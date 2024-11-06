@@ -1,147 +1,200 @@
-Return-Path: <linux-kernel+bounces-398554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC269BF2C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:08:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019A39BF2C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66C91F2235F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:08:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24D9C1C26912
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A052064E7;
-	Wed,  6 Nov 2024 16:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA1D2076CE;
+	Wed,  6 Nov 2024 16:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMSU+/Qb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GVlxQEKN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpiLxwRe";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GVlxQEKN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpiLxwRe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7442204F7F;
-	Wed,  6 Nov 2024 16:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17591203707;
+	Wed,  6 Nov 2024 16:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909169; cv=none; b=kmfDvNZl//oSECZXdIHa2QryWq02nJranMc0kPflKD82dLvz34/W1+VfmoIVYp6IuumHZXak4zRuVfnnjiTZbQBiExwFm7eJAkLt88F4tGKuHnzQz+m57Lk1hhEWzAvFcS67Y5pXAuvqdV45OSfPPIt1HT11UFfFW8/xSkYzs4w=
+	t=1730909239; cv=none; b=BtzR9mdD4b+9TS6YiYApveTIa618ONN9Z+Aja0IlsbNqPaupQ3ACxfvR+G9XhiC5Jh9CBKfp4cXTXHpbeq4uFQrPSrSVWinnXV3l9K/8Y9gNJOEK4oN3McYYot4MRqOnwDv2jXHpzEghbElJvenaqQ3WKRfl9uEHn9Z/KFWV57I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909169; c=relaxed/simple;
-	bh=owI1dOfUO3f36nslRIYvy0cGotXXjlEaH4q214cOC1c=;
+	s=arc-20240116; t=1730909239; c=relaxed/simple;
+	bh=yrnpiJhy1J/7RqZ/+CyJugHSccwtATWWeukq81MaSCM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=itgE/Dmi+TdxJOOH+/rPmwNymQGF9I8SaCls3ODL+MX7je7O1cwH/ol1cqEmTXqezyHH7LOILUMAw7WY/nUnK+ExFEeV5Erayx3fR09BoSZTvohja8i0zpsUXnqNyo/PC9iyaGUqi3FtPpD9hS9h9sy+7b6NtmOmEMKHcN2Dbpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMSU+/Qb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D04BC4CEC6;
-	Wed,  6 Nov 2024 16:06:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730909168;
-	bh=owI1dOfUO3f36nslRIYvy0cGotXXjlEaH4q214cOC1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jMSU+/QbU/pj0W2yPaEzZ3tlG2Nxxjl29ftjebUJg//CpoYZie8Olae8TK9Qszn8Z
-	 cBFQdSSVI2F9HBW69bVCf3gulyFw1/JnI4PGJiFAraRg/NwE3UuPqbVyTZFqnsHTV7
-	 hUhA5U8s3eAmPNvXiqbQc0GsYH4drW2XdH3efH83RccdkJ86g56FKloRxm/2tVKZZK
-	 sILpHcZZDuu+gi+ySE2Zg2e0kFdapC3Uw+CJLNAx23AtbAcUsyy+sgttGhWZqLgQZn
-	 rNuERN65MXOGQsNcadg2XoBvnd9wHHDRmPrNWNvQ2+Yv0rdTOyoOJj3rXy2Y8ho4iv
-	 UdR7+rlq0tk5Q==
-Date: Wed, 6 Nov 2024 16:06:02 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Yin <peteryin.openbmc@gmail.com>,
-	Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
-	Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v2 1/2] dt-bindings: trivial-devices: add ltp8800
-Message-ID: <20241106-gatherer-glancing-495dbf9d86c7@spud>
-References: <20241106030918.24849-1-cedricjustine.encarnacion@analog.com>
- <20241106030918.24849-2-cedricjustine.encarnacion@analog.com>
- <8e4dc080-d779-4b06-8fd1-74784e06323a@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nom28SspPsPRgQFo5vPiCghkuFbd+UQGcSN1pGv87/s342kDFdjswuUQcYbm4dvx5e+V+g7eoWlaozW/0GH/2u2JdBnlXvgTjdKGdjfUnsnJKZ7gvtZS0+1Ws7x4Jxg0xSsa115bMK47TWxF9+ET95xBHR0m8bOBKBZ0aPWFrhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GVlxQEKN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpiLxwRe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GVlxQEKN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpiLxwRe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 410DE1FD16;
+	Wed,  6 Nov 2024 16:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730909234;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oFK4lU6B12gDl5NcQ8bStKX2YCBIjE84h/WDX0M3oX0=;
+	b=GVlxQEKN3N/ZUMBOshLxms6mGsMue3UYHWVi1mIDw1tBV2ZPdp8hmRhKTc2D2GXij2WUOv
+	t8Hq06BbIeQd3N/c/ocBmmwjaAH9JW/ey6GolnmYyvA6vQ9VC3MA2r5aCZITpotTGEitmz
+	224sR5GS3zq/J9+1J6kkSgt5kzEFNuI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730909234;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oFK4lU6B12gDl5NcQ8bStKX2YCBIjE84h/WDX0M3oX0=;
+	b=TpiLxwReKDl7e0yEg9XXcp1Uuush7wNq9HBMtCqDXUg9gHoPtPNXBSUrQjivAzEFj/uHRG
+	7SDYa2bi1PlVhkDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GVlxQEKN;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TpiLxwRe
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730909234;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oFK4lU6B12gDl5NcQ8bStKX2YCBIjE84h/WDX0M3oX0=;
+	b=GVlxQEKN3N/ZUMBOshLxms6mGsMue3UYHWVi1mIDw1tBV2ZPdp8hmRhKTc2D2GXij2WUOv
+	t8Hq06BbIeQd3N/c/ocBmmwjaAH9JW/ey6GolnmYyvA6vQ9VC3MA2r5aCZITpotTGEitmz
+	224sR5GS3zq/J9+1J6kkSgt5kzEFNuI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730909234;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oFK4lU6B12gDl5NcQ8bStKX2YCBIjE84h/WDX0M3oX0=;
+	b=TpiLxwReKDl7e0yEg9XXcp1Uuush7wNq9HBMtCqDXUg9gHoPtPNXBSUrQjivAzEFj/uHRG
+	7SDYa2bi1PlVhkDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F49D137C4;
+	Wed,  6 Nov 2024 16:07:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DkGAAzKUK2dLWgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 06 Nov 2024 16:07:14 +0000
+Date: Wed, 6 Nov 2024 17:07:08 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hagar@microsoft.com, broonie@kernel.org, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Linux btrfs <linux-btrfs@vger.kernel.org>,
+	linux-mips@vger.kernel.org
+Subject: Re: [PATCH 6.11 000/245] 6.11.7-rc1 review
+Message-ID: <20241106160708.GE31418@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20241106120319.234238499@linuxfoundation.org>
+ <CA+G9fYtjpUJFFV=FdqvW+5K+JL5ZYN4sPfVDjQovqzd7cib39w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="g7f03nsiTMvmTYyW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8e4dc080-d779-4b06-8fd1-74784e06323a@roeck-us.net>
+In-Reply-To: <CA+G9fYtjpUJFFV=FdqvW+5K+JL5ZYN4sPfVDjQovqzd7cib39w@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 410DE1FD16
+X-Spam-Score: -2.71
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.71 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_CC(0.00)[linuxfoundation.org,vger.kernel.org,lists.linux.dev,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de,microsoft.com,fb.com,toxicpanda.com,suse.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLe1zdo9uk7dz69twkrygihbgb)];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Wed, Nov 06, 2024 at 03:12:46PM +0000, Naresh Kamboju wrote:
+> On Wed, 6 Nov 2024 at 12:26, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.11.7 release.
+> > There are 245 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.7-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> The mips gcc-12 allmodconfig build failed on the Linux stable-rc
+> linux-6.11.y branch.
+> 
+> 
+> First seen on Linux stable-rc v6.11.4-642-g0e21c72fc970
+> 
+>   Good: v6.11.4-397-g4ccf0b49d5b6
+>   Bad:   v6.11.4-642-g0e21c72fc970
+> 
+> mips:
+>   build:
+>     * gcc-12-allmodconfig
+> 
+> Build errors:
+> -------------
+> ERROR: modpost: "__cmpxchg_small" [fs/btrfs/btrfs.ko] undefined!
 
---g7f03nsiTMvmTYyW
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 05, 2024 at 08:34:01PM -0800, Guenter Roeck wrote:
-> On 11/5/24 19:09, Cedric Encarnacion wrote:
-> > Add Analog Devices LTP8800-1A, LTP8800-2, and LTP8800-4A DC/DC =CE=BCMo=
-dule
-> > regulator.
-
-A single compatible for 3 devices is highly suspect. What is
-different between these devices?
-
-> >=20
-> > Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> > ---
-> >   Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
-> >   MAINTAINERS                                            | 5 +++++
-> >   2 files changed, 7 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/D=
-ocumentation/devicetree/bindings/trivial-devices.yaml
-> > index 90a7c0a3dc48..72877d00b8dd 100644
-> > --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> > +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> > @@ -43,6 +43,8 @@ properties:
-> >             - adi,adp5589
-> >               # Analog Devices LT7182S Dual Channel 6A, 20V PolyPhase S=
-tep-Down Silent Switcher
-> >             - adi,lt7182s
-> > +            # Analog Devices LTP8800-1A/-2/-4A 150A/135A/200A, 54V DC/=
-DC =CE=BCModule regulator
-> > +          - adi,ltp8800
-> >               # AMS iAQ-Core VOC Sensor
-> >             - ams,iaq-core
-> >               # Temperature monitoring of Astera Labs PT5161L PCIe reti=
-mer
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 7c357800519a..6ca691500fb7 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -13555,6 +13555,11 @@ S:	Maintained
-> >   F:	Documentation/devicetree/bindings/iio/light/liteon,ltr390.yaml
-> >   F:	drivers/iio/light/ltr390.c
-> > +LTP8800 HARDWARE MONITOR DRIVER
-> > +M:	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> > +L:	linux-hwmon@vger.kernel.org
-> > +S:	Supported
-> > +
->=20
-> This entry doesn't make sense in this patch.
->=20
-> Guenter
->=20
-> >   LYNX 28G SERDES PHY DRIVER
-> >   M:	Ioana Ciornei <ioana.ciornei@nxp.com>
-> >   L:	netdev@vger.kernel.org
->=20
-
---g7f03nsiTMvmTYyW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyuT6gAKCRB4tDGHoIJi
-0rjyAPwNU65BJtJsjvnjwbUO2RxFVge6HDRF720CkCn1W8byoAD/eVZZvsDtPJ5J
-eTiT6GnZMxq9T+7hd7gwM/r8/aBDfQM=
-=xBOT
------END PGP SIGNATURE-----
-
---g7f03nsiTMvmTYyW--
+The patch "btrfs: fix error propagation of split bios" needs
+90a88784cdb7 ("MIPS: export __cmpxchg_small()")
 
