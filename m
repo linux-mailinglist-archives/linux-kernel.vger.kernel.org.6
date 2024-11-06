@@ -1,59 +1,83 @@
-Return-Path: <linux-kernel+bounces-398585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9AD9BF328
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:24:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E78C9BF32C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764E91F22D2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:24:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6ADC281D9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784152038DF;
-	Wed,  6 Nov 2024 16:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7E3205E2D;
+	Wed,  6 Nov 2024 16:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="poQGc65H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zro7LkBK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lCcgewcH"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7426D204080
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C034205AAC;
+	Wed,  6 Nov 2024 16:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730910293; cv=none; b=YGZmSMLw1qg+KTTgSjCAqNx0DqxSWLEDCIUQiovlIRaj9yoMkLl76LJmHfEhwbShz8l15GQrKPAhjLSaPZzc7cg9uL5T75ngP0A730BFQB3BPCzQO0Z/YsFuncA2xUD1fwxLs2rcOaZF7n8tUe0WBjhQsyaXwt8KKpsxkhmJrhY=
+	t=1730910345; cv=none; b=g04uDPwIO5hHIIJISszmNTuYug19II9toFoBgiqYapfCrL7E9yRHCVmsSgByr7MoSG9xWEZWaGv6EarxPyyVON9f/B9HEhngZsghvvmS5wGx92AKmJzXiE4/BW0R2egu3Ka7I99mjQQ0N8vzSZXFT821rA15DPaPr3R9ZE/lHi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730910293; c=relaxed/simple;
-	bh=j+pW09KlCfHgEwChtrQmLqJdAkLRMYqlpV0/EVc7ZLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rZrGjHtk/afgIP488p5S/fjmrd0NIVHM2GQf0tcaNU8ZebEx+0jUrxvOftFn8cfS1Rg3HdH3Wr2L/BFhO7FNEB1QKTOukGDbl+XRYjvhowKW38AXg1FkaEkOWvvtf59z9M2rI50gAdFuxf3NZfiAbkQdv8xGgfjfDoRuZkcxKmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=poQGc65H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zro7LkBK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 6 Nov 2024 17:24:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730910290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=GQrCrITldNuGCh3c3Ejb12ZGNxCVfnc9RHcU2GD5HLk=;
-	b=poQGc65HMQGUGapZ9yh/65RCv1kODx50O20Nv1oQu+PK940ewfU2PcEEAqYD+JGjNMOKnZ
-	HKQACrXsQrCJiraFwhM8p6ouIVNVMpBYu95nTC6ioDIfsPy20K4dvJQArrKax7NbY1/bs3
-	CuIJxG9CvBTUl5gh+YJ3olvKq2zTYJDWlm0KnR0eugsyYUPVsC+UryOQbutc0xy9fy11jF
-	2jIxgYmRw4Ptdo5jCfOqzNpCKHyvJhEv8beRfAQItLgQJxYgLn3i75M5p/z7Iuj0VHlNvJ
-	EQhldFhGRkkgC894322ES5j2LdXYc8N6gPrkonbvxVG6vRB1HPd1FyymyEGeMg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730910290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=GQrCrITldNuGCh3c3Ejb12ZGNxCVfnc9RHcU2GD5HLk=;
-	b=Zro7LkBKYLG97v403vx8LrSvV4S/YDhDsJtr3rwqjwkTBXT1v85d7arMrHDacStqrVSGfQ
-	bb6yViZ6NzJYHLCg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
-Subject: [PATCH] sched, x86: Update the comment for TIF_NEED_RESCHED_LAZY.
-Message-ID: <20241106162449.sk6rDddk@linutronix.de>
+	s=arc-20240116; t=1730910345; c=relaxed/simple;
+	bh=/7T9CWq50/EDW4GKHhXrEmSIjWMuU9YbJ9xGSuwCaqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTISmTMiiLDCEEp4H+2l9fhyz4cCQh2n6vBpqc4ch2gyxM61EVrPFOcaswIIWjZ6lE/90Qe2zIlFDLVWgn0wmWplINn1DTpFH4fyPlMXj4EWmuwudleZXd2Ho7Q/GhZR9lDdCiJJKQVQBqVcDMBTuGM2t5QbMgrgdG1f3rhWGjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lCcgewcH; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3B66440E0191;
+	Wed,  6 Nov 2024 16:25:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id rFZESn4E9EYc; Wed,  6 Nov 2024 16:25:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730910337; bh=GmdL+T5K4/SF+Sct49tJ8IMuWMK3TTT9WwZH8bDTlgc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lCcgewcHDU8owBBp8kRF9Ui7cVCT5+NN2YO25bfoRLHMftyg2nLw/GOoFkCuZQ9of
+	 eRLhkBNzWGac3lRYyrJZS2uhTGDOnrVeiq77UGY5XJnxTtaO3UixFqxDYuWsgF5Zbx
+	 iMNeU4MOtRb/xyRkOacgi00XrzN6ABvBoJMWyevOnzjdNuu6AqBG0glpT1LG0XmJiF
+	 VKvgEQxsbbr6brQs2Y3hcww4T3YKgtN3rNfz36fDGIf0l0Qs7HFcoVcsaOJvaejaK4
+	 DlWtITAxRjGjTdGc4n9r90XD4dc8HcX76CV4ROkaGtjMCzxmXP/n+QSg+rox0oyLKr
+	 z9xEzjtwcgnggMSeTdc7vdP7dlV4V7tbB06MgCmmUvexjeqt+7r1jWVJPkjrME5Fkm
+	 XQ5Eo5P4lEG69jectFyyU7vOruPRDkqpZ1cliO1qNnfQucbsoO9KC2VL+Q/YEi4pwn
+	 qrP/7Urk07zjKQFMnZFSpgxcPsWgONWhoTe7AkSuofp7jblVDcv5OtpUQE8Ei33b+U
+	 5wD98Tp5tEpH7bATmK6V/wtBKhWS/U5vQV7pqFbgQcCbesFYfB0zwjHEgbb2G6mBFR
+	 w4p6tuqm7Y0Y0pE7EWLhgTuU3594cy5PUaPC9/yfh3ig+0ph44P38oKcyh7AkrEVGh
+	 45rSk0r1txjCNHvGMmrzjOKA=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 04F5840E0163;
+	Wed,  6 Nov 2024 16:25:29 +0000 (UTC)
+Date: Wed, 6 Nov 2024 17:25:25 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
+Message-ID: <20241106162525.GHZyuYdWswAoGAUEUM@fat_crate.local>
+References: <20241105123416.GBZyoQyAoUmZi9eMkk@fat_crate.local>
+ <ZypfjFjk5XVL-Grv@google.com>
+ <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local>
+ <ZypvePo2M0ZvC4RF@google.com>
+ <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local>
+ <ZyuJQlZqLS6K8zN2@google.com>
+ <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
+ <ZyuMsz5p26h_XbRR@google.com>
+ <20241106161323.GGZyuVo2Vwg8CCIpxR@fat_crate.local>
+ <ZyuWoiUf2ghGvj7s@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,29 +86,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <ZyuWoiUf2ghGvj7s@google.com>
 
-Add the "Lazy" part to the comment for TIF_NEED_RESCHED_LAZY so it is
-not the same as TIF_NEED_RESCHED.
+On Wed, Nov 06, 2024 at 08:17:38AM -0800, Sean Christopherson wrote:
+> I do subscribe to kvm@, but it's a mailing list, not at alias like x86@.  AFAIK,
+> x86@ is unique in that regard.  In other words, I don't see a need to document
+> the kvm@ behavior, because that's the behavior for every L: entry in MAINTAINERS
+> except the few "L:	x86@kernel.org" cases.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/x86/include/asm/thread_info.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have had maintainers in the past not like to be CCed directly as long as the
+corresponding mailing list is CCed. You guys want to be CCed. I will try to
+remember that. We have different trees, with different requirements, wishes,
+idiosyncrasies and so on. And you know that very well.
 
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 75bb390f7baf5..a55c214f3ba64 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -87,7 +87,7 @@ struct thread_info {
- #define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
- #define TIF_SIGPENDING		2	/* signal pending */
- #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
--#define TIF_NEED_RESCHED_LAZY	4	/* rescheduling necessary */
-+#define TIF_NEED_RESCHED_LAZY	4	/* Lazy rescheduling needed */
- #define TIF_SINGLESTEP		5	/* reenable singlestep on user return*/
- #define TIF_SSBD		6	/* Speculative store bypass disable */
- #define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
+So document it or not - your call.
+
 -- 
-2.45.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
