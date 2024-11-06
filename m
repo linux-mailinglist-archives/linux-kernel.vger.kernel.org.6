@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-398569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7909BF2F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:13:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37FE59BF2F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D5B1F22EE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:13:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD671C24516
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8151DEFC7;
-	Wed,  6 Nov 2024 16:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DBE20492C;
+	Wed,  6 Nov 2024 16:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cshKHZZV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="K1QDha32"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0587189F5C;
-	Wed,  6 Nov 2024 16:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B743A1DEFC7;
+	Wed,  6 Nov 2024 16:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909592; cv=none; b=m45RpY2zpRogdIZNTpBBsxZUM+2oEwrR/eAsZOm2hZxH37F3iflU5C3NMbgqw9imN1rlAvD3Y78ehLPiY1MjzYzHfTsDPCidM4RDQKLIVyT96w5GwxJjsfLj7IGftVN92/fenB7YorsTKVQQyQvWNQJSXxiD1miUEwAAHjOtirc=
+	t=1730909625; cv=none; b=kvAkdHfoE8AbNenl9caNkEAKjOOGbv8qZ6gX4srRcsC0+Bofqzw1m9iyVlPcjtgZns8d/5HROCUGTF2cYBBTndd+3v3f65o68/oQ+AIXRAc0ijT8MqZ7AMxsNSeCpmf6KhNg4rEkspPPKBfNX5mI70FXostISBydxsj7RReH2bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909592; c=relaxed/simple;
-	bh=dTuD8etQK1as5a2h+NWAEDvTetEZY5ki9oji2OXxqRA=;
+	s=arc-20240116; t=1730909625; c=relaxed/simple;
+	bh=fMW/VsOUBf/Zzj/r5YgUE0W40cX8c/8i64nz6ZYNeH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B1vUoX5Llm5wQM4utqLfsyz2tkuSwbRh6HZ54CBnykX/Vwx8RyzKUiZvakn41EmnyMzu3KiaKHkeKV38Q8IcN3reCXeZLy3USp3I7p2y6exWIUySaQr8t7tmvxVAKt/wxF3QYjLnXlpKsDeYTTajPHkM/kLD0cMbl4ZW0ju9wW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cshKHZZV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F3AC4CEC6;
-	Wed,  6 Nov 2024 16:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730909592;
-	bh=dTuD8etQK1as5a2h+NWAEDvTetEZY5ki9oji2OXxqRA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=mBqARlLz0jYJ9fU0E0qAmTaEhVG1nB/Vz7WcD+fWbrTOlp940rVjYS3dSwnUObSQGdWZdKKWqmZIrWivX8drNdHMPbp0Rg/yp7hSFvePOaUSo2zxeqPXHO7y9PNom1LXk2ES068l5gDeqw04Yw43WMc66F3d7UZUkM87FuGtRMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=K1QDha32; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A727340E0169;
+	Wed,  6 Nov 2024 16:13:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id lFXbq98d3ilJ; Wed,  6 Nov 2024 16:13:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730909615; bh=yem5yUNBo739fH9yVwWSEMahuq8YLo7+oLjxfHLmaBY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cshKHZZVNpfpeAjwuoOwWomv7lCCQFOmVRMbCC7WT4kNyMQKFjWHoFPWb8GmipzYc
-	 hIz+8lhyrssZigWqq3FKL/8XbVIC8I+ssq0aliIPCCs8TybGcfg+QxmVlsSoqfaTAn
-	 OWv2KGutS01+3hTJTNPHjThOCdlvWxJEfIVoO+y4WN7+yae750oUsL585Jgx5zI1rh
-	 m4/DToo8zuSBwwR6EtDxtwTCjrBHujBn4RfxUNhxIkwArjVeI2ck5bG4aA6sbQheDr
-	 CNJbzUu1GbXnxNbO23+5n5eeqOuv01d+QJpMBg3vk8bKfX0LniFbRc7WjTOEDQvCU5
-	 sTZ2YVnG+tolw==
-Date: Wed, 6 Nov 2024 16:13:03 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-Cc: Eason Yang <j2anfernee@gmail.com>, avifishman70@gmail.com,
-	tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
-	yuenn@google.com, benjaminfair@google.com, jic23@kernel.org,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	javier.carrasco.cruz@gmail.com, andy@kernel.org,
-	marcelo.schmitt@analog.com, olivier.moysan@foss.st.com,
-	mitrutzceclan@gmail.com, matteomartelli3@gmail.com,
-	alisadariana@gmail.com, joao.goncalves@toradex.com,
-	marius.cristea@microchip.com, mike.looijmans@topic.nl,
-	chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
-	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
- NCT720x ADCs
-Message-ID: <20241106-humid-unwired-1d3fa1f50469@spud>
-References: <20241106023916.440767-1-j2anfernee@gmail.com>
- <20241106023916.440767-2-j2anfernee@gmail.com>
- <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
+	b=K1QDha32VM+gvATPnBylkqxb7p/63c29FuKywJ98uiYe189FEdixJM+JckTpBromM
+	 Lg2ZjyHGgqp7x7iTS4IUywRzQ01m4S+fCPO3oGnB4ffc0tPXjmCy1GRmF9TNGx1L5w
+	 Je8wR4Kg4q3NJ4Ml//Bs64J9yoqpPTvhH2c9x7G4HRI/eVj8u8te+EOcvAMr8xSmPl
+	 d3HLo7tiMZnZqISypm0WTjZpOBwxhTnvYq2ZqQ9AqNq/rZNOK1pZ1VrqPBVnMUbrxh
+	 Wv8VaNe1GFzHTQ+8iSsvFY523cqnHU1McvZA6JFnBB3lRnCCDqs6YhFuHOn0NLnVKG
+	 Kg2v1aVDmnGK0TzlYq9M0NSQ4MZUxtEQTqzzbCrgbnXaBfyyEeMOBzXbbqir9s+LPN
+	 iBQZ/qc7FLu2IkE+j16SetEn9TWkmJS9DEPsI0dPOOrdM2CToydl7I3jUn7zKWdVoc
+	 yXJWPBd0X/HkwkCUULIoXTulyA+PTzKdN50Npm4/eJkENPSyMx16B4gwzYhbK1/jgo
+	 Bd0MWOZwhfiV/56n1Sy4Mkl40008JcMGRIHUN5DE9D15q6SNfZ167ClMP9Qll8L8cd
+	 6QZv717JiKGvI8vyRPx8fn2p2y1F+xP3Bk6YbEN8bIDNvGFX99JBrV+shhJadqpH7I
+	 +mrMK8DFcVhqSGBnnyGfqeZI=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7200040E0191;
+	Wed,  6 Nov 2024 16:13:28 +0000 (UTC)
+Date: Wed, 6 Nov 2024 17:13:23 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
+Message-ID: <20241106161323.GGZyuVo2Vwg8CCIpxR@fat_crate.local>
+References: <20241104101543.31885-1-bp@kernel.org>
+ <ZyltcHfyCiIXTsHu@google.com>
+ <20241105123416.GBZyoQyAoUmZi9eMkk@fat_crate.local>
+ <ZypfjFjk5XVL-Grv@google.com>
+ <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local>
+ <ZypvePo2M0ZvC4RF@google.com>
+ <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local>
+ <ZyuJQlZqLS6K8zN2@google.com>
+ <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
+ <ZyuMsz5p26h_XbRR@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MjU5mkQF8kA0duUf"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
+In-Reply-To: <ZyuMsz5p26h_XbRR@google.com>
 
+On Wed, Nov 06, 2024 at 07:35:15AM -0800, Sean Christopherson wrote:
+> You didn't though.  The original mail Cc'd kvm@, but neither Paolo nor I.
 
---MjU5mkQF8kA0duUf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think we established that tho - I didn't know that kvm@ doesn't CC you guys.
+Probably should document that somewhere.
 
-On Wed, Nov 06, 2024 at 11:58:06AM +0700, Chanh Nguyen wrote:
->=20
->=20
-> On 06/11/2024 09:39, Eason Yang wrote:
-> > This adds a binding specification for the Nuvoton NCT7201/NCT7202
-> > family of ADCs.
-> >=20
-> > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-> > ---
-> >   .../bindings/iio/adc/nuvoton,nct720x.yaml     | 47 +++++++++++++++++++
-> >   MAINTAINERS                                   |  1 +
-> >   2 files changed, 48 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,=
-nct720x.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.=
-yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> > new file mode 100644
-> > index 000000000000..3052039af10e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> > @@ -0,0 +1,47 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Nuvoton nct7202 and similar ADCs
-> > +
-> > +maintainers:
-> > +  - Eason Yang <yhyang2@nuvoton.com>
-> > +
-> > +description: |
-> > +   Family of ADCs with i2c interface.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nuvoton,nct7201
-> > +      - nuvoton,nct7202
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  read-vin-data-size:
->=20
-> Is it generic property or vendor property? I tried to find in the
-> https://github.com/torvalds/linux/tree/master/Documentation/devicetree/bi=
-ndings
-> , but it seems this property hasn't been used on other devices.
->=20
-> If it is vendor property, then I think it should include a vendor prefix.
-> For examples:
->=20
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/adi%2Cad7780.yaml#L50
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/fsl%2Cvf610-adc.yaml#L42
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/st%2Cstmpe-adc.yaml#L22
+Uff, lemme try again. As already explained:
 
-An explanation of why it cannot be determined from the compatible would
-also be good. Two compatibles and two values makes me a little
-suspicious!
+>   $ ./scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --nofixes -- <patch>
+>   Thomas Gleixner <tglx@linutronix.de>
+>   Ingo Molnar <mingo@redhat.com>
+>   Borislav Petkov <bp@alien8.de>
+>   Dave Hansen <dave.hansen@linux.intel.com>
+>   "H. Peter Anvin" <hpa@zytor.com>
+>   Peter Zijlstra <peterz@infradead.org>
 
---MjU5mkQF8kA0duUf
-Content-Type: application/pgp-signature; name="signature.asc"
+those above are behind the mail alias x86@kernel.org so no need to CC each and
+every one of them.
 
------BEGIN PGP SIGNATURE-----
+>   Josh Poimboeuf <jpoimboe@kernel.org>
+>   Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyuVjwAKCRB4tDGHoIJi
-0r8qAP9P7kaywRwDNIUfUhRZgobeyzxRZW+mS9lmBafdUk9w+wD/abZJkKEzZukx
-MAAD/6b+6Bclx/ACc2ypkNzWVK4scAU=
-=fggK
------END PGP SIGNATURE-----
+Those folks are CCed as per MAINTAINERS as they wanted to look at bugs.c
+tragedies.
 
---MjU5mkQF8kA0duUf--
+>   Sean Christopherson <seanjc@google.com>
+>   Paolo Bonzini <pbonzini@redhat.com>
+>   linux-kernel@vger.kernel.org
+
+LKML is CCed.
+
+>   kvm@vger.kernel.org
+
+I hope that clarifies the situation.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
