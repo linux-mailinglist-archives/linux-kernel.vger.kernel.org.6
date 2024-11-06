@@ -1,163 +1,149 @@
-Return-Path: <linux-kernel+bounces-397645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCAF9BDE7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:06:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5086C9BDE7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D393B23087
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:06:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 741451C20F41
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB49191F86;
-	Wed,  6 Nov 2024 06:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F310D191F85;
+	Wed,  6 Nov 2024 06:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VudVv6p5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qPDAHpXr"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31D736D;
-	Wed,  6 Nov 2024 06:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B85536D;
+	Wed,  6 Nov 2024 06:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730873202; cv=none; b=GMvvWKPvG5NsKOYDYJ7PV3QzJSAzDTVqPU1q6iO6gABo4MQJIouDAnIb07MP2vycu/ePk840QpSfVTXiwcxT2PBqInmlwbs0b8+KvKDbmwIi0zz3ugr/nQPT0zv175CbogkkF/6/Gm5Z48X46MUxWrfPRnyImZ/4Fr42pUDq4LA=
+	t=1730873237; cv=none; b=E0vxC5M0LewXD8/KoRkTQSUN6soR1eiR8rROu28oFko9Z54p/LSBVigDtiR5TRoeYX+kWsGjrnO93yYEhmNyy0BcblXytPnIcPJ/A7KZU4iQyJ4vu+nSbn6SI57pWUt7z3sDWveECgkDhA+nCmIRQ2ckMZMJrXBvvB4wk92pvKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730873202; c=relaxed/simple;
-	bh=shvgXzW8dVMGYFd5CIjINKxCEvqPGZwVOe3y2HPRXGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3aeWjE1kbONsOr0FldYLBHbG/gOCxX9mXuXDhv3Mx9hhHOD8XT8CHKUwG2dgXCT96bVBPdYt2zmqQhmkdmTZ8Eep2QNviUfM4CfzOYtNZEMSEe7a8dmbbrK8WJmg0s5VlhQyDJByOXSyIlRd5CLcVFKVtTbn47AfGN6d6d8e1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VudVv6p5; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730873201; x=1762409201;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=shvgXzW8dVMGYFd5CIjINKxCEvqPGZwVOe3y2HPRXGY=;
-  b=VudVv6p5aDh4ib9WAVw5Vw/y0SwDNmfQLyWBIxjTALJ0i4j24EJlOr1s
-   YbwkSTZs67/UQZkDn2eb0hq4zffekjbeWoIwQvlAEyGxaGFoGQhgcEBO+
-   lQ7Vmfp8OTvMNUcfpGXuqixVE/z/ZZcIEWZbSw21/BobLWyjFlbxOWJuW
-   IAyhxH6snWl6Ptn/YSsgs1scuQiRfqTQH123iBBU06YMwgcD4EkW2gKYw
-   dUB95Vxlezolfa7I8My3OUy3UECi9yT70LuIo7sb0SqaI1PW35IXyZSdM
-   hnKWtvYhQIkxk22bNye+AKdRNLHHpK9mQT1mdT9crjC9vkOlKUSqmijgt
-   Q==;
-X-CSE-ConnectionGUID: AQQBocEgRN2zlgWiXnujow==
-X-CSE-MsgGUID: Gu6uFhxnR6O6LFzGdQibfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53218730"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="53218730"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 22:06:39 -0800
-X-CSE-ConnectionGUID: 4uVEvHwzRYmonJF/SS6/pA==
-X-CSE-MsgGUID: KDN4O9z8TT6g6yxRowNChQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="115165065"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 05 Nov 2024 22:06:38 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 720C71BD; Wed, 06 Nov 2024 08:06:35 +0200 (EET)
-Date: Wed, 6 Nov 2024 08:06:35 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
-	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
-	mmikowski@kfocus.org, linux-kernel@vger.kernel.org,
-	Gil Fine <gil.fine@linux.intel.com>
-Subject: Re: USB-C DisplayPort display failing to stay active with Intel
- Barlow Ridge USB4 controller, power-management related issue?
-Message-ID: <20241106060635.GJ275077@black.fi.intel.com>
-References: <20241011183751.7d27c59c@kf-ir16>
- <20241023062737.GG275077@black.fi.intel.com>
- <20241023073931.GH275077@black.fi.intel.com>
- <20241023174413.451710ea@kf-ir16>
- <20241024154341.GK275077@black.fi.intel.com>
- <20241031095542.587e8aa6@kf-ir16>
- <20241101072155.GW275077@black.fi.intel.com>
- <20241101181334.25724aff@kf-ir16>
- <20241104060159.GY275077@black.fi.intel.com>
- <20241105141627.5e5199b3@kf-ir16>
+	s=arc-20240116; t=1730873237; c=relaxed/simple;
+	bh=oGFIBXGmNj4TtM62n5n9meAA22Gd8kybI9OvvT5MMjA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXVFGIaKTD9rgyFqQkdf9b3C0gW4GiXp2L5rjcDbaJGUOT5TCdarVkhlAfrQ9FgWkEibe3h/qySvHfrvZDPQPSJhLAglJGAZYG+3bUKl7aah0SXvNdwEUlI0kWZyfioGz0rQHN7Ei6to6PdZxyneemLgGQRp4dNE4cvB1JFn9sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qPDAHpXr; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A666eoj064806;
+	Wed, 6 Nov 2024 00:06:40 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730873200;
+	bh=9E01b5lO3ji2wEte0jqqAxO6EzU7eTUFjSnqcONGvZc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=qPDAHpXryy/zsx9k3xi+1+JktRZXpwTSAAaZbCxu+fVm9me6Ucvf+J9wFHMvFMyAG
+	 rBbYwq3eCJu6qGSz87s/qsiRexf7/6RQDU/9N8q8kIVua1fJW0NBw8/BqbLHm1yBxT
+	 8bKkjOm2LgfkvqIbD8gyG473RFCpgZvZidgSvDuY=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A666eAH057444
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 6 Nov 2024 00:06:40 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 6
+ Nov 2024 00:06:40 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 6 Nov 2024 00:06:40 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A666cvV042705;
+	Wed, 6 Nov 2024 00:06:39 -0600
+Date: Wed, 6 Nov 2024 11:36:38 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <manivannan.sadhasivam@linaro.org>, <kishon@kernel.org>,
+        <u.kleine-koenig@pengutronix.de>, <cassel@kernel.org>,
+        <dlemoal@kernel.org>, <yoshihiro.shimoda.uh@renesas.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
+ "ti,keystone-pcie" compatible
+Message-ID: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
+References: <20240524105714.191642-2-s-vadapalli@ti.com>
+ <20241106005758.GA1498067@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20241105141627.5e5199b3@kf-ir16>
+In-Reply-To: <20241106005758.GA1498067@bhelgaas>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Aaron,
+On Tue, Nov 05, 2024 at 06:57:58PM -0600, Bjorn Helgaas wrote:
 
-On Tue, Nov 05, 2024 at 02:16:36PM -0600, Aaron Rainbolt wrote:
-> On Mon, 4 Nov 2024 08:01:59 +0200
-> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+Hello Bjorn,
+
+> On Fri, May 24, 2024 at 04:27:13PM +0530, Siddharth Vadapalli wrote:
+> > From: Kishon Vijay Abraham I <kishon@ti.com>
+> > 
+> > commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
+> > Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
+> > device data ("struct ks_pcie_of_data"). However it failed to set mode
+> > for "ti,keystone-pcie" compatible. Set mode as RootComplex for
+> > "ti,keystone-pcie" compatible here.
 > 
-> ...snip...
+> 23284ad677a9 appeared in v5.10.  
 > 
-> > Okay, thanks again for testing!
-> > 
-> > It means disabling adapter 16 in DROM is actually intentional as that
-> > is not connected to the dGPU and so makes sense.
-> > 
-> > > * Boot the system up, nothing connected.
-> > > * Wait for Barlow Ridge to enter runtime suspend. This takes ~15
-> > >   seconds so waiting for > 15 seconds should be enough.
-> > > * Plug in USB-C monitor to the USB-C port of the Barlow Ridge.
-> > >   Screen shows in log, screen wakes, but then no signal is
-> > > received, and no image ever appears. Screen then sleeps after its
-> > > timeout.
-> > > * Run lspci -k to wake up the monitors. Once this is run, the
-> > > display shows correctly and is stable. Adding another USB-C display
-> > > after this also works correctly: It is recognized and lights up in
-> > > seconds to show the desktop background, and remains stable.
-> > > 
-> > > Notice that pre-6.5 kernels work fine with Barlow Ridge, which
-> > > implies that new code is causing this. It may be new support code
-> > > for tbt capability (and therefore pretty much required). But
-> > > regardless, it's still new code. With the current patch, we can run
-> > > a udev rule that enables hot plugging that likely always work, or
-> > > (worst case) at least empowers the customer to refresh monitors by
-> > > clicking a button.  
-> > 
-> > We definitely want to fix this properly so there is no need for anyone
-> > to run 'lspci' or similar hacks but because I'm unable to reproduce
-> > this with my reference Barlow Ridge setup, I need some help from you.
-> > 
-> > You say with v6.5 it works? That's interesting because we only added
-> > this redrive mode workaround for v6.9 and without that the domain
-> > surely will not be kept powered but maybe I'm missing something.
+> But I guess RC support has not been broken since v5.10 because we
+> never used ks_pcie_rc_of_data.mode anyway?
 > 
-> 6.5 is *broken*. 6.1 works correctly, but that's probably because it
-> doesn't have Thunderbolt support for Barlow Ridge chips at all. I
-> suspect this is because the chip is just acting as a USB-C controller,
-> and that works just fine without the Thunderbolt driver.
-
-Exactly so while it "works" for this particular case all other cases
-will not pass.
-
-> > I wonder if your test team could provide log from v6.5 as well
-> > following the same steps, no need to run 'lspci' just do:
-> > 
-> >   1. Boot the system up, nothing connected.
-> >   2. Wait for ~15 seconds for the domain to enter runtime suspend.
-> >   3. Plug in USB-C monitor to the USB-C port of Barlow Ridge.
-> >   4. Verify that it wakes up and, there is picture on the screen.
-> >   5. Wait for ~15 seconds.
-> > 
-> > Expectation: After step 5 the monitor still displays picture.
-> > 
-> > If this works as above then I'm really surprised but if that's the
-> > case then we can maybe think of another approach of dealing with the
-> > redrive mode.
+> It looks like the only use is here:
 > 
-> We'd be happy to run this testing on the 6.1 kernel if it would be
-> helpful. Will that work, or is 6.1 too old?
+>   #define DW_PCIE_VER_365A                0x3336352a
+>   #define DW_PCIE_VER_480A                0x3438302a
+> 
+>   ks_pcie_probe
+>   {
+>     ...
+>     mode = data->mode;
+>     ...
+>     if (dw_pcie_ver_is_ge(pci, 480A))
+>       ret = ks_pcie_am654_set_mode(dev, mode);
+>     else
+>       ret = ks_pcie_set_mode(dev);
 
-Unfortunately that does not help here. I need to figure something else
-how to detect the redrive case with this firmware but first, does this
-work in Windows? I mean if you install Windows to this same system does
-it work as expected?
+"mode" is used later on during probe at:
+
+....
+	switch (mode) {
+	case DW_PCIE_RC_TYPE:
+	...
+	case DW_PCIE_EP_TYPE:
+	...
+	default:
+		dev_err(dev, "INVALID device type %d\n", mode);
+	}
+....
+
+> 
+> so we don't even look at .mode unless the version is v4.80a or later,
+> and this is v3.65a?
+> 
+> So this is basically a cosmetic fix (but still worth doing for
+> readability!) and doesn't need a stable backport, right?
+
+I suppose that "data->mode" will default to zero for v3.65a prior to
+this commit, corresponding to "DW_PCIE_UNKNOWN_TYPE" rather than the
+correct value of "DW_PCIE_RC_TYPE". Since I don't have an SoC with the
+v3.65a version of the controller, I cannot test it out, but I presume
+that the "INVALID device type 0" error will be displayed. Though the probe
+will not fail since the "default" case doesn't return an error code, the
+controller probably will not be functional as the configuration associated
+with the "DW_PCIE_RC_TYPE" case has been skipped. Hence, I believe that
+this fix should be backported.
+
+Regards,
+Siddharth.
 
