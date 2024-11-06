@@ -1,124 +1,86 @@
-Return-Path: <linux-kernel+bounces-397973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0E29BE340
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:55:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8C39BE347
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:58:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 367251F2362C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39FD1F2355B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1890A1DD547;
-	Wed,  6 Nov 2024 09:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4421DBB35;
+	Wed,  6 Nov 2024 09:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBIWBSwt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OD+DetET"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617E81DACAF;
-	Wed,  6 Nov 2024 09:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451701D7E37;
+	Wed,  6 Nov 2024 09:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886926; cv=none; b=DbcHRrBWSYYytGAfLBCv1mB+YXOEgv4un0Q4D8TtlqP3BKHZ40ZusKXkNTjtSnYMtzAppN/8LTNZvEt9lwcYxJAICsxnpn3b3xo3f/Xk4N9up3/9kfrN6BhZihGfDVF1zsiKssX8zuKV6d0T3BYr8KrUJQpMLIDJ450dR2zGRBs=
+	t=1730887072; cv=none; b=cgOXSPekcQb71IRfpwdacEQ1zgqjBUxobxzCn0eiWmIJmAX+ASciIPzkdKMJTNmkUqETjZdwer8zYPOym2LHutzu79DfyBsWZd4FLnHzPobKpzQCdwosw2j6B5S27aMJOJFlLdy+BUFobxZGXif+uLDohLvPWHz2BIosbov8ypk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886926; c=relaxed/simple;
-	bh=RZivVHsX1p8dULP9mNC1LUxwiEF+L/SLxiNfZZN1qRE=;
+	s=arc-20240116; t=1730887072; c=relaxed/simple;
+	bh=qctm7T8Rzv8QohIR2jqbK/UyirlBjD1wQg4/rIfL5Ek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X9E45YGWo/eCO5s55pI12B0eNOnpZ8Ge9tsKpyydTPEPG8qTiP55HBaz8fxzUPoWp1MZFJJJJ0xZSfGP9cYDfDESrkSRH9xEFbetTPrC2D8YgKUOvYmnQPY2VezP02NBZXNJIFzejhVXSf/Qoy+GORoDa2IJUgdSBf8eLOktYmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBIWBSwt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0AA9C4CED0;
-	Wed,  6 Nov 2024 09:55:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oExxFmKZOCYfbVPUPaUkTKLp+A7Qr0tn6HXyy+0cNGBR6J2d2xlzQIczl7yT+x1ue1nFEGNz+NWLBs0csBX4rrRt+qxImiXcVWqQDrWB5anwj6osLbc4uvl8mGM3VAbXbrHrNZmEhlLeUYO/uT9aR0jQD3z5+e+g4HlJww6H/Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OD+DetET; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73970C4CECD;
+	Wed,  6 Nov 2024 09:57:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730886926;
-	bh=RZivVHsX1p8dULP9mNC1LUxwiEF+L/SLxiNfZZN1qRE=;
+	s=k20201202; t=1730887071;
+	bh=qctm7T8Rzv8QohIR2jqbK/UyirlBjD1wQg4/rIfL5Ek=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBIWBSwtMF1lHVxk8kFv5Ld+3FgvQU+Up3RYG+nPrJeI/7oWIsTpH3o1OKU+Q0qqh
-	 vsMy90fYuiQWNfhssG0Rx9/yYjW7pD0Tv3uMuO0zU9KilM7TJbeEaq5wkI7Ql+kWIi
-	 4uegJ1Az4kcKGYXINFG2SoB6DPzEaEj/iL+E4UdImwZdlt22kUwGGFu54ut7HBl3sc
-	 inlNY4wajw6+u43BLb15PKxBapCMh4TnVptbaEbkxrZXdnKXcyw/NuMF5jCunwOKLJ
-	 8+PleglAX7gZs3yWnHS8UMAlmH518P7zcXhaZOgXrEhgpfyNmAx06ZpLLgup08EAQu
-	 V0AY4hi5o/INA==
-Date: Wed, 6 Nov 2024 09:55:20 +0000
-From: Lee Jones <lee@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-usb@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v1 3/6] leds: gpio: Avoid using GPIOF_ACTIVE_LOW
-Message-ID: <20241106095520.GM1807686@google.com>
-References: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
- <20241104093609.156059-4-andriy.shevchenko@linux.intel.com>
+	b=OD+DetETDubPKJ+uYxAOj+65R38iRall8sppLYQkvgPaiqCCHlZK25NhnbvqwPJI4
+	 0UG/yR2JtqOtBvZ5N7bVbGEl/14SZsvieFM96Fc31vmJbJ+5/7d5uq6Shc1Lpv/1Du
+	 EO7fcb4JDuir81lbEkuSeTE9IHlOQ5IyzpXRhk/3wJB+QkR6XXG/mCdeZh59eA+GLF
+	 Fe5/VbmB/6zhzTBkGjIsbTixEILNQrVx7578Kq37k3kWFGzDjEmAOvrFxNPeFFzoR1
+	 urdCFjczMJnelSKaaHWbXCmq8PFIZBJbz1lWl+T5OQSEOQiy+2USyX/ZzKZdMyAqaw
+	 ZykObvm+Nk8yQ==
+Date: Wed, 6 Nov 2024 10:57:48 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, tsbogend@alpha.franken.de, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v9 4/4] i2c: Add driver for the RTL9300 I2C controller
+Message-ID: <vn6t6qxqry2ay4tbvo3cb4rbjv53pnyl56vangul36vvvxibwp@q3pssbthesef>
+References: <20241106001835.2725522-1-chris.packham@alliedtelesis.co.nz>
+ <20241106001835.2725522-5-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241104093609.156059-4-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20241106001835.2725522-5-chris.packham@alliedtelesis.co.nz>
 
-On Mon, 04 Nov 2024, Andy Shevchenko wrote:
+Hi Chris,
 
-> Avoid using GPIOF_ACTIVE_LOW as it's deprecated and subject to remove.
+On Wed, Nov 06, 2024 at 01:18:35PM +1300, Chris Packham wrote:
+> Add support for the I2C controller on the RTL9300 SoC. There are two I2C
+> controllers in the RTL9300 that are part of the Ethernet switch register
+> block. Each of these controllers owns a SCL pin (GPIO8 for the fiorst
+> I2C controller, GPIO17 for the second). There are 8 possible SDA pins
+> (GPIO9-16) that can be assigned to either I2C controller. This
+> relationship is represented in the device tree with a child node for
+> each SDA line in use.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/leds/leds-gpio.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-
-Acked-by: Lee Jones <lee@kernel.org>
-
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 0d59b0bbc002..a3428b22de3a 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -212,7 +212,6 @@ static struct gpio_desc *gpio_led_get_gpiod(struct device *dev, int idx,
->  					    const struct gpio_led *template)
->  {
->  	struct gpio_desc *gpiod;
-> -	unsigned long flags = GPIOF_OUT_INIT_LOW;
->  	int ret;
->  
->  	/*
-> @@ -239,10 +238,7 @@ static struct gpio_desc *gpio_led_get_gpiod(struct device *dev, int idx,
->  	if (!gpio_is_valid(template->gpio))
->  		return ERR_PTR(-ENOENT);
->  
-> -	if (template->active_low)
-> -		flags |= GPIOF_ACTIVE_LOW;
-> -
-> -	ret = devm_gpio_request_one(dev, template->gpio, flags,
-> +	ret = devm_gpio_request_one(dev, template->gpio, GPIOF_OUT_INIT_LOW,
->  				    template->name);
->  	if (ret < 0)
->  		return ERR_PTR(ret);
-> @@ -251,6 +247,9 @@ static struct gpio_desc *gpio_led_get_gpiod(struct device *dev, int idx,
->  	if (!gpiod)
->  		return ERR_PTR(-EINVAL);
->  
-> +	if (template->active_low ^ gpiod_is_active_low(gpiod))
-> +		gpiod_toggle_active_low(gpiod);
-> +
->  	return gpiod;
->  }
->  
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
+> This is based on the openwrt implementation[1] but has been
+> significantly modified
 > 
+> [1] - https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/realtek/files-5.15/drivers/i2c/busses/i2c-rtl9300.c
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
--- 
-Lee Jones [李琼斯]
+Thanks for following up with v9. I think nothing prevents us from
+already merging this 4/4 patch, right?
+
+Andi
 
