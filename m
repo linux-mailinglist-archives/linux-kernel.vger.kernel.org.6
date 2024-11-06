@@ -1,77 +1,92 @@
-Return-Path: <linux-kernel+bounces-398686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D279BF4AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:54:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880929BF4B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:58:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E60286D9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:54:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE961F24A4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C3B2076DF;
-	Wed,  6 Nov 2024 17:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTsgDwhA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62278207A1A;
+	Wed,  6 Nov 2024 17:58:51 +0000 (UTC)
+Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C073A205E11;
-	Wed,  6 Nov 2024 17:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3564120408D;
+	Wed,  6 Nov 2024 17:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730915674; cv=none; b=H/KA60e0+cKC5URc1jtnVnJan+i5zRbo5+EQ0DIQYF4CNixorvkFVGp5isvVugAH+FcEguR2MLn7ko98WUjaui9jUiWoWTDW8JAyERIwBTRbtNNspS3NQaAAb7TdaVtgY7SHoUiiB6NfQzDqHEQP9+w/0krFiCx+IZuVTeOEQjU=
+	t=1730915931; cv=none; b=TfF5RMB+uwZ4Ei3qQQsxYOxsanOo8z6SxsBq5uA26T5Xtk3k+11E9bxhMBPcZDjTfRbXgGpUIRWf+N1m2jV7mZQXV7miy16UL4FTnjE8QwTQttWbesdbI1r6giVXiBgWxfZwxYHTMfpw1jxzOn9SFMl8pVNeXiwV7aUY1drKF1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730915674; c=relaxed/simple;
-	bh=jf7KOZW7MkxSdy84zxMPX5bS25WtjnjSgbIM0UxdFEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h80ihWrHWFt7adKbxaUhgl3OVOe5HH48OQNLxrc4v7cLzpF7JryO+44RX53GDOPwcrwhuhP+8CnAywxOfdx/VzQGB/9Tk0KexB6AREIXhZ3TmQE24aSNRugUTIGC/F1xqL4s3E/Pkwpc7YTKbHHQB+ANTuoyo53pTTve8bvlA5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTsgDwhA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FE5C4CEC6;
-	Wed,  6 Nov 2024 17:54:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730915674;
-	bh=jf7KOZW7MkxSdy84zxMPX5bS25WtjnjSgbIM0UxdFEw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FTsgDwhAtgbqwMidiaW8Ha7yhg8jmHbzo7W9hpQx6mKw/OSFx6LY4kFKl3tIbe2wU
-	 qP/9l+q1TUZf42LilTGMANRO0Oyx/cS+fchx+Ke0NaQNDl5jAeKZ7KUnWP0wTNiwto
-	 gbuPhXGjdPxWl0X6UrBKWVK73mSSWPmOnC0tBzXNCLrmme/uyYceDKE+0YY8x2/3/E
-	 71+N+XtQfoKekE/RYt88079238fNHR+NkfriEozpD90Az/dziyOcgq2ddoD2wSw7VL
-	 Ik+LA5Y94Cz+JFJOHb0NqXD+PxIcfIZajO2lIPDR4lFMIvq7+sr08B0N0johkoTBxG
-	 ZHBzGJR3F527w==
-Date: Wed, 6 Nov 2024 07:54:33 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Muchun Song <songmuchun@bytedance.com>
-Cc: hannes@cmpxchg.org, mkoutny@suse.com, longman@redhat.com,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Zefan Li <lizf.kern@gmail.com>, Zefan Li <lizefan.x@bytedance.com>
-Subject: Re: [PATCH v2] MAINTAINERS: remove Zefan Li
-Message-ID: <ZyutWWrDL3vbFmSM@slm.duckdns.org>
-References: <20241105030252.82419-1-songmuchun@bytedance.com>
+	s=arc-20240116; t=1730915931; c=relaxed/simple;
+	bh=vpSZueTCVDNlO0388ur1IGgrtb/PEfMr8Nvwewr1XY0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=eZDHUwInHvP/G5NUtgREj420WjrwRQSGvVRi3naP+hNyjHAiYw8g9RehHAzUT+KIbUeHEZHpWLbbRITEUGDM6P16GT5W8t3hAdBCW/n1bg5tG0utMy3aZzCnAnBX3BWQPwDVwjqOLWp7L5kVrPeyf/JUqukNRNMakR4E2LqokzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw01.astralinux.ru (Postfix) with ESMTP id B83E92501E;
+	Wed,  6 Nov 2024 20:58:44 +0300 (MSK)
+Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail04.astralinux.ru [10.177.185.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
+	Wed,  6 Nov 2024 20:58:44 +0300 (MSK)
+Received: from smtpclient.apple (unknown [10.198.46.47])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XkCbz62VKzkWsC;
+	Wed,  6 Nov 2024 20:58:02 +0300 (MSK)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105030252.82419-1-songmuchun@bytedance.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH 6.1 1/1] cpufreq: amd-pstate: add check for
+ cpufreq_cpu_get's return value
+From: Anastasia Belova <abelova@astralinux.ru>
+In-Reply-To: <20241106132437.38024-2-abelova@astralinux.ru>
+Date: Wed, 6 Nov 2024 20:57:27 +0300
+Cc: lvc-project@linuxtesting.org,
+ Huang Rui <ray.huang@amd.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Perry Yuan <perry.yuan@amd.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <CB41EF06-3DEF-4682-84AE-7E74D6FB448F@astralinux.ru>
+References: <20241106132437.38024-1-abelova@astralinux.ru>
+ <20241106132437.38024-2-abelova@astralinux.ru>
+To: stable@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3776.700.51.11.1)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 188998 [Nov 06 2024]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/11/06 15:41:00 #26827080
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-On Tue, Nov 05, 2024 at 11:02:52AM +0800, Muchun Song wrote:
-> From: Zefan Li <lizf.kern@gmail.com>
-> 
-> Not active for a long time, so remove myself from MAINTAINERS.
-> 
-> Cc: Zefan Li <lizefan.x@bytedance.com>
-> Signed-off-by: Zefan Li <lizf.kern@gmail.com>
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Hi!
 
-Applied to cgroup/for-6.13.
+I found out this commit should be backported to 6.6 first.
+Should I resend this letter after it is done or I may ping it later?
 
-Thanks.
-
--- 
-tejun
+Anastasia Belova
 
