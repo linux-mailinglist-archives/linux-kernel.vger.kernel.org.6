@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-397948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219D59BE2D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:39:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F38F9BE2DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA88B283A1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:39:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410A71F219D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B5A1DC1AB;
-	Wed,  6 Nov 2024 09:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30351DA63C;
+	Wed,  6 Nov 2024 09:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QB3QrXhO"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="P8IrTqVC"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3B01D27BA;
-	Wed,  6 Nov 2024 09:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025F218C00E;
+	Wed,  6 Nov 2024 09:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730885951; cv=none; b=sZuiTz1E6JP6t5zJi1zGpaEyvo/lSSL5G5xY7vkUW7SMn/bWy4iQnjDhKD6VuXOkOX9n6Po4caeigC+d+5TBM8do2nobAItKEjxMjnGRugebnUiWLahTwVVtfJRS4x+2dloHFXeiMklbl93k1kYCJ0H+waJuTWx6uN9l8WWYgZ4=
+	t=1730886105; cv=none; b=AQ2GY97/kBapabAas8859C7jG0QiffFH2yR6xqyUbxz9FMhfJHVpVhms+fGDFKn3i0Qnsu6Qyj/wVUkNfbKw8ZPTAAx68MOR77Enj0qAYr02V2vXg/EI9H6zWVZmTq3g0hCLDWG+TBbtzY47lyzkoabpQx/UJo1J54XBrC86Fms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730885951; c=relaxed/simple;
-	bh=xFq6H5Gss2PaZCwqeYcPrMJ1Mp9+Lm1NpbULI16e1Nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jir7OxL5Q2ZqOzvhxMBl4wSJ7d8mjyhr5EE2EGdl/DSEu8NlhKUACxn23k36MB8SuN2a3N5onzt31cn/n0TDuV9EitPYUGPIuo8koN4tl1Vf+fXg4LOzC93NnQONyVBi6ores8AsM/UEGvnajV3/mLwa0ltjdaZOgwYZFPopDQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QB3QrXhO; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6e9ed5e57a7so51155167b3.1;
-        Wed, 06 Nov 2024 01:39:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730885949; x=1731490749; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oinRG9+NhYdFlC3tEh227zzGakOwtuLOqwW6sGXxLbc=;
-        b=QB3QrXhOgkAC2cRPZrG5sYF/qNjvbnr/4+1SIoPxb3uwbh3nRhqrMziWafMCMPSvJg
-         umx4M7GqQuF+CvXTAAl3bWL65jbOVbnhW8fvjbqmIrLhsDnxEYdnmfnUPnspneeNkZI6
-         NcqvaujujOi6TZo45GPKXDzUOkDj/+PvS8YPeRXaQCDGb/szr/1CYP9yPSzfB6UO28ac
-         AbXV0LrfOx6/KuVAQUwzQceWPBoH+GlyO28Q6umK/uH9KEX35BQtLve5AgCCqifOdMWv
-         HzR7nKIHGZvk/2R9N6nkoRM93d0ZCJE6FnXf7cTN8FxaUo8v3ssSV4GH556VVHzuNWOV
-         gRzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730885949; x=1731490749;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oinRG9+NhYdFlC3tEh227zzGakOwtuLOqwW6sGXxLbc=;
-        b=rKgCjKEuUNGMaWy5Qe1EF6UoTNeCJ5t0GQutmVLroG8Ph9Vl6l3OOouNf9kTdaN4PQ
-         2mnINb1Q8q+tP9k35q5BygMsGANouup1X41PFBxa5LAtHomEPLRsT++miVHKojJ9dp6k
-         lO0reDTUYQqcXCqmkyVpNcVPI3ouhsmPPetXyaBANm4T6uE4FXE1wKLpyvo185oAfgsW
-         tJcBLJ9htlWY6uJgjLlI7giZjPQQBlHAgHetSVGE89lOa4UP1W6ugJ8nmFPeTN+WxcDm
-         CgE6UcYWOmIywFyMnRfr4Zj3ydGHysYHIYvrrhJ5Ti8p2TVg2VUNV3puCVgNWETaPiBJ
-         K9IA==
-X-Forwarded-Encrypted: i=1; AJvYcCUz+Y1P5H946S3Iv5dXySFGTRzAH6M4/EeIp8AZjk/+cJKSHlCA6KN5d6Em18eFfPFXCa0=@vger.kernel.org, AJvYcCVCbYmsDKTR3i9D+FVcTVfyvapLzmCThxaccu1WbQYk/5P/VgrnTV4vuFfq+HJX6RP4yjomm2UpF47e5KWI@vger.kernel.org, AJvYcCX8Aps4ajDdlR2Z3xfFAPWTiRQHGvl0QNiN4TuNcsmgzHAQ0ZM+9cYzAzCUoW37q5haFFKtIB+7Jx5lV0BlcX9h@vger.kernel.org, AJvYcCXuMFj4e2FAUoF0eN3M5rKGs201i+d7k/816ixtGvx2lVBaiUhXMykzrO8LGxu05MufRN9/E7gD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLUm/IhjzT7RUA2gvlwQDpUNeRx5BCsv5uHRv5gUp+PDPX2WH+
-	Sen71CD1PXtEL9Aj3sEi3hRxmEeQJ+IavmQKLMuD5BJF3qMJYZS81MywiWMAO7NaMblVVSHRbrO
-	08PYlacwc6+gTxQROH3P0cBiFx9Zf+bas
-X-Google-Smtp-Source: AGHT+IG/bK8cqy34pOh5Zq5wDFPLa4wQ66r575ctEahwLJo1FJD3pLmUhRA44FtaVQRpsttX0rv0AKr6C/8eLs3MBlw=
-X-Received: by 2002:a05:690c:dd2:b0:6dd:d5b7:f35d with SMTP id
- 00721157ae682-6ea52525cebmr213814677b3.30.1730885948671; Wed, 06 Nov 2024
- 01:39:08 -0800 (PST)
+	s=arc-20240116; t=1730886105; c=relaxed/simple;
+	bh=Z5roYg9oRz3yI9LK5xYLrK5CwmwJFt3kt0HhvBbnyRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FMczB4N0zMIRy2iUy0sUSk/PypdsP+QojtyEbkumwHjZfr6esjSGuzgYQbTBp3jHqPK9oEXnd4PhTdfVkN6ZnWgdQ8ibGlJoA2b7vXOCX8qn+ESNCqsnNECSyv57I2O5hTK8zoGGV9LUAAsAfx0hrw9IQxrGHaziKxR6E0/jILA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=P8IrTqVC; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=R33AHOEKuWVl8dftmRKyPE5U6BtAYCDsZvIA1WDMh7s=; b=P8IrTqVCjorN7eadZJASD5gDV+
+	DkgY0GG4hZ4lNvGNzMranIQVOzUUk17FfkTOySdqpwtT0VB/ElK2uHdIseXsi7JazCi9gvjRaMGUH
+	ZvbopYu7W+ndp1Mdx1LHimV2R//HGArXbV45ZVybT9wm5NBZWFz4NZQkOP5nD0pW0Kw//PRtmeOhq
+	8JrBEUhzc3tV/pPX4da5cKaI04Ne5SKcOEiTkROu9S+HIs0U5a8Smmd6/Bb8zyaL5Pix4j/lqcAsw
+	haN4uGgxT/K8U1tTeTur/kQx0hkI3+wr/0K5UULXuJzRY0uvUTtgHFDJpLNy+LBs2ZSJ6htduGd8B
+	cvIMtT1A==;
+Received: from i53875b28.versanet.de ([83.135.91.40] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t8cXh-00062B-Pe; Wed, 06 Nov 2024 10:41:37 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org,
+ Quentin Schulz <quentin.schulz@cherry.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alchark@gmail.com
+Subject:
+ Re: [PATCH v2] arm64: dts: rockchip: Add OPP voltage ranges to RK3399 OP1 SoC
+ dtsi
+Date: Wed, 06 Nov 2024 10:41:36 +0100
+Message-ID: <3252308.5fSG56mABF@diego>
+In-Reply-To: <f6bb3387-4396-45d4-9cb4-594d58095510@cherry.de>
+References:
+ <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
+ <f6bb3387-4396-45d4-9cb4-594d58095510@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030014145.1409628-1-dongml2@chinatelecom.cn>
- <20241030014145.1409628-7-dongml2@chinatelecom.cn> <62773e8f-884c-4bfe-b412-97ad976f9cb8@redhat.com>
-In-Reply-To: <62773e8f-884c-4bfe-b412-97ad976f9cb8@redhat.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 6 Nov 2024 17:40:16 +0800
-Message-ID: <CADxym3adJA1rEHc1GVCmA0_CvuBvMyEF8GOJjm_69uvXhgu9GQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND net-next v4 6/9] net: ip: make ip_route_input_noref()
- return drop reasons
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	horms@kernel.org, dsahern@kernel.org, pablo@netfilter.org, 
-	kadlec@netfilter.org, roopa@nvidia.com, razor@blackwall.org, 
-	gnault@redhat.com, bigeasy@linutronix.de, hawk@kernel.org, idosch@nvidia.com, 
-	dongml2@chinatelecom.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	bridge@lists.linux.dev, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Nov 5, 2024 at 7:22=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wrot=
-e:
->
-> Hi,
->
-> On 10/30/24 02:41, Menglong Dong wrote:
-> > @@ -175,10 +175,12 @@ static void ip_expire(struct timer_list *t)
-> >
-> >       /* skb has no dst, perform route lookup again */
-> >       iph =3D ip_hdr(head);
-> > -     err =3D ip_route_input_noref(head, iph->daddr, iph->saddr, ip4h_d=
-scp(iph),
-> > -                                head->dev);
-> > -     if (err)
-> > +     reason =3D ip_route_input_noref(head, iph->daddr, iph->saddr,
-> > +                                   ip4h_dscp(iph), head->dev);
-> > +     if (reason)
-> >               goto out;
-> > +     else
-> > +             reason =3D SKB_DROP_REASON_FRAG_REASM_TIMEOUT;
->
-> I think the else branch above is confusing - and unneeded.
+Am Mittwoch, 6. November 2024, 10:32:06 CET schrieb Quentin Schulz:
+> Hi Dragan,
+> 
+> On 11/6/24 9:33 AM, Dragan Simic wrote:
+> > Add support for voltage ranges to the CPU, GPU and DMC OPPs defined in the
+> > SoC dtsi for Rockchip OP1, as a variant of the Rockchip RK3399.  This may be
+> > useful if there are any OP1-based boards whose associated voltage regulators
+> > are unable to deliver the exact voltages; otherwise, it causes no functional
+> > changes to the resulting OPP voltages at runtime.
+> > 
+> > These changes cannot cause stability issues or any kind of damage, because
+> > it's perfectly safe to use the highest voltage from an OPP group for each OPP
+> > in the same group.  The only possible negative effect of using higher voltages
+> > is wasted energy in form of some additionally generated heat.
+> > 
+> > Reported-by: Quentin Schulz <quentin.schulz@cherry.de>
+> 
+> Well, I merely highlighted that the voltage was different on OP1 
+> compared to RK3399 for the 600MHz OPP :)
+> 
+> So... If there's ONE SoC I'm pretty sure is working as expected it's the 
+> OP1 fitted on the Gru Chromebooks with the ChromiumOS kernel fork 
+> (though yes, I believe all Gru CB are EoL since August 2023). In the 6.1 
+> kernel fork, there's also no range: 
+> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/refs/heads/chromeos-6.1/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
 
-Yeah, that makes sense.
+yeah, this somehow goes quite a bit into the "stuff that doesn't need to
+change" area. On the one hand it does make "some" sense to unify things
+if we're using ranges everywhere else.
 
-> Please move the assignment after the comment below, so it's clear why we
-> get a TIMEOUT drop reason.
+On the other hand, as Quentin noted below, all existing OP1 devices seem
+to run just fine, and there won't be any more entering the kernel.
 
-Okay!
+So what do we realisitically gain here, except hiding existing git-history
+under another layer?
 
-Thanks!
-Menglong Dong
+> So not sure we need to handle theoretical cases here. Will let 
+> maintainers decide on that one. FWIW, there are two other OP1 devices, 
+> the RockPi4A+ and RockPi4B+ which do not change the OPP either.
 
->
-> Thanks,
->
-> Paolo
->
+
+Heiko
+
+
 
