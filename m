@@ -1,153 +1,106 @@
-Return-Path: <linux-kernel+bounces-398801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DF49BF63F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:20:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDDE9BF639
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EBF62849CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04CC61F21F9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A072F20C327;
-	Wed,  6 Nov 2024 19:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F0A20966E;
+	Wed,  6 Nov 2024 19:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="TSBzv99O"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="FlCO/gpu"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F6320BB2D;
-	Wed,  6 Nov 2024 19:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5EA20ADF9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 19:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730920738; cv=none; b=KXNqGrWjGDPHz652dfp/Mkeu2Yw1r31sRprLGm9IMUvKPqmPhMweK2KqgMIhFKNznAYXf234ooclrEjxRSsOec/sqGc9FGnM3JdpZWpPOyCQzB2HfyIzgyTHK7a57xGfsWk7thfqD8NMt+5M5nY5lYFDXNyFzbZc80en0oqoMiM=
+	t=1730920732; cv=none; b=J8gs94eNJeOHcEM21IGmFUkpGOBp517dS/oFmoKjP6nPPLU2FlnetHkna31L7VnS8xoleLeWmlsns7YGI17HZzugT6hAjlmIt2iVEFFFKozEoHXgZFEZnL8nHZ6A29cmZh/SbVuZx0uTuv/uMGy8jKD4I0xCv73/E73F/l68TWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730920738; c=relaxed/simple;
-	bh=Y2hO76nlYLH4oaliyjXCyEVpFRsjQ4+LUZILd/pxEro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hxn47BIfWwMlpmiWtxmod+dGY3+ONDSyweGDO2P4QnG52cVzB0amunL8DlCbx9PkIHoaT0uDle2rQOsOkiaU/pBwaOFKMhbrlb+g7Cqi/88aAyrmIBRj88W7PAE9zWegQttWwcggDjjokw4gm5VoEyd/RNru7mhSmUgYV7JAerU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=TSBzv99O; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730920666; x=1731525466; i=w_armin@gmx.de;
-	bh=nDRd2vz978UPLgl6sbE+OoDyIcGzJt9CgPhtAAZ4MVo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=TSBzv99OeIwE5ie6rLCIli/N6pr7rUzI0oxoAE/kTQBM3h0ukv6af+3Q6k4rAupt
-	 7TpmCGq8vtGvTgs3mwsS9DX2N5DmccZjX18otq0VHzpTC401jmAvjLbfKGD5grlLG
-	 BgVV03Hm6kJDcrSGQzNZTr7EqZOx6QYKo5MKklng8iVMNxlF4LuG5DX7P7SKqupWI
-	 vpOnasSDmhuuWKXG104K+ZqGyjQZOC72FjiCuqzjA47+/GamvxRjj37ojEtXLIck/
-	 1N8v5BxISzhMXL2Omauv7pOx2qjkul4uRUST3ahjq/cMqy1KOIVSEfazOTsH+GloN
-	 XkrnD2N5l0nxD/xQIA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ml6m4-1tXyPl43eG-00jXx4; Wed, 06
- Nov 2024 20:17:46 +0100
-Message-ID: <2e48d12b-e772-4a11-8660-b3153a018443@gmx.de>
-Date: Wed, 6 Nov 2024 20:17:44 +0100
+	s=arc-20240116; t=1730920732; c=relaxed/simple;
+	bh=qOe1CXVlc6MFF5iYmoeU/kZHwPZE0z1YOhnSZJKpHWc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VHwhNCW3F7YF5Bdy+AK7lWJceuTbdina7Y9EpMbVHbDdRtas4dAjETcK9iveRITGbctVdqMnNBshr+jHBOKmIfEpP226vs0/AzkdVIlFYxU3gHzS4VpmXIzCnvFkjNKFi5B3jOiSXxPWDJEb2bVrsQLEMo+DoqCvkbT12Zz7o+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=FlCO/gpu; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so1831825e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 11:18:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1730920729; x=1731525529; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qOe1CXVlc6MFF5iYmoeU/kZHwPZE0z1YOhnSZJKpHWc=;
+        b=FlCO/gpusn+K3rcuqWi3P3idxngUitO3mwKanUvxtlqIGpFCSRXytHOo4RPMBk5DgF
+         rKPSRjexqJB6yInovLZIbEtzGBa95unkLPlYRfN2HlOP9dDFZii6fYU8RvzmvG7SfxlP
+         ObaAMUyCz+kb2x7JjCugdBSqs9GfwzhMbSNekcNooWyeridXewt2oU1bAE1wx8NHylYT
+         DHMzG2DCw+bBcYE3zqIl7w7rRIsmj7v10Fd2StgzG1XtCX2x8BdODOx0EYT8y7G1hNvG
+         vrb0jsbi4wfsgL0QlYFL/N/HFY6evAkAw23RnYZvNszvMnLnUWj/QakLvoj6pUoEPtjn
+         FRhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730920729; x=1731525529;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qOe1CXVlc6MFF5iYmoeU/kZHwPZE0z1YOhnSZJKpHWc=;
+        b=QKPGCKtsNLHp4fL0JRZe3Dn6lNZTeMXXxgtfj9PebGx6aIL0Za1fnz54vdHBloDOBn
+         j3rB/k52a1ZP6BP3EfNiuCVrM5BZv9fZgJgCr3Mtt9UcYPzfQt/FnKx3PncaI/HnxRp9
+         H9q2/7bxhiUtoimMOLv9VK0mKAV6ueyHaoJtJ+Dco3Wy52oCkiGKo+P1oNe00/gD2neY
+         fHKINcjvetligIVQr/KzyUy/lD7t5JIBRqgKIxmP7Q4L3USYT5bCPSO4OqBUD2Io1BL5
+         kabTHx1nXzhhqhLJ2WS1neASb0DY+YCzbrp92UV5Ui0QOPeMCEiQY9rVG8/OjyVJYT6o
+         ByQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCPUQEEaz00FsyDVF8RTE1r8iiUBSR23DGKJfO/kTe2794kOiXya08vgVnT+dWSiQcGMT4FslP9/yPysw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgkALW5dyO2aSCvf7x+b2993m46RD0e9JRQIVNe4KO9nfx2PEh
+	rCyWZ0R1JVFkzvKJjiDjDbv2gAfAL9jOfwd2LZJkxauL54VNbJCz4021A1CSihU=
+X-Google-Smtp-Source: AGHT+IHIfvSuVMYE/OJ5z1Vf/8NWtnI3qpI11qZI1ZDjCQ5R1eoen0eQA7m2x6FHYRcVHKNghMdtTg==
+X-Received: by 2002:a5d:47ac:0:b0:37d:48f2:e749 with SMTP id ffacd0b85a97d-381c7a4636cmr20971751f8f.10.1730920728680;
+        Wed, 06 Nov 2024 11:18:48 -0800 (PST)
+Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::179:1ba])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7387sm19855419f8f.51.2024.11.06.11.18.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 11:18:48 -0800 (PST)
+From: Matt Fleming <matt@readmodwrite.com>
+To: nicolas@fjasle.eu
+Cc: benh@debian.org,
+	justinstitt@google.com,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	masahiroy@kernel.org,
+	morbo@google.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	re@w6rz.net,
+	kernel-team@cloudflare.com
+Subject: Re: [PATCH 2/3] kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile
+Date: Wed,  6 Nov 2024 19:18:46 +0000
+Message-Id: <20241106191846.2079521-1-matt@readmodwrite.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZxkYYLbiXZ3p59iu@fjasle.eu>
+References: <ZxkYYLbiXZ3p59iu@fjasle.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 15/20] ACPI: platform_profile: Add concept of a
- "custom" profile
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-16-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241105153316.378-16-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CUr7G7igNB1iTZWuqidIaOopyHCWDf7/CMiRIIUCXNw+r4qzkw4
- qA7MrWKH0kX4jHLKUsliyUkrjbmsODutMuHQXThVWR/u3XhRm47NTypOarnefOnJOvJBySu
- SX2vNBKfJqYoz4zwYqrqS4h1SSsp47I3Gd9y5bU7MC/MKDqM3F2IAO7LJgXm1DfDPZsVC/t
- sX79wbr59QjsWwPbQ6sFQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:V/NMmZ5hVtY=;MRYCm0XHSCeKEmVfIVCEYQI1yWV
- 4J8uHD3z4qj7ESiTNrF4inqzIns8WqPg9fzg78F2LrAHYLMl+QlTKa9zEgk83gNvslH0NutHG
- bj4cRHgG/1xhkC5WlJeX3YE6jY6f6I81R5dJHmnQ1sZzg7VsDW8vudZJdauj9EVZIIiTJrgbc
- NwmgapXaWDHbtS8KNEBh/UhV0xA48wgSq6qQ15CSGKte3YFT9ryrvdUPXSgoffjWC2etZbS4p
- Dphm69r3TTkaKiNS3Xi0DFeJXwDtFeDg1ov8AXlJiWWyPa3FyArw67rPoo2qtJFJBi8oO+C4O
- fooNPdUEZfjexadP4E9YTjGeSUo7Bpaw6ITU4nSp30VXB98e5H/VldlSJ3HXQZPS+vdOZmu38
- wf3ll925kT3IjeUKByuTED3IpuFw9H2Zm1CQNpPp8Ky68G6+5FCxTHYfa8uWNQemLMvKw34/3
- lx75JLQ1OExKceKQucDMk+EVQ0QzLQgxGlUSmqsmuEEs8kpHLXpzA8uouznmUdXcjiAE/IV+k
- vvkHgAxnPxFfXUqZfqHsmwxqqTdui3nnh+hSqqOqWtlIiIHDuSrwnAGAFSTuLfbzCu2wacnvV
- p26CEpUE2OLZBZuSWNlNgcZH9qYD0u84SeTjZWC6Rbta6oaLZ6QQJPP2SC2Akg4OEW9YH00VF
- pPplw3wNbl/O3hBcJyMXlpeomCnslAuXpOif5dSfwaIGJrJcV2+OHYr49V+YxTZBrH0ZzfBC1
- EBTUatCKAvDD5m7Cf4NAGYMsqNZSufWZCl4DHzzKQSC/2NyyAGVPqsfwPic+rBDYrBlRfJVbu
- 8aupzPv6lGsqVyJzFWqzRWkQN0+4z2hYpLfVMMbTmsts5rFJg57lbiyqNY7dHmsC8zRTNICYb
- MhBeRt+RAsJD9P+wQDxQR3AfbmbQ8Q0Q0cyDGSOOdLYAYaJxElXAkgk1a
+Content-Transfer-Encoding: 8bit
 
-Am 05.11.24 um 16:33 schrieb Mario Limonciello:
 
-> When two profile handlers don't agree on the current profile it's ambigu=
-ous
-> what to show to the legacy sysfs interface.
->
-> Add a "custom" profile string that userspace will be able to distinguish
-> this situation when using the legacy sysfs interface.
+Hey there,
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+Can you explain how this change works a bit more? This reads like it's now
+impossible to build the debian linux-headers package with clang? At Cloudflare,
+we're using a custom build of gcc, not the gcc-x86-64-linux-gnu package, and
+with this change we can no longer build linux-headers.
 
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/acpi/platform_profile.c  | 1 +
->   include/linux/platform_profile.h | 1 +
->   2 files changed, 2 insertions(+)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index 8de7c8352673e..d8c2d195106c2 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -20,6 +20,7 @@ static const char * const profile_names[] =3D {
->   	[PLATFORM_PROFILE_BALANCED] =3D "balanced",
->   	[PLATFORM_PROFILE_BALANCED_PERFORMANCE] =3D "balanced-performance",
->   	[PLATFORM_PROFILE_PERFORMANCE] =3D "performance",
-> +	[PLATFORM_PROFILE_CUSTOM] =3D "custom",
->   };
->   static_assert(ARRAY_SIZE(profile_names) =3D=3D PLATFORM_PROFILE_LAST);
->
-> diff --git a/include/linux/platform_profile.h b/include/linux/platform_p=
-rofile.h
-> index f81c3afcb7575..d2a2ab4c6cee9 100644
-> --- a/include/linux/platform_profile.h
-> +++ b/include/linux/platform_profile.h
-> @@ -23,6 +23,7 @@ enum platform_profile_option {
->   	PLATFORM_PROFILE_BALANCED,
->   	PLATFORM_PROFILE_BALANCED_PERFORMANCE,
->   	PLATFORM_PROFILE_PERFORMANCE,
-> +	PLATFORM_PROFILE_CUSTOM,
->   	PLATFORM_PROFILE_LAST, /*must always be last */
->   };
->
+What's the solution for those of us that want to build the linux-headers deb
+package but can't install gcc-*-linux-gnu?
 
