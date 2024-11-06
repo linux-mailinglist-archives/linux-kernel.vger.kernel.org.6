@@ -1,133 +1,86 @@
-Return-Path: <linux-kernel+bounces-399007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B247F9BF94B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:29:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B3C9BF94F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77ECE28473E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4011C21BA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2015420CCFE;
-	Wed,  6 Nov 2024 22:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwBqoK48"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47F21DDC32;
+	Wed,  6 Nov 2024 22:30:21 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FA120C313;
-	Wed,  6 Nov 2024 22:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B911925B7;
+	Wed,  6 Nov 2024 22:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730932176; cv=none; b=N4iyeq79SeU26g/MZjModXsbkkjO0Be9fhQgvAAHA0nSLxWu8UaYNrj5QS4jJglCG7C+FSuWpYwDKEvnIUbFbXjuVdFEi/yGQO3fZlKr+taRkUyP1Cf+wrUbYtu6fiKsUKrrd571zh6aXKBlKoo5d9JxcPiu2gRQGsScATmIWew=
+	t=1730932221; cv=none; b=XECItFzVbpaC0hyTIkWI2ausdr2oES4zFxyTvfT0L39/Q0UY6nvwKN4utaA7B1AFLsrAZ+kDNkDJ+ruVoJ9AdE7GgneIijOkL/IrgXHFZhbI6L17p9CPQnkiBtOklDtHg0uvetwZhZ+QJuLFtE7vlaimwC9XYRXzcxc5D9Ecnpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730932176; c=relaxed/simple;
-	bh=FHEZ8Db5PTgMmVRyesXrgUdXjQUoWglkt/etn3U6PNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=eWdni2068q5zQxvNyP2ssIxY2BcrgQFyp0mAxCatkdwKvPY5b/EqfpEA9AR70qTsPdN32rHt56jqap1KJQjN9cwcpd2jNsi83nBeVbgqut3i57nzihmqcuAdS0TUD61aPTI0R87WVjzJR2Fg0VufrGME9jFgwTo7oAflR6nSxYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwBqoK48; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B420EC4CEC6;
-	Wed,  6 Nov 2024 22:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730932175;
-	bh=FHEZ8Db5PTgMmVRyesXrgUdXjQUoWglkt/etn3U6PNE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VwBqoK488rj4i5ZAs5nN/uCeP7h7zth66K1wgO39pGpLfXIiXeWtenBjfJhyvMNe7
-	 mv07rsD6goSN/i0a8VR0F/IyfTPfMRI2Dv8i/Pvw8CLQaASyp4rwG1bScAnkMmqQ61
-	 v60vLFFo0q2VvD6AucpE0Tj5ln7xxE813lpwCzQGU0oJO0flmfj5X8mLi9v7BMW9Sz
-	 xSDL7J8lSfqV8JVK+mJBUZOmu2Je/8o5LQXTVqoEjnqjbMahPp4xtaqDCdfSInx1lT
-	 QPZVvbKUkgWbaDLDo2fR+Yic0+RMp1Gh3L2ncFFu7w90J4AGSqJZPCfpdZ5jMow2Ra
-	 S2rstTiEMhKzw==
-Date: Wed, 6 Nov 2024 16:29:33 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-	Frank Li <frank.li@nxp.com>, "mani@kernel.org" <mani@kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at
- some platforms
-Message-ID: <20241106222933.GA1543549@bhelgaas>
+	s=arc-20240116; t=1730932221; c=relaxed/simple;
+	bh=Dr9iONoy6m9CSWCI8Z4YSKmqzeS9S2/hoP45JK+tQ7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TQV3PYGw2OCVap4dW/cTjNlLzFQg2VLmanpczcGFrbRdYxflfd+SDrUv7hBwObyl4QWTh/Mjv+A9DEAh8mtFr+8z8TFrIlF8yjMVCe0FTdC2qfHkaJtotC90GK+YOKyfvZRgC5dfA4h9/Y0zjoi1IIzt27YdxRjF5FUZUsgDnBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F8DC4CEC6;
+	Wed,  6 Nov 2024 22:30:19 +0000 (UTC)
+Date: Wed, 6 Nov 2024 17:30:23 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Marco Elver <elver@google.com>
+Cc: Kees Cook <keescook@chromium.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Dmitry
+ Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Subject: Re: [PATCH] tracing: Add task_prctl_unknown tracepoint
+Message-ID: <20241106173023.09322117@gandalf.local.home>
+In-Reply-To: <CANpmjNMMvZPWJG0rOe=azUqbLbo8aGNVZBre=01zUyST40pYxw@mail.gmail.com>
+References: <20241105133610.1937089-1-elver@google.com>
+	<20241105113111.76c46806@gandalf.local.home>
+	<CANpmjNMuTdLDMmSeJkHmGjr59OtMEsf4+Emkr8hWD++XjQpSpg@mail.gmail.com>
+	<20241105120247.596a0dc9@gandalf.local.home>
+	<CANpmjNNTcrk7KtsQAdGVPmcOkiy446VmD-Y=YqxoUx+twTiOwA@mail.gmail.com>
+	<CANpmjNP+CFijZ-nhwSR_sdxNDTjfRfyQ5c5wLE=fqN=nhL8FEA@mail.gmail.com>
+	<20241106101823.4a5d556d@gandalf.local.home>
+	<20241106102856.00ad694e@gandalf.local.home>
+	<ZyuxmsK0jfKa7NKK@elver.google.com>
+	<20241106162342.3c44a8e9@gandalf.local.home>
+	<CANpmjNMMvZPWJG0rOe=azUqbLbo8aGNVZBre=01zUyST40pYxw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB8676998092241543AEABFAAB8C532@AS8PR04MB8676.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 01:59:41AM +0000, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Bjorn Helgaas <helgaas@kernel.org>
-> > Sent: 2024年11月6日 7:27
-> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Cc: kwilczynski@kernel.org; bhelgaas@google.com;
-> > lorenzo.pieralisi@arm.com; Frank Li <frank.li@nxp.com>; mani@kernel.org;
-> > linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > linux-kernel@vger.kernel.org; kernel@pengutronix.de; imx@lists.linux.dev
-> > Subject: Re: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at
-> > some platforms
-> > 
-> > On Mon, Jul 22, 2024 at 02:15:13PM +0800, Richard Zhu wrote:
-> > > The dw_pcie_suspend_noirq() function currently returns success
-> > > directly if no endpoint (EP) device is connected. However, on some
-> > > platforms, power loss occurs during suspend, causing dw_resume() to do
-> > > nothing in this case.
-> > > This results in a system halt because the DWC controller is not
-> > > initialized after power-on during resume.
+On Wed, 6 Nov 2024 22:59:25 +0100
+Marco Elver <elver@google.com> wrote:
 
-> > > @@ -933,23 +933,23 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
-> > >  	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) &
-> > PCI_EXP_LNKCTL_ASPM_L1)
-> > >  		return 0;
-> > >
-> > > -	if (dw_pcie_get_ltssm(pci) <= DW_PCIE_LTSSM_DETECT_ACT)
-> > > -		return 0;
-> > > -
-> > > -	if (pci->pp.ops->pme_turn_off)
-> > > -		pci->pp.ops->pme_turn_off(&pci->pp);
-> > > -	else
-> > > -		ret = dw_pcie_pme_turn_off(pci);
-> > > +	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
-> > > +		/* Only send out PME_TURN_OFF when PCIE link is up */
-> > > +		if (pci->pp.ops->pme_turn_off)
-> > > +			pci->pp.ops->pme_turn_off(&pci->pp);
-> > > +		else
-> > > +			ret = dw_pcie_pme_turn_off(pci);
-> > 
-> > This looks possibly racy since the link can go down at any point.
->
-> When link is down and without this commit changes,
-> dw_pcie_suspend_noirq() return directly, and the PME_TURN_OFF
-> wouldn't be kicked off.
+> On Wed, 6 Nov 2024 at 22:23, Steven Rostedt <rostedt@goodmis.org> wrote:
+> ...
+> > > That's pretty much it. I've attached my kernel config just in case I
+> > > missed something.  
+> >
+> > OK, it's because you are using trace_pipe (which by the way should not be
+> > used for anything serious). The read of trace_pipe flushes the buffer
+> > before the task is scheduled out and the comm saved, so it prints the
+> > "<...>". If you instead do the cat of trace_pipe *after* running the
+> > command, you'll see the comm.
+> >
+> > So this is just because you are using the obsolete trace_pipe.  
+> 
+> I see, thanks for clarifying.  I always felt for quick testing it
+> serves its purpose - anything equally simple you recommend for testing
+> but doesn't suffer from this problem?
 
-Right, that's the code change.
+You can run trace-cmd, or cat trace after the run.
 
-> I change the behavior to issue the PME_TURN_OFF when link is up
-> here.
-
-But I don't think you responded to the race question.  What happens
-here?
-
-  if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
-    --> link goes down here <--
-    pci->pp.ops->pme_turn_off(&pci->pp);
-
-You decide the LTSSM is active and the link is up.  Then the link goes
-down.  Then you send PME_Turn_off.  Now what?
-
-If it's safe to try to send PME_Turn_off regardless of whether the
-link is up or down, there would be no need to test the LTSSM state.
-
-Bjorn
+-- Steve
 
