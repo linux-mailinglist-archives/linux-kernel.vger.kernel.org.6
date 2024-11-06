@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-398091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2122C9BE534
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:06:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405E39BE53B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7B81F21C28
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:06:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBAFCB24024
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3C21DE4E6;
-	Wed,  6 Nov 2024 11:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YYc5yuky"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BDC1DE4F1;
+	Wed,  6 Nov 2024 11:08:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743061DACBB;
-	Wed,  6 Nov 2024 11:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A31E18C00E;
+	Wed,  6 Nov 2024 11:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730891170; cv=none; b=MZnpVqLE8p/1Itgor0VIrRnrkEJQcVoRB4Fd3KXxErl5H34qTsuSVgyrqv2ce9WFlivxjDXLUI66B34kuh6o72sQgtgK2v2TgPg51wtkzavqeweNr+H4bWfAKoZK4OWKm81xbk9ZA6l51Wa9S/FvNHjQfIpCuKzmLvtYnj67wio=
+	t=1730891303; cv=none; b=OdF3O9Apx8RWcCUf5Wpksj2FOJw9q7VszwjcYgyC3ixA065qiJVmAgiCHVcp0RSFrxLnE7L6QCkVBw9OPiFx3CxtuKFC6LqmeS3FA0WrzsDCXzr8nhPAbs/JbLevvx6M33O49e/ZTrRHRt694dY8+Wr4WUnn/LgZkwW/Gev8Tc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730891170; c=relaxed/simple;
-	bh=x1daPAci/sH83L77hKsJtfM7BbABjcNhbB9A2zFZeIY=;
+	s=arc-20240116; t=1730891303; c=relaxed/simple;
+	bh=O4y3JTBicmTSlJdnHiQSpamitaviXOau9AsHU/b8xpM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUt1f6iM3o/M30r91Ea3/YG2k9Vt5uwQ9MHFF3LxrEoAGfH7eveV4Jal5EfHhE6qg6RWh5vx0QkRZi0A/eG00iCucg2VCzMEu7ocAbcNK147tf7dd5keNbzQgaJyJETtntb47dHlaO7WBGZKtG9ZYPCHfMgjVI73wzWQzc6BeVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YYc5yuky; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=KHhlvkY8UlSzLnmAPPPFJYM+1mV9xaApz1N9IxO+X3E=; b=YYc5yukyNei5Uqg2meExPOJ1cv
-	4/f75h4eVieapeaztoHVEuXr6JM6ZSh3S95Iiz0oH29FJR5dNlaftCulT51z+1KKUMbX2j7lVKXOi
-	fYN8I7PAKZgVQdUYlkqbHjowT6i1HBz0lEpO7N59D4wzQSOHJf15Z0/h/gQrEe9/MATutq/npDHO4
-	BpqRuiztCUgxSok5E0he8kysi3woj0V0vqAhbDvc9QHVeOgUp0+132q3n16FwiruXa2FLQBnsAm2Y
-	fRJ7oUjdqvbHU0OyKMhw7qv5bMoVeQdp4RSjS9OxVMs62DwKgLL81/9xylcyLEC3ruN/DXUG6obDO
-	eCsXzMnA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8drK-0000000BwK8-1Hm8;
-	Wed, 06 Nov 2024 11:05:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 809ED300478; Wed,  6 Nov 2024 12:05:57 +0100 (CET)
-Date: Wed, 6 Nov 2024 12:05:57 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-	bpf <bpf@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Liao Chang <liaochang1@huawei.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>
-Subject: Re: The state of uprobes work and logistics
-Message-ID: <20241106110557.GY33184@noisy.programming.kicks-ass.net>
-References: <CAEf4BzarhiBHAQXECJzP5e-z0fbSaTpfQNPaSXwdgErz2f0vUA@mail.gmail.com>
- <ZyH_fWNeL3XYNEH1@krava>
- <CAEf4BzZTTuBdCT2Qe=n7gqhf3yENZwHYUdsrQP9WfaEC4C35rw@mail.gmail.com>
- <20241106104639.GL10375@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhazJ5YkaL0w2ubW2NZPdZsUlWqdhTgbwivX34im1sFIVlVJvCQxQnCjUNYH2x744wvGiKPUOovTEkY6cMHaWa5RpKi0qwD+dV9AlS6dmtT+jYcA8eSyGcimdNX+/6VnSX/o+1iEc3U5TaYnRoKqY3afETdzKV78WJZHQggu9ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 147B3C4CECD;
+	Wed,  6 Nov 2024 11:08:17 +0000 (UTC)
+Date: Wed, 6 Nov 2024 11:08:15 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Haris Okanovic <harisokn@amazon.com>
+Cc: ankur.a.arora@oracle.com, linux-pm@vger.kernel.org, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	will@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	pbonzini@redhat.com, wanpengli@tencent.com, vkuznets@redhat.com,
+	rafael@kernel.org, daniel.lezcano@linaro.org, peterz@infradead.org,
+	arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com,
+	mtosatti@redhat.com, sudeep.holla@arm.com, cl@gentwo.org,
+	misono.tomohiro@fujitsu.com, maobibo@loongson.cn,
+	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
+	konrad.wilk@oracle.com
+Subject: Re: [PATCH 1/5] asm-generic: add smp_vcond_load_relaxed()
+Message-ID: <ZytOH2oigoC-qVLK@arm.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+ <20241105183041.1531976-1-harisokn@amazon.com>
+ <20241105183041.1531976-2-harisokn@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106104639.GL10375@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241105183041.1531976-2-harisokn@amazon.com>
 
-On Wed, Nov 06, 2024 at 11:46:39AM +0100, Peter Zijlstra wrote:
-> On Tue, Nov 05, 2024 at 06:11:07PM -0800, Andrii Nakryiko wrote:
-> > On Wed, Oct 30, 2024 at 2:42 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > >
-> > > On Wed, Oct 16, 2024 at 12:35:21PM -0700, Andrii Nakryiko wrote:
-> > >
-> > > SNIP
-> > >
-> > > >   - Jiri Olsa's uprobe "session" support ([5]). This is less
-> > > > performance focused, but important functionality by itself. But I'm
-> > > > calling this out here because the first two patches are pure uprobe
-> > > > internal changes, and I believe they should go into tip/perf/core to
-> > > > avoid conflicts with the rest of pending uprobe changes.
-> > > >
-> > > > Peter, do you mind applying those two and creating a stable tag for
-> > > > bpf-next to pull? We'll apply the rest of Jiri's series to
-> > > > bpf-next/master.
-> > >
-> > >
-> > > Hi Ingo,
-> > > there's uprobe session support change that already landed in tip tree,
-> > > but we have bpf related changes that need to go in through bpf-next tree
-> > >
-> > > could you please create the stable tag that we could pull to bpf-next/master
-> > > and apply the rest of the uprobe session changes in there?
-> > 
-> > Ping. We (BPF) are blocked on this, we can't apply Jiri's uprobe
-> > session series ([0]), until we merge two of his patches that landed
-> > into perf/core. Can we please get a stable tag which we can use to
-> > pull perf/core's patches into bpf-next/master?
-> 
-> The whole tip/perf/core should be stable, but let me try and figure out
-> how git tags work.. might as well read a man-page today.
+On Tue, Nov 05, 2024 at 12:30:37PM -0600, Haris Okanovic wrote:
+> diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
+> index d4f581c1e21d..112027eabbfc 100644
+> --- a/include/asm-generic/barrier.h
+> +++ b/include/asm-generic/barrier.h
+> @@ -256,6 +256,31 @@ do {									\
+>  })
+>  #endif
+>  
+> +/**
+> + * smp_vcond_load_relaxed() - (Spin) wait until an expected value at address
+> + * with no ordering guarantees. Spins until `(*addr & mask) == val` or
+> + * `nsecs` elapse, and returns the last observed `*addr` value.
+> + *
+> + * @nsecs: timeout in nanoseconds
 
-I might have managed to create a perf-core-for-bpf-next tag, but I'm not
-sure I know enough about git to even test it.
+FWIW, I don't mind the relative timeout, it makes the API easier to use.
+Yes, it may take longer in absolute time if the thread is scheduled out
+before local_clock_noinstr() is read but the same can happen in the
+caller anyway. It's similar to udelay(), it can take longer if the
+thread is scheduled out.
 
-Let me know..
+> + * @addr: pointer to an integer
+> + * @mask: a bit mask applied to read values
+> + * @val: Expected value with mask
+> + */
+> +#ifndef smp_vcond_load_relaxed
+> +#define smp_vcond_load_relaxed(nsecs, addr, mask, val) ({	\
+> +	const u64 __start = local_clock_noinstr();		\
+> +	u64 __nsecs = (nsecs);					\
+> +	typeof(addr) __addr = (addr);				\
+> +	typeof(*__addr) __mask = (mask);			\
+> +	typeof(*__addr) __val = (val);				\
+> +	typeof(*__addr) __cur;					\
+> +	smp_cond_load_relaxed(__addr, (				\
+> +		(VAL & __mask) == __val ||			\
+> +		local_clock_noinstr() - __start > __nsecs	\
+> +	));							\
+> +})
+
+The generic implementation has the same problem as Ankur's current
+series. smp_cond_load_relaxed() can't wait on anything other than the
+variable at __addr. If it goes into a WFE, there's nothing executed to
+read the timer and check for progress. Any generic implementation of
+such function would have to use cpu_relax() and polling.
+
+-- 
+Catalin
 
