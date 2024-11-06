@@ -1,100 +1,64 @@
-Return-Path: <linux-kernel+bounces-398166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C2C9BE6B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:04:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B40CB9BE7BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:17:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCDF280571
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:04:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77600284632
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C96E1E909C;
-	Wed,  6 Nov 2024 12:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F651DF267;
+	Wed,  6 Nov 2024 12:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="p7eZhhzi"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="on/Ign6v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925351E32DD
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 12:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7587C1DF249;
+	Wed,  6 Nov 2024 12:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730894513; cv=none; b=LkkkaYeB/OqtgVTMcnjUXKBQ3Qfeehd1fLg8BdfwwdFRkFvDzC2Sygt1RoNXsA7SjE0qvNSX3UbA+Hf/2g7bF8TMhHyveEUBobhSFr/PJuGn0ENrVpLYcUR/5HVqy1hchnSI1MKnMfBClpdWGKMzR8harB+mDt+MOHgJmxn5jZw=
+	t=1730895433; cv=none; b=QJpm6dWVV0gua8+0zNDBTnfllOtEPUMmk13x0IP7GzzQCdv4hAWDNqvijiH4dYPWdz8LSbEI0/yIG1Yf7hUTgXxxFado3WIAvc2iCTF/nlJScP0oZqjCbH7oWxcNOuV8E545XZVltLXYE5FYwgVrTb0OKkuSAQn7B4Gek/ZyVGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730894513; c=relaxed/simple;
-	bh=l2nLfEhXQdqdldj7HMRPD/BKF+Yo/cZTkzGKteJPuqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EA9LjH26n8S2w4SmlUjEpsAbWb/1I3vDstBKQxobnYVJaWmlLnytOEuj6e5w1k7xzT1lRq1WqAu7YXs39sYHtt3yQtrcfX8cCk8pJW1juuN+ynQLotr8MU6wYLfSCvXNAGjSTq2s3hMFH+N9c5VJ6ECnEOzL6yI67jXX6W6bfks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=p7eZhhzi; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so56627661fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 04:01:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730894510; x=1731499310; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2JwPCGHe69m/pJb0qH1LaF4qTTUiifIIPi692eTZlzU=;
-        b=p7eZhhzip/ycZoC9bUx4Xj/Raxbv8DKTYi0hclsnVElxx1IDTDWMDv5/zujT7ImHPF
-         wl+QzTqzCAUbSiT83jzRNj1QjmEajok6udXAvz1YjO+CBItLEtdzfvJVcrlMrR2me5nQ
-         Oy+mcAQGzcu9mGqqUC3jChXcooSuEafTKKTviT0GUVpUbcY/SvG4A5ttcARCb1+DsVdL
-         VFoxJYqMPk4TSKdw3W+21R+zUCWcRP6NVyA4w+RTQ5258ECYkB76+xabnDgfJV1B7ydE
-         G4gQEvlHSKhjCT3FpxG+0MrY6BcJvtSqOR3FLmyez6BYFyTTcw2HHg4+kHBSSzURMwun
-         wbXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730894510; x=1731499310;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2JwPCGHe69m/pJb0qH1LaF4qTTUiifIIPi692eTZlzU=;
-        b=LYAPk1qYkXJX88kebepepZ+leixtB5h6r3CSFbKpXsUgBYq/sBf9Bu0uciFPoIFJEI
-         LWxX/zCzlEquBiTynnbKHPvF/IdGP7cHVLa1brnYXX5sJFC644ladVaYvqT1tTnsGh3J
-         /F1iN1QICgtM5W567at5spHl+15mjuYiMecuoxOuLJvLTBHC6/cdsxX7K1l3oNg7vmP2
-         6gHGO+t1m7xiUD43ivEq0d0p27k2TwBXrl4gPAV8IlqJel0tXvsHtsaslEQy0VMfW2DP
-         BmImSAdFCc/FJo1rX4XfGQbY5k0tMqzXBgnvmxRMC36VnqbPLZ2PQt9ZAXZJtXSrxQty
-         98AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXw0pdJP4nMxL4mXbfwcI+hiGQl7KCfmvfUIYU2k2JwP5rWAslkDpo3icjoow2u46ybL7RDWotF/i5X3lU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQjHayKnLMxKP6K0LmufE3JOthtIgLjc3aZEWfdD40o4NjEOaH
-	WXHzYjLCg7nzQbR2jwn4PqLy2DLcSZxKlTQolWSGUzp+6ZNqUt2aCGVGGL1f8YY=
-X-Google-Smtp-Source: AGHT+IGmZAnyNN2H3HVq8mWB2A4J8BfLSHy4gBsMu6TgAseykCSA2VwSabOZhkZzxv828ZqhYx8Qgw==
-X-Received: by 2002:a2e:b8c8:0:b0:2fb:4b0d:9092 with SMTP id 38308e7fff4ca-2fcbdf69fbemr189607851fa.1.1730894509534;
-        Wed, 06 Nov 2024 04:01:49 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6afe528sm2697984a12.55.2024.11.06.04.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 04:01:49 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	p.zabel@pengutronix.de,
-	lethal@linux-sh.org,
-	g.liakhovetski@gmx.de,
-	ysato@users.sourceforge.jp,
-	ulrich.hecht+renesas@gmail.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1730895433; c=relaxed/simple;
+	bh=pJIrqatPnOw7XqObTRvFo0WUaSlOHeEOSZGEOHIsQJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MYwWLdCOuS4W+dN+CiLxUeh+bT6vyCcz6zMGZfa4/KlbXYDTN8HusLHA94CDcjuTEBcZMVbUvjps8xnfxrOeGuowgWtU1KwC60xfNAExVyAGMkNGJa1isgqVPO4ylnjioJAPw/D3KWWTDgDDumB7u68WF3tr++FiYYmXL0s/0g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=on/Ign6v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0F19C4CECD;
+	Wed,  6 Nov 2024 12:17:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730895433;
+	bh=pJIrqatPnOw7XqObTRvFo0WUaSlOHeEOSZGEOHIsQJE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=on/Ign6v7qp3qcyA7qE6EPNBVX5EjVSgX9tiQl04bz2E5RTxCL3JArUntsjDo4TWl
+	 U3gsriO+FAMP2eYyv0opJUHnUNKeDB6iIE37SoWnQJCyo9BfNVIeC1jJmI+BQAABG8
+	 1Y3WEVLUOkvqPs+4WmZhFkaq9k4ni3+1MQiBRwnA=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Morse <james.morse@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 9/9] arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for SCIF1
-Date: Wed,  6 Nov 2024 14:01:18 +0200
-Message-Id: <20241106120118.1719888-10-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 217/350] arm64: Add Cortex-715 CPU part definition
+Date: Wed,  6 Nov 2024 13:02:25 +0100
+Message-ID: <20241106120326.359631125@linuxfoundation.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241106120320.865793091@linuxfoundation.org>
+References: <20241106120320.865793091@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,87 +67,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Add DT overlay for SCIF1 (of the Renesas RZ/G3S SoC) routed through the
-PMOD1_3A interface available on the Renesas RZ SMARC Carrier II board.
+------------------
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+
+[ Upstream commit 07e39e60bbf0ccd5f895568e1afca032193705c0 ]
+
+Add the CPU Partnumbers for the new Arm designs.
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Link: https://lore.kernel.org/r/20221116140915.356601-2-anshuman.khandual@arm.com
+Signed-off-by: Will Deacon <will@kernel.org>
+[ Mark: Trivial backport ]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/Makefile          |  3 ++
- .../dts/renesas/r9a08g045s33-smarc-pmod.dtso  | 48 +++++++++++++++++++
- 2 files changed, 51 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
+ arch/arm64/include/asm/cputype.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 97228a3cb99c..7ad52630d350 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -137,6 +137,9 @@ r9a07g054l2-smarc-cru-csi-ov5645-dtbs := r9a07g054l2-smarc.dtb r9a07g054l2-smarc
- dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc-cru-csi-ov5645.dtb
- 
- dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc.dtb
-+dtb-$(CONFIG_ARCH_R9A07G043) += r9a08g045s33-smarc-pmod.dtbo
-+r9a08g045s33-smarc-pmod-dtbs := r9a08g045s33-smarc.dtb r9a08g045s33-smarc-pmod.dtbo
-+dtb-$(CONFIG_ARCH_R9A07G043) += r9a08g045s33-smarc-pmod.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
-new file mode 100644
-index 000000000000..7d637ab110e1
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZ/G3S SMARC Carrier II EVK PMOD parts
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ *
-+ *
-+ * [Connection]
-+ *
-+ * SMARC Carrier II EVK
-+ * +--------------------------------------------+
-+ * |PMOD1_3A (PMOD1 PIN HEADER)			|
-+ * |	SCIF1_CTS# (pin1)  (pin7)  PMOD1_GPIO10	|
-+ * |	SCIF1_TXD  (pin2)  (pin8)  PMOD1_GPIO11	|
-+ * |	SCIF1_RXD  (pin3)  (pin9)  PMOD1_GPIO12	|
-+ * |	SCIF1_RTS# (pin4)  (pin10) PMOD1_GPIO13	|
-+ * |	GND	   (pin5)  (pin11) GND		|
-+ * |	PWR_PMOD1  (pin6)  (pin12) GND		|
-+ * +--------------------------------------------+
-+ *
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-+
-+&{/} {
-+	aliases {
-+		serial0 = "/soc/serial@1004bc00";
-+	};
-+};
-+
-+&pinctrl {
-+	scif1_pins: scif1-pins {
-+		pinmux = <RZG2L_PORT_PINMUX(14, 0, 1)>, /* TXD */
-+			 <RZG2L_PORT_PINMUX(14, 1, 1)>, /* RXD */
-+			 <RZG2L_PORT_PINMUX(16, 0, 1)>, /* CTS */
-+			 <RZG2L_PORT_PINMUX(16, 1, 1)>; /* RTS */
-+	};
-+};
-+
-+&scif1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif1_pins>;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index f8be4d7ecde28..e3df8b0c067bf 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -86,6 +86,7 @@
+ #define ARM_CPU_PART_CORTEX_A78		0xD41
+ #define ARM_CPU_PART_CORTEX_X1		0xD44
+ #define ARM_CPU_PART_CORTEX_A710	0xD47
++#define ARM_CPU_PART_CORTEX_A715	0xD4D
+ #define ARM_CPU_PART_CORTEX_X2		0xD48
+ #define ARM_CPU_PART_NEOVERSE_N2	0xD49
+ #define ARM_CPU_PART_CORTEX_A78C	0xD4B
+@@ -130,6 +131,7 @@
+ #define MIDR_CORTEX_A78	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78)
+ #define MIDR_CORTEX_X1	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X1)
+ #define MIDR_CORTEX_A710 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A710)
++#define MIDR_CORTEX_A715 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A715)
+ #define MIDR_CORTEX_X2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X2)
+ #define MIDR_NEOVERSE_N2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N2)
+ #define MIDR_CORTEX_A78C	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78C)
 -- 
-2.39.2
+2.43.0
+
+
 
 
