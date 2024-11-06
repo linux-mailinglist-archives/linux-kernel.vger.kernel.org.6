@@ -1,123 +1,196 @@
-Return-Path: <linux-kernel+bounces-398539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840799BF283
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:04:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5279BF28B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A38D285499
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:04:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42EE1F20F7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C9A206514;
-	Wed,  6 Nov 2024 16:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52EE206E86;
+	Wed,  6 Nov 2024 16:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHHnBIlT"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OZzsrRRC"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FDF2064F3;
-	Wed,  6 Nov 2024 16:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9501DCB06;
+	Wed,  6 Nov 2024 16:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909014; cv=none; b=loNXQEwgs8jFUpAjdGddldY4BvY7HJYYa794iirQVfPNtTZ1GXcLefkX6tZDmsU18b+lG+wm4vjTyCA4mxGMU3wMhCokPDzZcEfBeHyPo4U3QHE9L2fRis7R7U0gHgVWropBI1aIKSuDZXf35wlJsZ5dc2J9EzlskAxSub4F6DA=
+	t=1730909042; cv=none; b=FOW73s0DxHW3sNhfN+Aak7HIrUqPskvWAiE5uSjM4N4rvG/S9tc23czoF9LDmXA9LicxtpZE479LWuCfjyuBFSEOi0B/bisA4jEYOistRdn8BgCKmCuLcGYCHlHnyCOf0vHRKIMGsDlR7OMsyLYFwBmVEm7cX0vZr/8ph063G6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909014; c=relaxed/simple;
-	bh=eYa9wlnu9E3P2y1lCWwcPAwQK8qAERsjwqOa/z4hWc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tEZ/guxHexr2G2WS4b2K1fM4lpVmrsl7XETLOm4Y9XfX+2TZi8N2idLnEef0C2xgEshdqHji66b7Ebt0rSsLUKMV+5YVNJ/INKPcA1tH5I19ZQu2KWvtTtP4WcXcbKyh7APc7+rv11pWV3hG/U7Yg+LlttA0KSm8JgzHRplE7mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHHnBIlT; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2110a622d76so53008775ad.3;
-        Wed, 06 Nov 2024 08:03:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730909011; x=1731513811; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZNocM+WdbV87f0ucaFRRKZx/lGWrptiPjNjZfE8UDfY=;
-        b=QHHnBIlTTdxUri1LN2nFWB1u8sT05bUs4n4T+IsT9Fhhqo+n2Wxh82bMfl30cCb267
-         U+TIxHSrgZlnGdi+qjfKti8hbnjHhBDI9IhQVJ64kh0eeAL8uV16MhjJngr2WT3VdzQK
-         nSEQJlC9yCUEREXCMLom6GIjps6iE3cS8m2u1gFwwu94MVaV5joV6UsFKmOWmYUjJS/F
-         I+fQxO5o5QBncQ6tE0lD6T/Ko1vQ4wF1hGign4yX3zaBINrjuMR/Q94LZWrRupqkeS3t
-         bBDVY2uW2j2xSFR5Y7E33242YjvnJ+FbJnGw5RN1r/RFUA4FGqDBqYZrhAEgqp8tkwqa
-         RaUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730909011; x=1731513811;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZNocM+WdbV87f0ucaFRRKZx/lGWrptiPjNjZfE8UDfY=;
-        b=imWXyZnKjVewDkgnCujhcMxKRhDfi79wXL18y9ai+mL+QXt569bKZQu557xKx8eyXV
-         aQyAAJiDAvdcLIwCmNd/QGQNhtjVzCEWZGBmtdh9RM6BcN2I+fDAIo1KKGqZLEAYORg+
-         d5saYE+fGKCy0h6DCk4d0hRbkPkz0HrdCLMxDNaGmquoHVd94PIQUrkOBKLBGes2HTmE
-         TgCpioqM37cyErbiUhjtQ079cNyUVvIdOm6WvlI0B2t0xVTfCjXObO2Ay/Y9OCuimIxd
-         MvwZyXz16lI+JJnd6bBODgudcSG9EU6xaJRYKtsXn1ayoj/E8qYRK8TWdmWu5L/sPVtR
-         KqwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUG8jfpNLiELropoReaAi5funYiFC48dsuEBgF7hRDztAabHV1/OqkbQSLa7FBWnE051rvWxXWILMqh@vger.kernel.org, AJvYcCUu3zh77npibqT7XMHZ0ETBoMz+lVHyOxpbvVcegOFYheYAqY1EfBMIHf4+QmbhlYJBrKJQsDser74j@vger.kernel.org, AJvYcCVoYc0ah9RmxTxu9kxNEZHVZsF1X58RF5qtKQCRVqv3c6Kz1dGEVIggW/mRAdm+qv0DOT+1fo5mRXRY@vger.kernel.org, AJvYcCWkwogD2YYlwpoEvBxMNHYv0nlLsY2b0JVhak0Y5dHUxr+4nssSyMBWRwHqsWuLM3i8+XV+yttTR5QDcRRH@vger.kernel.org, AJvYcCX1DaVTx1cb8IpgMv2aFU4DQ9tZDJeweJcsOWXr9wDhVMItmb4XJOnwwFh9ZAe/lFZpAG3PeyPiyk9c03g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYQVPuuuLFulTTnNbFJGOdT2vEYYce7F+uaNp/cqiSiRlz2HH8
-	oZOAiYxmftcr7xbYzAJYN0K7HZNk3+bniUcSl6sG3QRJ2By3u9iV
-X-Google-Smtp-Source: AGHT+IFhRVrWIpPInnku4WjWMhMV/MtkoROR+ZMVi9n99hUzxhu1sEQlSsIAG0pSadilzV6mPYRygA==
-X-Received: by 2002:a17:902:da91:b0:20c:82ea:41bd with SMTP id d9443c01a7336-210c68d4349mr539228785ad.18.1730909010905;
-        Wed, 06 Nov 2024 08:03:30 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a541cfbsm1699958a91.18.2024.11.06.08.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 08:03:30 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 6 Nov 2024 08:03:29 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v4 5/7] hwmon: (pmbus/core) clear faults after setting
- smbalert mask
-Message-ID: <ec18ced0-c113-4925-8096-3f776f0f11d9@roeck-us.net>
-References: <20241105-tps25990-v4-0-0e312ac70b62@baylibre.com>
- <20241105-tps25990-v4-5-0e312ac70b62@baylibre.com>
+	s=arc-20240116; t=1730909042; c=relaxed/simple;
+	bh=kNMZOxloojlVgJYl446sTR/0XhQacwriWl73D/alcGs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=to2YRudjtfQIxBB4L0IVGCiAiAu6+KxIUtR6LMYvGs/TIZctOEwEo6po4KO9BKHnJHs13vVWyDf57OrOGuqUnazp6pJ7z1/x3Uy4r77mRKzoP4XGHTlM7+tmF9nyElK7FiP2/VId29hDRFSgpw/A4NXL9fuP4Rj4hwWF3KJbP2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OZzsrRRC; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1248340002;
+	Wed,  6 Nov 2024 16:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730909037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xQ0f6eUzwBnvZvNbGKfAEFJ1fg/LcmINDrTkR6LRI70=;
+	b=OZzsrRRC8J1Q47Ti6s+Mcp8knmymb+jObk1EQxnQXsnZDYKpAUbJgpDVdXx+yi8rSrwOWt
+	v4BflQJxfdodQbBG9wjWUrs3fgKn07vc/OXbaREi47M1qQaBwzDECjSFfXwSuPsSctFiGU
+	t9FIXYuPQylUhGs5QELQsIYtydKXRbaEp+9hgQF5D64okTh6D/CQw3PGTDqdxWDzCkqdSp
+	vCpfipYE8YEyMZWS7XxBly50EE33AIPB27oVmRHOY5lfTdmKX952P0gkvE0c0XJ6ATIn8m
+	xHVCJikKGQjg36MNOwW24Rp3uwig/IoWF5cAdiYAXP04VER9kAhBwcpkCEI6uw==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v2 00/10] Usable clocks on Mobileye EyeQ5 & EyeQ6H
+Date: Wed, 06 Nov 2024 17:03:51 +0100
+Message-Id: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105-tps25990-v4-5-0e312ac70b62@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGeTK2cC/0XMSwqDMBSF4a3IHTclj9LEjrqP4sDEa71UjSQSK
+ pK9NxVKh//h8O0QMRBGuFU7BEwUyc8l5KkCN7TzExl1pUFyeRFccTbZcWNufLHWaN0rXSu0Esp
+ 9CdjT+6AeTemB4urDdshJfNcfIv5IEowzU3fGSoOK8+vder+ONJ+dn6DJOX8AaYGCf6IAAAA=
+X-Change-ID: 20241030-mbly-clk-a877f3793eb2
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Tue, Nov 05, 2024 at 06:58:42PM +0100, Jerome Brunet wrote:
-> pmbus_write_smbalert_mask() ignores the errors if the chip can't set
-> smbalert mask the standard way. It is not necessarily a problem for the irq
-> support if the chip is otherwise properly setup but it may leave an
-> uncleared fault behind.
-> 
-> pmbus_core will pick the fault on the next register_check(). The register
-> check will fails regardless of the actual register support by the chip.
-> 
-> This leads to missing attributes or debugfs entries for chips that should
-> provide them.
-> 
-> We cannot rely on register_check() as PMBUS_SMBALERT_MASK may be read-only.
-> 
-> Unconditionally clear the page fault after setting PMBUS_SMBALERT_MASK to
-> avoid the problem.
-> 
-> Suggested-by: Guenter Roeck <linux@roeck-us.net>
-> Fixes: 221819ca4c36 ("hwmon: (pmbus/core) Add interrupt support")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Now that clk-eyeq is in the clk-next tree, we can add the small(-ish)
+details required to make the platform work fully. The work is mostly
+about updating devicetrees to rely on the system-controller nodes as
+clock providers.
 
-Applied.
+--
+
+Things we do:
+
+ - In EyeQ5 devicetrees, remove all fixed-factor clocks that are derived
+   from clk-eyeq PLLs. We expose those directly from clk-eyeq (using
+   match data info). This is simpler to reason about.
+
+   [PATCH v2 02/10] dt-bindings: clock: eyeq: add more Mobileye EyeQ5/EyeQ6H clocks
+   [PATCH v2 03/10] clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+   [PATCH v2 05/10] clk: eyeq: add fixed factor clocks infrastructure
+   [PATCH v2 06/10] clk: eyeq: add EyeQ5 fixed factor clocks
+   [PATCH v2 09/10] MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+
+ - EyeQ6H devicetrees used fixed-clocks and didn't have
+   system-controllers defined. Remove all that and define our syscons.
+
+   [PATCH v2 07/10] clk: eyeq: add EyeQ6H central fixed factor clocks
+   [PATCH v2 08/10] clk: eyeq: add EyeQ6H west fixed factor clocks
+   [PATCH v2 10/10] MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+ - Our bindings used to say that some compatibles require a clock cell
+   (those that expose multiple clocks) and others do not. Remove that
+   subtlety and enforce a clock cell for everyone.
+
+   The goal is to make it easier to add clocks to compatibles that
+   previously exposed a single one. It happens for two compatibles in
+   this patch series (EyeQ6H central and west).
+
+   This is a "revert". I had been advised in the initial patch that the
+   behavior was a bad idea. I 100% agree with those comments.
+
+   [PATCH v2 01/10] dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+   [PATCH v2 04/10] clk: eyeq: require clock index with phandle in all cases
+
+--
+
+In which tree patches should go:
+
+ - clk:
+   [PATCH v2 02/10] dt-bindings: clock: eyeq: add more Mobileye EyeQ5/EyeQ6H clocks
+   [PATCH v2 03/10] clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+   [PATCH v2 04/10] clk: eyeq: require clock index with phandle in all cases
+   [PATCH v2 05/10] clk: eyeq: add fixed factor clocks infrastructure
+   [PATCH v2 06/10] clk: eyeq: add EyeQ5 fixed factor clocks
+   [PATCH v2 07/10] clk: eyeq: add EyeQ6H central fixed factor clocks
+   [PATCH v2 08/10] clk: eyeq: add EyeQ6H west fixed factor clocks
+
+ - MIPS:
+   [PATCH v2 01/10] dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+   [PATCH v2 09/10] MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+   [PATCH v2 10/10] MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+Reasoning: we need the clock indexes from dt-bindings headers to avoid
+breaking the driver build, so patch 2 must go in clk-next.
+
+Note about devicetree patches 9-10: other patches on the same
+devicetrees are in the mailing-lists, with which I expect conflicts.
+All should be straight-forward to resolve.
 
 Thanks,
-Guenter
+Have a nice day,
+Théo
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v2:
+- Patch "dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all
+         compatibles":
+  - Mention that we break ABI (#clock-cells) in commit message, and
+    explain why. [0]
+- Patches "dt-bindings: clock: eyeq: add * clocks":
+  - Squash all four patches into a single one. [1]
+  - Improve the commit message, describing the clock tree structure.
+  - Expose more EyeQ5 peripheral clocks: SPI, I2C, GPIO, EMMC, PCI.
+    We already know those will be used later down the road.
+- Patch "clk: eyeq: add EyeQ5 fixed factor clocks":
+  - Use enum to auto-number non-exposed EyeQ5 clock indexes.
+    Start from the last dt-bindings exposed index plus one.
+- Link to v1: https://lore.kernel.org/r/20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com
+
+[0]: https://lore.kernel.org/lkml/20241105133323.GA3064907-robh@kernel.org/
+[1]: https://lore.kernel.org/lkml/7ebcdarioght4u2bai4l42pckitcw5iz4rky4ncgp7aqmtrlen@zl7k7pgijloq/
+
+---
+Théo Lebrun (10):
+      dt-bindings: soc: mobileye: set `#clock-cells = <1>` for all compatibles
+      dt-bindings: clock: eyeq: add more Mobileye EyeQ5/EyeQ6H clocks
+      clk: fixed-factor: add clk_hw_register_fixed_factor_index() function
+      clk: eyeq: require clock index with phandle in all cases
+      clk: eyeq: add fixed factor clocks infrastructure
+      clk: eyeq: add EyeQ5 fixed factor clocks
+      clk: eyeq: add EyeQ6H central fixed factor clocks
+      clk: eyeq: add EyeQ6H west fixed factor clocks
+      MIPS: mobileye: eyeq5: use OLB as provider for fixed factor clocks
+      MIPS: mobileye: eyeq6h: add OLB nodes OLB and remove fixed clocks
+
+ .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  |  24 +-
+ arch/mips/boot/dts/mobileye/eyeq5-clocks.dtsi      | 270 ---------------------
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  30 ++-
+ .../boot/dts/mobileye/eyeq6h-fixed-clocks.dtsi     |  52 ----
+ arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |  73 +++++-
+ drivers/clk/clk-eyeq.c                             | 208 ++++++++++++++--
+ drivers/clk/clk-fixed-factor.c                     |  11 +
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  44 +++-
+ include/linux/clk-provider.h                       |   3 +
+ 9 files changed, 327 insertions(+), 388 deletions(-)
+---
+base-commit: 11713909beb7debd3d466a6dc302a33d91298be0
+change-id: 20241030-mbly-clk-a877f3793eb2
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
+
 
