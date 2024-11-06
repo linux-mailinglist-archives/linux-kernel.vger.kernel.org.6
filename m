@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-398265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D699BED2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:09:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042B29BED4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05ED72862B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE114282708
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70E61F81BA;
-	Wed,  6 Nov 2024 13:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0541A1F4298;
+	Wed,  6 Nov 2024 13:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d/hbWg1U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iF+f2JrO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA471F4297
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6891F8EE3;
+	Wed,  6 Nov 2024 13:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730898214; cv=none; b=Q8KmBk7MIZYb3eEJK0BUO3Tzx6h45pHBtmGmYNhR/5LjDzks1EoGEHiFLRbN95mQd14h300DRJJ/omaAnypNEjqXtv9xQGi3pYEs1scLx1nnDG4wBSBaGQonAMDma1bePNNLyshcup2sWLW1uoqAI6zCceLBR6Y/Q5eDCtZHQDc=
+	t=1730898287; cv=none; b=Ny/KlYp0RRxz/qW1tca17KLw4HqIiXssjMfuEeQaB9YasI3xy9UxC058scXTb/Qq13zi0b2aMMy/TkkxCg4md0+aK/VWDpzuaUiZk86Y9cq1QkhsbbnO1PDlLVZ3EhysYUDdlysaz06ckVq9mK2cfbSe+dOlWQ/Vaz+xcIHxsO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730898214; c=relaxed/simple;
-	bh=GyHaXBpas0Jk5Yxydrz5kNdf95Ahw0pvB2pioizFJF8=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=pEPRolLjxvADJflNKAaimiGGJhPu1+Ibv9Uh7HymbHN6kU+HdLYIq/OUfwHnIGor4CGC0DnSlCaBBYvOfwRzRU+8fZ0y6PAlXEuPqvY7h0zl4IULmTzwDMSw3iqJh85oODOHnR0ikzpR9jrtM7+wWiQguGeaziRb58fR8qIRcxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d/hbWg1U; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730898210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fxGSqNGg1Goa58e13x+V5i9uNNuZ+24Z3hxIk+gVXhQ=;
-	b=d/hbWg1UWd2KGHHnfH0BTTEAYDJcuO+v3L5ZK+GBg7cDdHRPkj+ngpgIK/bLr1nM4ZNgcB
-	XuXjTFsgUg+3NJy3OycJSqnPhsbP67uyHgwrlGVaqFwXeVEHDiw6wtUzYnY5qAdWGpbJSU
-	TgUHBFjNWNYv7dEmcVe4VsBhh0SYwQc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-300-OQPL5yXXMMuRWECWD_vg7g-1; Wed,
- 06 Nov 2024 08:03:27 -0500
-X-MC-Unique: OQPL5yXXMMuRWECWD_vg7g-1
-X-Mimecast-MFC-AGG-ID: OQPL5yXXMMuRWECWD_vg7g
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D7B681955EAC;
-	Wed,  6 Nov 2024 13:03:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 54E5F195605A;
-	Wed,  6 Nov 2024 13:03:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net] rxrpc: Fix missing locking causing hanging calls
+	s=arc-20240116; t=1730898287; c=relaxed/simple;
+	bh=682rZ4W8M3E5mVOEB3/2mrEAAw15OgHnlpXKz526rA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RT6qeKQu3qb/bgAre/5lwbFpw4qcwI+cex6T6xwggSgPHPX+0q6iYRxt6sAHZukRr5VuEB5V6GxnllTcp6Ff7WxhngOihH/Ow6EVrXQ/hlRZIDUN9NH4T/2q1I643lwh2QXB2+WS4eNxmfXg4SViHCSXLPCnD7mWs7hva8+XlGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iF+f2JrO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0B6BA475;
+	Wed,  6 Nov 2024 14:04:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730898275;
+	bh=682rZ4W8M3E5mVOEB3/2mrEAAw15OgHnlpXKz526rA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iF+f2JrOf8LKiTjHV1UChMRbmf6ckq9rA1BPUFp1xg1DRGXF+rkuI5950BTGfwpL+
+	 Yu4AWc7mmgpAU2nekPMMSN1CPfv8fof6p/lUxd1J/aU5O1aWQByo6hUgRFK9fVFltt
+	 vI+mieU5JY7lKw6pBcmWAlmuai8Wap7Qb23EoTFI=
+Date: Wed, 6 Nov 2024 15:04:37 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: CK Hu =?utf-8?B?KOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+Cc: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Shu-hsiang Yang =?utf-8?B?KOaliuiIkue/lCk=?= <Shu-hsiang.Yang@mediatek.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"yunkec@chromium.org" <yunkec@chromium.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Yaya Chang =?utf-8?B?KOW8tembhea4hSk=?= <Yaya.Chang@mediatek.com>,
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	Teddy Chen =?utf-8?B?KOmZs+S5vuWFgyk=?= <Teddy.Chen@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"hidenorik@chromium.org" <hidenorik@chromium.org>,
+	Shun-Yi Wang =?utf-8?B?KOeOi+mghuWEhCk=?= <Shun-Yi.Wang@mediatek.com>
+Subject: Re: [PATCH v1 10/10] uapi: linux: add mediatek isp_7x camsys user api
+Message-ID: <20241106130437.GA16791@pendragon.ideasonboard.com>
+References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
+ <20241009111551.27052-11-Shu-hsiang.Yang@mediatek.com>
+ <ff96b314cdd3d52a14a5e91f79ec3097d04c4380.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <726659.1730898202.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 06 Nov 2024 13:03:22 +0000
-Message-ID: <726660.1730898202@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ff96b314cdd3d52a14a5e91f79ec3097d04c4380.camel@mediatek.com>
 
-If a call gets aborted (e.g. because kafs saw a signal) between it being
-queued for connection and the I/O thread picking up the call, the abort
-will be prioritised over the connection and it will be removed from
-local->new_client_calls by rxrpc_disconnect_client_call() without a lock
-being held.  This may cause other calls on the list to disappear if a race
-occurs.
+On Mon, Oct 14, 2024 at 05:56:40AM +0000, CK Hu (胡俊光) wrote:
+> Hi, Shu-hsiang:
+> 
+> On Wed, 2024-10-09 at 19:15 +0800, Shu-hsiang Yang wrote:
+> > Add UAPI for MediaTek ISP platform, providing user-space
+> > interfaces for the new camsys driver.
+> > 
+> > Signed-off-by: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>
+> > ---
+> 
+> [snip]
+> 
+> > +
+> > +/* MTK ISP camsys controls */
+> > +#define V4L2_CID_MTK_CAM_USED_ENGINE_LIMIT	(V4L2_CID_USER_MTK_CAM_BASE + 1)
+> > +#define V4L2_CID_MTK_CAM_BIN_LIMIT		(V4L2_CID_USER_MTK_CAM_BASE + 2)
+> > +#define V4L2_CID_MTK_CAM_FRZ_LIMIT		(V4L2_CID_USER_MTK_CAM_BASE + 3)
+> > +#define V4L2_CID_MTK_CAM_RESOURCE_PLAN_POLICY	(V4L2_CID_USER_MTK_CAM_BASE + 4)
+> > +#define V4L2_CID_MTK_CAM_USED_ENGINE		(V4L2_CID_USER_MTK_CAM_BASE + 5)
+> > +#define V4L2_CID_MTK_CAM_BIN			(V4L2_CID_USER_MTK_CAM_BASE + 6)
+> > +#define V4L2_CID_MTK_CAM_FRZ			(V4L2_CID_USER_MTK_CAM_BASE + 7)
+> > +#define V4L2_CID_MTK_CAM_USED_ENGINE_TRY	(V4L2_CID_USER_MTK_CAM_BASE + 8)
+> > +#define V4L2_CID_MTK_CAM_BIN_TRY		(V4L2_CID_USER_MTK_CAM_BASE + 9)
+> > +#define V4L2_CID_MTK_CAM_FRZ_TRY		(V4L2_CID_USER_MTK_CAM_BASE + 10)
+> > +#define V4L2_CID_MTK_CAM_PIXEL_RATE		(V4L2_CID_USER_MTK_CAM_BASE + 11)
+> > +#define V4L2_CID_MTK_CAM_FEATURE		(V4L2_CID_USER_MTK_CAM_BASE + 12)
+> > +#define V4L2_CID_MTK_CAM_SYNC_ID		(V4L2_CID_USER_MTK_CAM_BASE + 13)
+> > +#define V4L2_CID_MTK_CAM_RAW_PATH_SELECT	(V4L2_CID_USER_MTK_CAM_BASE + 14)
+> > +#define V4L2_CID_MTK_CAM_HSF_EN			(V4L2_CID_USER_MTK_CAM_BASE + 15)
+> > +#define V4L2_CID_MTK_CAM_PDE_INFO		(V4L2_CID_USER_MTK_CAM_BASE + 16)
+> > +#define V4L2_CID_MTK_CAM_MSTREAM_EXPOSURE	(V4L2_CID_USER_MTK_CAM_BASE + 17)
+> > +#define V4L2_CID_MTK_CAM_RAW_RESOURCE_CALC	(V4L2_CID_USER_MTK_CAM_BASE + 18)
+> > +#define V4L2_CID_MTK_CAM_TG_FLASH_CFG		(V4L2_CID_USER_MTK_CAM_BASE + 19)
+> > +#define V4L2_CID_MTK_CAM_RAW_RESOURCE_UPDATE	(V4L2_CID_USER_MTK_CAM_BASE + 20)
+> > +#define V4L2_CID_MTK_CAM_CAMSYS_HW_MODE		(V4L2_CID_USER_MTK_CAM_BASE + 21)
+> > +
+> 
+> Please give introduction of how to use these user space interface.
 
-Fix this by taking the client_call_lock when removing a call from whatever
-list its ->wait_link happens to be on.
+I'm very, very *not* thrilled by all this. It looks like a big pile of
+hacks really. Every single parameter used by those controls needs to be
+clearly documented, including explaining how they are used, in order for
+us to review the API. I suspect that many of the parameters should
+instead be handled through the ISP parameters buffers, or be controlled
+from standard V4L2 APIs.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
----
- include/trace/events/rxrpc.h |    1 +
- net/rxrpc/conn_client.c      |    4 ++++
- 2 files changed, 5 insertions(+)
+-- 
+Regards,
 
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index c2f087e90fbe..d03e0bd8c028 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -287,6 +287,7 @@
- 	EM(rxrpc_call_see_input,		"SEE input   ") \
- 	EM(rxrpc_call_see_release,		"SEE release ") \
- 	EM(rxrpc_call_see_userid_exists,	"SEE u-exists") \
-+	EM(rxrpc_call_see_waiting_call,		"SEE q-conn  ") \
- 	E_(rxrpc_call_see_zap,			"SEE zap     ")
- =
-
- #define rxrpc_txqueue_traces \
-diff --git a/net/rxrpc/conn_client.c b/net/rxrpc/conn_client.c
-index d25bf1cf3670..bb11e8289d6d 100644
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -516,6 +516,7 @@ void rxrpc_connect_client_calls(struct rxrpc_local *lo=
-cal)
- =
-
- 		spin_lock(&local->client_call_lock);
- 		list_move_tail(&call->wait_link, &bundle->waiting_calls);
-+		rxrpc_see_call(call, rxrpc_call_see_waiting_call);
- 		spin_unlock(&local->client_call_lock);
- =
-
- 		if (rxrpc_bundle_has_space(bundle))
-@@ -586,7 +587,10 @@ void rxrpc_disconnect_client_call(struct rxrpc_bundle=
- *bundle, struct rxrpc_call
- 		_debug("call is waiting");
- 		ASSERTCMP(call->call_id, =3D=3D, 0);
- 		ASSERT(!test_bit(RXRPC_CALL_EXPOSED, &call->flags));
-+		/* May still be on ->new_client_calls. */
-+		spin_lock(&local->client_call_lock);
- 		list_del_init(&call->wait_link);
-+		spin_unlock(&local->client_call_lock);
- 		return;
- 	}
- =
-
+Laurent Pinchart
 
