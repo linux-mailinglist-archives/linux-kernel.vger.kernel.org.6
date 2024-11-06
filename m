@@ -1,87 +1,147 @@
-Return-Path: <linux-kernel+bounces-397654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE849BDE92
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:11:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BEA59BDE9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A622857F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0F61C2128D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003361922E7;
-	Wed,  6 Nov 2024 06:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1861922EA;
+	Wed,  6 Nov 2024 06:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ovgt2lzU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bA5Wgbxz"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50697191F99;
-	Wed,  6 Nov 2024 06:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F048D1922D8;
+	Wed,  6 Nov 2024 06:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730873458; cv=none; b=TFqJiCUHhyE+w/ox3ttNLkvmWCFqTzodZHWk0YxKhS0SSUon9LX4TR0O3I6tTINRpqMcT1JGYGmFB5tfH9NhhUCjtNgGteO4eOsGCYkOVb2FTWtjXCmq7qImBpPN1eXI22hFml9VMho97G4Qbi74LonaAQZ33mZiuHy7Crdhzjk=
+	t=1730873553; cv=none; b=RLgzTwDC7ULh444A8Ap+5bIqPxboBTdO+HYc9lAwg0btd7jsO11eBXzMacHFHom7DJM1vIgzPhzYmfA7cCDgFIqwmfsSCbL6AjqtWeznigBTboAz+uP8KScGWsL4/MhCOtMDZVH5FIfgJ5ecGNc0/9Ap3euTgW0HYRT06vjIaMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730873458; c=relaxed/simple;
-	bh=ZIkhSG3SWSWDdb9gBg4UsYaD7jsdzVUXEoG0AgAwFSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SInMeccylVCHmAhVAzNkAhgFa4RETn9bAr24whGgk+4wIT4KV3YDdxVDCCjvnsT5NS7Bs5hOTyCVBr4fC+i1O3R3D7ZdcrKGuIqedpGydHaU9eRcDWGT3wJWCzkG9DaaaOrcGDrzZpNI84/3na1BBklOf3NkIH/3FeWNlaQbHSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ovgt2lzU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48340C4CECD;
-	Wed,  6 Nov 2024 06:10:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730873457;
-	bh=ZIkhSG3SWSWDdb9gBg4UsYaD7jsdzVUXEoG0AgAwFSc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ovgt2lzUBOZfLk7pABtIhToyXGkdTqkJKx+TNiQeY6ezEdfO3b7xC91czETuNOpMB
-	 y18w3iJ4nddoGe+2vGtUuaDePpLfPqI7yX7irQnJK/z17/blNFLDXyj+aF3cWdyT6l
-	 Ro+sUpdmvGt/ahk0ofPJbvb0pS2ucMFF9aJZH7Vc=
-Date: Wed, 6 Nov 2024 07:10:39 +0100
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-Cc: "sashal@kernel.org" <sashal@kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-	"shivani.agarwal@broadcom.com" <shivani.agarwal@broadcom.com>
-Subject: Re: 5.10.225 stable kernel cgroup_mutex not held assertion failure
-Message-ID: <2024110612-lapping-rebate-ed25@gregkh>
-References: <20240920092803.101047-1-shivani.agarwal@broadcom.com>
- <4f827551507ed31b0a876c6a14cdca3209c432ae.camel@oracle.com>
+	s=arc-20240116; t=1730873553; c=relaxed/simple;
+	bh=D0JUw2XPORngfrUnmh8daZdEZBtqjSX+Eg0u7JDObeI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C3RgcA3G9/9tUy85uQT/q3HAAVOugz0ZnLYChNc5Y+eJpkG5+U1+OgS4ZGtks/zAd33WCDNmKM4duFvG0hwbnk+fc3v/5HDxPgNv5jIZ14ChzjM7eGmOhcud1maNWoJVVYKHV0rT1Hr5h+a3vAOPKZHWL/qf44cNLxlu/kPh0H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bA5Wgbxz; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730873542; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=F1x8diBjxJZ/wui4j6BD6zQoh/rM6nkCqZnmZjoErlo=;
+	b=bA5WgbxzsEjmnuiwqp+S1YnVdLU6xmpUJqru8ye8glTWbTLwYPbL11IR4s2mU5rp8NpM8FRF2+aYM8DaErDKvaLxV/Ae5QiMLAjAIkMEPx5Pq/WmnRUogUQAK3dyJqpq/yeC08qBr3eqTJQB+FeaAU5KkeT221MiIh2ow278cXE=
+Received: from 30.246.162.170(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WIqAQVZ_1730873538 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 06 Nov 2024 14:12:19 +0800
+Message-ID: <4decd52b-a2c9-4e04-9793-4d1553689b92@linux.alibaba.com>
+Date: Wed, 6 Nov 2024 14:12:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f827551507ed31b0a876c6a14cdca3209c432ae.camel@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 2/3] mm: memory-failure: move return value
+ documentation to function declaration
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
+ robin.murphy@arm.com, Jonathan.Cameron@huawei.com, bp@alien8.de,
+ rafael@kernel.org, wangkefeng.wang@huawei.com, tanxiaofei@huawei.com,
+ mawupeng1@huawei.com, tony.luck@intel.com, linmiaohe@huawei.com,
+ naoya.horiguchi@nec.com, james.morse@arm.com, tongtiangen@huawei.com,
+ gregkh@linuxfoundation.org, will@kernel.org, jarkko@kernel.org,
+ linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20241104015430.98599-3-xueshuai@linux.alibaba.com>
+ <20241105151847.GF916505@yaz-khff2.amd.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20241105151847.GF916505@yaz-khff2.amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 07:29:38AM +0000, Siddh Raman Pant wrote:
-> Hello maintainers,
+
+
+在 2024/11/5 23:18, Yazen Ghannam 写道:
+> On Mon, Nov 04, 2024 at 09:54:29AM +0800, Shuai Xue wrote:
+>> Part of return value comments for memory_failure() were originally
+>> documented at the call site. Move those comments to the function
+>> declaration to improve code readability and to provide developers with
+>> immediate access to function usage and return information.
+>>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> ---
+>>   arch/x86/kernel/cpu/mce/core.c | 7 -------
+>>   mm/memory-failure.c            | 9 ++++++---
+>>   2 files changed, 6 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+>> index 2a938f429c4d..c90d8fcd246a 100644
+>> --- a/arch/x86/kernel/cpu/mce/core.c
+>> +++ b/arch/x86/kernel/cpu/mce/core.c
+>> @@ -1373,13 +1373,6 @@ static void kill_me_maybe(struct callback_head *cb)
+>>   		return;
+>>   	}
+>>   
+>> -	/*
+>> -	 * -EHWPOISON from memory_failure() means that it already sent SIGBUS
+>> -	 * to the current process with the proper error info,
+>> -	 * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
+>> -	 *
+>> -	 * In both cases, no further processing is required.
+>> -	 */
+>>   	if (ret == -EHWPOISON || ret == -EOPNOTSUPP)
+>>   		return;
+>>   
+>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>> index 96ce31e5a203..1c5098f32d48 100644
+>> --- a/mm/memory-failure.c
+>> +++ b/mm/memory-failure.c
+>> @@ -2209,9 +2209,12 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
+>>    * Must run in process context (e.g. a work queue) with interrupts
+>>    * enabled and no spinlocks held.
+>>    *
+>> - * Return: 0 for successfully handled the memory error,
+>> - *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
+>> - *         < 0(except -EOPNOTSUPP) on failure.
+>> + * Return:
+>> + *   0             - success,
 > 
-> On Fri, 20 Sep 2024 02:28:03 -0700, Shivani Agarwal wrote:
-> > Thanks Fedor.
-> > 
-> > Upstream commit 1be59c97c83c is merged in 5.4 with commit 10aeaa47e4aa and
-> > in 4.19 with commit 27d6dbdc6485. The issue is reproducible in 5.4 and 4.19
-> > also.
-> > 
-> > I am sending the backport patch of d23b5c577715 and a7fb0423c201 for 5.4 and
-> > 4.19 in the next email.
+> One more obvious one from this function:
 > 
-> Please backport these changes to stable.
+> 	-ENXIO        - memory not managed by the kernel
+
+Yes, will fix it.
+
 > 
-> "cgroup/cpuset: Prevent UAF in proc_cpuset_show()" has already been
-> backported and bears CVE-2024-43853. As reported, we may already have
-> introduced another problem due to the missing backport.
+>> + *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
+>> + *   -EHWPOISON    - the page was already poisoned, potentially
+>> + *                   kill process,
+>> + *   other negative values - failure.
+>>    */
+>>   int memory_failure(unsigned long pfn, int flags)
+>>   {
+>> -- 
+> 
+> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> Thanks,
+> Yazen
 
-What exact commits are needed here?  Please submit backported and tested
-commits and we will be glad to queue them up.
-
-thanks,
-
-greg k-h
+Thank you for valuable comments.
+Shuai
 
