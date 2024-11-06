@@ -1,150 +1,173 @@
-Return-Path: <linux-kernel+bounces-398767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3919BF5BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:52:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C919BF5CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:57:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0661C20E20
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C04C1F229F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176CB208992;
-	Wed,  6 Nov 2024 18:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2291320898D;
+	Wed,  6 Nov 2024 18:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="oPeTTcgh"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNijy397"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5183208236
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32C220820D;
+	Wed,  6 Nov 2024 18:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730919018; cv=none; b=K1loD5j0XmEWcE0Ni0d7/jCkb0gyJc3ZfpC5JGubmFqCxlIAdcgUlzlHr6/Oa696Y8nS7IlMTLaT1r25PHtpo0c9BMssxyP9aX9+HqRYvKdm4jGOStcWw/92J/e5KbnMlz/fxWxEsR9g8gk74hEqDxHJd+P1YlOCoEggipODY2A=
+	t=1730919411; cv=none; b=nlTDxrDmlQKqH6ZyYVyKIMeH+dMxOMHxq1HJ2rqzTxG3ngN/kR8e2VY2HzLpGNaSTD3TuZFFx7n7NOZj8zZCTAWNe/GNAiZji6A7rbJnMsyW7wtAeAiPmr8VV+7bQ247gk90eNSkhEzZH1oPMACsTiHeaaYeDKfwe6oTeBlAmAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730919018; c=relaxed/simple;
-	bh=m/jP5PT+AmPTonBurwprv2eoMljxeLQUdoQIl1TZrSA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=DpNipZ587czJzPTmkz4cWTL51XxakQhuQbgoBSBbUt97jclbI5oWn4nR/y3Ok+3JVlRsz/+GovqacuOhYEntBT/t1wI6V9yqm1sWZVYShXdQPs7Lnup9RDYdXtYaPR6iuF4bqqPg0uqtm7O7D9br7FUxgOkmH35KWcEvf2WhjvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=oPeTTcgh; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fb49c64aso72813e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:50:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1730919015; x=1731523815; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=m/jP5PT+AmPTonBurwprv2eoMljxeLQUdoQIl1TZrSA=;
-        b=oPeTTcghue+YtA9EHr99Gfsn9Tnx00lrti58Uh0I/Wb0gP/JgVmxrxWXBRuWgqIYX0
-         xYazM6LS7Cj2Xrn1HaOUd1ebCyRPDeOoavKD/o/KYXuz9q25a3DX3Jn6DiaOTTXu8KLd
-         x/rAGN17rr8uCx2CL1LlnHGa4NbiKtzBFBCLs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730919015; x=1731523815;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m/jP5PT+AmPTonBurwprv2eoMljxeLQUdoQIl1TZrSA=;
-        b=mQMMZuKWPVdx3PGr4QGbO0n7m+cbIsXz2puNYFmdNXUmcjnfe3J7z9fVCGIeWb6dq/
-         7rkQkZjf9uS6UVkwp7UqvKLzM8ObmVkcmwmadFWXiNCuu6BLkBh99KSm+thgkfnCm74L
-         Iqzv1FECeKePAyXOUQxtXuGUaLnBGmhamdL1N4Kq2rL8Frc4W137/DDHkD86VV7fUGAK
-         TM0tjmIsFR/d6iC/y2trDald8OIF7yn91n+I8yWYpsWUhGQTwA+wJKGD6U/10JJOQcyh
-         c8+3fj4i2ma+t7+ZO882RaK3CczsonSzCqQw9TA6thBIwLQ6h3S7nW2Z3nSX3m7889Yn
-         qwwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7MFvAuiVdMVseC4TotxjT7jAQc+BmQc39+get7O2Z9isxqMU48o/fhqSpZJGtqBxJTuDk4gdkRDePKrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAn7yz/eAUBYvUIyxND2C7tXUHPEQBbObJNDKf/bfSho3wJSCo
-	mimyfWXKqyaAvphikTzMlpF/cv38JnHFMQS4J40MCI9taYa6MlMxeaPcnO7f/XQ=
-X-Google-Smtp-Source: AGHT+IHrBZualZIjo+yXzXOuH9W/Qa3OnPeFKyRLr/uYJ3aHzcooB3niS5GxzRC4oz5EaJIIU2dcOg==
-X-Received: by 2002:a05:6512:12c7:b0:536:53e3:feae with SMTP id 2adb3069b0e04-53d65dca682mr16913344e87.11.1730919014705;
-        Wed, 06 Nov 2024 10:50:14 -0800 (PST)
-Received: from [10.125.226.166] ([185.25.67.249])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16d5a4esm316580166b.47.2024.11.06.10.50.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 10:50:14 -0800 (PST)
-Message-ID: <6449aa6c-43b1-40eb-ab54-48803481d11b@citrix.com>
-Date: Wed, 6 Nov 2024 18:50:12 +0000
+	s=arc-20240116; t=1730919411; c=relaxed/simple;
+	bh=hyMv01gLmOo95GlTaKcxVke3e6gveNY0nSXI8qWLs/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkRqu9ANopvElSABGMx6hDBGhXusEq3DLihVusoxQDrlTOhmZKw7kWh77THx4B2p9UrYYeBeNjLbkVr/GcwejgGCwFqLSfDhhqOZ2qxVcNR1BaCN064tRNPlUvzAMzFr2GYm4Tq3M5fET2z5D6phPGgoGCNXy52hGQUgC5NshEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNijy397; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730919410; x=1762455410;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hyMv01gLmOo95GlTaKcxVke3e6gveNY0nSXI8qWLs/U=;
+  b=nNijy397f7M5gzMgCSRjgyuyX2sZ1owdmEQm7DO9SYh5kSF9PwBeWBQR
+   Gn4qPqfQw7dc37+04rPDrY1byDfh1Qsf3f20Sw+O5YNJU29Uq0/KVJtH8
+   xpz58CLhn8ePWeItGsVrFyoPAp4AhwtPFb0cl2IJj/CF49MdY7vl6FBms
+   f+kaMGBaFwJOgm5mnBnXAfQCxxbzmv+nYXDbbhL+zA89cVf+z1l4t6vNV
+   uasxrPtXcapH1eamk2c7UxH01PYjwIMmsBSMJVwcHnGlxMjW+7nEOD62f
+   7+IwbRnu5EsShfSry1R4or+Jut5Yx0nD6FM2R/yQJHmQCLQrQfQTvYfM4
+   A==;
+X-CSE-ConnectionGUID: 5yglTmrqR0e1PG9eYOu54g==
+X-CSE-MsgGUID: 5zlORu1qRFiJuKn3pya3ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="41357896"
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="41357896"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 10:56:49 -0800
+X-CSE-ConnectionGUID: x7Xr4cpgR3+Y1QCOQpWbtg==
+X-CSE-MsgGUID: ux6hEzz2S0iV5lh/+fFXow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="89289554"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 06 Nov 2024 10:56:32 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8lCg-000pJS-1e;
+	Wed, 06 Nov 2024 18:56:30 +0000
+Date: Thu, 7 Nov 2024 02:56:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, brauner@kernel.org,
+	amir73il@gmail.com, hu1.chen@intel.com
+Cc: oe-kbuild-all@lists.linux.dev, miklos@szeredi.hu,
+	malini.bhandaru@intel.com, tim.c.chen@intel.com,
+	mikko.ylinen@intel.com, linux-unionfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: Re: [PATCH overlayfs-next v3 1/4] cred: Add a light version of
+ override/revert_creds()
+Message-ID: <202411070234.EOrhSGRU-lkp@intel.com>
+References: <20241105193514.828616-2-vinicius.gomes@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: thomas.de_schampheleire@nokia.com
-Cc: bp@alien8.de, linux-kernel@vger.kernel.org, x86@kernel.org
-References: <ZyulbYuvrkshfsd2@antipodes>
-Subject: Re: x86/amd late microcode thread loading slows down boot
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
- VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
- srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
- Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
- ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
- YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
- LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
- e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
- gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
- ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
- cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
- CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
- 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
- IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
- SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
- JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
- mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
- ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
- RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
- dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
- /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
- TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
- Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
- 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
- vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
- g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
- wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
- 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
- kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
- bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
- uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
- XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
- HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
- pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
- vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
- b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
- 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
- 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
- nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
- B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
- d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
- 6+ahAA==
-In-Reply-To: <ZyulbYuvrkshfsd2@antipodes>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105193514.828616-2-vinicius.gomes@intel.com>
 
-> Hi Borislav, all,
->
-> I am encountering varying delays in the boot process
+Hi Vinicius,
 
-I recognise those symptoms.
+kernel test robot noticed the following build warnings:
 
-https://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=f19a199281a23725beb73bef61eb8964d8e225ce
+[auto build test WARNING on next-20241105]
+[also build test WARNING on v6.12-rc6]
+[cannot apply to brauner-vfs/vfs.all linus/master v6.12-rc6 v6.12-rc5 v6.12-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-We found it in Xen in 2019, and were instructed by AMD to insert a TLB
-flush immediately after patchloading.
+url:    https://github.com/intel-lab-lkp/linux/commits/Vinicius-Costa-Gomes/cred-Add-a-light-version-of-override-revert_creds/20241106-033748
+base:   next-20241105
+patch link:    https://lore.kernel.org/r/20241105193514.828616-2-vinicius.gomes%40intel.com
+patch subject: [PATCH overlayfs-next v3 1/4] cred: Add a light version of override/revert_creds()
+config: x86_64-randconfig-121-20241106 (https://download.01.org/0day-ci/archive/20241107/202411070234.EOrhSGRU-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070234.EOrhSGRU-lkp@intel.com/reproduce)
 
-Looking at Linux, there's no such workaround.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411070234.EOrhSGRU-lkp@intel.com/
 
-It turns out that a side effect of patchloading on some CPUs leaves the
-mapping of the blob in the TLB (at whatever granularity) as fully UC. 
-When this happens to be a 2M/1G superpage, it causes whole lot of perf
-problems in unrelated areas.
+sparse warnings: (new ones prefixed by >>)
+   kernel/cred.c:104:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/cred.c:104:9: sparse:    struct cred *
+   kernel/cred.c:104:9: sparse:    struct cred const [noderef] __rcu *
+   kernel/cred.c:105:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/cred.c:105:9: sparse:    struct cred *
+   kernel/cred.c:105:9: sparse:    struct cred const [noderef] __rcu *
+   kernel/cred.c:121:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct atomic64_t const [usertype] *v @@     got struct atomic64_t const [noderef] __rcu * @@
+   kernel/cred.c:121:9: sparse:     expected struct atomic64_t const [usertype] *v
+   kernel/cred.c:121:9: sparse:     got struct atomic64_t const [noderef] __rcu *
+   kernel/cred.c:124:22: sparse: sparse: cast removes address space '__rcu' of expression
+   kernel/cred.c:127:17: sparse: sparse: cast removes address space '__rcu' of expression
+   kernel/cred.c:218:13: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
+   kernel/cred.c:218:13: sparse:     expected struct cred const *old
+   kernel/cred.c:218:13: sparse:     got struct cred const [noderef] __rcu *cred
+   kernel/cred.c:305:47: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
+   kernel/cred.c:305:47: sparse:     expected struct cred const *cred
+   kernel/cred.c:305:47: sparse:     got struct cred const [noderef] __rcu *cred
+   kernel/cred.c:305:30: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const [noderef] __rcu *real_cred @@     got struct cred const * @@
+   kernel/cred.c:305:30: sparse:     expected struct cred const [noderef] __rcu *real_cred
+   kernel/cred.c:305:30: sparse:     got struct cred const *
+   kernel/cred.c:306:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct atomic64_t const [usertype] *v @@     got struct atomic64_t const [noderef] __rcu * @@
+   kernel/cred.c:306:17: sparse:     expected struct atomic64_t const [usertype] *v
+   kernel/cred.c:306:17: sparse:     got struct atomic64_t const [noderef] __rcu *
+   kernel/cred.c:344:32: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const [noderef] __rcu *real_cred @@     got struct cred const * @@
+   kernel/cred.c:344:32: sparse:     expected struct cred const [noderef] __rcu *real_cred
+   kernel/cred.c:344:32: sparse:     got struct cred const *
+   kernel/cred.c:395:38: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *real_cred @@
+   kernel/cred.c:395:38: sparse:     expected struct cred const *old
+   kernel/cred.c:395:38: sparse:     got struct cred const [noderef] __rcu *real_cred
+   kernel/cred.c:400:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/cred.c:400:9: sparse:    struct cred const [noderef] __rcu *
+   kernel/cred.c:400:9: sparse:    struct cred const *
+   kernel/cred.c:519:46: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *override @@     got struct cred const [noderef] __rcu *cred @@
+   kernel/cred.c:519:46: sparse:     expected struct cred const *override
+   kernel/cred.c:519:46: sparse:     got struct cred const [noderef] __rcu *cred
+   kernel/cred.c:301:19: sparse: sparse: dereference of noderef expression
+   kernel/cred.c: note: in included file:
+>> include/linux/cred.h:182:41: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct cred const *old @@     got struct cred const [noderef] __rcu *cred @@
+   include/linux/cred.h:182:41: sparse:     expected struct cred const *old
+   include/linux/cred.h:182:41: sparse:     got struct cred const [noderef] __rcu *cred
 
-I suggest Linux take the same approach.
+vim +182 include/linux/cred.h
 
-~Andrew
+   174	
+   175	/*
+   176	 * Override creds without bumping reference count. Caller must ensure
+   177	 * reference remains valid or has taken reference. Almost always not the
+   178	 * interface you want. Use override_creds()/revert_creds() instead.
+   179	 */
+   180	static inline const struct cred *override_creds_light(const struct cred *override_cred)
+   181	{
+ > 182		const struct cred *old = current->cred;
+   183	
+   184		rcu_assign_pointer(current->cred, override_cred);
+   185		return old;
+   186	}
+   187	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
