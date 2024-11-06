@@ -1,164 +1,140 @@
-Return-Path: <linux-kernel+bounces-398656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB249BF43F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:27:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67939BF45A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0DFA1C23652
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A042285965
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7A1206941;
-	Wed,  6 Nov 2024 17:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bugNXo+A"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954302071E2;
+	Wed,  6 Nov 2024 17:33:13 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D881D1F9ABB
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C892038A6;
+	Wed,  6 Nov 2024 17:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730914029; cv=none; b=ghq1vMJdzMi13iqDmfmprGeacHLK8KtTxrEczTP+xY2R3zbCPYm/l5HJf5UcnruQ8I8TEM+PpgqEqzTLbpN4K7dam/xA4+2/ZvaU26zCBFCRorl1PEr2eZn0ebToQVsgEt2+4o9vKJ4nMkptr8XWgJ7gQZAtTxpMRa0NaU0Nywk=
+	t=1730914393; cv=none; b=jUEC6fz0LmgDmf/Y5MNe5WUC6sThloyAvKN1vWr0p/nEzhX9t5r9FmdeZ1At4i9miEiTOywM5IGTSSa7jke2cECO9+AbpLqMPoCozwM2LqybRBAz8cH50syIe57XBNwaBhUDC8FaIJBLgKUKUbys69FBJ8UwcE875u2qPitny7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730914029; c=relaxed/simple;
-	bh=H1qn31TfTmOYcOTa1KZpe7FrkJMF+1dJBpzVEuG39BE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WBOtuP2SyzMDaqz5hHmSxOPEyulGijbevtW/c1JIJHP6D5iwtmlAnjx6qm4wd3Ba7x4eX+UwZDu7ZURkxJphlf066Ji/CTP8ydWtb1tlt/6Q4GIfOV4xR1ktBAuxjK1NFleqqf/+0BwWe5ZlY4IY0mtkN8k4xTNhrq7QvktZrp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bugNXo+A; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C815B40E0261;
-	Wed,  6 Nov 2024 17:27:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id dy7xL1aM1vUV; Wed,  6 Nov 2024 17:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730914018; bh=Dvy/HIvuV86I1cm58jlPufMKEKiji6KXZ5ZtXk6Dipg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bugNXo+AOSQkQkppNpoxw/s47rvyVY7umSvx0ASnIrhbRVjG/LsmtMR/XhM2rKxfg
-	 YWqSixElct3YYK8g3q3mcZszKlOUeI/PKCgfjD307uD78PhamMR5RYL5iC7VCW94Ow
-	 uT1SlfSEyx20M1jGUKOz7ej6eCmha2dorO9ePn4FUq+P6OPjYBi3FzdcldwZhBwAIO
-	 ToVoFkHPeUtRVYB5utFrk+wjdn76pOgdVkT8ycyZCsrp8ERk/JAJ7xQqsuI5D2YG/o
-	 alSobgc80oCNTefaWorXc6B4047vShZ082r/tg1nPh2QQ3v4vx1KXtJpdc6WqrGcs0
-	 xQTHf3F9/1CcRXdNNzQGeSck9tgeZO4e0gjw0M6OuS7dyBjNoW/E3HeUMEa93FSjOT
-	 9vRQIn/YlRIGtCdQYv8QGQkxMRViTk4dqJmmoT6joLRA2XCwEQU/2BNUHczsdUyp7x
-	 eK5gRlfHM1dUx+zoGOypEmx5OTQEYRxHwBNDuR/9k2URrOpoNAZRXrAetKWIWYNg00
-	 gmIRe1/ggMmnrFDDTYtIvVqMnfUKv+/8cBQlKTUVOGRlZszAFhTe1o8iYcypZ2G+A8
-	 IpR/zPGWldPpKnmZGEJp97nz27gvZBcdyevyjVu3jcUquru2KoRSdu1AprqvAdNQ5z
-	 G3I71k1RvzBr6LVSe2be7oWc=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 819F540E0163;
-	Wed,  6 Nov 2024 17:26:54 +0000 (UTC)
-Date: Wed, 6 Nov 2024 18:26:47 +0100
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-	linux-coco@lists.linux.dev
-Subject: [RFC PATCH] x86/sev: Cleanup vc_handle_msr()
-Message-ID: <20241106172647.GAZyum1zngPDwyD2IJ@fat_crate.local>
+	s=arc-20240116; t=1730914393; c=relaxed/simple;
+	bh=ydyhpAVLDcyskkiqgsbfEtKnDrTEwMD6GrknhaHy9Ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ExISe7DABnOX5maIm7WS/uHqiyWg/5YuHuydjvkx6iu1RyHomB4xnx6D/kvcjIasc7AQQNMdR2B2xJokvXoF5zEvrNYkNuk/3PpPcYstwxbOxiK0NK/HV2kEFulDpjs6L8LzlW8f2nLw8TPdxhmVY8sAtdiZ8foirbchyyUSNcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 0BCD71C00A8; Wed,  6 Nov 2024 18:27:40 +0100 (CET)
+Date: Wed, 6 Nov 2024 18:27:39 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hagar@microsoft.com, broonie@kernel.org,
+	Wang Jianzheng <wangjianzheng@vivo.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4.19 000/350] 4.19.323-rc1 review
+Message-ID: <ZyunCxYg0pYUhl2F@duo.ucw.cz>
+References: <20241106120320.865793091@linuxfoundation.org>
+ <CA+G9fYu-X4w24M9NgwWU4=vOsMxq8CzmCGo+BC-=t9e-R0NwnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pJRKqg6bCQhm53P0"
 Content-Disposition: inline
-
-Hi,
-
-I think we should clean this one up before in-flight patchsets make it more
-unreadable and in need for an even more cleanup.
-
----
-Carve out the MSR_SVSM_CAA into a helper with the suggestion that
-upcoming future users should do the same. Rename that silly exit_info_1
-into what it actually means in this function - whether the MSR access is
-a read or a write.
-
-No functional changes.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/coco/sev/core.c | 34 +++++++++++++++++++---------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 97f445f3366a..1efb4a5c5ab3 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -1406,35 +1406,39 @@ int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
- 	return 0;
- }
- 
-+/* Writes to the SVSM CAA MSR are ignored */
-+static enum es_result __vc_handle_msr_caa(struct pt_regs *regs, bool write)
-+{
-+	if (write)
-+		return ES_OK;
-+
-+	regs->ax = lower_32_bits(this_cpu_read(svsm_caa_pa));
-+	regs->dx = upper_32_bits(this_cpu_read(svsm_caa_pa));
-+
-+	return ES_OK;
-+}
-+
- static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
- {
- 	struct pt_regs *regs = ctxt->regs;
- 	enum es_result ret;
--	u64 exit_info_1;
-+	bool write;
- 
- 	/* Is it a WRMSR? */
--	exit_info_1 = (ctxt->insn.opcode.bytes[1] == 0x30) ? 1 : 0;
--
--	if (regs->cx == MSR_SVSM_CAA) {
--		/* Writes to the SVSM CAA msr are ignored */
--		if (exit_info_1)
--			return ES_OK;
--
--		regs->ax = lower_32_bits(this_cpu_read(svsm_caa_pa));
--		regs->dx = upper_32_bits(this_cpu_read(svsm_caa_pa));
-+	write = ctxt->insn.opcode.bytes[1] == 0x30;
- 
--		return ES_OK;
--	}
-+	if (regs->cx == MSR_SVSM_CAA)
-+		return __vc_handle_msr_caa(regs, write);
- 
- 	ghcb_set_rcx(ghcb, regs->cx);
--	if (exit_info_1) {
-+	if (write) {
- 		ghcb_set_rax(ghcb, regs->ax);
- 		ghcb_set_rdx(ghcb, regs->dx);
- 	}
- 
--	ret = sev_es_ghcb_hv_call(ghcb, ctxt, SVM_EXIT_MSR, exit_info_1, 0);
-+	ret = sev_es_ghcb_hv_call(ghcb, ctxt, SVM_EXIT_MSR, !!write, 0);
- 
--	if ((ret == ES_OK) && (!exit_info_1)) {
-+	if ((ret == ES_OK) && (!write)) {
- 		regs->ax = ghcb->save.rax;
- 		regs->dx = ghcb->save.rdx;
- 	}
--- 
-2.43.0
+In-Reply-To: <CA+G9fYu-X4w24M9NgwWU4=vOsMxq8CzmCGo+BC-=t9e-R0NwnQ@mail.gmail.com>
 
 
--- 
-Regards/Gruss,
-    Boris.
+--pJRKqg6bCQhm53P0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Hi!
+
+> On Wed, 6 Nov 2024 at 12:07, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 4.19.323 release.
+> > There are 350 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patc=
+h-4.19.323-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git linux-4.19.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+>=20
+> The arm builds failed with gcc-8, gcc-12 on the Linux stable-rc
+> linux-4.19.y and linux-5.4.y.
+>=20
+> First seen on Linux v4.19.322-351-ge024cd330026
+>   Good: v4.19.321-96-g00a71bfa9b89
+>   Bad:  v4.19.322-351-ge024cd330026
+
+We see same failure.
+
+drivers/pinctrl/mvebu/pinctrl-dove.c: In function 'dove_pinctrl_probe':
+3778
+drivers/pinctrl/mvebu/pinctrl-dove.c:791:9: error: implicit declaration of =
+function 'devm_platform_get_and_ioremap_resource'; did you mean 'devm_platf=
+orm_ioremap_resource'? [-Werror=3Dimplicit-function-declaration]
+3779
+  base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &mpp_res);
+3780
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3781
+         devm_platform_ioremap_resource
+3782
+drivers/pinctrl/mvebu/pinctrl-dove.c:791:7: warning: assignment to 'void *'=
+ from 'int' makes pointer from integer without a cast [-Wint-conversion]
+3783
+  base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &mpp_res);
+3784
+       ^
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/1=
+529999662
+
+Best regards,
+									Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--pJRKqg6bCQhm53P0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZyunCwAKCRAw5/Bqldv6
+8lPGAJ9oMNWV03OHZaARiHp2lZHDi0qgAQCeICvyy50v6eFhf5qYmsRHSy5a/mA=
+=P71y
+-----END PGP SIGNATURE-----
+
+--pJRKqg6bCQhm53P0--
 
