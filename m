@@ -1,71 +1,70 @@
-Return-Path: <linux-kernel+bounces-398627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB789BF3D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:02:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DA89BF3D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F068E1C236B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491E31F236CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3AA2064EC;
-	Wed,  6 Nov 2024 17:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0938206515;
+	Wed,  6 Nov 2024 17:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y1Z5JiAh"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WAnxO6mK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12271205129
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825FE20514F;
+	Wed,  6 Nov 2024 17:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730912524; cv=none; b=fICdPYyVi+C8P3nbRO8qlZWlgB0NjMgfwfB/XlOGtRCNnTvJ3x1wW4yDcVQ3XE7XWJidbHc8yMab5IIQHFHhRTE+Iiq2SYVJsBWyNqijLFScthLhR1jpPDeB1b8iMxeCQrWViNoRen7ENovifM4ASGnxFehytBELQfZS4PqI4P8=
+	t=1730912525; cv=none; b=epnWUIcl5mp3jZHzIi6SCEwcJQF2R2nkxyXIT3O0JycO/KSoCAN1ZKlY1Lv8hmeHj06ndMu21I9/kopVZW4oMwEQlBTInNYXKc7jh+sBAnzez0yxxBG16nKndBS2L5k+m2+nD4TyoMUZ1bUKKC/uRik11btddMmUppuDLnzvxtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730912524; c=relaxed/simple;
-	bh=q1WeBHGD5h1tHIzQJ3J0B4q74CaQ/9M3+/9g556AVjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LE6ybMjn9Zws2DyWtvJiAGLlYTujLB8VdSy/JIDITuXNPRgGEupUSKHwr3fRxVIIE7ljJIWM2Wi2CzTXs6cscvkD6FWKjyMU8vVXimHPg8XpW1FyIZtwPVOgztI0k9l8GR8yodMYrQyguuu+J5Xodm1QMJ1wJERgtTM2HNsuYb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y1Z5JiAh; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3c00f2c75so232195ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 09:02:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730912521; x=1731517321; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CGwC2Hl3MxKojtjjrNlDFREWkdarOnfG+IIyc3QOx0E=;
-        b=Y1Z5JiAhxUTxhmEZ2RQy+weWn8XXMrhpdctCJMcd5GMVOl0rhEurvIpqIlOv+DDaox
-         ls2t/UaRZ0Vwuez2eJv3MWkgtj4htC4v3T4ky/LqcdCwb7B2Y7SIgNrDs3xRVvPRt77v
-         l8AXsofuhgPVW9oV82cQdi67Fxrnzb5eNqozU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730912521; x=1731517321;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGwC2Hl3MxKojtjjrNlDFREWkdarOnfG+IIyc3QOx0E=;
-        b=b25O/iHbSjjHM5LKokyQqmeCAOk+aMR47bOxctiC65R95aB1iI5VTWiIGmhiSnkPyK
-         w+PSziOEoMqxsG/RwmAKrkvmKEtYog7+xdpfTZ08/3knyU3vbQN90v9ZlBFPid+uz6KN
-         EBeIZXcflvE4vpw2MhL6eFaqk27K37IvQRBB+RFfGNbaLeaTZcDcz7wZMjrMXNh21XVh
-         bcDPDOW1tbp1dnQvOve9Wp9AGrEoGnzDhAkbHDh1YFyWJN3LzZsSOxU6c/UaZOe7PmhJ
-         aa2ktxjFNuvaBzND365FPIG87HgijFpgOqUJ7p7VwXrwIFnoyYdT3eSu69g3wNWnJuCH
-         /wVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdOkhB5C7yUvTBJ4y0CPQolfFPYMM2nS6BFKtb0GvTktIWGQVxp2Yv1FLt8hxxIlIrNXB4KO/95JnQ/3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0b11Icq19wlEjev72/mbBWchUHQkY+6GlXinEu5EU5ewFYi2j
-	4Wqm2SDo7m9oetOS2rgDLqVInWpJRDuLUDX/xwZ7MIQxqQatJg0J+uZaE+MJjfv7N1r/6yqsZXm
-	H
-X-Google-Smtp-Source: AGHT+IGpeyiohwTOy3CiKjinzWrPekKa3XkMj9Vgkkbqp5ZVCiUarzkfx8daEIGTgTOBqI7LMwudKg==
-X-Received: by 2002:a05:6e02:1946:b0:3a3:b527:e809 with SMTP id e9e14a558f8ab-3a6b0327357mr188862495ab.14.1730912520864;
-        Wed, 06 Nov 2024 09:02:00 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6bd2da409sm26213575ab.57.2024.11.06.09.01.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 09:02:00 -0800 (PST)
-Message-ID: <920c61a8-4c5b-4386-a072-7c4e0f3a48c8@linuxfoundation.org>
-Date: Wed, 6 Nov 2024 10:01:59 -0700
+	s=arc-20240116; t=1730912525; c=relaxed/simple;
+	bh=zCXWyEVldkd9KNzFKA2eZUdeCgmR3MFPxkTievOg+tY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oqxpdh/aiKICgkyPd1RdvOsB3ZpBjTmzDf/El2yku85fAENuJmaiNFlo4hrKaINbOfvkukbqLlCaXhs5/QizTWCLmZodOXjzHo8ROul6bhbXm93xkqIY2S8JRQkgyTDMnR46o3VODRuRjnmNsVDy6r4diYw0ndVeURTqZFvztrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WAnxO6mK; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730912524; x=1762448524;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=zCXWyEVldkd9KNzFKA2eZUdeCgmR3MFPxkTievOg+tY=;
+  b=WAnxO6mKrrDgFmKwGc7yLWHdKjhFcsGJybnvD9nxUmcsruCy2j/jMBV/
+   dzWhsbW22i3ai4KlHR0PrSOMLdE5so+V0zgCO491ZfEjx8LK9WXNM3P34
+   Q8y00w92WpWB3KYc4WHzdVhQGnYYKm3eh9TgW9hz+PLaQT2X4NYbssRap
+   e2zzvJLI6d3sZCVx862klUzp2SrFUzo+teWG3V+DtOrxPV9xGOVhNb1ii
+   hQDetxxR0u86yrHi5HHV5LczQoEORZptY5lmCUvN7XDSBq6wJDApGhpNA
+   DYcP9eh9w1UNbWEN+7UcfWiujt93cefCev3fHmLHdPH4xU6Dp5RFIOXRx
+   Q==;
+X-CSE-ConnectionGUID: FXcahGssTs6Ry0dMiVdJcA==
+X-CSE-MsgGUID: HgjF2itFTrmIO6TgXHcBbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30901917"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30901917"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:02:03 -0800
+X-CSE-ConnectionGUID: 7ak/XTZtQjWlStfORYySYA==
+X-CSE-MsgGUID: A0BgLoLeTcCFccYCUB2mzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="89238194"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:02:02 -0800
+Received: from [10.212.82.230] (kliang2-mobl1.ccr.corp.intel.com [10.212.82.230])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 95DCC20B5703;
+	Wed,  6 Nov 2024 09:02:00 -0800 (PST)
+Message-ID: <452ec98c-b715-4e11-a605-0d6a1aafb91d@linux.intel.com>
+Date: Wed, 6 Nov 2024 12:01:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,197 +72,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] selftests: tmpfs: Add kselftest support to tmpfs
-To: Shivam Chaudhary <cvam0000@gmail.com>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org
-References: <20241105202639.1977356-1-cvam0000@gmail.com>
- <20241105202639.1977356-3-cvam0000@gmail.com>
+Subject: Re: [PATCH v4 02/22] perf jevents: Add idle metric for Intel models
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Perry Taylor <perry.taylor@intel.com>, Samantha Alt
+ <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>,
+ Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
+References: <20240926175035.408668-1-irogers@google.com>
+ <20240926175035.408668-3-irogers@google.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241105202639.1977356-3-cvam0000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240926175035.408668-3-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/5/24 13:26, Shivam Chaudhary wrote:
-> Replace direct error handling with 'ksft_test_result_*',
-> 'ksft_print_msg' and KSFT_SKIP  macros for better reporting.
-> 
-> Test logs:
-> 
-> Before change:
-> 
-> - Without root
->   error: unshare, errno 1
-> 
-> - With root
->   No, output
-> 
-> After change:
-> 
-> - Without root
->   TAP version 13
->   1..1
->    ok 1 # SKIP This test needs root to run
-> 
-> - With root
->   TAP version 13
-> 1..1
->    unshare(): Creat new mount namespace: Success.
->    mount(): Root filesystem private mount: Success
->    mount(): Mounting tmpfs on /tmp: Success
->    openat(): Open first temporary file: Success
->    linkat(): Linking the temporary file: Success
->    openat(): Opening the second temporary file: Success
 
-This is too noisy - there is no need to add message in
-every single conditional. Errors make sense, bot don't
-add unnecessary messages.
 
->    ok 1 Test : Success
->    Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+On 2024-09-26 1:50 p.m., Ian Rogers wrote:
+> Compute using the msr PMU the percentage of wallclock cycles where the
+> CPUs are in a low power state.
 > 
-> Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
+>  tools/perf/pmu-events/intel_metrics.py | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
 > 
->   .../selftests/tmpfs/bug-link-o-tmpfile.c      | 66 ++++++++++++++-----
->   1 file changed, 49 insertions(+), 17 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> index cdab1e8c0392..f2e6a5b20698 100644
-> --- a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> +++ b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> @@ -42,39 +42,71 @@ int main(void)
->   
->   	if (unshare(CLONE_NEWNS) == -1) {
->   		if (errno == ENOSYS || errno == EPERM) {
-> -			fprintf(stderr, "error: unshare, errno %d\n", errno);
-> -			return 4;
-> +			ksft_print_msg("unshare() error: unshare, errno %d\n", errno);
-> +			exit(KSFT_SKIP);
+> diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
+> index 58e23eb48312..f875eb844c78 100755
+> --- a/tools/perf/pmu-events/intel_metrics.py
+> +++ b/tools/perf/pmu-events/intel_metrics.py
+> @@ -1,7 +1,8 @@
+>  #!/usr/bin/env python3
+>  # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> -from metric import (d_ratio, has_event, Event, JsonEncodeMetric, JsonEncodeMetricGroupDescriptions,
+> -                    LoadEvents, Metric, MetricGroup, Select)
+> +from metric import (d_ratio, has_event, max, Event, JsonEncodeMetric,
+> +                    JsonEncodeMetricGroupDescriptions, LoadEvents, Metric,
+> +                    MetricGroup, Select)
+>  import argparse
+>  import json
+>  import math
+> @@ -11,6 +12,16 @@ import os
+>  _args = None
+>  interval_sec = Event("duration_time")
+>  
+> +def Idle() -> Metric:
+> +  cyc = Event("msr/mperf/")
+> +  tsc = Event("msr/tsc/")
+> +  low = max(tsc - cyc, 0)
+> +  return Metric(
+> +      "idle",
+> +      "Percentage of total wallclock cycles where CPUs are in low power state (C1 or deeper sleep state)",
+> +      d_ratio(low, tsc), "100%")
 
-Same comment - you can simply use approrpiare ksft_exit_*() routine.
+I'm not sure if the metrics is correct, especially considering the mperf
+is a R/W register. If someone clear the mperf, the restuls must be wrong.
 
-> +
-> +		}
-> +		else{
-> +			fprintf(stderr, "unshare() error: unshare, errno %d\n", errno);
-> +			return 1;
-
-Since you are converting the test to use KSFT_ codes,
-why not change this one? Shound't this ksft_exit_fail_msg()
-
-
-> +
->   		}
-> -		fprintf(stderr, "error: unshare, errno %d\n", errno);
-> -		return 1;
-
-Since you are converting the test to use KSFT_ codes,
-why not change this one? Shound't this ksft_exit_fail_msg()
-
-> +	}
-> +	
-> +	else {
-> +		ksft_print_msg("unshare(): Creat new mount namespace: Success.\n");
-
-Spelling - did you tun checkpatch on this?
-
-> +
->   	}
-> -	if (mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL) == -1) {
-> -		fprintf(stderr, "error: mount '/', errno %d\n", errno);
-> -		return 1;
-
-Since you are converting the test to use KSFT_ codes,
-why not change this one? Shound't this ksft_exit_fail_msg()
-
-Same comment on using KSFT_ codes consistently.
+Thanks,
+Kan
 
 > +
 > +
-> +
-> +	if (mount(NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL) == -1) {
-> +		ksft_print_msg("mount() error: Root filesystem private mount: Fail %d\n", errno);
-> +		exit(KSFT_SKIP);
+>  def Rapl() -> MetricGroup:
+>    """Processor power consumption estimate.
+>  
+> @@ -68,6 +79,7 @@ def main() -> None:
+>    LoadEvents(directory)
+>  
+>    all_metrics = MetricGroup("", [
+> +      Idle(),
+>        Rapl(),
+>    ])
+>  
 
-Why is this a skip?
-
-Don't need two calls - ksft_exit_* calls
-
-Since you are converting the test to use KSFT_ codes,
-why not change this one? Shound't this ksft_exit_fail_msg()
-
-> +	} else {
-> +		ksft_print_msg("mount(): Root filesystem private mount: Success\n");
-
-Is this message necessary?
-
->   	}
->   
-> +
->   	/* Our heroes: 1 root inode, 1 O_TMPFILE inode, 1 permanent inode. */
->   	if (mount(NULL, "/tmp", "tmpfs", 0, "nr_inodes=3") == -1) {
-> -		fprintf(stderr, "error: mount tmpfs, errno %d\n", errno);
-> -		return 1;
-> +		ksft_print_msg("mount() error: Mounting tmpfs on /tmp: Fail %d\n", errno);
-> +		exit(KSFT_SKIP);
-> +	} else {
-> +		ksft_print_msg("mount(): Mounting tmpfs on /tmp: Success\n");
->   	}
->   
-> -	fd = openat(AT_FDCWD, "/tmp", O_WRONLY|O_TMPFILE, 0600);
-> +
-> +	fd = openat(AT_FDCWD, "/tmp", O_WRONLY | O_TMPFILE, 0600);
->   	if (fd == -1) {
-> -		fprintf(stderr, "error: open 1, errno %d\n", errno);
-> -		return 1;
-> +		ksft_print_msg("openat() error: Open first temporary file: Fail %d\n", errno);
-> +		exit(KSFT_SKIP);
-> +	} else {
-> +		ksft_print_msg("openat(): Open first temporary file: Success\n");
->   	}
-> +
-> +
->   	if (linkat(fd, "", AT_FDCWD, "/tmp/1", AT_EMPTY_PATH) == -1) {
-> -		fprintf(stderr, "error: linkat, errno %d\n", errno);
-> -		return 1;
-> +		ksft_print_msg("linkat() error: Linking the temporary file: Fail %d\n", errno);
-> +		/* Ensure fd is closed on failure */
-> +		close(fd);
-> +		exit(KSFT_SKIP);
-> +	} else {
-> +		ksft_print_msg("linkat(): Linking the temporary file: Success\n");
->   	}
->   	close(fd);
->   
-> -	fd = openat(AT_FDCWD, "/tmp", O_WRONLY|O_TMPFILE, 0600);
-> +
-> +	fd = openat(AT_FDCWD, "/tmp", O_WRONLY | O_TMPFILE, 0600);
->   	if (fd == -1) {
-> -		fprintf(stderr, "error: open 2, errno %d\n", errno);
-> -		return 1;
-> +		ksft_print_msg("openat() error: Opening the second temporary file: Fail %d\n", errno);
-> +		exit(KSFT_SKIP);
-> +	} else {
-> +		ksft_print_msg("openat(): Opening the second temporary file: Success\n");
->   	}
->   
-> +    ksft_test_result_pass("Test : Success\n");
-
-Why do you need a message additional message here.
-
-> +	ksft_exit_pass();
->   	return 0;
->   }
-> +
-
-
-I didn't call out every single error path. Same comments apply
-to all. Please get rid of unnecessary success path messages.
-
-If the output is too noisy it is hard to read and understand.
-
-thanks,
--- Shuah
 
