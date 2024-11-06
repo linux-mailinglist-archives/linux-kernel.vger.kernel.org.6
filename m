@@ -1,189 +1,134 @@
-Return-Path: <linux-kernel+bounces-399004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F067C9BF92C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:21:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BAB9BF942
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 867BCB21B95
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:21:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985D71F22499
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2551320C313;
-	Wed,  6 Nov 2024 22:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF2B20CCF8;
+	Wed,  6 Nov 2024 22:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="nY4hwt+D"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYOW6ssN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009501D0E23
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51BD20C313;
+	Wed,  6 Nov 2024 22:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730931672; cv=none; b=TAs0N03pYYUl+K+Bgihx38qXE4Fp3O0jByzRiH6dVE4f3wbxnq8cR+MbyFcQhAg0du6iJSaUSRV0PGiUHXCPfkToPUm3WIv75ADDNDSfrGANc3YR/CF39hTCNVlMMW7vp36A9YKnZT/cX13cmucmeGph4qz+kFBEvLvo7lmX0c8=
+	t=1730932018; cv=none; b=UFDQ5WW31y6gEaijGklbQHCbz/CrwJaMDhGYriwZn7fi3kn+2rIsoHf9ciMSsKLxwwo0aPc0XGVmI+Cqmq4DxKCYqi6XXt2MhR32K5JrHdwlr/QtlojI1wh6weNUKjso5sZL3EKPL1JIYKOWKTXDcpBbCJuo1ZIiVSBGcwHrdgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730931672; c=relaxed/simple;
-	bh=/ltJRxxeRqhazNb+BzXmlDc1/j1rX/Q0zzTl/znvvaY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AynzQpyG6XIHl/5kyuIRRctPPncedegvsmB/uoFWz6n74R2OSQ3SVzdaKhHBX6dsWSSZu/CEWDFjAo0a4yqzteHoNWg3cXFd5BDFkkq/L7ncKsSNW90sT45R5EzdwuPq4oYNZOsGbIO21ns8ig/EWjeSrHmsWoXv4jYjeF7ft4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=nY4hwt+D; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9590C2C01F6;
-	Thu,  7 Nov 2024 11:21:00 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1730931660;
-	bh=c36n9aUbpZTu085KuVii6yBbMfoXLQ3MCyUi3chLmZ0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nY4hwt+DijYY1bHY/1DJBt/z9rX5lkQzEjUGtmwjju7V4ErhjGzZYDnRCvdmSeIZ1
-	 KHVsp00A1hnpknygyQSoUcT/2zEs61kJ9M1c9gebOC7LafP2Uo10KeugCYeMHrqccu
-	 C/zN7maQjKs489xTvhGlnH6W7bkzBDMiWonrASfEYPJYyaEOn8l59kr5tqhHpXwb28
-	 0HQx00aOMex8GWZoR3IJLFEf4RtkVH7B/+KaDip1eUcIEAI2Q2cBumELHW3kw13OXr
-	 TRoNnYcnkaXao3GDweKXmSmN5paTmuq5f/Cs766VtCW+sVWQQAXSI/4/x1Lw0eYWpT
-	 zIF0ttTjYuf0Q==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B672bebcc0000>; Thu, 07 Nov 2024 11:21:00 +1300
-Received: from pauld2-dl.ws.atlnz.lc (pauld-dl.ws.atlnz.lc [10.33.23.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 7C6E913ED6B;
-	Thu,  7 Nov 2024 11:21:00 +1300 (NZDT)
-Received: by pauld2-dl.ws.atlnz.lc (Postfix, from userid 1684)
-	id 7886540758; Thu,  7 Nov 2024 11:21:00 +1300 (NZDT)
-From: Paul Davey <paul.davey@alliedtelesis.co.nz>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Daniel Golle <daniel@makrotopia.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paul Davey <paul.davey@alliedtelesis.co.nz>
-Subject: [PATCH net-next v2] net: phy: aquantia: Add mdix config and reporting
-Date: Thu,  7 Nov 2024 11:20:57 +1300
-Message-ID: <20241106222057.3965379-1-paul.davey@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730932018; c=relaxed/simple;
+	bh=OC5e4KnBysEavl1YeXx88vJZKGAoloUIPo2wglacvfg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Hn/3hTMapP32xM6VxuWlSVf4uGIC3IlXK6W+wZx+qMn4CRv1ICOG0l4JpCoph/X8UIHZP1daHPBZJQE0N802Kbahw31aEOotPJAwnUWdKfViwwIcVRr+vxBZxUTYIhTX/dDeyCCL3kJ7LUT1K6wYTpPQzSG2Cegtnt9ufudcOs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYOW6ssN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E87DCC4CEC6;
+	Wed,  6 Nov 2024 22:26:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730932018;
+	bh=OC5e4KnBysEavl1YeXx88vJZKGAoloUIPo2wglacvfg=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=CYOW6ssNu/aWE2b05S3LBoWLO+mIYt5+46hev9722vB11Z1yGBiGfmM/T1mxgO7xj
+	 y/FSOQq976hvxWKY69f0ZzSwzXdDScWkCGzOris7Z7Pqi+fbhRaJxS77J2iECB5rmE
+	 49rcyEFStCbfDECKeH116nqAEV6v3G79HHbAXfvrrkKoOYMUyUquY0g+y+4HvAT/L2
+	 XY7pjBdBDE8D95bstgVyOqGrD2qjMAKwIWblo+Awm7HpQ75b2Fq91RvPBI44v2ZSem
+	 7SsJtt+B/1nUt9QTgPh1WI6c3/YDrRjiCQJCOmRPEJX2ZI2np5ckPB2u07zhJ/HIXQ
+	 MYWwT7wN1+U4w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=672bebcc a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=VlfZXiiP6vEA:10 a=VwQbUJbxAAAA:8 a=ZB1B0HUU6VUEMc52-JgA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Nov 2024 00:26:54 +0200
+Message-Id: <D5FG6TOVUY5W.3SUG1J3CDB3J5@kernel.org>
+Cc: <James.Bottomley@HansenPartnership.com>, <roberto.sassu@huawei.com>,
+ <mapengyu@gmail.com>, "Paul Moore" <paul@paul-moore.com>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
+ be disabled on boot
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241015193916.59964-1-zohar@linux.ibm.com>
+In-Reply-To: <20241015193916.59964-1-zohar@linux.ibm.com>
 
-Add support for configuring MDI-X state of PHY.
-Add reporting of resolved MDI-X state in status information.
+On Tue Oct 15, 2024 at 10:39 PM EEST, Mimi Zohar wrote:
+> The initial TPM2 HMAC session capability added HMAC authentication to
+> each and every TPM communication making the pcr_extend performance
+> abysmal for HW TPMs. Further, the new CONFIG_TCG_TPM2_HMAC option was
+> configured by default on x86_64.
+>
+> The decision to use the TPM2 HMAC session capability feature doesn't
+> differentiate between the critical encrypted and the non-encrypted
+> communication, but when configured is required for all TPM communication.
+>
+> In addition, the reason to HMAC the tpm2_pcr_extend() as provided in comm=
+it
+> 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()") was to protect
+> tpm2_pcr_extend() when used by "trusted keys" to lock the PCR.  However,
+> locking the PCR is currently limited to TPM 1.2.
+>
+> We can revert the commit which adds the HMAC sessions for
+> tpm2_pcr_extend, allow just the TPM2 pcr_extend HMAC capability to be
+> disabled on boot for better IMA performance, or define a generic boot
+> command line option to disable HMAC in general.  This patch allows
+> disabling the HMAC for just the TPM2_pcr_extend.
+>
+> Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
+> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Tested on AQR113C.
+I have alternative proposal that hit me today.
 
-Signed-off-by: Paul Davey <paul.davey@alliedtelesis.co.nz>
----
-v2:
- - Renamed aqr_set_polarity to aqr_set_mdix
- - Guard MDI-X state reporting on genphy_c45_aneg_done
- - Link to v1: https://lore.kernel.org/netdev/20241017015407.256737-1-pau=
-l.davey@alliedtelesis.co.nz/
----
- drivers/net/phy/aquantia/aquantia_main.c | 52 ++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+First an observation: I think this issue shows that we also stress
+beyond limits desktop configurations with encrypted bus, even tho it is
+not in the same way visible. This affects bunch of things, including
+e.g. power consumption. Not a lot but best possible situation would be
+if callers could be served without any additional stress.
 
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
-quantia/aquantia_main.c
-index 38d0dd5c80a4..bb56a66d2a48 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -54,6 +54,12 @@
- #define MDIO_AN_VEND_PROV_DOWNSHIFT_MASK	GENMASK(3, 0)
- #define MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT	4
-=20
-+#define MDIO_AN_RESVD_VEND_PROV			0xc410
-+#define MDIO_AN_RESVD_VEND_PROV_MDIX_AUTO	0
-+#define MDIO_AN_RESVD_VEND_PROV_MDIX_MDI	1
-+#define MDIO_AN_RESVD_VEND_PROV_MDIX_MDIX	2
-+#define MDIO_AN_RESVD_VEND_PROV_MDIX_MASK	GENMASK(1, 0)
-+
- #define MDIO_AN_TX_VEND_STATUS1			0xc800
- #define MDIO_AN_TX_VEND_STATUS1_RATE_MASK	GENMASK(3, 1)
- #define MDIO_AN_TX_VEND_STATUS1_10BASET		0
-@@ -64,6 +70,9 @@
- #define MDIO_AN_TX_VEND_STATUS1_5000BASET	5
- #define MDIO_AN_TX_VEND_STATUS1_FULL_DUPLEX	BIT(0)
-=20
-+#define MDIO_AN_RESVD_VEND_STATUS1		0xc810
-+#define MDIO_AN_RESVD_VEND_STATUS1_MDIX		BIT(8)
-+
- #define MDIO_AN_TX_VEND_INT_STATUS1		0xcc00
- #define MDIO_AN_TX_VEND_INT_STATUS1_DOWNSHIFT	BIT(1)
-=20
-@@ -155,12 +164,40 @@ static void aqr107_get_stats(struct phy_device *phy=
-dev,
- 	}
- }
-=20
-+static int aqr_set_mdix(struct phy_device *phydev, int mdix)
-+{
-+	u16 val =3D 0;
-+
-+	switch (mdix) {
-+	case ETH_TP_MDI:
-+		val =3D MDIO_AN_RESVD_VEND_PROV_MDIX_MDI;
-+		break;
-+	case ETH_TP_MDI_X:
-+		val =3D MDIO_AN_RESVD_VEND_PROV_MDIX_MDIX;
-+		break;
-+	case ETH_TP_MDI_AUTO:
-+	case ETH_TP_MDI_INVALID:
-+	default:
-+		val =3D MDIO_AN_RESVD_VEND_PROV_MDIX_AUTO;
-+		break;
-+	}
-+
-+	return phy_modify_mmd_changed(phydev, MDIO_MMD_AN, MDIO_AN_RESVD_VEND_P=
-ROV,
-+				      MDIO_AN_RESVD_VEND_PROV_MDIX_MASK, val);
-+}
-+
- static int aqr_config_aneg(struct phy_device *phydev)
- {
- 	bool changed =3D false;
- 	u16 reg;
- 	int ret;
-=20
-+	ret =3D aqr_set_mdix(phydev, phydev->mdix_ctrl);
-+	if (ret < 0)
-+		return ret;
-+	if (ret > 0)
-+		changed =3D true;
-+
- 	if (phydev->autoneg =3D=3D AUTONEG_DISABLE)
- 		return genphy_c45_pma_setup_forced(phydev);
-=20
-@@ -278,6 +315,21 @@ static int aqr_read_status(struct phy_device *phydev=
-)
- 				 val & MDIO_AN_RX_LP_STAT1_1000BASET_HALF);
- 	}
-=20
-+	val =3D genphy_c45_aneg_done(phydev);
-+	if (val < 0)
-+		return val;
-+	if (val) {
-+		val =3D phy_read_mmd(phydev, MDIO_MMD_AN, MDIO_AN_RESVD_VEND_STATUS1);
-+		if (val < 0)
-+			return val;
-+		if (val & MDIO_AN_RESVD_VEND_STATUS1_MDIX)
-+			phydev->mdix =3D ETH_TP_MDI_X;
-+		else
-+			phydev->mdix =3D ETH_TP_MDI;
-+	} else {
-+		phydev->mdix =3D ETH_TP_MDI_INVALID;
-+	}
-+
- 	return genphy_c45_read_status(phydev);
- }
-=20
---=20
-2.47.0
+A second observation is in [1]:=20
 
+"It is recommended that a TPM implement the RNG in a manner that would
+allow it to return RNG octets such that, as long as the value of
+bytesRequested is not greater than the maximum digest size, the
+frequency of bytesRequested being more than the number of octets
+available is an infrequent occurrence."
+
+I think from this we can derive a fair assumption that with any possible
+TPM2 chip we can pull a 32 byte value within a single transcation (i.e.
+matching SHA256 digest size).
+
+So based on these facts I think this might be a sweet spot in making a
+compromise between performance and security:
+
+1. Generate a 32 byte seed every N iterations (calls of
+   tpm2_get_random(). Store it to chip->random_seed.
+2. In-between iterations use PRNG to generate the values
+   starting form chip->random_seed.
+
+I think N could be fairly large without causing any major difference
+(even when analyzed through numerical error analysis) between calling
+TPM2_GetRandom for each and every iteration. And this way bus encryption
+never has to be disabled.
+
+I'd see this as win-win approach.
+
+PS. I have no idea what kind of PRNG's kernel provides (never used
+such).
+
+[1] 16.1.TPM2_GetRandom
+    https://trustedcomputinggroup.org/wp-content/uploads/TPM-2.0-1.83-Part-=
+3-Commands.pdf
+
+BR, Jarkko
 
