@@ -1,137 +1,210 @@
-Return-Path: <linux-kernel+bounces-398511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6047E9BF238
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:50:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D253B9BF23C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:53:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913B61C2637A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:50:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 023501C23553
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0CD2040B7;
-	Wed,  6 Nov 2024 15:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEB120127C;
+	Wed,  6 Nov 2024 15:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLI4m8V8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2r01wSfU"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B8A190079;
-	Wed,  6 Nov 2024 15:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844522EAE0
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730908187; cv=none; b=gXRgo6dWnAAiyJrbO0lN0sWelCYmDpIftOG9wdezfuc0EWE9VblToknNjP+8XPUj5WzJ3jAanFufKxGV1Zd69XbJL58oFlSQBIFdLKlF+QRZ7mJJK+hctSV7QyH6HJYTKrKG4r/dFwCFOi69OdLsDtzOBT60uCigdq6ZgBflr2s=
+	t=1730908377; cv=none; b=E1LRXyO6JQuC6Y4HsduQMHXUFtioCJnCT1rA5ZvplqX8oei+HVpDTv3HChLuJAPZ/aFOLamUdWTyiS+jWRaSSIl7wtt1C1XlPA7Clh68sB1b4nZ0bpsp4G7wDJV4DpkzJv97T/wdCcqBlvBs0FnFMuQgWvnOm1obT4JZzlg2eWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730908187; c=relaxed/simple;
-	bh=FgAAS0grrWTmncw1PDMvpu8itvg5qcH9lr5R3c5RBQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=qHhLNtrI8mQ0CFaBtn0jFySU/8JUwz/WjEUan/IR5nBY8JGrA8xdVm9GUb15+RWz74Hq9yZGrDBm5RNEg0h7IosJpOcYOoMt/rUZ0INtEP+T6O9A/Aysj/8HaRW1aFMbas7OPDroHrHszfIbZZQ121KAh9plvBfW0vmyvO0FwyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLI4m8V8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4902C4CEC6;
-	Wed,  6 Nov 2024 15:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730908186;
-	bh=FgAAS0grrWTmncw1PDMvpu8itvg5qcH9lr5R3c5RBQ8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KLI4m8V8ysxLfzGkQNN5S218DMpJBtzWgzEj8jBhuMUYzU9WyCvKP7K/BRkfUsCe9
-	 P25NWjkP63S8LWeClBNKPD3PnkOD6AUqPwThyzj/KW11H7JUkUvjlHWpAlEJSSPvMz
-	 lhp2uzdYhHbbOOUGmk7AFTL3jIS7fUf75mJKGznIIK9la6aVCGH825o3I+6ZlxMbSI
-	 1MNtwnQlJn5z6TyGjTexY2cTcSKQf96XZGEmY5fXDiotPWjEY229wySOxexnsRZt6h
-	 zmb8b6TEUD1/KYCHDUw2Sw4WcUSOW31gGIMb1MMcdKsJzep3tZEOgA5lN4PktQg8lS
-	 9ZrhWrXmpUiJQ==
-Date: Wed, 6 Nov 2024 09:49:45 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, manivannan.sadhasivam@linaro.org,
-	kishon@kernel.org, u.kleine-koenig@pengutronix.de,
-	cassel@kernel.org, dlemoal@kernel.org,
-	yoshihiro.shimoda.uh@renesas.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com
-Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
- "ti,keystone-pcie" compatible
-Message-ID: <20241106154945.GA1526156@bhelgaas>
+	s=arc-20240116; t=1730908377; c=relaxed/simple;
+	bh=77FKdwMXthSAkOFykXBBs0el/6wCErzqQfWS967tiEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NmEfBW9Z+JAng/mqVArVfMDQL0I6xrLuLtEChe9bKjvn/eDb38781UoSs3TZlH2HZiSs/hFefi3riZxfFLAXx0euhWillXxJRSNZIOv3j09Qd5RHJEUrKydiAt7LCc6r13a33S49rhugKehbjR8xmQ+V6qYii8xBV8HXc8+uA4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2r01wSfU; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a6b4ca29bso881253366b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:52:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730908374; x=1731513174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DVjwj77z7TD7jHedx6XeNVyFBolLQf1b5Pxid0JiQ2A=;
+        b=2r01wSfU4LxMOxkwtvGf/oniOprYzjYN025TyNUgO1Gs/NtN+ax46LiNUE2bE/08ap
+         iNVFoUqBH9Oe5pQeYpv7MHuc8g3+2X0EQ3Ut3eSYbOGrsAedW2hsRc9fw7T7m14IXsWl
+         O2qWNYKcUPghBzEfs7SccRUvZGwnoSdDRkeEkTrWguk6nJurZeyDrri7mu1zvxN/Bfda
+         H84K1fYJN/dI6qu5TpCmjxcg4HcbBjZRZIt1dmmPsPI3OHyS2znfoEinqwOsTlj8PEcH
+         JynGp1hV3R7Hbsey+sn88l6k2aXfINQmJr1Y28WQfD3T5bptLVCjSgbAECxBQDupPcqE
+         QDxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730908374; x=1731513174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DVjwj77z7TD7jHedx6XeNVyFBolLQf1b5Pxid0JiQ2A=;
+        b=buueabZNOCqMSe8Cr/pVp1EWzqQ/E2L4e9j0clA0EiGC9sSnq4qvUdLTEd1jwaacHL
+         ZQAitmJjLUwFTLIDyBk+X18Df4owjaMEnzplu8GqIYt/DORwGJzwmg2nkzcjCVXLojdg
+         T17gUQQp9rL9qvHuZWxPS4e1gYKPMaQhOsSaUrmXbHp70+AuAjAP6lW6JNKGfNOvmqix
+         m3x4PkAmyQgFMmdpFvJOEWbsUw08dSCpOTZJDOGpAW/TQFizlfcqNIxAAGDoDWVJ9SfM
+         q9gfkDn3TrN4Foga2Jx5SSt79szGgjYLuPIfHeY6ZKmbQ5MFXV52FdMsLsc0i/ijqZGP
+         Zdww==
+X-Forwarded-Encrypted: i=1; AJvYcCXCf0C6SYXHHfbs66LuynmSkmCTALkr48EkCuH3EQdDOCv9b3whnkj5cLORBLlhX/5q77LSg6ufkigDUR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC/zCcdo2heHGtKmdVAgR8WElG9FRxlLe7OHlRNuuqAKWHuRDD
+	i5jF4vY4Ne/hEtCHBMr0L4p41errDviYHikwn0MYLboW0JgmbTdSIsRzTCSII/d2/cjrw9lKhiW
+	mGHdsjGgYp4Ytb44ayC+CTWAtbibrAowI8xLK
+X-Google-Smtp-Source: AGHT+IE0vLSdJdCsW70pWfJiCpT4w8OilAbiTiK5oBce1naa6uq7RmWdPuSK43Wk2PEcE/8xaKD272R8Qxiz3P3CfcQ=
+X-Received: by 2002:a17:906:f585:b0:a9a:a5c:e23b with SMTP id
+ a640c23a62f3a-a9e50b9e32fmr2305821366b.58.1730908373745; Wed, 06 Nov 2024
+ 07:52:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
+References: <20241031142553.3963058-1-peternewman@google.com>
+ <20241031142553.3963058-2-peternewman@google.com> <b3a52af9-e298-7baa-19b3-8931d03731d1@intel.com>
+ <CALPaoCgc13hS64mSWvn6zYQWwVKzcyF8xueWsaP62ZZJiv+nog@mail.gmail.com>
+In-Reply-To: <CALPaoCgc13hS64mSWvn6zYQWwVKzcyF8xueWsaP62ZZJiv+nog@mail.gmail.com>
+From: Peter Newman <peternewman@google.com>
+Date: Wed, 6 Nov 2024 16:52:42 +0100
+Message-ID: <CALPaoCjwrp+5B3pQ6C43Mv=x9ZtsoQbvjAqXR+Ujtqb_AQVdcw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] x86/resctrl: Don't workqueue local event counter reads
+To: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>, Babu Moger <babu.moger@amd.com>, 
+	James Morse <james.morse@arm.com>, Martin Kletzander <nert.pinx@gmail.com>, 
+	Shaopeng Tan <tan.shaopeng@fujitsu.com>, linux-kernel@vger.kernel.org, eranian@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 06, 2024 at 11:36:38AM +0530, Siddharth Vadapalli wrote:
-> On Tue, Nov 05, 2024 at 06:57:58PM -0600, Bjorn Helgaas wrote:
-> > On Fri, May 24, 2024 at 04:27:13PM +0530, Siddharth Vadapalli wrote:
-> > > From: Kishon Vijay Abraham I <kishon@ti.com>
-> > > 
-> > > commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
-> > > Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
-> > > device data ("struct ks_pcie_of_data"). However it failed to set mode
-> > > for "ti,keystone-pcie" compatible. Set mode as RootComplex for
-> > > "ti,keystone-pcie" compatible here.
-> > 
-> > 23284ad677a9 appeared in v5.10.  
-> > 
-> > But I guess RC support has not been broken since v5.10 because we
-> > never used ks_pcie_rc_of_data.mode anyway?
-> > 
-> > It looks like the only use is here:
-> > 
-> >   #define DW_PCIE_VER_365A                0x3336352a
-> >   #define DW_PCIE_VER_480A                0x3438302a
-> > 
-> >   ks_pcie_probe
-> >   {
-> >     ...
-> >     mode = data->mode;
-> >     ...
-> >     if (dw_pcie_ver_is_ge(pci, 480A))
-> >       ret = ks_pcie_am654_set_mode(dev, mode);
-> >     else
-> >       ret = ks_pcie_set_mode(dev);
-> 
-> "mode" is used later on during probe at:
-> 
-> ....
-> 	switch (mode) {
-> 	case DW_PCIE_RC_TYPE:
-> 	...
-> 	case DW_PCIE_EP_TYPE:
-> 	...
-> 	default:
-> 		dev_err(dev, "INVALID device type %d\n", mode);
-> 	}
-> ....
+Hi Fenghua,
 
-How did I miss that? :)  It is literally two lines down.
+On Tue, Nov 5, 2024 at 12:25=E2=80=AFPM Peter Newman <peternewman@google.co=
+m> wrote:
+>
+> Hi Fenghua,
+>
+> On Mon, Nov 4, 2024 at 11:36=E2=80=AFPM Fenghua Yu <fenghua.yu@intel.com>=
+ wrote:
+> >
+> > Hi, Peter,
+> >
+> > On 10/31/24 07:25, Peter Newman wrote:
+>
+> > > diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/ker=
+nel/cpu/resctrl/ctrlmondata.c
+> > > index 200d89a640270..daaff1cfd3f24 100644
+> > > --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> > > +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+> > > @@ -541,6 +541,31 @@ void mon_event_read(struct rmid_read *rr, struct=
+ rdt_resource *r,
+> > >               return;
+> > >       }
+> > >
+> > > +     /*
+> > > +      * If a performance-conscious caller has gone to the trouble of=
+ binding
+> > > +      * their thread to the monitoring domain of the event counter, =
+ensure
+> > > +      * that the counters are read directly. smp_call_on_cpu()
+> > > +      * unconditionally uses a work queue to read the counter, subst=
+antially
+> > > +      * increasing the cost of the read.
+> > > +      *
+> > > +      * Preemption must be disabled to prevent a migration out of th=
+e domain
+> > > +      * after the CPU is checked, which would result in reading the =
+wrong
+> > > +      * counters. Note that this makes the (slow) remote path a litt=
+le slower
+> > > +      * by requiring preemption to be reenabled when redirecting the=
+ request
+> > > +      * to another domain was in fact necessary.
+> > > +      *
+> > > +      * In the case where all eligible target CPUs are nohz_full and
+> > > +      * smp_call_function_any() is used, keep preemption disabled to=
+ avoid
+> > > +      * the cost of reenabling it twice in the same read.
+> > > +      */
+> > > +     cpu =3D get_cpu();
+> > > +     if (cpumask_test_cpu(cpu, cpumask)) {
+> > > +             mon_event_count(rr);
+> > > +             resctrl_arch_mon_ctx_free(r, evtid, rr->arch_mon_ctx);
+> > > +             put_cpu();
+> > > +             return;
+> > > +     }
+> >
+> > This fast path code is a duplicate part of smp_call_funcion_any().
+> >
+> > In nohz_full() case, the fast path doesn't gain much and even hurts
+> > remote domain performance:
+> > 1. On local domain, it may gain a little bit because it has a few lines
+> > less than directly calling smp_call_function_any(). But the gain is
+> > minor due to a lines less code, not due to heavy weight queued work.
+> >
+> > 2. On remote domain, it degrades performance because get_cpu() and
+> > put_cpu() are both called twice: one in the fast path code and one in
+> > smp_call_function_any(). As you mentioned earlier, put_cpu() impacts
+> > performance. I think get_cpu() has same impact too.
+>
+> get_cpu() and put_cpu() nest, so only the put_cpu() that reduces the
+> preempt count to 0 will call into the scheduler. See the source
+> comment I had added below.
+>
+> But... note that below smp_call_on_cpu() is now called with preemption
+> disabled. (Looks like I only benchmarked and never ran a debug
+> build...) I will have to change the patch to make sure put_cpu() is
+> called before smp_call_on_cpu().
+>
+>
+> >
+> > The fast path only gains in none nohz_full() case.
+> >
+> > So maybe it's better to move the fast path code into the non nohz_full(=
+)
+> > case? With this change, you may have the following benefits:
+> >
+> > 1. No performance impact on nohz_full() case (either local or remote
+> > domain).
+> > 2. Improve performance on non nohz_full() case as you intended in this
+> > patch.
+> > 3. The fast path focuses on fixing the right performance bottleneck.
+>
+> The consequence of reusing the current-cpu-in-mask check in
+> smp_call_function_any() is that if the check fails, it could cause
+> resctrl_arch_rmid_read() to fail by invoking it in an IPI handler when
+> it would have succeeded if invoked on a kernel worker, undoing James's
+> original work.
 
-> > so we don't even look at .mode unless the version is v4.80a or later,
-> > and this is v3.65a?
-> > 
-> > So this is basically a cosmetic fix (but still worth doing for
-> > readability!) and doesn't need a stable backport, right?
-> 
-> I suppose that "data->mode" will default to zero for v3.65a prior to
-> this commit, corresponding to "DW_PCIE_UNKNOWN_TYPE" rather than the
-> correct value of "DW_PCIE_RC_TYPE". Since I don't have an SoC with the
-> v3.65a version of the controller, I cannot test it out, but I presume
-> that the "INVALID device type 0" error will be displayed. Though the probe
-> will not fail since the "default" case doesn't return an error code, the
-> controller probably will not be functional as the configuration associated
-> with the "DW_PCIE_RC_TYPE" case has been skipped. Hence, I believe that
-> this fix should be backported.
+I noted in my earlier email to Reinette that this is already a problem
+in the fast path case I added.
 
-I guess nobody really cares too much since it's been broken for almost
-four years.
+I ended up creating a resctrl_arch_event_read_blocks() hook for asking
+the implementation whether a particular event actually blocks so that
+the workqueue is only used when it's really necessary:
 
-But indeed, sounds like it should have a stable tag and maybe a commit
-log hint about what the failure looks like.
+https://lore.kernel.org/lkml/20241106154306.2721688-2-peternewman@google.co=
+m/
+
+With this, I was able to follow your suggestion of using
+smp_call_function_any() for the local counter read.
+
+However, it's worth noting that this ended up making remote reads
+faster on AMD but slower on Intel for some reason. I assume it's a
+flaw in my benchmark where the IPIs were cross-socket on Intel while
+they were only cross-chiplet on AMD.
 
 Thanks!
-
-Bjorn
+-Peter
 
