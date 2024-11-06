@@ -1,104 +1,98 @@
-Return-Path: <linux-kernel+bounces-398576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E622A9BF30B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:16:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE51D9BF30E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:17:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59ED1C236B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:16:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F20282596
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5115204028;
-	Wed,  6 Nov 2024 16:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3B2204929;
+	Wed,  6 Nov 2024 16:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOIN6gWB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DkohO5bJ"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D2C18B48B;
-	Wed,  6 Nov 2024 16:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99CE2038A1
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909796; cv=none; b=p60NoiWOy8x8+ZUPQ7ZkAzeLtzMi8l4oalRAz+WbzfyK8+p6mzIyyVz5RtK8WH5Ja6YWZIxUT4yw2f6lrc0FTBK/YDCtCKG7ZRzzVwkfmgHd5Kc64NnGhVvQMDNhP97VhEw7avvqmF2auntZPzn/9LXyFgqRTdgK+I7jnMT45/I=
+	t=1730909861; cv=none; b=eq7k+0EkkHNMwXFDNrPScrm4axkoFtdwZC7GljOQTkKFt+g8+lCc9DHwqW6WUPBCxebEqk8hyKFjR34R/2ItnqGHvU5mSVQYgCpfK7y0UEdbSv6IkX4EQ2Z8qTynCesdKztRkHSWgPD9ZrcInuobCk66kbu/JiZWZx1ZRa9ubQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909796; c=relaxed/simple;
-	bh=qRGU4RUqChfhcxpb0dUaFVDhL+6ttSNAKLTGzeeHc8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXZwB17istnZaPoYI2Y11f4qbNaAqj1e9yHZs9PsDOUK5X+YFH+N3y/ZvEpjd0Tiy9uKAdVlNQGmX6CB6y14rFnKSD5zYgyTofUayI6iUCeFa4PRQmOco+4a9bFwwAMFp1Rb2U/3P/ikiTXpwDMWMZMfpMY90Xy7cfY86qOhQj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tOIN6gWB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC16EC4CEC6;
-	Wed,  6 Nov 2024 16:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730909795;
-	bh=qRGU4RUqChfhcxpb0dUaFVDhL+6ttSNAKLTGzeeHc8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tOIN6gWB8PagNoC8TVFz54hj7uIEjWIkiwWpBkqrSSQUF4qQQDdgRwEI1AVG7FVoH
-	 HtAyNvvNUtp4hRHlqrCDxQrMrHD2GA2B5Yzk6JXvJcvaUAHgqkPJE/RN5fZHaoFMZe
-	 d1JMB9Hyz2jb2p2MWxiaoLfvkPEfPf8qDqGyhsaZCxkQR11S5JdIvkvTZjH9pFRAdj
-	 HJ3rjdm0/SeXGNx03z3me0okMX5Vrxo3+lhyN6nm1em7ws/shHY+jK+u5wuPNqKaKd
-	 Yh9KI+s8H2CX930niLHLefl6882hizGXRDhGsmI2YzB6rwUGAgSG0n5BR0+I8AOyGv
-	 hQnGkrA+M3FmA==
-Date: Wed, 6 Nov 2024 16:16:31 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH v2 1/2] dt-bindings: power/supply: Add ltc4162-f/s and
- ltc4015
-Message-ID: <20241106-riveting-implant-41db6f7ed66e@spud>
-References: <20241106015537.6189-1-kimseer.paller@analog.com>
+	s=arc-20240116; t=1730909861; c=relaxed/simple;
+	bh=fedLJeFnx53tF8ytv9N7sw3rQkKfQ5/ZXz2jxAZZFQ0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SNMMOo/Q8AVu+RtkjzOWR58+giNyPMzJYYAzzqlUqv97FiK8cDYW9R+0Q3yAiVgaQ2r3Lz4Ukf4bkoU2LH9mQsXXWCqI8dZ1ARhZLlRmUL7K0BmQHjfhYfQetsMj6954Ndsv+rRJBmmlSHgZmWrPZCZDgoLJHRDgctkuUbm8Tn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DkohO5bJ; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e55c9d23cso11740b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:17:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730909859; x=1731514659; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7gX7J5OfXehl+QPtww/mhm3dQ9/mVzO2E9r70KgS5Q=;
+        b=DkohO5bJqXwWzFac5zoUiJ5rhZvfi9P9GYhc5ewv0BEa8pmOsTlugS0+kT/mNvw5J6
+         U/ZDPZW7pRXgXroRXimlCADokrUoLACSO7Q5RDumcWy+Xy9Gk0TSaP/bc2n3NdmGvqjj
+         3pHEnulgbiGoEuZUsCcgNZdmKZKQaMezXWVm+GqkVQ6sbx3rxBG8k21SU9GksRtfXoho
+         K2byjFta4/p4YA/3KgvkDpx5NOUaQMixEvya6SbQQQlOBfZhbvRflHFCMnkWJ1hczucE
+         iOk/0y5EPFZ48WZXH4vjoUeCQBjdM4bU4E+SQCR6K17kh70Crt4PG4MvMYihRqj41Hqb
+         ejeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730909859; x=1731514659;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7gX7J5OfXehl+QPtww/mhm3dQ9/mVzO2E9r70KgS5Q=;
+        b=d1fTml6wlIqp4ZX5/knWin5KxN1i/v9tYLv5HQ3dKwPM04fnisFOkYBQfOjbw7NkKX
+         Au5SCJ7v6hQqnY/I4xCp+GuoiCDWksCCc+rejJHEKNzXcjeNh+Kf0g5MX2tiGz9TXz9d
+         13nhbmc9qRPEekoxIG2hhNNS+kXycbwWB/8BtHBbLIUW9SK98jAaP+28RyH7kf98L14N
+         k5ltBFZW88nUe8GPeF1KcJU0dDld6l/5bhjhw1217LrQ6IWijYySxMvlJBUJ6p9XBVEE
+         GbAgNpiTxiNq8RoYaTDwL1HpAuiedzMZnPBc60MWmnYPKa2XY4z1fTiV962PGMgn8xN8
+         TMFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwNHkeElxIOpiZIqtSOzlJM5sNur63Q5jfgQmQJF1yj+COTxwFHubPncQbpd3lNSIUIXVo75dy3tqdvKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO+xj1IKu4mTBGcXWceBF7lHpyFyZrbnEwKm8zUI/HvLwsnkpx
+	8Z3i/IVg8+t0bmdgyFDVfv8JAFLBSj5Mnly82GRpak8bsyGqub2fx3E1p8+OWYKJ5B4Nc0GMqqr
+	h7g==
+X-Google-Smtp-Source: AGHT+IH5+RHugGjNIyOCE03q8z+Pnhir0c96MdXDK12iPCjoXlkZZlPPOs48lMhm932hF8zhCzkzRWOqcX0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:6514:b0:71e:6a72:e9d with SMTP id
+ d2e1a72fcca58-723f79ca4a4mr64927b3a.3.1730909859150; Wed, 06 Nov 2024
+ 08:17:39 -0800 (PST)
+Date: Wed, 6 Nov 2024 08:17:38 -0800
+In-Reply-To: <20241106161323.GGZyuVo2Vwg8CCIpxR@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3phU+roiop2B7xTt"
-Content-Disposition: inline
-In-Reply-To: <20241106015537.6189-1-kimseer.paller@analog.com>
+Mime-Version: 1.0
+References: <ZyltcHfyCiIXTsHu@google.com> <20241105123416.GBZyoQyAoUmZi9eMkk@fat_crate.local>
+ <ZypfjFjk5XVL-Grv@google.com> <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local>
+ <ZypvePo2M0ZvC4RF@google.com> <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local>
+ <ZyuJQlZqLS6K8zN2@google.com> <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
+ <ZyuMsz5p26h_XbRR@google.com> <20241106161323.GGZyuVo2Vwg8CCIpxR@fat_crate.local>
+Message-ID: <ZyuWoiUf2ghGvj7s@google.com>
+Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, kvm@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Nov 06, 2024, Borislav Petkov wrote:
+> On Wed, Nov 06, 2024 at 07:35:15AM -0800, Sean Christopherson wrote:
+> > You didn't though.  The original mail Cc'd kvm@, but neither Paolo nor I.
+> 
+> I think we established that tho - I didn't know that kvm@ doesn't CC you guys.
 
---3phU+roiop2B7xTt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 06, 2024 at 09:55:36AM +0800, Kim Seer Paller wrote:
-> LTC4162-L 35V/3.2A Multi-Cell Lithium-Ion Step-Down Battery Charger
-> LTC4162-F 35V/3.2A Multi-Cell LiFePO4 Step-Down Battery Charger
-> LTC4162-S 35V/3.2A Lead-Acid Step-Down Battery Charger
-> LTC4015 35V/3.2A Multichemistry Buck Battery Charger Controller
->=20
-> - Add compatible entries for ltc4162-f/s and ltc4015
-> - Include datasheets for new devices
->=20
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
-> V1 -> V2: Modified commit message describing differences between
->           variants/devices.
-
-What you need to do is explain what makes the programming model for the
-devices different. These are all 35V/3.2A, it is plausible that despite
-the different battery chemistries these are designed for that the
-programming model would be the same.
-
---3phU+roiop2B7xTt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyuWXwAKCRB4tDGHoIJi
-0jl9AP98aabBIZKBYV2Ki1P1pBa1W22o/ubd3ZiCbQoxzcAtWAEA4J0a1PIScoz3
-qQUogwAwxLcJExl5AkKVxgba9JRuSg4=
-=XIdJ
------END PGP SIGNATURE-----
-
---3phU+roiop2B7xTt--
+I do subscribe to kvm@, but it's a mailing list, not at alias like x86@.  AFAIK,
+x86@ is unique in that regard.  In other words, I don't see a need to document
+the kvm@ behavior, because that's the behavior for every L: entry in MAINTAINERS
+except the few "L:	x86@kernel.org" cases.
 
