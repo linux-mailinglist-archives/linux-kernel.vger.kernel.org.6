@@ -1,157 +1,302 @@
-Return-Path: <linux-kernel+bounces-398869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1E79BF768
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:47:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB0B9BF76D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F47A283BFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:47:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFBE01C243A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187AD20D4E5;
-	Wed,  6 Nov 2024 19:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057CA20D512;
+	Wed,  6 Nov 2024 19:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="yNSkz/VV"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EzGwyc0N"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05olkn2107.outbound.protection.outlook.com [40.92.89.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D26F209F4B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 19:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730921945; cv=none; b=RHx0IBVFBzO0EntcrlyHMD7IQZYYg6yMMAaKzLk7R8503M7j/PLCJXYnc2DrgcK0Tm8v/wMBqdS/lqTboby2n8YxBuVDIAmDuX8fdt1471Rei1xPPWi7rURdmawkBbK0ekjCWbjHPEQcVprAlgCJxyDJc//GIstUjYuvCAlnlCA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730921945; c=relaxed/simple;
-	bh=0yMXJ3amPkiTYtjDbP6sDDDoFte7LfJTl96OJZnq0QY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HM7K1HkVjUSAHnBjaMqiFbEHr4hqawXf1TK+cwqa6eEGhT6yRhPpdL3RAreOGnQ/DLfE0wZnNHBEO2W8DXPW+PRRfoUdhImSirQFZAyGfU3zadkq92oR+mtfNIjcfaRiSbsU8/3m0SMooVAm8sO9snVkE2SFyf7yXxPs38iShY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=yNSkz/VV; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CE3B72C03C3;
-	Thu,  7 Nov 2024 08:38:58 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1730921938;
-	bh=0yMXJ3amPkiTYtjDbP6sDDDoFte7LfJTl96OJZnq0QY=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=yNSkz/VVZNIzd38tOD9TA3rHugD/gTWnpjGlBCybjTTqn5tY615oySThaKEYRXqDM
-	 ljUAMoNlWhhbrtFEl7RoI49Uh3SvHzWLBg41cA3u3C01GAZpEPWE5lKKEnPCztXcvZ
-	 f9mLwGneA6ZFK8nLU+X+AZL9R8h/Kjtmlk27XzBBnrQObkKqbm6SawPyV59L9FMRJN
-	 e/f6IVEUNZR71B/cXaxgnLi1XCW5ozU/SUkF1CycDlHIE7Xntp/imVHLyf4CkafTCI
-	 8Yn04mYeO49EFnZKROahJOmo2/LSbGA9vShFo2pGUwkWpI3DzjnwShdm6Pr8olx9Yv
-	 SI1CiD2dRJgHQ==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B672bc5d20001>; Thu, 07 Nov 2024 08:38:58 +1300
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 7 Nov 2024 08:38:58 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.48; Thu, 7 Nov 2024 08:38:46 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 7 Nov 2024 08:38:46 +1300
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-CC: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: ubifs_recover_master_node: failed to recover master node
-Thread-Topic: ubifs_recover_master_node: failed to recover master node
-Thread-Index: AQHbKZq96Tx6yEKYG0Wljc12ck8PQ7Kqb/M4//9p5YA=
-Date: Wed, 6 Nov 2024 19:38:45 +0000
-Message-ID: <2aadcbb0-298c-4b60-9d6f-a1b55f23de2b@alliedtelesis.co.nz>
-References: <7eaf332e-9439-4d4c-a2ea-d963e41f44f2@alliedtelesis.co.nz>
- <87jzdgjrxw.fsf@bootlin.com>
-In-Reply-To: <87jzdgjrxw.fsf@bootlin.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <38D079CB9521194784CA57B05BDE1B83@atlnz.lc>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2DD209F5F;
+	Wed,  6 Nov 2024 19:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.89.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730921974; cv=fail; b=ZVaKs7w+RHQ0AVhVWiy6qoSjmUPqRtpoz/ZAnvV/t47Ej/8QIa9G2pJ+AaT8ID46rMEXfTYscz3jr32Ex4d65OeInI5CTI7veM01b65kEgAQYhTvYgVps6mlDl3aFBnyRqLcGM5kQO+WabpbRhGERma4O2q551EMEK+4GrOCl84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730921974; c=relaxed/simple;
+	bh=imCKjTt+FjZs71vA+1DWP4iRwmafPtQ7z6q2v3riIQE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HlBEds+6pQ3pPgvx3RSwbKaZpThEiyU79Jj2HMM9gYp4mOS23AzHh7nI2p+wyowej+A/oL8AIF1l9rvMr0iyjb8+nspyPki3AosdYkx9Bcm/JhycJ7sRapkvcFmhleqB6IYGJv9gQuA5PNjsXrfJoZB4Y0hSxOgOyz65LBCmC/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EzGwyc0N; arc=fail smtp.client-ip=40.92.89.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jk+38LfN0uHu6852d6eFrETgibUgKRii2N+ZqYrsNKY1DqVwiVyxqk2GKFTsCZE9lvV+PWrV+keWQ3eBY9LxCB5VeoytoKZatL5x3uOXCZKb4HT2Lqv3XRB27BFg5DFJjMyoZW+NR3X0ROoNZMJBmz/QiwpE/lkLiD2Waub9nc+TEer15ah0cTtQi1PRyzuED9po3oAat9MzyrFM9a/qRNlt51Moi29c3GrEF/0uOjV3/3Ip2c5FOfW4CIvKAtSG6NJw17IjTOqTMxLOO3zat9NMM1Ac5UK8S4vxIGLLeSnZ6ym3qSBhj3reCTCVCZ92UoXe2lRy2AdGPFNPYGw8Qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P96QpylSM/F4xNLnWHy7URkJkQ9HGs/KE5ZWx90fjjQ=;
+ b=nFs7f7SNRKt4kFwyk6h7o6hfr/6l+o5GabOQQrhpoe2ZiX8vNbote4y6dGMG/JROi3T+btUsomojeQZdV/iBEPq9gc1WQNfnoTrpZ+2nMm+JZ7aXujrFivFyOrQ+PRoq9z1KfduDXw4+SFKdUeO6ExTIyt0vQaNijFmDBoYTj0HYPjMPF64o+el5fybQ1XINy1GYp1fkkWxO9YPmCPUJ//GH4JUpXZmpuRooB1hKEZdA5Q9XUDJhPuTY4RI7BoVJrvph8mSkHz7pwtqm/e47ANMZTTMCDXtYSVwantwEZpE7hi8Ykgn42luiPM1s1w+9yygGlBgfzPCLTY9K3gQNfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P96QpylSM/F4xNLnWHy7URkJkQ9HGs/KE5ZWx90fjjQ=;
+ b=EzGwyc0NYPIq7MvfhOHwN8Ht8/jrNyRl+u4K8Qy6AabSHTVxXTAand9efKg5oSqCXsG3cQ+tq7mNKxYfOr0CyNh6RY9SdD+z8ql/4GaOrrHLl11GBVI/zO9ApUSFaIkurZp53x+AIUiIUzy0jwqQiHn+qapK4U61wQX28y4u/OwWZb3eFHUFdB87PVng5wucPC0dShOutVkJG/IlEuu0iArKDplGfpZJSnkSR8T8eeqZD3KKoOmRNiNz6U+4lYNGPWSGAaHm+ZZ3pd9F08GvEz4MN0ejXT8qgRl2am5iUy+DN77C5ZEzRlUlQFAzebU/YaHu3wBL2MZW5OUmeHaXDw==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by AS2PR03MB9792.eurprd03.prod.outlook.com (2603:10a6:20b:608::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Wed, 6 Nov
+ 2024 19:39:28 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.8093.027; Wed, 6 Nov 2024
+ 19:39:28 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	snorcht@gmail.com,
+	brauner@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH bpf-next v3 1/4] bpf/crib: Introduce task_file open-coded iterator kfuncs
+Date: Wed,  6 Nov 2024 19:38:45 +0000
+Message-ID:
+ <AM6PR03MB5848C66D53C0204C4EE2655F99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+References: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P265CA0280.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:37a::17) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20241106193848.160447-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=672bc5d2 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=VwQbUJbxAAAA:8 a=aDF-memnnrlVHBypX7IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|AS2PR03MB9792:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb6fa12a-530c-48c8-2e90-08dcfe9aba1a
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|15080799006|19110799003|5072599009|8060799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?es8Kqm/eKjHZ6UQAoQoE9FZcNxAbXaRL6V+U2sZ1FEVRnhWhxiL7Bx0sS3xo?=
+ =?us-ascii?Q?auVL3ZNAo/dgwgCTFi9xdR56iStz9DRjaMAYQiJKxfIy2nHYLBbkJi2YimSm?=
+ =?us-ascii?Q?X/N/90WemFQu9Wp+2Ouqdu0LNJ2ZIZthQKP/zGRwPfcYOuuFZx4BYgZpTPD9?=
+ =?us-ascii?Q?mh6jhWXATE/MBjm0J2h6YUTKvru7mcZ2jr4EfhZJOs8P5LgDAwzKtVOl/vr+?=
+ =?us-ascii?Q?7q5X0UUES6rk4ogarw3wEkRa61YbbTbyXpUQTrboWCFIDr2mfEj5p4NuVmzf?=
+ =?us-ascii?Q?PMTw2pVEvcTPI+N3EjB0A6Zt1UP91jZfyGkROZem68+lZ13qW3hByIKLDG4W?=
+ =?us-ascii?Q?qzDt6W0dCiFB4qxZJWbLTCKxhU0/omxF6MI5gQwOLgjFsr3eoSGd+4NNAxk5?=
+ =?us-ascii?Q?X2vlduhvutMAhp5fe7nHla0QkQEuZRyeY1RITQSLMLFsmN2D8Ym+YeJOpTFI?=
+ =?us-ascii?Q?KocHdDkVvwMTuMBn5C36+uaDQf+K5y74um5cy3cFTtvQvfObzRoYcDpoZ8nH?=
+ =?us-ascii?Q?DYyJN1Q404CBTqiCFWsBwU25Vq+Hn0COQzJVkpS0QNCXLOxFd7EmZAWIuR8w?=
+ =?us-ascii?Q?t5W04YfIWk7Aj/IK14cBGoVLSSo3RuRXJOgV2KMfJvCQptdO2lK93STyIMwJ?=
+ =?us-ascii?Q?FsfA3vvZX12KuWclgQhtYaG7oxJP19A7NUChbYEtH/CxJWvIYAOuNonHpDlt?=
+ =?us-ascii?Q?FtAbleSp1dujIKBdMMIbwVXNYg94QHvI0uNC0jqgdBlORs3XUKtdFApj2Gt1?=
+ =?us-ascii?Q?Zpa+o6LSLtLQfJxkMTVbHe1HxBc4QduowTxHHdbR0iiSCV1vhW7GsKKA/wSz?=
+ =?us-ascii?Q?SY8SuO+/yHT3yWND68pU8ViVkxqoY0WOqRfdMLD/8BuDkwPJNCjItgBbzsm4?=
+ =?us-ascii?Q?dyzGNiE4WMEb2uSkJDU5QkdXFXPZh7MTagBt2+X/X7ACK6zU5gb/fL4w+a15?=
+ =?us-ascii?Q?xmEHST9yc7FctR0Z+eMZzWsqagfotB3EQ4N1VkC8XiunIsN/F5WlKYPlHVvc?=
+ =?us-ascii?Q?gJ9de1MblvJghao6U/5A2BFLRQ=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rN4arw0R29lGXi0Pg1H1lFwWR6Fk30UfuxkuujPyrNewfDGsVXAI7Zt8+2z+?=
+ =?us-ascii?Q?Z/QRgtvLE2zR9Z4bXDuhKLcKbiSKsUs40JKKLHT3EI9EKGr7P7u9+836cJ1p?=
+ =?us-ascii?Q?7/35/8Ls5/VykVABdN8uqA2w+hJiU1VF/Md1vUScveXz6rTipoQTKdWRIGZz?=
+ =?us-ascii?Q?3MriYHkBAeGfGJmxc++OcSmYQFGww9xBNohjbDqPpadxPA2houonZ3rzg0mM?=
+ =?us-ascii?Q?5PzZu+5rwrIfHY5G8vXLejzfE9TdsuRm8yGs+FYAaDWuxTYyTKY7stDHzKKZ?=
+ =?us-ascii?Q?DslqYt8FVO3sRMxXFymA042Lr0sHbr3TJKz6N01U11+qV1R858c6vsp1knba?=
+ =?us-ascii?Q?0MgSHZvkPXm81+m7ZcVFUZ7rwlTVqgAP1eFCwHaHMTNpGC/MVHxicu3BMkOU?=
+ =?us-ascii?Q?Q4SJGdK+GTVOiGKTYAvTZo6IsfXFUC2pInNCVK7uvI9J8pcHKdjrdMqJ1Nw+?=
+ =?us-ascii?Q?7OilO1inBjldKi2zc6DhLQMxamhRAezUWoUhtP6FjpAnZuzmq4zGzWol9CQ5?=
+ =?us-ascii?Q?Yo30d6AK27RPo5CuVPjkKgh3Mrx/I2rqoiEHaOvsAlmFzMl354i2KmobUdfO?=
+ =?us-ascii?Q?eVAq8a3tNnyidu/dRKOoCgrjmJVsrKH055sQaAfRxu3HzE/irzrbCq25VUsE?=
+ =?us-ascii?Q?lIK1phWq7TUzCbGQx36YLd6WhhgxbcTiqYFKxXbmd10shJR7GyGF+GT/JK1S?=
+ =?us-ascii?Q?im8eW8FN5C+LBVcnf/mupnvrKjaZ0vzfnWwksvoduC1MCFnKewEZ/83Q+Ytr?=
+ =?us-ascii?Q?Aejyd5t2VbPQlrF4aQUTLzsyx4wiJzWQAWQNWahCaW6Wr3Pcy0mQesA5rwhC?=
+ =?us-ascii?Q?OriwB3ezN+DUZLBcwbnS02bUkNELAQBhiWErp0aofqIsTJh8d8eo6GF/hI8O?=
+ =?us-ascii?Q?XpiVZk/5WAQ0NY/FtsETQ6rflKJW4T7sA24z/jU8ljPY64NhoxZtte1d2mm2?=
+ =?us-ascii?Q?P8O7eTzJHfME0nsQP36DsPa0f3vm3bW4sZapebPdszwdfhL8c7lDI3bSmFFQ?=
+ =?us-ascii?Q?HCwFf/toNZ5J+WijwBr7f56Wcx/KZh1N4lF3Y+PEpbd4MgBPoX8pO0QiFIyr?=
+ =?us-ascii?Q?GvxfL6oBHQ9xcHckBRi4+wbkwbxVHEzuDb7Yre34MQL4UblWvKvrgV6ZNl8i?=
+ =?us-ascii?Q?IinCZgDhbUW8EDSt7WkToRx7uJ5i1nUGcuDLUOOcQEynDf1eC6cimYkunGi5?=
+ =?us-ascii?Q?WuhPtS9wqL4ui42lbixM3nuRnFHrBg4YbbfnyWW/8eDWPD3g5AcCvh+ad1J5?=
+ =?us-ascii?Q?ps+CF42NNs9vK9WqYs9o?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb6fa12a-530c-48c8-2e90-08dcfe9aba1a
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 19:39:28.2714
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR03MB9792
 
-SGkgTWlxdWVsLA0KDQpPbiA3LzExLzI0IDA0OjM1LCBNaXF1ZWwgUmF5bmFsIHdyb3RlOg0KPiBI
-aSBDaHJpcywNCj4NCj4gT24gMjkvMTAvMjAyNCBhdCAxMzozNzozMSArMTMsIENocmlzIFBhY2to
-YW0gPGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4gd3JvdGU6DQo+DQo+PiBIaSwN
-Cj4+DQo+PiBJIHJlY2VudGx5IGFkZGVkIHN1cHBvcnQgZm9yIHRoZSBTUEktTkFORCBjb250cm9s
-bGVyIG9uIHRoZSBSVEw5MzAyQyBTb0NbMV0uIEkgZGlkIG1vc3Qgb2YgdGhlIHdvcmsgYWdhaW5z
-dCBMaW51eCA2LjExDQo+PiBhbmQgaXQncyB3b3JraW5nIGZpbmUgdGhlcmUuIEkgcmVjZW50bHkg
-cmViYXNlZCBhZ2FpbnN0IHRoZSB0aXAgb2YgTGludXMncyB0cmVlICg2LjEyLXJjNSkgYW5kIGZv
-dW5kIEkgd2FzIGdldHRpbmcgdWJpZnMNCj4+IGVycm9ycyB3aGVuIG1vdW50aW5nOg0KPj4NCj4+
-IFsgICAgMS4yNTUxOTFdIHNwaS1uYW5kIHNwaTEuMDogTWFjcm9uaXggU1BJIE5BTkQgd2FzIGZv
-dW5kLg0KPj4gWyAgICAxLjI2MTI4M10gc3BpLW5hbmQgc3BpMS4wOiAyNTYgTWlCLCBibG9jayBz
-aXplOiAxMjggS2lCLCBwYWdlIHNpemU6IDIwNDgsIE9PQiBzaXplOiA2NA0KPj4gWyAgICAxLjI3
-MTEzNF0gMiBmaXhlZC1wYXJ0aXRpb25zIHBhcnRpdGlvbnMgZm91bmQgb24gTVREIGRldmljZSBz
-cGkxLjANCj4+IFsgICAgMS4yNzgyNDddIENyZWF0aW5nIDIgTVREIHBhcnRpdGlvbnMgb24gInNw
-aTEuMCI6DQo+PiBbICAgIDEuMjgzNjMxXSAweDAwMDAwMDAwMDAwMC0weDAwMDAwZjAwMDAwMCA6
-ICJ1c2VyIg0KPj4gWyAgIDIwLjQ4MTEwOF0gMHgwMDAwMGYwMDAwMDAtMHgwMDAwMTAwMDAwMDAg
-OiAiUmVzZXJ2ZWQiDQo+PiBbICAgNzIuMjQwMzQ3XSB1YmkwOiBzY2FubmluZyBpcyBmaW5pc2hl
-ZA0KPj4gWyAgIDcyLjI3MDU3N10gdWJpMDogYXR0YWNoZWQgbXRkMyAobmFtZSAidXNlciIsIHNp
-emUgMjQwIE1pQikNCj4+IFsgICA3Mi4yNzY4MTVdIHViaTA6IFBFQiBzaXplOiAxMzEwNzIgYnl0
-ZXMgKDEyOCBLaUIpLCBMRUIgc2l6ZTogMTI2OTc2IGJ5dGVzDQo+PiBbICAgNzIuMjg0NTM3XSB1
-YmkwOiBtaW4uL21heC4gSS9PIHVuaXQgc2l6ZXM6IDIwNDgvMjA0OCwgc3ViLXBhZ2Ugc2l6ZSAy
-MDQ4DQo+PiBbICAgNzIuMjkyMTMyXSB1YmkwOiBWSUQgaGVhZGVyIG9mZnNldDogMjA0OCAoYWxp
-Z25lZCAyMDQ4KSwgZGF0YSBvZmZzZXQ6IDQwOTYNCj4+IFsgICA3Mi4yOTk4ODVdIHViaTA6IGdv
-b2QgUEVCczogMTkyMCwgYmFkIFBFQnM6IDAsIGNvcnJ1cHRlZCBQRUJzOiAwDQo+PiBbICAgNzIu
-MzA2Njg5XSB1YmkwOiB1c2VyIHZvbHVtZTogMSwgaW50ZXJuYWwgdm9sdW1lczogMSwgbWF4LiB2
-b2x1bWVzIGNvdW50OiAxMjgNCj4+IFsgICA3Mi4zMTQ3NDddIHViaTA6IG1heC9tZWFuIGVyYXNl
-IGNvdW50ZXI6IDEvMCwgV0wgdGhyZXNob2xkOiA0MDk2LCBpbWFnZSBzZXF1ZW5jZSBudW1iZXI6
-IDI1MjY0MjIzMA0KPj4gWyAgIDcyLjMyNDg1MF0gdWJpMDogYXZhaWxhYmxlIFBFQnM6IDAsIHRv
-dGFsIHJlc2VydmVkIFBFQnM6IDE5MjAsIFBFQnMgcmVzZXJ2ZWQgZm9yIGJhZCBQRUIgaGFuZGxp
-bmc6IDQwDQo+PiBbICAgNzIuMzcwMTIzXSB1YmkwOiBiYWNrZ3JvdW5kIHRocmVhZCAidWJpX2Jn
-dDBkIiBzdGFydGVkLCBQSUQgMTQxDQo+PiBbICAgNzIuNDcwNzQwXSBVQklGUyAodWJpMDowKTog
-TW91bnRpbmcgaW4gdW5hdXRoZW50aWNhdGVkIG1vZGUNCj4+IFsgICA3Mi40OTAyNDZdIFVCSUZT
-ICh1YmkwOjApOiBiYWNrZ3JvdW5kIHRocmVhZCAidWJpZnNfYmd0MF8wIiBzdGFydGVkLCBQSUQg
-MTQ0DQo+PiBbICAgNzIuNTI4MjcyXSBVQklGUyBlcnJvciAodWJpMDowIHBpZCAxNDMpOiB1Ymlm
-c19yZWNvdmVyX21hc3Rlcl9ub2RlOiBmYWlsZWQgdG8gcmVjb3ZlciBtYXN0ZXIgbm9kZQ0KPj4g
-WyAgIDcyLjU1MDEyMl0gVUJJRlMgKHViaTA6MCk6IGJhY2tncm91bmQgdGhyZWFkICJ1Ymlmc19i
-Z3QwXzAiIHN0b3BzDQo+PiBbICAgNzIuNzEwNzIwXSBVQklGUyAodWJpMDowKTogTW91bnRpbmcg
-aW4gdW5hdXRoZW50aWNhdGVkIG1vZGUNCj4+IFsgICA3Mi43MTc0NDddIFVCSUZTICh1YmkwOjAp
-OiBiYWNrZ3JvdW5kIHRocmVhZCAidWJpZnNfYmd0MF8wIiBzdGFydGVkLCBQSUQgMTQ5DQo+PiBb
-ICAgNzIuNzc3NjAyXSBVQklGUyBlcnJvciAodWJpMDowIHBpZCAxNDgpOiB1Ymlmc19yZWNvdmVy
-X21hc3Rlcl9ub2RlOiBmYWlsZWQgdG8gcmVjb3ZlciBtYXN0ZXIgbm9kZQ0KPj4gWyAgIDcyLjc4
-Nzc5Ml0gVUJJRlMgKHViaTA6MCk6IGJhY2tncm91bmQgdGhyZWFkICJ1Ymlmc19iZ3QwXzAiIHN0
-b3BzDQo+Pg0KPj4gRnVsbCBkbWVzZyBvdXRwdXQgaXMgYXRbMl0NCj4+DQo+PiBnaXQgYmlzZWN0
-IGxlYWQgbWUgdG8gY29tbWl0IDExODEzODU3ODY0ZiAoIm10ZDogc3BpLW5hbmQ6IG1hY3Jvbml4
-OiBDb250aW51b3VzIHJlYWQgc3VwcG9ydCIpLiBSZXZlcnRpbmcgdGhlIGJsYW1lZA0KPj4gY29t
-bWl0IGZyb20gNi4xMi1yYzUgc2VlbXMgdG8gYXZvaWQgdGhlIHByb2JsZW0uIFRoZSBmbGFzaCBj
-aGlwIG9uIG15IGJvYXJkIGlzIGEgTVgzMExGMkcyOEFELVRJLiBJJ20gbm90IHN1cmUgaWYgdGhl
-cmUNCj4+IGlzIGEgcHJvYmxlbSB3aXRoIDExODEzODU3ODY0ZiBvciB3aXRoIG15IHNwaS1tZW0g
-ZHJpdmVyIHRoYXQgaXMNCj4+IGV4cG9zZWQgYWZ0ZXIgc3VwcG9ydCBmb3IgY29udGludW91cyBy
-ZWFkIGlzIGVuYWJsZWQuDQo+IENyYXAuIEkgaGFkIGEgbG9vaywgYW5kIFRCSCBJIGRvbid0IGtu
-b3cuIFRoZSBvbmx5IHRoaW5nIEkgc2VlIGluIHlvdXINCj4gZHJpdmVyIG1pZ2h0IGJlIHRoZSBE
-TUEgdnMgUElPIGNob2ljZS4gQ291bGQgeW91IHRyeSB0byBhbHdheXMgcmV0dXJuDQo+IGZhbHNl
-IGZyb20gcnRsX3NuYW5kX2RtYV9vcCgpPw0KDQpJdCB0dXJuZWQgb3V0IHRoZSBsaW1pdGF0aW9u
-IHdhcyBpbiBteSBETUEgc3VwcG9ydC4gV2l0aCB0aGUgZml4IGZvciANCnRoYXRbMV0geW91ciBj
-aGFuZ2VzIGFyZSBmaW5lLiBJJ20gYSBsaXR0bGUgc3VycHJpc2VkIEkgbmV2ZXIgaGl0IA0KcHJv
-YmxlbXMgd2l0aCBETUEgcHJpb3IgdG8gdGhlIGNvbnRpbnVvdXMgcmVhZCBjaGFuZ2VzIGJ1dCBJ
-IGd1ZXNzIHRoZSANCnBhZ2UgcmVhZHMgd291bGQgaGF2ZSBiZWVuIHVuZGVyIHRoZSBsaW1pdCBh
-bmQgbXkgdGVzdGluZyBwcm9iYWJseSANCmRpZG4ndCB0cmlnZ2VyIGEgYmlnIGVub3VnaCB3cml0
-ZS4NCg0KPiBIb3dldmVyIHlvdSBzYXkgeW91J3JlIHVzaW5nIGFuIE1YMzAqIGRldmljZSwgdGhp
-cyBpcyBhIHJhdyBOQU5EIGNoaXAsDQo+IFNQSS1OQU5EIGNoaXBzIGFyZSBJIGJlbGlldmUgc3Rh
-cnRpbmcgd2l0aCBNWDM1KiBpbiB0aGVpciBJRHMsIG5vPw0KSSB0aGluayBJIGNvcGllZCB0aGF0
-IHBhcnQgbnVtYmVyIG9mZiB0aGUgd3JvbmcgZGF0YXNoZWV0IGluIG15IHVuc29ydGVkIA0KRG93
-bmxvYWRzIGRpcmVjdG9yeS4gVGhlIHNjaGVtYXRpYyBmb3IgdGhlIGJvYXJkIEkgaGF2ZSBzYXlz
-IA0KTVgzNUxGMkdFNEFELVo0IGFuZCB0aGUgY29ycmVjdCBkYXRhc2hlZXQgaGFzIGFsbCB0aGUg
-cmlnaHQgdGhpbmdzIGFib3V0IA0KU1BJLU5BTkQgYW5kIGNvbnRpbnVvdXMgcmVhZC4NCj4NCj4g
-VGhhbmtzLA0KPiBNaXF1w6hsDQoNCg0KWzFdIC0gDQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1
-Yi9zY20vbGludXgva2VybmVsL2dpdC9icm9vbmllL3NwaS5naXQvY29tbWl0Lz9pZD0yNWQyODQ3
-MTU4NDVhNDY1YTFhMzY5M2EwOWNmOGI2YWI4YmQ5Y2FmDQo=
+This patch adds the open-coded iterator style process file iterator
+kfuncs bpf_iter_task_file_{new,next,destroy} that iterates over all
+files opened by the specified process.
+
+In addition, this patch adds bpf_iter_task_file_get_fd() getter to get
+the file descriptor corresponding to the file in the current iteration.
+
+The reference to struct file acquired by the previous
+bpf_iter_task_file_next() is released in the next
+bpf_iter_task_file_next(), and the last reference is released in the
+last bpf_iter_task_file_next() that returns NULL.
+
+In the bpf_iter_task_file_destroy(), if the iterator does not iterate to
+the end, then the last struct file reference is released at this time.
+
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+ kernel/bpf/helpers.c   |  4 ++
+ kernel/bpf/task_iter.c | 96 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 100 insertions(+)
+
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 395221e53832..1f0f7ca1c47a 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -3096,6 +3096,10 @@ BTF_ID_FLAGS(func, bpf_iter_css_destroy, KF_ITER_DESTROY)
+ BTF_ID_FLAGS(func, bpf_iter_task_new, KF_ITER_NEW | KF_TRUSTED_ARGS | KF_RCU_PROTECTED)
+ BTF_ID_FLAGS(func, bpf_iter_task_next, KF_ITER_NEXT | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_iter_task_destroy, KF_ITER_DESTROY)
++BTF_ID_FLAGS(func, bpf_iter_task_file_new, KF_ITER_NEW | KF_TRUSTED_ARGS)
++BTF_ID_FLAGS(func, bpf_iter_task_file_next, KF_ITER_NEXT | KF_RET_NULL)
++BTF_ID_FLAGS(func, bpf_iter_task_file_get_fd)
++BTF_ID_FLAGS(func, bpf_iter_task_file_destroy, KF_ITER_DESTROY)
+ BTF_ID_FLAGS(func, bpf_dynptr_adjust)
+ BTF_ID_FLAGS(func, bpf_dynptr_is_null)
+ BTF_ID_FLAGS(func, bpf_dynptr_is_rdonly)
+diff --git a/kernel/bpf/task_iter.c b/kernel/bpf/task_iter.c
+index 5af9e130e500..32e15403a5a6 100644
+--- a/kernel/bpf/task_iter.c
++++ b/kernel/bpf/task_iter.c
+@@ -1031,6 +1031,102 @@ __bpf_kfunc void bpf_iter_task_destroy(struct bpf_iter_task *it)
+ {
+ }
+ 
++struct bpf_iter_task_file {
++	__u64 __opaque[3];
++} __aligned(8);
++
++struct bpf_iter_task_file_kern {
++	struct task_struct *task;
++	struct file *file;
++	int fd;
++} __aligned(8);
++
++/**
++ * bpf_iter_task_file_new() - Initialize a new task file iterator for a task,
++ * used to iterate over all files opened by a specified task
++ *
++ * @it: the new bpf_iter_task_file to be created
++ * @task: a pointer pointing to a task to be iterated over
++ */
++__bpf_kfunc int bpf_iter_task_file_new(struct bpf_iter_task_file *it,
++		struct task_struct *task)
++{
++	struct bpf_iter_task_file_kern *kit = (void *)it;
++
++	BUILD_BUG_ON(sizeof(struct bpf_iter_task_file_kern) > sizeof(struct bpf_iter_task_file));
++	BUILD_BUG_ON(__alignof__(struct bpf_iter_task_file_kern) !=
++		     __alignof__(struct bpf_iter_task_file));
++
++	kit->task = task;
++	kit->fd = -1;
++	kit->file = NULL;
++
++	return 0;
++}
++
++/**
++ * bpf_iter_task_file_next() - Get the next file in bpf_iter_task_file
++ *
++ * bpf_iter_task_file_next acquires a reference to the returned struct file.
++ *
++ * The reference to struct file acquired by the previous
++ * bpf_iter_task_file_next() is released in the next bpf_iter_task_file_next(),
++ * and the last reference is released in the last bpf_iter_task_file_next()
++ * that returns NULL.
++ *
++ * @it: the bpf_iter_task_file to be checked
++ *
++ * @returns a pointer to the struct file of the next file if further files
++ * are available, otherwise returns NULL
++ */
++__bpf_kfunc struct file *bpf_iter_task_file_next(struct bpf_iter_task_file *it)
++{
++	struct bpf_iter_task_file_kern *kit = (void *)it;
++
++	if (kit->file)
++		fput(kit->file);
++
++	kit->fd++;
++
++	rcu_read_lock();
++	kit->file = task_lookup_next_fdget_rcu(kit->task, &kit->fd);
++	rcu_read_unlock();
++
++	return kit->file;
++}
++
++/**
++ * bpf_iter_task_file_get_fd() - Get the file descriptor corresponding to
++ * the file in the current iteration
++ *
++ * @it: the bpf_iter_task_file to be checked
++ *
++ * @returns the file descriptor. If -1 is returned, it means the iteration
++ * has not started yet.
++ */
++__bpf_kfunc int bpf_iter_task_file_get_fd(struct bpf_iter_task_file *it__iter)
++{
++	struct bpf_iter_task_file_kern *kit = (void *)it__iter;
++
++	return kit->fd;
++}
++
++/**
++ * bpf_iter_task_file_destroy() - Destroy a bpf_iter_task_file
++ *
++ * If the iterator does not iterate to the end, then the last
++ * struct file reference is released at this time.
++ *
++ * @it: the bpf_iter_task_file to be destroyed
++ */
++__bpf_kfunc void bpf_iter_task_file_destroy(struct bpf_iter_task_file *it)
++{
++	struct bpf_iter_task_file_kern *kit = (void *)it;
++
++	if (kit->file)
++		fput(kit->file);
++}
++
+ __bpf_kfunc_end_defs();
+ 
+ DEFINE_PER_CPU(struct mmap_unlock_irq_work, mmap_unlock_work);
+-- 
+2.39.5
+
 
