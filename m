@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-398161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528089BE69A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:03:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826EC9BE69C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:03:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4458B25720
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42185280C99
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA481E049B;
-	Wed,  6 Nov 2024 12:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909331E0DB6;
+	Wed,  6 Nov 2024 12:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lY1yQmsM"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qpWnTctF"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5041DFE12
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 12:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F991E0488
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 12:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730894500; cv=none; b=q1a3/93lAxeWr5PqrURqzHvgMjYCx/FrZR0OUCl+qUwOzOqYryAa9dni9jHWnzAUJWnDmhgizN8mcqZUmpxaIfsY3On9+/P+wjNQ7AerJoX6fFgh2z+l2iGSaW5fPls3FkQbr1AgjRPkqmerX0+8RFdLw1bmWTpzYtT/gnLkfTg=
+	t=1730894502; cv=none; b=rduTkTvbbZxY8yKBBuM6u9Vf6WuPDbZCIiXgX4DLDuwiCa97T4blgQbdqSGcANd7eT5BTixdwAJJQdPYWDI+5D/NZp8vsQZxH16z8cdey9x/kElataOjWsRpnLgTc+OeBF5g8veRlaHdhW7hGlbZK0xVoZpGghPV2J6IhpdFSkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730894500; c=relaxed/simple;
-	bh=nnIKMHwZCVnhmpyPc+cxLCcbBBDKni1qbHKymLGyy3o=;
+	s=arc-20240116; t=1730894502; c=relaxed/simple;
+	bh=0jeuRPiyyg5MoDwyj3mqnXFmNpzYM4erd+w9ZG5JZZc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nu4d7F1Dcxa5Rqs3V3ZSPvmtFoP7eYHhTJrd8UVIVzRJPMy6CfaxKhK5kcdWRYg7ISbW3TgDaQYo2RTmqWNoTsVixFG2nCXZ5NrpW7CLjS9qq0UNvs+YycuLsp6B4wSO7cAVDcLqlnzIdAmnOOwRZE70ZpavhyZqF50llID9toY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lY1yQmsM; arc=none smtp.client-ip=209.85.208.49
+	 MIME-Version; b=HaGZ5wYCm0J/0o7Zou7bbLfEWlJzXOYn24mjkF0y2IuaHAmYV0vOcplfSTSV+R1mFo7sGzKj2V3qKUjdpAC4+VwdfIU9GiZAZ83jaIpr9AtxROvCb5JXEP0XCJtfp4gZ5rNQtHmtOTqafrySsjWgO9P9qLxg8CSpoEtEWOIwcnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qpWnTctF; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c984352742so8095331a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 04:01:38 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cec7cde922so6618176a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 04:01:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730894497; x=1731499297; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1730894499; x=1731499299; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iuF+HQqDfNrvN/hR/B+TpLxJCm1YVPLvTielS6yXYjw=;
-        b=lY1yQmsMAB0D53Zc/WIJDvWSSrmopO7Lv+V7lXtTklOoYD83hJrB05lP+vHlA3lbdn
-         7v5kVPVIAhInFPvVxn4CKCMRcxdgAk7Cortq+l7N4VQUA+Xn9zkqzUxXe22GVQ1eMQyC
-         cCfSS7tFi4odDVidkZYIkmGi5yDZuZ/NOO1iJ+erExkroaeFhnhBVKCy/QINPDetUvbw
-         kAJjt7p81UWg77VjyJpcL4O8Bwnzj8zP5Pwwj55bbcFXUtRxWaRvtQ8woQb7QnP/dnNU
-         Kl00QJuyJZy+Fv2ScZ+dguY6/crdmpaDS2TMzF8yyBHmOGk8IS+hoV6rIWtUasagBnVJ
-         U80g==
+        bh=8dfLgZ6EMGgbdpUoSorvdjE4ZEjo6VB1d0vruAXMU0w=;
+        b=qpWnTctF5wvCzT0722KLgyuUhc6TdFZu5dl6nzs6yx4xxd8xwjz9erxqPA/YahdoR8
+         JglWxmnv4ZOqP811cWjY1Kn/N7a/TP4Iw6HoeG1wxYhZJd2Axn6t0gvww1GJg6MZ8P4L
+         xNxnM/K5vsdjGNxgAzNqRt74mZv2KzMK5hqZKWA3ACih9pnJ0lGcm8diY3RhG9FtLvI/
+         y/SyjpuJX56ygtcZ+ke/wMRN1JP+NDmrz5MiJ8BNq1vNpdqDBVlcjaNacOHqOu5D++sg
+         mVmbTrmwqQviA2HPJvXJgAPBfNbuRIGU+BQcvkIj+HyhRKGRdkS+CGKoN5ZwUY8Lvk+0
+         3+GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730894497; x=1731499297;
+        d=1e100.net; s=20230601; t=1730894499; x=1731499299;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iuF+HQqDfNrvN/hR/B+TpLxJCm1YVPLvTielS6yXYjw=;
-        b=pcqUjRJ/ypGEY3tF+iPDmWHzeTOg7iuR4SvfU6hAaf38Pe1ZK9pzd79SxZwbj8Swnj
-         SgLipR+g1v7r3bZY+7CJvGjRgyewc+xxr0rDSKWN4NF/NQd2S/8/27mm9vHM+QLgWMai
-         Xlf+oyKsJBkD8/iAcHlu1F/9vnxMJtgclUAEmnbhZpkQvrqYA1hGgdwCudSmTnd5/Pcv
-         ZCx/VxCPhRW4qzx25BoWEPhAKmHtlNR/m28BCCLSy/8MY4INg11YgrZHsCBvKuMJwPew
-         tlCdHBqWRBE4TN2qmU7NhDpQ/pcuvV2Vp7CxNt449UdhGLrVHBWTxE+8dyW8/B0fDd0d
-         goYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxJgEeG6FcoOEdpyDWTFyH/5/c4nhsLYIUayXKmUmB5Ub1I49R2irffgY3wozTGWybkiutEcdH4vKWj18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvhAMB5l2d/N4FQ1hEJiLD335VN15J5aJdYtoyRSFDG01pf0QD
-	uXTLR29PNI1Ea/nCb0nANQjwd3J5euN5toG+Ux81M1n8HPWrfcIuqcldme2CPVw=
-X-Google-Smtp-Source: AGHT+IGOKdOCav6rBMLw0KkGMzDYbQNM2pA4wEc6Kqrkqnjh7CeppixXiGNwvtEFO5/5/sy+9d87Xw==
-X-Received: by 2002:a05:6402:2753:b0:5c9:62c3:e7fd with SMTP id 4fb4d7f45d1cf-5cbbf8b1d2emr33677935a12.16.1730894497360;
-        Wed, 06 Nov 2024 04:01:37 -0800 (PST)
+        bh=8dfLgZ6EMGgbdpUoSorvdjE4ZEjo6VB1d0vruAXMU0w=;
+        b=Wb8yg8FuRVX82PsM11+mzbGFq5nbTbt4v+3/AHK40zk6KKa5Y2cIM3LUvmCErEKgvv
+         L9Dlik0b/MFQ/T0jbgYqlsG4zvcX5RzeIPwpii9k7kvngUPev0RokcQ4LHAqqSeb9tq2
+         qfhVqYu8lF3BGwIu6GVIbIweDxKhzKMERZhTBuOx6ko4RuYxMJkjlNQzcVxAltiwIa+O
+         qIxM2T8sFQ69Eg7wX0mvFP5i8ifCovvp3yZSNqayK66KsyqqIhndAJf9oJPV/WXp0cgd
+         /+Jo0RtPbXFqMxFsz8DtCC78CaD1QxEvswTNpfAU8teke3HBRKfrHie/CoGQNcv3OEYc
+         ymdA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4GmTjKOnEBjOXH5E8i2x0g+m1wpLPE3heaPYKzE3aTCZ6obazYeS/09MRWqQM6ceN8zkmEpQIvseTO/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI8u+XoCEWSupJbdIZhWC5wtHuF4qDS4+j3JhxbVqvKExi92Fw
+	itDVvcvhbmzvniOnNeiMcP42gm/eUCUwvzAxzsw/LOjqOk1Labkc+FNVIbIi6Zs=
+X-Google-Smtp-Source: AGHT+IEj8QQdYUS9iAJlLLKfU0ogFglwclPszCya71IFXAUQsoN0hO3T3mJeIbY3qcMSrfrfaYLezg==
+X-Received: by 2002:a05:6402:50cb:b0:5ce:d1b2:efc2 with SMTP id 4fb4d7f45d1cf-5ced1b2f1bcmr9628388a12.3.1730894499493;
+        Wed, 06 Nov 2024 04:01:39 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6afe528sm2697984a12.55.2024.11.06.04.01.35
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6afe528sm2697984a12.55.2024.11.06.04.01.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 04:01:36 -0800 (PST)
+        Wed, 06 Nov 2024 04:01:39 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -89,9 +89,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-clk@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 4/9] serial: sh-sci: Update the suspend/resume support
-Date: Wed,  6 Nov 2024 14:01:13 +0200
-Message-Id: <20241106120118.1719888-5-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5/9] arm64: dts: renesas: r9a08g045: Add the remaining SCIF interfaces
+Date: Wed,  6 Nov 2024 14:01:14 +0200
+Message-Id: <20241106120118.1719888-6-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
@@ -105,150 +105,115 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The Renesas RZ/G3S supports a power saving mode where power to most of the
-SoC components is turned off. When returning from this power saving mode,
-SoC components need to be re-configured.
-
-The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
-returning from this power saving mode. The sh-sci code already configures
-the SCIF clocks, power domain and registers by calling uart_resume_port()
-in sci_resume(). On suspend path the SCIF UART ports are suspended
-accordingly (by calling uart_suspend_port() in sci_suspend()). The only
-missing setting is the reset signal. For this assert/de-assert the reset
-signal on driver suspend/resume.
-
-In case the no_console_suspend is specified by the user, the registers need
-to be saved on suspend path and restore on resume path. To do this the
-sci_console_setup() function was added. There is no need to cache/restore
-the status or FIFO registers. Only the control registers. To differentiate
-b/w these, the struct sci_port_params::regs was updated with a new member
-that specifies if the register needs to be chached on suspend. Only the
-RZ_SCIFA instances were updated with this new support as the hardware for
-the rest of variants was missing for testing.
+The Renesas RZ/G3S SoC has 6 SCIF interfaces. SCIF0 is used as debug
+console. Add the remaining ones.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-------
- 1 file changed, 44 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 90 ++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 2f8188bdb251..9548b8e97b8f 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -101,7 +101,7 @@ enum SCI_CLKS {
- 		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+index be8a0a768c65..5b15ff2482ab 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -73,6 +73,96 @@ scif0: serial@1004b800 {
+ 			status = "disabled";
+ 		};
  
- struct plat_sci_reg {
--	u8 offset, size;
-+	u8 offset, size, suspend_cacheable;
- };
- 
- struct sci_port_params {
-@@ -134,6 +134,8 @@ struct sci_port {
- 	struct dma_chan			*chan_tx;
- 	struct dma_chan			*chan_rx;
- 
-+	struct reset_control		*rstc;
++		scif1: serial@1004bc00 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004bc00 0 0x400>;
++			interrupts = <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF1_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF1_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
- #ifdef CONFIG_SERIAL_SH_SCI_DMA
- 	struct dma_chan			*chan_tx_saved;
- 	struct dma_chan			*chan_rx_saved;
-@@ -154,6 +156,7 @@ struct sci_port {
- 	struct timer_list		rx_fifo_timer;
- 	int				rx_fifo_timeout;
- 	atomic_t			first_time_tx;
-+	unsigned int			console_cached_regs[SCIx_NR_REGS];
- 	u16				hscif_tot;
- 
- 	bool has_rtscts;
-@@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
- 	 */
- 	[SCIx_RZ_SCIFA_REGTYPE] = {
- 		.regs = {
--			[SCSMR]		= { 0x00, 16 },
--			[SCBRR]		= { 0x02,  8 },
--			[SCSCR]		= { 0x04, 16 },
-+			[SCSMR]		= { 0x00, 16, 1 },
-+			[SCBRR]		= { 0x02,  8, 1 },
-+			[SCSCR]		= { 0x04, 16, 1 },
- 			[SCxTDR]	= { 0x06,  8 },
- 			[SCxSR]		= { 0x08, 16 },
- 			[SCxRDR]	= { 0x0A,  8 },
--			[SCFCR]		= { 0x0C, 16 },
-+			[SCFCR]		= { 0x0C, 16, 1 },
- 			[SCFDR]		= { 0x0E, 16 },
--			[SCSPTR]	= { 0x10, 16 },
-+			[SCSPTR]	= { 0x10, 16, 1 },
- 			[SCLSR]		= { 0x12, 16 },
--			[SEMR]		= { 0x14, 8 },
-+			[SEMR]		= { 0x14, 8, 1 },
- 		},
- 		.fifosize = 16,
- 		.overrun_reg = SCLSR,
-@@ -3365,6 +3368,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
- 	}
- 
- 	sp = &sci_ports[id];
-+	sp->rstc = rstc;
- 	*dev_id = id;
- 
- 	p->type = SCI_OF_TYPE(data);
-@@ -3492,13 +3496,34 @@ static int sci_probe(struct platform_device *dev)
- 	return 0;
- }
- 
-+static void sci_console_setup(struct sci_port *s, bool save)
-+{
-+	for (u16 i = 0; i < SCIx_NR_REGS; i++) {
-+		struct uart_port *port = &s->port;
++		scif2: serial@1004c000 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004c000 0 0x400>;
++			interrupts = <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF2_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF2_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
-+		if (!s->params->regs[i].suspend_cacheable)
-+			continue;
++		scif3: serial@1004c400 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004c400 0 0x400>;
++			interrupts = <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF3_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF3_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
-+		if (save)
-+			s->console_cached_regs[i] = sci_serial_in(port, i);
-+		else
-+			sci_serial_out(port, i, s->console_cached_regs[i]);
-+	}
-+}
++		scif4: serial@1004c800 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004c800 0 0x400>;
++			interrupts = <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF4_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF4_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
- static __maybe_unused int sci_suspend(struct device *dev)
- {
- 	struct sci_port *sport = dev_get_drvdata(dev);
- 
--	if (sport)
-+	if (sport) {
- 		uart_suspend_port(&sci_uart_driver, &sport->port);
- 
-+		if (!console_suspend_enabled && uart_console(&sport->port))
-+			sci_console_setup(sport, true);
-+		else
-+			return reset_control_assert(sport->rstc);
-+	}
++		scif5: serial@1004e000 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004e000 0 0x400>;
++			interrupts = <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF5_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF5_RST_SYSTEM_N>;
++			status = "disabled";
++		};
 +
- 	return 0;
- }
- 
-@@ -3506,8 +3531,18 @@ static __maybe_unused int sci_resume(struct device *dev)
- {
- 	struct sci_port *sport = dev_get_drvdata(dev);
- 
--	if (sport)
-+	if (sport) {
-+		if (!console_suspend_enabled && uart_console(&sport->port)) {
-+			sci_console_setup(sport, false);
-+		} else {
-+			int ret = reset_control_deassert(sport->rstc);
-+
-+			if (ret)
-+				return ret;
-+		}
-+
- 		uart_resume_port(&sci_uart_driver, &sport->port);
-+	}
- 
- 	return 0;
- }
+ 		rtc: rtc@1004ec00 {
+ 			compatible = "renesas,r9a08g045-rtca3", "renesas,rz-rtca3";
+ 			reg = <0 0x1004ec00 0 0x400>;
 -- 
 2.39.2
 
