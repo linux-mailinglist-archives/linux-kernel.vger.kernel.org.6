@@ -1,83 +1,101 @@
-Return-Path: <linux-kernel+bounces-398084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99ECC9BE50F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:00:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29849BE517
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572E1282F24
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:00:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6760FB214D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ADF1DE4EA;
-	Wed,  6 Nov 2024 11:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A291DE3B6;
+	Wed,  6 Nov 2024 11:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fluKaB32"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmcXmFIk"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193BB142E86;
-	Wed,  6 Nov 2024 11:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050638DD8;
+	Wed,  6 Nov 2024 11:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890844; cv=none; b=jaJugPyCXZRzJK4MjDh+iuGF68+SNdZOJLOwPz7It/0ksXTseKuDmppc4KBdlYTqBlmkrdTP5mb3ufESoJGsquuJMNkNLvZn7Csl52TccF7Io7R/gkStWcp/STQ62BpUNFhp3usc3EbVk5NliQ7whr/ZsOCoDY0iiv9GBEgf4O0=
+	t=1730890902; cv=none; b=NM+G7KrRuieXIhgvmJsUA5zeLBSCKVQin3m7+rpCTxNc5giITLbLH86cQ0vPHErzIf6YKqM4fAKbslfTrDksRzu8HLZSE8o/IfeT2Iop5WuA17Noti5P9C+DMTiFTHh/3gqiimi+MOugVJGkISqXPuq546gi0kI9vkHcjrwedfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890844; c=relaxed/simple;
-	bh=iIV7Yr0bdlyHCC81DwX4Zrc8Y06lx1+kkRFDjM5Xwto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJ7YNlEPZQHk1XZIv1MoWD1jmD/rOmvxSobtMZCvXVSX1CXMQugkX4nRQdzCWjSQ1gTOPjLk6N7dHp5QtOlhvkdVuXTrA7P5C0ey5+2JK8TQAO1fkJNiQ/cSNyVtVpMxrwpf206U6lxNbzBJeWrOXBdVh+9SIcafoEURx50q04A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fluKaB32; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3542C4CED2;
-	Wed,  6 Nov 2024 11:00:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730890843;
-	bh=iIV7Yr0bdlyHCC81DwX4Zrc8Y06lx1+kkRFDjM5Xwto=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fluKaB329vNJTNI9zO/jYxyQxleiQBtI3hKbWs0s2lRdk257564zui1vCDHtl7bRo
-	 uB6DyslqXkzRJkh7Uh0+/5IENbwqceE3vizLfiBT8q+hE3kqvLcUFJVL+XILS0196J
-	 g6R57UQ1g6u2rYpwp6KXjgGC4nRFip0fVAogwjC1acxNaYODBKLotQp1JpvPXAKwRE
-	 eMggPtQL0BehPSCWpReY1vNYEvjsUWGnO8q24WUBs949ASDp7FHhlPf0Mh1278yW7r
-	 UkjHp3qRTvUJ+Ayunm7ExLAsKwD1LujV35so92bkZAG+x+p0a52oaY/6xcwHo7XuRS
-	 grAVdrY8SNwXw==
-Date: Wed, 6 Nov 2024 11:00:39 +0000
-From: Simon Horman <horms@kernel.org>
-To: Gan Jie <ganjie182@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, trivial@kernel.org,
-	ganjie163@hust.edu.cn
-Subject: Re: [PATCH] Driver:net:fddi: Fix typo 'adderss'
-Message-ID: <20241106110039.GO4507@kernel.org>
-References: <20241101074551.943-1-ganjie182@gmail.com>
+	s=arc-20240116; t=1730890902; c=relaxed/simple;
+	bh=3Ttyl8Nkn8S95rvO5YhBvGG9S2zvLPy1qHxzRNquABU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=o00DoGThXgqBCOXtdN35hxqPDwIRd2NrmI4+/wucYw2326BuTM6RCUkmrXQKmGWfDoDZDKo19Il/jYVik8hv5vZnvRnS8f84VvT7lgJwQOtnEXwiEgw+nT7m1y6XV5td3QWcABrXj0Hqt8ncfXf6pl09Gm2PGLQ8+Ob3l56ANpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EmcXmFIk; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea16c7759cso3580769a12.1;
+        Wed, 06 Nov 2024 03:01:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730890900; x=1731495700; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FqoEH4eHRdA69hXRfFE9hVKR0NbklO4CabBdC7IqTJc=;
+        b=EmcXmFIkOCNe2zWjeTJdQEgPwDc6lHCxgB7tyjpXmb0bWir9SpJWGbC7svdqcCHh41
+         Ro3ayl/vGMju2nEFBTV9x6yXte6wadMTXWmxIo45GxxHln8WZg2bCyfDYRi0LM0Afczw
+         s2IaTDpWMdM7TMClMi9ztbQNAy+I85hCWbKwQumocD49nFSdQAmIWy12klmS5lCjsnWa
+         sv3Zoq2xzwinYj80gvceinQpu6swMjHt/qWPyzJ2HE2KGh7kDICdZij4Y82sObG9zijE
+         gNfxokM0Gk/3W8R5FwtAhepLGIJMAOSwI67fLuYYTRl3FUmw9ZmA+tEweZ39HEt/P2AT
+         WjiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730890900; x=1731495700;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FqoEH4eHRdA69hXRfFE9hVKR0NbklO4CabBdC7IqTJc=;
+        b=rCtkcSBM2aJsLsdBsDSpoQVquo/VSZFDpuhW/m2TUWRKLp64i+4WTGjjC4MNtQGRxn
+         hVMXtSSrxv2BNepo48ureg33mSWk98KdjQuO/bpbq7Vmw/N4tWrR2M1tLCkac44erkHB
+         iwByJw8BwwLnBSPNvIiOHd3Kr5/VVRCMdfQsOiPJh/6tz/fgCDF0aCUawwFpDwM7Wzx6
+         ohquuXy5yP+bta3WWMetlugp5lsO9M2TqeZoPP35/UKUkqSKcbotijqODWYBqp7ruh1O
+         PSCyE9gCM5Z1FtI6XIBSqEfA4JDszZXNBbW2TUCfJfJ4LHRGIsWtJKh3/cuzS5lI8HOJ
+         i8Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUToDAQb/JIkYISkkMJO+Fd4gzyO5eGluTCVUqBBN8NKi5XXauz6lDJLDg2j9RvKnQRyeOsh7PzjvnWyUrA@vger.kernel.org, AJvYcCWv3UPiSyqui6ZntDeNLx4LSr3YWkHG6H5Ao/HMT2Ow/IuD8X8nkGbiaM12+qliAv31I5PnrGkierA5RuXr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCqtraBaA1WVENN4fanYY4aPq8GNIUerA/6pQI/fHOk8jcuF7N
+	gYEiwEFTA5HOHUFJEeK8MytYIk3MlUD6UTGgQ5WUZGJhyA8SdYT4
+X-Google-Smtp-Source: AGHT+IHsn7RTzpS/5JLW0WEmrwF+aaAAWPEDVhUvtIt+NqL7wdHGauXdVTqGEOmkH7X0jRFpW/YGfA==
+X-Received: by 2002:a17:90b:540d:b0:2e2:d15c:1a24 with SMTP id 98e67ed59e1d1-2e93c1a6cddmr31712372a91.23.1730890900382;
+        Wed, 06 Nov 2024 03:01:40 -0800 (PST)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ee452aa158sm10977927a12.30.2024.11.06.03.01.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 03:01:39 -0800 (PST)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: jmoyer@redhat.com
+Cc: bcrl@kvack.org,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pvmohammedanees2003@gmail.com,
+	viro@zeniv.linux.org.uk,
+	willy@infradead.org
+Subject: Re: [PATCH] fs: aio: Transition from Linked List to Hash Table for Active Request Management in AIO
+Date: Wed,  6 Nov 2024 16:31:20 +0530
+Message-ID: <20241106110120.11093-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <x491pzwtogw.fsf@segfault.usersys.redhat.com>
+References: <x491pzwtogw.fsf@segfault.usersys.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101074551.943-1-ganjie182@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 01, 2024 at 03:45:51PM +0800, Gan Jie wrote:
-> Fix typo 'adderss' to 'address'.
-> 
-> Signed-off-by: Gan Jie <ganjie182@gmail.com>
+> ... and cancelation is only supported by usb gadgetfs.  I'd say submit a
+> patch that gets rid of that todo so nobody else wastes time on it.
 
-Hi Gan Jie,
-
-While you are addressing spelling in this file, could you
-also look into the following which are flagged by codespell.
-
-drivers/net/fddi/skfp/h/supern_2.h:55: impementor ==> implementer
-drivers/net/fddi/skfp/h/supern_2.h:587: Implementor ==> Implementer
-drivers/net/fddi/skfp/h/supern_2.h:598: Implementor ==> Implementer
-drivers/net/fddi/skfp/h/supern_2.h:885: activ ==> active
-drivers/net/fddi/skfp/h/supern_2.h:927: activ ==> active
-drivers/net/fddi/skfp/h/supern_2.h:956: ACTIV ==> ACTIVE
-drivers/net/fddi/skfp/h/supern_2.h:959: ACTIV ==> ACTIVE
-drivers/net/fddi/skfp/h/supern_2.h:1028: recources ==> resources
+Absolutely I'll do just that, do you want me to make it a V2
+or shall send it as a new patch.
 
 Thanks!
 
