@@ -1,90 +1,204 @@
-Return-Path: <linux-kernel+bounces-398075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC4E9BE4EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:56:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01E09BE4F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:56:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 720E11F2462B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:56:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1B1A1C2377B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00ED1DE4FA;
-	Wed,  6 Nov 2024 10:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRFzni32"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553361DE4EA;
+	Wed,  6 Nov 2024 10:56:40 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A371DA622;
-	Wed,  6 Nov 2024 10:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B37A1DA622;
+	Wed,  6 Nov 2024 10:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890548; cv=none; b=sM38JXe90cDwMrkiuVQ37G2uBAIx6Ub+tqEu6rzYoUIDmSXXlr1qXkbKveI4vioeYcjz+vgi1ORRA7trvt480TS8FdYsFTA3jQwKcXPoD302lhRwK0Ni5z8R+d86N/XixeDJubTDqIPoZ1nweDf5lhbttyt4D4S6mpN51ZqkTCU=
+	t=1730890599; cv=none; b=RdYIdGcGJFiH5Igr/nBzmjyVBAWw7+7f8XqdUNPY2XKWswCxXD9AT2KWF+wzT2X2tiy5brpoG8tt8ci9xCoXfsKLTeEEUQwHlXgGiEL/0uYNZ+V2g7iphO7VIUL+RDlYDUQHSRvQzX7Y/SZxrilx6LMibF2PBStK1ULO0WHMnqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890548; c=relaxed/simple;
-	bh=3QNhdLfaFoqKHebi4TF2CAzndgVvZujHDKpOb5+/9Ws=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uHRPwSuYq6nmP7/fFI9x+sT5ftIJMxIBkyu0JRJ+b/Vgw5twywG1UiCYphRUSa4p2DluYwa4VuLepqlhbp++YTYKgkRBbTbWkw42JiX+3dNGvR+25c6UDdc+l4AoQplm4HaO5GbpJCq072UAOXWpM8368Ht6slRudvu6Hz+qexM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRFzni32; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3C5C4CECD;
-	Wed,  6 Nov 2024 10:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730890547;
-	bh=3QNhdLfaFoqKHebi4TF2CAzndgVvZujHDKpOb5+/9Ws=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uRFzni32xjLNM+M0TZe2xWbHmRUxAdYUw+ibMTkRpgX8EZljDuAghAlconbqitZsF
-	 oXFv/4X66CDoGXnx49ZzqNlpckHchuJ0F+xLDHoX4w2QKBmhw3dleTqixTHMn8AhNE
-	 ayjr1CSltQPO0EZBTBpiEUt8s1oioBo9RlfuLKCnLpF5kXTv2+/IrBLQbtH2rk+vgz
-	 lDTpppvGcahpRIBC/ujmoozezpQS8VYAYR6aNUDcc2LwNBELG7A/nbpiPnKMV+U1Tb
-	 PCg3eCRRje0WL1xBKmdRUxA6OVygJkaxnTRyIN4gC4N2d1PHmqGF31545q4rBlD57k
-	 iUJIg88rbLB7w==
-From: Lee Jones <lee@kernel.org>
-To: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, lee@kernel.org, sre@kernel.org, 
- tsbogend@alpha.franken.de, 
- Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-mips@vger.kernel.org
-In-Reply-To: <20241031200350.274945-5-chris.packham@alliedtelesis.co.nz>
-References: <20241031200350.274945-1-chris.packham@alliedtelesis.co.nz>
- <20241031200350.274945-5-chris.packham@alliedtelesis.co.nz>
-Subject: Re: (subset) [PATCH v8 4/7] dt-bindings: mfd: Add Realtek RTL9300
- switch peripherals
-Message-Id: <173089054492.3329096.14087747490130064328.b4-ty@kernel.org>
-Date: Wed, 06 Nov 2024 10:55:44 +0000
+	s=arc-20240116; t=1730890599; c=relaxed/simple;
+	bh=LQG9eqDPNmwxwvZfvSWSmROcayIPhbmGXD5bEneyqGQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gBwsE1XPBkXljawSjmQY2e7QsjJp17bh3Jyi8ajSWISJVuyZL66B6RAN6UmEL8mCLc/RADxuokNOTY7ieYhofdu1auLsIPzdXOgAezhf80gbE/uQmxfbpwLTo1mKGOUvCBka+cNwNwh3RnWbkNiKT4IQbD6C/tU3Lmmpk+vMDks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xk2BZ0KDMzNpR6;
+	Wed,  6 Nov 2024 18:53:58 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id E382C140361;
+	Wed,  6 Nov 2024 18:56:34 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 6 Nov 2024 18:56:34 +0800
+Message-ID: <2f256bce-0c37-4940-9218-9545daa46169@huawei.com>
+Date: Wed, 6 Nov 2024 18:56:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
+ has already unbound
+To: Jesper Dangaard Brouer <hawk@kernel.org>,
+	=?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <zhangkun09@huawei.com>, <fanghaiqing@huawei.com>,
+	<liuyonglong@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
+ Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew
+ Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
+ Apalodimas <ilias.apalodimas@linaro.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, kernel-team
+	<kernel-team@cloudflare.com>, Christoph Hellwig <hch@lst.de>,
+	<m.szyprowski@samsung.com>
+References: <20241022032214.3915232-1-linyunsheng@huawei.com>
+ <20241022032214.3915232-4-linyunsheng@huawei.com>
+ <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
+ <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
+ <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
+ <cf1911c5-622f-484c-9ee5-11e1ac83da24@huawei.com> <878qu7c8om.fsf@toke.dk>
+ <1eac33ae-e8e1-4437-9403-57291ba4ced6@huawei.com> <87o731by64.fsf@toke.dk>
+ <023fdee7-dbd4-4e78-b911-a7136ff81343@huawei.com> <874j4sb60w.fsf@toke.dk>
+ <a50250bf-fe76-4324-96d7-b3acf087a18c@huawei.com>
+ <a6cfba96-9164-4497-b075-9359c18a5eef@kernel.org>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <a6cfba96-9164-4497-b075-9359c18a5eef@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Fri, 01 Nov 2024 09:03:47 +1300, Chris Packham wrote:
-> Add device tree schema for the Realtek RTL9300 switches. The RTL9300
-> family is made up of the RTL9301, RTL9302B, RTL9302C and RTL9303. These
-> have the same SoC differ in the Ethernet switch/SERDES arrangement.
++cc Christoph & Marek
+
+On 2024/11/6 4:11, Jesper Dangaard Brouer wrote:
+
+...
+
+>>>
+>>>> I am not sure if I understand the reasoning behind the above suggestion to 'wait
+>>>> and see if this actually turns out to be a problem' when we already know that there
+>>>> are some cases which need cache kicking/flushing for the waiting to work and those
+>>>> kicking/flushing may not be easy and may take indefinite time too, not to mention
+>>>> there might be other cases that need kicking/flushing that we don't know yet.
+>>>>
+>>>> Is there any reason not to consider recording the inflight pages so that unmapping
+>>>> can be done for inflight pages before driver unbound supposing dynamic number of
+>>>> inflight pages can be supported?
+>>>>
+>>>> IOW, Is there any reason you and jesper taking it as axiomatic that recording the
+>>>> inflight pages is bad supposing the inflight pages can be unlimited and recording
+>>>> can be done with least performance overhead?
+>>>
+>>> Well, page pool is a memory allocator, and it already has a mechanism to
+>>> handle returning of memory to it. You're proposing to add a second,
+>>> orthogonal, mechanism to do this, one that adds both overhead and
+>>
+>> I would call it as a replacement/improvement for the old one instead of
+>> 'a second, orthogonal' as the old one doesn't really exist after this patch.
+>>
 > 
-> Currently the only supported features are the syscon-reboot and i2c
-> controllers. The syscon-reboot is needed to be able to reboot the board.
-> The I2C controllers are slightly unusual because they each own an SCL
-> pin (GPIO8 for the first controller, GPIO 17 for the second) but have 8
-> common SDA pins which can be assigned to either controller (but not
-> both).
+> Yes, are proposing doing a very radical change to the page_pool design.
+> And this is getting proposed as a fix patch for IOMMU.
 > 
-> [...]
+> It is a very radical change that page_pool needs to keep track of *ALL* in-flight pages.
 
-Applied, thanks!
+I am agreed that it is a radical change, that is why it is targetting net-next
+tree instead of net tree even when there is a Fixes tag for it.
 
-[4/7] dt-bindings: mfd: Add Realtek RTL9300 switch peripherals
-      commit: 0c64e7496717779ff60249d5aafd5c18aceee982
+If there is a proper and non-radical way to fix that, I would prefer the
+non-radical way too.
 
---
-Lee Jones [李琼斯]
+> 
+> The DMA issue is a life-time issue of DMA object associated with the
+> struct device.  Then, why are you not looking at extending the life-time
+
+It seems it is not really about the life-time of DMA object associated with the
+life-time of 'struct device', it seems to be the life-time of DMA API associated
+with the life-time of the driver for the 'struct device' from the the opinion of
+experts from IOMMU/DMA subsystem in [1] & [2].
+
+I am not sure what is reasoning behind the above, but the implementation seems
+to be the case as mentioned in [3]:
+__device_release_driver -> device_unbind_cleanup -> arch_teardown_dma_ops
+
+1. https://lkml.org/lkml/2024/8/6/632
+2. https://lore.kernel.org/all/20240923175226.GC9634@ziepe.ca/
+3. https://lkml.org/lkml/2024/10/15/686
+
+> of the DMA object, or at least detect when DMA object goes away, such
+> that we can change a setting in page_pool to stop calling DMA unmap for
+> the pages in-flight once they get returned (which we have en existing
+> mechanism for).
+
+To be honest, I was mostly depending on the opinion of the experts from
+IOMMU/DMA subsystem for the correct DMA API usage as mentioned above.
+So I am not sure if skipping DMA unmapping for the inflight pages is the
+correct DMA API usage?
+If it is the correct DMA API usage, how to detect that if DMA unmapping
+can be skipped?
+
+From previous discussion, skipping DMA unmapping may casue some resource
+leaking, like the iova resoure behind the IOMMU and bounce buffer memory
+behind the swiotlb.
+
+Anyway, I may be wrong, CC'ing more experts to see if we can have some
+clarifying from them.
+
+> 
+> 
+>>> complexity, yet doesn't handle all cases (cf your comment about devmem).
+>>
+>> I am not sure if unmapping only need to be done using its own version DMA API
+>> for devmem yet, but it seems waiting might also need to use its own version
+>> of kicking/flushing for devmem as devmem might be held from the user space?
+>>
+>>>
+>>> And even if it did handle all cases, force-releasing pages in this way
+>>> really feels like it's just papering over the issue. If there are pages
+>>> being leaked (or that are outstanding forever, which basically amounts
+>>> to the same thing), that is something we should be fixing the root cause
+>>> of, not just working around it like this series does.
+>>
+>> If there is a definite time for waiting, I am probably agreed with the above.
+>>  From the previous discussion, it seems the time to do the kicking/flushing
+>> would be indefinite depending how much cache to be scaned/flushed.
+>>
+>> For the 'papering over' part, it seems it is about if we want to paper over
+>> different kicking/flushing or paper over unmapping using different DMA API.
+>>
+>> Also page_pool is not really a allocator, instead it is more like a pool
+>> based on different allocator, such as buddy allocator or devmem allocator.
+>> I am not sure it makes much to do the flushing when page_pool_destroy() is
+>> called if the buddy allocator behind the page_pool is not under memory
+>> pressure yet.
+>>
+> 
+> I still see page_pool as an allocator like the SLUB/SLAB allocators,
+> where slab allocators are created (and can be destroyed again), which we
+> can allocate slab objects from.  SLAB allocators also use buddy
+> allocator as their backing allocator.
+
+I am not sure if SLUB/SLAB is that similar to page_pool for the specific
+problem here, at least SLUB/SLAB doesn't seems to support dma mapping in
+its core and doesn't seem to allow inflight cache when kmem_cache_destroy()
+is called as its alloc API doesn't seems to take reference to s->refcount
+and doesn't have the inflight cache calculating as page_pool does?
+https://elixir.bootlin.com/linux/v6.12-rc6/source/mm/slab_common.c#L512
+
+
+> 
+> The page_pool is of-cause evolving with the addition of the devmem
+> allocator as a different "backing" allocator type.
+
 
 
