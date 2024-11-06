@@ -1,99 +1,152 @@
-Return-Path: <linux-kernel+bounces-397356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0C09BDAEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:09:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169099BDAF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3772832BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:09:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC8741F21A27
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18F4170A13;
-	Wed,  6 Nov 2024 01:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D2F17BB34;
+	Wed,  6 Nov 2024 01:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F5YZj37e"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f1jkwQoD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E0D6088F
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 01:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1AF13C918;
+	Wed,  6 Nov 2024 01:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730855357; cv=none; b=W6E22KJ3JjLN49xh2NTr0W5owxZOT7Q7N8dg85ON3de6S4MeIqUgMXi+vllku9Gc3kgQYb9unqV8wLBaVF0X8iYtFb91HoCBQuGu7aIFDPGnsc7zvkbBEL8K95zQXvJOeT7dnEpfTrb1U54ho5N3+X0gyDM0gubrDdbOUu4kxg0=
+	t=1730855402; cv=none; b=ZfSEBhgPyj+vRbZjNwX0pH0D6IW3hoGlJko6xGqyHPgPIkRmSEjvSPJDhF0PNPwoCiMHCGtdjMkqT77hwRBuC6ThOfgAgCz0Dobdpos0R8glYkozNBVZ96Wxtmqam9pub8eU19jcgjKx3SkKJ3PbhJyLJWV7v+bsePa8JZTsFTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730855357; c=relaxed/simple;
-	bh=m1jPRgvwaVt0Ji0K64vPZOJS/AW3EobWcVHaJ+6e92c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=u3vu87OsvYLi8/eIFL0Zv7agC7LpYSI3IXGH4Fi+PtbxRapUl20O1+hPB/UmyGfjoqL2pPz1sssj9Br7wXLngfO+VT7dR4UWLorddkyF0QWWlk4tLZm16aZL5glY/V8KW2kjJGUuuzBKjvFaW52ipCRfujOaXG9RGaq21po7XoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F5YZj37e; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20d15285c87so64504435ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 17:09:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730855355; x=1731460155; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mM/JOg5R9b+FWm0W8b94lT0depobNUxyZ6mpenVonLw=;
-        b=F5YZj37etMbDFkfq+xPkgdawXcWhpwlf09vsOXLU5h4XV5+HEdNpH+9t8dagp4Kt7l
-         acfHh99oribWtl67RAQFqFIOMmFWBGTm8alpJltgHhn9qpi4jwdAhGwQUQsybgdMb1wZ
-         d7YsVyyoTrtR//KP1TEMnB7qltSI4WDhNFy0+4VUHoY/qiY0yLLJgEIMYPufiduzzYbh
-         zQ935BI96vcnkyWVChDaRdTvOEu5ziJzi9yceHXHwhKPhbGMtYoJkS98eFFbRUrvDzzM
-         2ynCpwWDMWe8upF0JMJAYRtaFa7M3oTvGFm8Z8uHmn2fdxzfmPaMDVrXPGiyfLFAaHEw
-         2chA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730855355; x=1731460155;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mM/JOg5R9b+FWm0W8b94lT0depobNUxyZ6mpenVonLw=;
-        b=s1Ap6atmoIpJrddetO++pfvnaY1n+9mJ645ZpCI0w7H1Q7Amx7uC4un/92sX0SlILJ
-         WVI30WeEChcgwS/8iGueTTRyCaqDhWwOFmgiGzG4x/f1Qh0ydrVEh3flNDU0F3RrkEwK
-         mm9JYXQy0OMIHJHixDy1E+Iihl3X/6lY8XF8Mb1k8pRcnxQKulfQgXRg20aB5L4Dpaxg
-         LNnRMmmwI7b/n8ok0+EvlHRYqBcHrDW6HK0d5RcQBsCD7exqkZpo+1kI1Efn2vglTUKW
-         Uzqdfnpvqg2vU/JvRlK/dVOhUwslwXEciaRLo4HQTqI3vOsgrrFc5Z437wHiErDr+3y/
-         bjiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7OjEPOxUhisnNdQ1NeRBmTt9idgms6QtGo51/qneK4/3AVGAjWwVSv4wn7702wZoIAVc3DeV7XSD8frQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUpdvnIUz+pMK0FpMa5Mmh8nv6RrPXIXGQ954uqkz7lJ8e/ORc
-	lVpRHmAN+RmuMKN7AhKq6NqgAA1CS397uECW+nKOK7UDensRJ4XlTTx5C6HFtkOeNW2uXeJPdFk
-	FYQ==
-X-Google-Smtp-Source: AGHT+IGwBu+onCDNn0Y32ZVpfpCe4rwxG/l9NILnSH55nW3/1oRdipH1Rgb6zMdW9xSxMW4+/zY3xYf4thA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:903:448c:b0:20c:c9ac:bd0f with SMTP id
- d9443c01a7336-2111aef735dmr281325ad.5.1730855354521; Tue, 05 Nov 2024
- 17:09:14 -0800 (PST)
-Date: Tue, 5 Nov 2024 17:09:13 -0800
-In-Reply-To: <ZxcK_Gkdn0fegRl6@google.com>
+	s=arc-20240116; t=1730855402; c=relaxed/simple;
+	bh=8wkwyTaOOs9Q5NnvxbQhqZPtZs3GJ1PNsILlDFMD+Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEq4OGTe5xVIYATfV/ux+H37ztPUKT6xcq1AvWPhCGdCxmtA+8h7tsTAjfwSpIST27U5cjcf90W7TSVwwI2DgKJpytrCABznG0qgpWxeO508n4PvzPVK9u7Pt7nYqlWQmVKYIUp8J1taUmbMDGQGF+c8qmmpDOjPPLyGh+6VlmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f1jkwQoD; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730855401; x=1762391401;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8wkwyTaOOs9Q5NnvxbQhqZPtZs3GJ1PNsILlDFMD+Ic=;
+  b=f1jkwQoDTBYlKXY8YTuAysaBWintcHbhfmuZqKioP1/mm7gANIVTVIXv
+   ClRJoZCzSAJ09bQ3g1+hWTLF0OQaW49MVtMYcXjQsWVMHNSTqGq8lOGla
+   aNJF6k35AFoeXC2vVd02mNFJ0CfSkq4kd/XRLL1PLaFbfnk7L543g894r
+   q4cSQfMHGzg15iRfLFmvVgWsFW2AbxYQkTKZSj5ufxwsTYYKoctzyjtz6
+   7KycIHm7wrv/HKy26ECV7tTv8N1v//TMGW26l3twjCtF8d5h5fVlTMNEl
+   br9a1H8hGgfCf/tu5XHEcs4iyh+gf6ItKTOWybUDrDZDF20t1k8b8Gcm3
+   A==;
+X-CSE-ConnectionGUID: 2zVQhq9PSDithnQ/yf+5sw==
+X-CSE-MsgGUID: cWE8+CeCQmmg2eoerDW4PA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30740728"
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="30740728"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 17:10:00 -0800
+X-CSE-ConnectionGUID: 8QkttW8lSlGJTh+nJBv2Tw==
+X-CSE-MsgGUID: nvQubyb8SZOi3RncHdWtHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="89395669"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 05 Nov 2024 17:09:56 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8UYS-000mgP-3B;
+	Wed, 06 Nov 2024 01:09:52 +0000
+Date: Wed, 6 Nov 2024 09:09:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Lee Chun-Yi <jlee@suse.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Ike Panhc <ike.pan@canonical.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Alexis Belmonte <alexbelm48@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>,
+	"open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	Matthew Schwartz <matthew.schwartz@linux.dev>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v4 11/20] ACPI: platform_profile: Add choices attribute
+ for class interface
+Message-ID: <202411060835.GlMKVSsy-lkp@intel.com>
+References: <20241105153316.378-12-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241021173455.2691973-1-roman.gushchin@linux.dev>
- <d50407d4-5a4e-de0c-9f70-222eef9a9f67@google.com> <ZxcK_Gkdn0fegRl6@google.com>
-Message-ID: <ZyrBuZPBjJi75gGU@google.com>
-Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into free_pages_prepare()
-From: Sean Christopherson <seanjc@google.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105153316.378-12-mario.limonciello@amd.com>
 
-On Tue, Oct 22, 2024, Roman Gushchin wrote:
-> On Mon, Oct 21, 2024 at 12:49:28PM -0700, Hugh Dickins wrote:
-> > On Mon, 21 Oct 2024, Roman Gushchin wrote:
-> > I don't think there's any need to change your text, but
-> > let me remind us that any "Bad page" report stops that page from being
-> > allocated again (because it's in an undefined, potentially dangerous
-> > state): so does amount to a small memory leak even if otherwise harmless.
-> 
-> It looks like I need to post v3 as soon as I get a publicly available
-> syzkaller report, so I'll add this to the commit log.
+Hi Mario,
 
-Today is your lucky day :-)
+kernel test robot noticed the following build warnings:
 
-https://lore.kernel.org/all/6729f475.050a0220.701a.0019.GAE@google.com
+[auto build test WARNING on d68cb6023356af3bd3193983ad4ec03954a0b3e2]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/ACPI-platform-profile-Add-a-name-member-to-handlers/20241105-233922
+base:   d68cb6023356af3bd3193983ad4ec03954a0b3e2
+patch link:    https://lore.kernel.org/r/20241105153316.378-12-mario.limonciello%40amd.com
+patch subject: [PATCH v4 11/20] ACPI: platform_profile: Add choices attribute for class interface
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241106/202411060835.GlMKVSsy-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060835.GlMKVSsy-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411060835.GlMKVSsy-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/acpi/platform_profile.c:55: warning: Function parameter or struct member 'choices' not described in '_get_class_choices'
+
+
+vim +55 drivers/acpi/platform_profile.c
+
+    48	
+    49	/**
+    50	 * _get_class_choices - Get the available profile choices for a class device
+    51	 * @dev: The class device
+    52	 * Return: The available profile choices
+    53	 */
+    54	static int _get_class_choices(struct device *dev, unsigned long *choices)
+  > 55	{
+    56		struct platform_profile_handler *handler;
+    57		int i;
+    58	
+    59		scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+    60			handler = dev_get_drvdata(dev);
+    61			for_each_set_bit(i, handler->choices, PLATFORM_PROFILE_LAST)
+    62				*choices |= BIT(i);
+    63		}
+    64	
+    65		return 0;
+    66	}
+    67	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
