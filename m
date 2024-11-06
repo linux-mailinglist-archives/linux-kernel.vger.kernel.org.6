@@ -1,74 +1,77 @@
-Return-Path: <linux-kernel+bounces-397707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32709BDF52
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:24:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7FF9BDF58
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B39811C22CD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:24:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8188B1C227B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5191CC887;
-	Wed,  6 Nov 2024 07:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBF41CCB20;
+	Wed,  6 Nov 2024 07:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V/dl6cII"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C6Qo8LJX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473F017995E;
-	Wed,  6 Nov 2024 07:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFFB192580;
+	Wed,  6 Nov 2024 07:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730877841; cv=none; b=lXsnVnDj/GyjHbUF761DMJVrvRYrjG43f9dHEJ7DrO6tyKztGF7gPy9irCuFhNOTEaWtRixjQnKZ6Jb7PYptPB8Y3epI0NAr9NSoO4xlvWqNwe/Aj522J54LLUd/bFPWBMe+WBItOPmH9Eik73Z7wQ8hbvAr+1rZt/wfGN7h83U=
+	t=1730877859; cv=none; b=MpD7ECtOi8lbp50q41bxbx8gBiiD8K6F2zFNqtpGPSW8tT0v1V5wPk8FmAr2WU8vin//LsPmIrQjb1xMZIXSGpRxYX8XB2YFpcHxEJvoi2nJz21Nob4DbJhFCx9SP0QxMu/gE8BFvpTvzDQzD1KeBKeEN2Dukfw6bRtV89VcUOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730877841; c=relaxed/simple;
-	bh=MN/UI52Rj6HjKSgYZUtiruuiPbJymTYGdmdUNhU9KtE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mVMzyO+ZW1x5X5UIdky4diaN4dWpe0dlrQE7QmagBIFvMfahpU5kj3TU/ngx0LVfW5kJIfDi2i7hyTEheOeRfxzF9pg5qpVeHECcLoVvyNCQLxuxrqVRTV+36LusHYpWXnhPPTQFQXdoe2zAvR/Gj2W91n5K8Hy7h1Svis8RBDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=V/dl6cII; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A67NgPw084600;
-	Wed, 6 Nov 2024 01:23:43 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730877823;
-	bh=L2kiDY6j3nYdvBD4lilTFn1FykcKM28CEdpdyTD+P1Q=;
-	h=From:To:CC:Subject:Date;
-	b=V/dl6cIIb6IDM2zC3AEWa1wfCeW5YnPnE3k5sutNfP94TTN7p9d6eFqzlHKgXLgx8
-	 jwrAxgksNlcttp3J3vKnRjVDNZdfKJgQ9htGd+ee4hEqRFLZTyA5vXLIqk+gTKOsDP
-	 Z8h7iEJRE7avlJ5ySbfrq81GjNo06N9d4MESuAn8=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A67NgMP101272;
-	Wed, 6 Nov 2024 01:23:42 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 6
- Nov 2024 01:23:42 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 6 Nov 2024 01:23:42 -0600
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A67NgKG050049;
-	Wed, 6 Nov 2024 01:23:42 -0600
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4A67NfPw031591;
-	Wed, 6 Nov 2024 01:23:42 -0600
-From: Meghana Malladi <m-malladi@ti.com>
-To: <vigneshr@ti.com>, <horms@kernel.org>, <m-malladi@ti.com>,
-        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net v4] net: ti: icssg-prueth: Fix 1 PPS sync
-Date: Wed, 6 Nov 2024 12:53:14 +0530
-Message-ID: <20241106072314.3361048-1-m-malladi@ti.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730877859; c=relaxed/simple;
+	bh=ICkU33ZuvTHMbJPuStnFSL5tudikUcEnea5QF+5Ao2Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KLqw+Ixvcz+AZcQX6bggBs8LNfOVK5M1GDyAgB2/t2Iyn3/CWImdWtSP9ipQV0ABujQ7sbcJY3CbDqdoTkMtFqh0aTMSGE+j9s9GZMbX3fEUbV5YnKKSgYZeuj1mEn7ooseJkXYW1ugOH4RSDnirZBloBKa9bpQRAF1jzbN4RTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C6Qo8LJX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A662pIj024488;
+	Wed, 6 Nov 2024 07:24:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=itJYgGhc6H+lPelkky49wCyjosmLYrewr5s
+	RFxv5M3o=; b=C6Qo8LJXGvoQRVQqaGfWOJ6zB6Su+vxiJs/2EOJaSOqJlcq/p4f
+	ocXyYnJbVkESojmEmPOTHhonERkNeiF2SVbCh00CGkoCeG/GOSY918j3DTTwwNeB
+	wLLjerhUdU2BX0JdtMCXo7jU6FKSqlZ6ssfEVjsqx5shyCFKwMBokYqP39nFo2jO
+	y66LNA//S4MpqT+Q+5LH4gPr/SsqUsWxoS9jK2YWi+pbxFe6MeGZNUTlWajq8FvC
+	/K25qX8v6HeHO7Y7pLSKfzwvwPQuMurimnfmyWdSXxyugq3k/1sPSCfhGCLCBk6x
+	Z2WagcYRr10zvE4Lo8wZE+BZ0tbpj1w+HAw==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r2ugr7fj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 07:24:13 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A67OAwU025643;
+	Wed, 6 Nov 2024 07:24:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 42nd5ktsg7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 07:24:10 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A67OAZ9025627;
+	Wed, 6 Nov 2024 07:24:10 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4A67O9Ta025622
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 07:24:10 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4571896)
+	id 3A561159C; Wed,  6 Nov 2024 15:24:08 +0800 (CST)
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, bhupesh.sharma@linaro.org, andersson@kernel.org,
+        konradybcio@kernel.org
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com
+Subject: [PATCH v2 0/2] Enable emmc and SD on QCS615
+Date: Wed,  6 Nov 2024 15:23:41 +0800
+Message-Id: <20241106072343.2070933-1-quic_yuanjiey@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,103 +79,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: j22MSu0qUuoGf_BdjosQz7h0rJyI9vVh
+X-Proofpoint-GUID: j22MSu0qUuoGf_BdjosQz7h0rJyI9vVh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0
+ clxscore=1015 impostorscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411060059
 
-The first PPS latch time needs to be calculated by the driver
-(in rounded off seconds) and configured as the start time
-offset for the cycle. After synchronizing two PTP clocks
-running as master/slave, missing this would cause master
-and slave to start immediately with some milliseconds
-drift which causes the PPS signal to never synchronize with
-the PTP master.
+Add SDHC1 and SDHC2 support to the QCS615 Ride platform. The SDHC1
+and SDHC2 of QCS615 are derived from SM6115. Include the relevant
+binding documents accordingly. Additionally, configure SDHC1-related
+and SDHC2-related opp, power, and interconnect settings in the device
+tree.
 
-Fixes: 186734c15886 ("net: ti: icssg-prueth: add packet timestamping and ptp support")
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
 ---
+This patch series depends on below patch series:
+https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/
+https://lore.kernel.org/all/20241105032107.9552-1-quic_qqzhou@quicinc.com/
 
-This patch is based on net-next tagged next-2024102.
-v3:https://lore.kernel.org/all/20241028111051.1546143-1-m-malladi@ti.com
-* Changes since v3 (v4-v3):
-- Update read function to handle hi/lo race between reads as 
-suggested by Jakub Kicinski <kuba@kernel.org>
+Changes in v2:
+- Improve the commit messages and cover letter
+- Remove applied patches 1
+- Pad sdhc_1 node and sdhc_2 node register addresses to 8 hex digits
+- Adjust sdhc_1 node and sdhc_2 node register addresses to hexadecimal
+- Modify sdhc_2 vqmmc-supply incorrect power configuration
+- Link to v1: https://lore.kernel.org/all/20241023092708.604195-1-quic_yuanjiey@quicinc.com/
 
-* Changes since v2 (v3-v2):
-- Use hi_lo_writeq() and hi_lo_readq() instead of own helpers
-(icssg_readq() & iccsg_writeq()) as asked by Andrew Lunn <andrew@lunn.ch>
-- Collected Reviewed-by tags from Vadim and Danish
+---
+Yuanjie Yang (2):
+  arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+  arm64: dts: qcom: qcs615-ride: Enable SDHC1 and SDHC2
 
-* Changes since v1 (v2-v1):
-- Use roundup() instead of open coding as suggested by Vadim Fedorenko
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts |  31 ++++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi     | 198 +++++++++++++++++++++++
+ 2 files changed, 229 insertions(+)
 
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 13 +++++++++++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.h | 12 ++++++++++++
- 2 files changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 0556910938fa..cae8a4f450bb 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -16,6 +16,7 @@
- #include <linux/if_hsr.h>
- #include <linux/if_vlan.h>
- #include <linux/interrupt.h>
-+#include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-@@ -411,6 +412,8 @@ static int prueth_perout_enable(void *clockops_data,
- 	struct prueth_emac *emac = clockops_data;
- 	u32 reduction_factor = 0, offset = 0;
- 	struct timespec64 ts;
-+	u64 current_cycle;
-+	u64 start_offset;
- 	u64 ns_period;
- 
- 	if (!on)
-@@ -449,8 +452,14 @@ static int prueth_perout_enable(void *clockops_data,
- 	writel(reduction_factor, emac->prueth->shram.va +
- 		TIMESYNC_FW_WC_SYNCOUT_REDUCTION_FACTOR_OFFSET);
- 
--	writel(0, emac->prueth->shram.va +
--		TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
-+	current_cycle = icssg_readq(emac->prueth->shram.va +
-+				    TIMESYNC_FW_WC_CYCLECOUNT_OFFSET);
-+
-+	/* Rounding of current_cycle count to next second */
-+	start_offset = roundup(current_cycle, MSEC_PER_SEC);
-+
-+	hi_lo_writeq(start_offset, emac->prueth->shram.va +
-+		     TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 8722bb4a268a..5c194c6991bf 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -330,6 +330,18 @@ static inline int prueth_emac_slice(struct prueth_emac *emac)
- extern const struct ethtool_ops icssg_ethtool_ops;
- extern const struct dev_pm_ops prueth_dev_pm_ops;
- 
-+static inline __u64 icssg_readq(const void __iomem *addr)
-+{
-+	u32 low, high;
-+
-+	do {
-+		high = readl(addr + 4);
-+		low = readl(addr);
-+	} while (high != readl(addr + 4));
-+
-+	return low + ((u64)high << 32);
-+}
-+
- /* Classifier helpers */
- void icssg_class_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac);
- void icssg_class_set_host_mac_addr(struct regmap *miig_rt, const u8 *mac);
-
-base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
 -- 
-2.25.1
+2.34.1
 
 
