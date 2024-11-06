@@ -1,102 +1,71 @@
-Return-Path: <linux-kernel+bounces-398683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4DF9BF4A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:52:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704A89BF4A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:53:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79519B24EB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E8A1C2337C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5767207A2F;
-	Wed,  6 Nov 2024 17:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDE320408D;
+	Wed,  6 Nov 2024 17:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="m84woleR"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nVTr1xfu"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF3C207A30
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E3C207218
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730915551; cv=none; b=ZlgJ3Z7sc4Y9KHbRgBvehjNVsKC2i8b4DMmLtAx/dgwuXnReD+DGNxqAfyIG0wFibvOcdbDWHR3AeqamE9GiwuEoICWXgRET8OeEh5Ueu8ZYMPRK4atFKAPeI2N8HjJdPFZSuNr/HgPNUvqGRt04YlVb3gyYeUDZQ60Pl4iLcLk=
+	t=1730915586; cv=none; b=u8iCg5NfkYnynaSaTcQrbJG2YEqhs1Y7sECATa0rpZzzgme//kY7tnpdKMjT4JtyRDOHkivtJLim8xGGdydrx8NxFRO23GzzkQUNTemZPUrz1LVci6Q0dOrO5rPCjjpo6w6KHrPKMNqmrJfTEH0Cz0/28iywHgZTGJRbHIgVj9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730915551; c=relaxed/simple;
-	bh=QknsfhNJpkSWvghdqGJQydIO8NDXgigr6SsR14Z15QI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GPweUBTpmxOXA2CK8hd4RsKYQtx1fgQJKz+obNwgh3N+VVOMeUxcZiRlGPTqW1krZtqyl+UQQIASq5Wru0E2rzVF//tCE1oIpllUEoko8pjV1AUdC5UuT41OTmHQcl5EAvXxdMs29xaM0PEYvH/DrR8l69qyCmk1jmXGbFmj3kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=m84woleR; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431688d5127so779145e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 09:52:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730915548; x=1731520348; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ipymvx1/6bALryF6zoyWfiFzrkoooAVpB7ONDyc7qcc=;
-        b=m84woleRjYfb7Y4itCq43i2a0layn4LTdCQYuBAXCAY51PqzAZ5gWbGmUM+yC/Wfz7
-         IjRBBok7Cm6ndQPQELN2KaWnN+ZGF7QsArFkYDPlMxxImMyN1mcbsqGQf7nYYG4dS3jp
-         QVFlNH+kAXe9TSiy4taJFwivYIiZ2THF4HrDUgvQflnqBkp12/p7rlbNES6bcofCt5ei
-         9tJ5LvDbFWTA50xeohBPnVasrKbvmVR+66WiIx14RcY4VAzBV0WbzwtiBYP8X3QJPSwe
-         1svZh79ViOwvMqPKpe1dXZy6UDsf709yFuqJSXPeQyeU2oBjZuHTMi5NGPuIEXKKGWlO
-         JbNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730915548; x=1731520348;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ipymvx1/6bALryF6zoyWfiFzrkoooAVpB7ONDyc7qcc=;
-        b=sXzmyxf6Eb+vVBrsGR880Xhr16zTshuHtAB2IIM7iS3z9iWtopSpfh+opyFtksvUvV
-         ih7dF5UlHZ1xuAaH0M2UF8mH+0Ipfe0pDoOt5ie86j2yDQeWf6B1P2AklB/iPE49gv91
-         eZfHgXRODvhkTrXoBHxTfYP0mhuG/T5fTKTql+l078ORVrCdPaA1aS8LrcWxkJyp3q3g
-         iv4D30QGPoA5KKKsRW3q1z9FENMJz0Tasw/BsvauArRcqkbPL6/274dAIK6Fkkq3bXlr
-         DXsdfFEq7hCtr1UEfdoQXmCOY49h7MPv7LwpagYLCBiiPRxNiUnpnChJIDuHLdA3jiwE
-         Acyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEZAXM+SOZ1fPVeqpueT+evJEPJVEDLUzlMbBsUOnY6aRvENc4PcvuPp0PnDnAQkEfRQV0s5dxuFLrIdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlCJxSieUWoGByDB9KzO5o803IW+CN/+L0Fh+kWBg3q9lxYnDp
-	lwBgZ/Wmtfj7fxPQ8KriztBoRNpUpNh5kGYNAvI8zjN72g5tE5I8vghcWaPGLtQ=
-X-Google-Smtp-Source: AGHT+IFIGPqnuhGsKt9HNzG2CjyeWY7ObH0ZmvhCUaj02z3qP4fB3YkNaT4JK7o3DTcS9aJDv9+AHg==
-X-Received: by 2002:a05:600c:4583:b0:430:5760:2fe with SMTP id 5b1f17b1804b1-4319ad04fa0mr375752515e9.22.1730915547682;
-        Wed, 06 Nov 2024 09:52:27 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d4b82sm19841073f8f.43.2024.11.06.09.52.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 09:52:27 -0800 (PST)
-Message-ID: <b8633534-d0b0-409e-98ce-1cb7966e98e2@tuxon.dev>
-Date: Wed, 6 Nov 2024 19:52:24 +0200
+	s=arc-20240116; t=1730915586; c=relaxed/simple;
+	bh=KC79F8AAKN9zqsEsq8PEeOTMFX475VCxxZ6E4T2vDxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zi5iCqxIP8K73yliWM9w3teUk5M1WFLmZYZ/SPWPZyIskTcE9GnWgMjGq2YOurZJ83zFN0Ny8mqprAzEjBJLjurlsiMl7giYDjWu8NCODq1dGwgHhWhmUPmnSIlbRLUSKGmZpX3ShpVq1eW+SySr8GklXZESQyJcHDm9DDk+eMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nVTr1xfu; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 6 Nov 2024 12:52:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730915581;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QRUJHFqF+m0efCjGnDS9+jrRg248YsINL1Mb2R1+v28=;
+	b=nVTr1xfu8w6uQJeTqK9x2ouT757pOCHXirpVgAkH/sc7TXR7+0wgV5PAH5eV7X5R6MwAqM
+	BcCOFGgQjcqbqQvV/6yd0Ixv3+LPnM02BOpeuwNAfs4psecHTRPY1UL8Gyuem77X3zCPIH
+	0OBZ4p46ce0Ri4XHLvXgu/RrI9tLPD0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
+Subject: Re: [PATCH] Fix wrong max check in bch2_opt_validate
+Message-ID: <v5wttxaimwpqb5jfpxvcs3rmg27fm4mf7446slutl7ztha6q4p@434ppx3gzv7l>
+References: <20241031231823.688918-2-pZ010001011111@proton.me>
+ <pkxqQnSTQLReyYEHegx90LNp5dbR6LlpcqUIkBFa2CiL-0P48QWpGJ1YYKtWwu0IFM7H-2T4fYQz0MldP6OqZppPzmqafQDKouhETLnM5o4=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/12] Add support for sam9x7 SoC family
-Content-Language: en-US
-To: Varshini Rajendran <varshini.rajendran@microchip.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, tglx@linutronix.de, sre@kernel.org,
- p.zabel@pengutronix.de, mihai.sain@microchip.com,
- andrei.simion@microchip.com, dharma.b@microchip.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240903063913.48307-1-varshini.rajendran@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240903063913.48307-1-varshini.rajendran@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <pkxqQnSTQLReyYEHegx90LNp5dbR6LlpcqUIkBFa2CiL-0P48QWpGJ1YYKtWwu0IFM7H-2T4fYQz0MldP6OqZppPzmqafQDKouhETLnM5o4=@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
+On Wed, Nov 06, 2024 at 08:11:13AM +0000, Piotr Zalewski wrote:
+> Hi Kent,
+> 
+> Did you see this?
 
+Whoops, I did miss it the first time.
 
-On 03.09.2024 09:39, Varshini Rajendran wrote:
-> Varshini Rajendran (11):
->   ARM: dts: at91: sam9x7: add device tree for SoC
->   dt-bindings: arm: add sam9x75 curiosity board
->   ARM: dts: microchip: sam9x75_curiosity: add sam9x75 curiosity board
-
-Applied to at91-dt, thanks!
+I think it'd be better to fix it in the OPT_STR() macro though.
 
