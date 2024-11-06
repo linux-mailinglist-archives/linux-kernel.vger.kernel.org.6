@@ -1,153 +1,209 @@
-Return-Path: <linux-kernel+bounces-397563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF55C9BDD66
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:04:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8CC9BDD67
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71DEE1F239AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022D02846BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECEC18FDA7;
-	Wed,  6 Nov 2024 03:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A72E18FC70;
+	Wed,  6 Nov 2024 03:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ASsBZCc8"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NleqXcQW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A604523A;
-	Wed,  6 Nov 2024 03:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD36E523A
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 03:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730862261; cv=none; b=Xo/Wx4PhSv9PkP0it5ECPXG5m70rmNNroiJJGwyazu2gOU185T9HSBtP8NR+ZlGx/GVG7ll6Qnv+sOqeJYJZ1VhOP+CpbryBh+FfYZ0fdTaS24z42hooZ/swGxz6qmkUE0z2UjcWupHmMgslPMKRzM1TYGl6tEpbGsW5aCjBiPI=
+	t=1730862434; cv=none; b=RgS2XCGCrfSrANw9PCM03Q4bAvcZoMIq9Xrde57wfeZYtZlAvZUFFCnrgGh4f3YpT9sl0/jGMZLbC7niqNX4I9cXkykrxtVVsULAzcKRSM2EazDwJlzIfR+JxmOO1Sk80PcxAb+ACJSuj97fqaKYqjfQFuL5HvbPLq3E5A3SFFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730862261; c=relaxed/simple;
-	bh=BgZepueDaRZ0YNTrEPqaFTJQmJhrFz7AjejiDrgQ3bc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VBXLOnxemIFcJQ63l6+BbkHgkNxJMUv1smm5KR8X3XR0Mm2VhBJsmve8bj4J6Z0otg5r9eNP0ozsnfLh5Vo8TaXu4/x8yxe9Gv4qyt40hcqixx7KyHi3R3V22lI9r+CG46XdbDW4xS7Bfv7pnxPF8Mgg7B8RTeUdIBwufu88D1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ASsBZCc8; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730862253;
-	bh=s9b01BRLDdx+kydfCLwn4XCUIydahSsmU7oeUYqYYTY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ASsBZCc8TzsAp7qXjbYNsz7PBkvTpDSMiN2C7d9onxvhX5UDPq6PPHCMrFHtM5HsI
-	 L3EOVz2OMqt9X+RTnHQypBagY0xKe0ilgsF8gOGr51aTfp/p9fteWIjYUsXKvnIWtr
-	 VELWK/5iY7YkD0J2Tn9e0bHkZ1/wj8bi6xtp/EZ3iTeM3SJ+ac3cAlpJ/IhL3Nce5V
-	 RGSV5ObhVWA7GR4UpZecMsb5MdMImtLK2gqjuL4/sfgsV6WuyTztQnmQ6aVUt1FXPi
-	 BsTD+4DYNHlbO9xupcd9OglgedffGBbgjSDlO+4E5r4ElTmi/N/iNR/ChvFIJXbEQ0
-	 J2UjtRmWab9lg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XjqmY0lBsz4x7D;
-	Wed,  6 Nov 2024 14:04:12 +1100 (AEDT)
-Date: Wed, 6 Nov 2024 14:04:14 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
-Cc: Naveen N Rao <naveen@kernel.org>, PowerPC
- <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ftrace tree
-Message-ID: <20241106140414.760b502c@canb.auug.org.au>
+	s=arc-20240116; t=1730862434; c=relaxed/simple;
+	bh=A1ZjKBB16slWoFN7AM1/+vew+uu39wZgGK9XTVZschc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oy8bFhMnKYqLXxDhdOQNDyp+6/GUqfj/9v/lac2v5zzajyKsPEis7eTSLvin0wVCH7lDMznTJxizD9YRj5qnqjmd/E3TJnHkj32cjQA38jW3hg5x6RW5XqigSqRIfnWelmFv72qQ9JBL8JJLLjVvRW3XpwIeYKmevIlEOpiFfFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NleqXcQW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=A1ZjKBB16slWoFN7AM1/+vew+uu39wZgGK9XTVZschc=; b=NleqXcQWHqUWe2PqjnPcChSEsH
+	ckOJ+6EDF/pZXnJHHuOHMHtkp5Y9uw5TMX4hGti8ff0QTbUOjnb8tkKHLSGmq5/8RZnrHfziGQ2JK
+	Sq8YYEHR40WnQ4zejo6Q1IFQronbsn3e1CmCvIuRlruqPFbBWnelT4QbZJX842Y/exlX5bVaGVBjN
+	/L30wUwh8tzlZp1gs5+05pm13pg+qseJdVl1yxtZsv1x8Zujvbi4b5+z9JZw0XpcSxzZKijElacMd
+	OaL/t99DM7VAYDQHLt+04x0X6FSgBZPyU4A7FGlAlame2Ej8eNge1w2xGpwjeBB1UulE7WZHJdDSM
+	HwhG32sA==;
+Received: from [205.251.233.52] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8WNs-00000003z3u-285v;
+	Wed, 06 Nov 2024 03:07:05 +0000
+Message-ID: <5e2a658b9030ba57b75620958b29f018c80d0a65.camel@infradead.org>
+Subject: Re: [RFC PATCH 6/7] x86/kexec: Debugging support: Dump registers on
+ exception
+From: David Woodhouse <dwmw2@infradead.org>
+To: "H. Peter Anvin" <hpa@zytor.com>, "peterz@infradead.org"
+ <peterz@infradead.org>, "kexec@lists.infradead.org"
+ <kexec@lists.infradead.org>,  "jpoimboe@kernel.org" <jpoimboe@kernel.org>
+Cc: "horms@kernel.org" <horms@kernel.org>, "x86@kernel.org"
+ <x86@kernel.org>,  "bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com"
+ <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+ "kai.huang@intel.com" <kai.huang@intel.com>, 
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, 
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Date: Tue, 05 Nov 2024 19:07:00 -0800
+In-Reply-To: <B4EBAF27-5E42-4088-9857-DBCD0D19305C@zytor.com>
+References: <20241103054019.3795299-1-dwmw2@infradead.org>
+	 <20241103054019.3795299-7-dwmw2@infradead.org>
+	 <230aacb0ca0d57581f9350f96390933646f203e4.camel@amazon.co.uk>
+	 <b66cd5ca-aae4-48eb-a0ba-2d1d4e53f810@zytor.com>
+	 <10f2dec7afbbff6570007495185ce1c4144e446b.camel@infradead.org>
+	 <B4EBAF27-5E42-4088-9857-DBCD0D19305C@zytor.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-IpZdprIHFsvh3+mFZP80"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DAq6YdHv5B=ZCDY1RGE2RU.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
---Sig_/DAq6YdHv5B=ZCDY1RGE2RU.
-Content-Type: text/plain; charset=US-ASCII
+
+--=-IpZdprIHFsvh3+mFZP80
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, 2024-11-05 at 18:47 -0800, H. Peter Anvin wrote:
+>=20
+> Yes, the linker script needs to happen.=20
+>=20
+> This is a case of doing it right vs doing it quickly.
 
-After merging the ftrace tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+That may just tip it over the edge of how much work it's worth doing to
+clean up the debug hack that I implemented for my own use, and make it
+useful to others in the future. But I'll see what I can do.
 
-In file included from include/linux/ftrace.h:23,
-                 from include/linux/kvm_host.h:32,
-                 from arch/powerpc/include/asm/kvm_ppc.h:19,
-                 from arch/powerpc/include/asm/dbell.h:17,
-                 from arch/powerpc/kernel/asm-offsets.c:36:
-arch/powerpc/include/asm/ftrace.h: In function 'arch_ftrace_set_direct_call=
-er':
-arch/powerpc/include/asm/ftrace.h:141:38: error: invalid use of undefined t=
-ype 'struct ftrace_regs'
-  141 |         struct pt_regs *regs =3D &fregs->regs;
-      |                                      ^~
+--=-IpZdprIHFsvh3+mFZP80
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Caused by commit
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMTA2MDMwNzAwWjAvBgkqhkiG9w0BCQQxIgQgAE4MitAX
+luao0kWKooj1nkLzpcv08i4dANeyjQON7PIwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBtGZDmEQuwhJttkjaCeFqSMqrrBMy83anr
+i+VThL+FaJGpyi++KltRC961G+zIlE2b76ncdgoP3xagn5Vhz3/KsFW2bYc5oxzhnwAL3Kenyp5B
+XEjB1rKjc6klq+XjGEzJbgTLJTNZs2HmVrUU6KHvm3vJw0FnS8VWySladpMjUNIXWuG4qf3GvSb7
+SVgba2UhjXpcMPMaJBFrq13SNJvXad6ipPo740svj1MRLHvhFd0UAFvOexvf0umjvzYlB/a/FlEC
+rH98FnY3tm3vzbr7UvnkF5DEYlELlZq6g4NJTjzgRYcnJadz1HlX7uier7n914+ZN5Z6Aulv16iX
+Gl5cn2ilPaczIJqij+UxxFOJxQDMGSIAkp6cU+xIDLcBja/5NcILNyWk2VDdU12ZgyGtOvltfFce
+Drq3C2K1M82wFaLgQEBotJ5YBecRv/Hp4/fQGg6wv3MDF//aHL3xUqERB7cTNvblGGVVgbzS+g15
+AUlIWMLXnDMyk55unm+T71NrxA8DCQqUlZvwFoVhKLdG9qmVYJd3U9XxkUMB8rR350MVdXe9fMyD
+4J7eWcFvGFDyO2AMdXXuBQBEiFMYFi+4hgVSQtGWJRegu9U2YImBSEvLSuBgsbo9gzc2Q6LAur8D
+yE0i5jWlWPvewD8fcPFh4/LzPpEkv1Q5nObPILbj4wAAAAAAAA==
 
-  7888af4166d4 ("ftrace: Make ftrace_regs abstract from direct use")
 
-interacting with commit
-
-  a52f6043a223 ("powerpc/ftrace: Add support for DYNAMIC_FTRACE_WITH_DIRECT=
-_CALLS")
-
-from the powerpc tree.
-
-I have applied the following merge fix patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 6 Nov 2024 13:33:53 +1100
-Subject: [PATCH] fix up for "ftrace: Make ftrace_regs abstract from direct =
-use"
-
-from the ftrace tree interacting with "powerpc/ftrace: Add support for
-DYNAMIC_FTRACE_WITH_DIRECT_CALLS" from the powerpc tree
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/include/asm/ftrace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/f=
-trace.h
-index bb2c90997618..db481b336bca 100644
---- a/arch/powerpc/include/asm/ftrace.h
-+++ b/arch/powerpc/include/asm/ftrace.h
-@@ -138,7 +138,7 @@ unsigned long ftrace_call_adjust(unsigned long addr);
-  */
- static inline void arch_ftrace_set_direct_caller(struct ftrace_regs *fregs=
-, unsigned long addr)
- {
--	struct pt_regs *regs =3D &fregs->regs;
-+	struct pt_regs *regs =3D &arch_ftrace_regs(fregs)->regs;
-=20
- 	regs->orig_gpr3 =3D addr;
- }
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DAq6YdHv5B=ZCDY1RGE2RU.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcq3K4ACgkQAVBC80lX
-0Gw0JAf7Bq9qv+tbPiKn8tlsulBba4WywVS6jwuTJH64TQY2YwCql1EcSviO8v/E
-+6rw8LM0Xx0lljiKx38noD4SJghE34EGMO0w5/X6SFUengJ10pMu/3mihJM681r9
-BVlfSqqxR3PMNBQ45oYxTb5zz8yM9rKf/uWzTcumEx824K3Apx3Kd3vG5go6P4sd
-gj9b9YOV6tM46s70zfIJJiarINvA5pbteoMPa20C//GSk5nyj993AVBlQxYarYTn
-dRSekAWryp9OhN+R5FzgTWyy6cpD6fGssnNRmGnB76DuHdYdvxy2NYLmFlGv0ZGS
-9Rj+q+p9bVVvNjqzPjlVbgfzp8zJ7w==
-=J8sY
------END PGP SIGNATURE-----
-
---Sig_/DAq6YdHv5B=ZCDY1RGE2RU.--
+--=-IpZdprIHFsvh3+mFZP80--
 
