@@ -1,126 +1,98 @@
-Return-Path: <linux-kernel+bounces-398047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79FD9BE4AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:49:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC099BE4B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE15F1C234A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CFB01C23569
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCFF1DF256;
-	Wed,  6 Nov 2024 10:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B0E1DF724;
+	Wed,  6 Nov 2024 10:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="XfMthEGW"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="sxsclCJe"
+Received: from mail-40135.protonmail.ch (mail-40135.protonmail.ch [185.70.40.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063101DF248;
-	Wed,  6 Nov 2024 10:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3381DF27B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890074; cv=none; b=CY+jl1abTjrFs6jXUAchzb0tJuY4WnrgX48oCjeRSNn2wGdd9HaRnG9sardB3z1QOR5cm1NZfhbPquTbyQ3IdC2Nn+J/buCPr79PhTVAvF+lbi7cJEuVApj5dteBGLJS0eETgI0LAujYJJSvcojbWrKjshCj0uNmDulUStTFJvM=
+	t=1730890079; cv=none; b=OzPDGCDaYKdeo8Bjz7vMGgGDcSfWlctPej9XxiLoyj3byO8sAMSjpXjqoHCmHAhikfEX6TOab3gmQEPF3SITb4amj2ezD5zAeWwXeiborltk+k/g15lR/Bzl7cYsZ70tYflgCX+uCpviJMg2+OJmGUpzxEPkmgovAbiAe2MzaTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890074; c=relaxed/simple;
-	bh=NNbsvPnE+AlIc4GVWs6zHtak2Vihyn56/gz48YQUoWo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Zg31nudPpUbw7w21AheV2yAvPoQUCORsVPGqXYRimgbi6PTQO/n7pEXFi5vfx4JQqe7BZEu5m5+WJ4gH1J1YLNj64GDHDCWDqpI+hkJr0HttkVpBYmuZdTLNjokLwv0PqLK6qS1rCXJzMK3gpsIzTZFC97klAS26XbmZBAo7jSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=XfMthEGW; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1730890069;
-	bh=b8vIgaII3bhiClo4kBJSxp0N5aPBhPERAUgQvLm1waw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=XfMthEGW47SsFcn6LBbF9D0wlypfVKz5IIKVJWWjlVmd2ZkKdaWcnp9VsqxIpgJ2n
-	 QPcxpWVAGEjb6Ip6jb3SJHF41SA99az7LTAGR32m7uKcCf61t8iAA9vQsoR5KYMHPT
-	 oozURhr7PBcIojXF9odPhB1lAvqL7dTVJ+k1Wc9KkoMqclZCljjipN53iaKXRqBXHz
-	 M+R37MKfeo4EGXahwMeC0bTvGOoSvs/kmYF3/TOkmEXnpsrSy+9ATgCG1HW5m1LdLC
-	 3CLxNmp+uObkOwnSr4XVOtW3vBOc9lhoxDisvqtwJYkzV4q/jeEDsYfJRjXgAMyNFk
-	 ClOJj/Ip8lG8A==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 850F56B2BF;
-	Wed,  6 Nov 2024 18:47:47 +0800 (AWST)
-Message-ID: <f8454df795572983fb83c4ea78b64006a05ef79b.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v6 2/2] mctp pcc: Implement MCTP over PCC Transport
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>, 
- admiyo@os.amperecomputing.com, Matt Johnston <matt@codeconstruct.com.au>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
-	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Huisong Li <lihuisong@huawei.com>
-Date: Wed, 06 Nov 2024 18:47:47 +0800
-In-Reply-To: <693f39f9-9505-4135-91db-a7280570fbc3@amperemail.onmicrosoft.com>
-References: <20241029165414.58746-1-admiyo@os.amperecomputing.com>
-	 <20241029165414.58746-3-admiyo@os.amperecomputing.com>
-	 <b614c56f007b2669f1a23bfe8a8bc6c273f81bba.camel@codeconstruct.com.au>
-	 <3e68ad61-8b21-4d15-bc4c-412dd2c7b53d@amperemail.onmicrosoft.com>
-	 <675c2760e1ed64ee8e8bcd82c74af764d48fea6c.camel@codeconstruct.com.au>
-	 <693f39f9-9505-4135-91db-a7280570fbc3@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1730890079; c=relaxed/simple;
+	bh=9FbpAsg3o7PfFDuCF41WcBi9lk55h04DLXJFlfqA0BE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AUdxDfUwoezjqsC0anm/UPn+caISKAkOuuRxaNXFEHOr0Quann4obPM/e/Q/+Gs8SN1tKFmD1KM3KaKa04CMUV4ah4xeWQCKxsstipO9EE24d1PmUueL9Y1Gaz9eZgb9G9v/pWqESyriL38BhsmeigY2PBHoQWe2x+OIQEu+EEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=sxsclCJe; arc=none smtp.client-ip=185.70.40.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1730890075; x=1731149275;
+	bh=9FbpAsg3o7PfFDuCF41WcBi9lk55h04DLXJFlfqA0BE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=sxsclCJegFRL6x4xkC5mrgqX0ejLFv9tv7vLYtkBjZsBQNV2k8rc9Pg5LVlrCRPgP
+	 DMXkRIRLPirrQLw/MPoOBmR+xZiB8tNRGNkedeb2pElaKarIF6e0fMY6PlpFf6tuxj
+	 c5ACyhW7/v50RhFxlekVQskzsOQwo+vFlHoKalmyiVDAqKX6vBH3TdD3ww9QIhVOoM
+	 YlwiYEBPPB8bTLZ14feBfTjDJsQHglLtVIKm1SXl/mbgGjd7vRWuwefqdjd5TKpqOF
+	 MHLqMadkPLWCzQvrKogK/5DqHb+fFPWzGWyATb2VROJtzFabLg6lPQK/6Unh689xgD
+	 QsczlP9DlXxcw==
+Date: Wed, 06 Nov 2024 10:47:51 +0000
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 1/2] watchdog: mediatek: Fix mtk_wdt_restart
+Message-ID: <20241106104738.195968-2-y.oudjana@protonmail.com>
+In-Reply-To: <20241106104738.195968-1-y.oudjana@protonmail.com>
+References: <20241106104738.195968-1-y.oudjana@protonmail.com>
+Feedback-ID: 6882736:user:proton
+X-Pm-Message-ID: 2270a8af62230626aa0eba89eb49248f2a8f9a91
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Adam,
+Clear the IRQ enable bit of WDT_MODE before asserting software reset
+in order to make TOPRGU issue a system reset signal instead of an IRQ.
 
-> Adding the inbox id ( to the HW address does not harm anything, and
-> it makes things much more explicit.
+Fixes: a44a45536f7b ("watchdog: Add driver for Mediatek watchdog")
+Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+---
+ drivers/watchdog/mtk_wdt.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-My issue is that these inbox/outbox/subspace IDs do not align with what
-the device lladdr represents.
-
-From what you have said so far, and from what I can glean from the
-spec, what you have here is device *instance* information, not device
-*address* information.
-
-For an address, I would expect that to represent the address of the
-interface on whatever downstream bus protocol is being used. Because
-the packet formats do not define any addressing mechanism (ie, packets
-are point-to-point), there is no link-layer addressing performed by the
-device.
-
-You mentioned that there may, in future, be shared resources between
-multiple PCC interfaces (eg, a shared interrupt), but that doesn't
-change the point-to-point nature of the packet format, and hence the
-lack of bus/device addresses.
-
-This is under my assumption that a PCC interface will always represent
-a pair of in/out channels, to a single remote endpoint. If that won't
-be the case in future, then two things will need to happen:
-
- - we will need a change in the packet format to specify the
-   source/destination addresses for a tx/rx-ed packet; and
-
- - we will *then* need to store a local address on the lladdr of the
-   device, and implement neighbour-table lookups to query remote
-   lladdrs.
-
-is that what the upcoming changes are intended to do? A change to the
-packet format seems like a fundamental rework to the design here.
-
-> It seems like removing either the inbox or the outbox id from the HW=20
-> address is hiding information that should be exposed.
-
-We can definitely expose all of the necessary instance data, but it
-sounds like the lladdr is not the correct facility for this.
-
-We already have examples of this instance information, like the
-persistent onboard-naming scheme of ethernet devices. These are
-separate from lladdr of those devices.
-
-Cheers,
+diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
+index c35f85ce8d69c..e2d7a57d6ea2e 100644
+--- a/drivers/watchdog/mtk_wdt.c
++++ b/drivers/watchdog/mtk_wdt.c
+@@ -225,9 +225,15 @@ static int mtk_wdt_restart(struct watchdog_device *wdt=
+_dev,
+ {
+ =09struct mtk_wdt_dev *mtk_wdt =3D watchdog_get_drvdata(wdt_dev);
+ =09void __iomem *wdt_base;
++=09u32 reg;
+=20
+ =09wdt_base =3D mtk_wdt->wdt_base;
+=20
++=09/* Enable reset in order to issue a system reset instead of an IRQ */
++=09reg =3D readl(wdt_base + WDT_MODE);
++=09reg &=3D ~WDT_MODE_IRQ_EN;
++=09writel(reg | WDT_MODE_KEY, wdt_base + WDT_MODE);
++
+ =09while (1) {
+ =09=09writel(WDT_SWRST_KEY, wdt_base + WDT_SWRST);
+ =09=09mdelay(5);
+--=20
+2.47.0
 
 
-Jeremy
 
