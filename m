@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-398989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E829BF8F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:14:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F879BF907
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:15:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591741F22E61
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:14:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43F921C21E50
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A3820CCF6;
-	Wed,  6 Nov 2024 22:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A18A20D4F1;
+	Wed,  6 Nov 2024 22:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niguz29O"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GtG6PMDS"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78304824A3;
-	Wed,  6 Nov 2024 22:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5AE20CCD8;
+	Wed,  6 Nov 2024 22:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730931241; cv=none; b=imdR2NHgyOrTKTSvxeVGQL6WQuHY9VHUIrpPfNetwOay0K1Q4cqh+GfXC3gf12zMxS3z+axosTT2+JtC/XDOF40S3zKIBw5WT8Oxxi/25SCA5Mnndm4ntfODLoRaWrY00mvmOzFc4Yx6iUzRmChW4ZseZ6ylBcMu4xTDPathPC8=
+	t=1730931278; cv=none; b=qMv9GSkaK4su+DupDc5yijy+NoOpq4NKZWUPWZvRRiwNHtJCpmWkciSDtz+K4fxKkkQkrwTJ+4CculA7uxgh9lhofpatOO3JHqpOOaLnmhRRAAxbU7x44egFh2N3VR0FbUrTmWfPgltrb2tupkItCVIGO5M0wPpdqzE7DPoHDTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730931241; c=relaxed/simple;
-	bh=3TAxW4iLu7FEdZCLMZsXcu6CBgSL4sgzNjHckmB6DvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EpawvOtupxgz2W1WmDV/Mc3tu9pfw4Md8Fv8k5JSF5EfDHO56EaKK6B1muLaMvpc7uZuIEoectrwwreQvNyc8GLQhAMCPoqKs9wSsDbzEwaDl7pUOHJA1tpeeEmHdog5jjEdDejI+2FlOjTwG5AdMAXi1r7kzT0sTtEjf06T9yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niguz29O; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1730931278; c=relaxed/simple;
+	bh=P53BPmzv/+iV2jsIzuoNRBsbfjzW6iNbRpShn6rDYzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dd41EQ6hYVTUEKpec1p6CGM+umnpYORS5b+/vnqr+JilcdUdapPAZ+aYFjzjEoku/BsGmS98z8rzZ1sF3SMq8S18S19vedsHUpnNJqAx58fk9lVM4iUo+gk57syrsaT8QsHKPJmjdkwC2ov4GEchJewIW59Zl2CSGRkR1U1Mpmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GtG6PMDS; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d47eff9acso173050f8f.3;
-        Wed, 06 Nov 2024 14:13:59 -0800 (PST)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ea5b97e31cso3642737b3.1;
+        Wed, 06 Nov 2024 14:14:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730931238; x=1731536038; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OZpDtRtZooKd1iFzDtmdRZs1JzT6IjBLSrd8zk1Zy8o=;
-        b=niguz29ONm1cc6oL1J4Nyd0On37QIeymKh2g6k/zgHu4MqKmV7arJc7nWEvH1lNBIh
-         2Y4c7kfIccE6KHhqGf3x4Glns7m63k54KAMdRebu7NHf/oTU1eLDGJwwIJppOiQ7AfRj
-         zLvmWYUfvoXMR1ML/RiRlu82KuxHG5maNH8Wmm9Nex+hWwHii/Lr4hd+jZ20sPe7YiT9
-         MygbMPSSkuyiwafe/Xp16q07iMJ2Sk0IUlIZyX8HsUWKQ/IMKsvtA+mCBoyQ2v5+7NFX
-         t75eeD8hKKP+T9eQYnJ17mYT0JVUI++5FXEe4UquOqRjmEEE/IMWg26BULYru/okJgVh
-         FFDA==
+        d=gmail.com; s=20230601; t=1730931275; x=1731536075; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vBT8+7Y8eGQoStNo8j+EOisJsIkNwtvVgBPv7xvh8pg=;
+        b=GtG6PMDSg7FbEQeBHcasaIPjXgpYAPDlOti2KpDHAueMAVXgIiR3Dm7Y4uH0Q/zd4V
+         k3cUUOGuFmBqyvXmcORcC9He1DzQtaBns178HTH4JyaiJG0Pn1EwRmNyCzUqk38rhScE
+         Vu6K9vA7z3bF8jUor2LQFU0E0ynmAquwq2b9N46C1MwgIzBXFMAI8GMafhUymzrCk+gL
+         o7dOXdRcJ1roQ8JOkRxYjY6DyXwh0Piyh3wkR85utWI0znt9Qo7rkXWaaRQksMCBF0OP
+         nwv3Ygvdo+XXjrCTLmmJ4rnJh9LBoqSVZBugtR0+WQoU99KsyaYpjjZeF23kZjKMzJCp
+         o+QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730931238; x=1731536038;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OZpDtRtZooKd1iFzDtmdRZs1JzT6IjBLSrd8zk1Zy8o=;
-        b=JB0XwaXzlpuc/83D9qmreEfLjWK1vbxoJ2+IOq1ugCg4yUbdjW2TKbcLPQNOWeT9Ca
-         yW6yxafWfti6tR+i/tldZvXBXuEJczXP+Xu9Oj3y2NWK7wTuP5ZpT62q5IjhW+DiZXC3
-         O2a+/wOaW5U0gwTBN3IybozT7Taar1562DlVQKQVXE9AhUpayswwF/ynw05TCGUcXGLh
-         nzDXupwtjrnOf89VcmKgUUI8tKjUpQteajtZuq86G41lOgLPCqOxkqGUY5kR2KRhsUeY
-         a+xGAvslPaM4SZdPT1t5PQFNKi367nZwaBMx6gc/kYrcL82ZQqdtNkzO/d52Z68CC7zU
-         2O8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjmBdeFBClNhP53udPkXpI3BdN3eICXKTpr1BWN++wWt/pj1aEaA6RUKzAXFA7OfFBshE=@vger.kernel.org, AJvYcCW57tThIP9rgUs2aQdQEQIryNG9WdrfdcgMOyXkYoJ1LBSs+Y/IJGMpecRGxFe2dtnrbMfysoW4HZdLqHr/IQ==@vger.kernel.org, AJvYcCXptu6gd0CxbN6k0DV7bHT5lPUgBMDBHTjwDAYZMqef9Pq4tQWuYDFbtqYvwlMczBNIgP54Q899hgFrQqt/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFPl9OCxCV4tE5KG/S3EcdxY+U55F9CRuTIle9VEdfOOgvQH1O
-	NeccSIL5aoQ5uCBn89T8bhUnkKJLkcKSysx7EqQydq/OnpSh/N2r7W+j5QTeQIz2YYGzAVIPCE/
-	92JJJFmah5Ms+n6e64ZOpMEt0x3U=
-X-Google-Smtp-Source: AGHT+IGWfz66X/M3XNQDfc44OJ7w7Vdqi9GnMhEQjIFr3fSxdqZX1ZOwEv3sZsY5fu0T1SPwMB59ZRC11BGU8vsOD8c=
-X-Received: by 2002:a05:6000:1a8a:b0:37d:4a7b:eeb2 with SMTP id
- ffacd0b85a97d-381c7a6d600mr16954110f8f.35.1730931237601; Wed, 06 Nov 2024
- 14:13:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730931275; x=1731536075;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vBT8+7Y8eGQoStNo8j+EOisJsIkNwtvVgBPv7xvh8pg=;
+        b=pOy9BtHVxHTMR7gJ1M39pk8fx1L3hKnLWmzuwO1V1EBZizpJSurHkSDsPMjU8M4b7o
+         wH2Gj374b1ecH8leXiJLmLmf0nwfo/xRPpnvodILQWs2Hrr+ba63vSkzl+Oxld/FJ41h
+         wsRAIrXr4wdVHISpgOj/8RPtelHiDmHQI06r5ax4v0KQjSgbGJcXo6ratyogk8850t8T
+         KhR6WxIppecxrkFF/Gp3gYmYE1pHolkcx8rdH7DFahlD/rxWY1E/jJpTImA6DQrk0k7Z
+         8zP+HTk+A0vIh9BfXsAex2e6hGMM8LJpEwFpXuRgLr6hML7b9X4ZKkCGSJsQW4dqyqKQ
+         aSQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURGRWvcikS0UIVlTZoDyZP3DqQrgcRWmaI0kpwh7gFFqPKdMR5PZvKlSsJKBIWR6bmtfzi3z+94m9g2K3I@vger.kernel.org, AJvYcCVit4ci+5n65MISqN1iliC29YKyPYdU4jNByDSfEKcckEyFx2+7Xh+cz+X4eK7ctXCWXn8cx4SP@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrLMNjFTKPokmPEdt2OsbRwvYYHvqyQZjHY7Vv4WIBHn51uWEF
+	mDLM4a+blXFoUdBWT/AVtaIJx6WBwkzcolP7PT9/FYS0NwtdyQRN
+X-Google-Smtp-Source: AGHT+IG53bD5/wh0AdwmE6KJSqgFkcBXwAWMV1DubYdMhPmG6F3ou0Rj2ZzQOQzCphQc3ElRVgS1yg==
+X-Received: by 2002:a05:690c:6f8d:b0:6e9:c117:760b with SMTP id 00721157ae682-6eacbfe3381mr9656507b3.5.1730931275235;
+        Wed, 06 Nov 2024 14:14:35 -0800 (PST)
+Received: from localhost (fwdproxy-frc-112.fbsv.net. [2a03:2880:21ff:70::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb09a6fsm206457b3.68.2024.11.06.14.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 14:14:34 -0800 (PST)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: shakeel.butt@linux.dev
+Cc: hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	muchun.song@linux.dev,
+	akpm@linux-foundation.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH 0/2] memcg/hugetlb: Rework memcg hugetlb charging
+Date: Wed,  6 Nov 2024 14:14:32 -0800
+Message-ID: <20241106221434.2029328-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <AM6PR03MB5848C66D53C0204C4EE2655F99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAADnVQKuyqY7J4iJ=FZVNoon2y_v866H9hvjAn-06c8nq577Ng@mail.gmail.com> <CAEf4BzYib5jyu90tJYSTEmhpZ-4aF135719V+A7J7pzMj7RpNA@mail.gmail.com>
-In-Reply-To: <CAEf4BzYib5jyu90tJYSTEmhpZ-4aF135719V+A7J7pzMj7RpNA@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 6 Nov 2024 14:13:46 -0800
-Message-ID: <CAADnVQ+0LUXxmfm1YgyGDz=cciy3+dGGM-Zysq84fpAdaB74Qw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/4] bpf/crib: Introduce task_file open-coded
- iterator kfuncs
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Juntong Deng <juntong.deng@outlook.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
-	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 6, 2024 at 2:10=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> > > +__bpf_kfunc int bpf_iter_task_file_new(struct bpf_iter_task_file *it=
-,
-> > > +               struct task_struct *task)
-> > > +{
-> > > +       struct bpf_iter_task_file_kern *kit =3D (void *)it;
-> > > +
-> > > +       BUILD_BUG_ON(sizeof(struct bpf_iter_task_file_kern) > sizeof(=
-struct bpf_iter_task_file));
-> > > +       BUILD_BUG_ON(__alignof__(struct bpf_iter_task_file_kern) !=3D
-> > > +                    __alignof__(struct bpf_iter_task_file));
-> > > +
-> > > +       kit->task =3D task;
-> >
-> > This is broken, since task refcnt can drop while iter is running.
->
-> I noticed this as well, but I thought that given KF_TRUSTED_ARGS we
-> should have a guarantee that the task survives the iteration? Am I
-> mistaken?
+This series cleans up memcg's hugetlb charging logic by deprecating the
+current memcg hugetlb try-charge + {commit, cancel} logic present in
+alloc_hugetlb_folio. A single function mem_cgroup_charge_hugetlb takes
+its place instead. This makes the code more maintainable by simplifying
+the error path, and reduces memcg's footprint in hugetlb logic. 
 
-KF_TRUSTED_ARGS will only guarantee that the task is valid when it's
-passed into this kfunc. Right after the prog can call
-bpf_task_release() to release the ref and kit->task will become
-dangling.
-If this object was RCU protected we could have marked this iter
-as KF_RCU_PROTECTED, then the verifier would make sure that
-RCU unlock doesn't happen between iter_new and iter_destroy.
+This patch introduces a few changes in the allocation error path:
+(a) Instead of having multiple return paths, we consolidate them into
+    a single error path. Failing when memcg's limit is reached no longer
+    returns -ENOMEM, but -ENOSPEC like the other errors as well. This
+    makes the memory controller error behavior the same as hugeTLB's.
+    With this said, no callers handle -ENOMEM separately, so no existing
+    behavior is affected by this change.
+(b) Previously, the memcg limit is checked before the folio is acquired,
+    meaning the hugeTLB folio isn't acquired if the limit is reached.
+    This patch performs the charging after the folio is reached, meaning
+    if memcg's limit is reached, the acquired folio is freed right away. 
+
+In the first patch, a check for whether memcg accounts hugetlb [1] is
+introduced. In the second patch, the charging mechanism is reworked.
+
+This patch builds on earlier work [2] which adds memcg hugeTLB counters.
+The request for this rework is also part of the original thread.
+
+Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
+Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+
+[1] https://lore.kernel.org/all/20231006184629.155543-1-nphamcs@gmail.com/
+[2] https://lore.kernel.org/all/20241101204402.1885383-1-joshua.hahnjy@gmail.com/
+
+Joshua Hahn (2):
+  Introduce memcg_accounts_hugetlb
+  Deprecate hugetlb memcg try-commit-cancel charging
+
+ include/linux/memcontrol.h |  5 ++--
+ mm/hugetlb.c               | 35 ++++++++++------------------
+ mm/memcontrol.c            | 47 +++++++++++++++-----------------------
+ 3 files changed, 33 insertions(+), 54 deletions(-)
+
+
+base-commit: 34d664f9c954f4bce85be506bd81024f64dd5fda
+-- 
+2.43.5
+
 
