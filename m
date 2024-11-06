@@ -1,166 +1,135 @@
-Return-Path: <linux-kernel+bounces-398306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111189BEF58
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:44:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0159BEF60
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA7A285BCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 523F0284871
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484131FA249;
-	Wed,  6 Nov 2024 13:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E242A1FA27F;
+	Wed,  6 Nov 2024 13:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="SLsnzVlC"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mE20lKKz"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C691F9EC2
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01A01FA276;
+	Wed,  6 Nov 2024 13:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730900624; cv=none; b=Fyey7tab62xA/ACDpT2TCAR52lD3F2laMivVilefEuH9EK2Pzdq/ORSzCW0bKo+JZSCdCj3bkEuXZj79/r6nHDRPJfEP+SErTBg3q2hP/x650T+bouJ36KS0uE7V7RVoI0uuex/fFtY4LN17/EyXiCZMx9fEOE3/BzUIP/NXo5k=
+	t=1730900709; cv=none; b=J3+iBnsQLU0WCOTqxtTaES+TBgrkTIRCQEpl5/DfPj6PrfXnp2Y4uwTEe1of2YCFmjiak/9v07PnEM+LCQPcM1YU5pRSZ4Fd/7rNG2uydLRes9LWQ+5snvv0nsfuMM2WZNfDMOOtkZZpJJ/b+LVtsLSVeLRmAl9gXgGUl6UOUlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730900624; c=relaxed/simple;
-	bh=2X4om5Soa3ADmmiA1nr6u9X+2oPSt7F/UX+51YMP45o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bI2sYXg5H0SSTg5FgN2HKVwAI950higaCK/3a5C7gtR0mNC5mLeH4/d9mj5/JTlTDIpbV8PNIhqyD8KW87Nd8+gmjJYpyLpIAkCJH0I90ZHjvztHPMESplBMrm/6EmU9nh6Y5YKMK62FM/pHdV7r4pBjmmmif8awQTK/ni52mEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=SLsnzVlC; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1730900709; c=relaxed/simple;
+	bh=PRfP3mrthFXqO8z1UzhBDfaDERwKXLXkFR5QCYXGAq8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IGEBNZt5vjNM9jcJQoLoU3o0c1037YagW2Ud36gP+5Qznrt55OmGZKb3YMay2e9AKQqHEhrXe0O/Dw4DMmK5YlkgigpOCgwOBQGuYEhztKfZTolfFsJS4TaFaRCLzMY7gJwsh+hdOwhmVXL/gWZ/FMlIjm7vQJRbmuBkXiDNDws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mE20lKKz; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso61857761fa.0;
+        Wed, 06 Nov 2024 05:45:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730900706; x=1731505506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PRfP3mrthFXqO8z1UzhBDfaDERwKXLXkFR5QCYXGAq8=;
+        b=mE20lKKzhumN6npQ6O05N/5WD+qhS+T/lwG7GFBoPx5Nv/9nKQeMn1yLhaW2D+klcL
+         d1uQ1yvh6+LI4RDJJZg/dqbRIUuJxVm6s89+SiodfO2lqgIPxDaXQSckNAu80I94XOTE
+         FktVrDrKBriTcJn9zWU24sfPssWqe1h0RKV7UYhiAz/pz9cOYG32B+dCeK58tc/bLtgb
+         zb4fQMQK34ZQ5kSu7mbRioZU7cPt5b6LDbTslqXXew6dN252f6nKTD41is0MvygUhiyH
+         VBkV34fTRhifZNfUoefgWbYyNOrwHS29z3OpF9QuAIP5pwBqcNGoDAv2diDu/UF4vXXb
+         W2dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730900706; x=1731505506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PRfP3mrthFXqO8z1UzhBDfaDERwKXLXkFR5QCYXGAq8=;
+        b=RIdvOiVR71mZyXOCCeecsmUERL5JawezEZL/Kxl+C6w/IOCzwzI+2R33rXbTxIZbcw
+         PENRWJPgThiRdC1fx+Rg7JS9Whtdv/6YWWoKtRF2eheckCrO5KlWCh31kV7LvtyxgcDU
+         FOkJ4emtbm74MynLzq9aP1pzKVx+dNYNi0m8+FWjMtRkG4zn5XXZLXN1xDY2qPXn5cwp
+         Y27IxqfF/3O/zwRuKCZWPfGFte37iSjAWb3QxpKwtQFt4VbuhLrQEZl79gFdu4atdLir
+         Hc6YCqU9WCCgt2NVtB6+MMFsL68qkjwFiLHvw9QCiNkyhsGWIMEzEI0vtEbpSOzVzFc1
+         LOeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZHZgHGAqeuM76bl3/YRy1zWyJ3jDhNXGzZeQiRGmBEyqbJWnS6SgfzTaTKlOLvYUDh4hxVHvuVFlNh6w=@vger.kernel.org, AJvYcCVz7bYHhdHc8SEOZokkzZvbeixWnq7zj1ArdTs4lpGG481lmIOSVo38f6VpCTn3jhXX/SxLkmSHIY/X73V7yfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOkrgbtODuSZtFK/GhZYzO77hS/lzfo/qfS4EpWpSMqRdGA7S4
+	CJSp1BIu0w132CtNTLP+TIm629R8T106EmSc50ce5XcWp5g5exQYNsMS2LMc0j1yBneXYH1GEPK
+	rAn31jHxXeeMCbMUaYGEil296XlcnWc6Mb/bzDQ==
+X-Google-Smtp-Source: AGHT+IELinPh6kMtPZIP+nahufU32K4ML7ul8ABbiKuMB0PqMwTZcIuuGNgfP6rzZ7Nn5cP2Lr7pslHb2Ini0UymVNs=
+X-Received: by 2002:a05:651c:510:b0:2fa:f5f1:2539 with SMTP id
+ 38308e7fff4ca-2fedb79ef0emr107100971fa.24.1730900705695; Wed, 06 Nov 2024
+ 05:45:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1730900620;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KaeGzukjSkkdIXrI/sRrKa+8hdtWtX3cTAwGr+R/Sm4=;
-	b=SLsnzVlC8dWSFPPdbsnuJcGZmSOiL8iSO7F5qRMO93o6+E5pEPed06GD8EF7pJ8tdipCnP
-	cBVI61BME5zB+mvqd3sAA/J/4DSIDAUUB3GqebuDmO4O9YBnau6+006pQKdPu0Z0Hg7F2f
-	AvXcqKdvMmFYMGGjlenQMJ2HSZn7lwZfoTqRpwX3VNjQc9aE6YZEiWjhinBgBdo2rmQ7an
-	Mp9/Zvr5cVEVVJpntrbhHZwNHhWDkAwpOkGJoYZjxCnrTB0jbVgiMPifjhkkZc79s1Zfws
-	zmf3kh6djxbkTomT/+J2m+PKqi46pBCgDVpypjPBqwFmuQcNHshU9Lnai65ABg==
-Content-Type: multipart/signed;
- boundary=d325a75fd624665202bd836b8054801c6e1beb170779c0c55314142a3ace;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Wed, 06 Nov 2024 14:43:36 +0100
-Message-Id: <D5F525WYXDO1.3I92CTU67RVF6@cknow.org>
-Cc: <quentin.schulz@cherry.de>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "Heiko Stuebner" <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH 1/3] arm64: dts: rockchip: add mipi dcphy nodes to
- rk3588
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Heiko Stuebner" <heiko@sntech.de>
-References: <20241106123758.423584-1-heiko@sntech.de>
- <20241106123758.423584-2-heiko@sntech.de>
-In-Reply-To: <20241106123758.423584-2-heiko@sntech.de>
-X-Migadu-Flow: FLOW_OUT
-
---d325a75fd624665202bd836b8054801c6e1beb170779c0c55314142a3ace
+MIME-Version: 1.0
+References: <20241104-simplify-arc-v1-1-a4ffc290f905@gmail.com>
+ <ZylNvC8enwPG4IQ4@Boquns-Mac-mini.local> <CANiq72nQ6b1wO6i6zWW6ZWeQFN4SJVB28b216FDU70KmtCbaxA@mail.gmail.com>
+ <CAJ-ks9=xW_WWZXB0CbDvU-3otkYs-TY+PSYeiPyidM58QujC3g@mail.gmail.com> <CAH5fLgjXXE32k2VuC9yGrNG7ib5vo7V+fsvRxWG0ijopK7MDCQ@mail.gmail.com>
+In-Reply-To: <CAH5fLgjXXE32k2VuC9yGrNG7ib5vo7V+fsvRxWG0ijopK7MDCQ@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 6 Nov 2024 09:44:29 -0400
+Message-ID: <CAJ-ks9=b=UEp9KCZ5_dE5yDKWZ1BEfnTkAtS4LiNQ4wzMgdT4A@mail.gmail.com>
+Subject: Re: [PATCH] rust: arc: remove unused PhantomData
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Wed Nov 6, 2024 at 1:37 PM CET, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+On Wed, Nov 6, 2024 at 5:26=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
 >
-> Add the two MIPI-DC-phy nodes to the RK3588, that will be used by the
-> DSI2 controllers and hopefully in some future also for camera input.
+> On Tue, Nov 5, 2024 at 9:13=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+> >
+> > On Tue, Nov 5, 2024 at 8:29=E2=80=AFAM Miguel Ojeda
+> > <miguel.ojeda.sandonis@gmail.com> wrote:
+> > >
+> > > On Mon, Nov 4, 2024 at 11:42=E2=80=AFPM Boqun Feng <boqun.feng@gmail.=
+com> wrote:
+> > > >
+> > > > I believe we need this `PhantomData` to inform drop chec [1] that t=
+he
+> > > > drop of `Arc` may result into the drop of an `ArcInner<T>`. Rust st=
+d
+> > > > `Arc` has the similar definition [2], you can find more information
+> > > > about PhantomData usage on drop checking at [3].
+> > >
+> > > Hmm... But they use `may_dangle` in their `Drop` and we don't (and we
+> > > have a `Drop` unlike something like `Unique`), no? Or am I confused?
+> > > i.e. if I understand correctly, that would have been needed in the
+> > > past, but not anymore.
+> >
+> > Doing a bit of archaeology I found the reasoning for the presence of
+> > `PhantomData` in std's `Arc`[0]. The TL;DR is that the presence of a
+> > type parameter `T` implies "owns T", but `Arc` owns `ArcInner<T>`
+> > rather than `T`. Thus in order to get correct dropck behavior it is
+> > necessary to opt out of "owns T" using `may_dangle` and opt into "owns
+> > ArcInner<T>" using `PhantomData`.
+> >
+> > Please check my understanding; I couldn't find detailed documentation
+> > of the interaction between `may_dangle` and `PhantomData`. If this
+> > sounds correct, should we add `may_dangle` to our dropck? compile-fail
+> > tests would be useful here.
 >
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 42 +++++++++++++++++++
->  1 file changed, 42 insertions(+)
+> We don't *have* to use #[may_dangle]. Using it may allow more stuff,
+> but it's not a problem for it to be missing. We probably don't want to
+> use it since it's unstable.
 >
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/b=
-oot/dts/rockchip/rk3588-base.dtsi
-> index 51ba7563f7d0..8c95c56e8097 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-> @@ -576,6 +576,16 @@ sys_grf: syscon@fd58c000 {
->  		reg =3D <0x0 0xfd58c000 0x0 0x1000>;
->  	};
-> =20
-> +	mipidcphy0_grf: syscon@fd5e8000 {
-> +		compatible =3D "rockchip,rk3588-dcphy-grf", "syscon";
-> +		reg =3D <0x0 0xfd5e8000 0x0 0x4000>;
-> +	};
-> +
-> +	mipidcphy1_grf: syscon@fd5ec000 {
-> +		compatible =3D "rockchip,rk3588-dcphy-grf", "syscon";
-> +		reg =3D <0x0 0xfd5ec000 0x0 0x4000>;
-> +	};
-> +
->  	vop_grf: syscon@fd5a4000 {
->  		compatible =3D "rockchip,rk3588-vop-grf", "syscon";
->  		reg =3D <0x0 0xfd5a4000 0x0 0x2000>;
-> @@ -2878,6 +2888,38 @@ usbdp_phy0: phy@fed80000 {
->  		status =3D "disabled";
->  	};
-> =20
-> +	mipidcphy0: phy@feda0000 {
-> +		compatible =3D "rockchip,rk3588-mipi-dcphy";
-> +		reg =3D <0x0 0xfeda0000 0x0 0x10000>;
-> +		rockchip,grf =3D <&mipidcphy0_grf>;
-> +		clocks =3D <&cru PCLK_MIPI_DCPHY0>,
-> +			 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
-> +		clock-names =3D "pclk", "ref";
-> +		resets =3D <&cru SRST_M_MIPI_DCPHY0>,
-> +			 <&cru SRST_P_MIPI_DCPHY0>,
-> +			 <&cru SRST_P_MIPI_DCPHY0_GRF>,
-> +			 <&cru SRST_S_MIPI_DCPHY0>;
-> +		reset-names =3D "m_phy", "apb", "grf", "s_phy";
-> +		#phy-cells =3D <0>;
-> +		status =3D "disabled";
-> +	};
-> +
-> +	mipidcphy1: phy@fedb0000 {
-> +		compatible =3D "rockchip,rk3588-mipi-dcphy";
-> +		reg =3D <0x0 0xfedb0000 0x0 0x10000>;
-> +		rockchip,grf =3D <&mipidcphy1_grf>;
-> +		clocks =3D <&cru PCLK_MIPI_DCPHY1>,
-> +			 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
-> +		clock-names =3D "pclk", "ref";
-> +		resets =3D <&cru SRST_M_MIPI_DCPHY1>,
-> +			 <&cru SRST_P_MIPI_DCPHY1>,
-> +			 <&cru SRST_P_MIPI_DCPHY1_GRF>,
-> +			 <&cru SRST_S_MIPI_DCPHY1>;
-> +		reset-names =3D "m_phy", "apb", "grf", "s_phy";
-> +		#phy-cells =3D <0>;
-> +		status =3D "disabled";
-> +	};
+> Since we don't use #[may_dangle], we don't *need* the PhantomData
+> field. Having it doesn't change anything.
 
-No power-domains property?
-RK3588 TRM v1.0 part 1 page 1097 has ALIVE(PD_BUS) for
-MIPI_DC_PHY0~MIPI_DC_PHY1
-
-Cheers,
-  Diederik
-> +
->  	combphy0_ps: phy@fee00000 {
->  		compatible =3D "rockchip,rk3588-naneng-combphy";
->  		reg =3D <0x0 0xfee00000 0x0 0x100>;
-
-
---d325a75fd624665202bd836b8054801c6e1beb170779c0c55314142a3ace
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZytyjAAKCRDXblvOeH7b
-bn3bAP0a67joM+6d9CLYveao1RDKHB27FIWdlPfAWU00XESHxQD9EqDyGe3+QvqV
-XoBO2e1oqQ/iO4szViGc6LynQn/oGgk=
-=y9hB
------END PGP SIGNATURE-----
-
---d325a75fd624665202bd836b8054801c6e1beb170779c0c55314142a3ace--
+In that case, should we reconsider this patch?
 
