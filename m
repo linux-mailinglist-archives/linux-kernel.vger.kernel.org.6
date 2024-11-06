@@ -1,204 +1,426 @@
-Return-Path: <linux-kernel+bounces-398389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7659BF0AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:50:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471C79BF0AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A2928142A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:50:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 579951C21FE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA892022C1;
-	Wed,  6 Nov 2024 14:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85361202F84;
+	Wed,  6 Nov 2024 14:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ppsfjl+v"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6N31rjG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E3320126B;
-	Wed,  6 Nov 2024 14:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0561DFE3A;
+	Wed,  6 Nov 2024 14:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730904611; cv=none; b=t9faB3CtO+8ebJgLJLcyAWIQNYLO7gSlh2CxBBAW5em8H6LCuOYVC6TlWqRt0PRLL7d07qUSERY6pE4Lvsy/4a7pS2KxVBpckuDfk/PFNSx7k1FWlibPvrpQa043ZfHb1SPYN5yb/QHPizFEpwK9pYzqfycONtOyT0EEte+7wIs=
+	t=1730904620; cv=none; b=g/WBvopmrEJsotJMsz/dZ31YnLvmbSBrZm3q9RwKRXOeC41chVVetbT5WPas5Zzx0KmIs4laup+RKjuTGH/2OcKo/94LSakY9aputHL+IRf3MbvArif5VLrnlo7eif3nR1iSoRHms3ttKJUTyMyJippNVGXOHh4jyRmwV/mAuqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730904611; c=relaxed/simple;
-	bh=pafdbCKJ4T0X9ew4LkODpKKyd/czMwM+QSMDM1Wv1xs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OY7A5JyNtyJnx68zHXEhhduVQDbhenxi8nkBhPhXm2woWijWdHinw0WN43fwNtcrZP208xaFW6aKfNGkaSUeS2JBKenjLKZSOrCOh8Gc+mnK6coMb8AivbOMIoQfnh5/TIlzpWesX3zukUPZN40vOafbyydNnOCQrvzC3Alr3xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ppsfjl+v; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=48SrrvM08TEZKc3LzQPWlbvvtC60XKoMO5KYeMToqlI=; b=ppsfjl+vksFmgwWr
-	XvHipSjpAP6g+RGH9s0bJ0d/+MFrcZm/u/TE3jnsO0zbLa/K1QBPcGqT5R++vbkZLsvO9Dk5rGdHf
-	2DxPH4BMuIus5cnUcHj7Sj57cSIsVVdCV6iHNHEz7FEFWlQopOrqGlJQekpaGh+0gXy2ss3iA+nWG
-	xqPFdvBbImn1cniif05Wd7bcEVR6W5aq5UVGJW3erbNG0/dKUQ6bepuXIq3A0i0e5T2FDuNdEhBkc
-	MqFYArCsUkTOu43pyoLWy56m/rPJpyqQ+azkeluerli1QYs43V/KA8HU3XJk1yFi25dJyTWpE2I3X
-	bGNxxlWhxJVByuYDtA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1t8hM7-00FoOw-0i;
-	Wed, 06 Nov 2024 14:49:59 +0000
-Date: Wed, 6 Nov 2024 14:49:59 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: event: Remove deadcode
-Message-ID: <ZyuCF3reuIHZjZwp@gallifrey>
-References: <20241103142302.230370-1-linux@treblig.org>
- <ZyscLqAzo9Z7Zg02@google.com>
+	s=arc-20240116; t=1730904620; c=relaxed/simple;
+	bh=BTI8mCfd+F1+ZsSIhcKu394EogjHKK4f8R5thMR9/JU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bP2yTdst+AxWl2mwXVb+Tn5WJsSiKmO54PUFAyDWj7ETr1b9mFB+/RUq3rixQ2+cUJgixa9moPdwDM4Vj3UU84eFb2UwR+bd9kPyRpc/rZJu7U0/8VcR8eHLLfDXSLHdJX2Jb6AwsO6uoE1QtRITirnIFOJq1F2mi89R01t4EoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6N31rjG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5DEC4CED4;
+	Wed,  6 Nov 2024 14:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730904620;
+	bh=BTI8mCfd+F1+ZsSIhcKu394EogjHKK4f8R5thMR9/JU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=W6N31rjGfOOb21AuwOjYbrLm1LsPNpwjx1H3nfjVrIa/eY7mJjUKcDyzu9iHdVWC4
+	 OQiSvi9sfLoz8CCeWutkA6Vl38qRKH0t6KWAXubN49ONqKgkujyuj2bHZVrEPHYSJG
+	 jXKAbrJCaKlmFMYd6KOChoO87KuW0FfaJ5uynGGvmfhenJqEIs4lGnEekq1PXSk0uN
+	 sJZt5ERQLSo5ZVE4KOOvVce2XFdOZAAqh45V+K1m4SMpqCu4bmXpOJoBMZG1Yvs6Y7
+	 ahoYq35DCasl60Q/33pGpWYabdZOx1slY/KGX0fL/1SwXl1Fm3EzE5IzAM03TBRx88
+	 wPEdUshb3QWvA==
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e34339d41bso58179127b3.0;
+        Wed, 06 Nov 2024 06:50:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUVVXphpOEhga3WJK6dBv9ANUxB+UrbYjD1nYg6+qsfB5z2HWfaX8ZplfbujjtN1x33+ny9wLbwv+16cRK7@vger.kernel.org, AJvYcCWg1NMd9CvyM4F9XWytWqWZz+xMRnNTQ+AtpYQBkjsIVDDMvGAnas7UcvyNpZ7BvvX6z8rakhaGVzWEcSp3vgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCzDbJmthrsI0SAV2T9qVJbuD805l6vdW+a2iEfzbcBwYE1qna
+	t2uGXU9m2aysZI/LHa6KpCpM0pBBfQUtGrQ3pU55Rm8m6fHQoksp7y8HP5/aD2C7QyPWmdjWcTD
+	2h0c+IMbpkyorDBkgl/KNqsbIMA==
+X-Google-Smtp-Source: AGHT+IGQ+HcePls4B68fjLXm2WG2zUD3sxLkDlRwa73g9O74Ed7KDSK8zEDsTM92UO+3R5W3P/C8H8ih65XnTgWZQDo=
+X-Received: by 2002:a05:690c:61c9:b0:6e3:31ee:23ab with SMTP id
+ 00721157ae682-6e9d899d1c2mr405335217b3.25.1730904619096; Wed, 06 Nov 2024
+ 06:50:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <ZyscLqAzo9Z7Zg02@google.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 14:49:36 up 182 days,  2:03,  1 user,  load average: 0.00, 0.01,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20240702161052.3563599-1-robh@kernel.org> <D2RSWMPFF8KK.X5HZZMHANQMO@iki.fi>
+ <D2RT0J8KXY1H.3MEV7KGQXTWHW@iki.fi> <CAL_JsqJDX+uOSoPh6pTNEP0vBLwcP3bKmAW1wCr_0cVr5fsPcg@mail.gmail.com>
+ <D2SSH5HSDHQS.2YJSB22W3MHQK@iki.fi>
+In-Reply-To: <D2SSH5HSDHQS.2YJSB22W3MHQK@iki.fi>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 6 Nov 2024 08:50:07 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLF+gs9e1TL1yi-xAZJRx4Kz7fOk=2wcF8kCqU3vyMWZA@mail.gmail.com>
+Message-ID: <CAL_JsqLF+gs9e1TL1yi-xAZJRx4Kz7fOk=2wcF8kCqU3vyMWZA@mail.gmail.com>
+Subject: Re: [PATCH] tpm: atmel: Drop PPC64 specific MMIO setup
+To: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Namhyung Kim (namhyung@kernel.org) wrote:
-> Hello,
-> 
-> On Sun, Nov 03, 2024 at 02:23:01PM +0000, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > event_format__print() last use was removed by 2017's
-> > commit 894f3f1732cb ("perf script: Use event_format__fprintf()")
-> > 
-> > evlist__find_tracepoint_by_id() last use was removed by 2012's
-> > commit e60fc847cefa ("perf evlist: Remove some unused methods")
-> > 
-> > evlist__set_tp_filter_pid() last use was removed by 2017's
-> > commit dd1a50377c92 ("perf trace: Introduce filter_loop_pids()")
-> > 
-> > Remove them.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> Unfortunately it doesn't apply to the current perf-tools-next cleanly.
-> Can you please rebase?
+On Thu, Jul 18, 2024 at 11:01=E2=80=AFAM Jarkko Sakkinen <jarkko.sakkinen@i=
+ki.fi> wrote:
+>
+> On Thu Jul 18, 2024 at 5:57 PM EEST, Rob Herring wrote:
+> > On Wed, Jul 17, 2024 at 6:14=E2=80=AFAM Jarkko Sakkinen <jarkko.sakkine=
+n@iki.fi> wrote:
+> > >
+> > > On Wed Jul 17, 2024 at 3:08 PM EEST, Jarkko Sakkinen wrote:
+> > > > On Tue Jul 2, 2024 at 7:10 PM EEST, Rob Herring (Arm) wrote:
+> > > > > The PPC64 specific MMIO setup open codes DT address functions rat=
+her
+> > > > > than using standard address parsing functions. The open-coded ver=
+sion
+> > > > > fails to handle any address translation and is not endian safe.
+> > > > >
+> > > > > I haven't found any evidence of what platform used this. The only=
+ thing
+> > > > > that turned up was a PPC405 platform, but that is 32-bit and PPC4=
+05
+> > > > > support is being removed as well. CONFIG_TCG_ATMEL is not enabled=
+ for
+> > > > > any powerpc config and never was. The support was added in 2005 a=
+nd
+> > > > > hasn't been touched since.
+> > > > >
+> > > > > Rather than try to modernize and fix this code, just remove it.
+> > > > >
+> > > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > > ---
+> > > > >  drivers/char/tpm/Kconfig     |   2 +-
+> > > > >  drivers/char/tpm/tpm_atmel.c |  64 +++++++++++++++-
+> > > > >  drivers/char/tpm/tpm_atmel.h | 140 -----------------------------=
+------
+> > > > >  3 files changed, 62 insertions(+), 144 deletions(-)
+> > > > >  delete mode 100644 drivers/char/tpm/tpm_atmel.h
+> > > > >
+> > > > > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> > > > > index e63a6a17793c..9b655e9fc7ab 100644
+> > > > > --- a/drivers/char/tpm/Kconfig
+> > > > > +++ b/drivers/char/tpm/Kconfig
+> > > > > @@ -162,7 +162,7 @@ config TCG_NSC
+> > > > >
+> > > > >  config TCG_ATMEL
+> > > > >     tristate "Atmel TPM Interface"
+> > > > > -   depends on PPC64 || HAS_IOPORT_MAP
+> > > > > +   depends on HAS_IOPORT_MAP
+> > > > >     depends on HAS_IOPORT
+> > > > >     help
+> > > > >       If you have a TPM security chip from Atmel say Yes and it
+> > > > > diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_=
+atmel.c
+> > > > > index 9fb2defa9dc4..622c4abe8cb3 100644
+> > > > > --- a/drivers/char/tpm/tpm_atmel.c
+> > > > > +++ b/drivers/char/tpm/tpm_atmel.c
+> > > > > @@ -15,7 +15,67 @@
+> > > > >   */
+> > > > >
+> > > > >  #include "tpm.h"
+> > > > > -#include "tpm_atmel.h"
+> > > > > +
+> > > > > +struct tpm_atmel_priv {
+> > > > > +   int region_size;
+> > > > > +   int have_region;
+> > > > > +   unsigned long base;
+> > > > > +   void __iomem *iobase;
+> > > > > +};
+> > > > > +
+> > > > > +#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->base =
++ offset)
+> > > > > +#define atmel_putb(val, chip, offset) \
+> > > > > +   outb(val, atmel_get_priv(chip)->base + offset)
+> > > > > +#define atmel_request_region request_region
+> > > > > +#define atmel_release_region release_region
+> > > > > +/* Atmel definitions */
+> > > > > +enum tpm_atmel_addr {
+> > > > > +   TPM_ATMEL_BASE_ADDR_LO =3D 0x08,
+> > > > > +   TPM_ATMEL_BASE_ADDR_HI =3D 0x09
+> > > > > +};
+> > > > > +
+> > > > > +static inline int tpm_read_index(int base, int index)
+> > > > > +{
+> > > > > +   outb(index, base);
+> > > > > +   return inb(base+1) & 0xFF;
+> > > > > +}
+> > > > > +
+> > > > > +/* Verify this is a 1.1 Atmel TPM */
+> > > > > +static int atmel_verify_tpm11(void)
+> > > > > +{
+> > > > > +
+> > > > > +   /* verify that it is an Atmel part */
+> > > > > +   if (tpm_read_index(TPM_ADDR, 4) !=3D 'A' ||
+> > > > > +       tpm_read_index(TPM_ADDR, 5) !=3D 'T' ||
+> > > > > +       tpm_read_index(TPM_ADDR, 6) !=3D 'M' ||
+> > > > > +       tpm_read_index(TPM_ADDR, 7) !=3D 'L')
+> > > > > +           return 1;
+> > > > > +
+> > > > > +   /* query chip for its version number */
+> > > > > +   if (tpm_read_index(TPM_ADDR, 0x00) !=3D 1 ||
+> > > > > +       tpm_read_index(TPM_ADDR, 0x01) !=3D 1)
+> > > > > +           return 1;
+> > > > > +
+> > > > > +   /* This is an atmel supported part */
+> > > > > +   return 0;
+> > > > > +}
+> > > > > +
+> > > > > +/* Determine where to talk to device */
+> > > > > +static void __iomem * atmel_get_base_addr(unsigned long *base, i=
+nt *region_size)
+> > > > > +{
+> > > > > +   int lo, hi;
+> > > > > +
+> > > > > +   if (atmel_verify_tpm11() !=3D 0)
+> > > > > +           return NULL;
+> > > > > +
+> > > > > +   lo =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_LO);
+> > > > > +   hi =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_HI);
+> > > > > +
+> > > > > +   *base =3D (hi << 8) | lo;
+> > > > > +   *region_size =3D 2;
+> > > > > +
+> > > > > +   return ioport_map(*base, *region_size);
+> > > > > +}
+> > > > >
+> > > > >  /* write status bits */
+> > > > >  enum tpm_atmel_write_status {
+> > > > > @@ -142,7 +202,6 @@ static void atml_plat_remove(void)
+> > > > >     tpm_chip_unregister(chip);
+> > > > >     if (priv->have_region)
+> > > > >             atmel_release_region(priv->base, priv->region_size);
+> > > > > -   atmel_put_base_addr(priv->iobase);
+> > > > >     platform_device_unregister(pdev);
+> > > > >  }
+> > > > >
+> > > > > @@ -211,7 +270,6 @@ static int __init init_atmel(void)
+> > > > >  err_unreg_dev:
+> > > > >     platform_device_unregister(pdev);
+> > > > >  err_rel_reg:
+> > > > > -   atmel_put_base_addr(iobase);
+> > > > >     if (have_region)
+> > > > >             atmel_release_region(base,
+> > > > >                                  region_size);
+> > > > > diff --git a/drivers/char/tpm/tpm_atmel.h b/drivers/char/tpm/tpm_=
+atmel.h
+> > > > > deleted file mode 100644
+> > > > > index 7ac3f69dcf0f..000000000000
+> > > > > --- a/drivers/char/tpm/tpm_atmel.h
+> > > > > +++ /dev/null
+> > > > > @@ -1,140 +0,0 @@
+> > > > > -/* SPDX-License-Identifier: GPL-2.0-only */
+> > > > > -/*
+> > > > > - * Copyright (C) 2005 IBM Corporation
+> > > > > - *
+> > > > > - * Authors:
+> > > > > - * Kylene Hall <kjhall@us.ibm.com>
+> > > > > - *
+> > > > > - * Maintained by: <tpmdd-devel@lists.sourceforge.net>
+> > > > > - *
+> > > > > - * Device driver for TCG/TCPA TPM (trusted platform module).
+> > > > > - * Specifications at www.trustedcomputinggroup.org
+> > > > > - *
+> > > > > - * These difference are required on power because the device mus=
+t be
+> > > > > - * discovered through the device tree and iomap must be used to =
+get
+> > > > > - * around the need for holes in the io_page_mask.  This does not=
+ happen
+> > > > > - * automatically because the tpm is not a normal pci device and =
+lives
+> > > > > - * under the root node.
+> > > > > - */
+> > > > > -
+> > > > > -struct tpm_atmel_priv {
+> > > > > -   int region_size;
+> > > > > -   int have_region;
+> > > > > -   unsigned long base;
+> > > > > -   void __iomem *iobase;
+> > > > > -};
+> > > > > -
+> > > > > -#ifdef CONFIG_PPC64
+> > > > > -
+> > > > > -#include <linux/of.h>
+> > > > > -
+> > > > > -#define atmel_getb(priv, offset) readb(priv->iobase + offset)
+> > > > > -#define atmel_putb(val, priv, offset) writeb(val, priv->iobase +=
+ offset)
+> > > > > -#define atmel_request_region request_mem_region
+> > > > > -#define atmel_release_region release_mem_region
+> > > > > -
+> > > > > -static inline void atmel_put_base_addr(void __iomem *iobase)
+> > > > > -{
+> > > > > -   iounmap(iobase);
+> > > > > -}
+> > > > > -
+> > > > > -static void __iomem * atmel_get_base_addr(unsigned long *base, i=
+nt *region_size)
+> > > > > -{
+> > > > > -   struct device_node *dn;
+> > > > > -   unsigned long address, size;
+> > > > > -   const unsigned int *reg;
+> > > > > -   int reglen;
+> > > > > -   int naddrc;
+> > > > > -   int nsizec;
+> > > > > -
+> > > > > -   dn =3D of_find_node_by_name(NULL, "tpm");
+> > > > > -
+> > > > > -   if (!dn)
+> > > > > -           return NULL;
+> > > > > -
+> > > > > -   if (!of_device_is_compatible(dn, "AT97SC3201")) {
+> > > > > -           of_node_put(dn);
+> > > > > -           return NULL;
+> > > > > -   }
+> > > > > -
+> > > > > -   reg =3D of_get_property(dn, "reg", &reglen);
+> > > > > -   naddrc =3D of_n_addr_cells(dn);
+> > > > > -   nsizec =3D of_n_size_cells(dn);
+> > > > > -
+> > > > > -   of_node_put(dn);
+> > > > > -
+> > > > > -
+> > > > > -   if (naddrc =3D=3D 2)
+> > > > > -           address =3D ((unsigned long) reg[0] << 32) | reg[1];
+> > > > > -   else
+> > > > > -           address =3D reg[0];
+> > > > > -
+> > > > > -   if (nsizec =3D=3D 2)
+> > > > > -           size =3D
+> > > > > -               ((unsigned long) reg[naddrc] << 32) | reg[naddrc =
++ 1];
+> > > > > -   else
+> > > > > -           size =3D reg[naddrc];
+> > > > > -
+> > > > > -   *base =3D address;
+> > > > > -   *region_size =3D size;
+> > > > > -   return ioremap(*base, *region_size);
+> > > > > -}
+> > > > > -#else
+> > > > > -#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->base =
++ offset)
+> > > > > -#define atmel_putb(val, chip, offset) \
+> > > > > -   outb(val, atmel_get_priv(chip)->base + offset)
+> > > > > -#define atmel_request_region request_region
+> > > > > -#define atmel_release_region release_region
+> > > > > -/* Atmel definitions */
+> > > > > -enum tpm_atmel_addr {
+> > > > > -   TPM_ATMEL_BASE_ADDR_LO =3D 0x08,
+> > > > > -   TPM_ATMEL_BASE_ADDR_HI =3D 0x09
+> > > > > -};
+> > > > > -
+> > > > > -static inline int tpm_read_index(int base, int index)
+> > > > > -{
+> > > > > -   outb(index, base);
+> > > > > -   return inb(base+1) & 0xFF;
+> > > > > -}
+> > > > > -
+> > > > > -/* Verify this is a 1.1 Atmel TPM */
+> > > > > -static int atmel_verify_tpm11(void)
+> > > > > -{
+> > > > > -
+> > > > > -   /* verify that it is an Atmel part */
+> > > > > -   if (tpm_read_index(TPM_ADDR, 4) !=3D 'A' ||
+> > > > > -       tpm_read_index(TPM_ADDR, 5) !=3D 'T' ||
+> > > > > -       tpm_read_index(TPM_ADDR, 6) !=3D 'M' ||
+> > > > > -       tpm_read_index(TPM_ADDR, 7) !=3D 'L')
+> > > > > -           return 1;
+> > > > > -
+> > > > > -   /* query chip for its version number */
+> > > > > -   if (tpm_read_index(TPM_ADDR, 0x00) !=3D 1 ||
+> > > > > -       tpm_read_index(TPM_ADDR, 0x01) !=3D 1)
+> > > > > -           return 1;
+> > > > > -
+> > > > > -   /* This is an atmel supported part */
+> > > > > -   return 0;
+> > > > > -}
+> > > > > -
+> > > > > -static inline void atmel_put_base_addr(void __iomem *iobase)
+> > > > > -{
+> > > > > -}
+> > > > > -
+> > > > > -/* Determine where to talk to device */
+> > > > > -static void __iomem * atmel_get_base_addr(unsigned long *base, i=
+nt *region_size)
+> > > > > -{
+> > > > > -   int lo, hi;
+> > > > > -
+> > > > > -   if (atmel_verify_tpm11() !=3D 0)
+> > > > > -           return NULL;
+> > > > > -
+> > > > > -   lo =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_LO);
+> > > > > -   hi =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_HI);
+> > > > > -
+> > > > > -   *base =3D (hi << 8) | lo;
+> > > > > -   *region_size =3D 2;
+> > > > > -
+> > > > > -   return ioport_map(*base, *region_size);
+> > > > > -}
+> > > > > -#endif
+> > > >
+> > > > Responding from holidays but:
+> > > >
+> > > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > >
+> > > > [still away for couple of weeks]
+> > >
+> > > I got these in with checkpatch.pl --strict:
+> > >
+> > > CHECK: Macro argument 'offset' may be better as '(offset)' to avoid p=
+recedence issues
+> > > #59: FILE: drivers/char/tpm/tpm_atmel.c:26:
+> > > +#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->base + of=
+fset)
+> > >
+> > > CHECK: Macro argument 'offset' may be better as '(offset)' to avoid p=
+recedence issues
+> > > #60: FILE: drivers/char/tpm/tpm_atmel.c:27:
+> > > +#define atmel_putb(val, chip, offset) \
+> > > +       outb(val, atmel_get_priv(chip)->base + offset)
+> > >
+> > > CHECK: spaces preferred around that '+' (ctx:VxV)
+> > > #73: FILE: drivers/char/tpm/tpm_atmel.c:40:
+> > > +       return inb(base+1) & 0xFF;
+> > >                       ^
+> > >
+> > > CHECK: Blank lines aren't necessary after an open brace '{'
+> > > #79: FILE: drivers/char/tpm/tpm_atmel.c:46:
+> > > +{
+> > > +
+> > >
+> > > Can you address them and I'll tag the next version, once I've
+> > > revisited checkpatch. Otherwise, nothing against the code change.
+> >
+> > Those all existed before because I just moved what was left of the
+> > header contents into the .c file. Fixing them seems like a separate
+> > change to me. I can just leave the header in place and avoid the
+> > warnings if you prefer. Otherwise, those warnings are the least of the
+> > clean-up this driver needs. For starters, I would make those defines
+> > static inlines instead.
+>
+> Ah, ok sorry. It was fairly mechanical check as I'm just quickly
+> going critical stuff from holidays.
+>
+> I'm back after next week, so I'd really like to hold with this
+> up until that and prepare when I'm back a patch set, which includes
+> a supplemental patch fixing those issues (if you don't mind).
 
-Done, you should see the v2 as a reply to your message
-with id 20241106144826.91728-1-linux@treblig.org
+Whatever happened to this? Can you please apply my patch if you don't
+have the time for further rework.
 
-Dave
-
-> Thanks,
-> Namhyung
-> 
-> > ---
-> >  tools/perf/util/evlist.c            | 18 ------------------
-> >  tools/perf/util/evlist.h            |  2 --
-> >  tools/perf/util/trace-event-parse.c |  6 ------
-> >  tools/perf/util/trace-event.h       |  3 ---
-> >  4 files changed, 29 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-> > index f14b7e6ff1dc..4b992a3f2985 100644
-> > --- a/tools/perf/util/evlist.c
-> > +++ b/tools/perf/util/evlist.c
-> > @@ -362,19 +362,6 @@ __weak int arch_evlist__add_default_attrs(struct evlist *evlist,
-> >  	return __evlist__add_default_attrs(evlist, attrs, nr_attrs);
-> >  }
-> >  
-> > -struct evsel *evlist__find_tracepoint_by_id(struct evlist *evlist, int id)
-> > -{
-> > -	struct evsel *evsel;
-> > -
-> > -	evlist__for_each_entry(evlist, evsel) {
-> > -		if (evsel->core.attr.type   == PERF_TYPE_TRACEPOINT &&
-> > -		    (int)evsel->core.attr.config == id)
-> > -			return evsel;
-> > -	}
-> > -
-> > -	return NULL;
-> > -}
-> > -
-> >  struct evsel *evlist__find_tracepoint_by_name(struct evlist *evlist, const char *name)
-> >  {
-> >  	struct evsel *evsel;
-> > @@ -1199,11 +1186,6 @@ int evlist__set_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids)
-> >  	return ret;
-> >  }
-> >  
-> > -int evlist__set_tp_filter_pid(struct evlist *evlist, pid_t pid)
-> > -{
-> > -	return evlist__set_tp_filter_pids(evlist, 1, &pid);
-> > -}
-> > -
-> >  int evlist__append_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids)
-> >  {
-> >  	char *filter = asprintf__tp_filter_pids(npids, pids);
-> > diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-> > index bcc1c6984bb5..ff73908e2178 100644
-> > --- a/tools/perf/util/evlist.h
-> > +++ b/tools/perf/util/evlist.h
-> > @@ -144,7 +144,6 @@ int __evlist__set_tracepoints_handlers(struct evlist *evlist,
-> >  	__evlist__set_tracepoints_handlers(evlist, array, ARRAY_SIZE(array))
-> >  
-> >  int evlist__set_tp_filter(struct evlist *evlist, const char *filter);
-> > -int evlist__set_tp_filter_pid(struct evlist *evlist, pid_t pid);
-> >  int evlist__set_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids);
-> >  
-> >  int evlist__append_tp_filter(struct evlist *evlist, const char *filter);
-> > @@ -152,7 +151,6 @@ int evlist__append_tp_filter(struct evlist *evlist, const char *filter);
-> >  int evlist__append_tp_filter_pid(struct evlist *evlist, pid_t pid);
-> >  int evlist__append_tp_filter_pids(struct evlist *evlist, size_t npids, pid_t *pids);
-> >  
-> > -struct evsel *evlist__find_tracepoint_by_id(struct evlist *evlist, int id);
-> >  struct evsel *evlist__find_tracepoint_by_name(struct evlist *evlist, const char *name);
-> >  
-> >  int evlist__add_pollfd(struct evlist *evlist, int fd);
-> > diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-> > index f0332bd3a501..d97830cdbd7e 100644
-> > --- a/tools/perf/util/trace-event-parse.c
-> > +++ b/tools/perf/util/trace-event-parse.c
-> > @@ -116,12 +116,6 @@ void event_format__fprintf(struct tep_event *event,
-> >  	trace_seq_destroy(&s);
-> >  }
-> >  
-> > -void event_format__print(struct tep_event *event,
-> > -			 int cpu, void *data, int size)
-> > -{
-> > -	return event_format__fprintf(event, cpu, data, size, stdout);
-> > -}
-> > -
-> >  /*
-> >   * prev_state is of size long, which is 32 bits on 32 bit architectures.
-> >   * As it needs to have the same bits for both 32 bit and 64 bit architectures
-> > diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
-> > index bbf8b26bc8da..0e5133f1b910 100644
-> > --- a/tools/perf/util/trace-event.h
-> > +++ b/tools/perf/util/trace-event.h
-> > @@ -42,9 +42,6 @@ struct tep_event *trace_event__tp_format_id(int id);
-> >  void event_format__fprintf(struct tep_event *event,
-> >  			   int cpu, void *data, int size, FILE *fp);
-> >  
-> > -void event_format__print(struct tep_event *event,
-> > -			 int cpu, void *data, int size);
-> > -
-> >  int parse_ftrace_file(struct tep_handle *pevent, char *buf, unsigned long size);
-> >  int parse_event_file(struct tep_handle *pevent,
-> >  		     char *buf, unsigned long size, char *sys);
-> > -- 
-> > 2.47.0
-> > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Rob
 
