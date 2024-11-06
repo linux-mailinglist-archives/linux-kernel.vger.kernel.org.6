@@ -1,98 +1,86 @@
-Return-Path: <linux-kernel+bounces-397622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E869BDE28
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:05:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FC19BDE29
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6891C22510
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F63A284E21
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E592191478;
-	Wed,  6 Nov 2024 05:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KI97yrkN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F6F1917D2;
+	Wed,  6 Nov 2024 05:08:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4962F50;
-	Wed,  6 Nov 2024 05:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2E22F50
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 05:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730869549; cv=none; b=t5Luucnf75tOv1iJfd0TzEu5lHeOTwViKe/fTZ+O9DkzH/JoY0q9DTcMDWDcUUuEqUs3LXeHJ2PA7zxfapAoNBeAOiIjItmZszbiO+l+xXbJ+SEysvYT8Ea11RPtJUeqvDVr+uyLb+1vvaNgnG/r5XJyACiey8mjSpQ2Qeendic=
+	t=1730869684; cv=none; b=J+4IeyOida4VL1kep4qay0mIHummgXAGXqumqd/pGX4LL6rliOXJzaaYKZVvsu/+0mjihDmsDJY3ycRY1uvAxVo6bfFvGahdrNGXTfkGkx3DCsCEDethTA1PAR4Dazsm1bLovHopNwdctmjm2saDgPsbU0QQCRzxmeotnNOrc60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730869549; c=relaxed/simple;
-	bh=r5+V6O8KvZg6st/Kb+eZvvE2eU3/E8D/N8KaYGPUADU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gh8Mf/1n4QLk9BxPUHrpa4Y4XINPOKslpJYZmzxYvgjYr2Uc0W5emv1nrgwaa75jPLnbE5AvbRfMTclSuE3XieP/x4idAFGorENocAVWOfOByL6nh5RM62LEEZ/7LX9o5t/gjCLJgYK0rtqRxN9jK7adN5NOUqfQUQwC06bUwic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KI97yrkN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA8DBC4CECD;
-	Wed,  6 Nov 2024 05:05:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730869549;
-	bh=r5+V6O8KvZg6st/Kb+eZvvE2eU3/E8D/N8KaYGPUADU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KI97yrkNDg6s/xnIZzIGOYPjvS7IF09Lr0qGq4OTo43wICY3Q0KToAHRCF2tAF8Sc
-	 I82+bEE0gMsjlEv+e29xaUk7089f0I4ZybKjEbYeGFSrVF1Mab1+BGVFNwzA46BZTT
-	 5NMgCxopuIyGslwS7KYglR9lGikAFCzpjTIspXfQ=
-Date: Wed, 6 Nov 2024 06:05:30 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chang Yu <marcus.yu.56@gmail.com>
-Cc: andreyknvl@gmail.com, viro@zeniv.linux.org.uk,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stern@rowland.harvard.edu, skhan@linuxfoundation.org,
-	syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
-Subject: Re: [PATCH] usb: raw_gadget: Add debug logs to a troubleshoot a
- double-free bug in raw_release.
-Message-ID: <2024110657-tummy-decaf-66ee@gregkh>
-References: <Zyrsg3bvNu1rswqb@gmail.com>
+	s=arc-20240116; t=1730869684; c=relaxed/simple;
+	bh=a1d9rFYmiox8Cvtw9o+GMM5ZvGuCn8t66Hz/uZIPOVU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ogi2PeDgybysimG5Tbk40AN/ndsfePfjkmJw6t2JFurNcy3XgANIVksgwLe9hQZzQq94FB7PZspLKYTOJRY7tfFxHNGVxjyPY6SeU3DVLzFYlhMJdIX9nkKWrx0yO39kKPe4KlZl3WDbmcNDpyIPGVozTpIwFJRij9vgtaWk6Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so64861755ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 21:08:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730869682; x=1731474482;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZCpyZnda5DlHXgbs9S3nxrto8V8O+1AIPUGm5d2KMU=;
+        b=jiFT0BxY0y/W/W6RoXHlKz+10Q3JIIzx4BYIxaOxOspJsY5gIYaeQ2UItuB9sSJ9jw
+         PufsSkD8HqORtG3KQiaF2pzo/PdVtsdBo4tGf+quSpseoQeiJymAGLNDJ0WA7omT95iE
+         ltvr6DbQs2KGGvNalnZcp2S2vtyAVBHdZycgWJ9xoQ2Kvh8owdLQfp20DupGMnmRmqK+
+         ygS3sp+4bGk6fcCtRKhrqNl+gb7fUp6zRvwVHtHx+NQzXvMPZHY+js3p2d+0Ee2Y1KbZ
+         8IFpg3ZNraEuAKJhsXSI8PJjGF57T6BZLteou5ZfbMmau809tPfUVaG6pbEqLokHa82z
+         qZ6Q==
+X-Gm-Message-State: AOJu0YxFznV68gJ3ZUrXXZfm1QAXVh684EN9cfcsGGr5kT9x1rLvoUhA
+	3e5b6h0izNy5SgTZKojsUjsOGgmGkaJE9KwaDX4+HsQy2YM6mkiCsdIvL80AUX8FljjkW/BdECA
+	4BeKrs0PTkfiICtU31ip9H8AWq3a32TTE6naevljMOzZe4bhOPMPqO/8=
+X-Google-Smtp-Source: AGHT+IEbaZMaak1hOR+JlAZzixE2T090fs8rKeKGEUM59TJWcInbswUrml2siCNIq69pOOmYlWTFxm+M7ofQwO7D98wedpFh6WoI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zyrsg3bvNu1rswqb@gmail.com>
+X-Received: by 2002:a05:6e02:1948:b0:3a6:c7a8:a1cc with SMTP id
+ e9e14a558f8ab-3a6c7a8a3ccmr130602465ab.20.1730869682494; Tue, 05 Nov 2024
+ 21:08:02 -0800 (PST)
+Date: Tue, 05 Nov 2024 21:08:02 -0800
+In-Reply-To: <Zyr0DaD6yG6WDHXz@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672af9b2.050a0220.2a847.1b5e.GAE@google.com>
+Subject: Re: [syzbot] [usb?] KASAN: invalid-free in dev_free
+From: syzbot <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, marcus.yu.56@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 05, 2024 at 08:11:47PM -0800, Chang Yu wrote:
-> syzkaller reported a double free bug
-> (https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c) in
-> raw_release.
-> 
-> >From the stack traces it looks like either raw_release was invoked
-> twice or there were some between kref_get in raw_ioctl_run and
-> kref_put raw_release. But these should not be possible. We need
-> more logs to understand the cause.
-> 
-> Make raw_release and raw_ioctl_run report the ref count before
-> and after get/put to help debug this.
-> 
-> Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
-> Reported-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
-> Link: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
-> ---
->  drivers/usb/gadget/legacy/raw_gadget.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
-> index 112fd18d8c99..ac4e319c743f 100644
-> --- a/drivers/usb/gadget/legacy/raw_gadget.c
-> +++ b/drivers/usb/gadget/legacy/raw_gadget.c
-> @@ -194,6 +194,8 @@ static struct raw_dev *dev_new(void)
->  		return NULL;
->  	/* Matches kref_put() in raw_release(). */
->  	kref_init(&dev->count);
-> +	dev_dbg(dev->dev, "%s kref count initialized: %d\n",
-> +		__func__, kref_read(&dev->count));
+Hello,
 
-Please note that you never need to add a __func__ to a dev_dbg() call,
-as it is already present automatically for you.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-thanks,
+Reported-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
+Tested-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
 
-greg k-h
+Tested on:
+
+commit:         6ff78df5 usb: Use (of|device)_property_present() for n..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=108d4e30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f0eaad4c825e2e9
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17154e30580000
+
+Note: testing is done by a robot and is best-effort only.
 
