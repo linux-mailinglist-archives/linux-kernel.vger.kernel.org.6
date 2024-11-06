@@ -1,84 +1,127 @@
-Return-Path: <linux-kernel+bounces-398034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52689BE48C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:45:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922F09BE473
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:40:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A801283655
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55F0C285452
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284F41DE2C1;
-	Wed,  6 Nov 2024 10:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A05A1DE3B6;
+	Wed,  6 Nov 2024 10:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="rzwkd3HB"
-Received: from out187-6.us.a.mail.aliyun.com (out187-6.us.a.mail.aliyun.com [47.90.187.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEogLUqi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61C51DE3D8
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C325D1D1753;
+	Wed,  6 Nov 2024 10:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730889920; cv=none; b=Gx9yq7yjm/pY7yjPSz/ybLnd23xH+3cB0PmdDRCmTuIwPq5aYe15cpSDcGG3L0zzsvKQ3zvIB+Hsp3y+QC47ghKGCyQP//+9Bf8YrnaUEkQhJcHaKYz1TfVfyGNipXgjOlPtvxuDelEQhZS+rDN71HChKSCljK5G/Ji+LJNY/pM=
+	t=1730889606; cv=none; b=R9sBY5/iMG6MW+NJJdJshqLXgm4lnjwGYXHcUqB7jrTE/DpZwWF+Py0ggAYto4696X1lycl/qVuvwSKmeKO4Bk0p+yu7Kb1mYVEeZNq3QPivLY/XANEYK61DmiXuTsWH1DO6uta6CU80/pbsAUVtwDCpP6YjADM+PGlYfiWTWkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730889920; c=relaxed/simple;
-	bh=TdpKBsOgCyas+x+Rm4U/URbX/Z2utvaDiZxNwLz/BRA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V/azpjW+xwqaSZLiE4E0gKp3HuTKaa7/D1Za3h48k2VGoKoq+9H/ks6aB0sdkCJgN+NS1YfAOYl2mr+y/dn6jrFl1yjfHIVPKDF+iz0cSfW83ER6SiqCqtWiYw0lSYT0W58f82DAkYkfhtPRP0sUNFMCoyUDZ6PhM7fxUQlzTt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=rzwkd3HB; arc=none smtp.client-ip=47.90.187.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1730889898; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=PVxLB4ynQexwBLLLCslCsw+YDn8W8UTgxWZ/DVEd+W4=;
-	b=rzwkd3HBdzXyFdgok5rfMJpk65SwSE+m+E2EGf8ShSPO/w6YRFbMrF6wqkTFVI6iWa1RaftZvODQGmvWP0uCZhY5lGJXoKq7Z3ttqBgT4lcee7/wUU7wwUzLEgjxCFkA7IVWoRG7g7yl4HTYQhrpBvW5lYVoTmSQFjkQJBiSPpc=
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.a2sg25o_1730889575 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Wed, 06 Nov 2024 18:39:39 +0800
-From: "Tiwei Bie" <tiwei.btw@antgroup.com>
-To: richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net
-Cc:  <linux-um@lists.infradead.org>,
-   <linux-kernel@vger.kernel.org>,
-  "Tiwei Bie" <tiwei.btw@antgroup.com>
-Subject: [PATCH] um: Always dump trace for specified task in show_stack
-Date: Wed, 06 Nov 2024 18:39:33 +0800
-Message-Id: <20241106103933.1132365-1-tiwei.btw@antgroup.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730889606; c=relaxed/simple;
+	bh=II1Cw9WyiI/NLZcAELD6NgMA0DFZpwlqXmvxCdhqAD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ofBJcQBYfjPQIS2TsnAw8u2G2bxNIVzhQFhXJ/nQscB22Zl5NR0ooX9DF4utwknClf8y2l0Jtsw2HJfAubxwyaWjGCqWcYfKUlwxvq1nBc+xrGKJqZ9ddprCQgFNT6kJjqt8UmqDOuq6+ElInGwOXoWqCR/W6/LJuwsRG6V3ocY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEogLUqi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98B67C4CECD;
+	Wed,  6 Nov 2024 10:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730889606;
+	bh=II1Cw9WyiI/NLZcAELD6NgMA0DFZpwlqXmvxCdhqAD0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DEogLUqiMmuObMNMeSY8FcHdvgDogMK+QyjinwG/XNCnQ8SNYK4LRpLkaXxrfVwRm
+	 JM+RDFqx7L4ZhBnQ6Bj3w7vL6rRqVGzGGeulgi36v+cLzgO9AEUbPIP7+v7LVH6YZ7
+	 mGEAJ9fWWObcIAhHO7KCMtJfqSiBobCeUJz1lZzcwN9B4OEA55NK1I8GINTYrwaoz5
+	 6uOOzMREbwAt4umCxFlpEU4r3TQN0ZcuenROmPKcZBPUzdOHpFxzMegP4Ns2Szgfav
+	 WdQzvVjVMBItJlcgwYC6JB5MhK3TowyO93eJGL90932WnvqFXVbY5uhzDx2v/23Xb+
+	 ZFZ2E9786oFIg==
+Date: Wed, 6 Nov 2024 11:40:00 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+	Carlos Maiolino <cem@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	John Garry <john.g.garry@oracle.com>, Catherine Hoang <catherine.hoang@oracle.com>, 
+	linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org, Dave Chinner <david@fromorbit.com>, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
+Message-ID: <20241106-hupen-phosphor-f4e126535131@brauner>
+References: <20241105004341.GO21836@frogsfrogsfrogs>
+ <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
+ <72515c41-4313-4287-97cc-040ec143b3c5@kernel.dk>
+ <20241105150812.GA227621@mit.edu>
+ <5557bb8e-0ab8-4346-907e-a6cfea1dabf8@kernel.dk>
+ <20241105154044.GD2578692@frogsfrogsfrogs>
+ <00618fda-985d-4d6b-ada1-2d93a5380492@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <00618fda-985d-4d6b-ada1-2d93a5380492@kernel.dk>
 
-Currently, show_stack() always dumps the trace of the current task.
-However, it should dump the trace of the specified task if one is
-provided. Otherwise, things like running "echo t > sysrq-trigger"
-won't work as expected.
+On Tue, Nov 05, 2024 at 08:54:40AM -0700, Jens Axboe wrote:
+> On 11/5/24 8:40 AM, Darrick J. Wong wrote:
+> > On Tue, Nov 05, 2024 at 08:11:52AM -0700, Jens Axboe wrote:
+> >> On 11/5/24 8:08 AM, Theodore Ts'o wrote:
+> >>> On Tue, Nov 05, 2024 at 05:52:05AM -0700, Jens Axboe wrote:
+> >>>>
+> >>>> Why is this so difficult to grasp? It's a pretty common method for
+> >>>> cross subsystem work - it avoids introducing conflicts when later
+> >>>> work goes into each subsystem, and freedom of either side to send a
+> >>>> PR before the other.
+> >>>>
+> >>>> So please don't start committing the patches again, it'll just cause
+> >>>> duplicate (and empty) commits in Linus's tree.
+> >>>
+> >>> Jens, what's going on is that in order to test untorn (aka "atomic"
+> >>> although that's a bit of a misnomer) writes, changes are needed in the
+> >>> block, vfs, and ext4 or xfs git trees.  So we are aware that you had
+> >>> taken the block-related patches into the block tree.  What Darrick has
+> >>> done is to apply the the vfs patches on top of the block commits, and
+> >>> then applied the ext4 and xfs patches on top of that.
+> >>
+> >> And what I'm saying is that is _wrong_. Darrick should be pulling the
+> >> branch that you cut from my email:
+> >>
+> >> for-6.13/block-atomic
+> >>
+> >> rather than re-applying patches. At least if the intent is to send that
+> >> branch to Linus. But even if it's just for testing, pretty silly to have
+> >> branches with duplicate commits out there when the originally applied
+> >> patches can just be pulled in.
+> > 
+> > I *did* start my branch at the end of your block-atomic branch.
+> > 
+> > Notice how the commits I added yesterday have a parent commitid of
+> > 1eadb157947163ca72ba8963b915fdc099ce6cca, which is the head of your
+> > for-6.13/block-atomic branch?
+> 
+> Ah that's my bad, I didn't see a merge commit, so assumed it was just
+> applied on top. Checking now, yeah it does look like it's done right!
+> Would've been nicer on top of current -rc and with a proper merge
+> commit, but that's really more of a style preference. Though -rc1 is
+> pretty early...
+> 
+> > But, it's my fault for not explicitly stating that I did that.  One of
+> > the lessons I apparently keep needing to learn is that senior developers
+> > here don't actually pull and examine the branches I link to in my emails
+> > before hitting Reply All to scold.  You obviously didn't.
+> 
+> I did click the link, in my defense it was on the phone this morning.
+> And this wasn't meant as a scolding, nor do I think my wording really
+> implies any scolding. My frustration was that I had explained this
+> previously, and this seemed like another time to do the exact same. So
+> my apologies if it came off like that, was not the intent.
 
-Fixes: 970e51feaddb ("um: Add support for CONFIG_STACKTRACE")
-Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
----
- arch/um/kernel/sysrq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/um/kernel/sysrq.c b/arch/um/kernel/sysrq.c
-index 4bb8622dc512..e3b6a2fd75d9 100644
---- a/arch/um/kernel/sysrq.c
-+++ b/arch/um/kernel/sysrq.c
-@@ -52,5 +52,5 @@ void show_stack(struct task_struct *task, unsigned long *stack,
- 	}
- 
- 	printk("%sCall Trace:\n", loglvl);
--	dump_trace(current, &stackops, (void *)loglvl);
-+	dump_trace(task ?: current, &stackops, (void *)loglvl);
- }
--- 
-2.34.1
-
+Fwiw, I pulled the branch that Darrick provided into vfs.untorn.writes
+and it all looks sane to me.
 
