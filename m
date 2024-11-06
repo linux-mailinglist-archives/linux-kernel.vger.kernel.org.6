@@ -1,260 +1,125 @@
-Return-Path: <linux-kernel+bounces-398615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD289BF3A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:52:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2FD9BF3A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:53:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C338CB245FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448A71F23E66
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFA62064F0;
-	Wed,  6 Nov 2024 16:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4C8205135;
+	Wed,  6 Nov 2024 16:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ZciBo3XH"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8P3uzWj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1602036EB
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDE484039;
+	Wed,  6 Nov 2024 16:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730911930; cv=none; b=qPZrzmCZQSSQ62kOpmn2xpO9FTatYqM59BYY11enKY3NT/EmJybmFhKmin/dxyPMQvCkXRZJFoY+QiwLrRuN+YrF9HIIDSKVgp0iNQ6pZkXlYyZ+/T5dUldDVtQFRmzb77os24L57GqQ8Z27LJ6Rb6Nz3sVyfAt7jPTdXq4Ucf4=
+	t=1730911994; cv=none; b=KSHyunQ6S7Vmq+TK2k+zsqYxWTwLIXZrO1pOiSZfIvRF3hIQmb4OyOgBlyFXY8Ia9dD0UnHGrZXewyQ1r+83DX9mqhk6VBSG9jmKwSPMrN7+HA2aomDr2TJUbDS9ypxAuqwIo/5r3vDWK4ogKy44dkFvqzDfoprI6/KBAcfS3Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730911930; c=relaxed/simple;
-	bh=wfvrJkIJkD7cWTPVa799siSRv93sTETpAX8Yan9sDLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TVS6Gk8+msDKejI/RCFcfQ1s6ukTZayZNNkObPBlMeg2KcENsqgR7BAK9jekYQJCoIT3ol+olkvAw104wzqhqm9FHdn6psErsuw+P0dIYUXfJrLFcGrj4VjgsJQqDrOs5SQlYrXhTzB1P953JV0iWxXVMkjFSRjog88UuoV4+R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ZciBo3XH; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-720be27db74so31980b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:52:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730911927; x=1731516727; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IpR2iS5Wz9a7Ed3Yf5S3sZhuiwomMm725Dc8wDLmQig=;
-        b=ZciBo3XHU8KDEiiMj9vXfpu9GJ5m4ILrDzw/aA0jgQHZJZv5D1uXizKE08WSZpo1N6
-         E55ZSQ0q05110C1yvWPacl+86VCz/i6jheAwmsME27TwUrTZzYeC6QRIUXNCUNZW6IsD
-         wozl6CU9ch4CKMV4RpQxCgAvNxakeRZYMTDcw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730911927; x=1731516727;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IpR2iS5Wz9a7Ed3Yf5S3sZhuiwomMm725Dc8wDLmQig=;
-        b=AefE/b1j29vLBAUQ8f8qHUZCSRrIbZLsPRYKh0rzwLeBz7OCal6YS004dPrl7yUweC
-         ZaO5v3O9/xfq1OUmhOI5eb8ZHal7pAkBef4I3zCVGGYXlS2CNcPDt3/HWAov41k6AHt8
-         VOn5J0LQl60gJ/3voYd06KYd475LBFstk/ZKaJ254EeRIS58PQayOGBkkoTM+lev+Tb8
-         sGB5AqBkc4x2/NqMTco3a+KcNvsDQXH5U+VMTvBiMM93cD2+tbIYuS7qTC8/SN/Dy7QY
-         ckCgistuz2MgH/Cpb9fH2v/czDRBqzkrMV/CZpUDbNNkqKxAawgObBl0LprA71zadDO8
-         1RDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Rdl9tN9uPBgG15NyzjLgFQKVmweLe6h9VG8vkYojtlmjQs1jpWYzS7xve1wr2Jy45HL53vU69PDIrmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCuVRKycgdOrwQSYQl218eJnoSpFGNbwASzR/HLIx47akXYB9m
-	LN/wqbV3paM9FZHco+yqqzYbHkK/2gXSF9/uw4/eeNiHkzbZLQUjhiCoxy448bE=
-X-Google-Smtp-Source: AGHT+IEgJZtJt0MJdxpZzlMUWg+AcH31AbtTn853kLwglpscmOgiFFT8TpjbpgMdNu5hs36kUNmLfA==
-X-Received: by 2002:a05:6a00:2da1:b0:720:3092:e75f with SMTP id d2e1a72fcca58-723f7aab6a0mr5333855b3a.8.1730911927432;
-        Wed, 06 Nov 2024 08:52:07 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e591fsm11900829b3a.51.2024.11.06.08.52.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 08:52:06 -0800 (PST)
-Date: Wed, 6 Nov 2024 08:52:00 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, corbet@lwn.net, hdanton@sina.com,
-	bagasdotme@gmail.com, pabeni@redhat.com, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v6 2/7] net: Suspend softirq when
- prefer_busy_poll is set
-Message-ID: <ZyuesOyJLI3U0C5e@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	corbet@lwn.net, hdanton@sina.com, bagasdotme@gmail.com,
-	pabeni@redhat.com, namangulati@google.com, edumazet@google.com,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
-	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20241104215542.215919-1-jdamato@fastly.com>
- <20241104215542.215919-3-jdamato@fastly.com>
- <20241105210338.5364375d@kernel.org>
+	s=arc-20240116; t=1730911994; c=relaxed/simple;
+	bh=2xtSNP79Z+OcH6i5Q5Uvg2EduBSaA1/JfcXdLbWhHp4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OEBjLu0xz0qIxy0oMJZzlcKM75mNAxvAAwm7AdHuurXt3I3jZVeAi6ct3eW2ydQp0M0D7aWhV3SqYoLk0Qd4nwzPjHeGkK9nVBxN0Dz1avzp5vM41DUflgVWu0KbGHRHXDqUrpOfTaYvYUUPz8Ycv0BASrRRTJGtJK6I8Da9VNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8P3uzWj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491C2C4CEC6;
+	Wed,  6 Nov 2024 16:53:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730911993;
+	bh=2xtSNP79Z+OcH6i5Q5Uvg2EduBSaA1/JfcXdLbWhHp4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=l8P3uzWj1HyOqlbDZfRwAbr83eq6Bxwf1fj1MeSmmXknp9ejaLgcHqGyNomcQSFSn
+	 vHkWQRzVLY8qg/FuyzKVbxSKDaceokh/17ynDBIJTaA0r5oi4Li6U/HIbTs99Ihqpl
+	 U3dIQJP83n/67F4SOrb2MTjbEdROIY8Y6301eErQV9/4bGPED5myu7AI8FpfeBtGEH
+	 kEUiZH0lzHSmY/W5rgA1sQUE8oGlji5Oi4Wun0Yg2N5zJjEVHR3noT9CUXjPtFkiEB
+	 m8+T5vBFYYQxlRTei8qkY9MjSbzcyFY7zNEgWp/9QzPrPQIEOQECMVFkK+hi0CowsV
+	 iE4A52eoLzvrg==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hagar@microsoft.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 5.15 00/73] 5.15.171-rc1 review
+Date: Wed,  6 Nov 2024 08:53:11 -0800
+Message-Id: <20241106165311.8008-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241106120259.955073160@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105210338.5364375d@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 05, 2024 at 09:03:38PM -0800, Jakub Kicinski wrote:
-> On Mon,  4 Nov 2024 21:55:26 +0000 Joe Damato wrote:
-> > From: Martin Karsten <mkarsten@uwaterloo.ca>
-> > 
-> > When NAPI_F_PREFER_BUSY_POLL is set during busy_poll_stop and the
-> > irq_suspend_timeout is nonzero, this timeout is used to defer softirq
-> > scheduling, potentially longer than gro_flush_timeout. This can be used
-> > to effectively suspend softirq processing during the time it takes for
-> > an application to process data and return to the next busy-poll.
-> > 
-> > The call to napi->poll in busy_poll_stop might lead to an invocation of
+Hello,
+
+On Wed, 6 Nov 2024 13:05:04 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> This is the start of the stable review cycle for the 5.15.171 release.
+> There are 73 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> The call to napi->poll when we're arming the timer is counter
-> productive, right? Maybe we can take this opportunity to add
-> the seemingly missing logic to skip over it?
+> Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
+> Anything received after that time might be too late.
 
-It seems like the call to napi->poll in busy_poll_stop is counter
-productive and we're not opposed to making an optimization like that
-in the future.
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
-When we tried it, it triggered several bugs/system hangs, so we left
-as much of the original code in place as possible.
+Tested-by: SeongJae Park <sj@kernel.org>
 
-The existing patch works and streamlining busy_poll_stop to skip the
-call to napi->poll is an optimization that can be added as a later
-series that focuses solely on when/where/how napi->poll is called.
+[1] https://github.com/damonitor/damon-tests/tree/next/corr
+[2] 7a95f8fff07f ("Linux 5.15.171-rc1")
 
-Our focus was on:
-  - Not breaking any of the existing mechanisms
-  - Adding a new mechanism
+Thanks,
+SJ
 
-I think we should avoid pulling the optimization you suggest into
-this particular series and save that for the future.
+[...]
 
-> > napi_complete_done, but the prefer-busy flag is still set at that time,
-> > so the same logic is used to defer softirq scheduling for
-> > irq_suspend_timeout.
-> > 
-> > Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> > Co-developed-by: Joe Damato <jdamato@fastly.com>
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > Tested-by: Joe Damato <jdamato@fastly.com>
-> > Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> > Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-> > Reviewed-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
-> > ---
-> >  v3:
-> >    - Removed reference to non-existent sysfs parameter from commit
-> >      message. No functional/code changes.
-> > 
-> >  net/core/dev.c | 17 +++++++++++++----
-> >  1 file changed, 13 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/net/core/dev.c b/net/core/dev.c
-> > index 4d910872963f..51d88f758e2e 100644
-> > --- a/net/core/dev.c
-> > +++ b/net/core/dev.c
-> > @@ -6239,7 +6239,12 @@ bool napi_complete_done(struct napi_struct *n, int work_done)
-> >  			timeout = napi_get_gro_flush_timeout(n);
-> >  		n->defer_hard_irqs_count = napi_get_defer_hard_irqs(n);
-> >  	}
-> > -	if (n->defer_hard_irqs_count > 0) {
-> > +	if (napi_prefer_busy_poll(n)) {
-> > +		timeout = napi_get_irq_suspend_timeout(n);
-> 
-> Why look at the suspend timeout in napi_complete_done()?
-> We are unlikely to be exiting busy poll here.
+---
 
-The idea is similar to commit 7fd3253a7de6 ("net: Introduce
-preferred busy-polling"); continue to defer IRQs as long as forward
-progress is being made. In this case, napi->poll ran, called
-napi_complete_done -- the system is moving forward with processing
-so prevent IRQs from interrupting us.
-
-epoll_wait will re-enable IRQs (by calling napi_schedule) if
-there are no events ready for processing.
-
-> Is it because we need more time than gro_flush_timeout
-> for the application to take over the polling?
-
-That's right; we want the application to retain control of packet
-processing. That's why we connected this to the "prefer_busy_poll"
-flag.
-
-> > +		if (timeout)
-> > +			ret = false;
-> > +	}
-> > +	if (ret && n->defer_hard_irqs_count > 0) {
-> >  		n->defer_hard_irqs_count--;
-> >  		timeout = napi_get_gro_flush_timeout(n);
-> >  		if (timeout)
-> > @@ -6375,9 +6380,13 @@ static void busy_poll_stop(struct napi_struct *napi, void *have_poll_lock,
-> >  	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
-> >  
-> >  	if (flags & NAPI_F_PREFER_BUSY_POLL) {
-> > -		napi->defer_hard_irqs_count = napi_get_defer_hard_irqs(napi);
-> > -		timeout = napi_get_gro_flush_timeout(napi);
-> > -		if (napi->defer_hard_irqs_count && timeout) {
-> > +		timeout = napi_get_irq_suspend_timeout(napi);
-> 
-> Even here I'm not sure if we need to trigger suspend.
-> I don't know the eventpoll code well but it seems like you suspend 
-> and resume based on events when exiting epoll. Why also here?
-
-There's two questions wrapped up here and an overall point to make:
-
-1. Suspend and resume based on events when exiting epoll - that's
-   right and as you'll see in those patches that happens by:
-     - arming the suspend timer (via a call to napi_suspend_irqs)
-       when a positive number of events are retrieved
-     - calling napi_schedule (via napi_resume_irqs) when there are
-       no events or the epoll context is being freed.
-
-2. Why defer the suspend timer here in busy_poll_stop? Note that the
-   original code would set the timer to gro_flush_timeout, which
-   would introduce the trade offs we mention in the cover letter
-   (latency for large values, IRQ interruption for small values).
-
-   We don't want the gro_flush_timeout to take over yet because we
-   want to avoid these tradeoffs up until the point where epoll_wait
-   finds no events for processing.
-
-   Does that make sense? If we skipped the IRQ suspend deferral
-   here, we'd be giving packet processing control back to
-   gro_flush_timeout and napi_defer_hard_irqs, but the system might
-   still have packets that can be processed in the next call to
-   epoll_wait.
-
-The overall point to make is that: the suspend timer is used to
-prevent misbehaving userland applications from taking too long. It's
-essentially a backstop and, as long as the app is making forward
-progress, allows the app to continue running its busy poll loop
-undisturbed (via napi_complete_done preventing the driver from
-enabling IRQs).
-
-Does that make sense?
-
-> > +		if (!timeout) {
-> > +			napi->defer_hard_irqs_count = napi_get_defer_hard_irqs(napi);
-> > +			if (napi->defer_hard_irqs_count)
-> > +				timeout = napi_get_gro_flush_timeout(napi);
-> > +		}
-> > +		if (timeout) {
-> >  			hrtimer_start(&napi->timer, ns_to_ktime(timeout), HRTIMER_MODE_REL_PINNED);
-> >  			skip_schedule = true;
-> >  		}
-> 
+ok 1 selftests: damon: debugfs_attrs.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh # SKIP
+ok 12 selftests: damon-tests: build_m68k.sh # SKIP
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
