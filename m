@@ -1,274 +1,104 @@
-Return-Path: <linux-kernel+bounces-397910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF5E9BE245
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:22:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E516B9BE249
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:22:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7E3B23BB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:22:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A28AA2867C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9661D90DF;
-	Wed,  6 Nov 2024 09:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99B51D9339;
+	Wed,  6 Nov 2024 09:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gcBnbDW7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MM2bZesW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g9eGje0F"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2980183CD6
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 09:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33D4198E80;
+	Wed,  6 Nov 2024 09:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730884914; cv=none; b=uhuRaA7XqQ3+m6nRcq0JdmtK2/3FmmFT54NQaA0DWB9wn0UHgEjOkoIf3mxIakt22fRRR6QfMweSvQIGRzIo2kNYguClRp7XhQsHmv9FIY7Gs3rlpTrRyjUPg5GjQA7jWTifmPC4tlCaxYTYz4xGdOlj9nOH1vVGBV+cqwEgsIg=
+	t=1730884953; cv=none; b=EC4wKh9dltt4fbFvQN/EC8pFZTDRv1D1dAHdAAzFM06sAmyC+2tUUAAcEtmu2NOmIampNtRKlqHPrdXAdn6lZO2G5wx1JLq/x/9zrzFteRU6Zx7VXk1v28uYE+18AKuJRUv14iFV/+sdaKqqUoaK2XGns1s/t3T0F06Y+m82uzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730884914; c=relaxed/simple;
-	bh=Pw+CI4bHxgFkgqeCayKSDMkesfgD/0zFa0vhtdOxMjc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AZ885mlGA8e3xnetfacY//YriFG4R5LrH4ik208MnpD0qVghKYwJi3PKCpY7MhYataLwQwhJSMofv1tk/vTOjcBoqfgvjr1sF1D6QnFn1OUNnkgFuL3eLfLakLoMeEw7vHtMXWN06xhY1HKa1Xs258IQUmlB9vGGpGhb+N7QsZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gcBnbDW7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730884911;
+	s=arc-20240116; t=1730884953; c=relaxed/simple;
+	bh=5qoJM70NTtWWb/4K3e0/PrPCH6R3eYNFuNWINYpsrT0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cK8FpfqBgfn+BJUtD2MnFUcqC2Oh38+yhZFLdwPBbpW1KFZ+AjaagOHKyNy3tGa8/4g2XTJnTORG8CB8YebJ9c7ENvzYri38ZCky41aR1SCH+bDU1MVkEGtUwoQNJ+zUKds76n3WVV8ugoMWMpflnk5QtEF2BHTaRzpjgfmYRpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MM2bZesW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g9eGje0F; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730884949;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G+/r8y82t5LpcD8J2mPdZCtNa7f1NkKmPiS7dBnIVQM=;
-	b=gcBnbDW7IEY8/2CGHxpyLHgQNpZUM4AzTAFiQ56aqcELbcMt8ZdrdndQz1jsm5jMJd/djv
-	0A0F9/kTsPjnyD/ED47XPO5gfW5MjF/M8PnG3n4n4jV6r1Nxu9GewHzs7aO7ADYUagYWGs
-	yvLKOFpGdankpfR12LdHxiBAB4gnlkY=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-623-zNY5oHQRO-SUdo-NEQlMCw-1; Wed, 06 Nov 2024 04:21:50 -0500
-X-MC-Unique: zNY5oHQRO-SUdo-NEQlMCw-1
-X-Mimecast-MFC-AGG-ID: zNY5oHQRO-SUdo-NEQlMCw
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5c934ceea1fso775410a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 01:21:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730884909; x=1731489709;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G+/r8y82t5LpcD8J2mPdZCtNa7f1NkKmPiS7dBnIVQM=;
-        b=oIiB0dVoAn8LsW+kY3uRCQj2Mu3pOX3CFGjRRvSBDCCAbgGFDQF4jrniawS1KURN80
-         j8LZsd5I9fM20b6ngHq9tgkvHp9XtRUP3Ow1VToGTUs9mW+PUH9ePzWwqbPQvpL63rtF
-         TDxvQir60MHjb/lJ4rlhSPb5NoJYatJGaKzLTTQeSyDkVcwvUEv5aNMBpJWA8BZMF4QC
-         cw0NKapfisNSQNn9RL0ZCb8aPSP78gDnV8aMQn8Pxia6sHrvpfYT8lHw+BBiKYxZIbva
-         a2d4lHD4vXMFRgvxzNrK58FqM8qz+j8LjfWdABogjm0Bo/qWsLZhDPZ7zudTINzfDgEJ
-         HtBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJrkPnr78oeKlTuUzTd1WZApDHAOuYhuid1WxMWbPka8CVaezzG9WhHxJpXXBVMeO6QJHEQx8n9sfgk/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJlFQ6maVhoymSllezb4uqj35gWOC3Ex2rfWSxXYZiqEguvvcC
-	JwrpovOHHaZQ6XhbnW+l1TtaD5ZGbohHXh45xj2K7ULS6XaPw+1x6NR2aw4GIO9rv6E9Ps1ZnoB
-	yoxkSrrHkhk151l0R4T5WSzoMLnrB56fyO9YAPq1GnlJLKsTAEGsiZVF3wOspbvArvOYk41gF/X
-	D3x0JFUTPSg299nsZ4lKmNlq9D4qSJ//x7WH8S
-X-Received: by 2002:a17:906:dc91:b0:a9a:4f78:c3 with SMTP id a640c23a62f3a-a9e3a5a0da3mr2632258666b.21.1730884909160;
-        Wed, 06 Nov 2024 01:21:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHaDNg6wSMGmRW4F0u9QWcnzmzJVMDxrKOMNX8UWkiv8lV8hKePP9x5R6DeNMjld7k4M/mJKlB64IX5d/Yhcbk=
-X-Received: by 2002:a17:906:dc91:b0:a9a:4f78:c3 with SMTP id
- a640c23a62f3a-a9e3a5a0da3mr2632249266b.21.1730884907353; Wed, 06 Nov 2024
- 01:21:47 -0800 (PST)
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ucM0Xa47bBE4k1wlq/Myz0uqZ1pLu02YCO0xbf8QpEw=;
+	b=MM2bZesWsCbcKBfa0q8cS+XEZW0U5nWH3KZ7HZOZhFUTe6QijkfQh02+/gOLBLDxyTMFEA
+	Kc63MvZ23L1kqSshrPLgKeiexwwMuSMZJEWbxEjBXNV6RbNAc5Z5/xVsv40GDEA4GdkeDu
+	QHWgpjTknVzJjgDT/YFcJ9yMvJN3RyKLym6xgXCP1Q3djpJk7TVcS3KRbSGYfXf0VUYD83
+	Lp4pn9+KFsrnrW5a+KTN26Hg+LMUCGYKYeNz5vhPh1aJES7pUFcq/5d7xzY8d5OpJxJ0fs
+	Pg8WAwhEYQNT6XrVuJ/6ku/5WLk26AHpklZ7v2FHEK6xDDmr+LccLGDS3rsC3Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730884949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ucM0Xa47bBE4k1wlq/Myz0uqZ1pLu02YCO0xbf8QpEw=;
+	b=g9eGje0FRaJMSZh/4E9padn4xjOtOfJY2Sxw7teIk7BLeF7Yr1+fV5UTS4SyjQDTpT6IM0
+	iw0m3vX0ifi7V3Bw==
+To: Shuah Khan <shuah@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Dylan Hatch <dylanbhatch@google.com>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: [PATCH 0/2] fix reading ESP during coredump
+Date: Wed,  6 Nov 2024 10:22:14 +0100
+Message-Id: <cover.1730883229.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105072642.898710-1-lulu@redhat.com> <20241105072642.898710-5-lulu@redhat.com>
- <CACGkMEvwirx3C7QL_xYB_niYBYfugCR9OMWqwcPfAPX=E1Qm=Q@mail.gmail.com>
-In-Reply-To: <CACGkMEvwirx3C7QL_xYB_niYBYfugCR9OMWqwcPfAPX=E1Qm=Q@mail.gmail.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Wed, 6 Nov 2024 17:21:09 +0800
-Message-ID: <CACLfguXEc85-59966iK-aO2uzKthcv2TqGpK3VLhNs1K0pBq9w@mail.gmail.com>
-Subject: Re: [PATCH v3 4/9] vhost: Add kthread support in function vhost_worker_create
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 5, 2024 at 5:36=E2=80=AFPM Jason Wang <jasowang@redhat.com> wro=
-te:
->
-> On Tue, Nov 5, 2024 at 3:27=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
-> >
-> > Restored the previous functions kthread_wakeup and kthread_stop.
-> > Also add a new structure, vhost_task_fn. The function vhost_worker_crea=
-te
-> > Will initializes this structure based on the value of inherit_owner.
-> >
-> > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > ---
-> >  drivers/vhost/vhost.c | 71 ++++++++++++++++++++++++++++++++++++-------
-> >  drivers/vhost/vhost.h |  6 ++++
-> >  2 files changed, 66 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > index e40cef3a1fa5..603b146fccc1 100644
-> > --- a/drivers/vhost/vhost.c
-> > +++ b/drivers/vhost/vhost.c
-> > @@ -741,43 +741,92 @@ static void vhost_workers_free(struct vhost_dev *=
-dev)
-> >         xa_destroy(&dev->worker_xa);
-> >  }
-> >
-> > +static int vhost_task_wakeup_fn(void *vtsk)
-> > +{
-> > +       vhost_task_wake((struct vhost_task *)vtsk);
-> > +       return 0;
-> > +}
->
-> Let's have a newline between two functions.
->
-will fix this
-> > +static int vhost_kthread_wakeup_fn(void *p)
-> > +{
-> > +       return wake_up_process((struct task_struct *)p);
-> > +}
-> > +static int vhost_task_stop_fn(void *vtsk)
-> > +{
-> > +       vhost_task_stop((struct vhost_task *)vtsk);
-> > +       return 0;
-> > +}
-> > +static int vhost_kthread_stop_fn(void *k)
-> > +{
-> > +       return kthread_stop((struct task_struct *)k);
-> > +}
-> > +
-> >  static struct vhost_worker *vhost_worker_create(struct vhost_dev *dev)
-> >  {
-> >         struct vhost_worker *worker;
-> > -       struct vhost_task *vtsk;
-> > +       struct vhost_task *vtsk =3D NULL;
-> > +       struct task_struct *task =3D NULL;
-> >         char name[TASK_COMM_LEN];
-> >         int ret;
-> >         u32 id;
-> >
-> > +       /* Allocate resources for the worker */
-> >         worker =3D kzalloc(sizeof(*worker), GFP_KERNEL_ACCOUNT);
-> >         if (!worker)
-> >                 return NULL;
-> >
-> > +       worker->fn =3D kzalloc(sizeof(struct vhost_task_fn), GFP_KERNEL=
-_ACCOUNT);
-> > +       if (!worker->fn) {
-> > +               kfree(worker);
-> > +               return NULL;
-> > +       }
-> > +
-> >         worker->dev =3D dev;
-> >         snprintf(name, sizeof(name), "vhost-%d", current->pid);
-> >
-> > -       vtsk =3D vhost_task_create(vhost_run_work_list, vhost_worker_ki=
-lled,
-> > -                                worker, name);
-> > -       if (!vtsk)
-> > -               goto free_worker;
-> > -
-> >         mutex_init(&worker->mutex);
-> >         init_llist_head(&worker->work_list);
-> >         worker->kcov_handle =3D kcov_common_handle();
-> > -       worker->vtsk =3D vtsk;
-> >
-> > -       vhost_task_start(vtsk);
-> > +       if (dev->inherit_owner) {
-> > +               /* Create and start a vhost task */
-> > +               vtsk =3D vhost_task_create(vhost_run_work_list,
-> > +                                        vhost_worker_killed, worker, n=
-ame);
-> > +               if (!vtsk)
-> > +                       goto free_worker;
-> > +
-> > +               worker->vtsk =3D vtsk;
-> > +               worker->fn->wakeup =3D vhost_task_wakeup_fn;
-> > +               worker->fn->stop =3D vhost_task_stop_fn;
-> > +
-> > +               vhost_task_start(vtsk);
-> > +       } else {
-> > +               /* Create and start a kernel thread */
-> > +               task =3D kthread_create(vhost_run_work_kthread_list, wo=
-rker,
-> > +                                     "vhost-%d", current->pid);
-> > +               if (IS_ERR(task)) {
-> > +                       ret =3D PTR_ERR(task);
-> > +                       goto free_worker;
-> > +               }
-> > +               worker->task =3D task;
-> > +               worker->fn->wakeup =3D vhost_kthread_wakeup_fn;
-> > +               worker->fn->stop =3D vhost_kthread_stop_fn;
-> > +
-> > +               wake_up_process(task);
-> > +               /* Attach to the vhost cgroup */
-> > +               ret =3D vhost_attach_cgroups(dev);
-> > +               if (ret)
-> > +                       goto stop_worker;
-> > +       }
-> >
-> >         ret =3D xa_alloc(&dev->worker_xa, &id, worker, xa_limit_32b, GF=
-P_KERNEL);
-> >         if (ret < 0)
-> >                 goto stop_worker;
-> >         worker->id =3D id;
-> > -
-> >         return worker;
-> > -
-> >  stop_worker:
-> > -       vhost_task_stop(vtsk);
-> > +       worker->fn->stop(dev->inherit_owner ? (void *)vtsk : (void *)ta=
-sk);
-> >  free_worker:
-> > +       kfree(worker->fn);
-> >         kfree(worker);
-> >         return NULL;
-> >  }
-> > diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-> > index c650c4506c70..ebababa4e340 100644
-> > --- a/drivers/vhost/vhost.h
-> > +++ b/drivers/vhost/vhost.h
-> > @@ -25,8 +25,13 @@ struct vhost_work {
-> >         vhost_work_fn_t         fn;
-> >         unsigned long           flags;
-> >  };
-> > +struct vhost_task_fn {
-> > +       int (*wakeup)(void *task);
->
-> Let's have comments to explain the semantics of each operation.
->
-sure, will fix this
-> > +       int (*stop)(void *task);
-> > +};
->
-> I think the goal is to reduce if/else, so while at this, let's
-> introduce more ops. For example the create_worker one?
->
-sure, will change this part
-thanks
-cindy
-> >
-> >  struct vhost_worker {
-> > +       struct task_struct      *task;
-> >         struct vhost_task       *vtsk;
-> >         struct vhost_dev        *dev;
-> >         /* Used to serialize device wide flushing with worker swapping.=
- */
-> > @@ -36,6 +41,7 @@ struct vhost_worker {
-> >         u32                     id;
-> >         int                     attachment_cnt;
-> >         bool                    killed;
-> > +       struct vhost_task_fn *fn;
-> >  };
-> >
-> >  /* Poll a file (eventfd or socket) */
-> > --
-> > 2.45.0
-> >
->
-> Thanks
->
+Hi,
+
+In /proc/PID/stat, there is the kstkesp field which is the stack pointer of
+a thread. While the thread is active, this field reads zero. But during a
+coredump, it should have a valid value.
+
+However, at the moment, kstkesp is zero even during coredump.
+
+The first commit fixes this problem, and the second commit adds a selftest
+to detect if this problem appears again in the future.
+
+Nam Cao (2):
+  fs/proc: do_task_stat: Fix ESP not readable during coredump
+  selftests: coredump: Add stackdump test
+
+ fs/proc/array.c                               |  36 ++--
+ tools/testing/selftests/coredump/Makefile     |   7 +
+ tools/testing/selftests/coredump/README.rst   |  50 ++++++
+ tools/testing/selftests/coredump/stackdump    |  14 ++
+ .../selftests/coredump/stackdump_test.c       | 154 ++++++++++++++++++
+ 5 files changed, 243 insertions(+), 18 deletions(-)
+ create mode 100644 tools/testing/selftests/coredump/Makefile
+ create mode 100644 tools/testing/selftests/coredump/README.rst
+ create mode 100755 tools/testing/selftests/coredump/stackdump
+ create mode 100644 tools/testing/selftests/coredump/stackdump_test.c
+
+--=20
+2.39.5
 
 
