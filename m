@@ -1,264 +1,302 @@
-Return-Path: <linux-kernel+bounces-397361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650789BDB04
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:13:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C97C79BDAFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D75928356D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56FFB1F2316B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866FD824A3;
-	Wed,  6 Nov 2024 01:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A98B17C21E;
+	Wed,  6 Nov 2024 01:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gOovRyxm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Jkd6e/3O"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2084.outbound.protection.outlook.com [40.107.102.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2741F188737;
-	Wed,  6 Nov 2024 01:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730855568; cv=none; b=V03p4Ag2GvXJRD8uWerBC5FKkMKhrGD/ukLHCpI+lQtsszAmfbJ1D6whSaezogUfi1J6UcAGZ8Qc0XlKwaZuXeWecTEh4RIjKC0BqcY0l8/KqVycwUJ1DRYmF39xe+hcYgFxrhAiUhc/ke8oIBmazqX5qNse0sOLUtdJDvh0eig=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730855568; c=relaxed/simple;
-	bh=4HF3rwA/AvxO3Knhf+XcS3MMF6XDQAoU3kzYc67y7fw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MElsk5tUoZNxRM4C9HwZaTeSxw7fdfjFlx8mDn0OdXIlnMYVcQMJk01etTPzaiXy2KJRUJ8MNa+/nlRlzZoQgZHUhOwTyJWxUKP1WoMkuXphE+AxjNxojw9k3qWEpzPUHyYHyK1nUn93oCYyjLm+C9py1jpo69fYDg5iVhRMkXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gOovRyxm; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730855567; x=1762391567;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4HF3rwA/AvxO3Knhf+XcS3MMF6XDQAoU3kzYc67y7fw=;
-  b=gOovRyxmE0qQBXomfWWopldou2NQeFXPjdKtENpjyNxC3cyOlu+t7lDD
-   F4ElqBm2+jrbcSW3ZFQPtcFmtcYKwEffoxWegl6HXuIdgw587LU2cJqA1
-   kAzZ1HxL2yEX7jpGMZgnw68cWDHSgK6oLD0E8J50wr4V2nfTUfI4b+q+N
-   i6JqS7bMlaXp6V8SwrlPMPT9TVY0C0R3i3+OIOltmRobU8etM8iah50qm
-   aPmukA35bHWdeTs/KYNmfQvQmue/slf0rsrbPEHUBszoY6GZTw451kfV7
-   eVIULZfGA76WOcLjUcDq3McBLGwGqTy4uI06m+VMN6MMBHS9WvJAi6HCU
-   g==;
-X-CSE-ConnectionGUID: UCYtPL2nShyI+Sk5Ia2a1w==
-X-CSE-MsgGUID: xZ1H1HrfSYGNI8y/jAPaHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="18254765"
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="18254765"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 17:12:46 -0800
-X-CSE-ConnectionGUID: xEOV3UogSKqou3OpRiUuqg==
-X-CSE-MsgGUID: 93TWSWv/Rb6U/eR9zWtyRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="84362797"
-Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
-  by fmviesa008.fm.intel.com with ESMTP; 05 Nov 2024 17:12:43 -0800
-From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org
-Cc: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	richardcochran@gmail.com,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Subject: [PATCH net-next v3 2/2] ice: ptp: add control over HW timestamp latch point
-Date: Wed,  6 Nov 2024 02:07:56 +0100
-Message-Id: <20241106010756.1588973-3-arkadiusz.kubalewski@intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20241106010756.1588973-1-arkadiusz.kubalewski@intel.com>
-References: <20241106010756.1588973-1-arkadiusz.kubalewski@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B24413A26F;
+	Wed,  6 Nov 2024 01:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730855501; cv=fail; b=RhKrdOEyAThklH+twfOWb3gH9BttD3XZ65Gf/Jr4xxZruQ39ru/XndF97GydJE+zEElUpFxB+xAM3nMgtPmDfSW1yr8C+Ei7Tz655UnmwzgDHz7JnALpzxTTJ2n/r7PqV2KNCZy+DF4gxBnUhtC/gf1REo+ax9PJw4Lnzikvwqg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730855501; c=relaxed/simple;
+	bh=kmp9RnkXSRFcvmUXc/fdCT4GYQmdqRoCI89a8K1798o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nuBzoXiG3KB1WouQnuoPH2OnqLQpj8oFa51BM3r1SPon5bSDgk8BcByZXWvitPFxxCh+Hz9ILUXJoKprSHLMUwVnTveDQ4Vpk++JKFscwHGe3Lm1ciSf+cQUUpkd2rj9PtpADPQfkXLEnFY/HIoLIrIc+tMlccTWJUM2eNdH5O0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Jkd6e/3O; arc=fail smtp.client-ip=40.107.102.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vTTCZVaUMb8MHxmr50A6UnVcFVMqKrsXS22rZimTeQSY4L6ypnNjKQWCjUvJ3NtOniKgpB12McXkeSkew6b0FQ9XbF++Zr8OTb2cJRjtBb/3N24YEwu0KWzmmASe2Z42BUYTtCwPozcWMUfkilqBBL/FL7H2Szy8kzZgrm9zoxyiqPcqumCn8KLjQKIAXt+WWiyq69Y+Qvs47kafgzNRYSoRt3ftZSpBhQ0slj7x4sj8wceU4KIIQ3+7PvEqeiWqSrqYKYHCiSERYtUrIo4I/3aHbMiuka5aMIN8j7SL16zgOgkLtEPtjz/kB0l8p3Nc32druISwGMHC4Ujc0m7JHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lreoNL20EmQIyDOKgfeIlnNvIy22vivJlYCErBGXBXI=;
+ b=XJWI7IwTQ4jqYFM6ajdFMyTzZj6Ei+EY2si3kNCGNSphXV/Cp8uOqg/QChDgQADsBksv+TW17ROwG0V6y/2nMdvLSVE/x5f0rPA/ZcdXyF8oqSNVN0q8PBwGjEEwmh5DUhsfv1Hgjvl4enpmozAFlJjCetNQWzHhKu9u3erwWLo298J2micxD3uLABQf4N6Hjyzn5330irQ642+uuz9rE1rH7pgZmO+w9zdUwNBFwUxWqn3RCHvH6mZmPwe9XqtZyLsIrRVURMkFflPt2tJLffc98YPFB85ULgKLxmuL3NiI+3witlgAISIN8NeoIav4IoQ5I73w3mJmEQvGsvxgUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lreoNL20EmQIyDOKgfeIlnNvIy22vivJlYCErBGXBXI=;
+ b=Jkd6e/3OOgiGtXbmFub8DOh+dsPiSBta/YN8cjOkWxNccTuNDyC0BJRpGmhNiftNZ4iqdCGu/154XBlswBAUoAK7hIrztlWy4kv34xfmoW58Y87U1EomhovJDoNOpczqMFOITrmspPznAytbf1zLVIxtA+rryl7WUrTllhQ1MyQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by IA0PR12MB8893.namprd12.prod.outlook.com (2603:10b6:208:484::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Wed, 6 Nov
+ 2024 01:11:36 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8114.028; Wed, 6 Nov 2024
+ 01:11:36 +0000
+Message-ID: <4462f1d4-4f10-493c-b7ba-8f8d618a8fd7@amd.com>
+Date: Tue, 5 Nov 2024 19:11:32 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/20] Add support for binding ACPI platform profile to
+ multiple drivers
+To: Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <26a494ee-d929-4aee-9c2e-d184e0efb842@app.fastmail.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <26a494ee-d929-4aee-9c2e-d184e0efb842@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0091.namprd04.prod.outlook.com
+ (2603:10b6:806:122::6) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|IA0PR12MB8893:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef3ddc68-91ea-4e1d-2c9a-08dcfdfff5e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Mk1OMk01ZVIwN2s0M1BFaEpLWTlQd0pHaG1EMUVTVnhXYS9Ga0YrZkE1V0dN?=
+ =?utf-8?B?aGxqOXRPZUtmTFZIeXRaZzFWTkFIZ2xjWnhRWk8vNUFTdTZjbDcxeEh1ZGps?=
+ =?utf-8?B?cHU3RnJ6VElEMk03aU4vaVpZemxETlhaZm1aUVBpVDR4KzFQS1pmMTZuR1hh?=
+ =?utf-8?B?WExPcFBuWFdidjdoVDk0eG1PMWVpQUIyWnVHWGJKWFArbXNDanNGYkRPb3dT?=
+ =?utf-8?B?eVU5K251eC9LczVSQ3BMWG5tTXljaVBEOHVQR2l5T2xaY3pVQUlaL2w4Qk5r?=
+ =?utf-8?B?UXZZclhiL2NUcHVjNERJKzFkV1lUc1dQWlFjWGxWWWFET1g2b0pLd0ViU0xL?=
+ =?utf-8?B?dkNHOU9iOU9QLzJLR2dhU09kWkMyOHJLOHBReDc1N3J4SVhRc3Y5Ymw5VU9F?=
+ =?utf-8?B?SVhOMFlxWlExTTdaRW1RYk5uWXhMZCswSklQWkF2eWJSaDh2VzZlUTRtK2R2?=
+ =?utf-8?B?ZTNmNzRYd2ZhOHAxSXluOXZwVXRHZFJNcExwYUp4dlkvbkFLcC9YWTN5bmZM?=
+ =?utf-8?B?NFNWV1lSOVBNWXRhemdwNWRmMzd4ekY3cGh4Q3AyQnlnWVlVVTJoQ1Z3UmpI?=
+ =?utf-8?B?T3ZUTnZuODlDTXFKNDVZdGdDMklWYzRqQXZEM1hxMTVOT3JCb0NvbHdtWDJz?=
+ =?utf-8?B?U2NyQ0d3eTBaREE5RTdFdTFHMjRkQXQ4LzhmSS91UHQzU1d3NVg1akp2c1Qv?=
+ =?utf-8?B?UEovTnBmZFhGVnJBdmFmUnRHemJyb0Yvd3ZJZTZMenQ3MjRnQllBRWlZd1Z3?=
+ =?utf-8?B?TTBDanhMYkJNZWRyNzNPc0VMWWw3dzVRNytTUVRodTdoNEJDRHFmU1k2ZkRk?=
+ =?utf-8?B?a0ViNFBTcTdHNjhxYTdBK2N2eDBVSU5uR0c1Vm9IeDVQNnBCd28zZCswcENH?=
+ =?utf-8?B?eStpNkl4SWdRMUllUHRudzRrdTN5SmZGMWRVSTd1aVVkODI0T2srcmUya2hQ?=
+ =?utf-8?B?Y2hXU1ljSnpMWkZLV1ZZY05NVE9wWlR0T05CdEo0aXFBcy9FbW1rY2YvQWFE?=
+ =?utf-8?B?aFdGS1FJVjR4b3ZRLzhWL0RRL0s3UHUxQ3JYdHJ6R1BWWm1UdjdCdGV5bzUv?=
+ =?utf-8?B?NjlWRW43anBzemgwUlhOMG0yTy9IUUwwYU5YVDNZRjJnL1RDcmoxckZFWW4w?=
+ =?utf-8?B?K0pzVEwzM0w5QlZQYVkydnJvZEUyNDFuTVczbzVadFBwdW5UWG9oUWZwbDZX?=
+ =?utf-8?B?d01jWHFFT3hzUUtoQm9sMGRyWHlsSmJ5S3F4Vkk5cXl2eFRSNjdCRVlMRkpN?=
+ =?utf-8?B?RXFWazZHYXFiUTZvTSs0Qys1MXZRZXlDeklFSnY5WnVwb2UxdEpFY09Dc1E5?=
+ =?utf-8?B?cE9JbkVaTnVyMDNBZzMvUXRNcEhlb01OaDIwaCswbWFKRjBkQjQ5c08zT1Ey?=
+ =?utf-8?B?WnpyK2NqOEZZdG5OOFMvYitWVFJJQWdZZjRzWXlDNEVIb3FGZzJtaklYNU12?=
+ =?utf-8?B?K3VsSkx1MU9venNEQ3BtV0psTE8vaGRrTEFXYkhKUzd6dUExdTlpT3BkdHpU?=
+ =?utf-8?B?bThiTkFTblFoOGxkMnhmSXNjQWNZZGZ3ek50cTI0cTQrVitXdTM2WWN0Y0R1?=
+ =?utf-8?B?ZStJeUdrUlpjM1NvNTIwb1A3YTZPc3lMRW1XSnA3bEZ3RE85OWI3VzVHQUd6?=
+ =?utf-8?B?eGo3NFRBZVF3VmZscGIyTFVMUjZTUVhzemd1SlJjVXVhK2VRL2huRW1hL1hP?=
+ =?utf-8?B?R2M2Q3VTbEdUazlTUXcrUTliWHc4aHBpTWoxKzNBL0Y4OGkzQ2JZS0Z4S0ZQ?=
+ =?utf-8?Q?Owa4vKPa5XTzVTJ7FGdWdfiQ6C0hpEphN7L4Ajm?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NGk5SER3anhsYkZ3ZWM4N2J2TFRlbUF5TjRKSkVUcGxCMi8wYlhuWEE3Y2RD?=
+ =?utf-8?B?T0EyL09PajB2SjhFczh0a2k4MlNxUlhmelIydGhrMVlzY1k4b0g2T3YzZTRl?=
+ =?utf-8?B?aDB6T1I1Y0hGMklKOE5mQmtndG5xYXV2d3RUSlJ2emVtQ3Z2dVlTMHBiUEUy?=
+ =?utf-8?B?bnM5U2pVOXlsL3lOQnRCZzM3VFQrT29oTitCb0xLN3NKV0g0d1owUDJlQ00v?=
+ =?utf-8?B?Q3oyNitSRUU0aXplaGxmTmJtaWtVRjJzenBPRVgvbEgxa3pPcjdYcVJZaGFG?=
+ =?utf-8?B?TTEyM0pYYlNQait1SGFyZ1FaYkdZcWNOT3IwaENvTllUbWlOTDI4UGJOOW43?=
+ =?utf-8?B?WWN4NkFpcUVvT2ZMNm9KREptL255c1NMWldURk5OL3FsSXZUR2dzTDJLWTNm?=
+ =?utf-8?B?K2FTZU9iL1Z5Sll5NURQblNoNG0xRkhZcGNKaThNVHJUM3d3M0VGUE94ZmJX?=
+ =?utf-8?B?b2MrRThEbXU4Wld6RHBQRnVWVTIvUFRaQ3ZQWUkrK1QxWGsxK0JVbU53VXV5?=
+ =?utf-8?B?bFo2TEk4THJ2SHhHWjdGQzZMOFRtODhOMDlqTXQ5WGZJWTMzSTc3UStxSkNw?=
+ =?utf-8?B?SWMyckdYK3pXV0VkVkt3cXV1cjg5a2dlZzNCNGtUYU02QVRiR29UbUhpNUdT?=
+ =?utf-8?B?NUdIVjN4UjVXM2VJdktualVhTGFWK3dKZDg1UElQemZuc2NBQmdKeVdINmU2?=
+ =?utf-8?B?b2k4ajJJNE1OeVJyYzdRNFlPd0dyd3JjZnFoNnJhelFxRExXTzcwdUtPTXNT?=
+ =?utf-8?B?MENSTFM0YXFOSEYyNzJjV2JtT0JObGRTUjVJdDh6QVJqTlJjaW56V2NKeGZS?=
+ =?utf-8?B?L1dwaUJCWlhjRUxOampNYTVwNXJpL3VGUFdDSCtyVUZnc2FJdldWZzJvVmo4?=
+ =?utf-8?B?K0Y3SFN6WkpOMUNSdzdmSVhQZjl3cjVuUW1nOFZwWWpQZk01SFd1dlV2NFZz?=
+ =?utf-8?B?ZDR0dk1ZN1RvUXVSbWRVN1VENDVXdDNiZk91OGExNFVVeGtZRkx6QlhxcWNx?=
+ =?utf-8?B?aHQyR0hUQ2xWallQeDVyR2M4L21wdm92SHo2Y3Z2d3I5NG5ibzkySUU1b3F2?=
+ =?utf-8?B?SVNiem1MTXpSY0VpcDJoRWxuaTdlN3BtdzNEcUozVEJOZUxNZE4xOEVrYWpk?=
+ =?utf-8?B?STRsd3FyOHN5TU94MlE4TWZBajRwVElselQ3ckN3TkpOckNRWURlb1BYcUhO?=
+ =?utf-8?B?cjE3K1R2Ky83SExhc05SRmR2TTNPSkN2YkVvSHI1d0JQVXQrb2diNnJpcWE3?=
+ =?utf-8?B?MzV2cHdpY01RMGpkRWdjVE9UQ0pHZHY2QkdmOHlQd05BU0FoUGttc2lTZWFi?=
+ =?utf-8?B?dElYNTd0b2JvMWF6MFp1OGtkZFFnZGVla1J5RkN0YjlkNkV4bVZQeWNDRHRW?=
+ =?utf-8?B?UjZ0KzJZY2FweEZoeUFiU3ZZL3BvbWJuWGo1c0FGYmRmVEJ1S0hxTmZ3K2lJ?=
+ =?utf-8?B?d3RxbzBLUFJiVzA5ZmNuNmtCRnROckN2SGtWV0tZbmJnSFIvY1hYd2RjOGZk?=
+ =?utf-8?B?anVNMXdxNEJhb3BrUTdzNmJyVGlsWHhoWEJLWHdPbS85TGVoR2V1L3hPTzVh?=
+ =?utf-8?B?YkpiUlY2VGpDdmE2QW02U1hQM2xrRUVXbVovbXJxaG9JQ1VVSXhraE9sMjZq?=
+ =?utf-8?B?L1l3T0tMbWh2b2szU0tvbnRtR1FQeFh6elN1aHRQenR0THZ6SEtiTHBaOUpR?=
+ =?utf-8?B?REh6RTdjWExnalUxV3NiY0hCa0Mvb3FvdjlTNTNnVHQzNzRQTkp5NHFKM1ZI?=
+ =?utf-8?B?R3JvRjA5L0N4VXV4VWJBMEhpODZoR2ZqKzR2ZUcrZ0lhWVFUSEpUNG5NZFVh?=
+ =?utf-8?B?eEZzejNWLzRXa2g4S2R5TTQ1Q1B0YmVad0dhZkFtWHpPQkJ2YTNUdk5xM3NK?=
+ =?utf-8?B?TVF2azhVWEowbFpkZkpFVlNkMVRQRGhIdnczUTFWVTM3WUxzeDBPOERZYjg1?=
+ =?utf-8?B?VmhpWWp6NDFFTFFvSXprTDB2TE14ZkpRNlZVOHVIcjF2Q1Y3Um5nSTAyUnFm?=
+ =?utf-8?B?S1RJbGdjRGxXaXVnM1dibHpKbzRsOGpmRU8zS0EvQm9YV3FuVEhPOEFHVnZj?=
+ =?utf-8?B?c1dBaVl3VEZDbHQ5dURXcXdwUHdPWHFWTml4dkRmd2pjT3NsRXBUTVoveW5x?=
+ =?utf-8?Q?GkPy9b7/3SORa4ru0Vw8yapkZ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef3ddc68-91ea-4e1d-2c9a-08dcfdfff5e9
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 01:11:36.5373
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qg1bl9xOA6UNl2zsbu95PEyG2ELjYB3gIds65hoVAriIlh80uw6UvkL0yaL2e4WnHULEDHBy3m1juIDtuorcOw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8893
 
-Allow user to control the latch point of ptp HW timestamps in E825
-devices.
+On 11/5/2024 16:47, Mark Pearson wrote:
+> Hi Mario,
+> 
+> On Tue, Nov 5, 2024, at 10:32 AM, Mario Limonciello wrote:
+>> Currently there are a number of ASUS products on the market that happen to
+>> have ACPI objects for amd-pmf to bind to as well as an ACPI platform
+>> profile provided by asus-wmi.
+>>
+>> The ACPI platform profile support created by amd-pmf on these ASUS
+>> products is "Function 9" which is specifically for "BIOS or EC
+>> notification" of power slider position. This feature is actively used
+>> by some designs such as Framework 13 and Framework 16.
+>>
+>> On these ASUS designs we keep on quirking more and more of them to turn
+>> off this notification so that asus-wmi can bind.
+>>
+>> This however isn't how Windows works.  "Multiple" things are notified for
+>> the power slider position. This series adjusts Linux to behave similarly.
+>>
+>> Multiple drivers can now register an ACPI platform profile and will react
+>> to set requests.
+>>
+>> To avoid chaos, only positions that are common to both drivers are
+>> accepted when the legacy /sys/firmware/acpi/platform_profile interface
+>> is used.
+>>
+>> This series also adds a new concept of a "custom" profile.  This allows
+>> userspace to discover that there are multiple driver handlers that are
+>> configured differently.
+>>
+>> This series also allows dropping all of the PMF quirks from amd-pmf.
+>>
+>> v4:
+>>   * Drop the list; iterate classes
+>>   * Drop patches that didn't make sense without list
+>>   * Cover alienware-wmi as well (recently merged to platform-x86/for-next)
+>>   * Drop requirement for balanced
+>>   * Rename platform-profile class members to 'profile', 'options', 'name'
+>>   * Drop the name in /sys/class/platform-profile and just use ida value.
+>>     IE platform-profile-0
+>>
+>> Mario Limonciello (20):
+>>    ACPI: platform-profile: Add a name member to handlers
+>>    platform/x86/dell: dell-pc: Create platform device
+>>    ACPI: platform_profile: Add device pointer into platform profile
+>>      handler
+>>    ACPI: platform_profile: Add platform handler argument to
+>>      platform_profile_remove()
+>>    ACPI: platform_profile: Move sanity check out of the mutex
+>>    ACPI: platform_profile: Move matching string for new profile out of
+>>      mutex
+>>    ACPI: platform_profile: Use guard(mutex) for register/unregister
+>>    ACPI: platform_profile: Use `scoped_cond_guard`
+>>    ACPI: platform_profile: Create class for ACPI platform profile
+>>    ACPI: platform_profile: Add name attribute to class interface
+>>    ACPI: platform_profile: Add choices attribute for class interface
+>>    ACPI: platform_profile: Add profile attribute for class interface
+>>    ACPI: platform_profile: Notify change events on register and
+>>      unregister
+>>    ACPI: platform_profile: Only show profiles common for all handlers
+>>    ACPI: platform_profile: Add concept of a "custom" profile
+>>    ACPI: platform_profile: Make sure all profile handlers agree on
+>>      profile
+>>    ACPI: platform_profile: Check all profile handler to calculate next
+>>    ACPI: platform_profile: Allow multiple handlers
+>>    platform/x86/amd: pmf: Drop all quirks
+>>    Documentation: Add documentation about class interface for platform
+>>      profiles
+>>
+>>   .../userspace-api/sysfs-platform_profile.rst  |  28 ++
+>>   drivers/acpi/platform_profile.c               | 446 ++++++++++++++----
+>>   .../surface/surface_platform_profile.c        |   8 +-
+>>   drivers/platform/x86/acer-wmi.c               |  10 +-
+>>   drivers/platform/x86/amd/pmf/Makefile         |   2 +-
+>>   drivers/platform/x86/amd/pmf/core.c           |   1 -
+>>   drivers/platform/x86/amd/pmf/pmf-quirks.c     |  66 ---
+>>   drivers/platform/x86/amd/pmf/pmf.h            |   3 -
+>>   drivers/platform/x86/amd/pmf/sps.c            |   4 +-
+>>   drivers/platform/x86/asus-wmi.c               |   6 +-
+>>   drivers/platform/x86/dell/alienware-wmi.c     |   8 +-
+>>   drivers/platform/x86/dell/dell-pc.c           |  39 +-
+>>   drivers/platform/x86/hp/hp-wmi.c              |   8 +-
+>>   drivers/platform/x86/ideapad-laptop.c         |   4 +-
+>>   .../platform/x86/inspur_platform_profile.c    |   7 +-
+>>   drivers/platform/x86/thinkpad_acpi.c          |   4 +-
+>>   include/linux/platform_profile.h              |   7 +-
+>>   17 files changed, 456 insertions(+), 195 deletions(-)
+>>   delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+>>
+>>
+>> base-commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
+>> -- 
+>> 2.43.0
+> 
+> For the series - I tried it out on my T14s G6 AMD, and it all looks to be working nicely and as expected.
+> The thinkpad-acpi and amd-pmf classes show up. I can tweak them individually and 'custom' shows up under firmware/acpi/platform_profile.
+> I tried various combo's and didn't see any issues.
+> If you have any recommendations of things to try let me know.
+> 
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> 
+> Mark
 
-Usage, examples:
+Thanks for testing!  The fact that Lenovo and ASUS are both doing this 
+with recent laptops makes it all the stronger of a case to do it rather 
+than let them race for who gets the coveted platform profile slot.
 
-** Obtain current state:
-$ cat /sys/class/net/eth<N>/device/ptp/ts_point
-Command returns enum/integer:
-* 1 - timestamp latched by PHY at the beginning of SFD,
-* 2 - timestamp latched by PHY after the SFD,
-* None - callback returns error to the user.
+If you've already tried mixing and matching combinations that's all I 
+was going to suggest.
 
-** Configure timestamp latch point at the beginning of SFD:
-$ echo 1 > /sys/class/net/eth<N>/device/ptp/ts_point
+I'll wait for Armin's review and then I'll respin with the tags and 
+small things you and Ilpo found.
 
-** Configure timestamp latch point after the SFD:
-$ echo 2 > /sys/class/net/eth<N>/device/ptp/ts_point
-
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
----
-v3:
-- improve readability, for "nothing to do" logic
-- /s/PTP/ptp
-- remove 'tx' from docs description
----
- drivers/net/ethernet/intel/ice/ice_ptp.c    | 44 +++++++++++++++
- drivers/net/ethernet/intel/ice/ice_ptp_hw.c | 60 +++++++++++++++++++++
- drivers/net/ethernet/intel/ice/ice_ptp_hw.h |  2 +
- 3 files changed, 106 insertions(+)
-
-diff --git a/drivers/net/ethernet/intel/ice/ice_ptp.c b/drivers/net/ethernet/intel/ice/ice_ptp.c
-index a999fface272..c351c9707394 100644
---- a/drivers/net/ethernet/intel/ice/ice_ptp.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ptp.c
-@@ -2509,6 +2509,48 @@ static int ice_ptp_parse_sdp_entries(struct ice_pf *pf, __le16 *entries,
- 	return 0;
- }
- 
-+/**
-+ * ice_get_ts_point - get the timestamp latch point
-+ * @info: the driver's ptp info structure
-+ * @point: returns the configured timestamp latch point
-+ *
-+ * Return: 0 on success, negative on failure.
-+ */
-+static int ice_get_ts_point(struct ptp_clock_info *info,
-+			    enum ptp_ts_point *point)
-+{
-+	struct ice_pf *pf = ptp_info_to_pf(info);
-+	struct ice_hw *hw = &pf->hw;
-+	int ret;
-+
-+	ice_ptp_lock(hw);
-+	ret = ice_ptp_hw_ts_point_get(hw, point);
-+	ice_ptp_unlock(hw);
-+
-+	return ret;
-+}
-+
-+/**
-+ * ice_set_ts_point - set the timestamp latch point
-+ * @info: the driver's ptp info structure
-+ * @point: requested timestamp latch point
-+ *
-+ * Return: 0 on success, negative on failure.
-+ */
-+static int ice_set_ts_point(struct ptp_clock_info *info,
-+			    enum ptp_ts_point point)
-+{
-+	struct ice_pf *pf = ptp_info_to_pf(info);
-+	struct ice_hw *hw = &pf->hw;
-+	int ret;
-+
-+	ice_ptp_lock(hw);
-+	ret = ice_ptp_hw_ts_point_set(hw, point);
-+	ice_ptp_unlock(hw);
-+
-+	return ret;
-+}
-+
- /**
-  * ice_ptp_set_funcs_e82x - Set specialized functions for E82X support
-  * @pf: Board private structure
-@@ -2529,6 +2571,8 @@ static void ice_ptp_set_funcs_e82x(struct ice_pf *pf)
- 	if (ice_is_e825c(&pf->hw)) {
- 		pf->ptp.ice_pin_desc = ice_pin_desc_e825c;
- 		pf->ptp.info.n_pins = ICE_PIN_DESC_ARR_LEN(ice_pin_desc_e825c);
-+		pf->ptp.info.set_ts_point = ice_set_ts_point;
-+		pf->ptp.info.get_ts_point = ice_get_ts_point;
- 	} else {
- 		pf->ptp.ice_pin_desc = ice_pin_desc_e82x;
- 		pf->ptp.info.n_pins = ICE_PIN_DESC_ARR_LEN(ice_pin_desc_e82x);
-diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-index dfd49732bd5b..06c32f180932 100644
---- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
-@@ -6320,3 +6320,63 @@ int ice_cgu_get_output_pin_state_caps(struct ice_hw *hw, u8 pin_id,
- 
- 	return 0;
- }
-+
-+/**
-+ * ice_ptp_hw_ts_point_get - check if timestamps are latched on/post SFD
-+ * @hw: pointer to the HW struct
-+ * @point: return the configured timestamp latch point
-+ *
-+ * Verify if HW timestamping point is configured to latch at the beginning or
-+ * post of SFD (Start of Frame Delimiter)
-+ *
-+ * Return: 0 on success, negative on error
-+ */
-+int ice_ptp_hw_ts_point_get(struct ice_hw *hw, enum ptp_ts_point *point)
-+{
-+	u8 port = hw->port_info->lport;
-+	u32 val;
-+	int err;
-+
-+	err = ice_read_mac_reg_eth56g(hw, port, PHY_MAC_XIF_MODE, &val);
-+	if (err)
-+		return err;
-+	if (val & PHY_MAC_XIF_TS_SFD_ENA_M)
-+		*point = PTP_TS_POINT_SFD;
-+	else
-+		*point = PTP_TS_POINT_POST_SFD;
-+
-+	return err;
-+}
-+
-+/**
-+ * ice_ptp_hw_ts_point_set - configure timestamping on/post SFD
-+ * @hw: pointer to the HW struct
-+ * @point: requested timestamp latch point
-+ *
-+ * Configure timestamping to measure at the beginning/post SFD (Start of Frame
-+ * Delimiter)
-+ *
-+ * Return: 0 on success, negative on error
-+ */
-+int ice_ptp_hw_ts_point_set(struct ice_hw *hw, enum ptp_ts_point point)
-+{
-+	u8 port = hw->port_info->lport;
-+	int err, val;
-+
-+	err = ice_read_mac_reg_eth56g(hw, port, PHY_MAC_XIF_MODE, &val);
-+	if (err)
-+		return err;
-+	if ((val & PHY_MAC_XIF_TS_SFD_ENA_M) && point == PTP_TS_POINT_SFD)
-+		return -EINVAL;
-+	if (!(val & PHY_MAC_XIF_TS_SFD_ENA_M) &&
-+	    point == PTP_TS_POINT_POST_SFD)
-+		return -EINVAL;
-+	if (point == PTP_TS_POINT_SFD)
-+		val |= PHY_MAC_XIF_TS_SFD_ENA_M;
-+	else if (point == PTP_TS_POINT_POST_SFD)
-+		val &= ~PHY_MAC_XIF_TS_SFD_ENA_M;
-+	else
-+		return -EINVAL;
-+
-+	return ice_write_mac_reg_eth56g(hw, port, PHY_MAC_XIF_MODE, val);
-+}
-diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.h b/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-index 47af7c5c79b8..5e4edaee063e 100644
---- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-+++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
-@@ -348,6 +348,8 @@ void ice_ptp_init_hw(struct ice_hw *hw);
- int ice_get_phy_tx_tstamp_ready(struct ice_hw *hw, u8 block, u64 *tstamp_ready);
- int ice_ptp_one_port_cmd(struct ice_hw *hw, u8 configured_port,
- 			 enum ice_ptp_tmr_cmd configured_cmd);
-+int ice_ptp_hw_ts_point_get(struct ice_hw *hw, enum ptp_ts_point *point);
-+int ice_ptp_hw_ts_point_set(struct ice_hw *hw, enum ptp_ts_point point);
- 
- /* E822 family functions */
- int ice_read_quad_reg_e82x(struct ice_hw *hw, u8 quad, u16 offset, u32 *val);
--- 
-2.38.1
-
+BTW if I missed any important feedback of yours from v3 please let me 
+know.  It was a lot of overhaul to switch to this way of doing things 
+and a lot of it didn't make sense anymore.
 
