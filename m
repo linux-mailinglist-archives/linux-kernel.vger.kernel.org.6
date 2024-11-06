@@ -1,210 +1,161 @@
-Return-Path: <linux-kernel+bounces-398945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2A09BF854
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:11:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E2B9BF85B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:13:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50489283BC7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 645231F228BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D57820C48F;
-	Wed,  6 Nov 2024 21:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186AF20CCC8;
+	Wed,  6 Nov 2024 21:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K2w5ZPXC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RhV8oxBg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F55F20C473;
-	Wed,  6 Nov 2024 21:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D120720C489
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 21:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730927503; cv=none; b=WF3nLM7w9iMcfwXp3Oa7aNhrpKbFxIHZRv22oiSI0bRYirXisgEY4BqC3hyZ8bMTjkGYWDgSInJjLyLc7gfUPsxbd4Ej51170HuFq5XFHkF5uprOB2sQ622ImXXjzvl6EiCjGfUuvEpDHab7BQ9W9Sp1NRbwAziXwGU3IirWTM0=
+	t=1730927585; cv=none; b=poiKlyIoP4UIjNC7NUw5JRd3MBJC4aOUt7ecnwHBdd+qBAfUkcI937SHvWGQATPm97bSzX4YRl82P1X8fPVOEEbucHLlD2myGG43M5CdvaxmG5L5XZNncg+YwhM1hSYIcISvN+5oOey5xwOk8G3dK8JuMZM2o7p25weVQc+/81E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730927503; c=relaxed/simple;
-	bh=huYLARWenfwUcsC3qlGBR/nDXR80KJL1574pQn4aHRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQpPjpzcazDGYrwOD6JTvMb4oJTeeBoR8TdeancgV4qmSPVsIxwoaQ+vpkWjvxPdahjLdPzLsQ6QpEPKAbeTer3CWYoSc6AU6IdHEpnZMerTyLLQIFrwtuPvl8pJ7jQmhgINdOgN+pZN4TlPCO4VQ4qKfFhjOakw+KZwGwIERio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K2w5ZPXC; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730927501; x=1762463501;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=huYLARWenfwUcsC3qlGBR/nDXR80KJL1574pQn4aHRQ=;
-  b=K2w5ZPXCDvFCW8+XZXWrBSv5RJbWIY5JSrZAP3dBD1g+CiV8wiuW1c8M
-   2y4rLE50+9PM6IbJarxL3Q2lVhS/N2ZbctTp+ndwkdzgoE3pwQg4NVZeu
-   wm+HPCrv9MLUN3LRNTFMLArxTA2o10jEyotg6+gwYPuZUsliWhu2wc7ML
-   npbUug9rvKWLG5fGBBrvhmcuG49RzyRpIfkypiQWNf6gkms3gdIZuY6Nu
-   uFKh6m7FgiWhRVIYzisw36kcvhT/59ifW/wPKFELBLtqpLZ70so4+WQ0t
-   OZMyjbkzfhPy56kT0znCpOuh8kR20H4ODsREIHYQpeh0Y3GmXbHjwy6WY
-   g==;
-X-CSE-ConnectionGUID: Z+majKsRSsqtifboXAoHGA==
-X-CSE-MsgGUID: V/aTrz0fSU+tmUrAHoh8mA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30970714"
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="30970714"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 13:11:40 -0800
-X-CSE-ConnectionGUID: +xIJCD1iQhSFhOG6nRINnw==
-X-CSE-MsgGUID: WPJFrZdcRNeCUd+wMt4OZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="89546581"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 06 Nov 2024 13:11:38 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8nJO-000pQk-1w;
-	Wed, 06 Nov 2024 21:11:34 +0000
-Date: Thu, 7 Nov 2024 05:11:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Longfang Liu <liulongfang@huawei.com>, alex.williamson@redhat.com,
-	jgg@nvidia.com, shameerali.kolothum.thodi@huawei.com,
-	jonathan.cameron@huawei.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxarm@openeuler.org, liulongfang@huawei.com
-Subject: Re: [PATCH v13 3/4] hisi_acc_vfio_pci: register debugfs for
- hisilicon migration driver
-Message-ID: <202411070400.I8XzogJF-lkp@intel.com>
-References: <20241106100343.21593-4-liulongfang@huawei.com>
+	s=arc-20240116; t=1730927585; c=relaxed/simple;
+	bh=2Be2vptfkRRusVApOXjRb/TOfYhZr3S2q2yLZnErf24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ENtlaGhueS4Y5c6aVjggT0/yN/oRN0C65cMVvpU7G7wpNwcgbBFklUZ7d5ZBF/I5YHGKv1Dkjtv33AS9/7o9GDdpcXdpJkLlRYDAygpbFcIwOUTSycPeIi/uDF/uhKX9Bz5NiUYnpPN4KWk9fXvdYi+cHhA5UZ3nDByjVe6ZSQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RhV8oxBg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730927582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6CaKWX2sAhCDPrXFOg5z+X6ACDdnGEgP4/mWIeAlabk=;
+	b=RhV8oxBgAooD3tW3ZOPDTlYm6CqgNZ+9tGhLw/LPRMEVAc8Afbdx19gb2Yy+gkplnHSBm/
+	UQ2DC18iQVp4BQq2aKh2Og9TfVt0Jgy/udiBru0LfJkQPv6pJIPzYnnHHiz56IEbP8Q3x6
+	mjvrbnMdG9kvDpo8VKRyqzAxw/ZRQbI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-669-pg-M9TUrP3K8DYQtVkkOdQ-1; Wed,
+ 06 Nov 2024 16:12:59 -0500
+X-MC-Unique: pg-M9TUrP3K8DYQtVkkOdQ-1
+X-Mimecast-MFC-AGG-ID: pg-M9TUrP3K8DYQtVkkOdQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D972195608B;
+	Wed,  6 Nov 2024 21:12:57 +0000 (UTC)
+Received: from f39.redhat.com (unknown [10.39.192.235])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CA52E1956088;
+	Wed,  6 Nov 2024 21:12:51 +0000 (UTC)
+From: Eder Zulian <ezulian@redhat.com>
+To: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	miguel.ojeda.sandonis@gmail.com,
+	tglx@linutronix.de,
+	williams@redhat.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	jlelli@redhat.com
+Subject: [PATCH v2] rust: Fix build error
+Date: Wed,  6 Nov 2024 22:12:15 +0100
+Message-ID: <20241106211215.2005909-1-ezulian@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106100343.21593-4-liulongfang@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Longfang,
+On a PREEMPT_RT build, spin locks have been mapped to rt_mutex types, so
+avoid the raw_spinlock_init call for RT.
 
-kernel test robot noticed the following build errors:
+When CONFIG_DEBUG_SPINLOCK=y and CONFIG_PREEMPT_RT=y the following build
+error occurs:
 
-[auto build test ERROR on awilliam-vfio/next]
-[also build test ERROR on awilliam-vfio/for-linus linus/master v6.12-rc6 next-20241106]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+https://lore.kernel.org/oe-kbuild-all/202409251238.vetlgXE9-lkp@intel.com/
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Longfang-Liu/hisi_acc_vfio_pci-extract-public-functions-for-container_of/20241106-182913
-base:   https://github.com/awilliam/linux-vfio.git next
-patch link:    https://lore.kernel.org/r/20241106100343.21593-4-liulongfang%40huawei.com
-patch subject: [PATCH v13 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon migration driver
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241107/202411070400.I8XzogJF-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070400.I8XzogJF-lkp@intel.com/reproduce)
+Fixes: 876346536c1b ("rust: kbuild: split up helpers.c")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202409251238.vetlgXE9-lkp@intel.com/
+Signed-off-by: Eder Zulian <ezulian@redhat.com>
+---
+V1 -> V2: Cleaned up style and addressed review comments
+ include/linux/spinlock_rt.h | 15 +++++++--------
+ rust/helpers/spinlock.c     |  8 ++++++--
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411070400.I8XzogJF-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:9:
-   In file included from include/linux/hisi_acc_qm.h:10:
-   In file included from include/linux/pci.h:1650:
-   In file included from include/linux/dmapool.h:14:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:1400:4: error: too many arguments to function call, expected 2, have 4
-    1397 |         seq_puts(seq,
-         |         ~~~~~~~~
-    1398 |                  "guest driver load: %u\n"
-    1399 |                  "data size: %lu\n",
-    1400 |                  hisi_acc_vdev->vf_qm_state,
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1401 |                  sizeof(struct acc_vf_data));
-         |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/seq_file.h:122:29: note: 'seq_puts' declared here
-     122 | static __always_inline void seq_puts(struct seq_file *m, const char *s)
-         |                             ^        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c:1429:46: error: too many arguments to function call, expected 2, have 3
-    1429 |         seq_puts(seq, "migrate data length: %lu\n", debug_migf->total_length);
-         |         ~~~~~~~~                                    ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/seq_file.h:122:29: note: 'seq_puts' declared here
-     122 | static __always_inline void seq_puts(struct seq_file *m, const char *s)
-         |                             ^        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   4 warnings and 2 errors generated.
-
-
-vim +1400 drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-
-  1364	
-  1365	static int hisi_acc_vf_dev_read(struct seq_file *seq, void *data)
-  1366	{
-  1367		struct device *vf_dev = seq->private;
-  1368		struct vfio_pci_core_device *core_device = dev_get_drvdata(vf_dev);
-  1369		struct vfio_device *vdev = &core_device->vdev;
-  1370		struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(vdev);
-  1371		size_t vf_data_sz = offsetofend(struct acc_vf_data, padding);
-  1372		struct acc_vf_data *vf_data;
-  1373		int ret;
-  1374	
-  1375		mutex_lock(&hisi_acc_vdev->open_mutex);
-  1376		ret = hisi_acc_vf_debug_check(seq, vdev);
-  1377		if (ret) {
-  1378			mutex_unlock(&hisi_acc_vdev->open_mutex);
-  1379			return ret;
-  1380		}
-  1381	
-  1382		mutex_lock(&hisi_acc_vdev->state_mutex);
-  1383		vf_data = kzalloc(sizeof(*vf_data), GFP_KERNEL);
-  1384		if (!vf_data) {
-  1385			ret = -ENOMEM;
-  1386			goto mutex_release;
-  1387		}
-  1388	
-  1389		vf_data->vf_qm_state = hisi_acc_vdev->vf_qm_state;
-  1390		ret = vf_qm_read_data(&hisi_acc_vdev->vf_qm, vf_data);
-  1391		if (ret)
-  1392			goto migf_err;
-  1393	
-  1394		seq_hex_dump(seq, "Dev Data:", DUMP_PREFIX_OFFSET, 16, 1,
-  1395			     (const void *)vf_data, vf_data_sz, false);
-  1396	
-  1397		seq_puts(seq,
-  1398			 "guest driver load: %u\n"
-  1399			 "data size: %lu\n",
-> 1400			 hisi_acc_vdev->vf_qm_state,
-  1401			 sizeof(struct acc_vf_data));
-  1402	
-  1403	migf_err:
-  1404		kfree(vf_data);
-  1405	mutex_release:
-  1406		mutex_unlock(&hisi_acc_vdev->state_mutex);
-  1407		mutex_unlock(&hisi_acc_vdev->open_mutex);
-  1408	
-  1409		return ret;
-  1410	}
-  1411	
-
+diff --git a/include/linux/spinlock_rt.h b/include/linux/spinlock_rt.h
+index f9f14e135be7..f6499c37157d 100644
+--- a/include/linux/spinlock_rt.h
++++ b/include/linux/spinlock_rt.h
+@@ -16,22 +16,21 @@ static inline void __rt_spin_lock_init(spinlock_t *lock, const char *name,
+ }
+ #endif
+ 
+-#define spin_lock_init(slock)					\
++#define __spin_lock_init(slock, name, key, percpu)		\
+ do {								\
+-	static struct lock_class_key __key;			\
+-								\
+ 	rt_mutex_base_init(&(slock)->lock);			\
+-	__rt_spin_lock_init(slock, #slock, &__key, false);	\
++	__rt_spin_lock_init(slock, name, key, percpu);		\
+ } while (0)
+ 
+-#define local_spin_lock_init(slock)				\
++#define _spin_lock_init(slock, percpu)				\
+ do {								\
+ 	static struct lock_class_key __key;			\
+-								\
+-	rt_mutex_base_init(&(slock)->lock);			\
+-	__rt_spin_lock_init(slock, #slock, &__key, true);	\
++	__spin_lock_init(slock, #slock, &__key, percpu);	\
+ } while (0)
+ 
++#define spin_lock_init(slock)		_spin_lock_init(slock, false)
++#define local_spin_lock_init(slock)	_spin_lock_init(slock, true)
++
+ extern void rt_spin_lock(spinlock_t *lock) __acquires(lock);
+ extern void rt_spin_lock_nested(spinlock_t *lock, int subclass)	__acquires(lock);
+ extern void rt_spin_lock_nest_lock(spinlock_t *lock, struct lockdep_map *nest_lock) __acquires(lock);
+diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
+index b7b0945e8b3c..5971fdf6f755 100644
+--- a/rust/helpers/spinlock.c
++++ b/rust/helpers/spinlock.c
+@@ -6,10 +6,14 @@ void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
+ 				  struct lock_class_key *key)
+ {
+ #ifdef CONFIG_DEBUG_SPINLOCK
++# if defined(CONFIG_PREEMPT_RT)
++	__spin_lock_init(lock, name, key, false);
++# else /*!CONFIG_PREEMPT_RT */
+ 	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+-#else
++# endif /* CONFIG_PREEMPT_RT */
++#else /* !CONFIG_DEBUG_SPINLOCK */
+ 	spin_lock_init(lock);
+-#endif
++#endif /* CONFIG_DEBUG_SPINLOCK */
+ }
+ 
+ void rust_helper_spin_lock(spinlock_t *lock)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
