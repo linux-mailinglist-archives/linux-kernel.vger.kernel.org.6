@@ -1,133 +1,113 @@
-Return-Path: <linux-kernel+bounces-398442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC909BF15A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:15:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBECD9BF160
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74CB4B23F57
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45567B21E29
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953EB2022D1;
-	Wed,  6 Nov 2024 15:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EA4202F76;
+	Wed,  6 Nov 2024 15:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fkJ9eDg7"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcvyDC3J"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8993D17B439
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF7820127C;
+	Wed,  6 Nov 2024 15:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730906148; cv=none; b=DeTe4EYZt/QXPRFfyEbPBnJnrs4QbYwzguqEVHAk237Y1n6ileegExRCEtvBWz5l/NyF93P5Wgmc1YmpvyX8gmcEHMu/K59s5sDT0zAXnClIWMLcPDo++yTrnPA8YkbUDBv2Y3ilSWdFZSYMtdrSXsMnOFz0+UPU2Kcg4KNfo1k=
+	t=1730906236; cv=none; b=NqdFwL+4QNQvRV9i+gDvX0JISaSgPxm8TOHOEfc+PusEUQL1etHQu4hwrmHbTNFTW0cR3Ha86+zVSZTMpsRPPrbI+4ppXr9tAYobOSgbTuynX8tPAGSZFEfDOsgKg963oxQPUJtoPRpncqC7pQW4TdebuxavX+n42EzvY9/CY0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730906148; c=relaxed/simple;
-	bh=ah6lRDJ1vIAqy6JYLuznrNniubx0AIAPGEcdoLbmwbk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uFqp9/C67U2qDH09oTL+3A57Bh+fJdeOA9WF/c4noit5rAdsfLa4+Vu++1PK8m30ZwokULzlUc70kBf6WwRYg+pJZKDSf8wHk9jXYa7S+/fRFWnYFOKNUmSj4WUWku69nGgf0FP3oIFCekdZYR9o+WwpH7jrC4SBoQq0Cq6kXUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fkJ9eDg7; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea258fe4b6so136870877b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:15:46 -0800 (PST)
+	s=arc-20240116; t=1730906236; c=relaxed/simple;
+	bh=S95d1DVGhFgHevrHa/QaulBHO7dmWGDwrOgPRxWXnoQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=Aj/T9YTPXpgkmCmqQPqnkazUH+KK/ky9nPlgHtAjz2lA88Pjez/xjsikS6Ogz1sz+DGTPXQjqUfYz0Ktv9uKsBLbFmMRYHfl53Bl1sMH/g6ob4WBiOLd2R1oHxT7QfRMeE8rloKH0Pd95Ksff3VWXfGS+L5CwqRn32iXiIczz6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcvyDC3J; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7aa086b077so876545666b.0;
+        Wed, 06 Nov 2024 07:17:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730906145; x=1731510945; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UQ2mx+EpljTToGeyel8oB03Vw6L977V2IZ3L/Hui8OM=;
-        b=fkJ9eDg7ln6P3eFEkRVgNEFW9EqDRPPRY78Ous36LuuWrYz90ljfWAkGneRo79LVAm
-         /MXHDOFDG1USCtwA1GzmWncEGciH1qWqktpF9/M3O+V3DebHgmetqhccI7lOpFzJNAiA
-         Sd/k3gSduveuHBkz91z8cULgdJkw3cY/0V48QnaPWiy7n/xIpuPVpT/W7/SVe2t5HW0M
-         90ZMoA52/BUnLeTtqS0fQJVsmnSUnsTVKoT12Q4vKGrkDXc8QTEHY56WOv33opMBQ1I/
-         Smakj0n0Nr/tWplJuBd0pjN+tsHyn8vsbuPpzg5GYnRIT7lTVqvNfSCz6fuJEtgcT424
-         kdSw==
+        d=gmail.com; s=20230601; t=1730906233; x=1731511033; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S95d1DVGhFgHevrHa/QaulBHO7dmWGDwrOgPRxWXnoQ=;
+        b=jcvyDC3J8VMWsE9ugGrPJoH7hEUJwmbNIe6tEUtiafqCQVN7Qm/vL9LhKqH23PKu/k
+         1TU0rNcCjtg0xfmYBmo32rMqEopZGIQaYwHbUCyMe3TwiWxl8pRpaBTn1g4C1dxH40we
+         43gG1a9OdPpDDDMeAVznGZ/b032tKdJTGN+TJacu9h/fuMECGxzZRcECijTCynbZunNJ
+         BKFQK22P+9mWfpxtwZPRwp11G1uGZEPMzQd4NnUtJNms64RyxqZLMOLi8f0SkuECofdn
+         jUHop6/PvfZ0h6hCu5/+mC4dQMBz6i7RHr9MBAiXXkz7u1lhHCkRqh+o5OXNC5dCdPA/
+         oezA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730906145; x=1731510945;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UQ2mx+EpljTToGeyel8oB03Vw6L977V2IZ3L/Hui8OM=;
-        b=eRIOyluVX93UFGRgEsRjWkO/up7oxLyAXD9TZRZfbzz8vyhS8iR15nR6QPMJCz2MGk
-         M+TvcvHkocrNUiiHifO3Pv4ASpYHDWkcFEnMlZ6BsUCm9iFo5DxADWU2+CHebfWhuZKq
-         K9eTv9gxOOITstBXU2lVLeoBR0WTzdEeG/p/dG4Wp0luJsKegYggxZxnZLRlTAXsX91L
-         sAKuVnHvjF1ogJ1woUS/FjOg6Z+7W1oiAjwkwzayulsFzQ2DLvzY25bClxhjCpJa55Ja
-         DZwUM3LqhLTFbKTC3AvhRMus+mZxF8pjegL6XnBfSG1ehl/KW4IJONOiDDaM58c9LXeA
-         3kSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVn0wmycp/211hGLB3ithE/KRY5faK5CHcbUVa//TSi/lyoFmVaeYnpRiIVcF/1oRU8s3yHoEzZeBe3kSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz30zZC/oFZ0mXQBFWZzlR61SKOkNEPRzXyiVN9Azws6EkBtTDM
-	PmtwJhx5Kh8fB2n476cEWxzVLinSrDtEWifhTsh4aJOFXsTJCJlUN4U6YYPZhliCVB16bWA/i49
-	/vg==
-X-Google-Smtp-Source: AGHT+IHSVYy6O6LuOrDLKfyMmnWs9nkPoThhKY5KU2GVwo0c+o1WEZ/A33w3yFUxE8RmnKti3wVld/5lngA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:7448:b0:6e3:f12:1ad3 with SMTP id
- 00721157ae682-6ea64be01cdmr2004097b3.6.1730906145701; Wed, 06 Nov 2024
- 07:15:45 -0800 (PST)
-Date: Wed, 6 Nov 2024 07:15:44 -0800
-In-Reply-To: <fb72d616-dba8-410f-a377-3774aa7a5295@kernel.org>
+        d=1e100.net; s=20230601; t=1730906233; x=1731511033;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S95d1DVGhFgHevrHa/QaulBHO7dmWGDwrOgPRxWXnoQ=;
+        b=U00AKLLBHEDA4uc03Wa/xtzJCY39Z7mhLSpF1oCC0jPR2dwMDKgPxdOcAYV9tAt0u4
+         J2waCM+pHj3LaAKv9OJCiUXbt3li6fCvhNPKygogDKG+KHujqJHQTelibh3Wa4tt3Krx
+         1gFlrzQgrWT83Uchn2JYixE/4Vn0WcYPkaZ5ATgM26/SJgkuudHH2STgF2qjeUbm4U9r
+         5GrwUn4UtkWlkAg6p/09xrLpmkxaucEhcuBuQIiIPy9JYjiNp1doZ0kCYfQjlSAqji3o
+         E1arWngY9/Coldx/qiic4W1C0RucTHpExtit/l1LpTXrYCTlyDpJoMSCFiujfb7WJHJb
+         32ng==
+X-Forwarded-Encrypted: i=1; AJvYcCWH0O1hth1Bc3UexhCnxrxl8cZpaKKH5KTtIdy9oCNsK13Hswas7wDRmDyplC5AQW65P/ehvvVolTSNoPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuWozPCdjJNGiW0RDwh87zFGjxQ+QBKSXgmsfQ7nQP6DVzjeqv
+	vgfcWyLpDOLcXsDSA/CItNBxCoF7Mi0l8XV+xhKZjCur0qbc/zmjS/wuGdu+MsgoNTtXFcVZear
+	wwX2hGhIvPECY+LIeOQs5THLVyrxCj46p
+X-Google-Smtp-Source: AGHT+IHr44bjMjzGKzBJEYC3WA2Fb4CY7pBUnFZZAYKHoMYadxN7NXQbnXhIpjXlKlqQLFvzD5GEGF4NZ1YUJey2y5U=
+X-Received: by 2002:a17:907:3e99:b0:a99:fb10:1285 with SMTP id
+ a640c23a62f3a-a9e3a5a0e19mr2901369366b.20.1730906232637; Wed, 06 Nov 2024
+ 07:17:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241105160234.1300702-1-superm1@kernel.org> <ZyuFMtYSneOFrsvs@google.com>
- <fb72d616-dba8-410f-a377-3774aa7a5295@kernel.org>
-Message-ID: <ZyuIINwBdiztWhi3@google.com>
-Subject: Re: [PATCH] x86/CPU/AMD: Clear virtualized VMLOAD/VMSAVE on Zen4 client
-From: Sean Christopherson <seanjc@google.com>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Nikolay Borisov <nik.borisov@suse.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, 
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
-	Mario Limonciello <mario.limonciello@amd.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20241030-bcwide-v3-0-c2df49a26c45@kernel.org>
+In-Reply-To: <20241030-bcwide-v3-0-c2df49a26c45@kernel.org>
+From: Sebastian Feld <sebastian.n.feld@gmail.com>
+Date: Wed, 6 Nov 2024 16:16:35 +0100
+Message-ID: <CAHnbEGJWtRgPHSRMqEVDgRhvYHeqcHEKxeY=B2mD3W_YjR6zpA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] nfsd: allow the use of multiple backchannel slots
+To: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 06, 2024, Mario Limonciello wrote:
-> On 11/6/2024 09:03, Sean Christopherson wrote:
-> > +KVM, given that this quite obviously affects KVM...
-> > 
-> > On Tue, Nov 05, 2024, Mario Limonciello wrote:
-> > > From: Mario Limonciello <mario.limonciello@amd.com>
-> > > 
-> > > A number of Zen4 client SoCs advertise the ability to use virtualized
-> > > VMLOAD/VMSAVE, but using these instructions is reported to be a cause
-> > > of a random host reboot.
-> > > 
-> > > These instructions aren't intended to be advertised on Zen4 client
-> > > so clear the capability.
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=219009
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> > > ---
-> > >   arch/x86/kernel/cpu/amd.c | 11 +++++++++++
-> > >   1 file changed, 11 insertions(+)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-> > > index 015971adadfc7..ecd42c2b3242e 100644
-> > > --- a/arch/x86/kernel/cpu/amd.c
-> > > +++ b/arch/x86/kernel/cpu/amd.c
-> > > @@ -924,6 +924,17 @@ static void init_amd_zen4(struct cpuinfo_x86 *c)
-> > >   {
-> > >   	if (!cpu_has(c, X86_FEATURE_HYPERVISOR))
-> > >   		msr_set_bit(MSR_ZEN4_BP_CFG, MSR_ZEN4_BP_CFG_SHARED_BTB_FIX_BIT);
-> > > +
-> > > +	/*
-> > > +	 * These Zen4 SoCs advertise support for virtualized VMLOAD/VMSAVE
-> > > +	 * in some BIOS versions but they can lead to random host reboots.
-> > 
-> > Uh, CPU bug?  Erratum?
-> 
-> BIOS bug.  Those shouldn't have been advertised.
+On Wed, Oct 30, 2024 at 3:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> A few more minor updates to the set to fix some small-ish bugs, and do a
+> bit of cleanup. This seems to test OK for me so far.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> Changes in v3:
+> - add patch to convert se_flags to single se_dead bool
+> - fix off-by-one bug in handling of NFSD_BC_SLOT_TABLE_MAX
+> - don't reject target highest slot value of 0
+> - Link to v2: https://lore.kernel.org/r/20241029-bcwide-v2-1-e9010b6ef55d=
+@kernel.org
+>
+> Changes in v2:
+> - take cl_lock when fetching fields from session to be encoded
+> - use fls() instead of bespoke highest_unset_index()
+> - rename variables in several functions with more descriptive names
+> - clamp limit of for loop in update_cb_slot_table()
+> - re-add missing rpc_wake_up_queued_task() call
+> - fix slotid check in decode_cb_sequence4resok()
+> - add new per-session spinlock
+>
 
-Why not?  "but they can lead to random host reboots" is a description of the
-symptom, not an explanation for why KVM is unable to use a feature that is
-apparently support by the CPU.
+What does a NFSv4.1 client need to do to be compatible with this change?
 
-And if the CPU doesn't actually support virtualized VMLOAD/VMSAVE, then this is
-a much bigger problem, because it means KVM is effectively giving the guest read
-and write access to all of host memory.
+Sebi
+--=20
+Sebastian Feld - IT secruity expert
 
