@@ -1,269 +1,260 @@
-Return-Path: <linux-kernel+bounces-398997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CBD9BF90B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:16:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A2A9BF90D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68B81F2128A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:16:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBF81C21F29
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE6320EA56;
-	Wed,  6 Nov 2024 22:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CBE1D363D;
+	Wed,  6 Nov 2024 22:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWGIheHp"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hy3R/6PM"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BBE20D4F3;
-	Wed,  6 Nov 2024 22:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DB61D5151;
+	Wed,  6 Nov 2024 22:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730931280; cv=none; b=Egl1ZrC7GODgTaxwUNTmbNH/iupwCX8dGybvm/tWfJM3fTGmjSjnUK7k4Je1dSsRmm4rnJwtDJuIhOG0xPhfpsHMFBJKzRsL519Qq6e/2PChJMoEacgDbE7EWbfihvRAuYz1+T9m0MlpO9JEQMMXrKyIRvY90kKRZ2vF80ZAup4=
+	t=1730931343; cv=none; b=O12IuZG4QxqOOUQt+ej6PArb2nBUvLDpqTa+gdEF+VGFjtRoZSo51Kqht3Bb27xR6szxNacNBL68S5j7LPf9yHot1QsnfxDTgctjAVxXX8/XXjslWBTv0oeIiSbN9/IynSupGKhNefyGR4/6vsQmx24BuipSOzrL2lmbMCiRNkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730931280; c=relaxed/simple;
-	bh=P1kC+Hm8/7dfYqrVrlPWMXBDsQUXhTRhj5IWs/wkmK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hRNc0I2ZMMfCkTiN+/LRh9d6PGIfxZ/x3PtGISiVXBIR55lJ2PRUT47DNmq2LYjbghPyv05auWgOhoA5FS+sfttttd7OHJxD4N6iyISUiv1dV9hB/P8tHYVV8CTnsiKwlCtMKVMzjAqQszCHZStQ36buf2RyOvYBhwnL4S40lto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWGIheHp; arc=none smtp.client-ip=209.85.219.175
+	s=arc-20240116; t=1730931343; c=relaxed/simple;
+	bh=z98hpMQxfpYc0n+ZYrKaPSTkUUMba3878SMe8PgSAkw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jdDCpHm3DtIglRv06RPpFV8AB1IWMZ9C+06laa8FjHha3hqnti80aj/B2X4hNV8t91oe/45WSI/FI87VnPsm42QjqmshoUMBD3bVHofybyq6bK7I6HPxB+Z+HyWgu2nKPubujc21rr2ecnpKvLP4bj7TKFDaCspVOqHZuuo+6kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hy3R/6PM; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e29047bec8fso1201320276.0;
-        Wed, 06 Nov 2024 14:14:38 -0800 (PST)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ee7e87f6e4so272538a12.2;
+        Wed, 06 Nov 2024 14:15:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730931277; x=1731536077; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730931339; x=1731536139; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cbER8uQRgMc3lGFT4u7VFeg6pXjRf9IXs/IQf6vmq6s=;
-        b=DWGIheHpCS4XJbdXRcgD8hmNSNPpjqCCuE1I7FsnCEA5WcZz+qLTrE6q0M9Ohh+Gay
-         jAARLo1biF9eyhl6t9I2wCeduXI9DRfs347XMDb45a0eM8qftu8aCzn/uBIETyZ7c8+O
-         FYZaevPDSLscG/m0x0ZXR0H68jWZPuFvB29lZHv8p+NpbcvvqRoFtusJME7JOetV41qh
-         De2rVNjZgwUS/0OnZIACCYiXppwFAR6B/WjUaG6Vs/1tUrzAGJz2VF8hf3FW+Ysoylv1
-         qAtfdrtyx5CrPYyG/3iEV6AZG2OQP5jvvHB/f5W63W/zniLll4JnEUHI3xVhpbUwh1LH
-         TerA==
+        bh=ZVlemPBZb31F4Ktpe27you5t3FXwVBtCloJLcZZCTYE=;
+        b=Hy3R/6PML+Cc1tjxXosOJPqMY5GafN2M2DyiwrK0VGc8aBUNVsNvNMvIAuZfNwjXN8
+         LahKKfewYf7zXjZjb4RTJPc02XPWWnHiPRWTH5NMWna3lg91aIFDDpV+U6GQWNPfTHdA
+         KwR9kHA4ya6F4GUHscJbd9gOhxMl9YAg4vq5GYf65A8Bpuw68f9W5fgAwN5D0G9HYJ2+
+         lx6NjmYE24nZE8wrq3KWeVGSUUprs0paM0KkWPFkQjF7T6WSLI5PqBMJ3MYy//94guZo
+         6e4MnrQ6s+EdF7AcEffxaJBQg2LfXx5QubberCkQKX0e5sSrklGaM89NW56pH2LGedl+
+         7evA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730931277; x=1731536077;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730931339; x=1731536139;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cbER8uQRgMc3lGFT4u7VFeg6pXjRf9IXs/IQf6vmq6s=;
-        b=TWOAsHJ0SnEaOoVMakBUKsxCg/xpSB3kEiocMVmj30uEtrgRQW8hQJMrWA32HZLO2r
-         ZtdrbrnmWcHg/Vr//FYPikI98dQ/7IRBmabCceRZ4HNPbYLiOxu43G1YktdDiszl19NZ
-         N5rpx0ch3PMenb2gXLBmGPBo94feuEqlbDzTiQV4dqsU0qy+31brbzPc59w76DfsUpNK
-         5KgPvUwKgQrkx0ePxOaKJet9TfpiBd0dw5I3tv4lB5BIa26s3WLx6WqsCTZBioy+EC4d
-         5NybfcQ4pfZudCJKOHwmydEzr79zKQ69pLTrEI2SK1fJSUnKubq8G+mftDZJYubYaoEE
-         +aVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJOafWSVOHBWiJZu2nsbGgR8QtZkKf6TxEvBYklN1vLKuq858gexyDoY33CgRvSQ/+coouBgmTY8uuV2bC@vger.kernel.org, AJvYcCXqvLKeTeCd5cHhyBbrFlIodvHjjnQ4ujOzbk+LNnaE3gqsd0ynMk9OqattjeI6wiketSPSlLHp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU2UHZhAo1tSubYPtGOTHhd52DaUkGNQs5CnuDf25+UPq7p34f
-	mMS3UMV66gX/crcAKP9JkTxslReI3lOlngGwhNrPMRNfp7AjMwmJ
-X-Google-Smtp-Source: AGHT+IGszx+ho52yOVYH5yhv/l6mOK19o5HKqSOg2vLBuohvAZ7xFIBSVJm6ut1NbuJt/3OD0+/bdw==
-X-Received: by 2002:a05:690c:23c5:b0:6db:e1e0:bf6a with SMTP id 00721157ae682-6eacbff145fmr10678587b3.7.1730931277584;
-        Wed, 06 Nov 2024 14:14:37 -0800 (PST)
-Received: from localhost (fwdproxy-frc-002.fbsv.net. [2a03:2880:21ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb7a578sm185057b3.102.2024.11.06.14.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 14:14:36 -0800 (PST)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: shakeel.butt@linux.dev
-Cc: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH 2/2] memcg/hugetlb: Deprecate hugetlb memcg try-commit-cancel charging
-Date: Wed,  6 Nov 2024 14:14:34 -0800
-Message-ID: <20241106221434.2029328-3-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241106221434.2029328-1-joshua.hahnjy@gmail.com>
-References: <20241106221434.2029328-1-joshua.hahnjy@gmail.com>
+        bh=ZVlemPBZb31F4Ktpe27you5t3FXwVBtCloJLcZZCTYE=;
+        b=CclwgXJgLMdaUSdndi0gY62Mim0U1mFQFpkGeknHVgHqcxYkrjsVg7Al8Ckz97WBW+
+         w1EwIjSVmIWcgx6xC8fYelutNlZPNIXqRuA3S899timt9vjl9ePiggMDbMZgcRnpVFY8
+         d/aR6JLVAAm5BoQ5+gi90xs+41qldXCgxFDbdbXgFPLaptneFOBxG4U2sUYMwnxUN4is
+         8/L+cSS/fUuxsL3aFnVmLemJs1eVsUZ2+p4qQkW5ygBc3CgoygPKldxDyhU+36aqgXeO
+         8KOGyIdFVAKflC2QBaUC+mUNJny5/F8C0hWTMReBwivL8aO6wGFhP2t3Q8Zhtqy8tZwu
+         r5TA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeOhFHdYIojgAqVPG/iIP+gbF7LamEB0pkyKrGZYHtFs+xsOinhZ9ZEOI7/VA4JyeZcAM=@vger.kernel.org, AJvYcCWD5nXC9toy72AjB2JpEmi8ojILpszw03y5GKYwapWnxm8cyhR7GznWMe7+eTdy9Vy/ms0zg0+r0n6Y7kDZ@vger.kernel.org, AJvYcCXWISNYludpuFmWS8eD4z+bgWpsdBASmEtNNkhsGmyCYg4JflAl/lHO59PM6IAiPgUAuEu6toPx7JOjxjGKJg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmJSwlS0H1rhJuRqA+oOrwD6rEcaE+RtDbpyOh9XPV/hf2N6P5
+	ESWqJXtWQXVjU1K+NDwPOQsG2w1QGIiO4exbAPXtKCA1q8c3j+su3rNAm7MV1PhQgLPtgvEKMj/
+	/2hIrjMMskk4b29efZzFwpHDMgQU=
+X-Google-Smtp-Source: AGHT+IEMgHBIg76lvdFqk9Gvx5K24uD0OsQh7CrLqzchjmu0y5UKi/uIwzyR5+JXQVqcFmGihLXcUt2KTE+mV6pQ04s=
+X-Received: by 2002:a17:90b:17c1:b0:2e2:cd6b:c6ca with SMTP id
+ 98e67ed59e1d1-2e94c51b643mr29502308a91.25.1730931339400; Wed, 06 Nov 2024
+ 14:15:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 6 Nov 2024 14:15:27 -0800
+Message-ID: <CAEf4BzZJuWcCLeUdmzhRVe9nyi9jAN8y=u2nK=mqzxXG6DTkDw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 0/4] bpf/crib: Add open-coded style process
+ file iterator and file related CRIB kfuncs
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, 
+	brauner@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch deprecates the memcg try-{commit,cancel} logic used in hugetlb.
-Instead of having three points of error for memcg accounting, the error
-patch is reduced to just one point at the end, and shares the same path
-with the hugeTLB controller as well.
+On Wed, Nov 6, 2024 at 11:35=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
+>
+> This patch series adds open-coded style process file iterator
+> bpf_iter_task_file and file related kfuncs bpf_fget_task(),
+> bpf_get_file_ops_type(), and corresponding selftests test cases.
+>
+> Known future merge conflict: In linux-next task_lookup_next_fdget_rcu()
+> has been removed and replaced with fget_task_next() [0], but that has
+> not happened yet in bpf-next, so I still
+> use task_lookup_next_fdget_rcu() in bpf_iter_task_file_next().
+>
+> [0]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/=
+commit/?id=3D8fd3395ec9051a52828fcca2328cb50a69dea8ef
+>
+> Although iter/task_file already exists, for CRIB we still need the
+> open-coded iterator style process file iterator, and the same is true
+> for other bpf iterators such as iter/tcp, iter/udp, etc.
+>
+> The traditional bpf iterator is more like a bpf version of procfs, but
+> similar to procfs, it is not suitable for CRIB scenarios that need to
+> obtain large amounts of complex, multi-level in-kernel information.
+>
+> The following is from previous discussions [1].
+>
+> [1]: https://lore.kernel.org/bpf/AM6PR03MB5848CA34B5B68C90F210285E99B12@A=
+M6PR03MB5848.eurprd03.prod.outlook.com/
+>
+> This is because the context of bpf iterators is fixed and bpf iterators
+> cannot be nested. This means that a bpf iterator program can only
+> complete a specific small iterative dump task, and cannot dump
+> multi-level data.
+>
+> An example, when we need to dump all the sockets of a process, we need
+> to iterate over all the files (sockets) of the process, and iterate over
+> the all packets in the queue of each socket, and iterate over all data
+> in each packet.
+>
+> If we use bpf iterator, since the iterator can not be nested, we need to
+> use socket iterator program to get all the basic information of all
+> sockets (pass pid as filter), and then use packet iterator program to
+> get the basic information of all packets of a specific socket (pass pid,
+> fd as filter), and then use packet data iterator program to get all the
+> data of a specific packet (pass pid, fd, packet index as filter).
+>
+> This would be complicated and require a lot of (each iteration)
+> bpf program startup and exit (leading to poor performance).
+>
+> By comparison, open coded iterator is much more flexible, we can iterate
+> in any context, at any time, and iteration can be nested, so we can
+> achieve more flexible and more elegant dumping through open coded
+> iterators.
+>
+> With open coded iterators, all of the above can be done in a single
+> bpf program, and with nested iterators, everything becomes compact
+> and simple.
+>
+> Also, bpf iterators transmit data to user space through seq_file,
+> which involves a lot of open (bpf_iter_create), read, close syscalls,
+> context switching, memory copying, and cannot achieve the performance
+> of using ringbuf.
+>
+> Discussion
+> ----------
+>
+> 1. Do we need bpf_iter_task_file_get_fd()?
+>
+> Andrii suggested that next() should return a pointer to
+> a bpf_iter_task_file_item, which contains *file and fd.
+>
+> This is feasible, but it might compromise iterator encapsulation?
 
-Please note that the hugeTLB controller still uses the try_charge to 
-{commit/cancel} protocol. 
+I don't think so, replied on v2 ([0]). I know you saw that, I'm just
+linking it for others.
 
-Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+  [0] https://lore.kernel.org/bpf/CAEf4Bzba2N7pxPQh8_BDrVgupZdeow_3S7xSjDms=
+dhL19eXb3A@mail.gmail.com/
 
----
- include/linux/memcontrol.h |  3 +--
- mm/hugetlb.c               | 35 ++++++++++++-----------------------
- mm/memcontrol.c            | 37 +++++++++----------------------------
- 3 files changed, 22 insertions(+), 53 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 25761d55799e..0024634d161f 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -696,8 +696,7 @@ static inline int mem_cgroup_charge(struct folio *folio, struct mm_struct *mm,
- 
- bool memcg_accounts_hugetlb(void);
- 
--int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
--		long nr_pages);
-+int mem_cgroup_charge_hugetlb(struct folio *folio, gfp_t gfp);
- 
- int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct *mm,
- 				  gfp_t gfp, swp_entry_t entry);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index fbb10e52d7ea..db9801b16d13 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2967,21 +2967,13 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 	struct hugepage_subpool *spool = subpool_vma(vma);
- 	struct hstate *h = hstate_vma(vma);
- 	struct folio *folio;
--	long map_chg, map_commit, nr_pages = pages_per_huge_page(h);
-+	long map_chg, map_commit;
- 	long gbl_chg;
--	int memcg_charge_ret, ret, idx;
-+	int ret, idx;
- 	struct hugetlb_cgroup *h_cg = NULL;
--	struct mem_cgroup *memcg;
- 	bool deferred_reserve;
- 	gfp_t gfp = htlb_alloc_mask(h) | __GFP_RETRY_MAYFAIL;
- 
--	memcg = get_mem_cgroup_from_current();
--	memcg_charge_ret = mem_cgroup_hugetlb_try_charge(memcg, gfp, nr_pages);
--	if (memcg_charge_ret == -ENOMEM) {
--		mem_cgroup_put(memcg);
--		return ERR_PTR(-ENOMEM);
--	}
--
- 	idx = hstate_index(h);
- 	/*
- 	 * Examine the region/reserve map to determine if the process
-@@ -2989,12 +2981,8 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 	 * code of zero indicates a reservation exists (no change).
- 	 */
- 	map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
--	if (map_chg < 0) {
--		if (!memcg_charge_ret)
--			mem_cgroup_cancel_charge(memcg, nr_pages);
--		mem_cgroup_put(memcg);
-+	if (map_chg < 0)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	/*
- 	 * Processes that did not create the mapping will have no
-@@ -3056,6 +3044,12 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 		/* Fall through */
- 	}
- 
-+	ret = mem_cgroup_charge_hugetlb(folio, gfp);
-+	if (ret == -ENOMEM)
-+		goto free_folio;
-+	else if (!ret)
-+		lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
-+
- 	hugetlb_cgroup_commit_charge(idx, pages_per_huge_page(h), h_cg, folio);
- 	/* If allocation is not consuming a reservation, also store the
- 	 * hugetlb_cgroup pointer on the page.
-@@ -3092,13 +3086,11 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 		}
- 	}
- 
--	if (!memcg_charge_ret)
--		mem_cgroup_commit_charge(folio, memcg);
--	lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
--	mem_cgroup_put(memcg);
--
- 	return folio;
- 
-+free_folio:
-+	spin_unlock_irq(&hugetlb_lock);
-+	free_huge_folio(folio);
- out_uncharge_cgroup:
- 	hugetlb_cgroup_uncharge_cgroup(idx, pages_per_huge_page(h), h_cg);
- out_uncharge_cgroup_reservation:
-@@ -3110,9 +3102,6 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 		hugepage_subpool_put_pages(spool, 1);
- out_end_reservation:
- 	vma_end_reservation(h, vma, addr);
--	if (!memcg_charge_ret)
--		mem_cgroup_cancel_charge(memcg, nr_pages);
--	mem_cgroup_put(memcg);
- 	return ERR_PTR(-ENOSPC);
- }
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 59dea0122579..3b728635d6aa 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1448,8 +1448,7 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
- 		u64 size;
- 
- #ifdef CONFIG_HUGETLB_PAGE
--		if (unlikely(memory_stats[i].idx == NR_HUGETLB) &&
--		    !(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
-+		if (unlikely(memory_stats[i].idx == NR_HUGETLB) && !memcg_accounts_hugetlb())
- 			continue;
- #endif
- 		size = memcg_page_state_output(memcg, memory_stats[i].idx);
-@@ -4506,37 +4505,19 @@ bool memcg_accounts_hugetlb(void)
- #endif
- }
- 
--/**
-- * mem_cgroup_hugetlb_try_charge - try to charge the memcg for a hugetlb folio
-- * @memcg: memcg to charge.
-- * @gfp: reclaim mode.
-- * @nr_pages: number of pages to charge.
-- *
-- * This function is called when allocating a huge page folio to determine if
-- * the memcg has the capacity for it. It does not commit the charge yet,
-- * as the hugetlb folio itself has not been obtained from the hugetlb pool.
-- *
-- * Once we have obtained the hugetlb folio, we can call
-- * mem_cgroup_commit_charge() to commit the charge. If we fail to obtain the
-- * folio, we should instead call mem_cgroup_cancel_charge() to undo the effect
-- * of try_charge().
-- *
-- * Returns 0 on success. Otherwise, an error code is returned.
-- */
--int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
--			long nr_pages)
-+int mem_cgroup_charge_hugetlb(struct folio *folio, gfp_t gfp)
- {
--	/*
--	 * If hugetlb memcg charging is not enabled, do not fail hugetlb allocation,
--	 * but do not attempt to commit charge later (or cancel on error) either.
--	 */
--	if (mem_cgroup_disabled() || !memcg ||
--		!cgroup_subsys_on_dfl(memory_cgrp_subsys) || !memcg_accounts_hugetlb())
-+	struct mem_cgroup *memcg = get_mem_cgroup_from_current();
-+
-+	if (mem_cgroup_disabled() || !memcg_accounts_hugetlb() ||
-+			!memcg || !cgroup_subsys_on_dfl(memory_cgrp_subsys))
- 		return -EOPNOTSUPP;
- 
--	if (try_charge(memcg, gfp, nr_pages))
-+	if (charge_memcg(folio, memcg, gfp))
- 		return -ENOMEM;
- 
-+	mem_cgroup_put(memcg);
-+
- 	return 0;
- }
- 
--- 
-2.43.5
+>
+> More detailed discussion can be found at [3] [4]
+>
+> [3]: https://lore.kernel.org/bpf/CAEf4Bzbt0kh53xYZL57Nc9AWcYUKga_NQ6uUrTe=
+U4bj8qyTLng@mail.gmail.com/
+> [4]: https://lore.kernel.org/bpf/AM6PR03MB584814D93FE3680635DE61A199562@A=
+M6PR03MB5848.eurprd03.prod.outlook.com/
+>
+> What should we do? Maybe more discussion is needed?
+>
+> 2. Where should we put CRIB related kfuncs?
+>
+> I totally agree that most of the CRIB related kfuncs are not
+> CRIB specific.
+>
+> The goal of CRIB is to collect all relevant information about a process,
+> which means we need to add kfuncs involving several different kernel
+> subsystems (though these kfuncs are not complex and many just help the
+> bpf program reach a certain data structure).
+>
+> But here is a question, where should these CRIB kfuncs be placed?
+> There doesn't seem to be a suitable file to put them in.
+>
+> My current idea is to create a crib folder and then create new files for
+> the relevant subsystems, e.g. crib/files.c, crib/socket.c, crib/mount.c
+> etc. Putting them in the same folder makes it easier to maintain
+> them centrally.
+>
+> If anyone else wants to use CRIB kfuncs, welcome to use them.
+>
 
+CRIB is just one of possible applications of such kfuncs, so I'd steer
+away from over-specifying it as CRIB.
+
+task_file open-coded iterator is generic, and should stay close to
+other task iterator code, as you do in this revision.
+
+bpf_get_file_ops_type() is unnecessary, as we already discussed on v2,
+__ksym and comparison is the way to go here.
+
+bpf_fget_task(), if VFS folks agree to add it, probably will have to
+stay close to other similar VFS helpers.
+
+> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> ---
+> v2 -> v3:
+> 1. Move task_file open-coded iterator to kernel/bpf/helpers.c.
+>
+> 2. Fix duplicate error code 7 in test_bpf_iter_task_file().
+>
+> 3. Add comment for case when bpf_iter_task_file_get_fd() returns -1.
+>
+> 4. Add future plans in commit message of "Add struct file related
+> CRIB kfuncs".
+>
+> 5. Add Discussion section to cover letter.
+>
+> v1 -> v2:
+> Fix a type definition error in the fd parameter of
+> bpf_fget_task() at crib_common.h.
+>
+> Juntong Deng (4):
+>   bpf/crib: Introduce task_file open-coded iterator kfuncs
+>   selftests/bpf: Add tests for open-coded style process file iterator
+>   bpf/crib: Add struct file related CRIB kfuncs
+>   selftests/bpf: Add tests for struct file related CRIB kfuncs
+>
+>  kernel/bpf/Makefile                           |   1 +
+>  kernel/bpf/crib/Makefile                      |   3 +
+>  kernel/bpf/crib/crib.c                        |  28 ++++
+>  kernel/bpf/crib/files.c                       |  54 ++++++++
+>  kernel/bpf/helpers.c                          |   4 +
+>  kernel/bpf/task_iter.c                        |  96 +++++++++++++
+>  tools/testing/selftests/bpf/prog_tests/crib.c | 126 ++++++++++++++++++
+>  .../testing/selftests/bpf/progs/crib_common.h |  25 ++++
+>  .../selftests/bpf/progs/crib_files_failure.c  | 108 +++++++++++++++
+>  .../selftests/bpf/progs/crib_files_success.c  | 119 +++++++++++++++++
+>  10 files changed, 564 insertions(+)
+>  create mode 100644 kernel/bpf/crib/Makefile
+>  create mode 100644 kernel/bpf/crib/crib.c
+>  create mode 100644 kernel/bpf/crib/files.c
+>  create mode 100644 tools/testing/selftests/bpf/prog_tests/crib.c
+>  create mode 100644 tools/testing/selftests/bpf/progs/crib_common.h
+>  create mode 100644 tools/testing/selftests/bpf/progs/crib_files_failure.=
+c
+>  create mode 100644 tools/testing/selftests/bpf/progs/crib_files_success.=
+c
+>
+> --
+> 2.39.5
+>
 
