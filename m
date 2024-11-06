@@ -1,217 +1,157 @@
-Return-Path: <linux-kernel+bounces-397815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE7F9BE0FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:32:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5D69BE10D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40A51C21290
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EB61F23E9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB861D435F;
-	Wed,  6 Nov 2024 08:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D341D5ACF;
+	Wed,  6 Nov 2024 08:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dwUURdBV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QgnsZzxj"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C3210F2;
-	Wed,  6 Nov 2024 08:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E6438F82
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730881966; cv=none; b=P8zMeKqLj34uHS1CxnV7Sl7N/mdzbjiim5pVnSGZkEyBvgWOQ2lrcTQvZMy+VPlsg7zCuqqeCflB2Rl0k9OuMs8XTzcIGe3JRJJ/0S2+Y8JzEfhYB13z1HJam3edUdI4//x3k4HhYJbpwdb2xHVZWjVwDwi+Hu7NP0mlAPCsmnE=
+	t=1730882114; cv=none; b=kX+oTgcGni4OArVAaB+N5+CZjeWRdlhaZSVgOQltAg0v4ZwNNc66/r7C8Cbs6loa5bi6MpXtySmuKO0+Syka2qQT0B0k7XzGCezZtcODj0Mp4mc89WTvS9Ps7hNt3uFXribYxs2b05bLDUlrISRhVW09QvtlGjsSpOwmDEU6hZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730881966; c=relaxed/simple;
-	bh=Cs/WodRVZmIX/VI2JdODdxjoBOobCQ65AmVv2eKfwAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UHs8RXx6kWwQn/OTkJhw8eMkizTZDGPX3DUiPdXOHTyTjHYsFioH75hNTz/+zh3Vb3nEPZZqD2qThpEb3dNiEpBtuIArKyyLOhBjSsAdXp5nzpEdsrXLt38nu830zO4QPQp9ulVa2g36XSIkfK6aVU6y1Ogqroog+laQ23WwZX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dwUURdBV; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730881965; x=1762417965;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Cs/WodRVZmIX/VI2JdODdxjoBOobCQ65AmVv2eKfwAA=;
-  b=dwUURdBVCI2+Yv36CF6vstRUZ4y1EPfnHnds4PyHCA0S6jLA11wN1R6z
-   EfgT18zXjeKpzjhwtdiciwle0Ec7l7IU8lTDQKTWIoNp9h/pWnYvZHK3Q
-   6ncyln1rLSI16W7wHixJ5sUcbVc9sSGiU0kWtfVwyzbn5/p0Q0ySyt+pO
-   8BBeniMDlH3xsWmX+Qb2QbATdYNG3PEXTfcfqxAK3iIAhRLH2MRv4ksS1
-   oHPEvAUgD5G/veYpoK6KeIaUBrLkxDBA76Dps+16jt8Fw0i3eGN9CC2NH
-   iBEpSlsp31WfTcqj0Ip8xzf78KCQdh80FydmhTYGLWPHNbSSxRU99ZSvF
-   A==;
-X-CSE-ConnectionGUID: 5vCY+9/+RXGS4ohTbTI7tw==
-X-CSE-MsgGUID: XQefZObvS8moZXdTKUDXKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="42048792"
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="42048792"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 00:32:38 -0800
-X-CSE-ConnectionGUID: yTyKz2cfSNO2ywyt9X/EFQ==
-X-CSE-MsgGUID: 6eGHPVTWRD6hoA44792b1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="121917951"
-Received: from unknown (HELO [10.238.12.149]) ([10.238.12.149])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 00:32:35 -0800
-Message-ID: <cef7b663-bc6d-44a1-9d5e-736aa097ea68@linux.intel.com>
-Date: Wed, 6 Nov 2024 16:32:33 +0800
+	s=arc-20240116; t=1730882114; c=relaxed/simple;
+	bh=1gKbUy0hvqMiIFVOqU0r6R+JX/FdNFtqzepVp9aPdHY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=p0eleJVbrKCtg8wQVTWIKtAUyZmq/HrOE56ycnggNsH5ZRkhF43Y1yxHTX5fX+bjqC222hV+M5PQR2k5ws5Vqk/1kmtFloBpApQNBTqzoWRV8FcBMOIa17pDRdYYK0FwyW7CgeZ21iYwOFq72HpnSZDU4JDBMRyiwEEGDYWYj3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QgnsZzxj; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e29205f6063so10546423276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 00:35:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730882112; x=1731486912; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+sZnhN4f59w8eaVlm9uPspF2D1aSNtZ8q/ULxpzacKg=;
+        b=QgnsZzxjl1pfLAa98P51T2P1UJ609DOAFGsjhH8zBUeSJJFSYqp39lRNq+6Ch65CbF
+         9XJzSsq5XeJvAgWzY3uyLbYk/mooezWc/E3FIZpAElvD4DoqiWgdSFx1d9ZlVHC8boCr
+         T8EGYb0cpzBBatw4nIKx0bT9Q8fCBExLT+wth687I4OeNR/F4r30lRvqP+au2+Bed7AO
+         13pPFAbCImTHLTxwZDXTkghwRuUWkxgAvAOHxMzLrVmDXjmFPfqUebWhnGz/xWxFJ9Cs
+         wpqOMXxT5NPeGgbZj+1HkLLMSVZBLgw/EfvPDmgFBZCaWlxZgvFgUr67HWNX708HcOwq
+         Xbng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730882112; x=1731486912;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+sZnhN4f59w8eaVlm9uPspF2D1aSNtZ8q/ULxpzacKg=;
+        b=s7Ti36ozcYkdVXKTcbHQzTBiH3NOt/AqcNhardZx463LbsdAWKWukFlqyDGVN2WqVm
+         Bm8M4BxJpwVu1bbl39pyna1mzeowgUG1NMIigUzRnhoTXguVpyjDuVcXPgg0S0xjCNiQ
+         0XudE4Y5ovxBOGTnJd8bwUN5ETnGjgXB4UXMvQWzXwxlSx1FFZx2eY8u+JSPYnYp9/sM
+         IL646FjpgKDRsfKU8kSMJUVYzb5Nl6VSIGUBQKSluM28JCkbiDxx8za2OoIFioHYVSeL
+         Y5l/AGuMuNetrKtz/QC7boOyxtrWWnLBpPq/0MZzuzRs3lYRnrKTi9fS1hK0XTy8q7ba
+         jm9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVRhYDImbs75YQCAMVo2NTV41jhgmqJCYZpV1Fj31Ft+EIQj3JboSydcbXa0HhTQ8EVMeKEPWoMFs0D4CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1Fa3J+MS92tGYJIFaZKsHwN1RIVa0ogfWl6p0NP75rhsSlZzg
+	EnvvqDP433Fkt52QhefLwWuuqCRSOB1nuRYqbe0OQI34GlRnCRgKgCYEwKcz6ko15vTdm/hBP6b
+	FhgDV04833pFH1w==
+X-Google-Smtp-Source: AGHT+IHOksJL+AHrN3er9na69HscWBTL2INnAN32T9B6olbGvvN+npsilT1SmjoIKHmUPaN1Z/4NdH5ApfdcALQ=
+X-Received: from guanyulin.c.googlers.com ([fda3:e722:ac3:cc00:131:cd17:ac11:19c7])
+ (user=guanyulin job=sendgmr) by 2002:a25:a407:0:b0:e33:4850:b1bd with SMTP id
+ 3f1490d57ef6-e334b7cf78fmr10125276.1.1730882112322; Wed, 06 Nov 2024 00:35:12
+ -0800 (PST)
+Date: Wed,  6 Nov 2024 08:32:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] KVM: x86: Check hypercall's exit to userspace
- generically
-To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
- <seanjc@google.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>
-References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
- <20240826022255.361406-2-binbin.wu@linux.intel.com>
- <ZyKbxTWBZUdqRvca@google.com>
- <3f158732a66829faaeb527a94b8df78d6173befa.camel@intel.com>
- <ZyLWMGcgj76YizSw@google.com>
- <1cace497215b025ed8b5f7815bdeb23382ecad32.camel@intel.com>
- <ZyUEMLoy6U3L4E8v@google.com>
- <f95cd8c6-af5c-4d8f-99a8-16d0ec56d9a4@linux.intel.com>
- <95c92ff265cfa48f5459009d48a161e5cbe7ab3d.camel@intel.com>
- <ZymDgtd3VquVwsn_@google.com>
- <662b4aa037bfd5e8f3653a833b460f18636e2bc1.camel@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <662b4aa037bfd5e8f3653a833b460f18636e2bc1.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241106083501.408074-1-guanyulin@google.com>
+Subject: [PATCH v6 0/5] Support system sleep with offloaded usb transfers
+From: Guan-Yu Lin <guanyulin@google.com>
+To: gregkh@linuxfoundation.org, Thinh.Nguyen@synopsys.com, 
+	mathias.nyman@intel.com, stern@rowland.harvard.edu, sumit.garg@linaro.org, 
+	dianders@chromium.org, kekrby@gmail.com, oneukum@suse.com, 
+	yajun.deng@linux.dev, niko.mauno@vaisala.com, christophe.jaillet@wanadoo.fr, 
+	tj@kernel.org, stanley_chang@realtek.com, andreyknvl@gmail.com, 
+	quic_jjohnson@quicinc.com, ricardo@marliere.net
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guan-Yu Lin <guanyulin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Wesley Cheng and Mathias Nyman's USB offload design enables a co-processor
+to handle some USB transfers, potentially allowing the main system to
+sleep and save power. However, Linux's power management system halts the
+USB host controller when the main system isn't managing any USB transfers.
+To address this, the proposal modifies the system to recognize offloaded
+USB transfers and manage power accordingly.
 
+This involves two key steps:
+1. Transfer Status Tracking: Propose xhci_sideband_get and
+xhci_sideband_put to track USB transfers on the co-processor, ensuring the
+system is aware of any ongoing activity.
+2. Power Management Adjustment:  Modifications to the USB driver stack
+(dwc3 controller driver, xhci host controller driver, and USB device
+drivers) allow the system to sleep without disrupting co-processor managed
+USB transfers. This involves adding conditional checks to bypass some
+power management operations.
 
+patches depends on series "Introduce QC USB SND audio offloading support" 
+https://lore.kernel.org/lkml/20240925010000.2231406-11-quic_wcheng@quicinc.com/T/
 
-On 11/5/2024 5:20 PM, Huang, Kai wrote:
->> I think I prefer Binbin's version, as it forces the caller to provide cui(), i.e.
->> makes it harder KVM to fail to handle the backend of the hypercall.
-> Fine to me.
->
-> [...]
->
->> The one thing I don't love about providing a separate cui() is that it means
->> duplicating the guts of the completion helper.  Ha!  But we can avoid that by
->> adding another macro (untested).
->>
->> More macros/helpers is a bit ugly too, but I like the symmetry, and it will
->> definitely be easier to maintain.  E.g. if the completion phase needs to pivot
->> on the exact hypercall, then we can update common code and don't need to remember
->> to go update TDX too.
->>
->> If no one objects and/or has a better idea, I'll splice together Binbin's patch
->> with this blob, and post a series tomorrow.
->>
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index 8e8ca6dab2b2..0b0fa9174000 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -2179,6 +2179,16 @@ static inline void kvm_clear_apicv_inhibit(struct kvm *kvm,
->>          kvm_set_or_clear_apicv_inhibit(kvm, reason, false);
->>   }
->>   
->> +#define kvm_complete_hypercall_exit(vcpu, ret_reg)                             \
->> +do {                                                                           \
->> +       u64 ret = (vcpu)->run->hypercall.ret;                                   \
->> +                                                                               \
->> +       if (!is_64_bit_mode(vcpu))                                              \
->> +               ret = (u32)ret;                                                 \
->> +       kvm_##ret_reg##_write(vcpu, ret);                                       \
->> +       ++(vcpu)->stat.hypercalls;                                              \
->> +} while (0)
->> +
->>   int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
->>                                unsigned long a0, unsigned long a1,
->>                                unsigned long a2, unsigned long a3,
->> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->> index 425a301911a6..aec79e132d3b 100644
->> --- a/arch/x86/kvm/x86.c
->> +++ b/arch/x86/kvm/x86.c
->> @@ -9989,12 +9989,8 @@ static void kvm_sched_yield(struct kvm_vcpu *vcpu, unsigned long dest_id)
->>   
->>   static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
->>   {
->> -       u64 ret = vcpu->run->hypercall.ret;
->> +       kvm_complete_hypercall_exit(vcpu, rax);
->>   
->> -       if (!is_64_bit_mode(vcpu))
->> -               ret = (u32)ret;
->> -       kvm_rax_write(vcpu, ret);
->> -       ++vcpu->stat.hypercalls;
->>          return kvm_skip_emulated_instruction(vcpu);
->>   }
->>   
-> I think there's one issue here:
->
-> I assume macro kvm_complete_hypercall_exit(vcpu, ret_reg) will also be used by
-> TDX.  The issue is it calls !is_64_bit_mode(vcpu), which has below WARN():
->
->          WARN_ON_ONCE(vcpu->arch.guest_state_protected);
->
-> So IIUC TDX will hit this.
->
-> Btw, we have below (kinda) duplicated code in ____kvm_emulate_hypercall() too:
->
-> 	++vcpu->stat.hypercalls;
->                                                                                                                                                                 
->          if (!op_64_bit)
->                  ret = (u32)ret;
->                                                                                                                                                                 
->          kvm_register_write_raw(vcpu, ret_reg, ret);
->
-> If we add a helper to do above, e.g.,
->
-> static void kvm_complete_hypercall_exit(struct kvm_vcpu *vcpu, int ret_reg,
-> 				        unsigned long ret, bool op_64_bit)
-> {
-> 	if (!op_64_bit)
-> 		ret = (u32)ret;
-> 	kvm_register_write_raw(vcpu, ret_reg, ret);
-> 	++vcpu->stat.hypercalls;
-> }
-If this is going to be the final version, it would be better to make it
-public, and export the symbol, so that TDX code can reuse it.
+changelog
+----------
+Changes in v6:
+- Fix build errors when CONFIG_USB_XHCI_SIDEBAND is disabled.
+- Explicitly specify the data structure of the drvdata refereced in
+  dwc3_suspend(), dwc3_resume().
+- Move the initialization of counters to the patches introducing them.
 
+Changes in v5:
+- Walk through the USB children in usb_sideband_check() to determine the
+  sideband activity under the specific USB device. 
+- Replace atomic_t by refcount_t.
+- Reduce logs by using dev_dbg & remove __func__.
 
->
-> Then we can have
->
-> static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
-> {
-> 	kvm_complete_hypercall_exit(vcpu, VCPU_REGS_RAX,
-> 		vcpu->run->hypercall.ret, is_64_bit_mode(vcpu));
->
-> 	return kvm_skip_emulated_instruction(vcpu);
-> }
->
-> TDX version can use:
->
-> 	kvm_complete_hypercall_exit(vcpu, VCPU_REGS_R10,
-> 		vcpu->run->hypercall.ret, true);
->
-> And ____kvm_emulate_hypercall() can be:
->
-> static int ____kvm_emulate_hypercall(vcpu, ...)
-> {
-> 	...
-> out:
-> 	kvm_complete_hypercall_exit(vcpu, ret_reg, ret, op_64_bit);
-> 	return 1;
-> }
->
+Changes in v4:
+- Isolate the feature into USB driver stack.
+- Integrate with series "Introduce QC USB SND audio offloading support"
+
+Changes in v3:
+- Integrate the feature with the pm core framework.
+
+Changes in v2:
+- Cosmetics changes on coding style.
+
+[v3] PM / core: conditionally skip system pm in device/driver model
+[v2] usb: host: enable suspend-to-RAM control in userspace
+[v1] [RFC] usb: host: Allow userspace to control usb suspend flows
+---
+
+Guan-Yu Lin (5):
+  usb: dwc3: separate dev_pm_ops for each pm_event
+  usb: xhci-plat: separate dev_pm_ops for each pm_event
+  usb: add apis for sideband usage tracking
+  xhci: sideband: add api to trace sideband usage
+  usb: host: enable sideband transfer during system sleep
+
+ drivers/usb/core/driver.c         | 87 +++++++++++++++++++++++++++
+ drivers/usb/core/hcd.c            |  4 ++
+ drivers/usb/core/usb.c            |  4 ++
+ drivers/usb/dwc3/core.c           | 97 ++++++++++++++++++++++++++++++-
+ drivers/usb/dwc3/core.h           |  1 +
+ drivers/usb/host/xhci-plat.c      | 38 ++++++++++--
+ drivers/usb/host/xhci-sideband.c  | 92 +++++++++++++++++++++++++++++
+ include/linux/usb.h               | 20 +++++++
+ include/linux/usb/hcd.h           | 13 +++++
+ include/linux/usb/xhci-sideband.h |  5 ++
+ 10 files changed, 356 insertions(+), 5 deletions(-)
+
+-- 
+2.47.0.199.ga7371fff76-goog
 
 
