@@ -1,137 +1,156 @@
-Return-Path: <linux-kernel+bounces-397639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0EB9BDE5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:47:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525A29BDE96
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8CA1C224DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:47:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087F91F23A23
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DF21917C0;
-	Wed,  6 Nov 2024 05:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFF21922E4;
+	Wed,  6 Nov 2024 06:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tJDSJq/3"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W+2cJHzS"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A629618FDDA
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 05:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A781EA84;
+	Wed,  6 Nov 2024 06:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730872044; cv=none; b=H8z8aQsDzTOrp+SurRTENwK3Oq0HTT3oPgojqUJqMMR21aju0h9k4GUctHatq3kXmXfbFiwOx0e8nalVr7LzeFxxDnNbvtPU0Sn0or5YKUc3BpE3k2akQB6FLhtsO/NDiXL1RgD/KFXO/Ir2BcDlAwT9HaOMR3BdLtxJNRfL45E=
+	t=1730873518; cv=none; b=sJkHSuehyGMxvlDxrjhVxY9k7XPMCAzV5tOKhUO8MwRetGRtyCFnCjEIL1klLP8cLyNv/ZOSTpqg2i7+EAV5nvSohoXLTjIoTKngub8FXV4iUTD9Vu3yunehJvOF/k6KvPmDn9TBF6rdjhJfbt8sWgVJPSniHFe9Oqr4Jb1AYao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730872044; c=relaxed/simple;
-	bh=dYSK4OvUsOnyLQSwnFtsKalpN2mQMKz+nYSsrdB416E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UWjsVMgOss0vCc3EDlwJAz3o/Y7DymzpHbEEQtXjI9rcyU7U8bs34XxWRo1puoKRvyVZBtOKOlZ6NWkjZ+xxYdPd+uY5QlR+275kFzLK6iAgS/pBti75qLrd/QTdpzNd18iAc+CFtUZm0WOky8+1zrdNfG3hHu2cIYcKpVvs+nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tJDSJq/3; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539d9fffea1so6445916e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 21:47:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730872041; x=1731476841; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4wlFtruNqQoercRi+1WD7cjSp20+NvrYGVk9jN7SiPQ=;
-        b=tJDSJq/3XaRsaxYUcA7IdSZaXu2Yqa6z7XjSJnJ+HNaH8azxvAXzyXaFAT51WhUY5M
-         /cIc7l5GdKaSTLc6/HwMr3xJYOw6LE5PyrFjgZ6KnzGdSLUjqiHhE8wel7Bhzp+rGbI+
-         LR1vMyLrGI/XjQofNpuc18QyMTPFoRzmiaeOn6lpLcFaqSaMKavBLgH6bUJEYaOWswGA
-         JaYb5ZRmY2VkQZlf1QnTjt57457C5wqJJcZkQow25+c0p1rrVMKkPWB/z1Tae7SmgXKD
-         zewqvG7ZHjm+Uv6aKTpALx3Yb5REJK1osa9yIGWAnFBa87zFXK0XtYBmL+cKpATcWh46
-         YLQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730872041; x=1731476841;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4wlFtruNqQoercRi+1WD7cjSp20+NvrYGVk9jN7SiPQ=;
-        b=Ebzjwxqt0lQ9GQnhKCnoRXx6ta26lTASwnHSUeIzoB6QDd7X/IMRyRHWF7MEjSgAIH
-         aPGaNy7zTl9IOeZ0bi3ZBMRdh8jlgUll44ZffGF76lq6BLW6dIiS9QNZXGyUaRu5RAKe
-         syniKWsM4q/CMoavVRyoNuHjmn8EHR1QB3y2rMH7cQWzSw0+5zlEFkmnQruOdcU8srGa
-         +xOay8DWUE/oWlLoGqQtHaCikY71iPfbSshHN5h6ub8kfTSE2i28PA4cPIE6pGunIV96
-         cETdfSVDh0qW/zvgh9vn6TeGIOfUI3L2k6TF93ZFH+7vbmVg8oyr4r+ktI6miUt0zknW
-         JZXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMLXhLlKE9FHNpMyQFOHah3Ki8kxugBCjfUHf4TY7JOmXpAhSKK467dAcyaj4LOwOkhU+C03VQ+RxWd0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSPd6fS/drTlrzCZA58EuTD9a/o75Yuh+OrwOcVt48f6318Bts
-	8JLYzmL3ycqXwsM8YeMH1/Q8WSkKqczqvVOP1JSLma7X3qwaklS9Ah6aXTRKWQsUaPatL9AFUTC
-	Cma7ISvpt173UsoVx1TNu4usmYW1JOYTJfphJPw==
-X-Google-Smtp-Source: AGHT+IEnLs5oHn+wd5p8lCC2M2Tssn5RakwYm8btDcDudbYQW7dLKT6AmkZYIPaEtOX+HUdGXJaNRoHMRaMkwx6uano=
-X-Received: by 2002:a05:6512:3f0c:b0:53b:1369:fcf8 with SMTP id
- 2adb3069b0e04-53b348f96e8mr19139399e87.15.1730872040707; Tue, 05 Nov 2024
- 21:47:20 -0800 (PST)
+	s=arc-20240116; t=1730873518; c=relaxed/simple;
+	bh=tJ1rGgan2u7SVhW2GXwWBNCltOtVTaNjavpnt1+lswM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YKySuz6/WwWIq7hHrC6QhUEzCSq61Fty4Ma80UzmBxcr3p91+NPvfHzyoGj9bhc9pa2lZP85UJB+6qaGs5oAkxpy1uuMfojqn2gL9JoXAylBW2gRly7nDO6JftQ2WjOZYWtCQqeexTFSp3/u1szqHgNWgic37olb69LiOW8PeT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W+2cJHzS; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A65eR0j031806;
+	Wed, 6 Nov 2024 05:54:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ysSqMG
+	tbwbmFOqT1XRY+kGYi4gISugGgiIjpkXQ26zE=; b=W+2cJHzSxKStqNEMsCJ6oE
+	oo4PRwZMT3VaXlB60G0+ql//qGBpP/dIRa8vvca2UVpU8ceiBC0w2R0YHBPVtqTg
+	AGTK65/PgYIWa8sq+ePofqXUYZUAhH6jo4rZ8m4FFCHMy4NgJRk8HFZCYKpeDEqH
+	Mw0panYRRr2Z3XGJyv2D7rLvMT/PcA9enRq6mwpxZMTrUm2GPRgiSzq3buYCapg1
+	Lpns4YFX2GhurjfD06WorpPEcY5O3Uh9BaSF3bNzFffo+YiC6oD5njQWOSnM12nD
+	+hmB/2mVG8ufb3rhigiHPJ23XVk14KUZVxQ3TP1LgAefH4th/gZK+iqwJ5NG8TXQ
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r2gq0164-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 05:54:39 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A65WLMT008430;
+	Wed, 6 Nov 2024 05:54:39 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nywkqwav-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 05:54:39 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A65sbAX58655144
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 6 Nov 2024 05:54:37 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 430FE20043;
+	Wed,  6 Nov 2024 05:54:37 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 36E5E20040;
+	Wed,  6 Nov 2024 05:54:35 +0000 (GMT)
+Received: from [9.203.115.143] (unknown [9.203.115.143])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  6 Nov 2024 05:54:35 +0000 (GMT)
+Message-ID: <e6ba6084-e224-44c8-86e6-f3ae408209c1@linux.ibm.com>
+Date: Wed, 6 Nov 2024 11:24:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028113209.123-1-zhangfei.gao@linaro.org>
-In-Reply-To: <20241028113209.123-1-zhangfei.gao@linaro.org>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Wed, 6 Nov 2024 05:47:09 +0000
-Message-ID: <CABQgh9H9HWaKRP=rFvXf90PjfVP1M6YpwfLcYTZH1hWET6GPsw@mail.gmail.com>
-Subject: Re: [PATCH] iommufd: modify iommufd_fault_iopf_enable limitation
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	jean-philippe <jean-philippe@linaro.org>, Jason Gunthorpe <jgg@nvidia.com>, baolu.lu@linux.intel.com, 
-	shamiali2008@gmail.com
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/ftrace: update kprobe syntax error test for
+ ppc64le
+Content-Language: en-US
+To: Segher Boessenkool <segher@kernel.crashing.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        "Naveen N. Rao"
+ <naveen@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-trace-kernel@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20241101191925.1550493-1-hbathini@linux.ibm.com>
+ <20241101205948.GW29862@gate.crashing.org>
+ <1916cb5c-cb3d-427c-bcf0-2c1b905fd6d1@linux.ibm.com>
+ <20241104094431.GY29862@gate.crashing.org>
+ <245fed6f-5fb4-4925-ba0a-fb2f32e650d0@linux.ibm.com>
+ <20241104103615.GZ29862@gate.crashing.org>
+ <f7e8243a-a4c8-44ce-ad03-7d232df461ed@linux.ibm.com>
+ <20241105082018.GA29862@gate.crashing.org>
+ <20241105181752.74a3d6fa2f06d0adfdf85322@kernel.org>
+ <20241105195208.GC29862@gate.crashing.org>
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <20241105195208.GC29862@gate.crashing.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: l3aRu8tgKptju9-xOMLrFcnp-sMl082c
+X-Proofpoint-GUID: l3aRu8tgKptju9-xOMLrFcnp-sMl082c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 phishscore=0
+ clxscore=1015 mlxlogscore=841 adultscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411060043
 
-On Mon, 28 Oct 2024 at 11:32, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
->
-> iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
-> because the PRI might be a shared resource and current iommu
-> subsystem is not ready to support enabling/disabling PRI on a VF
-> without any impact on others.
->
-> However, we have devices that appear as PCI but are actually on the
-> AMBA bus. These fake PCI devices have PASID capability, support
-> stall as well as SRIOV, so remove the limitation for these devices.
->
-> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/iommufd/fault.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
-> index bca956d496bd..8b3e34250dae 100644
-> --- a/drivers/iommu/iommufd/fault.c
-> +++ b/drivers/iommu/iommufd/fault.c
-> @@ -10,6 +10,7 @@
->  #include <linux/module.h>
->  #include <linux/mutex.h>
->  #include <linux/pci.h>
-> +#include <linux/pci-ats.h>
->  #include <linux/poll.h>
->  #include <uapi/linux/iommufd.h>
->
-> @@ -27,8 +28,12 @@ static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
->          * resource between PF and VFs. There is no coordination for this
->          * shared capability. This waits for a vPRI reset to recover.
->          */
-> -       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
-> -               return -EINVAL;
-> +       if (dev_is_pci(dev)) {
-> +               struct pci_dev *pdev = to_pci_dev(dev);
-> +
-> +               if (pdev->is_virtfn && pci_pri_supported(pdev))
-> +                       return -EINVAL;
-> +       }
->
->         mutex_lock(&idev->iopf_lock);
->         /* Device iopf has already been on. */
-> --
-> 2.25.1
->
 
-Hi, Jason
 
-Would you mind also taking a look at this.
+On 06/11/24 1:22 am, Segher Boessenkool wrote:
+> Hi!
+> 
+> On Tue, Nov 05, 2024 at 06:17:51PM +0900, Masami Hiramatsu wrote:
+>> On Tue, 5 Nov 2024 02:20:18 -0600
+>> Segher Boessenkool <segher@kernel.crashing.org> wrote:
+>>> On Mon, Nov 04, 2024 at 11:06:23PM +0530, Hari Bathini wrote:
+>>>> Seems like a bit of misunderstanding there. Function entry here intends
+>>>> to mean the actual start of function code (function prologue) - after
+>>>> GEP and function profiling sequence (mflr r0; bl mcount).
+>>>
+>>> What you call "function entry" here simply does not exist.  The compiler
+>>> can -- and ***WILL***, ***DOES*** -- mix up all of that.
+>>
+>> Here is the "function entry" means the function address.
+> 
+> "Function entry point".  "Function entry" can mean whatever nebulous
+> thing done at the start of a function :-)
+> 
+> You're free to use your own terminology of course, but it help to use
+> standard names for standard things!
+> 
+>> Not the prologue.
+> 
+> But that is literally what Hari said, so it confused me.
+
+Sorry about that. I should have said.. maybe prologue or whatever
+nebulous thing at the start of a function :-)
+
+Basically, the address provided to test case can be any insn in the
+function code expect what the kernel considers function entry address..
 
 Thanks
+Hari
+
 
