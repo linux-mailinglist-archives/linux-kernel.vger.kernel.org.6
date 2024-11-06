@@ -1,179 +1,141 @@
-Return-Path: <linux-kernel+bounces-397693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31DB9BDF1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:05:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037089BDF1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86BAF284542
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAE8A1F23F2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4F6198E80;
-	Wed,  6 Nov 2024 07:05:17 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08625193091;
+	Wed,  6 Nov 2024 07:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYjWN1Mk"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A067519046E;
-	Wed,  6 Nov 2024 07:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBFF19046E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 07:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730876717; cv=none; b=Xu0TTeIHszsO33qG9H4tCX2kNMsMvLJK04hdJ/81vL45rDY9NUZ2jb6KybaD5U41ZbyNxr3kHY/1ErhJzciIgEPbzrhdOd9BRuNnyYJZmIkavfMo3xnH+QpMiYFC+RqIlbU2l1QH2ID5kEr1vSInaZBnYzlL5X5wIeVKeMiPtHQ=
+	t=1730876763; cv=none; b=oUlkiv/Yz/+ppCWpAvHG3Z63VBzMUkQ8NurH5dzw1k0Bfubku7fepaUA+cXOpQoqdrapB5kqXD5gF58VmG/W0IDe37+egWxY9sT4dyIX+E3SHb7zv/OCESEKp9ADxM39fSng3yK3lFb+tvLn45FCKT0blvyPbw/iTi7hSuyFxiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730876717; c=relaxed/simple;
-	bh=FlrbajGkVWKZv7DBfiNmX0RwbnrSl4eKa+pz0LV46GQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=khqsQMkrs9HCYy93ga6FW3Xdwev0xMzINEuSDfpIVKSroVvIuaLXnDYEUnmUmqolwu2OoTzShjFufBKMUgAgnlYo8pwdWsINpg323k1j4r0OBzauBwtghmhNp29mny4paKj5wSh/VYWDGxp3AYDy9WITH9rg31zxViqCFGQ6y44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xjx3S075VzNqYG;
-	Wed,  6 Nov 2024 15:02:28 +0800 (CST)
-Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
-	by mail.maildlp.com (Postfix) with ESMTPS id BE481140384;
-	Wed,  6 Nov 2024 15:05:04 +0800 (CST)
-Received: from [10.110.54.32] (10.110.54.32) by kwepemf200001.china.huawei.com
- (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 6 Nov
- 2024 15:05:03 +0800
-Subject: Re: [PATCH v2 net-next] net/smc: Optimize the search method of reused
- buf_desc
-To: <dust.li@linux.alibaba.com>, <wenjia@linux.ibm.com>, <jaka@linux.ibm.com>,
-	<alibuda@linux.alibaba.com>, <tonylu@linux.alibaba.com>,
-	<guwen@linux.alibaba.com>, <kuba@kernel.org>
-CC: <linux-s390@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <luanjianhai@huawei.com>,
-	<zhangxuzhou4@huawei.com>, <dengguangxing@huawei.com>, <gaochao24@huawei.com>
-References: <20241101082342.1254-1-liqiang64@huawei.com>
- <20241105031938.1319-1-liqiang64@huawei.com>
- <20241105144457.GB89669@linux.alibaba.com>
-From: Li Qiang <liqiang64@huawei.com>
-Message-ID: <07f7e770-f78c-b272-f077-c238f1dc030b@huawei.com>
-Date: Wed, 6 Nov 2024 15:05:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+	s=arc-20240116; t=1730876763; c=relaxed/simple;
+	bh=p6C5IEPN6P+pbtCgSR46Ccoxyvy0NUXuTKfMt6Fl5DE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkvXrqrSI6+JI58wK3nNeclzuJznOdJGFikwPU8maCHHzMXFJo2aD0swmxqNL9q/AvwG6QmumHde2SXZ8K2gRTb+vpsLsISXL3/tnLEmCHxKtJZgH7cXa/Q3hbLAkBh35PVT//8Sx1upb+0col+AKwdEqi2lyU7TVBRzYAAdZHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYjWN1Mk; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e13375d3so6536984e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 23:06:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730876760; x=1731481560; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b5sOFKhhbWxoz81S1+CXD6VUF6R09kQsa2DuJ0ohEo0=;
+        b=DYjWN1Mk4I5BNVUvoMB+9dCwNfpGzgZfAeK2X1OuChtk6uVVKBes5WBjAh1/dfyiE2
+         C1DvZuwC/hS+qzVFNQVDK8jIPnQtzUcvAqdEfJhEGiqBewLfcJgtlMzpJeaavw4QHcFf
+         ZelZn+mjvsolL0Yzf18Vsa6Y6/AzaMG0FVxSezmGCHphZUdNn6Hz1WeKHfZumKFuJjQB
+         wNWvtXcvqPkv4QxBgGd2Ne35LlhK0MgYgVfJoo2liiCN9U33YRXUFCMgM9pOkyW/9XUz
+         OMg1elGEeDVkp5cwE4Lba175WNitbQritfZ6/wTv2+AxAj60IbLQqyfvhc7ph34sDiIg
+         mTGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730876760; x=1731481560;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b5sOFKhhbWxoz81S1+CXD6VUF6R09kQsa2DuJ0ohEo0=;
+        b=YLn8vB16+S87KbaH5z+WxkxeydXotfwx/NYII4Vzo8AMbe50WA10C8PJPl7np4jCY+
+         1pLsC23hBBiwrPgWGIDwHm4+j1Lk0yxIvdisvYNEsmqk2kQH6slhvzAClyvQ7JRTqDBz
+         rltSm9FTtFFuY/EX58hPSfS/MNIrLSdNDRA4OyfhfnpVfjw2eaoeFpEn1TRsHTCIKTAG
+         s88dE9hw2E41zqPNZUlXS/kFI61rKCejMbvwhF1AdD9hzPGSv773Q9DHBmYRbPyPz/qX
+         fbjIPczaFPZLE5A/Cfg4mCXvWtldVc69JUxwZExrRT6sni8ErPKdqTXCl3hflVmQN2nP
+         NMKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWufA94kdEEklfo9lXno6QSd2yPWwDz8hDdQMAt6lkkGBHg9D7lz/enJEW5rx17EbjgPeBzMYCEJSqzKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrzzdeL5QNf/8bh0kPCtxah0EvwEBa8QNHpWhwtlMSEQp1flyk
+	1JfSGJoxiRr6+AZnqElbsZWsqejjJqYzhQCnuiagp6hhYMisMcW6
+X-Google-Smtp-Source: AGHT+IHch6RbS1NM1k6CBI+Hi17vN7v1edOLx1yQHVelZgvWVj+Tc6VeH8uVB1lg6GXcZxXjYmSOiw==
+X-Received: by 2002:a05:6512:ac3:b0:536:56d8:24b4 with SMTP id 2adb3069b0e04-53c79e15746mr10404636e87.5.1730876759339;
+        Tue, 05 Nov 2024 23:05:59 -0800 (PST)
+Received: from localhost ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bdcc03asm2372232e87.207.2024.11.05.23.05.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 23:05:58 -0800 (PST)
+Date: Wed, 6 Nov 2024 10:05:56 +0300
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Shoji Keita <awaittrot@shjk.jp>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH 1/2] arm64: dts: sun50i-a64-pinephone: Add AF8133J to
+ PinePhone
+Message-ID: <ZysVVCIdJ_hpe0OS@skv.local>
+Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Shoji Keita <awaittrot@shjk.jp>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Andre Przywara <andre.przywara@arm.com>
+References: <20240908214718.36316-1-andrej.skvortzov@gmail.com>
+ <20240908214718.36316-2-andrej.skvortzov@gmail.com>
+ <CAGb2v65Laka+YaPyAecwxEhMkoodrXnDPn+UTwZUS_wsSBMzyg@mail.gmail.com>
+ <ZuazIgLz5PP_Z8Cn@skv.local>
+ <CAGb2v66-saec9RcQsCTNOz_Tz4+BSFPdDd6CEA+RrGcF6kCY=A@mail.gmail.com>
+ <Zyp3N9pGWhLqmtq1@skv.local>
+ <CAGb2v66DgOmfm0U_dm-+=3nEXaZWUMZiajCdkqVJ6vUPvGC8tQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241105144457.GB89669@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf200001.china.huawei.com (7.202.181.227)
+In-Reply-To: <CAGb2v66DgOmfm0U_dm-+=3nEXaZWUMZiajCdkqVJ6vUPvGC8tQ@mail.gmail.com>
 
+Hi,
 
+On 24-11-06 10:31, Chen-Yu Tsai wrote:
+> On Wed, Nov 6, 2024 at 3:51 AM Andrey Skvortsov
+> <andrej.skvortzov@gmail.com> wrote:
 
-在 2024/11/5 22:44, Dust Li 写道:
-> On 2024-11-05 11:19:38, liqiang wrote:
->> [...]
->> I tested the time-consuming comparison of this function
->> under multiple connections based on redis-benchmark
->> (test in smc loopback-ism mode):
->> The function 'smc_buf_get_slot' takes less time when a
->> new SMC link is established:
->> 1. 5us->100ns (when there are 200 active links);
->> 2. 30us->100ns (when there are 1000 active links).
->> [...]
->> -/* try to reuse a sndbuf or rmb description slot for a certain
->> - * buffer size; if not available, return NULL
->> - */
->> -static struct smc_buf_desc *smc_buf_get_slot(int compressed_bufsize,
->> -					     struct rw_semaphore *lock,
->> -					     struct list_head *buf_list)
->> +/* use lock less list to save and find reuse buf desc */
->> +static struct smc_buf_desc *smc_buf_get_slot_free(struct llist_head *buf_llist)
->> {
->> -	struct smc_buf_desc *buf_slot;
->> +	struct smc_buf_desc *buf_free;
->> +	struct llist_node *llnode;
->>
->> -	down_read(lock);
->> -	list_for_each_entry(buf_slot, buf_list, list) {
->> -		if (cmpxchg(&buf_slot->used, 0, 1) == 0) {
->> -			up_read(lock);
->> -			return buf_slot;
->> -		}
->> -	}
->> -	up_read(lock);
->> -	return NULL;
->> +	/* lock-less link list don't need an lock */
->> +	llnode = llist_del_first(buf_llist);
->> +	if (!llnode)
->> +		return NULL;
->> +	buf_free = llist_entry(llnode, struct smc_buf_desc, llist);
->> +	WRITE_ONCE(buf_free->used, 1);
->> +	return buf_free;
+> >
+> > >
+> > > FYI I'm open to either approach. If the firmware can do it, that is also
+> > > fine. I don't know if it makes sense to have both disabled by default
+> > > though? That would break existing users, but so would the in-kernel
+> > > prober approach, which requires both components be marked as
+> > > "fail-needs-probe", and also requires that the kernel driver be enabled.
+> > > In other words, I think the firmware approach is friendlier for existing
+> > > users that have the original batches.
+> >
+> > Current patches leave original magnetometer enabled as before. So only
+> > the new alternative magnetometer is disabled. Firmware prober will set
+> > the correct status. So you are right firmware approach is a bit nicer
+> > for existing users, nothing will change for them with any combination
+> > of kernel and firmware. Let's go with a firmware approach with current
+> > patches then, if nobody
 > 
-> Sorry for the late reply.
-> 
-> It looks this is not right here.
-> 
-> The rw_semaphore here is not used to protect against adding/deleting
-> the buf_list since we don't even add/remove elements on the buf_list.
-> The cmpxchg already makes sure only one will get an unused smc_buf_desc.
+> If?
+if no one has anything against that.
 
-I first came up with the idea of ​​​​optimizing because this function needs to
-traverse all rmbs/sndbufs, which includes all active links and is a waste
-of time and unnecessary.
 
-Changing to an llist linked list implementation can ensure that a free buf_slot
-with a 'used' mark of 0 can be directly obtained every time, without the need
-to start traversing from the first element of the rmbs/sndbufs linked list.
-
-> 
-> Removing the down_read()/up_read() would cause mapping/unmapping link
-> on the link group race agains the buf_slot alloc/free here. For exmaple
-> _smcr_buf_map_lgr() take the write lock of the rw_semaphore.
-
-Read from the relevant code, here only a buf_slot is found in the
-down_read/up_read and 'used' is set to 0, while the 'used' is read
-in other down_write/up_write code.
-
-so I have two questions:
-
-1. Is the read lock of rw_semaphore necessary here? (The read lock here
-   is mutually exclusive with the write lock elsewhere, what is guaranteed
-   should be that in the critical section of the write lock, all
-   'smc_buf_desc->used' statuses in rmbs/sndbufs will not change.)
-2. If is necessary, can we add it in new implement of this patch, like this?
-
-```
-{
-        struct smc_buf_desc *buf_free;
-        struct llist_node *llnode;
-
-        /* lock-less link list don't need an lock */
-        llnode = llist_del_first(buf_llist);
-        if (!llnode)
-                return NULL;
-        buf_free = llist_entry(llnode, struct smc_buf_desc, llist);
-	up_read(lock);
-        WRITE_ONCE(buf_free->used, 1);
-	down_read(lock);
-        return buf_free;
-}
-```
-I think this can also ensure that all 'used' marks remain unchanged during
-the write lock process.
-Anyway, use llist to manage free rmbs/sndbufs is a better choice than traverse,
-and it doesn't conflict with useing or not using rw_semaphore. :)
-
-> 
-> But I agree the lgr->rmbs_lock/sndbufs_lock should be improved. Would
-> you like digging into it and improve the usage of the lock here ?
-> 
-
-Maybe I can try it, I need to spend some time to read in detail the
-code used in every place of this lock.
-
-Thanks for taking the time to read this email. ;-)
+> I'll wait a day before applying this patch then.
+Sure, thanks.
 
 -- 
 Best regards,
-Li Qiang
+Andrey Skvortsov
 
