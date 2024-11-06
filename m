@@ -1,158 +1,90 @@
-Return-Path: <linux-kernel+bounces-398584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33CC59BF327
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:24:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9AD9BF328
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7390B2478C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:24:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764E91F22D2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35394205137;
-	Wed,  6 Nov 2024 16:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784152038DF;
+	Wed,  6 Nov 2024 16:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onHYz3TI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="poQGc65H";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zro7LkBK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890F8202F6C;
-	Wed,  6 Nov 2024 16:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7426D204080
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730910271; cv=none; b=n6Obp4O0ywpwqcaCwtSeRmYjaMeDFJPaIJsvl2F/RfyEHVTfkIIiY+TkXzaGO5Th7q/28SE/BeyBH2fjwfQCZQ0NMkOrCO9WZ6z7+AV1s5OOtnBnRwJd5LxZQHmTmdVbrUnT+YtAIzwVV9otbRRDDNehpE9Vp5j+7a+77GeHdTo=
+	t=1730910293; cv=none; b=YGZmSMLw1qg+KTTgSjCAqNx0DqxSWLEDCIUQiovlIRaj9yoMkLl76LJmHfEhwbShz8l15GQrKPAhjLSaPZzc7cg9uL5T75ngP0A730BFQB3BPCzQO0Z/YsFuncA2xUD1fwxLs2rcOaZF7n8tUe0WBjhQsyaXwt8KKpsxkhmJrhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730910271; c=relaxed/simple;
-	bh=Sj2iMPVC4t8UWXhnZpLZQxauCOr7yy27q4FUElk2RYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdt6uQLnhQomL2zhsR3E2v98IUq/g25qrtFZiYp0iI/VWGgc0F1DoXBuyCk7UaJPm91CZScdl85uL7ZCgrqLey5CpNR+3ygM4SdPjcORfMBreCMusdn3OpZIjx/mY6v3zjwiCep0Ja4uh9wPAeJmN+Wcadxf1nXBr4pitaQ8mX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onHYz3TI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F781C4CEC6;
-	Wed,  6 Nov 2024 16:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730910271;
-	bh=Sj2iMPVC4t8UWXhnZpLZQxauCOr7yy27q4FUElk2RYU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=onHYz3TIcQpi871TKla1sO2Q6ZAMq8LYGhMIbTQRlTbt8SGu8fpqzQ3UTZI4L/E6g
-	 mkSRDMJWDnx1iCoX7kzsBATcYb+EnXOgaGckevSGT/sawyhooKYVfUYowb9ppaK/Pc
-	 +yJGEmHpcHO/ImYGS6KQRWRdw35E6WbyIXVW3tNC2oVgVNbp4GRPyFIQn6aLDizeKo
-	 c9qwrtvBhZk2O5i1CIsHneXSbuBJ21Rc67eZCGvYlA0rSE0sFSxmP3EXHThqT+nIUm
-	 xzXKIG41q+DjnY5e7/1CZpyBOpWAYKXykCY7evCLxrcjeVNbeC/Ax1YlXyEmZMwlGK
-	 YWsROwdnNpjFw==
-Date: Wed, 6 Nov 2024 16:24:27 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] dt-bindings: input: matrix_keypad - add missing
- property
-Message-ID: <20241106-mobility-exorcist-34d53a6303a3@spud>
-References: <20241031063004.69956-1-markus.burri@mt.com>
- <20241105130322.213623-1-markus.burri@mt.com>
- <20241105130322.213623-5-markus.burri@mt.com>
- <20241105-earpiece-swizzle-a3e36d50b9c6@spud>
- <ZypumDqlw2tdllG5@google.com>
+	s=arc-20240116; t=1730910293; c=relaxed/simple;
+	bh=j+pW09KlCfHgEwChtrQmLqJdAkLRMYqlpV0/EVc7ZLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rZrGjHtk/afgIP488p5S/fjmrd0NIVHM2GQf0tcaNU8ZebEx+0jUrxvOftFn8cfS1Rg3HdH3Wr2L/BFhO7FNEB1QKTOukGDbl+XRYjvhowKW38AXg1FkaEkOWvvtf59z9M2rI50gAdFuxf3NZfiAbkQdv8xGgfjfDoRuZkcxKmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=poQGc65H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zro7LkBK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 6 Nov 2024 17:24:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730910290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=GQrCrITldNuGCh3c3Ejb12ZGNxCVfnc9RHcU2GD5HLk=;
+	b=poQGc65HMQGUGapZ9yh/65RCv1kODx50O20Nv1oQu+PK940ewfU2PcEEAqYD+JGjNMOKnZ
+	HKQACrXsQrCJiraFwhM8p6ouIVNVMpBYu95nTC6ioDIfsPy20K4dvJQArrKax7NbY1/bs3
+	CuIJxG9CvBTUl5gh+YJ3olvKq2zTYJDWlm0KnR0eugsyYUPVsC+UryOQbutc0xy9fy11jF
+	2jIxgYmRw4Ptdo5jCfOqzNpCKHyvJhEv8beRfAQItLgQJxYgLn3i75M5p/z7Iuj0VHlNvJ
+	EQhldFhGRkkgC894322ES5j2LdXYc8N6gPrkonbvxVG6vRB1HPd1FyymyEGeMg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730910290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=GQrCrITldNuGCh3c3Ejb12ZGNxCVfnc9RHcU2GD5HLk=;
+	b=Zro7LkBKYLG97v403vx8LrSvV4S/YDhDsJtr3rwqjwkTBXT1v85d7arMrHDacStqrVSGfQ
+	bb6yViZ6NzJYHLCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+Subject: [PATCH] sched, x86: Update the comment for TIF_NEED_RESCHED_LAZY.
+Message-ID: <20241106162449.sk6rDddk@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UD1TWMaQ/sueAZ84"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZypumDqlw2tdllG5@google.com>
 
+Add the "Lazy" part to the comment for TIF_NEED_RESCHED_LAZY so it is
+not the same as TIF_NEED_RESCHED.
 
---UD1TWMaQ/sueAZ84
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ arch/x86/include/asm/thread_info.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, Nov 05, 2024 at 11:14:32AM -0800, Dmitry Torokhov wrote:
-> Hi Conor,
->=20
-> On Tue, Nov 05, 2024 at 06:22:36PM +0000, Conor Dooley wrote:
-> > On Tue, Nov 05, 2024 at 02:03:19PM +0100, Markus Burri wrote:
-> > > Add missing property 'gpio-activelow' to DT schema.
-> >=20
-> > What do you mean "missing property"? Why isn't it sufficient to mark the
-> > GPIOs as GPIO_ACTIVE_LOW in the various -gpios properties?
->=20
-> Unfortunately we do have "gpio-activelow" property already used in the
-> driver since 2012 when DT support was added to the driver. This patch
-> merely acknowledges that it is there.
->=20
-> If DT maintainers wish to adjust known DTSes and switch to proper
-> polarity annotation through gpio property I am all for it.
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 75bb390f7baf5..a55c214f3ba64 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -87,7 +87,7 @@ struct thread_info {
+ #define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+ #define TIF_SIGPENDING		2	/* signal pending */
+ #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+-#define TIF_NEED_RESCHED_LAZY	4	/* rescheduling necessary */
++#define TIF_NEED_RESCHED_LAZY	4	/* Lazy rescheduling needed */
+ #define TIF_SINGLESTEP		5	/* reenable singlestep on user return*/
+ #define TIF_SSBD		6	/* Speculative store bypass disable */
+ #define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
+-- 
+2.45.2
 
-If that's the rationale, it should be in the commit message. It's not my
-job to figure out people's intentions :)
-
-> > > Signed-off-by: Markus Burri <markus.burri@mt.com>
-> > > ---
-> > >  .../devicetree/bindings/input/gpio-matrix-keypad.yaml        | 5 +++=
-++
-> > >  1 file changed, 5 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keyp=
-ad.yaml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> > > index 745652b..9ea66b3 100644
-> > > --- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> > > +++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> > > @@ -51,6 +51,11 @@ properties:
-> > >        (Legacy property supported: "linux,wakeup")
-> > >      default: false
-> > > =20
-> > > +  gpio-activelow:
-> > > +    type: boolean
-> > > +    description: The GPIOs are low active.
-> > > +    default: false
-> >=20
-> > What you want is a flag, not a boolean here btw. Flags you can check for
-> > the presence of, booleans you cannot.
->=20
-> The behavior is fixed.
-
-What do you mean by "fixed"? Corrected, unchangeable or something else?
-
-> If the flag is true GPIO is assumed to be active
-> low, otherwise (and in the absence of the flag) GPIO is assumed to be
-> active high.
-
-Flags cannot be false only true or absent, what you have described here
-is a boolean.
-
->=20
-> >=20
-> > > +
-> > >    debounce-delay-ms:
-> > >      description: Debounce interval in milliseconds.
-> > >      default: 0
-> > > --=20
-> > > 2.39.5
-> > >=20
->=20
-> Thanks.
->=20
-> --=20
-> Dmitry
-
---UD1TWMaQ/sueAZ84
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyuYOwAKCRB4tDGHoIJi
-0qeUAPsF2DNow0eSoZP9W//jfvG6mplUYUf9qe14TyGebWKkwAD/aAd4BecuHr3n
-rEp+xCY2x/ikKJ/Pmmdgd1fa6u3s8gE=
-=bjik
------END PGP SIGNATURE-----
-
---UD1TWMaQ/sueAZ84--
 
