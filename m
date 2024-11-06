@@ -1,225 +1,142 @@
-Return-Path: <linux-kernel+bounces-397915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5A99BE256
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:23:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B92B9BE258
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 538641C23382
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:23:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97168B234CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CD61D90DF;
-	Wed,  6 Nov 2024 09:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EBC1DB522;
+	Wed,  6 Nov 2024 09:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzAVVJLq"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="MAfoJycb"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4646D1D95A9;
-	Wed,  6 Nov 2024 09:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F60A1DA622;
+	Wed,  6 Nov 2024 09:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730884996; cv=none; b=uencmvORk3uZCW3UEyOFORHsZvrmB4EFYroNSvYJVRxGRxj6G9hFv7QpLb7iSYebSdrMrHpWVwuXEEDUvvxUeFlNeBXHPKQvJWdiqqN0eLAFVWp38ceACmrKOpH9zTPOPs+zaj2KxKhjFQFEM95x5ZLlnvKDebUB6x0mWnDmM3E=
+	t=1730885001; cv=none; b=ov7OrBpz5jGRNW/1PJqtaP6YQtGwl3lLrNRbaQWnRzuubdLDG0bHwQr4D5dm7nOGFgKPx84Bt9xqOOCQyULG0NoThdezUTDTZAVZhLWgLszXd9Zwjo9v7htpsfkCHlAzFTCGOD9fv46KjXeOqwQ68WHYI1Yu7Q8PYMWJmBFboV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730884996; c=relaxed/simple;
-	bh=nxrCpqfCp7YF5rQvcpcOOqUALKRgtWKx9p44sRekEsY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EhGoqlm0E8oVVPJ8ZaYxz13Sk0IQ+l6TL2IwiCV1xpHfC/tYXITH1c4bpvLpaUELE1080lZiQNJRQ10IIhpilQPxYFCBkQTa7Z8B5mY9NWdA45vAJ37Oh5GjrwAZuyaIndsPcxkTdUXY3HQu6Zk1Ma3iyaSsoAfFrRYezzFaxFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzAVVJLq; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7aa086b077so832117066b.0;
-        Wed, 06 Nov 2024 01:23:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730884992; x=1731489792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uRkks3dSyRy/clHnQcnjYlOdhUaiujCRFslbnDY6mJA=;
-        b=VzAVVJLqJywk7hdR0a+cnNDq9GWnAuWAGh8o2ybLGXEhNNmTwGxJZr6MK8XefFbtVQ
-         dQ84EEM2BdOuKSwY1955/M2fCUdp0341P2PGbUJbu7wZYinb4by5zVgKC5cUUcObTQG2
-         ByC1AYj1rRF+3rott2+qqXVg7MeusT+dhcakgFos6OTNXtSQL+JzeQvsu5uCEtC97Zut
-         nsc4ggthj1CdAjEXbI4antNUfGGGstfhaKG4Cjzis2SbVYHl7AsZI9JkS8mjWOHsw/LG
-         PjzS5p218Tk79hXbAqZsJCPafzaK+aTspTKMabs1anoJ5t5f0MeeYkBq6G/B/Ln5H1Ds
-         egCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730884993; x=1731489793;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uRkks3dSyRy/clHnQcnjYlOdhUaiujCRFslbnDY6mJA=;
-        b=PoSN8eqsvgxeon/nEAVa6+Xe1/UuhS5/Zdt3oIRPeSUYTfUNiEzktsx4PNFmSyM2+R
-         T1r3nth944PsV3LgQk9wazbDO7vl3DvYa3Hcw1kSdzfB7hah4/sFTiWy8R3tbYH/+y6T
-         cHUjoUbs/Cql1s/t7ldTMYs7APlvZFSDLyJL9zzPrMeCa6Jwo2uDwdwLmK4FA1Lgmda4
-         iqWuPSEUxu8svZOsQXQgGcljenaPpbFqk5Tdqf82l4Gv59RCQWEkt8NwT5kptnDo/t/l
-         wSV/0esQcqU6d5zJ0LtW42Oyc49bfCeKpyi+YDbxEEmbstgd801QiaYNbhrYogi0oPWG
-         263g==
-X-Forwarded-Encrypted: i=1; AJvYcCX3E5DA8Ji8rVGTjLOcurJwSjV2q2XR8pdbSCXaKf/4pcZtYVrNLVLYavXXWEWeZ/ttxAeYh60TU3eE@vger.kernel.org, AJvYcCXEIWIRxMnRdDaFc/TOtFZGTBZWrUQvpikdKrs+K5g/4vuFp01f1dySSxn1BxGRV+jRYznjvYZ+1+MZBiSB@vger.kernel.org, AJvYcCXFpHLjM/lfZeUWUOQoClBpjby3cYOREfALYYv7jcP4cL6ZhaIQH8tuoQgILXGo4c3AVdQ+K3nPGEMn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsJIxoHB7kYFCVSBfGNlSMW5kWiP9MyMl3X9iK2owF9WrDVv3J
-	fc4ctIJ5wqWhAyhq/UM2i8O6wEJJ8YW9dviUpRGfELMnyjgLii6BoSMcK3MGnrSQb4T0gGTsKRx
-	bc8YzPG79jzgKaGBlfzpU3e0GZuo=
-X-Google-Smtp-Source: AGHT+IFv6NXCj0PoJ3/9MebXG7UMEvSLe5/XYsXv7IOXWlLpbZrwz5OF5MmA5IiWVO83xU2p+sYbWhvM35oxrlZEs5c=
-X-Received: by 2002:a17:906:f34a:b0:a9e:c696:8f78 with SMTP id
- a640c23a62f3a-a9ec6969260mr153549166b.51.1730884992222; Wed, 06 Nov 2024
- 01:23:12 -0800 (PST)
+	s=arc-20240116; t=1730885001; c=relaxed/simple;
+	bh=m1N+5jyQ67HSah3rKgOgWZVkkGqLOIgklCq6QXJ6uzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IvV7aOjhCAmNrIrFegayLn5/koeHPJbHgnLqFmNCMJBTqdkLWHxsznRl9x0MPpnfsFmuUXxawEuUZBKPeOQXNnJ39GeZm7Po8Ba6NLEA8Bxj2VB6qT5GH3uqHTbcUJwctdbBNbYm9ztcWGii42iw8UIj9xbuXukw8+cykoBO0ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=MAfoJycb; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 0742B2FC0050;
+	Wed,  6 Nov 2024 10:23:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1730884995;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=anTqZfKLitYWHQoCE04uHclcVRN2RSOQREYPJyYJsT8=;
+	b=MAfoJycb5veaN9VjpA6wtgrjwUpGXNXChtLgNRJvyQw1PnQQWdtUAGTmp58yZhOw+Vi+G5
+	8KgO9i/sOrCQInliAVNwZ4IRy0QYHR3GBe5lmQHIv1YqkomG8KsRA7OQHp3QMSSBMW1Oxm
+	1OnswIwPpLXbJnsihWyHJX/AAXqUsOo=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <a7ab1da8-5fe8-4f46-bf18-bfc8d6fa3e6f@tuxedocomputers.com>
+Date: Wed, 6 Nov 2024 10:23:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106023916.440767-1-j2anfernee@gmail.com> <20241106023916.440767-2-j2anfernee@gmail.com>
- <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
-In-Reply-To: <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
-From: Yu-Hsian Yang <j2anfernee@gmail.com>
-Date: Wed, 6 Nov 2024 17:22:35 +0800
-Message-ID: <CA+4VgcJD74ar9zQCj38M2w8FzGWpq+u5Z7ip9M7a1Lu7u8rojw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
- NCT720x ADCs
-To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com, 
-	javier.carrasco.cruz@gmail.com, andy@kernel.org, marcelo.schmitt@analog.com, 
-	olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, 
-	matteomartelli3@gmail.com, alisadariana@gmail.com, joao.goncalves@toradex.com, 
-	marius.cristea@microchip.com, mike.looijmans@topic.nl, 
-	chanh@os.amperecomputing.com, KWLIU@nuvoton.com, yhyang2@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: FAILED: Patch "ALSA: hda/realtek: Fix headset mic on TUXEDO
+ Gemini 17 Gen3" failed to apply to v6.1-stable tree
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org, cs@tuxedo.de
+Cc: Takashi Iwai <tiwai@suse.de>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241106021124.182205-1-sashal@kernel.org>
+ <dc0af563-59d2-4176-ad15-fa93cf5c99d2@tuxedocomputers.com>
+Content-Language: en-US
+In-Reply-To: <dc0af563-59d2-4176-ad15-fa93cf5c99d2@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Dear Chanh Nguyen,
+Am 06.11.24 um 10:19 schrieb Werner Sembach:
+> Hi,
+>
+> Am 06.11.24 um 03:11 schrieb Sasha Levin:
+>> The patch below does not apply to the v6.1-stable tree.
+>> If someone wants it applied there, or to any other stable or longterm
+>> tree, then please email the backport, including the original git commit
+>> id to <stable@vger.kernel.org>.
+>
+> Applying 33affa7fb46c0c07f6c49d4ddac9dd436715064c (ALSA: hda/realtek: Add 
+> quirks for some Clevo laptops) first and then 
+> 0b04fbe886b4274c8e5855011233aaa69fec6e75 (ALSA: hda/realtek: Fix headset mic 
+> on TUXEDO Gemini 17 Gen3) and e49370d769e71456db3fbd982e95bab8c69f73e8 (ALSA: 
+> hda/realtek: Fix headset mic on TUXEDO Stellaris 16 Gen6 mb1) makes everything 
+> work without alteration.
+>
+> The first one is just missing the cc stable tag, probably by accident.
+>
+> Should I alter the 2nd and 3rd commit or should I send a patchset that 
+> includes the first one?
 
-Thank you for your response.
+Sorry just realized that for 5.15 it's a different patch that is missing for 
+e49370d769e71456db3fbd982e95bab8c69f73e8 to cleanly apply
 
-Chanh Nguyen <chanh@amperemail.onmicrosoft.com> =E6=96=BC 2024=E5=B9=B411=
-=E6=9C=886=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8812:58=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
->
->
-> On 06/11/2024 09:39, Eason Yang wrote:
-> > This adds a binding specification for the Nuvoton NCT7201/NCT7202
-> > family of ADCs.
-> >
-> > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-> > ---
-> >   .../bindings/iio/adc/nuvoton,nct720x.yaml     | 47 ++++++++++++++++++=
-+
-> >   MAINTAINERS                                   |  1 +
-> >   2 files changed, 48 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,=
-nct720x.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.=
-yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> > new file mode 100644
-> > index 000000000000..3052039af10e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> > @@ -0,0 +1,47 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Nuvoton nct7202 and similar ADCs
-> > +
-> > +maintainers:
-> > +  - Eason Yang <yhyang2@nuvoton.com>
-> > +
-> > +description: |
-> > +   Family of ADCs with i2c interface.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nuvoton,nct7201
-> > +      - nuvoton,nct7202
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  read-vin-data-size:
->
-> Is it generic property or vendor property? I tried to find in the
-> https://github.com/torvalds/linux/tree/master/Documentation/devicetree/bi=
-ndings
-> , but it seems this property hasn't been used on other devices.
->
-> If it is vendor property, then I think it should include a vendor
-> prefix. For examples:
->
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/adi%2Cad7780.yaml#L50
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/fsl%2Cvf610-adc.yaml#L42
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/st%2Cstmpe-adc.yaml#L22
->
->
+I will just alter the patches
 
-I would add a vendor prefix for it.
-
-> > +    description: number of data bits per read vin
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    enum: [8, 16]
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - read-vin-data-size
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i2c {
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        nct7202@1d {
 >
-> I think the Node name should follow
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-device=
-tree-basics.html#generic-names-recommendation
+> Kind regards,
 >
+> Werner Sembach
 >
-> For some examples that were merged before
->
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/adi%2Cad7091r5.yaml#L102
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/maxim%2Cmax1238.yaml#L73
-> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
-ndings/iio/adc/ti%2Cadc081c.yaml#L49
->
-
-I would change it for the node naming.
-
-> > +            compatible =3D "nuvoton,nct7202";
-> > +            reg =3D <0x1d>;
-> > +            read-vin-data-size =3D <8>;
-> > +        };
-> > +    };
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 91d0609db61b..68570c58e7aa 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -2746,6 +2746,7 @@ L:      openbmc@lists.ozlabs.org (moderated for n=
-on-subscribers)
-> >   S:  Supported
-> >   F:  Documentation/devicetree/bindings/*/*/*npcm*
-> >   F:  Documentation/devicetree/bindings/*/*npcm*
-> > +F:   Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> >   F:  Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.yaml
-> >   F:  arch/arm/boot/dts/nuvoton/nuvoton-npcm*
-> >   F:  arch/arm/mach-npcm/
->
+>>
+>> Thanks,
+>> Sasha
+>>
+>> ------------------ original commit in Linus's tree ------------------
+>>
+>>  From 0b04fbe886b4274c8e5855011233aaa69fec6e75 Mon Sep 17 00:00:00 2001
+>> From: Christoffer Sandberg <cs@tuxedo.de>
+>> Date: Tue, 29 Oct 2024 16:16:52 +0100
+>> Subject: [PATCH] ALSA: hda/realtek: Fix headset mic on TUXEDO Gemini 17 Gen3
+>>
+>> Quirk is needed to enable headset microphone on missing pin 0x19.
+>>
+>> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
+>> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+>> Cc: <stable@vger.kernel.org>
+>> Link: https://patch.msgid.link/20241029151653.80726-1-wse@tuxedocomputers.com
+>> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+>> ---
+>>   sound/pci/hda/patch_realtek.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+>> index 7f4926194e50f..e06a6fdc0bab7 100644
+>> --- a/sound/pci/hda/patch_realtek.c
+>> +++ b/sound/pci/hda/patch_realtek.c
+>> @@ -10750,6 +10750,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+>>       SND_PCI_QUIRK(0x1558, 0x1404, "Clevo N150CU", 
+>> ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+>>       SND_PCI_QUIRK(0x1558, 0x14a1, "Clevo L141MU", 
+>> ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+>>       SND_PCI_QUIRK(0x1558, 0x2624, "Clevo L240TU", 
+>> ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+>> +    SND_PCI_QUIRK(0x1558, 0x28c1, "Clevo V370VND", ALC2XX_FIXUP_HEADSET_MIC),
+>>       SND_PCI_QUIRK(0x1558, 0x4018, "Clevo NV40M[BE]", 
+>> ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+>>       SND_PCI_QUIRK(0x1558, 0x4019, "Clevo NV40MZ", 
+>> ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+>>       SND_PCI_QUIRK(0x1558, 0x4020, "Clevo NV40MB", 
+>> ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
 
