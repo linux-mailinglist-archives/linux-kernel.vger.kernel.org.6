@@ -1,174 +1,152 @@
-Return-Path: <linux-kernel+bounces-398124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F9A9BE5D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:41:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F48E9BE5A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:38:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C05F5280CA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:41:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A6D28468B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC8B1DED76;
-	Wed,  6 Nov 2024 11:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305591DED6C;
+	Wed,  6 Nov 2024 11:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b="QKl4N1IT"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="HpFhxp/4"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D88E1DE3B4
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE781DE4C2;
+	Wed,  6 Nov 2024 11:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730893308; cv=none; b=NIYwg9gFTLtAl4z5+9HDgfH9GeATXrTBdLbkqq33eVpZ1j7J9IxWWmFEhSRdMdoll9pr43ToiM0DJYxDGugzewnZzRPbpXd/qWk4L4TmHzsLSOT+P9nVidgeaX33y5fYJz62K07NMWMrkICX7oDlR/3KR3js5z8DvskFa96XvV4=
+	t=1730893071; cv=none; b=O1I0ib4xRRDpLcTr/n6I1TDAxAN4hKyIpKco4K2sGorJOYJeazQXRLwzJdZJTneqdARUls/C2JIQs22TWXdMsIGvDe+WCy+cRZFdRLIAZvQoqzaoAsOZox5IuC6kW1AK25ZYwxjK+mEXia8S6lu2yYE1RKoERy1VP7obfXxz/Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730893308; c=relaxed/simple;
-	bh=gpKnmGMkCL3MLyDlexE5kcZ1gDVx6RqpDiyiH1Uxa/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ETg3ECAoYo70ipInnRLEf14h1D29MhGwdB9JPxk8xAdwewWu2Fvx2dH1gl3P5ZXPojz3eJ3Y3ZIbFvi/pF7FPFRiUA5qU1nL+BwMPkv8/s4gwRehwnDTVPgdvN9bPOAWy6zOTiPARJ5Wv7uRm8cgZyYyCX8GekCJb/7kiUhGXAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io; spf=pass smtp.mailfrom=aiven.io; dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b=QKl4N1IT; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aiven.io
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539eb97f26aso4528348e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 03:41:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=aiven.io; s=google; t=1730893305; x=1731498105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dPCzRjUimrvW9UNg2TpVh6Pq5BYTOh3dyaOa5B/jNvU=;
-        b=QKl4N1ITS3KyKgTXShiN9+r8rm63nzdKdhl1/1DteMb2f3NDfE+YQHD0Yref2k3L82
-         zcI8vn266L5K3cn98N1/NhRr9ruZkRaOBYaljYQr1FNhXvBd7E+XPzShTg9BsHizNTCx
-         BQoBcnZ0ZRLbSv3YXTkknlueDqQ6dfhhfG0ro=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730893305; x=1731498105;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dPCzRjUimrvW9UNg2TpVh6Pq5BYTOh3dyaOa5B/jNvU=;
-        b=Iy0iUskH/U4rjwUXmYrj7bz58mo2COd8qYiFCwT1IpjXtKDjDKRXBn4QaoRcrgFWGc
-         4wDba+fnJjcje+11UTM7T6jolwcwQWFfBhtFWkziUOYyFpf3Zpi+z33OGhjTO17Lv1b2
-         NQIeaJmlv++zZR9QHloPyySzjiFD7SRLNfRIKyIlnsbw0MMwctijNaS5a1jKIpRfB9jS
-         aNYOTGw42GiyHdwC/ixGw4ujqkvWkacljQwN4+ty+zNnCg6spg/HEcX5nhBpWIM6/yI5
-         YJAGoUfxbB1Wqzkul83V8SxWHPlV7K+z+s3IBTQPjVzvIvs+UCJI5FdAjwgtWBpGdNlK
-         KrpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVV8gfvxNXBw4rJDwuk3YCoxXQCbTrfOSM3AaZAzpOgbasgTM3/2tSe9oT60RN1WnZGjaj/M0YRLiLWP7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsHyEXu3sLa7ekbiG5he//IIgV92eGTWADnODZhKoVjp84FPkh
-	dr+GwMOnmlkhRynKX1joysIQWUIZ/jrGA9Z/z8pzxnmIo0hFNWtkfR2uRuXO77w=
-X-Google-Smtp-Source: AGHT+IGXkt0yYBT7Tm2B+DHoTvfz6t5T9JKmnp4MG4hr0sosZp9XndcXXtQ2G5/RBce1KaWy/EP2xQ==
-X-Received: by 2002:a05:6512:308a:b0:539:8d67:1b1b with SMTP id 2adb3069b0e04-53b7ecf1ff6mr14947497e87.26.1730893305209;
-        Wed, 06 Nov 2024 03:41:45 -0800 (PST)
-Received: from ox.aiven-management.aivencloud.com (n114-74-229-70.bla3.nsw.optusnet.com.au. [114.74.229.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d3f87sm93796755ad.249.2024.11.06.03.41.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 03:41:44 -0800 (PST)
-From: Orange Kao <orange@aiven.io>
-To: tony.luck@intel.com,
-	qiuxu.zhuo@intel.com
-Cc: bp@alien8.de,
-	james.morse@arm.com,
-	orange@kaosy.org,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mchehab@kernel.org,
-	rric@kernel.org,
-	Orange Kao <orange@aiven.io>
-Subject: [PATCH 3/3] EDAC/igen6: Allow setting edac_op_state
-Date: Wed,  6 Nov 2024 11:35:47 +0000
-Message-ID: <20241106114024.941659-4-orange@aiven.io>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241106114024.941659-1-orange@aiven.io>
-References: <20241106114024.941659-1-orange@aiven.io>
+	s=arc-20240116; t=1730893071; c=relaxed/simple;
+	bh=C1n9EJ3Er0NrXM0zfDuaNPlNbQYf7Fs6wVvI/wCLf+w=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=IsMOTonpPOOUt7DmlFGftcloHpUiWEvwjZddrdFM873+A3oJE9qb4b2u2gtxEMFAC2dOKQF0OKcrwzMt3LS2nGa/DmyRLxIzPi+rewO4veGMFFV8YqQwGhJ/lK1qnyNuCv19FTARIVbQCAq9acABQdFfFRVBIPE0e0hc4gTq2SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=HpFhxp/4; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1730893067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SAVWN1jllFgopZaf0TDwkFXp6oVX56WTH2lis0u2zBw=;
+	b=HpFhxp/4D+HOZ1HX/JiwwgNR5olDDT/A5VwquOc7q6EymSbB089NHLszIJrfeKEe5KZu9Q
+	pfNa7XV8BdPon3Ke9uuHChHXCo6xJXiXt7zPpQ50ropiwuAwdf0ysy5ghxe+ts658YUlna
+	oqOgy51LmGzKl83jo1b9HARZW0JghhKO7DhVq/aTlV3Gl7QGUse/dbgDhg9LvBIp5Ja9kL
+	NIgpdLryTocWhziCDe9N6a6RFoVhsOrj922k3Arryy7jlv5zumNT0vE242UAhuipSHapKK
+	zsCITqgvY/Qzdu6iX1j4ZN883OWdlGVwodShSgWMIdsS3077++Zc2zimhN3NvQ==
+Date: Wed, 06 Nov 2024 12:37:47 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, Quentin Schulz
+ <quentin.schulz@cherry.de>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alchark@gmail.com
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add OPP voltage ranges to RK3399
+ OP1 SoC dtsi
+In-Reply-To: <3515804.QJadu78ljV@diego>
+References: <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
+ <3252308.5fSG56mABF@diego> <77bc2898bbbd2633d6713b4935bd5ee3@manjaro.org>
+ <3515804.QJadu78ljV@diego>
+Message-ID: <09212b36eddf74748afa7e97172d89de@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Current implementation does not allow users to set edac_op_state. As a
-result, if a user needs to test different edac_op_state, they need to
-compile the kernel.
+On 2024-11-06 12:24, Heiko Stübner wrote:
+> Am Mittwoch, 6. November 2024, 11:45:06 CET schrieb Dragan Simic:
+>> On 2024-11-06 10:41, Heiko Stübner wrote:
+>> > Am Mittwoch, 6. November 2024, 10:32:06 CET schrieb Quentin Schulz:
+>> >> On 11/6/24 9:33 AM, Dragan Simic wrote:
+>> >> > Add support for voltage ranges to the CPU, GPU and DMC OPPs defined in the
+>> >> > SoC dtsi for Rockchip OP1, as a variant of the Rockchip RK3399.  This may be
+>> >> > useful if there are any OP1-based boards whose associated voltage regulators
+>> >> > are unable to deliver the exact voltages; otherwise, it causes no functional
+>> >> > changes to the resulting OPP voltages at runtime.
+>> >> >
+>> >> > These changes cannot cause stability issues or any kind of damage, because
+>> >> > it's perfectly safe to use the highest voltage from an OPP group for each OPP
+>> >> > in the same group.  The only possible negative effect of using higher voltages
+>> >> > is wasted energy in form of some additionally generated heat.
+>> >> >
+>> >> > Reported-by: Quentin Schulz <quentin.schulz@cherry.de>
+>> >>
+>> >> Well, I merely highlighted that the voltage was different on OP1
+>> >> compared to RK3399 for the 600MHz OPP :)
+>> >>
+>> >> So... If there's ONE SoC I'm pretty sure is working as expected it's
+>> >> the
+>> >> OP1 fitted on the Gru Chromebooks with the ChromiumOS kernel fork
+>> >> (though yes, I believe all Gru CB are EoL since August 2023). In the
+>> >> 6.1
+>> >> kernel fork, there's also no range:
+>> >> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/refs/heads/chromeos-6.1/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
+>> >
+>> > yeah, this somehow goes quite a bit into the "stuff that doesn't need
+>> > to
+>> > change" area. On the one hand it does make "some" sense to unify things
+>> > if we're using ranges everywhere else.
+>> 
+>> I agree that it might be unneeded, but there's no possible harm, and
+>> unifying the things may be seen as beneficial.
+>> 
+>> > On the other hand, as Quentin noted below, all existing OP1 devices
+>> > seem
+>> > to run just fine, and there won't be any more entering the kernel.
+>> 
+>> Hmm, why can't we add more OP1-based devices?  As I mentioned in my
+>> earlier response to Quentin, my plan is to implement the board dts
+>> for OP1-based TinkerBoard 2S, so I'd like to know is there something
+>> that might prevent that board dts from becoming merged?
+>> 
+>> > So what do we realisitically gain here, except hiding existing
+>> > git-history
+>> > under another layer?
+>> 
+>> Sorry, I'm not sure what would become hidden by this patch?
+> 
+> When you change a part of the file, a git blame points to you,
+> hiding the previous blame, so it makes traversing history a tiny
+> bit harder.
 
-This commit accepts module parameter edac_op_state which makes it easier
-for users to test IBECC on their hardware.
+Ah, I see, thanks for the clarification.  I'm willing to take the
+resulting blame, though. :)
 
-Signed-off-by: Orange Kao <orange@aiven.io>
----
- drivers/edac/igen6_edac.c | 34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+> If you're actually doing the Tinkerboard and thus adding new things 
+> this
+> changes the whole judgement a bit too.
 
-diff --git a/drivers/edac/igen6_edac.c b/drivers/edac/igen6_edac.c
-index dd62aa1ea9c3..025f994f7bf0 100644
---- a/drivers/edac/igen6_edac.c
-+++ b/drivers/edac/igen6_edac.c
-@@ -1341,16 +1341,18 @@ static int register_err_handler(void)
- {
- 	int rc;
- 
--	if (res_cfg->machine_check) {
-+	if (edac_op_state == EDAC_OPSTATE_INT) {
- 		mce_register_decode_chain(&ecclog_mce_dec);
- 		return 0;
- 	}
- 
--	rc = register_nmi_handler(NMI_SERR, ecclog_nmi_handler,
--				  0, IGEN6_NMI_NAME);
--	if (rc) {
--		igen6_printk(KERN_ERR, "Failed to register NMI handler\n");
--		return rc;
-+	if (edac_op_state == EDAC_OPSTATE_NMI) {
-+		rc = register_nmi_handler(NMI_SERR, ecclog_nmi_handler,
-+					  0, IGEN6_NMI_NAME);
-+		if (rc) {
-+			igen6_printk(KERN_ERR, "Failed to register NMI handler\n");
-+			return rc;
-+		}
- 	}
- 
- 	return 0;
-@@ -1358,16 +1360,29 @@ static int register_err_handler(void)
- 
- static void unregister_err_handler(void)
- {
--	if (res_cfg->machine_check) {
-+	if (edac_op_state == EDAC_OPSTATE_INT) {
- 		mce_unregister_decode_chain(&ecclog_mce_dec);
- 		return;
- 	}
- 
--	unregister_nmi_handler(NMI_SERR, IGEN6_NMI_NAME);
-+	if (edac_op_state == EDAC_OPSTATE_NMI)
-+		unregister_nmi_handler(NMI_SERR, IGEN6_NMI_NAME);
- }
- 
- static void opstate_set(struct res_config *cfg, const struct pci_device_id *ent)
- {
-+	switch (edac_op_state) {
-+	case EDAC_OPSTATE_POLL:
-+	case EDAC_OPSTATE_NMI:
-+	case EDAC_OPSTATE_INT:
-+		return;
-+	case EDAC_OPSTATE_INVAL:
-+		break;
-+	default:
-+		edac_op_state = EDAC_OPSTATE_INVAL;
-+		break;
-+	}
-+
- 	/*
- 	 * Quirk: Certain SoCs' error reporting interrupts don't work.
- 	 *        Force polling mode for them to ensure that memory error
-@@ -1509,3 +1524,6 @@ module_exit(igen6_exit);
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Qiuxu Zhuo");
- MODULE_DESCRIPTION("MC Driver for Intel client SoC using In-Band ECC");
-+
-+module_param(edac_op_state, int, 0444);
-+MODULE_PARM_DESC(edac_op_state, "EDAC Error Reporting state: 0=Poll, 1=NMI, 2=Machine Check, Default=Auto detect");
--- 
-2.47.0
+Yes, I need an OP1-based board for my upcoming Rockchip SoC binning
+endeavor, which for me basically boils down to getting a TinkerBoard
+2S.  Of course, I need to have my future TinkerBoard 2S working and
+running mainline kernel, and what's a better way for doing that than
+having its board dts upstreamed, for everyone's benefit. :)
 
+> Like I was on the mindset-road of rk3399 is mostly done in terms of new
+> boards, so what's in the kernel now will at max get some new 
+> peripherals
+> but is in general already mostly working.
+> 
+> If we're still adding new rk3399 boards, it does make more sense to go
+> back and make the underlying parts nicer :-)
+
+Yes, I see the RK3399 as an actively maintained part of the kernel. :)
+With all that in mind, I hope the associated cleanups will be seen as
+justified.
 
