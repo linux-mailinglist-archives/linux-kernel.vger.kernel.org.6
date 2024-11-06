@@ -1,122 +1,182 @@
-Return-Path: <linux-kernel+bounces-398296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918469BEF20
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:35:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACFB9BEEF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45BCE1F23E64
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9D59286172
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE0D1F9EA5;
-	Wed,  6 Nov 2024 13:35:08 +0000 (UTC)
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [195.16.41.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351461E00AB;
+	Wed,  6 Nov 2024 13:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUrGuBIJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044C81F9AB3;
-	Wed,  6 Nov 2024 13:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.16.41.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F55A646;
+	Wed,  6 Nov 2024 13:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730900108; cv=none; b=HFqHNAy6VKRRbjY9704kuAyKG78+Pa6RpvbBB7t73OGYpzC8ybL2JGcU7JoWzAbGEqfF8jb2RAsJbQ2t54Hk2TnJ7WOXY4FwkEbw8fZhWzv3LuHAn+59JkrqStijuL3OU8F87DPHvne/apQ4oqAk2qAwaXdwjAu4ZYjWkb+f498=
+	t=1730899507; cv=none; b=XDDZof6xvzVlfsDvv9m9AgyYE39uN9UB9uSCt6tvElmLfBDxUK3KSa7kxqkPXEm1/FhyRqd3gAEWMN9RQi5JKhRw9AuTLnJpON5kF1vlu0cgxcyebIFi0SK/cIBIvUXe2pB/R0lP5PU2M8IFCQg3LY8LfG79sraDpcP0TwYdOss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730900108; c=relaxed/simple;
-	bh=Ckqa7vHg2WL+/0jKP2wMeqZaRRJbincf8sFm0r/Qv/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mNYHBKH0jMqJ3rXg7Xgc/kEiDlzj+bS8ecU/bvT9qhslNqfhseErECXD/jFAoUvK17G0iJ4pB5ZsPdyEgSDCbXIdp8HTC1UUu0C/VT0rCjFWTAdjkGHUxRpv0VT9wD1r5hRT/tuyG5wc1D17o+bCBPYCV659UPZo9Ss0RcwBMw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=195.16.41.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 5C4671F9C0;
-	Wed,  6 Nov 2024 16:24:54 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail05.astralinux.ru [10.177.185.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Wed,  6 Nov 2024 16:24:54 +0300 (MSK)
-Received: from MBP-Anastasia.DL (unknown [10.198.46.47])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Xk5Xd0Nkkz1c03C;
-	Wed,  6 Nov 2024 16:24:48 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
-	lvc-project@linuxtesting.org,
-	Huang Rui <ray.huang@amd.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Perry Yuan <perry.yuan@amd.com>
-Subject: [PATCH 6.1 1/1] cpufreq: amd-pstate: add check for cpufreq_cpu_get's return value
-Date: Wed,  6 Nov 2024 16:24:34 +0300
-Message-ID: <20241106132437.38024-2-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241106132437.38024-1-abelova@astralinux.ru>
-References: <20241106132437.38024-1-abelova@astralinux.ru>
+	s=arc-20240116; t=1730899507; c=relaxed/simple;
+	bh=116sGymRPGxitIATLh63Hu4bt7vFtHZYdaTU44MGasg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yug4kI16puH31boI/uUhUd5YeYNkx0HZQnmbFiryZd17AojrDA0Y479aIFyVfiIPWwjJmTFmtev7Fi+f6yr0zuAQ1GgpQ9vKeDh43hGltNch5gE7SvsiVuhBQvfxd3Qd1M5rj5RR/cqYyXfDgr8bTJdkTUl6gY9Ef8MAK+4Y86U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUrGuBIJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A80FC4CED3;
+	Wed,  6 Nov 2024 13:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730899507;
+	bh=116sGymRPGxitIATLh63Hu4bt7vFtHZYdaTU44MGasg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YUrGuBIJv1qi8hzM0QUpV/DuyXkCd2ksGSx6fggOz070whoF7aDf3hk4NyKamwJya
+	 DgoLj27XHpgNGbwBk+PV8DRnLSAy5btBnSSBvDD65Oi3IYhJvwIL0axKwBS7ui4iNR
+	 yE5r8ZDlsTGGRary7720MS/x7WG0P4Bw3SEKLWfHEOblNyXtN9O6Wy7nVW7BYyH/Kf
+	 6MUtKypDaBNjUoeOL9FdEniDj6xB1HiJSGqbZ2IzwXBSZ3W8ucCd0noTi3QH1cVu6i
+	 4Qe8Xd1k65bwKMvXXHVhN8IzWdJE2OwCii+u8KG1fmPGvrc2R7ms4rH3SbXIIJb1On
+	 lk12pztt8QeSw==
+Message-ID: <18ba4489-ad30-423e-9c54-d4025f74c193@kernel.org>
+Date: Wed, 6 Nov 2024 14:25:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
+ has already unbound
+To: Yunsheng Lin <linyunsheng@huawei.com>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
+Cc: zhangkun09@huawei.com, fanghaiqing@huawei.com, liuyonglong@huawei.com,
+ Robin Murphy <robin.murphy@arm.com>,
+ Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet
+ <edumazet@google.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ kernel-team <kernel-team@cloudflare.com>, Viktor Malik <vmalik@redhat.com>
+References: <20241022032214.3915232-1-linyunsheng@huawei.com>
+ <20241022032214.3915232-4-linyunsheng@huawei.com>
+ <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
+ <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
+ <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
+ <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
+ <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;new-mail.astralinux.ru:7.1.1;astralinux.ru:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 188994 [Nov 06 2024]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/11/06 12:26:00 #26826484
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
 
-From: Anastasia Belova <abelova@astralinux.ru>
 
-commit 5493f9714e4cdaf0ee7cec15899a231400cb1a9f upstream.
+On 26/10/2024 09.33, Yunsheng Lin wrote:
+> On 2024/10/25 22:07, Jesper Dangaard Brouer wrote:
+> 
+> ...
+> 
+>>
+>>>> You and Jesper seems to be mentioning a possible fact that there might
+>>>> be 'hundreds of gigs of memory' needed for inflight pages, it would be nice
+>>>> to provide more info or reasoning above why 'hundreds of gigs of memory' is
+>>>> needed here so that we don't do a over-designed thing to support recording
+>>>> unlimited in-flight pages if the driver unbound stalling turns out impossible
+>>>> and the inflight pages do need to be recorded.
+>>>
+>>> I don't have a concrete example of a use that will blow the limit you
+>>> are setting (but maybe Jesper does), I am simply objecting to the
+>>> arbitrary imposing of any limit at all. It smells a lot of "640k ought
+>>> to be enough for anyone".
+>>>
+>>
+>> As I wrote before. In *production* I'm seeing TCP memory reach 24 GiB
+>> (on machines with 384GiB memory). I have attached a grafana screenshot
+>> to prove what I'm saying.
+>>
+>> As my co-worker Mike Freemon, have explain to me (and more details in
+>> blogposts[1]). It is no coincident that graph have a strange "sealing"
+>> close to 24 GiB (on machines with 384GiB total memory).  This is because
+>> TCP network stack goes into a memory "under pressure" state when 6.25%
+>> of total memory is used by TCP-stack. (Detail: The system will stay in
+>> that mode until allocated TCP memory falls below 4.68% of total memory).
+>>
+>>   [1] https://blog.cloudflare.com/unbounded-memory-usage-by-tcp-for-receive-buffers-and-how-we-fixed-it/
+> 
+> Thanks for the info.
 
-cpufreq_cpu_get may return NULL. To avoid NULL-dereference check it
-and return in case of error.
+Some more info from production servers.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+(I'm amazed what we can do with a simple bpftrace script, Cc Viktor)
 
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
-Reviewed-by: Perry Yuan <perry.yuan@amd.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/amd-pstate.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+In below bpftrace script/oneliner I'm extracting the inflight count, for
+all page_pool's in the system, and storing that in a histogram hash.
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 90dcf26f0973..106aef210003 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -309,9 +309,14 @@ static void amd_pstate_adjust_perf(unsigned int cpu,
- 	unsigned long max_perf, min_perf, des_perf,
- 		      cap_perf, lowest_nonlinear_perf, max_freq;
- 	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
--	struct amd_cpudata *cpudata = policy->driver_data;
-+	struct amd_cpudata *cpudata;
- 	unsigned int target_freq;
- 
-+	if (!policy)
-+		return;
-+
-+	cpudata = policy->driver_data;
-+
- 	cap_perf = READ_ONCE(cpudata->highest_perf);
- 	lowest_nonlinear_perf = READ_ONCE(cpudata->lowest_nonlinear_perf);
- 	max_freq = READ_ONCE(cpudata->max_freq);
--- 
-2.47.0
+sudo bpftrace -e '
+  rawtracepoint:page_pool_state_release { @cnt[probe]=count();
+   @cnt_total[probe]=count();
+   $pool=(struct page_pool*)arg0;
+   $release_cnt=(uint32)arg2;
+   $hold_cnt=$pool->pages_state_hold_cnt;
+   $inflight_cnt=(int32)($hold_cnt - $release_cnt);
+   @inflight=hist($inflight_cnt);
+  }
+  interval:s:1 {time("\n%H:%M:%S\n");
+   print(@cnt); clear(@cnt);
+   print(@inflight);
+   print(@cnt_total);
+  }'
 
+The page_pool behavior depend on how NIC driver use it, so I've run this 
+on two prod servers with drivers bnxt and mlx5, on a 6.6.51 kernel.
+
+Driver: bnxt_en
+- kernel 6.6.51
+
+@cnt[rawtracepoint:page_pool_state_release]: 8447
+@inflight:
+[0]             507 |                                        |
+[1]             275 |                                        |
+[2, 4)          261 |                                        |
+[4, 8)          215 |                                        |
+[8, 16)         259 |                                        |
+[16, 32)        361 |                                        |
+[32, 64)        933 |                                        |
+[64, 128)      1966 |                                        |
+[128, 256)   937052 |@@@@@@@@@                               |
+[256, 512)  5178744 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[512, 1K)     73908 |                                        |
+[1K, 2K)    1220128 |@@@@@@@@@@@@                            |
+[2K, 4K)    1532724 |@@@@@@@@@@@@@@@                         |
+[4K, 8K)    1849062 |@@@@@@@@@@@@@@@@@@                      |
+[8K, 16K)   1466424 |@@@@@@@@@@@@@@                          |
+[16K, 32K)   858585 |@@@@@@@@                                |
+[32K, 64K)   693893 |@@@@@@                                  |
+[64K, 128K)  170625 |@                                       |
+
+Driver: mlx5_core
+  - Kernel: 6.6.51
+
+@cnt[rawtracepoint:page_pool_state_release]: 1975
+@inflight:
+[128, 256)         28293 |@@@@                               |
+[256, 512)        184312 |@@@@@@@@@@@@@@@@@@@@@@@@@@@        |
+[512, 1K)              0 |                                   |
+[1K, 2K)            4671 |                                   |
+[2K, 4K)          342571 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[4K, 8K)          180520 |@@@@@@@@@@@@@@@@@@@@@@@@@@@        |
+[8K, 16K)          96483 |@@@@@@@@@@@@@@                     |
+[16K, 32K)         25133 |@@@                                |
+[32K, 64K)          8274 |@                                  |
+
+
+The key thing to notice that we have up-to 128,000 pages in flight on
+these random production servers. The NIC have 64 RX queue configured,
+thus also 64 page_pool objects.
+
+--Jesper
 
