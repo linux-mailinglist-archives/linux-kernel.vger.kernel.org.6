@@ -1,154 +1,146 @@
-Return-Path: <linux-kernel+bounces-398568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082749BF2EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:13:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A53A9BF2B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC83D281C80
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0C71C26741
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E0C204928;
-	Wed,  6 Nov 2024 16:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B120E2036ED;
+	Wed,  6 Nov 2024 16:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KNbfNSoC"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dGyJjcHv"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECDD1DEFC7
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770551DE8AE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909563; cv=none; b=SRfCdeNtTLd0luK1rxUZDzL+na1ZtlHiDki8sR4EhRLItwQoe4eFIulpRV/D9AO5ddBmqIQvYKl9qbYTPoqYO9CMBB8dOA1Bxmpx0YD51sB9dhp+DY/qz1InYMIiRDceWoCdNb1uivuwT20KOYJxYhcFX6N0JXLfp8qsguWPnRU=
+	t=1730909105; cv=none; b=t9bKb/cig/rDfUO7aLPPjOkN6TGsc0Mxhgb00LUsF7Q2RkWH/HWDyMfl4y7ls+1vnzZ/n2ogQYfTbPwT0XPgEP4Sqaagw8WUVSgvkzoKZvWGP6kDncnbmrrhVaEfSCsWy0HF2tTL1p/WGOnhUUWjkwJ+2LzTHcWkB09iUfOEtUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909563; c=relaxed/simple;
-	bh=QHlKEhY/AIIUdJMFadNDpFCHHpgPYS9bjBlO3hMTQYg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LMpSoVJjWyvAnwckBa6V+2a67MTMknyqC35KhyBVR3XdgDCcZIP8S3Y4j8WwXWz/E945m8KZxVEGxyj2Y+EIlH2DOpOHzZZmjBKLU0AwPA0YEp2ShZUuYVzFqVdqPID+wPO4I0OlnwsuIfZUyUYdYUAQTzJJ+gZGPgqUL7wzl2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KNbfNSoC; arc=none smtp.client-ip=209.85.128.201
+	s=arc-20240116; t=1730909105; c=relaxed/simple;
+	bh=cH5OE7NX7Mz/bdUBs66w08qwMK7Qsujzly9jtp/uTs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jw6xZDkeOJpTMeLwrwxFmuk6um9WdYEivlp1HMhsInG4JQ7gU+XxFY6oFgaEcXs1OLzAGz6+6hgq5clYJ2FjJzI+MjMHnSR4f5oWtx71g5jjJJSi6anT6Jkqtd2RdZyqNm29n6TC0miiMkCFsfEOQPiys9utpQ7gxweg6AEw6Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dGyJjcHv; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e376aa4586so128840297b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:12:41 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460a8d1a9b7so250761cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:05:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730909561; x=1731514361; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NdMD5BosN2RfbHLWrwz8uCn9Mhxge705v2wH/rUtjSM=;
-        b=KNbfNSoCz+8v5zjHLxzThsQgMdRr2bB0Gvty5n4HgxREQUNNlvPq253P8Gare0GeRa
-         5EdYOskda8iT8nSOA0oFs26M5uuo1vah4x44GRf9bDA94tHID/+uv6sXuxI+nygRgg3x
-         J9EmkX94r6Xvf4HR3SK85o0+bigKozMBYP0Oh2ptPmJah7GiPVQzN+bYol3ehQfQbdqK
-         vjyJi4kiocZgjIsfaOxYen+yOZuJJU4WIYW8zHU8+cw9BRNq8+K+2obiAeom3ezxlDk7
-         msItvpX2jkGEJiVC0m9Dr5gj9aio1cy2MFE0cx9Z38UiyCKv2ewgomhS8mjtLpE3AJbk
-         sNcg==
+        d=google.com; s=20230601; t=1730909102; x=1731513902; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IL4bTsX4yoJsol4u3vZrSSAIg09xmcdzQI4G8r3j4oA=;
+        b=dGyJjcHvAHDgfRG3X/RgQ+bx5l3YhTieFfM7h+u6PvzEBy+fdt4/0RDso71iBRIvUN
+         4uKyUZ8euqX6fEDRAU1FArMbIjqAwM9UOELJH70sJFzu6nB7rZyP2KVTgARPpvS2APvB
+         z5/0DTOkEhZpuVCW8cmTWumMpLrHEIJCQZThCp6Wouo8A0IVELVLFl5IEUwImMOhoBvU
+         E/z07b+C9k/4yagcuO7NziwpUnThJA13kHW7yuzOlq4i8R7WPaXaI6h4iXxz4NvYxPmj
+         FEIiKIe2mBL6lYGSdc3VNWbFhg8w2wBqMCPm0dJNfiLeC4ONPnyENm0n5oGygwhfaUPk
+         4W7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730909561; x=1731514361;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NdMD5BosN2RfbHLWrwz8uCn9Mhxge705v2wH/rUtjSM=;
-        b=emYdHDM1IkpLySHA973l6uj0GkmeC+QDBvwOrwOj/KnVEAbc3B0dAHLI81m+hcZvCm
-         CwSROM6u4x/m//USlVbMRHkTPg3M2ypL6GsfvemNwqrhI5Zr705+uMwWgg+vcH1n8tu4
-         mCHvgiwgd+2tJrbIDnDu6y3oWSThf8V2VmtDtDCkWxlO/wMPSkCwXXN0EDcZIpVGk4Xa
-         HiJMni6a41nR23TNIbquhij4g5RJTXA0pVW85/3BiYBn7x3s3pdt3z2xpHAxoCyls4bV
-         WKtDFbFNO2jiInaom699KkSQo4tBnZyU8TOnrVWKyf1dYrOgvBHvhCijYodFI6t9BTSv
-         bz6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/1OGOxkuKX8uUV6wLzVDvJmkvQOA1Hdaz6UrYotfSoy4HNBCM2QA1gD9L1Sy4xwnTLLL3SQVBa4jG21s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQhLgNRs04XO9xXW4podaowFMHxL81fkk9yyuS8GFGKQldBpL2
-	KxP7SCAeDLjH8vGKKip1RvfmzBilQswkbnYQNUTw2P1TGQQF60Sy/hOppMcZiD60EUUddVCa4qD
-	Jhw==
-X-Google-Smtp-Source: AGHT+IFeE3a1gJ6+WLFgBQh9esgy9tnUuYeur36tttYGKm/72J+XCTEWa6Yc3oe1D9Q+GM9+45nD0LS+SK0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6902:181e:b0:e28:fdfc:b788 with SMTP id
- 3f1490d57ef6-e30cf4d455bmr19596276.9.1730909560885; Wed, 06 Nov 2024 08:12:40
- -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed,  6 Nov 2024 08:04:25 -0800
+        d=1e100.net; s=20230601; t=1730909102; x=1731513902;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IL4bTsX4yoJsol4u3vZrSSAIg09xmcdzQI4G8r3j4oA=;
+        b=puhl6ATEKrHWEpLjwc2QAO1y6ZN14nUBtv4af9+X3PmVUBQprY0V9NxhvMvww146Oy
+         iEjmzXsHTvfejHVWXqC0O6t4shCkE+db8nKHGtlt1RO0MmL6YodDOxPpBvVGXR+pwWfm
+         t7GYEX7x7rULm4CPzHYS6eWYMjleY42pATyeKmO1yeg1JMpQko3MlRjG/MAAVwZHAGu/
+         Uhi0V8oSnMM019WuhK5WlVgjwLgkxjatv400eYAblu+CUhQjESIK6kQEM5rPhergrezH
+         4en7UZSuMrOKPQmuPx4YJPl3xnq5twYNYDQ4v5HGnGR1Ik+B+rNR4fNMMZuVXBOftayh
+         JphA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBM2qvS5VMisua6z6OQWd7uyVVnXIk9yLjfgd74qsBPDTsMKMVh1RBjtufFaYJrSgtrIIBjuK0H+tFfC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBEaPMt4yHWzddK0vLmhBDk4xwEouxUS9cnhXV/DCc2CsWSrc/
+	q0EzjCKeSaKImyxPaZPojtF2ZOUy0tDJsi/IeJgj9GbqIJcBFYSIVa8eo8Jt1Smy1KkFhCw7YmM
+	QxILdExuQ4cRhkD+efpdJwvyAhbRw9gnsXQqgWgGDVWppcVACVjWKgCc=
+X-Gm-Gg: ASbGnctIxQWbnnh8WKuTRD3Uz7vVMDS4W2+fmLueGB8r/8FyYTs/HS6Eca4cu4X7WmI
+	2U/IyIUH/BvrJomsGol0W1h3K/PqgKgy0qXJPguhvHmI28iP+sHtJJy6ZkYT3L6g=
+X-Google-Smtp-Source: AGHT+IGVuAyYxfbKNtvaZjW52zgPaDYQVeAmhHgdEdnwxmPFzOVkFKrhtvzICzMYI5c5fjUF6KVTO9JuvH8HQgPdF7Y=
+X-Received: by 2002:a05:622a:612:b0:461:6e0a:6a27 with SMTP id
+ d75a77b69052e-462fa6113c7mr288421cf.20.1730909102271; Wed, 06 Nov 2024
+ 08:05:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-Message-ID: <20241106160425.2622481-1-seanjc@google.com>
-Subject: [GIT PULL] KVM: x86 and selftests fixes for 6.12-rcN
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>
+MIME-Version: 1.0
+References: <20241106004818.2174593-1-irogers@google.com> <126ebac6-fb52-4c3c-b364-0b423e164d40@linux.intel.com>
+In-Reply-To: <126ebac6-fb52-4c3c-b364-0b423e164d40@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 6 Nov 2024 08:04:51 -0800
+Message-ID: <CAP-5=fV3RuvU0N_bt7R-ZMs2nX1_wfKh30PA59u3MW0TF4nzBg@mail.gmail.com>
+Subject: Re: [PATCH v1] perf stat: Expand metric+unit buffer size
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please pull several fixes for 6.12, and to save us both effort, please also
-apply several fixes that should probably go into 6.12 (the selftest fix
-definitely needs to land in 6.12).
+On Wed, Nov 6, 2024 at 7:27=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.co=
+m> wrote:
+>
+>
+>
+> On 2024-11-05 7:48 p.m., Ian Rogers wrote:
+> > Long metric names combined with units may exceed the metric_bf and
+> > lead to truncation. Double metric_bf in size to avoid this.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/stat-shadow.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shado=
+w.c
+> > index 8c9292aa61d3..6b531d4f58a3 100644
+> > --- a/tools/perf/util/stat-shadow.c
+> > +++ b/tools/perf/util/stat-shadow.c
+> > @@ -507,7 +507,7 @@ static void generic_metric(struct perf_stat_config =
+*config,
+> >       if (!metric_events[i]) {
+> >               if (expr__parse(&ratio, pctx, metric_expr) =3D=3D 0) {
+> >                       char *unit;
+> > -                     char metric_bf[64];
+> > +                     char metric_bf[128];
+>
+> I thin there is already a MAX_EVENT_NAME.
+> Can we similarly define a MAX_METRIC_NAME for it?
 
-  https://lore.kernel.org/all/20241106034031.503291-1-jsperbeck@google.com
-  https://lore.kernel.org/all/20241105010558.1266699-2-dionnaglaze@google.com
-  https://lore.kernel.org/all/20241106015135.2462147-1-seanjc@google.com
+So in this case the buffer needs to be big enough to hold the metric
+name, the unit from the scaleunit (e.g. the "%" from "100%"). I'd
+prefer we used dynamic memory allocation to having hard coded limits,
+just to avoid a "640K ought to be enough for anybody," moment.
+Although this change is implicitly a hard coded limit, sigh. There is
+also the metric only name length:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/builtin-stat.c?h=3Dperf-tools-next#n160
+That looked like it was planned to be dynamically computed but then
+the patch adding that never materialized - meaning "standard"
+metric-only output has its own cut-off rules at 20 characters. I'd
+rather wait on doing a larger cleanup and do this quick fix for now,
+mainly as I have enough to do.
 
-And while I have your attention, I'd also like your input on a proposed "fix"
-for Intel PT virtualization, which is probably belongs in 6.12 too, if you
-agree with the direction. 
+While we're talking metrics, I'm still looking for feedback on the
+python generation of metrics. v1 was sent back in January, if v4 looks
+okay some acknowledgement would be nice:
+https://lore.kernel.org/lkml/CAP-5=3DfVX5wypmAAhR8LsE4nSWp5BmN_qhGf9+WCh2be=
+bNcGYTg@mail.gmail.com/
+Leo sent some feedback to improve some of the ARM metrics, so I can
+resend the whole series. Would be nice to gather some acked-by or
+other tags.
 
-  https://lore.kernel.org/all/20241101185031.1799556-2-seanjc@google.com
-
-Note, this is based on v6.12-rc5 in order to pull in the necessary base for
-the -march=x86-64-v2 fix.
-
-The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e:
-
-  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
-
-are available in the Git repository at:
-
-  https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.12-rcN
-
-for you to fetch changes up to e5d253c60e9627a22940e00a05a6115d722f07ed:
-
-  KVM: SVM: Propagate error from snp_guest_req_init() to userspace (2024-11-04 22:03:04 -0800)
-
-----------------------------------------------------------------
-KVM x86 and selftests fixes for 6.12:
-
- - Increase the timeout for the memslot performance selftest to avoid false
-   failures on arm64 and nested x86 platforms.
-
- - Fix a goof in the guest_memfd selftest where a for-loop initialized a
-   bit mask to zero instead of BIT(0).
-
- - Disable strict aliasing when building KVM selftests to prevent the
-   compiler from treating things like "u64 *" to "uint64_t *" cases as
-   undefined behavior, which can lead to nasty, hard to debug failures.
-
- - Force -march=x86-64-v2 for KVM x86 selftests if and only if the uarch
-   is supported by the compiler.
-
- - When emulating a guest TLB flush for a nested guest, flush vpid01, not
-   vpid02, if L2 is active but VPID is disabled in vmcs12, i.e. if L2 and
-   L1 are sharing VPID '0' (from L1's perspective).
-
- - Fix a bug in the SNP initialization flow where KVM would return '0' to
-   userspace instead of -errno on failure.
-
-----------------------------------------------------------------
-Maxim Levitsky (1):
-      KVM: selftests: memslot_perf_test: increase guest sync timeout
-
-Patrick Roy (1):
-      KVM: selftests: fix unintentional noop test in guest_memfd_test.c
-
-Sean Christopherson (4):
-      KVM: selftests: Disable strict aliasing
-      KVM: selftests: Don't force -march=x86-64-v2 if it's unsupported
-      KVM: nVMX: Treat vpid01 as current if L2 is active, but with VPID disabled
-      KVM: SVM: Propagate error from snp_guest_req_init() to userspace
-
- arch/x86/kvm/svm/sev.c                          |  7 ++++--
- arch/x86/kvm/vmx/nested.c                       | 30 ++++++++++++++++++++-----
- arch/x86/kvm/vmx/vmx.c                          |  2 +-
- tools/testing/selftests/kvm/Makefile            | 10 +++++----
- tools/testing/selftests/kvm/guest_memfd_test.c  |  2 +-
- tools/testing/selftests/kvm/memslot_perf_test.c |  2 +-
- 6 files changed, 39 insertions(+), 14 deletions(-)
+Thanks,
+Ian
 
