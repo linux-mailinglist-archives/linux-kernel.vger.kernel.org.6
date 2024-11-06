@@ -1,126 +1,204 @@
-Return-Path: <linux-kernel+bounces-397928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBBD9BE28D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:31:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010779BE28F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:32:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24DE1F22431
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:31:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6741FB21872
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B0C183CD6;
-	Wed,  6 Nov 2024 09:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB91D9663;
+	Wed,  6 Nov 2024 09:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K9uzxNfa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="XzQY5BQh"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2070.outbound.protection.outlook.com [40.107.241.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774E41D54CF
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 09:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730885495; cv=none; b=oEAKduK8RQydGT0B9K9oXuYRx5j/pw9TDaRqUUB2ZXBgFiudLYjGaBdk4fasoel2mUZiWTF6LoF2CZaCRoMgxWkrASHAi24sFRpvrjKdtd7yCKSzHrCZTdGU4kpulLwQaznm+ULfQV/XAGNa6X6B4muyVn91cw/5yX+yzHc2vPo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730885495; c=relaxed/simple;
-	bh=JiQ4UZeYNmZjPUCdRREOzBbUPxshCp9ydNEIQdTxnkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mV3Vl+jMIjmUY8emFB/M44TBmUWxynMLVbXU40rKWwOnZYtlfZ825jIQ9ILncM2CP7WikcRax5+F5yJpG3cZcRnI5E+AFxEUcIUqOKKbgkGnoz6JNjUTR/DUn+M73htQzY4fb/oFhpTEtBeauieP0g5s8/IcbXvCoIN+qADEzFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K9uzxNfa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730885492;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v58eFNnRCpQyAQvqQmmVaZ0uMDgtCEI/dBsjoJSUfhk=;
-	b=K9uzxNfaZtvwBfnhh1khO6ao/+vMtsQ3CVlWXc3h/D0RjoKyRi5Z1w6NqL5tzA+i5TNizT
-	sdyz5fzkL0B7UZPWh5Hj8P5zARYTFFz9hl0JX4rhBz1Zq+C2ZpfHi/+S4Gtm+3B5VW9qk7
-	G5kQlOvrHZXgWqdMVhxhMU90ogLq9hw=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-280-FvYl3x6oM8mwxbHJygS6dw-1; Wed, 06 Nov 2024 04:31:30 -0500
-X-MC-Unique: FvYl3x6oM8mwxbHJygS6dw-1
-X-Mimecast-MFC-AGG-ID: FvYl3x6oM8mwxbHJygS6dw
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-539e03bfd4aso4391455e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 01:31:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730885489; x=1731490289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v58eFNnRCpQyAQvqQmmVaZ0uMDgtCEI/dBsjoJSUfhk=;
-        b=AeRXylgwpvJc67oMm445NGy0SAHThPPeLVBvNQqFDt23luV6Dkgy5jM87/CrgO1WnB
-         v+iSEdXq03tgOyvqW3sjTFXK9sxUs0j2Hm4QIbP7c4eBtMKX4zL6ppZl7yUDZJ9WUgmI
-         h+pmAX2l6OjQ5cQ7qFfh7+qYJBqvojPkPOaZIDx9cE/mE5UWdj5QBAQ3gK4CSk4RP3AV
-         Dnu4b0H4q3ivUl9F9I3lrq/Omg19/CR/pZpu//7HHpAMhELxOFaKea8tlOyERBT6X7Gn
-         BrEZ1SYZwSart3r3iK6D8jNZ6115c89tPDTvuGWnr+/l08hMq+8GB9uczkLYOHZN+UVo
-         XDaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEruy/dAu938ybfGdu53Nb6vj+n93bzeL3VYE0h5bFC9R6J4POCms8c8RfMpDZ9NKQVCsIprZ6B4IYzdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWZz+lRceGZOGDsa80gymxZfskj5fUKzOakMdVZysik1cw7Xf6
-	XLU0X5oeYK9xjeIomR1Hv/D137BK2+AEF1PXb3n1ytfkeB7pHMU1suxZhyXFyHCWOZIq86en4/j
-	DNHGyRjNBg/x5htDAvTCzM5geXlRhOeFIKi2s+5ANK5lJMSk6q3Aj+fEzNPLl3w==
-X-Received: by 2002:ac2:4e06:0:b0:52c:fd46:bf07 with SMTP id 2adb3069b0e04-53b34a2e4d0mr17637559e87.49.1730885488746;
-        Wed, 06 Nov 2024 01:31:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGHSH1SBaQr5jBIsa52gGokkq9bGzxMCBLmYIc/MQMKZVJdyqq8Vzi2SdL9vrY12cUu256ODw==
-X-Received: by 2002:ac2:4e06:0:b0:52c:fd46:bf07 with SMTP id 2adb3069b0e04-53b34a2e4d0mr17637538e87.49.1730885488282;
-        Wed, 06 Nov 2024 01:31:28 -0800 (PST)
-Received: from redhat.com ([2a02:14f:178:e74:5fcf:8a69:659d:f2b2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10eaafdsm18588441f8f.63.2024.11.06.01.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 01:31:27 -0800 (PST)
-Date: Wed, 6 Nov 2024 04:31:24 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Philo Lu <lulie@linux.alibaba.com>
-Cc: netdev@vger.kernel.org, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	andrew@daynix.com, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 0/4] virtio_net: Make RSS interact properly with
- queue number
-Message-ID: <20241106043106-mutt-send-email-mst@kernel.org>
-References: <20241104085706.13872-1-lulie@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB05D1D27BA;
+	Wed,  6 Nov 2024 09:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730885536; cv=fail; b=OF0ktxpBGxKgybQZyIVlqnqJT7ARtmwPjR57BPY2SlhF5PrT3zqMzkN86BNHVu0p/KkiBhBaADKAUwb6Kh86D1w8ez0oVZoSq7hB8UWtX6i0NQOuM73acdWps/aSuO2tqHMLElm1pKUAN+K0LMd7GqQLro9AQ7xbdRIvmAdHQjc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730885536; c=relaxed/simple;
+	bh=X1oRfruvAGi1umFOPjlcv/SvYYPTGa6LMlaJLwgd+rs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=u5o6KgUM+jWWVx5pLlDOiMUdOuXPkGW0N3Txo0tX9j2utFDx4lLtlyjnrvYCbTLrLRqqKN078j3IrAFccJm+Sx2gEX1REFEfESfMDEGGoZEgdoAIPChgamcsRrSnSt/PSTboBnBZvqj+2d0rVw4FBqMt1oB0TGs2bfcJQb4Yu00=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=XzQY5BQh; arc=fail smtp.client-ip=40.107.241.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TCclS7d4o7tJq/mI/tdesnspy8J2TEl0/8ZRY7R6DHw9wou48g3a5yjHtN7ti8AqnljufpfVgZ9YsP6InDSmLom1p6EA7LWvc5pDdjvZ5vtwjaU4krWIPh05AVW3DCJoJiJ8A6fxVbx8bgVPfutugFO8PlzisQC1reYSR3UUt3t4xngWvjtSYmUzF1yND9V2+M6RhFQtftRbmV3WT8oOPzyKlYd1yvLlKsGLrZAtEdyUub71kCZjGsXwe3BKa9jPjZ+TZUUMnRPR2U2UTIySrog35DSuwYgZNl2dCNHL/QoIMWJoKsuax6zCkBThZd1QcClIEwI4F4sFh+dwaax9wg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zxZtscEuTqTbMSy2LFyAYLBkh5iV4vdDDgrzQ4hEa14=;
+ b=lvWt4FTygUqDR7ASVaN7yyuaayyvo+Yp/asSPMsHLIL0pe/PICI8f2sjwvgqT1WCscNnMP59t7vkDVVToOVZMK/VoVbeX05PRUFV2/4m1+rKXnlcXHvWoM1/xnFpbLr9DB/N1ri5dvksu2oPIKI2uW8ht41vmO3A6OxtAc81jjHFfgXAXZ3tHjLk9gGXLPDmlpR3lneqJi1WgEmkeInLU24LGLz6YYbt8bABInRzXIjWCrvjJggT9TZwZr6zxciBKy5XyX1mIxhgdzIPor3k5rO6ezNEmA6rL5CoJOMbZxZ4ZeciIG3iPmuglTtTW1fspTCxMe+T2AJivmezGAHF7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zxZtscEuTqTbMSy2LFyAYLBkh5iV4vdDDgrzQ4hEa14=;
+ b=XzQY5BQhDa+iTZ0XbewCF1Duwrj7RjqHg2HYBGMWqOE6V7EvBetcMEp8IGUEzmXA7PfMDvBw+4xoA5peMNpa9DKLsI8H/d9geWreYTBXGVPIKUPIro+S5ExqxBwTQLyeQX7WPkanRDMy2QkHYo9Ziio77xSIn+O+4TdgiEzutpI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by DBAPR04MB7221.eurprd04.prod.outlook.com (2603:10a6:10:1b1::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Wed, 6 Nov
+ 2024 09:32:08 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%7]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
+ 09:32:08 +0000
+Message-ID: <f6bb3387-4396-45d4-9cb4-594d58095510@cherry.de>
+Date: Wed, 6 Nov 2024 10:32:06 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add OPP voltage ranges to RK3399
+ OP1 SoC dtsi
+To: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alchark@gmail.com
+References: <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA2P291CA0009.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1e::6) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104085706.13872-1-lulie@linux.alibaba.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DBAPR04MB7221:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4df8a24c-16fd-4777-80ff-08dcfe45e1f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VVIvbWgyS25vYVh6eWx2Y0wvS1lRSGNYR1V2WC94dllRa09xeXFEa1IvbmlS?=
+ =?utf-8?B?cnJGeCs5NVp2VUpHSG9kRUdEdEdReVZ1RlkzZ05Ec0lOQnlYN29KY3B2clNj?=
+ =?utf-8?B?MFZIbDU4LzBwUDIvTEdvNWNJYVVYeEtRYlpkaGV3NU95TnhoZlhTck9rUWJ1?=
+ =?utf-8?B?NEtqczhKK2JTREZBa2hmcXRtVUtBVTFibE53NXVlRjkrM3I0TEdxVGQxKzRh?=
+ =?utf-8?B?VmpGOE9kRmpld2xUYVd5MnQzQVM0dzJlUXVkNEpGWVdWL3JVZGxCdWtOM1pD?=
+ =?utf-8?B?YzQvKzk0TmtTS3lqOW5Eek5CSS9qZEllbjdLRjVya1YyVktiSGpGM2lXQWZX?=
+ =?utf-8?B?UmdGWEY2ZzFtbzdIQXU2bm53WnFLQ0hvWWE1UVBkVjFlcFR5a2M1dzhYc0Zo?=
+ =?utf-8?B?QkV2NG9BT25pL21UakdlQmxybzNtWUxYME80MUR1UzF6aWVha2tHRVZmZnJ2?=
+ =?utf-8?B?VUNwMXJZaldYRGtrNlJ6WkpLUjA1VkI3K2YzeW9RRGZENDZSZ25pL2tad0lq?=
+ =?utf-8?B?L0k1dTRyMzAwUWgrMjZMUU9oczNrQmdKQ2tJSWRhamliRDJISzIwU1pQeUZH?=
+ =?utf-8?B?S1ZiQUs0RCtnYUkrR0FzOVd1enJEcmtsUXJHR0hKbGZVaUtYS3NlcWl0MXBi?=
+ =?utf-8?B?YVlpNXUwQjlqcStHYlFMdCtIZWNFeFdZZy9SMDEra3pvSnZ1d2d1UzZxdlhE?=
+ =?utf-8?B?am15WkZNWVNlODhENTE3OUxpWU1tTjBmMmw0UjF2NHFIQnphbVRHR3owcVpF?=
+ =?utf-8?B?enlLYXJHbHVLS3dEbXRWTS8zdnRRSklvUVNIRVljK1pOYW83WkV5Yk54T0Qv?=
+ =?utf-8?B?Yll6U1krS0VRdnNaVFFkMzQ2SXdJUmlqVHBtaTVqTnBCM2t5ZW02V2YvUExR?=
+ =?utf-8?B?aXM0N2thQ3JlNi9yMUNiQmxJdlluMEZndzRHTkhHMzNzYlVpeHVScmt0Mzlk?=
+ =?utf-8?B?clNtR0FjN1FIUlorUFg1dEZWSEU0RWF1dkRCMjZML0IzWSthMC84RTRkMjJo?=
+ =?utf-8?B?U3VqWkRZYWtBbVdIcUdrK005NTd3dVl1Mmt6L0NXVTVKenBwUHNmTURGRDRh?=
+ =?utf-8?B?czdLMWpydGhlL2lIODNPdUJGUVFtak1ZNHlmcGEvenVJcFNWTUNoTlA4anM4?=
+ =?utf-8?B?Z0ovV3Yweld2UHh2QW9uR3pmcmt3M0QvblR3bnA4U3Q5RnZRUUs3VDhYZHRG?=
+ =?utf-8?B?ckhyVTdmampTamw5QW9ZNDBGTlYzbnhPOWFCTlo0Q3V1RGd5M1dXUXlJcG9T?=
+ =?utf-8?B?TXFJdmwwVmpVSVlGSGlxMDQ5dDh4Q05wY1JOVTdKRUlnb2NDSHIvWFB2ZXVk?=
+ =?utf-8?B?djhoaHhKRHV5MmtpVWVBd1k5RFI2Z1lmQlRId0dUWEF4NmNFYzZCOFBmRm4x?=
+ =?utf-8?B?SXAram9vSGk1Rnp5blpHK1VCYmwrQmI1VkVMdEV3L09VWkxXSFJ4TkFWdmpF?=
+ =?utf-8?B?UTJhek1lUDAvNExhb3hEcFZIMy9oYXdxZUNyVVphREFKU3pLVDEwUHdvR2R1?=
+ =?utf-8?B?akJ3OXdvYTh1dFBvVDlPS2ZUbk1sRWdKd2pPSUZPbTh6MmFRUEhJUDNMcTl2?=
+ =?utf-8?B?MDBCbXJPL0YzZWc3NnlsTjlnMnczMkRjZmpidGpocXFZRzd4ejYzYjY0blZD?=
+ =?utf-8?B?L01EMytRdEZ2MTYvSUR4ak9GUFJmaWpyLytJRlFpa3RVaitWVGRlSE1YWVNa?=
+ =?utf-8?Q?X0oVEgdkH4+Dc/zFBxlW?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dWtuSjJhbmgyT2NvMmFwV1lyT3NSY2JvY01EOXF0cVZnL04rcUY0RURCTElv?=
+ =?utf-8?B?OEJRRmN3T1hRSkFyQXJpcldtWnVxQ21BSmlTQ2g4NHgzNTFCLzRLYzFYVUl2?=
+ =?utf-8?B?UGhNdUxqUXZOdmJHK0VPUnNjUEVOM3hKNGRWNXNsK1NnMEtWT2NpMktKd21H?=
+ =?utf-8?B?MEgzc09MYXFqOHUrR3BGbGgzak5wZDZjckY3dHNKdVp0TFA0RU42Z1NQMzBz?=
+ =?utf-8?B?UnRkRC9zb1VwRVRiMlkrb0FBbkdTUkhlNEZPZVAwS0lSRXRzRDNxdW5LdmFL?=
+ =?utf-8?B?ZERZUk5VSFJacEhFS2Q0MDJPZzVGVFNDUDFRa0NOVDFDNmlmWTF1QnlwN092?=
+ =?utf-8?B?angwekc2ZE9IOHIySk81bmZET1JmVERYUmI2cmI0Sy96SUZVZG1nbHJHb0dl?=
+ =?utf-8?B?VExKTnA2SjNJWDVaWTdIL1dvYVlzM1BpZTVldlk0YWZrY0hnUTBtbmJ6dm52?=
+ =?utf-8?B?RWthaS9VYmlBcko4UGxtRTdJOWh2UWZCejROSzViZnlZSHd3NjQ2ajRIRS9Y?=
+ =?utf-8?B?R3dBdnJBWTNJSE5GdnFBQnJ6R29Qc3BSYWFZVHkyTlVaeE5ZcS9aWU03czE1?=
+ =?utf-8?B?c0NmdTBvbmJ1b0tMZnNDTG55eE1jUS9sTmQrNEdJdlMyQWkycmVNYnhxVkRG?=
+ =?utf-8?B?WnpPTEZaS2wyOFk3TTFFK0FnSlZDN1lFUGdmeWttSFlPNlNYVmVQRGRtTHNI?=
+ =?utf-8?B?ZDlPcEVsZ2dwZUZ0S2cxUDJwQ0o1Qk1UaXdXSk03c09nclllWkNLZ2ZuaS9Z?=
+ =?utf-8?B?aUlUOFpUNVAvNjRDTXZmSTQxZitFNnlMakNqVHE5RVFHbjcydjF0RVA4Y0w5?=
+ =?utf-8?B?bmIvM2NRZWtDMVNZTVdXVmc3cXRzejc4WjBXRk14TzVCTTg3eWR6SXE3NmRn?=
+ =?utf-8?B?Q0dXeUdTWFNldlBOYnRaVHh2d3FyRHVxdiswY2hMU0NHcUdKWWpBNTBQTVFw?=
+ =?utf-8?B?TGZ3a0ZOb0VPcGVac1NCTS9lQmgvQXpFbU8yZnEzcDI4OEcrRnVhVUM3MnFW?=
+ =?utf-8?B?QVFVUUJwdDBRaXNKbDV6Rjd3Y3Mvemg2ZFFEY2ZqaUZiNXhGdWZZdDZ4eERJ?=
+ =?utf-8?B?aGtGeU9IQTZHdklvR2tHV3ZVN1lUeEwra2tyOUpMWjErVWZ1SHE5L0VmYUlJ?=
+ =?utf-8?B?dFVtMlFXVGhha1p3RkJHdGJiWjVZV3E1ZS9qa0YyV1VieDc5azZ5cmowWnV4?=
+ =?utf-8?B?SHQ1ZTBhU1lKaFRmRmpvaHRJK29BL2tybFdsMW5MUk53UVp3cXdaMVRNVVY0?=
+ =?utf-8?B?SFlYb1pxbnRYRG91KzlWQWhFNUVOYVlDNUNzMTFSYVc4RnRLeCs4MGV2ZTlx?=
+ =?utf-8?B?TUxCbUp3aVJmV00xUnIvYzdVcVJlVU0zN1BjdjVxamgwSHhvNUdKWUNSNUlB?=
+ =?utf-8?B?SGlHWFlqR1BKWG9MZlFacU4rTlRoekQwMCtaNGRkSnNISlJ1MmFPVFh4TGgy?=
+ =?utf-8?B?S1BxWGFvanduTUMrMXFnYXlYWllCOEtxd2dzVU1vSE44VG85akZlckpQaXNr?=
+ =?utf-8?B?WXdIRkk0WWJES20vWUhjWnFFSFdYd3JEZVB0Z3pjYy9HY1BTSm9uMkR6eG43?=
+ =?utf-8?B?TFlXWGR2NkYrVVo4cHFJRmFIeFVVR1M5SVY4OXpISEpwWUlQMVMwei9MazdL?=
+ =?utf-8?B?VEdwMGlnRE5uSWVoYWVvdCt4bWtRNzZLT3JGNnhEdE04cmhabHVWMEhZNHN6?=
+ =?utf-8?B?UEp0cEFPQWVLUVJvQTNZeFM3K0tNbjRUQkxvalJ1a213anlxMmFJanhneFIw?=
+ =?utf-8?B?SGxkazZGaVNDODZKUVlnbnRYTFVDQmZQWkVpQUNoa3RpZ2tvZlRuNEJ2MjQr?=
+ =?utf-8?B?WjFjL3IyemRlcEJ4K0RqdDIwUE9wK2hSeVBYNy9HUUlkM3g2TGVOdWF1TzBl?=
+ =?utf-8?B?Y3VycW5nTmRUODFtdmZhQm03OUU3TUJ0M25EK24xb2k4VkFwbjVzZVRKa3Y2?=
+ =?utf-8?B?ZHpmMG0vRjBaTGlqT2ppM2Q4L3V1YVc0cG5yNnh0dWdmMEc4Zk1vekIxb20w?=
+ =?utf-8?B?bS90eTk3dnJmZDVCNDJIMGNNZXNBaUdyOWRBcHR6YTdlcU1qUzBqMXdaSG15?=
+ =?utf-8?B?R1hzNzMvUzUzVDBONEpUTzR3TU02ekRXbk9hQ0V5ajdMem1KUHNoWGpZeEZn?=
+ =?utf-8?B?SWx3KzVCdUtOaFMzU1pYbFJ5cjZxQVduMW92cW1ReUczRnEzZU5DZGdxeTlN?=
+ =?utf-8?Q?DatPMPIoRm3vol+7QpvxsUs=3D?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4df8a24c-16fd-4777-80ff-08dcfe45e1f0
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 09:32:07.8926
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S1CQEXIVja9H11LswvnW8J3tAGoBvXbXlIBLCXJ27SeBiUFCJ6eu1YgWqdefB/zqT2xbMJQRNlp3v+QFCaipYEkVyk3UALoSUxzDvoNYUww=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7221
 
-On Mon, Nov 04, 2024 at 04:57:02PM +0800, Philo Lu wrote:
-> With this patch set, RSS updates with queue_pairs changing:
-> - When virtnet_probe, init default rss and commit
-> - When queue_pairs changes _without_ user rss configuration, update rss
->   with the new queue number
-> - When queue_pairs changes _with_ user rss configuration, keep rss as user
->   configured
+Hi Dragan,
+
+On 11/6/24 9:33 AM, Dragan Simic wrote:
+> Add support for voltage ranges to the CPU, GPU and DMC OPPs defined in the
+> SoC dtsi for Rockchip OP1, as a variant of the Rockchip RK3399.  This may be
+> useful if there are any OP1-based boards whose associated voltage regulators
+> are unable to deliver the exact voltages; otherwise, it causes no functional
+> changes to the resulting OPP voltages at runtime.
 > 
-> Patch 1 and 2 fix possible out of bound errors for indir_table and key.
-> Patch 3 and 4 add RSS update in probe() and set_queues().
+> These changes cannot cause stability issues or any kind of damage, because
+> it's perfectly safe to use the highest voltage from an OPP group for each OPP
+> in the same group.  The only possible negative effect of using higher voltages
+> is wasted energy in form of some additionally generated heat.
 > 
-> Please review, thanks.
+> Reported-by: Quentin Schulz <quentin.schulz@cherry.de>
 
-Looks reasonable.
+Well, I merely highlighted that the voltage was different on OP1 
+compared to RK3399 for the 600MHz OPP :)
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+So... If there's ONE SoC I'm pretty sure is working as expected it's the 
+OP1 fitted on the Gru Chromebooks with the ChromiumOS kernel fork 
+(though yes, I believe all Gru CB are EoL since August 2023). In the 6.1 
+kernel fork, there's also no range: 
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/refs/heads/chromeos-6.1/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
 
-> Philo Lu (4):
->   virtio_net: Support dynamic rss indirection table size
->   virtio_net: Add hash_key_length check
->   virtio_net: Sync rss config to device when virtnet_probe
->   virtio_net: Update rss when set queue
-> 
->  drivers/net/virtio_net.c | 119 ++++++++++++++++++++++++++++++++-------
->  1 file changed, 100 insertions(+), 19 deletions(-)
-> 
-> --
-> 2.32.0.3.g01195cf9f
+So not sure we need to handle theoretical cases here. Will let 
+maintainers decide on that one. FWIW, there are two other OP1 devices, 
+the RockPi4A+ and RockPi4B+ which do not change the OPP either.
 
+Cheers,
+Quentin
 
