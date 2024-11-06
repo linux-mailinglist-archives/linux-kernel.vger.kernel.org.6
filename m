@@ -1,124 +1,137 @@
-Return-Path: <linux-kernel+bounces-398485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152F79BF1D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0EC9BF1D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:35:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46E541C25735
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:35:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE7F1C2592A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE47D203709;
-	Wed,  6 Nov 2024 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5D418FDD0;
+	Wed,  6 Nov 2024 15:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U53m2Gyk"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fK/QW1FC"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDE716CD29
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F10A16CD29;
+	Wed,  6 Nov 2024 15:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730907320; cv=none; b=iIBqi+x7iStk9j5wYrXAkg1E1OTV4EYfU0htFce8eMX0O/OkeWxZxQwtGzgLxUuDq2AJWjjnCJFtfQF4/rMMTZ3/EdEVQUkEdcL7LcQKMVKxehujAdtzNa0lByniWLF0Ju5I/MtPzhlDRua216S1jFbytXHLIbUMMI1/mJJzX6M=
+	t=1730907345; cv=none; b=quZ4oykibC9amb1CfnHdgYIVdLm9FWdZpcp53ObjToXivT8Jq8iTXM371Y7lmRcWtEx7/LFjpv13D14qbHSXKLg+phuqVlRt034O9HHAYfvhewP9F3e2khxJDxdTn+KHkbd9bk7B1iH+3GVQeJcAmMyekjUuUH0v/3dtkMcmVfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730907320; c=relaxed/simple;
-	bh=BzMh/SkjF/vZhwo25zJAi8RA4wwY7ojx5tSTsjGDWMQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=beRfAYT8RtUBJdPIrAKZsdjf9xQs5WTzhlFQYsXoe41uiHIwou7nY3OYsvViOusv1rGGTJqlZDfNMhJ1tiJu198814dqAj+Ch2/LoWLamM3dshdikOrhzHtJI2/pzusSvGuxf10OPs75pvjDAuqhA/YtXlH+kPxDZY1C5F4HOhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U53m2Gyk; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea863ecfe9so84402217b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:35:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730907317; x=1731512117; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yuAQmTAdCCAAaxxu5QbRxg4oOjJGHpnFzwE4CldcWU=;
-        b=U53m2GykqvDaj/gz/83Nz/TuZ/YIjGvaatD6B86Wbx30pdX6rIfF6S7iF8dsBaewYG
-         IaYEAVzSsfMcb27xE4SuywzQAOQgXbMed4jurzRx7DNtib7uW5r3x8G1VGXXX43rNdDI
-         zS3ACcLnm6saxV2RIg0SY2Yt5CAvrVhNodRYQMJklVwQSxEVIniGICbTumPoCzT7WGWo
-         REK1sMN9wOy/9W2V42rpI7d5KbqVjTaZtpmFydOtjxl863KjcUOLFDNB691wXszOSuKZ
-         dzh9r5YNhJWtxrLc1vM7ANHBDB8qyg2e9Q5QdHh0oodcbqlik6me4a4EbpQp7ZGhMCN9
-         EXFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730907317; x=1731512117;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yuAQmTAdCCAAaxxu5QbRxg4oOjJGHpnFzwE4CldcWU=;
-        b=GuA8r9Glf7UgT0WrdjRCR62lCjpYSYbdAerqfFx7D+Yfn+EXu2+EimXjjJr4CtIfim
-         oKaeJO4gbMFQq6gyj7ryOTCvS1Xztepc/Wcu7NgI2Ti7wB2Pqn5UaZpHdfOcs6p75ysf
-         zBvI74MZWp3k+/eiQKbgSp/LZi7ooPgTqIvwJbRiwvLx8YqZWalM65VHNerOE6GJ+01N
-         I9OccG8qbcSWP3i9NyiYtNweeIluWp+S4I/NHpNFPzjauyOXhxnvheRrEJ+Ey8aveI9+
-         BZD9LrZWx4EOgmRWEzLEhw3X2iCpplzS0pRhQMvy0wbk704xZHmW2QYt1Rb5s1UyKgSS
-         w4eA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOhZgl2Mc9V9AedfegRI3in83PodWjPUSKUDdK2aNU5k23MzDeisOYVhhqhavYtuvbvnq8dphVI8Fsucg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF3884Hk8GZowDDUdB7AuDZ54F8/DITnSNmbmV77F3meMyGbwk
-	GQxioGDbNvyQEHT+jlHEp7nVev5L5aFqcmgsaDlIK2ekMBymIDepfddhIepjs1ygWZkdyNRTAWE
-	k2w==
-X-Google-Smtp-Source: AGHT+IHmNxgiraaP+U1uT1ChKSKhhI4xy7BUPpqdGKKVhBllQrZbqSbHpux9zDxuCCy+elXJIEPKqQ6aqPM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:25c7:b0:6e2:6f2:efc with SMTP id
- 00721157ae682-6e9d8ad570amr9938387b3.5.1730907316561; Wed, 06 Nov 2024
- 07:35:16 -0800 (PST)
-Date: Wed, 6 Nov 2024 07:35:15 -0800
-In-Reply-To: <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
+	s=arc-20240116; t=1730907345; c=relaxed/simple;
+	bh=7qHzpB3TG+C8tGAFsrcXsTV+YPrG0APq81/k9Dc8bHw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jwH98cim8WdUuGfsXvFyjq717P4zfdcQTwvfPEXtS35Idd57Otr4djQQtzKTnL51u8W/a0uSaq6LnizaSzTOvBvfYsZjgQCtD4i6mUQV5XHmA4h0JLokrl5DBsv8jLxMCqBFnzEgiQDhu6J9Vd+89otAKd21dzAlpVbI8zlFW3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fK/QW1FC; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A297B240007;
+	Wed,  6 Nov 2024 15:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730907340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u0O1DZej7ntn5vlTTkeOAaf/z20TWgE994IzTCP97PI=;
+	b=fK/QW1FCogdbqrToYB8N3GWm4ZqL1Zprc0NhwciUGNy+i+X97EREKODC6FfqKFJBmRoU30
+	u36cU4dfvTnv/uHDR8xke1mBANmSr7IDVVIR39I8AoTZhGkzuq5LptP7ovk58yDtaZddqH
+	TIV2a0IbXGSg4mWVb5qT85gP95qAW9s/KdaNt2hqmW6axv9Szhr4srC8M+kHqrjr09xUiP
+	Opvivl4D3bdn7CM4qNtcB47gL6CD/TX8EY+GL/xBmpQOfCguWnzP0X/N8uKqJAz3jqryL2
+	EJYRwHNVhc3+ImBs1PU3YH20OhE5X2zVbLH8HfWMZqKBcM13KBci/mX1Dep2JQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+  "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: ubifs_recover_master_node: failed to recover master node
+In-Reply-To: <7eaf332e-9439-4d4c-a2ea-d963e41f44f2@alliedtelesis.co.nz> (Chris
+	Packham's message of "Tue, 29 Oct 2024 13:37:31 +1300")
+References: <7eaf332e-9439-4d4c-a2ea-d963e41f44f2@alliedtelesis.co.nz>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Wed, 06 Nov 2024 16:35:39 +0100
+Message-ID: <87jzdgjrxw.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241104101543.31885-1-bp@kernel.org> <ZyltcHfyCiIXTsHu@google.com>
- <20241105123416.GBZyoQyAoUmZi9eMkk@fat_crate.local> <ZypfjFjk5XVL-Grv@google.com>
- <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local> <ZypvePo2M0ZvC4RF@google.com>
- <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local> <ZyuJQlZqLS6K8zN2@google.com>
- <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
-Message-ID: <ZyuMsz5p26h_XbRR@google.com>
-Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, kvm@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, Nov 06, 2024, Borislav Petkov wrote:
-> On Wed, Nov 06, 2024 at 07:20:34AM -0800, Sean Christopherson wrote:
-> > I prefer to be To:/Cc:'d on any patches that touch files that are covered by
-> > relevant MAINTAINERS entries.  IMO, pulling names/emails from git is useless noise
-> > the vast majority of the time.
-> 
-> Huh, that's what I did!
 
-You didn't though.  The original mail Cc'd kvm@, but neither Paolo nor I.
+Hi Chris,
 
-> Please run this patch through get_maintainer.pl and tell me who else I should
-> have CCed.
+On 29/10/2024 at 13:37:31 +13, Chris Packham <chris.packham@alliedtelesis.c=
+o.nz> wrote:
 
-  $ ./scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --nofixes -- <patch>
-  Thomas Gleixner <tglx@linutronix.de>
-  Ingo Molnar <mingo@redhat.com>
-  Borislav Petkov <bp@alien8.de>
-  Dave Hansen <dave.hansen@linux.intel.com>
-  x86@kernel.org
-  "H. Peter Anvin" <hpa@zytor.com>
-  Peter Zijlstra <peterz@infradead.org>
-  Josh Poimboeuf <jpoimboe@kernel.org>
-  Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-  Sean Christopherson <seanjc@google.com>
-  Paolo Bonzini <pbonzini@redhat.com>
-  linux-kernel@vger.kernel.org
-  kvm@vger.kernel.org
+> Hi,
+>
+> I recently added support for the SPI-NAND controller on the RTL9302C SoC[=
+1]. I did most of the work against Linux 6.11
+> and it's working fine there. I recently rebased against the tip of Linus'=
+s tree (6.12-rc5) and found I was getting ubifs
+> errors when mounting:
+>
+> [    1.255191] spi-nand spi1.0: Macronix SPI NAND was found.
+> [    1.261283] spi-nand spi1.0: 256 MiB, block size: 128 KiB, page size: =
+2048, OOB size: 64
+> [    1.271134] 2 fixed-partitions partitions found on MTD device spi1.0
+> [    1.278247] Creating 2 MTD partitions on "spi1.0":
+> [    1.283631] 0x000000000000-0x00000f000000 : "user"
+> [   20.481108] 0x00000f000000-0x000010000000 : "Reserved"
+> [   72.240347] ubi0: scanning is finished
+> [   72.270577] ubi0: attached mtd3 (name "user", size 240 MiB)
+> [   72.276815] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: 126976 b=
+ytes
+> [   72.284537] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page size 2=
+048
+> [   72.292132] ubi0: VID header offset: 2048 (aligned 2048), data offset:=
+ 4096
+> [   72.299885] ubi0: good PEBs: 1920, bad PEBs: 0, corrupted PEBs: 0
+> [   72.306689] ubi0: user volume: 1, internal volumes: 1, max. volumes co=
+unt: 128
+> [   72.314747] ubi0: max/mean erase counter: 1/0, WL threshold: 4096, ima=
+ge sequence number: 252642230
+> [   72.324850] ubi0: available PEBs: 0, total reserved PEBs: 1920, PEBs r=
+eserved for bad PEB handling: 40
+> [   72.370123] ubi0: background thread "ubi_bgt0d" started, PID 141
+> [   72.470740] UBIFS (ubi0:0): Mounting in unauthenticated mode
+> [   72.490246] UBIFS (ubi0:0): background thread "ubifs_bgt0_0" started, =
+PID 144
+> [   72.528272] UBIFS error (ubi0:0 pid 143): ubifs_recover_master_node: f=
+ailed to recover master node
+> [   72.550122] UBIFS (ubi0:0): background thread "ubifs_bgt0_0" stops
+> [   72.710720] UBIFS (ubi0:0): Mounting in unauthenticated mode
+> [   72.717447] UBIFS (ubi0:0): background thread "ubifs_bgt0_0" started, =
+PID 149
+> [   72.777602] UBIFS error (ubi0:0 pid 148): ubifs_recover_master_node: f=
+ailed to recover master node
+> [   72.787792] UBIFS (ubi0:0): background thread "ubifs_bgt0_0" stops
+>
+> Full dmesg output is at[2]
+>
+> git bisect lead me to commit 11813857864f ("mtd: spi-nand: macronix: Cont=
+inuous read support"). Reverting the blamed
+> commit from 6.12-rc5 seems to avoid the problem. The flash chip on my boa=
+rd is a MX30LF2G28AD-TI. I'm not sure if there
+> is a problem with 11813857864f or with my spi-mem driver that is
+> exposed after support for continuous read is enabled.
 
-Versus the actual To + Cc:
+Crap. I had a look, and TBH I don't know. The only thing I see in your
+driver might be the DMA vs PIO choice. Could you try to always return
+false from rtl_snand_dma_op()?
 
-  X86 ML <x86@kernel.org>
-  Josh Poimboeuf <jpoimboe@redhat.com>,
-  Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-  kvm@vger.kernel.org,
-  LKML <linux-kernel@vger.kernel.org>,
-  "Borislav Petkov (AMD)" <bp@alien8.de>
+However you say you're using an MX30* device, this is a raw NAND chip,
+SPI-NAND chips are I believe starting with MX35* in their IDs, no?
+
+Thanks,
+Miqu=C3=A8l
 
