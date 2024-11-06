@@ -1,113 +1,143 @@
-Return-Path: <linux-kernel+bounces-398754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EA29BF578
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:40:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9269BF584
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:45:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67AB5282978
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF252284440
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F18E20823B;
-	Wed,  6 Nov 2024 18:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F4520823D;
+	Wed,  6 Nov 2024 18:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HiaX0aVm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bh7nRh21"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78E936D;
-	Wed,  6 Nov 2024 18:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14CF176AC8;
+	Wed,  6 Nov 2024 18:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730918402; cv=none; b=k1K1jirokJkvTHAwSzwnb3hJ+TOcLhQR4kGGxW4ZYi8Eq32D6lF4tWrsWgOGhiuZ4YKGJikTfSTuYmq+UD2VwMDM179TfSymU7EmaUBiiVxXGV2myIfwUNY88OeUBs9aPYC90OLq63NFD8bN3OkDlm1s5aSoi3jgSm72qeVIUqw=
+	t=1730918739; cv=none; b=ZrEzjZ42fAKqOuA3TlNntLm2r2zjmvoAGATAVi/Y7cM3awTGyAIe1Sfl0lhT+abhecX/KeRj++c3fA09+w6DCCyB6wzG9zDLy9Ml5riXjRR1iAjsQHeVafg9ZII2YN55w4TA2SGojs/NkiAK99yoCDvIXfxHxXX6ShutwynZMho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730918402; c=relaxed/simple;
-	bh=SmGjdX560phYOMnUGNxDLQ5D/ndLDKNLI3vEydTFtCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gmtfcVO4ch+z+o0B1GGYgKymvDhzDzL96AbOBcrR2QXRGqpmTNfbWjF2KM34k112HO+XUAvmc9ntI3Y4F6mWzmJAvI2sJ343BHc1y9XzDrAiKQ7hU8nbF7B/xSTK8/qzKADbd41v6wXLSHkXKsCJsYW2+dxUgJWfKjSamSinu4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HiaX0aVm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD89C4CED6;
-	Wed,  6 Nov 2024 18:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730918402;
-	bh=SmGjdX560phYOMnUGNxDLQ5D/ndLDKNLI3vEydTFtCw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HiaX0aVmnYDwQi1Mprx35gxtFUh51uKtM3AfDW7o9VCSmYB3XVRFF/M8U7HPXF0vu
-	 FAmDvyhuKkGkdhrT3RmsPz55QO/y3EGQCBhtgvtFCa+KjFHdRy/afetwGs1Rw6gSKk
-	 r/OIZzxh0BimPBhaOLQUwxuin3luyclt+SAcxs6y9y6GmXff+jhAGImPeQi1VHxV3z
-	 pvsb39HX+2U708QRqNamTBvNYqMzGl4dl1H/CcOvkx6PgnKNhMnWxwkpK6yAgpijH/
-	 CMipdIGWnj1AbbzP7kpyYau9eqkHOlLDbZDtA0AC6HFXEnj9Zi1L/vsuiIpF8RuL4q
-	 JILh5dvYzWqdg==
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e29267b4dc4so113174276.0;
-        Wed, 06 Nov 2024 10:40:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW/xqpMEr2ejBNzGlMknv0W2p/I/03IUxCG2fRz6DZADpL3LlQTx42AcmtVQdmDDeaeBb3uQB/jD4RHDXjS@vger.kernel.org, AJvYcCX0AqtF1Atpzxjb7MwRhQezDHA/QVAZSmDywHmwf+6z/+PPavOdY8aWbA/mVYJxVzTsaO1BT3l1xmqS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi74YV9Uy7Psnze/OPFp3fvOhLNQak3QR4Rq/UlgAdDhbcKVXO
-	MfqrC1T90oX7Qgp2ZKZ6jf2Nq7NavfpAPoGTsk3t1SMY9qVy3nlaRjhfKomvz9IjT2qEdUUeoM3
-	PiyxThqRBQ/1i1/+2quHr1Kq1Dg==
-X-Google-Smtp-Source: AGHT+IHqHyWQZr3Kb4+lAVzkmrlMi6Kb562fzbCmjQZmI/dxFlh/J4Eg8RThK7adMjkoNv6+1SjeqeFuuO+ig4Pv6ms=
-X-Received: by 2002:a05:6902:15c7:b0:e2e:3431:b754 with SMTP id
- 3f1490d57ef6-e3302696128mr18078053276.50.1730918401410; Wed, 06 Nov 2024
- 10:40:01 -0800 (PST)
+	s=arc-20240116; t=1730918739; c=relaxed/simple;
+	bh=ts1jeFGgXcWV69i9NnWPLiE0tUfahZCCkXmefsTxWgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M7HVC/UEclp8FDILpTnXgNNRmnAXBEmn3B6IOmHd6dLgh8sdb0fWyo1Yvs3ymG5EEft3S58qgxkfeU4eereKWpGFn5FRv7b/+TFB4ZevhLoP5biTH6Wz7ejZFo2LIefVU3WKoBwGQKE0mopEhNpK/JuW57OVuSphQfY09n92S9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bh7nRh21; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730918738; x=1762454738;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ts1jeFGgXcWV69i9NnWPLiE0tUfahZCCkXmefsTxWgY=;
+  b=bh7nRh2170HNYGvim2MXS0Y38/7pgoqHo5PH1zBNbrzRITDQVod8/ApX
+   CpDguNMJJxskle7iiYhjdTGbsWVMiMts2r9pKWrRVfVXY7xWGXECf3mJc
+   MhxHdRsJzZ042Q4efMi77mgpcOCLZTeMrQ3bLoPqvF/x7VapiFbF7CIvr
+   T9k9jiN6hLRdBW9K5UClO2CTv+zx60ybrBcXmwWYPoZmLU3tXuSBD8DGY
+   8LGen66GUVqKhU2q1Iz/lst8UZ4JAX9PF5ZvaJDJBQKfBREkoOl97TAxv
+   ivOXC9nETLtGlqbehtbjhUFuNKs0vgld8GNdb2sRMlAP2Jb+ydAUVhf0e
+   g==;
+X-CSE-ConnectionGUID: gvXxRNgwTlmGQ1k00yHR3w==
+X-CSE-MsgGUID: B7Rvqnx6QS6CKZka/PtDew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41835385"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41835385"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 10:45:37 -0800
+X-CSE-ConnectionGUID: JXbIrWCESACS6phQ1AkCqQ==
+X-CSE-MsgGUID: D5jfgmkXRwyWfuvgMCl/oA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="85516951"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 06 Nov 2024 10:45:32 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8l21-000pIy-2k;
+	Wed, 06 Nov 2024 18:45:29 +0000
+Date: Thu, 7 Nov 2024 02:45:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Yin <peteryin.openbmc@gmail.com>,
+	Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
+	Lukas Wunner <lukas@wunner.de>,
+	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+Subject: Re: [PATCH v2 2/2] hwmon: pmbus: add driver for ltp8800-1a,
+ ltp8800-4a, and ltp8800-2
+Message-ID: <202411070232.xrxV7tVx-lkp@intel.com>
+References: <20241106030918.24849-3-cedricjustine.encarnacion@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014193528.1896905-2-robh@kernel.org> <87r07p8x12.fsf@BLaptop.bootlin.com>
- <0A5AFF77-D888-4151-9C15-15A408709857@fw-web.de>
-In-Reply-To: <0A5AFF77-D888-4151-9C15-15A408709857@fw-web.de>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 6 Nov 2024 12:39:50 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKfpVVVh6L0PLmieBO3qMFpcDfWFwd+5=qzH_MbeZt31Q@mail.gmail.com>
-Message-ID: <CAL_JsqKfpVVVh6L0PLmieBO3qMFpcDfWFwd+5=qzH_MbeZt31Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: marvell: Drop undocumented SATA phy names
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106030918.24849-3-cedricjustine.encarnacion@analog.com>
 
-On Wed, Nov 6, 2024 at 12:34=E2=80=AFPM Frank Wunderlich <linux@fw-web.de> =
-wrote:
->
-> Am 5. November 2024 17:28:57 MEZ schrieb Gregory CLEMENT <gregory.clement=
-@bootlin.com>:
-> >"Rob Herring (Arm)" <robh@kernel.org> writes:
-> >
-> >> While "phy-names" is allowed for sata-port nodes, the names used aren'=
-t
-> >> documented and are incorrect ("sata-phy" is what's documented). The na=
-me
-> >> for a single entry is fairly useless, so just drop the property.
-> >>
-> >> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >
-> >Applied on mvebu/dt64
-> >
-> >Thanks,
-> >
-> >Gregory
-> >> ---
-> >> Cc: Frank Wunderlich <linux@fw-web.de>
-> >>
-> >> There's also this 2 year old patch fixing other SATA errors[1] which
-> >> was never picked up. :(
-> >>
-> >> [1] https://lore.kernel.org/linux-arm-kernel/20220311210357.222830-3-l=
-inux@fw-web.de/
->
-> Hi
->
-> How to deal with my patch pointed by rob?
+Hi Cedric,
 
-I believe it will conflict with mine. Can you rebase on top of
-mvebu/dt64 and resend it.
+kernel test robot noticed the following build warnings:
 
-Rob
+[auto build test WARNING on 30a984c0c9d8c631cc135280f83c441d50096b6d]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Cedric-Encarnacion/dt-bindings-trivial-devices-add-ltp8800/20241106-111734
+base:   30a984c0c9d8c631cc135280f83c441d50096b6d
+patch link:    https://lore.kernel.org/r/20241106030918.24849-3-cedricjustine.encarnacion%40analog.com
+patch subject: [PATCH v2 2/2] hwmon: pmbus: add driver for ltp8800-1a, ltp8800-4a, and ltp8800-2
+config: x86_64-buildonly-randconfig-004-20241107 (https://download.01.org/0day-ci/archive/20241107/202411070232.xrxV7tVx-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070232.xrxV7tVx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411070232.xrxV7tVx-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/hwmon/pmbus/ltp8800.c:7:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/hwmon/pmbus/ltp8800.c:12:36: warning: unused variable 'ltp8800_reg_desc' [-Wunused-const-variable]
+      12 | static const struct regulator_desc ltp8800_reg_desc[] = {
+         |                                    ^~~~~~~~~~~~~~~~
+   2 warnings generated.
+
+
+vim +/ltp8800_reg_desc +12 drivers/hwmon/pmbus/ltp8800.c
+
+    11	
+  > 12	static const struct regulator_desc ltp8800_reg_desc[] = {
+    13		PMBUS_REGULATOR("vout", 0),
+    14	};
+    15	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
