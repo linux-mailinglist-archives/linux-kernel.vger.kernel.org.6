@@ -1,131 +1,170 @@
-Return-Path: <linux-kernel+bounces-398668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631C79BF468
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:39:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1C69BF481
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:45:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F271F24468
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:39:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28DD8B242E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEF120721D;
-	Wed,  6 Nov 2024 17:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E899207215;
+	Wed,  6 Nov 2024 17:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="goHplJ1v"
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xp0JQOxU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA972645;
-	Wed,  6 Nov 2024 17:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2D916B391;
+	Wed,  6 Nov 2024 17:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730914752; cv=none; b=o9GI02wt5YMMU/xKHAxip8dAc66CNNTC7LfjEo7SchU2vbbrxaL3dEnpFUXv/efqexni/6RiaSRsts4PYtaHpU22KIeVINxFYYix4M9h4CgGSFkWZmbrOOLKpuH0gMz5CWoKJt32S1v73+DyeKlNHh5bo4+YBwH/UfCz4EectbU=
+	t=1730915120; cv=none; b=QwdyvJPg0dbcp1yv5dUTWlwMcJmJy/nZFtiTccaCYincwzgpfUsWMgNJ+ODE/0GZ9zU7iCAZyMXHIuZWDYdJZDkz50m70mWTQUpgtONLUi8cX5hDv8JnbfLrfb1c7hzOr0f9sJNrAL/4yMWo8GpsiAcJWpBrtur1yoAwEjC6PzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730914752; c=relaxed/simple;
-	bh=8kci1woKxcuU8zna+ejYhzw1IeAp8nkCktOAQyR/1z4=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tMxTR8WfbOrcNe5nbyp0bGCkblp51LhBzyWT7fo3rO6azYv5dYHKWK0S8F6nSYbslxzWs+CPjDdcRg1KDiBsNkvc4fv0+dFiXqSbwOI9lFV1ddOFrOtLtyEdV8188kBf9VC0MDH3zZQss7HOxJZxjS5NQ4MuARIlN44y1d9TXKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=goHplJ1v; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730914751; x=1762450751;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=8kci1woKxcuU8zna+ejYhzw1IeAp8nkCktOAQyR/1z4=;
-  b=goHplJ1vHtk4J5thQAY76l+kVeOcEExVUDsKNhywS6NfoEp7K1LIhUaC
-   wTHIaDr7PKJxP3+Wgxj6ZnBknL8C5cGRC+V5rtAC9IU+Bxk1YCqaWrmWU
-   agyhRTnNWXVgUrB4NYJZEOgGmUVyGDkDpEOTF9W3RrsggrfIrw8AH75v4
-   g=;
-X-IronPort-AV: E=Sophos;i="6.11,263,1725321600"; 
-   d="scan'208";a="382940829"
-Subject: Re: [PATCH 3/5] arm64: refactor delay() to enable polling for value
-Thread-Topic: [PATCH 3/5] arm64: refactor delay() to enable polling for value
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 17:39:10 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:14779]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.17.195:2525] with esmtp (Farcaster)
- id 0e147bef-d664-4db1-81e7-192215fe6e62; Wed, 6 Nov 2024 17:38:55 +0000 (UTC)
-X-Farcaster-Flow-ID: 0e147bef-d664-4db1-81e7-192215fe6e62
-Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 6 Nov 2024 17:38:55 +0000
-Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
- EX19D001UWA003.ant.amazon.com (10.13.138.211) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 6 Nov 2024 17:38:55 +0000
-Received: from EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2]) by
- EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2%7]) with mapi id
- 15.02.1258.035; Wed, 6 Nov 2024 17:38:55 +0000
-From: "Okanovic, Haris" <harisokn@amazon.com>
-To: "catalin.marinas@arm.com" <catalin.marinas@arm.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rafael@kernel.org"
-	<rafael@kernel.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-	"ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>, "wanpengli@tencent.com"
-	<wanpengli@tencent.com>, "cl@gentwo.org" <cl@gentwo.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>, "maobibo@loongson.cn"
-	<maobibo@loongson.cn>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "misono.tomohiro@fujitsu.com"
-	<misono.tomohiro@fujitsu.com>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>,
-	"lenb@kernel.org" <lenb@kernel.org>, "will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
-	<peterz@infradead.org>, "boris.ostrovsky@oracle.com"
-	<boris.ostrovsky@oracle.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>, "Okanovic, Haris" <harisokn@amazon.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mtosatti@redhat.com"
-	<mtosatti@redhat.com>, "x86@kernel.org" <x86@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>
-Thread-Index: AQHbL7EHko86fTfE7kuIbrTyhHlrvrKp+i8AgACL7gA=
-Date: Wed, 6 Nov 2024 17:38:55 +0000
-Message-ID: <3156dcdbddc9b1f692bc45adba0893bcc9b58035.camel@amazon.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
-	 <20241105183041.1531976-1-harisokn@amazon.com>
-	 <20241105183041.1531976-4-harisokn@amazon.com> <Zys0TAHZzqbGst93@arm.com>
-In-Reply-To: <Zys0TAHZzqbGst93@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EA38280D1CE6BB43BA5C6CB9D142F899@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730915120; c=relaxed/simple;
+	bh=4hI5vTzKe6h+64EipIsPRN3WM31BsmB5rIzxFxXmrcM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fWWMwsFqrX6GUvsdV6N+mSclwj0JpTohZwgG5iblES7W7DOIB+kg2KhVfSmhcrJFfuoBfB0SzlN78YqD2MTFFa5Wexw6YGUkl8F+TPnCoq/OHKQ177wrYoXpXy8w0cXhXug8600C4EPqOKxeZINrt0ofGmPt79Kwfmv2fF80zB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xp0JQOxU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 175A9C4CEC6;
+	Wed,  6 Nov 2024 17:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730915119;
+	bh=4hI5vTzKe6h+64EipIsPRN3WM31BsmB5rIzxFxXmrcM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Xp0JQOxUM8tiNHv49Avg3KvXMij3Sz2uB58vmTu3GzENRfQOCbJYBy6ysQKXd3Qle
+	 jQRh+1Z1YUu+T/2CcaM6kxUX6vfCLUeueasQfhJfgilu9xDA4IKdcoXkNVc5xKty1M
+	 9xoNw35t4CL/6GTn5W8yI7COeD29SI4xOuXUwVTeqz7ok6vptiv5XfsVVjRFFIMtt/
+	 G1HBNz606HZDHoD65bG3Ef6xaXoSsuG0bd6flZ8ZRnZiElCo1GP+gE5aHEbXCVZoCl
+	 XA6XuTdmMx1Qg+XYIgMFPBFV8GMxOVlpi957pZJ90ygOIKaawKKidSvOYorJb/eiqi
+	 I1oRHCYKrxhvA==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 06 Nov 2024 17:41:32 +0000
+Subject: [PATCH] arm64/ptrace: Clarify documentation of VL configuration
+ via ptrace
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241106-arm64-sve-ptrace-vl-set-v1-1-3b164e8b559c@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEuqK2cC/x3MQQqDQAxG4atI1g0Yq0J7FelinPnVQKuSyFAQ7
+ 96hy2/x3kkOUzg9q5MMWV23tUBuFcUlrDNYUzE1ddOK1MLBPn3LnsH7YSGC85sdB6exuyOkcYo
+ PoVLvhkm///Pwuq4f56rUi2kAAAA=
+X-Change-ID: 20241101-arm64-sve-ptrace-vl-set-db53eadbfc91
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Oleg Nesterov <oleg@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3892; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=4hI5vTzKe6h+64EipIsPRN3WM31BsmB5rIzxFxXmrcM=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhnTt1dpJH/3n8YT2XzdrO2/A3byD0Texw26xadTGysIvYsVh
+ WfqdjMYsDIxcDLJiiixrn2WsSg+X2Dr/0fxXMINYmUCmMHBxCsBEiuPY//ueOuCV5+JTZrr8aujm+l
+ 3My8o+OBYxzAmQtdD0v1ju3zBxik4Z19afp6vPLpdfYXIxMyZGW7aH61zmAdHLEiv15DIaQuRuxUrY
+ TfoqvtAg6lLCw4DTObcqj7DxWD6Y3f+9ukVAWcPm4PNe3Y/uhiejWwTS39x75PBLor/jfOBy3VvXIl
+ 7E3Sy3NWfzCOWe8GjB/O1ZBtaK/02S1V+uWmBaoR7xe37lGpVrDyaV8nw/W8tV1CG3couguXiNytuN
+ gdGNf868WK8bu05N1rU+KMa/4dHDZ/xTpzyu5zTgf9h7J/zVtiUv/n7/n5QdKsB/68ivKN/+ZrGSl5
+ wVP+T+a39nWS6Tnna7csrlqBQFAA==
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-T24gV2VkLCAyMDI0LTExLTA2IGF0IDA5OjE4ICswMDAwLCBDYXRhbGluIE1hcmluYXMgd3JvdGU6
-DQo+IENBVVRJT046IFRoaXMgZW1haWwgb3JpZ2luYXRlZCBmcm9tIG91dHNpZGUgb2YgdGhlIG9y
-Z2FuaXphdGlvbi4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNz
-IHlvdSBjYW4gY29uZmlybSB0aGUgc2VuZGVyIGFuZCBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUu
-DQo+IA0KPiANCj4gDQo+IE9uIFR1ZSwgTm92IDA1LCAyMDI0IGF0IDEyOjMwOjM5UE0gLTA2MDAs
-IEhhcmlzIE9rYW5vdmljIHdyb3RlOg0KPiA+ICsgICAgICAgICAgICAgZG8gew0KPiA+ICsgICAg
-ICAgICAgICAgICAgICAgICBjdXIgPSBfX1JFQURfT05DRV9FWCgqYWRkcik7DQo+ID4gKyAgICAg
-ICAgICAgICAgICAgICAgIGlmICgoY3VyICYgbWFzaykgPT0gdmFsKSB7DQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgIH0N
-Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgd2ZldChlbmQpOw0KPiANCj4gQ29uc3RydWN0cyBs
-aWtlIHRoaXMgbmVlZCB0byBiZSBlbnRpcmVseSBpbiBhc3NlbWJseS4gVGhlIGNvbXBpbGVyIG1h
-eQ0KPiBzcGlsbCAnY3VyJyBvbnRvIHRoZSBzdGFjayBhbmQgdGhlIHdyaXRlIGNvdWxkIGNsZWFy
-IHRoZSBleGNsdXNpdmUNCj4gbW9uaXRvciB3aGljaCBtYWtlcyB0aGUgd2ZldCByZXR1cm4gaW1t
-ZWRpYXRlbHkuIFRoYXQncyBoaWdobHkgQ1BVDQo+IGltcGxlbWVudGF0aW9uIHNwZWNpZmljIGJ1
-dCBpdCdzIHRoZSByZWFzb24gd2UgaGF2ZSBmdW5jdGlvbnMgbGlrZQ0KPiBfX2NtcHdhaXQoKSBp
-biBhc3NlbWJseSAob3Igd2hhdGV2ZXIgZWxzZSBkZWFscyB3aXRoIGV4Y2x1c2l2ZXMpLiBJT1cs
-DQo+IHdlIGNhbid0IGhhdmUgb3RoZXIgbWVtb3J5IGFjY2Vzc2VzIGJldHdlZW4gdGhlIExEWFIg
-YW5kIHdoYXRldmVyIGlzDQo+IGNvbnN1bWluZyB0aGUgZXhjbHVzaXZlIG1vbml0b3IgYXJtZWQg
-c3RhdGUgKHR5cGljYWxseSBTVFhSIGJ1dCBXRkUvV0ZFVA0KPiBjYW4gYmUgYW5vdGhlcikuDQoN
-CkFncmVlZCwgd2lsbCByZXdyaXRlIHBhcnRzIG9mIGRlbGF5KCkgaW4gYXNtLg0KDQo+IA0KPiAt
-LQ0KPiBDYXRhbGluDQoNCg==
+When we configure SVE, SSVE or ZA via ptrace we allow the user to configure
+the vector length and specify any of the flags that are accepted when
+configuring via prctl(). This includes the S[VM]E_SET_VL_ONEXEC flag which
+defers the configuration of the VL until an exec(). We don't do anything to
+limit the provision of register data as part of configuring the _ONEXEC VL
+but as a function of the VL enumeration support we do this will be
+interpreted using the vector length currently configured for the process.
+
+This is all a bit surprising, and probably we should just not have allowed
+register data to be specified with _ONEXEC, but it's our ABI so let's
+add some explicit documentation in both the ABI documents and the source
+calling out what happens.
+
+The comments are also missing the fact that since SME does not have a
+mandatory 128 bit VL it is possible for VL enumeration to result in the
+configuration of a higher VL than was requested, cover that too.
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/arch/arm64/sme.rst |  4 ++++
+ Documentation/arch/arm64/sve.rst |  4 ++++
+ arch/arm64/kernel/ptrace.c       | 12 ++++++++++--
+ 3 files changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/arch/arm64/sme.rst b/Documentation/arch/arm64/sme.rst
+index be317d457417434c24811edce3ef2bad88f2cace..b2fa01f85cb5e33350c59f752aba9248e4fbd80e 100644
+--- a/Documentation/arch/arm64/sme.rst
++++ b/Documentation/arch/arm64/sme.rst
+@@ -346,6 +346,10 @@ The regset data starts with struct user_za_header, containing:
+ 
+ * Writes to NT_ARM_ZT will set PSTATE.ZA to 1.
+ 
++* If any register data is provided along with SME_PT_VL_ONEXEC then the
++  registers data will be interpreted with the current vector length, not
++  the vector length configured for use on exec.
++
+ 
+ 8.  ELF coredump extensions
+ ---------------------------
+diff --git a/Documentation/arch/arm64/sve.rst b/Documentation/arch/arm64/sve.rst
+index 8d8837fc39ec71414a72dfef9e834f0800106fdd..28152492c29cbc7a81165a367e87d4aa327690f4 100644
+--- a/Documentation/arch/arm64/sve.rst
++++ b/Documentation/arch/arm64/sve.rst
+@@ -402,6 +402,10 @@ The regset data starts with struct user_sve_header, containing:
+   streaming mode and any SETREGSET of NT_ARM_SSVE will enter streaming mode
+   if the target was not in streaming mode.
+ 
++* If any register data is provided along with SVE_PT_VL_ONEXEC then the
++  registers data will be interpreted with the current vector length, not
++  the vector length configured for use on exec.
++
+ * The effect of writing a partial, incomplete payload is unspecified.
+ 
+ 
+diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+index b756578aeaeea1d3250276734520e3eaae8a671d..f09ffd70c9166aeb306376a34316499010376044 100644
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -898,7 +898,11 @@ static int sve_set_common(struct task_struct *target,
+ 	if (ret)
+ 		goto out;
+ 
+-	/* Actual VL set may be less than the user asked for: */
++	/*
++	 * Actual VL set may be different from what the user asked
++	 * for, or we may have configured the _ONEXEC VL not the
++	 * current VL:
++	 */
+ 	vq = sve_vq_from_vl(task_get_vl(target, type));
+ 
+ 	/* Enter/exit streaming mode */
+@@ -1125,7 +1129,11 @@ static int za_set(struct task_struct *target,
+ 	if (ret)
+ 		goto out;
+ 
+-	/* Actual VL set may be less than the user asked for: */
++	/*
++	 * Actual VL set may be different from what the user asked
++	 * for, or we may have configured the _ONEXEC rather than
++	 * current VL:
++	 */
+ 	vq = sve_vq_from_vl(task_get_sme_vl(target));
+ 
+ 	/* Ensure there is some SVE storage for streaming mode */
+
+---
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241101-arm64-sve-ptrace-vl-set-db53eadbfc91
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
