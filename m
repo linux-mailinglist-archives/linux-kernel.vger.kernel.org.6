@@ -1,88 +1,77 @@
-Return-Path: <linux-kernel+bounces-397347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA0A9BDAD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:02:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325C09BDAD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8641C22EC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8BE1F213A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C522B189913;
-	Wed,  6 Nov 2024 01:01:41 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77035161328;
+	Wed,  6 Nov 2024 01:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJkhPL6u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4673C17F4F2;
-	Wed,  6 Nov 2024 01:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF59D3A1DB;
+	Wed,  6 Nov 2024 01:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730854901; cv=none; b=e8h+NZsovPYtsclINBkpuA3zVWaVD+IcGvz2ebXeuYpDVp0tdDhnQdy6JoraZ5eljTuU4YcV5Ybli2GhkTvkQlHIfZJ/rQibScn/E0dSG+SydK+GoOTTU5uXnIYvbTM2DLVx22XxQvrbkW9zVHWbl4j0eKqW3a2/gh8lOCPz1ms=
+	t=1730854942; cv=none; b=OEZ5OVHK5b9aAZ2b1Ann3mn1I5mpmYDUNxzloImbErgJBoR2bUl1cnb5mHGco6NMyhkyXc4ABZMXbre19d+WmJPnW3qT1cNz8zE6r8XPgl+d++g1M1GRLfR02JSgF6Q/2zfvSeZ6IimxtUFpQqX06GpItT1fIB1zIpGkRSfXO4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730854901; c=relaxed/simple;
-	bh=1t9TMw2SgXI7sUlPyzY+L1hKWpWbHsOM8itTqn1tf8s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CxOCQLLZumn7qruFvpymYJTdA3DApGueqPIiP0WcxUwQC6bebjWxX7RC/0SiScJHnCywmuxKVuLlz3qUs3zFnxwfRfqKk53z9RBlVbNZTdXog3ezC2g4Yp0pedY87wcZoHAtflqejVO1XetphuyRHue0T/Arh3LQz1vHKyT7+qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xjn013rd9zfdcs;
-	Wed,  6 Nov 2024 08:58:57 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 385DE18007C;
-	Wed,  6 Nov 2024 09:01:34 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 6 Nov
- 2024 09:01:33 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <ruanjinjie@huawei.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <qperret@google.com>
-Subject: [PATCH -next] cpufreq: CPPC: Fix wrong return value in cppc_get_cpu_power()
-Date: Wed, 6 Nov 2024 09:01:11 +0800
-Message-ID: <20241106010111.2404387-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730854942; c=relaxed/simple;
+	bh=BttNn7lXrePS44BuRpIBKpxxgxgRnihX4x4/xHR5B6Q=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=UCdly1uq5yMaBMwnxQ87zgiPX04NcJ19zcK8QWS4E27rwH+1AEZ9qH9AZHCaI+Q1cRXWyhM5Tr7XBeWJvQL1q320UQKO5xfnJ/wtfhUnFGxmgGBJ46iii/2oEqN2huacsgkGoz7dXsnpVJMPOgKnZaZLjAnHLRtZ7jtkmCsf+lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJkhPL6u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFB2C4CECF;
+	Wed,  6 Nov 2024 01:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730854942;
+	bh=BttNn7lXrePS44BuRpIBKpxxgxgRnihX4x4/xHR5B6Q=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=AJkhPL6uPdCqeqLuI16M5ep55k+r1gEdp4rhIPV6b8lwChZZ37QjqZWZFkCvYqZWG
+	 TJt4Sa11pwClk4YiXMa5fx++QF/15BSgSHjQqyBmRvLKoPScvWP7U7HSS/JnkSGfwT
+	 plXEFvqg25WJU/YMCrLr7zhf6bFVUpGidHP1SYjc6nJL+htaY+aA/Zh8AgkVYxj60O
+	 s6JB+mm2qozmb1cLk35Wi/nCamezdirmc6CTR8LBsy9gV38Va3PoSu1uOP3bOJJ4/g
+	 l26DlJXx9dizk9H1Zxu9/22+l/8tm75gYW5aeZ5eUiF+IUnbqlE/auPfHFMDjDa0G2
+	 9YM3JqVbSJZrQ==
+Message-ID: <b6a264f8175f7c825b97aed63fb277a9.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0198082e-19a2-48e8-ada1-a7edaeddb73c@gmail.com>
+References: <20241104153108.3053932-1-ivo.ivanov.ivanov1@gmail.com> <20241104-lend-lark-ab46a268213a@spud> <0198082e-19a2-48e8-ada1-a7edaeddb73c@gmail.com>
+Subject: Re: [PATCH v1] dt-bindings: clock: actions,owl-cmu: convert to YAML
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Andreas =?utf-8?q?F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-actions@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor@kernel.org>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Date: Tue, 05 Nov 2024 17:02:20 -0800
+User-Agent: alot/0.10
 
-cppc_get_cpu_power() return 0 if the policy is NULL. Then in
-em_create_perf_table(), the later zero check for power is not valid
-as power is uninitialized. As Quentin pointed out, kernel energy model
-core check the return value of active_power() first, so if the callback
-failed it should tell the core. So return -EINVAL to fix it.
+Quoting Ivaylo Ivanov (2024-11-04 12:19:57)
+>=20
+>=20
+>=20
+> On 11/4/24 21:03, Conor Dooley wrote:
+> > On Mon, Nov 04, 2024 at 05:31:08PM +0200, Ivaylo Ivanov wrote:
+> >> +    soc {
+> >> +        #address-cells =3D <2>;
+> >> +        #size-cells =3D <2>;
+> > FWIW, you could drop these two if...
+>=20
+> I see, although the point of this was to keep it the example as close
+> to the original usage in s900.dtsi as possible. Anyways, if a v2 is
+> needed, I can do that.
 
-Fixes: a78e72075642 ("cpufreq: CPPC: Fix possible null-ptr-deref for cpufreq_cpu_get_raw()")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Suggested-by: Quentin Perret <qperret@google.com>
----
- drivers/cpufreq/cppc_cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index cdc569cf7743..bd8f75accfa0 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -405,7 +405,7 @@ static int cppc_get_cpu_power(struct device *cpu_dev,
- 
- 	policy = cpufreq_cpu_get_raw(cpu_dev->id);
- 	if (!policy)
--		return 0;
-+		return -EINVAL;
- 
- 	cpu_data = policy->driver_data;
- 	perf_caps = &cpu_data->perf_caps;
--- 
-2.34.1
-
+Please resend with the fix.
 
