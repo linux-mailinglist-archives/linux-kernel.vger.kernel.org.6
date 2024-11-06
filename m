@@ -1,485 +1,354 @@
-Return-Path: <linux-kernel+bounces-397313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1F89BDA56
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:31:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5EAC9BDA5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7E92847A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:31:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8545A283A01
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5F9CA5A;
-	Wed,  6 Nov 2024 00:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DA92E414;
+	Wed,  6 Nov 2024 00:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6jp/OEe"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Vo+bLEoI"
+Received: from CY4PR02CU008.outbound.protection.outlook.com (mail-westcentralusazon11021085.outbound.protection.outlook.com [40.93.199.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FEC10E3;
-	Wed,  6 Nov 2024 00:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730853071; cv=none; b=ePz8ZRbIc0dcuR0txbQop3hwhNBDVmyNOQsk0YmkqQDAnE2N0n5WYqMnnrlsz37kbBDsTjQOpj32GHwQZ5cRu2+fcuDnsRzXFAKnX5/YoPwBG9miZ2nLgvgnri3Z4889ZTDXHj1fgFTGjOESdP/86dE8GY3p40X1Dm/zXH9IHs0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730853071; c=relaxed/simple;
-	bh=jOx6xPm2NQ2Dy+LcxTA/n5pvFHgVVddEWkJjFZh6pN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WBXhGREUSA4qJmEk7NfhcltOV90oSU2rrSbDZBrsJoXE/NZDjotxILr9zT7jlKo8qAhuhdrqyB1Mnay685qSff0b3sYf0Fv5Syuaxb5Jqk+rftIMrsy7zEk7Bh0JFezl1WxUXjNl3Uy+IJhAh7AFfpUBnRoBOE9J4jw+9chHmFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6jp/OEe; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d8901cb98so181923f8f.0;
-        Tue, 05 Nov 2024 16:31:08 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B19E10E3;
+	Wed,  6 Nov 2024 00:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.199.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730853150; cv=fail; b=I+umLQWoDsh+nVNnpYi1SYX7rZtcBvm2e0WBp80bxwVF85/YPyTNkyZBaIfhQU90kCEIuzn/GQ3c5mfVqEUhdW17fm8xnc+T6T7B5SiKp9m6OhUNVDglz4KwbPQNpTAvS0oVRdAjBA4oWFqhWpYFKrhFpc+9edAkH0VpDwEMqxY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730853150; c=relaxed/simple;
+	bh=NfI6RDa95zsn3idGHM+KTJB+Y66LODokFNN1lR+eFGA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 Content-Type:MIME-Version; b=GAOB2fr2ADkZzfNwHT/KM3h5Q+s/viDDDKtSxiVRgn1R2w0VQgYJ005gcm+9rzZggD6+nqHS1Pq4FpbjhjA+57u4c2IYA4OolImSY7tQ+CBEXmG0NY7sC6/0DCchU0gLR9qHigOTzYKDIogCEM7KJgmF/qDhe5bMN10mnY7BdKY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Vo+bLEoI; arc=fail smtp.client-ip=40.93.199.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pcCEuwnaqginx95X5UaFH4UcLe1sBgewVlirpna+B0C7NEKjMsvbeIONyZGcgDvar48Ngb2wRB14FQYlZIoE2hL7UW/b/9JSpFHzPeNBOTrSx3X/SgM1qWdH+5Y/9edtmWiVOd7Gma/2iME+hC4SdLtl1phjiHA3RN1j3gnjnMCZ3PQmIFYOyzaqm3AC31k2WmBin8nx4KvdTqaZKVrpROD+stVigiOEvygMKn6aX+djRB6NgYUjBnyhIZIg+0C6a/yta5MvFsP50yM8AzpuZ9YRRWpVIfPLoruCa2lpDzCA6g1aBXgzc2+obEDi5Zx6OdG59owBUrAWPlEiD+d65A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OonQ3n27GpTNyHLcyJNSYW94OP6gRJ62TNjw/KhLJZQ=;
+ b=qI2KLWsFs0QMeeGvEZcOb1nuhDglQbKi4naW8+eU7F4waTcIGCMaXmohLdghGebJb8RcNm30vit58rt2xhAFsOmbeHLO7IpbhcQFB7RSIa/dkkFdAnC6mpkOaye5OQXJmvJW21kczRrofiUU+O6CeS0mUEaYpfrRzzl3n72EMRB1Aqxe1byKhASg+ael1ytXRBgQyKTAZgRzME4f/VpjL8ZRuKJUWUL0FOfg8rY91jj1GOaXdZFWUUCNcAHA/07mHPIo7j/PfG8Wb3+hdRp0sTK5D2pusvPzcU/e+GGY7Y9X7BojklAMt/VFXoyo8+Q1Uf9oRC7ln/VCnf1iVgPAig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730853067; x=1731457867; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PYjmXwFHtnAB1duZTNcAEkMOaIotdcD7DShsEbstppg=;
-        b=V6jp/OEevZwhXOmbJrB4r6PLXy83yGBLnZu/ngh3QBZL4yhRs7ctUfiiRwKd+vWKt/
-         bbcBzwgxIUoH+ST94OijdZI7tmXvISWEmc5d8Q6OPwKdjyh4hXkQWGc6Pju7Ey+RqFco
-         d84dsXpjXGpa5pJ1mZCJauTbKsfWMIyu0ydrKvTzd2Z1pEJyZO82Wef8DF9NL5LFv+rQ
-         nj7+PZ1J1n8Zj9WFyEVEg/wYUgetCk47glKwSWpznYfvlGQGRJNWH+CJa4FwcjcdgfQ0
-         dpKowV+8YErGFiTdwJBpru/t5bwHicqnU4j0pxu8XPNlawdw2LUtb8jRDwyR6Wxaes99
-         47KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730853067; x=1731457867;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYjmXwFHtnAB1duZTNcAEkMOaIotdcD7DShsEbstppg=;
-        b=OnAQ4yFRl6HfvPd3yushfLn17azIEfhvYdy1lu7se80M4k9N7g1e+PSmXn+lTFRH58
-         4qw4Aw/RE3vfkfUVnXLg/Lo6aUX0V6ErsTNP7/R8zwqlc6pcmpA3DCyeEZh+yVJk13FS
-         aXTUPYCB2PP1rL625klHmU1dprrFOXzyxQRfBEPa0US7i0IZ99MEUgXxcEFwWtL25Umg
-         MM7meE9147GzAHpZzH/sIJLZYZyZSS4gQWbbaaYFW73HM0gOl7YkoWc2olbdupOW775U
-         5O1/2gv+y26iQWF7Gv2DBshWOkLLprNOSBxSIfRH8IGM03Lu7tRYcQ8UiDZh8VirgihA
-         n3RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV59Ml5hjcXgz40/0XxzQbfBOUPv7MJVof/57idO9ZFiuOj0/dBySQ8YaxfAuw0ffmpLnUKrHTU/hCq8xo=@vger.kernel.org, AJvYcCXEfyjl68fvo2C/YBjGKeVr/S4o4Ou4aFSzxA7p1ndkMRTwJs6WAt4kKXPYncTW9M09Og7WKFNI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwTxrAmD2p/MHdOe2py1avu4NPqJBKooAUsKjJQCsx2bDiQqlH
-	SNV35CwlauFJ8CIMXL29ipiammfEzSqWjaXGTTDxP8jCPB2FGSpm
-X-Google-Smtp-Source: AGHT+IGZQlFVbZBFKAEy9zeOs9BkJdMECfm0uEy1awqXNEQsg3db0A3jYWtG4UkMKMfizWmRpQkZ2w==
-X-Received: by 2002:a5d:5f45:0:b0:37d:5251:e5ad with SMTP id ffacd0b85a97d-381e81c4953mr466700f8f.2.1730853067086;
-        Tue, 05 Nov 2024 16:31:07 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa737c86sm2881955e9.38.2024.11.05.16.31.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 16:31:06 -0800 (PST)
-Message-ID: <f35c2ec2-ef00-442d-94cd-fa695268c4f2@gmail.com>
-Date: Wed, 6 Nov 2024 02:31:33 +0200
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OonQ3n27GpTNyHLcyJNSYW94OP6gRJ62TNjw/KhLJZQ=;
+ b=Vo+bLEoI8uDRFYtVsAUJfipHdj6CRZyVT+LFqQnra5SDXSx92AyK+YKqEo+M+75iHDRUwNGTiBlEL0q6c5DMgSDiwIOG6arCZIaHnHy45m1LNzXBOCjP9/VVuAAvTRJ+SmR/gk0AoQ2Rj2LRtYhQLxFfxIs4uLlSicWVZpZYwGg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ SA1PR01MB6655.prod.exchangelabs.com (2603:10b6:806:1a3::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8137.19; Wed, 6 Nov 2024 00:32:25 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
+ 00:32:24 +0000
+Date: Tue, 5 Nov 2024 16:32:20 -0800 (PST)
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: James Clark <james.clark@linaro.org>
+cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
+    linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, John Garry <john.g.garry@oracle.com>, 
+    Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>, 
+    Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, 
+    Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+    Adrian Hunter <adrian.hunter@intel.com>, 
+    "Liang, Kan" <kan.liang@linux.intel.com>, 
+    Graham Woodward <graham.woodward@arm.com>
+Subject: Re: [PATCH v2 2/2] perf arm-spe: Add support for SPE Data Source
+ packet on AmpereOne
+In-Reply-To: <ed15526d-9b1a-4204-92a3-4d319b03b790@linaro.org>
+Message-ID: <4c2aa7e9-8e4e-aa1a-9c0-23c62f6b15cd@os.amperecomputing.com>
+References: <20241031213533.11148-1-ilkka@os.amperecomputing.com> <20241031213533.11148-3-ilkka@os.amperecomputing.com> <ed15526d-9b1a-4204-92a3-4d319b03b790@linaro.org>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-ClientProxiedBy: MW4PR02CA0004.namprd02.prod.outlook.com
+ (2603:10b6:303:16d::19) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 02/23] net: introduce OpenVPN Data Channel
- Offload (ovpn)
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, steffen.klassert@secunet.com,
- antony.antony@secunet.com
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-2-de4698c73a25@openvpn.net>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <20241029-b4-ovpn-v11-2-de4698c73a25@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|SA1PR01MB6655:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5102dbc1-7763-4604-fcf1-08dcfdfa7bcb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|7416014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RgOYK6/UjwkdJh3DzLtOAb6Oyb9TDzwzoq/NFSrO9rc+ZpC0UYJzRzzfaY4W?=
+ =?us-ascii?Q?TXvcIf85Ro7jl+C+Igx2By1moPEkDKRQkic5CYrZG+qluvkKPWdtDDAQjhlX?=
+ =?us-ascii?Q?82UjYri7hZqkgTIx0v2GxAf+Vq1MgUBCt0LGSawfzQNXFalOl/E2VTu8nUsa?=
+ =?us-ascii?Q?Ur/tIJb1YIqerljOWu1AEpCO3x0oNMTM0TuKW/HqoT4348h1qJ8bje6+r+NE?=
+ =?us-ascii?Q?YJ0miXOyZNc7/HzXQXz5U4USf/l2gzO7U+lDDNt5YBrmclOpKbMURFzfyIWG?=
+ =?us-ascii?Q?zl7sGc6rTW6bZViI4DPvk82IZWzJ97d/UwRtG3YFzyf/+Tf83Nw4spE+RCRO?=
+ =?us-ascii?Q?T7Uafvsl21aa2tkak3I/V03OQWr5srZzWmfZTQMddrt4FDE5oQtKVz+7OliI?=
+ =?us-ascii?Q?lwY8yPftXaDgab2czTl4NKVFXNXTYh/Rq5yt0aRmZUktM3cxowBrsSBTP6OH?=
+ =?us-ascii?Q?+tZGTA0zgeNxEOOInnfAV0vB0xgVpj0puueOVet+fP1v4FZ7/Q3evMeurlRx?=
+ =?us-ascii?Q?ov6/hygHfHDdMHaNPN7Jhnq071C7pIw1vbWYAA5Sa/J+ydairJ9wxxT4xcSb?=
+ =?us-ascii?Q?Qlt05KGn+uk6ygeKYb72FkNaw6yfdyj5JHl+EFMFKckj8/2iKw7fjyB0Zf2S?=
+ =?us-ascii?Q?LtbMS779VyaWkS6PLIV2CXkpBEPBGcJsxx2RKqpSADFMbZly4W1EwoBqVTkE?=
+ =?us-ascii?Q?dCsSqIj0T7yKGjYshkR9op70dGqsLmlmuCJ6Sjlicu9m9JXfQyzx5cs4gDso?=
+ =?us-ascii?Q?ZWKSOfCfXKRkTh8Vs8oGzrgXwQAMaJtiYyrdzZO48QplnMaxGcepI1q5xaYp?=
+ =?us-ascii?Q?3m/kpmVyZYpQiMOGhkojkcfPO72GMho98NEI02W/KUFIYrKKT4XUTKVU8Jz0?=
+ =?us-ascii?Q?A9HoLBK//9aKVpYu/ne6w6J68yyf4LYlm+ON+ULS2/zOOXSoBG1JUHIkGi2j?=
+ =?us-ascii?Q?pYDJ8hweZF1SCKbYzxJhrhIQZTIjkGKJGGwhqi/9k2iYHcbd6jB9ExXWF41O?=
+ =?us-ascii?Q?Nc/6ZCxiWgTZODPl4EH234ckV24P+naxR8727vrppryL57NSfUpLNb/bG9JJ?=
+ =?us-ascii?Q?FjwcEgAxKXYtwtzjrkflfsmnPEOgItJOEiAbu8Eb6oAX0rWXRiX3tCy2WeT1?=
+ =?us-ascii?Q?9CHUxtfh/nQ1RqsRSnzxysCNOm0s/qkbSnQgvQAOoFmYaEZrWfzXentU29lq?=
+ =?us-ascii?Q?XmpLaAezacPtNxhPcn4DWYpfyoqpKciaFMaS/N+NyKVoS+C5G6/3USwCO3OV?=
+ =?us-ascii?Q?AydGv84d3eGQ/NxTAyTHeABpykfeeORK0jGhbulFFka0XcmlLs1YobzR7VKh?=
+ =?us-ascii?Q?MgbKzWwEGBcsOMGilfp82CFiXRT0AHX86yoU4X0MZpIDVYdaB5xABLT4jNHf?=
+ =?us-ascii?Q?gwBDX8s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nNZhg/7xiSa1dDpAm4tO7y+lC/AbCSktbk452dKp/gAXRRBpnQbatLqSsY7/?=
+ =?us-ascii?Q?cMGIsU3HD9y6RBwdFZE894JfPuI0sG4Uhh7noJs28M6SZ4To7HhfZOdFf4iF?=
+ =?us-ascii?Q?lB0+v4qShxIPEEtcunV6Zge83aXeNdTM2482dxUkS8YSORWfDE5jxr5jvJwe?=
+ =?us-ascii?Q?4Th6MZ2GLft+RGWE5P2Qq8seb5KHen1g/q/UlCweBgJdIiKgLJWRrim73/Hv?=
+ =?us-ascii?Q?R/T5RSTCx/anrKBGVKYodXbgwHj60AZl8R7rLdUsPVILvA3TsB3W2NOKndcg?=
+ =?us-ascii?Q?AzbZi7RtDwOGleWyIfXOfX4QB7PKsWmJBjF+srWEZX4/RH20/CSyLFt9zpmQ?=
+ =?us-ascii?Q?tiyuj8uQadIEgfcp9GBAFVi7mcEU1ntgl35u8S6+ffM9ZwFQ+Xg4lVCeyBXK?=
+ =?us-ascii?Q?XIVJSTMdGG1VD4U1dH9DBY2kR9i33iqlj4E+Mxp8Oumj9URijtoARlIKflvR?=
+ =?us-ascii?Q?Vh3MgAKEPhiOy3dSXRlBdMxSZWn6D3U/QEXxh0Gy97a5XfMpXIKIsDYALPBT?=
+ =?us-ascii?Q?AJCUoRRZb9Luv8AuRhkVqDYe7lrKZUQfrE6GVDZWkmlIj2vsNg9hs1pHJUDq?=
+ =?us-ascii?Q?x3cEDwLHgeH1bFH606my1wqNbZ/kFgE+3ANTvFfcdxJQ3lzZs4Sl2Vp76dZi?=
+ =?us-ascii?Q?GasCskUmHI6rtNPxY88fn17RTxQeSdJAz4AgePD729IrC1Srjmxq4W0eYxIJ?=
+ =?us-ascii?Q?hei8GCDumhiSIX1nYrpQw5GCAnUYbS6C5kL1xvbJCdd8CPRNjaYzT6cdIVIa?=
+ =?us-ascii?Q?6Vanlz4L/kBec5kCxJHNlBpKYLp/FGJUcW3wNPCk8GOiKxYUXpeNJyPLuDiC?=
+ =?us-ascii?Q?j4nfWOboTg3XVySjlxq95wHXyODTZLfiFA4yiZ21TsMiF7fFYvnb2ep6Qh5o?=
+ =?us-ascii?Q?3fjXBLYmz0q3bqi3D4hAZ9zxvzt3/JUIzo/Va190/ZoWvsyVsGKeNM/vzCJs?=
+ =?us-ascii?Q?qYn1PtlcPdyNnsINBP58Z503Ug8Nl/E3qwpRb56aV3EoavcHevyKirG+Q0AE?=
+ =?us-ascii?Q?ph6lkbZ10XLIKHe6BUwz8UrNS4GRQyiFDxlYDLV0U9lv7qFt60yV8/Cvvu6C?=
+ =?us-ascii?Q?S7/LD51ljJAoUnQ3lwY/mDIsDaUECljMcKxBF3y+WMZDUbwHFr3JEN6MTIdw?=
+ =?us-ascii?Q?35jCBo1Qctzo59VDpxb1DeVptP19njNgRmKqUhGaJA9DZZXGzMDRr2d6+UXf?=
+ =?us-ascii?Q?2XnpWofm0uTTkl93WZF+9aHJPgHo3+3OIr27UCOclg8VxNTIC8anyz6iY1Hd?=
+ =?us-ascii?Q?PynrRXM1z7kt7FlFog7fg0e5gxJ3PJnjxqCJ8tThXXhs8x5fXH/E3UF9Znzo?=
+ =?us-ascii?Q?kkM0yODtfR+EUmwjfemBDto+PVQl1oOVoau/d3/wGKlUe5OGWgFXhsuHUyr/?=
+ =?us-ascii?Q?OKBMLOcIoYawteD4909ytjhZm0TB/cv2X3CN/9q5aNIPrbXHdAmylU7T00dq?=
+ =?us-ascii?Q?zSaZ3NRfNvF6MsQctAr2scd71gItuqQjejFDfG0kRJ4/eZ6LilI7/X7gpHb/?=
+ =?us-ascii?Q?mX572Fb4J7OT82you/+/L+d4ClEjk2iLo3EJqltf7KWxS/yumOUsNDM2XElQ?=
+ =?us-ascii?Q?pBU39cIwwObudJ3kALwB16+nMrAEyXbLvz5fjy8skoldLHmYKkYi4arjEZHJ?=
+ =?us-ascii?Q?crMnfwHp/KYPSnZhpODm4gI=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5102dbc1-7763-4604-fcf1-08dcfdfa7bcb
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 00:32:24.1557
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aVYvZGgaUuvqEVe7q10ghgPSXh7cVRAj5tly+iIPgNxLoz144sRa+/BGePWdMN/F78egqrIugB478N9eA+m3RH8BsIEao8yi9Wx84BwG7/jCYEuQZEv5WAZuozPradKL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR01MB6655
 
-On 29.10.2024 12:47, Antonio Quartulli wrote:
-> OpenVPN is a userspace software existing since around 2005 that allows
-> users to create secure tunnels.
-> 
-> So far OpenVPN has implemented all operations in userspace, which
-> implies several back and forth between kernel and user land in order to
-> process packets (encapsulate/decapsulate, encrypt/decrypt, rerouting..).
-> 
-> With `ovpn` we intend to move the fast path (data channel) entirely
-> in kernel space and thus improve user measured throughput over the
-> tunnel.
-> 
-> `ovpn` is implemented as a simple virtual network device driver, that
-> can be manipulated by means of the standard RTNL APIs. A device of kind
-> `ovpn` allows only IPv4/6 traffic and can be of type:
-> * P2P (peer-to-peer): any packet sent over the interface will be
->    encapsulated and transmitted to the other side (typical OpenVPN
->    client or peer-to-peer behaviour);
-> * P2MP (point-to-multipoint): packets sent over the interface are
->    transmitted to peers based on existing routes (typical OpenVPN
->    server behaviour).
-> 
-> After the interface has been created, OpenVPN in userspace can
-> configure it using a new Netlink API. Specifically it is possible
-> to manage peers and their keys.
-> 
-> The OpenVPN control channel is multiplexed over the same transport
-> socket by means of OP codes. Anything that is not DATA_V2 (OpenVPN
-> OP code for data traffic) is sent to userspace and handled there.
-> This way the `ovpn` codebase is kept as compact as possible while
-> focusing on handling data traffic only (fast path).
-> 
-> Any OpenVPN control feature (like cipher negotiation, TLS handshake,
-> rekeying, etc.) is still fully handled by the userspace process.
-> 
-> When userspace establishes a new connection with a peer, it first
-> performs the handshake and then passes the socket to the `ovpn` kernel
-> module, which takes ownership. From this moment on `ovpn` will handle
-> data traffic for the new peer.
-> When control packets are received on the link, they are forwarded to
-> userspace through the same transport socket they were received on, as
-> userspace is still listening to them.
-> 
-> Some events (like peer deletion) are sent to a Netlink multicast group.
-> 
-> Although it wasn't easy to convince the community, `ovpn` implements
-> only a limited number of the data-channel features supported by the
-> userspace program.
-> 
-> Each feature that made it to `ovpn` was attentively vetted to
-> avoid carrying too much legacy along with us (and to give a clear cut to
-> old and probalby-not-so-useful features).
-> 
-> Notably, only encryption using AEAD ciphers (specifically
-> ChaCha20Poly1305 and AES-GCM) was implemented. Supporting any other
-> cipher out there was not deemed useful.
-> 
-> Both UDP and TCP sockets ae supported.
 
-s/ae/are/
+Hi James,
 
-> As explained above, in case of P2MP mode, OpenVPN will use the main system
-> routing table to decide which packet goes to which peer. This implies
-> that no routing table was re-implemented in the `ovpn` kernel module.
-> 
-> This kernel module can be enabled by selecting the CONFIG_OVPN entry
-> in the networking drivers section.
+On Mon, 4 Nov 2024, James Clark wrote:
+> On 31/10/2024 9:35 pm, Ilkka Koskinen wrote:
+>> Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
+>> 
+>> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+>> ---
+>>   .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 +++
+>>   tools/perf/util/arm-spe.c                     | 65 +++++++++++++++++++
+>>   2 files changed, 74 insertions(+)
+>> 
+>> diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h 
+>> b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+>> index 358c611eeddb..4bcd627e859f 100644
+>> --- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+>> +++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+>> @@ -67,6 +67,15 @@ enum arm_spe_common_data_source {
+>>   	ARM_SPE_COMMON_DS_DRAM		= 0xe,
+>>   };
+>>   +enum arm_spe_ampereone_data_source {
+>> +	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE    = 0x0,
+>> +	ARM_SPE_AMPEREONE_SLC                           = 0x3,
+>> +	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE             = 0x5,
+>> +	ARM_SPE_AMPEREONE_DDR                           = 0x7,
+>> +	ARM_SPE_AMPEREONE_L1D                           = 0x8,
+>> +	ARM_SPE_AMPEREONE_L2D                           = 0x9,
+>> +};
+>> +
+>>   struct arm_spe_record {
+>>   	enum arm_spe_sample_type type;
+>>   	int err;
+>> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+>> index 9586416be30a..700d4bc8d8ec 100644
+>> --- a/tools/perf/util/arm-spe.c
+>> +++ b/tools/perf/util/arm-spe.c
+>> @@ -103,6 +103,30 @@ struct arm_spe_queue {
+>>   	u32				flags;
+>>   };
+>>   +struct arm_spe_source_mapping {
+>> +	u16 source;
+>> +	enum arm_spe_common_data_source common_src;
+>> +};
+>> +
+>> +#define MAP_SOURCE(src, common)				\
+>> +	{						\
+>> +		.source = ARM_SPE_##src,		\
+>> +		.common_src = ARM_SPE_COMMON_##common,  \
+>> +	}
+>> +
+>> +static int arm_spe__map_to_common_source(u16 source,
+>> +					 struct arm_spe_source_mapping *tbl,
+>> +					 int nr_sources)
+>> +{
+>> +	while (nr_sources--) {
+>> +		if (tbl->source == source)
+>> +			return tbl->common_src;
+>> +		tbl++;
+>> +	}
+>> +
+>
+> Hi Ilkka,
+>
+> I think a simple switch statement here would be easier to follow than the 
+> loop, custom macro and then having the mappings in some other place:
+>
+> switch(source)
+> case 0x0: /* AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE */
+>  return DS_PEER_CORE;
+>
+> etc...
+>
+>> +	return -1;
+>
+> And the default case can return 0xfff directly, which avoids the if else 
+> later only to convert this -1 back into 0xfff.
 
-Most of the above text has no relation to the patch itself. Should it be 
-moved to the cover letter?
+I can surely do that.
 
-> NOTE: this first patch introduces the very basic framework only.
-> Features are then added patch by patch, however, although each patch
-> will compile and possibly not break at runtime, only after having
-> applied the full set it is expected to see the ovpn module fully working.
-> 
-> Cc: steffen.klassert@secunet.com
-> Cc: antony.antony@secunet.com
-> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
-> ---
->   MAINTAINERS               |   8 ++++
->   drivers/net/Kconfig       |  13 ++++++
->   drivers/net/Makefile      |   1 +
->   drivers/net/ovpn/Makefile |  11 +++++
->   drivers/net/ovpn/io.c     |  22 +++++++++
->   drivers/net/ovpn/io.h     |  15 ++++++
->   drivers/net/ovpn/main.c   | 116 ++++++++++++++++++++++++++++++++++++++++++++++
->   drivers/net/ovpn/main.h   |  15 ++++++
->   include/uapi/linux/udp.h  |   1 +
->   9 files changed, 202 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f39ab140710f16b1245924bfe381cd64d499ff8a..09e193bbc218d74846cbae26f80ada3e04c3692a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17286,6 +17286,14 @@ F:	arch/openrisc/
->   F:	drivers/irqchip/irq-ompic.c
->   F:	drivers/irqchip/irq-or1k-*
->   
-> +OPENVPN DATA CHANNEL OFFLOAD
-> +M:	Antonio Quartulli <antonio@openvpn.net>
-> +L:	openvpn-devel@lists.sourceforge.net (moderated for non-subscribers)
-> +L:	netdev@vger.kernel.org
-> +S:	Supported
-> +T:	git https://github.com/OpenVPN/linux-kernel-ovpn.git
-> +F:	drivers/net/ovpn/
-> +
->   OPENVSWITCH
->   M:	Pravin B Shelar <pshelar@ovn.org>
->   L:	netdev@vger.kernel.org
-> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-> index 1fd5acdc73c6af0e1a861867039c3624fc618e25..269b73fcfd348a48174fb96b8f8d4f8788636fa8 100644
-> --- a/drivers/net/Kconfig
-> +++ b/drivers/net/Kconfig
-> @@ -115,6 +115,19 @@ config WIREGUARD_DEBUG
->   
->   	  Say N here unless you know what you're doing.
->   
-> +config OVPN
-> +	tristate "OpenVPN data channel offload"
-> +	depends on NET && INET
-> +	select NET_UDP_TUNNEL
-> +	select DST_CACHE
-> +	select CRYPTO
-> +	select CRYPTO_AES
-> +	select CRYPTO_GCM
-> +	select CRYPTO_CHACHA20POLY1305
 
-nit: Options from NET_UDP_TUNNEL to CRYPTO_CHACHA20POLY1305 are not 
-required for changes introduced in this patch. Should they be moved to 
-corresponding patches?
+>
+>> +}
+>> +
+>>   static void arm_spe_dump(struct arm_spe *spe __maybe_unused,
+>>   			 unsigned char *buf, size_t len)
+>>   {
+>> @@ -443,6 +467,11 @@ static const struct midr_range 
+>> common_ds_encoding_cpus[] = {
+>>   	{},
+>>   };
+>>   +static const struct midr_range ampereone_ds_encoding_cpus[] = {
+>> +	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
+>> +	{},
+>> +};
+>> +
+>>   static void arm_spe__sample_flags(struct arm_spe_queue *speq)
+>>   {
+>>   	const struct arm_spe_record *record = &speq->decoder->record;
+>> @@ -532,6 +561,38 @@ static void arm_spe__synth_data_source_common(const 
+>> struct arm_spe_record *recor
+>>   	}
+>>   }
+>>   +static struct arm_spe_source_mapping ampereone_sources[] = {
+>> +	MAP_SOURCE(AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE, DS_PEER_CORE),
+>> +	MAP_SOURCE(AMPEREONE_SLC, DS_SYS_CACHE),
+>> +	MAP_SOURCE(AMPEREONE_REMOTE_CHIP_CACHE, DS_REMOTE),
+>> +	MAP_SOURCE(AMPEREONE_DDR, DS_DRAM),
+>> +	MAP_SOURCE(AMPEREONE_L1D, DS_L1D),
+>> +	MAP_SOURCE(AMPEREONE_L2D, DS_L2),
+>> +};
+>> +
+>> +/*
+>> + * Source is IMPDEF. Here we convert the source code used on AmpereOne 
+>> cores
+>> + * to the common (Neoverse, Cortex) to avoid duplicating the decoding 
+>> code.
+>> + */
+>> +static void arm_spe__synth_data_source_ampereone(const struct 
+>> arm_spe_record *record,
+>> +						 union perf_mem_data_src 
+>> *data_src)
+>> +{
+>> +	int common_src;
+>> +	struct arm_spe_record common_record;
+>> +
+>> +	common_src = arm_spe__map_to_common_source(record->source,
+>> +						   ampereone_sources,
+>> + 
+>> ARRAY_SIZE(ampereone_sources));
+>> +	if (common_src < 0)
+>> +		 /* Assign a bogus value that's not used for common coding */
+>> +		common_record.source = 0xfff;
+>> +	else
+>> +		common_record.source = common_src;
+>> +
+>> +	common_record.op = record->op;
+>> +	arm_spe__synth_data_source_common(&common_record, data_src);
+>> +}
+>> +
+>>   static void arm_spe__synth_memory_level(const struct arm_spe_record 
+>> *record,
+>>   					union perf_mem_data_src *data_src)
+>>   {
+>> @@ -606,6 +667,8 @@ static u64 arm_spe__synth_data_source(struct 
+>> arm_spe_queue *speq,
+>>   	union perf_mem_data_src	data_src = { .mem_op = PERF_MEM_OP_NA };
+>>   	bool is_common = arm_spe__is_ds_encoding_supported(speq,
+>>   						common_ds_encoding_cpus);
+>> +	bool is_ampereone = arm_spe__is_ds_encoding_supported(speq,
+>> +						ampereone_ds_encoding_cpus);
+>
+> I know this probably already works, but we don't really need is_common 
+> is_ampere etc, it will only grow anyway. All we need is a list of midrs and 
+> function pairs. That also avoids doing is_ampereone even after we already 
+> know is_common == true.
+>
+> static const struct data_src[] = {
+> ...
+> 	DS(MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2), common_ds),
+> 	DS(MIDR_ALL_VERSIONS(MIDR_AMPERE1A), ampere_ds),
+> 	{},
+> ...
+> };
+>
+> "arm_spe__is_ds_encoding_supported" then becomes a direct call to 
+> "arm_spe__synth_ds" and we can drop the is_ampereone and is_common vars. Then 
+> adding new ones doesn't require changing the function anymore.
 
-> +	help
-> +	  This module enhances the performance of the OpenVPN userspace software
-> +	  by offloading the data channel processing to kernelspace.
-> +
->   config EQUALIZER
->   	tristate "EQL (serial line load balancing) support"
->   	help
-> diff --git a/drivers/net/Makefile b/drivers/net/Makefile
-> index 13743d0e83b5fde479e9b30ad736be402d880dee..5152b3330e28da7eaec821018a26c973bb33ce0c 100644
-> --- a/drivers/net/Makefile
-> +++ b/drivers/net/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_IPVLAN) += ipvlan/
->   obj-$(CONFIG_IPVTAP) += ipvlan/
->   obj-$(CONFIG_DUMMY) += dummy.o
->   obj-$(CONFIG_WIREGUARD) += wireguard/
-> +obj-$(CONFIG_OVPN) += ovpn/
->   obj-$(CONFIG_EQUALIZER) += eql.o
->   obj-$(CONFIG_IFB) += ifb.o
->   obj-$(CONFIG_MACSEC) += macsec.o
-> diff --git a/drivers/net/ovpn/Makefile b/drivers/net/ovpn/Makefile
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..53fb197027d787d6683e9056d3d341abf6ed38e4
-> --- /dev/null
-> +++ b/drivers/net/ovpn/Makefile
-> @@ -0,0 +1,11 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# ovpn -- OpenVPN data channel offload in kernel space
-> +#
-> +# Copyright (C) 2020-2024 OpenVPN, Inc.
-> +#
-> +# Author:	Antonio Quartulli <antonio@openvpn.net>
-> +
-> +obj-$(CONFIG_OVPN) := ovpn.o
-> +ovpn-y += main.o
-> +ovpn-y += io.o
-> diff --git a/drivers/net/ovpn/io.c b/drivers/net/ovpn/io.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ad3813419c33cbdfe7e8ad6f5c8b444a3540a69f
-> --- /dev/null
-> +++ b/drivers/net/ovpn/io.c
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*  OpenVPN data channel offload
-> + *
-> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
-> + *
-> + *  Author:	James Yonan <james@openvpn.net>
-> + *		Antonio Quartulli <antonio@openvpn.net>
-> + */
-> +
-> +#include <linux/netdevice.h>
-> +#include <linux/skbuff.h>
-> +
-> +#include "io.h"
-> +
-> +/* Send user data to the network
-> + */
-> +netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev)
-> +{
-> +	skb_tx_error(skb);
-> +	kfree_skb(skb);
-> +	return NET_XMIT_DROP;
-> +}
-> diff --git a/drivers/net/ovpn/io.h b/drivers/net/ovpn/io.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..aa259be66441f7b0262f39da12d6c3dce0a9b24c
-> --- /dev/null
-> +++ b/drivers/net/ovpn/io.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/* OpenVPN data channel offload
-> + *
-> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
-> + *
-> + *  Author:	James Yonan <james@openvpn.net>
-> + *		Antonio Quartulli <antonio@openvpn.net>
-> + */
-> +
-> +#ifndef _NET_OVPN_OVPN_H_
-> +#define _NET_OVPN_OVPN_H_
-> +
-> +netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev);
-> +
-> +#endif /* _NET_OVPN_OVPN_H_ */
-> diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..369a5a2b2fc1a497c8444e59f9b058eb40e49524
-> --- /dev/null
-> +++ b/drivers/net/ovpn/main.c
-> @@ -0,0 +1,116 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*  OpenVPN data channel offload
-> + *
-> + *  Copyright (C) 2020-2024 OpenVPN, Inc.
-> + *
-> + *  Author:	Antonio Quartulli <antonio@openvpn.net>
-> + *		James Yonan <james@openvpn.net>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/netdevice.h>
-> +#include <net/rtnetlink.h>
-> +
-> +#include "main.h"
-> +#include "io.h"
-> +
-> +/* Driver info */
-> +#define DRV_DESCRIPTION	"OpenVPN data channel offload (ovpn)"
-> +#define DRV_COPYRIGHT	"(C) 2020-2024 OpenVPN, Inc."
+To be honest, I'm not a big fan of the is_xyz() thing but I just didn't 
+want to change it. Anyway, I'll change it for the next version.
 
-nit: these strings are used only once for MODULE_{DESCRIPTION,AUTHOR} 
-below. Can we directly use strings to avoid levels of indirection?
+Cheers, Ilkka
 
-> +
-> +/**
-> + * ovpn_dev_is_valid - check if the netdevice is of type 'ovpn'
-> + * @dev: the interface to check
-> + *
-> + * Return: whether the netdevice is of type 'ovpn'
-> + */
-> +bool ovpn_dev_is_valid(const struct net_device *dev)
-> +{
-> +	return dev->netdev_ops->ndo_start_xmit == ovpn_net_xmit;
 
-You can directly check for the ops matching saving one dereferencing 
-operation:
-
-return dev->netdev_ops == &ovpn_netdev_ops;
-
-You can define an empty ovpn_netdev_ops struct for this purpose in this 
-patch and fill ops later with next patches. This way you can even move 
-the ovpn_net_xmit() definition to the interface creation/destruction patch.
-
-> +}
-> +
-> +static int ovpn_newlink(struct net *src_net, struct net_device *dev,
-> +			struct nlattr *tb[], struct nlattr *data[],
-> +			struct netlink_ext_ack *extack)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static struct rtnl_link_ops ovpn_link_ops = {
-> +	.kind = "ovpn",
-> +	.netns_refund = false,
-> +	.newlink = ovpn_newlink,
-> +	.dellink = unregister_netdevice_queue,
-> +};
-> +
-> +static int ovpn_netdev_notifier_call(struct notifier_block *nb,
-> +				     unsigned long state, void *ptr)
-> +{
-> +	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
-> +
-> +	if (!ovpn_dev_is_valid(dev))
-> +		return NOTIFY_DONE;
-> +
-> +	switch (state) {
-> +	case NETDEV_REGISTER:
-> +		/* add device to internal list for later destruction upon
-> +		 * unregistration
-> +		 */
-> +		break;
-> +	case NETDEV_UNREGISTER:
-> +		/* can be delivered multiple times, so check registered flag,
-> +		 * then destroy the interface
-> +		 */
-> +		break;
-> +	case NETDEV_POST_INIT:
-> +	case NETDEV_GOING_DOWN:
-> +	case NETDEV_DOWN:
-> +	case NETDEV_UP:
-> +	case NETDEV_PRE_UP:
-> +	default:
-> +		return NOTIFY_DONE;
-> +	}
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
-> +static struct notifier_block ovpn_netdev_notifier = {
-> +	.notifier_call = ovpn_netdev_notifier_call,
-> +};
-> +
-> +static int __init ovpn_init(void)
-> +{
-> +	int err = register_netdevice_notifier(&ovpn_netdev_notifier);
-> +
-> +	if (err) {
-> +		pr_err("ovpn: can't register netdevice notifier: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err = rtnl_link_register(&ovpn_link_ops);
-> +	if (err) {
-> +		pr_err("ovpn: can't register rtnl link ops: %d\n", err);
-> +		goto unreg_netdev;
-> +	}
-> +
-> +	return 0;
-> +
-> +unreg_netdev:
-> +	unregister_netdevice_notifier(&ovpn_netdev_notifier);
-> +	return err;
-> +}
-> +
-> +static __exit void ovpn_cleanup(void)
-> +{
-> +	rtnl_link_unregister(&ovpn_link_ops);
-> +	unregister_netdevice_notifier(&ovpn_netdev_notifier);
-> +
-> +	rcu_barrier();
-> +}
-> +
-> +module_init(ovpn_init);
-> +module_exit(ovpn_cleanup);
-> +
-> +MODULE_DESCRIPTION(DRV_DESCRIPTION);
-> +MODULE_AUTHOR(DRV_COPYRIGHT);
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/net/ovpn/main.h b/drivers/net/ovpn/main.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a3215316c49bfcdf2496590bac878f145b8b27fd
-> --- /dev/null
-> +++ b/drivers/net/ovpn/main.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*  OpenVPN data channel offload
-> + *
-> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
-> + *
-> + *  Author:	James Yonan <james@openvpn.net>
-> + *		Antonio Quartulli <antonio@openvpn.net>
-> + */
-> +
-> +#ifndef _NET_OVPN_MAIN_H_
-> +#define _NET_OVPN_MAIN_H_
-> +
-> +bool ovpn_dev_is_valid(const struct net_device *dev);
-> +
-> +#endif /* _NET_OVPN_MAIN_H_ */
-> diff --git a/include/uapi/linux/udp.h b/include/uapi/linux/udp.h
-> index d85d671deed3c78f6969189281b9083dcac000c6..edca3e430305a6bffc34e617421f1f3071582e69 100644
-> --- a/include/uapi/linux/udp.h
-> +++ b/include/uapi/linux/udp.h
-> @@ -43,5 +43,6 @@ struct udphdr {
->   #define UDP_ENCAP_GTP1U		5 /* 3GPP TS 29.060 */
->   #define UDP_ENCAP_RXRPC		6
->   #define TCP_ENCAP_ESPINTCP	7 /* Yikes, this is really xfrm encap types. */
-> +#define UDP_ENCAP_OVPNINUDP	8 /* OpenVPN traffic */
-
-nit: this specific change does not belong to this specific patch.
-
->   
->   #endif /* _UAPI_LINUX_UDP_H */
-> 
-
+>
+>>     	if (record->op & ARM_SPE_OP_LD)
+>>   		data_src.mem_op = PERF_MEM_OP_LOAD;
+>> @@ -616,6 +679,8 @@ static u64 arm_spe__synth_data_source(struct 
+>> arm_spe_queue *speq,
+>>     	if (is_common)
+>>   		arm_spe__synth_data_source_common(record, &data_src);
+>> +	else if (is_ampereone)
+>> +		arm_spe__synth_data_source_ampereone(record, &data_src);
+>>   	else
+>>   		arm_spe__synth_memory_level(record, &data_src);
+>> 
+>
+>
 
