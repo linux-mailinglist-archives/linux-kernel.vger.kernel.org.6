@@ -1,127 +1,139 @@
-Return-Path: <linux-kernel+bounces-398028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922F09BE473
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:40:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008AE9BE479
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55F0C285452
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:40:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91D2DB21C83
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A05A1DE3B6;
-	Wed,  6 Nov 2024 10:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8811DE2DC;
+	Wed,  6 Nov 2024 10:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEogLUqi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNwSqe1j"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C325D1D1753;
-	Wed,  6 Nov 2024 10:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAC21DDC29;
+	Wed,  6 Nov 2024 10:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730889606; cv=none; b=R9sBY5/iMG6MW+NJJdJshqLXgm4lnjwGYXHcUqB7jrTE/DpZwWF+Py0ggAYto4696X1lycl/qVuvwSKmeKO4Bk0p+yu7Kb1mYVEeZNq3QPivLY/XANEYK61DmiXuTsWH1DO6uta6CU80/pbsAUVtwDCpP6YjADM+PGlYfiWTWkc=
+	t=1730889676; cv=none; b=U+kqqWhGenYnEZ7qkBQTEL5txqcDDibHVl5B21IBCcvhzIu/xYVDJMkH9FRD7wjXOL4AMoJ0U12hanc9Y6oaap/fUIxhz4rIFyG1kUOwJ5DXLVYtkA88O0ebFhWQ9DnQgM7J5iPIccqSkknuZuL95dmM4ITMbT4yr3uMtiYV6us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730889606; c=relaxed/simple;
-	bh=II1Cw9WyiI/NLZcAELD6NgMA0DFZpwlqXmvxCdhqAD0=;
+	s=arc-20240116; t=1730889676; c=relaxed/simple;
+	bh=aKMZry0zU9jc0hxKUceZALQgjsRpHrw1CuDNWdHz8hQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofBJcQBYfjPQIS2TsnAw8u2G2bxNIVzhQFhXJ/nQscB22Zl5NR0ooX9DF4utwknClf8y2l0Jtsw2HJfAubxwyaWjGCqWcYfKUlwxvq1nBc+xrGKJqZ9ddprCQgFNT6kJjqt8UmqDOuq6+ElInGwOXoWqCR/W6/LJuwsRG6V3ocY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEogLUqi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98B67C4CECD;
-	Wed,  6 Nov 2024 10:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730889606;
-	bh=II1Cw9WyiI/NLZcAELD6NgMA0DFZpwlqXmvxCdhqAD0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DEogLUqiMmuObMNMeSY8FcHdvgDogMK+QyjinwG/XNCnQ8SNYK4LRpLkaXxrfVwRm
-	 JM+RDFqx7L4ZhBnQ6Bj3w7vL6rRqVGzGGeulgi36v+cLzgO9AEUbPIP7+v7LVH6YZ7
-	 mGEAJ9fWWObcIAhHO7KCMtJfqSiBobCeUJz1lZzcwN9B4OEA55NK1I8GINTYrwaoz5
-	 6uOOzMREbwAt4umCxFlpEU4r3TQN0ZcuenROmPKcZBPUzdOHpFxzMegP4Ns2Szgfav
-	 WdQzvVjVMBItJlcgwYC6JB5MhK3TowyO93eJGL90932WnvqFXVbY5uhzDx2v/23Xb+
-	 ZFZ2E9786oFIg==
-Date: Wed, 6 Nov 2024 11:40:00 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-	Carlos Maiolino <cem@kernel.org>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
-	John Garry <john.g.garry@oracle.com>, Catherine Hoang <catherine.hoang@oracle.com>, 
-	linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org, Dave Chinner <david@fromorbit.com>, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
-Message-ID: <20241106-hupen-phosphor-f4e126535131@brauner>
-References: <20241105004341.GO21836@frogsfrogsfrogs>
- <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
- <72515c41-4313-4287-97cc-040ec143b3c5@kernel.dk>
- <20241105150812.GA227621@mit.edu>
- <5557bb8e-0ab8-4346-907e-a6cfea1dabf8@kernel.dk>
- <20241105154044.GD2578692@frogsfrogsfrogs>
- <00618fda-985d-4d6b-ada1-2d93a5380492@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bClKpKv18ZKpCqWfxRqPz8igWYoz/2sulCM+nq6p6XVIQmlG9CCFGwytrZMxp4IaiQBN9Z/Z1SwnsYPnUZHL0c1ti2WYiVtbyrm5gh7qRoHyeTgvba6w1Bh+pvSyGR0nNJuK6nOb9OuXKwjYRZitaaag3LX18Nb2nugLipFpB4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YNwSqe1j; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ed9f1bcb6bso4537669a12.1;
+        Wed, 06 Nov 2024 02:41:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730889674; x=1731494474; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKMZry0zU9jc0hxKUceZALQgjsRpHrw1CuDNWdHz8hQ=;
+        b=YNwSqe1j9+YRj79Q+VUpthTovuA8ahXu9qrSfIGkXh5t20m2i/IcmsjZL1jiYU8yxj
+         rZuTYdL9ct/pajW2EJiQs71npVVeyIbLfqnptFANbYLopR9Ud4eYG+rgps1w6w0qnWeb
+         Zm5B+u2beoLKfL2dRQx+OwFNvZZ95xit0FkpByZdLyNhFWPEJmsa7IdqLTs/4a6U0Prs
+         TkAHgg0F2T9kpmuKD0Gzt11ARNi6BdelvlJ21w9jBNdWcZJIn4uLbJAZ0k/PckcAgUfF
+         kIN4UkqsRiHcFp6yETQBqkauqUe+ZaiAhmDovju1XlRka2M+uGOlWjFxn76TLZMgVUAh
+         N4xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730889674; x=1731494474;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aKMZry0zU9jc0hxKUceZALQgjsRpHrw1CuDNWdHz8hQ=;
+        b=eL5Fc+ntHuJi5QQ16i1H8eAk9KHbMe6kleQKDyFFszPzD9lKTgMht2uU8M+zop07Hh
+         J1V8PFagaWAGiOUrdhNifmWN2kLc3Pyo0gBTiRJscqH78sbbG9E2IjNiKY3K9p2Wj1eJ
+         asUisbMmEsfznAgTq7NZL9r51AVKGpf3pdGUekk18Hn0geOSlgkysXBJA1Y+qgTsCA6t
+         nV+kC1xyAh2Ob0varOmtAKVsfrowBkYxnDucmGPjBoEyVkVX0uoBYkydrMMSByet6qi2
+         wUOOvmlxFcNNY5dq0b/+SVJsUXykR3T1cmRCUoz/Ql0VZHZfgNoJWdURC5zH63b6qZNg
+         MLdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1o4aK5vm/YmNrreFvvDX9gEY3/VgkoyrsaSn9IdG1Hs3q6wwR64KibAvvo0nFhz3TwLMzwy/6vKZPMnc=@vger.kernel.org, AJvYcCXKNeKUSQE/X6oWZNEO9SssHKQP8PbIdgOUehArRvJYdk8c7YTBKDRq7VVx4ug24cDfn/Sy8VrKdXymXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YydPlq34joPJLWzHq9DGSfWo4XWt6yDHZpNcnHTyjOELJeCz+zK
+	AVp3zXbhDZe1uFbFUq4CgdjWXpRSGW4EKmKq36SjP68OPd8i7wTm8vttvw==
+X-Google-Smtp-Source: AGHT+IEmJXqLAPUGkEQREzaDE/c6yRq/tAfrsi7A2FGJm4WBOAOV015k1/vm3+l7bHXRjp0mPIr05g==
+X-Received: by 2002:a05:6a20:bb06:b0:1d9:c743:860f with SMTP id adf61e73a8af0-1d9c7438653mr36451189637.11.1730889674000;
+        Wed, 06 Nov 2024 02:41:14 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c02bcsm92894295ad.191.2024.11.06.02.41.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 02:41:13 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id AA6B1456A07D; Wed, 06 Nov 2024 17:41:06 +0700 (WIB)
+Date: Wed, 6 Nov 2024 17:41:06 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Thorsten Leemhuis <linux@leemhuis.info>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3] docs: bug-bisect: add a note about bisecting -next
+Message-ID: <ZytHwhJOjeg3r-Pq@archie.me>
+References: <ec19d5fc503ff7db3d4c4ff9e97fff24cc78f72a.1730808651.git.linux@leemhuis.info>
+ <ZyrAoWSF9KXxtuYL@archie.me>
+ <1a3dcbe4-76dd-40c4-bafd-16be33607e77@leemhuis.info>
+ <ZytBuIRztNwrXoe_@archie.me>
+ <230b7ea7-af9c-4f46-b331-a2df4ae86933@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dY7o+MeR2VRqlo4A"
+Content-Disposition: inline
+In-Reply-To: <230b7ea7-af9c-4f46-b331-a2df4ae86933@leemhuis.info>
+
+
+--dY7o+MeR2VRqlo4A
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <00618fda-985d-4d6b-ada1-2d93a5380492@kernel.dk>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 05, 2024 at 08:54:40AM -0700, Jens Axboe wrote:
-> On 11/5/24 8:40 AM, Darrick J. Wong wrote:
-> > On Tue, Nov 05, 2024 at 08:11:52AM -0700, Jens Axboe wrote:
-> >> On 11/5/24 8:08 AM, Theodore Ts'o wrote:
-> >>> On Tue, Nov 05, 2024 at 05:52:05AM -0700, Jens Axboe wrote:
-> >>>>
-> >>>> Why is this so difficult to grasp? It's a pretty common method for
-> >>>> cross subsystem work - it avoids introducing conflicts when later
-> >>>> work goes into each subsystem, and freedom of either side to send a
-> >>>> PR before the other.
-> >>>>
-> >>>> So please don't start committing the patches again, it'll just cause
-> >>>> duplicate (and empty) commits in Linus's tree.
-> >>>
-> >>> Jens, what's going on is that in order to test untorn (aka "atomic"
-> >>> although that's a bit of a misnomer) writes, changes are needed in the
-> >>> block, vfs, and ext4 or xfs git trees.  So we are aware that you had
-> >>> taken the block-related patches into the block tree.  What Darrick has
-> >>> done is to apply the the vfs patches on top of the block commits, and
-> >>> then applied the ext4 and xfs patches on top of that.
-> >>
-> >> And what I'm saying is that is _wrong_. Darrick should be pulling the
-> >> branch that you cut from my email:
-> >>
-> >> for-6.13/block-atomic
-> >>
-> >> rather than re-applying patches. At least if the intent is to send that
-> >> branch to Linus. But even if it's just for testing, pretty silly to have
-> >> branches with duplicate commits out there when the originally applied
-> >> patches can just be pulled in.
-> > 
-> > I *did* start my branch at the end of your block-atomic branch.
-> > 
-> > Notice how the commits I added yesterday have a parent commitid of
-> > 1eadb157947163ca72ba8963b915fdc099ce6cca, which is the head of your
-> > for-6.13/block-atomic branch?
-> 
-> Ah that's my bad, I didn't see a merge commit, so assumed it was just
-> applied on top. Checking now, yeah it does look like it's done right!
-> Would've been nicer on top of current -rc and with a proper merge
-> commit, but that's really more of a style preference. Though -rc1 is
-> pretty early...
-> 
-> > But, it's my fault for not explicitly stating that I did that.  One of
-> > the lessons I apparently keep needing to learn is that senior developers
-> > here don't actually pull and examine the branches I link to in my emails
-> > before hitting Reply All to scold.  You obviously didn't.
-> 
-> I did click the link, in my defense it was on the phone this morning.
-> And this wasn't meant as a scolding, nor do I think my wording really
-> implies any scolding. My frustration was that I had explained this
-> previously, and this seemed like another time to do the exact same. So
-> my apologies if it came off like that, was not the intent.
+On Wed, Nov 06, 2024 at 11:35:10AM +0100, Thorsten Leemhuis wrote:
+> On 06.11.24 11:15, Bagas Sanjaya wrote:
+> > On Wed, Nov 06, 2024 at 06:26:49AM +0100, Thorsten Leemhuis wrote:
+> >> On 06.11.24 02:04, Bagas Sanjaya wrote:
+> >>> On Tue, Nov 05, 2024 at 01:11:08PM +0100, Thorsten Leemhuis wrote:
+> >
+> >> Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst handl=
+es
+> >> such things, as it has a different target audience. Should it cover
+> >> -next as well? Not sure. I for now decided to focus on this addition.
+> >=20
+> > I think for those who want to test linux-next, they can simply follow [=
+1].
+> > Maybe we can add a pointer to it.
+> > [1]: https://www.kernel.org/doc/man-pages/linux-next.html
+>=20
+> Don't think that's worth it either for this document, as those that want
+> to bisect -next most of the time will already have retrieved next via
+> git. And again: providing such a pointer for -next, but not explaining
+> how to retrieve mainline (which is left to the other document linked
+> prominently at the top) IMHO makes no sense either.
 
-Fwiw, I pulled the branch that Darrick provided into vfs.untorn.writes
-and it all looks sane to me.
+OK, thanks!
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--dY7o+MeR2VRqlo4A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZytHvgAKCRD2uYlJVVFO
+o++GAPwLeonibiZiiZ28aQvZcM9Tc8FFa2MJv31ZcHDbWLGXrQEAxtxcSjh7oXNG
+WvpyCFxhAgXwPbv4iDPpmnd2JW4Jgwo=
+=8DAm
+-----END PGP SIGNATURE-----
+
+--dY7o+MeR2VRqlo4A--
 
