@@ -1,201 +1,183 @@
-Return-Path: <linux-kernel+bounces-397591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39E69BDDBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:42:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2939BDDC2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5038AB233DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 909951C22D1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28360190667;
-	Wed,  6 Nov 2024 03:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F03190676;
+	Wed,  6 Nov 2024 03:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qAvtBkxN"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eFjlg1jU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5704190468
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 03:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7895190468;
+	Wed,  6 Nov 2024 03:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730864544; cv=none; b=HQeI3rzObKqchXQH/1bJlWaY/ZLS4EK+nwjvcHTc/cy4o/sX/YxdFODrRkAfdgQRBGR4BAQ5nIbdMdy9AVkN7B2uOQG/qKS8kQKMOFycBGqMPshbb1quaiuwUn8QEGGyRZ3yc2egMWw/vhsosGcgdit6bXXDcEKwexOXW46mZ4g=
+	t=1730864643; cv=none; b=eN7+Age21KU/Dmg7aLVm+3oo/Ln73ZG13Ojc3v9ji23xH+BE81jioSSew/5SPda1FT0UgqOvUsp4/n6lOxzevoz97C3X8iN9FON/hSeIwCDkOJUXefg6cujBdQrnhPQ/wt4O997YrAiPulCIeldFr74iWSWTsr75ZgNDQABmCbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730864544; c=relaxed/simple;
-	bh=5j2FxXW6VV2AAMaYXR9MzsYRrqLRILm/ZvqV+vsjn/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=etf/J/+2AbzoJ6VYaYySo5Fzkpo0lthoSzBcmoDewldyV6/iDuuYTUePmWN3vHhks/cJbz3DsHgetGYaQCYE5Bi2ZzkWwVR6QOkd82G8ESfo4dgBsTjHwLhf4rVIljiWIUd3TryA+0ZuRPCLh8ED8wzhLC2jXxX36Sa3UhBSF+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qAvtBkxN; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7f3f184985bso912967a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 19:42:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730864542; x=1731469342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n2zrxulVBoCR0AsXUg5w2WaDAbZzLwKamgsttf0Goms=;
-        b=qAvtBkxN/2mXY3N9hMWXJCDdwJ2OQjbLX0WP+5ucs8nvjnKmgH7sFz7lbjfml/EM6t
-         54btllSSBdAq8xXhSdT+IGFhuVTfhQk3sKrb4axgH15exQAmZWozFMA1JUduFF8Rwm+L
-         I7ORZ1DxBeFaH9f+irQ+egL6EznTl8udtQ2VRdA3txyzKIDG/JgjIM4HQZePOU/n8BdU
-         n5+KyRXSgEWmKT7l6z3zpR35p8chqOPdqMRM/2WbHtBTWS/rCl13H2WvnhYyaqrEr63s
-         Erj95zwyruGHPd8niAWoKQaxNkv9C4/a2T4Af56NNK4NqbIpk77lGJkoljS2X0aMrC4r
-         1FPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730864542; x=1731469342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n2zrxulVBoCR0AsXUg5w2WaDAbZzLwKamgsttf0Goms=;
-        b=iB8n1KVpAXEKpysXHjDjkCDZZoWqsZQ6HX3+RBBJTovyp6aC/qtm1eLwK+k1LcxxYm
-         ogDHm9LbU3p+G5oYG2RRcs4fQDHju6WnZRhpFmuBwZaqjs72S8nMpaHquZ7OZvSd47TR
-         Ky9SHWRHFEnhXqd6w9kyJGcNbzEIX4QnZKy4fpcIWAJUD6p8QaJ+vH52dZdOLgRBv6/J
-         5IH8Rb3BtTpvRr+z4mC34v9FpaSj9eWI/WNkRMPbI5HPBpDdxz0HSMYlHZ/iaVCDyOCJ
-         oNvi+eKLQzUm+5bmjonNvcfPLIEp4DGs/akjr+rG0kAjtVl/23a+wGfJM/GLcYrsPtJw
-         dEGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUDBSyrkD0ijyaA04nf+tKZ4IA/4JM+uKRp2FBCRtSDTM48sKiAJ2/eljJWNur2QlsqtZ8ZCitaTcg1N0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykA+ekJ0Y4tWc/4CAPYVk9SNdSHroRgOZlyzkxUI1de+fx2spN
-	Nt1PSbuU0VcxyV9/pWrY3DWB8EtIs8wps8u7wX2h2CDZvkUrQjaZO/1pJ1fr26558srv2hyALg2
-	iJ7Uqjb2WkISgYcsgAnHQuv3RQqTYw02ExRFU
-X-Google-Smtp-Source: AGHT+IEqOOrb8YDlDXwfyFqVUppTwsu28sy3bC7DxTWEhZch2kOKe8VhsIg09TSmhYG23FtZXYpPMnlCx3/PhQad8Fo=
-X-Received: by 2002:a17:90a:ca8e:b0:2e2:bad2:69ba with SMTP id
- 98e67ed59e1d1-2e8f106b4aamr38783910a91.14.1730864541952; Tue, 05 Nov 2024
- 19:42:21 -0800 (PST)
+	s=arc-20240116; t=1730864643; c=relaxed/simple;
+	bh=ZncZUTSm22c5m24Ui4mJNMu57aMs6v/CYQsluLVrFuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZmdJRI7FXjitjmtCeoVycWu/Z3Qr/8pCk5/Rzm1f0KBRd34TkIEWlEgKykmLZZH5tNy5qpaTjqGCy93grS2Ntu0avGJ/AojYHbeSuEBf/R/fxATXW/gYL1xg1p9sKhxmevH7/N2N1enpDIi+FmZSQf8PqBouh8f+HnMXmB4oTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eFjlg1jU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=62ogp206Pt4nsQOJ/YCTzDbyZHE4u3VhsCNVD+OXsko=; b=eFjlg1jUgGFnIu6M17ETvJbH10
+	0UlXroM4BfY4a7JmOvPtV8NKwcf/Q9HJvl61tpwrsEi74go5PZ75k8UcK34eePWr9JjsvkV/YxsG/
+	OxkC1afjkZTVE+UTrhTCeTfLABPYwd4P7km5r/z+xWphQ75C7HWK7LJCEhR1j3y0eKjs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t8WxL-00CHsW-Mw; Wed, 06 Nov 2024 04:43:43 +0100
+Date: Wed, 6 Nov 2024 04:43:43 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lei Wei <quic_leiwei@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
+	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
+	john@phrozen.org
+Subject: Re: [PATCH net-next 3/5] net: pcs: qcom-ipq: Add PCS create and
+ phylink operations for IPQ9574
+Message-ID: <a0826aa8-703c-448d-8849-47808f847774@lunn.ch>
+References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
+ <20241101-ipq_pcs_rc1-v1-3-fdef575620cf@quicinc.com>
+ <d7782a5e-2f67-4f62-a594-0f52144a368f@lunn.ch>
+ <9b3a4f00-59f2-48d1-8916-c7d7d65df063@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <MW5PR13MB5632321E93B031C0E107DB38FD4F2@MW5PR13MB5632.namprd13.prod.outlook.com>
- <CAGETcx_c2nfFQ++-FcsdUdLUo3e-oe07MkLgbuyrnq2FPrcsXQ@mail.gmail.com>
- <MW5PR13MB5632E4EFFD802E0839027A51FD4A2@MW5PR13MB5632.namprd13.prod.outlook.com>
- <CAGETcx-Y6LHpZZUeexeuSF4RJ1E2MDtNtST=ytEUPAj7kKzwFA@mail.gmail.com>
- <Zyqz1LBDXZosrjle@x1> <MW5PR13MB5632276F33CCE4E18D0258E0FD532@MW5PR13MB5632.namprd13.prod.outlook.com>
-In-Reply-To: <MW5PR13MB5632276F33CCE4E18D0258E0FD532@MW5PR13MB5632.namprd13.prod.outlook.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Tue, 5 Nov 2024 19:41:42 -0800
-Message-ID: <CAGETcx-5r6+-9q1GCOry6PP1hALMuPbwSco7jdcNZ24MTMcBpw@mail.gmail.com>
-Subject: Re: Boot-time initiative (SIG) thoughts and next steps
-To: "Bird, Tim" <Tim.Bird@sony.com>
-Cc: Brian Masney <bmasney@redhat.com>, 
-	"linux-embedded@vger.kernel.org" <linux-embedded@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b3a4f00-59f2-48d1-8916-c7d7d65df063@quicinc.com>
 
-On Tue, Nov 5, 2024 at 4:45=E2=80=AFPM Bird, Tim <Tim.Bird@sony.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Brian Masney <bmasney@redhat.com>
-> > Sent: Tuesday, November 5, 2024 5:10 PM
-> > To: Saravana Kannan <saravanak@google.com>
-> > Cc: Bird, Tim <Tim.Bird@sony.com>; linux-embedded@vger.kernel.org; linu=
-x-kernel@vger.kernel.org
-> > Subject: Re: Boot-time initiative (SIG) thoughts and next steps
-> >
-> > On Mon, Oct 28, 2024 at 03:=E2=80=8A33:=E2=80=8A29PM -0700, Saravana Ka=
-nnan wrote: > On Sun, Oct 27, 2024 at 6:=E2=80=8A30 PM Bird, Tim
-> > <Tim.=E2=80=8ABird@=E2=80=8Asony.=E2=80=8Acom> wrote: > > > On Fri, Oct=
- 25, 2024 at 11:=E2=80=8A18 AM Bird, Tim <Tim.=E2=80=8ABird@=E2=80=8Asony.=
-=E2=80=8Acom> wrote: >
-> >
-> > On Mon, Oct 28, 2024 at 03:33:29PM -0700, Saravana Kannan wrote:
-> > > On Sun, Oct 27, 2024 at 6:30=E2=80=AFPM Bird, Tim <Tim.Bird@sony.com>=
- wrote:
-> > > > > On Fri, Oct 25, 2024 at 11:18=E2=80=AFAM Bird, Tim <Tim.Bird@sony=
-.com> wrote:
-> > > > > > =3D wiki account =3D
-> > > > > > The wiki where we'll be maintaining information about
-> > > > > > boot time, and about activities of the boot time SIG, is the el=
-inux wiki.
-> > > > > > The page we'll be focusing on is: https://elinux.org/Boot_Time.
-> > > > > > If you are interested in helping update and maintain the inform=
-ation there
-> > > > > > (which I hope almost everyone is), then please make sure you ha=
-ve a user
-> > > > > > account on the wiki.
-> > > > > > If you don't have one, please go here:
-> > > > > > https://elinux.org/Special:RequestAccount
-> > > > > > I have to manually approve accounts in order to fight spambots.=
-  It might
-> > > > > > take a few days for me to get to your request.  It's very helpf=
-ul if you
-> > > > > > put a comment in one of the request fields about this being rel=
-ated to
-> > > > > > the boot-time initiative or SIG, so I can distinguish your requ=
-est from
-> > > > > > spam requests.
-> > > > >
-> > > > > Can we instead keep this all a part of the kernel docs instead of=
- the
-> > > > > wiki? Couple of reasons for that:
-> > > >
-> > > > Ideally, we would put some material in the wiki, and also
-> > > > produce a document - some kind of "boot-time tuning guide" that can
-> > > > live in the kernel tree.
-> > >
-> > > This is the part I care most about being in the kernel docs. Eg: what
-> > > configs to use. What commandline params to set. Dos and Don'ts for th=
-e
-> > > drivers, etc. So, good to see that is an acceptable option.
-> >
-> > I'm interested to help contribute to a boot speed document, and I
-> > suspect some others at Red Hat are interested as well. Personally,
-> > I would prefer to have a section in the kernel documentation over a
-> > Wiki
-> OK - that's at least two votes for an upstream kernel doc.
->
-> I think it would be good to have a boot time tuning guide upstream.
-> I hope to augment that with a tool that will check for various
-> items or conditions on a machine, and give a list of recommendations.
-> This could go along with the tuning guide.
->
-> However, I would still plan to collect some information on the wiki
-> that I don't think will be upstreamable.  For example, see this page:
-> https://elinux.org/Disable_Console
->
-> The first few items on that page could be sentences in a kernel tuning
-> guide, but the data from actual uses I don't think belongs there, as
-> it will quickly bitrot.  (Indeed the information on that page has already
-> bitrotted.)
->
-> I think it would be useful to gather this results information on a wiki, =
-but its
-> possible that if reports are sent by e-mail, just a few lore links would
-> suffice.
->
-> > Besides arch-specific recommendations, we can also contribute
-> > some boot speed improvement techniques that we've done that are
-> > specific to RT.
-> That would be great.
->
-> > In addition to the recommended configs, I think it would also be
-> > beneficial to list some upstream patches that improve boot speed along
-> > with the kernel version it was introduced in.
-> I think this would be good also.
->
-> We should discuss what a kernel boot-time tuning guide should look like
-> and how it should be organized.  Starting this may be one of the first
-> things the SIG does.
+On Wed, Nov 06, 2024 at 11:16:37AM +0800, Lei Wei wrote:
+> 
+> 
+> On 11/1/2024 9:21 PM, Andrew Lunn wrote:
+> > > +static int ipq_pcs_config_mode(struct ipq_pcs *qpcs,
+> > > +			       phy_interface_t interface)
+> > > +{
+> > > +	unsigned int val;
+> > > +	int ret;
+> > > +
+> > > +	/* Configure PCS interface mode */
+> > > +	switch (interface) {
+> > > +	case PHY_INTERFACE_MODE_SGMII:
+> > > +		/* Select Qualcomm SGMII AN mode */
+> > > +		ret = regmap_update_bits(qpcs->regmap, PCS_MODE_CTRL,
+> > > +					 PCS_MODE_SEL_MASK | PCS_MODE_AN_MODE,
+> > > +					 PCS_MODE_SGMII);
+> > 
+> > How does Qualcomm SGMII AN mode differ from Cisco SGMII AN mode?
+> > 
+> 
+> Qualcomm SGMII AN mode extends Cisco SGMII spec Revision 1.8 by adding pause
+> bit support in the SGMII word format. It re-uses two of the reserved bits
+> 1..9 for this purpose. The PCS supports both Qualcomm SGMII AN and Cisco
+> SGMII AN modes.
 
-I wrote something like this for the Android ecosystem
-https://source.android.com/docs/core/architecture/kernel/boot-time-opt
+Is Qualcomm SGMII AN actually needed? I assume it only works against a
+Qualcomm PHY? What interoperability testing have you do against
+non-Qualcomm PHYs?
 
-So, I'm happy to add something like this to the kernel doc if we have
-some consensus on having a kernel doc.
+> > > +struct phylink_pcs *ipq_pcs_create(struct device_node *np)
+> > > +{
+> > > +	struct platform_device *pdev;
+> > > +	struct ipq_pcs_mii *qpcs_mii;
+> > > +	struct device_node *pcs_np;
+> > > +	struct ipq_pcs *qpcs;
+> > > +	int i, ret;
+> > > +	u32 index;
+> > > +
+> > > +	if (!of_device_is_available(np))
+> > > +		return ERR_PTR(-ENODEV);
+> > > +
+> > > +	if (of_property_read_u32(np, "reg", &index))
+> > > +		return ERR_PTR(-EINVAL);
+> > > +
+> > > +	if (index >= PCS_MAX_MII_NRS)
+> > > +		return ERR_PTR(-EINVAL);
+> > > +
+> > > +	pcs_np = of_get_parent(np);
+> > > +	if (!pcs_np)
+> > > +		return ERR_PTR(-ENODEV);
+> > > +
+> > > +	if (!of_device_is_available(pcs_np)) {
+> > > +		of_node_put(pcs_np);
+> > > +		return ERR_PTR(-ENODEV);
+> > > +	}
+> > 
+> > How have you got this far if the parent is not available?
+> > 
+> 
+> This check can fail only if the parent node is disabled in the board DTS. I
+> think this error situation may not be caught earlier than this point.
+> However I agree, the above check is redundant, since this check is
+> immediately followed by a validity check on the 'pdev' of the parent node,
+> which should be able cover any such errors as well.
 
--Saravana
+This was also because the driver does not work as i expected. I was
+expecting the PCS driver to walk its own DT and instantiate the PCS
+devices listed. If the parent is disabled, it is clearly not going to
+start its own children.  But it is in fact some other device which
+walks the PCS DT blob, and as a result the child/parent relationship
+is broken, a child could exist without its parent.
 
-> The other one may be a data-gathering tool that
-> I've been working on, that (of all things) automatically populates a wiki
-> with boot time data.  I will explain my intentions when I post the script
-> (likely tomorrow).
->  -- Tim
->
+> > > +	for (i = 0; i < PCS_MII_CLK_MAX; i++) {
+> > > +		qpcs_mii->clk[i] = of_clk_get_by_name(np, pcs_mii_clk_name[i]);
+> > > +		if (IS_ERR(qpcs_mii->clk[i])) {
+> > > +			dev_err(qpcs->dev,
+> > > +				"Failed to get MII %d interface clock %s\n",
+> > > +				index, pcs_mii_clk_name[i]);
+> > > +			goto err_clk_get;
+> > > +		}
+> > > +
+> > > +		ret = clk_prepare_enable(qpcs_mii->clk[i]);
+> > > +		if (ret) {
+> > > +			dev_err(qpcs->dev,
+> > > +				"Failed to enable MII %d interface clock %s\n",
+> > > +				index, pcs_mii_clk_name[i]);
+> > > +			goto err_clk_en;
+> > > +		}
+> > > +	}
+> > 
+> > Maybe devm_clk_bulk_get() etc will help you here? I've never actually
+> > used them, so i don't know for sure.
+> > 
+> 
+> We don't have a 'device' associated with the 'np', so we could not consider
+> using the "devm_clk_bulk_get()" API.
+
+Another artefact of not have a child-parent relationship. I wounder if
+it makes sense to change the architecture. Have the PCS driver
+instantiate the PCS devices as its children. They then have a device
+structure for calls like clk_bulk_get(), and a more normal
+consumer/provider setup.
+
+	Andrew
 
