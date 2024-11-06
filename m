@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-397341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E315F9BDABB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:57:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03849BDABF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F8A91C22D71
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 850C3281F34
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFD614386D;
-	Wed,  6 Nov 2024 00:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B815F13B5A0;
+	Wed,  6 Nov 2024 00:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GU1x2eZA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUCcH9hs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E05E2D613;
-	Wed,  6 Nov 2024 00:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E81A2D613;
+	Wed,  6 Nov 2024 00:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730854662; cv=none; b=eJBPvOeenoUD0FTUHi6xTfQTRIfWUxypzfcqArBAJ+xiNkdhQqdKNV6XU2UtLUz589jq5YF7ccPiET5Gw7voWnOU0YDpa11MAOTa6FoYeaXIskMN8e5+dDfEEwkPOA3SOYDdtSHhMCcAAZn0HcgvW3bdHZgYgGqmapVFu4Cuoa4=
+	t=1730854681; cv=none; b=INAQywllj79RWmoqLQ/JiyOQ3UwPtfZnC+zS0x57qt/IRNg6dNGwfvPC66YL6fM6SAW5N3y+uDdrAqtUOCKvSVA0NOsrg3kaWZ5FanoN2iAIX6XQd+dDYWzF/e04CObgyKTL0RMd1PjXYbSRn03Y93LrzJj590tPuwDzvmez1iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730854662; c=relaxed/simple;
-	bh=goa/cIX22Cl5f7cGc755k5BLCpVCIYhtzQep8rQrGi0=;
+	s=arc-20240116; t=1730854681; c=relaxed/simple;
+	bh=yNQ9oZI1LY0D3fQ4q4pt0Z8IWksfEtyB2tsRgj/DkR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hm6Yf36QRTQl5eKrPsngiMZ4KT8PsfEfDO8rZHuTjYELQSDmK3eWSbLxkqOvxMQApxwFUnMEYuTuNE2z5kAWTZf4LAYclLNmIiovTSmGlJxK7OGf35VOIGgbBlyiYKDL8LABcsuDY7xf5MmzbeBQ2/a5ULFVO0y5ns2Fari1dGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GU1x2eZA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A296CC4CECF;
-	Wed,  6 Nov 2024 00:57:41 +0000 (UTC)
+	 Content-Disposition:In-Reply-To; b=IdIJLIngT2S/oGTCUTBn6tfwqUhKY+TqvxzgCiGudfeFsWaJWIJoyVLQrTOh9AlCF93iCRtJLOjIgxEEElVq8lVlqUMfcg2rHyzGU01rWjWuDgX/+zdlZwUOyzVki7hYXrRUp1oyJL1yEvaZp5mrhdsF7PUlAUF70NTdnHMu3SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUCcH9hs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66C91C4CECF;
+	Wed,  6 Nov 2024 00:58:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730854661;
-	bh=goa/cIX22Cl5f7cGc755k5BLCpVCIYhtzQep8rQrGi0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GU1x2eZA9XHMIO4M9v9jE9MleHLUATw50umb4dKqqzAEKt47KLmAA6I8BlfHVpUuI
-	 4cszwID984YUqCVHKuybA9ufRga2t32Vw7E76eUX8x34o0iYOoWzJsQV10izZAZi3M
-	 CfqQLlG5mYjIm8f9shAsfW2P1tIrmcssBxDEZTe1x9Z0ejacqlQi4nIBd/TDxTdxdY
-	 6zBaiD3ZB3yme3ZLRWjwYH15wJPbeYu+qs/MCHGeLiinSkjAYfV7rDk1ih+fYysaOa
-	 3lpINihHVT5hRJGRDSSYKmK1OJy59oN4Ajqdtrg0gP0tWrV/nyeZoqZW0uYjnDWiXF
-	 +AYpsq2O36OjQ==
-Date: Tue, 5 Nov 2024 16:57:40 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: brauner@kernel.org
-Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Catherine Hoang <catherine.hoang@oracle.com>,
-	linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [ANNOUNCE v2] work tree for untorn filesystem writes
-Message-ID: <20241106005740.GM2386201@frogsfrogsfrogs>
+	s=k20201202; t=1730854680;
+	bh=yNQ9oZI1LY0D3fQ4q4pt0Z8IWksfEtyB2tsRgj/DkR4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=WUCcH9hsRpWToVrU9NgS9cJN80oTS5l23JIyQZdjctDJTXgjCN+5GIFJox+8ZK6fu
+	 h+us217VSnCtx9rGlMtvwMpNlxE5wJFBCxgUoOIHXxOOgPZwbTTSiN/EH6a8ZHYdJt
+	 boBceX/R24+JOtLVKoMjPMOPDlOiytDelhOv4c5jfcv6GTYD5XdyW4+H7leofzX0w8
+	 CeCBPhXQdxlnRmpX4QemxcdKOM8+68kdoU1Yl3rGSM6wrYHlxtYdZWzxj+V0Fvjppp
+	 f8HQ10NQifujNR26e9r0+9dEi9NWrUXNwIWangZRjae+0fpLGDfD2Iby6Zph7dWcUa
+	 bz3ov2QdeW7Ww==
+Date: Tue, 5 Nov 2024 18:57:58 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, manivannan.sadhasivam@linaro.org,
+	kishon@kernel.org, u.kleine-koenig@pengutronix.de,
+	cassel@kernel.org, dlemoal@kernel.org,
+	yoshihiro.shimoda.uh@renesas.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com
+Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
+ "ti,keystone-pcie" compatible
+Message-ID: <20241106005758.GA1498067@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,85 +61,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240524105714.191642-2-s-vadapalli@ti.com>
 
-Hi everyone,
+On Fri, May 24, 2024 at 04:27:13PM +0530, Siddharth Vadapalli wrote:
+> From: Kishon Vijay Abraham I <kishon@ti.com>
+> 
+> commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
+> Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
+> device data ("struct ks_pcie_of_data"). However it failed to set mode
+> for "ti,keystone-pcie" compatible. Set mode as RootComplex for
+> "ti,keystone-pcie" compatible here.
 
-Here's a slightly updated working branch for the filesystem side of
-atomic write changes for 6.13:
+23284ad677a9 appeared in v5.10.  
 
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-05
+But I guess RC support has not been broken since v5.10 because we
+never used ks_pcie_rc_of_data.mode anyway?
 
-This branch is, like yesterday's, based off of axboe's
-for-6.13/block-atomic branch:
+It looks like the only use is here:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block-atomic
+  #define DW_PCIE_VER_365A                0x3336352a
+  #define DW_PCIE_VER_480A                0x3438302a
 
-The only difference is that I added Ojaswin's Tested-by: tags to the end
-of the xfs series.  I have done basic testing with the shell script at
-the end of this email and am satisfied that it at least seems to do the
-(limited) things that I think we're targeting for 6.13.
+  ks_pcie_probe
+  {
+    ...
+    mode = data->mode;
+    ...
+    if (dw_pcie_ver_is_ge(pci, 480A))
+      ret = ks_pcie_am654_set_mode(dev, mode);
+    else
+      ret = ks_pcie_set_mode(dev);
 
-Christian: Could you pull this fs-atomic branch into your vfs.git work
-for 6.13, please?  Or would you rather I ask rothwell to include this
-branch into for-next/fs-next and send the PR to Linus myself?
+so we don't even look at .mode unless the version is v4.80a or later,
+and this is v3.65a?
 
-(Actually I might just ask rothwell to do that tomorrow regardless...)
+So this is basically a cosmetic fix (but still worth doing for
+readability!) and doesn't need a stable backport, right?
 
---D
+If so, I might amend the commit log to mention the fact that this
+doesn't actually fix a functional issue.
 
-#!/bin/bash -x
-
-# Mess around with atomic writes via scsi_debug
-
-mnt=/opt
-
-true "${FSTYP:=xfs}"
-true "${MIN_ATOMIC:=32768}"
-true "${SECTOR_SIZE:=512}"
-true "${FSBLOCK_SIZE:=4096}"
-
-umount $mnt
-rmmod "$FSTYP"
-
-rmmod scsi_debug
-modprobe scsi_debug atomic_wr=1 dev_size_mb=300 \
-	SECTOR_SIZE=$SECTOR_SIZE \
-	atomic_wr_align=$((MIN_ATOMIC / SECTOR_SIZE)) \
-	atomic_wr_gran=$((MIN_ATOMIC / SECTOR_SIZE))
-
-sleep 1
-dev="$(readlink -m /dev/disk/by-id/wwn-0x3333333000*)"
-sysfs=/sys/block/$(basename "$dev")
-
-sysfs-dump $sysfs/queue/atomic_write_*
-
-for ((i = 9; i < 20; i++)); do
-	xfs_io -d -c "pwrite -b 1m -V 1 -AD $((2 ** i)) $((2 ** i))" $dev
-done
-
-case "$FSTYP" in
-"xfs")
-	mkfs.xfs -f $dev -b size=$MIN_ATOMIC
-	;;
-"ext4")
-	mkfs.ext4 -F $dev -b $FSBLOCK_SIZE -C $MIN_ATOMIC -O bigalloc
-	;;
-*)
-	echo "$FSTYP: not recognized"
-	exit 1
-	;;
-esac
-mount $dev $mnt
-
-xfs_io -f -c 'falloc 0 1m' -c fsync $mnt/a
-filefrag -v $mnt/a
-
-for ((i = 9; i < 20; i++)); do
-	xfs_io -d -c "pwrite -b 1m -V 1 -AD $((2 ** i)) $((2 ** i))" $mnt/a
-done
-
-# does not support buffered io
-xfs_io -c "pwrite -b 1m -V 1 -AD 0 $MIN_ATOMIC" $mnt/a
-# does not support unaligned directio
-xfs_io -c "pwrite -b 1m -V 1 -AD $SECTOR_SIZE $MIN_ATOMIC" $mnt/a
+> Fixes: 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x Platforms")
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index d3a7d14ee685..3184546ba3b6 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -1064,6 +1064,7 @@ static int ks_pcie_am654_set_mode(struct device *dev,
+>  
+>  static const struct ks_pcie_of_data ks_pcie_rc_of_data = {
+>  	.host_ops = &ks_pcie_host_ops,
+> +	.mode = DW_PCIE_RC_TYPE,
+>  	.version = DW_PCIE_VER_365A,
+>  };
+>  
+> -- 
+> 2.40.1
+> 
 
