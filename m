@@ -1,120 +1,94 @@
-Return-Path: <linux-kernel+bounces-397384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434209BDB48
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:40:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33179BDB4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:40:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDEE5284952
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B5B1F23E6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0420218A93A;
-	Wed,  6 Nov 2024 01:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B929218C329;
+	Wed,  6 Nov 2024 01:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/ae5x6X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aITdy0qr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417A8185B6E;
-	Wed,  6 Nov 2024 01:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0BD18BBB9;
+	Wed,  6 Nov 2024 01:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730857227; cv=none; b=dh6V0HVz711zfvKjFfXtxqc/dV6Mg0ysZlecT8xnczwUK+LtKwWXqLc7pqSeu5sndU5vngvAqqGV99PES9xzoUVdeUUWyhfe93GBMEydR5qKOY2HbtCVDp+ChNXIbbAoQ1VHW/NxLbVC2s5Yrgp+z+RNt443Gop3CIvPyjnW1kU=
+	t=1730857229; cv=none; b=tEDqJNb8yPoz81ZVR90ERSMvFiWez7KkIGoowSQBBQEiT/IGaNUk79KxTTiZZO2du959rsiMGDb8esz57Tzi5BzK8golnpspt8aTk0D5qaypwbA43I3vgU7CohWVdzg9VZUYzhNwl+JPsjO/dJZB8sBrUzikVOy7S0grG6eJkZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730857227; c=relaxed/simple;
-	bh=2qZF0UH8un2sU3i+H0aULvDk3LSIb2B4gJQw/wg2RWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=FUYTKpqShGy9pH+pdSHFDwUKGTZVCIPS3epXnoVKm4ELZGVlPPBcJ6TfxmzvBhX5O4oEseatFEtfL5aYUu+QJVC4I+qhpFSKHT5gZN4d1JDMbAolEm6XT48CR4a4LkdTodGhE/0WxWCxnJ5DxWfWja1/zbT9egIME/0L++8smvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/ae5x6X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BFAC4CECF;
-	Wed,  6 Nov 2024 01:40:26 +0000 (UTC)
+	s=arc-20240116; t=1730857229; c=relaxed/simple;
+	bh=esOnjkeufN8HAPgjP5fkn+3SUM3+jIm1xlaaK6Sx+ns=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=HQQnbisAEdI5HabTORVHsHCGktWfU2MPI3+5TVUHgmCtAsxkzdSEl+i6Wbg9ANduZ9+2lGhQt1twUiqZmSdzyhdYriAiAc98zZK77KcCuoTDGh2KvwxiM0n75BFDRA3QLKzi5QVTAMiCIKVcrTWVa6VZ4qExLZtzihcjqTJ/whE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aITdy0qr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA1AC4CECF;
+	Wed,  6 Nov 2024 01:40:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730857226;
-	bh=2qZF0UH8un2sU3i+H0aULvDk3LSIb2B4gJQw/wg2RWY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=D/ae5x6XQivZmlQd7HUdaCNYSMauQxnhSTaij4PDtzFJDvcnKuDMp93nQHW5BPr4Q
-	 yj1kDMRhtuY4pZeaMtgqr4r1g7v+oxW14PEMpKO7ZvuYvK0Fv/JEzkv5ZsZYJ4D2rg
-	 QwM0CgC+nFKubQnOt/IwVn29z6TNx+I2Ms3ApCYwMAKIlOSXbsUA5FgoVPW9jDRdwA
-	 11pYEpBupBzvm3lC/7dBvv4bXA7FWZqqOP1PBRrA0B1PpOC6K4uCY6sNT7JKqZb/81
-	 oQvM+wgTn15tXXfAK6pnLf2GH9wF2yrFgvDkqjC7cy/rBbxK1JrZ7fGO9TW4Z9SUgE
-	 tILw97FdTNqcQ==
-Date: Tue, 5 Nov 2024 19:40:24 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sricharan R <quic_srichara@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konrad.dybcio@linaro.org,
-	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V7 4/4] PCI: qcom: Add support for IPQ9574
-Message-ID: <20241106014024.GA1499855@bhelgaas>
+	s=k20201202; t=1730857228;
+	bh=esOnjkeufN8HAPgjP5fkn+3SUM3+jIm1xlaaK6Sx+ns=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=aITdy0qr3NafHRwWdPWIzf1OVlqZgNQX8jtQltYDCTl6063O6Mffjrv6TG73w0Hk9
+	 u2F1Z/D8WvTv8kjIJqBvapfhdIhry1a6+7OeRTs8Y7ZKtYFPejgCTktnsRrVH0vN+7
+	 pagV/8e6F9gBRUytiVNh+On2qtDkTgvYa9eht/xwpqS5leukK/nnnfBY6huh7lOCwX
+	 quNd4oBy0BhtHaprF8jyo3MwuD2QnewVkTB1lWNGBQ+S2dOhyQb2/JCLRYb1e3agvU
+	 S5Gjfnkk/6y0sp0GzKrJkudVRp0o6kZbjcVNbpZdFKlVNZm34mB8xWAcapI6TRKQ63
+	 3ia/jU+8SHswg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0D93809A80;
+	Wed,  6 Nov 2024 01:40:38 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801054803.3015572-5-quic_srichara@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] selftests: net: include lib/sh/*.sh with lib.sh
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173085723778.759302.10510309486670038114.git-patchwork-notify@kernel.org>
+Date: Wed, 06 Nov 2024 01:40:37 +0000
+References: <20241104-net-next-selftests-lib-sh-deps-v1-1-7c9f7d939fc2@kernel.org>
+In-Reply-To: <20241104-net-next-selftests-lib-sh-deps-v1-1-7c9f7d939fc2@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, shuah@kernel.org,
+ martineau@kernel.org, geliang@kernel.org, pablo@netfilter.org,
+ kadlec@netfilter.org, petrm@nvidia.com, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org
 
-On Thu, Aug 01, 2024 at 11:18:03AM +0530, Sricharan R wrote:
-> From: devi priya <quic_devipriy@quicinc.com>
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 04 Nov 2024 12:34:26 +0100 you wrote:
+> Recently, the net/lib.sh file has been modified to include defer.sh from
+> net/lib/sh/ directory. The Makefile from net/lib has been modified
+> accordingly, but not the ones from the sub-targets using net/lib.sh.
 > 
-> The IPQ9574 platform has four Gen3 PCIe controllers:
-> two single-lane and two dual-lane based on SNPS core 5.70a.
+> Because of that, the new file is not installed as expected when
+> installing the Forwarding, MPTCP, and Netfilter targets, e.g.
 > 
-> QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
-> Reuse all the members of 'ops_2_9_0'.
+> [...]
 
-Wow, this is confusing.
+Here is the summary with links:
+  - [net-next] selftests: net: include lib/sh/*.sh with lib.sh
+    https://git.kernel.org/netdev/net-next/c/f72aa1b27628
 
-"Based on SNPS core 5.70a", but "Synopsys IP rev is 5.80a."
-Are those supposed to match?  Or is it 5.70a of one thing but 5.80a of
-a different thing?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-And where does ops_2_9_0 come in?  The code comment says:
 
-  /* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
-  static const struct qcom_pcie_ops ops_2_9_0 = {
-
-which doesn't match 1.27.0 or 5.70a or 5.80a.  In fact there's nothing
-in the file that matches 1.*27.*0
-
-Honestly, I don't really care if you have all the versions here in the
-commit log.  But if the versions *are* here, can we make them make
-sense?
-
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> ---
->  [V7] Rebased on top of [1] to avoid DBI/ATU mirroring. With that dropped
->       the need for separate ops.
->  [1] https://lore.kernel.org/linux-arm-msm/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/
-> 
->  drivers/pci/controller/dwc/pcie-qcom.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 6976efb8e2f0..e9371f945900 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1752,6 +1752,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->  	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
->  	{ .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
->  	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
-> +	{ .compatible = "qcom,pcie-ipq9574", .data = &cfg_2_9_0 },
->  	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
->  	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
->  	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
-> -- 
-> 2.34.1
-> 
 
