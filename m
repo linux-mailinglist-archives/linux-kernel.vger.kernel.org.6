@@ -1,191 +1,94 @@
-Return-Path: <linux-kernel+bounces-397862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD209BE189
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:01:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A34A9BE173
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:00:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01E21F247D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:01:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B51D8B2174F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6891D95AA;
-	Wed,  6 Nov 2024 09:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19631D6182;
+	Wed,  6 Nov 2024 08:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaw4auC9"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DvqXowYl"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0CD1D90D7;
-	Wed,  6 Nov 2024 09:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970471D0DF7;
+	Wed,  6 Nov 2024 08:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730883692; cv=none; b=Au1hNQuLMVR/PxAljzZX/vcVlh+MLSOL2WPWRLCZms3IpGwX864R48jzlIX0AU3+yJ+/s5o6SBIpBC9nxO3xsF0fsFWMCJvgp2EeY4dgErbUrdU2cMemDHVoZc/tsKSv6FTviKObAUWjl5PJbRo0ElEFpQCPqn0hx2PKdeX9U6o=
+	t=1730883596; cv=none; b=SvIGDnt+7Ea+B1SFNno+L+3EGsHGexL+6kNlRxb4uqzYEl0SWbsVs39OaHAFuxv9L0bzXuoPUSHcIEhJTfuasGNfPVSn2aZ2Es+jmfSLVCakTsUm7TbkF5/do2wx5pFuscmsnmi3NoCX43RB5BW+Uorh92umyHnPU4NVOpxnO6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730883692; c=relaxed/simple;
-	bh=Ma7zHm/VTawO0uhZBJJdi+x5g2IFHZE6w9ObR9Dz8mM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fB16A6jQX3VG2+JZ4Ae4bHliiuDE0co1gthZP7r2vDUz9UfYEpbM2e7CKdxxVPssfDGrXb0aPv+MMeUXSlEF27/WA7c6KxZ/cVVG1jHXJEDARqXKPzWGNC3UA6yZ0UZ2cHtpwprjZrm8bvYzpGbKVPJ9PKLORTCBbZ59zc97ud8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaw4auC9; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cd76c513cso50704365ad.3;
-        Wed, 06 Nov 2024 01:01:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730883690; x=1731488490; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sGC6TPqRGXu1mF5aeFEhak+3rB765Th2HjWB1mjw0KQ=;
-        b=eaw4auC9Lit20tq+bXyvY0kSZQoDuSNAoA28JAkBQjU85tlW/jZOjirDxRdP5/o+qY
-         /ZVtytHTIpqOJWRaBMSybhqN6Fpa+a5ltJkFEvVF5vXsJEu16H1y3osqoawXu+MiNp5z
-         KP1zWmvVXUXft1X3DzIAc8riYWfSBcCBbHWO+Gdq6UyGP6kjrLa+Jnxzilpxx3GVz0kj
-         igIVAdzwNgUD/Qsz7OWs8XaZzDNYtI2/FFGB7/00spHz3t1cbmQXakpMmGmdn3urhVlV
-         2VKAaW0vb/6ajOvgdam7WqpJL9JCUTNWyh3Ona5ABlFa6eutHPZTy8GH8ixRFqmB0xCv
-         Mouw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730883690; x=1731488490;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sGC6TPqRGXu1mF5aeFEhak+3rB765Th2HjWB1mjw0KQ=;
-        b=apUoQdJYP7c7oQUdaqGi96Ki6JjDB3tFwJnuQCwISelDtT8/NZNr+le5bFR9XyAlNm
-         BC55KyR9HYnhoI6SG0irs/xFlguVSVq+ENUCBA3+44b39rLf1QL4d6DoEkjsTa/vOrDj
-         in9bbi81+275J2hv6dvRJynNQRHWhBdCr2jraGSYmceIBMxE+hIGPNv4QyBmGBEaPmtQ
-         rv3Q14ER/TRWhU4sp+m8MzeHr20QwY9rWaiYFIyVDtIpxhpPYZkeCf3o5I8CzO26kP+f
-         qj7RFnd/oA8f2SYmSYRCSsIMW2lAJ18Dk4xjxdLEAbEwVJu+KOSGYKzFQi97Xd1kmhmn
-         vesA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3qIq5WC+/SVXDaAUb8ypTlo6d3CtGsdXzRTOpfcOIYFEYEYWj/xkYjS9Zj7FSDHw77to+ZsbQL5JcDC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxMys0sgzw2jQLkfahsL4jmcDC9vIH+KXRLMq9Qaz5rtw3GwD2
-	cca4SZ3NYT8NHU0pwfsSY5OUEB/BqqU/kQ973xpUaWZG/ERPvoQR
-X-Google-Smtp-Source: AGHT+IEERyee8yuMkqt0ER6m9QzckotlvCf7D5ZemQxV4YVnYPTWKduYZ7ohuFoSiKwCKIa+Cet3hw==
-X-Received: by 2002:a17:902:dace:b0:20c:5cdd:a91 with SMTP id d9443c01a7336-210f76d6870mr381219045ad.41.1730883689798;
-        Wed, 06 Nov 2024 01:01:29 -0800 (PST)
-Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d380fsm91317665ad.240.2024.11.06.01.01.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 01:01:29 -0800 (PST)
-From: Potin Lai <potin.lai.pt@gmail.com>
-Date: Wed, 06 Nov 2024 16:58:52 +0800
-Subject: [PATCH 2/2] ARM: dts: aspeed: catalina: add hdd board cpld ioexp
+	s=arc-20240116; t=1730883596; c=relaxed/simple;
+	bh=Eu+9GLCUs+ZL9T5JhqY4naszVNfrhG7aUHNrkoZ5HJc=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=fBs+MxBftCfzUId4cBpi/QvtMFs5m8EFaxQS28MlaWj0IlYvhPSXxZJsFKzk/034+EGfhdr6IALEvOVErnj3T8SL4cws8NdmHsRXBEKYwMsVhRITRvej+atMwxjHDv4KM/IOkOl+mP+sI4EXIwGqIQJbYRbP2S1cxtt8J6pxTrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DvqXowYl; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730883584; h=Message-ID:Subject:Date:From:To;
+	bh=U/vSd1bKneBHb9JmFxdGvWQlHRxiwwioW2TGCsju+hY=;
+	b=DvqXowYlqmXDXf8L9WGd+dTJl6+SdIXxJyKkdRV8qGWXZINiSfsGTqECh0P9fVeMmOIuQ3ug00rC+rNT2Ju1NhcOo+KJd8CN8YQSvKKytG0jUwFo/VPD66gDuTFbNaYuCd7Tt0E/s5mMx8Y8F0jmxjiVnqBWfcYHcl07dPNbTQM=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WIqiKNA_1730883583 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 06 Nov 2024 16:59:44 +0800
+Message-ID: <1730883538.0293355-3-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH net 0/4] virtio_net: Make RSS interact properly with queue number
+Date: Wed, 6 Nov 2024 16:58:58 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Philo Lu <lulie@linux.alibaba.com>
+Cc: mst@redhat.com,
+ jasowang@redhat.com,
+ eperezma@redhat.com,
+ andrew+netdev@lunn.ch,
+ davem@davemloft.net,
+ edumazet@google.com,
+ kuba@kernel.org,
+ pabeni@redhat.com,
+ andrew@daynix.com,
+ virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20241104085706.13872-1-lulie@linux.alibaba.com>
+In-Reply-To: <20241104085706.13872-1-lulie@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241106-catalina-cpld-ioexp-update-v1-2-3437bcfcb608@gmail.com>
-References: <20241106-catalina-cpld-ioexp-update-v1-0-3437bcfcb608@gmail.com>
-In-Reply-To: <20241106-catalina-cpld-ioexp-update-v1-0-3437bcfcb608@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Patrick Williams <patrick@stwcx.xyz>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- Potin Lai <potin.lai@quantatw.com>, Cosmo Chou <cosmo.chou@quantatw.com>, 
- Potin Lai <potin.lai.pt@gmail.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730883681; l=2784;
- i=potin.lai.pt@gmail.com; s=20240724; h=from:subject:message-id;
- bh=Ma7zHm/VTawO0uhZBJJdi+x5g2IFHZE6w9ObR9Dz8mM=;
- b=9Mfn75WH2EHATjpkT8yHXktIYSE/oom0no6vIbpn29BER7AETsF/1yGpaSr1mOLp8P1Z7Jnx7
- BC/PFZV9qOlBWzy0AXX0GZ8TtazizPmWZFVoFLekpIsrhZ5YsIhjCBL
-X-Developer-Key: i=potin.lai.pt@gmail.com; a=ed25519;
- pk=6Z4H4V4fJwLteH/WzIXSsx6TkuY5FOcBBP+4OflJ5gM=
 
-Add HDD board CPLD IO expender based on latest CPLD firmware support.
+Hi Jason, could you review this firstly?
 
-Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
----
- .../dts/aspeed/aspeed-bmc-facebook-catalina.dts    | 65 ++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Thanks.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-index 10a9fca1b803..102d71234932 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-@@ -632,6 +632,36 @@ eeprom@51 {
- 
- &i2c3 {
- 	status = "okay";
-+
-+	// HDD CPLD IOEXP 0x10
-+	io_expander13: gpio@10 {
-+		compatible = "nxp,pca9555";
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <ASPEED_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
-+		reg = <0x10>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	// HDD CPLD IOEXP 0x11
-+	io_expander14: gpio@11 {
-+		compatible = "nxp,pca9555";
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <ASPEED_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
-+		reg = <0x11>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	// HDD CPLD IOEXP 0x12
-+	io_expander15: gpio@12 {
-+		compatible = "nxp,pca9555";
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <ASPEED_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
-+		reg = <0x12>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
- };
- 
- &i2c4 {
-@@ -1067,3 +1097,38 @@ &io_expander12 {
- 		"PRSNT_CHASSIS1_LEAK_CABLE_R_N","PRSNT_CHASSIS0_LEAK_CABLE_R_N";
- };
- 
-+&io_expander13 {
-+	gpio-line-names =
-+		"wP3V3_RUNTIME_FLT_HDD0","wP12V_RUNTIME_FLT_HDD0",
-+		"wP3V3_AUX_RUNTIME_FLT_HDD0","",
-+		"Host_PERST_SEQPWR_FLT_HDD0","wP3V3_SEQPWR_FLT_HDD0",
-+		"wP12V_SEQPWR_FLT_HDD0","wP3V3_AUX_SEQPWR_FLT_HDD0",
-+		"wP3V3_RUNTIME_FLT_HDD1","wP12V_RUNTIME_FLT_HDD1",
-+		"wP3V3_AUX_RUNTIME_FLT_HDD1","",
-+		"Host_PERST_SEQPWR_FLT_HDD1","wP3V3_SEQPWR_FLT_HDD1",
-+		"wP12V_SEQPWR_FLT_HDD1","wP3V3_AUX_SEQPWR_FLT_HDD1";
-+};
-+
-+&io_expander14 {
-+	gpio-line-names =
-+		"wP3V3_RUNTIME_FLT_HDD2","wP12V_RUNTIME_FLT_HDD2",
-+		"wP3V3_AUX_RUNTIME_FLT_HDD2","",
-+		"Host_PERST_SEQPWR_FLT_HDD2","wP3V3_SEQPWR_FLT_HDD2",
-+		"wP12V_SEQPWR_FLT_HDD2","wP3V3_AUX_SEQPWR_FLT_HDD2",
-+		"wP3V3_RUNTIME_FLT_HDD3","wP12V_RUNTIME_FLT_HDD3",
-+		"wP3V3_AUX_RUNTIME_FLT_HDD3","",
-+		"Host_PERST_SEQPWR_FLT_HDD3","wP3V3_SEQPWR_FLT_HDD3",
-+		"wP12V_SEQPWR_FLT_HDD3","wP3V3_AUX_SEQPWR_FLT_HDD3";
-+};
-+
-+&io_expander15 {
-+	gpio-line-names =
-+		"P3V3_HDD3_FAULT_R","P3V3_HDD2_FAULT_R",
-+		"P3V3_HDD1_FAULT_R","P3V3_HDD0_FAULT_R",
-+		"P12V_HDD3_FLT_L","P12V_HDD2_FLT_L",
-+		"P12V_HDD1_FLT_L","P12V_HDD0_FLT_L",
-+		"HDD_23_PWRBRK_N_R","HDD_01_PWRBRK_N_R",
-+		"","",
-+		"HDD3_PRSNT_N_R","HDD2_PRSNT_N_R",
-+		"HDD1_PRSNT_N_R","HDD0_PRSNT_N_R";
-+};
-
--- 
-2.31.1
-
+On Mon,  4 Nov 2024 16:57:02 +0800, Philo Lu <lulie@linux.alibaba.com> wrote:
+> With this patch set, RSS updates with queue_pairs changing:
+> - When virtnet_probe, init default rss and commit
+> - When queue_pairs changes _without_ user rss configuration, update rss
+>   with the new queue number
+> - When queue_pairs changes _with_ user rss configuration, keep rss as user
+>   configured
+>
+> Patch 1 and 2 fix possible out of bound errors for indir_table and key.
+> Patch 3 and 4 add RSS update in probe() and set_queues().
+>
+> Please review, thanks.
+>
+> Philo Lu (4):
+>   virtio_net: Support dynamic rss indirection table size
+>   virtio_net: Add hash_key_length check
+>   virtio_net: Sync rss config to device when virtnet_probe
+>   virtio_net: Update rss when set queue
+>
+>  drivers/net/virtio_net.c | 119 ++++++++++++++++++++++++++++++++-------
+>  1 file changed, 100 insertions(+), 19 deletions(-)
+>
+> --
+> 2.32.0.3.g01195cf9f
+>
 
