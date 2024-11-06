@@ -1,92 +1,194 @@
-Return-Path: <linux-kernel+bounces-398334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04DE9BEFC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:02:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FFD69BEFC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2A91C23E52
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:02:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 843CFB2502B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A417A20126B;
-	Wed,  6 Nov 2024 14:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41F01F80C4;
+	Wed,  6 Nov 2024 14:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVDIRaBL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3QcSTEwR"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C75188CC9;
-	Wed,  6 Nov 2024 14:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E801DED75
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 14:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730901749; cv=none; b=dtCYcXgKwZ/IJcuYvNGcoheGWn/J5f3a8gx2scfUt4/vSTa3LC/6c53BKsogTr8WFhzAhNMWqsOkNaL22vKV8Kaf8sbYfdQNWtIaRt0tBkzPb08oJnFGEu2CsdHTHMW/UI9o2cVlSu0rGCYREX2ePuKq1CWPqVU99gsdJAGKT0A=
+	t=1730901831; cv=none; b=WCEoTZke2DLCdq9s7fmTwj+IyBTX14qzUkGKn8Fp706KH6OoAdHTz7sb/yYNWtOZ26eqmJPPoZy+ZR5mA7TLKrUzH15ZqnZ0TL2k7qo38HUsXE0uDS1THpCBYMzgaWYEVoL+vZcSjoPVrivTJheXjLhjHmRAWxf/L+UMNBWzues=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730901749; c=relaxed/simple;
-	bh=/FKciTcW80Woxl5rG3QH5J1wGHkVKx3o/SXZ9vV/a8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZxcUufCnYqoaTnAnpbkulLewt2D/1yXalYslCI4cGtHHqeIrAri7HJYy+kFqOHJkn8irnw5lQbO6hQV+WUzOE8gPpSpgwiKxRJF4NcUkVGnGh7KYiNEmbstxASANC6s5YB0mxieEOkgGX80YtkV+xv+fCvxPJTnHrbyT8VahUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVDIRaBL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B109EC4CECC;
-	Wed,  6 Nov 2024 14:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730901746;
-	bh=/FKciTcW80Woxl5rG3QH5J1wGHkVKx3o/SXZ9vV/a8g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JVDIRaBL8kXAceC7CZtmsFsNPKpBCUDPEhqhOtZDnGRT1L+z4yfD9cnzY3Z+0eln4
-	 gS4MNoUQzgPpsDzFEVp/dtRsimGCp/pmyrL42B97ry9HCRiRQ/xL8N0CiZ5ZyJZSbd
-	 sPRBZi0fkqh6IFZtdoi7/lKR5cLjpZYWKtRoXPce8AHFpHbvwxXd5K0N16KvZ4N/fy
-	 A6PJSNurVY6DDMUlXRbdnTQf7DjOzJxGxA3G5fdoAf3zAkI58KOSX5sQT5kKPzKq0d
-	 AhTM45E86u3uW9/8+cjUJ6wRv4TrOXr9J58Avmi7D7kiEwEwUXnF98hg266LfCEo77
-	 +57ifc0DPp8yw==
-Date: Wed, 6 Nov 2024 15:02:23 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/3] [PATCH v4] dt-bindings: leds: Add LED1202 LED
- Controller
-Message-ID: <z2msksz2aso4mip57mlyecxaiyqrcyy4e7dh6w6mdy33mevnpb@wgx7anub3qmn>
-References: <20241106061812.6819-1-vicentiu.galanopulo@remote-tech.co.uk>
- <20241106061812.6819-2-vicentiu.galanopulo@remote-tech.co.uk>
+	s=arc-20240116; t=1730901831; c=relaxed/simple;
+	bh=BRELluoB3BcwrDwB0JatpNKtw7xSPMK5yId7NAyYwb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WPARrIAz/WotY4wD6G9Fg4BfdKacX2LnvUKbSltsuCWEBrszMawyoSdCYE8aKbg/MS0o7t88ELNYBgzu7VC4Je6WzWGgld1EJNfX2cnpgNg4qXPtlBPsmT0da2Q3oH0CGXwgCHmlnaUsgBfXY4zlvyuoEzU7Se+67YJWqE/Q1gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3QcSTEwR; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b14f3927ddso494571185a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 06:03:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730901828; x=1731506628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7qFAv62RI8NqXjqdkvHw+8SNQsMbQ88Kr9G0caEjF2A=;
+        b=3QcSTEwReAj589TLDCLJ0RevJSQ+7I7a2nnt8d7WL0WrsfiG2aPD0T+k1wyrji5PPV
+         D3ufzQSSHQ6bbSLkQfWfD4EembtpWgQRd8EQ5zqNbvcxfOWNlOyXa7See1OUJw/YYRrF
+         1Xl/sYSldZKFhlN1smkL99fEiMjSK3RUHgE5jjWV4r74lRHRcLfOT9JMtNJyWuCX0qEo
+         x626Eh2pWlmN90L7IKNG3MjAX4fw4T/kJgkW6WU1MliydXQWfcBqwHb7ys0b4oCrVePA
+         XxjdOZ7rR9R7UHk5qIKUCFNFkohuvxdmz0woaHeEbpvExsOU8LY6VEWiggPQx/CYRKde
+         08/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730901828; x=1731506628;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7qFAv62RI8NqXjqdkvHw+8SNQsMbQ88Kr9G0caEjF2A=;
+        b=E1QeddrbOmGDORy8CBWCV90RqihafP9gzTdt95/X8eHTdzkwB7SDRzu6tVY3ddyKWu
+         JZUbXFjC0pqy7ZXcsMYVFrZmV2S+ZM2rRMBMDc1u+oYsYpK1rwsU7rKgieazZmTj0Sab
+         9hE6PrfI6djBRHH7ScCCWKy/dy/R7po+G4UNi+HyZ+rywECJNFbn5JEKMDndUID5utLh
+         JL8qTrtyQaulRYqtoAfB1wqeHi95RPuIBeuNj6M2c+x7s/yIiNx5b8QSoG81nHooAnAA
+         YYKmQIYp3bodm0K17edigwuRrXpCSY9sutGffcRcfFfjKc913RnIJm9gByRj5nOdPf1B
+         O8gA==
+X-Forwarded-Encrypted: i=1; AJvYcCUH3LZljzXvPjFdGMEdbzzLSKwTzCg+Y/4aeZEsSVKfGjxpN1ST2atbJmpPhgo+L2L+rdlfIMY8bhR8r2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXOKRW37cINdv4FfxcgP/p1IQIzyPVoC5qKToEbQ1hBdElNkX3
+	qpnCJrafbBerL3LUaB4A9wll+s1zU1Hj3rAzjwifRrlc50CTrn1aWvrmFhTnW0hXtuRCaclSSDz
+	J9ueJ46rCvNhPyTt6ptZTyCT3H8qYEupK8X16zw==
+X-Google-Smtp-Source: AGHT+IES2FaQC22aSUkUFna/ll6nbwvITqYva6F+Gk8zHOjC0pnuajIqTPOsAxtt5SNW3oxA44R0ZyCHgFOLCwmf8NQ=
+X-Received: by 2002:a05:620a:4153:b0:7b1:123a:2185 with SMTP id
+ af79cd13be357-7b193f5b5damr5095196385a.54.1730901827481; Wed, 06 Nov 2024
+ 06:03:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241106061812.6819-2-vicentiu.galanopulo@remote-tech.co.uk>
+References: <20241105145406.554365-1-aardelean@baylibre.com> <20241105150826.86b0a8f2c0df2a4822b07757@linux-foundation.org>
+In-Reply-To: <20241105150826.86b0a8f2c0df2a4822b07757@linux-foundation.org>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Wed, 6 Nov 2024 16:03:36 +0200
+Message-ID: <CA+GgBR-a050NUMB4Z=Q1UhqjAcKRVVw4k+S9uBZp6iRGqHkB6A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] util_macros.h: fix/rework find_closest() macros
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, jic23@kernel.org, 
+	bartosz.golaszewski@linaro.org, gregkh@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 06, 2024 at 06:18:08AM +0000, Vicentiu Galanopulo wrote:
-> The LED1202 is a 12-channel low quiescent current LED driver with:
->   * Supply range from 2.6 V to 5 V
->   * 20 mA current capability per channel
->   * 1.8 V compatible I2C control interface
->   * 8-bit analog dimming individual control
->   * 12-bit local PWM resolution
->   * 8 programmable patterns
-> 
-> If the led node is present in the controller then the channel is
-> set to active.
-> 
-> v1: https://lore.kernel.org/lkml/ZnCnnQfwuRueCIQ0@admins-Air/T/
-> v2: https://lore.kernel.org/all/ZniNdGgKyUMV-hjq@admins-Air/T/
-> v3: https://lore.kernel.org/all/ZniNdGgKyUMV-hjq@admins-Air/T/
-> 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+On Wed, Nov 6, 2024 at 1:08=E2=80=AFAM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
+>
+> On Tue,  5 Nov 2024 16:54:05 +0200 Alexandru Ardelean <aardelean@baylibre=
+.com> wrote:
+>
+> > A bug was found in the find_closest() (find_closest_descending() is als=
+o
+> > affected after some testing), where for certain values with small
+> > progressions, the rounding (done by averaging 2 values) causes an incor=
+rect
+> > index to be returned.
+>
+> Convincing changelog, thanks.
+>
+> > -#define find_closest(x, a, as) __find_closest(x, a, as, <=3D)
+> > +#define find_closest(x, a, as)                                        =
+       \
+> > +({                                                                   \
+> > +     typeof(as) __fc_i, __fc_as =3D (as) - 1;                         =
+ \
+> > +     long __fc_mid_x, __fc_x =3D (x);                                 =
+ \
+> > +     long __fc_left, __fc_right;                                     \
+> > +     typeof(*a) const *__fc_a =3D (a);                                =
+ \
+> > +     for (__fc_i =3D 0; __fc_i < __fc_as; __fc_i++) {                 =
+ \
+> > +             __fc_mid_x =3D (__fc_a[__fc_i] + __fc_a[__fc_i + 1]) / 2;=
+ \
+> > +             if (__fc_x <=3D __fc_mid_x) {                            =
+ \
+> > +                     __fc_left =3D __fc_x - __fc_a[__fc_i];           =
+ \
+> > +                     __fc_right =3D __fc_a[__fc_i + 1] - __fc_x;      =
+ \
+> > +                     if (__fc_right < __fc_left)                     \
+> > +                             __fc_i++;                               \
+> > +                     break;                                          \
+> > +             }                                                       \
+> > +     }                                                               \
+> > +     (__fc_i);                                                       \
+> > +})
+> >
+> > ...
+> >
+> > +#define find_closest_descending(x, a, as)                            \
+>
+> Boy these things are hard to read.  They're also bloaty and I'm
+> counting 36ish callsites!
+>
 
-Really, try by yourself:
+Yeah, they're not easy on the eyes at first.
+But you do get used to them, after spending some time trying to
+understand why they're not working for some values.
 
-b4 diff 20241106061812.6819-2-vicentiu.galanopulo@remote-tech.co.uk
-Works? No. Should work? Yes and tools make it working, don't re-invent
-the process.
+> Can we fix both issues by just giving up on the macro approach and
+> reimplement them in out-of-line C code?  All the sites I looked at are
+> using 32-bit quantities - a mix of signed and unsigned.
+>
 
-Best regards,
-Krzysztof
+Converting this to a static-inline was my other thought, rather than
+keeping the macros.
+But I'm not sure where to draw the line between too much rework vs a bug-fi=
+x.
+Just fixing the bug was done in V1 of this patch, but then the kunit
+exposed a bunch more.
 
+> It's separate from this bugfix of course, but would it be feasible for
+> someone to go switch all callers to use u32's then reimplement these in
+> lib/find_closest.c?
+>
+
+That would work.
+How would a rework be preferred?
+As a continuation to this patchset? Or a V3 to this patchset?
+
+It's not a big effort to do, now that the kunit is in place.
+I actually have a bunch of kunit variants (locally) that try various
+combinations of signed/unsigned X & arrays.
+But they drove me slightly nuts, until I decided to do the enforcement
+to 'long' type for x, mid, left, right variables.
+
+A catch-all implementation (for all current use-cases) would be best
+with an int32 vs uint32 for X, mid, left & right (variables).
+The thing with X being an int32 is more related to what userspace
+would expect to see when inputting a negative number against an array
+(of signed or unsigned).
+The type of the elements in the array (signed or unsigned) doesn't
+matter much (if focusing on the type for the X, mid, left & right
+variables).
+
+For the oversampling feature in ad7606, with unsigned X:
+   echo -1 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+would return 128 rather than 0 (for "cat
+/sys/bus/iio/devices/iio\:device0/oversampling_ratio")
+Right now, the IIO framework treats -1 as an 'int'
+
+But, moving forward: what would some preferences be?
+- have variants of find_closest() for unsigned/signed arrays? (
+find_closest_u32() or find_closest_i32() ?)
+   - AFAICT so far, there aren't any values in the arrays that get
+close to INT32_MAX, so int32 may work for now
+   - maybe later some 64-bit variants could be added if needed
+- should the variables X, mid, left & right be the same signedness as the a=
+rray
+
+The only preference (towards which I'm leaning) is just making sure
+that X (and friends) are signed.
 
