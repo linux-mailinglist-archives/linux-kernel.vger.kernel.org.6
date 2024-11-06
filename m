@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-398589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5312A9BF332
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:27:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B8E9BF333
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:28:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4111F22528
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:27:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A951B25BB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA88204F94;
-	Wed,  6 Nov 2024 16:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501B4204F7F;
+	Wed,  6 Nov 2024 16:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTdcGpEV"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yeiDOyOs"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5E81DE2DE;
-	Wed,  6 Nov 2024 16:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D4920408B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730910453; cv=none; b=jwKeQ7DEw6LUJ8ehsdf1qGrUJyLTl6Rr9kW+tJSLP5UakASEFiKxaXEmcpj2us6y3di4AsP724O+qZm90iexJOu+MsBXfrIQCeH0TjdTfYoJAJkiikq+QYMYthFlPjRYT99+hBwe5riwtd4ea0rU6ECGgz0rfv1oq4h11E/9Ck0=
+	t=1730910470; cv=none; b=tVzVKOd0mW7WP6vP94NOI9AsJv3NBfAvigyYUYZhf7ZKzaxnofPqFUEL7FJHzwqih+5ceKc9SY1wRfzAS3JisXgLOkxyMc5XqKEXOnAe5z6wc1mbtkXs/Bj8ghkQcGYN3Wwkwp99DDPkXv6MaYj+EwNwTwDwA3jloRbfk/USmTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730910453; c=relaxed/simple;
-	bh=dqDHGCKp076r/ubz/6dxcP+mhyFxuV6k2hXCDYfTq+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P1qTUUnFZ5Mnt+KD0rSOXrsL0Nf9jOuAzPrRTiE9Vs2AIduVgYcWcACRphlBxrWayfbazbODArO3NYYZOqC8wZpm2Dejy7xcfHOE+0w5HOW1wxx2sAjetr8YRpqIo/B2KH8LkmjOG38f4UhCsuOqkyUb6o/9K2paGaU/Ne/A6ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTdcGpEV; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cdbe608b3so70161565ad.1;
-        Wed, 06 Nov 2024 08:27:31 -0800 (PST)
+	s=arc-20240116; t=1730910470; c=relaxed/simple;
+	bh=ph8WgCziHmWfyswsDBnx5qg6csF9c5Z6bkRrBHlPhds=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rTQwQMDJlsZr0ibFWSexacMp0yYCpdE4BcOjeIeLMw90MIR9o/9q1P5tEn0FbkOR8JB2BIYKUtfQGfsCiw6vLzZBW/dEQhqLZIFcHsr/xFbXI6Pr5RwM6MT7Zwssf7DnPSXJ0G24JP1WNXfbRb3emJFnPVICoZYwKK1PSvmMML4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yeiDOyOs; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7cbe272efa6so9338a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:27:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730910451; x=1731515251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2WsPRBTQwc5dj4lXDl+OK/MBpD2SjiCdDP2sbqnAg9M=;
-        b=VTdcGpEV9ZKhzgxY6UBssZWiVgHtvHGLrHC4TtUnttALWq1yqNge6YKthOjF0lNDv6
-         JskF1QCKKbsQ5DVnxVUqFcE1qGQ/X5DmaugvNHc4ouZlgbhB9TW90zK9dGOveHjNmuEE
-         K9+Tn/5zFUdJ8GiKzx98vtXvIr6y5qauQ6GZXbOLQjA5CF96Sd+Es+bJSJbsjqTSDFAj
-         O5HwOPlRAypZQOhQo7KXMm2fJnhtuYLAejSm/fT5KA7uWwHV/kD6k9/fE1Gic6Ij8k3Z
-         wtWTrzlgeClOD33qKokL3tMVzWkuLfy5/Ojj9IuCQy1+jGZRc4pZdorepxeqXx2D4Mxy
-         LxEg==
+        d=google.com; s=20230601; t=1730910469; x=1731515269; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FCXUf644XlkJphA6SVk+8Af9SxQm8DuQmfcSkYLayzs=;
+        b=yeiDOyOs/fY4CnfqJW/K33m2cWdqxFCjYyVgWvNMl0Omo9Q45D1uvrVNdpfqZiE8uY
+         jhWulJNAcfZNi4p+XEi3/MFO1gfJezFOVf4UpwjLlOgc0DlGtuSAyY4rRjB4fNdlZC29
+         KOmUTjpxfxnFcR9rvoxK9Pwqd2NECLdr2Qgb/+QF2u4tevMS7EXjm9iwwl3CHze+omz6
+         Ie/2FACHH6CUk3WDddUbrXZzXPXvz0EbHl7a9KglaJeKTU0jGbKJEbETcAFssmly4iJD
+         8k7fA0SxH3jXiXEvguj/kqEtrBjUuWBBrsyqFtL2dD79DEJVDh6+UJC4hxB0pIDaJbw2
+         RCEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730910451; x=1731515251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2WsPRBTQwc5dj4lXDl+OK/MBpD2SjiCdDP2sbqnAg9M=;
-        b=BzGGKxl3Jpe6MUtbDVbRJBvWH12vLycOaItRdqyDAPGeuMF5m+KUuUhhFcDtSU8S6w
-         Mkkt8jN+q708vTf67l6QSwBLvk6YgUEZrEQKzcYum34J0EGATW73go95eiZvdjmsQCE0
-         7P8RBcDFShNlTo3d+RArBIjuVpnKtGSYwKkDwBpnae38WS7Cl5HvIzzwsqi7Ym5L2MM2
-         LFMukoBJ9oATjUgF5DNnAy6HD9ZvjW2xUNHyquYACwBhNtxegl4PhRccNtESQa36iw4/
-         u63djSDQ0Zw+a/h585/Do0JVdczpNeAuw2U2lYn8oEXopvqct37m1SsqcCgwKDfhNWqC
-         jE+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVe7jc0s7Ox2B/pneA7DN0u3OwUWGP434+KRCu40mSVI+JmRBPOHtZb14X7qtp6l1HHXcIxEMRlxt/dl7xq@vger.kernel.org, AJvYcCW0gG3m0bJwoRT9ak5Sh08Hx+lZeAtQ+nHqsJpT2o7t8wjYok0NfG1tTZn/xncJ0DWQiXH0QuXrRiaR1qmF5/Booe3j@vger.kernel.org, AJvYcCXMkYAGetLmFK7XPjwPv7O65hun7SasqqVYDq/p738NNR6ChKJ/JPIprCAFJ15dU89qVJc=@vger.kernel.org, AJvYcCXcBOx76WF2GG2RE6ualqZmAV3v9moPXblhx2ouLF2gip8H5l8gP5OBX+uh6XSHrY4GKDIqrXuFxYEyH/7hQEJxlA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5nQX+4IVzGjKhJSibQr1ZnisHTN5XPhEddjvacg8XKS5d4pCv
-	yRTTzoppi6LrrfvwJ08W0sNduGIXyfdHmogMVqLzFF5zhQeXhROYdFaum5imq1fIgJBJ1C1OuN5
-	nYb0Q7QDT2OJ/nW4nLDPJrte1U8X8Ew==
-X-Google-Smtp-Source: AGHT+IFZ7HPko/c4Xkh8GcCqUVhoDlLwVi5fZbQ8zNvjsTCHeshsiiTyyBk7S/FdYeBvDsBuooWoB3NR+4xTtuy981A=
-X-Received: by 2002:a17:902:ec8c:b0:20e:5777:1b83 with SMTP id
- d9443c01a7336-210f75339d6mr395312835ad.24.1730910451252; Wed, 06 Nov 2024
- 08:27:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730910469; x=1731515269;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FCXUf644XlkJphA6SVk+8Af9SxQm8DuQmfcSkYLayzs=;
+        b=PBAQo6ICmnrlCFP98gVEHR4ktghyCEYh2Nv50Lxl1JfAX0fH3ZwvMCu63R6lah7mo1
+         x3FlCGmR0YMsk7DPpltA38c3DcB0DkoprICZzLptoZeWev7j41vioWKL7LgCZx7QWLZa
+         tgzPyvWCV1NVgqfB60C9kKes/LdKOlC0gDp5W0DlIZAzpfL78ER39lSEir/jSSUfATFM
+         dxduCr5lkIE/hhcuoi4JI8qUU59dYbsZ/qOZaxLwJKj6FORzX9RvfwXBk/wIrrFxid+3
+         HHYsc9iPRHeJerYH6kIN77iBL6PWiBRO5CnEtIdYRspaQ71HYdwFLm2a1x+p+lqCyyTB
+         mEkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBOT1aPCAhlc3rervLNiZUgs3bB75Cm2YKb8/UQ7xbHlhjPrIQMqqWFJGLwPUY28bSbaS3x3mNclkNfPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV2NpC2Widr4JMx2SPYlUsNlxt+jvSBJkJek5X+K1HFMwjPoT1
+	vVB4FF1XP9y4DoOMPBL9VDyh+7KYiE03bcF9rHpf2JAKLKAXf+yZVmKQ9Ggd+E+Bb3ZB6LA8IYt
+	6Pg==
+X-Google-Smtp-Source: AGHT+IG3df/kZk2fCqxxe+LGQm+PfVIDi52PzJ3ZNYNOJoCeWKyXHryfz8LDsbPSuUIbUhymUD1+KWX23yo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a63:1a0e:0:b0:7e6:b3ab:697 with SMTP id
+ 41be03b00d2f7-7ee2908a4e4mr46438a12.5.1730910468750; Wed, 06 Nov 2024
+ 08:27:48 -0800 (PST)
+Date: Wed, 6 Nov 2024 08:27:47 -0800
+In-Reply-To: <20241106162525.GHZyuYdWswAoGAUEUM@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240927094549.3382916-1-liaochang1@huawei.com> <8bcc6d5b-08d6-48a8-99d2-d8bb2bef2d6c@huawei.com>
-In-Reply-To: <8bcc6d5b-08d6-48a8-99d2-d8bb2bef2d6c@huawei.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 6 Nov 2024 08:27:19 -0800
-Message-ID: <CAEf4BzbJZ72Yr6tQuGLpz6fpKFXeUw3cD1BRO3T3j1psV4Qkdg@mail.gmail.com>
-Subject: Re: [PATCH v2] uprobes: Improve the usage of xol slots for better scalability
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: andrii@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	bpf@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <ZypfjFjk5XVL-Grv@google.com> <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local>
+ <ZypvePo2M0ZvC4RF@google.com> <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local>
+ <ZyuJQlZqLS6K8zN2@google.com> <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
+ <ZyuMsz5p26h_XbRR@google.com> <20241106161323.GGZyuVo2Vwg8CCIpxR@fat_crate.local>
+ <ZyuWoiUf2ghGvj7s@google.com> <20241106162525.GHZyuYdWswAoGAUEUM@fat_crate.local>
+Message-ID: <ZyuZAzqQIXudhbxi@google.com>
+Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, kvm@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Nov 6, 2024 at 1:12=E2=80=AFAM Liao, Chang <liaochang1@huawei.com> =
-wrote:
->
->
->
-> =E5=9C=A8 2024/9/27 17:45, Liao Chang =E5=86=99=E9=81=93:
-> >>  2 files changed, 139 insertions(+), 42 deletions(-)
-> >>
-> > Liao,
-> >
-> > Assuming your ARM64 improvements go through, would you still need
-> > these changes? XOL case is a slow case and if possible should be
-> > avoided at all costs. If all common cases for ARM64 are covered
-> > through instruction emulation, would we need to add all this
-> > complexity to optimize slow case?
->
-> Andrii,
->
-> I've studied the optimizations merged over the past month, it seems
-> that part of the problem addressed in this patch has been resolved
-> by Oleg(uprobes: kill xol_area->slot_count). And I hope you've received
-> the email with the re-run results for -push using simulated STP on
-> the latest kernel (tag next-20241104). It show significant improvements,
-> althought there's still room to match the throughput of -nop and -ret.
-> So based on these results, I would prioritize the STP simulation patch.
+On Wed, Nov 06, 2024, Borislav Petkov wrote:
+> On Wed, Nov 06, 2024 at 08:17:38AM -0800, Sean Christopherson wrote:
+> > I do subscribe to kvm@, but it's a mailing list, not at alias like x86@.  AFAIK,
+> > x86@ is unique in that regard.  In other words, I don't see a need to document
+> > the kvm@ behavior, because that's the behavior for every L: entry in MAINTAINERS
+> > except the few "L:	x86@kernel.org" cases.
+> 
+> I have had maintainers in the past not like to be CCed directly as long as the
+> corresponding mailing list is CCed.
 
-Great, I was hoping that Oleg's patches would help. And yes, I
-absolutely agree, STP simulation to avoid kernel->user->kernel switch
-is probably the biggest bang for the buck for ARM64 specifically now.
-Can you please send a fastest simulation approach that works like
-x86-64, and we can try to continue conversation on the refreshed
-patch?
-
->
-> --
-> BR
-> Liao, Chang
->
+LOL, doesn't that kind of defeat the purpose of MAINTAINERS?
 
