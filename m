@@ -1,61 +1,80 @@
-Return-Path: <linux-kernel+bounces-398780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2D99BF5FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:03:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C869BF603
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 199EDB2201B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A6E1C2213F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62102076CE;
-	Wed,  6 Nov 2024 19:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C41207A16;
+	Wed,  6 Nov 2024 19:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="siaAa8ha"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSG0tQD3"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7B0646;
-	Wed,  6 Nov 2024 19:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF735190678;
+	Wed,  6 Nov 2024 19:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730919772; cv=none; b=lhCujtljSi3/hO7patSH1s1T2M06eJNLy/pnmgse+ZB1LR1CcuargRa/qQZY1fwZ02cjm2VjodowztFE/4vUZavDaFg9kp3Qo9Jw6+FACsOKP6DNmkH9NRjDkYvk+PVgSOy9NVsMwWjxOew+pmvLeTlBcY7ki1GF1ZUKJ7rWanA=
+	t=1730919925; cv=none; b=aGcD7aksZ/YuLAKB89Ir7dU8HXSMbVoZhc6w3oKpQwEZ6rR+W63oAU8C9BUNa8Q8qaGE9aKKP1nP6E/lbAflTR7d1OPaG/Uj+exCFNF59mUBjY5PZorv3o4ZDqdjOGDssPU9ShKTLjgAbA1e0t+8gTdXhbdbh3VJfRR9t+JLK4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730919772; c=relaxed/simple;
-	bh=IhNmAHl50eN2Qntv98/NdsYVBigGbufrZ49dx0S8UfM=;
+	s=arc-20240116; t=1730919925; c=relaxed/simple;
+	bh=VfUQbcHeTqx1CU3myiQvEq+RQs1gzVpxtuheYp3105U=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oAd12gBVxPVC93HTf1sRZu0iydFA/4d79NMyJ712GlncN+Sct6v6r2/umjntUMWXkbDamJ34ofEEItCkD7DKnGrB1cS0fcuFfphe2hO1+g4CJj/whOfIHyPcLUYU4G9SOvY2TK4GTGnagwy8nsqceB8sMprJk3cYBA1jdKqpK3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=siaAa8ha; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=9QSSI/uYI0CEB6fzsQ7FkjhfiqW1QbCWsDx3P3extjI=; b=siaAa8hau4q9E3xQgArws/8Mvu
-	76jfTHf5Rnw/55kK7T0Glkqd/6oDCE0sXsjXs5gGKaie6jRpzKEbswwzQ2inuelKaWyj+/3Qv30bp
-	ghYt7KNNEGMp0hU78rCU2svK2HpBzVqBVoeGA/TNcUAjCUXV+Ao4aEIN4DxRyR75Qg2MbAvrOFpv/
-	Jjf291PKmJRAJ9CLS7a+iJfdAr11ffaydh0NLcrrzqnK/5exYlpSO/UKkNLR7Y5ipIroomOOG7wK4
-	r3VzTWJAuhPqO0++tCkfQSBnI13SexeHudUr7wGjv2ZJUa4OyhPw9bK5OeGGA4wafInTfuaiuvWky
-	5EbGtnJQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8lIf-000000059H0-0ND9;
-	Wed, 06 Nov 2024 19:02:41 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C4A5E300478; Wed,  6 Nov 2024 20:02:40 +0100 (CET)
-Date: Wed, 6 Nov 2024 20:02:40 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: mcgrof@kernel.org
-Cc: x86@kernel.org, hpa@zytor.com, mcgrof@kernel.org, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	hch@infradead.org, gregkh@linuxfoundation.org
-Subject: [RFC] module: Strict per-modname namespaces
-Message-ID: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
+	 Content-Disposition; b=FLLkA8Ad1N14DxZ6PQtBciut8taOkJVOdBDjPQjo7f3LB5t2frzxeDr4+bK7EGkJE1IKfpMo9owZIb5CembhTnhsIsdPkHVv3Oeh3P2Murb4C+GXgnWgmM4ShePuk16PA4Ncc9a9aYBGWi9ti5q6SpvoDfZZCTlsgJr0r3js83c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSG0tQD3; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso2225616a12.0;
+        Wed, 06 Nov 2024 11:05:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730919922; x=1731524722; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=git7RwFThytpqBRPQPjG3NYoVolRMqPNPDVZ2KDiULc=;
+        b=CSG0tQD3yP7tG3SCqnH/dXFpqppNjS77VTDRdWbTKyOqwCV6OFAyvtvzZNw2pixbjT
+         o0up17ugPeTRg/fVQ4qKrtZPbtUq4kodp1OqMB1YMI4iQywYzx9Qsc89xJMoH4V9/kCG
+         S9HidKN8MvI/VNNEfag1MegwlbyDzI/iMcFobwVtidIrGvJwUMYmhxCnAJ9Kz46mh2bY
+         t38FQlS9d6aRXDC1C42hI7QHHwDFvZflABmQoZjCmlz0+ZWuLQNtKxZC/DGWrMPHEYV0
+         /zMlb/5DzGmLNssRutEaTtxgCcHCtn7vZhw73vAk8Cvu1sexKghNVSng5DttyT/P2qo1
+         8xrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730919922; x=1731524722;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=git7RwFThytpqBRPQPjG3NYoVolRMqPNPDVZ2KDiULc=;
+        b=G9n/8uo0BkQFFVsPRIvMs5u7I0QLD/1WOy/XTahDBYivZzgWautfaKR+ghKBDcs7Wn
+         QbUfmYU1B5RQH2scGFGsjGzNhdhVa+zDxUtvJIokbTZi0xO/xPJIXMi8Dz5VPYO2gQq+
+         e11KpLlI7dF0wY8B0keaYngQ/fLVUMkjpVGEG6INxcjJT3TX2vAKK36rW7cirynYN0hT
+         shRiGlhUxugsQiA16CupqJCltmw6KGVRWpM/CYxU8PIjeITxul5guT1CYFkz7pEylBcS
+         /FTbs3itvJaCvosrz3cFohCNABNMaApxi+BYvmuNpLNUisKSBuDnZk9FnU7wsjdCzCRF
+         t4PA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvZY/qJk2XW+5lJu5208OunZ91E6cdaHzOqcLx0MdWNhXgujOu0cZKCPeR/7vcljtFO5pLHE0f/PJ/FMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWinIIyIkjBwwHlAjeLAMppBj7DiRflnL+C1NBmxfalbN9lyan
+	dh9c1HD3IhaaC/ZXjhTHmKHL83nyQw0wlBt1Lm2H5PMNnjwPr3eU
+X-Google-Smtp-Source: AGHT+IGLfWHfvOwk4Ib9st26djdKrupvyFqM40x8jybcV9FDbvsNfHRBmNjr49ZmGYpdWJR61X1euA==
+X-Received: by 2002:a17:907:a4b:b0:a9a:babb:b916 with SMTP id a640c23a62f3a-a9ed50fb64emr23526166b.15.1730919921834;
+        Wed, 06 Nov 2024 11:05:21 -0800 (PST)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16aecbasm319207266b.32.2024.11.06.11.05.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 11:05:21 -0800 (PST)
+Date: Wed, 6 Nov 2024 20:05:19 +0100
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] Cleanup Spreadtrum/Unisoc ARM64 DT (part 2)
+Message-ID: <cover.1730918663.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,156 +84,35 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+This series continues cleaning up various issues with the Spreadtrum/Unisoc
+ARM64 DeviceTrees.
 
-I've been wanting $topic for a while, and having just stumbled into the
-whole namespace thing by accident, I figured I'd give it a go, most if
-the hard parts seem to have already been done.
+Changes in V2:
+- dropped original patch 2, as it was split off into its own series [1]
+- new patches 2, 4 and 5 which fix some issues found by Rob's bot
+  and/or CHECK_DTBS=y
+- rebase on next-20241106
 
-It reserves and disallows imports on any "MODULE_${name}" namespace,
-while it implicitly adds the same namespace to every module.
+[1] https://lore.kernel.org/lkml/cover.1730720720.git.stano.jakubek@gmail.com/
 
-This allows exports targeted at specific modules and no others -- one
-random example included. I've hated the various kvm exports we've had
-for a while, and strictly limiting them to the kvm module helps
-alleviate some abuse potential.
+Link to V1: https://lore.kernel.org/lkml/cover.1723716331.git.stano.jakubek@gmail.com/
 
----
- arch/x86/kernel/fpu/core.c |  2 +-
- kernel/module/main.c       | 28 ++++++++++++++++++++++++++--
- scripts/mod/modpost.c      | 29 ++++++++++++++++++++---------
- 3 files changed, 47 insertions(+), 12 deletions(-)
+Stanislav Jakubek (5):
+  arm64: dts: sprd: sp9860g-1h10: fix
+    constant-charge-voltage-max-microvolt property
+  arm64: dts: sprd: sp9860g-1h10: fix
+    factory-internal-resistance-micro-ohms property
+  arm64: dts: sprd: sc2731: move fuel-gauge monitored-battery to device
+    DTS
+  arm64: dts: sprd: sc9863a: fix in-ports property
+  arm64: dts: sprd: sc9863a: reorder clocks, clock-names per bindings
 
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 1209c7aebb21..23b188a53d9d 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -366,7 +366,7 @@ int fpu_swap_kvm_fpstate(struct fpu_guest *guest_fpu, bool enter_guest)
- 	fpregs_unlock();
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(fpu_swap_kvm_fpstate);
-+EXPORT_SYMBOL_NS_GPL(fpu_swap_kvm_fpstate, MODULE_kvm);
- 
- void fpu_copy_guest_fpstate_to_uabi(struct fpu_guest *gfpu, void *buf,
- 				    unsigned int size, u64 xfeatures, u32 pkru)
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 49b9bca9de12..b30af879c2cb 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -1070,6 +1070,13 @@ static int verify_namespace_is_imported(const struct load_info *info,
- 
- 	namespace = kernel_symbol_namespace(sym);
- 	if (namespace && namespace[0]) {
-+		/*
-+		 * Implicitly import MODULE_${mod->name} namespace.
-+		 */
-+		if (strncmp(namespace, "MODULE_", 7) == 0 &&
-+		    strcmp(namespace+7, mod->name) == 0)
-+			return 0;
-+
- 		for_each_modinfo_entry(imported_namespace, info, "import_ns") {
- 			if (strcmp(namespace, imported_namespace) == 0)
- 				return 0;
-@@ -1613,15 +1620,30 @@ static void module_license_taint_check(struct module *mod, const char *license)
- 	}
- }
- 
--static void setup_modinfo(struct module *mod, struct load_info *info)
-+static int setup_modinfo(struct module *mod, struct load_info *info)
- {
- 	struct module_attribute *attr;
-+	char *imported_namespace;
- 	int i;
- 
- 	for (i = 0; (attr = modinfo_attrs[i]); i++) {
- 		if (attr->setup)
- 			attr->setup(mod, get_modinfo(info, attr->attr.name));
- 	}
-+
-+	for_each_modinfo_entry(imported_namespace, info, "import_ns") {
-+		/*
-+		 * 'MODULE_' prefixed namespaces are implicit, disallow
-+		 * explicit imports.
-+		 */
-+		if (strstarts(imported_namespace, "MODULE_")) {
-+			pr_err("%s: module tries to import module namespace: %s\n",
-+			       mod->name, imported_namespace);
-+			return -EPERM;
-+		}
-+	}
-+
-+	return 0;
- }
- 
- static void free_modinfo(struct module *mod)
-@@ -2935,7 +2957,9 @@ static int load_module(struct load_info *info, const char __user *uargs,
- 		goto free_unload;
- 
- 	/* Set up MODINFO_ATTR fields */
--	setup_modinfo(mod, info);
-+	err = setup_modinfo(mod, info);
-+	if (err)
-+		goto free_modinfo;
- 
- 	/* Fix up syms, so that st_value is a pointer to location. */
- 	err = simplify_symbols(mod, info);
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 107393a8c48a..d1de3044ee03 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1553,8 +1553,19 @@ static void mod_set_crcs(struct module *mod)
- 	free(buf);
- }
- 
-+static const char *mod_basename(const char *modname)
-+{
-+	const char *basename = strrchr(modname, '/');
-+	if (basename)
-+		basename++;
-+	else
-+		basename = modname;
-+	return basename;
-+}
-+
- static void read_symbols(const char *modname)
- {
-+	char module_namespace[MODULE_NAME_LEN + 8];
- 	const char *symname;
- 	char *version;
- 	char *license;
-@@ -1586,12 +1597,16 @@ static void read_symbols(const char *modname)
- 			license = get_next_modinfo(&info, "license", license);
- 		}
- 
--		namespace = get_modinfo(&info, "import_ns");
--		while (namespace) {
-+		for (namespace = get_modinfo(&info, "import_ns"); namespace;
-+		     namespace = get_next_modinfo(&info, "import_ns", namespace)) {
-+			if (strstarts(namespace, "MODULE_"))
-+				error("importing implicit module namespace: %s\n", namespace);
-+
- 			add_namespace(&mod->imported_namespaces, namespace);
--			namespace = get_next_modinfo(&info, "import_ns",
--						     namespace);
- 		}
-+		snprintf(module_namespace, sizeof(module_namespace), "MODULE_%s",
-+			 mod_basename(mod->name));
-+		add_namespace(&mod->imported_namespaces, module_namespace);
- 
- 		if (extra_warn && !get_modinfo(&info, "description"))
- 			warn("missing MODULE_DESCRIPTION() in %s\n", modname);
-@@ -1700,11 +1715,7 @@ static void check_exports(struct module *mod)
- 		s->crc_valid = exp->crc_valid;
- 		s->crc = exp->crc;
- 
--		basename = strrchr(mod->name, '/');
--		if (basename)
--			basename++;
--		else
--			basename = mod->name;
-+		basename = mod_basename(mod->name);
- 
- 		if (!contains_namespace(&mod->imported_namespaces, exp->namespace)) {
- 			modpost_log(!allow_missing_ns_imports,
+ arch/arm64/boot/dts/sprd/sc2731.dtsi      |  4 ++--
+ arch/arm64/boot/dts/sprd/sc9863a.dtsi     | 14 +++++++-------
+ arch/arm64/boot/dts/sprd/sp9860g-1h10.dts |  9 +++++++--
+ 3 files changed, 16 insertions(+), 11 deletions(-)
+
+-- 
+2.43.0
+
 
