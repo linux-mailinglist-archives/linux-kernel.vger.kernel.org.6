@@ -1,152 +1,183 @@
-Return-Path: <linux-kernel+bounces-398118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F48E9BE5A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACACD9BE5C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A6D28468B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:37:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BEEE284E20
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305591DED6C;
-	Wed,  6 Nov 2024 11:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="HpFhxp/4"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE781DE4C2;
-	Wed,  6 Nov 2024 11:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A681DF249;
+	Wed,  6 Nov 2024 11:38:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099F21DEFEB
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730893071; cv=none; b=O1I0ib4xRRDpLcTr/n6I1TDAxAN4hKyIpKco4K2sGorJOYJeazQXRLwzJdZJTneqdARUls/C2JIQs22TWXdMsIGvDe+WCy+cRZFdRLIAZvQoqzaoAsOZox5IuC6kW1AK25ZYwxjK+mEXia8S6lu2yYE1RKoERy1VP7obfXxz/Mg=
+	t=1730893105; cv=none; b=phB/Jcdq1PhIez1im5zNOpAeHHi4og23u2Gvs7EwLjr6dV3IHq45TI3fXuwimYbsNljOe0pSVjmio1Y1ACdrW/StTcD2BoIC98q+tIQbODjUsxsxiQDH6LOTqKR9XtFQ6hAg8i9QQipjcVqxvVAzlnRUOL3IDpvK55Yd3m9UegU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730893071; c=relaxed/simple;
-	bh=C1n9EJ3Er0NrXM0zfDuaNPlNbQYf7Fs6wVvI/wCLf+w=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=IsMOTonpPOOUt7DmlFGftcloHpUiWEvwjZddrdFM873+A3oJE9qb4b2u2gtxEMFAC2dOKQF0OKcrwzMt3LS2nGa/DmyRLxIzPi+rewO4veGMFFV8YqQwGhJ/lK1qnyNuCv19FTARIVbQCAq9acABQdFfFRVBIPE0e0hc4gTq2SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=HpFhxp/4; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1730893105; c=relaxed/simple;
+	bh=NGCZ25tpbvEKxszclDIE57z+HZeyD2o4IESPGMgEPbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hxx7aGj3LfoMuo7xKNiwzRmBHivWrydAgj7YwuBn/3pPejSkPVCQzCCPIcrQGtvid7dvOpSf8QAmZo4SY1JseMzscJS11kuW5YC0HibwO95QTlHYELvdYdIOXyUOZ8IW3W8Xs0xmJwMajWbp/4sJ/SFUzcwdpwHelf1478EXX9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11BCD1063;
+	Wed,  6 Nov 2024 03:38:52 -0800 (PST)
+Received: from [10.57.88.115] (unknown [10.57.88.115])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B8423F6A8;
+	Wed,  6 Nov 2024 03:38:19 -0800 (PST)
+Message-ID: <083d9e98-b6b8-4702-a700-24aea95cef9e@arm.com>
+Date: Wed, 6 Nov 2024 11:37:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1730893067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAVWN1jllFgopZaf0TDwkFXp6oVX56WTH2lis0u2zBw=;
-	b=HpFhxp/4D+HOZ1HX/JiwwgNR5olDDT/A5VwquOc7q6EymSbB089NHLszIJrfeKEe5KZu9Q
-	pfNa7XV8BdPon3Ke9uuHChHXCo6xJXiXt7zPpQ50ropiwuAwdf0ysy5ghxe+ts658YUlna
-	oqOgy51LmGzKl83jo1b9HARZW0JghhKO7DhVq/aTlV3Gl7QGUse/dbgDhg9LvBIp5Ja9kL
-	NIgpdLryTocWhziCDe9N6a6RFoVhsOrj922k3Arryy7jlv5zumNT0vE242UAhuipSHapKK
-	zsCITqgvY/Qzdu6iX1j4ZN883OWdlGVwodShSgWMIdsS3077++Zc2zimhN3NvQ==
-Date: Wed, 06 Nov 2024 12:37:47 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org, Quentin Schulz
- <quentin.schulz@cherry.de>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alchark@gmail.com
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add OPP voltage ranges to RK3399
- OP1 SoC dtsi
-In-Reply-To: <3515804.QJadu78ljV@diego>
-References: <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
- <3252308.5fSG56mABF@diego> <77bc2898bbbd2633d6713b4935bd5ee3@manjaro.org>
- <3515804.QJadu78ljV@diego>
-Message-ID: <09212b36eddf74748afa7e97172d89de@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <ZyPxhF34JjT3Ky9K@arm.com>
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <ZyPxhF34JjT3Ky9K@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-11-06 12:24, Heiko Stübner wrote:
-> Am Mittwoch, 6. November 2024, 11:45:06 CET schrieb Dragan Simic:
->> On 2024-11-06 10:41, Heiko Stübner wrote:
->> > Am Mittwoch, 6. November 2024, 10:32:06 CET schrieb Quentin Schulz:
->> >> On 11/6/24 9:33 AM, Dragan Simic wrote:
->> >> > Add support for voltage ranges to the CPU, GPU and DMC OPPs defined in the
->> >> > SoC dtsi for Rockchip OP1, as a variant of the Rockchip RK3399.  This may be
->> >> > useful if there are any OP1-based boards whose associated voltage regulators
->> >> > are unable to deliver the exact voltages; otherwise, it causes no functional
->> >> > changes to the resulting OPP voltages at runtime.
->> >> >
->> >> > These changes cannot cause stability issues or any kind of damage, because
->> >> > it's perfectly safe to use the highest voltage from an OPP group for each OPP
->> >> > in the same group.  The only possible negative effect of using higher voltages
->> >> > is wasted energy in form of some additionally generated heat.
->> >> >
->> >> > Reported-by: Quentin Schulz <quentin.schulz@cherry.de>
->> >>
->> >> Well, I merely highlighted that the voltage was different on OP1
->> >> compared to RK3399 for the 600MHz OPP :)
->> >>
->> >> So... If there's ONE SoC I'm pretty sure is working as expected it's
->> >> the
->> >> OP1 fitted on the Gru Chromebooks with the ChromiumOS kernel fork
->> >> (though yes, I believe all Gru CB are EoL since August 2023). In the
->> >> 6.1
->> >> kernel fork, there's also no range:
->> >> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/refs/heads/chromeos-6.1/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
->> >
->> > yeah, this somehow goes quite a bit into the "stuff that doesn't need
->> > to
->> > change" area. On the one hand it does make "some" sense to unify things
->> > if we're using ranges everywhere else.
->> 
->> I agree that it might be unneeded, but there's no possible harm, and
->> unifying the things may be seen as beneficial.
->> 
->> > On the other hand, as Quentin noted below, all existing OP1 devices
->> > seem
->> > to run just fine, and there won't be any more entering the kernel.
->> 
->> Hmm, why can't we add more OP1-based devices?  As I mentioned in my
->> earlier response to Quentin, my plan is to implement the board dts
->> for OP1-based TinkerBoard 2S, so I'd like to know is there something
->> that might prevent that board dts from becoming merged?
->> 
->> > So what do we realisitically gain here, except hiding existing
->> > git-history
->> > under another layer?
->> 
->> Sorry, I'm not sure what would become hidden by this patch?
+On 31/10/2024 21:07, Catalin Marinas wrote:
+> Hi Ryan,
 > 
-> When you change a part of the file, a git blame points to you,
-> hiding the previous blame, so it makes traversing history a tiny
-> bit harder.
-
-Ah, I see, thanks for the clarification.  I'm willing to take the
-resulting blame, though. :)
-
-> If you're actually doing the Tinkerboard and thus adding new things 
-> this
-> changes the whole judgement a bit too.
-
-Yes, I need an OP1-based board for my upcoming Rockchip SoC binning
-endeavor, which for me basically boils down to getting a TinkerBoard
-2S.  Of course, I need to have my future TinkerBoard 2S working and
-running mainline kernel, and what's a better way for doing that than
-having its board dts upstreamed, for everyone's benefit. :)
-
-> Like I was on the mindset-road of rk3399 is mostly done in terms of new
-> boards, so what's in the kernel now will at max get some new 
-> peripherals
-> but is in general already mostly working.
+> On Mon, Oct 14, 2024 at 11:55:11AM +0100, Ryan Roberts wrote:
+>> This RFC series implements support for boot-time page size selection within the
+>> arm64 kernel. arm64 supports 3 base page sizes (4K, 16K, 64K), but to date, page
+>> size has been selected at compile-time, meaning the size is baked into a given
+>> kernel image. As use of larger-than-4K page sizes become more prevalent this
+>> starts to present a problem for distributions. Boot-time page size selection
+>> enables the creation of a single kernel image, which can be told which page size
+>> to use on the kernel command line.
 > 
-> If we're still adding new rk3399 boards, it does make more sense to go
-> back and make the underlying parts nicer :-)
+> That's great work, something I wasn't expecting to even build, let alone
+> run ;). 
 
-Yes, I see the RK3399 as an actively maintained part of the kernel. :)
-With all that in mind, I hope the associated cleanups will be seen as
-justified.
+Cheers!
+
+> I only looked briefly through the patches, there's probably room
+> for optimisation of micro-benchmarks like fork(), maybe using something
+> like runtime constants. 
+
+Yes I suspect there is room for some optimization. Although note I already tried
+using alternatives patching but for the fork() microbenchmark this performed
+worse than the approach I ended up taking of just loading a global variable. I
+think this was likely due to code layout changes due to all the extra
+branches/nops - fork has been very sensitive to code layout changes in the past.
+
+> The advantage for deployment and easy testing of
+> different configurations is pretty clear (distros mainly, not sure how
+> relevant it is for Android if apps can't move beyond 4K pages).
+> 
+> However, as a maintainer, my main concern is having to chase build
+> failures in obscure drivers that have not been tested/developed on
+> arm64. If people primarily test on x86, they wouldn't notice that
+> PAGE_SIZE/PAGE_SHIFT are no longer constants. Not looking forward to
+> trying to sort out allmodconfig builds every kernel release, especially
+> if they turn up in subsystems I have no clue about (like most stuff
+> outside arch/arm64).
+
+Yes, I understand that concern.
+
+> 
+> So, first of all, I'd like to understand the overall maintainability
+> impact better. I assume you tested mostly defconfig. If you run an
+> allmodconfig build with make -k, how many build failures do you get with
+> this patchset? Similarly for some distro configs.
+
+I've roughly done:
+
+    make alldefconfig &&
+        ./scripts/config --enable CONFIG_ARM64_BOOT_TIME_PAGE_SIZE &&
+	make -s -j`nproc` -k &> allmodconfig.log
+
+Then parsed the log for issues. Unfortunately the errors are very chatty and it
+is difficult to perfectly extract stats.
+
+If I search for r'(\S+\.[ch]):.*error:', that is optimistic because PAGE_SIZE
+being non-const gets the ultimate blame for most things, but I'm interested in
+the call sites. Number of affected files using this approach: 111.
+
+If I just blindly search for all files, r'(\S+\.[ch]):', that is pessimistic
+because when the issue is in a header, the full include chain is spat out.
+Number of affected files using this approach: 1807.
+
+If I just search for C files, r'(\S+\.[c]):', (all issues in headers terminate
+in a C file) that is also pessimistic because the same single header issue is
+reported for every C file it is included in. Number of affected files using this
+approach: 1369.
+
+In the end, I decided to go for r'(\S+\.[ch]):.*(error|note):', which is any
+files described as having an error or being the callsite of the thing with the
+error. I think this is likely most accurate from eyeballing the log:
+
+|            |     C&H files | percentage of |
+| directory  |      w/ error | all C&H files |
+|------------|---------------|---------------|
+| arch/arm64 |             7 |          1.3% |
+| drivers    |           127 |          0.4% |
+| fs         |            25 |          1.1% |
+| include    |            27 |          0.4% |
+| init       |             1 |          8.3% |
+| kernel     |             7 |          1.3% |
+| lib        |             1 |          0.2% |
+| mm         |             6 |          3.2% |
+| net        |             7 |          0.4% |
+| security   |             2 |          0.8% |
+| sound      |            21 |          0.8% |
+|------------|---------------|---------------|
+| TOTAL      |           231 |          0.4% |
+|------------|---------------|---------------|
+
+I'm not sure how best to evaluate if this is a large or small number though! For
+comparison, the RFC modified 172 files.
+
+> 
+> Do we have any better way to detect this other than actual compilation
+> on arm64? Can we hack something around COMPILE_TEST like redefine
+> PAGE_SIZE (for modules only) to a variable so that we have a better
+> chance of detecting build failures when modules are only tested on other
+> architectures?
+
+I can certainly look into this. But if the concern is that drivers are not being
+compiled against arm64, what is the likelyhood of them being compiled against
+COMPILE_TEST?
+
+> 
+> At the moment, I'm not entirely convinced of the benefits vs. long term
+> maintainability. Even if we don't end up merging the dynamic PAGE_SIZE
+> support, parts of this series are needed for supporting 128-bit ptes on
+> arm64, hopefully dynamically as well.
+
+Agreed.
+
+Thanks,
+Ryan
+
+> 
+> Thanks.
+> 
+
 
