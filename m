@@ -1,140 +1,152 @@
-Return-Path: <linux-kernel+bounces-398663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67939BF45A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:33:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA80D9BF445
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:28:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A042285965
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:33:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CFD92856C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954302071E2;
-	Wed,  6 Nov 2024 17:33:13 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E68F20696B;
+	Wed,  6 Nov 2024 17:28:51 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C892038A6;
-	Wed,  6 Nov 2024 17:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D704713541B;
+	Wed,  6 Nov 2024 17:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730914393; cv=none; b=jUEC6fz0LmgDmf/Y5MNe5WUC6sThloyAvKN1vWr0p/nEzhX9t5r9FmdeZ1At4i9miEiTOywM5IGTSSa7jke2cECO9+AbpLqMPoCozwM2LqybRBAz8cH50syIe57XBNwaBhUDC8FaIJBLgKUKUbys69FBJ8UwcE875u2qPitny7U=
+	t=1730914131; cv=none; b=np1XuhGngVNj4Zo+PY1fhmOLUKGq0GyWUTt+jQbiEmstTG9TtiyDKraugk0j57FkSClwRy4y7JoHxuliXb/G3sSnbZ1KsKQgIeoYYasvCogtcn0aEtuKNWn1p/UU9eB0HDueEfrqRrsMBdtz7t4G0+HVXOsZnwnf4fsxLDtAHOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730914393; c=relaxed/simple;
-	bh=ydyhpAVLDcyskkiqgsbfEtKnDrTEwMD6GrknhaHy9Ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ExISe7DABnOX5maIm7WS/uHqiyWg/5YuHuydjvkx6iu1RyHomB4xnx6D/kvcjIasc7AQQNMdR2B2xJokvXoF5zEvrNYkNuk/3PpPcYstwxbOxiK0NK/HV2kEFulDpjs6L8LzlW8f2nLw8TPdxhmVY8sAtdiZ8foirbchyyUSNcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 0BCD71C00A8; Wed,  6 Nov 2024 18:27:40 +0100 (CET)
-Date: Wed, 6 Nov 2024 18:27:39 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hagar@microsoft.com, broonie@kernel.org,
-	Wang Jianzheng <wangjianzheng@vivo.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4.19 000/350] 4.19.323-rc1 review
-Message-ID: <ZyunCxYg0pYUhl2F@duo.ucw.cz>
-References: <20241106120320.865793091@linuxfoundation.org>
- <CA+G9fYu-X4w24M9NgwWU4=vOsMxq8CzmCGo+BC-=t9e-R0NwnQ@mail.gmail.com>
+	s=arc-20240116; t=1730914131; c=relaxed/simple;
+	bh=665+N82pws8qPypIy9h7Aefyz4JxCj/33OeQ/iQlk68=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KVC9ks95VTeK8qKrejM/v4BpKEk2vNFzwgHIuIT/YogH5eVrbNf0ZCkP0WYoFyuMymZP5RY1pgGcTBVCL1u3MT15oG0XyFhJANvAR9HM0FmvdBVvQbKpGsyAdLid0G+59gXChPgNv6w513xDIRB8rusmjCUtnk/tomg95xCZxtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XkBts0XcVz6K7Hy;
+	Thu,  7 Nov 2024 01:25:57 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+	by mail.maildlp.com (Postfix) with ESMTPS id E3E71140B33;
+	Thu,  7 Nov 2024 01:28:44 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 6 Nov 2024 18:28:44 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Wed, 6 Nov 2024 18:28:44 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Dave Jiang <dave.jiang@intel.com>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "bp@alien8.de" <bp@alien8.de>, "tony.luck@intel.com"
+	<tony.luck@intel.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "mchehab@kernel.org"
+	<mchehab@kernel.org>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+	"dave@stgolabs.net" <dave@stgolabs.net>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
+	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "leo.duran@amd.com"
+	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
+	<jiaqiyan@google.com>, "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>, "james.morse@arm.com"
+	<james.morse@arm.com>, "jthoughton@google.com" <jthoughton@google.com>,
+	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>, "erdemaktas@google.com"
+	<erdemaktas@google.com>, "pgonda@google.com" <pgonda@google.com>,
+	"duenwen@google.com" <duenwen@google.com>, "gthelen@google.com"
+	<gthelen@google.com>, "wschwartz@amperecomputing.com"
+	<wschwartz@amperecomputing.com>, "dferguson@amperecomputing.com"
+	<dferguson@amperecomputing.com>, "wbs@os.amperecomputing.com"
+	<wbs@os.amperecomputing.com>, "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
+	tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v15 13/15] cxl/memfeature: Add CXL memory device sPPR
+ control feature
+Thread-Topic: [PATCH v15 13/15] cxl/memfeature: Add CXL memory device sPPR
+ control feature
+Thread-Index: AQHbLD8E5jWI1EDDu0C0+SJpWS5APLKpGmUAgAFvVgA=
+Date: Wed, 6 Nov 2024 17:28:44 +0000
+Message-ID: <987130b3079d4afcbe67b04627e619a1@huawei.com>
+References: <20241101091735.1465-1-shiju.jose@huawei.com>
+ <20241101091735.1465-14-shiju.jose@huawei.com>
+ <827fe047-a456-48b4-9db1-d28c184b9cb3@intel.com>
+In-Reply-To: <827fe047-a456-48b4-9db1-d28c184b9cb3@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pJRKqg6bCQhm53P0"
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYu-X4w24M9NgwWU4=vOsMxq8CzmCGo+BC-=t9e-R0NwnQ@mail.gmail.com>
 
-
---pJRKqg6bCQhm53P0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> On Wed, 6 Nov 2024 at 12:07, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 4.19.323 release.
-> > There are 350 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patc=
-h-4.19.323-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->=20
-> The arm builds failed with gcc-8, gcc-12 on the Linux stable-rc
-> linux-4.19.y and linux-5.4.y.
->=20
-> First seen on Linux v4.19.322-351-ge024cd330026
->   Good: v4.19.321-96-g00a71bfa9b89
->   Bad:  v4.19.322-351-ge024cd330026
-
-We see same failure.
-
-drivers/pinctrl/mvebu/pinctrl-dove.c: In function 'dove_pinctrl_probe':
-3778
-drivers/pinctrl/mvebu/pinctrl-dove.c:791:9: error: implicit declaration of =
-function 'devm_platform_get_and_ioremap_resource'; did you mean 'devm_platf=
-orm_ioremap_resource'? [-Werror=3Dimplicit-function-declaration]
-3779
-  base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &mpp_res);
-3780
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-3781
-         devm_platform_ioremap_resource
-3782
-drivers/pinctrl/mvebu/pinctrl-dove.c:791:7: warning: assignment to 'void *'=
- from 'int' makes pointer from integer without a cast [-Wint-conversion]
-3783
-  base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &mpp_res);
-3784
-       ^
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/1=
-529999662
-
-Best regards,
-									Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---pJRKqg6bCQhm53P0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZyunCwAKCRAw5/Bqldv6
-8lPGAJ9oMNWV03OHZaARiHp2lZHDi0qgAQCeICvyy50v6eFhf5qYmsRHSy5a/mA=
-=P71y
------END PGP SIGNATURE-----
-
---pJRKqg6bCQhm53P0--
+DQo+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj5Gcm9tOiBEYXZlIEppYW5nIDxkYXZlLmpp
+YW5nQGludGVsLmNvbT4NCj5TZW50OiAwNSBOb3ZlbWJlciAyMDI0IDIwOjMyDQo+VG86IFNoaWp1
+IEpvc2UgPHNoaWp1Lmpvc2VAaHVhd2VpLmNvbT47IGxpbnV4LWVkYWNAdmdlci5rZXJuZWwub3Jn
+OyBsaW51eC0NCj5jeGxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hY3BpQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgtbW1Aa3ZhY2sub3JnOyBsaW51eC0NCj5rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+
+Q2M6IGJwQGFsaWVuOC5kZTsgdG9ueS5sdWNrQGludGVsLmNvbTsgcmFmYWVsQGtlcm5lbC5vcmc7
+IGxlbmJAa2VybmVsLm9yZzsNCj5tY2hlaGFiQGtlcm5lbC5vcmc7IGRhbi5qLndpbGxpYW1zQGlu
+dGVsLmNvbTsgZGF2ZUBzdGdvbGFicy5uZXQ7IEpvbmF0aGFuDQo+Q2FtZXJvbiA8am9uYXRoYW4u
+Y2FtZXJvbkBodWF3ZWkuY29tPjsgZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7DQo+c3VkZWVw
+LmhvbGxhQGFybS5jb207IGphc3Npc2luZ2hicmFyQGdtYWlsLmNvbTsgYWxpc29uLnNjaG9maWVs
+ZEBpbnRlbC5jb207DQo+dmlzaGFsLmwudmVybWFAaW50ZWwuY29tOyBpcmEud2VpbnlAaW50ZWwu
+Y29tOyBkYXZpZEByZWRoYXQuY29tOw0KPlZpbGFzLlNyaWRoYXJhbkBhbWQuY29tOyBsZW8uZHVy
+YW5AYW1kLmNvbTsgWWF6ZW4uR2hhbm5hbUBhbWQuY29tOw0KPnJpZW50amVzQGdvb2dsZS5jb207
+IGppYXFpeWFuQGdvb2dsZS5jb207IEpvbi5HcmltbUBhbWQuY29tOw0KPmRhdmUuaGFuc2VuQGxp
+bnV4LmludGVsLmNvbTsgbmFveWEuaG9yaWd1Y2hpQG5lYy5jb207DQo+amFtZXMubW9yc2VAYXJt
+LmNvbTsganRob3VnaHRvbkBnb29nbGUuY29tOyBzb21hc3VuZGFyYW0uYUBocGUuY29tOw0KPmVy
+ZGVtYWt0YXNAZ29vZ2xlLmNvbTsgcGdvbmRhQGdvb2dsZS5jb207IGR1ZW53ZW5AZ29vZ2xlLmNv
+bTsNCj5ndGhlbGVuQGdvb2dsZS5jb207IHdzY2h3YXJ0ekBhbXBlcmVjb21wdXRpbmcuY29tOw0K
+PmRmZXJndXNvbkBhbXBlcmVjb21wdXRpbmcuY29tOyB3YnNAb3MuYW1wZXJlY29tcHV0aW5nLmNv
+bTsNCj5uaWZhbi5jeGxAZ21haWwuY29tOyB0YW54aWFvZmVpIDx0YW54aWFvZmVpQGh1YXdlaS5j
+b20+OyBaZW5ndGFvIChCKQ0KPjxwcmltZS56ZW5nQGhpc2lsaWNvbi5jb20+OyBSb2JlcnRvIFNh
+c3N1IDxyb2JlcnRvLnNhc3N1QGh1YXdlaS5jb20+Ow0KPmthbmdrYW5nLnNoZW5AZnV0dXJld2Vp
+LmNvbTsgd2FuZ2h1aXFpYW5nIDx3YW5naHVpcWlhbmdAaHVhd2VpLmNvbT47DQo+TGludXhhcm0g
+PGxpbnV4YXJtQGh1YXdlaS5jb20+DQo+U3ViamVjdDogUmU6IFtQQVRDSCB2MTUgMTMvMTVdIGN4
+bC9tZW1mZWF0dXJlOiBBZGQgQ1hMIG1lbW9yeSBkZXZpY2Ugc1BQUg0KPmNvbnRyb2wgZmVhdHVy
+ZQ0KPg0KPg0KPg0KPk9uIDExLzEvMjQgMjoxNyBBTSwgc2hpanUuam9zZUBodWF3ZWkuY29tIHdy
+b3RlOg0KPj4gRnJvbTogU2hpanUgSm9zZSA8c2hpanUuam9zZUBodWF3ZWkuY29tPg0KPj4NCj4+
+IFBvc3QgUGFja2FnZSBSZXBhaXIgKFBQUikgbWFpbnRlbmFuY2Ugb3BlcmF0aW9ucyBtYXkgYmUg
+c3VwcG9ydGVkIGJ5DQo+PiBDWEwgZGV2aWNlcyB0aGF0IGltcGxlbWVudCBDWEwubWVtIHByb3Rv
+Y29sLiBBIFBQUiBtYWludGVuYW5jZQ0KPj4gb3BlcmF0aW9uIHJlcXVlc3RzIHRoZSBDWEwgZGV2
+aWNlIHRvIHBlcmZvcm0gYSByZXBhaXIgb3BlcmF0aW9uIG9uIGl0cyBtZWRpYS4NCj4+IEZvciBl
+eGFtcGxlLCBhIENYTCBkZXZpY2Ugd2l0aCBEUkFNIGNvbXBvbmVudHMgdGhhdCBzdXBwb3J0IFBQ
+Ug0KPj4gZmVhdHVyZXMgbWF5IGltcGxlbWVudCBQUFIgTWFpbnRlbmFuY2Ugb3BlcmF0aW9ucy4g
+RFJBTSBjb21wb25lbnRzDQo+bWF5DQo+PiBzdXBwb3J0IHR3byB0eXBlcyBvZiBQUFI6IEhhcmQg
+UFBSIChoUFBSKSwgZm9yIGEgcGVybWFuZW50IHJvdyByZXBhaXIsDQo+PiBhbmQgU29mdCBQUFIg
+KHNQUFIpLCBmb3IgYSB0ZW1wb3Jhcnkgcm93IHJlcGFpci4gc1BQUiBpcyBtdWNoIGZhc3Rlcg0K
+Pj4gdGhhbiBoUFBSLCBidXQgdGhlIHJlcGFpciBpcyBsb3N0IHdpdGggYSBwb3dlciBjeWNsZS4N
+Cj4+DQpbLi4uXQ0KPj4gK2VudW0gY3hsX3Bwcl9wYXJhbSB7DQo+PiArCUNYTF9QUFJfUEFSQU1f
+RE9fUVVFUlksDQo+PiArCUNYTF9QUFJfUEFSQU1fRE9fUFBSLA0KPj4gK307DQo+PiArDQo+PiAr
+LyogU2VlIENYTCByZXYgMy4xIEA4LjIuOS43LjIuMSBUYWJsZSA4LTExMyBzUFBSIEZlYXR1cmUg
+UmVhZGFibGUNCj4+ICtBdHRyaWJ1dGVzICovDQo+PiArLyogU2VlIENYTCByZXYgMy4xIEA4LjIu
+OS43LjIuMiBUYWJsZSA4LTExNiBoUFBSIEZlYXR1cmUgUmVhZGFibGUNCj5BdHRyaWJ1dGVzICov
+DQo+PiArI2RlZmluZQlDWExfTUVNREVWX1BQUl9RVUVSWV9SRVNPVVJDRV9GTEFHIEJJVCgwKQ0K
+Pg0KPkFyZSBhbGwgdGhlIGV4dHJhIHNwYWNlcyBhZnRlciAjZGVmaW5lIGludGVuZGVkPw0KDQpG
+aXhlZC4NCj4NCj5ESg0KPg0KPj4gKw0KPj4gKyNkZWZpbmUgQ1hMX01FTURFVl9QUFJfREVWSUNF
+X0lOSVRJQVRFRF9NQVNLIEJJVCgwKSAjZGVmaW5lDQpbLi4uXQ0KPj4gK2ZlYXRfc3Bwcl9kb25l
+Og0KPj4gIAlyZXR1cm4gZWRhY19kZXZfcmVnaXN0ZXIoJmN4bG1kLT5kZXYsIGN4bF9kZXZfbmFt
+ZSwgTlVMTCwNCj4+ICAJCQkJIG51bV9yYXNfZmVhdHVyZXMsIHJhc19mZWF0dXJlcyk7ICB9DQo+
+DQoNClRoYW5rcywNClNoaWp1DQo=
 
