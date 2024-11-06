@@ -1,101 +1,87 @@
-Return-Path: <linux-kernel+bounces-397704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB36F9BDF43
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:20:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FAB9BDF40
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50340B23CB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:20:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 961E3284E48
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE2B1BDAA8;
-	Wed,  6 Nov 2024 07:20:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C827192B61;
-	Wed,  6 Nov 2024 07:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5206D1CC175;
+	Wed,  6 Nov 2024 07:20:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D6B1B5EDC
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 07:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730877627; cv=none; b=fcYR7tmaEOLG74rOzMrh0eC7gTfxelxYhi6D9R7YfxEKJL5LvMzgiTxJ4nVsOLzRKy3XXJwVHYKcLZ6vQfo7RXAosiVEkTsDMg1LorsFHOFxbirWw7kTFx+q3YGo53lPtn0Kok1GsbORwx77QnGaEqeBTcw2Nq7B5YPL9zPO+QE=
+	t=1730877604; cv=none; b=j2JK7gF/JFHkT+YwGhdlwS/uVPawvSjpkZHhtctKxaIaApn3Tid+CprQxbkJ47PNAuSKSKYfJItzUAUR+ymb8EJqqUVC04cePwWj11cmMv3Z9tgQJS6ahwxEePVX1vmH4gQWt+aPLzvE+nUq2P7FNu4RLmcGMZoOaJZ5Ie0+tGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730877627; c=relaxed/simple;
-	bh=/mEdkmb4i1pd4wl+jSu8sjFkQAOoedX+OBM66cNaNUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uODCmfRMFG7vqTU2g7r1qOaMw/V2cIJVn/4YiPhYJizHTRSmpFZhAj+y8TtTGbKIXdGVmWfceybarEHvmbooW2woJxjxnigLsGJ/gTsteMb2Sc8BzxM+SSTr+GZo7YQ1E1eXQLwz5NhMeh0i6jnx55LX55TK/1FHL62E96BpyaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 70CE11063;
-	Tue,  5 Nov 2024 23:20:54 -0800 (PST)
-Received: from bogus (unknown [10.57.64.60])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9C3A3F66E;
-	Tue,  5 Nov 2024 23:20:16 -0800 (PST)
-Date: Wed, 6 Nov 2024 07:20:01 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>, cristian.marussi@arm.com,
-	ulf.hansson@linaro.org, jassisinghbrar@gmail.com,
-	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org,
-	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH V5 3/6] firmware: arm_scmi: Report duplicate opps as
- firmware bugs
-Message-ID: <20241106072001.5jrbbctj7ud5uaxd@bogus>
-References: <20241030125512.2884761-1-quic_sibis@quicinc.com>
- <20241030125512.2884761-4-quic_sibis@quicinc.com>
- <ZyThAFbOHKaBIgLg@hovoldconsulting.com>
- <e173058b-57e7-7fd0-dab7-7398bf9d66ec@quicinc.com>
- <ZyjViCVtPwe-tmMq@hovoldconsulting.com>
+	s=arc-20240116; t=1730877604; c=relaxed/simple;
+	bh=Y270/xRUpuj8gwRE9wa6Q0/PzwMPDFUT+l02kpxYJvc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BX9DijZJ231xF9FjgIavP0rWvksojXb4VS4fLqeBvBk97nMlrQ1hdhAK+brADXZ4UzZ0v84bbyAIG3gA5dGP5FJDkiqpXn4QXZcMc76FaRgDNtDslUtlBHEEKIHbVVdRrJfVHTJTQQe3uoidCn7H8yEwctdAfXGdu2MT/QJYLbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6ca616500so37089035ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 23:20:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730877602; x=1731482402;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sRoiQ9O17ecUzInDNwHnviQHANv5CWKXk0TEsKw6AfU=;
+        b=JoQH1xPpe9xwTpsVIvB9FtsNw5GcOSWl70d63E79oI3eK975DUnN9xIlHc1XQqJ8QX
+         PQuNAPESZoDbS7/5V9TeJ49DeCmK+Znd3oC0wdYecJ6sZmSJhtxxsjdD5kDofOQF1C4P
+         ebWQvH4OUlAR8Kbkysxphh3yr2E9onngMNWJEb4Eq7DO8/cpJHiGFzy4y48H/l6zM1DT
+         fy/iEzjhmlW6B5SYT/yPu+uz5oFvPLgFMZ/f5eQGbjIUfgHo1avmaqYJNBn99AXDPWF/
+         WdZKIaxgCwBbK0rs4RrKNLsO+weRDI+jdwZ4JXyAbblI14Y7l2IIIIHojqDuI3yFAaot
+         wRSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTOzpkG+yGl3Kd89/fF6Vle1oj7yjyPhUXA2cQ7oAE83DgZmTbsc/3E46zdFY9MWtgJFHC63HLyxuePrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySk1XvYtE87kQXBms2iW1CniXu1nMJ0YU8D/fPtiJt15sjHRBl
+	Uj+qlVRXxxLAfIgcmPobaTDBc12ve46Xl4BgXqexVmW/KSyE4gT3N6aLP1IvEnx8WPuJr/kiC2d
+	V2nbN4ME9PTZEViKf/M7hSgcgmERGyG+xdOetbHr8k16ChktLGvzZKUk=
+X-Google-Smtp-Source: AGHT+IG2btnfaVPTCER2vSQjwK27ilgCD4Oq1p+DbbNgiSfEEU/hvxPvODMmmEHFepz0gIRnNtTr1d9+OMsKJi0HRQLikYD54Mj6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyjViCVtPwe-tmMq@hovoldconsulting.com>
+X-Received: by 2002:a05:6e02:152e:b0:3a6:b445:dc92 with SMTP id
+ e9e14a558f8ab-3a6b445dd34mr159977155ab.10.1730877602621; Tue, 05 Nov 2024
+ 23:20:02 -0800 (PST)
+Date: Tue, 05 Nov 2024 23:20:02 -0800
+In-Reply-To: <tencent_536FC3A5A458D765576F66CF736AC3616905@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672b18a2.050a0220.2a847.1ba0.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_cat_bin_cmp_key
+From: syzbot <syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 04, 2024 at 03:09:12PM +0100, Johan Hovold wrote:
-> On Mon, Nov 04, 2024 at 07:20:01PM +0530, Sibi Sankar wrote:
-> > On 11/1/24 19:39, Johan Hovold wrote:
-> > > On Wed, Oct 30, 2024 at 06:25:09PM +0530, Sibi Sankar wrote:
-> 
-> > >> @@ -387,7 +387,7 @@ process_response_opp(struct device *dev, struct perf_dom_info *dom,
-> > >>   
-> > >>   	ret = xa_insert(&dom->opps_by_lvl, opp->perf, opp, GFP_KERNEL);
-> > >>   	if (ret) {
-> > >> -		dev_warn(dev, "Failed to add opps_by_lvl at %d for %s - ret:%d\n",
-> > >> +		dev_info(dev, FW_BUG "Failed to add opps_by_lvl at %d for %s - ret:%d\n",
-> > >>   			 opp->perf, dom->info.name, ret);
-> > > 
-> > > I was hoping you could make the error message a bit more informative as
-> > > well, for example, by saying that a duplicate opp level was ignored:
-> > > 
-> > > 	arm-scmi arm-scmi.0.auto: [Firmware Bug]: Ignoring duplicate OPP 3417600 for NCC
-> > 
-> > I did think about doing something similar but xa_insert can fail
-> > with both -EXIST (duplicate) and -ENOMEM, so the we can't really
-> > use term duplicate when insert fails. I can add the perf level
-> > though to the message though.
-> 
-> We generally don't log errors for memory allocation failures (e.g. as
-> that would already have been taken care of by the allocators, if that is
-> the source of the -ENOMEM).
-> 
-> But either way you should be able to check the errno to determine if
-> this is due to a duplicate entry or not.
+Hello,
 
-Everyone has valid reasons for their argument here, so we need to find
-a safe middle ground. Will stating it as [Possible Firmware Bug] be any
-useful ? If there is -ENOMEM, other error messages will be seen before
-this and user can ignore this error until that memory issue is fixed ?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
--- 
-Regards,
-Sudeep
+Reported-by: syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com
+Tested-by: syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1017f587980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fdf74cce377223b
+dashboard link: https://syzkaller.appspot.com/bug?extid=968ecf5dc01b3e0148ec
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1233f587980000
+
+Note: testing is done by a robot and is best-effort only.
 
