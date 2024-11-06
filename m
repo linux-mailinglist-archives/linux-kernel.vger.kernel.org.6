@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-398732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181199BF549
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:32:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3669BF551
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:34:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF2C72836E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:32:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 120751F2589A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000E4208217;
-	Wed,  6 Nov 2024 18:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C7920821A;
+	Wed,  6 Nov 2024 18:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkDRv6xT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aCa2xiCe"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4E6202637;
-	Wed,  6 Nov 2024 18:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D0E207A2C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730917944; cv=none; b=CQ9asdhQt7f08QWJKGIergJl2Np+12rxcaQ0dO0i4XhiARz33bXMLWJVBNaR5jhFc0cRSlAoXWYuXctNvWNnFiZ8MtPQmqz00nzdPrMLhsafaFqHupUzqqP2Jg7HpOXjZMi9BFPEHReRnh8R1P47DXWmmQjgkqMq5bZiJa614rs=
+	t=1730918037; cv=none; b=VtPPBM4UuzsQ71w+FU+d5dwhZo4/6Ta/VYL2MucipOQ395hKUy/5yt75z1IJ2ACknSRpZVwWuinvv89hRg3ZINwJFQpegB5BtVnV991sBkI/SKZWjGaQ+jy59s/dEmVdj36HYhEeZA9j5g5Hncd8Xetjj8IKV1m+PmJbx/4JNe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730917944; c=relaxed/simple;
-	bh=VZAJqAIJ1C/Lh9DLgBZKS+KRl8i2ROrpVpzHBnbbhE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f7NM+wNhj6m7PziSNubaMKVwDHXSJnX7UAztSMn6Pk89y58pwjkIb/SRxT2Btaxjw0JaJHQh3sWgwP2XGQS8tlyoqcgHcj6vsGGXG11zyBs6HEjSxkkvHGn7ETprJ0N0kWIKjJu20DmIYanotYjBVrv6IYToU/99BXDxzT8Yceg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkDRv6xT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D862DC4CED7;
-	Wed,  6 Nov 2024 18:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730917943;
-	bh=VZAJqAIJ1C/Lh9DLgBZKS+KRl8i2ROrpVpzHBnbbhE4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PkDRv6xTRctPUKBiyFgsQSDikbJfwz/A9CYVYQYxhpt4w7Qk9NdT54U9iSLGdv2pb
-	 htOJOQD7/rVh/bJBP+dYYZzuG7tkFQ5874OrJWODy/7UAHJu2ZqewmrWhgTPINxHgm
-	 SXrggaF2eXjxrc24zsr8cM43in25irJdCQ+P6LfhoRP1shEYTm+QBhZwNN35BmwJ7a
-	 Zw8iFmfKfz/JPzuCHlegm3JYdZv9HCOm30CphxdKWrErE9QDI6KjHk5v6yIpdes003
-	 DQflz7jGg06FANTss3tbT0q0NKZCEgownWTxkSyIBLDp4xnB3oSpi+If4BDAoyUsd0
-	 prTT3GKnN/XIg==
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e9ba45d67fso592907b3.1;
-        Wed, 06 Nov 2024 10:32:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUUYgOLRvLrI69KeZ/vLUTf786eqqRlWb0J/kKWfckkCit4VQjrjWxfiJccuqrpYiPRZLCHIDcNLaSBVf9a7to=@vger.kernel.org, AJvYcCXbakr3vSErO7VY44Fj2rRaN7pwrkXQhrNy1Q+CAd8xPmZRnr+TtsD6h9RQqcj2pEORw33wHLjxFS3tX/nm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6UWdmGHjz9W9Ma+sVMVqO6R1E227+axnYRWMzdQ/F+znZlZzF
-	2R+WXmPWRNl+uOQNA/KVHBu+iO6ir0sdg4CX0TuoUNOd2Em4Si5QE0nF6krgNtKrsP6VPTZ0NA1
-	iqrt/y4wRqkTwlr/A/wWfpTOZlw==
-X-Google-Smtp-Source: AGHT+IHF7huaas71JDmvvH8NbieYOfzeri2Ws8mw0BHdC5V9CTrAnY0eW9Crx/tJlxy/Vp+n09K9FKAFs2dJs+U2oy4=
-X-Received: by 2002:a05:690c:62c6:b0:6e5:9bc2:53a0 with SMTP id
- 00721157ae682-6ea3b9831c7mr307446817b3.41.1730917943104; Wed, 06 Nov 2024
- 10:32:23 -0800 (PST)
+	s=arc-20240116; t=1730918037; c=relaxed/simple;
+	bh=0Gc+JPVi9O0tZICMYNaPCrl3aoXp938+vWpDID6LlwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JASubp0aoRn4flzZwGqpP2Sf4RSxDwwfArYrrtghVMVDuuaoBvpSsNzUJexgi9bQDAU4h5oMAAAVPmCxCQRM1KVOX+8mebJBVgBNwlc0auMWLy9FVp01+96enr+czZFbaPADc3nrr0+cXznNYGceNzsGql+Ope1UAvGQTz4bhqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aCa2xiCe; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9acafdb745so33660666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:33:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730918034; x=1731522834; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tx6X1YtADs2XT3Ox3Y3sdyzQo/0AxuioBEE5kCAYkwg=;
+        b=aCa2xiCetRiLNp0KufJB21Z4PpZmJ9drvOdA0BiLJDMXWe1zs5qkp8q4H8k+2dY0xi
+         YP88CMdGLLrCbbJrrBPX+jx995g0sE0poIfxuBF1naMeltGnfklUEDG4T3oZDlezzG7O
+         v2ZQ2mQcDGzjiVEQ7YlirgVGYVR/8ze9Dr3RLjbKzv6bZJzrQDEZ2SEXamuxHU9YtT5C
+         9JiBjC7tGEvLbOcA2XG/AndWuFue8/khMpSc6rTNdiywyVo164uDI10I6gy1hjCm/u8U
+         v/7mQw03wCZe4fSrXwHR2cuwjuTtaWeFYzgNbofwViTT+vgloQSHb46jauKgBMWjXrXy
+         aD9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730918034; x=1731522834;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tx6X1YtADs2XT3Ox3Y3sdyzQo/0AxuioBEE5kCAYkwg=;
+        b=KEfzCVGnCy2llxgENwG+Evw8gMz5QsdPyvdENkziCrj7gqUq/wv3j64vAuq3gczjhu
+         MrMbZjwQdxa5PIM5krvrp2VQUnHgD+pTaVpBHZ/xwLoM/n9qdWITQQslGLWDrGCwv0io
+         24GEUhCwzbUm5moQ8aItvjDK1b135kvSK0uZhFc17JMVgWHk69IwQNh6NC359CPTFUYK
+         SzlAZJpGISUCUYCXUMzQICbckZuxUU88mt9J75wQWslkZXIPcP+4+6U90YMmFbraDjP3
+         YAoPiGJ9mhbP1myKvfe1+TGHKPD3DQ8P1DYNiFIn24fDNwXxWb9OkwsLy3YtbSUrWLXw
+         PeDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWh7RLF2hJtPy7DUjQlzEVU/zHKzEqqEi8iwRFbJr5eYCpYWkCmtXreCKcqrtH8+a7TYbPzwm99phWE3AI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX096JI7W10NvKlIwGH1elLcqN8jLZE2HUUf+TNccZ3X30JKW0
+	nGn1Q5rlUy+U1kK7eoPXMSpC5YubPj8ztcqdoDnIn2Fwvr5XlRee
+X-Google-Smtp-Source: AGHT+IGDWdUXEFRrR3jrnbt0tCF12f0An9+oAbEngtnkkZAAsRtEs+1qquwf2GEABXZvC8PGz2p8RA==
+X-Received: by 2002:a17:907:c05:b0:a9e:85f8:2a3a with SMTP id a640c23a62f3a-a9ed506f2a8mr18888466b.2.1730918033692;
+        Wed, 06 Nov 2024 10:33:53 -0800 (PST)
+Received: from kernel-710.speedport.ip (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb1813a07sm315298966b.190.2024.11.06.10.33.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 10:33:53 -0800 (PST)
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Subject: [PATCH 00/16] staging: rtl8723bs: Replace function pointers starting with EFUSEGetEfuseDefinition
+Date: Wed,  6 Nov 2024 19:33:29 +0100
+Message-ID: <cover.1730916582.git.philipp.g.hortmann@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702161052.3563599-1-robh@kernel.org> <D2RSWMPFF8KK.X5HZZMHANQMO@iki.fi>
- <D2RT0J8KXY1H.3MEV7KGQXTWHW@iki.fi> <CAL_JsqJDX+uOSoPh6pTNEP0vBLwcP3bKmAW1wCr_0cVr5fsPcg@mail.gmail.com>
- <D2SSH5HSDHQS.2YJSB22W3MHQK@iki.fi> <CAL_JsqLF+gs9e1TL1yi-xAZJRx4Kz7fOk=2wcF8kCqU3vyMWZA@mail.gmail.com>
- <D5FAVRTM32ZJ.1HFCHF3L9I68C@kernel.org> <D5FAXEKQ71ZJ.1U9AE15UVWRT9@kernel.org>
-In-Reply-To: <D5FAXEKQ71ZJ.1U9AE15UVWRT9@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 6 Nov 2024 12:32:12 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJdabUmgOEe29y4o5muOnh83V7rS=YwfXMtZ+Fugcgzdw@mail.gmail.com>
-Message-ID: <CAL_JsqJdabUmgOEe29y4o5muOnh83V7rS=YwfXMtZ+Fugcgzdw@mail.gmail.com>
-Subject: Re: [PATCH] tpm: atmel: Drop PPC64 specific MMIO setup
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>, Peter Huewe <peterhuewe@gmx.de>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 6, 2024 at 12:19=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Wed Nov 6, 2024 at 8:17 PM EET, Jarkko Sakkinen wrote:
-> > > Whatever happened to this? Can you please apply my patch if you don't
-> > > have the time for further rework.
-> >
-> > Sorry unintentional.
-> >
-> > I applied with
-> >
-> > -static void __iomem * atmel_get_base_addr(unsigned long *base, int *re=
-gion_size)
-> > +static void __iomem *atmel_get_base_addr(unsigned long *base, int *reg=
-ion_size)
-> >
-> > as this gives checkpatch error.
->
-> See:
-> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/co=
-mmit/?id=3Db18ffd5e0faaa02bffda61e19a013573451008d4
->
-> If that looks good to you, I can mirror it to -next.
+Replace function pointers with functions to increase readability.
+Remove unused functions.
 
-Looks good. Thanks.
+Tested with rtl8723bs in ODYS Trendbook Next 14
 
-Rob
+Philipp Hortmann (16):
+  staging: rtl8723bs: Remove function pointer EFUSEGetEfuseDefinition
+  staging: rtl8723bs: Remove function pointer EfuseGetCurrentSize
+  staging: rtl8723bs: Remove unused function Efuse_PgPacketRead
+  staging: rtl8723bs: Remove unused function Hal_EfusePgPacketRead
+  staging: rtl8723bs: Remove unused function Efuse_PgPacketWrite
+  staging: rtl8723bs: Remove unused function Hal_EfusePgPacketWrite
+  staging: rtl8723bs: Remove unused function Hal_EfusePgPacketWrite_BT
+  staging: rtl8723bs: Remove unused function hal_EfusePgPacketWriteData
+  staging: rtl8723bs: Remove unused function
+    hal_EfusePgPacketWriteHeader
+  staging: rtl8723bs: Remove unused function hal_EfusePartialWriteCheck
+  staging: rtl8723bs: Remove unused function hal_EfuseConstructPGPkt
+  staging: rtl8723bs: Remove unused function
+    hal_EfusePgCheckAvailableAddr
+  staging: rtl8723bs: Remove function hal_EfusePgPacketWrite2ByteHeader
+  staging: rtl8723bs: Remove function hal_EfusePgPacketWrite1ByteHeader
+  staging: rtl8723bs: Remove unused function efuse_WordEnableDataRead
+  staging: rtl8723bs: Remove unused function Efuse_GetCurrentSize
+
+ drivers/staging/rtl8723bs/core/rtw_efuse.c    |  90 +----
+ .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 353 +-----------------
+ drivers/staging/rtl8723bs/include/hal_intf.h  |   8 +-
+ drivers/staging/rtl8723bs/include/rtw_efuse.h |   4 -
+ 4 files changed, 6 insertions(+), 449 deletions(-)
+
+-- 
+2.43.0
+
 
