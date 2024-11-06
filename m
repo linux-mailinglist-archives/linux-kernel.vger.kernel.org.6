@@ -1,133 +1,140 @@
-Return-Path: <linux-kernel+bounces-397379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FDB9BDB37
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:31:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B399BDB3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6499B21B1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:31:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE99284562
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A9A18786C;
-	Wed,  6 Nov 2024 01:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23F8185B6E;
+	Wed,  6 Nov 2024 01:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ONtD99Gr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANpcxLP8"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3C93EA76
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 01:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D230158DB2
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 01:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730856663; cv=none; b=RyJ6WqEi5rKud/BikzGl4tr9C0D+fFgj5Whg/iyP7rEj3ZXFteP9jgXB6KnhvxxwTpLBV8rGBFge7F+XxzFYXpWQZLvjRoKHlEV+yHArQnyZ1g1u2DVqz708FycUG8m8UUKekFf4Y3oFtcj1tmDODsOWhgn4N3yMY1EL6OCTZ4M=
+	t=1730856703; cv=none; b=TCsEZ/o9HMJ3aJA9OMu3uVFQ5rJUnpaPWkp79q55y+MJc7EMqd4Zy0YVOT78FVBPY4OjDud1rNtG4LT5ASoC6Wp1H9Rw8hOcI2mUvcNl9H/xR97PYsSwLXhyrgpDlbfvaeP8QjuLlpiSp54bK/FmTHTae90Vv8lQCGDRYfwhno4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730856663; c=relaxed/simple;
-	bh=w4uRAgM8xbGcWtcxv849nFQ4mF6NuoUMjhUqN7BpOZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NeVrq+bbQ0sxQojivhaRP0gxMaT46ZSpdUjPxUF1alMR4KhL1VkEQ+aAW6+zo8hOzx1xLiuOP+MLy7Gu37/OpDmk94YtjXmYOrXCkjO7rfsA9MT0lc1bDngtIw0BM2kyUXWkkwoXh0SQtschW6VSrD0qx+IWzBHbcdFuh5kyYd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ONtD99Gr; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730856660; x=1762392660;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=w4uRAgM8xbGcWtcxv849nFQ4mF6NuoUMjhUqN7BpOZE=;
-  b=ONtD99GrBf25+rM34KqHUwiiwURJm/oah1vLGcWaIc5uQ35/pb8qi8bk
-   m32DKNOLqFNO0G1UE38es+/jeRiiG2FSdhTn5QJ20y4RaariVeN/uBFcu
-   7GNO9SJPGq1kHva5k2UKCo0MNlysf+CTJDpdPM83y8ZogbMGBY8ifnqFJ
-   B6VZm7Y0cZBH2l62hclJA8GycLUGFIxUaeBauGxOXBWX4bGs9/w21FEdB
-   xq9wwsQpqByCrRLpItYG9tyL0vDW4gQeHdQL0fyDl+BJCl8Yx8vruioCa
-   uCkzhgp8GU9o3bUvocDy/Vxd6UMKOoKf3GnSUbEkGe9oet0J+NEaGaHgk
-   w==;
-X-CSE-ConnectionGUID: w62g+gfjRfau4wwr4o52Ig==
-X-CSE-MsgGUID: k1NY0S4gSvWMjuRUrLWyZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53201959"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="53201959"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 17:30:59 -0800
-X-CSE-ConnectionGUID: 4L7Ct1tFSgaMWkNvEsRxBQ==
-X-CSE-MsgGUID: +Z+xLsTLRoWY1bWMap8SKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="84347612"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 05 Nov 2024 17:30:55 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8Usn-000mhP-1q;
-	Wed, 06 Nov 2024 01:30:53 +0000
-Date: Wed, 6 Nov 2024 09:30:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	John Ogness <john.ogness@linutronix.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-	bluescreen_avenger@verizon.net,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jocelyn Falempe <jfalempe@redhat.com>
-Subject: Re: [PATCH v6 2/6] drm/log: Introduce a new boot logger to draw the
- kmsg on the screen
-Message-ID: <202411060951.mK9Fi0fi-lkp@intel.com>
-References: <20241105125109.226866-3-jfalempe@redhat.com>
+	s=arc-20240116; t=1730856703; c=relaxed/simple;
+	bh=5CmSX02hMXqC0tcwAjp+rJhnC2j0lws2C8eH6CXLVfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f1Ewfo9FaOa5x9Ub1WpSHv/IZOoD1jHw58m1mHqnxTUxKIDN/AqK21hZaYFleLm9uitLWf7Fh7XY6EM4RqzAhK5h2ui2Knz+gqzlvESGO3aRY0INH5hj9HfJ1EMXPAo7J6ZJGcPfvkyHoPLVrrwp5vfai6DW4XF8SIgJx+Qghvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANpcxLP8; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a6bba54722so15682675ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 17:31:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730856700; x=1731461500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ZEdQ5A4rc3P9ZMICWLA+PiCJDpmRtuPvoqRfEkgQC0=;
+        b=ANpcxLP8B/JaT3R3W0Oyii8JdGXjvisFrxv1WpGdXee6scT3fEFKi0eeBMp/pDUrhM
+         u07893vK4mpgNAeX0pqVJCojiotcOX9vD+14gxk5cnT+kTrDlcqiQS3RlHQ+qWzCqL0k
+         j433VbTxrovqZ0wKm2Sa5GNLpCq4PMYBqu5hUUxNj99rdzbWh0gbyjMlOKzUIpECbT6J
+         13wkCHBJ7W2KrPpPWLCMqtAWoBE2qtg6qfugJXWhzzEIlgrHQ064RwTD4Ip2e8YzWY2S
+         1rQPbYo52aiMYlzUuLEuXykqsgNxqTU1bXpqAlt7AoQ1e0LGuyAjQjDIbyhLE1QyteL8
+         RPGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730856701; x=1731461501;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1ZEdQ5A4rc3P9ZMICWLA+PiCJDpmRtuPvoqRfEkgQC0=;
+        b=HmhaW+E0W0M+hbhrQbsMZqGukdKV/rA3kvsDYo+EsAc+AwNGIeYy4IC89rC2Ny8C+Z
+         L0XZTuDoMfO/xmbMwnKtdM7fVjxRRfjnLU7hhbKQOV/2I9QJ+eM3ZCoHFbIFXX1/YAVs
+         A6hMQHWv1TAVU4/AcpvNqS4mHxKbY7OiWKz+AXydpqmNLzFo3woOCakBd4B16sdAbKQn
+         7y0O8kPMyd8cToemAKO6PQyTenixhu6FvQpyC6hEpw5Q5ZxmpLCtqkdFD33lD03hpCz1
+         etKV1ho1lWd7R2cL2WQt5iWH3A1YXwUAdXEQ6zYxrTb2FG/NQrkyFgQwrwRFgpcUxH7z
+         9Ayw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8ssxRPJf5yRr8kBb80S0VCCHznd0toVh3OXa1ErQ4qB3OB+GqS0efio9Lup+cFZvUQZU5oyxTnPC4rDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc9pOySlO9b7iidO8PMeENrwzP+PvKovHq5CeYDzZ1vPIAsfjC
+	TtAIdI3Rm8J/Ij8/ceQ+0dHhkkO64Z1NGC41bxKTHCyiZIsd73Dta8deaPQPBtVQ/S8/WgViA+g
+	xa6eDvwH5tgqaffkakuhwTVxlbH9iwQ==
+X-Google-Smtp-Source: AGHT+IEKU8XnaFKdqE7nB8aAs1Qbr/FQljqOuyQsSN6+XX2borSTMs1XTeUygH5VgMPHRf3Wtb671mQbzY159BQ9UUU=
+X-Received: by 2002:a05:6e02:148a:b0:3a6:b37c:6a12 with SMTP id
+ e9e14a558f8ab-3a6b37c6cc2mr189320995ab.7.1730856700682; Tue, 05 Nov 2024
+ 17:31:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105125109.226866-3-jfalempe@redhat.com>
+References: <20241020224725.179937-1-dmitry.osipenko@collabora.com>
+In-Reply-To: <20241020224725.179937-1-dmitry.osipenko@collabora.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 5 Nov 2024 17:31:28 -0800
+Message-ID: <CAF6AEGs2+gPtqOw=LMwVxNkzWgYc11u0VN3DnQOyQc2MPhsJig@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/virtio: Don't create a context with default param
+ if context_init is supported
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
+	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, dri-devel@lists.freedesktop.org, 
+	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jocelyn,
+On Sun, Oct 20, 2024 at 3:49=E2=80=AFPM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
+>
+> From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+>
+> Xorg context creation fails for native contexts that use
+> VIRTGPU_CONTEXT_INIT because context is already initialized implicitly
+> when dumb buffer is created. Fix it by not creating default vrend context
+> if context_init is supported.
+>
+> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd=
+.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Rob Clark <robdclark@gmail.com>
 
-[auto build test ERROR on d78f0ee0406803cda8801fd5201746ccf89e5e4a]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-panic-Move-drawing-functions-to-drm_draw/20241105-205432
-base:   d78f0ee0406803cda8801fd5201746ccf89e5e4a
-patch link:    https://lore.kernel.org/r/20241105125109.226866-3-jfalempe%40redhat.com
-patch subject: [PATCH v6 2/6] drm/log: Introduce a new boot logger to draw the kmsg on the screen
-config: hexagon-randconfig-002-20241106 (https://download.01.org/0day-ci/archive/20241106/202411060951.mK9Fi0fi-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060951.mK9Fi0fi-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411060951.mK9Fi0fi-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: drm_client_setup
-   >>> referenced by komeda_drv.c:87 (drivers/gpu/drm/arm/display/komeda/komeda_drv.c:87)
-   >>>               drivers/gpu/drm/arm/display/komeda/komeda_drv.o:(komeda_platform_probe) in archive vmlinux.a
-   >>> referenced by komeda_drv.c:87 (drivers/gpu/drm/arm/display/komeda/komeda_drv.c:87)
-   >>>               drivers/gpu/drm/arm/display/komeda/komeda_drv.o:(komeda_platform_probe) in archive vmlinux.a
-   >>> referenced by vkms_drv.c:230 (drivers/gpu/drm/vkms/vkms_drv.c:230)
-   >>>               drivers/gpu/drm/vkms/vkms_drv.o:(vkms_init) in archive vmlinux.a
-   >>> referenced 23 more times
---
->> ld.lld: error: undefined symbol: drm_client_setup_with_fourcc
-   >>> referenced by arcpgu.c:399 (drivers/gpu/drm/tiny/arcpgu.c:399)
-   >>>               drivers/gpu/drm/tiny/arcpgu.o:(arcpgu_probe) in archive vmlinux.a
-   >>> referenced by arcpgu.c:399 (drivers/gpu/drm/tiny/arcpgu.c:399)
-   >>>               drivers/gpu/drm/tiny/arcpgu.o:(arcpgu_probe) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_gem.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virti=
+o/virtgpu_gem.c
+> index 7db48d17ee3a..67f557e058b4 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_gem.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
+> @@ -127,15 +127,17 @@ int virtio_gpu_gem_object_open(struct drm_gem_objec=
+t *obj,
+>         /* the context might still be missing when the first ioctl is
+>          * DRM_IOCTL_MODE_CREATE_DUMB or DRM_IOCTL_PRIME_FD_TO_HANDLE
+>          */
+> -       virtio_gpu_create_context(obj->dev, file);
+> +       if (!vgdev->has_context_init)
+> +               virtio_gpu_create_context(obj->dev, file);
+>
+>         objs =3D virtio_gpu_array_alloc(1);
+>         if (!objs)
+>                 return -ENOMEM;
+>         virtio_gpu_array_add_obj(objs, obj);
+>
+> -       virtio_gpu_cmd_context_attach_resource(vgdev, vfpriv->ctx_id,
+> -                                              objs);
+> +       if (vfpriv->ctx_id)
+> +               virtio_gpu_cmd_context_attach_resource(vgdev, vfpriv->ctx=
+_id, objs);
+> +
+>  out_notify:
+>         virtio_gpu_notify(vgdev);
+>         return 0;
+> --
+> 2.47.0
+>
 
