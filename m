@@ -1,113 +1,93 @@
-Return-Path: <linux-kernel+bounces-398443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBECD9BF160
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:17:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6419BF164
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45567B21E29
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873811F2262A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EA4202F76;
-	Wed,  6 Nov 2024 15:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0892038A6;
+	Wed,  6 Nov 2024 15:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcvyDC3J"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTiVV26D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF7820127C;
-	Wed,  6 Nov 2024 15:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72622036E2;
+	Wed,  6 Nov 2024 15:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730906236; cv=none; b=NqdFwL+4QNQvRV9i+gDvX0JISaSgPxm8TOHOEfc+PusEUQL1etHQu4hwrmHbTNFTW0cR3Ha86+zVSZTMpsRPPrbI+4ppXr9tAYobOSgbTuynX8tPAGSZFEfDOsgKg963oxQPUJtoPRpncqC7pQW4TdebuxavX+n42EzvY9/CY0Y=
+	t=1730906239; cv=none; b=CFdOEOjhTBAEV1gRDmPT1GC+TEyb+wLwx2hNQAl8DTqj7YOPCNuvRZC/QnbgFtgRA22Y1WFwc7GN/A0kKBFHnXw16hL5pi3bjE1JzfTbRAk0y9sB7fKeBRAnuo8JzQD1Rc2BJPG4rjoCpU9pPdysHp98Mf6JjijXf00VyfuRqpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730906236; c=relaxed/simple;
-	bh=S95d1DVGhFgHevrHa/QaulBHO7dmWGDwrOgPRxWXnoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Aj/T9YTPXpgkmCmqQPqnkazUH+KK/ky9nPlgHtAjz2lA88Pjez/xjsikS6Ogz1sz+DGTPXQjqUfYz0Ktv9uKsBLbFmMRYHfl53Bl1sMH/g6ob4WBiOLd2R1oHxT7QfRMeE8rloKH0Pd95Ksff3VWXfGS+L5CwqRn32iXiIczz6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcvyDC3J; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7aa086b077so876545666b.0;
-        Wed, 06 Nov 2024 07:17:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730906233; x=1731511033; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S95d1DVGhFgHevrHa/QaulBHO7dmWGDwrOgPRxWXnoQ=;
-        b=jcvyDC3J8VMWsE9ugGrPJoH7hEUJwmbNIe6tEUtiafqCQVN7Qm/vL9LhKqH23PKu/k
-         1TU0rNcCjtg0xfmYBmo32rMqEopZGIQaYwHbUCyMe3TwiWxl8pRpaBTn1g4C1dxH40we
-         43gG1a9OdPpDDDMeAVznGZ/b032tKdJTGN+TJacu9h/fuMECGxzZRcECijTCynbZunNJ
-         BKFQK22P+9mWfpxtwZPRwp11G1uGZEPMzQd4NnUtJNms64RyxqZLMOLi8f0SkuECofdn
-         jUHop6/PvfZ0h6hCu5/+mC4dQMBz6i7RHr9MBAiXXkz7u1lhHCkRqh+o5OXNC5dCdPA/
-         oezA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730906233; x=1731511033;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S95d1DVGhFgHevrHa/QaulBHO7dmWGDwrOgPRxWXnoQ=;
-        b=U00AKLLBHEDA4uc03Wa/xtzJCY39Z7mhLSpF1oCC0jPR2dwMDKgPxdOcAYV9tAt0u4
-         J2waCM+pHj3LaAKv9OJCiUXbt3li6fCvhNPKygogDKG+KHujqJHQTelibh3Wa4tt3Krx
-         1gFlrzQgrWT83Uchn2JYixE/4Vn0WcYPkaZ5ATgM26/SJgkuudHH2STgF2qjeUbm4U9r
-         5GrwUn4UtkWlkAg6p/09xrLpmkxaucEhcuBuQIiIPy9JYjiNp1doZ0kCYfQjlSAqji3o
-         E1arWngY9/Coldx/qiic4W1C0RucTHpExtit/l1LpTXrYCTlyDpJoMSCFiujfb7WJHJb
-         32ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWH0O1hth1Bc3UexhCnxrxl8cZpaKKH5KTtIdy9oCNsK13Hswas7wDRmDyplC5AQW65P/ehvvVolTSNoPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuWozPCdjJNGiW0RDwh87zFGjxQ+QBKSXgmsfQ7nQP6DVzjeqv
-	vgfcWyLpDOLcXsDSA/CItNBxCoF7Mi0l8XV+xhKZjCur0qbc/zmjS/wuGdu+MsgoNTtXFcVZear
-	wwX2hGhIvPECY+LIeOQs5THLVyrxCj46p
-X-Google-Smtp-Source: AGHT+IHr44bjMjzGKzBJEYC3WA2Fb4CY7pBUnFZZAYKHoMYadxN7NXQbnXhIpjXlKlqQLFvzD5GEGF4NZ1YUJey2y5U=
-X-Received: by 2002:a17:907:3e99:b0:a99:fb10:1285 with SMTP id
- a640c23a62f3a-a9e3a5a0e19mr2901369366b.20.1730906232637; Wed, 06 Nov 2024
- 07:17:12 -0800 (PST)
+	s=arc-20240116; t=1730906239; c=relaxed/simple;
+	bh=C83+cS1FmxFeYWO4grdtw/TcIlDardzYddF7qf2i1sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dW3XnyJdThfXzRUXK5Capmz0Lr1302JqHdkWLKxMfqCeiglrOuZQsb5NKYLhDsqEzEVlycqRtJyQ/bNCGk1AOSDiwI9RhCno2AcitZM//GYJtbSJ3i2n5qnVhOwKB51m4lG4MDFuUCnCjWW7l4N/zA/Ox2KvBsZQ2pLu9wcH5cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTiVV26D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63FFC4CEC6;
+	Wed,  6 Nov 2024 15:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730906238;
+	bh=C83+cS1FmxFeYWO4grdtw/TcIlDardzYddF7qf2i1sY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UTiVV26DrXcC45caqLHhEMxU5TiEn317mvWJ7DfW+oTrT2FnLowY9e3jA8GcfJRFY
+	 dHBi4abr2dT5J8VsZRZxUoxLEz9kUEhgGxqT1iZ/wa0egKJZqQWLbOnN4cd4/52rmz
+	 7AfwUOaPUEHCV680Mx8SLb5as7x23TWPtPRVJ6CKFoL+FPtKpYrZvQH5guDp++/pbW
+	 myMU1fCXa9jcSWsAFRofcUdf3AZB5Fp72tBmBRcNCfUQNrTWeKHfypt4LUwb0GE4tt
+	 gma2EpI3KYVpQ6brHGU6U1awxLQLyco5HCZUdAP2cfNuqbEOMzUNit7Abafso4hIWm
+	 tf8zNAieC2xrw==
+Date: Wed, 6 Nov 2024 15:17:14 +0000
+From: Simon Horman <horms@kernel.org>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Thomas Kopp <thomas.kopp@microchip.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Sven Schuchmann <schuchmann@schleissheimer.de>,
+	linux-can@vger.kernel.org, kernel@pengutronix.de,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH can v3] can: mcp251xfd: mcp251xfd_get_tef_len(): fix
+ length calculation
+Message-ID: <20241106151714.GR4507@kernel.org>
+References: <20241104-mcp251xfd-fix-length-calculation-v3-1-608b6e7e2197@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-bcwide-v3-0-c2df49a26c45@kernel.org>
-In-Reply-To: <20241030-bcwide-v3-0-c2df49a26c45@kernel.org>
-From: Sebastian Feld <sebastian.n.feld@gmail.com>
-Date: Wed, 6 Nov 2024 16:16:35 +0100
-Message-ID: <CAHnbEGJWtRgPHSRMqEVDgRhvYHeqcHEKxeY=B2mD3W_YjR6zpA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] nfsd: allow the use of multiple backchannel slots
-To: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104-mcp251xfd-fix-length-calculation-v3-1-608b6e7e2197@pengutronix.de>
 
-On Wed, Oct 30, 2024 at 3:50=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> A few more minor updates to the set to fix some small-ish bugs, and do a
-> bit of cleanup. This seems to test OK for me so far.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> Changes in v3:
-> - add patch to convert se_flags to single se_dead bool
-> - fix off-by-one bug in handling of NFSD_BC_SLOT_TABLE_MAX
-> - don't reject target highest slot value of 0
-> - Link to v2: https://lore.kernel.org/r/20241029-bcwide-v2-1-e9010b6ef55d=
-@kernel.org
->
-> Changes in v2:
-> - take cl_lock when fetching fields from session to be encoded
-> - use fls() instead of bespoke highest_unset_index()
-> - rename variables in several functions with more descriptive names
-> - clamp limit of for loop in update_cb_slot_table()
-> - re-add missing rpc_wake_up_queued_task() call
-> - fix slotid check in decode_cb_sequence4resok()
-> - add new per-session spinlock
->
+On Mon, Nov 04, 2024 at 05:42:40PM +0100, Marc Kleine-Budde wrote:
+> Commit b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround
+> broken TEF FIFO tail index erratum") introduced
+> mcp251xfd_get_tef_len() to get the number of unhandled transmit events
+> from the Transmit Event FIFO (TEF).
+> 
+> As the TEF has no head pointer, the driver uses the TX FIFO's tail
+> pointer instead, assuming that send frames are completed. However the
+> check for the TEF being full was not correct. This leads to the driver
+> stop working if the TEF is full.
+> 
+> Fix the TEF full check by assuming that if, from the driver's point of
+> view, there are no free TX buffers in the chip and the TX FIFO is
+> empty, all messages must have been sent and the TEF must therefore be
+> full.
+> 
+> Reported-by: Sven Schuchmann <schuchmann@schleissheimer.de>
+> Closes: https://patch.msgid.link/FR3P281MB155216711EFF900AD9791B7ED9692@FR3P281MB1552.DEUP281.PROD.OUTLOOK.COM
+> Fixes: b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround broken TEF FIFO tail index erratum")
+> Tested-by: Sven Schuchmann <schuchmann@schleissheimer.de>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
-What does a NFSv4.1 client need to do to be compatible with this change?
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Sebi
---=20
-Sebastian Feld - IT secruity expert
+...
 
