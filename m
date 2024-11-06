@@ -1,128 +1,152 @@
-Return-Path: <linux-kernel+bounces-397453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF289BDC46
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:18:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE229BDC42
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:17:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B89828166A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:18:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E531F211C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8788E1DE2A0;
-	Wed,  6 Nov 2024 02:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6501DDA2E;
+	Wed,  6 Nov 2024 02:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rv8INxvM"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGQeYu2/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739E51DDC1C;
-	Wed,  6 Nov 2024 02:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034E11DDA14;
+	Wed,  6 Nov 2024 02:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859081; cv=none; b=FiknUjKbDuCJJq8+na8yiUh6T4F1D+wqOnGC7S6v1vIhMZctqELWu+EXz0DPNTUgBdT5aGZ/LrmVd3uXCGjXd4aqMF8ybSRLIeQIOAaRQS8MMpJFXKSsw/DF+PmNxosXeqAD+tUjK9fE9jkndrYu9yj2wDVMteZpJfrhvlm87Q8=
+	t=1730859074; cv=none; b=DyBHluKUwrmfezNxDEpSSUD6Do/aIezRC6MOZNauQM1A07i3YoYmIDekvM0/izyidLajoarPlXnXUEFO9FsqaPnvd6MJkh7ANuDfcQaNAhBncJXqi/DDJonNyNR/Fz+r8nGGLEiJWVlUkjQCXAAnAAZiKqvwRXR21L6ykewYnww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859081; c=relaxed/simple;
-	bh=obMhTpK3d+UU3JSNJrBtMMUWyHBoU0qKH/rNVB8ORy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZzG4y8cZ5vIosvQsf2Lhjt88Sy6zCemZt8PTE6tt3VLytMdEDD197TK1/wpmIfHQLnEK0TMuL9rudK9M178CJEiYSbnbIk4wt/0CHFfsmrIceUDdjz7r3gxTPF9kHo5srhRnHsTC73Ghy7ptdVVt8A+VQ/FFb2w9svmeCfJ5zd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rv8INxvM; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e30116efc9so4886270a91.2;
-        Tue, 05 Nov 2024 18:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730859080; x=1731463880; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M+BC9bKNYRzaIUhTatFOzGkofunov+kcpxiHDzejgjs=;
-        b=Rv8INxvM+HJ+fje5XpKVqqIARYcvKVMplnNPeUYc9hSCe2nTEwXINLGsZbgD1BDYaf
-         Lzs/gmyKEBg4vMBhcstZGCu4AAw/P8oil4WeDUHUNIyd5TRan6GCxQVgkCEJUwR3OgQc
-         WCLHXpt0lEVScpCiNfMLYe7LJVWJUXfEWwOtN6M1/NoTEw2EJJW0CR8ukjpNQUDoe1rv
-         nn5ZyKjE7yQ5fqPHQQR/pn3j+xTwAjN3qfGXpCI4hsHIIK024O2oNl7XNei+jgGGMszY
-         yHiABSqlJUT16JlCCFqrCCzNYuCMG+YNEZw8d2XlpEtwcy/tGDwtEtxD6z+lMwrl9Ppw
-         Oyyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730859080; x=1731463880;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M+BC9bKNYRzaIUhTatFOzGkofunov+kcpxiHDzejgjs=;
-        b=rvkumE2VW8/UCQHQg9f0krtk3TTJZ02JEeSO5ANrDx867HXlEZTNgasu0qgMSpWqH9
-         LlsLTkCTH/JIZlluVvQZCWj+TbZ06BCoXXZ+QSlwlaJaOMGCk0iaQOoV1t+sy3HkDEY6
-         DV3UGwV+xjsev7qFDyzjFmEEjHPEGNE5B9a3cf/Gp8kArqUTLGWInfhRlJJhT8zZeFs2
-         0cgx/47YMiYYj1p7SDapSy2N412myjzBSCa39ktwqp+D2G0mT7cmSe2EyxOjbtEpS5C5
-         CuorAnro7z+XaH2RYDn17R3e0AS7tjywMB2LcyOn9LhjLoYfqcz1I6OiVw9Z9y9kthf0
-         Ty4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFgkSksiPovFlEvQjcGduxGhkrQdP2o7E6lcXodDl7juY9OK78shrsw17wrLxwq2pwu6PmLXdF/QQEQ0v5Aq5V+Q==@vger.kernel.org, AJvYcCXNRs3ZmOxt1WEmLljrTpXHNlyT7QzC6bU5HGeU5/XZQ1Vj0SmyfGtfaZgPXKZYbZaZrbw=@vger.kernel.org, AJvYcCXXWH0m87DsHhOEztimrgUN2fG3xupRywc4WVeqESBOqOetlIX9e6Hep8isqkMjsoxiaDy4T1Qqr0TIOOkILQPlxR4y@vger.kernel.org, AJvYcCXojluwzjh1NA54BnfxZCKjt4/DpzTZxkcLEHmMK0Bw/+dc9k8QsHCiYlf6wrL3K2ChGf6sMOrPYpFBo0JO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzGWU0OvxU7POxBwhJmm9zD+Ah74BfDu6f1lXQG9EB5K+APO1t
-	hZKCaNPxNuiVcAJt/I7PMIaAgO9fHj6p7clb8etX8GPbj4cXJ0adsVpwoertapd+2uB16EqvJFy
-	gQoagIaenhP6lc91AoDsGgC2akd4=
-X-Google-Smtp-Source: AGHT+IGhuQ0Ki8lFJVw8HHIMRmUd846pjUdGQf6LulmYw2lSFPmOAplOZpFFGIuvUvpuGEld1hpQerhc+3AfhlnAJUo=
-X-Received: by 2002:a17:90b:3848:b0:2e2:aef9:8f60 with SMTP id
- 98e67ed59e1d1-2e8f0d531ffmr41021824a91.0.1730859079752; Tue, 05 Nov 2024
- 18:11:19 -0800 (PST)
+	s=arc-20240116; t=1730859074; c=relaxed/simple;
+	bh=fzCzDevYVLqItwXvQJgE6iP2JEYT39bi5k3NAHgpDWY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MpYOcxkzZwCaQMoczrfFlMfYYr8akqxu3/rRHJgOFqG1tPUVVHUPvwz1i4AeAv9oYM2pG49CCKOdz50AmAuUajn5J5CvYhKMyODLDW3JoUQBSYRadJxYqNW6MpvcVzor/6AT2baHFqmY1uBzxTHrDMnrHKdxsfiy9FHyuwXVzwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lGQeYu2/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 622E8C4CECF;
+	Wed,  6 Nov 2024 02:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730859073;
+	bh=fzCzDevYVLqItwXvQJgE6iP2JEYT39bi5k3NAHgpDWY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lGQeYu2/vMYJQxZOVQbvwSy5m/Yso0HevSW3nv/acTL05PotxjqzsewgCJDQ0Eryz
+	 hW6bNpJk07u/yTL31nRB+fz33DwZui+N6K7D4AJfpAnPgmfBiHvMvaZZ+yeH03OJqP
+	 P0I8i6H9PxE/GnXFF4GiSagGGgNOtHoW3YHEydDypGL0Q16s1dEDxfZmhXjsamE5kK
+	 peKbcQKPXiTgxIiJcnY50nih89oQlprr2NQmCkjYU+F6ULdtYzvySgmrq9xmJYnmd3
+	 JR8t9FdnDMwPCQORw/n4euibRR1xgQOMGocpY+kfcTsDVB/L3SHK7YhAwxeFrbplGn
+	 5+XWP9Dodszyg==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org,
+	snovitoll@gmail.com
+Cc: Alexander Potapenko <glider@google.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: FAILED: Patch "x86/traps: move kmsan check after instrumentation_begin" failed to apply to v6.1-stable tree
+Date: Tue,  5 Nov 2024 21:11:10 -0500
+Message-ID: <20241106021110.182083-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEf4BzarhiBHAQXECJzP5e-z0fbSaTpfQNPaSXwdgErz2f0vUA@mail.gmail.com>
- <ZyH_fWNeL3XYNEH1@krava>
-In-Reply-To: <ZyH_fWNeL3XYNEH1@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 5 Nov 2024 18:11:07 -0800
-Message-ID: <CAEf4BzZTTuBdCT2Qe=n7gqhf3yENZwHYUdsrQP9WfaEC4C35rw@mail.gmail.com>
-Subject: Re: The state of uprobes work and logistics
-To: Jiri Olsa <olsajiri@gmail.com>, Ingo Molnar <mingo@kernel.org>
-Cc: Peter Ziljstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Liao Chang <liaochang1@huawei.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Patchwork-Hint: ignore
+X-stable: review
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 30, 2024 at 2:42=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Wed, Oct 16, 2024 at 12:35:21PM -0700, Andrii Nakryiko wrote:
->
-> SNIP
->
-> >   - Jiri Olsa's uprobe "session" support ([5]). This is less
-> > performance focused, but important functionality by itself. But I'm
-> > calling this out here because the first two patches are pure uprobe
-> > internal changes, and I believe they should go into tip/perf/core to
-> > avoid conflicts with the rest of pending uprobe changes.
-> >
-> > Peter, do you mind applying those two and creating a stable tag for
-> > bpf-next to pull? We'll apply the rest of Jiri's series to
-> > bpf-next/master.
->
->
-> Hi Ingo,
-> there's uprobe session support change that already landed in tip tree,
-> but we have bpf related changes that need to go in through bpf-next tree
->
-> could you please create the stable tag that we could pull to bpf-next/mas=
-ter
-> and apply the rest of the uprobe session changes in there?
+The patch below does not apply to the v6.1-stable tree.
+If someone wants it applied there, or to any other stable or longterm
+tree, then please email the backport, including the original git commit
+id to <stable@vger.kernel.org>.
 
-Ping. We (BPF) are blocked on this, we can't apply Jiri's uprobe
-session series ([0]), until we merge two of his patches that landed
-into perf/core. Can we please get a stable tag which we can use to
-pull perf/core's patches into bpf-next/master?
+Thanks,
+Sasha
 
-  [0] https://lore.kernel.org/all/20241018204109.713820-1-jolsa@kernel.org/
+------------------ original commit in Linus's tree ------------------
 
->
-> thanks,
-> jirka
+From 1db272864ff250b5e607283eaec819e1186c8e26 Mon Sep 17 00:00:00 2001
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Date: Wed, 16 Oct 2024 20:24:07 +0500
+Subject: [PATCH] x86/traps: move kmsan check after instrumentation_begin
+
+During x86_64 kernel build with CONFIG_KMSAN, the objtool warns following:
+
+  AR      built-in.a
+  AR      vmlinux.a
+  LD      vmlinux.o
+vmlinux.o: warning: objtool: handle_bug+0x4: call to
+    kmsan_unpoison_entry_regs() leaves .noinstr.text section
+  OBJCOPY modules.builtin.modinfo
+  GEN     modules.builtin
+  MODPOST Module.symvers
+  CC      .vmlinux.export.o
+
+Moving kmsan_unpoison_entry_regs() _after_ instrumentation_begin() fixes
+the warning.
+
+There is decode_bug(regs->ip, &imm) is left before KMSAN unpoisoining, but
+it has the return condition and if we include it after
+instrumentation_begin() it results the warning "return with
+instrumentation enabled", hence, I'm concerned that regs will not be KMSAN
+unpoisoned if `ud_type == BUG_NONE` is true.
+
+Link: https://lkml.kernel.org/r/20241016152407.3149001-1-snovitoll@gmail.com
+Fixes: ba54d194f8da ("x86/traps: avoid KMSAN bugs originating from handle_bug()")
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
+Cc: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+ arch/x86/kernel/traps.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index d05392db5d0fe..2dbadf347b5f4 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -261,12 +261,6 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 	int ud_type;
+ 	u32 imm;
+ 
+-	/*
+-	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
+-	 * is a rare case that uses @regs without passing them to
+-	 * irqentry_enter().
+-	 */
+-	kmsan_unpoison_entry_regs(regs);
+ 	ud_type = decode_bug(regs->ip, &imm);
+ 	if (ud_type == BUG_NONE)
+ 		return handled;
+@@ -275,6 +269,12 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 	 * All lies, just get the WARN/BUG out.
+ 	 */
+ 	instrumentation_begin();
++	/*
++	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
++	 * is a rare case that uses @regs without passing them to
++	 * irqentry_enter().
++	 */
++	kmsan_unpoison_entry_regs(regs);
+ 	/*
+ 	 * Since we're emulating a CALL with exceptions, restore the interrupt
+ 	 * state to what it was at the exception site.
+-- 
+2.43.0
+
+
+
+
 
