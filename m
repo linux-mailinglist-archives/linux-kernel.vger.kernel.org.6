@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-398361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECADD9BF01F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:27:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E659BF022
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:27:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A63D1C23B7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:27:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27944B23F91
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E34C2022FE;
-	Wed,  6 Nov 2024 14:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65E72022E5;
+	Wed,  6 Nov 2024 14:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glI76d+g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d50ehJic"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909A2201110;
-	Wed,  6 Nov 2024 14:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D222D201256;
+	Wed,  6 Nov 2024 14:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730903241; cv=none; b=Cj1FoXkR9MP9cbmhs3b0BgspzNti5JWZ3V9a9PwQkFftrGf41+VjQyR1QQFgtCqJbYmxzKhQU1qyLgfkUYLAYYqSm/OXzMsH9r84Iu5ssm6B9IjEsZlw/g2PTABS5c80jidh31U0g9Iwyzj1WpSBgN/ZynxzXt0j55xnXzWEOLM=
+	t=1730903251; cv=none; b=Xp2DGexWc9S89GAOAtNAgk0T01AUEUseHHgxPSM8HDpbJSE9VWbuYPIcYZ0GKjvCxQLHGlc64ZTDh9CFLnJXoE8hP8y2C9QHstCVBWjO7cz+SG4D2xAuG3BjOK4NPR0O5NKLGYI1kLBI4Mt/jQsOxf2wuTxU/RreKoverX+iliA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730903241; c=relaxed/simple;
-	bh=EO+tfnoIRUp2u0RgLpFVCzHSffk8Ne+S5BWeP0W6jxo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=D4t2kjLYvI7wRDGTB7UNXUVtJvLaXWnHqIW5MJp5jkagZX2OdaGO2bLRhqxE4rEBNwMbc4FlYM0hQucNQ6bqfQhUc/grARScoHjqoyW+W7EAJ8pqHkSeWbYe69p7zDMw5+okQGc7ZcWDj+tKm5983BSd3H55ue+/22hhfPXRmU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glI76d+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4836BC4CEC6;
-	Wed,  6 Nov 2024 14:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730903241;
-	bh=EO+tfnoIRUp2u0RgLpFVCzHSffk8Ne+S5BWeP0W6jxo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=glI76d+gVOvm0s9xssUBKz+3Tb8/xOC3jKtX8rS3xKc9Q/w+PtKc/fUD+gqLVNO4+
-	 W4BEbYaefFpiQNZdJjV/7RXxpt/ZYxWbr6ZjgrtBlYTPSx8ftaopIY5n80J3yMAJwO
-	 oFSvPkKE2Gkt64taub/99Z0CoC0DojYnfGUPryMHypH3M98zQseSronsLeE4MjrzxJ
-	 yFqSz25EHy1tj4wafiZwI3UI5BcqOWp9rk5nOJvarrrRcCh/K4rs3T6o8mCnIHWOeu
-	 d5LLSGpOb1E87gtYhnbKYRC/WmGpQ5p5+7fqUA8y+Y0WUd698cXDwUjPnyRsI6lHU4
-	 1Zq0/yROX7Erw==
-Message-ID: <4715808e-4066-4e64-979d-2ec75cd0d210@kernel.org>
-Date: Wed, 6 Nov 2024 15:27:15 +0100
+	s=arc-20240116; t=1730903251; c=relaxed/simple;
+	bh=Rv37NiT3+iDJ5CgpqJWaTOJjv4nw5P8z90idJ9ZnGXQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kn4oCR5z7Soxq7x0erGxVdJvEGSfRXUjoYgVwfL+9iT9W9E+ubxBaTo96n3sR7OMjS6b/mpyaaUZVto1OF4hI4zlFGxWmTPMCEhWCH/CrxOf0Sa4b3gPZXT76VM4nYAdv0qlEccAEcW2WYm9gAGy5IVA8gplNmtUAIzEIqZjcFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d50ehJic; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-72097a5ca74so6364556b3a.3;
+        Wed, 06 Nov 2024 06:27:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730903249; x=1731508049; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0JcE14w5p6N0fo4tVcmmC31puUI/DV24DnItGCBT3I0=;
+        b=d50ehJicInFMRGDh5UVL+kCMbNe3ZG8FgIKSHWDuqcJhydmdSe2UVJrS7LOVewAUoZ
+         A1o/AcISTU5EQCQEcUMeU7LGpYgwsHk6236Ml+j2p4WwKxDNw8iD9qCX3Kst1PIr6FpA
+         yf2rH9RFbo/0ZTuP6+9vppbxGmpZ2zgupvmZS/zhF95iyUmtLhKLNE0ePSdxPxTLLucv
+         tPIA8/gcsW945jMRJjNCOySnUtFrpmddIRt+M8c8hcGAuzHZLAy6AbuP690pLQFkybLu
+         0TMHNF2lKXMAv9K9vDmi2RYJ6kAyUi4IpmYOVBH0FqvegUAWjURUit2xRb+7V1gr8sFv
+         t2lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730903249; x=1731508049;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0JcE14w5p6N0fo4tVcmmC31puUI/DV24DnItGCBT3I0=;
+        b=Xc40sEhEdCn5jULHlTz6L/RldmpmE6tB0AFTmpHd6v2fQ2FTe1/m7doQl07J1uUXj5
+         xvxaoR9Ct36OW3eaIszLBaCD7DFrHcQfjP9c4T4sVcd5ACy4wz70jwBqZobkPP/czY69
+         gMpIkHCILeWQXduvXAYdPSNjxO3dazJk75csrtDTq5eztI79pB1DV/Jw3QXfYIQ/hBd/
+         KnpR6CWLQUb7qQ2e5iX7VBv0zvVu9AsLPzbgxOK41o8+oqKRNJ9zip30CWCOKhZzwaD4
+         xAKOni33OFjTlQUOtMqnN0CJqje8ynw5yq5LC9M52zSosTPfNPkTevinoWBvMhiQOi8R
+         rphw==
+X-Forwarded-Encrypted: i=1; AJvYcCUy4tWaZqMbqI0mTD/EVq5XOkKH1kZTwbVsvTfxm+WQg9sBKnlMwuNgWrlZr1DirfImanv43/Z9vtBHkQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiLoVvU5dLfGrrajXdQ1KK8RDAagiOz0x36HyRs0JTvtjmlQh4
+	ENNpN8/NuYzxFmNKpDDATUIsPP2zeaLcy5UmrP8BVe4ZjEnfML9m
+X-Google-Smtp-Source: AGHT+IFg06EqOdCF2rpOYxi14EtM+wTa5t4FQVjglGsXDwwnpcFEc0NFnQQneJknXwmLobufAnZm3A==
+X-Received: by 2002:a05:6a00:3d51:b0:71e:cd0:cc99 with SMTP id d2e1a72fcca58-720c98a1bfamr29992840b3a.4.1730903248950;
+        Wed, 06 Nov 2024 06:27:28 -0800 (PST)
+Received: from Kuchus.. ([27.7.141.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ed2f7sm11843129b3a.64.2024.11.06.06.27.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 06:27:28 -0800 (PST)
+From: Shivam Chaudhary <cvam0000@gmail.com>
+To: richard.genoud@bootlin.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com,
+	Hari.PrasathGE@microchip.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Shivam Chaudhary <cvam0000@gmail.com>
+Subject: [PATCH v2] tty: atmel_serial: Fix typo retreives to retrieves
+Date: Wed,  6 Nov 2024 19:57:20 +0530
+Message-Id: <20241106142720.41351-1-cvam0000@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: can: convert tcan4x5x.txt to DT schema
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241105-convert-tcan-v2-1-4b320f3fcf99@geanix.com>
- <kfcs5hhpkjustyfxxjeecvyw5dbqaqkupppionovdqwyewwdcd@sodle7cc6yv6>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <kfcs5hhpkjustyfxxjeecvyw5dbqaqkupppionovdqwyewwdcd@sodle7cc6yv6>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 06/11/2024 15:24, Krzysztof Kozlowski wrote:
-> On Tue, Nov 05, 2024 at 03:24:34PM +0100, Sean Nyekjaer wrote:
->> +  device-wake-gpios:
->> +    description:
->> +      Wake up GPIO to wake up the TCAN device.
->> +      Not available with tcan4552/4553.
->> +    maxItems: 1
->> +
->> +  bosch,mram-cfg:
-> 
-> Last time I wrote:
-> "You need to mention all changes done to the binding in the commit msg."
-> 
-> Then I wrote again:
-> "Yeah, CAREFULLY [read][//this was missing, added now] previous review
-> and respond to all comments or implement all of them (or any
-> combination). If you leave one comment ignored, it will mean reviewer
-> has to do same work twice. That's very discouraging and wasteful of my
-> time."
-> 
-> Then I wrote:
-> "Where? I pointed out that this is a change. I cannot find it...."
-> 
-> So we are back at the same spot but I waste much more time to respond
-> and repeat the same.
-> 
-> You must address all comments: either respond, fix or ask for
-> clarifications. You cannot leave anything ignored.
-> 
-> I am not going to review the rest.
+Fix typo 'retreives' to 'retrieves' in atmel_serial.c file.
 
-Uh, I am wrong. You did remove the supplies, but I just looked at wrong
-version. Apologies, everything is fine and you did implement my
-feedback. Thank you.
+Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
+---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+v1->v2
+ - Improve subject line.
+ - Improve commit message.
 
-Best regards,
-Krzysztof
+v1: https://lore.kernel.org/all/20241024172300.968015-1-cvam0000@gmail.com/
+
+
+ drivers/tty/serial/atmel_serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index 09b246c9e389..bb1978db6939 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -1166,7 +1166,7 @@ static void atmel_rx_from_dma(struct uart_port *port)
+ 		port->icount.rx += count;
+ 	}
+ 
+-	/* USART retreives ownership of RX DMA buffer */
++	/* USART retrieves ownership of RX DMA buffer */
+ 	dma_sync_single_for_device(port->dev, atmel_port->rx_phys,
+ 				   ATMEL_SERIAL_RX_SIZE, DMA_FROM_DEVICE);
+ 
+-- 
+2.34.1
 
 
