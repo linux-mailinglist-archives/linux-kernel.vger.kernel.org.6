@@ -1,140 +1,148 @@
-Return-Path: <linux-kernel+bounces-398493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170C29BF1E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:41:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6DE9BF1E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:42:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD52D285809
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:41:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604CD1C2202A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF942038C6;
-	Wed,  6 Nov 2024 15:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0B12036F7;
+	Wed,  6 Nov 2024 15:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HInPBgBF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RBSlUJlo"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484F9201273;
-	Wed,  6 Nov 2024 15:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D832022D1
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730907682; cv=none; b=UzZNC8y08cio8x+af0JfLA3bRYogJoGZN3w+VctpjKQM43eN1Pc6yqIshFVV1MgKchmW1VIRAKdz+zRSRCd5MZjTbbLXbKocsgEVRmsHHJEuIIWI0oiQbBXBLSRlDcu185ji3tbWdg6s/3XweTsSuH5SDD25suE1NxLEEHu9cGs=
+	t=1730907750; cv=none; b=Rx/DD4tSHzo9K3T68xk3Ub6rscEb1D92UgMvfUjk/1MWLAjkkfctsPYg8wycuM+xl0E05gBQBAoBKnedPO5X5wpNDxpdJGaw9WuBHO8J5kf1caeh56lCz80OVkd9zwtAagrsVRNOJlMSI4yMV8ffQh14Is9UfJIpBMywvrRi3Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730907682; c=relaxed/simple;
-	bh=bou6xWV3nj9LLXSPhsNdqJ6OEBSUvPCJ1pAIlguOgDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bQhIaWTleffWyMGxCZSJ7P8doLhkW1yKkStLqXNhp+5C6SJ6f6ewlF2485DkQzGcFktzEyYbzeuW9s0HQfWhMPT+2lZE2BBFPmqBWnMkVYqdS9qTWyo2xg+6Bl0T+Sg1TVFntIyp0CjCB5k6LaL1HQ6BwF4tcn6urhenV313xWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HInPBgBF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 917A6C4CEC6;
-	Wed,  6 Nov 2024 15:41:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730907681;
-	bh=bou6xWV3nj9LLXSPhsNdqJ6OEBSUvPCJ1pAIlguOgDs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HInPBgBFKhjpuG5/UXIBDngUtno/HE2jpz+2gBl6zUUlPtVJ/C1X4nvNXHsVO6ggI
-	 9yiMsfMkin+Q39YBw8RoL1bpJY0wvWApMXSp6scyIGPhjeoyz+En0lOuAZNX8K8U30
-	 KF5YV/K3Jw6C6F90LZ3ZHS1L7RIrZAdbwCLpGR0G2EfFvpPlyo3Y6g7LzCxZ226Lwi
-	 OumA7eTwo4LuFcf3A+TehxohEmfQmbeuP1hllO1aUxJPMJ0o5ZVW1NSZ6xmM142NiO
-	 gafBwW1VqQpOjjCWMqzPbIY01Zyujx3Uu1ojVYaiVqFe1uOZTdxEwMutUbpvHxf+Ll
-	 AALYfYfIbybLw==
-Message-ID: <9b265c9b-f101-4ea3-83b6-7709e8f2ea47@kernel.org>
-Date: Wed, 6 Nov 2024 16:41:10 +0100
+	s=arc-20240116; t=1730907750; c=relaxed/simple;
+	bh=rXpfHHtaAD5pTcx1X9at8HJg/Dbu27X0NgaP+4zCyjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQ4d6mEyaH14eSqAR5LSD2s0Gfa83XdS0248jN0EbXKmnrMp7WMfVwShaNAusoeu26ZdNRg7bmogQj3LbDejx7xA8meQbOApghq8b8XF4zFh8xnn45JBpyuhzqJmXPmmsas+8Xz4jIre7/KNJWx/R1rRLGE4lkbpEqwDkYnwcEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RBSlUJlo; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d495d217bso5921768f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:42:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730907747; x=1731512547; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ti7UsIKyZqf2Hot2MVTOlKId95dgb1Zot1pr3BqVVw=;
+        b=RBSlUJloMrVDNAYbrbIn3vGHJE9lNf1kaSwsLfJiQik3MCXxmm33xsnWIKhugy+C2n
+         k9Xto7JyjuoP3AfQ5bFfF0eNTLx2mZsOzjFQwCRwRpDiF0OEJQko/gm1UsxbWecPVSpk
+         hLDcptH5UcnTO74GOS5eIChvYZ50KwCCKzcef5nKYWCzMOL5cr8xJFmWO+QRFUFuB+5N
+         gvHx1hPf/tHEPJufU4GJTapeP0pGj6A4pa1/jbx9cY4MTtidIg+QxTmMA2weyB2Bmd7a
+         U19nlsyzTcLVmTnuzcUCFQl8MUBRzlpkhbtuf8NKNQ/K8qK6nX4bJoD6Y0cMUqWzeL93
+         shvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730907747; x=1731512547;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ti7UsIKyZqf2Hot2MVTOlKId95dgb1Zot1pr3BqVVw=;
+        b=p7iQMD/JoYWd/cptzSe9JymzGCJOesLLaQ3pLs/RbrvD66GFSculRabHEYyGyD5h+d
+         rkT3rSLigVPJaN1be2Wlu/rcAziEuGmJnUt5M1bTcLqsYe+BZCmRzHGiM2LADLPe/sQR
+         o6fh3zX2UAlwwAsp7xay6f+JjU/ngzL9kg+0qh1nUtUkDCcWpZC0a2ZSoWYQmY7W08+T
+         MxDE0xB2XTNdJTje+j/zx6QRt2Io7MPKYnWZCKMfo0tWvMHKkyaOU9Vpt3oJJZzwqfRJ
+         6CER9DtW8HS579opHGSz+jAqCW70ACsL7KVrbICqhPK7taPkhvLbEH/KPuDQRUCFsL75
+         QZGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLlhlKhnFwt/jm+/8pitkKMjdENraQ6Q+U36uS4SCMc4GczzQz+tpb7BdIf7/maa+PDwai9Sm5mPON7mU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjgVRpn2On3MLcgG0R5F7H3ctOYTFO1jWx8VrTP2EVtxdXO2b0
+	25LpMsHhzWZR08cMUnIk7ftTlyUQQFXDr9IFgcidj0mJBxcmKBjtOu2n9zQpg1Q=
+X-Google-Smtp-Source: AGHT+IHL/9OFC3B7xauZzAm3FztTY/x82hTX3rnLuRwwJLNiavrv7/WtChDCcQs0E4+aSR2o60E95Q==
+X-Received: by 2002:a05:6000:156e:b0:37d:61aa:67de with SMTP id ffacd0b85a97d-381c7ac3be6mr20806701f8f.42.1730907746813;
+        Wed, 06 Nov 2024 07:42:26 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6eb5fesm28133095e9.41.2024.11.06.07.42.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 07:42:26 -0800 (PST)
+Date: Wed, 6 Nov 2024 16:42:23 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Markus Schneider-Pargmann <msp@baylibre.com>,
+	Ronald Wahl <ronald.wahl@raritan.com>, Udit Kumar <u-kumar1@ti.com>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH tty-next v3 4/6] serial: 8250: Specify console context
+ for rs485_start/stop_tx
+Message-ID: <ZyuOX4VVbfAFhMfV@pathway.suse.cz>
+References: <20241025105728.602310-1-john.ogness@linutronix.de>
+ <20241025105728.602310-5-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] mptcp: remove the redundant assignment of
- 'new_ctx->tcp_sock' in subflow_ulp_clone()
-Content-Language: en-GB
-To: MoYuanhao <moyuanhao3676@163.com>
-Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev,
- linux-kernel@vger.kernel.org, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org
-References: <20241106071035.2591-1-moyuanhao3676@163.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20241106071035.2591-1-moyuanhao3676@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025105728.602310-5-john.ogness@linutronix.de>
 
-Hi MoYuanhao, Netdev maintainers,
+On Fri 2024-10-25 13:03:26, John Ogness wrote:
+> For RS485 mode, if SER_RS485_RX_DURING_TX is not available, the
+> console write callback needs to enable/disable TX. It does this
+> by calling the rs485_start/stop_tx() callbacks. However, these
+> callbacks will disable/enable interrupts, which is a problem
+> for console write, as it must be responsible for
+> disabling/enabling interrupts.
 
-On 06/11/2024 08:10, MoYuanhao wrote:
-> The variable has already been assigned in the subflow_create_ctx(),
-> So we don't need to reassign this variable in the subflow_ulp_clone().
+It is not clear to me what exactly is the problem. Is the main
+problem calling pm_runtime*() API because it uses extra locks
+and can cause deadlocks? Or is it more complicated?
 
-Good catch, no need to reassign it there.
+IMHO, it would deserve some explanation.
 
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Add an argument @in_con to the rs485_start/stop_tx() callbacks
+> to specify if they are being called from console write. If so,
+> the callbacks will not handle interrupt disabling/enabling.
+> 
+> For all call sites other than console write, there is no
+> functional change.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
+It looks like the code does what the description says. And honestly,
+I do not have any idea how to improve the naming. I would keep
+it as is after reading John's answers in the thread.
 
-I guess this patch is for net-next. Please next time clearly indicate
-for which tree this patch is for, by adding this in the patch prefix:
+IMHO, one thing which makes things comlicated is that
+serial8250_em485_start_tx() and serial8250_em485_stop_tx()
+are not completely reversible operations. Especially,
+the change done by __serial8250_stop_rx_mask_dr() is
+not reverted in serial8250_em485_stop_tx(). It makes
+things look tricky. But I think that it is beyond the scope
+of this patchset to do anything about it.
 
-  [PATCH net-next]
+Just 2 my cents.
 
-See: https://docs.kernel.org/process/maintainer-netdev.html
-
-Also, please try to keep the patch title under ~50 chars.
-
-
-@Netdev maintainers: is it OK for you to apply this small patch in
-net-next directly?
-
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+Best Regaards,
+Petr
 
