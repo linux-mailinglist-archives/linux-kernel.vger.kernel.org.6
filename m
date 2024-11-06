@@ -1,94 +1,76 @@
-Return-Path: <linux-kernel+bounces-398660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3479BF44B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:30:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF049BF454
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21BD2856C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:30:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9C08B232F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199B11917FD;
-	Wed,  6 Nov 2024 17:30:11 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DD0206E9D;
+	Wed,  6 Nov 2024 17:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gcNKZ7i0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97222071FD;
-	Wed,  6 Nov 2024 17:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915AF26AFA;
+	Wed,  6 Nov 2024 17:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730914210; cv=none; b=nJJzVR7uZFbxXxd+qpJEwfWQTGLSmR7wT1xQx3GZANRWTQjlOz15KjxoiYVTlBIUDf3UM2nFbYT02XS3GtFMJueiUz9TX2+jZ7BGPkdiqOjI3GTk4j8B64fDHojUxnYb21OfqmE6rhXXhbFOFxQwCICUkTQONCNAZCALfF5ldME=
+	t=1730914342; cv=none; b=Uf2ktlWi0RJKHjBXa/b8eEk92zqTgLu7WPGmZhe8vvZsRF+Bra8aMf7TC3skvJ/Anxr9lkCbYIGkRho26QSjI8h9gN3gljmP0tVy3EbUQtpkH5bXB6Zz24Kg/HIDJSB2hmJWjqcqfINeYCSvRDzK8t26R6ty8lafjptREy4DKRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730914210; c=relaxed/simple;
-	bh=7ED50qs/dwz/5BIJaayodwVGqZmunq9nk0KaYaeTWkM=;
+	s=arc-20240116; t=1730914342; c=relaxed/simple;
+	bh=i+k9vjCFv3LU1RPAjVEeMMk8SXDWCo+j5ZaGAu7lfjA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RUe1YdBFlIWagPa4B89Cn24cXvJkgdXSsE+KP8b7/QAWPRb6u/wN5D/VFB5kLA7N1Dm6BotIMyMSgMFqDcfst0cantFlHzBcvnXkfG87rswcudpvYohjS9Td/4jeUs0DbrQ686DgduF8HjYLv+mEQWkCty7Pcw78rBKq550nodI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 2C5A21C00BD; Wed,  6 Nov 2024 18:30:07 +0100 (CET)
-Date: Wed, 6 Nov 2024 18:30:06 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hagar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/126] 6.1.116-rc1 review
-Message-ID: <ZyunnhDQz/SGly5A@duo.ucw.cz>
-References: <20241106120306.038154857@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eeFM7WSeH5Lellpnkk9ayycpQcqmX1Vg5Ns5LhwM5RW0tGp/cYHYraiOpOcAdaWaQ+ZQ8rsxrH+Bf8ja3nKusqYbC/siq4mw0r2JoAoWSUd3OkNi1+kGC465GqsVPhhAXS8JjlDLb4bDckXiIdMmcDHnQo1m6kDTD5aFGcJgjSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gcNKZ7i0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=yq9pHwwDX9h6c6DAIXavhiSq0K9iQ69fUsgE1qHT2I4=; b=gcNKZ7i0kN3GNPbf5drsTC3sgY
+	M8LVxx5MMrxE8ZOH4Swmw664vphhFS4HJ1DE1khsCAt8X1RCAGjPkqFF2RB7ierelWo7eduKcjm8i
+	Tul5WL+Gd8Xhh4gujqXAcaT84kGlm3d5H4FCVLAwAqrOcDygLnd7dSpoBcvo1JbYMPXc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t8jsv-00CMVl-QN; Wed, 06 Nov 2024 18:32:01 +0100
+Date: Wed, 6 Nov 2024 18:32:01 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sanman Pradhan <sanman.p211993@gmail.com>
+Cc: netdev@vger.kernel.org, alexanderduyck@fb.com, kuba@kernel.org,
+	kernel-team@meta.com, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	mohsin.bashr@gmail.com, sanmanpradhan@meta.com,
+	andrew+netdev@lunn.ch, vadim.fedorenko@linux.dev,
+	jdamato@fastly.com, sdf@fomichev.me, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] eth: fbnic: Add PCIe hardware statistics
+Message-ID: <683c8ffd-6766-4ad3-8049-0defaff7295f@lunn.ch>
+References: <20241106002625.1857904-1-sanman.p211993@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IvDv0KzJkbF3ZGLA"
-Content-Disposition: inline
-In-Reply-To: <20241106120306.038154857@linuxfoundation.org>
-
-
---IvDv0KzJkbF3ZGLA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241106002625.1857904-1-sanman.p211993@gmail.com>
 
-Hi!
+> +struct fbnic_hw_stat {
+> +	struct fbnic_stat_counter frames;
+> +	struct fbnic_stat_counter bytes;
+> +};
 
-> This is the start of the stable review cycle for the 6.1.116 release.
-> There are 126 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+I don't think this belongs in this patch, since the PCIe counters
+don't seem to have anything to do with frames or bytes.
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---IvDv0KzJkbF3ZGLA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZyunngAKCRAw5/Bqldv6
-8kX4AJ9kki3HaeaS81WQGawkRe3USaKiKwCfWmp5ZJtCFb7se1XSk9cg5dmwbIs=
-=rRgm
------END PGP SIGNATURE-----
-
---IvDv0KzJkbF3ZGLA--
+	Andrew
 
