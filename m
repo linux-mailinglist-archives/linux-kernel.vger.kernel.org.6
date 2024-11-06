@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-398362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E659BF022
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:27:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170EA9BF039
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27944B23F91
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:27:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA27DB24B89
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65E72022E5;
-	Wed,  6 Nov 2024 14:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8D12036E9;
+	Wed,  6 Nov 2024 14:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d50ehJic"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="nqJWy2wM"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D222D201256;
-	Wed,  6 Nov 2024 14:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A233E2022F5;
+	Wed,  6 Nov 2024 14:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730903251; cv=none; b=Xp2DGexWc9S89GAOAtNAgk0T01AUEUseHHgxPSM8HDpbJSE9VWbuYPIcYZ0GKjvCxQLHGlc64ZTDh9CFLnJXoE8hP8y2C9QHstCVBWjO7cz+SG4D2xAuG3BjOK4NPR0O5NKLGYI1kLBI4Mt/jQsOxf2wuTxU/RreKoverX+iliA=
+	t=1730903341; cv=none; b=AZfnYjWRm8AcpXtSUJqLVlfuogWHaECQSOe/G8RYcN0uiu6EzUseB8symjLCwy9flHVa03YTN5PWyb3xrv4S5JhRJjGOefF5Zx2ALo46G7Y+Ne9LemCXFAKhVJCfp0FCCgahrESUUumyXI/LDU5smQuDZZA76kZP+rdYzH943l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730903251; c=relaxed/simple;
-	bh=Rv37NiT3+iDJ5CgpqJWaTOJjv4nw5P8z90idJ9ZnGXQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kn4oCR5z7Soxq7x0erGxVdJvEGSfRXUjoYgVwfL+9iT9W9E+ubxBaTo96n3sR7OMjS6b/mpyaaUZVto1OF4hI4zlFGxWmTPMCEhWCH/CrxOf0Sa4b3gPZXT76VM4nYAdv0qlEccAEcW2WYm9gAGy5IVA8gplNmtUAIzEIqZjcFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d50ehJic; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-72097a5ca74so6364556b3a.3;
-        Wed, 06 Nov 2024 06:27:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730903249; x=1731508049; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0JcE14w5p6N0fo4tVcmmC31puUI/DV24DnItGCBT3I0=;
-        b=d50ehJicInFMRGDh5UVL+kCMbNe3ZG8FgIKSHWDuqcJhydmdSe2UVJrS7LOVewAUoZ
-         A1o/AcISTU5EQCQEcUMeU7LGpYgwsHk6236Ml+j2p4WwKxDNw8iD9qCX3Kst1PIr6FpA
-         yf2rH9RFbo/0ZTuP6+9vppbxGmpZ2zgupvmZS/zhF95iyUmtLhKLNE0ePSdxPxTLLucv
-         tPIA8/gcsW945jMRJjNCOySnUtFrpmddIRt+M8c8hcGAuzHZLAy6AbuP690pLQFkybLu
-         0TMHNF2lKXMAv9K9vDmi2RYJ6kAyUi4IpmYOVBH0FqvegUAWjURUit2xRb+7V1gr8sFv
-         t2lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730903249; x=1731508049;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0JcE14w5p6N0fo4tVcmmC31puUI/DV24DnItGCBT3I0=;
-        b=Xc40sEhEdCn5jULHlTz6L/RldmpmE6tB0AFTmpHd6v2fQ2FTe1/m7doQl07J1uUXj5
-         xvxaoR9Ct36OW3eaIszLBaCD7DFrHcQfjP9c4T4sVcd5ACy4wz70jwBqZobkPP/czY69
-         gMpIkHCILeWQXduvXAYdPSNjxO3dazJk75csrtDTq5eztI79pB1DV/Jw3QXfYIQ/hBd/
-         KnpR6CWLQUb7qQ2e5iX7VBv0zvVu9AsLPzbgxOK41o8+oqKRNJ9zip30CWCOKhZzwaD4
-         xAKOni33OFjTlQUOtMqnN0CJqje8ynw5yq5LC9M52zSosTPfNPkTevinoWBvMhiQOi8R
-         rphw==
-X-Forwarded-Encrypted: i=1; AJvYcCUy4tWaZqMbqI0mTD/EVq5XOkKH1kZTwbVsvTfxm+WQg9sBKnlMwuNgWrlZr1DirfImanv43/Z9vtBHkQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiLoVvU5dLfGrrajXdQ1KK8RDAagiOz0x36HyRs0JTvtjmlQh4
-	ENNpN8/NuYzxFmNKpDDATUIsPP2zeaLcy5UmrP8BVe4ZjEnfML9m
-X-Google-Smtp-Source: AGHT+IFg06EqOdCF2rpOYxi14EtM+wTa5t4FQVjglGsXDwwnpcFEc0NFnQQneJknXwmLobufAnZm3A==
-X-Received: by 2002:a05:6a00:3d51:b0:71e:cd0:cc99 with SMTP id d2e1a72fcca58-720c98a1bfamr29992840b3a.4.1730903248950;
-        Wed, 06 Nov 2024 06:27:28 -0800 (PST)
-Received: from Kuchus.. ([27.7.141.222])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ed2f7sm11843129b3a.64.2024.11.06.06.27.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 06:27:28 -0800 (PST)
-From: Shivam Chaudhary <cvam0000@gmail.com>
-To: richard.genoud@bootlin.com,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	Hari.PrasathGE@microchip.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Shivam Chaudhary <cvam0000@gmail.com>
-Subject: [PATCH v2] tty: atmel_serial: Fix typo retreives to retrieves
-Date: Wed,  6 Nov 2024 19:57:20 +0530
-Message-Id: <20241106142720.41351-1-cvam0000@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730903341; c=relaxed/simple;
+	bh=TUBw2uIBrv3P6Vu94x6Bt/3l45ZfpEg6eDWmfn9rJmo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iIKbY2qkUCRr2o3mPa3FwRFniCouUZGX33yh1Vix01NWc5Vgz0h3FvdN9px9TB2AUVINHYnm+zGEnADYHhagseB+zJ0sBswsWV1CiYrwnMxBJY6wVJtmMaKHuF8sdEqCgkS7nYYHWmisBQAXA8C3k9l3rFh4NnkF+jsDNF1nb+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=nqJWy2wM; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4A01A42C18
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1730903333; bh=zlLF8omotvZApa3hMNvREdMOe0PP8IHuj07kcO93LH8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nqJWy2wMQC+qyxsFeZd2htuNSXGlVPULYqAA/CcvISYCFX0T2rWntfYHfE70jEhen
+	 P8blfMtfeyKT8jSp2nHOy44EJOFU7MO+V4kMdMutmUXqrp1+VSKu58gQMWPqtzUJ5k
+	 q8mnDiWouD1ZyNrrZeTw8Ye3GYze3sB6jWAw0j4MsesXS2X4zidgyvqZ3+iXbJoyAC
+	 hFfVpLi9xBqyEmwlY7FEn7nLR/SZ9LjTomWz091R1zWGsql4zq9WrO2D0H6gIHDI1l
+	 5IO9d+5zNrJJ1aCwjUK2mnqnq2fkYPgGX+g58dKfTQvAcqPnUUXYw3/VneiJZ6uCGe
+	 SxvKSJooXfzgQ==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 4A01A42C18;
+	Wed,  6 Nov 2024 14:28:53 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dragan Simic <dsimic@manjaro.org>, apw@canonical.com, joe@perches.com
+Cc: dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com,
+ workflows@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, wens@csie.org, dsimic@manjaro.org
+Subject: Re: [PATCH v2 0/3] Make Helped-by tag supported
+In-Reply-To: <cover.1730874296.git.dsimic@manjaro.org>
+References: <cover.1730874296.git.dsimic@manjaro.org>
+Date: Wed, 06 Nov 2024 07:28:52 -0700
+Message-ID: <87h68k4esb.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Fix typo 'retreives' to 'retrieves' in atmel_serial.c file.
+Dragan Simic <dsimic@manjaro.org> writes:
 
-Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
----
+> This is a short series that adds Helped-by tag to the list of accepted
+> tags in scripts/checkpatch.pl, and describes the intended use of this new
+> tag in Documentation/process/submitting-patches.rst.
+>
+> The proposed Helped-by tag fits well to indicate someone had helped with
+> the development of a patch, to the level that doesn't warrant providing
+> a Co-developed-by tag, but is much more than it would've been indicated
+> by providing a Suggested-by tag.
 
-v1->v2
- - Improve subject line.
- - Improve commit message.
+The documentation is meant to cover our existing conventions, rather
+than to drive new ones - usually, at least.  There are exactly 11
+commits in the history with Helped-by, suggesting we're not really at an
+established convention at this point.  Given that there has been some
+resistance to inventing new tags, are we sure that we want this one?
 
-v1: https://lore.kernel.org/all/20241024172300.968015-1-cvam0000@gmail.com/
+Thanks,
 
-
- drivers/tty/serial/atmel_serial.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 09b246c9e389..bb1978db6939 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -1166,7 +1166,7 @@ static void atmel_rx_from_dma(struct uart_port *port)
- 		port->icount.rx += count;
- 	}
- 
--	/* USART retreives ownership of RX DMA buffer */
-+	/* USART retrieves ownership of RX DMA buffer */
- 	dma_sync_single_for_device(port->dev, atmel_port->rx_phys,
- 				   ATMEL_SERIAL_RX_SIZE, DMA_FROM_DEVICE);
- 
--- 
-2.34.1
-
+jon
 
