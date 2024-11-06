@@ -1,98 +1,113 @@
-Return-Path: <linux-kernel+bounces-398978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401CE9BF8CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:02:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5569BF8CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E85D1C21C32
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:02:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F15211C21D3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8F2205AB4;
-	Wed,  6 Nov 2024 22:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78601DFE13;
+	Wed,  6 Nov 2024 22:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kHW6ciBR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJsGY8/n"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02DE1D0E23
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F961D0E23;
+	Wed,  6 Nov 2024 22:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730930532; cv=none; b=oKIqlH7vHTiJ7Qyt0qBmEgWcDAuRu7KXg1ImPXA11k7oeSd+t//SJYnNmT3+glaoYKfi3nEdv+bhPABCy1cITjCd1dGDpYztVRFJgriZh2nx1yRQk7dZA14n+toDNrd0+y+Jg6QVH0PxuqZJy8DLwjJ5nxzImgVAEGx4vdvGmpo=
+	t=1730930620; cv=none; b=bbys8lGqjXDCLrKAqn3RxkfUEiKMJ7Tu31d/aBBNUIpEIebvhP6xc/6fSRyQh4jmXsmmEyxyqNIuTcMWcaUiI1QX1fEzJSLImUJ//BXoJHSPnDASMNXCT0TaVWmCelkb31IpKqKFkwI1/U+zRCBm+UIrMODcrGmtkxzfODzRx3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730930532; c=relaxed/simple;
-	bh=qQomBuQN4Q81ObHmsV989becOTbHMcs1fG5+uVha8/s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=EmUeEaxZUXuoDeq1ExoedCn17oS+oEWI/fq2j7kW+xwekC4fmJVYqPPlA8X0+6hI+vgOWLXjiKgHgAGi/yjQOUzTknW5L3buL+nkid//SgiH7XGOgikvRcnJ6aWAcszLMydyT/NsvKDhPxWGn9POHnPSN6r+GL1MmAGpKQyNmuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kHW6ciBR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9456AC4CEC6;
-	Wed,  6 Nov 2024 22:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730930532;
-	bh=qQomBuQN4Q81ObHmsV989becOTbHMcs1fG5+uVha8/s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kHW6ciBRy1vtLDHEZh8B8siDDtOV9Uwhq6QqqFCpUDHK1lO2G2L0MDuje4PXoU1rE
-	 xy9DUV5UvujjGYKBvNgc7ghd7OE4yL/JrIhquwsg7IjRMg22vXxlJ4wUIacpeoWbJu
-	 lPrJ4Rl5+p2ftgh8ljEIEoI51eRIesaepqkVmbkc=
-Date: Wed, 6 Nov 2024 14:02:11 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, Johannes Weiner
- <hannes@cmpxchg.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Barry Song <v-songbaohua@oppo.com>, Nhat Pham <nphamcs@gmail.com>, Usama
- Arif <usamaarif642@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>,
- Yosry Ahmed <yosryahmed@google.com>, Hailong Liu <hailong.liu@oppo.com>,
- David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>, Shakeel Butt
- <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
- "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
- Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [PATCH v3] mm: count zeromap read and set for swapout and
- swapin
-Message-Id: <20241106140211.a1272fe0e23d99d7c37b7751@linux-foundation.org>
-In-Reply-To: <CAGsJ_4zLv=HpPL3g085vUaMo8tZZnPZBGT_SfLVCV-10zn+D3Q@mail.gmail.com>
-References: <20241105211934.5083-1-21cnbao@gmail.com>
-	<20241106150631.GA1172372@cmpxchg.org>
-	<CAGsJ_4zYiRzG6mBnW-2wh7YCo_PJQc7u1syd05DNdic7MaE7Zw@mail.gmail.com>
-	<20241106124225.632b42c3680cae0b940d2871@linux-foundation.org>
-	<CAGsJ_4xoHbg+6CtGhC7dPePPC44OMH8azQsOWMEJnXpCQs=bDQ@mail.gmail.com>
-	<20241106134446.aaadc57a2a88c9efe899c838@linux-foundation.org>
-	<CAGsJ_4zLv=HpPL3g085vUaMo8tZZnPZBGT_SfLVCV-10zn+D3Q@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730930620; c=relaxed/simple;
+	bh=YJWjwpYXHiV2SY6PkifU5htAknhaTr+41+oZ8yNDjec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N8R+hjtSxZ3fJSXXTVFjFOa1SD0Bu3YacxCybU5OcPzaUuEZJrYH+uosc9LCWMzuSrkB7gXWwvhE3K07b40t08kZaFtBmRCgYmj+plFm+hFx88zVXnTSiPvSvK54x5Pbyy5gzcZqN/lPNCydXMX1GWA1Ac1Uo9TgZF6QWFosf9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJsGY8/n; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso4149941fa.3;
+        Wed, 06 Nov 2024 14:03:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730930616; x=1731535416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qIj8QYqUkzDrkpjYMB5/jbWypSblXkiBacZ+ENgTse8=;
+        b=bJsGY8/n3VleB9mlZF6zSaDj7+seQpLOB1ophK1eXg7hQXnzV/y9JOgTCn1ZOSwFDy
+         T+LJCcLG2XTFl+dON8j85bRIW7vrJDmq0UXoKF1T9SI8wf+3a45qe7P46O4Y/wgc4Xgv
+         sdMQxY8P2pvjIp54o8S0F+aLUQpx7bnehS97zFm+Uz4BSvV99DGCeXe5/r6ZJTuUZytt
+         HSPilyaUS5XR624/TER+v8yaEn4V+CzBcFPmK4Os5pYLGMGgM/mN1ky57S0pTIRg1KMl
+         NeaK+3+5/ix8+yYDDr6ZrqL7fMyQ2TQ0k3Q6ElCJJIPXsea8L+U3Z7vGzlo39lFkc0Aa
+         XwoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730930616; x=1731535416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qIj8QYqUkzDrkpjYMB5/jbWypSblXkiBacZ+ENgTse8=;
+        b=KLdJJrhikfvLrZtB6aF0XO1YHjusfd7d9FfDBF2ERsxnFw0PGiEiGPgyvgIWhY67uq
+         OCXivVSjSBt208gqEfGNWLbD45q9+ctkm6oWbdnVB/bXL6/jVOUw2czHEH6VRAO+WiNe
+         gPwJt/ZyOosO95ILV3WqGzi4Myn8XmejtTbBThJVIDMUtJQV3OXmj7xCSbm4dwwcw8Em
+         t2EPaQ2Jf3+lQ/FJzGgyEVEd8ClZH08TWr9CULf28OGjGCKxYIKj1SBM7kojgYvv7lOD
+         ghIXI7+Ogc7AcDxdWiRg4e14DaEtvS7gInEuCS16iwxCtIT8Fo1A/SYiVKCkyZ3vMMDn
+         VCww==
+X-Forwarded-Encrypted: i=1; AJvYcCVxXv8vrThEVVF3AFDaGu2k5szjFEYzzVgZuEMVFDREC0vH/KE3wYTtyxiatZIjWt5d25A21KhASMDx83Q=@vger.kernel.org, AJvYcCXeZCBhDMeFXh9CbB+sdmf9Pv24Qqp5IadcRg7Ofsyz02wlP/eUt8JEm1dyqpx/QvW7FgYKxPbs7VRreg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YziAHI1o8mCP/h9aaQc/egXq2KDbH3ZiAsgsmCOGxL52OFsP9CK
+	NcVgmASmqaGJMcCOa4KSzy//cw9IWenGZu4kKNdAicHdij+scr3MJl25E0BTRVY01w8280mUSrg
+	3R/W/8TOT9q8ROVlcp/Mfx3hxTuQ=
+X-Google-Smtp-Source: AGHT+IEO77gOQ5lnKmiwOtNspVF7cv9Ls5keQEslYlOuWg0QevYlxNqB8qZZzxFkVY4hpuh+azhtXwKZaLz1TB3Qp9M=
+X-Received: by 2002:a2e:be0c:0:b0:2fa:d84a:bda5 with SMTP id
+ 38308e7fff4ca-2fedb794b84mr154563801fa.7.1730930616224; Wed, 06 Nov 2024
+ 14:03:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20241106015441.995014-1-anishkmr@amazon.com> <ZyusEX3Pad8DTAk+@duo.ucw.cz>
+In-Reply-To: <ZyusEX3Pad8DTAk+@duo.ucw.cz>
+From: anish kumar <yesanishhere@gmail.com>
+Date: Wed, 6 Nov 2024 14:03:24 -0800
+Message-ID: <CABCoZhDAg1LfUZ1XCTFkR=TbHEUn=yOQRqrugzDK5Apge3JVPw@mail.gmail.com>
+Subject: Re: [PATCH] leds: driver for O2 Micro LED IC
+To: Pavel Machek <pavel@ucw.cz>
+Cc: anishkmr@amazon.com, dmurphy@ti.com, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Karthik Poduval <kpoduval@lab126.com>, 
+	Yue Hu <yhuamzn@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 7 Nov 2024 10:53:11 +1300 Barry Song <21cnbao@gmail.com> wrote:
+On Wed, Nov 6, 2024 at 9:49=E2=80=AFAM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> Hi!
+>
+> > +++ b/Documentation/devicetree/bindings/leds/leds-ozl003.txt
+> > @@ -0,0 +1,23 @@
+> > +*O2 Micro Compact LED Strobe Light Controller
+> > +
+> > +Compact LED strobe light controller, can be controlled by I2C or via a
+> > +PWM gpio controlled.
+> > +
+> > +Required properties:
+> > +- compatible : "o2micro,ozl003"
+>
+> o2micro needs to be registered as a prefix somewhere.
 
-> 
-> Kanchana's commit 'mm: change count_objcg_event() to count_objcg_events()'
-> changes count_objcg_event() to count_objcg_events() and supports
-> nr_pages more than 1. This is what we need for the minimal patch of
-> fixing zeromap
-> as zeromap could be nr_pages > 1 for large folios.
-> 
-> So my question is that, do I combine Kanchana's change into my patch
-> and send a single patch, or do I send a patch series with 2 patches:
-> 
-> 1: Kanchana's mm: change count_objcg_event() to count_objcg_events()
-> 2: mm: count zeromap read and set for swapout and swapin
+Wondering if adding hereDocumentation/devicetree/bindings/vendor-prefixes.y=
+aml
+not sufficient? I added that in the same patch though, I guess
+I will have to split the patch to add that first and then the
+driver.
 
-A single self-contained backportable patch is preferable, please.
-
-> If we combine them into a single patch, I'll need to incorporate the changes
-> from 1 into 2. I'm also unsure how to acknowledge Kanchana's contribution
-> —perhaps mark it as co-developed?
-
-Sure.
-
+>
+> Best regards,
+>                                                                 Pavel
+> --
+> People of Russia, stop Putin before his war on Ukraine escalates.
 
