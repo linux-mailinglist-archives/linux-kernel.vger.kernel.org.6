@@ -1,202 +1,199 @@
-Return-Path: <linux-kernel+bounces-398684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528309BF4A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 009069BF4AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75DDD1C21430
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F28501C22362
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ABE2076DF;
-	Wed,  6 Nov 2024 17:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F8A207A26;
+	Wed,  6 Nov 2024 17:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DF+meZZN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VilI7UWP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DA6205E11;
-	Wed,  6 Nov 2024 17:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928A02036E2
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730915583; cv=none; b=oN2Lm7aBL9gSsu81qO5AGaBW4sv0CefULHBGANNvGOEnzOkMSsUNzRKOJRYNL0Ih/31DiLOAJFEF8Ck+5xHkWZPDgVr3/dYoNvbijilosivLQcFCBVorujbsNgoRPKCJStXo0vf2Pduc5qRL0fy2kLGDzVxrb1AYnolOfjxBYVg=
+	t=1730915675; cv=none; b=czHhmxupUBCr/w1di5TTazubWrU1kwKrpO3WdoUYiWFQ8PjJnWnpQ2hoib8wSBQMzbCDbhyC8HTc4uY9h8nTdmxwW2NRoyXuQ8rTLm3rHGRlNmF7C8MAR3YzVsR3tYPKUmQBZ0EH8PeFot8U9FRTRioeHaWkuQjoQgYJAvofUb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730915583; c=relaxed/simple;
-	bh=hI5g072hwyeIma5XJ1a6SD58g7lhAxNM4XIWHVAuGN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Yii7b7aAeiwjj0zh6R5t5+9+08mytTdhGNctzK26/5py20U7Irx+jJ08OR5pmmdbL1swNxL0KnpN+1Ix7AIue1cayfmI7NT7R/TJIUT5B8EAWBpP0Kbvh8mVKM0uQHBiFTefhtojRweyPUefCZXvIISL0r2PRM+dCWfvvsycfig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DF+meZZN; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730915675; c=relaxed/simple;
+	bh=cDz3GbfOlnxsDFkNUWxFouzEfiwqYtJwJJki0uFIs1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DD5YWLpT02CO/0sSVUBQQbmHPgcxRxqXB23PaaF2fqQDZ7hG83RD7tsHVms4b9jmZn3H/cgkc0hTxGU179Ti/TUrB2U1WTDdgCProuwVXA4Q47gx1eu3glAIKBMfXavNmbGY32BTc/D+h/oVLg0NhZ9CxHi77LNJ6Or7sIIPGLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VilI7UWP; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730915582; x=1762451582;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=hI5g072hwyeIma5XJ1a6SD58g7lhAxNM4XIWHVAuGN4=;
-  b=DF+meZZN9kTt10F08fFjNk+gY2yTtNcBFlCQAIUTmnXLuLo2dW32j8Dl
-   ParJM2xRTppQrhvVNMuP6ZApU4zV7qpC/i6dYX8+4FMBBgL4cPkc/3C2c
-   KaJnoCkGQd7pX/ngzEin8mRlRmmjpVI4+trXfQZzj9fdWox1eIxiL9hgD
-   EFWuyv5y7BPxyM+F4NMd8DsI4iSRzVnlQQRgHLZV3inNyFHn+TVfZ33sN
-   oREdTNcM8oizAH+7fDV1PK+tsPUb/ig9i7jj8kIyi5DD2f9J7wHDbykFL
-   JHeptxZoiToU9/nNWTRnA4klAU6t1dcUb7/QwBbKf93cSgMsBU0CVWK9s
-   Q==;
-X-CSE-ConnectionGUID: BvUxMyT2RIuPqzNxiRq7Yg==
-X-CSE-MsgGUID: oVs67PILQHa2SMXIX1JbCA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="34508431"
+  t=1730915673; x=1762451673;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cDz3GbfOlnxsDFkNUWxFouzEfiwqYtJwJJki0uFIs1k=;
+  b=VilI7UWPfQV9sT+1bGw2MeVyjJTXL/869c7spv7SQemJZ3NYfBw2vMQB
+   +jnLWmG9aEy9M8zlsl8K35BOcatjckFPUN71Hk1fRqDzWqOStvUyt8SwR
+   QSSWo4Zioe1fM45MUfUn+qCNN7h+tRPn6geIz6nutivkFCu+vRYtcVYkQ
+   zdBGNnZnYEk+GzrRJwTTsf2D5rftv2XLF8MBPgMK70rltd7hmrrqti41U
+   DINruTCkKGBOcl68RPlBd/XxhhAVb6Zuc7OTY403mVtWEY7vdRIgACwxX
+   AvROC2RIyeKVnGpB4fkWiyShyLBJlbYhVw+X9Hfc/xezz/9uCYF64C85X
+   A==;
+X-CSE-ConnectionGUID: hHvsxDbeQt69EFcV7RjUnA==
+X-CSE-MsgGUID: DjYsRm6fSnKR2443azENPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="48246433"
 X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="34508431"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:53:01 -0800
-X-CSE-ConnectionGUID: eb2KSZ/AS+mBYMbhDjrXUg==
-X-CSE-MsgGUID: ay4pzBApS9OUG1m5EtDkfw==
+   d="scan'208";a="48246433"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:54:33 -0800
+X-CSE-ConnectionGUID: YZVQo7FOSumGqTal8BzSCQ==
+X-CSE-MsgGUID: 7nCFTiLDSaaGVdNjepMI+Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="84203631"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:53:00 -0800
-Received: from [10.212.82.230] (kliang2-mobl1.ccr.corp.intel.com [10.212.82.230])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 509E820B5703;
-	Wed,  6 Nov 2024 09:52:58 -0800 (PST)
-Message-ID: <244b4c80-2ab2-4248-b930-22fea9ed6429@linux.intel.com>
-Date: Wed, 6 Nov 2024 12:52:56 -0500
+   d="scan'208";a="115516600"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 06 Nov 2024 09:54:30 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8kEd-000pFe-0h;
+	Wed, 06 Nov 2024 17:54:27 +0000
+Date: Thu, 7 Nov 2024 01:53:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Liviu Dudau <liviu.dudau@arm.com>,
+	Boris Brezillon <bbrezillon@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] drm/panthor: Lock XArray when getting entries for heap
+ and VM
+Message-ID: <202411070115.YPuBa5QX-lkp@intel.com>
+References: <20241106120748.290697-1-liviu.dudau@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/22] perf jevents: Add tsx metric group for Intel
- models
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Perry Taylor <perry.taylor@intel.com>, Samantha Alt
- <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>,
- Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
-References: <20240926175035.408668-1-irogers@google.com>
- <20240926175035.408668-7-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240926175035.408668-7-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106120748.290697-1-liviu.dudau@arm.com>
+
+Hi Liviu,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on linus/master v6.12-rc6 next-20241106]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Liviu-Dudau/drm-panthor-Lock-XArray-when-getting-entries-for-heap-and-VM/20241106-200841
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20241106120748.290697-1-liviu.dudau%40arm.com
+patch subject: [PATCH] drm/panthor: Lock XArray when getting entries for heap and VM
+config: x86_64-buildonly-randconfig-002-20241106 (https://download.01.org/0day-ci/archive/20241107/202411070115.YPuBa5QX-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070115.YPuBa5QX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411070115.YPuBa5QX-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/panthor/panthor_heap.c:9:
+   In file included from drivers/gpu/drm/panthor/panthor_device.h:10:
+   In file included from include/linux/io-pgtable.h:6:
+   In file included from include/linux/iommu.h:10:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: error: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Werror,-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: error: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Werror,-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/gpu/drm/panthor/panthor_heap.c:354:57: error: declaration of 'struct pathor_heap_pool' will not be visible outside of this function [-Werror,-Wvisibility]
+     354 | static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
+         |                                                         ^
+   drivers/gpu/drm/panthor/panthor_heap.c:358:15: error: incomplete definition of type 'struct pathor_heap_pool'
+     358 |         xa_lock(&pool->xa);
+         |                  ~~~~^
+   include/linux/xarray.h:536:34: note: expanded from macro 'xa_lock'
+     536 | #define xa_lock(xa)             spin_lock(&(xa)->xa_lock)
+         |                                             ^~
+   drivers/gpu/drm/panthor/panthor_heap.c:354:57: note: forward declaration of 'struct pathor_heap_pool'
+     354 | static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
+         |                                                         ^
+   drivers/gpu/drm/panthor/panthor_heap.c:359:22: error: incomplete definition of type 'struct pathor_heap_pool'
+     359 |         heap = xa_load(&pool->xa, id);
+         |                         ~~~~^
+   drivers/gpu/drm/panthor/panthor_heap.c:354:57: note: forward declaration of 'struct pathor_heap_pool'
+     354 | static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
+         |                                                         ^
+   drivers/gpu/drm/panthor/panthor_heap.c:360:17: error: incomplete definition of type 'struct pathor_heap_pool'
+     360 |         xa_unlock(&pool->va);
+         |                    ~~~~^
+   include/linux/xarray.h:537:38: note: expanded from macro 'xa_unlock'
+     537 | #define xa_unlock(xa)           spin_unlock(&(xa)->xa_lock)
+         |                                               ^~
+   drivers/gpu/drm/panthor/panthor_heap.c:354:57: note: forward declaration of 'struct pathor_heap_pool'
+     354 | static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
+         |                                                         ^
+   drivers/gpu/drm/panthor/panthor_heap.c:389:30: error: incompatible pointer types passing 'struct panthor_heap_pool *' to parameter of type 'struct pathor_heap_pool *' [-Werror,-Wincompatible-pointer-types]
+     389 |         heap = panthor_heap_from_id(pool, heap_id);
+         |                                     ^~~~
+   drivers/gpu/drm/panthor/panthor_heap.c:354:75: note: passing argument to parameter 'pool' here
+     354 | static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
+         |                                                                           ^
+   drivers/gpu/drm/panthor/panthor_heap.c:452:30: error: incompatible pointer types passing 'struct panthor_heap_pool *' to parameter of type 'struct pathor_heap_pool *' [-Werror,-Wincompatible-pointer-types]
+     452 |         heap = panthor_heap_from_id(pool, heap_id);
+         |                                     ^~~~
+   drivers/gpu/drm/panthor/panthor_heap.c:354:75: note: passing argument to parameter 'pool' here
+     354 | static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
+         |                                                                           ^
+   10 errors generated.
 
 
+vim +354 drivers/gpu/drm/panthor/panthor_heap.c
 
-On 2024-09-26 1:50 p.m., Ian Rogers wrote:
-> Allow duplicated metric to be dropped from json files. Detect when TSX
-> is supported by a model by using the json events, use sysfs events at
-> runtime as hypervisors, etc. may disable TSX.
-> 
-> Add CheckPmu to metric to determine if which PMUs have been associated
-> with the loaded events.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/pmu-events/intel_metrics.py | 52 +++++++++++++++++++++++++-
->  1 file changed, 51 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-> index f34b4230a4ee..58e243695f0a 100755
-> --- a/tools/perf/pmu-events/intel_metrics.py
-> +++ b/tools/perf/pmu-events/intel_metrics.py
-> @@ -1,12 +1,13 @@
->  #!/usr/bin/env python3
->  # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> -from metric import (d_ratio, has_event, max, Event, JsonEncodeMetric,
-> +from metric import (d_ratio, has_event, max, CheckPmu, Event, JsonEncodeMetric,
->                      JsonEncodeMetricGroupDescriptions, LoadEvents, Metric,
->                      MetricGroup, MetricRef, Select)
->  import argparse
->  import json
->  import math
->  import os
-> +from typing import Optional
->  
->  # Global command line arguments.
->  _args = None
-> @@ -74,6 +75,54 @@ def Smi() -> MetricGroup:
->      ], description = 'System Management Interrupt metrics')
->  
->  
-> +def Tsx() -> Optional[MetricGroup]:
-> +  pmu = "cpu_core" if CheckPmu("cpu_core") else "cpu"
-> +  cycles = Event('cycles')
+   353	
+ > 354	static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
+   355	{
+   356		struct panthor_heap *heap;
+   357	
+   358		xa_lock(&pool->xa);
+   359		heap = xa_load(&pool->xa, id);
+   360		xa_unlock(&pool->va);
+   361	
+   362		return heap;
+   363	}
+   364	
 
-Isn't the pmu prefix required for cycles as well?
-
-> +  cycles_in_tx = Event(f'{pmu}/cycles\-t/')
-> +  cycles_in_tx_cp = Event(f'{pmu}/cycles\-ct/')
-> +  try:
-> +    # Test if the tsx event is present in the json, prefer the
-> +    # sysfs version so that we can detect its presence at runtime.
-> +    transaction_start = Event("RTM_RETIRED.START")
-> +    transaction_start = Event(f'{pmu}/tx\-start/')
-
-What's the difference between this check and the later has_event() check?
-
-All the tsx related events are model-specific events. We should check
-them all before using it.
-
-Thanks,
-Kan
-> +  except:> +    return None
-> +
-> +  elision_start = None
-> +  try:
-> +    # Elision start isn't supported by all models, but we'll not
-> +    # generate the tsx_cycles_per_elision metric in that
-> +    # case. Again, prefer the sysfs encoding of the event.
-> +    elision_start = Event("HLE_RETIRED.START")
-> +    elision_start = Event(f'{pmu}/el\-start/')
-> +  except:
-> +    pass
-> +
-> +  return MetricGroup('transaction', [
-> +      Metric('tsx_transactional_cycles',
-> +             'Percentage of cycles within a transaction region.',
-> +             Select(cycles_in_tx / cycles, has_event(cycles_in_tx), 0),
-> +             '100%'),
-> +      Metric('tsx_aborted_cycles', 'Percentage of cycles in aborted transactions.',
-> +             Select(max(cycles_in_tx - cycles_in_tx_cp, 0) / cycles,
-> +                    has_event(cycles_in_tx),
-> +                    0),
-> +             '100%'),
-> +      Metric('tsx_cycles_per_transaction',
-> +             'Number of cycles within a transaction divided by the number of transactions.',
-> +             Select(cycles_in_tx / transaction_start,
-> +                    has_event(cycles_in_tx),
-> +                    0),
-> +             "cycles / transaction"),
-> +      Metric('tsx_cycles_per_elision',
-> +             'Number of cycles within a transaction divided by the number of elisions.',
-> +             Select(cycles_in_tx / elision_start,
-> +                    has_event(elision_start),
-> +                    0),
-> +             "cycles / elision") if elision_start else None,
-> +  ], description="Breakdown of transactional memory statistics")
-> +
-> +
->  def main() -> None:
->    global _args
->  
-> @@ -100,6 +149,7 @@ def main() -> None:
->        Idle(),
->        Rapl(),
->        Smi(),
-> +      Tsx(),
->    ])
->  
->  
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
