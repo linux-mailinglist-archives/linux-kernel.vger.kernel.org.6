@@ -1,92 +1,81 @@
-Return-Path: <linux-kernel+bounces-398217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1699BEA3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:42:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3979BEA46
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22231F22F86
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E107F284EBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7551F80B5;
-	Wed,  6 Nov 2024 12:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E401E909B;
+	Wed,  6 Nov 2024 12:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FFeZj506"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hzxem+gA"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9C01F76B7;
-	Wed,  6 Nov 2024 12:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284941F80AD
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 12:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730896665; cv=none; b=ta4Rq4TBhzMV0mXglgxBTsL+UKqoyAN0LUnWVzL4GxBl8QAlcI2kxrHBlrnqeSwgyyR/TIbYmxyYJADok7PRGuxEIgerihEbQ4baVzF19jLrspoJ4YKbZN1oEhu23qAyQgVRbEv8hjBJW2wugrhjyMS8omXvZvC9GI1V/5zCgoQ=
+	t=1730896670; cv=none; b=hxGHsOtiUzdEnnO5QfYzKgRlBgFZtHwFlXsgnrcnQMz502oekqUiN24epWhNsUK/FTr966j2S/RcKv4P0aoguP6ulwurTWaAkstqcRa0PxjoKhfsEzDNLKL+Tg1am8b2NHk09yla95xlRzgkFM5fR+pq+UwbaJwLZ+exOYFClCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730896665; c=relaxed/simple;
-	bh=PK6WGWIzzUxygDZyxgAl8NGzW2USJnn+khK0DoMIIho=;
+	s=arc-20240116; t=1730896670; c=relaxed/simple;
+	bh=kwmHjPAVawyLF5ecNZoCszuUgpIE4aMH6tKO8F/bZGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RoqiggxhkuBt4qJmebiAUQyEshrOtNJTpUauZoTHNZi01FjwOUQzIcmu0Y5mCZcMOGSaKIOy+QtVuSJuFdEfsiWEXZDK2L6axquiYyx0CDpxv+mVaLmoBrgMD8wfLfI60WPwKOFcnXfUxDeY2cK6Hns5g3nBA8ijmHIMEw1FRlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FFeZj506; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id 6B470114018D;
-	Wed,  6 Nov 2024 07:37:41 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Wed, 06 Nov 2024 07:37:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730896661; x=1730983061; bh=/jLOtRJkzelCEg/A2YxeNiDuCCzg/r1GPN8
-	Ngxasi5k=; b=FFeZj5063QyYvANJ4SJWcaaccy8A0bFk2OeCPZAtb39xWa5aOns
-	+cEa6SbJsOxnEPskn5onyWCbYpH5W7IVjtV66Uh02dq35Zc4Uwzwp+a6LaChdaNa
-	vjEq45pwoMreBFAU2kyLSt4vX0WWBxZ98mjqisGdnZGkETAAk4C0lQGNC6DhS4dQ
-	tByZ7oRPA+CVwzZwAB8oajs6SFQxYuXSUJVMe2X6ctCzrZPZ92Zwr0Qc2pwf5SYY
-	kPaEBW9a6u7dsBfqDee0IFgMGvYJ2tTc5NSR0Wru7AKp02/W+CMp+ww5xHeEk6Gd
-	WtT5sT/ky8hJgCEk9uIjDqinTLlqqeN+/PA==
-X-ME-Sender: <xms:FGMrZ4NFfZ6crfnV-B9ekqcuwkjQ8yrVSIlhRcpGRH5itQgw2y9JRA>
-    <xme:FGMrZ-9mhP4QXLq1v2NQt5KI2MqVNfIbdVmPuB03qMWw8Fs1tk88HfaEpcRFGfzCB
-    KonPhaJF_bGW6U>
-X-ME-Received: <xmr:FGMrZ_TljnC-Qc0vrGjE6VE5WDIW-QWDw2ixI0aQHpvU5DIlTR_Gs36tYqOedxhFVXEpDGBv4kCv5dsUtLut5R0wdMo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtddvgdegudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
-    hfhrohhmpefkughoucfutghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorh
-    hgqeenucggtffrrghtthgvrhhnpedvudefveekheeugeeftddvveefgfduieefudeifefg
-    leekheegleegjeejgeeghfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgpdhnsggprhgtphhtthho
-    peduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrthhtrdhmuhhgghgvrh
-    hiughgvgeshhhpvgdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhht
-    rdhnvghtpdhrtghpthhtohepughsrghhvghrnheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehhohhrmhhs
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqrghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:FGMrZwuNRCmqAIpboIuYM4JVhlJRXvM4DPmvtZcQeDjorxdF-ZT9RQ>
-    <xmx:FGMrZwe0T_WEWhy6cmI1Btx4gLkFG5pU7E29HW0dQJfJ9TpRfXs9lQ>
-    <xmx:FGMrZ02NCJhF4HGMFPPIbKN3sQcQzQW263kKfXeUoadTa--BxnVxqw>
-    <xmx:FGMrZ0_pMOapVd5zf7lFE_QlIN6UmH_1-Ztbqy-a7gRdWpeLa1ilzw>
-    <xmx:FWMrZxVWN6yUr9Fvec4ds_qFDMWUZ40di6V-w1thbEHbzxS8kXh8TcyX>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 6 Nov 2024 07:37:39 -0500 (EST)
-Date: Wed, 6 Nov 2024 14:37:36 +0200
-From: Ido Schimmel <idosch@idosch.org>
-To: Matt Muggeridge <Matt.Muggeridge@hpe.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	horms@kernel.org, kuba@kernel.org, linux-api@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, stable@vger.kernel.org
-Subject: Re: [PATCH net 1/1] net/ipv6: Netlink flag for new IPv6 Default
- Routes
-Message-ID: <ZytjEINNRmtpadr_@shredder>
-References: <Zypgu5l7F1FpIpqo@shredder>
- <20241106025056.11241-1-Matt.Muggeridge@hpe.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ltnty0Rll1PLOnQSGtvpSaceGiMdWP8MpPKJv0RRZQ0JTrrXxNvartndDVG0OI7I6LnuV7qXUrs+CcM9h7heZKPkihsfPEuuTuSurt72BYo9M90ntVwaTlfq+bJvESR9mQ6cTb4CONDLtfcNNoY+NuCfRjUoKt42mpgQV0W3SXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hzxem+gA; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so59764311fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 04:37:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730896666; x=1731501466; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ae1koq8dMp04bbFTqClDde3Vovpb14m9bsDzfQ/pDI4=;
+        b=Hzxem+gAoURgOYJh0T1xX1cAXu1H4qy7in0buGgCL5M8/TLtaL3X+KoqqXapoxNrrq
+         3GprIi/qxoM+JoR7hzMbfbzOLfSt72vBdRjiVeViESaMkdw6h1hFqga0pmsh7er9j57n
+         XFyhhaI/73defe67u4vPqBoE80gdPOViGY7TnLox1Z/yXS6Bl7UFAM3URNflb6JE7aNH
+         0ktnhNjFnNet/1TScRuMgdamRZUYR1eMvpsn4JJR+3M9qr9rKmxp2sVNwquH+U44xG9/
+         QS1RYJYwp17IBMbLHUBpTJMaFKUa47/WHQdcpIWuCr7m0b3jXNu0dN6ttiaOzr76C0wo
+         zUjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730896666; x=1731501466;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ae1koq8dMp04bbFTqClDde3Vovpb14m9bsDzfQ/pDI4=;
+        b=bWn0rC0Kmli2vCG3cxdvdJc59mj+/t9VenatbdbpmK1/DTwFiBUETt0J5QW0NPRacq
+         p3TrCNyqBuj8YYYtEcnp8jiRe4cr/NPPXas8iAJ1sRe4MbhHIe6ayFv/xvSPfxkBdqpQ
+         LVBBqWk3RQ/NjXMf3hyhaBumkQCak3pKuEnF1tM/+Cv6dIfoBF4xn8SDa92gr0n9cJIz
+         +ujyzA23McrM3ZuRqy2tY+iWsm0gGEn+onTlYwXDVpKUX0JGSwI3o9wStL+BWyBCKwm6
+         UuNyOdz0Wljj3SqgbMBtCiZIfgQ5tGKXHOaIylfiodWzVyY/Z5HjDeBUSKYAjd+XyaVO
+         SzcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5OCsHLRDrPj7xYDJaNsuIVYo/Eb5pN+S93eGmdfDzp/wx4WeDBQ4V/TOJ0+3cC1m/RleRp+ePR0UNrGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3MRvwCwdOEwE46oToe4BW6sj8Ai2ot1T/UWYUzPGSXj+hNh1b
+	DsgwoQ43npC9/KJS/U/okZ2VR92g3Jz1FfQ7lM4r5VpYM0oF2PAb2gQVbhLJoII=
+X-Google-Smtp-Source: AGHT+IG18B8XOx5468uBh2oYr28fOGs05I2R99SXd0y1/W0ItCrjogqsU3jSoo/FQC1khD4aOuBaMQ==
+X-Received: by 2002:a2e:bc18:0:b0:2ef:2490:46fb with SMTP id 38308e7fff4ca-2fdecc2f714mr118699741fa.37.1730896666319;
+        Wed, 06 Nov 2024 04:37:46 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef8c345asm24833201fa.105.2024.11.06.04.37.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 04:37:45 -0800 (PST)
+Date: Wed, 6 Nov 2024 14:37:43 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jonathan Marek <jonathan@marek.ca>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] arm64: dts: qcom: x1e80100: enable OTG on USB-C
+ controllers
+Message-ID: <hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef>
+References: <20241011231624.30628-1-jonathan@marek.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,98 +84,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241106025056.11241-1-Matt.Muggeridge@hpe.com>
+In-Reply-To: <20241011231624.30628-1-jonathan@marek.ca>
 
-On Tue, Nov 05, 2024 at 09:50:56PM -0500, Matt Muggeridge wrote:
-> Thank you for your review and feedback, Ido.
+On Fri, Oct 11, 2024 at 07:16:21PM -0400, Jonathan Marek wrote:
+> These 3 controllers support OTG and the driver requires the usb-role-switch
+> property to enable OTG. Add the property to enable OTG by default.
 > 
-> >> Without this flag, when there are mutliple default routers, the kernel
-> >> coalesces multiple default routes into an ECMP route. The ECMP route
-> >> ignores per-route REACHABILITY information. If one of the default
-> >> routers is unresponsive, with a Neighbor Cache entry of INCOMPLETE, then
-> >> it can still be selected as the nexthop for outgoing packets. This
-> >> results in an inability to communicate with remote hosts, even though
-> >> one of the default routers remains REACHABLE. This violates RFC4861
-> >> section 6.3.6, bullet 1.
-> >
-> >Do you have forwarding disabled (it causes RT6_LOOKUP_F_REACHABLE to be
-> >set)?
-> 
-> Yes, forwarding is disabled on our embedded system. Though, this needs to
-> work on systems regardless of the state of forwarding.
-> 
-> >  Is the problem that fib6_table_lookup() chooses a reachable
-> >nexthop and then fib6_select_path() overrides it with an unreachable
-> >one?
-> 
-> I'm afraid I don't know.
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-We need to understand the current behavior before adding a new interface
-that we will never be able to remove. It is possible we can improve /
-fix the current code. I won't have time to look into it myself until
-next week.
+For some reason commit f042bc234c2e ("arm64: dts: qcom: x1e80100: enable
+OTG on USB-C controllers") seems to break UCSI on X1E80100 CRD:
+
+[   34.479352] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: PPM init failed, stop trying
 
 > 
-> The objective is to allow IPv6 Netlink clients to be able to create default
-> routes from RAs in the same way the kernel creates default routes from RAs.
-> Essentially, I'm trying to have Netlink and Kernel behaviors match.
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 7778e17fb2610..fb16047d803c9 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -4199,6 +4199,8 @@ usb_1_ss2_dwc3: usb@a000000 {
+>  
+>  				dma-coherent;
+>  
+> +				usb-role-switch;
+> +
+>  				ports {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+> @@ -4452,6 +4454,8 @@ usb_1_ss0_dwc3: usb@a600000 {
+>  
+>  				dma-coherent;
+>  
+> +				usb-role-switch;
+> +
+>  				ports {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+> @@ -4550,6 +4554,8 @@ usb_1_ss1_dwc3: usb@a800000 {
+>  
+>  				dma-coherent;
+>  
+> +				usb-role-switch;
+> +
+>  				ports {
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+> -- 
+> 2.45.1
+> 
 
-I understand, but it's essentially an extension for the legacy IPv6
-multipath API which we are trying to move away from towards the nexthop
-API (see more below).
-
-> 
-> My analysis led me to the need for Netlink clients to set the kernel's
-> fib6_config flags RTF_RA_ROUTER, where:
-> 
->     #define RTF_RA_ROUTER		(RTF_ADDRCONF | RTF_DEFAULT)
-> 
-> >> +	if (rtm->rtm_flags & RTM_F_RA_ROUTER)
-> >> +		cfg->fc_flags |= RTF_RA_ROUTER;
-> >> +
-> > 
-> > It is possible there are user space programs out there that set this bit
-> > (knowingly or not) when sending requests to the kernel and this change
-> > will result in a behavior change for them. So, if we were to continue in
-> > this path, this would need to be converted to a new netlink attribute to
-> > avoid such potential problems.
-> > 
-> 
-> Is this a mandated approach to implementing unspecified bits in a flag?
-> 
-> I'm a little surprised by this consideration. If we account for poorly
-> written buggy user-programs, doesn't this open any API to an explosion
-> of new attributes or other odd extensions? I'd imagine the same argument
-> would be applicable to ioctl flags, socket flags, and so on. Why would we
-> treat implementing unspecified Netlink bits differently to implementing
-> unspecified ioctl bits, etc.
-> 
-> Naturally, if this is the mandated approach, then I'll reimplement it with
-> a new Netlink attribute. I'm just trying to understand what is the
-> Linux-lore, here?
-
-Using this bit could have been valid if previously the kernel rejected
-requests with this bit set, but as evident by your patch the kernel does
-not do it. It is therefore possible that there are user space programs
-out there that are working perfectly fine right now and they will break
-/ misbehave after this change.
-
-> 
-> > BTW, you can avoid the coalescing problem by using the nexthop API (man
-> > ip-nexthop).
-> 
-> I'm not sure how that would help in this case. We need the nexthop to be
-> determined according to its REACHABILITY and other considerations described
-> in RFC4861.
-
-Using your example:
-
-# ip nexthop add id 1 via fe80::200:10ff:fe10:1060 dev enp0s9
-# ip -6 route add default nhid 1 expires 600 proto ra
-# ip nexthop add id 2 via fe80::200:10ff:fe10:1061 dev enp0s9
-# ip -6 route append default nhid 2 expires 600 proto ra
-# ip -6 route
-fe80::/64 dev enp0s9 proto kernel metric 256 pref medium
-default nhid 1 via fe80::200:10ff:fe10:1060 dev enp0s9 proto ra metric 1024 expires 563sec pref medium
-default nhid 2 via fe80::200:10ff:fe10:1061 dev enp0s9 proto ra metric 1024 expires 594sec pref medium
+-- 
+With best wishes
+Dmitry
 
