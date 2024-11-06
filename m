@@ -1,99 +1,197 @@
-Return-Path: <linux-kernel+bounces-397395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6BC9BDB73
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:51:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B64C9BDB74
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 255C8B229A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:51:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DEFE28497D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C93C18E341;
-	Wed,  6 Nov 2024 01:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA73B18C036;
+	Wed,  6 Nov 2024 01:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EW5uFtri"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ys5ScLeg"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B530318E020;
-	Wed,  6 Nov 2024 01:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B791898E9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 01:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730857830; cv=none; b=iS8El22918q2zEJCz07jkmgBNy6BtD04VEr/1NnrU11wOBDDcCF4tZLvVhfnQCJC+laZ7IdSXEDeFGKjvlHFlSj7wqUW+SaoYZCCu9L387nLxPOQDV70M/HMAogvHPhPENTgU6ku4HzU2uMrfR9stBwLfrAjDzamhIb/694VLVc=
+	t=1730857900; cv=none; b=ufui5amGf30KZdIrTiFqV8iMaIQTDLJ+XsEItbrLp5WdUe9SR8+GWcqyP5WAQzybENEWQTlvktyvrLdGPbIqbJXN9dtb1tRmoHP7dbMDg2iWr3fTONenll37pezzDFelZ8ctqE+ZbKrhyO4CpSMLKkWMMBL8ctbxueuXmZApcHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730857830; c=relaxed/simple;
-	bh=UycnUG2vyx2OGbJNhH8/v00Y16FzU8SjpOarn4OXYAs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MpDi2zKnhRk2PjpfRpJIg6ZpBwy2y8BKGeM08OwQ0vbyK5chQeigMndOEJgT67/8/+Bc+RJx5evnnnr+XnkwgWIVHEKJBLpwukGNhr3sh80M0pFyjOyiLF9mbqI2IVeK/9hx6xSx9xFTiVTWM3+B6vLqebmxhMXJvYBHfDdinYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EW5uFtri; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B592C4CECF;
-	Wed,  6 Nov 2024 01:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730857830;
-	bh=UycnUG2vyx2OGbJNhH8/v00Y16FzU8SjpOarn4OXYAs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EW5uFtriyhkfGFToWekTZX4I9neZ+py1suYXbj53iYpewPAAglyHyYYtLUnJYSXrE
-	 5KFxw5PUGpT/jwiRACRtO02xN8jPdL/NAP5r8jC2d8mqjKVSTXnuF3UqDlrQnU+ZS0
-	 IRjjDTN3k66lmowQIf1jmyGs19/dfiKAe7vp14H6Kl37Hp24oYaRaBJ7Gr8ZknZc3g
-	 N8PuODPFnM4rBfz0TWBXn5E4FOX5ls57xSQ3k0eLzPAI9VVZjQDuXN1SuVNiIXh9o/
-	 rZClyc/D2nBhD640gBI6f9xQ0R6lpbq60LyOcBksprau9aDmqnoPD/61RQ9rt9Edwa
-	 q3USPuFHuUfcQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D353809A80;
-	Wed,  6 Nov 2024 01:50:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730857900; c=relaxed/simple;
+	bh=0cfREXYBv/O6QXSpQyDtQ6EZkt8ICo8sWJAbzDYUgA4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qqdi5LFSTnQ4hfPlvdRIlPMwVVjmKIZdiJCamKCpC3/f4MF6LKjYRVwzVv2Dkdu6rTkmU8VqE4/Izpu3c1Nl0FQd+5XBtPfuYHchCncBjJWPiVfvJ3QOCeLoEqHowmtJpeuRUMMriy5dNMfvhWYDiN3bLZIyU7Hn1wqcJzAOAAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ys5ScLeg; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e59dc7df64so5239417b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 17:51:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730857897; x=1731462697; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZsVWtySqNFgTVWgHXk6f3n0Xscm8CdqH5W1OuzF+xZg=;
+        b=Ys5ScLegXytCfTIyxOHU6c0NqGJlq5OBzFLvKvwYFGEa7kvZe5l3CWVNeKfbtx5+y4
+         iUTF0xZOFboOHe3Ol+MpfZnt+gPJHVwwmI3kH9CHtpp6SOHlMfQtfac5QpSo8XBS+eoa
+         OVkVIY9s7J+/z3sQ8mg3/WkWcwWp6wdVJu2F2xkKIonvPPUQBmxcpITxu8dPixAUUYUl
+         Ob0sXG3PaGMgx+Q9akH6M/8C5QtmLXkCXJrqauhaUzDm/yBEAthlx9X+ecJPuCHxMn7E
+         /u4tS3DdaG3nfPtH5ECEp/yKdp4/eJgI7lfWG+YS07pIug0CQwByqkU9J0sNHgTiJGBQ
+         i3tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730857897; x=1731462697;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZsVWtySqNFgTVWgHXk6f3n0Xscm8CdqH5W1OuzF+xZg=;
+        b=Xv6H/aaUVdc23/WEDI2WDbvM0dxerR8LzT8sNVswza2a1+qYjXgDpCAv6eEXFMMcWp
+         GtWsjSnNjDhM+t3SN58PYD8cTgyhiPCTR6E3yk3PmQbszPHDs1uzs8meOgmzy9vr4n8L
+         s7Zy0Nyk2ZjqpFuZCJ/lxBaH6g8IZH5gPs6aCd0AAbyIKEP2Ri9jvlK03QPDKIkE5EKj
+         2T66WkRNSO4YnntxYtJ24LoPqTGcDql0O55dR+2kCvP6oXWUyW2P2U5oqryeG1HJ9XZ0
+         eAiQGBrw8jEcursCXConJ9fx6EJfbXZ3d76Ghag/bhXthMd53zoZ/A51QrdPQUFpSh7c
+         8TRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVomMZ9BzJbOhN3sFNj11nFjpf1Sc2TlziTGIsnuScWYhYcbeLfx0d36KhhoUr2yqkNYZZX8FDpE/KUspY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3jh2R5s2ICguAGBKLYYB2gb0BCPsEeZGlIVrolY9HIRT+DRwo
+	q58Anayly4SiOB4UP0yl3ywM+azQ0IU5yEh36qg0vdvfNpcxlWN1ygtyEvH5KfYVr7Tg9n12gho
+	3wA==
+X-Google-Smtp-Source: AGHT+IGazWVeu0FiUgVNQ3537CJxZulfvjKMPsuJVlG1YN0Q7hnoVT4PImyk2lCO7WXJSsE83WQ9+k4BJSU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a81:8d0c:0:b0:6d9:d865:46c7 with SMTP id
+ 00721157ae682-6eabed866b9mr123877b3.2.1730857897571; Tue, 05 Nov 2024
+ 17:51:37 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue,  5 Nov 2024 17:51:35 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] openvswitch: Pass on secpath details for internal
- port rx.
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173085783899.762099.17442482800210666704.git-patchwork-notify@kernel.org>
-Date: Wed, 06 Nov 2024 01:50:38 +0000
-References: <20241101204732.183840-1-aconole@redhat.com>
-In-Reply-To: <20241101204732.183840-1-aconole@redhat.com>
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, pshelar@ovn.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- dev@openvswitch.org, linux-kernel@vger.kernel.org,
- steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
- liuhangbin@gmail.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241106015135.2462147-1-seanjc@google.com>
+Subject: [PATCH v2] KVM: x86: Unconditionally set irr_pending when updating
+ APICv state
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Yong He <zhuangel570@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Always set irr_pending (to true) when updating APICv status to fix a bug
+where KVM fails to set irr_pending when userspace sets APIC state and
+APICv is disabled, which ultimate results in KVM failing to inject the
+pending interrupt(s) that userspace stuffed into the vIRR, until another
+interrupt happens to be emulated by KVM.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Only the APICv-disabled case is flawed, as KVM forces apic->irr_pending to
+be true if APICv is enabled, because not all vIRR updates will be visible
+to KVM.
 
-On Fri,  1 Nov 2024 16:47:32 -0400 you wrote:
-> Clearing the secpath for internal ports will cause packet drops when
-> ipsec offload or early SW ipsec decrypt are used.  Systems that rely
-> on these will not be able to actually pass traffic via openvswitch.
-> 
-> There is still an open issue for a flow miss packet - this is because
-> we drop the extensions during upcall and there is no facility to
-> restore such data (and it is non-trivial to add such functionality
-> to the upcall interface).  That means that when a flow miss occurs,
-> there will still be packet drops.  With this patch, when a flow is
-> found then traffic which has an associated xfrm extension will
-> properly flow.
-> 
-> [...]
+Hit the bug with a big hammer, even though strictly speaking KVM can scan
+the vIRR and set/clear irr_pending as appropriate for this specific case.
+The bug was introduced by commit 755c2bf87860 ("KVM: x86: lapic: don't
+touch irr_pending in kvm_apic_update_apicv when inhibiting it"), which as
+the shortlog suggests, deleted code that updated irr_pending.
 
-Here is the summary with links:
-  - [net-next] openvswitch: Pass on secpath details for internal port rx.
-    https://git.kernel.org/netdev/net-next/c/7d1c2d517f50
+Before that commit, kvm_apic_update_apicv() did indeed scan the vIRR, with
+with the crucial difference that kvm_apic_update_apicv() did the scan even
+when APICv was being *disabled*, e.g. due to an AVIC inhibition.
 
-You are awesome, thank you!
+        struct kvm_lapic *apic = vcpu->arch.apic;
+
+        if (vcpu->arch.apicv_active) {
+                /* irr_pending is always true when apicv is activated. */
+                apic->irr_pending = true;
+                apic->isr_count = 1;
+        } else {
+                apic->irr_pending = (apic_search_irr(apic) != -1);
+                apic->isr_count = count_vectors(apic->regs + APIC_ISR);
+        }
+
+And _that_ bug (clearing irr_pending) was introduced by commit b26a695a1d78
+("kvm: lapic: Introduce APICv update helper function"), prior to which KVM
+unconditionally set irr_pending to true in kvm_apic_set_state(), i.e.
+assumed that the new virtual APIC state could have a pending IRQ.
+
+Furthermore, in addition to introducing this issue, commit 755c2bf87860
+also papered over the underlying bug: KVM doesn't ensure CPUs and devices
+see APICv as disabled prior to searching the IRR.  Waiting until KVM
+emulates an EOI to update irr_pending "works", but only because KVM won't
+emulate EOI until after refresh_apicv_exec_ctrl(), and there are plenty of
+memory barriers in between.  I.e. leaving irr_pending set is basically
+hacking around bad ordering.
+
+So, effectively revert to the pre-b26a695a1d78 behavior for state restore,
+even though it's sub-optimal if no IRQs are pending, in order to provide a
+minimal fix, but leave behind a FIXME to document the ugliness.  With luck,
+the ordering issue will be fixed and the mess will be cleaned up in the
+not-too-distant future.
+
+Fixes: 755c2bf87860 ("KVM: x86: lapic: don't touch irr_pending in kvm_apic_update_apicv when inhibiting it")
+Cc: stable@vger.kernel.org
+Cc: Maxim Levitsky <mlevitsk@redhat.com>
+Reported-by: Yong He <zhuangel570@gmail.com>
+Closes: https://lkml.kernel.org/r/20241023124527.1092810-1-alexyonghe%40tencent.com
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+
+v2: Go with a big hammer fix, and plan on scanning the vIRR for all cases
+    once the ordering bug has been resolved, i.e. once KVM guarantees the
+    scan happens after CPUs and devices see the new APICv state.
+
+v1: https://lore.kernel.org/all/20241101193532.1817004-1-seanjc@google.com
+
+ arch/x86/kvm/lapic.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 65412640cfc7..e470061b744a 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -2629,19 +2629,26 @@ void kvm_apic_update_apicv(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_lapic *apic = vcpu->arch.apic;
+ 
+-	if (apic->apicv_active) {
+-		/* irr_pending is always true when apicv is activated. */
+-		apic->irr_pending = true;
++	/*
++	 * When APICv is enabled, KVM must always search the IRR for a pending
++	 * IRQ, as other vCPUs and devices can set IRR bits even if the vCPU
++	 * isn't running.  If APICv is disabled, KVM _should_ search the IRR
++	 * for a pending IRQ.  But KVM currently doesn't ensure *all* hardware,
++	 * e.g. CPUs and IOMMUs, has seen the change in state, i.e. searching
++	 * the IRR at this time could race with IRQ delivery from hardware that
++	 * still sees APICv as being enabled.
++	 *
++	 * FIXME: Ensure other vCPUs and devices observe the change in APICv
++	 *        state prior to updating KVM's metadata caches, so that KVM
++	 *        can safely search the IRR and set irr_pending accordingly.
++	 */
++	apic->irr_pending = true;
++
++	if (apic->apicv_active)
+ 		apic->isr_count = 1;
+-	} else {
+-		/*
+-		 * Don't clear irr_pending, searching the IRR can race with
+-		 * updates from the CPU as APICv is still active from hardware's
+-		 * perspective.  The flag will be cleared as appropriate when
+-		 * KVM injects the interrupt.
+-		 */
++	else
+ 		apic->isr_count = count_vectors(apic->regs + APIC_ISR);
+-	}
++
+ 	apic->highest_isr_cache = -1;
+ }
+ 
+
+base-commit: 5cb1659f412041e4780f2e8ee49b2e03728a2ba6
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.47.0.199.ga7371fff76-goog
 
 
