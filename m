@@ -1,240 +1,173 @@
-Return-Path: <linux-kernel+bounces-398586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F939BF32B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:25:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C956E9BF330
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:26:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4141A1C21FCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0762E1C22268
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0044204942;
-	Wed,  6 Nov 2024 16:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058C5204F7F;
+	Wed,  6 Nov 2024 16:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcLEEX1U"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVgvAAkq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A0B202F6C;
-	Wed,  6 Nov 2024 16:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506912022EE;
+	Wed,  6 Nov 2024 16:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730910340; cv=none; b=q0JqaiUCUXK1TtADQib+vGZiideCJVTCjxARX07PyPlnl12F/cjRH6uQF8Rg6By0M4XrDHKtdUepvuM1yTHfZ+OYM1ssGiLitQF5z6UM0hQSuVYoOTdwTAC1sTa4r6m6+E05HllE6R5SOLw8nopeRmBY+K1SiLoLvDswj8eQdAU=
+	t=1730910367; cv=none; b=uELXKpurLOSaCAcmkTQOTpUbmQq2K5G1neSY08haU5utNMjJw//FUHWbouRp+vDkgTC3Waa0xu63n/MXCRA8W1UwTNf8deN/4wOQuVWfnCyspaWy9IE9VLlbmw5EUyJ4c+l/yUHJ+x4WY2mYl3dQvGwOwHmmo5saDEtdZ1hD3sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730910340; c=relaxed/simple;
-	bh=nTn7OyYR8+3QNfGTfcCXswxFf7/1Ob2OUBMC6woIoxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VcRTn25qBUZRZ/1ME/h8U7CnVkyDx65FKlD2uYIjwVG5ojji/lth2GwdT/Sn1F8O9jH3B8omoOVRQ3dYE/wFh8A7O3bAyr+FgMTJORAip22J92+4ih5fsnKJIoR3SSWhObbmxBxdk2YL32hWo8Ka4Mi9TXx+f6LTKIi7+jeKAMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hcLEEX1U; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7f3e30a43f1so19098a12.1;
-        Wed, 06 Nov 2024 08:25:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730910338; x=1731515138; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+0dv4IU+YC5q2KRQYq8uwpngy1gJkMWrxKCi3WhUWU=;
-        b=hcLEEX1UggKoB8FmNqghQmTYLn/ADffiO25E1bEBTvu+fuhZ1+KvI8CmxeJWI6I1ri
-         xzaeEF0/EVgVXx46fcs5YKeerfSrhNzww8KNu7hZXh0cP4J/MLjMeBi56Pd3WwsUt6rO
-         0u+pz2DIA81on4G78ysbh+rLf8RP2yO1KOuJXvpyObKbp2ZoYjcXp8IsCgLT8ry1Niqc
-         VcLQ9SS3mcanmsWaO2KZkRNJM8tFgESd90nYS3JpGDOzEnodhgDh1HhQse2e7SrgVnvB
-         u7xqpheYk/OdbbKcP4ivmxlyR11hGsSRv6UzdFpwcQ48ZY8JRIVpTwaAp0I1daAht7NJ
-         ChaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730910338; x=1731515138;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b+0dv4IU+YC5q2KRQYq8uwpngy1gJkMWrxKCi3WhUWU=;
-        b=VJczpskhKIcC+MO/sVqsHH+WhKOyFNPNADgf/Ll1Jy276igThcK0YiqoGzmcuBddD0
-         8TnjuDtM/btBISdQpeVzXq0+g30zseHZ5qJavR7d2res26Zp+7sdVwZnEZU6kawgNKo3
-         BxV3u4c+mI9TbpH6j6F8zNNj+iIUnvW/omvJfJayyljdq6hNtWwZ4SYde7AsPNvVQA6U
-         y43B0NFtl1BgCkWF16OnZtjclDkneOU6MI55jHr1CzQ5hkO47tiJ2OvOb38Qe5A8uji3
-         5dWrEvkKZMeByyvCMKku5tqe5lK5uGUuXm9oM6nO4C11Ltv+NG157WJuj37LKrg0UHO/
-         +20A==
-X-Forwarded-Encrypted: i=1; AJvYcCWYHibFYzYhICRKpM/oPjOTl6VNkj5vJryIn3/vs6C/+T3E2yvHAnuu8Kj5bg+6TdtTgaf5dTiRIfv1/BkJVUXw7MQG@vger.kernel.org, AJvYcCWfWMCoRPGF5Fl2OX4IKERtCDxzLmx66BN+X9heJXGdZDvLuNPnsOg7QIpHEsAh1iMYB+4hytOs+9q9y3U9@vger.kernel.org, AJvYcCXdGVvt0LzSwdUVZjWIu9z6JII5IxfxBPtgLgbI2UvZr0eFVgtfBbGD8ti3gIAMga8F18I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSMo4+FkXE77fOvFkvHv70CfZeEffnve70+VLzyqk85jrjSw/j
-	fgf+ztNFyZ8luhxsDhdmo60isJ+eWjK8cEdEIbn+6Ut9n1gyhL91YLRATy6TwV8YXsrd7tDNqzi
-	2ZhPZ0AbDIObe2qqQI28z6Fq6n0A=
-X-Google-Smtp-Source: AGHT+IEuC+sjDmRRM+7Ip58qlQhuXlW7P6FZrMFM5HQZMRFIR/40DNXrCLAlmXLitRtFdIMOx0fEHkj8wHjs3x34hLg=
-X-Received: by 2002:a17:90b:2681:b0:2c8:647:1600 with SMTP id
- 98e67ed59e1d1-2e94c2b082fmr27691282a91.9.1730910337781; Wed, 06 Nov 2024
- 08:25:37 -0800 (PST)
+	s=arc-20240116; t=1730910367; c=relaxed/simple;
+	bh=SEV9bd+GX/2qf2FHLXeJIP4QQb00PuGWxAb2OJDbHH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzGOUxm3XjXtqIKVcdfhOgCQSGVAnQyi2N4elnsevO+cHQgqVmLXMQ566G2yMofC0vEE23CRzFuvzwHjYMc21+cwR9xoCmAMG3onIHEeLAZz83h/KI2KykZwqnnv+hiSj3+9zqb0UX/jXNcjLxHFXmL9GQq/5g7gB/kDSAtwI0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVgvAAkq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8D1C4CEC6;
+	Wed,  6 Nov 2024 16:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730910366;
+	bh=SEV9bd+GX/2qf2FHLXeJIP4QQb00PuGWxAb2OJDbHH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SVgvAAkqitwp3CRjcYwtzVTYcZps3/+UsLrpka7Kuzuwj0PL6LVYtp/VKr3YSx5b6
+	 W9uV5xvoZG8glsIw7QD7pVmQ+m5Jg7Dy8zkNIwLLbhpwUfqBlIzo5FR0UW9+zdC3HZ
+	 8ryHGTmawTKI37MqbBxPTWh4wVV0Wv6Lr/t8YXm1Y5l+0U3PCIRE0QdQUIxZoimvpu
+	 oCoIoDeo1bu4GSvQ+pYmFukpPYsGPMR9ulXkbxjP2dVOfDV28AYWLeAexY8MTuYCh9
+	 w/XMkqn7EdAT2u28KwDOWLfdrzjz9yThyRcyp1XraJo6d5RDmpiQHjLWtwuleyozIQ
+	 7OKq0beIoHrNA==
+Date: Wed, 6 Nov 2024 16:26:02 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v5 2/2] PCI: microchip: rework reg region handing to
+ support using either instance 1 or 2
+Message-ID: <20241106-eats-anthology-657e2238e271@spud>
+References: <20241104-stabilize-friday-94705c3dc244@spud>
+ <20241105171828.GA1474726@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240903174603.3554182-1-andrii@kernel.org> <20240903174603.3554182-5-andrii@kernel.org>
- <20241106-transparent-athletic-ammonite-586af8@leitao>
-In-Reply-To: <20241106-transparent-athletic-ammonite-586af8@leitao>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 6 Nov 2024 08:25:25 -0800
-Message-ID: <CAEf4Bza3+WYN8dstn1v99yeh+G0cjAeRQy8d5GAbvvecLmbO0A@mail.gmail.com>
-Subject: Re: [PATCH v5 4/8] uprobes: travers uprobe's consumer list locklessly
- under SRCU protection
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
-	akpm@linux-foundation.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="00d4RwnxQ06JtKcq"
+Content-Disposition: inline
+In-Reply-To: <20241105171828.GA1474726@bhelgaas>
+
+
+--00d4RwnxQ06JtKcq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 4:03=E2=80=AFAM Breno Leitao <leitao@debian.org> wro=
-te:
->
-> Hello Andrii,
->
-> On Tue, Sep 03, 2024 at 10:45:59AM -0700, Andrii Nakryiko wrote:
-> > uprobe->register_rwsem is one of a few big bottlenecks to scalability o=
-f
-> > uprobes, so we need to get rid of it to improve uprobe performance and
-> > multi-CPU scalability.
-> >
-> > First, we turn uprobe's consumer list to a typical doubly-linked list
-> > and utilize existing RCU-aware helpers for traversing such lists, as
-> > well as adding and removing elements from it.
-> >
-> > For entry uprobes we already have SRCU protection active since before
-> > uprobe lookup. For uretprobe we keep refcount, guaranteeing that uprobe
-> > won't go away from under us, but we add SRCU protection around consumer
-> > list traversal.
->
-> I am seeing the following message in a kernel with RCU_PROVE_LOCKING:
->
->         kernel/events/uprobes.c:937 RCU-list traversed without holding th=
-e required lock!!
->
-> It seems the SRCU is not held, when coming from mmap_region ->
-> uprobe_mmap. Here is the message I got in my debug kernel. (sorry for
-> not decoding it, but, the stack trace is clear enough).
->
->          WARNING: suspicious RCU usage
->            6.12.0-rc5-kbuilder-01152-gc688a96c432e #26 Tainted: G        =
-W   E    N
->            -----------------------------
->            kernel/events/uprobes.c:938 RCU-list traversed without holding=
- the required lock!!
->
-> other info that might help us debug this:
->
-> rcu_scheduler_active =3D 2, debug_locks =3D 1
->            3 locks held by env/441330:
->             #0: ffff00021c1bc508 (&mm->mmap_lock){++++}-{3:3}, at: vm_mma=
-p_pgoff+0x84/0x1d0
->             #1: ffff800089f3ab48 (&uprobes_mmap_mutex[i]){+.+.}-{3:3}, at=
-: uprobe_mmap+0x20c/0x548
->             #2: ffff0004e564c528 (&uprobe->consumer_rwsem){++++}-{3:3}, a=
-t: filter_chain+0x30/0xe8
->
-> stack backtrace:
->            CPU: 4 UID: 34133 PID: 441330 Comm: env Kdump: loaded Tainted:=
- G        W   E    N 6.12.0-rc5-kbuilder-01152-gc688a96c432e #26
->            Tainted: [W]=3DWARN, [E]=3DUNSIGNED_MODULE, [N]=3DTEST
->            Hardware name: Quanta S7GM 20S7GCU0010/S7G MB (CG1), BIOS 3D22=
- 07/03/2024
->            Call trace:
->             dump_backtrace+0x10c/0x198
->             show_stack+0x24/0x38
->             __dump_stack+0x28/0x38
->             dump_stack_lvl+0x74/0xa8
->             dump_stack+0x18/0x28
->             lockdep_rcu_suspicious+0x178/0x2c8
->             filter_chain+0xdc/0xe8
->             uprobe_mmap+0x2e0/0x548
->             mmap_region+0x510/0x988
->             do_mmap+0x444/0x528
->             vm_mmap_pgoff+0xf8/0x1d0
->             ksys_mmap_pgoff+0x184/0x2d8
->
->
-> That said, it seems we want to hold the SRCU, before reaching the
-> filter_chain(). I hacked a bit, and adding the lock in uprobe_mmap()
-> solves the problem, but, I might be missing something, since I am not fam=
-iliar
-> with this code.
->
-> How does the following patch look like?
->
-> commit 1bd7bcf03031ceca86fdddd8be2e5500497db29f
-> Author: Breno Leitao <leitao@debian.org>
-> Date:   Mon Nov 4 06:53:31 2024 -0800
->
->     uprobes: Get SRCU lock before traverseing the list
->
->     list_for_each_entry_srcu() is being called without holding the lock,
->     which causes LOCKDEP (when enabled with RCU_PROVING) to complain such
->     as:
->
->             kernel/events/uprobes.c:937 RCU-list traversed without holdin=
-g the required lock!!
->
->     Get the SRCU uprobes_srcu lock before calling filter_chain(), which
->     needs to have the SRCU lock hold, since it is going to call
->     list_for_each_entry_srcu().
->
->     Signed-off-by: Breno Leitao <leitao@debian.org>
->     Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list lockles=
-sly under SRCU protection")
->
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 4b52cb2ae6d62..cc9d4ddeea9a6 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1391,6 +1391,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
->         struct list_head tmp_list;
->         struct uprobe *uprobe, *u;
->         struct inode *inode;
-> +       int srcu_idx;
->
->         if (no_uprobe_events())
->                 return 0;
-> @@ -1409,6 +1410,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
->
->         mutex_lock(uprobes_mmap_hash(inode));
->         build_probe_list(inode, vma, vma->vm_start, vma->vm_end, &tmp_lis=
-t);
-> +       srcu_idx =3D srcu_read_lock(&uprobes_srcu);
+On Tue, Nov 05, 2024 at 11:18:28AM -0600, Bjorn Helgaas wrote:
+> On Mon, Nov 04, 2024 at 11:18:43AM +0000, Conor Dooley wrote:
+> > On Fri, Nov 01, 2024 at 02:51:29PM -0500, Bjorn Helgaas wrote:
+> > > On Wed, Aug 14, 2024 at 09:08:42AM +0100, Conor Dooley wrote:
+> > > > From: Conor Dooley <conor.dooley@microchip.com>
+> > > >=20
+> > > > The PCI host controller on PolarFire SoC has multiple "instances", =
+each
+> > > > with their own bridge and ctrl address spaces. The original binding=
+ has
+> > > > an "apb" register region, and it is expected to be set to the base
+> > > > address of the host controllers register space. Defines in the driv=
+er
+> > > > were used to compute the addresses of the bridge and ctrl address r=
+anges
+> > > > corresponding to instance1. Some customers want to use instance0 ho=
+wever
+> > > > and that requires changing the defines in the driver, which is clea=
+rly
+> > > > not a portable solution.
+> > >=20
+> > > The subject mentions "instance 1 or 2".
+> > >=20
+> > > This paragraph implies adding support for "instance0" ("customers want
+> > > to use instance0").
+> > >=20
+> > > The DT patch suggests that we're adding support for "instance2"
+> > > ("customers want to use instance2").
+> > >=20
+> > > Both patches suggest that the existing support is for "instance 1".
+> > >=20
+> > > Maybe what's being added is "instance 2", and this commit log should
+> > > s/instance0/instance 2/ ?  And probably s/instance1/instance 1/ so the
+> > > style is consistent?
+> >=20
+> > Hmm no, it would be s/instance1/instance 2/ & s/instance0/instance 1/.
+> > The indices are 1-based, not 0-based.
+> >=20
+> > > Is this a "pick one or the other but not both" situation, or does this
+> > > device support two independent PCIe controllers?
+> > >=20
+> > > I first thought this driver supported a single PCIe controller, and
+> > > you were adding support for a second independent controller.
+> >=20
+> > I don't know if they are fully independent (Daire would have to confirm)
+> > but as far as the driver in linux is concerned they are. As far as I
+> > know, you could operate both instances at the same time, but I've not
+> > heard of any customer that is actually doing that nor tested it myself.
+> > Operating both instances would require another node in the devicetree,
+> > which should work fine given the private data structs are allocated at
+> > runtime. I think the config space is shared.
+> >=20
+> > > But the fact that you say "the [singular] host controller on
+> > > PolarFire", and you're not changing mc_host_probe() to call
+> > > pci_host_common_probe() more than once makes me think there is only a
+> > > single PCIe controller, and for some reason you can choose to operate
+> > > it using either register set 1 or register set 2.
+> >=20
+> > The wording I've used mostly stems from conversations with Daire. We've
+> > kinda been saying that there's a single controller with two root port
+> > instances.=20
+>=20
+> If these are two separate Root Ports, can we call them "Root Ports"
+> instead of "instances"?  Common terminology makes for common
+> understanding.
 
-Hey Breno,
+Sure.
 
-Thanks for catching that (production testing FTW, right?!).
+> > Each root port instance is connected to different IOs,
+> > they're more than just different registers for accessing the same thing.
+>=20
+> Sounds like some customers use Root Port 1 and others use Root Port 2,
+> maybe based on things like which pins are more convenient to route.
 
-But I think you a) adding wrong RCU protection flavor (it has to be
-rcu_read_lock_trace()/rcu_read_unlock_trace(), see uprobe_apply() for
-an example) and b) I think this is the wrong place to add it. We
-should add it inside filter_chain(). filter_chain() is called from
-three places, only one of which is already RCU protected (that's the
-handler_chain() case). But there is also register_for_each_vma(),
-which needs RCU protection as well.
+Aye, the user that motivated the patchset uses a very small package and
+was not able to use root port 1 for that reason.
 
-So can you resend the patch as a stand-alone patch, switch to RCU
-Tasks Trace flavor, and add the protection inside filter_chain()?
-Thank you!
+> I would very much like to reword these commit logs using as much
+> standard PCIe terminology as possible.  Most of these native PCIe
+> controller drivers have Root Complex and Root Port concepts all mixed
+> together, and anything we can do to standardize them will be a
+> benefit.
 
-P.S. pending_list traversal that you (accidentally) protect as well in
-your patch doesn't need RCU protection, so there is no problem with
-moving into filter_chain() for RCU stuff.
+I can do that tomorrow.
 
->         /*
->          * We can race with uprobe_unregister(), this uprobe can be alrea=
-dy
->          * removed. But in this case filter_chain() must return false, al=
-l
-> @@ -1422,6 +1424,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
->                 }
->                 put_uprobe(uprobe);
->         }
-> +       srcu_read_unlock(&uprobes_srcu, srcu_idx);
->         mutex_unlock(uprobes_mmap_hash(inode));
->
->         return 0;
->
+--00d4RwnxQ06JtKcq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyuYmgAKCRB4tDGHoIJi
+0s4TAP9ih6PFRzTbgox+CHVwQgWCULG9sxCQ63YThXWRx/E+oAD/UR0qA0IMkUcN
+5OWxK/mfq+PpID6qtsDwHr1Wd0qMogE=
+=zqeK
+-----END PGP SIGNATURE-----
+
+--00d4RwnxQ06JtKcq--
 
