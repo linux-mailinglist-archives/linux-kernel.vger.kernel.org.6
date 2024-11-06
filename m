@@ -1,127 +1,147 @@
-Return-Path: <linux-kernel+bounces-397923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDF29BE276
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:26:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E872F9BE242
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35DC11F23E80
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795531F2443F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5233C1D9663;
-	Wed,  6 Nov 2024 09:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F41D958B;
+	Wed,  6 Nov 2024 09:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="N1/VoIaH"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K4RpLId8"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2111D90C5;
-	Wed,  6 Nov 2024 09:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D36B1D79B8
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 09:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730885162; cv=none; b=CZsUgNqnYmkjr2A6Hce4ptc8IEYxjfg0KSDFujY44FaHtHzsr6ztbvHDgTO2XPTLiPkip2HGEtuYpyQ+95eddXvnYp5lZZ3H2o7LvGDYNdLlzskzKyvKoVy9oYMNI5n6S5XaY6cOuMUy+LGEorymwBLmxIgF7fC4gjDpjZ9bQcI=
+	t=1730884817; cv=none; b=ZySIJ498RR9Jp+gG4Xz89A1Pu7YriKNKciykCdYMIp2b0qRA8fZJMvqU4Shb830vzpwunUolj8ItvooxIafUgwl+xBP4Qt6ddqQijUZIJe1sIblll/yT285IpEfpFlJdQDH/ImBhxQ+VbE6a7xUV1wTF8mf1gLyE9ktzzMD6zNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730885162; c=relaxed/simple;
-	bh=VdbBfWIYI0EyhZExXWJk0pgkTnAE2gEFUzidGt1wsBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mWnvYCcVajbGZ3rdB8iaZVmaSvgNdJTyLvFECXjKMUyLn90ozARPhjALAkcDeDDEn7L96hwRzu6JU2G9Nb4kmhAe4INvAq7VqvDypfEKEklX2OqN3JJaA9UNeZXEWzHgEDtl4/HVlm0rjfwT3xvxDYiceXh5Juc9yIVXCOBhxXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=N1/VoIaH; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 32ED72FC004D;
-	Wed,  6 Nov 2024 10:19:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1730884760;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0hKykF9KmzmeBtNlfxbKqI/JDOAvSBg8cwAFUqKJaDA=;
-	b=N1/VoIaHnDmXUlvX91xO2L6K57fRc8RjbFDr3nj6SBDCOTjCzRQy5b6YlKar3oZXdxft6F
-	JIZ2XVQzSo8kRhe1o1hJgLMa7O7gdMGD+X+PRt+Hq1uk0bb8Ih0VtqYoTMyyQ7TWw9Jthl
-	fxafx3W1i/4c61LQVgY3DXMVdu9+OJk=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <dc0af563-59d2-4176-ad15-fa93cf5c99d2@tuxedocomputers.com>
-Date: Wed, 6 Nov 2024 10:19:19 +0100
+	s=arc-20240116; t=1730884817; c=relaxed/simple;
+	bh=NICnhTyDeFjw5xDNNJO75dAzGin9vebw41liMa/LWfQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=FNKiG65SHGPfkXJ9R3PAyMO9bLFbytbSsryjx3z83NWrxYgtEcu39dE/SKKPjVhoGYBFDYQ33JULLzF1d+ir7NZitvSqrfLTSAm1J8c2jBXUXMQCytABSfhx+TW1Wt1iTGexX+AyDoLt+DaJr8JpzEFYKO3qNdY9h1zgMP2JaQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K4RpLId8; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431695fa98bso50554495e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 01:20:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730884814; x=1731489614; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nFpPn0d2yFLk+e22ei9wc3wv5WH7ZWHa4AxPfroJzYQ=;
+        b=K4RpLId8FOia2ZTw8xNSkQFgJeaDxHVh9Ety0ZAKGtoB895RP4mkoG+fG6bfoE3lpF
+         bM4WA8eBh1Zty75wiLDGvUOpIci7UzbbNsKDDs8YkJJt/srd7Ysz1zT84aaGrD/jR/XV
+         913KBuYwgDGjnkd2SXuTd+g9n/ZbpEISROpyDtTJsxzFNylcOdWDa5TN99p7Rzf5J2id
+         obnnCDPhXaI3gZ3DjOabw3QPNAjvuu++8+jzQVJJ8XAsngf79LoxfjbpfPWOglDVZmCi
+         Fcll7pJ44K9MC07ABWIokLr9FYFrrOZO6fI8Etny7pm2awvWDkEY9A5zzXcJlTfXig6A
+         mu8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730884814; x=1731489614;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nFpPn0d2yFLk+e22ei9wc3wv5WH7ZWHa4AxPfroJzYQ=;
+        b=KrSF8AJux6KGZ/yGjvo6wIZ8stVPTxLodiQ0dCotR1U6zIe3tBXJ4GNuXruCasU2pO
+         JFhw48cCllErkYtaY2jTUg8Yy8snTXPnSuq29TmvMJ6XXYJghhxymaADXilFJtumCowG
+         0jczZ2OiVRqFcUEYVH40n6jOQzNiu4JxIk0eJ37fRpsezqtKZQ53UEfthbAh9+F1UDAq
+         wUagi1+K6rQ8nfMYa9wd1EIlPwE7GBH025xEYUvdbzCSDkU98CU9opZfukqz8QMKT0nI
+         TpaMQvE/QoDNN27IWjXSQKQYJwN3FMs+hF+7zkVorCKecX6Sy//hy9iiYYRZx/8lkqjv
+         lFAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqd27SJSvnYtMq1fpGHOsH2Nb8sMrEJZjF+d5NXe0RKe9BL+i+QbM9zwa5+xXpJnrQkSFuxgDdTvjkIf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynIxyMlghGnBrOvVzkgy22HXGHTbBekwFQr/jj63JIthRR8w7i
+	vgRa7ZN7wNDnlD20q3SsFUKhstlZkRgYkasmUthKmBeS30BwQdJH8rmMPEE7ksw=
+X-Google-Smtp-Source: AGHT+IEYpLtbvoq+DLNXwR3nRAmR6avtTq4h+YsWpETFhBlqaeNqXWJjhte4lroosj4mGd9kd6ILbg==
+X-Received: by 2002:a05:600c:4fd3:b0:431:60d0:9088 with SMTP id 5b1f17b1804b1-4319ac9acedmr359810715e9.13.1730884813855;
+        Wed, 06 Nov 2024 01:20:13 -0800 (PST)
+Received: from [127.0.0.1] ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6da939sm15286495e9.31.2024.11.06.01.20.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 01:20:13 -0800 (PST)
+Date: Wed, 06 Nov 2024 09:20:12 +0000
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+CC: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ Liu Ying <victor.liu@nxp.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com,
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
+ simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ quic_jesszhan@quicinc.com, mchehab@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ catalin.marinas@arm.com, will@kernel.org, sakari.ailus@linux.intel.com,
+ hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com,
+ quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de,
+ nfraprado@collabora.com, thierry.reding@gmail.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, marex@denx.de,
+ biju.das.jz@bp.renesas.com
+Subject: =?US-ASCII?Q?Re=3A_=28subset=29_=5BPATCH_v5_00/13=5D_Add_ITE?=
+ =?US-ASCII?Q?_IT6263_LVDS_to_HDMI_converter_support?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20241105-succinct-pygmy-dingo-4db79c@houat>
+References: <20241104032806.611890-1-victor.liu@nxp.com> <173080602214.231309.12977765173766280536.b4-ty@linaro.org> <20241105-secret-seriema-of-anger-7acfdf@houat> <CD810D31-F9C5-499D-86CF-B94BEF82449A@linaro.org> <20241105-succinct-pygmy-dingo-4db79c@houat>
+Message-ID: <7C2A2BDC-07E8-4ED7-B65B-BD7E4E5DC53F@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: FAILED: Patch "ALSA: hda/realtek: Fix headset mic on TUXEDO
- Gemini 17 Gen3" failed to apply to v6.1-stable tree
-To: Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org, cs@tuxedo.de
-Cc: Takashi Iwai <tiwai@suse.de>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241106021124.182205-1-sashal@kernel.org>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20241106021124.182205-1-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 5 November 2024 17:39:40 GMT, Maxime Ripard <mripard@kernel=2Eorg> wrote=
+:
+>On Tue, Nov 05, 2024 at 05:33:21PM +0000, Dmitry Baryshkov wrote:
+>> On 5 November 2024 16:13:26 GMT, Maxime Ripard <mripard@kernel=2Eorg> w=
+rote:
+>> >On Tue, Nov 05, 2024 at 01:28:48PM +0200, Dmitry Baryshkov wrote:
+>> >> On Mon, 04 Nov 2024 11:27:53 +0800, Liu Ying wrote:
+>> >> > This patch series aims to add ITE IT6263 LVDS to HDMI converter on
+>> >> > i=2EMX8MP EVK=2E  Combined with LVDS receiver and HDMI 1=2E4a tran=
+smitter,
+>> >> > the IT6263 supports LVDS input and HDMI 1=2E4 output by conversion
+>> >> > function=2E  IT6263 product link can be found at [1]=2E
+>> >> >=20
+>> >> > Patch 1 is a preparation patch to allow display mode of an existin=
+g
+>> >> > panel to pass the added mode validation logic in patch 3=2E
+>> >> >=20
+>> >> > [=2E=2E=2E]
+>> >>=20
+>> >> Applied to drm-misc-next, thanks!
+>> >>=20
+>> >> [04/13] media: uapi: Add MEDIA_BUS_FMT_RGB101010_1X7X5_{SPWG, JEIDA}
+>> >>         commit: 5205b63099507a84458075c3ca7e648407e6c8cc
+>> >
+>> >Where's the immutable branch Laurent asked for?
+>>=20
+>> The patch set has been picked up after getting an Ack from Sakari,
+>> before Laurent's email=2E I am sorry if I rushed it in=2E
+>
+>I mean, this was less than a day after you've asked that question
+>yourself=2E Waiting less than a day for a mail to be answered seems a bit
+>short, especially when there's no rush to merge these patches in the
+>first place=2E
 
-Am 06.11.24 um 03:11 schrieb Sasha Levin:
-> The patch below does not apply to the v6.1-stable tree.
-> If someone wants it applied there, or to any other stable or longterm
-> tree, then please email the backport, including the original git commit
-> id to <stable@vger.kernel.org>.
+Point noted=2E I should have been more patient=2E As a lame excuse I could=
+ point out that the patch has been up for review / comments for quite a whi=
+le, etc, etc, but this is really lame=2E=20
 
-Applying 33affa7fb46c0c07f6c49d4ddac9dd436715064c (ALSA: hda/realtek: Add quirks 
-for some Clevo laptops) first and then 0b04fbe886b4274c8e5855011233aaa69fec6e75 
-(ALSA: hda/realtek: Fix headset mic on TUXEDO Gemini 17 Gen3) and 
-e49370d769e71456db3fbd982e95bab8c69f73e8 (ALSA: hda/realtek: Fix headset mic on 
-TUXEDO Stellaris 16 Gen6 mb1) makes everything work without alteration.
 
-The first one is just missing the cc stable tag, probably by accident.
-
-Should I alter the 2nd and 3rd commit or should I send a patchset that includes 
-the first one?
-
-Kind regards,
-
-Werner Sembach
 
 >
-> Thanks,
-> Sasha
->
-> ------------------ original commit in Linus's tree ------------------
->
->  From 0b04fbe886b4274c8e5855011233aaa69fec6e75 Mon Sep 17 00:00:00 2001
-> From: Christoffer Sandberg <cs@tuxedo.de>
-> Date: Tue, 29 Oct 2024 16:16:52 +0100
-> Subject: [PATCH] ALSA: hda/realtek: Fix headset mic on TUXEDO Gemini 17 Gen3
->
-> Quirk is needed to enable headset microphone on missing pin 0x19.
->
-> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> Cc: <stable@vger.kernel.org>
-> Link: https://patch.msgid.link/20241029151653.80726-1-wse@tuxedocomputers.com
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
->   sound/pci/hda/patch_realtek.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-> index 7f4926194e50f..e06a6fdc0bab7 100644
-> --- a/sound/pci/hda/patch_realtek.c
-> +++ b/sound/pci/hda/patch_realtek.c
-> @@ -10750,6 +10750,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
->   	SND_PCI_QUIRK(0x1558, 0x1404, "Clevo N150CU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
->   	SND_PCI_QUIRK(0x1558, 0x14a1, "Clevo L141MU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
->   	SND_PCI_QUIRK(0x1558, 0x2624, "Clevo L240TU", ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
-> +	SND_PCI_QUIRK(0x1558, 0x28c1, "Clevo V370VND", ALC2XX_FIXUP_HEADSET_MIC),
->   	SND_PCI_QUIRK(0x1558, 0x4018, "Clevo NV40M[BE]", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
->   	SND_PCI_QUIRK(0x1558, 0x4019, "Clevo NV40MZ", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
->   	SND_PCI_QUIRK(0x1558, 0x4020, "Clevo NV40MB", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+>Maxime
+
 
