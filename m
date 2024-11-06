@@ -1,155 +1,278 @@
-Return-Path: <linux-kernel+bounces-398632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41A39BF3E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:06:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D5D9BF3E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:06:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E620C1C2336E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC84228675E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AFB2064FB;
-	Wed,  6 Nov 2024 17:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC1C206509;
+	Wed,  6 Nov 2024 17:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WwZg7eGl"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WVoNbPpp"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537B51DE4EF
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9523D20650C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730912770; cv=none; b=FG57RYpwVy6yhlKZr32ktltpm8tjR43ge8XVgCYpaLjSiqNPTzptBbkbL0F34GUxsRkJbYv7+j6U5/NwQ19MTMr9SRn+xU20Z4gmMjBOJFhMcYth+7m23C/877zbrMiBIcaBDE7B+RCYqILz1oV9wOEzV1BKPQYe4mDxzGXSTsI=
+	t=1730912804; cv=none; b=tDhjV4JdI73TxXYn6T4qu1EuhkS9lyoo8CcjeHTw6tOElmG1SPpaqUs8LRA0ai+eE99GcBuJX4xlez3iFiVJs6xWvG9OYWtUZbsqE8Z6Edfesghe7yFy7luzIuzdQ+CEOKCYtfvni3Z5DdZuGbq1wIQSf1fk4DUmsL6aEpVUKpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730912770; c=relaxed/simple;
-	bh=EHHfV01+YzBryJK6oqy+NG1HYmJOBrkQ3gPa9wHwugA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SvyEhTpzkuzXVV+y5+HiAhn4fwPZfHUD0nyu7p7mxjBgKQjWu0Htae9+MAKwwCyf0jQ2+prElaCTIiLJDZDspepmh7ZeqkUrvRpMjXh/8VKpnzVV1tiQH6yu0gwNoMse3Dh+Py0mmNffwLvkx8u/SHrnYWgT9EHLPcWwiyv9nDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WwZg7eGl; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e607556c83so40292b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 09:06:08 -0800 (PST)
+	s=arc-20240116; t=1730912804; c=relaxed/simple;
+	bh=6Rf5zqPa5m3hV7JKPsCSyDllRSudKN5CTQ483bKOox4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=o3SXQl4e0lkZ8N+MDvBEFHWQEp1AjraLfdvAh36PuZB0/NLQYctbcUmOPrCAfnjyTebDZqJsP+55cmjFjBVQo/SADKaSst51m4nymkG14Ve9fYsGCPbb55qeB//lPG9ZPzFZIWQuNwTlYbE+MMiu/z4G67NqcvLzvoHsu2ys3b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WVoNbPpp; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea7cfb6e0fso98068897b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 09:06:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730912767; x=1731517567; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s6ZhbKhfLK1nW6cUD5V1lnrveGjn3mERSf9IypO38E0=;
-        b=WwZg7eGlRU0H8MVDkJtHTxvQt78jeZoVfh9PpUakVnbBne7VGIIxnlY3xj/ezVcNvq
-         EFi0i0X7jTuL/PD+AOtg3EfMZesHa41DEQcF9oEyVxgMNtzEHMYdr9lQCNNVffYFlP3y
-         Kmkmtq+S/cwTrFINTCazhzTbgaaACM0tQdTO4=
+        d=google.com; s=20230601; t=1730912801; x=1731517601; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5t+pTmBPHbo0E/uwfzEy52VjrmqfqWmgZSSzb34Bz4w=;
+        b=WVoNbPppUwP8N0xx6+U+zD/bpRPIimnYdMKeGWAo/MaBmItQyW7yYwCzDp33PxAmIE
+         7sqrjittlj7swW10B26tiR8yg2LNnzdgvkidQK3a6fFVepmj7NeC+IWU7jIU9z/Xhzcz
+         YEGG6mlKAE7bK/fTg3Dexqh4lRy2Oo8e57lcNUQBpqnvenNaNYFjziqsLizAMzWBL+f8
+         jgT+XhH3ULLZbWflXHndn73BHVxZHeE2ftRh1DMSlOoMkWEdM+vx0GBhhBRi/MVoqQNP
+         SjuOZKHebFKO1VrFW0MPfKdqWSoUiH00wsXi7sD7jJn1lYbw/w+wS5EJHV0zisFydoHi
+         tqlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730912767; x=1731517567;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s6ZhbKhfLK1nW6cUD5V1lnrveGjn3mERSf9IypO38E0=;
-        b=twu9jm/iSqX4nO4J52mKpsdch8v4MFsKg6qITnVrEnbWFOgHPCeYtYBfgXvPHAgTm6
-         Kcwf9NpB3kfz5yh4pHUpGkTRKvtSrHJ0bVJQw+Jkb2GWykA6P8dWRZb7G+LiKsScWs1W
-         rtO3jw+AR0m79/7SFXk1pD0X3bSZLCuwSLJBc87TboI7ZVF+2yil9Kqn2137KWmdI1MQ
-         R+fcGAA8zLv874rl2l38XgM3mI9o2vpdBfFEsc/7OI6rSvrB3WZ5Bm4ApV5CrZzrhVSk
-         fQDaxYXia4PnDBmy6lLCK3qOamKJ/SyjlTS9f99Brm2oGLwZWp60NSU8nQ78eMowu3FM
-         Oa/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXO1A+rIPujHF37J0LGtaR2rg+hpMxyerzZ7T6fP3ftv86NdzeEJMYVqmTlcZcnhdQ2Xikj+IXCwIlCrQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRw1HWscEsJoG8DrIszTf5sq+mS5pVu7fw7fRO+bnTShhIRGPA
-	u0/ostuUHPsLrs45mu7ektrWs+qe/WMYAJ9JusKjnZLft5538+cv45iZWiwzuITdnV+gQ0sanoP
-	o
-X-Google-Smtp-Source: AGHT+IGd+6QAHwLm4BRK4KI/o1F57lC601S2uhu+juKFHx8TGA5Du5HsaaVln/kyanZ/EY60PQ8t+w==
-X-Received: by 2002:a05:6808:179f:b0:3e6:3647:ba55 with SMTP id 5614622812f47-3e6384b4cacmr39288877b6e.32.1730912767262;
-        Wed, 06 Nov 2024 09:06:07 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de049a474asm3008087173.146.2024.11.06.09.06.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 09:06:06 -0800 (PST)
-Message-ID: <8db9feab-0600-440b-b4b2-042695a100b5@linuxfoundation.org>
-Date: Wed, 6 Nov 2024 10:06:06 -0700
+        d=1e100.net; s=20230601; t=1730912801; x=1731517601;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5t+pTmBPHbo0E/uwfzEy52VjrmqfqWmgZSSzb34Bz4w=;
+        b=ZlwYLOxyF1nN+CGaMmYzcguJrJew2BQrNK6bvhzbbczIY1czshNwiQQiFH+hz62S/9
+         OSatPGGLwMW+T6Rb+qxSqqoqBu2jy7iyJBwXwQtqDDUhajIZIfuaCj/y0yoD2rSgrDRX
+         pKCoalg3HGi9tu7ziUIl4kzmfLpLjZ2OEEjYMDEiO9A2W5QtiygB9zAemvOv8NQyupII
+         FIV4sh1Z7MK3EQJw/HgfxsOEa+Zr6UKu0pR6OfcLbmunvnmQURF2RZQyrgaRwdHrV5Em
+         xLAmig0xUOV89BcDzqvDH03/CLzlqnhcjFUKRWZfDv5PLbW5cNaSwt513fgZCeDEt279
+         gE9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWBaa8uh35CxiT6aPF3rsKpQaJQtpaI7XTcaJJZVEPWHYTi9yP8Ed6pBjnqcSzr7hhud+rbzuU20VhBUnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYHxWMN/68uaWI7gVZqOLArywc8ZWbyk9etNbFx0RWFFZc232m
+	BtySUYfDfzzBdqnse0RmBPK930DGcrzatYsBOTUeyiERsUADSZb0+BMz1qwFuEVrgEgZjH1RswH
+	vyQ==
+X-Google-Smtp-Source: AGHT+IGtFenR1QTBctdMYFKBTYZG/ZO0INYKhWuvVmpVVCJ3u0Ldd1ciEKyXxUgTterH6MxTNnFNUgE23Nc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:abe9:0:b0:e30:b98d:a33d with SMTP id
+ 3f1490d57ef6-e30b98da4f0mr50282276.5.1730912800993; Wed, 06 Nov 2024 09:06:40
+ -0800 (PST)
+Date: Wed, 6 Nov 2024 09:06:39 -0800
+In-Reply-To: <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] selftests:tmpfs: Add Skip test if not run as root
-To: Shivam Chaudhary <cvam0000@gmail.com>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org
-References: <20241105202639.1977356-1-cvam0000@gmail.com>
- <20241105202639.1977356-2-cvam0000@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241105202639.1977356-2-cvam0000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240821223012.3757828-1-vipinsh@google.com> <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
+ <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
+Message-ID: <ZyuiH_CVQqJUoSB-@google.com>
+Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just default
+From: Sean Christopherson <seanjc@google.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, kvm-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Anup Patel <anup@brainfault.org>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 11/5/24 13:26, Shivam Chaudhary wrote:
-> Add skip test if  not run as root, with an appropriate Warning.
+On Fri, Nov 01, 2024, Vipin Sharma wrote:
+> Had an offline discussion with Sean, providing a summary on what we
+> discussed (Sean, correct me if something is not aligned from our
+> discussion):
 > 
-> Add 'ksft_print_header()' and 'ksft_set_plan()' to structure test
-> outputs more effectively.
+> We need to have a roadmap for the runner in terms of features we support.
 > 
-> Test logs :
+> Phase 1: Having a basic selftest runner is useful which can:
 > 
-> Before change:
-> 
-> - Without root
->   error: unshare, errno 1
-> 
-> - With root
->   No, output
-> 
-> After change:
-> 
-> - Without root
-> TAP version 13
-> 1..1
-> 
-> - With root
-> TAP version 13
-> 1..1
-> 
-> Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
-> ---
->    
->   tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> index b5c3ddb90942..cdab1e8c0392 100644
-> --- a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> +++ b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-> @@ -23,10 +23,23 @@
->   #include <sys/mount.h>
->   #include <unistd.h>
->   
-> +#include "../kselftest.h"
-> +
->   int main(void)
->   {
->   	int fd;
->   
-> +	/* Setting up kselftest framework */
-> +	ksft_print_header();
-> +	ksft_set_plan(1);
-> +
-> +	/* Check if test is run as root */
-> +	if (geteuid()) {
-> +		ksft_print_msg("Skip : Need to run as root");
-> +		exit(KSFT_SKIP);
+> - Run tests parallely
 
-These two can be replaced by ksft_exit_fail_msg() - refer to the
-kselftest.h for the right API to use for each of these cases.
+Maybe with a (very conversative) per test timeout?  Selftests generally don't have
+the same problems as KVM-Unit-Tests (KUT), as selftests are a little better at
+guarding against waiting indefinitely, i.e. I don't think we need a configurable
+timeout.  But a 120 second timeout or so would be helpful.
 
-> +
-> +	}
-> +
->   	if (unshare(CLONE_NEWNS) == -1) {
->   		if (errno == ENOSYS || errno == EPERM) {
->   			fprintf(stderr, "error: unshare, errno %d\n", errno);
+E.g. I recently was testing a patch (of mine) that had a "minor" bug where it
+caused KVM to do a remote TLB flush on *every* SPTE update in the shadow MMU,
+which manifested as hilariously long runtimes for max_guest_memory_test.  I was
+_this_ close to not catching the bug (which would have been quite embarrasing),
+because my hack-a-scripts don't use timeouts (I only noticed because a completely
+unrelated bug was causing failures).
 
-thanks,
--- Shuah
+> - Provide a summary of what passed and failed, or only in case of failure.
+
+I think a summary is always warranted.  And for failures, it would be helpful to
+spit out _what_ test failed, versus the annoying KUT runner's behavior of stating
+only the number of passes/failures, which forces the user to go spelunking just
+to find out what (sub)test failed.
+
+I also think the runner should have a "heartbeat" mechanism, i.e. something that
+communicates to the user that forward progress is being made.  And IMO, that
+mechanism should also spit out skips and failures (this could be optional though).
+One of the flaws with the KUT runner is that it's either super noisy and super
+quiet.
+
+E.g. my mess of bash outputs this when running selftests in parallel (trimmed for
+brevity):
+
+        Running selftests with npt_disabled
+        Waiting for 'access_tracking_perf_test', PID '92317'
+        Waiting for 'amx_test', PID '92318'
+        SKIPPED amx_test
+        Waiting for 'apic_bus_clock_test', PID '92319'
+        Waiting for 'coalesced_io_test', PID '92321'
+        Waiting for 'cpuid_test', PID '92324'
+        
+        ...
+        
+        Waiting for 'hyperv_svm_test', PID '92552'
+        SKIPPED hyperv_svm_test
+        Waiting for 'hyperv_tlb_flush', PID '92563'
+        FAILED hyperv_tlb_flush : ret ='254'
+        Random seed: 0x6b8b4567
+        ==== Test Assertion Failure ====
+          x86_64/hyperv_tlb_flush.c:117: val == expected
+          pid=92731 tid=93548 errno=4 - Interrupted system call
+             1	0x0000000000411566: assert_on_unhandled_exception at processor.c:627
+             2	0x000000000040889a: _vcpu_run at kvm_util.c:1649
+             3	 (inlined by) vcpu_run at kvm_util.c:1660
+             4	0x00000000004041a1: vcpu_thread at hyperv_tlb_flush.c:548
+             5	0x000000000043a305: start_thread at pthread_create.o:?
+             6	0x000000000045f857: __clone3 at ??:?
+          val == expected
+        Waiting for 'kvm_binary_stats_test', PID '92579'
+        
+        ...
+        
+        SKIPPED vmx_preemption_timer_test
+        Waiting for 'vmx_set_nested_state_test', PID '93316'
+        SKIPPED vmx_set_nested_state_test
+        Waiting for 'vmx_tsc_adjust_test', PID '93329'
+        SKIPPED vmx_tsc_adjust_test
+        Waiting for 'xapic_ipi_test', PID '93350'
+        Waiting for 'xapic_state_test', PID '93360'
+        Waiting for 'xcr0_cpuid_test', PID '93374'
+        Waiting for 'xen_shinfo_test', PID '93391'
+        Waiting for 'xen_vmcall_test', PID '93405'
+        Waiting for 'xss_msr_test', PID '93420'
+
+It's far from perfect, e.g. just waits in alphabetical order, but it gives me
+easy to read feedback, and signal that tests are indeed running and completing.
+        
+> - Dump output which can be easily accessed and parsed.
+
+And persist the output/logs somewhere, e.g. so that the user can triage failures
+after the fact.
+
+> - Allow to run with different command line parameters.
+
+Command line parameters for tests?  If so, I would put this in phase 3.  I.e. make
+the goal of Phase 1 purely about running tests in parallel.
+
+> Current patch does more than this and can be simplified.
+> 
+> Phase 2: Environment setup via runner
+> 
+> Current patch, allows to write "setup" commands at test suite and test
+> level in the json config file to setup the environment needed by a
+> test to run. This might not be ideal as some settings are exposed
+> differently on different platforms.
+> 
+> For example,
+> To enable TDP:
+> - Intel needs npt=Y
+> - AMD needs ept=Y
+> - ARM always on.
+> 
+> To enable APIC virtualization
+> - Intel needs enable_apicv=Y
+> - AMD needs avic=Y
+> 
+> To enable/disable nested, they both have the same file name "nested"
+> in their module params directory which should be changed.
+> 
+> These kinds of settings become more verbose and unnecessary on other
+> platforms. Instead, runners should have some programming constructs
+> (API, command line options, default) to enable these options in a
+> generic way. For example, enable/disable nested can be exposed as a
+> command line --enable_nested, then based on the platform, runner can
+> update corresponding module param or ignore.
+> 
+> This will easily extend to providing sane configuration on the
+> corresponding platforms without lots of hardcoding in JSON. These
+> individual constructs will provide a generic view/option to run a KVM
+> feature, and under the hood will do things differently based on the
+> platform it is running on like arm, x86-intel, x86-amd, s390, etc.
+
+My main input on this front is that the runner needs to configure module params
+(and other environment settings) _on behalf of the user_, i.e. in response to a
+command line option (to the runner), not in response to per-test configurations.
+
+One of my complaints with our internal infrastructure is that the testcases
+themselves can dictate environment settings.  There are certainly benefits to
+that approach, but it really only makes sense at scale where there are many
+machines available, i.e. where the runner can achieve parallelism by running
+tests on multiple machines, and where the complexity of managing the environment
+on a per-test basis is worth the payout.
+
+For the upstream runner, I want to cater to developers, i.e. to people that are
+running tests on one or two machines.  And I want the runner to rip through tests
+as fast as possible, i.e. I don't want tests to get serialized because each one
+insists on being a special snowflake and doesn't play nice with other children.
+Organizations that the have a fleet of systems can pony up the resources to develop
+their own support (on top?).
+
+Selftests can and do check for module params, and should and do use TEST_REQUIRE()
+to skip when a module param isn't set as needed.  Extending that to arbitrary
+sysfs knobs should be trivial.  I.e. if we get _failures_ because of an incompatible
+environment, then it's a test bug.
+
+> Phase 3: Provide collection of interesting configurations
+> 
+> Specific individual constructs can be combined in a meaningful way to
+> provide interesting configurations to run on a platform. For example,
+> user doesn't need to specify each individual configuration instead,
+> some prebuilt configurations can be exposed like
+> --stress_test_shadow_mmu, --test_basic_nested
+
+IMO, this shouldn't be baked into the runner, i.e. should not surface as dedicated
+command line options.  Users shouldn't need to modify the runner just to bring
+their own configuration.  I also think configurations should be discoverable,
+e.g. not hardcoded like KUT's unittest.cfg.  A very real problem with KUT's
+approach is that testing different combinations is frustratingly difficult,
+because running a testcase with different configuration requires modifying a file
+that is tracked by git.
+
+There are underlying issues with KUT that essentially necessitate that approach,
+e.g. x86 has several testcases that fail if run without the exact right config.
+But that's just another reason to NOT follow KUT's pattern, e.g. to force us to
+write robust tests.
+
+E.g. instead of per-config command line options, let the user specify a file,
+and/or a directory (using a well known filename pattern to detect configs).
+
+> Tests need to handle the environment in which they are running
+> gracefully, which many tests already do but not exhaustively. If some
+> setting is not provided or set up properly for their execution then
+> they should fail/skip accordingly.
+
+This belongs in phase 2.
+
+> Runner will not be responsible to precheck things on tests behalf.
+> 
+> 
+> Next steps:
+> 1. Consensus on above phases and features.
+> 2. Start development.
+> 
+> Thanks,
+> Vipin
 
