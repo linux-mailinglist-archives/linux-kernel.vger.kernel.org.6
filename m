@@ -1,118 +1,150 @@
-Return-Path: <linux-kernel+bounces-398261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD749BECE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:07:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18979BECF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0A121C23C17
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2AB1F217EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAB11F7569;
-	Wed,  6 Nov 2024 13:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628081F76B5;
+	Wed,  6 Nov 2024 13:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="p6sPqwTf"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MnPd16El"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61C5646
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1438E1EE01C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730898023; cv=none; b=e3H5x3XzIrtJ4w4zVkCTMrkdYW7IJL2W53E1PimJJUj3/iGR3GkwKAPcn9Y7zgTNdgbXysjLebEX6WEt+5e9bfDIIhLTgr6MeT15mAAm8OkgoBk68n4O0s0zxt2EppofWsbhpftsrgKqmrjrQDwsjtdjMEVxQZWxLAq3WL9vYVI=
+	t=1730898056; cv=none; b=rDYfFP2rVc6jKbQvgHSaiRaAxaZn8zJnIx/g39cDaex/aBTwUMvDeVbbYGnStMs2XJW6t9fdCjFYjpDXrQK6jh1Eo2xc/8j3pHl9VJZbkgkUskOWdScq9gxiqt1kEEkUEC+DejD7jseiU3f/GvfVatgenJ4q0t48rJIlFQ8njDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730898023; c=relaxed/simple;
-	bh=S6tm6Rs3fXGY6fr3KgIHVwKt/zqcDr2lq6x917vNVbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lnwcF9S5tgtkuKydcbW8DX9Y1KO6or1qiYc8hg2y9Bvol7rEmJMgMxkDg/MhNR30xDPei+9BqohKLGMICoPuY6pJ6r4raOBg+YOdyAsuOpc9cdaEvDGqsRnntWEGgOiKv4mtXyWyF5Ovt5k1dm3kJ9jflDLT7+t9Q2HM5Agsnq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=p6sPqwTf; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e6104701ffso3975660b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 05:00:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1730898020; x=1731502820; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E3CfkUvmHBfftI7nEjPqKAga3mFEVe00QCXyDqUTKB0=;
-        b=p6sPqwTfeoxCt1RanVN2SruEqKlexdP+45SVA9nkfR3r3ziUJnAa0Xd8xoiPNUAlTY
-         YSx7UeSTirIanYLuFUgYZWu1VEGJX+SUwJFEh21UhTFgwH0XOVPqYrSXYGUd+gutInbM
-         EQn5QS29hNNjt7zkLt2AmYMvpAlBzYUUUXpi5+sERWyjFLaTKcHChAZWQMoP0uCVrBv9
-         VJurRjSJsVtSVaM4dlt+xQumw0FE7WMjPCh2Ozx+ajHy0ikLBFVkD8QBmKAuO9khOGcC
-         bRoXoj7b3TBqktmMc/6eB1DgBG/9TN3yRdU3eZ+3kTbBjTuFWm3/iesMhPBo9uTXmpiS
-         cIRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730898020; x=1731502820;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E3CfkUvmHBfftI7nEjPqKAga3mFEVe00QCXyDqUTKB0=;
-        b=jF0msWJkSBslnKzTwd4wv1FtMtBkRBo2KtO2z15oYdu7C2HC5rOLspJKQLo1XeKJ+u
-         0kJoWWPe4lqlNNZiR4m+c9ycH5WR4l3UXuQ0aaATnUVcgbuZH5EkcAJzakomhcyW6nui
-         RRHKga7aXHGplR3TveUhYOY0HSFdfVnk1Qv7A3dlG0DIk9xUOvxifBYD4sXv3INZlnya
-         olGeE03Zw2QXMZIgKU36vlmwaakoxqoMuEP3lBJia8FeQB3LZo9NZq4Jh32tISI5bb8a
-         WR4+d5h98mJV0HUWF5uChIFJvDGlj1eEE+BarZoJZrLBQB/P3Ndj9HxaXxlzNkaRzjo7
-         uo3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwr3ow807YIGuldCW/Tgt9CIFZjtzVLpAWuoXh6Eo2TGfmN41sg7hTtBTK0IVyqaQqDN1BZQaYDEPsaY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg6XuC2K9m5K8M1FJTQBsO+/0q0qBK4gLBXx5vgQIhQeIryn/v
-	/HiafhO9gvPQbL67xufHNmp53S8d1xrge0ykT3WwM1US5CFyC4KGr267gSz5CYA=
-X-Google-Smtp-Source: AGHT+IHJyz2ZD0Tulkl1wbaFPR6j+E+IbS6Z1fX733mFNactan83QAKY3E30AHJnO4HLitxjcG4Z5Q==
-X-Received: by 2002:a05:6808:178d:b0:3e5:df4b:bf4f with SMTP id 5614622812f47-3e63845b56bmr39868716b6e.24.1730898017172;
-        Wed, 06 Nov 2024 05:00:17 -0800 (PST)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:f7a1:2561:134f:bca6])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e75b5b9201sm2429660b6e.13.2024.11.06.05.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 05:00:15 -0800 (PST)
-Date: Wed, 6 Nov 2024 07:00:08 -0600
-From: Corey Minyard <corey@minyard.net>
-To: liujing <liujing@cmss.chinamobile.com>
-Cc: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] char:ipmi: Fix the wrong format specifier
-Message-ID: <ZytoWGTQ4fn9KpV2@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20241106111458.2157-1-liujing@cmss.chinamobile.com>
+	s=arc-20240116; t=1730898056; c=relaxed/simple;
+	bh=QQCqKvtPt8YinCEAsZUCxcrG2xQJRRuu3P8vQdgq1Cs=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=H7gP6CBkc+gDfw3HX2Kxww0aBqRp4eB0bqXL5aGZj9j7PnNFRIzUBMZ3xlEUqXwmlheykgvw5bYi456EftDJE57YxhfL5gM+xjYw5u4mdiL8axc3c7FgXPPHBorvpqvxpAZD2JD766ONzmQQevPN4YcQGX4g+s72Vzsubk52rWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MnPd16El; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730898054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7zc2UPyvhc/gaG96Z14+cpV1YeG2vT5ilG2eZvzA9MI=;
+	b=MnPd16Elh3BeDIKx2gkwxMjjcUHsUebBQMrC4kkSWurPClyF9jH+70UzLbInzNIBqntuCY
+	Y54f8QkwKnYBzvY3WKGsVPSduWhCARXIuulsL46HEMq1AVpk0mcR1zw7xxTVUikHGBX/SX
+	iI22pZVF/DiMvjQB0UTfQql9ne0UCys=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-332-ee2LlgR9O5KgykoE8c0VTg-1; Wed,
+ 06 Nov 2024 08:00:50 -0500
+X-MC-Unique: ee2LlgR9O5KgykoE8c0VTg-1
+X-Mimecast-MFC-AGG-ID: ee2LlgR9O5KgykoE8c0VTg
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ECBCC19560A2;
+	Wed,  6 Nov 2024 13:00:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4F66330000DF;
+	Wed,  6 Nov 2024 13:00:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] rxrpc: Add a tracepoint for aborts being proposed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106111458.2157-1-liujing@cmss.chinamobile.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <726355.1730898045.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 06 Nov 2024 13:00:45 +0000
+Message-ID: <726356.1730898045@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Nov 06, 2024 at 07:14:58PM +0800, liujing wrote:
-> Because the types of io.regsize and io.regspacing in the ipmipci_probe function are unsigned int,
-> they should be output in the %u format.
+Add a tracepoint to rxrpc to trace the proposal of an abort.  The abort is
+performed asynchronously by the I/O thread.
 
-I reformatted the above text to fit into 80 characters, but this is
-right, I've applied it.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: Simon Horman <horms@kernel.org>
+cc: linux-afs@lists.infradead.org
+cc: netdev@vger.kernel.org
+---
+ include/trace/events/rxrpc.h |   25 +++++++++++++++++++++++++
+ net/rxrpc/sendmsg.c          |    1 +
+ 2 files changed, 26 insertions(+)
 
--corey
+diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
+index a1b126a6b0d7..c2f087e90fbe 100644
+--- a/include/trace/events/rxrpc.h
++++ b/include/trace/events/rxrpc.h
+@@ -772,6 +772,31 @@ TRACE_EVENT(rxrpc_rx_done,
+ 	    TP_printk("r=3D%d a=3D%d", __entry->result, __entry->abort_code)
+ 	    );
+ =
 
-> 
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
-> 
-> diff --git a/drivers/char/ipmi/ipmi_si_pci.c b/drivers/char/ipmi/ipmi_si_pci.c
-> index b83d55685b22..8c0ea637aba0 100644
-> --- a/drivers/char/ipmi/ipmi_si_pci.c
-> +++ b/drivers/char/ipmi/ipmi_si_pci.c
-> @@ -118,7 +118,7 @@ static int ipmi_pci_probe(struct pci_dev *pdev,
->  	if (io.irq)
->  		io.irq_setup = ipmi_std_irq_setup;
->  
-> -	dev_info(&pdev->dev, "%pR regsize %d spacing %d irq %d\n",
-> +	dev_info(&pdev->dev, "%pR regsize %u spacing %u irq %d\n",
->  		 &pdev->resource[0], io.regsize, io.regspacing, io.irq);
->  
->  	return ipmi_si_add_smi(&io);
-> -- 
-> 2.27.0
-> 
-> 
-> 
++TRACE_EVENT(rxrpc_abort_call,
++	    TP_PROTO(const struct rxrpc_call *call, int abort_code),
++
++	    TP_ARGS(call, abort_code),
++
++	    TP_STRUCT__entry(
++		    __field(unsigned int,		call_nr)
++		    __field(enum rxrpc_abort_reason,	why)
++		    __field(int,			abort_code)
++		    __field(int,			error)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->call_nr	=3D call->debug_id;
++		    __entry->why	=3D call->send_abort_why;
++		    __entry->abort_code	=3D abort_code;
++		    __entry->error	=3D call->send_abort_err;
++			   ),
++
++	    TP_printk("c=3D%08x a=3D%d e=3D%d %s",
++		      __entry->call_nr,
++		      __entry->abort_code, __entry->error,
++		      __print_symbolic(__entry->why, rxrpc_abort_reasons))
++	    );
++
+ TRACE_EVENT(rxrpc_abort,
+ 	    TP_PROTO(unsigned int call_nr, enum rxrpc_abort_reason why,
+ 		     u32 cid, u32 call_id, rxrpc_seq_t seq, int abort_code, int error),
+diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
+index 23d18fe5de9f..6abb8eec1b2b 100644
+--- a/net/rxrpc/sendmsg.c
++++ b/net/rxrpc/sendmsg.c
+@@ -29,6 +29,7 @@ bool rxrpc_propose_abort(struct rxrpc_call *call, s32 ab=
+ort_code, int error,
+ 		call->send_abort_why =3D why;
+ 		call->send_abort_err =3D error;
+ 		call->send_abort_seq =3D 0;
++		trace_rxrpc_abort_call(call, abort_code);
+ 		/* Request abort locklessly vs rxrpc_input_call_event(). */
+ 		smp_store_release(&call->send_abort, abort_code);
+ 		rxrpc_poke_call(call, rxrpc_call_poke_abort);
+
 
