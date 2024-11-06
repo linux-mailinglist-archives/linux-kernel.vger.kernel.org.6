@@ -1,186 +1,231 @@
-Return-Path: <linux-kernel+bounces-398610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DBF9BF394
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:48:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1019BF397
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46D781C21D5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:48:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE452B22081
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BD9201115;
-	Wed,  6 Nov 2024 16:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA58204F94;
+	Wed,  6 Nov 2024 16:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="ha9MMNcw"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011063.outbound.protection.outlook.com [52.101.65.63])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0SpbMFo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C230E1DFE33
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730911711; cv=fail; b=jH4SUGc0R1b2OG4yBT2FQiLlZa1LhCUIJ8MeskEbSmdvw061NAP06+n76wWTqhHm61eu0cf8cXRMrd8OYkXnVcC7k9eOgpWFTKVB2y5XYUvr77LWISJRSxu88xph+lm6qHlXInvZzZNzSZw6bOOzNh/nHc+7NUsLsw/Eppftj1E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730911711; c=relaxed/simple;
-	bh=GwUHhzwMtKD5uPVG9ifWaYMIfHBhufJ+VnE5lfepJhI=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QzYxtaYTuaKUYkhLnLz2qSGTKOE8FUGoAokgFw80EsTsX3hCHoU9Qq2k4ajsb1CzeOGY25HJaWlznfJNTK5QA/gP1TFt55a/4NlUSX29IYrDb+fqIoOEHqbqFLNrMRkYj5wJgDt7nTAhOQDXHiW3k+OUEPtggJ8F/jabEzOcuu8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=ha9MMNcw; arc=fail smtp.client-ip=52.101.65.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PVG9qn5u8D7b8VOxx7Lk4y2DQF19CagxIfzT0YXbZHP0HV0LdqXf8UH4v6Hl720Jwh4GeG8+1kQs5k7xIgOt0y4k5k/XM10+2GPZpdSuPqw7o0qV02zkA7jYgCF3RSyLMcgn3Jg3Tt63kdz5r42bag4tWB8nfQVpjhH0kQegkSKO5fepEaktfC6ElXSEXJhSWjvxxljsP0+xdEzQ979n8cwJawks/JEVcOie68b/ldrONOqZ1NzkOoRD9eZcyZt59vFTsB9kQ9qrbdH37Ww0BN/6NQICFCcg7JiEMJhk2RtZ7QflXjb5iHmRm1ikTnLEfMDTBDGXzHFabLXi6mx1wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6d+SQNSFeCVTazYEjOpq4fAzrai47BD/wMkPD1t5ols=;
- b=MXhus4URmlcRkMUG5US0w/ynJ0mpuD2nHEYv6gCSCBIiGTUZxaE+v4ZC3EL2wiv53+71gCgm86TNvVPSbsPViZwGesecN/FkjwqKAQ21B+n+xCIGCs/XNvstWZGAShkmgJXosnSMwtHNZ0cd2YAwJxRvmW+zihqm+UVmlYLJPCWcOir7m8eIC7zGtTPRqXzZ5kcGi7FMGr6TTB9HHb2EPdOHpXn661RSJ1chxVj/T7KMljriNYAOL34BTmAT5F75dXjJMLNg/+ezSywCypRBoHn+rk33WRNMOA59giHuPCh83wSL8kgTrG7i3ZgaLXObaHfkpQa5sQgWgSHaPcee0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6d+SQNSFeCVTazYEjOpq4fAzrai47BD/wMkPD1t5ols=;
- b=ha9MMNcwJKc4oKFIzLs5gp6+/P7uR1DCNl4MVadH1nInHgwMS+AMXAI1KXiAugS+EFeZK2GBnfzqiq1mD8MlVIWsSZeBSkjpMks1lwx7oD97YQK2Yp2Cl0e3kfF8kd3gH7ftednEdJiySDCodnJNXUmj/caeTIBr2ogA+TCmlvg=
-Received: from DU6P191CA0023.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:540::17)
- by GV1PR02MB8609.eurprd02.prod.outlook.com (2603:10a6:150:96::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Wed, 6 Nov
- 2024 16:48:22 +0000
-Received: from DU2PEPF0001E9C3.eurprd03.prod.outlook.com
- (2603:10a6:10:540:cafe::ef) by DU6P191CA0023.outlook.office365.com
- (2603:10a6:10:540::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19 via Frontend
- Transport; Wed, 6 Nov 2024 16:48:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- DU2PEPF0001E9C3.mail.protection.outlook.com (10.167.8.72) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8137.17 via Frontend Transport; Wed, 6 Nov 2024 16:48:22 +0000
-Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Nov
- 2024 17:48:17 +0100
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Zhihao Cheng <chengzhihao1@huawei.com>
-CC: Richard Weinberger <richard@nod.at>, <kernel@axis.com>,
-	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ubifs: Move update of cnt in get_znodes_to_commit
-In-Reply-To: <4751d3df-99a6-ec67-1175-ea5375290726@huawei.com> (Zhihao Cheng's
-	message of "Fri, 18 Oct 2024 09:24:03 +0800")
-References: <ebf1570e3d28462a97b1a595794e1969a4c27d81.1729191143.git.waqar.hameed@axis.com>
-	<4751d3df-99a6-ec67-1175-ea5375290726@huawei.com>
-Date: Wed, 6 Nov 2024 17:48:17 +0100
-Message-ID: <pndo72s2tri.fsf@axis.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96E8202640
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730911850; cv=none; b=Lw6DOaQH+bEOjhZrOYyxoTxGpsMWGG34j3/qB3vvhyfetXxdBWoKn5ct3RTFZC3F1Rh8NG7huhI/b02c4AdIClKH+UUOfpzb0Cl/1d/xESXu0tVL+yecaMzRRfy+xr7F98QPAp+gdtUQYE378d0J9TpQinVMoOntjVQqE5or/g8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730911850; c=relaxed/simple;
+	bh=q5gWslTmXOmIKIR0Phq9m4RfTGiKSPy5Vie0dZjlCMs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=TAP/uLZHOMFxi60C/rZeyHgSF+omYUyAqdLjLeNfFjDnLfdmR3JmD5kRs5PihmE3pFMrXZpvoQqr5rdTThxNq7jtxsSERIuYI+wY2hoQ2y0MnfhtiSBAZ2RFXGXijP4J9Nc2O46tT8FiPKfq2SlWjX8sEtIvGG7TW+7sGzG6d3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0SpbMFo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D6BC4CECC
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:50:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730911850;
+	bh=q5gWslTmXOmIKIR0Phq9m4RfTGiKSPy5Vie0dZjlCMs=;
+	h=References:In-Reply-To:From:Date:Subject:To:From;
+	b=Z0SpbMFo6GLAzOOz2gLz5q1UWHVpDFpHBo+ZFAQ3z1oG359PMh7J5v3SQhQzRaywz
+	 bh3BoUpafHAdzhZrtsI+aCSglRjNLfGEAeDlfWs+AVAUn5tTAzXTHNLY465yvvmKRR
+	 wSNs/VHgb4in08ZmedvDk+wCMrAdao+aztkOLlx8OQBN5cs62tcOzuMFtsS/TTQsT+
+	 McKc8AFmoR/GF1oQNgJMqFE1Bx9XWu8T9Of610bfpIl8D/rmoPIweJE4KAteniVXSp
+	 cv0AwkXQpZJ0hLKuhpBRZJBtZUp/XfV/0uwtKPx6BQyKKTybNF5fJAp6oulNX3LbaN
+	 Ty1RuFDRvelFw==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so7100829e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:50:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUjCfS7fkAs61X5bKSM58aDHeu7k99qHmBCHm1HAV5mNoQT/CODjyx88vf4sZKL75l66HfsTUhQ46dRSO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtutxbuSFo1n30VM7/0gZvPnckxEMbjf6DI+jfxKu9ycsNwWBT
+	OmKbjkgSvB5oPg8F4F+lOKtjjs11c/Gj6+tbG4UY+6Z0cHtDygDfN6O5nlLDA77322Ytc540XMj
+	Bn34Sy5zdtxyON0IxrU/yrRqSd4g=
+X-Google-Smtp-Source: AGHT+IFyxo6dsdnmJ8QGD0SQSLP0HIXjeKp08U+g4sEiUit9BBwDnXW50YxV01tXz9p6AqltEhx+UId84EpQFpok1Oo=
+X-Received: by 2002:a05:6512:12c8:b0:52c:d819:517e with SMTP id
+ 2adb3069b0e04-53b348e2efbmr21462389e87.30.1730911848876; Wed, 06 Nov 2024
+ 08:50:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+References: <20240918045431.607826-1-masahiroy@kernel.org>
+In-Reply-To: <20240918045431.607826-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 7 Nov 2024 01:50:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARJrLA2fC1Jdj+xK8yZk_Y_Xb6MwxqWM_9CTEQjJiZXZg@mail.gmail.com>
+Message-ID: <CAK7LNARJrLA2fC1Jdj+xK8yZk_Y_Xb6MwxqWM_9CTEQjJiZXZg@mail.gmail.com>
+Subject: Re: [PATCH] microblaze: use the common infrastructure to support
+ built-in DTB
+To: Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF0001E9C3:EE_|GV1PR02MB8609:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f1585bd-2872-4600-d03f-08dcfe82d33c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UUgxdjRuUGYyUUlTTlNCZVNGTW9JeW1scGVSYVREU2JPKzcraXAxVGMvZEsr?=
- =?utf-8?B?MEEzRk52UU5VKyttdUEybVlLVDZlWHNseEo5YjRkNlVFbGFzcXlDTHgzS1NT?=
- =?utf-8?B?aHIyYzJkbldUWkVwUDNISDkwMW5rYXBFMlpZZk14ZWFmWjdLc05BajcrM2Rs?=
- =?utf-8?B?b2YvQmFmeEpEUHpPV09iNTNoMVBsRnRNSDZBSXUwMGo1MTFkd0NUMTJpeEdK?=
- =?utf-8?B?QXdKVDRIU1NHREdGRzdqYUx1RVB4c1lyNGEwSFZWcFZtVW55WGdZc21RNk16?=
- =?utf-8?B?d2t6bzFPancrbGZYWEh4a29vb2hQUGVrdUR0U2RLMlpHYW00MXA1SUVHeHpD?=
- =?utf-8?B?bTlWNnp1ay95QXg3YW5oZU83ZzZQVi9kampHVXIxWmZOK2RLQzNzZ3ZTdFVt?=
- =?utf-8?B?VUVjcW91c3FUdGZvNTRWaGRUdFZnOVRDaEp2V21BenZkMnJjZHpmL2liQ05S?=
- =?utf-8?B?eXk2eENKQ2tpSjg2aGtzdWZuK0svZUh0U1ZsYi9yakRqTjA3WUhmS2ZLM3d4?=
- =?utf-8?B?RjBueUdJY2NwTTVvZzBhV01QVlljeXZGZ1B2VG9pK25ObE50Z2ZHbFFrOEhm?=
- =?utf-8?B?Uk5aOWlMTkswcTBGNzAyRGxiWmNpNlJFOFlIWHBuSkozMUovVGN2QzFRNllh?=
- =?utf-8?B?VG40SjduTVNrWnVYN2NxbDdNOGEwL0VZQlJodm5idHRCb1dMSldneWdpQXN0?=
- =?utf-8?B?OGVSZlFKUHhHTXVaMDlkQURZWGNjRnlYTDZKQzBCY0EveUVXUnA2a2hkcmhR?=
- =?utf-8?B?NWVsdXM0R2RiSzlWcWNHc3gyWUQ2ZjB4QStyL0ZrakgweU1HTm0rN1NkdUc1?=
- =?utf-8?B?N0NOV3RsbmVVNVo1dFkzN2xNNkphUnJVazEya1g0UllmYnhpTVFBQ2VuMkNs?=
- =?utf-8?B?dzVIdnVhMXRZVmxobXA5Mk92U3Jodk1DSVluNVF2N0I5OTAvZ3J5dzM2MGVO?=
- =?utf-8?B?MllXRTF3Q0l2WlN5ay9ha1RWWCsrTHJwditzNXZPNmxRaytlNFNQODlqSGtj?=
- =?utf-8?B?ZnhnL3gwK2Q1MWNBR3NOZjNtU2hzV3NEdW9iMlovUlNueTRQZXlvZmRmbmJh?=
- =?utf-8?B?aXplUXM0aXVTdVJGTUNoWU41ZEdNb3Z0KzRjeXl6c3czcG1IVGVSNTZiYVp3?=
- =?utf-8?B?bGNQVmFva3Bvbzc4YmY0THdOdklHUjdtT3VrVTBqaXhxL1o5VDlMN2VuNkFO?=
- =?utf-8?B?NDNqOEpGYjF5Q1E1OXhjNVlIZUhDc0pWTm5qdVpmYVY0V1Z0Z09aVXV4UFdy?=
- =?utf-8?B?eExZT05tcmVxMGpPZG9kWFRqTWxyTGFpRG5HVTIwNUhjTk0rcFIvZjJra2w2?=
- =?utf-8?B?TU51c3o2bmg4bDVXaUR1WTM1V3BnVjhsMmtQVnVzV2FWWExyY1lqdWJEYXQw?=
- =?utf-8?B?dzVsYjZmNTVGaHgwR1BscjRiRko0NDFYK2F6TkJ2MjFnZGRkbFRKS0YvbzU4?=
- =?utf-8?B?eWlTbUxaYnRjWFoyMlNIcFNBdHBBRWlOUUMxWFlmbGRPRE11RmNCSVFLOHJO?=
- =?utf-8?B?R1BndGllUnp5bTAwKzBobGFIWTZnNkt4RTI0aHJ3eUkvdEMyZHZGcWMya080?=
- =?utf-8?B?YWVWQ1lUS2dhc0dMVkJzdHFMR2NVeFVLOGVKeUwycE9zbFUxTHRhdTAzZVlR?=
- =?utf-8?B?Q281U2g4b3VnLytCODJvd3MvVjJ4dGxMbEw4MThRVzhaZGFGRklUOG1NNGh0?=
- =?utf-8?B?R3Y4MFloRnJyOUFaTHpjbUJ2WG9aQ3ZwL2huc3J2eVBsbWgyUUp2U01OeEdQ?=
- =?utf-8?B?clFVdFBNVHlXRm1uUFcrWENpVkhoN0ErSjBaOGtLMVdoR1JPUVcrdWJTYUNY?=
- =?utf-8?B?Q2xEalZkK0ZSV3BhaC9RdC9zWklmTXE1SndNQXJPTDBZTUFwelNzWUdyTHdD?=
- =?utf-8?B?VGJNeGRVckEyZDRYY0FHQ29BNTBROFBCemZCL0RHU0dHaWc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 16:48:22.2324
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f1585bd-2872-4600-d03f-08dcfe82d33c
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU2PEPF0001E9C3.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR02MB8609
 
-On Fri, Oct 18, 2024 at 09:24 +0800 Zhihao Cheng <chengzhihao1@huawei.com> =
-wrote:
-
-> =E5=9C=A8 2024/10/18 2:41, Waqar Hameed =E5=86=99=E9=81=93:
->> There is no need to update `cnt` for the first dirty node just before
->> the loop, and then again update it at the end of each iteration for the
->> next dirty nodes. Just update `cnt` at the beginning of each iteration
->> instead. This way, the first iteration will count the first dirty node
->> and any subsequent iterations will count the next dirty nodes.
+On Wed, Sep 18, 2024 at 1:54=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
 >
-> Well, from my own view, I prefer the orignal style because it looks more
-> readable.
->   c->cnext =3D find_first_dirty(c->zroot.znode);
->   znode =3D c->enext =3D c->cnext;
->   cnt +=3D 1;  // We get the first one.
+> MicroBlaze is the only architecture that supports a built-in DTB in
+> its own way.
 >
->   while (1) {
->     cnext =3D find_next_dirty(znode);
->     znode =3D cnext;
->     cnt +=3D 1; // We get another one.
->   }
+> Other architectures (e.g., ARC, NIOS2, RISC-V, etc.) use the common
+> infrastructure introduced by commit aab94339cd85 ("of: Add support for
+> linking device tree blobs into vmlinux").
 >
-> After applying this patch, the intention of 'cnt' updating is not so obvi=
-ously.
-> However, it does reduce the duplicated codes. I will add an acked-by to l=
-et
-> Richard determine whether or not apply this patch.
+> This commit migrates MicroBlaze to this common infrastructure.
 >
-> Acked-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-[...]
+Ping?
 
-As you say, there could be a subjective argument here (for me it was the
-other way around :) ), and that the objective argument is that it
-reduces the code.=20
 
-I'm fine with either! Richard, you decide then.
 
+>
+> I do not know why MicroBlaze still adopts its own way.
+> Perhaps, because MicroBlaze supports the built-in DTB
+> before aab94339cd85 and nobody attempted migration.
+> Anyway, I only compile-tested this patch.
+> I hope the maintainer can do boot-testing.
+>
+>  arch/microblaze/boot/Makefile          | 3 +--
+>  arch/microblaze/boot/dts/Makefile      | 5 +----
+>  arch/microblaze/boot/dts/linked_dtb.S  | 2 --
+>  arch/microblaze/include/asm/sections.h | 2 --
+>  arch/microblaze/kernel/head.S          | 2 +-
+>  arch/microblaze/kernel/setup.c         | 4 ++--
+>  arch/microblaze/kernel/vmlinux.lds.S   | 8 --------
+>  7 files changed, 5 insertions(+), 21 deletions(-)
+>  delete mode 100644 arch/microblaze/boot/dts/linked_dtb.S
+>
+> diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefil=
+e
+> index 2b42c370d574..23a48e090f93 100644
+> --- a/arch/microblaze/boot/Makefile
+> +++ b/arch/microblaze/boot/Makefile
+> @@ -17,8 +17,7 @@ $(obj)/linux.bin.gz: $(obj)/linux.bin FORCE
+>         $(call if_changed,gzip)
+>
+>  quiet_cmd_strip =3D STRIP   $< $@$2
+> -       cmd_strip =3D $(STRIP) -K microblaze_start -K _end -K __log_buf \
+> -                               -K _fdt_start $< -o $@$2
+> +       cmd_strip =3D $(STRIP) -K microblaze_start -K _end -K __log_buf $=
+< -o $@$2
+>
+>  UIMAGE_LOADADDR =3D $(CONFIG_KERNEL_BASE_ADDR)
+>
+> diff --git a/arch/microblaze/boot/dts/Makefile b/arch/microblaze/boot/dts=
+/Makefile
+> index b84e2cbb20ee..f168a127bf94 100644
+> --- a/arch/microblaze/boot/dts/Makefile
+> +++ b/arch/microblaze/boot/dts/Makefile
+> @@ -4,10 +4,7 @@
+>  dtb-y :=3D system.dtb
+>
+>  ifneq ($(DTB),)
+> -obj-y +=3D linked_dtb.o
+> -
+> -# Ensure system.dtb exists
+> -$(obj)/linked_dtb.o: $(obj)/system.dtb
+> +obj-y +=3D system.dtb.o
+>
+>  # Generate system.dtb from $(DTB).dtb
+>  ifneq ($(DTB),system)
+> diff --git a/arch/microblaze/boot/dts/linked_dtb.S b/arch/microblaze/boot=
+/dts/linked_dtb.S
+> deleted file mode 100644
+> index 23345af3721f..000000000000
+> --- a/arch/microblaze/boot/dts/linked_dtb.S
+> +++ /dev/null
+> @@ -1,2 +0,0 @@
+> -.section __fdt_blob,"a"
+> -.incbin "arch/microblaze/boot/dts/system.dtb"
+> diff --git a/arch/microblaze/include/asm/sections.h b/arch/microblaze/inc=
+lude/asm/sections.h
+> index a9311ad84a67..6bc4855757c3 100644
+> --- a/arch/microblaze/include/asm/sections.h
+> +++ b/arch/microblaze/include/asm/sections.h
+> @@ -14,7 +14,5 @@
+>  extern char _ssbss[], _esbss[];
+>  extern unsigned long __ivt_start[], __ivt_end[];
+>
+> -extern u32 _fdt_start[], _fdt_end[];
+> -
+>  # endif /* !__ASSEMBLY__ */
+>  #endif /* _ASM_MICROBLAZE_SECTIONS_H */
+> diff --git a/arch/microblaze/kernel/head.S b/arch/microblaze/kernel/head.=
+S
+> index ec2fcb545e64..9727aa1934df 100644
+> --- a/arch/microblaze/kernel/head.S
+> +++ b/arch/microblaze/kernel/head.S
+> @@ -95,7 +95,7 @@ big_endian:
+>         bnei    r11, no_fdt_arg                 /* No - get out of here *=
+/
+>  _prepare_copy_fdt:
+>         or      r11, r0, r0 /* incremment */
+> -       ori     r4, r0, TOPHYS(_fdt_start)
+> +       ori     r4, r0, TOPHYS(__dtb_start)
+>         ori     r3, r0, (0x10000 - 4)
+>  _copy_fdt:
+>         lw      r12, r7, r11 /* r12 =3D r7 + r11 */
+> diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setu=
+p.c
+> index f417333eccae..8e57b490ca9c 100644
+> --- a/arch/microblaze/kernel/setup.c
+> +++ b/arch/microblaze/kernel/setup.c
+> @@ -120,7 +120,7 @@ void __init machine_early_init(const char *cmdline, u=
+nsigned int ram,
+>         memset(_ssbss, 0, _esbss-_ssbss);
+>
+>  /* initialize device tree for usage in early_printk */
+> -       early_init_devtree(_fdt_start);
+> +       early_init_devtree(__dtb_start);
+>
+>         /* setup kernel_tlb after BSS cleaning
+>          * Maybe worth to move to asm code */
+> @@ -132,7 +132,7 @@ void __init machine_early_init(const char *cmdline, u=
+nsigned int ram,
+>         if (fdt)
+>                 pr_info("FDT at 0x%08x\n", fdt);
+>         else
+> -               pr_info("Compiled-in FDT at %p\n", _fdt_start);
+> +               pr_info("Compiled-in FDT at %p\n", __dtb_start);
+>
+>  #ifdef CONFIG_MTD_UCLINUX
+>         pr_info("Found romfs @ 0x%08x (0x%08x)\n",
+> diff --git a/arch/microblaze/kernel/vmlinux.lds.S b/arch/microblaze/kerne=
+l/vmlinux.lds.S
+> index ae50d3d04a7d..3d4a78aa9ab4 100644
+> --- a/arch/microblaze/kernel/vmlinux.lds.S
+> +++ b/arch/microblaze/kernel/vmlinux.lds.S
+> @@ -44,14 +44,6 @@ SECTIONS {
+>                 _etext =3D . ;
+>         }
+>
+> -       . =3D ALIGN (8) ;
+> -       __fdt_blob : AT(ADDR(__fdt_blob) - LOAD_OFFSET) {
+> -               _fdt_start =3D . ;                /* place for fdt blob *=
+/
+> -               *(__fdt_blob) ;                 /* Any link-placed DTB */
+> -               . =3D _fdt_start + 0x10000;       /* Pad up to 64kbyte */
+> -               _fdt_end =3D . ;
+> -       }
+> -
+>         . =3D ALIGN(16);
+>         RO_DATA(4096)
+>
+> --
+> 2.43.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
