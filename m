@@ -1,131 +1,149 @@
-Return-Path: <linux-kernel+bounces-398933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB439BF835
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A19A9BF83A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B88D4B22FAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:51:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26C37B232B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EBC20C301;
-	Wed,  6 Nov 2024 20:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B3920C494;
+	Wed,  6 Nov 2024 20:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1PTDQaC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Bw/NSx1j"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD4F14F9D9;
-	Wed,  6 Nov 2024 20:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1A0204F76
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 20:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730926270; cv=none; b=SdmsnwZtgoxvX4WNLCfgMSYAaMaGRoNyIOjtJarp/rByy7sVkOdul7sJ3ikfzRU+/ugdY+dCXz9E7htqxNGzmY5lwSbhIr4iOImdb9a+p7GV0NfOywqPfMCpnsM5cQN8MVqv3RXBykThWqcemKUb3Al1l+VQGqSI5VDVsGSZh9M=
+	t=1730926321; cv=none; b=NlDLy/CloKfepJxIpmuVPEW5cYbz24R3u4lc7SIf6brMgkjcE65WaYY4EC4dsGL6OxKOTlavHMsyJl/2i35kXhRyLhYs9z+6P8TUiJCz23kMNcqcds1E2kp5zUVqxBWMhIh423FsWlxuey5U8oMuyV7MZ1jROWE2HhWcXXU+2Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730926270; c=relaxed/simple;
-	bh=3icivavPqzjUtXmffIVTz6m0RmdGyiaZWnhkP8mFoXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MI0VcTOjiouxUTYMqZuc4bPQmLAS+BLWTqU61UzBfFCxWRhSHzSncNImba+VnuUtqLg2uEZRhn3wKLS9od8cwSrIXH9aAPiSVI2a7ATrm58xb+oY4fECUKChtxMYd48ykqs1ZRJiBiJPfl5wM+YGW8j6J/azbic5Tr9fV/M33l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1PTDQaC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA90C4CEC6;
-	Wed,  6 Nov 2024 20:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730926270;
-	bh=3icivavPqzjUtXmffIVTz6m0RmdGyiaZWnhkP8mFoXk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=T1PTDQaCpQR2TLYe9X+V/shxSWvY5owtCBt8greaRvtM1Zjqpn33QLWNmydIaj7sN
-	 t6jwTtCnE+qbd+A9lWFXFcz8Y3JwQTfqNQ9A+y7iYeGZJJTBoXLuWl4vz/HRkmLpAD
-	 xTg1orqobPIJH6md3u54HXsGwmGAxTm3q/rfDrwzxw/BU23SDZf+OYkn5gdBG8uV+1
-	 dUkPzKYTo6SyZM+cgwAbfLXSfIBgbwG1XsGti3JCNLF7xDMqZc0hqN+Io6loSM0wA1
-	 mms3CCsesn1X9wp/eINLwCj8IMC5WVMZYPNk80qPWSgeIH+07gquk6/FxN6wNOR9Ej
-	 BF9sBkuwivmTw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1t8mzb-00000002JGi-1ql2;
-	Wed, 06 Nov 2024 21:51:07 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: 
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Zhipeng Lu <alexious@zju.edu.cn>,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] dvbdev: fix the logic when DVB_DYNAMIC_MINORS is not set
-Date: Wed,  6 Nov 2024 21:50:55 +0100
-Message-ID: <9e067488d8935b8cf00959764a1fa5de85d65725.1730926254.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730926321; c=relaxed/simple;
+	bh=BUiy1Lrkui/QDhUO26WuXJ0XiAVZDQ7hDrKZilM9VkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cW3RdP256CMVdEyrJb2wur0DOnnva5OCnvE13JUEpa3Y/C3BLmXfqpO6eJBFDf68Q0bA0tWcrWiXJnhWR6kTRF3/+xzsrrFJkSBN0Nb4zxdTaqOh84YnJzO5tNz1dUpk0KqL4sGsziHMSr8wsJvkNnDuQb3T9QlosVySz0vE6Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Bw/NSx1j; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 6 Nov 2024 12:51:40 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730926316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iTbQ6DPhP6MjHwSaDILXhZVjYXEH8BwsiSbm61YVqgE=;
+	b=Bw/NSx1j2z8iH74+2uUPsORZOF/lHwjDSE1XgPO3bR7hc3VDGRgJjxxqihTFVbyt2Vu2w8
+	raQ7DhoPXKD5HHKOAaOJujYj6vS582FOQLBKtpnd3xvd1RSxRYMmmhyO+1CxVOE0maifyR
+	a4U5OreS2n4YhRCs77wj4S8lLE19n7c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v6 4/5] x86: perf: Refactor misc flag assignments
+Message-ID: <ZyvW3FxcezmYyOMa@linux.dev>
+References: <20241105195603.2317483-1-coltonlewis@google.com>
+ <20241105195603.2317483-5-coltonlewis@google.com>
+ <65675ed8-e569-47f8-b1eb-40c853751bfb@linux.intel.com>
+ <ZyvLOjy8Vfvai5cG@linux.dev>
+ <597dbcf6-8169-4084-881c-8942ed363189@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <597dbcf6-8169-4084-881c-8942ed363189@linux.intel.com>
+X-Migadu-Flow: FLOW_OUT
 
-When CONFIG_DVB_DYNAMIC_MINORS, ret is not initialized, and a
-semaphore is left at the wrong state, in case of errors.
+On Wed, Nov 06, 2024 at 03:33:30PM -0500, Liang, Kan wrote:
+> On 2024-11-06 3:02 p.m., Oliver Upton wrote:
+> > On Wed, Nov 06, 2024 at 11:03:10AM -0500, Liang, Kan wrote:
+> >>> +static unsigned long common_misc_flags(struct pt_regs *regs)
+> >>> +{
+> >>> +	if (regs->flags & PERF_EFLAGS_EXACT)
+> >>> +		return PERF_RECORD_MISC_EXACT_IP;
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+> >>> +{
+> >>> +	unsigned long guest_state = perf_guest_state();
+> >>> +	unsigned long flags = common_misc_flags(regs);
+> >>> +
+> >>> +	if (guest_state & PERF_GUEST_USER)
+> >>> +		flags |= PERF_RECORD_MISC_GUEST_USER;
+> >>> +	else if (guest_state & PERF_GUEST_ACTIVE)
+> >>> +		flags |= PERF_RECORD_MISC_GUEST_KERNEL;
+> >>> +
+> >>
+> >> The logic of setting the GUEST_KERNEL flag is implicitly changed here.
+> >>
+> >> For the current code, the GUEST_KERNEL flag is set for !PERF_GUEST_USER,
+> >> which include both guest_in_kernel and guest_in_NMI.
+> > 
+> > Where is the "guest_in_NMI" state coming from? KVM only reports user v.
+> > kernel mode.
+> 
+> I may understand the kvm_arch_pmi_in_guest() wrong.
 
-Make the code simpler and avoid mistakes by having just one error
-check logic used weather DVB_DYNAMIC_MINORS is used or not.
+kvm_arch_pmi_in_guest() is trying to *guess* whether or not an overflow
+interrupt caused the most recent VM-exit, implying a counter overflowed
+while in the VM. It has no idea what events are loaded on the PMU and
+which contexts they're intended to sample in.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202410201717.ULWWdJv8-lkp@intel.com/
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- drivers/media/dvb-core/dvbdev.c | 25 +++++++++----------------
- 1 file changed, 9 insertions(+), 16 deletions(-)
+It only makes sense to check kvm_arch_pmi_in_guest() if you're dealing with
+an event that counts in both host and guest modes and you need to decide who
+to sample.
 
-diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
-index 14f323fbada7..9df7c213716a 100644
---- a/drivers/media/dvb-core/dvbdev.c
-+++ b/drivers/media/dvb-core/dvbdev.c
-@@ -530,30 +530,23 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
- 	for (minor = 0; minor < MAX_DVB_MINORS; minor++)
- 		if (!dvb_minors[minor])
- 			break;
--	if (minor >= MAX_DVB_MINORS) {
--		if (new_node) {
--			list_del(&new_node->list_head);
--			kfree(dvbdevfops);
--			kfree(new_node);
--		}
--		list_del(&dvbdev->list_head);
--		kfree(dvbdev);
--		*pdvbdev = NULL;
--		up_write(&minor_rwsem);
--		mutex_unlock(&dvbdev_register_lock);
--		return -EINVAL;
--	}
- #else
- 	minor = nums2minor(adap->num, type, id);
-+#endif
- 	if (minor >= MAX_DVB_MINORS) {
--		dvb_media_device_free(dvbdev);
-+		if (new_node) {
-+			list_del(&new_node->list_head);
-+			kfree(dvbdevfops);
-+			kfree(new_node);
-+		}
- 		list_del(&dvbdev->list_head);
- 		kfree(dvbdev);
- 		*pdvbdev = NULL;
-+		up_write(&minor_rwsem);
- 		mutex_unlock(&dvbdev_register_lock);
--		return ret;
-+		return -EINVAL;
- 	}
--#endif
-+
- 	dvbdev->minor = minor;
- 	dvb_minors[minor] = dvb_device_get(dvbdev);
- 	up_write(&minor_rwsem);
+> However, the kvm_guest_state() at least return 3 states.
+> 0
+> PERF_GUEST_ACTIVE
+> PERF_GUEST_ACTIVE | PERF_GUEST_USER
+> 
+> The existing code indeed assumes two modes. If it's not user mode, it
+> must be kernel mode.
+> However, the proposed code behave differently, or at least implies there
+> are more modes.
+> If it's not user mode and sets PERF_GUEST_ACTIVE, it's kernel mode.
+
+A precondition of the call to perf_arch_guest_misc_flags() is that guest
+state is nonzero, meaning a vCPU is loaded presently on this CPU.
+
 -- 
-2.47.0
-
+Thanks,
+Oliver
 
