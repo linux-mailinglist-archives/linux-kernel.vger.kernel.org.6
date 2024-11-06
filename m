@@ -1,87 +1,200 @@
-Return-Path: <linux-kernel+bounces-398986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB5C59BF8EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:10:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A389BF8EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:10:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADB79282AA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:10:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA05C28295C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE8520C313;
-	Wed,  6 Nov 2024 22:10:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5F220CCF8;
+	Wed,  6 Nov 2024 22:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NxPrk8jg"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEDE1DFE13
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1065E1DFE13;
+	Wed,  6 Nov 2024 22:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730931005; cv=none; b=Ww96RDV32CRLejB79LvzgVBTDLtv+QVjPGg6cgiP8zgxHSQqC96FWsiMwAZ5rg0MWQ9r0XZ/Kwexq+uJ6LoKIqsJXjH98jP3i2FbrmUTmUjHervhPgDZO7qOdUYYgwd7xPWAUBax2WimDlxHHLD2xVTv1BFO5KFILdwvb60Z+uM=
+	t=1730931022; cv=none; b=eiXiO7NYA4/mtZHNEj0YTYwRWBmui3PPOacDaCTdm0cGtelqag5koHT55mnUD6J76aV/zuexGS7rvEPuAEFWzQnZzclcHX+GWGZiBhEliDPd+amojZT1oeiuxBTP9R/O0pjYvJEwYUSJhzObua+EMZeTV/q/4Q7C/B0PisHRZAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730931005; c=relaxed/simple;
-	bh=ZDCq+S196X1oEZe/GjI0HBmW4W0Qjau2MkKtbK/A+3g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pxMiA/YfrnxewJyDvkG2mEpXZi0Uw1FEArpDeRmJR23ByLEjLOdlZYTsNsu0VtfjVNR7mlKT5cxQ212+vsLLI6MqwwySHsvUJOfMZTkNVrNtxRncdlVE5f6VjA0GUqBIt0xtyHi+xpwkLaeJbKHSViLs+OzvfP89O0eyB3NtQDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4f32b0007so4098645ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 14:10:03 -0800 (PST)
+	s=arc-20240116; t=1730931022; c=relaxed/simple;
+	bh=MzmDmWYqBogOFhNpsnduBcvuDwaAFS6ndPzfR0Glz2k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OvmalVS3/5Q0PWKIwRDuxrCQOl0YpPZ7pQEcptkNfPLASkOWSE1erP6TE16CHrseiq/YyDQV1NSPLx6XPlpi1M8mfWYGTR/cqRdTSAV8nXzYd/r9qsOaCuYCjjPyKbLPc6IGpifnzAJf4krOdCgN9JlflwNd9SAasqRF4NY/6t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NxPrk8jg; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cf6eea3c0so3744015ad.0;
+        Wed, 06 Nov 2024 14:10:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730931020; x=1731535820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sbQPTGHZO+Rsg4AP3Nwn34Yw4SOAMi3fH85r8C2FTLM=;
+        b=NxPrk8jghRlrWnnPQ9GFe7NMiOheZFHncAAKf9i7/h7+quN+EepgEmONX6A+4c/nsz
+         eHcKUH57xvCma4AB+IijBdHABivpD2l+JPgbCZpm/lr91TI3rnjoRcUD0d9YWpawJfTK
+         NS10n28957dgErWo/RX+ODK3e8sUrHWXo96uCzoWRCZbwY5Dxg+OSAwpm9Hz1JNEMwW2
+         yCnph+yLRdhLtuuvG7/G5k3cjc/h6MqAcrX2n+Vn8/5H+p/l8Yvh5BRHd9wDVtMd1LGD
+         j17wvOD1gombrzfLfBxxL4jav9k0I3imXqkXHw3xZh8OxWNvD/nA43wADN4HBRm1N9JZ
+         eOhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730931003; x=1731535803;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tc/p+7snJhM6/YlTQIy1yUOBmqrmGxzfzfEeP866GUc=;
-        b=a9N8NFU21axGIM8IGn/l+PMMwWyPcPImNrbu8y0M+oFmSGdEYXL+I6NexOU50mSgkV
-         TSSArTp8ns5b4Q3fZ7oTiRfyscYBP2IXSok5QHvn1g/z9IAmbFntORpmY/YSILKKCGD5
-         yvwh8s3QKtve+MQC+KFGvJOaXSHGYHzN0puq5eQ5TDsblbojIrWYdgpfd60+GMwEMkA+
-         DTE6tAMrjIKSaYw01cMiIY0xHk3ewVm12ifHLN2wPEJ04vcRClovjIKrY9sybY93fSIr
-         9Ms0hncw4gGKomm53GSnBaLS7ZrEqsPDLyrgN7VPtJPBTN+ieG1ZMDSgB6VHSmAdhmN4
-         e82A==
-X-Forwarded-Encrypted: i=1; AJvYcCW/FmvJQaAIs69rtiLnpR72QZ1KufMxzL4XlGWA7ZU57B7l+ei9jOlw+wyV8SQDO6sfh2v6jE3GsLNBEPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhp0K1A9caasyldqyN7LlrRW1uoNe5Htsev6Q0fpY9W1E8rplB
-	gLSdp2o4nIKeoe8NiYxVPH7h6PILtfVHgUnz8SPQ3dwBy/kjsH2Juy1vY5XjGU+tCka71FKsP4a
-	xkJ35TxeJNUaF0TaVC6nLcnG+Lp7n7iE55DL1jUk7vAu6LbZrqIV4Lsk=
-X-Google-Smtp-Source: AGHT+IGA0N+fYg0ceNk/VmG5X0IIfpv364dj3EaK4JJ5MznsiNyj+5fT51/Q1iGdRIVJGz8AMXnPs9fGUy6Eo/50PQCZFzgyPDtq
+        d=1e100.net; s=20230601; t=1730931020; x=1731535820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sbQPTGHZO+Rsg4AP3Nwn34Yw4SOAMi3fH85r8C2FTLM=;
+        b=Okx3GcyVkQMyzAN6KpAvKUq+L8Bj1fOrivVZFBdKnjE6ILICGavGqCF3nAoFdh01aV
+         5Bq0MH6fGTV/fuThVRrM7+lshu+wcB3/m6nNS5jyNxNqCTovIqPG03OT6gvl6SrY3Pza
+         yKe0jr3aXiZnU0hB2ELYBjzVBmhlsB4z6JSq2UkfoA+TKenAKKWQNf3g8TG2eFFWN8Yt
+         kxxnDpCDVVGMqb/N3OBHXwfB9Fh9Musg+S+IQ1BimhkvXy5pIPR2FKrZ1EeXENnFqs1+
+         ngQnvUUJyFF7j7tpp95HkGFF0Y/Cgnfgh38aB5i94fp2+Y7KBypTqOHETXR1N7RVm6OO
+         P0eA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4C59NATg/ojUPDC7C4OAHDMHb5blzitZRJDyVDnauqpLfLu/Z0wXyAobkg1U5hKWkkJDAtRMfiJ5tqIxQ@vger.kernel.org, AJvYcCW8l9yj1L1lwq927n5RKDYDUfUNZvQ/eKPn+B5ljwntbEKS0RaeydEmNeUHMyTlOH98LxKseQf+3UT0DDzRyg==@vger.kernel.org, AJvYcCWORI9FAHg4N2Rbw6OkIotag8QwBi6/HFNgM4flko6YVYzi9O26gMwCbtQyy7lUfoRiIwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4wQvoDbPFiOSLSRGxZQcfMSGwWHyocRPxrCHeFQuW9iYy1bXi
+	pAxYoLtDgiauUEdFmfkKO9/6KyZ8YNLIH9O1qFgJvpBKV7zBT5/7Ebze7kERuzfGlL8bB+Z738x
+	2hiii71vGroEkAb4MRPxA9zc0bi4=
+X-Google-Smtp-Source: AGHT+IHH9yZO/DKtwvEzGpoug1M5WPDBbJLKXmeBIcv6m8OlpYBpP7Vk2ZpKe1VWlKtji/4Vwy7foR5eixKmCL9+z1g=
+X-Received: by 2002:a17:903:244d:b0:20c:bb35:dae2 with SMTP id
+ d9443c01a7336-210c69e1c8emr539563395ad.28.1730931020245; Wed, 06 Nov 2024
+ 14:10:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a4:b0:3a6:c98d:86ac with SMTP id
- e9e14a558f8ab-3a6c98d8a5emr150122055ab.1.1730931002785; Wed, 06 Nov 2024
- 14:10:02 -0800 (PST)
-Date: Wed, 06 Nov 2024 14:10:02 -0800
-In-Reply-To: <5e3c5bf9-5c8c-16cb-5b35-4fe57c636d65@katalix.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672be93a.050a0220.49393.016e.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in l2tp_exit_net
-From: syzbot <syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com>
-To: jchapman@katalix.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+ <AM6PR03MB5848C66D53C0204C4EE2655F99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+ <CAADnVQKuyqY7J4iJ=FZVNoon2y_v866H9hvjAn-06c8nq577Ng@mail.gmail.com>
+In-Reply-To: <CAADnVQKuyqY7J4iJ=FZVNoon2y_v866H9hvjAn-06c8nq577Ng@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 6 Nov 2024 14:10:08 -0800
+Message-ID: <CAEf4BzYib5jyu90tJYSTEmhpZ-4aF135719V+A7J7pzMj7RpNA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 1/4] bpf/crib: Introduce task_file open-coded
+ iterator kfuncs
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Juntong Deng <juntong.deng@outlook.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
+	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Nov 6, 2024 at 1:32=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Nov 6, 2024 at 11:39=E2=80=AFAM Juntong Deng <juntong.deng@outloo=
+k.com> wrote:
+> >
+> > This patch adds the open-coded iterator style process file iterator
+> > kfuncs bpf_iter_task_file_{new,next,destroy} that iterates over all
+> > files opened by the specified process.
+>
+> This is ok.
+>
+> > In addition, this patch adds bpf_iter_task_file_get_fd() getter to get
+> > the file descriptor corresponding to the file in the current iteration.
+>
+> Unnecessary. Use CORE to read iter internal fields.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
++1, I suggested to use __ksym approach and compare to f_op
 
-Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
-Tested-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
+>
+> > The reference to struct file acquired by the previous
+> > bpf_iter_task_file_next() is released in the next
+> > bpf_iter_task_file_next(), and the last reference is released in the
+> > last bpf_iter_task_file_next() that returns NULL.
+> >
+> > In the bpf_iter_task_file_destroy(), if the iterator does not iterate t=
+o
+> > the end, then the last struct file reference is released at this time.
+> >
+> > Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> > ---
+> >  kernel/bpf/helpers.c   |  4 ++
+> >  kernel/bpf/task_iter.c | 96 ++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 100 insertions(+)
+> >
+> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> > index 395221e53832..1f0f7ca1c47a 100644
+> > --- a/kernel/bpf/helpers.c
+> > +++ b/kernel/bpf/helpers.c
+> > @@ -3096,6 +3096,10 @@ BTF_ID_FLAGS(func, bpf_iter_css_destroy, KF_ITER=
+_DESTROY)
+> >  BTF_ID_FLAGS(func, bpf_iter_task_new, KF_ITER_NEW | KF_TRUSTED_ARGS | =
+KF_RCU_PROTECTED)
+> >  BTF_ID_FLAGS(func, bpf_iter_task_next, KF_ITER_NEXT | KF_RET_NULL)
+> >  BTF_ID_FLAGS(func, bpf_iter_task_destroy, KF_ITER_DESTROY)
+> > +BTF_ID_FLAGS(func, bpf_iter_task_file_new, KF_ITER_NEW | KF_TRUSTED_AR=
+GS)
+> > +BTF_ID_FLAGS(func, bpf_iter_task_file_next, KF_ITER_NEXT | KF_RET_NULL=
+)
+> > +BTF_ID_FLAGS(func, bpf_iter_task_file_get_fd)
+> > +BTF_ID_FLAGS(func, bpf_iter_task_file_destroy, KF_ITER_DESTROY)
+> >  BTF_ID_FLAGS(func, bpf_dynptr_adjust)
+> >  BTF_ID_FLAGS(func, bpf_dynptr_is_null)
+> >  BTF_ID_FLAGS(func, bpf_dynptr_is_rdonly)
+> > diff --git a/kernel/bpf/task_iter.c b/kernel/bpf/task_iter.c
+> > index 5af9e130e500..32e15403a5a6 100644
+> > --- a/kernel/bpf/task_iter.c
+> > +++ b/kernel/bpf/task_iter.c
+> > @@ -1031,6 +1031,102 @@ __bpf_kfunc void bpf_iter_task_destroy(struct b=
+pf_iter_task *it)
+> >  {
+> >  }
+> >
+> > +struct bpf_iter_task_file {
+> > +       __u64 __opaque[3];
+> > +} __aligned(8);
+> > +
+> > +struct bpf_iter_task_file_kern {
+> > +       struct task_struct *task;
+> > +       struct file *file;
+> > +       int fd;
+> > +} __aligned(8);
+> > +
+> > +/**
+> > + * bpf_iter_task_file_new() - Initialize a new task file iterator for =
+a task,
+> > + * used to iterate over all files opened by a specified task
+> > + *
+> > + * @it: the new bpf_iter_task_file to be created
+> > + * @task: a pointer pointing to a task to be iterated over
+> > + */
+> > +__bpf_kfunc int bpf_iter_task_file_new(struct bpf_iter_task_file *it,
+> > +               struct task_struct *task)
+> > +{
+> > +       struct bpf_iter_task_file_kern *kit =3D (void *)it;
+> > +
+> > +       BUILD_BUG_ON(sizeof(struct bpf_iter_task_file_kern) > sizeof(st=
+ruct bpf_iter_task_file));
+> > +       BUILD_BUG_ON(__alignof__(struct bpf_iter_task_file_kern) !=3D
+> > +                    __alignof__(struct bpf_iter_task_file));
+> > +
+> > +       kit->task =3D task;
+>
+> This is broken, since task refcnt can drop while iter is running.
 
-Tested on:
+I noticed this as well, but I thought that given KF_TRUSTED_ARGS we
+should have a guarantee that the task survives the iteration? Am I
+mistaken?
 
-commit:         ccb35037 Merge branch 'net-lan969x-add-vcap-functional..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=170f8d87980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a9d1c42858837b59
-dashboard link: https://syzkaller.appspot.com/bug?extid=332fe1e67018625f63c9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11e7b6a7980000
-
-Note: testing is done by a robot and is best-effort only.
+>
+> Before doing any of that I'd like to see a long term path for crib.
+> All these small additions are ok if they're generic and useful elsewhere.
+> I'm afraid there is no path forward for crib itself though.
+>
+> pw-bot: cr
 
