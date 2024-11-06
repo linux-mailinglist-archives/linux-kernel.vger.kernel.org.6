@@ -1,175 +1,116 @@
-Return-Path: <linux-kernel+bounces-398416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955339BF103
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:01:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C059BF101
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:00:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E40DFB21C40
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3DFD1C20CBF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D7C206509;
-	Wed,  6 Nov 2024 14:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFP7uzod"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A43205AAC;
+	Wed,  6 Nov 2024 14:59:37 +0000 (UTC)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F008206045;
-	Wed,  6 Nov 2024 14:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED11204F7F;
+	Wed,  6 Nov 2024 14:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730905182; cv=none; b=RxSqPfCqEET3StDIN8etLugEQSqeWH0GkZkaCrRh0bSsGCeTybqwp9tG79+IcAkNs1tlEgox5TwbE0JTh7RPtX2L8kkhn0mFt74p9oSBWiivYXfkTcSrdPuEI/tG5RaMAfGlkZ/OfrHybh8rfx0SI61gFSwwPcgAt7HrCEjUWRg=
+	t=1730905177; cv=none; b=UXE/dN7sQlgZwXBt0iAeyG4/z4FxZsVriflE/6XpxK5tp5M3MRyhzcYAB6w0a/86Om+H7GFsxlH2u4TEwcwDeyYGPUQ+d8TN2FGlPVQu5C+1BVZzczuBXKhiLmYIR1gwYG2pdHfIX/wFJBsk3E+wHL4cZTgCVvVUVZdw5cmmz4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730905182; c=relaxed/simple;
-	bh=EKZK3XBXXX+F3Ao8jAgqUC+OMm945u1cnOH3t6tzhJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GJ/wIpjnChix6KHXZZ6hDs5KMmB8oAwQ//gCpiAI88lAdfpsTLDM8ymN+RDWivqOqInrmsg/r0aDvgBjdibXdAXB/NqaabphS7rMqg4kVQYT5Ox4KHk5VwktamDNpJjP/S8+36Y1XaW4HpdSZ8aV/JigOxrdHIucNib2fHxZaEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFP7uzod; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D47C4CECD;
-	Wed,  6 Nov 2024 14:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730905181;
-	bh=EKZK3XBXXX+F3Ao8jAgqUC+OMm945u1cnOH3t6tzhJ4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UFP7uzodl03B5rjR8BcUJOub3klrGH4MH+KuAYjOvnDDzwSFTtpZvA/8JDO7pcTCB
-	 XNkuWYpYUbent8R4X2ZEcxguzOZBb5HenQEuUr3nkhoB/w+K7e2rvoz/R7WvywDMfn
-	 SGO8SWzqJX6k1puLBVd6d/QCQlS6zuD3QS/TWTi68s0/iDPQEhXCleBgob9KKMxta/
-	 SVclWI55E20ptx/ccLPO16mJ/q/B48MYRToZNU1ebYr63lE+s6UUI1cEdNfIODsoO9
-	 +2qu/EZDJM4Qs3Dgpws/ZSsLJ4wwMVMZlfYbqazIMbWe9ig1UbXNh904nt0L/D5Gn9
-	 lw9O2pz2+Hfcw==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu <rcu@vger.kernel.org>,
-	syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 8/8] rcu/kvfree: Fix data-race in __mod_timer / kvfree_call_rcu
-Date: Wed,  6 Nov 2024 15:59:11 +0100
-Message-ID: <20241106145911.35503-9-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241106145911.35503-1-frederic@kernel.org>
-References: <20241106145911.35503-1-frederic@kernel.org>
+	s=arc-20240116; t=1730905177; c=relaxed/simple;
+	bh=UZKpKujLwVeGdVZk9MpJvykEvV6HabVlF+HSnOu32uU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hNxkSifL5Md35+5HINdCQzsp1AapKZ4oOIeHl4+q4HmufKx9mTIKzUOw/96jvi/H5+9Otc6eSjN+VnoExuqAA/EaQpTqPeKyZ6q5aKcb61HyqvrISkXu9muXSJES6ZDIFpObvRiQYyhjeRk88pL06WhdMueZy2v7ozKkyE9shV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e38fa1f82fso17246277b3.1;
+        Wed, 06 Nov 2024 06:59:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730905173; x=1731509973;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oRSWOQdsDyO6AcUgL70A+o8qTcIm6mjHEU7V94H9DC0=;
+        b=BDZwoJ2EG/xETOZPTVF0nT/+WXr4ThL5vvx9XvSLBXKx9WuV3mDd+PGL38NdUIbALO
+         AHMxfHjnBVbtXkp5u0fAwE9SppXqV+nH9UZV6d8YWeU2Iy270gJiLdh7AtsdxdBA9Qmp
+         E8ZJ3p7+2wT36iA5DgliCU01cuxxRA6HW11sRt9mqXe1mwfKnDQwTCW6uaxRxlWInctD
+         8/4+3dCg2pk8a353QvA4A9BsjjyAEwmH8zWKE07WgvKHxM1mgdugFk5dLvgP7yOJpQDx
+         AnBQ9/e/jhvEKtdppt3OFn8N1X02wcXOxe0MJr9oNQWeMXZplXLJrrwEkiC7Cd3aS0nc
+         06lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFXJRsPawr44gXQelcgVpviMZEoBE6YKMHlaIrAAsEqN9Y2cWEr3z4Ijx4OxCnbJKGr1hODClC8Ysn@vger.kernel.org, AJvYcCUpZyt8F+6ynSGQDoWxiklaSBkCDdFJSMT4YiOyC91FjrL/fCVVxG3Ggbhl5OGZ+BHcMvZbpplw56oh0jeY@vger.kernel.org, AJvYcCUzZFN8HyiAJwaxP+eHeMospHQ69J1Kh21OlPUS48A0lSAUYya1M5kU1lq7P1Z5d6+PpKJkfcxzFZolSyE=@vger.kernel.org, AJvYcCWUNevwN5C7B4NbJGkd4L6+4oamuVJ46mknHWxzyZZLYBzkpTwLSWz2yPSgth8TJqD6AxoXFFL0mtXf@vger.kernel.org, AJvYcCX2KBpfJJVNRs6+GT8y3Qd7ApaozmJASUxuATBPMFng19q2NqGWTluvth9hlvOzGhxKOKEial3dFi4mFH4fvkyYosw=@vger.kernel.org, AJvYcCXbIFwyfh/S39qJZQAiQcCdQd8UoH3ZPGF5hqziDrwMz3cWaCsFI0KPPxkVdaHzIVDNOOWFis+D//gzmg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJJVxABhIpMzr5oC7oYX9w0xq3RKwP+HROPoO5gCHVFQVBjZI2
+	siSol6dkjvekqgGA/cMoA/cXB/qaR3CPbpVDa0cjz0uTS8xfVeVKq3CZhJSB
+X-Google-Smtp-Source: AGHT+IFrL+bK+Xx4mH0U8pW6cZ1PVhkcDrJHq0TByzXCWYR+KqytyM/FfwoxgmZLlBrKTibplSYkxA==
+X-Received: by 2002:a81:c843:0:b0:6ea:8236:d1fa with SMTP id 00721157ae682-6ea8236d5e2mr102152827b3.4.1730905172756;
+        Wed, 06 Nov 2024 06:59:32 -0800 (PST)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea55c45c36sm27607457b3.91.2024.11.06.06.59.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 06:59:31 -0800 (PST)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e2e3e4f65dso21911337b3.3;
+        Wed, 06 Nov 2024 06:59:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUrLSyZPBrC2+GmfPERg7XOBcgNgpBf9XIH5f5mZIsdOhRNrrphWy+Aadkyv25NLG+1D0v93HbxQRKT49s6@vger.kernel.org, AJvYcCVI9+oC2W8fHUQYB6aT/xXvK2OkEadKSVEyHLKS1SFZwa0tgQ3P3o9gbWjUB5EpzbF2k5+KmKSTUD1AVpw=@vger.kernel.org, AJvYcCW6KHi0BNLW09Yt8VwdVKxTGFvtvGjG4Bn6kEg2wQqoyMyV2v8ba1nEYThrUoBter41nLG38HxPC2P4Yg==@vger.kernel.org, AJvYcCWRpZdgsgf+emGhQprUJFxqbMnAiuCHuy9JdEPIQbVibyONTwVPSKe88x3eb8U8GWnObnB12xxBGfZ8@vger.kernel.org, AJvYcCWxGuxQUugUG3Z8MSNB1NFX6A8sy0SokBfR/BnstRcpnh+68gkFnfIQSEiOgfUjshifkLXBYgS2ShK67zjUgm1FiXQ=@vger.kernel.org, AJvYcCXAi/GVJuNyD6A70n/dOqAj+rLfrVs/Jb3tjCl772WX9+n3VYKOBznkryvdDcghTBOEhqYk7smjoUu9@vger.kernel.org
+X-Received: by 2002:a05:690c:31a:b0:6ea:6876:5226 with SMTP id
+ 00721157ae682-6ea68765303mr192089937b3.23.1730905171325; Wed, 06 Nov 2024
+ 06:59:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com> <20241106081826.1211088-12-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241106081826.1211088-12-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Nov 2024 15:59:17 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUFY0COLzOSZBSkTwCUQApANbWMYBG5+1TbucPeNk=L0Q@mail.gmail.com>
+Message-ID: <CAMuHMdUFY0COLzOSZBSkTwCUQApANbWMYBG5+1TbucPeNk=L0Q@mail.gmail.com>
+Subject: Re: [PATCH 11/31] ASoC: sh: rz-ssi: Remove the 2nd argument of rz_ssi_stream_is_play()
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com, 
+	p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Hi Claudiu,
 
-KCSAN reports a data race when access the krcp->monitor_work.timer.expires
-variable in the schedule_delayed_monitor_work() function:
+On Wed, Nov 6, 2024 at 9:19=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The 2nd argument of the rz_ssi_stream_is_play() is not used. Remove it.
 
-<snip>
-BUG: KCSAN: data-race in __mod_timer / kvfree_call_rcu
+s/2nd/first/ (also in the one-line summary).
 
-read to 0xffff888237d1cce8 of 8 bytes by task 10149 on cpu 1:
- schedule_delayed_monitor_work kernel/rcu/tree.c:3520 [inline]
- kvfree_call_rcu+0x3b8/0x510 kernel/rcu/tree.c:3839
- trie_update_elem+0x47c/0x620 kernel/bpf/lpm_trie.c:441
- bpf_map_update_value+0x324/0x350 kernel/bpf/syscall.c:203
- generic_map_update_batch+0x401/0x520 kernel/bpf/syscall.c:1849
- bpf_map_do_batch+0x28c/0x3f0 kernel/bpf/syscall.c:5143
- __sys_bpf+0x2e5/0x7a0
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x43/0x50 kernel/bpf/syscall.c:5739
- x64_sys_call+0x2625/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:322
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-write to 0xffff888237d1cce8 of 8 bytes by task 56 on cpu 0:
- __mod_timer+0x578/0x7f0 kernel/time/timer.c:1173
- add_timer_global+0x51/0x70 kernel/time/timer.c:1330
- __queue_delayed_work+0x127/0x1a0 kernel/workqueue.c:2523
- queue_delayed_work_on+0xdf/0x190 kernel/workqueue.c:2552
- queue_delayed_work include/linux/workqueue.h:677 [inline]
- schedule_delayed_monitor_work kernel/rcu/tree.c:3525 [inline]
- kfree_rcu_monitor+0x5e8/0x660 kernel/rcu/tree.c:3643
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3310
- worker_thread+0x51d/0x6f0 kernel/workqueue.c:3391
- kthread+0x1d1/0x210 kernel/kthread.c:389
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+For the actual change:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 56 Comm: kworker/u8:4 Not tainted 6.12.0-rc2-syzkaller-00050-g5b7c893ed5ed #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events_unbound kfree_rcu_monitor
-<snip>
+Gr{oetje,eeting}s,
 
-kfree_rcu_monitor() rearms the work if a "krcp" has to be still
-offloaded and this is done without holding krcp->lock, whereas
-the kvfree_call_rcu() holds it.
+                        Geert
 
-Fix it by acquiring the "krcp->lock" for kfree_rcu_monitor() so
-both functions do not race anymore.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Reported-by: syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/lkml/ZxZ68KmHDQYU0yfD@pc636/T/
-Fixes: 8fc5494ad5fa ("rcu/kvfree: Move need_offload_krc() out of krcp->lock")
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/tree.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 13829cf38f52..ff98233d4aa5 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3511,7 +3511,7 @@ static int krc_count(struct kfree_rcu_cpu *krcp)
- }
- 
- static void
--schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
-+__schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
- {
- 	long delay, delay_left;
- 
-@@ -3525,6 +3525,16 @@ schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
- 	queue_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
- }
- 
-+static void
-+schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krcp->lock, flags);
-+	__schedule_delayed_monitor_work(krcp);
-+	raw_spin_unlock_irqrestore(&krcp->lock, flags);
-+}
-+
- static void
- kvfree_rcu_drain_ready(struct kfree_rcu_cpu *krcp)
- {
-@@ -3836,7 +3846,7 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
- 
- 	// Set timer to drain after KFREE_DRAIN_JIFFIES.
- 	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING)
--		schedule_delayed_monitor_work(krcp);
-+		__schedule_delayed_monitor_work(krcp);
- 
- unlock_return:
- 	krc_this_cpu_unlock(krcp, flags);
--- 
-2.46.0
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
