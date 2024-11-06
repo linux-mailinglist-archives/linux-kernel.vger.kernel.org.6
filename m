@@ -1,111 +1,139 @@
-Return-Path: <linux-kernel+bounces-398599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881FD9BF364
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:40:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E20EE9BF363
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:39:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07763B2223E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A701E284D1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1E32064E3;
-	Wed,  6 Nov 2024 16:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15933204F95;
+	Wed,  6 Nov 2024 16:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cxklaOao"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhGoVNcM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B662205E03;
-	Wed,  6 Nov 2024 16:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730911179; cv=none; b=n1CwsApv3owkeZnukMZZYu/nb3yGfUKGyhuMMrcObeNeXI0JicB0QNVpEq+UDcYnzd/fqWdHlbZpn/WmZBRDQvlaMVd5qcjaGkRV+0BkYtn7b1RqnvA63MISYG5ol2SsfUoUe6/f8ntHGX5bZwCpw27uns/ZARMEQSr36Bw0HrM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730911179; c=relaxed/simple;
-	bh=GYA9MjkDaBwgqN2oIjbmN7LMWTymbZq5fZknTihzdzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSx0guakMt36c9/TFrJ9Dc2XAom9i7QxIe1oXvoms69YTQiRqzjt8P7c4D2d/uDr6AJPxY8Blh4+1r06v7w/u/yizEb/pRAZBWVYSE6shZU9ZxoBuZUEY4A6KhkoE+mRw6mxubNm1brv4iJ4yfB24s3tNhGjGUfKFFZo+iHLtus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cxklaOao; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5E51D40E0261;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0F713C67C;
 	Wed,  6 Nov 2024 16:39:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id LuXQmxtn_8tI; Wed,  6 Nov 2024 16:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730911171; bh=N5nZZCAdqn2VYgszp7ps4wrf9AaLj8hMUMFS/viYIUQ=;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730911175; cv=none; b=hGUDRqulQ0UKNepwbUNXfnCs3m7oCzQ5bqhf618SYiPDTJPlTBYh6wUqa4i8Vk0swkzyhQBk0sjf9ztFN6wG/B9INJrUEQrSql25iscEzkTxoBxToqhWKIbv0a5WyH6CKBcTgF+T+niN97Ydyk4ejdk/BQtJiEspPCTCJ70J+P8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730911175; c=relaxed/simple;
+	bh=qgyfwsgI0NGyv3rTn5MDG6QtmrGNHZk4smbSHtOhvkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6tLL4pKre6LGLV3Jjfy8DjWlAR/+wU0EKAuNbq7Uj9GFGTulw7ty1A7BvW0oesA37pXEJ13N6s8HjQ4p9jKSQMuMaulEsB8Ar3skDIcWErh3wxt63uzHKnBWDcKdqY42HVDSGoWk7DCCY9hTIahl8nW/Q1YC290SJlmXVCa3zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhGoVNcM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AABC1C4CEC6;
+	Wed,  6 Nov 2024 16:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730911175;
+	bh=qgyfwsgI0NGyv3rTn5MDG6QtmrGNHZk4smbSHtOhvkU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cxklaOaoZ+/u9QxkuI7JfwicbfBNsdhjyuyCPdG3qwZPRo7kdxE1fleSVpmcGpyzg
-	 cPpm022f8s8/j14ohof8v/jwhsZAaIGXNzCwuhk9ntt3M5b09UhSPkVLNbNRr4l4IA
-	 oNSVIqGDelUUbb1uxJtukMmeN/ONRQlHPae97+9Lbr9HJM75vIpnklCIqa7Ldnhcpm
-	 1amZS7QqJIpfbVKZU1q31f8VKpWTbXctRMRQcLffWcO8vWc4syRB9DJUEgpBtgYV8o
-	 EnbUxoTV86EpMsGasaYAeXLI8pZ92dRqH0cdwHg7NCraMN8BRoYNxyb/hL9zs4v18N
-	 9KEwH1T9oQOqOnugAZIWM6BsUb4Kj1hIcSPLr1QDMfwuOssyILtgRZIVHh8LcIbw53
-	 i7iaor+C2woPcJ4Ho1iSqnvfoyd1lUNR25eOFlEFnHONCh/hqKe1qEZ9daO0cFWaIt
-	 sqHKtTNl9EUn1pWlitzcYIcSqv/ItPqLmBb9CvSgE3m5QfhOsjM0E43Ea44blE02af
-	 ogsEIE024z/gqAWnTaPxb1uVgkuFtqmBdMp2npZoi+g9eWCmO073VsePH5Bd3C/HhI
-	 /RZhhbdAnTA3dbT/Vlir+Dg71pn9YFO4iRlJiwzS5GAf/AuCsfNrI4CueUsOyG5Vjc
-	 V4B2jlqc1owDE9Ak1+GEtv5I=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2158640E0191;
-	Wed,  6 Nov 2024 16:39:24 +0000 (UTC)
-Date: Wed, 6 Nov 2024 17:39:18 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
-Message-ID: <20241106163918.GIZyubtm2zhu6CZmI8@fat_crate.local>
-References: <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local>
- <ZypvePo2M0ZvC4RF@google.com>
- <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local>
- <ZyuJQlZqLS6K8zN2@google.com>
- <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
- <ZyuMsz5p26h_XbRR@google.com>
- <20241106161323.GGZyuVo2Vwg8CCIpxR@fat_crate.local>
- <ZyuWoiUf2ghGvj7s@google.com>
- <20241106162525.GHZyuYdWswAoGAUEUM@fat_crate.local>
- <ZyuZAzqQIXudhbxi@google.com>
+	b=LhGoVNcMYeHEA4ME2kQFjw1bmyNAIEA2RYwH55JxP901y/PHC72sdYajCH6JQjjtO
+	 zyApsTGwQYYdBNjLScNkKrFHAH8m6c6jDBOijF36PL/NewB3xFe21DIajIWk22hIVE
+	 S+RjiJ0b9/FSGt8IkgN1KjVpPFdw3C2+o3wbfAXFrLMvY4MvAJ3lbcU1+ldUZQuppL
+	 9CJHiGk3BUEZDi+kNQlMpZheWyKV+kj5LR07o644tWRMARQDHYdQqQu9cjsazEaFxv
+	 njgVulySb9zQBHq+ZwkrRal5sl5/m6I6ybq54vN5dcWq/G4joas37wisZ6X3ykhmIB
+	 xkwBtrZpi1vKQ==
+Date: Wed, 6 Nov 2024 09:39:32 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com,
+	mahesh@linux.ibm.com, oohall@gmail.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [RFC PATCH v1 2/2] PCI/AER: report fatal errors of RCiEP and EP
+ if link recoverd
+Message-ID: <ZyubxGBL7TvchZI_@kbusch-mbp>
+References: <20241106090339.24920-1-xueshuai@linux.alibaba.com>
+ <20241106090339.24920-3-xueshuai@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZyuZAzqQIXudhbxi@google.com>
+In-Reply-To: <20241106090339.24920-3-xueshuai@linux.alibaba.com>
 
-On Wed, Nov 06, 2024 at 08:27:47AM -0800, Sean Christopherson wrote:
-> LOL, doesn't that kind of defeat the purpose of MAINTAINERS?
+On Wed, Nov 06, 2024 at 05:03:39PM +0800, Shuai Xue wrote:
+> +int aer_get_device_fatal_error_info(struct pci_dev *dev, struct aer_err_info *info)
+> +{
+> +	int type = pci_pcie_type(dev);
+> +	int aer = dev->aer_cap;
+> +	u32 aercc;
+> +
+> +	pci_info(dev, "type :%d\n", type);
+> +
+> +	/* Must reset in this function */
+> +	info->status = 0;
+> +	info->tlp_header_valid = 0;
+> +	info->severity = AER_FATAL;
+> +
+> +	/* The device might not support AER */
+> +	if (!aer)
+> +		return 0;
+> +
+> +
+> +	if (type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_RC_END) {
+> +		/* Link is healthy for IO reads now */
+> +		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
+> +			&info->status);
+> +		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK,
+> +			&info->mask);
+> +		if (!(info->status & ~info->mask))
+> +			return 0;
+> +
+> +		/* Get First Error Pointer */
+> +		pci_read_config_dword(dev, aer + PCI_ERR_CAP, &aercc);
+> +		info->first_error = PCI_ERR_CAP_FEP(aercc);
+> +
+> +		if (info->status & AER_LOG_TLP_MASKS) {
+> +			info->tlp_header_valid = 1;
+> +			pcie_read_tlp_log(dev, aer + PCI_ERR_HEADER_LOG, &info->tlp);
+> +		}
 
-You're new here, right? :-P :-P
+This matches the uncorrectable handling in aer_get_device_error_info, so
+perhaps a helper to reduce duplication.
 
-And you sound like everyone is supposed to unanimously adhere to the rules
-we've all agreed upon. Oh well, I will make sure to point you to such
-"exceptions" I come across in the future.
+> +	}
+> +
+> +	return 1;
+> +}
 
-And no, I'm better off simply doing those small "exceptions" instead of
-dropping into the fruitles abyss of endless discussions which will cause me
-nothing but white hair so...
+Returning '1' even if type is root or downstream port?
 
-:-)
+>  static inline void aer_process_err_devices(struct aer_err_info *e_info)
+>  {
+>  	int i;
+> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+> index 31090770fffc..a74ae6a55064 100644
+> --- a/drivers/pci/pcie/err.c
+> +++ b/drivers/pci/pcie/err.c
+> @@ -196,6 +196,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>  	struct pci_dev *bridge;
+>  	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+>  	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+> +	struct aer_err_info info;
+>  
+>  	/*
+>  	 * If the error was detected by a Root Port, Downstream Port, RCEC,
+> @@ -223,6 +224,10 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>  			pci_warn(bridge, "subordinate device reset failed\n");
+>  			goto failed;
+>  		}
+> +
+> +		/* Link recovered, report fatal errors on RCiEP or EP */
+> +		if (aer_get_device_fatal_error_info(dev, &info))
+> +			aer_print_error(dev, &info);
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+This will always print the error info even for root and downstream
+ports, but you initialize "info" status and mask only if it's an EP or
+RCiEP.
 
