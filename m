@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-397640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D848D9BDE62
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:55:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519F49BDE64
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69CAA1F24007
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1615D284EF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A362D1917EE;
-	Wed,  6 Nov 2024 05:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KWH8KeX/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D722C80;
-	Wed,  6 Nov 2024 05:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4391917D7;
+	Wed,  6 Nov 2024 05:57:37 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE112C80;
+	Wed,  6 Nov 2024 05:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730872530; cv=none; b=hfBYpBcokD76fHzpgCRVhHs03Z5lCWfjXJu6TpzRzA8WFwgPJwKcO7mrACjHdjQ/EZMHMiEB2X6JsXEunaC5JQeSpgZEtvnoaZetb8x6XbF12SBxz/VvVNey9PZsQ81JhSklHvKMNeyTsWXrYNHgdqN72hLWfzoNR2DqQXQekgw=
+	t=1730872657; cv=none; b=B09aZbV3xUqcXfalIwR1XHfBHV6RqJLfdxf0moo7ejBqQ/mL5LvxLyBF1MWOpQn3XscIN0dTgaUT4Iid0ENiPQ2ZEQOLV80Q8MhVF5Ng2fB9PjFfTjiqZ+gXpCHj0LEa+q/OYv8P2w2Xfz1/bL0qaqwYEXDfsBIY9zD1G3jm+4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730872530; c=relaxed/simple;
-	bh=NYez0m/jimO5JejBvOByvS6zoER5SI6TqON3EfoumcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=droA9cMhamMrRbFfSKUlXZDwjMeWnuKudq56Hj2IagdPYosiV++5xKgTHjaWKoiB/xXrfQGQbkh8IWfrHH3hqatiK6mor9Vhz34MNKkC4LBtbk0IGJsfkHvUGDK5sAnPsrtF2DqrilS4uCL6tjVIIVtoNXbb0REm5R9OHKXgwhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KWH8KeX/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5FUqK9013189;
-	Wed, 6 Nov 2024 05:55:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vSpgCxbiGI8nQRDnE4BM/8pmdlSFVSya8qnxpAcJhvY=; b=KWH8KeX/yclXfCvq
-	H7AhudhVslXpa7FBUghMJzMqPywRNH256SWtPWGCJqfhske+pGnP/6jMQ+HWn3+5
-	akUpm3/fUuBftFWiseT8msIIw5G+RslT98boTom5+Pb1Z+T0XElMtJlXTLgI4Cg3
-	KH8ugps52Rb3APv2Z2eJMFvBQse02+Vo1j2Fr6LBpdH3B/WZnUcRj0B3+x6UO09X
-	np1DK6JexXk5Qrpugbn+euVd0x0ZWJUNDWFuHNuXDDGDbcvzIROQFn+KtTYOwzpD
-	8hKmtC5bnuLF+tj1bqtQiiTT4WtlKaITuNhl5l0MSdn47qh4jzFuKtaFrrGduxgK
-	Eg3p5A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qp2rsvq5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 05:55:24 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A65tNne009243
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Nov 2024 05:55:23 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 5 Nov 2024
- 21:55:18 -0800
-Message-ID: <919bf75f-890c-41e7-b096-5804ac9bd3ec@quicinc.com>
-Date: Wed, 6 Nov 2024 13:55:16 +0800
+	s=arc-20240116; t=1730872657; c=relaxed/simple;
+	bh=2AM/jbmldN3Uoh7ZxuT26wR2a9hMQJ37FTIwOeMLbUc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D+SX8pg0taggS1MfmGOFHWLWCKRkJts2bopScjElsONzrCM0WlM07qTUjZve3efL1kuBoVhr8S+HziK3/FcHzUC1ZKHuPl4yA5P7NJ6vXUs4WQbiZYl28KapE4OO/4AR0fkV3aY6ZLKxh3D8tZyk2q84A42ONSHW3lDis2sibHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3672b054215b-aa97b;
+	Wed, 06 Nov 2024 13:57:22 +0800 (CST)
+X-RM-TRANSID:2ee3672b054215b-aa97b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee6672b0541a82-20337;
+	Wed, 06 Nov 2024 13:57:22 +0800 (CST)
+X-RM-TRANSID:2ee6672b0541a82-20337
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luo Yifan <luoyifan@cmss.chinamobile.com>
+Subject: [PATCH] ASoC: amd: acp: Fix potential null pointer dereference of "adata"
+Date: Wed,  6 Nov 2024 13:57:20 +0800
+Message-Id: <20241106055720.208057-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] arm64: dts: qcom: Add coresight nodes for x1e80100
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>,
-        Tao Zhang <quic_taozha@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Song Chai
-	<quic_songchai@quicinc.com>,
-        Yushan Li <quic_yushli@quicinc.com>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Konrad
- Dybcio" <konrad.dybcio@oss.qualcomm.com>
-References: <20241016063113.673179-1-quic_jiegan@quicinc.com>
- <fc2f0bf9-7afa-4db8-a234-26c01749b070@oss.qualcomm.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <fc2f0bf9-7afa-4db8-a234-26c01749b070@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sLcLEfXyGTPmH_gTC9nfJQ7p4N9g7BXC
-X-Proofpoint-ORIG-GUID: sLcLEfXyGTPmH_gTC9nfJQ7p4N9g7BXC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- bulkscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- mlxlogscore=579 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060045
+Content-Transfer-Encoding: 8bit
+
+The condition `!adata` indicates a possible null pointer dereference
+for the "adata" parameter. To address this, the access to "adata"
+members has been moved after the null check to ensure safer handling.
+
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+---
+ sound/soc/amd/acp/acp-platform.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/amd/acp/acp-platform.c b/sound/soc/amd/acp/acp-platform.c
+index 3a7a467b7..2acb08073 100644
+--- a/sound/soc/amd/acp/acp-platform.c
++++ b/sound/soc/amd/acp/acp-platform.c
+@@ -137,7 +137,7 @@ EXPORT_SYMBOL_NS_GPL(acp_machine_select, SND_SOC_ACP_COMMON);
+ static irqreturn_t i2s_irq_handler(int irq, void *data)
+ {
+ 	struct acp_dev_data *adata = data;
+-	struct acp_resource *rsrc = adata->rsrc;
++	struct acp_resource *rsrc;
+ 	struct acp_stream *stream;
+ 	u16 i2s_flag = 0;
+ 	u32 ext_intr_stat, ext_intr_stat1;
+@@ -145,6 +145,8 @@ static irqreturn_t i2s_irq_handler(int irq, void *data)
+ 	if (!adata)
+ 		return IRQ_NONE;
+ 
++	rsrc = adata->rsrc;
++
+ 	if (adata->rsrc->no_of_ctrls == 2)
+ 		ext_intr_stat1 = readl(ACP_EXTERNAL_INTR_STAT(adata, (rsrc->irqp_used - 1)));
+ 
+-- 
+2.27.0
 
 
 
-On 10/26/2024 3:37 AM, Konrad Dybcio wrote:
-> On 16.10.2024 8:31 AM, Jie Gan wrote:
->> Add following coresight components for x1e80100 platform.
->> It includes CTI, dummy sink, dynamic Funnel, Replicator, STM,
->> TPDM, TPDA and TMC ETF.
->>
->> Tested-by: Yushan Li <quic_yushli@quicinc.com>
->> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->> ---
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Konrad
-
-Hi, Bjorn
-
-Just a gentle ping.
-
-Any further comments before apply this patch?
-
-Thanks
-Jie
 
