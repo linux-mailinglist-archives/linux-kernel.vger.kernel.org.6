@@ -1,112 +1,108 @@
-Return-Path: <linux-kernel+bounces-398039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1879BE497
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:47:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2AD69BE495
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:46:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1A51F23EC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:47:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00CD31C2335D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A691DE4C6;
-	Wed,  6 Nov 2024 10:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC211DE2C6;
+	Wed,  6 Nov 2024 10:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RWgp7HSH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JHTKE9tx"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C448E1DE3D0;
-	Wed,  6 Nov 2024 10:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF441DB92C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890012; cv=none; b=TRXqo3F37T4kFjtFWixHeujVZKjojpE7/DlPYp2GhTm1fV87abDDceydT4kbt6Rg9S7xVrHY9DHfQyiJ4Xmphhw6UXzwzkMO1cpXBb5Jl/mDCglPbl2m5C+OWH9jYn5pcq4DFcP+W/8U2UUBA9ejr9C29rZSfg7uolP+QfOryLc=
+	t=1730890007; cv=none; b=EXloESgw8uNkcv6GXgw9upDcWs55KPeGuaDqsGviTCbQnd2rJ7RCpgd5HlhccZgcdm1fXbCsdG/j6KOhQIWWDTiHYV3gD17Uirn/sNtMzmugcCKA8gAHd7IRuZ2tVVb9+DbYO6/btmL6pq7Ji0QiA50R2Dydz3EaUXZxfuNjxmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890012; c=relaxed/simple;
-	bh=vkkM2h695D/l5SDWyygknwKCqGMFK5wq+MaFFHsuDNo=;
+	s=arc-20240116; t=1730890007; c=relaxed/simple;
+	bh=XbiIK6GjOS/yZ5j6g6CoF1rq3kPr/i/tae+WR3Cy8es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afEOUtc/YVnUEnihIEedxexc8PLrXO636daWPsnEcfXUhsEdiJ5UCYByPLky6lj36GVj/WaLQCpAWvtu9iKGcmc2CGT8erbblIWYW2RWvykT7lZXgh1uAhJqc1DHFP6IB322U+Duwp7zWjPdRT7eCbfLPJjACZSS5AMEvikkRVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RWgp7HSH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=n9pw/ncIr5xOQG+ZVQBxpx/l5w//5qbE75eKMDsD6eQ=; b=RWgp7HSHErvWscYGf1Ffm3pndl
-	wZb86wwxZSTq50rJJ73hOf9XdgYa7NkwXbNsWfbMR490miX4DN5skr2j4TaPcbBBehFi2UOvpfs2L
-	iMGqnFjXS7MuIqFrjI67qlhWA0akoD+5TldIzUnkN+/gcwr/EY+smdDft6Fola4hDzOq2vcSr+x/m
-	OKXrbxMuJtXMOB0pJLvL1fHEP6UoS5BekteG+l+aaMlcIW5HN9kccPF0qkeqCIvSmHs9KXsRDxpkP
-	n9a/7rgziZhXmN3f7DYepd57Le/kzu9dDsPPNRv3I3xiXb26mQ9jPH8Udg8sXcdSgLXxIW/QWLdah
-	L/6nj1sg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8dYd-00000004Olv-1fBL;
-	Wed, 06 Nov 2024 10:46:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2C45A300478; Wed,  6 Nov 2024 11:46:39 +0100 (CET)
-Date: Wed, 6 Nov 2024 11:46:39 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-	bpf <bpf@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Liao Chang <liaochang1@huawei.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>
-Subject: Re: The state of uprobes work and logistics
-Message-ID: <20241106104639.GL10375@noisy.programming.kicks-ass.net>
-References: <CAEf4BzarhiBHAQXECJzP5e-z0fbSaTpfQNPaSXwdgErz2f0vUA@mail.gmail.com>
- <ZyH_fWNeL3XYNEH1@krava>
- <CAEf4BzZTTuBdCT2Qe=n7gqhf3yENZwHYUdsrQP9WfaEC4C35rw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6qQIkiLg02dFcqAKPm6GnFoQ8AnybssvsJvOhkV0tNgaIWTL7gcouJVQrAmzK3xNhMk+CS25yOKsG1feJMeG45nugjJ+gOvEE1DCAZ6uKFpy/PztppLalXULDQpuPPYQJ/nGKV5KdXqr1GNL7rER2O9aAeBAnDbCzrDmE7UXBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JHTKE9tx; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a628b68a7so998829166b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 02:46:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730890003; x=1731494803; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnvfOfDupOxyZMEu8q+2hpeE5bOttK1dIHZM5bV1S7U=;
+        b=JHTKE9txH2p0/9srsdDkdLbJF0RfdhDFEfl8NIEEP7b6/LnP4f4jhBvG6XzPWlAymd
+         9iqZqVpuXwvt5A5JNoWhZ1btZ6gOEQ5wAcef2qJDw3lc2+sGiPZ982hs5I6gbIqqCBVx
+         kzW0K/gFJZzzpyQWnKwDEJgoAo6hOAvHRg9BV+l7oAEfcfQmqhxGM3hDFMyIxsdATV/z
+         VaWqbGlw3dFBQMY3HPXxT1PL1YKOrUq/VYMziyGenqoqMlAFsWMa5Rlcv6CoavzEacO4
+         +sdZDkuzjiUS1zcNCKx8iWTY6r+2ClPgZqIW8ZnOvKZC/CB8kWFZZFxgjbHBVyuZHIxn
+         Om5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730890003; x=1731494803;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jnvfOfDupOxyZMEu8q+2hpeE5bOttK1dIHZM5bV1S7U=;
+        b=WJyUm1YfjOH5UjJFHw51CJoD0DxwVYCnkpp2CgHVG3QfMk17xq462+G1SmbQAGJZ/W
+         RZzsjoUsN+vXPSOM4Qz1YQn/pfoeUGiK7op73iCd4XS93YHBHZcYsl1RvlWpH6lsziEd
+         XaD7eRYPVi0phpmBOkhhPHR9ExEvJLHPL05YhOhDNlbf5/oDjog/geNiYMw2KpieUsyJ
+         L2Q4R54GpPim8hxwunKnixvgFsoeFu2NM8Fl7giH/XiFXHY9TVtlLomONlYnOyLJ0QNl
+         4cmFg/NABFAyjgML30k+DcRmk7XY+IgkidyArGnN93xsuH/dnv88w8e6tEgPWtoi15MQ
+         7t2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWH1VNMFfMqqEfWoI6jBN0P2lGd2P///3pfhwwQY7OhOpgEkDv93lkKfPYNPhswZREyFFxHRZymvsAbJBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2eOwD51FMoeOYSWYQfwHmDsxO5aGUO0RHKRs3avIPYqWwQ+bs
+	jAujwJH08VP3NtXQ0xLNO2u6Wm3D8gC4Ahq2uliNDvH2XMrQirV8RI8wJP9TwcA=
+X-Google-Smtp-Source: AGHT+IFLqfCVbNW7IItqNBM12Hvln8l60e4gy4+M/K4utCO4TZx6BCGSX7in4grJXnBtZUzFTWezNA==
+X-Received: by 2002:a17:907:3ea3:b0:a99:d797:c132 with SMTP id a640c23a62f3a-a9e654cdcedmr2089540966b.16.1730890003621;
+        Wed, 06 Nov 2024 02:46:43 -0800 (PST)
+Received: from localhost ([154.14.63.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17fa445sm259358966b.169.2024.11.06.02.46.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 02:46:43 -0800 (PST)
+Date: Wed, 6 Nov 2024 13:46:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qiu-ji Chen <chenqiuji666@gmail.com>
+Cc: dtwlin@gmail.com, johan@kernel.org, elder@kernel.org,
+	gregkh@linuxfoundation.org, greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com
+Subject: Re: [PATCH v2] greybus/uart: Fix atomicity violation in
+ get_serial_info()
+Message-ID: <35c0f989-4618-46cd-9427-61f2a37269c0@suswa.mountain>
+References: <20241106095819.15194-1-chenqiuji666@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZTTuBdCT2Qe=n7gqhf3yENZwHYUdsrQP9WfaEC4C35rw@mail.gmail.com>
+In-Reply-To: <20241106095819.15194-1-chenqiuji666@gmail.com>
 
-On Tue, Nov 05, 2024 at 06:11:07PM -0800, Andrii Nakryiko wrote:
-> On Wed, Oct 30, 2024 at 2:42 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Wed, Oct 16, 2024 at 12:35:21PM -0700, Andrii Nakryiko wrote:
-> >
-> > SNIP
-> >
-> > >   - Jiri Olsa's uprobe "session" support ([5]). This is less
-> > > performance focused, but important functionality by itself. But I'm
-> > > calling this out here because the first two patches are pure uprobe
-> > > internal changes, and I believe they should go into tip/perf/core to
-> > > avoid conflicts with the rest of pending uprobe changes.
-> > >
-> > > Peter, do you mind applying those two and creating a stable tag for
-> > > bpf-next to pull? We'll apply the rest of Jiri's series to
-> > > bpf-next/master.
-> >
-> >
-> > Hi Ingo,
-> > there's uprobe session support change that already landed in tip tree,
-> > but we have bpf related changes that need to go in through bpf-next tree
-> >
-> > could you please create the stable tag that we could pull to bpf-next/master
-> > and apply the rest of the uprobe session changes in there?
+On Wed, Nov 06, 2024 at 05:58:19PM +0800, Qiu-ji Chen wrote:
+> Our static checker found a bug where set_serial_info() uses a mutex, but 
+> get_serial_info() does not. Fortunately, the impact of this is relatively 
+> minor. It doesn't cause a crash or any other serious issues. However, if a 
+> race condition occurs between set_serial_info() and get_serial_info(), 
+> there is a chance that the data returned by get_serial_info() will be 
+> meaningless.
 > 
-> Ping. We (BPF) are blocked on this, we can't apply Jiri's uprobe
-> session series ([0]), until we merge two of his patches that landed
-> into perf/core. Can we please get a stable tag which we can use to
-> pull perf/core's patches into bpf-next/master?
+> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+> Fixes: 0aad5ad563c8 ("greybus/uart: switch to ->[sg]et_serial()")
+> ---
 
-The whole tip/perf/core should be stable, but let me try and figure out
-how git tags work.. might as well read a man-page today.
+Thanks!
+
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
 
