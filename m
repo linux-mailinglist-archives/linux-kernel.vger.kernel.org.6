@@ -1,91 +1,144 @@
-Return-Path: <linux-kernel+bounces-398513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C089BF23E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:53:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1FAD9BF241
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 634142822B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0461E1C20ABA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72794202640;
-	Wed,  6 Nov 2024 15:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8810B20263F;
+	Wed,  6 Nov 2024 15:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtQ/J9Ii"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="FZe7Ay07"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4672EAE0;
-	Wed,  6 Nov 2024 15:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730908410; cv=none; b=WkmEr1BCTy8D+prtPZ6SlWDy5RacvK+Ckrpcdw9TJSTXXjZrK6rmTp4ccA0EpN1j4IwKsPtAS/ixByPyy/mnEQWqKfT8tswhH5F4eftmu6whuvyz/NROY1+gvoGijUMdBZ1pZimln2mUHqOU1BYriJgttVUCnCoVroraDZGSyL4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730908410; c=relaxed/simple;
-	bh=6/DLV0Ij3ucV/bFgMjAQCQcBgcmt5Ui1j16wxrUI0HQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EazgV1nZTPDbql/deeRpRvVzxv9uI36tsSvp66iJE+Oj3tT3bgJEY7GagzgoPtxl+NG63ZnH2xm/FjzKxiSMI4AcIuUIG7CWJOoYU7VPlPwvSSAPM1XGPhViDHeqHIXqfAE30CS1s3rnGKwmqzkNCKGT5qtXbDQzy6LOBeiqW4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DtQ/J9Ii; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE83CC4CEC6;
-	Wed,  6 Nov 2024 15:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730908410;
-	bh=6/DLV0Ij3ucV/bFgMjAQCQcBgcmt5Ui1j16wxrUI0HQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DtQ/J9Ii8Xw09w+p1m7kGR6qBbFkl/7zHiQ6fuct/0LC8qmEnnHajDhM7norJNjw1
-	 j33wtCQMl608Y6B2l9F9i547VX147JEBqW5A+KCy+/eEhObUoX7TA0aICb0VpmD31l
-	 mxX2ESPGjiZN9nRyIOxxrfGfLE5nzJLts/BASu4M+feFsgecfTuwogBkKTMOX3sr2M
-	 9DR4ulxzKGHC7U3Uz+sjfziJkNHVMLK63qR/5We98LtDUZfhG49P3j97ZWfecT3dLs
-	 JzVWUchvSaL4XNUT3UY3MkdUz+HdXR3/G+StxGIrC6PwetPjJwCRtl8uOOI63Suo+Q
-	 1kQZvwIsi61Jw==
-From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 0/2] arm64/fp: Fix missing invalidation when working with in memory FP state
-Date: Wed,  6 Nov 2024 15:53:22 +0000
-Message-Id: <173090098098.2905624.10744681189844988391.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20241030-arm64-fpsimd-foreign-flush-v1-0-bd7bd66905a2@kernel.org>
-References: <20241030-arm64-fpsimd-foreign-flush-v1-0-bd7bd66905a2@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A83200CA6
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730908458; cv=pass; b=DP16YqPyg6RiLDvprOPnSQNPba1rB9NLFOUvKJIZdNn98ktHRlOQLPnAscm4a/+Wrs6Xf0QrrN5HgbxwXnXxk4mYR84xSljF3rSDKrTJb5arXxoWQfwsCSrPLRJt0iyKRaDxbuCwx7hd1DkP0rZMZcikHpIPXDWJw0Z7p/mvS4s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730908458; c=relaxed/simple;
+	bh=NOdJNdwiALVAaqqmkloFBOiw+xAlUwOedkSNVUGpdxA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MeALjoQj3L6gIgzDkTPDkKsr2aV4xBLib/a9295jq2KjNHcUEgKPAkGmrq4C7hGzI+4wXFeLuvadKvpChqJW+C9mGV02Z24Ixen3NpBRntXrleWk9ex9KEE532QR/BkNGzbvrIe4y8jc819TsIAvqVij9lsrC0MHPGdpZ1mF1sM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=FZe7Ay07; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1730908434; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RDm7RT7XDUs+o5P3a5YII1jpRlcQTxdoG3dw7k3iUha2rlRNi2MCs4ZdIjEZy9uyeqobiMNGF2zBKoqc4TBdqRXMoTLWcJGf5NRM06W/PykEsY9q6O83u8l98ZqKPQhBN8saHNIwnn1ZOJj0+fBOLyZMFI++hjbyo9Ec/LJitrA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1730908434; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=d9owUKVL5RmM44FaajdtaQ+bTNIjOEZeFrlJJspbg7w=; 
+	b=RUH9yDRxkPh320DjBhZvGnnpGVfVJ0zV4q/UFgJF5XrdgMcMyVegWXAGO7E5+NyDmIH0SSffH3ROB8cdhhEGJlNKhnybDYds38EVE5VSoKftZd977WlrJXuWhfQ2H6r8Ikrwq+OGy/1Ajdt/E+pXXR+H/QPGQHBXvIy+bWuBG0c=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
+	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730908434;
+	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=d9owUKVL5RmM44FaajdtaQ+bTNIjOEZeFrlJJspbg7w=;
+	b=FZe7Ay07ArzBMSFjQX0XLOx9cMvA6QUHwOiKr0jP6TovnpwHiKIOPd58myBSUgaX
+	oc4UoeEmAgeO9VrB54/BV3i4zQE0ssDq6cs4PUryqaTI9M0PwHqNdVCfwjkrvO+2Uid
+	7avAcRnP88Xd2D0n7r1c1YUdVTfPFRssk9AyXv+E=
+Received: by mx.zohomail.com with SMTPS id 173090843306930.84842752758027;
+	Wed, 6 Nov 2024 07:53:53 -0800 (PST)
+Message-ID: <e5b0252f-f097-4e47-ad07-701cadd965fb@collabora.com>
+Date: Wed, 6 Nov 2024 16:53:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/fourcc: Add modifier definition for describing
+ Verisilicon video framebuffer
+To: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ laurentiu.palcu@nxp.com, aisheng.dong@nxp.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Collabora Kernel ML <kernel@collabora.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>
+References: <0102019301ab1b2d-5539e1c7-e026-47bc-8692-b3335f6f7584-000000@eu-west-1.amazonses.com>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <0102019301ab1b2d-5539e1c7-e026-47bc-8692-b3335f6f7584-000000@eu-west-1.amazonses.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Oct 2024 20:23:49 +0000, Mark Brown wrote:
-> Mark Rutland identified a repeated pattern where we update the in memory
-> floating point state for tasks but do not invalidate the tracking of the
-> last CPU that the task's state was loaded on, meaning that we can
-> incorrectly fail to load the state from memory due to the checking in
-> fpsimd_thread_switch().  When we change the in-memory state we need to
-> also invalidate the last CPU information so that the state is corretly
-> identified as needing to be reloaded from memory.
-> 
-> [...]
++ nicolas
 
-Applied SVE patch (with updated commit message) to arm64 (for-next/fixes),
-thanks!
-
-[1/2] arm64/sve: Flush foreign register state in sve_init_regs()
-      https://git.kernel.org/arm64/c/751ecf6afd65
-
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+Le 06/11/2024 à 14:30, Benjamin Gaignard a écrit :
+> Verisilicon hardware video decoders can produce tiled (8x4 or 4x4)
+> and compressed video framebuffers.
+> It considerably reduces memory bandwidth while writing and reading
+> frames in memory.
+>
+> The underlying storage in NV12 (for 8-bit) or NV15 (for 10-bit).
+>
+> Display controllers, like imx DCSS, could use these modifier definition
+> as input for overlay planes.
+>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> ---
+> The original code comes from:
+> https://github.com/nxp-imx/linux-imx/commit/ab01b7fe82d5a11dfb533cfbd08c4dfa140815de
+> I have port it and modify DRM_FORMAT_MOD_VENDOR_VSI value.
+>
+>   include/uapi/drm/drm_fourcc.h | 27 +++++++++++++++++++++++++++
+>   1 file changed, 27 insertions(+)
+>
+> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> index 78abd819fd62..31d09a98d0d7 100644
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -421,6 +421,7 @@ extern "C" {
+>   #define DRM_FORMAT_MOD_VENDOR_ARM     0x08
+>   #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
+>   #define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
+> +#define DRM_FORMAT_MOD_VENDOR_VSI     0x0b
+>   
+>   /* add more to the end as needed */
+>   
+> @@ -1607,6 +1608,32 @@ drm_fourcc_canonicalize_nvidia_format_mod(__u64 modifier)
+>   #define AMD_FMT_MOD_CLEAR(field) \
+>   	(~((__u64)AMD_FMT_MOD_##field##_MASK << AMD_FMT_MOD_##field##_SHIFT))
+>   
+> +/* Verisilicon framebuffer modifiers */
+> +
+> +/*
+> + * Verisilicon 8x4 tiling layout
+> + *
+> + * This is G1 VPU tiled layout using tiles of 8x4 pixels in a row-major
+> + * layout.
+> + */
+> +#define DRM_FORMAT_MOD_VSI_G1_TILED fourcc_mod_code(VSI, 1)
+> +
+> +/*
+> + * Verisilicon 4x4 tiling layout
+> + *
+> + * This is G2 VPU tiled layout using tiles of 4x4 pixels in a row-major
+> + * layout.
+> + */
+> +#define DRM_FORMAT_MOD_VSI_G2_TILED fourcc_mod_code(VSI, 2)
+> +
+> +/*
+> + * Verisilicon 4x4 tiling with compression layout
+> + *
+> + * This is G2 VPU tiled layout using tiles of 4x4 pixels in a row-major
+> + * layout with compression.
+> + */
+> +#define DRM_FORMAT_MOD_VSI_G2_TILED_COMPRESSED fourcc_mod_code(VSI, 3)
+> +
+>   #if defined(__cplusplus)
+>   }
+>   #endif
 
