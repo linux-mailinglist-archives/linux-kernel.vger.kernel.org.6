@@ -1,405 +1,459 @@
-Return-Path: <linux-kernel+bounces-397607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5379BDDF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:32:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4803D9BDDFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:34:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F6A284A4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:32:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA18B2255E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F541189528;
-	Wed,  6 Nov 2024 04:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D17019066D;
+	Wed,  6 Nov 2024 04:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVI4xOzQ"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="G/kjhi89"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A5776035;
-	Wed,  6 Nov 2024 04:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730867511; cv=none; b=euABFfzFrCRZTSYpy4tYCOq2SYGv3aSeMK3YjieqJRV6QoMZITIUMAj+Jd4ktmkvoMlRahM4dxQaD2GMCQjYYLqwFVEfxX4HOycUaY0ym6dZDo+s4Ijmty39JKEML2mkcUd9kGL+nRaGiApkADIts2ADrlgltXY1HlMh9mMT7H0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730867511; c=relaxed/simple;
-	bh=BFBhWaVJ1NjTVIuUBgpSEuRZGb9akHwornbYVvqwOls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SCpCdgi9fqqAkTWWhI3wxGxYuy1ECZoY6YRGPgVEtQXxdZzReZthCFihhGnkOf1ua5kD8mzli3RctA74vQQ1/s/wHuS1Ps5qdIYFK3DZtCJYsIonQT1lS9YDN66fCT3oaMhSgWWwMu1fJZZnvLk3KQDc5qpzjUWLtfQTtj0t8Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gVI4xOzQ; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2ad9825a7so4563873a91.0;
-        Tue, 05 Nov 2024 20:31:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730867509; x=1731472309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=42QNibVxGN8majzaOkdnUDSaQ6NUZm9iELyp49h2R9Y=;
-        b=gVI4xOzQESCkymBEUJ0XXeZgjM86jNCrbBJEFZrw5S4sLyYIpEBf6ccDsiUr5deb/G
-         0uxvDn+Q3ZUl1nH5KzAnaNO4sv00OMqSrH/0q1WA+rVYIyJouAF/Zgmxel5SMpgPJztm
-         6ZIBNGlF3DXpWJv6uacokC4yv6mJQHWzvBjDAVUkydGLk94gy7TMXroe3UuV0FSYA2A+
-         B1/jjQHiHtijzmKunexDKBXBi3DO/bhNgeOhg/tnpK+qSBdz+n1jHGuWML2IAI1GClYU
-         Lp7cObvDO7fRIUvzNWXDSdvpK5kcUFMRtH/5qeOYmKd8d8ZLK0sacLKii2b3FF4iKQaT
-         sTBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730867509; x=1731472309;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=42QNibVxGN8majzaOkdnUDSaQ6NUZm9iELyp49h2R9Y=;
-        b=f3o3xvpyf9I2Imy9JZtyWTUCPXDjsy4Vp7xELpWzOfsrdxyRUCgG2h4eOM/k0t5H/I
-         fMlx/9+1bP4jRgo58e1i5J0GOLO2PjqbmgXvkM2Ty+MeijvVNRZD1E7X13TDbEaUrkHJ
-         recW+0rrZr7bn7BGFaMTIwi/oEw4isQSKIyHehCOYmKwmNRyfPdQbCGsYa6ia6ZubKsv
-         pHAsAysjvmBbIfsVLUrVVoNL5MQh+7euJ60ePM/reWoH7w5nKYRI8qe1bQ012MvwcA/0
-         q1rjFS1kManfvDnf4dQCXAk8jwU8ZYtHw5J90XLJzRxA/tZf8krcoEHo/ly5fVPvJvMA
-         kz3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUohup/RpMWSO4wVXXz1QTzaybpOu5lYP4TQy7sZ6PxCNdvoBfVHBP0SEbzlXGRTSgl81v3Pzmdonl7@vger.kernel.org, AJvYcCWCZKzBpY5ipLewX/++sPH/EJ1x8HC1cv4vUx7N7DHE3e6d3HMt+eMy4OimKbBOg8M+AKS9wMpVS2BOPhk=@vger.kernel.org, AJvYcCWG/EcVlhXG46lH7dITW8vvvmZbL9GW6SS5/1PzxKahcaPadDrGRh1pc6lWFSu2jqMHy8HBf8zRKQ9O@vger.kernel.org, AJvYcCXVQK0jhXTI/TEqqLBZVuplvmcOcjPOGzCjl4r1irX87NBUJ4Xt88hX5OywCdI2WPXmuMYlqx7GOqau@vger.kernel.org, AJvYcCXojAn7GfhIylIpSSm0AyLsxHO/KVHx2hhTcbMgLisZcx6jzNBLbKVZdtaR4NMW9JVOIuOwad/b6TrAhQnb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyAvEUpv0acMWCgtM+s1l3QD2meJqWm2j1vgI7VQTs5KyKyNX3
-	lGCG0mqnUjviKG1zumgxBK4xtc4n0hF/bNRJ/yuBmG5gR4nedU2o
-X-Google-Smtp-Source: AGHT+IHG6rXVDFwm4UcyLMcVXxwbRdXpaDtRZ7anYDuhGOjHa+Jxpgfj++Ls2RbGHfZqkr4a/1NHfQ==
-X-Received: by 2002:a17:90a:4e0a:b0:2cc:ef14:89e3 with SMTP id 98e67ed59e1d1-2e8f1071ca9mr41122947a91.15.1730867508805;
-        Tue, 05 Nov 2024 20:31:48 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a54eddesm427187a91.13.2024.11.05.20.31.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 20:31:48 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <d016c2e5-2ebe-45cb-a62e-25f8b8d3a1b9@roeck-us.net>
-Date: Tue, 5 Nov 2024 20:31:46 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610C276035;
+	Wed,  6 Nov 2024 04:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730867647; cv=fail; b=YNzNXACzri7hikMYZOljKQGZiV0bcVkP/2jJSRzt+ZXCJMaVk079mOnQr7nKKQBci6OHzH6OOYdVHLpB2b15rfH9jWQ310/mvxYcHjgLpdm6n1lHE5Dt9AN9gMG/lS08UDGeo3dLDeMWs0y3fkJHUrOTEtx0kHm33NAcqfF1CD0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730867647; c=relaxed/simple;
+	bh=tMFZ0e8NUcK8gmlcf1E21ay+ozi7C640z59cymXuX88=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dsVRpABbQi1Z2dpIMjY4y0dw/QMBJL+usIJlENfbJeqyZXRdR8gaJtJMEw0lEC/KLRUO/nkc2l07tmIqNZ/28lfcJ6I+iZ+yDaXnasVrmYxG/QcpQtAmeJo3OA1OAszmaq5hoJIJytjiR8rYafNsl6APGo1vCFXEKiNIGv9f4+E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=G/kjhi89; arc=fail smtp.client-ip=40.107.94.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ucazfGw59Rg8FcWpoUf0KQ8l+o8Ya442a5ffPRNEL+GyqAqW1f5pW7JW2HhE6QdT2XSXueTNVr7Pe4v79lQGIdYVUp/Tvo/wfKMNROpD4MXyv8Un5acawS0fHQw6XSHhxmnqSONmP4oC5SlucexJy5HtqSskLRD9oY3hIevhWNTicTh4ZtT3u4C/oB9S75G19TIhmmUScr5Bhak9Mp+/Q6usQUHjP7MPUIYK3J7cy27NYShVYLsQOoLqaWLbWAlJvGRBTiFVJfUrFDoRhCNaqAKbbUB536qQ1rcgHJy6m63Ep2WogZpDLI0DPRtF95d9UHhN3ctKc/SNUjebe7UnQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=STKmnU2um3xkrTKGLKLxfclKIKOyQ/FIzvmf3HYdLC0=;
+ b=EzsAKe9PA0UFIzq2IUjTl/iOJuWPWd3qK414PVKRM7Oq0FVe+S93/kuX2xupRg7RV8m03wmJ+XRNwnpVKlu62IU3fXxUTtKkLxAlNeMr48GorqJOz50L85K85bGJLiEShYRDxnM4Okus/X+TjcgM+Z+5U7gib7pKCAwyLTuZHdSOsDESLhdXalzac3p+Nckvjue7fDMyHnMZsAcApHwYsBPmU3933YoXtH/sbRzFxFcjakrVG0CK11G0Vm51StSOoG7hrbIH0Ttc/uYkVqgpAaMCbrRaxsGTLUaSNHeYnUX+vJ5vaalJTk+inI6GSXzRFlNjLBddbA+e8IVhfICpLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=STKmnU2um3xkrTKGLKLxfclKIKOyQ/FIzvmf3HYdLC0=;
+ b=G/kjhi895CwemRF6ZaTDBgpHjnMu9F4K0h492+SxKoBa1QTG/BjGc/lxFsFrjiBMM+TuREWlKzDrsuGp2IyyylKZQDft4MQ6uvI/i2q32ElL7oiA2FHcWJ0cKXvrztQmLHgelvxvof+osOJeQRP4Ojks1gCNkdCMhVqZtXtcUTs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
+ by BY5PR12MB4273.namprd12.prod.outlook.com (2603:10b6:a03:212::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Wed, 6 Nov
+ 2024 04:34:02 +0000
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4%5]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
+ 04:34:02 +0000
+Message-ID: <8361ae12-60d1-42a1-ba90-c3b31c8a6e6f@amd.com>
+Date: Wed, 6 Nov 2024 10:03:54 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 04/12] platform/x86: hfi: Introduce AMD Hardware
+ Feedback Interface Driver
+Content-Language: en-US
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org
+References: <20241104175407.19546-1-mario.limonciello@amd.com>
+ <20241104175407.19546-5-mario.limonciello@amd.com>
+From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+In-Reply-To: <20241104175407.19546-5-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PNYP287CA0009.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:23d::15) To BL1PR12MB5176.namprd12.prod.outlook.com
+ (2603:10b6:208:311::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] hwmon: pmbus: add driver for ltp8800-1a,
- ltp8800-4a, and ltp8800-2
-To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Yin <peteryin.openbmc@gmail.com>,
- Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
- Lukas Wunner <lukas@wunner.de>
-References: <20241106030918.24849-1-cedricjustine.encarnacion@analog.com>
- <20241106030918.24849-3-cedricjustine.encarnacion@analog.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241106030918.24849-3-cedricjustine.encarnacion@analog.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|BY5PR12MB4273:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea982386-d95d-4186-0e32-08dcfe1c3d13
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?djhhelc5ak5hNEQ1RTFrVWEwTWF1TzdqU2U0Z3JQUXdJeXowM0xHRUM4VU05?=
+ =?utf-8?B?Mi9CVk5VbHVrcUNyWm5ndnF1S2VHNjZTVzkzUFRiWDk1TkFZZnQ0cUdYZWxD?=
+ =?utf-8?B?QmpHeFRoMFBIVHJSVGRWT2JzSExUMkxNZ0Rxck1GQmx4QURZaHlTRGZibVMw?=
+ =?utf-8?B?Qi92bUdMckJBOVVTOEZIcVA3Ump3VXhHMFcyQk8wVnBzOS9YdXk2QXBlQTlw?=
+ =?utf-8?B?Y0diWkY5NHBiRys4UFRtcis0K2xwTVJ3VS85bmc1djE1UUF3enhhRzZTYW5L?=
+ =?utf-8?B?UmUwTnBQZHpDRGJiVFhUelExT0p6Q3FibVZ0MkZGNzBIZmxBeHltSU5tODk0?=
+ =?utf-8?B?RS8zTGZNZXk5Z0R1T0FyMk9URnBOOFFJZUloSm9QNXFwSVBnU0RwQytsbFZq?=
+ =?utf-8?B?RVNBdWI1K0d3S3gzakVZaGMxaGJubWpTMGxnN0RkWVJQV3VTZmhJaFNBNlp3?=
+ =?utf-8?B?WG5GK1g4MXBOVTZCcVExNXpIbEQvSzhrVGV1K2Jhb0dZdU9weitmQWZwRW9F?=
+ =?utf-8?B?a3JpUkQ4alptbC91VEhzMUJZZVAxVDFVWk9XaGMvSEprQ3pIL0dRRUxUYzdG?=
+ =?utf-8?B?ZnBqZTVJcVRFeHNuYm55WS9UMW5kQndlNjNHZkFrYUgraDF5YXlBUDdlS1dC?=
+ =?utf-8?B?Z21TSWFNL0JPdHFnV2Z1bnZPS3ZsY3Rnak9aLzkyblEyQVd0VHExOGlSbTdR?=
+ =?utf-8?B?MWVxUjdtbTgxSHJIdkNQNnFzTlFteDl0Mit6TXMxRHBMaU12VmFZdEZRK21C?=
+ =?utf-8?B?M3NUT0dKaWllQ0hPelRWN0xKbm5lWndmTS94S3ZlYWtSYWVUcExna1cvSUNr?=
+ =?utf-8?B?WVNZUk15YXc5a3VBbTJIOTMxQlFMY1haS0Jud1l5YzRrTEoxQkNuWGEyeW1U?=
+ =?utf-8?B?Z1dHR295NDdoZTlReTMvdGVhSlNnMTVjNTRVTFBUYVR1WWVNcjN4d3EySjlY?=
+ =?utf-8?B?QVl4dFJVTUI2dWdUUTVLUFByZ0tnRG44ek1nWEZPV2c4SnN1NGhPT2lzU0Fj?=
+ =?utf-8?B?bXhJcXdFWGVWc1pGeCs0S3BrZTJtVFpvS1ZJdFZQdU40SkdRMVV5cnJrbVRI?=
+ =?utf-8?B?M3ViS0ZDcWoxUHoxUTdybjRjblBRZW5kZ2R1cmVjc1NFTTNrTndibXBZVVli?=
+ =?utf-8?B?eGxJQmIwaEdvQVNXOWkrWXhSYUxJWTRUZTdHWFc5Zm16MWZnTmhPS3JjdXhB?=
+ =?utf-8?B?QUFPWGtSZjVvckZpSDU5UWhJclJSNkhZVldDZmY3UzVmeC9pOGpRY1k4UG9w?=
+ =?utf-8?B?bGNLZ25MY0hyaXd6RHc1MHpXcFFsRGUwazcvdElrTytNSE9pQ0UxV0VaY3Fw?=
+ =?utf-8?B?NytCcDgyNll4djJ2cjYyVndkVG1MZXgyRCswMWV3VElydWltV28zVlM0WDI2?=
+ =?utf-8?B?TExsMVFSeHh5V2Q5bUc0OWhqNWJQd040MXBmU3hYcEtLOEpzeEpLM3NnZmNw?=
+ =?utf-8?B?MEoreGJXZXZWUHpWWmxReVoyMzJLTFUzYW9ueUl1MStnRDYwZ0tIaGNmUkN5?=
+ =?utf-8?B?d2Vic0tHVXkwaTFjTWtCamVBaFJKUDBtNkpPcGFyTzBYOVZWUUc2dEhwd2t6?=
+ =?utf-8?B?YWoySEtYUzZkQ2pNQWFyQTlpeDdBNmQ1ZktmVzFvNzJybitOMUlWSitjTXll?=
+ =?utf-8?B?bnZaU1NqZ1JJNUZqYmRmRjJhM3hOL1VHY2Eyc0NNbnh0R1JOZFR4VVoreTN4?=
+ =?utf-8?B?UENacWxyYkhJeG5vTUU0RWhJRHBPUlZmbmVqQ0pnNDQ5OGpjODN6N2I4MURv?=
+ =?utf-8?Q?Feph4LJTxOjP7jWCWI4d5lDAG6HPEwEr6cKOt45?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bXF1NVowZVgrdkNSYWgwZ1ZSOHB3dzdkYjhXdTh2YWkvOFJTVzBIZ1dNYjBL?=
+ =?utf-8?B?RVJRcVRwUnhWTW1vQnV3NWpiTkhjekVtS0EzdFc4WVJLdlNFTW55OC91aTF0?=
+ =?utf-8?B?VlZDQ1JDamppaWhsSDAxMUtldmhXdmpCNVVXdlRXMGE2S0pweGVrS1hrNERL?=
+ =?utf-8?B?NUZJVmxEbWdiaUJ4cnY5S1FCQ0pwZ1V6akdwZHFEbHNOenA1NXh6aVJWV2Rh?=
+ =?utf-8?B?eWkxbXd6ZUdFZkh4Q3haQ0FEUHhCdS9haHR5WW1WTmlsZzluWk1iS1FlQUNN?=
+ =?utf-8?B?aElWeWRvblRCdWJWOWJWWWwzY1Era0lzclI5V2FHVzNxNGlxSFRnZ2E0MHBj?=
+ =?utf-8?B?NlliTjhtZlpUb1ZCalV5S0dhMmxUa280cGF1SlBwSEtaNTFMbitiV2IrN1Jh?=
+ =?utf-8?B?TFoyblRZTHdzSnYwZUxzME9zR1ZPUk40Z3VaMWFMZFgrSy9UZ0pHQllQTXpt?=
+ =?utf-8?B?UU0vUHZIRVV2SzRGQVR2d29lMS96b3VXcVZBTjdiOFhqSWhIUkY2ZUR6VGc2?=
+ =?utf-8?B?RnZ0WUlZZEJqdWtTaXFTL1Z2V2RXMGdoUWhkdENtZEV0bE5qMFpIMHdiaXhy?=
+ =?utf-8?B?ODRpR3B3MFZpQW11K3FGZ3hQSzk2OTB3cE5JVDU1dS9EWFZMNTRoRVFGSlNl?=
+ =?utf-8?B?eGhyU3JBaFRmYy9SK2E4NGd6cSs2MGdlM3FwM1VHblZDbkpQWEh1QXVpUEVh?=
+ =?utf-8?B?bXFPNGI0YWFmbUVjM045ZTRtOVNaSHdBaDJoYmZyclpBM29MazgzVjE3SVBL?=
+ =?utf-8?B?ZHlyMDZ1VldPREVoREpJZllMbzdQNHRxRjlGUEpydFAzUzJMTno2VURORmty?=
+ =?utf-8?B?K05pSjdtL2tralhNTElCdWJtMkZBYzlXMTdWcHBtR2dMdktGMVUvc256emlr?=
+ =?utf-8?B?WHlTTm1kQlcrZTlDMFczVXdEaVJ2VEVDZmt4dUlGL3RLWmtNY3pra09GMEdO?=
+ =?utf-8?B?NVRWVDVtUm1neWpxdk5qREg1YlBWcjJXbldUZFdDRDBTSm1TdDQvUnMvNzlj?=
+ =?utf-8?B?dCtCNzRmdncwK1B2YlhXOEIrZ2RSeTZ0M3lZaDVjVDhYdVh6Y295bmZYWVdt?=
+ =?utf-8?B?YzFVQ3Azb3JDQnVFNDlNeG9LdDM0MDMzRHh3MzhaT3NJelh4cE9iT1FqUTBR?=
+ =?utf-8?B?Qlk3azRhdDgwa0M5ekZ3a3NmbVZxalpJZEdRTjFWUm0rUmV6MWdkOTRWeFZ1?=
+ =?utf-8?B?N016NUdlNUdCRmhhMHFNZTg0N0xabDlKZENvYjhOYm5YeURTZG1DNEc1VUJt?=
+ =?utf-8?B?YUlBT2lzS2J0aVBNZjlwQVM3YXp5YzNSK2RNOUhSNWN6cG5ZMTEwbG5jOTdi?=
+ =?utf-8?B?czY0TTRXZUpueXhjcytYV2E5SDFNV0lrRThRM29HNVBTSHFRc2pYaGtXUHV0?=
+ =?utf-8?B?MzNIK2FrcVdOdmNQV01sSGZ3aUI1bVBQUEJOTThtSkE2RU9JTXFJSnQ1bHhB?=
+ =?utf-8?B?YU55cGdnaWR2NXgwcXN5azdpNWxKUGxHRVVSanE3ck4zVGRGbVlGZmJKTUZW?=
+ =?utf-8?B?OE9wdVZBQnRZSVh5WEdNdWdkVjZuY3lXaE1LY0ZzZWljdHNtbnJSckJwY3pa?=
+ =?utf-8?B?SXg4M1pka04wME5abStURDdEeUNJQzBOSVRCc2htNG4xaU5PZUYweUF3VjZu?=
+ =?utf-8?B?dlNLdHowb210T09UYi9kcHF4cklEWDUvbWxscktwSTVsZ2JocGdRT2pqZmtw?=
+ =?utf-8?B?RitDemROOEFIR0xiSkQxcFJXS2ZaMGlXZ2RKSlpVUmllV1JXMEJpV2REY3p2?=
+ =?utf-8?B?WHA2eVk5VitxTTh5MzhFMnlYUEN4ZWVjTTJBQ2FpOVVxelJyV0J4UVBBVnRu?=
+ =?utf-8?B?RTdJWmMra3diRWtMYmxiRkF3ZkV3eW5uaCs5SEJQS2tiTzFRRElJNTJFb2tt?=
+ =?utf-8?B?bHhLRUFSQ0pRSG9pUVBHdlVKc3IvUDB3K2tiTWhVdGh1V3pjRTBveXpIUkdZ?=
+ =?utf-8?B?cU1HaGpXNlBaL09KcGtrNWoxbWJZRFh4OCtTU3hVZHU0ekJHUjVxeVJSOFg2?=
+ =?utf-8?B?S1ArV0dCa1g1OGRNRGFrUEk5VmswbkFwVFZPYVpvY3RDaVBINFdMRXJVRlJ3?=
+ =?utf-8?B?bEtFbWJLdTBUb3NuQmVFYlpBbEd6UjVkNXliNnY0MS83bjNHbk00NWhseGxD?=
+ =?utf-8?Q?YG2ejr5ZC4QBZ9mLPRTFA89or?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea982386-d95d-4186-0e32-08dcfe1c3d13
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 04:34:02.0214
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qJwLG6EAc6oPi9hHn/UM++mW68vNPRAzFz04lxosGiDRo6mfxGz6xRyg0xmt0TVtt8OCBrbyWJmUKX7aRXHxRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4273
 
-On 11/5/24 19:09, Cedric Encarnacion wrote:
-> LTP8800-1A 54V, 150A DC/DC µModule Regulator with PMBus Interface
-> LTP8800-4A 54V, 200A DC/DC µModule Regulator with PMBus Interface
-> LTP8800-2 54V, 135A DC/DC μModule Regulator with PMBus Interface
+
+
+On 11/4/2024 23:23, Mario Limonciello wrote:
+> From: Perry Yuan <Perry.Yuan@amd.com>
 > 
-> The LTP8800 is a family of step-down μModule regulators that provides
-> microprocessor core voltage from 54V power distribution architecture. It
-> features telemetry monitoring of input/output voltage, input current,
-> output power, and temperature over PMBus.
+> The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
+> provide behavioral classification and a dynamically updated ranking table
+> for the scheduler to use when choosing cores for tasks.
 > 
-> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> There are two CPU core types defined: `Classic Core` and `Dense Core`.
+> "Classic" cores are the standard performance cores, while "Dense" cores
+> are optimized for area and efficiency.
+> 
+> Heterogeneous compute refers to CPU implementations that are comprised
+> of more than one architectural class, each with two capabilities. This
+> means each CPU reports two separate capabilities: "perf" and "eff".
+> 
+> Each capability lists all core ranking numbers between 0 and 255, where
+> a higher number represents a higher capability.
+> 
+> Heterogeneous systems can also extend to more than two architectural
+> classes.
+> 
+> The purpose of the scheduling feedback mechanism is to provide information
+> to the operating system scheduler in real time, allowing the scheduler to
+> direct threads to the optimal core during task scheduling.
+> 
+> All core ranking data are provided by the PMFW via a shared memory ranking
+> table, which the driver reads and uses to update core capabilities to the
+> scheduler. When the hardware updates the table, it generates a platform
+> interrupt to notify the OS to read the new ranking table.
+> 
+
+Reviewed-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->   Documentation/hwmon/index.rst   |  1 +
->   Documentation/hwmon/ltp8800.rst | 91 +++++++++++++++++++++++++++++++++
->   MAINTAINERS                     |  2 +
->   drivers/hwmon/pmbus/Kconfig     | 18 +++++++
->   drivers/hwmon/pmbus/Makefile    |  1 +
->   drivers/hwmon/pmbus/ltp8800.c   | 63 +++++++++++++++++++++++
->   6 files changed, 176 insertions(+)
->   create mode 100644 Documentation/hwmon/ltp8800.rst
->   create mode 100644 drivers/hwmon/pmbus/ltp8800.c
+> v5->v6:
+>  * Whitespace (Shyam)
+>  * Use managed mutex (Shyam)
+>  * Remove needless include (Shyam)
+>  * Commit message text (Shyam)
+>  * Use cpu_feature_enabled (Boris)
+>  * Remove EOF newline (Boris)
+> ---
+>  drivers/platform/x86/amd/Kconfig      |   1 +
+>  drivers/platform/x86/amd/Makefile     |   1 +
+>  drivers/platform/x86/amd/hfi/Kconfig  |  18 +++
+>  drivers/platform/x86/amd/hfi/Makefile |   7 ++
+>  drivers/platform/x86/amd/hfi/hfi.c    | 161 ++++++++++++++++++++++++++
+>  5 files changed, 188 insertions(+)
+>  create mode 100644 drivers/platform/x86/amd/hfi/Kconfig
+>  create mode 100644 drivers/platform/x86/amd/hfi/Makefile
+>  create mode 100644 drivers/platform/x86/amd/hfi/hfi.c
 > 
-> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-> index 55f1111594b2..8e6799824859 100644
-> --- a/Documentation/hwmon/index.rst
-> +++ b/Documentation/hwmon/index.rst
-> @@ -136,6 +136,7 @@ Hardware Monitoring Kernel Drivers
->      ltc4261
->      ltc4282
->      ltc4286
-> +   ltp8800
->      max127
->      max15301
->      max16064
-> diff --git a/Documentation/hwmon/ltp8800.rst b/Documentation/hwmon/ltp8800.rst
+> diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
+> index f88682d36447c..c3f69dbe3037d 100644
+> --- a/drivers/platform/x86/amd/Kconfig
+> +++ b/drivers/platform/x86/amd/Kconfig
+> @@ -5,6 +5,7 @@
+>  
+>  source "drivers/platform/x86/amd/pmf/Kconfig"
+>  source "drivers/platform/x86/amd/pmc/Kconfig"
+> +source "drivers/platform/x86/amd/hfi/Kconfig"
+>  
+>  config AMD_HSMP
+>  	tristate "AMD HSMP Driver"
+> diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
+> index dcec0a46f8af1..2676fc81fee54 100644
+> --- a/drivers/platform/x86/amd/Makefile
+> +++ b/drivers/platform/x86/amd/Makefile
+> @@ -9,3 +9,4 @@ amd_hsmp-y			:= hsmp.o
+>  obj-$(CONFIG_AMD_HSMP)		+= amd_hsmp.o
+>  obj-$(CONFIG_AMD_PMF)		+= pmf/
+>  obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
+> +obj-$(CONFIG_AMD_HFI)		+= hfi/
+> diff --git a/drivers/platform/x86/amd/hfi/Kconfig b/drivers/platform/x86/amd/hfi/Kconfig
 > new file mode 100644
-> index 000000000000..bbe1b4a7c827
+> index 0000000000000..79e3b0073275c
 > --- /dev/null
-> +++ b/Documentation/hwmon/ltp8800.rst
-> @@ -0,0 +1,91 @@
-> +.. SPDX-License-Identifier: GPL-2.0
+> +++ b/drivers/platform/x86/amd/hfi/Kconfig
+> @@ -0,0 +1,18 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# AMD Hardware Feedback Interface Driver
+> +#
 > +
-> +Kernel driver ltp8800
-> +=====================
-> +
-> +Supported chips:
-> +
-> +  * Analog Devices LTP8800-1A, LTP8800-2, LTP8800-4A
-> +
-> +    Prefix: 'ltp8800'
-> +
-> +    Addresses scanned: -
-> +
-> +    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-1a.pdf
-> +
-> +         https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-2.pdf
-> +
-> +         https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-4a.pdf
-> +
-> +Authors:
-> +    - Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-> +
-> +
-> +Description
-> +-----------
-> +
-> +The LTP8800 is a family of step-down μModule regulators that provides
-> +microprocessor core voltage from 54V power distribution architecture. LTP8800
-> +features telemetry monitoring of input/output voltage, input current, output
-> +power, and temperature over PMBus.
-> +
-> +The driver is a client driver to the core PMBus driver. Please see
-> +Documentation/hwmon/pmbus.rst for details on PMBus client drivers.
-> +
-> +Usage Notes
-> +-----------
-> +
-> +This driver does not auto-detect devices. You will have to instantiate the
-> +devices explicitly. Please see Documentation/i2c/instantiating-devices.rst for
-> +details.
-> +
-> +Platform data support
-> +---------------------
-> +
-> +The driver supports standard PMBus driver platform data. Please see
-> +Documentation/hwmon/pmbus.rst for details.
-> +
-> +Sysfs Attributes
-> +----------------
-> +
-> +======================= ===========================
-> +curr1_label		"iin"
-> +curr1_input		Measured input current
-> +curr1_crit		Critical maximum current
-> +curr1_crit_alarm	Current critical high alarm
-> +
-> +curr2_label		"iout1"
-> +curr2_input		Measured output current
-> +curr2_lcrit		Critical minimum current
-> +curr2_crit		Critical maximum current
-> +curr2_max		Maximum output current
-> +curr2_alarm		Current alarm
-> +
-> +in1_label		"vin"
-> +in1_input		Measured input voltage
-> +in1_lcrit		Critical minimum input voltage
-> +in1_lcrit_alarm		Input voltage critical low alarm
-> +in1_crit		Critical maximum input voltage
-> +in1_crit_alarm		Input voltage critical high alarm
-> +
-> +in2_label		"vout1"
-> +in2_input		Measured output voltage
-> +in2_lcrit		Critical minimum output voltage
-> +in2_lcrit_alarm		Output voltage critical low alarm
-> +in2_crit		Critical maximum output voltage
-> +in2_crit_alarm		Output voltage critical high alarm
-> +in2_max			Maximum output voltage
-> +in2_max_alarm		Output voltage high alarm
-> +in2_min			Minimum output voltage
-> +in2_min_alarm		Output voltage low alarm
-> +
-> +power1_label		"pout1"
-> +power1_input		Measured output power
-> +power1_crit		Critical maximum output power
-> +
-> +temp1_input		Measured temperature
-> +temp1_lcrit		Critical low temperature
-> +temp1_lcrit_alarm		Chip temperature critical low alarm
-> +temp1_crit		Critical high temperature
-> +temp1_crit_alarm		Chip temperature critical high alarm
-> +======================= ===========================
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6ca691500fb7..a5d1bd61fc2c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13559,6 +13559,8 @@ LTP8800 HARDWARE MONITOR DRIVER
->   M:	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
->   L:	linux-hwmon@vger.kernel.org
->   S:	Supported
-> +F:	Documentation/hwmon/ltp8800.rst
-> +F:	drivers/hwmon/pmbus/ltp8800.c
->   
->   LYNX 28G SERDES PHY DRIVER
->   M:	Ioana Ciornei <ioana.ciornei@nxp.com>
-> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-> index f6d352841953..264c73275d86 100644
-> --- a/drivers/hwmon/pmbus/Kconfig
-> +++ b/drivers/hwmon/pmbus/Kconfig
-> @@ -247,6 +247,24 @@ config SENSORS_LTC4286
->   	  If you say yes here you get hardware monitoring support for Analog
->   	  Devices LTC4286.
->   
-> +config SENSORS_LTP8800
-> +	tristate "Analog Devices LTP8800 and compatibles"
+> +config AMD_HFI
+> +	bool "AMD Hetero Core Hardware Feedback Driver"
+> +	depends on ACPI
+> +	depends on CPU_SUP_AMD
 > +	help
-> +	  If you say yes here you get hardware monitoring support for Analog
-> +	  Devices LTP8800-1A, LTP8800-4A, and LTP8800-2.
-> +
-> +	  This driver can also be built as a module. If so, the module will
-> +	  be called ltp8800.
-> +
-> +config SENSORS_LTP8800_REGULATOR
-> +	bool "Regulator support for LTP8800 and compatibles"
-> +	depends on SENSORS_LTP8800 && REGULATOR
-> +	help
-> +	  If you say yes here you get regulator support for Analog Devices
-> +	  LTP8800-1A, LTP8800-4A, and LTP8800-2. LTP8800 is a family of DC/DC
-> +	  µModule regulators that can provide microprocessor power from 54V
-> +	  power distribution architecture.
-> +
->   config SENSORS_MAX15301
->   	tristate "Maxim MAX15301"
->   	help
-> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-> index d00bcc758b97..aa5bbdb4a806 100644
-> --- a/drivers/hwmon/pmbus/Makefile
-> +++ b/drivers/hwmon/pmbus/Makefile
-> @@ -26,6 +26,7 @@ obj-$(CONFIG_SENSORS_LT7182S)	+= lt7182s.o
->   obj-$(CONFIG_SENSORS_LTC2978)	+= ltc2978.o
->   obj-$(CONFIG_SENSORS_LTC3815)	+= ltc3815.o
->   obj-$(CONFIG_SENSORS_LTC4286)	+= ltc4286.o
-> +obj-$(CONFIG_SENSORS_LTP8800)	+= ltp8800.o
->   obj-$(CONFIG_SENSORS_MAX15301)	+= max15301.o
->   obj-$(CONFIG_SENSORS_MAX16064)	+= max16064.o
->   obj-$(CONFIG_SENSORS_MAX16601)	+= max16601.o
-> diff --git a/drivers/hwmon/pmbus/ltp8800.c b/drivers/hwmon/pmbus/ltp8800.c
+> +	 Select this option to enable the AMD Heterogeneous Core Hardware Feedback Interface. If
+> +	 selected, hardware provides runtime thread classification guidance to the operating system
+> +	 on the performance and energy efficiency capabilities of each heterogeneous CPU core.
+> +	 These capabilities may vary due to the inherent differences in the core types and can
+> +	 also change as a result of variations in the operating conditions of the system such
+> +	 as power and thermal limits. If selected, the kernel relays updates in heterogeneous
+> +	 CPUs' capabilities to userspace, allowing for more optimal task scheduling and
+> +	 resource allocation, leveraging the diverse set of cores available.
+> diff --git a/drivers/platform/x86/amd/hfi/Makefile b/drivers/platform/x86/amd/hfi/Makefile
 > new file mode 100644
-> index 000000000000..d57f8c058a89
+> index 0000000000000..672c6ac106e95
 > --- /dev/null
-> +++ b/drivers/hwmon/pmbus/ltp8800.c
-> @@ -0,0 +1,63 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +++ b/drivers/platform/x86/amd/hfi/Makefile
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# AMD Hardware Feedback Interface Driver
+> +#
+> +
+> +obj-$(CONFIG_AMD_HFI) += amd_hfi.o
+> +amd_hfi-objs := hfi.o
+> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
+> new file mode 100644
+> index 0000000000000..2cd71d79a22c9
+> --- /dev/null
+> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+> @@ -0,0 +1,161 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
 > +/*
-> + * Hardware monitoring driver for Analog Devices LTP8800
+> + * AMD Hardware Feedback Interface Driver
 > + *
-> + * Copyright (C) 2024 Analog Devices, Inc.
+> + * Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
+> + *
+> + * Authors: Perry Yuan <Perry.Yuan@amd.com>
+> + *          Mario Limonciello <mario.limonciello@amd.com>
 > + */
-> +#include <linux/i2c.h>
+> +
+> +#define pr_fmt(fmt)  "amd-hfi: " fmt
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/gfp.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
 > +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include "pmbus.h"
+> +#include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/smp.h>
 > +
-> +static const struct regulator_desc ltp8800_reg_desc[] = {
-> +	PMBUS_REGULATOR("vout", 0),
-
-Ah, sorry, I didn't realize this earlier. This needs to use "PMBUS_REGULATOR_ONE("vout")"
-since there is only a single regulator (which needs to be named "vout" and not "vout0").
-
-Thanks,
-Guenter
-
+> +#define AMD_HFI_DRIVER		"amd_hfi"
+> +#define AMD_HETERO_CPUID_27	0x80000027
+> +static struct platform_device *device;
+> +
+> +struct amd_hfi_data {
+> +	const char	*name;
+> +	struct device	*dev;
+> +	struct mutex	lock;
 > +};
 > +
-> +static struct pmbus_driver_info ltp8800_info = {
-> +	.pages = 1,
-> +	.format[PSC_VOLTAGE_IN] = linear,
-> +	.format[PSC_VOLTAGE_OUT] = linear,
-> +	.format[PSC_CURRENT_IN] = linear,
-> +	.format[PSC_TEMPERATURE] = linear,
-> +	.func[0] = PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
-> +		   PMBUS_HAVE_VIN | PMBUS_HAVE_STATUS_INPUT |
-> +		   PMBUS_HAVE_IIN | PMBUS_HAVE_IOUT |
-> +		   PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
-> +		   PMBUS_HAVE_POUT,
-> +#if IS_ENABLED(CONFIG_SENSORS_LTP8800_REGULATOR)
-> +	.num_regulators = 1,
-> +	.reg_desc = ltp8800_reg_desc,
-> +#endif
+> +struct amd_hfi_classes {
+> +	u32	perf;
+> +	u32	eff;
 > +};
 > +
-> +static int ltp8800_probe(struct i2c_client *client)
+> +/**
+> + * struct amd_hfi_cpuinfo - HFI workload class info per CPU
+> + * @cpu:		cpu index
+> + * @cpus:		mask of cpus associated with amd_hfi_cpuinfo
+> + * @class_index:	workload class ID index
+> + * @nr_class:		max number of workload class supported
+> + * @amd_hfi_classes:	current cpu workload class ranking data
+> + *
+> + * Parameters of a logical processor linked with hardware feedback class
+> + */
+> +struct amd_hfi_cpuinfo {
+> +	int		cpu;
+> +	cpumask_var_t	cpus;
+> +	s16		class_index;
+> +	u8		nr_class;
+> +	struct amd_hfi_classes	*amd_hfi_classes;
+> +};
+> +
+> +static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index = -1};
+> +
+> +static int amd_hfi_alloc_class_data(struct platform_device *pdev)
 > +{
-> +	return pmbus_do_probe(client, &ltp8800_info);
+> +	struct amd_hfi_cpuinfo *hfi_cpuinfo;
+> +	struct device *dev = &pdev->dev;
+> +	int idx;
+> +	int nr_class_id;
+> +
+> +	nr_class_id = cpuid_eax(AMD_HETERO_CPUID_27);
+> +	if (nr_class_id < 0 || nr_class_id > 255) {
+> +		dev_err(dev, "failed to get number of supported classes: %d\n",
+> +			nr_class_id);
+> +		return -EINVAL;
+> +	}
+> +
+> +	for_each_present_cpu(idx) {
+> +		struct amd_hfi_classes *classes;
+> +
+> +		classes = devm_kzalloc(dev,
+> +				       nr_class_id * sizeof(struct amd_hfi_classes),
+> +				       GFP_KERNEL);
+> +		if (!classes)
+> +			return -ENOMEM;
+> +		hfi_cpuinfo = per_cpu_ptr(&amd_hfi_cpuinfo, idx);
+> +		hfi_cpuinfo->amd_hfi_classes = classes;
+> +		hfi_cpuinfo->nr_class = nr_class_id;
+> +	}
+> +
+> +	return 0;
 > +}
 > +
-> +static const struct i2c_device_id ltp8800_id[] = {
-> +	{"ltp8800", 0},
-> +	{}
+> +static const struct acpi_device_id amd_hfi_platform_match[] = {
+> +	{"AMDI0104", 0},
+> +	{ }
 > +};
-> +MODULE_DEVICE_TABLE(i2c, ltp8800_id);
+> +MODULE_DEVICE_TABLE(acpi, amd_hfi_platform_match);
 > +
-> +static const struct of_device_id ltp8800_of_match[] = {
-> +	{ .compatible = "adi,ltp8800"},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, ltp8800_of_match);
+> +static int amd_hfi_probe(struct platform_device *pdev)
+> +{
+> +	struct amd_hfi_data *amd_hfi_data;
+> +	int ret;
 > +
-> +static struct i2c_driver ltp8800_driver = {
+> +	if (!acpi_match_device(amd_hfi_platform_match, &pdev->dev))
+> +		return -ENODEV;
+> +
+> +	amd_hfi_data = devm_kzalloc(&pdev->dev, sizeof(*amd_hfi_data), GFP_KERNEL);
+> +	if (!amd_hfi_data)
+> +		return -ENOMEM;
+> +
+> +	amd_hfi_data->dev = &pdev->dev;
+> +	ret = devm_mutex_init(&pdev->dev, &amd_hfi_data->lock);
+> +	if (ret)
+> +		return ret;
+> +	platform_set_drvdata(pdev, amd_hfi_data);
+> +
+> +	ret = amd_hfi_alloc_class_data(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver amd_hfi_driver = {
 > +	.driver = {
-> +		.name = "ltp8800",
-> +		.of_match_table = ltp8800_of_match,
+> +		.name = AMD_HFI_DRIVER,
+> +		.owner = THIS_MODULE,
+> +		.acpi_match_table = ACPI_PTR(amd_hfi_platform_match),
 > +	},
-> +	.probe = ltp8800_probe,
-> +	.id_table = ltp8800_id,
+> +	.probe = amd_hfi_probe,
 > +};
-> +module_i2c_driver(ltp8800_driver);
 > +
-> +MODULE_AUTHOR("Cedric Encarnacion <cedricjustine.encarnacion@analog.com>");
-> +MODULE_DESCRIPTION("Analog Devices LTP8800 HWMON PMBus Driver");
+> +static int __init amd_hfi_init(void)
+> +{
+> +	int ret;
+> +
+> +	if (acpi_disabled ||
+> +	    !cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES) ||
+> +	    !cpu_feature_enabled(X86_FEATURE_AMD_WORKLOAD_CLASS))
+> +		return -ENODEV;
+> +
+> +	device = platform_device_register_simple(AMD_HFI_DRIVER, -1, NULL, 0);
+> +	if (IS_ERR(device)) {
+> +		pr_err("unable to register HFI platform device\n");
+> +		return PTR_ERR(device);
+> +	}
+> +
+> +	ret = platform_driver_register(&amd_hfi_driver);
+> +	if (ret)
+> +		pr_err("failed to register HFI driver\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static __exit void amd_hfi_exit(void)
+> +{
+> +	platform_device_unregister(device);
+> +	platform_driver_unregister(&amd_hfi_driver);
+> +}
+> +module_init(amd_hfi_init);
+> +module_exit(amd_hfi_exit);
+> +
 > +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS(PMBUS);
-
+> +MODULE_DESCRIPTION("AMD Hardware Feedback Interface Driver");
 
