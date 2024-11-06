@@ -1,314 +1,133 @@
-Return-Path: <linux-kernel+bounces-397380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38EDA9BDB38
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:31:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FDB9BDB37
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:31:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C4EF1C221BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:31:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6499B21B1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7173318B47E;
-	Wed,  6 Nov 2024 01:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A9A18786C;
+	Wed,  6 Nov 2024 01:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YUjew3K0"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ONtD99Gr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8CC185B58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3C93EA76
 	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 01:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730856667; cv=none; b=a8v8Q/b6ffGesyklslWXniA6pmYGTtHYu8ADGzO6RwVhOHYN2cBdMjjh94lH6LWPIMEa10QCT4UHYiZB9A71JxeAjSrBdHaeeFahSo1EuEMQGU1D6WCF2Nj7X2GbajBCH1WCvE3s5xX7ZZF7tPGqE4aykQh9HR+/ExOdGzV57as=
+	t=1730856663; cv=none; b=RyJ6WqEi5rKud/BikzGl4tr9C0D+fFgj5Whg/iyP7rEj3ZXFteP9jgXB6KnhvxxwTpLBV8rGBFge7F+XxzFYXpWQZLvjRoKHlEV+yHArQnyZ1g1u2DVqz708FycUG8m8UUKekFf4Y3oFtcj1tmDODsOWhgn4N3yMY1EL6OCTZ4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730856667; c=relaxed/simple;
-	bh=vzFB9xStOCX972cpMon5YnTYpZ/raQM0JduXXuU2Kfo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XFOQd2fWjiQNRT25srENDuNzFZ/UEYYYRENg3i3aR1YMJs0xADCkjejMNMqHUSmAlVHDqspvL5k5Q3TDmndorZGNCqACfX6O2rrWSb0GS9UOgcjGAZSA8FzxzAOrEc/rT5CHiNS9l6VSpmGGIr3pqD9qlchriiVTYzmuqIe2LDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YUjew3K0; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso4874115a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 17:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730856660; x=1731461460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9dPtLYyyFnRfenKmPBexESny14tkCENyQqLk3FnIXd8=;
-        b=YUjew3K0FWVyo4PdynX9Qpnc3HoV3dHfp5GOF7F1PEWO5IpRbU0JR/RJ/VOEe4HqVh
-         ilwJUQTpkx1erCRI7ShWNXqLaAzWkhpgrDOORsnict/N4gFlTDL+3/EYALJDW3mnu/Qx
-         1HfXTnPHZMrfm7J+HyggLTYq4oNMCbqxugFj1yZnLQZb3grEQCiw9tVtX1wB7+6A1h/T
-         1sSAkHdHCA2mh9pmMP7gPRrVJo6ziLY7AIQD0GeG8xZisatgRNUcEvPzPxaHmF1NUvKa
-         pZNt1xJ+RkoJGttpnIarJKIaBWBzTI3oUQWc/m+H3k+TplRzI1s4DcX0B6XI0W2oRHAU
-         ng1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730856660; x=1731461460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9dPtLYyyFnRfenKmPBexESny14tkCENyQqLk3FnIXd8=;
-        b=YQBtzqYzu86SPLS4SGXkQT9yUjjSC9EkVS2by7N7asmDBFEHwoYss+nsylWo/jYSLU
-         v05ZCqNS1UknlaOyM0aLsVwaMaiFhgLduGrL29I1Htc7MyK9JUSk76WxJm9/etIqzqA1
-         aXejVoYGRvwqEE4YQcFfsNvdUI3/IC1GhOVbAFjTbW6VIqUIwacfkKIHMCCtGlkIfM+G
-         EjOq6z0JhQQvYj2KKgeABFfw4KR0HMLTcrdquQbwnrWGvaa6rsAeq2LpF8q++sqGWIJ0
-         OUlcqJICg2iglBzqaWdE8lFHy5+7zZz2ejrDcSuEUad3tkLAp3f//eBRzwqdjKyl0YTm
-         WCAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUitwdUQPOWmSaPuZtHaOXe/TUTy+bZQZK/wTP+JHvXHxp5hNO1IDvmT/NcACZ8HNLWjDLOEVi1i/42Mas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKE8T76ApF58nmMfMV3ywgzcwFrCJgZOyeRJCTjyRrzpPVsgVi
-	HSZtiA0Y6E2SgA1tU9PNh49a5eVmAc1RQG8vj84qn4yo8HW618j7heisykF0LnBwrqK4Fsmd7B5
-	UKsrfnodx0eO/vG89gLUNnDyj8+dvJxoneieP
-X-Google-Smtp-Source: AGHT+IGNl4bJP+n92BSTip1ee5Eh6hUcyuO7KCDErBF6owjWJE6mIP3zJ+qfnKXwlzSwMTniUPn9FzEIR9o7Myz6Cgg=
-X-Received: by 2002:a17:90a:d14f:b0:2e2:bb32:73eb with SMTP id
- 98e67ed59e1d1-2e8f10a72a3mr42421056a91.31.1730856660175; Tue, 05 Nov 2024
- 17:31:00 -0800 (PST)
+	s=arc-20240116; t=1730856663; c=relaxed/simple;
+	bh=w4uRAgM8xbGcWtcxv849nFQ4mF6NuoUMjhUqN7BpOZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NeVrq+bbQ0sxQojivhaRP0gxMaT46ZSpdUjPxUF1alMR4KhL1VkEQ+aAW6+zo8hOzx1xLiuOP+MLy7Gu37/OpDmk94YtjXmYOrXCkjO7rfsA9MT0lc1bDngtIw0BM2kyUXWkkwoXh0SQtschW6VSrD0qx+IWzBHbcdFuh5kyYd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ONtD99Gr; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730856660; x=1762392660;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=w4uRAgM8xbGcWtcxv849nFQ4mF6NuoUMjhUqN7BpOZE=;
+  b=ONtD99GrBf25+rM34KqHUwiiwURJm/oah1vLGcWaIc5uQ35/pb8qi8bk
+   m32DKNOLqFNO0G1UE38es+/jeRiiG2FSdhTn5QJ20y4RaariVeN/uBFcu
+   7GNO9SJPGq1kHva5k2UKCo0MNlysf+CTJDpdPM83y8ZogbMGBY8ifnqFJ
+   B6VZm7Y0cZBH2l62hclJA8GycLUGFIxUaeBauGxOXBWX4bGs9/w21FEdB
+   xq9wwsQpqByCrRLpItYG9tyL0vDW4gQeHdQL0fyDl+BJCl8Yx8vruioCa
+   uCkzhgp8GU9o3bUvocDy/Vxd6UMKOoKf3GnSUbEkGe9oet0J+NEaGaHgk
+   w==;
+X-CSE-ConnectionGUID: w62g+gfjRfau4wwr4o52Ig==
+X-CSE-MsgGUID: k1NY0S4gSvWMjuRUrLWyZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53201959"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="53201959"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 17:30:59 -0800
+X-CSE-ConnectionGUID: 4L7Ct1tFSgaMWkNvEsRxBQ==
+X-CSE-MsgGUID: +Z+xLsTLRoWY1bWMap8SKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="84347612"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 05 Nov 2024 17:30:55 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8Usn-000mhP-1q;
+	Wed, 06 Nov 2024 01:30:53 +0000
+Date: Wed, 6 Nov 2024 09:30:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	John Ogness <john.ogness@linutronix.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+	bluescreen_avenger@verizon.net,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [PATCH v6 2/6] drm/log: Introduce a new boot logger to draw the
+ kmsg on the screen
+Message-ID: <202411060951.mK9Fi0fi-lkp@intel.com>
+References: <20241105125109.226866-3-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030171009.1853340-1-saravanak@google.com>
-In-Reply-To: <20241030171009.1853340-1-saravanak@google.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Tue, 5 Nov 2024 17:30:20 -0800
-Message-ID: <CAGETcx9MZbvg0ikfsWpJXYw=UzUjv3PerzN4RL1VFMjitBtYXw@mail.gmail.com>
-Subject: Re: [PATCH v3] driver core: fw_devlink: Stop trying to optimize cycle
- detection logic
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>
-Cc: Francesco <francesco.dolcini@toradex.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105125109.226866-3-jfalempe@redhat.com>
 
-On Wed, Oct 30, 2024 at 10:10=E2=80=AFAM Saravana Kannan <saravanak@google.=
-com> wrote:
->
-> In attempting to optimize fw_devlink runtime, I introduced numerous cycle
-> detection bugs by foregoing cycle detection logic under specific
-> conditions. Each fix has further narrowed the conditions for optimization=
-.
->
-> It's time to give up on these optimization attempts and just run the cycl=
-e
-> detection logic every time fw_devlink tries to create a device link.
->
-> The specific bug report that triggered this fix involved a supplier fwnod=
-e
-> that never gets a device created for it. Instead, the supplier fwnode is
-> represented by the device that corresponds to an ancestor fwnode.
->
-> In this case, fw_devlink didn't do any cycle detection because the cycle
-> detection logic is only run when a device link is created between the
-> devices that correspond to the actual consumer and supplier fwnodes.
->
-> With this change, fw_devlink will run cycle detection logic even when
-> creating SYNC_STATE_ONLY proxy device links from a device that is an
-> ancestor of a consumer fwnode.
->
-> Reported-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> Closes: https://lore.kernel.org/all/1a1ab663-d068-40fb-8c94-f0715403d276@=
-ideasonboard.com/
-> Fixes: 6442d79d880c ("driver core: fw_devlink: Improve detection of overl=
-apping cycles")
-> Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->  drivers/base/core.c | 55 ++++++++++++++++++++-------------------------
->  1 file changed, 24 insertions(+), 31 deletions(-)
->
-> Tomi,
->
-> Thanks for all the testing and debugging help! And do use
-> post-init-providers even with this patch to improve ordering
-> enforcement. I probably should change the cycle log from info to warn in
-> a separate patch :)
->
-> Greg,
->
-> I no longer have concerns about pulling this into 6.13. But we can give
-> a week or so to Geert/Francesco to do some additional testing.
->
-> Geert/Francesco,
+Hi Jocelyn,
 
-Heads up. Greg has pulled this into driver-core git's
-driver-core-testing branch. Which means in a week or two it'll get
-into the actual driver-core-next branch. So, if you want to do
-additional testing, you might want to jump on it soon.
+kernel test robot noticed the following build errors:
 
-Thanks,
-Saravana
+[auto build test ERROR on d78f0ee0406803cda8801fd5201746ccf89e5e4a]
 
->
-> If you want to test this patch, pull it in and compare the output of
-> the following:
->
-> ls -1 /sys/class/devlink
->
-> The only device links that should be missing with the patch should be
-> device links in a cycle that weren't detected before.
->
-> Also, if you notice any significant boot time increase with this change,
-> let me know.
->
-> Thanks,
-> Saravana
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 3b13fed1c3e3..9a490b1b7a6f 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -1990,10 +1990,10 @@ static struct device *fwnode_get_next_parent_dev(=
-const struct fwnode_handle *fwn
->   *
->   * Return true if one or more cycles were found. Otherwise, return false=
-.
->   */
-> -static bool __fw_devlink_relax_cycles(struct device *con,
-> +static bool __fw_devlink_relax_cycles(struct fwnode_handle *con_handle,
->                                  struct fwnode_handle *sup_handle)
->  {
-> -       struct device *sup_dev =3D NULL, *par_dev =3D NULL;
-> +       struct device *sup_dev =3D NULL, *par_dev =3D NULL, *con_dev =3D =
-NULL;
->         struct fwnode_link *link;
->         struct device_link *dev_link;
->         bool ret =3D false;
-> @@ -2010,22 +2010,22 @@ static bool __fw_devlink_relax_cycles(struct devi=
-ce *con,
->
->         sup_handle->flags |=3D FWNODE_FLAG_VISITED;
->
-> -       sup_dev =3D get_dev_from_fwnode(sup_handle);
-> -
->         /* Termination condition. */
-> -       if (sup_dev =3D=3D con) {
-> +       if (sup_handle =3D=3D con_handle) {
->                 pr_debug("----- cycle: start -----\n");
->                 ret =3D true;
->                 goto out;
->         }
->
-> +       sup_dev =3D get_dev_from_fwnode(sup_handle);
-> +       con_dev =3D get_dev_from_fwnode(con_handle);
->         /*
->          * If sup_dev is bound to a driver and @con hasn't started bindin=
-g to a
->          * driver, sup_dev can't be a consumer of @con. So, no need to ch=
-eck
->          * further.
->          */
->         if (sup_dev && sup_dev->links.status =3D=3D  DL_DEV_DRIVER_BOUND =
-&&
-> -           con->links.status =3D=3D DL_DEV_NO_DRIVER) {
-> +           con_dev && con_dev->links.status =3D=3D DL_DEV_NO_DRIVER) {
->                 ret =3D false;
->                 goto out;
->         }
-> @@ -2034,7 +2034,7 @@ static bool __fw_devlink_relax_cycles(struct device=
- *con,
->                 if (link->flags & FWLINK_FLAG_IGNORE)
->                         continue;
->
-> -               if (__fw_devlink_relax_cycles(con, link->supplier)) {
-> +               if (__fw_devlink_relax_cycles(con_handle, link->supplier)=
-) {
->                         __fwnode_link_cycle(link);
->                         ret =3D true;
->                 }
-> @@ -2049,7 +2049,7 @@ static bool __fw_devlink_relax_cycles(struct device=
- *con,
->         else
->                 par_dev =3D fwnode_get_next_parent_dev(sup_handle);
->
-> -       if (par_dev && __fw_devlink_relax_cycles(con, par_dev->fwnode)) {
-> +       if (par_dev && __fw_devlink_relax_cycles(con_handle, par_dev->fwn=
-ode)) {
->                 pr_debug("%pfwf: cycle: child of %pfwf\n", sup_handle,
->                          par_dev->fwnode);
->                 ret =3D true;
-> @@ -2067,7 +2067,7 @@ static bool __fw_devlink_relax_cycles(struct device=
- *con,
->                     !(dev_link->flags & DL_FLAG_CYCLE))
->                         continue;
->
-> -               if (__fw_devlink_relax_cycles(con,
-> +               if (__fw_devlink_relax_cycles(con_handle,
->                                               dev_link->supplier->fwnode)=
-) {
->                         pr_debug("%pfwf: cycle: depends on %pfwf\n", sup_=
-handle,
->                                  dev_link->supplier->fwnode);
-> @@ -2115,11 +2115,6 @@ static int fw_devlink_create_devlink(struct device=
- *con,
->         if (link->flags & FWLINK_FLAG_IGNORE)
->                 return 0;
->
-> -       if (con->fwnode =3D=3D link->consumer)
-> -               flags =3D fw_devlink_get_flags(link->flags);
-> -       else
-> -               flags =3D FW_DEVLINK_FLAGS_PERMISSIVE;
-> -
->         /*
->          * In some cases, a device P might also be a supplier to its chil=
-d node
->          * C. However, this would defer the probe of C until the probe of=
- P
-> @@ -2140,25 +2135,23 @@ static int fw_devlink_create_devlink(struct devic=
-e *con,
->                 return -EINVAL;
->
->         /*
-> -        * SYNC_STATE_ONLY device links don't block probing and supports =
-cycles.
-> -        * So, one might expect that cycle detection isn't necessary for =
-them.
-> -        * However, if the device link was marked as SYNC_STATE_ONLY beca=
-use
-> -        * it's part of a cycle, then we still need to do cycle detection=
-. This
-> -        * is because the consumer and supplier might be part of multiple=
- cycles
-> -        * and we need to detect all those cycles.
-> +        * Don't try to optimize by not calling the cycle detection logic=
- under
-> +        * certain conditions. There's always some corner case that won't=
- get
-> +        * detected.
->          */
-> -       if (!device_link_flag_is_sync_state_only(flags) ||
-> -           flags & DL_FLAG_CYCLE) {
-> -               device_links_write_lock();
-> -               if (__fw_devlink_relax_cycles(con, sup_handle)) {
-> -                       __fwnode_link_cycle(link);
-> -                       flags =3D fw_devlink_get_flags(link->flags);
-> -                       pr_debug("----- cycle: end -----\n");
-> -                       dev_info(con, "Fixed dependency cycle(s) with %pf=
-wf\n",
-> -                                sup_handle);
-> -               }
-> -               device_links_write_unlock();
-> +       device_links_write_lock();
-> +       if (__fw_devlink_relax_cycles(link->consumer, sup_handle)) {
-> +               __fwnode_link_cycle(link);
-> +               pr_debug("----- cycle: end -----\n");
-> +               pr_info("%pfwf: Fixed dependency cycle(s) with %pfwf\n",
-> +                       link->consumer, sup_handle);
->         }
-> +       device_links_write_unlock();
-> +
-> +       if (con->fwnode =3D=3D link->consumer)
-> +               flags =3D fw_devlink_get_flags(link->flags);
-> +       else
-> +               flags =3D FW_DEVLINK_FLAGS_PERMISSIVE;
->
->         if (sup_handle->flags & FWNODE_FLAG_NOT_DEVICE)
->                 sup_dev =3D fwnode_get_next_parent_dev(sup_handle);
-> --
-> 2.47.0.163.g1226f6d8fa-goog
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-panic-Move-drawing-functions-to-drm_draw/20241105-205432
+base:   d78f0ee0406803cda8801fd5201746ccf89e5e4a
+patch link:    https://lore.kernel.org/r/20241105125109.226866-3-jfalempe%40redhat.com
+patch subject: [PATCH v6 2/6] drm/log: Introduce a new boot logger to draw the kmsg on the screen
+config: hexagon-randconfig-002-20241106 (https://download.01.org/0day-ci/archive/20241106/202411060951.mK9Fi0fi-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060951.mK9Fi0fi-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411060951.mK9Fi0fi-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: drm_client_setup
+   >>> referenced by komeda_drv.c:87 (drivers/gpu/drm/arm/display/komeda/komeda_drv.c:87)
+   >>>               drivers/gpu/drm/arm/display/komeda/komeda_drv.o:(komeda_platform_probe) in archive vmlinux.a
+   >>> referenced by komeda_drv.c:87 (drivers/gpu/drm/arm/display/komeda/komeda_drv.c:87)
+   >>>               drivers/gpu/drm/arm/display/komeda/komeda_drv.o:(komeda_platform_probe) in archive vmlinux.a
+   >>> referenced by vkms_drv.c:230 (drivers/gpu/drm/vkms/vkms_drv.c:230)
+   >>>               drivers/gpu/drm/vkms/vkms_drv.o:(vkms_init) in archive vmlinux.a
+   >>> referenced 23 more times
+--
+>> ld.lld: error: undefined symbol: drm_client_setup_with_fourcc
+   >>> referenced by arcpgu.c:399 (drivers/gpu/drm/tiny/arcpgu.c:399)
+   >>>               drivers/gpu/drm/tiny/arcpgu.o:(arcpgu_probe) in archive vmlinux.a
+   >>> referenced by arcpgu.c:399 (drivers/gpu/drm/tiny/arcpgu.c:399)
+   >>>               drivers/gpu/drm/tiny/arcpgu.o:(arcpgu_probe) in archive vmlinux.a
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
