@@ -1,176 +1,157 @@
-Return-Path: <linux-kernel+bounces-398087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1839BE51E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:02:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7A69BE527
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C52D1C22213
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066741F21A05
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140F51DE4E7;
-	Wed,  6 Nov 2024 11:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75711DE4C7;
+	Wed,  6 Nov 2024 11:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XYIQcpUq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ifh3OU9l"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53E81DB377;
-	Wed,  6 Nov 2024 11:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC961DB377;
+	Wed,  6 Nov 2024 11:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890931; cv=none; b=Vj4QDcAIV2qbVZ9rLs9KnmsrVTAqRfZLFDaRcz+zZsg9zax7LJaMmtwhFAOhfRswS/jxaY9t5xg8RaCnrBjAKlafRxjA4I1llW5EiMJjnvk4BNHirk/DI/7IHKIecEsyAVsF0+571Pz4Y9lye1LiNbuhnbWNFb93z1bnNiUfBDw=
+	t=1730891082; cv=none; b=mQ3+QHalWNY9zFati3IdV8ZcIULpn4sCsLJGC3xtOpJSgqPGm9Iib19QmOy2FTd+ZYb81vS2Il5dsEGaO5BQfaA8nfrz0BKgHX3VtrF5nZlKcpMV/AS3FbXr10KyKOgyGDte974FZxBjl0OdWI7ewYJ3nTRMlsglyScmsPaHCBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890931; c=relaxed/simple;
-	bh=1dTRn6G3+FsVzkxhN1/j7Oz/OfNqXXZqYece5eehNKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rVMFBBiV3GY6kYtWBqBxqWxPeVFCWogUUoTKXKh2GcOYDqdF/NdDxEN0f7igWVrM/bkVS/57CDd3Qc59uNwycIfFB7kUjHZHi/MK8I9YUdsw7IjTzge+CkK6tuzjvPv7DybsrA3Qw8LrzNavcIhXioLbAJkAL7RkG9RyE2OV654=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XYIQcpUq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A66cCrv028341;
-	Wed, 6 Nov 2024 11:02:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZjS0l83UJc0bSCWh5cI259hHg/JCYwNlqHSFdWT8+Kw=; b=XYIQcpUqAirPL+lC
-	5RRDVa8ZH192RiCm2j/HEIf6LfvXiBfQLQLt1BlJvxE4VNbZaZWt+UcYSzhaLwDw
-	yJAnOZ/r2iat3FogF6fZrUTkVNxSFrXQEL7TbdZ0BKv74jU32pV/rNpr+QEM6amY
-	aXnki9zetgRKVOLJg8fCRtJmP8mtG8A3A8Qlxt1rFLTazKArTZ2V7xnC1YOMab5C
-	WKIo4OhNIEv2gdWfYEvvmTgUIYRHpCRJTAbDMGnKHu4CCvXz280h8JxWU3fXPZNL
-	FH/sJmIEq1dEH50rboPgrv7QRRvSGsf0py3GoeTmVshDdH/cmdnbjvrbUg0B/6CW
-	gHrjHw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r3c18p2y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 11:02:05 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A6B248i009079
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Nov 2024 11:02:04 GMT
-Received: from [10.218.15.248] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 6 Nov 2024
- 03:01:59 -0800
-Message-ID: <78442ba8-b6c9-45be-afbc-09456cec5a28@quicinc.com>
-Date: Wed, 6 Nov 2024 16:31:57 +0530
+	s=arc-20240116; t=1730891082; c=relaxed/simple;
+	bh=QJzD2cy9KQWR48lFPZQEaD2sL9yIDbAudy3i3zK2Uss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gOoclqyI9Gq4u2X5FjwSG/KUA6smm8s+zlFFYHt/Nm4QBb0EqJhGdjdXEdl+LuGNa06np816vwzwobfSgzIYex5YwUFzZ8nnxL4+9o6N3aHgRiDd0bnEkieulOPAU00CV9l+oYZbv4HklfD7YBLX7Jyzq1JpC5MPEwLOt4eBRNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ifh3OU9l; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cbe3e99680so35170026d6.3;
+        Wed, 06 Nov 2024 03:04:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730891079; x=1731495879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJzD2cy9KQWR48lFPZQEaD2sL9yIDbAudy3i3zK2Uss=;
+        b=Ifh3OU9lbi0qCAhYUsb2PtwLgkcXIiEqv1r3wfK5ImoQKHaoHx4+sA9P00m/Lsof6g
+         v6Oj3+OZkmEpYy2Meb9B44zteCgr6gXQ2MxazXTTN0BrO4MaZxHxNVDH7mMskxM3Oxaz
+         bDocYNLuSvWBKJKvrt4Quzkcti4ro/MuvA+BIGhBpeWHiLRCNDHXkFLfo5rZLa7yTolR
+         8W0VmpaJO7Bq2PTs95iYpeThdbJ4EZ50IrjEjUnI9RcFYORa3vcprfoWPROLmS4BoLeJ
+         JJkL5NRBbIDt8Hna/gix6A/q9D8kWrYl2ACKVBVw649av4GpaGSDKeg7UWltuz3tJEIp
+         LChA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730891079; x=1731495879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QJzD2cy9KQWR48lFPZQEaD2sL9yIDbAudy3i3zK2Uss=;
+        b=Eo/EHm4VFSSFGA54wePqVZHywl/LiWjozW2udnBJ6yIR8Zg4e5uF33QxNnkArndRL0
+         3Zhs7H7EbMkGez0tNISVjw9myfBcQXntseXb01f8dLnzVU1ZhZxA1rE+JWEyv9COKfIO
+         ILmqpzZqejzaOWqX0jGBU7lfWaJBM/Bw6VKg2NX9XK5D0JjqtUM92oGF0Cmh44Zx2sTm
+         dfApISimM4mbDJKT92rQIcawFa2YAIs1Xx11vzSdFRaZQH38YInAb4wKYaTDFIpm3Yu+
+         hZS+Wm32WWeu9iA60Og5/xw6273C6ad2TtLfiAxaB/oLBilvXVjUxmE8zZLe6K+qiYvr
+         ZS/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVB79Zhp1za2NqRbCzWd9iywiy3mCiyxf/XdtKnU80XKW/Zn4e6bi9zX5vG/oIqNAyp12o8MlgeAvvt8hDy@vger.kernel.org, AJvYcCVDv0qbEx7JjYL5Zo4hhQOHysjT0v+Wblsu2t1dqLG2uQSN03ukZR76QdS3wtpOrAjRCowXXySaRv9za9RryQ==@vger.kernel.org, AJvYcCW+52BvZdj9mP3LnXKYUAzhebOfgVgaNoEkCHFyZhISF6gITsv0rC1Ohw8ZTXR0bZh8bYVoR1cWrZJojmIY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMVbBr8e+ftmljH5Mj8Vnwe+36QcBdewkT2mZkrIccgTYkPBYa
+	Qy+QeOgauXYJTb6kvsoWXm0/SPLXitymfGALoeC9RsBqdTReVTfaE62HwiPOkT+lVsrmv0oU3Ru
+	u/s+TfAkPe+z6DCYi9E5fwRxttApJp2TS
+X-Google-Smtp-Source: AGHT+IFDKH+mbTd2xwsg0nX0AaLCteb2Gnpa4GsMAtV3ol5yplQfOyye01XEeQJimIpoIHwqQBx3mT6BehChS//+utc=
+X-Received: by 2002:a05:6214:4b02:b0:6cb:afe7:1403 with SMTP id
+ 6a1803df08f44-6d185866d2fmr585370366d6.48.1730891079186; Wed, 06 Nov 2024
+ 03:04:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/3] dt-bindings: interconnect: Add EPSS L3 compatible
- for SA8775P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Odelu Kukatla
-	<quic_okukatla@quicinc.com>,
-        Mike Tipton <quic_mdtipton@quicinc.com>
-References: <20241026123058.28258-1-quic_rlaggysh@quicinc.com>
- <20241026123058.28258-2-quic_rlaggysh@quicinc.com>
- <7k2vnjop6xyshquqlbe22gm7o5empeluvsohfmq5ulnaas3keb@yzomhzi4w7vf>
- <2ac4604c-a765-48b1-84b2-8979f18c29a7@quicinc.com>
- <vljb7wwqaaqgdcm6whf5ymhnh4jbtswyibto4qpqmbgwvshudy@unh3jhbyeac6>
- <00c9feac-722a-481a-9c57-36463fe0b3ff@quicinc.com>
- <925202f0-7fd1-4422-88fb-138c9027ac2c@oss.qualcomm.com>
- <CAA8EJpqM0vQZR5yEbGeBBPbog4KoEiTp1kWRwrjuwO4wo_umaw@mail.gmail.com>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <CAA8EJpqM0vQZR5yEbGeBBPbog4KoEiTp1kWRwrjuwO4wo_umaw@mail.gmail.com>
+References: <20241106-overlayfs-fsopen-log-v1-1-9d883be7e56e@cyphar.com>
+ <20241106-mehrzahl-bezaubern-109237c971e3@brauner> <CAOQ4uxirsNEK24=u3K-X5A-EX80ofEx5ycjoqU4gocBoPVxbYw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxirsNEK24=u3K-X5A-EX80ofEx5ycjoqU4gocBoPVxbYw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 6 Nov 2024 12:04:27 +0100
+Message-ID: <CAOQ4uxj+gAtM6cY_aEmM7TAqLor7498f0FO3eTek_NpUXUKNaw@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: port all superblock creation logging to fsopen logs
+To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xSnczSEthktzFdMKL2ZXPLJSMzcwFPzD
-X-Proofpoint-ORIG-GUID: xSnczSEthktzFdMKL2ZXPLJSMzcwFPzD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 clxscore=1015
- spamscore=0 phishscore=0 priorityscore=1501 adultscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060090
+Content-Transfer-Encoding: quoted-printable
 
+[Fixed address of linux-fsdevel]
 
-
-On 11/4/2024 4:08 PM, Dmitry Baryshkov wrote:
-> On Mon, 4 Nov 2024 at 09:35, Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 4.11.2024 7:40 AM, Raviteja Laggyshetty wrote:
->>>
->>>
->>> On 11/1/2024 12:26 AM, Dmitry Baryshkov wrote:
->>>> On Wed, Oct 30, 2024 at 12:23:57PM +0530, Raviteja Laggyshetty wrote:
->>>>>
->>>>>
->>>>> On 10/26/2024 8:15 PM, Dmitry Baryshkov wrote:
->>>>>> On Sat, Oct 26, 2024 at 12:30:56PM +0000, Raviteja Laggyshetty wrote:
->>>>>>> Add Epoch Subsystem (EPSS) L3 interconnect provider binding on
->>>>>>> SA8775P SoCs.
->>>>>>>
->>>>>>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
->>>>>>> ---
->>>>>>>  .../devicetree/bindings/interconnect/qcom,osm-l3.yaml         | 4 ++++
->>>>>>>  1 file changed, 4 insertions(+)
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
->>>>>>> index 21dae0b92819..042ca44c32ec 100644
->>>>>>> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
->>>>>>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
->>>>>>> @@ -34,6 +34,10 @@ properties:
->>>>>>>                - qcom,sm8250-epss-l3
->>>>>>>                - qcom,sm8350-epss-l3
->>>>>>>            - const: qcom,epss-l3
->>>>>>> +      - items:
->>>>>>> +          - enum:
->>>>>>> +              - qcom,sa8775p-epss-l3
->>>>>>> +          - const: qcom,epss-l3-perf
->>>>>>
->>>>>> Why is it -perf? What's so different about it?
->>>>>
->>>>> The EPSS instance in SA8775P uses PERF_STATE register instead of REG_L3_VOTE to scale L3 clocks.
->>>>> So adding new generic compatible "qcom,epss-l3-perf" for PERF_STATE register based l3 scaling.
->>>>
->>>> Neither sm8250 nor sc7280 use this compatible, while they also use
->>>> PERF_STATE register.
->>>>
->>> That is correct, both sm8250 and sc7280 use perf state register.
->>> The intention for adding "qcom,epss-l3-perf" generic compatible is to use it for the chipsets which use perf state register for l3 scaling.
->>> Using generic compatible avoids the need for adding chipset specific compatible in match table.
->>
->> That is exactly what bindings guidelines forbid.
->>
->> You need a SoC-specific compatible so that you can address platform-
->> specific quirks that may arise in the future while keeping backwards
->> compatibility with older device trees
-> 
-> The proposed bindings have SoC-specific compat. If that's not against
-> the current rules, I'd prefer to have qcom,epss-l3-perf to be added to
-> sc7280 and sm8250 too.
-> 
-> 
-Existing compatibles for sc7280 and sm8250 do not break the backward compatibility.
-I will take up the update of generic compatibles for these two SoCs as separate patch series.
-
-
-
+On Wed, Nov 6, 2024 at 12:00=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Wed, Nov 6, 2024 at 10:59=E2=80=AFAM Christian Brauner <brauner@kernel=
+.org> wrote:
+> >
+> > On Wed, Nov 06, 2024 at 02:09:58PM +1100, Aleksa Sarai wrote:
+> > > overlayfs helpfully provides a lot of of information when setting up =
+a
+> > > mount, but unfortunately when using the fsopen(2) API, a lot of this
+> > > information is mixed in with the general kernel log.
+> > >
+> > > In addition, some of the logs can become a source of spam if programs
+> > > are creating many internal overlayfs mounts (in runc we use an intern=
+al
+> > > overlayfs mount to protect the runc binary against container breakout
+> > > attacks like CVE-2019-5736, and xino_auto=3Don caused a lot of spam i=
+n
+> > > dmesg because we didn't explicitly disable xino[1]).
+> > >
+> > > By logging to the fs_context, userspace can get more accurate
+> > > information when using fsopen(2) and there is less dmesg spam for
+> > > systems where a lot of programs are using fsopen("overlay"). Legacy
+> > > mount(2) users will still see the same errors in dmesg as they did
+> > > before (though the prefix of the log messages will now be "overlay"
+> > > rather than "overlayfs").
+>
+> I am not sure about the level of risk in this format change.
+> Miklos, WDYT?
+>
+> > >
+> > > [1]: https://bbs.archlinux.org/viewtopic.php?pid=3D2206551
+> > >
+> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > ---
+> >
+> > To me this sounds inherently useful! So I'm all for it.
+> >
+>
+> [CC: Karel]
+>
+> I am quite concerned about this.
+> I have a memory that Christian suggested to make this change back in the
+> original conversion to new mount API, but back then mount tool
+> did not print out the errors to users properly and even if it does
+> print out errors,
+> some script could very well be ignoring them.
+>
+> My strong feeling is that suppressing legacy errors to kmsg should be opt=
+-in
+> via the new mount API and that it should not be the default for libmount.
+> IMO, it is certainly NOT enough that new mount API is used by userspace
+> as an indication for the kernel to suppress errors to kmsg.
+> I have no problem with reporting errors to both userspace and kmsg
+> without opt-in from usersapce.
+>
+> Furthermore, looking at the existing invalfc() calls in overlayfs, I see =
+that
+> a few legacy pr_err() were converted to invalfc() with this commit
+> (signed off by myself):
+> 819829f0319a ovl: refactor layer parsing helpers
+>
+> I am not really sure if the discussion about suppressing the kmsg errors =
+was
+> resolved or dismissed or maybe it only happened in my head??
+>
+> Thanks,
+> Amir.
 
