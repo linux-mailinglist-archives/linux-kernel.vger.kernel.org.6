@@ -1,147 +1,137 @@
-Return-Path: <linux-kernel+bounces-398509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609609BF22B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:50:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6047E9BF238
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72D61281415
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:50:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913B61C2637A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D7F204F96;
-	Wed,  6 Nov 2024 15:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0CD2040B7;
+	Wed,  6 Nov 2024 15:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKuByCz6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLI4m8V8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5901D204928;
-	Wed,  6 Nov 2024 15:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B8A190079;
+	Wed,  6 Nov 2024 15:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730908140; cv=none; b=bD7WHTSM/TdPF4mn0XdfrGvqKLIf01c09e+E7UdpW/U3EyXOcPNsp572IoIRxXmupNssVbH7qNUMKbw2XBTp02ShoyHFNgZGGm4DvCMm8V4WYPSe+aPxTDbRKgMHR/bpZq3ZdeN/OLSoHF/7FlJUD/o5WgBro4+983ZQyRQTy1I=
+	t=1730908187; cv=none; b=gXRgo6dWnAAiyJrbO0lN0sWelCYmDpIftOG9wdezfuc0EWE9VblToknNjP+8XPUj5WzJ3jAanFufKxGV1Zd69XbJL58oFlSQBIFdLKlF+QRZ7mJJK+hctSV7QyH6HJYTKrKG4r/dFwCFOi69OdLsDtzOBT60uCigdq6ZgBflr2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730908140; c=relaxed/simple;
-	bh=y7EcEXTItmufqI81KnM67CUPSoCotATvKqJ0csQfsCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nITh2fQ8XNSKhVVrxD735Xhkbln5Z+0+e4h9F6GiZFcU7r5s1R/hhJDaKx+F6ZVnfWNvx4qXNM6x/JueGPcwn7OtMKhAkCW4Ace/QWXlKo8CG4iE1tX7I3NCzF2kO+LHD3rJw5Xw95fo3YPGe3QDfHdmhLhC1hxxlTC9lJoxgGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKuByCz6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3173FC4CEC6;
-	Wed,  6 Nov 2024 15:48:57 +0000 (UTC)
+	s=arc-20240116; t=1730908187; c=relaxed/simple;
+	bh=FgAAS0grrWTmncw1PDMvpu8itvg5qcH9lr5R3c5RBQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qHhLNtrI8mQ0CFaBtn0jFySU/8JUwz/WjEUan/IR5nBY8JGrA8xdVm9GUb15+RWz74Hq9yZGrDBm5RNEg0h7IosJpOcYOoMt/rUZ0INtEP+T6O9A/Aysj/8HaRW1aFMbas7OPDroHrHszfIbZZQ121KAh9plvBfW0vmyvO0FwyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLI4m8V8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4902C4CEC6;
+	Wed,  6 Nov 2024 15:49:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730908139;
-	bh=y7EcEXTItmufqI81KnM67CUPSoCotATvKqJ0csQfsCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WKuByCz6Q7OYrcaWptrTofl1N2wGIlPgTUGw4wwywZfOfS1G6ZI3q5Nh5V+/M1zH9
-	 /7XmonE6im18fAbtqSJ0jzEu6rJTV4UC5pLT8QXZHtVmlCj+ZArvtrQeNwhtIBzkm4
-	 Jhil0DB6OQIUY0xv1xiXjJQWwDXVCskHCY+3PESRw0ltSNndHl+NB2IpgbN4IiZYe5
-	 OiHiUrmsWVWqBUUompLZ/etix0NdChcsr6rED2HpeZT432hyq9hLAqh3/So4ObyoTG
-	 u/tvl26g/K92b3KkiniCHAR8fuq7ZDSg+W53Jvc/6w9LweeMh4q75RLgVy014oGHwj
-	 cGwspMk1MN2kQ==
-Date: Wed, 6 Nov 2024 15:48:55 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Alexis Cezar Torreno <alexisczezar.torreno@analog.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	Radu Sabau <radu.sabau@analog.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: (pmbus/adp1050): Support adp1051
- and adp1055: add bindings.
-Message-ID: <20241106-linoleum-kebab-decf14f54f76@spud>
-References: <20241106090311.17536-1-alexisczezar.torreno@analog.com>
- <20241106090311.17536-2-alexisczezar.torreno@analog.com>
+	s=k20201202; t=1730908186;
+	bh=FgAAS0grrWTmncw1PDMvpu8itvg5qcH9lr5R3c5RBQ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KLI4m8V8ysxLfzGkQNN5S218DMpJBtzWgzEj8jBhuMUYzU9WyCvKP7K/BRkfUsCe9
+	 P25NWjkP63S8LWeClBNKPD3PnkOD6AUqPwThyzj/KW11H7JUkUvjlHWpAlEJSSPvMz
+	 lhp2uzdYhHbbOOUGmk7AFTL3jIS7fUf75mJKGznIIK9la6aVCGH825o3I+6ZlxMbSI
+	 1MNtwnQlJn5z6TyGjTexY2cTcSKQf96XZGEmY5fXDiotPWjEY229wySOxexnsRZt6h
+	 zmb8b6TEUD1/KYCHDUw2Sw4WcUSOW31gGIMb1MMcdKsJzep3tZEOgA5lN4PktQg8lS
+	 9ZrhWrXmpUiJQ==
+Date: Wed, 6 Nov 2024 09:49:45 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, manivannan.sadhasivam@linaro.org,
+	kishon@kernel.org, u.kleine-koenig@pengutronix.de,
+	cassel@kernel.org, dlemoal@kernel.org,
+	yoshihiro.shimoda.uh@renesas.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com
+Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
+ "ti,keystone-pcie" compatible
+Message-ID: <20241106154945.GA1526156@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7vvc3r3v3f48fLLB"
-Content-Disposition: inline
-In-Reply-To: <20241106090311.17536-2-alexisczezar.torreno@analog.com>
-
-
---7vvc3r3v3f48fLLB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
 
-On Wed, Nov 06, 2024 at 05:03:10PM +0800, Alexis Cezar Torreno wrote:
-> Add dt-bindings for adp1051 and adp1055 pmbus.
-> ADP1051: 6 PWM for I/O Voltage, I/O Current, Temperature
-> ADP1055: 6 PWM for I/O Voltage, I/O Current, Power, Temperature
->=20
-> Signed-off-by: Alexis Cezar Torreno <alexisczezar.torreno@analog.com>
-> ---
->  .../devicetree/bindings/hwmon/pmbus/adi,adp1050.yaml | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/adi,adp1050.ya=
-ml b/Documentation/devicetree/bindings/hwmon/pmbus/adi,adp1050.yaml
-> index 10c2204bc3df..88aaa29b3bd1 100644
-> --- a/Documentation/devicetree/bindings/hwmon/pmbus/adi,adp1050.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/adi,adp1050.yaml
-> @@ -10,16 +10,24 @@ maintainers:
->    - Radu Sabau <radu.sabau@analog.com>
-> =20
->  description: |
-> -   The ADP1050 is used to monitor system voltages, currents and temperat=
-ures.
-> +   The ADP1050 and similar devices are used to monitor system voltages,
-> +   currents, power, and temperatures.
-> +
->     Through the PMBus interface, the ADP1050 targets isolated power suppl=
-ies
->     and has four individual monitors for input/output voltage, input curr=
-ent
->     and temperature.
->     Datasheet:
->       https://www.analog.com/en/products/adp1050.html
-> +     https://www.analog.com/en/products/adp1051.html
-> +     https://www.analog.com/en/products/adp1055.html
-> =20
->  properties:
-> +
+On Wed, Nov 06, 2024 at 11:36:38AM +0530, Siddharth Vadapalli wrote:
+> On Tue, Nov 05, 2024 at 06:57:58PM -0600, Bjorn Helgaas wrote:
+> > On Fri, May 24, 2024 at 04:27:13PM +0530, Siddharth Vadapalli wrote:
+> > > From: Kishon Vijay Abraham I <kishon@ti.com>
+> > > 
+> > > commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
+> > > Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
+> > > device data ("struct ks_pcie_of_data"). However it failed to set mode
+> > > for "ti,keystone-pcie" compatible. Set mode as RootComplex for
+> > > "ti,keystone-pcie" compatible here.
+> > 
+> > 23284ad677a9 appeared in v5.10.  
+> > 
+> > But I guess RC support has not been broken since v5.10 because we
+> > never used ks_pcie_rc_of_data.mode anyway?
+> > 
+> > It looks like the only use is here:
+> > 
+> >   #define DW_PCIE_VER_365A                0x3336352a
+> >   #define DW_PCIE_VER_480A                0x3438302a
+> > 
+> >   ks_pcie_probe
+> >   {
+> >     ...
+> >     mode = data->mode;
+> >     ...
+> >     if (dw_pcie_ver_is_ge(pci, 480A))
+> >       ret = ks_pcie_am654_set_mode(dev, mode);
+> >     else
+> >       ret = ks_pcie_set_mode(dev);
+> 
+> "mode" is used later on during probe at:
+> 
+> ....
+> 	switch (mode) {
+> 	case DW_PCIE_RC_TYPE:
+> 	...
+> 	case DW_PCIE_EP_TYPE:
+> 	...
+> 	default:
+> 		dev_err(dev, "INVALID device type %d\n", mode);
+> 	}
+> ....
 
-That's an abnormal newline, leave it alone if you respin.
+How did I miss that? :)  It is literally two lines down.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > so we don't even look at .mode unless the version is v4.80a or later,
+> > and this is v3.65a?
+> > 
+> > So this is basically a cosmetic fix (but still worth doing for
+> > readability!) and doesn't need a stable backport, right?
+> 
+> I suppose that "data->mode" will default to zero for v3.65a prior to
+> this commit, corresponding to "DW_PCIE_UNKNOWN_TYPE" rather than the
+> correct value of "DW_PCIE_RC_TYPE". Since I don't have an SoC with the
+> v3.65a version of the controller, I cannot test it out, but I presume
+> that the "INVALID device type 0" error will be displayed. Though the probe
+> will not fail since the "default" case doesn't return an error code, the
+> controller probably will not be functional as the configuration associated
+> with the "DW_PCIE_RC_TYPE" case has been skipped. Hence, I believe that
+> this fix should be backported.
 
-Cheers,
-Conor.
+I guess nobody really cares too much since it's been broken for almost
+four years.
 
->    compatible:
-> -    const: adi,adp1050
-> +    enum:
-> +      - adi,adp1050
-> +      - adi,adp1051
-> +      - adi,adp1055
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.34.1
->=20
+But indeed, sounds like it should have a stable tag and maybe a commit
+log hint about what the failure looks like.
 
---7vvc3r3v3f48fLLB
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks!
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyuP5wAKCRB4tDGHoIJi
-0tkjAQCV040LJuM+7Lz+kw5HduHbQQp6TYOjvmZuFrbXqwA6agEA+TwmOPB3Djux
-yZGMVGdQjB+i8kC83cyXzJLcXe4WywE=
-=zCfB
------END PGP SIGNATURE-----
-
---7vvc3r3v3f48fLLB--
+Bjorn
 
