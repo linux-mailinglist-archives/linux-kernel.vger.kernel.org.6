@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-398567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891EC9BF2EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:12:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7909BF2F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1B71C245BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:12:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D5B1F22EE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EEC204926;
-	Wed,  6 Nov 2024 16:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8151DEFC7;
+	Wed,  6 Nov 2024 16:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GxJBm5uK"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cshKHZZV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1777189F5C;
-	Wed,  6 Nov 2024 16:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0587189F5C;
+	Wed,  6 Nov 2024 16:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909551; cv=none; b=V1+mFCGVvHEUs/brkrpSpm1x9hnni4cze8zpJckoxzO2xLoT31QOak3j/Z+djG1fS+h3q07UCdUAcK6iKLmDi+w/h8+QdMfj7OTN36XHFGZx0IpwjDSlb6haftbTnO3V3IFZjrtwQ9sK+aMU7kdYNZRL+Wmh85FqYiHsLYTz1J0=
+	t=1730909592; cv=none; b=m45RpY2zpRogdIZNTpBBsxZUM+2oEwrR/eAsZOm2hZxH37F3iflU5C3NMbgqw9imN1rlAvD3Y78ehLPiY1MjzYzHfTsDPCidM4RDQKLIVyT96w5GwxJjsfLj7IGftVN92/fenB7YorsTKVQQyQvWNQJSXxiD1miUEwAAHjOtirc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909551; c=relaxed/simple;
-	bh=VbHI5Go0cQBSJCMa+bDHACq+Jn9qnFhUWYRTLUOXoVM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oaK48ANPSESvGcbsASloh/sDcnBJvJgkXWU391wRA+uDd/4VWRSkMNAX2RtrUWh370AhnOMyxaXQZWKowoZNV7wL7AlNGBYwv9KaLON6b2nxLEeeABy/Q515EXYTz+CmB6C/mYLAgZjsgy/cZlLhKt47OPmJaTM9lE9NU68Oryo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GxJBm5uK; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 14A4460005;
-	Wed,  6 Nov 2024 16:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730909547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VbHI5Go0cQBSJCMa+bDHACq+Jn9qnFhUWYRTLUOXoVM=;
-	b=GxJBm5uK5iksWp7N5LSPUfKZcCq+hGLQvJgj5t1P2JVy4Bkmx87ijVSBNs73xqrlw4doKf
-	VSqvn7RqIYTtmxvRmD98Hfw6H+KMSk4c5yrOlfis1CVrkEG6g9hPkmZoVVOiSLTt2oOsnm
-	0yOEKtKYJz2VNCxIVRpqdFGmiFJQxRXiZHAtSILlcLFi9c7QuRgAYR9dFKSTEiZrOJIAcT
-	EEJ47hUjsaPtDDqorT5ZP5N6ueVAyBMtKWxG+7gCGIYrAS9twFTRRMxaiDgCmr3edZg58O
-	gWKKSbbml3TUiOpMrXVIBufUmGBDgOsS8XASWpKON4ibGpA6G5ZLL0RLYLD4yQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-  "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-  "broonie@kernel.org" <broonie@kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: ubifs_recover_master_node: failed to recover master node
-In-Reply-To: <94ffb58b-3242-4ab4-b09a-686116ced781@alliedtelesis.co.nz> (Chris
-	Packham's message of "Wed, 30 Oct 2024 10:13:45 +1300")
-References: <826c4456-461c-424b-88de-a36e77fd7475@alliedtelesis.co.nz>
-	<94ffb58b-3242-4ab4-b09a-686116ced781@alliedtelesis.co.nz>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Wed, 06 Nov 2024 17:12:26 +0100
-Message-ID: <87ses4ibo5.fsf@bootlin.com>
+	s=arc-20240116; t=1730909592; c=relaxed/simple;
+	bh=dTuD8etQK1as5a2h+NWAEDvTetEZY5ki9oji2OXxqRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1vUoX5Llm5wQM4utqLfsyz2tkuSwbRh6HZ54CBnykX/Vwx8RyzKUiZvakn41EmnyMzu3KiaKHkeKV38Q8IcN3reCXeZLy3USp3I7p2y6exWIUySaQr8t7tmvxVAKt/wxF3QYjLnXlpKsDeYTTajPHkM/kLD0cMbl4ZW0ju9wW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cshKHZZV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F3AC4CEC6;
+	Wed,  6 Nov 2024 16:13:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730909592;
+	bh=dTuD8etQK1as5a2h+NWAEDvTetEZY5ki9oji2OXxqRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cshKHZZVNpfpeAjwuoOwWomv7lCCQFOmVRMbCC7WT4kNyMQKFjWHoFPWb8GmipzYc
+	 hIz+8lhyrssZigWqq3FKL/8XbVIC8I+ssq0aliIPCCs8TybGcfg+QxmVlsSoqfaTAn
+	 OWv2KGutS01+3hTJTNPHjThOCdlvWxJEfIVoO+y4WN7+yae750oUsL585Jgx5zI1rh
+	 m4/DToo8zuSBwwR6EtDxtwTCjrBHujBn4RfxUNhxIkwArjVeI2ck5bG4aA6sbQheDr
+	 CNJbzUu1GbXnxNbO23+5n5eeqOuv01d+QJpMBg3vk8bKfX0LniFbRc7WjTOEDQvCU5
+	 sTZ2YVnG+tolw==
+Date: Wed, 6 Nov 2024 16:13:03 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
+Cc: Eason Yang <j2anfernee@gmail.com>, avifishman70@gmail.com,
+	tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+	yuenn@google.com, benjaminfair@google.com, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+	javier.carrasco.cruz@gmail.com, andy@kernel.org,
+	marcelo.schmitt@analog.com, olivier.moysan@foss.st.com,
+	mitrutzceclan@gmail.com, matteomartelli3@gmail.com,
+	alisadariana@gmail.com, joao.goncalves@toradex.com,
+	marius.cristea@microchip.com, mike.looijmans@topic.nl,
+	chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
+ NCT720x ADCs
+Message-ID: <20241106-humid-unwired-1d3fa1f50469@spud>
+References: <20241106023916.440767-1-j2anfernee@gmail.com>
+ <20241106023916.440767-2-j2anfernee@gmail.com>
+ <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MjU5mkQF8kA0duUf"
+Content-Disposition: inline
+In-Reply-To: <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
+
+
+--MjU5mkQF8kA0duUf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
+On Wed, Nov 06, 2024 at 11:58:06AM +0700, Chanh Nguyen wrote:
+>=20
+>=20
+> On 06/11/2024 09:39, Eason Yang wrote:
+> > This adds a binding specification for the Nuvoton NCT7201/NCT7202
+> > family of ADCs.
+> >=20
+> > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+> > ---
+> >   .../bindings/iio/adc/nuvoton,nct720x.yaml     | 47 +++++++++++++++++++
+> >   MAINTAINERS                                   |  1 +
+> >   2 files changed, 48 insertions(+)
+> >   create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,=
+nct720x.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.=
+yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > new file mode 100644
+> > index 000000000000..3052039af10e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > @@ -0,0 +1,47 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Nuvoton nct7202 and similar ADCs
+> > +
+> > +maintainers:
+> > +  - Eason Yang <yhyang2@nuvoton.com>
+> > +
+> > +description: |
+> > +   Family of ADCs with i2c interface.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - nuvoton,nct7201
+> > +      - nuvoton,nct7202
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  read-vin-data-size:
+>=20
+> Is it generic property or vendor property? I tried to find in the
+> https://github.com/torvalds/linux/tree/master/Documentation/devicetree/bi=
+ndings
+> , but it seems this property hasn't been used on other devices.
+>=20
+> If it is vendor property, then I think it should include a vendor prefix.
+> For examples:
+>=20
+> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
+ndings/iio/adc/adi%2Cad7780.yaml#L50
+> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
+ndings/iio/adc/fsl%2Cvf610-adc.yaml#L42
+> https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bi=
+ndings/iio/adc/st%2Cstmpe-adc.yaml#L22
 
-Hi Chris,
+An explanation of why it cannot be determined from the compatible would
+also be good. Two compatibles and two values makes me a little
+suspicious!
 
-On 30/10/2024 at 10:13:45 +13, Chris Packham <chris.packham@alliedtelesis.c=
-o.nz> wrote:
+--MjU5mkQF8kA0duUf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> On 29/10/24 13:38, Chris Packham wrote:
->> (resend as plaintext)
->>
->> Hi,
->>
->> I recently added support for the SPI-NAND controller on the RTL9302C
->> SoC[1]. I did most of the work against Linux 6.11 and it's working
->> fine there. I recently rebased against the tip of Linus's tree
->> (6.12-rc5) and found I was getting ubifs errors when mounting:
->>
->> [=C2=A0=C2=A0=C2=A0 1.255191] spi-nand spi1.0: Macronix SPI NAND was fou=
-nd.
->> [=C2=A0=C2=A0=C2=A0 1.261283] spi-nand spi1.0: 256 MiB, block size: 128 =
-KiB, page
->> size: 2048, OOB size: 64
->> [=C2=A0=C2=A0=C2=A0 1.271134] 2 fixed-partitions partitions found on MTD=
- device spi1.0
->> [=C2=A0=C2=A0=C2=A0 1.278247] Creating 2 MTD partitions on "spi1.0":
->> [=C2=A0=C2=A0=C2=A0 1.283631] 0x000000000000-0x00000f000000 : "user"
->> [=C2=A0=C2=A0 20.481108] 0x00000f000000-0x000010000000 : "Reserved"
->> [=C2=A0=C2=A0 72.240347] ubi0: scanning is finished
->> [=C2=A0=C2=A0 72.270577] ubi0: attached mtd3 (name "user", size 240 MiB)
->> [=C2=A0=C2=A0 72.276815] ubi0: PEB size: 131072 bytes (128 KiB), LEB siz=
-e:
->> 126976 bytes
->> [=C2=A0=C2=A0 72.284537] ubi0: min./max. I/O unit sizes: 2048/2048, sub-=
-page
->> size 2048
->> [=C2=A0=C2=A0 72.292132] ubi0: VID header offset: 2048 (aligned 2048), d=
-ata
->> offset: 4096
->> [=C2=A0=C2=A0 72.299885] ubi0: good PEBs: 1920, bad PEBs: 0, corrupted P=
-EBs: 0
->> [=C2=A0=C2=A0 72.306689] ubi0: user volume: 1, internal volumes: 1, max.=
- volumes
->> count: 128
->> [=C2=A0=C2=A0 72.314747] ubi0: max/mean erase counter: 1/0, WL threshold=
-: 4096,
->> image sequence number: 252642230
->> [=C2=A0=C2=A0 72.324850] ubi0: available PEBs: 0, total reserved PEBs: 1=
-920,
->> PEBs reserved for bad PEB handling: 40
->> [=C2=A0=C2=A0 72.370123] ubi0: background thread "ubi_bgt0d" started, PI=
-D 141
->> [=C2=A0=C2=A0 72.470740] UBIFS (ubi0:0): Mounting in unauthenticated mode
->> [=C2=A0=C2=A0 72.490246] UBIFS (ubi0:0): background thread "ubifs_bgt0_0"
->> started, PID 144
->> [=C2=A0=C2=A0 72.528272] UBIFS error (ubi0:0 pid 143):
->> ubifs_recover_master_node: failed to recover master node
->> [=C2=A0=C2=A0 72.550122] UBIFS (ubi0:0): background thread "ubifs_bgt0_0=
-" stops
->> [=C2=A0=C2=A0 72.710720] UBIFS (ubi0:0): Mounting in unauthenticated mode
->> [=C2=A0=C2=A0 72.717447] UBIFS (ubi0:0): background thread "ubifs_bgt0_0"
->> started, PID 149
->> [=C2=A0=C2=A0 72.777602] UBIFS error (ubi0:0 pid 148):
->> ubifs_recover_master_node: failed to recover master node
->> [=C2=A0=C2=A0 72.787792] UBIFS (ubi0:0): background thread "ubifs_bgt0_0=
-" stops
->>
->> Full dmesg output is at[2]
->>
->> git bisect lead me to commit 11813857864f ("mtd: spi-nand: macronix:
->> Continuous read support"). Reverting the blamed commit from 6.12-rc5
->> seems to avoid the problem. The flash chip on my board is a
->> MX30LF2G28AD-TI. I'm not sure if there is a problem with 11813857864f
->> or with my spi-mem driver that is exposed after support for continuous
->> read is enabled.
->>
-> A bit of an update. The ubifs failure is from the is_empty() check in
-> get_master_node(). It looks like portions of the LEB are 0 instead of
-> 0xff. I've also found if I avoid use the non-DMA path in my driver I
-> don't have such a problem. I think there is at least one problem in my
-> driver because I don't handle DMAing more than 0xffff bytes.
+-----BEGIN PGP SIGNATURE-----
 
-I am going through my mails in a chronological order :-)
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyuVjwAKCRB4tDGHoIJi
+0r8qAP9P7kaywRwDNIUfUhRZgobeyzxRZW+mS9lmBafdUk9w+wD/abZJkKEzZukx
+MAAD/6b+6Bclx/ACc2ypkNzWVK4scAU=
+=fggK
+-----END PGP SIGNATURE-----
 
-Glad to see you found a lead. I was already a bit suspicious about the
-DMA path, glad to see we might narrow down the problem.
-
-Is the 0xffff limitation a hard constraint or is it just a pure software
-constraint? If we reach a hard constraint, maybe you should check that
-when you decide which path you take.
-
-Miqu=C3=A8l
+--MjU5mkQF8kA0duUf--
 
