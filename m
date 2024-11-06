@@ -1,198 +1,193 @@
-Return-Path: <linux-kernel+bounces-398817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294C79BF666
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:25:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320EA9BF65E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4341C21C23
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:25:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADA8CB237B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83715209F5F;
-	Wed,  6 Nov 2024 19:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A36020CCD2;
+	Wed,  6 Nov 2024 19:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ShGNyb7s"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IY18pwlR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CC5208969;
-	Wed,  6 Nov 2024 19:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A671220C30E;
+	Wed,  6 Nov 2024 19:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730920944; cv=none; b=KRUqif3IKh9tKwU269ruwcKfEfHuwvzx82fH3RBWYSVYxAeLkq8paJtH3r1swQPn4ymEf4XP6RX6sYPINuTjue4rF5C7nj8noWSPD/zKdWPoYh3mMude2Axlgwh7UhfCzRhC/Ee6ydh73aHW6323rpb+9pe6+jOHfmygURAurDE=
+	t=1730920877; cv=none; b=bVChhevyk1wraDg9E55ff36jVswGZNgRt/xtbFpyFQXpdaUC2gNhRHghoDf7YXI05H8UhlIBqpLHHfawXSpB+oLeZWyHkjGdJEM6FjfD+9CXNB2R8MjHvisiuT2fw4by8/kg/kMMR3DjH/yHozPcGvv1axVPGfYY/LOPWkjhFT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730920944; c=relaxed/simple;
-	bh=9vIkHvL9hvPktrSrM7rscVqb2ZA58R17Y2dDoLfJ8iM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DApUW9xVjNPLbH1nlC7AzR6WMcVwlZBphZRkQhfDG8ObgPEN/RyhEVzwL5OYGsc92minIped+eF3OdwoHonXaCSOU9DWvMiOI7s5iiX/wpLcghTd7hwKeicM0oJRJTIQr2LoE3z/b1av8K6mqjks3z9FwkJIu18IRvZYMQQUPe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ShGNyb7s; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730920863; x=1731525663; i=w_armin@gmx.de;
-	bh=zXO7NkBpscdEohIxAJweDFsLIyuWAvv3I0tUqol0ZNQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ShGNyb7s/+IBYAqV7MICSL1POctENXv7MvPJCKzflusSnkyRL5k/dVDErs2Cec5v
-	 yQ4BOWOICCvVg2FFPBNRBHTVSInN1ByrW9EjFl3vl9FqiDwFf6S2WJl5W3NJBJmFi
-	 6c7s1kyjtNrwY7MaO/edr1XIfQnPbLZxYevA9qSXzvUAVjOF3Py2lms+6yQYpzIzu
-	 e/UDjhzOpuHA46Wlt9M9mR0MxF7g0v+ABhkqvvOqTHJWzJqAQzbhFThfFqo5P311r
-	 vZX1nSmyd2i4n6cxO0zCihLuw5ZhEA59Y99teMZoy+/4Lnw5P5yp8Z7DOeLCrn2CS
-	 nGDN7Si726WNk9Wg0g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N8obG-1tvZ5V2Kuc-018OMw; Wed, 06
- Nov 2024 20:21:03 +0100
-Message-ID: <42623eed-1220-4cdf-aa7f-3a9777a3da4b@gmx.de>
-Date: Wed, 6 Nov 2024 20:21:01 +0100
+	s=arc-20240116; t=1730920877; c=relaxed/simple;
+	bh=FAnZNiRqeUl7Ne2U4+z2H8Xn+OqrQ2UYadwz7Qe0Ap8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZtBAP09zc/Hixu0ZH1sbRV8AxbpGe5AL47+BAam+8LW7BrhUMydkJvT6W7Ubbmw7kMDXEgR+z/FkipGOhjwpktZzD1xiF7K5bKQSQM8m1E4KDeaumHwXUgOga5oTCOA3X26QEoJoTZapWrdBuaUQuK256rVXe5XcwpARoJi6P20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IY18pwlR; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730920876; x=1762456876;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=FAnZNiRqeUl7Ne2U4+z2H8Xn+OqrQ2UYadwz7Qe0Ap8=;
+  b=IY18pwlRTG9CoPeNp7yj0ASvzSpZT3ckrmLl7uHNTVutGeGeNYEYwKb5
+   f65dZ3Wn9aBsmVgevGc1uq2BAG3KQa1FSbpppdewvgzdk8gioVj55UWed
+   fGbVDyajuEIuxbEuYOGCpCIVhVO5XKFudCSFPwP+1eZyHD2WgHaH8cQm3
+   dHX8IKX+oUaYwCUi92zudSipvO4K5JYQ0Q4OJ6OWIYxIJBrr70mPAthUD
+   +UYjbGlLmZ+ENXIu7PdkNCG88W5A1DXrKqhAdv1YE8vgMSifxMWiXWWJ+
+   09vLrGOxbncPGmF5OldqaGLkJDJkYqw4OupGFqKiUW8pzoOUntf15I450
+   Q==;
+X-CSE-ConnectionGUID: qDPz2mRBSHuMtlBNC/xQ8w==
+X-CSE-MsgGUID: UAsUAwO5Qq6jKMWO6q2QHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41292047"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41292047"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 11:21:13 -0800
+X-CSE-ConnectionGUID: 6oXbOKZDRWiqdJfoYia+Yg==
+X-CSE-MsgGUID: 7yNp1XuCTqGZv0eIhDj5ZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="88695410"
+Received: from unknown (HELO JF5300-B11A338T.jf.intel.com) ([10.242.51.115])
+  by fmviesa003.fm.intel.com with ESMTP; 06 Nov 2024 11:21:12 -0800
+From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	usamaarif642@gmail.com,
+	ryan.roberts@arm.com,
+	ying.huang@intel.com,
+	21cnbao@gmail.com,
+	akpm@linux-foundation.org,
+	linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	clabbe@baylibre.com,
+	ardb@kernel.org,
+	ebiggers@google.com,
+	surenb@google.com,
+	kristen.c.accardi@intel.com,
+	zanussi@kernel.org
+Cc: wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: [PATCH v3 10/13] mm: zswap: Add a per-cpu "acomp_batch_ctx" to struct zswap_pool.
+Date: Wed,  6 Nov 2024 11:21:02 -0800
+Message-Id: <20241106192105.6731-11-kanchana.p.sridhar@intel.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
+References: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 18/20] ACPI: platform_profile: Allow multiple handlers
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-19-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241105153316.378-19-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:o8eSaMAalEjM0ZyhsVSxQvpPnVmTFYgHq3Ee054ETZgdmd6+xTb
- YxaUbDIgDwhYEVRUXBlfdFKjJw6oRwJ+6kYU4MbBu98pb4NDeOpW6Vv1aItpTwlvcsHbwkF
- 9XavgiRw7IzKtu+FuUXRaASQO7Oa3ap1w980WTxZnPqFzXshI2AyNWJzmI5CcXSJs+VVrrL
- zm9mBJy3C3Bia1CjLoejQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1xZ26NIqGEc=;J6MN4rHMSkzWlrqRF2TkHHyozXB
- HkFkzyNut79EjjfED1tVcx9lmA8Uy4Sv60nwlOsh00D9Jn9DVsk4ndmnm6OG5UWBEfgJMzbLr
- vNLunRYXRvzZJ8kbbT3F6VKrWfrZHv0gtyFfCYw69Lg4DFa7FuByYjCeolNrkCKg4jeGFJ8ka
- EQuagxiTc4AM/4gv80Le65J4XVAF+aIKc49DSANoZR5UqprZrgUCCVbvOz8qLAwGbsE6c9VCc
- Mjg4kqSA9Sc9Vsz5qIrqWj1HT65rNIiwasDFIk+Iur+U1XSpDZnDfB6e0RbtLKd5REVXzO9/R
- B2T1yPd5DK13sWp3vfZp0bgjLvgrWszmVjTpWNfR1rs7FORFPpltAyNsbcYbiknJlW2ZDc5Zk
- pQkRSFNOeo2GkV/pT58DOpa1vBS5UyV8VPAnRXKUapCYTvIgq/70C5mWmqHTQbny7hYJaRYpA
- X1dmYY2x9asqfVA5ur+jJAn/gW6izpRBLe4b5NrakySOrTUPZ8tCHQD0KCLvK7yx2mso1UwN9
- MxuLsps/8Iz/oldfahhvisgpVDgPGs6Imei1jfKM4EYqfTg4PpDe+Bhb/DcOcd6bFuY02KKU4
- GgqDl5yYgkqZjyi0vngKXQDe0IIKjr16CP7tgbIU5cyPBXlbf7whpAy2jgr1WDhRFmVGTCHdo
- gWMrQdTUlLAtY4YYmARteulmVf8chSr1M2GZxYi+7EePdJD4jZ8D0J5a0vp/xT0jN1dgVq/Gg
- 50HUeLQeUqLmUKDlcIeoCXjF7bFT8WD0jEXfot3ozxR3WNZKQbcNz7aIrm5h1FHhC1xDxYuYF
- c2B4wv2xyJeGSR3CF8PfBaXTmLgY5j7SzF3t5/IZourOHPrCMqe8A8HnMV5YVWeo9o6q3gomr
- nxZThCO/Jg11eY1II7s+G+ycXDr76/JrrHtuBzbOu4N1sO3+py1Lwyo4I
+Content-Transfer-Encoding: 8bit
 
-Am 05.11.24 um 16:33 schrieb Mario Limonciello:
+This patch adds a separate per-cpu batching acomp context "acomp_batch_ctx"
+to the zswap_pool. The per-cpu acomp_batch_ctx pointer is allocated at pool
+creation time, but no per-cpu resources are allocated for it.
 
-> Multiple drivers may attempt to register platform profile handlers,
-> but only one may be registered and the behavior is non-deterministic
-> for which one wins.  It's mostly controlled by probing order.
->
-> This can be problematic if one driver changes CPU settings and another
-> driver notifies the EC for changing fan curves.
->
-> Modify the ACPI platform profile handler to let multiple drivers
-> register platform profile handlers and abstract this detail from userspa=
-ce.
->
-> To avoid undefined behaviors only offer profiles that are commonly
-> advertised across multiple handlers.
->
-> If any problems occur when changing profiles for any driver, then revert
-> back to the balanced profile, which is now required.
+The idea is to not incur the memory footprint cost of multiple acomp_reqs
+and buffers in the existing "acomp_ctx" for cases where compress batching
+is not possible; for instance, with software compressor algorithms, on
+systems without IAA, on systems with IAA that want to run the existing
+non-batching implementation of zswap_store() of large folios.
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+By creating a separate acomp_batch_ctx, we have the ability to allocate
+additional memory per-cpu only if the zswap compressor supports batching,
+and if the user wants to enable the use of compress batching in
+zswap_store() to improve swapout performance of large folios.
 
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/acpi/platform_profile.c | 12 ++----------
->   1 file changed, 2 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index 568485e285061..b9eb25f58a2a2 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -10,7 +10,6 @@
->   #include <linux/platform_profile.h>
->   #include <linux/sysfs.h>
->
-> -static struct platform_profile_handler *cur_profile;
->   static DEFINE_MUTEX(profile_lock);
->
->   static const char * const profile_names[] =3D {
-> @@ -368,8 +367,7 @@ static const struct attribute_group platform_profile=
-_group =3D {
->
->   void platform_profile_notify(void)
->   {
-> -	if (!cur_profile)
-> -		return;
-> +	guard(mutex)(&profile_lock);
->   	if (!class_is_registered(&platform_profile_class))
->   		return;
->   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> @@ -428,9 +426,6 @@ int platform_profile_register(struct platform_profil=
-e_handler *pprof)
->   	}
->
->   	guard(mutex)(&profile_lock);
-> -	/* We can only have one active profile */
-> -	if (cur_profile)
-> -		return -EEXIST;
->
->   	if (!class_is_registered(&platform_profile_class)) {
->   		/* class for individual handlers */
-> @@ -451,9 +446,9 @@ int platform_profile_register(struct platform_profil=
-e_handler *pprof)
->   	if (IS_ERR(pprof->class_dev))
->   		return PTR_ERR(pprof->class_dev);
->   	dev_set_drvdata(pprof->class_dev, pprof);
-> +
->   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
->
-> -	cur_profile =3D pprof;
->   	return 0;
->
->   cleanup_class:
-> @@ -467,13 +462,10 @@ int platform_profile_remove(struct platform_profil=
-e_handler *pprof)
->   {
->   	guard(mutex)(&profile_lock);
->
-> -	cur_profile =3D NULL;
-> -
->   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
->
->   	device_destroy(&platform_profile_class, MKDEV(0, pprof->minor));
->
-> -	cur_profile =3D NULL;
->   	return 0;
->   }
->   EXPORT_SYMBOL_GPL(platform_profile_remove);
+Suggested-by: Yosry Ahmed <yosryahmed@google.com>
+Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+---
+ mm/zswap.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 02e031122fdf..80a928cf0f7e 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -160,6 +160,7 @@ struct crypto_acomp_ctx {
+ struct zswap_pool {
+ 	struct zpool *zpool;
+ 	struct crypto_acomp_ctx __percpu *acomp_ctx;
++	struct crypto_acomp_ctx __percpu *acomp_batch_ctx;
+ 	struct percpu_ref ref;
+ 	struct list_head list;
+ 	struct work_struct release_work;
+@@ -287,10 +288,14 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
+ 
+ 	pool->acomp_ctx = alloc_percpu(*pool->acomp_ctx);
+ 	if (!pool->acomp_ctx) {
+-		pr_err("percpu alloc failed\n");
++		pr_err("percpu acomp_ctx alloc failed\n");
+ 		goto error;
+ 	}
+ 
++	pool->acomp_batch_ctx = alloc_percpu(*pool->acomp_batch_ctx);
++	if (!pool->acomp_batch_ctx)
++		pr_err("percpu acomp_batch_ctx alloc failed\n");
++
+ 	ret = cpuhp_state_add_instance(CPUHP_MM_ZSWP_POOL_PREPARE,
+ 				       &pool->node);
+ 	if (ret)
+@@ -312,6 +317,8 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
+ ref_fail:
+ 	cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE, &pool->node);
+ error:
++	if (pool->acomp_batch_ctx)
++		free_percpu(pool->acomp_batch_ctx);
+ 	if (pool->acomp_ctx)
+ 		free_percpu(pool->acomp_ctx);
+ 	if (pool->zpool)
+@@ -368,6 +375,8 @@ static void zswap_pool_destroy(struct zswap_pool *pool)
+ 
+ 	cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE, &pool->node);
+ 	free_percpu(pool->acomp_ctx);
++	if (pool->acomp_batch_ctx)
++		free_percpu(pool->acomp_batch_ctx);
+ 
+ 	zpool_destroy_pool(pool->zpool);
+ 	kfree(pool);
+@@ -930,6 +939,11 @@ static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_node *node)
+ 	struct zswap_pool *pool = hlist_entry(node, struct zswap_pool, node);
+ 	struct crypto_acomp_ctx *acomp_ctx;
+ 
++	if (pool->acomp_batch_ctx) {
++		acomp_ctx = per_cpu_ptr(pool->acomp_batch_ctx, cpu);
++		acomp_ctx->nr_reqs = 0;
++	}
++
+ 	acomp_ctx = per_cpu_ptr(pool->acomp_ctx, cpu);
+ 	return zswap_create_acomp_ctx(cpu, acomp_ctx, pool->tfm_name, 1);
+ }
+@@ -939,6 +953,12 @@ static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node *node)
+ 	struct zswap_pool *pool = hlist_entry(node, struct zswap_pool, node);
+ 	struct crypto_acomp_ctx *acomp_ctx;
+ 
++	if (pool->acomp_batch_ctx) {
++		acomp_ctx = per_cpu_ptr(pool->acomp_batch_ctx, cpu);
++		if (!IS_ERR_OR_NULL(acomp_ctx) && (acomp_ctx->nr_reqs > 0))
++			zswap_delete_acomp_ctx(acomp_ctx);
++	}
++
+ 	acomp_ctx = per_cpu_ptr(pool->acomp_ctx, cpu);
+ 	zswap_delete_acomp_ctx(acomp_ctx);
+ 
+-- 
+2.27.0
+
 
