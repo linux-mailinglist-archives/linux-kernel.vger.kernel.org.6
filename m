@@ -1,99 +1,90 @@
-Return-Path: <linux-kernel+bounces-397962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AFE9BE30A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:50:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D199BE30F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ED131C2181D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35564283F62
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E751DB92A;
-	Wed,  6 Nov 2024 09:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F391DBB35;
+	Wed,  6 Nov 2024 09:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="l8dWzLC6"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcScvpXA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC131D619F;
-	Wed,  6 Nov 2024 09:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB85F1DA63F;
+	Wed,  6 Nov 2024 09:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886611; cv=none; b=nYm4vq+Hz4QwAqBXpKHK8sZgHtQP320xRFhhSPiuPu4/nhql1Ot1uoKCYHbkbwMnGTrgj7llMFOMi7hiktZjnTc910vYh6MfFq/APANIyJtXGwiNzYBOIyrevVKlI2+pbJxn4yCqkdWLxCg0z9G4uM9xLJNe4R6nNnG6mDCK2qs=
+	t=1730886629; cv=none; b=h39O/SthVbfGD1hFFN+NshvzpUlwY5A8pf513JFZEm7snv35ZlR3X/RXjIUs7oTiGI7s7YCfDah9DleXtvrWf3ufJwkbaNl/7APXPW9vEcMx1yiiCo7nAaSIzcFGCbv4StoxJV/7tBVlFu3IuTzRf5eVFif9qPOkBarTlUTEaXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886611; c=relaxed/simple;
-	bh=IxGgB4goTYdvh36pBXG8IKLfNT0ChOV2pxk9y07NOjw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rDos56oCnt5sqwGtBSnf6AyoSJ7F8arpDDifrs59j82HG1x3aB7m1LK3k0FUF1dlrn4Uj0a+a3FZFFXDnAwG/B4Mh2uY4R87WvU1o+Bvj462I69/JWf7nKykkvTv1I+R5A9I6VALRPmNwm73lSseD/V1kBXJjvRC9ZLIz/oeQuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=l8dWzLC6; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse.fritz.box (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 24B702FC0052;
-	Wed,  6 Nov 2024 10:50:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1730886605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t2Mz/XxLc5OV/1YXXIYb2n/ZISSgE/M/Rfzfgvbus6k=;
-	b=l8dWzLC6+WQndrYgqeZIe8+FDCJYxxmssjL1PVFLl8UQ+jUcDBYDbLkE5Z/Fuj9b8gu0al
-	3rf3ubwGXEh7zQkCuQLbFeyfeI+6wP0txXD/10adMnqOyZBVT0zLgIX81Sv0cUM7TcpXyO
-	/x+z+7jvhVNzX0vn9f6LPBtMIby3n4g=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: stable@vger.kernel.org,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Christoffer Sandberg <cs@tuxedo.de>,
-	Werner Sembach <wse@tuxedocomputers.com>,
-	alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.1.y] ALSA: hda/realtek: Fix headset mic on TUXEDO Gemini 17 Gen3
-Date: Wed,  6 Nov 2024 10:49:04 +0100
-Message-ID: <20241106094920.239972-1-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241106021124.182205-1-sashal>
-References: <20241106021124.182205-1-sashal>
+	s=arc-20240116; t=1730886629; c=relaxed/simple;
+	bh=3IYck0Jb+qA3j7/LD2LcqSk3StFna7qHYLbxuaE47Vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9tmUE8/XH+2gLj3Gkqnc1wEHXMzZYmZH2on1z+WfLXtkVUqCVRuQt9xybtNBAZalG9AIrLedsiWLNl/kooj4ycVGIVePFxuH0hP6Ri2L1yOVcn3uHQY6Vd6lKVW8Cb8FTJgLgC+NvvJ7Y6HQ3V5iwtc21ZCQ3wTJCqML2pl5ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcScvpXA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7378C4CED0;
+	Wed,  6 Nov 2024 09:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730886629;
+	bh=3IYck0Jb+qA3j7/LD2LcqSk3StFna7qHYLbxuaE47Vc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OcScvpXA2uD4UHi7gjOhG7xzBaRI313+k+xSFkx8gSeLcWoEDuKxJoQKA3+nXqdSa
+	 Armr1qF0VqelXLFWdbzDqojj4q5zvoQOf+AMLGPoaCLUZeV9qYCuOYrmxJxSjqMKCY
+	 +wq3xrCUi3mytHwGzjFMbOLR7W1kzqxtRpbBneivHLGaFXbXfDgaqIT6ohv62i3GLc
+	 Bmlt9bT8Z40tGfDsEV9iHDV2D71Wt65eXWaUzxkxn1cQxjYjru1QyOJKSe3tkTReO1
+	 IPMe7uoYBny66gSkHI4v7RJHEezSbSetI+x/KOn+eT4ZSA8k1l3MahHJWOvX9Xgd6v
+	 lj/afQw9BPdhw==
+Date: Wed, 6 Nov 2024 10:50:21 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
+	John Garry <john.g.garry@oracle.com>, Catherine Hoang <catherine.hoang@oracle.com>, 
+	linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, 
+	Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, 
+	linux-block@vger.kernel.org, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [ANNOUNCE v2] work tree for untorn filesystem writes
+Message-ID: <20241106-zerkleinern-verzweifeln-7ec8173c56ad@brauner>
+References: <20241106005740.GM2386201@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241106005740.GM2386201@frogsfrogsfrogs>
 
-From: Christoffer Sandberg <cs@tuxedo.de>
+On Tue, Nov 05, 2024 at 04:57:40PM -0800, Darrick J. Wong wrote:
+> Hi everyone,
+> 
+> Here's a slightly updated working branch for the filesystem side of
+> atomic write changes for 6.13:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-05
+> 
+> This branch is, like yesterday's, based off of axboe's
+> for-6.13/block-atomic branch:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block-atomic
+> 
+> The only difference is that I added Ojaswin's Tested-by: tags to the end
+> of the xfs series.  I have done basic testing with the shell script at
+> the end of this email and am satisfied that it at least seems to do the
+> (limited) things that I think we're targeting for 6.13.
+> 
+> Christian: Could you pull this fs-atomic branch into your vfs.git work
+> for 6.13, please?
 
-Quirk is needed to enable headset microphone on missing pin 0x19.
+Of course!
 
-Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-Cc: <stable@vger.kernel.org>
-Link: https://patch.msgid.link/20241029151653.80726-1-wse@tuxedocomputers.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index a8bc95ffa41a3..da14ab97783f8 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10001,6 +10001,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1558, 0x1403, "Clevo N140CU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x1404, "Clevo N150CU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x14a1, "Clevo L141MU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x1558, 0x28c1, "Clevo V370VND", ALC2XX_FIXUP_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1558, 0x4018, "Clevo NV40M[BE]", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x4019, "Clevo NV40MZ", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x4020, "Clevo NV40MB", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
--- 
-2.43.0
-
+I did git pull fs-atomic_2024-11-05 from your tree. It should show up in
+-next tomorrow.
 
