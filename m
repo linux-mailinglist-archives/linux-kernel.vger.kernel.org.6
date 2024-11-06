@@ -1,136 +1,301 @@
-Return-Path: <linux-kernel+bounces-398705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB1B9BF4ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:13:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A24C9BF4DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108A7285E3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:13:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 156DDB222FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74871207A39;
-	Wed,  6 Nov 2024 18:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECA9207A3A;
+	Wed,  6 Nov 2024 18:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="ophAy6CZ"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vA4oX648"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAAD2076DE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FDA206948
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730916813; cv=none; b=EWyqipYiBxPWLXP8dx6382pdUn3VjFwGBh4+en+7z4wu2S9Bvz5rnbfSSIGltjRQUuko47osQi95ZmZ41I+gCrC4xITDyvQe6soGuCUWx/aiKsdRKttAUQy1Yg+QMKm2H7y6REojgcGphjYN73jgjEeyf3afyXgH2Ce43BH3KeE=
+	t=1730916573; cv=none; b=NTWYqyfQrYkuF2+51936ylhL/R4nlLWzhCaR6dYhHofIuW9PiaxCC8iPEUzg9Y4Apuqdshq/oyc+Fjfsa1krM8jhtdVaWbR6k9UvhKZkfuvaAxT5hpgB5jPlokCjtu7IwdzYLhQdDfV/9AiDyvYaggc7HuDXbq7vTRw8ABWC9Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730916813; c=relaxed/simple;
-	bh=CjR3zzRrP/Tq/gW6QLzF1lfcrd4/ESzxdp2qlsMrvbg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ox++9P4Lm7sFHBP/hNFSCQkmwVve3vocygVVj1C7gQnsmSzwlXV6SNerve3QAY7Fd1JWReAXWtZBmhgu5s/67bnsrx0NQkHO2WWi1ecZ+2glqdP7SUzU9+BnYSvu7uaQHI7+hb8xvvBpW1m8LUJv+1cAVTDlnTTb4aDl+dKmdzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=ophAy6CZ; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from katalix.com (unknown [IPv6:2a02:8010:6359:1:ca3f:3ca4:dc38:27ae])
-	(Authenticated sender: james)
-	by mail.katalix.com (Postfix) with ESMTPSA id 350E87DCA0;
-	Wed,  6 Nov 2024 18:07:06 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1730916426; bh=CjR3zzRrP/Tq/gW6QLzF1lfcrd4/ESzxdp2qlsMrvbg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:From;
-	z=From:=20James=20Chapman=20<jchapman@katalix.com>|To:=20syzbot+332
-	 fe1e67018625f63c9@syzkaller.appspotmail.com|Cc:=20linux-kernel@vge
-	 r.kernel.org,=0D=0A=09syzkaller-bugs@googlegroups.com|Subject:=20t
-	 est=20fix=20for=20WARN_ON=20in=20l2tp_exit_net|Date:=20Wed,=20=206
-	 =20Nov=202024=2018:07:06=20+0000|Message-Id:=20<20241106180706.330
-	 326-1-jchapman@katalix.com>|In-Reply-To:=20<672ba5ac.050a0220.4939
-	 3.016b.GAE@google.com>|References:=20<672ba5ac.050a0220.49393.016b
-	 .GAE@google.com>|MIME-Version:=201.0;
-	b=ophAy6CZkD/JLCpgBqpdNunq7yADdmoyFCf0EqBUvTkz6KZWqgbT4NNR0lHnWEVnD
-	 mjc3A+H58A7M2JYjy7woGfwkG+nWopemG/Ky54E6ufoU6kSNI9xluZ+egbYpPAcks8
-	 eG3Zy1vim/X9aCVK7sLvgu+7eaMNT0uk9Q+hmQXzipkKjZI2vXNwygtX8Xr6e1sC+D
-	 wQR0qeSu6kBGSCbYOSMpiBlBjHbsqyPxsesGptRpLw6gWcuM7IB2ZgfEhfu/jjji6Z
-	 IoNClwRiXH7oQFxc9XZMU3Y60kANgxlWpZXs5qKaGkIjQlY7ymoWiqrQe7ireyx1dM
-	 g2p5pwV45t2yQ==
-From: James Chapman <jchapman@katalix.com>
-To: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: test fix for WARN_ON in l2tp_exit_net
-Date: Wed,  6 Nov 2024 18:07:06 +0000
-Message-Id: <20241106180706.330326-1-jchapman@katalix.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <672ba5ac.050a0220.49393.016b.GAE@google.com>
-References: <672ba5ac.050a0220.49393.016b.GAE@google.com>
+	s=arc-20240116; t=1730916573; c=relaxed/simple;
+	bh=yITS/CirUTbxr+/UbiO9U44GtlS2l96omfztpUbrt4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PaIUIjTRUmB9MiYHojn3kP7ZlKU/9gca0B4Ch27/4ID6M/nYMwRbz8F5vOMEzWIWQ5pOOc1RWvKYPltvJ2RS74oLqQfdDWLZlU1VTSy/vRiELtbOw1N0Fn9CRHqoS7JJR5QgGFK6zVXiDaXBp2FXOOyW+g0gk3ZDPoRJY3bJpJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vA4oX648; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cefc36c5d4so61576a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:09:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730916570; x=1731521370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yEd3ayDpZTjyYEebgErcbQo4vxDon5fvuouc/CvpOzU=;
+        b=vA4oX648VHy+y3GUue4+a80TIQXwlG4GrJxPA9T4hwlN0FTy0I/Rv2IK1p1xl73o51
+         N+4CHCtaHsTuxV89J2I15TfQJv7Ab3nUO1UTR79tlPinkPOQglMBdTqdT98BesIqWnjk
+         KtwKPpoTga3KJITDZCMvKryrUBQb23WTsDze6DbWrlpHkuWYTS6AyJjz4PVm9gcAYBk7
+         V/DboOSMu7SjuyMonOray4hrAo/WzPrqbFNN6kyuDJbBh5te8Q3pErvCtNai2dUeHJaT
+         +zVdwM+Q+4mMM9skvD1EkvH96bCXmrKLKCoWNwbvO2tdWrtUGiXKhU4jnSXghsqf/lKE
+         VFPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730916570; x=1731521370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yEd3ayDpZTjyYEebgErcbQo4vxDon5fvuouc/CvpOzU=;
+        b=gSL8D6H3+QRUUpP0/9/MwedUpETtNZy6qM86bSm+qUk0MT9h2JJT1o0cOaiLQM5Oom
+         U46bhJwxR7xuduUmvX/O0AzCkpV0bZ8Oj0c8sZ5GtB0MHEmb3EeJH5LQmuFKHyjk1VPz
+         p1CkrZ4P7EhQvV+2ZR+yCXh+w6quPu9J4Ta5cjIAGRMi6v+MwcOtfjIb1U9/+TSsn8ox
+         feBiHZPsYtxxEfRQZnlGFYw1dskcIvbIjnk1Mvyr2jTk8LB2Oi14EMFvAzDP4G2VqHhC
+         uKF9owV0YkyowX89iozZI2mnEeqjpWizcD4kat95ESk056PpNlI4JVxw6y/QOJDxWHqw
+         luxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXILLCzEv/9j8RViZFUahkNEqvSzZT0AlTFywIUWfs3QnHeSauHqe7bY4k6GO1s9vc6UyfM3iHRVfbyPK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnuG/DENrxZDeVXFW4nxeugDC2ILChWJKfzXkGNofJqbg2QEjn
+	udzsR9XpK0bCh20994k2a6bBoGivrhKrE8rBPHmp6iBfexTShaRMp7w9pcKPGYSOTvwn92nOKjf
+	AV7tNm1Mx+j1Dd8BVrm3JaSQIaKEzmsO8wjzL
+X-Google-Smtp-Source: AGHT+IFDI4yL5sYBFLN9nnhHwUWdXgASYkuHkrUJO5teq5xRHIjQbOabmDsiGZPb+TuAEChP0JdgRUHBoXinzG3Aic4=
+X-Received: by 2002:a05:6402:354e:b0:5ce:fbd0:573d with SMTP id
+ 4fb4d7f45d1cf-5cefbd05990mr436047a12.11.1730916569387; Wed, 06 Nov 2024
+ 10:09:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <00000000000035941f061932a077@google.com> <672bae42.050a0220.350062.0279.GAE@google.com>
+In-Reply-To: <672bae42.050a0220.350062.0279.GAE@google.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 6 Nov 2024 19:09:18 +0100
+Message-ID: <CANn89iJptb2gackja+KocyPYwf855EgZM34GSO3km4Z8tcwq1w@mail.gmail.com>
+Subject: Re: [syzbot] [net?] KMSAN: kernel-infoleak in __skb_datagram_iter (4)
+To: syzbot <syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, horms@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Resend to include the patch inline.
+On Wed, Nov 6, 2024 at 6:58=E2=80=AFPM syzbot
+<syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following issue on:
+>
+> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ke=
+r..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1485dd5f98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6fdf74cce3772=
+23b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D0c85cae3350b7d4=
+86aee
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1685dd5f980=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10bfb6a798000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/08456e37db58/dis=
+k-2e1b3cc9.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinu=
+x-2e1b3cc9.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/7579fe72ed89/b=
+zImage-2e1b3cc9.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/inst=
+rumented.h:114 [inline]
+> BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inlin=
+e]
+> BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:30 [=
+inline]
+> BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_ite=
+r.h:300 [inline]
+> BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter=
+.h:328 [inline]
+> BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x2f3/0x2b30 lib/iov_iter.c:=
+185
+>  instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+>  copy_to_user_iter lib/iov_iter.c:24 [inline]
+>  iterate_ubuf include/linux/iov_iter.h:30 [inline]
+>  iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
+>  iterate_and_advance include/linux/iov_iter.h:328 [inline]
+>  _copy_to_iter+0x2f3/0x2b30 lib/iov_iter.c:185
+>  copy_to_iter include/linux/uio.h:211 [inline]
+>  simple_copy_to_iter net/core/datagram.c:524 [inline]
+>  __skb_datagram_iter+0x18d/0x1190 net/core/datagram.c:401
+>  skb_copy_datagram_iter+0x5c/0x200 net/core/datagram.c:538
+>  skb_copy_datagram_msg include/linux/skbuff.h:4076 [inline]
+>  netlink_recvmsg+0x432/0x1610 net/netlink/af_netlink.c:1958
+>  sock_recvmsg_nosec net/socket.c:1051 [inline]
+>  sock_recvmsg+0x2c4/0x340 net/socket.c:1073
+>  sock_read_iter+0x32d/0x3c0 net/socket.c:1143
+>  io_iter_do_read io_uring/rw.c:771 [inline]
+>  __io_read+0x8d2/0x20f0 io_uring/rw.c:865
+>  io_read+0x3e/0xf0 io_uring/rw.c:943
+>  io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1739
+>  io_queue_sqe io_uring/io_uring.c:1953 [inline]
+>  io_req_task_submit+0x104/0x1e0 io_uring/io_uring.c:1373
+>  io_poll_task_func+0x12e5/0x1620
+>  io_handle_tw_list+0x23a/0x5c0 io_uring/io_uring.c:1063
+>  tctx_task_work_run+0xf8/0x3d0 io_uring/io_uring.c:1135
+>  tctx_task_work+0x6d/0xc0 io_uring/io_uring.c:1153
+>  task_work_run+0x268/0x310 kernel/task_work.c:239
+>  ptrace_notify+0x304/0x320 kernel/signal.c:2403
+>  ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+>  ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+>  syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
+>  syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+>  syscall_exit_to_user_mode+0x13b/0x170 kernel/entry/common.c:218
+>  do_syscall_64+0xda/0x1e0 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was stored to memory at:
+>  pskb_expand_head+0x305/0x1a60 net/core/skbuff.c:2283
+>  netlink_trim+0x2c2/0x330 net/netlink/af_netlink.c:1313
+>  netlink_unicast+0x9f/0x1260 net/netlink/af_netlink.c:1347
+>  nlmsg_unicast include/net/netlink.h:1158 [inline]
+>  nlmsg_notify+0x21d/0x2f0 net/netlink/af_netlink.c:2602
+>  rtnetlink_send+0x73/0x90 net/core/rtnetlink.c:770
+>  rtnetlink_maybe_send include/linux/rtnetlink.h:18 [inline]
+>  tcf_add_notify net/sched/act_api.c:2068 [inline]
+>  tcf_action_add net/sched/act_api.c:2091 [inline]
+>  tc_ctl_action+0x146e/0x19d0 net/sched/act_api.c:2139
+>  rtnetlink_rcv_msg+0x12fc/0x1410 net/core/rtnetlink.c:6675
+>  netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2551
+>  rtnetlink_rcv+0x34/0x40 net/core/rtnetlink.c:6693
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+>  netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1357
+>  netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1901
+>  sock_sendmsg_nosec net/socket.c:729 [inline]
+>  __sock_sendmsg+0x30f/0x380 net/socket.c:744
+>  ____sys_sendmsg+0x877/0xb60 net/socket.c:2607
+>  ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2661
+>  __sys_sendmsg net/socket.c:2690 [inline]
+>  __do_sys_sendmsg net/socket.c:2699 [inline]
+>  __se_sys_sendmsg net/socket.c:2697 [inline]
+>  __x64_sys_sendmsg+0x300/0x4a0 net/socket.c:2697
+>  x64_sys_call+0x2da0/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
+47
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Uninit was stored to memory at:
+>  __nla_put lib/nlattr.c:1041 [inline]
+>  nla_put+0x1c6/0x230 lib/nlattr.c:1099
+>  tcf_ife_dump+0x250/0x10b0 net/sched/act_ife.c:660
+>  tcf_action_dump_old net/sched/act_api.c:1190 [inline]
+>  tcf_action_dump_1+0x85e/0x970 net/sched/act_api.c:1226
+>  tcf_action_dump+0x1fd/0x460 net/sched/act_api.c:1250
+>  tca_get_fill+0x519/0x7a0 net/sched/act_api.c:1648
+>  tcf_add_notify_msg net/sched/act_api.c:2043 [inline]
+>  tcf_add_notify net/sched/act_api.c:2062 [inline]
+>  tcf_action_add net/sched/act_api.c:2091 [inline]
+>  tc_ctl_action+0x1365/0x19d0 net/sched/act_api.c:2139
+>  rtnetlink_rcv_msg+0x12fc/0x1410 net/core/rtnetlink.c:6675
+>  netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2551
+>  rtnetlink_rcv+0x34/0x40 net/core/rtnetlink.c:6693
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+>  netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1357
+>  netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1901
+>  sock_sendmsg_nosec net/socket.c:729 [inline]
+>  __sock_sendmsg+0x30f/0x380 net/socket.c:744
+>  ____sys_sendmsg+0x877/0xb60 net/socket.c:2607
+>  ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2661
+>  __sys_sendmsg net/socket.c:2690 [inline]
+>  __do_sys_sendmsg net/socket.c:2699 [inline]
+>  __se_sys_sendmsg net/socket.c:2697 [inline]
+>  __x64_sys_sendmsg+0x300/0x4a0 net/socket.c:2697
+>  x64_sys_call+0x2da0/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
+47
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Local variable opt created at:
+>  tcf_ife_dump+0xab/0x10b0 net/sched/act_ife.c:647
+>  tcf_action_dump_old net/sched/act_api.c:1190 [inline]
+>  tcf_action_dump_1+0x85e/0x970 net/sched/act_api.c:1226
+>
+> Bytes 158-159 of 216 are uninitialized
+> Memory access of size 216 starts at ffff88811980e280
+>
+> CPU: 1 UID: 0 PID: 5791 Comm: syz-executor190 Not tainted 6.12.0-rc6-syzk=
+aller-00077-g2e1b3cc9d7f7 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+>
+>
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git ccb35037c48a
+#syz test
 
-From fa6758c4ac6439c3ef4bedf6c0abfbf3ee17d36e Mon Sep 17 00:00:00 2001
-From: James Chapman <jchapman@katalix.com>
-Date: Wed, 6 Nov 2024 16:04:44 +0000
-Subject: [PATCH] l2tp: fix warning in l2tp_exit_net found by syzbot
+diff --git a/include/uapi/linux/tc_act/tc_connmark.h
+b/include/uapi/linux/tc_act/tc_connmark.h
+index 9f8f6f709feb5cb67decc5fc80c422d9373df930..7089b9466065df074f98b47ffe1=
+79baf386600a9
+100644
+--- a/include/uapi/linux/tc_act/tc_connmark.h
++++ b/include/uapi/linux/tc_act/tc_connmark.h
+@@ -8,6 +8,7 @@
+ struct tc_connmark {
+        tc_gen;
+        __u16 zone;
++       __u16 pad;
+ };
 
-l2tp uses idr_is_empty to check that its IDRs are empty in its net
-exit handler before calling idr_destroy and warns if the IDR isn't
-empty. syzbot is able to hit this warning by injecting a memory
-allocation fail inside idr_alloc_u32 (radix_tree_node_alloc). However,
-this leaves the IDR root with its IDR_FREE tag unset such that the IDR
-appears non-empty to idr_is_empty callers.
+ enum {
+diff --git a/include/uapi/linux/tc_act/tc_ife.h
+b/include/uapi/linux/tc_act/tc_ife.h
+index 8c401f185675582febc262a8d11bf9598cb8a1f4..6f7f7af20fe9466631cc571f9c0=
+0665489cfe91d
+100644
+--- a/include/uapi/linux/tc_act/tc_ife.h
++++ b/include/uapi/linux/tc_act/tc_ife.h
+@@ -13,6 +13,7 @@
+ struct tc_ife {
+        tc_gen;
+        __u16 flags;
++       __u16 pad;
+ };
 
-Fix this in l2tp by checking that the IDR is empty using idr_for_each
-instead of idr_is_empty.
-
-Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
-Fixes: 73d33bd063c4c ("l2tp: avoid using drain_workqueue in l2tp_pre_exit_net")
-
----
- net/l2tp/l2tp_core.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-index 3eec23ac5ab1..a665bdf3f9c6 100644
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1870,15 +1870,26 @@ static __net_exit void l2tp_pre_exit_net(struct net *net)
- 	}
- }
- 
-+static int l2tp_idr_item_unexpected(int id, void *p, void *data)
-+{
-+	const char *idr_name = data;
-+	pr_err("IDR %s not empty\n", idr_name);
-+	WARN_ON_ONCE(1);
-+	return 1;
-+}
-+
- static __net_exit void l2tp_exit_net(struct net *net)
- {
- 	struct l2tp_net *pn = l2tp_pernet(net);
- 
--	WARN_ON_ONCE(!idr_is_empty(&pn->l2tp_v2_session_idr));
-+	rcu_read_lock_bh();
-+	idr_for_each(&pn->l2tp_v2_session_idr, l2tp_idr_item_unexpected, "v2_session");
-+	idr_for_each(&pn->l2tp_v3_session_idr, l2tp_idr_item_unexpected, "v3_session");
-+	idr_for_each(&pn->l2tp_tunnel_idr, l2tp_idr_item_unexpected, "tunnel");
-+	rcu_read_unlock_bh();
-+
- 	idr_destroy(&pn->l2tp_v2_session_idr);
--	WARN_ON_ONCE(!idr_is_empty(&pn->l2tp_v3_session_idr));
- 	idr_destroy(&pn->l2tp_v3_session_idr);
--	WARN_ON_ONCE(!idr_is_empty(&pn->l2tp_tunnel_idr));
- 	idr_destroy(&pn->l2tp_tunnel_idr);
- }
- 
--- 
-2.34.1
-
+ /*XXX: We need to encode the total number of bytes consumed */
+diff --git a/include/uapi/linux/tc_act/tc_pedit.h
+b/include/uapi/linux/tc_act/tc_pedit.h
+index f5cab7fc96ab1ea1516beeedff20b279c3cfa4d7..28e026dbc1400899a072fdbac68=
+72654bea3ab8d
+100644
+--- a/include/uapi/linux/tc_act/tc_pedit.h
++++ b/include/uapi/linux/tc_act/tc_pedit.h
+@@ -62,6 +62,7 @@ struct tc_pedit_sel {
+        tc_gen;
+        unsigned char           nkeys;
+        unsigned char           flags;
++       __u16                                   pad;
+        struct tc_pedit_key     keys[] __counted_by(nkeys);
+ };
 
