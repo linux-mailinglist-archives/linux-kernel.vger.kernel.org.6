@@ -1,164 +1,130 @@
-Return-Path: <linux-kernel+bounces-397950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03AA69BE2DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:40:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219D59BE2D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:39:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF7A21F24C78
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:40:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA88B283A1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED06F1DA634;
-	Wed,  6 Nov 2024 09:39:47 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B5A1DC1AB;
+	Wed,  6 Nov 2024 09:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QB3QrXhO"
+Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB72E1D2784;
-	Wed,  6 Nov 2024 09:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3B01D27BA;
+	Wed,  6 Nov 2024 09:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730885987; cv=none; b=su8ioCIgVRhqpHMufn5Sv/stFy/U7Knd3hlLoLJRpoabelYw8BoLDg3hNSBM8FPI4ktvEDLOycvm+wdg3oP1igcgdFh6UR3usTd5ehz39TrOzQUqe5uBZePXa6yRGM8AkMlZWTcbD4uWNNMQkFkckL6fhw9UDj7JOyMVsPD5D2o=
+	t=1730885951; cv=none; b=sZuiTz1E6JP6t5zJi1zGpaEyvo/lSSL5G5xY7vkUW7SMn/bWy4iQnjDhKD6VuXOkOX9n6Po4caeigC+d+5TBM8do2nobAItKEjxMjnGRugebnUiWLahTwVVtfJRS4x+2dloHFXeiMklbl93k1kYCJ0H+waJuTWx6uN9l8WWYgZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730885987; c=relaxed/simple;
-	bh=HqkSHPNzNxfWq47hs/mKT9Od0KoWzw5n3XoycMQEAb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XwU0pDGsPEMQPwMWheBIneI/XZTuA0rb3LwVSEUs+4J/tVp39Oj5LXpYvK3PGc6Qtb9dU4ICQCgr9xLkypLTw/qSkC4VMzXgTNwBgTxuR4Dw9U+UJCJFk+e2VXfOP7yXEfaA84+3Tjq7oLTZNhuymBlKgUyutZpW0s9RVf3BNts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Xk0Xv5Scnz9sRr;
-	Wed,  6 Nov 2024 10:39:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id HlDylVDbi0Jl; Wed,  6 Nov 2024 10:39:43 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Xk0Xv48Vfz9sRk;
-	Wed,  6 Nov 2024 10:39:43 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7965A8B77B;
-	Wed,  6 Nov 2024 10:39:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id FLvIR2VzFJTV; Wed,  6 Nov 2024 10:39:43 +0100 (CET)
-Received: from [192.168.232.102] (unknown [192.168.232.102])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 436038B77A;
-	Wed,  6 Nov 2024 10:39:43 +0100 (CET)
-Message-ID: <8dcc739a-3fd4-434c-995c-1dce33cefe6f@csgroup.eu>
-Date: Wed, 6 Nov 2024 10:39:43 +0100
+	s=arc-20240116; t=1730885951; c=relaxed/simple;
+	bh=xFq6H5Gss2PaZCwqeYcPrMJ1Mp9+Lm1NpbULI16e1Nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jir7OxL5Q2ZqOzvhxMBl4wSJ7d8mjyhr5EE2EGdl/DSEu8NlhKUACxn23k36MB8SuN2a3N5onzt31cn/n0TDuV9EitPYUGPIuo8koN4tl1Vf+fXg4LOzC93NnQONyVBi6ores8AsM/UEGvnajV3/mLwa0ltjdaZOgwYZFPopDQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QB3QrXhO; arc=none smtp.client-ip=209.85.128.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6e9ed5e57a7so51155167b3.1;
+        Wed, 06 Nov 2024 01:39:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730885949; x=1731490749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oinRG9+NhYdFlC3tEh227zzGakOwtuLOqwW6sGXxLbc=;
+        b=QB3QrXhOgkAC2cRPZrG5sYF/qNjvbnr/4+1SIoPxb3uwbh3nRhqrMziWafMCMPSvJg
+         umx4M7GqQuF+CvXTAAl3bWL65jbOVbnhW8fvjbqmIrLhsDnxEYdnmfnUPnspneeNkZI6
+         NcqvaujujOi6TZo45GPKXDzUOkDj/+PvS8YPeRXaQCDGb/szr/1CYP9yPSzfB6UO28ac
+         AbXV0LrfOx6/KuVAQUwzQceWPBoH+GlyO28Q6umK/uH9KEX35BQtLve5AgCCqifOdMWv
+         HzR7nKIHGZvk/2R9N6nkoRM93d0ZCJE6FnXf7cTN8FxaUo8v3ssSV4GH556VVHzuNWOV
+         gRzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730885949; x=1731490749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oinRG9+NhYdFlC3tEh227zzGakOwtuLOqwW6sGXxLbc=;
+        b=rKgCjKEuUNGMaWy5Qe1EF6UoTNeCJ5t0GQutmVLroG8Ph9Vl6l3OOouNf9kTdaN4PQ
+         2mnINb1Q8q+tP9k35q5BygMsGANouup1X41PFBxa5LAtHomEPLRsT++miVHKojJ9dp6k
+         lO0reDTUYQqcXCqmkyVpNcVPI3ouhsmPPetXyaBANm4T6uE4FXE1wKLpyvo185oAfgsW
+         tJcBLJ9htlWY6uJgjLlI7giZjPQQBlHAgHetSVGE89lOa4UP1W6ugJ8nmFPeTN+WxcDm
+         CgE6UcYWOmIywFyMnRfr4Zj3ydGHysYHIYvrrhJ5Ti8p2TVg2VUNV3puCVgNWETaPiBJ
+         K9IA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz+Y1P5H946S3Iv5dXySFGTRzAH6M4/EeIp8AZjk/+cJKSHlCA6KN5d6Em18eFfPFXCa0=@vger.kernel.org, AJvYcCVCbYmsDKTR3i9D+FVcTVfyvapLzmCThxaccu1WbQYk/5P/VgrnTV4vuFfq+HJX6RP4yjomm2UpF47e5KWI@vger.kernel.org, AJvYcCX8Aps4ajDdlR2Z3xfFAPWTiRQHGvl0QNiN4TuNcsmgzHAQ0ZM+9cYzAzCUoW37q5haFFKtIB+7Jx5lV0BlcX9h@vger.kernel.org, AJvYcCXuMFj4e2FAUoF0eN3M5rKGs201i+d7k/816ixtGvx2lVBaiUhXMykzrO8LGxu05MufRN9/E7gD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLUm/IhjzT7RUA2gvlwQDpUNeRx5BCsv5uHRv5gUp+PDPX2WH+
+	Sen71CD1PXtEL9Aj3sEi3hRxmEeQJ+IavmQKLMuD5BJF3qMJYZS81MywiWMAO7NaMblVVSHRbrO
+	08PYlacwc6+gTxQROH3P0cBiFx9Zf+bas
+X-Google-Smtp-Source: AGHT+IG/bK8cqy34pOh5Zq5wDFPLa4wQ66r575ctEahwLJo1FJD3pLmUhRA44FtaVQRpsttX0rv0AKr6C/8eLs3MBlw=
+X-Received: by 2002:a05:690c:dd2:b0:6dd:d5b7:f35d with SMTP id
+ 00721157ae682-6ea52525cebmr213814677b3.30.1730885948671; Wed, 06 Nov 2024
+ 01:39:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc: Add __must_check to set_memory_...()
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Naveen N Rao <naveen@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org
-References: <775dae48064a661554802ed24ed5bdffe1784724.1725723351.git.christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <775dae48064a661554802ed24ed5bdffe1784724.1725723351.git.christophe.leroy@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241030014145.1409628-1-dongml2@chinatelecom.cn>
+ <20241030014145.1409628-7-dongml2@chinatelecom.cn> <62773e8f-884c-4bfe-b412-97ad976f9cb8@redhat.com>
+In-Reply-To: <62773e8f-884c-4bfe-b412-97ad976f9cb8@redhat.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 6 Nov 2024 17:40:16 +0800
+Message-ID: <CADxym3adJA1rEHc1GVCmA0_CvuBvMyEF8GOJjm_69uvXhgu9GQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND net-next v4 6/9] net: ip: make ip_route_input_noref()
+ return drop reasons
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	horms@kernel.org, dsahern@kernel.org, pablo@netfilter.org, 
+	kadlec@netfilter.org, roopa@nvidia.com, razor@blackwall.org, 
+	gnault@redhat.com, bigeasy@linutronix.de, hawk@kernel.org, idosch@nvidia.com, 
+	dongml2@chinatelecom.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	bridge@lists.linux.dev, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+On Tue, Nov 5, 2024 at 7:22=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wrot=
+e:
+>
+> Hi,
+>
+> On 10/30/24 02:41, Menglong Dong wrote:
+> > @@ -175,10 +175,12 @@ static void ip_expire(struct timer_list *t)
+> >
+> >       /* skb has no dst, perform route lookup again */
+> >       iph =3D ip_hdr(head);
+> > -     err =3D ip_route_input_noref(head, iph->daddr, iph->saddr, ip4h_d=
+scp(iph),
+> > -                                head->dev);
+> > -     if (err)
+> > +     reason =3D ip_route_input_noref(head, iph->daddr, iph->saddr,
+> > +                                   ip4h_dscp(iph), head->dev);
+> > +     if (reason)
+> >               goto out;
+> > +     else
+> > +             reason =3D SKB_DROP_REASON_FRAG_REASM_TIMEOUT;
+>
+> I think the else branch above is confusing - and unneeded.
 
-Le 07/09/2024 à 17:40, Christophe Leroy a écrit :
-> After the following powerpc commits, all calls to set_memory_...()
-> functions check returned value.
-> - Commit 8f17bd2f4196 ("powerpc: Handle error in mark_rodata_ro() and
-> mark_initmem_nx()")
-> - Commit f7f18e30b468 ("powerpc/kprobes: Handle error returned by
-> set_memory_rox()")
-> - Commit 009cf11d4aab ("powerpc: Don't ignore errors from
-> set_memory_{n}p() in __kernel_map_pages()")
-> - Commit 9cbacb834b4a ("powerpc: Don't ignore errors from
-> set_memory_{n}p() in __kernel_map_pages()")
-> - Commit 78cb0945f714 ("powerpc: Handle error in mark_rodata_ro() and
-> mark_initmem_nx()")
-> 
-> All calls in core parts of the kernel also always check returned value,
-> can be looked at with following query:
-> 
->    $ git grep -w -e set_memory_ro -e set_memory_rw -e set_memory_x -e set_memory_nx -e set_memory_rox `find . -maxdepth 1 -type d | grep -v arch | grep /`
-> 
-> It is now possible to flag those functions with __must_check to make
-> sure no new unchecked call it added.
-> 
-> Link: https://github.com/KSPP/linux/issues/7
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Yeah, that makes sense.
 
-Do you plan to take this patch anytime soon ?
+> Please move the assignment after the comment below, so it's clear why we
+> get a TIMEOUT drop reason.
 
-The generic part of the same was already applied in previous cycle, see 
-https://github.com/torvalds/linux/commit/82ce8e2f31a1eb05b1527c3d807bea40031df913
+Okay!
 
-Discussion at 
-https://lore.kernel.org/all/b0fe75b4-c1bb-47f7-a7c3-2534b31c1780@csgroup.eu/T/ 
-suggests that it would be beneficial to enforce return checking.
+Thanks!
+Menglong Dong
 
-Christophe
-
-
-> ---
->   arch/powerpc/include/asm/set_memory.h | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/set_memory.h b/arch/powerpc/include/asm/set_memory.h
-> index 9a025b776a4b..9c8d5747755d 100644
-> --- a/arch/powerpc/include/asm/set_memory.h
-> +++ b/arch/powerpc/include/asm/set_memory.h
-> @@ -12,37 +12,37 @@
->   
->   int change_memory_attr(unsigned long addr, int numpages, long action);
->   
-> -static inline int set_memory_ro(unsigned long addr, int numpages)
-> +static inline int __must_check set_memory_ro(unsigned long addr, int numpages)
->   {
->   	return change_memory_attr(addr, numpages, SET_MEMORY_RO);
->   }
->   
-> -static inline int set_memory_rw(unsigned long addr, int numpages)
-> +static inline int __must_check set_memory_rw(unsigned long addr, int numpages)
->   {
->   	return change_memory_attr(addr, numpages, SET_MEMORY_RW);
->   }
->   
-> -static inline int set_memory_nx(unsigned long addr, int numpages)
-> +static inline int __must_check set_memory_nx(unsigned long addr, int numpages)
->   {
->   	return change_memory_attr(addr, numpages, SET_MEMORY_NX);
->   }
->   
-> -static inline int set_memory_x(unsigned long addr, int numpages)
-> +static inline int __must_check set_memory_x(unsigned long addr, int numpages)
->   {
->   	return change_memory_attr(addr, numpages, SET_MEMORY_X);
->   }
->   
-> -static inline int set_memory_np(unsigned long addr, int numpages)
-> +static inline int __must_check set_memory_np(unsigned long addr, int numpages)
->   {
->   	return change_memory_attr(addr, numpages, SET_MEMORY_NP);
->   }
->   
-> -static inline int set_memory_p(unsigned long addr, int numpages)
-> +static inline int __must_check set_memory_p(unsigned long addr, int numpages)
->   {
->   	return change_memory_attr(addr, numpages, SET_MEMORY_P);
->   }
->   
-> -static inline int set_memory_rox(unsigned long addr, int numpages)
-> +static inline int __must_check set_memory_rox(unsigned long addr, int numpages)
->   {
->   	return change_memory_attr(addr, numpages, SET_MEMORY_ROX);
->   }
+>
+> Thanks,
+>
+> Paolo
+>
 
