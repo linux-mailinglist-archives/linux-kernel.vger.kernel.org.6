@@ -1,105 +1,183 @@
-Return-Path: <linux-kernel+bounces-398617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F4F9BF3A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:53:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 506809BF3AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:53:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB801F23A7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:53:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D0E1F24021
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1D5206500;
-	Wed,  6 Nov 2024 16:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A82ix3l5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8814206E8C;
+	Wed,  6 Nov 2024 16:53:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E566205E33;
-	Wed,  6 Nov 2024 16:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740EE201115
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730911995; cv=none; b=mcr87bRtz3Mon1ERTvpKUdA6DFSU7Ot4ye1ZpIwmA4MPSuVHY3N8DO9ymug8aYPDXkSjvN/psFMvFEnXJY3iYMcVfmqHauLQq8LJ1IYYsOJ0NV+YQu36ge18uHWl8RmtRUP/nLQ/gKng909cALAAJ0YBNPzZ/A7N63CCp1pBIxc=
+	t=1730912006; cv=none; b=PiFhV8lH4ynyMWus3Da0BkUXnjXDlCGpqYECKZDME+ZZeKtXhhrRiTQGhaW2wijSh2FXJGv3wvwjcRq/xXofK1iZQeau9LD1Isz4Y50E09rkD8EgFPTx+O9PsbyuAjf9cDCGI4Xnt0nZ20DsgSnTgtturOxrIiXvEKFWTzPEtvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730911995; c=relaxed/simple;
-	bh=OzUAI9y2vdwmmvCD+XJYm4cHA0A6WZjIJsfN0+pkEiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=aaXhCebJbxCqKCuqfZvP09Gddz2kDhBWp0YbT81lzhkN8hk4VHrMyN3MSeE/5FkcetV+2U6M5MltzvO92QhetQIsduIack0OQwNlbyGkQrSMdjic17MAgiQMH7LFilkCCST8gXd+UEFO97erw+9xpNI1M8f6+CXlA8Pw+GO0kwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A82ix3l5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77AFC4CED6;
-	Wed,  6 Nov 2024 16:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730911994;
-	bh=OzUAI9y2vdwmmvCD+XJYm4cHA0A6WZjIJsfN0+pkEiM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=A82ix3l5i8JXXCa8Ly4NI6GqAfXg70yCSN47GvTf2odoIqanT1OQSxtYQs9+EeyaO
-	 eIBz0LfxgEeQMRoq6Doq/0gu6P/tJvZPeTtHX/YLvVLjYn0h0ecehgO0i8hGW/uyL8
-	 yuZV0JKwLbKZt5/ElHWq2wkuTDzigiaa9p0aC0D4IJAq4OkzhhW7X5ACtGSXSlh4A3
-	 IoBw8U50Gm337WwW5Lb1zK781XjKvsVduYNrkM57Wb8GQn3rtUErE07jPCo6l4iWxs
-	 dFSMonjOfImmIMg5xTyHI+/KGrHBWfhB1h6wfj7vZvlquBozDtB9cMEQM950Vb2x9P
-	 +IH478GRWoebQ==
-Date: Wed, 6 Nov 2024 10:53:12 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Sricharan R <quic_srichara@quicinc.com>, bhelgaas@google.com,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-	konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V7 4/4] PCI: qcom: Add support for IPQ9574
-Message-ID: <20241106165312.GA1528877@bhelgaas>
+	s=arc-20240116; t=1730912006; c=relaxed/simple;
+	bh=xnQ4Y5OkLDw7+kpBIjjDpj/d4KDArPXb58DSwWlk9/c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nNTfUauG4fBvhp5t20ZnXo+clazsXjWapIzAnmUMJYoWwGJjzrNGdgTKKOIts041WelLOJV69wJSMsHvcP3qfyD1GN8v7RuEiZNgIi9dH0ZIUampDB/HEbZoDFN5+hBOG4Fyhr7giFxsJZR8Hz2XdnLkhL9CKebNGw4dPbzDd3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so432355ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:53:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730912003; x=1731516803;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wAuJyuZyW3fwlKbDhzM6Z2xlWYFISeiwXKrwvgPNhqc=;
+        b=izNcYt4YubxyROtYwLzaJblsMJnI6AdOqSkDu7cbuZT+jJ6k7gV0a6dCF2+i8j/vPy
+         xprOfTuo9Yt90d92tmlUx5DrznkZRKew5SFUVi4LYDE1rPkd4OoGzPpZe5jHpTTHwMq3
+         vAC7NB7yLgzTW//ZrsKz8e3WEnSuO8FjHbkvQGYE7ssKQcYYEajoa2mguiC3PF+Q0sQw
+         ykL51SqmtLPS0dWoWFX5r6AvwEcl/i8ZEKM2iJxyKxUqEu+4agCaln0mhtwqlBcLAXd0
+         BpLiWrYvCm0pGmTrGut6SRumGcE9Tfk+/j9sfugpGswa3S87oybi0UkXiFMGbAkA8bKZ
+         lrSA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8UkIJwgmXNqsTMbN5ECbp+9svBR/2f+0pLhvrp1gTc08o9mS+x8ibiXM75qmWgG1TND0AXmH0T/X2rLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXvM7MEvisWNSQmdZ/7px7Tv2JsyFgQugJuq+DiljmQ1Pm8ORD
+	fgg8Bq+/v3MdZIByrQNklb+2Q/d6P+SDHpRdDb3hw9brwLF1D4O74alzpYGxM996G0+OeaG+8hf
+	VPtW5CJlphtp7z0W2h5T9aeKTIxKHIuLATRnfgXA9TmX72fdJ9OCikvo=
+X-Google-Smtp-Source: AGHT+IHdPpKyWCNZXHoI1XBOWe8fIhCxF9cGjMgOMB/oUdi2ooOGWuK5QOMQ/He+FwMCTi3itzqPKo3pDdjNU1AKn8H67+g7mkQ1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106145615.25tc7n4zcdkp47jr@thinkpad>
+X-Received: by 2002:a05:6e02:1b07:b0:3a5:e5cf:c5b6 with SMTP id
+ e9e14a558f8ab-3a5e5cfc68bmr286814735ab.10.1730912003663; Wed, 06 Nov 2024
+ 08:53:23 -0800 (PST)
+Date: Wed, 06 Nov 2024 08:53:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672b9f03.050a0220.350062.0276.GAE@google.com>
+Subject: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
+From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
+To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-wpan@vger.kernel.org, 
+	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 06, 2024 at 02:56:15PM +0000, Manivannan Sadhasivam wrote:
-> On Tue, Nov 05, 2024 at 07:40:24PM -0600, Bjorn Helgaas wrote:
-> > On Thu, Aug 01, 2024 at 11:18:03AM +0530, Sricharan R wrote:
-> > > From: devi priya <quic_devipriy@quicinc.com>
-> > > 
-> > > The IPQ9574 platform has four Gen3 PCIe controllers:
-> > > two single-lane and two dual-lane based on SNPS core 5.70a.
-> > > 
-> > > QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
-> > > Reuse all the members of 'ops_2_9_0'.
-> > 
-> > Wow, this is confusing.
-> > 
-> > "Based on SNPS core 5.70a", but "Synopsys IP rev is 5.80a."
-> > Are those supposed to match?  Or is it 5.70a of one thing but 5.80a of
-> > a different thing?
-> 
-> Hmm, I'm not sure why 5.70a is mentioned here. It seems irrelevant
-> (even if it is the base).
-> 
-> > And where does ops_2_9_0 come in?  The code comment says:
-> > 
-> >   /* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
-> >   static const struct qcom_pcie_ops ops_2_9_0 = {
-> > 
-> > which doesn't match 1.27.0 or 5.70a or 5.80a.  In fact there's nothing
-> > in the file that matches 1.*27.*0
-> > 
-> > Honestly, I don't really care if you have all the versions here in the
-> > commit log.  But if the versions *are* here, can we make them make
-> > sense?
-> 
-> We name the 'ops' structure based on Qcom IP revision. And we reuse
-> it across the SoCs which are compatible. That's why ops_2_9_0 is
-> used for this SoC which has Qcom IP rev 1.27.0.
+Hello,
 
-Got it.  So a family of compatible Qcom IP starts with 2.9.0 and newer
-members are 1.27.0 etc.  With no hint in the source about what the
-members of the family are.  Perfect sEnSe.
+syzbot found the following issue on:
 
-Bjorn
+HEAD commit:    557329bcecc2 Merge tag 'mmc-v6.12-rc3' of git://git.kernel..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a9f740580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=921b01cbfd887a9b
+dashboard link: https://syzkaller.appspot.com/bug?extid=985f827280dc3a6e7e92
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d76d5f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a9f740580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2b44e0081eb5/disk-557329bc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/15b6a52c8e11/vmlinux-557329bc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ab40912bec45/bzImage-557329bc.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:58!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 6277 Comm: syz-executor157 Not tainted 6.12.0-rc6-syzkaller-00005-g557329bcecc2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__list_del_entry_valid_or_report+0xf4/0x140 lib/list_debug.c:56
+Code: e8 a1 7e 00 07 90 0f 0b 48 c7 c7 e0 37 60 8c 4c 89 fe e8 8f 7e 00 07 90 0f 0b 48 c7 c7 40 38 60 8c 4c 89 fe e8 7d 7e 00 07 90 <0f> 0b 48 c7 c7 a0 38 60 8c 4c 89 fe e8 6b 7e 00 07 90 0f 0b 48 c7
+RSP: 0018:ffffc9000490f3d0 EFLAGS: 00010246
+RAX: 000000000000004e RBX: dead000000000122 RCX: d211eee56bb28d00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffff88805b278dd8 R08: ffffffff8174a12c R09: 1ffffffff2852f0d
+R10: dffffc0000000000 R11: fffffbfff2852f0e R12: dffffc0000000000
+R13: dffffc0000000000 R14: dead000000000100 R15: ffff88805b278cc0
+FS:  0000555572f94380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056262e4a3000 CR3: 0000000078496000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __list_del_entry_valid include/linux/list.h:124 [inline]
+ __list_del_entry include/linux/list.h:215 [inline]
+ list_del_rcu include/linux/rculist.h:157 [inline]
+ ieee802154_if_remove+0x86/0x1e0 net/mac802154/iface.c:687
+ rdev_del_virtual_intf_deprecated net/ieee802154/rdev-ops.h:24 [inline]
+ ieee802154_del_iface+0x2c0/0x5c0 net/ieee802154/nl-phy.c:323
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd094c32309
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffec50063a8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fd094c32309
+RDX: 0000000004000000 RSI: 0000000020000b00 RDI: 0000000000000004
+RBP: 00000000000f4240 R08: 0000000000000000 R09: 00000000000000a0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000161b7
+R13: 00007ffec50063bc R14: 00007ffec50063d0 R15: 00007ffec50063c0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__list_del_entry_valid_or_report+0xf4/0x140 lib/list_debug.c:56
+Code: e8 a1 7e 00 07 90 0f 0b 48 c7 c7 e0 37 60 8c 4c 89 fe e8 8f 7e 00 07 90 0f 0b 48 c7 c7 40 38 60 8c 4c 89 fe e8 7d 7e 00 07 90 <0f> 0b 48 c7 c7 a0 38 60 8c 4c 89 fe e8 6b 7e 00 07 90 0f 0b 48 c7
+RSP: 0018:ffffc9000490f3d0 EFLAGS: 00010246
+RAX: 000000000000004e RBX: dead000000000122 RCX: d211eee56bb28d00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffff88805b278dd8 R08: ffffffff8174a12c R09: 1ffffffff2852f0d
+R10: dffffc0000000000 R11: fffffbfff2852f0e R12: dffffc0000000000
+R13: dffffc0000000000 R14: dead000000000100 R15: ffff88805b278cc0
+FS:  0000555572f94380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056262e4a3000 CR3: 0000000078496000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
