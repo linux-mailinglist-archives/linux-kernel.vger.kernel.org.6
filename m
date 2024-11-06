@@ -1,75 +1,56 @@
-Return-Path: <linux-kernel+bounces-398319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83D09BEF85
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:54:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 733389BEF87
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:55:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4390C1F23B1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047D61F2229A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9006C1DEFD7;
-	Wed,  6 Nov 2024 13:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269921F9ABA;
+	Wed,  6 Nov 2024 13:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EAqchDMU"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ftP6I8KI"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C951DF747
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65140201011;
+	Wed,  6 Nov 2024 13:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730901285; cv=none; b=H0iWp+9XJcEE4iW+KUXko7KmM1flpqUQRwYFc3zYd9MvnnQabf2UgPUytuhR1JwwBlxRUtgGskzzJ0R/avqihuELI+sHqwKVaFGl0q/x/1psoOOUIGeejhxGgkLJyHHbE337f0TXShqFQTAP6Eh9bJgODkSgnQvbT+cLYijV10Y=
+	t=1730901299; cv=none; b=By3nHm3TZbVLKSYf21j4R4tGTt3+a4QFj0/uj2TEHk5C+RBvLX/0z1SL1CdjDeLRNMkejH7Hb6s4UaQG3zTV0yhPgjCGZu4OuvmIODpJQOs3WZGHACDFKKRDg4zfntFUmNMMJowbUlBlHioIjPjyJA+y8gbwHaPni2kCmHcwY/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730901285; c=relaxed/simple;
-	bh=xMrPou6GPm33A5v987LSjttEToeB4yUBzYXZUsBiDoY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SJ2teLYLsOhu109By2kJFheXfaRYrq9jFso/W7KfFRIomoI9rVtwx8qBeqJuzO9ADWXeSrR+s+v+KzZePuQ5+gqjVNpoDIszOYgqFr6n02kOWcm6Iq2Cqs7lsXgtBc//DUv+7YEtvolt+0iyS/sDWe9Tb9O9Gq4LA+kpyjGB1Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EAqchDMU; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so78745465e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 05:54:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730901282; x=1731506082; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iIbwFT4SCUMumif7gepjn5EYZ9GZDHKic5/CpUlhIho=;
-        b=EAqchDMUALcwBduK1w1rw9nI7PkaSL/EmYH4ZqybsbC3lnt+4vaw+iRCX/OFRuh5cP
-         JT6zZoZZ20a2judvY8pXAe383oNeNIA2q/Usw9S3obX35BwuwkdN55h9bYM/lvS/7xBW
-         hmidGFPppQtnCjN2PkCP/VnhRH6MnlEe9Npi2mNxLGWxh9HfQcSRt7+wgjxlambnmRmN
-         yD83kMf4djE4gh85YNAClCnVnu2jMD7mHDBK+7pBQTlOTNSfc9bX/7HQ7PYsE8M8SHhu
-         a+75tn+XCFI8uGnaDjqeL2xBWkchmGkxICjVw16P+plic1GhoiFywhsocJpzccljKsWG
-         gT/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730901282; x=1731506082;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iIbwFT4SCUMumif7gepjn5EYZ9GZDHKic5/CpUlhIho=;
-        b=qHguthGZfOClYUyHHdObp+zXrvta3hU8rgl53byEMurjR0N1Mih1oX3zxp61X4/shl
-         BTiBDX9GaKW72Rs50IrIz+MbJ2XEnCDpdDifuayweYYTGVXyH+OzwfDImI8xxioR8M+u
-         xWcmbhCSMXOCAuhJTRljtlH0CkIlQ2JPkfJ7Cve/C/bH1jS99JyEgRpxPquog0G5gJnp
-         NePLcLtqfQ2zGpyGgq1cEBsomZRtxyk87eDKnE/eTPZaV0xixKlmqZEi6G6ATXQC/L3p
-         gPEqGdCo6EPQaFWJI1AVhPyZTJNoebHjShKOOOqDeytEsExW5dfRx8+V3wj3bu2J3IzY
-         EujQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGyVbOwx6ohojzX5dB5uqH+798Gz/eojW/d7auEX5jK6I7qRkGLMSV9KUoIA5DyYiGr6pW3ZmvtrfJmFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN8tH0/8UJHCc/GRTxjEFqej5TX+jVLaQi6HwaiZk6BRDUQ4VG
-	beesY1sVXoFpCCCyM/ikyfDi1VKf/TbBHbuz+E9WVlJgUH7XFWRqS4WGNRQBAWk=
-X-Google-Smtp-Source: AGHT+IExlp14LamzJibkBVml6vvGyDOOLZgznO+UzTiI8EtaITHrO3KHcV9jCeTx8IkfVkzBkZKxZQ==
-X-Received: by 2002:a05:600c:1c06:b0:430:57e8:3c7e with SMTP id 5b1f17b1804b1-4328327e00cmr193973875e9.28.1730901281787;
-        Wed, 06 Nov 2024 05:54:41 -0800 (PST)
-Received: from [172.16.23.252] ([89.101.134.25])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116ae82sm19172284f8f.93.2024.11.06.05.54.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 05:54:41 -0800 (PST)
-Message-ID: <881f2820-ff18-4d60-8bf3-f8cca1be5914@linaro.org>
-Date: Wed, 6 Nov 2024 14:54:39 +0100
+	s=arc-20240116; t=1730901299; c=relaxed/simple;
+	bh=Sfw1gAiy1cCy8QCHZMOzCQQMC8sWPK+f7SqnefWeOUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cmp8LJTsDKSDPlABkq76DBLeRNhUU3JaNJd+KxyyBl3Ct65fJPQHKNofcnDv7N2IdD5NGjq+J2LM4fO9oqRxxhmONDheoXHTgDrixdjJrBJADL63ntV3AKnFrItDfYf7Y2btp8F1lOsavq9pcHMQIGOOxjhOFxXSlN11eIep0yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ftP6I8KI; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id CC512100027;
+	Wed,  6 Nov 2024 16:54:42 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru CC512100027
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1730901282;
+	bh=TamoRQHVz3CLLV4TriCaXhJ6JFCj9iwTzd2ELzYslvI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=ftP6I8KI+D0QkunWuobJM9R6/TLFnROf1F1QNLBw6FPYpuIo6tY4d3yl3W9LMy4L1
+	 pe+Z6mmHZGG9cDWB+GaWLZsp8W708Cv+E4Nxq5TjF8SrudxCEbW9ikIAnTWEMrbOJf
+	 2VUhYXX/AIUGMe2zxIJnKxohEqC5Yjw2jmewuVDMx9NgMT30ACU3zLm+LXueCVLeFa
+	 Q8MSFaAJt4t3WPtpvZDVP07WJucipz1r+ImTxYCOSxkCuCJk7tOiGv0gDdqnhFlP8k
+	 R8mkR8NcSwfxW9HcKtebB7e/FyukW3kWRvm2CR6yF2J9DZidXV1iuSslXStARAM96t
+	 iAG3vPqk8zEEg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed,  6 Nov 2024 16:54:42 +0300 (MSK)
+Message-ID: <f08513c8-56d6-4551-8ac6-84641c134552@salutedevices.com>
+Date: Wed, 6 Nov 2024 16:54:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,405 +58,157 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/3] drm/bridge/synopsys: Add MIPI DSI2 host controller
- bridge
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com,
- rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- quentin.schulz@cherry.de, Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20241106123304.422854-1-heiko@sntech.de>
- <20241106123304.422854-2-heiko@sntech.de>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241106123304.422854-2-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 2/4] pwm: meson: Support constant and polarity bits
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+CC: <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
+	<jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+	<linux-pwm@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@salutedevices.com>
+References: <20241016152553.2321992-1-gnstark@salutedevices.com>
+ <20241016152553.2321992-3-gnstark@salutedevices.com>
+ <w3igi2jmva6mfa7anlieyp3iiwfzhsvi3t37wwcqqtzdy42fqn@btmdsfsmpw7r>
+Content-Language: en-US
+From: George Stark <gnstark@salutedevices.com>
+In-Reply-To: <w3igi2jmva6mfa7anlieyp3iiwfzhsvi3t37wwcqqtzdy42fqn@btmdsfsmpw7r>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188995 [Nov 06 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/06 12:26:00 #26826484
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi,
+Hello Uwe
 
-On 06/11/2024 13:33, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+Thanks for the review.
+
+On 11/4/24 12:32, Uwe Kleine-König wrote:
+> Hello George,
 > 
-> Add a Synopsys Designware MIPI DSI host DRM bridge driver for their
-> DSI2 host controller, based on the Rockchip version from the driver
-> rockchip/dw-mipi-dsi2.c in their vendor-kernel with phy & bridge APIs.
+> there are two minor things I dislike in this patch/driver. But I'm not
+> sure the alternatives are objectively considerably better. See below and
+> judge yourself.
+
+...
+
+>> @@ -68,6 +72,8 @@ static struct meson_pwm_channel_data {
+>>   	u8		clk_div_shift;
+>>   	u8		clk_en_shift;
+>>   	u32		pwm_en_mask;
+>> +	u32		const_en_mask;
+>> +	u32		inv_en_mask;
+>>   } meson_pwm_per_channel_data[MESON_NUM_PWMS] = {
+>>   	{
+>>   		.reg_offset	= REG_PWM_A,
+>> @@ -75,6 +81,8 @@ static struct meson_pwm_channel_data {
+>>   		.clk_div_shift	= MISC_A_CLK_DIV_SHIFT,
+>>   		.clk_en_shift	= MISC_A_CLK_EN_SHIFT,
+>>   		.pwm_en_mask	= MISC_A_EN,
+>> +		.const_en_mask	= MISC_A_CONSTANT_EN,
+>> +		.inv_en_mask	= MISC_A_INVERT_EN,
+>>   	},
+>>   	{
+>>   		.reg_offset	= REG_PWM_B,
+>> @@ -82,6 +90,8 @@ static struct meson_pwm_channel_data {
+>>   		.clk_div_shift	= MISC_B_CLK_DIV_SHIFT,
+>>   		.clk_en_shift	= MISC_B_CLK_EN_SHIFT,
+>>   		.pwm_en_mask	= MISC_B_EN,
+>> +		.const_en_mask	= MISC_B_CONSTANT_EN,
+>> +		.inv_en_mask	= MISC_B_INVERT_EN,
+>>   	}
+>>   };
 > 
-> While the driver is heavily modelled after the previous IP, the register
-> set of this DSI2 controller is completely different and there are also
-> additional properties like the variable-width phy interface.
+> So the generic register description describes the const and invert bits,
+> but it doesn't apply to all IPs. Thinking about that, I wonder why this
+> struct exists at all. I would have done this as follows:
 > 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> ---
->   drivers/gpu/drm/bridge/synopsys/Kconfig       |    6 +
->   drivers/gpu/drm/bridge/synopsys/Makefile      |    1 +
->   .../gpu/drm/bridge/synopsys/dw-mipi-dsi2.c    | 1034 +++++++++++++++++
->   include/drm/bridge/dw_mipi_dsi2.h             |   94 ++
->   4 files changed, 1135 insertions(+)
->   create mode 100644 drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
->   create mode 100644 include/drm/bridge/dw_mipi_dsi2.h
+> 	#define MESON_PWM_REG_PWM(chan)		(0 + 4 * (chan))
 > 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/Kconfig b/drivers/gpu/drm/bridge/synopsys/Kconfig
-> index ca416dab156d..f3ab2f985f8c 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/Kconfig
-> +++ b/drivers/gpu/drm/bridge/synopsys/Kconfig
-> @@ -59,3 +59,9 @@ config DRM_DW_MIPI_DSI
->   	select DRM_KMS_HELPER
->   	select DRM_MIPI_DSI
->   	select DRM_PANEL_BRIDGE
-> +
-> +config DRM_DW_MIPI_DSI2
-> +	tristate
-> +	select DRM_KMS_HELPER
-> +	select DRM_MIPI_DSI
-> +	select DRM_PANEL_BRIDGE
-> diff --git a/drivers/gpu/drm/bridge/synopsys/Makefile b/drivers/gpu/drm/bridge/synopsys/Makefile
-> index 9869d9651ed1..9dc376d220ad 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/Makefile
-> +++ b/drivers/gpu/drm/bridge/synopsys/Makefile
-> @@ -8,3 +8,4 @@ obj-$(CONFIG_DRM_DW_HDMI_CEC) += dw-hdmi-cec.o
->   obj-$(CONFIG_DRM_DW_HDMI_QP) += dw-hdmi-qp.o
->   
->   obj-$(CONFIG_DRM_DW_MIPI_DSI) += dw-mipi-dsi.o
-> +obj-$(CONFIG_DRM_DW_MIPI_DSI2) += dw-mipi-dsi2.o
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
-> new file mode 100644
-> index 000000000000..43738fe3cb93
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
-> @@ -0,0 +1,1034 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (c) 2024, Fuzhou Rockchip Electronics Co., Ltd
-> + *
-> + * Modified by Heiko Stuebner <heiko.stuebner@cherry.de>
-> + * This generic Synopsys DesignWare MIPI DSI2 host driver is based on the
-> + * Rockchip version from rockchip/dw-mipi-dsi2.c converted to use bridge APIs.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/media-bus-format.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
-> +
-> +#include <video/mipi_display.h>
-> +
-> +#include <drm/bridge/dw_mipi_dsi2.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_bridge.h>
-> +#include <drm/drm_mipi_dsi.h>
-> +#include <drm/drm_of.h>
-> +#include <drm/drm_print.h>
-> +
-> +#define UPDATE(v, h, l)			(((v) << (l)) & GENMASK((h), (l)))
+> 	#define MESON_PWM_REG_MISC		(8)
+> 	#define MESON_PWM_REG_MISC_EN(chan)		BIT(chan)
+> 	#define MESON_PWM_REG_MISC_CLK_SEL(chan)	GENMASK(5 + 2 * (chan), 4 + 2 * (chan))
+> 	....
+> 
+> and then use these constants directly (with pwm->hwpwm as parameter if
+> needed) in the code. I would expect this to result in more efficient and
+> smaller code.
 
-I'm not super fan of this macro, overall I thinkg you should switch to
-regmap and make use of regmap_update_bits and drop dsi2_write/read wrappers
-to readl/writel.
+I've been looking into this driver for more than a year and got used to
+it so much so never thought about changing the foundations :) Although 
+it's an interesting thought.
 
-> +
-> +#define DSI2_PWR_UP			0x000c
-> +#define RESET				0
-> +#define POWER_UP			BIT(0)
-> +#define CMD_TX_MODE(x)			UPDATE(x,  24,  24)
-> +#define DSI2_SOFT_RESET			0x0010
-> +#define SYS_RSTN			BIT(2)
-> +#define PHY_RSTN			BIT(1)
-> +#define IPI_RSTN			BIT(0)
-> +#define INT_ST_MAIN			0x0014
-> +#define DSI2_MODE_CTRL			0x0018
-> +#define DSI2_MODE_STATUS		0x001c
-> +#define DSI2_CORE_STATUS		0x0020
-> +#define PRI_RD_DATA_AVAIL		BIT(26)
-> +#define PRI_FIFOS_NOT_EMPTY		BIT(25)
-> +#define PRI_BUSY			BIT(24)
-> +#define CRI_RD_DATA_AVAIL		BIT(18)
-> +#define CRT_FIFOS_NOT_EMPTY		BIT(17)
-> +#define CRI_BUSY			BIT(16)
-> +#define IPI_FIFOS_NOT_EMPTY		BIT(9)
-> +#define IPI_BUSY			BIT(8)
-> +#define CORE_FIFOS_NOT_EMPTY		BIT(1)
-> +#define CORE_BUSY			BIT(0)
-> +#define MANUAL_MODE_CFG			0x0024
-> +#define MANUAL_MODE_EN			BIT(0)
-> +#define DSI2_TIMEOUT_HSTX_CFG		0x0048
-> +#define TO_HSTX(x)			UPDATE(x, 15, 0)
-> +#define DSI2_TIMEOUT_HSTXRDY_CFG	0x004c
-> +#define TO_HSTXRDY(x)			UPDATE(x, 15, 0)
-> +#define DSI2_TIMEOUT_LPRX_CFG		0x0050
-> +#define TO_LPRXRDY(x)			UPDATE(x, 15, 0)
-> +#define DSI2_TIMEOUT_LPTXRDY_CFG	0x0054
-> +#define TO_LPTXRDY(x)			UPDATE(x, 15, 0)
-> +#define DSI2_TIMEOUT_LPTXTRIG_CFG	0x0058
-> +#define TO_LPTXTRIG(x)			UPDATE(x, 15, 0)
-> +#define DSI2_TIMEOUT_LPTXULPS_CFG	0x005c
-> +#define TO_LPTXULPS(x)			UPDATE(x, 15, 0)
-> +#define DSI2_TIMEOUT_BTA_CFG		0x60
-> +#define TO_BTA(x)			UPDATE(x, 15, 0)
-> +
+1. I took meson_pwm_enable() without
+const patches and reimplemented it using only defines (e.g. w/o local
+var channel_data) and objdumped current and new versions. New version
+turned out to be one instruction longer (arm64, gcc, default -O2). So 
+total difference in executable code may be not that significant although
+we can win in C-code line count.
 
-<snip>
+2. Things like
+#define MISC_B_EN		BIT(1)
+#define MISC_A_EN		BIT(0)
+is more straightforward and can be matched to the datasheet easier
+comparing to (a + b * (chan)) things.
 
-> +
-> +static struct dw_mipi_dsi2 *
-> +__dw_mipi_dsi2_probe(struct platform_device *pdev,
-> +		     const struct dw_mipi_dsi2_plat_data *plat_data)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct reset_control *apb_rst;
-> +	struct dw_mipi_dsi2 *dsi2;
-> +	int ret;
-> +
-> +	dsi2 = devm_kzalloc(dev, sizeof(*dsi2), GFP_KERNEL);
-> +	if (!dsi2)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	dsi2->dev = dev;
-> +	dsi2->plat_data = plat_data;
-> +
-> +	if (!plat_data->phy_ops->init || !plat_data->phy_ops->get_lane_mbps ||
-> +	    !plat_data->phy_ops->get_timing)
-> +		return dev_err_ptr_probe(dev, -ENODEV, "Phy not properly configured\n");
-> +
-> +	if (!plat_data->base) {
-> +		dsi2->base = devm_platform_ioremap_resource(pdev, 0);
-> +		if (IS_ERR(dsi2->base))
-> +			return ERR_PTR(-ENODEV);
-> +	} else {
-> +		dsi2->base = plat_data->base;
-> +	}
-> +
-> +	dsi2->pclk = devm_clk_get(dev, "pclk");
-> +	if (IS_ERR(dsi2->pclk))
-> +		return dev_err_cast_probe(dev, dsi2->pclk, "Unable to get pclk\n");
-> +
-> +	dsi2->sys_clk = devm_clk_get(dev, "sys");
-> +	if (IS_ERR(dsi2->sys_clk))
-> +		return dev_err_cast_probe(dev, dsi2->sys_clk, "Unable to get sys_clk\n");
-> +
-> +	/*
-> +	 * Note that the reset was not defined in the initial device tree, so
-> +	 * we have to be prepared for it not being found.
-> +	 */
-> +	apb_rst = devm_reset_control_get_optional_exclusive(dev, "apb");
-> +	if (IS_ERR(apb_rst))
-> +		return dev_err_cast_probe(dev, apb_rst, "Unable to get reset control\n");
-> +
-> +	if (apb_rst) {
-> +		ret = clk_prepare_enable(dsi2->pclk);
-> +		if (ret) {
-> +			dev_err(dev, "%s: Failed to enable pclk\n", __func__);
-> +			return ERR_PTR(ret);
-> +		}
-> +
-> +		reset_control_assert(apb_rst);
-> +		usleep_range(10, 20);
-> +		reset_control_deassert(apb_rst);
-> +
-> +		clk_disable_unprepare(dsi2->pclk);
-> +	}
-> +
-> +	pm_runtime_enable(dev);
-> +
-> +	dsi2->dsi_host.ops = &dw_mipi_dsi2_host_ops;
-> +	dsi2->dsi_host.dev = dev;
-> +	ret = mipi_dsi_host_register(&dsi2->dsi_host);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register MIPI host: %d\n", ret);
-> +		pm_runtime_disable(dev);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	dsi2->bridge.driver_private = dsi2;
-> +	dsi2->bridge.funcs = &dw_mipi_dsi2_bridge_funcs;
-> +	dsi2->bridge.of_node = pdev->dev.of_node;
-> +
-> +	return dsi2;
-> +}
-> +
-> +static void __dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2)
-> +{
-> +	mipi_dsi_host_unregister(&dsi2->dsi_host);
-> +
-> +	pm_runtime_disable(dsi2->dev);
-> +}
-> +
-> +/*
-> + * Probe/remove API, used from platforms based on the DRM bridge API.
-> + */
-> +struct dw_mipi_dsi2 *
-> +dw_mipi_dsi2_probe(struct platform_device *pdev,
-> +		   const struct dw_mipi_dsi2_plat_data *plat_data)
-> +{
-> +	return __dw_mipi_dsi2_probe(pdev, plat_data);
-> +}
-> +EXPORT_SYMBOL_GPL(dw_mipi_dsi2_probe);
-> +
-> +void dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2)
-> +{
-> +	__dw_mipi_dsi2_remove(dsi2);
-> +}
-> +EXPORT_SYMBOL_GPL(dw_mipi_dsi2_remove);
+So I'm not sure either.
 
-Since it's not use yet, you should probably drop those since it's dead
-code.
+>> @@ -227,6 +252,15 @@ static void meson_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+>>   
+>>   	value = readl(meson->base + REG_MISC_AB);
+>>   	value |= channel_data->pwm_en_mask;
+>> +
+>> +	if (meson->data->has_constant)
+>> +		meson_pwm_assign_bit(&value, channel_data->const_en_mask,
+>> +				     channel->constant);
+> 
+> Personally I'd prefer:
+> 
+> 	value &= ~MESON_PWM_REG_MISC_CONST_EN(pwm->hwpwm);
+> 	if (meson->data->has_constant && channel->constant)
+> 		value |= MESON_PWM_REG_MISC_CONST_EN(pwm->hwpwm);
+> 
+> even though your variant only mentions the mask once. While it has this
+> repetition, it's clear what happens without having to know what
+> meson_pwm_assign_bit() does. Maybe that's subjective?
+> 
 
-> +
-> +/*
-> + * Bind/unbind API, used from platforms based on the component framework.
-> + */
-> +int dw_mipi_dsi2_bind(struct dw_mipi_dsi2 *dsi2, struct drm_encoder *encoder)
-> +{
-> +	return drm_bridge_attach(encoder, &dsi2->bridge, NULL, 0);
-> +}
-> +EXPORT_SYMBOL_GPL(dw_mipi_dsi2_bind);
-> +
-> +void dw_mipi_dsi2_unbind(struct dw_mipi_dsi2 *dsi2)
-> +{
-> +}
-> +EXPORT_SYMBOL_GPL(dw_mipi_dsi2_unbind);
-> +
-> +MODULE_AUTHOR("Guochun Huang <hero.huang@rock-chips.com>");
-> +MODULE_AUTHOR("Heiko Stuebner <heiko.stuebner@cherry.de>");
-> +MODULE_DESCRIPTION("DW MIPI DSI2 host controller driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:dw-mipi-dsi2");
-> diff --git a/include/drm/bridge/dw_mipi_dsi2.h b/include/drm/bridge/dw_mipi_dsi2.h
-> new file mode 100644
-> index 000000000000..ef5479b35028
-> --- /dev/null
-> +++ b/include/drm/bridge/dw_mipi_dsi2.h
-> @@ -0,0 +1,94 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2024, Fuzhou Rockchip Electronics Co., Ltd
-> + *
-> + * Authors: Guochun Huang <hero.huang@rock-chips.com>
-> + *          Heiko Stuebner <heiko.stuebner@cherry.de>
-> + */
-> +
-> +#ifndef __DW_MIPI_DSI2__
-> +#define __DW_MIPI_DSI2__
-> +
-> +#include <linux/types.h>
-> +
-> +#include <drm/drm_atomic.h>
-> +#include <drm/drm_bridge.h>
-> +#include <drm/drm_connector.h>
-> +#include <drm/drm_crtc.h>
-> +#include <drm/drm_modes.h>
-> +
-> +struct drm_display_mode;
-> +struct drm_encoder;
-> +struct dw_mipi_dsi2;
-> +struct mipi_dsi_device;
-> +struct platform_device;
-> +
-> +enum dw_mipi_dsi2_phy_type {
-> +	DW_MIPI_DSI2_DPHY,
-> +	DW_MIPI_DSI2_CPHY,
-> +};
-> +
-> +struct dw_mipi_dsi2_phy_iface {
-> +	int ppi_width;
-> +	enum dw_mipi_dsi2_phy_type phy_type;
-> +};
-> +
-> +struct dw_mipi_dsi2_phy_timing {
-> +	u32 data_hs2lp;
-> +	u32 data_lp2hs;
-> +};
-> +
-> +struct dw_mipi_dsi2_phy_ops {
-> +	int (*init)(void *priv_data);
-> +	void (*power_on)(void *priv_data);
-> +	void (*power_off)(void *priv_data);
-> +	void (*get_interface)(void *priv_data, struct dw_mipi_dsi2_phy_iface *iface);
-> +	int (*get_lane_mbps)(void *priv_data,
-> +			     const struct drm_display_mode *mode,
-> +			     unsigned long mode_flags, u32 lanes, u32 format,
-> +			     unsigned int *lane_mbps);
-> +	int (*get_timing)(void *priv_data, unsigned int lane_mbps,
-> +			  struct dw_mipi_dsi2_phy_timing *timing);
-> +	int (*get_esc_clk_rate)(void *priv_data, unsigned int *esc_clk_rate);
-> +};
-> +
-> +struct dw_mipi_dsi2_host_ops {
-> +	int (*attach)(void *priv_data,
-> +		      struct mipi_dsi_device *dsi);
-> +	int (*detach)(void *priv_data,
-> +		      struct mipi_dsi_device *dsi);
-> +};
-> +
-> +struct dw_mipi_dsi2_plat_data {
-> +	void __iomem *base;
-> +	unsigned int max_data_lanes;
-> +
-> +	enum drm_mode_status (*mode_valid)(void *priv_data,
-> +					   const struct drm_display_mode *mode,
-> +					   unsigned long mode_flags,
-> +					   u32 lanes, u32 format);
-> +
-> +	bool (*mode_fixup)(void *priv_data, const struct drm_display_mode *mode,
-> +			   struct drm_display_mode *adjusted_mode);
-> +
-> +	u32 *(*get_input_bus_fmts)(void *priv_data,
-> +				   struct drm_bridge *bridge,
-> +				   struct drm_bridge_state *bridge_state,
-> +				   struct drm_crtc_state *crtc_state,
-> +				   struct drm_connector_state *conn_state,
-> +				   u32 output_fmt,
-> +				   unsigned int *num_input_fmts);
-> +
-> +	const struct dw_mipi_dsi2_phy_ops *phy_ops;
-> +	const struct dw_mipi_dsi2_host_ops *host_ops;
-> +
-> +	void *priv_data;
-> +};
-> +
-> +struct dw_mipi_dsi2 *dw_mipi_dsi2_probe(struct platform_device *pdev,
-> +					const struct dw_mipi_dsi2_plat_data *plat_data);
-> +void dw_mipi_dsi2_remove(struct dw_mipi_dsi2 *dsi2);
-> +int dw_mipi_dsi2_bind(struct dw_mipi_dsi2 *dsi2, struct drm_encoder *encoder);
-> +void dw_mipi_dsi2_unbind(struct dw_mipi_dsi2 *dsi2);
-> +
-> +#endif /* __DW_MIPI_DSI2__ */
+Actually I also don't like meson_pwm_assign_bit() too match and I'm
+surprised there's no something like this in the kernel already.
+I again objdumped versions meson_pwm_assign_bit() vs double mask 
+repetition. Unconditional bit clearing takes only a single instruction:
 
-Overall the driver is very close to dw-mipi-dsi, si it's overall good!
+// value &= ~channel_data->const_en_mask;
+9ac:	0a250040 	bic	w0, w2, w5
 
-Thanks,
-Neil
+So in the current series I could drop meson_pwm_assign_bit() and use:
+
+value &= ~channel_data->const_en_mask;
+if (meson->data->has_constant && channel->constant)
+	value |= channel_data->const_en_mask;
+
+If it's decided now or later to drop meson_pwm_channel_data then
+w\o meson_pwm_assign_bit() future patch will be line-to-line change.
+
+What you think?
+
+> Best regards
+> Uwe
+
+-- 
+Best regards
+George
 
