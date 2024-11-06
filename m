@@ -1,197 +1,180 @@
-Return-Path: <linux-kernel+bounces-398454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288BB9BF184
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:23:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB089BF187
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:24:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADAEA1F21C98
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416B81C21F01
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAEF2022EE;
-	Wed,  6 Nov 2024 15:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245872036F0;
+	Wed,  6 Nov 2024 15:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="ilX9iBqL"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="l9QiK9pb"
+Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C0552F9B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6454F52F9B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730906596; cv=none; b=bMgk00dnJH7FERvuZih0eRgQajNLtH4Tt9byYedr944xYF+k4v8hFt27UdrqSbQ2OTQKewwllUV1wzJ4MnTBk4YjqsTqhFVjoiWojPcDArKbuhkOzeManlHPPp7yzDYpUA36qiBl/b6/umriIjniR8nlK+v1h20Y8MHA4tZOe7Y=
+	t=1730906670; cv=none; b=EHYLd80eHNoQ8W/MaaTE4oa1EET/ZTMx/0kFtLjVxQW4XqEe1OnaFzEs6i2t4rxONAl8TqDcT5JuRD8f/BSYOdGatLFn6DuQFIb0rjj4uxztEy9bxL2IKrIA3+nT5KhsytfbXsGkIWK2DXgWaoO0AkiYwhxGiVAGqsFI14+K8UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730906596; c=relaxed/simple;
-	bh=MChNJG0r2a7I2iei0kFL3H5thFNRvGxY7ByRvE5iXmc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AAF1wt9NN5SwP9xlvqj7YSAbpud4fNfrybO+LpIo4g8UkhPzvgmGCtG1t+yjtWMxJ41yYNm8UE+HCimGRgcE5LTEGclifLFzfN0U+wvEzr2o+qp1wo+ZYWKoxWszFRkot7Mkwo7Gx/w3ayYLvXLsTd+gO1/lNJMomHRwJ3f/yw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=ilX9iBqL; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730906552; x=1731511352; i=efault@gmx.de;
-	bh=MChNJG0r2a7I2iei0kFL3H5thFNRvGxY7ByRvE5iXmc=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ilX9iBqLfzViJJjPZjHPnI2MAzBuiltQKC17ZAuYhYQMtdEbucbpyFhdE5zo6mIo
-	 s8H4SelYJ15KEBN+o2/Ss8kJR2RJ49o4zg60WWyv/sdTJdU3Kj2U77XS4qyxmklry
-	 02pGOWb11GlZWam5vbwAfO5AgF/Pj2GsPBNsuT5iruROuxWlgGtEMk202tBEzC795
-	 9eXIi7RT3P3N71I2nh0LJw/8B5WjXikDKM82+fAekXUE+hV9yeESw09IoSoDJ9FvE
-	 f1hcxK3xrPSZWeks+6N8yL5o1mjuuWWng1w0ZGQv3MrrqXJFJEy/71+Ngr+ryrcv6
-	 BV3N6o40fLcC4XyxfA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.144]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Md6Qr-1tgwUF0b7z-00q9DY; Wed, 06
- Nov 2024 16:22:32 +0100
-Message-ID: <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-From: Mike Galbraith <efault@gmx.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Phil Auld <pauld@redhat.com>, mingo@redhat.com, juri.lelli@redhat.com, 
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
- linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com,  youssefesmat@chromium.org, tglx@linutronix.de
-Date: Wed, 06 Nov 2024 16:22:30 +0100
-In-Reply-To: <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
-References: <20241101125659.GY14555@noisy.programming.kicks-ass.net>
-	 <20241101133822.GC689589@pauld.westford.csb>
-	 <20241101142649.GX9767@noisy.programming.kicks-ass.net>
-	 <20241101144225.GD689589@pauld.westford.csb>
-	 <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
-	 <20241101200704.GE689589@pauld.westford.csb>
-	 <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
-	 <20241104130515.GB749675@pauld.westford.csb>
-	 <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
-	 <20241106135346.GL24862@noisy.programming.kicks-ass.net>
-	 <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1730906670; c=relaxed/simple;
+	bh=iWVoDSt16/6SO5SD84UmBUUnrUw2s3QZdnSOMTCJeEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHxXnGfllTBwHrhaQeyHuW2yaaW3lIZR4hu817zJPcx6CWO3pA7Rq/TvuyWPeV8UwoJmqTM2sGmCVgrqTDDciaY4c4aZDLJDrVJu06uDcwPASvKHhShwRbJiI9EPf2BowETbT+qcOhBVSRi75BeXRPcnFlMQjqtUlXZY/VAhH3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=l9QiK9pb; arc=none smtp.client-ip=209.85.219.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e30d1d97d20so5931606276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:24:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1730906666; x=1731511466; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fRspcGjZXal6pVniQMFb2Ir3HusABO8VA+M0NXCiYpo=;
+        b=l9QiK9pb61EDbK+q40+lacw6OCQHJvHJpWYhMVMneOLECvV3+BiQVfOAT7RSuadXb9
+         jIMRJ0j+BserF9oebGk4Hn5tPwd8KEu+3vbETjbehAJE7ZZ0LOC7TrXIwIBTK9lkwrKG
+         /E93qQIryUg1tF+li6tSGnQPmBQBX9UHHdNvmUGpQdSDcJMxuBK/TMZCSbUBt3xy31Dg
+         FI72vjCbHnOYe0QcP+E2jx61qCHshZFAa3zClCIUlQpNEUhMs4WuFA8RmBGXjmdMmwES
+         0z6PaZMqsXTJVe+QpB8r9p0lne5lpnNenHGwIaJp2eOaXpg2bM2TN7Lbtew1hPlDBR16
+         hKSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730906666; x=1731511466;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fRspcGjZXal6pVniQMFb2Ir3HusABO8VA+M0NXCiYpo=;
+        b=CrsPZBfUmip0Sax1chyyOJJ4gjBEU6RlqMc/9XXMqTSZ0WHO7+EO96x3M7JMb6p+Ro
+         IIGI6RTmK2Jgr8JeLkUPBC57B97MdKUQxqnsbvqvN4A2gdzQ99VkIOJvwi47nReZuTjQ
+         ZKxXP8CLPOW3mnrDQjQHhWejp83vzj1kFeSyKAWqkCesjyAxDgc7ifySk+r8PAf4WL5f
+         AwLU5DLj49y+3G7AOPX0uFR6kfrJH3sY7ZH6gnlz6mmQ1lmjbpJWOvkNCIwefOV0SQqN
+         rDlcbW49/5GCtdqnL7xyjvXTijVIO0+t9FXvGUhwIayccOxm9+DHLOEAYTk7sFFzJjeY
+         GmFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcmstfOeOpNdH0DHUV/mHZBgLUsFOPYkk1Z1hBSjTMLiY0LbtpsRm448TbzAjxwLw/Jx2MTC/pfu2Ln28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDT8gItsx2ByGaQ+YYXTE2hiviZwzTq0Y93VwSWyfEa4akpvVu
+	QbUhZm7bqK1GMySb/NZusalSWZW0UjIH1ZsiZVkpQm7hDE95sxX0FwzZwCKIoA==
+X-Google-Smtp-Source: AGHT+IGNIss1AEKTBNYwl9sR8shJAHZm84ppXhYfRfU/5Vn/q6gPrYZLUSgXJrtIV3Yu6ad0dHJMRw==
+X-Received: by 2002:a05:6902:1083:b0:e30:e3f6:75ec with SMTP id 3f1490d57ef6-e30e3f676dbmr22722700276.17.1730906666231;
+        Wed, 06 Nov 2024 07:24:26 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.12.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad19b328sm72514791cf.85.2024.11.06.07.24.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 07:24:25 -0800 (PST)
+Date: Wed, 6 Nov 2024 10:24:23 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Chang Yu <marcus.yu.56@gmail.com>, gregkh@linuxfoundation.org,
+	viro@zeniv.linux.org.uk, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
+Subject: Re: [PATCH] usb: raw_gadget: Add debug logs to a troubleshoot a
+ double-free bug in raw_release.
+Message-ID: <c616753b-2dfa-4d47-8e59-ae6fdf857708@rowland.harvard.edu>
+References: <Zyrsg3bvNu1rswqb@gmail.com>
+ <CA+fCnZeThG-J7kCraPbr4NCpys=jne3dD4sOLT_0h6iPw2YZEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:YwE/yTn50D/ymjOjzwD/x5hL8p+0e89XB7EYwrcRgAg6iJ38Pnz
- CBlZK0nhO1kDlLqh+jivyAVJR70zocURgk6FgGdzl5IUy49zMoKAwpQ6eSQ5cCyoBxNrBUA
- 99bHrnYRpkzHwVCDnYhzQOud43qc9qpG2Jia4R8bqLWK1JzU5QKHAbabh+++A+q1524Lblo
- oLSsQP+0r3eNZVfX+SpnA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cPP1xwkVhn4=;GYmJGtptUdxQyoYQ/NwCW3gPnPY
- lwJg9Gj7zMbB2bgWBiGxNWPBnuC+DfnypV7xrHpMsxIzRfVCgEy7ot0Rh/k9I72oE7DnCzkGV
- qCjsKZNned+uvGQqz5Z9+98hOwX/dobZKNZuPpKfCh89MRO4atDYPmwsRT+d2NBfcfDFv6o/X
- AakMh9WBy73wNAmHvwOR4Wc9kAr6a0WQ4Jq4oMt8mjV7xKqCMj/lQAua335HLK8vb3epvcUVN
- dYiwGKzLwlt6A22x8jMwbB+G/dYMH4QwnjdDLtCixQXPPx91rptgYQGMk2K+ZeL8RXec8DIa3
- SkWeYSepK5tYmMpZa6EZdCbdDajFdRogxUgMt207eDGN/IqB3sF1zBHgz3l6ZZz4Bsw+O8TDJ
- MipjCgCG5mcxe3jWNG23tFo6LXOOFB0JVaDP4mJ/MqynbVphEDHkDb8XFggqp0YXl4sV9mxWE
- wzXniyoIyf73+pzzO2yjj5fVYDmaN1WYOVg460UUsbfJITvToOO1FYmw4BD667gpch6Ds+eUZ
- zEra/yBlUU9RT9C3R/1Hgi0fam7Fo+FVxVAWSrpnl8h7od71dtGuI4JrqcfnYI7mS8VTDeAe0
- YlknA2pPJjJlvnZpTj96IhquqRIUuZBPn/iMnVqy0NQ2tZq/gI6PSY4KyzSd2VYzQbmUyJ42C
- yUXNH1YazIpwIl6WnZ7TqqPbLpZ45jFHIxYUgqPS0eUSWN1HfJpTOSZlUlu4TuIdzAB9/JGo9
- t3ge8GFKVp5O6172eh5xJE2SYPcvzxAW/I+XP0o1wqbh2ijoZhPz1xr5aGWARYPE2eJzzpN4O
- BLBCEitBV457buhmqPJxBTOD1FvHDUiu4jkca4yj0tcflUpiO3kvnq7nbGX2iJMpn2uKGo0kE
- Mf+tJ5DrTZIGvSHti3GSHkiyMmYZw4O0nR0gWiIwC1ExFGI3Jq50g8Smr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+fCnZeThG-J7kCraPbr4NCpys=jne3dD4sOLT_0h6iPw2YZEw@mail.gmail.com>
 
-T24gV2VkLCAyMDI0LTExLTA2IGF0IDE1OjE0ICswMTAwLCBQZXRlciBaaWpsc3RyYSB3cm90ZToN
-Cj4gT24gV2VkLCBOb3YgMDYsIDIwMjQgYXQgMDI6NTM6NDZQTSArMDEwMCwgUGV0ZXIgWmlqbHN0
-cmEgd3JvdGU6DQo+IA0KPiA+IGRpZmYgLS1naXQgYS9rZXJuZWwvc2NoZWQvY29yZS5jIGIva2Vy
-bmVsL3NjaGVkL2NvcmUuYw0KPiA+IGluZGV4IDU0ZDgyYzIxZmM4ZS4uYjA4M2M2Mzg1ZTg4IDEw
-MDY0NA0KPiA+IC0tLSBhL2tlcm5lbC9zY2hlZC9jb3JlLmMNCj4gPiArKysgYi9rZXJuZWwvc2No
-ZWQvY29yZS5jDQo+ID4gQEAgLTM3NzQsMjggKzM3NzQsMzggQEAgdHR3dV9kb19hY3RpdmF0ZShz
-dHJ1Y3QgcnEgKnJxLCBzdHJ1Y3QgdGFza19zdHJ1Y3QgKnAsIGludCB3YWtlX2ZsYWdzLA0KPiA+
-IMKgICovDQo+ID4gwqBzdGF0aWMgaW50IHR0d3VfcnVubmFibGUoc3RydWN0IHRhc2tfc3RydWN0
-ICpwLCBpbnQgd2FrZV9mbGFncykNCj4gPiDCoHsNCj4gPiArwqDCoMKgwqDCoMKgwqBDTEFTUyhf
-X3Rhc2tfcnFfbG9jaywgcnFfZ3VhcmQpKHApOw0KPiA+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBy
-cSAqcnEgPSBycV9ndWFyZC5ycTsNCj4gPiDCoA0KPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghdGFz
-a19vbl9ycV9xdWV1ZWQocCkpDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJl
-dHVybiAwOw0KPiA+ICsNCj4gPiArwqDCoMKgwqDCoMKgwqB1cGRhdGVfcnFfY2xvY2socnEpOw0K
-PiA+ICvCoMKgwqDCoMKgwqDCoGlmIChwLT5zZS5zY2hlZF9kZWxheWVkKSB7DQo+ID4gK8KgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGludCBxdWV1ZV9mbGFncyA9IEVOUVVFVUVfREVMQVlF
-RCB8IEVOUVVFVUVfTk9DTE9DSzsNCj4gPiArDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoC8qDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIFNpbmNlIHNj
-aGVkX2RlbGF5ZWQgbWVhbnMgd2UgY2Fubm90IGJlIGN1cnJlbnQgYW55d2hlcmUsDQo+ID4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIGRlcXVldWUgaXQgaGVyZSBhbmQgaGF2ZSBp
-dCBmYWxsIHRocm91Z2ggdG8gdGhlDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCAqIHNlbGVjdF90YXNrX3JxKCkgY2FzZSBmdXJ0aGVyIGFsb25nIHRoZSB0dHd1KCkgcGF0aC4N
-Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICovDQo+ID4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoGlmIChycS0+bnJfcnVubmluZyA+IDEgJiYgcC0+bnJfY3B1c19h
-bGxvd2VkID4gMSkgew0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgZGVxdWV1ZV90YXNrKHJxLCBwLCBERVFVRVVFX1NMRUVQIHwgcXVldWVfZmxhZ3Mp
-Ow0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0
-dXJuIDA7DQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9DQo+ID4gKw0KPiA+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBlbnF1ZXVlX3Rhc2socnEsIHAsIHF1ZXVl
-X2ZsYWdzKTsNCj4gDQo+IEFuZCB0aGVuIEkgd29uZGVyZWQuLi4gdGhpcyBtZWFucyB0aGF0ICF0
-YXNrX29uX2NwdSgpIGlzIHRydWUgZm9yDQo+IHNjaGVkX2RlbGF5ZWQsIGFuZCB0aHVzIHdlIGNh
-biBtb3ZlIHRoaXMgaW4gdGhlIGJlbG93IGJyYW5jaC4NCj4gDQo+IEJ1dCBhbHNvLCB3ZSBjYW4g
-cHJvYmFibHkgZGVxdWV1ZSBldmVyeSBzdWNoIHRhc2ssIG5vdCBvbmx5DQo+IHNjaGVkX2RlbGF5
-ZWQgb25lcy4NCj4gDQo+ID4gwqDCoMKgwqDCoMKgwqDCoH0NCj4gPiArwqDCoMKgwqDCoMKgwqBp
-ZiAoIXRhc2tfb25fY3B1KHJxLCBwKSkgew0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAvKg0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBXaGVuIG9uX3Jx
-ICYmICFvbl9jcHUgdGhlIHRhc2sgaXMgcHJlZW1wdGVkLCBzZWUgaWYNCj4gPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgICogaXQgc2hvdWxkIHByZWVtcHQgdGhlIHRhc2sgdGhhdCBp
-cyBjdXJyZW50IG5vdy4NCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICovDQo+
-ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHdha2V1cF9wcmVlbXB0KHJxLCBwLCB3
-YWtlX2ZsYWdzKTsNCj4gPiArwqDCoMKgwqDCoMKgwqB9DQo+ID4gK8KgwqDCoMKgwqDCoMKgdHR3
-dV9kb193YWtldXAocCk7DQo+ID4gwqANCj4gPiArwqDCoMKgwqDCoMKgwqByZXR1cm4gMTsNCj4g
-PiDCoH0NCj4gDQo+IA0KPiBZaWVsZGluZyBzb21ldGhpbmcgbGlrZSB0aGlzIG9uIHRvcC4uLiB3
-aGljaCBib290cy4gQnV0IHNpbmNlIEkgZm9yZ290DQo+IHRvIG1ha2UgaXQgYSBmZWF0dXJlLCBJ
-IGNhbid0IGFjdHVhbGx5IHRlbGwgYXQgdGhpcyBwb2ludC4uICpzaWdoKg0KPiANCj4gQW55d2F5
-LCBtb3JlIHRveXMgdG8gcG9rZSBhdCBJIHN1cHBvc2UuDQo+IA0KPiANCj4gZGlmZiAtLWdpdCBh
-L2tlcm5lbC9zY2hlZC9jb3JlLmMgYi9rZXJuZWwvc2NoZWQvY29yZS5jDQo+IGluZGV4IGIwODNj
-NjM4NWU4OC4uNjliMTliYTc3NTk4IDEwMDY0NA0KPiAtLS0gYS9rZXJuZWwvc2NoZWQvY29yZS5j
-DQo+ICsrKyBiL2tlcm5lbC9zY2hlZC9jb3JlLmMNCj4gQEAgLTM3ODEsMjggKzM3ODEsMzIgQEAg
-c3RhdGljIGludCB0dHd1X3J1bm5hYmxlKHN0cnVjdCB0YXNrX3N0cnVjdCAqcCwgaW50IHdha2Vf
-ZmxhZ3MpDQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIDA7DQo+IMKg
-DQo+IMKgwqDCoMKgwqDCoMKgwqB1cGRhdGVfcnFfY2xvY2socnEpOw0KPiAtwqDCoMKgwqDCoMKg
-wqBpZiAocC0+c2Uuc2NoZWRfZGVsYXllZCkgew0KPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgaW50IHF1ZXVlX2ZsYWdzID0gRU5RVUVVRV9ERUxBWUVEIHwgRU5RVUVVRV9OT0NMT0NL
-Ow0KPiArwqDCoMKgwqDCoMKgwqBpZiAoIXRhc2tfb25fY3B1KHJxLCBwKSkgew0KPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaW50IHF1ZXVlX2ZsYWdzID0gREVRVUVVRV9OT0NMT0NL
-Ow0KPiArDQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAocC0+c2Uuc2NoZWRf
-ZGVsYXllZCkNCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqBxdWV1ZV9mbGFncyB8PSBERVFVRVVFX0RFTEFZRUQ7DQo+IMKgDQo+IMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgLyoNCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAq
-IFNpbmNlIHNjaGVkX2RlbGF5ZWQgbWVhbnMgd2UgY2Fubm90IGJlIGN1cnJlbnQgYW55d2hlcmUs
-DQo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBkZXF1ZXVlIGl0IGhlcmUgYW5k
-IGhhdmUgaXQgZmFsbCB0aHJvdWdoIHRvIHRoZQ0KPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgICogc2VsZWN0X3Rhc2tfcnEoKSBjYXNlIGZ1cnRoZXIgYWxvbmcgdGhlIHR0d3UoKSBw
-YXRoLg0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICogU2luY2Ugd2UncmUgbm90
-IGN1cnJlbnQgYW55d2hlcmUgKkFORCogaG9sZCBwaV9sb2NrLCBkZXF1ZXVlDQo+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBpdCBoZXJlIGFuZCBoYXZlIGl0IGZhbGwgdGhyb3Vn
-aCB0byB0aGUgc2VsZWN0X3Rhc2tfcnEoKQ0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgICogY2FzZSBmdXJ0aGVyIGFsb25nIHRoZSB0dHd1KCkgcGF0aC4NCj4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgKi8NCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqBpZiAocnEtPm5yX3J1bm5pbmcgPiAxICYmIHAtPm5yX2NwdXNfYWxsb3dlZCA+IDEpIHsNCj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGVxdWV1ZV90
-YXNrKHJxLCBwLCBERVFVRVVFX1NMRUVQIHwgcXVldWVfZmxhZ3MpOw0KPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gMDsNCj4gwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9DQoNCkhtLCBpZiB3ZSB0cnkgdG8gYm91bmNlIGEgcHJl
-ZW1wdGVkIHRhc2sgYW5kIGZhaWwsIHRoZSB3YWtldXBfcHJlZW1wdCgpDQpjYWxsIHdvbid0IGhh
-cHBlbi4NCg0KQm91bmNpbmcgcHJlZW1wdGVkIHRhc2tzIGlzIGRvdWJsZSBlZGdlZCBzd29yZC4u
-IG9uIHRoZSBvbmUgaGFuZCwgaXQncw0KYSBodWdlIHdpbiBpZiBib3VuY2Ugd29ya3MgZm9yIGNv
-bW11bmljYXRpbmcgdGFza3Mgd2hvIHdpbGwgb3RoZXJ3aXNlDQpiZSB0YWxraW5nIGFyb3VuZCB0
-aGUgbm90LW15LWJ1ZGR5IG1hbi1pbi10aGUtbWlkZGxlIHdobyBkaWQgdGhlDQpwcmVlbXB0aW5n
-LCBidXQgb24gdGhlIG90aGVyLCB3aGVuIFBFTFQgaGFzIGl0cyB3aGl0ZSBoYXQgb24gKGFsc28g
-aGFzDQphIGJsYWNrIG9uZSkgYW5kIGhhcyBidWRkaWVzIHBhaXJpbmcgdXAgbmljZWx5IGluIGFu
-IGFwcHJvYWNoaW5nDQpzYXR1cmF0aW9uIHNjZW5hcmlvLCBib3VuY2VzIGRpc3R1cmIgaXQsIGFk
-ZCBjaGFvcy4gIER1bm5vLg0KDQo+IMKgDQo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqBlbnF1ZXVlX3Rhc2socnEsIHAsIHF1ZXVlX2ZsYWdzKTsNCj4gLcKgwqDCoMKgwqDCoMKgfQ0K
-PiAtwqDCoMKgwqDCoMKgwqBpZiAoIXRhc2tfb25fY3B1KHJxLCBwKSkgew0KPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKHAtPnNlLnNjaGVkX2RlbGF5ZWQpDQo+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZW5xdWV1ZV90YXNrKHJxLCBw
-LCBxdWV1ZV9mbGFncyk7DQo+ICsNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAv
-Kg0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIFdoZW4gb25fcnEgJiYgIW9u
-X2NwdSB0aGUgdGFzayBpcyBwcmVlbXB0ZWQsIHNlZSBpZg0KPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCAqIGl0IHNob3VsZCBwcmVlbXB0IHRoZSB0YXNrIHRoYXQgaXMgY3VycmVu
-dCBub3cuDQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICovDQo+IMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgd2FrZXVwX3ByZWVtcHQocnEsIHAsIHdha2VfZmxhZ3Mp
-Ow0KPiDCoMKgwqDCoMKgwqDCoMKgfQ0KPiArwqDCoMKgwqDCoMKgwqBTQ0hFRF9XQVJOX09OKHAt
-PnNlLnNjaGVkX2RlbGF5ZWQpOw0KPiDCoMKgwqDCoMKgwqDCoMKgdHR3dV9kb193YWtldXAocCk7
-DQo+IMKgDQo+IMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gMTsNCg0K
+On Wed, Nov 06, 2024 at 01:35:27PM +0900, Andrey Konovalov wrote:
+> On Wed, Nov 6, 2024 at 1:11 PM Chang Yu <marcus.yu.56@gmail.com> wrote:
+> >
+> > syzkaller reported a double free bug
+> > (https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c) in
+> > raw_release.
+> >
+> > From the stack traces it looks like either raw_release was invoked
+> > twice or there were some between kref_get in raw_ioctl_run and
+> > kref_put raw_release. But these should not be possible. We need
+> > more logs to understand the cause.
+> >
+> > Make raw_release and raw_ioctl_run report the ref count before
+> > and after get/put to help debug this.
+> >
+> > Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
+> > Reported-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
+> > Link: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
+> > ---
+> >  drivers/usb/gadget/legacy/raw_gadget.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
+> > index 112fd18d8c99..ac4e319c743f 100644
+> > --- a/drivers/usb/gadget/legacy/raw_gadget.c
+> > +++ b/drivers/usb/gadget/legacy/raw_gadget.c
+> > @@ -194,6 +194,8 @@ static struct raw_dev *dev_new(void)
+> >                 return NULL;
+> >         /* Matches kref_put() in raw_release(). */
+> >         kref_init(&dev->count);
+> > +       dev_dbg(dev->dev, "%s kref count initialized: %d\n",
+> > +               __func__, kref_read(&dev->count));
+> >         spin_lock_init(&dev->lock);
+> >         init_completion(&dev->ep0_done);
+> >         raw_event_queue_init(&dev->queue);
+> > @@ -464,13 +466,21 @@ static int raw_release(struct inode *inode, struct file *fd)
+> >                         dev_err(dev->dev,
+> >                                 "usb_gadget_unregister_driver() failed with %d\n",
+> >                                 ret);
+> > +               dev_dbg(dev->dev, "%s kref count before unregister driver put: %d\n",
+> > +                               __func__, kref_read(&dev->count));
+> >                 /* Matches kref_get() in raw_ioctl_run(). */
+> >                 kref_put(&dev->count, dev_free);
+> > +               dev_dbg(dev->dev, "%s kref count after unregister driver put: %d\n",
+> > +                               __func__, kref_read(&dev->count));
+> >         }
+> >
+> >  out_put:
+> > +       dev_dbg(dev->dev, "%s kref count before final put: %d\n",
+> > +                       __func__, kref_read(&dev->count));
+> >         /* Matches dev_new() in raw_open(). */
+> >         kref_put(&dev->count, dev_free);
+> > +       dev_dbg(dev->dev, "%s kref count after final put: %d\n",
+> > +                       __func__, kref_read(&dev->count));
+> >         return ret;
+> >  }
+> >
+> > @@ -603,8 +613,12 @@ static int raw_ioctl_run(struct raw_dev *dev, unsigned long value)
+> >         }
+> >         dev->gadget_registered = true;
+> >         dev->state = STATE_DEV_RUNNING;
+> > +       dev_dbg(dev->dev, "%s kref count before get: %d\n",
+> > +                       __func__, kref_read(&dev->count));
+> >         /* Matches kref_put() in raw_release(). */
+> >         kref_get(&dev->count);
+> > +       dev_dbg(dev->dev, "%s kref count after get: %d\n",
+> > +                       __func__, kref_read(&dev->count));
+> >
+> >  out_unlock:
+> >         spin_unlock_irqrestore(&dev->lock, flags);
+> > --
+> > 2.47.0
+> >
+> 
+> Hi Chang,
+> 
+> This patch looks very specific to the bug we're trying to debug - I
+> don't think it makes sense to apply it to the mainline.
+> 
+> What you can do instead is ask syzbot to run the reproducer it has
+> with this patch applied via the #syz test command.
+> 
+> Thank you!
+
+In addition you should change your dev_dbg() calls to dev_info(), 
+because dev_dbg() output will not show up in the syzbot console log.
+
+Alan Stern
 
