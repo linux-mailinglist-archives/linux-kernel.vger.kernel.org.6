@@ -1,95 +1,60 @@
-Return-Path: <linux-kernel+bounces-397959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA899BE2FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7EE9BE302
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A62D5B22533
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606651C2312B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1FA1DB527;
-	Wed,  6 Nov 2024 09:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E421DA63F;
+	Wed,  6 Nov 2024 09:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hhP5clCP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFVBn55P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAF71D54EE;
-	Wed,  6 Nov 2024 09:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C791D54EE;
+	Wed,  6 Nov 2024 09:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886384; cv=none; b=LAok+gNJtk1K6e84uPGCfrs5n9ePKeLz+9HWDOo/E7ubvdgrnfzMVzPzQ419tZ/MwlGBUjiSpLAFfyy6+PmOtDaQ3Spo+V+iluuW+iXaXG4KAjUNlQktNHbkfZekdlLZKgxnZjVjGhUm2ZoW1ctQbZT31FDZfS2eYZZwaT46Xtw=
+	t=1730886388; cv=none; b=XRr45CpZocpgxRDxXWDQ73VmFghJmxQvZPQ4p5+7OYDgnba1Mnn+eSS1wNYpuSWK+PFPS6DdMb8H9QrK6J8HDZ1NHWqJEsQbCqxpHu20NAXmvpBrON7x2y0bqgl18Ae47nMN5CEWExr96604rygZxGcHjTV/WUjkARVTyKfrrUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886384; c=relaxed/simple;
-	bh=FCzq19ZQriPVyzh0sTZo3Dh2ni0fniF4xDpwOt2piiA=;
+	s=arc-20240116; t=1730886388; c=relaxed/simple;
+	bh=YJbgmhCR1V4d2ghT3gDkyVoynkwejRu4bVzz3P6hpGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UIgbaM1X+3xWGLMGKZ44aL9aQ1uFhl+Pw8+gXzIm+pSETsv7YTNAt0fzIiampwqFy5iEh/qFbfQLE3kSLmPr78+gdAsSifZ8mz9DiKTXwGeZu6I1af+ae1cWpj1rGVH+3nyd9KYaxblNGZGujj9scdB9Qo9F/J4GNNMBq7oqI10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hhP5clCP; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730886383; x=1762422383;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FCzq19ZQriPVyzh0sTZo3Dh2ni0fniF4xDpwOt2piiA=;
-  b=hhP5clCPYFqwEub2gwO2inkLyG49b1ocQXqt2V2DKLK7UlmKVo/xAfZP
-   jJSRQy3DfyQjwGce+OcZR+7SJMcggsD43vbPlGT5yMQZK2QSOHH3WvgGf
-   CTWnc+02mFK7jNXjh1xR+0QHvqHWlzmymzSffUjNb5KiyQl0sUVwhLSdF
-   spmnjqNH9FsngJlTEwnsjMtfsPBHCN3z3LYjXB0a0MFOP/kRs8BxUR+0h
-   B3j9s62tJhikmndZkoou4Cx+fLM088Pm6fLpoVGpFssYxhY5ELIQMc5Y1
-   Y9+IgyUQql2ujhiBYq59UacoWdg7HJNrtOa2Hv0SpnV7MxaYLcI3dwJG6
-   g==;
-X-CSE-ConnectionGUID: IsVyg6vXSzq0IIn/JbLsaA==
-X-CSE-MsgGUID: tnlm40tQSgClbGagK225kw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30788783"
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="30788783"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 01:46:21 -0800
-X-CSE-ConnectionGUID: k2/7LShbSDaGOr4szaPsBw==
-X-CSE-MsgGUID: pcvQjkT9RbWo30mUfZPUFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="84847233"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 01:46:07 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 2169A11F9C3;
-	Wed,  6 Nov 2024 11:46:05 +0200 (EET)
-Date: Wed, 6 Nov 2024 09:46:05 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, Liu Ying <victor.liu@nxp.com>,
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org,
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se, jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
-	airlied@gmail.com, simona@ffwll.ch, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com,
-	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-	will@kernel.org, hverkuil@xs4all.nl,
-	tomi.valkeinen@ideasonboard.com, quic_bjorande@quicinc.com,
-	geert+renesas@glider.be, arnd@arndb.de, nfraprado@collabora.com,
-	thierry.reding@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: (subset) [PATCH v5 00/13] Add ITE IT6263 LVDS to HDMI converter
- support
-Message-ID: <Zys63S2xy-wdwQ8P@kekkonen.localdomain>
-References: <20241104032806.611890-1-victor.liu@nxp.com>
- <173080602214.231309.12977765173766280536.b4-ty@linaro.org>
- <20241105-secret-seriema-of-anger-7acfdf@houat>
- <CD810D31-F9C5-499D-86CF-B94BEF82449A@linaro.org>
- <20241105-succinct-pygmy-dingo-4db79c@houat>
- <7C2A2BDC-07E8-4ED7-B65B-BD7E4E5DC53F@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=omuANWGgUvjHeHVP11eRwjXWkCiSL56PhXOsTIOzbwoIs1i8nGgnllYoUI6MzvBiou11Ftl22xAvm380mc7hLwvI2Tc/sZf/9lnay5SH7h2Ts5+K+kHf8x1glC0LaYxDr+9sqAlZEbx2QKlhQMsHhDLWTxdoMW63sWorYQSgRP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFVBn55P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 724EEC4CED0;
+	Wed,  6 Nov 2024 09:46:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730886385;
+	bh=YJbgmhCR1V4d2ghT3gDkyVoynkwejRu4bVzz3P6hpGw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dFVBn55PbfH3tjFxeLtezBfNLp59aV7gxETVJDmk52/fh1Rjjse3UZt9yME34nL8S
+	 OIxuVSokPbVhx0AXFP3N4DlX6Adnqq55JqGF62KakAIkyqpglWd/XEAas4flaKbg0j
+	 Ucl3Vouvd69O7xzCf4oIXpsIIKM5rEQ1JULrXGaAVjg2nu5fVB5pKJ/Bwa/mxlKIas
+	 vKuseC6jzQeBvVF6e8bQWjkEtaaM3IbWsUI7zyiDhlzRX2y0WVkt3uP0oHZ7DRcQ16
+	 qrpekVOnofESuQRUXGjU5U24ONJ6Rz/1M/Ui2dS2/mXJbuMA5jcp5zy20+eHgSHwf9
+	 Oz5HL7JbyJShQ==
+Date: Wed, 6 Nov 2024 10:46:22 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Liu Peibao <loven.liu@jaguarmicro.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Jan Dabros <jsd@semihalf.com>, "xiaowu . ding" <xiaowu.ding@jaguarmicro.com>, 
+	Angus Chen <angus.chen@jaguarmicro.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND TO CC MAILLIST] i2c: designware: fix master
+ holding SCL low when I2C_DYNAMIC_TAR_UPDATE not set
+Message-ID: <lv7hm72ngmjohh3hd3tsiawh47pjcyq76iw3weboytfcywttmt@jjrcuwan74rw>
+References: <20241101081243.1230797-1-loven.liu@jaguarmicro.com>
+ <ZySU7bEvct4_FbBX@smile.fi.intel.com>
+ <3580ce2a-963b-4a50-98b5-52ecac43871c@jaguarmicro.com>
+ <anhqlov5vdsicmopulnvbaerhctjaauwsvl6nlc3llsh4hi5sn@d3jmeqxnlhpl>
+ <d2abc63a-884d-4d48-b652-56989e55d0cd@jaguarmicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,52 +63,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7C2A2BDC-07E8-4ED7-B65B-BD7E4E5DC53F@linaro.org>
+In-Reply-To: <d2abc63a-884d-4d48-b652-56989e55d0cd@jaguarmicro.com>
 
-Hi Dmitry, others,
+Hi Liu,
 
-On Wed, Nov 06, 2024 at 09:20:12AM +0000, Dmitry Baryshkov wrote:
-> On 5 November 2024 17:39:40 GMT, Maxime Ripard <mripard@kernel.org> wrote:
-> >On Tue, Nov 05, 2024 at 05:33:21PM +0000, Dmitry Baryshkov wrote:
-> >> On 5 November 2024 16:13:26 GMT, Maxime Ripard <mripard@kernel.org> wrote:
-> >> >On Tue, Nov 05, 2024 at 01:28:48PM +0200, Dmitry Baryshkov wrote:
-> >> >> On Mon, 04 Nov 2024 11:27:53 +0800, Liu Ying wrote:
-> >> >> > This patch series aims to add ITE IT6263 LVDS to HDMI converter on
-> >> >> > i.MX8MP EVK.  Combined with LVDS receiver and HDMI 1.4a transmitter,
-> >> >> > the IT6263 supports LVDS input and HDMI 1.4 output by conversion
-> >> >> > function.  IT6263 product link can be found at [1].
-> >> >> > 
-> >> >> > Patch 1 is a preparation patch to allow display mode of an existing
-> >> >> > panel to pass the added mode validation logic in patch 3.
-> >> >> > 
-> >> >> > [...]
-> >> >> 
-> >> >> Applied to drm-misc-next, thanks!
-> >> >> 
-> >> >> [04/13] media: uapi: Add MEDIA_BUS_FMT_RGB101010_1X7X5_{SPWG, JEIDA}
-> >> >>         commit: 5205b63099507a84458075c3ca7e648407e6c8cc
-> >> >
-> >> >Where's the immutable branch Laurent asked for?
-> >> 
-> >> The patch set has been picked up after getting an Ack from Sakari,
-> >> before Laurent's email. I am sorry if I rushed it in.
+On Wed, Nov 06, 2024 at 03:27:42PM +0800, Liu Peibao wrote:
+> On 2024/11/6 4:30, Andi Shyti wrote:
+> > On Fri, Nov 01, 2024 at 06:18:36PM +0800, Liu Peibao wrote:
+> >> On 2024/11/1 16:44, Andy Shevchenko wrote:
+> >>> External Mail: This email originated from OUTSIDE of the organization!
+> >>> Do not click links, open attachments or provide ANY information unless you recognize the sender and know the content is safe.
+> >>>
+> >>> On Fri, Nov 01, 2024 at 04:12:43PM +0800, Liu Peibao wrote:
+> >>>> When Tx FIFO empty and last command with no STOP bit set, the master
+> >>>> holds SCL low. If I2C_DYNAMIC_TAR_UPDATE is not set, BIT(13) MST_ON_HOLD
+> >>>> of IC_RAW_INTR_STAT is not Enabled, causing the __i2c_dw_disable()
+> >>>> timeout. This is quiet similar as commit 2409205acd3c ("i2c: designware:
+> >>>> fix __i2c_dw_disable() in case master is holding SCL low") mentioned.
+> >>>> Check BIT(7) MST_HOLD_TX_FIFO_EMPTY in IC_STATUS also which is available
+> >>>> when IC_STAT_FOR_CLK_STRETCH is set.
+> >>>
+> >>> Who are those people? Why Angus Chen is not a committer of the change?
+> >>> Please, consult with the Submitting Patches documentation to clarify on these
+> >>> tags.
+> >>>
+> >>
+> >> We have discussed and analyzed this issue together. I developed this patch.
+> >> This patch was also reviewed by Angus Chen and Xiaowu Ding.
+> > 
+> > The tag list follows a specific order: tags are sorted
+> > sequentially, with the last Signed-off-by (SoB) being the person
+> > sending the patch, which is your email.
+> > 
+> > The other SoBs are fine, but if someone contributed to
+> > development, consider using "Co-developed-by" instead.
+> > 
+> > If someone tested the patch, use "Tested-by"; if they reviewed
+> > it, use "Reviewed-by"; and if they simply agreed with the
+> > change, use "Acked-by."
+> > 
+> > Please ensure that "Reviewed-by," "Tested-by," or "Acked-by"
+> > tags are visible in the mailing list. I do not typically accept
+> > offline R-b, T-b, or A-b.
+> > 
+> > This is why Andy asked about those contributors. Three SoBs can
+> > seem unusual, but it's acceptable if justified. Reviewers may
+> > ask for clarification, and it's fine to specify contributors'
+> > roles. You can also provide extra details after the "---"
+> > delimiter.
 > >
-> >I mean, this was less than a day after you've asked that question
-> >yourself. Waiting less than a day for a mail to be answered seems a bit
-> >short, especially when there's no rush to merge these patches in the
-> >first place.
 > 
-> Point noted. I should have been more patient. As a lame excuse I could point out that the patch has been up for review / comments for quite a while, etc, etc, but this is really lame. 
+> I think this tag list should be much better than the original. ^-^
+> 
+> Fixes: 2409205acd3c ("i2c: designware: fix __i2c_dw_disable() in case master is holding SCL low")
+> Co-developed-by: xiaowu.ding <xiaowu.ding@jaguarmicro.com>
+> Signed-off-by: xiaowu.ding <xiaowu.ding@jaguarmicro.com>
+> Co-developed-by: Angus Chen <angus.chen@jaguarmicro.com>
+> Signed-off-by: Angus Chen <angus.chen@jaguarmicro.com>
+> Signed-off-by: Liu Peibao <loven.liu@jaguarmicro.com>
 
-The patch had been around for a few weeks already, I don't see this having
-been rushed in. It's a bit a matter of taste whether an immutable branch is
-necessary here, I thought it wouldn't be. I can also ask for one in the
-future in cases where there's even slightly more than an improbable
-possibility of a merge conflict going forward: it won't hurt in any case to
-have one.
+Thanks, this make much more sense now.
 
--- 
-Kind regards,
+Just one question, do we want to keep xiaowu.ding or Xiaowu Ding?
+Can I change it to the second way? It looks better and that's how
+it's normally signed.
 
-Sakari Ailus
+Andi
+
+> >> And in this case, should I replace the "SoBs" with "Reviewed-by"?
+> >>
+> >>> Also, sounds to me that Fixes tag is needed.
+> >>>
+> >>
+> >> How about this tag:
+> >> Fixes: 2409205acd3c ("i2c: designware: fix __i2c_dw_disable() in case master is holding SCL low")
+> > 
+> > Sounds reasonable.
+> > 
+> > For accepting this patch I need an ack from either Andy, Jarkko
+> > or Mika.
+> > 
+> > As long as the fixes are limited to the commit message there is
+> > no need to resend the patch.
+> > 
+> > Thanks,
+> > Andi
+> 
+> Got it!
+> 
+> BR,
+> Peibao
 
