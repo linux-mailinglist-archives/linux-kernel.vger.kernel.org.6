@@ -1,190 +1,154 @@
-Return-Path: <linux-kernel+bounces-397808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FB09BE0E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:28:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 958FB9BE0E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:28:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132A61C20B77
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273611F23C4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59ED1D9346;
-	Wed,  6 Nov 2024 08:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E721D5AC2;
+	Wed,  6 Nov 2024 08:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXUX+5Yl"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J4Y5gozX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6C31D8DE1;
-	Wed,  6 Nov 2024 08:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5891D5178;
+	Wed,  6 Nov 2024 08:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730881238; cv=none; b=nRTst1xVJlPNnilCE2taWcMOdQeCtM+HGkw0UBY/NstukUVXp7CLLXGBuEB+Y/yAUwSc5UVORl3HDFpkYQi+xvLlIS8+1B8QUL5vY9cJVczlI6CCAuHSbWJLs+xab1DBTqfemhn3kEssta4qqe/PbPvJvuG6MzZH96Apg3ixzSg=
+	t=1730881343; cv=none; b=uzSSWzZwgKM5ufe+2STyx7L3W71XSBR7AxfB7hGvJO+sgsjVSE2LGhbMoh7VUboNsGhvzpRE5RtpnMOD4hlMiW8Bs1C5jbhtaXNjEDZl93fIfEJ+8P0qJcz7nU/R3BKixp+mxq/bn+b90tN6eAHmHQ1+gSMD6q+EUdAtaWfJ5To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730881238; c=relaxed/simple;
-	bh=G68askeglz0Zycs/ZtvuBkulP5B1kE34vWfd5VV4eaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aqVxAQV8gDUFfptzrZOATW2xQw235AlFAoy/KzoBOVpy3jrBR5zUwMZJB280UvwVFjeJzeZUjNMpm1ZH5t5d8+lFKtiQCzfwCtGhSlXAUuvMdx7oVylI5i5sx8v+txSPCfV5nQyW2nCsCpy4REVkKexHDINxn03oso/OG6eQhA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXUX+5Yl; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6cbce8d830dso41937896d6.1;
-        Wed, 06 Nov 2024 00:20:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730881235; x=1731486035; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9liWDNx4iphIAePTwPX4+XTvgFUOWAVBEnwX8vIu5vo=;
-        b=NXUX+5YlbyFvWICynm7XRGbB2jvQBiL2z+LZ5OOz0gT7R6LjBL1B83DnD5YzhDD4CW
-         TP5qUqsi5TkuCU1lfCX7HHc4kPI6uPj0au6nZfp/evn6x4HiuME/mDSAcipYwnVxj9MO
-         dhEz7OslBbsV4pmtmwLJ86u3aKoUBqDmN1lZGI5jmpx591KGgX47qxMVRnswjafjQIsd
-         wLPwT/BvZoIawcVQs6i9h/01yEL9C5Wcdh+8D4Kop7M+23i0b8cdQdJTNo++a+m1/c3D
-         vOxygm6qnYzvPKsoxI9+pVzq/zZ1T6eJerZJb5ENWaGzBXuVv66QX/DSwX9j0yYyIz7J
-         rDCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730881235; x=1731486035;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9liWDNx4iphIAePTwPX4+XTvgFUOWAVBEnwX8vIu5vo=;
-        b=l4dtklIsStN3DAq9ID1PaRKgpiHaVmEM1+8n2j4iIu7Edu7HNu68ggd8/LtFkgsCK/
-         Jl3+7m2GcWvXszzdx7vdVMfqXNS0O5tWmql6V9s6lfKnO7/aTsXl5YkqfM+vrwpbgpLw
-         1DehA9+8sBjP2sh1s9FYEhpt2ANlANYlv+/L6tzYzVmLDKFkCu+NM9MW+U34MyRCXNd3
-         YCcEQrn6VTKzJcvuO2/uVF+q3s8yejMaxUaQj+dhPpU6QpLWKWRubZkAEdM+xsqSKrUs
-         r2Fe3b+qcoo8a2IsQznF56lyJao7dC2hfXBdLNAhBp8uDYeE24k7UM3iO2MurI3YR669
-         /7Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCX053i24nKtfTh+FEsh37uo6uKLqoLVBP8dVWeYO858Y30gtPLgGtdfiTFaIu+ZWY7i43KEMLcgw57OKCdJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5AwW/fcR6PqEhQezAN7EPNJed23Kx4HXi99880phZZOkKOjMc
-	DaPn50pGk5RIbBAE+9AJQ83nDqH5z5E9AyAIxCzSn9F86y9SDWJaLN2zalxIrmso1y/99CM7LdQ
-	jrLKkiWErF9HpM6QZc5YnP+Toibg=
-X-Google-Smtp-Source: AGHT+IGPQp/P6EbblcA1XsCvVA7c6e1OroBMyYoa1OCNRugD2V0+QX4orBfHxTKkeRKPbOoUwqRYvHYBCok2SXeNnEs=
-X-Received: by 2002:a05:6214:3c8b:b0:6ce:3cfb:d158 with SMTP id
- 6a1803df08f44-6d35c14e8bfmr268227306d6.26.1730881235243; Wed, 06 Nov 2024
- 00:20:35 -0800 (PST)
+	s=arc-20240116; t=1730881343; c=relaxed/simple;
+	bh=xZIKcH8xCyb0GTaVvSB3BqXD9mW6/nv+FXboxz/GI74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CVr6sKE/yPlJxb+kymBZQZb/LEUpaEjXSPcdZRIdAUL1v0FHPKQnzFNV4I0FuL2d5aqu7dWXjdC4ssLVAcmHV2iDxCz56zvMW5nzHBvLNB/4pDIOTTfMP9gjG2ySbQF6UqBoy6jKPZrY95To2KddQzslZ+3+atZ5bXw0UQ6wSqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J4Y5gozX; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730881341; x=1762417341;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xZIKcH8xCyb0GTaVvSB3BqXD9mW6/nv+FXboxz/GI74=;
+  b=J4Y5gozXGIwkiiRR7mupiEpAAJk8DHqwPQgnpmDdDKT3Wo3kimTAgeD+
+   UB1odgzjEbfnVsTwS6oVs5hzShTjR0Y5RTMUh2adeKco5RBsu64R1T4sy
+   cpafDYq6Q592ruTvtBcQnI2aNUIqk2fjzNPIpIKKZU/hS6/VDcZyZ10BY
+   nFj09v/CcNQny2N2Z4uPZcd9MUkcCqPmMQgxWIjmbf6OMy7rE7+zf36uD
+   k1HmFaxss4vil+FFgA3j5xZYjs4bGxPXapILWqjt8W8jUFI4BlgfTk4xE
+   chwzvAzAq/RYf92zh9zS8+cDgUUyFpkRc+mKAYQIS71uZetHZofuxvVh/
+   Q==;
+X-CSE-ConnectionGUID: cqrFxJ7hSP+IRMEWKde4pw==
+X-CSE-MsgGUID: +lLpo7moTbyE4AbTOKZBxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30886722"
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="30886722"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 00:22:20 -0800
+X-CSE-ConnectionGUID: RtbyNr8cRXG/qvBKAWPtFQ==
+X-CSE-MsgGUID: LZopDLTsR6u0Qj0aY9xbhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="89544488"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 06 Nov 2024 00:22:18 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8bIt-000n50-0a;
+	Wed, 06 Nov 2024 08:22:15 +0000
+Date: Wed, 6 Nov 2024 16:22:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: James Houghton <jthoughton@google.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, David Matlack <dmatlack@google.com>,
+	David Rientjes <rientjes@google.com>,
+	James Houghton <jthoughton@google.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>,
+	Yu Zhao <yuzhao@google.com>,
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 04/11] KVM: x86/mmu: Relax locking for
+ kvm_test_age_gfn and kvm_age_gfn
+Message-ID: <202411061526.RAuCXKJh-lkp@intel.com>
+References: <20241105184333.2305744-5-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxi36iUbYa27c81pNpO7T0vR=rY63b7KACJLP6b4HTJGXQ@mail.gmail.com>
- <tencent_08A4E8A2ED86CE7C793E6CC02FBD6FF0960A@qq.com>
-In-Reply-To: <tencent_08A4E8A2ED86CE7C793E6CC02FBD6FF0960A@qq.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 6 Nov 2024 09:20:24 +0100
-Message-ID: <CAOQ4uxi-G3u0fXDdD4a_5p_HAFSh7oJ5C0w5RZeDh=jM353qvg@mail.gmail.com>
-Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_encode_real_fh
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105184333.2305744-5-jthoughton@google.com>
 
-On Wed, Nov 6, 2024 at 3:43=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> w=
-rote:
->
-> On Mon, 4 Nov 2024 20:30:41 +0100, Amir Goldstein <amir73il@gmail.com> wr=
-ote:
-> > > When the memory is insufficient, the allocation of fh fails, which ca=
-uses
-> > > the failure to obtain the dentry fid, and finally causes the dentry e=
-ncoding
-> > > to fail.
-> > > Retry is used to avoid the failure of fh allocation caused by tempora=
-ry
-> > > insufficient memory.
-> > >
-> > > #syz test
-> > >
-> > > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-> > > index 2ed6ad641a20..1e027a3cf084 100644
-> > > --- a/fs/overlayfs/copy_up.c
-> > > +++ b/fs/overlayfs/copy_up.c
-> > > @@ -423,15 +423,22 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs=
- *ofs, struct dentry *real,
-> > >         int fh_type, dwords;
-> > >         int buflen =3D MAX_HANDLE_SZ;
-> > >         uuid_t *uuid =3D &real->d_sb->s_uuid;
-> > > -       int err;
-> > > +       int err, rtt =3D 0;
-> > >
-> > >         /* Make sure the real fid stays 32bit aligned */
-> > >         BUILD_BUG_ON(OVL_FH_FID_OFFSET % 4);
-> > >         BUILD_BUG_ON(MAX_HANDLE_SZ + OVL_FH_FID_OFFSET > 255);
-> > >
-> > > +retry:
-> > >         fh =3D kzalloc(buflen + OVL_FH_FID_OFFSET, GFP_KERNEL);
-> > > -       if (!fh)
-> > > +       if (!fh) {
-> > > +               if (!rtt) {
-> > > +                       cond_resched();
-> > > +                       rtt++;
-> > > +                       goto retry;
-> > > +               }
-> > >                 return ERR_PTR(-ENOMEM);
-> > > +       }
-> > >
-> > >         /*
-> > >          * We encode a non-connectable file handle for non-dir, becau=
-se we
-> > >
-> >
-> > This endless loop is out of the question and anyway, syzbot reported
-> > a WARN_ON in line 448:
-> >             WARN_ON(fh_type =3D=3D FILEID_INVALID))
-> >
-> > How does that have to do with memory allocation failure?
-> > What am I missing?
-> Look following log, it in https://syzkaller.appspot.com/text?tag=3DCrashL=
-og&x=3D178bf640580000:
-> [   64.050342][ T5103] FAULT_INJECTION: forcing a failure.
-> [   64.050342][ T5103] name failslab, interval 1, probability 0, space 0,=
- times 0
-> [   64.055933][ T5103] CPU: 0 UID: 0 PID: 5103 Comm: syz-executor195 Not =
-tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-> [   64.060023][ T5103] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)=
-, BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> [   64.063941][ T5103] Call Trace:
-> [   64.065199][ T5103]  <TASK>
-> [   64.066296][ T5103]  dump_stack_lvl+0x241/0x360
-> [   64.068028][ T5103]  ? __pfx_dump_stack_lvl+0x10/0x10
-> [   64.069939][ T5103]  ? __pfx__printk+0x10/0x10
-> [   64.071667][ T5103]  ? __kmalloc_cache_noprof+0x44/0x2c0
-> [   64.073756][ T5103]  ? __pfx___might_resched+0x10/0x10
-> [   64.075720][ T5103]  should_fail_ex+0x3b0/0x4e0
-> [   64.077525][ T5103]  should_failslab+0xac/0x100
-> [   64.079341][ T5103]  ? ovl_encode_real_fh+0xdf/0x410
-> [   64.081295][ T5103]  __kmalloc_cache_noprof+0x6c/0x2c0
-> [   64.083282][ T5103]  ? dput+0x37/0x2b0
-> [   64.084758][ T5103]  ovl_encode_real_fh+0xdf/0x410
-> [   64.086578][ T5103]  ? __pfx_ovl_encode_real_fh+0x10/0x10
-> [   64.088687][ T5103]  ? _raw_spin_unlock+0x28/0x50
-> [   64.090550][ T5103]  ovl_encode_fh+0x388/0xc20
-> [   64.092281][ T5103]  exportfs_encode_fh+0x1bd/0x3e0
-> [   64.094122][ T5103]  ovl_encode_real_fh+0x129/0x410
-> [   64.095883][ T5103]  ? __pfx_ovl_encode_real_fh+0x10/0x10
-> [   64.097852][ T5103]  ? bpf_lsm_capable+0x9/0x10
-> [   64.099620][ T5103]  ? capable+0x89/0xe0
-> [   64.101064][ T5103]  ovl_copy_up_flags+0x1068/0x46f0
+Hi James,
 
-I see. it is nested overlayfs, so a memory allocation failure in the lower
-overlayfs, causes ovl_encode_fh() to return FILEID_INVALID.
+kernel test robot noticed the following build warnings:
 
-> >
-> > Probably this WARN_ON as well as the one in line 446 should be
-> > relaxed because it is perfectly possible for fs to return negative or
-> > FILEID_INVALID for encoding a file handle even if fs supports encoding
-> > file handles.
-> >
+[auto build test WARNING on a27e0515592ec9ca28e0d027f42568c47b314784]
 
-As I wrote, the correct fix is to relax the WARN_ON from
-fh_type =3D=3D FILEID_INVALID and fh_type < 0 conditions because
-those are valid return values from filesystems.
+url:    https://github.com/intel-lab-lkp/linux/commits/James-Houghton/KVM-Remove-kvm_handle_hva_range-helper-functions/20241106-025133
+base:   a27e0515592ec9ca28e0d027f42568c47b314784
+patch link:    https://lore.kernel.org/r/20241105184333.2305744-5-jthoughton%40google.com
+patch subject: [PATCH v8 04/11] KVM: x86/mmu: Relax locking for kvm_test_age_gfn and kvm_age_gfn
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241106/202411061526.RAuCXKJh-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411061526.RAuCXKJh-lkp@intel.com/reproduce)
 
-Thanks,
-Amir,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411061526.RAuCXKJh-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   arch/x86/kvm/mmu/tdp_mmu.c: In function 'kvm_tdp_mmu_age_spte':
+>> arch/x86/kvm/mmu/tdp_mmu.c:1189:23: warning: ignoring return value of '__tdp_mmu_set_spte_atomic' declared with attribute 'warn_unused_result' [-Wunused-result]
+    1189 |                 (void)__tdp_mmu_set_spte_atomic(iter, new_spte);
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +1189 arch/x86/kvm/mmu/tdp_mmu.c
+
+  1166	
+  1167	/*
+  1168	 * Mark the SPTEs range of GFNs [start, end) unaccessed and return non-zero
+  1169	 * if any of the GFNs in the range have been accessed.
+  1170	 *
+  1171	 * No need to mark the corresponding PFN as accessed as this call is coming
+  1172	 * from the clear_young() or clear_flush_young() notifier, which uses the
+  1173	 * return value to determine if the page has been accessed.
+  1174	 */
+  1175	static void kvm_tdp_mmu_age_spte(struct tdp_iter *iter)
+  1176	{
+  1177		u64 new_spte;
+  1178	
+  1179		if (spte_ad_enabled(iter->old_spte)) {
+  1180			iter->old_spte = tdp_mmu_clear_spte_bits_atomic(iter->sptep,
+  1181							shadow_accessed_mask);
+  1182			new_spte = iter->old_spte & ~shadow_accessed_mask;
+  1183		} else {
+  1184			new_spte = mark_spte_for_access_track(iter->old_spte);
+  1185			/*
+  1186			 * It is safe for the following cmpxchg to fail. Leave the
+  1187			 * Accessed bit set, as the spte is most likely young anyway.
+  1188			 */
+> 1189			(void)__tdp_mmu_set_spte_atomic(iter, new_spte);
+  1190		}
+  1191	
+  1192		trace_kvm_tdp_mmu_spte_changed(iter->as_id, iter->gfn, iter->level,
+  1193					       iter->old_spte, new_spte);
+  1194	}
+  1195	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
