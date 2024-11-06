@@ -1,167 +1,275 @@
-Return-Path: <linux-kernel+bounces-397546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41C49BDD46
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:51:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2AF9BDD4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427DD28159A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:51:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA6B1F22B02
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4B218FDDB;
-	Wed,  6 Nov 2024 02:51:24 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69D218FC9F;
+	Wed,  6 Nov 2024 02:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SYR4/KZl"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A0618B47E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147B3187848
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730861483; cv=none; b=SX9hElazUmSbsConpE2c3UMWkRtfFbWfg+F4x5lm1wYXOgbXzmU3rOG1Avg5ZTUSQnHhvX11zVOhiYKECUoB0wvAhAgQ7yYoFrnFn6/ZT5tE76hh0crknzLSsskEtThaert/AJ2YsSmHXC0TCuLp8m4H0CR2pSCeStcEwhRPQfQ=
+	t=1730861570; cv=none; b=H5w2B2vpTIzHF77qvDrdEL4dykgT9pjlXbNBabf1DN+MD3AMeO6errZ+du9qTQgEdk9+b8/DLRzOV8iUnYRJnnCk1K1qKsk1ajsZeuAVgfdxAMxM9KllJ3JGB3MQbAJFr5e9JJSglSdmygxM26hg4ixHN1Q+o6ostdkGlk2LaG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730861483; c=relaxed/simple;
-	bh=NfP7BlgLxSn2WKKVkdrepVfQTJK7R3TVBFB7/t9tjC8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nJ6JuJbBX9T8Z+TdMgBYDUkOBNuHmxk32OGrddvqOpFasUz0bEVe396msWog8YubUA4YpPN1JHNGh+mY0lWVOJBvgXug0lSlAee5GAgpjNHCEmqAESXHD+cnvZyC6I/XGFNPT8BOeDbNiXQXo+5q6Ap5AxGZB0D3uI6idjS8OrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4e80ccd1bso54039835ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 18:51:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730861480; x=1731466280;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=47a/jn3+/iOcV/k21j0lppzSJhAAjbRAD5/il+fS9AY=;
-        b=cl1+yX984nGZ+erl2A4zVbjIF7aoCIyPTfptp/4BEqbuH+l/nJ3UIKG9+FYywFqAC5
-         eCqon5odpd7C6Xb0dwOKSwSDbq1KKdIhpHB56uWlIcWH8n6RfMXh0NO1BoNugUCZIUqR
-         kZhIQjL55NLntevJdyWEti/flcQPXryTRyqUGrss9/J4oyA3vjURTisCI1p9oNAJZvOd
-         tdAYO+nQWRqOGMjdydmwaWgNVHhczREoruy41BSaZe805hgPbfSd54pU+HWGLvZA1C1m
-         lB+MD1qEiQbEERo4mHMzDHaYd/W9Mvi/jj1XvNpED9CUQyUQLWV/8t7bLjSmXtedb400
-         2LPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhbulNkMsbDCAjDS5g+ekCkXwP7sO7bp9DEi3E0HJnAZYIKuPPGVTIyDuUmkO+Q1cpSuPmy8hw/wTBg8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8RgPlbPDrGJMw6cmLRG0RX8qgKqYZRpBGcjafciel4KfwOoUy
-	Tk4kJSH7TK1Nnh5b4JLDxLskiCKlhdffjkHCGw9HA6+WFm4ldjcVpNOU4SA4FPyF2EGUi/Tb0LU
-	iyDRDH8MluCV4bhIA4Zf53yTr2jBI03RmAQFzWkLoYyzvEUnZy4vvM8Y=
-X-Google-Smtp-Source: AGHT+IGFA7vO4U2x3q6uAPBDzuTKgONZPR+0I/WW2RDdNThGI7VcDHE7KiA+lQeHU0V2dPevX7he5TheTnl8dkXWYd5ZPtDh9PWA
+	s=arc-20240116; t=1730861570; c=relaxed/simple;
+	bh=uCsZwpC7dmdc5UEVx5YxcX1liFeE3sIKtFwudsKQW/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sw8EMzExn/Qio8BvPXbtRIpGNvX7GE4d/PscAmBL8a//DYVjtDDaYc8DiWglND3YU+Wc1IHmSHiGU33N6yPFBGkqOQLWRsdOXyalM46a/zwrCjIJlGTeH7Wnd+WGwV/y3+MnjwyOikKM8yOjchRKxpc8yxTntHlFVH2jl6jwYME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SYR4/KZl; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <067039c2-5656-40b5-ab6e-a2325e3a9f4e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730861565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cV6dJd0Z+fIOMfEtL/0r1shAJgGhenmAKhtEa57be4M=;
+	b=SYR4/KZl6gWuWteE8cAhyqv6HsCgyVyi3J3r7yHvpMpHr3cxllwbDEPnQPsyOrqApfsCx+
+	X+iaQPBMwg90YM+t6A9J6HgspPJWRQvedfNtn2Tvvqg4kw1F/PytCKmYztrR/8qqsQYT+/
+	NZShQBOxYg5pqsZn6P89vV+uOVjegDY=
+Date: Wed, 6 Nov 2024 10:52:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1487:b0:3a6:aee2:1693 with SMTP id
- e9e14a558f8ab-3a6b0250c4emr195392805ab.6.1730861480603; Tue, 05 Nov 2024
- 18:51:20 -0800 (PST)
-Date: Tue, 05 Nov 2024 18:51:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672ad9a8.050a0220.2a847.1aac.GAE@google.com>
-Subject: [syzbot] [usb?] [scsi?] WARNING: bad unlock balance in sd_revalidate_disk
-From: syzbot <syzbot+331e232a5d7a69fa7c81@syzkaller.appspotmail.com>
-To: James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	martin.petersen@oracle.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3] mm: count zeromap read and set for swapout and swapin
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+ Nhat Pham <nphamcs@gmail.com>, Usama Arif <usamaarif642@gmail.com>,
+ Yosry Ahmed <yosryahmed@google.com>, Hailong Liu <hailong.liu@oppo.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>,
+ Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
+ "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
+ Ryan Roberts <ryan.roberts@arm.com>
+References: <20241105211934.5083-1-21cnbao@gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20241105211934.5083-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On 2024/11/6 05:19, Barry Song wrote:
+> From: Barry Song <v-songbaohua@oppo.com>
+> 
+> When the proportion of folios from the zeromap is small, missing their
+> accounting may not significantly impact profiling. However, it’s easy
+> to construct a scenario where this becomes an issue—for example,
+> allocating 1 GB of memory, writing zeros from userspace, followed by
+> MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
+> and swap-in counts seem to vanish into a black hole, potentially
+> causing semantic ambiguity.
+> 
+> On the other hand, Usama reported that zero-filled pages can exceed 10% in
+> workloads utilizing zswap, while Hailong noted that some app in Android
+> have more than 6% zero-filled pages. Before commit 0ca0c24e3211 ("mm: store
+> zero pages to be swapped out in a bitmap"), both zswap and zRAM implemented
+> similar optimizations, leading to these optimized-out pages being counted
+> in either zswap or zRAM counters (with pswpin/pswpout also increasing for
+> zRAM). With zeromap functioning prior to both zswap and zRAM, userspace
+> will no longer detect these swap-out and swap-in actions.
+> 
+> We have three ways to address this:
+> 
+> 1. Introduce a dedicated counter specifically for the zeromap.
+> 2. Use pswpin/pswpout accounting, treating the zero map as a standard
+> backend. This approach aligns with zRAM's current handling of
+> same-page fills at the device level. However, it would mean losing
+> the optimized-out page counters previously available in zRAM and
+> would not align with systems using zswap. Additionally, as noted by
+> Nhat Pham, pswpin/pswpout counters apply only to I/O done directly
+> to the backend device.
+> 3. Count zeromap pages under zswap, aligning with system behavior when
+> zswap is enabled. However, this would not be consistent with zRAM,
+> nor would it align with systems lacking both zswap and zRAM.
+> 
+> Given the complications with options 2 and 3, this patch selects
+> option 1.
+> 
+> We can find these counters from /proc/vmstat (counters for the whole
+> system) and memcg's memory.stat (counters for the interested memcg).
+> 
+> For example:
+> 
+> $ grep -E 'swpin_zero|swpout_zero' /proc/vmstat
+> swpin_zero 1648
+> swpout_zero 33536
+> 
+> $ grep -E 'swpin_zero|swpout_zero' /sys/fs/cgroup/system.slice/memory.stat
+> swpin_zero 3905
+> swpout_zero 3985
+> 
+> This patch does not address any specific zeromap bug, but the missing
+> swpout and swpin counts for zero-filled pages can be highly confusing
+> and may mislead user-space agents that rely on changes in these counters
+> as indicators. Therefore, we add a Fixes tag to encourage the inclusion
+> of this counter in any kernel versions with zeromap.
+> 
+> Fixes: 0ca0c24e3211 ("mm: store zero pages to be swapped out in a bitmap")
+> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+> Cc: Usama Arif <usamaarif642@gmail.com>
+> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+> Cc: Yosry Ahmed <yosryahmed@google.com>
+> Cc: Hailong Liu <hailong.liu@oppo.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: Chris Li <chrisl@kernel.org>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 
-syzbot found the following issue on:
+Looks good to me!
 
-HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1051f55f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
-dashboard link: https://syzkaller.appspot.com/bug?extid=331e232a5d7a69fa7c81
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16952b40580000
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/disk-c88416ba.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinux-c88416ba.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/bzImage-c88416ba.xz
+Thanks.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+331e232a5d7a69fa7c81@syzkaller.appspotmail.com
-
-sd 2:0:0:1: [sdc] Test Unit Ready failed: Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
-=====================================
-WARNING: bad unlock balance detected!
-6.12.0-rc5-next-20241101-syzkaller #0 Not tainted
--------------------------------------
-udevd/5897 is trying to release lock (&q->q_usage_counter(queue)) at:
-[<ffffffff862f40d3>] sd_revalidate_disk+0x7933/0xbcf0 drivers/scsi/sd.c:3808
-but there are no more locks to release!
-
-other info that might help us debug this:
-1 lock held by udevd/5897:
- #0: ffff8881433c14c8 (&disk->open_mutex){+.+.}-{4:4}, at: bdev_open+0xf0/0xc50 block/bdev.c:904
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5897 Comm: udevd Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_unlock_imbalance_bug+0x25b/0x2d0 kernel/locking/lockdep.c:5287
- __lock_release kernel/locking/lockdep.c:5526 [inline]
- lock_release+0x5cb/0xa30 kernel/locking/lockdep.c:5870
- blk_unfreeze_release_lock block/blk.h:745 [inline]
- blk_mq_unfreeze_queue+0xd2/0x140 block/blk-mq.c:213
- sd_revalidate_disk+0x7933/0xbcf0 drivers/scsi/sd.c:3808
- sd_open+0x21e/0x610 drivers/scsi/sd.c:1534
- blkdev_get_whole+0x8e/0x450 block/bdev.c:689
- bdev_open+0x2d4/0xc50 block/bdev.c:916
- blkdev_open+0x389/0x4f0 block/fops.c:627
- do_dentry_open+0xbe1/0x1b70 fs/open.c:962
- vfs_open+0x3e/0x330 fs/open.c:1092
- do_open fs/namei.c:3774 [inline]
- path_openat+0x2c84/0x3590 fs/namei.c:3933
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1419
- do_sys_open fs/open.c:1434 [inline]
- __do_sys_openat fs/open.c:1450 [inline]
- __se_sys_openat fs/open.c:1445 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1445
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f64b7d169a4
-Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffcdb024940 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00005623a7271270 RCX: 00007f64b7d169a4
-RDX: 00000000000a0800 RSI: 00005623a725b4e0 RDI: 00000000ffffff9c
-RBP: 00005623a725b4e0 R08: 0000000000000006 R09: 7fffffffffffffff
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000a0800
-R13: 00005623a726ee60 R14: 0000000000000001 R15: 00005623a724f910
- </TASK>
-udevd[5897]: inotify_add_watch(7, /dev/sdc, 10) failed: No such file or directory
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> ---
+>   -v3:
+>   * collected Nhat's reviewed-by, thanks!
+>   * refine doc per Usama and David, thanks!
+>   * refine changelog
+> 
+>   Documentation/admin-guide/cgroup-v2.rst |  9 +++++++++
+>   include/linux/vm_event_item.h           |  2 ++
+>   mm/memcontrol.c                         |  4 ++++
+>   mm/page_io.c                            | 16 ++++++++++++++++
+>   mm/vmstat.c                             |  2 ++
+>   5 files changed, 33 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+> index db3799f1483e..13736a94edfd 100644
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -1599,6 +1599,15 @@ The following nested keys are defined.
+>   	  pglazyfreed (npn)
+>   		Amount of reclaimed lazyfree pages
+>   
+> +	  swpin_zero
+> +		Number of pages swapped into memory and filled with zero, where I/O
+> +		was optimized out because the page content was detected to be zero
+> +		during swapout.
+> +
+> +	  swpout_zero
+> +		Number of zero-filled pages swapped out with I/O skipped due to the
+> +		content being detected as zero.
+> +
+>   	  zswpin
+>   		Number of pages moved in to memory from zswap.
+>   
+> diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
+> index aed952d04132..f70d0958095c 100644
+> --- a/include/linux/vm_event_item.h
+> +++ b/include/linux/vm_event_item.h
+> @@ -134,6 +134,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
+>   #ifdef CONFIG_SWAP
+>   		SWAP_RA,
+>   		SWAP_RA_HIT,
+> +		SWPIN_ZERO,
+> +		SWPOUT_ZERO,
+>   #ifdef CONFIG_KSM
+>   		KSM_SWPIN_COPY,
+>   #endif
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 5e44d6e7591e..7b3503d12aaf 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -441,6 +441,10 @@ static const unsigned int memcg_vm_event_stat[] = {
+>   	PGDEACTIVATE,
+>   	PGLAZYFREE,
+>   	PGLAZYFREED,
+> +#ifdef CONFIG_SWAP
+> +	SWPIN_ZERO,
+> +	SWPOUT_ZERO,
+> +#endif
+>   #ifdef CONFIG_ZSWAP
+>   	ZSWPIN,
+>   	ZSWPOUT,
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 5d9b6e6cf96c..4b4ea8e49cf6 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -204,7 +204,9 @@ static bool is_folio_zero_filled(struct folio *folio)
+>   
+>   static void swap_zeromap_folio_set(struct folio *folio)
+>   {
+> +	struct obj_cgroup *objcg = get_obj_cgroup_from_folio(folio);
+>   	struct swap_info_struct *sis = swp_swap_info(folio->swap);
+> +	int nr_pages = folio_nr_pages(folio);
+>   	swp_entry_t entry;
+>   	unsigned int i;
+>   
+> @@ -212,6 +214,12 @@ static void swap_zeromap_folio_set(struct folio *folio)
+>   		entry = page_swap_entry(folio_page(folio, i));
+>   		set_bit(swp_offset(entry), sis->zeromap);
+>   	}
+> +
+> +	count_vm_events(SWPOUT_ZERO, nr_pages);
+> +	if (objcg) {
+> +		count_objcg_events(objcg, SWPOUT_ZERO, nr_pages);
+> +		obj_cgroup_put(objcg);
+> +	}
+>   }
+>   
+>   static void swap_zeromap_folio_clear(struct folio *folio)
+> @@ -507,6 +515,7 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+>   static bool swap_read_folio_zeromap(struct folio *folio)
+>   {
+>   	int nr_pages = folio_nr_pages(folio);
+> +	struct obj_cgroup *objcg;
+>   	bool is_zeromap;
+>   
+>   	/*
+> @@ -521,6 +530,13 @@ static bool swap_read_folio_zeromap(struct folio *folio)
+>   	if (!is_zeromap)
+>   		return false;
+>   
+> +	objcg = get_obj_cgroup_from_folio(folio);
+> +	count_vm_events(SWPIN_ZERO, nr_pages);
+> +	if (objcg) {
+> +		count_objcg_events(objcg, SWPIN_ZERO, nr_pages);
+> +		obj_cgroup_put(objcg);
+> +	}
+> +
+>   	folio_zero_range(folio, 0, folio_size(folio));
+>   	folio_mark_uptodate(folio);
+>   	return true;
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 22a294556b58..c8ef7352f9ed 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1418,6 +1418,8 @@ const char * const vmstat_text[] = {
+>   #ifdef CONFIG_SWAP
+>   	"swap_ra",
+>   	"swap_ra_hit",
+> +	"swpin_zero",
+> +	"swpout_zero",
+>   #ifdef CONFIG_KSM
+>   	"ksm_swpin_copy",
+>   #endif
 
