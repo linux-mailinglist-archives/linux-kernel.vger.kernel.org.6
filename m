@@ -1,150 +1,217 @@
-Return-Path: <linux-kernel+bounces-398262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18979BECF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:08:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694B29BE5EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2AB1F217EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:08:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA85B23022
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628081F76B5;
-	Wed,  6 Nov 2024 13:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44EB41DF240;
+	Wed,  6 Nov 2024 11:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MnPd16El"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERS90dte"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1438E1EE01C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA591DE3B5;
+	Wed,  6 Nov 2024 11:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730898056; cv=none; b=rDYfFP2rVc6jKbQvgHSaiRaAxaZn8zJnIx/g39cDaex/aBTwUMvDeVbbYGnStMs2XJW6t9fdCjFYjpDXrQK6jh1Eo2xc/8j3pHl9VJZbkgkUskOWdScq9gxiqt1kEEkUEC+DejD7jseiU3f/GvfVatgenJ4q0t48rJIlFQ8njDA=
+	t=1730893793; cv=none; b=cxzN+E1IQOcdOp+pTh3e21hy6jBSDPCUHFdVkTJJJNeqHE2X6wu+SZnQRuz7y3ZPXl4vPBEO7HOqXEkgapEwrMexpSgmb4jjNwupwmRbGISGTH/RScg0Ox3XIb6ReDOwbacPvxnUhZazdVd5EJPPRv/7nZrr9CZZYybt6mv9oCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730898056; c=relaxed/simple;
-	bh=QQCqKvtPt8YinCEAsZUCxcrG2xQJRRuu3P8vQdgq1Cs=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=H7gP6CBkc+gDfw3HX2Kxww0aBqRp4eB0bqXL5aGZj9j7PnNFRIzUBMZ3xlEUqXwmlheykgvw5bYi456EftDJE57YxhfL5gM+xjYw5u4mdiL8axc3c7FgXPPHBorvpqvxpAZD2JD766ONzmQQevPN4YcQGX4g+s72Vzsubk52rWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MnPd16El; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730898054;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7zc2UPyvhc/gaG96Z14+cpV1YeG2vT5ilG2eZvzA9MI=;
-	b=MnPd16Elh3BeDIKx2gkwxMjjcUHsUebBQMrC4kkSWurPClyF9jH+70UzLbInzNIBqntuCY
-	Y54f8QkwKnYBzvY3WKGsVPSduWhCARXIuulsL46HEMq1AVpk0mcR1zw7xxTVUikHGBX/SX
-	iI22pZVF/DiMvjQB0UTfQql9ne0UCys=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-332-ee2LlgR9O5KgykoE8c0VTg-1; Wed,
- 06 Nov 2024 08:00:50 -0500
-X-MC-Unique: ee2LlgR9O5KgykoE8c0VTg-1
-X-Mimecast-MFC-AGG-ID: ee2LlgR9O5KgykoE8c0VTg
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ECBCC19560A2;
-	Wed,  6 Nov 2024 13:00:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4F66330000DF;
-	Wed,  6 Nov 2024 13:00:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] rxrpc: Add a tracepoint for aborts being proposed
+	s=arc-20240116; t=1730893793; c=relaxed/simple;
+	bh=LOOaR/Cqen3lSPEtbXmj2LYeQ66sd5JLSJFcTPBnlJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E3/06DvCZ9s+YyCxCEGgwYEkjrGdbMYEnuondvqHqFjDJlNOKhcTo0NIMppc/kgQkmKnfVXQ7PAtBQWWB00MBWXeV81Vd7zZP06tinSddrRMeo0HWLu5Jo/GqWt89qXuzuBFGtgoby9ZbjpzdmVp8EZIdvPQrRh+DOK9ODraaJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERS90dte; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C3BC4CECD;
+	Wed,  6 Nov 2024 11:49:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730893793;
+	bh=LOOaR/Cqen3lSPEtbXmj2LYeQ66sd5JLSJFcTPBnlJY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ERS90dteSEkeiIG3qMeK5Ko7Wp7kiDP3nC4ZN+5RRyIx6t5Jz5vvRmybMfQ3ggiSL
+	 jcxvuTqAmuDgdbeJJrfgTkWJ72idW2fQ/kNgWmyy5ll9wjylo3WgzFlM4kb5zbOCcY
+	 U26/ap6/h1kZj3RgffyAbhy1dhRMr3M5b3udG6YKZuJp40Egc8TPBia0xdV3zmGLvZ
+	 +zXa14tlVjTrF0h+3WfX7GBnnRGTXA4R4nS5g1EnPW4ItnFuPHlYEtdXt002N7ZhZB
+	 1qrIJr8yLBcsmQHYitFBr6XP0X7CdiCSp3iZ4va0QOHEiro3xYFV7vd3IAAnFTWJfp
+	 RArpJxygzHQXQ==
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-mm@kvack.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2 00/17] Provide a new two step DMA mapping API
+Date: Wed,  6 Nov 2024 15:49:28 +0200
+Message-ID: <cover.1730892663.git.leon@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <726355.1730898045.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 06 Nov 2024 13:00:45 +0000
-Message-ID: <726356.1730898045@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-Add a tracepoint to rxrpc to trace the proposal of an abort.  The abort is
-performed asynchronously by the I/O thread.
+Changelog:
+v2:
+ * Fixed docs file as Randy suggested
+ * Fixed releases of memory in HMM path. It was allocated with kv..
+   variants but released with kfree instead of kvfree.
+ * Slightly changed commit message in VFIO patch.
+v1: https://lore.kernel.org/all/cover.1730298502.git.leon@kernel.org
+ * Squashed two VFIO patches into one
+ * Added Acked-by/Reviewed-by tags
+ * Fix docs spelling errors
+ * Simplified dma_iova_sync() API
+ * Added extra check in dma_iova_destroy() if mapped size to make code more clear
+ * Fixed checkpatch warnings in p2p patch
+ * Changed implementation of VFIO mlx5 mlx5vf_add_migration_pages() to
+   be more general
+ * Reduced the number of changes in VFIO patch
+v0: https://lore.kernel.org/all/cover.1730037276.git.leon@kernel.org
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
----
- include/trace/events/rxrpc.h |   25 +++++++++++++++++++++++++
- net/rxrpc/sendmsg.c          |    1 +
- 2 files changed, 26 insertions(+)
+----------------------------------------------------------------------------
+The code can be downloaded from:
+https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git tag:dma-split-nov-06
 
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index a1b126a6b0d7..c2f087e90fbe 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -772,6 +772,31 @@ TRACE_EVENT(rxrpc_rx_done,
- 	    TP_printk("r=3D%d a=3D%d", __entry->result, __entry->abort_code)
- 	    );
- =
+Christoph,
 
-+TRACE_EVENT(rxrpc_abort_call,
-+	    TP_PROTO(const struct rxrpc_call *call, int abort_code),
-+
-+	    TP_ARGS(call, abort_code),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,		call_nr)
-+		    __field(enum rxrpc_abort_reason,	why)
-+		    __field(int,			abort_code)
-+		    __field(int,			error)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->call_nr	=3D call->debug_id;
-+		    __entry->why	=3D call->send_abort_why;
-+		    __entry->abort_code	=3D abort_code;
-+		    __entry->error	=3D call->send_abort_err;
-+			   ),
-+
-+	    TP_printk("c=3D%08x a=3D%d e=3D%d %s",
-+		      __entry->call_nr,
-+		      __entry->abort_code, __entry->error,
-+		      __print_symbolic(__entry->why, rxrpc_abort_reasons))
-+	    );
-+
- TRACE_EVENT(rxrpc_abort,
- 	    TP_PROTO(unsigned int call_nr, enum rxrpc_abort_reason why,
- 		     u32 cid, u32 call_id, rxrpc_seq_t seq, int abort_code, int error),
-diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
-index 23d18fe5de9f..6abb8eec1b2b 100644
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -29,6 +29,7 @@ bool rxrpc_propose_abort(struct rxrpc_call *call, s32 ab=
-ort_code, int error,
- 		call->send_abort_why =3D why;
- 		call->send_abort_err =3D error;
- 		call->send_abort_seq =3D 0;
-+		trace_rxrpc_abort_call(call, abort_code);
- 		/* Request abort locklessly vs rxrpc_input_call_event(). */
- 		smp_store_release(&call->send_abort, abort_code);
- 		rxrpc_poke_call(call, rxrpc_call_poke_abort);
+Can you please take this series through your DMA mapping tree, so it
+will soak enough time in linux-next before sending PR to Linus?
+
+Thanks
+----------------------------------------------------------------------------
+Currently the only efficient way to map a complex memory description through
+the DMA API is by using the scatterlist APIs. The SG APIs are unique in that
+they efficiently combine the two fundamental operations of sizing and allocating
+a large IOVA window from the IOMMU and processing all the per-address
+swiotlb/flushing/p2p/map details.
+
+This uniqueness has been a long standing pain point as the scatterlist API
+is mandatory, but expensive to use. It prevents any kind of optimization or
+feature improvement (such as avoiding struct page for P2P) due to the impossibility
+of improving the scatterlist.
+
+Several approaches have been explored to expand the DMA API with additional
+scatterlist-like structures (BIO, rlist), instead split up the DMA API
+to allow callers to bring their own data structure.
+
+The API is split up into parts:
+ - Allocate IOVA space:
+    To do any pre-allocation required. This is done based on the caller
+    supplying some details about how much IOMMU address space it would need
+    in worst case.
+ - Map and unmap relevant structures to pre-allocated IOVA space:
+    Perform the actual mapping into the pre-allocated IOVA. This is very
+    similar to dma_map_page().
+
+In this and the next series [1], examples of three different users are converted
+to the new API to show the benefits and its versatility. Each user has a unique
+flow:
+ 1. RDMA ODP is an example of "SVA mirroring" using HMM that needs to
+    dynamically map/unmap large numbers of single pages. This becomes
+    significantly faster in the IOMMU case as the map/unmap is now just
+    a page table walk, the IOVA allocation is pre-computed once. Significant
+    amounts of memory are saved as there is no longer a need to store the
+    dma_addr_t of each page.
+ 2. VFIO PCI live migration code is building a very large "page list"
+    for the device. Instead of allocating a scatter list entry per allocated
+    page it can just allocate an array of 'struct page *', saving a large
+    amount of memory.
+ 3. NVMe PCI demonstrates how a BIO can be converted to a HW scatter
+    list without having to allocate then populate an intermediate SG table.
+
+To make the use of the new API easier, HMM and block subsystems are extended
+to hide the optimization details from the caller. Among these optimizations:
+ * Memory reduction as in most real use cases there is no need to store mapped
+   DMA addresses and unmap them.
+ * Reducing the function call overhead by removing the need to call function
+   pointers and use direct calls instead.
+
+This step is first along a path to provide alternatives to scatterlist and
+solve some of the abuses and design mistakes, for instance in DMABUF's P2P
+support.
+
+Thanks
+
+[1] This still points to v0, as the change is just around handling dma_iova_sync():
+https://lore.kernel.org/all/cover.1730037261.git.leon@kernel.org
+
+Christoph Hellwig (6):
+  PCI/P2PDMA: Refactor the p2pdma mapping helpers
+  dma-mapping: move the PCI P2PDMA mapping helpers to pci-p2pdma.h
+  iommu: generalize the batched sync after map interface
+  iommu/dma: Factor out a iommu_dma_map_swiotlb helper
+  dma-mapping: add a dma_need_unmap helper
+  docs: core-api: document the IOVA-based API
+
+Leon Romanovsky (11):
+  dma-mapping: Add check if IOVA can be used
+  dma: Provide an interface to allow allocate IOVA
+  dma-mapping: Implement link/unlink ranges API
+  mm/hmm: let users to tag specific PFN with DMA mapped bit
+  mm/hmm: provide generic DMA managing logic
+  RDMA/umem: Store ODP access mask information in PFN
+  RDMA/core: Convert UMEM ODP DMA mapping to caching IOVA and page
+    linkage
+  RDMA/umem: Separate implicit ODP initialization from explicit ODP
+  vfio/mlx5: Explicitly use number of pages instead of allocated length
+  vfio/mlx5: Rewrite create mkey flow to allow better code reuse
+  vfio/mlx5: Enable the DMA link API
+
+ Documentation/core-api/dma-api.rst   |  70 ++++
+ drivers/infiniband/core/umem_odp.c   | 250 +++++----------
+ drivers/infiniband/hw/mlx5/mlx5_ib.h |  12 +-
+ drivers/infiniband/hw/mlx5/odp.c     |  65 ++--
+ drivers/infiniband/hw/mlx5/umr.c     |  12 +-
+ drivers/iommu/dma-iommu.c            | 459 +++++++++++++++++++++++----
+ drivers/iommu/iommu.c                |  65 ++--
+ drivers/pci/p2pdma.c                 |  38 +--
+ drivers/vfio/pci/mlx5/cmd.c          | 373 +++++++++++-----------
+ drivers/vfio/pci/mlx5/cmd.h          |  35 +-
+ drivers/vfio/pci/mlx5/main.c         |  87 +++--
+ include/linux/dma-map-ops.h          |  54 ----
+ include/linux/dma-mapping.h          |  85 +++++
+ include/linux/hmm-dma.h              |  32 ++
+ include/linux/hmm.h                  |  16 +
+ include/linux/iommu.h                |   4 +
+ include/linux/pci-p2pdma.h           |  84 +++++
+ include/rdma/ib_umem_odp.h           |  25 +-
+ kernel/dma/direct.c                  |  44 +--
+ kernel/dma/mapping.c                 |  20 ++
+ mm/hmm.c                             | 231 +++++++++++++-
+ 21 files changed, 1377 insertions(+), 684 deletions(-)
+ create mode 100644 include/linux/hmm-dma.h
+
+-- 
+2.47.0
 
 
