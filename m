@@ -1,250 +1,311 @@
-Return-Path: <linux-kernel+bounces-398867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17419BF761
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0FF9BF75B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F8F1B24D7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:47:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F6C0B24BC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D9B20C493;
-	Wed,  6 Nov 2024 19:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8C420C007;
+	Wed,  6 Nov 2024 19:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9YNZL5F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmQVIP+E"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E703209F3C;
-	Wed,  6 Nov 2024 19:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DEA209681;
+	Wed,  6 Nov 2024 19:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730921866; cv=none; b=Dd4ss3hDKAXTAKC3pdwFXrGl3Z+4/RPGnjQNPI7vUySXznhhiCwnsUuJ1c7uzGG0Ulix1K3Xq0elWRAqnw6l21TZLZENZ67vutbwUqAxiRAVB/RTmfcPLBWL7KWyj3CvQQdUJ4x0nb6nFuChGTFwfYAjUZDx4Uie2/jzQhAq1EI=
+	t=1730921793; cv=none; b=J7ETe7lhMy7fpTvjkabLCqUvnDo39m6HrJxdsTK6Os131gw4zyVOY4cR8U9dMkux1iUgpFJH/qz/cbTvl+LxRZaFG2d8Qh+01TIDqIrxw0Olw9zMDY5xxQl5I9fxfmiKgRNc6w/KUIG9lUS3bJ8enuHwXkEoNHgUeUsj0/gaTkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730921866; c=relaxed/simple;
-	bh=fN9Lf/+1M3vz8fvp9JB7a8D4GFEYSQKstM1USNDT7tY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t2Vu29CwvhAyzAOi914Z3zMT+LbAFEVp+SVmpOJagcr4DZBBqjxhLjSjs30kWBdeCchI7HoPkazX3DbOYFOp5fNp94i75qngi67ImtZm8XesiN+g5QpDmzKlYbgLlaEy0nLML3VlQV4/e/j75zaVM8lYikxE3x7y7WqFRRnOTwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9YNZL5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C776CC4CEC6;
-	Wed,  6 Nov 2024 19:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730921866;
-	bh=fN9Lf/+1M3vz8fvp9JB7a8D4GFEYSQKstM1USNDT7tY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=r9YNZL5FtlvtBFjClx+bm3BBFZvMrxlkyCXwkeH4gBq0Xugpa4nJ08H6b5joQGoyi
-	 nfoTKH1ZQRrYeze8ERvAsycHTfbC7Fe4J6E2sx5FbWFBCcl6+7nJhnrXxgj/26QVk2
-	 gkEU5gNvL4CE+tvFvLU7QSIlRgOsekPVWND8nbCVS3xo4WpX3BC9NLQ9E3faXjnNfi
-	 8ohZQh1STT651Je5Dm1JcmqIK+HHzYvuZR10NsPYLSJ5tDH3gxs3IHewseuadrW9Qe
-	 5pGL36jJ4Xqq4TjkesY2pX+nBBm5L3GmgbE3ZxkqGLlWfgc+oPeXIGpGAEwpPwjSwj
-	 D9Aey8V7h8d2A==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 06 Nov 2024 19:35:46 +0000
-Subject: [PATCH v3] arm64/signal: Avoid corruption of SME state when
- entering signal handler
+	s=arc-20240116; t=1730921793; c=relaxed/simple;
+	bh=FwD2AhzLym3tIs//QavLK91orPyfFO2s6FAPQCF7I6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rh0/VrqNuhoPRBaqpkL+TSdVIM0TFAJ/9kLCW9pcVzMs63v8Lr9nZB5IaEeGiA8AV9g8ytfCDnHjPEB7moPW1NvPpGym/Q5vn58G0kSf46gHrarOI2YRefhTgqA/2OWSaZRJ9clEdMnyOQfNwCiQ8wBfF7UV1deU5uTOvv6SmM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmQVIP+E; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cdbe608b3so2131805ad.1;
+        Wed, 06 Nov 2024 11:36:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730921791; x=1731526591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FLMfViTBLhMu6Hmd6680gXcegnnfvf6VkiDpRB1s/bM=;
+        b=mmQVIP+EUOc9J6n2HHwYaS1hqjm81U3L0Se9TE2dcA8z5cpn1Fu/Zh64cJbbssXTB+
+         iKa5IOUCwNcHcTfUSSh2Y8hTYNPz3T+VvsPOpMr5XWaniGtwZ7CjDG86uHUwvS06jfAz
+         OZSmX42hb9TxmLPCqFKGZXOZTWGlbOcgFzziz5MlCDOxZlXtWSBvmb8CgANvlsSYWjSg
+         BRmCMMXeFDVPOUjiqqf/CrbyNmtsgbUC76iv+3pOu3L9xHsgrqyOp90sD2sdozPir7Jz
+         P+Q+ZmWS9/nYbulGNFJzPYBGKReoSiGOzQpcnH2Xf+nD4tqEeISVRR4PWPiNj0uXZAM6
+         bI7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730921791; x=1731526591;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FLMfViTBLhMu6Hmd6680gXcegnnfvf6VkiDpRB1s/bM=;
+        b=DEiiQLKLbAapWyji6gi5oXoQUCR1DANbZ932+sFwQJpYk/PPV1jVbGqa/Y2NeYzRGZ
+         6lEvEpU0m2CEXcAUhVInPkigFdbmlikKmh60Yj+Q0E7r0l/X+3zhsUQRggjFTPrxHClJ
+         etB1USU2jt/PlgfzEbYyFI1+xf4SkismWPPg/ezzuXTzW80nFYieqcC3V4ZOVibvsIFc
+         b6qg5tDEW44m7t3ftU2E8etyRAWacLl6dXlvR37k/fxhYcmzsH+GkDCQ9Oc9Oxs8fLME
+         FpD5ps2Tri6+kUQbDD3S1pTcEj2furt8lkoIUVjyEtADoWOt4QQG8UgzecfX+P+c3Bbl
+         j/3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUpIsAHCsj+03GTiGQl95hY4dnXAZhUYfpoBxvi8fkwrqAAqSjih4uN228oRkBhaPd9RiLPb+OzaaPCn67U6TCPqg==@vger.kernel.org, AJvYcCWDvkX/7xRrUnHKS+oUrevlr02ciG4y36x/nayh3QHISeCbXpoPxqc2pIpuOQlUoSeaiMg=@vger.kernel.org, AJvYcCWhSj6QUcSm8cC0Dip82O5uPwqKARdd5JCd9BVHgPUdDCqMg+oAgPqC/FUgcnHA8Iektr10QeQmz/xI7guI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkJBXZEIv47TmU0UuVO0Xqxq6l5u+8+ocJdDXIZodDZQtIo4kd
+	P1SXDK0DdukjmvpA4Ucbm6wqMwewex1wp8nP/fxtCq/bhL1EeY5KMG/Hjt65zyBhVgl8K7JdHTD
+	6yik1ZDDFNjSh1ccuN+E8TKgME4s=
+X-Google-Smtp-Source: AGHT+IGbxusoEznnEA5Rn9lqSQ8l2811obJCIECsVRNP1dvG/8eQSbkqOUKXou3V6w+eP5kl/pGMnp2dzh8eOcDraSM=
+X-Received: by 2002:a17:902:f546:b0:211:18bf:e91d with SMTP id
+ d9443c01a7336-21118bfe962mr320862175ad.27.1730921791072; Wed, 06 Nov 2024
+ 11:36:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241106-arm64-fp-sme-sigentry-v3-1-38d06b75c850@kernel.org>
-X-B4-Tracking: v=1; b=H4sIABLFK2cC/4XNQQ6CMBCF4auYrh3TTqtFV97DuCgwhUYppCWNh
- HB3CytdGJf/S+abmUUKjiK77GYWKLnoep9D7nesao1vCFydmyFHJThKMKE7KbADxI4guob8GCY
- wWNZaFJq0KFm+HQJZ99rc2z136+LYh2l7k8S6/hOTAAGoztZqqqSp+fVBwdPz0IeGrWTCD0byX
- wxmRsmKCn6sRYnfzLIsb/9qie8CAQAA
-X-Change-ID: 20241023-arm64-fp-sme-sigentry-a2bd7187e71b
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6777; i=broonie@kernel.org;
- h=from:subject:message-id; bh=fN9Lf/+1M3vz8fvp9JB7a8D4GFEYSQKstM1USNDT7tY=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnK8WH1to3G4Nc52JGFgAtq6nyvdY7xhRxskcODXv2
- tvGLqw+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZyvFhwAKCRAk1otyXVSH0MbJB/
- 43Z9YJKdN4EQdlLfsAL0Ro+d90IuYlIvHZjjQ7r/LoK+p4wlm6tQzK/E4rob9iAOt9ZtQjzQKs/+jW
- 4FdkKVAu0sbiVCQAXs2yKbwGiXWcQYNL3xUiVpCRAmWraUUnsnMpcr+RyGAOC9m0zvIwDQznvNZtOE
- rA3bLCy1Rdcz6VBUMhQFOwK7U+m+6n3J4oGZKuEIrtmmBJkyCsan2d5IiQrI5ekLjPwQNDcERC1z+y
- 0nuGf70+eXtlz+hm8l2knQywg0crvJkBRcX7MbrQ4Kfwn9cQuIA9KRw0ngawKB5uErqTC5p1xQ9EZr
- TxtdKsJbnUj71F+24UYJ4FqEx6thbt
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20241105172635.2463800-1-namhyung@kernel.org> <20241105172635.2463800-3-namhyung@kernel.org>
+In-Reply-To: <20241105172635.2463800-3-namhyung@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 6 Nov 2024 11:36:19 -0800
+Message-ID: <CAEf4BzaL71O-odNtE88OwwZcVkRPw2uRaBgRAZYcoVo+G+38Mg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] perf lock contention: Run BPF slab cache iterator
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
+	Stephane Eranian <eranian@google.com>, Vlastimil Babka <vbabka@suse.cz>, Kees Cook <kees@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We intend that signal handlers are entered with PSTATE.{SM,ZA}={0,0}.
-The logic for this in setup_return() manipulates the saved state and
-live CPU state in an unsafe manner, and consequently, when a task enters
-a signal handler:
+On Tue, Nov 5, 2024 at 9:27=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> Recently the kernel got the kmem_cache iterator to traverse metadata of
+> slab objects.  This can be used to symbolize dynamic locks in a slab.
+>
+> The new slab_caches hash map will have the pointer of the kmem_cache as
+> a key and save the name and a id.  The id will be saved in the flags
+> part of the lock.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/bpf_lock_contention.c         | 51 +++++++++++++++++++
+>  .../perf/util/bpf_skel/lock_contention.bpf.c  | 28 ++++++++++
+>  tools/perf/util/bpf_skel/lock_data.h          | 12 +++++
+>  tools/perf/util/bpf_skel/vmlinux/vmlinux.h    |  8 +++
+>  4 files changed, 99 insertions(+)
+>
+> diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bpf_=
+lock_contention.c
+> index 41a1ad08789511c3..a2efd40897bad316 100644
+> --- a/tools/perf/util/bpf_lock_contention.c
+> +++ b/tools/perf/util/bpf_lock_contention.c
+> @@ -12,12 +12,60 @@
+>  #include <linux/zalloc.h>
+>  #include <linux/string.h>
+>  #include <bpf/bpf.h>
+> +#include <bpf/btf.h>
+>  #include <inttypes.h>
+>
+>  #include "bpf_skel/lock_contention.skel.h"
+>  #include "bpf_skel/lock_data.h"
+>
+>  static struct lock_contention_bpf *skel;
+> +static bool has_slab_iter;
+> +
+> +static void check_slab_cache_iter(struct lock_contention *con)
+> +{
+> +       struct btf *btf =3D btf__load_vmlinux_btf();
+> +       s32 ret;
+> +
+> +       ret =3D libbpf_get_error(btf);
 
- * The task entering the signal handler might not have its PSTATE.{SM,ZA}
-   bits cleared, and other register state that is affected by changes to
-   PSTATE.{SM,ZA} might not be zeroed as expected.
+please don't use libbpf_get_error() in new code. I left that API for
+cases when user might want to support both per-1.0 libbpf and 1.0+,
+but by now I don't think you should be caring about <1.0 versions. And
+in 1.0+, you'll get btf =3D=3D NULL on error, and errno will be set to
+error. So just check errno directly.
 
- * An unrelated task might have its PSTATE.{SM,ZA} bits cleared
-   unexpectedly, potentially zeroing other register state that is
-   affected by changes to PSTATE.{SM,ZA}.
-
-   Tasks which do not set PSTATE.{SM,ZA} (i.e. those only using plain
-   FPSIMD or non-streaming SVE) are not affected, as there is no
-   resulting change to PSTATE.{SM,ZA}.
-
-Consider for example two tasks on one CPU:
-
- A: Begins signal entry in kernel mode, is preempted prior to SMSTOP.
- B: Using SM and/or ZA in userspace with register state current on the
-    CPU, is preempted.
- A: Scheduled in, no register state changes made as in kernel mode.
- A: Executes SMSTOP, modifying live register state.
- A: Scheduled out.
- B: Scheduled in, fpsimd_thread_switch() sees the register state on the
-    CPU is tracked as being that for task B so the state is not reloaded
-    prior to returning to userspace.
-
-Task B is now running with SM and ZA incorrectly cleared.
-
-Fix this by:
-
- * Checking TIF_FOREIGN_FPSTATE, and only updating the saved or live
-   state as appropriate.
-
- * Using {get,put}_cpu_fpsimd_context() to ensure mutual exclusion
-   against other code which manipulates this state. To allow their use,
-   the logic is moved into a new fpsimd_enter_sighandler() helper in
-   fpsimd.c.
-
-This race has been observed intermittently with fp-stress, especially
-with preempt disabled, commonly but not exclusively reporting "Bad SVCR: 0".
-
-While we're at it also fix a discrepancy between in register and in memory
-entries. When operating on the register state we issue a SMSTOP, exiting
-streaming mode if we were in it. This clears the V/Z and P register and
-FPMR but nothing else. The in memory version clears all the user FPSIMD
-state including FPCR and FPSR but does not clear FPMR. Add the clear of
-FPMR and limit the existing memset() to only cover the vregs, preserving
-the state of FPCR and FPSR like SMSTOP does.
-
-Fixes: 40a8e87bb3285 ("arm64/sme: Disable ZA and streaming mode when handling signals")
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
-Changes in v3:
-- Fix the in memory update to follow the behaviour of the SMSTOP we
-  issue when updating in registers.
-- Link to v2: https://lore.kernel.org/r/20241030-arm64-fp-sme-sigentry-v2-1-43ce805d1b20@kernel.org
-
-Changes in v2:
-- Commit message tweaks.
-- Flush the task state when updating in memory to ensure we reload.
-- Link to v1: https://lore.kernel.org/r/20241023-arm64-fp-sme-sigentry-v1-1-249ff7ec3ad0@kernel.org
----
- arch/arm64/include/asm/fpsimd.h |  1 +
- arch/arm64/kernel/fpsimd.c      | 39 +++++++++++++++++++++++++++++++++++++++
- arch/arm64/kernel/signal.c      | 19 +------------------
- 3 files changed, 41 insertions(+), 18 deletions(-)
-
-diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
-index f2a84efc361858d4deda99faf1967cc7cac386c1..09af7cfd9f6c2cec26332caa4c254976e117b1bf 100644
---- a/arch/arm64/include/asm/fpsimd.h
-+++ b/arch/arm64/include/asm/fpsimd.h
-@@ -76,6 +76,7 @@ extern void fpsimd_load_state(struct user_fpsimd_state *state);
- extern void fpsimd_thread_switch(struct task_struct *next);
- extern void fpsimd_flush_thread(void);
- 
-+extern void fpsimd_enter_sighandler(void);
- extern void fpsimd_signal_preserve_current_state(void);
- extern void fpsimd_preserve_current_state(void);
- extern void fpsimd_restore_current_state(void);
-diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index 77006df20a75aee7c991cf116b6d06bfe953d1a4..10c8efd1c5ce83f4ea4025b213111ab9519263b1 100644
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -1693,6 +1693,45 @@ void fpsimd_signal_preserve_current_state(void)
- 		sve_to_fpsimd(current);
- }
- 
-+/*
-+ * Called by the signal handling code when preparing current to enter
-+ * a signal handler. Currently this only needs to take care of exiting
-+ * streaming mode and clearing ZA on SME systems.
-+ */
-+void fpsimd_enter_sighandler(void)
-+{
-+	if (!system_supports_sme())
-+		return;
-+
-+	get_cpu_fpsimd_context();
-+
-+	if (test_thread_flag(TIF_FOREIGN_FPSTATE)) {
-+		/*
-+		 * Exiting streaming mode zeros the V/Z and P
-+		 * registers and FPMR.  Zero FPMR and the V registers,
-+		 * marking the state as FPSIMD only to force a clear
-+		 * of the remaining bits during reload if needed.
-+		 */
-+		if (current->thread.svcr & SVCR_SM_MASK) {
-+			memset(&current->thread.uw.fpsimd_state.vregs, 0,
-+			       sizeof(current->thread.uw.fpsimd_state.vregs));
-+			current->thread.uw.fpmr = 0;
-+			current->thread.fp_type = FP_STATE_FPSIMD;
-+		}
-+
-+		current->thread.svcr &= ~(SVCR_ZA_MASK |
-+					  SVCR_SM_MASK);
-+
-+		/* Ensure any copies on other CPUs aren't reused */
-+		fpsimd_flush_task_state(current);
-+	} else {
-+		/* The register state is current, just update it. */
-+		sme_smstop();
-+	}
-+
-+	put_cpu_fpsimd_context();
-+}
-+
- /*
-  * Called by KVM when entering the guest.
-  */
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 5619869475304776fc005fe24a385bf86bfdd253..fe07d0bd9f7978d73973f07ce38b7bdd7914abb2 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -1218,24 +1218,7 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
- 	/* TCO (Tag Check Override) always cleared for signal handlers */
- 	regs->pstate &= ~PSR_TCO_BIT;
- 
--	/* Signal handlers are invoked with ZA and streaming mode disabled */
--	if (system_supports_sme()) {
--		/*
--		 * If we were in streaming mode the saved register
--		 * state was SVE but we will exit SM and use the
--		 * FPSIMD register state - flush the saved FPSIMD
--		 * register state in case it gets loaded.
--		 */
--		if (current->thread.svcr & SVCR_SM_MASK) {
--			memset(&current->thread.uw.fpsimd_state, 0,
--			       sizeof(current->thread.uw.fpsimd_state));
--			current->thread.fp_type = FP_STATE_FPSIMD;
--		}
--
--		current->thread.svcr &= ~(SVCR_ZA_MASK |
--					  SVCR_SM_MASK);
--		sme_smstop();
--	}
-+	fpsimd_enter_sighandler();
- 
- 	if (system_supports_poe())
- 		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
-
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241023-arm64-fp-sme-sigentry-a2bd7187e71b
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+> +       if (ret) {
+> +               pr_debug("BTF loading failed: %d\n", ret);
+> +               return;
+> +       }
+> +
+> +       ret =3D btf__find_by_name_kind(btf, "bpf_iter__kmem_cache", BTF_K=
+IND_STRUCT);
+> +       if (ret < 0) {
+> +               bpf_program__set_autoload(skel->progs.slab_cache_iter, fa=
+lse);
+> +               pr_debug("slab cache iterator is not available: %d\n", re=
+t);
+> +               goto out;
+> +       }
+> +
+> +       has_slab_iter =3D true;
+> +
+> +       bpf_map__set_max_entries(skel->maps.slab_caches, con->map_nr_entr=
+ies);
+> +out:
+> +       btf__free(btf);
+> +}
+> +
+> +static void run_slab_cache_iter(void)
+> +{
+> +       int fd;
+> +       char buf[256];
+> +
+> +       if (!has_slab_iter)
+> +               return;
+> +
+> +       fd =3D bpf_iter_create(bpf_link__fd(skel->links.slab_cache_iter))=
+;
+> +       if (fd < 0) {
+> +               pr_debug("cannot create slab cache iter: %d\n", fd);
+> +               return;
+> +       }
+> +
+> +       /* This will run the bpf program */
+> +       while (read(fd, buf, sizeof(buf)) > 0)
+> +               continue;
+> +
+> +       close(fd);
+> +}
+>
+>  int lock_contention_prepare(struct lock_contention *con)
+>  {
+> @@ -109,6 +157,8 @@ int lock_contention_prepare(struct lock_contention *c=
+on)
+>                         skel->rodata->use_cgroup_v2 =3D 1;
+>         }
+>
+> +       check_slab_cache_iter(con);
+> +
+>         if (lock_contention_bpf__load(skel) < 0) {
+>                 pr_err("Failed to load lock-contention BPF skeleton\n");
+>                 return -1;
+> @@ -304,6 +354,7 @@ static void account_end_timestamp(struct lock_content=
+ion *con)
+>
+>  int lock_contention_start(void)
+>  {
+> +       run_slab_cache_iter();
+>         skel->bss->enabled =3D 1;
+>         return 0;
+>  }
+> diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools/perf/=
+util/bpf_skel/lock_contention.bpf.c
+> index 1069bda5d733887f..fd24ccb00faec0ba 100644
+> --- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> +++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> @@ -100,6 +100,13 @@ struct {
+>         __uint(max_entries, 1);
+>  } cgroup_filter SEC(".maps");
+>
+> +struct {
+> +       __uint(type, BPF_MAP_TYPE_HASH);
+> +       __uint(key_size, sizeof(long));
+> +       __uint(value_size, sizeof(struct slab_cache_data));
+> +       __uint(max_entries, 1);
+> +} slab_caches SEC(".maps");
+> +
+>  struct rw_semaphore___old {
+>         struct task_struct *owner;
+>  } __attribute__((preserve_access_index));
+> @@ -136,6 +143,8 @@ int perf_subsys_id =3D -1;
+>
+>  __u64 end_ts;
+>
+> +__u32 slab_cache_id;
+> +
+>  /* error stat */
+>  int task_fail;
+>  int stack_fail;
+> @@ -563,4 +572,23 @@ int BPF_PROG(end_timestamp)
+>         return 0;
+>  }
+>
+> +SEC("iter/kmem_cache")
+> +int slab_cache_iter(struct bpf_iter__kmem_cache *ctx)
+> +{
+> +       struct kmem_cache *s =3D ctx->s;
+> +       struct slab_cache_data d;
+> +
+> +       if (s =3D=3D NULL)
+> +               return 0;
+> +
+> +       d.id =3D ++slab_cache_id << LCB_F_SLAB_ID_SHIFT;
+> +       bpf_probe_read_kernel_str(d.name, sizeof(d.name), s->name);
+> +
+> +       if (d.id >=3D LCB_F_SLAB_ID_END)
+> +               return 0;
+> +
+> +       bpf_map_update_elem(&slab_caches, &s, &d, BPF_NOEXIST);
+> +       return 0;
+> +}
+> +
+>  char LICENSE[] SEC("license") =3D "Dual BSD/GPL";
+> diff --git a/tools/perf/util/bpf_skel/lock_data.h b/tools/perf/util/bpf_s=
+kel/lock_data.h
+> index 4f0aae5483745dfa..c15f734d7fc4aecb 100644
+> --- a/tools/perf/util/bpf_skel/lock_data.h
+> +++ b/tools/perf/util/bpf_skel/lock_data.h
+> @@ -32,9 +32,16 @@ struct contention_task_data {
+>  #define LCD_F_MMAP_LOCK                (1U << 31)
+>  #define LCD_F_SIGHAND_LOCK     (1U << 30)
+>
+> +#define LCB_F_SLAB_ID_SHIFT    16
+> +#define LCB_F_SLAB_ID_START    (1U << 16)
+> +#define LCB_F_SLAB_ID_END      (1U << 26)
+> +#define LCB_F_SLAB_ID_MASK     0x03FF0000U
+> +
+>  #define LCB_F_TYPE_MAX         (1U << 7)
+>  #define LCB_F_TYPE_MASK                0x0000007FU
+>
+> +#define SLAB_NAME_MAX  28
+> +
+>  struct contention_data {
+>         u64 total_time;
+>         u64 min_time;
+> @@ -55,4 +62,9 @@ enum lock_class_sym {
+>         LOCK_CLASS_RQLOCK,
+>  };
+>
+> +struct slab_cache_data {
+> +       u32 id;
+> +       char name[SLAB_NAME_MAX];
+> +};
+> +
+>  #endif /* UTIL_BPF_SKEL_LOCK_DATA_H */
+> diff --git a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h b/tools/perf/util=
+/bpf_skel/vmlinux/vmlinux.h
+> index 4dcad7b682bdee9c..7b81d3173917fdb5 100644
+> --- a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+> +++ b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+> @@ -195,4 +195,12 @@ struct bpf_perf_event_data_kern {
+>   */
+>  struct rq {};
+>
+> +struct kmem_cache {
+> +       const char *name;
+> +} __attribute__((preserve_access_index));
+> +
+> +struct bpf_iter__kmem_cache {
+> +       struct kmem_cache *s;
+> +} __attribute__((preserve_access_index));
+> +
+>  #endif // __VMLINUX_H
+> --
+> 2.47.0.199.ga7371fff76-goog
+>
+>
 
