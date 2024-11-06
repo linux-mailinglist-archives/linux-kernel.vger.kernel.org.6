@@ -1,185 +1,94 @@
-Return-Path: <linux-kernel+bounces-398094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A6F9BE53F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:09:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362C89BE540
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2120F1C20E0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:09:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A741C20D1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4316D1DE4FC;
-	Wed,  6 Nov 2024 11:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475ED1DE8AC;
+	Wed,  6 Nov 2024 11:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGM9C+uD"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h03EHJOr"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E501DE2DA;
-	Wed,  6 Nov 2024 11:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB2B1DE4C7
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730891376; cv=none; b=er1RKa4rl+ZoANyVRpsom0mAmBYv4kIOV7FYg4xThWnVH4Rqek8j+dT743/aag/UCg3q+LCdPBe2kdrFl1d7maLPcUAx3DpnxDsznUWK9g9dZZKmANY2TKumP7oi0Ybe+9zG7+25irM+sNpzzgBFg6kYxEn1MFIfFJxSxnrMR6Y=
+	t=1730891377; cv=none; b=jkdtKSLcQbUR6CFJ2PaS5Ac+IIEb2T0Jwc8xPqjC9YEH2wyt1/jb8Z1a+hVPjCBfn+YZ5cX+WtbCxbomCrdbCu5BLxBUs8FMa3Lgf4AOXH6uwG/2H3Tk1jFBUiFvF+r8bgzURTNDUbgJG5uP3mfamrvljPq+KOil/kAxmtbmi30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730891376; c=relaxed/simple;
-	bh=snzjNfHjqAFnkGq1r9MG22FiC/VAIWDdrnPvCVsOl1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rwvmct4YwSqyt9go6yyhadgynozmv1iVjAhY3f/2RXQbsfO7AuoXkosXDCtHabnngK/wUpi/mUvtyKekPetWCAxrH1JIv3Kd5dCxrvj65nKSovjcQ6+p1wB+4DNGF0oAfML9I/WHG+X3GPdVvF84YbQ/KDn2OxbUL1w6rEyAOqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGM9C+uD; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e28fea0f5b8so5602292276.1;
-        Wed, 06 Nov 2024 03:09:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730891374; x=1731496174; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Vpj6pPEf0EmMHYTr4Iju1EZzUqtCf2UuA/FxmYMKsM=;
-        b=nGM9C+uDJTssrDsSk1EqzyWSRyCO4iWwKowMnK2DCgqbIUDB6V1iQADctePnZnCerr
-         FTI0WaUTRPmla3q5hrP5pRrI9KPdQ2i7ceaEdY+X6vtY5LIcGolXxNXJ5FoE4Lg/4L+8
-         7f0P28AE+874C0QXmbbmFyOdqgR/uHkWELE6mLa2AfREOjL+lrMzKwx8x0HFypwytmV2
-         cF0mn6uCkVreC1FY6fMEdg4Cm1/WQvlrm7CnwC47WagCUQ+y/l2Cjg5dJoqVckDhqMwQ
-         oj7Nfn0zBQ7M5hRA3x2YZPrdDryuji3RAxRy/OYora/LU1rWzZu1yQmaFUpTYgAzBEOb
-         UJcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730891374; x=1731496174;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Vpj6pPEf0EmMHYTr4Iju1EZzUqtCf2UuA/FxmYMKsM=;
-        b=Q8od4y6PvDiSjZkO0v+WNPIyPGfhxlbkIk77dXyaSJYnGGpUolhjPN1hT+z+hQTQYC
-         +LEW6UQGXDA9l7r3qMvGT/jFuN9ia27luArrb1jkt3Ys033UpUj1bpVWDjgrdfMP2e0Y
-         y32GaV82P8FJj3hvkSueENPrzhZxvzX5zj+N6DajHF46+kutiB794QNNGa+ACmzsixMY
-         B1HYsZ8kw563xF6dNXLSy26qnjWMdTbh0Gioq3xm8zt/bAV/QCVxKk7FOIHz2jFeIXCP
-         Gs0BE00f/N/nkFVvfbEv/ryXyvLbBc3VoV49A38KpVKL5nwjDX+l2H6WUWEJu7Vrmv5J
-         dYkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUu69OF3ngNfx8dbMEJkq5SoG7NkRX+7iFsaH0RoiEmlQzY/ukBLt+DwsLeD9qv3kGwWtecTCM2MC+v@vger.kernel.org, AJvYcCXhKEhFSmKePd4yqkXTnj8NwUb2dxMXGfyhUhoXOsg52/uudPulv6Q+jc9ut9N7c2cvRWQgHl7svuhH/j8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgiW/Vuy2FXi7Z3LNDW0kel0rNASZRJsi6nVa5bdNqAx/rDWGq
-	l27P11UOF0RIqHHpuR/HzosXwC0sbPnoFEIincnhDFfjQMsqgSdvDem0cJYbfMlfGHp7F+DU7CV
-	k5tMoUX4DNYAhBtoDWX6bNMRRkDm+WeKoayA=
-X-Google-Smtp-Source: AGHT+IE0WB272AhVsNiDIdLQWYOMWMiR/dwnuKDyc8ckezqJfdF5u82ZkLJ9uQe57n5OHXFMIVftWU43Jz6lJdD9KQ0=
-X-Received: by 2002:a05:690c:4a02:b0:6e7:e3a9:f30d with SMTP id
- 00721157ae682-6e9d8935894mr406686417b3.15.1730891373944; Wed, 06 Nov 2024
- 03:09:33 -0800 (PST)
+	s=arc-20240116; t=1730891377; c=relaxed/simple;
+	bh=2hr9vNgaqFJGpc8y5Y5spJQWhzbyZLblQav8t9Ftgw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EprY+Cm3pFpIYfkRdAYkY+1OjEB0qJp4NYT52SQWJiyWaQTRMBpa1Aj/KS3pfhvUGi1vhc5VIHN90iPxb7BTHHoQI3xSGkbTR+ZhRDPBz3GmTJ5yORVAkxl+qm6lR9klJNPCUPWpsNvEOGH6Sbu8qeNx8Lz8KmZtDO7lRM17TF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h03EHJOr; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2hr9vNgaqFJGpc8y5Y5spJQWhzbyZLblQav8t9Ftgw4=; b=h03EHJOrzsBk7V+/1ljPslDlTQ
+	ZdbpYQkbkJPzS/0n/HFmyuNk6HdkmULhO+2Pt10foYJugyUFI42XGtJGTq52AD2ikrUf5DPMxhgNl
+	d0T/m++7QTPiwUGS7uU7UhBBFkQTIis2BKuY0xTFPNGgnKZ6qdGOf+uDwRya4+BBBFE8V5kbSoxxl
+	WNL5iEXQ0VMo0OVHUMpkzJVqc+w4MzEM21KmBAuZtBITmsheNBv9bPX12flH7OwCCSMMvY71LNasO
+	IZ2/DyuUCBBlIkkL4s3tIU+KGw8qmHW34wro4ok1E2sUd4vwZ2vgVAGpWXkj5rGpd0bUGJ0Jl5TqP
+	CF/W8WKg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8duf-00000004QZD-1jWf;
+	Wed, 06 Nov 2024 11:09:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A294D300478; Wed,  6 Nov 2024 12:09:25 +0100 (CET)
+Date: Wed, 6 Nov 2024 12:09:25 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Saravana Kannan <saravanak@google.com>, Samuel Wu <wusamuel@google.com>,
+	David Dai <davidai@google.com>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org,
+	tglx@linutronix.de, efault@gmx.de,
+	Android Kernel Team <kernel-team@android.com>,
+	Qais Yousef <qyousef@google.com>,
+	Vincent Palomares <paillon@google.com>,
+	John Stultz <jstultz@google.com>,
+	Luis Machado <luis.machado@arm.com>
+Subject: Re: [PATCH 00/24] Complete EEVDF
+Message-ID: <20241106110925.GK24862@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+ <CAGETcx97SEHP5MspzBHsMkmSExnY870DQ-F5L077vzOGnPx0UA@mail.gmail.com>
+ <4a3dac53-69e5-d3cd-8bc0-3549af4932b3@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028080415.697793-1-wojackbb@gmail.com> <ZyDRIW0DIGn_FIsD@hovoldconsulting.com>
-In-Reply-To: <ZyDRIW0DIGn_FIsD@hovoldconsulting.com>
-From: =?UTF-8?B?5ZCz6YC86YC8?= <wojackbb@gmail.com>
-Date: Wed, 6 Nov 2024 19:09:22 +0800
-Message-ID: <CAAQ7Y6ZGrQt+rPBK9PzwJRC5ErbFgbc239X=iwjRboY3HU6O8g@mail.gmail.com>
-Subject: Re: [PATCH] USB: serial: option: add MediaTek T7XX compositions
-To: Johan Hovold <johan@kernel.org>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a3dac53-69e5-d3cd-8bc0-3549af4932b3@amd.com>
 
-I:* If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
-=3Doption
-E:  Ad=3D83(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-It is USB AP Log Port.
+On Wed, Nov 06, 2024 at 11:49:00AM +0530, K Prateek Nayak wrote:
 
-I:* If#=3D 3 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
-=3Doption
-E:  Ad=3D84(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D03(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-It is USB AP GNSS Port.
+> Since delayed entities are still on the runqueue, they can affect PELT
+> calculation. Vincent and Dietmar have both noted this and Peter posted
+> https://lore.kernel.org/lkml/172595576232.2215.18027704125134691219.tip-bot2@tip-bot2/
+> in response but it was pulled out since Luis reported observing -ve
+> values for h_nr_delayed on his setup. A lot has been fixed around
+> delayed dequeue since and I wonder if now would be the right time to
+> re-attempt h_nr_delayed tracking.
 
-I:* If#=3D 4 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
-=3Doption
-E:  Ad=3D85(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D04(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-It is USB AP META Port.
+Yeah, it's something I meant to get back to. I think the patch as posted
+was actually right and it didn't work for Luis because of some other,
+since fixed issue.
 
-I:* If#=3D 5 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D42 Prot=3D01 Driver=
-=3D(none)
-E:  Ad=3D86(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D05(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-It is ADB port.
-
-I:* If#=3D 6 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
-=3Doption
-E:  Ad=3D87(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D06(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-It is USB MD AT Port. User can use the port send AT command.
-
-I:* If#=3D 7 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
-=3Doption
-E:  Ad=3D88(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D07(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-It is USB MD META Port.
-
-I:* If#=3D 8 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
-=3Doption
-E:  Ad=3D89(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D08(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-It is USB NTZ Port. User can use the port send MIPC command.
-MIPC is an instruction set designed by MTK, similar to QCT's QMI
-
-I:* If#=3D 9 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
-=3Doption
-E:  Ad=3D8a(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-E:  Ad=3D09(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
-It is USB Debug port.
-
-Sorry, I don't understand "not accepting modem control".
-Should I set the non-MD ports to true?
-for example: USB AP Log Port.
-
-Johan Hovold <johan@kernel.org> =E6=96=BC 2024=E5=B9=B410=E6=9C=8829=E6=97=
-=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=888:11=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Mon, Oct 28, 2024 at 04:04:15PM +0800, wojackbb@gmail.com wrote:
-> > From: Jack Wu <wojackbb@gmail.com>
-> >
-> > Add the MediaTek T7XX compositions:
->
-> Can you say something about what the various interfaces are used for
-> here?
->
-> > T:  Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D05 Cnt=3D01 Dev#=3D 74 Spd=3D480=
-  MxCh=3D 0
-> > D:  Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=3D  =
-1
-> > P:  Vendor=3D0e8d ProdID=3D7129 Rev=3D 0.01
-> > S:  Manufacturer=3DMediaTek Inc.
-> > S:  Product=3DUSB DATA CARD
-> > S:  SerialNumber=3D004402459035402
-> > C:* #Ifs=3D10 Cfg#=3D 1 Atr=3Da0 MxPwr=3D500mA
->
-> > Signed-off-by: Jack Wu <wojackbb@gmail.com>
-> > ---
-> >  drivers/usb/serial/option.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-> > index 4f18f189f309..b6118f545386 100644
-> > --- a/drivers/usb/serial/option.c
-> > +++ b/drivers/usb/serial/option.c
-> > @@ -2244,6 +2244,7 @@ static const struct usb_device_id option_ids[] =
-=3D {
-> >         .driver_info =3D NCTRL(2) },
-> >       { USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7127, 0xff,=
- 0x00, 0x00),
-> >         .driver_info =3D NCTRL(2) | NCTRL(3) | NCTRL(4) },
-> > +     { USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7129, 0xff,=
- 0x00, 0x00) },        /* MediaTek T7XX */
->
-> Should you mark some of the interfaces are not accepting modem control
-> requests similar to 0x7126 and 0x7127?
->
-> >       { USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MEN200) },
-> >       { USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MPL200),
-> >         .driver_info =3D RSVD(1) | RSVD(4) },
->
-> Johan
+But I might be misremembering things. I'll get to it eventually :/
 
