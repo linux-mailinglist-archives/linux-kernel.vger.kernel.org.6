@@ -1,146 +1,108 @@
-Return-Path: <linux-kernel+bounces-398551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A53A9BF2B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:07:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597319BF2B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:08:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0C71C26741
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:07:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D922280636
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B120E2036ED;
-	Wed,  6 Nov 2024 16:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9E4205E3E;
+	Wed,  6 Nov 2024 16:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dGyJjcHv"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWX8h2xO"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770551DE8AE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AE31DE8AE;
+	Wed,  6 Nov 2024 16:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909105; cv=none; b=t9bKb/cig/rDfUO7aLPPjOkN6TGsc0Mxhgb00LUsF7Q2RkWH/HWDyMfl4y7ls+1vnzZ/n2ogQYfTbPwT0XPgEP4Sqaagw8WUVSgvkzoKZvWGP6kDncnbmrrhVaEfSCsWy0HF2tTL1p/WGOnhUUWjkwJ+2LzTHcWkB09iUfOEtUY=
+	t=1730909124; cv=none; b=rLSnmxsr74hiCzJfpFj5MuLX4/LJTU5VmP7DBZZqhb0EXX4zPvm7XzgEk0pmJMODhjSnbrlhA19AkQhqgQcixJpHs0w9TWjGuvo1ySN/2LtGjsLFB6+scomqB1os0dpKD3ZbYOgxTljWt1w1MCoUBiAySMOmMGVgaO2QsAwyZLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909105; c=relaxed/simple;
-	bh=cH5OE7NX7Mz/bdUBs66w08qwMK7Qsujzly9jtp/uTs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jw6xZDkeOJpTMeLwrwxFmuk6um9WdYEivlp1HMhsInG4JQ7gU+XxFY6oFgaEcXs1OLzAGz6+6hgq5clYJ2FjJzI+MjMHnSR4f5oWtx71g5jjJJSi6anT6Jkqtd2RdZyqNm29n6TC0miiMkCFsfEOQPiys9utpQ7gxweg6AEw6Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dGyJjcHv; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460a8d1a9b7so250761cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:05:03 -0800 (PST)
+	s=arc-20240116; t=1730909124; c=relaxed/simple;
+	bh=SuGuSheuI08iICd2YRupGe9J6gSR7uvopUoPsQ79pvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZLrhCxulH65KEFGwx/Z/q6b4Qcv2Gqh/gcejk+lhI+6QFfJyaer0onOGcoSIqe02bPj2ePYvZLPVSgaaMmWUKBkU7ZPqHs1dgS0VVbbfW2+CzlOUNVuxBUMKCcU+pklJM2ZBfGNlj/kzLzyTXg4n0KLHlqEM6t3ZbjNhiQB3f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WWX8h2xO; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso5427027b3a.3;
+        Wed, 06 Nov 2024 08:05:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730909102; x=1731513902; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IL4bTsX4yoJsol4u3vZrSSAIg09xmcdzQI4G8r3j4oA=;
-        b=dGyJjcHvAHDgfRG3X/RgQ+bx5l3YhTieFfM7h+u6PvzEBy+fdt4/0RDso71iBRIvUN
-         4uKyUZ8euqX6fEDRAU1FArMbIjqAwM9UOELJH70sJFzu6nB7rZyP2KVTgARPpvS2APvB
-         z5/0DTOkEhZpuVCW8cmTWumMpLrHEIJCQZThCp6Wouo8A0IVELVLFl5IEUwImMOhoBvU
-         E/z07b+C9k/4yagcuO7NziwpUnThJA13kHW7yuzOlq4i8R7WPaXaI6h4iXxz4NvYxPmj
-         FEIiKIe2mBL6lYGSdc3VNWbFhg8w2wBqMCPm0dJNfiLeC4ONPnyENm0n5oGygwhfaUPk
-         4W7w==
+        d=gmail.com; s=20230601; t=1730909122; x=1731513922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I9hh0Dyre/6OcliMKrPmVWCYWdORO1fnrFHP9Hk2a5A=;
+        b=WWX8h2xOjxSDu9T4nkM8iHs7Aldjltc6QdpEA0jq1WEZDv5mGOtV+d1WkDsbCVxtEq
+         fqsFNep5XuSCPtaTVYWFKixXT4+4IHW4tuA/Iv4NwAXy82wr0bpKkfcOGlJyirWP2R+P
+         w7evmIEJ3Q+8W4cgpmg/fEwqTeUHBB4a0sGEWd5IH171pdc6mXnoElOUDj1ZE4bCHmlP
+         nJuDgnoAHDz/xJqkbv65DKYGEy/fpgVO39iS++PX1t1kdPmPHse/YDsxpCu21tTkqsXJ
+         yUbr3ELZRk1mlYZJIS3mFSqsNQLJO9iNQ27vA4hG2P3DcIT08EXi3m1wBpqJH80EAhvX
+         Ty4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730909102; x=1731513902;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730909122; x=1731513922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IL4bTsX4yoJsol4u3vZrSSAIg09xmcdzQI4G8r3j4oA=;
-        b=puhl6ATEKrHWEpLjwc2QAO1y6ZN14nUBtv4af9+X3PmVUBQprY0V9NxhvMvww146Oy
-         iEjmzXsHTvfejHVWXqC0O6t4shCkE+db8nKHGtlt1RO0MmL6YodDOxPpBvVGXR+pwWfm
-         t7GYEX7x7rULm4CPzHYS6eWYMjleY42pATyeKmO1yeg1JMpQko3MlRjG/MAAVwZHAGu/
-         Uhi0V8oSnMM019WuhK5WlVgjwLgkxjatv400eYAblu+CUhQjESIK6kQEM5rPhergrezH
-         4en7UZSuMrOKPQmuPx4YJPl3xnq5twYNYDQ4v5HGnGR1Ik+B+rNR4fNMMZuVXBOftayh
-         JphA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBM2qvS5VMisua6z6OQWd7uyVVnXIk9yLjfgd74qsBPDTsMKMVh1RBjtufFaYJrSgtrIIBjuK0H+tFfC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBEaPMt4yHWzddK0vLmhBDk4xwEouxUS9cnhXV/DCc2CsWSrc/
-	q0EzjCKeSaKImyxPaZPojtF2ZOUy0tDJsi/IeJgj9GbqIJcBFYSIVa8eo8Jt1Smy1KkFhCw7YmM
-	QxILdExuQ4cRhkD+efpdJwvyAhbRw9gnsXQqgWgGDVWppcVACVjWKgCc=
-X-Gm-Gg: ASbGnctIxQWbnnh8WKuTRD3Uz7vVMDS4W2+fmLueGB8r/8FyYTs/HS6Eca4cu4X7WmI
-	2U/IyIUH/BvrJomsGol0W1h3K/PqgKgy0qXJPguhvHmI28iP+sHtJJy6ZkYT3L6g=
-X-Google-Smtp-Source: AGHT+IGVuAyYxfbKNtvaZjW52zgPaDYQVeAmhHgdEdnwxmPFzOVkFKrhtvzICzMYI5c5fjUF6KVTO9JuvH8HQgPdF7Y=
-X-Received: by 2002:a05:622a:612:b0:461:6e0a:6a27 with SMTP id
- d75a77b69052e-462fa6113c7mr288421cf.20.1730909102271; Wed, 06 Nov 2024
- 08:05:02 -0800 (PST)
+        bh=I9hh0Dyre/6OcliMKrPmVWCYWdORO1fnrFHP9Hk2a5A=;
+        b=Ybu1qZ98K94kvOIS1T2P2/zNzOzGQGVQJX35QBC0U/yY5pziK9tWJWdCwGIoBOo9ag
+         vcwQd9vF0Tp2WpUgd2n1xeVNJY8rFFJUYOBXBju5rnY7X5DqRTc8RU4hB7/b1+WVYhx+
+         ljJts8jpaMWpzsv97Ez6HUj5cWZPYSwwPlIJn3b1o9slwVFBlH3z0AD6KY3A8tNJcsEA
+         Vs+qDf452uFyK6TJYYRJB7iNJzLBp9wdDs32RzOBhWuvOfcfB74HLj1GADdjOChPnjr1
+         zY2qqaIRK9MVMwOfH8jrcp+7tPvlfhpXvvjhmgwzy90ZVVFTYsNrCPTq9OdfHv/E3TPM
+         RJUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhyqM3A0j3PyXeaMrY0N4D/XtqUDMeavWuk9DFkocxYSy0ZlMM5Zjcnme5D+11TV4bz9D6w44+6SBH@vger.kernel.org, AJvYcCVXC7cshCNT5jASooJ2Fce1A1AeCDDGPMcqyPsKI/E9F8CseNvIq20YNBLtO5jUxred03zwohRTiGgg@vger.kernel.org, AJvYcCWiNgY6HPpiSBPkDhIUYpbRXauyUtSaQNC2DgQsRXycjAQtJhe4yEftx/Yfz+heGJstn9DszwJoIX/4Popq@vger.kernel.org, AJvYcCX+bUVxPukM6aZWnX3nfKHPKxkp0h+9tT6vDdElNwA+DPakZFboUjkGEwDyFduZ5fpdQs7LWKAM5nFlukU=@vger.kernel.org, AJvYcCXQ12hFvrbXYZQcsCogkbeQIx2mJDdTktt1caHet9DghSwZWDYVwNkgkM2zG0R4h5kW4yIXYFNxHxI4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUr5nNp0rSFC8FL9ZbNgYDjccLrsiK7mZzNqJ1XCJkGDeMUvgb
+	2vk10yoRWIfQCIbN0ps4omrOaeMeXpzFOz3JfgukdxOlbvvgKB7E
+X-Google-Smtp-Source: AGHT+IF1jct8OyG/Z5cfXNHGMCNw7qbVenSFYhbxJkZEVBq3kbHXTrvCB9AijCFQ6arovvx4YJyoLA==
+X-Received: by 2002:a05:6a00:cc9:b0:71e:6eb:786e with SMTP id d2e1a72fcca58-720c990b6ccmr27962762b3a.13.1730909122058;
+        Wed, 06 Nov 2024 08:05:22 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ba033sm11801376b3a.34.2024.11.06.08.05.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 08:05:21 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 6 Nov 2024 08:05:20 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v4 6/7] dt-bindings: hwmon: pmbus: add ti tps25990 support
+Message-ID: <d083ef2b-28b8-4fdd-b023-096a0ce7ee4f@roeck-us.net>
+References: <20241105-tps25990-v4-0-0e312ac70b62@baylibre.com>
+ <20241105-tps25990-v4-6-0e312ac70b62@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106004818.2174593-1-irogers@google.com> <126ebac6-fb52-4c3c-b364-0b423e164d40@linux.intel.com>
-In-Reply-To: <126ebac6-fb52-4c3c-b364-0b423e164d40@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 6 Nov 2024 08:04:51 -0800
-Message-ID: <CAP-5=fV3RuvU0N_bt7R-ZMs2nX1_wfKh30PA59u3MW0TF4nzBg@mail.gmail.com>
-Subject: Re: [PATCH v1] perf stat: Expand metric+unit buffer size
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105-tps25990-v4-6-0e312ac70b62@baylibre.com>
 
-On Wed, Nov 6, 2024 at 7:27=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.co=
-m> wrote:
->
->
->
-> On 2024-11-05 7:48 p.m., Ian Rogers wrote:
-> > Long metric names combined with units may exceed the metric_bf and
-> > lead to truncation. Double metric_bf in size to avoid this.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/stat-shadow.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shado=
-w.c
-> > index 8c9292aa61d3..6b531d4f58a3 100644
-> > --- a/tools/perf/util/stat-shadow.c
-> > +++ b/tools/perf/util/stat-shadow.c
-> > @@ -507,7 +507,7 @@ static void generic_metric(struct perf_stat_config =
-*config,
-> >       if (!metric_events[i]) {
-> >               if (expr__parse(&ratio, pctx, metric_expr) =3D=3D 0) {
-> >                       char *unit;
-> > -                     char metric_bf[64];
-> > +                     char metric_bf[128];
->
-> I thin there is already a MAX_EVENT_NAME.
-> Can we similarly define a MAX_METRIC_NAME for it?
+On Tue, Nov 05, 2024 at 06:58:43PM +0100, Jerome Brunet wrote:
+> Add DT binding for the Texas Instruments TPS25990 eFuse
+> 
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-So in this case the buffer needs to be big enough to hold the metric
-name, the unit from the scaleunit (e.g. the "%" from "100%"). I'd
-prefer we used dynamic memory allocation to having hard coded limits,
-just to avoid a "640K ought to be enough for anybody," moment.
-Although this change is implicitly a hard coded limit, sigh. There is
-also the metric only name length:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/builtin-stat.c?h=3Dperf-tools-next#n160
-That looked like it was planned to be dynamically computed but then
-the patch adding that never materialized - meaning "standard"
-metric-only output has its own cut-off rules at 20 characters. I'd
-rather wait on doing a larger cleanup and do this quick fix for now,
-mainly as I have enough to do.
-
-While we're talking metrics, I'm still looking for feedback on the
-python generation of metrics. v1 was sent back in January, if v4 looks
-okay some acknowledgement would be nice:
-https://lore.kernel.org/lkml/CAP-5=3DfVX5wypmAAhR8LsE4nSWp5BmN_qhGf9+WCh2be=
-bNcGYTg@mail.gmail.com/
-Leo sent some feedback to improve some of the ARM metrics, so I can
-resend the whole series. Would be nice to gather some acked-by or
-other tags.
+Applied.
 
 Thanks,
-Ian
+Guenter
 
