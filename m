@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-397346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A089BDACF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:01:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA0A9BDAD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:02:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69801B23177
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:01:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8641C22EC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701EC189903;
-	Wed,  6 Nov 2024 01:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTr9fcUi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C522B189913;
+	Wed,  6 Nov 2024 01:01:41 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC0B188CC6;
-	Wed,  6 Nov 2024 01:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4673C17F4F2;
+	Wed,  6 Nov 2024 01:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730854831; cv=none; b=UMNOVSNQmYAAGF903twyNXKfcLEPqRRYTsT9sMMcECT98IOxNsYwztgWlmprri4s7wi8I7NLtmIPI2feW2exf3HNQXMm3WhwsQnc0TNOvCmhorCy6WLNcMlcuraXhVd8bWNAfjHKw/4Ne7ChpNyTEyZ4+ASPyvnpfKoXXuJuiCU=
+	t=1730854901; cv=none; b=e8h+NZsovPYtsclINBkpuA3zVWaVD+IcGvz2ebXeuYpDVp0tdDhnQdy6JoraZ5eljTuU4YcV5Ybli2GhkTvkQlHIfZJ/rQibScn/E0dSG+SydK+GoOTTU5uXnIYvbTM2DLVx22XxQvrbkW9zVHWbl4j0eKqW3a2/gh8lOCPz1ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730854831; c=relaxed/simple;
-	bh=2xq03IheQk0VtglJEByLAo5ZZJCKajQxQT8Gn6j/8M4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aFG7inVWswaXk/+nKMwWchFcBt0bCDp2MQCSBwNea47CUTD8ojHWIe7BIWzxlAAEodFET1ivHS0jM4gKg+eoJ9ep8Ga2OI05yyuYsW7Yi7gfXzfM9rSzbzafCId1g+AVrpLUYcb4sy7wBaEJKR76gaxmwhlXdjQjbSUcE+f19jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTr9fcUi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A969EC4CED1;
-	Wed,  6 Nov 2024 01:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730854831;
-	bh=2xq03IheQk0VtglJEByLAo5ZZJCKajQxQT8Gn6j/8M4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aTr9fcUibE0gH6AAEA+tYyw0EGtpUqdJL7RxX67r+maqXeIDRfRLXZfRrvvrQbxUJ
-	 NWmbErjhjkvXIQnh6SdZ/JE4YMnNpk97XEkyj8mzpAY2xuhbx3hKbWejiuil3nkzeE
-	 Jfcj8XUDd9Gsp2N93INIzYlZYg9ppw7SqwwVIP9pkXMwJQkEhR5lqju9xTB4aVRP+s
-	 aKxjgfwdsVGi1hEF0pbmwPXfK9TfRQiPvp/wye5faGIr9QzVQUG/QKQhnqwA93AwfM
-	 9zm2MhJDa4VRyv4vSi2KO56hJ+qRIW6/5aeRug8nUxGxGAwBVZz7aa//BqW2U9Lntw
-	 +NT9f6sLilmgQ==
-Date: Tue, 5 Nov 2024 17:00:29 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, davej@codemonkey.org.uk, vlad.wing@gmail.com,
- max@kutsevol.com, kernel-team@meta.com, jiri@resnulli.us, jv@jvosburgh.net,
- andy@greyhouse.net, aehkn@xenhub.one, Rik van Riel <riel@surriel.com>, Al
- Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH net-next 1/3] net: netpoll: Defer skb_pool population
- until setup success
-Message-ID: <20241105170029.719344e7@kernel.org>
-In-Reply-To: <20241104-nimble-scallop-of-justice-4ab82f@leitao>
-References: <20241025142025.3558051-1-leitao@debian.org>
-	<20241025142025.3558051-2-leitao@debian.org>
-	<20241031182647.3fbb2ac4@kernel.org>
-	<20241101-cheerful-pretty-wapiti-d5f69e@leitao>
-	<20241101-prompt-carrot-hare-ff2aaa@leitao>
-	<20241101190101.4a2b765f@kernel.org>
-	<20241104-nimble-scallop-of-justice-4ab82f@leitao>
+	s=arc-20240116; t=1730854901; c=relaxed/simple;
+	bh=1t9TMw2SgXI7sUlPyzY+L1hKWpWbHsOM8itTqn1tf8s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CxOCQLLZumn7qruFvpymYJTdA3DApGueqPIiP0WcxUwQC6bebjWxX7RC/0SiScJHnCywmuxKVuLlz3qUs3zFnxwfRfqKk53z9RBlVbNZTdXog3ezC2g4Yp0pedY87wcZoHAtflqejVO1XetphuyRHue0T/Arh3LQz1vHKyT7+qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xjn013rd9zfdcs;
+	Wed,  6 Nov 2024 08:58:57 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 385DE18007C;
+	Wed,  6 Nov 2024 09:01:34 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 6 Nov
+ 2024 09:01:33 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <ruanjinjie@huawei.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <qperret@google.com>
+Subject: [PATCH -next] cpufreq: CPPC: Fix wrong return value in cppc_get_cpu_power()
+Date: Wed, 6 Nov 2024 09:01:11 +0800
+Message-ID: <20241106010111.2404387-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On Mon, 4 Nov 2024 12:40:00 -0800 Breno Leitao wrote:
-> Let's assume the pool is full and we start getting OOMs. It doesn't
-> matter if alloc_skb() will fail in the critical path or in the work
-> thread, netpoll will have MAX_SKBS skbs buffered to use, and none will
-> be allocated, thus, just 32 SKBs will be used until a -ENOMEM returns.
+cppc_get_cpu_power() return 0 if the policy is NULL. Then in
+em_create_perf_table(), the later zero check for power is not valid
+as power is uninitialized. As Quentin pointed out, kernel energy model
+core check the return value of active_power() first, so if the callback
+failed it should tell the core. So return -EINVAL to fix it.
 
-Do you assume the worker thread will basically keep up with the output?
-Vadim was showing me a system earlier today where workqueue workers
-didn't get scheduled in for minutes :( That's a bit extreme but doesn't
-inspire confidence in worker replenishing the pool quickly.
+Fixes: a78e72075642 ("cpufreq: CPPC: Fix possible null-ptr-deref for cpufreq_cpu_get_raw()")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Suggested-by: Quentin Perret <qperret@google.com>
+---
+ drivers/cpufreq/cppc_cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On the other side, let's suppose there is a bunch of OOM pressure for a
-> while (10 SKBs are consumed for instance), and then some free memory
-> show up, causing the pool to be replenished. It is better
-> to do it in the workthread other than in the hot path.
-
-We could cap how much we replenish in one go?
-
-> In both cases, the chance of not having SKBs to send the packet seems to
-> be the same, unless I am not modeling the problem correctly.
-
-Maybe I misunderstood the proposal, I think you said earlier that you
-want to consume from the pool instead of calling alloc(). If you mean
-that we'd still alloc in the fast path but not replenish the pool
-that's different.
-
-> On top of that, a few other points that this new model could help more,
-> in a OOM case.
-> 
-> 1) Now with Maksysm patches, we can monitor the OOMing rate
-> 
-> 2) With the pool per target, we can easily increase the pool size if we
-> want. (patchset not pushed yet)
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index cdc569cf7743..bd8f75accfa0 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -405,7 +405,7 @@ static int cppc_get_cpu_power(struct device *cpu_dev,
+ 
+ 	policy = cpufreq_cpu_get_raw(cpu_dev->id);
+ 	if (!policy)
+-		return 0;
++		return -EINVAL;
+ 
+ 	cpu_data = policy->driver_data;
+ 	perf_caps = &cpu_data->perf_caps;
+-- 
+2.34.1
 
 
