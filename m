@@ -1,54 +1,82 @@
-Return-Path: <linux-kernel+bounces-397762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC07B9BE000
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:10:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0B79BDFFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:10:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603791F23940
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198301C22AD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC12C1D31B2;
-	Wed,  6 Nov 2024 08:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523BC1CF2BD;
+	Wed,  6 Nov 2024 08:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o7duiaOW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dVblc/Ss"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4006C19148A;
-	Wed,  6 Nov 2024 08:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E947919148A;
+	Wed,  6 Nov 2024 08:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730880622; cv=none; b=BF1+H7DM6iq6kbKOhUdvUGtaeMMQHJvRHE8FfJoJfWWRxRfJsRXAw9DTPQEvJXbhTtViqcqkk7I3Iml+zZVmVali2SQtk4jJ83JD/dzUcElpgfPYT8wGar4wi8jDh6/0Z8klTWkBsZCh2KZyziIFuD7Mbc3bdpKkDY1ojFi69Dk=
+	t=1730880613; cv=none; b=qio0pvkAbXdsxbJxjWFszaJoWVmywKlBG3VUbMOJE0BzpCebsmGJf/MSltbYY6yBoz08Tlkg1KmLZMuKl9XrvljGAiG/HxATZqoWW/l+B6IGO7OaaQuB6KWbMmqEFLKHNDQSwCZh8dl2VwvrowZxZ+HU2JkJNIC/ZWX70vDrFKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730880622; c=relaxed/simple;
-	bh=KZ8aBWBC6rv25YMrg2zHEHoVtOEBWRyUHz/BlKlWqn8=;
+	s=arc-20240116; t=1730880613; c=relaxed/simple;
+	bh=sXgglb6RJyFZT6poiRwu0692++EFfo0EZU7SsQpBdJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7/cKaJS7Ts8dncN7eKMSpniKSGEgGoX9aBaQHwT19CoKBTrF/u+LyN09coDzPK2pWqYORnUDp1/3CVkUlwMTRwWxdpOdO+nc01N3AF07DALvgq/fGNrwk82CsqBZiI0+sNt2Loi3B5i6F4gXy7XqhuLdBAdMd2R4obx0B+tJ4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o7duiaOW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF7AC4CECD;
-	Wed,  6 Nov 2024 08:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730880621;
-	bh=KZ8aBWBC6rv25YMrg2zHEHoVtOEBWRyUHz/BlKlWqn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o7duiaOWrkEP5F8V4tgcT6Lhe2v1GQVNC4GUn+rF3gBTNdx0KIn5U7IQCqHP0l2Wj
-	 bVc2HIDFtcheCexV0KCQravF4ADo028uGNeSlH3x71+R8W4aX5rw4tmGkS1D/KVkY7
-	 NkipgjDGX3T0X2vEMh7PhYOC9xXJvCM0SKFEiS6Y=
-Date: Wed, 6 Nov 2024 09:10:03 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Liao, Bard" <yung-chuan.liao@linux.intel.com>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	mstrozek@opensource.cirrus.com,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	bard.liao@intel.com
-Subject: Re: Request to backport "ASoC: Intel: mtl-match: Add cs42l43_l0
- cs35l56_l23 for MTL"
-Message-ID: <2024110635-directive-steadier-9ab2@gregkh>
-References: <448a5371-75d5-4016-9e6d-d54252c792b4@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AzlmDJ6KyQklPqFadgmK4RS1kLpVXLnIjVhMX4Xy0nCRsZLDDWtgMwrayxTBAuQu5E6BW5GGiIo1C12+Kvowe01S/5E/ecSEsW7AbJuRIIMy3G6e1N1+gOCh/siODhAvOo03g5bX2TV4hBGUBhzIBE8PGY5qsPTz0XXpzn+QkDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dVblc/Ss; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A66eZBE028055;
+	Wed, 6 Nov 2024 08:10:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=vnyKGLlOrMBKv5a70pXeBruA9QrK89
+	THd5y5r0X5kqQ=; b=dVblc/Ssb1RyhbcTY/pEi7FNM24+SiFyf++5bKy7qVZ6k6
+	JSxb3/qmORQ7lH7mbsgTXLM1JDPqXgxe/XJSGnqlCXVt6qYBfp8Xz5WRDuEniS2V
+	7T6+7T/HdqBLb/QiL0CC75GU6Tbn4GeXAsmASa5cgULDVtBfFLH28ufTaBVTRpxh
+	Q1u7mUUbgfVA/RRrJijALb+Ee3UW0yh2z+RRpf9t/neamYAbelCwlne0Zup2vTBK
+	5UzHr9jPvXtEnQkam4lhu975Zxkhvrdwc37ac7nk1SSZNvRpkXeINAnOhNCUgun6
+	8FG96/g9w/n1VfH8UuuG+jf++OiChBcHNAyVi6gw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r3d2re9r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 08:10:10 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A65vAob019096;
+	Wed, 6 Nov 2024 08:10:10 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p0mj5p9a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 08:10:09 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A68A6PK39649538
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 6 Nov 2024 08:10:06 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2C84B2004B;
+	Wed,  6 Nov 2024 08:10:06 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9A6ED20043;
+	Wed,  6 Nov 2024 08:10:05 +0000 (GMT)
+Received: from osiris (unknown [9.171.89.178])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  6 Nov 2024 08:10:05 +0000 (GMT)
+Date: Wed, 6 Nov 2024 09:10:04 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Steffen Eiden <seiden@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Ingo Franzki <ifranzki@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
+Subject: Re: [PATCH v3] s390/uvdevice: Support longer secret lists
+Message-ID: <20241106081004.16507-A-hca@linux.ibm.com>
+References: <20241104153609.1361388-1-seiden@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,26 +85,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <448a5371-75d5-4016-9e6d-d54252c792b4@linux.intel.com>
+In-Reply-To: <20241104153609.1361388-1-seiden@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: QH-RRJU5xP0YMUELHZLowN6Pc13qQZtt
+X-Proofpoint-ORIG-GUID: QH-RRJU5xP0YMUELHZLowN6Pc13qQZtt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=431 spamscore=0 clxscore=1015 suspectscore=0 impostorscore=0
+ phishscore=0 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411060065
 
-On Tue, Oct 22, 2024 at 07:31:42PM +0800, Liao, Bard wrote:
-> Hi,
+On Mon, Nov 04, 2024 at 04:36:09PM +0100, Steffen Eiden wrote:
+> Enable the list IOCTL to provide lists longer than one page (85 entries).
+> The list IOCTL now accepts any argument length in page granularity.
+> It fills the argument up to this length with entries until the list
+> ends. User space unaware of this enhancement will still receive one page
+> of data and an uv_rc 0x0100.
 > 
-> commit 84b22af29ff6 ("ASoC: Intel: mtl-match: Add cs42l43_l0 cs35l56_l23
-> for MTL") upstream.
-> 
-> The commit added cs42l43 on SoundWire link 0 and cs35l56 on SoundWire
-> link 2 and 3 configuration support on Intel Meteor Lake support. Audio
-> will not work without this commit if the laptop use the given audio
-> configuration.
-> 
-> I wish this commit can be applied to kernel 6.8.
+> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+> ---
+>  v3: remove upper boundary (8 pages) for arg len
 
-6.8.y is long end-of-life, so there is nothing we can do here.  Please
-always look at the front page of kernel.org to see the current active
-kernels.
+...
 
-thanks,
+> +static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
+> +{
+> +	const size_t data_off = offsetof(struct uv_secret_list, secrets);
+> +	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
+> +	struct uv_secret_list *list = zpage;
+> +	u16 num_secrets_stored = 0;
+> +	size_t user_off = data_off;
+> +	size_t copy_len;
+> +
+> +	do {
+> +		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
+> +				&uv_ioctl->uv_rrc);
+> +		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
+> +		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
+> +			break;
+> +
+> +		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
+> +		WARN_ON(copy_len > sizeof(list->secrets));
 
-greg k-h
+Is this really possible? Without checking the documentation I guess
+this is not possible and therefore the WARN_ON() should be removed.
+
+If however this can be possible then this should be turned into a
+WARN_ON_ONCE().
+
+> +		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
+> +			return -EFAULT;
+
+...and in addition, if the above would be possible this _could_ copy
+random kernel data to user space. Not good.
 
