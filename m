@@ -1,105 +1,92 @@
-Return-Path: <linux-kernel+bounces-398949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FE29BF85E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:14:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9790D9BF862
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33381F23727
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:14:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493811F22DE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BF820CCD6;
-	Wed,  6 Nov 2024 21:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4315D20CCC9;
+	Wed,  6 Nov 2024 21:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FL4mZL1L"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VCtggFHt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74139209668;
-	Wed,  6 Nov 2024 21:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928AE20C02A;
+	Wed,  6 Nov 2024 21:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730927660; cv=none; b=BQP9cdkrj9aIov9V39ArOYtl2RvJeAItA68I8symx3/xf1ckCzBUwj/ngqG6ydk3lZLqrmOCr5uJ64sfSxU+9cajGP7xaw3dfReU3FVOzaqAujaoQgjQvb98H9PgQTC+4F0KSc4byzkpKit96W3VgREp7n+aB9mtgL4hFmwRjSU=
+	t=1730927840; cv=none; b=nExq2abRLkUUbLLtCjsH6R/KlZUYM8WqBDUxDZaBjJIepoexZ3zeN7FK1smA+fds9Swo/zihFGVaiQdW3sR2HMwrirIjcVGAAhvdS17Os47gDd0djAB4IBF/Kf3TrKv6k6y4mdGqYHCKTrad7SwtMDYGB5SsvTKQobsiTJZvoJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730927660; c=relaxed/simple;
-	bh=7/BdvkRmiyyxC0XnyH5pvkrr+j4iCL5yDpito59jKc8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GrDdeXRzCNO3EdPJIpo+q7mPBaEMT//OQ8yqr8b7eAhIBD9M1nnXifogVGWHZlv3XOXfTlr8umyduhDaNdanc+emlFWb2z8RtpS7Oa9MWD4LwSw41BgbBBHTqcHfVO3xpdzinvlkqxj5xlGpu9+cWX3k7Soi1+tVl2pH6gjLi1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FL4mZL1L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C49CC4CEC6;
-	Wed,  6 Nov 2024 21:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730927659;
-	bh=7/BdvkRmiyyxC0XnyH5pvkrr+j4iCL5yDpito59jKc8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FL4mZL1LEP/eoXCMb2ABDyBKV3jMPIEb4b2ONddyE0DiGDwGC12Zt6PDSoXOmLOal
-	 4Sq6sG7lTddHoYBA08gaCc6TtdQTAFfEUUYvtrFLYIo3a92Q5OzQ7WOLzgBgUOFEdp
-	 P15Uqj6IT5RZDnmrWqwyzsAra1fCMbKTpfnbeSPJ/5y82JQvnhcgknY77MlzQpkAdw
-	 vBGMZKTZxRAg3Tp1Kq7noXX1TaNJRDO5pCYLKk85OL6pHPptvwB6A2yOYKfUPZpuI6
-	 hwuGI8Z/vtwGSMz8mDtyn8DxHpQ+kPO3DIj9N0JmQiPzUCaQPGVR4SRuIBgcdRN30R
-	 f+W5WzcuxP8jA==
-From: Mark Brown <broonie@kernel.org>
-To: Fei Shao <fshao@chromium.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org
-In-Reply-To: <20241105091513.3963102-1-fshao@chromium.org>
-References: <20241105091513.3963102-1-fshao@chromium.org>
-Subject: Re: [PATCH v2] ASoC: dt-bindings: maxim,max98390: Reference common
- DAI properties
-Message-Id: <173092765728.208420.14697399337630001578.b4-ty@kernel.org>
-Date: Wed, 06 Nov 2024 21:14:17 +0000
+	s=arc-20240116; t=1730927840; c=relaxed/simple;
+	bh=UVIVzkxgnorxFMAYc29bFffedWIX/7PJbZ8MAWTGHHk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ZNRUqQzAsBLSSl+mvCygYVGBsCvxQheM5ypfkUlG2Ei4tK2Fc3d1Xp2uDXL3b37Zk43/9GyaoJHGfd7DUgRboeaAIFMAlBR7HHA98Ndb7EyZcOCHk6TfLEDRIWAo15KX8gfkErY3kyjxI7fY0BTkGWscsz0Bh5d+UaXHxfaGH2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VCtggFHt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A2FFC4CED0;
+	Wed,  6 Nov 2024 21:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730927840;
+	bh=UVIVzkxgnorxFMAYc29bFffedWIX/7PJbZ8MAWTGHHk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VCtggFHtCZJcnKvaL5gL67E9uejc+5iNSlBQMidKQzvPnqyI2/yN4GWvT5JzfsyOK
+	 xA4X+UGM4DLOMeP0V7IEuK+qJX7KAUZBfjP8gApyYN9rxWY/TADf6n9xgqQ/vmbnfr
+	 hW7g+Xfeh9/vGiHCpF1jbztKwOmDkYmug/9uOXnA=
+Date: Wed, 6 Nov 2024 13:17:18 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: David Gow <davidgow@google.com>, Shuah Khan <skhan@linuxfoundation.org>,
+ Brendan Higgins <brendanhiggins@google.com>, Rae Moar <rmoar@google.com>,
+ Kees Cook <kees@kernel.org>, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, Stephen Rothwell
+ <sfr@canb.auug.org.au>, Luis Felipe Hernandez
+ <luis.hernandez093@gmail.com>, quic_jjohnson@quicinc.com,
+ macro@orcam.me.uk, tpiepho@gmail.com, ricardo@marliere.net,
+ linux-kernel-mentees@lists.linuxfoundation.org, Nicolas Pitre
+ <npitre@baylibre.com>
+Subject: Re: [PATCH 1/6] lib: math: Move kunit tests into tests/ subdir
+Message-Id: <20241106131718.e0899c324941f63dc931f0fc@linux-foundation.org>
+In-Reply-To: <CAMuHMdVQ-Fmnti80_HoX1+6L8wNUghpuJzqpT_g0SJQG-oq6RQ@mail.gmail.com>
+References: <20241011072509.3068328-2-davidgow@google.com>
+	<20241011072509.3068328-3-davidgow@google.com>
+	<CAMuHMdUdotDYAgSDDrWi-TOj2o=5a53n452DydhD-Q0fjiGhew@mail.gmail.com>
+	<CAMuHMdVQ-Fmnti80_HoX1+6L8wNUghpuJzqpT_g0SJQG-oq6RQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
 
-On Tue, 05 Nov 2024 17:14:31 +0800, Fei Shao wrote:
-> MAX98390 is a smart amplifier and exposes one DAI, so '#sound-dai-cells'
-> property is needed for describing the DAI links.
+On Wed, 6 Nov 2024 09:33:55 +0100 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+
+> Hi all,
+> > This conflicts with "[PATCH] m68k: defconfig: Update defconfigs for
+> > v6.12-rc1"[1].  Of course the proper way forward would be to add
+> > "default KUNIT_ALL_TESTS" to all tests that still lack it, so I can
+> > just never queue that patch ;-)
 > 
-> Reference the dai-common.yaml schema to allow '#sound-dai-cells' to be
-> used.
+> What's the status of this series? I am asking because I am wondering if
+> I should queue [1] for v6.13, or just drop it, and send a patch to add
+> "default KUNIT_ALL_TESTS" instead.
 > 
-> This fixes dtbs_check error:
->   '#sound-dai-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 
-> [...]
+> I saw the email from Andrew stating he applied it to his tree[2],
+> but that seems to have been dropped silently, and never made it into
+> linux-next?
 
-Applied to
+Yes, sorry.  Believe it or not, I do try to avoid spraying out too many
+emails.  David will recall better than I, but things got messy. 
+https://lkml.kernel.org/r/20241009162719.0adaea37@canb.auug.org.au was
+perhaps the cause.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: dt-bindings: maxim,max98390: Reference common DAI properties
-      commit: 9b915776e0e6a2d185498077e0ebdb154a2751ac
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+I'm sure David can being us up to date.
 
 
