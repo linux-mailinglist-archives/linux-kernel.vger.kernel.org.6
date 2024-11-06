@@ -1,235 +1,438 @@
-Return-Path: <linux-kernel+bounces-398714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A38A9BF50D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:17:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1749BF510
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:17:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6541F21E9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA5A2882D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF1E208204;
-	Wed,  6 Nov 2024 18:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C20208229;
+	Wed,  6 Nov 2024 18:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UbXwfjMt"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeNV9+W4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B91A204934;
-	Wed,  6 Nov 2024 18:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6B1205E38;
+	Wed,  6 Nov 2024 18:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730917046; cv=none; b=b/yq9Nb8ivw2AbMdRwKjNXkuL0rVRMGIHfm8FKlFajbEWl0wjgsAroMF/mOq+ynB4JimcchGdypYwKEPeggGC14srgjFrOQZ8pb8wxJ85VCtSrDsMR17QJYChoOrqw1rq3UCVYj0+3nbPhHgqO7XuwCJGUyLq2N4kr7ODUyB6lI=
+	t=1730917047; cv=none; b=ht6FuPt2BZn+1Mu+lWnC/6S0WBn1HFAU9Hc0A2pLbNCS3VQM5Ze7rmK1UZHIqHqNZF6yY/v79KAfESgsnPqZ3eUYJvi3B5BwCiCWbqPoM+c+pBdHV9wJe90yPqFzL4wupyGq7/Lx9lF7/YuCkzPXEUlHfzswJ+i9et4ALqoT8h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730917046; c=relaxed/simple;
-	bh=iOz1kyK1h6dpyS+gFYdERgAcIkwyLqV7rqyjyDHqGME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJ/o1dcG0/Hq5mCIR4LwKRY/2r6nLK/ZGgmvvYFn8w+hSCPtkBfAdFlihtI2Q0Nf8Q4yTnlc5/0ifTg7RGUzx4hYjXV+kQtavrGwsYavU/R9FF8HWOlFuctIdMOzsfujFWNNOov8OPdRC7iihm7fGa7Zkwcj01s8y9OpzZogO+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UbXwfjMt; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9334640E0163;
-	Wed,  6 Nov 2024 18:17:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mhpTMvEGzZ3n; Wed,  6 Nov 2024 18:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730917037; bh=ZCw6KZ56wNE+x3+fx0qZaa5aMg59QwoMP17Ar6mfZ0I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UbXwfjMtVaJKDReZ5xCe0stdzqv3JKcqAoFkjgtD4EyXqJHonBgTUAW3ZziahTcKG
-	 F5zGxxGayLyGEXocmrKfMvlgzg3uvCOwXPBHUWtF3/8Rg8k/l9XyY9gwbhErZhoizi
-	 HGXIjVUViDyobGE11uYx3ubolPXUEGnn+V+czkb1OMCjrGuzDvqkWr5VlwDc5U/81G
-	 uawT+mK8yLsKsrZCtQn7ky/U9oyUJH5XFB/pcsb7CcwdCZePZjOgLSv0zTXLL/3fly
-	 z9OHJrtJ6cx7gRbHpjVMNwcf6a9SKPJoquK9/xVQ1BzHXHqbadCx0j0sTCp3MU8Nwz
-	 DAWH+nt7NVjRt9YhJvoRXdYqAHpCy3xcBe1bxZRa+XBWLjgHMWU0E2hRSOAI7tdjV4
-	 XnSFsNXrIZOJJYEdVtYsHecY47CRw66+zS+PHyrTJyKHVGqhA5MXm4TBWO2OvObJdf
-	 Qj6QM6rowrjzMSdCquFsnKqEsEpqzUpcZC21iEmtBJD9ias3tPtOYWreh0/v2o408j
-	 xiBiq1BEYshdlpBSnZlPkIxKj4jGt9DU1q2jcxr+3zqD0QM53AQZcKeBpZM7C8nF8Z
-	 UqEsjSOubt0Lq+lVXoTuKMB8+Q0DAvn5PE9RpFwmfc6u5Un2SHp2PWGjK9XrGp02km
-	 OLF/VpS2XzUKuScLsDNwnkpY=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6F91140E0169;
-	Wed,  6 Nov 2024 18:17:00 +0000 (UTC)
-Date: Wed, 6 Nov 2024 19:16:55 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org
-Subject: Re: [RFC 03/14] x86/apic: Populate .read()/.write() callbacks of
- Secure AVIC driver
-Message-ID: <20241106181655.GYZyuyl0zDTTmlMKzz@fat_crate.local>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-4-Neeraj.Upadhyay@amd.com>
+	s=arc-20240116; t=1730917047; c=relaxed/simple;
+	bh=cHbb0Rqd2g6rV06D4JQTthn3+eLxOEYaau9P/hGAoc4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=seUoOc5OfdEsIFc/RAJitkQwMqxYxs3hfHb3XyQXHkpAsXoQPTX8wvdFTwva/8vZQl72Lc8Du5rIDCZsEDPvYiegL4m4W3fYh/tuGU+npMCjVKGk6I9JUdEJXHTMTB1wsvOWRxm4lcsyQd+YeuigbEJjoluJg8S5DBf0MvgpFCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeNV9+W4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E26BC4CEC6;
+	Wed,  6 Nov 2024 18:17:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730917047;
+	bh=cHbb0Rqd2g6rV06D4JQTthn3+eLxOEYaau9P/hGAoc4=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=GeNV9+W4bC+vtOV7z2krPcRWzdLA+u82GnCb8rE48zskJgdF7M1lGuQ7j49KksI35
+	 ZB1nmos9/P9JBmYI2MSD/Tvy+fV6+YX5Vf6/2OpySmNN9xinOn21SgfS44gHoN+m3f
+	 v9LQhzntD3i6uXGb0JKapdQ5YnXWIPdbXoawcM+JBK60OwhavYypP4uXdIOHUXQ9sE
+	 I5H1dlw/x43th35dWlWyOXPi3tbgVgbgdXgeaHP0cBv1nJwhhTEdOaNXg/uh0/bDWK
+	 XlVaaMq2k5yDKfDC3GbxDecSuyOW56tkcPntNcYaf67pA98MG2obkDTwwZNJAYnkYF
+	 onfrwOmc8C9hw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240913113705.419146-4-Neeraj.Upadhyay@amd.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 06 Nov 2024 20:17:22 +0200
+Message-Id: <D5FAVRTM32ZJ.1HFCHF3L9I68C@kernel.org>
+Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ "Michael Ellerman" <mpe@ellerman.id.au>, "Nicholas Piggin"
+ <npiggin@gmail.com>, "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] tpm: atmel: Drop PPC64 specific MMIO setup
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Rob Herring" <robh@kernel.org>, "Jarkko Sakkinen"
+ <jarkko.sakkinen@iki.fi>
+X-Mailer: aerc 0.18.2
+References: <20240702161052.3563599-1-robh@kernel.org>
+ <D2RSWMPFF8KK.X5HZZMHANQMO@iki.fi> <D2RT0J8KXY1H.3MEV7KGQXTWHW@iki.fi>
+ <CAL_JsqJDX+uOSoPh6pTNEP0vBLwcP3bKmAW1wCr_0cVr5fsPcg@mail.gmail.com>
+ <D2SSH5HSDHQS.2YJSB22W3MHQK@iki.fi>
+ <CAL_JsqLF+gs9e1TL1yi-xAZJRx4Kz7fOk=2wcF8kCqU3vyMWZA@mail.gmail.com>
+In-Reply-To: <CAL_JsqLF+gs9e1TL1yi-xAZJRx4Kz7fOk=2wcF8kCqU3vyMWZA@mail.gmail.com>
 
-On Fri, Sep 13, 2024 at 05:06:54PM +0530, Neeraj Upadhyay wrote:
-> @@ -24,6 +25,108 @@ static int x2apic_savic_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
->  	return x2apic_enabled() && cc_platform_has(CC_ATTR_SNP_SECURE_AVIC);
->  }
->  
-> +static inline u32 get_reg(char *page, int reg_off)
+On Wed Nov 6, 2024 at 4:50 PM EET, Rob Herring wrote:
+> On Thu, Jul 18, 2024 at 11:01=E2=80=AFAM Jarkko Sakkinen <jarkko.sakkinen=
+@iki.fi> wrote:
+> >
+> > On Thu Jul 18, 2024 at 5:57 PM EEST, Rob Herring wrote:
+> > > On Wed, Jul 17, 2024 at 6:14=E2=80=AFAM Jarkko Sakkinen <jarkko.sakki=
+nen@iki.fi> wrote:
+> > > >
+> > > > On Wed Jul 17, 2024 at 3:08 PM EEST, Jarkko Sakkinen wrote:
+> > > > > On Tue Jul 2, 2024 at 7:10 PM EEST, Rob Herring (Arm) wrote:
+> > > > > > The PPC64 specific MMIO setup open codes DT address functions r=
+ather
+> > > > > > than using standard address parsing functions. The open-coded v=
+ersion
+> > > > > > fails to handle any address translation and is not endian safe.
+> > > > > >
+> > > > > > I haven't found any evidence of what platform used this. The on=
+ly thing
+> > > > > > that turned up was a PPC405 platform, but that is 32-bit and PP=
+C405
+> > > > > > support is being removed as well. CONFIG_TCG_ATMEL is not enabl=
+ed for
+> > > > > > any powerpc config and never was. The support was added in 2005=
+ and
+> > > > > > hasn't been touched since.
+> > > > > >
+> > > > > > Rather than try to modernize and fix this code, just remove it.
+> > > > > >
+> > > > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > > > ---
+> > > > > >  drivers/char/tpm/Kconfig     |   2 +-
+> > > > > >  drivers/char/tpm/tpm_atmel.c |  64 +++++++++++++++-
+> > > > > >  drivers/char/tpm/tpm_atmel.h | 140 ---------------------------=
+--------
+> > > > > >  3 files changed, 62 insertions(+), 144 deletions(-)
+> > > > > >  delete mode 100644 drivers/char/tpm/tpm_atmel.h
+> > > > > >
+> > > > > > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfi=
+g
+> > > > > > index e63a6a17793c..9b655e9fc7ab 100644
+> > > > > > --- a/drivers/char/tpm/Kconfig
+> > > > > > +++ b/drivers/char/tpm/Kconfig
+> > > > > > @@ -162,7 +162,7 @@ config TCG_NSC
+> > > > > >
+> > > > > >  config TCG_ATMEL
+> > > > > >     tristate "Atmel TPM Interface"
+> > > > > > -   depends on PPC64 || HAS_IOPORT_MAP
+> > > > > > +   depends on HAS_IOPORT_MAP
+> > > > > >     depends on HAS_IOPORT
+> > > > > >     help
+> > > > > >       If you have a TPM security chip from Atmel say Yes and it
+> > > > > > diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tp=
+m_atmel.c
+> > > > > > index 9fb2defa9dc4..622c4abe8cb3 100644
+> > > > > > --- a/drivers/char/tpm/tpm_atmel.c
+> > > > > > +++ b/drivers/char/tpm/tpm_atmel.c
+> > > > > > @@ -15,7 +15,67 @@
+> > > > > >   */
+> > > > > >
+> > > > > >  #include "tpm.h"
+> > > > > > -#include "tpm_atmel.h"
+> > > > > > +
+> > > > > > +struct tpm_atmel_priv {
+> > > > > > +   int region_size;
+> > > > > > +   int have_region;
+> > > > > > +   unsigned long base;
+> > > > > > +   void __iomem *iobase;
+> > > > > > +};
+> > > > > > +
+> > > > > > +#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->bas=
+e + offset)
+> > > > > > +#define atmel_putb(val, chip, offset) \
+> > > > > > +   outb(val, atmel_get_priv(chip)->base + offset)
+> > > > > > +#define atmel_request_region request_region
+> > > > > > +#define atmel_release_region release_region
+> > > > > > +/* Atmel definitions */
+> > > > > > +enum tpm_atmel_addr {
+> > > > > > +   TPM_ATMEL_BASE_ADDR_LO =3D 0x08,
+> > > > > > +   TPM_ATMEL_BASE_ADDR_HI =3D 0x09
+> > > > > > +};
+> > > > > > +
+> > > > > > +static inline int tpm_read_index(int base, int index)
+> > > > > > +{
+> > > > > > +   outb(index, base);
+> > > > > > +   return inb(base+1) & 0xFF;
+> > > > > > +}
+> > > > > > +
+> > > > > > +/* Verify this is a 1.1 Atmel TPM */
+> > > > > > +static int atmel_verify_tpm11(void)
+> > > > > > +{
+> > > > > > +
+> > > > > > +   /* verify that it is an Atmel part */
+> > > > > > +   if (tpm_read_index(TPM_ADDR, 4) !=3D 'A' ||
+> > > > > > +       tpm_read_index(TPM_ADDR, 5) !=3D 'T' ||
+> > > > > > +       tpm_read_index(TPM_ADDR, 6) !=3D 'M' ||
+> > > > > > +       tpm_read_index(TPM_ADDR, 7) !=3D 'L')
+> > > > > > +           return 1;
+> > > > > > +
+> > > > > > +   /* query chip for its version number */
+> > > > > > +   if (tpm_read_index(TPM_ADDR, 0x00) !=3D 1 ||
+> > > > > > +       tpm_read_index(TPM_ADDR, 0x01) !=3D 1)
+> > > > > > +           return 1;
+> > > > > > +
+> > > > > > +   /* This is an atmel supported part */
+> > > > > > +   return 0;
+> > > > > > +}
+> > > > > > +
+> > > > > > +/* Determine where to talk to device */
+> > > > > > +static void __iomem * atmel_get_base_addr(unsigned long *base,=
+ int *region_size)
+> > > > > > +{
+> > > > > > +   int lo, hi;
+> > > > > > +
+> > > > > > +   if (atmel_verify_tpm11() !=3D 0)
+> > > > > > +           return NULL;
+> > > > > > +
+> > > > > > +   lo =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_LO);
+> > > > > > +   hi =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_HI);
+> > > > > > +
+> > > > > > +   *base =3D (hi << 8) | lo;
+> > > > > > +   *region_size =3D 2;
+> > > > > > +
+> > > > > > +   return ioport_map(*base, *region_size);
+> > > > > > +}
+> > > > > >
+> > > > > >  /* write status bits */
+> > > > > >  enum tpm_atmel_write_status {
+> > > > > > @@ -142,7 +202,6 @@ static void atml_plat_remove(void)
+> > > > > >     tpm_chip_unregister(chip);
+> > > > > >     if (priv->have_region)
+> > > > > >             atmel_release_region(priv->base, priv->region_size)=
+;
+> > > > > > -   atmel_put_base_addr(priv->iobase);
+> > > > > >     platform_device_unregister(pdev);
+> > > > > >  }
+> > > > > >
+> > > > > > @@ -211,7 +270,6 @@ static int __init init_atmel(void)
+> > > > > >  err_unreg_dev:
+> > > > > >     platform_device_unregister(pdev);
+> > > > > >  err_rel_reg:
+> > > > > > -   atmel_put_base_addr(iobase);
+> > > > > >     if (have_region)
+> > > > > >             atmel_release_region(base,
+> > > > > >                                  region_size);
+> > > > > > diff --git a/drivers/char/tpm/tpm_atmel.h b/drivers/char/tpm/tp=
+m_atmel.h
+> > > > > > deleted file mode 100644
+> > > > > > index 7ac3f69dcf0f..000000000000
+> > > > > > --- a/drivers/char/tpm/tpm_atmel.h
+> > > > > > +++ /dev/null
+> > > > > > @@ -1,140 +0,0 @@
+> > > > > > -/* SPDX-License-Identifier: GPL-2.0-only */
+> > > > > > -/*
+> > > > > > - * Copyright (C) 2005 IBM Corporation
+> > > > > > - *
+> > > > > > - * Authors:
+> > > > > > - * Kylene Hall <kjhall@us.ibm.com>
+> > > > > > - *
+> > > > > > - * Maintained by: <tpmdd-devel@lists.sourceforge.net>
+> > > > > > - *
+> > > > > > - * Device driver for TCG/TCPA TPM (trusted platform module).
+> > > > > > - * Specifications at www.trustedcomputinggroup.org
+> > > > > > - *
+> > > > > > - * These difference are required on power because the device m=
+ust be
+> > > > > > - * discovered through the device tree and iomap must be used t=
+o get
+> > > > > > - * around the need for holes in the io_page_mask.  This does n=
+ot happen
+> > > > > > - * automatically because the tpm is not a normal pci device an=
+d lives
+> > > > > > - * under the root node.
+> > > > > > - */
+> > > > > > -
+> > > > > > -struct tpm_atmel_priv {
+> > > > > > -   int region_size;
+> > > > > > -   int have_region;
+> > > > > > -   unsigned long base;
+> > > > > > -   void __iomem *iobase;
+> > > > > > -};
+> > > > > > -
+> > > > > > -#ifdef CONFIG_PPC64
+> > > > > > -
+> > > > > > -#include <linux/of.h>
+> > > > > > -
+> > > > > > -#define atmel_getb(priv, offset) readb(priv->iobase + offset)
+> > > > > > -#define atmel_putb(val, priv, offset) writeb(val, priv->iobase=
+ + offset)
+> > > > > > -#define atmel_request_region request_mem_region
+> > > > > > -#define atmel_release_region release_mem_region
+> > > > > > -
+> > > > > > -static inline void atmel_put_base_addr(void __iomem *iobase)
+> > > > > > -{
+> > > > > > -   iounmap(iobase);
+> > > > > > -}
+> > > > > > -
+> > > > > > -static void __iomem * atmel_get_base_addr(unsigned long *base,=
+ int *region_size)
+> > > > > > -{
+> > > > > > -   struct device_node *dn;
+> > > > > > -   unsigned long address, size;
+> > > > > > -   const unsigned int *reg;
+> > > > > > -   int reglen;
+> > > > > > -   int naddrc;
+> > > > > > -   int nsizec;
+> > > > > > -
+> > > > > > -   dn =3D of_find_node_by_name(NULL, "tpm");
+> > > > > > -
+> > > > > > -   if (!dn)
+> > > > > > -           return NULL;
+> > > > > > -
+> > > > > > -   if (!of_device_is_compatible(dn, "AT97SC3201")) {
+> > > > > > -           of_node_put(dn);
+> > > > > > -           return NULL;
+> > > > > > -   }
+> > > > > > -
+> > > > > > -   reg =3D of_get_property(dn, "reg", &reglen);
+> > > > > > -   naddrc =3D of_n_addr_cells(dn);
+> > > > > > -   nsizec =3D of_n_size_cells(dn);
+> > > > > > -
+> > > > > > -   of_node_put(dn);
+> > > > > > -
+> > > > > > -
+> > > > > > -   if (naddrc =3D=3D 2)
+> > > > > > -           address =3D ((unsigned long) reg[0] << 32) | reg[1]=
+;
+> > > > > > -   else
+> > > > > > -           address =3D reg[0];
+> > > > > > -
+> > > > > > -   if (nsizec =3D=3D 2)
+> > > > > > -           size =3D
+> > > > > > -               ((unsigned long) reg[naddrc] << 32) | reg[naddr=
+c + 1];
+> > > > > > -   else
+> > > > > > -           size =3D reg[naddrc];
+> > > > > > -
+> > > > > > -   *base =3D address;
+> > > > > > -   *region_size =3D size;
+> > > > > > -   return ioremap(*base, *region_size);
+> > > > > > -}
+> > > > > > -#else
+> > > > > > -#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->bas=
+e + offset)
+> > > > > > -#define atmel_putb(val, chip, offset) \
+> > > > > > -   outb(val, atmel_get_priv(chip)->base + offset)
+> > > > > > -#define atmel_request_region request_region
+> > > > > > -#define atmel_release_region release_region
+> > > > > > -/* Atmel definitions */
+> > > > > > -enum tpm_atmel_addr {
+> > > > > > -   TPM_ATMEL_BASE_ADDR_LO =3D 0x08,
+> > > > > > -   TPM_ATMEL_BASE_ADDR_HI =3D 0x09
+> > > > > > -};
+> > > > > > -
+> > > > > > -static inline int tpm_read_index(int base, int index)
+> > > > > > -{
+> > > > > > -   outb(index, base);
+> > > > > > -   return inb(base+1) & 0xFF;
+> > > > > > -}
+> > > > > > -
+> > > > > > -/* Verify this is a 1.1 Atmel TPM */
+> > > > > > -static int atmel_verify_tpm11(void)
+> > > > > > -{
+> > > > > > -
+> > > > > > -   /* verify that it is an Atmel part */
+> > > > > > -   if (tpm_read_index(TPM_ADDR, 4) !=3D 'A' ||
+> > > > > > -       tpm_read_index(TPM_ADDR, 5) !=3D 'T' ||
+> > > > > > -       tpm_read_index(TPM_ADDR, 6) !=3D 'M' ||
+> > > > > > -       tpm_read_index(TPM_ADDR, 7) !=3D 'L')
+> > > > > > -           return 1;
+> > > > > > -
+> > > > > > -   /* query chip for its version number */
+> > > > > > -   if (tpm_read_index(TPM_ADDR, 0x00) !=3D 1 ||
+> > > > > > -       tpm_read_index(TPM_ADDR, 0x01) !=3D 1)
+> > > > > > -           return 1;
+> > > > > > -
+> > > > > > -   /* This is an atmel supported part */
+> > > > > > -   return 0;
+> > > > > > -}
+> > > > > > -
+> > > > > > -static inline void atmel_put_base_addr(void __iomem *iobase)
+> > > > > > -{
+> > > > > > -}
+> > > > > > -
+> > > > > > -/* Determine where to talk to device */
+> > > > > > -static void __iomem * atmel_get_base_addr(unsigned long *base,=
+ int *region_size)
+> > > > > > -{
+> > > > > > -   int lo, hi;
+> > > > > > -
+> > > > > > -   if (atmel_verify_tpm11() !=3D 0)
+> > > > > > -           return NULL;
+> > > > > > -
+> > > > > > -   lo =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_LO);
+> > > > > > -   hi =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_HI);
+> > > > > > -
+> > > > > > -   *base =3D (hi << 8) | lo;
+> > > > > > -   *region_size =3D 2;
+> > > > > > -
+> > > > > > -   return ioport_map(*base, *region_size);
+> > > > > > -}
+> > > > > > -#endif
+> > > > >
+> > > > > Responding from holidays but:
+> > > > >
+> > > > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > > > >
+> > > > > [still away for couple of weeks]
+> > > >
+> > > > I got these in with checkpatch.pl --strict:
+> > > >
+> > > > CHECK: Macro argument 'offset' may be better as '(offset)' to avoid=
+ precedence issues
+> > > > #59: FILE: drivers/char/tpm/tpm_atmel.c:26:
+> > > > +#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->base + =
+offset)
+> > > >
+> > > > CHECK: Macro argument 'offset' may be better as '(offset)' to avoid=
+ precedence issues
+> > > > #60: FILE: drivers/char/tpm/tpm_atmel.c:27:
+> > > > +#define atmel_putb(val, chip, offset) \
+> > > > +       outb(val, atmel_get_priv(chip)->base + offset)
+> > > >
+> > > > CHECK: spaces preferred around that '+' (ctx:VxV)
+> > > > #73: FILE: drivers/char/tpm/tpm_atmel.c:40:
+> > > > +       return inb(base+1) & 0xFF;
+> > > >                       ^
+> > > >
+> > > > CHECK: Blank lines aren't necessary after an open brace '{'
+> > > > #79: FILE: drivers/char/tpm/tpm_atmel.c:46:
+> > > > +{
+> > > > +
+> > > >
+> > > > Can you address them and I'll tag the next version, once I've
+> > > > revisited checkpatch. Otherwise, nothing against the code change.
+> > >
+> > > Those all existed before because I just moved what was left of the
+> > > header contents into the .c file. Fixing them seems like a separate
+> > > change to me. I can just leave the header in place and avoid the
+> > > warnings if you prefer. Otherwise, those warnings are the least of th=
+e
+> > > clean-up this driver needs. For starters, I would make those defines
+> > > static inlines instead.
+> >
+> > Ah, ok sorry. It was fairly mechanical check as I'm just quickly
+> > going critical stuff from holidays.
+> >
+> > I'm back after next week, so I'd really like to hold with this
+> > up until that and prepare when I'm back a patch set, which includes
+> > a supplemental patch fixing those issues (if you don't mind).
+>
+> Whatever happened to this? Can you please apply my patch if you don't
+> have the time for further rework.
 
-Just "reg" like the other APICs.
+Sorry unintentional.
 
-> +{
-> +	return READ_ONCE(*((u32 *)(page + reg_off)));
-> +}
-> +
-> +static inline void set_reg(char *page, int reg_off, u32 val)
-> +{
-> +	WRITE_ONCE(*((u32 *)(page + reg_off)), val);
-> +}
-> +
-> +#define SAVIC_ALLOWED_IRR_OFFSET	0x204
-> +
-> +static u32 x2apic_savic_read(u32 reg)
-> +{
-> +	void *backing_page = this_cpu_read(apic_backing_page);
-> +
-> +	switch (reg) {
-> +	case APIC_LVTT:
-> +	case APIC_TMICT:
-> +	case APIC_TMCCT:
-> +	case APIC_TDCR:
-> +	case APIC_ID:
-> +	case APIC_LVR:
-> +	case APIC_TASKPRI:
-> +	case APIC_ARBPRI:
-> +	case APIC_PROCPRI:
-> +	case APIC_LDR:
-> +	case APIC_SPIV:
-> +	case APIC_ESR:
-> +	case APIC_ICR:
-> +	case APIC_LVTTHMR:
-> +	case APIC_LVTPC:
-> +	case APIC_LVT0:
-> +	case APIC_LVT1:
-> +	case APIC_LVTERR:
-> +	case APIC_EFEAT:
-> +	case APIC_ECTRL:
-> +	case APIC_SEOI:
-> +	case APIC_IER:
+I applied with
 
-I'm sure those can be turned into ranges instead of enumerating every single
-APIC register...
+-static void __iomem * atmel_get_base_addr(unsigned long *base, int *region=
+_size)
++static void __iomem *atmel_get_base_addr(unsigned long *base, int *region_=
+size)
+=20
+as this gives checkpatch error.
 
-> +	case APIC_EILVTn(0) ... APIC_EILVTn(3):
+> Rob
 
-Like here.
-
-> +		return get_reg(backing_page, reg);
-> +	case APIC_ISR ... APIC_ISR + 0x70:
-> +	case APIC_TMR ... APIC_TMR + 0x70:
-> +		WARN_ONCE(!IS_ALIGNED(reg, 16), "Reg offset %#x not aligned at 16 bytes", reg);
-
-What's the point of a WARN...
-
-> +		return get_reg(backing_page, reg);
-
-... and then allowing the register access anyway?
-
-> +	/* IRR and ALLOWED_IRR offset range */
-> +	case APIC_IRR ... APIC_IRR + 0x74:
-> +		/*
-> +		 * Either aligned at 16 bytes for valid IRR reg offset or a
-> +		 * valid Secure AVIC ALLOWED_IRR offset.
-> +		 */
-> +		WARN_ONCE(!(IS_ALIGNED(reg, 16) || IS_ALIGNED(reg - SAVIC_ALLOWED_IRR_OFFSET, 16)),
-> +			  "Misaligned IRR/ALLOWED_IRR reg offset %#x", reg);
-> +		return get_reg(backing_page, reg);
-
-Ditto.
-
-And below too.
-
-> +	default:
-> +		pr_err("Permission denied: read of Secure AVIC reg offset %#x\n", reg);
-> +		return 0;
-> +	}
-> +}
-> +
-> +#define SAVIC_NMI_REQ_OFFSET		0x278
-> +
-> +static void x2apic_savic_write(u32 reg, u32 data)
-> +{
-> +	void *backing_page = this_cpu_read(apic_backing_page);
-> +
-> +	switch (reg) {
-> +	case APIC_LVTT:
-> +	case APIC_LVT0:
-> +	case APIC_LVT1:
-> +	case APIC_TMICT:
-> +	case APIC_TDCR:
-> +	case APIC_SELF_IPI:
-> +	/* APIC_ID is writable and configured by guest for Secure AVIC */
-> +	case APIC_ID:
-> +	case APIC_TASKPRI:
-> +	case APIC_EOI:
-> +	case APIC_SPIV:
-> +	case SAVIC_NMI_REQ_OFFSET:
-> +	case APIC_ESR:
-> +	case APIC_ICR:
-> +	case APIC_LVTTHMR:
-> +	case APIC_LVTPC:
-> +	case APIC_LVTERR:
-> +	case APIC_ECTRL:
-> +	case APIC_SEOI:
-> +	case APIC_IER:
-> +	case APIC_EILVTn(0) ... APIC_EILVTn(3):
-> +		set_reg(backing_page, reg, data);
-> +		break;
-> +	/* ALLOWED_IRR offsets are writable */
-> +	case SAVIC_ALLOWED_IRR_OFFSET ... SAVIC_ALLOWED_IRR_OFFSET + 0x70:
-> +		if (IS_ALIGNED(reg - SAVIC_ALLOWED_IRR_OFFSET, 16)) {
-> +			set_reg(backing_page, reg, data);
-> +			break;
-> +		}
-> +		fallthrough;
-> +	default:
-> +		pr_err("Permission denied: write to Secure AVIC reg offset %#x\n", reg);
-> +	}
-> +}
-> +
->  static void x2apic_savic_send_IPI(int cpu, int vector)
->  {
->  	u32 dest = per_cpu(x86_cpu_to_apicid, cpu);
-> @@ -140,8 +243,8 @@ static struct apic apic_x2apic_savic __ro_after_init = {
->  	.send_IPI_self			= x2apic_send_IPI_self,
->  	.nmi_to_offline_cpu		= true,
->  
-> -	.read				= native_apic_msr_read,
-> -	.write				= native_apic_msr_write,
-> +	.read				= x2apic_savic_read,
-> +	.write				= x2apic_savic_write,
->  	.eoi				= native_apic_msr_eoi,
->  	.icr_read			= native_x2apic_icr_read,
->  	.icr_write			= native_x2apic_icr_write,
-> -- 
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+BR, Jarkko
 
