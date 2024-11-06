@@ -1,122 +1,196 @@
-Return-Path: <linux-kernel+bounces-397598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99AA19BDDD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:57:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF499BDDDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11C53B23825
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EDE51F21789
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7099419046E;
-	Wed,  6 Nov 2024 03:57:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DD619049D;
+	Wed,  6 Nov 2024 03:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="azUXEiCy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2CB24B26
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 03:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1881E24B26
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 03:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730865427; cv=none; b=sQHOSEO2DQhtZNafKIO5kit39SM80crqWtqi9NDh1m8VUAVD09/l9rOVn4zGCDFKq9EU+XBYyEA40I5T8jhXRC3siUbplojUMakGAk8BLj3iK2DCmpeExeieIvKJlWCUiHFV+P6zPtM/ziGE6I6ApsQcAYxMRrDyz3aVRupkV1w=
+	t=1730865548; cv=none; b=HR8sk3ps2s5E8PAOWy+8ptWfVI1TlRFzFOMUgSCdDN7fABrAmnW2s/eXjtQHPjZpWkAOgXE62IOHpAE+jFTHTkH4DnBP3L0r3nYEMfRTNH3xKoAqqj/Q9KLyY3Ew7MESPe+wuQKKRihrYmybnFPQBOBHiH2qbK0hDmmJo1HNTLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730865427; c=relaxed/simple;
-	bh=oj83BaBI2W/r+TShi/B5/JFFcIoNqkPdcP66U8eMhik=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fOJxXHpRrla7JazwD2Qx+WepPIeStmhE6NmDy7vLD4oAExNl8QEtB6+0km1hRIzHp9KA5gjExijhm9sQkY5sgio0bwiRlsK5tyVpuxOIfTF1N+l+sl1K+cLSd6b7EH8Uzz/2rDpqXUVRxYxCMkNLaBbE6KoI0fq1Pb2XpdaVTmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b2aee1a3so68653215ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 19:57:05 -0800 (PST)
+	s=arc-20240116; t=1730865548; c=relaxed/simple;
+	bh=vFCeH5tfdMdof6SDEGDwKvjPbG4ibsF9Q2P6V1oGb+Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JHow8VTQQCOTxYf2jRR+0pUdi0ENwsIrEJBaZ20pOj0g5B8VbvZ2ZAYdUe9gWndm3IZ4jFuj/q4vv2uMuNQ68LOxH0GrNrs8AE+WmXi2wyqGeojwGvdRFyITpE9Q3MBCZs+YChUxcS5qfWVZ1/zUd1gqYXqOIM/8CF5ALn7Y9PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=azUXEiCy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730865544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i65ggtVhllfw2lstHxf4sn7duXOoTxNKDcpH0B3r5sw=;
+	b=azUXEiCyHm/BZuk3Y8HHAz+C3cprqJnaVGJGr+1gD7qcuDoTe+AG+rUpddarQerao3J59o
+	038gjTedAe6TKlbRJG3v1n3eDuLgNjCUV9Nyr9exz8qsycQJtGcSP4PizkqUjOqHF6/ghx
+	57d5FpHfNvgqZPhoH+LZB8Ply2kJqMs=
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
+ [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-214-8IGteh41MS27TGU894oP5g-1; Tue, 05 Nov 2024 22:59:03 -0500
+X-MC-Unique: 8IGteh41MS27TGU894oP5g-1
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-84ff378cd5fso2282699241.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 19:59:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730865425; x=1731470225;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SDPOxyqp9NxDCammuw+iyPXC5CP5joSuI9EWZ4GzeUg=;
-        b=GwAVhvYrzCettMxIuaTl8zY6zG6Ag6PSgIzzxxDqmXl2GputFy1tUR/YzuRX6GxV4/
-         a1Pkbw+4X4astL4rtiOAfvD2TqKJzp3vIbC0+wUa84zM3xU2VxKvIVxnnJtKeuA9lj6G
-         fDcJ1wd9ctAW0D1UO2PDW/LZY0oVGkrQ1PhT94gZcug44xkiJXwTE78LV7J8vAEV4qDw
-         8xIgm+lpssO9MZXV35Q6KDo5QjuQ6APaEHbB7HYQwg6YKZiSqsyneVGhMkyz8euVnsfn
-         XEHZROF+MiiNcXqSy2lMNnCXi6oGBMyfRiCfRGyV8ncBVea1lCVYju7wu5Od9/yhDOvt
-         hy+w==
-X-Gm-Message-State: AOJu0Yy5UtYf9bHuzX1kHCxbGCQA5L8iswcDZvFN4Cj91/PXa9LJl0Z7
-	+et2d1WEHb9rTyYqIh5OK1wAbOpiCIkx5UpNwSSTW9v1aEt1p5wl8TZ71Lc4d/ay81iV2ipswWC
-	leLxCqnZsijNoPQTXTaUUJVu+tGV3buB0UfPlLw9mC/1VFJwiU+uHRDg=
-X-Google-Smtp-Source: AGHT+IEOUGgoXAwVysWK4aoqVPmv0LmSSDcScYpUXDoEusloZea7107q+6h0Wunhnx4U9+dMgbcqypmCEKHtRA3GHREuELTJxMDz
+        d=1e100.net; s=20230601; t=1730865543; x=1731470343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i65ggtVhllfw2lstHxf4sn7duXOoTxNKDcpH0B3r5sw=;
+        b=NWKywqFFtr3QIXFg4rVu+SSPxFfBaodkmW1NDdJ0vRE4q/b2fUxNU4ptjIKnjBErsa
+         ctoSub9HSNIJcRmAX/HTMKGuj1VIp28njCbgWUhGALnPY9PXdR1EdPtyqLYyW8ezkuL1
+         GfuW0Y/3dIUTQuOkanKwlLESydJLkGC+M08fQbGXA57WYZwwEkGKGU72EP/qwbd9z69f
+         JrXhgJ2bIbmolQ4Bi2yRWV1S/psUF+kKXBOgUjOalYEKIjpwpbtpMH1b0S3ccmGxw3xG
+         cr9ABXqXejyHOB0aqggbq5bKQhnazYGezRZ46IHEjDxlVFt1JlC7Q8g1IVzBVh44SRw4
+         50hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUp8R6sBHFZbu/UutgsG4GyfE6yfV+IdT83OTwTanx5fP8Hbfh/oB96gquXqA/vWhS/+OmpddJVKkdlVyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlzmHfnTUOr0U2whhmbZENh1bqVKvx6SEAzr1fhZDKvQfvsbiZ
+	MOQbt4V9bH4RWurklw8JX6ejvC9hTlkpqadyRRHVsbZpYvJGYMs/6lJ45qe4tF5tyvBKQfU9Xn1
+	LfESq+S+6p7RcrhUM9u6B6K6uv+aN294TaOu8VbN3EPzke/7LMN0O4BZqzvvzvYgdUxe0v+MUH0
+	VYtkZqu2VKC32ih4K6emS6hWN7YcCa9mp31R0b
+X-Received: by 2002:a05:6102:1890:b0:4a9:61c1:4e56 with SMTP id ada2fe7eead31-4a961c14ea1mr13520279137.13.1730865543143;
+        Tue, 05 Nov 2024 19:59:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IECBVLcWw1pYcwoMcH67wqdE4G3+IcTNY6jd52ByUeJU203rRh/lyfP09mI+hsxi+bJD59NH/ZmftJiYRlQ/e8=
+X-Received: by 2002:a05:6102:1890:b0:4a9:61c1:4e56 with SMTP id
+ ada2fe7eead31-4a961c14ea1mr13520272137.13.1730865542878; Tue, 05 Nov 2024
+ 19:59:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20cc:b0:3a6:b5b9:3e51 with SMTP id
- e9e14a558f8ab-3a6b5b9415dmr157478585ab.8.1730865424817; Tue, 05 Nov 2024
- 19:57:04 -0800 (PST)
-Date: Tue, 05 Nov 2024 19:57:04 -0800
-In-Reply-To: <CAN=OONw=P_=3i7RSj67ZqW++8wcrmzuE-oN_fwjS7aR1t_B94g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672ae910.050a0220.2edce.151b.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
-From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, sarvesh20123@gmail.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20241104110005.1412161-1-yukuai1@huaweicloud.com>
+ <Zyn_RGV2i9COvNQl@infradead.org> <217f242b-b4e2-89f7-3b0f-3337c251a603@huaweicloud.com>
+ <ZyreVTWn2no-WCC3@fedora> <43ed2c81-7e86-a106-3592-7f1944ce0f25@huaweicloud.com>
+ <ZyrkTB0-SKjrQaiZ@fedora> <78c19006-e4c1-ef19-e930-9d5dc1cb295d@huaweicloud.com>
+In-Reply-To: <78c19006-e4c1-ef19-e930-9d5dc1cb295d@huaweicloud.com>
+From: Ming Lei <ming.lei@redhat.com>
+Date: Wed, 6 Nov 2024 11:58:52 +0800
+Message-ID: <CAFj5m9Jvw=3KPGYyChJu5nxraxwKm04kpMak5Ns+pjkHepsN-Q@mail.gmail.com>
+Subject: Re: [PATCH -next] block: fix uaf for flush rq while iterating tags
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+	"yukuai (C)" <yukuai3@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Nov 6, 2024 at 11:52=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> w=
+rote:
+>
+> Hi,
+>
+> =E5=9C=A8 2024/11/06 11:36, Ming Lei =E5=86=99=E9=81=93:
+> > On Wed, Nov 06, 2024 at 11:25:07AM +0800, Yu Kuai wrote:
+> >> Hi,
+> >>
+> >> =E5=9C=A8 2024/11/06 11:11, Ming Lei =E5=86=99=E9=81=93:
+> >>> On Wed, Nov 06, 2024 at 10:58:40AM +0800, Yu Kuai wrote:
+> >>>> Hi,Ming and Christoph
+> >>>>
+> >>>> =E5=9C=A8 2024/11/05 19:19, Christoph Hellwig =E5=86=99=E9=81=93:
+> >>>>> On Mon, Nov 04, 2024 at 07:00:05PM +0800, Yu Kuai wrote:
+> >>>>>> From: Yu Kuai <yukuai3@huawei.com>
+> >>>>>>
+> >>>>>> blk_mq_clear_flush_rq_mapping() is not called during scsi probe, b=
+y
+> >>>>>> checking blk_queue_init_done(). However, QUEUE_FLAG_INIT_DONE is c=
+leared
+> >>>>>> in del_gendisk by commit aec89dc5d421 ("block: keep q_usage_counte=
+r in
+> >>>>>> atomic mode after del_gendisk"), hence for disk like scsi, followi=
+ng
+> >>>>>> blk_mq_destroy_queue() will not clear flush rq from tags->rqs[] as=
+ well,
+> >>>>>> cause following uaf that is found by our syzkaller for v6.6:
+> >>>>>
+> >>>>> Which means we leave the flush request lingering after del_gendisk,
+> >>>>> which sounds like the real bug.  I suspect we just need to move the
+> >>>>> call to blk_mq_clear_flush_rq_mapping so that it is called from
+> >>>>> del_gendisk and doesn't leave the flush tag lingering around.
+> >>>>>
+> >>>>
+> >>>> This remind me that del_gendisk is still too late to do that. Noted =
+that
+> >>>> flush_rq can acquire different tags, so if the multiple flush_rq is =
+done
+> >>>> and those tags are not reused, the flush_rq can exist in multiple
+> >>>> entries in tags->rqs[]. The consequence I can think of is that itera=
+ting
+> >>>> tags can found the same flush_rq multiple times, and the flush_rq ca=
+n be
+> >>>> inflight.
+> >>>
+> >>> How can that be one problem?
+> >>>
+> >>> Please look at
+> >>>
+> >>> commit 364b61818f65 ("blk-mq: clearing flush request reference in tag=
+s->rqs[]")
+> >>> commit bd63141d585b ("blk-mq: clear stale request in tags->rq[] befor=
+e freeing one request pool")
+> >>>
+> >>> and understand the motivation.
+> >>>
+> >>> That also means it is just fine to delay blk_mq_clear_flush_rq_mappin=
+g()
+> >>> after disk is deleted.
+> >>
+> >> I do understand what you mean. Let's see if you want this to be avoide=
+d,
+> >> for example(no disk is deleted):
+> >
+> > It is definitely another issue, and not supposed to be covered by
+> > blk_mq_clear_flush_rq_mapping().
+> >
+> >>
+> >> 1) issue a flush, and tag 0 is used, after the flush is done,
+> >> tags->rqs[0] =3D flush_rq
+> >> 2) issue another flush, and tag 1 is used, after the flush is done,
+> >> tags->rqs[1] =3D flush_rq
+> >> 3) issue a flush again, and tag 2 is used, and the flush_rq is
+> >> dispatched to disk;
+> >
+> > Yes, this kind of thing exists since blk-mq begins, and you can't expec=
+t
+> > blk_mq_in_flight_rw() to get accurate inflight requests.
+> >
+> >> 4) Then in this case, blk_mq_in_flight_rw() will found the same flush_=
+rq
+> >> 3 times and think there are 3 inflight request, same for
+> >> hctx_busy_show()...
+> >
+> > But we have tried to avoid it, such as in blk_mq_find_and_get_req()
+> > req->tag is checked against the current 'bitnr' of sbitmap when walking
+> > over tags. Then the same flush_rq won't be counted 3 times.
+>
+> Yes, I missed that req->tag is checked. Looks like there is no porblem
+> now. :)
+>
+> Just to make sure, we're still on the same page for this patch, right?
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __hfs_ext_cache_extent
+Yeah, my reviewed-by still stands, and it is fine to delay to clear flush r=
+eq
+wrt. the original motivation, what matters is that it is cleared before the
+flush req is freed.
 
-loop0: detected capacity change from 0 to 64
-=====================================================
-BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
-BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
- __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
- __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
- hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
- hfs_get_block+0x733/0xf50 fs/hfs/extent.c:366
- __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
- block_write_begin fs/buffer.c:2231 [inline]
- cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- cont_expand_zero fs/buffer.c:2509 [inline]
- cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
- hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
- notify_change+0x1a8e/0x1b80 fs/attr.c:503
- do_truncate+0x22a/0x2b0 fs/open.c:65
- vfs_truncate+0x5d4/0x680 fs/open.c:111
- do_sys_truncate+0x104/0x240 fs/open.c:134
- __do_sys_truncate fs/open.c:146 [inline]
- __se_sys_truncate fs/open.c:144 [inline]
- __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
- x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:77
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable fd.i created at:
- hfs_ext_read_extent fs/hfs/extent.c:193 [inline]
- hfs_get_block+0x295/0xf50 fs/hfs/extent.c:366
- __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
-
-CPU: 0 UID: 0 PID: 6068 Comm: syz.0.15 Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-
-
-Tested on:
-
-commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10194e30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8a4f4c5365f96b
-dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=129d9d5f980000
+Thanks,
 
 
