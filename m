@@ -1,133 +1,174 @@
-Return-Path: <linux-kernel+bounces-398671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6619BF476
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:43:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84399BF47D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADD501C21B38
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:43:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0FC1F24784
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC552076C6;
-	Wed,  6 Nov 2024 17:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2202076A4;
+	Wed,  6 Nov 2024 17:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="MrkOjQe0"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V5KURQh1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k0hojoQ2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V5KURQh1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k0hojoQ2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F342645;
-	Wed,  6 Nov 2024 17:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44C8204932;
+	Wed,  6 Nov 2024 17:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730914985; cv=none; b=BtJN1xgT2ObCDK8et+IEjMAipKnRAwVl6ByHsuD3bu4Aye/8uJEslmWV1KCNWT58V0NEhTdIMkP5/nuIVHZSZ1PGHwghDCegdW9XVj+p2OiKwGoODwzaqwSt6U0NgaNUzv95skVaSqnamy4wiRFs64uDJT3KzaUCAL/BMVofreE=
+	t=1730915071; cv=none; b=FTteZHw+ZTN05jp7THj/qV/ISh9ROagmXPCcEJ38jYv6q/2CmB/bvM5OkDNVxhGg24QN+0Rxr8RIQuLkW6zoqcyW4X1gj4q0ov6xOmJoBVx4OufuhLXLjHJgGPf5k2uW7L0o1dec57gRkch5WOvv10H179oiuixrA/5X/Jyd7iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730914985; c=relaxed/simple;
-	bh=W1X5rDQFCgExyY0Epc7bMWiWhw1daz1M7vG9x/tyeiI=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lALwwDEwYgGW+Z/3AQedUySX1kA2LAEgbFpUamjBL4fE8qKgnSr1PRq6K/RuHULG+QI+QFQ6D1kF+rQz8DRCUzG8ihyD2sSvl28XgZRzH4i6xRMJ/F2J+LRNjYuwvQ7zYzFFcVxH9lpKrLpQ1Dv/B5p2aoHmVE+OOcSpTdcTpR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=MrkOjQe0; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730914984; x=1762450984;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=W1X5rDQFCgExyY0Epc7bMWiWhw1daz1M7vG9x/tyeiI=;
-  b=MrkOjQe0MisOUna8rEmX/60/hDiN0teAU8g0vK6d3Uk22qOq2NykLFfp
-   da6hDQvJIC0oaJV7DjEy0yPgBHxPNAxbQR36RrlPyoHrPnEMzEfliAdUt
-   lhM/p7E0Nz9jVLyxnid97W+vSr8bW0SVrJcy3NM/nQmj4wYB4urXZ07In
-   U=;
-X-IronPort-AV: E=Sophos;i="6.11,263,1725321600"; 
-   d="scan'208";a="693553406"
-Subject: Re: [PATCH 3/5] arm64: refactor delay() to enable polling for value
-Thread-Topic: [PATCH 3/5] arm64: refactor delay() to enable polling for value
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 17:42:55 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:13502]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.1.168:2525] with esmtp (Farcaster)
- id 4ebbe4e2-78ed-4697-b2ed-e404fbebf4fe; Wed, 6 Nov 2024 17:42:39 +0000 (UTC)
-X-Farcaster-Flow-ID: 4ebbe4e2-78ed-4697-b2ed-e404fbebf4fe
-Received: from EX19D001UWA002.ant.amazon.com (10.13.138.236) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 6 Nov 2024 17:42:39 +0000
-Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
- EX19D001UWA002.ant.amazon.com (10.13.138.236) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 6 Nov 2024 17:42:38 +0000
-Received: from EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2]) by
- EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2%7]) with mapi id
- 15.02.1258.035; Wed, 6 Nov 2024 17:42:38 +0000
-From: "Okanovic, Haris" <harisokn@amazon.com>
-To: "cl@gentwo.org" <cl@gentwo.org>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rafael@kernel.org"
-	<rafael@kernel.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>, "wanpengli@tencent.com"
-	<wanpengli@tencent.com>, "joao.m.martins@oracle.com"
-	<joao.m.martins@oracle.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "mingo@redhat.com" <mingo@redhat.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "misono.tomohiro@fujitsu.com"
-	<misono.tomohiro@fujitsu.com>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>,
-	"lenb@kernel.org" <lenb@kernel.org>, "will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
-	<peterz@infradead.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "Okanovic, Haris"
-	<harisokn@amazon.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>, "mtosatti@redhat.com" <mtosatti@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>
-Thread-Index: AQHbL7EHko86fTfE7kuIbrTyhHlrvrKpFnIAgAFwtgA=
-Date: Wed, 6 Nov 2024 17:42:38 +0000
-Message-ID: <193a81555a87a6d499fbe889406eeb2014465ec5.camel@amazon.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
-	 <20241105183041.1531976-1-harisokn@amazon.com>
-	 <20241105183041.1531976-4-harisokn@amazon.com>
-	 <efd92a03-f5a9-ba9b-338f-b9a5ad93174f@gentwo.org>
-In-Reply-To: <efd92a03-f5a9-ba9b-338f-b9a5ad93174f@gentwo.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A9E0998F1AEF2E4095A2603921A4002F@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730915071; c=relaxed/simple;
+	bh=P9Im8Mja/NroOhr10JZTucnsIuTZZ4Un9St924nVyQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4yuZxoYtHOW/jh+dEzYoYHP8MAple5X6w6tle1KTrRfcf5fHZclF8h7lZw8M+jgaAI3MmEJvAgd5RKPi8cfQ5MPelHq3z3QP5bKrvlJ7McCxkXMJisMCunA6BvFODuJxxFgM5x3UtYc0+7eJIJoSa0zuBnhX3uqayOk2dNmhL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V5KURQh1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k0hojoQ2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V5KURQh1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k0hojoQ2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CFC121F846;
+	Wed,  6 Nov 2024 17:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730915067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9VFl2eelebdXx2dClx4rsISOiUVqPiYqhxkteQkA/0s=;
+	b=V5KURQh1NcCO48njiAdO5jUzgWp0K//VtpJs+i8QxLB/YF1x2+fJFkWvXqSqJMr8TmtEmO
+	rlE34R5WBsmy/WiRVllH2XFBSpzAcheI8WGZfF9wwprzcAFkM7WKUT2p4M1H6Sxs+ge7Wp
+	AEcPX2sJqZTEFT97/T5YI+CCabz11fI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730915067;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9VFl2eelebdXx2dClx4rsISOiUVqPiYqhxkteQkA/0s=;
+	b=k0hojoQ2a3lu3qTqKlfOv67RJ5Nmd1F4GfW9G6SHNyFeNcOXwRxZeCZFjbNJPwlbx2WlHW
+	LaXbPe6Jy9xx03Dg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730915067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9VFl2eelebdXx2dClx4rsISOiUVqPiYqhxkteQkA/0s=;
+	b=V5KURQh1NcCO48njiAdO5jUzgWp0K//VtpJs+i8QxLB/YF1x2+fJFkWvXqSqJMr8TmtEmO
+	rlE34R5WBsmy/WiRVllH2XFBSpzAcheI8WGZfF9wwprzcAFkM7WKUT2p4M1H6Sxs+ge7Wp
+	AEcPX2sJqZTEFT97/T5YI+CCabz11fI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730915067;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9VFl2eelebdXx2dClx4rsISOiUVqPiYqhxkteQkA/0s=;
+	b=k0hojoQ2a3lu3qTqKlfOv67RJ5Nmd1F4GfW9G6SHNyFeNcOXwRxZeCZFjbNJPwlbx2WlHW
+	LaXbPe6Jy9xx03Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C3849137C4;
+	Wed,  6 Nov 2024 17:44:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LfHSL/uqK2fneAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 06 Nov 2024 17:44:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 59A80A0AFB; Wed,  6 Nov 2024 18:44:23 +0100 (CET)
+Date: Wed, 6 Nov 2024 18:44:23 +0100
+From: Jan Kara <jack@suse.cz>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Ma, Yu" <yu.ma@intel.com>, Christian Brauner <brauner@kernel.org>,
+	jack@suse.cz, mjguzik@gmail.com, edumazet@google.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v5 0/3] fs/file.c: optimize the critical section of
+ file_lock in
+Message-ID: <20241106174423.kdgv6eonsmwci5oj@quack3>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240722-geliebt-feiern-9b2ab7126d85@brauner>
+ <20240801191304.GR5334@ZenIV>
+ <20240802-bewachsen-einpacken-343b843869f9@brauner>
+ <20240802142248.GV5334@ZenIV>
+ <20240805-gesaugt-crashtest-705884058a28@brauner>
+ <5210f83c-d2d9-4df6-b3eb-3311da128dae@intel.com>
+ <20240812024044.GF13701@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812024044.GF13701@ZenIV>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[intel.com,kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,linux.intel.com];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-T24gVHVlLCAyMDI0LTExLTA1IGF0IDExOjQyIC0wODAwLCBDaHJpc3RvcGggTGFtZXRlciAoQW1w
-ZXJlKSB3cm90ZToNCj4gQ0FVVElPTjogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20gb3V0c2lk
-ZSBvZiB0aGUgb3JnYW5pemF0aW9uLiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2ht
-ZW50cyB1bmxlc3MgeW91IGNhbiBjb25maXJtIHRoZSBzZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRl
-bnQgaXMgc2FmZS4NCj4gDQo+IA0KPiANCj4gT24gVHVlLCA1IE5vdiAyMDI0LCBIYXJpcyBPa2Fu
-b3ZpYyB3cm90ZToNCj4gDQo+ID4gLSNkZWZpbmUgVVNFQ1NfVE9fQ1lDTEVTKHRpbWVfdXNlY3Mp
-ICAgICAgICAgICAgICAgICAgXA0KPiA+IC0gICAgIHhsb29wc190b19jeWNsZXMoKHRpbWVfdXNl
-Y3MpICogMHgxMEM3VUwpDQo+ID4gLQ0KPiA+IC1zdGF0aWMgaW5saW5lIHVuc2lnbmVkIGxvbmcg
-eGxvb3BzX3RvX2N5Y2xlcyh1bnNpZ25lZCBsb25nIHhsb29wcykNCj4gPiArc3RhdGljIGlubGlu
-ZSB1NjQgeGxvb3BzX3RvX2N5Y2xlcyh1NjQgeGxvb3BzKQ0KPiA+ICB7DQo+ID4gICAgICAgcmV0
-dXJuICh4bG9vcHMgKiBsb29wc19wZXJfamlmZnkgKiBIWikgPj4gMzI7DQo+ID4gIH0NCj4gPiAN
-Cj4gPiAtdm9pZCBfX2RlbGF5KHVuc2lnbmVkIGxvbmcgY3ljbGVzKQ0KPiA+ICsjZGVmaW5lIFVT
-RUNTX1RPX1hMT09QUyh0aW1lX3VzZWNzKSBcDQo+ID4gKyAgICAgKCh0aW1lX3VzZWNzKSAqIDB4
-MTBDN1VMKQ0KPiA+ICsNCj4gPiArI2RlZmluZSBVU0VDU19UT19DWUNMRVModGltZV91c2Vjcykg
-XA0KPiA+ICsgICAgIHhsb29wc190b19jeWNsZXMoVVNFQ1NfVE9fWExPT1BTKHRpbWVfdXNlY3Mp
-KQ0KPiA+ICsNCj4gDQo+IA0KPiA+ICsjZGVmaW5lIE5TRUNTX1RPX1hMT09QUyh0aW1lX25zZWNz
-KSBcDQo+ID4gKyAgICAgKCh0aW1lX25zZWNzKSAqIDB4MTBDN1VMKQ0KPiANCj4gVGhlIGNvbnN0
-YW50IGhlcmUgaXMgdGhlIHNhbWUgdmFsdWUgYXMgZm9yIG1pY3Jvc2Vjb25kcy4gSWYgSSByZW1l
-bWJlcg0KPiBjb3JyZWN0bHkgaXRzIDVVTCBmb3IgbmFub3NlY29uZHMuDQo+IA0KDQpZb3UncmUg
-cmlnaHQsIGdvb2QgY2F0Y2guIFNob3VsZCBiZSBgbnNlY3MgKiAweDVVTGAgcGVyIG9sZCBjb2Rl
-Lg0KDQo=
+On Mon 12-08-24 03:40:44, Al Viro wrote:
+> On Mon, Aug 12, 2024 at 09:31:17AM +0800, Ma, Yu wrote:
+> > 
+> > On 8/5/2024 2:56 PM, Christian Brauner wrote:
+> > > On Fri, Aug 02, 2024 at 03:22:48PM GMT, Al Viro wrote:
+> > > > On Fri, Aug 02, 2024 at 01:04:44PM +0200, Christian Brauner wrote:
+> > > > > > Hmm...   Something fishy's going on - those are not reachable by any branches.
+> > > > > Hm, they probably got dropped when rebasing to v6.11-rc1 and I did have
+> > > > > to play around with --onto.
+> > > > > 
+> > > > > > I'm putting together (in viro/vfs.git) a branch for that area (#work.fdtable)
+> > > > > > and I'm going to apply those 3 unless anyone objects.
+> > > > > Fine since they aren't in that branch. Otherwise I generally prefer to
+> > > > > just merge a common branch.
+> > > > If it's going to be rebased anyway, I don't see much difference from cherry-pick,
+> > > > TBH...
+> > > Yeah, but I generally don't rebase after -rc1 anymore unles there's
+> > > really annoying conflicts.
+> > 
+> > Thanks Christian and Al for your time and efforts. I'm not familiar with the
+> > merging process, may i know about when these patches could be seen in master
+> 
+> It's in work.fdtable in my tree, will post that series tonight and add to #for-next
+
+Al, it seems you didn't push the patches to Linus during the last merge
+window. Do you plan to push them during the coming one?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
