@@ -1,167 +1,98 @@
-Return-Path: <linux-kernel+bounces-398271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10799BEDD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:13:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4106D9BEDFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5E8A286495
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:13:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06F552866D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E935D1F668B;
-	Wed,  6 Nov 2024 13:10:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF1C1F6696
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EB11E6DD5;
+	Wed,  6 Nov 2024 13:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGmwz3OA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD181E04AD;
+	Wed,  6 Nov 2024 13:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730898649; cv=none; b=T3vOWsdWof8z1OGspUXniJLsM7XyUXPQNUf4gNhgKNNrmGZHN9kzkWB3iK1BkpjxQgiLTaLNRzCdxxiuimCLi0fi0JkZ/Tkdjv7UWyYFLC66HkXYn6E+RnZ+mkXRIBAt8LdATPhfP19h7B/BNDOssfwEDqfTpjBLTyMld9qaKYE=
+	t=1730898748; cv=none; b=fAH9Ly+vjSFhE9LC1CSNHqVuejoEw2b5wx9udpwJODhoz6Q/XemdxKTKG16/sCbAjpzonh5h+Du6GWQnPbS2Gy6drBmx9tFsGnaGSgST+nELCL/LnzuyIFGNTtqJGmbt6zVISQW7sMB7evaSzsG+k6kECWDY5uOUazUchOVUAmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730898649; c=relaxed/simple;
-	bh=phEkKP844nmf00cJXWY56yT+J+3e3ZIbN8imknW6IWg=;
+	s=arc-20240116; t=1730898748; c=relaxed/simple;
+	bh=3SfESvrKfdyPsR2Toa1m1lCX2fQeSf+A2nGffmF11BM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxEcdPpjhMyWZ0HlXBEq/MtVlNuP+LpcZF1OOrnrjWIpUO0RXGDpTDz7ZZ9a+/YMoqmuz8ibmwqGavhkdzEko8llsF6VRDdC12lF+W/wgPrUMPTyPpkFYDl/PAP4YxFN1Gi8smu81LHhweopiX9YHbN7a9ICpCovnc7gb8vKYVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ABD6339
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 05:11:16 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 63ACD3F66E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 05:10:46 -0800 (PST)
-Date: Wed, 6 Nov 2024 13:10:37 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH] drm/panthor: Lock XArray when getting entries for heap
- and VM
-Message-ID: <ZytqzTg2QnEkvDcl@e110455-lin.cambridge.arm.com>
-References: <20241106120748.290697-1-liviu.dudau@arm.com>
- <20241106131641.47487624@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fGenyS9gPLtx7E6bODNeeZZ1/tPEJEKkj+J4+/XTZkcJPYSWn6uQWcm6BCDFIiFRAkL5j1sotrOTiaSCg+PyMx41lyM+YpaMufL1+abpqBQdrCJyRxT2vVBw5+11Ify9NVwF2YJtwBhmxSsnjU1hfVN17jLcZMU/yk76lDNu0oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGmwz3OA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74AE1C4CED4;
+	Wed,  6 Nov 2024 13:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730898747;
+	bh=3SfESvrKfdyPsR2Toa1m1lCX2fQeSf+A2nGffmF11BM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BGmwz3OAHtxzQimhPb+0ta8GU6ekMnC0Nr55rDVo5Z3eBQBSlzx2R0yCIlpqJTOug
+	 j2jouZOq2FDue45FB9L57askeLY0wQvdBhk/Gs0RrA+xfuh6r844UNGSxzP1OQXWIs
+	 WXhKJLIxD2erc+Tx9VY3wDSHDZY+JfqC87LI5/t4yCyTb2NIa+Jd6NPO6/Ndk+e/sn
+	 7wPD0pSWLEOAvVSYTLYShwVsWDCllhThbE4uSdrDpnIealbuz3ZctYPnh6JBIFnxXG
+	 77B/lfXugrwKHs9CL6LdpZVWzV+0Ah6f+DmjxZMCmxviBIoCDOqDZRF9mx6ufS7cB3
+	 YKiC40WL00LVg==
+Date: Wed, 6 Nov 2024 13:12:23 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org, conor.dooley@microchip.com,
+	Jason Montleon <jmontleo@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev
+Subject: Re: FAILED: Patch "RISC-V: disallow gcc + rust builds" failed to
+ apply to v6.11-stable tree
+Message-ID: <20241106-undead-cupbearer-a22f27c8b9e2@spud>
+References: <20241106020840.164364-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="T7IwLFePnUSWKnbZ"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106131641.47487624@collabora.com>
+In-Reply-To: <20241106020840.164364-1-sashal@kernel.org>
 
-On Wed, Nov 06, 2024 at 01:16:41PM +0100, Boris Brezillon wrote:
-> On Wed,  6 Nov 2024 12:07:48 +0000
-> Liviu Dudau <liviu.dudau@arm.com> wrote:
-> 
-> > Similar to cac075706f29 ("drm/panthor: Fix race when converting
-> > group handle to group object") we need to use the XArray's internal
-> > locking when retrieving a pointer from there for heap and vm.
-> > 
-> > Reported-by: Jann Horn <jannh@google.com>
-> > Cc: Boris Brezillon <boris.brezillon@collabora.com>
-> > Cc: Steven Price <steven.price@arm.com>
-> > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 
-From the other email: I will add the Fixes tag for next version.
+--T7IwLFePnUSWKnbZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_heap.c | 15 +++++++++++++--
-> >  drivers/gpu/drm/panthor/panthor_mmu.c  |  2 ++
-> >  2 files changed, 15 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/panthor/panthor_heap.c
-> > index 3796a9eb22af2..fe0bcb6837f74 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_heap.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_heap.c
-> > @@ -351,6 +351,17 @@ int panthor_heap_create(struct panthor_heap_pool *pool,
-> >  	return ret;
-> >  }
-> >  
-> > +static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
-> 
-> struct pathor_heap_pool does not exist :-).
+On Tue, Nov 05, 2024 at 09:08:39PM -0500, Sasha Levin wrote:
+> The patch below does not apply to the v6.11-stable tree.
+> If someone wants it applied there, or to any other stable or longterm
+> tree, then please email the backport, including the original git commit
+> id to <stable@vger.kernel.org>.
 
-Oops! Turns out that for my "compile testing" of the patch on my Arm machine I was using
-the wrong O= directory so my .config did not had Panthor enabled.
+I sent 20241106-happily-unknotted-9984b07a414e@spud that should be a
+6.11 viable version of this change.
 
-> 
-> > +{
-> > +	struct panthor_heap *heap;
-> > +
-> > +	xa_lock(&pool->xa);
-> > +	heap = xa_load(&pool->xa, id);
-> > +	xa_unlock(&pool->va);
-> 
-> Access to panthor_heap_pool::xa is protected by the external
-> pathor_heap_pool::lock, so taking the xa lock seems redundant here. How
-> about adding a lockdep_assert_held(pool->lock) instead?
+Cheers,
+Conor.
 
-panthor_heap_pool_release() does not take the panthor_heap_pool::lock, so the protection
-is not really there. I could fix panthor_heap_pool_release() and then add a
-lockdep_assert_held() before both calls to xa_load() if you think that's a better
-solution.
+--T7IwLFePnUSWKnbZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Liviu
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> > +
-> > +	return heap;
-> > +}
-> > +
-> >  /**
-> >   * panthor_heap_return_chunk() - Return an unused heap chunk
-> >   * @pool: The pool this heap belongs to.
-> > @@ -375,7 +386,7 @@ int panthor_heap_return_chunk(struct panthor_heap_pool *pool,
-> >  		return -EINVAL;
-> >  
-> >  	down_read(&pool->lock);
-> > -	heap = xa_load(&pool->xa, heap_id);
-> > +	heap = panthor_heap_from_id(pool, heap_id);
-> >  	if (!heap) {
-> >  		ret = -EINVAL;
-> >  		goto out_unlock;
-> > @@ -438,7 +449,7 @@ int panthor_heap_grow(struct panthor_heap_pool *pool,
-> >  		return -EINVAL;
-> >  
-> >  	down_read(&pool->lock);
-> > -	heap = xa_load(&pool->xa, heap_id);
-> > +	heap = panthor_heap_from_id(pool, heap_id);
-> >  	if (!heap) {
-> >  		ret = -EINVAL;
-> >  		goto out_unlock;
-> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > index 8ca85526491e6..8b5cda9d21768 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > @@ -1580,7 +1580,9 @@ panthor_vm_pool_get_vm(struct panthor_vm_pool *pool, u32 handle)
-> >  {
-> >  	struct panthor_vm *vm;
-> >  
-> > +	xa_lock(&pool->xa);
-> >  	vm = panthor_vm_get(xa_load(&pool->xa, handle));
-> > +	xa_unlock(&pool->va);
-> >  
-> >  	return vm;
-> >  }
-> 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZytrNwAKCRB4tDGHoIJi
+0lrZAQDwZgrJpDCrMBOUflphmluD0ARCIvhYF9shsNzm9sAm5gEA4dQEww2rvB2W
+ETWhXsstVjfNvdt4kg8SZh+nFLTwKQc=
+=IEMP
+-----END PGP SIGNATURE-----
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+--T7IwLFePnUSWKnbZ--
 
