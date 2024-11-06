@@ -1,78 +1,93 @@
-Return-Path: <linux-kernel+bounces-397829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCAE29BE11F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:37:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73799BE124
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:37:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 735BCB25ACB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:37:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E80E1F24568
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFE71DB928;
-	Wed,  6 Nov 2024 08:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF8B1D88A4;
+	Wed,  6 Nov 2024 08:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6AzekI+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OJjN9v3r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54261D47AC;
-	Wed,  6 Nov 2024 08:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5CE1D5171;
+	Wed,  6 Nov 2024 08:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730882141; cv=none; b=QtSzhDt5FC3UBTiklX8rbk18YIdnSltDp/TnC5Sbm4M2NeVmkHA8WwJNS3T6qjZti/gb/A866oSTJJwL4YAlAjlD34U10IkykBSdQ9IQzVM30crjPgRtAs/eBTbPHRWERo65nb+/uzDboCaZguPleuATrQ3qnYfKSMOznPPftNE=
+	t=1730882175; cv=none; b=Ig+NP6l3LYfXQsa2tLzN7R0Ykfx7t92dZvOrGlRn5tOay1NdmXy+oE0G0tK0FBEmIFpS8YwTC0g6zmAJR8nUWrQwFnKdc8s1bdR4KuGqbI/7p/GYTaoflSiM8v3rWmHYVDjtKVERmEVBsiDGuw2o/fsl+B0AscSGY9Sr397l5dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730882141; c=relaxed/simple;
-	bh=N9L3f39LVnSxyrSgJFD5OMkM9xnQm7GyL98QzitsJOg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p5bEpY9w2AyvnhmGBw/kciv2nYfrMWfpZmcqUqZzGZFLTPRx80hI1vW2RL9Vtn5oEzpC1JbDwPmZ824/Ul5pNmR/msQ3Y6lynjehFVvIudFk7c3NSTPN8dSgHRFpc0AxZyjd9dv67La5E5H0Uy39RzVNo2u+Qz1k1RHnY3pxflg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6AzekI+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B902CC4CECD;
-	Wed,  6 Nov 2024 08:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730882141;
-	bh=N9L3f39LVnSxyrSgJFD5OMkM9xnQm7GyL98QzitsJOg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=C6AzekI+pfUY3oHl/dIjxAJ4cjxI18w7tIUGXuLVkJINRxV13zpjI5ANvWymn8JpV
-	 0wztrXupOfm/CXnXeyfLVsOqxzjFsvLhhyGjot6Xa3vD18+1CVaRtKO5j4GPtXeIUN
-	 pHYnD5OgR5LU6FhVQIIyZL1HZ2ZtsYbq701TGgia6vu+XTszRdKwK1R+kgxlkee+Z6
-	 Ta77/ETuir6M/E+Urf9VYyskOUeoVK8B+P4qzRd/KS6Cv9nmYnoNv07sKMr9qsMOoR
-	 nVFX7Bn9G0DR4hhKXAubZubF48RFPxbF8Mqvwj3YHvzrLFJEo92/yvRNLQ6R16Gf0l
-	 1TkQr+TVjTXjA==
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, 
- Raymond Hackley <raymondhackley@protonmail.com>
-Cc: pavel@ucw.cz, lee@kernel.org, krzysztof.kozlowski@linaro.org, 
- duje.mihanovic@skole.hr, daniel.thompson@linaro.org, 
- linus.walleij@linaro.org, u.kleine-koenig@baylibre.com, 
- linux-leds@vger.kernel.org
-In-Reply-To: <20241103083505.49648-1-raymondhackley@protonmail.com>
-References: <20241103083505.49648-1-raymondhackley@protonmail.com>
-Subject: Re: (subset) [PATCH] leds: ktd2692: Set missing timing
-Message-Id: <173088213948.3248329.10549504992077467020.b4-ty@kernel.org>
-Date: Wed, 06 Nov 2024 08:35:39 +0000
+	s=arc-20240116; t=1730882175; c=relaxed/simple;
+	bh=4lWAHklcm14vPuh3Q9+OKVUs+RH3n6zDXgavv2ivdck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qLqZcNDwj24j+ShPikTt6IIuggZ2D9E/V1knBEek4uW7VaYPIubyg6C59a3qGGiSm2bA79FDaM0C8RH37emua1EbDLwf7svER5qHLZPxoxSmBkKczuIENQDutuja5ohIEifa3v4YhGEyniSH6aav0u0zJ/vcqm8iuWgVH/4E5pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OJjN9v3r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199BAC4CED0;
+	Wed,  6 Nov 2024 08:36:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730882173;
+	bh=4lWAHklcm14vPuh3Q9+OKVUs+RH3n6zDXgavv2ivdck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OJjN9v3rVc4ENn4RYJBUjgoOCXtqvP850TvOAoB/SzkW0mEHaOLMWsCkHdLYOf24P
+	 pSrTGIk7WnEXDrwJ7CY7Uv8hHLkJnBE48ChZedL0PFecpO/c4unHGTkp8vIzZ7Kf2D
+	 0ca7KP3jMz9jfC7g4DUjNTsONxlfLvHvilgWAvQk=
+Date: Wed, 6 Nov 2024 09:35:55 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Christian Ebner <c.ebner@proxmox.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org, stable@vger.kernel.org,
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH stable 6.11.y] netfs: reset subreq->iov_iter before
+ netfs_clear_unread() tail clean
+Message-ID: <2024110625-blot-uncooked-48f9@gregkh>
+References: <20241027114315.730407-1-c.ebner@proxmox.com>
+ <2024110644-audible-canine-30ca@gregkh>
+ <7e364258-e643-4656-9233-f89f1c4b1a66@proxmox.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e364258-e643-4656-9233-f89f1c4b1a66@proxmox.com>
 
-On Sun, 03 Nov 2024 08:35:16 +0000, Raymond Hackley wrote:
-> props.timing is not set after b5a8c50e5c18. Set it with ktd2692_timing.
+On Wed, Nov 06, 2024 at 09:26:46AM +0100, Christian Ebner wrote:
+> On 11/6/24 06:59, Greg KH wrote:
+> > We would much rather take the original series of commits, what exactly
+> > are they here?
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
+> Hello Greg,
+> thank you for your reply.
 > 
+> AFAIK the relevant patches for this series are commits 80887f31..ee4cdf7b,
+> although the last patch containing the fix does not apply cleanly on the
+> current 6.11.y branch.
+> 
+> Please note, I am not very familiar with the code so unsure if all of the
+> patches in the series are required for the fix. Maybe David Howells as
+> author of the series can provide some more insights?
+> 
+> The patch series introducing the fix is
+> https://lore.kernel.org/all/20240814203850.2240469-1-dhowells@redhat.com/
+> 
+> Please let me know how to proceed, thanks!
 
-Applied, thanks!
+Please try testing the original fixes and providing them as a patch
+series and send them for us to review.
 
-[1/1] leds: ktd2692: Set missing timing
-      commit: 95c65546f03f888481eda98b499947252e1f3b20
+thanks,
 
---
-Lee Jones [李琼斯]
-
+greg k-h
 
