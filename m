@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-397850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400DD9BE161
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 989B59BE162
 	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 047E6283A5C
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A19131C2333A
 	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB63E1D90D7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6961D90D9;
 	Wed,  6 Nov 2024 08:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RVDddowh"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BaOim/Ri"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8523C1D6DA9
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851DD1D63F8
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730883319; cv=none; b=r+QBXoS41rg7SBnt9yzQwV42fsxIeec+3sHoEtesmI33q2UEyDH76t8u0q0DSCFC2snmSsaJlxlZgYZvmSPGCgUE+AJ4b5uzgpqwXV5K2c9dTMigKPvR4YR78vhPagYg0srGGX2T+1EzAObVvVz+AKW0ywhMjPTQMrfru1hkww8=
+	t=1730883319; cv=none; b=haTV9RE8Aa7Cn0GVvStbcwuKPIce2UUylYrTskC5t73yoIrko3COic3FTo6QXw5aD3BN3TVHp15XXGnZiXsL24Y2zIXtsyoiFT09tH7089OKHDyf87VOrufK3ZoobqEK/8QkzUFTJk1PbHvIEsTJoqtR+lD8f+gjxmUt5UhOlg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730883319; c=relaxed/simple;
-	bh=h6Ixu3RgfB/yKWn7YlzSBsiXSugceNv8TIHypQHazUA=;
+	bh=deaieWFiVONpNRlAhKMPRKsF7JDojpQ/DZGVZJ9W5Dg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aMLaV0b/olvuGwKQNtgiz32wwUyPHlY7g/uAHzZtEs1K6ig6FFRWiCC2/hq2WoavMhx3wjZr2gksj+dbkHe7RsDHomeR6sqhMyzvZnVSmxFAEHvXar0hgwu8HL9XODeVQ305UGB9qSEs1iiOU6y1g915SckCug88k0CcLtq2wlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RVDddowh; arc=none smtp.client-ip=217.70.183.197
+	 MIME-Version; b=rBerSnA2OM4a0xvdHYUGBgJgl8rpFy6j8vojLYhci/A06tM1keG8aEfQ4jdWo87L2pIos2JFcpDqCQT1piQpSaLr1BQY1+kmR0RtMVSS4gl/BK3ZDPA1JSGmO1OMJFH9JguEONgqAiu3U0E/d3RMPfhNlEgYh6nZjbz41kzeoHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BaOim/Ri; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 43EF81C0002;
-	Wed,  6 Nov 2024 08:55:14 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 5453D1C0011;
+	Wed,  6 Nov 2024 08:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730883314;
+	t=1730883315;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=260i8Kmy1qIGGfd2CxjTGXG+BKpSWuDOsQ7KscW8IdI=;
-	b=RVDddowheMh2Y67227SddCz/E09oO7H6Uo62/Qz482isvIR8bpHboW4ogqNv0HRNzNx+HQ
-	RROWE8ReS8ZJySauLtKzS+nbf/jphrpqUt1iA0YwlOK/2pme7oYlSRl6axRD0HcH0Bit1Y
-	9X0vSqiNbAiQ4h9ffLnx4Z6mYjU89P1/nYQ9iYAaH72pZpyEyXD1+3Oh7HaIB8lwQY1uug
-	TU0twGZmgzdfDHhHxiRBLdOVqcBkwxbhgDCjc9z7WItkeWMCtTj25QKJyVyDoomx3nJoRv
-	3mSKKrEja8YKpU62+oPD3S0VUHfM+ULHIeJkhu4mlINbj8l+HUqYD73nIQqltg==
+	bh=khZM5fFii6r1q+Z9uZi3Zgk6G9+0lCTuTox0qCES4xo=;
+	b=BaOim/RiEk5dHGcktW6R1sY5hwjLW2MCkHaoo57gZKnhvU5SpYwcorRETyOoCBx9Avjx4j
+	shUfh7lcCq4+j92aGGaeV16wU/Q+DQFuV79CuG2oz4ocx6b/ph/BFswyk8Rth9n6cl9r38
+	AW9O3tJ0hjTJxHsNliUrrq3fc4laoRoS0DxR4YdmppBJBSDHXywYywfuUhQAqHaNtDE6z5
+	m3BzKNFf2c8p79+w1bAsJlBOd2rRjgpNKg6KtNe3NhNDcJuLDR49gLVAxCl4Fk9TbtFhby
+	qU7SACr8AKcKKwko16QfMj13cDveradcy7evwoCa3yN7nsC4Oto7i6XUHl9Wyw==
 From: Bastien Curutchet <bastien.curutchet@bootlin.com>
 To: Santosh Shilimkar <ssantosh@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -55,11 +55,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Herve Codina <herve.codina@bootlin.com>,
 	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v2 3/6] mtd: rawnand: davinci: Always depends on TI_AEMIF
-Date: Wed,  6 Nov 2024 09:55:04 +0100
-Message-ID: <20241106085507.76425-4-bastien.curutchet@bootlin.com>
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH v2 4/6] mtd: rawnand: davinci: Order headers alphabetically
+Date: Wed,  6 Nov 2024 09:55:05 +0100
+Message-ID: <20241106085507.76425-5-bastien.curutchet@bootlin.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241106085507.76425-1-bastien.curutchet@bootlin.com>
 References: <20241106085507.76425-1-bastien.curutchet@bootlin.com>
@@ -72,36 +71,37 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: bastien.curutchet@bootlin.com
 
-DAVINCI_NAND depends on TI_AEMIF only when ARCH_KEYSTONE is selected
-while the NAND controller is also always a part of the AEMIF controller
-on DaVinci SoCs.
-
-Set a dependency on TI_AEMIF regardless of the selected architecture.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411020140.3wsKJOSB-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202411020957.X1T8T9ZR-lkp@intel.com/
+Order headers alphabetically for better readability.
 
 Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
 ---
- drivers/mtd/nand/raw/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/raw/davinci_nand.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-index d0aaccf72d78..bb61434347bd 100644
---- a/drivers/mtd/nand/raw/Kconfig
-+++ b/drivers/mtd/nand/raw/Kconfig
-@@ -279,8 +279,8 @@ config MTD_NAND_SH_FLCTL
+diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
+index 392678143a36..3c0efbdd789e 100644
+--- a/drivers/mtd/nand/raw/davinci_nand.c
++++ b/drivers/mtd/nand/raw/davinci_nand.c
+@@ -10,15 +10,15 @@
+  *   Dirk Behme <Dirk.Behme@gmail.com>
+  */
  
- config MTD_NAND_DAVINCI
- 	tristate "DaVinci/Keystone NAND controller"
--	depends on ARCH_DAVINCI || (ARCH_KEYSTONE && TI_AEMIF) || COMPILE_TEST
--	depends on HAS_IOMEM
-+	depends on COMPILE_TEST || ARCH_DAVINCI || ARCH_KEYSTONE
-+	depends on HAS_IOMEM && TI_AEMIF
- 	help
- 	  Enable the driver for NAND flash chips on Texas Instruments
- 	  DaVinci/Keystone processors.
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+ #include <linux/err.h>
+ #include <linux/iopoll.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/mtd/rawnand.h>
+ #include <linux/mtd/partitions.h>
+-#include <linux/slab.h>
+ #include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
+ 
+ #define NRCSR_OFFSET		0x00
+ #define NANDFCR_OFFSET		0x60
 -- 
 2.47.0
 
