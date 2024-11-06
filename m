@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-399002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB65A9BF926
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:20:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514359BF928
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2D891C21CEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021571F2145A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8901D20CCF2;
-	Wed,  6 Nov 2024 22:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RvjM3cOT"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAC720CCE1;
+	Wed,  6 Nov 2024 22:20:01 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5623520C47F
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561FB20C47F
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730931593; cv=none; b=KmuqPyftOIOkXnlvlTljNRgYqqrntEZ7t0EJFdbFJPnvnP8UHGXdIHzYguuEgPypXgoGHGbfA8LTV7fXipUvP9/N6wpvGPvI7d//b/AZDLDWwkUeNL4mzfHxfONRuZuBmkfwXFonrR2F4gGALVD2vkx4VTD+OD3BZ5PrYcz94CQ=
+	t=1730931601; cv=none; b=fUR2zTlAjUYBgehNc9WsRoS9nD0r3N00ZEeIvu/yuXAU1MD5yjnO/OUv56AhWeXyPiiwTMQ541unSbPHqZL4LwBaQALIldpzd7IfBJDb3dX0j0jb8s35NPAwEm97gLioJQYOExygP1k5bcfM4+1YjZXihPYogtofH4ckRce4kdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730931593; c=relaxed/simple;
-	bh=oBnBqWpM8lRdtEoqkpENq0fMTF0z3JfZf00+3RNW9zY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oWHeeYr2HtpJOAPtdd4hItiLRIv7AZ3WEGXUv6X60aoZOKCIUu41/a93Js1Xr13H4X3Kbhx12s5D8RjNyu5rtxHDsaKMv27+8lf/1/zCDgc7DOKX0jQMI2fr/32fHnillhL508OQHxgQuZp2rXLaxGqZ8HXy1nyhgxJhjotEDTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RvjM3cOT; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c947c00f26so2427a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 14:19:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730931591; x=1731536391; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VIfMB0/RRt0Ar1Plzd0i42wcI4LGr6zVtLHR+97rgBY=;
-        b=RvjM3cOTcqB/hxPw4bBvMJEFKEJsFueDkFcki+11WjTgflchF3SVXTd+1Ay0uD2CUK
-         KwPGBCImdQtQU/UYiPcEzzHHd95JAeNnXeyJOqokGNR8IPJEnB8qwaHGvXF/ePSceMdm
-         WmDm6c8WDspITHEtx709i2VHyfzomGBHmhVz5x75dy0iJK0gb042cUOdhWwxdmheK7+E
-         00v5aQzV9FObAVyhGgPTqB/Usfg5opluGpSchzfG1o6JgELDa56AToVMZXoZp61guguo
-         M4ve8BOVjtaVk9PZg1Zz7Ll5FpBkFQqJ9hwX1Eka6K73yvHfEQeI8BesACY2ERg4RYFE
-         h37A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730931591; x=1731536391;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VIfMB0/RRt0Ar1Plzd0i42wcI4LGr6zVtLHR+97rgBY=;
-        b=irvKTrmvU5pw3kQ/hw4PYB7FKnMN6BugcbVijDh0qfW7HWKbfKoYI8czyYJ1AX79Ts
-         Bt52WbHzTQ9M5sBoE0Bb7n1olasDL7FrOOl/5p5wDHXhl7eeXJnuXmnQhg8mQWOa1dZ9
-         C8OAPFYozebzpCTjchZNKmAY7oGEMPYedUAlwzLluET6m/E4eYm3zXH6Yx02Ifgf0q8m
-         mAF4TWmmRAqlrUcVeGNkMlu5Lso8pTo8p/mT1Bx2Xe4tL1uLxDbxeWOckMMpmC6vD5lo
-         Bbk4HyCA1Hq5Dp2sXh1ayKeHObitIY7ObPlWkOvVhdgMJanAqd7FRYRcYNZykVbsHKAY
-         pQAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHMh3MQ5jNqgp/Cu6QEUxeoNhrSyoxAi5aKIytA5KIdjFL0D5z0/fC/a1lesfkMTYe9kKepPSFT7K1EyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsS8PvWKuhZ9zCWeujZ0+AmVVXwRIi5xzrzixoMKQhi5DGLm2q
-	XqAB+Z52EXIBLoiLq4tgMldN6E7xMh4I0rZDCHzZ2mC1goBuiuvjTrMhzreec/1fIDTaSV2B7E+
-	Bl1WplMTU+Ky3ijDm2UiVpJcYJEIDGUPSR69J
-X-Gm-Gg: ASbGnctVqBz0D4VaY51CfNfPsE4z8yvtZhaagr6+QYz6dLksQUBBEmDEQ4HN7Epwvbc
-	5v3iYD1BgxEHLC3WBy+vJ4KsdQqRRnfGMWRd2pyt521+wG3lCxkmIN/3lN6K/
-X-Google-Smtp-Source: AGHT+IHr43cQPFdqXPCZMuhW0YfDPZKYdGnYJyq09Flo3eqNIAHnldTJTztppmJyfXcIKbSiu12OxTpcgO6RCsjM9mo=
-X-Received: by 2002:a50:8d09:0:b0:5cb:6b7e:9634 with SMTP id
- 4fb4d7f45d1cf-5cefbc29fcfmr233654a12.2.1730931590492; Wed, 06 Nov 2024
- 14:19:50 -0800 (PST)
+	s=arc-20240116; t=1730931601; c=relaxed/simple;
+	bh=K8KsY2smXkK1xQT8hZaHtpx8Err1J8dEOV/nMsM834c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=pLDj5R6N4Tzc8/hEIzaIneVXhxXV3QMX6+ekrAm5ytJ5Kb1CaIwh94aPQ07ZAuW34NTtPvjkmJ9b6g6XQoEj9fYfgGM0YMbqZB9JnmbmaBAZ01TCGdgXv9+E2kcX3BG/SeSI65sgF86DrX6+/OKHoQ010vuq/w6sLhDwKgfGruQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-312-0l6m2jorNFGkVKQs09YrBw-1; Wed, 06 Nov 2024 22:19:56 +0000
+X-MC-Unique: 0l6m2jorNFGkVKQs09YrBw-1
+X-Mimecast-MFC-AGG-ID: 0l6m2jorNFGkVKQs09YrBw
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 6 Nov
+ 2024 22:19:55 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 6 Nov 2024 22:19:55 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Thomas Gleixner' <tglx@linutronix.de>, Geert Uytterhoeven
+	<geert@linux-m68k.org>
+CC: Easwar Hariharan <eahariha@linux.microsoft.com>, "K. Y. Srinivasan"
+	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, "Anna-Maria
+ Behnsen" <anna-maria@linutronix.de>, Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>, "linux-bluetooth@vger.kernel.org"
+	<linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Michael Kelley <mhklinux@outlook.com>
+Subject: RE: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
+Thread-Topic: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
+Thread-Index: AQHbKih6Ns02ltD4hEi4XtuoZsqA1LKq32OQ
+Date: Wed, 6 Nov 2024 22:19:55 +0000
+Message-ID: <6acb24504a454638848dd9adff7cb5dc@AcuMS.aculab.com>
+References: <20241028-open-coded-timeouts-v2-0-c7294bb845a1@linux.microsoft.com>
+ <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com>
+ <87wmhq28o6.ffs@tglx>
+ <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
+ <87ed3y255a.ffs@tglx>
+In-Reply-To: <87ed3y255a.ffs@tglx>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
- <20241030-extended-modversions-v8-2-93acdef62ce8@google.com>
- <ZyNr--iMz_6Fj4yq@bombadil.infradead.org> <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
- <ZyVDv0mTm3Bgh1BR@bombadil.infradead.org> <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
- <ZyrRYUD0K1f7SwWg@bombadil.infradead.org>
-In-Reply-To: <ZyrRYUD0K1f7SwWg@bombadil.infradead.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Wed, 6 Nov 2024 14:19:38 -0800
-Message-ID: <CAGSQo03+1WjUVj-iQ6zdOST6z=p+=OqS2Xk_c4ZUdHOsxa7g2w@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Lucas De Marchi <lucas.de.marchi@gmail.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: L0p9qPl_6qKMzmQDtcu_Yf-LpYRmKf3hznL2Z_Emol8_1730931595
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
->
-> > If booted against an old kernel, it will
-> > behave as though there is no modversions information.
->
-> Huh? This I don't get. If you have the new libkmod and boot
-> an old kernel, that should just not break becauase well, long
-> symbols were not ever supported properly anyway, so no regression.
+RnJvbTogVGhvbWFzIEdsZWl4bmVyDQo+IFNlbnQ6IDI5IE9jdG9iZXIgMjAyNCAxNzoyNQ0KPiAN
+Cj4gT24gVHVlLCBPY3QgMjkgMjAyNCBhdCAxNzoyMiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3Rl
+Og0KPiA+IE9uIFR1ZSwgT2N0IDI5LCAyMDI0IGF0IDU6MDjigK9QTSBUaG9tYXMgR2xlaXhuZXIg
+PHRnbHhAbGludXRyb25peC5kZT4gd3JvdGU6DQo+ID4+IE9uIE1vbiwgT2N0IDI4IDIwMjQgYXQg
+MTk6MTEsIEVhc3dhciBIYXJpaGFyYW4gd3JvdGU6DQo+ID4+ID4gZGlmZiAtLWdpdCBhL2luY2x1
+ZGUvbGludXgvamlmZmllcy5oIGIvaW5jbHVkZS9saW51eC9qaWZmaWVzLmgNCj4gPj4gPiBpbmRl
+eCAxMjIwZjBmYmU1YmYuLmU1MjU2YmI1Zjg1MSAxMDA2NDQNCj4gPj4gPiAtLS0gYS9pbmNsdWRl
+L2xpbnV4L2ppZmZpZXMuaA0KPiA+PiA+ICsrKyBiL2luY2x1ZGUvbGludXgvamlmZmllcy5oDQo+
+ID4+ID4gQEAgLTUyNiw2ICs1MjYsOCBAQCBzdGF0aWMgX19hbHdheXNfaW5saW5lIHVuc2lnbmVk
+IGxvbmcgbXNlY3NfdG9famlmZmllcyhjb25zdCB1bnNpZ25lZCBpbnQgbSkNCj4gPj4gPiAgICAg
+ICB9DQo+ID4+ID4gIH0NCj4gPj4gPg0KPiA+PiA+ICsjZGVmaW5lIHNlY3NfdG9famlmZmllcyhf
+c2VjcykgKChfc2VjcykgKiBIWikNCj4gPj4NCj4gPj4gQ2FuIHlvdSBwbGVhc2UgbWFrZSB0aGF0
+IGEgc3RhdGljIGlubGluZSwgYXMgdGhlcmUgaXMgbm8gbmVlZCBmb3IgbWFjcm8NCj4gPj4gbWFn
+aWMgbGlrZSBpbiB0aGUgb3RoZXIgY29udmVyc2lvbnMsIGFuZCBhZGQgYSBrZXJuZWwgZG9jIGNv
+bW1lbnQgd2hpY2gNCj4gPj4gZG9jdW1lbnRzIHRoaXM/DQo+ID4NCj4gPiBOb3RlIHRoYXQgYSBz
+dGF0aWMgaW5saW5lIG1lYW5zIGl0IGNhbm5vdCBiZSB1c2VkIGluIGUuZy4gc3RydWN0IGluaXRp
+YWxpemVycywNCj4gPiB3aGljaCBhcmUgc3Vic3RhbnRpYWwgdXNlcnMgb2YgICI8dmFsdWU+ICog
+SFoiLg0KPiANCj4gQmFoLiBUaGF0IHdhbnRzIHRvIGJlIG1lbnRpb25lZCBpbiB0aGUgY2hhbmdl
+IGxvZyB0aGVuLg0KPiANCj4gU3RpbGwgdGhlIG1hY3JvIHNob3VsZCBiZSBkb2N1bWVudGVkLg0K
+DQpJIHdhcyB3b25kZXJpbmcgaWYgaXQgcmVhbGx5IGhhZCBhbnkgcHVycG9zZSBhdCBhbGwuDQpJ
+dCBqdXN0IG9iZnVzY2F0ZXMgY29kZSwgZG9lc24ndCBldmVuIG1ha2UgaXQgc21hbGxlci4NCg0K
+CURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBN
+b3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAx
+Mzk3Mzg2IChXYWxlcykNCg==
 
-Specifically, if you set NO_BASIC_MODVERSIONS, build a module, and
-then load said module with a kernel *before* EXTENDED_MODVERSIONS
-existed, it will see no modversion info on the module to check. This
-will be true regardless of symbol length.
-
->
-> I'm not quite sure I understood your last comment here though,
-> can you clarify what you meant?
->
-> Anyway, so now that this is all cleared up, the next question I have
-> is, let's compare a NO_BASIC_MODVERSIONS world now, given that the
-> userspace requirements aren't large at all, what actual benefits does
-> using this new extended mod versions have? Why wouldn't a distro end
-> up preferring this for say a future release for all modules?
-
-I think a distro will end up preferring using this for all modules,
-but was intending to put both in for a transitional period until the
-new format was more accepted.
-
->
->   Luis
 
