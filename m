@@ -1,204 +1,135 @@
-Return-Path: <linux-kernel+bounces-397929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010779BE28F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:32:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065AE9BE295
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6741FB21872
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1FC1C2311F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB91D9663;
-	Wed,  6 Nov 2024 09:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98C01DA60B;
+	Wed,  6 Nov 2024 09:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="XzQY5BQh"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2070.outbound.protection.outlook.com [40.107.241.70])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dJCbaX2C"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB05D1D27BA;
-	Wed,  6 Nov 2024 09:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730885536; cv=fail; b=OF0ktxpBGxKgybQZyIVlqnqJT7ARtmwPjR57BPY2SlhF5PrT3zqMzkN86BNHVu0p/KkiBhBaADKAUwb6Kh86D1w8ez0oVZoSq7hB8UWtX6i0NQOuM73acdWps/aSuO2tqHMLElm1pKUAN+K0LMd7GqQLro9AQ7xbdRIvmAdHQjc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730885536; c=relaxed/simple;
-	bh=X1oRfruvAGi1umFOPjlcv/SvYYPTGa6LMlaJLwgd+rs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=u5o6KgUM+jWWVx5pLlDOiMUdOuXPkGW0N3Txo0tX9j2utFDx4lLtlyjnrvYCbTLrLRqqKN078j3IrAFccJm+Sx2gEX1REFEfESfMDEGGoZEgdoAIPChgamcsRrSnSt/PSTboBnBZvqj+2d0rVw4FBqMt1oB0TGs2bfcJQb4Yu00=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=XzQY5BQh; arc=fail smtp.client-ip=40.107.241.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TCclS7d4o7tJq/mI/tdesnspy8J2TEl0/8ZRY7R6DHw9wou48g3a5yjHtN7ti8AqnljufpfVgZ9YsP6InDSmLom1p6EA7LWvc5pDdjvZ5vtwjaU4krWIPh05AVW3DCJoJiJ8A6fxVbx8bgVPfutugFO8PlzisQC1reYSR3UUt3t4xngWvjtSYmUzF1yND9V2+M6RhFQtftRbmV3WT8oOPzyKlYd1yvLlKsGLrZAtEdyUub71kCZjGsXwe3BKa9jPjZ+TZUUMnRPR2U2UTIySrog35DSuwYgZNl2dCNHL/QoIMWJoKsuax6zCkBThZd1QcClIEwI4F4sFh+dwaax9wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zxZtscEuTqTbMSy2LFyAYLBkh5iV4vdDDgrzQ4hEa14=;
- b=lvWt4FTygUqDR7ASVaN7yyuaayyvo+Yp/asSPMsHLIL0pe/PICI8f2sjwvgqT1WCscNnMP59t7vkDVVToOVZMK/VoVbeX05PRUFV2/4m1+rKXnlcXHvWoM1/xnFpbLr9DB/N1ri5dvksu2oPIKI2uW8ht41vmO3A6OxtAc81jjHFfgXAXZ3tHjLk9gGXLPDmlpR3lneqJi1WgEmkeInLU24LGLz6YYbt8bABInRzXIjWCrvjJggT9TZwZr6zxciBKy5XyX1mIxhgdzIPor3k5rO6ezNEmA6rL5CoJOMbZxZ4ZeciIG3iPmuglTtTW1fspTCxMe+T2AJivmezGAHF7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zxZtscEuTqTbMSy2LFyAYLBkh5iV4vdDDgrzQ4hEa14=;
- b=XzQY5BQhDa+iTZ0XbewCF1Duwrj7RjqHg2HYBGMWqOE6V7EvBetcMEp8IGUEzmXA7PfMDvBw+4xoA5peMNpa9DKLsI8H/d9geWreYTBXGVPIKUPIro+S5ExqxBwTQLyeQX7WPkanRDMy2QkHYo9Ziio77xSIn+O+4TdgiEzutpI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by DBAPR04MB7221.eurprd04.prod.outlook.com (2603:10a6:10:1b1::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Wed, 6 Nov
- 2024 09:32:08 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%7]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
- 09:32:08 +0000
-Message-ID: <f6bb3387-4396-45d4-9cb4-594d58095510@cherry.de>
-Date: Wed, 6 Nov 2024 10:32:06 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add OPP voltage ranges to RK3399
- OP1 SoC dtsi
-To: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alchark@gmail.com
-References: <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0009.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1e::6) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53371D27BA;
+	Wed,  6 Nov 2024 09:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730885599; cv=none; b=lKZ87mimyqB/9tkFjFP+0n2yY5wxENbIO2l/C3IWT3tTA2HteuP8Drr5PgBrtG2jiQWdS0vVL2E1dfdp3Oqet8tFSqqPGOf1CbK3k/itKMWoYpxfBP7z23PwkXXGBrkuOuvtckYcHnE/264eR8l4ZtNNdT3Ul/4sYd42r6O0HIw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730885599; c=relaxed/simple;
+	bh=QiEDB5mi8W/VjNnRPEmKrLelOzqBFEdzV3sB1MVs9/U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUOn3Gv1h78y3SmikvEYJ4iltDvL8g67YUWtO0l0tykZXsucx7Wksnhr3TpoH8g8VIOimLMzancXk7SGsyiOScDj0IiTzmtqrt/TIGNEEcQuaqQ0wkuy6X47uIFVRzVvPF3OVaYP50zSr7o4rgEWp8GzR8L29co1APmecuEK664=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dJCbaX2C; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5Lr3fG015895;
+	Wed, 6 Nov 2024 09:33:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=g2hmAisisJ+9Ub7aj6jl4dRQ
+	PL81uW+0wOCEjJo02DY=; b=dJCbaX2CgmcoY0VTCe/uZH85TxfamcZIegL3Nsyg
+	BOflMrqznyAGcXjnID808pfIMHBSLYTOsnW7lmlw/WICeOqR7IkyOJkh/X2IWLhE
+	apSiFoRlRjCE9KtNJ+q+KehTkF301aN6GcSJCcsUDmO9dIIxykDS0NA4GL1YReEU
+	oIiBOKVeAyLAZdo+kVmZpLDapoIJGoKguOoZX2yxtcuY3b3j31zqycw1YSHeAurR
+	qxBk8ri3qXeO12ElkWzjrgU4dYX620YR1gEBzGNl7YjgOooTuaOgbIOzAQBjQYoz
+	/derzL1ZOmzY8yb8gqRGA4dBt9okdOehDpUSlTWQqf3/Eg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42q5n8n3qr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 09:33:13 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A69XDFg006098
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 6 Nov 2024 09:33:13 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 6 Nov 2024 01:33:08 -0800
+Date: Wed, 6 Nov 2024 17:33:03 +0800
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, <ulf.hansson@linaro.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <bhupesh.sharma@linaro.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_tingweiz@quicinc.com>, <quic_yuanjiey@quicinc.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+Message-ID: <Zys3zwMAA+dWuGby@cse-cd02-lnx.ap.qualcomm.com>
+References: <20241106072343.2070933-1-quic_yuanjiey@quicinc.com>
+ <20241106072343.2070933-2-quic_yuanjiey@quicinc.com>
+ <347uhs7apex3usmfpzrpwakrzchxactwtc7gs45indkzez2vfj@n75dc3ovl3g2>
+ <ZyshSbJgLHTRaps1@cse-cd02-lnx.ap.qualcomm.com>
+ <FF5BD9CD-8E5E-4C40-906C-8552C067AE8C@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DBAPR04MB7221:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4df8a24c-16fd-4777-80ff-08dcfe45e1f0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VVIvbWgyS25vYVh6eWx2Y0wvS1lRSGNYR1V2WC94dllRa09xeXFEa1IvbmlS?=
- =?utf-8?B?cnJGeCs5NVp2VUpHSG9kRUdEdEdReVZ1RlkzZ05Ec0lOQnlYN29KY3B2clNj?=
- =?utf-8?B?MFZIbDU4LzBwUDIvTEdvNWNJYVVYeEtRYlpkaGV3NU95TnhoZlhTck9rUWJ1?=
- =?utf-8?B?NEtqczhKK2JTREZBa2hmcXRtVUtBVTFibE53NXVlRjkrM3I0TEdxVGQxKzRh?=
- =?utf-8?B?VmpGOE9kRmpld2xUYVd5MnQzQVM0dzJlUXVkNEpGWVdWL3JVZGxCdWtOM1pD?=
- =?utf-8?B?YzQvKzk0TmtTS3lqOW5Eek5CSS9qZEllbjdLRjVya1YyVktiSGpGM2lXQWZX?=
- =?utf-8?B?UmdGWEY2ZzFtbzdIQXU2bm53WnFLQ0hvWWE1UVBkVjFlcFR5a2M1dzhYc0Zo?=
- =?utf-8?B?QkV2NG9BT25pL21UakdlQmxybzNtWUxYME80MUR1UzF6aWVha2tHRVZmZnJ2?=
- =?utf-8?B?VUNwMXJZaldYRGtrNlJ6WkpLUjA1VkI3K2YzeW9RRGZENDZSZ25pL2tad0lq?=
- =?utf-8?B?L0k1dTRyMzAwUWgrMjZMUU9oczNrQmdKQ2tJSWRhamliRDJISzIwU1pQeUZH?=
- =?utf-8?B?S1ZiQUs0RCtnYUkrR0FzOVd1enJEcmtsUXJHR0hKbGZVaUtYS3NlcWl0MXBi?=
- =?utf-8?B?YVlpNXUwQjlqcStHYlFMdCtIZWNFeFdZZy9SMDEra3pvSnZ1d2d1UzZxdlhE?=
- =?utf-8?B?am15WkZNWVNlODhENTE3OUxpWU1tTjBmMmw0UjF2NHFIQnphbVRHR3owcVpF?=
- =?utf-8?B?enlLYXJHbHVLS3dEbXRWTS8zdnRRSklvUVNIRVljK1pOYW83WkV5Yk54T0Qv?=
- =?utf-8?B?Yll6U1krS0VRdnNaVFFkMzQ2SXdJUmlqVHBtaTVqTnBCM2t5ZW02V2YvUExR?=
- =?utf-8?B?aXM0N2thQ3JlNi9yMUNiQmxJdlluMEZndzRHTkhHMzNzYlVpeHVScmt0Mzlk?=
- =?utf-8?B?clNtR0FjN1FIUlorUFg1dEZWSEU0RWF1dkRCMjZML0IzWSthMC84RTRkMjJo?=
- =?utf-8?B?U3VqWkRZYWtBbVdIcUdrK005NTd3dVl1Mmt6L0NXVTVKenBwUHNmTURGRDRh?=
- =?utf-8?B?czdLMWpydGhlL2lIODNPdUJGUVFtak1ZNHlmcGEvenVJcFNWTUNoTlA4anM4?=
- =?utf-8?B?Z0ovV3Yweld2UHh2QW9uR3pmcmt3M0QvblR3bnA4U3Q5RnZRUUs3VDhYZHRG?=
- =?utf-8?B?ckhyVTdmampTamw5QW9ZNDBGTlYzbnhPOWFCTlo0Q3V1RGd5M1dXUXlJcG9T?=
- =?utf-8?B?TXFJdmwwVmpVSVlGSGlxMDQ5dDh4Q05wY1JOVTdKRUlnb2NDSHIvWFB2ZXVk?=
- =?utf-8?B?djhoaHhKRHV5MmtpVWVBd1k5RFI2Z1lmQlRId0dUWEF4NmNFYzZCOFBmRm4x?=
- =?utf-8?B?SXAram9vSGk1Rnp5blpHK1VCYmwrQmI1VkVMdEV3L09VWkxXSFJ4TkFWdmpF?=
- =?utf-8?B?UTJhek1lUDAvNExhb3hEcFZIMy9oYXdxZUNyVVphREFKU3pLVDEwUHdvR2R1?=
- =?utf-8?B?akJ3OXdvYTh1dFBvVDlPS2ZUbk1sRWdKd2pPSUZPbTh6MmFRUEhJUDNMcTl2?=
- =?utf-8?B?MDBCbXJPL0YzZWc3NnlsTjlnMnczMkRjZmpidGpocXFZRzd4ejYzYjY0blZD?=
- =?utf-8?B?L01EMytRdEZ2MTYvSUR4ak9GUFJmaWpyLytJRlFpa3RVaitWVGRlSE1YWVNa?=
- =?utf-8?Q?X0oVEgdkH4+Dc/zFBxlW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dWtuSjJhbmgyT2NvMmFwV1lyT3NSY2JvY01EOXF0cVZnL04rcUY0RURCTElv?=
- =?utf-8?B?OEJRRmN3T1hRSkFyQXJpcldtWnVxQ21BSmlTQ2g4NHgzNTFCLzRLYzFYVUl2?=
- =?utf-8?B?UGhNdUxqUXZOdmJHK0VPUnNjUEVOM3hKNGRWNXNsK1NnMEtWT2NpMktKd21H?=
- =?utf-8?B?MEgzc09MYXFqOHUrR3BGbGgzak5wZDZjckY3dHNKdVp0TFA0RU42Z1NQMzBz?=
- =?utf-8?B?UnRkRC9zb1VwRVRiMlkrb0FBbkdTUkhlNEZPZVAwS0lSRXRzRDNxdW5LdmFL?=
- =?utf-8?B?ZERZUk5VSFJacEhFS2Q0MDJPZzVGVFNDUDFRa0NOVDFDNmlmWTF1QnlwN092?=
- =?utf-8?B?angwekc2ZE9IOHIySk81bmZET1JmVERYUmI2cmI0Sy96SUZVZG1nbHJHb0dl?=
- =?utf-8?B?VExKTnA2SjNJWDVaWTdIL1dvYVlzM1BpZTVldlk0YWZrY0hnUTBtbmJ6dm52?=
- =?utf-8?B?RWthaS9VYmlBcko4UGxtRTdJOWh2UWZCejROSzViZnlZSHd3NjQ2ajRIRS9Y?=
- =?utf-8?B?R3dBdnJBWTNJSE5GdnFBQnJ6R29Qc3BSYWFZVHkyTlVaeE5ZcS9aWU03czE1?=
- =?utf-8?B?c0NmdTBvbmJ1b0tMZnNDTG55eE1jUS9sTmQrNEdJdlMyQWkycmVNYnhxVkRG?=
- =?utf-8?B?WnpPTEZaS2wyOFk3TTFFK0FnSlZDN1lFUGdmeWttSFlPNlNYVmVQRGRtTHNI?=
- =?utf-8?B?ZDlPcEVsZ2dwZUZ0S2cxUDJwQ0o1Qk1UaXdXSk03c09nclllWkNLZ2ZuaS9Z?=
- =?utf-8?B?aUlUOFpUNVAvNjRDTXZmSTQxZitFNnlMakNqVHE5RVFHbjcydjF0RVA4Y0w5?=
- =?utf-8?B?bmIvM2NRZWtDMVNZTVdXVmc3cXRzejc4WjBXRk14TzVCTTg3eWR6SXE3NmRn?=
- =?utf-8?B?Q0dXeUdTWFNldlBOYnRaVHh2d3FyRHVxdiswY2hMU0NHcUdKWWpBNTBQTVFw?=
- =?utf-8?B?TGZ3a0ZOb0VPcGVac1NCTS9lQmgvQXpFbU8yZnEzcDI4OEcrRnVhVUM3MnFW?=
- =?utf-8?B?QVFVUUJwdDBRaXNKbDV6Rjd3Y3Mvemg2ZFFEY2ZqaUZiNXhGdWZZdDZ4eERJ?=
- =?utf-8?B?aGtGeU9IQTZHdklvR2tHV3ZVN1lUeEwra2tyOUpMWjErVWZ1SHE5L0VmYUlJ?=
- =?utf-8?B?dFVtMlFXVGhha1p3RkJHdGJiWjVZV3E1ZS9qa0YyV1VieDc5azZ5cmowWnV4?=
- =?utf-8?B?SHQ1ZTBhU1lKaFRmRmpvaHRJK29BL2tybFdsMW5MUk53UVp3cXdaMVRNVVY0?=
- =?utf-8?B?SFlYb1pxbnRYRG91KzlWQWhFNUVOYVlDNUNzMTFSYVc4RnRLeCs4MGV2ZTlx?=
- =?utf-8?B?TUxCbUp3aVJmV00xUnIvYzdVcVJlVU0zN1BjdjVxamgwSHhvNUdKWUNSNUlB?=
- =?utf-8?B?SGlHWFlqR1BKWG9MZlFacU4rTlRoekQwMCtaNGRkSnNISlJ1MmFPVFh4TGgy?=
- =?utf-8?B?S1BxWGFvanduTUMrMXFnYXlYWllCOEtxd2dzVU1vSE44VG85akZlckpQaXNr?=
- =?utf-8?B?WXdIRkk0WWJES20vWUhjWnFFSFdYd3JEZVB0Z3pjYy9HY1BTSm9uMkR6eG43?=
- =?utf-8?B?TFlXWGR2NkYrVVo4cHFJRmFIeFVVR1M5SVY4OXpISEpwWUlQMVMwei9MazdL?=
- =?utf-8?B?VEdwMGlnRE5uSWVoYWVvdCt4bWtRNzZLT3JGNnhEdE04cmhabHVWMEhZNHN6?=
- =?utf-8?B?UEp0cEFPQWVLUVJvQTNZeFM3K0tNbjRUQkxvalJ1a213anlxMmFJanhneFIw?=
- =?utf-8?B?SGxkazZGaVNDODZKUVlnbnRYTFVDQmZQWkVpQUNoa3RpZ2tvZlRuNEJ2MjQr?=
- =?utf-8?B?WjFjL3IyemRlcEJ4K0RqdDIwUE9wK2hSeVBYNy9HUUlkM3g2TGVOdWF1TzBl?=
- =?utf-8?B?Y3VycW5nTmRUODFtdmZhQm03OUU3TUJ0M25EK24xb2k4VkFwbjVzZVRKa3Y2?=
- =?utf-8?B?ZHpmMG0vRjBaTGlqT2ppM2Q4L3V1YVc0cG5yNnh0dWdmMEc4Zk1vekIxb20w?=
- =?utf-8?B?bS90eTk3dnJmZDVCNDJIMGNNZXNBaUdyOWRBcHR6YTdlcU1qUzBqMXdaSG15?=
- =?utf-8?B?R1hzNzMvUzUzVDBONEpUTzR3TU02ekRXbk9hQ0V5ajdMem1KUHNoWGpZeEZn?=
- =?utf-8?B?SWx3KzVCdUtOaFMzU1pYbFJ5cjZxQVduMW92cW1ReUczRnEzZU5DZGdxeTlN?=
- =?utf-8?Q?DatPMPIoRm3vol+7QpvxsUs=3D?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4df8a24c-16fd-4777-80ff-08dcfe45e1f0
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 09:32:07.8926
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S1CQEXIVja9H11LswvnW8J3tAGoBvXbXlIBLCXJ27SeBiUFCJ6eu1YgWqdefB/zqT2xbMJQRNlp3v+QFCaipYEkVyk3UALoSUxzDvoNYUww=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7221
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <FF5BD9CD-8E5E-4C40-906C-8552C067AE8C@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Pzvn6bKvwG4HwTzo0T3vWw5xa1zXrc8a
+X-Proofpoint-ORIG-GUID: Pzvn6bKvwG4HwTzo0T3vWw5xa1zXrc8a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 mlxlogscore=961 mlxscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411060077
 
-Hi Dragan,
-
-On 11/6/24 9:33 AM, Dragan Simic wrote:
-> Add support for voltage ranges to the CPU, GPU and DMC OPPs defined in the
-> SoC dtsi for Rockchip OP1, as a variant of the Rockchip RK3399.  This may be
-> useful if there are any OP1-based boards whose associated voltage regulators
-> are unable to deliver the exact voltages; otherwise, it causes no functional
-> changes to the resulting OPP voltages at runtime.
+On Wed, Nov 06, 2024 at 09:10:57AM +0000, Dmitry Baryshkov wrote:
+> On 6 November 2024 07:56:57 GMT, Yuanjie Yang <quic_yuanjiey@quicinc.com> wrote:
+> >On Wed, Nov 06, 2024 at 09:36:56AM +0200, Dmitry Baryshkov wrote:
+> >> On Wed, Nov 06, 2024 at 03:23:42PM +0800, Yuanjie Yang wrote:
+> >> > Add SDHC1 and SDHC2 support to the QCS615 Ride platform. The SDHC1
+> >> > and SDHC2 of QCS615 are derived from SM6115. Include the relevant
+> >> > binding documents accordingly.
+> >> 
+> >> Which binding documents?
+> >Thanks, the binding documents is sdhci-msm.yaml.
+> >I have modified this yaml patch in patch v1, and this yaml patch is
+> >applied, so I remove this yaml patch in patch v2.
+> >link:https://lore.kernel.org/all/CAPDyKFr-Gzd3Mzn+vN6DXO9C4Xrvpv4z5V2G_VRTzOa=89Fd3w@mail.gmail.com/
 > 
-> These changes cannot cause stability issues or any kind of damage, because
-> it's perfectly safe to use the highest voltage from an OPP group for each OPP
-> in the same group.  The only possible negative effect of using higher voltages
-> is wasted energy in form of some additionally generated heat.
+> The question is why do you mention bindings in the DTSI commit message? Please don't just C&P your texts.
+Thanks, I will adjust commit message in next version. I will optimize my language expression again.
+
+> >
+> >> > Additionally, configure SDHC1-related
+> >> > and SDHC2-related opp, power, and interconnect settings in the device
+> >> > tree.
+> >> > 
+> >> > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> >> > ---
+> >> >  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
+> >> >  1 file changed, 198 insertions(+)
+> >> > 
+> >> 
+> >> -- 
+> >> With best wishes
+> >> Dmitry
+> >
+> >Thanks,
+> >Yuanjie
 > 
-> Reported-by: Quentin Schulz <quentin.schulz@cherry.de>
 
-Well, I merely highlighted that the voltage was different on OP1 
-compared to RK3399 for the 600MHz OPP :)
-
-So... If there's ONE SoC I'm pretty sure is working as expected it's the 
-OP1 fitted on the Gru Chromebooks with the ChromiumOS kernel fork 
-(though yes, I believe all Gru CB are EoL since August 2023). In the 6.1 
-kernel fork, there's also no range: 
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/refs/heads/chromeos-6.1/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
-
-So not sure we need to handle theoretical cases here. Will let 
-maintainers decide on that one. FWIW, there are two other OP1 devices, 
-the RockPi4A+ and RockPi4B+ which do not change the OPP either.
-
-Cheers,
-Quentin
+Thanks,
+Yuanjie
 
