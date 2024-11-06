@@ -1,161 +1,506 @@
-Return-Path: <linux-kernel+bounces-398032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EC79BE485
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:44:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D45E9BE490
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96F72821EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F78F1F23BAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6900F1DE2DE;
-	Wed,  6 Nov 2024 10:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D701DE2DB;
+	Wed,  6 Nov 2024 10:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMBZMFWr"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j85Ez2JO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609351D6191;
-	Wed,  6 Nov 2024 10:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D482F44
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730889844; cv=none; b=j56S99jkJsB6OQmaGqv+Kq4S4Bp9Xnmzw+R6SZ5rmde0gak5I/FWekDPtbZTmrK2cH5fzT/BdoFNSH5eAFpTFUzOyzi/0USF6CqfDa7c1rdIYdoszwek+SWjv3xKhnQy/Wm5FweELPULbm2MEYLX9Iydkhxiy4SByLZt4vvcDso=
+	t=1730889960; cv=none; b=JfvOANJrAoUScFplEGY8tFgGwvaZ9uOWW+X4v3qRkcnb994l6tTXtyPeMnfRZLuD6CQ7v6u7hs89XnLavTjhuXojeb/ueS4rYVbtw1tx4pE7tGIESwfRTa8jZj1SmEKzEjXNUlsOV0S4kALR53QDpmKvYKzrVqJmmtNbqH0oA+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730889844; c=relaxed/simple;
-	bh=WNI3xSGo3nesqRlhZePkS2TRbCQNJ8hkYEk6M3sj4uU=;
+	s=arc-20240116; t=1730889960; c=relaxed/simple;
+	bh=4hxFSfObS2fESiq8+i+IHUyDgOVaYAj4EnPemDLRDsg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eUMIL17ZPghXuOBF9SBrkT0DOmt7UwGREGazNEtBz/z5z5vxOUkiTpPHvfmpxLxqkdwxDaHyh7YbXow6j5O6XKPUbN8HMLoGRjsP/6mHaFHRIPmB3r2gPGfzKe38ZcH4c8CzVzG8IeXWQr1KLkA9oaqW+eeaxZDL7zCARihFtPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMBZMFWr; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e604425aa0so3536323b6e.0;
-        Wed, 06 Nov 2024 02:44:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730889842; x=1731494642; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T25HsGVJcAN3ETqyfBc3tR6NSPcizy5l8tnRPPz2tQk=;
-        b=OMBZMFWrtjc3dknioexXcyx7yLj0Vcb/nKVOl2v7lMpbbWIjwzqf4ltKMwvPPWDBCi
-         d9d7vNc6S+WIv123uQW4lTDHNTR5LyfpR6YVftvdvVGZnjBAxxmN7TkFVTgUHjys/Mc+
-         6fNYm5HsW6WAfSJFpzF1c4C2UNQ6atLWJlBr+HkBzNGgNY1QMTRyM+dDBBoN3udC/Z2w
-         3XKd+BlzPLs5L6anwQW5nc69AThUyjMpWASiHMDPOCKWzVKEQjI16AX+uX8M/8X4Skuk
-         VhmCY4IujhdGawEKiy6IjeauvVtfdXnUqtvfw78LM3ARguDnRssB4zs5A4LSB/7pUdrd
-         U8Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730889842; x=1731494642;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T25HsGVJcAN3ETqyfBc3tR6NSPcizy5l8tnRPPz2tQk=;
-        b=e+QszUbxTUxAgl66VK9DJedrIulq1M6W0+Zyfqz2cX2JOFaSOJ2vUO8yaoNbZvXVU+
-         f761EF8yyJvFxjB6sua/684BSaHdXxW34/f4/XkII5d7a82yokQ6qNJ1HiOTaKx8or1Y
-         Zyo9uzkbbGINBXKXZTYM07i9bRggiemaGNA+kFdWuob40CQLnx4RVEnaqT3Rr3k9wLoA
-         LyzbNhF64C+eQ/qDD9eWzavI9bYeq2D49n8Z37gNQ68+XhbopjXAAMuOU0a+BjybxIPx
-         9WUFlojPqkCP3FEbIhLg0WS44xKqwIlTZVscGKSbLBZYOw40sEVTZ4pFHsvk0m1Ke7On
-         mhHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoZejxojsRelYylftbDA+5aU84o3LCjL6qJjsXNIzDMKuyxOX7/J47Cmgv3Un/P92N6WDmWgLGxrCrCOY=@vger.kernel.org, AJvYcCW+8Oja5Q+zEQZoHaIPp8SSQv2M2sZ8rs+vFs2+6pj12+OxEqnvc/hhkuh6WMOmMNgDbbJdROj5ROJ7bg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjEa6xut7SDYU87fI4t4eKQeVrRxEmDZ7ZSU7rPuDbJCJEZf6o
-	q/M+1CihPQv2ylP46bprtomdl1I6G/iP0LMLKmE8bEU+fIOFw0Hmw6E0hg==
-X-Google-Smtp-Source: AGHT+IHfKkKTotxeeX3JSZaK04Ih4Kl8flPmrwwKt0CbXwfU7tWoFhUoW9SwoLyLj+UFu9asBYaaRg==
-X-Received: by 2002:a05:6808:3c46:b0:3e5:dbb6:4b6b with SMTP id 5614622812f47-3e6384c4da7mr37487332b6e.36.1730889841911;
-        Wed, 06 Nov 2024 02:44:01 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45298a7dsm10706225a12.6.2024.11.06.02.44.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 02:44:00 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 70C964613072; Wed, 06 Nov 2024 17:43:57 +0700 (WIB)
-Date: Wed, 6 Nov 2024 17:43:57 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Thorsten Leemhuis <linux@leemhuis.info>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3] docs: bug-bisect: add a note about bisecting -next
-Message-ID: <ZytIbemd-8FqLfKc@archie.me>
-References: <ec19d5fc503ff7db3d4c4ff9e97fff24cc78f72a.1730808651.git.linux@leemhuis.info>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qw/l2eA3HMQZB9gF9EQGinLcliu9Sg+8pHFKWOBtJGdnSQDPDvWAs5p/yPRS2EIlHN/hwCZ88B+TblN2ZHNkMS0Qrr0jlnjbvncvtkMJQwVCcK41ZijHWRTw8B08SilockGO/CquizXd3Ie29XWCT65Fxp+L8+rJk2LwKEwUXF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j85Ez2JO; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730889959; x=1762425959;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4hxFSfObS2fESiq8+i+IHUyDgOVaYAj4EnPemDLRDsg=;
+  b=j85Ez2JOUxFUiWhB0//2ja+LPOGM7NUaZGcpVp2o+5ocD8JnNGfxlL2Z
+   hJS3eCxKI2b4n/6IclwWm/QQY760TmYaHS72N0qDaZjDXIdj9oHCeGSB+
+   hmp6J0+mMxHLQNW2KeSwbkTozT9Lh7qVuoftjBAFhnYVjxFR4ndnRFgjd
+   etju7RPj0g4IJXFgS5NqqKPN3+8hvNRGf/3B0E4EbM0JSRf2maX4Hckvr
+   n6oz8EZYsvWl4uQhbxHcgXIJbEy1TGyyrxCtGeblXKenljvldBe9oGDfZ
+   XW0wi5A4Of+NJpy8c4X1iSC8or5jdok56p74mDVXhrUr2NrOxeQ+5pbFQ
+   A==;
+X-CSE-ConnectionGUID: MR+HecxuQp+MmgTjc5RiWA==
+X-CSE-MsgGUID: 19efjOdbQW2XPzcnqVUVDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="33525497"
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="33525497"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 02:45:58 -0800
+X-CSE-ConnectionGUID: kftTS9oPQM+CbRYMnlTO1A==
+X-CSE-MsgGUID: bevkhD42R1+lNOUTbMQ+RQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="84380251"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 06 Nov 2024 02:44:47 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id C68C2A4B; Wed, 06 Nov 2024 12:44:45 +0200 (EET)
+Date: Wed, 6 Nov 2024 12:44:45 +0200
+From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, Yang Shi <yang@os.amperecomputing.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+	Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] mm/huge_memory: add two new (yet used) functions
+ for folio_split()
+Message-ID: <e6ppwz5t4p4kvir6eqzoto4y5fmdjdxdyvxvtw43ncly4l4ogr@7ruqsay6i2h2>
+References: <20241101150357.1752726-1-ziy@nvidia.com>
+ <20241101150357.1752726-2-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qgDl1AQ3jO3q4+Tm"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ec19d5fc503ff7db3d4c4ff9e97fff24cc78f72a.1730808651.git.linux@leemhuis.info>
+In-Reply-To: <20241101150357.1752726-2-ziy@nvidia.com>
 
+On Fri, Nov 01, 2024 at 11:03:52AM -0400, Zi Yan wrote:
+> This is a preparation patch, both added functions are not used yet.
+> 
 
---qgDl1AQ3jO3q4+Tm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In subject: s/yet/not yet/
 
-On Tue, Nov 05, 2024 at 01:11:08PM +0100, Thorsten Leemhuis wrote:
-> diff --git a/Documentation/admin-guide/bug-bisect.rst b/Documentation/adm=
-in-guide/bug-bisect.rst
-> index 585630d14581c7..f4f867cabb1778 100644
-> --- a/Documentation/admin-guide/bug-bisect.rst
-> +++ b/Documentation/admin-guide/bug-bisect.rst
-> @@ -108,6 +108,27 @@ a fully reliable and straight-forward way to reprodu=
-ce the regression, too.*
->  With that the process is complete. Now report the regression as describe=
-d by
->  Documentation/admin-guide/reporting-issues.rst.
-> =20
-> +Bisecting linux-next
-> +--------------------
+> The added __folio_split_without_mapping() is able to split a folio with
+> its mapping removed in two manners: 1) uniform split (the existing way),
+> and 2) buddy allocator like split.
+> 
+> The added __split_folio_to_order() can split a folio into any lower order.
+> For uniform split, __folio_split_without_mapping() calls it once to split
+> the given folio to the new order. For buddy allocator split,
+> __folio_split_without_mapping() calls it (folio_order - new_order) times
+> and each time splits the folio containing the given page to one lower
+> order.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>  mm/huge_memory.c | 328 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 327 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f92068864469..f7649043ddb7 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3135,7 +3135,6 @@ static void remap_page(struct folio *folio, unsigned long nr, int flags)
+>  static void lru_add_page_tail(struct folio *folio, struct page *tail,
+>  		struct lruvec *lruvec, struct list_head *list)
+>  {
+> -	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>  	VM_BUG_ON_FOLIO(PageLRU(tail), folio);
+>  	lockdep_assert_held(&lruvec->lru_lock);
+>  
+> @@ -3379,6 +3378,333 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
+>  					caller_pins;
+>  }
+>  
+> +static long page_in_folio_offset(struct page *page, struct folio *folio)
+> +{
+> +	long nr_pages = folio_nr_pages(folio);
+> +	unsigned long pages_pfn = page_to_pfn(page);
+> +	unsigned long folios_pfn = folio_pfn(folio);
 > +
-> +If you face a problem only happening in linux-next, bisect between the
-> +linux-next branches 'stable' and 'master'. The following commands will s=
-tart
-> +the process for a linux-next tree you added as a remote called 'next'::
+> +	if (pages_pfn >= folios_pfn && pages_pfn < (folios_pfn + nr_pages))
+> +		return pages_pfn - folios_pfn;
 > +
-> +  git bisect start
-> +  git bisect good next/stable
-> +  git bisect bad next/master
+> +	return -EINVAL;
+> +}
 > +
-> +The 'stable' branch refers to the state of linux-mainline that the curre=
-nt
-> +linux-next release (found in the 'master' branch) is based on -- the for=
-mer
-> +thus should be free of any problems that show up in -next, but not in Li=
-nus'
-> +tree.
+> +/*
+> + * It splits @folio into @new_order folios and copies the @folio metadata to
+> + * all the resulting folios.
+> + */
+> +static int __split_folio_to_order(struct folio *folio, int new_order)
+> +{
+> +	int curr_order = folio_order(folio);
+> +	long nr_pages = folio_nr_pages(folio);
+> +	long new_nr_pages = 1 << new_order;
+> +	long index;
 > +
-> +This will bisect across a wide range of changes, some of which you might=
- have
-> +used in earlier linux-next releases without problems. Sadly there is no =
-simple
-> +way to avoid checking them: bisecting from one linux-next release to a l=
-ater
-> +one (say between 'next-20241020' and 'next-20241021') is impossible, as =
-they
-> +share no common history.
-> =20
->  Additional reading material
->  ---------------------------
->=20
+> +	if (curr_order <= new_order)
+> +		return -EINVAL;
+> +
+> +	for (index = new_nr_pages; index < nr_pages; index += new_nr_pages) {
 
-Looks good, thanks!
+Hm. It is not clear why you skip the first new_nr_pages range. It worth a
+comment.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> +		struct page *head = &folio->page;
+> +		struct page *second_head = head + index;
 
---=20
-An old man doll... just what I always wanted! - Clara
+I am not sure about 'second_head' name. Why it is better than page_tail?
 
---qgDl1AQ3jO3q4+Tm
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +		/*
+> +		 * Careful: new_folio is not a "real" folio before we cleared PageTail.
+> +		 * Don't pass it around before clear_compound_head().
+> +		 */
+> +		struct folio *new_folio = (struct folio *)second_head;
+> +
+> +		VM_BUG_ON_PAGE(atomic_read(&second_head->_mapcount) != -1, second_head);
+> +
+> +		/*
+> +		 * Clone page flags before unfreezing refcount.
+> +		 *
+> +		 * After successful get_page_unless_zero() might follow flags change,
+> +		 * for example lock_page() which set PG_waiters.
+> +		 *
+> +		 * Note that for mapped sub-pages of an anonymous THP,
+> +		 * PG_anon_exclusive has been cleared in unmap_folio() and is stored in
+> +		 * the migration entry instead from where remap_page() will restore it.
+> +		 * We can still have PG_anon_exclusive set on effectively unmapped and
+> +		 * unreferenced sub-pages of an anonymous THP: we can simply drop
+> +		 * PG_anon_exclusive (-> PG_mappedtodisk) for these here.
+> +		 */
+> +		second_head->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
+> +		second_head->flags |= (head->flags &
+> +				((1L << PG_referenced) |
+> +				 (1L << PG_swapbacked) |
+> +				 (1L << PG_swapcache) |
+> +				 (1L << PG_mlocked) |
+> +				 (1L << PG_uptodate) |
+> +				 (1L << PG_active) |
+> +				 (1L << PG_workingset) |
+> +				 (1L << PG_locked) |
+> +				 (1L << PG_unevictable) |
+> +#ifdef CONFIG_ARCH_USES_PG_ARCH_2
+> +				 (1L << PG_arch_2) |
+> +#endif
+> +#ifdef CONFIG_ARCH_USES_PG_ARCH_3
+> +				 (1L << PG_arch_3) |
+> +#endif
+> +				 (1L << PG_dirty) |
+> +				 LRU_GEN_MASK | LRU_REFS_MASK));
+> +
+> +		/* ->mapping in first and second tail page is replaced by other uses */
+> +		VM_BUG_ON_PAGE(new_nr_pages > 2 && second_head->mapping != TAIL_MAPPING,
+> +			       second_head);
+> +		second_head->mapping = head->mapping;
+> +		second_head->index = head->index + index;
+> +
+> +		/*
+> +		 * page->private should not be set in tail pages. Fix up and warn once
+> +		 * if private is unexpectedly set.
+> +		 */
+> +		if (unlikely(second_head->private)) {
+> +			VM_WARN_ON_ONCE_PAGE(true, second_head);
+> +			second_head->private = 0;
+> +		}
 
------BEGIN PGP SIGNATURE-----
+New line.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZytIbQAKCRD2uYlJVVFO
-o1uGAP4odbwPktbyPDf6WsZp4aCO6ezYhRoW6x7uG4tcGtavWAD/RMicuJOL4/R8
-91bqPk3MOQ7D+9c4JsFbv+jV0Hkh6gI=
-=LodR
------END PGP SIGNATURE-----
+> +		if (folio_test_swapcache(folio))
+> +			new_folio->swap.val = folio->swap.val + index;
+> +
+> +		/* Page flags must be visible before we make the page non-compound. */
+> +		smp_wmb();
+> +
+> +		/*
+> +		 * Clear PageTail before unfreezing page refcount.
+> +		 *
+> +		 * After successful get_page_unless_zero() might follow put_page()
+> +		 * which needs correct compound_head().
+> +		 */
+> +		clear_compound_head(second_head);
+> +		if (new_order) {
+> +			prep_compound_page(second_head, new_order);
+> +			folio_set_large_rmappable(new_folio);
+> +
+> +			folio_set_order(folio, new_order);
+> +		} else {
+> +			if (PageHead(head))
+> +				ClearPageCompound(head);
 
---qgDl1AQ3jO3q4+Tm--
+Huh? You only have to test for PageHead() because it is inside the loop.
+It has to be done after loop is done.
+
+> +		}
+> +
+> +		if (folio_test_young(folio))
+> +			folio_set_young(new_folio);
+> +		if (folio_test_idle(folio))
+> +			folio_set_idle(new_folio);
+> +
+> +		folio_xchg_last_cpupid(new_folio, folio_last_cpupid(folio));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +#define for_each_folio_until_end_safe(iter, iter2, start, end)	\
+> +	for (iter = start, iter2 = folio_next(start);		\
+> +	     iter != end;					\
+> +	     iter = iter2, iter2 = folio_next(iter2))
+
+I am not sure if hiding it inside the macro helps reading the code.
+
+> +
+> +/*
+> + * It splits a @folio (without mapping) to lower order smaller folios in two
+> + * ways.
+
+What do you mean by "without mapping". I initially thought that ->mapping
+is NULL, but it is obviously not true. 
+
+Do you mean unmapped?
+
+> + * 1. uniform split: the given @folio into multiple @new_order small folios,
+> + *    where all small folios have the same order. This is done when
+> + *    uniform_split is true.
+> + * 2. buddy allocator like split: the given @folio is split into half and one
+> + *    of the half (containing the given page) is split into half until the
+> + *    given @page's order becomes @new_order. This is done when uniform_split is
+> + *    false.
+> + *
+> + * The high level flow for these two methods are:
+> + * 1. uniform split: a single __split_folio_to_order() is called to split the
+> + *    @folio into @new_order, then we traverse all the resulting folios one by
+> + *    one in PFN ascending order and perform stats, unfreeze, adding to list,
+> + *    and file mapping index operations.
+> + * 2. buddy allocator like split: in general, folio_order - @new_order calls to
+> + *    __split_folio_to_order() are called in the for loop to split the @folio
+> + *    to one lower order at a time. The resulting small folios are processed
+> + *    like what is done during the traversal in 1, except the one containing
+> + *    @page, which is split in next for loop.
+> + *
+> + * After splitting, the caller's folio reference will be transferred to the
+> + * folio containing @page. The other folios may be freed if they are not mapped.
+> + *
+> + * In terms of locking, after splitting,
+> + * 1. uniform split leaves @page (or the folio contains it) locked;
+> + * 2. buddy allocator like split leaves @folio locked.
+> + *
+> + * If @list is null, tail pages will be added to LRU list, otherwise, to @list.
+> + *
+> + * For !uniform_split, when -ENOMEM is returned, the original folio might be
+> + * split. The caller needs to check the input folio.
+> + */
+> +static int __folio_split_without_mapping(struct folio *folio, int new_order,
+> +		struct page *page, struct list_head *list, pgoff_t end,
+> +		struct xa_state *xas, struct address_space *mapping,
+> +		bool uniform_split)
+
+It is not clear what state xas has to be on call.
+
+> +{
+> +	struct lruvec *lruvec;
+> +	struct address_space *swap_cache = NULL;
+> +	struct folio *origin_folio = folio;
+> +	struct folio *next_folio = folio_next(folio);
+> +	struct folio *new_folio;
+> +	struct folio *next;
+> +	int order = folio_order(folio);
+> +	int split_order = order - 1;
+> +	int nr_dropped = 0;
+> +	int ret = 0;
+> +
+> +	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
+> +		if (!uniform_split)
+> +			return -EINVAL;
+
+Why this limitation?
+
+> +		swap_cache = swap_address_space(folio->swap);
+> +		xa_lock(&swap_cache->i_pages);
+> +	}
+> +
+> +	if (folio_test_anon(folio))
+> +		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+> +
+> +	/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
+> +	lruvec = folio_lruvec_lock(folio);
+> +
+> +	/*
+> +	 * split to new_order one order at a time. For uniform split,
+> +	 * intermediate orders are skipped
+> +	 */
+> +	for (split_order = order - 1; split_order >= new_order; split_order--) {
+> +		int old_order = folio_order(folio);
+> +		struct folio *release;
+> +		struct folio *end_folio = folio_next(folio);
+> +		int status;
+> +		bool stop_split = false;
+> +
+> +		if (folio_test_anon(folio) && split_order == 1)
+
+Comment is missing.
+
+> +			continue;
+> +		if (uniform_split && split_order != new_order)
+> +			continue;
+
+What the point in the loop for uniform_split?
+
+> +
+> +		if (mapping) {
+> +			/*
+> +			 * uniform split has xas_split_alloc() called before
+> +			 * irq is disabled, since xas_nomem() might not be
+> +			 * able to allocate enough memory.
+> +			 */
+> +			if (uniform_split)
+> +				xas_split(xas, folio, old_order);
+> +			else {
+> +				xas_set_order(xas, folio->index, split_order);
+> +				xas_set_err(xas, -ENOMEM);
+> +				if (xas_nomem(xas, 0))
+
+0 gfp?
+
+> +					xas_split(xas, folio, old_order);
+> +				else {
+> +					stop_split = true;
+> +					ret = -ENOMEM;
+> +					goto after_split;
+> +				}
+> +			}
+> +		}
+> +
+> +		split_page_memcg(&folio->page, old_order, split_order);
+
+__split_huge_page() has a comment for split_page_memcg(). Do we want to
+keep it? Is it safe to call it under lruvec lock?
+
+> +		split_page_owner(&folio->page, old_order, split_order);
+> +		pgalloc_tag_split(folio, old_order, split_order);
+> +
+> +		status = __split_folio_to_order(folio, split_order);
+> +
+> +		if (status < 0)
+> +			return status;
+> +
+> +after_split:
+> +		/*
+> +		 * Iterate through after-split folios and perform related
+> +		 * operations. But in buddy allocator like split, the folio
+> +		 * containing the specified page is skipped until its order
+> +		 * is new_order, since the folio will be worked on in next
+> +		 * iteration.
+> +		 */
+> +		for_each_folio_until_end_safe(release, next, folio, end_folio) {
+> +			if (page_in_folio_offset(page, release) >= 0) {
+> +				folio = release;
+> +				if (split_order != new_order && !stop_split)
+> +					continue;
+
+I don't understand this condition.
+
+> +			}
+> +			if (folio_test_anon(release))
+> +				mod_mthp_stat(folio_order(release),
+> +						MTHP_STAT_NR_ANON, 1);
+
+Add { } around the block.
+
+> +
+> +			/*
+> +			 * Unfreeze refcount first. Additional reference from
+> +			 * page cache.
+> +			 */
+> +			folio_ref_unfreeze(release,
+> +				1 + ((!folio_test_anon(origin_folio) ||
+> +				     folio_test_swapcache(origin_folio)) ?
+> +					     folio_nr_pages(release) : 0));
+> +
+> +			if (release != origin_folio)
+> +				lru_add_page_tail(origin_folio, &release->page,
+> +						lruvec, list);
+> +
+> +			/* Some pages can be beyond EOF: drop them from page cache */
+> +			if (release->index >= end) {
+> +				if (shmem_mapping(origin_folio->mapping))
+> +					nr_dropped++;
+> +				else if (folio_test_clear_dirty(release))
+> +					folio_account_cleaned(release,
+> +						inode_to_wb(origin_folio->mapping->host));
+> +				__filemap_remove_folio(release, NULL);
+> +				folio_put(release);
+> +			} else if (!folio_test_anon(release)) {
+> +				__xa_store(&origin_folio->mapping->i_pages,
+> +						release->index, &release->page, 0);
+> +			} else if (swap_cache) {
+> +				__xa_store(&swap_cache->i_pages,
+> +						swap_cache_index(release->swap),
+> +						&release->page, 0);
+> +			}
+> +		}
+> +		xas_destroy(xas);
+> +	}
+> +
+> +	unlock_page_lruvec(lruvec);
+> +
+> +	if (folio_test_anon(origin_folio)) {
+> +		if (folio_test_swapcache(origin_folio))
+> +			xa_unlock(&swap_cache->i_pages);
+> +	} else
+> +		xa_unlock(&mapping->i_pages);
+> +
+> +	/* Caller disabled irqs, so they are still disabled here */
+> +	local_irq_enable();
+> +
+> +	if (nr_dropped)
+> +		shmem_uncharge(mapping->host, nr_dropped);
+> +
+> +	remap_page(origin_folio, 1 << order,
+> +			folio_test_anon(origin_folio) ?
+> +				RMP_USE_SHARED_ZEROPAGE : 0);
+> +
+> +	/*
+> +	 * At this point, folio should contain the specified page, so that it
+> +	 * will be left to the caller to unlock it.
+> +	 */
+> +	for_each_folio_until_end_safe(new_folio, next, origin_folio, next_folio) {
+> +		if (uniform_split && new_folio == folio)
+> +			continue;
+> +		if (!uniform_split && new_folio == origin_folio)
+> +			continue;
+> +
+> +		folio_unlock(new_folio);
+> +		/*
+> +		 * Subpages may be freed if there wasn't any mapping
+> +		 * like if add_to_swap() is running on a lru page that
+> +		 * had its mapping zapped. And freeing these pages
+> +		 * requires taking the lru_lock so we do the put_page
+> +		 * of the tail pages after the split is complete.
+> +		 */
+> +		free_page_and_swap_cache(&new_folio->page);
+> +	}
+> +	return ret;
+> +}
+> +
+>  /*
+>   * This function splits a large folio into smaller folios of order @new_order.
+>   * @page can point to any page of the large folio to split. The split operation
+> -- 
+> 2.45.2
+> 
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
