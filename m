@@ -1,135 +1,210 @@
-Return-Path: <linux-kernel+bounces-398691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE3F09BF4BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1289BF4B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D7D1F24B8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:59:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6959F1F24959
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40BF2076DE;
-	Wed,  6 Nov 2024 17:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UznUGVdT"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF5B207A1A;
+	Wed,  6 Nov 2024 17:58:29 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9157C2071E2
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A19920408D
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730915985; cv=none; b=DUlBwNLYeMddC+mFd+NQs6oGMJqxjQ1hCIHZqNzL2SMyVpm7KcLQnkdZwQqRh7G53NphWook21paBt3DVcBdPDLKKD3icJGUOojg72OnjxXVFafk6DLKfyvUieLV9HUOfJ8i4Qpicct2Z3BZwXd4pHpJ1AoZ7P+ti34mUa+DcDk=
+	t=1730915909; cv=none; b=Z0dF19ZjfXndrbPgffd5oVY4RisYxiO9lIsx8wsMQ5jWRXBFOVc0ZSGtldiJif78lDjpUx+Ne/RqOVm+PN7/OGHhdyxOQ6rqdnyt/A4Ej67DdvlZKkKKHim5vb71Lv64f5A2TwLL27b9tm5FO/TQ8hbJ5USqMYO7oNa/uoUbRuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730915985; c=relaxed/simple;
-	bh=IwUKzsdSnOkefCuk2y9bjZ7OSC0p2jvrbYV6ywdPeQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fa7zveK5fk3QUVGxU2q79774UBhTl0Rj4arUrPKbxE9DAI6MDbTi2FcCxXiPHXilptgX7L3EI6ifkBlG4vpwuP+fmmp3qBE9WaEOVORDhVfX4qyOlOKgTdNstnBRWYPcnnQdz1e1QUocBNnV0QcJL/X7VcflUvVA1iiJMGW05uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UznUGVdT; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 8kIRtGOdtj0218kIRtYl3W; Wed, 06 Nov 2024 18:58:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730915908;
-	bh=sAI1t49uY1vzpGkibesf6A/6SiFuBftz4fsouvSiR8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=UznUGVdTyKvLZfR9glgErBk9eBsk7yYTl0pAz2zZvx11BO9X0DhyY+st0bi22bG+5
-	 LOXJBMJJ17CRdgNgxXvx+FKTqWuxCHdyyr2LnNZntZl39Kx/cESIgyDgWsAqejlucw
-	 mAXehyYJf2Sle7Yz3dlLAjTg3gv6X9c/vog7lBx0tnfaI7hvwJgp5pRuvyp0tfPwNN
-	 lk6wH17QV67YY+r1Hv20rDGNMxRCJjJrgNO8RoSkAb0qfH9Qpg+ajurOw/Ah3Fp9Xh
-	 r8vYQ4qkDnCPhuaycshWXd/k1XIOyym00RsdQ6vV8nUeAfxBlxP73kWAsopsCoefes
-	 8ivFvBjhDvkDw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 06 Nov 2024 18:58:28 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <14fd8032-51b2-4182-b74d-699df550ffec@wanadoo.fr>
-Date: Wed, 6 Nov 2024 18:58:23 +0100
+	s=arc-20240116; t=1730915909; c=relaxed/simple;
+	bh=U2fDqR5IlX4PDYKRKfLYhlEV7ULcJDVvJRq7DXO+tVY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Qv+fyLM78U6hlQsr+ESHFoMg6heeTdQWYAZzeTuiNExAZp7L4dmqOmQmJ3341uYmIg4zc7eGdybUoR8t5xJwaXy3sxsck11QxTd34VyyIKDBDtAA5+z+ElRDUlDjCZ1J0ADYpwUlluDAU85+4L6amyGhGv1hvAJOq6Gkp56+wHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c90919a2so1827655ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 09:58:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730915907; x=1731520707;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PNHG3iiJiCHJWpGw09OBTrXqaqsk0zUyRdHVwF9motk=;
+        b=ZUKYTCACLJSR4hGkjzm6Ln4idsvOr3C/0ifiW30h998BZxVQunWTbyPXpaUbvYPRN3
+         A/ZogEMuVr/p0XruhMovARtvCLZYZ2DSKSqkgvtLmv6p5hde7TAkXfMHsic5UxQQeqR0
+         Z05Naqg/2z/pX65m12hCSI053LZSNvzEnQgM3WfnfGfik8ZQyO6Qw8LdWit6LBMSAtqJ
+         rp1cwL1jOtixz/4tIh6Z/yt4583AeFcxTh3BanBIHygcIXDMArH8fKQoqsn0V7etr32X
+         uDjXKpjtXxR41IestpR6cnms/ADRqaImbIfpwLgD6qk8LcBm+wtqNXVZrfgfmODVDXDQ
+         xH6A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4HHgzr21/2R4f1vBJhooWjHmvZtkv0J9iDDpUyD/ektPuz3GIxaFY0vio7d7FHdw1a7RqkjJpOgd53Sc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaRNaLjf8kggYfLGNm2EH9vO7EfPOPoTw3QE/1OTyrBEELs++h
+	sY6S8+kTDTmI9ezAheS/wS/IE/EAZn4+UVE0RHgTm59KITlutL4+ftXlMfrbwib+1mBxzmxaeEw
+	KO68jVDreL6o0lRZaRm11S5eboZPGrxmAG+krIdAL+aAiGKRR1BaBYoU=
+X-Google-Smtp-Source: AGHT+IFk0l9397QL9o/w8WIjBh7VbEvFsKy/kMtkZOH/SOcFSFKsaMmKk2Nmt3Gbzsjjg/1Jt9/46OTyZAdrFAhRIQhLoGOBV0E3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] sched/topology: optimize topology_span_sane()
-To: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Chen Yu <yu.c.chen@intel.com>, Leonardo Bras <leobras@redhat.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-References: <20240902183609.1683756-1-yury.norov@gmail.com>
- <ZuW_0fMfPSix4qqX@yury-ThinkPad> <Zvr4s9ErpD9F81YH@yury-ThinkPad>
- <ZyuZJoD4hKa3hIvR@yury-ThinkPad>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ZyuZJoD4hKa3hIvR@yury-ThinkPad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1568:b0:3a6:b258:fcf with SMTP id
+ e9e14a558f8ab-3a6b25813e9mr222778855ab.2.1730915906754; Wed, 06 Nov 2024
+ 09:58:26 -0800 (PST)
+Date: Wed, 06 Nov 2024 09:58:26 -0800
+In-Reply-To: <00000000000035941f061932a077@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672bae42.050a0220.350062.0279.GAE@google.com>
+Subject: Re: [syzbot] [net?] KMSAN: kernel-infoleak in __skb_datagram_iter (4)
+From: syzbot <syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Le 06/11/2024 à 17:28, Yury Norov a écrit :
-> Last reminder. If you guys don't care, I don't care either.
+syzbot has found a reproducer for the following issue on:
 
-Hi Yury,
+HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1485dd5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fdf74cce377223b
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c85cae3350b7d486aee
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1685dd5f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10bfb6a7980000
 
-I'm the only one in the To: field, but I'm not a maintainer.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/08456e37db58/disk-2e1b3cc9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinux-2e1b3cc9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7579fe72ed89/bzImage-2e1b3cc9.xz
 
-Maybe, try to move people in the Cc: field into the To: field, to 
-increase visibility?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
 
-CJ
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:30 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter.h:328 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x2f3/0x2b30 lib/iov_iter.c:185
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ copy_to_user_iter lib/iov_iter.c:24 [inline]
+ iterate_ubuf include/linux/iov_iter.h:30 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0x2f3/0x2b30 lib/iov_iter.c:185
+ copy_to_iter include/linux/uio.h:211 [inline]
+ simple_copy_to_iter net/core/datagram.c:524 [inline]
+ __skb_datagram_iter+0x18d/0x1190 net/core/datagram.c:401
+ skb_copy_datagram_iter+0x5c/0x200 net/core/datagram.c:538
+ skb_copy_datagram_msg include/linux/skbuff.h:4076 [inline]
+ netlink_recvmsg+0x432/0x1610 net/netlink/af_netlink.c:1958
+ sock_recvmsg_nosec net/socket.c:1051 [inline]
+ sock_recvmsg+0x2c4/0x340 net/socket.c:1073
+ sock_read_iter+0x32d/0x3c0 net/socket.c:1143
+ io_iter_do_read io_uring/rw.c:771 [inline]
+ __io_read+0x8d2/0x20f0 io_uring/rw.c:865
+ io_read+0x3e/0xf0 io_uring/rw.c:943
+ io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1739
+ io_queue_sqe io_uring/io_uring.c:1953 [inline]
+ io_req_task_submit+0x104/0x1e0 io_uring/io_uring.c:1373
+ io_poll_task_func+0x12e5/0x1620
+ io_handle_tw_list+0x23a/0x5c0 io_uring/io_uring.c:1063
+ tctx_task_work_run+0xf8/0x3d0 io_uring/io_uring.c:1135
+ tctx_task_work+0x6d/0xc0 io_uring/io_uring.c:1153
+ task_work_run+0x268/0x310 kernel/task_work.c:239
+ ptrace_notify+0x304/0x320 kernel/signal.c:2403
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x13b/0x170 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x1e0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> 
-> On Mon, Sep 30, 2024 at 12:15:02PM -0700, Yury Norov wrote:
->> Ping again?
->>
->> On Sat, Sep 14, 2024 at 09:54:43AM -0700, Yury Norov wrote:
->>> Ping?
->>>
->>> On Mon, Sep 02, 2024 at 11:36:04AM -0700, Yury Norov wrote:
->>>> The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
->>>> even when cpu != i. In such case, cpumask_equal() would always return
->>>> true, and we can proceed to the next iteration immediately.
->>>>
->>>> Valentin Schneider shares on it:
->>>>
->>>>    PKG can potentially hit that condition, and so can any
->>>>    sched_domain_mask_f that relies on the node masks...
->>>>
->>>>    I'm thinking ideally we should have checks in place to
->>>>    ensure all node_to_cpumask_map[] masks are disjoint,
->>>>    then we could entirely skip the levels that use these
->>>>    masks in topology_span_sane(), but there's unfortunately
->>>>    no nice way to flag them... Also there would be cases
->>>>    where there's no real difference between PKG and NODE
->>>>    other than NODE is still based on a per-cpu cpumask and
->>>>    PKG isn't, so I don't see a nicer way to go about this.
->>>>
->>>> v1: https://lore.kernel.org/lkml/ZrJk00cmVaUIAr4G@yury-ThinkPad/T/
->>>> v2: https://lkml.org/lkml/2024/8/7/1299
->>>> v3:
->>>>   - add topology_cpumask_equal() helper in #3;
->>>>   - re-use 'cpu' as an iterator int the for_each_cpu() loop;
->>>>   - add proper versioning for all patches.
->>>>
->>>> Yury Norov (3):
->>>>    sched/topology: pre-compute topology_span_sane() loop params
->>>>    sched/topology: optimize topology_span_sane()
->>>>    sched/topology: reorganize topology_span_sane() checking order
->>>>
->>>>   kernel/sched/topology.c | 29 +++++++++++++++++++++++++----
->>>>   1 file changed, 25 insertions(+), 4 deletions(-)
->>>>
->>>> -- 
->>>> 2.43.0
-> 
-> 
+Uninit was stored to memory at:
+ pskb_expand_head+0x305/0x1a60 net/core/skbuff.c:2283
+ netlink_trim+0x2c2/0x330 net/netlink/af_netlink.c:1313
+ netlink_unicast+0x9f/0x1260 net/netlink/af_netlink.c:1347
+ nlmsg_unicast include/net/netlink.h:1158 [inline]
+ nlmsg_notify+0x21d/0x2f0 net/netlink/af_netlink.c:2602
+ rtnetlink_send+0x73/0x90 net/core/rtnetlink.c:770
+ rtnetlink_maybe_send include/linux/rtnetlink.h:18 [inline]
+ tcf_add_notify net/sched/act_api.c:2068 [inline]
+ tcf_action_add net/sched/act_api.c:2091 [inline]
+ tc_ctl_action+0x146e/0x19d0 net/sched/act_api.c:2139
+ rtnetlink_rcv_msg+0x12fc/0x1410 net/core/rtnetlink.c:6675
+ netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2551
+ rtnetlink_rcv+0x34/0x40 net/core/rtnetlink.c:6693
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:744
+ ____sys_sendmsg+0x877/0xb60 net/socket.c:2607
+ ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2661
+ __sys_sendmsg net/socket.c:2690 [inline]
+ __do_sys_sendmsg net/socket.c:2699 [inline]
+ __se_sys_sendmsg net/socket.c:2697 [inline]
+ __x64_sys_sendmsg+0x300/0x4a0 net/socket.c:2697
+ x64_sys_call+0x2da0/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:47
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+Uninit was stored to memory at:
+ __nla_put lib/nlattr.c:1041 [inline]
+ nla_put+0x1c6/0x230 lib/nlattr.c:1099
+ tcf_ife_dump+0x250/0x10b0 net/sched/act_ife.c:660
+ tcf_action_dump_old net/sched/act_api.c:1190 [inline]
+ tcf_action_dump_1+0x85e/0x970 net/sched/act_api.c:1226
+ tcf_action_dump+0x1fd/0x460 net/sched/act_api.c:1250
+ tca_get_fill+0x519/0x7a0 net/sched/act_api.c:1648
+ tcf_add_notify_msg net/sched/act_api.c:2043 [inline]
+ tcf_add_notify net/sched/act_api.c:2062 [inline]
+ tcf_action_add net/sched/act_api.c:2091 [inline]
+ tc_ctl_action+0x1365/0x19d0 net/sched/act_api.c:2139
+ rtnetlink_rcv_msg+0x12fc/0x1410 net/core/rtnetlink.c:6675
+ netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2551
+ rtnetlink_rcv+0x34/0x40 net/core/rtnetlink.c:6693
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:744
+ ____sys_sendmsg+0x877/0xb60 net/socket.c:2607
+ ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2661
+ __sys_sendmsg net/socket.c:2690 [inline]
+ __do_sys_sendmsg net/socket.c:2699 [inline]
+ __se_sys_sendmsg net/socket.c:2697 [inline]
+ __x64_sys_sendmsg+0x300/0x4a0 net/socket.c:2697
+ x64_sys_call+0x2da0/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:47
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable opt created at:
+ tcf_ife_dump+0xab/0x10b0 net/sched/act_ife.c:647
+ tcf_action_dump_old net/sched/act_api.c:1190 [inline]
+ tcf_action_dump_1+0x85e/0x970 net/sched/act_api.c:1226
+
+Bytes 158-159 of 216 are uninitialized
+Memory access of size 216 starts at ffff88811980e280
+
+CPU: 1 UID: 0 PID: 5791 Comm: syz-executor190 Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
