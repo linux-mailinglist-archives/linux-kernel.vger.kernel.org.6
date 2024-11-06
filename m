@@ -1,100 +1,145 @@
-Return-Path: <linux-kernel+bounces-397340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE1D9BDAB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:55:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E315F9BDABB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:57:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC18028195D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F8A91C22D71
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B341898E9;
-	Wed,  6 Nov 2024 00:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFD614386D;
+	Wed,  6 Nov 2024 00:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9v0zHsQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GU1x2eZA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7171885B8;
-	Wed,  6 Nov 2024 00:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E05E2D613;
+	Wed,  6 Nov 2024 00:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730854438; cv=none; b=A2d7+KtIDha2ZDrfkuNAVKDoRVrv+61Ob21mrbGPyzLxpLSspeOwevyyMBtzU9EPnLSazzFjMfejtijCEYyHLzBlqnu0HyREAWIUAyRAWpYt31tENTmGeH3m4+hPRRkbbVrWM7+YOEJZCuoMwK7xcP+ywUK9aMDmvT20/xR0DXk=
+	t=1730854662; cv=none; b=eJBPvOeenoUD0FTUHi6xTfQTRIfWUxypzfcqArBAJ+xiNkdhQqdKNV6XU2UtLUz589jq5YF7ccPiET5Gw7voWnOU0YDpa11MAOTa6FoYeaXIskMN8e5+dDfEEwkPOA3SOYDdtSHhMCcAAZn0HcgvW3bdHZgYgGqmapVFu4Cuoa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730854438; c=relaxed/simple;
-	bh=HPTg6F0AYPQEIKZS8GnAFmra5qXWz8AKMhVZCHGPW+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VaRfEN3TDA3N4Lr4XSTl/Cuzf77yFGdEi2DWQtF2jOV/FPVkZWn51uz/vfMdm/AbbmUGnW2WK25HxcR+R3kf2jy2q5oSyRcAJExnxUGk/G75FxbIkf8bcwJaflcGfRBWkzBTxm67bdjbMxZichO+J0sGuh+SPr7FosuINV29scA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9v0zHsQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2EFC4CEDD;
-	Wed,  6 Nov 2024 00:53:56 +0000 (UTC)
+	s=arc-20240116; t=1730854662; c=relaxed/simple;
+	bh=goa/cIX22Cl5f7cGc755k5BLCpVCIYhtzQep8rQrGi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hm6Yf36QRTQl5eKrPsngiMZ4KT8PsfEfDO8rZHuTjYELQSDmK3eWSbLxkqOvxMQApxwFUnMEYuTuNE2z5kAWTZf4LAYclLNmIiovTSmGlJxK7OGf35VOIGgbBlyiYKDL8LABcsuDY7xf5MmzbeBQ2/a5ULFVO0y5ns2Fari1dGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GU1x2eZA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A296CC4CECF;
+	Wed,  6 Nov 2024 00:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730854437;
-	bh=HPTg6F0AYPQEIKZS8GnAFmra5qXWz8AKMhVZCHGPW+I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b9v0zHsQjN2hTRx2yrCy/4HS7d/jSxBpi8f/++f2qyq8D2UDYx3LrwDutMiLlTqlO
-	 q64b/Waq2CuLIhuHRS0m5eBc8UKnn0scn7a+5owraAIWwHPgRR3dsiY82q3NNdcyI4
-	 +rozCJzGgdOWevZGIWt+1PKNCCYlUbl5G/4yi74sxmJ93CEkhOr87SxDSP1CDgv1wZ
-	 sMByjejW+ec0YjFUG2x3U0HQrzPJOfThz0ApvJCtZ1wx4jO65RpkSZFwHL4xD+LeAc
-	 Zl7nth9qpixByJW306xgur9vTAyScFsNPQDSuHdK8Ytdbks2UdgkwVbbz3D/ZY3Vxo
-	 tO1roa2FTWnZw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ulf.hansson@linaro.org,
-	linus.walleij@linaro.org,
-	catalin.marinas@arm.com,
-	p.zabel@pengutronix.de,
-	geert+renesas@glider.be,
-	dmitry.baryshkov@linaro.org,
-	neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sricharan R <quic_srichara@quicinc.com>
-Cc: quic_varada@quicinc.com
-Subject: Re: (subset) [PATCH V5 0/6] Add minimal boot support for IPQ5424
-Date: Tue,  5 Nov 2024 16:53:49 -0800
-Message-ID: <173085441672.26510.12002868497417768812.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241028060506.246606-1-quic_srichara@quicinc.com>
-References: <20241028060506.246606-1-quic_srichara@quicinc.com>
+	s=k20201202; t=1730854661;
+	bh=goa/cIX22Cl5f7cGc755k5BLCpVCIYhtzQep8rQrGi0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GU1x2eZA9XHMIO4M9v9jE9MleHLUATw50umb4dKqqzAEKt47KLmAA6I8BlfHVpUuI
+	 4cszwID984YUqCVHKuybA9ufRga2t32Vw7E76eUX8x34o0iYOoWzJsQV10izZAZi3M
+	 CfqQLlG5mYjIm8f9shAsfW2P1tIrmcssBxDEZTe1x9Z0ejacqlQi4nIBd/TDxTdxdY
+	 6zBaiD3ZB3yme3ZLRWjwYH15wJPbeYu+qs/MCHGeLiinSkjAYfV7rDk1ih+fYysaOa
+	 3lpINihHVT5hRJGRDSSYKmK1OJy59oN4Ajqdtrg0gP0tWrV/nyeZoqZW0uYjnDWiXF
+	 +AYpsq2O36OjQ==
+Date: Tue, 5 Nov 2024 16:57:40 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: brauner@kernel.org
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Catherine Hoang <catherine.hoang@oracle.com>,
+	linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [ANNOUNCE v2] work tree for untorn filesystem writes
+Message-ID: <20241106005740.GM2386201@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi everyone,
 
-On Mon, 28 Oct 2024 11:35:00 +0530, Sricharan R wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> 
-> The IPQ5424 is Qualcomm's 802.11be SoC for Routers, Gateways and
-> Access Points.
-> 
-> This series adds minimal board boot support for ipq5424-rdp466 board.
-> 
-> [...]
+Here's a slightly updated working branch for the filesystem side of
+atomic write changes for 6.13:
 
-Applied, thanks!
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-05
 
-[6/6] arm64: defconfig: Enable IPQ5424 RDP466 base configs
-      commit: fd516bb4f48fc527744cae42d8e156fb09bce157
+This branch is, like yesterday's, based off of axboe's
+for-6.13/block-atomic branch:
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block-atomic
+
+The only difference is that I added Ojaswin's Tested-by: tags to the end
+of the xfs series.  I have done basic testing with the shell script at
+the end of this email and am satisfied that it at least seems to do the
+(limited) things that I think we're targeting for 6.13.
+
+Christian: Could you pull this fs-atomic branch into your vfs.git work
+for 6.13, please?  Or would you rather I ask rothwell to include this
+branch into for-next/fs-next and send the PR to Linus myself?
+
+(Actually I might just ask rothwell to do that tomorrow regardless...)
+
+--D
+
+#!/bin/bash -x
+
+# Mess around with atomic writes via scsi_debug
+
+mnt=/opt
+
+true "${FSTYP:=xfs}"
+true "${MIN_ATOMIC:=32768}"
+true "${SECTOR_SIZE:=512}"
+true "${FSBLOCK_SIZE:=4096}"
+
+umount $mnt
+rmmod "$FSTYP"
+
+rmmod scsi_debug
+modprobe scsi_debug atomic_wr=1 dev_size_mb=300 \
+	SECTOR_SIZE=$SECTOR_SIZE \
+	atomic_wr_align=$((MIN_ATOMIC / SECTOR_SIZE)) \
+	atomic_wr_gran=$((MIN_ATOMIC / SECTOR_SIZE))
+
+sleep 1
+dev="$(readlink -m /dev/disk/by-id/wwn-0x3333333000*)"
+sysfs=/sys/block/$(basename "$dev")
+
+sysfs-dump $sysfs/queue/atomic_write_*
+
+for ((i = 9; i < 20; i++)); do
+	xfs_io -d -c "pwrite -b 1m -V 1 -AD $((2 ** i)) $((2 ** i))" $dev
+done
+
+case "$FSTYP" in
+"xfs")
+	mkfs.xfs -f $dev -b size=$MIN_ATOMIC
+	;;
+"ext4")
+	mkfs.ext4 -F $dev -b $FSBLOCK_SIZE -C $MIN_ATOMIC -O bigalloc
+	;;
+*)
+	echo "$FSTYP: not recognized"
+	exit 1
+	;;
+esac
+mount $dev $mnt
+
+xfs_io -f -c 'falloc 0 1m' -c fsync $mnt/a
+filefrag -v $mnt/a
+
+for ((i = 9; i < 20; i++)); do
+	xfs_io -d -c "pwrite -b 1m -V 1 -AD $((2 ** i)) $((2 ** i))" $mnt/a
+done
+
+# does not support buffered io
+xfs_io -c "pwrite -b 1m -V 1 -AD 0 $MIN_ATOMIC" $mnt/a
+# does not support unaligned directio
+xfs_io -c "pwrite -b 1m -V 1 -AD $SECTOR_SIZE $MIN_ATOMIC" $mnt/a
 
