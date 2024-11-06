@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-397718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027C59BDF79
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:37:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7D29BDF89
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 312BD1C22EC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064E91F2370C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA331CF2AB;
-	Wed,  6 Nov 2024 07:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShqLWas9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C111D0169;
+	Wed,  6 Nov 2024 07:39:14 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9463B1CCB34;
-	Wed,  6 Nov 2024 07:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318761CC8A3;
+	Wed,  6 Nov 2024 07:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730878623; cv=none; b=HVgrm0VkOl1VZHGUSBY6M5g60dm34vZ+RbyH1EVBrbew0b43+rGBrx433PZKTUeRKQXdEcPf7/0iksf8mEt3A6a5tZTJUNfjDSa6aKuASVZvu+YgnmVSQkcrTlSNQu1k0FW1UgU1Kqez95mf1dbTg5/V3v2X2kSslD7fuTQ+wPM=
+	t=1730878753; cv=none; b=j0s0e8B0BNbPbbsS3MLPi1CBxugWkyMvLoxdbMdoKseh7g284TIYFlFSEs4XOKzt5vA3LHLy1gRFufRpxj25epf/m+9zPdcApcIJnmUkk0wqnlMLaBVZshlV+U8ShdCGVW/aeEazTx60HHvYA1N8k2/gnyS+dQ5uJotauyJTLDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730878623; c=relaxed/simple;
-	bh=If2i5o23d50+LpgvLZSHaiNVPerDOZ97QUkr4t9cvIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkSDezaVOLzMYLsiSyzvI+q0tsxdUqXRCONhHV+ErYijh0mTeqLQ/2zKf1YzwENSkzpn+u9+mLS7C2NbG9AjRcl9FCl1LkY23xKcSvebQBVF0dt7RarnV/A8N/YHP/JyPG8t+DCekwlsMRONg5WW1OvkLxMj67GlLklBVhe7iEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShqLWas9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB35C4CECD;
-	Wed,  6 Nov 2024 07:37:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730878623;
-	bh=If2i5o23d50+LpgvLZSHaiNVPerDOZ97QUkr4t9cvIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ShqLWas9FCX+qvlmwO8Xikkhh//NVy0ZyG6KiQA4w4sjhMygr3moBge1F+kEnq8sO
-	 DTt9EmsSQPvC9YvE0LjRBnmFMhYWj7RClZANC0iL/IqYZwtfcLiyILtF462LTRz5pW
-	 cohLSj9kCCAqhrsM7XmeMWeA5rl5Mt/4xCY+htmhuw+94tFV+Fk9tOgcp3EP6F/io1
-	 wPFE5I6RPWat1gKcGsq+mSfk2JU91NtW28LHxfGtwYcfWEocrs+kaEntA0OYjuQlhM
-	 ywoXmjQlkqG4qNJlIbZOpxnM7QWXhcEr+AD5w3wHVBXi9UAFRCB3wBJO2KasQ/8kY2
-	 h6kVmHwrIgkwQ==
-Date: Tue, 5 Nov 2024 23:37:01 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Haiyue Wang <haiyuewa@163.com>
-Cc: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] perf tools: Add the empty-pmu-events build to
- .gitignore
-Message-ID: <Zyscncm_MDm5Swy9@google.com>
-References: <20241105052409.7783-1-haiyuewa@163.com>
+	s=arc-20240116; t=1730878753; c=relaxed/simple;
+	bh=xuGsBAC66f1EIxXNWuG80EHUZdUuteWHvpgrFCrIJA8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=onBWw9z/S1KAyKGJOWWXW5ewtzwa9IPpcLh1IB1ZW3UzpzddzE9jS+TNG4jxitq216InWBStL99CJK6t7yjPffQYSyX4RUOvWRSRe7x6D20OsiotXkMI60aSogbYvz/nL13QWgLId3nGiqWSXgfqIv6kgg0TkDeVWJOBXwPuJVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so53611657b3.1;
+        Tue, 05 Nov 2024 23:39:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730878748; x=1731483548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D/r6tXnUuPwmcrOqEYQI7dbDs3qpnado9Q9kI0QYsBk=;
+        b=saWZrtXo/IVtk8l2hmgOdErdlmwYmpGxebdp6YDHU0J8qighpx57xWkUaWMfXJU8md
+         kGALbUx+ra1fakVebLopftX0avacVK8AGyRggut4gGHdTbGdQYUUVV2ZB0jBzTJBscxK
+         QAGVSRdi3gttNbj0cdRq+mpijgoUVQ+q/sQEJuqz+ZFCvKEMBy7gjES8DTDs/cPQFRMG
+         vTCnHpvnkxLrUYwo3Nqq1sqSrRyqavr6eJ++YZoMsIDVw2VjW+q5SuuUa4HOMSRnMRNJ
+         Gn+SwevlP2R/Nu/mS6Try92dsSMTSwLAtYoES7S4TPUmXVjrLmvHFaRXqF6c4FyDE482
+         38NA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8/Lf7w4m+1lrv6M1rQzCB9To+fWxj/xr4MGpkXwjaTKy7PEEMia7Vj1RcFGlVULP7O8jvolYIzYfr@vger.kernel.org, AJvYcCVCgJ5ruXp0EDWC64kG7UmlbUoCK+HtuqkXt0Z/GPuWSnmfe4f+0Zn8QND+Cf5cbyBjL3GzjZ9sQTlclGxi@vger.kernel.org, AJvYcCWJr24n4JD9JM+xmGMkp4MZjLFkJBmmRvUXU0hwyWdlHS9BuK0642pyNaVI/tPDxfqqUABUVE8MTzYN@vger.kernel.org, AJvYcCWP01+btG/8im2Ez5NBSgJ7jCCOLmR8LLVT1Nbz/2Ijza1nDFzSSOaMR0RP6ynsqo9QZFSmYO3mc2ZPUYA9ssHQ//k=@vger.kernel.org, AJvYcCXVvJRTwofHp0UIFGDlDf2wP58/7+eDIdhtecnOJqpU2Lf2NZDut/OJheCgQcu3QXuhahykv0g3KDT1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznv0/L9DSfGXjLhkKMynFCvUOiPVuh1/2PREWqo7AAyOuhpcUj
+	IOUaLyo2vQstBxm8C9upY+gJjbA9NfEvBBIWaQYvNlnk6zjiNgAWsnGG1yHY
+X-Google-Smtp-Source: AGHT+IEovY+LJyyVFTjFLxLllDEH8pLPXCouaJ2LPCnBD3qiWglf/tevhpIzch95sfSHIdli7RVeQA==
+X-Received: by 2002:a05:690c:3509:b0:6e5:b2de:8585 with SMTP id 00721157ae682-6e9d8982819mr414480857b3.21.1730878748552;
+        Tue, 05 Nov 2024 23:39:08 -0800 (PST)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea7beaae0dsm19104977b3.48.2024.11.05.23.39.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 23:39:06 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so53611227b3.1;
+        Tue, 05 Nov 2024 23:39:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUmXkEXMzg4RSiOG6DgzsW0UfT5cXm43aQdvFbEQRDMqk9u0NWA+Tg2HJjzjKdnnWhWGHeLAoudAVtkFumOwoFR0OU=@vger.kernel.org, AJvYcCV8kE7OhtN0SlUDxJnVL5TgYlNcIqqZBU3224La69B+5aXtxujoNdsp4PxULARkXh2wo+bpomXWKdZ3@vger.kernel.org, AJvYcCVTvrTDEeAPt4QIBbUIFxP5/kccEXKYT3x7aUlWF+nQ48bSqpE2QOahaPrgUAKod+8cQQWXGRbCmVepAZmr@vger.kernel.org, AJvYcCW8Hg+oOVZXZu7vowCANAvtFxWLpBWhmF4K9ogtJxDaYeyIY1+TuXLbvWXEpL5MNE6lLhmnm8DfWIkb@vger.kernel.org, AJvYcCX+Ryzrhlz9+zrOI9d7Be1yba+RczSbOWFjioDCda+BkEMQGF5F66xIH5goVkUl2Di1T2bEgqX53YsU@vger.kernel.org
+X-Received: by 2002:a05:690c:6211:b0:6e3:28ec:1a7f with SMTP id
+ 00721157ae682-6e9d8995185mr433595127b3.23.1730878746661; Tue, 05 Nov 2024
+ 23:39:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241105052409.7783-1-haiyuewa@163.com>
+References: <20241101095720.2247815-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241101095720.2247815-3-claudiu.beznea.uj@bp.renesas.com> <8aa04e346f65bc4fcb0efc47a4f0550a.sboyd@kernel.org>
+In-Reply-To: <8aa04e346f65bc4fcb0efc47a4f0550a.sboyd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Nov 2024 08:38:55 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVH3CK7Fvfj-jis5Ja+oOFcXN4ntRDfz3Pf9ZJrfFMk+A@mail.gmail.com>
+Message-ID: <CAMuHMdVH3CK7Fvfj-jis5Ja+oOFcXN4ntRDfz3Pf9ZJrfFMk+A@mail.gmail.com>
+Subject: Re: [PATCH v6 2/9] clk: linux/clk-provider.h: Add devm_clk_hw_register_gate_parent_hw()
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, 
+	conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, 
+	robh@kernel.org, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Stephen,
 
-On Tue, Nov 05, 2024 at 01:24:05PM +0800, Haiyue Wang wrote:
-> The commit 0fe881f10ceb ("perf jevents: Autogenerate empty-pmu-events.c")
-> build will generate two files, add them to .gitignore:
-> 
-> 	tools/perf/pmu-events/empty-pmu-events.log
-> 	tools/perf/pmu-events/test-empty-pmu-events.c
-> 
-> Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+On Wed, Nov 6, 2024 at 12:26=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+> Quoting Claudiu (2024-11-01 02:57:13)
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > Add devm_clk_hw_register_gate_parent_hw() macro to allow registering
+> > devres managed gate clocks providing struct clk_hw object as parent.
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > ---
+>
+> Please fix the subject line to not have linux/clk-provider.h because
+> it's redundant.
 
-It doesn't apply to the current perf-tools-next.  Can you please rebase?
+OK, I will amend, and respin the PR.
 
-Thanks,
-Namhyung
+BTW, I had noticed it too, but since you had Acked the patch, I
+decided not to change it while applying.
 
-> ---
->  tools/perf/.gitignore | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/perf/.gitignore b/tools/perf/.gitignore
-> index f5b81d439387..51713b655f62 100644
-> --- a/tools/perf/.gitignore
-> +++ b/tools/perf/.gitignore
-> @@ -39,6 +39,8 @@ trace/beauty/generated/
->  pmu-events/pmu-events.c
->  pmu-events/jevents
->  pmu-events/metric_test.log
-> +pmu-events/empty-pmu-events.log
-> +pmu-events/test-empty-pmu-events.c
->  tests/shell/*.shellcheck_log
->  tests/shell/coresight/*.shellcheck_log
->  tests/shell/lib/*.shellcheck_log
-> -- 
-> 2.47.0
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
