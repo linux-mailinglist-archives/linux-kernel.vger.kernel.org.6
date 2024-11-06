@@ -1,157 +1,237 @@
-Return-Path: <linux-kernel+bounces-398896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3AA9BF7A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:56:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A9A9BF7AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:57:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539B71F2213E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:56:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16E6B28338B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C12420B1EF;
-	Wed,  6 Nov 2024 19:55:54 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C049209F27;
+	Wed,  6 Nov 2024 19:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R01XiqLH"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BEE13A26F;
-	Wed,  6 Nov 2024 19:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F64199247;
+	Wed,  6 Nov 2024 19:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730922954; cv=none; b=ONo6FVBVI/rGJ3HVFn/3iSpm/OKaJGrXtnoDCc2Suggnk5ra7HdkJuFSoA2qO5C+iuKxTFFUuNxyrxV0Jgn78sHRe5Nlpm8A6BTwYrPr3RDY0KyQBo3ZjOhO6iyBbKUn8aE3dToAgd76ZyVtqp6MsPBHVVHkp4JT/QWZwWLTqak=
+	t=1730923006; cv=none; b=se6RB8PS1HRv5JnIhPpcEwgXWaQWG/F46o5C0oIjP3sLA7muqjzCANAhwqfiDx08KzuPjqqVmqlHDjEPzZ3ZqNzpF5Jh7ykEW0XTx49isaljp0FJnXHq5gxFbWsPBpLz3D554hZpSBFsiOP9mrZBKIiPHPOn50d5jNws1YmokDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730922954; c=relaxed/simple;
-	bh=XPs6E4peSoALY20kBmu4SRgS9pGyv22f5TO51cGafaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yzo7GMDx+F/2M+3S9K9qsvMwl8TdOn/gzmvI96Ijhf9inZRsEu2TclhfdeeBFPCFdmtezVAZFTyAGhZNXc3HY4zg56Qvj6z+OH62jDNB1yAlpo5lKi8l8pOTz/fOjusjb8QdaEcgaFyMCNgZqpXH3NFsAmYWsZSd4wkOHhMs9pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B876EC4CED5;
-	Wed,  6 Nov 2024 19:55:48 +0000 (UTC)
-Date: Wed, 6 Nov 2024 19:55:46 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "Okanovic, Haris" <harisokn@amazon.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-	"ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-	"wanpengli@tencent.com" <wanpengli@tencent.com>,
-	"cl@gentwo.org" <cl@gentwo.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"maobibo@loongson.cn" <maobibo@loongson.cn>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"misono.tomohiro@fujitsu.com" <misono.tomohiro@fujitsu.com>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"mtosatti@redhat.com" <mtosatti@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/5] asm-generic: add smp_vcond_load_relaxed()
-Message-ID: <ZyvJwjfKgnqMpM9P@arm.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
- <20241105183041.1531976-1-harisokn@amazon.com>
- <20241105183041.1531976-2-harisokn@amazon.com>
- <ZytOH2oigoC-qVLK@arm.com>
- <b62d938111c6ce52b91d0f2e3922857c5d4ef253.camel@amazon.com>
+	s=arc-20240116; t=1730923006; c=relaxed/simple;
+	bh=3gDf54DnaNfDFqsq8szEsqsPmGsDuHA8DUSYSS5opg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hjLrAuT+2fiprME2RC7N+KratkGefjpTg7Qhq6KqLM+WSpS51EwnKjZpX8tJZFvFKladWOzub9dc5akLL86n4NbhZWQ1b7TmSY2KsM/l9JxC5FrtNdXJasSYPBTLHzhZttDWWNg6oEnvUdIo+RdzhAlnIMNw0ys1+HtZoIoLqe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R01XiqLH; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2e87153a3so141634a91.3;
+        Wed, 06 Nov 2024 11:56:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730923004; x=1731527804; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oFrym7huHKnhZnS5680kXo5TCeGO5oAMT94uW6IHvOM=;
+        b=R01XiqLHEMmaXauRU8sDL/hDSfZLKrpD/SpZWOJ3XTzk15miJXx1MB/lWflb/nhgYi
+         /xwPAbelcNX0AehLldw35MlrGoafCVoEqPCvwJ0bggndtu9d+nKUSPw1SfPh/I7lMTyu
+         OffppFrONknqxe4LrOJu3oA0FrjWTYqaGK0YbM+hluwibPafJ2aKh1jZUGVfSRpYmbAE
+         m6xlIGmwG6bIM0czNU7iTxnSuaTaCrWJ49t8gjFaSfg3OfJuKFub+BuEkJn3hFrOnDQW
+         X53WmoCavLEO5+o898hJgCgM+f/WcTU/VU/YOz0gC3GdI3NMr8F6y5+2Djr/NsnL6JZe
+         H6gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730923004; x=1731527804;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oFrym7huHKnhZnS5680kXo5TCeGO5oAMT94uW6IHvOM=;
+        b=m5J4r6x+DV+lKzZWMx65gXgtJvtHZbRIblHlEWmACTZOkcS2YE7VHD78E2w6HgY9WQ
+         LGPi24imyA99epxng5/tJsJc0TONAqJDDyVPIFWzu57oE40eRaN5ojNVKoyyw2V/O+/n
+         T3vugXkg1BaK4wkDkRPwuRdDaCifi681XqxhcxclQ/j2nVT1RSSroVXOMz14tNuMSji9
+         ZE0vzkSWLXZRC27oV9NR2tJ/JGs15tdO7ib7VmpsbSIJB2M14/PPXtiLDPRr1ghVYYzk
+         sTk+3NhLzNUxOPfVNYG9U3VYQarHmHSSfUEhct79IuFMeJQ74X0ZCI4xomcCh6HWlktG
+         V5wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSF9oawm62buqmcPMMPzox1vF29SzQoqvKPTv3iOQuQxuR90xEMwge8ciONErS2F5Q+RHRNJoxGZPY7hcenA==@vger.kernel.org, AJvYcCVhZIhSEFGK55cEwPprSj+4CSavftRzFcHRVVsr3WWx6Kc6qqLUBkkPJiXtXO/nBhIapsmtdRYkVKJEKdMw@vger.kernel.org, AJvYcCWVXsLFZ2p9BYMTf4SSGz67H4ZCURy/tqm7Xp6PRLpPJug8xjXyJ2tz1DAQjG8nU71oQHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMuuH2JmWPvFWawc4NIlPoAUiIhGV3Z+7OmyY0NHEowWnxfmd9
+	tBPEksOa/sMKdlYW4uFVxPOyK8gpqs29iP7JgT5Ms4aftmpaMxSFp6o8LKf0W3ElH9/HyDpxvNx
+	kGl2NJ3rBcYesyUN8yspa/L6xDxo=
+X-Google-Smtp-Source: AGHT+IEe4hVOfXvlyno+5FcEtlkvLjjMkC5npFwTrVuGYMM1VnoMN0sNcb9Anij0vgzegNqtLU+CdkCvDMH+YhLDhuo=
+X-Received: by 2002:a17:90b:1650:b0:2e2:b45f:53b4 with SMTP id
+ 98e67ed59e1d1-2e94c50d447mr29124283a91.25.1730923004182; Wed, 06 Nov 2024
+ 11:56:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b62d938111c6ce52b91d0f2e3922857c5d4ef253.camel@amazon.com>
+References: <AM6PR03MB5848098C1DF99C6C417B405D99542@AM6PR03MB5848.eurprd03.prod.outlook.com>
+ <AM6PR03MB584858690D5A02162502A02099542@AM6PR03MB5848.eurprd03.prod.outlook.com>
+ <CAEf4BzadfF8iSAnhWFDNmXE80ayJXDkucbeg0jv-+=FtoDg5Zg@mail.gmail.com> <AM6PR03MB5848E2CFFC021ED762E347BE99562@AM6PR03MB5848.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB5848E2CFFC021ED762E347BE99562@AM6PR03MB5848.eurprd03.prod.outlook.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 6 Nov 2024 11:56:31 -0800
+Message-ID: <CAEf4BzYujC7b7hbpXM9BoBzHrkX8JBpLT8XA-VL+uPk_NZfKrQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 3/4] bpf/crib: Add struct file related CRIB kfuncs
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 06, 2024 at 06:13:35PM +0000, Okanovic, Haris wrote:
-> On Wed, 2024-11-06 at 11:08 +0000, Catalin Marinas wrote:
-> > On Tue, Nov 05, 2024 at 12:30:37PM -0600, Haris Okanovic wrote:
-> > > diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
-> > > index d4f581c1e21d..112027eabbfc 100644
-> > > --- a/include/asm-generic/barrier.h
-> > > +++ b/include/asm-generic/barrier.h
-> > > @@ -256,6 +256,31 @@ do {                                                                     \
-> > >  })
-> > >  #endif
-> > > 
-> > > +/**
-> > > + * smp_vcond_load_relaxed() - (Spin) wait until an expected value at address
-> > > + * with no ordering guarantees. Spins until `(*addr & mask) == val` or
-> > > + * `nsecs` elapse, and returns the last observed `*addr` value.
-> > > + *
-> > > + * @nsecs: timeout in nanoseconds
-> > 
-> > FWIW, I don't mind the relative timeout, it makes the API easier to use.
-> > Yes, it may take longer in absolute time if the thread is scheduled out
-> > before local_clock_noinstr() is read but the same can happen in the
-> > caller anyway. It's similar to udelay(), it can take longer if the
-> > thread is scheduled out.
-> > 
-> > > + * @addr: pointer to an integer
-> > > + * @mask: a bit mask applied to read values
-> > > + * @val: Expected value with mask
-> > > + */
-> > > +#ifndef smp_vcond_load_relaxed
-> > > +#define smp_vcond_load_relaxed(nsecs, addr, mask, val) ({    \
-> > > +     const u64 __start = local_clock_noinstr();              \
-> > > +     u64 __nsecs = (nsecs);                                  \
-> > > +     typeof(addr) __addr = (addr);                           \
-> > > +     typeof(*__addr) __mask = (mask);                        \
-> > > +     typeof(*__addr) __val = (val);                          \
-> > > +     typeof(*__addr) __cur;                                  \
-> > > +     smp_cond_load_relaxed(__addr, (                         \
-> > > +             (VAL & __mask) == __val ||                      \
-> > > +             local_clock_noinstr() - __start > __nsecs       \
-> > > +     ));                                                     \
-> > > +})
-> > 
-> > The generic implementation has the same problem as Ankur's current
-> > series. smp_cond_load_relaxed() can't wait on anything other than the
-> > variable at __addr. If it goes into a WFE, there's nothing executed to
-> > read the timer and check for progress. Any generic implementation of
-> > such function would have to use cpu_relax() and polling.
-> 
-> How would the caller enter wfe()? Can you give a specific scenario that
-> you're concerned about?
+On Fri, Nov 1, 2024 at 1:28=E2=80=AFPM Juntong Deng <juntong.deng@outlook.c=
+om> wrote:
+>
+> On 2024/11/1 19:08, Andrii Nakryiko wrote:
+> > On Tue, Oct 29, 2024 at 5:17=E2=80=AFPM Juntong Deng <juntong.deng@outl=
+ook.com> wrote:
+> >>
+> >> This patch adds struct file related CRIB kfuncs.
+> >>
+> >> bpf_fget_task() is used to get a pointer to the struct file
+> >> corresponding to the task file descriptor. Note that this function
+> >> acquires a reference to struct file.
+> >>
+> >> bpf_get_file_ops_type() is used to determine what exactly this file
+> >> is based on the file operations, such as socket, eventfd, timerfd,
+> >> pipe, etc, in order to perform different checkpoint/restore processing
+> >> for different file types. This function currently has only one return
+> >> value, FILE_OPS_UNKNOWN, but will increase with the file types that
+> >> CRIB supports for checkpoint/restore.
+> >>
+> >> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+> >> ---
+> >>   kernel/bpf/crib/crib.c  |  4 ++++
+> >>   kernel/bpf/crib/files.c | 44 +++++++++++++++++++++++++++++++++++++++=
+++
+> >>   2 files changed, 48 insertions(+)
+> >>
+> >
+> > Please CC Christian Brauner and fs mailing list
+> > (linux-fsdevel@vger.kernel.org, both cc'ed) on changes like this (this
+> > entire patch set)
+> >
+>
+> Thanks for your reply!
+>
+> I will CC Christian Brauner and fs mailing list in the next
+> patch series.
+>
+> >> diff --git a/kernel/bpf/crib/crib.c b/kernel/bpf/crib/crib.c
+> >> index e6536ee9a845..78ddd19d5693 100644
+> >> --- a/kernel/bpf/crib/crib.c
+> >> +++ b/kernel/bpf/crib/crib.c
+> >> @@ -14,6 +14,10 @@ BTF_ID_FLAGS(func, bpf_iter_task_file_next, KF_ITER=
+_NEXT | KF_RET_NULL)
+> >>   BTF_ID_FLAGS(func, bpf_iter_task_file_get_fd)
+> >>   BTF_ID_FLAGS(func, bpf_iter_task_file_destroy, KF_ITER_DESTROY)
+> >>
+> >> +BTF_ID_FLAGS(func, bpf_fget_task, KF_ACQUIRE | KF_TRUSTED_ARGS | KF_R=
+ET_NULL)
+> >> +BTF_ID_FLAGS(func, bpf_get_file_ops_type, KF_TRUSTED_ARGS)
+> >> +BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
+> >> +
+> >>   BTF_KFUNCS_END(bpf_crib_kfuncs)
+> >>
+> >>   static const struct btf_kfunc_id_set bpf_crib_kfunc_set =3D {
+> >> diff --git a/kernel/bpf/crib/files.c b/kernel/bpf/crib/files.c
+> >> index ececf150303f..8e0e29877359 100644
+> >> --- a/kernel/bpf/crib/files.c
+> >> +++ b/kernel/bpf/crib/files.c
+> >> @@ -5,6 +5,14 @@
+> >>   #include <linux/fdtable.h>
+> >>   #include <linux/net.h>
+> >>
+> >> +/**
+> >> + * This enum will grow with the file types that CRIB supports for
+> >> + * checkpoint/restore.
+> >> + */
+> >> +enum {
+> >> +       FILE_OPS_UNKNOWN =3D 0
+> >> +};
+> >> +
+> >>   struct bpf_iter_task_file {
+> >>          __u64 __opaque[3];
+> >>   } __aligned(8);
+> >> @@ -102,4 +110,40 @@ __bpf_kfunc void bpf_iter_task_file_destroy(struc=
+t bpf_iter_task_file *it)
+> >>                  fput(kit->file);
+> >>   }
+> >>
+> >> +/**
+> >> + * bpf_fget_task() - Get a pointer to the struct file corresponding t=
+o
+> >> + * the task file descriptor
+> >> + *
+> >> + * Note that this function acquires a reference to struct file.
+> >> + *
+> >> + * @task: the specified struct task_struct
+> >> + * @fd: the file descriptor
+> >> + *
+> >> + * @returns the corresponding struct file pointer if found,
+> >> + * otherwise returns NULL
+> >> + */
+> >> +__bpf_kfunc struct file *bpf_fget_task(struct task_struct *task, unsi=
+gned int fd)
+> >> +{
+> >> +       struct file *file;
+> >> +
+> >> +       file =3D fget_task(task, fd);
+> >> +       return file;
+> >> +}
+> >> +
+> >> +/**
+> >> + * bpf_get_file_ops_type() - Determine what exactly this file is base=
+d on
+> >> + * the file operations, such as socket, eventfd, timerfd, pipe, etc
+> >> + *
+> >> + * This function will grow with the file types that CRIB supports for
+> >> + * checkpoint/restore.
+> >> + *
+> >> + * @file: a pointer to the struct file
+> >> + *
+> >> + * @returns the file operations type
+> >> + */
+> >> +__bpf_kfunc unsigned int bpf_get_file_ops_type(struct file *file)
+> >> +{
+> >> +       return FILE_OPS_UNKNOWN;
+> >> +}
+> >> +
+> >
+> > this is not very supportable, users can do the same by accessing
+> > file->f_op and comparing it to a set of known struct file_operations
+> > references.
+> >
+>
+> Yes, users can access file->f_op, but there seems to be no way for
+> users to get references to struct file_operations for the various file
+> types? For example, how does a user get a reference to socket_file_ops?
 
-Let's take the arm64 example with the event stream disabled. Without the
-subsequent patches implementing smp_vcond_load_relaxed(), just expand
-the arm64 smp_cond_load_relaxed() implementation in the above macro. If
-the timer check doesn't trigger an exit from the loop,
-__cmpwait_relaxed() only waits on the variable to change its value,
-nothing to do with the timer.
+See [0]. Libbpf will find it for the BPF program from kallsyms.
 
-> This code already reduces to a relaxed poll, something like this:
-> 
-> ```
-> start = clock();
-> while((READ_ONCE(*addr) & mask) != val && (clock() - start) < nsecs) {
->   cpu_relax();
-> }
-> ```
+  [0] https://github.com/torvalds/linux/blob/master/tools/testing/selftests=
+/bpf/progs/test_ksyms.c#L13-L18
 
-Well, that's if you also use the generic implementation of
-smp_cond_load_relaxed() but have you checked all the other architectures
-that don't do something similar to the arm64 wfe (riscv comes close)?
-Even if all other architectures just use a cpu_relax(), that's still
-abusing the smp_cond_load_relaxed() semantics. And what if one places
-another loop in their __cmpwait()? That's allowed because you are
-supposed to wait on a single variable to change not on multiple states.
-
--- 
-Catalin
+>
+> Also, currently the struct file_operations for most of the file types
+> are static, and I cannot even get a reference to them in
+> crib/files.c directly.
+>
+> My future plan is to add functions like is_socket_file_ops to the
+> corresponding files (e.g. net/socket.c).
+>
+> >>   __bpf_kfunc_end_defs();
+> >> --
+> >> 2.39.5
+> >>
+>
 
