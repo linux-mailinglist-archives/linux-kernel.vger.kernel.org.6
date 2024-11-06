@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-397755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EF19BDFE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:00:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37079BDFE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:00:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8AE31C230E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:00:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD7E1F23636
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB7F1D54FD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0E71D54C2;
 	Wed,  6 Nov 2024 08:00:07 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEDD1CCED2
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAF684D02
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730880006; cv=none; b=Eo4uxzn5y63Q3k5BDv6Uvumy6U4oNPiS8j0z79oA55m8UXnwL1aMl1vmOfgrY+CiOEIfoJi5cV7XeLkwlD08YlZbARpELAhPowU/d7iOLrT6iPowHfzaTnirpb/L+Zfi7t+aEDIsNec1f/mkKWGSZx8jV10XCCXWuVc3eC4pOQ8=
+	t=1730880006; cv=none; b=HyZJPIDxxR713Gf4h2qLObGEbcbetIuqOKCCSHmILJ6VO0VenVbI5XzSjaMk1CGde/pTn1Hs9uYOfdR83kdaFeTcVNilTEoqsXx5iuN0LQsWbJcf5C4Gf4YsQg+oTQ2437GI+XT1/NwkHIuk61Ek1ADfmg+1jsBzCby/vUuWcPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730880006; c=relaxed/simple;
-	bh=KiN6DGOmM7OzUXs2Uv6Tvbtd/F9eVemP3yL1pAxNyV8=;
+	bh=mv2/SEFrlPC3p6OnzI+7NQhDPVvHM/AyOdIW9TzUXwc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RHASU//1ipmIZ5DSiDDs1r8590sbD0o0ahjgNwIPW4lSn44sdpHRx2m1p9Kp12OUwSfC1mOjjXq/mEBIIO+iidWXz02NJhILYsujf0fBmxQlF38Kdg5obLYFxluHwtwl775soSiAKRdiPpcfuSkRBAmaUENKuRRbmBtCJ2CZclc=
+	 MIME-Version; b=BevwJZfHC8hvwhEUHd4cKaBdsOT8tZjTrev7jjIBa54dEEvVc9LzeQTjxNKMIRFFyy9fuIrY+y4FeEUw8fN2eARn11kE0YHs4mF6BCEMU9H+U9sT7i1AcfDmglL8rHxBJkBcvieyhmSuytVx067bZFRhvYctDaPK5EmG+OoHPm0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1t8ax6-0000ne-AV; Wed, 06 Nov 2024 08:59:44 +0100
+	id 1t8ax6-0000nf-AV; Wed, 06 Nov 2024 08:59:44 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1t8ax4-002Gdf-31;
+	id 1t8ax4-002Gdg-38;
 	Wed, 06 Nov 2024 08:59:42 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1t8ax4-006rrr-2l;
+	id 1t8ax4-006rs1-2s;
 	Wed, 06 Nov 2024 08:59:42 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -65,9 +65,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	"Russell King (Oracle)" <linux@armlinux.org.uk>,
 	devicetree@vger.kernel.org,
 	Marek Vasut <marex@denx.de>
-Subject: [PATCH net-next v4 1/6] dt-bindings: net: dsa: microchip: add internal MDIO bus description
-Date: Wed,  6 Nov 2024 08:59:36 +0100
-Message-Id: <20241106075942.1636998-2-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v4 2/6] dt-bindings: net: dsa: microchip: add mdio-parent-bus property for internal MDIO
+Date: Wed,  6 Nov 2024 08:59:37 +0100
+Message-Id: <20241106075942.1636998-3-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241106075942.1636998-1-o.rempel@pengutronix.de>
 References: <20241106075942.1636998-1-o.rempel@pengutronix.de>
@@ -83,38 +83,37 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add description for the internal MDIO bus, including integrated PHY
-nodes, to ksz DSA bindings.
+Introduce `mdio-parent-bus` property in the ksz DSA bindings to
+reference the parent MDIO bus when the internal MDIO bus is attached to
+it, bypassing the main management interface.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- .../devicetree/bindings/net/dsa/microchip,ksz.yaml    | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../devicetree/bindings/net/dsa/microchip,ksz.yaml       | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-index 30c0c3e6f37a4..a4e463819d4d7 100644
+index a4e463819d4d7..121a4bbd147be 100644
 --- a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
 +++ b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-@@ -81,6 +81,17 @@ properties:
-   interrupts:
-     maxItems: 1
- 
-+  mdio:
-+    $ref: /schemas/net/mdio.yaml#
-+    unevaluatedProperties: false
-+    patternProperties:
-+      "^ethernet-phy@[0-9a-f]$":
-+        type: object
-+        $ref: /schemas/net/ethernet-phy.yaml#
-+        unevaluatedProperties: false
+@@ -84,6 +84,15 @@ properties:
+   mdio:
+     $ref: /schemas/net/mdio.yaml#
+     unevaluatedProperties: false
++    properties:
++      mdio-parent-bus:
++        $ref: /schemas/types.yaml#/definitions/phandle
 +        description:
-+          Integrated PHY node
++          Phandle pointing to the MDIO bus controller connected to the
++          secondary MDIO interface. This property should be used when
++          the internal MDIO bus is accessed via a secondary MDIO
++          interface rather than the primary management interface.
 +
- required:
-   - compatible
-   - reg
+     patternProperties:
+       "^ethernet-phy@[0-9a-f]$":
+         type: object
 -- 
 2.39.5
 
