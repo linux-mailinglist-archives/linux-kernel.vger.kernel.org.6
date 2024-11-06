@@ -1,114 +1,91 @@
-Return-Path: <linux-kernel+bounces-397987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C7C9BE3A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:07:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C059BE39E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E38D2880E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:07:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47A371C22892
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613B11DDC13;
-	Wed,  6 Nov 2024 10:06:33 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BF81DE4C6;
+	Wed,  6 Nov 2024 10:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHO6hjlz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279DC1DCB0E;
-	Wed,  6 Nov 2024 10:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358401DDA15;
+	Wed,  6 Nov 2024 10:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730887593; cv=none; b=SkLHcN1n6GUIyswKU8xrCODWa1dF0aZ6HuW90LTKRehOgLXGnWPpxOZ3TDwBRA7iVSboO5wYSHsYlMFthffDY3NlQ+gPq42P1qGcvkHnQncgLtXZQZoIFIQ1tHhv7kOLyQTEYezb+bSTtjrF81j11B+ZeUAfUde42LFm17w0/ss=
+	t=1730887577; cv=none; b=upPLsyfNVGEBXGWITnv+lcL4dZC0vYVhI2eLM2HU8WWlDSRupGb3RIBM9+tI59fH4c5wakwFnfwOdSDyFtTWDwpuvpiP4Mkpc7prqNEYMyEkwDF84QMi7GYpg4CQjGUJHYpx3abv8ro2BafdGpe4tnPbxAcfDKWqTqN/tTjK75g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730887593; c=relaxed/simple;
-	bh=/p+aqP93T3K4PYoazZPh+X0mdSLojNh6PgukGvcdpIs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ioTjrf63s2DT06TwNgPS32McbkMf1AZr7XM/3hM+bOOzqZZFcBBjgkpNFHoGwBKWCOfYUZgltWTWATiuQILRrDCKHw8JKhrBL11KZFXXarPOgSk0G54Nm5jXuw9KLzl5bfKr3q053mqVdB0EjgrMza36oIvyOF8JD7HDxw9wAJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Xk16Q6sNczQppn;
-	Wed,  6 Nov 2024 18:05:18 +0800 (CST)
-Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
-	by mail.maildlp.com (Postfix) with ESMTPS id 30F9B140361;
-	Wed,  6 Nov 2024 18:06:20 +0800 (CST)
-Received: from kwepemn100017.china.huawei.com (7.202.194.122) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 6 Nov 2024 18:06:19 +0800
-Received: from huawei.com (10.50.165.33) by kwepemn100017.china.huawei.com
- (7.202.194.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 6 Nov
- 2024 18:06:19 +0800
-From: Longfang Liu <liulongfang@huawei.com>
-To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
-Subject: [PATCH v13 4/4] Documentation: add debugfs description for hisi migration
-Date: Wed, 6 Nov 2024 18:03:43 +0800
-Message-ID: <20241106100343.21593-5-liulongfang@huawei.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20241106100343.21593-1-liulongfang@huawei.com>
-References: <20241106100343.21593-1-liulongfang@huawei.com>
+	s=arc-20240116; t=1730887577; c=relaxed/simple;
+	bh=sLdEEwKwMLxWdWdZL65wb/2gBWurtCr+YBjQaRMnIDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hX0jNGbiPgpAJ8+sXvoo6LVCtfe55/7ajnC1uXS0pgecJk5Efth9paMsfT2BzpP3Ll8c77lH0EGgxoL0apvLIcM30gZauRrY5jkFdzwkVLMgp6RNFWMPNewFzv6bBQdaYKVVsLEsMTV/Of1PrBfQUjEDybZgLz+Qkj+nujx3I1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHO6hjlz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C432C4CED4;
+	Wed,  6 Nov 2024 10:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730887576;
+	bh=sLdEEwKwMLxWdWdZL65wb/2gBWurtCr+YBjQaRMnIDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iHO6hjlz+1cwRAj11Z0BXNSd3Yq6BnEvTZZoGBv1qhp1x7HGDkemndDVxEVMG7J51
+	 Gdz8SwuQ/BfwAbWyCiYidSR2UDQ8QAqPcH9HdtDm/2jxHoLBUzwTVRM7XcSbmTizht
+	 zFfSspDks1KDLvwhuUv/HuWhPE3wHyi9+vVVOVF8kNgqdHL8TT40qZKa8oUL4EBss+
+	 tPpud4BB3rowu/lvm+SvsrUDIiyFr5FClJMP8DTtafe3fbi9ktfvQz/3x7HXc1hfeg
+	 aXZFxzbBZ3tECD9sDCGGU5caeLzmpy2hjygUe9YclZaeK8hYsEZn2fVE0Ae5Yz51zO
+	 rZA0wkMlJdM/Q==
+Date: Wed, 6 Nov 2024 11:06:10 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Tycho Andersen <tandersen@netflix.com>
+Subject: Re: [PATCH 1/2] exec: fix up /proc/pid/comm in the
+ execveat(AT_EMPTY_PATH) case
+Message-ID: <20241106-neukauf-befugnis-a54d08ac9b4b@brauner>
+References: <20241030203732.248767-1-tycho@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemn100017.china.huawei.com (7.202.194.122)
+In-Reply-To: <20241030203732.248767-1-tycho@tycho.pizza>
 
-Add a debugfs document description file to help users understand
-how to use the hisilicon accelerator live migration driver's
-debugfs.
+On Wed, Oct 30, 2024 at 02:37:31PM -0600, Tycho Andersen wrote:
+> From: Tycho Andersen <tandersen@netflix.com>
+> 
+> Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> switching to execveat() for service execution, but can't, because the
+> contents of /proc/pid/comm are the file descriptor which was used,
+> instead of the path to the binary. This makes the output of tools like
+> top and ps useless, especially in a world where most fds are opened
+> CLOEXEC so the number is truly meaningless.
+> 
+> Change exec path to fix up /proc/pid/comm in the case where we have
+> allocated one of these synthetic paths in bprm_init(). This way the actual
+> exec machinery is unchanged, but cosmetically the comm looks reasonable to
+> admins investigating things.
+> 
+> Signed-off-by: Tycho Andersen <tandersen@netflix.com>
+> Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
+> CC: Aleksa Sarai <cyphar@cyphar.com>
+> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
+> ---
 
-Update the file paths that need to be maintained in MAINTAINERS
+We finally went full circle back to what was originally proposed :)
 
-Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
----
- .../ABI/testing/debugfs-hisi-migration        | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/ABI/testing/debugfs-hisi-migration
-
-diff --git a/Documentation/ABI/testing/debugfs-hisi-migration b/Documentation/ABI/testing/debugfs-hisi-migration
-new file mode 100644
-index 000000000000..2c01b2d387dd
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-hisi-migration
-@@ -0,0 +1,25 @@
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/dev_data
-+Date:		Jan 2025
-+KernelVersion:  6.13
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Read the configuration data and some status data
-+		required for device live migration. These data include device
-+		status data, queue configuration data, some task configuration
-+		data and device attribute data. The output format of the data
-+		is defined by the live migration driver.
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/migf_data
-+Date:		Jan 2025
-+KernelVersion:  6.13
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Read the data from the last completed live migration.
-+		This data includes the same device status data as in "dev_data".
-+		The migf_data is the dev_data that is migrated.
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/cmd_state
-+Date:		Jan 2025
-+KernelVersion:  6.13
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Used to obtain the device command sending and receiving
-+		channel status. Returns failure or success logs based on the
-+		results.
--- 
-2.24.0
-
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
