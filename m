@@ -1,82 +1,254 @@
-Return-Path: <linux-kernel+bounces-398938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AAA9BF840
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:57:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 214499BF843
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:59:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A791F23564
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:57:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1F2FB232CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1E620C492;
-	Wed,  6 Nov 2024 20:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB7420C494;
+	Wed,  6 Nov 2024 20:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PtS6ctDQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="KRPz24c6"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B4620C308;
-	Wed,  6 Nov 2024 20:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C669A14F9D9;
+	Wed,  6 Nov 2024 20:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730926665; cv=none; b=iAVe4rhVp6JpjLJ5YwofFYQMO1KN38GdI+yO48pfj0+SQg9F91Zcv5QipT0QPHVujuRjtVAdO3KftOR7ijr2I9360psBaAN1aYWoHfSTz+cB51xNM/MksXC/cV1PJLyLKg6ZbEmZubr04BY4/Up0AQ4F+6P66zPo+Zy/wOEt738=
+	t=1730926770; cv=none; b=ZmzNpvr3AlzLYem6SWUuQgpGNJY44qO1YwSxwYCeUCVf5jC3cr8n5axUvf9uuxrI7WV2VuADMMA4BLPp9P1fJzTBD1qzGe3JXAK+IRMfR8jcbprcY4rpxeJWCi7uSAMuNYO9W5V5OZjiEWxZolPg8aYTX61XMoiwjVNgeLQqZrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730926665; c=relaxed/simple;
-	bh=c8/i+aAT+f3p8CkKo793zsU+HTDsGoC2h0xF+cxEIO0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cLQ6H8nEza8G65KQeYNrZOb5lx1pFxVYf3L/zH5iLjQN5VifiMg8eUrkvNbuhjMeSHUFNrlY0RcxLsx1/C3wMF/8FnPIQywtzoE4NmMgjQjIdPhDoq2VbE9N/CMBSfjEYCTvh65llukmucvrZv7EGRkjE6aaLql3ihSavvIgqP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PtS6ctDQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98F1C4CEC6;
-	Wed,  6 Nov 2024 20:57:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730926665;
-	bh=c8/i+aAT+f3p8CkKo793zsU+HTDsGoC2h0xF+cxEIO0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PtS6ctDQsZnG4StsyFNciEmgwDWUQEGL6X+KzbnYpJEICltYPgLgYDhB9WysqswDg
-	 ewHo0OmrXSQU526PYc//iXx/pqiIa2rzDYDYiCjNdmhaTkZtb9nIVvXdgbaIrRq47n
-	 +1MgE2LEPl4eyH62LQDZNaFpnTmfZt4ft4zYiwhU=
-Date: Wed, 6 Nov 2024 12:57:44 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Eric Biederman <ebiederm@xmission.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: exec: Mark Kees as maintainer
-Message-Id: <20241106125744.8645accf12a4ada579fbb0cc@linux-foundation.org>
-In-Reply-To: <20241031220853.work.354-kees@kernel.org>
-References: <20241031220853.work.354-kees@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730926770; c=relaxed/simple;
+	bh=XLCDMd7ciz35QR/ham/cIEWPwfp1Kdq9Agnq2FNhYBg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ofpb7KDs8S7WbU0RipMGqsh6vOI8q14jt8DkKEyxdRqfP953Wmbp08kcXeEEn6JUQWXfmMlmaSM9aD7+RQZ9flwy9vzdLoo0Vd94c+hP+CHjS9zHfJuE8xEaWxpwrAX93fCPT23t0oB568xJNddZ1xWFxjr2d+ZnpWaQraN7nOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=KRPz24c6; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730926697; x=1731531497; i=w_armin@gmx.de;
+	bh=f64O5SeeguIhDFFVO43b0ng+qApTOFN/1RVAqsvMJ0c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KRPz24c6wLzcAoRocrZ0Xq7XLQgQKpoAX2Cq1lvfOc1mv0Kz2wsK4ouiECCPHoor
+	 Xrq8hJx6tcukzFs9kIPQHWn9Y0VolLptDpG2g9U/IUjVJlckVNtRE+3Z/x5Eykdfj
+	 +LW+eS7Cmbrrnn9Nmw4lftuz8jgwQ6EnJIOltNAeFkN7BeWUKreJjlpN6DO6g2yi1
+	 oxGH+I7YiNIDddOrpPXX8GSUguQ5/v7CuJquwQvcNoCiRgTHRaZLUUtVGTr/y4dOe
+	 yvJ7Na7ARaQTfHuJVi48CSJcUfc2ACDTbx75q8/YXMP0tIyR5+LQn9EMC5cMwUvXc
+	 hiXKmKymaYUyQcKkyQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MowGa-1tboj03iPO-00ZM5a; Wed, 06
+ Nov 2024 21:58:16 +0100
+Message-ID: <a2bde9c6-6aa3-445b-b27b-2338d78d132d@gmx.de>
+Date: Wed, 6 Nov 2024 21:58:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v4 16/20] ACPI: platform_profile: Make sure all profile
+ handlers agree on profile
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <20241105153316.378-17-mario.limonciello@amd.com>
+Content-Language: en-US
+In-Reply-To: <20241105153316.378-17-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dnrJjE2v6RW09QLQlmqJMIZuysujbEAw61s3H6+dvbxToEL1eNs
+ pCOm693I/KRnk26JlqV5HfKOVPETI9Tb2yEL6MND0gPBfQiu/f9cQBaEhTme2Lwn1u5XeV7
+ FJzOZaNXc5j5yWXhZiBMqp4mCSqR7m7RwUKqQWljxU09bCFKBX7gKgsoYo2aZEMZNuNTqHl
+ ZL1A4ECV/wG8aT2/AXEFg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4luOdEoGEfg=;WuN8fjlZkJqvUYmedeaVPL8go9J
+ fUaHvnZJC5aJfLwyIyv5jpZuEsYI+4/6dvjPt+KUYRiFvXIvtc/u2sp2Pzuh9Dj3fml4/eCM8
+ uD/jYovHNu9yDTisU2uWoHVsoD5Xzu0l1jTM4HXA4ItCCoERY08dZ+CKAzOdYNDcnkbKl8SQ/
+ KkEQmTyRg73h+Q41W97J9VmuQdB+hTxFhwJGjuA15bzQruq2ECLN/jCEn68XV5euOQUGPUEU5
+ OmaWP8gXObqCbHTsOcgNSBGXf9/3K2H6eP92XXYR9p/BK4vZ1L6bu0AjbvyygXt214ygntDv3
+ dYnRayBY3DdgVwBOJuoViR2bNzpOJEHlTnoDePdyKl9MoLZyKUAqXM2ZALMIbacJo0BHdFSQ3
+ 3T68NrUOJ90/ajXtKafqmQl2Enr8ZDyXOwZqt4J7lK2I5DO5vCPYpgp91x/nUN1twKDH0o1WE
+ tJGObYarXqnHugJ1qG/A8mmgXFUcfvLZ7o+0WV9yIuQEwv1/T8FSAJlG84CTDNRO9WUdyRaa6
+ dJ8qCO1R3zm3t+y90ZXsdGSz0a05BUf3Ak2karjfKhGnldEfsgk55DjLxg120++GcFJSK1pf3
+ YXsKQ/j4fmcG+Gl/Yyw9bP8Qhb3JoydnPTAl1xORk4EaHe56nCdIzWqT2VdxpebaBtkjBjCe9
+ WTGoTmHITS8AdgUMR0S6fUyg8jugsptfXT4Sx7cVy3uELW9p6PzJSMwnAph6PR98oTWlpwKL8
+ l1PsWq5s8BzbGJaz9tJew52vIH6CtG7trFisNkYNs4ybSPm26FUJgLfE+iDG+38SxqSYnLIMW
+ DkEbIhqKsMuBRT+RT0+oWhJKSJBIeTzwkhulfBEFwFZLji1/jfLS5wdTrfomVgnPe+lY8nQRl
+ CzvKwnni7Uee9u451UghRT87xLR1I8mIbd9V6t8TfTpblq8pHV0m4HjwK
 
-On Thu, 31 Oct 2024 15:08:55 -0700 Kees Cook <kees@kernel.org> wrote:
+Am 05.11.24 um 16:33 schrieb Mario Limonciello:
 
-> It's more accurate to mark myself as a maintainer: I've been keeping the
-> tree up to date in linux-next, etc.
-> 
-> ...
+> If for any reason multiple profile handlers don't agree on the profile
+> return the custom profile.
 >
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8488,8 +8488,8 @@ F:	rust/kernel/net/phy.rs
->  F:	rust/kernel/net/phy/reg.rs
->  
->  EXEC & BINFMT API, ELF
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/acpi/platform_profile.c | 84 +++++++++++++++++++++------------
+>   1 file changed, 53 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
+file.c
+> index d8c2d195106c2..7861fccc2e58c 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -280,55 +280,77 @@ static ssize_t platform_profile_choices_show(struc=
+t device *dev,
+>   	return _commmon_choices_show(aggregate, buf);
+>   }
+>
+> -static ssize_t platform_profile_show(struct device *dev,
+> -					struct device_attribute *attr,
+> -					char *buf)
+> +/**
+> + * _aggregate_profiles - Aggregate the profiles for legacy sysfs interf=
+ace
+> + * @dev: The device
+> + * @data: The profile to return
+> + * Return: 0 on success, -errno on failure
+> + */
+> +static int _aggregate_profiles(struct device *dev, void *data)
+>   {
+> -	enum platform_profile_option profile =3D PLATFORM_PROFILE_BALANCED;
+> +	enum platform_profile_option *profile =3D data;
+> +	enum platform_profile_option val;
+>   	int err;
+>
+> -	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> -		if (!cur_profile)
+> -			return -ENODEV;
+> +	err =3D get_class_profile(dev, &val);
+> +	if (err)
+> +		return err;
+>
+> -		err =3D cur_profile->profile_get(cur_profile, &profile);
+> -		if (err)
+> -			return err;
+> -	}
+> +	if (*profile !=3D PLATFORM_PROFILE_LAST && *profile !=3D val)
+> +		*profile =3D PLATFORM_PROFILE_CUSTOM;
+> +	else
+> +		*profile =3D val;
+>
+> -	/* Check that profile is valid index */
+> -	if (WARN_ON((profile < 0) || (profile >=3D ARRAY_SIZE(profile_names)))=
+)
+> -		return -EIO;
 
-I suggest you add coredump here, and to the F: list.
+Please check the returned value from profile_get() first before doing
+the custom platform
+profile check.
 
-> +M:	Kees Cook <kees@kernel.org>
->  R:	Eric Biederman <ebiederm@xmission.com>
-> -R:	Kees Cook <kees@kernel.org>
->  L:	linux-mm@kvack.org
->  S:	Supported
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
+> +	return 0;
+> +}
+> +
+> +/**
+> + * platform_profile_show - Show the current profile for legacy sysfs in=
+terface
+> + * @dev: The device
+> + * @attr: The attribute
+> + * @buf: The buffer to write to
+> + * Return: The number of bytes written
+> + */
+> +static ssize_t platform_profile_show(struct device *dev,
+> +				     struct device_attribute *attr,
+> +				     char *buf)
+> +{
+> +	enum platform_profile_option profile =3D PLATFORM_PROFILE_LAST;
+> +	int err;
+> +
+> +	err =3D class_for_each_device(&platform_profile_class, NULL,
+> +				    &profile, _aggregate_profiles);
 
+Missing error handling.
+
+>
+>   	return sysfs_emit(buf, "%s\n", profile_names[profile]);
+>   }
+>
+> +/**
+> + * platform_profile_store - Set the profile for legacy sysfs interface
+> + * @dev: The device
+> + * @attr: The attribute
+> + * @buf: The buffer to read from
+> + * @count: The number of bytes to read
+> + * Return: The number of bytes read
+> + */
+>   static ssize_t platform_profile_store(struct device *dev,
+> -			    struct device_attribute *attr,
+> -			    const char *buf, size_t count)
+> +				      struct device_attribute *attr,
+> +				      const char *buf, size_t count)
+>   {
+> -	int err, i;
+> +	int ret;
+> +	int i;
+>
+>   	/* Scan for a matching profile */
+>   	i =3D sysfs_match_string(profile_names, buf);
+>   	if (i < 0)
+>   		return -EINVAL;
+> -
+> -	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> -		if (!cur_profile)
+> -			return -ENODEV;
+> -
+> -		/* Check that platform supports this profile choice */
+> -		if (!test_bit(i, cur_profile->choices))
+> -			return -EOPNOTSUPP;
+> -
+> -		err =3D cur_profile->profile_set(cur_profile, i);
+> -		if (err)
+> -			return err;
+> +	if (i =3D=3D PLATFORM_PROFILE_CUSTOM) {
+> +		pr_warn("Custom profile not supported for legacy sysfs interface\n");
+
+This would allow userspace applications to spam the kernel log. Please
+just return -EINVAL here
+and document this special case inside the interface specification.
+
+Thanks,
+Armin Wolf
+
+> +		return -EINVAL;
+>   	}
+>
+> -	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> -	return count;
+> +	ret =3D class_for_each_device(&platform_profile_class, NULL, &i, _stor=
+e_class_profile);
+> +
+> +	return ret ? ret : count;
+>   }
+>
+>   static DEVICE_ATTR_RO(platform_profile_choices);
 
