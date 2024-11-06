@@ -1,157 +1,167 @@
-Return-Path: <linux-kernel+bounces-399037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00E79BF9E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:23:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 957009BF9E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:22:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEEFF2840C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:23:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B89F1F22426
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBD720E008;
-	Wed,  6 Nov 2024 23:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C372520D4FF;
+	Wed,  6 Nov 2024 23:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HNld1z1C"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sO/KOSsP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D8520D502
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24424201110;
+	Wed,  6 Nov 2024 23:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730935378; cv=none; b=Pn8JoMspl+D8USnXsM2NOEbpujUJoiNjcLjAYUyJmVrnls/7XnC/6GXhyrowItdzi2REdqwVEQGHkbq+ZwHWZ/V3MHqPZI3LYCDD57TzxjFgJCO6hBx49AmauyCmEhVaCtAGCJz2PO6y5ydGkmP5iI6HaLV8hHqCDi0GRKFzOTs=
+	t=1730935364; cv=none; b=TTxsBcdwRfr/WIew6v5YXI62HvBFLFXSxuvDlgB8YO/6mqgKqdLBvA/qmiVoiHuxFebpISiuQ3Mzw9FA3i0dMuhYhR2+HMtJIHEK+NZDjT+BPV3ITZ9UIBtlUV9Ri4j74dI6h/YOso2VGJ+UxillOT1d358Ftp5RQaO2I0v1Fzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730935378; c=relaxed/simple;
-	bh=ZRsZKSpD8AGeF9GYcFFMhOlvqYru3RCE/Zuw/Pjv2mc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TV0i7aElZ4MGh9Jx7xTyvp+byH6bYiSOiTyUxB5V77poOOZZyjNUr4Xba64ww/nO3jS6be+dG4RsRhLXGQte9d8Tnjzj1+BUO5gKI91cshMY3VpEF7FK3OaL4xs0u7KuLZoWUy8HIJJ/xKbM3oRCj0hPLGEP+4DAvPrMu2qUYW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HNld1z1C; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730935375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DlAJxXvAaicdmQcRjbPL9yT3IVxGMViMrr8OkJo1fpo=;
-	b=HNld1z1CzOsS7ycye5sdJyi6Fmpwgc3mWs4KEa8JEgR7KhlhK28u7P3AXSfJcSjNplWA1p
-	1za1R+wbr+9Hg8YIssAh9Zf+fCpPanL34W0OKBMZE4kysW85/x7mbBdiiI/oFkeLShu2+z
-	iAWll1MjxL4/fyWgcoEYncKFkrAZ0h4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-423-NLX0mvfNOdKFBgtr77M5RA-1; Wed, 06 Nov 2024 18:22:54 -0500
-X-MC-Unique: NLX0mvfNOdKFBgtr77M5RA-1
-X-Mimecast-MFC-AGG-ID: NLX0mvfNOdKFBgtr77M5RA
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43151a9ea95so7490275e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 15:22:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730935373; x=1731540173;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DlAJxXvAaicdmQcRjbPL9yT3IVxGMViMrr8OkJo1fpo=;
-        b=wvRb+aUHQUxdpqzWi+L4vi2LghzJhSjhovjcs1FYqnIkZXLt8i0+Df9OQ99yQs5Y+j
-         8Stk5dPPewaY/djBZI/pre4OOM3rnS7VVoJxXblzxV1sU9UObvI/ugDb1y52s16ND3Ne
-         SeeUdbBum95sC2PUN5vGqygDrNteu9U48e+d3p3IXyEwX1WediUctN1EQMkN4o9rtr0b
-         RXYokapd74PjvG/MK7PdsbR5XCE0vXPpCtKXP4E7PUVgzBpyESMg3G34r3R+L+snVWgd
-         8JN5CJQYOmJ5QFq6zXSwoeE56r2Ec2seNb2ObgX5SIWaocoSFrcqKyKF/UfJgXsJUWjo
-         r0bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9UO2qq4ldXSwSdujAr5ipMfUa8mks25mIcEeeDjXRCJjakRB6FnXQ41mDvC1rI/FC6EIC4VLpPcuQglo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzftfsx5zGW6ZwM0UwE64DQg79dwZUshx/06chcN/d749i7+pGI
-	zuNKERsb45R1zky8Zo7FXr8ICY5Tk4QqLIzc09Vo0518ynFO1smAZ0sKsGk80JMdKqEc3ZEoL3R
-	bW438gdtX5sIPb73JOhVwiHK+OOImXC7DJ8/hNOuwSdvICPRyV3YUCHTdSbOl9fFZECQaHTF5TR
-	5eoMFPx5WVM7fqJ7dps/PuxvrHa8hqSuuBaSgy
-X-Received: by 2002:a5d:6d04:0:b0:37c:fdc8:77ab with SMTP id ffacd0b85a97d-381ec5d2a25mr750630f8f.7.1730935373103;
-        Wed, 06 Nov 2024 15:22:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IED8dbEfyAL8ooo8GPjsYUR6b8v06yZSyJJBhEN0YD0lcZceYOU0DyiocvCsAGXa+6yihn58aU4AvlD9ufSOHo=
-X-Received: by 2002:a5d:6d04:0:b0:37c:fdc8:77ab with SMTP id
- ffacd0b85a97d-381ec5d2a25mr750625f8f.7.1730935372755; Wed, 06 Nov 2024
- 15:22:52 -0800 (PST)
+	s=arc-20240116; t=1730935364; c=relaxed/simple;
+	bh=lcf+7l73JzBKQ+KigkV+9T6nUxYNGhwt8EiZ+E7xL2Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=JQS4LlvCLPE1y5VsOvFQsSTRTiJ4Tcul3AUzOM222kxCCbk8k37pJmvF5qpgQxZx5XJl+nbdWVqseRaDf7mKlzYHjRH8qPxgrm2h5tl7M1vU8ALc0UUwoDsUnMh4wCK/ljXohNLEsgptsWS7gvtF7i/ktUZ5zYt6aAkxXndEg5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sO/KOSsP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42CF5C4CEC6;
+	Wed,  6 Nov 2024 23:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730935363;
+	bh=lcf+7l73JzBKQ+KigkV+9T6nUxYNGhwt8EiZ+E7xL2Q=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=sO/KOSsPQxLuzz7quwmccHeyPOY/4IdEErbd8s8OvPnhe4b0IYedR9dKRyu1VtGH5
+	 IAjNDOvlDDaILT29cWrEZPpkOT6dgcIe9oOV9EuwLK+ABEpBa2q4c5XbxAV8IeSd98
+	 L6T14hT4qKF3cCwDCz1A5/eh1p/n5YZ5TnwaqXUPZbUHKJv078joohZc4e6zwy/9tA
+	 8bkSjd7VYc6LXZ4Gc86nCLis9f8Fb5+4uMLUhcAYGzz6jPSQhjoa4jnTUfbRNr+QET
+	 y/bXNA4msMWMA3O4nq6/20C4824xbYu4KOtpBI2g5waY2P/YXQ5OEX4cPkQa7kw7nS
+	 v0PksYLe+H9Kg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ZyAnSAw34jwWicJl@slm.duckdns.org> <1998a069-50a0-46a2-8420-ebdce7725720@redhat.com>
- <ZyF858Ruj-jgdLLw@slm.duckdns.org> <CABgObfYR6e0XV94USugVOO5XcOfyctr1rAm+ZWJwfu9AHYPtiA@mail.gmail.com>
- <ZyJ3eG8YHeyxqOe_@slm.duckdns.org> <CAMw=ZnQk5ttytEKO6pK+VLEhSO9diRAqE9DEUwjXnQkz+Vf7kA@mail.gmail.com>
-In-Reply-To: <CAMw=ZnQk5ttytEKO6pK+VLEhSO9diRAqE9DEUwjXnQkz+Vf7kA@mail.gmail.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 7 Nov 2024 00:22:33 +0100
-Message-ID: <CABgObfYrX8O-Vj5g7t8DD=6_twedXToajNtLedLgtKR6+G9_Hg@mail.gmail.com>
-Subject: Re: cgroup2 freezer and kvm_vm_worker_thread()
-To: Luca Boccassi <bluca@debian.org>
-Cc: Tejun Heo <tj@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, kvm@vger.kernel.org, 
-	cgroups@vger.kernel.org, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Nov 2024 01:22:39 +0200
+Message-Id: <D5FHDIMJBWQM.2GWFOR0198360@kernel.org>
+Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Paul Moore"
+ <paul@paul-moore.com>, <linux-kernel@vger.kernel.org>,
+ <christian@heusel.eu>
+Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
+ be disabled on boot
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241015193916.59964-1-zohar@linux.ibm.com>
+ <D5FG6TOVUY5W.3SUG1J3CDB3J5@kernel.org>
+ <321b247dcfaba5d9691919eec8476b3c6fc7875d.camel@HansenPartnership.com>
+In-Reply-To: <321b247dcfaba5d9691919eec8476b3c6fc7875d.camel@HansenPartnership.com>
 
-On Thu, Nov 7, 2024 at 12:21=E2=80=AFAM Luca Boccassi <bluca@debian.org> wr=
-ote:
+On Thu Nov 7, 2024 at 12:52 AM EET, James Bottomley wrote:
+> On Thu, 2024-11-07 at 00:26 +0200, Jarkko Sakkinen wrote:
+> > On Tue Oct 15, 2024 at 10:39 PM EEST, Mimi Zohar wrote:
+> > > The initial TPM2 HMAC session capability added HMAC authentication
+> > > to each and every TPM communication making the pcr_extend
+> > > performance abysmal for HW TPMs. Further, the new
+> > > CONFIG_TCG_TPM2_HMAC option was configured by default on x86_64.
+> > >=20
+> > > The decision to use the TPM2 HMAC session capability feature
+> > > doesn't differentiate between the critical encrypted and the non-
+> > > encrypted communication, but when configured is required for all
+> > > TPM communication.
+> > >=20
+> > > In addition, the reason to HMAC the tpm2_pcr_extend() as provided
+> > > in commit 6519fea6fd37 ("tpm: add hmac checks to
+> > > tpm2_pcr_extend()") was to protect tpm2_pcr_extend() when used by
+> > > "trusted keys" to lock the PCR.=C2=A0 However, locking the PCR is
+> > > currently limited to TPM 1.2.
+> > >=20
+> > > We can revert the commit which adds the HMAC sessions for
+> > > tpm2_pcr_extend, allow just the TPM2 pcr_extend HMAC capability to
+> > > be disabled on boot for better IMA performance, or define a generic
+> > > boot command line option to disable HMAC in general.=C2=A0 This patch
+> > > allows disabling the HMAC for just the TPM2_pcr_extend.
+> > >=20
+> > > Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
+> > > Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> >=20
+> > I have alternative proposal that hit me today.
+> >=20
+> > First an observation: I think this issue shows that we also stress
+> > beyond limits desktop configurations with encrypted bus, even tho it
+> > is
+> > not in the same way visible. This affects bunch of things, including
+> > e.g. power consumption. Not a lot but best possible situation would
+> > be
+> > if callers could be served without any additional stress.
+> >=20
+> > A second observation is in [1]:=20
+> >=20
+> > "It is recommended that a TPM implement the RNG in a manner that
+> > would
+> > allow it to return RNG octets such that, as long as the value of
+> > bytesRequested is not greater than the maximum digest size, the
+> > frequency of bytesRequested being more than the number of octets
+> > available is an infrequent occurrence."
+> >=20
+> > I think from this we can derive a fair assumption that with any
+> > possible
+> > TPM2 chip we can pull a 32 byte value within a single transcation
+> > (i.e.
+> > matching SHA256 digest size).
+> >=20
+> > So based on these facts I think this might be a sweet spot in making
+> > a
+> > compromise between performance and security:
+> >=20
+> > 1. Generate a 32 byte seed every N iterations (calls of
+> > =C2=A0=C2=A0 tpm2_get_random(). Store it to chip->random_seed.
+> > 2. In-between iterations use PRNG to generate the values
+> > =C2=A0=C2=A0 starting form chip->random_seed.
+> >=20
+> > I think N could be fairly large without causing any major difference
+> > (even when analyzed through numerical error analysis) between calling
+> > TPM2_GetRandom for each and every iteration. And this way bus
+> > encryption
+> > never has to be disabled.
+> >=20
+> > I'd see this as win-win approach.
+> >=20
+> > PS. I have no idea what kind of PRNG's kernel provides (never used
+> > such).
+> >=20
+> > [1] 16.1.TPM2_GetRandom
+> > =C2=A0=C2=A0=C2=A0
+> > https://trustedcomputinggroup.org/wp-content/uploads/TPM-2.0-1.83-Part-=
+3-Commands.pdf
 >
-> On Wed, 30 Oct 2024 at 18:14, Tejun Heo <tj@kernel.org> wrote:
-> >
-> > Hello,
-> >
-> > On Wed, Oct 30, 2024 at 01:05:16PM +0100, Paolo Bonzini wrote:
-> > > On Wed, Oct 30, 2024 at 1:25=E2=80=AFAM Tejun Heo <tj@kernel.org> wro=
-te:
-> > > > > I'm not sure if the KVM worker thread should process signals.  We=
- want it
-> > > > > to take the CPU time it uses from the guest, but otherwise it's n=
-ot running
-> > > > > on behalf of userspace in the way that io_wq_worker() is.
-> > > >
-> > > > I see, so io_wq_worker()'s handle signals only partially. It sets
-> > > > PF_USER_WORKER which ignores fatal signals, so the only signals whi=
-ch take
-> > > > effect are STOP/CONT (and friends) which is handled in do_signal_st=
-op()
-> > > > which is also where the cgroup2 freezer is implemented.
-> > >
-> > > What about SIGKILL? That's the one that I don't want to have for KVM
-> > > workers, because they should only stop when the file descriptor is
-> > > closed.
-> >
-> > I don't think SIGKILL does anything for PF_USER_WORKER threads. Those a=
-re
-> > all handled in the fatal: label in kernel/signal.c::get_signal() and th=
-e
-> > function just returns for PF_USER_WORKER threads. I haven't used it mys=
-elf
-> > but looking at io_uring usage, it seems pretty straightforward.
-> >
-> > > (Replying to Luca: the kthreads are dropping some internal data
-> > > structures that KVM had to "de-optimize" to deal with processor bugs.
-> > > They allow the data structures to be rebuilt in the optimal way using
-> > > large pages).
-> > >
-> > > > Given that the kthreads are tied to user processes, I think it'd be=
- better
-> > > > to behave similarly to user tasks as possible in this regard if use=
-rspace
-> > > > being able to stop/cont these kthreads are okay.
-> > >
-> > > Yes, I totally agree with you on that, I'm just not sure of the best
-> > > way to do it.
-> > >
-> > > I will try keeping the kthread and adding allow_signal(SIGSTOP).  Tha=
-t
-> > > should allow me to process the SIGSTOP via get_signal().
-> >
-> > I *think* you can just copy what io_wq_worker() is doing.
+> I'm a bit confused here.  It's TPM2_PCR_Extend we have the trouble with
+> (as Mimi says in her email that you quoted) not TPM2_GetRandom.
 >
-> Any update on this? We keep getting reports of this issue, so it would
-> be great if there was a fix for 6.12. Thanks!
+> The random number generator reseed occurs in a kernel thread that fires
+> about once a minute, so it doesn't show up in really any of the boot
+> timings.  Plus even with sessions added, what there now isn't a
+> significant overhead even to the running kernel given it's asynchronous
+> and called infrequently.
 
-No, did not have time yet.
+Ah, right then we need the boot flag, and my earlier comments to the
+parameter apply. I've never used IMA so I don't actually even know in
+detail how it is using TPM.
 
-Paolo
+Now that I did some seek I mixed this up with the report:
 
+https://chaos.social/@gromit/113345582873908273
+
+Anyway concerning this issue and patch, my earlier comments still apply.
+
+BR, Jarkko
 
