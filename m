@@ -1,107 +1,93 @@
-Return-Path: <linux-kernel+bounces-398287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C839BEEFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:26:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018A79BEEFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37AB4B22068
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA755286AD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22161E048E;
-	Wed,  6 Nov 2024 13:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LhG+/OG3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6AC1DF976;
+	Wed,  6 Nov 2024 13:26:40 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37FD1DF995;
-	Wed,  6 Nov 2024 13:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7783E191461
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730899574; cv=none; b=smT8k5tlTJu0/y30VTk6yLlzvzQ4xasR/RM49gciUEJedt9xmPdZoGJl0NyYY4+vSUOC/F7R3aI1ktiuagPG/8XYt2HGmnDXi/bIEKQ38mJUOe/Bo3qUA/smVNJtB4jQR6k/MpyPiPgPwaf0eogiICGalZ1IoV6wud77tYdS5Tk=
+	t=1730899599; cv=none; b=n23iiZFVBRYdxWvAiNYRzKXA9RtYJ9PXO/yDs0vevH/iuuQI4HQIqlk3tBfJpcGBGE9xyh0S1gHYRrAGS7iRDZ3CJWQS4v1YLjs+Ybup/dLzqvQzvZuvfv+pzhCkF/VJKtMiMWz/GjjFiG+gAHm4ykbLGz25pNn1ycdYbNjL65Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730899574; c=relaxed/simple;
-	bh=2TKdnD2pCGp1HGWZ+uy5SvmeSKhAzj5r5r+FuhZcNnM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UwHFlqyhwYSjqgGHnWUubjx58e8Yb3G671Y4/X7FlprnAKBB8nF8SZoRYnXwmnkcLyZGvjn5RSfSPaj9z7Nd62DK2cu3d7OuTUOAzSnh0n8QTXKT+S0MoyRLTuWhfyb351adaQWEC+VJ6jMIvfAAPmKWTU4IcIGpsCZIyCQLHlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LhG+/OG3; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730899573; x=1762435573;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=2TKdnD2pCGp1HGWZ+uy5SvmeSKhAzj5r5r+FuhZcNnM=;
-  b=LhG+/OG3fRwglFM8XVBHdYgODj+WXKnaGHhXGSznzdl+B1TJyeXp8mck
-   ON7txYTqn+bRCwVu05Wkc846EBg/7f0i3VgPGTCObHcYo70CrYYxO1Qiz
-   T4vshIKeWQGFJNLivb5EBdPNp4ofQerAzVzzWAnJhGREcu1K1+0fp4okU
-   DOyFDLuH+TcojFhd53QmyEaL9kMg6SOgSYFU0Bgzm5hhjRoA7PqLf4nAQ
-   U7h5MlmYU41Pb0qTh8gl9PsV3X01QmTlcTkztb0IPi/eywMABMWgpDSR2
-   H568EIyy6RbggSlhrt7ijTd+Qz6yf5MUSqOXRx8uktTIjU2gG1/SbmDx5
-   Q==;
-X-CSE-ConnectionGUID: rnu/23JkSXiag4XQZk+D0Q==
-X-CSE-MsgGUID: XW+wSWyOR1Ob2B3ejb6MYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41245267"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41245267"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 05:26:13 -0800
-X-CSE-ConnectionGUID: TWzhqo02T/qVt+hq3bqvhQ==
-X-CSE-MsgGUID: nT34LukQQ6C+6LKEHajdnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="84638577"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.110])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 05:26:09 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
- Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
- Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-In-Reply-To: <20241105152813.60823-1-lukas.bulwahn@redhat.com>
-References: <20241105152813.60823-1-lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in INTEL TPMI DRIVER
-Message-Id: <173089956521.2259.13164548577532945229.b4-ty@linux.intel.com>
-Date: Wed, 06 Nov 2024 15:26:05 +0200
+	s=arc-20240116; t=1730899599; c=relaxed/simple;
+	bh=CEvR2wN90zI8nazSZ3qTAEzn6FARJPmdgsYn3mybFr8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IJbGumdfEbs2oJ0tjCCyNObsAIM8/MJ6vOg8coDAOP9EEgp5NhBgOGxke09GPLDUrnv8oAua2ReVet6dYCHw/FPRZR/O76RcrxAF9ZV3Ygi0PupHZQJAwT2EwklGWmnLm3SDmjd1sBla54SF749nwgAJ9IK4DML0bCUKLWz/9o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2473:2222:191a:9acf])
+	by baptiste.telenet-ops.be with cmsmtp
+	id ZRSS2D00e52sj0y01RSTcZ; Wed, 06 Nov 2024 14:26:28 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t8g2x-006MWd-2p;
+	Wed, 06 Nov 2024 14:26:26 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t8g3G-006VYZ-OI;
+	Wed, 06 Nov 2024 14:26:26 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geoff Levand <geoff@infradead.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] powerpc/ps3: Mark ps3_setup_uhc_device() __init
+Date: Wed,  6 Nov 2024 14:26:25 +0100
+Message-Id: <31fe9435056fcfbf82c3a01693be278d5ce4ad0f.1730899557.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 05 Nov 2024 16:28:13 +0100, Lukas Bulwahn wrote:
+ps3_setup_uhc_device() is only called from ps3_setup_ehci_device() and
+ps3_setup_ohci_device(), which are both marked __init.  Hence replace
+the former's __ref marker by __init.
 
-> Commit df7f9acd8646 ("platform/x86: intel: Add 'intel' prefix to the
-> modules automatically") renames tpmi.c to vsec_tpmi.c in
-> drivers/platform/x86/intel/, but misses to adjust the INTEL TPMI DRIVER
-> section, which is referring to this file.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> [...]
+Note that before commit bd721ea73e1f9655 ("treewide: replace obsolete
+_refok by __ref"), the function was marked __init_refok, which probably
+should have been __init in the first place.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/powerpc/platforms/ps3/device-init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] MAINTAINERS: adjust file entry in INTEL TPMI DRIVER
-      commit: 44ed58e57984d0fb26d1e267deb9d83a1a071dfe
-
---
- i.
+diff --git a/arch/powerpc/platforms/ps3/device-init.c b/arch/powerpc/platforms/ps3/device-init.c
+index b18e1c92e554ce87..61722133eb2d3f99 100644
+--- a/arch/powerpc/platforms/ps3/device-init.c
++++ b/arch/powerpc/platforms/ps3/device-init.c
+@@ -178,7 +178,7 @@ static int __init ps3_setup_gelic_device(
+ 	return result;
+ }
+ 
+-static int __ref ps3_setup_uhc_device(
++static int __init ps3_setup_uhc_device(
+ 	const struct ps3_repository_device *repo, enum ps3_match_id match_id,
+ 	enum ps3_interrupt_type interrupt_type, enum ps3_reg_type reg_type)
+ {
+-- 
+2.34.1
 
 
