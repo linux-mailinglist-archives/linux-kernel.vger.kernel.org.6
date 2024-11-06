@@ -1,119 +1,227 @@
-Return-Path: <linux-kernel+bounces-398018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E989BE44D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:32:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4705C9BE453
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247301F23A1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:32:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C84285504
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7D21DE2BF;
-	Wed,  6 Nov 2024 10:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F991DC1AF;
+	Wed,  6 Nov 2024 10:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bY9MPnaX"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEe0G69y"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A21A1925AC
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9719173;
+	Wed,  6 Nov 2024 10:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730889127; cv=none; b=g5Z6cjzy+VHB2YLZBhNAse3NTIa19wIDdVcq56ZrXhHpW0dGJRn5iUuiG2C21p2FTtH7CccK3P2bOkn8XYEPYLcIbjK7HEl9vSe9TAmC67O8ocNSRDNhm2qkqwuzaLcx2bast4H4lEodcpez9U2Eod//gKsr7/mEKHh9Me5TJyc=
+	t=1730889267; cv=none; b=ojNNFFmtSvhflxFXIpN0EeEONdGhLNVb4hCygxHj0UXmhi2xzhLTDhMnE8Payw2iM8MtKNJRL1XkpXC4ArvIwADOOmpWIzbxflImnWYVWPAS73y2Fz3LPl2RogYXGJMJlkSyMPQTys+jguLyzH+JOLkRrse7ilSZkIPT+mrueq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730889127; c=relaxed/simple;
-	bh=Q5poYfktsvGS71s9aS4q+CSekomjeLYYAsuyry1Y2Ts=;
+	s=arc-20240116; t=1730889267; c=relaxed/simple;
+	bh=jLYcTWP7ycbUss0mFpIBYF0D5uo1nsf7Zv3XMVr1lUk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V35JmrFzyV9BkeKWwiHU0VZ07VFKX0D5cj28TXjvBvdReXnyhMJF7wTeGYYGz2vrMizLu3FGURLeiuJ1E+FeAj1wGQTyTX2K/7ASksmnw8y/b/UwvuR3nyq856IHKvzp5uv5gNa9vYbayktqCOZAvUTCXV6xQdFvMz1AB5FSUfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bY9MPnaX; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d538fe5f2so4407374f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 02:32:05 -0800 (PST)
+	 To:Cc:Content-Type; b=ou4MrfwLc+8YRzvyNmEs38ga0br2aHA2jhvYQbsG5bzu7F1SSPKsuJeiHgP7+vf4qp0MpmSvpB9Gd7x9eOoSVe8woWZvdZBhS9/3AB5tgX43i6gRg8xi3J8xLZBeXS06x1joXUWw4CD6sLXg2Myf7BTf4tK3KSCLf1/EJaI957c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VEe0G69y; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso8235619276.1;
+        Wed, 06 Nov 2024 02:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730889124; x=1731493924; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730889265; x=1731494065; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZafzsinukWqaTiyA6PRRzr4gyDshbzX8EvcpHMVNLns=;
-        b=bY9MPnaXiTHpGt2VRx+ZVCesNiKuXDN40BCamomGEhckCyf7/uJ9gJXeiOEJTEZGl8
-         tXfA7Ulxo77q4SqdSV6DUY4D22szylPP3PLnCeTdBp+JZuGQhv4U8EK9+CUT8VK0Etyt
-         tZOv+kYGCAU/4W5P147BputAjr+b2mOUK4NIVAGIWTrb2tEvlxdR4f+guJ+FGl/tQ6ms
-         uppFrQrBLyxtVF2xk2C6UVLnTu0raU6/Pg67tFqgXRYI87p53/CRoWRBDgNrPTdHZYPj
-         0rNu8um1hN35L200LTKPYjAAZfFJT3fwO9i03A/6u0gzC7I43Nhheos0j8Qwr56VkO6R
-         rbww==
+        bh=OE3q1GvNioQeiRfUFxz5uhBFdp3vdG704Ksuu9Ul/wI=;
+        b=VEe0G69yaSdBm5/mMAHS9YYXVpzpQHi8yQQmVwEYXP8tqC+nMM4kAqK8T9vQO1yWYO
+         SSW2MyKOHziDFxx9bJmrflb0x3fSTytfEyfbWDfdcpzMUTU5MbEr0uNCncZGFR6HcV73
+         cfo1zLRnsYT7j5k6azC4iRAf0UBPwfFe9TMM9tODVZ8OcA2c/DKexGLUs93f2mBbpd2s
+         aKTnFVMl8PjrH6M/xJC7gh8wcP9XzCTmxhFpjYzI8kwj8OMO4BDlk1SiLu4ypj/UVQGL
+         aks9woPExawfg0voDnESwNA/KC1vtikJOtNrLRjmw9BZLv+ah5K2oA8S+vtdry02V3kU
+         8WIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730889124; x=1731493924;
+        d=1e100.net; s=20230601; t=1730889265; x=1731494065;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZafzsinukWqaTiyA6PRRzr4gyDshbzX8EvcpHMVNLns=;
-        b=wh0Ujamv5c4FodIPqS7mHkCJP9rmP9WhZcwieg3v4LhyeYIorXqw8vm6grl1AhpSko
-         rOXGy3T04JDM63Asga3kPO9PbeWA58YBosSIP3OXTx1H4nTcNKnGU8kPJU+Th4rd9qej
-         8qhtYxxJzPKK/HbQGed6AguxbqmJjnFXm2H8tIe9yf5+uw6kgDoR3Uh3iLlEnFolIUd9
-         ePgRTlgVKPe5gkYzwKk80MKa0N5jyIi65XMP/tT/zPNWqfmz1/Wf9sQok8i9mb/F/cwz
-         kB7yJeZIQnxVtVvP5Dcx6HOA3GP7LktKTiBHJu9BWP8MkiJxyONjGRemrnFchakM12Xg
-         rRVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOB2K+RAvOeRm+JWfw7cLGopMIKnmyAgPHMcB7y1hpSQF7ZhMTOMc57UDdBIHtYfVehmRfWFI3BKCuugQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIf+JBB/1aM9orzg42otTfe0kZqgGobCJuL3NnDbwNXrl1OyIN
-	597pv+3PeoCIXX4Q97e2999TD+OwxTbdmOGIDzUTUu9hZjkj6OxeyLWlNhCJJGkpgQBGzddeH+l
-	SXjrf0c5Xqzcr3PbhNRrrRgUh5oUyZLFhXqmb
-X-Google-Smtp-Source: AGHT+IE5skJ22YR7bGRMtACJ5E6pg6v3a0PstIzVtR6wDeA00nLsEbZdA7aI5AhsIKnBKuim3PR8pEe6G6r18yg6IbE=
-X-Received: by 2002:a05:6000:1a8e:b0:368:37ac:3f95 with SMTP id
- ffacd0b85a97d-381be7d8f8bmr19584152f8f.31.1730889124182; Wed, 06 Nov 2024
- 02:32:04 -0800 (PST)
+        bh=OE3q1GvNioQeiRfUFxz5uhBFdp3vdG704Ksuu9Ul/wI=;
+        b=qtOuhvZCjkq/bSm1PajCfGLTfcIJaNQEys2FCNh/O7tSGV1DzvzB+GSCxCYjrYF588
+         Q9zj1MIUzXUbIS+Yc1h4QpQwyn2nLdW6uvIa0bYpRXRLeg2x8jHmcKlDaWKUNX9eXF6H
+         JrZaqNRYC1kA/IMDpeXZHHdF94CaccYLe9ath/etdkTn6YvvjRXcdL0TsOU6T0A2Kabr
+         6z2JFyOPTQyiDGNmtgMQSOkGV7oeuCMg0wujMsQHanOzJgYBPBT1HTvUHKFZu26LgyL9
+         DWp2gwQaV5peiXqtifpXlnNk1nvP/cqQiL4L304AlhrpQlnee+w5IL2PJ9+6NinN3pOP
+         A9sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYpxIsR8++uXlk5X8Uy17hA2GnjJJlhD4AHLTStzSzee8ReC8Sa8WC3K+0aB65HK9xplZ5inPKM/dqXYUv@vger.kernel.org
+X-Gm-Message-State: AOJu0YyptvGfTQ22Lh1F1AHi2yjZjWFEjfdTiH+HlQYhrDj4de6qW7up
+	h62+yvD9oLKx5IVE7hn7Qlg2oMKlzWM+TijKZqak6Cun124FBj+gFypFYkQb8zjtERPeo7QLxuu
+	xU50guvJDI9S/hpnkeMB0pEH0t6E=
+X-Google-Smtp-Source: AGHT+IFIuZlBTzsY7QmQZ8OFkr+/SPnJUWs77uPzNNbCoTJyFakWzCJEzuPSW2ghUAyzTa0SVhaoaIaYZ2cUEHa1lOk=
+X-Received: by 2002:a05:690c:3584:b0:6ea:84e9:15fb with SMTP id
+ 00721157ae682-6ea84e91ae7mr124782297b3.24.1730889264870; Wed, 06 Nov 2024
+ 02:34:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024-topic-panthor-rs-platform_io_support-v1-1-3d1addd96e30@collabora.com>
-In-Reply-To: <20241024-topic-panthor-rs-platform_io_support-v1-1-3d1addd96e30@collabora.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 6 Nov 2024 11:31:52 +0100
-Message-ID: <CAH5fLghzPr8KgneqX=K=AfMYy2Neej2ayfkzMaRWjwYaFiS+kQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: platform: add Io support
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jeffrey Vander Stoep <jeffv@google.com>
+References: <CAOQ4uxi-G3u0fXDdD4a_5p_HAFSh7oJ5C0w5RZeDh=jM353qvg@mail.gmail.com>
+ <tencent_73EE0DCC923DDDAB5DD8995C4F958DE92507@qq.com>
+In-Reply-To: <tencent_73EE0DCC923DDDAB5DD8995C4F958DE92507@qq.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 6 Nov 2024 11:34:13 +0100
+Message-ID: <CAOQ4uxgU0fdEtksACCmvrUEU+hhsBJqK+HSVEhW9vqcvAakCrA@mail.gmail.com>
+Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_encode_real_fh
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	miklos@szeredi.hu, syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 4:20=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
-> +    /// Maps a platform resource through ioremap() where the size is kno=
-wn at
-> +    /// compile time.
-> +    pub fn ioremap_resource_sized<const SIZE: usize>(
-> +        &self,
-> +        resource: u32,
-> +    ) -> Result<Devres<IoMem<SIZE>>> {
-> +        let res =3D self.resource(resource)?;
-> +        let size =3D self.resource_len(resource)? as usize;
-> +
-> +        // SAFETY: `res` is guaranteed to be a valid MMIO address and th=
-e size
-> +        // is given by the kernel as per `self.resource_len()`.
-> +        let io =3D unsafe { IoMem::new(res as _, size) }?;
+On Wed, Nov 6, 2024 at 11:18=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> =
+wrote:
+>
+> On Wed, 6 Nov 2024 09:20:24 +0100, Amir Goldstein <amir73il@gmail.com> wr=
+ote:
+> > On Wed, Nov 6, 2024 at 3:43=E2=80=AFAM Edward Adam Davis <eadavis@qq.co=
+m> wrote:
+> > >
+> > > On Mon, 4 Nov 2024 20:30:41 +0100, Amir Goldstein <amir73il@gmail.com=
+> wrote:
+> > > > > When the memory is insufficient, the allocation of fh fails, whic=
+h causes
+> > > > > the failure to obtain the dentry fid, and finally causes the dent=
+ry encoding
+> > > > > to fail.
+> > > > > Retry is used to avoid the failure of fh allocation caused by tem=
+porary
+> > > > > insufficient memory.
+> > > > >
+> > > > > #syz test
+> > > > >
+> > > > > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> > > > > index 2ed6ad641a20..1e027a3cf084 100644
+> > > > > --- a/fs/overlayfs/copy_up.c
+> > > > > +++ b/fs/overlayfs/copy_up.c
+> > > > > @@ -423,15 +423,22 @@ struct ovl_fh *ovl_encode_real_fh(struct ov=
+l_fs *ofs, struct dentry *real,
+> > > > >         int fh_type, dwords;
+> > > > >         int buflen =3D MAX_HANDLE_SZ;
+> > > > >         uuid_t *uuid =3D &real->d_sb->s_uuid;
+> > > > > -       int err;
+> > > > > +       int err, rtt =3D 0;
+> > > > >
+> > > > >         /* Make sure the real fid stays 32bit aligned */
+> > > > >         BUILD_BUG_ON(OVL_FH_FID_OFFSET % 4);
+> > > > >         BUILD_BUG_ON(MAX_HANDLE_SZ + OVL_FH_FID_OFFSET > 255);
+> > > > >
+> > > > > +retry:
+> > > > >         fh =3D kzalloc(buflen + OVL_FH_FID_OFFSET, GFP_KERNEL);
+> > > > > -       if (!fh)
+> > > > > +       if (!fh) {
+> > > > > +               if (!rtt) {
+> > > > > +                       cond_resched();
+> > > > > +                       rtt++;
+> > > > > +                       goto retry;
+> > > > > +               }
+> > > > >                 return ERR_PTR(-ENOMEM);
+> > > > > +       }
+> > > > >
+> > > > >         /*
+> > > > >          * We encode a non-connectable file handle for non-dir, b=
+ecause we
+> > > > >
+> > > >
+> > > > This endless loop is out of the question and anyway, syzbot reporte=
+d
+> > > > a WARN_ON in line 448:
+> > > >             WARN_ON(fh_type =3D=3D FILEID_INVALID))
+> > > >
+> > > > How does that have to do with memory allocation failure?
+> > > > What am I missing?
+> > > Look following log, it in https://syzkaller.appspot.com/text?tag=3DCr=
+ashLog&x=3D178bf640580000:
+> > > [   64.050342][ T5103] FAULT_INJECTION: forcing a failure.
+> > > [   64.050342][ T5103] name failslab, interval 1, probability 0, spac=
+e 0, times 0
+> > > [   64.055933][ T5103] CPU: 0 UID: 0 PID: 5103 Comm: syz-executor195 =
+Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+> > > [   64.060023][ T5103] Hardware name: QEMU Standard PC (Q35 + ICH9, 2=
+009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> > > [   64.063941][ T5103] Call Trace:
+> > > [   64.065199][ T5103]  <TASK>
+> > > [   64.066296][ T5103]  dump_stack_lvl+0x241/0x360
+> > > [   64.068028][ T5103]  ? __pfx_dump_stack_lvl+0x10/0x10
+> > > [   64.069939][ T5103]  ? __pfx__printk+0x10/0x10
+> > > [   64.071667][ T5103]  ? __kmalloc_cache_noprof+0x44/0x2c0
+> > > [   64.073756][ T5103]  ? __pfx___might_resched+0x10/0x10
+> > > [   64.075720][ T5103]  should_fail_ex+0x3b0/0x4e0
+> > > [   64.077525][ T5103]  should_failslab+0xac/0x100
+> > > [   64.079341][ T5103]  ? ovl_encode_real_fh+0xdf/0x410
+> > > [   64.081295][ T5103]  __kmalloc_cache_noprof+0x6c/0x2c0
+> > > [   64.083282][ T5103]  ? dput+0x37/0x2b0
+> > > [   64.084758][ T5103]  ovl_encode_real_fh+0xdf/0x410
+> > > [   64.086578][ T5103]  ? __pfx_ovl_encode_real_fh+0x10/0x10
+> > > [   64.088687][ T5103]  ? _raw_spin_unlock+0x28/0x50
+> > > [   64.090550][ T5103]  ovl_encode_fh+0x388/0xc20
+> > > [   64.092281][ T5103]  exportfs_encode_fh+0x1bd/0x3e0
+> > > [   64.094122][ T5103]  ovl_encode_real_fh+0x129/0x410
+> > > [   64.095883][ T5103]  ? __pfx_ovl_encode_real_fh+0x10/0x10
+> > > [   64.097852][ T5103]  ? bpf_lsm_capable+0x9/0x10
+> > > [   64.099620][ T5103]  ? capable+0x89/0xe0
+> > > [   64.101064][ T5103]  ovl_copy_up_flags+0x1068/0x46f0
+> >
+> > I see. it is nested overlayfs, so a memory allocation failure in the lo=
+wer
+> > overlayfs, causes ovl_encode_fh() to return FILEID_INVALID.
+> >
+> > > >
+> > > > Probably this WARN_ON as well as the one in line 446 should be
+> > > > relaxed because it is perfectly possible for fs to return negative =
+or
+> > > > FILEID_INVALID for encoding a file handle even if fs supports encod=
+ing
+> > > > file handles.
+> > > >
+> >
+> > As I wrote, the correct fix is to relax the WARN_ON from
+> > fh_type =3D=3D FILEID_INVALID and fh_type < 0 conditions because
+> > those are valid return values from filesystems.
+> Oh, You mean is following diff?
 
-This cast looks wrong to me. You're taking a pointer to `struct
-resource` and casting that to an MMIO address? Shouldn't the address
-be (*res).start?
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index 2ed6ad641a20..32890cc0dd4a 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -443,9 +443,7 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs *ofs,=
+ struct dentry *real,
+>         buflen =3D (dwords << 2);
+>
+>         err =3D -EIO;
+> -       if (WARN_ON(fh_type < 0) ||
+> -           WARN_ON(buflen > MAX_HANDLE_SZ) ||
+> -           WARN_ON(fh_type =3D=3D FILEID_INVALID))
+> +       if (WARN_ON(buflen > MAX_HANDLE_SZ))
+>                 goto out_err;
+>
 
-Danilo already mentioned this, but I think you're missing a call to
-`request_mem_region` as well.
+No. sorry, what I meant with "relax WARN_ON" was to remove the WARN_ON, so:
 
-> +        let devres =3D Devres::new(self.as_ref(), io, GFP_KERNEL)?;
+       err =3D -EIO;
+       if (fh_type < 0 || fh_type =3D=3D FILEID_INVALID ||
+           WARN_ON(buflen > MAX_HANDLE_SZ))
+                 goto out_err;
 
-What purpose does the Devres serve?
+Meaning that error should definitely be returned in those cases,
+but there is no reason for the assertion which is what syzbot
+was complaining about.
 
-Alice
+Thanks,
+Amir.
 
