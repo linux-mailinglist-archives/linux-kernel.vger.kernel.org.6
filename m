@@ -1,74 +1,115 @@
-Return-Path: <linux-kernel+bounces-397524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545AA9BDCFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:36:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3549BDD07
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA721F24A7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F89283C5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87F218FC86;
-	Wed,  6 Nov 2024 02:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA581D0F44;
+	Wed,  6 Nov 2024 02:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KF/7FHeX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfwlKML7"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10804190462;
-	Wed,  6 Nov 2024 02:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BF11D0BA0;
+	Wed,  6 Nov 2024 02:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859652; cv=none; b=KDsckUtuAV97hnVnGaP8KIDSi3cJKEHOv+zciHnSbgiPSrKRIT7Egz1LhdCcc7X8Sz92iEb/MbkSSZrY8oqcjijFapFUYaXHYE8V5cCxfWCFOEpH0ELnPT2Q9ebL5JU1S5rln17wEUeXseJ9ifqiWNXLxcHcPJQnwy2WJXcHrcU=
+	t=1730859961; cv=none; b=ql/YuZ78go72SDGVTZNt24pZge+Fem1swp8cKIDpqSd3IiD/FTAs4LO36C5LSzy3Ssm4AFX4YdUEuPaMmrHbSN/eiQTDu7qpWGoHV0uoacOHqR7M1qXLxSyVtHF+QMtDEKTUCzmlhmUwH/8HqmtF8GX4KqUcbslPW5cOLkkK9ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859652; c=relaxed/simple;
-	bh=JQwZWqay0fD/RVvSUq/M7j+EthA8PgKPkA3/ngbOuF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iFcXgWxLaexUVqwRkIjA/CS/SAMzCnemAb+z6Qn6vKj/5UbQGZqQ0Ayg6I3nMLgN27T9hdd/INEYyNelFM1O2TMSSbRyF+eRqHW90jrGX2ELtIZrdCv7rb1Y6yhMsmxTCNLHVE63LTPu05sosxQ98tN53uGDjeveLMlHb9ETeaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KF/7FHeX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEF43C4CECF;
-	Wed,  6 Nov 2024 02:20:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730859651;
-	bh=JQwZWqay0fD/RVvSUq/M7j+EthA8PgKPkA3/ngbOuF4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KF/7FHeXI9aKLJBwKxLnNY6wq54eyINIDMfExomu8YLPUTv+YYLNMj7o7ajtMMxqn
-	 PMAPN6PxUti4+6ybZwg4Fs4UgKJhld9T0g17Em38dezveqmQQC1+YymOrTSPJaX+h/
-	 0Z7BMzz1yoEQaIrquQwaiGB/xs3U/thQ4yYD6TxPwtlCcaqls5rO3M2oPGJUUcrNQx
-	 j5qTGOiUo5tVq58m1/pRnBRwS6aK1LVivF9YFqxx+VfieFeHytAEBXDtFkEo34v+V7
-	 9zNNA75klioy00Xrw4vX5B2KCkHwgp8rbEGR/3LlJxtbww3I6jICHoMT4TDXU6MkvT
-	 khDR9erObcLrg==
-Date: Tue, 5 Nov 2024 18:20:50 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
- <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Richard
- Cochran <richardcochran@gmail.com>, Alexis =?UTF-8?B?TG90aG9yw6k=?=
- <alexis.lothore@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 0/9] Support external snapshots on dwmac1000
-Message-ID: <20241105182050.2839f1e7@kernel.org>
-In-Reply-To: <20241104170251.2202270-1-maxime.chevallier@bootlin.com>
-References: <20241104170251.2202270-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1730859961; c=relaxed/simple;
+	bh=Ga2D97KZpZQx6YoyIZmGok19w3T5OcLWLUO8jQGvZpk=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=jFAtCnwIFw+ynRoAW5MuZqgUQsM9xrLYxFolB+oUDvNsABL1A+VM94WShAQ3uj4W3ZbL7bMF0bFdJ3FaN2vz/xrpFDEq4VXBn8H0PqdSGY//+cLOOlY3ETNRaiCmSffxfB8lm8TGUlLTHaU9ZyLVYvWZr+60MzEYAAO0/ObQNtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfwlKML7; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2110a622d76so47330895ad.3;
+        Tue, 05 Nov 2024 18:25:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730859959; x=1731464759; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QId6zyuhVAFO0zUHn6SCG/UmTpu93h5H3UtKXVtla4U=;
+        b=nfwlKML78XfWDoapTQpe7dNl17/gGl3761FA48v0czV21Fzgd+NMF1yDkZEzB2dm4T
+         zMqJPvcDInS1gPawpmev3Unk/4QMwQW7nbSQn+ijQK7NS6dWtHW1Vh0nlmB6zXIUPWzK
+         ih54w+j/MBsAD/bHztKVkHZ5M2G9vBUWSGYzhV8+afHsOig1qvs3xe4iyew2ftTdQvFq
+         JyT+9GfMLyBbsH51D5+O5j9LFZBT2yaIlgGUpKYbAqGb/W49izruHu0bS5cKyTZPi2Z3
+         6P3YnuYQjQMImTGUhz9KJHy7yPodovjyYck1jYYod32U5zITp+SlfyrthWAW42jCmRer
+         21Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730859959; x=1731464759;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QId6zyuhVAFO0zUHn6SCG/UmTpu93h5H3UtKXVtla4U=;
+        b=sFV7zLzK6RzK3l7DWiiXmo0xNTc253+U3y16o73Jfsc64nwpsCR18r0zRtgdQ57Y4A
+         b+0kuD9WGayLi4bZx5xaDUQwDhIzI+iwM1r6nBJTaCx5ec7B9sik/9md/E50hyQ+Qj1c
+         kVhTutD3XJYfi65UnsnPAjOLVhlBLUXj7r8wLTedqTN3mRUn9Ievupj8Th7WQRaPPFJA
+         VX5KuCaOag1HBs9OVwm4Xn6r2r9NRKTlNv4xPlMJVlf7IBJTRhI7VRxsyIA8S5Rp6Aqr
+         aMFRWC8A6TuFZHmfC7Khs7rRh02e4qikTi3vlG6M8BN1PE/0ekadPU+kG6ZI7/waKSsY
+         +Npg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBiGI+Mi+gJxpRh8B7CIgQqewTqvtbaEItXi1L0/bZRSvG6qbKxPa8JaagaJRYmH6bmA6P4L77Gw==@vger.kernel.org, AJvYcCWGGPAq047Qsbv9fB8fIyFAggn9K3QcY2W5cAI/XMoG/hdKD0gWLq19aNN3yYPTujmCBWE658shD6TkFmvg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUC58ZkUQQtkmiuwnNQ5S0o1EjpdIsRE/ykootNUynNSzeD6UJ
+	tFBePgjMR2SuxxJdqpk8BO6RCigcuqv4rcw8oHZceEi6j4K+N7z3aZFg9ourT7Q=
+X-Google-Smtp-Source: AGHT+IEpy/fWWcNr48m3F6c9ydWhFBd5TIPprNIIhpRemXcuysthbsmRuuS58b9DvRfzLAMjcKHKrA==
+X-Received: by 2002:a17:902:da91:b0:20c:82ea:41bd with SMTP id d9443c01a7336-210c68d4349mr511610375ad.18.1730859959173;
+        Tue, 05 Nov 2024 18:25:59 -0800 (PST)
+Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21105706891sm85661615ad.69.2024.11.05.18.25.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 18:25:58 -0800 (PST)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: Tyler Hicks <code@tyhicks.com>,
+	"GitAuthor: Daniel Yang" <danielyangkang@gmail.com>,
+	ecryptfs@vger.kernel.org (open list:ECRYPT FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ecryptfs_parse_options(): Replace strcpy with strscpy
+Date: Tue,  5 Nov 2024 18:25:26 -0800
+Message-Id: <20241106022527.493421-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon,  4 Nov 2024 18:02:40 +0100 Maxime Chevallier wrote:
->   net: stmmac: Only update the auto-discovered PTP clock features
+The function strcpy is deprecated. strscpy is recommended to replace
+strcpy. Instances of strcpy in ecryptfs_parse_options() don't require
+strcpy return value so the different methods of detecting truncation
+shouldn't be an issue here.
 
-Minor conflict in the context on this one, please respin.
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+---
+ fs/ecryptfs/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ecryptfs/main.c b/fs/ecryptfs/main.c
+index 577c56302..d0b8ce70c 100644
+--- a/fs/ecryptfs/main.c
++++ b/fs/ecryptfs/main.c
+@@ -379,12 +379,12 @@ static int ecryptfs_parse_options(struct ecryptfs_sb_info *sbi, char *options,
+ 		int cipher_name_len = strlen(ECRYPTFS_DEFAULT_CIPHER);
+ 
+ 		BUG_ON(cipher_name_len > ECRYPTFS_MAX_CIPHER_NAME_SIZE);
+-		strcpy(mount_crypt_stat->global_default_cipher_name,
++		strscpy(mount_crypt_stat->global_default_cipher_name,
+ 		       ECRYPTFS_DEFAULT_CIPHER);
+ 	}
+ 	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)
+ 	    && !fn_cipher_name_set)
+-		strcpy(mount_crypt_stat->global_default_fn_cipher_name,
++		strscpy(mount_crypt_stat->global_default_fn_cipher_name,
+ 		       mount_crypt_stat->global_default_cipher_name);
+ 	if (!cipher_key_bytes_set)
+ 		mount_crypt_stat->global_default_cipher_key_size = 0;
 -- 
-pw-bot: cr
+2.39.5
+
 
