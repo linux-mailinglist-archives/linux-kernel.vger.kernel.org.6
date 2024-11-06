@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-397894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307919BE203
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:12:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0881C9BE20B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:13:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E878F28331A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:12:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5551C22F96
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06F41DA622;
-	Wed,  6 Nov 2024 09:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA571DBB19;
+	Wed,  6 Nov 2024 09:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ts8RqOkv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hGDUXrcY"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748BB1DA0E1
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 09:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9F61DB365
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 09:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730884196; cv=none; b=puchDM7qrtCrsUbnCMi8u+A1a68seQQ44MzkKIn64jDBuLE3lqwYHfDT9fWwjcvh0lmalWDClNd1WXCtcXBD2jwljWXL6hi9IHTfkXD4EZoS4jjf5X9JkMH4sXtAOV9ukXK8qqm4JdQX2o4P+3F/hUojWw2RiA2xn0/A7smzt8E=
+	t=1730884267; cv=none; b=Rdl6xKgTGw2afIaL5Xe283sjDAbAzfcqxbcSz/Ty+sDbisvSSGUWotNl7uqPyH1v32h9slf/PEEjOmXglnw5zj4kPrsATItl0WKqkWUMJTlXDa128A/1baxW9QBaMZDzFTbRw7KWNn4HrCflyPivLEbqZ1RXtSKH9qV+WCKYet4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730884196; c=relaxed/simple;
-	bh=Ve3ngN2EEXHIJllVwR94QiODyXjYWDIRJ59WcErDYVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LORdMRay9IGw+zL7fIKGP9VI6+0q12DyynIRVUnoFGJTFHtLBsdIVdA7tUh5d8USbeTllnFBTid8+bvhHS3AwLfv0IiKwL793N+TqNo/k7v4sa3956eZ/uWOPoxUKxypE1L0bbW5uIWT4qRTzVMS71vpJJS004kmZQbMje1DmaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ts8RqOkv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730884193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eGIM5USzAXYsKg5z2NxV6SvyDptl8f4iMkBBwNNtWVo=;
-	b=Ts8RqOkvtmYR0V2a//4lP6iKh7EP6DbfKfPE9JnogIcLO0t5Ed7sIhE1hgw+FPcu21K1p/
-	o4PaLs+HkIt3kXFeKWupB3bo2he1ta/myVzcjoH/FJKL4QiByTk0r+kqn7DivfF+n3iz6c
-	J/7v16wvNdVUNlbN0JPdzPM126t9N/g=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-308-QxO4E2ABPRy-SNd0nF9W7A-1; Wed, 06 Nov 2024 04:09:52 -0500
-X-MC-Unique: QxO4E2ABPRy-SNd0nF9W7A-1
-X-Mimecast-MFC-AGG-ID: QxO4E2ABPRy-SNd0nF9W7A
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6cc10cd78e4so106486146d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 01:09:52 -0800 (PST)
+	s=arc-20240116; t=1730884267; c=relaxed/simple;
+	bh=1zAzLkW/f2nboF9qbLPIqlx5xCQjSwlZVzYtvjCOkKc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=I3r/sVM66hXvaeiWBxTlLB2CXzp3wjylcrObit5uKGOrBKdb6bhejun964OUQKod5SpOdg8EzotlcnH9hRVaei5w1xwf+G+XGpI1Y4yGW9vHdKlshyuwEyoHxE7ibBTGuhWIIrbe2/74rnAffE4BR0Sx5Vebj2hPkp9ZczgiTlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hGDUXrcY; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53c73f01284so166880e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 01:11:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730884263; x=1731489063; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/QYPghorRcTYN0shVQYwBn/dY0r8tY2xwb/60ofT3BI=;
+        b=hGDUXrcYOboR5kZaxvzBlo0hUQDiO1fwHMCA26CQNd811FkpJF9O0qcuWpo1U1hnYg
+         9sPq6iolq42LziI5H9sm4U7VL6Vpd1oNzxMBNUJS+dTmgGoJ5rihZERcAwXG/ez5lhWb
+         NcE9Av0Do7PnQlqTwsIP7qBk2cpNPuLhIF8WSNzTbZP2okeCaIru6+IpMD/8dZ++yH1R
+         ijCesYew4KytenuW9aJCQwBH0EN5DKtLLjwERBG13osRbQMRPKl3AYhoCZSe78PCKumO
+         fsQwN4KOzkEz9E1BO7ASEpnSV3xMXR453Poq73OFDTi3Z7tycy0LHkKLM2x8QIzrYxqk
+         VK3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730884191; x=1731488991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eGIM5USzAXYsKg5z2NxV6SvyDptl8f4iMkBBwNNtWVo=;
-        b=g/K+mhcdLg6LdYGCEFyo/knEZjzznOkBebjw8loIvEa4mbkhR6SGigc6ZbLFbONnNd
-         pUBD1B9n09UhrSOYjClxQXufxueuZsoVE6y0HlIFMeNlo9HSsY0dhJiAETJc+uV176cU
-         BdmNHpOvtW6A5pfe1IPNVCLQIpl1C+pnuBqIXYR6aD/jEIjbmO603o0wDL2rcID1FmCK
-         R8TtIZinRkofyI8kzx1a9qj7PdPJnkvWAhW5Djt3wXjxl3cyBvJVzId/hKW342cEgTPI
-         HX3c35ffCZHZWVm6OAjBwcHwmvxrZjidL+UoZd3ZIeXAVV8vwj95if4KNRC3KkLc1jLD
-         rS8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUUB4///GJsCkGSm3GOXfmExm1ADCf2d9VcRbwTLnGCxsm111N6kRsSJh8S6RjU5w1wUYlgtQRWuXWy6wE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdk0XLyEyk/R/TwfWi2jZtGDAYcIRDK3fuCRCYx/WCAVodjVPd
-	nevKpsfjxyInPcPPEVrp5d9fqyI7hGTfJqe9Z7xn5mxMzdl7189V7Tu9ssf4H00oLa91ITBdHo+
-	L3zDUkiTfZPFF9nU/6RMiMCShee0njS1EtZfHt9usi10mzW09Oa/NwTOlHxwlgO9/7sl6rxyL+A
-	f3xoZ3+HRRNojjKyhypfwEeGYrNHqC0pErBGNT
-X-Received: by 2002:a05:6214:2c0f:b0:6d3:71ab:adb9 with SMTP id 6a1803df08f44-6d371abc487mr181888996d6.45.1730884191749;
-        Wed, 06 Nov 2024 01:09:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGLsFkorkkGw4mojt664zWvWPLr3Scpo66osjjuJqG5oZ4qhtX+rowBC3sywsaK62RI3BDLKaQTGDUzR5Jf7D0=
-X-Received: by 2002:a05:6214:2c0f:b0:6d3:71ab:adb9 with SMTP id
- 6a1803df08f44-6d371abc487mr181888866d6.45.1730884191530; Wed, 06 Nov 2024
- 01:09:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730884263; x=1731489063;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/QYPghorRcTYN0shVQYwBn/dY0r8tY2xwb/60ofT3BI=;
+        b=fDA7Fwgoufj2/i3MGDTyvGuGnNehz1gu21eiN+e9y0ZPJ+jUfNDxsvly3rY55yykHD
+         xEPs7I4XpH9yGDOX7OalllkeIxmkXIuFwDJlFawDI+K0AZGZBO0G2IUYY1OZTGRNBy0D
+         /gN3Eb1uPzJggzg8h1P3v8oVVscVrjt34TCaBYCeGzo1Q7sEKhpUwXm60+IL4n5Jz/nM
+         3YoybtyjhvjTMoxaI0STJiIwPabMl++SNKintktpNSjVD96MUABalVCwHYepYRMkGrG9
+         vWy/+Nhr8roxg67k+T18moL1wDe06YHuH0vfqBmlpIzxk6+QfJuLFSy5R4XdivnkZLsJ
+         kKQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx6Ql0gE2VzFXeBUkzpFlaaqXYoSvArhLy4O4rhUEQAFWhX1wj0HQihp8nrD/e1LISwd1jk1V8uFOzygE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdF/NGPMz9s3lxF3MYe7xmbucR1Zi4s2S+VkM/5H3kJ18nzywh
+	DSP59nZJ14s3CxRH5whWqPl4FF1AzUmpbcvQZO0OvMZpksMrGx0XDXoa4IS9zN4=
+X-Google-Smtp-Source: AGHT+IFgFtkTNxczGyqzn7wYXW9ZEAg3W8OYU60DWsR7AGwkgCQzgf+QKFtY9ICn2zYQFSnBE45QLQ==
+X-Received: by 2002:a05:6512:3c9f:b0:539:dc87:fd3a with SMTP id 2adb3069b0e04-53c79e16040mr11342042e87.6.1730884262780;
+        Wed, 06 Nov 2024 01:11:02 -0800 (PST)
+Received: from [127.0.0.1] (85-76-77-12-nat.elisa-mobile.fi. [85.76.77.12])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc957aasm2443358e87.42.2024.11.06.01.10.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 01:11:01 -0800 (PST)
+Date: Wed, 06 Nov 2024 09:10:57 +0000
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ bhupesh.sharma@linaro.org, andersson@kernel.org, konradybcio@kernel.org
+CC: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com
+Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+User-Agent: Thunderbird for Android
+In-Reply-To: <ZyshSbJgLHTRaps1@cse-cd02-lnx.ap.qualcomm.com>
+References: <20241106072343.2070933-1-quic_yuanjiey@quicinc.com> <20241106072343.2070933-2-quic_yuanjiey@quicinc.com> <347uhs7apex3usmfpzrpwakrzchxactwtc7gs45indkzez2vfj@n75dc3ovl3g2> <ZyshSbJgLHTRaps1@cse-cd02-lnx.ap.qualcomm.com>
+Message-ID: <FF5BD9CD-8E5E-4C40-906C-8552C067AE8C@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <672ad9a8.050a0220.2a847.1aac.GAE@google.com>
-In-Reply-To: <672ad9a8.050a0220.2a847.1aac.GAE@google.com>
-From: Ming Lei <ming.lei@redhat.com>
-Date: Wed, 6 Nov 2024 17:09:40 +0800
-Message-ID: <CAFj5m9LSOvbaOdM8Gvgt8HVprB_DAxiFDOW3Qou8bfAtEz_e8g@mail.gmail.com>
-Subject: Re: [syzbot] [usb?] [scsi?] WARNING: bad unlock balance in sd_revalidate_disk
-To: syzbot <syzbot+331e232a5d7a69fa7c81@syzkaller.appspotmail.com>
-Cc: James.Bottomley@hansenpartnership.com, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	martin.petersen@oracle.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 10:51=E2=80=AFAM syzbot
-<syzbot+331e232a5d7a69fa7c81@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1051f55f98000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D704b6be2ac2f2=
-05f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D331e232a5d7a69f=
-a7c81
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D16952b40580=
-000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/dis=
-k-c88416ba.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinu=
-x-c88416ba.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/b=
-zImage-c88416ba.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+331e232a5d7a69fa7c81@syzkaller.appspotmail.com
+On 6 November 2024 07:56:57 GMT, Yuanjie Yang <quic_yuanjiey@quicinc=2Ecom>=
+ wrote:
+>On Wed, Nov 06, 2024 at 09:36:56AM +0200, Dmitry Baryshkov wrote:
+>> On Wed, Nov 06, 2024 at 03:23:42PM +0800, Yuanjie Yang wrote:
+>> > Add SDHC1 and SDHC2 support to the QCS615 Ride platform=2E The SDHC1
+>> > and SDHC2 of QCS615 are derived from SM6115=2E Include the relevant
+>> > binding documents accordingly=2E
+>>=20
+>> Which binding documents?
+>Thanks, the binding documents is sdhci-msm=2Eyaml=2E
+>I have modified this yaml patch in patch v1, and this yaml patch is
+>applied, so I remove this yaml patch in patch v2=2E
+>link:https://lore=2Ekernel=2Eorg/all/CAPDyKFr-Gzd3Mzn+vN6DXO9C4Xrvpv4z5V2=
+G_VRTzOa=3D89Fd3w@mail=2Egmail=2Ecom/
 
-#syz test: https://github.com/ming1/linux.git for-next
+The question is why do you mention bindings in the DTSI commit message? Pl=
+ease don't just C&P your texts=2E
+
+>
+>> > Additionally, configure SDHC1-related
+>> > and SDHC2-related opp, power, and interconnect settings in the device
+>> > tree=2E
+>> >=20
+>> > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc=2Ecom>
+>> > ---
+>> >  arch/arm64/boot/dts/qcom/qcs615=2Edtsi | 198 +++++++++++++++++++++++=
+++++
+>> >  1 file changed, 198 insertions(+)
+>> >=20
+>>=20
+>> --=20
+>> With best wishes
+>> Dmitry
+>
+>Thanks,
+>Yuanjie
 
 
