@@ -1,165 +1,186 @@
-Return-Path: <linux-kernel+bounces-398639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 512FF9BF3FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:09:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CA89BF405
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B969287A1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B05281CBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE3D20694E;
-	Wed,  6 Nov 2024 17:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BED206946;
+	Wed,  6 Nov 2024 17:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jtmkdDS0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="RCBd1X61"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E232064FF;
-	Wed,  6 Nov 2024 17:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD85720605D;
+	Wed,  6 Nov 2024 17:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730912942; cv=none; b=J5DMHdOBMyjjY8AgsmhWEZjJmfkGxFTc0LXyyLGT4H7hGtGkGbVn48E0dyOf3E7643ilq12K+gQSACA23rKXTrbE5Hyoxbo3RbUDxrICWFUi8NObfJtPnGwkHx3zzrmpF/pR3nHwJpr9CjrhW3nolEfCZ4G0Lk6MGybS3dZNUxc=
+	t=1730912990; cv=none; b=ZHRG70xibUCMJtoV1YFyx+XNGuFoEesqLPsrxXB/nBHvJGDHK5c96QNhG/VLMEYdfEAWFethAgyJpLqcDquK+WUCLNcVsmnOWePcTbbMfpsqNhB9wK3b2m90v+bwsVIxSZEy4OzbouwGTZEvtzq430voK85yiegVsZJOIfSAKJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730912942; c=relaxed/simple;
-	bh=jdDBuQ/io0RAwH8i8QYi2WqvPZGMUC8zmXe5Gdh6TPY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=m9uyPOd31l2sIxYUcETNrioiwa/L3h7cDDiKfVU889//mmKax/16h86vy6z6h956Aionw7r6qRSFQ5wkOQUqfhOq7sku/xESbg6upKrQfwFIj9/c9L+S5SYPoBKa8koBe9Es5DqTw8WubfdoAn0NR6Kk4aUgzuuMZhgj5tf1v3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jtmkdDS0; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730912941; x=1762448941;
-  h=message-id:date:mime-version:subject:from:to:references:
-   in-reply-to:content-transfer-encoding;
-  bh=jdDBuQ/io0RAwH8i8QYi2WqvPZGMUC8zmXe5Gdh6TPY=;
-  b=jtmkdDS0DYffxwUSgGbYPMEoJBBG9ickfLhN4QTfcyt2BEK3xaErhCjE
-   hZ/rDUN6cV0W1CkP01qaLVGumjcDyCzsIIxLTDMxtR5oMYujpQq68O2GL
-   KZxVoA+6Q7eaDmnXXBC3tXIfsusDWH/eu5a+5u0VrZhLCw5PycX+Ll849
-   90Ksd4V5VWG65kzTngWN0eiTFaCvVopM4KVXEpSEbXIvKI7Tiip2pSf06
-   EUUy7nxIsBb/ToEomJLIMJH76IoeUe04tqSEj0OL0uAOiNh4Bko1EHqjs
-   l7tQo9i2zav1dwo2MyyGzvtqmC1Ix0HhrJ1l8J8fSuAc4vHpqz4VQT2MG
-   w==;
-X-CSE-ConnectionGUID: U3lnfHcnRleQ/PCE9NcVsw==
-X-CSE-MsgGUID: ANneXoMTRru6M+L34FTpKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30881681"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30881681"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:09:01 -0800
-X-CSE-ConnectionGUID: kCtS4L9HT42XQyTuopVynQ==
-X-CSE-MsgGUID: W3MUBwIQRYS8JNN+Hli7dA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="84817570"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:08:59 -0800
-Received: from [10.212.82.230] (kliang2-mobl1.ccr.corp.intel.com [10.212.82.230])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 8819620B5703;
-	Wed,  6 Nov 2024 09:08:57 -0800 (PST)
-Message-ID: <365e34e3-929e-4b28-b0f2-ddcbaa09294a@linux.intel.com>
-Date: Wed, 6 Nov 2024 12:08:56 -0500
+	s=arc-20240116; t=1730912990; c=relaxed/simple;
+	bh=IIMXLu0XRvZ+8U+JOvjW7CrjFM8KZSomWoMTCbipas4=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ooVZVUcJDadLpnXWvyxZ1ZY3jrejM5O/vVkd1tO0L5hM2Wt4Um/x3s90MjiVOljPJABCC3SKXgqLZCbcFM6bO3PrTsdrAs5ez6u6vobh2zULOuW/DixCRMao8FIUJ1eI8VNwhAQ6jRuDYqRmx86i8sHNh+9w08+BDtv8QYMfNB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=RCBd1X61; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730912988; x=1762448988;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=IIMXLu0XRvZ+8U+JOvjW7CrjFM8KZSomWoMTCbipas4=;
+  b=RCBd1X61b8JpgA4cwj8XdHvDdy2W3PSdL+V7QTESKmGk/XW75SYd5t6D
+   D8NvYqKn/jVxhaNZP2AOGo8x1xNR+dgpOZ6Js0hidQgyWWMuZDoAV7uTv
+   A43hKM2FzRYeqWxgD5i4YO8qPR1YDMH16adcJZ4xpfv78rXfHJZbZuZ4t
+   M=;
+X-IronPort-AV: E=Sophos;i="6.11,263,1725321600"; 
+   d="scan'208";a="144914788"
+Subject: Re: [PATCH 2/5] arm64: add __READ_ONCE_EX()
+Thread-Topic: [PATCH 2/5] arm64: add __READ_ONCE_EX()
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 17:09:48 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:6315]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.28.15:2525] with esmtp (Farcaster)
+ id 20bcd19b-d844-41e7-b076-f7b9146dfb37; Wed, 6 Nov 2024 17:09:47 +0000 (UTC)
+X-Farcaster-Flow-ID: 20bcd19b-d844-41e7-b076-f7b9146dfb37
+Received: from EX19D001UWA002.ant.amazon.com (10.13.138.236) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 6 Nov 2024 17:09:46 +0000
+Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
+ EX19D001UWA002.ant.amazon.com (10.13.138.236) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 6 Nov 2024 17:09:45 +0000
+Received: from EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2]) by
+ EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2%7]) with mapi id
+ 15.02.1258.035; Wed, 6 Nov 2024 17:09:45 +0000
+From: "Okanovic, Haris" <harisokn@amazon.com>
+To: "will@kernel.org" <will@kernel.org>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rafael@kernel.org"
+	<rafael@kernel.org>, "boris.ostrovsky@oracle.com"
+	<boris.ostrovsky@oracle.com>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+	"ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>, "wanpengli@tencent.com"
+	<wanpengli@tencent.com>, "cl@gentwo.org" <cl@gentwo.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "misono.tomohiro@fujitsu.com"
+	<misono.tomohiro@fujitsu.com>, "daniel.lezcano@linaro.org"
+	<daniel.lezcano@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>,
+	"lenb@kernel.org" <lenb@kernel.org>, "mtosatti@redhat.com"
+	<mtosatti@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "maobibo@loongson.cn"
+	<maobibo@loongson.cn>, "vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "Okanovic, Haris"
+	<harisokn@amazon.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>
+Thread-Index: AQHbL7D9P6U0yGi3sU+ODiwZGjE2xLKqIrGAgABbR4A=
+Date: Wed, 6 Nov 2024 17:09:45 +0000
+Message-ID: <53b33d48c81b35bb3567ab19308f309b0f320e6a.camel@amazon.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+	 <20241105183041.1531976-1-harisokn@amazon.com>
+	 <20241105183041.1531976-3-harisokn@amazon.com>
+	 <20241106114302.GB13801@willie-the-truck>
+In-Reply-To: <20241106114302.GB13801@willie-the-truck>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C1BFC01D4A71E44A8101937144D111AF@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/22] perf jevents: Add idle metric for Intel models
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Perry Taylor <perry.taylor@intel.com>, Samantha Alt
- <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>,
- Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
-References: <20240926175035.408668-1-irogers@google.com>
- <20240926175035.408668-3-irogers@google.com>
- <452ec98c-b715-4e11-a605-0d6a1aafb91d@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <452ec98c-b715-4e11-a605-0d6a1aafb91d@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-
-
-On 2024-11-06 12:01 p.m., Liang, Kan wrote:
-> 
-> 
-> On 2024-09-26 1:50 p.m., Ian Rogers wrote:
->> Compute using the msr PMU the percentage of wallclock cycles where the
->> CPUs are in a low power state.
->>
->> Signed-off-by: Ian Rogers <irogers@google.com>
->> ---
->>  tools/perf/pmu-events/intel_metrics.py | 16 ++++++++++++++--
->>  1 file changed, 14 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
->> index 58e23eb48312..f875eb844c78 100755
->> --- a/tools/perf/pmu-events/intel_metrics.py
->> +++ b/tools/perf/pmu-events/intel_metrics.py
->> @@ -1,7 +1,8 @@
->>  #!/usr/bin/env python3
->>  # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
->> -from metric import (d_ratio, has_event, Event, JsonEncodeMetric, JsonEncodeMetricGroupDescriptions,
->> -                    LoadEvents, Metric, MetricGroup, Select)
->> +from metric import (d_ratio, has_event, max, Event, JsonEncodeMetric,
->> +                    JsonEncodeMetricGroupDescriptions, LoadEvents, Metric,
->> +                    MetricGroup, Select)
->>  import argparse
->>  import json
->>  import math
->> @@ -11,6 +12,16 @@ import os
->>  _args = None
->>  interval_sec = Event("duration_time")
->>  
->> +def Idle() -> Metric:
->> +  cyc = Event("msr/mperf/")
->> +  tsc = Event("msr/tsc/")
->> +  low = max(tsc - cyc, 0)
->> +  return Metric(
->> +      "idle",
->> +      "Percentage of total wallclock cycles where CPUs are in low power state (C1 or deeper sleep state)",
->> +      d_ratio(low, tsc), "100%")
-> 
-
-The mperf and aperf can be enumerated. It's better to check it before
-using it, has_event(mperf).
-
-Thanks,
-Kan
-
-> I'm not sure if the metrics is correct, especially considering the mperf
-> is a R/W register. If someone clear the mperf, the restuls must be wrong.
-> 
-> Thanks,
-> Kan
-> 
->> +
->> +
->>  def Rapl() -> MetricGroup:
->>    """Processor power consumption estimate.
->>  
->> @@ -68,6 +79,7 @@ def main() -> None:
->>    LoadEvents(directory)
->>  
->>    all_metrics = MetricGroup("", [
->> +      Idle(),
->>        Rapl(),
->>    ])
->>  
-> 
-> 
-
+T24gV2VkLCAyMDI0LTExLTA2IGF0IDExOjQzICswMDAwLCBXaWxsIERlYWNvbiB3cm90ZToNCj4g
+Q0FVVElPTjogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20gb3V0c2lkZSBvZiB0aGUgb3JnYW5p
+emF0aW9uLiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91
+IGNhbiBjb25maXJtIHRoZSBzZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCj4g
+DQo+IA0KPiANCj4gT24gVHVlLCBOb3YgMDUsIDIwMjQgYXQgMTI6MzA6MzhQTSAtMDYwMCwgSGFy
+aXMgT2thbm92aWMgd3JvdGU6DQo+ID4gUGVyZm9ybSBhbiBleGNsdXNpdmUgbG9hZCwgd2hpY2gg
+YXRvbWljYWxseSBsb2FkcyBhIHdvcmQgYW5kIGFybXMgdGhlDQo+ID4gZXhjbHVzaXZlIG1vbml0
+b3IgdG8gZW5hYmxlIHdmZXQoKS93ZmUoKSBhY2NlbGVyYXRlZCBwb2xsaW5nLg0KPiA+IA0KPiA+
+IGh0dHBzOi8vZGV2ZWxvcGVyLmFybS5jb20vZG9jdW1lbnRhdGlvbi9kaHQwMDA4L2EvYXJtLXN5
+bmNocm9uaXphdGlvbi1wcmltaXRpdmVzL2V4Y2x1c2l2ZS1hY2Nlc3Nlcy9leGNsdXNpdmUtbW9u
+aXRvcnMNCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBIYXJpcyBPa2Fub3ZpYyA8aGFyaXNva25A
+YW1hem9uLmNvbT4NCj4gPiAtLS0NCj4gPiAgYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9yZWFkZXgu
+aCB8IDQ2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hh
+bmdlZCwgNDYgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm02
+NC9pbmNsdWRlL2FzbS9yZWFkZXguaA0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0
+L2luY2x1ZGUvYXNtL3JlYWRleC5oIGIvYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9yZWFkZXguaA0K
+PiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi41MTk2M2Mz
+MTA3ZTENCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvYXJjaC9hcm02NC9pbmNsdWRlL2Fz
+bS9yZWFkZXguaA0KPiA+IEBAIC0wLDAgKzEsNDYgQEANCj4gPiArLyogU1BEWC1MaWNlbnNlLUlk
+ZW50aWZpZXI6IEdQTC0yLjAgKi8NCj4gPiArLyoNCj4gPiArICogQmFzZWQgb24gYXJjaC9hcm02
+NC9pbmNsdWRlL2FzbS9yd29uY2UuaA0KPiA+ICsgKg0KPiA+ICsgKiBDb3B5cmlnaHQgKEMpIDIw
+MjAgR29vZ2xlIExMQy4NCj4gPiArICogQ29weXJpZ2h0IChDKSAyMDI0IEFtYXpvbi5jb20sIElu
+Yy4gb3IgaXRzIGFmZmlsaWF0ZXMuDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiArI2lmbmRlZiBfX0FT
+TV9SRUFERVhfSA0KPiA+ICsjZGVmaW5lIF9fQVNNX1JFQURFWF9IDQo+ID4gKw0KPiA+ICsjZGVm
+aW5lIF9fTE9BRF9FWChzZngsIHJlZ3MuLi4pICJsZGF4ciIgI3NmeCAiXHQiICNyZWdzDQo+ID4g
+Kw0KPiA+ICsjZGVmaW5lIF9fUkVBRF9PTkNFX0VYKHgpICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyh7ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwNCj4gPiArICAgICB0eXBl
+b2YoJih4KSkgX194ID0gJih4KTsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgXA0KPiA+ICsgICAgIGludCBhdG9taWMgPSAxOyAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgdW5pb24geyBfX3VucXVhbF9zY2Fs
+YXJfdHlwZW9mKCpfX3gpIF9fdmFsOyBjaGFyIF9fY1sxXTsgfSBfX3U7IFwNCj4gPiArICAgICBz
+d2l0Y2ggKHNpemVvZih4KSkgeyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgXA0KPiA+ICsgICAgIGNhc2UgMTogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgICAgICAgICBhc20gdm9sYXRp
+bGUoX19MT0FEX0VYKGIsICV3MCwgJTEpICAgICAgICAgICAgICAgICAgICAgIFwNCj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgOiAiPXIiICgqKF9fdTggKilfX3UuX19jKSAgICAgICAgICAgICAg
+ICAgICAgICAgXA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICA6ICJRIiAoKl9feCkgOiAibWVt
+b3J5Iik7ICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgICAgICAgICBicmVhazsg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwNCj4gPiAr
+ICAgICBjYXNlIDI6ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgXA0KPiA+ICsgICAgICAgICAgICAgYXNtIHZvbGF0aWxlKF9fTE9BRF9FWCho
+LCAldzAsICUxKSAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgIDogIj1yIiAoKihfX3UxNiAqKV9fdS5fX2MpICAgICAgICAgICAgICAgICAgICAgIFwNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgOiAiUSIgKCpfX3gpIDogIm1lbW9yeSIpOyAgICAgICAg
+ICAgICAgICAgICAgICAgXA0KPiA+ICsgICAgICAgICAgICAgYnJlYWs7ICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgY2FzZSA0OiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwN
+Cj4gPiArICAgICAgICAgICAgIGFzbSB2b2xhdGlsZShfX0xPQURfRVgoLCAldzAsICUxKSAgICAg
+ICAgICAgICAgICAgICAgICAgXA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICA6ICI9ciIgKCoo
+X191MzIgKilfX3UuX19jKSAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgIDogIlEiICgqX194KSA6ICJtZW1vcnkiKTsgICAgICAgICAgICAgICAgICAgICAg
+IFwNCj4gPiArICAgICAgICAgICAgIGJyZWFrOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgXA0KPiA+ICsgICAgIGNhc2UgODogICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAgICAg
+ICAgICBhc20gdm9sYXRpbGUoX19MT0FEX0VYKCwgJTAsICUxKSAgICAgICAgICAgICAgICAgICAg
+ICAgIFwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgOiAiPXIiICgqKF9fdTY0ICopX191Ll9f
+YykgICAgICAgICAgICAgICAgICAgICAgXA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICA6ICJR
+IiAoKl9feCkgOiAibWVtb3J5Iik7ICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAgICAg
+ICAgICAgICBicmVhazsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIFwNCj4gPiArICAgICBkZWZhdWx0OiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgXA0KPiA+ICsgICAgICAgICAgICAgYXRvbWljID0g
+MDsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcDQo+ID4gKyAg
+ICAgfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIFwNCj4gPiArICAgICBhdG9taWMgPyAodHlwZW9mKCpfX3gpKV9fdS5fX3ZhbCA6
+ICgqKHZvbGF0aWxlIHR5cGVvZihfX3gpKV9feCk7XA0KPiA+ICt9KQ0KPiANCj4gSSB0aGluayB0
+aGlzIGlzIGEgYmFkIGlkZWEuIExvYWQtZXhjbHVzaXZlIG5lZWRzIHRvIGJlIHVzZWQgdmVyeSBj
+YXJlZnVsbHksDQo+IHByZWZlcmFibHkgd2hlbiB5b3UncmUgYWJsZSB0byBzZWUgZXhhY3RseSB3
+aGF0IGluc3RydWN0aW9ucyBpdCdzDQo+IGludGVyYWN0aW5nIHdpdGguIEJ5IG1ha2luZyB0aGlz
+IGludG8gYSBtYWNybywgd2UncmUgYXQgdGhlIG1lcmN5IG9mIHRoZQ0KPiBjb21waWxlciBhbmQg
+d2UgZ2l2ZSB0aGUgd3JvbmcgaW1wcmVzc2lvbiB0aGF0IHlvdSBjb3VsZCBlLmcuIGJ1aWxkIGF0
+b21pYw0KPiBjcml0aWNhbCBzZWN0aW9ucyBvdXQgb2YgdGhpcyBtYWNyby4NCj4gDQo+IFNvIEkn
+bSBmYWlybHkgc3Ryb25nbHkgYWdhaW5zdCB0aGlzIGludGVyZmFjZS4NCg0KRmFpciBwb2ludC4g
+SSdsbCBwb3N0IGFuIGFsdGVybmF0ZSBkZWxheSgpIGltcGxlbWVudGF0aW9uIGluIGFzbS4gSXQn
+cw0KYSBzaW1wbGUgcm91dGluZS4NCg0KPiANCj4gV2lsbA0KDQo=
 
