@@ -1,116 +1,226 @@
-Return-Path: <linux-kernel+bounces-398921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877BF9BF80B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:34:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38249BF811
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8D228496A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:34:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D075B22652
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48CA20C329;
-	Wed,  6 Nov 2024 20:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800620C478;
+	Wed,  6 Nov 2024 20:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qp+2tJDN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hsL7sM9r"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F74220C325;
-	Wed,  6 Nov 2024 20:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A96820C462
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 20:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730925243; cv=none; b=pvRk1f1XSAs4YFgQy3ORviaiS5aVwa4SsHU+UftiT48TiwliBgjX2+JK5/944ByWBtWOujgI7tssP5k2eHO7kkfVJhP20ylP8FTLpP39sU6a3O7VA45TjSsqk1RBu7arwauLNFiWj1KADydB275JkgeGl6eb7fWhrbyeczQrG8w=
+	t=1730925372; cv=none; b=S1JOyBJDzfE+2vcTQ2/EP6qlrjKna8AKIOA3NUJrcauXdhDSHWR44Bw0wNDSfnbkdZSEXHTORvfSTnz0KtdsgNWAZSS8Ft6iKT/sO54XzAOnFazAjkK7+8KRR5NbaUBu8S54+lQCawspq1KOzlRwyNJ+1wER2Kw5dbX6nwkRfHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730925243; c=relaxed/simple;
-	bh=FohDGAir3tCHy+2gHu5Qo5hFIGFB4ybypUNSHv+E94o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nPSbijU+kdlNVzZi8zgH6KTCgcL9fH4BCa0qSlc5O5t+lpIXTDPldDujR2BtShzzskCTsdagYwNqKQVV4QMIMHP4UNp+z9QUbB5a8tspQy2QYxMFYIpF6Y7Z/KjjPSEKO0+Lkg1ALzOlsStHXGRFZz6w5OIx9yTg+l2sonsVsvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qp+2tJDN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF003C4CED8;
-	Wed,  6 Nov 2024 20:34:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730925242;
-	bh=FohDGAir3tCHy+2gHu5Qo5hFIGFB4ybypUNSHv+E94o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qp+2tJDNDDNnEvEXorSf6ztPAGCji2NP6uIsi65W1B3595+5ZnS+eeLFX3Q2a08SZ
-	 EE9BA3NaCPk4/R3f0UeNOFLuGm0rk4+VAAIp5rZcOaam709/CqWrZeXu4E7aupXL1i
-	 C7M/ZuUVBfhAmE2CMjesaNWImc3jT3ZyGs8/G6b/Z0U9G4j2b9IG26kTYK2Pxlt+g9
-	 xqvznGT5qbX+PgTlESQMRGWPTyT/VSjZsYqMZHQk0RkfM19HfSTkXGWdnyO8pOLCSq
-	 3Q/XO5IbodtyIQfecDpum97swDAi+c9TGgH7qQ7/lcqThCjZT+iBIfxolpw/pey+ul
-	 ih6nxBzrCInFQ==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e6104701ffso195198b6e.0;
-        Wed, 06 Nov 2024 12:34:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUtj2mMeu0Li2folVfNuMuf+7yfx4hqr47KCOCkkJtAq8cLChFFTbli3ryBBZQAjcXdEGwKp3BQAvUi/Cp0@vger.kernel.org, AJvYcCWWf930AOjbqqzla1Pwsn+0P/MxqOxMJM/AXVEBnyhQFJ05XMX8HbDOCvof2m4Hlzujy+C2xKazBDOA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzax6lEtkbbwwNEPjxxkl25Bn+mSe415w/sz0CV0f4dzClVfg7Z
-	QbjlzLrHoBTL8bIBHW0LTMLdSEfbYsG3vSWHZrnoxmKae7s+cIXz6yQiz2iHgzCFteg2aG/Ymi7
-	22tlH/xa1bFT52pXCIQUy/4lzcFU=
-X-Google-Smtp-Source: AGHT+IGecqvZYz6VJ6nPpjW5PfwtCsmdNJCPFVN4oXkxrvO72g6VDvW7tykCxY6jViLJuWqan+LokpLOrJ2cns7t//M=
-X-Received: by 2002:a05:6870:418d:b0:270:50f7:50c1 with SMTP id
- 586e51a60fabf-29051af0f4amr37508782fac.1.1730925241795; Wed, 06 Nov 2024
- 12:34:01 -0800 (PST)
+	s=arc-20240116; t=1730925372; c=relaxed/simple;
+	bh=DDan4rb3ZDfZooaIPdGKMHpMdyXPRM8PAAJJ+ibuzD8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YyNRziFVQGaI6VI6jkq4quEzbkbJ7LAX0WKJrooC/HNqOvfhMD0WqCN2PtlrkccSzCqHmNIHpMj8r2DvIlFl6vgBfzLoZW7MJWiwx/3PppVE3aQlLml+BhHd/WdbSSxzwNZtz8mXWtQs/mQFICWlo09kIzybWpX5autBOvRb6pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hsL7sM9r; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4609c96b2e5so1520841cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 12:36:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730925369; x=1731530169; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vDv+Zw29UPJy5Wu1eDDdz3Y9nEtJru0vhbk85035bL8=;
+        b=hsL7sM9rQLJaKg6ZTjk7LJnDi5wQOFKuGL3sTeNnwXA8y4Bq3JnLjYuCliyg2FRIJz
+         3C2+KTOcTun8dfE3/YZA6zvo/ER9vnooEnP+KKNCg3JeuElGIKrYupMd2pFPuH5fkcHS
+         DGBgfPKdH2mOAL9lVaPxu4v0ymV9NmpJLoQsI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730925369; x=1731530169;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vDv+Zw29UPJy5Wu1eDDdz3Y9nEtJru0vhbk85035bL8=;
+        b=qRd+pgD3xNVlf+PYIZUrldLbT4e+CXTNCzXyActd+CPUkO2pAZNfwMj5lOoh0KcNKu
+         6fICa5CEjazuBRJZuZbXIvuM0SmbB5UMpcuZ6/z/oAJv8zOTJc+VQmzaybfwTKiwF1Sh
+         Ddj+6z4s81QoQnXo0oxEUl+WlYmj4t0sGWBzenZ8ZzJNmnf7ScP72mYpMJf1kE5xC0/+
+         Bu/Y2XEBLPeA6RmzQOsoYwRin83mYSjE9wlbHv0qRWBtwszIOrsBlLDZ+xeOEFQi1H6H
+         NDDVB9IU1DmWiasuAsBAzml68OZFfKu1+OZjrxOFQcmQVXE4dHXI4PqFpkmtGStnruZs
+         EVdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpEAdIRT4I6SOuGTjWllqkodayUH2Hr4EoRzU1S/FiGtsBlUo6NDlJTTfoVW9iHNrNIfqIxG5eh1y19hY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxL3W0OEs8Sf4K5YgFFcuAhWo05AnEPzKV/E/05actqr1hHaVh
+	CYNKVdXsbOc8NVScw+Voj9cUKOc4sJ9xngIePWWYuT0AY5lr9fxaNj2gZ/A82g==
+X-Google-Smtp-Source: AGHT+IGneR3U1qsCjlwemlshVx6J+SNXK0Oj1alprvpKqgmhnx9tb/oDytUpxjX089+aCQwqJcBjVg==
+X-Received: by 2002:a05:6214:3990:b0:6cb:ef1f:d1ab with SMTP id 6a1803df08f44-6d1856fa3dfmr624113066d6.30.1730925369092;
+        Wed, 06 Nov 2024 12:36:09 -0800 (PST)
+Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353f9f1f6sm76449816d6.27.2024.11.06.12.36.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 12:36:08 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Wed, 06 Nov 2024 20:36:07 +0000
+Subject: [PATCH v6] media: uvcvideo: Fix crash during unbind if gpio unit
+ is in use
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104222855.3959267-1-superm1@kernel.org> <CAJZ5v0iVfdfetFBrq93hcaTgVTN-=WoWYnK5G65q+kRA-qNtwQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iVfdfetFBrq93hcaTgVTN-=WoWYnK5G65q+kRA-qNtwQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 6 Nov 2024 21:33:50 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jLez+WcqMs4hWeTKdeSbBbAShWvbvGHVj--foZLQ_u6w@mail.gmail.com>
-Message-ID: <CAJZ5v0jLez+WcqMs4hWeTKdeSbBbAShWvbvGHVj--foZLQ_u6w@mail.gmail.com>
-Subject: Re: [PATCH v4] ACPI: processor: Move arch_init_invariance_cppc() call later
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Mario Limonciello <mario.limonciello@amd.com>, 
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
-	"open list:ACPI" <linux-acpi@vger.kernel.org>, Ivan Shapovalov <intelfx@intelfx.name>, 
-	Oleksandr Natalenko <oleksandr@natalenko.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org>
+X-B4-Tracking: v=1; b=H4sIADbTK2cC/33PwW7DIAyA4VepOI8JA3bCTnuPagdGTMMhZYIVd
+ ary7qO9TNqyHH9L/mTfROWSuIqXw00UbqmmfO5BTwcRZn8+sUxTb6GVtqAMyEsLMhRf57IseZJ
+ ENLGJwYEF0Zc+Csd0fYDHt95zqp+5fD38Bvfpv1QDCVKhi4zOvAPTa5hLXtJlec7lJO5a0z8CK
+ Pwj6C6gHQKTJ0eaNwSzL5guBOXQhdEpmsyGYPcFK5Xs/zHaMSo3+A0B9wXsN4ykTfQIfrDxl7C
+ u6zc62tpQtwEAAA==
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ stable@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Tue, Nov 5, 2024 at 9:17=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Mon, Nov 4, 2024 at 11:29=E2=80=AFPM Mario Limonciello <superm1@kernel=
-.org> wrote:
-> >
-> > From: Mario Limonciello <mario.limonciello@amd.com>
-> >
-> > arch_init_invariance_cppc() is called at the end of
-> > acpi_cppc_processor_probe() in order to configure frequency invariance
-> > based upon the values from _CPC.
-> >
-> > This however doesn't work on AMD CPPC shared memory designs that have
-> > AMD preferred cores enabled because _CPC needs to be analyzed from all
-> > cores to judge if preferred cores are enabled.
-> >
-> > This issue manifests to users as a warning since commit 21fb59ab4b97
-> > ("ACPI: CPPC: Adjust debug messages in amd_set_max_freq_ratio() to warn=
-"):
-> > ```
-> > Could not retrieve highest performance (-19)
-> > ```
-> >
-> > However the warning isn't the cause of this, it was actually
-> > commit 279f838a61f9 ("x86/amd: Detect preferred cores in
-> > amd_get_boost_ratio_numerator()") which exposed the issue.
-> >
-> > To fix this problem, change arch_init_invariance_cppc() into a new weak
-> > symbol that is called at the end of acpi_processor_driver_init().
-> > Each architecture that supports it can declare the symbol to override
-> > the weak one.
->
-> "Define it for x86, in arch/x86/kernel/acpi/cppc.c, and for all of the
-> architectures using the generic arch_topology.c code."
+We used the wrong device for the device managed functions. We used the
+usb device, when we should be using the interface device.
 
-I've added this to the patch changelog and queued it up as a 6.12 fix.
+If we unbind the driver from the usb interface, the cleanup functions
+are never called. In our case, the IRQ is never disabled.
 
-Thanks!
+If an IRQ is triggered, it will try to access memory sections that are
+already free, causing an OOPS.
+
+We cannot use the function devm_request_threaded_irq here. The devm_*
+clean functions may be called after the main structure is released by
+uvc_delete.
+
+Luckily this bug has small impact, as it is only affected by devices
+with gpio units and the user has to unbind the device, a disconnect will
+not trigger this error.
+
+Cc: stable@vger.kernel.org
+Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v6:
+- Rename cleanup as deinit
+- Move cleanup to the beginning of the uvc_unregister_video.
+- Fix commit message.
+- Link to v5: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v5-1-8623fa51a74f@chromium.org
+
+Changes in v5:
+- Revert non refcount, that belongs to a different set
+- Move cleanup to a different function
+- Link to v4: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org
+
+Changes in v4: Thanks Laurent.
+- Remove refcounted cleaup to support devres.
+- Link to v3: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v3-1-c0959c8906d3@chromium.org
+
+Changes in v3: Thanks Sakari.
+- Rename variable to initialized.
+- Other CodeStyle.
+- Link to v2: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org
+
+Changes in v2: Thanks to Laurent.
+- The main structure is not allocated with devres so there is a small
+  period of time where we can get an irq with the structure free. Do not
+  use devres for the IRQ.
+- Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
+---
+ drivers/media/usb/uvc/uvc_driver.c | 28 +++++++++++++++++++++-------
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 2 files changed, 22 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index a96f6ca0889f..cd13bf01265d 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
+ 	struct gpio_desc *gpio_privacy;
+ 	int irq;
+ 
+-	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
++	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
+ 					       GPIOD_IN);
+ 	if (IS_ERR_OR_NULL(gpio_privacy))
+ 		return PTR_ERR_OR_ZERO(gpio_privacy);
+ 
+ 	irq = gpiod_to_irq(gpio_privacy);
+ 	if (irq < 0)
+-		return dev_err_probe(&dev->udev->dev, irq,
++		return dev_err_probe(&dev->intf->dev, irq,
+ 				     "No IRQ for privacy GPIO\n");
+ 
+ 	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
+@@ -1329,15 +1329,27 @@ static int uvc_gpio_parse(struct uvc_device *dev)
+ static int uvc_gpio_init_irq(struct uvc_device *dev)
+ {
+ 	struct uvc_entity *unit = dev->gpio_unit;
++	int ret;
+ 
+ 	if (!unit || unit->gpio.irq < 0)
+ 		return 0;
+ 
+-	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
+-					 uvc_gpio_irq,
+-					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
+-					 IRQF_TRIGGER_RISING,
+-					 "uvc_privacy_gpio", dev);
++	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
++				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
++				   IRQF_TRIGGER_RISING,
++				   "uvc_privacy_gpio", dev);
++
++	unit->gpio.initialized = !ret;
++
++	return ret;
++}
++
++static void uvc_gpio_deinit(struct uvc_device *dev)
++{
++	if (!dev->gpio_unit || !dev->gpio_unit->gpio.initialized)
++		return;
++
++	free_irq(dev->gpio_unit->gpio.irq, dev);
+ }
+ 
+ /* ------------------------------------------------------------------------
+@@ -1934,6 +1946,8 @@ static void uvc_unregister_video(struct uvc_device *dev)
+ {
+ 	struct uvc_streaming *stream;
+ 
++	uvc_gpio_deinit(dev);
++
+ 	list_for_each_entry(stream, &dev->streams, list) {
+ 		/* Nothing to do here, continue. */
+ 		if (!video_is_registered(&stream->vdev))
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index 07f9921d83f2..965a789ed03e 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -234,6 +234,7 @@ struct uvc_entity {
+ 			u8  *bmControls;
+ 			struct gpio_desc *gpio_privacy;
+ 			int irq;
++			bool initialized;
+ 		} gpio;
+ 	};
+ 
+
+---
+base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
+change-id: 20241031-uvc-crashrmmod-666de3fc9141
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
