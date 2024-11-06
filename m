@@ -1,197 +1,263 @@
-Return-Path: <linux-kernel+bounces-398070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0EC9BE4D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:53:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B379BE4DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8315A1C23205
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B5B281DBF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4781DED43;
-	Wed,  6 Nov 2024 10:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CC91DE3CA;
+	Wed,  6 Nov 2024 10:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cwcm+uPU"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jcavy66q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8C11DE8BE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A844E193094;
+	Wed,  6 Nov 2024 10:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890330; cv=none; b=bgjx6W/lfqdoY1em4ALmj7Ya/yKT2bweIzL5V168YZM1aK1IkyO275zKVGSGu1ev8a0WlJtYMmfOq9v8bKVYs+mjCYJJEF/rWeDRWGog8WuwK8oDvpB6Zw7aaKEzbDpnkaEdbPoPLsTI8DF3VH/juWm+CZEfKP0ojQ6DcLbv4q0=
+	t=1730890461; cv=none; b=dx0GhxaALdtdAXLtJoatJzstXxGbm3+CwlwzMAugghDTtTB+Hb3Ke3VVK8MRleO7pSpt37neBJlUPhIuyuzN1g19tEz8oi3Fbf+a9rXKlk9ZizuMUMoZi59vMsvs2QH9vG9QXoDIlQGU8VLbpsGWqbEqcD1+flm432TxvtkKjpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890330; c=relaxed/simple;
-	bh=u7AyQyTK1zEqP2xPv9JHBaVJ0O7ciFV8N45QHJ28EPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S5TqqZxMv5cxlexGz5hv0JUvzHNJk5OKas++yjGwFxgPSFajdb7D5KU+xzAj9IlbCpz6aCQjRqJpUj32T33uyS3FZFsnKWic4cP9vWAt3k+PSp0Wes5cORRDrUGSEvHpiDaDNihfJTUZjqzsUnsbCfiaYnaTZcse2u1dkezP40s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cwcm+uPU; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43158625112so57543585e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 02:52:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730890327; x=1731495127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UCxSEzKgL1zH2eyIUhadinz5mEtbswOhMWKsLzQ9Pjw=;
-        b=Cwcm+uPULM2Ebeq37s1XoYJhpXKhUgIUWIcHGU1m7HJTyku2EKoE856BsR7rJHPvFw
-         hCmBLwvlkE7Q6/YaxmdTeSn4UUFzWVNtZ8z348jZ/osKtBOYzFKnMRcyXTA5LAfjDTXU
-         GtuM4l988b5pl9dK0IglZPCfA5gLsfDqMWIKGOcrsyWAvI2AMEpuWPvqBh3lMM2sZT9D
-         N0/Y5YYsQOKvNnyU0BmXUH7/MpkO3w5XO5w5dpmnIBL9C+miAdgd0fYUNtOgYFRas+Qr
-         dT5xw3F+Dw7b5yroxzJwiybI/UU275/Kd9bnOZ8M3WqKUs9GZ9jCeNvgVRLId4i2XaHL
-         irRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730890327; x=1731495127;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UCxSEzKgL1zH2eyIUhadinz5mEtbswOhMWKsLzQ9Pjw=;
-        b=bVtpCCLkqOwMMrsuaBhOk7qlwWKJjzP/Kkw2Qdp0UzjhopE6UK3/hQHthFWJTb1viM
-         73N8VeHa8rN6jA1L5A5vpb+R1ptd/OZ4mlJZR1FKHBmNutFyPbgkJChWqpWpFroTcNjF
-         +TwKyvRyNLqKhp4evU62ZOwPYzQBnT+Bk568lqocg/tSiRJQjuBTjNxEgC1G3KWSu7hK
-         +/sb9xRnPyrhXi62y3YxSbduoOTlthDRLfJt7lFes1W3pLm3U2YITMFXcOk15DynoF9k
-         wFO3Ryq0idxn9jCGvEG9i0CEXajQCepzTgua0PasudnnpPVqe9Jd0Zya6N7Toce/J6TS
-         Xdsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhON9jZeDSrKk2JSng2FyoRM4RNB3i6Vb2rziEVOaQLNoeBfOKtUizPUPx6EY1euciPVtv0dJwf6UYT7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNKBjeK8eyPiKZWvpMiEIsniHO9ao+lMismruASuFvSW8czSP5
-	2JpmohCSIxc2oEdBZoT3nFNH+ai6zTZWK00jTz7tfE29a/11KPpB
-X-Google-Smtp-Source: AGHT+IHg4XTEew3l0kqPf+Gkb9KGrdyLxo/QnI5GgVlIsaFloaF/eSsiXGJtzKZ1/slEJ0FlL44QOw==
-X-Received: by 2002:a05:600c:5493:b0:431:5533:8f0c with SMTP id 5b1f17b1804b1-43285649fe6mr151529565e9.29.1730890326572;
-        Wed, 06 Nov 2024 02:52:06 -0800 (PST)
-Received: from eichest-laptop ([2a02:168:af72:0:e6de:f900:d54a:ec1d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e073sm18676391f8f.66.2024.11.06.02.52.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 02:52:06 -0800 (PST)
-Date: Wed, 6 Nov 2024 11:52:04 +0100
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
-	Shawn Guo <shawnguo2@yeah.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	imx <imx@lists.linux.dev>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v1] ARM: imx_v6_v7_defconfig: enable SND_SOC_SPDIF
-Message-ID: <ZytKVAQzaMKd3w1o@eichest-laptop>
-References: <20241030122128.115000-1-eichest@gmail.com>
- <ZyXTFhEm9UCBii2c@dragon>
- <ZyY41nJY9ghwe-Y4@eichest-laptop>
- <065268d6-84eb-4247-b834-40a9ff32c1f4@gmx.net>
- <ZyiAMpjmXuVMi5FX@eichest-laptop>
- <787b45a1-9f8d-493d-8930-e1c8d396c818@gmx.net>
- <Zyj0VsTJ2qDHiss2@eichest-laptop>
- <1044800423.57572.1730815098440.JavaMail.zimbra@savoirfairelinux.com>
- <283bbd2c-0997-43d6-bc24-08bf2cb2412b@gmx.net>
+	s=arc-20240116; t=1730890461; c=relaxed/simple;
+	bh=EVLel/BpIW9ZJ2k6oBxp60z3pvlEjqawY1CsripKoLk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cW0o87bJmQX1Hl+3HFKtWargquFh1RYW3KwsuxeY7TctK7zE5KFf/fyL8fLdEFO7/JW7XZYAcsbr+WTm13whl1hwN3bE1vAvPsR/qKkdj6xYCx86PNCJzfdL0Gk88fmUgJz5Favl7l4rG/2+/OyZdJY2Zinmoq2VcpQVS5ArcUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jcavy66q; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730890460; x=1762426460;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=EVLel/BpIW9ZJ2k6oBxp60z3pvlEjqawY1CsripKoLk=;
+  b=Jcavy66q4hjg8Ngv2OSvkrqwOcxhLJ0Y0cngjQ/iorBnYyGm4mr6ca2z
+   ni8P0bMzGu/vyiVWMF1jrRSjaOhI18Y/uiqstzYdn/HRExrRqguC9BuUW
+   vQUefiGVRDJ1mepWbdEYlsFRRbXsxZp9ZgerrX0yPx4S03lsL+cM1+www
+   eXrnRmv3bEEnFDuVTnKAk+Z38AZwoNjvroJqH7R8bu9EOr6DOXkgqv1Sb
+   ifsF0B9d2KXmA6seljV+MJcE3g3iJJNNVzjI/s450PukgbaMiSPFfKIkw
+   s+Kt9yr0K+bTx2edEMqKwUIxnh0M72eJiBGlX7kYi8IgcHRXJ2SyvAyqZ
+   w==;
+X-CSE-ConnectionGUID: 07eHyPI9SUW4sLMpwI+CsQ==
+X-CSE-MsgGUID: v/O5i9JNTDugloGiRuL9qA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="18302276"
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="18302276"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 02:54:19 -0800
+X-CSE-ConnectionGUID: SkB0hNp0T0OHzWshhSB97Q==
+X-CSE-MsgGUID: 4ruixzv0QDakWrKF0eaUcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="121994029"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.110])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 02:54:15 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 6 Nov 2024 12:54:12 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Jian-Hong Pan <jhp@endlessos.org>, Johan Hovold <johan@kernel.org>, 
+    David Box <david.e.box@linux.intel.com>, 
+    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+    Nirmal Patel <nirmal.patel@linux.intel.com>, 
+    Jonathan Derrick <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org
+Subject: Re: [PATCH v12 3/3] PCI/ASPM: Make pci_save_aspm_l1ss_state save
+ both child and parent's L1SS configuration
+In-Reply-To: <20241105225949.GA1493775@bhelgaas>
+Message-ID: <04b86150-c6f5-2898-5b43-dcf14c19845e@linux.intel.com>
+References: <20241105225949.GA1493775@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <283bbd2c-0997-43d6-bc24-08bf2cb2412b@gmx.net>
+Content-Type: multipart/mixed; boundary="8323328-371933605-1730890452=:928"
 
-On Tue, Nov 05, 2024 at 04:52:04PM +0100, Stefan Wahren wrote:
-> Am 05.11.24 um 14:58 schrieb Elinor Montmasson:
-> > Hi Stefan,
-> > 
-> > On Monday, 4 November, 2024 17:20:38, Stefan Eichenberger wrote:
-> > > Hi Stefan,
-> > > 
-> > > On Mon, Nov 04, 2024 at 12:39:40PM +0100, Stefan Wahren wrote:
-> > > > Hi Stefan,
-> > > > 
-> > > > Am 04.11.24 um 09:05 schrieb Stefan Eichenberger:
-> > > > > Hi Stefan,
-> > > > > 
-> > > > > On Sat, Nov 02, 2024 at 04:35:19PM +0100, Stefan Wahren wrote:
-> > > > > > Hi Stefan,
-> > > > > > 
-> > > > > > Am 02.11.24 um 15:36 schrieb Stefan Eichenberger:
-> > > > > > > Hi Shawn,
-> > > > > > > 
-> > > > > > > On Sat, Nov 02, 2024 at 03:21:58PM +0800, Shawn Guo wrote:
-> > > > > > > > On Wed, Oct 30, 2024 at 01:21:12PM +0100, Stefan Eichenberger wrote:
-> > > > > > > > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > > > > > > > > 
-> > > > > > > > > Enable SND_SOC_SPDIF in imx_v6_v7_defconfig to support SPDIF audio. This
-> > > > > > > > > change will fix commit d469b771afe1 ("ARM: dts: imx6: update spdif sound
-> > > > > > > > > card node properties") which moves away from the old "spdif-controller"
-> > > > > > > > > property to the new "audio-codec" property.
-> > > > > > > > > 
-> > > > > > > > > Fixes: d469b771afe1 ("ARM: dts: imx6: update spdif sound card node properties")
-> > > > > > > > It doesn't look a fix to me.
-> > > > > > > I agree somehow, it was just that before the referenced commit our test
-> > > > > > > succeeds with the imx_v6_v7_defconfig and after that we get the
-> > > > > > > following error:
-> > > > > > > [   24.165534] platform sound-spdif: deferred probe pending: fsl-asoc-card:
-> > > > > > > snd_soc_register_card failed
-> > > > > > this error should have been in the commit message including the
-> > > > > > information which platform/board is affected.
-> > > > > Okay, I will add this information to the next version. We see this error
-> > > > > on an Apalis iMX6 which has in my variant an NXP i.MX6Q SoC.
-> > > > > 
-> > > > > > > So maybe it is not a fix in the sense of a bug, but it fixes the error
-> > > > > > > message. However, I'm also fine with removing the Fixes tag.
-> > > > > > But this patch doesn't look like the real approach.
-> > > > > > 
-> > > > > > Could you please clarify the impact of the regression?
-> > > > > So the problem is that before commit d469b771afe1 ("ARM: dts: imx6:
-> > > > > update spdif sound card node properties") the audio driver was
-> > > > > using an implementation of linux,spdif-dit and linux,spdif-dir which was
-> > > > > directly inside the fsl,imx-audio-spdif compatible driver. Now with the
-> > > > > referenced commit the idea is to use the more generic linux,spdif-dir
-> > > > > and linux,spdif-dit compatible drivers. That's why this driver must be
-> > > > > enabled in the kernel configuration.
-> > > > > 
-> > > > > > Is it just this error message and audio works fine or is audio also broken?
-> > > > > It is not just the error message, audio is not working because the
-> > > > > driver deferes and because it is not enabled it will never succeed to
-> > > > > load. I don't know if this is called a regression, because the driver is
-> > > > > there it is just not enabled in the imx6_v7_defconfig. I thought because
-> > > > > a lot of the i.MX6 based board use the generic driver, it makes sense to
-> > > > > enable it in the imx_v6_v7_defconfig.
-> > > > okay, thanks for the clarification. From my understanding
-> > > > imx6_v7_defconfig is just an example config for testing. All possible
-> > > > users of these boards might have their own configs and stumble across
-> > > > the same issue. So I thought it would be better to add the dependency in
-> > > > the Kconfig of the FSL audio driver.
-> > > > 
-> > > > I'm not that audio driver expert and don't know how the dependency
-> > > > handling between the FSL audio driver and the required codecs like
-> > > > SND_SOC_SPDIF. So it's possible that I'm completely wrong here and your
-> > > > approach is the best we can do.
-> > > That might be a good point. I don't know how this is usually handled.
-> > > @Shawn and @Elinor, do you think this could be an approach to make
-> > > SND_SOC_FSL_ASOC_CARD select SND_SOC_SPDIF? It already seems to do this
-> > > for SND_SOC_WM8994 and SND_SOC_FSL_SPDIF.
-> > SND_SOC_FSL_ASOC_CARD will compile the machine driver fsl-asoc-card,
-> > SND_SOC_FSL_SPDIF the CPU DAI driver fsl_spdif for the SPDIF
-> > and SND_SOC_SPDIF the codec drivers spdif-rx and spdif-tx.
-> > 
-> > In my commit series I made SND_SOC_FSL_ASOC_CARD select SND_SOC_FSL_SPDIF
-> > because the old machine driver previously compiled with SND_SOC_IMX_SPDIF
-> > selected SND_SOC_FSL_SPDIF.
-> > But because fsl-asoc-card is a generic driver, it could be used on a system
-> > that doesn't have an SPDIF device, and therefore should not require
-> > SND_SOC_SPDIF nor SND_SOC_FSL_SPDIF.
-> > So maybe it is not a good idea to automatically select SND_SOC_FSL_SPDIF or SND_SOC_SPDIF.
-> > 
-> > On the other hand, if every imx6 or imx7 boards have an SPDIF device, then
-> > I suppose SND_SOC_SPDIF can be put in imx_v6_v7_defconfig.
-> Okay, I'm fine with the original approach.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Perfect thanks, then I will improve the commit message and send a v2.
+--8323328-371933605-1730890452=:928
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Regards,
-Stefan
+On Tue, 5 Nov 2024, Bjorn Helgaas wrote:
+
+> On Tue, Oct 01, 2024 at 04:34:42PM +0800, Jian-Hong Pan wrote:
+> > PCI devices' parameters on the VMD bus have been programmed properly
+> > originally. But, cleared after pci_reset_bus() and have not been restor=
+ed
+> > correctly. This leads the link's L1.2 between PCIe Root Port and child
+> > device gets wrong configs.
+> >=20
+> > Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
+> > bridge and NVMe device should have the same LTR1.2_Threshold value.
+> > However, they are configured as different values in this case:
+> >=20
+> > 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Proces=
+sor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
+> >   ...
+> >   Capabilities: [200 v1] L1 PM Substates
+> >     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Sub=
+states+
+> >       PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
+> >     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+> >       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
+> >     L1SubCtl2: T_PwrOn=3D0us
+> >=20
+> > 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Bl=
+ue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+> >   ...
+> >   Capabilities: [900 v1] L1 PM Substates
+> >     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Sub=
+states+
+> >       PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
+> >     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+> >       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
+> >     L1SubCtl2: T_PwrOn=3D50us
+> >=20
+> > Here is VMD mapped PCI device tree:
+> >=20
+> > -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
+> >  | ...
+> >  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
+> >               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
+> >
+> > When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
+> > restores NVMe's state before and after reset. Then, when it restores th=
+e
+> > NVMe's state, ASPM code restores L1SS for both the parent bridge and th=
+e
+> > NVMe in pci_restore_aspm_l1ss_state(). The NVMe's L1SS is restored
+> > correctly. But, the parent bridge's L1SS is restored with a wrong value=
+ 0x0
+> > because the parent bridge's L1SS wasn't saved by pci_save_aspm_l1ss_sta=
+te()
+> > before reset.
+>=20
+> There's nothing specific to VMD here, is there?  This whole log looks
+> like it should be made generic.  The VMD *example* is OK, but the
+> justification should not be VMD-specific.  This last paragraph seems
+> to be the kernel of the whole thing, and I don't think it's specific
+> to either VMD or NVMe.
+>=20
+> > So, if the PCI device has a parent, make pci_save_aspm_l1ss_state() sav=
+e
+> > the parent's L1SS configuration, too. This is symmetric on
+> > pci_restore_aspm_l1ss_state().
+> >=20
+> > Link: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6=
+SdS4eG9oGpEX1wmnMLkQ@mail.gmail.com/
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
+> > Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for sus=
+pend/resume")
+> > Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> > ---
+> > v9:
+> > - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instea=
+d.
+> >=20
+> > v10:
+> > - Drop the v9 fix about drivers/pci/controller/vmd.c
+> > - Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_stat=
+e()
+> >   and pci_restore_aspm_l1ss_state()
+> >=20
+> > v11:
+> > - Introduce __pci_save_aspm_l1ss_state as a resusable helper function
+> >   which is same as the original pci_configure_aspm_l1ss
+> > - Make pci_save_aspm_l1ss_state invoke __pci_save_aspm_l1ss_state for
+> >   both child and parent devices
+> > - Smooth the commit message
+> >=20
+> > v12:
+> > - Update the commit message
+> >=20
+> >  drivers/pci/pcie/aspm.c | 20 +++++++++++++++++++-
+> >  1 file changed, 19 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > index bd0a8a05647e..17cdf372f7e0 100644
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -79,7 +79,7 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
+> >  =09=09=09ERR_PTR(rc));
+> >  }
+> > =20
+> > -void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> > +static void __pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> >  {
+> >  =09struct pci_cap_saved_state *save_state;
+> >  =09u16 l1ss =3D pdev->l1ss;
+> > @@ -101,6 +101,24 @@ void pci_save_aspm_l1ss_state(struct pci_dev *pdev=
+)
+> >  =09pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
+> >  }
+> > =20
+> > +void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> > +{
+> > +=09struct pci_dev *parent;
+> > +
+> > +=09__pci_save_aspm_l1ss_state(pdev);
+>=20
+> Is there any point in saving the "pdev" state if there's no parent?
+>=20
+> > +=09/*
+> > +=09 * To be symmetric on pci_restore_aspm_l1ss_state(), save parent's =
+L1
+> > +=09 * substate configuration, if the parent has not saved state.
+> > +=09 */
+> > +=09if (!pdev->bus || !pdev->bus->self)
+> > +=09=09return;
+>=20
+> Is "pdev->bus =3D=3D NULL" possible here even though it doesn't seem
+> possible in pci_restore_aspm_l1ss_state()?
+>=20
+> > +=09parent =3D pdev->bus->self;
+> > +=09if (!parent->state_saved)
+> > +=09=09__pci_save_aspm_l1ss_state(parent);
+> > +}
+>=20
+> I see the suggestion for a helper here, but I'm not convinced.
+> pci_save_aspm_l1ss_state() and pci_restore_aspm_l1ss_state() should
+> *look* similar, and a helper makes them less similar.
+>=20
+> I think you should go to some effort to follow the
+> pci_restore_aspm_l1ss_state() structure, as much as possible doing the
+> same declarations, checks, and lookups in the same order, e.g.:
+>
+>   struct pci_cap_saved_state *pl_save_state, *cl_save_state;
+>   struct pci_dev *parent =3D pdev->bus->self;
+>=20
+>   if (pcie_downstream_port(pdev) || !parent)
+> =09  return;
+>=20
+>   if (!pdev->l1ss || !parent->l1ss)
+> =09  return;
+>=20
+>   cl_save_state =3D pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1SS);
+>   pl_save_state =3D pci_find_saved_ext_cap(parent, PCI_EXT_CAP_ID_L1SS);
+>   if (!cl_save_state || !pl_save_state)
+> =09  return;
+
+Hi,
+
+I understand I'm not the one who has the final say in this, but the reason=
+=20
+why restore has to be done the way it is (the long way), is because of the=
+=20
+strict ordering requirement of operations it performs.
+
+There are no similar ordering requirements on the save side AFAIK.
+
+--=20
+ i.
+
+--8323328-371933605-1730890452=:928--
 
