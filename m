@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-397695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332A19BDF20
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3928A9BDF21
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4C61F23FCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44071F2454E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EAD1990AD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9412E1991C3;
 	Wed,  6 Nov 2024 07:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="h80rEgtJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xw3iMcwk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B603A2D;
-	Wed,  6 Nov 2024 07:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D4D192B61;
+	Wed,  6 Nov 2024 07:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730876813; cv=none; b=bL8WSCcwe41hD4FbejvDYUDCpwljpLj8tNPYjbw5lwTelzhN0QwdebF/PD0mrvQ8rJhVosQ3gifU4PoVN59Y3Ph/YBik4qsoZBD/pFj8pLyXJzrp6SpVFAi+GIyL55ipAdONEYWldTSwuexYqVp2QaS1DjdhDWdUQb7cuuuv6Fk=
+	t=1730876814; cv=none; b=Le6ydvNhhfrrId/Uhziqz2ZCmFY5IBofp+JBFGz++b0LKQmpzikwQD40MBpkyHYpoZk4U15ZxLJMMsiux0KtpAR6VbcOmCzPkxiw5sfVk3A+ZOWJcHcwcBPa2WNl5Qxbf2a6sF70E5QFEaGqFfBD3i9ljkgynge9+rmCm/WrZOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730876813; c=relaxed/simple;
-	bh=mxUa4wXzdvBDGoXNKjPAAdJI49s9TSRxkkDIR/2IP/A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CM/RtJtQnioCElDQVvJY5/UXLAVMSKx8VGl22z3BQNsYr4SBvPhtlqhMrvVQ9UG2FkTdMoTWBNkbAucZrhNCoCk+93/cGmu5DJPh9Rih8LQDqCoj1GbcPxetQlsxc+HwI2Xjt4dxrtmvs7e+TkCCoL6KHSA9Xuhn/pHzvIwt8PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=h80rEgtJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730876806;
-	bh=yAUFaVAsNQ/ccJyGlmMcytG2+Qr2oEjByXJHlP+rk68=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=h80rEgtJ7qD9jyDyLJcISbRk3INZH8ZPcYosK4VrHHZVogREXxmMdnucgdz5uGIVq
-	 2FKIvnwHaCmTCM5h2wCPV5BHvVPqGtTkGb8EMAQ3QpqRcFOIuuN9J+N+f2mo7sMJe/
-	 dU4VVqU+Z1FcyNgWJiu6rzNqueMfO3e6FKKNop6UZT1IVzPlW79wIw8rl8ikKnhRpJ
-	 +n1/bbdRaP9EQPbjeaxIqHG5JuYMBpoWql3abi4yDgJ1tGm3FhgLFRk5m7yklMr2OW
-	 JsGlZDD1354L3XGFFlQ4dOrEE1hpvtyE9IKa50nyhPWS+nOpSyzlxB/+3KkxmrZtK5
-	 AOEEtdbWDj8jw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xjx8D1mmSz4x11;
-	Wed,  6 Nov 2024 18:06:36 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Thomas Gleixner
- <tglx@linutronix.de>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <thomas.weissschuh@linutronix.de>,
- Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Russell
- King <linux@armlinux.org.uk>, Huacai Chen <chenhuacai@kernel.org>, WANG
- Xuerui <kernel@xen0n.name>, Theodore Ts'o <tytso@mit.edu>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Nam Cao
- <namcao@linutronix.de>
-Subject: Re: [PATCH 00/28] vdso: Preparations for generic data storage
-In-Reply-To: <e33569c8-1591-462c-9388-4a514e156bfa@csgroup.eu>
-References: <20241010-vdso-generic-base-v1-0-b64f0842d512@linutronix.de>
- <871pzxzuny.ffs@tglx> <e33569c8-1591-462c-9388-4a514e156bfa@csgroup.eu>
-Date: Wed, 06 Nov 2024 18:06:35 +1100
-Message-ID: <877c9glu2s.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1730876814; c=relaxed/simple;
+	bh=7pdnXq7EufOCuoXoSdtjBZ4tbALPR7ZeEojqa8COUKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GrIiD53Dkchwl+yug9ebq1lg9bKwBsFxNL/VVxMjLQ5PNorWF3a6Uc6Xjx/R3c8JDlcefXbj7x1MwNB6uHAqw1AIOORo3WwztEqulSpiNI/isFWCQG2Js6fPkHCGGnLtGEL0HIzYoYPhRLYTKw9yRNZtrMb4KIAF+KSAU9ECO78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xw3iMcwk; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730876812; x=1762412812;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7pdnXq7EufOCuoXoSdtjBZ4tbALPR7ZeEojqa8COUKA=;
+  b=Xw3iMcwk0AG3zY2G4o2JsfE2ZORCsi8arLTMzQHEes7Aa6I1Tcgx6b47
+   rCDQbS5MX28UCV0QLnd/wJYPWPAMBKGust7d4CvJGgM/VMBW3JNYV48eq
+   LG95VhK+9g34Ic7JBOqQxXDGxj5PUJcdyp7IqnqzrBxcvC+atoD6jL+iX
+   PFNew16l2kH8MPolusWJMfmxi6W6ay5osUB1QXxA5wRIuyek/pihc/DCT
+   wv8M1yX17r5ei0gmot+4K3+NtGDt0r5LhIKaNLxNvUKYofdcvsnW6aGqw
+   K8cUeSeW1TyrNRr/9aU+umQTnfqowy6L2jNfj4yVvi6ZukjvtH0nOCpTs
+   w==;
+X-CSE-ConnectionGUID: NS8JQO7JRmmBWWF0JJryqA==
+X-CSE-MsgGUID: D6vmeZpbSx68Qe6Pfxx5kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="42057493"
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="42057493"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 23:06:51 -0800
+X-CSE-ConnectionGUID: YncT/+raQ4+gvwOnOC8tkQ==
+X-CSE-MsgGUID: W5BlBnEGSsu+L4VuWZ6yNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="89185156"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO pujfalus-desk.intel.com) ([10.245.244.56])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 23:06:49 -0800
+From: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+To: vkoul@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	amadeuszx.slawinski@linux.intel.com
+Subject: [PATCH] ALSA: compress_offload: Remove unused runtime pointer from snd_compr_poll()
+Date: Wed,  6 Nov 2024 09:06:46 +0200
+Message-ID: <20241106070646.2599-1-peter.ujfalusi@linux.intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Christophe Leroy <christophe.leroy@csgroup.eu> writes:
-> Le 30/10/2024 =C3=A0 12:39, Thomas Gleixner a =C3=A9crit=C2=A0:
->> Folks!
->>=20
->> On Thu, Oct 10 2024 at 09:01, Thomas Wei=C3=9Fschuh wrote:
->>> Historically each architecture defined their own datapage to store the
->>> VDSO data. This stands in contrast to the generic nature of the VDSO
->>> code itself.
->>> We plan to introduce a generic framework for the management of the VDSO
->>> data storage that can be used by all architectures and which works
->>> together with the existing generic VDSO code.
->>>
->>> Before that is possible align the different architectures by
->>> standardizing on the existing generic infrastructure and moving things
->>> out of the VDSO data page which does not belong there.
->>>
->>> Patches	 1- 2:	csky
->>> Patch	    3:	s390
->>> Patches	 4- 5:	arm64
->>> Patch	    6:	riscv
->>> Patch	    7:	arm
->>> Patch	    8:	LoongArch
->>> Patch	    9:	MIPS
->>> Patches 10-20:	x86
->>> Patches 21-27:	powerpc
->>> Patch      28: 	Renamings to avoid a name clash with the new code.
->>=20
->> As this has been sitting for two weeks now without major comments, I'm
->> planning to merge that through the tip tree tomorrow.
->
-> To avoid any future conflicts with powerpc tree, I suggest you merge=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git=20
-> topic/vdso into your tree before applying this series.
+runtime is not used as seen with W=1 :
+sound/core/compress_offload.c: In function ‘snd_compr_poll’:
+sound/core/compress_offload.c:409:35: error: variable ‘runtime’ set but not used [-Werror=unused-but-set-variable]
+  409 |         struct snd_compr_runtime *runtime;
+      |                                   ^~~~~~~
 
-I thought the same, but there actually isn't any conflict at the moment
-between the two trees.
+Fixes: 04177158cf98 ("ALSA: compress_offload: introduce accel operation mode")
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+---
+ sound/core/compress_offload.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Some of Thomas W's later changes to convert arches to generic VDSO
-storage do conflict, but they look to be destined for the next merge
-window.
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index 5ecdad80a0d8..c08afbd0155b 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -406,7 +406,6 @@ static __poll_t snd_compr_poll(struct file *f, poll_table *wait)
+ {
+ 	struct snd_compr_file *data = f->private_data;
+ 	struct snd_compr_stream *stream;
+-	struct snd_compr_runtime *runtime;
+ 	size_t avail;
+ 	__poll_t retval = 0;
+ 
+@@ -414,8 +413,6 @@ static __poll_t snd_compr_poll(struct file *f, poll_table *wait)
+ 		return EPOLLERR;
+ 
+ 	stream = &data->stream;
+-	runtime = stream->runtime;
+-
+ 	guard(mutex)(&stream->device->lock);
+ 
+ 	switch (stream->runtime->state) {
+-- 
+2.47.0
 
-cheers
 
