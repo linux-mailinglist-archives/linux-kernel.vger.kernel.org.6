@@ -1,204 +1,123 @@
-Return-Path: <linux-kernel+bounces-398538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8779BF27D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:04:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840799BF283
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6951F23057
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:04:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A38D285499
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BE4205E3C;
-	Wed,  6 Nov 2024 16:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C9A206514;
+	Wed,  6 Nov 2024 16:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NKC//QNW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHHnBIlT"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D366F204028;
-	Wed,  6 Nov 2024 16:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FDF2064F3;
+	Wed,  6 Nov 2024 16:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909001; cv=none; b=IxfyfprJ1sHeCHEz3J2bVHNQZ2nnFRZG07pcynG103IpwbBO6aO4pBhno6wCTVw0aWj9IvfGil9dvGjZqaNcMPN+Hvue57TIp0jyEEmwFM+DA423yp2fYn5jfc/Lm2932Cm5tMrv3JKHfQxIGHYmirfF9pcKdt6meicN9Z4UetM=
+	t=1730909014; cv=none; b=loNXQEwgs8jFUpAjdGddldY4BvY7HJYYa794iirQVfPNtTZ1GXcLefkX6tZDmsU18b+lG+wm4vjTyCA4mxGMU3wMhCokPDzZcEfBeHyPo4U3QHE9L2fRis7R7U0gHgVWropBI1aIKSuDZXf35wlJsZ5dc2J9EzlskAxSub4F6DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909001; c=relaxed/simple;
-	bh=eeEXuIJ2vlczIF22PZRVZhnTIMIbHqdB4rwbCI1c/Sg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ioHxjZvG2b/rKl6i/a9S1Pg1BDRxa0z/4iLF/c/FJbM0VqV0EHMGsIS4X9gifo/pSYDnIP7wsKPjBNBS7wDV6lgPJzDoUdiMPaDa/1gTKI1ISVPvBY142jZaCISZLGzbvfs2TEc3tP0Tk1bhI7CVZBvXTaA+mIY6rE8lrgENED4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NKC//QNW; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730908999; x=1762444999;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=eeEXuIJ2vlczIF22PZRVZhnTIMIbHqdB4rwbCI1c/Sg=;
-  b=NKC//QNWBYXoeHvZEqxuSnuxCT8KPuPef2vRSskVLfPrVkXKORdjfijW
-   PT7V0JcFNbWVVXXhZwlVA794AgC694G7LGkNkSz2IbCO1hDExl+sq3xG7
-   /fRkRkG5ju89ymQYYguwuEomHa1v/GjWw8MjjK28lvNUNJOBNDv7AcMWZ
-   yxw0QRmo+0ToBCzstBTRpq6oTMdqgIVJr7/PZ8W2ga3++bO5+X8dG+MrF
-   K1YcUPu0accPxz4YTPXOifFZJSr29oIB8TOZSmE/1ttypxAeeUppdpFAP
-   F5DBWDDDNkKxnuwtnTrUfyig6yjxQPRNXpi7UcMAHMhIUtz0PiPYhRudm
-   w==;
-X-CSE-ConnectionGUID: Nh3lJl2hQrih+hUTaZUwAg==
-X-CSE-MsgGUID: kfGnJJAiTmm8xeWlk7XzkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48176917"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="48176917"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 08:03:17 -0800
-X-CSE-ConnectionGUID: a5M3gJ+/QYaSWgS/qH6ALg==
-X-CSE-MsgGUID: phJVPBFJQuabQWlVho3xvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="84715253"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 08:03:17 -0800
-Received: from [10.212.82.230] (kliang2-mobl1.ccr.corp.intel.com [10.212.82.230])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 2C51820B5703;
-	Wed,  6 Nov 2024 08:03:12 -0800 (PST)
-Message-ID: <65675ed8-e569-47f8-b1eb-40c853751bfb@linux.intel.com>
-Date: Wed, 6 Nov 2024 11:03:10 -0500
+	s=arc-20240116; t=1730909014; c=relaxed/simple;
+	bh=eYa9wlnu9E3P2y1lCWwcPAwQK8qAERsjwqOa/z4hWc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEZ/guxHexr2G2WS4b2K1fM4lpVmrsl7XETLOm4Y9XfX+2TZi8N2idLnEef0C2xgEshdqHji66b7Ebt0rSsLUKMV+5YVNJ/INKPcA1tH5I19ZQu2KWvtTtP4WcXcbKyh7APc7+rv11pWV3hG/U7Yg+LlttA0KSm8JgzHRplE7mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHHnBIlT; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2110a622d76so53008775ad.3;
+        Wed, 06 Nov 2024 08:03:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730909011; x=1731513811; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZNocM+WdbV87f0ucaFRRKZx/lGWrptiPjNjZfE8UDfY=;
+        b=QHHnBIlTTdxUri1LN2nFWB1u8sT05bUs4n4T+IsT9Fhhqo+n2Wxh82bMfl30cCb267
+         U+TIxHSrgZlnGdi+qjfKti8hbnjHhBDI9IhQVJ64kh0eeAL8uV16MhjJngr2WT3VdzQK
+         nSEQJlC9yCUEREXCMLom6GIjps6iE3cS8m2u1gFwwu94MVaV5joV6UsFKmOWmYUjJS/F
+         I+fQxO5o5QBncQ6tE0lD6T/Ko1vQ4wF1hGign4yX3zaBINrjuMR/Q94LZWrRupqkeS3t
+         bBDVY2uW2j2xSFR5Y7E33242YjvnJ+FbJnGw5RN1r/RFUA4FGqDBqYZrhAEgqp8tkwqa
+         RaUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730909011; x=1731513811;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZNocM+WdbV87f0ucaFRRKZx/lGWrptiPjNjZfE8UDfY=;
+        b=imWXyZnKjVewDkgnCujhcMxKRhDfi79wXL18y9ai+mL+QXt569bKZQu557xKx8eyXV
+         aQyAAJiDAvdcLIwCmNd/QGQNhtjVzCEWZGBmtdh9RM6BcN2I+fDAIo1KKGqZLEAYORg+
+         d5saYE+fGKCy0h6DCk4d0hRbkPkz0HrdCLMxDNaGmquoHVd94PIQUrkOBKLBGes2HTmE
+         TgCpioqM37cyErbiUhjtQ079cNyUVvIdOm6WvlI0B2t0xVTfCjXObO2Ay/Y9OCuimIxd
+         MvwZyXz16lI+JJnd6bBODgudcSG9EU6xaJRYKtsXn1ayoj/E8qYRK8TWdmWu5L/sPVtR
+         KqwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUG8jfpNLiELropoReaAi5funYiFC48dsuEBgF7hRDztAabHV1/OqkbQSLa7FBWnE051rvWxXWILMqh@vger.kernel.org, AJvYcCUu3zh77npibqT7XMHZ0ETBoMz+lVHyOxpbvVcegOFYheYAqY1EfBMIHf4+QmbhlYJBrKJQsDser74j@vger.kernel.org, AJvYcCVoYc0ah9RmxTxu9kxNEZHVZsF1X58RF5qtKQCRVqv3c6Kz1dGEVIggW/mRAdm+qv0DOT+1fo5mRXRY@vger.kernel.org, AJvYcCWkwogD2YYlwpoEvBxMNHYv0nlLsY2b0JVhak0Y5dHUxr+4nssSyMBWRwHqsWuLM3i8+XV+yttTR5QDcRRH@vger.kernel.org, AJvYcCX1DaVTx1cb8IpgMv2aFU4DQ9tZDJeweJcsOWXr9wDhVMItmb4XJOnwwFh9ZAe/lFZpAG3PeyPiyk9c03g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYQVPuuuLFulTTnNbFJGOdT2vEYYce7F+uaNp/cqiSiRlz2HH8
+	oZOAiYxmftcr7xbYzAJYN0K7HZNk3+bniUcSl6sG3QRJ2By3u9iV
+X-Google-Smtp-Source: AGHT+IFhRVrWIpPInnku4WjWMhMV/MtkoROR+ZMVi9n99hUzxhu1sEQlSsIAG0pSadilzV6mPYRygA==
+X-Received: by 2002:a17:902:da91:b0:20c:82ea:41bd with SMTP id d9443c01a7336-210c68d4349mr539228785ad.18.1730909010905;
+        Wed, 06 Nov 2024 08:03:30 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a541cfbsm1699958a91.18.2024.11.06.08.03.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 08:03:30 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 6 Nov 2024 08:03:29 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 5/7] hwmon: (pmbus/core) clear faults after setting
+ smbalert mask
+Message-ID: <ec18ced0-c113-4925-8096-3f776f0f11d9@roeck-us.net>
+References: <20241105-tps25990-v4-0-0e312ac70b62@baylibre.com>
+ <20241105-tps25990-v4-5-0e312ac70b62@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] x86: perf: Refactor misc flag assignments
-To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org
-Cc: Oliver Upton <oliver.upton@linux.dev>,
- Sean Christopherson <seanjc@google.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org
-References: <20241105195603.2317483-1-coltonlewis@google.com>
- <20241105195603.2317483-5-coltonlewis@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20241105195603.2317483-5-coltonlewis@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105-tps25990-v4-5-0e312ac70b62@baylibre.com>
 
-
-
-On 2024-11-05 2:56 p.m., Colton Lewis wrote:
-> Break the assignment logic for misc flags into their own respective
-> functions to reduce the complexity of the nested logic.
+On Tue, Nov 05, 2024 at 06:58:42PM +0100, Jerome Brunet wrote:
+> pmbus_write_smbalert_mask() ignores the errors if the chip can't set
+> smbalert mask the standard way. It is not necessarily a problem for the irq
+> support if the chip is otherwise properly setup but it may leave an
+> uncleared fault behind.
 > 
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
-> Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
-> ---
->  arch/x86/events/core.c            | 31 +++++++++++++++++++++++--------
->  arch/x86/include/asm/perf_event.h |  2 ++
->  2 files changed, 25 insertions(+), 8 deletions(-)
+> pmbus_core will pick the fault on the next register_check(). The register
+> check will fails regardless of the actual register support by the chip.
 > 
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index d19e939f3998..24910c625e3d 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -3011,16 +3011,34 @@ unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
->  	return regs->ip + code_segment_base(regs);
->  }
->  
-> +static unsigned long common_misc_flags(struct pt_regs *regs)
-> +{
-> +	if (regs->flags & PERF_EFLAGS_EXACT)
-> +		return PERF_RECORD_MISC_EXACT_IP;
-> +
-> +	return 0;
-> +}
-> +
-> +unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
-> +{
-> +	unsigned long guest_state = perf_guest_state();
-> +	unsigned long flags = common_misc_flags(regs);
-> +
-> +	if (guest_state & PERF_GUEST_USER)
-> +		flags |= PERF_RECORD_MISC_GUEST_USER;
-> +	else if (guest_state & PERF_GUEST_ACTIVE)
-> +		flags |= PERF_RECORD_MISC_GUEST_KERNEL;
-> +
+> This leads to missing attributes or debugfs entries for chips that should
+> provide them.
+> 
+> We cannot rely on register_check() as PMBUS_SMBALERT_MASK may be read-only.
+> 
+> Unconditionally clear the page fault after setting PMBUS_SMBALERT_MASK to
+> avoid the problem.
+> 
+> Suggested-by: Guenter Roeck <linux@roeck-us.net>
+> Fixes: 221819ca4c36 ("hwmon: (pmbus/core) Add interrupt support")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-The logic of setting the GUEST_KERNEL flag is implicitly changed here.
-
-For the current code, the GUEST_KERNEL flag is set for !PERF_GUEST_USER,
-which include both guest_in_kernel and guest_in_NMI.
-
-With the above change, the GUEST_KERNEL flag should be only set for the
-guest_in_kernel case.
-IIUC, this is the series's target, right?
-
-If so, could you please move the explanation into this patch?
-For x86, the behavior has already been changed since this patch.
+Applied.
 
 Thanks,
-Kan
-
-> +	return flags;
-> +}
-> +
->  unsigned long perf_arch_misc_flags(struct pt_regs *regs)
->  {
->  	unsigned int guest_state = perf_guest_state();
-> -	int misc = 0;
-> +	unsigned long misc = common_misc_flags(regs);
->  
->  	if (guest_state) {
-> -		if (guest_state & PERF_GUEST_USER)
-> -			misc |= PERF_RECORD_MISC_GUEST_USER;
-> -		else
-> -			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
-> +		misc |= perf_arch_guest_misc_flags(regs);
->  	} else {
->  		if (user_mode(regs))
->  			misc |= PERF_RECORD_MISC_USER;
-> @@ -3028,9 +3046,6 @@ unsigned long perf_arch_misc_flags(struct pt_regs *regs)
->  			misc |= PERF_RECORD_MISC_KERNEL;
->  	}
->  
-> -	if (regs->flags & PERF_EFLAGS_EXACT)
-> -		misc |= PERF_RECORD_MISC_EXACT_IP;
-> -
->  	return misc;
->  }
->  
-> diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-> index feb87bf3d2e9..d95f902acc52 100644
-> --- a/arch/x86/include/asm/perf_event.h
-> +++ b/arch/x86/include/asm/perf_event.h
-> @@ -538,7 +538,9 @@ struct x86_perf_regs {
->  
->  extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
->  extern unsigned long perf_arch_misc_flags(struct pt_regs *regs);
-> +extern unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs);
->  #define perf_arch_misc_flags(regs)	perf_arch_misc_flags(regs)
-> +#define perf_arch_guest_misc_flags(regs)	perf_arch_guest_misc_flags(regs)
->  
->  #include <asm/stacktrace.h>
->  
-
+Guenter
 
