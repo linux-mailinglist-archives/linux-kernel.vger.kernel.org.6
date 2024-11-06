@@ -1,226 +1,151 @@
-Return-Path: <linux-kernel+bounces-398922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38249BF811
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:36:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F35569BF816
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D075B22652
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:36:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B931B22190
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800620C478;
-	Wed,  6 Nov 2024 20:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3099220C48B;
+	Wed,  6 Nov 2024 20:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hsL7sM9r"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eIc2QBo5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A96820C462
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 20:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D377A1D358C;
+	Wed,  6 Nov 2024 20:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730925372; cv=none; b=S1JOyBJDzfE+2vcTQ2/EP6qlrjKna8AKIOA3NUJrcauXdhDSHWR44Bw0wNDSfnbkdZSEXHTORvfSTnz0KtdsgNWAZSS8Ft6iKT/sO54XzAOnFazAjkK7+8KRR5NbaUBu8S54+lQCawspq1KOzlRwyNJ+1wER2Kw5dbX6nwkRfHs=
+	t=1730925513; cv=none; b=I9aZt5JSntXK+W8MP8lx7ne4FZ8AvJusClqueA4NWeLdiqAttI85Kyl61INbc+06gTOKmk+bWEryzmp33W9fEdTSv66rXgoP4CGFVrW1Dlo16B7Up8orTHV8kjX+FUYKcYmPpkSLRJdropafA+JVyaoSsT2RaUDp+FESsixx1L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730925372; c=relaxed/simple;
-	bh=DDan4rb3ZDfZooaIPdGKMHpMdyXPRM8PAAJJ+ibuzD8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YyNRziFVQGaI6VI6jkq4quEzbkbJ7LAX0WKJrooC/HNqOvfhMD0WqCN2PtlrkccSzCqHmNIHpMj8r2DvIlFl6vgBfzLoZW7MJWiwx/3PppVE3aQlLml+BhHd/WdbSSxzwNZtz8mXWtQs/mQFICWlo09kIzybWpX5autBOvRb6pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hsL7sM9r; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4609c96b2e5so1520841cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 12:36:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730925369; x=1731530169; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vDv+Zw29UPJy5Wu1eDDdz3Y9nEtJru0vhbk85035bL8=;
-        b=hsL7sM9rQLJaKg6ZTjk7LJnDi5wQOFKuGL3sTeNnwXA8y4Bq3JnLjYuCliyg2FRIJz
-         3C2+KTOcTun8dfE3/YZA6zvo/ER9vnooEnP+KKNCg3JeuElGIKrYupMd2pFPuH5fkcHS
-         DGBgfPKdH2mOAL9lVaPxu4v0ymV9NmpJLoQsI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730925369; x=1731530169;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vDv+Zw29UPJy5Wu1eDDdz3Y9nEtJru0vhbk85035bL8=;
-        b=qRd+pgD3xNVlf+PYIZUrldLbT4e+CXTNCzXyActd+CPUkO2pAZNfwMj5lOoh0KcNKu
-         6fICa5CEjazuBRJZuZbXIvuM0SmbB5UMpcuZ6/z/oAJv8zOTJc+VQmzaybfwTKiwF1Sh
-         Ddj+6z4s81QoQnXo0oxEUl+WlYmj4t0sGWBzenZ8ZzJNmnf7ScP72mYpMJf1kE5xC0/+
-         Bu/Y2XEBLPeA6RmzQOsoYwRin83mYSjE9wlbHv0qRWBtwszIOrsBlLDZ+xeOEFQi1H6H
-         NDDVB9IU1DmWiasuAsBAzml68OZFfKu1+OZjrxOFQcmQVXE4dHXI4PqFpkmtGStnruZs
-         EVdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpEAdIRT4I6SOuGTjWllqkodayUH2Hr4EoRzU1S/FiGtsBlUo6NDlJTTfoVW9iHNrNIfqIxG5eh1y19hY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxL3W0OEs8Sf4K5YgFFcuAhWo05AnEPzKV/E/05actqr1hHaVh
-	CYNKVdXsbOc8NVScw+Voj9cUKOc4sJ9xngIePWWYuT0AY5lr9fxaNj2gZ/A82g==
-X-Google-Smtp-Source: AGHT+IGneR3U1qsCjlwemlshVx6J+SNXK0Oj1alprvpKqgmhnx9tb/oDytUpxjX089+aCQwqJcBjVg==
-X-Received: by 2002:a05:6214:3990:b0:6cb:ef1f:d1ab with SMTP id 6a1803df08f44-6d1856fa3dfmr624113066d6.30.1730925369092;
-        Wed, 06 Nov 2024 12:36:09 -0800 (PST)
-Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353f9f1f6sm76449816d6.27.2024.11.06.12.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 12:36:08 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 06 Nov 2024 20:36:07 +0000
-Subject: [PATCH v6] media: uvcvideo: Fix crash during unbind if gpio unit
- is in use
+	s=arc-20240116; t=1730925513; c=relaxed/simple;
+	bh=t1T0JqltTt1br9rO+URcAmslVziWyZeSdcV2iKnx4V4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h5J06iVFkiZkICIf8ap1aEmyTtbz6dB/V9Mlj9rXFqsZP/3X0Qa/kg2N65GEhY5U7uHyihUT2/MBSgwdazZ8Z6rCrQ1A2X6lBnsB57+L5S5m/hWoahtV46V8yTowX/+gpLQl3Gv8AWpII+zQdSHxVVOv381d5cmMMB380J/HFYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eIc2QBo5; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730925512; x=1762461512;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=t1T0JqltTt1br9rO+URcAmslVziWyZeSdcV2iKnx4V4=;
+  b=eIc2QBo5LHAv7yeQxN0NNsNzg8CR9ZPijh1MCmsvm8Sh2iFs/RpnAU4J
+   kVEkfLkJ4N3SKelTgWsP7OaUhvuXLbeBYCuzMC1Ao/JcamHlcpQRAJR0h
+   ye0OQM8eC63r36JAzSMDKTaqT88OyZHCBFF63qwa4TxHTjFQks5NSTCIF
+   aj4FUqiSHEl+c7yQH+sOi75F7PmrFPsp6R3V2y6dNe1X6aDi3ig1YS8+Q
+   qP4xl6tP6rW/VBRaXo3kZd7VAMTKaNOaiihCSmTXGofpRsMy80N2j6a0e
+   PXqGGK4m6rZRRxIemnBJ8C/X29cgoQItVg7iCGtg2JQUF/k8xfX5d2aWc
+   g==;
+X-CSE-ConnectionGUID: wuV0iq3STWqNvMWBuOq0kw==
+X-CSE-MsgGUID: /Tn2Z6r7QTqgvL/FuE64cQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="41340839"
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="41340839"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 12:38:31 -0800
+X-CSE-ConnectionGUID: d6sAQXYbTuCw0s8JjLqdMw==
+X-CSE-MsgGUID: 0q6Tkfi4S2Wgas+639rTLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="108044520"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 12:38:30 -0800
+Received: from [10.212.82.230] (kliang2-mobl1.ccr.corp.intel.com [10.212.82.230])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 2880520B5703;
+	Wed,  6 Nov 2024 12:38:26 -0800 (PST)
+Message-ID: <89b46b99-e9fc-4ce4-84b2-b24f565db8d5@linux.intel.com>
+Date: Wed, 6 Nov 2024 15:38:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/5] perf: Correct perf sampling with guest VMs
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org,
+ Sean Christopherson <seanjc@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org
+References: <20241105195603.2317483-1-coltonlewis@google.com>
+ <20241105195603.2317483-6-coltonlewis@google.com>
+ <007cfed1-111d-45aa-b873-24cca9d4af01@linux.intel.com>
+ <ZyvJIx-UHXawnUYs@linux.dev>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <ZyvJIx-UHXawnUYs@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org>
-X-B4-Tracking: v=1; b=H4sIADbTK2cC/33PwW7DIAyA4VepOI8JA3bCTnuPagdGTMMhZYIVd
- ary7qO9TNqyHH9L/mTfROWSuIqXw00UbqmmfO5BTwcRZn8+sUxTb6GVtqAMyEsLMhRf57IseZJ
- ENLGJwYEF0Zc+Csd0fYDHt95zqp+5fD38Bvfpv1QDCVKhi4zOvAPTa5hLXtJlec7lJO5a0z8CK
- Pwj6C6gHQKTJ0eaNwSzL5guBOXQhdEpmsyGYPcFK5Xs/zHaMSo3+A0B9wXsN4ykTfQIfrDxl7C
- u6zc62tpQtwEAAA==
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
- stable@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
 
-We used the wrong device for the device managed functions. We used the
-usb device, when we should be using the interface device.
 
-If we unbind the driver from the usb interface, the cleanup functions
-are never called. In our case, the IRQ is never disabled.
 
-If an IRQ is triggered, it will try to access memory sections that are
-already free, causing an OOPS.
+On 2024-11-06 2:53 p.m., Oliver Upton wrote:
+> On Wed, Nov 06, 2024 at 11:07:53AM -0500, Liang, Kan wrote:
+>>> +#ifndef perf_arch_guest_misc_flags
+>>> +static inline unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+>>> +{
+>>> +	unsigned long guest_state = perf_guest_state();
+>>> +
+>>> +	if (guest_state & PERF_GUEST_USER)
+>>> +		return PERF_RECORD_MISC_GUEST_USER;
+>>> +
+>>> +	if (guest_state & PERF_GUEST_ACTIVE)
+>>> +		return PERF_RECORD_MISC_GUEST_KERNEL;
+>>
+>> Is there by any chance to add a PERF_GUEST_KERNEL flag in KVM?
+> 
+> Why do we need another flag? As it stands today, the vCPU is either in
+> user mode or kernel mode.
+> 
+>> The PERF_GUEST_ACTIVE flag check looks really confusing.
+> 
+> Perhaps instead:
+> 
+> static inline unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+> {
+> 	unsigned long guest_state = perf_guest_state();
+> 
+> 	if (!(guest_state & PERF_GUEST_ACTIVE))
+> 		return 0;
+> 
+> 	return (guest_state & PERF_GUEST_USER) ? PERF_RECORD_MISC_GUEST_USER :
+> 						 PERF_RECORD_MISC_GUEST_KERNEL;
+> }
 
-We cannot use the function devm_request_threaded_irq here. The devm_*
-clean functions may be called after the main structure is released by
-uvc_delete.
+Yes, this one is much clear.
 
-Luckily this bug has small impact, as it is only affected by devices
-with gpio units and the user has to unbind the device, a disconnect will
-not trigger this error.
+Can a similar change be done for the x86 perf_arch_guest_misc_flags() in
+the previous patch?
 
-Cc: stable@vger.kernel.org
-Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-Changes in v6:
-- Rename cleanup as deinit
-- Move cleanup to the beginning of the uvc_unregister_video.
-- Fix commit message.
-- Link to v5: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v5-1-8623fa51a74f@chromium.org
-
-Changes in v5:
-- Revert non refcount, that belongs to a different set
-- Move cleanup to a different function
-- Link to v4: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org
-
-Changes in v4: Thanks Laurent.
-- Remove refcounted cleaup to support devres.
-- Link to v3: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v3-1-c0959c8906d3@chromium.org
-
-Changes in v3: Thanks Sakari.
-- Rename variable to initialized.
-- Other CodeStyle.
-- Link to v2: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org
-
-Changes in v2: Thanks to Laurent.
-- The main structure is not allocated with devres so there is a small
-  period of time where we can get an irq with the structure free. Do not
-  use devres for the IRQ.
-- Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
----
- drivers/media/usb/uvc/uvc_driver.c | 28 +++++++++++++++++++++-------
- drivers/media/usb/uvc/uvcvideo.h   |  1 +
- 2 files changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index a96f6ca0889f..cd13bf01265d 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
- 	struct gpio_desc *gpio_privacy;
- 	int irq;
- 
--	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
-+	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
- 					       GPIOD_IN);
- 	if (IS_ERR_OR_NULL(gpio_privacy))
- 		return PTR_ERR_OR_ZERO(gpio_privacy);
- 
- 	irq = gpiod_to_irq(gpio_privacy);
- 	if (irq < 0)
--		return dev_err_probe(&dev->udev->dev, irq,
-+		return dev_err_probe(&dev->intf->dev, irq,
- 				     "No IRQ for privacy GPIO\n");
- 
- 	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
-@@ -1329,15 +1329,27 @@ static int uvc_gpio_parse(struct uvc_device *dev)
- static int uvc_gpio_init_irq(struct uvc_device *dev)
- {
- 	struct uvc_entity *unit = dev->gpio_unit;
-+	int ret;
- 
- 	if (!unit || unit->gpio.irq < 0)
- 		return 0;
- 
--	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
--					 uvc_gpio_irq,
--					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
--					 IRQF_TRIGGER_RISING,
--					 "uvc_privacy_gpio", dev);
-+	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
-+				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
-+				   IRQF_TRIGGER_RISING,
-+				   "uvc_privacy_gpio", dev);
-+
-+	unit->gpio.initialized = !ret;
-+
-+	return ret;
-+}
-+
-+static void uvc_gpio_deinit(struct uvc_device *dev)
-+{
-+	if (!dev->gpio_unit || !dev->gpio_unit->gpio.initialized)
-+		return;
-+
-+	free_irq(dev->gpio_unit->gpio.irq, dev);
- }
- 
- /* ------------------------------------------------------------------------
-@@ -1934,6 +1946,8 @@ static void uvc_unregister_video(struct uvc_device *dev)
- {
- 	struct uvc_streaming *stream;
- 
-+	uvc_gpio_deinit(dev);
-+
- 	list_for_each_entry(stream, &dev->streams, list) {
- 		/* Nothing to do here, continue. */
- 		if (!video_is_registered(&stream->vdev))
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 07f9921d83f2..965a789ed03e 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -234,6 +234,7 @@ struct uvc_entity {
- 			u8  *bmControls;
- 			struct gpio_desc *gpio_privacy;
- 			int irq;
-+			bool initialized;
- 		} gpio;
- 	};
- 
-
----
-base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
-change-id: 20241031-uvc-crashrmmod-666de3fc9141
-
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
+Thanks,
+Kan
 
 
