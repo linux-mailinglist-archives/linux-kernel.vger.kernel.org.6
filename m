@@ -1,344 +1,247 @@
-Return-Path: <linux-kernel+bounces-397541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A829BDD27
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:47:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4349BDD25
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515601F21C9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12140280A4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A3C18FC7E;
-	Wed,  6 Nov 2024 02:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018FF18DF81;
+	Wed,  6 Nov 2024 02:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lN3cGSRQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X0rIHs6m"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60828A47;
-	Wed,  6 Nov 2024 02:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A709033F3
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730861229; cv=none; b=k0GJEn1pWnOBEMsXUFP2MLzSq7ghQsq04dXUkgEmfEY+7J4NfjqoYxMVc5Kvr5S/8Uh7jseMHf+8Xp9BL8FZVEhl9MuZqtv/8YnekIP16u1wWpokUG3o+jbtPCnm8x+mqV3iZ9WmLUAqQqsgJnhWnLp6onhcaBwhNsbn38oLGP0=
+	t=1730861048; cv=none; b=iJDFyTGfnmocxd3uLWZmMJUx3DOxvLmFXPDsq6lC9Ln4fjILKp/YUNlPrW/bhMeIG4sfhEqzK9rGKo58VRpBejx8sKIB+iM/RJkok7MCnubIZx9KLxxNvrFFE0sqMdIPl0R2yAngLfTeelQCFVHS8Ul6BDg22704S+WBMbaStNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730861229; c=relaxed/simple;
-	bh=DdfIxqlQlz3pdCPcOkvTnG+GvT+X5p3zUaHfIjMSHnU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Kf3Mn/BYJrsY3Ob6NRo7is6ehtSNQf0Q+A4z7nr39ZR7ywgro9nmRb3EOFd4vusCHvcEhrETAudI4rLe3ZaX3hPd2e7PplWMnnkZsriH7m4sD/56DoEpa/uhyUY+0yN/uDA3niu9dSd8bqnOdYrs0uwtQSzunbUacT7xPOJZG5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lN3cGSRQ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730861227; x=1762397227;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=DdfIxqlQlz3pdCPcOkvTnG+GvT+X5p3zUaHfIjMSHnU=;
-  b=lN3cGSRQ5okF1I6w7t9baENknA081B5YHJCtKWMDghglmgwDlaZmkEkb
-   fSSMVdmk5XGpQrMDWsZrXvJ5EcCMyBG0Kpv2A7SkoVFfiWB2MTwzft1di
-   IsZ//9HK6SfraQIGfdOqpvdLIS1SVQHwYI4MVvR32p2xJPpT0UGpuKmSA
-   Cb/fciA3z++2+vZLpuwflAUT2WzVogIDWDWtD6NEo/qosgibFOLPudxdJ
-   4UtBXe72H433Dp6AQKkIjwvRs5ARJGGwycbloox8OtoQPm/cjjm3P9r9c
-   TJeAyS48A9VHxz9Rl+TLilgx/a7GAJYkCwuNv9wN8/Sk3BiIH4W58htfB
-   w==;
-X-CSE-ConnectionGUID: 7sVBUeqbRGqY+Lj/aH04Yw==
-X-CSE-MsgGUID: 1SBmpl9bQ6KQqrY5etx+SA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30070024"
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="30070024"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 18:47:06 -0800
-X-CSE-ConnectionGUID: CbFnNrQiToaCZ/0W8Q4nWw==
-X-CSE-MsgGUID: ui+bkFSxSEehf9kIMW+7Aw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="89115602"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 18:47:03 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,  Dave Jiang
- <dave.jiang@intel.com>,  <linux-cxl@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  Jonathan Cameron
- <Jonathan.Cameron@huawei.com>,  Davidlohr Bueso <dave@stgolabs.net>,
-  "Gregory Price" <gourry@gourry.net>,  Vishal Verma
- <vishal.l.verma@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  Alejandro
- Lucero <alucerop@amd.com>,  Ben Cheatham <benjamin.cheatham@amd.com>
-Subject: Re: [PATCH] cxl: Rename ACPI_CEDT_CFMWS_RESTRICT_TYPE2/TYPE3
-In-Reply-To: <ZyrUFMutrN_uJvPe@aschofie-mobl2.lan> (Alison Schofield's message
-	of "Tue, 5 Nov 2024 18:27:32 -0800")
-References: <20241104084110.583710-1-ying.huang@intel.com>
-	<ZyrUFMutrN_uJvPe@aschofie-mobl2.lan>
-Date: Wed, 06 Nov 2024 10:43:30 +0800
-Message-ID: <878qtx6q0d.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730861048; c=relaxed/simple;
+	bh=hTp3V7yOuKlIPqbO3/Yo4FC62i0sTvzGEyO40R2W648=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q9bvrh1o32S5KQq/axIdJydc0kGqddhb0KogHsqE/P+qg0VBqbBGl+hcDKGTcgPcAK0aEChWj0zNg8o3JhaJFnQMzbTIsDKVJ0nIfbteX584qXD633m85B5qci2PnNokBrUAN9pLA52FP9HdFZmbyMwOGSlZ3EIPKJNRFx/yaxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X0rIHs6m; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hTp3V7yOuKlIPqbO3/Yo4FC62i0sTvzGEyO40R2W648=; b=X0rIHs6mI1hLQrR/XujshsJq6Q
+	2TWgnftljXyfdhasbOfse5fID8VnXBG3oLBnAzoPkD/RZDl25fEVdWfysryr2JsX9NuPbqm/YbeQk
+	yaS0uuB/tsKP5SgL1RSx/TDtcbtavYJyn07qmyZdJCj6R05/ndwL59xu0Xe99/B1pWy/VOQI36x7O
+	4c+sF9j+bZwvWVHF3IrkgodJ6fZ5TnpJJfL0TqbhfgvGwyHYC6E7Z6Yp90L2U3l5r8dHwIIMtJ1xb
+	15CGtoeonkbCfkfyqwNqdO+rpGZb8gKqIosKxo+SXU6ylwwuQOZSfZMC/euP+3LqKxnzlbykQZqUz
+	U28VQzdQ==;
+Received: from [205.251.233.52] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8W1O-00000003xwF-2FE3;
+	Wed, 06 Nov 2024 02:43:51 +0000
+Message-ID: <10f2dec7afbbff6570007495185ce1c4144e446b.camel@infradead.org>
+Subject: Re: [RFC PATCH 6/7] x86/kexec: Debugging support: Dump registers on
+ exception
+From: David Woodhouse <dwmw2@infradead.org>
+To: "H. Peter Anvin" <hpa@zytor.com>, "peterz@infradead.org"
+ <peterz@infradead.org>, "kexec@lists.infradead.org"
+ <kexec@lists.infradead.org>,  "jpoimboe@kernel.org" <jpoimboe@kernel.org>
+Cc: "horms@kernel.org" <horms@kernel.org>, "x86@kernel.org"
+ <x86@kernel.org>,  "bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com"
+ <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+ "kai.huang@intel.com" <kai.huang@intel.com>, 
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, 
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Date: Tue, 05 Nov 2024 18:43:44 -0800
+In-Reply-To: <b66cd5ca-aae4-48eb-a0ba-2d1d4e53f810@zytor.com>
+References: <20241103054019.3795299-1-dwmw2@infradead.org>
+	 <20241103054019.3795299-7-dwmw2@infradead.org>
+	 <230aacb0ca0d57581f9350f96390933646f203e4.camel@amazon.co.uk>
+	 <b66cd5ca-aae4-48eb-a0ba-2d1d4e53f810@zytor.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-lqAHLn5mSGAKaJX2S/MD"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-Alison Schofield <alison.schofield@intel.com> writes:
 
-> On Mon, Nov 04, 2024 at 04:41:10PM +0800, Ying Huang wrote:
->> According to the description of the "Window Restrictions" field of
->> "CFMWS Structure" in the CXL spec v3.1 section 9.18.1.3: CXL Fixed
->> Memory Window Structure (CFMWS), the bit 0 of "Window Restrictions" is
->> formerly known as "CXL Type 2 Memory" and renamed to "Device
->> Coherent", while the bit 1 is formerly known as "CXL Type 3 Memory"
->> and renamed to "Host-only Coherent".  Because type 3 memory can only
->> be host-only coherent before, while it can be host-only coherent or
->> device coherent with "Back-Invalidate" now.
->> 
->> To avoid confusion about type 2/3 memory and device/host-only coherent
->> in Linux kernel, the patch renames corresponding bit definition from
->> ACPI_CEDT_CFMWS_RESTRICT_TYPE2/TYPE3 to
->> ACPI_CEDT_CFMWS_RESTRICT_DEVMEM/HOSTONLYMEM.  This makes the kernel
->> code consistent with the spec too.
->> 
->> The patch also renames the corresponding cxl_decoder flags
->> CXL_DECODER_F_TYPE2/TYPE3 to CXL_DECODER_F_DEVMEM/HOSTONLYMEM.
->> 
->> No functionality change is expected.
->> 
->> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
->> Reviewed-by: Gregory Price <gourry@gourry.net>
->> Cc: Dan Williams <dan.j.williams@intel.com>
->> Cc: Dave Jiang <dave.jiang@intel.com>
->> Cc: Alison Schofield <alison.schofield@intel.com>
->> Cc: Vishal Verma <vishal.l.verma@intel.com>
->> Cc: Ira Weiny <ira.weiny@intel.com>
->> Cc: Alejandro Lucero <alucerop@amd.com>
->> Cc: Ben Cheatham <benjamin.cheatham@amd.com>
->> ---
->>  drivers/cxl/acpi.c           |  8 ++++----
->>  drivers/cxl/core/port.c      |  8 ++++----
->>  drivers/cxl/cxl.h            | 14 +++++++-------
->>  include/acpi/actbl1.h        | 10 +++++-----
->>  tools/testing/cxl/test/cxl.c | 18 +++++++++---------
->>  5 files changed, 29 insertions(+), 29 deletions(-)
->> 
->> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
->> index 82b78e331d8e..aca8cbb7540d 100644
->> --- a/drivers/cxl/acpi.c
->> +++ b/drivers/cxl/acpi.c
->> @@ -115,10 +115,10 @@ static unsigned long cfmws_to_decoder_flags(int restrictions)
->>  {
->>  	unsigned long flags = CXL_DECODER_F_ENABLE;
->>  
->> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE2)
->> -		flags |= CXL_DECODER_F_TYPE2;
->> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE3)
->> -		flags |= CXL_DECODER_F_TYPE3;
->> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_DEVMEM)
->> +		flags |= CXL_DECODER_F_DEVMEM;
->> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM)
->> +		flags |= CXL_DECODER_F_HOSTONLYMEM;
->>  	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_VOLATILE)
->>  		flags |= CXL_DECODER_F_RAM;
->>  	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_PMEM)
->> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
->> index a5e6f3d23cfb..8524714968fd 100644
->> --- a/drivers/cxl/core/port.c
->> +++ b/drivers/cxl/core/port.c
->> @@ -125,8 +125,8 @@ static DEVICE_ATTR_RO(name)
->>  
->>  CXL_DECODER_FLAG_ATTR(cap_pmem, CXL_DECODER_F_PMEM);
->>  CXL_DECODER_FLAG_ATTR(cap_ram, CXL_DECODER_F_RAM);
->> -CXL_DECODER_FLAG_ATTR(cap_type2, CXL_DECODER_F_TYPE2);
->> -CXL_DECODER_FLAG_ATTR(cap_type3, CXL_DECODER_F_TYPE3);
->> +CXL_DECODER_FLAG_ATTR(cap_type2, CXL_DECODER_F_DEVMEM);
->> +CXL_DECODER_FLAG_ATTR(cap_type3, CXL_DECODER_F_HOSTONLYMEM);
->>  CXL_DECODER_FLAG_ATTR(locked, CXL_DECODER_F_LOCK);
->>  
-> Hi Ying,
+--=-lqAHLn5mSGAKaJX2S/MD
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Alison,
+On Tue, 2024-11-05 at 13:37 -0800, H. Peter Anvin wrote:
+>=20
+> Looking at your code, you have a much bigger problem here:
+>=20
+> +/*
+> + * This allows other types of serial ports to be used.
+> + *=C2=A0 - %al: Character to be printed (no clobber %rax)
+> + *=C2=A0 - %rdx: MMIO address or port.
+> + */
+> +.macro pr_char
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 outb=C2=A0=C2=A0=C2=A0 %al, %dx
+> +.endm
+> +
+>=20
+> This will overflow your UART buffer very quickly since you are now=20
+> dumping a whole bunch of data. The URT buffer -- if you even have one
+> and it is enabled -- is only 16 bytes in a standard 16550A UART. In=20
+> older UARTs (or emulated older UARTs) you might not have a buffer at=20
+> all. To print more than a handful of bytes, you need to poll for the=20
+> THRE bit=3D1 (bit 5 of register 5).
 
->
-> The commit log explains that type3 can now be 'either/or', so does
-> cap_type3_show() need to emit true for either:
-> 	(flags & CXL_DECODER_F_HOSTONLYMEM)
-> 	or
-> 	(flags & CXL_DECODER_F_DEVMEM) & 'back invalidate')
->
-> Does this explanation in the ABI need updating:
-> What:           /sys/bus/cxl/devices/decoderX.Y/cap_{pmem,ram,type2,type3}
-> Date:           June, 2021
-> KernelVersion:  v5.14
-> Contact:        linux-cxl@vger.kernel.org
-> Description:
->                 (RO) When a CXL decoder is of devtype "cxl_decoder_root", it
->                 represents a fixed memory window identified by platform
->                 firmware. A fixed window may only support a subset of memory
->                 types. The 'cap_*' attributes indicate whether persistent
->                 memory, volatile memory, accelerator memory, and / or expander
->                 memory may be mapped behind this decoder's memory window.
+Emulated UARTs are generally fine because they don't really emulate the
+buffer at all. And when I originally wrote this it was purely a hack to
+debug an issue for myself, and used a different type of logging device
+altogether.
 
-I think so too.  However, I prefer to keep this patch just mechanic
-renaming and do these changes in another patch.  Do you agree?
+But yeah, if this were to be used on bare metal 16550A it would indeed
+need to wait for space in the FIFO/THR.
 
---
-Best Regards,
-Huang, Ying
+> What is the point of writing this code in assembly in the first place? A=
+=20
+> much more logical thing to do is to just push the registers you haven't=
+=20
+> pushed already onto the stack and call a C function to do the actual=20
+> dumping? It isn't like it is in any shape, way or form performance critic=
+al.
 
->
->>  static ssize_t target_type_show(struct device *dev,
->> @@ -326,14 +326,14 @@ static struct attribute *cxl_decoder_root_attrs[] = {
->>  
->>  static bool can_create_pmem(struct cxl_root_decoder *cxlrd)
->>  {
->> -	unsigned long flags = CXL_DECODER_F_TYPE3 | CXL_DECODER_F_PMEM;
->> +	unsigned long flags = CXL_DECODER_F_HOSTONLYMEM | CXL_DECODER_F_PMEM;
->>  
->>  	return (cxlrd->cxlsd.cxld.flags & flags) == flags;
->>  }
->>  
->>  static bool can_create_ram(struct cxl_root_decoder *cxlrd)
->>  {
->> -	unsigned long flags = CXL_DECODER_F_TYPE3 | CXL_DECODER_F_RAM;
->> +	unsigned long flags = CXL_DECODER_F_HOSTONLYMEM | CXL_DECODER_F_RAM;
->>  
->>  	return (cxlrd->cxlsd.cxld.flags & flags) == flags;
->>  }
->> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
->> index 0fc96f8bf15c..b9083ce1cf74 100644
->> --- a/drivers/cxl/cxl.h
->> +++ b/drivers/cxl/cxl.h
->> @@ -315,13 +315,13 @@ resource_size_t cxl_rcd_component_reg_phys(struct device *dev,
->>   * Additionally indicate whether decoder settings were autodetected,
->>   * user customized.
->>   */
->> -#define CXL_DECODER_F_RAM   BIT(0)
->> -#define CXL_DECODER_F_PMEM  BIT(1)
->> -#define CXL_DECODER_F_TYPE2 BIT(2)
->> -#define CXL_DECODER_F_TYPE3 BIT(3)
->> -#define CXL_DECODER_F_LOCK  BIT(4)
->> -#define CXL_DECODER_F_ENABLE    BIT(5)
->> -#define CXL_DECODER_F_MASK  GENMASK(5, 0)
->> +#define CXL_DECODER_F_RAM         BIT(0)
->> +#define CXL_DECODER_F_PMEM        BIT(1)
->> +#define CXL_DECODER_F_DEVMEM      BIT(2)
->> +#define CXL_DECODER_F_HOSTONLYMEM BIT(3)
->> +#define CXL_DECODER_F_LOCK        BIT(4)
->> +#define CXL_DECODER_F_ENABLE      BIT(5)
->> +#define CXL_DECODER_F_MASK        GENMASK(5, 0)
->>  
->>  enum cxl_decoder_type {
->>  	CXL_DECODER_DEVMEM = 2,
->> diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
->> index 199afc2cd122..e195909928df 100644
->> --- a/include/acpi/actbl1.h
->> +++ b/include/acpi/actbl1.h
->> @@ -551,11 +551,11 @@ struct acpi_cedt_cfmws_target_element {
->>  
->>  /* Values for Restrictions field above */
->>  
->> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE2      (1)
->> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE3      (1<<1)
->> -#define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE   (1<<2)
->> -#define ACPI_CEDT_CFMWS_RESTRICT_PMEM       (1<<3)
->> -#define ACPI_CEDT_CFMWS_RESTRICT_FIXED      (1<<4)
->> +#define ACPI_CEDT_CFMWS_RESTRICT_DEVMEM        (1)
->> +#define ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM   (1<<1)
->> +#define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE      (1<<2)
->> +#define ACPI_CEDT_CFMWS_RESTRICT_PMEM          (1<<3)
->> +#define ACPI_CEDT_CFMWS_RESTRICT_FIXED         (1<<4)
->>  
->>  /* 2: CXL XOR Interleave Math Structure */
->>  
->> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
->> index 90d5afd52dd0..9d919fc99f6b 100644
->> --- a/tools/testing/cxl/test/cxl.c
->> +++ b/tools/testing/cxl/test/cxl.c
->> @@ -209,7 +209,7 @@ static struct {
->>  			},
->>  			.interleave_ways = 0,
->>  			.granularity = 4,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M * 4UL,
->> @@ -224,7 +224,7 @@ static struct {
->>  			},
->>  			.interleave_ways = 1,
->>  			.granularity = 4,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M * 8UL,
->> @@ -239,7 +239,7 @@ static struct {
->>  			},
->>  			.interleave_ways = 0,
->>  			.granularity = 4,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M * 4UL,
->> @@ -254,7 +254,7 @@ static struct {
->>  			},
->>  			.interleave_ways = 1,
->>  			.granularity = 4,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M * 8UL,
->> @@ -269,7 +269,7 @@ static struct {
->>  			},
->>  			.interleave_ways = 0,
->>  			.granularity = 4,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M * 4UL,
->> @@ -284,7 +284,7 @@ static struct {
->>  			},
->>  			.interleave_ways = 0,
->>  			.granularity = 4,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M,
->> @@ -301,7 +301,7 @@ static struct {
->>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->>  			.interleave_ways = 0,
->>  			.granularity = 4,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M * 8UL,
->> @@ -317,7 +317,7 @@ static struct {
->>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->>  			.interleave_ways = 1,
->>  			.granularity = 0,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M * 8UL,
->> @@ -333,7 +333,7 @@ static struct {
->>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
->>  			.interleave_ways = 2,
->>  			.granularity = 0,
->> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
->> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
->>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
->>  			.qtg_id = FAKE_QTG_ID,
->>  			.window_size = SZ_256M * 16UL,
->> -- 
->> 2.39.2
->> 
+If we fix it up to use a proper linker script, that's slightly more
+feasible.=C2=A0As things stand, it's only really possible to do it in the
+existing asm file.=20
+
+And it's only the core of the exception handler "function" which could
+be moved out to C; it didn't seem particularly worth bothering. Would
+be nice to have the IDT generated from C code *before* calling
+relocate_kernel() instead of inside relocate_kernel itself, perhaps,
+but I was also trying to keep the #define DEBUG version of the code
+fairly self-contained.
+
+
+
+--=-lqAHLn5mSGAKaJX2S/MD
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMTA2MDI0MzQ0WjAvBgkqhkiG9w0BCQQxIgQggO7cyQzj
+L1t9rF+v96vFYKkd0APAeM5Csevav4dmNm8wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCEizWv1OKQBplULDJEbtaJtbriBWDk9z46
+Wv+YR1DpMYUUxgzadLytpcYd9F2X4eK5WX3buiE/0+f1Gt52yFawvFIIn5VSVbrmsNqxtKYLlbL3
+pZohnM6sQtDpP5r0PviSNwCCIHBeCIu2bzDAHhhJkCJhUf3YyNT2MObm8OgD+zuSNz7PdWH6AtSt
+d7B2giecy69/BxNFEmu34VuWhMcUJDuvWfA3mMnrDiWc/M4gy82m0P4XRkX51h/L+35m1MZBC/nO
+bzhO46mv/K3+NrMLXtZC2VsKImvtBhNsUQWm+VAY+34toFoNY78YU4xOVBFjiEbgLidOSVxv9ljj
+96vtVRGRqvID+PAlD+Q8XZnt/e+qvwkFAabQq2k5EtL2at1i+xzf2GRYSr3UIwrTN1LJS/MeT0So
+QB85rErAfhfYbTwIWZwBfXiKJP5fm2z8r50agTuDLCZ/QYF++/UXmzJyYDSHDd9g6n50Rn5p7wEE
+2Gax7a4oDD3yqY7d9nHEPNfbunMAFOPzaIn394/jeLv5KiuhwXjaSe+zbFFtoWr58HAtK/M2bB2w
+Th0mbxM/03w3f29mwrolSaEXxrp78CUtQyO9hGO77hzzVYDF7cc7cuKO83BxaSkOHIDtdjplP0NV
+0PiCNkOgB+7CHV6Lm56vuZz1D30hR7/u/cNOLXDksQAAAAAAAA==
+
+
+--=-lqAHLn5mSGAKaJX2S/MD--
 
