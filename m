@@ -1,151 +1,84 @@
-Return-Path: <linux-kernel+bounces-398463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0D89BF1A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:28:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC699BF1A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:29:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A36284E20
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C692A28501F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307D32036E4;
-	Wed,  6 Nov 2024 15:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="BtUBpuCW"
-Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D111DDC39;
+	Wed,  6 Nov 2024 15:28:55 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD921D63D3
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EE71D63D3;
+	Wed,  6 Nov 2024 15:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730906930; cv=none; b=Cd7eoBaBiYfKreJs/Y/wOyMO4dl1/Xh+pcessu5RRG3ga8ZPGCUvPr647rA6XSXl1lHEl43ggxAwwlJ4fMIwVXwjoLTmy8KzU/HpN4vez7yfoWlemViv/t6alEe/K4kNI+ULpEeM8G8lsmflewlUtGGhFagUQO9hOfc8aMB2X7w=
+	t=1730906934; cv=none; b=BbiVQO4GuuGjWBvY/IlURWwGytxmOdlFDx4PWs0/geD5Wm2wibrv3gx5Ug1YhzHJfDXGtGfocarI3X3Qtuhz4uQL9rmP6UncZq8IyEcgj4iU3wxPT8zseCmWswPVNrAz5xcWst7QnwzXiTtFPxLauamqH1Rri7Nennm15Nkd9cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730906930; c=relaxed/simple;
-	bh=joFVQbJDGKoV4KDHKORG1ljdEZb+4Avn08akHPViVZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sj3RyV7zBIIapw83g3rpujVxOipzf00h7SvjKb88pj3OzESluJ0/vI8tJU65rlEEIFlTLMYSypDk0Mjj80AKK1cQQBUTevzTL2J4mdLApKx5jSu3o6agzaB9S/lFNudOqQAbEJaoWxSDe4EkDcC96MN71gRVM/WZhfmf90TyK8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=BtUBpuCW; arc=none smtp.client-ip=17.58.6.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1730906928;
-	bh=oR3Va8z9d2Tc/eVUOUoRWon9Mc7HjZ0n4MCseiNIfUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=BtUBpuCWlzNwrPRuZx1Gl/wat4SdtvMIzO3ohgAsqQ+nR+cqBHpu7Kx2DtaDnCQ3R
-	 dwNT2CnL6ZGUcsn8i4E/ZxoaKI5ukwlKStoknKsxfS8nCPP4lv0hqWHY68PFOIzqKu
-	 zQkOlHI2iO1dEMX59fOEVs8q3loyH+BGR6s4w1uUsS6AY6Io38DLo8emoktuqZZHh/
-	 cwhuxqgfcB2bkfvJd5fWT8j9q2XVXLOZtf/iIa+VduvWGhAxm5kQ6spwM1aXM2ER7N
-	 WOGOD3Yr2MNpMHHaAmuDv2yHYqucD1MtcsBB02xyrmJKp/E7UVVy2x02rbSNOLYeAn
-	 Q8lUXnp9e4Q1Q==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id A862768038A;
-	Wed,  6 Nov 2024 15:28:41 +0000 (UTC)
-Message-ID: <0699ed24-9603-48f5-b5bd-859dbed1da5c@icloud.com>
-Date: Wed, 6 Nov 2024 23:28:37 +0800
+	s=arc-20240116; t=1730906934; c=relaxed/simple;
+	bh=HFkx8A9c/DXmyKVip2S9IgWa1WaXKPYCzOdOTEw+6lQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hDK3hfebmPpUMov/TZ7EFBcxSZ6sWsjLf2zHMciROIlfjhol0WBNTYICX2CU54cMWgR3uyt+bhjOqdDePsS4v0tq6vRlqrcdynLVxSU8zKLO+YP15LfrjYp7vwkyvK0llfoXmzVdm3qiRCU5q7l7WIXSmdnlqzDNFAQilsip59A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DFFDC4CECC;
+	Wed,  6 Nov 2024 15:28:53 +0000 (UTC)
+Date: Wed, 6 Nov 2024 10:28:56 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Marco Elver <elver@google.com>
+Cc: Kees Cook <keescook@chromium.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Dmitry
+ Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Subject: Re: [PATCH] tracing: Add task_prctl_unknown tracepoint
+Message-ID: <20241106102856.00ad694e@gandalf.local.home>
+In-Reply-To: <20241106101823.4a5d556d@gandalf.local.home>
+References: <20241105133610.1937089-1-elver@google.com>
+	<20241105113111.76c46806@gandalf.local.home>
+	<CANpmjNMuTdLDMmSeJkHmGjr59OtMEsf4+Emkr8hWD++XjQpSpg@mail.gmail.com>
+	<20241105120247.596a0dc9@gandalf.local.home>
+	<CANpmjNNTcrk7KtsQAdGVPmcOkiy446VmD-Y=YqxoUx+twTiOwA@mail.gmail.com>
+	<CANpmjNP+CFijZ-nhwSR_sdxNDTjfRfyQ5c5wLE=fqN=nhL8FEA@mail.gmail.com>
+	<20241106101823.4a5d556d@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] phy: core: Fix an OF node refcount leakage in
- _of_phy_get()
-To: Johan Hovold <johan@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Lee Jones <lee@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Bjorn Helgaas <bhelgaas@google.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, stable@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241102-phy_core_fix-v4-0-4f06439f61b1@quicinc.com>
- <20241102-phy_core_fix-v4-4-4f06439f61b1@quicinc.com>
- <ZypT18RpHSd_Vb-o@hovoldconsulting.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <ZypT18RpHSd_Vb-o@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: P0XKrIbDBhf3WsrRJ3b3UEMcTA5BM8fK
-X-Proofpoint-ORIG-GUID: P0XKrIbDBhf3WsrRJ3b3UEMcTA5BM8fK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-06_05,2024-11-05_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxlogscore=999
- bulkscore=0 mlxscore=0 phishscore=0 suspectscore=0 malwarescore=0
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2411060085
 
-On 2024/11/6 01:20, Johan Hovold wrote:
-> On Sat, Nov 02, 2024 at 11:53:46AM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> _of_phy_get() will directly return when suffers of_device_is_compatible()
->> error, but it forgets to decrease refcount of OF node @args.np before error
->> return, the refcount was increased by previous of_parse_phandle_with_args()
->> so causes the OF node's refcount leakage.
->>
->> Fix by decreasing the refcount via of_node_put() before the error return.
->>
->> Fixes: b7563e2796f8 ("phy: work around 'phys' references to usb-nop-xceiv devices")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  drivers/phy/phy-core.c | 9 ++++++---
->>  1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
->> index 52ca590a58b9..3127c5d9c637 100644
->> --- a/drivers/phy/phy-core.c
->> +++ b/drivers/phy/phy-core.c
->> @@ -624,13 +624,15 @@ static struct phy *_of_phy_get(struct device_node *np, int index)
->>  	struct of_phandle_args args;
->>  
->>  	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
->> -		index, &args);
->> +					 index, &args);
-> 
-> This is an unrelated change which do not belong in this patch (and even
-> more so as it is a fix that is marked for backporting).
-> 
+On Wed, 6 Nov 2024 10:18:23 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-make sense.
-will remove it for next revision. (^^)
-
->>  	if (ret)
->>  		return ERR_PTR(-ENODEV);
->>  
->>  	/* This phy type handled by the usb-phy subsystem for now */
->> -	if (of_device_is_compatible(args.np, "usb-nop-xceiv"))
->> -		return ERR_PTR(-ENODEV);
->> +	if (of_device_is_compatible(args.np, "usb-nop-xceiv")) {
->> +		phy = ERR_PTR(-ENODEV);
->> +		goto out_put_node;
->> +	}
->>  
->>  	mutex_lock(&phy_provider_mutex);
->>  	phy_provider = of_phy_provider_lookup(args.np);
->> @@ -652,6 +654,7 @@ static struct phy *_of_phy_get(struct device_node *np, int index)
->>  
->>  out_unlock:
->>  	mutex_unlock(&phy_provider_mutex);
->> +out_put_node:
->>  	of_node_put(args.np);
->>  
->>  	return phy;A
+> > Some trial and error led me to conclude it's a race between the logic
+> > looking up the comm and the process exiting: If the test program exits
+> > soon after the traced event, it doesn't print the comm. Adding a
+> > generous usleep() before it exits reliably prints the comm.  
 > 
-> With the above fixed:
-> 
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> Thanks for letting me know. Let me see if I can fix that!
 
+Hmm, that still doesn't make sense. Is this just a single line or do you
+have other events being recorded?
+
+The way the caching works is during the sched_switch tracepoint which still
+gets called when the task exits. If a trace event is triggered, it sets a
+per cpu flags to have the next sched_switch record the comm for both the
+previous and next tasks.
+
+Now the reason it can miss is that there's contention on the lock that
+saves the comms (it does a trylock and if it fails, it just skips it). Or
+if another task hits the same "comm cache line".
+
+This is why I wonder if you have other events being traced.
+
+-- Steve
 
