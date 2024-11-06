@@ -1,71 +1,83 @@
-Return-Path: <linux-kernel+bounces-397981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC08D9BE36C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:03:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E916F9BE353
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:58:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 632C41F238C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9802845A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFAE1DC730;
-	Wed,  6 Nov 2024 10:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A380A1DBB03;
+	Wed,  6 Nov 2024 09:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="E/0mRUTS"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NkTk7VCB"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE721D358B;
-	Wed,  6 Nov 2024 10:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0BC1D7E37
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 09:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730887412; cv=none; b=hbSm7sMHBOyEEXZFBp3ikBTEZyGjeB4MO2otDNU6gIhurbkiPY5Zvu8fKEX8z+wXIwFizCvwdpDCVI554B8qII93eJckuCAEFF344cRlf5Cb4hvk4F6B7MPEgnGTZiGiP2+CG/HdvwqoCIFTfOqPkikD7ovTtM/czt+/9fZyy8c=
+	t=1730887113; cv=none; b=dDjBIes40Q6RROkcrd+0LqOOL/ShP4gTpZwXxuwQPwvmrVG21e5OXcLxcAq/XjeMot7lXBxnX7qAbVEaEKhu4xL82OUkouHp33zfE0kMD2hkHn0LWrQxS1RxS0svbWg8NfaIZc5zKzzbm2ICfR+6fZ+er2SJgoP+v4L0qZxAmAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730887412; c=relaxed/simple;
-	bh=eYDOWcPa2ciGS4G1ET/o3nhJOJjUKeCB0RU3cD7giJ8=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Z0h3DGoRORIksO1tBsrB3AuOW51ZFJkN/yY12za2J1baw0E1jd9deOLs1wb3NpEYfiSu9Ib0VmuVm5sTIYpKruGzzLFQIvyBxoXhgXIDpPf3z9eQxb2hymU9EuzhAMwvb2RqfCBLGAcNrxHrrmnNC0tRrQUk4hSzFZH+LDfwp00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=E/0mRUTS; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730887103; bh=T6ISGij/28iNi571YET1e4ZKWBp2zqaPu/RNUpV/bCs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=E/0mRUTSGvJZOX+cfi6OBFC6nLOoz7RAKbvQp161pfeK4z4L+7uOTjHSdXtGpR+8y
-	 U5p/kVHtZjtaXJdVx2hYo+5CSerGKqUVR5AN34R7LqUmZ7UsX3fNmZcXDwz/bf4lHu
-	 PAqOQIxCxbhlLVNenr0sqN7YhyCCtASsthUrcCu0=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id E93128B6; Wed, 06 Nov 2024 17:58:19 +0800
-X-QQ-mid: xmsmtpt1730887099twabkf3i3
-Message-ID: <tencent_E298974436464AA47527762F67923C3D3609@qq.com>
-X-QQ-XMAILINFO: MIXpHopat2IaQcxi7iiR1KyaoM2oCRhE6iZ60lk7MFlWJV8jD2LfeMbm9ywJIa
-	 ExUZhoW18VztkueoaR4BoDxA4+47uwc8V/0Sllvx4TgT8NW8zg8pZhiLMqrPQS4RZtN2r3OI1Lz0
-	 v6wWcxERrozACgGxZQQzytGTPS9t8duFciUOgdaCzOqQ/ZyB7vyHivDu0GPOqeHOi3DhugfuYmhW
-	 b1eYkvKeeA7YuOhBlLU0zwf4IWee30yjYUUE/hHPMSpXpC5wCEN0yjB/TbWH0ampvOnRhgB3u4UW
-	 kddP3fQsqc2O1E5P8VwQjl10qGdcRnMsR/o6IV1asxMt3SVIr889Sgw4NFicrvd9eG7UWxQSjSF1
-	 ztUQB/9ELFzhGkUeGK0h1m4aGKLn1hXHF7cnPd29fhNwj2J3zbq/eY3twbhFWPgTXh1NKwgZw9w6
-	 owzSQo79j5au3FZP5MaHdlsWqE2OylYVz5CHBr5Ivt/rjCVMr96UnYaO+Fhk53yg1jzJrbcy7ATy
-	 skzcabo4xqUtyOhNz8j7EYX/I8haYSWxcHMr041ajkjFn04Q1JQRxtWXeByH96w6qxZXOmuXMgKB
-	 QhILp5BCmpzPR9aKvVVdHoTUKMEJ7rwqtZSX89b0+kO8+e+JimfCsrNWdM9UZOOSnEcIkZ01GiYY
-	 /vgi+8h6VacaRW8K+MF4wDGHN3z39kr0sQD8CWibEJnJwldeTdG0ypKHoIb6qve9nWRRV9ifakqV
-	 WDFPhg9d+urQAlBGRvVeEag9uWZ1Tjy9rnicd/ik8lZG1cvoEKMIlgSBqBUTCCrIpPXINq3S2GKA
-	 cMqphXITW8T517nogyzggFYQGSd6GsR8nWr88L/srIGdzi/S8sztUZ5/LVRsyXf8GC5eBfIJ/wlR
-	 Eew/uyi1kWRSvcPM3X832GfNbpaery+0uW9yEMTLlMP1FNcfAATdRWFGhMX8q2kw==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1730887113; c=relaxed/simple;
+	bh=r8tGsCoG9wLufbOZ5M5/PI/FbmgjucQ6I3ohVntAYNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hxLz8UhQROEaodQRTXZuc3xG3+6SgciS66c1lvk2O7nsXh0q+/WhCZEVDh9kev0V/IS5ZYYg5snoJJ6Mq1P9BX/8vAwN5SbTroiR7HSAlSaCtf5ZHkLGuy5VBtBsQ8Rhrc68KdAZM+nkpykk/yV9A6fndUkc5uSOV29mYDoV0YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NkTk7VCB; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso4412817a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 01:58:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730887110; x=1731491910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IL+yWlh9vw0jY8HppITDLAmrvaCxhRoxikmmdyKh+y8=;
+        b=NkTk7VCB/1Ai886uEdELttQXq3Zm33AWCbme+MmSw3EaC9yfFYhlV+ysXTd4mexmsf
+         jO+ZweJ0+wEVu6vPB5Ky6MW9RvExx711n85ENkcc/j9RezlTHjNNITB7oomGHlSWLp80
+         WJof/ciet3HumYg137VdeZPYBTIsNj5x19NWpyWzfNmghy+Dq3YjWRPiiJyscWBtKPqm
+         dm+uqxYhXgNSmzjmv2dTdYAQAdGXh74Qr/mzonvH1ZE56e4m7rz1w3/x4Ck9CRDYGumZ
+         I0nFOYvnN/Za9+igGGNsg2q29q0KYwh0J8Y1ICoSbJvkQnzoCfszRPUcK1UDH2LmPWNg
+         cjcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730887110; x=1731491910;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IL+yWlh9vw0jY8HppITDLAmrvaCxhRoxikmmdyKh+y8=;
+        b=G4as6OvLoZE9ZNeWGgx5lvrDWfxsHCIVgqcCJU48S2KstPClccHOZlwrtN7ZK31ZEZ
+         VMkQsk3kGhShNz8eLrKt2nYg78SKIiGESSRgupQaqUS/BvWd4nMTZN/XlbtZ8uZW/Dul
+         vI9cE6056Ks9KFcyKAANSUyg1GfhdcZxWem6kNeobbKTLCJBYmVf09q5+Md8UCUk4ONZ
+         lrR3s5V+UyrefUEg5T2W9TZQIs0vi7XNMF4OnLva1Agovax1BhHwGCJoevHxp0kDQ1qD
+         8G5wAx3odDLIFuQGXiSJutOyOvWJ6dsVdSPnjXQyuHzYwa9GDQlghUkZ3oM+6oE6Edeu
+         co/w==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Nj1Ty+WYgxwyzjzx8vQLNC+r6Axr/qvohH5eW56vtk2cSogYyWh7PYU8QZ/hD0xPk9cukRXfqDmpSVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyov3Pb4wtfkA1iq4wzxEMF7xbnfpAFz42tSl5sL6Rslqe7ljOC
+	9/SK64p5Koh0IWaAY4x40rbw4YN89IOEuuJKM0j20bQieQGiK2qk
+X-Google-Smtp-Source: AGHT+IG2tBOEv1SQ+V34aw/3CB9NObTGsM/TPaYr68DvAKudhuXE3dzD2HjurZOP4mEoNNYPZUQJwQ==
+X-Received: by 2002:a05:6a20:12d2:b0:1db:e425:c8a2 with SMTP id adf61e73a8af0-1dbe4263443mr12310020637.19.1730887109882;
+        Wed, 06 Nov 2024 01:58:29 -0800 (PST)
+Received: from tom-QiTianM540-A739.. ([106.39.42.118])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c3db8sm11229287b3a.131.2024.11.06.01.58.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 01:58:29 -0800 (PST)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: dtwlin@gmail.com,
+	johan@kernel.org,
+	elder@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] hfsplus: add check for cat key length
-Date: Wed,  6 Nov 2024 17:58:07 +0800
-X-OQ-MSGID: <20241106095806.2695499-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <672af85a.050a0220.2edce.151c.GAE@google.com>
-References: <672af85a.050a0220.2edce.151c.GAE@google.com>
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>
+Subject: [PATCH v2] greybus/uart: Fix atomicity violation in get_serial_info()
+Date: Wed,  6 Nov 2024 17:58:19 +0800
+Message-Id: <20241106095819.15194-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,43 +86,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Syzbot reported a uninit-value in hfsplus_cat_bin_cmp_key.
-The result of reading from the raw data of the node in hfs_bnode_read_u16()
-is 0, and the final calculated catalog key length is 2, which will eventually
-lead to too little key data read from the node to initialize the parent member
-of struct hfsplus_cat_key.
+Our static checker found a bug where set_serial_info() uses a mutex, but 
+get_serial_info() does not. Fortunately, the impact of this is relatively 
+minor. It doesn't cause a crash or any other serious issues. However, if a 
+race condition occurs between set_serial_info() and get_serial_info(), 
+there is a chance that the data returned by get_serial_info() will be 
+meaningless.
 
-The solution is to increase the key length judgment, and terminate the
-subsequent operations if it is too small.
-
-#syz test
-
-Reported-by: syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=968ecf5dc01b3e0148ec
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+Fixes: 0aad5ad563c8 ("greybus/uart: switch to ->[sg]et_serial()")
 ---
- fs/hfsplus/brec.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+V2:
+Modified the patch description to make it more concise and easier to understand.
+Changed the fix code to ensure the logic is correct.
+Thanks to Johan Hovold and Dan Carpenter for helpful suggestion.
+---
+ drivers/staging/greybus/uart.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 1918544a7871..da38638ad808 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -51,6 +51,13 @@ u16 hfs_brec_keylen(struct hfs_bnode *node, u16 rec)
- 		}
+diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
+index cdf4ebb93b10..8eab94cb06fa 100644
+--- a/drivers/staging/greybus/uart.c
++++ b/drivers/staging/greybus/uart.c
+@@ -596,11 +596,13 @@ static int get_serial_info(struct tty_struct *tty,
+ 	struct gb_tty *gb_tty = tty->driver_data;
  
- 		retval = hfs_bnode_read_u16(node, recoff) + 2;
-+		if (node->tree->cnid == HFSPLUS_CAT_CNID &&
-+		    retval < offsetof(struct hfsplus_cat_key, parent) +
-+			     sizeof(hfsplus_cnid)) {
-+			pr_err("keylen %d too small\n",
-+				retval);
-+			return 0;
-+		}
- 		if (retval > node->tree->max_key_len + 2) {
- 			pr_err("keylen %d too large\n",
- 				retval);
+ 	ss->line = gb_tty->minor;
++	mutex_lock(&gb_tty->port.mutex);
+ 	ss->close_delay = jiffies_to_msecs(gb_tty->port.close_delay) / 10;
+ 	ss->closing_wait =
+ 		gb_tty->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
+ 		ASYNC_CLOSING_WAIT_NONE :
+ 		jiffies_to_msecs(gb_tty->port.closing_wait) / 10;
++	mutex_unlock(&gb_tty->port.mutex);
+ 
+ 	return 0;
+ }
 -- 
-2.43.0
+2.34.1
 
 
