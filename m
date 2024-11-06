@@ -1,158 +1,186 @@
-Return-Path: <linux-kernel+bounces-398695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344099BF4C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:04:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3499BF4CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF061F24919
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:04:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 094BFB248A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2316C207A1F;
-	Wed,  6 Nov 2024 18:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06ACB207A1D;
+	Wed,  6 Nov 2024 18:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C80fcSta"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pnb8AN/L"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A4E8C11;
-	Wed,  6 Nov 2024 18:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C4A8C11
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730916257; cv=none; b=M7qKWke2VcSJmVp1T51RJky0ZFHqjHPVoxildrjVrOjoPC+O4tpQdaLARvjQmmmEojK4iY8X1vO0aljUcznBQnzQrtcczqXOVQwRhM4IcVyntZHnSI5RRMh2zi5JlFHnuuYFUttsUtigYmOWj7UaiU43grs+e804B+eLHhRNpkw=
+	t=1730916359; cv=none; b=kdEzLQg8k+MyumKWNQOwJOmSFAewB7wR/LS6jb+lKHsBDFZZg/3wl9DO4vnxDPzVd6bl2KUfbyrF0eInPE94G67r+ZmuoSDu2lxUKYC1uaGJDB6KK6t7Jg6Qn7KKC3/wWIUNfSwbIwdMI6aL2vWLnjVf6ZFaPPOhYlAuzVghzkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730916257; c=relaxed/simple;
-	bh=Nv1nBQAiSxp9f8ngR1qR4rybkmihY6GwuRN50hS2zNw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AqSOJLqWrAAHfyD9gyX4C19lM5CleqEYqgKBpqvzZZ3NvYaJpsyAuRZbVo+Y9N1obKh4kGoDjBnlKpDD5sgk1/SOOJRnr+egBdgTYVzRECkAZ3e0Hb2N1ojlcObqj/cOT84z9xwiK1T9bQ/A4VUPW7F2YPLtf0HWudeRRgy2Tw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C80fcSta; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43158625112so755185e9.3;
-        Wed, 06 Nov 2024 10:04:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730916254; x=1731521054; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=jAgIf4p6278/YchMAjPlcn7XsnhPqNv2eFyDqelI99w=;
-        b=C80fcSta9MI02+qxKb9WQMhxxf03MNcyTQXMqFZxfJ0gPQUMRaCpJFOiI8rttnqJfa
-         M+WbVcz25aCD7zVzJ0eEPSNwGVIzEAxgXR+WxbC7Xc2jRZYJQNa8qyBfz4R9f1q2e8LY
-         8WISx1O4cLDPJ7iqqqBbJ+7aHXjCR7Y51Qbv4cwOusScN9R3a61IYgodMCW2YUr0dp8C
-         a1UB2nUI0pk+MQC3743vbmFuO4Bxe7v3qyHtRhTvPkp38UBZxR7LpkNDXPlTm+ZQZYxO
-         FITHo7Kzf+zrmDxbPejmzS7DMVTg2aJ+rbhxTlFZOzbBNbGWGmNfkAGvgRXdg3eg2Jwx
-         0wpg==
+	s=arc-20240116; t=1730916359; c=relaxed/simple;
+	bh=GV7Zwy7mK9/jhbh8hdPlZq62mgng4qNRiVfnkdCsQLQ=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=o0CRYh/hIPTnLgLMz2B3/7DWtxhK0Fb5csfMpbl7ksJXgbDP42ELJT646K+08t2ntlTl6Y/EKFrfh5Xs6b683uwmraT2N0Ax7RsLgubiQZc7je5nAr/w8J1ppppfJKYy0XAGIZYIVMr6RW5XfDycn/ngW8o4bfO3losbYBfkv/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pnb8AN/L; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730916356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EH2mk6tfXrsChIRVB3f5ZeTVrowPBXnHWr9Q970bTFM=;
+	b=Pnb8AN/LYar989Yp2aDBnI6qG7LI/NrdtjGAmq9vrW73rcok75Os+osXOs2YOoY0ez9kdx
+	A89GAzTGjWAbv0hwLwTjRH0ioF5Y0mmaTaxoBaFErMxFnKh+qpUI08y8/n5jAT1ewDnRGA
+	myWHK1C/MgPnFMlMxqiKEtRR6zUTkbQ=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-eGOm3q1UNWmW3JLH_FCdsg-1; Wed, 06 Nov 2024 13:05:55 -0500
+X-MC-Unique: eGOm3q1UNWmW3JLH_FCdsg-1
+X-Mimecast-MFC-AGG-ID: eGOm3q1UNWmW3JLH_FCdsg
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-460aaa683eeso872311cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:05:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730916254; x=1731521054;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jAgIf4p6278/YchMAjPlcn7XsnhPqNv2eFyDqelI99w=;
-        b=tHBbtx+e3GsSAgABie1W03UyR67Q0VZYhFfLMk1rdT7oFyjgZTpEXCdaNdi+za18+W
-         M5/11SaOsqVz1HliBFiDXoU7G/V7HnuctcjB/MZ3/shXXZ6hIJE8cwq2V6xCGYvfA7ut
-         c/ORUd2n7sz/yROlf7A0hLENSPCDequY1bK8MzgZCeb3XT4ZniBUkppiAVuwqQ649pOa
-         Z4mZc0jjncLcLAuAcOGoF/ZBclG90/gR33+ruWWjrKsnxawkHoin2SvSvE3IpgWwMQ1N
-         PfpYQ71iO2s+mn3B2zM8FqpxAsrUrAbr84aDHZSClkYdHdrTf0C9AT6HTHmRuu7sjgrs
-         Yp5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4VC2q7G6SM6qIDRbVMEEJe1hj3TIf8wy6HG4Yl/f1lp0dLkGVQnLmxhI3hFE8o3Tj78zGRX/XiC/zQb43@vger.kernel.org, AJvYcCW5i+xcBxRwjjoXYydz3PsGbwwni4VqiQcx/qtGpEAMJ2bACYfVwPsxAnTqZ0J1ygSZvy7IOwnz@vger.kernel.org, AJvYcCXc2XTZpq/EzYD1BBIcmyZ8Bt5GTvsHN3S8G6v882f0NdCM91nbDP27ApCqRJV38DERMxnc2VbK/Dts@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt+ZmB0ogZ5oPcCYyrQJB7RQ0oznsIilBRQwhfgyrDTiGitdFE
-	WCOKhowquqFVwGWyG6p6WB+UyOxY/UNT0bBEYyjHol+1jVPL8J1F
-X-Google-Smtp-Source: AGHT+IHWPx8gOIteq17zsIZ6IuYs4C2NhdtTeClqoAZ0Tqb/e3ajHoC9WAVLlhvh/OK0YcC6B4Ee6g==
-X-Received: by 2002:a05:6000:400d:b0:37c:fdc9:fc17 with SMTP id ffacd0b85a97d-381c7a4cea7mr16193774f8f.23.1730916253935;
-        Wed, 06 Nov 2024 10:04:13 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa523a0esm31344865e9.0.2024.11.06.10.04.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 10:04:13 -0800 (PST)
-Message-ID: <672baf9d.050a0220.3c71f4.9bb6@mx.google.com>
-X-Google-Original-Message-ID: <ZyuvmSyxag6aJ34H@Ansuel-XPS.>
-Date: Wed, 6 Nov 2024 19:04:09 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v3 3/3] net: phy: Add Airoha AN8855 Internal
- Switch Gigabit PHY
-References: <20241106122254.13228-1-ansuelsmth@gmail.com>
- <20241106122254.13228-4-ansuelsmth@gmail.com>
- <20241106155458.3552cdda@fedora.home>
+        d=1e100.net; s=20230601; t=1730916355; x=1731521155;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EH2mk6tfXrsChIRVB3f5ZeTVrowPBXnHWr9Q970bTFM=;
+        b=IGocJjhAi/4vWtOTNR3+khlZ03qM8KFQH1D7/fKKOnhoBSG6znvT/kXvWhunM7v3XT
+         5fbEz4pDa2aFuxllK9J2ApcjQCy5GnVHQPVyyikE3gfPzrXwZLMBGamuR5TdGMzaci79
+         Z7s39hTtuFbeT0CaL0EBW957uOIFKlIXlRgQWSLnYsHkSbigR6Rl4QYsPvCwgtX07owK
+         o7bpaqC9ICQ1no6A+Qsy54N9ykX8Io4p/W++L2L39IiXESRWLZqv+yF0K/yvzqm3gcsk
+         s61LIZrLDqd3jNCSgyvNlf2wzTLilNcd5Ugf1HYLMnw+us6663mBGmTK5mEOpDcKBzJY
+         3Adw==
+X-Gm-Message-State: AOJu0YzP8CLpIkuUUvW18vnLn1SvGROv/dsnf7TWs0/cs4QSLGIi1Du8
+	Bb5Tswgss7AWK6d0T4CxMkCZycjvnEjwzrmupcIj7upbZdnLtxM/eg8hbV+tZL8CZpCG0sb3u5L
+	AaIQUN6ZKqdKlLsZhx/FlUctOYXNTzzIMw4fYEcIcNvJMWx5/sct+R01ojLDOKA==
+X-Received: by 2002:a05:622a:50:b0:460:ad8e:f5ae with SMTP id d75a77b69052e-462ab26f61fmr307486391cf.19.1730916354473;
+        Wed, 06 Nov 2024 10:05:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGGB/rr3rb9KVr8J164nn5/VzqvU40xNUz5CyU5xxF6VgXUKpFUv+LBuTQPl7f9QLlBO1HVRA==
+X-Received: by 2002:a05:622a:50:b0:460:ad8e:f5ae with SMTP id d75a77b69052e-462ab26f61fmr307485881cf.19.1730916353949;
+        Wed, 06 Nov 2024 10:05:53 -0800 (PST)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad086df0sm74298431cf.5.2024.11.06.10.05.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 10:05:53 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <74c126bc-911f-45fc-b024-815e134c97cf@redhat.com>
+Date: Wed, 6 Nov 2024 13:05:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106155458.3552cdda@fedora.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
+To: Juri Lelli <juri.lelli@redhat.com>,
+ Joel Fernandes <joel@joelfernandes.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
+ Shin Kawamura <kawasin@google.com>,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+References: <20241029225116.3998487-1-joel@joelfernandes.org>
+ <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
+ <20241030195017.GA4171541@google.com>
+ <Zyin7P2WNZMM40tp@jlelli-thinkpadt14gen4.remote.csb>
+ <20241104174109.GA1044726@google.com>
+ <ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US
+In-Reply-To: <ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 03:54:58PM +0100, Maxime Chevallier wrote:
-> Hello Christian,
-> 
-> On Wed,  6 Nov 2024 13:22:38 +0100
-> Christian Marangi <ansuelsmth@gmail.com> wrote:
-> 
-> > Add support for Airoha AN8855 Internal Switch Gigabit PHY.
-> > 
-> > This is a simple PHY driver to configure and calibrate the PHY for the
-> > AN8855 Switch with the use of NVMEM cells.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> 
-> [...]
-> 
-> > +static int an8855_get_downshift(struct phy_device *phydev, u8 *data)
-> > +{
-> > +	int saved_page;
-> > +	int val;
-> > +	int ret;
-> > +
-> > +	saved_page = phy_select_page(phydev, AN8855_PHY_PAGE_EXTENDED_1);
-> > +	if (saved_page >= 0)
-> > +		val = __phy_read(phydev, AN8855_PHY_EXT_REG_14);
-> > +	ret = phy_restore_page(phydev, saved_page, val);
-> 
-> I think this can be replaced with phy_read_paged()
-> 
-> [...]
-> 
-> > +static int an8855_set_downshift(struct phy_device *phydev, u8 cnt)
-> > +{
-> > +	int saved_page;
-> > +	int ret;
-> > +
-> > +	saved_page = phy_select_page(phydev, AN8855_PHY_PAGE_EXTENDED_1);
-> > +	if (saved_page >= 0) {
-> > +		if (cnt != DOWNSHIFT_DEV_DISABLE)
-> > +			ret = __phy_set_bits(phydev, AN8855_PHY_EXT_REG_14,
-> > +					     AN8855_PHY_EN_DOWN_SHFIT);
-> > +		else
-> > +			ret = __phy_clear_bits(phydev, AN8855_PHY_EXT_REG_14,
-> > +					       AN8855_PHY_EN_DOWN_SHFIT);
-> > +	}
-> > +
-> > +	return phy_restore_page(phydev, saved_page, ret);
-> 
-> And this by phy_modify_paged() :)
+On 11/6/24 11:08 AM, Juri Lelli wrote:
+> On 04/11/24 17:41, Joel Fernandes wrote:
+>> On Mon, Nov 04, 2024 at 11:54:36AM +0100, Juri Lelli wrote:
+> ...
 >
+>>> I added a printk in __dl_server_attach_root which is called after the
+>>> dynamic rd is built to transfer bandwidth to it.
+>>>
+>>> __dl_server_attach_root came with d741f297bceaf ("sched/fair: Fair
+>>> server interface"), do you have this change in your backport?
+>> You nailed it! Our 5.15 backport appears to be slightly older and is missing
+>> this from topology.c as you mentioned. Thanks for clarifying!
+>>
+>>
+>>          /*
+>>           * Because the rq is not a task, dl_add_task_root_domain() did not
+>>           * move the fair server bw to the rd if it already started.
+>>           * Add it now.
+>>           */
+>>          if (rq->fair_server.dl_server)
+>>                  __dl_server_attach_root(&rq->fair_server, rq);
+>>
+>>>> So if rd changes during boot initialization, the correct dl_bw has to be
+>>>> updated AFAICS. Also if cpusets are used, the rd for a CPU may change.
+>>> cpusets changes are something that I still need to double check. Will
+>>> do.
+>>>
+>> Sounds good, that would be good to verify.
+> So, I played a little bit with it and came up with a simple set of ops
+> that point out an issue (default fedora server install):
+>
+> echo Y >/sys/kernel/debug/sched/verbose
+>
+> echo +cpuset >/sys/fs/cgroup/cgroup.subtree_control
+>
+> echo 0-7 > /sys/fs/cgroup/user.slice/cpuset.cpus
+> echo 6-7 > /sys/fs/cgroup/user.slice/cpuset.cpus.exclusive
+> echo root >/sys/fs/cgroup/user.slice/cpuset.cpus.partition
+>
+> The domains are rebuilt correctly, but we end up with a null total_bw.
+>
+> The conditional call above takes care correctly of adding back dl_server
+> per-rq bandwidth when we pass from the single domain to the 2 exclusive
+> ones, but I noticed that we go through partition_sched_domains_locked()
+> twice for a single write of 'root' and the second one, since it's not
+> actually destroying/rebuilding anything, is resetting total_bw w/o
+> addition dl_server contribution back.
+>
+> Now, not completely sure why we need to go through partition_sched_
+> domains_locked() twice, as we have (it also looked like a pattern from
+> other call paths)
+>
+> update_prstate()
+> -> update_cpumasks_hier()
+>     -> rebuild_sched_domains_locked() <- right at the end
+> -> update_partition_sd_lb()
+>     -> rebuild_sched_domains_locked() <- right after the above call
+>
+> Removing the first call does indeed fix the issue and domains look OK,
+> but I'm pretty sure I'm missing all sort of details and corner cases.
+>
+> Waiman (now Cc-ed), maybe you can help here understanding why the two
+> back to back calls are needed?
 
-Didn't notice those, even better! Thanks!
+Thanks for letting me know about this case.
 
--- 
-	Ansuel
+I am aware that rebuild_sched_domains_locked() can be called more than 
+once. I have addressed the hotplug case, but it can happen in some other 
+corner cases as well. The problem with multiple 
+rebuild_sched_domains_locked() calls is the fact that intermediate ones 
+may be called where the internal states may not be consistent. I am 
+going to work on a fix to this issue by making sure that 
+rebuild_sched_domains_locked() will only be called once.
+
+Cheers,
+Longman
+
 
