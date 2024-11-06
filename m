@@ -1,124 +1,106 @@
-Return-Path: <linux-kernel+bounces-397922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2CF9BE268
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:25:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8659BE2C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 907101C21714
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:25:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81CC61C230CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171061DC1AB;
-	Wed,  6 Nov 2024 09:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2032A1DDC39;
+	Wed,  6 Nov 2024 09:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dChU8DUy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPV6OTg+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC60C1D9A63;
-	Wed,  6 Nov 2024 09:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690921DDC2C;
+	Wed,  6 Nov 2024 09:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730885079; cv=none; b=XwehrHjIb0xhZPa/a1Zk2ddoXZ8JLW/8BfVyt5WblQgv5fAZwFvSDT7Rl6XbSFNXJfErkfml+la1ohZnLNmy5PqEfTLUZamvfU1/KHzb+Wq0yFPhENFmoxH0jjKFXN7te40dESoQXEV33NgFXEGcsDrnOgNIx/ImfJ/f/zWjoY0=
+	t=1730885808; cv=none; b=PR5g6DRiJuFtElEvreoZVNEpcpVo9jnrq17JHEmcrUoN/JcYvw24e4iOrKJ9XOEC6ZGC0VFJ3k0Tl3e9tH13s78N33LJCeW+UXkc63C1fAcdpxwF3z5hV8f1mLWbzz+I/19XDTZnZk5fL20aNoZOj+MCVv45vaO7dMb4SDMBS1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730885079; c=relaxed/simple;
-	bh=aj3QpbQ3vAeAf4pan0gySW1WB6gm994teoTQgAanVdA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dZzoxi+pgO2L8sATjlbSfK+Zk+UblMJcmyXK6vwU2qaCDpB6dzuWFqqobGZRzKsc1k17Eas8gEY3/HlA4p8E3nupkQJE98+L+S8P2ZZoRbDM8AEkXBzvSf3x4XaWeT4HNCzd/mIPjlHzz1HwpZ5Nz0ZzFTpdVE/Vvx+zMUzwpe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dChU8DUy; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730885077; x=1762421077;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=aj3QpbQ3vAeAf4pan0gySW1WB6gm994teoTQgAanVdA=;
-  b=dChU8DUymeq65Zku9OPY7dXdG0Mia88eeXa6BfxbyI8uQSRmuXmflIAZ
-   0XnD1rlxMAf8XeaU24A0NICEp923bMtFKgNhDGTG4tl88jfblVIGER3q1
-   EBQNCR8Z+TauLAOdeBNix60xp+pnbhUJaWXsa4AH8tvxo96yt5xkHJfHG
-   RD4coqsg2kGOmSgkJJ2xFkNlSahcLi2WXNKLSTKK4sLvOWCUvXYB8oYEZ
-   wByJB9m46Rc7SovwQIJ6z2WOh7lh9gU0sKdZILFWMuF+J/zeqGkINcoT7
-   Anxex/T0WFDjSh6cn0pYoEV3/SxkyQdaEcNp4nNm14SuCYkG+Jky8bDCB
-   w==;
-X-CSE-ConnectionGUID: i2/rLwT1Q1epj8Xb3aWHaQ==
-X-CSE-MsgGUID: BHoGK/vyRRqoUV0FZmgRzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="34368401"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="34368401"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 01:24:35 -0800
-X-CSE-ConnectionGUID: t8nhEareSpmhJjTFVSTmGw==
-X-CSE-MsgGUID: 7hbvPhtcQmyYso6I20nXUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="115221990"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by fmviesa001.fm.intel.com with ESMTP; 06 Nov 2024 01:24:14 -0800
-Received: from kord.igk.intel.com (kord.igk.intel.com [10.123.220.9])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 38CA42877E;
-	Wed,  6 Nov 2024 09:24:12 +0000 (GMT)
-From: Konrad Knitter <konrad.knitter@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: jacob.e.keller@intel.com,
-	netdev@vger.kernel.org,
-	jiri@resnulli.us,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	Konrad Knitter <konrad.knitter@intel.com>,
-	Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com>
-Subject: [PATCH iwl-next v2 2/3] devlink: add devl guard
-Date: Wed,  6 Nov 2024 10:36:42 +0100
-Message-Id: <20241106093643.106476-3-konrad.knitter@intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20241106093643.106476-1-konrad.knitter@intel.com>
-References: <20241106093643.106476-1-konrad.knitter@intel.com>
+	s=arc-20240116; t=1730885808; c=relaxed/simple;
+	bh=xK3U7kti/fKCKAedO+rH/itcrdtQnCITud0yaoSFbQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mBbNAZN1qwTqAF+VWFZcF0741HP3jvd0+MqvqATxXCrhKROQAepVGq8taYi8seKPkB/bVVPiuuNVHvUTsprIu2vW0WN3ZY99JnqOk2gtkd2VxZCUByWO6jWYdYSUEzroKLJzSLYQtnOtthzw5e1vDrFxDR/mPZGW1bL6rAZ3O2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPV6OTg+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3171DC4CED4;
+	Wed,  6 Nov 2024 09:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730885808;
+	bh=xK3U7kti/fKCKAedO+rH/itcrdtQnCITud0yaoSFbQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pPV6OTg+vBv7X5R/WGjvBOheU4bK8G8JhvsUlixPtiLO5rUYV9BDUNdLzI7UOiVYb
+	 Bwv5EbRukCIw0y+09TZyca8I3F8KQvGB/JQ0smVGly+lK8mYlkLLgug6hhuF/3uR/8
+	 NlMxDLgFd7CMDgksnWv5ZT9/fNaXnKIIbt3RMHt14hLIZBfg72SQh+wJm9EcCLqBQ0
+	 VNex18ciWplOcQJBrTI9TIQnnpbHAlQN+Ya213+nNd3XjZia7zuerp5yhqbBNrfGYq
+	 fPJo35+ByDct98NuUUtrl3ErD8pcjZ8O0jZziTLe0Hhf5A20I3rT67VYNgDd8ZYmvX
+	 rqtmaH3t1jehQ==
+Date: Wed, 6 Nov 2024 10:36:42 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, jdmason@kudzu.us
+Subject: Re: [PATCH v4 0/5] PCI: EP: Add RC-to-EP doorbell with platform MSI
+ controller
+Message-ID: <Zys4qs-uHvISaaPB@ryzen>
+References: <20241031-ep-msi-v4-0-717da2d99b28@nxp.com>
+ <Zyszr3Cqg8UXlbqw@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zyszr3Cqg8UXlbqw@ryzen>
 
-Add devl guard for scoped_guard().
+On Wed, Nov 06, 2024 at 10:15:27AM +0100, Niklas Cassel wrote:
+> 
+> I do get a domain, but I do not get any IRQ on the EP side when the RC side is
+> writing the doorbell (as part of pcitest -B),
+> 
+> [    7.978984] pci_epc_alloc_doorbell: num_db: 1
+> [    7.979545] pci_epf_test_bind: doorbell_addr: 0x40
+> [    7.979978] pci_epf_test_bind: doorbell_data: 0x0
+> [    7.980397] pci_epf_test_bind: doorbell_bar: 0x1
+> [   21.114613] pci_epf_enable_doorbell db_bar: 1
+> [   21.115001] pci_epf_enable_doorbell: doorbell_addr: 0xfe650040
+> [   21.115512] pci_epf_enable_doorbell: phys_addr: 0xfe650000
+> [   21.115994] pci_epf_enable_doorbell: success
+> 
+> # cat /proc/interrupts | grep epc
+> 117:          0          0          0          0          0          0          0          0  ITS-pMSI-a40000000.pcie-ep   0 Edge      pci-epc-doorbell0
+> 
+> Even if I try to write the doorbell manually from EP side using devmem:
+> 
+> # devmem 0xfe670040 32 1
 
-Example usage:
+Sorry, this should of course have been:
+# devmem 0xfe650040 32 1
 
-scoped_guard(devl, priv_to_devlink(pf)) {
-	err = init_devlink(pf);
-	if (err)
-		return err;
-}
+But the result is the name, no IRQ triggered on the EP side.
 
-Co-developed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Signed-off-by: Konrad Knitter <konrad.knitter@intel.com>
-Tested-by: Pucha Himasekhar Reddy <himasekharx.reddy.pucha@intel.com> (A Contingent worker at Intel)
----
- include/net/devlink.h | 1 +
- 1 file changed, 1 insertion(+)
+(My command above was from testing "msi-parent = <&its0 0x0000>",
+rather than &its1, but that also didn't work when writing the
+corresponding "doorbell_addr" using e.g. devmem.)
 
-diff --git a/include/net/devlink.h b/include/net/devlink.h
-index 7f5b36554778..6fa46ed3345f 100644
---- a/include/net/devlink.h
-+++ b/include/net/devlink.h
-@@ -1534,6 +1534,7 @@ int devl_trylock(struct devlink *devlink);
- void devl_unlock(struct devlink *devlink);
- void devl_assert_locked(struct devlink *devlink);
- bool devl_lock_is_held(struct devlink *devlink);
-+DEFINE_GUARD(devl, struct devlink *, devl_lock(_T), devl_unlock(_T));
- 
- struct ib_device;
- 
--- 
-2.38.1
+Considering that the RC node is using &its1, that is probably
+also what should be used in the EP node when running the controller
+in EP mode instead of RC mode.
 
+
+Kind regards,
+Niklas
 
