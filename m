@@ -1,121 +1,110 @@
-Return-Path: <linux-kernel+bounces-398519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7769BF254
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:58:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A748A9BF259
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641D62840E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:58:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA7B51C234C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B8D20513D;
-	Wed,  6 Nov 2024 15:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3918B2040B7;
+	Wed,  6 Nov 2024 15:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nyGwTmqn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzSL+JHt"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F28204926
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F932EAE0;
+	Wed,  6 Nov 2024 15:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730908666; cv=none; b=J3DSpg5wYvvaHuAdCjfz5yboGU1N9RJ4XYD4Wvhe6Y3EUYLXmHx9pCf+Qwh8aKJlAl324NUugtV1d8yvOl8+zuPKE8D/9zXe2eX3oA2ANTMd+if9SzrmwZNyy+BEQLtUTwrgrONvi007gRzkb1XQ1/UkURPMMdRUCJSWTp0y3Ys=
+	t=1730908714; cv=none; b=tY83StX1cFTJmVdb0OQuuJKWrw+cjgQaazZ4bzPWBoW823vQliwxnoHx9DgbkU8nAiJpVyBMCf0wImGqW++O026Xhl0CEufdhRkxkMBd8t+CQkXwxn97oui1Rf3487Kdsr6yozKFAlqM+9KaI7R6yUM3NJkZoCkouQe/tE0C1kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730908666; c=relaxed/simple;
-	bh=/G7nzRpmsKRHkkHRP0eGu41M2dPPtFGVTc5sy7S9GmI=;
+	s=arc-20240116; t=1730908714; c=relaxed/simple;
+	bh=HdoUy9fkRfHNMPI/Zqx1R8MVO28AwhfbFFuB5nPrHjU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkpWxBOigN3j89Gp0JNegI/oHeWhyLjcNsne2grEdoq0JT4wvAjLzJgRpl5nbeTz7m07VF3zTdkyRHJl/Yxmkwfpyadw4XaYlqoKQ0DYlcFScQYwW2layfJJ0gwbxp4oLs3LKUSiqfgSykQoWiIyvEgEgyOspkBaXub3RQ/k0DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nyGwTmqn; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730908665; x=1762444665;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=/G7nzRpmsKRHkkHRP0eGu41M2dPPtFGVTc5sy7S9GmI=;
-  b=nyGwTmqnSFvV60RTUmHeMEMizo3wOUhaBCpM/2y2//pH3klu3KCQcR3m
-   LziDyR2QTpM1pf7j6kxVdZ4/ioYjAR7BbBW6uqWS+54pUE1a3TVQEj5K0
-   ZphendqpJPEbRMPzycQ1/3r6jkRyYkpGFhMOhDsuDDbSz5eLoO+NmENSI
-   9uCqnRNbdV72OVaagW1RIgekGnnxgulZcRqwCNfIwI5NqaPLCA3IHLhby
-   2mldcnFtUxFvztJSbv6Og0GDQUUj5cCSGZOtxjfVwsjETffJ4jY9kQofk
-   lt4khO9hn6YKYPlPnnVhyA+Bf24ydJ8tClCnYEmqeYIUEBtai2xCp1DgM
-   w==;
-X-CSE-ConnectionGUID: iznXNfSoRgeeuo0A76EuUw==
-X-CSE-MsgGUID: jmmw1NlnR/a5h/k/PI/fSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="41307181"
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="41307181"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 07:57:44 -0800
-X-CSE-ConnectionGUID: z0c1tEO+TS6vifwYi0IeSA==
-X-CSE-MsgGUID: o0Z2mQ9ERUWJLGKEBPC4GQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="84961930"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 07:57:41 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t8iPa-0000000ByUZ-0cgF;
-	Wed, 06 Nov 2024 17:57:38 +0200
-Date: Wed, 6 Nov 2024 17:57:37 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Zeng Heng <zengheng4@huawei.com>
-Cc: gregkh@linuxfoundation.org, quic_jjohnson@quicinc.com,
-	jinqian@android.com, jia-cheng.hu@intel.com,
-	u.kleine-koenig@pengutronix.de, alan@linux.intel.com,
-	linux-kernel@vger.kernel.org, bobo.shaobowang@huawei.com
-Subject: Re: [PATCH v2] goldfish: Fix unused const variable
- 'goldfish_pipe_acpi_match'
-Message-ID: <ZyuR8blW8IScgNl-@smile.fi.intel.com>
-References: <20241026070150.3239819-1-zengheng4@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFLFzFDdF1Fs9GcgiMVD1MhpAP4fuaNcDnzjgnqQ9kfRZTHRAmCqHpmQP5lhMZEuAanvSqG5aDWyIfQoGOLm2rOMDnUPmQNSrRMzv1oTEt7vHLhYriJMZGsiSLl9lxB+BQBDNUnfRppr/vkhEtG8BSoYbbaE3eqEQY6lXoe3X3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LzSL+JHt; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e34a089cd3so5446494a91.3;
+        Wed, 06 Nov 2024 07:58:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730908712; x=1731513512; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XUAqFDp51+CluivEaChqcOcsJi1Yi3zAq5PND3VwOLs=;
+        b=LzSL+JHt9nR1sCsruX+0lGMDbHtvZ/7XbRnoqRAUZNQ0YG6pTPGK8xsjlJ/nKXsL3C
+         1zC7mF8bXW+zUyFjRKJ7HtchVWLaepzsMC4+Tuqp/wVvM+48SCfHMKlkMNvN9J2hGjMy
+         wsotIhRvmWdk/nEtuplvWLafBgR5xcVu2P0ZAu2zfsoWkX/SLBG2yvaIUU7DA9JxypJo
+         Ue+lrQ6q4nGtxBIlzcz4dvOdehvUBXG+rxj3kd0AEpEh+cKIgI/BfUd6cxgkSFM8BJ2C
+         M+WG4AICAhtDucRDw0xtVh+CCbC7BmOF/ZrGssGqlEmoZaRcmECxjOXce7Mdmr252GWm
+         0n/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730908712; x=1731513512;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XUAqFDp51+CluivEaChqcOcsJi1Yi3zAq5PND3VwOLs=;
+        b=BIKsaqda4pNQEQKaNlLirhNNJn742rJu7s50bhhaiqsmw4hBYHrys3LA2fST+MZESm
+         Mdd3CdH5hKVVTzwHah65PIQx3+9R/gBZPjM5JGLBv9jNt4UgdoTawVD9teG/mjZjhvoZ
+         Wgb+It4/CPhPfQeLyNN25qC/1J+2paMTBAL1HgavmnweKKr1u9ToBkGahx5vYJ34snZy
+         LlNxaycwzC31sTetbsc+36dC9IeKRfDI+F6JNJ8P9pLF3F39H9JRZEUrK1VcQoK6XWVb
+         b0u9HOKiQL7F+X87Fpn+mkoNONX4sFs3w5kJz54sRWp89EE1JqhZEW07uA5qA24wmTPV
+         9pGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVw+FT1VwfWF/TDVyzuxiKDIM43sLZLhGiuu/udRo/EI6/zth0ZU2bu1z7PGZb7XYGW/yJQ4hr2sg0RrSaR@vger.kernel.org, AJvYcCX76DJ7Xu2YsPZBFTjFDXZ4O2SoF9YLVd8r8DiUL8GiSke9DS/53XBLheB7+lBdau78g2nN4RtnfldWfkE=@vger.kernel.org, AJvYcCXXexhdO/JKw/Yl9ckOpoKIDyf7dUevHH4U1x5s/YbK/AVlQB57fhK6rTO1cML39EXiyuP42wMAhUIg@vger.kernel.org, AJvYcCXYKElhiDdWOIJpibC8D+rUplE6RmoFPz+ukTblap9ODyz4yZbpqtMHBeeebXnSh7nvsYFqnrDsN4CI@vger.kernel.org, AJvYcCXpk4uel+rHVBMtAcwQT1BXj8mI7PsfBEJoJk5jhX1TVW6LR5sPdLP/bv3t6zJtXGAQd9aDlPRXAff7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlRTH91ppURDzn+v1vGg4cvvagySKph8OYj866PAFkc33+WAhK
+	IPnKrV5fMt4jXKt5KOvgmllfHjgAk7pDd4UDJDupIlE16atv4CFs
+X-Google-Smtp-Source: AGHT+IGg5WQMsEr9pnJxspcf4pALiyC/ozBfwqFSU5i1wYsgWEJ/S94GrDgJEKjrQof/TQOVShKsxw==
+X-Received: by 2002:a17:90a:43c3:b0:2e2:c9c1:aacf with SMTP id 98e67ed59e1d1-2e8f10a7276mr43122388a91.29.1730908712314;
+        Wed, 06 Nov 2024 07:58:32 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5a2f95sm1668475a91.34.2024.11.06.07.58.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 07:58:31 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 6 Nov 2024 07:58:30 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] hwmon: (pmbus/core) allow drivers to override
+ WRITE_PROTECT
+Message-ID: <36a1a209-18dc-4cb5-b2ef-80045eb306bc@roeck-us.net>
+References: <20241105-tps25990-v4-0-0e312ac70b62@baylibre.com>
+ <20241105-tps25990-v4-2-0e312ac70b62@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241026070150.3239819-1-zengheng4@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241105-tps25990-v4-2-0e312ac70b62@baylibre.com>
 
-On Sat, Oct 26, 2024 at 03:01:50PM +0800, Zeng Heng wrote:
-> Fix the following compilation warning:
+On Tue, Nov 05, 2024 at 06:58:39PM +0100, Jerome Brunet wrote:
+> Use _pmbus_read_byte_data() rather than calling smbus directly to check
+> the write protection status. This give a chance to device implementing
+> write protection differently to report back on the actual write protection
+> status.
 > 
-> drivers/platform/goldfish/goldfish_pipe.c:925:36: warning:
-> ‘goldfish_pipe_acpi_match’ defined but not used
-> [-Wunused-const-variable=]
->   925 | static const struct acpi_device_id goldfish_pipe_acpi_match[] = {
-> 
-> The complexity of config guards needed for ACPI_PTR() is not worthwhile
-> for the small amount of saved data. So remove the use of ACPI_PTR instead
-> and drop now unneeded linux/acpi.h include.
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-...
+Applied,
 
->  #include <linux/io.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/mm.h>
-> -#include <linux/acpi.h>
-
-Because header inclusions are unsorted, it's unclear if there is
-mod_devicetable.h included. If not, you should replace acpi.h with
-mod_devicetable.h.
-
->  #include <linux/bug.h>
->  #include "goldfish_pipe_qemu.h"
-
-Otherwise LGTM,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Guenter
 
