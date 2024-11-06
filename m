@@ -1,167 +1,115 @@
-Return-Path: <linux-kernel+bounces-398295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7359BEF1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:34:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF3D9BEF2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89AE1F24C9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47BB61F2436E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5D61F9AB3;
-	Wed,  6 Nov 2024 13:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0791F9EA5;
+	Wed,  6 Nov 2024 13:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YS1eG0Gt"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYMjKNIV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48601F9AB5
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B5A1DE4CA;
+	Wed,  6 Nov 2024 13:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730900051; cv=none; b=MD0EUcc5x22R3Tp/R+V/Qu6BRUNGR18aJLEOoxDCjVrSuNeTj+UHZHH99OcCxq6P/enuHZVq2Q6oi9Ww70tkfM/rw3vOVqPp6LSuEDlKF6kuZlkbeUPyNSNpzE0B13KXJ1qtspWNVetLkbX3L+G+2vurqyHUGjBWQgIvedFy3k0=
+	t=1730900212; cv=none; b=ZqsxpNgXYEFQ7k//fDvBS2rqcDmB2/UCpTVuCwCcye2eP03zLKI/YjfyNdOHFHNd3liKpuMVUPkCdCGVyKIXmkLVLmWgAilsk3t/9RYji26MK0zmvE+B6wFa/XvGSPKCiU8A0bHmHtGwBFJFH3z43MPaj3gic7p4qjqsyNpQhJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730900051; c=relaxed/simple;
-	bh=Yoiib6vdS/6XzN748mEm3NNl4q2ZfiIBbJS6Rd27i68=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qo4lv8LJEePX/PqHr4/KG8hX43Yb9A5QYIIacWUroi5Cz7t/FD9cm8+yy5ZSIXgf1L6ODGFcJmZ8QiW896gq29J/s0aeSY9v+YDHqv+eMwXEHXIhXt+Jd4KP1nHfwABjP4MwewGO0iAh+VVIdRxy6307+kSzvEkLHOqSJ50Nwuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YS1eG0Gt; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730900047;
-	bh=Yoiib6vdS/6XzN748mEm3NNl4q2ZfiIBbJS6Rd27i68=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YS1eG0GtUvzbbS4IBnQChLBo/+zO4bierMMTnvDriQBpvvug/5UWq5dPazREfgcMl
-	 +zv+tpMZPy8zlxAip5qkEnH2fN5LTWs9aH3oYVBicE/a4lnCG5XjLH6HN3az6dICI2
-	 z+KOHQvcw9Fuhlou8fh5HXjLzRtPok2INiS3PWTbyK7UMh+Mq9L+V9okSi+tovJg2Q
-	 ssUpboxoL8rqHyGX6KK3WIWYMAxAacU10LQQQyRRVQ8/Gc1VbWLNxUk+No1pBHLP+n
-	 RDffxRKkIYgMX1L34oPzpAVhqLie7LEz7z4Jx04SmMNfALXsqjsMFzTkJNDliNTsua
-	 KkUfuhT7c5bng==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 63DFA17E3638;
-	Wed,  6 Nov 2024 14:34:07 +0100 (CET)
-Date: Wed, 6 Nov 2024 14:34:02 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH] drm/panthor: Lock XArray when getting entries for heap
- and VM
-Message-ID: <20241106143402.4bbaea96@collabora.com>
-In-Reply-To: <20d75e2c-c5a5-48c3-ac99-a9e15f19b872@arm.com>
-References: <20241106120748.290697-1-liviu.dudau@arm.com>
-	<20d75e2c-c5a5-48c3-ac99-a9e15f19b872@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730900212; c=relaxed/simple;
+	bh=LNXfloYp9NxsfFEtf3y74Qg0Z197tnIsIXZDZW9Ablk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hvn1ZDZzy8aVuOP4bRSY58cmvlut28iXiX11JaAJgTiBETjpSUDWN3SNOxq7EB9ZhKMcYaYH6TUsE4uTSm4ZpnvgUIyoS16gYxZ4gVwCBWCjfnfnHk8iVXOODr0sTPqAF9OQuIM1fDqAceMx6ZEekKDuA97BB5H5vhCPUWXWpzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYMjKNIV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C65C4CED3;
+	Wed,  6 Nov 2024 13:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730900211;
+	bh=LNXfloYp9NxsfFEtf3y74Qg0Z197tnIsIXZDZW9Ablk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gYMjKNIVQaq4ELhbqWiYPYj1cytI2t7mj1eVLEmSVCEMeKxOIkH/EnPDdXVzTwhqp
+	 cA7LpX4dKR5KGQ8W7D3ATdtFEaw76M2NVSqP+44q/83EvFm2OicmTQI3f7W49LsnT4
+	 lXSwdzS+8K1IoA2LM4TAF+DQZAjKu1cSbp7bocBsj9bIJhDjrIG60X7ms/ISMHo1N/
+	 oS1M0OzCdhQDwICdmjHzENIsFSZ/2f/GlLwPW9CdEFn53ppvI2FgcZD8ZE8dq+nA5g
+	 OGNzZ3OBgdQzjMGG7bO99CuspLIXfwSBbKxUMin8Dsqc5QJQs8dgdENXOIFg76WDyi
+	 ATAuV8KJtmnkg==
+Date: Wed, 6 Nov 2024 15:36:46 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
+	linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org, tangchengchang@huawei.com
+Subject: Re: [PATCH for-next 0/2] Small optimization for ib_map_mr_sg() and
+ ib_map_mr_sg_pi()
+Message-ID: <20241106133646.GE5006@unreal>
+References: <20241105120841.860068-1-huangjunxian6@hisilicon.com>
+ <20241106120819.GA5006@unreal>
+ <b7dd1cc5-849d-781e-ad08-c5b554900150@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7dd1cc5-849d-781e-ad08-c5b554900150@hisilicon.com>
 
-On Wed, 6 Nov 2024 13:17:29 +0000
-Steven Price <steven.price@arm.com> wrote:
-
-> On 06/11/2024 12:07, Liviu Dudau wrote:
-> > Similar to cac075706f29 ("drm/panthor: Fix race when converting
-> > group handle to group object") we need to use the XArray's internal
-> > locking when retrieving a pointer from there for heap and vm.
+On Wed, Nov 06, 2024 at 09:12:47PM +0800, Junxian Huang wrote:
+> 
+> 
+> On 2024/11/6 20:08, Leon Romanovsky wrote:
+> > On Tue, Nov 05, 2024 at 08:08:39PM +0800, Junxian Huang wrote:
+> >> ib_map_mr_sg() and ib_map_mr_sg_pi() allow ULPs to specify NULL as
+> >> the sg_offset/data_sg_offset/meta_sg_offset arguments. Drivers who
+> >> need to derefernce these arguments have to add NULL pointer checks
+> >> to avoid crashing the kernel.
+> >>
+> >> This can be optimized by adding dummy sg_offset pointer to these
+> >> two APIs. When the sg_offset arguments are NULL, pass the pointer
+> >> of dummy to drivers. Drivers can always get a valid pointer, so no
+> >> need to add NULL pointer checks.
+> >>
+> >> Junxian Huang (2):
+> >>   RDMA/core: Add dummy sg_offset pointer for ib_map_mr_sg() and
+> >>     ib_map_mr_sg_pi()
+> >>   RDMA: Delete NULL pointer checks for sg_offset in .map_mr_sg ops
+> >>
+> >>  drivers/infiniband/core/verbs.c         | 12 +++++++++---
+> >>  drivers/infiniband/hw/mlx5/mr.c         | 18 ++++++------------
+> >>  drivers/infiniband/sw/rdmavt/trace_mr.h |  2 +-
+> >>  3 files changed, 16 insertions(+), 16 deletions(-)
 > > 
-> > Reported-by: Jann Horn <jannh@google.com>
-> > Cc: Boris Brezillon <boris.brezillon@collabora.com>
-> > Cc: Steven Price <steven.price@arm.com>
-> > Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_heap.c | 15 +++++++++++++--
-> >  drivers/gpu/drm/panthor/panthor_mmu.c  |  2 ++
-> >  2 files changed, 15 insertions(+), 2 deletions(-)
+> > So what does this change give us?
+> > We have same functionality, same number of lines, same everything ...
 > > 
-> > diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/panthor/panthor_heap.c
-> > index 3796a9eb22af2..fe0bcb6837f74 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_heap.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_heap.c
-> > @@ -351,6 +351,17 @@ int panthor_heap_create(struct panthor_heap_pool *pool,
-> >  	return ret;
-> >  }
-> >  
-> > +static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
-> > +{
-> > +	struct panthor_heap *heap;
-> > +
-> > +	xa_lock(&pool->xa);
-> > +	heap = xa_load(&pool->xa, id);
-> > +	xa_unlock(&pool->va);
-> > +
-> > +	return heap;
-> > +}  
 > 
-> This locking doesn't actually achieve anything - XArray already deals
-> with the concurrency (with RCU), and if we're doing nothing more than an
-> xa_load() then we don't need (extra) locking (unless using the __
-> prefixed functions).
+> Actually this is inspired by an hns bug. When ib_map_mr_sg() passes a NULL
+> sg_offset pointer to hns_roce_map_mr_sg(), we dereference this pointer
+> without a NULL check.
 > 
-> And, as Boris has pointed out, pool->lock is held. As you mention in
-> your email the missing bit might be panthor_heap_pool_release() - if
-> it's not holding a lock then the heap could be freed immediately after
-> panthor_heap_from_id() returns (even with the above change).
+> Of course we can fix it by adding NULL check in hns, but I think this
+> patch may be a better solution since the sg_offset is guaranteed to be
+> a valid pointer. This could benefit future drivers who also want to
+> dereference sg_offset, they won't need to care about NULL checks.
 
-Hm, if we call panthor_heap_from_id(), that means we have a heap pool to
-pass, and incidentally, we're supposed to hold a ref on this pool. So I
-don't really see how the heap pool can go away, unless someone messed
-up with the refcounting in the meantime.
+Let's fix hns please. We are moving away from SG in RDMA.
 
 > 
-> Steve
+> Junxian
 > 
-> > +
-> >  /**
-> >   * panthor_heap_return_chunk() - Return an unused heap chunk
-> >   * @pool: The pool this heap belongs to.
-> > @@ -375,7 +386,7 @@ int panthor_heap_return_chunk(struct panthor_heap_pool *pool,
-> >  		return -EINVAL;
-> >  
-> >  	down_read(&pool->lock);
-> > -	heap = xa_load(&pool->xa, heap_id);
-> > +	heap = panthor_heap_from_id(pool, heap_id);
-> >  	if (!heap) {
-> >  		ret = -EINVAL;
-> >  		goto out_unlock;
-> > @@ -438,7 +449,7 @@ int panthor_heap_grow(struct panthor_heap_pool *pool,
-> >  		return -EINVAL;
-> >  
-> >  	down_read(&pool->lock);
-> > -	heap = xa_load(&pool->xa, heap_id);
-> > +	heap = panthor_heap_from_id(pool, heap_id);
-> >  	if (!heap) {
-> >  		ret = -EINVAL;
-> >  		goto out_unlock;
-> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > index 8ca85526491e6..8b5cda9d21768 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > @@ -1580,7 +1580,9 @@ panthor_vm_pool_get_vm(struct panthor_vm_pool *pool, u32 handle)
-> >  {
-> >  	struct panthor_vm *vm;
-> >  
-> > +	xa_lock(&pool->xa);
-> >  	vm = panthor_vm_get(xa_load(&pool->xa, handle));
-> > +	xa_unlock(&pool->va);
-> >  
-> >  	return vm;
-> >  }  
-> 
-
+> > Thanks
+> > 
+> >>
+> >> --
+> >> 2.33.0
+> >>
+> >>
 
