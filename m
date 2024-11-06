@@ -1,125 +1,159 @@
-Return-Path: <linux-kernel+bounces-398909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1229BF7DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:18:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A3A9BF7EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:20:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E28F1C2151E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39691F2214A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE90C209F28;
-	Wed,  6 Nov 2024 20:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3193C20C023;
+	Wed,  6 Nov 2024 20:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6ZPiP4p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nrubsig.org header.i=@nrubsig.org header.b="cKRy88Rg"
+Received: from iguana.tulip.relay.mailchannels.net (iguana.tulip.relay.mailchannels.net [23.83.218.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D80E204944;
-	Wed,  6 Nov 2024 20:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730924308; cv=none; b=PAwSYycwFLWbEGU85FhJAFgmG1KH7zwXjskavaa7LwnyOwJTl0ZWPkc3rYCpRQSBYU6WQqceyN7uN0Q/VMQlttRvZZPMFk3FkO+NdisbDXOz8loC6q/YizrSPaP12ZUINqO7nj7tCrk5VxnGJ75cQ26SbE3PQzQAfek/qaizLQg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730924308; c=relaxed/simple;
-	bh=QsLrCND2FcA2NmDLIeBmkTo+vrdrgqm9mjExCkISpuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fQOfMktt6b+E6BNppnbrkMi5IIUA2HeRhFV93/RNNLYQv/PAreU9w95bLYGQgYgSlG4mCymUWkv8i64/ECKeyFJTnpoW7WEyJ9DgM80Zk3OhQUztCDP6Py+DS+a7w0RHItFCMnCxab98zqmaQYmyGhZfshJH0+0gxHP1T7GJcns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6ZPiP4p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DFA6C4CEC6;
-	Wed,  6 Nov 2024 20:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730924305;
-	bh=QsLrCND2FcA2NmDLIeBmkTo+vrdrgqm9mjExCkISpuU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=M6ZPiP4p09olpLK2/Sas2zI6tv/jySRPbJyrIXAtdxFqALsT/LXAcZlxf5Z7kbdt/
-	 V2kujZ+gkGS0i8repnTBlIkoJipF/qyBxba2mHfZZj4MluE47xfv8D0kuEz0SiyWHh
-	 mQ1qqi+gbRt88PTtW0IinJzkO16Nw9BkK+k1ZSx+aJWOUgJ/ViNmhFBWABq4q7kEmE
-	 N4CQ13RsQyVMWVbzi7Y8w8LBZ7LUJh5EJVzuBqVRmwYK6EhlAlJbPCU7wRCP3Ll6TW
-	 ZSoiRFwXE6gxUosCwPcgbEkkaVfr7hlpFSGnMn6lNamReXKPTobbRzXjcJ9rhrx9xb
-	 tQ5WqOjZz3v6Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1CAC8CE09DB; Wed,  6 Nov 2024 12:18:25 -0800 (PST)
-Date: Wed, 6 Nov 2024 12:18:25 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zilin Guan <zilinguan811@gmail.com>
-Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
-	josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
-	rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rcu: Use READ_ONCE() for rdp->gpwrap access in
- __note_gp_changes()
-Message-ID: <65bfe6b1-3bfa-469d-aada-8e79d1101d5d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241104151230.3107133-1-zilinguan811@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8003320BB5E;
+	Wed,  6 Nov 2024 20:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.253
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730924446; cv=pass; b=JEOEfjViaHSOlyx4vkESdfAVAKhGhvJPs057k5NKT+wi6ArrdPjc+mVWt1EK78fA1VjVFP82PhF9g+bJRVzf2eh3C/93fauDORc3UF80tc0EGW6YPMKyRYfNbEpbcHM9IQj/GVKnx+VO2Am+RuO2len6OmcEakmoDEVnPPavvCU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730924446; c=relaxed/simple;
+	bh=rBQHWtkz/Ui+XebkeUm4wexmgRPBsPn7T2/0TEjcn4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=f8HtLifa5gXDwrqud6hsD1n83jjaYuyOqSrB0rxHGyxazUBQyxOCQc0xpj9uV0Y1fvZoRBsl6lXSbKHaTphFrfRJPLqyRUPou9L+EV2Qnh3VVVo+KY47OxSkS2JWF226m7CMTNtuc+M5KpC6KMuaUUCEx7RQH7f0pBXtdzuA/ug=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nrubsig.org; spf=pass smtp.mailfrom=nrubsig.org; dkim=pass (2048-bit key) header.d=nrubsig.org header.i=@nrubsig.org header.b=cKRy88Rg; arc=pass smtp.client-ip=23.83.218.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nrubsig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nrubsig.org
+X-Sender-Id: dreamhost|x-authsender|gisburn@nrubsig.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 7F6FE4E2889;
+	Wed,  6 Nov 2024 20:20:38 +0000 (UTC)
+Received: from pdx1-sub0-mail-a231.dreamhost.com (trex-5.trex.outbound.svc.cluster.local [100.107.241.67])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 34D4D4E70E1;
+	Wed,  6 Nov 2024 20:20:38 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1730924438; a=rsa-sha256;
+	cv=none;
+	b=3nT81WLyvqdrKEdq+2z7lXYrodSJRn+W/jgr4Q6kJTbjC9FCe40ZXnTOVfwhYG6VxICifr
+	l//BVuaf9hI+P/7gt545ABYNT/6A5J+m9DZMXd+GoMKU5Ve+fL9d6rftKBByFayP35H8tw
+	rooI7Ij3mNf8tovG2oRLR7h1S0k7jyfH/X7vkyNoNI4Wouz/4iU/nH2ctsRAXlJ3xD/Qah
+	CpqmtKUXO0vsvRfjWKCkYSDQHN3YrK8pwMflwK+PC84igcRCl24HZQW7TlV5+SsbkIe4vM
+	ruwzHYmO89JPLB/0nYd5cJAEXmnyDO8zoxSVYNmozxlaFzCk62Ga1PZVTf+73g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1730924438;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=WY2anYNfn8k8GJEnwFB8BFpcgKAjDtQGklhTaZXRZV4=;
+	b=8ZfrXGSslbK6yGVtEgaxbNXk7xW2pBCFx/rsC5Xf7VrnWMsCr0JRTL/HVPmcJnILL9fsY2
+	q861ZsasAfZ41oaVFbfhajrHBFki1zKTXfOUOUv5vXi8XjLNfkAERv7E0ekLk3N23trnri
+	JW+1v5Xu3kY+4qQfyjUIxtfQpThAlqiqACR/bRjPciLEY2HuFyzmyQxsAgRhXU/wtclYtn
+	NNxY3BXCa1lA4QOuumSG+pUSJ1FnmZ/V7JxjXbVjbMfr0nvkUpkjlpIyC0SuUlc+oOZqq2
+	NcpQZ9/+TBPm7KknJri8XfETLGAsWbRd8JwdTMYXKTVsiFVQjiRHPeVI45uCeQ==
+ARC-Authentication-Results: i=1;
+	rspamd-8b6b4986c-82rpl;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=roland.mainz@nrubsig.org
+X-Sender-Id: dreamhost|x-authsender|gisburn@nrubsig.org
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|gisburn@nrubsig.org
+X-MailChannels-Auth-Id: dreamhost
+X-Thread-Little: 4092f92d69ff1877_1730924438424_569367905
+X-MC-Loop-Signature: 1730924438424:960644043
+X-MC-Ingress-Time: 1730924438423
+Received: from pdx1-sub0-mail-a231.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.107.241.67 (trex/7.0.2);
+	Wed, 06 Nov 2024 20:20:38 +0000
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: gisburn@nrubsig.org)
+	by pdx1-sub0-mail-a231.dreamhost.com (Postfix) with ESMTPSA id 4XkGmQ0HlPz61;
+	Wed,  6 Nov 2024 12:20:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nrubsig.org;
+	s=dreamhost; t=1730924438;
+	bh=WY2anYNfn8k8GJEnwFB8BFpcgKAjDtQGklhTaZXRZV4=;
+	h=From:Date:Subject:To:Content-Type:Content-Transfer-Encoding;
+	b=cKRy88RgOEDs4Rx6whPnEtqT4fdY/inbH4a/tYSNZYn0EVpU/+B9cV6PCfIbhJKmT
+	 53KEaxP1a8kqW6jUJ90Cy41LrxtZr6aUAMPszfGEKAOkpT3GrrxOeSuYPRFtRhqq/z
+	 5PtHMnq8NmO079PLVWKph8LzoQx5ZtOW2uVKuQgjPw4QxY9fP0OYxnTO4y64KJW7Wc
+	 2JTcuijjq8QGll2cTTqp+jHJbQLHuV3SALuA4Ru5v1+O2pdlrMh1ilP2iYjAehzRMl
+	 16LDkX+0Q2afBTfFKypBWAarVxmWeTr/Pw0DWisVfgMMHAfMlmZaU0FDnsQZm4zVVe
+	 kN+s50usc+yQw==
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43158625112so1946035e9.3;
+        Wed, 06 Nov 2024 12:20:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUQTl634XFeg0Gin5kN0ulMoj/ZJXUYC/qnslmW8Ai6F8owHdeZbbESDH9XDL9BBDP9jcgFIXdTRe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIPf78pKVrPaCuZqrxEBi7nfvsFaEdo8M2YMBkx3Wfvu/+fJuD
+	WCtM3/jWY+lLFoKrXOrtlbz90UOvg+Fe7OBn/1tqtkQrEPSksH8bEh9xTChkKZjT0IAA3tcGdbD
+	2qg3IlLIbk9zB9rSZXqIr61Pu5uE=
+X-Google-Smtp-Source: AGHT+IEfW5V9bBuD6U2TxP0vhjN/8Z2Cb2s26E+5dRJhqyDqQ9MwyQn2tqPXIVStSLx6o3Fy7jDPS1fnV0VCanUIlUk=
+X-Received: by 2002:a05:600c:4f13:b0:428:1b0d:8657 with SMTP id
+ 5b1f17b1804b1-4328327ec47mr167830195e9.22.1730924436758; Wed, 06 Nov 2024
+ 12:20:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104151230.3107133-1-zilinguan811@gmail.com>
+References: <20241106024952.494718-1-danielyangkang@gmail.com>
+In-Reply-To: <20241106024952.494718-1-danielyangkang@gmail.com>
+From: Roland Mainz <roland.mainz@nrubsig.org>
+Date: Wed, 6 Nov 2024 21:20:10 +0100
+X-Gmail-Original-Message-ID: <CAKAoaQnOfAU2LgLRwNNHion=-iHB1fSfPnfSFUQMmUyyEzu6LQ@mail.gmail.com>
+Message-ID: <CAKAoaQnOfAU2LgLRwNNHion=-iHB1fSfPnfSFUQMmUyyEzu6LQ@mail.gmail.com>
+Subject: Re: [PATCH] nfs_sysfs_link_rpc_client(): Replace strcpy with strscpy
+To: open list <linux-kernel@vger.kernel.org>, 
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 04, 2024 at 03:12:30PM +0000, Zilin Guan wrote:
-> In function __note_gp_changes(), rdp->gpwrap is read using READ_ONCE()
-> in line 1307:
-> 
-> 1307    if (IS_ENABLED(CONFIG_PROVE_RCU) && READ_ONCE(rdp->gpwrap))
-> 1308            WRITE_ONCE(rdp->last_sched_clock, jiffies);
-> 
-> while read directly in line 1305:
-> 
-> 1305    if (ULONG_CMP_LT(rdp->gp_seq_needed, rnp->gp_seq_needed) ||
-> 	    rdp->gpwrap)
-> 1306            WRITE_ONCE(rdp->gp_seq_needed, rnp->gp_seq_needed);
-> 
-> In the same environment, reads in two places should have the same
-> protection.
-> 
-> Signed-off-by: Zilin Guan <zilinguan811@gmail.com>
-
-Good eyes!!!
-
-But did you find this with KCSAN, or by visual inspection?
-
-The reason that I ask is that the __note_gp_changes() should be
-invoked with the leaf rnp->lock held, which should exclude writes to
-the rdp->gpwrap fields for all CPUs corresponding to that leaf rcu_node
-structure.
-
-Note the raw_lockdep_assert_held_rcu_node(rnp) call at the beginning of
-this function.
-
-So I believe that the proper fix is to *remove* READ_ONCE() from accesses
-to rdp->gpwrap in this function.
-
-Or am I missing something here?
-
-							Thanx, Paul
-
+On Wed, Nov 6, 2024 at 3:49=E2=80=AFAM Daniel Yang <danielyangkang@gmail.co=
+m> wrote:
+>
+> The function strcpy is deprecated due to lack of bounds checking. The
+> recommended replacement is strscpy.
+>
+> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
 > ---
->  kernel/rcu/tree.c | 2 +-
+>  fs/nfs/sysfs.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index b1f883fcd918..d3e2b420dce5 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -1302,7 +1302,7 @@ static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
->  		zero_cpu_stall_ticks(rdp);
->  	}
->  	rdp->gp_seq = rnp->gp_seq;  /* Remember new grace-period state. */
-> -	if (ULONG_CMP_LT(rdp->gp_seq_needed, rnp->gp_seq_needed) || rdp->gpwrap)
-> +	if (ULONG_CMP_LT(rdp->gp_seq_needed, rnp->gp_seq_needed) || READ_ONCE(rdp->gpwrap))
->  		WRITE_ONCE(rdp->gp_seq_needed, rnp->gp_seq_needed);
->  	if (IS_ENABLED(CONFIG_PROVE_RCU) && READ_ONCE(rdp->gpwrap))
->  		WRITE_ONCE(rdp->last_sched_clock, jiffies);
-> -- 
-> 2.34.1
-> 
+>
+> diff --git a/fs/nfs/sysfs.c b/fs/nfs/sysfs.c
+> index bf378ecd5..f3d0b2ef9 100644
+> --- a/fs/nfs/sysfs.c
+> +++ b/fs/nfs/sysfs.c
+> @@ -280,7 +280,7 @@ void nfs_sysfs_link_rpc_client(struct nfs_server *ser=
+ver,
+>         char name[RPC_CLIENT_NAME_SIZE];
+>         int ret;
+>
+> -       strcpy(name, clnt->cl_program->name);
+> +       strscpy(name, clnt->cl_program->name);
+
+How should the "bounds checking" work in this case if you only pass
+two arguments ?
+Per https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
+|strscpy()| takes three arguments...
+
+----
+
+Bye,
+Roland
+--=20
+  __ .  . __
+ (o.\ \/ /.o) roland.mainz@nrubsig.org
+  \__\/\/__/  MPEG specialist, C&&JAVA&&Sun&&Unix programmer
+  /O /=3D=3D\ O\  TEL +49 641 3992797
+ (;O/ \/ \O;)
 
