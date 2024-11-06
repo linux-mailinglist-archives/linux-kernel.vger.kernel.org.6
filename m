@@ -1,116 +1,184 @@
-Return-Path: <linux-kernel+bounces-397579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8E29BDD96
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:29:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B70F9BDD9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA68284D9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A1111F244B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006B1190696;
-	Wed,  6 Nov 2024 03:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9AB190477;
+	Wed,  6 Nov 2024 03:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XjLkZ2Aj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hi5iB0tL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF80419048A;
-	Wed,  6 Nov 2024 03:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8235018FC89
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 03:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730863750; cv=none; b=Z4BGKBYMqAJW/bjByCxzWze4YQfbHFmwYjdCHWtBcOhD8Cn7P56BxRO1AeUeDGTpjKVAMYp0AJvvXFgRf9ROS79rH01X75RTjUtvu19oF6pY9MHoHOO/6QSoscwj8cLNbdaD1t6jthkdt7psOWThU5qt7/kT24faImruTBfN6GA=
+	t=1730863831; cv=none; b=ewkNtI1X8lwbq5WpfCleKL0hZkbxbdr8Tm/SGSNLVWhguE3tGCeW5DCmKDdVK1OYTLLHubrCMVjDkU8q9ZdJ+9pbznx8zsBrcVyvW/ASJneuxsM5swak+B1bAVHy0/iA5w/ncmpBUotGsT/Z/O4CNbPYGv/99NaIIj2vnjm5JCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730863750; c=relaxed/simple;
-	bh=qC1wnd1WwW47fQVNwxJjJihB3ApMLG2UMI1x7ljhGu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RXQy2xiDYAwKQgwwLZRXKRFZqXlAyo0pG3GXpDY6Ss+Mr5bQvt5X5TVXoFI0wNx3VnJjo/3r0Z85SCJGMGJ0b5b3xv6/QHiYA2G8wPA7lkH0iaFamjuWwQslAKhTO2+VzkT1zMzo1bRkV1HcfAl2dq/qv4iNgkX1i98JRJnrbN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XjLkZ2Aj; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730863749; x=1762399749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qC1wnd1WwW47fQVNwxJjJihB3ApMLG2UMI1x7ljhGu8=;
-  b=XjLkZ2Aj4cE77oDzieTyMXIV9Ae6bCYba8w9OZPJw3p5yyxkhSUNIC2f
-   pCZo5eZgFegHN8awXzQMWUSM15yFGcH4HI9BbfnmZ1GZhs6Zi64mwYY0h
-   KHixMcLKwDpOOKbQuWJ7E9ilto+BMmOI5ubXXKbhgFRMTQl5StsVBbOdg
-   K4YwqzGuLWHs2Lu1VnUy7LOzLSTjZ/JgVfUze49bt0iMH7Mpnpsz2czR4
-   e55qIwpeRW+DrmSb+F9XBEgYOUILVCYf2DJD7kWfJcRaMzzxxtQPjFeuA
-   YeElh/jQR7oMZhQrr9FB4tmKAFh63KVw+L7UW4ThsRW2ybIxKZ9N8AsCQ
-   Q==;
-X-CSE-ConnectionGUID: 7PHUuiICSBKAtQFukx4EGQ==
-X-CSE-MsgGUID: 7IkPjOfjSl2snCaxdJqsjA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="41269991"
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="41269991"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 19:29:08 -0800
-X-CSE-ConnectionGUID: o4ttEnRoTteCZ5MHOpisWQ==
-X-CSE-MsgGUID: 0P0Yqix6TiK6L7VzCX4pjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="84694585"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 05 Nov 2024 19:29:04 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8Wj7-000mtG-0t;
-	Wed, 06 Nov 2024 03:29:01 +0000
-Date: Wed, 6 Nov 2024 11:29:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Philo Lu <lulie@linux.alibaba.com>, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, willemdebruijn.kernel@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, dsahern@kernel.org, horms@kernel.org,
-	antony.antony@secunet.com, steffen.klassert@secunet.com,
-	linux-kernel@vger.kernel.org, dust.li@linux.alibaba.com,
-	jakub@cloudflare.com, fred.cc@alibaba-inc.com,
-	yubing.qiuyubing@alibaba-inc.com
-Subject: Re: [PATCH v7 net-next 4/4] ipv6/udp: Add 4-tuple hash for connected
- socket
-Message-ID: <202411061155.g9trZ6rZ-lkp@intel.com>
-References: <20241105121225.12513-5-lulie@linux.alibaba.com>
+	s=arc-20240116; t=1730863831; c=relaxed/simple;
+	bh=7Kk3znZIyerx2PDNIN0drxdx/hAXIsUrO3BiNtWqf8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=So2S80rzLZA0Df/gyXPXspP5A7ClPsvx94OfPecIAsP5wWc1Av+mMgqY3uxqIA0OWrnUm0QJq6a4gx3l2N7sJgBNwSBjXuKsDeIhBsdjcOYbwZkxDajgaxpvw6M8erJdU1dIL9cIj7YADMk+79JfogUGPhqDUbPH+4qPA4Tsqiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hi5iB0tL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730863828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0+wD5C8mnnSFMtajBQ0Ep+tgIvgdpwZh5j0ZoDDULiE=;
+	b=Hi5iB0tLaQf31yx9Iofp4/Dxy0quCwgsAf3pCT25fI52+nj6NiYAzbCQQHxHtkd+WTBKIg
+	laRMHQYAUbWYP5cXCV8E3b18Lgen7vUkPExULkC2FORSGWzZ0hbUPScnK6mywyV6065qoI
+	Es+zO5palBD7DKwp0gLzC/lT/bKkua8=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-480-vUONysihMaiImwGFE39nCA-1; Tue, 05 Nov 2024 22:30:27 -0500
+X-MC-Unique: vUONysihMaiImwGFE39nCA-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e2fc2b1ce1so6306020a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 19:30:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730863826; x=1731468626;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+wD5C8mnnSFMtajBQ0Ep+tgIvgdpwZh5j0ZoDDULiE=;
+        b=EGB2+7p32oSorfUaQplpuauCUFtfLfnp8krzUd620nBm6AG3KVORCueV5n4mTC8tw3
+         74on9P9jkfvegJcbz60tVsZizMuJqIuxB5QDGypZlKHSiDrfIzvrNXhnxSVIJ8quuXZw
+         B6S9poLLSLIz1et8Zt6wi7LehL6kU3gT65pYCo3IrKn7NuWt9gsAwqdsrXhFovRrhIAx
+         4SWn6fXfsZNqllCN2NGK+zH0UdbScrngcQ0PV1fD87Uqq8wf4Wi5DEWp68XhhngBKTYS
+         pFnPi47YriAfxC6wYL3H/qyH1ReMR8wzeqL8aIEXQZIhlXxIb/WBPU+xpDfa4heg8/hM
+         le8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCC7MMnk3WOVBLn6VTt/f1n9S4UIwYykIHnV2CP8ZxYP9m9j+3rW/mxljoJT1uHQ/WOi6kneqMC/EYpKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynAYLJDZeOOY9pRdNgQ7HMYOUHVxfiIfA0CmXdDaD0pfmHpXeQ
+	95yBixlTTQGXktmoqNBXeSKPZcsLfviogBDOlvPVmOUCfQpg+iOT9Es2dyO9L/yUgdgK6v4Lk//
+	k+JeNqNp789p/tk3t0EyH8BiV+918BAJRUjSefEnPlfLFH4tVnHnqz7GBkPzXJvvU/QKex816R2
+	VoCdIbf7xyJTyN/3E2c7ucigHqLRi3RfPhlang
+X-Received: by 2002:a17:90b:4c46:b0:2e2:8fb4:502d with SMTP id 98e67ed59e1d1-2e92ce52d78mr28691982a91.16.1730863826238;
+        Tue, 05 Nov 2024 19:30:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHZ8ehhnb5warv41MQecmdcJ74fifjbHOtjAiOyNQliV/l9hnuvE6Steaw0kjpDyhiXUzeiDRKvVs9Tf1rD8pE=
+X-Received: by 2002:a17:90b:4c46:b0:2e2:8fb4:502d with SMTP id
+ 98e67ed59e1d1-2e92ce52d78mr28691961a91.16.1730863825811; Tue, 05 Nov 2024
+ 19:30:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105121225.12513-5-lulie@linux.alibaba.com>
+References: <20241105185101.1323272-2-dtatulea@nvidia.com>
+In-Reply-To: <20241105185101.1323272-2-dtatulea@nvidia.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 6 Nov 2024 11:30:14 +0800
+Message-ID: <CACGkMEswM_3uhOHnzGwOMjfiPqpMgTnjVRhgpWquzTwVpwNr6g@mail.gmail.com>
+Subject: Re: [PATCH] vdpa/mlx5: Fix error path during device add
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Eugenio Perez Martin <eperezma@redhat.com>, 
+	Si-Wei Liu <si-wei.liu@oracle.com>, virtualization@lists.linux.dev, 
+	Gal Pressman <gal@nvidia.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Philo,
+On Wed, Nov 6, 2024 at 2:52=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia.com>=
+ wrote:
+>
+> In the error recovery path of mlx5_vdpa_dev_add(), the cleanup is
+> executed and at the end put_device() is called which ends up calling
+> mlx5_vdpa_free(). This function will execute the same cleanup all over
+> again. Most resources support being cleaned up twice, but the recent
+> mlx5_vdpa_destroy_mr_resources() doesn't.
+>
+> This change drops the explicit cleanup from within the
+> mlx5_vdpa_dev_add() and lets mlx5_vdpa_free() do its work.
+>
+> This issue was discovered while trying to add 2 vdpa devices with the
+> same name:
+> $> vdpa dev add name vdpa-0 mgmtdev auxiliary/mlx5_core.sf.2
+> $> vdpa dev add name vdpa-0 mgmtdev auxiliary/mlx5_core.sf.3
+>
+> ... yields the following dump:
+>
+>   BUG: kernel NULL pointer dereference, address: 00000000000000b8
+>   #PF: supervisor read access in kernel mode
+>   #PF: error_code(0x0000) - not-present page
+>   PGD 0 P4D 0
+>   Oops: Oops: 0000 [#1] SMP
+>   CPU: 4 UID: 0 PID: 2811 Comm: vdpa Not tainted 6.12.0-rc6 #1
+>   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-g=
+f21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+>   RIP: 0010:destroy_workqueue+0xe/0x2a0
+>   Code: ...
+>   RSP: 0018:ffff88814920b9a8 EFLAGS: 00010282
+>   RAX: 0000000000000000 RBX: ffff888105c10000 RCX: 0000000000000000
+>   RDX: 0000000000000001 RSI: ffff888100400168 RDI: 0000000000000000
+>   RBP: 0000000000000000 R08: ffff888100120c00 R09: ffffffff828578c0
+>   R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+>   R13: ffff888131fd99a0 R14: 0000000000000000 R15: ffff888105c10580
+>   FS:  00007fdfa6b4f740(0000) GS:ffff88852ca00000(0000) knlGS:00000000000=
+00000
+>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   CR2: 00000000000000b8 CR3: 000000018db09006 CR4: 0000000000372eb0
+>   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>   Call Trace:
+>    <TASK>
+>    ? __die+0x20/0x60
+>    ? page_fault_oops+0x150/0x3e0
+>    ? exc_page_fault+0x74/0x130
+>    ? asm_exc_page_fault+0x22/0x30
+>    ? destroy_workqueue+0xe/0x2a0
+>    mlx5_vdpa_destroy_mr_resources+0x2b/0x40 [mlx5_vdpa]
+>    mlx5_vdpa_free+0x45/0x150 [mlx5_vdpa]
+>    vdpa_release_dev+0x1e/0x50 [vdpa]
+>    device_release+0x31/0x90
+>    kobject_put+0x8d/0x230
+>    mlx5_vdpa_dev_add+0x328/0x8b0 [mlx5_vdpa]
+>    vdpa_nl_cmd_dev_add_set_doit+0x2b8/0x4c0 [vdpa]
+>    genl_family_rcv_msg_doit+0xd0/0x120
+>    genl_rcv_msg+0x180/0x2b0
+>    ? __vdpa_alloc_device+0x1b0/0x1b0 [vdpa]
+>    ? genl_family_rcv_msg_dumpit+0xf0/0xf0
+>    netlink_rcv_skb+0x54/0x100
+>    genl_rcv+0x24/0x40
+>    netlink_unicast+0x1fc/0x2d0
+>    netlink_sendmsg+0x1e4/0x410
+>    __sock_sendmsg+0x38/0x60
+>    ? sockfd_lookup_light+0x12/0x60
+>    __sys_sendto+0x105/0x160
+>    ? __count_memcg_events+0x53/0xe0
+>    ? handle_mm_fault+0x100/0x220
+>    ? do_user_addr_fault+0x40d/0x620
+>    __x64_sys_sendto+0x20/0x30
+>    do_syscall_64+0x4c/0x100
+>    entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>   RIP: 0033:0x7fdfa6c66b57
+>   Code: ...
+>   RSP: 002b:00007ffeace22998 EFLAGS: 00000202 ORIG_RAX: 000000000000002c
+>   RAX: ffffffffffffffda RBX: 000055a498608350 RCX: 00007fdfa6c66b57
+>   RDX: 000000000000006c RSI: 000055a498608350 RDI: 0000000000000003
+>   RBP: 00007ffeace229c0 R08: 00007fdfa6d35200 R09: 000000000000000c
+>   R10: 0000000000000000 R11: 0000000000000202 R12: 000055a4986082a0
+>   R13: 0000000000000000 R14: 0000000000000000 R15: 00007ffeace233f3
+>    </TASK>
+>   Modules linked in: ...
+>   CR2: 00000000000000b8
+>
+> Fixes: 62111654481d ("vdpa/mlx5: Postpone MR deletion")
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
 
-kernel test robot noticed the following build errors:
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-[auto build test ERROR on net-next/main]
+Thanks
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Philo-Lu/net-udp-Add-a-new-struct-for-hash2-slot/20241105-201454
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241105121225.12513-5-lulie%40linux.alibaba.com
-patch subject: [PATCH v7 net-next 4/4] ipv6/udp: Add 4-tuple hash for connected socket
-config: arc-randconfig-002-20241106 (https://download.01.org/0day-ci/archive/20241106/202411061155.g9trZ6rZ-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411061155.g9trZ6rZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411061155.g9trZ6rZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "udp_lib_hash4" [net/ipv6/ipv6.ko] undefined!
->> ERROR: modpost: "udp_ehashfn" [net/ipv6/ipv6.ko] undefined!
->> ERROR: modpost: "udp4_hash4" [net/ipv6/ipv6.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
