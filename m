@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-398738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2809BF555
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:34:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B179BF557
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D14CF1C216D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:34:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56841F26137
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE8220A5EF;
-	Wed,  6 Nov 2024 18:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A92D20ADCD;
+	Wed,  6 Nov 2024 18:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQVQMiPC"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UK86PWZc"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93826208995
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351E5209689
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730918041; cv=none; b=kbLMdQoCj4b2ztyW3fjg2LNk3tDdC1wgonydisBTfE2Zf9r5cwicJfg9IVTWV1WRr0n2Y6XS5nLdP4FudqSrzyPlxa6k2xPkACGhXqUZWkmPDdPyToNq40JGRs6GLO2MhdculAvH4DVhMkFCEvN+VFO0A998SJ3X/N42QG3Bc3E=
+	t=1730918042; cv=none; b=ZGS/3O1f+CkmH4RhUBtllOhnvVPvSItwAQ+w4gsqJ2+UtIgQarTIERsFnZ4rjrD5oBlQdOmBjGB2HsE/+bnNCShjqi1AIWDfRp81LXddRtTw/cIAQdbJU963sTv4QBABhVvbjrKCGykTmue8QU+YEMpx+LAmPrpuIld3Y0Mbt+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730918041; c=relaxed/simple;
-	bh=z9YLI3XeypD2JkVURDsXmKAMCA0CwILrHqs40+Csj8Q=;
+	s=arc-20240116; t=1730918042; c=relaxed/simple;
+	bh=KfmJMPUsphqIRh7b0IAgOalfl+iFBdDUBMD/8jenYxM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bPI6Axxs0z/4ds87kL5DNhJcDB1Zbv0FOLSaqq8U51VoR9VWslTdAQQMsW+fyx4Lhohit3f6R55vRedXPxIaei5ICxkPEfc7xcj58N1wnJyj8DO1QVnJNF+SQlM9oMBJWUnQ8mCgdJ/69xfTg2MzMGpYXYYjG08/BdLdlhXx4uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQVQMiPC; arc=none smtp.client-ip=209.85.218.41
+	 MIME-Version; b=XzvRwNqGPV8n8kB28Wp3xEL+Sf63IrA94Xhz9aunvrs2oZYsY9Xagh1J4wKexXtj3aoFvPZ49zZUTmqxSFNcpO6s5R/6sX4DWmERyHDI6He7fjWBqn9m4rSzIxl5RWEYqacKoy0u70sFMROaAVfnEk2UFM+9mRZKZKFpr59WhD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UK86PWZc; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9ed49edd41so13501166b.0
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ced377447bso65886a12.1
         for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:33:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1730918038; x=1731522838; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iPcfkzQzzHYPVnMWaHpmyomuW/J2G/s5mhha7Kyk8zQ=;
-        b=JQVQMiPCOkbmGjtk6p/aLIsSP2U7EwBgo9eNrF+izJDCKfgqVe1RTLCJEsFhMAafV2
-         vNF2wMl6eVY7c9gBZU40vVttvjuGOaAZdBSG9Jm7wxOlQJlZGz6lkObXX4M3dSgPBFj5
-         /w5RPxd1EqDJ7PWEVUQlshPlLwH2s0cMRBcjVFBtGJVBmFSHxOSGYva8Jkg/4gwZYQv/
-         thp4XliwkEPRApdPQItAcl5+4iyCNDGdYMwmhr0V3yMszZoWSOjp8kXbAKvrWnNt1+ES
-         +e+6vDVmBNXQBlTlrumn59lnxq3F72qMYD1IxiLAJ87WkB4qsPp+7d6Xf6gLMbayzRXV
-         YVEQ==
+        bh=T+BamNq9Ka/vNcjcRd0qfZ5Er2QEzGn5caaTQCnbdDU=;
+        b=UK86PWZcpGOBdHQMlI5vzN8uKhptiJNzCPGdl8Io8elub7TrY6k5TO/rtIINBwej2m
+         A40v5RKNwHM+9Q61ssI6mrDS8tpl59DBSQA/cezRi3HsMSGAZQBLMc9lbOXvK9A/3NYC
+         f6o4xUKyBAf5gAG15Sxzzuqdk1O0MbuOYEF1OGL6j9BPs9gAarSMCOe0ddAZYWqRjsVq
+         xNRg426lPyaSOaktm9GCSQYvrL/jARDvMS0naueFNgC0jltm9PvaIT8Q/ysmVzIUbSt3
+         x9Lc+Y6dicN59oaeHcJcUXGKz47ww5I5p/qiP4qQpqAZrbXbZECZdPulNKoML2//UbFw
+         mwBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1730918038; x=1731522838;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iPcfkzQzzHYPVnMWaHpmyomuW/J2G/s5mhha7Kyk8zQ=;
-        b=C4LqS7cvM85DLTaRor05lmgtBNCkSNvIO80OF8boEkmefYAlR5ghG/VWyZLy8KOCMp
-         OdwTgUESg2+sQJWHWZNyt/3A0+jU32nGlo2HCn3x4lhGtn6H8i0wP5SvblcDzuDvZ3u8
-         gNR9D+00pqq9H8p7fQsXUaJInzRfIj8Y03vcDY8dNd0VTZQFrvh8A28RB6r8XQ29on4O
-         thA/RKVXYf0lh2QV84rpQrTZUUU3If7nM65ybwz2DmSwLeQcTbuzyAzxCrVOLsCkk/Ji
-         tTvmTaivPPeMInu919KjxpRF8YGdEjGc9j57PPqlAjKT0Psidnw30gUNaYlK52czUWnR
-         KuLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtDqJncKNjIs+5+/qtv0haXzhF22yhm3zqaTQ2sBzURlY8SAeSFkNmpsw25S2W8RW34o2fZU0pMMRXYSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxebaT37wVoRfhW176oKrGKChGJQEcubS3pHy9RJIjns29+bkie
-	FO49XtLV2AjX4b3HaVjc69tGFSFXzoy8fPshf0tEFu/bERSBpnZB
-X-Google-Smtp-Source: AGHT+IGeq+rxg4ogSXDYO599VyNKOGALtpa4ihVmhkyLPUdzPJvsEp1uvL0ovpW4CuTtBB+Y2OLq7g==
-X-Received: by 2002:a17:907:7f07:b0:a9a:17f5:79a8 with SMTP id a640c23a62f3a-a9de5d6fad3mr4081888666b.13.1730918037785;
-        Wed, 06 Nov 2024 10:33:57 -0800 (PST)
+        bh=T+BamNq9Ka/vNcjcRd0qfZ5Er2QEzGn5caaTQCnbdDU=;
+        b=cJmUusmzIH1idBAmgBIlIdH3O+ujKJu3U10k0OO7CcyZh2H3wxt3lUy2dVsHOMo2dI
+         e6Z2++WK5gHVgxGtpK3iv690AWm7DAH/S/qIGxsRs+ouTQWcVAgI2+E1Dg0KYuCwzxDX
+         FO/GEL95pD8IVZlcm69KQ+nW033yu4K2fgTcHGTBAp5fhY8K01zTOADJkOeiRQahHLgm
+         HyRxHeDeDnd+2LRFWojzq5w5wkX2WNVGAPX/AlQFZSxD4nhofugFD/YoWUnZfaTIUH2b
+         0SpSQX9a0WXjwGSprs/RPcG3AZXriiJafbtfno1lkysdj4FA+EGgG4e9W04LBqmi5HcW
+         qe1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVQJPKNvsrZYDABPQeTybRgArUa3vyVM65lkwsOeEKHPBbhDJEhRyyi4+vVfLvTdzXRVdbDUSAJanY8x3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLRRxtveXRPGx+mLc2N0dJthNmQHDdpYDb0+QeDnrOsVob7x05
+	JJpr6rpSBoAHzt/ihmmLyRqFGYVaGMrpeXDvDOZtxgWjFbu25Pwg
+X-Google-Smtp-Source: AGHT+IFiOWsnaFQPqNjtsLxnwyXMF5A+F68kG7RMtDz44fbvdi0yYFlh7V52DNVEms8teFIuXfKXmQ==
+X-Received: by 2002:a17:906:dc92:b0:a99:f0f4:463d with SMTP id a640c23a62f3a-a9e3a5a5083mr2500921966b.26.1730918038427;
+        Wed, 06 Nov 2024 10:33:58 -0800 (PST)
 Received: from kernel-710.speedport.ip (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb1813a07sm315298966b.190.2024.11.06.10.33.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 10:33:57 -0800 (PST)
+        Wed, 06 Nov 2024 10:33:58 -0800 (PST)
 From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [PATCH 06/16] staging: rtl8723bs: Remove unused function Hal_EfusePgPacketWrite
-Date: Wed,  6 Nov 2024 19:33:35 +0100
-Message-ID: <e2d4cfd440651ed08952afccbb3e927c26927c77.1730916582.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 07/16] staging: rtl8723bs: Remove unused function Hal_EfusePgPacketWrite_BT
+Date: Wed,  6 Nov 2024 19:33:36 +0100
+Message-ID: <d7f6a44ef5e2e9b17d3cc14cd346aff8220a9373.1730916582.git.philipp.g.hortmann@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1730916582.git.philipp.g.hortmann@gmail.com>
 References: <cover.1730916582.git.philipp.g.hortmann@gmail.com>
@@ -85,8 +85,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove unused function pointer Efuse_PgPacketWrite and unused function
-Hal_EfusePgPacketWrite.
+Remove unused function pointer Efuse_PgPacketWrite_BT and unused function
+Hal_EfusePgPacketWrite_BT.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
@@ -95,14 +95,14 @@ Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
  2 files changed, 31 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 13fe77f84cc9..432c2c0aa259 100644
+index 432c2c0aa259..fa6fbf0ddc23 100644
 --- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
 +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
 @@ -1365,35 +1365,6 @@ static u8 hal_EfusePgPacketWriteData(
  	return true;
  }
  
--static s32 Hal_EfusePgPacketWrite(
+-static bool Hal_EfusePgPacketWrite_BT(
 -	struct adapter *padapter,
 -	u8 offset,
 -	u8 word_en,
@@ -112,7 +112,7 @@ index 13fe77f84cc9..432c2c0aa259 100644
 -{
 -	struct pgpkt_struct targetPkt;
 -	u16 startAddr = 0;
--	u8 efuseType = EFUSE_WIFI;
+-	u8 efuseType = EFUSE_BT;
 -
 -	if (!hal_EfusePgCheckAvailableAddr(padapter, efuseType, bPseudoTest))
 -		return false;
@@ -131,29 +131,29 @@ index 13fe77f84cc9..432c2c0aa259 100644
 -	return true;
 -}
 -
- static bool Hal_EfusePgPacketWrite_BT(
- 	struct adapter *padapter,
- 	u8 offset,
-@@ -1673,7 +1644,6 @@ void UpdateHalRAMask8723B(struct adapter *padapter, u32 mac_id, u8 rssi_level)
- void rtl8723b_set_hal_ops(struct hal_ops *pHalFunc)
+ static struct hal_version ReadChipVersion8723B(struct adapter *padapter)
+ {
+ 	u32 value32;
+@@ -1645,7 +1616,6 @@ void rtl8723b_set_hal_ops(struct hal_ops *pHalFunc)
  {
  	/*  Efuse related function */
--	pHalFunc->Efuse_PgPacketWrite = &Hal_EfusePgPacketWrite;
  	pHalFunc->Efuse_WordEnableDataWrite = &Hal_EfuseWordEnableDataWrite;
- 	pHalFunc->Efuse_PgPacketWrite_BT = &Hal_EfusePgPacketWrite_BT;
+-	pHalFunc->Efuse_PgPacketWrite_BT = &Hal_EfusePgPacketWrite_BT;
+ 
+ 	pHalFunc->SetHalODMVarHandler = &rtl8723b_SetHalODMVar;
  
 diff --git a/drivers/staging/rtl8723bs/include/hal_intf.h b/drivers/staging/rtl8723bs/include/hal_intf.h
-index c320795f3fd4..34cd13e49d8f 100644
+index 34cd13e49d8f..282e141616b0 100644
 --- a/drivers/staging/rtl8723bs/include/hal_intf.h
 +++ b/drivers/staging/rtl8723bs/include/hal_intf.h
-@@ -164,7 +164,6 @@ typedef s32 (*c2h_id_filter)(u8 *c2h_evt);
- struct hal_ops {
+@@ -165,7 +165,6 @@ struct hal_ops {
  	void (*SetHalODMVarHandler)(struct adapter *padapter, enum hal_odm_variable eVariable, void *pValue1, bool bSet);
  
--	int	(*Efuse_PgPacketWrite)(struct adapter *padapter, u8 offset, u8 word_en, u8 *data, bool bPseudoTest);
  	u8 (*Efuse_WordEnableDataWrite)(struct adapter *padapter, u16 efuse_addr, u8 word_en, u8 *data, bool bPseudoTest);
- 	bool	(*Efuse_PgPacketWrite_BT)(struct adapter *padapter, u8 offset, u8 word_en, u8 *data, bool bPseudoTest);
+-	bool	(*Efuse_PgPacketWrite_BT)(struct adapter *padapter, u8 offset, u8 word_en, u8 *data, bool bPseudoTest);
  
+ 	s32 (*xmit_thread_handler)(struct adapter *padapter);
+ 	void (*hal_notch_filter)(struct adapter *adapter, bool enable);
 -- 
 2.43.0
 
