@@ -1,73 +1,45 @@
-Return-Path: <linux-kernel+bounces-397896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D8E9BE211
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:13:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B198C9BE212
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC39F1F27394
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:13:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 763AA284CE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638271D88A4;
-	Wed,  6 Nov 2024 09:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="li8nmCy3"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE101D95B4;
+	Wed,  6 Nov 2024 09:12:44 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBA11D5ABD;
-	Wed,  6 Nov 2024 09:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6C91D8A04;
+	Wed,  6 Nov 2024 09:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730884353; cv=none; b=duAZNKr5ayl0eUuj8STsyM67zt6ribpc0ecrzFEdWyTh0h3KjiRnjqKgkCURWmih1tWCs48DmFzVkHFj0Wtp8LrJGZpvzBKs+W9INAOas8IFO5ruih/l03qFVxmF/88TgA4wHkRyTDpvKAEkDKiWC/1yErtOvboMnw+e+CHZqcY=
+	t=1730884364; cv=none; b=Lq5IntFa7H0hnCY6oIMQs9TmWUfMigJFJY+kzRTJ3CP4kbGfxXbnbtb+hFyhObVWBxVCG2ZAUVCXYJKVOG52PPQSzGUCHdvlv7/IVbFlfvVasBqHN5zKpfVgQdpW6uKw02FPmh7y/gIAR+l4PlGQGfFDvCApivn4vxo4b+kpC+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730884353; c=relaxed/simple;
-	bh=vBtPgAq5zkwFfAZqksVHHgW8EQlGOUc2Q3SmQIcy0QE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szRcaqb4H8tSjkeWoGQXXMkOy1kPfX7IbQfkK3tnb+EopnlJKxcTIYR/AU5F2eigt7sFbCD/QIHTO/MonEb1bZb0h557HSx2hg6vk2Kj1sadkLDjGq4b+100hPgor8NbJTgsLrF1qJCYxU9FYMeayfQ709kuO8mCg8KIpe2PVto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=li8nmCy3; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cebcf96fabso6256472a12.3;
-        Wed, 06 Nov 2024 01:12:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730884350; x=1731489150; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7nW40zqFje8srCjiR5OmAVUxOIYZzyXXm/hFeVlWl6I=;
-        b=li8nmCy3ab6R5GuFB3Q8pbV0Ho/54yFexB+/7dPVn5ge0d6WM//e/Twq0+Sh9GijHx
-         zB/ePIrhG2LYyceFk3iGq6Jx+kbm9SYyFS96OH2l+z4DzNYbFpIUYoVPllWVhEMqON3u
-         SO967qEgyJV8rj3RJDFXUjjrG4bC8swPFrytxr0GXasDAweAwOISvL6GHWzHt++rLpQc
-         GrLbTam6uAwnb3hwpFoppj8R5BPCMUNGPef0AF6f8Wj042vAkiE4Vbl715HztOt6+irm
-         BZzTlWGOwHav9DhtFWJBZ0llVegaz77/HFo8hq9GCQ+m1QHrXeMAxPqxyLPkfxzZCH3N
-         9IMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730884350; x=1731489150;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7nW40zqFje8srCjiR5OmAVUxOIYZzyXXm/hFeVlWl6I=;
-        b=L+RFlvaoZ0c1Bwcv0Sye8EOrTxV2xbfEaBiTzbIuwSp3Qmf1SYYnUUML8JpBnzgc4T
-         lu97YLeercFJJOV2Ir01Q3mquBakUn4fEVIqeHzQX6u3X4a+7Org207jaePMcfEBM3I/
-         YyzibGotREPnPb9IcFH36MKqUJSZvyFNxowA3TnLGBvC0UiP1z7j4l/GHroVwn1V5wuf
-         fOAIxGTcG+tyMVbSccPVYRQZ7XHi4ZYDrXzz9bwG05neK5rT9TfI2RSHGOEljj4GHzWU
-         Hlhex73iLZ0pRhTYkk9lq2GHxHq797gp2g/yv9/CDHQYWJsJ6bUGCsbJt6NlES3FDuvH
-         zGpw==
-X-Forwarded-Encrypted: i=1; AJvYcCViY5CLcVfHLFBagO3hTH8JtreJyaDYRClkjBeR6TVeYRrH+brGhMgVLFJVfQwZQJIFMpFuNyaKGHK25baVzQ==@vger.kernel.org, AJvYcCW3VN8pUjhd4FzUI/wNgufapuYtkUUJnY+zy88uuIorgeSyzTX4Fb4oo16AD2F9n40u7gBbnmekwa1uAbrt@vger.kernel.org, AJvYcCWJAepcaTOQ2Xfw1/bH0Pa2JoX94bmA6vlQbEJ6twK+hZgN/FN2Y4bSfWbkNUURgUHkdFvYrr2Msms=@vger.kernel.org, AJvYcCXhyNpa9ik+kfW4S0Gq+Dp0sDGitA4RjQaMqhulzM/8VoLoljYkTNrcX1NsaaLJ1NHz2F6QxRW2uDQy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwncUiO/GRhdNBXLx6CsLV4ncQ1QKl0v9mhFvlNyYOJETv6RqeQ
-	2jj0E0NitvHGdj/cLiNR1YBOmWeWDMsRdqB1xkvNMYlgavSCzxQf
-X-Google-Smtp-Source: AGHT+IHV7R7KK9k7MSo6cyQksVmBATZQ1s9HUzySsITu23MhMBSld/91CVKjIp26poEYOqy04HF6jA==
-X-Received: by 2002:a17:907:6d12:b0:a99:d782:2e2b with SMTP id a640c23a62f3a-a9e50938952mr2045392166b.30.1730884349784;
-        Wed, 06 Nov 2024 01:12:29 -0800 (PST)
-Received: from ?IPV6:2a00:f41:90aa:ba3c:cb43:651a:b4b2:c19? ([2a00:f41:90aa:ba3c:cb43:651a:b4b2:c19])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16dbd38sm248935966b.73.2024.11.06.01.12.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 01:12:28 -0800 (PST)
-Message-ID: <2c7ece9d-95e8-4d01-a9da-c1d5d7388771@gmail.com>
-Date: Wed, 6 Nov 2024 10:12:25 +0100
+	s=arc-20240116; t=1730884364; c=relaxed/simple;
+	bh=6YtzTxo27BLuqqybhSbmOu/ytxHDEfIPXSd/2vFzzVc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=JCI0Pqwn27tjouCGBNvtiz8zhizGBLWcEHDxNF0q8gdZBonXudVWy4CR3bgcZVvU1nPpfKeE7ISrBHaCjoWMeAfKDyayYN6aaRu8/y/tGW/uO/tOIhSNo0Yzaw+lUHt25L1aBfFQr94Y8pqFJCNnBFaO9srozMptUUoJttXwDJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xjzvb0s1Zz10V78;
+	Wed,  6 Nov 2024 17:10:51 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id B723418010F;
+	Wed,  6 Nov 2024 17:12:37 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 6 Nov 2024 17:12:37 +0800
+Message-ID: <8bcc6d5b-08d6-48a8-99d2-d8bb2bef2d6c@huawei.com>
+Date: Wed, 6 Nov 2024 17:12:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,65 +47,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/7] arm64: dts: qcom: ipq5424: Add thermal zone nodes
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- srinivas.kandagatla@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, amitk@kernel.org, thara.gopinath@gmail.com,
- rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
- lukasz.luba@arm.com, andersson@kernel.org, konradybcio@kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20241104124413.2012794-1-quic_mmanikan@quicinc.com>
- <20241104124413.2012794-8-quic_mmanikan@quicinc.com>
- <91ea0f03-9bbe-491d-9056-ebd9fdc73bfa@oss.qualcomm.com>
- <8cb665f5-4885-4853-804a-7313decc719c@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <8cb665f5-4885-4853-804a-7313decc719c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] uprobes: Improve the usage of xol slots for better
+ scalability
+From: "Liao, Chang" <liaochang1@huawei.com>
+To: <andrii@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov
+	<oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>
+References: <20240927094549.3382916-1-liaochang1@huawei.com>
+In-Reply-To: <20240927094549.3382916-1-liaochang1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
 
 
-On 11/6/24 09:47, Manikanta Mylavarapu wrote:
-> 
-> 
-> On 11/4/2024 7:21 PM, Konrad Dybcio wrote:
->> On 4.11.2024 1:44 PM, Manikanta Mylavarapu wrote:
->>> Add thermal zone nodes for sensors present in IPQ5424.
->>>
->>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>> ---
->> [...]
+在 2024/9/27 17:45, Liao Chang 写道:
+>>  2 files changed, 139 insertions(+), 42 deletions(-)
 >>
->>> +
->>> +		cpu3-thermal {
->>> +			polling-delay-passive = <0>;
->>> +			polling-delay = <0>;
->>> +			thermal-sensors = <&tsens 13>;
->>> +
->>> +			trips {
->>> +				cpu-critical {
->>> +					temperature = <120000>;
->>> +					hysteresis = <9000>;
->>> +					type = "critical";
->>> +				};
->>> +
->>> +				cpu-passive {
->>> +					temperature = <110000>;
->>> +					hysteresis = <9000>;
->>> +					type = "passive";
->>
->> You have a passive trip point without passive polling
->>
+> Liao,
 > 
-> Okay, will remove this.
+> Assuming your ARM64 improvements go through, would you still need
+> these changes? XOL case is a slow case and if possible should be
+> avoided at all costs. If all common cases for ARM64 are covered
+> through instruction emulation, would we need to add all this
+> complexity to optimize slow case?
 
-You most likely want to preserve it, while keeping a sensible
-polling frequency, so that userspace will be aware of the current
-CPU temperature. <100> sounds like a sensible value here.
+Andrii,
 
-Konrad
+I've studied the optimizations merged over the past month, it seems
+that part of the problem addressed in this patch has been resolved
+by Oleg(uprobes: kill xol_area->slot_count). And I hope you've received
+the email with the re-run results for -push using simulated STP on
+the latest kernel (tag next-20241104). It show significant improvements,
+althought there's still room to match the throughput of -nop and -ret.
+So based on these results, I would prioritize the STP simulation patch.
+
+-- 
+BR
+Liao, Chang
+
 
