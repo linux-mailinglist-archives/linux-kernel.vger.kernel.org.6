@@ -1,268 +1,141 @@
-Return-Path: <linux-kernel+bounces-399060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5A79BFA53
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:44:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 301FC9BFA58
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:45:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502FD1C21F8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85F21C21C88
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBFD20E020;
-	Wed,  6 Nov 2024 23:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BE2209668;
+	Wed,  6 Nov 2024 23:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="XMm0UrpW"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="cTT8TQfj"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F3B1CDA36
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730936658; cv=none; b=lIZrVZlVf1S8Cqz5yX6S4pogvU1gHHj6+/qqwWYM0vu22zpC1WD2rh3Twavf3Pd+EIM0nOXqIPK+koF11vBf16aXafjQv7Cee1N6FJKVUuJFl6enqRmHHV8E6rLm2RKXwUFGojDmeXeeOgGyc5aQvRF1ue62HWKFvp4edOgKJ3g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730936658; c=relaxed/simple;
-	bh=lSxaigboPLXHNcddz2sY56eN7f1c39zsSqkEN3I8a4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pE8V26fN063gdKQf3U50zfQJMikXwO9BlFQFSUxGfctvSt12bkhFtoZCE0kaAWpujLgeb3TYdDG7Nd8gquaTar2WV4CWvZJ7ARwXJj0E54dCKDFtzyHf68CKOaqTs4mdNLbRgLECH6WGIWhvpVqSSstqCHdHAo2KMcRUEdvtmpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=XMm0UrpW; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2d83f15f3so50230a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 15:44:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1730936656; x=1731541456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QPXJsl8fLkTdJ5MrNMMlzw9z0f/yutenIKxxBRJC7Ks=;
-        b=XMm0UrpWuVqnuuAaqgGDs7cdITimrNeenLyZ0gwcKNTNrUzCyXielur17h5iwj3l5F
-         Tncul6SeOOPoFbu81xdkAJBAFmOLfGdkyqsWEMYtHcNnpvzKb+HkWuClvGANIZG3R8Mw
-         SNHOZ99fu0gr7Bop6SRDHmpN1s46bi0Eygj1ys5dUoRsbi1w+uKOJAN0qZ6OscuxaSqD
-         CR7mCbKG88bvdDYvMs8dG6IMDCz+y07GFnHigDsHG3T24KrlTPKOXQLqB5xT6ty1NLvV
-         2bFZMS+rcE4AaO5nGS/jjlK6qu7ebVqFyvei6AWqlLKgmmhtlCZw92/hbBqP8iBubbv4
-         2zRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730936656; x=1731541456;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QPXJsl8fLkTdJ5MrNMMlzw9z0f/yutenIKxxBRJC7Ks=;
-        b=f5mO+k7kTOixdBf7azQGSQkU1YynYGo2tCZKmUjdoikdDEqYqLsLf6KwlJWGUVcpzw
-         0iPYniy3AFeAYmgfHl3JKIEAI/7B98uqR3PuOyb1ubmjk5bgU4ybGSfdnsdxZzHgilew
-         DT0RIXKrwYanqFG71nOJfr6hfPTp+34RdCKIeOXPg8hQeZnRiT892ljF/WAzxh6qvT5W
-         Vm9GIqVY7l/5UulKHPjo5++5SZMI+FIWBm/sv/DDhUZ6YHV2Iw0P+o3JzE+zJK1FSzOT
-         2Vc9H6AhC3N8td/M3evD8J3l1LwHXdiloM0HLsZjOgnPa+eDzyd14JzpmmSubpMbfvyq
-         yfEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUi7E/D6IhuRg18amt+e5qsmg47tONyfpnGVXyR1qrcx59gEMPgHkEG/KNnB4G78ADBs8y/bdWqp29uXTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWyNMXJy2JqqyvI/WsitDYEpRS2r/DrlDr1x0ItDdDaQxbZmkR
-	En3dLyiZGdf/Tu7Vd/Khspi8TEPx261+7wqPksxiVnuSJMlrXrMNCez1N4QI9Fr1JiRaAVQF1NZ
-	kGYcKsfdl2dIxy3oNkCd8aPmtKIhbHb+Zw9dxTA==
-X-Google-Smtp-Source: AGHT+IEfTLGxMRTgZVBrGwFKA9oioUe6XiP0kU3ZXwnrA2Gb+QVba1IpxfUk/kA/lH7d6J1l+V4TSFC0vo8qJ2jirVQ=
-X-Received: by 2002:a17:90a:e7c2:b0:2e2:ada8:2984 with SMTP id
- 98e67ed59e1d1-2e9a4b22b1bmr587838a91.4.1730936656020; Wed, 06 Nov 2024
- 15:44:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746E61D966A;
+	Wed,  6 Nov 2024 23:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730936724; cv=pass; b=Uauh3+XaJpJd72NhRdR4poz5Y3GD3O7QwzuLJ5J+7J15Ej637oqRFBm0qDff5VG0FnhesuY+L1kmtJjYRqjXf+I2BDwrUToJszvUtzMbTDfTSo3cnqP+UlZk2RO0pHojsv2G8sfW/dL7oY1Vu3RdM4hne4lWMh/vSSWY8fzlgjk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730936724; c=relaxed/simple;
+	bh=w9RBdGBrQqRvP4QVYXJHPuVD77PpiUcpzIMOVebp6nc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=bNBKlThnjCcfs7Wz8afDAV4W0HIFj08nVMG4aXpHPU8wbZoevv+jWTV5k5JHX0rzDyZIBtQ1UOABH4i0i/+qahVXbYqs3opL+1FzUmOFXTY34bVsXFNCj7hTfx06I+Vyff6lL4O24KYSVXM5HByCIWifGuBcrpgbhMxsCxjp7qs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=cTT8TQfj; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1730936695; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=R6HMMUHtc1LGPVEXrD5PNCVUxuA7BNkb7qJL3b0pLjLv8KPrIoadLVYSoabQ3Z+dYr67mzJPDqk/klYxmCyN1pZjEL4TFpbrIa/ruLX0WAV5YTwj4qgQXrVd1NZP9xJ/sg3VtgwMoaE2n2XRNUbiyFJfhoPtoeSxNv7H4Xsf8c8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1730936695; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=w9RBdGBrQqRvP4QVYXJHPuVD77PpiUcpzIMOVebp6nc=; 
+	b=RXsjqdDFZQ9QelySvS1PT8h+kkEyaqZOHzHv477RVO68k+djASH4mQZcOoGs4jU7GagDjlOuSd/TDOH6AgQ0wSgDtC60AmAog+s3Ux5EmBnHhhCPpkU3CNN47P9ocdI2umln9L1hWbpG9cqA8CiSj2cAoJ/K2xa2WHvbG58n/nc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730936695;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=w9RBdGBrQqRvP4QVYXJHPuVD77PpiUcpzIMOVebp6nc=;
+	b=cTT8TQfjqYSX70R+jyXBXf3BreIvqkS/bPYdo1zcpQqYXavSLEcTWfuKhcb/sFB/
+	c9+YbkfqcF5ndTea00wwVd7HXbcGw7u9YZr3XhaKwno6pflglCl+Kr+3fHn9/GkfQ6x
+	IfqTxL1p3uzUoEE0DKAu4CHGUxwEeNcfWMmQdFfU=
+Received: by mx.zohomail.com with SMTPS id 1730936692453913.7917799009244;
+	Wed, 6 Nov 2024 15:44:52 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241101034647.51590-1-csander@purestorage.com>
- <20241101034647.51590-2-csander@purestorage.com> <CY8PR12MB71958512F168E2C172D0BE05DC502@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CADUfDZofFwy12oZYTmm3TE314RM79EGsxV6bKEBRMVFv8C3jNg@mail.gmail.com>
- <CY8PR12MB71953FD36C70ACACEBE3DBA1DC522@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CADUfDZqanDo+v_jap7pQire86QkfaDQE4HvhvVBb64YqKNgRHg@mail.gmail.com> <CY8PR12MB7195FDC4A280F4CD7EA219ABDC532@CY8PR12MB7195.namprd12.prod.outlook.com>
-In-Reply-To: <CY8PR12MB7195FDC4A280F4CD7EA219ABDC532@CY8PR12MB7195.namprd12.prod.outlook.com>
-From: Caleb Sander <csander@purestorage.com>
-Date: Wed, 6 Nov 2024 15:44:04 -0800
-Message-ID: <CADUfDZon6QbURp7TqB6dvE4Ewb_To2EDyUTQ=spNCorXDy0DbQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/2] mlx5/core: deduplicate {mlx5_,}eq_update_ci()
-To: Parav Pandit <parav@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v3 09/16] rust: add `io::Io` base type
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAH5fLgjC5Rcq5VJbEFSVP_rE0xjj8CGdqxZexhPVsGcTZ+85HA@mail.gmail.com>
+Date: Wed, 6 Nov 2024 20:44:35 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ gregkh@linuxfoundation.org,
+ rafael@kernel.org,
+ bhelgaas@google.com,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me,
+ tmgross@umich.edu,
+ a.hindborg@samsung.com,
+ airlied@gmail.com,
+ fujita.tomonori@gmail.com,
+ lina@asahilina.net,
+ pstanner@redhat.com,
+ ajanulgu@redhat.com,
+ lyude@redhat.com,
+ robh@kernel.org,
+ saravanak@google.com,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <A309C141-E390-44C1-A2B7-A7A9CDB132D7@collabora.com>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-10-dakr@kernel.org>
+ <CAH5fLggFD7pq0WCfMPYTZcFkvrXajPbxTBtkvSeh-N2isT1Ryw@mail.gmail.com>
+ <ZyCo9SRP4aFZ6KsZ@pollux>
+ <CAH5fLgjC5Rcq5VJbEFSVP_rE0xjj8CGdqxZexhPVsGcTZ+85HA@mail.gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Tue, Nov 5, 2024 at 9:44=E2=80=AFPM Parav Pandit <parav@nvidia.com> wrot=
-e:
->
->
-> > From: Caleb Sander <csander@purestorage.com>
-> > Sent: Tuesday, November 5, 2024 9:36 PM
-> >
-> > On Mon, Nov 4, 2024 at 9:22=E2=80=AFPM Parav Pandit <parav@nvidia.com> =
-wrote:
-> > >
-> > >
-> > >
-> > > > From: Caleb Sander <csander@purestorage.com>
-> > > > Sent: Monday, November 4, 2024 3:49 AM
-> > > >
-> > > > On Sat, Nov 2, 2024 at 8:55=E2=80=AFPM Parav Pandit <parav@nvidia.c=
-om> wrote:
-> > > > >
-> > > > >
-> > > > >
-> > > > > > From: Caleb Sander Mateos <csander@purestorage.com>
-> > > > > > Sent: Friday, November 1, 2024 9:17 AM
-> > > > > >
-> > > > > > The logic of eq_update_ci() is duplicated in mlx5_eq_update_ci(=
-).
-> > > > > > The only additional work done by mlx5_eq_update_ci() is to
-> > > > > > increment
-> > > > > > eq->cons_index. Call eq_update_ci() from mlx5_eq_update_ci() to
-> > > > > > eq->avoid
-> > > > > > the duplication.
-> > > > > >
-> > > > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > > > > > ---
-> > > > > >  drivers/net/ethernet/mellanox/mlx5/core/eq.c | 9 +--------
-> > > > > >  1 file changed, 1 insertion(+), 8 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > > > > > b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > > > > > index 859dcf09b770..078029c81935 100644
-> > > > > > --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > > > > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > > > > > @@ -802,19 +802,12 @@ struct mlx5_eqe *mlx5_eq_get_eqe(struct
-> > > > > > mlx5_eq *eq, u32 cc)  }  EXPORT_SYMBOL(mlx5_eq_get_eqe);
-> > > > > >
-> > > > > >  void mlx5_eq_update_ci(struct mlx5_eq *eq, u32 cc, bool arm)  =
-{
-> > > > > > -     __be32 __iomem *addr =3D eq->doorbell + (arm ? 0 : 2);
-> > > > > > -     u32 val;
-> > > > > > -
-> > > > > >       eq->cons_index +=3D cc;
-> > > > > > -     val =3D (eq->cons_index & 0xffffff) | (eq->eqn << 24);
-> > > > > > -
-> > > > > > -     __raw_writel((__force u32)cpu_to_be32(val), addr);
-> > > > > > -     /* We still want ordering, just not swabbing, so add a ba=
-rrier */
-> > > > > > -     wmb();
-> > > > > > +     eq_update_ci(eq, arm);
-> > > > > Long ago I had similar rework patches to get rid of
-> > > > > __raw_writel(), which I never got chance to push,
-> > > > >
-> > > > > Eq_update_ci() is using full memory barrier.
-> > > > > While mlx5_eq_update_ci() is using only write memory barrier.
-> > > > >
-> > > > > So it is not 100% deduplication by this patch.
-> > > > > Please have a pre-patch improving eq_update_ci() to use wmb().
-> > > > > Followed by this patch.
-> > > >
-> > > > Right, patch 1/2 in this series is changing eq_update_ci() to use
-> > > > writel() instead of __raw_writel() and avoid the memory barrier:
-> > > > https://lore.kernel.org/lkml/20241101034647.51590-1-
-> > > > csander@purestorage.com/
-> > > This patch has two bugs.
-> > > 1. writel() writes the MMIO space in LE order. EQ updates are in BE o=
-rder.
-> > > So this will break on ppc64 BE.
-> >
-> > Okay, so this should be writel(cpu_to_le32(val), addr)?
-> >
-> That would break the x86 side because device should receive in BE format =
-regardless of cpu endianness.
-> Above code will write in the LE format.
->
-> So an API foo_writel() need which does
-> a. write memory barrier
-> b. write to MMIO space but without endineness conversion.
+Sorry, I didn=E2=80=99t see this:
 
-Got it, thanks. writel(bswap_32(val, addr)) should work, then? I
-suppose it may introduce a second bswap on BE architectures, but
-that's probably worth it to avoid the memory barrier.
+> On 29 Oct 2024, at 07:18, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> What you're doing now is a bit awkward to use. You have to make sure
+> that it never escapes the struct it's created for, so e.g. you can't
+> give out a mutable reference as the user could otherwise `mem::swap`
+> it with another Io. Similarly, the Io can never be in a public field.
+> Your safety comment on Io::new really needs to say something like
+> "while this struct exists, the `addr` must be a valid I/O region",
+> since I assume such regions are not valid forever? Similarly if we
 
->
-> > >
-> > > 2. writel() issues the barrier BEFORE the raw_writel().
-> > > As opposed to that eq update needs to have a barrier AFTER the writel=
-().
-> > > Likely to synchronize with other CQ related pointers update.
-> >
-> > I was referencing this prior discussion about the memory barrier:
-> > https://lore.kernel.org/netdev/CALzJLG8af0SMfA1C8U8r_Fddb_ZQhvEZd6=3D2
-> > a97dOoBcgLA0xg@mail.gmail.com/
-> > From Saeed's message, it sounds like the memory barrier is only used to
-> > ensure the ordering of writes to the doorbell register, not the orderin=
-g of the
-> > doorbell write relative to any other writes. If some other write needs =
-to be
-> > ordered after the doorbell write, please explain what it is.
-> Not write, reading of the CQE likely requires read barrier.
+Io is meant to be a private member within a wrapper type that actually
+acquires the underlying I/O region, like `pci::Bar` or =
+`Platform::IoMem`.
 
-But mlx5_eq_update_ci() is already using wmb(), which only imposes an
-ordering on writes. So if the existing code is correct, the memory
-barrier cannot be required to order the doorbell write with respect to
-a read of the CQE.
+Doesn=E2=80=99t that fix the above?
 
->
-> > As Gal Pressman
-> > pointed out, a wmb() at the end of a function doesn't make much sense, =
-as
-> > there are no further writes in the function to order. If the doorbell w=
-rite needs
-> > to be ordered before some other write in a caller function, the memory =
-barrier
-> > should probably move to the caller.
-> It is the two EQ doorbell writes that needs to be ordered with respect to=
- each other.
-> So please audit the code for CQE processing ensure that there is read bar=
-rier after valid bit.
-> And removal of this read barrier does not affect there.
->
-> It would be best if you can test on ARM (non x86_64) platform for this ch=
-ange.
+> look at [1], the I/O region actually gets unmapped *before* the Io is
+> destroyed since IoMem::drop runs before the fields of IoMem are
+> destroyed, so you really need something like "until the last use of
+> this Io" and not "until this Io is destroyed" in the safety comment.
+>=20
+> If you compare similar cases in Rust, then they also do what I
+> suggested. For example, Vec<T> holds a raw pointer, and it uses unsafe
+> to assert that it's valid on each use of the raw pointer - it does not
+> create e.g. an `&'static mut [T]` to hold in a field of the Vec<T>.
+> Having an IoRaw<S> and an Io<'a, S> corresponds to what Vec<T> does
+> with IoRaw being like NonNull<T> and Io<'a, S> being like &'a T.
+>=20
+> [1]: =
+https://lore.kernel.org/all/20241024-topic-panthor-rs-platform_io_support-=
+v1-1-3d1addd96e30@collabora.com/
 
-Unfortunately I don't have access to any platform besides x86_64 with
-ConnectX cards.
+What I was trying to say in my last message is that the wrapper type, =
+i.e.:
+IoMem and so on, should not have a lifetime parameter, but IIUC this is =
+not
+what you=E2=80=99re suggesting here, right?
 
->
-> >
-> > >
-> > > > Are you suggesting something different? If so, it would be great if
-> > > > you could clarify what you mean.
-> > > >
-> > > So I was suggesting to keep __raw_writel() as is and replace mb() wit=
-h
-> > wmb().
-> >
-> > wmb() would certainly be cheaper than mb(), but I would like to underst=
-and
-> > the requirement for the barrier in the first place. The fence instructi=
-on is very
-> > expensive.
-> >
-> To order two doorbell writes of the same EQ.
-
-Right, I understand why the memory barrier is needed with the existing
-__raw_writel(), as it provides no ordering guarantees. But writel()
-seems to guarantee the necessary ordering of writes to the EQ's
-doorbell. This is the relevant documentation from memory-barriers.txt
-(I assume the mutual exclusion of interrupt handlers is equivalent to
-holding a spinlock):
-
-2. A writeX() issued by a CPU thread holding a spinlock is ordered
-   before a writeX() to the same peripheral from another CPU thread
-   issued after a later acquisition of the same spinlock. This ensures
-   that MMIO register writes to a particular device issued while holding
-   a spinlock will arrive in an order consistent with acquisitions of
-   the lock.
-
-Do you still think the barrier is necessary if writel() is used instead?
-
-If you feel strongly about keeping the wmb(), I can do that. It's
-certainly an improvement over the full memory barrier. But fences are
-quite expensive, so I would prefer to remove it if it's not necessary
-for correctness.
-
-Thanks,
-Caleb
+=E2=80=94 Daniel=
 
