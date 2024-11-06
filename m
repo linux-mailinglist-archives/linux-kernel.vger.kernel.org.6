@@ -1,80 +1,85 @@
-Return-Path: <linux-kernel+bounces-397322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65EB39BDA6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA5C9BDA69
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260AF2835FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:39:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B64C284481
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35C3130A54;
-	Wed,  6 Nov 2024 00:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B09A4F8A0;
+	Wed,  6 Nov 2024 00:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="URx8y0+G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LcgpBxHp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F819502B1;
-	Wed,  6 Nov 2024 00:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB5A1B815
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 00:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730853543; cv=none; b=sd9pwcxwh89DyA+9WaN41qYtu5+OMweGZvEBE1fH3F2++W4JrYoKh6i/ddE/xPCRKesrUnxWIo3KnsRK35KY4BbAsQv0NWVjJO4yp7KG0DjbZrzaIdBXjPgwobm7qNxhOLw/4iHwFZuBGDq/bZhDfsCkHwXKGQVZwwKaWqms158=
+	t=1730853540; cv=none; b=rEKX6vjBDPkNld3byGBB75jqPf63GhLpgf7UfbhukSE9Wp+/19hcvuuAIoJwFZkavx1MDRcrentlOIgv6p8JvWspcfJs8gIccVsUL4fIdzGm56wnZGCsXJnVjVhvWriwaDaZX/6YclwbM5u+1z0amsq/hTTNcqbGFuRK59LTasU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730853543; c=relaxed/simple;
-	bh=CbnbHhZ5g+AnISB2qi8+n7pIi443xyPrj0/svOudxF8=;
+	s=arc-20240116; t=1730853540; c=relaxed/simple;
+	bh=OY1hlIVYQYS0vaFdEQbDhhBtFBmY9oVIQ6rqxklOL7Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GmhC+OLLwK24t/NHvdNVUVOCAp3iAkX9yvtfgSGzR3blQBeDj9Q6wBXxgA7ZpkCGXWkqOTK+y2YnvTlOE1S1Enm+HsmW1lZHlZjVtpPbBtXcnrpc/ry52ql+ms/yZnmjQ1fP/NvDlBGlF24+TJn0FIHd8CIn4yaXMp9wlrPBUtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=URx8y0+G; arc=none smtp.client-ip=192.198.163.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQ3gAkEgsvlm8biJV5nOJMtnDkPJ16GNCS4jgrjCV87bCyDArJcaGWCaTt8HXkQN66net0whn11MF6Cjgt4kOoBTgujY3t6nE2hBkZ/aXarObJAz4t0QyMP2GFFj4HxPLoFmR2bbm9iHP6ydUElkdiZuf5S5OLMxphSCKTAxp2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LcgpBxHp; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730853541; x=1762389541;
+  t=1730853538; x=1762389538;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=CbnbHhZ5g+AnISB2qi8+n7pIi443xyPrj0/svOudxF8=;
-  b=URx8y0+GKu1JcvX7vqMpnbItOYVw4YpfIpvSdun8/XFkbdjQfhVd8Aqf
-   ggUBJ0zyPCROBNC7qfIG8zN9wfSgeVLHWhvn6Oki/Jf+hCRyYjfon1zWc
-   FmiBlc7oVI68dvyyNy5sIikVojXDhA/oDOOKi3zAaCOpGuyP58w8DkHtt
-   3KeufQRppw4tIyPtGOiaT1mv+/wM53mGO22zw/zrmhBFyok0RXWZfKbZP
-   kDkFoIqK2WUbbCBfozlRY6vh08A4jNtyVnkawDp0YYTt79j8KDFnUda9Y
-   D6b60doaipPFmEJCV0zpBpWiuwnIUZ0K6feBRYU/7wyZWXw0wVLLLZ/YX
-   w==;
-X-CSE-ConnectionGUID: sqdOaDe3TvOS1FmJlAhhtQ==
-X-CSE-MsgGUID: Uh4bKZtIT+SSoa5vYInGbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="41227719"
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="41227719"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 16:38:57 -0800
-X-CSE-ConnectionGUID: CMQEnPN1R86AFU17tTOaog==
-X-CSE-MsgGUID: ht2dK8EgRFGQ7ou2Yl+MAg==
+  bh=OY1hlIVYQYS0vaFdEQbDhhBtFBmY9oVIQ6rqxklOL7Q=;
+  b=LcgpBxHptWTqsaPvULxcwsX/J70pBAGtu8/EdUt8qJWFMUm11dWUbIYr
+   6CHwB1vSEgSk+pH80nxeK1VNPQVI65a15E/PDFkwbDuHDVCNbbALxwUvw
+   Gj5uVHU65hz8hjP9IHiw1QyTeDe60NcapkousnEMSIZWyZJpMDQvqOXge
+   KI9k29ATlmn/ylqzYGaeNofIQGXzU0/bzuvg0kMLSzn5vbwqItnrmoIW9
+   qeFzWSGM14IyVNXc4WbxsT6dhya4FLHGMLPXStC13K8fO21akfHUwAkUn
+   0MtV1AdUl0Ulf9YH1dosMemjnGwtrvW+OXpMkzK8WJ25phXbBqVBg8w6x
+   Q==;
+X-CSE-ConnectionGUID: 8Ybq9CrcQq688ZcCiUGAeQ==
+X-CSE-MsgGUID: KFSU8AOBRieiIoIL1JtT3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30793756"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30793756"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 16:38:58 -0800
+X-CSE-ConnectionGUID: I3dyyNjpT2qz2VOPNAR7VQ==
+X-CSE-MsgGUID: Tn51CGnTRsuvRpj/uZhEOg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="88793876"
+   d="scan'208";a="88746269"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 05 Nov 2024 16:38:54 -0800
+  by fmviesa005.fm.intel.com with ESMTP; 05 Nov 2024 16:38:54 -0800
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1t8U4R-000me5-2a;
+	id 1t8U4R-000me3-2V;
 	Wed, 06 Nov 2024 00:38:51 +0000
 Date: Wed, 6 Nov 2024 08:38:35 +0800
 From: kernel test robot <lkp@intel.com>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
-	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 3/3] [PATCH v5] leds: Add LED1202 I2C driver
-Message-ID: <202411060859.fqkOY75Z-lkp@intel.com>
-References: <20241105161041.4813-3-vicentiu.galanopulo@remote-tech.co.uk>
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	John Ogness <john.ogness@linutronix.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+	bluescreen_avenger@verizon.net,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [PATCH v6 2/6] drm/log: Introduce a new boot logger to draw the
+ kmsg on the screen
+Message-ID: <202411060804.HiQa1eSZ-lkp@intel.com>
+References: <20241105125109.226866-3-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,114 +88,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105161041.4813-3-vicentiu.galanopulo@remote-tech.co.uk>
+In-Reply-To: <20241105125109.226866-3-jfalempe@redhat.com>
 
-Hi Vicentiu,
+Hi Jocelyn,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on lee-leds/for-leds-next]
-[also build test ERROR on robh/for-next linus/master v6.12-rc6 next-20241105]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test ERROR on d78f0ee0406803cda8801fd5201746ccf89e5e4a]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vicentiu-Galanopulo/dt-bindings-leds-Add-LED1202-LED-Controller/20241106-001305
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/20241105161041.4813-3-vicentiu.galanopulo%40remote-tech.co.uk
-patch subject: [PATCH 3/3] [PATCH v5] leds: Add LED1202 I2C driver
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241106/202411060859.fqkOY75Z-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060859.fqkOY75Z-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-panic-Move-drawing-functions-to-drm_draw/20241105-205432
+base:   d78f0ee0406803cda8801fd5201746ccf89e5e4a
+patch link:    https://lore.kernel.org/r/20241105125109.226866-3-jfalempe%40redhat.com
+patch subject: [PATCH v6 2/6] drm/log: Introduce a new boot logger to draw the kmsg on the screen
+config: s390-randconfig-001-20241106 (https://download.01.org/0day-ci/archive/20241106/202411060804.HiQa1eSZ-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060804.HiQa1eSZ-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411060859.fqkOY75Z-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411060804.HiQa1eSZ-lkp@intel.com/
 
-All error/warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
-   drivers/leds/leds-st1202.c: In function 'st1202_dt_init':
->> drivers/leds/leds-st1202.c:350:49: warning: missing terminating " character
-     350 |                         dev_err_probe(dev, err, "Failed to register LED class dev,
-         |                                                 ^
->> drivers/leds/leds-st1202.c:350:49: error: missing terminating " character
-     350 |                         dev_err_probe(dev, err, "Failed to register LED class dev,
-         |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/leds/leds-st1202.c:351:41: error: 'error' undeclared (first use in this function); did you mean 'err'?
-     351 |                                         error: %d\n", err);
-         |                                         ^~~~~
-         |                                         err
-   drivers/leds/leds-st1202.c:351:41: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/leds/leds-st1202.c:351:46: error: expected ')' before ':' token
-     351 |                                         error: %d\n", err);
-         |                                              ^
-         |                                              )
-   drivers/leds/leds-st1202.c:350:38: note: to match this '('
-     350 |                         dev_err_probe(dev, err, "Failed to register LED class dev,
-         |                                      ^
->> drivers/leds/leds-st1202.c:351:50: error: stray '\' in program
-     351 |                                         error: %d\n", err);
-         |                                                  ^
-   drivers/leds/leds-st1202.c:351:52: warning: missing terminating " character
-     351 |                                         error: %d\n", err);
-         |                                                    ^
-   drivers/leds/leds-st1202.c:351:52: error: missing terminating " character
-     351 |                                         error: %d\n", err);
-         |                                                    ^~~~~~~~
->> drivers/leds/leds-st1202.c:352:36: error: expected ';' before '}' token
-     352 |                         return err;
-         |                                    ^
-         |                                    ;
-     353 |                 }
-         |                 ~                   
+   s390-linux-ld: drivers/gpu/drm/arm/display/komeda/komeda_drv.o: in function `komeda_platform_probe':
+>> drivers/gpu/drm/arm/display/komeda/komeda_drv.c:87:(.text+0x18e): undefined reference to `drm_client_setup'
+   s390-linux-ld: drivers/gpu/drm/radeon/radeon_drv.o: in function `radeon_pci_probe':
+>> drivers/gpu/drm/radeon/radeon_drv.c:336:(.text+0x594): undefined reference to `drm_client_setup'
+   s390-linux-ld: drivers/gpu/drm/vkms/vkms_drv.o: in function `vkms_create':
+>> drivers/gpu/drm/vkms/vkms_drv.c:230:(.text.unlikely+0x1b4): undefined reference to `drm_client_setup'
+   s390-linux-ld: drivers/gpu/drm/nouveau/nouveau_drm.o: in function `nouveau_drm_probe':
+>> drivers/gpu/drm/nouveau/nouveau_drm.c:882:(.text+0x2c26): undefined reference to `drm_client_setup'
+   s390-linux-ld: drivers/gpu/drm/ast/ast_drv.o: in function `ast_pci_probe':
+>> drivers/gpu/drm/ast/ast_drv.c:365:(.text+0x916): undefined reference to `drm_client_setup'
+   s390-linux-ld: drivers/gpu/drm/qxl/qxl_drv.o:drivers/gpu/drm/qxl/qxl_drv.c:122: more undefined references to `drm_client_setup' follow
 
 
-vim +350 drivers/leds/leds-st1202.c
+vim +87 drivers/gpu/drm/arm/display/komeda/komeda_drv.c
 
-   318	
-   319	static int st1202_dt_init(struct st1202_chip *chip)
-   320	{
-   321		struct device *dev = &chip->client->dev;
-   322		struct st1202_led *led;
-   323		int err, reg;
-   324	
-   325		for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
-   326			struct led_init_data init_data = {};
-   327	
-   328			err = of_property_read_u32(child, "reg", &reg);
-   329			if (err) {
-   330				of_node_put(child);
-   331				return dev_err_probe(dev, err, "Invalid register, error: %d\n", err);
-   332			}
-   333	
-   334			led = &chip->leds[reg];
-   335			led->is_active = true;
-   336			led->fwnode = of_fwnode_handle(child);
-   337	
-   338			led->led_cdev.max_brightness = U8_MAX;
-   339			led->led_cdev.brightness_set_blocking = st1202_led_set;
-   340			led->led_cdev.pattern_set = st1202_led_pattern_set;
-   341			led->led_cdev.pattern_clear = st1202_led_pattern_clear;
-   342			led->led_cdev.default_trigger = "pattern";
-   343	
-   344			init_data.fwnode = led->fwnode;
-   345			init_data.devicename = "st1202";
-   346			init_data.default_label = ":";
-   347			err = devm_led_classdev_register_ext(dev,
-   348						&led->led_cdev, &init_data);
-   349			if (err < 0) {
- > 350				dev_err_probe(dev, err, "Failed to register LED class dev,
- > 351						error: %d\n", err);
- > 352				return err;
-   353			}
-   354			led->led_cdev.brightness_set = st1202_brightness_set;
-   355			led->led_cdev.brightness_get = st1202_brightness_get;
-   356		}
-   357	
-   358		return 0;
-   359	}
-   360	
+ce3d99c8349584 Douglas Anderson                       2023-09-01   55  
+4cfe5cc02e3f62 Faiz Abbas                             2023-07-12   56  static int komeda_platform_probe(struct platform_device *pdev)
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   57) {
+4cfe5cc02e3f62 Faiz Abbas                             2023-07-12   58  	struct device *dev = &pdev->dev;
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   59) 	struct komeda_drv *mdrv;
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   60) 	int err;
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   61) 
+a918dcfecc36f8 Amjad Ouled-Ameur                      2024-02-19   62  	err = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(40));
+a918dcfecc36f8 Amjad Ouled-Ameur                      2024-02-19   63  	if (err)
+a918dcfecc36f8 Amjad Ouled-Ameur                      2024-02-19   64  		return dev_err_probe(dev, err, "DMA mask error\n");
+a918dcfecc36f8 Amjad Ouled-Ameur                      2024-02-19   65  
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   66) 	mdrv = devm_kzalloc(dev, sizeof(*mdrv), GFP_KERNEL);
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   67) 	if (!mdrv)
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   68) 		return -ENOMEM;
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   69) 
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   70) 	mdrv->mdev = komeda_dev_create(dev);
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   71) 	if (IS_ERR(mdrv->mdev)) {
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   72) 		err = PTR_ERR(mdrv->mdev);
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   73) 		goto free_mdrv;
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   74) 	}
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   75) 
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   76) 	pm_runtime_enable(dev);
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   77) 	if (!pm_runtime_enabled(dev))
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   78) 		komeda_dev_resume(mdrv->mdev);
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   79) 
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   80) 	mdrv->kms = komeda_kms_attach(mdrv->mdev);
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   81) 	if (IS_ERR(mdrv->kms)) {
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   82) 		err = PTR_ERR(mdrv->kms);
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   83) 		goto destroy_mdev;
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   84) 	}
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   85) 
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   86) 	dev_set_drvdata(dev, mdrv);
+dd5891e7a4099e Thomas Zimmermann                      2024-09-24  @87  	drm_client_setup(&mdrv->kms->base, NULL);
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   88) 
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   89) 	return 0;
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   90) 
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   91) destroy_mdev:
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   92) 	if (pm_runtime_enabled(dev))
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   93) 		pm_runtime_disable(dev);
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   94) 	else
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   95) 		komeda_dev_suspend(mdrv->mdev);
+efb46508851874 james qian wang (Arm Technology China  2019-12-12   96) 
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   97) 	komeda_dev_destroy(mdrv->mdev);
+61f1c4a8ab7575 james qian wang (Arm Technology China  2019-01-03   98) 
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03   99) free_mdrv:
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03  100) 	devm_kfree(dev, mdrv);
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03  101) 	return err;
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03  102) }
+26bd43a7599639 james qian wang (Arm Technology China  2019-01-03  103) 
 
 -- 
 0-DAY CI Kernel Test Service
