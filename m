@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-397761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0B79BDFFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:10:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF73E9BE002
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:11:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198301C22AD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83566283957
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523BC1CF2BD;
-	Wed,  6 Nov 2024 08:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BB81CF2BD;
+	Wed,  6 Nov 2024 08:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dVblc/Ss"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="OoGXb3DK"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E947919148A;
-	Wed,  6 Nov 2024 08:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A23519148A
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730880613; cv=none; b=qio0pvkAbXdsxbJxjWFszaJoWVmywKlBG3VUbMOJE0BzpCebsmGJf/MSltbYY6yBoz08Tlkg1KmLZMuKl9XrvljGAiG/HxATZqoWW/l+B6IGO7OaaQuB6KWbMmqEFLKHNDQSwCZh8dl2VwvrowZxZ+HU2JkJNIC/ZWX70vDrFKQ=
+	t=1730880689; cv=none; b=mDkWrbsv95GRCIhuip86XOLDI++t+Bmc6bBCaT3OLBsygTiDFxMqRpTLMubnLNMCOTKBma+Zi/6NGKl/Ed5SGaYPmmLPMW9uRuat8/m4Ts1j5kxYRclgP1/OG0k9v7FattHcSwqf9EgRErtj4JPK2X7RikOTYFjeF/w2ZGfBGwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730880613; c=relaxed/simple;
-	bh=sXgglb6RJyFZT6poiRwu0692++EFfo0EZU7SsQpBdJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzlmDJ6KyQklPqFadgmK4RS1kLpVXLnIjVhMX4Xy0nCRsZLDDWtgMwrayxTBAuQu5E6BW5GGiIo1C12+Kvowe01S/5E/ecSEsW7AbJuRIIMy3G6e1N1+gOCh/siODhAvOo03g5bX2TV4hBGUBhzIBE8PGY5qsPTz0XXpzn+QkDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dVblc/Ss; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A66eZBE028055;
-	Wed, 6 Nov 2024 08:10:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=vnyKGLlOrMBKv5a70pXeBruA9QrK89
-	THd5y5r0X5kqQ=; b=dVblc/Ssb1RyhbcTY/pEi7FNM24+SiFyf++5bKy7qVZ6k6
-	JSxb3/qmORQ7lH7mbsgTXLM1JDPqXgxe/XJSGnqlCXVt6qYBfp8Xz5WRDuEniS2V
-	7T6+7T/HdqBLb/QiL0CC75GU6Tbn4GeXAsmASa5cgULDVtBfFLH28ufTaBVTRpxh
-	Q1u7mUUbgfVA/RRrJijALb+Ee3UW0yh2z+RRpf9t/neamYAbelCwlne0Zup2vTBK
-	5UzHr9jPvXtEnQkam4lhu975Zxkhvrdwc37ac7nk1SSZNvRpkXeINAnOhNCUgun6
-	8FG96/g9w/n1VfH8UuuG+jf++OiChBcHNAyVi6gw==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r3d2re9r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 08:10:10 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A65vAob019096;
-	Wed, 6 Nov 2024 08:10:10 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p0mj5p9a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 08:10:09 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A68A6PK39649538
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Nov 2024 08:10:06 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2C84B2004B;
-	Wed,  6 Nov 2024 08:10:06 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A6ED20043;
-	Wed,  6 Nov 2024 08:10:05 +0000 (GMT)
-Received: from osiris (unknown [9.171.89.178])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  6 Nov 2024 08:10:05 +0000 (GMT)
-Date: Wed, 6 Nov 2024 09:10:04 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Steffen Eiden <seiden@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Ingo Franzki <ifranzki@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
-Subject: Re: [PATCH v3] s390/uvdevice: Support longer secret lists
-Message-ID: <20241106081004.16507-A-hca@linux.ibm.com>
-References: <20241104153609.1361388-1-seiden@linux.ibm.com>
+	s=arc-20240116; t=1730880689; c=relaxed/simple;
+	bh=WCMTSOtEeIUT1Du4KziJr3RbObN3+UpaGNedghH7IKk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N43Abu8x+3xWHvTYQY0Ch+oayNGzyDipiSQQ/Hxf4ObtkONaSta/MMlxsDX3oH43v1uD1O9yYu0IqUhtgAJjkp8Ox/gprjjrlvhcJoAJ2XQZqO1nH/vKpXaLZknUPu/Z+/RmgluTA8yOjfIgCbi7RY2mbMrm9iKAiR5uq9B/IT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=OoGXb3DK; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1730880679; x=1731139879;
+	bh=WCMTSOtEeIUT1Du4KziJr3RbObN3+UpaGNedghH7IKk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=OoGXb3DKvJu2NiUGIk4u/PLhKENusFnxZNDGZtIkdH03hSirWA8cUmBxI8jCsz+O/
+	 13Olz1jiwYsrq1p9JtHWSveyVTMuiZJr4teqGoXsspjXO+O8cHDdP0nRLIkoeEExI/
+	 PS8DEqgbOOcnHjIWWAqhafz3wKfZ8xAq/Aca9Un5mLS3/3ma2Ow/nklZFuJ+Izay3K
+	 6KnpHNgRAnnYHyQWR/T3c32hDELw+j0Jiauwk7YMW60Qnh/gW4p5Zd1GIEKN5ux6mN
+	 s3WT13IJHtZnQEynTAvhprAoJNn+ONVDVmkxDthjnwcevvNtUBQG9UNnk5732Y9BhX
+	 SJthZEUXChgOA==
+Date: Wed, 06 Nov 2024 08:11:13 +0000
+To: Piotr Zalewski <pZ010001011111@proton.me>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
+Subject: Re: [PATCH] Fix wrong max check in bch2_opt_validate
+Message-ID: <pkxqQnSTQLReyYEHegx90LNp5dbR6LlpcqUIkBFa2CiL-0P48QWpGJ1YYKtWwu0IFM7H-2T4fYQz0MldP6OqZppPzmqafQDKouhETLnM5o4=@proton.me>
+In-Reply-To: <20241031231823.688918-2-pZ010001011111@proton.me>
+References: <20241031231823.688918-2-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 1a6b9fb3156df086c9647ecc2e3ecef125742860
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104153609.1361388-1-seiden@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: QH-RRJU5xP0YMUELHZLowN6Pc13qQZtt
-X-Proofpoint-ORIG-GUID: QH-RRJU5xP0YMUELHZLowN6Pc13qQZtt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=431 spamscore=0 clxscore=1015 suspectscore=0 impostorscore=0
- phishscore=0 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060065
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 04, 2024 at 04:36:09PM +0100, Steffen Eiden wrote:
-> Enable the list IOCTL to provide lists longer than one page (85 entries).
-> The list IOCTL now accepts any argument length in page granularity.
-> It fills the argument up to this length with entries until the list
-> ends. User space unaware of this enhancement will still receive one page
-> of data and an uv_rc 0x0100.
-> 
-> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+Hi Kent,
+
+Did you see this?
+
+Best regards
+
+On Friday, November 1st, 2024 at 12:22 AM, Piotr Zalewski <pZ010001011111@p=
+roton.me> wrote:
+
+> Use opt->max-1 in bch2_opt_validate when option type is BCH_OPT_STR. When
+>
+> option type is BCH_OPT_STR, real option's max is one less than the max
+> value stored in option structure.
+>
+> Reported-by: syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Dbee87a0c3291c06aa8c6
+> Fixes: 63c4b2545382 ("bcachefs: Better superblock opt validation")
+> Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
+>
 > ---
->  v3: remove upper boundary (8 pages) for arg len
-
-...
-
-> +static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
-> +{
-> +	const size_t data_off = offsetof(struct uv_secret_list, secrets);
-> +	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
-> +	struct uv_secret_list *list = zpage;
-> +	u16 num_secrets_stored = 0;
-> +	size_t user_off = data_off;
-> +	size_t copy_len;
+> fs/bcachefs/opts.c | 6 ++++--
+> 1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
+> index 83f55cf99d46..bffcbe6a6fd0 100644
+> --- a/fs/bcachefs/opts.c
+> +++ b/fs/bcachefs/opts.c
+> @@ -290,6 +290,8 @@ static int bch2_mount_opt_lookup(const char *name)
+>
+> int bch2_opt_validate(const struct bch_option *opt, u64 v, struct printbu=
+f *err)
+> {
+> + const u64 opt_max =3D opt->type =3D=3D BCH_OPT_STR ? opt->max - 1 : opt=
+->max;
+>
 > +
-> +	do {
-> +		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
-> +				&uv_ioctl->uv_rrc);
-> +		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
-> +		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
-> +			break;
-> +
-> +		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
-> +		WARN_ON(copy_len > sizeof(list->secrets));
-
-Is this really possible? Without checking the documentation I guess
-this is not possible and therefore the WARN_ON() should be removed.
-
-If however this can be possible then this should be turned into a
-WARN_ON_ONCE().
-
-> +		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
-> +			return -EFAULT;
-
-...and in addition, if the above would be possible this _could_ copy
-random kernel data to user space. Not good.
+> if (v < opt->min) {
+>
+> if (err)
+> prt_printf(err, "%s: too small (min %llu)",
+> @@ -297,10 +299,10 @@ int bch2_opt_validate(const struct bch_option *opt,=
+ u64 v, struct printbuf *err)
+> return -BCH_ERR_ERANGE_option_too_small;
+> }
+>
+> - if (opt->max && v >=3D opt->max) {
+>
+> + if (opt->max && v >=3D opt_max) {
+>
+> if (err)
+> prt_printf(err, "%s: too big (max %llu)",
+> - opt->attr.name, opt->max);
+>
+> + opt->attr.name, opt_max);
+>
+> return -BCH_ERR_ERANGE_option_too_big;
+> }
+>
+> --
+> 2.47.0
+>
 
