@@ -1,438 +1,169 @@
-Return-Path: <linux-kernel+bounces-398715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1749BF510
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:17:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B7A9BF514
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:18:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA5A2882D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:17:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35FD1F210F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C20208229;
-	Wed,  6 Nov 2024 18:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E35320821A;
+	Wed,  6 Nov 2024 18:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeNV9+W4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ai2G6Qr+"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6B1205E38;
-	Wed,  6 Nov 2024 18:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D8F206E69;
+	Wed,  6 Nov 2024 18:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730917047; cv=none; b=ht6FuPt2BZn+1Mu+lWnC/6S0WBn1HFAU9Hc0A2pLbNCS3VQM5Ze7rmK1UZHIqHqNZF6yY/v79KAfESgsnPqZ3eUYJvi3B5BwCiCWbqPoM+c+pBdHV9wJe90yPqFzL4wupyGq7/Lx9lF7/YuCkzPXEUlHfzswJ+i9et4ALqoT8h0=
+	t=1730917088; cv=none; b=ov6kvdbXI+23g2eLA4Tk5LvL3ndl9oFiF/enNiD5C2ErFkbesCsM7xPIsYYEvMc4PeIZwFu/H+wfC0vFll0JMig9adC3G44Vb6mUmWY4OBjIQbkxiMHJ43Ap7+t7UKG0qZODRhPCQf8ChculkyrVOWvKSWzYyfMkoDd+nNppimM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730917047; c=relaxed/simple;
-	bh=cHbb0Rqd2g6rV06D4JQTthn3+eLxOEYaau9P/hGAoc4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=seUoOc5OfdEsIFc/RAJitkQwMqxYxs3hfHb3XyQXHkpAsXoQPTX8wvdFTwva/8vZQl72Lc8Du5rIDCZsEDPvYiegL4m4W3fYh/tuGU+npMCjVKGk6I9JUdEJXHTMTB1wsvOWRxm4lcsyQd+YeuigbEJjoluJg8S5DBf0MvgpFCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeNV9+W4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E26BC4CEC6;
-	Wed,  6 Nov 2024 18:17:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730917047;
-	bh=cHbb0Rqd2g6rV06D4JQTthn3+eLxOEYaau9P/hGAoc4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=GeNV9+W4bC+vtOV7z2krPcRWzdLA+u82GnCb8rE48zskJgdF7M1lGuQ7j49KksI35
-	 ZB1nmos9/P9JBmYI2MSD/Tvy+fV6+YX5Vf6/2OpySmNN9xinOn21SgfS44gHoN+m3f
-	 v9LQhzntD3i6uXGb0JKapdQ5YnXWIPdbXoawcM+JBK60OwhavYypP4uXdIOHUXQ9sE
-	 I5H1dlw/x43th35dWlWyOXPi3tbgVgbgdXgeaHP0cBv1nJwhhTEdOaNXg/uh0/bDWK
-	 XlVaaMq2k5yDKfDC3GbxDecSuyOW56tkcPntNcYaf67pA98MG2obkDTwwZNJAYnkYF
-	 onfrwOmc8C9hw==
+	s=arc-20240116; t=1730917088; c=relaxed/simple;
+	bh=JOqzxSLeHWD0n7cfTKM/sSVhPy5OUMMkSiGbDTUDwEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qi7G8oQYKqHmXpP15UFPQYMzZiGZAhMDSzBwLiv3dUutLkgpUTCbMKh14YIKzNSlqO7qWNtF1+W6tn2WqMtW0Z7zWCkXsR5PGz8krPJXUh7QtDr7pvZb2YzxOmiQMYA7G3+106HJOomVa6rb4/crsLBHVJWuX0PGAX1IX0n8ZdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ai2G6Qr+; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460b2e4c50fso702781cf.0;
+        Wed, 06 Nov 2024 10:18:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730917085; x=1731521885; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wQwj/GWrTbMpB2h+csAzG3gf0YiNR+Wiy6DXEYYkKXY=;
+        b=ai2G6Qr+EAGWmaamyvc8iGjPbv7UaLcEg7apI6IJ2PceWcFN2BGiQRuzmtsUEcvEL8
+         gRwOF4g2FRNT1Dg3lpgfs5mbhYpCUHsT5eppefr5gzTjSVcJ1Vd/sUdkXnIKL67C49kZ
+         3THM3LY135EhMwOcKxcF/Yw09iIjk+puF4wP/JCk/PbOeIOfuau6kWfuFbeiaZEGv8vi
+         I2Q9ngnvAYGyA1AUkxk6vRH5gJZq4YdNucnein0Ug6sjtuHPOqdrrnbvJ/QKv+wxyHXA
+         7qW4ejhA662cCXK7Txi1vCtVa4rA4wyhubdrmELX0UYIbWPTl1yf4tG18nXmRYm1/JQV
+         jZVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730917085; x=1731521885;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wQwj/GWrTbMpB2h+csAzG3gf0YiNR+Wiy6DXEYYkKXY=;
+        b=vy1BW9i1GxSdFvyYsxrWleXtxMfuxggpUrthm9abiQFXvRo3IVv5vj7N9ztEXkt9H4
+         ulJJl7HPJVpWElM9KbASS8X1YswOgHpcyHXMWV/f0h6gF1X5NDw35J/aml1U8ZG8upOC
+         yI1Cb5HSaM7sGNwXtMyGm2HYWFY+D5vaBMJhJ+d8KJ7eNjQxjTQFO59a0SHdx8yVUXko
+         RnxBYdOUhbRDwfmV0fUIpEgcXYOLmtXlRS3LldR2PboT9RgnHS0Dr7wysKzrjB5insHJ
+         ioJnSiJB2RAwLDvIlDcKHw6JFBWqrElboxQxvirz0OLI6v9eN5PNXjGbv0YOVJXNWHit
+         b+zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC6jN5MmDdhzxMg0Z3st9qxN0fG2FrRXDT8/09wW0P5CgTdEUp1uxO+h3YkFltfZH2QieOItg0jmEtkGrMHYk=@vger.kernel.org, AJvYcCWgu8r3CDf/KPmEGAHVvVFz+bxxPwdmskz/tSTo+VwpKDg6Qs7s2wGqvFXlV5nzsx2PYyqBL588@vger.kernel.org, AJvYcCXDWaO2MbjvjO6t0r8AAPyzgkjPbqLcEvD9k/o1TjG76REmvg6iGLBDFdaDzq3MfsnV2G20Ow94+kvBn+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKDzKAYmzN1zZPtKabax5ITE5+sSupUfYo7AtrhEzf3tSEKCwU
+	VzuM18hG93nH815dEizk31hpnIU3Wez9nfgcS5S5Tk+Yh2U0YwBl
+X-Google-Smtp-Source: AGHT+IHbd+iWdp0AZ8TZAWXa3c1ZwOS+r/2JbXndDVsoOY5g+73G1rcnWC8pcgBWuIsZYJpy7tWZaA==
+X-Received: by 2002:a05:622a:58d:b0:460:8e3b:6790 with SMTP id d75a77b69052e-4613c1a74d0mr605708961cf.48.1730917085472;
+        Wed, 06 Nov 2024 10:18:05 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462f18fd044sm10816751cf.10.2024.11.06.10.18.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 10:18:05 -0800 (PST)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 900D31200066;
+	Wed,  6 Nov 2024 13:18:04 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Wed, 06 Nov 2024 13:18:04 -0500
+X-ME-Sender: <xms:3LIrZ5iOrx11gTigcukRQ9RCdoyQ5QS-SUMptEgYY2SqHgf8L7yK_A>
+    <xme:3LIrZ-Bi8unVoVxdPGOUiydSiOZODHd6xhK2ITehAzXrgG6d0iYQuLjzzz10A2mpR
+    LJHpON45QmX5U54FQ>
+X-ME-Received: <xmr:3LIrZ5Gx6b7BZ6D4jaUhOg1QKwHvkEif7xgKZakAwmVOvr882lDxWocY4F0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtddvgddutdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
+    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehfuhhjihhtrgdrthhomhhonhhorhhisehgmh
+    grihhlrdgtohhmpdhrtghpthhtoheprghnnhgrqdhmrghrihgrsehlihhnuhhtrhhonhhi
+    gidruggvpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehjshhtuhhl
+    thiisehgohhoghhlvgdrtghomhdprhgtphhtthhopehssghohigusehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhr
+    gh
+X-ME-Proxy: <xmx:3LIrZ-RMmPNreF3mQ-rm_liTbjo8K15_Ha_ng8vPkpcCnxDqxjlj_A>
+    <xmx:3LIrZ2xZYWPV9VsH7ErEuXbJe71BCIt_Rt7sVypp4JZddLcxj_5liw>
+    <xmx:3LIrZ063QF9vCZSMWjv3QVLsYSZnXYMdDOXWcsnk0PyKXsoa5DBzVg>
+    <xmx:3LIrZ7yxw8WgkFqywVN1zpxISPc7_sgTv93r1RO766Uxv648ZOZCKQ>
+    <xmx:3LIrZ-hhAvDFEDwuCXnVU61RZ_ke3YwDGwvkfoKWlIwAbl_434YbyEik>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 6 Nov 2024 13:18:04 -0500 (EST)
+Date: Wed, 6 Nov 2024 10:18:03 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+	jstultz@google.com, sboyd@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	andrew@lunn.ch, hkallweit1@gmail.com, tmgross@umich.edu,
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de
+Subject: Re: [PATCH v5 6/7] rust: Add read_poll_timeout functions
+Message-ID: <Zyuy25viG51DDRk7@Boquns-Mac-mini.local>
+References: <20241101010121.69221-1-fujita.tomonori@gmail.com>
+ <20241101010121.69221-7-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 06 Nov 2024 20:17:22 +0200
-Message-Id: <D5FAVRTM32ZJ.1HFCHF3L9I68C@kernel.org>
-Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- "Michael Ellerman" <mpe@ellerman.id.au>, "Nicholas Piggin"
- <npiggin@gmail.com>, "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] tpm: atmel: Drop PPC64 specific MMIO setup
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Rob Herring" <robh@kernel.org>, "Jarkko Sakkinen"
- <jarkko.sakkinen@iki.fi>
-X-Mailer: aerc 0.18.2
-References: <20240702161052.3563599-1-robh@kernel.org>
- <D2RSWMPFF8KK.X5HZZMHANQMO@iki.fi> <D2RT0J8KXY1H.3MEV7KGQXTWHW@iki.fi>
- <CAL_JsqJDX+uOSoPh6pTNEP0vBLwcP3bKmAW1wCr_0cVr5fsPcg@mail.gmail.com>
- <D2SSH5HSDHQS.2YJSB22W3MHQK@iki.fi>
- <CAL_JsqLF+gs9e1TL1yi-xAZJRx4Kz7fOk=2wcF8kCqU3vyMWZA@mail.gmail.com>
-In-Reply-To: <CAL_JsqLF+gs9e1TL1yi-xAZJRx4Kz7fOk=2wcF8kCqU3vyMWZA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101010121.69221-7-fujita.tomonori@gmail.com>
 
-On Wed Nov 6, 2024 at 4:50 PM EET, Rob Herring wrote:
-> On Thu, Jul 18, 2024 at 11:01=E2=80=AFAM Jarkko Sakkinen <jarkko.sakkinen=
-@iki.fi> wrote:
-> >
-> > On Thu Jul 18, 2024 at 5:57 PM EEST, Rob Herring wrote:
-> > > On Wed, Jul 17, 2024 at 6:14=E2=80=AFAM Jarkko Sakkinen <jarkko.sakki=
-nen@iki.fi> wrote:
-> > > >
-> > > > On Wed Jul 17, 2024 at 3:08 PM EEST, Jarkko Sakkinen wrote:
-> > > > > On Tue Jul 2, 2024 at 7:10 PM EEST, Rob Herring (Arm) wrote:
-> > > > > > The PPC64 specific MMIO setup open codes DT address functions r=
-ather
-> > > > > > than using standard address parsing functions. The open-coded v=
-ersion
-> > > > > > fails to handle any address translation and is not endian safe.
-> > > > > >
-> > > > > > I haven't found any evidence of what platform used this. The on=
-ly thing
-> > > > > > that turned up was a PPC405 platform, but that is 32-bit and PP=
-C405
-> > > > > > support is being removed as well. CONFIG_TCG_ATMEL is not enabl=
-ed for
-> > > > > > any powerpc config and never was. The support was added in 2005=
- and
-> > > > > > hasn't been touched since.
-> > > > > >
-> > > > > > Rather than try to modernize and fix this code, just remove it.
-> > > > > >
-> > > > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > > > > > ---
-> > > > > >  drivers/char/tpm/Kconfig     |   2 +-
-> > > > > >  drivers/char/tpm/tpm_atmel.c |  64 +++++++++++++++-
-> > > > > >  drivers/char/tpm/tpm_atmel.h | 140 ---------------------------=
---------
-> > > > > >  3 files changed, 62 insertions(+), 144 deletions(-)
-> > > > > >  delete mode 100644 drivers/char/tpm/tpm_atmel.h
-> > > > > >
-> > > > > > diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfi=
-g
-> > > > > > index e63a6a17793c..9b655e9fc7ab 100644
-> > > > > > --- a/drivers/char/tpm/Kconfig
-> > > > > > +++ b/drivers/char/tpm/Kconfig
-> > > > > > @@ -162,7 +162,7 @@ config TCG_NSC
-> > > > > >
-> > > > > >  config TCG_ATMEL
-> > > > > >     tristate "Atmel TPM Interface"
-> > > > > > -   depends on PPC64 || HAS_IOPORT_MAP
-> > > > > > +   depends on HAS_IOPORT_MAP
-> > > > > >     depends on HAS_IOPORT
-> > > > > >     help
-> > > > > >       If you have a TPM security chip from Atmel say Yes and it
-> > > > > > diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tp=
-m_atmel.c
-> > > > > > index 9fb2defa9dc4..622c4abe8cb3 100644
-> > > > > > --- a/drivers/char/tpm/tpm_atmel.c
-> > > > > > +++ b/drivers/char/tpm/tpm_atmel.c
-> > > > > > @@ -15,7 +15,67 @@
-> > > > > >   */
-> > > > > >
-> > > > > >  #include "tpm.h"
-> > > > > > -#include "tpm_atmel.h"
-> > > > > > +
-> > > > > > +struct tpm_atmel_priv {
-> > > > > > +   int region_size;
-> > > > > > +   int have_region;
-> > > > > > +   unsigned long base;
-> > > > > > +   void __iomem *iobase;
-> > > > > > +};
-> > > > > > +
-> > > > > > +#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->bas=
-e + offset)
-> > > > > > +#define atmel_putb(val, chip, offset) \
-> > > > > > +   outb(val, atmel_get_priv(chip)->base + offset)
-> > > > > > +#define atmel_request_region request_region
-> > > > > > +#define atmel_release_region release_region
-> > > > > > +/* Atmel definitions */
-> > > > > > +enum tpm_atmel_addr {
-> > > > > > +   TPM_ATMEL_BASE_ADDR_LO =3D 0x08,
-> > > > > > +   TPM_ATMEL_BASE_ADDR_HI =3D 0x09
-> > > > > > +};
-> > > > > > +
-> > > > > > +static inline int tpm_read_index(int base, int index)
-> > > > > > +{
-> > > > > > +   outb(index, base);
-> > > > > > +   return inb(base+1) & 0xFF;
-> > > > > > +}
-> > > > > > +
-> > > > > > +/* Verify this is a 1.1 Atmel TPM */
-> > > > > > +static int atmel_verify_tpm11(void)
-> > > > > > +{
-> > > > > > +
-> > > > > > +   /* verify that it is an Atmel part */
-> > > > > > +   if (tpm_read_index(TPM_ADDR, 4) !=3D 'A' ||
-> > > > > > +       tpm_read_index(TPM_ADDR, 5) !=3D 'T' ||
-> > > > > > +       tpm_read_index(TPM_ADDR, 6) !=3D 'M' ||
-> > > > > > +       tpm_read_index(TPM_ADDR, 7) !=3D 'L')
-> > > > > > +           return 1;
-> > > > > > +
-> > > > > > +   /* query chip for its version number */
-> > > > > > +   if (tpm_read_index(TPM_ADDR, 0x00) !=3D 1 ||
-> > > > > > +       tpm_read_index(TPM_ADDR, 0x01) !=3D 1)
-> > > > > > +           return 1;
-> > > > > > +
-> > > > > > +   /* This is an atmel supported part */
-> > > > > > +   return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > > +/* Determine where to talk to device */
-> > > > > > +static void __iomem * atmel_get_base_addr(unsigned long *base,=
- int *region_size)
-> > > > > > +{
-> > > > > > +   int lo, hi;
-> > > > > > +
-> > > > > > +   if (atmel_verify_tpm11() !=3D 0)
-> > > > > > +           return NULL;
-> > > > > > +
-> > > > > > +   lo =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_LO);
-> > > > > > +   hi =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_HI);
-> > > > > > +
-> > > > > > +   *base =3D (hi << 8) | lo;
-> > > > > > +   *region_size =3D 2;
-> > > > > > +
-> > > > > > +   return ioport_map(*base, *region_size);
-> > > > > > +}
-> > > > > >
-> > > > > >  /* write status bits */
-> > > > > >  enum tpm_atmel_write_status {
-> > > > > > @@ -142,7 +202,6 @@ static void atml_plat_remove(void)
-> > > > > >     tpm_chip_unregister(chip);
-> > > > > >     if (priv->have_region)
-> > > > > >             atmel_release_region(priv->base, priv->region_size)=
-;
-> > > > > > -   atmel_put_base_addr(priv->iobase);
-> > > > > >     platform_device_unregister(pdev);
-> > > > > >  }
-> > > > > >
-> > > > > > @@ -211,7 +270,6 @@ static int __init init_atmel(void)
-> > > > > >  err_unreg_dev:
-> > > > > >     platform_device_unregister(pdev);
-> > > > > >  err_rel_reg:
-> > > > > > -   atmel_put_base_addr(iobase);
-> > > > > >     if (have_region)
-> > > > > >             atmel_release_region(base,
-> > > > > >                                  region_size);
-> > > > > > diff --git a/drivers/char/tpm/tpm_atmel.h b/drivers/char/tpm/tp=
-m_atmel.h
-> > > > > > deleted file mode 100644
-> > > > > > index 7ac3f69dcf0f..000000000000
-> > > > > > --- a/drivers/char/tpm/tpm_atmel.h
-> > > > > > +++ /dev/null
-> > > > > > @@ -1,140 +0,0 @@
-> > > > > > -/* SPDX-License-Identifier: GPL-2.0-only */
-> > > > > > -/*
-> > > > > > - * Copyright (C) 2005 IBM Corporation
-> > > > > > - *
-> > > > > > - * Authors:
-> > > > > > - * Kylene Hall <kjhall@us.ibm.com>
-> > > > > > - *
-> > > > > > - * Maintained by: <tpmdd-devel@lists.sourceforge.net>
-> > > > > > - *
-> > > > > > - * Device driver for TCG/TCPA TPM (trusted platform module).
-> > > > > > - * Specifications at www.trustedcomputinggroup.org
-> > > > > > - *
-> > > > > > - * These difference are required on power because the device m=
-ust be
-> > > > > > - * discovered through the device tree and iomap must be used t=
-o get
-> > > > > > - * around the need for holes in the io_page_mask.  This does n=
-ot happen
-> > > > > > - * automatically because the tpm is not a normal pci device an=
-d lives
-> > > > > > - * under the root node.
-> > > > > > - */
-> > > > > > -
-> > > > > > -struct tpm_atmel_priv {
-> > > > > > -   int region_size;
-> > > > > > -   int have_region;
-> > > > > > -   unsigned long base;
-> > > > > > -   void __iomem *iobase;
-> > > > > > -};
-> > > > > > -
-> > > > > > -#ifdef CONFIG_PPC64
-> > > > > > -
-> > > > > > -#include <linux/of.h>
-> > > > > > -
-> > > > > > -#define atmel_getb(priv, offset) readb(priv->iobase + offset)
-> > > > > > -#define atmel_putb(val, priv, offset) writeb(val, priv->iobase=
- + offset)
-> > > > > > -#define atmel_request_region request_mem_region
-> > > > > > -#define atmel_release_region release_mem_region
-> > > > > > -
-> > > > > > -static inline void atmel_put_base_addr(void __iomem *iobase)
-> > > > > > -{
-> > > > > > -   iounmap(iobase);
-> > > > > > -}
-> > > > > > -
-> > > > > > -static void __iomem * atmel_get_base_addr(unsigned long *base,=
- int *region_size)
-> > > > > > -{
-> > > > > > -   struct device_node *dn;
-> > > > > > -   unsigned long address, size;
-> > > > > > -   const unsigned int *reg;
-> > > > > > -   int reglen;
-> > > > > > -   int naddrc;
-> > > > > > -   int nsizec;
-> > > > > > -
-> > > > > > -   dn =3D of_find_node_by_name(NULL, "tpm");
-> > > > > > -
-> > > > > > -   if (!dn)
-> > > > > > -           return NULL;
-> > > > > > -
-> > > > > > -   if (!of_device_is_compatible(dn, "AT97SC3201")) {
-> > > > > > -           of_node_put(dn);
-> > > > > > -           return NULL;
-> > > > > > -   }
-> > > > > > -
-> > > > > > -   reg =3D of_get_property(dn, "reg", &reglen);
-> > > > > > -   naddrc =3D of_n_addr_cells(dn);
-> > > > > > -   nsizec =3D of_n_size_cells(dn);
-> > > > > > -
-> > > > > > -   of_node_put(dn);
-> > > > > > -
-> > > > > > -
-> > > > > > -   if (naddrc =3D=3D 2)
-> > > > > > -           address =3D ((unsigned long) reg[0] << 32) | reg[1]=
-;
-> > > > > > -   else
-> > > > > > -           address =3D reg[0];
-> > > > > > -
-> > > > > > -   if (nsizec =3D=3D 2)
-> > > > > > -           size =3D
-> > > > > > -               ((unsigned long) reg[naddrc] << 32) | reg[naddr=
-c + 1];
-> > > > > > -   else
-> > > > > > -           size =3D reg[naddrc];
-> > > > > > -
-> > > > > > -   *base =3D address;
-> > > > > > -   *region_size =3D size;
-> > > > > > -   return ioremap(*base, *region_size);
-> > > > > > -}
-> > > > > > -#else
-> > > > > > -#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->bas=
-e + offset)
-> > > > > > -#define atmel_putb(val, chip, offset) \
-> > > > > > -   outb(val, atmel_get_priv(chip)->base + offset)
-> > > > > > -#define atmel_request_region request_region
-> > > > > > -#define atmel_release_region release_region
-> > > > > > -/* Atmel definitions */
-> > > > > > -enum tpm_atmel_addr {
-> > > > > > -   TPM_ATMEL_BASE_ADDR_LO =3D 0x08,
-> > > > > > -   TPM_ATMEL_BASE_ADDR_HI =3D 0x09
-> > > > > > -};
-> > > > > > -
-> > > > > > -static inline int tpm_read_index(int base, int index)
-> > > > > > -{
-> > > > > > -   outb(index, base);
-> > > > > > -   return inb(base+1) & 0xFF;
-> > > > > > -}
-> > > > > > -
-> > > > > > -/* Verify this is a 1.1 Atmel TPM */
-> > > > > > -static int atmel_verify_tpm11(void)
-> > > > > > -{
-> > > > > > -
-> > > > > > -   /* verify that it is an Atmel part */
-> > > > > > -   if (tpm_read_index(TPM_ADDR, 4) !=3D 'A' ||
-> > > > > > -       tpm_read_index(TPM_ADDR, 5) !=3D 'T' ||
-> > > > > > -       tpm_read_index(TPM_ADDR, 6) !=3D 'M' ||
-> > > > > > -       tpm_read_index(TPM_ADDR, 7) !=3D 'L')
-> > > > > > -           return 1;
-> > > > > > -
-> > > > > > -   /* query chip for its version number */
-> > > > > > -   if (tpm_read_index(TPM_ADDR, 0x00) !=3D 1 ||
-> > > > > > -       tpm_read_index(TPM_ADDR, 0x01) !=3D 1)
-> > > > > > -           return 1;
-> > > > > > -
-> > > > > > -   /* This is an atmel supported part */
-> > > > > > -   return 0;
-> > > > > > -}
-> > > > > > -
-> > > > > > -static inline void atmel_put_base_addr(void __iomem *iobase)
-> > > > > > -{
-> > > > > > -}
-> > > > > > -
-> > > > > > -/* Determine where to talk to device */
-> > > > > > -static void __iomem * atmel_get_base_addr(unsigned long *base,=
- int *region_size)
-> > > > > > -{
-> > > > > > -   int lo, hi;
-> > > > > > -
-> > > > > > -   if (atmel_verify_tpm11() !=3D 0)
-> > > > > > -           return NULL;
-> > > > > > -
-> > > > > > -   lo =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_LO);
-> > > > > > -   hi =3D tpm_read_index(TPM_ADDR, TPM_ATMEL_BASE_ADDR_HI);
-> > > > > > -
-> > > > > > -   *base =3D (hi << 8) | lo;
-> > > > > > -   *region_size =3D 2;
-> > > > > > -
-> > > > > > -   return ioport_map(*base, *region_size);
-> > > > > > -}
-> > > > > > -#endif
-> > > > >
-> > > > > Responding from holidays but:
-> > > > >
-> > > > > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > > > >
-> > > > > [still away for couple of weeks]
-> > > >
-> > > > I got these in with checkpatch.pl --strict:
-> > > >
-> > > > CHECK: Macro argument 'offset' may be better as '(offset)' to avoid=
- precedence issues
-> > > > #59: FILE: drivers/char/tpm/tpm_atmel.c:26:
-> > > > +#define atmel_getb(chip, offset) inb(atmel_get_priv(chip)->base + =
-offset)
-> > > >
-> > > > CHECK: Macro argument 'offset' may be better as '(offset)' to avoid=
- precedence issues
-> > > > #60: FILE: drivers/char/tpm/tpm_atmel.c:27:
-> > > > +#define atmel_putb(val, chip, offset) \
-> > > > +       outb(val, atmel_get_priv(chip)->base + offset)
-> > > >
-> > > > CHECK: spaces preferred around that '+' (ctx:VxV)
-> > > > #73: FILE: drivers/char/tpm/tpm_atmel.c:40:
-> > > > +       return inb(base+1) & 0xFF;
-> > > >                       ^
-> > > >
-> > > > CHECK: Blank lines aren't necessary after an open brace '{'
-> > > > #79: FILE: drivers/char/tpm/tpm_atmel.c:46:
-> > > > +{
-> > > > +
-> > > >
-> > > > Can you address them and I'll tag the next version, once I've
-> > > > revisited checkpatch. Otherwise, nothing against the code change.
-> > >
-> > > Those all existed before because I just moved what was left of the
-> > > header contents into the .c file. Fixing them seems like a separate
-> > > change to me. I can just leave the header in place and avoid the
-> > > warnings if you prefer. Otherwise, those warnings are the least of th=
-e
-> > > clean-up this driver needs. For starters, I would make those defines
-> > > static inlines instead.
-> >
-> > Ah, ok sorry. It was fairly mechanical check as I'm just quickly
-> > going critical stuff from holidays.
-> >
-> > I'm back after next week, so I'd really like to hold with this
-> > up until that and prepare when I'm back a patch set, which includes
-> > a supplemental patch fixing those issues (if you don't mind).
->
-> Whatever happened to this? Can you please apply my patch if you don't
-> have the time for further rework.
+On Fri, Nov 01, 2024 at 10:01:20AM +0900, FUJITA Tomonori wrote:
+[...]
+> @@ -44,6 +45,7 @@
+>  pub mod page;
+>  pub mod prelude;
+>  pub mod print;
+> +pub mod processor;
+>  pub mod sizes;
+>  pub mod rbtree;
+>  mod static_assert;
+> diff --git a/rust/kernel/processor.rs b/rust/kernel/processor.rs
+> new file mode 100644
+> index 000000000000..eeeff4be84fa
+> --- /dev/null
+> +++ b/rust/kernel/processor.rs
 
-Sorry unintentional.
+What else would we put into this file? `smp_processor_id()` and IPI
+functionality? If so, I would probably want to rename this to cpu.rs.
 
-I applied with
+Regards,
+Boqun
 
--static void __iomem * atmel_get_base_addr(unsigned long *base, int *region=
-_size)
-+static void __iomem *atmel_get_base_addr(unsigned long *base, int *region_=
-size)
-=20
-as this gives checkpatch error.
-
-> Rob
-
-BR, Jarkko
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Processor related primitives.
+> +//!
+> +//! C header: [`include/linux/processor.h`](srctree/include/linux/processor.h).
+> +
+> +/// Lower CPU power consumption or yield to a hyperthreaded twin processor.
+> +///
+> +/// It also happens to serve as a compiler barrier.
+> +pub fn cpu_relax() {
+> +    // SAFETY: FFI call.
+> +    unsafe { bindings::cpu_relax() }
+> +}
+> -- 
+> 2.43.0
+> 
+> 
 
