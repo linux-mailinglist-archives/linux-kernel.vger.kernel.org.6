@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-398305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF7A9BEF52
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:43:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111189BEF58
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4161C21787
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:43:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA7A285BCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609B81F9EC6;
-	Wed,  6 Nov 2024 13:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484131FA249;
+	Wed,  6 Nov 2024 13:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfRrOfXm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="SLsnzVlC"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D991F9EAB;
-	Wed,  6 Nov 2024 13:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C691F9EC2
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730900621; cv=none; b=Ba8EaKXXmZ21ZuZz100zAMfnCptiIGeW0/BfV8Qt0xKuUxNr9h5JPdr/JIFjYNPzd64MJR+Sytziyt8nhBn7LAYhvMKIsxLqGT5qJMDTk9sdtE3UfzT8XaJjKuVRMRjeO1C5PRLN50tfIesTxt+SjTnqAMRnDfZp6QSjKh7j9IY=
+	t=1730900624; cv=none; b=Fyey7tab62xA/ACDpT2TCAR52lD3F2laMivVilefEuH9EK2Pzdq/ORSzCW0bKo+JZSCdCj3bkEuXZj79/r6nHDRPJfEP+SErTBg3q2hP/x650T+bouJ36KS0uE7V7RVoI0uuex/fFtY4LN17/EyXiCZMx9fEOE3/BzUIP/NXo5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730900621; c=relaxed/simple;
-	bh=AvHJghciWDhD/x8KUXSpLz7qHkc2aFQiPOOMs5V1Fv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4dcQivjX19G5DWDcUjkdb8fqqx7RE9J0/tq1kHBzu18VGS4rwEJlHbUjyGsrTRBcUYq7v489Gwgh0OEz8BhUulzg3GA92Kl08em1JTTkFjOOYui2oEe8s1Fg9JZLNJvKbo9krA51SHgVRtYgy8AK3iGwB02UCc0NzSbkpNSwaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfRrOfXm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69956C4CECD;
-	Wed,  6 Nov 2024 13:43:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730900621;
-	bh=AvHJghciWDhD/x8KUXSpLz7qHkc2aFQiPOOMs5V1Fv0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qfRrOfXmESwZyDQhPNkDJgGi8YWbap+zQSnnKTjNRq0K9d9rKEeLHS6ISBOc0j2kr
-	 T0QHzq7K9ZnLcN6d6mrBJQs6WBeU6BUvOvI/eGFXtWd9TAftn+cVheqed+TaW5m+CV
-	 +4GOrYK3gQL5KFhzalL9L/zI3KX4CE9yoQE/PygkdsjA1rOozplLuj2atjLsNY74RU
-	 BymKoASK8FGh9ttmyKOwg/REy7cughmQAKD0hJ1tXZl19CBJPWndXjjJ9UDHX3Ogy2
-	 GIxlLPsQIpKQyIWgT71PrAPTYYG03xd8zkC8uFT4SjN9JjkOjnwZVM8KoDdGea14Ou
-	 9k0LUcU284nkw==
-Date: Wed, 6 Nov 2024 13:43:33 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	lgirdwood@gmail.com, magnus.damm@gmail.com,
-	linus.walleij@linaro.org, support.opensource@diasemi.com,
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de,
-	Adam.Thomson.Opensource@diasemi.com,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 22/31] ASoC: da7213: Populate max_register to
- regmap_config
-Message-ID: <d3c28a8b-878c-4894-aa23-5b360153b85d@sirena.org.uk>
-References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
- <20241106081826.1211088-23-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1730900624; c=relaxed/simple;
+	bh=2X4om5Soa3ADmmiA1nr6u9X+2oPSt7F/UX+51YMP45o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=bI2sYXg5H0SSTg5FgN2HKVwAI950higaCK/3a5C7gtR0mNC5mLeH4/d9mj5/JTlTDIpbV8PNIhqyD8KW87Nd8+gmjJYpyLpIAkCJH0I90ZHjvztHPMESplBMrm/6EmU9nh6Y5YKMK62FM/pHdV7r4pBjmmmif8awQTK/ni52mEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=SLsnzVlC; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qgBjwTwv0FsyKsIO"
-Content-Disposition: inline
-In-Reply-To: <20241106081826.1211088-23-claudiu.beznea.uj@bp.renesas.com>
-X-Cookie: Include me out.
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1730900620;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KaeGzukjSkkdIXrI/sRrKa+8hdtWtX3cTAwGr+R/Sm4=;
+	b=SLsnzVlC8dWSFPPdbsnuJcGZmSOiL8iSO7F5qRMO93o6+E5pEPed06GD8EF7pJ8tdipCnP
+	cBVI61BME5zB+mvqd3sAA/J/4DSIDAUUB3GqebuDmO4O9YBnau6+006pQKdPu0Z0Hg7F2f
+	AvXcqKdvMmFYMGGjlenQMJ2HSZn7lwZfoTqRpwX3VNjQc9aE6YZEiWjhinBgBdo2rmQ7an
+	Mp9/Zvr5cVEVVJpntrbhHZwNHhWDkAwpOkGJoYZjxCnrTB0jbVgiMPifjhkkZc79s1Zfws
+	zmf3kh6djxbkTomT/+J2m+PKqi46pBCgDVpypjPBqwFmuQcNHshU9Lnai65ABg==
+Content-Type: multipart/signed;
+ boundary=d325a75fd624665202bd836b8054801c6e1beb170779c0c55314142a3ace;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Wed, 06 Nov 2024 14:43:36 +0100
+Message-Id: <D5F525WYXDO1.3I92CTU67RVF6@cknow.org>
+Cc: <quentin.schulz@cherry.de>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ "Heiko Stuebner" <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH 1/3] arm64: dts: rockchip: add mipi dcphy nodes to
+ rk3588
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Heiko Stuebner" <heiko@sntech.de>
+References: <20241106123758.423584-1-heiko@sntech.de>
+ <20241106123758.423584-2-heiko@sntech.de>
+In-Reply-To: <20241106123758.423584-2-heiko@sntech.de>
+X-Migadu-Flow: FLOW_OUT
 
-
---qgBjwTwv0FsyKsIO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--d325a75fd624665202bd836b8054801c6e1beb170779c0c55314142a3ace
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Wed, Nov 06, 2024 at 10:18:17AM +0200, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> On the Renesas RZ/G3S SMARC Carrier II board having a DA7212 codec (using
-> da7213 driver) connected to one SSIF-2 available on the Renesas RZ/G3S SoC
-> it has been discovered that using the runtime PM API for suspend/resume
-> (as will be proposed in the following commits) leads to the codec not
-> being propertly initialized after resume. This is because w/o
-> max_register populated to regmap_config the regcache_rbtree_sync()
-> breaks on base_reg > max condition and the regcache_sync_block() call is
-> skipped.
->=20
-> Fixes: ef5c2eba2412 ("ASoC: codecs: Add da7213 codec")
-> Cc: stable@vger.kernel.org
+On Wed Nov 6, 2024 at 1:37 PM CET, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+>
+> Add the two MIPI-DC-phy nodes to the RK3588, that will be used by the
+> DSI2 controllers and hopefully in some future also for camera input.
+>
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 42 +++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/b=
+oot/dts/rockchip/rk3588-base.dtsi
+> index 51ba7563f7d0..8c95c56e8097 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> @@ -576,6 +576,16 @@ sys_grf: syscon@fd58c000 {
+>  		reg =3D <0x0 0xfd58c000 0x0 0x1000>;
+>  	};
+> =20
+> +	mipidcphy0_grf: syscon@fd5e8000 {
+> +		compatible =3D "rockchip,rk3588-dcphy-grf", "syscon";
+> +		reg =3D <0x0 0xfd5e8000 0x0 0x4000>;
+> +	};
+> +
+> +	mipidcphy1_grf: syscon@fd5ec000 {
+> +		compatible =3D "rockchip,rk3588-dcphy-grf", "syscon";
+> +		reg =3D <0x0 0xfd5ec000 0x0 0x4000>;
+> +	};
+> +
+>  	vop_grf: syscon@fd5a4000 {
+>  		compatible =3D "rockchip,rk3588-vop-grf", "syscon";
+>  		reg =3D <0x0 0xfd5a4000 0x0 0x2000>;
+> @@ -2878,6 +2888,38 @@ usbdp_phy0: phy@fed80000 {
+>  		status =3D "disabled";
+>  	};
+> =20
+> +	mipidcphy0: phy@feda0000 {
+> +		compatible =3D "rockchip,rk3588-mipi-dcphy";
+> +		reg =3D <0x0 0xfeda0000 0x0 0x10000>;
+> +		rockchip,grf =3D <&mipidcphy0_grf>;
+> +		clocks =3D <&cru PCLK_MIPI_DCPHY0>,
+> +			 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
+> +		clock-names =3D "pclk", "ref";
+> +		resets =3D <&cru SRST_M_MIPI_DCPHY0>,
+> +			 <&cru SRST_P_MIPI_DCPHY0>,
+> +			 <&cru SRST_P_MIPI_DCPHY0_GRF>,
+> +			 <&cru SRST_S_MIPI_DCPHY0>;
+> +		reset-names =3D "m_phy", "apb", "grf", "s_phy";
+> +		#phy-cells =3D <0>;
+> +		status =3D "disabled";
+> +	};
+> +
+> +	mipidcphy1: phy@fedb0000 {
+> +		compatible =3D "rockchip,rk3588-mipi-dcphy";
+> +		reg =3D <0x0 0xfedb0000 0x0 0x10000>;
+> +		rockchip,grf =3D <&mipidcphy1_grf>;
+> +		clocks =3D <&cru PCLK_MIPI_DCPHY1>,
+> +			 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
+> +		clock-names =3D "pclk", "ref";
+> +		resets =3D <&cru SRST_M_MIPI_DCPHY1>,
+> +			 <&cru SRST_P_MIPI_DCPHY1>,
+> +			 <&cru SRST_P_MIPI_DCPHY1_GRF>,
+> +			 <&cru SRST_S_MIPI_DCPHY1>;
+> +		reset-names =3D "m_phy", "apb", "grf", "s_phy";
+> +		#phy-cells =3D <0>;
+> +		status =3D "disabled";
+> +	};
 
-Why is this a stable fix when it only enables further work?
+No power-domains property?
+RK3588 TRM v1.0 part 1 page 1097 has ALIVE(PD_BUS) for
+MIPI_DC_PHY0~MIPI_DC_PHY1
 
---qgBjwTwv0FsyKsIO
+Cheers,
+  Diederik
+> +
+>  	combphy0_ps: phy@fee00000 {
+>  		compatible =3D "rockchip,rk3588-naneng-combphy";
+>  		reg =3D <0x0 0xfee00000 0x0 0x100>;
+
+
+--d325a75fd624665202bd836b8054801c6e1beb170779c0c55314142a3ace
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcrcoQACgkQJNaLcl1U
-h9B+uAf/T9UHiIXHURIt+YX7P9zWTkwxOYzQrVtIxV9Uz16GFNImxUT3T7ZkDJPm
-Erxp7p9mSMTejwQKY8qPBDBgFh00UE8ZNhdcb1PmRZTJ4DeK1mOmjl2SulAB/EM9
-v5g+3Cv95GmCpE0FfpsEwuhtz+wPWdJU3lqpG1rVtjMyXzuPqH5Ie4viG/I2pGO5
-RNoUFDOHu2pc7f3i3WzmmywjEDJIhOHXv/rQRy8ZG8TZyvNDDX0sP/+y0ElBUBsB
-81GcYxUjx+0h5uiE0XlXcfdemDG3L73XccwdWEJZ0xh+XKmrVLm1jFoJqLAiY7gM
-jGFGeURWY9VEnaDqJCf33O0nhkmAGQ==
-=RpAB
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZytyjAAKCRDXblvOeH7b
+bn3bAP0a67joM+6d9CLYveao1RDKHB27FIWdlPfAWU00XESHxQD9EqDyGe3+QvqV
+XoBO2e1oqQ/iO4szViGc6LynQn/oGgk=
+=y9hB
 -----END PGP SIGNATURE-----
 
---qgBjwTwv0FsyKsIO--
+--d325a75fd624665202bd836b8054801c6e1beb170779c0c55314142a3ace--
 
