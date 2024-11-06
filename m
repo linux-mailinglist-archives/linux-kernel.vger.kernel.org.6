@@ -1,120 +1,148 @@
-Return-Path: <linux-kernel+bounces-398327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690CF9BEF9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:57:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A24BE9BEFA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:57:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF5C2814BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:57:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F2FAB25681
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12874200CB7;
-	Wed,  6 Nov 2024 13:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6017201018;
+	Wed,  6 Nov 2024 13:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="civDo1qo"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TesP+4rK"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083291E0DC4;
-	Wed,  6 Nov 2024 13:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6072117DFF2
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730901406; cv=none; b=CWNHF88z4siK+KUzT5Z4bcr22J5AcAc+i7aQaq7yy2N64SkZ41KvBe32LGPnhTr4TjRjCSzsuffAUSI+25rKNB4AXu7QGcwGTm3mlS3HHxQzoymBZHmpr7cVnDTEImZMQtSr6R8yNh5rwijYNiIPKXG90+pLzoQrTfWNggYNAts=
+	t=1730901470; cv=none; b=hQ8s6XqmjGKWBsvT28g343hO8Gd+3jIRYMpnfRR+FVSc6HHCnPaxhzBLWfme2Ngk3SqGiV739Nl4GCvJdgCNtzv7/9t7jkoQHzWM8nFndWMkfBOPUIEKlW0gPWPBArObfoAIQ7KnFVLPzzzHxYR5b+avXziCEynsD6P1aLo9UMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730901406; c=relaxed/simple;
-	bh=7J7DnXd/AUvMjHWLvIl/lim+ofnGteAjqqRMdS9BgGw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=FS3jsq0CvRePI4+gexZi9v9FyGEUnplfNSllaM5mMlwx8Lu9xyQeOkCP8YoPvfIAeDwuMu5tQLYviz36172xbIHW0QEyWe7WLsfOWiL0dQxCWM+1e8z0AkQrVz6IVw1O8sb2NZ4yZ/mmigHqB6ajLD4WdHcN0X+EmNREFlEQhSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=civDo1qo; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1730901470; c=relaxed/simple;
+	bh=BwPjfhJ6zHiv9ahOO5Y1SN2iWZaAKh737Ie2cZw3Ipw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=T56hw/eVyI9/5cjJP9PBKy85J2X8wfIaOci8VqsYcbnIHOa4RufDz6FPlQ2uWehdUSM/BcXGN6sOBr15CynOIHxFIcPpALcYnnzOCK43/pJ/UStVDDQGyOc2X2OMCi5T5hk2ixXw/LtYe7S+ph/m7qo41isL7Qf7+IN5517pMOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TesP+4rK; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A6Dvced099950;
+	Wed, 6 Nov 2024 07:57:38 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730901459;
+	bh=DSqnZgLZFmjR/zI09hPj35lExE9DozM7LRLSXNYuBeQ=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=TesP+4rKGnJ6jtqqLzP9Yqm7ZsdGP4CH/HkGIMrdU7rORd+CDqLAdBQPBByR0pt9h
+	 wKcpnT7GG0WfBuolJIb4Ql/ADKwPuxA0QQZzdbYQySqDtt/g8Ql85pOVxuWKb/CgoS
+	 SZbL38q62GI1j1jAUcYp20FiVjtzyNuMcCCrNhLM=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A6DvcYS002611
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 6 Nov 2024 07:57:38 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 6
+ Nov 2024 07:57:38 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 6 Nov 2024 07:57:38 -0600
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A6DvZWm062961;
+	Wed, 6 Nov 2024 07:57:36 -0600
+Message-ID: <b13eabeb-48dd-493e-a7c7-fd247c971ae8@ti.com>
+Date: Wed, 6 Nov 2024 19:27:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1730901402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NHHYML0BEoPmu07uEuVWCMR6UzMbCnRMamSxbmnkn0o=;
-	b=civDo1qoh0TP45iFIHWo4U31+mpvHe8lkbDh3GuEa0ZZmzQA7y+buDTUPY8xijrRBFSqrA
-	zb3ECm1xYuV+iBNrn1zt5jb/GJLTMj06G+kgpeUfKzmgfNYRKy3DE3naaYSbrmmPFeYAg/
-	9x2nE4nLfvRsjInfpYCYoa0zGncOLDL2YA3n0tAYHybQEsTG6oqYJmsL4ywlHV9x6iHVij
-	txY05WsCJ9qvX8B72j01ZStfRUv20+6gxHIhIWisOLMziav2EQ8BjtmVp0OHdG/qHfOb4Z
-	V3j4BzFKr+Owb0XOY3mlV9SJIJCzEdOJgxJIINdOjazassPtDa5APqVneEMwag==
-Content-Type: multipart/signed;
- boundary=012b4e88e5ada0d79e0d754e24911a278ebf87aafc76bd346a02ee35533f;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Wed, 06 Nov 2024 14:56:31 +0100
-Message-Id: <D5F5C1RWVHG5.TSHPO29TXYEF@cknow.org>
-Cc: <quentin.schulz@cherry.de>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- "Heiko Stuebner" <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH 1/3] arm64: dts: rockchip: add mipi dcphy nodes to
- rk3588
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Heiko Stuebner" <heiko@sntech.de>
-References: <20241106123758.423584-1-heiko@sntech.de>
- <20241106123758.423584-2-heiko@sntech.de>
- <D5F525WYXDO1.3I92CTU67RVF6@cknow.org>
-In-Reply-To: <D5F525WYXDO1.3I92CTU67RVF6@cknow.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: [GIT PULL 2/2] arm64: defconfig: Updates for v6.13 for TI K3
+ platforms
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm-soc
+	<arm@kernel.org>, SoC <soc@kernel.org>
+CC: Tero Kristo <kristo@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>
+References: <3ded4795-2186-4e06-bda6-9c9a65a3fdb9@ti.com>
+Content-Language: en-US
+In-Reply-To: <3ded4795-2186-4e06-bda6-9c9a65a3fdb9@ti.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------0BYMO8heXxr4akuBJs0wGJ5K"
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
---012b4e88e5ada0d79e0d754e24911a278ebf87aafc76bd346a02ee35533f
-Content-Transfer-Encoding: quoted-printable
+--------------0BYMO8heXxr4akuBJs0wGJ5K
+Content-Type: multipart/mixed; boundary="------------Wti14dmmowaCZOnaHPCZPIia";
+ protected-headers="v1"
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+ arm-soc <arm@kernel.org>, SoC <soc@kernel.org>
+Cc: Tero Kristo <kristo@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Nishanth Menon <nm@ti.com>
+Message-ID: <b13eabeb-48dd-493e-a7c7-fd247c971ae8@ti.com>
+Subject: [GIT PULL 2/2] arm64: defconfig: Updates for v6.13 for TI K3
+ platforms
+References: <3ded4795-2186-4e06-bda6-9c9a65a3fdb9@ti.com>
+In-Reply-To: <3ded4795-2186-4e06-bda6-9c9a65a3fdb9@ti.com>
+
+--------------Wti14dmmowaCZOnaHPCZPIia
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
+dc:
 
-On Wed Nov 6, 2024 at 2:43 PM CET, Diederik de Haas wrote:
-> On Wed Nov 6, 2024 at 1:37 PM CET, Heiko Stuebner wrote:
-> > From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> >
-> > Add the two MIPI-DC-phy nodes to the RK3588, that will be used by the
-> > DSI2 controllers and hopefully in some future also for camera input.
-> >
-> > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 42 +++++++++++++++++++
-> >  1 file changed, 42 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64=
-/boot/dts/rockchip/rk3588-base.dtsi
-> > index 51ba7563f7d0..8c95c56e8097 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-> > @@ -576,6 +576,16 @@ sys_grf: syscon@fd58c000 {
-> >  		reg =3D <0x0 0xfd58c000 0x0 0x1000>;
-> >  	};
-> > =20
->
-> No power-domains property?
-> RK3588 TRM v1.0 part 1 page 1097 has ALIVE(PD_BUS) for
-> MIPI_DC_PHY0~MIPI_DC_PHY1
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-Please ignore. They're defined in patch 2 of the series.
+are available in the Git repository at:
 
-Cheers,
-  Diederik
+  https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git tags/ti-k3=
+-config-for-v6.13
 
+for you to fetch changes up to 8461bcf0a3d9d39ff9d858c06c2c820f711a8182:
 
---012b4e88e5ada0d79e0d754e24911a278ebf87aafc76bd346a02ee35533f
-Content-Type: application/pgp-signature; name="signature.asc"
+  arm64: defconfig: Enable PCF857X GPIO expander (2024-10-28 20:42:47 +05=
+30)
+
+----------------------------------------------------------------
+TI K3 defconfig updates for v6.13
+
+Enable driver for GPIO PCF857x I2C GPIO expander present on multiple TI
+boards
+
+----------------------------------------------------------------
+Wadim Egorov (1):
+      arm64: defconfig: Enable PCF857X GPIO expander
+
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+--------------Wti14dmmowaCZOnaHPCZPIia--
+
+--------------0BYMO8heXxr4akuBJs0wGJ5K
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZyt1kwAKCRDXblvOeH7b
-btIaAP9GEyWWHj2Ucfg8SHEqGPFXB1DOlzMCnFSxDRzE8HkkHQEAoDu8i0KMPRAh
-xQ0hirMyEoP9TjRU/1stf0TaofvvzQQ=
-=oNr/
+wsB5BAABCAAjFiEEyRC2zAhGcGjrhiNExEYeRXyRFuMFAmcrdc8FAwAAAAAACgkQxEYeRXyRFuM9
+sQgArcKMxrJqwx6+LcLpHZ3B8pOnVUXjfvva32PE059xUWqB636BxhMl/kGVlrxtUpPayNBTLniY
+QpQ/Fr/NnCDwuv0nhUEA+SQcChb8onDT0/hBAj5Y37vnQPQuywHRIrv9smXjsuFiM8gPt/ybi8+f
+V2XK6jrf9gFRpLBq/+mxqYt5/zbNeg5/oUge53EoT9v7MogH/ek3bI2zDu66jW+nwETGjyxk77F5
+eUEWSK/4M1vzfiapnmxW6h3jezQzlDAMqdjk2ezCMBUfQjYIPyOdDwGgB3iU5rH0SdVvC7fbV73I
+viUwcJ81+a9224s3MXWPiPWpyc3+riaEf+nRAPQGfw==
+=LJ9D
 -----END PGP SIGNATURE-----
 
---012b4e88e5ada0d79e0d754e24911a278ebf87aafc76bd346a02ee35533f--
+--------------0BYMO8heXxr4akuBJs0wGJ5K--
 
