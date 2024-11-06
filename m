@@ -1,89 +1,178 @@
-Return-Path: <linux-kernel+bounces-397706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7981E9BDF4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:23:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32709BDF52
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:24:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAB31F24746
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:23:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B39811C22CD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1A31CB9E0;
-	Wed,  6 Nov 2024 07:23:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD1917995E;
-	Wed,  6 Nov 2024 07:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5191CC887;
+	Wed,  6 Nov 2024 07:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V/dl6cII"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473F017995E;
+	Wed,  6 Nov 2024 07:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730877792; cv=none; b=b2sTVe+I9Bsfwmmw2w2jG54zeXsY8cjIrPP/51mwpLCwnFw5gvcgzF6Fi/DBnlxuzeUozA3ktirPNi+LvBCvo/ZY1hGjtGz4pOtPRMp+T4ZZ0o//dz+V7KRdYoLRLEaLpztjpvtrB0PyZ+pqDX9CPjaJ+/MNcmHFm+yObq9uEto=
+	t=1730877841; cv=none; b=lXsnVnDj/GyjHbUF761DMJVrvRYrjG43f9dHEJ7DrO6tyKztGF7gPy9irCuFhNOTEaWtRixjQnKZ6Jb7PYptPB8Y3epI0NAr9NSoO4xlvWqNwe/Aj522J54LLUd/bFPWBMe+WBItOPmH9Eik73Z7wQ8hbvAr+1rZt/wfGN7h83U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730877792; c=relaxed/simple;
-	bh=x6tAi3iztnRg7xJSW0CeMk6+NpO+0l0VjsBhfzFqZFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PIqL0NxQaCvUsuMNA51x3augFCLaG4TmvYuwszgay1r0hMWAE39AYzz0ix8gMVCosv8+vwgJHyB4SYdUV5LzgDKD1CMLBcwwiKyOoxcbXnVmT+f1EIbqv3S5AotPvwuWinGwx5xLabvFo0aBnDjb0i8wz3AT8wQDBQ1HD6yrLM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF7671063;
-	Tue,  5 Nov 2024 23:23:39 -0800 (PST)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AA44D3F66E;
-	Tue,  5 Nov 2024 23:23:07 -0800 (PST)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org,
-	justin.chen@broadcom.com,
-	opendmb@gmail.com,
-	kapil.hali@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 0/2] Support for I/O width within ARM SCMI SHMEM
-Date: Wed,  6 Nov 2024 07:23:04 +0000
-Message-Id: <173087767267.3975373.2771980370736261734.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240827182450.3608307-1-florian.fainelli@broadcom.com>
-References: <20240827182450.3608307-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1730877841; c=relaxed/simple;
+	bh=MN/UI52Rj6HjKSgYZUtiruuiPbJymTYGdmdUNhU9KtE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mVMzyO+ZW1x5X5UIdky4diaN4dWpe0dlrQE7QmagBIFvMfahpU5kj3TU/ngx0LVfW5kJIfDi2i7hyTEheOeRfxzF9pg5qpVeHECcLoVvyNCQLxuxrqVRTV+36LusHYpWXnhPPTQFQXdoe2zAvR/Gj2W91n5K8Hy7h1Svis8RBDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=V/dl6cII; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A67NgPw084600;
+	Wed, 6 Nov 2024 01:23:43 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730877823;
+	bh=L2kiDY6j3nYdvBD4lilTFn1FykcKM28CEdpdyTD+P1Q=;
+	h=From:To:CC:Subject:Date;
+	b=V/dl6cIIb6IDM2zC3AEWa1wfCeW5YnPnE3k5sutNfP94TTN7p9d6eFqzlHKgXLgx8
+	 jwrAxgksNlcttp3J3vKnRjVDNZdfKJgQ9htGd+ee4hEqRFLZTyA5vXLIqk+gTKOsDP
+	 Z8h7iEJRE7avlJ5ySbfrq81GjNo06N9d4MESuAn8=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A67NgMP101272;
+	Wed, 6 Nov 2024 01:23:42 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 6
+ Nov 2024 01:23:42 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 6 Nov 2024 01:23:42 -0600
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A67NgKG050049;
+	Wed, 6 Nov 2024 01:23:42 -0600
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4A67NfPw031591;
+	Wed, 6 Nov 2024 01:23:42 -0600
+From: Meghana Malladi <m-malladi@ti.com>
+To: <vigneshr@ti.com>, <horms@kernel.org>, <m-malladi@ti.com>,
+        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net v4] net: ti: icssg-prueth: Fix 1 PPS sync
+Date: Wed, 6 Nov 2024 12:53:14 +0530
+Message-ID: <20241106072314.3361048-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, 27 Aug 2024 11:24:48 -0700, Florian Fainelli wrote:
-> We just got our hands on hardware that only supports 32-bit access width
-> to the SRAM being used. This patch series adds support for the
-> 'reg-io-width' property and allows us to specify the exact access width
-> that the SRAM supports.
-> 
-> Changes in v4:
-> 
-> [...]
+The first PPS latch time needs to be calculated by the driver
+(in rounded off seconds) and configured as the start time
+offset for the cycle. After synchronizing two PTP clocks
+running as master/slave, missing this would cause master
+and slave to start immediately with some milliseconds
+drift which causes the PPS signal to never synchronize with
+the PTP master.
 
-(with some trivial rebasing)
+Fixes: 186734c15886 ("net: ti: icssg-prueth: add packet timestamping and ptp support")
+Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+---
 
-Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
+This patch is based on net-next tagged next-2024102.
+v3:https://lore.kernel.org/all/20241028111051.1546143-1-m-malladi@ti.com
+* Changes since v3 (v4-v3):
+- Update read function to handle hi/lo race between reads as 
+suggested by Jakub Kicinski <kuba@kernel.org>
 
-[1/2] dt-bindings: sram: Document reg-io-width property
-      https://git.kernel.org/sudeep.holla/c/14b2157a9c14
-[2/2] firmware: arm_scmi: Support 'reg-io-width' property for shared memory
-      https://git.kernel.org/sudeep.holla/c/2cd7f3db25fe
+* Changes since v2 (v3-v2):
+- Use hi_lo_writeq() and hi_lo_readq() instead of own helpers
+(icssg_readq() & iccsg_writeq()) as asked by Andrew Lunn <andrew@lunn.ch>
+- Collected Reviewed-by tags from Vadim and Danish
 
---
-Regards,
-Sudeep
+* Changes since v1 (v2-v1):
+- Use roundup() instead of open coding as suggested by Vadim Fedorenko
+
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 13 +++++++++++--
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h | 12 ++++++++++++
+ 2 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+index 0556910938fa..cae8a4f450bb 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -16,6 +16,7 @@
+ #include <linux/if_hsr.h>
+ #include <linux/if_vlan.h>
+ #include <linux/interrupt.h>
++#include <linux/io-64-nonatomic-hi-lo.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+@@ -411,6 +412,8 @@ static int prueth_perout_enable(void *clockops_data,
+ 	struct prueth_emac *emac = clockops_data;
+ 	u32 reduction_factor = 0, offset = 0;
+ 	struct timespec64 ts;
++	u64 current_cycle;
++	u64 start_offset;
+ 	u64 ns_period;
+ 
+ 	if (!on)
+@@ -449,8 +452,14 @@ static int prueth_perout_enable(void *clockops_data,
+ 	writel(reduction_factor, emac->prueth->shram.va +
+ 		TIMESYNC_FW_WC_SYNCOUT_REDUCTION_FACTOR_OFFSET);
+ 
+-	writel(0, emac->prueth->shram.va +
+-		TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
++	current_cycle = icssg_readq(emac->prueth->shram.va +
++				    TIMESYNC_FW_WC_CYCLECOUNT_OFFSET);
++
++	/* Rounding of current_cycle count to next second */
++	start_offset = roundup(current_cycle, MSEC_PER_SEC);
++
++	hi_lo_writeq(start_offset, emac->prueth->shram.va +
++		     TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+index 8722bb4a268a..5c194c6991bf 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+@@ -330,6 +330,18 @@ static inline int prueth_emac_slice(struct prueth_emac *emac)
+ extern const struct ethtool_ops icssg_ethtool_ops;
+ extern const struct dev_pm_ops prueth_dev_pm_ops;
+ 
++static inline __u64 icssg_readq(const void __iomem *addr)
++{
++	u32 low, high;
++
++	do {
++		high = readl(addr + 4);
++		low = readl(addr);
++	} while (high != readl(addr + 4));
++
++	return low + ((u64)high << 32);
++}
++
+ /* Classifier helpers */
+ void icssg_class_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac);
+ void icssg_class_set_host_mac_addr(struct regmap *miig_rt, const u8 *mac);
+
+base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
+-- 
+2.25.1
 
 
