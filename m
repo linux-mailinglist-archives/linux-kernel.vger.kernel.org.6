@@ -1,120 +1,88 @@
-Return-Path: <linux-kernel+bounces-398046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B559BE4A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:48:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579B69BE4AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F204B1F255DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BE9E283B62
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE391DEFC0;
-	Wed,  6 Nov 2024 10:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7541DE3DD;
+	Wed,  6 Nov 2024 10:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GuHWfBX2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bVhmptKm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="f03K9Ojm"
+Received: from mail-40135.protonmail.ch (mail-40135.protonmail.ch [185.70.40.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710A31DE4F9;
-	Wed,  6 Nov 2024 10:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E8F1DE3D3
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890070; cv=none; b=q/5ruAC08SSBHU4JHBnzOz6YZBMHFUNkvx0S0tVe0AOAP6fwz5chwzwLeZEDzJq6rnJe4rCtw2MSzlWMt/9FY7HITL0e3xuo/axSE8ycSh2DcnGwS/1LFMggxTMPsJMD2FRMzhxx+hZdO4p8HTKTgjpLvbRu2V5rpPgMc9mh/+o=
+	t=1730890079; cv=none; b=KRN8vyZ0IZdyy3GL5TIYS9b0zoH2qm6HjfOqJJH8bbfi1PO4NEiBTi4Uui86w1AWpt5oDvoFh8SEL0iAPtW9U8nRH0WuQe92mHZDG6I0+Ndbkar4OKYcaWBWzS7D3PQXWt6Zv+Z9wUt+QMJRxBt3M0LCFKN3msPpKRJX9yqu6wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890070; c=relaxed/simple;
-	bh=jImEuzHBvr0L/upFph/rre6xu4WVPYuu/HgIobneUYU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=YvSBt6P9mHyc+ESICHD4xOFXFFmm22RHAnyQ5ggYCYn0C1FUS4nfAdVYQPz7NtNc8DhAUvtQZXLWpZMkS5ruMC3pGxsgReq0W5qNkybV6ocnCOd8tiLCMx932te96763xNyrPoZv2cp+rqeLilzJnvQKWDmRB7V5YS/zEoNiYaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GuHWfBX2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bVhmptKm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 06 Nov 2024 10:47:45 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730890066;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MwmQPQ2dbuM1wgkVuHG9hstZdLw9nfiuyLSAwF4kavk=;
-	b=GuHWfBX2fQ8RSZTqgIcS9TMSnFRM3aDe83od1LQb+lqKLxi8a7b4sJEAmhu3k+uoIdCX/c
-	2+Yqti0UrscPZrDlgIrGiyKMZTruF1RX5ASQBNpPXuj8Aq7KodS7X7iR3PTGon3rOpOWfD
-	Rrr43OEpYx72GwMZ2XyhDj+dMEZp1E8CPkN7AWqG2Se2BiszycKo6sd7imaqVIDFz5JX+o
-	V9juyz6lyRvhYCc7/hGv896YU1WSJgp/dJSgy7seN6Ip1yMR6WgchrTF+B6+t6GyXDsiJU
-	LtSdrlJpDyG7pVCHj2F6V2klIiBbSuT7V38+Kxnd42XJvwjVQMG7oYzGlxSDEw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730890066;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MwmQPQ2dbuM1wgkVuHG9hstZdLw9nfiuyLSAwF4kavk=;
-	b=bVhmptKmHVuYh7wrlalMKVYg1mf6SIq39Nhf2wEn96Q1S9E0Cvk3mmvVzn7Nk1MkfBIT6P
-	SFLugtF/3lgeNYAA==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] locking/atomic/x86: Use ALT_OUTPUT_SP() for
- __alternative_atomic64()
-Cc: Uros Bizjak <ubizjak@gmail.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241103160954.3329-1-ubizjak@gmail.com>
-References: <20241103160954.3329-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1730890079; c=relaxed/simple;
+	bh=v0ldc4MKuJZxd0Vs4Lc8g4q7qJQo/4A845isTxqoHzQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Qcn27xX5+k7ZvcKqedpNQzkAZHVCag4I6Zl2mUEPWwupf/8BjBN9UGDwmVkMxdo7PoOsk7EHxDXVpmFvAU5M9m7m58o9xUDmYV44tMst0xWcVqownpq19b4vOqUI1zB7Bg0zLyLy+I5zYovST/Qo6F+DiRNc2//h/FMaatnrd4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=f03K9Ojm; arc=none smtp.client-ip=185.70.40.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1730890070; x=1731149270;
+	bh=okwVwo7asZ9u+tVOHleOHRoJjZ574ZQY9yfS63ntQdM=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=f03K9Ojm1YKTa2f7VqL7KWrRdp47xlYl0cBwVOYq6zyWRWu3LU3bZlKRsdIX4ROLa
+	 noPNHsmSxxgp3PQrt7SbxWSPx3Zpavi/X+ubull6a1XpFSS2c6KMd1E2JOShfklsQo
+	 uB1zNKPvFSNvNOo6TZvY6zePQdKaUqJBmNCoNPQmbTDqSOllCOu7AOPlT9r7xik+1T
+	 4vn94zWTP3xFu9MQaebWHAu01QJjlGYHnYenPohpc1bilsrDrLZCPiUgIiQuHFa3Pw
+	 dtHXbOgCFJAPv7cyUZj1YF/CUQBo93DVI1hi1vxgNG57oHz8UjKw1hQGAMDxtfPyTg
+	 EQLfSZfN2JecQ==
+Date: Wed, 06 Nov 2024 10:47:46 +0000
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 0/2] MediaTek MT6735 TOPRGU/WDT support
+Message-ID: <20241106104738.195968-1-y.oudjana@protonmail.com>
+Feedback-ID: 6882736:user:proton
+X-Pm-Message-ID: 09934d38fc3ebae1fee80fc7dd599a9c054ee796
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173089006563.32228.13896147526722814370.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the locking/core branch of tip:
+These patches are part of a larger effort to support the MT6735 SoC family
+in mainline Linux. More patches (unsent or sent and pending review or
+revision) can be found here[1].
 
-Commit-ID:     8b64db9733c2e4d30fd068d0b9dcef7b4424b035
-Gitweb:        https://git.kernel.org/tip/8b64db9733c2e4d30fd068d0b9dcef7b4424b035
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Sun, 03 Nov 2024 17:09:31 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 05 Nov 2024 12:55:34 +01:00
+This series adds support for the top reset generation unit (TOPRGU) found
+on the MediaTek MT6735 SoC. TOPRGU generates several reset signals and
+provides watchdog timer functionality.
 
-locking/atomic/x86: Use ALT_OUTPUT_SP() for __alternative_atomic64()
+While doing so, a fix is made to the restart handler to make it work even
+when the watchdog is disabled by default (never enabled by the bootloader).
 
-CONFIG_X86_CMPXCHG64 variant of x86_32 __alternative_atomic64()
-macro uses CALL instruction inside asm statement. Use
-ALT_OUTPUT_SP() macro to add required dependence on %esp register.
+[1] https://gitlab.com/mt6735-mainline/linux/-/commits/mt6735-staging
 
-Fixes: 819165fb34b9 ("x86: Adjust asm constraints in atomic64 wrappers")
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20241103160954.3329-1-ubizjak@gmail.com
----
- arch/x86/include/asm/atomic64_32.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes since v1:
+- Split restart handler fix and MT6735 support into separate patches.
 
-diff --git a/arch/x86/include/asm/atomic64_32.h b/arch/x86/include/asm/atomic64_32.h
-index 1f650b4..6c6e9b9 100644
---- a/arch/x86/include/asm/atomic64_32.h
-+++ b/arch/x86/include/asm/atomic64_32.h
-@@ -51,7 +51,8 @@ static __always_inline s64 arch_atomic64_read_nonatomic(const atomic64_t *v)
- #ifdef CONFIG_X86_CMPXCHG64
- #define __alternative_atomic64(f, g, out, in...) \
- 	asm volatile("call %c[func]" \
--		     : out : [func] "i" (atomic64_##g##_cx8), ## in)
-+		     : ALT_OUTPUT_SP(out) \
-+		     : [func] "i" (atomic64_##g##_cx8), ## in)
- 
- #define ATOMIC64_DECL(sym) ATOMIC64_DECL_ONE(sym##_cx8)
- #else
+Yassine Oudjana (2):
+  watchdog: mediatek: Fix mtk_wdt_restart
+  watchdog: mediatek: Add support for MT6735 TOPRGU/WDT
+
+ drivers/watchdog/mtk_wdt.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+--=20
+2.47.0
+
+
 
