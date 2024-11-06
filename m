@@ -1,123 +1,142 @@
-Return-Path: <linux-kernel+bounces-398729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679C19BF53E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:30:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BFC9BF542
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:30:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FFA31F23C01
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:30:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91DB1B24185
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A93C208217;
-	Wed,  6 Nov 2024 18:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A9A208234;
+	Wed,  6 Nov 2024 18:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cik0xK+A"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpITMdZi"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C5136D;
-	Wed,  6 Nov 2024 18:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D386B36D;
+	Wed,  6 Nov 2024 18:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730917824; cv=none; b=M8wfkFOwH9Bvbakzzk6t/8wYd1sstFBXkh8Y4/d41VTD5AL4vGa7/n+uBDePRFZ0HMEVZ6xMjAlpNl2IVRQEEm8FhLqeJO4PScqTqOvowPOsdrz0eXcB0UCYYt9Dn/p1aH1srkAdeUc0vDN6b4hdxsXpn3lHFzUGA4UpJNJ7F0E=
+	t=1730917846; cv=none; b=fVr8Q+5kM0pqHh8PZ5OU9+ijqF7VkCbbtdRhZofJaRPqzIVDzxphcDkgrMVocfaQVOfmhEgvWia+prFLftQjPAV0fN/hhPeXspHUwiCfgtUJHUDsfX1JOOVxpoZgHZrutF8MnNE2BbQ1l04ONfsr0TCMO4tvWo7VPg/yRmau9eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730917824; c=relaxed/simple;
-	bh=gF5yzVYH46mvGRFeqrnnwmfx2DTqUT/8f1nV3OgxZoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PTGKGNLeDwT02dat/gToUF/7sVb+uL9JEyu/4yZn14yOOG+EmyU2lzM5Yc5KhcUt/pH/YegmNcMRoHTkCrX3DID1GJ3xcB7nxmovn5RF20tyHCsDKDuwHrBxoxsI4BIy+EvVXLUYqEx9KKnbBOXY3db18+3Z2iToGluqm0C+lDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cik0xK+A; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1730917846; c=relaxed/simple;
+	bh=30AuDX1Mh0CsEAAlI7vPkUgHlaRbfrD6TmxgS0EWW/s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thCPc/PsjE623G+iE3HbOLMWA7wHT+seUx956jsKHcNMzEMn1BVnQa/SEcIbbDAnKK+uE2IQGD4rOsOeeyaDFaWT6dWHP/BRAsRXqrAnG8zTybyWdsJtuLNkJ5BrjBGpRCONDG/qkY8Pd767tqWBuZpKiFHa1J1uLha+7i40b7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KpITMdZi; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e31977c653so12974a91.0;
-        Wed, 06 Nov 2024 10:30:22 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ceccffadfdso40507a12.2;
+        Wed, 06 Nov 2024 10:30:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730917822; x=1731522622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gF5yzVYH46mvGRFeqrnnwmfx2DTqUT/8f1nV3OgxZoI=;
-        b=Cik0xK+AA9hQuH9OMezILM0sNxwAHeFesL5aYOSrhsRXZCuHK3KnIwGv/81tF03VFu
-         GJBW4ZGtyXkNrZaMl57NBwfKjWj2pvqFKGjSTb1jEs5hmnvSAfK1yE7JGhpkbNJkrrOf
-         6stgVu4xrWl4ehEMLx5eDKKdAymdlsXXzcNx/+kHXxbHdWckLx9aqljmuA1/zEQPvqYw
-         CBSTOUwJa1BGz/9ee5IcQCWeUVXHw5Jcdk3FIiwYTp7Ktd6Y44JU+fqgQkEnEwnsWeGR
-         kq6MQOVhX2HoQVR4lkq2l31jAEuihsMsVDz1R6nieZVFB6chfq0I8S/WMN1riMr6kxH9
-         OTPw==
+        d=gmail.com; s=20230601; t=1730917843; x=1731522643; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4jQjAPZSMk3c5EOUW4fuy8zkDO9GQcwiVzIg0XH4OH4=;
+        b=KpITMdZin8n8Ug1Y8BDixQESyBfV0sMAjtLwyoQ1+aiOrVjnuej1WNbBtUt67/I4zl
+         836dnz3P7sm1EMG6z3tlBleDh+oI1isNJSPVrIBdUihD3QhKYVUyRk85qr6uKPRvt89P
+         Nwut8tMArhi7FFj+rgE9HgWOSxqGf9Oq2+n4fW2+gdUrMIrXocAeVoKpIqOYPpFhvZS/
+         7Y5C+fJw2ZkrnkoA7hGA8kwBQn1RIhCU48ifLf73iUj186sEnxFeuMIauEJ9ziZ3o85F
+         NtsxmeJdpPQ5BAlJdUlL1KeLwf1r0YX2j2gnhFAOG8BhAN8R7dfNhKp6vAPSP64I/Sfc
+         LCsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730917822; x=1731522622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gF5yzVYH46mvGRFeqrnnwmfx2DTqUT/8f1nV3OgxZoI=;
-        b=N7eFdQrqa+uHW1nFTUuLzPWhwtBgO6nRDqpvitaYFH+5GK8w3D/xZwV7uT+Gc0bDU0
-         QOcLB+UYIm6G4O5fhLk3FupoZ/degie+SQd7AOlrLNR8ZCfM8jTaWe7MekK/PpfyhyOh
-         9ZAccEsA49M6Pk/ya5kKufe26COdEBUSrKxQ0lsVVecSyo5oHvw6ZHte687D6Mpn1EsG
-         BKrXYUJokX0VvOaqF8CqiTvXR5nDArqMDGWrwr3SxGCr7qY7JPcrnExXWz3UDoKR+i3F
-         GlasNTkHBYcxxh1T55hYUTrs8emwP7GzqC0Kp6XlbsnjEWc4smFwGkf4Vu0ERZQLlMu/
-         pB1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU9t7D+wMg+Ky+EMYwCYiqEeMPt7iKKj6CJVb5nov3KGTK0ckFteQzb+YchUsj7BiWvamuh7YN/7RPrL2IBLLQ=@vger.kernel.org, AJvYcCXhFvCz1DkeJ0MMnGyJ5cqkz4CUei9MshceT68nnq2pSfwRjxGzut6lsrCGsImz3CE51xdIXWbTWa08kJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmM17AFFiaN9HTNQolMoJBPMaETwlXr/Hg8wDb49nxjnqp39tA
-	c0JtMBTX77x0VtWXnoQgoprFvf7AY4nW/erHnnbO4vDbx5/EwNPQo7BHZiSO+SCWUgGrSPOXZxV
-	ev+J/SU3ibOjjpxhq2oLsaV5oFio=
-X-Google-Smtp-Source: AGHT+IGugjNzUPl9S05Fiqq/N1TaSPnc6TQF3WdZmgyKufOmNd1/JHc9uWZB9T7rqhi8og8VXuAxKNd762hhNfoQcn4=
-X-Received: by 2002:a17:90b:164e:b0:2e2:abab:c456 with SMTP id
- 98e67ed59e1d1-2e9a4a8c9edmr137897a91.1.1730917822407; Wed, 06 Nov 2024
- 10:30:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730917843; x=1731522643;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4jQjAPZSMk3c5EOUW4fuy8zkDO9GQcwiVzIg0XH4OH4=;
+        b=TccoGuXpR+YnmqWZgvZ6I4FxIjr7rB+apRapvq86eeKcRqqtm2AZQICQMMJZD+T16e
+         CzivWVmbcMW6M+F+hNXD+xGL7bSQdrZR5bCaDw2wD6QQ5N5gFgvCx4ZnK+idA8rKLc4q
+         G+D5vbzjUrEbxUawTEIYO5jF5uAkXYhLRLB4t6WJ3P9OKTtDu7mlEqsko6OJ0zlI5X+G
+         NHhUEmQ1mYHBt2F45LX4k6sNHwNAik29V1bJzsu9cYrLsMLOG0oqFT6DVq6xFb48Ff2G
+         qsEM25nfatvqxN2B5TMaAJUaV9+dAJArJwiAAlps8SC4KyOVIaJrB7QILb7a88Vy4A5z
+         9qWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVerZyY7umrDzyilJ3Isz9xIrUbgp+/L5gceqYhxNrbZFQJrtbKgk4oEze/7TUmNAhcj4NiVoTYaqQWGgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyknu5SVDo0KAFEREZUXMwZQCzGiPaEvJzZrJiFjDd4VkjlGRrR
+	wLbPzm0g4wCh0di0ZeeCy1JCOdtwjlsCL3O/Zkw2vS9vTLgFDicx
+X-Google-Smtp-Source: AGHT+IGKEOlwyyanLQrWzfWXYnMuH7AyafClYqD6xch68uThhM29tx9Z1Uac8l2W0vN2AIXNSUaOBw==
+X-Received: by 2002:a05:6402:26c4:b0:5ce:bb32:ca9b with SMTP id 4fb4d7f45d1cf-5cebb32cbd9mr15675866a12.21.1730917842851;
+        Wed, 06 Nov 2024 10:30:42 -0800 (PST)
+Received: from localhost.localdomain ([83.168.79.145])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6a9a3e3sm3070634a12.12.2024.11.06.10.30.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 10:30:42 -0800 (PST)
+From: Karol Przybylski <karprzy7@gmail.com>
+To: gregkh@linuxfoundation.org,
+	paul@crapouillou.net,
+	tudor.ambarus@linaro.org,
+	Chris.Wulff@biamp.com,
+	david.sands@biamp.com,
+	viro@zeniv.linux.org.uk,
+	m.grzeschik@pengutronix.de,
+	peter@korsgaard.com,
+	karprzy7@gmail.com
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: [PATCH] usb: gadget: f_fs: remove unused values and add immediate returns
+Date: Wed,  6 Nov 2024 19:30:32 +0100
+Message-Id: <20241106183032.80155-1-karprzy7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-simplify-arc-v1-1-a4ffc290f905@gmail.com>
- <ZylNvC8enwPG4IQ4@Boquns-Mac-mini.local> <CANiq72nQ6b1wO6i6zWW6ZWeQFN4SJVB28b216FDU70KmtCbaxA@mail.gmail.com>
- <CAJ-ks9=xW_WWZXB0CbDvU-3otkYs-TY+PSYeiPyidM58QujC3g@mail.gmail.com>
- <CAH5fLgjXXE32k2VuC9yGrNG7ib5vo7V+fsvRxWG0ijopK7MDCQ@mail.gmail.com>
- <CAJ-ks9=b=UEp9KCZ5_dE5yDKWZ1BEfnTkAtS4LiNQ4wzMgdT4A@mail.gmail.com>
- <CANiq72=MmpyquVfi=796v0BAmx6=yuy_gvzeRgUVPhpq8E4rrw@mail.gmail.com> <CAJ-ks9muM0RRtawt-C=vwT7b29rhsHbh1FjpX7LbJ=a05tLuPQ@mail.gmail.com>
-In-Reply-To: <CAJ-ks9muM0RRtawt-C=vwT7b29rhsHbh1FjpX7LbJ=a05tLuPQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 6 Nov 2024 19:30:10 +0100
-Message-ID: <CANiq72kBo4x7D92Xe7Wkvu=Jj+YmMH+-ARiovG+SHt9BYECbvg@mail.gmail.com>
-Subject: Re: [PATCH] rust: arc: remove unused PhantomData
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 6, 2024 at 5:41=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> The upstream changes to dropck predate the PR I linked up-thread which
-> landed in 2017. Since this Arc code was written in 2022, it never had
-> any effect. Isn't it proper to keep the "Fixes" tag?
+In case of faulty copy_from_user call inside ffs_epfile_ioctl, error code is
+saved in a variable. However, this variable is later overwritten in every possible
+path, which overshadows initial assignment.
 
-If there is a bug, definitely yes, but I don't think that applies is
--- this is more of a cleanup, no?
+This patch fixes it by returning the error code immediately and exiting the function.
 
-Sometimes things are marked as "fixes" that are perhaps a stretch
-(e.g. a typo in a comment). It depends a bit on the maintainer and how
-we define "bug" (e.g. does it count in docs, or just actual end
-users). But here it just seems something is superfluous, at worst, and
-it does not need to be backported either. Even if we kept the tag for
-some reason, I think this belongs in `rust-next`.
+Error discovered in coverity scan - CID 1583682
 
-But if I am missing something, and this does indeed fix something that
-we should prioritize, please let me know!
+Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+---
+ drivers/usb/gadget/function/f_fs.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-What looks more important, to me, is to clarify/document why (or why
-not) we have it, regardless of whether we keep it or not, i.e. having
-thought about it, I think it wouldn't hurt having a line/comment even
-if we remove it.
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index 2920f8000bbd..00f52c9bb716 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -1735,8 +1735,7 @@ static long ffs_epfile_ioctl(struct file *file, unsigned code,
+ 		int fd;
+ 
+ 		if (copy_from_user(&fd, (void __user *)value, sizeof(fd))) {
+-			ret = -EFAULT;
+-			break;
++			return -EFAULT;
+ 		}
+ 
+ 		return ffs_dmabuf_attach(file, fd);
+@@ -1746,8 +1745,7 @@ static long ffs_epfile_ioctl(struct file *file, unsigned code,
+ 		int fd;
+ 
+ 		if (copy_from_user(&fd, (void __user *)value, sizeof(fd))) {
+-			ret = -EFAULT;
+-			break;
++			return -EFAULT;
+ 		}
+ 
+ 		return ffs_dmabuf_detach(file, fd);
+@@ -1757,8 +1755,7 @@ static long ffs_epfile_ioctl(struct file *file, unsigned code,
+ 		struct usb_ffs_dmabuf_transfer_req req;
+ 
+ 		if (copy_from_user(&req, (void __user *)value, sizeof(req))) {
+-			ret = -EFAULT;
+-			break;
++			return -EFAULT;
+ 		}
+ 
+ 		return ffs_dmabuf_transfer(file, &req);
+-- 
+2.34.1
 
-Thanks!
-
-Cheers,
-Miguel
 
