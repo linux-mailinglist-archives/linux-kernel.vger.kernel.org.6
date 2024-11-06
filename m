@@ -1,402 +1,152 @@
-Return-Path: <linux-kernel+bounces-398900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE77E9BF7B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:02:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8699BF7C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40064B22C52
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7246283411
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DC920A5E0;
-	Wed,  6 Nov 2024 20:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7Z/X/cO"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBEC205E0C;
-	Wed,  6 Nov 2024 20:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEE320ADDF;
+	Wed,  6 Nov 2024 20:03:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B52204086;
+	Wed,  6 Nov 2024 20:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730923337; cv=none; b=X3vcPmUDhmNlMcyb1Z4P8BdhdusxLV444YGXJ2w3EkAZqRVdimlIXaBl4kW5I4J2M7PvyEJKci5OEZ5eIyyPvjiX5FmpXoDHn0ffo9+y1V8ucIM5LchDfafpj7Suo+VnjtFlIwF3w3FoNlZb5SQFZKVjPmO5MZog8ZLeZMZ888I=
+	t=1730923430; cv=none; b=WhQG4/F/o1M4Ty6Vgdkt+fjcP8E4arz6hPkLWTFpVCoGZk7ZJQXiZCNcfndpXUXCco6qPL3UEHsrZfOkdcdjp+y/NlKnojWvZLB2DELMNn1MmUZb/IKdJYQLu4AzNiOqM8MsxjlaAuF1B4BBT9psyXVAVIy5myY27S7SteLa2Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730923337; c=relaxed/simple;
-	bh=0ndvj0LRyugEXOQTiBA+yGXCTnbfUBHqt3oqkAeUor8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p0DcjQLjKj78wLleGs4VFmOBvvdVUl/ZAN2c/9JF0Y40AtqkJ8/IrxGAbIKTQX3w9NbPq0k+obcfwbgQZNOx0F5nBW4yrXB5o7yBCOvAmaHmaNFzRJWvZEuBTUv411cXpZhigcyxFCJj3LLUi98x3Rm0yQN7zF+2qcHNJFd2Hgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F7Z/X/cO; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2eb9dde40so180148a91.0;
-        Wed, 06 Nov 2024 12:02:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730923335; x=1731528135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CiYpdHaszdyuaXQQsVN004xtHRYdDKQWMIi87TqO2Us=;
-        b=F7Z/X/cONcfgdszLDKmYEAd2X0Xz2zsAfI08pzZHeGbnx+yOtfZJb0cod49Kwp4wP8
-         UAUl6wjAiI4JkqEmLLUvn1/FwOWm4xeAWtu73zADicCm1uIXKoAr7XZHKrMaJxlo6LOP
-         /qL7gXaU9FiQbsiKqJ/Z28wPoZIqzdwbw7aZSSU0QfohZ6VJK6ZKnuBMRwwF5zRZjv6C
-         XaufLbzSqg7d8qyFn1ds+a5yuU/sKf7niY2qfPbycMrO8A7KlaAwbU0l+u8z2vlt8+Kx
-         aDssDoyOeltiIRa+H+9ExfmXZyviuPPntyd5tWoPfPSHyZvLA/Iwbol3o52dQioIssCc
-         Xw6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730923335; x=1731528135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CiYpdHaszdyuaXQQsVN004xtHRYdDKQWMIi87TqO2Us=;
-        b=fU2IVJd0qqjhoaj4GALx5GYgmBZ+ckVuJrOj8L+gKK1rHBTcj3DqYyDioj+o7wF3W2
-         a8FHKQppCVqvwABiTsZZE9/Hu4KuWdOWgL0WTzSd8zI3ggonT52NCWr0Oy3vaIW3xUe0
-         a2zR6Ut7UaxVFwFh9RDpNXUnk+F5lDA9EtxAmVdnD3mjPrJ69cQBjKVwLCIOZVe02F1w
-         5e9b9w+uv/yPcQ/ee8nsrS6sHOpf2/HINrFruQH1C1h0eg6v5cGGKt1DtkrgRJcT0TsJ
-         3Q5Zfwaldp4nccmTnXhHovwFR/prt1SErhbunuKzugyzg16NGs4LuVeqkj5LrutwrPEX
-         fyNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVT0I6NbQOXlZZpkUzhpjfDwAKa2eqCtLVU7PTFVuE+HWLvvuElqzlmXPmn1HKWBlCCyNE=@vger.kernel.org, AJvYcCWJqQ2RTcK+OarSFI9Ntu/xrtxLUq+1qr47jMSu90dn+Ky0IZCqgimq4FMSUm+R2KeqPZArwNFjaJrsBZg9@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIKklxV+H7bUFHF3WiZpwLe1pVrtWQ1xCYqjxO+Zvcidb4KVp8
-	1FqVIofKoLxT9PM+yyiyVkyd2eHr95LYMTHn06OTm8yNNTL4e7F15bt04uU8U2Q7yDvomxom6mS
-	fs1ZaOrE8KYIbUmPJH71BSTqa/cIbMw==
-X-Google-Smtp-Source: AGHT+IEdcv4otZxkYQZ+yUubB28SU7wCq/NglXS2cqh0QetasEdWKRugj+U40BpzMg3KMRkWkADBfy2AVSG0kTER29A=
-X-Received: by 2002:a17:90b:1804:b0:2e2:e597:6cdc with SMTP id
- 98e67ed59e1d1-2e93c1750bamr32782774a91.22.1730923335019; Wed, 06 Nov 2024
- 12:02:15 -0800 (PST)
+	s=arc-20240116; t=1730923430; c=relaxed/simple;
+	bh=ivX4CiQTotWMPINucszsfz9xCMxcsuzikA7zdx2o5fA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gP3GN2PJpIaKP6ucR6PUEa5u3Fjtms0ghV+Cf2rVw1Hs/GoCFQZ3JKeCLjQK0v3oPEOpJErwh1fyv2QZjB6gfKSzMlvqI6nle2oh2I2TgxWylsj9EDUx57r6EORdGzE9M9DgP5eGXIgqnHjL4o70rADe2lhndKjpHHRMgd/fB9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2ADD7497;
+	Wed,  6 Nov 2024 12:04:16 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 490D43F528;
+	Wed,  6 Nov 2024 12:03:43 -0800 (PST)
+Date: Wed, 6 Nov 2024 20:03:30 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
+	cristian.marussi@arm.com, andersson@kernel.org,
+	konrad.dybcio@linaro.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
+	arm-scmi@vger.kernel.org
+Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
+ Extensions
+Message-ID: <ZyvLktLUZOGP-LH5@pluto>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <ZytnRc94iKUfMYH0@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB5848098C1DF99C6C417B405D99542@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <AM6PR03MB584846B635B10C59EFAF596099542@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAEf4Bzbt0kh53xYZL57Nc9AWcYUKga_NQ6uUrTeU4bj8qyTLng@mail.gmail.com> <AM6PR03MB584814D93FE3680635DE61A199562@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB584814D93FE3680635DE61A199562@AM6PR03MB5848.eurprd03.prod.outlook.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 6 Nov 2024 12:02:03 -0800
-Message-ID: <CAEf4Bzba2N7pxPQh8_BDrVgupZdeow_3S7xSjDmsdhL19eXb3A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 1/4] bpf/crib: Introduce task_file open-coded
- iterator kfuncs
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZytnRc94iKUfMYH0@hovoldconsulting.com>
 
-On Fri, Nov 1, 2024 at 1:22=E2=80=AFPM Juntong Deng <juntong.deng@outlook.c=
-om> wrote:
->
-> On 2024/11/1 19:06, Andrii Nakryiko wrote:
-> > On Tue, Oct 29, 2024 at 5:15=E2=80=AFPM Juntong Deng <juntong.deng@outl=
-ook.com> wrote:
-> >>
-> >> This patch adds the open-coded iterator style process file iterator
-> >> kfuncs bpf_iter_task_file_{new,next,destroy} that iterates over all
-> >> files opened by the specified process.
-> >>
-> >> In addition, this patch adds bpf_iter_task_file_get_fd() getter to get
-> >> the file descriptor corresponding to the file in the current iteration=
-.
-> >>
-> >> The reference to struct file acquired by the previous
-> >> bpf_iter_task_file_next() is released in the next
-> >> bpf_iter_task_file_next(), and the last reference is released in the
-> >> last bpf_iter_task_file_next() that returns NULL.
-> >>
-> >> In the bpf_iter_task_file_destroy(), if the iterator does not iterate =
-to
-> >> the end, then the last struct file reference is released at this time.
-> >>
-> >> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> >> ---
-> >>   kernel/bpf/Makefile      |   1 +
-> >>   kernel/bpf/crib/Makefile |   3 ++
-> >>   kernel/bpf/crib/crib.c   |  29 +++++++++++
-> >>   kernel/bpf/crib/files.c  | 105 +++++++++++++++++++++++++++++++++++++=
-++
-> >>   4 files changed, 138 insertions(+)
-> >>   create mode 100644 kernel/bpf/crib/Makefile
-> >>   create mode 100644 kernel/bpf/crib/crib.c
-> >>   create mode 100644 kernel/bpf/crib/files.c
-> >>
-> >> diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
-> >> index 105328f0b9c0..933d36264e5e 100644
-> >> --- a/kernel/bpf/Makefile
-> >> +++ b/kernel/bpf/Makefile
-> >> @@ -53,3 +53,4 @@ obj-$(CONFIG_BPF_SYSCALL) +=3D relo_core.o
-> >>   obj-$(CONFIG_BPF_SYSCALL) +=3D btf_iter.o
-> >>   obj-$(CONFIG_BPF_SYSCALL) +=3D btf_relocate.o
-> >>   obj-$(CONFIG_BPF_SYSCALL) +=3D kmem_cache_iter.o
-> >> +obj-$(CONFIG_BPF_SYSCALL) +=3D crib/
-> >> diff --git a/kernel/bpf/crib/Makefile b/kernel/bpf/crib/Makefile
-> >> new file mode 100644
-> >> index 000000000000..4e1bae1972dd
-> >> --- /dev/null
-> >> +++ b/kernel/bpf/crib/Makefile
-> >> @@ -0,0 +1,3 @@
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +obj-$(CONFIG_BPF_SYSCALL) +=3D crib.o files.o
-> >> diff --git a/kernel/bpf/crib/crib.c b/kernel/bpf/crib/crib.c
-> >> new file mode 100644
-> >> index 000000000000..e6536ee9a845
-> >> --- /dev/null
-> >> +++ b/kernel/bpf/crib/crib.c
-> >> @@ -0,0 +1,29 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Checkpoint/Restore In eBPF (CRIB)
-> >> + */
-> >> +
-> >> +#include <linux/bpf.h>
-> >> +#include <linux/btf.h>
-> >> +#include <linux/btf_ids.h>
-> >> +
-> >> +BTF_KFUNCS_START(bpf_crib_kfuncs)
-> >> +
-> >> +BTF_ID_FLAGS(func, bpf_iter_task_file_new, KF_ITER_NEW | KF_TRUSTED_A=
-RGS)
-> >> +BTF_ID_FLAGS(func, bpf_iter_task_file_next, KF_ITER_NEXT | KF_RET_NUL=
-L)
-> >> +BTF_ID_FLAGS(func, bpf_iter_task_file_get_fd)
-> >> +BTF_ID_FLAGS(func, bpf_iter_task_file_destroy, KF_ITER_DESTROY)
-> >
-> > This is in no way CRIB-specific, right? So I'd drop the CRIB reference
-> > and move code next to task_file BPF iterator program type
-> > implementation, this is a generic functionality.
-> >
-> > Even more so, given Namhyung's recent work on adding kmem_cache
-> > iterator (both program type and open-coded iterator), it seems like it
-> > should be possible to cut down on code duplication by using open-coded
-> > iterator logic inside the BPF iterator program. Now that you are
-> > adding task_file open-coded iterator, can you please check if it can
-> > be reused. See kernel/bpf/task_iter.c (and I think that's where your
-> > code should live as well, btw).
-> >
-> > pw-bot: cr
-> >
->
-> Thanks for your reply!
->
-> Yes, I agree that it would be better to put the task_file open-coded
-> iterator together with the traditional task_file iterator (in the
-> same file).
->
-> I will move it in the next patch series.
->
-> >> +
-> >> +BTF_KFUNCS_END(bpf_crib_kfuncs)
-> >> +
-> >> +static const struct btf_kfunc_id_set bpf_crib_kfunc_set =3D {
-> >> +       .owner =3D THIS_MODULE,
-> >> +       .set   =3D &bpf_crib_kfuncs,
-> >> +};
-> >> +
-> >> +static int __init bpf_crib_init(void)
-> >> +{
-> >> +       return register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &bpf_c=
-rib_kfunc_set);
-> >> +}
-> >> +
-> >> +late_initcall(bpf_crib_init);
-> >> diff --git a/kernel/bpf/crib/files.c b/kernel/bpf/crib/files.c
-> >> new file mode 100644
-> >> index 000000000000..ececf150303f
-> >> --- /dev/null
-> >> +++ b/kernel/bpf/crib/files.c
-> >> @@ -0,0 +1,105 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +#include <linux/btf.h>
-> >> +#include <linux/file.h>
-> >> +#include <linux/fdtable.h>
-> >> +#include <linux/net.h>
-> >> +
-> >> +struct bpf_iter_task_file {
-> >> +       __u64 __opaque[3];
-> >> +} __aligned(8);
-> >> +
-> >> +struct bpf_iter_task_file_kern {
-> >> +       struct task_struct *task;
-> >> +       struct file *file;
-> >> +       int fd;
-> >> +} __aligned(8);
-> >> +
-> >> +__bpf_kfunc_start_defs();
-> >> +
-> >> +/**
-> >> + * bpf_iter_task_file_new() - Initialize a new task file iterator for=
- a task,
-> >> + * used to iterate over all files opened by a specified task
-> >> + *
-> >> + * @it: the new bpf_iter_task_file to be created
-> >> + * @task: a pointer pointing to a task to be iterated over
-> >> + */
-> >> +__bpf_kfunc int bpf_iter_task_file_new(struct bpf_iter_task_file *it,
-> >> +               struct task_struct *task)
-> >> +{
-> >> +       struct bpf_iter_task_file_kern *kit =3D (void *)it;
-> >> +
-> >> +       BUILD_BUG_ON(sizeof(struct bpf_iter_task_file_kern) > sizeof(s=
-truct bpf_iter_task_file));
-> >> +       BUILD_BUG_ON(__alignof__(struct bpf_iter_task_file_kern) !=3D
-> >> +                    __alignof__(struct bpf_iter_task_file));
-> >> +
-> >> +       kit->task =3D task;
-> >> +       kit->fd =3D -1;
-> >> +       kit->file =3D NULL;
-> >> +
-> >> +       return 0;
-> >> +}
-> >> +
-> >> +/**
-> >> + * bpf_iter_task_file_next() - Get the next file in bpf_iter_task_fil=
-e
-> >> + *
-> >> + * bpf_iter_task_file_next acquires a reference to the returned struc=
-t file.
-> >> + *
-> >> + * The reference to struct file acquired by the previous
-> >> + * bpf_iter_task_file_next() is released in the next bpf_iter_task_fi=
-le_next(),
-> >> + * and the last reference is released in the last bpf_iter_task_file_=
-next()
-> >> + * that returns NULL.
-> >> + *
-> >> + * @it: the bpf_iter_task_file to be checked
-> >> + *
-> >> + * @returns a pointer to the struct file of the next file if further =
-files
-> >> + * are available, otherwise returns NULL
-> >> + */
-> >> +__bpf_kfunc struct file *bpf_iter_task_file_next(struct bpf_iter_task=
-_file *it)
-> >> +{
-> >> +       struct bpf_iter_task_file_kern *kit =3D (void *)it;
-> >> +
-> >> +       if (kit->file)
-> >> +               fput(kit->file);
-> >> +
-> >> +       kit->fd++;
-> >> +
-> >> +       rcu_read_lock();
-> >> +       kit->file =3D task_lookup_next_fdget_rcu(kit->task, &kit->fd);
-> >> +       rcu_read_unlock();
-> >> +
-> >> +       return kit->file;
-> >> +}
-> >> +
-> >> +/**
-> >> + * bpf_iter_task_file_get_fd() - Get the file descriptor correspondin=
-g to
-> >> + * the file in the current iteration
-> >> + *
-> >> + * @it: the bpf_iter_task_file to be checked
-> >> + *
-> >> + * @returns the file descriptor
-> >> + */
-> >> +__bpf_kfunc int bpf_iter_task_file_get_fd(struct bpf_iter_task_file *=
-it__iter)
-> >> +{
-> >> +       struct bpf_iter_task_file_kern *kit =3D (void *)it__iter;
-> >> +
-> >> +       return kit->fd;
-> >> +}
-> >> +
-> >
-> > I don't think we need this. It's probably better to return a pointer
-> > to a small struct representing "item" returned from this iterator.
-> > Something like
-> >
-> > struct bpf_iter_task_file_item {
-> >      struct task_struct *task;
-> >      struct file *file;
-> >      int fd;
-> > };
-> >
-> > You can then embed this struct into struct bpf_iter_task_file and
-> > return a pointer to it on each next() call (avoiding memory
-> > allocation)
-> >
-> >
-> > (naming just for illustrative purposes, I spent 0 seconds thinking abou=
-t it)
-> >
->
-> Yes, I agree that it is feasible.
->
-> But there is a question here, should we expose the internal state
-> structure of the iterator (If we want to embed) ?
->
-> I guess that we need two versions of data structures struct bpf_iter_xxx
-> and struct bpf_iter_xxx_kern is for the purpose of encapsulation?
+On Wed, Nov 06, 2024 at 01:55:33PM +0100, Johan Hovold wrote:
+> On Mon, Oct 07, 2024 at 11:40:18AM +0530, Sibi Sankar wrote:
+> > The QCOM SCMI vendor protocol provides a generic way of exposing a
+> > number of Qualcomm SoC specific features (like memory bus scaling)
+> > through a mixture of pre-determined algorithm strings and param_id
+> > pairs hosted on the SCMI controller. Introduce a client driver that
+> > uses the memlat algorithm string hosted on QCOM SCMI Vendor Protocol
+> > to detect memory latency workloads and control frequency/level of
+> > the various memory buses (DDR/LLCC/DDR_QOS).
+> > 
+> > QCOM SCMI Generic Vendor protocol background:
+> > It was found that a lot of the vendor protocol used internally was
+> > for debug/internal development purposes that would either be super
+> > SoC specific or had to be disabled because of some features being
+> > fused out during production. This lead to a large number of vendor
+> > protocol numbers being quickly consumed and were never released
+> > either. Using a generic vendor protocol with functionality abstracted
+> > behind algorithm strings gave us the flexibility of allowing such
+> > functionality exist during initial development/debugging while
+> > still being able to expose functionality like memlat once they have
+> > matured enough. The param-ids are certainly expected to act as ABI
+> > for algorithms strings like MEMLAT.
+> 
+> I wanted to give this series a quick spin on the x1e80100 CRD, but ran
+> into some issues.
+> 
+> First, I expected the drivers to be loaded automatically when built as
+> modules, but that did not happen so something appears to be missing.
+> 
 
-Yes, that's what we do for iterator state structure, and you should do
-that as well. bpf_iter_xxx one will be opaque (see other examples, we
-literally add `u64 __opaque[N];` there).
+Hi Johan,
 
-But this bpf_iter_task_file_item will be sort of internal API that is
-returned from bpf_iter_task_file_next(). So you'll have something like
+so the SCMI stack is fully modularizable as of this release, i.e.
 
-struct bpf_iter_task_file {
-    .... additional state ...
-    struct bpf_iter_task_file_item item;
-};
+ - SCMI core (scmi-core + scmi-module)
+ - SCMI transports (scmi_transport_{mailbox,virtio,smc,optee}
+ - optional SCMI Vendor protos
+ - Std and Vendor SCMI Drivers on top of protos
 
-then you have
+....on the other side the SCMI standard protocols are still embedded
+in scmi-module (or builtin) as of now...
 
-struct bpf_iter_task_file_item bpf_iter_task_file_next(struct
-bpf_iter_task_file *it)
-{
-    struct bpf_iter_task_file_kern *kit =3D (void *)it;
+Even though, module usage is tracked by the core AND when an SCMI Vendor
+driver tries to use protocol_X, it causes protocol_X to be initialized
+(calling its protocol_init), there is NO auto-loading for SCMI Vendor
+Protocols when bult as LKM...because there were really no ask till now
+and this stuff is in general needed so very early dburing boot...so the
+usecase of all these LKM modules is just debug/test as in your case
+(or in mine frequently)....
 
-    ...
-    kit->item.task =3D <sometask>;
-    kit->item.file =3D <file>; /* and so on */
+...and I am NOT saying with this that is necessarily right or must be
+stay like this...just explaining how it is now....
 
-    return &kit->item;
-}
+....anyway...it is mostly trivial to add vendor/protocols autoloading
+transparently...today I was experimenting with a patch that triggers
+autoloading based on a generic common alias pattern in the form
+'scmi-protocol-0x<NN>' (with NN the specific protocol ID of course)
+that triggers the loading as soon as the SCMI Vendor driver tries to
+access the protocol during its probe...
 
->
-> With two versions of the data structure, users can only manipulate
-> the iterator using the iterator kfuncs, avoiding users from directly
-> accessing the internal state.
->
-> After we decide to return struct bpf_iter_task_file_item, these members
-> will not be able to change and users can directly access/change the
-> internal state of the iterator.
+....I will post it for the next cycle once it is clean.
+(unless I am missing something else that you want to add...)
 
-Yes, you have to carefully set up bpf_iter_task_file_item, but you
-could expand it in the future without breaking any old users, because
-you only return it by pointer and with BPF CO-RE all the field shifts
-will be correctly handled.
+> Second, after loading the protocol and client drivers manually (in that
+> order, shouldn't the client driver pull in the protocol?), I got:
+> 
+> 	scmi_module: Loaded SCMI Vendor Protocol 0x80 - Qualcomm  20000
+> 	arm-scmi arm-scmi.0.auto: QCOM Generic Vendor Version 1.0
+> 	scmi-qcom-generic-ext-memlat scmi_dev.5: error -EOPNOTSUPP: failed to configure common events
+> 	scmi-qcom-generic-ext-memlat scmi_dev.5: probe with driver scmi-qcom-generic-ext-memlat failed with error -95
+> 
+> which seems to suggest that the firmware on my CRD does not support this
+> feature. Is that the way this should be interpreted? And does that mean
+> that non of the commercial laptops supports this either?
 
->
-> >> +/**
-> >> + * bpf_iter_task_file_destroy() - Destroy a bpf_iter_task_file
-> >> + *
-> >> + * If the iterator does not iterate to the end, then the last
-> >> + * struct file reference is released at this time.
-> >> + *
-> >> + * @it: the bpf_iter_task_file to be destroyed
-> >> + */
-> >> +__bpf_kfunc void bpf_iter_task_file_destroy(struct bpf_iter_task_file=
- *it)
-> >> +{
-> >> +       struct bpf_iter_task_file_kern *kit =3D (void *)it;
-> >> +
-> >> +       if (kit->file)
-> >> +               fput(kit->file);
-> >> +}
-> >> +
-> >> +__bpf_kfunc_end_defs();
-> >> --
-> >> 2.39.5
-> >>
->
+This seems like FW rejecting the command, maybe just only for the specific
+Linux OSPM agent since it is not allowed to ask for that specific setup,
+and only Sibi can shed a light here :D
+
+...but this Vendor protocol, if I am not mistaken, AFAIU, uses a bunch
+of "algo strings" coming from tokens it picks from DT and use thsoe as
+params for the set_param() VendorProtocol ops...cannot be that a bad/missing
+DT value could cause the FW to reject the command due to the params ?
+(even if the command is supported)...
+
+...just a guess ah... I have no real knowledge of this venndor proto...
+
+
+Thanks,
+Cristian
+
 
