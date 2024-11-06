@@ -1,131 +1,133 @@
-Return-Path: <linux-kernel+bounces-398999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83EF9BF91C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:19:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6301F9BF91F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:19:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D5D2816B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:19:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951771C21F15
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A26620CCD9;
-	Wed,  6 Nov 2024 22:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D52020D4F8;
+	Wed,  6 Nov 2024 22:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4AlvKgf"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C7zBWjkK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2967824A3;
-	Wed,  6 Nov 2024 22:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B535613C67C;
+	Wed,  6 Nov 2024 22:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730931532; cv=none; b=ZK7SPEAn1LWDpcgCb2bmi3LQijPGkjwpXjRMJU87Sr8vwnUp8o0XTtUgHuG/aHbi2efEu1KWHwLN/el2kPeCFauoKH5ogeNMwipSESfkiRISxuV9pVGiSXMtowbuuGYeNYJp7oQL8FNHflG58PVfUm2FAxgtNh8SxQI8VoSGGTw=
+	t=1730931533; cv=none; b=LwX3b7qdT7sxbYKC+ka9V7yShlo//R4m3Rnt02c+jwGtXsiJXIoLyweD0qLCY/BO+gYGKvxr7PX/zw9NjKHrXROPVcUb0n/IBCh1FfJsOVoN12U0Bre2ShiOIKDTVJE7qESYXNjGFliofG8Gc6seWq1Nl+lD3/8Nd8VVf8I7a2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730931532; c=relaxed/simple;
-	bh=aIFlKwth4J4OQ3bOZ2tIJdiR1MfWpvv7DpD+5ufnlM4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l4SzfzpyC0WDqVC852Sr5HiR0zkEk+efNZ230NGwpyD/OdohkYLM+oKDl/InzJoaC0WALS+gz94EnO9E21O+byfojD4/9CMbZ7Zb8tbF+plckLI6FmDoIXl1gmfHjqMivzaubR3dZXq4+OR8hxDAwxdnRGY5K+E/9R9mi+vGil8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4AlvKgf; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-720be27db27so171978b3a.2;
-        Wed, 06 Nov 2024 14:18:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730931530; x=1731536330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CIvbD0MdhpvC8ocX+R437pfHaRhuHn7RLCw1h6ZRFX8=;
-        b=F4AlvKgfxnfzejd/5xkcQZu3CFOggO//1yyc0sqUT2PMJFyMR4Unq98uY99P7PK6dt
-         kOPirU313lNwe8QX6y8QsreBq5x4tgWAzhcbCVwMLtjYjLAPvleo+ZMTNVSRe8uX5j9k
-         6dU9jVhMHPNrux4u+9VgwXXWH8XEsjg+IgAluj9//I8XERqFhCXm/MhWfgpwHRLndafx
-         R1KUpSQkqj9tRniXk+RVp90otH79KPLW9uDdHVyLdQcmPMw3N3l7jTqRXo+pYx0z6cI7
-         6RTI7AW2CjsHmArbJhrtzsNGGRpZjYvN2bC2QUa8LNEl5JbzZbkNrDHnHcArLDjkxX3r
-         7a1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730931530; x=1731536330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CIvbD0MdhpvC8ocX+R437pfHaRhuHn7RLCw1h6ZRFX8=;
-        b=QRNCvhz7EZuZYII8hnCAtrEzaXnZUt8dFD2/dw0dUk3RyrDgcGlHIXHpcOEhh0+l/m
-         pm3tK/nct98GfwIAfcwtGjP5CvAkfhzo6CU4+9F1sJJgjZuhadVD3Aono/7Q4CGm8a3D
-         cdTdZnvYb1TUg9ANU/M7kAP/uLNHRU8TRTduMmrmSxR5qhg5+TDtpsIk/z5lMdY5Zqow
-         gOdchsESfG2HVzsJKhh7NdHbbixcykU+XO2QSnctMw7+obY3MFVIS+PTLCDzmBviKt9D
-         3wcZaOm1AyfGljQQad6o6kzdcrxkNCOGNoULhBtkkSOnnd9q9r1v1VmZYH3s58QSzRC2
-         MthQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBlXgej3wZHMW8nhp7xoUytlX148+yBRLE6M2Pxm846rSBJV8K0gR3m63GxyfbWSgRNM3LNlL2Su7Ymb6Y@vger.kernel.org, AJvYcCUYqiYhqQnA+gaWyjBaPvJqUQ9dADCynsiExSK0tTSCEGLQMZ3imwLBwKUPnI0lGPBSBfs=@vger.kernel.org, AJvYcCUlrFmQHX45sjPAdmVFP5WOH7aJzBLvcN6JlUOksSPXrT70P5HHLGBYLmOlXjdByIHt0NzwavQsmIl+yvjgnQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn5V0dBg40OcRhpFJ17LRExv1TG/frnKJAAaDpQgrZ2Zyg8wCv
-	60m5MBubEsSP9QnheUQLnfqM2+FNr+EYrDVwINSr0MVQ8qAhoGPonj8iuQrUrXOdvh8uzMgQMnK
-	uC8klGGwpMdKOa91Sz7MLY0BM+6M=
-X-Google-Smtp-Source: AGHT+IF4M4JFgLDNFXgKa2s8x6f7mFYCFL0H1L34B6OWQ0KMdk+UAatRi6kVlmxKs+JysKaIEJauBtDicnrwX2ZdPXY=
-X-Received: by 2002:a05:6a20:4328:b0:1db:dd9d:cd3f with SMTP id
- adf61e73a8af0-1dbdd9dce4dmr15547071637.28.1730931529945; Wed, 06 Nov 2024
- 14:18:49 -0800 (PST)
+	s=arc-20240116; t=1730931533; c=relaxed/simple;
+	bh=pSEqy3Dd13ARUfobgBIfnTgR9bWaIjSE0Fk3rV2AeD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hD6GCLGhDli3NCjkkbHRLN833jYwK9oBUYr/MzJUw2Xu0+9Mm7F0EiDDN3HoPtKwnETA+40G7ssK4vULLn3Qk8w4E/zW5bGsBZNpCGoyFinA848U7is1imGBjOulxAdl5crIcTXnoQ/+ET5sZqk9+8E8Ig9M2reX+kIKmS1TIlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C7zBWjkK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6AGSmr003817;
+	Wed, 6 Nov 2024 22:18:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Y6umwoYj9OreXKl0xzSlbeae+yKTlKkVh5/dhD285sY=; b=C7zBWjkKMfiX6Tju
+	b11ykT+vFfcKGfkY1jkQ6k+eWsEzydPEhGQvxcw3bxUnZHY9Lod7tvZ30vjJBsNa
+	NMBoxzrQMc0nes4nF+3nkTi6ez7ikI45MjNrHkjy4NAAlw5fwk9Rg5VFZUvnPYTt
+	zClpkiG7mDNGKWrP1fF2r8OxPRFJYz0M4Mx6nY9/padiEZy/H3wsyR9Ol1jLxXDZ
+	QCy7jCvQZpXMpvjuE12sqRtZ3NO3u48Kb7wLqY/yW/BEwkjoY0uOqLCWlhmdAwTC
+	bS2HSez2qaiDX5rPLxLzjuesN7UuCsO9JQwjzaUQeuViS1VuuQXsXFDQFHArHeUp
+	V/3k/w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qvg3u8w4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 22:18:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A6MIea0022910
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 6 Nov 2024 22:18:40 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 6 Nov 2024
+ 14:18:39 -0800
+Message-ID: <e77acdfe-43b9-a28b-11e4-2ffb481c4078@quicinc.com>
+Date: Wed, 6 Nov 2024 15:18:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <AM6PR03MB5848C66D53C0204C4EE2655F99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAADnVQKuyqY7J4iJ=FZVNoon2y_v866H9hvjAn-06c8nq577Ng@mail.gmail.com>
- <CAEf4BzYib5jyu90tJYSTEmhpZ-4aF135719V+A7J7pzMj7RpNA@mail.gmail.com> <CAADnVQ+0LUXxmfm1YgyGDz=cciy3+dGGM-Zysq84fpAdaB74Qw@mail.gmail.com>
-In-Reply-To: <CAADnVQ+0LUXxmfm1YgyGDz=cciy3+dGGM-Zysq84fpAdaB74Qw@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 6 Nov 2024 14:18:37 -0800
-Message-ID: <CAEf4Bza67tpBiquJr-+ZMTTa=+29iz6Ag2+vCKyhZQv4yj9m0w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/4] bpf/crib: Introduce task_file open-coded
- iterator kfuncs
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Juntong Deng <juntong.deng@outlook.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, 
-	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
+ SCMI Generic Extension
+Content-Language: en-US
+To: Sibi Sankar <quic_sibis@quicinc.com>, <sudeep.holla@arm.com>,
+        <cristian.marussi@arm.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <conor+dt@kernel.org>, <arm-scmi@vger.kernel.org>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <20241007061023.1978380-2-quic_sibis@quicinc.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241007061023.1978380-2-quic_sibis@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OFrehKGGJi8JVLmM8D5HdD9jI8bRk7oR
+X-Proofpoint-GUID: OFrehKGGJi8JVLmM8D5HdD9jI8bRk7oR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 clxscore=1011 mlxscore=0 spamscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 adultscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411060171
 
-On Wed, Nov 6, 2024 at 2:13=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Wed, Nov 6, 2024 at 2:10=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> > > > +__bpf_kfunc int bpf_iter_task_file_new(struct bpf_iter_task_file *=
-it,
-> > > > +               struct task_struct *task)
-> > > > +{
-> > > > +       struct bpf_iter_task_file_kern *kit =3D (void *)it;
-> > > > +
-> > > > +       BUILD_BUG_ON(sizeof(struct bpf_iter_task_file_kern) > sizeo=
-f(struct bpf_iter_task_file));
-> > > > +       BUILD_BUG_ON(__alignof__(struct bpf_iter_task_file_kern) !=
-=3D
-> > > > +                    __alignof__(struct bpf_iter_task_file));
-> > > > +
-> > > > +       kit->task =3D task;
-> > >
-> > > This is broken, since task refcnt can drop while iter is running.
-> >
-> > I noticed this as well, but I thought that given KF_TRUSTED_ARGS we
-> > should have a guarantee that the task survives the iteration? Am I
-> > mistaken?
->
-> KF_TRUSTED_ARGS will only guarantee that the task is valid when it's
-> passed into this kfunc. Right after the prog can call
-> bpf_task_release() to release the ref and kit->task will become
-> dangling.
-> If this object was RCU protected we could have marked this iter
-> as KF_RCU_PROTECTED, then the verifier would make sure that
-> RCU unlock doesn't happen between iter_new and iter_destroy.
+On 10/7/2024 12:10 AM, Sibi Sankar wrote:
+> diff --git a/include/dt-bindings/firmware/qcom,scmi-memlat.h b/include/dt-bindings/firmware/qcom,scmi-memlat.h
+> new file mode 100644
+> index 000000000000..7ae8d8d5623b
+> --- /dev/null
+> +++ b/include/dt-bindings/firmware/qcom,scmi-memlat.h
+> @@ -0,0 +1,22 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +#ifndef __DT_BINDINGS_QCOM_SCMI_VENDOR_H
+> +#define __DT_BINDINGS_QCOM_SCMI_VENDOR
 
-I see, it makes sense. I guess we'll need tryget_task_struct() here
-and just return an error if we failed to get it.
+The #define does not match the #ifndef (missing "_H")
+
+> +
+> +/* Memory IDs */
+> +#define QCOM_MEM_TYPE_DDR	0x0
+> +#define QCOM_MEM_TYPE_LLCC	0x1
+> +#define QCOM_MEM_TYPE_DDR_QOS	0x2
+> +
+> +/*
+> + * QCOM_MEM_TYPE_DDR_QOS supports the following states.
+> + *
+> + * %QCOM_DDR_LEVEL_AUTO:	DDR operates with LPM enabled
+> + * %QCOM_DDR_LEVEL_PERF:	DDR operates with LPM disabled
+> + */
+> +#define QCOM_DDR_LEVEL_AUTO	0x0
+> +#define QCOM_DDR_LEVEL_PERF	0x1
+> +
+> +#endif /* __DT_BINDINGS_QCOM_SCMI_VENDOR_H */
+
 
