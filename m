@@ -1,135 +1,186 @@
-Return-Path: <linux-kernel+bounces-398284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0499BEEF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:23:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E889BEEF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:24:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24DC2286C9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:23:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3521C236AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D801DF747;
-	Wed,  6 Nov 2024 13:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="V+xM+729"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2CD1E00AB;
+	Wed,  6 Nov 2024 13:24:32 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6867A13AD11
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DA61DE4E6
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730899403; cv=none; b=htDOaUvHCAWi3OC/ER0LiKjMBcHkYddxyDITOoCpUuCfvCR0lGF5qMPKSMHb71G6Ne3WBQkCv/xE1MHfxZ+EI4F8St+Uu3gKWecki+1XbrrYWN3k3WHe6S93q2+JARIoh8i+QTs7MWOnXe3gfsOD/VAF74LcIuRod7SRZO8C+v0=
+	t=1730899471; cv=none; b=AtzbAAPHM9w6LucZD07Xz3y600F+3MRe8WU2u0Lkp/+wZeq3UrE8afQe6JNHnP2nZmgxzJRdEOKIQWpJcPCzgaj+iGArahy8Nn47HE2CAUi/KaZc/UgV0MYhLNn3XMvjzN4hKKMP5PdaUM7/PiGhmGnHEIukkB8l4eoANAdnQyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730899403; c=relaxed/simple;
-	bh=MYzngtFP/0VquOc39xPDda1muKV2r7FBWa/dVjhLMB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KHAPYt5rxuGENYLhrMMugnlJ8yEBmsAw4BrJ2ndkpQ7XmgBIwOs3fX4K7IzK2+bO/CCxhF4mWwv73zxh39YXdEC/e5nIimE/PNNGaIa5gMecHixzah9vbSUkKlID3JHE0XeDYtzr3XvxMp0IX32Ema3hEIq88/Ghd8LQogfgmMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=V+xM+729; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83aa3ced341so249848239f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 05:23:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1730899398; x=1731504198; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lvbC08yvW1+eqm0ij3BDRpcWHRsnk8Vwjo+EayjDVtU=;
-        b=V+xM+729HIF0StaGL6lXwvfkB5MPXdOxXM/q2iH2fb1yla5g7EIqDr9Pc1FH5BT+4g
-         aKQvYi7nmaj4If2DgJB9BzvzSOa2J/2lDrvJPvOiYhYRnOS/NIspNwkHY2AuuIRuwwug
-         X1fiIRvCuvxf+7kK6SLHbI3BGsgE1dzRttdO4=
+	s=arc-20240116; t=1730899471; c=relaxed/simple;
+	bh=ENA9AWi0tjn+1a3zT70Krgt930E7soDwAJinHc+5dUM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YSirlRMNcMmF3FnWjemGOrwxY2xbGpCZXNxOU2l/EPVvV8UI2pEdI7bz0BJ+IPiaLxc7yJQhNLvewvLI9AB1GofbdMfmmdC09S9kdTFoRvvrelOMDnOnnCe8Bi2Rn2xR+GqjrhB9GHMCsIqdSpZEpwoi4drx6du2pbD7ZGKeekM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aed4f24a9so695852839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 05:24:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730899398; x=1731504198;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lvbC08yvW1+eqm0ij3BDRpcWHRsnk8Vwjo+EayjDVtU=;
-        b=I1mNgND4YjzML9FULccbI0hDYwKbeyC6SUS5IWNBorZ3/Uo9kQhL9fN5RAPth0kHHJ
-         5rZIMvt1blDLB7prU3GjhuXmW1NJ0aHjOFKBJkLiqgsvUDsIQFja6jTxTZnwGuOfxHBG
-         lYmkIGN+bKXARXhrst5btFJs2O2OaqpVEQ/VQW8kSpfk8LT8id+/XzM9ybwtazp300VE
-         OIcOePaDTpYbM0bOOmlm4jMdqzWt3t8lbc5G6sb/GEXi/d21VaUbK787FoyhQVy4ICvk
-         zlDH9Mn8oj/hWHYobbyP097fM+lEMpZ4p0gtix9To3UiBRzvqIPBn4ua69wNxSYDbLes
-         Lg+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXwiuTrNdvbpohn1iLi4SJh+evFvHtDAsyOS/fk0/LN4YSR2PW2cS0trafwMfgLx2VW8MTaw+w7d0MLCK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFxTd5QdFdTb+Q4xiPGOe6lzSdJbLpvmhJAq+5Dkn67FIVwpoH
-	skstVQkoEB+GGWq8n2RDpJRAV6GDavMnt3Ov9w0fejrNLYAHa8hWW3hKzstITw==
-X-Google-Smtp-Source: AGHT+IHbqwR7B3eVmE9F/lWy/V/XK5+ENJpr7w8o5TU778A+kAokEQDMU/5iZGUsEydWO8j+npXxNA==
-X-Received: by 2002:a05:6602:1695:b0:83b:2167:650f with SMTP id ca18e2360f4ac-83b6503964emr2926999139f.10.1730899398332;
-        Wed, 06 Nov 2024 05:23:18 -0800 (PST)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-83b67b23aafsm313767039f.13.2024.11.06.05.23.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 05:23:16 -0800 (PST)
-Message-ID: <6c36f9d8-b6ee-476c-9daf-feb2fd7ef15c@ieee.org>
-Date: Wed, 6 Nov 2024 07:23:14 -0600
+        d=1e100.net; s=20230601; t=1730899469; x=1731504269;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HHvtJ8N+bx/9aPCFxEqXjWPVaAHCL5HZey8ePX+IBqg=;
+        b=IPMsitLJTvDPVd60CoeK0FoKj7TYxtgVUfQpdHIH2uHNERlBoXw4Atu5t/8F0Khj0N
+         7VS6AFjo1N8ZbnwJ/NotdK9wIsDyL9k+HjDtnHqBPZDyzs8fv0QgAsmi9YChTtmlMBgK
+         hKbyzih8MXsHjNuI0GgyrzCeALERvLb/Uz5/aowFdnAD1C5bhhofZR7j2gkyYXTHbmJq
+         YnT4upkT07C8gKHzkZQ1hnSPuQu0PpO7iCuaJYpqBWePU/Zccc0gY9Mnldh4FpahAUuz
+         XXDTw6ilAh6RsBIPuxqSi1ge68dh5c2k6LpAgxHYSE90xtw5rz8zfgeyyURLR7GQcjPc
+         GQ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVwQ3xV2oKFY9m8i/+HSm8MV2UCqXxM6ZqZpmdkNc8s5xaAphuZyjMU4UAqnjsl4lv4yZf0ud9vQzcy2K4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKgSqPVJhBDlJdVDIfdZXwNuGCrlmTnEGfoT488Z5q8qAldA5B
+	nETCLvQWCgYAkj9M94IC4CmjxT4YzPv5PyhkY/1Z9Xkwi6nSiTbKNdlvocUg98K/VfhFh/XyTBK
+	gjH5IYldooju1+rSEMH9sZ45xi2YRN5tqTnTAxORa7DrNW2kzeL4Ff5I=
+X-Google-Smtp-Source: AGHT+IENVoPWcUMexzAHUgyOtsY+zH1/ohLNJevAiZYyAtrb91HgAbGnz4QiyAbmWsEu7CgX5idlkXoCc6S1W7V8X0q47mHeA70m
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] greybus/uart: Fix atomicity violation in
- get_serial_info()
-To: Qiu-ji Chen <chenqiuji666@gmail.com>, dtwlin@gmail.com, johan@kernel.org,
- elder@kernel.org, gregkh@linuxfoundation.org
-Cc: greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
-References: <20241106095819.15194-1-chenqiuji666@gmail.com>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20241106095819.15194-1-chenqiuji666@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1c41:b0:3a5:d2a:10e0 with SMTP id
+ e9e14a558f8ab-3a6b0229ecbmr187669405ab.5.1730899469442; Wed, 06 Nov 2024
+ 05:24:29 -0800 (PST)
+Date: Wed, 06 Nov 2024 05:24:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672b6e0d.050a0220.350062.024e.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_btree_path_traverse_one
+From: syzbot <syzbot+997f0573004dcb964555@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/6/24 3:58 AM, Qiu-ji Chen wrote:
-> Our static checker found a bug where set_serial_info() uses a mutex, but
-> get_serial_info() does not. Fortunately, the impact of this is relatively
-> minor. It doesn't cause a crash or any other serious issues. However, if a
-> race condition occurs between set_serial_info() and get_serial_info(),
-> there is a chance that the data returned by get_serial_info() will be
-> meaningless.
-> 
-> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
-> Fixes: 0aad5ad563c8 ("greybus/uart: switch to ->[sg]et_serial()")
+Hello,
 
-Looks good.
+syzbot found the following issue on:
 
-Reviewed-by: Alex Elder <elder@riscstar.com>
+HEAD commit:    11066801dd4b Merge tag 'linux_kselftest-fixes-6.12-rc6' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=123e755f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=672325e7ab17fdf7
+dashboard link: https://syzkaller.appspot.com/bug?extid=997f0573004dcb964555
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156b2987980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163e755f980000
 
-PS  I was going to suggest computing the close delay and closing wait
-     outside the mutex, as get_serial_info() above it does.  But it's
-     minor and there's no reason to hold up your patch for that.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-11066801.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b062b193560b/vmlinux-11066801.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5b6da4ee7c42/bzImage-11066801.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/8becb7eaabe7/mount_0.gz
 
-> ---
-> V2:
-> Modified the patch description to make it more concise and easier to understand.
-> Changed the fix code to ensure the logic is correct.
-> Thanks to Johan Hovold and Dan Carpenter for helpful suggestion.
-> ---
->   drivers/staging/greybus/uart.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
-> index cdf4ebb93b10..8eab94cb06fa 100644
-> --- a/drivers/staging/greybus/uart.c
-> +++ b/drivers/staging/greybus/uart.c
-> @@ -596,11 +596,13 @@ static int get_serial_info(struct tty_struct *tty,
->   	struct gb_tty *gb_tty = tty->driver_data;
->   
->   	ss->line = gb_tty->minor;
-> +	mutex_lock(&gb_tty->port.mutex);
->   	ss->close_delay = jiffies_to_msecs(gb_tty->port.close_delay) / 10;
->   	ss->closing_wait =
->   		gb_tty->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
->   		ASYNC_CLOSING_WAIT_NONE :
->   		jiffies_to_msecs(gb_tty->port.closing_wait) / 10;
-> +	mutex_unlock(&gb_tty->port.mutex);
->   
->   	return 0;
->   }
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+997f0573004dcb964555@syzkaller.appspotmail.com
 
+bcachefs (loop0): check_btree_backpointers... done
+bcachefs (loop0): check_backpointers_to_extents... done
+bcachefs (loop0): check_extents_to_backpointers...
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_cache.h:129!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5320 Comm: syz-executor345 Not tainted 6.12.0-rc5-syzkaller-00299-g11066801dd4b #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:bch2_btree_id_root fs/bcachefs/btree_cache.h:129 [inline]
+RIP: 0010:btree_path_lock_root fs/bcachefs/btree_iter.c:723 [inline]
+RIP: 0010:bch2_btree_path_traverse_one+0x28de/0x2940 fs/bcachefs/btree_iter.c:1183
+Code: f4 8e 48 89 de e8 92 da dc 00 e9 78 f8 ff ff e8 38 e1 7b fd 90 0f 0b e8 c0 2d ae 07 e8 2b e1 7b fd 90 0f 0b e8 23 e1 7b fd 90 <0f> 0b e8 1b e1 7b fd 90 0f 0b e8 13 e1 7b fd 90 0f 0b 48 8b 4c 24
+RSP: 0018:ffffc9000d0d5de0 EFLAGS: 00010293
+RAX: ffffffff8418f8fd RBX: ffff888044480000 RCX: ffff88801f084880
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: ffffc9000d0d60d0 R08: ffffffff8418e949 R09: ffffffff8418b9a9
+R10: 0000000000000002 R11: ffff88801f084880 R12: dffffc0000000000
+R13: 0000000000000004 R14: ffff8880414cc380 R15: 0000000000000000
+FS:  0000555593398380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056431d273820 CR3: 0000000044502000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
+ bch2_btree_iter_peek_slot+0x84f/0x2550 fs/bcachefs/btree_iter.c:2629
+ bch2_backpointer_get_key+0x2bc/0x970 fs/bcachefs/backpointers.c:322
+ check_bp_exists fs/bcachefs/backpointers.c:579 [inline]
+ check_extent_to_backpointers+0x21f9/0x46b0 fs/bcachefs/backpointers.c:683
+ bch2_check_extents_to_backpointers_pass fs/bcachefs/backpointers.c:879 [inline]
+ bch2_check_extents_to_backpointers+0x1190/0x1bf0 fs/bcachefs/backpointers.c:932
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
+ bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
+ bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:861
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2170
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f31be2970aa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd6f7edc68 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd6f7edc70 RCX: 00007f31be2970aa
+RDX: 00000000200058c0 RSI: 0000000020005900 RDI: 00007ffd6f7edc70
+RBP: 0000000000000004 R08: 00007ffd6f7edcb0 R09: 00000000000058cb
+R10: 0000000000000001 R11: 0000000000000282 R12: 00007ffd6f7edcb0
+R13: 0000000000000003 R14: 0000000001000000 R15: 00007f31be2de03b
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_btree_id_root fs/bcachefs/btree_cache.h:129 [inline]
+RIP: 0010:btree_path_lock_root fs/bcachefs/btree_iter.c:723 [inline]
+RIP: 0010:bch2_btree_path_traverse_one+0x28de/0x2940 fs/bcachefs/btree_iter.c:1183
+Code: f4 8e 48 89 de e8 92 da dc 00 e9 78 f8 ff ff e8 38 e1 7b fd 90 0f 0b e8 c0 2d ae 07 e8 2b e1 7b fd 90 0f 0b e8 23 e1 7b fd 90 <0f> 0b e8 1b e1 7b fd 90 0f 0b e8 13 e1 7b fd 90 0f 0b 48 8b 4c 24
+RSP: 0018:ffffc9000d0d5de0 EFLAGS: 00010293
+RAX: ffffffff8418f8fd RBX: ffff888044480000 RCX: ffff88801f084880
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: ffffc9000d0d60d0 R08: ffffffff8418e949 R09: ffffffff8418b9a9
+R10: 0000000000000002 R11: ffff88801f084880 R12: dffffc0000000000
+R13: 0000000000000004 R14: ffff8880414cc380 R15: 0000000000000000
+FS:  0000555593398380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055cc391660a8 CR3: 0000000044502000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
