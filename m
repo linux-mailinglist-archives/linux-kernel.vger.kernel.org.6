@@ -1,107 +1,97 @@
-Return-Path: <linux-kernel+bounces-398635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16CB9BF3EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:07:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF599BF3F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31231C22106
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A778C1F216CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719272076C8;
-	Wed,  6 Nov 2024 17:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9045620651F;
+	Wed,  6 Nov 2024 17:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="EAtQ1/zk"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OXmQNybx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77ED71DE4EF;
-	Wed,  6 Nov 2024 17:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474F72064ED;
+	Wed,  6 Nov 2024 17:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730912816; cv=none; b=PqlJiVuVd0Lt6e1o8v1/iy+jbGOPuQy62oRozg6lfb+0cmxuo3317YuFmKvZpto34os5rDERZTP/m27+aKINoHjpAy8PWHgwwXZ+Tmc5n5yr22LqoGq+CP3C5p9PoDVZXoKAeIx8QzVtYwmn+bZ+lvlMcHgD5IywfK1aghVaux0=
+	t=1730912860; cv=none; b=t3hUkyUZLiU9Ch5vA07Uad0esRube+p8gh08i4R++SzrPO8nsERTXYkYPmHhARKSulShyYm3xxG6LsxRtJHPRSAcc55e0gXS+ttp8Niu1jgzqETtQpJ/t7KImS5d4Q7MyKOCbFh+w9LeVlzz1Upl/qXjtGMovQVXGLiYCj87o5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730912816; c=relaxed/simple;
-	bh=Pz81Pbck5wcyAI6JbvV2ZyEMZPVsLQdxsAgLdb8/Imw=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nCl8eeox/u4GOYg8AT1hWVwmilh60JmzTMq7PFvOlhyv94TtuAIlxGxzW98DHqxm10TCHZAmFVO10f7e9xovLxhGNvnk7JcPROX312sC5p0ValWtwhQhJPNmInQ2B59OsSMzqIW1Cg300Vpt7OB538zzAdpzywWkzrxWiAN7NdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=EAtQ1/zk; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730912815; x=1762448815;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=Pz81Pbck5wcyAI6JbvV2ZyEMZPVsLQdxsAgLdb8/Imw=;
-  b=EAtQ1/zkUr5uda3dtYCmxLUjFaOFXx50TP6R/jdY2yS34z6zEDmNV+WZ
-   Pq32Us+v1Z0QMAWFZTlSGeeBjQXbLcN3K2kxNN7Cxa3A2JMwCS6x/pw+G
-   qabO3nH60NUEe+CyLVo49e2ZBkJwZi8/omx6s3tDZZpv01wpxIAnhv0dh
-   0=;
-X-IronPort-AV: E=Sophos;i="6.11,263,1725321600"; 
-   d="scan'208";a="144914035"
-Subject: Re: [PATCH 1/5] asm-generic: add smp_vcond_load_relaxed()
-Thread-Topic: [PATCH 1/5] asm-generic: add smp_vcond_load_relaxed()
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 17:06:54 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:44945]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.17.195:2525] with esmtp (Farcaster)
- id 5bdf6e78-b305-43b2-b302-077e2957626d; Wed, 6 Nov 2024 17:06:54 +0000 (UTC)
-X-Farcaster-Flow-ID: 5bdf6e78-b305-43b2-b302-077e2957626d
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 6 Nov 2024 17:06:54 +0000
-Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 6 Nov 2024 17:06:54 +0000
-Received: from EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2]) by
- EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2%7]) with mapi id
- 15.02.1258.035; Wed, 6 Nov 2024 17:06:54 +0000
-From: "Okanovic, Haris" <harisokn@amazon.com>
-To: "cl@gentwo.org" <cl@gentwo.org>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rafael@kernel.org"
-	<rafael@kernel.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>, "wanpengli@tencent.com"
-	<wanpengli@tencent.com>, "joao.m.martins@oracle.com"
-	<joao.m.martins@oracle.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "mingo@redhat.com" <mingo@redhat.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "misono.tomohiro@fujitsu.com"
-	<misono.tomohiro@fujitsu.com>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>,
-	"lenb@kernel.org" <lenb@kernel.org>, "will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
-	<peterz@infradead.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "Okanovic, Haris"
-	<harisokn@amazon.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>, "mtosatti@redhat.com" <mtosatti@redhat.com>,
-	"x86@kernel.org" <x86@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>
-Thread-Index: AQHbL7D0KO91MZWU0ESDfcp3e5ep6bKpFJ6AgAFojYA=
-Date: Wed, 6 Nov 2024 17:06:53 +0000
-Message-ID: <2306e1b324c135d7d2bf961202657031d02ad4b0.camel@amazon.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
-	 <20241105183041.1531976-1-harisokn@amazon.com>
-	 <20241105183041.1531976-2-harisokn@amazon.com>
-	 <f46a71b5-8e0f-c2a9-b3f8-d499c10f227a@gentwo.org>
-In-Reply-To: <f46a71b5-8e0f-c2a9-b3f8-d499c10f227a@gentwo.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <764253D7DEDA7049AEB8E76EECF8AB1B@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730912860; c=relaxed/simple;
+	bh=PWUwMXSmdhMVZG5CyYFOKLPQMIFbQ2XIOUmCa9ZyZfE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UK5T6Z7nkyuRgcct3lM725cKfA4+ChQQZZnA5sCrXN9k9LLUIX0BUeT7dyU8ycruCDVxthZU1LSVDCgYIeWyro0WGHDEQhXltEMGcGOh3oCcBk7uMbITqmBnoUuf0990ZYpMRYfl96Jxr2IYdjhkEmYFlyUcBE5VCG6CMrnUrX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OXmQNybx; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730912859; x=1762448859;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=PWUwMXSmdhMVZG5CyYFOKLPQMIFbQ2XIOUmCa9ZyZfE=;
+  b=OXmQNybxi42DRPQHatch0wRwipQOeND+qqB1UVD8TOfvwlS0SWKliL4d
+   nCO1Rxs50lLCLifY5xR+lwSzSJmoxqQQDVzhoysgtZJAotvuRFThCHpSz
+   zgK0s+2hllTDfDg0jfk7x1TA0jCK6Y6FXjMMwM6AONh9OwIcewsuNCGC+
+   onoGt6Z4y6jl5vzr77YO6yeqqA51m+K+nPjugXTOCoEtGjHdrOJMNwhDB
+   LzB/fc0jC5tuk2RHTHh4wMIX2xHToBHPsS1YFV+2LTpA+u/8tikmyqSlW
+   dwAkUgGhePPZ+GUuqU2tWBjp0SJSUgn7qoTYHqjJAOH6NzDEVp5awM1nb
+   g==;
+X-CSE-ConnectionGUID: u5XFDFnHR/GUcLYel6yXPQ==
+X-CSE-MsgGUID: i+UWLIltTpSPXSa4YL4/ew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="42102114"
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="42102114"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:07:35 -0800
+X-CSE-ConnectionGUID: XRiLSzzfTFuHNigc+/asqg==
+X-CSE-MsgGUID: AG8W6tFeQgWZJzxCV1ys8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="85463822"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.110.53])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:07:08 -0800
+Message-ID: <f7e474ae70e659a33174ff3571ee7d311e47c8d3.camel@linux.intel.com>
+Subject: Re: [PATCH v3 0/5] iio: hid-sensors-prox: Add support for more
+ channels
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>, Ricardo Ribalda
+ <ribalda@chromium.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+  Lars-Peter Clausen <lars@metafoo.de>, Harvey Yang
+ <chenghaoyang@google.com>,  linux-input@vger.kernel.org,
+ linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Wed, 06 Nov 2024 09:07:07 -0800
+In-Reply-To: <20241101153255.4d835495@jic23-huawei>
+References: <20241101-hpd-v3-0-e9c80b7c7164@chromium.org>
+	 <20241101153255.4d835495@jic23-huawei>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,25 +99,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-T24gVHVlLCAyMDI0LTExLTA1IGF0IDExOjM2IC0wODAwLCBDaHJpc3RvcGggTGFtZXRlciAoQW1w
-ZXJlKSB3cm90ZToNCj4gQ0FVVElPTjogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20gb3V0c2lk
-ZSBvZiB0aGUgb3JnYW5pemF0aW9uLiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2ht
-ZW50cyB1bmxlc3MgeW91IGNhbiBjb25maXJtIHRoZSBzZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRl
-bnQgaXMgc2FmZS4NCj4gDQo+IA0KPiANCj4gT24gVHVlLCA1IE5vdiAyMDI0LCBIYXJpcyBPa2Fu
-b3ZpYyB3cm90ZToNCj4gDQo+ID4gKy8qKg0KPiA+ICsgKiBzbXBfdmNvbmRfbG9hZF9yZWxheGVk
-KCkgLSAoU3Bpbikgd2FpdCB1bnRpbCBhbiBleHBlY3RlZCB2YWx1ZSBhdCBhZGRyZXNzDQo+ID4g
-KyAqIHdpdGggbm8gb3JkZXJpbmcgZ3VhcmFudGVlcy4gU3BpbnMgdW50aWwgYCgqYWRkciAmIG1h
-c2spID09IHZhbGAgb3INCj4gPiArICogYG5zZWNzYCBlbGFwc2UsIGFuZCByZXR1cm5zIHRoZSBs
-YXN0IG9ic2VydmVkIGAqYWRkcmAgdmFsdWUuDQo+ID4gKyAqDQo+ID4gKyAqIEBuc2VjczogdGlt
-ZW91dCBpbiBuYW5vc2Vjb25kcw0KPiANCj4gUGxlYXNlIHVzZSBhbiBhYnNvbHV0ZSB0aW1lIGlu
-IG5zZWNzIGluc3RlYWQgb2YgYSB0aW1lb3V0Lg0KDQpJIHdlbnQgd2l0aCByZWxhdGl2ZSB0aW1l
-IGJlY2F1c2UgaXQgY2xvY2sgYWdub3N0aWMuIEkgYWdyZWUgZGVhZGxpbmUNCmlzIG5pY2VyIGJl
-Y2F1c2UgaXQgY2FuIHByb3BhZ2F0ZSBkb3duIGxheWVycyBvZiBmdW5jdGlvbnMsIGJ1dCBpdCBw
-aW5zDQp0aGUgY2FsbGVyIHRvIHNpbmdsZSB0aW1lIGJhc2UuDQoNCj4gWW91IGRvIG5vdCBrbm93
-DQo+IHdoYXQgd2lsbCBoYXBwZW4gdG8geW91ciBleGVjdXRpb24gdGhyZWFkIHVudGlsIHRoZSBs
-b2NhbF9jbG9ja19ub2luc3RyKCkNCj4gaXMgcnVuLg0KDQoNCk5vdCBzdXJlIHdoYXQgeW91IG1l
-YW4uIENvdWxkIHlvdSBwZXJoYXBzIGdpdmUgYW4gZXhhbXBsZSB3aGVyZSBpdA0Kd291bGQgYnJl
-YWs/DQoNCj4gDQo+IA0KDQpPbmUgYWx0ZXJuYXRpdmUgaXMgdG8gZG8gdGltZWtlZXBpbmcgd2l0
-aCBkZWxheSgpIGluIGFsbCBjYXNlcywgdG8NCmRlY291cGxlIGZyb20gc2NoZWQvY2xvY2suDQoN
-Cg==
+On Fri, 2024-11-01 at 15:32 +0000, Jonathan Cameron wrote:
+> On Fri, 01 Nov 2024 07:46:26 +0000
+> Ricardo Ribalda <ribalda@chromium.org> wrote:
+>=20
+> > EgisVision 620 provides two additional channels:
+> > - proximity
+> > - attention
+> >=20
+> > Add support for them.
+> >=20
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> Looks good to me. I'll queue it up, but Jiri / Srinivas if either of
+> you have time
+> to take a look as well that would be great of course.
+>=20
+Sorry for the delay. I was on vacation.
+
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+
+> I'll only push this out as testing for now to let 0-day take a look.
+>=20
+>=20
+> > ---
+> > Changes in v3:
+> > - Make attention CHAN_INFO_PROCESSED.
+> > - Fix comment style.
+> > - Multiply attention by 100 to make it a percentage.
+> > - Link to v2:
+> > https://lore.kernel.org/r/20241028-hpd-v2-0-18f6e79154d7@chromium.org
+> >=20
+> > Changes in v2 (Thanks Jonathan):
+> > - Create new attention channel type.
+> > - Improve documentation for HID usages.
+> > - Link to v1:
+> > https://lore.kernel.org/r/20241024-hpd-v1-0-2a125882f1f8@chromium.org
+> >=20
+> > ---
+> > Ricardo Ribalda (5):
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: hid-sensors: Add proximity and atte=
+ntion IDs
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: hid-sensors-prox: Factor-in hid_sen=
+sor_push_data
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: Add channel type for attention
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: hid-sensors-prox: Make proximity ch=
+annel indexed
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: hid-sensor-prox: Add support for mo=
+re channels
+> >=20
+> > =C2=A0Documentation/ABI/testing/sysfs-bus-iio |=C2=A0=C2=A0 8 ++
+> > =C2=A0drivers/iio/industrialio-core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0drivers/iio/light/hid-sensor-prox.c=C2=A0=C2=A0=C2=A0=C2=A0 | 195=
+ ++++++++++++++++++--
+> > ------------
+> > =C2=A0include/linux/hid-sensor-ids.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> > =C2=A0include/uapi/linux/iio/types.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0tools/iio/iio_event_monitor.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> > =C2=A06 files changed, 122 insertions(+), 87 deletions(-)
+> > ---
+> > base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
+> > change-id: 20241023-hpd-edeb37f1ffc4
+> >=20
+> > Best regards,
+>=20
+
 
