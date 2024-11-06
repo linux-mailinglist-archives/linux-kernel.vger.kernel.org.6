@@ -1,150 +1,94 @@
-Return-Path: <linux-kernel+bounces-398452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7589BF17F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:22:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A429BF17A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:22:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584751F227AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50081C21B89
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3912022EE;
-	Wed,  6 Nov 2024 15:22:13 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27B0202F76;
+	Wed,  6 Nov 2024 15:22:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E629552F9B;
-	Wed,  6 Nov 2024 15:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C1D200CB5
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730906532; cv=none; b=CK6MvLOTAOigJsBKLJ8vYpih8NAY8UU/dLzEbatcxIKKG2UQ3v3sU7SsbQ86+yeC4sfyW6FUOIDlZij7bQjNwx2p1Xaunt+e8txYgl0nKx15teuE57aIrZU+VKpzYS9cP4pCliJkuBMLc2jYUSi78PxUmDKZPCNFNzuT15N0Vjk=
+	t=1730906526; cv=none; b=ZW0k5ew50Efj8bONaTq4/vNuOZpiy4knzkDsROpaIxfiLETBHJPUtEnHqmMIJBG/Fk+x59CPTxenOggrtfqnWec1V+ujhSRiuuyr93oMgWAal4i+aGWf5852hVnW1y75snpfeLJLjgwROX+6sct7EBZTgt3BZg2fAImyzhGz5Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730906532; c=relaxed/simple;
-	bh=yWz0ZoIl894qSrEs4p/3LumB+MuMd+WBPNQ8gaStZqI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g14/hAX0VGsXHTBiUjOBc+k1xmIDQpARQ/8vbO2iy6afI4af+6qeEYlYsyEbPYtChT53UXTdowFDd5yWMAVXA3li7EDlmuG/pSDVwB1/Bwdts40bJK5X6lflg3yfqDCJ020oTG409xuYITL/QMETZQUU7ZX4/7i+6Yy27+xdrCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e2e444e355fso826689276.1;
-        Wed, 06 Nov 2024 07:22:10 -0800 (PST)
+	s=arc-20240116; t=1730906526; c=relaxed/simple;
+	bh=hwQb6Bgpzxjusi1sNjee+JRXjDmZXCInqM6lgcIFXi0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RDzeDUm3PhUVSCtdFEij5A6ovFO7DFbRS/pu52XJ7jKQwbZK384nrwz6Wuo3EcyIPXCXzxFFRp0CYAVZIaXokAoWQa42ulNDSaxu04MTb6QFu5SpkmBkIjU2OOfzDab5UqmZ4i1RVCUpSlgR3dEmfIdUSnUidjWZ2Ax9LAOsW3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so70077305ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:22:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730906529; x=1731511329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ZCcFtuDO9+jlZixEXsylP2Du+IUl9/vDpjq5iLELto=;
-        b=G7Fchjo4t4hxeSvA1yAiLyUlrRrfZRx8fWPXpNaXDnxtzQKlAQ0UvfoYUakdTtBSOJ
-         f9DYDJzOKG3Q0xBlMPi02HfzmoMbNGxtnXP9C2qbLt65UNEbMXGH/bx4urViYurq2pL4
-         9YkKXEpcgT5AMApyIY8zSAc2IrOO2fInL3lcKen8U87iKLONor/gy+jzSk1UHjCqGZBG
-         SPXwpz1Wml5zOicWNBca2Rhp9VVyrU3guWsUSM9kB70DGXFs0XhUpuS84xow+UKRNZPg
-         V7oNDgd5b/PA0XLn4MFMHxPBmRfs1aZPjj8IDMuQGRJ9b8fkBrrJczvZI0A365M6Y6/6
-         leKw==
-X-Forwarded-Encrypted: i=1; AJvYcCURGt+iM7ZoxIbjY9ijn5jP0dO1rea0onDm8+3e6BJ0waReNLk/kT6f6KtYAv+8lPVdfouRY84Z6/MelA==@vger.kernel.org, AJvYcCUbD4k4oJO8AzUcWqdwy8frKjlPYpnAPlv8UJ08z/9+uKErOJuQNH2vX7pxZRFdIddyO4FmIuu1e9o7gD+wrIskW9Y=@vger.kernel.org, AJvYcCUhInyFX90000YPGWD5t33NZxLTVermbzwrIjXjJZbr1i49I6LLlEuNEz1t+ODsFK3DvVdTtjnbZ7jR@vger.kernel.org, AJvYcCV5/nNk59N2hRer05pG84s59lmRpgRVLFiJXgYErapoPP8QkpizouccW1UXoDdNPCBvkgje70jqwvEhEMQ=@vger.kernel.org, AJvYcCXvoaWHDeLjm9uezl6b9Q+qCOq+tyxTTZYgAWbAZHmz6lOk/0MNaK9lthx5qRY+80OjLOGU/m5cjtsnZsT2@vger.kernel.org, AJvYcCXvpmj1M0bBTzVuR5/OemfCUAmOfLTwQvhr/RWKSv1MVe2O3NnrUexcnQEtItCOBoVnJAJNJ3s58kcw@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSbpStx08L5XwgCFFwN0Y++k6PBjeLZkjsCdLC/9jkvADYdXOD
-	YlSxjpGvb/MoreUay3ryQU1Iv/q3j4Z41z8e5KwbSGrNgarliJR4KrO/78eK
-X-Google-Smtp-Source: AGHT+IEjFv2YwWwSsE6AvnoEm4qKS9NUpuGrVJVh04raCcfhJVFWxqJl6wIAH1s8zhveIuwuh4U/ng==
-X-Received: by 2002:a05:690c:610f:b0:6e3:1d8c:1224 with SMTP id 00721157ae682-6eabf0589ffmr16184547b3.20.1730906529019;
-        Wed, 06 Nov 2024 07:22:09 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea55ac9a22sm27907647b3.8.2024.11.06.07.22.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 07:22:07 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e29218d34f8so794350276.1;
-        Wed, 06 Nov 2024 07:22:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVF974h96kthoFbYZNfc/4fqjiThIuof49Kh7npWSFc7L2j6HDXb6GDX8lU3n16ZVGcPAi+v+GtQVBTmPmAVD9axGM=@vger.kernel.org, AJvYcCVFS9rYpKNwPYbtCAXWVc90oAfZV7VeBLS+WzvchR9fQvGwccLCxxYZBTW+ArlfQR/7iNSPiyJkOCnh@vger.kernel.org, AJvYcCW/+2gJeudEQVE0fOU9INpEbzwJnZkuAV2rfKkeetOV/DDm3a3m3Vh1TXkvdi/TQCmfX8qYNWGrOezu@vger.kernel.org, AJvYcCWQ8l2KI+xtmLLZPEtOPsy9putGeZ5Xdbh5UScj6lrf64qk6yOLemlble7v+I1g779j3nzu+mxZnBXUshk=@vger.kernel.org, AJvYcCXOsr4k84yF3hlalbxCau9ocUBqDBp6C5qk6jNm/jWmz1TaVQdO4JMKf4ZF0z0ChVak7rmA+p+YQwzLwA==@vger.kernel.org, AJvYcCXZPLyt6WqpeAXqnyr9oKWQEeBltiittQiTpPH7bKJrr5kFyA8jKqA93giVmrI5szKoiG3gV4GTc9A2lvb+@vger.kernel.org
-X-Received: by 2002:a25:8243:0:b0:e30:c930:4af8 with SMTP id
- 3f1490d57ef6-e335a9c8793mr2201505276.3.1730906526105; Wed, 06 Nov 2024
- 07:22:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730906524; x=1731511324;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TxtIZrToYDUsmz51BXFewoWsiGAdqJraREWxLhVJXpA=;
+        b=i1ZMioZ/RQQhOndDytQI5L5IU4IvTqKbc9j5wSeEE84/VI2VEg/gHctkZkRoI2r946
+         dWAKG1lQBVJCxSJW4iq0FHVMUwGOwYB6HPbtYKjX9qEXBa/zvj6ZM0KrAqbLFOy21ZZn
+         4gSu8KR50jIxAcohPafQeXxrbiXW0WTcXsLZupMXowwkMMgN1bUqtSk4bnafGe69YLsv
+         2sViEDfauXea9xHMv5YQa24IjqGdfnpARQ2oBCe5XqdKvMu1ex+s9BYWhUzlXh810vND
+         PiWXYxzLsl3E4jw0xvxzcZTVt9fi1U4R2K5cL7eMCLjGLgElMQLyqWgiSYaWe01l/leW
+         yydg==
+X-Forwarded-Encrypted: i=1; AJvYcCXv95K8FiDbt6X1vg4DC8SHa/QzhYMD2yu+SxPafh8m2cQCpDgu6MNg/FXuiELqrqq7/AEKaMME/pDCoZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgvXPEbTGRUps0Fyyyp/5Zj4LpUeNYpfhBKvr3jkePSkr5eObV
+	uKUP0z1iS9Km+uBjPNaWIh7Zuhr3gyEn/RUEJK7pdRrboEvgCjJjF8uVA4w5dXiA5xSzgq2r+ui
+	Eh45kQ1rfy8438G0CdRsjzHnuq8oqByLZolSHjO1Up6VAmAqYKS1Fnm0=
+X-Google-Smtp-Source: AGHT+IGB0fuX92rvZS/mWn27iW0EG8h6GUgkVshI6dXgd3sqA8coI/pcSaFgr7mzopz8lL1dOWvuvS+ns96sVHW4jkdJMv2qVU9o
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
- <20241106081826.1211088-13-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWxmoUQSSnAVdqhpTQJYvUCJTL0EZbdKmLLhFWi8UCGkg@mail.gmail.com> <4e233ebe-b0e1-4b37-9063-bdbeb5980b13@tuxon.dev>
-In-Reply-To: <4e233ebe-b0e1-4b37-9063-bdbeb5980b13@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Nov 2024 16:21:54 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVrKoyRuaa=jtZ5SJ3OX8ytGyN_jwv2uKX2ohGpg6yiuA@mail.gmail.com>
-Message-ID: <CAMuHMdVrKoyRuaa=jtZ5SJ3OX8ytGyN_jwv2uKX2ohGpg6yiuA@mail.gmail.com>
-Subject: Re: [PATCH 12/31] ASoC: sh: rz-ssi: Use a proper bitmask for clear bits
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com, 
-	p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+X-Received: by 2002:a05:6e02:505:b0:3a5:e1f5:156a with SMTP id
+ e9e14a558f8ab-3a5e1f51a6bmr238666775ab.2.1730906524025; Wed, 06 Nov 2024
+ 07:22:04 -0800 (PST)
+Date: Wed, 06 Nov 2024 07:22:04 -0800
+In-Reply-To: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672b899c.050a0220.350062.026d.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Write in ext4_insert_dentry
+From: syzbot <syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, adilger@dilger.ca, eadavis@qq.com, jack@suse.cz, 
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com, 
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, oe-lkp@lists.linux.dev, 
+	oliver.sang@intel.com, sandeen@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
+syzbot has bisected this issue to:
 
-On Wed, Nov 6, 2024 at 4:17=E2=80=AFPM Claudiu Beznea <claudiu.beznea@tuxon=
-.dev> wrote:
-> On 06.11.2024 16:56, Geert Uytterhoeven wrote:
-> > On Wed, Nov 6, 2024 at 9:19=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.de=
-v> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> While it is still correct to pass zero as the bit-clear mask it may be
-> >> confusing. For this, use a proper bitmask for clear bits.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- a/sound/soc/renesas/rz-ssi.c
-> >> +++ b/sound/soc/renesas/rz-ssi.c
-> >> @@ -331,7 +331,7 @@ static void rz_ssi_set_idle(struct rz_ssi_priv *ss=
-i)
-> >>                 dev_info(ssi->dev, "timeout waiting for SSI idle\n");
-> >>
-> >>         /* Hold FIFOs in reset */
-> >> -       rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_FIFO_RST);
-> >> +       rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_FIFO_RST, SSIFCR_FIFO=
-_RST);
-> >
-> > But you're not clearing SSIFCR_FIFO_RST, you're setting it?
->
-> The bits should be set to reset the FIFOs.
->
-> By "Use a proper bitmask for clear bits" phrase in the patch title or
-> description I was referring at the 3rd argument of the
-> rz_ssi_reg_mask_setl() function, which has the following prototype:
->
-> static void rz_ssi_reg_mask_setl(struct rz_ssi_priv *priv, uint reg,
->
->                                  u32 bclr, u32 bset)
->
->
-> Would you prefer to rephrase it in the next version?
+commit 5872331b3d91820e14716632ebb56b1399b34fe1
+Author: Eric Sandeen <sandeen@redhat.com>
+Date:   Wed Jun 17 19:19:04 2020 +0000
 
-The idea behind such functions is to pass a bitmask representing the
-bits to be cleared to "bclr", and a bitmask representing the bits
-to be set to "bset".  In this case, you do not want to clear any bits,
-so the "bclr" parameter should be zero, and the original code is fine.
+    ext4: fix potential negative array index in do_split()
 
-Gr{oetje,eeting}s,
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15b9ce30580000
+start commit:   2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17b9ce30580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b9ce30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=921b01cbfd887a9b
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c99c3f90699936c1e77
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=173636a7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1600cf40580000
 
-                        Geert
+Reported-by: syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com
+Fixes: 5872331b3d91 ("ext4: fix potential negative array index in do_split()")
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
