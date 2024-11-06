@@ -1,421 +1,122 @@
-Return-Path: <linux-kernel+bounces-398774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B33B9BF5E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:59:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FAC9BF5E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD836283F32
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948D91C20E57
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0D5208236;
-	Wed,  6 Nov 2024 18:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E103220ADFB;
+	Wed,  6 Nov 2024 18:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YDEQFr09"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gwC7plbh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A73208219;
-	Wed,  6 Nov 2024 18:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD62C209F20
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730919556; cv=none; b=IOhFFzPmH8m568JdniAi8CKai5dqi/83kAlQQYpIwu2EYVPxMuuDzBnoK0U9q2VwjuFnwWBf4JouCK2+Cn63Kly2nWxlz7wDkqxsCez9nMSrv/hnap1zUjdmj9aprvcgTGblESgy/x9NpLiwr9sylEegVh7zGndeVSqZHxVTg8E=
+	t=1730919561; cv=none; b=lDbUyv1GYMOiuqovgDVRPU2lQSL5mxnXAZF4ulw7kLgV1MjTap2aKUhRVmcjNGUIWYIcjojRwSjC/KpgBpodXkrdCkUnAZiAkfKb0jlPCspzG+MX5k987T5e7YU8owGuIpfqOzYeKO8czDDvbN8kPkIGCKroKPnTWwAn3suy9Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730919556; c=relaxed/simple;
-	bh=ZcQWDCYqgh/2NASXV5Ud4ArvZhZ16Y5ijanglWE3cZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TAiEDP1MJQyacQrUzsyguDGEiAyMmCsDWa6wR6HhxDUKeLnTEq7VPCetkSA7xbSy8LJ/6sLfsnmTm9jkt4/bzbwnrxZnViL8z1VVWH59B6Vg/mIU42h1Vgktzu2BgxfCjMkhVCyNP/cUI0iL/w6FNaKbQYyvgY7C5lUcnDmQAxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YDEQFr09; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e5a62031aso57387b3a.1;
-        Wed, 06 Nov 2024 10:59:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730919554; x=1731524354; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hsKGfmQriIXowPQeA7kxtjSVb0+d4T2VXufIl2Gh+dk=;
-        b=YDEQFr09jEQfZd/99qosCxoZ/d/g4JA/0dQVXoL8FRs1wl96TmXb3U+Ub+A+nAOeit
-         9H3rSo5cO92mbQJMfudLurEJ3uZwJhgPo5FI7monxnasH3KVBc4Aym26k2RK7DmVzNMH
-         8mrkknfnu1Se4e3DR5By2K6OdkQKI8wSlCMGjtOdE0iNjdvI2mvkT2k2S8PQJHkNsMcQ
-         PIvyQ6uAqgXjKLd1m2bLhp+S9tbi11byU1/Y4/Ud/ijgAcGiDc1QuxfoYub2Ka0ZwPc3
-         1hzZGxanCLMlrca1DJT+wfvjx9o+1zrT5DmcDqjGMH73Lq/NSTMp5wkQgpt0p9rbkgNp
-         HoTA==
+	s=arc-20240116; t=1730919561; c=relaxed/simple;
+	bh=CPTlwe4grbdyPIOrfvUXMEfBRZ6IkY8r9X/KnDxuWHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=udmnBdjf+0CF2zxEUww246DyZESoiAU9jOu6WC30/dYN3gOb6y49Kk1M7E4bS3ICA3V6/Mbykk3vs7PxVl404cpfPlRpLPkXupgKWVsPAl5PsrUYWks7uhVhsPAytTycAphOuBB+pt0g4t/JstF2dBKH+ldVGiXsJeJ6ZR/sChE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gwC7plbh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730919558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SKSTA1wlPf7ylAPAEuFscDQ41z0q8//fTZB4PW5qnTQ=;
+	b=gwC7plbh1sSmYsUJHflKTKpNGwl4EtMnayV9YmbIZniRC3n+EHoz8BkkoSDiqhxvp0ss//
+	7epJhXaHCx5OnHGmzwgZ40kDJqd0PWD38YsJYVjsvBZB+M/TGXIMCeiWSJmMXwc0bcg78x
+	2t4Ai+RUV3L7lskeEFBflXc7NWr5LXQ=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-247-CiTsiHVqPhSfC9X3prgwwQ-1; Wed, 06 Nov 2024 13:59:17 -0500
+X-MC-Unique: CiTsiHVqPhSfC9X3prgwwQ-1
+X-Mimecast-MFC-AGG-ID: CiTsiHVqPhSfC9X3prgwwQ
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83aa904b231so15129039f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:59:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730919554; x=1731524354;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hsKGfmQriIXowPQeA7kxtjSVb0+d4T2VXufIl2Gh+dk=;
-        b=oTXuhyjTly3Izta44xabPJExUEqfQ7+68pdb/G+XgGDGYI9TXudCPlT2rgxmAIIDsJ
-         993ku/DzGqbCaroD+V6QZNAlplfiglpwTIYjLrObvM8WDFa9Wt1sGhq4HL4RZuawnOgO
-         GM+YS7rx0+Ci30oYza/6WDll3I40Xpe0e5FLgBGaj4ztO/DubDart46La8za/Z3jbTvW
-         M0AGnJAT3phzB7jLLe9vepoFYH2UvOfXT36gzWirHO2ygt0ZKPGiTyowJPuXMdoamqc1
-         WdLrHwD5IwcTgE7wkvjAlbovj16MgoCV2TCavY9BA28kJJ8Hg+eMs00RTUiftRrBVbtQ
-         0LWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIc3GYYVsQTQdWr74Hi5Xsoi1dwTjU/4rJH34QKOVH10d8ESv5XMjM05yaa4AHhhxDoeVxsX+/FMcS@vger.kernel.org, AJvYcCUW3nsa6/LYtBICblpbdfFOuqmM3p9oYsAGrkuzBRcuhFH9AV2HHeQ4AE/tgZmoAchJhdVJ/doRLkTJFqc=@vger.kernel.org, AJvYcCVLD7D/XhWtcKbD+fqdZB1gXPuwGliX2eEdIGzxCLsmBPkKdtr4sJ4LCJj3FgIbpaN9P4ZbDBeBq/n/u2dI@vger.kernel.org, AJvYcCX7mbRf1Cem1AUXU7ae4K1aigRbuSOjO6lqNHXM9beVpuyxAq7kimSWiw6I/bK5gsVZFhbKAhEcwGfN@vger.kernel.org, AJvYcCXRBwmNaV89yRvd6rfT//OkynGByc9zuhY51GBCiJFu35uo+GZqik+4B3/hn43shOHx4RmIH3JyJ0Ha@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoZS9JG9u0XxcdzpoFoAgr/1PibguHsd3eKZwx8Qf32L2dLrf3
-	Z2TkMoZy2qH7ikIr4NzJrmjIQFp3YcKDRBaa/k2q2944Kpjznrfk
-X-Google-Smtp-Source: AGHT+IEZFoWPsAlfTT3V+IhDTECeoYtWfll6jrHbODouSvgIJ4dfIJeUW6C6/EWEry0+DZUolpxgdw==
-X-Received: by 2002:a05:6a00:a2a:b0:710:6e83:cd5e with SMTP id d2e1a72fcca58-720c9680ee1mr31083022b3a.0.1730919553668;
-        Wed, 06 Nov 2024 10:59:13 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2e9316sm12477525b3a.148.2024.11.06.10.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 10:59:12 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 6 Nov 2024 10:59:11 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-i2c@vger.kernel.org, Vaishnav Achath <vaishnav.a@ti.com>
-Subject: Re: [PATCH v4 7/7] hwmon: (pmbus/tps25990): add initial support
-Message-ID: <df0db75a-b5e1-4bd8-8a59-de85b0a77fa5@roeck-us.net>
-References: <20241105-tps25990-v4-0-0e312ac70b62@baylibre.com>
- <20241105-tps25990-v4-7-0e312ac70b62@baylibre.com>
+        d=1e100.net; s=20230601; t=1730919556; x=1731524356;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SKSTA1wlPf7ylAPAEuFscDQ41z0q8//fTZB4PW5qnTQ=;
+        b=Z4MlZFGUVOkP2DHj9G/ry61Ruax4CXolvwYgCYDFH3814IDod4ou6oqXdPrNBE2VoB
+         XOu5SfObtwv7kfU0DKmGZS75PETEyIX95HURvBj3gXD3UJn4lyH1BC0qudpwZlx+An8N
+         ysGF0Mf+yN/xBGooeAu4C7xiDX8cWfQUrTWFOVzcH0EzpT8tSGFw3k6EOAz/A6IFqQBz
+         CGYnYT/jZXVUFwWU28vOr17mpmcJJXTSHj+c14ngFwfx5G0qt4QEu8It17iALs1S4kiC
+         m1CJ9Ro2PqKedv1bQXPOhiRFfqkp9qQIetRYMdkR4Rb87YDDUWwUu4aZXU8tSs19Keyh
+         kVeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwnx6vC6fWiuTBSxWJIeVs7ZeKWFogt95kfxELlYzxfZJ5DPtAekxa0NUpC4VEjocezCN0Qej66uiTf4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjflDKGjqmI4UGRaluEw4KASge8aSGfbbOa5LkYrkuHmtNeHwP
+	jl0VU3Jigq5x93KCej2WaWUJloCohpUua3DC/ah22NDBlvQtEbdvCYam6au4tpPZwg1gOH1tdfa
+	JvQ2SfdjxZXHC8knj7x2T0b58TSxW/z0G8m00Bg3RQCjOJL9EdSXCEZHWGbDoAVvJJ4blaZ0m
+X-Received: by 2002:a05:6602:1589:b0:83a:a8c6:21ad with SMTP id ca18e2360f4ac-83b64fc3438mr2044469939f.7.1730919556590;
+        Wed, 06 Nov 2024 10:59:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF5fu+BQk98rvYiawDn7mLMHhKgFT39Cp/7oyDEILxh0dPNKOUBpYjLOIhed6eg2JByxajWpA==
+X-Received: by 2002:a05:6602:1589:b0:83a:a8c6:21ad with SMTP id ca18e2360f4ac-83b64fc3438mr2044468639f.7.1730919556276;
+        Wed, 06 Nov 2024 10:59:16 -0800 (PST)
+Received: from [10.0.0.71] ([65.128.110.20])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67ba907esm328037439f.25.2024.11.06.10.59.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 10:59:15 -0800 (PST)
+Message-ID: <9fa5857d-4d3f-4406-8241-20905bcfcc7f@redhat.com>
+Date: Wed, 6 Nov 2024 12:59:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105-tps25990-v4-7-0e312ac70b62@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] isofs: avoid memory leak in iocharset
+To: Hao Ge <hao.ge@linux.dev>, jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hao Ge <gehao@kylinos.cn>
+References: <20241106082841.51773-1-hao.ge@linux.dev>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <20241106082841.51773-1-hao.ge@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 05, 2024 at 06:58:44PM +0100, Jerome Brunet wrote:
-> Add initial support for the Texas Instruments TPS25990 eFuse.
-> This adds the basic PMBUS telemetry support for the device.
+On 11/6/24 2:28 AM, Hao Ge wrote:
+> From: Hao Ge <gehao@kylinos.cn>
+
+...
+
+> The opt->iocharset is freed inside the isofs_fill_super function,
+> But there may be situations where it's not possible to
+> enter this function.
 > 
-> Tested-by: Vaishnav Achath <vaishnav.a@ti.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  Documentation/hwmon/index.rst    |   1 +
->  Documentation/hwmon/tps25990.rst | 148 ++++++++++++++
->  MAINTAINERS                      |   2 +
->  drivers/hwmon/pmbus/Kconfig      |  17 ++
->  drivers/hwmon/pmbus/Makefile     |   1 +
->  drivers/hwmon/pmbus/tps25990.c   | 428 +++++++++++++++++++++++++++++++++++++++
->  6 files changed, 597 insertions(+)
+> For example, in the get_tree_bdev_flags function,when
+> encountering the situation where "Can't mount, would change RO state,"
+> In such a case, isofs_fill_super will not have the opportunity
+> to be called,which means that opt->iocharset will not have the chance
+> to be freed,ultimately leading to a memory leak.
 > 
-> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-> index 55f1111594b2e9ada4a881e5d4d8884f33256d1f..1a3cb0a59f7210b8a5e972a8015658b983834cd2 100644
-> --- a/Documentation/hwmon/index.rst
-> +++ b/Documentation/hwmon/index.rst
-> @@ -236,6 +236,7 @@ Hardware Monitoring Kernel Drivers
->     tmp464
->     tmp513
->     tps23861
-> +   tps25990
->     tps40422
->     tps53679
->     tps546d24
-> diff --git a/Documentation/hwmon/tps25990.rst b/Documentation/hwmon/tps25990.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ed9e74d43e2c2f070d3abe987d93bcdfcf2162ec
-> --- /dev/null
-> +++ b/Documentation/hwmon/tps25990.rst
-> @@ -0,0 +1,148 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +Kernel driver tps25990
-> +======================
-> +
-> +Supported chips:
-> +
-> +  * TI TPS25990
-> +
-> +    Prefix: 'tps25990'
-> +
-> +  * Datasheet
-> +
-> +    Publicly available at Texas Instruments website: https://www.ti.com/lit/gpn/tps25990
-> +
-> +Author:
-> +
-> +	Jerome Brunet <jbrunet@baylibre.com>
-> +
-> +Description
-> +-----------
-> +
-> +This driver implements support for TI TPS25990 eFuse.
-> +This is an integrated, high-current circuit protection and power
-> +management device with PMBUS interface
-> +
-> +Device compliant with:
-> +
-> +- PMBus rev 1.3 interface.
-> +
-> +Device supports direct format for reading input voltages,
-> +output voltage, input current, input power and temperature.
-> +
-> +Due to the specificities of the chip, all history reset attributes
-> +are tied together. Resetting the history of a sensor, resets the
-> +history of all the sensors.
-> +
-> +The driver exports the following attributes via the 'sysfs' files
-> +for input current:
-> +
-> +**curr1_average**
-> +
-> +**curr1_crit**
-> +
-> +**curr1_crit_alarm**
-> +
-> +**curr1_highest**
-> +
-> +**curr1_input**
-> +
-> +**curr1_label**
-> +
-> +**curr1_max**
-> +
-> +**curr1_max_alarm**
-> +
-> +**curr1_reset_history**
-> +
-> +The driver provides the following attributes for main input voltage:
-> +
-> +**in1_average**
-> +
-> +**in1_crit**
-> +
-> +**in1_crit_alarm**
-> +
-> +**in1_highest**
-> +
-> +**in1_input**
-> +
-> +**in1_label**
-> +
-> +**in1_lcrit**
-> +
-> +**in1_lcrit_alarm**
-> +
-> +**in1_lowest**
-> +
-> +**in1_max**
-> +
-> +**in1_max_alarm**
-> +
-> +**in1_min**
-> +
-> +**in1_min_alarm**
-> +
-> +**in1_reset_history**
-> +
-> +The driver provides the following attributes for auxiliary input voltage:
-> +
-> +**in2_input**
-> +
-> +**in2_label**
-> +
-> +The driver provides the following attributes for output voltage:
-> +
-> +**in3_average**
-> +
-> +**in3_input**
-> +
-> +**in3_label**
-> +
-> +**in3_lowest**
-> +
-> +**in3_min**
-> +
-> +**in3_min_alarm**
-> +
-> +**in3_reset_history**
-> +
-> +The driver provides the following attributes for input power:
-> +
-> +**power1_alarm**
-> +
-> +**power1_average**
-> +
-> +**power1_input**
-> +
-> +**power1_input_highest**
-> +
-> +**power1_label**
-> +
-> +**power1_max**
-> +
-> +**power1_reset_history**
-> +
-> +The driver provides the following attributes for temperature:
-> +
-> +**temp1_average**
-> +
-> +**temp1_crit**
-> +
-> +**temp1_crit_alarm**
-> +
-> +**temp1_highest**
-> +
-> +**temp1_input**
-> +
-> +**temp1_max**
-> +
-> +**temp1_max_alarm**
-> +
-> +**temp1_reset_history**
-> +
-> +The driver provides the following attributes for sampling:
-> +
-> +**samples**
-> +
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4f21d7d2ce992f14d8c533f0c8742edb22a0db3f..10a65cd5c84e56cf876ee5eb06336b5bc8ff991c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22816,6 +22816,8 @@ M:	Jerome Brunet <jbrunet@baylibre.com>
->  L:	linux-hwmon@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/hwmon/pmbus/ti,tps25990.yaml
-> +F:	Documentation/hwmon/tps25990.rst
-> +F:	drivers/hwmon/pmbus/tps25990.c
->  
->  TEXAS INSTRUMENTS TPS23861 PoE PSE DRIVER
->  M:	Robert Marko <robert.marko@sartura.hr>
-> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-> index f6d3528419536a68011d67a4a239c0cba1bbf475..22418a05ced0c4d7025a243134f231c54c741371 100644
-> --- a/drivers/hwmon/pmbus/Kconfig
-> +++ b/drivers/hwmon/pmbus/Kconfig
-> @@ -510,6 +510,23 @@ config SENSORS_TDA38640_REGULATOR
->  	  If you say yes here you get regulator support for Infineon
->  	  TDA38640 as regulator.
->  
-> +config SENSORS_TPS25990
-> +	tristate "TI TPS25990"
-> +	help
-> +	  If you say yes here you get hardware monitoring support for TI
-> +	  TPS25990.
-> +
-> +	  This driver can also be built as a module. If so, the module will
-> +	  be called tps25990.
-> +
-> +config SENSORS_TPS25990_REGULATOR
-> +	bool "Regulator support for TPS25990 and compatibles"
-> +	depends on SENSORS_TPS25990 && REGULATOR
-> +	default SENSORS_TPS25990
-> +	help
-> +	  If you say yes here you get regulator support for Texas Instruments
-> +	  TPS25990.
-> +
->  config SENSORS_TPS40422
->  	tristate "TI TPS40422"
->  	help
-> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-> index d00bcc758b97200b80158e33b0ac41e6e5ac3231..3d3183f8d2a7060eb513f54f4f0a78ba37c09393 100644
-> --- a/drivers/hwmon/pmbus/Makefile
-> +++ b/drivers/hwmon/pmbus/Makefile
-> @@ -51,6 +51,7 @@ obj-$(CONFIG_SENSORS_PXE1610)	+= pxe1610.o
->  obj-$(CONFIG_SENSORS_Q54SJ108A2)	+= q54sj108a2.o
->  obj-$(CONFIG_SENSORS_STPDDC60)	+= stpddc60.o
->  obj-$(CONFIG_SENSORS_TDA38640)	+= tda38640.o
-> +obj-$(CONFIG_SENSORS_TPS25990)	+= tps25990.o
->  obj-$(CONFIG_SENSORS_TPS40422)	+= tps40422.o
->  obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
->  obj-$(CONFIG_SENSORS_TPS546D24)	+= tps546d24.o
-> diff --git a/drivers/hwmon/pmbus/tps25990.c b/drivers/hwmon/pmbus/tps25990.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..db59638f6c626f2467b859f023523276cfb6c3a5
-> --- /dev/null
-> +++ b/drivers/hwmon/pmbus/tps25990.c
-> @@ -0,0 +1,428 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (c) 2024 BayLibre, SAS.
-> +// Author: Jerome Brunet <jbrunet@baylibre.com>
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/err.h>
-> +#include <linux/hwmon-sysfs.h>
-> +#include <linux/i2c.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +
-> +#include "pmbus.h"
-> +
-> +#define TPS25990_READ_VAUX		0xd0
-> +#define TPS25990_READ_VIN_MIN		0xd1
-> +#define TPS25990_READ_VIN_PEAK		0xd2
-> +#define TPS25990_READ_IIN_PEAK		0xd4
-> +#define TPS25990_READ_PIN_PEAK		0xd5
-> +#define TPS25990_READ_TEMP_AVG		0xd6
-> +#define TPS25990_READ_TEMP_PEAK		0xd7
-> +#define TPS25990_READ_VOUT_MIN		0xda
-> +#define TPS25990_READ_VIN_AVG		0xdc
-> +#define TPS25990_READ_VOUT_AVG		0xdd
-> +#define TPS25990_READ_IIN_AVG		0xde
-> +#define TPS25990_READ_PIN_AVG		0xdf
-> +#define TPS25990_VIREF			0xe0
-> +#define TPS25990_PK_MIN_AVG		0xea
-> +#define  PK_MIN_AVG_RST_PEAK		BIT(7)
-> +#define  PK_MIN_AVG_RST_AVG		BIT(6)
-> +#define  PK_MIN_AVG_RST_MIN		BIT(5)
-> +#define  PK_MIN_AVG_AVG_CNT		GENMASK(2, 0)
-> +#define TPS25990_MFR_WRITE_PROTECT	0xf8
-> +#define  TPS25990_UNLOCKED		BIT(7)
-> +
-> +#define TPS25990_8B_SHIFT		2
-> +#define TPS25990_VIN_OVF_NUM		525100
-> +#define TPS25990_VIN_OVF_DIV		10163
-> +#define TPS25990_VIN_OVF_OFF		155
-> +#define TPS25990_IIN_OCF_NUM		953800
-> +#define TPS25990_IIN_OCF_DIV		129278
-> +#define TPS25990_IIN_OCF_OFF		157
-> +
-> +#define PK_MIN_AVG_RST_MASK		(PK_MIN_AVG_RST_PEAK | \
-> +					 PK_MIN_AVG_RST_AVG  | \
-> +					 PK_MIN_AVG_RST_MIN)
-> +
-> +/*
-> + * Arbitrary default Rimon value: 1kOhm
-> + * This correspond to an overcurrent limit of 55A, close to the specified limit
-> + * of un-stacked TPS25990 and makes further calculation easier to setup in
-> + * sensor.conf, if necessary
-> + */
-> +#define TPS25990_DEFAULT_RIMON		1000000000
-> +
-> +static void tps25990_set_m(int *m, u32 rimon)
-> +{
-> +	u64 val = ((u64)*m) * rimon;
-> +
-> +	/* Make sure m fits the s32 type */
-> +	*m = DIV_ROUND_CLOSEST_ULL(val, 1000000);
-> +}
-> +
-> +static int tps25990_mfr_write_protect_set(struct i2c_client *client,
-> +					  u8 protect)
-> +{
-> +	/*
-> +	 * The chip has a single protection mode, set it regardless of
-> +	 * the specific protection requested
-> +	 */
-> +	return pmbus_write_byte_data(client, -1, TPS25990_MFR_WRITE_PROTECT,
-> +				     protect ? 0x0 : 0xa2);
+> Let's move the memory freeing of opt->iocharset into
+> isofs_free_fc function.
+> 
+> Fixes: 1b17a46c9243 ("isofs: convert isofs to use the new mount API")
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
 
-After some thought, I think it would be better to reject all protect values
-other than 0 (no write protection) and PB_WP_ALL because that is what the chip
-supports. Something like
+Agreed, thank you.
 
-	if (protect & ~PB_WP_ALL)
-		return -ENXIO;		// or -EINVAL ? Not really sure.
+Reviewed-by: Eric Sandeen <sandeen@redhat.com>
 
-Thanks,
-Guenter
+
 
