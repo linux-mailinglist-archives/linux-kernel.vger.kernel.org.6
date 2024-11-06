@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-397393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7DA9BDB6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7AFB9BDB71
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55CE9284C5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:50:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EFC6284C2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D861F18C92F;
-	Wed,  6 Nov 2024 01:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B5718BBBB;
+	Wed,  6 Nov 2024 01:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFmGBOvK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwK13Mb+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F42833F3;
-	Wed,  6 Nov 2024 01:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CFA18D649;
+	Wed,  6 Nov 2024 01:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730857826; cv=none; b=GteKHDLrXvOkOGwyIBoKbOUrdRaA3ARult3gJ97aZzUgoF6tlWmuowk8dRZi4NM3dFpuYQlvoljymTxGGuYzY9KK+yxME2fR210ykVMaBIJA0l4H4vstTMYqZf6VDZp1ZYLKkbAHfUW6a+PqoXMXCYZShoRr3tGjYw/Wk5JMYxY=
+	t=1730857829; cv=none; b=CfsCiNGAX/nfs/7QPLpcQSEdamcVJb5Dk7WsZ8KErANY0gb9YtTeNB70qzCaGpeoISKZRBxPrZ0yX1m6GiEuvq6N5FqfkOwZEQeVcmZvBhM8LXAcZAj8CBwrQg1+HLDt5yjP0OAWUjfccBxv4kfMLlT05ka2eckCl5gDZWNUhU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730857826; c=relaxed/simple;
-	bh=3LFEDOWB+2Q8xYQ6abpdlLPvINSwrYHpsVfa02lPGgQ=;
+	s=arc-20240116; t=1730857829; c=relaxed/simple;
+	bh=y8MG1WBPKCKkhseOfwN6igxneU0mxRhDtteJDtTIZ80=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RBqyMYgyfdPigbS3DBEGApZb+fz+B+eAOrVQWrN2TfaAREbm92CxYduFVqJg7lBEcx621ftDcUYMxcJ+F/DdkUJH6Q+eYt31occt8UN0NPORD9pZbH/B+M8/IFxR0+Q96EvGt9zsdke8Eb1btEd3vrgA7gGHMphNmpvgsSUp8/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFmGBOvK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6AD3C4CECF;
-	Wed,  6 Nov 2024 01:50:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=lNucGj7W+MKQeJuCnswE8g+oiGbwHjKW/8gUkfPu1LLrIukl3zoRat5bebeFo5R36U41x9Q1eqeaBoxifxSsgweucVndphVu4G0D7WXECXMXzvfjZK/xSaF4IkuEt9kpqAWhjAFm5hScJlpZ/d5gaWtEY98d99hJ9lOXq5Nayz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwK13Mb+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3BFC4CECF;
+	Wed,  6 Nov 2024 01:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730857825;
-	bh=3LFEDOWB+2Q8xYQ6abpdlLPvINSwrYHpsVfa02lPGgQ=;
+	s=k20201202; t=1730857828;
+	bh=y8MG1WBPKCKkhseOfwN6igxneU0mxRhDtteJDtTIZ80=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gFmGBOvKRX5nprWnaijVZn0jesxeIkSXG26KOvrPqvWBqyk/7qwYPy8LtrUkRmChS
-	 c1au3qoKuOMGIuATGkCAwHtbUmbwZo+unoe4r4T7WMG8ykbukC2oKiM6EcXwOpaLze
-	 8KPLEzjfvnLnqIXJkAGoTdsBXNBpS2ys4AjkjmdzyyPk4QSI3XqM0ZChy24sQYVkkw
-	 mOMQYfhZu4oK46zWvk3fEhlUcI6P9KIqztD0I0rY/yS/0QYexNz1dnNyELr/xUBWpa
-	 J0e3IGRoOnsviSxJTRbbVYeeNruoh59eoA5Uc0xiCTfVrT/x+jkmfr5KkKVG+X/cIt
-	 VoPX4C55K7dsw==
+	b=JwK13Mb+stiNLS4FappBwqATmT30X/8M77CVZWPXX0ILf0rvNKTm+fhkg8LmxGiMe
+	 B8oIrb9B5XKT+OAGhlLNtOnRCNUTv1Y6kzteIM8SWbTb7sEE9VMFPMdyvmJFcERcfB
+	 o5Sgy3AJaSZJ6uDsrtkNWdObQewVHpt/w3UVLLndy8ivr+ze04OrA05LCtihwkD2KI
+	 GeeNNvfQgAFGcTmUXUIBOtjvEmKxGsquWKxfn7j32Yw9lswZDsq3ylPgP2LYIl8377
+	 aww6Ayqqb1VebtT+WXNgvKwHIVTp1szu4MskpXIKHZ5W4LL5zRGJhcLOFpeX0gwSaS
+	 jAegtPvI35cgQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6A23809A80;
-	Wed,  6 Nov 2024 01:50:35 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD233809A80;
+	Wed,  6 Nov 2024 01:50:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: hisilicon: hns: use ethtool string helpers
+Subject: Re: [PATCH v1 0/2] Add support for Synopsis DesignWare version 3.72a
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173085783449.762099.10027713671502165728.git-patchwork-notify@kernel.org>
-Date: Wed, 06 Nov 2024 01:50:34 +0000
-References: <20241101220023.290926-1-rosenp@gmail.com>
-In-Reply-To: <20241101220023.290926-1-rosenp@gmail.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, shenjian15@huawei.com, salil.mehta@huawei.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, shaojijie@huawei.com,
+ <173085783749.762099.1620260205741649555.git-patchwork-notify@kernel.org>
+Date: Wed, 06 Nov 2024 01:50:37 +0000
+References: <20241102114122.4631-1-l.rubusch@gmail.com>
+In-Reply-To: <20241102114122.4631-1-l.rubusch@gmail.com>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: robh@kernel.org, kuba@kernel.org, alexandre.torgue@foss.st.com,
+ joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, peppe.cavallaro@st.com, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net-next.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  1 Nov 2024 15:00:22 -0700 you wrote:
-> The latter is the preferred way to copy ethtool strings.
+On Sat,  2 Nov 2024 11:41:20 +0000 you wrote:
+> Add compatibility and dt-binding for Synopsis DesignWare version 3.72a.
+> The dwmac is used on some older Altera/Intel SoCs such as Arria10.
+> Updating compatibles in the driver and bindings for the DT improves the
+> binding check coverage for such SoCs.
 > 
-> Avoids manually incrementing the pointer. Cleans up the code quite well.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Jijie Shao <shaojijie@huawei.com>
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] net: hisilicon: hns: use ethtool string helpers
-    https://git.kernel.org/netdev/net-next/c/7a4ea5da4d02
+  - [v1,1/2] net: stmmac: add support for dwmac 3.72a
+    https://git.kernel.org/netdev/net-next/c/ffda5c62878f
+  - [v1,2/2] dt-bindings: net: snps,dwmac: add support for Arria10
+    https://git.kernel.org/netdev/net-next/c/8bed89232a8c
 
 You are awesome, thank you!
 -- 
