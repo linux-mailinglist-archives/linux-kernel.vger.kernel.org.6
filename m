@@ -1,209 +1,112 @@
-Return-Path: <linux-kernel+bounces-397878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099C59BE1C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:07:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415099BE1CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:08:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7CB284EA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83F11F23683
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A831DE8AC;
-	Wed,  6 Nov 2024 09:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AE61DA10A;
+	Wed,  6 Nov 2024 09:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dA+D8MA+"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzZbmJRB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB371D9337;
-	Wed,  6 Nov 2024 09:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6733F1D9682;
+	Wed,  6 Nov 2024 09:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730883843; cv=none; b=aSC95aOcOBum6RlRZslH15nHWbstqrTCouvZKjFcRQoV870s8yfYdBEhebXOBSYsjsuwSWGjEtxAd5zdxV07IIgtkYCABSV9SO6Ye+ZlWawaHRJJh6NC9q7VlgejLHRuC5EI9FaeiErI6i1Z4YtMwIcSKM748qPt99gs+leDcrs=
+	t=1730883869; cv=none; b=UmR+LXV6XmOi8+t3QbKbJTFhwdqhhfuvTC2v42oj0Z1QieIZvA0SMZ0cykTvJWn2ap/3Klg/HEWyMYjbkK6BrSpbURpYo1Lhk9bjnrO9DjU6HOaHQ3Ef1N1NDdOMJp1O23AswyofmUm0fQeeb4zPrGpPCjoEUD/g6w701EulRPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730883843; c=relaxed/simple;
-	bh=6cwVqwRy1wuBgGHHjAPhRk6T+e2OlsLMv98lUlJ1Mvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YnwdGR8R28rCh9T+BMzTBlklAUzdQlFVx1FWpWkz0mxBeWV5wrX907zRDbft1/iRMBiKq8PLJmetiwJUYm63vH568BuYJ+aQKI8nJd7aqvTwFKQJjtdvaTRhycWR5HKhfbN59VnSRS4+3qdVa9PsplUwdhj+zMh/cr2mk2oLL30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dA+D8MA+; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730883833; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=Z+sxZ++Zk/sXquFko87mDs4djKewv/tiZai6wAuYD2I=;
-	b=dA+D8MA+u1EivGpXdqXtyxoSMEr7sdEvK2Q91Iw0WLcnsqZBnMtDo+EMXdhtPVduAuG79J2riXn4LwiQkWU2hyGraoQ6RvYa3PKabkN76WXW3iul17I183rhjUOJWm31cYBIg0PMqkyZS15Ne/qV2OQsXiQUodp5sLmo84V5VmM=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WIqmpDn_1730883831 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 06 Nov 2024 17:03:52 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Cc: bhelgaas@google.com,
-	mahesh@linux.ibm.com,
-	oohall@gmail.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	xueshuai@linux.alibaba.com
-Subject: [RFC PATCH v1 2/2] PCI/AER: report fatal errors of RCiEP and EP if link recoverd
-Date: Wed,  6 Nov 2024 17:03:39 +0800
-Message-ID: <20241106090339.24920-3-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20241106090339.24920-1-xueshuai@linux.alibaba.com>
-References: <20241106090339.24920-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1730883869; c=relaxed/simple;
+	bh=14LiskvmrAxH19seuwybTIAIS03TefkfmGN9gcOpSRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nfJtm0fClXrs3/Mv01jPeZT2UnMeoHOBx+aQwLnkYohn0HIaUP7anMxOJvUCvv6i3w5HtqUXwq1/XqRhIjb4nZVpGTYFWcdpOSCp57Vz3WxY76gzAl4HprAuRTgpzEfBQehxm15P0CwLdBaB5QgaoMeNt+tmkAIfwdz+OW9zsCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzZbmJRB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C73AC4CECD;
+	Wed,  6 Nov 2024 09:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730883868;
+	bh=14LiskvmrAxH19seuwybTIAIS03TefkfmGN9gcOpSRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rzZbmJRBcqbgXgYaBOLVAb4F+VwDv1meTvq6TBFHewgm2Ax2UD6+6FrJ27eIReMxq
+	 dlSxKDl9FhR1If78kCtPjRT8X04YZ4mc+vsUMJTFQvx9z7sFQM7iRIWFqSWsMA9D9C
+	 PTcjuo95TRk7WNj+zsBA7zZ57j8ADRpnNa0bkD/nhnJYwMDXNA4QXXL5TeA72xxPmh
+	 jcUnBoFNOlTLbL0owGm38XvpbioneVAYp3+uyVpOc3cxlPhrbS6Whb0wNzEdlH/5kX
+	 eWfIgZWKRTZuJakpBUP6XnyPlxyvK+vYRG7gAt+a3wLBNY1xBXgyCB3wjNxdQr+jxM
+	 q7WniXc2AkyJQ==
+Date: Wed, 6 Nov 2024 09:04:22 +0000
+From: Lee Jones <lee@kernel.org>
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: mfd: sprd,sc2731: convert to YAML
+Message-ID: <20241106090422.GK1807686@google.com>
+References: <efd200c3b5b75405e4e450d064b026f10ae2f8e0.1730709384.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <efd200c3b5b75405e4e450d064b026f10ae2f8e0.1730709384.git.stano.jakubek@gmail.com>
 
-The AER driver has historically avoided reading the configuration space of an
-endpoint or RCiEP that reported a fatal error, considering the link to that
-device unreliable. Consequently, when a fatal error occurs, the AER and DPC
-drivers do not report specific error types, resulting in logs like:
+On Mon, 04 Nov 2024, Stanislav Jakubek wrote:
 
-[  245.281980] pcieport 0000:30:03.0: EDR: EDR event received
-[  245.287466] pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
-[  245.295372] pcieport 0000:30:03.0: DPC: ERR_FATAL detected
-[  245.300849] pcieport 0000:30:03.0: AER: broadcast error_detected message
-[  245.307540] nvme nvme0: frozen state error detected, reset controller
-[  245.722582] nvme 0000:34:00.0: ready 0ms after DPC
-[  245.727365] pcieport 0000:30:03.0: AER: broadcast slot_reset message
+> Convert the Spreadtrum SC27xx PMIC bindings to DT schema. Adjust the
+> filename to match the compatible of the only in-tree user, SC2731.
+> Change #interrupt-cells value to 1, as according to [1] that is the
+> correct value.
+> Move partial examples of child nodes in the child node schemas to this new
+> MFD schema to have one complete example.
+> 
+> [1] https://lore.kernel.org/lkml/b6a32917d1e231277d240a4084bebb6ad91247e3.1550060544.git.baolin.wang@linaro.org/
+> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> ---
+> Changes in V3:
+> - remove $ref to nvmem/sc2731-efuse and list the compatibles with
+>   additionalProperties: true (Krzysztof)
+> 
+> Changes in V2:
+> - rebase on next-20241029
+> - drop partial examples in child node schemas, move them here (Rob)
+> 
+> Link to V2: https://lore.kernel.org/lkml/ZyExK01iprBHhGm6@standask-GA-A55M-S2HP/
+> Link to V1: https://lore.kernel.org/lkml/Zr3X1RoQs7ElTnlJ@standask-GA-A55M-S2HP/
+> 
+>  .../bindings/iio/adc/sprd,sc2720-adc.yaml     |  17 --
+>  .../bindings/leds/sprd,sc2731-bltc.yaml       |  31 ---
+>  .../devicetree/bindings/mfd/sprd,sc2731.yaml  | 252 ++++++++++++++++++
+>  .../bindings/mfd/sprd,sc27xx-pmic.txt         |  40 ---
+>  .../bindings/power/supply/sc2731-charger.yaml |  21 +-
+>  .../bindings/power/supply/sc27xx-fg.yaml      |  38 +--
+>  .../regulator/sprd,sc2731-regulator.yaml      |  21 --
+>  .../bindings/rtc/sprd,sc2731-rtc.yaml         |  16 --
 
-But, if the link recovered after hot reset, we can safely access AER status of
-the error device. In such case, report fatal error which helps to figure out the
-error root case.
+Is everyone happy with me merging this through MFD?
 
-After this patch, the logs like:
-
-[  414.356755] pcieport 0000:30:03.0: EDR: EDR event received
-[  414.362240] pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
-[  414.370148] pcieport 0000:30:03.0: DPC: ERR_FATAL detected
-[  414.375642] pcieport 0000:30:03.0: AER: broadcast error_detected message
-[  414.382335] nvme nvme0: frozen state error detected, reset controller
-[  414.645413] pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
-[  414.788016] nvme 0000:34:00.0: ready 0ms after DPC
-[  414.796975] nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
-[  414.807312] nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
-[  414.815305] nvme 0000:34:00.0:    [ 4] DLP                    (First)
-[  414.821768] pcieport 0000:30:03.0: AER: broadcast slot_reset message
-
-Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
----
- drivers/pci/pci.h      |  1 +
- drivers/pci/pcie/aer.c | 50 ++++++++++++++++++++++++++++++++++++++++++
- drivers/pci/pcie/err.c |  6 +++++
- 3 files changed, 57 insertions(+)
-
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 0866f79aec54..143f960a813d 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -505,6 +505,7 @@ struct aer_err_info {
- };
- 
- int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info);
-+int aer_get_device_fatal_error_info(struct pci_dev *dev, struct aer_err_info *info);
- void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
- #endif	/* CONFIG_PCIEAER */
- 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 13b8586924ea..0c1e382ce117 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -1252,6 +1252,56 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
- 	return 1;
- }
- 
-+/**
-+ * aer_get_device_fatal_error_info - read fatal error status from EP or RCiEP
-+ * and store it to info
-+ * @dev: pointer to the device expected to have a error record
-+ * @info: pointer to structure to store the error record
-+ *
-+ * Return 1 on success, 0 on error.
-+ *
-+ * Note that @info is reused among all error devices. Clear fields properly.
-+ */
-+int aer_get_device_fatal_error_info(struct pci_dev *dev, struct aer_err_info *info)
-+{
-+	int type = pci_pcie_type(dev);
-+	int aer = dev->aer_cap;
-+	u32 aercc;
-+
-+	pci_info(dev, "type :%d\n", type);
-+
-+	/* Must reset in this function */
-+	info->status = 0;
-+	info->tlp_header_valid = 0;
-+	info->severity = AER_FATAL;
-+
-+	/* The device might not support AER */
-+	if (!aer)
-+		return 0;
-+
-+
-+	if (type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_RC_END) {
-+		/* Link is healthy for IO reads now */
-+		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
-+			&info->status);
-+		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK,
-+			&info->mask);
-+		if (!(info->status & ~info->mask))
-+			return 0;
-+
-+		/* Get First Error Pointer */
-+		pci_read_config_dword(dev, aer + PCI_ERR_CAP, &aercc);
-+		info->first_error = PCI_ERR_CAP_FEP(aercc);
-+
-+		if (info->status & AER_LOG_TLP_MASKS) {
-+			info->tlp_header_valid = 1;
-+			pcie_read_tlp_log(dev, aer + PCI_ERR_HEADER_LOG, &info->tlp);
-+		}
-+	}
-+
-+	return 1;
-+}
-+
- static inline void aer_process_err_devices(struct aer_err_info *e_info)
- {
- 	int i;
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 31090770fffc..a74ae6a55064 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -196,6 +196,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
- 	struct pci_dev *bridge;
- 	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
- 	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-+	struct aer_err_info info;
- 
- 	/*
- 	 * If the error was detected by a Root Port, Downstream Port, RCEC,
-@@ -223,6 +224,10 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
- 			pci_warn(bridge, "subordinate device reset failed\n");
- 			goto failed;
- 		}
-+
-+		/* Link recovered, report fatal errors on RCiEP or EP */
-+		if (aer_get_device_fatal_error_info(dev, &info))
-+			aer_print_error(dev, &info);
- 	} else {
- 		pci_walk_bridge(bridge, report_normal_detected, &status);
- 	}
-@@ -259,6 +264,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
- 	if (host->native_aer || pcie_ports_native) {
- 		pcie_clear_device_status(dev);
- 		pci_aer_clear_nonfatal_status(dev);
-+		pci_aer_clear_fatal_status(dev);
- 	}
- 
- 	pci_walk_bridge(bridge, pci_pm_runtime_put, NULL);
 -- 
-2.39.3
-
+Lee Jones [李琼斯]
 
