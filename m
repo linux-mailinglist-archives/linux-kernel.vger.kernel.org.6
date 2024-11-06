@@ -1,79 +1,63 @@
-Return-Path: <linux-kernel+bounces-398566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4142A9BF2ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:12:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891EC9BF2EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3E53281FDC
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1B71C245BE
 	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E9E2040B7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EEC204926;
 	Wed,  6 Nov 2024 16:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdIpjHP8"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GxJBm5uK"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B991DCB06
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1777189F5C;
+	Wed,  6 Nov 2024 16:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909550; cv=none; b=iLbQGClk3bYjjnJNHgOrZvu3IpAb1VtsGhj0whQmT/OSJAHkoFlGAMR1DfzMdbCVwvnjdozS6B2D4aei8zfDbr2yknwabVF3OEIlpq2mQpCTxUz9Fk6p6VBaN2zWltBVf7EyqC5ncTHgstzczKY0eETeN1y/r/W5itzTry6VnVQ=
+	t=1730909551; cv=none; b=V1+mFCGVvHEUs/brkrpSpm1x9hnni4cze8zpJckoxzO2xLoT31QOak3j/Z+djG1fS+h3q07UCdUAcK6iKLmDi+w/h8+QdMfj7OTN36XHFGZx0IpwjDSlb6haftbTnO3V3IFZjrtwQ9sK+aMU7kdYNZRL+Wmh85FqYiHsLYTz1J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909550; c=relaxed/simple;
-	bh=S+6j0e/Je7jCLayvyjzxx3aRIopaCyH2OeALP6BFQng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNfI/ehzuUKm3BmtmZp8xnUOzsu7A5D28kkXteUWH/rntVS6bzlJmBljtaBhNjNS069Cuu2PMHT3uytK2gaSnRu8uIhvEOQRWPi+siSsCB+fLfizsyQNRGFlPM9Ed28D49PjvdD2XoSUMNVkbtAKg2mPm4rwrHubNJ11ocOFx2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdIpjHP8; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720be27db74so904030b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:12:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730909548; x=1731514348; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oYaP27BPhUyEydSF0IDN+ySR2iGr3Su9AB65thly3D8=;
-        b=FdIpjHP8vEv95b7aLTd9nSZqUvgi1mjSDXBNvMjLzqYp1gooqNO2yIMqZNROGrqD1w
-         5bdX+9u7TSVCDpSyD4BzAD+1K1VZ9I96Gyr59Ro2Eu5SGTnbP4tkybczt/QPJ1njyzZC
-         Dqg4/eb5eJcB6u5cAQTOxmG65QqEVQT/b+Z8zRNf/v/TDINvt4baDYytTfKZ8eHys/Uh
-         /nCCzO8FPsmHS/92EwDYZM00+p3fTRhXTV5fUVT/lR8lc+oqxF4o3un29fGni7zvEGB6
-         BTmixnTSMYyGXwkZavXlfQTihgSdM7faVmWa8L7J3081f8a2esI0fpdoqTIyiFvl45EM
-         YXAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730909548; x=1731514348;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYaP27BPhUyEydSF0IDN+ySR2iGr3Su9AB65thly3D8=;
-        b=E4ku/V53tzAoujtcxx0uQKAiBWgC+S0AFo3SgaFZ2YURz76GcoHauBNo8CndxqsRlz
-         WwU3cEl2EeDS70WdhE9hOb8/YhTwWYhonzPHbON4Y9jPCYszhRzqAEi63Skv3WZKJYmt
-         1NLuORHEbmyBkdVrfrUuNh1P4DmWO9Jm1XDKM5kAq9PjT+bB0KkjakJcQ4OOGaKVGinJ
-         r47btFjv/PCdeTbMx/r7gCS6bdqWjEqMOx/U0zKjSTSU/a8VlJ3pVc8sRQGCiGX2EQV+
-         2/4hcvge+p98rdSBg0Wna192e5EqqP+bxWq76DGOkqYO2f1VOyDd8vRlvZgftDaSdD84
-         cabg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXVuK0aRpXutASxSAX4okeTsaslFZ2FhxRVDsPGR+qtQeLUYuq1pPedUERF32wHflN1dWQ0IaivjgpvRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfNuvZmNycFdSwDHpwAZ6bideuAj0ts6nZvGQvPHp72u92o8IP
-	kck1/pmO3Qlk68vjNoDay2/SYtgMCq/GCAySE9fN9coe+XTGP0xP
-X-Google-Smtp-Source: AGHT+IGdbktmo4RmwOx60EB12b0bGn9SSTGFLek5URc5mLfu2TZT2EM/ysKEAtJNdQVd93TyPd2lng==
-X-Received: by 2002:a05:6a00:428a:b0:71e:5252:2412 with SMTP id d2e1a72fcca58-723f79863f5mr5131081b3a.2.1730909547999;
-        Wed, 06 Nov 2024 08:12:27 -0800 (PST)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c47f1sm12041992b3a.107.2024.11.06.08.12.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 08:12:27 -0800 (PST)
-Date: Wed, 6 Nov 2024 08:12:25 -0800
-From: Yury Norov <yury.norov@gmail.com>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: briannorris@chromium.org, kees@kernel.org, nathan@kernel.org,
-	linux-kernel@vger.kernel.org, Gregory Joyce <gjoyce@ibm.com>
-Subject: Re: [bug report] cpumask: gcc 13.x emits compilation error on PowerPC
-Message-ID: <ZyuVaXw8zEpF-935@yury-ThinkPad>
-References: <7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com>
+	s=arc-20240116; t=1730909551; c=relaxed/simple;
+	bh=VbHI5Go0cQBSJCMa+bDHACq+Jn9qnFhUWYRTLUOXoVM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oaK48ANPSESvGcbsASloh/sDcnBJvJgkXWU391wRA+uDd/4VWRSkMNAX2RtrUWh370AhnOMyxaXQZWKowoZNV7wL7AlNGBYwv9KaLON6b2nxLEeeABy/Q515EXYTz+CmB6C/mYLAgZjsgy/cZlLhKt47OPmJaTM9lE9NU68Oryo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GxJBm5uK; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 14A4460005;
+	Wed,  6 Nov 2024 16:12:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730909547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VbHI5Go0cQBSJCMa+bDHACq+Jn9qnFhUWYRTLUOXoVM=;
+	b=GxJBm5uK5iksWp7N5LSPUfKZcCq+hGLQvJgj5t1P2JVy4Bkmx87ijVSBNs73xqrlw4doKf
+	VSqvn7RqIYTtmxvRmD98Hfw6H+KMSk4c5yrOlfis1CVrkEG6g9hPkmZoVVOiSLTt2oOsnm
+	0yOEKtKYJz2VNCxIVRpqdFGmiFJQxRXiZHAtSILlcLFi9c7QuRgAYR9dFKSTEiZrOJIAcT
+	EEJ47hUjsaPtDDqorT5ZP5N6ueVAyBMtKWxG+7gCGIYrAS9twFTRRMxaiDgCmr3edZg58O
+	gWKKSbbml3TUiOpMrXVIBufUmGBDgOsS8XASWpKON4ibGpA6G5ZLL0RLYLD4yQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+  "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+  "broonie@kernel.org" <broonie@kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: ubifs_recover_master_node: failed to recover master node
+In-Reply-To: <94ffb58b-3242-4ab4-b09a-686116ced781@alliedtelesis.co.nz> (Chris
+	Packham's message of "Wed, 30 Oct 2024 10:13:45 +1300")
+References: <826c4456-461c-424b-88de-a36e77fd7475@alliedtelesis.co.nz>
+	<94ffb58b-3242-4ab4-b09a-686116ced781@alliedtelesis.co.nz>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Wed, 06 Nov 2024 17:12:26 +0100
+Message-ID: <87ses4ibo5.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,200 +65,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com>
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, Nov 06, 2024 at 06:32:23PM +0530, Nilay Shroff wrote:
-> Hi,
-> 
-> Of late, I've been encountering the following compilation error while using GCC 13.x and latest upstream code:
-> 
-> Compilation error:
-> ==================
->   <snip>
->   CC      kernel/padata.o
-> In file included from ./include/linux/string.h:390,
->                  from ./arch/powerpc/include/asm/paca.h:16,
->                  from ./arch/powerpc/include/asm/current.h:13,
->                  from ./include/linux/thread_info.h:23,
->                  from ./include/asm-generic/preempt.h:5,
->                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
->                  from ./include/linux/preempt.h:79,
->                  from ./include/linux/spinlock.h:56,
->                  from ./include/linux/swait.h:7,
->                  from ./include/linux/completion.h:12,
->                  from kernel/padata.c:14:
-> In function ‘bitmap_copy’,
->     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
->     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
->   633 |         __underlying_##op(p, q, __fortify_size);                        \
->       |         ^~~~~~~~~~~~~
-> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
->   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
-> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
->   713 |                                  cpumask_var_t pcpumask,
->       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> In function ‘bitmap_copy’,
->     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
->     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
->   633 |         __underlying_##op(p, q, __fortify_size);                        \
->       |         ^~~~~~~~~~~~~
-> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
->   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
-> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
->   713 |                                  cpumask_var_t pcpumask,
->       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> cc1: all warnings being treated as errors
-> make[3]: *** [scripts/Makefile.build:229: kernel/padata.o] Error 1
-> make[2]: *** [scripts/Makefile.build:478: kernel] Error 2
-> make[1]: *** [/root/linux/Makefile:1936: .] Error 2
-> make: *** [Makefile:224: __sub-make] Error 2
-> 
-> # gcc --version 
-> gcc (GCC) 13.2.1 20231205 (Red Hat 13.2.1-6)
-> Copyright (C) 2023 Free Software Foundation, Inc.
-> This is free software; see the source for copying conditions.  There is NO
-> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-> 
-> Note:
-> =====
-> I don't encounter above error using GCC 11.x and 12.x on PowerPC.
-> Moreover, I don't encounter above error using GCC 11.x or 12.x or 13.x on x86_64.
-> 
-> Git bisect:
-> ===========
-> The git bisect points to the following commit causing the above compilation error:
-> 
-> commit ab6b1010dab68f6d4bf063517db4ce2d63554bc6 (HEAD)
-> Author: Brian Norris <briannorris@chromium.org>
-> Date:   Thu Jul 18 17:50:39 2024 -0700
-> 
->     cpumask: Switch from inline to __always_inline
->     
->     On recent (v6.6+) builds with Clang (based on Clang 18.0.0) and certain
->     configurations [0], I'm finding that (lack of) inlining decisions may
->     lead to section mismatch warnings like the following:
->     
->       WARNING: modpost: vmlinux.o: section mismatch in reference:
->       cpumask_andnot (section: .text) ->
->       cpuhp_bringup_cpus_parallel.tmp_mask (section: .init.data) ERROR:
->       modpost: Section mismatches detected.
->     
->     or more confusingly:
->     
->       WARNING: modpost: vmlinux: section mismatch in reference:
->       cpumask_andnot+0x5f (section: .text) -> efi_systab_phys (section:
->       .init.data)
->     
->     The first warning makes a little sense, because
->     cpuhp_bringup_cpus_parallel() (an __init function) calls
->     cpumask_andnot() on tmp_mask (an __initdata symbol). If the compiler
->     doesn't inline cpumask_andnot(), this may appear like a mismatch.
->     
->     The second warning makes less sense, but might be because efi_systab_phys
->     and cpuhp_bringup_cpus_parallel.tmp_mask are laid out near each other,
->     and the latter isn't a proper C symbol definition.
->     
->     In any case, it seems a reasonable solution to suggest more strongly to
->     the compiler that these cpumask macros *must* be inlined, as 'inline' is
->     just a recommendation.
->     
->     This change has been previously proposed in the past as:
->       Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
->       https://lore.kernel.org/all/20221027043810.350460-2-yury.norov@gmail.com/
->     
->     But the change has been split up, to separately justify the cpumask
->     changes (which drive my work) and the bitmap/const optimizations (that
->     Yury separately proposed for other reasons). This ends up as somewhere
->     between a "rebase" and "rewrite" -- I had to rewrite most of the patch.
->     
->     According to bloat-o-meter, vmlinux decreases minimally in size (-0.00%
->     to -0.01%, depending on the version of GCC or Clang and .config in
->     question) with this series of changes:
->     
->     gcc 13.2.0, x86_64_defconfig
->     -3005 bytes, Before=21944501, After=21941496, chg -0.01%
->     
->     clang 16.0.6, x86_64_defconfig
->     -105 bytes, Before=22571692, After=22571587, chg -0.00%
->     
->     gcc 9.5.0, x86_64_defconfig
->     -1771 bytes, Before=21557598, After=21555827, chg -0.01%
->     
->     clang 18.0_pre516547 (ChromiumOS toolchain), x86_64_defconfig
->     -191 bytes, Before=22615339, After=22615148, chg -0.00%
->     
->     clang 18.0_pre516547 (ChromiumOS toolchain), based on ChromiumOS config + gcov
->     -979 bytes, Before=76294783, After=76293804, chg -0.00%
->     
->     [0] CONFIG_HOTPLUG_PARALLEL=y ('select'ed for x86 as of [1]) and
->         CONFIG_GCOV_PROFILE_ALL.
->     
->     [1] commit 0c7ffa32dbd6 ("x86/smpboot/64: Implement
->         arch_cpuhp_init_parallel_bringup() and enable it")
->     
->     Co-developed-by: Brian Norris <briannorris@chromium.org>
->     Signed-off-by: Brian Norris <briannorris@chromium.org>
->     Reviewed-by: Kees Cook <kees@kernel.org>
->     Reviewed-by: Nathan Chancellor <nathan@kernel.org>
->     Signed-off-by: Yury Norov <yury.norov@gmail.com>
-> 
-> So it appears that changing cpumask_copy() from inline to __always_inline causing the 
-> above error using Gcc 13.x. I am not gcc expert but it seems some issue with GCC 13.x?
-> 
-> I tried the following patch which helps fix the above error but I'm not sure if this
-> is the proper fix or do we need to fix it differently.
-> 
-> Patch:
-> ======
-> diff --git a/kernel/padata.c b/kernel/padata.c
-> index d899f34558af..86aad2f71890 100644
-> --- a/kernel/padata.c
-> +++ b/kernel/padata.c
-> @@ -710,8 +710,8 @@ static bool padata_validate_cpumask(struct padata_instance *pinst,
->  }
->  
->  static int __padata_set_cpumasks(struct padata_instance *pinst,
-> -                                cpumask_var_t pcpumask,
-> -                                cpumask_var_t cbcpumask)
-> +                                struct cpumask *pcpumask,
-> +                                struct cpumask *cbcpumask)
->  {
->         int valid;
->         int err;
- 
-This only works if CONFIG_CPUMASK_OFFSTACK=y. Otherwise, cpumask_var_t
-is declared as:
 
-typedef struct cpumask cpumask_var_t[1];
+Hi Chris,
 
-and your hack wouldn't work. You can read a comment starting with "Oh, the
-wicked games we play!" in include/linux/cpumask_types.h for details. :)
- 
-> Please let me know if you need any further information.
+On 30/10/2024 at 10:13:45 +13, Chris Packham <chris.packham@alliedtelesis.c=
+o.nz> wrote:
 
-config usually helps. Is it defconfig? What instrumentation is
-enabled? Can you try the same without *ASAN and friends?
+> On 29/10/24 13:38, Chris Packham wrote:
+>> (resend as plaintext)
+>>
+>> Hi,
+>>
+>> I recently added support for the SPI-NAND controller on the RTL9302C
+>> SoC[1]. I did most of the work against Linux 6.11 and it's working
+>> fine there. I recently rebased against the tip of Linus's tree
+>> (6.12-rc5) and found I was getting ubifs errors when mounting:
+>>
+>> [=C2=A0=C2=A0=C2=A0 1.255191] spi-nand spi1.0: Macronix SPI NAND was fou=
+nd.
+>> [=C2=A0=C2=A0=C2=A0 1.261283] spi-nand spi1.0: 256 MiB, block size: 128 =
+KiB, page
+>> size: 2048, OOB size: 64
+>> [=C2=A0=C2=A0=C2=A0 1.271134] 2 fixed-partitions partitions found on MTD=
+ device spi1.0
+>> [=C2=A0=C2=A0=C2=A0 1.278247] Creating 2 MTD partitions on "spi1.0":
+>> [=C2=A0=C2=A0=C2=A0 1.283631] 0x000000000000-0x00000f000000 : "user"
+>> [=C2=A0=C2=A0 20.481108] 0x00000f000000-0x000010000000 : "Reserved"
+>> [=C2=A0=C2=A0 72.240347] ubi0: scanning is finished
+>> [=C2=A0=C2=A0 72.270577] ubi0: attached mtd3 (name "user", size 240 MiB)
+>> [=C2=A0=C2=A0 72.276815] ubi0: PEB size: 131072 bytes (128 KiB), LEB siz=
+e:
+>> 126976 bytes
+>> [=C2=A0=C2=A0 72.284537] ubi0: min./max. I/O unit sizes: 2048/2048, sub-=
+page
+>> size 2048
+>> [=C2=A0=C2=A0 72.292132] ubi0: VID header offset: 2048 (aligned 2048), d=
+ata
+>> offset: 4096
+>> [=C2=A0=C2=A0 72.299885] ubi0: good PEBs: 1920, bad PEBs: 0, corrupted P=
+EBs: 0
+>> [=C2=A0=C2=A0 72.306689] ubi0: user volume: 1, internal volumes: 1, max.=
+ volumes
+>> count: 128
+>> [=C2=A0=C2=A0 72.314747] ubi0: max/mean erase counter: 1/0, WL threshold=
+: 4096,
+>> image sequence number: 252642230
+>> [=C2=A0=C2=A0 72.324850] ubi0: available PEBs: 0, total reserved PEBs: 1=
+920,
+>> PEBs reserved for bad PEB handling: 40
+>> [=C2=A0=C2=A0 72.370123] ubi0: background thread "ubi_bgt0d" started, PI=
+D 141
+>> [=C2=A0=C2=A0 72.470740] UBIFS (ubi0:0): Mounting in unauthenticated mode
+>> [=C2=A0=C2=A0 72.490246] UBIFS (ubi0:0): background thread "ubifs_bgt0_0"
+>> started, PID 144
+>> [=C2=A0=C2=A0 72.528272] UBIFS error (ubi0:0 pid 143):
+>> ubifs_recover_master_node: failed to recover master node
+>> [=C2=A0=C2=A0 72.550122] UBIFS (ubi0:0): background thread "ubifs_bgt0_0=
+" stops
+>> [=C2=A0=C2=A0 72.710720] UBIFS (ubi0:0): Mounting in unauthenticated mode
+>> [=C2=A0=C2=A0 72.717447] UBIFS (ubi0:0): background thread "ubifs_bgt0_0"
+>> started, PID 149
+>> [=C2=A0=C2=A0 72.777602] UBIFS error (ubi0:0 pid 148):
+>> ubifs_recover_master_node: failed to recover master node
+>> [=C2=A0=C2=A0 72.787792] UBIFS (ubi0:0): background thread "ubifs_bgt0_0=
+" stops
+>>
+>> Full dmesg output is at[2]
+>>
+>> git bisect lead me to commit 11813857864f ("mtd: spi-nand: macronix:
+>> Continuous read support"). Reverting the blamed commit from 6.12-rc5
+>> seems to avoid the problem. The flash chip on my board is a
+>> MX30LF2G28AD-TI. I'm not sure if there is a problem with 11813857864f
+>> or with my spi-mem driver that is exposed after support for continuous
+>> read is enabled.
+>>
+> A bit of an update. The ubifs failure is from the is_empty() check in
+> get_master_node(). It looks like portions of the LEB are 0 instead of
+> 0xff. I've also found if I avoid use the non-DMA path in my driver I
+> don't have such a problem. I think there is at least one problem in my
+> driver because I don't handle DMAing more than 0xffff bytes.
 
-Thanks,
-Yury
+I am going through my mails in a chronological order :-)
+
+Glad to see you found a lead. I was already a bit suspicious about the
+DMA path, glad to see we might narrow down the problem.
+
+Is the 0xffff limitation a hard constraint or is it just a pure software
+constraint? If we reach a hard constraint, maybe you should check that
+when you decide which path you take.
+
+Miqu=C3=A8l
 
