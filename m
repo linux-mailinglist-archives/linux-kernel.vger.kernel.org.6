@@ -1,119 +1,179 @@
-Return-Path: <linux-kernel+bounces-397745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322319BDFC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:54:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A900E9BDFCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B011C22EC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:54:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06270B23F15
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026C51D415B;
-	Wed,  6 Nov 2024 07:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7C81D1724;
+	Wed,  6 Nov 2024 07:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iu+PeePE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8J56eWG"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4B4192B98;
-	Wed,  6 Nov 2024 07:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5CB1CF2AE;
+	Wed,  6 Nov 2024 07:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730879665; cv=none; b=PyZDfB7FWA3+1//7Zshr3B7udvLLHfbt1J7ciA3pfNMFgoUIRaT3HUozNFB90TByvQyOxjPqaEAZDPuGRmeIr6aHGrCpa6+u/CAOAs54M9qEBM1NsdtI4P7X8qINH4PdOatTuBmD40ixIIJ8N433Nhy6IbZQH6WW9wS1ySs9GI0=
+	t=1730879742; cv=none; b=jx8kiOGgGyDwtfhX6Gw2tIPE3cxRALF9O5SLAPAwPV8BNp4j8iEe4Rlk51AzZkrk3mORIngUgGp+qqiZJPy4L5hMlKNDGjOlRZSnB2S4YcfJbBM6Sx6NS68n1yMRGgVqnRDYt1gqh+0KLk3epelqQHhlDPDCpsgPHEELu4MXWys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730879665; c=relaxed/simple;
-	bh=7vrEPIQ4bAMycnZ9O2SmDP1fd541LGxGZlIiiqJbkww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AskfYkEMSSs3IVGY6tg4dAM/ijU2Hk+tZKkNKQA7Hx935NKffuRrAb9hJ1Ns69HiuzMHDboM9LwKZUUtlLyXOQgadjuuKrIANuxtnO+3sDKTl7ZMAAOO8NvpSCZCcTZ7/nya91qwWq3qe2smIfQAmV4IZGtvFxBRpKddw+X+IM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iu+PeePE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7E4EC4CED7;
-	Wed,  6 Nov 2024 07:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730879665;
-	bh=7vrEPIQ4bAMycnZ9O2SmDP1fd541LGxGZlIiiqJbkww=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Iu+PeePE/GEEYfb6FbpeMRTK51rUkWH6GMgJntrqO1ajwKzF+EPvc1d1Yy7xqKUHP
-	 BWzjVi/SjgQURLOqBaLfGRZaIkCm0m0I/s5sE/DWQi+bdlJn1BCjDQhGZ+z9FWS6t9
-	 DZDD/VE+z+QOuaofcf23X948QMmQGBAaGllNeovOueanW02Q1Q8fh4s9Rv0mOn1uNs
-	 qOwdNyYswVaZ64tjIpNRbmSJiq0R+yH31y/aaq9/KmI1iBhxUING1KW7jAsjkSdki9
-	 /ocbtcBvTe+Svg4PL04/q8Sy++ZU/YtSbdayXSFnY5DanL4Z2W/ZjHjTKfWAeDlPgk
-	 pajSAR2bKjv4A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D87F4D29FB5;
-	Wed,  6 Nov 2024 07:54:24 +0000 (UTC)
-From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Date: Wed, 06 Nov 2024 08:54:02 +0100
-Subject: [PATCH v5 3/3] MAINTAINERS: Add apple-spi driver & binding files
+	s=arc-20240116; t=1730879742; c=relaxed/simple;
+	bh=gjlS76/98Cni8neei4/F8MwTiistLFcbZLmXlKdzIZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cMW1hjzwmLehkFRyU2mfQsZ3MIotygdlv6GbtyxJYqPa4kztIzvahkX1egLbRuMeacmnu+RTcBzhtzHmp2LyZvRRA1z4xxaUQUCNIVUNkhZn3aDmdMk3k5dWvpssy3AH9FOD9fqgTnj2KdTakJxCQ1K2w42NFc3y62SkCss4mqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8J56eWG; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b1418058bbso449278585a.3;
+        Tue, 05 Nov 2024 23:55:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730879739; x=1731484539; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TJ3Y8x4A9Kv0VojRXE40fqCjR+Xz0wiILYeF1Q+j1Bk=;
+        b=N8J56eWG7ORNoRaIcC+2KyIOndkce8ImAH3E7BM4i7UeOVOpU1fcpyEjIHdiMa0RKU
+         6crztYIRUscTm8hnkAHMeQb1jvIhBk6Fgtq2/1qQsFoL4u0Kwza3r4yrvNgcgJkGfdFM
+         amxtzxAnrv4rMCZGVDOwykYI2FvwLbcFaPncNzPvF4RzivnK4v3ky/ZSIR8zRY994HWM
+         5kRaMSj/NPkZG6oRqqN6OgBvRQ+kqo0XShKxNikVjEY8AeZS9XoT6pds/CECYPBN0Gev
+         8XRsJoMNKry6iE34Om5lKOaYUkWp9Lokc7fvC4esRX3SRdOsarqjDZyraNYiINCpxWFx
+         Bv1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730879739; x=1731484539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TJ3Y8x4A9Kv0VojRXE40fqCjR+Xz0wiILYeF1Q+j1Bk=;
+        b=t9NcptM+RoKZJxsJSesfIimIoJiR99jKo593KY95d3EMsgDSwNoM9/uwa29x8mzaa5
+         vyokoYX0mJElDmjzUc2cw6pLzJeBT/p4HA3R61n4P0z0sggssfFc3lYlgrayxtbt4+2p
+         8MVzoZEZHwlNX7SS/svr/pwh4yIEgfDewCZd7X48J8q3oRHMsUysqSbcT1l9pH0sWh96
+         WnB4nBeB3PMsOwoBmPZJAV86GX9ivQe9Z9l4Xbvo9Nnxm4qAwnXFfoSAlBVjifn5p8A6
+         lkjC9+2uS4NEy7XMMCxro2ayEKT+2tCxgDbpe0BXaIXagIYH6hjGWMCxdfQLhWKc0xc5
+         4n1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVR6ZZ+gb3qa5QTCzBFVecJpa4hWLUEg3//EtVyF3eWyi3mmPkPZf6clOXTdpI+k52T10KU2pocO/PIYQ+V@vger.kernel.org, AJvYcCVxqFeCD87zhHgMuHrP4UjlIMEn+dhLEV6Mv8OJ8wmCDlJObnX2Y4rIYWeyM4tefhX5U1x0FR27le6g@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg8jLpUp9/iP5wEP27nDck25zwvmVpddhpPsQvrygtapHAQYZ2
+	y/C6/+rGRF0OVo/DH0FyDaZpfYtFIZmyKTQfq/LqGZSdS2YZiy4E0Z5YedyuKm2bTNtwJhYuXvs
+	T3n5xYjbkRDQgaaDmdxBffMVZWc4=
+X-Google-Smtp-Source: AGHT+IFhJbaqJv3pBEr11USTxaLxjnqc8AtjiRuH9iIT4+AXTrfXWWty6WhGqpPLOlJvr+SCaUZfi6Qr61u5KxyZgZQ=
+X-Received: by 2002:a05:620a:294d:b0:7af:c3e6:651 with SMTP id
+ af79cd13be357-7b2fb9d0c40mr2615260085a.44.1730879738759; Tue, 05 Nov 2024
+ 23:55:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241106-asahi-spi-v5-3-e81a4f3a8e19@jannau.net>
-References: <20241106-asahi-spi-v5-0-e81a4f3a8e19@jannau.net>
-In-Reply-To: <20241106-asahi-spi-v5-0-e81a4f3a8e19@jannau.net>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1316; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=wbyAeXiak8ymhiqSGZePVuZ0IdBpI3guim8H/E8/EiU=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhnRthfUzOlZFlm65nPWA31d2+UxpfaX3bhb9xmdWlsk/M
- dfttwrsKGVhEONikBVTZEnSftnBsLpGMab2QRjMHFYmkCEMXJwCMJG3Lgz/7EJ9pv446XDkfNcc
- vRr1wn7ufpEozhxfWdOnuxxXlu09w/BP+cxVu9ZHHV8kPmvfsX1v5qap9Jm9rneJi47p+8tRwn3
- MAA==
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
-X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
-X-Original-From: Janne Grunau <j@jannau.net>
-Reply-To: j@jannau.net
+References: <806d5e2a07ae0c81d9907bbe8bec4e3e1138b392.1730838347.git.dsimic@manjaro.org>
+In-Reply-To: <806d5e2a07ae0c81d9907bbe8bec4e3e1138b392.1730838347.git.dsimic@manjaro.org>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Wed, 6 Nov 2024 11:55:28 +0400
+Message-ID: <CABjd4Yyt6WiY5E5DbyjnboFvsTpp33dydkGMF7AwMB9m7bfX6A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Add OPP voltage ranges to RK3399
+ OP1 SoC dtsi
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, Quentin Schulz <quentin.schulz@cherry.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Hector Martin <marcan@marcan.st>
+Hi Dragan,
 
-This Apple SPI controller is present on Apple ARM SoCs (t8103/t6000).
+On Wed, Nov 6, 2024 at 11:50=E2=80=AFAM Dragan Simic <dsimic@manjaro.org> w=
+rote:
+>
+> Add support for voltage ranges to the CPU, GPU and DMC OPPs defined in th=
+e
+> SoC dtsi for Rockchip OP1, as a variant of the Rockchip RK3399.  This may=
+ be
+> useful if there are any OP1-based boards whose associated voltage regulat=
+ors
+> are unable to deliver the exact voltages; otherwise, it causes no functio=
+nal
+> changes to the resulting OPP voltages at runtime.
+>
+> These changes cannot cause stability issues or any kind of damage, becaus=
+e
+> it's perfectly safe to use the highest voltage from an OPP group for each=
+ OPP
+> in the same group.  The only possible negative effect of using higher vol=
+tages
+> is wasted energy in form of some additionally generated heat.
+>
+> Reported-by: Quentin Schulz <quentin.schulz@cherry.de>
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi | 52 ++++++++++----------
+>  1 file changed, 26 insertions(+), 26 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi b/arch/arm64/bo=
+ot/dts/rockchip/rk3399-op1.dtsi
+> index b24bff511513..aa79219471d3 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
+> @@ -12,125 +12,125 @@ cluster0_opp: opp-table-0 {
+>
+>                 opp00 {
+>                         opp-hz =3D /bits/ 64 <408000000>;
+> -                       opp-microvolt =3D <800000>;
+> +                       opp-microvolt =3D <800000 800000 1150000>;
+>                         clock-latency-ns =3D <40000>;
+>                 };
+>                 opp01 {
+>                         opp-hz =3D /bits/ 64 <600000000>;
+> -                       opp-microvolt =3D <825000>;
+> +                       opp-microvolt =3D <825000 825000 1150000>;
+>                 };
+>                 opp02 {
+>                         opp-hz =3D /bits/ 64 <816000000>;
+> -                       opp-microvolt =3D <850000>;
+> +                       opp-microvolt =3D <850000 850000 1150000>;
+>                 };
+>                 opp03 {
+>                         opp-hz =3D /bits/ 64 <1008000000>;
+> -                       opp-microvolt =3D <900000>;
+> +                       opp-microvolt =3D <900000 900000 1150000>;
+>                 };
+>                 opp04 {
+>                         opp-hz =3D /bits/ 64 <1200000000>;
+> -                       opp-microvolt =3D <975000>;
+> +                       opp-microvolt =3D <975000 975000 1150000>;
+>                 };
+>                 opp05 {
+>                         opp-hz =3D /bits/ 64 <1416000000>;
+> -                       opp-microvolt =3D <1100000>;
+> +                       opp-microvolt =3D <1100000 1100000 1150000>;
+>                 };
+>                 opp06 {
+>                         opp-hz =3D /bits/ 64 <1512000000>;
+> -                       opp-microvolt =3D <1150000>;
+> +                       opp-microvolt =3D <1150000 1150000 1150000>;
+>                 };
+>         };
+>
+>         cluster1_opp: opp-table-1 {
+>                 compatible =3D "operating-points-v2";
+>                 opp-shared;
+>
+>                 opp00 {
+>                         opp-hz =3D /bits/ 64 <408000000>;
+>                         opp-microvolt =3D <800000>;
+> -                       clock-latency-ns =3D <40000>;
+> +                       clock-latency-ns =3D <40000 40000 1250000>;
 
-Splitting this change from the binding/driver commits to avoid merge
-conflicts with other things touching this section, as usual.
+Did you mean to update opp-microvolt instead?
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Signed-off-by: Janne Grunau <j@jannau.net>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+Speaking of which, this single opp having clock-latency-ns while none
+of the others do (except the first one in cluster0) looks weird.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cc40a9d9b8cd10e2e00caa5a5881381cd40c0d9a..552febcb12a95766ff502960782941d9d016d5e0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2068,6 +2068,7 @@ F:	Documentation/devicetree/bindings/pci/apple,pcie.yaml
- F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
- F:	Documentation/devicetree/bindings/power/apple*
- F:	Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
-+F:	Documentation/devicetree/bindings/spi/apple,spi.yaml
- F:	Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
- F:	arch/arm64/boot/dts/apple/
- F:	drivers/bluetooth/hci_bcm4377.c
-@@ -2085,6 +2086,7 @@ F:	drivers/nvmem/apple-efuses.c
- F:	drivers/pinctrl/pinctrl-apple-gpio.c
- F:	drivers/pwm/pwm-apple.c
- F:	drivers/soc/apple/*
-+F:	drivers/spi/spi-apple.c
- F:	drivers/watchdog/apple_wdt.c
- F:	include/dt-bindings/interrupt-controller/apple-aic.h
- F:	include/dt-bindings/pinctrl/apple.h
-
--- 
-2.47.0
-
-
+Best regards,
+Alexey
 
