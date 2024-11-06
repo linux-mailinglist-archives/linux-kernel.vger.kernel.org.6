@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-398093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2769BE53C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:09:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2122C9BE534
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:06:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56741F21C4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7B81F21C28
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BCB1DE4C5;
-	Wed,  6 Nov 2024 11:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3C21DE4E6;
+	Wed,  6 Nov 2024 11:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nJBRWsqy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YYc5yuky"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84D71DDA15
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743061DACBB;
+	Wed,  6 Nov 2024 11:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730891335; cv=none; b=KBVKcl/NJwzYiyblcBF+KsYGUnJQnNAZwSFqJ6kx0TnHhpfaFaPO1+Y4Ctv9ocyak1fEKvh+WriKORiE6EIxrB9WwiITZTM+5crD6M1n/qYykeGNZbcXxyhZ6faRU3dnkWVZzXVP8pbQgz3YDavCHYkD1GP8KA9pGgQJYOPEIEw=
+	t=1730891170; cv=none; b=MZnpVqLE8p/1Itgor0VIrRnrkEJQcVoRB4Fd3KXxErl5H34qTsuSVgyrqv2ce9WFlivxjDXLUI66B34kuh6o72sQgtgK2v2TgPg51wtkzavqeweNr+H4bWfAKoZK4OWKm81xbk9ZA6l51Wa9S/FvNHjQfIpCuKzmLvtYnj67wio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730891335; c=relaxed/simple;
-	bh=F2BXgCM0xWZBgpe333JVy4snkckz6II4fuPM822ioYk=;
+	s=arc-20240116; t=1730891170; c=relaxed/simple;
+	bh=x1daPAci/sH83L77hKsJtfM7BbABjcNhbB9A2zFZeIY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bI8O4gjYrpJvkqcYfVjxOPs02D6IY3/iS0faV1w+ZOCPbl61w+LPlxzePmCVBagvDBm2BMFtZ2dUoqujeB3dHfeZa2fPcSzdzSq9PKJg67eVAwivyjDNTT9ADA3IQ+VLvH5aNQgiwNM5rEWHwbr8J5VM7A5VE+LjeaYxfK6ypG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nJBRWsqy; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730891334; x=1762427334;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F2BXgCM0xWZBgpe333JVy4snkckz6II4fuPM822ioYk=;
-  b=nJBRWsqyBwZny9Vfu156dOXIupoR8i9VnsrIz96G0jYuJYtS0dSbCCwn
-   fvbwMNT6LPtQ97/H79q2YQD+08izJZG+2Hgjk1Nrx1FB4mJxpg/OhoJ/o
-   0mtuqeesWGFuNN7lMdrzUnJmFRNcT6phmbQ84OLOSqEeiJl65IyU/AfMe
-   /s0zObd2VPr/BH7iO8eUTUOZteWxgNsczQzbBAyxa4J3xG902Uhj2GCEO
-   n85YZJy2Ojfht3Qxh9nGpCW5HkjenCBuTjX5Vy0kWlHlMa0VQbkfZ/2Vw
-   RcOGqf9u2FtixVWhT0AYZHAm2QlpmfBMspHdq26b2dxmZw+RCvHu2LKyc
-   Q==;
-X-CSE-ConnectionGUID: XbmPEgTyTTGKUmLhwbmaiQ==
-X-CSE-MsgGUID: 8lirYM4LRESa1luZKQxJjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="42082724"
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="42082724"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 03:08:53 -0800
-X-CSE-ConnectionGUID: n/KeWUJNRQWWuZOUZ7oJ4A==
-X-CSE-MsgGUID: Ztn7PRLrRdm7ZJYG2iO34Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="84890985"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 03:05:59 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t8drI-0000000Blgh-0nAQ;
-	Wed, 06 Nov 2024 13:05:56 +0200
-Date: Wed, 6 Nov 2024 13:05:55 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/platform/intel-mid: Replace deprecated PCI functions
-Message-ID: <ZytNkxLzgBnQn_pV@smile.fi.intel.com>
-References: <20241105112521.58638-2-pstanner@redhat.com>
- <ZyoxPQPupkorXPoa@smile.fi.intel.com>
- <b778fb587d7ce15b89847627ba3caca2d8d060d8.camel@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUt1f6iM3o/M30r91Ea3/YG2k9Vt5uwQ9MHFF3LxrEoAGfH7eveV4Jal5EfHhE6qg6RWh5vx0QkRZi0A/eG00iCucg2VCzMEu7ocAbcNK147tf7dd5keNbzQgaJyJETtntb47dHlaO7WBGZKtG9ZYPCHfMgjVI73wzWQzc6BeVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YYc5yuky; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=KHhlvkY8UlSzLnmAPPPFJYM+1mV9xaApz1N9IxO+X3E=; b=YYc5yukyNei5Uqg2meExPOJ1cv
+	4/f75h4eVieapeaztoHVEuXr6JM6ZSh3S95Iiz0oH29FJR5dNlaftCulT51z+1KKUMbX2j7lVKXOi
+	fYN8I7PAKZgVQdUYlkqbHjowT6i1HBz0lEpO7N59D4wzQSOHJf15Z0/h/gQrEe9/MATutq/npDHO4
+	BpqRuiztCUgxSok5E0he8kysi3woj0V0vqAhbDvc9QHVeOgUp0+132q3n16FwiruXa2FLQBnsAm2Y
+	fRJ7oUjdqvbHU0OyKMhw7qv5bMoVeQdp4RSjS9OxVMs62DwKgLL81/9xylcyLEC3ruN/DXUG6obDO
+	eCsXzMnA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8drK-0000000BwK8-1Hm8;
+	Wed, 06 Nov 2024 11:05:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 809ED300478; Wed,  6 Nov 2024 12:05:57 +0100 (CET)
+Date: Wed, 6 Nov 2024 12:05:57 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
+	bpf <bpf@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Liao Chang <liaochang1@huawei.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>
+Subject: Re: The state of uprobes work and logistics
+Message-ID: <20241106110557.GY33184@noisy.programming.kicks-ass.net>
+References: <CAEf4BzarhiBHAQXECJzP5e-z0fbSaTpfQNPaSXwdgErz2f0vUA@mail.gmail.com>
+ <ZyH_fWNeL3XYNEH1@krava>
+ <CAEf4BzZTTuBdCT2Qe=n7gqhf3yENZwHYUdsrQP9WfaEC4C35rw@mail.gmail.com>
+ <20241106104639.GL10375@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b778fb587d7ce15b89847627ba3caca2d8d060d8.camel@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106104639.GL10375@noisy.programming.kicks-ass.net>
 
-On Wed, Nov 06, 2024 at 09:37:51AM +0100, Philipp Stanner wrote:
-> On Tue, 2024-11-05 at 16:52 +0200, Andy Shevchenko wrote:
-> > On Tue, Nov 05, 2024 at 12:25:22PM +0100, Philipp Stanner wrote:
-
-...
-
-> > > -	ret = pcim_iomap_regions(pdev, 1 << 0, pci_name(pdev));
-> > > -	if (ret) {
-> > > -		dev_err(&pdev->dev, "I/O memory remapping
-> > > failed\n");
+On Wed, Nov 06, 2024 at 11:46:39AM +0100, Peter Zijlstra wrote:
+> On Tue, Nov 05, 2024 at 06:11:07PM -0800, Andrii Nakryiko wrote:
+> > On Wed, Oct 30, 2024 at 2:42 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> > >
+> > > On Wed, Oct 16, 2024 at 12:35:21PM -0700, Andrii Nakryiko wrote:
+> > >
+> > > SNIP
+> > >
+> > > >   - Jiri Olsa's uprobe "session" support ([5]). This is less
+> > > > performance focused, but important functionality by itself. But I'm
+> > > > calling this out here because the first two patches are pure uprobe
+> > > > internal changes, and I believe they should go into tip/perf/core to
+> > > > avoid conflicts with the rest of pending uprobe changes.
+> > > >
+> > > > Peter, do you mind applying those two and creating a stable tag for
+> > > > bpf-next to pull? We'll apply the rest of Jiri's series to
+> > > > bpf-next/master.
+> > >
+> > >
+> > > Hi Ingo,
+> > > there's uprobe session support change that already landed in tip tree,
+> > > but we have bpf related changes that need to go in through bpf-next tree
+> > >
+> > > could you please create the stable tag that we could pull to bpf-next/master
+> > > and apply the rest of the uprobe session changes in there?
 > > 
-> > Btw, do we have a similar message to be printed inside the new call?
+> > Ping. We (BPF) are blocked on this, we can't apply Jiri's uprobe
+> > session series ([0]), until we merge two of his patches that landed
+> > into perf/core. Can we please get a stable tag which we can use to
+> > pull perf/core's patches into bpf-next/master?
 > 
-> Hm, no, it seems I forgot. Normally I keep those messages.
-> 
-> In this particular case we probably want to say "I/O memory request /
-> remapping failed\n", though.
-> 
-> And/or we give back the error code, which would reveal the exact issue
-> through -ENOMEM / -EBUSY
+> The whole tip/perf/core should be stable, but let me try and figure out
+> how git tags work.. might as well read a man-page today.
 
-I would expect this to behave in a similar way to devm_*ioremap*() which prints
-message(s) and returns different error codes depending on the failure.
+I might have managed to create a perf-core-for-bpf-next tag, but I'm not
+sure I know enough about git to even test it.
 
-> > > -		return ret;
-> > > -	}
-
-...
-
-> > > +	pwr->regs = pcim_iomap_region(pdev, 0, "intel_mid_pwr");
-> > > +	if (IS_ERR(pwr->regs))
-> > > +		return PTR_ERR(pwr->regs);
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Let me know..
 
