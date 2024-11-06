@@ -1,107 +1,113 @@
-Return-Path: <linux-kernel+bounces-397517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85CF9BDCE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:33:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDA29BDCFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6594D28944B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FF261C2318F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E968A219CA0;
-	Wed,  6 Nov 2024 02:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E472A19049B;
+	Wed,  6 Nov 2024 02:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtVFlk+n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dAKO0fq5"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA46191F9C;
-	Wed,  6 Nov 2024 02:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF4C18FC84;
+	Wed,  6 Nov 2024 02:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859295; cv=none; b=bumGWstkCIg2+JPSNFqk+rDT9sultz3SgoiPamzfwfoCvFHv0tHXIZPU0mQrs42/RpXk/zrpIMNc93OL/oWsnegVQBLCyeZlIywIvFhkHyRivh/CBacYvwr1gZpxptCUA9dqBmt3bpn3rZvRbRB3NKKoJ5OB+DsnDyc7y82/png=
+	t=1730859735; cv=none; b=DYNOdsTscI4RGDDoHyzoaTVXHl+N3G++48WraQE13AaFOkilkYNIvbHeXzCel6dHIouqR1hayDDF1vHlGdZyhw9HTmfKQ8N1/mPY44o8Xy5qmdW6Y7pobzQstE/2W/rpJDAcu6/vjMpU7LxuBGb3PXWyAMkV7WLcEbXH7QqpRhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859295; c=relaxed/simple;
-	bh=x/WkULtpgcu+7wn+mbnUIATgu5kHvQQi4ewRNtvfbmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gJzZgZe68mHMYn3sIzOH8K63YfFEjgvFbu30gJXxBdx6lBvF3/1Ga0/tOMvne7nYqgisU/K7QlMX2R+DjeQJ8e3ILsBNuHuXitSUdmnH7n/QoZ2qL4/l6pbYOl85oNxo+FBz7oX0x9qBZq7LZrbyt/T63HgwluZcUZtRpkq1ZFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtVFlk+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3AE0C4CECF;
-	Wed,  6 Nov 2024 02:14:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730859295;
-	bh=x/WkULtpgcu+7wn+mbnUIATgu5kHvQQi4ewRNtvfbmA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jtVFlk+n58LCuoZdUsAbVYksnz8OM0IqhUjYa7XstJYxkn7djA4ScQ1X6i8QzTP+6
-	 9fMCum1zDPJnhK/8a9V7MIrAgx71B7eTT0byYCHWDEsTghIT/lwxTBc/AUSdH9j/tE
-	 X6gm39tpFGjqtVBhDQJzcUcB/wZKsQaXDVCt0DAUaZymXwxbrBSVF8MrThttvAhMXp
-	 IV72iTrRyOWEKIOLd29rfLjexFEr5E2ZPGczr/vW/TdTVFvm+D1MTbjYoiqCBucWjn
-	 jgKRnKM+v/M1znZ2CW6IzxtOlQfL7xkSO8yx4xKeQAeGz5aBRedGuA49LtMbIkDTBQ
-	 OuAekNrd8iMqw==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org,
-	cs@tuxedo.de
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	Takashi Iwai <tiwai@suse.de>,
+	s=arc-20240116; t=1730859735; c=relaxed/simple;
+	bh=2qF+i2GBeBNPPdCfJiQ4Zadi5AbhdAUNHJJo39Uo7WA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Z9U39jACoIn4DE3iKZgvbNuduxxeQhe/VCS0qDsYfBDWD+5BSRzk1TQXfVMQvVvlWrO6VC76AMfCdVxcv65mnaNsI80kEQZaL8AatnNG4VMVXjAaXwHTJGpfikmoV0SjE3XhifwsQ2mcxgTgoSGL0+GO1lW/yrIl+dhUNLdyzXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dAKO0fq5; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1730859722; bh=cFaOscYleCwW/uQU8cfrJjLltdjwdkYacmXZzii6qV4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=dAKO0fq5DECQ7ryAMI9lFWAGuBz5qIK0MwPeHWerRIdeQhAQiUYpwxmtrse9xuZ96
+	 eDyDlpIzhCrNNU0L1HmuGgpsOvCrdbyPdzKgbvTqDVIODrJPUrvCpDkUFrEb8Kp6CL
+	 1qSE5bBOHsdhqppTbB4FyjQ/ILCv1U75YaN2mAt0=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 3F030E96; Wed, 06 Nov 2024 10:15:48 +0800
+X-QQ-mid: xmsmtpt1730859348t2o10k8o3
+Message-ID: <tencent_9E3DBD3732961C37FC4AEC74E3763367E209@qq.com>
+X-QQ-XMAILINFO: M/M2SMd6THQPRu+ZY7h9Kqc1izHKLaZ+Hq7t0EUOH9huvykFx5MKg6kuUGmnpJ
+	 bS44rKV2dpkRj5smGJchqTTnSDvGXlb0lcxh1+WoZIb9UClxl1S93A4aNN8gFPKIgsb49dhdM+6K
+	 RHLQ6vW863sxOkwGw863HGOumvgRQ/zOOr6TeLkPbEhHXAGR1qWyKb4ctuF2vqz2j8/Bd4xfl77t
+	 2Juzckm4mDPly9OKcwYIQzhFJTMG48VzwS06BsaA+DhdSwAJq5DWrqn29PC+tBQ7s+r7d0IFipV1
+	 Vu+WI1r3atvFDJPiycqsfj94Ub1DoZbj7gPkMRnFHXvlz8ovMf9eLFFsw/ksLDAApdlnUS7XFBzt
+	 Q6oGNwmu3VyyEeSx6V5qEk9rw14CdU/duFjCtm1jM9IaiuUeim5QCly0+uKhM1HKQqxlcuWgdauu
+	 jUkGDwrjmACuGkOZnHHrPrzmjBBQKVyVXDM3yE1/eUN8QLIqW/joackpLWdVBp/m/VY7pE7namjh
+	 XdBHQ5IcYQyWCSriHQ4W622vHvM2e5HtPmxByui8WG8Yo1qZoOH5CWGjW+fNJFm7ql388McdR5ff
+	 6Pk+X8dJ0brtdCSVFfun4dxAvw8fEGmD/toaYpBCaxDuCPwzAUJKV4zHlqz/wSD4Z6TL4d5Y0nbW
+	 B+Yo9GWa6EZUMfliq/86JX34wLW9URzmgLn5PAwgo+f3OYUJQWRqgKNVSFfu4HvatHO99I96JBGN
+	 vsFEeTvMROP0U3Fx5VDsoCTJGDx9Qg7iMFQdeVxVR/zckA/Ti2fOYOpLrLm5xb9mXQ1C6CFLqS5K
+	 4tEBDQ7ZU5mUl5mxrZk8Zf0gc4RJppT6QtMo0j0r9vaUDvMfs5UgquiNNrbXevbTmclSZ4RR3Bbp
+	 vgqFuC+Guc68PXlKkAutZDpYKi+n/Ft4AaMeNxKse8MN4p5Tzy1AFvd/Piwhi8Yi1m7LlcXKZBgR
+	 5usanpcpI=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+73582d08864d8268b6fd@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
 	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: FAILED: Patch "ALSA: hda/realtek: Fix headset mic on TUXEDO Gemini 17 Gen3" failed to apply to v4.19-stable tree
-Date: Tue,  5 Nov 2024 21:14:51 -0500
-Message-ID: <20241106021451.184554-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	perex@perex.cz,
+	syzkaller-bugs@googlegroups.com,
+	tiwai@suse.com
+Subject: [PATCH] usb: fix a task hung in snd_card_free
+Date: Wed,  6 Nov 2024 10:15:49 +0800
+X-OQ-MSGID: <20241106021548.2253763-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <6726bf35.050a0220.35b515.018b.GAE@google.com>
+References: <6726bf35.050a0220.35b515.018b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the v4.19-stable tree.
-If someone wants it applied there, or to any other stable or longterm
-tree, then please email the backport, including the original git commit
-id to <stable@vger.kernel.org>.
+task 1: snd ctrl will add card_dev ref count and can't call close to dec it,
+        it is blocked waiting for task 2 to release the USB dev lock.
 
-Thanks,
-Sasha
+task 2: usb dev lock has been locked by hung task (here is usb_disconnect),
+        it is hung waiting for task 1 to exit and release card_dev.
 
------------------- original commit in Linus's tree ------------------
+Adjust the USB lock acquisition method to non-blocking in ioctl to avoid
+hang when the USB connection is closed.
 
-From 0b04fbe886b4274c8e5855011233aaa69fec6e75 Mon Sep 17 00:00:00 2001
-From: Christoffer Sandberg <cs@tuxedo.de>
-Date: Tue, 29 Oct 2024 16:16:52 +0100
-Subject: [PATCH] ALSA: hda/realtek: Fix headset mic on TUXEDO Gemini 17 Gen3
-
-Quirk is needed to enable headset microphone on missing pin 0x19.
-
-Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-Cc: <stable@vger.kernel.org>
-Link: https://patch.msgid.link/20241029151653.80726-1-wse@tuxedocomputers.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-and-tested-by: syzbot+73582d08864d8268b6fd@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=73582d08864d8268b6fd
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/core/devio.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 7f4926194e50f..e06a6fdc0bab7 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10750,6 +10750,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1558, 0x1404, "Clevo N150CU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x14a1, "Clevo L141MU", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x2624, "Clevo L240TU", ALC256_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x1558, 0x28c1, "Clevo V370VND", ALC2XX_FIXUP_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1558, 0x4018, "Clevo NV40M[BE]", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x4019, "Clevo NV40MZ", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1558, 0x4020, "Clevo NV40MB", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index 3beb6a862e80..dd037dc4cb37 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -2605,7 +2605,8 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
+ 	if (!(file->f_mode & FMODE_WRITE))
+ 		return -EPERM;
+ 
+-	usb_lock_device(dev);
++	if (!usb_trylock_device(dev))
++		return -EBUSY;
+ 
+ 	/* Reap operations are allowed even after disconnection */
+ 	switch (cmd) {
 -- 
 2.43.0
-
-
-
 
 
