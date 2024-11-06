@@ -1,79 +1,66 @@
-Return-Path: <linux-kernel+bounces-397545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A886F9BDD32
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:50:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B699BDD4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF39A1C22DF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:50:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB6F1F21C40
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDEC190472;
-	Wed,  6 Nov 2024 02:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C93E18FDDB;
+	Wed,  6 Nov 2024 02:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2lXm+lc"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="CPSIO1oh"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFF5190056;
-	Wed,  6 Nov 2024 02:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1CA18B47E;
+	Wed,  6 Nov 2024 02:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730861401; cv=none; b=J/IPBJ1QGxLWzLhRI8mZQOwuuHVludHpn2LZkNGRCXZZ7xJV6q2VOfCQYT6J//iGHkdVyQ+5s1ov+sM6nPj8bhQWaXc9iws7CrrM7tlOCV3A+AQrAq7iub690tG23pLNxltrkCJSH6kFVqV8iYzA+ZxEirdt6A9u/lU176UTGGY=
+	t=1730861497; cv=none; b=ROVQ/qtfrvNphFKiEHad7q6J+5sdrG+BTKSIcNg/kkmla7WuR1LVveTLnaodGRYhTornxW6gwxDpLZB0Fy/T2iFPi7U5fRfy/lZ0coWHtZfUBMR72jm4VuQT0sD/QSBoR0gDNVymAsmLUcdeNc+IkxCQrCUQhpqA2oAD9NO5OGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730861401; c=relaxed/simple;
-	bh=WHdYZyKYmj7xiGxF0fx2SDirkvcvGaVZgFNhWTcTcOs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YzUZ3t+rIGiStr2fQA2K5Er3UenTWkg00aTa+6lUDmN+J49tCnzrzoZZkRyDsI5orDxdYTpGPMWP/WjnpqgC7R7wYanO76aXl51NPCY/UCiFj2RPC4ObjvVgYvgSSqTONT1jmeVAFBLr52O3uKh7nEZ7eiFJK+78OD2yiVFqp/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2lXm+lc; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso4840121b3a.3;
-        Tue, 05 Nov 2024 18:49:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730861399; x=1731466199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nmR98cWU1ulDZaP8dZ+K15F19ez22dKqwVUZTiGwrq8=;
-        b=K2lXm+lcZolfh8Pc3JCW36gk1X4LPky8JDVuEo9FdHi7guQuJ0AWoheI+xQ18webSU
-         tbU89559CPE4Pqq8a2Wb9TRg7ZvXzJHT1ZuT6GjjX/hM1tG0EWMhDhp4Jzx1C7UEyL/w
-         f7C4GYeD58UIvLS24b5fc8YS/l0wcqjeg1zMSJhicKQbj/6hcqhtzqJ9+3g2ewMC0hZy
-         45cem7XhM+MNW9y1tV3WsxFihAPIp7C0POI/qy+8ECDeJMZe/01ADdmRgj+Wiey0Oww3
-         MSvxAC69AxVpFCkfkKUkP0r/auHJqd0ctULCVMn1CrFUiIncgBlzng4g9AHZYGQ21VvQ
-         rn0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730861399; x=1731466199;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nmR98cWU1ulDZaP8dZ+K15F19ez22dKqwVUZTiGwrq8=;
-        b=G51RJNWJqwZ3Zh0NJ7UvtZo1pOjKupS8nJUqBxqpWn8UUs/eIW4nbOnxMwFqB1jry4
-         pvfcFWa1jgebWUYBrdGOcbpm3j5+lSdHtXQb5Yg7q600TAdLYgnkiBUCErd/HeJ0S2mt
-         vmxVdcPfVjJAvgFDHxd+Ig7OTWIyNCtz0nYKunFiwutwa19WmmtlaF36z4is83/v4BKp
-         dgw28sYjACrgAk6DHQo4+Mnza3oFMDHR7Z+c3xX532GdZHsn4gpz0uoYDwE8o3MLS9Ag
-         HWQzMowbpXQUjdxFMlZHzV8xcYZIwn9+BtzzSIJa/T3uJ55l/9IaPSlrbUqCnlrfVYxA
-         WpvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwEzo2SS4rlWc9ghI/0WTba0UlK+IWGsmOdtIp9OdX3ZeGLfa44mKejh0B/iWc/DGkSbSG8g0BLdury1s=@vger.kernel.org, AJvYcCX25GAN8uDdH3rrvRegFOtrhFDuqEeolv4lfQcA11wHNpxZXCIxuLSObL7UKye3Uma3BLACy1U90Fy/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE+72Mxwcr9x7+semQk8cyBJEJQgrKFhtM94VOmzqxOwqZtp9V
-	NVTnYpfB2Bsx11CrlG3svMDiuEyw0FMmrjg4a0mKqQhvD5u0rwzp
-X-Google-Smtp-Source: AGHT+IH3GWlc3718py/4iMlXY0Kwb/RLZw61xjAAcLiM+WM58X9tyK76osdiPDn69Ez6GqZ051Et1w==
-X-Received: by 2002:a05:6a21:32a8:b0:1db:e3a2:eaba with SMTP id adf61e73a8af0-1dbe3a2ec0fmr10227263637.11.1730861398955;
-        Tue, 05 Nov 2024 18:49:58 -0800 (PST)
-Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e99a62bd39sm288547a91.48.2024.11.05.18.49.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 18:49:58 -0800 (PST)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	linux-nfs@vger.kernel.org (open list:NFS, SUNRPC, AND LOCKD CLIENTS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Daniel Yang <danielyangkang@gmail.com>
-Subject: [PATCH] nfs_sysfs_link_rpc_client(): Replace strcpy with strscpy
-Date: Tue,  5 Nov 2024 18:49:51 -0800
-Message-Id: <20241106024952.494718-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730861497; c=relaxed/simple;
+	bh=zGklckDW0yAzRpIHB36p0nroZKUlM400pZk1ZhfMExw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AbytIZeBm+umqHYNtfIA6gDoRzFsJt+lXzKrSvvLn55T3uKcAzUj0XsOj/9R0ck5mgLIr8t5W/2DDGpxDVkWkDTkabmO7pnj0ocCTJuFRxdJd661xaC7jCs93UwzqyLrMgx0dQpAPAbx1j7/dKiR4iaiivm6Wah2CaKTezUx50s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=CPSIO1oh; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A61igiP017650;
+	Wed, 6 Nov 2024 02:51:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pps0720; bh=fIau/TGBK/Y6E
+	JZSH4sYAY5qCp0ClLkPwdbVUgJbvDw=; b=CPSIO1oh/jpKfndIGm14Np1CbjWQg
+	hyuP8zyjECZjObh4jNnoKW9STq4jgktvUNUridmLgkdl1T1XQUPF9J+pgOTelhtD
+	Jw0ceWFgjylRafJJ4RAhdzY+McmPuCf8aktwkiBrZrroObZLp4pH14eIeY9fyFac
+	CkNlF8txzjfXhAwGYE5RoWBzs1UFfAMCPlCP3Eiihth1zZk9o8HQ9zoGo9nCtB4g
+	F02PPqPE2L4DVX0pj4TpjGK9uPeubyfVLPILUP70O0Lko3B986J2jx382AJnnHOl
+	GRrygh/GJiiuPCSeAQSkanOEGcx+ixFNhEcKIMXUFqK+qne0OdYLMpZYg==
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 42qqxw3nj1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 02:51:04 +0000 (GMT)
+Received: from localhost (unknown [192.58.206.35])
+	by p1lg14881.it.hpe.com (Postfix) with ESMTP id A0FE0806B3F;
+	Wed,  6 Nov 2024 02:51:02 +0000 (UTC)
+From: Matt Muggeridge <Matt.Muggeridge@hpe.com>
+To: idosch@idosch.org
+Cc: Matt.Muggeridge@hpe.com, davem@davemloft.net, dsahern@kernel.org,
+        edumazet@google.com, horms@kernel.org, kuba@kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org
+Subject: Re: [PATCH net 1/1] net/ipv6: Netlink flag for new IPv6 Default Routes
+Date: Tue,  5 Nov 2024 21:50:56 -0500
+Message-Id: <20241106025056.11241-1-Matt.Muggeridge@hpe.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <Zypgu5l7F1FpIpqo@shredder>
+References: <Zypgu5l7F1FpIpqo@shredder>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,29 +68,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: IQacsdKuxoAHBraaf122jx6QcKWt9S9_
+X-Proofpoint-ORIG-GUID: IQacsdKuxoAHBraaf122jx6QcKWt9S9_
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ phishscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 mlxscore=0 mlxlogscore=866 spamscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411060020
 
-The function strcpy is deprecated due to lack of bounds checking. The
-recommended replacement is strscpy.
+Thank you for your review and feedback, Ido.
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
----
- fs/nfs/sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> Without this flag, when there are mutliple default routers, the kernel
+>> coalesces multiple default routes into an ECMP route. The ECMP route
+>> ignores per-route REACHABILITY information. If one of the default
+>> routers is unresponsive, with a Neighbor Cache entry of INCOMPLETE, then
+>> it can still be selected as the nexthop for outgoing packets. This
+>> results in an inability to communicate with remote hosts, even though
+>> one of the default routers remains REACHABLE. This violates RFC4861
+>> section 6.3.6, bullet 1.
+>
+>Do you have forwarding disabled (it causes RT6_LOOKUP_F_REACHABLE to be
+>set)?
 
-diff --git a/fs/nfs/sysfs.c b/fs/nfs/sysfs.c
-index bf378ecd5..f3d0b2ef9 100644
---- a/fs/nfs/sysfs.c
-+++ b/fs/nfs/sysfs.c
-@@ -280,7 +280,7 @@ void nfs_sysfs_link_rpc_client(struct nfs_server *server,
- 	char name[RPC_CLIENT_NAME_SIZE];
- 	int ret;
- 
--	strcpy(name, clnt->cl_program->name);
-+	strscpy(name, clnt->cl_program->name);
- 	strcat(name, uniq ? uniq : "");
- 	strcat(name, "_client");
- 
--- 
-2.39.5
+Yes, forwarding is disabled on our embedded system. Though, this needs to
+work on systems regardless of the state of forwarding.
 
+>  Is the problem that fib6_table_lookup() chooses a reachable
+>nexthop and then fib6_select_path() overrides it with an unreachable
+>one?
+
+I'm afraid I don't know.
+
+The objective is to allow IPv6 Netlink clients to be able to create default
+routes from RAs in the same way the kernel creates default routes from RAs.
+Essentially, I'm trying to have Netlink and Kernel behaviors match.
+
+My analysis led me to the need for Netlink clients to set the kernel's
+fib6_config flags RTF_RA_ROUTER, where:
+
+    #define RTF_RA_ROUTER		(RTF_ADDRCONF | RTF_DEFAULT)
+
+>> +	if (rtm->rtm_flags & RTM_F_RA_ROUTER)
+>> +		cfg->fc_flags |= RTF_RA_ROUTER;
+>> +
+> 
+> It is possible there are user space programs out there that set this bit
+> (knowingly or not) when sending requests to the kernel and this change
+> will result in a behavior change for them. So, if we were to continue in
+> this path, this would need to be converted to a new netlink attribute to
+> avoid such potential problems.
+> 
+
+Is this a mandated approach to implementing unspecified bits in a flag?
+
+I'm a little surprised by this consideration. If we account for poorly
+written buggy user-programs, doesn't this open any API to an explosion
+of new attributes or other odd extensions? I'd imagine the same argument
+would be applicable to ioctl flags, socket flags, and so on. Why would we
+treat implementing unspecified Netlink bits differently to implementing
+unspecified ioctl bits, etc.
+
+Naturally, if this is the mandated approach, then I'll reimplement it with
+a new Netlink attribute. I'm just trying to understand what is the
+Linux-lore, here?
+
+> BTW, you can avoid the coalescing problem by using the nexthop API (man
+> ip-nexthop).
+
+I'm not sure how that would help in this case. We need the nexthop to be
+determined according to its REACHABILITY and other considerations described
+in RFC4861.
+
+Kind regards,
+Matt.
 
