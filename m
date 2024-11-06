@@ -1,87 +1,133 @@
-Return-Path: <linux-kernel+bounces-399006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745559BF943
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:27:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B247F9BF94B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:29:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A24FB22C36
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:27:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77ECE28473E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB9E20E00A;
-	Wed,  6 Nov 2024 22:27:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2015420CCFE;
+	Wed,  6 Nov 2024 22:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwBqoK48"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B200F20D515
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FA120C313;
+	Wed,  6 Nov 2024 22:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730932026; cv=none; b=sywmkOoXHucWz3PQR1U/faG1bvDAUDQl/SIe1jRm41U82AwNUt2Sj1mJNSMy37X9FmgPVVmBefIg/ayTsdEGR1mElu5ql6yL6VIQIaSaRo3uH9FVfXEl7+SdPP4h41Rol5tnlpKgVnABML4OermSBTlKAK9+3n8OWzqA/wBY2mI=
+	t=1730932176; cv=none; b=N4iyeq79SeU26g/MZjModXsbkkjO0Be9fhQgvAAHA0nSLxWu8UaYNrj5QS4jJglCG7C+FSuWpYwDKEvnIUbFbXjuVdFEi/yGQO3fZlKr+taRkUyP1Cf+wrUbYtu6fiKsUKrrd571zh6aXKBlKoo5d9JxcPiu2gRQGsScATmIWew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730932026; c=relaxed/simple;
-	bh=1TaITtvy2eb/mnbYQr+EPTeoOjeFF1uMYjoYVpRQwGE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TT2XnSEJ09O4dNGyMBYam/i9suDa0gF4RJ8VbycOFFYAIcv0AWPauK0wXPfdwn93p4BKWkUYDxcj/w1XbLRmK+CzSRCvpoIoe2QUtqxHPyOXKuXTPAh9nsxpP59s6zgSxw579DTldFDjmT2DB678A/oALjk+vPSV8Yt0jtPSLgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83a8c0df400so34912339f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 14:27:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730932024; x=1731536824;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KCRpFjqQcBnw7Wfeg7JfgGGwO9fw3TCvqG/7Y4ODjQ0=;
-        b=XrUz46i0qh2eHjSIa7zPGw5HZICH1DUsrv8bjGvNw1q6hp7Ttfpx69JVQqVB2S7oIM
-         cnWcWG8v+NYOhv6RZ1Jdvg3KlkGttntGcf7JQzg4okv2DTUHLfYKuW7gqyAf7fNuleO4
-         4K0dvfEMiy1MD9n+/qjGTvp7Iy0qFtU/CMqvBMDqXPD/kepU2bfVGn5yPOM3TbYSFJhc
-         hRwaNCUT+VrHWE9MM5R4UhjuqSX3qWTyPmsCwMrOM2kbcxIi7lMcIuS44PrBApHArSq4
-         2HPmpw99A/3CqeZU6KDb4iy1UOV+M4gsjiH5vyvt1Xd8vdG08VvNXE/YmRMA5oVumMVW
-         zuIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW57VykBnKXwqqfKNP4b/Jg+Z6huUcMm9mg1b19UTcgweGDBTYL5xgzFiFVshrar8QdfewF8vS5JFsY77M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR9ERHodk/N2YjJG+CirtAm9cHMr3EWHMITVGTtbpsJfScIYIX
-	8jkDAmGGXgB2k1VRgXlgWoQgGJynoe/4lTh/9RC00Lid4feZwCEjO/YFnLUbXb2+CCj+G2j+ddt
-	kfd27oY73Yl6uq1UlKvbqOUcQYpP1z2DQo/rdbGxAVpXRb9PMuVBAww0=
-X-Google-Smtp-Source: AGHT+IEhdX4ridmhZ9oiF9pcnssnDVwNUY7BLZ7N2FwBDqpA7YdUa2crIN5H9xLsATmWaoIeeqJey1goErv0z158XO8LOjTtAHFB
+	s=arc-20240116; t=1730932176; c=relaxed/simple;
+	bh=FHEZ8Db5PTgMmVRyesXrgUdXjQUoWglkt/etn3U6PNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eWdni2068q5zQxvNyP2ssIxY2BcrgQFyp0mAxCatkdwKvPY5b/EqfpEA9AR70qTsPdN32rHt56jqap1KJQjN9cwcpd2jNsi83nBeVbgqut3i57nzihmqcuAdS0TUD61aPTI0R87WVjzJR2Fg0VufrGME9jFgwTo7oAflR6nSxYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwBqoK48; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B420EC4CEC6;
+	Wed,  6 Nov 2024 22:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730932175;
+	bh=FHEZ8Db5PTgMmVRyesXrgUdXjQUoWglkt/etn3U6PNE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VwBqoK488rj4i5ZAs5nN/uCeP7h7zth66K1wgO39pGpLfXIiXeWtenBjfJhyvMNe7
+	 mv07rsD6goSN/i0a8VR0F/IyfTPfMRI2Dv8i/Pvw8CLQaASyp4rwG1bScAnkMmqQ61
+	 v60vLFFo0q2VvD6AucpE0Tj5ln7xxE813lpwCzQGU0oJO0flmfj5X8mLi9v7BMW9Sz
+	 xSDL7J8lSfqV8JVK+mJBUZOmu2Je/8o5LQXTVqoEjnqjbMahPp4xtaqDCdfSInx1lT
+	 QPZVvbKUkgWbaDLDo2fR+Yic0+RMp1Gh3L2ncFFu7w90J4AGSqJZPCfpdZ5jMow2Ra
+	 S2rstTiEMhKzw==
+Date: Wed, 6 Nov 2024 16:29:33 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+	Frank Li <frank.li@nxp.com>, "mani@kernel.org" <mani@kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at
+ some platforms
+Message-ID: <20241106222933.GA1543549@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216e:b0:3a6:aa59:fffa with SMTP id
- e9e14a558f8ab-3a6b02b808amr206630215ab.11.1730932023791; Wed, 06 Nov 2024
- 14:27:03 -0800 (PST)
-Date: Wed, 06 Nov 2024 14:27:03 -0800
-In-Reply-To: <20241106180706.330326-1-jchapman@katalix.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672bed37.050a0220.350062.027e.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in l2tp_exit_net
-From: syzbot <syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com>
-To: jchapman@katalix.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AS8PR04MB8676998092241543AEABFAAB8C532@AS8PR04MB8676.eurprd04.prod.outlook.com>
 
-Hello,
+On Wed, Nov 06, 2024 at 01:59:41AM +0000, Hongxing Zhu wrote:
+> > -----Original Message-----
+> > From: Bjorn Helgaas <helgaas@kernel.org>
+> > Sent: 2024年11月6日 7:27
+> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
+> > Cc: kwilczynski@kernel.org; bhelgaas@google.com;
+> > lorenzo.pieralisi@arm.com; Frank Li <frank.li@nxp.com>; mani@kernel.org;
+> > linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > linux-kernel@vger.kernel.org; kernel@pengutronix.de; imx@lists.linux.dev
+> > Subject: Re: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at
+> > some platforms
+> > 
+> > On Mon, Jul 22, 2024 at 02:15:13PM +0800, Richard Zhu wrote:
+> > > The dw_pcie_suspend_noirq() function currently returns success
+> > > directly if no endpoint (EP) device is connected. However, on some
+> > > platforms, power loss occurs during suspend, causing dw_resume() to do
+> > > nothing in this case.
+> > > This results in a system halt because the DWC controller is not
+> > > initialized after power-on during resume.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> > > @@ -933,23 +933,23 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+> > >  	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) &
+> > PCI_EXP_LNKCTL_ASPM_L1)
+> > >  		return 0;
+> > >
+> > > -	if (dw_pcie_get_ltssm(pci) <= DW_PCIE_LTSSM_DETECT_ACT)
+> > > -		return 0;
+> > > -
+> > > -	if (pci->pp.ops->pme_turn_off)
+> > > -		pci->pp.ops->pme_turn_off(&pci->pp);
+> > > -	else
+> > > -		ret = dw_pcie_pme_turn_off(pci);
+> > > +	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
+> > > +		/* Only send out PME_TURN_OFF when PCIE link is up */
+> > > +		if (pci->pp.ops->pme_turn_off)
+> > > +			pci->pp.ops->pme_turn_off(&pci->pp);
+> > > +		else
+> > > +			ret = dw_pcie_pme_turn_off(pci);
+> > 
+> > This looks possibly racy since the link can go down at any point.
+>
+> When link is down and without this commit changes,
+> dw_pcie_suspend_noirq() return directly, and the PME_TURN_OFF
+> wouldn't be kicked off.
 
-Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
-Tested-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
+Right, that's the code change.
 
-Tested on:
+> I change the behavior to issue the PME_TURN_OFF when link is up
+> here.
 
-commit:         ccb35037 Merge branch 'net-lan969x-add-vcap-functional..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e85f40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a9d1c42858837b59
-dashboard link: https://syzkaller.appspot.com/bug?extid=332fe1e67018625f63c9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b68d87980000
+But I don't think you responded to the race question.  What happens
+here?
 
-Note: testing is done by a robot and is best-effort only.
+  if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
+    --> link goes down here <--
+    pci->pp.ops->pme_turn_off(&pci->pp);
+
+You decide the LTSSM is active and the link is up.  Then the link goes
+down.  Then you send PME_Turn_off.  Now what?
+
+If it's safe to try to send PME_Turn_off regardless of whether the
+link is up or down, there would be no need to test the LTSSM state.
+
+Bjorn
 
