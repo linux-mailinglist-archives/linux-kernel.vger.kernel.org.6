@@ -1,308 +1,145 @@
-Return-Path: <linux-kernel+bounces-398641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5449BF401
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:09:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EED29BF3FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F16287A4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:09:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D1A2877AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DF4206514;
-	Wed,  6 Nov 2024 17:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB88F20696A;
+	Wed,  6 Nov 2024 17:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ETlzRxm4"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N/DgUSiY"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66421DE4EF;
-	Wed,  6 Nov 2024 17:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A3C2064ED
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730912969; cv=none; b=g9n9j9JBdR/l7bOqwjMyWE7FwzaRkQyRt6AJwU4dqO1SuSYXdM2LndfRZQswH3fu3iQ7ygbXJMMQK0wTYM3U5unIMwaHXw1KFZ4BQ+8VKJSG8sGTHuF7l7XFU2xr6X07P9CsYsc4m33diOzQ2kaKagA4bgaFWOn1OK07BXY/cFk=
+	t=1730912942; cv=none; b=onCArOWW4HD4i01FhSs8Kp8///BhKBMOMV/XTgEkvdjCWQtKjLysp568N5d+nNfppNdU4ZZuuz2iepML93nlm7NJ4s9OUr3Lya3OA7dkMx1kTL+5FPUfYpEDw01nFNYVAnFWJEfRp3IhSBaTrNn+MkLHvh26RXPnPsxTYyUZQUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730912969; c=relaxed/simple;
-	bh=41LsHXoX987C4fNFtmJj2o2V8wDdrdxLnruf1+GeCrk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MQPu70ESrQnXA9EHm310+njmJAw4uVnDnB6FhK8+Dad6GgRjWLUJsrIa1LU2BYqLMoTpVarjhTt38JbSrYMM8xe0yMi2dT+0bso5ZBF7bmRI/gAfPsRZusZ/VjpY80ts//5WlGUcN/f5+3CsAm8yWu7V+YkZyZD4XvIKGLOIfK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ETlzRxm4; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6H6ph6005159;
-	Wed, 6 Nov 2024 17:08:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=fevTHl
-	45RE9CKA3n1iiJliFCZI5cGe0f+tLLXFWGdpE=; b=ETlzRxm48457iUotNvv2JP
-	aaeziDrbsHe0UYOy59PUgFwEGKqNo7Las3duRlVGSGY7ZS58L23oEhsBiCqivafh
-	ex9nrSty5gw2qODohqkesfaOT90OCMPxoDH5Rnlnex5Z5hNmWh2J+ESVzwmglJr+
-	w1ODkNS6CDqDtNmuf3XrP6R44OJgRejohQyIR0ufob+mawqXN0U+DMOfRKnTWWoE
-	b/bCz6ao9nRQ1a8NFci4oLG0ECTROO70/vwsAMCfm5fU6dBaK3RAH+j726dmcjtN
-	R9euHZAxt2GMfM/u2eO/dl8ec4VxEMQYcMfGPDKIWp5cncM4fE+2cOQpNu9XNvGw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rba0gk5e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 17:08:57 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A6H6qeD005319;
-	Wed, 6 Nov 2024 17:08:57 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rba0gk32-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 17:08:56 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6FGn5T019085;
-	Wed, 6 Nov 2024 17:04:12 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p0mj6fye-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 17:04:12 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A6H48FY47710652
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Nov 2024 17:04:08 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 611BA20040;
-	Wed,  6 Nov 2024 17:04:08 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 17B1320043;
-	Wed,  6 Nov 2024 17:04:07 +0000 (GMT)
-Received: from [9.152.222.93] (unknown [9.152.222.93])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Nov 2024 17:04:07 +0000 (GMT)
-Message-ID: <dc588eb9-f4ec-4ec8-b472-19e894b753e9@linux.ibm.com>
-Date: Wed, 6 Nov 2024 18:04:06 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-        Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
-From: Jens Remus <jremus@linux.ibm.com>
-Content-Language: en-US
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZWjQAsrbLnnnQrWJyHlh0lryrAE7UvIA
-X-Proofpoint-ORIG-GUID: M9vnOA56mAYv8FrsMXCtZQaJeayKSw9c
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1730912942; c=relaxed/simple;
+	bh=lUtU6exFV/0t2K0nFD83dUTyPPvOKmzMlR2+lgOJ6QA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jF9dKoI9kxDnrYYmRH8E/zLv+rMLLkC67yBiSHfs35IZIlIpwUnpCmEThxJJhqUmyMW9WFdxW0IviR4t34qnECg1utk2uY5ZeXir+DhJDgnsImPJ3Pq5sHOc4s85xsJftvFJ6ACTydzswavvFODSvywxeewcusDNbsadfxwNOxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N/DgUSiY; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso8473035a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 09:09:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730912939; x=1731517739; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=J6eDnsApgHXXX2eNqrPT459Y8vwvHutnUiY5z69lIwY=;
+        b=N/DgUSiYMBtMsnL5i8eVB2h80AVSJN8YVrvFJ6hlbM7bTXRyFZ6mRy34idwiM6e38r
+         qGyaYmyVk7AXZcP5/MSztof2avfE8zMptzoyw1c7pWk1Su10jnFHvo0gwDln3plN6HnS
+         T8leGnJGsU0DuZ+xszb0tprfC3ms0FLrJ02fdjPK0ybj4kC81B4yJT5+bvzENa3dfAMi
+         eO4SzIA+1iZTDtkbT1c891hZgxJI9i7qNB13dJuFv6qVfeqBPD3MdTCce/b4KTkpNlyp
+         cnCoHAL9x6YFYuj5oySeRQvpdC9bmkqfrY2iyTUWODRBAy5p5A8XtlZ5FhTxMKa+zQmy
+         4sIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730912939; x=1731517739;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J6eDnsApgHXXX2eNqrPT459Y8vwvHutnUiY5z69lIwY=;
+        b=l5krW8PZg1vD7YpxCKeAr5mpkHVIVe2XWXCYW1Ca8whm2iaKmt60wJ1fgipAUHG4g9
+         y+hSzsrDT05hJ1ActA363KUQ7ACfRyl+gtP/J2BwfVzZHg6k1AFFKNJ/q9Unc661n82O
+         HLXQYghrR/IHi6YYTdDDdFxGF1iqwxojq2uObkZcXgMRL1kAdBe2FyfP4LO0oN2gNELe
+         qf0EtIvBFA2pGkMOLe+4H3mfnPL8j/X2AfgmIGMh0Ppmr77UCWOToLZK8nWEMhyKnlBK
+         9jsDimhsrQC4/IBwWpeVI+p4+9n84ttYPQDywMJvcvEsnFna44m8HPkSr8gY7Dub4ddg
+         +CbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbnuwrkEAM6ZjvGvwJJqWZe6PiEeBPJwVdmiGf4MDNf7+i5hBylt7+16vrpxmGGIhS+dgO4miJes632Ck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydUHsRbUpz7FEJA7QhHJcgBA19n9mqkiwq3TH3PUc1ZRnmZdov
+	7asyhiXxNJWFHCgN3lx0hfKwjXEOxamPmSrMVuE5N0abzjuIw/EmW7Z/vIMGfg==
+X-Google-Smtp-Source: AGHT+IFuDYP4MNuKTvCz+cqkpbEel3mPAHGXPas8WurjLlxHRsA6YcT5W5N/fyHtAoT/QJOJ2VQgxw==
+X-Received: by 2002:a17:906:7305:b0:a9e:c267:2040 with SMTP id a640c23a62f3a-a9ec2672423mr402543566b.51.1730912938575;
+        Wed, 06 Nov 2024 09:08:58 -0800 (PST)
+Received: from thinkpad ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16a2ec7sm311191266b.22.2024.11.06.09.08.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 09:08:57 -0800 (PST)
+Date: Wed, 6 Nov 2024 17:08:56 +0000
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Sricharan R <quic_srichara@quicinc.com>, bhelgaas@google.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+	konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V7 4/4] PCI: qcom: Add support for IPQ9574
+Message-ID: <20241106170856.7iv2sjmjwyhnurps@thinkpad>
+References: <20241106145615.25tc7n4zcdkp47jr@thinkpad>
+ <20241106165312.GA1528877@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- clxscore=1015 adultscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411060133
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106165312.GA1528877@bhelgaas>
 
-On 28.10.2024 22:47, Josh Poimboeuf wrote:
-...
+On Wed, Nov 06, 2024 at 10:53:12AM -0600, Bjorn Helgaas wrote:
+> On Wed, Nov 06, 2024 at 02:56:15PM +0000, Manivannan Sadhasivam wrote:
+> > On Tue, Nov 05, 2024 at 07:40:24PM -0600, Bjorn Helgaas wrote:
+> > > On Thu, Aug 01, 2024 at 11:18:03AM +0530, Sricharan R wrote:
+> > > > From: devi priya <quic_devipriy@quicinc.com>
+> > > > 
+> > > > The IPQ9574 platform has four Gen3 PCIe controllers:
+> > > > two single-lane and two dual-lane based on SNPS core 5.70a.
+> > > > 
+> > > > QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
+> > > > Reuse all the members of 'ops_2_9_0'.
+> > > 
+> > > Wow, this is confusing.
+> > > 
+> > > "Based on SNPS core 5.70a", but "Synopsys IP rev is 5.80a."
+> > > Are those supposed to match?  Or is it 5.70a of one thing but 5.80a of
+> > > a different thing?
+> > 
+> > Hmm, I'm not sure why 5.70a is mentioned here. It seems irrelevant
+> > (even if it is the base).
+> > 
+> > > And where does ops_2_9_0 come in?  The code comment says:
+> > > 
+> > >   /* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
+> > >   static const struct qcom_pcie_ops ops_2_9_0 = {
+> > > 
+> > > which doesn't match 1.27.0 or 5.70a or 5.80a.  In fact there's nothing
+> > > in the file that matches 1.*27.*0
+> > > 
+> > > Honestly, I don't really care if you have all the versions here in the
+> > > commit log.  But if the versions *are* here, can we make them make
+> > > sense?
+> > 
+> > We name the 'ops' structure based on Qcom IP revision. And we reuse
+> > it across the SoCs which are compatible. That's why ops_2_9_0 is
+> > used for this SoC which has Qcom IP rev 1.27.0.
+> 
+> Got it.  So a family of compatible Qcom IP starts with 2.9.0 and newer
+> members are 1.27.0 etc.  With no hint in the source about what the
+> members of the family are.  Perfect sEnSe.
+> 
 
-> diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-...
-> +#define __SFRAME_GET_USER(out, user_ptr, type)				\
-> +({									\
-> +	type __tmp;							\
-> +	if (get_user(__tmp, (type __user *)user_ptr))			\
-> +		return -EFAULT;						\
-> +	user_ptr += sizeof(__tmp);					\
-> +	out = __tmp;							\
-> +})
-> +
-> +#define SFRAME_GET_USER(out, user_ptr, size)				\
-> +({									\
-> +	switch (size) {							\
-> +	case 1:								\
-> +		__SFRAME_GET_USER(out, user_ptr, u8);			\
-> +		break;							\
-> +	case 2:								\
-> +		__SFRAME_GET_USER(out, user_ptr, u16);			\
-> +		break;							\
-> +	case 4:								\
-> +		__SFRAME_GET_USER(out, user_ptr, u32);			\
-> +		break;							\
-> +	default:							\
-> +		return -EINVAL;						\
-> +	}								\
-> +})
-> +
-> +static unsigned char fre_type_to_size(unsigned char fre_type)
-> +{
-> +	if (fre_type > 2)
-> +		return 0;
-> +	return 1 << fre_type;
-> +}
-> +
-> +static unsigned char offset_size_enum_to_size(unsigned char off_size)
-> +{
-> +	if (off_size > 2)
-> +		return 0;
-> +	return 1 << off_size;
-> +}
-...
-> +static int find_fre(struct sframe_section *sec, struct sframe_fde *fde,
-> +		    unsigned long ip, struct unwind_user_frame *frame)
-> +{
-> +	unsigned char fde_type = SFRAME_FUNC_FDE_TYPE(fde->info);
-> +	unsigned char fre_type = SFRAME_FUNC_FRE_TYPE(fde->info);
-> +	unsigned char offset_count, offset_size;
-> +	s32 cfa_off, ra_off, fp_off, ip_off;
-> +	void __user *f, *last_f = NULL;
-> +	unsigned char addr_size;
-> +	u32 last_fre_ip_off = 0;
-> +	u8 fre_info = 0;
-> +	int i;
-> +
-> +	addr_size = fre_type_to_size(fre_type);
-> +	if (!addr_size)
-> +		return -EINVAL;
-> +
-> +	ip_off = ip - (sec->sframe_addr + fde->start_addr);
-> +
-> +	f = (void __user *)sec->fres_addr + fde->fres_off;
-> +
-> +	for (i = 0; i < fde->fres_num; i++) {
-> +		u32 fre_ip_off;
-> +
-> +		SFRAME_GET_USER(fre_ip_off, f, addr_size);
-> +
-> +		if (fre_ip_off < last_fre_ip_off)
-> +			return -EINVAL;
-> +
-> +		last_fre_ip_off = fre_ip_off;
-> +
-> +		if (fde_type == SFRAME_FDE_TYPE_PCINC) {
-> +			if (ip_off < fre_ip_off)
-> +				break;
-> +		} else {
-> +			/* SFRAME_FDE_TYPE_PCMASK */
-> +			if (ip_off % fde->rep_size < fre_ip_off)
-> +				break;
-> +		}
-> +
-> +		SFRAME_GET_USER(fre_info, f, 1);
-> +
-> +		offset_count = SFRAME_FRE_OFFSET_COUNT(fre_info);
-> +		offset_size  = offset_size_enum_to_size(SFRAME_FRE_OFFSET_SIZE(fre_info));
-> +
-> +		if (!offset_count || !offset_size)
-> +			return -EINVAL;
-> +
-> +		last_f = f;
-> +		f += offset_count * offset_size;
-> +	}
-> +
-> +	if (!last_f)
-> +		return -EINVAL;
-> +
-> +	f = last_f;
-> +
-> +	SFRAME_GET_USER(cfa_off, f, offset_size);
+You can get that information by mapping the ops structure with compatibles. I
+feel less incentive in documenting the SoC names deriving the same IP.
 
-SFRAME_GET_USER() does not work for the signed SFrame CFA offset.
+And the reason why 2.9.0 ops is used by 1.27 is because, we ended up adding
+support for 2.9.0 IP first and the lower version followed later.
 
-> +	offset_count--;
-> +
-> +	ra_off = sec->ra_off;
-> +	if (!ra_off) {
-> +		if (!offset_count--)
-> +			return -EINVAL;
-> +
-> +		SFRAME_GET_USER(ra_off, f, offset_size);
+- Mani
 
-Likewise for the signed SFrame RA offset.
-
-Excerpt from my added trace. Note the RA_off=65488 (unsigned) = 0xFFD0 = 
--48 (signed):
-
-unwind_user_next: WARNING: RA could not be obtained from user space 
-(IP=0x000003ffbb5f4218, CFA=0x000003ffc22f8f10, RA_off=65488)
-
-Excerpt from perf script:
-
-3ffbb5f4218 internal_fnwmatch+0x558 (/usr/lib64/libc.so.6)
-
-Excerpts from objdump -wt --sframe:
-
-00000000000f3cc0 l     F .text  000000000000195c 
-internal_fnwmatch
-
-func idx [1715]: pc = 0xf3cc0, size = 6492 bytes
-STARTPC         CFA       FP        RA           INFO
-00000000000f3cc0  sp+160    u         u            (1*1B)
-00000000000f3cc6  sp+160    c-72      c-48         (3*1B)
-00000000000f3cd0  sp+4256   c-72      c-48         (3*2B)
-00000000000f3cdc  sp+8352   c-72      c-48         (3*2B)
-00000000000f3ce8  sp+10792  c-72      c-48         (3*2B)
-00000000000f3f7e  sp+160    u         u            (1*1B)
-00000000000f3f80  sp+10792  c-72      c-48         (3*2B)
-
-> +	}
-> +
-> +	fp_off = sec->fp_off;
-> +	if (!fp_off && offset_count) {
-> +		offset_count--;
-> +		SFRAME_GET_USER(fp_off, f, offset_size);
-
-Likewise for the signed SFrame FP offset.
-
-> +	}
-> +
-> +	if (offset_count)
-> +		return -EINVAL;
-> +
-> +	frame->cfa_off = cfa_off;
-> +	frame->ra_off = ra_off;
-> +	frame->fp_off = fp_off;
-> +	frame->use_fp = SFRAME_FRE_CFA_BASE_REG_ID(fre_info) == SFRAME_BASE_REG_FP;
-> +
-> +	return 0;
-> +}
-...
-
-I have verified that reintroducing and using SFRAME_GET_USER_SIGNED() 
-works correctly.
-
-Regards,
-Jens
 -- 
-Jens Remus
-Linux on Z Development (D3303) and z/VSE Support
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des 
-Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der 
-Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
-
+மணிவண்ணன் சதாசிவம்
 
