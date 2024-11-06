@@ -1,223 +1,100 @@
-Return-Path: <linux-kernel+bounces-398677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0589BF492
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:48:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A719BF494
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:49:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D610B23163
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:48:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92AE1C23AA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D4A207A1A;
-	Wed,  6 Nov 2024 17:48:41 +0000 (UTC)
-Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B563A2076CE;
+	Wed,  6 Nov 2024 17:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="gcj3HTZ7"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792362036E2;
-	Wed,  6 Nov 2024 17:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D98F205137;
+	Wed,  6 Nov 2024 17:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730915321; cv=none; b=gWk+n/itM65Dz2X6EcvKLl7WaN5UnUcKTQH6UoDqkz0/5s2Y85CLOiwQHmyCP5SS65DRMsMU8We1MbdA7F0GvigeJKXGisnOcFUqjPlaOf9MLAam5/4xNbaCZ2yQ44+jNPPLWNmpU2/B8ESfGeU4Pgmd8Mt/lW5VuVmVEsB6x7Q=
+	t=1730915351; cv=none; b=QuS10lptNcoTF0VMrO4FPuDUTrxAfjmy71M1LgiVEZQ/Q7z/ArlENNn1/FkzK0u9QJtQtDnC/3zE9+4VROl5H8Y+KVSo3UooJHZDbBgvUFy3sEUbKOhUcD8/n2Z9Bvqqz6ROwYNKbHN/qq6QJSDEOUd70FjlGtMsMYAMm+QTwq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730915321; c=relaxed/simple;
-	bh=MPiumqJT7AxuuDKLT0ImfUnDD8n1jnUk04Z9Z1kO6Gs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pcPu3HN8sdrFBLdDnJyFNUV4zmYl9wr8EaItiCv6lkFjJrCi0gMy9QohSg1D/L0So3PQcKj+JNvkaOYYLwtLuKCoRK1D7ZqVd6OJxmMVRLyNj/43yv6+0d1y5gP1wtERaFSG19X5Isp81gIECdd8BqclL3QyKoITIkg8cHcPZd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw01.astralinux.ru (Postfix) with ESMTP id F39E225021;
-	Wed,  6 Nov 2024 20:48:31 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail03.astralinux.ru [10.177.185.108])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
-	Wed,  6 Nov 2024 20:48:04 +0300 (MSK)
-Received: from MBP-Anastasia.DL (unknown [10.198.46.47])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XkCNM02rDz1h0CX;
-	Wed,  6 Nov 2024 20:48:02 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
-	lvc-project@linuxtesting.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Christopher Covington <cov@codeaurora.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.1 1/1] arm64: esr: Define ESR_ELx_EC_* constants as UL
-Date: Wed,  6 Nov 2024 20:47:56 +0300
-Message-ID: <20241106174757.38951-2-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241106174757.38951-1-abelova@astralinux.ru>
-References: <20241106174757.38951-1-abelova@astralinux.ru>
+	s=arc-20240116; t=1730915351; c=relaxed/simple;
+	bh=rZ0AHnFlkPojxV8zDLmE7gXqcPz0Hc1o+TSxHoEAZBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RH2d2aMexWGqUl1fWFe0mavT2N5jLraWhtRro2c2dBYR17U2ImaaXP8BXGVvYLIE7hrucIIz6cR1EPkyUQXHwicsUAvpUWReh7IMOYe1igfes96hrvrFEnTmm1ijUHgBafMvNAejXcNXNhfFP0RJCfbJkrSMCP6w0SPtw5lzJmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=gcj3HTZ7; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 33AF61C00A8; Wed,  6 Nov 2024 18:49:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1730915346;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qrqxqbGgbhGqhX5NKtxPAjB1Ah5iqmFvP6g0rlkAXFE=;
+	b=gcj3HTZ7ZpwPKj7DPl19zsYplL4Cq4z5Yi7Q1RACgd0Kzse7ZWCXgdkFJOPetMHFV3//kR
+	yUoOdSNatYVwPWBfqY7bgTFkeoY/VbClTxphi5i770e/LUoNMIrX3vHbFzPbiBTmUdedzp
+	/r9g1laAU2V/Xwee6NUYbz9bfcaWvD8=
+Date: Wed, 6 Nov 2024 18:49:05 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: anishkmr@amazon.com
+Cc: dmurphy@ti.com, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Anish Kumar <yesanishhere@gmail.com>,
+	Karthik Poduval <kpoduval@lab126.com>, Yue Hu <yhuamzn@amazon.com>
+Subject: Re: [PATCH] leds: driver for O2 Micro LED IC
+Message-ID: <ZyusEX3Pad8DTAk+@duo.ucw.cz>
+References: <20241106015441.995014-1-anishkmr@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected, bases: 2024/11/06 14:56:00
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;new-mail.astralinux.ru:7.1.1;astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 188998 [Nov 06 2024]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/11/06 15:41:00 #26827080
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2024/11/06 14:56:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ihaWzg01fV8LJLgH"
+Content-Disposition: inline
+In-Reply-To: <20241106015441.995014-1-anishkmr@amazon.com>
 
-From: Anastasia Belova <abelova@astralinux.ru>
 
-commit b6db3eb6c373b97d9e433530d748590421bbeea7 upstream.
+--ihaWzg01fV8LJLgH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add explicit casting to prevent expantion of 32th bit of
-u32 into highest half of u64 in several places.
+Hi!
 
-For example, in inject_abt64:
-ESR_ELx_EC_DABT_LOW << ESR_ELx_EC_SHIFT = 0x24 << 26.
-This operation's result is int with 1 in 32th bit.
-While casting this value into u64 (esr is u64) 1
-fills 32 highest bits.
+> +++ b/Documentation/devicetree/bindings/leds/leds-ozl003.txt
+> @@ -0,0 +1,23 @@
+> +*O2 Micro Compact LED Strobe Light Controller
+> +
+> +Compact LED strobe light controller, can be controlled by I2C or via a
+> +PWM gpio controlled.
+> +
+> +Required properties:
+> +- compatible : "o2micro,ozl003"
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+o2micro needs to be registered as a prefix somewhere.
 
-Cc: <stable@vger.kernel.org>
-Fixes: aa8eff9bfbd5 ("arm64: KVM: fault injection into a guest")
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/stable/20240910085016.32120-1-abelova%40astralinux.ru
-Link: https://lore.kernel.org/r/20240910085016.32120-1-abelova@astralinux.ru
-Signed-off-by: Will Deacon <will@kernel.org>
----
- arch/arm64/include/asm/esr.h | 86 ++++++++++++++++++------------------
- 1 file changed, 43 insertions(+), 43 deletions(-)
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-index 15b34fbfca66..4582cfc5d940 100644
---- a/arch/arm64/include/asm/esr.h
-+++ b/arch/arm64/include/asm/esr.h
-@@ -10,63 +10,63 @@
- #include <asm/memory.h>
- #include <asm/sysreg.h>
- 
--#define ESR_ELx_EC_UNKNOWN	(0x00)
--#define ESR_ELx_EC_WFx		(0x01)
-+#define ESR_ELx_EC_UNKNOWN	UL(0x00)
-+#define ESR_ELx_EC_WFx		UL(0x01)
- /* Unallocated EC: 0x02 */
--#define ESR_ELx_EC_CP15_32	(0x03)
--#define ESR_ELx_EC_CP15_64	(0x04)
--#define ESR_ELx_EC_CP14_MR	(0x05)
--#define ESR_ELx_EC_CP14_LS	(0x06)
--#define ESR_ELx_EC_FP_ASIMD	(0x07)
--#define ESR_ELx_EC_CP10_ID	(0x08)	/* EL2 only */
--#define ESR_ELx_EC_PAC		(0x09)	/* EL2 and above */
-+#define ESR_ELx_EC_CP15_32	UL(0x03)
-+#define ESR_ELx_EC_CP15_64	UL(0x04)
-+#define ESR_ELx_EC_CP14_MR	UL(0x05)
-+#define ESR_ELx_EC_CP14_LS	UL(0x06)
-+#define ESR_ELx_EC_FP_ASIMD	UL(0x07)
-+#define ESR_ELx_EC_CP10_ID	UL(0x08)	/* EL2 only */
-+#define ESR_ELx_EC_PAC		UL(0x09)	/* EL2 and above */
- /* Unallocated EC: 0x0A - 0x0B */
--#define ESR_ELx_EC_CP14_64	(0x0C)
--#define ESR_ELx_EC_BTI		(0x0D)
--#define ESR_ELx_EC_ILL		(0x0E)
-+#define ESR_ELx_EC_CP14_64	UL(0x0C)
-+#define ESR_ELx_EC_BTI		UL(0x0D)
-+#define ESR_ELx_EC_ILL		UL(0x0E)
- /* Unallocated EC: 0x0F - 0x10 */
--#define ESR_ELx_EC_SVC32	(0x11)
--#define ESR_ELx_EC_HVC32	(0x12)	/* EL2 only */
--#define ESR_ELx_EC_SMC32	(0x13)	/* EL2 and above */
-+#define ESR_ELx_EC_SVC32	UL(0x11)
-+#define ESR_ELx_EC_HVC32	UL(0x12)	/* EL2 only */
-+#define ESR_ELx_EC_SMC32	UL(0x13)	/* EL2 and above */
- /* Unallocated EC: 0x14 */
--#define ESR_ELx_EC_SVC64	(0x15)
--#define ESR_ELx_EC_HVC64	(0x16)	/* EL2 and above */
--#define ESR_ELx_EC_SMC64	(0x17)	/* EL2 and above */
--#define ESR_ELx_EC_SYS64	(0x18)
--#define ESR_ELx_EC_SVE		(0x19)
--#define ESR_ELx_EC_ERET		(0x1a)	/* EL2 only */
-+#define ESR_ELx_EC_SVC64	UL(0x15)
-+#define ESR_ELx_EC_HVC64	UL(0x16)	/* EL2 and above */
-+#define ESR_ELx_EC_SMC64	UL(0x17)	/* EL2 and above */
-+#define ESR_ELx_EC_SYS64	UL(0x18)
-+#define ESR_ELx_EC_SVE		UL(0x19)
-+#define ESR_ELx_EC_ERET		UL(0x1a)	/* EL2 only */
- /* Unallocated EC: 0x1B */
--#define ESR_ELx_EC_FPAC		(0x1C)	/* EL1 and above */
--#define ESR_ELx_EC_SME		(0x1D)
-+#define ESR_ELx_EC_FPAC		UL(0x1C)	/* EL1 and above */
-+#define ESR_ELx_EC_SME		UL(0x1D)
- /* Unallocated EC: 0x1E */
--#define ESR_ELx_EC_IMP_DEF	(0x1f)	/* EL3 only */
--#define ESR_ELx_EC_IABT_LOW	(0x20)
--#define ESR_ELx_EC_IABT_CUR	(0x21)
--#define ESR_ELx_EC_PC_ALIGN	(0x22)
-+#define ESR_ELx_EC_IMP_DEF	UL(0x1f)	/* EL3 only */
-+#define ESR_ELx_EC_IABT_LOW	UL(0x20)
-+#define ESR_ELx_EC_IABT_CUR	UL(0x21)
-+#define ESR_ELx_EC_PC_ALIGN	UL(0x22)
- /* Unallocated EC: 0x23 */
--#define ESR_ELx_EC_DABT_LOW	(0x24)
--#define ESR_ELx_EC_DABT_CUR	(0x25)
--#define ESR_ELx_EC_SP_ALIGN	(0x26)
-+#define ESR_ELx_EC_DABT_LOW	UL(0x24)
-+#define ESR_ELx_EC_DABT_CUR	UL(0x25)
-+#define ESR_ELx_EC_SP_ALIGN	UL(0x26)
- /* Unallocated EC: 0x27 */
--#define ESR_ELx_EC_FP_EXC32	(0x28)
-+#define ESR_ELx_EC_FP_EXC32	UL(0x28)
- /* Unallocated EC: 0x29 - 0x2B */
--#define ESR_ELx_EC_FP_EXC64	(0x2C)
-+#define ESR_ELx_EC_FP_EXC64	UL(0x2C)
- /* Unallocated EC: 0x2D - 0x2E */
--#define ESR_ELx_EC_SERROR	(0x2F)
--#define ESR_ELx_EC_BREAKPT_LOW	(0x30)
--#define ESR_ELx_EC_BREAKPT_CUR	(0x31)
--#define ESR_ELx_EC_SOFTSTP_LOW	(0x32)
--#define ESR_ELx_EC_SOFTSTP_CUR	(0x33)
--#define ESR_ELx_EC_WATCHPT_LOW	(0x34)
--#define ESR_ELx_EC_WATCHPT_CUR	(0x35)
-+#define ESR_ELx_EC_SERROR	UL(0x2F)
-+#define ESR_ELx_EC_BREAKPT_LOW	UL(0x30)
-+#define ESR_ELx_EC_BREAKPT_CUR	UL(0x31)
-+#define ESR_ELx_EC_SOFTSTP_LOW	UL(0x32)
-+#define ESR_ELx_EC_SOFTSTP_CUR	UL(0x33)
-+#define ESR_ELx_EC_WATCHPT_LOW	UL(0x34)
-+#define ESR_ELx_EC_WATCHPT_CUR	UL(0x35)
- /* Unallocated EC: 0x36 - 0x37 */
--#define ESR_ELx_EC_BKPT32	(0x38)
-+#define ESR_ELx_EC_BKPT32	UL(0x38)
- /* Unallocated EC: 0x39 */
--#define ESR_ELx_EC_VECTOR32	(0x3A)	/* EL2 only */
-+#define ESR_ELx_EC_VECTOR32	UL(0x3A)	/* EL2 only */
- /* Unallocated EC: 0x3B */
--#define ESR_ELx_EC_BRK64	(0x3C)
-+#define ESR_ELx_EC_BRK64	UL(0x3C)
- /* Unallocated EC: 0x3D - 0x3F */
--#define ESR_ELx_EC_MAX		(0x3F)
-+#define ESR_ELx_EC_MAX		UL(0x3F)
- 
- #define ESR_ELx_EC_SHIFT	(26)
- #define ESR_ELx_EC_WIDTH	(6)
--- 
-2.47.0
+--ihaWzg01fV8LJLgH
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZyusEQAKCRAw5/Bqldv6
+8oqkAJ9rllItCguh3nlqL4LAaohv1Gu6UQCbBwNsNov+8NZVoL4YQc29I8fRiYs=
+=bOme
+-----END PGP SIGNATURE-----
+
+--ihaWzg01fV8LJLgH--
 
