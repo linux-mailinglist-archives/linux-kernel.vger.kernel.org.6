@@ -1,281 +1,137 @@
-Return-Path: <linux-kernel+bounces-397638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319FB9BDE5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:46:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0EB9BDE5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:47:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60641F23E4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:46:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8CA1C224DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760A71917D0;
-	Wed,  6 Nov 2024 05:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DF21917C0;
+	Wed,  6 Nov 2024 05:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icD4pqdq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tJDSJq/3"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E0E2C80;
-	Wed,  6 Nov 2024 05:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A629618FDDA
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 05:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730871967; cv=none; b=Vii/tvqy2Hd5sV5EnzrkxYZIQZP8+xaQ4wiHlPOCCugjh1cfF6mZzZ7Pe/L3jvYEIPVSl+EGfgljTaMUFlx2c9/4+fxShfbdXKMO+yucb5/Ac/gh7y+USWK75UfjMiVqZBvz9vCTVQdtxq3H3jmAlvbtNHfBItzk6wwAQ/NyLkw=
+	t=1730872044; cv=none; b=H8z8aQsDzTOrp+SurRTENwK3Oq0HTT3oPgojqUJqMMR21aju0h9k4GUctHatq3kXmXfbFiwOx0e8nalVr7LzeFxxDnNbvtPU0Sn0or5YKUc3BpE3k2akQB6FLhtsO/NDiXL1RgD/KFXO/Ir2BcDlAwT9HaOMR3BdLtxJNRfL45E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730871967; c=relaxed/simple;
-	bh=KHaZm1BKPo5bIXvGUMESWUYC59KIwDNI0k37DvMlpVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H8p7PiTh4kkQXg0rLCCUxjEsEFb5x57Y0a7kooJs2+ZNopSGqWy9YL+R3eFQyKpgIa5tO4uAGb7U6qnNR0dKcaWNn58O6hYjdnk40xYYHhVuUJyJIxEgocDdvNZPGzwK4fePNdVNuqhnXVJI72T2ptX+Q1575FxbS+Y4HOHyZ3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icD4pqdq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 324EAC4CECD;
-	Wed,  6 Nov 2024 05:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730871967;
-	bh=KHaZm1BKPo5bIXvGUMESWUYC59KIwDNI0k37DvMlpVU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=icD4pqdqQbBRzIIcf6NeBCcFIAJSVFiN9TeJxVABG7BURPDCOmZAAPgvIJamzvRtn
-	 CGZXA7R79dq1crymNi3cWzswnCh09gVwyPjwfXph1OGTXIaPb0ECVHMnImw7NCqBry
-	 MYfGKtiu/w7sQKRH7Je/1IyoHKFxx5XDzTlQYFGFEnWGL1bU3RjYfY4EgOZBHfxT+i
-	 7YMfvxB6frG+9OIU8qSEFhE68LFWpavf502hL2zLYAU4RqZMTzQFo+q8KwR85Fb6ot
-	 Hn1OrHPPBCl3U7dImAxF8Z0urkoh7q1OI8HBt5yYbhMozB4wKUNavUBrul+P7jGeq7
-	 h22INCnYiPRtw==
-Message-ID: <a40ef9a8-0589-4070-921e-f3461fa6759c@kernel.org>
-Date: Tue, 5 Nov 2024 23:46:02 -0600
+	s=arc-20240116; t=1730872044; c=relaxed/simple;
+	bh=dYSK4OvUsOnyLQSwnFtsKalpN2mQMKz+nYSsrdB416E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UWjsVMgOss0vCc3EDlwJAz3o/Y7DymzpHbEEQtXjI9rcyU7U8bs34XxWRo1puoKRvyVZBtOKOlZ6NWkjZ+xxYdPd+uY5QlR+275kFzLK6iAgS/pBti75qLrd/QTdpzNd18iAc+CFtUZm0WOky8+1zrdNfG3hHu2cIYcKpVvs+nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tJDSJq/3; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539d9fffea1so6445916e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 21:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730872041; x=1731476841; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4wlFtruNqQoercRi+1WD7cjSp20+NvrYGVk9jN7SiPQ=;
+        b=tJDSJq/3XaRsaxYUcA7IdSZaXu2Yqa6z7XjSJnJ+HNaH8azxvAXzyXaFAT51WhUY5M
+         /cIc7l5GdKaSTLc6/HwMr3xJYOw6LE5PyrFjgZ6KnzGdSLUjqiHhE8wel7Bhzp+rGbI+
+         LR1vMyLrGI/XjQofNpuc18QyMTPFoRzmiaeOn6lpLcFaqSaMKavBLgH6bUJEYaOWswGA
+         JaYb5ZRmY2VkQZlf1QnTjt57457C5wqJJcZkQow25+c0p1rrVMKkPWB/z1Tae7SmgXKD
+         zewqvG7ZHjm+Uv6aKTpALx3Yb5REJK1osa9yIGWAnFBa87zFXK0XtYBmL+cKpATcWh46
+         YLQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730872041; x=1731476841;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4wlFtruNqQoercRi+1WD7cjSp20+NvrYGVk9jN7SiPQ=;
+        b=Ebzjwxqt0lQ9GQnhKCnoRXx6ta26lTASwnHSUeIzoB6QDd7X/IMRyRHWF7MEjSgAIH
+         aPGaNy7zTl9IOeZ0bi3ZBMRdh8jlgUll44ZffGF76lq6BLW6dIiS9QNZXGyUaRu5RAKe
+         syniKWsM4q/CMoavVRyoNuHjmn8EHR1QB3y2rMH7cQWzSw0+5zlEFkmnQruOdcU8srGa
+         +xOay8DWUE/oWlLoGqQtHaCikY71iPfbSshHN5h6ub8kfTSE2i28PA4cPIE6pGunIV96
+         cETdfSVDh0qW/zvgh9vn6TeGIOfUI3L2k6TF93ZFH+7vbmVg8oyr4r+ktI6miUt0zknW
+         JZXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMLXhLlKE9FHNpMyQFOHah3Ki8kxugBCjfUHf4TY7JOmXpAhSKK467dAcyaj4LOwOkhU+C03VQ+RxWd0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSPd6fS/drTlrzCZA58EuTD9a/o75Yuh+OrwOcVt48f6318Bts
+	8JLYzmL3ycqXwsM8YeMH1/Q8WSkKqczqvVOP1JSLma7X3qwaklS9Ah6aXTRKWQsUaPatL9AFUTC
+	Cma7ISvpt173UsoVx1TNu4usmYW1JOYTJfphJPw==
+X-Google-Smtp-Source: AGHT+IEnLs5oHn+wd5p8lCC2M2Tssn5RakwYm8btDcDudbYQW7dLKT6AmkZYIPaEtOX+HUdGXJaNRoHMRaMkwx6uano=
+X-Received: by 2002:a05:6512:3f0c:b0:53b:1369:fcf8 with SMTP id
+ 2adb3069b0e04-53b348f96e8mr19139399e87.15.1730872040707; Tue, 05 Nov 2024
+ 21:47:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 12/20] ACPI: platform_profile: Add profile attribute
- for class interface
-To: Armin Wolf <W_Armin@gmx.de>, Mario Limonciello
- <mario.limonciello@amd.com>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-13-mario.limonciello@amd.com>
- <dad36f32-5970-48c2-9ee1-78163958bf02@gmx.de>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <dad36f32-5970-48c2-9ee1-78163958bf02@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241028113209.123-1-zhangfei.gao@linaro.org>
+In-Reply-To: <20241028113209.123-1-zhangfei.gao@linaro.org>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Wed, 6 Nov 2024 05:47:09 +0000
+Message-ID: <CABQgh9H9HWaKRP=rFvXf90PjfVP1M6YpwfLcYTZH1hWET6GPsw@mail.gmail.com>
+Subject: Re: [PATCH] iommufd: modify iommufd_fault_iopf_enable limitation
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	jean-philippe <jean-philippe@linaro.org>, Jason Gunthorpe <jgg@nvidia.com>, baolu.lu@linux.intel.com, 
+	shamiali2008@gmail.com
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 28 Oct 2024 at 11:32, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+>
+> iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
+> because the PRI might be a shared resource and current iommu
+> subsystem is not ready to support enabling/disabling PRI on a VF
+> without any impact on others.
+>
+> However, we have devices that appear as PCI but are actually on the
+> AMBA bus. These fake PCI devices have PASID capability, support
+> stall as well as SRIOV, so remove the limitation for these devices.
+>
+> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/iommu/iommufd/fault.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
+> index bca956d496bd..8b3e34250dae 100644
+> --- a/drivers/iommu/iommufd/fault.c
+> +++ b/drivers/iommu/iommufd/fault.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  #include <linux/pci.h>
+> +#include <linux/pci-ats.h>
+>  #include <linux/poll.h>
+>  #include <uapi/linux/iommufd.h>
+>
+> @@ -27,8 +28,12 @@ static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
+>          * resource between PF and VFs. There is no coordination for this
+>          * shared capability. This waits for a vPRI reset to recover.
+>          */
+> -       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
+> -               return -EINVAL;
+> +       if (dev_is_pci(dev)) {
+> +               struct pci_dev *pdev = to_pci_dev(dev);
+> +
+> +               if (pdev->is_virtfn && pci_pri_supported(pdev))
+> +                       return -EINVAL;
+> +       }
+>
+>         mutex_lock(&idev->iopf_lock);
+>         /* Device iopf has already been on. */
+> --
+> 2.25.1
+>
 
+Hi, Jason
 
-On 11/5/24 22:10, Armin Wolf wrote:
-> Am 05.11.24 um 16:33 schrieb Mario Limonciello:
-> 
->> Reading and writing the `profile` sysfs file will use the callbacks for
->> the platform profile handler to read or set the given profile.
->>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>   drivers/acpi/platform_profile.c | 118 ++++++++++++++++++++++++++++++++
->>   1 file changed, 118 insertions(+)
->>
->> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/ 
->> platform_profile.c
->> index e1b6569c4ee70..79083d0bb22e3 100644
->> --- a/drivers/acpi/platform_profile.c
->> +++ b/drivers/acpi/platform_profile.c
->> @@ -65,6 +65,78 @@ static int _get_class_choices(struct device *dev, 
->> unsigned long *choices)
->>       return 0;
->>   }
->>
->> +/**
->> + * _store_class_profile - Set the profile for a class device
->> + * @dev: The class device
->> + * @data: The profile to set
->> + */
->> +static int _store_class_profile(struct device *dev, void *data)
->> +{
->> +    enum platform_profile_option profile;
->> +    unsigned long choices;
->> +    int *i = (int *)data;
->> +    int err;
->> +
->> +    err = _get_class_choices(dev, &choices);
->> +    if (err)
->> +        return err;
->> +
->> +    scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->> +        struct platform_profile_handler *handler;
->> +
->> +        if (!test_bit(*i, &choices))
->> +            return -EOPNOTSUPP;
->> +
->> +        handler = dev_get_drvdata(dev);
->> +        err = handler->profile_get(handler, &profile);
->> +        if (err)
->> +            return err;
->> +
->> +        err = handler->profile_set(handler, *i);
->> +        if (err) {
->> +            int recover_err;
->> +
->> +            dev_err(dev, "Failed to set profile: %d\n", err);
->> +            recover_err = handler->profile_set(handler, profile);
->> +            if (recover_err)
->> +                dev_err(dev, "Failed to reset profile: %d\n", 
->> recover_err);
->> +        }
-> 
-> The whole recovery handling seems unnecessary to me. In setting the 
-> platform profile fails, then
-> we should just return an error. The platform profile handler will tell 
-> us the current platform
-> profile anyway.
+Would you mind also taking a look at this.
 
-Sure, makes sense.  That also means no need to capture the profile 
-before setting it.
-
-> 
->> +        sysfs_notify(&handler->class_dev->kobj, NULL, 
->> "platform_profile");
->> +        kobject_uevent(&handler->class_dev->kobj, KOBJ_CHANGE);
-> 
-> Please avoid sending those events when the platform profile is changed 
-> through the class sysfs interface.
-> 
->> +    }
->> +
->> +    sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> 
-> Please avoid sending this event when the platform profile is changed 
-> through the legacy sysfs interface.
-
-In both above cases - why?
-
-* If I change using class interface then that implicitly means that 
-legacy interface changes.
-* If I change using legacy interface that implicitly means class 
-interface changes too.
-
-> 
->> +    return err ? err : 0;
->> +}
->> +
->> +/**
->> + * get_class_profile - Show the current profile for a class device
->> + * @dev: The class device
->> + * @profile: The profile to return
->> + * Return: 0 on success, -errno on failure
->> + */
->> +static int get_class_profile(struct device *dev,
->> +                 enum platform_profile_option *profile)
->> +{
->> +    struct platform_profile_handler *handler;
->> +    enum platform_profile_option val;
->> +    int err;
->> +
->> +    scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->> +        handler = dev_get_drvdata(dev);
->> +        err = handler->profile_get(handler, &val);
->> +        if (err) {
->> +            pr_err("Failed to get profile for handler %s\n", handler- 
->> >name);
->> +            return err;
->> +        }
->> +    }
->> +
->> +    if (WARN_ON(val >= PLATFORM_PROFILE_LAST))
->> +        return -EINVAL;
->> +    *profile = val;
->> +
->> +    return 0;
->> +}
->>
->>   /**
->>    * name_show - Show the name of the profile handler
->> @@ -102,12 +174,58 @@ static ssize_t choices_show(struct device *dev,
->>       return _commmon_choices_show(choices, buf);
->>   }
->>
->> +/**
->> + * profile_show - Show the current profile for a class device
->> + * @dev: The device
->> + * @attr: The attribute
->> + * @buf: The buffer to write to
->> + * Return: The number of bytes written
->> + */
->> +static ssize_t profile_show(struct device *dev,
->> +                struct device_attribute *attr,
->> +                char *buf)
->> +{
->> +    enum platform_profile_option profile = PLATFORM_PROFILE_LAST;
->> +    int err;
->> +
->> +    err = get_class_profile(dev, &profile);
->> +    if (err)
->> +        return err;
->> +
->> +    return sysfs_emit(buf, "%s\n", profile_names[profile]);
->> +}
->> +
->> +/**
->> + * profile_store - Set the profile for a class device
->> + * @dev: The device
->> + * @attr: The attribute
->> + * @buf: The buffer to read from
->> + * @count: The number of bytes to read
->> + * Return: The number of bytes read
->> + */
->> +static ssize_t profile_store(struct device *dev,
->> +                 struct device_attribute *attr,
->> +                 const char *buf, size_t count)
->> +{
->> +    int i, ret;
->> +
->> +    i = sysfs_match_string(profile_names, buf);
->> +    if (i < 0)
->> +        return -EINVAL;
->> +
->> +    ret = _store_class_profile(dev, (void *)(long)&i);
-> 
-> Please just pass &i.
-
-Ack.
-
-> 
-> Thanks,
-> Armin Wolf
-> 
->> +
->> +    return ret ? ret : count;
->> +}
->>
->>   static DEVICE_ATTR_RO(name);
->>   static DEVICE_ATTR_RO(choices);
->> +static DEVICE_ATTR_RW(profile);
->> +
->>   static struct attribute *profile_attrs[] = {
->>       &dev_attr_name.attr,
->>       &dev_attr_choices.attr,
->> +    &dev_attr_profile.attr,
->>       NULL
->>   };
->>   ATTRIBUTE_GROUPS(profile);
-> 
-
+Thanks
 
