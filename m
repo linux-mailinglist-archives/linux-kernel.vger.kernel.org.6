@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-398616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2FD9BF3A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:53:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F4F9BF3A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448A71F23E66
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:53:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB801F23A7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4C8205135;
-	Wed,  6 Nov 2024 16:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1D5206500;
+	Wed,  6 Nov 2024 16:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8P3uzWj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A82ix3l5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDE484039;
-	Wed,  6 Nov 2024 16:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E566205E33;
+	Wed,  6 Nov 2024 16:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730911994; cv=none; b=KSHyunQ6S7Vmq+TK2k+zsqYxWTwLIXZrO1pOiSZfIvRF3hIQmb4OyOgBlyFXY8Ia9dD0UnHGrZXewyQ1r+83DX9mqhk6VBSG9jmKwSPMrN7+HA2aomDr2TJUbDS9ypxAuqwIo/5r3vDWK4ogKy44dkFvqzDfoprI6/KBAcfS3Q8=
+	t=1730911995; cv=none; b=mcr87bRtz3Mon1ERTvpKUdA6DFSU7Ot4ye1ZpIwmA4MPSuVHY3N8DO9ymug8aYPDXkSjvN/psFMvFEnXJY3iYMcVfmqHauLQq8LJ1IYYsOJ0NV+YQu36ge18uHWl8RmtRUP/nLQ/gKng909cALAAJ0YBNPzZ/A7N63CCp1pBIxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730911994; c=relaxed/simple;
-	bh=2xtSNP79Z+OcH6i5Q5Uvg2EduBSaA1/JfcXdLbWhHp4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OEBjLu0xz0qIxy0oMJZzlcKM75mNAxvAAwm7AdHuurXt3I3jZVeAi6ct3eW2ydQp0M0D7aWhV3SqYoLk0Qd4nwzPjHeGkK9nVBxN0Dz1avzp5vM41DUflgVWu0KbGHRHXDqUrpOfTaYvYUUPz8Ycv0BASrRRTJGtJK6I8Da9VNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8P3uzWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 491C2C4CEC6;
+	s=arc-20240116; t=1730911995; c=relaxed/simple;
+	bh=OzUAI9y2vdwmmvCD+XJYm4cHA0A6WZjIJsfN0+pkEiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=aaXhCebJbxCqKCuqfZvP09Gddz2kDhBWp0YbT81lzhkN8hk4VHrMyN3MSeE/5FkcetV+2U6M5MltzvO92QhetQIsduIack0OQwNlbyGkQrSMdjic17MAgiQMH7LFilkCCST8gXd+UEFO97erw+9xpNI1M8f6+CXlA8Pw+GO0kwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A82ix3l5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77AFC4CED6;
 	Wed,  6 Nov 2024 16:53:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730911993;
-	bh=2xtSNP79Z+OcH6i5Q5Uvg2EduBSaA1/JfcXdLbWhHp4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l8P3uzWj1HyOqlbDZfRwAbr83eq6Bxwf1fj1MeSmmXknp9ejaLgcHqGyNomcQSFSn
-	 vHkWQRzVLY8qg/FuyzKVbxSKDaceokh/17ynDBIJTaA0r5oi4Li6U/HIbTs99Ihqpl
-	 U3dIQJP83n/67F4SOrb2MTjbEdROIY8Y6301eErQV9/4bGPED5myu7AI8FpfeBtGEH
-	 kEUiZH0lzHSmY/W5rgA1sQUE8oGlji5Oi4Wun0Yg2N5zJjEVHR3noT9CUXjPtFkiEB
-	 m8+T5vBFYYQxlRTei8qkY9MjSbzcyFY7zNEgWp/9QzPrPQIEOQECMVFkK+hi0CowsV
-	 iE4A52eoLzvrg==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hagar@microsoft.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 5.15 00/73] 5.15.171-rc1 review
-Date: Wed,  6 Nov 2024 08:53:11 -0800
-Message-Id: <20241106165311.8008-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241106120259.955073160@linuxfoundation.org>
-References: 
+	s=k20201202; t=1730911994;
+	bh=OzUAI9y2vdwmmvCD+XJYm4cHA0A6WZjIJsfN0+pkEiM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=A82ix3l5i8JXXCa8Ly4NI6GqAfXg70yCSN47GvTf2odoIqanT1OQSxtYQs9+EeyaO
+	 eIBz0LfxgEeQMRoq6Doq/0gu6P/tJvZPeTtHX/YLvVLjYn0h0ecehgO0i8hGW/uyL8
+	 yuZV0JKwLbKZt5/ElHWq2wkuTDzigiaa9p0aC0D4IJAq4OkzhhW7X5ACtGSXSlh4A3
+	 IoBw8U50Gm337WwW5Lb1zK781XjKvsVduYNrkM57Wb8GQn3rtUErE07jPCo6l4iWxs
+	 dFSMonjOfImmIMg5xTyHI+/KGrHBWfhB1h6wfj7vZvlquBozDtB9cMEQM950Vb2x9P
+	 +IH478GRWoebQ==
+Date: Wed, 6 Nov 2024 10:53:12 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Sricharan R <quic_srichara@quicinc.com>, bhelgaas@google.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+	konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V7 4/4] PCI: qcom: Add support for IPQ9574
+Message-ID: <20241106165312.GA1528877@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106145615.25tc7n4zcdkp47jr@thinkpad>
 
-Hello,
-
-On Wed, 6 Nov 2024 13:05:04 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> This is the start of the stable review cycle for the 5.15.171 release.
-> There are 73 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Nov 06, 2024 at 02:56:15PM +0000, Manivannan Sadhasivam wrote:
+> On Tue, Nov 05, 2024 at 07:40:24PM -0600, Bjorn Helgaas wrote:
+> > On Thu, Aug 01, 2024 at 11:18:03AM +0530, Sricharan R wrote:
+> > > From: devi priya <quic_devipriy@quicinc.com>
+> > > 
+> > > The IPQ9574 platform has four Gen3 PCIe controllers:
+> > > two single-lane and two dual-lane based on SNPS core 5.70a.
+> > > 
+> > > QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
+> > > Reuse all the members of 'ops_2_9_0'.
+> > 
+> > Wow, this is confusing.
+> > 
+> > "Based on SNPS core 5.70a", but "Synopsys IP rev is 5.80a."
+> > Are those supposed to match?  Or is it 5.70a of one thing but 5.80a of
+> > a different thing?
 > 
-> Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
-> Anything received after that time might be too late.
+> Hmm, I'm not sure why 5.70a is mentioned here. It seems irrelevant
+> (even if it is the base).
+> 
+> > And where does ops_2_9_0 come in?  The code comment says:
+> > 
+> >   /* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
+> >   static const struct qcom_pcie_ops ops_2_9_0 = {
+> > 
+> > which doesn't match 1.27.0 or 5.70a or 5.80a.  In fact there's nothing
+> > in the file that matches 1.*27.*0
+> > 
+> > Honestly, I don't really care if you have all the versions here in the
+> > commit log.  But if the versions *are* here, can we make them make
+> > sense?
+> 
+> We name the 'ops' structure based on Qcom IP revision. And we reuse
+> it across the SoCs which are compatible. That's why ops_2_9_0 is
+> used for this SoC which has Qcom IP rev 1.27.0.
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
+Got it.  So a family of compatible Qcom IP starts with 2.9.0 and newer
+members are 1.27.0 etc.  With no hint in the source about what the
+members of the family are.  Perfect sEnSe.
 
-Tested-by: SeongJae Park <sj@kernel.org>
-
-[1] https://github.com/damonitor/damon-tests/tree/next/corr
-[2] 7a95f8fff07f ("Linux 5.15.171-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 1 selftests: damon: debugfs_attrs.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+Bjorn
 
