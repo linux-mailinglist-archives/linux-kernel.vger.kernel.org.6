@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-397646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5086C9BDE7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:07:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C699A9BDE80
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 741451C20F41
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDDFC1C22626
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F310D191F85;
-	Wed,  6 Nov 2024 06:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFB3191F82;
+	Wed,  6 Nov 2024 06:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qPDAHpXr"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kSlx7nSh"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B85536D;
-	Wed,  6 Nov 2024 06:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93ED36D;
+	Wed,  6 Nov 2024 06:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730873237; cv=none; b=E0vxC5M0LewXD8/KoRkTQSUN6soR1eiR8rROu28oFko9Z54p/LSBVigDtiR5TRoeYX+kWsGjrnO93yYEhmNyy0BcblXytPnIcPJ/A7KZU4iQyJ4vu+nSbn6SI57pWUt7z3sDWveECgkDhA+nCmIRQ2ckMZMJrXBvvB4wk92pvKQ=
+	t=1730873244; cv=none; b=GaTb3LKUCDmXLCbBAIrplQpq83TcDqBOFfm6lEc1K1zZRI+ePcXYTKq5lRm9hRSX4wpPsTPbCyuzHC5TeRhCh4twx2s4z8GHYDpMf4rAAsC0vJdQ3JAZf/EVLKhKp7wLimSzMi3v6giZGeSZTzFMcjq3WcqsgkmthtvS7br2WRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730873237; c=relaxed/simple;
-	bh=oGFIBXGmNj4TtM62n5n9meAA22Gd8kybI9OvvT5MMjA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXVFGIaKTD9rgyFqQkdf9b3C0gW4GiXp2L5rjcDbaJGUOT5TCdarVkhlAfrQ9FgWkEibe3h/qySvHfrvZDPQPSJhLAglJGAZYG+3bUKl7aah0SXvNdwEUlI0kWZyfioGz0rQHN7Ei6to6PdZxyneemLgGQRp4dNE4cvB1JFn9sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qPDAHpXr; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A666eoj064806;
-	Wed, 6 Nov 2024 00:06:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730873200;
-	bh=9E01b5lO3ji2wEte0jqqAxO6EzU7eTUFjSnqcONGvZc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=qPDAHpXryy/zsx9k3xi+1+JktRZXpwTSAAaZbCxu+fVm9me6Ucvf+J9wFHMvFMyAG
-	 rBbYwq3eCJu6qGSz87s/qsiRexf7/6RQDU/9N8q8kIVua1fJW0NBw8/BqbLHm1yBxT
-	 8bKkjOm2LgfkvqIbD8gyG473RFCpgZvZidgSvDuY=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A666eAH057444
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 6 Nov 2024 00:06:40 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 6
- Nov 2024 00:06:40 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 6 Nov 2024 00:06:40 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A666cvV042705;
-	Wed, 6 Nov 2024 00:06:39 -0600
-Date: Wed, 6 Nov 2024 11:36:38 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <manivannan.sadhasivam@linaro.org>, <kishon@kernel.org>,
-        <u.kleine-koenig@pengutronix.de>, <cassel@kernel.org>,
-        <dlemoal@kernel.org>, <yoshihiro.shimoda.uh@renesas.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
- "ti,keystone-pcie" compatible
-Message-ID: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
-References: <20240524105714.191642-2-s-vadapalli@ti.com>
- <20241106005758.GA1498067@bhelgaas>
+	s=arc-20240116; t=1730873244; c=relaxed/simple;
+	bh=3tDMLeqhTLFddd4gV1A72IAhT0BPFpeYU9BNfPBRo7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HTBKzxHBStR8cXERRLAHGupVqj79ptxArAitiV5wd1ddcpfyqk4rauubCm48Q1eHNtcGDSGuOzIgDjst2k2mxuuO6rFt1Obw5NCqaFPDM290i95g998oP8b7Tpx/3SaqKpSbpQPpILG8aOjoR9uVDJhQwHjZby4PtMclgiRRjkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kSlx7nSh; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730873239; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ifC7maoPLJGfpi4Xs27e8HUfbbxX8LbnbtLNxWgwIr4=;
+	b=kSlx7nSh5m/L0DCqndEUHIPPBMMAF2PxDPJVr6CfXraqoyY5/1b7DXKMOJ57se7oewzDmvIoF2n+a82tcREit5URAn5k2UQcE+d4W/q0HZZK7aFrXH8EfahM7hkHnIJFXPu8km6lZ+u1CH7Ef+QD6uFgxot8rVynIQNirsjp4R8=
+Received: from 30.246.162.170(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WIqDixT_1730873235 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 06 Nov 2024 14:07:17 +0800
+Message-ID: <64dff7c7-95c9-48e5-b549-ec37ed6a6587@linux.alibaba.com>
+Date: Wed, 6 Nov 2024 14:07:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241106005758.GA1498067@bhelgaas>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 1/3] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
+ robin.murphy@arm.com, Jonathan.Cameron@huawei.com, bp@alien8.de,
+ rafael@kernel.org, wangkefeng.wang@huawei.com, tanxiaofei@huawei.com,
+ mawupeng1@huawei.com, tony.luck@intel.com, linmiaohe@huawei.com,
+ naoya.horiguchi@nec.com, james.morse@arm.com, tongtiangen@huawei.com,
+ gregkh@linuxfoundation.org, will@kernel.org, jarkko@kernel.org,
+ linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20241104015430.98599-2-xueshuai@linux.alibaba.com>
+ <20241105150945.GE916505@yaz-khff2.amd.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20241105150945.GE916505@yaz-khff2.amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 05, 2024 at 06:57:58PM -0600, Bjorn Helgaas wrote:
 
-Hello Bjorn,
 
-> On Fri, May 24, 2024 at 04:27:13PM +0530, Siddharth Vadapalli wrote:
-> > From: Kishon Vijay Abraham I <kishon@ti.com>
-> > 
-> > commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
-> > Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
-> > device data ("struct ks_pcie_of_data"). However it failed to set mode
-> > for "ti,keystone-pcie" compatible. Set mode as RootComplex for
-> > "ti,keystone-pcie" compatible here.
+在 2024/11/5 23:09, Yazen Ghannam 写道:
+> On Mon, Nov 04, 2024 at 09:54:28AM +0800, Shuai Xue wrote:
+>> Synchronous error was detected as a result of user-space process accessing
+>> a 2-bit uncorrected error. The CPU will take a synchronous error exception
+>> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
+>> memory_failure() work which poisons the related page, unmaps the page, and
+>> then sends a SIGBUS to the process, so that a system wide panic can be
+>> avoided.
+>>
+>> However, no memory_failure() work will be queued when abnormal synchronous
+>> errors occur. These errors can include situations such as invalid PA,
+>> unexpected severity, no memory failure config support, invalid GUID
+>> section, etc. In such case, the user-space process will trigger SEA again.
+>> This loop can potentially exceed the platform firmware threshold or even
+>> trigger a kernel hard lockup, leading to a system reboot.
+>>
+>> Fix it by performing a force kill if no memory_failure() work is queued
+>> for synchronous errors.
+>>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> ---
+>>   drivers/acpi/apei/ghes.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>> index ada93cfde9ba..af3339dd3817 100644
+>> --- a/drivers/acpi/apei/ghes.c
+>> +++ b/drivers/acpi/apei/ghes.c
+>> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
+>>   		}
+>>   	}
+>>   
+>> +	/*
+>> +	 * If no memory failure work is queued for abnormal synchronous
+>> +	 * errors, do a force kill.
+>> +	 */
+>> +	if (sync && !queued) {
+>> +		pr_err(HW_ERR GHES_PFX "%s:%d: hardware memory corruption (SIGBUS)\n",
 > 
-> 23284ad677a9 appeared in v5.10.  
-> 
-> But I guess RC support has not been broken since v5.10 because we
-> never used ks_pcie_rc_of_data.mode anyway?
-> 
-> It looks like the only use is here:
-> 
->   #define DW_PCIE_VER_365A                0x3336352a
->   #define DW_PCIE_VER_480A                0x3438302a
-> 
->   ks_pcie_probe
->   {
->     ...
->     mode = data->mode;
->     ...
->     if (dw_pcie_ver_is_ge(pci, 480A))
->       ret = ks_pcie_am654_set_mode(dev, mode);
->     else
->       ret = ks_pcie_set_mode(dev);
+> Is this always a memory error? The code flow above implies that an
+> unrecoverable ARM processor error can all be !queued. So should the
+> message be more generic like "synchronous unrecoverable error" or
+> similar?
 
-"mode" is used later on during probe at:
-
-....
-	switch (mode) {
-	case DW_PCIE_RC_TYPE:
-	...
-	case DW_PCIE_EP_TYPE:
-	...
-	default:
-		dev_err(dev, "INVALID device type %d\n", mode);
-	}
-....
-
+Yes, you are right. Will fix it.
 > 
-> so we don't even look at .mode unless the version is v4.80a or later,
-> and this is v3.65a?
+> In any case, this is just a minor nit if this is not an issue in
+> practice.
 > 
-> So this is basically a cosmetic fix (but still worth doing for
-> readability!) and doesn't need a stable backport, right?
+> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> Thanks,
+> Yazen
 
-I suppose that "data->mode" will default to zero for v3.65a prior to
-this commit, corresponding to "DW_PCIE_UNKNOWN_TYPE" rather than the
-correct value of "DW_PCIE_RC_TYPE". Since I don't have an SoC with the
-v3.65a version of the controller, I cannot test it out, but I presume
-that the "INVALID device type 0" error will be displayed. Though the probe
-will not fail since the "default" case doesn't return an error code, the
-controller probably will not be functional as the configuration associated
-with the "DW_PCIE_RC_TYPE" case has been skipped. Hence, I believe that
-this fix should be backported.
+Thank you for valuable comments.
+Shuai
 
-Regards,
-Siddharth.
 
