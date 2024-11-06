@@ -1,84 +1,140 @@
-Return-Path: <linux-kernel+bounces-399055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F5E9BFA47
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:42:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A40B9BFA4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE5D283565
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E7D28330D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C0B20E309;
-	Wed,  6 Nov 2024 23:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A732020E024;
+	Wed,  6 Nov 2024 23:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="JX+IWwM2"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNcDhYDU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DBA383;
-	Wed,  6 Nov 2024 23:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09508383;
+	Wed,  6 Nov 2024 23:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730936519; cv=none; b=c6XUi1fPHVmA/Jl0oSvWcPetPHAUcELf8EMzA4/sGwgt9eQvcezSV1XY23Ok9YQoF78lOurDmpFHPiNCR90v7pf6l2sNyZZDE2XUmwO9AVr3nzvpQeYUpE4Z9nLvrD5f7FIAKr1r4XsyRhxKY0Q5RGRl8B+vXXsuA5sqLqoWXUE=
+	t=1730936526; cv=none; b=qKToZjfEAlpkQ1ovQjBOxeh2zpcm0DlW6Y3KqwPCMYM8aNZoTjdeLpVNUGIi/3JSCHankiu20j4Nyf9+Pro3ZM5z94HNDPVl62agy216JDW0B73+KxCtLTwz9ExHxQWM0PXd68iMzX2s27JTHOkDdzsHxSSi8berExnverkRHIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730936519; c=relaxed/simple;
-	bh=V35WscTPJJZa0kbCQI1v1lpPEhxmxrS3QjHONqjJA1Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IGwHyfZc0Jfhb6Yu5kGUdpxQklz+4+XHVn+IGJmW/IYUW4vrFVQDiZ+PJkjtgViKUlzNuaxRwPMn2OzN1SQlV51WKmQ8NBX4vb40xtxyuIoACStESxqdd7DhNu3eXJpV3TXChVfXBDdOg0gzGCQT+4YUEvL5CAtm6xTimhRaiJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=JX+IWwM2; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1730936515;
-	bh=V35WscTPJJZa0kbCQI1v1lpPEhxmxrS3QjHONqjJA1Y=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=JX+IWwM2IZKC33djCGZllfdL1g6kzRmzqS2dbraQZ9yX2gxdN200kEeNQAPxmmw/b
-	 3ZMLeAZDM+IUbU0IczUPvUIwlK6HBNfxcl9jnimW+gI7Jaj4ksKEPptl6vsCwcJ6/L
-	 ppnYjq2NZn7T/gev1C9gOlYyPKpqbbYowo7vxCe62tCqYwkyUbK/GJfc/lBonbPuiQ
-	 +d+NIVAYzSMPNg7nBfjM8+KNC6BrRxWd2rs/mTn/Yfe5UPGuLs/5+rCXQVYLHW6/aB
-	 80pi1JjzLatvGOxIJ/rJvF9fpjD9Idt5igM0JL7oKKTnNpFoltR4hj5HzItHyUh9sd
-	 lLSpdH2zzHWNQ==
-Received: from [192.168.68.112] (203-173-7-89.dyn.iinet.net.au [203.173.7.89])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0F8706B4F1;
-	Thu,  7 Nov 2024 07:41:54 +0800 (AWST)
-Message-ID: <8e858e760c78ddf533e9e03c20b34fce29862c2e.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 1/2] ARM: dts: aspeed: catalina: update pdb board cpld
- ioexp linename
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Potin Lai <potin.lai.pt@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
-	 <joel@jms.id.au>, Patrick Williams <patrick@stwcx.xyz>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, Potin Lai
-	 <potin.lai@quantatw.com>, Cosmo Chou <cosmo.chou@quantatw.com>
-Date: Thu, 07 Nov 2024 10:11:53 +1030
-In-Reply-To: <20241106-catalina-cpld-ioexp-update-v1-1-3437bcfcb608@gmail.com>
-References: 
-	<20241106-catalina-cpld-ioexp-update-v1-0-3437bcfcb608@gmail.com>
-	 <20241106-catalina-cpld-ioexp-update-v1-1-3437bcfcb608@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1730936526; c=relaxed/simple;
+	bh=kwrvRtpnL9wQxwLPaB3tUfEYfC0qsi4v9251ehrqVeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PD4xv17BXDghJNDpHEr8L5ZO64hlZ0NhL99jb9lB5mJL3rPcbCHI9behQkA06L2Lui110aue4O7BpGu+/lMKdFSzSgT+VFINgdYKd4FHU0Rs41LnCqMRQyvQwmX5hq+vJQfbQMJVjKO+YwFAlfoxNYTUdEm8ensbd7OLzwtNck4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNcDhYDU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B36CC4CEC6;
+	Wed,  6 Nov 2024 23:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730936525;
+	bh=kwrvRtpnL9wQxwLPaB3tUfEYfC0qsi4v9251ehrqVeQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNcDhYDUdSPyfOdgNO8jvSiKfDe8h+ARB1B6QxdNU03dkrPGlTLnzCvdRheiGYXx1
+	 B0fy/y+1nCzSja3bozoUAkxbMghhz24mKLBCO4D+eUvdFDm7T9bDj+0ttPwPCxyXbe
+	 XI75HpGg+mXySsz+X8F+xGdbTewJAyk8FcjC3aEeB/cv2I1xb1XZaiA53EWRr/Et9H
+	 1UA2V4JDnDklDyVod1sHvdZnBvd+Z3qRDqKsyhqblgtYa7iBUPbr4uz8fFxZi5m3gX
+	 yKEr18QDqBxO3Kj4sWi0BdvCsFTzEmoCDVWPgn9ptfS0Mchoikhs3uTgGYj0RsbjPQ
+	 DAXgeyF+NcTpA==
+Date: Wed, 6 Nov 2024 15:42:03 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
+	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
+	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	hch@infradead.org, gregkh@linuxfoundation.org
+Subject: Re: [RFC] module: Strict per-modname namespaces
+Message-ID: <Zyv-yxClglfwvmUa@bombadil.infradead.org>
+References: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
 
-On Wed, 2024-11-06 at 16:58 +0800, Potin Lai wrote:
-> Update the GPIO linename of each PDB CPLD IO expander based on latest
-> CPLD firmware.
+On Wed, Nov 06, 2024 at 08:02:40PM +0100, Peter Zijlstra wrote:
+> Hi,
+> 
+> I've been wanting $topic for a while, and having just stumbled into the
+> whole namespace thing by accident, I figured I'd give it a go, most if
+> the hard parts seem to have already been done.
 
-What version is the latest CPLD firmware? What was the previous version
-with the old pin assignments?
+Neat, hch suggested something similar a while back
 
-I'm also interested in some discussion of the coordination between CPLD
-firmware, the devicetree and the BMC userspace configuration. This
-change feels pretty painful.
+https://lore.kernel.org/all/ZCIiBHyrzDoTJPXT@bombadil.infradead.org/
 
-Andrew
+> It reserves and disallows imports on any "MODULE_${name}" namespace,
+> while it implicitly adds the same namespace to every module.
+
+That's simple enough, I like it.
+
+> This allows exports targeted at specific modules and no others -- one
+> random example included. I've hated the various kvm exports we've had
+> for a while, and strictly limiting them to the kvm module helps
+> alleviate some abuse potential.
+
+Yeah we also want:
+
+EXPORT_SYMBOL_NS_GPL(bdev_disk_changed, MODULE_loop);
+EXPORT_SYMBOL_NS_GPL(bdev_disk_changed, MODULE_dasd_kmod);
+
+But we might as well have EXPORT_SYMBOL_GPL_FOR() with the implied
+module list. We could then add just:
+
+
+EXPORT_SYMBOL_GPL_FOR(bdev_disk_changed, loop);
+
+But it would be nice to just also support this as well:
+
+EXPORT_SYMBOL_GPL_FOR(bdev_disk_changed, loop, dasd_kmod);
+
+That's possible perhaps something grotesque like this:
+
+#define _EXPORT_SYMBOL_GPL_FOR_EACH(name, module) EXPORT_SYMBOL_NS_GPL(name, MODULE_##module);
+
+#define _GET_MACRO(_1, _2, _3, _4, _5, NAME, ...) NAME
+
+#define _EXPORT_SYMBOL_GPL_FOR1(name, a) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a)
+
+#define _EXPORT_SYMBOL_GPL_FOR2(name, a, b) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, b)
+
+#define _EXPORT_SYMBOL_GPL_FOR3(name, a, b, c) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, b) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, c)
+
+#define _EXPORT_SYMBOL_GPL_FOR4(name, a, b, c, d) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, b) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, c) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, d)
+
+#define _EXPORT_SYMBOL_GPL_FOR5(name, a, b, c, d, e) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, b) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, c) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, d) \
+    _EXPORT_SYMBOL_GPL_FOR_EACH(name, e)
+
+#define EXPORT_SYMBOL_GPL_FOR(name, ...) \
+    _GET_MACRO(__VA_ARGS__, \
+               _EXPORT_SYMBOL_GPL_FOR5, \
+               _EXPORT_SYMBOL_GPL_FOR4, \
+               _EXPORT_SYMBOL_GPL_FOR3, \
+               _EXPORT_SYMBOL_GPL_FOR2, \
+               _EXPORT_SYMBOL_GPL_FOR1)(name, __VA_ARGS__)
+
+  Luis
 
