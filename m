@@ -1,148 +1,98 @@
-Return-Path: <linux-kernel+bounces-399067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CAF9BFA7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:53:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288CC9BFA80
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 282001C20D85
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1EEB2839D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1AF20E00D;
-	Wed,  6 Nov 2024 23:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6A420E034;
+	Wed,  6 Nov 2024 23:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qzHCzTJB"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X8KvauNM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rXy4CBfQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361A420D4FE;
-	Wed,  6 Nov 2024 23:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7251020C49C;
+	Wed,  6 Nov 2024 23:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730937188; cv=none; b=JBfpruE0tw4cIvJ2ruG/sapk62CoDB5uyNDnKWjhPce7UFbk8adLku3dXz6o1hETD5UjjLE1HMBbP8ac4AzUqklmS/XZsqCZA3bpCDt+7YlLNbqTjcnay7VqPYH0Gu6kDuANBIopBOni3K3DS9Zfo5OJkOtmYflS1VC4CL7Vu5o=
+	t=1730937307; cv=none; b=laH519bqBVKbNsVHm/20itnLaP/HuWo4m0YoL6LXLGv9b/pm44EMuBX20GHjJ7jUNgaiggLuUgCa9uJkUqrY0jKnwR3PPx9d6NI++M3EPXFDD1BoodKjjjGnJu1Mq9eAI4hK8rqH4bZRYPTFfN9q7xq++2ZBfxjfbneHv4bD4dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730937188; c=relaxed/simple;
-	bh=JND/4bPkGje8KY3p1TNkBlusp1UL8Yv8fKJsDctQP6U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fVvCobbCJyGfEsPQZHfMVg1/98FeWL31ng7D1lIy9VNHvPwUOBD5LLOw9LqSJ4VrPne0xNA2alIfH6IgOmOZH3g0uxKR8Fyud/jW4sZiyeEDJwUWMjnmAKoFLA5DSom8PV5QEfMit2pfa9dh7hMJFQQRPSSNqQ40bJjkJtLsCjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qzHCzTJB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6MeOnJ016836;
-	Wed, 6 Nov 2024 23:52:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vFgfjO
-	a+uZRBLj86R7LfiIxkjpN/jIWuMVxEu/006NA=; b=qzHCzTJBePeAhtc90wLv+7
-	COPvHVRSB3YImy8gv5y6Funz9C4IeFm3jCOG+4sL5daalhM8bguLbK0xFmC0aMnT
-	vXMgiNNAuZ/YCWYTQUXyZxb2MTxT3NtL9odsl2VMgDGSsdC51ViWvIhSgSvTDRxI
-	/qG4jjdy/v7weMDa+Z6y/i7QZcxs97fcu8/0qqjGOxhGakBfNCuqHc8Ea81b5IPx
-	vY55OTWuuYjoCCHn5gjf+l0ECvfLB/dHqIsCCKDIN2yHdHx9PDW2Sj0LPU5sMk8g
-	67LnzPgzZaVz2PM2wjal7eX0Cu7c0dqBNIsFr+VyGJkhcQyP//vYkaCSBqqwAiaw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rhevraq1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 23:52:54 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A6Nqr6J027510;
-	Wed, 6 Nov 2024 23:52:53 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rhevrapw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 23:52:53 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6MvFN3023916;
-	Wed, 6 Nov 2024 23:52:52 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nxsys1bm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 23:52:52 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A6NqpM358655200
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Nov 2024 23:52:51 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C488C58062;
-	Wed,  6 Nov 2024 23:52:51 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4FF8D58056;
-	Wed,  6 Nov 2024 23:52:51 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.138.65])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Nov 2024 23:52:51 +0000 (GMT)
-Message-ID: <84fcb3e29f3aa1ea7a5b638307e500608bc8b11a.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
- be disabled on boot
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley
-	 <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org
-Cc: roberto.sassu@huawei.com, mapengyu@gmail.com,
-        Paul Moore
- <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        christian@heusel.eu
-Date: Wed, 06 Nov 2024 18:52:50 -0500
-In-Reply-To: <D5FHDIMJBWQM.2GWFOR0198360@kernel.org>
-References: <20241015193916.59964-1-zohar@linux.ibm.com>
-	 <D5FG6TOVUY5W.3SUG1J3CDB3J5@kernel.org>
-	 <321b247dcfaba5d9691919eec8476b3c6fc7875d.camel@HansenPartnership.com>
-	 <D5FHDIMJBWQM.2GWFOR0198360@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1730937307; c=relaxed/simple;
+	bh=vNSvR6RPvToIboxnKWjgc1Wvy57AFHKs9bVAobojDsI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C9NzPtl/nqn6O7SWdxJZWCQQbQOeLxSBZ3oN9NMFCNN7mX8taNvgndlEv7MUsGaqceGcaKxuu3WZ9cNNkeLWQbRAN/KRNe5LTiLn/DOV7loVqoHjrMKyNAUU3SOXJf60U6jw6B3mXL1mvhXC0OaRW7oWog1dBIF404pp19lyu+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X8KvauNM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rXy4CBfQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730937304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eBXHsZBlly+B2Lt9SYOMrYNWSUlMWOnyJJVlusbvvcs=;
+	b=X8KvauNMp535HneoyTufxEYHA+4BGbwzdWwnI8d/BUb3rozDITicZZo9wbfxx5QCnpLyOk
+	KLFsY284J4ggbawlughRISSfc9lD3NWss73De0pSau6WJCX28BGzR8aUwWGzzt/6l3eJj5
+	zWSnUxS84K0iiY+/ksroQqVmbJa5aFRyF89oppWqlWcYwUu8pPDaDIY++IXZ9rkkAmD0mI
+	9pVmvfY3sHnnu4hufxPEfj6ajkjhmsSenSoofHvsGb16Da0fdhAlhJyWNMXL2fvgMO/m1Z
+	MyBItZpTNC7nNbEU9xv+IoyGbpXrFfY/n8M7yF5bSq3QRBirQkEB7dG3R5IKEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730937304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eBXHsZBlly+B2Lt9SYOMrYNWSUlMWOnyJJVlusbvvcs=;
+	b=rXy4CBfQ8Vb+0GN983u0SpHvrdvUUJUNKP3e9bgR+A75cA0HVAB8V9Epdn/ewfNPGnK7e8
+	ocs1dS5lXF1kSZBQ==
+To: David Laight <David.Laight@ACULAB.COM>, Geert Uytterhoeven
+ <geert@linux-m68k.org>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, "K. Y. Srinivasan"
+ <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, Anna-Maria
+ Behnsen <anna-maria@linutronix.de>, Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
+ <luiz.dentz@gmail.com>, "linux-bluetooth@vger.kernel.org"
+ <linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Michael Kelley <mhklinux@outlook.com>
+Subject: RE: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
+In-Reply-To: <6acb24504a454638848dd9adff7cb5dc@AcuMS.aculab.com>
+References: <20241028-open-coded-timeouts-v2-0-c7294bb845a1@linux.microsoft.com>
+ <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com>
+ <87wmhq28o6.ffs@tglx>
+ <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
+ <87ed3y255a.ffs@tglx> <6acb24504a454638848dd9adff7cb5dc@AcuMS.aculab.com>
+Date: Thu, 07 Nov 2024 00:55:05 +0100
+Message-ID: <874j4jq5nq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZyKI6CiWdxsbpLpqk6UpmfrbVuuDvfSM
-X-Proofpoint-ORIG-GUID: of5xsuYIfBiswZgb59w5Q1JZAbbqT11f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- mlxscore=0 adultscore=0 bulkscore=0 impostorscore=0 clxscore=1011
- mlxlogscore=535 priorityscore=1501 lowpriorityscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060182
+Content-Type: text/plain
 
-On Thu, 2024-11-07 at 01:22 +0200, Jarkko Sakkinen wrote:
-> On Thu Nov 7, 2024 at 12:52 AM EET, James Bottomley wrote:
-> >=20
-> > I'm a bit confused here.  It's TPM2_PCR_Extend we have the trouble with
-> > (as Mimi says in her email that you quoted) not TPM2_GetRandom.
-> >=20
-> > The random number generator reseed occurs in a kernel thread that fires
-> > about once a minute, so it doesn't show up in really any of the boot
-> > timings.  Plus even with sessions added, what there now isn't a
-> > significant overhead even to the running kernel given it's asynchronous
-> > and called infrequently.
->=20
-> Ah, right then we need the boot flag, and my earlier comments to the
-> parameter apply. I've never used IMA so I don't actually even know in
-> detail how it is using TPM.
+On Wed, Nov 06 2024 at 22:19, David Laight wrote:
+> From: Thomas Gleixner
+>> Still the macro should be documented.
+>
+> I was wondering if it really had any purpose at all.
+> It just obfuscates code, doesn't even make it smaller.
 
-Huh?  A simple explanation is that IMA-measurement maintains a measurement =
-list,
-similar to the pre-boot event log.  Each IMA-measurement record extends the=
- TPM
-PCR (default PCR 10).
+What is obfuscated here?
 
-Assuming IMA is enabled in the kernel, then just add "ima_policy=3Dtcb" or
-"ima_policy=3Dcritical_data" on the boot command line.  To view the measure=
-ment
-records, cat <securityfs>/integrity/ima/ascii_runtime_measurements.  Normal=
-ly
-the IMA policy specified on the boot command line is replaced with a finer
-grained custom policy.
+secs_to_jiffies() is clearly describing what this is about, while 5 * HZ
+is not. Nothing in a driver has to care about the underlying conversion
+of a time delta expressed in SI units to a jiffies based time delta.
 
-Mimi
+Thanks,
 
+        tglx
 
