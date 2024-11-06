@@ -1,232 +1,235 @@
-Return-Path: <linux-kernel+bounces-398713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2D99BF507
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:16:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A38A9BF50D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977B4B25496
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6541F21E9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A29207A2E;
-	Wed,  6 Nov 2024 18:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF1E208204;
+	Wed,  6 Nov 2024 18:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hbFBv1a6"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UbXwfjMt"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E537C208231
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B91A204934;
+	Wed,  6 Nov 2024 18:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730916921; cv=none; b=VPIc51zC51sZi9H77mLUIgr9L85W8ghosDROcr+iI7X086fdT73XMBtBewxBRGNWa+IWoKobokRM7p0SRLSEny4HOghbBURwAm9/eiptZml48mwmbUwNl5CgmPUldHLRN9k5w+2MYOyjZ0nVKYCTnFAh5IYX4dfMNtwPNro7yxM=
+	t=1730917046; cv=none; b=b/yq9Nb8ivw2AbMdRwKjNXkuL0rVRMGIHfm8FKlFajbEWl0wjgsAroMF/mOq+ynB4JimcchGdypYwKEPeggGC14srgjFrOQZ8pb8wxJ85VCtSrDsMR17QJYChoOrqw1rq3UCVYj0+3nbPhHgqO7XuwCJGUyLq2N4kr7ODUyB6lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730916921; c=relaxed/simple;
-	bh=X/z/fq3fM2vDFRaUyPgNlBTfT3p13Tlyf7O49OnaLzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eH3qJNwBA16Ei1CNMwwoTV8eDzuDA7fhee8xPBTcrkMnx5dyhSL1u1GU+KpFE70RWIF65Hu84D2ck5jmtCZwHvK/kDZdrSfeovQnlXJkca02Ex3WkmFIP5RFO7HN42MLu3S++NRN236x7PaDDPHmgrSVhvzpHhzw9jvOS61Wm70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hbFBv1a6; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ca03687fdso10785ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:15:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730916919; x=1731521719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a2xLYmuySCzFVrJ3cUAOni0+7Dd9Fa47pe2AtilN+Ak=;
-        b=hbFBv1a6ZNejTSAnUL3O4TH1ciA7bdGcYwSoRFCTjD83F3aQT4ib3PEDihfCsjukaG
-         0gObQBGKNpN42/DHb33vFGqYKrdRFIEpRK7OOF41M/Q8qrnGUSeV/P3em0cKFamS0yQt
-         V8m+J4Ca2e1egSbR4QK+W6vw+D6bW+ehgjGs2iK2PTLZKBaiagQkTLO01ygT+KHkapfu
-         mpeRTVtD7M6QFh/nCbu1IiLL0NRFKMmKnpa/O0CKiecDqXKzQXWyUQiEl3nPnkVA9AW7
-         QkTjHwuwlbF52KLpwxFt84ZiLaH6nYbn77kUOm0SE8XpOSlwD1zBO3C0/r1GBCWItocN
-         +Cng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730916919; x=1731521719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a2xLYmuySCzFVrJ3cUAOni0+7Dd9Fa47pe2AtilN+Ak=;
-        b=QLzukVsQ7WK0DsetFxuAmsWbVDiSjfauKGqvNJMvejBpNAWTdGD7UZHPPrCb45ztGb
-         7U0yDyUUEJvPDzLHoI9A9wLE7Ys/m2aSNfXL4pYGhm4wdy26BShWneDJkq0lgplo9LJl
-         Xchi+9Ms4ds8L++x6sC+PpMchOGibgQfCymYmwZS0zIs7K6tuuXcTFPpy2o4AowmBH46
-         ievUNgIl3rr/h6gQyvYuLvuHXgr18MS/TREg73L03Abtd6kfQIPG1a1H4YqI3ly5CyV9
-         VbNLKAb+tdNRahfvpm0VkYqKAxgee8RojAUzwag7B9xVFwYu8aYJOOR+Q0aRc9jnvTGZ
-         8fvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiOs3QIn7AJGgHeqeLSTpio0uYNupAYrsKO8Z6tCyd3DhKxIiofDF/p+FLkXi0D4B23SI0b8wPHKnB3Xg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz79FC149BsQKW3uSmYz50S4jticK3xyMfPlam/ThRZLErOQABm
-	P1msGcb32w4A+5cdvd4cq2AABtrGuvEWS4CU2I0PYcGX7lKljCCkvQ5tGYAMNfnQuaLgeFKhBkd
-	yes9321JD8Zxc4c4wBOgB1VSIvCAKJQbGEFUK
-X-Gm-Gg: ASbGncvKgwYhObR3mRkzFAKiW7bXNF3FFMZd4cru5tUke/E866SqZ2xiNguxbsfaaoZ
-	VR83cBW9kIESnA3DQoj0cPDpUALDoqK5+khytmFUrXXYqymZ5FaVHt0afZ1j/kBc=
-X-Google-Smtp-Source: AGHT+IEgroDsp0onx0K7wietJn6JnANYvY4f2U8zLM51cmNpvxlAnM0RNe75sEdp5mOQBFO8L+V6+wouh+x1KMnrO/U=
-X-Received: by 2002:a17:903:234a:b0:20c:675d:920f with SMTP id
- d9443c01a7336-21174a00513mr582095ad.25.1730916918975; Wed, 06 Nov 2024
- 10:15:18 -0800 (PST)
+	s=arc-20240116; t=1730917046; c=relaxed/simple;
+	bh=iOz1kyK1h6dpyS+gFYdERgAcIkwyLqV7rqyjyDHqGME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJ/o1dcG0/Hq5mCIR4LwKRY/2r6nLK/ZGgmvvYFn8w+hSCPtkBfAdFlihtI2Q0Nf8Q4yTnlc5/0ifTg7RGUzx4hYjXV+kQtavrGwsYavU/R9FF8HWOlFuctIdMOzsfujFWNNOov8OPdRC7iihm7fGa7Zkwcj01s8y9OpzZogO+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UbXwfjMt; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9334640E0163;
+	Wed,  6 Nov 2024 18:17:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mhpTMvEGzZ3n; Wed,  6 Nov 2024 18:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730917037; bh=ZCw6KZ56wNE+x3+fx0qZaa5aMg59QwoMP17Ar6mfZ0I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UbXwfjMtVaJKDReZ5xCe0stdzqv3JKcqAoFkjgtD4EyXqJHonBgTUAW3ZziahTcKG
+	 F5zGxxGayLyGEXocmrKfMvlgzg3uvCOwXPBHUWtF3/8Rg8k/l9XyY9gwbhErZhoizi
+	 HGXIjVUViDyobGE11uYx3ubolPXUEGnn+V+czkb1OMCjrGuzDvqkWr5VlwDc5U/81G
+	 uawT+mK8yLsKsrZCtQn7ky/U9oyUJH5XFB/pcsb7CcwdCZePZjOgLSv0zTXLL/3fly
+	 z9OHJrtJ6cx7gRbHpjVMNwcf6a9SKPJoquK9/xVQ1BzHXHqbadCx0j0sTCp3MU8Nwz
+	 DAWH+nt7NVjRt9YhJvoRXdYqAHpCy3xcBe1bxZRa+XBWLjgHMWU0E2hRSOAI7tdjV4
+	 XnSFsNXrIZOJJYEdVtYsHecY47CRw66+zS+PHyrTJyKHVGqhA5MXm4TBWO2OvObJdf
+	 Qj6QM6rowrjzMSdCquFsnKqEsEpqzUpcZC21iEmtBJD9ias3tPtOYWreh0/v2o408j
+	 xiBiq1BEYshdlpBSnZlPkIxKj4jGt9DU1q2jcxr+3zqD0QM53AQZcKeBpZM7C8nF8Z
+	 UqEsjSOubt0Lq+lVXoTuKMB8+Q0DAvn5PE9RpFwmfc6u5Un2SHp2PWGjK9XrGp02km
+	 OLF/VpS2XzUKuScLsDNwnkpY=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6F91140E0169;
+	Wed,  6 Nov 2024 18:17:00 +0000 (UTC)
+Date: Wed, 6 Nov 2024 19:16:55 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org
+Subject: Re: [RFC 03/14] x86/apic: Populate .read()/.write() callbacks of
+ Secure AVIC driver
+Message-ID: <20241106181655.GYZyuyl0zDTTmlMKzz@fat_crate.local>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-4-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926175035.408668-1-irogers@google.com> <20240926175035.408668-7-irogers@google.com>
- <244b4c80-2ab2-4248-b930-22fea9ed6429@linux.intel.com>
-In-Reply-To: <244b4c80-2ab2-4248-b930-22fea9ed6429@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 6 Nov 2024 10:15:07 -0800
-Message-ID: <CAP-5=fW1dACyxesnjpMQLAgomnRH+nA1sVphbpLyCFN3A79xSQ@mail.gmail.com>
-Subject: Re: [PATCH v4 06/22] perf jevents: Add tsx metric group for Intel models
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Perry Taylor <perry.taylor@intel.com>, 
-	Samantha Alt <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240913113705.419146-4-Neeraj.Upadhyay@amd.com>
 
-On Wed, Nov 6, 2024 at 9:53=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.co=
-m> wrote:
->
->
->
-> On 2024-09-26 1:50 p.m., Ian Rogers wrote:
-> > Allow duplicated metric to be dropped from json files. Detect when TSX
-> > is supported by a model by using the json events, use sysfs events at
-> > runtime as hypervisors, etc. may disable TSX.
-> >
-> > Add CheckPmu to metric to determine if which PMUs have been associated
-> > with the loaded events.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/pmu-events/intel_metrics.py | 52 +++++++++++++++++++++++++-
-> >  1 file changed, 51 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-ev=
-ents/intel_metrics.py
-> > index f34b4230a4ee..58e243695f0a 100755
-> > --- a/tools/perf/pmu-events/intel_metrics.py
-> > +++ b/tools/perf/pmu-events/intel_metrics.py
-> > @@ -1,12 +1,13 @@
-> >  #!/usr/bin/env python3
-> >  # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> > -from metric import (d_ratio, has_event, max, Event, JsonEncodeMetric,
-> > +from metric import (d_ratio, has_event, max, CheckPmu, Event, JsonEnco=
-deMetric,
-> >                      JsonEncodeMetricGroupDescriptions, LoadEvents, Met=
-ric,
-> >                      MetricGroup, MetricRef, Select)
-> >  import argparse
-> >  import json
-> >  import math
-> >  import os
-> > +from typing import Optional
-> >
-> >  # Global command line arguments.
-> >  _args =3D None
-> > @@ -74,6 +75,54 @@ def Smi() -> MetricGroup:
-> >      ], description =3D 'System Management Interrupt metrics')
-> >
-> >
-> > +def Tsx() -> Optional[MetricGroup]:
-> > +  pmu =3D "cpu_core" if CheckPmu("cpu_core") else "cpu"
-> > +  cycles =3D Event('cycles')
->
-> Isn't the pmu prefix required for cycles as well?
+On Fri, Sep 13, 2024 at 05:06:54PM +0530, Neeraj Upadhyay wrote:
+> @@ -24,6 +25,108 @@ static int x2apic_savic_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
+>  	return x2apic_enabled() && cc_platform_has(CC_ATTR_SNP_SECURE_AVIC);
+>  }
+>  
+> +static inline u32 get_reg(char *page, int reg_off)
 
-Makes sense.
+Just "reg" like the other APICs.
 
-> > +  cycles_in_tx =3D Event(f'{pmu}/cycles\-t/')
-> > +  cycles_in_tx_cp =3D Event(f'{pmu}/cycles\-ct/')
-> > +  try:
-> > +    # Test if the tsx event is present in the json, prefer the
-> > +    # sysfs version so that we can detect its presence at runtime.
-> > +    transaction_start =3D Event("RTM_RETIRED.START")
-> > +    transaction_start =3D Event(f'{pmu}/tx\-start/')
->
-> What's the difference between this check and the later has_event() check?
->
-> All the tsx related events are model-specific events. We should check
-> them all before using it.
+> +{
+> +	return READ_ONCE(*((u32 *)(page + reg_off)));
+> +}
+> +
+> +static inline void set_reg(char *page, int reg_off, u32 val)
+> +{
+> +	WRITE_ONCE(*((u32 *)(page + reg_off)), val);
+> +}
+> +
+> +#define SAVIC_ALLOWED_IRR_OFFSET	0x204
+> +
+> +static u32 x2apic_savic_read(u32 reg)
+> +{
+> +	void *backing_page = this_cpu_read(apic_backing_page);
+> +
+> +	switch (reg) {
+> +	case APIC_LVTT:
+> +	case APIC_TMICT:
+> +	case APIC_TMCCT:
+> +	case APIC_TDCR:
+> +	case APIC_ID:
+> +	case APIC_LVR:
+> +	case APIC_TASKPRI:
+> +	case APIC_ARBPRI:
+> +	case APIC_PROCPRI:
+> +	case APIC_LDR:
+> +	case APIC_SPIV:
+> +	case APIC_ESR:
+> +	case APIC_ICR:
+> +	case APIC_LVTTHMR:
+> +	case APIC_LVTPC:
+> +	case APIC_LVT0:
+> +	case APIC_LVT1:
+> +	case APIC_LVTERR:
+> +	case APIC_EFEAT:
+> +	case APIC_ECTRL:
+> +	case APIC_SEOI:
+> +	case APIC_IER:
 
-So if there is PMU in the Event name then the Event logic assumes you
-are using sysfs and doesn't check the event exists in json. As you
-say, I needed a way to detect does this model support TSX? I wanted to
-avoid a model lookup table, so I used the existence of
-RTM_RETIRED.START for a model as the way to determine if the model
-supports TSX. Once we know we have a model supporting TSX then we use
-the sysfs event name and has_event check, so that if the TSX and the
-event have been disabled the metric doesn't fail parsing.
+I'm sure those can be turned into ranges instead of enumerating every single
+APIC register...
 
-So, the first check is a compile time check of, "does this model have
-TSX?". The "has_event" check is a runtime thing where we want to see
-if the event exists in sysfs in case the TSX was disabled say in the
-BIOS.
+> +	case APIC_EILVTn(0) ... APIC_EILVTn(3):
 
-Thanks,
-Ian
+Like here.
 
->
-> Thanks,
-> Kan
-> > +  except:> +    return None
-> > +
-> > +  elision_start =3D None
-> > +  try:
-> > +    # Elision start isn't supported by all models, but we'll not
-> > +    # generate the tsx_cycles_per_elision metric in that
-> > +    # case. Again, prefer the sysfs encoding of the event.
-> > +    elision_start =3D Event("HLE_RETIRED.START")
-> > +    elision_start =3D Event(f'{pmu}/el\-start/')
-> > +  except:
-> > +    pass
-> > +
-> > +  return MetricGroup('transaction', [
-> > +      Metric('tsx_transactional_cycles',
-> > +             'Percentage of cycles within a transaction region.',
-> > +             Select(cycles_in_tx / cycles, has_event(cycles_in_tx), 0)=
-,
-> > +             '100%'),
-> > +      Metric('tsx_aborted_cycles', 'Percentage of cycles in aborted tr=
-ansactions.',
-> > +             Select(max(cycles_in_tx - cycles_in_tx_cp, 0) / cycles,
-> > +                    has_event(cycles_in_tx),
-> > +                    0),
-> > +             '100%'),
-> > +      Metric('tsx_cycles_per_transaction',
-> > +             'Number of cycles within a transaction divided by the num=
-ber of transactions.',
-> > +             Select(cycles_in_tx / transaction_start,
-> > +                    has_event(cycles_in_tx),
-> > +                    0),
-> > +             "cycles / transaction"),
-> > +      Metric('tsx_cycles_per_elision',
-> > +             'Number of cycles within a transaction divided by the num=
-ber of elisions.',
-> > +             Select(cycles_in_tx / elision_start,
-> > +                    has_event(elision_start),
-> > +                    0),
-> > +             "cycles / elision") if elision_start else None,
-> > +  ], description=3D"Breakdown of transactional memory statistics")
-> > +
-> > +
-> >  def main() -> None:
-> >    global _args
-> >
-> > @@ -100,6 +149,7 @@ def main() -> None:
-> >        Idle(),
-> >        Rapl(),
-> >        Smi(),
-> > +      Tsx(),
-> >    ])
-> >
-> >
->
+> +		return get_reg(backing_page, reg);
+> +	case APIC_ISR ... APIC_ISR + 0x70:
+> +	case APIC_TMR ... APIC_TMR + 0x70:
+> +		WARN_ONCE(!IS_ALIGNED(reg, 16), "Reg offset %#x not aligned at 16 bytes", reg);
+
+What's the point of a WARN...
+
+> +		return get_reg(backing_page, reg);
+
+... and then allowing the register access anyway?
+
+> +	/* IRR and ALLOWED_IRR offset range */
+> +	case APIC_IRR ... APIC_IRR + 0x74:
+> +		/*
+> +		 * Either aligned at 16 bytes for valid IRR reg offset or a
+> +		 * valid Secure AVIC ALLOWED_IRR offset.
+> +		 */
+> +		WARN_ONCE(!(IS_ALIGNED(reg, 16) || IS_ALIGNED(reg - SAVIC_ALLOWED_IRR_OFFSET, 16)),
+> +			  "Misaligned IRR/ALLOWED_IRR reg offset %#x", reg);
+> +		return get_reg(backing_page, reg);
+
+Ditto.
+
+And below too.
+
+> +	default:
+> +		pr_err("Permission denied: read of Secure AVIC reg offset %#x\n", reg);
+> +		return 0;
+> +	}
+> +}
+> +
+> +#define SAVIC_NMI_REQ_OFFSET		0x278
+> +
+> +static void x2apic_savic_write(u32 reg, u32 data)
+> +{
+> +	void *backing_page = this_cpu_read(apic_backing_page);
+> +
+> +	switch (reg) {
+> +	case APIC_LVTT:
+> +	case APIC_LVT0:
+> +	case APIC_LVT1:
+> +	case APIC_TMICT:
+> +	case APIC_TDCR:
+> +	case APIC_SELF_IPI:
+> +	/* APIC_ID is writable and configured by guest for Secure AVIC */
+> +	case APIC_ID:
+> +	case APIC_TASKPRI:
+> +	case APIC_EOI:
+> +	case APIC_SPIV:
+> +	case SAVIC_NMI_REQ_OFFSET:
+> +	case APIC_ESR:
+> +	case APIC_ICR:
+> +	case APIC_LVTTHMR:
+> +	case APIC_LVTPC:
+> +	case APIC_LVTERR:
+> +	case APIC_ECTRL:
+> +	case APIC_SEOI:
+> +	case APIC_IER:
+> +	case APIC_EILVTn(0) ... APIC_EILVTn(3):
+> +		set_reg(backing_page, reg, data);
+> +		break;
+> +	/* ALLOWED_IRR offsets are writable */
+> +	case SAVIC_ALLOWED_IRR_OFFSET ... SAVIC_ALLOWED_IRR_OFFSET + 0x70:
+> +		if (IS_ALIGNED(reg - SAVIC_ALLOWED_IRR_OFFSET, 16)) {
+> +			set_reg(backing_page, reg, data);
+> +			break;
+> +		}
+> +		fallthrough;
+> +	default:
+> +		pr_err("Permission denied: write to Secure AVIC reg offset %#x\n", reg);
+> +	}
+> +}
+> +
+>  static void x2apic_savic_send_IPI(int cpu, int vector)
+>  {
+>  	u32 dest = per_cpu(x86_cpu_to_apicid, cpu);
+> @@ -140,8 +243,8 @@ static struct apic apic_x2apic_savic __ro_after_init = {
+>  	.send_IPI_self			= x2apic_send_IPI_self,
+>  	.nmi_to_offline_cpu		= true,
+>  
+> -	.read				= native_apic_msr_read,
+> -	.write				= native_apic_msr_write,
+> +	.read				= x2apic_savic_read,
+> +	.write				= x2apic_savic_write,
+>  	.eoi				= native_apic_msr_eoi,
+>  	.icr_read			= native_x2apic_icr_read,
+>  	.icr_write			= native_x2apic_icr_write,
+> -- 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
