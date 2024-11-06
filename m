@@ -1,392 +1,294 @@
-Return-Path: <linux-kernel+bounces-398849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68C89BF720
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:41:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4010B9BF695
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97E71C26479
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CF41C22773
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614BC21312B;
-	Wed,  6 Nov 2024 19:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8C420968E;
+	Wed,  6 Nov 2024 19:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CXz+mHi1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="p9C8lmc7"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA1620F5AB;
-	Wed,  6 Nov 2024 19:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730921696; cv=none; b=mMwcETN/4UkNkXoSBvtqcFsrYW7dUpLT4itZaO1aQbhK5xf/Hk//NP9ooNEdy/v1xQKjFK4W9BCrXPHLKMz6sTCcaHsgN0mBdncwv6zaCuZn2Vk+qRpfDh4rwzYGN2omkSLI3/cW2a09W+3h7tA971XRDg4Z5oHM+nm1V8fvznk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730921696; c=relaxed/simple;
-	bh=FjLFYmyLM91EuK/4S4Mx/FACWz49ZL9h3izMArjdFmk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SC29hxklS3K7KFEaVhQBJkjQSTeREIuDU2uYUERD/afl3gr1eM83dT5Sjt8n9oFfOhH6hDJqUbc1lWlojoCcgzZ//sAravswDrZn14ReVkXejXY/766qiAXSQ7o1RxPfcFXY+WhBXuYtzh1Eq8D6sNj59Xf131a0aDvNy3OhbuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CXz+mHi1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6AvJKt004555;
-	Wed, 6 Nov 2024 19:34:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KbwVoMaWP1gYXPm3sE2SfiEML+YhA+Qa0sgHtH4EsFg=; b=CXz+mHi12b09/Qlv
-	ar+0TPCZMd8S5h6jE+QVWGhKuHREkYPgui9hPoSgbvUV1g3eRtft6Bg78p6DMLby
-	Wdh/IRpkb+JKBXDXWZ4fkxggLgrVOuPCFjib4/7C7tkEtTUzZf1DZWBJBTPxPtC4
-	DYll6NrA73CaQvbP7523vTJwBKG6UKZ4Fxi1IqdVlRYMQ0Pe8j9ZfoKdrAvZdZO4
-	/4MX0cVnFWo6YqsVs4v8yYzZhEkBk6byMjNq1DhHNEltVN4kJtGKhIwTHCCJlLuY
-	C5E71KqX51ualQQxfGYs2C3LsZ2l5wJFxafk+apGksX80xe+v7tchxJU7dDF0SMu
-	AlBv8Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qvg3txcp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 19:34:36 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A6JYZbq004022
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Nov 2024 19:34:35 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 6 Nov 2024 11:34:35 -0800
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>
-Subject: [PATCH v30 22/30] ASoC: qcom: qdsp6: Add headphone jack for offload connection status
-Date: Wed, 6 Nov 2024 11:34:05 -0800
-Message-ID: <20241106193413.1730413-23-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D117B4FF;
+	Wed,  6 Nov 2024 19:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730921653; cv=fail; b=Z6nEPeFvVKNoquf+nUIpb7v4LHhcniSOh+LNJca3kdPi9FRvrPKT7sQup0os55gLG/iS1ksuqNkrgTrUzqK0LZe5iUSd3q1tGf8YYDnxWHWGb+SEdPXY5vXrBXVQWeuoamee60r90f5rZOY9Eh6twiqo32NRTJjIrCDoM66cAHA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730921653; c=relaxed/simple;
+	bh=uHyN3pQBla/SugLNfdKICZGf0Y/KWo7d78zk1KZaqBg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XWLtBUcquLOVa1gAIB62/BgA/pceuYfqoDh+/jF54OSSwhE83y89j5vi1nYOQVRze9MRgZjPNvIdEwW8gqk41KxWoDexhvpq5Vrpq1J7r/CNscMsukdYQbf9A6BlYs0RKwZXlencL73Gr4kLqWxDykihWWufzk5AkbjFhkmZ0vg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=p9C8lmc7; arc=fail smtp.client-ip=40.107.223.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lyq7GuWR0eEXVEwMfmrT0Zy0iYk7jcF84oSeaUqC9ZVlL+chynhZkJx7eEjba7zFbOrO0PdNHmzWTd7S9reTrQ9dwbErn6j8EHozcPVyAvASQsMjjRCLMWMVIeKxJhoeXj/1MLdJ6c/odIpSI/Q1xzTVXr9/75fyZqdHmQgQZxsOkhHaLzS+o6vHJvUaJ9+jqQkZ2XiDJjJci6CZnvkZYaxjYE0oCd8quoFtYJND0gpgB+I8q68H641L3qdhwZ+hGf+0pHJolEzgjNOqOXteF1lYfgJtcysVPv4I6XJThfOAIoRP4270kAogRTIAmtcK4xt4X0epuKmaqEJvSarJGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UrI3TPKs/+TvNlOMVz6d1PiwcoLRNxZIH6wdqHeW6X8=;
+ b=avaS1rxPQg6TjV2D9i6U503QGrZh13cxUvJw0qiwxW2CxTvYemkG5rirEku3WxMx98DfgHCMaDQamX92E8/c1HCZ6Ji8EToyzt+ERufzkTh4j/lVffpyaoW49/IWOdDfJn+ON9bLjyyrcVWxvKeF7iBldbfNmc8/5rtcSWgZuY8qeR5L2qXbgxsktALbFQEry+B4kKRjpW05Z5slXD8MwcdeN7MMio42F1RMbTa3HcBpFeFEe/xeuS1F8vdTFX6wV9pFs/oCZB97V5u+EEgKgnD1ONAouzAxoxnbjJP46ib8n0IHZ+9BssSF4tQrpwcDzISF9yzj4ifcGPX9bochtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UrI3TPKs/+TvNlOMVz6d1PiwcoLRNxZIH6wdqHeW6X8=;
+ b=p9C8lmc7Wfmn2170VfAytDFdGPuRlsheEFaPKYbi3rUlmch5ZWkGWl4FoF2dnTOCPby7PZxlSBpq09xanSDerpPMteHI7GIu1Fr5eptaFO+ejomgKusd4G4ZHMKucDsSrnreiHq3kj6ycZC1IpggQd8l49zgQD7ShM+C4F38AWY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by PH7PR12MB7138.namprd12.prod.outlook.com (2603:10b6:510:1ee::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Wed, 6 Nov
+ 2024 19:34:09 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8114.028; Wed, 6 Nov 2024
+ 19:34:09 +0000
+Message-ID: <220ed38a-14ab-44e5-a8bb-dd5eb2888239@amd.com>
+Date: Wed, 6 Nov 2024 13:34:05 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 18/20] ACPI: platform_profile: Allow multiple handlers
+To: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <20241105153316.378-19-mario.limonciello@amd.com>
+ <42623eed-1220-4cdf-aa7f-3a9777a3da4b@gmx.de>
+ <cbf90e6e-1522-4235-b1fd-90dc54df35d5@gmx.de>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <cbf90e6e-1522-4235-b1fd-90dc54df35d5@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN4PR0501CA0003.namprd05.prod.outlook.com
+ (2603:10b6:803:40::16) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wsKQCu73qmrDztwbeKtokGybSd05eTAA
-X-Proofpoint-GUID: wsKQCu73qmrDztwbeKtokGybSd05eTAA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
- suspectscore=0 bulkscore=0 phishscore=0 adultscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060149
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH7PR12MB7138:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1cdbb49d-61a0-435b-8dfa-08dcfe99fbe1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Mkh1WXcyVFpKYmYyaXoveEhJMTZYQlQwK1VrUno2R0NabFIzazVSSHdGT1RW?=
+ =?utf-8?B?aHFZbGdoR1ZoVjMzRm1JVTN0Z0tRZE9nMXdJNnBwT3M3UWNKMDFGeCtwKy9V?=
+ =?utf-8?B?S2kyRzI4dysyZ05McmFESGhNT042emtkWTlIVit0UFoxSDdSOGVoRmVmelIr?=
+ =?utf-8?B?QUw2M21kand0OXByY0lEMjdiMHFqbE0yQnVCdEh1dld1ZmFhNHRaS05jVHgv?=
+ =?utf-8?B?eEtYbDVaK09nbUp5b3AzRjUwM2ZZUTUzWVljUndEWm1XbUhuNlVWZDNUZTRF?=
+ =?utf-8?B?UkhheXlVT3FuNkZoMVBrNHM1N2RHcTVpWWJLck9VYkRFUGlFQnArQWRXVzFE?=
+ =?utf-8?B?S0gxZmtWWXgvQjRxNTdHMDFoZHZheGxwUElQcFpROWFHTjk3cW1EOHlnYUxC?=
+ =?utf-8?B?L2Z2ZDdJSnRTbVowY21sc2RWUHVhMkZsdEo2RitlTURQMjIyT1VwN1RmYkxE?=
+ =?utf-8?B?WUZsN215cGR5ZmtzNVlSeUs2cm9JWllPZ212OEVWYjRidXRPa0lrVzQvZDlI?=
+ =?utf-8?B?RnZxQTRDU3ZrQ29EWDd0dWg5STg0ZWlXQWkvY1UzQ213ZC9Fc3VvNmV0eHll?=
+ =?utf-8?B?NHk5SEYzOHc2OGlPRTE2L0JCdlg4RnB0UFJNdWlmNDNnTkhtS2NVeTg4b1dL?=
+ =?utf-8?B?OGEvWEZTMHIyQlhqUVdjYTI2Y0JyeDRiZkZUOUJWTzZiWGVDVmlSZ0hVYWUz?=
+ =?utf-8?B?bDRyclJYekdtbHpESXBZYTM2YVRNdW52MXV6YXE1MnVPSXN3NkRHUTlrcms5?=
+ =?utf-8?B?R1ZxL0ZDUWQyblQ2OWRkNHpNeEYvMWYxQ0VNZm9aYnlMREdLZjkyZS9meE1u?=
+ =?utf-8?B?YnRMeStQL2lJM2thdFUzMkh2UGJSTmJLWTlWTlVDNXZwcTdTVnRiV0NhdE9S?=
+ =?utf-8?B?Z2YyN3h1K082YktIR2JWeGRValRFV0VOMnVYSDdORWdrQVlUTlFKMmc0RGl1?=
+ =?utf-8?B?d0xsb1IxZ2RRTCsvYjBUV01BVnA2QnhsbGlHTEYxaFg5b2ZoWEQ5ZjJqemhW?=
+ =?utf-8?B?dG9Oak1XYjAwMU9idGZpeDg5bUxEWUswU1VjcG8xcDZmN1R0UWN2WWs3Vjl5?=
+ =?utf-8?B?VUhOeUt3SmthRXEzQUdJd0NVYVNsaE1XMUE5T3hGWENYSHlvR0N2dytQVjRC?=
+ =?utf-8?B?anJoTURTd3NNdkN4VDk2NFpEVHdTNzNNb294SUFJdjVSd0J6emJKTG56YTB6?=
+ =?utf-8?B?SStVNUUrR3FrNDdkM1B3MitKZFpXdHlYN0hRWWEydWFXSXo0ditJc015TVpi?=
+ =?utf-8?B?c1NvYnJEUGczbGdWbHdGeDVhOWF3MVhSV3Q5T254dnlWb2Z1bVhnM25LRENx?=
+ =?utf-8?B?QTJvNDQ5NFNzY2R6VGU0YVFabjYvMmdYWmNIaVNHN1FvUG84NVVEMlE1ZkdX?=
+ =?utf-8?B?QzFwTGpROVlnKzlxb002c2lXTFhHeGZnSjFlRzZIQlhMaUZhdDNIelZIYWZj?=
+ =?utf-8?B?OGxkbW1VTytrcy9BUDBrajRwT3ZYY2h2UjBNc25RVVE0dGdRaEdsWDVwa3pT?=
+ =?utf-8?B?Y3V1K3U0dHZudkxPQzdLcms0VDlsb1Viek5JOHl0eW9rYUxCTzZSYmM4YVJx?=
+ =?utf-8?B?WkN3Q09oODFQcU1aNk9XZ2xsdDRJUXZ5TGtGNHRuWmhxLzdQOHNtUVA0cm83?=
+ =?utf-8?B?M3pqaHNlVk80VC9iTjMwdHJZZmpXWHBGcWZnQVdmU0dGdGJZcUxzUEF2anEr?=
+ =?utf-8?B?bkFVM3FQS1JwdllJRy9yM0NNcW1qMlVrQWNkLzNVR3lOOGRnVlJ5aEx1cnhm?=
+ =?utf-8?Q?OvzVdt9bqndvKx6Kg3qHJZAbe447tQTTOWWfcES?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dFRCSjBGL1BwdHZCSUt4L3lobUdqWDUzOFpwVncxMldPU2Jlc2NkR3NMbFVu?=
+ =?utf-8?B?Nm52RmJZRk41cmpTM1F4Lzh5RWVuUVhmNG5sQjUvZmdJNUpJNllBclB3bGUy?=
+ =?utf-8?B?Mi9QQlJxY3hVUy9FTDdzK3FPSDVyV0FoVDNHTCtjSmQ3bzYvVDNZaEtWczFj?=
+ =?utf-8?B?RGVLMm4wSlVaSFZIdTZPNU4vMks3Y3YxK2t0NERzNlM5L3M3WXNqd2svVytw?=
+ =?utf-8?B?bjdnSS8zcVhrUGNuT3QwajFHWGtvSXRPNVNSdmdFU1V4VHd0NU11M1lnVDVO?=
+ =?utf-8?B?RVFzMERNRzdsNVI4T0o1QXdnQVRGSHd5YStYVzVCWU11c21pU3FzVkFCalM4?=
+ =?utf-8?B?cDhCenViUWNhekRSN1BoWWxoZFcxZUVqa3JBRVRzbHUxUisvYU1scWR3eXRy?=
+ =?utf-8?B?Vy9tYWQ4WWNBWUpKa3lFYmhYK2JyZVBtSkJlamxlakNPbGF6bzJFQzVjeXdr?=
+ =?utf-8?B?YWlEdnZsRGl1MlFFclFrK0hyYnJrRjhWelk5dFViWDZkZHk5K0VYYUI2M0t3?=
+ =?utf-8?B?d0hrTTdNd29OTW5BUk5Qd0RkZ0taNVFrN0VPMTF0d1M1OFNBSTY2dWVVaC9I?=
+ =?utf-8?B?Y0JHakxEbnd4eTVxY1ZIQ0VDNUpwa2hub3A1eWM2L05hZ1p6RTRlMjJMTG5x?=
+ =?utf-8?B?cXllb2I3aWRYaXBmMlBsZzVYbVdkUGtUeThJWWFkK0hWMUx6TGFkSzFSYWlE?=
+ =?utf-8?B?L0txbTh5L3Z5YXJFdUJkN2x4THh4L0pLSGhXLzNvRmpTL0FaTFNnUWMwdHhs?=
+ =?utf-8?B?TnVJd2ZKUFc5bm5xRkVTa0JIei9RZThtcStIS1F0THo4YVNEZDladTlsNWpl?=
+ =?utf-8?B?MjlGR05pY1hoU2dkVFdROTVQaXN4UzYzT25HczRMcTJtVjc0WUdQUkxvOFRZ?=
+ =?utf-8?B?QVNWWlpRTTU3cXVXcDdUOCtsUFlZallvQnpTL1dCWWFxRWpKOXVhaTZrSDlV?=
+ =?utf-8?B?ME1Ma2ZBd3dEbmdXaHRYeUxsVzBnTW9ZRzhXM0hQeFROdStYblhrSG1OYXVr?=
+ =?utf-8?B?TFgxY1BKV0cvRmpJWVVMaGdsdkx2d014dzFZc1Q3WDJFR1RPWUtWaTJxQzRD?=
+ =?utf-8?B?T0twbmZSZG92QTJRQm1HT0grZkVoaXE0WGpva3F5b0oyKzAyZi9oR1p2amZh?=
+ =?utf-8?B?MVplUitpbnFyQ2xHeHNJRWMxdU16empPZ0tZaER5VG5nL09GT3dmYjdKeUtV?=
+ =?utf-8?B?RUlsVUs4T3QxRG15T0ZKTEZqdlVRM202Yjd2ZW91dmlnSy8wNHV0bE5RalVt?=
+ =?utf-8?B?Z3o4OEl5Z29wNmFlbFhhR3c1Y2krYTdDNlIvamFCaDZlcVAwTktqbnBvTzU0?=
+ =?utf-8?B?bFlBYm1lYWZWNnRQdmNrVGFtMmkwRXlkNTFva0J4bGZxeG1TSjRaaWo1NDJy?=
+ =?utf-8?B?SDI1aWlMbDVGaXllbDJHaDZiTEtFTTV0NVJTeEtOdUlsQmlKVHExajNUS2VS?=
+ =?utf-8?B?ek9raXIvS1FlZWtSeHpoRXZsbGNrUHRYd0NpOTBNTFhCeExXMTQ1Mm93dTFC?=
+ =?utf-8?B?Y0FsYU1XdlA2Q1FqSkxoZFdTYUNCZnc1M2ZTOFJBTE5CVkh0cGhXUzBUbEZn?=
+ =?utf-8?B?WEUxb1NJUXZRSCswSlNqSmxJU0VJTEc4eFZkdTNxN3p0eTExWHRKZ3NLOSt3?=
+ =?utf-8?B?RDArY0ZKdDVhK2MwcHZlRFNjdThrYnNQaU5MWHlFUzV0dlpHQm5mUENmWUR1?=
+ =?utf-8?B?eXliK215TEV4cmphRkxsdGR0ZnRDRlN6cmkvdlBlbHVnL1dqZjZhRjhHSE9h?=
+ =?utf-8?B?WDU1c0RpME1VVzJVcldZMHdMcFdzckc0WlRXdTBqZlE3d1BYRmd5d09OdkVT?=
+ =?utf-8?B?TDFKeis5dW41ZlNoTUh3RS80SnJlSzFmejVYaE9IUlZUSFhYamhzaHR6dU9x?=
+ =?utf-8?B?aUtDdURPL20yS3pjZ296bFF0T2xMTzR2MWt6ZS9ySVdSMnRBOVhBQlNTVmdk?=
+ =?utf-8?B?bmNYTWpCUm12aDBzY2JTK2tyVDA4YW1KUjZuUjl3SWNQcUZLZlpBRGhkL3Fy?=
+ =?utf-8?B?TzdmbUdETlBHWklrV1AzbklPb09MQVBFanRPNEJpTkQ4aHNxV3NiUzJYQ2JR?=
+ =?utf-8?B?a0pacDVFd01qMCsyTDR6TEtPcG1JM2FLanBHQThXVGYyZUh3M1FhbjZaOXk2?=
+ =?utf-8?Q?igASLeBb7XoxC+Rs+/D4aV1AP?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cdbb49d-61a0-435b-8dfa-08dcfe99fbe1
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 19:34:09.0335
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4fz82+J65r4u7WUVWK5UOwPOR9FiUAr9eNzCMgei4AK/u+FfuqTH//v00g31gVssBW1NdQ/xqjDCvkiVWWzqmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7138
 
-The headphone jack framework has a well defined infrastructure for
-notifying userspace entities through input devices.  Expose a jack device
-that carries information about if an offload capable device is connected.
-Applications can further identify specific offloading information through
-other SND kcontrols.
+On 11/6/2024 13:33, Armin Wolf wrote:
+> Am 06.11.24 um 20:21 schrieb Armin Wolf:
+> 
+>> Am 05.11.24 um 16:33 schrieb Mario Limonciello:
+>>
+>>> Multiple drivers may attempt to register platform profile handlers,
+>>> but only one may be registered and the behavior is non-deterministic
+>>> for which one wins.  It's mostly controlled by probing order.
+>>>
+>>> This can be problematic if one driver changes CPU settings and another
+>>> driver notifies the EC for changing fan curves.
+>>>
+>>> Modify the ACPI platform profile handler to let multiple drivers
+>>> register platform profile handlers and abstract this detail from
+>>> userspace.
+>>>
+>>> To avoid undefined behaviors only offer profiles that are commonly
+>>> advertised across multiple handlers.
+>>>
+>>> If any problems occur when changing profiles for any driver, then revert
+>>> back to the balanced profile, which is now required.
+>>
+>> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>>
+> I just noticed that the following text might need to be removed:
+> 
+> "If any problems occur when changing profiles for any driver, then revert
+>   back to the balanced profile, which is now required."
 
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- sound/soc/qcom/Kconfig             |  5 +++
- sound/soc/qcom/Makefile            |  2 ++
- sound/soc/qcom/qdsp6/q6usb.c       | 41 ++++++++++++++++++++++
- sound/soc/qcom/sm8250.c            | 24 ++++++++++++-
- sound/soc/qcom/usb_offload_utils.c | 56 ++++++++++++++++++++++++++++++
- sound/soc/qcom/usb_offload_utils.h | 30 ++++++++++++++++
- 6 files changed, 157 insertions(+), 1 deletion(-)
- create mode 100644 sound/soc/qcom/usb_offload_utils.c
- create mode 100644 sound/soc/qcom/usb_offload_utils.h
+Good catch, thanks.
 
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 77c21fc4fc1b..6bedac2effc9 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -118,9 +118,14 @@ config SND_SOC_QDSP6_PRM
- 	tristate
- 	select SND_SOC_QDSP6_PRM_LPASS_CLOCKS
- 
-+config SND_SOC_QCOM_OFFLOAD_UTILS
-+	tristate
-+
- config SND_SOC_QDSP6_USB
-     tristate "SoC ALSA USB offloading backing for QDSP6"
-     depends on SND_SOC_USB
-+    select SND_SOC_QCOM_OFFLOAD_UTILS
-+
-     help
-       Adds support for USB offloading for QDSP6 ASoC
-       based platform sound cards.  This will enable the
-diff --git a/sound/soc/qcom/Makefile b/sound/soc/qcom/Makefile
-index 16db7b53ddac..985ce2ae286b 100644
---- a/sound/soc/qcom/Makefile
-+++ b/sound/soc/qcom/Makefile
-@@ -30,6 +30,7 @@ snd-soc-sc8280xp-y := sc8280xp.o
- snd-soc-qcom-common-y := common.o
- snd-soc-qcom-sdw-y := sdw.o
- snd-soc-x1e80100-y := x1e80100.o
-+snd-soc-qcom-offload-utils-objs := usb_offload_utils.o
- 
- obj-$(CONFIG_SND_SOC_STORM) += snd-soc-storm.o
- obj-$(CONFIG_SND_SOC_APQ8016_SBC) += snd-soc-apq8016-sbc.o
-@@ -42,6 +43,7 @@ obj-$(CONFIG_SND_SOC_SM8250) += snd-soc-sm8250.o
- obj-$(CONFIG_SND_SOC_QCOM_COMMON) += snd-soc-qcom-common.o
- obj-$(CONFIG_SND_SOC_QCOM_SDW) += snd-soc-qcom-sdw.o
- obj-$(CONFIG_SND_SOC_X1E80100) += snd-soc-x1e80100.o
-+obj-$(CONFIG_SND_SOC_QCOM_OFFLOAD_UTILS) += snd-soc-qcom-offload-utils.o
- 
- #DSP lib
- obj-$(CONFIG_SND_SOC_QDSP6) += qdsp6/
-diff --git a/sound/soc/qcom/qdsp6/q6usb.c b/sound/soc/qcom/qdsp6/q6usb.c
-index 2b3e24520070..aacbe3bced99 100644
---- a/sound/soc/qcom/qdsp6/q6usb.c
-+++ b/sound/soc/qcom/qdsp6/q6usb.c
-@@ -14,6 +14,7 @@
- #include <linux/slab.h>
- 
- #include <sound/asound.h>
-+#include <sound/jack.h>
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
- #include <sound/q6usboffload.h>
-@@ -30,6 +31,7 @@
- struct q6usb_port_data {
- 	struct q6afe_usb_cfg usb_cfg;
- 	struct snd_soc_usb *usb;
-+	struct snd_soc_jack *hs_jack;
- 	struct q6usb_offload priv;
- 
- 	/* Protects against operations between SOC USB and ASoC */
-@@ -142,16 +144,54 @@ static int q6usb_alsa_connection_cb(struct snd_soc_usb *usb,
- 
- 	mutex_lock(&data->mutex);
- 	if (connected) {
-+		if (data->hs_jack)
-+			snd_jack_report(data->hs_jack->jack, SND_JACK_USB);
-+
- 		/* Selects the latest USB headset plugged in for offloading */
- 		list_add_tail(&sdev->list, &data->devices);
- 	} else {
- 		list_del(&sdev->list);
-+
-+		if (data->hs_jack)
-+			snd_jack_report(data->hs_jack->jack, 0);
- 	}
- 	mutex_unlock(&data->mutex);
- 
- 	return 0;
- }
- 
-+static void q6usb_component_disable_jack(struct q6usb_port_data *data)
-+{
-+	/* Offload jack has already been disabled */
-+	if (!data->hs_jack)
-+		return;
-+
-+	snd_jack_report(data->hs_jack->jack, 0);
-+	data->hs_jack = NULL;
-+}
-+
-+static void q6usb_component_enable_jack(struct q6usb_port_data *data,
-+					struct snd_soc_jack *jack)
-+{
-+	snd_jack_report(jack->jack, !list_empty(&data->devices) ? SND_JACK_USB : 0);
-+	data->hs_jack = jack;
-+}
-+
-+static int q6usb_component_set_jack(struct snd_soc_component *component,
-+				    struct snd_soc_jack *jack, void *priv)
-+{
-+	struct q6usb_port_data *data = dev_get_drvdata(component->dev);
-+
-+	mutex_lock(&data->mutex);
-+	if (jack)
-+		q6usb_component_enable_jack(data, jack);
-+	else
-+		q6usb_component_disable_jack(data);
-+	mutex_unlock(&data->mutex);
-+
-+	return 0;
-+}
-+
- static int q6usb_component_probe(struct snd_soc_component *component)
- {
- 	struct q6usb_port_data *data = dev_get_drvdata(component->dev);
-@@ -179,6 +219,7 @@ static void q6usb_component_remove(struct snd_soc_component *component)
- 
- static const struct snd_soc_component_driver q6usb_dai_component = {
- 	.probe = q6usb_component_probe,
-+	.set_jack = q6usb_component_set_jack,
- 	.remove = q6usb_component_remove,
- 	.name = "q6usb-dai-component",
- 	.dapm_widgets = q6usb_dai_widgets,
-diff --git a/sound/soc/qcom/sm8250.c b/sound/soc/qcom/sm8250.c
-index 19adadedc88a..4ab1f8c7556a 100644
---- a/sound/soc/qcom/sm8250.c
-+++ b/sound/soc/qcom/sm8250.c
-@@ -12,6 +12,7 @@
- #include <linux/input-event-codes.h>
- #include "qdsp6/q6afe.h"
- #include "common.h"
-+#include "usb_offload_utils.h"
- #include "sdw.h"
- 
- #define DRIVER_NAME		"sm8250"
-@@ -22,14 +23,34 @@ struct sm8250_snd_data {
- 	struct snd_soc_card *card;
- 	struct sdw_stream_runtime *sruntime[AFE_PORT_MAX];
- 	struct snd_soc_jack jack;
-+	struct snd_soc_jack usb_offload_jack;
-+	bool usb_offload_jack_setup;
- 	bool jack_setup;
- };
- 
- static int sm8250_snd_init(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct sm8250_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
-+	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-+	int ret;
-+
-+	if (cpu_dai->id == USB_RX)
-+		ret = qcom_snd_usb_offload_jack_setup(rtd, &data->usb_offload_jack,
-+						      &data->usb_offload_jack_setup);
-+	else
-+		ret = qcom_snd_wcd_jack_setup(rtd, &data->jack, &data->jack_setup);
-+	return ret;
-+}
-+
-+static void sm8250_snd_exit(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct sm8250_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
-+	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-+
-+	if (cpu_dai->id == USB_RX)
-+		qcom_snd_usb_offload_jack_remove(rtd,
-+						 &data->usb_offload_jack_setup);
- 
--	return qcom_snd_wcd_jack_setup(rtd, &data->jack, &data->jack_setup);
- }
- 
- static int sm8250_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
-@@ -137,6 +158,7 @@ static void sm8250_add_be_ops(struct snd_soc_card *card)
- 	for_each_card_prelinks(card, i, link) {
- 		if (link->no_pcm == 1) {
- 			link->init = sm8250_snd_init;
-+			link->exit = sm8250_snd_exit;
- 			link->be_hw_params_fixup = sm8250_be_hw_params_fixup;
- 			link->ops = &sm8250_be_ops;
- 		}
-diff --git a/sound/soc/qcom/usb_offload_utils.c b/sound/soc/qcom/usb_offload_utils.c
-new file mode 100644
-index 000000000000..0ebc73245cd4
---- /dev/null
-+++ b/sound/soc/qcom/usb_offload_utils.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+#include <dt-bindings/sound/qcom,q6afe.h>
-+#include <linux/module.h>
-+#include <sound/jack.h>
-+#include <sound/soc-usb.h>
-+
-+#include "usb_offload_utils.h"
-+
-+int qcom_snd_usb_offload_jack_setup(struct snd_soc_pcm_runtime *rtd,
-+				    struct snd_soc_jack *jack, bool *jack_setup)
-+{
-+	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-+	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
-+	int ret = 0;
-+
-+	if (cpu_dai->id != USB_RX)
-+		return -EINVAL;
-+
-+	if (!*jack_setup) {
-+		ret = snd_soc_usb_setup_offload_jack(codec_dai->component, jack);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	*jack_setup = true;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(qcom_snd_usb_offload_jack_setup);
-+
-+int qcom_snd_usb_offload_jack_remove(struct snd_soc_pcm_runtime *rtd,
-+				     bool *jack_setup)
-+{
-+	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-+	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
-+	int ret = 0;
-+
-+	if (cpu_dai->id != USB_RX)
-+		return -EINVAL;
-+
-+	if (*jack_setup) {
-+		ret = snd_soc_usb_disable_offload_jack(codec_dai->component);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	*jack_setup = false;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(qcom_snd_usb_offload_jack_remove);
-+MODULE_DESCRIPTION("ASoC Q6 USB offload controls");
-+MODULE_LICENSE("GPL");
-diff --git a/sound/soc/qcom/usb_offload_utils.h b/sound/soc/qcom/usb_offload_utils.h
-new file mode 100644
-index 000000000000..38205fa32ed4
---- /dev/null
-+++ b/sound/soc/qcom/usb_offload_utils.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+#ifndef __QCOM_SND_USB_OFFLOAD_UTILS_H__
-+#define __QCOM_SND_USB_OFFLOAD_UTILS_H__
-+
-+#include <sound/soc.h>
-+
-+#if IS_ENABLED(CONFIG_SND_SOC_QCOM_OFFLOAD_UTILS)
-+int qcom_snd_usb_offload_jack_setup(struct snd_soc_pcm_runtime *rtd,
-+				    struct snd_soc_jack *jack, bool *jack_setup);
-+
-+int qcom_snd_usb_offload_jack_remove(struct snd_soc_pcm_runtime *rtd,
-+				     bool *jack_setup);
-+#else
-+static inline int qcom_snd_usb_offload_jack_setup(struct snd_soc_pcm_runtime *rtd,
-+						  struct snd_soc_jack *jack,
-+						  bool *jack_setup)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int qcom_snd_usb_offload_jack_remove(struct snd_soc_pcm_runtime *rtd,
-+						   bool *jack_setup)
-+{
-+	return -ENODEV;
-+}
-+#endif /* IS_ENABLED(CONFIG_SND_SOC_QCOM_OFFLOAD_UTILS) */
-+#endif /* __QCOM_SND_USB_OFFLOAD_UTILS_H__ */
+> 
+> Thanks,
+> Armin Wolf
+> 
+>>> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+>>> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>>   drivers/acpi/platform_profile.c | 12 ++----------
+>>>   1 file changed, 2 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/acpi/platform_profile.c
+>>> b/drivers/acpi/platform_profile.c
+>>> index 568485e285061..b9eb25f58a2a2 100644
+>>> --- a/drivers/acpi/platform_profile.c
+>>> +++ b/drivers/acpi/platform_profile.c
+>>> @@ -10,7 +10,6 @@
+>>>   #include <linux/platform_profile.h>
+>>>   #include <linux/sysfs.h>
+>>>
+>>> -static struct platform_profile_handler *cur_profile;
+>>>   static DEFINE_MUTEX(profile_lock);
+>>>
+>>>   static const char * const profile_names[] = {
+>>> @@ -368,8 +367,7 @@ static const struct attribute_group
+>>> platform_profile_group = {
+>>>
+>>>   void platform_profile_notify(void)
+>>>   {
+>>> -    if (!cur_profile)
+>>> -        return;
+>>> +    guard(mutex)(&profile_lock);
+>>>       if (!class_is_registered(&platform_profile_class))
+>>>           return;
+>>>       sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>> @@ -428,9 +426,6 @@ int platform_profile_register(struct
+>>> platform_profile_handler *pprof)
+>>>       }
+>>>
+>>>       guard(mutex)(&profile_lock);
+>>> -    /* We can only have one active profile */
+>>> -    if (cur_profile)
+>>> -        return -EEXIST;
+>>>
+>>>       if (!class_is_registered(&platform_profile_class)) {
+>>>           /* class for individual handlers */
+>>> @@ -451,9 +446,9 @@ int platform_profile_register(struct
+>>> platform_profile_handler *pprof)
+>>>       if (IS_ERR(pprof->class_dev))
+>>>           return PTR_ERR(pprof->class_dev);
+>>>       dev_set_drvdata(pprof->class_dev, pprof);
+>>> +
+>>>       sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>>
+>>> -    cur_profile = pprof;
+>>>       return 0;
+>>>
+>>>   cleanup_class:
+>>> @@ -467,13 +462,10 @@ int platform_profile_remove(struct
+>>> platform_profile_handler *pprof)
+>>>   {
+>>>       guard(mutex)(&profile_lock);
+>>>
+>>> -    cur_profile = NULL;
+>>> -
+>>>       sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>>
+>>>       device_destroy(&platform_profile_class, MKDEV(0, pprof->minor));
+>>>
+>>> -    cur_profile = NULL;
+>>>       return 0;
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(platform_profile_remove);
+>>
+
 
