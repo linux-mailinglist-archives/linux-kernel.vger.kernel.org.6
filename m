@@ -1,301 +1,182 @@
-Return-Path: <linux-kernel+bounces-398698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A24C9BF4DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:09:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11119BF4DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 156DDB222FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:09:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7D11C23766
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECA9207A3A;
-	Wed,  6 Nov 2024 18:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1FC207A30;
+	Wed,  6 Nov 2024 18:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vA4oX648"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cbhsWiiy"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FDA206948
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61823206948
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730916573; cv=none; b=NTWYqyfQrYkuF2+51936ylhL/R4nlLWzhCaR6dYhHofIuW9PiaxCC8iPEUzg9Y4Apuqdshq/oyc+Fjfsa1krM8jhtdVaWbR6k9UvhKZkfuvaAxT5hpgB5jPlokCjtu7IwdzYLhQdDfV/9AiDyvYaggc7HuDXbq7vTRw8ABWC9Ps=
+	t=1730916640; cv=none; b=dBv8qR13PvSi+8lcK9HWQbhOf5XlgWNCi8lImtfVieDhmrfRE8KtaLHkHHeTBjUVDcZiCp2U0q+n7SAopKnRaon9WZYkWSs5KWYupgTqy0Ir38HsF4WtNjkNzQ6KMdBmUCOh6bvNsGbuuqnMJ4Bkd5KzK9Inm1hPzO29qWBlvoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730916573; c=relaxed/simple;
-	bh=yITS/CirUTbxr+/UbiO9U44GtlS2l96omfztpUbrt4k=;
+	s=arc-20240116; t=1730916640; c=relaxed/simple;
+	bh=PkPc+B615k/kXFxDS+L9I6dgsDOmeLZNoXXNnkOMAUo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PaIUIjTRUmB9MiYHojn3kP7ZlKU/9gca0B4Ch27/4ID6M/nYMwRbz8F5vOMEzWIWQ5pOOc1RWvKYPltvJ2RS74oLqQfdDWLZlU1VTSy/vRiELtbOw1N0Fn9CRHqoS7JJR5QgGFK6zVXiDaXBp2FXOOyW+g0gk3ZDPoRJY3bJpJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vA4oX648; arc=none smtp.client-ip=209.85.208.52
+	 To:Cc:Content-Type; b=tTLKzrGxJu9MjRa3skt1BkcuJWZNT76xzS7oFN0NpN2jQnGp/Tl8DNQeaiizdK6F10X1NJKQ9OqK+CyKJQlb2E1MTYRfUv+l7/Q6qjOvTeGWm36nmR4V0dDSxreOjWD/kDNITK3XIXhHQSs1RfDxQM1Kxi5qkGUXUwxgjj6d8xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cbhsWiiy; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cefc36c5d4so61576a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:09:31 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c947c00f26so1090a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:10:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730916570; x=1731521370; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730916636; x=1731521436; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yEd3ayDpZTjyYEebgErcbQo4vxDon5fvuouc/CvpOzU=;
-        b=vA4oX648VHy+y3GUue4+a80TIQXwlG4GrJxPA9T4hwlN0FTy0I/Rv2IK1p1xl73o51
-         N+4CHCtaHsTuxV89J2I15TfQJv7Ab3nUO1UTR79tlPinkPOQglMBdTqdT98BesIqWnjk
-         KtwKPpoTga3KJITDZCMvKryrUBQb23WTsDze6DbWrlpHkuWYTS6AyJjz4PVm9gcAYBk7
-         V/DboOSMu7SjuyMonOray4hrAo/WzPrqbFNN6kyuDJbBh5te8Q3pErvCtNai2dUeHJaT
-         +zVdwM+Q+4mMM9skvD1EkvH96bCXmrKLKCoWNwbvO2tdWrtUGiXKhU4jnSXghsqf/lKE
-         VFPw==
+        bh=jpqiovl0ffII9JvtOiEcilqO6gAo6Ysuk7IQTNDHH1E=;
+        b=cbhsWiiyfjGvIlEiDlfACsw7l1jb9cdeeh4nJPlS+ZA1vzch9YsysDOffzQdjlIIuF
+         TqkFRQvkb0hQ4bBfAppn8QywrTXHmVnT1J8EtgR77ueAmevFizoQqMCxDi6WAAIB0Y55
+         jIMTVADnu7lyk9Jo9ckpGpJuBGqDv2y70w+AvgKDQvOgFMeVGhTy1RslhGXgwh5DZnDE
+         NorfLJiHt3zMfe4eArbNpC1GI8k/9Quhsqd20LD/K2jzNRYMxZwPcsP06zt6Z1XH92P1
+         wb3+UACnnwxARyN4TKf6ULgno2NAs+ZqeZ9UL1+5q4ZVq8Xg59JrXPpCrNkX2O3k/Fr5
+         +elg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730916570; x=1731521370;
+        d=1e100.net; s=20230601; t=1730916636; x=1731521436;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yEd3ayDpZTjyYEebgErcbQo4vxDon5fvuouc/CvpOzU=;
-        b=gSL8D6H3+QRUUpP0/9/MwedUpETtNZy6qM86bSm+qUk0MT9h2JJT1o0cOaiLQM5Oom
-         U46bhJwxR7xuduUmvX/O0AzCkpV0bZ8Oj0c8sZ5GtB0MHEmb3EeJH5LQmuFKHyjk1VPz
-         p1CkrZ4P7EhQvV+2ZR+yCXh+w6quPu9J4Ta5cjIAGRMi6v+MwcOtfjIb1U9/+TSsn8ox
-         feBiHZPsYtxxEfRQZnlGFYw1dskcIvbIjnk1Mvyr2jTk8LB2Oi14EMFvAzDP4G2VqHhC
-         uKF9owV0YkyowX89iozZI2mnEeqjpWizcD4kat95ESk056PpNlI4JVxw6y/QOJDxWHqw
-         luxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXILLCzEv/9j8RViZFUahkNEqvSzZT0AlTFywIUWfs3QnHeSauHqe7bY4k6GO1s9vc6UyfM3iHRVfbyPK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnuG/DENrxZDeVXFW4nxeugDC2ILChWJKfzXkGNofJqbg2QEjn
-	udzsR9XpK0bCh20994k2a6bBoGivrhKrE8rBPHmp6iBfexTShaRMp7w9pcKPGYSOTvwn92nOKjf
-	AV7tNm1Mx+j1Dd8BVrm3JaSQIaKEzmsO8wjzL
-X-Google-Smtp-Source: AGHT+IFDI4yL5sYBFLN9nnhHwUWdXgASYkuHkrUJO5teq5xRHIjQbOabmDsiGZPb+TuAEChP0JdgRUHBoXinzG3Aic4=
-X-Received: by 2002:a05:6402:354e:b0:5ce:fbd0:573d with SMTP id
- 4fb4d7f45d1cf-5cefbd05990mr436047a12.11.1730916569387; Wed, 06 Nov 2024
- 10:09:29 -0800 (PST)
+        bh=jpqiovl0ffII9JvtOiEcilqO6gAo6Ysuk7IQTNDHH1E=;
+        b=dhNYtYZYjSOi1JrrsOvN/u+tZ673+xqPoPLRt5unS4QgganU30b25/ocqnAFm4ilCQ
+         RCF2UDDnNkB1P9rqyVo6oZ9KURZ4AQcSo5+8swRd78bd+O3w6g2b1MfvHcTEj7c5bnvQ
+         cC8QuCH38BPe/axbIA5tJcGyU79QJWFq43qVAZo9B8s+zF91/gbav4Drday/arLJ8aeu
+         vLGM2hZHz0sAE7rmL1rBNCGaSYqThU3IZjkHo6Dq37bsccdLq0xittnnpyVL9mbq078x
+         gRPH0Ir2F/DRsEgLRWUp0IdjnMkA484Ud87AnPo1WzcI4s+D2pes6KAVNJupsdFTnVZa
+         Zwog==
+X-Forwarded-Encrypted: i=1; AJvYcCVyHprvqOrWDvWVFrRGBaw/UtF0LXE0uq5hz5Ln7uFMzw9AEIGoQjCzCPAXwxLj5UeeZusJzqver29t4rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEaNj02/iNsrt+vZTYJjcQxUAvI9GgpjSsKka0v13TAHgRVcIH
+	GVqzk5+efrf7PmxvED228cQLLBz3XiEQn4+X+yBLMajMm1ORwGSV/zxmaSet4Irw+TxjRZ8zTKP
+	5J21gPe13SPM6RfuEcJ2F2cvl/7ITwilP4pXL
+X-Gm-Gg: ASbGncssW13SlGCtMJO4NR6dXZu4ALGpiNJy/8D3i1CQLprq5VHDt4k1zEkFdViX0UW
+	I2h+CsAH43TGpDsEWvBWFZH51OXYnFsH1uuK78NGartigFGWfT3eaQPc9lKY=
+X-Google-Smtp-Source: AGHT+IFfu8DjAm0U1ISPoTiJAxlj7uKrBs27eWrWlAcwhN7fibd3fMEyowQvMJcxtq9Vya2Xc31xMnfP1tRWRloFaGo=
+X-Received: by 2002:a05:6402:6c1:b0:5c9:85dc:5ae2 with SMTP id
+ 4fb4d7f45d1cf-5cefbcd6d8bmr119927a12.7.1730916635289; Wed, 06 Nov 2024
+ 10:10:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000035941f061932a077@google.com> <672bae42.050a0220.350062.0279.GAE@google.com>
-In-Reply-To: <672bae42.050a0220.350062.0279.GAE@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 6 Nov 2024 19:09:18 +0100
-Message-ID: <CANn89iJptb2gackja+KocyPYwf855EgZM34GSO3km4Z8tcwq1w@mail.gmail.com>
-Subject: Re: [syzbot] [net?] KMSAN: kernel-infoleak in __skb_datagram_iter (4)
-To: syzbot <syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20241101185033.131880-1-lorenzo.stoakes@oracle.com>
+ <CAG48ez0qsAM-dkOUDetmNBSK4typ5t_FvMvtGiB7wQsP-G1jVg@mail.gmail.com>
+ <2bf6329e-eb3b-4c5e-bd3a-b519eefffd63@lucifer.local> <CAG48ez1eeQatc0GC_hfOM_mvwjwQ=89JDmp_U5_diLy7ycjEdQ@mail.gmail.com>
+ <c0f64fa7-81fd-4691-86b5-2ad39ba9d8a7@bytedance.com>
+In-Reply-To: <c0f64fa7-81fd-4691-86b5-2ad39ba9d8a7@bytedance.com>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 6 Nov 2024 19:09:58 +0100
+Message-ID: <CAG48ez3hyaymBo_Y9V2Hpx8TRHbE2WyZoeLhi1n0VW9Np7iw2Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] docs/mm: add VMA locks documentation
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 6:58=E2=80=AFPM syzbot
-<syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com> wrote:
+On Wed, Nov 6, 2024 at 4:09=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedance.com=
+> wrote:
+> On 2024/11/5 05:29, Jann Horn wrote:
+> > On Mon, Nov 4, 2024 at 5:42=E2=80=AFPM Lorenzo Stoakes
 >
-> syzbot has found a reproducer for the following issue on:
+> [...]
 >
-> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ke=
-r..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1485dd5f98000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6fdf74cce3772=
-23b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D0c85cae3350b7d4=
-86aee
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1685dd5f980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10bfb6a798000=
-0
+> >
+> > I think it's important to know about the existence of hardware writes
+> > because it means you need atomic operations when making changes to
+> > page tables. Like, for example, in many cases when changing a present
+> > PTE, you can't even use READ_ONCE()/WRITE_ONCE() for PTEs and need
+> > atomic RMW operations instead - see for example ptep_get_and_clear(),
+> > which is basically implemented in arch code as an atomic xchg so that
+> > it can't miss concurrent A/D bit updates.
+> >
 >
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/08456e37db58/dis=
-k-2e1b3cc9.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinu=
-x-2e1b3cc9.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/7579fe72ed89/b=
-zImage-2e1b3cc9.xz
+> Totally agree! But I noticed before that ptep_clear() doesn't seem
+> to need atomic operations because it doesn't need to care about the
+> A/D bit.
 >
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
+> I once looked at the history of how the ptep_clear() was introduced.
+> If you are interested, you can take a look at my local draft below.
+> Maybe I missed something.
 >
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/inst=
-rumented.h:114 [inline]
-> BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inlin=
-e]
-> BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:30 [=
-inline]
-> BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_ite=
-r.h:300 [inline]
-> BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter=
-.h:328 [inline]
-> BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x2f3/0x2b30 lib/iov_iter.c:=
-185
->  instrument_copy_to_user include/linux/instrumented.h:114 [inline]
->  copy_to_user_iter lib/iov_iter.c:24 [inline]
->  iterate_ubuf include/linux/iov_iter.h:30 [inline]
->  iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
->  iterate_and_advance include/linux/iov_iter.h:328 [inline]
->  _copy_to_iter+0x2f3/0x2b30 lib/iov_iter.c:185
->  copy_to_iter include/linux/uio.h:211 [inline]
->  simple_copy_to_iter net/core/datagram.c:524 [inline]
->  __skb_datagram_iter+0x18d/0x1190 net/core/datagram.c:401
->  skb_copy_datagram_iter+0x5c/0x200 net/core/datagram.c:538
->  skb_copy_datagram_msg include/linux/skbuff.h:4076 [inline]
->  netlink_recvmsg+0x432/0x1610 net/netlink/af_netlink.c:1958
->  sock_recvmsg_nosec net/socket.c:1051 [inline]
->  sock_recvmsg+0x2c4/0x340 net/socket.c:1073
->  sock_read_iter+0x32d/0x3c0 net/socket.c:1143
->  io_iter_do_read io_uring/rw.c:771 [inline]
->  __io_read+0x8d2/0x20f0 io_uring/rw.c:865
->  io_read+0x3e/0xf0 io_uring/rw.c:943
->  io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1739
->  io_queue_sqe io_uring/io_uring.c:1953 [inline]
->  io_req_task_submit+0x104/0x1e0 io_uring/io_uring.c:1373
->  io_poll_task_func+0x12e5/0x1620
->  io_handle_tw_list+0x23a/0x5c0 io_uring/io_uring.c:1063
->  tctx_task_work_run+0xf8/0x3d0 io_uring/io_uring.c:1135
->  tctx_task_work+0x6d/0xc0 io_uring/io_uring.c:1153
->  task_work_run+0x268/0x310 kernel/task_work.c:239
->  ptrace_notify+0x304/0x320 kernel/signal.c:2403
->  ptrace_report_syscall include/linux/ptrace.h:415 [inline]
->  ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
->  syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
->  syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
->  syscall_exit_to_user_mode+0x13b/0x170 kernel/entry/common.c:218
->  do_syscall_64+0xda/0x1e0 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ```
+> mm: pgtable: make ptep_clear() non-atomic
 >
-> Uninit was stored to memory at:
->  pskb_expand_head+0x305/0x1a60 net/core/skbuff.c:2283
->  netlink_trim+0x2c2/0x330 net/netlink/af_netlink.c:1313
->  netlink_unicast+0x9f/0x1260 net/netlink/af_netlink.c:1347
->  nlmsg_unicast include/net/netlink.h:1158 [inline]
->  nlmsg_notify+0x21d/0x2f0 net/netlink/af_netlink.c:2602
->  rtnetlink_send+0x73/0x90 net/core/rtnetlink.c:770
->  rtnetlink_maybe_send include/linux/rtnetlink.h:18 [inline]
->  tcf_add_notify net/sched/act_api.c:2068 [inline]
->  tcf_action_add net/sched/act_api.c:2091 [inline]
->  tc_ctl_action+0x146e/0x19d0 net/sched/act_api.c:2139
->  rtnetlink_rcv_msg+0x12fc/0x1410 net/core/rtnetlink.c:6675
->  netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2551
->  rtnetlink_rcv+0x34/0x40 net/core/rtnetlink.c:6693
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:729 [inline]
->  __sock_sendmsg+0x30f/0x380 net/socket.c:744
->  ____sys_sendmsg+0x877/0xb60 net/socket.c:2607
->  ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2661
->  __sys_sendmsg net/socket.c:2690 [inline]
->  __do_sys_sendmsg net/socket.c:2699 [inline]
->  __se_sys_sendmsg net/socket.c:2697 [inline]
->  __x64_sys_sendmsg+0x300/0x4a0 net/socket.c:2697
->  x64_sys_call+0x2da0/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
-47
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>      In the generic ptep_get_and_clear() implementation, it is just a sim=
+ple
+>      combination of ptep_get() and pte_clear(). But for some architecture=
+s
+>      (such as x86 and arm64, etc), the hardware will modify the A/D bits
+> of the
+>      page table entry, so the ptep_get_and_clear() needs to be overwritte=
+n
+>      and implemented as an atomic operation to avoid contention, which ha=
+s a
+>      performance cost.
 >
-> Uninit was stored to memory at:
->  __nla_put lib/nlattr.c:1041 [inline]
->  nla_put+0x1c6/0x230 lib/nlattr.c:1099
->  tcf_ife_dump+0x250/0x10b0 net/sched/act_ife.c:660
->  tcf_action_dump_old net/sched/act_api.c:1190 [inline]
->  tcf_action_dump_1+0x85e/0x970 net/sched/act_api.c:1226
->  tcf_action_dump+0x1fd/0x460 net/sched/act_api.c:1250
->  tca_get_fill+0x519/0x7a0 net/sched/act_api.c:1648
->  tcf_add_notify_msg net/sched/act_api.c:2043 [inline]
->  tcf_add_notify net/sched/act_api.c:2062 [inline]
->  tcf_action_add net/sched/act_api.c:2091 [inline]
->  tc_ctl_action+0x1365/0x19d0 net/sched/act_api.c:2139
->  rtnetlink_rcv_msg+0x12fc/0x1410 net/core/rtnetlink.c:6675
->  netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2551
->  rtnetlink_rcv+0x34/0x40 net/core/rtnetlink.c:6693
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:729 [inline]
->  __sock_sendmsg+0x30f/0x380 net/socket.c:744
->  ____sys_sendmsg+0x877/0xb60 net/socket.c:2607
->  ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2661
->  __sys_sendmsg net/socket.c:2690 [inline]
->  __do_sys_sendmsg net/socket.c:2699 [inline]
->  __se_sys_sendmsg net/socket.c:2697 [inline]
->  __x64_sys_sendmsg+0x300/0x4a0 net/socket.c:2697
->  x64_sys_call+0x2da0/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:=
-47
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>      The commit d283d422c6c4 ("x86: mm: add x86_64 support for page table
+>      check") adds the ptep_clear() on the x86, and makes it call
+>      ptep_get_and_clear() when CONFIG_PAGE_TABLE_CHECK is enabled. The pa=
+ge
+>      table check feature does not actually care about the A/D bits, so on=
+ly
+>      ptep_get() + pte_clear() should be called. But considering that the
+> page
+>      table check is a debug option, this should not have much of an impac=
+t.
 >
-> Local variable opt created at:
->  tcf_ife_dump+0xab/0x10b0 net/sched/act_ife.c:647
->  tcf_action_dump_old net/sched/act_api.c:1190 [inline]
->  tcf_action_dump_1+0x85e/0x970 net/sched/act_api.c:1226
+>      But then the commit de8c8e52836d ("mm: page_table_check: add hooks t=
+o
+>      public helpers") changed ptep_clear() to unconditionally call
+>      ptep_get_and_clear(), so that the  CONFIG_PAGE_TABLE_CHECK check can=
+ be
+>      put into the page table check stubs (in
+> include/linux/page_table_check.h).
+>      This also cause performance loss to the kernel without
+>      CONFIG_PAGE_TABLE_CHECK enabled, which doesn't make sense.
 >
-> Bytes 158-159 of 216 are uninitialized
-> Memory access of size 216 starts at ffff88811980e280
+>      To fix it, just calling ptep_get() and pte_clear() in the ptep_clear=
+().
 >
-> CPU: 1 UID: 0 PID: 5791 Comm: syz-executor190 Not tainted 6.12.0-rc6-syzk=
-aller-00077-g2e1b3cc9d7f7 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 09/13/2024
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
+>      Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 >
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 117b807e3f894..2ace92293f5f5 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -506,7 +506,10 @@ static inline void clear_young_dirty_ptes(struct
+> vm_area_struct *vma,
+>   static inline void ptep_clear(struct mm_struct *mm, unsigned long addr,
+>                                pte_t *ptep)
+>   {
+> -       ptep_get_and_clear(mm, addr, ptep);
+> +       pte_t pte =3D ptep_get(ptep);
+> +
+> +       pte_clear(mm, addr, ptep);
+> +       page_table_check_pte_clear(mm, pte);
+>   }
 >
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+> ```
 
-#syz test
-
-diff --git a/include/uapi/linux/tc_act/tc_connmark.h
-b/include/uapi/linux/tc_act/tc_connmark.h
-index 9f8f6f709feb5cb67decc5fc80c422d9373df930..7089b9466065df074f98b47ffe1=
-79baf386600a9
-100644
---- a/include/uapi/linux/tc_act/tc_connmark.h
-+++ b/include/uapi/linux/tc_act/tc_connmark.h
-@@ -8,6 +8,7 @@
- struct tc_connmark {
-        tc_gen;
-        __u16 zone;
-+       __u16 pad;
- };
-
- enum {
-diff --git a/include/uapi/linux/tc_act/tc_ife.h
-b/include/uapi/linux/tc_act/tc_ife.h
-index 8c401f185675582febc262a8d11bf9598cb8a1f4..6f7f7af20fe9466631cc571f9c0=
-0665489cfe91d
-100644
---- a/include/uapi/linux/tc_act/tc_ife.h
-+++ b/include/uapi/linux/tc_act/tc_ife.h
-@@ -13,6 +13,7 @@
- struct tc_ife {
-        tc_gen;
-        __u16 flags;
-+       __u16 pad;
- };
-
- /*XXX: We need to encode the total number of bytes consumed */
-diff --git a/include/uapi/linux/tc_act/tc_pedit.h
-b/include/uapi/linux/tc_act/tc_pedit.h
-index f5cab7fc96ab1ea1516beeedff20b279c3cfa4d7..28e026dbc1400899a072fdbac68=
-72654bea3ab8d
-100644
---- a/include/uapi/linux/tc_act/tc_pedit.h
-+++ b/include/uapi/linux/tc_act/tc_pedit.h
-@@ -62,6 +62,7 @@ struct tc_pedit_sel {
-        tc_gen;
-        unsigned char           nkeys;
-        unsigned char           flags;
-+       __u16                                   pad;
-        struct tc_pedit_key     keys[] __counted_by(nkeys);
- };
+ptep_clear() is currently only used in debug code and in khugepaged
+collapse paths, which are fairly expensive, so I don't think the cost
+of an extra atomic RMW op should matter here; but yeah, the change
+looks correct to me.
 
