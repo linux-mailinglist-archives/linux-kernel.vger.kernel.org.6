@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-398126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC809BE5D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:44:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6239B9BE5D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727FD1F21547
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93DCE1C22F1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5231DED76;
-	Wed,  6 Nov 2024 11:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ERMWO/4g"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E039957333
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3881DED76;
+	Wed,  6 Nov 2024 11:44:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723131D619E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730893450; cv=none; b=jZqYTjW/eqIF1Y2KjylobEIitOeoHtTNMjtBjKn6FgdJ2xlwKBhRrgJB2mhZWS0aFRM1/Pf92qTHTz7Zr2fgb2ftEAZWCygC6HtMKRIlWO4fVE+MJbupGl9QWnsb0fMDLJt44rLRHRi0bTR9oYY4nb2D2ilACxymUW4dotZxPpk=
+	t=1730893479; cv=none; b=EMCsU79I500N9y6YOi6GdtC0Gd7RwHgh7H45lHoyFvAHYADgZkQJ9ZczVyzY35uzqMsuBYnODP7jmvJE8EiGdVwTwheBYi6b2e0pdH6hSnymucBxTPfSlkdwnVk30sVYU0stUeqYjFtfh5hVicUf7Zrm8n5mVmUxBwNI+Ze1jiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730893450; c=relaxed/simple;
-	bh=4TxdLOMe7YjIIYFFusZngVbuFO/o9a6sr+thsWPcBSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E72cG+QSrQw8GGIlkkiamcC9Hw+w8NaTosi/CWGaZ5wl5mvev3vOoHvDMnv/ZkGkDvPPsPDl8YDMgqrVqDaLwsNSdE84tKo/cswiV/HgBTL7nUW+oPhPo9y8yS3F26jY/cMpAALhFc2FI8FoJjEFoyPQ+1i0aoqKlgjf//1VdUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ERMWO/4g; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730893449; x=1762429449;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4TxdLOMe7YjIIYFFusZngVbuFO/o9a6sr+thsWPcBSw=;
-  b=ERMWO/4g8AKmwPNtZSnw7XsJH/WSLPPt3xA2SKJTbOKvYscmav7PxG+3
-   haNF1scfpZUHSs6+zr2004I+W4RJ5h3kF8ThBSwMR6wPZK9cC6WuKkgQ7
-   I4oTxF1ZB4KjPnNSP4k6q9FPA0ngDjNFPzU+acmbMzngXuR2unD2bK7uT
-   0RkqOaGFxkqQgbc6gZIwqbHJQwBBKR+lkN/rMVhVt8+v4hv4DI6DWg0mC
-   N0YaNjcejLX96wxgtwnfXUo8FPN4+ET/exggsasvRQ5rnR1gkH/LJmbkk
-   x6byDcoa2Zrfputnai60BSrMJfCUBbd3OzreYkxC3y07IPVimbAhB5Juq
-   A==;
-X-CSE-ConnectionGUID: mlTzul8tTW2xQrd28C8lfA==
-X-CSE-MsgGUID: VOdA+dutQLGi2ZS3X2MK/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30540442"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30540442"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 03:44:08 -0800
-X-CSE-ConnectionGUID: nCOHqIWGR4+VvcIovipxdA==
-X-CSE-MsgGUID: AKe41/oMT1OGhJevKVcYEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="89349774"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 06 Nov 2024 03:44:07 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C2557A4B; Wed, 06 Nov 2024 13:44:05 +0200 (EET)
-Date: Wed, 6 Nov 2024 13:44:05 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [GIT PULL] auxdisplay for 6.13-1
-Message-ID: <ZytWhTAeAIrzEyb9@black.fi.intel.com>
+	s=arc-20240116; t=1730893479; c=relaxed/simple;
+	bh=L/vsu6Br5m0izzUqaRo2886jDIY90r/38TvrRRq69Nw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VScx27aMp65BWr3/A+4GVguFZNh5IDiLixOCxxm+HP8Ou0ck/vDUSQcBYYCqQPnmf7jMary4JbIAEinxGEaPjxg2rJXl6yZxdNCBqhgsxIE0VxLWeJvnmdVQLMeyyeHZVaUZZjHL/eCmPhC/HjdHNG7RhOWBk4KA8QYvRXx8r+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69E0A1063;
+	Wed,  6 Nov 2024 03:45:06 -0800 (PST)
+Received: from [10.57.88.115] (unknown [10.57.88.115])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF9C13F6A8;
+	Wed,  6 Nov 2024 03:44:35 -0800 (PST)
+Message-ID: <3e26ec9a-4dc0-42e7-a383-2c1bd0a08412@arm.com>
+Date: Wed, 6 Nov 2024 11:44:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/slab: Avoid build bug for calls to kmalloc with a
+ large constant
+Content-Language: en-GB
+To: Dave Kleikamp <dave.kleikamp@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-6-ryan.roberts@arm.com>
+ <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Linus,
+On 01/11/2024 20:16, Dave Kleikamp wrote:
+> When boot-time page size is enabled, the test against KMALLOC_MAX_CACHE_SIZE
+> is no longer optimized out with a constant size, so a build bug may
+> occur on a path that won't be reached.
+> 
+> Found compiling drivers/net/ethernet/qlogic/qed/qed_sriov.c
+> 
+> Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+> ---
+> 
+> Ryan,
+> 
+> Please consider incorporating this fix or something similar into your
+> mm patch in the boot-time pages size patches.
+> 
+>  include/linux/slab.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 9848296ca6ba..a4c7507ab8ec 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -685,7 +685,8 @@ static __always_inline unsigned int __kmalloc_index(size_t
+> size,
+>      if (size <= 1024 * 1024) return 20;
+>      if (size <=  2 * 1024 * 1024) return 21;
+>  
+> -    if (!IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES) && size_is_constant)
+> +    if (!IS_ENABLED(CONFIG_ARM64_BOOT_TIME_PAGE_SIZE) &&
 
-New cycle new tiny update to auxdisplay subsystem. The changes were
-a few weeks in Linux Next without reported problems. Please, apply
-to v6.13-rc1 (or to current cycle if you want, there shouldn't be
-any dependencies or conflicts),
+Thanks for the patch! I think this may be better as:
+
+       if (PAGE_SHIFT_MIN == PAGE_SHIFT_MAX &&
+
+Since that is independent of the architecture. Your approach wouldn't work if
+another arch wanted to enable boot time page size, or if arm64 dropped the
+Kconfig because it decided only boot time page size will be supported in future.
 
 Thanks,
+Ryan
 
-With Best Regards,
-Andy Shevchenko
-
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git tags/auxdisplay-v6.13-1
-
-for you to fetch changes up to 0b028ff7e70ecbe5240ad92e36a664af5cf7f382:
-
-  auxdisplay: Remove unused functions (2024-10-08 20:48:18 +0300)
-
-----------------------------------------------------------------
-auxdisplay for v6.13-1
-
- * Move Holtek 16k33 driver to use agnostic i2c_get_match_data()
- * Miscellaneuous cleanups
-
-The following is an automated git shortlog grouped by driver:
-
-cfag12864b:
- - Remove unused functions
-
-ht16k33:
- - Make use of i2c_get_match_data()
- - Drop explicit initialization of struct i2c_device_id::driver_data to 0
-
-lcd2s:
- - Drop explicit initialization of struct i2c_device_id::driver_data to 0
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      auxdisplay: ht16k33: Make use of i2c_get_match_data()
-
-Dr. David Alan Gilbert (1):
-      auxdisplay: Remove unused functions
-
-Uwe Kleine-K�nig (1):
-      auxdisplay: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-
- drivers/auxdisplay/cfag12864b.c | 12 ------------
- drivers/auxdisplay/ht16k33.c    | 10 +++++-----
- drivers/auxdisplay/lcd2s.c      |  2 +-
- include/linux/cfag12864b.h      | 17 -----------------
- 4 files changed, 6 insertions(+), 35 deletions(-)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> +        !IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES) && size_is_constant)
+>          BUILD_BUG_ON_MSG(1, "unexpected size in kmalloc_index()");
+>      else
+>          BUG();
 
 
