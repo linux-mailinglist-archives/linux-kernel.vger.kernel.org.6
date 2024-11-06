@@ -1,155 +1,116 @@
-Return-Path: <linux-kernel+bounces-398920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ECF9BF806
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:33:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877BF9BF80B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:34:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47091F2293C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8D228496A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CEB20C33B;
-	Wed,  6 Nov 2024 20:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48CA20C329;
+	Wed,  6 Nov 2024 20:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ytyxj6G6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qp+2tJDN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B930020C325;
-	Wed,  6 Nov 2024 20:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F74220C325;
+	Wed,  6 Nov 2024 20:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730925220; cv=none; b=e5hcLnl0UZMh61xCw0Tvs8lFSghXq6pyElXvWbfDlHZR1nl5/tTp6/NRJODUIJtLX5L9OsEhDfZVyyOKsYSQ1RJCXheo/P3hL0oPkoLHqtze11DPCini4xIrmutTzulvetp/Zsy+HxkHdj/BPVROPhlBbu3wu3bqr8kwWuDSlIg=
+	t=1730925243; cv=none; b=pvRk1f1XSAs4YFgQy3ORviaiS5aVwa4SsHU+UftiT48TiwliBgjX2+JK5/944ByWBtWOujgI7tssP5k2eHO7kkfVJhP20ylP8FTLpP39sU6a3O7VA45TjSsqk1RBu7arwauLNFiWj1KADydB275JkgeGl6eb7fWhrbyeczQrG8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730925220; c=relaxed/simple;
-	bh=zoRLMKW55o98JRmgTawjT4yCHMdI37JhvZnILfOLqRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OWGWHzXjBTuDUnv+nx9OPgC+yT5XoPeVxOwNhPA6OXf1x1qUIXwvYG5sRmsOfmvID6GOvAgkUu5KEQ+3ctxmurfj6zN89Y5CWp2BQH7r7zgjZZItETSAzD34L4P+28Vlc/wUx6jCR3/vyEWSk8FZ4axW3kKuroI/nF96L+q4tY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ytyxj6G6; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730925219; x=1762461219;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zoRLMKW55o98JRmgTawjT4yCHMdI37JhvZnILfOLqRQ=;
-  b=Ytyxj6G6SsI495CioUmNHx7cRlyBFYFfPMdrwqQTs7kVLR52LzQ5yXFl
-   2exwwxeL7MhRBiV/6Rdm8RKO8DWaoyZRS+h3hOj0sKs07xGziQVw4EMsc
-   Fbvk7CnMHzRGVnAZbkkW8h/HOS1jYeIxr0v4Jyb7O0R1eOtx8z+rqYb9c
-   xhwxObhbata6+Q/OVHoVBhsvu5GxP5DSov99i2y+dhTMa5C7+OxtpF1yQ
-   pdLvtICoi/rKfvGMkXiX4O4vHa5yd0AaYEBH0R4CKPPpaM9ONm/ODdTPC
-   YP0kPzwBPMtxRSL5zdQYOz5VNqCIGITEymcDudpW6o/0nQLNhBw0y6I8A
-   A==;
-X-CSE-ConnectionGUID: K0x+SE5ZQ+iFnKBipbx8tw==
-X-CSE-MsgGUID: +nIijFSoRrmus9YYZpF2vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30705990"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30705990"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 12:33:37 -0800
-X-CSE-ConnectionGUID: V8XizmLPQ5C6WPxTiJI6TA==
-X-CSE-MsgGUID: oNVXimYpTpmteoMQVxNatg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="84355097"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 12:33:37 -0800
-Received: from [10.212.82.230] (kliang2-mobl1.ccr.corp.intel.com [10.212.82.230])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 560D920B5703;
-	Wed,  6 Nov 2024 12:33:32 -0800 (PST)
-Message-ID: <597dbcf6-8169-4084-881c-8942ed363189@linux.intel.com>
-Date: Wed, 6 Nov 2024 15:33:30 -0500
+	s=arc-20240116; t=1730925243; c=relaxed/simple;
+	bh=FohDGAir3tCHy+2gHu5Qo5hFIGFB4ybypUNSHv+E94o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nPSbijU+kdlNVzZi8zgH6KTCgcL9fH4BCa0qSlc5O5t+lpIXTDPldDujR2BtShzzskCTsdagYwNqKQVV4QMIMHP4UNp+z9QUbB5a8tspQy2QYxMFYIpF6Y7Z/KjjPSEKO0+Lkg1ALzOlsStHXGRFZz6w5OIx9yTg+l2sonsVsvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qp+2tJDN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF003C4CED8;
+	Wed,  6 Nov 2024 20:34:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730925242;
+	bh=FohDGAir3tCHy+2gHu5Qo5hFIGFB4ybypUNSHv+E94o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qp+2tJDNDDNnEvEXorSf6ztPAGCji2NP6uIsi65W1B3595+5ZnS+eeLFX3Q2a08SZ
+	 EE9BA3NaCPk4/R3f0UeNOFLuGm0rk4+VAAIp5rZcOaam709/CqWrZeXu4E7aupXL1i
+	 C7M/ZuUVBfhAmE2CMjesaNWImc3jT3ZyGs8/G6b/Z0U9G4j2b9IG26kTYK2Pxlt+g9
+	 xqvznGT5qbX+PgTlESQMRGWPTyT/VSjZsYqMZHQk0RkfM19HfSTkXGWdnyO8pOLCSq
+	 3Q/XO5IbodtyIQfecDpum97swDAi+c9TGgH7qQ7/lcqThCjZT+iBIfxolpw/pey+ul
+	 ih6nxBzrCInFQ==
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e6104701ffso195198b6e.0;
+        Wed, 06 Nov 2024 12:34:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUtj2mMeu0Li2folVfNuMuf+7yfx4hqr47KCOCkkJtAq8cLChFFTbli3ryBBZQAjcXdEGwKp3BQAvUi/Cp0@vger.kernel.org, AJvYcCWWf930AOjbqqzla1Pwsn+0P/MxqOxMJM/AXVEBnyhQFJ05XMX8HbDOCvof2m4Hlzujy+C2xKazBDOA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzax6lEtkbbwwNEPjxxkl25Bn+mSe415w/sz0CV0f4dzClVfg7Z
+	QbjlzLrHoBTL8bIBHW0LTMLdSEfbYsG3vSWHZrnoxmKae7s+cIXz6yQiz2iHgzCFteg2aG/Ymi7
+	22tlH/xa1bFT52pXCIQUy/4lzcFU=
+X-Google-Smtp-Source: AGHT+IGecqvZYz6VJ6nPpjW5PfwtCsmdNJCPFVN4oXkxrvO72g6VDvW7tykCxY6jViLJuWqan+LokpLOrJ2cns7t//M=
+X-Received: by 2002:a05:6870:418d:b0:270:50f7:50c1 with SMTP id
+ 586e51a60fabf-29051af0f4amr37508782fac.1.1730925241795; Wed, 06 Nov 2024
+ 12:34:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] x86: perf: Refactor misc flag assignments
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org,
- Sean Christopherson <seanjc@google.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org
-References: <20241105195603.2317483-1-coltonlewis@google.com>
- <20241105195603.2317483-5-coltonlewis@google.com>
- <65675ed8-e569-47f8-b1eb-40c853751bfb@linux.intel.com>
- <ZyvLOjy8Vfvai5cG@linux.dev>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <ZyvLOjy8Vfvai5cG@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241104222855.3959267-1-superm1@kernel.org> <CAJZ5v0iVfdfetFBrq93hcaTgVTN-=WoWYnK5G65q+kRA-qNtwQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iVfdfetFBrq93hcaTgVTN-=WoWYnK5G65q+kRA-qNtwQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 6 Nov 2024 21:33:50 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jLez+WcqMs4hWeTKdeSbBbAShWvbvGHVj--foZLQ_u6w@mail.gmail.com>
+Message-ID: <CAJZ5v0jLez+WcqMs4hWeTKdeSbBbAShWvbvGHVj--foZLQ_u6w@mail.gmail.com>
+Subject: Re: [PATCH v4] ACPI: processor: Move arch_init_invariance_cppc() call later
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Mario Limonciello <mario.limonciello@amd.com>, 
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
+	"open list:ACPI" <linux-acpi@vger.kernel.org>, Ivan Shapovalov <intelfx@intelfx.name>, 
+	Oleksandr Natalenko <oleksandr@natalenko.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Nov 5, 2024 at 9:17=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> On Mon, Nov 4, 2024 at 11:29=E2=80=AFPM Mario Limonciello <superm1@kernel=
+.org> wrote:
+> >
+> > From: Mario Limonciello <mario.limonciello@amd.com>
+> >
+> > arch_init_invariance_cppc() is called at the end of
+> > acpi_cppc_processor_probe() in order to configure frequency invariance
+> > based upon the values from _CPC.
+> >
+> > This however doesn't work on AMD CPPC shared memory designs that have
+> > AMD preferred cores enabled because _CPC needs to be analyzed from all
+> > cores to judge if preferred cores are enabled.
+> >
+> > This issue manifests to users as a warning since commit 21fb59ab4b97
+> > ("ACPI: CPPC: Adjust debug messages in amd_set_max_freq_ratio() to warn=
+"):
+> > ```
+> > Could not retrieve highest performance (-19)
+> > ```
+> >
+> > However the warning isn't the cause of this, it was actually
+> > commit 279f838a61f9 ("x86/amd: Detect preferred cores in
+> > amd_get_boost_ratio_numerator()") which exposed the issue.
+> >
+> > To fix this problem, change arch_init_invariance_cppc() into a new weak
+> > symbol that is called at the end of acpi_processor_driver_init().
+> > Each architecture that supports it can declare the symbol to override
+> > the weak one.
+>
+> "Define it for x86, in arch/x86/kernel/acpi/cppc.c, and for all of the
+> architectures using the generic arch_topology.c code."
 
+I've added this to the patch changelog and queued it up as a 6.12 fix.
 
-On 2024-11-06 3:02 p.m., Oliver Upton wrote:
-> On Wed, Nov 06, 2024 at 11:03:10AM -0500, Liang, Kan wrote:
->>> +static unsigned long common_misc_flags(struct pt_regs *regs)
->>> +{
->>> +	if (regs->flags & PERF_EFLAGS_EXACT)
->>> +		return PERF_RECORD_MISC_EXACT_IP;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
->>> +{
->>> +	unsigned long guest_state = perf_guest_state();
->>> +	unsigned long flags = common_misc_flags(regs);
->>> +
->>> +	if (guest_state & PERF_GUEST_USER)
->>> +		flags |= PERF_RECORD_MISC_GUEST_USER;
->>> +	else if (guest_state & PERF_GUEST_ACTIVE)
->>> +		flags |= PERF_RECORD_MISC_GUEST_KERNEL;
->>> +
->>
->> The logic of setting the GUEST_KERNEL flag is implicitly changed here.
->>
->> For the current code, the GUEST_KERNEL flag is set for !PERF_GUEST_USER,
->> which include both guest_in_kernel and guest_in_NMI.
-> 
-> Where is the "guest_in_NMI" state coming from? KVM only reports user v.
-> kernel mode.
-
-I may understand the kvm_arch_pmi_in_guest() wrong.
-However, the kvm_guest_state() at least return 3 states.
-0
-PERF_GUEST_ACTIVE
-PERF_GUEST_ACTIVE | PERF_GUEST_USER
-
-The existing code indeed assumes two modes. If it's not user mode, it
-must be kernel mode.
-However, the proposed code behave differently, or at least implies there
-are more modes.
-If it's not user mode and sets PERF_GUEST_ACTIVE, it's kernel mode.
-
-Thanks,
-Kan
-
-
+Thanks!
 
