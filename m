@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-398097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73C59BE551
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:14:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891429BE55B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE9381C21129
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:14:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11C03B24992
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0D51DE4F1;
-	Wed,  6 Nov 2024 11:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F5C1DE4F0;
+	Wed,  6 Nov 2024 11:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="w11ufpAu"
-Received: from mail-40140.protonmail.ch (mail-40140.protonmail.ch [185.70.40.140])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BL4XlHbU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1918418C00E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2771DE4F6
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730891671; cv=none; b=gi7ufP56RcWynldR4HCdRSf5DrPdlAhwhKQt7rJhu4PyTqDu7CQy5/IxDF+0wMTxhNh3WrOYsNdLLo4rODXjUG9d/YN/UutxQiMsCQZn8Y/ErBac4WjD2H8Xz3f+BL+/8BP8g7ftg6L4CrWOs5BPk71640FLOw6HOdb2YVVZl+Y=
+	t=1730891699; cv=none; b=l7KMlmFP2wd2XJncPnAHssUbv6itpwpyAXImu7JL/FihT4kYFeDTC4Gtyvvz+Th5OkbZM3w6SaSTvoPLk8+BSEdlkc5DfiYwLVxayTJ4K54MbGJhMR64ycpmxWTxiBJh7WTpEK/b+D6q78h24KCfIfZ1EFjjAQhn40pUfhkRzO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730891671; c=relaxed/simple;
-	bh=BxquhkBW532I4hD3BajrntKsboORTcgVhG73iCFJjO8=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SnqAK8s5emphV8N/wIJmcwHZmU1VKp9wHLyB8iPvHH12pGb9gbf37BgZfpA2NvLxGc9yVWEzEJ/74QmCo+oqOMK+1ZCi0dByX45zPsAkI3+Zt2Bky7JScDwrlafCdXj9yc7wBXhWA/OMCQJQeMdcrPfFTEx5Z2V8LvMAqBCOj8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=w11ufpAu; arc=none smtp.client-ip=185.70.40.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1730891666; x=1731150866;
-	bh=44Jj4Axf6VhdEIAU0ENXCGhb1JV9u+U+0Mxi10i0Jj4=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=w11ufpAuhZXSVRhO+3yN3KUxWb3+xqn+03qFy60Uh2a4PZ3L2c5gnRhKpCuIOTshI
-	 5qUnWNb8MrKU+4DJx/N4Of6Lz+b7RFD/5fFZBFzT7/xvC1wAOfAu2xyilaaeuSMvhn
-	 GDvCNJha3KWg0z12meCJ4lm8BNjeR3IZEu3cleJy5Ns0nef33P1tqE+Bw0QVS1Ieoi
-	 KnZZNJzcEMTwnrNZyavS3N4skMCnAcwWTA9CUnbqwkv8UmPUTkeYSjQqfyDBaEsXXh
-	 oGXDbc4hXpB1hCrgfEkNjyVIqio5cGhOCzqjmY6n253Qw4LC6i2X32RRJA2YF4EyU/
-	 oOAP4gbxEwyGg==
-Date: Wed, 06 Nov 2024 11:14:21 +0000
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Philipp Zabel <p.zabel@pengutronix.de>, Sam Shih <sam.shih@mediatek.com>, Lukas Bulwahn <lukas.bulwahn@redhat.com>, Daniel Golle <daniel@makrotopia.org>
-From: Yassine Oudjana <y.oudjana@protonmail.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/2] MediaTek MT6735 syscon clock/reset controller support
-Message-ID: <20241106111402.200940-1-y.oudjana@protonmail.com>
-Feedback-ID: 6882736:user:proton
-X-Pm-Message-ID: 0dd6bd5ca0773cfa6c0df23af5f595a7210c9feb
+	s=arc-20240116; t=1730891699; c=relaxed/simple;
+	bh=w0uIJNp7DkoJvCA6I6hYVWnWQRy0FN8z4oGmjvTP7UA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WnUMnp5FBLsm134YSRUE4bBat9oBiz4UIaWCOdxNlIVXjpOlqKy1/UI/wAWeFavbfiTeUmNfnXVjwOJdbMqNOsyKzTnChMuBA3MrKGRoywZouQ3pTxWyFAoUJ+lg1RcytqbwSgkx8Q0kncuomznlHjiAxZ0CQMGHeaeGRuPKKz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BL4XlHbU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730891696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=q/pUhWBxmCDgwQYzUjg0jWk3qPOCCQzEzMOB8Ax5AVQ=;
+	b=BL4XlHbU3+ebh70Zmrkc7vPhTFyhj7Qr1dM9D+IWwZw18vIJC/jkIR8PF7g9PcM7yaVoXl
+	n+/KdmFBMQGNWyPdDUfWsMvW05e74V7oGFD5Y0yRxMU4KTC5XDpsXF4WvKlATMZC4PZ4Mq
+	p6qv4RgMSrLcYQuTy6WQ68FGv0twPIo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-18-6LJtl8SbP8eoyf92emu2Kw-1; Wed,
+ 06 Nov 2024 06:14:52 -0500
+X-MC-Unique: 6LJtl8SbP8eoyf92emu2Kw-1
+X-Mimecast-MFC-AGG-ID: 6LJtl8SbP8eoyf92emu2Kw
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 51797196CE34;
+	Wed,  6 Nov 2024 11:14:42 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.80.50])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C23FB1955F41;
+	Wed,  6 Nov 2024 11:14:33 +0000 (UTC)
+From: Wander Lairson Costa <wander@redhat.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Simon Horman <horms@kernel.org>,
+	Wander Lairson Costa <wander@redhat.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-rt-devel@lists.linux.dev (open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT)
+Cc: tglx@linutronix.de
+Subject: [PATCH v2 1/4] Revert "igb: Disable threaded IRQ for igb_msix_other"
+Date: Wed,  6 Nov 2024 08:14:26 -0300
+Message-ID: <20241106111427.7272-1-wander@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-These patches are part of a larger effort to support the MT6735 SoC family
-in mainline Linux. More patches can found here[1].
+This reverts commit 338c4d3902feb5be49bfda530a72c7ab860e2c9f.
 
-This series adds support for clocks and resets of the following blocks:
-- IMGSYS (Camera)
-- MFGCFG (GPU)
-- VDECSYS (Video decoder)
-- VENCSYS (Video encoder, also has JPEG codec clocks)
+Sebastian noticed the ISR indirectly acquires spin_locks, which are
+sleeping locks under PREEMPT_RT, which leads to kernel splats.
 
-[1] https://gitlab.com/mt6735-mainline/linux/-/commits/mt6735-staging
+Fixes: 338c4d3902feb ("igb: Disable threaded IRQ for igb_msix_other")
+Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Wander Lairson Costa <wander@redhat.com>
 
-Changes since v1:
-- Simplify Kconfig dependencies.
-- Remove some extra newlines.
+---
 
-Yassine Oudjana (2):
-  dt-bindings: clock: mediatek: Add bindings for MT6735 syscon clock and
-    reset controllers
-  clk: mediatek: Add drivers for MT6735 syscon clock and reset
-    controllers
+Changelog:
 
- .../bindings/clock/mediatek,syscon.yaml       |  4 +
- MAINTAINERS                                   | 10 +++
- drivers/clk/mediatek/Kconfig                  | 28 +++++++
- drivers/clk/mediatek/Makefile                 |  4 +
- drivers/clk/mediatek/clk-mt6735-imgsys.c      | 57 +++++++++++++
- drivers/clk/mediatek/clk-mt6735-mfgcfg.c      | 61 ++++++++++++++
- drivers/clk/mediatek/clk-mt6735-vdecsys.c     | 79 +++++++++++++++++++
- drivers/clk/mediatek/clk-mt6735-vencsys.c     | 53 +++++++++++++
- .../clock/mediatek,mt6735-imgsys.h            | 15 ++++
- .../clock/mediatek,mt6735-mfgcfg.h            |  8 ++
- .../clock/mediatek,mt6735-vdecsys.h           |  9 +++
- .../clock/mediatek,mt6735-vencsys.h           | 11 +++
- .../reset/mediatek,mt6735-mfgcfg.h            |  9 +++
- .../reset/mediatek,mt6735-vdecsys.h           |  9 +++
- 14 files changed, 357 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt6735-imgsys.c
- create mode 100644 drivers/clk/mediatek/clk-mt6735-mfgcfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt6735-vdecsys.c
- create mode 100644 drivers/clk/mediatek/clk-mt6735-vencsys.c
- create mode 100644 include/dt-bindings/clock/mediatek,mt6735-imgsys.h
- create mode 100644 include/dt-bindings/clock/mediatek,mt6735-mfgcfg.h
- create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vdecsys.h
- create mode 100644 include/dt-bindings/clock/mediatek,mt6735-vencsys.h
- create mode 100644 include/dt-bindings/reset/mediatek,mt6735-mfgcfg.h
- create mode 100644 include/dt-bindings/reset/mediatek,mt6735-vdecsys.h
+v2: Add the Fixes tag
+Signed-off-by: Wander Lairson Costa <wander@redhat.com>
+---
+ drivers/net/ethernet/intel/igb/igb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index b83df5f94b1f5..f1d0881687233 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -907,7 +907,7 @@ static int igb_request_msix(struct igb_adapter *adapter)
+ 	int i, err = 0, vector = 0, free_vector = 0;
+ 
+ 	err = request_irq(adapter->msix_entries[vector].vector,
+-			  igb_msix_other, IRQF_NO_THREAD, netdev->name, adapter);
++			  igb_msix_other, 0, netdev->name, adapter);
+ 	if (err)
+ 		goto err_out;
+ 
+-- 
 2.47.0
-
 
 
