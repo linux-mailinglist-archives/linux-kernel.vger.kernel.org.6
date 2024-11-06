@@ -1,149 +1,278 @@
-Return-Path: <linux-kernel+bounces-398942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E75B9BF84B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:02:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC7E9BF84F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2CA51F2333B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:02:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99305282EDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63A91F9EB5;
-	Wed,  6 Nov 2024 21:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DB320C337;
+	Wed,  6 Nov 2024 21:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ocOJjefK"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="N/qmiQ18"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3003C1514CC;
-	Wed,  6 Nov 2024 21:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707B95B1FB;
+	Wed,  6 Nov 2024 21:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730926944; cv=none; b=Da7qcSG1eFN8UZpPe7tHaV+LGrm0CIxzriz/BSAldxq6Cej7W3GZZrraWN6y6nTNaZzfu0d1F4z+Bn4u8qt6knRnh4qUOBvYtUVtvv9XjOAbDg95Zy3GmKRmi2LaZCzJBGOIaocKHF1hd3KZjPPvAN3DEdUx8gaux7P2Cf/txmA=
+	t=1730927110; cv=none; b=L72j2BbIl/cKIfqH8+wGBwbEsLZrOdA3k+gSZ5N7K5hpymNRhs60IDkE8iewKiy9agS7yqRfEFazCAkknUHeOWDisk+C4C5bq1Z6nkoMr8zbc23B5jOr3NSRzn/4f4n6OcXzHFJkmTYl7EvX3QnNVReL+xGp+oWRuNfqz70zY0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730926944; c=relaxed/simple;
-	bh=DLZ+xT7FS54/kaVDeqPCFh6lOCpCqzZIMMnQ9XE6XMs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jnDSkBL7+3OoUl66DkmuxMVW4zN5OelKfaY4cenY4xC9OFsgwIosRpeO2BC0PKy3u4yrAdn2LY/PugnHCZD4b+pSlN7VWBK4qvH+mQwLoa/8TNK4vlQEzXa7ioeDKffHpFr8k6JaP27Yjp8L5QqObgvT7wGee1qJAD8RgYviWX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ocOJjefK; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730926940;
-	bh=DLZ+xT7FS54/kaVDeqPCFh6lOCpCqzZIMMnQ9XE6XMs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ocOJjefKZmTy6knNbSNW/ZiMuNCvnESs2KF1Q1Py5pKtFGxtABGwYk6Y+Z9Tm0ryo
-	 qa/efwBBYcmCLhThgvifgngBCqjbq1zQfool60Cv8Wz/6/KH0FioQVNgWLLjDp8U7h
-	 /brvxEiCvZQQWA7QcTHPAsBqluJsBOU34CWWj2tXPfinx+iXyae9QJzoZmj1q2hRW6
-	 34eJnXd1UWSzEUDFE4h4NcCXD0QcQR95y3Volpk7dF8tViwftbBMRwfelUM9XdgZ4J
-	 z2zXaETUFgJVR2MHr2RjxOHPE1Z/M0QPNe6ZDQnxy9MaT0Uejoh4aep9+4MGalBtEk
-	 vLT+fIFkuoy6Q==
-Received: from [192.168.1.51] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 529FF17E3786;
-	Wed,  6 Nov 2024 22:02:18 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Wed, 06 Nov 2024 16:01:45 -0500
-Subject: [PATCH] arm64: dts: mediatek: mt8186: Move wakeup to MTU3 to get
- working suspend
+	s=arc-20240116; t=1730927110; c=relaxed/simple;
+	bh=Ek/fPj5nMwmPNoaJtANmKTUXZ88Yvl97h8DjPn1tPB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MZSol0ZOSQAc+VfWe+r3JwWiv4ORVMzqJHMT3F78inSgxIPlFY7bB1I6iXjHGc2Y0OXQgquRrZxT6s6z74MCJYS5uvtEPmx/SehBfNi4YO/Caz8olCZCuf7svJNT7f3digpjcmRG6hu/zXiGwF5PHu/IFeOgwy2dZT2qeA3SSyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=N/qmiQ18; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730927044; x=1731531844; i=w_armin@gmx.de;
+	bh=Ek/fPj5nMwmPNoaJtANmKTUXZ88Yvl97h8DjPn1tPB8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=N/qmiQ18A9EkkwgYOeYMyeD4J1tsx2007bdzqyuFM22t7gDKh699gn7a0w3qRhGD
+	 GESsHRBqgPGZVGUAKW5WVxEZOdqTah28hGlqm74FSrxB2+M3oFU6K4nbFF1L0kW9e
+	 yXbw1x874xypxesqcAufpAd5xeQjrfRIp07GCPbo9RJFLxXr9PaSZSTmEZB+jhNYS
+	 PK/+8IRR7KQMGFmZJvEdPjSYLFti97Gf0dUEVOWU48FNTKaPAN3FSbhCD/BeILhbQ
+	 jTPQR4inI79Y1OmgBH3XiGmVGEBWRX9vNRG+nLWbzknh7euaqGiUgV+ReRoIY10f6
+	 nsxuzJSxcbNz/ysuJw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MacSe-1tf60k0JPm-00fLlA; Wed, 06
+ Nov 2024 22:04:04 +0100
+Message-ID: <1f3c4bca-9a41-47e8-ab1b-48e80760bee3@gmx.de>
+Date: Wed, 6 Nov 2024 22:04:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241106-mt8186-suspend-with-usb-wakeup-v1-1-07734a4c8236@collabora.com>
-X-B4-Tracking: v=1; b=H4sIADjZK2cC/x3NwQqDMAyA4VeRnBdo6nTiq4wd4owzjNXS2CmI7
- 76y43f5/wNMkopBXx2Q5KumSyigSwXPmcNLUMdi8M5fiVyLn7WjrkXLFiWMuOk6Y7YBN35Ljsg
- 1i3Dj6eYGKJGYZNL9P7g/zvMHw+83JHAAAAA=
-X-Change-ID: 20241106-mt8186-suspend-with-usb-wakeup-a3aeea52170b
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, Wojciech Macek <wmacek@google.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/20] Add support for binding ACPI platform profile to
+ multiple drivers
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>, Hans de Goede
+ <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <26a494ee-d929-4aee-9c2e-d184e0efb842@app.fastmail.com>
+ <4462f1d4-4f10-493c-b7ba-8f8d618a8fd7@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <4462f1d4-4f10-493c-b7ba-8f8d618a8fd7@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Sx1c0VfmTsHSi1uJOn/rST/UX9GZnUEDbwmweqyaZJTgDghARxb
+ UuytNJ9tUW6qGGo+GtfUMaKQDYOGoaI1tRZBNKxPvFfsJuj0VwnKMG7lW21G8QlY9hGse/k
+ v8Gg/qhd7SlsiaBbe3hWo3+GTiOsaypA64lCyRU706OEBMCqgc6dTballly6TE9TEvnpXbS
+ +6z8N0rwtyKZox5mURYSA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4G9SF6161V8=;/49ABQHs6ErJifGFuHHfTuIhScT
+ HdyPKLcf8J7IKPxc46Q/ctqvned7RERl+VI6Sm9sqjZd9D9RK6KbK/RnCCUk2kDnVKH+Frmdc
+ CjXLCUR7SP9cxfsVhazDfNrIUFLuxs80MsetNbTELffXCxCQYIZviS6v26ZTIxfcIcj50BB3A
+ 9IeQoC9mQiBrta+0DpndkvLH7MRd5sUuPm7x6iDvZTcyBYC1wBYBrxOIHYJ3oYeE331XgELsh
+ giMWEW6cIdSx9C7rXyKRNzKYAE+EeBFRaj8MkhOVXL9UsyBgZugpzDAcFF7CfndPr59fP0USR
+ 0YSvLpj9Le0lYD4AwXF4+omWvR1mFk0pJeLiIsLgQltz3g5JX9+Arw0IKVtsHNYj1yGDYqjzQ
+ rkvykeL7QtSR+bzF2fxNaILyxdButzCfx69Ns2INoTM690dF90DRcUZmBpj4mEEb2sP+vB3ct
+ 2pXYFt9XpKYQqH7xm4qWN3IoiAo9EYb7omTSvsqchEDnzF+ia3Lk5Q+GqDTmTBzIXmQIT0nXy
+ OsVTqyr7fXmT/H61cXDvq0IaexaL/J3EBeX/94kkqFT19fyyDwEJi0Vkl/kuYIR/Yq20O/sDW
+ 88Q6Pq28BG/P2HMMa8WOE+S5ph0HVSdpVtj2al88eL06rHKjDsB+Iwhv6whaYOqnHRQ8Ej8S5
+ Hqa9LtdXwiqCI/DDGu3iu/SALR59hZr7z03SxWJYpLKiYWY3daMitYMX9R5UA91p9dppuD9Lk
+ tN92KHCRY6Sy3D6tWqO1jh6TdXn9UWHVxMa0NyEojf3vf3dnxAovQ1IR2M+A1MsU9kCkNTz7M
+ MeZPYsDfFosS2pjc5BDnS+fN1wgaBYl3WPoJci57JKKi0=
 
-The current DT has the wakeup-source and mediatek,syscon-wakeup
-properties in the XHCI nodes, which configures USB wakeup after powering
-down the XHCI hardware block. However, since the XHCI controller is
-behind an MTU3 (USB3 DRD controller), the MTU3 only gets powered down
-after USB wakeup has been configured, causing the system to detect a
-wakeup, and results in broken suspend support as the system resumes
-immediately.
+Am 06.11.24 um 02:11 schrieb Mario Limonciello:
 
-Move the wakeup properties to the MTU3 nodes so that USB wakeup is only
-enabled after the MTU3 has powered down.
+> On 11/5/2024 16:47, Mark Pearson wrote:
+>> Hi Mario,
+>>
+>> On Tue, Nov 5, 2024, at 10:32 AM, Mario Limonciello wrote:
+>>> Currently there are a number of ASUS products on the market that
+>>> happen to
+>>> have ACPI objects for amd-pmf to bind to as well as an ACPI platform
+>>> profile provided by asus-wmi.
+>>>
+>>> The ACPI platform profile support created by amd-pmf on these ASUS
+>>> products is "Function 9" which is specifically for "BIOS or EC
+>>> notification" of power slider position. This feature is actively used
+>>> by some designs such as Framework 13 and Framework 16.
+>>>
+>>> On these ASUS designs we keep on quirking more and more of them to tur=
+n
+>>> off this notification so that asus-wmi can bind.
+>>>
+>>> This however isn't how Windows works.=C2=A0 "Multiple" things are
+>>> notified for
+>>> the power slider position. This series adjusts Linux to behave
+>>> similarly.
+>>>
+>>> Multiple drivers can now register an ACPI platform profile and will
+>>> react
+>>> to set requests.
+>>>
+>>> To avoid chaos, only positions that are common to both drivers are
+>>> accepted when the legacy /sys/firmware/acpi/platform_profile interface
+>>> is used.
+>>>
+>>> This series also adds a new concept of a "custom" profile. This allows
+>>> userspace to discover that there are multiple driver handlers that are
+>>> configured differently.
+>>>
+>>> This series also allows dropping all of the PMF quirks from amd-pmf.
+>>>
+>>> v4:
+>>> =C2=A0 * Drop the list; iterate classes
+>>> =C2=A0 * Drop patches that didn't make sense without list
+>>> =C2=A0 * Cover alienware-wmi as well (recently merged to
+>>> platform-x86/for-next)
+>>> =C2=A0 * Drop requirement for balanced
+>>> =C2=A0 * Rename platform-profile class members to 'profile', 'options'=
+,
+>>> 'name'
+>>> =C2=A0 * Drop the name in /sys/class/platform-profile and just use ida
+>>> value.
+>>> =C2=A0=C2=A0=C2=A0 IE platform-profile-0
+>>>
+>>> Mario Limonciello (20):
+>>> =C2=A0=C2=A0 ACPI: platform-profile: Add a name member to handlers
+>>> =C2=A0=C2=A0 platform/x86/dell: dell-pc: Create platform device
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Add device pointer into platform =
+profile
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 handler
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Add platform handler argument to
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 platform_profile_remove()
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Move sanity check out of the mute=
+x
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Move matching string for new prof=
+ile out of
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 mutex
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Use guard(mutex) for register/unr=
+egister
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Use `scoped_cond_guard`
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Create class for ACPI platform pr=
+ofile
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Add name attribute to class inter=
+face
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Add choices attribute for class i=
+nterface
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Add profile attribute for class i=
+nterface
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Notify change events on register =
+and
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 unregister
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Only show profiles common for all=
+ handlers
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Add concept of a "custom" profile
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Make sure all profile handlers ag=
+ree on
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 profile
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Check all profile handler to calc=
+ulate next
+>>> =C2=A0=C2=A0 ACPI: platform_profile: Allow multiple handlers
+>>> =C2=A0=C2=A0 platform/x86/amd: pmf: Drop all quirks
+>>> =C2=A0=C2=A0 Documentation: Add documentation about class interface fo=
+r platform
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 profiles
+>>>
+>>> =C2=A0 .../userspace-api/sysfs-platform_profile.rst=C2=A0 |=C2=A0 28 +=
++
+>>> =C2=A0 drivers/acpi/platform_profile.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 446
+>>> ++++++++++++++----
+>>> =C2=A0 .../surface/surface_platform_profile.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +-
+>>> =C2=A0 drivers/platform/x86/acer-wmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 +-
+>>> =C2=A0 drivers/platform/x86/amd/pmf/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
+>>> =C2=A0 drivers/platform/x86/amd/pmf/core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 -
+>>> =C2=A0 drivers/platform/x86/amd/pmf/pmf-quirks.c=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 66 ---
+>>> =C2=A0 drivers/platform/x86/amd/pmf/pmf.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 -
+>>> =C2=A0 drivers/platform/x86/amd/pmf/sps.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
+>>> =C2=A0 drivers/platform/x86/asus-wmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +-
+>>> =C2=A0 drivers/platform/x86/dell/alienware-wmi.c=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 8 +-
+>>> =C2=A0 drivers/platform/x86/dell/dell-pc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 39 +-
+>>> =C2=A0 drivers/platform/x86/hp/hp-wmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +-
+>>> =C2=A0 drivers/platform/x86/ideapad-laptop.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
+>>> =C2=A0 .../platform/x86/inspur_platform_profile.c=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 7 +-
+>>> =C2=A0 drivers/platform/x86/thinkpad_acpi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
+>>> =C2=A0 include/linux/platform_profile.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 7 +-
+>>> =C2=A0 17 files changed, 456 insertions(+), 195 deletions(-)
+>>> =C2=A0 delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+>>>
+>>>
+>>> base-commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
+>>> --
+>>> 2.43.0
+>>
+>> For the series - I tried it out on my T14s G6 AMD, and it all looks
+>> to be working nicely and as expected.
+>> The thinkpad-acpi and amd-pmf classes show up. I can tweak them
+>> individually and 'custom' shows up under firmware/acpi/platform_profile=
+.
+>> I tried various combo's and didn't see any issues.
+>> If you have any recommendations of things to try let me know.
+>>
+>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>>
+>> Mark
+>
+> Thanks for testing!=C2=A0 The fact that Lenovo and ASUS are both doing t=
+his
+> with recent laptops makes it all the stronger of a case to do it
+> rather than let them race for who gets the coveted platform profile slot=
+.
+>
+> If you've already tried mixing and matching combinations that's all I
+> was going to suggest.
+>
+> I'll wait for Armin's review and then I'll respin with the tags and
+> small things you and Ilpo found.
+>
+Looking forward to the next iteration.
 
-With this change in place, it is possible to suspend and resume, and
-also to wakeup through USB, as tested on the Google Steelix (Lenovo 300e
-Yoga Chromebook Gen 4).
+Thanks,
+Armin Wolf
 
-Fixes: f6c3e61c5486 ("arm64: dts: mediatek: mt8186: Add MTU3 nodes")
-Reported-by: Wojciech Macek <wmacek@google.com>
-Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8186.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8186.dtsi b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-index d3c3c2a40adcdf439a1c74586c35cf63a1c7cb30..b91f88ffae0e8b81b70269ea2d058b016a50232b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8186.dtsi
-@@ -1577,6 +1577,8 @@ ssusb0: usb@11201000 {
- 			#address-cells = <2>;
- 			#size-cells = <2>;
- 			ranges;
-+			wakeup-source;
-+			mediatek,syscon-wakeup = <&pericfg 0x420 2>;
- 			status = "disabled";
- 
- 			usb_host0: usb@11200000 {
-@@ -1590,8 +1592,6 @@ usb_host0: usb@11200000 {
- 					 <&infracfg_ao CLK_INFRA_AO_SSUSB_TOP_XHCI>;
- 				clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
- 				interrupts = <GIC_SPI 294 IRQ_TYPE_LEVEL_HIGH 0>;
--				mediatek,syscon-wakeup = <&pericfg 0x420 2>;
--				wakeup-source;
- 				status = "disabled";
- 			};
- 		};
-@@ -1643,6 +1643,8 @@ ssusb1: usb@11281000 {
- 			#address-cells = <2>;
- 			#size-cells = <2>;
- 			ranges;
-+			wakeup-source;
-+			mediatek,syscon-wakeup = <&pericfg 0x424 2>;
- 			status = "disabled";
- 
- 			usb_host1: usb@11280000 {
-@@ -1656,8 +1658,6 @@ usb_host1: usb@11280000 {
- 					 <&infracfg_ao CLK_INFRA_AO_SSUSB_TOP_P1_XHCI>;
- 				clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck","xhci_ck";
- 				interrupts = <GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH 0>;
--				mediatek,syscon-wakeup = <&pericfg 0x424 2>;
--				wakeup-source;
- 				status = "disabled";
- 			};
- 		};
-
----
-base-commit: 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
-change-id: 20241106-mt8186-suspend-with-usb-wakeup-a3aeea52170b
-
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+> BTW if I missed any important feedback of yours from v3 please let me
+> know.=C2=A0 It was a lot of overhaul to switch to this way of doing thin=
+gs
+> and a lot of it didn't make sense anymore.
+>
 
