@@ -1,174 +1,90 @@
-Return-Path: <linux-kernel+bounces-397473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A62119BDC76
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 390009BDC9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:27:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0B0282273
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:23:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB11428244D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF9A1E0090;
-	Wed,  6 Nov 2024 02:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E2118F2DF;
+	Wed,  6 Nov 2024 02:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZF7h8UoJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A95C1E0086;
-	Wed,  6 Nov 2024 02:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="b4AZu6kD"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDD7202F8A
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859151; cv=none; b=We6PTOM4Mtvq25c8vXMlh06iMfsWRKfsR7a1/Kfbuap0BbhEt8ixMnlY3zcgtjyFADRzZyhoJbCF9usNJ2najTlrTnj2Y/mJRYnA4CAMldwnehYmqehf2STvCIuq7eFI6sedpovXfHPD8rJfN5SRhKfT1/zC0sC5HGUqiIXK3lQ=
+	t=1730859206; cv=none; b=oeVQsppiDokPhS/y1jLgFSkgNpQpudwVE0Bbj1P1F7F0tl6GUVF1nwqRKJ7uwIFsYYUuAZ99rqJmPdp/KnqQkgH5OYkuk9QVTlJnJUHHKH3Z0zZnXQHSvN1ksvzDfLwHuRJr0pkZ9PPHkA2JBjhxBxFWwp+il9qYvhTF/J0n2vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859151; c=relaxed/simple;
-	bh=vu87v1cJIpgBjPf/VwKZ6vlbF0+mcJ6rw9b6/Oa8bmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZLKTFo4ie/nhwax6yJ0m0HBpbeEWwmXJ+N4rir5kzeQa+qgIfoX32BChyk2ura8UYpXs+3TW1gEankaxhQjsXnVMzNvc8RG9BLBosksV4KjPfKSDPWWBZMks4T31UaCwIoX4EmgpClNLIL4K26Y02ikgIgJiV6cxyMTj4lFEQB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZF7h8UoJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2308C4CECF;
-	Wed,  6 Nov 2024 02:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730859151;
-	bh=vu87v1cJIpgBjPf/VwKZ6vlbF0+mcJ6rw9b6/Oa8bmY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZF7h8UoJfA2o26X3cjyt4HlQL2Z2GM0awubZdc4952Ge+vekZ8faJBVVt9hA8jg24
-	 DpWCGrl4MzlAA8YPve/xTPFOEmTVZwEojxkeNBESwnQSkUmeZI8/7slKYoq5QP6CS6
-	 inHUqFgGYatfQyf7WxHT7qfywnSLjKQ7Ml+E7CiivdEXuCzOwGkjSjDAtOYfAXCkde
-	 cMVEcwS7DnTlmgYhfYlEpOV+yHZ3yB3Q9ktECUGB4aN7JIacgfrSrMuX5AMSV+rabL
-	 K+x5y16LPmD0+gfkhuwe84C/b55cTa5VrayxM7L0CmmQfeiz+jcJ57kY7R5JMJDZwB
-	 6EbJx/Gl/khJA==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org,
-	aha310510@gmail.com
-Cc: syzbot <syzkaller@googlegroup.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yu Zhao <yuzhao@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: FAILED: Patch "mm: shmem: fix data-race in shmem_getattr()" failed to apply to v5.10-stable tree
-Date: Tue,  5 Nov 2024 21:12:27 -0500
-Message-ID: <20241106021227.182927-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730859206; c=relaxed/simple;
+	bh=fYMU1omQrP2zqb9XQZxtQd9ll5LV/OeZx8sizRWVi7A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P9fpklBLe1TeF9FBYSRldjOY49E29kJH58gem3+hnTCXth4OQ4NBwJInSOKslt3Vq+qio/KKhgg31JxJmSfvJoHvKITIdOex5ee8bO3p4+bgLiTGNtuhq4GV+xpjXfDwRtnOpMkrg5IRK9g7HX7Vqx58TysBZjs/8tITBH/2q6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=b4AZu6kD; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=e4jxL
+	uR0QSoio6BcOtp0IFOfkcsMYik35o+d+H0C3cQ=; b=b4AZu6kDbjKAjjPWIReCf
+	H+ToAJ+G3DpGcsX2v0ZjukOELPkYdqz0etr+A+aDyi+ImqPoCXl94D0fo35Gd4C3
+	ZTrMYbOEGMsP/BZ4zWC9m7ifEVXYrx+8cOPF6JCB/jAuJcVnyPKWfcykvqUorg1V
+	6S9Q547Rm+HK66aDGf3d5Y=
+Received: from localhost.localdomain (unknown [111.35.191.191])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgAHtgaO0CpnmysXCg--.34730S4;
+	Wed, 06 Nov 2024 10:12:44 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de,
+	torvalds@linux-foundation.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH] proc/softirqs: replace seq_printf with seq_put_decimal_ull_width
+Date: Wed,  6 Nov 2024 10:12:28 +0800
+Message-Id: <20241106021228.4345-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgAHtgaO0CpnmysXCg--.34730S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZF45trWDKw1kXr43XF1xuFg_yoWDWwbE9F
+	97J3Wjgry7tr9xJryjyw4ft34UA395Zrn3ta48KF1UXryUZ3Z8JFWDGw1kurn7Wr48KFW7
+	u3ykXr1Yq3WfWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7VUUSfOUUUUUU==
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxGPqmcqzt0zgwAAsp
 
-The patch below does not apply to the v5.10-stable tree.
-If someone wants it applied there, or to any other stable or longterm
-tree, then please email the backport, including the original git commit
-id to <stable@vger.kernel.org>.
+seq_printf is costy, on a system with n CPUs, reading /proc/softirqs
+would yield 10*n decimal values, and the extra cost parsing format string
+grows linearly with number of cpus. Replace seq_printf with
+seq_put_decimal_ull_width have significant performance improvement.
+On an 8CPUs system, reading /proc/softirqs show ~40% performance
+gain with this patch.
 
-Thanks,
-Sasha
-
------------------- original commit in Linus's tree ------------------
-
-From d949d1d14fa281ace388b1de978e8f2cd52875cf Mon Sep 17 00:00:00 2001
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Mon, 9 Sep 2024 21:35:58 +0900
-Subject: [PATCH] mm: shmem: fix data-race in shmem_getattr()
-
-I got the following KCSAN report during syzbot testing:
-
-==================================================================
-BUG: KCSAN: data-race in generic_fillattr / inode_set_ctime_current
-
-write to 0xffff888102eb3260 of 4 bytes by task 6565 on cpu 1:
- inode_set_ctime_to_ts include/linux/fs.h:1638 [inline]
- inode_set_ctime_current+0x169/0x1d0 fs/inode.c:2626
- shmem_mknod+0x117/0x180 mm/shmem.c:3443
- shmem_create+0x34/0x40 mm/shmem.c:3497
- lookup_open fs/namei.c:3578 [inline]
- open_last_lookups fs/namei.c:3647 [inline]
- path_openat+0xdbc/0x1f00 fs/namei.c:3883
- do_filp_open+0xf7/0x200 fs/namei.c:3913
- do_sys_openat2+0xab/0x120 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0xf3/0x120 fs/open.c:1442
- x64_sys_call+0x1025/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-read to 0xffff888102eb3260 of 4 bytes by task 3498 on cpu 0:
- inode_get_ctime_nsec include/linux/fs.h:1623 [inline]
- inode_get_ctime include/linux/fs.h:1629 [inline]
- generic_fillattr+0x1dd/0x2f0 fs/stat.c:62
- shmem_getattr+0x17b/0x200 mm/shmem.c:1157
- vfs_getattr_nosec fs/stat.c:166 [inline]
- vfs_getattr+0x19b/0x1e0 fs/stat.c:207
- vfs_statx_path fs/stat.c:251 [inline]
- vfs_statx+0x134/0x2f0 fs/stat.c:315
- vfs_fstatat+0xec/0x110 fs/stat.c:341
- __do_sys_newfstatat fs/stat.c:505 [inline]
- __se_sys_newfstatat+0x58/0x260 fs/stat.c:499
- __x64_sys_newfstatat+0x55/0x70 fs/stat.c:499
- x64_sys_call+0x141f/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:263
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-value changed: 0x2755ae53 -> 0x27ee44d3
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 3498 Comm: udevd Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-==================================================================
-
-When calling generic_fillattr(), if you don't hold read lock, data-race
-will occur in inode member variables, which can cause unexpected
-behavior.
-
-Since there is no special protection when shmem_getattr() calls
-generic_fillattr(), data-race occurs by functions such as shmem_unlink()
-or shmem_mknod(). This can cause unexpected results, so commenting it out
-is not enough.
-
-Therefore, when calling generic_fillattr() from shmem_getattr(), it is
-appropriate to protect the inode using inode_lock_shared() and
-inode_unlock_shared() to prevent data-race.
-
-Link: https://lkml.kernel.org/r/20240909123558.70229-1-aha310510@gmail.com
-Fixes: 44a30220bc0a ("shmem: recalculate file inode when fstat")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-Reported-by: syzbot <syzkaller@googlegroup.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Yu Zhao <yuzhao@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: David Wang <00107082@163.com>
 ---
- mm/shmem.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/proc/softirqs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index c5adb987b23cf..4ba1d00fabdaa 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1166,7 +1166,9 @@ static int shmem_getattr(struct mnt_idmap *idmap,
- 	stat->attributes_mask |= (STATX_ATTR_APPEND |
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
-+	inode_lock_shared(inode);
- 	generic_fillattr(idmap, request_mask, inode, stat);
-+	inode_unlock_shared(inode);
- 
- 	if (shmem_huge_global_enabled(inode, 0, 0, false, NULL, 0))
- 		stat->blksize = HPAGE_PMD_SIZE;
+diff --git a/fs/proc/softirqs.c b/fs/proc/softirqs.c
+index f4616083faef..04bb29721419 100644
+--- a/fs/proc/softirqs.c
++++ b/fs/proc/softirqs.c
+@@ -20,7 +20,7 @@ static int show_softirqs(struct seq_file *p, void *v)
+ 	for (i = 0; i < NR_SOFTIRQS; i++) {
+ 		seq_printf(p, "%12s:", softirq_to_name[i]);
+ 		for_each_possible_cpu(j)
+-			seq_printf(p, " %10u", kstat_softirqs_cpu(i, j));
++			seq_put_decimal_ull_width(p, " ", kstat_softirqs_cpu(i, j), 10);
+ 		seq_putc(p, '\n');
+ 	}
+ 	return 0;
 -- 
-2.43.0
-
-
-
+2.39.2
 
 
