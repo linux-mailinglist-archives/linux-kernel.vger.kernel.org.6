@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-398072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B199BE4E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:54:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C774D9BE4E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED11E1F27AF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802581F22BBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A961DE3D5;
-	Wed,  6 Nov 2024 10:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5C81DE3D8;
+	Wed,  6 Nov 2024 10:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZMgCjEjm"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLZwFhBq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5043B1D278C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFCF1DD525;
+	Wed,  6 Nov 2024 10:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890487; cv=none; b=J3YzcyvGcEX9Dv0uYEQ9uUdF+k8jjGrbwmuQ4isAWfOsj5czZNPb7rS28pWtch/YIZ2sPrKT3ltRN4sNgc7goHZig0LiVlIwQNqoUFG7aO9IEdKvPVmdBSh9mpKCvlBsHD4DFwNGo9DL1eHTeY9quiKK2gtxc7g2lg19uV4vbWU=
+	t=1730890500; cv=none; b=uOS+HLVE/o5S9dsNBjSW4Vl2/7HjXUolY/Alglh3BofAn6+YrciKdg/dWm/1d3ZwQe+VkVKKq67mwX6b3eZOVPp1m8sDzv39SaCRCAglHtP1k2lV9H+s8mL99B05cVhNy9Q2MTZ8XePRcPUnzELSUsg+/BClL4b1KuKyyPxKB/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890487; c=relaxed/simple;
-	bh=N/mfT96fJ+//zql7k0BXSP3lhvY+yTvkuqwFMCe1mzc=;
+	s=arc-20240116; t=1730890500; c=relaxed/simple;
+	bh=JzJ2jvVWeRAP+hj95hcIGJu+zeCkaii11+p1DMnnk5U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TU3OOd4aUi4+rHgXYFYBGEGxHcuByI+vKVXZhABeHtvTNGdji4EeAgH1f6t17ndJX6gg1EqaFWfGVVeyWlHngETGOs6FmOTPDwHAd4Zxg0Jt9k/lhNIiY23afsSt5yDDocyKRXDbG+zNcMaCsUtnuBi/m38tRmNwz98lc+TkPxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZMgCjEjm; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso53344405e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 02:54:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730890483; x=1731495283; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vDyuLzj58C6IoALVweU82QLSkgc6OnhufpYdJ1qavYI=;
-        b=ZMgCjEjmsz25YdkOYL283GOB7bgTRd1XehKvyyw0ouLLbRx1bKuwRKiA2G882iX43R
-         9qskoYoWjvf+vkPPZoeJiL2useIdAhxy1j5Lgvrgv5AwMAQ6GX0vIc+qPA80dr+01ujj
-         +Ykaz0PPeLXZggvjqoLRxwy3kHiwNFrCVmtncslqUP89iIS9QKO5FaD4SsNcYIYgAzbb
-         eVh04B7EHgbatckHsgz1xTVyePEJ7QUrWH/cjiM+hetU/PwQgBdQxjpgY6DhwtnOQBKf
-         CKwMFycibNSVCa/vl6p4zTlXAZGUSIcKW5SCHoz09mVDQELHU0zvsNhI0LqTQMzOt+Q8
-         8R7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730890483; x=1731495283;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vDyuLzj58C6IoALVweU82QLSkgc6OnhufpYdJ1qavYI=;
-        b=hJeLFLDrW2liQnniO2Olaee/c1wyP6yowozxYBvo6eup4+3RS+ZSydRtRJRKsYFeK2
-         IojmYAPOjBxpN3pZZDa1wv0gViq8rSOfpp2bjbunhJfub4PeU3IpBDGVRTEX8pAMaua/
-         u+/Mvq4QK3wgyVVwiVGrq8sZ4ge5ZUFPRe+a9q72YEDU8beSbM2ncnXCjty9wNntA6JZ
-         nvouHvBnmgQVPGC0Az8RAQ4USIF48jbhZxCmCzpwazdrEu3NpyOcuuak34ATiOW5A7y2
-         ng7GiXCN8iF02mNjc/Tv5DgThwDAnpFHnmOmG6LvyXBemPwMNtepi78vXTPwzuexavrN
-         JWPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBv9jdIxBEAxExNib3Rgya9TRk/yIWZ6VpFTEUc0htZPbkGMnJY4vEoUz/AW5UXveMvO6VEBH4IjEMxms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxHmDDuhiRZ1gVMaXJJIKoX24Y8JDV7iG3tGbdmyl8xE5DlUk4
-	UCJhp2dGsNrUKf9IXWeoiaDV0l9noz7zas8G1t5xbVb9rfHIF1AEnyYyEcM018w=
-X-Google-Smtp-Source: AGHT+IFRGeHu6E+URPpjvGEsTdqLtd8SLISeViKJag+OPHvFn7/cF9Befbus7KR8aShFD/K/Gip29A==
-X-Received: by 2002:a05:600c:4f15:b0:430:5654:45d0 with SMTP id 5b1f17b1804b1-4319acb104dmr361528865e9.14.1730890483618;
-        Wed, 06 Nov 2024 02:54:43 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e8dsm18521635e9.6.2024.11.06.02.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 02:54:43 -0800 (PST)
-Date: Wed, 6 Nov 2024 11:54:40 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Peter Collingbourne <pcc@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH tty-next v3 3/6] serial: 8250: Split out rx stop/start
- code into helpers
-Message-ID: <ZytK8JzooLsn6SdG@pathway.suse.cz>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-4-john.ogness@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCJ4WOKo5rttdQrIwAOSxPc53YSgmlR4UHuQFPT2z4XRTDCHg2SfSIBM7EU6KHBbZwA8y/F4rxwWc/REqlBYYYiAUD1faqlgeIDcDhWL3XagaMpRYH/dPHf1oxagCWKKgRIdIb9RQxsE4N9kFxBoCapKyd6dy1SzvnwfoW6LeTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLZwFhBq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D515C4CECD;
+	Wed,  6 Nov 2024 10:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730890500;
+	bh=JzJ2jvVWeRAP+hj95hcIGJu+zeCkaii11+p1DMnnk5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PLZwFhBqTFsT7DIjmlEAaVVk2YeEJ00EI3QxsgEubH18WHZLRTcOzTg3E1snQn4hD
+	 yq9E5XrjyAMmStXBlvindVdaWDB3ZQJJuRRcwRAB6uIEM7c9H8UXf5gtmKVq83LsrH
+	 CCx2oay3Y78ESI5g6tiTVvfKBq0kGbeKtAWCJyVDF/nAzmIF9/tp9Q7xW0b1FxK6qv
+	 7kXn5WwOddhgS5ndHNA5s6ryr6T7/UTkyNClaA+YGmaPMKFALa62UjDrdp8fKrIcpN
+	 iBMc7n3KBPdtYvF10hWll2slpe7wEMIqwdL6/3we089+PCgel2IPkZB8AtcERX0+gH
+	 qY5FBvQkQq34A==
+Date: Wed, 6 Nov 2024 10:54:55 +0000
+From: Lee Jones <lee@kernel.org>
+To: George Stark <gnstark@salutedevices.com>
+Cc: pavel@ucw.cz, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@salutedevices.com
+Subject: Re: [RESEND PATCH v2 0/2] leds: pwm: Add default-brightness property
+Message-ID: <20241106105455.GQ1807686@google.com>
+References: <20241105185006.1380166-1-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241025105728.602310-4-john.ogness@linutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241105185006.1380166-1-gnstark@salutedevices.com>
 
-On Fri 2024-10-25 13:03:25, John Ogness wrote:
-> The rx stop/start callbacks also disable/enable interrupts. This
-> is not acceptable for the console write callback since it must
-> manage all interrupt disabling/enabling.
+On Tue, 05 Nov 2024, George Stark wrote:
+
+> led-pwm driver supports default-state DT property and if that state is on then
+> the driver during initialization turns on the LED setting maximum brightness.
+> Sometimes it's desirable to use lower initial brightness.
+> This patch series adds support for DT property default-brightness.
 > 
-> Move the interrupt disabling/enabling/masking into helper
-> functions so that the console write callback can make use of
-> the appropriate parts in a follow-up commit.
+> Things to discuss:
+> If such a property is acceptable it could be moved to leds/common.yaml due to
+> several drivers support multiple brightness levels and could support the property
+> too.
 > 
-> This is essentially refactoring and should cause no functional
-> change.
+> Changes in v2:
+>   leds: pwm: Add optional DT property default-brightness
+>     - refactor patch to make it more accurate
+>   link to v1: [1]
 > 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> [1] https://lore.kernel.org/lkml/20241015151410.2158102-3-gnstark@salutedevices.com/T/
+> 
+> George Stark (2):
+>   dt-bindings: leds: pwm: Add default-brightness property
+>   leds: pwm: Add optional DT property default-brightness
+> 
+>  .../devicetree/bindings/leds/leds-pwm.yaml      |  6 ++++++
+>  drivers/leds/leds-pwm.c                         | 17 ++++++++++++++++-
+>  2 files changed, 22 insertions(+), 1 deletion(-)
 
-The changes look reasonable and do what described:
+The set doesn't apply.  Please rebase it.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
+-- 
+Lee Jones [李琼斯]
 
