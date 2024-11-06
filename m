@@ -1,57 +1,103 @@
-Return-Path: <linux-kernel+bounces-398598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20EE9BF363
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:39:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6979BF367
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A701E284D1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:39:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89C7EB23ACC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15933204F95;
-	Wed,  6 Nov 2024 16:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF16D20651F;
+	Wed,  6 Nov 2024 16:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhGoVNcM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dwD9w7IJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fejHckqC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dwD9w7IJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fejHckqC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0F713C67C;
-	Wed,  6 Nov 2024 16:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C512064E4;
+	Wed,  6 Nov 2024 16:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730911175; cv=none; b=hGUDRqulQ0UKNepwbUNXfnCs3m7oCzQ5bqhf618SYiPDTJPlTBYh6wUqa4i8Vk0swkzyhQBk0sjf9ztFN6wG/B9INJrUEQrSql25iscEzkTxoBxToqhWKIbv0a5WyH6CKBcTgF+T+niN97Ydyk4ejdk/BQtJiEspPCTCJ70J+P8=
+	t=1730911182; cv=none; b=sWsBi/x6JmVWwGjszH3rXSTvo0aZ9gc2oP2YYWcUABR5iQPjK6VTnv6SAx6VcDp4VSwf5eo2Zb9EfUJnKjFpOtPmoyv2gqVNP6wMKbK6h2Yf7Wn9R9JvFLYXrxic8+j43F0U5pib1nin3VksqtdNOwQ7j40OW+RBBQlXioMTrXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730911175; c=relaxed/simple;
-	bh=qgyfwsgI0NGyv3rTn5MDG6QtmrGNHZk4smbSHtOhvkU=;
+	s=arc-20240116; t=1730911182; c=relaxed/simple;
+	bh=j895jQozx9by1vnLbsQVxtgODt6iqpgy0k+VYVq9BRQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l6tLL4pKre6LGLV3Jjfy8DjWlAR/+wU0EKAuNbq7Uj9GFGTulw7ty1A7BvW0oesA37pXEJ13N6s8HjQ4p9jKSQMuMaulEsB8Ar3skDIcWErh3wxt63uzHKnBWDcKdqY42HVDSGoWk7DCCY9hTIahl8nW/Q1YC290SJlmXVCa3zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhGoVNcM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AABC1C4CEC6;
-	Wed,  6 Nov 2024 16:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730911175;
-	bh=qgyfwsgI0NGyv3rTn5MDG6QtmrGNHZk4smbSHtOhvkU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LhGoVNcMYeHEA4ME2kQFjw1bmyNAIEA2RYwH55JxP901y/PHC72sdYajCH6JQjjtO
-	 zyApsTGwQYYdBNjLScNkKrFHAH8m6c6jDBOijF36PL/NewB3xFe21DIajIWk22hIVE
-	 S+RjiJ0b9/FSGt8IkgN1KjVpPFdw3C2+o3wbfAXFrLMvY4MvAJ3lbcU1+ldUZQuppL
-	 9CJHiGk3BUEZDi+kNQlMpZheWyKV+kj5LR07o644tWRMARQDHYdQqQu9cjsazEaFxv
-	 njgVulySb9zQBHq+ZwkrRal5sl5/m6I6ybq54vN5dcWq/G4joas37wisZ6X3ykhmIB
-	 xkwBtrZpi1vKQ==
-Date: Wed, 6 Nov 2024 09:39:32 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com,
-	mahesh@linux.ibm.com, oohall@gmail.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [RFC PATCH v1 2/2] PCI/AER: report fatal errors of RCiEP and EP
- if link recoverd
-Message-ID: <ZyubxGBL7TvchZI_@kbusch-mbp>
-References: <20241106090339.24920-1-xueshuai@linux.alibaba.com>
- <20241106090339.24920-3-xueshuai@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7T8tdaDz8FXmo0rAM2xv35QT66rX88vVQTo/TMG2QHLnDcwCLCNnXkobZqt4+1L0iLX814m9kq0k74aoOhRUX0PsrExkSFG52ek8XYBMpUsI0p58Vs3EHuVKAJvjsdOOX+Hova5sv+uxWBY8CED0RVoUT7bl+U64lya8N8oD1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dwD9w7IJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fejHckqC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dwD9w7IJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fejHckqC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 401BF1FECD;
+	Wed,  6 Nov 2024 16:39:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730911178; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PrbFmtK4N7dQPImiglS2+mhI8Be7DPz8PhfY57zJXyA=;
+	b=dwD9w7IJWsWUAINiIULOI7LKBXvYNSprcrsk5bZhGyAaxi20is053FJ9UPNex03OC/+cVF
+	3ApUSqXO2Ht1SMbKf9AJNhT4IdFK/QGXjyDMCePC7n9Zq4Sw34TgWEefbDqym+1CvsRRhG
+	Nottu6R1GzJXadG0p2kctuH/oLYnBok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730911178;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PrbFmtK4N7dQPImiglS2+mhI8Be7DPz8PhfY57zJXyA=;
+	b=fejHckqCYvZ391cFeZGI0jRMzIkxB8tjE4akbBxhKN3ct/5aqb9OhUHsfmAvMHGG0SOwHc
+	g/AiyfB8J1ca3PDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730911178; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PrbFmtK4N7dQPImiglS2+mhI8Be7DPz8PhfY57zJXyA=;
+	b=dwD9w7IJWsWUAINiIULOI7LKBXvYNSprcrsk5bZhGyAaxi20is053FJ9UPNex03OC/+cVF
+	3ApUSqXO2Ht1SMbKf9AJNhT4IdFK/QGXjyDMCePC7n9Zq4Sw34TgWEefbDqym+1CvsRRhG
+	Nottu6R1GzJXadG0p2kctuH/oLYnBok=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730911178;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PrbFmtK4N7dQPImiglS2+mhI8Be7DPz8PhfY57zJXyA=;
+	b=fejHckqCYvZ391cFeZGI0jRMzIkxB8tjE4akbBxhKN3ct/5aqb9OhUHsfmAvMHGG0SOwHc
+	g/AiyfB8J1ca3PDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3059813980;
+	Wed,  6 Nov 2024 16:39:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CA/JC8qbK2feZAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 06 Nov 2024 16:39:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DA94FA0AFB; Wed,  6 Nov 2024 17:39:37 +0100 (CET)
+Date: Wed, 6 Nov 2024 17:39:37 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: add the ability for statmount() to report the
+ fs_subtype
+Message-ID: <20241106163937.ch6lrhyoscdkk3y3@quack3>
+References: <20241106-statmount-v1-1-b93bafd97621@kernel.org>
+ <20241106133715.ellv3pf7ekz34fmi@quack3>
+ <82931e78305da9561b668e411d4ac09f4d73d6f1.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,80 +106,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241106090339.24920-3-xueshuai@linux.alibaba.com>
+In-Reply-To: <82931e78305da9561b668e411d4ac09f4d73d6f1.camel@kernel.org>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Nov 06, 2024 at 05:03:39PM +0800, Shuai Xue wrote:
-> +int aer_get_device_fatal_error_info(struct pci_dev *dev, struct aer_err_info *info)
-> +{
-> +	int type = pci_pcie_type(dev);
-> +	int aer = dev->aer_cap;
-> +	u32 aercc;
-> +
-> +	pci_info(dev, "type :%d\n", type);
-> +
-> +	/* Must reset in this function */
-> +	info->status = 0;
-> +	info->tlp_header_valid = 0;
-> +	info->severity = AER_FATAL;
-> +
-> +	/* The device might not support AER */
-> +	if (!aer)
-> +		return 0;
-> +
-> +
-> +	if (type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_RC_END) {
-> +		/* Link is healthy for IO reads now */
-> +		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
-> +			&info->status);
-> +		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK,
-> +			&info->mask);
-> +		if (!(info->status & ~info->mask))
-> +			return 0;
-> +
-> +		/* Get First Error Pointer */
-> +		pci_read_config_dword(dev, aer + PCI_ERR_CAP, &aercc);
-> +		info->first_error = PCI_ERR_CAP_FEP(aercc);
-> +
-> +		if (info->status & AER_LOG_TLP_MASKS) {
-> +			info->tlp_header_valid = 1;
-> +			pcie_read_tlp_log(dev, aer + PCI_ERR_HEADER_LOG, &info->tlp);
-> +		}
+On Wed 06-11-24 08:56:15, Jeff Layton wrote:
+> On Wed, 2024-11-06 at 14:37 +0100, Jan Kara wrote:
+> > On Wed 06-11-24 08:29:19, Jeff Layton wrote:
+> > > /proc/self/mountinfo prints out the sb->s_subtype after the type. In
+> > > particular, FUSE makes use of this to display the fstype as
+> > > fuse.<subtype>.
+> > > 
+> > > Add STATMOUNT_FS_SUBTYPE and claim one of the __spare2 fields to point
+> > > to the offset into the str[] array. The STATMOUNT_FS_SUBTYPE will only
+> > > be set in the return mask if there is a subtype associated with the
+> > > mount.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > 
+> > Looks good to me. I'm just curious: Do you have any particular user that is
+> > interested in getting subtype from statmount(2)?
+> > 
+> > 
+> 
+> Thanks! Can I count that as a R-b?
 
-This matches the uncorrectable handling in aer_get_device_error_info, so
-perhaps a helper to reduce duplication.
+Yes. Feel free to add:
 
-> +	}
-> +
-> +	return 1;
-> +}
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Returning '1' even if type is root or downstream port?
+> Meta does. They have some logging internally that tracks mounts, and
+> knowing what sort of FUSE mounts they have is useful info (when the
+> driver bothers to fill out the field anyway).
 
->  static inline void aer_process_err_devices(struct aer_err_info *e_info)
->  {
->  	int i;
-> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> index 31090770fffc..a74ae6a55064 100644
-> --- a/drivers/pci/pcie/err.c
-> +++ b/drivers/pci/pcie/err.c
-> @@ -196,6 +196,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->  	struct pci_dev *bridge;
->  	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
->  	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-> +	struct aer_err_info info;
->  
->  	/*
->  	 * If the error was detected by a Root Port, Downstream Port, RCEC,
-> @@ -223,6 +224,10 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->  			pci_warn(bridge, "subordinate device reset failed\n");
->  			goto failed;
->  		}
-> +
-> +		/* Link recovered, report fatal errors on RCiEP or EP */
-> +		if (aer_get_device_fatal_error_info(dev, &info))
-> +			aer_print_error(dev, &info);
+OK, I thought it's something like that. It would be nice to mention the
+usecase in the changelog.
 
-This will always print the error info even for root and downstream
-ports, but you initialize "info" status and mask only if it's an EP or
-RCiEP.
+								Honza
+
+
+> > >  fs/namespace.c             | 20 +++++++++++++++++++-
+> > >  include/uapi/linux/mount.h |  5 ++++-
+> > >  2 files changed, 23 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/namespace.c b/fs/namespace.c
+> > > index ba77ce1c6788dfe461814b5826fcbb3aab68fad4..5f2fb692449a9c0a15b60549fb9f7bedd10f1f3d 100644
+> > > --- a/fs/namespace.c
+> > > +++ b/fs/namespace.c
+> > > @@ -5006,6 +5006,14 @@ static int statmount_fs_type(struct kstatmount *s, struct seq_file *seq)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static int statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
+> > > +{
+> > > +	struct super_block *sb = s->mnt->mnt_sb;
+> > > +
+> > > +	seq_puts(seq, sb->s_subtype);
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
+> > >  {
+> > >  	s->sm.mask |= STATMOUNT_MNT_NS_ID;
+> > > @@ -5064,6 +5072,13 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+> > >  		sm->mnt_opts = seq->count;
+> > >  		ret = statmount_mnt_opts(s, seq);
+> > >  		break;
+> > > +	case STATMOUNT_FS_SUBTYPE:
+> > > +		/* ignore if no s_subtype */
+> > > +		if (!s->mnt->mnt_sb->s_subtype)
+> > > +			return 0;
+> > > +		sm->fs_subtype = seq->count;
+> > > +		ret = statmount_fs_subtype(s, seq);
+> > > +		break;
+> > >  	default:
+> > >  		WARN_ON_ONCE(true);
+> > >  		return -EINVAL;
+> > > @@ -5203,6 +5218,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+> > >  	if (!err && s->mask & STATMOUNT_MNT_OPTS)
+> > >  		err = statmount_string(s, STATMOUNT_MNT_OPTS);
+> > >  
+> > > +	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
+> > > +		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
+> > > +
+> > >  	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
+> > >  		statmount_mnt_ns_id(s, ns);
+> > >  
+> > > @@ -5224,7 +5242,7 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
+> > >  }
+> > >  
+> > >  #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
+> > > -			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS)
+> > > +			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
+> > >  
+> > >  static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+> > >  			      struct statmount __user *buf, size_t bufsize,
+> > > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> > > index 225bc366ffcbf0319929e2f55f1fbea88e4d7b81..fa206fb56b3b25cf80f7d430e1b6bab19c3220e4 100644
+> > > --- a/include/uapi/linux/mount.h
+> > > +++ b/include/uapi/linux/mount.h
+> > > @@ -173,7 +173,9 @@ struct statmount {
+> > >  	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
+> > >  	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
+> > >  	__u64 mnt_ns_id;	/* ID of the mount namespace */
+> > > -	__u64 __spare2[49];
+> > > +	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
+> > > +	__u32 __spare1[1];
+> > > +	__u64 __spare2[48];
+> > >  	char str[];		/* Variable size part containing strings */
+> > >  };
+> > >  
+> > > @@ -207,6 +209,7 @@ struct mnt_id_req {
+> > >  #define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+> > >  #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
+> > >  #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
+> > > +#define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got subtype */
+> > >  
+> > >  /*
+> > >   * Special @mnt_id values that can be passed to listmount
+> > > 
+> > > ---
+> > > base-commit: 26213e1a6caa5a7f508b919059b0122b451f4dfe
+> > > change-id: 20241106-statmount-3f91a7ed75fa
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Jeff Layton <jlayton@kernel.org>
+> > > 
+> 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
