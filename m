@@ -1,101 +1,139 @@
-Return-Path: <linux-kernel+bounces-397386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738019BDB4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:41:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C02D9BDB57
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE731C22D8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59179284971
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6824118CBEC;
-	Wed,  6 Nov 2024 01:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6109D188CC6;
+	Wed,  6 Nov 2024 01:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blDqvl6b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chGKxhm4"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECF918C91B;
-	Wed,  6 Nov 2024 01:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D3617B50E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 01:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730857230; cv=none; b=XIxna78D2Tpe3Y5blxTS94UALitGdnOj3VOGFU15c1MHAv9LO6w+hifHZNxCAyS690npYsG+gFwd8Bx4olcM+8OzwNUYoWc4upvvWEOyf2Sq3ELfZQcWYqEjKD9UWq9wIlDtBUSPi1iT09v6o7z24lpOXoiIeLKgBLXNRjwkg6o=
+	t=1730857434; cv=none; b=gnrvmoOVb0uFCCynusJNa6KLoHCsclLTtlG5Mbzpo9ypfZZ49d0X66HBpLCNEmUqXAgRv1wyPq94QbmhV14/+NRUVndxteL3jOMkiCm9Fg9PqTS8wik0xVoRYKDS6s48d8qfV8kcub8U8egqCDtjTJ5w319HkZEYzyE5ylPvCR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730857230; c=relaxed/simple;
-	bh=ltKju4GAlP9Gq8YfEV6X+ob93p7WotTATx4nxuTTo4Q=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AeAlO2IHr3O7BiY5a578XC3t/88BlXwxaIiBNqIjhberziMA+fRGFGDaRPyBK3QTGZonB0qBPl4UUKkTI2J47kJAArHVqbmvj/7G30u1GMCO8HtnUW+qbDLliaMGTQLEu4irr8Dhfh5BK5iYSJflHmrZVtOZ/Q79A9zWQ8/HP4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blDqvl6b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 563BFC4CED4;
-	Wed,  6 Nov 2024 01:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730857230;
-	bh=ltKju4GAlP9Gq8YfEV6X+ob93p7WotTATx4nxuTTo4Q=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=blDqvl6bEqEmVPyAwhYvo3MoqVWHowXcZuI/fJlKaGuQHMAsjo1lSgUx6Z6RbCQuu
-	 Y9L31LMGn4O7zLBPza82T3AsZsVdTwf3+MITc1B6u8XRiDV8qf1sPqaXpyvhlz1KMy
-	 npWWY+LUytOVNF5LE8yAQH3xrf0WXCkxG10uXCB3UPhdR21OdbZg2S0gy73pX91P0z
-	 KXZ+VcCIz+rtI2AeykTU4uIKh2hAwbG5TI7EG1rdTOf6wdirvXendEDnvuavxbGAEG
-	 9msxuwcZiitcSicTnTwAvTb/OWYylZ+bj5tF/Ua1QorhtpG4nRnVdKd0AjZedC/FQM
-	 psBBoC4WQcPOA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C883809A80;
-	Wed,  6 Nov 2024 01:40:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730857434; c=relaxed/simple;
+	bh=uV5P/1Uxeb6Q8gAz2rL3UngXzJTvnZaDYnMV708Jv74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=We835gXXdZDIVMe507/frAVHqtrRcmz3RHVeOLDtvB496tHBajzntL9xfvk8BSSdPFnN+ehpVoO2c7KS6V0DZwLMgPVmJVrkaO7gDjMpaLzpqwavXOtKLBYVvsaEOznFJxMLM4srbSnRc7jn2RFCiHHSDhy6qAqp5BqF5p0Fjgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chGKxhm4; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ebc5b4190eso3246711eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 17:43:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730857432; x=1731462232; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yG8jv53AK8R/U67YhXnDA52uUNbJU2dyWkTr6UcdFfc=;
+        b=chGKxhm4R3Lu+GT2UodeFSV53HNHOjDSHB2WVta1IPOjVco4kEKzTQ5cwfa1jsjwvO
+         3o8J9MWkGVdReRTltJ/16e+ykk7FDexC4R0jQipNcN/MaXg7Mc+BAhtuaeiZTrFUVyAF
+         wSNvQVQlaaopfMOVoTWfX/7QyUTYY8w+VzPEENzKo9gj86bpi3BiwN/j27XR7WZvObPm
+         1dwzUeTYVRkz5xz7ROyQgFgqu7gWa3xNAkMVZUlrMnoeO0Pu6QZkPo2Gw/RIIgrqJaIo
+         9AOm/xpPEUXVBiRZ17zF0GvcndBFhBC9aykTv61vJLV46d96jIueZya2IZbcad13tUTb
+         qJXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730857432; x=1731462232;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yG8jv53AK8R/U67YhXnDA52uUNbJU2dyWkTr6UcdFfc=;
+        b=EZc+21M6Un1GEcSBrGVEP6HUSB/WgrLA+or5wS5jqzJGsyn7qOSls87kYIggIIBgeA
+         KdKH4FplHewJt+osOALczA+ZomSIPfCsT5qWfX8PvetxF3b2uyRgRttCOsqtG6SpMp7j
+         swmKKDseqxO+fCx+c++omOK4lccqTJfJoGsJX5Bgr3vji5ERbfmasI9ozi/zE4VFCBRj
+         Eom3WTvWCy7t37bS6YytVSx9eNSM7MgdBXgHXHkmpaj4a/UpNgWdT79fW8zAPlA+QVMP
+         Qe1P9O2JJ6yl7GTzPEvGNUrs9myA6zoe7KS/PYRCDHWdOTc/3fpIden11XK5BYzLUVLg
+         qHUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUT3W2dJVdnO8W1jgKsvQbEt6+PUkab0WcKYekK0JckvQSvfYjMmEUuV9Ef/t+7f0sKHy6JlrWeTJHQLb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW83YI9V67xTZLudzcMFNviSgMYcml2glfWqfENLJTf/0AvWZq
+	weDquHbphHd3LzZAjRk+fG+pzqyNZSPRt9wmVxEjVBhTdmk2A/xCPlZDNBNv16vKS1jtQ/nr2Nw
+	B4yXJoCNF9ERAHznnB+jVNv/8Q7s=
+X-Google-Smtp-Source: AGHT+IGBX3Qy0gHZbnfJ0dlUVj0oxLkQ5CnPrtCzD5a9SjWi3pAZZoeCgbcmbNYrXWtedzQhhj/81NXNGq119DaHhqs=
+X-Received: by 2002:a05:6820:2018:b0:5ee:74:4d35 with SMTP id
+ 006d021491bc7-5ee007458d2mr8109318eaf.2.1730857432411; Tue, 05 Nov 2024
+ 17:43:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/4] A pile of sfc deadcode
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173085723899.759302.4593884648959376210.git-patchwork-notify@kernel.org>
-Date: Wed, 06 Nov 2024 01:40:38 +0000
-References: <20241102151625.39535-1-linux@treblig.org>
-In-Reply-To: <20241102151625.39535-1-linux@treblig.org>
-To: Dr. David Alan Gilbert <linux@treblig.org>
-Cc: ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-net-drivers@amd.com,
- linux-kernel@vger.kernel.org
+References: <20241105-coverity1511468wrongoperator-v1-1-06c7513c3efc@gmail.com>
+In-Reply-To: <20241105-coverity1511468wrongoperator-v1-1-06c7513c3efc@gmail.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Wed, 6 Nov 2024 09:43:16 +0800
+Message-ID: <CAAfSe-tDhxVQuEpxvCWy7sh122CujdQT_Kq5O6VQ3wFNRn40_w@mail.gmail.com>
+Subject: Re: [PATCH] drm:sprd: Correct left shift operator evaluating constant expression
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+Hi Karan,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+On Wed, 6 Nov 2024 at 02:19, Karan Sanghavi <karansanghvi98@gmail.com> wrote:
+>
+> The left shift operation followed by a mask with 0xf will
+> always result in 0. To correctly evaluate the expression for
+> the bitwise OR operation, use a right shift instead.
+>
+> Reported by Coverity Scan CID: 1511468
 
-On Sat,  2 Nov 2024 15:16:21 +0000 you wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> This is a collection of deadcode removal in the sfc
-> drivers;  the split is vaguely where I found them in
-> the tree, with some left over.
-> 
-> This has been build tested and booted on an x86 VM,
-> but I fon't have the hardware to test; however
-> it's all full function removal.
-> 
-> [...]
+Should we add a fixes tag, so that the patch can be backported to the
+stable branches.
 
-Here is the summary with links:
-  - [net-next,1/4] sfc: Remove falcon deadcode
-    https://git.kernel.org/netdev/net-next/c/cc4914d90479
-  - [net-next,2/4] sfc: Remove unused efx_mae_mport_vf
-    https://git.kernel.org/netdev/net-next/c/70e58249a646
-  - [net-next,3/4] sfc: Remove unused mcdi functions
-    https://git.kernel.org/netdev/net-next/c/5254fdfc746a
-  - [net-next,4/4] sfc: Remove more unused functions
-    https://git.kernel.org/netdev/net-next/c/d3e80070b5b4
+Apart from that, the patch looks good to me, so,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
 
+Thanks,
+Chunyan
 
+>
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+> ---
+> Coverity Scan Message:
+> CID 1511468: (#1 of 1): Wrong operator used (CONSTANT_EXPRESSION_RESULT)
+> operator_confusion: (pll->kint << 4) & 15 is always 0 regardless of the
+> values of its operands. This occurs as the bitwise second operand of "|"
+> ---
+>  drivers/gpu/drm/sprd/megacores_pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sprd/megacores_pll.c b/drivers/gpu/drm/sprd/megacores_pll.c
+> index 3091dfdc11e3..43c10a5fc441 100644
+> --- a/drivers/gpu/drm/sprd/megacores_pll.c
+> +++ b/drivers/gpu/drm/sprd/megacores_pll.c
+> @@ -94,7 +94,7 @@ static void dphy_set_pll_reg(struct dphy_pll *pll, struct regmap *regmap)
+>         reg_val[3] = pll->vco_band | (pll->sdm_en << 1) | (pll->refin << 2);
+>         reg_val[4] = pll->kint >> 12;
+>         reg_val[5] = pll->kint >> 4;
+> -       reg_val[6] = pll->out_sel | ((pll->kint << 4) & 0xf);
+> +       reg_val[6] = pll->out_sel | ((pll->kint >> 4) & 0xf);
+>         reg_val[7] = 1 << 4;
+>         reg_val[8] = pll->det_delay;
+>
+>
+> ---
+> base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+> change-id: 20241105-coverity1511468wrongoperator-20130bcd4240
+>
+> Best regards,
+> --
+> Karan Sanghavi <karansanghvi98@gmail.com>
+>
 
