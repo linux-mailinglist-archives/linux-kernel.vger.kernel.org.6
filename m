@@ -1,277 +1,281 @@
-Return-Path: <linux-kernel+bounces-397637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F079BDE5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:44:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319FB9BDE5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:46:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECB91F23C90
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60641F23E4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DE31917F6;
-	Wed,  6 Nov 2024 05:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760A71917D0;
+	Wed,  6 Nov 2024 05:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tdQX4NTY"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icD4pqdq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAD74084D;
-	Wed,  6 Nov 2024 05:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730871878; cv=fail; b=dEztBmJ/YjOPyAiMZeA9eBpEGen+XVrAZPn8MWasHJOONNU3bnuWOBCj2otKY4Z8Nx3B/rV/bZJkTKNqE84sQ/9VV0gELFuJ5udYeqVDYH7hsiW3zJyu/wRJElvNuWWZ+YQKP7EKNT2CX3OABKLF4dfysXddQC6SUr6YcaU780s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730871878; c=relaxed/simple;
-	bh=Su/z36lsfSRZkZ7SE28bZj066RyVqUmCoBjpaj5MdgE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BM6Wlk/yMYyNMqlCaTo/neSOihmBaA3840JXyIu1OF8kLAOcVL8ChNDTJU8a2nAPCi7e8AYcGyuYRjxA/Zf3uLRnO2g4U9W2SpBBztADX9rsshHMXbvjdy/ea40RGtsxLivmU9aM6JcST7NJiCniL7kxreMcZQD53NGay904T10=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tdQX4NTY; arc=fail smtp.client-ip=40.107.94.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A3U9jotgTRpV/Z/r7QcJdRGlW3v7u3HspNawH540uheiMV3Q6POZDvisrP/f/3l/2qDH9ZgpKJqPZ6KEmmtVkJ3GsKU3XvDVWNgkpk9ynCSP+Rts/1KWTfelh2Qn/adZ29UxgQXte8iu8yySWuyIQUlIR4t9MEfAGYVCv6HBXGJinktZqZGO/D6RyB6vLOc9mJXxsRiAiuzhY21+egcf+32nJYYY574szXgpohlmzbHlwNRVRYof1XU4kQ6WNfFiUqM7/IcBB+947owfPBZeTTcbH8gR93xDEOCCJQek6NbWs9G9JQ2TCr8I0z1wplGSi/qsUVmq7drXWOMh/pGvYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Su/z36lsfSRZkZ7SE28bZj066RyVqUmCoBjpaj5MdgE=;
- b=SkKj62Q2no7+i4cJf1WAxfRmRfHz0to2On0jGGOeBMTWEYY7IMNxP0+N/U00DjNsbBKW3dx12S7PWrdWSQJhGycyL4L7J7vgaEYatC4gkhFHDI4pOUD/pKXwh/vHPm9gGBkoqQOziDL4NDEPF2Dw1h9/EvwO/YJH/pAfc2reKf8I22s8SIzOk8ugPdclwBsmgDyQR/hoXlNm+/LY9gpdTWhfRJKiSeDmVohRuTIftscIDiiPXfnihho42RcAZSWg2vbhL1jngLYyq+hsIEfykdWmWZQCjVCV9uqKzmfp3ogbKTitxNtwnH7O1jXvi2xCie0W6q91PN8e7VoB8E/7Uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Su/z36lsfSRZkZ7SE28bZj066RyVqUmCoBjpaj5MdgE=;
- b=tdQX4NTY0oDF6DqMViMjXL5zr7mogRFhUG8stzUASgFl2r6odXn0UIB5zwF9PwGOHBnU1Vy7k/p+zvjMuQoKA3DDzRGB2SlWweQXN8LW+7TYYpZv0+qmNG6IqKZGxJy8XmxaPOVsjldDi5Y7MFyZZ0wTUso+x7MSzk8I+kCJ4xkEiwUVNBk01p0r/UpaX9ayLFSb5aztHQNOHTST4k40+qNY67ADIPXE581nLjnyELgwSeqtQVIJ1KNqFOjfqj7l4uebWzIuqLWFyP8hewbU/PatpRFfjnqowJVlCAOA55kfJ1WZDWPT1PPUmeF8yF6TR8u5d4Il8+lfYSeDgwiGHA==
-Received: from CY8PR12MB7195.namprd12.prod.outlook.com (2603:10b6:930:59::11)
- by IA0PR12MB8421.namprd12.prod.outlook.com (2603:10b6:208:40f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Wed, 6 Nov
- 2024 05:44:29 +0000
-Received: from CY8PR12MB7195.namprd12.prod.outlook.com
- ([fe80::c06c:905a:63f8:9cd]) by CY8PR12MB7195.namprd12.prod.outlook.com
- ([fe80::c06c:905a:63f8:9cd%6]) with mapi id 15.20.8114.028; Wed, 6 Nov 2024
- 05:44:29 +0000
-From: Parav Pandit <parav@nvidia.com>
-To: Caleb Sander <csander@purestorage.com>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next 2/2] mlx5/core: deduplicate
- {mlx5_,}eq_update_ci()
-Thread-Topic: [PATCH net-next 2/2] mlx5/core: deduplicate
- {mlx5_,}eq_update_ci()
-Thread-Index: AQHbLBDvBoxTaznD+0G3MAKMk1HOTrKk6zPQgAE5WoCAAgfKUIAAtNuAgADi7uA=
-Date: Wed, 6 Nov 2024 05:44:28 +0000
-Message-ID:
- <CY8PR12MB7195FDC4A280F4CD7EA219ABDC532@CY8PR12MB7195.namprd12.prod.outlook.com>
-References: <20241101034647.51590-1-csander@purestorage.com>
- <20241101034647.51590-2-csander@purestorage.com>
- <CY8PR12MB71958512F168E2C172D0BE05DC502@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CADUfDZofFwy12oZYTmm3TE314RM79EGsxV6bKEBRMVFv8C3jNg@mail.gmail.com>
- <CY8PR12MB71953FD36C70ACACEBE3DBA1DC522@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CADUfDZqanDo+v_jap7pQire86QkfaDQE4HvhvVBb64YqKNgRHg@mail.gmail.com>
-In-Reply-To:
- <CADUfDZqanDo+v_jap7pQire86QkfaDQE4HvhvVBb64YqKNgRHg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR12MB7195:EE_|IA0PR12MB8421:EE_
-x-ms-office365-filtering-correlation-id: 5171492f-2055-4a41-fe94-08dcfe2614b4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ajVOdHAzbnhRZFV6K1RCbDdBdTBsWHllYnNJaU1MSit4Sk1XWURxdzRvcTdP?=
- =?utf-8?B?cndvdW1KLzd1M2ZDakpmWSs4bElKbXUvWG9kazRxNjdVdVc1U1BhLzNFTnBx?=
- =?utf-8?B?WFdidlNnSzFVR0hTM3VtVWpXY2x3dyt6OFhBNmJYd01kYmcxY0R5eUZVWWx4?=
- =?utf-8?B?QVVRNUdkZy9YTWJjUTVab1IvZ25WQTVncHRvMk80TmtXZmRBb2hydVNvaXN1?=
- =?utf-8?B?Q3A0dUw1bnVNOWFYNjdFVHNLRkZqZ1FPTUZBdzI0OFdYYk1kbDJHenVQK2Ru?=
- =?utf-8?B?QjdWRmVHZDdubXFFN1RyNXByYzZYdVBMb0d2WjZDRjdqZTFjSzNvd2w4dXUw?=
- =?utf-8?B?dFh6QzQwQTA2S21KZ3o3ZTRoRWx0UFgwR1hlOFp0ZzRJTTZMckorTXVVdFgw?=
- =?utf-8?B?MmlueWhoSGhNUkxESHVxRzJwaWIvSVdTeXBMZ2xqY2IyR0srZFQ4VFNVTHVB?=
- =?utf-8?B?M25zZVQ4dkNUS2haSTVjWXduQXdJODBWdnNHNEFTK0Z2ZGp0Q2VsWktaZHR4?=
- =?utf-8?B?K01YWktteXhiak90dENpNExkRGhxc2g1eDloZkJ0NThvdzZWT3FoL005K2Zx?=
- =?utf-8?B?Nk5JUGNmZHZqbXZEMThPK1FEdEF2NU9zZENsODVLMnl2QWNtUGhaTngrcUh3?=
- =?utf-8?B?Tk9zblhITkVqY2sxckJMeERoNzNzVkJUTEtEaHU5eklpQnpiTmRxbGdMSHVC?=
- =?utf-8?B?aWtRWWhJY0FtZnNET1ZFU1U4NWRiWFJqL3hjM1JlS0VKMUwvSzJubEZtRTFQ?=
- =?utf-8?B?bFBUY2k0RjBDVUdrUVpiWEtmWWc4NmtuR1ROd3VtWG5FbGhhRVJWbE5nb1hn?=
- =?utf-8?B?eXZjcVorYmQvRFJTZUtaaXo3b0tXRzJmYjR2MkpXZzV3UVp4UGlTT1NjQThK?=
- =?utf-8?B?VHFyZWx2Vk13eXM3NVRZNFlPT2h5WTNkU29MVDYwbEwxcjNqcFh0UmpqOEc0?=
- =?utf-8?B?dmsyZkt3VzFkUnJPOTAwY21Cbk5vMzNnVmlyQUdGSjRpc3NPclFOYWdYTGpB?=
- =?utf-8?B?Yk52V3dUZStNV3IrL1BObTNqWHRwR1FkUG12V3QxNmp6a0I0RVhITmdwK3ZP?=
- =?utf-8?B?RmJCT2FwQXVBRUtmMnorV3U1eEtIeHNPRkVhYmpFNndvcmlvdDFZY0NOa1Na?=
- =?utf-8?B?SEFJWWdYRFdvV0FQZ091elBjcFMvSU9BYWlkSk50YVJtNThubE92dlBmbEQv?=
- =?utf-8?B?L1pZcXE3dUd0T0hKL3lPZlJKY1V4UUt3MnNOTWl3QUZDWUkrT1Z5VUphVys0?=
- =?utf-8?B?am4xcGV2ZG5tRFp4djMxNTFrOTF2MTh5d3dRZHROck1sSjZuNjFlRFpWODZa?=
- =?utf-8?B?emNnV010dlNPSVZQWGV3T2hLNVhhU2RGSU9TcENERm1FTDFLNVhTaEhRUERa?=
- =?utf-8?B?VDdPL3Y5RWt4cUVmcWhLTDVhWlM2TlI1NzMrc0x1V2M4TDFhc3FxckU5RzFy?=
- =?utf-8?B?VktvYmJRclgvcFBqdWl3KzVXRS9ZcGJDT3FlaDRxcEVOS3JiMXZ6dVhyeWFz?=
- =?utf-8?B?NWprRXlsR2RDTWRYTExBckcvektLaGVFazVERzE0MW1GZGZGSzFvNG5yaFp6?=
- =?utf-8?B?V0VQcnFuNk5iSkRHSHRsQWFwMkszUWl1Zkg1T01LYmlGeGlDTWRjUWRLZWZY?=
- =?utf-8?B?MmNpVmxEUzFLR2FZTUthQTV6SlJ4N3NhbU5scDNseGo2VGR4WUFzWEV6Qkxt?=
- =?utf-8?B?MVNwMmJqdW9yMjlYc1VvaU1uZmZkTTVHZzJCTlVGYzVMcEVIWk9ob2ExcmtZ?=
- =?utf-8?B?eDcrUUI1QWgrcDV2WXpkTmJMSTN6anFKcGhuS05EV1JLVnROZUVGRDZlRGtw?=
- =?utf-8?B?MmZlUWJXQ0xTcjVVVFNUWkR3dVNVN0tMSkRrRU5RcGNVQVN6QTlXdVdSY2xV?=
- =?utf-8?Q?wl7eCe+LaZChe?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7195.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dko0WWt3dUJabnpYRnJZR25ZRU9YWGZYNk11QkpWSTBaakZ2YkxpNFdNblNw?=
- =?utf-8?B?cGRHemdIdjArVG5TVGpmaVg0QTE1TVJMOWorLzRMTE90SU9hbm0xU1UrMmhZ?=
- =?utf-8?B?bUhvSmJ0aUlLOU11T0F2bGN5Znk5T3p5VVhkOFZ4cEY5Ky9Bd3UxVEdnTEM5?=
- =?utf-8?B?YXZHaklDT2dJdSt2ZkZDVUJsVWp4VlE5U0JkbVhXNnpKQ25iSElmdnh6MDFJ?=
- =?utf-8?B?Zkh2NXpEMklDUDhLMkNVSkV3a2x2OHNnamhldnpIU3VEd2ZYVnMxcFNQZ3RM?=
- =?utf-8?B?VVh4WXpMN04xOG9kYWV5QVYyaUcrQTlnLytNeUtMK3B2NFUweVNwcTRGTFZD?=
- =?utf-8?B?M1ZEWkhwa3hnVXdGY3JtNW5tMDRVY0dKQU5rZDUwNFArUHBTdTVyUVhEOXhw?=
- =?utf-8?B?eVBtTlY0SHgyK0VJMkNkTWFHUFcvQldOUjZaWjY0K1hyd1ppUkd4cmpZVlM4?=
- =?utf-8?B?WUlhdzl3eXRPdGgvakJYYnBMaXZ2QVNCeGpRZGtQZXZzdzdCb2ZDb0RoeGpS?=
- =?utf-8?B?UzFHR1lTSTVkY2VXTm9id2FJUE1zMDJOSExHQ1lidXZtM0ZVbmhGNVRwanpG?=
- =?utf-8?B?UklzODNNOHBjWmxCZUtYS0JOOXpRcFNPZzBQbUVPbGhsdHd1Ym03MHF5UkdQ?=
- =?utf-8?B?Q0N2cnE4TDNiYzFuZUtrYXZBR3MvQkNuWCs0M1ZVdytRc041Sm04Y3E2dVhO?=
- =?utf-8?B?Z00xdnVZK011alg1NkU4dU1DQkZzVkNyRUFpUGJ1Q2dkeGJHS0gvQnNqMlU3?=
- =?utf-8?B?SDkrVzBtNm05Y0YrcnRvOWR3RHkrQVFIOGZPUHl4aHpBb012Um1nTkFXQmJT?=
- =?utf-8?B?NktsRUlnQnZXSno0SnRkOWpiL2NNQmJQeW9jTzJUUkgrSTNGQS93ZjkyMWli?=
- =?utf-8?B?VlMybUtPZjllYkx3U0x5Y2ZpbVlET2ZCVVFHUDhPWHNSMktOVnBzd1cxUzZ1?=
- =?utf-8?B?cktLd3VRK3V2bFZtVDlSSVpaTlRBbjlHSFJ4ckVJUU8yenVtdHVQZ2w1NVBj?=
- =?utf-8?B?Zjc4ODVPdHFhd2E3ekhKNGtFSUxiSG1XNWhVS0YwQ3A3NllEb3R2ZWUzMWdI?=
- =?utf-8?B?Wk15M2xFNDc5RE9CZjRuMzVhU1hMK2VFcFhHMmlYeDQzYWFTZnZsUUdIcnZz?=
- =?utf-8?B?cGdDQ1NKZEtlczdHTDRZZ0tHVEJrdkRCbU9tTklCbEQzSy9zcmdZUk5WMm5U?=
- =?utf-8?B?dXBTNDh4N3haNlN5WkJRZHNZU1ZNcmN6Yk9haEVSaitzNVBvVkRRYlV3eGJH?=
- =?utf-8?B?YzFBVWtHNXdEb2pIQVV1Q3BocjRaRnFnZkF6L3Zab3NRZHlMVTNvUkpQdjhY?=
- =?utf-8?B?SHlzRnlEQzNMRWFkemFkeWpVTE82RUsyY2ZHZDRXU2JPY0pmcHRrYVRPajd0?=
- =?utf-8?B?ZGhLVGRDUnI2eWRRR09lUTdFb3VaNnpDYStaQVl3amFOZHlDUCt3YVlld3lE?=
- =?utf-8?B?ak45M0dlakw3VmxoclhEa2I1MVhETnp5cjluSVdDWVptMitmV0U5RGQxd0J4?=
- =?utf-8?B?OURLZFVsNDlmTlY1K0dSVmUyTCtCbHZyUm5SOHhlZzRlOHl6U3hQaUJRNGZ3?=
- =?utf-8?B?Tkh1OTU1b3JEbkVQbWpQRVY5ZkJ0L1Y1allHYWZRNUZ4QzV3YjhJMExsYnA0?=
- =?utf-8?B?VlZZU0QwNTVKbXNUdFQrS2JrdGlZRk01NFN1ZzZSeUdSRmM5NFByNUFXQVcw?=
- =?utf-8?B?UTYyeWVnRW1PSWNTTWFKTkcxU0J4QyszdU8xQWJ6WG40QkhVajNUSm5KSXdO?=
- =?utf-8?B?WEwxeWRGcDkwUjU2bFhIVUJPeUl5dmdvOXRscTdDakJwOW1MYmN4QVdkMGlN?=
- =?utf-8?B?QmtTcmZkQyswcHEzMVpkUVJZamlYK3NWTk9ERFFCR0xrVjdnUXhua2RUMG5O?=
- =?utf-8?B?bFl0ZzhXdFRDZzNsTjRpMjkxMGVRY3FoVkR0aHNoeEMrU2VUc1FOS2VqMGYw?=
- =?utf-8?B?U0dNaGlwdzRiNU9zK2J1dWhmMXRoNjB1OWxzYTVIUndlRkFBTERIU3RmcnJN?=
- =?utf-8?B?Y3RiUk1Hc2gwQlh4Vi9FYVZGZ09HdGV1U2w1UnFPRDNwdmVpWkxUc01YclJp?=
- =?utf-8?B?NElTdEdXMzZwZ0pqZEFwNkZGa3hQTXRtQjJ3RzRaN3hWWnQralBXWWgrbDMx?=
- =?utf-8?Q?YeF4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E0E2C80;
+	Wed,  6 Nov 2024 05:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730871967; cv=none; b=Vii/tvqy2Hd5sV5EnzrkxYZIQZP8+xaQ4wiHlPOCCugjh1cfF6mZzZ7Pe/L3jvYEIPVSl+EGfgljTaMUFlx2c9/4+fxShfbdXKMO+yucb5/Ac/gh7y+USWK75UfjMiVqZBvz9vCTVQdtxq3H3jmAlvbtNHfBItzk6wwAQ/NyLkw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730871967; c=relaxed/simple;
+	bh=KHaZm1BKPo5bIXvGUMESWUYC59KIwDNI0k37DvMlpVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H8p7PiTh4kkQXg0rLCCUxjEsEFb5x57Y0a7kooJs2+ZNopSGqWy9YL+R3eFQyKpgIa5tO4uAGb7U6qnNR0dKcaWNn58O6hYjdnk40xYYHhVuUJyJIxEgocDdvNZPGzwK4fePNdVNuqhnXVJI72T2ptX+Q1575FxbS+Y4HOHyZ3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icD4pqdq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 324EAC4CECD;
+	Wed,  6 Nov 2024 05:46:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730871967;
+	bh=KHaZm1BKPo5bIXvGUMESWUYC59KIwDNI0k37DvMlpVU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=icD4pqdqQbBRzIIcf6NeBCcFIAJSVFiN9TeJxVABG7BURPDCOmZAAPgvIJamzvRtn
+	 CGZXA7R79dq1crymNi3cWzswnCh09gVwyPjwfXph1OGTXIaPb0ECVHMnImw7NCqBry
+	 MYfGKtiu/w7sQKRH7Je/1IyoHKFxx5XDzTlQYFGFEnWGL1bU3RjYfY4EgOZBHfxT+i
+	 7YMfvxB6frG+9OIU8qSEFhE68LFWpavf502hL2zLYAU4RqZMTzQFo+q8KwR85Fb6ot
+	 Hn1OrHPPBCl3U7dImAxF8Z0urkoh7q1OI8HBt5yYbhMozB4wKUNavUBrul+P7jGeq7
+	 h22INCnYiPRtw==
+Message-ID: <a40ef9a8-0589-4070-921e-f3461fa6759c@kernel.org>
+Date: Tue, 5 Nov 2024 23:46:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7195.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5171492f-2055-4a41-fe94-08dcfe2614b4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2024 05:44:28.9023
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Zu8b+Rs9QpDH6xprkuSZAbt184TSfa/V3VFxkdi15OjhT3qR8IykCPcxvBKgDNN+ejDh1sjp/DWD7txA5b71pw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8421
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 12/20] ACPI: platform_profile: Add profile attribute
+ for class interface
+To: Armin Wolf <W_Armin@gmx.de>, Mario Limonciello
+ <mario.limonciello@amd.com>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <20241105153316.378-13-mario.limonciello@amd.com>
+ <dad36f32-5970-48c2-9ee1-78163958bf02@gmx.de>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <dad36f32-5970-48c2-9ee1-78163958bf02@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-DQo+IEZyb206IENhbGViIFNhbmRlciA8Y3NhbmRlckBwdXJlc3RvcmFnZS5jb20+DQo+IFNlbnQ6
-IFR1ZXNkYXksIE5vdmVtYmVyIDUsIDIwMjQgOTozNiBQTQ0KPiANCj4gT24gTW9uLCBOb3YgNCwg
-MjAyNCBhdCA5OjIy4oCvUE0gUGFyYXYgUGFuZGl0IDxwYXJhdkBudmlkaWEuY29tPiB3cm90ZToN
-Cj4gPg0KPiA+DQo+ID4NCj4gPiA+IEZyb206IENhbGViIFNhbmRlciA8Y3NhbmRlckBwdXJlc3Rv
-cmFnZS5jb20+DQo+ID4gPiBTZW50OiBNb25kYXksIE5vdmVtYmVyIDQsIDIwMjQgMzo0OSBBTQ0K
-PiA+ID4NCj4gPiA+IE9uIFNhdCwgTm92IDIsIDIwMjQgYXQgODo1NeKAr1BNIFBhcmF2IFBhbmRp
-dCA8cGFyYXZAbnZpZGlhLmNvbT4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+DQo+
-ID4gPiA+ID4gRnJvbTogQ2FsZWIgU2FuZGVyIE1hdGVvcyA8Y3NhbmRlckBwdXJlc3RvcmFnZS5j
-b20+DQo+ID4gPiA+ID4gU2VudDogRnJpZGF5LCBOb3ZlbWJlciAxLCAyMDI0IDk6MTcgQU0NCj4g
-PiA+ID4gPg0KPiA+ID4gPiA+IFRoZSBsb2dpYyBvZiBlcV91cGRhdGVfY2koKSBpcyBkdXBsaWNh
-dGVkIGluIG1seDVfZXFfdXBkYXRlX2NpKCkuDQo+ID4gPiA+ID4gVGhlIG9ubHkgYWRkaXRpb25h
-bCB3b3JrIGRvbmUgYnkgbWx4NV9lcV91cGRhdGVfY2koKSBpcyB0bw0KPiA+ID4gPiA+IGluY3Jl
-bWVudA0KPiA+ID4gPiA+IGVxLT5jb25zX2luZGV4LiBDYWxsIGVxX3VwZGF0ZV9jaSgpIGZyb20g
-bWx4NV9lcV91cGRhdGVfY2koKSB0bw0KPiA+ID4gPiA+IGVxLT5hdm9pZA0KPiA+ID4gPiA+IHRo
-ZSBkdXBsaWNhdGlvbi4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IENhbGVi
-IFNhbmRlciBNYXRlb3MgPGNzYW5kZXJAcHVyZXN0b3JhZ2UuY29tPg0KPiA+ID4gPiA+IC0tLQ0K
-PiA+ID4gPiA+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXEuYyB8
-IDkgKy0tLS0tLS0tDQo+ID4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwg
-OCBkZWxldGlvbnMoLSkNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXEuYw0KPiA+ID4gPiA+IGIvZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2VxLmMNCj4gPiA+ID4gPiBpbmRleCA4
-NTlkY2YwOWI3NzAuLjA3ODAyOWM4MTkzNSAxMDA2NDQNCj4gPiA+ID4gPiAtLS0gYS9kcml2ZXJz
-L25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZXEuYw0KPiA+ID4gPiA+ICsrKyBiL2Ry
-aXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9lcS5jDQo+ID4gPiA+ID4gQEAg
-LTgwMiwxOSArODAyLDEyIEBAIHN0cnVjdCBtbHg1X2VxZSAqbWx4NV9lcV9nZXRfZXFlKHN0cnVj
-dA0KPiA+ID4gPiA+IG1seDVfZXEgKmVxLCB1MzIgY2MpICB9ICBFWFBPUlRfU1lNQk9MKG1seDVf
-ZXFfZ2V0X2VxZSk7DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiAgdm9pZCBtbHg1X2VxX3VwZGF0ZV9j
-aShzdHJ1Y3QgbWx4NV9lcSAqZXEsIHUzMiBjYywgYm9vbCBhcm0pICB7DQo+ID4gPiA+ID4gLSAg
-ICAgX19iZTMyIF9faW9tZW0gKmFkZHIgPSBlcS0+ZG9vcmJlbGwgKyAoYXJtID8gMCA6IDIpOw0K
-PiA+ID4gPiA+IC0gICAgIHUzMiB2YWw7DQo+ID4gPiA+ID4gLQ0KPiA+ID4gPiA+ICAgICAgIGVx
-LT5jb25zX2luZGV4ICs9IGNjOw0KPiA+ID4gPiA+IC0gICAgIHZhbCA9IChlcS0+Y29uc19pbmRl
-eCAmIDB4ZmZmZmZmKSB8IChlcS0+ZXFuIDw8IDI0KTsNCj4gPiA+ID4gPiAtDQo+ID4gPiA+ID4g
-LSAgICAgX19yYXdfd3JpdGVsKChfX2ZvcmNlIHUzMiljcHVfdG9fYmUzMih2YWwpLCBhZGRyKTsN
-Cj4gPiA+ID4gPiAtICAgICAvKiBXZSBzdGlsbCB3YW50IG9yZGVyaW5nLCBqdXN0IG5vdCBzd2Fi
-YmluZywgc28gYWRkIGEgYmFycmllciAqLw0KPiA+ID4gPiA+IC0gICAgIHdtYigpOw0KPiA+ID4g
-PiA+ICsgICAgIGVxX3VwZGF0ZV9jaShlcSwgYXJtKTsNCj4gPiA+ID4gTG9uZyBhZ28gSSBoYWQg
-c2ltaWxhciByZXdvcmsgcGF0Y2hlcyB0byBnZXQgcmlkIG9mDQo+ID4gPiA+IF9fcmF3X3dyaXRl
-bCgpLCB3aGljaCBJIG5ldmVyIGdvdCBjaGFuY2UgdG8gcHVzaCwNCj4gPiA+ID4NCj4gPiA+ID4g
-RXFfdXBkYXRlX2NpKCkgaXMgdXNpbmcgZnVsbCBtZW1vcnkgYmFycmllci4NCj4gPiA+ID4gV2hp
-bGUgbWx4NV9lcV91cGRhdGVfY2koKSBpcyB1c2luZyBvbmx5IHdyaXRlIG1lbW9yeSBiYXJyaWVy
-Lg0KPiA+ID4gPg0KPiA+ID4gPiBTbyBpdCBpcyBub3QgMTAwJSBkZWR1cGxpY2F0aW9uIGJ5IHRo
-aXMgcGF0Y2guDQo+ID4gPiA+IFBsZWFzZSBoYXZlIGEgcHJlLXBhdGNoIGltcHJvdmluZyBlcV91
-cGRhdGVfY2koKSB0byB1c2Ugd21iKCkuDQo+ID4gPiA+IEZvbGxvd2VkIGJ5IHRoaXMgcGF0Y2gu
-DQo+ID4gPg0KPiA+ID4gUmlnaHQsIHBhdGNoIDEvMiBpbiB0aGlzIHNlcmllcyBpcyBjaGFuZ2lu
-ZyBlcV91cGRhdGVfY2koKSB0byB1c2UNCj4gPiA+IHdyaXRlbCgpIGluc3RlYWQgb2YgX19yYXdf
-d3JpdGVsKCkgYW5kIGF2b2lkIHRoZSBtZW1vcnkgYmFycmllcjoNCj4gPiA+IGh0dHBzOi8vbG9y
-ZS5rZXJuZWwub3JnL2xrbWwvMjAyNDExMDEwMzQ2NDcuNTE1OTAtMS0NCj4gPiA+IGNzYW5kZXJA
-cHVyZXN0b3JhZ2UuY29tLw0KPiA+IFRoaXMgcGF0Y2ggaGFzIHR3byBidWdzLg0KPiA+IDEuIHdy
-aXRlbCgpIHdyaXRlcyB0aGUgTU1JTyBzcGFjZSBpbiBMRSBvcmRlci4gRVEgdXBkYXRlcyBhcmUg
-aW4gQkUgb3JkZXIuDQo+ID4gU28gdGhpcyB3aWxsIGJyZWFrIG9uIHBwYzY0IEJFLg0KPiANCj4g
-T2theSwgc28gdGhpcyBzaG91bGQgYmUgd3JpdGVsKGNwdV90b19sZTMyKHZhbCksIGFkZHIpPw0K
-PiANClRoYXQgd291bGQgYnJlYWsgdGhlIHg4NiBzaWRlIGJlY2F1c2UgZGV2aWNlIHNob3VsZCBy
-ZWNlaXZlIGluIEJFIGZvcm1hdCByZWdhcmRsZXNzIG9mIGNwdSBlbmRpYW5uZXNzLg0KQWJvdmUg
-Y29kZSB3aWxsIHdyaXRlIGluIHRoZSBMRSBmb3JtYXQuDQoNClNvIGFuIEFQSSBmb29fd3JpdGVs
-KCkgbmVlZCB3aGljaCBkb2VzIA0KYS4gd3JpdGUgbWVtb3J5IGJhcnJpZXIgDQpiLiB3cml0ZSB0
-byBNTUlPIHNwYWNlIGJ1dCB3aXRob3V0IGVuZGluZW5lc3MgY29udmVyc2lvbi4NCg0KPiA+DQo+
-ID4gMi4gd3JpdGVsKCkgaXNzdWVzIHRoZSBiYXJyaWVyIEJFRk9SRSB0aGUgcmF3X3dyaXRlbCgp
-Lg0KPiA+IEFzIG9wcG9zZWQgdG8gdGhhdCBlcSB1cGRhdGUgbmVlZHMgdG8gaGF2ZSBhIGJhcnJp
-ZXIgQUZURVIgdGhlIHdyaXRlbCgpLg0KPiA+IExpa2VseSB0byBzeW5jaHJvbml6ZSB3aXRoIG90
-aGVyIENRIHJlbGF0ZWQgcG9pbnRlcnMgdXBkYXRlLg0KPiANCj4gSSB3YXMgcmVmZXJlbmNpbmcg
-dGhpcyBwcmlvciBkaXNjdXNzaW9uIGFib3V0IHRoZSBtZW1vcnkgYmFycmllcjoNCj4gaHR0cHM6
-Ly9sb3JlLmtlcm5lbC5vcmcvbmV0ZGV2L0NBTHpKTEc4YWYwU01mQTFDOFU4cl9GZGRiX1pRaHZF
-WmQ2PTINCj4gYTk3ZE9vQmNnTEEweGdAbWFpbC5nbWFpbC5jb20vDQo+IEZyb20gU2FlZWQncyBt
-ZXNzYWdlLCBpdCBzb3VuZHMgbGlrZSB0aGUgbWVtb3J5IGJhcnJpZXIgaXMgb25seSB1c2VkIHRv
-DQo+IGVuc3VyZSB0aGUgb3JkZXJpbmcgb2Ygd3JpdGVzIHRvIHRoZSBkb29yYmVsbCByZWdpc3Rl
-ciwgbm90IHRoZSBvcmRlcmluZyBvZiB0aGUNCj4gZG9vcmJlbGwgd3JpdGUgcmVsYXRpdmUgdG8g
-YW55IG90aGVyIHdyaXRlcy4gSWYgc29tZSBvdGhlciB3cml0ZSBuZWVkcyB0byBiZQ0KPiBvcmRl
-cmVkIGFmdGVyIHRoZSBkb29yYmVsbCB3cml0ZSwgcGxlYXNlIGV4cGxhaW4gd2hhdCBpdCBpcy4g
-DQpOb3Qgd3JpdGUsIHJlYWRpbmcgb2YgdGhlIENRRSBsaWtlbHkgcmVxdWlyZXMgcmVhZCBiYXJy
-aWVyLg0KDQo+IEFzIEdhbCBQcmVzc21hbg0KPiBwb2ludGVkIG91dCwgYSB3bWIoKSBhdCB0aGUg
-ZW5kIG9mIGEgZnVuY3Rpb24gZG9lc24ndCBtYWtlIG11Y2ggc2Vuc2UsIGFzDQo+IHRoZXJlIGFy
-ZSBubyBmdXJ0aGVyIHdyaXRlcyBpbiB0aGUgZnVuY3Rpb24gdG8gb3JkZXIuIElmIHRoZSBkb29y
-YmVsbCB3cml0ZSBuZWVkcw0KPiB0byBiZSBvcmRlcmVkIGJlZm9yZSBzb21lIG90aGVyIHdyaXRl
-IGluIGEgY2FsbGVyIGZ1bmN0aW9uLCB0aGUgbWVtb3J5IGJhcnJpZXINCj4gc2hvdWxkIHByb2Jh
-Ymx5IG1vdmUgdG8gdGhlIGNhbGxlci4NCkl0IGlzIHRoZSB0d28gRVEgZG9vcmJlbGwgd3JpdGVz
-IHRoYXQgbmVlZHMgdG8gYmUgb3JkZXJlZCB3aXRoIHJlc3BlY3QgdG8gZWFjaCBvdGhlci4NClNv
-IHBsZWFzZSBhdWRpdCB0aGUgY29kZSBmb3IgQ1FFIHByb2Nlc3NpbmcgZW5zdXJlIHRoYXQgdGhl
-cmUgaXMgcmVhZCBiYXJyaWVyIGFmdGVyIHZhbGlkIGJpdC4NCkFuZCByZW1vdmFsIG9mIHRoaXMg
-cmVhZCBiYXJyaWVyIGRvZXMgbm90IGFmZmVjdCB0aGVyZS4NCg0KSXQgd291bGQgYmUgYmVzdCBp
-ZiB5b3UgY2FuIHRlc3Qgb24gQVJNIChub24geDg2XzY0KSBwbGF0Zm9ybSBmb3IgdGhpcyBjaGFu
-Z2UuDQoNCj4gDQo+ID4NCj4gPiA+IEFyZSB5b3Ugc3VnZ2VzdGluZyBzb21ldGhpbmcgZGlmZmVy
-ZW50PyBJZiBzbywgaXQgd291bGQgYmUgZ3JlYXQgaWYNCj4gPiA+IHlvdSBjb3VsZCBjbGFyaWZ5
-IHdoYXQgeW91IG1lYW4uDQo+ID4gPg0KPiA+IFNvIEkgd2FzIHN1Z2dlc3RpbmcgdG8ga2VlcCBf
-X3Jhd193cml0ZWwoKSBhcyBpcyBhbmQgcmVwbGFjZSBtYigpIHdpdGgNCj4gd21iKCkuDQo+IA0K
-PiB3bWIoKSB3b3VsZCBjZXJ0YWlubHkgYmUgY2hlYXBlciB0aGFuIG1iKCksIGJ1dCBJIHdvdWxk
-IGxpa2UgdG8gdW5kZXJzdGFuZA0KPiB0aGUgcmVxdWlyZW1lbnQgZm9yIHRoZSBiYXJyaWVyIGlu
-IHRoZSBmaXJzdCBwbGFjZS4gVGhlIGZlbmNlIGluc3RydWN0aW9uIGlzIHZlcnkNCj4gZXhwZW5z
-aXZlLg0KPiANClRvIG9yZGVyIHR3byBkb29yYmVsbCB3cml0ZXMgb2YgdGhlIHNhbWUgRVEuDQoN
-Cj4gVGhhbmtzLA0KPiBDYWxlYg0K
+
+
+On 11/5/24 22:10, Armin Wolf wrote:
+> Am 05.11.24 um 16:33 schrieb Mario Limonciello:
+> 
+>> Reading and writing the `profile` sysfs file will use the callbacks for
+>> the platform profile handler to read or set the given profile.
+>>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>>   drivers/acpi/platform_profile.c | 118 ++++++++++++++++++++++++++++++++
+>>   1 file changed, 118 insertions(+)
+>>
+>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/ 
+>> platform_profile.c
+>> index e1b6569c4ee70..79083d0bb22e3 100644
+>> --- a/drivers/acpi/platform_profile.c
+>> +++ b/drivers/acpi/platform_profile.c
+>> @@ -65,6 +65,78 @@ static int _get_class_choices(struct device *dev, 
+>> unsigned long *choices)
+>>       return 0;
+>>   }
+>>
+>> +/**
+>> + * _store_class_profile - Set the profile for a class device
+>> + * @dev: The class device
+>> + * @data: The profile to set
+>> + */
+>> +static int _store_class_profile(struct device *dev, void *data)
+>> +{
+>> +    enum platform_profile_option profile;
+>> +    unsigned long choices;
+>> +    int *i = (int *)data;
+>> +    int err;
+>> +
+>> +    err = _get_class_choices(dev, &choices);
+>> +    if (err)
+>> +        return err;
+>> +
+>> +    scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>> +        struct platform_profile_handler *handler;
+>> +
+>> +        if (!test_bit(*i, &choices))
+>> +            return -EOPNOTSUPP;
+>> +
+>> +        handler = dev_get_drvdata(dev);
+>> +        err = handler->profile_get(handler, &profile);
+>> +        if (err)
+>> +            return err;
+>> +
+>> +        err = handler->profile_set(handler, *i);
+>> +        if (err) {
+>> +            int recover_err;
+>> +
+>> +            dev_err(dev, "Failed to set profile: %d\n", err);
+>> +            recover_err = handler->profile_set(handler, profile);
+>> +            if (recover_err)
+>> +                dev_err(dev, "Failed to reset profile: %d\n", 
+>> recover_err);
+>> +        }
+> 
+> The whole recovery handling seems unnecessary to me. In setting the 
+> platform profile fails, then
+> we should just return an error. The platform profile handler will tell 
+> us the current platform
+> profile anyway.
+
+Sure, makes sense.  That also means no need to capture the profile 
+before setting it.
+
+> 
+>> +        sysfs_notify(&handler->class_dev->kobj, NULL, 
+>> "platform_profile");
+>> +        kobject_uevent(&handler->class_dev->kobj, KOBJ_CHANGE);
+> 
+> Please avoid sending those events when the platform profile is changed 
+> through the class sysfs interface.
+> 
+>> +    }
+>> +
+>> +    sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> 
+> Please avoid sending this event when the platform profile is changed 
+> through the legacy sysfs interface.
+
+In both above cases - why?
+
+* If I change using class interface then that implicitly means that 
+legacy interface changes.
+* If I change using legacy interface that implicitly means class 
+interface changes too.
+
+> 
+>> +    return err ? err : 0;
+>> +}
+>> +
+>> +/**
+>> + * get_class_profile - Show the current profile for a class device
+>> + * @dev: The class device
+>> + * @profile: The profile to return
+>> + * Return: 0 on success, -errno on failure
+>> + */
+>> +static int get_class_profile(struct device *dev,
+>> +                 enum platform_profile_option *profile)
+>> +{
+>> +    struct platform_profile_handler *handler;
+>> +    enum platform_profile_option val;
+>> +    int err;
+>> +
+>> +    scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>> +        handler = dev_get_drvdata(dev);
+>> +        err = handler->profile_get(handler, &val);
+>> +        if (err) {
+>> +            pr_err("Failed to get profile for handler %s\n", handler- 
+>> >name);
+>> +            return err;
+>> +        }
+>> +    }
+>> +
+>> +    if (WARN_ON(val >= PLATFORM_PROFILE_LAST))
+>> +        return -EINVAL;
+>> +    *profile = val;
+>> +
+>> +    return 0;
+>> +}
+>>
+>>   /**
+>>    * name_show - Show the name of the profile handler
+>> @@ -102,12 +174,58 @@ static ssize_t choices_show(struct device *dev,
+>>       return _commmon_choices_show(choices, buf);
+>>   }
+>>
+>> +/**
+>> + * profile_show - Show the current profile for a class device
+>> + * @dev: The device
+>> + * @attr: The attribute
+>> + * @buf: The buffer to write to
+>> + * Return: The number of bytes written
+>> + */
+>> +static ssize_t profile_show(struct device *dev,
+>> +                struct device_attribute *attr,
+>> +                char *buf)
+>> +{
+>> +    enum platform_profile_option profile = PLATFORM_PROFILE_LAST;
+>> +    int err;
+>> +
+>> +    err = get_class_profile(dev, &profile);
+>> +    if (err)
+>> +        return err;
+>> +
+>> +    return sysfs_emit(buf, "%s\n", profile_names[profile]);
+>> +}
+>> +
+>> +/**
+>> + * profile_store - Set the profile for a class device
+>> + * @dev: The device
+>> + * @attr: The attribute
+>> + * @buf: The buffer to read from
+>> + * @count: The number of bytes to read
+>> + * Return: The number of bytes read
+>> + */
+>> +static ssize_t profile_store(struct device *dev,
+>> +                 struct device_attribute *attr,
+>> +                 const char *buf, size_t count)
+>> +{
+>> +    int i, ret;
+>> +
+>> +    i = sysfs_match_string(profile_names, buf);
+>> +    if (i < 0)
+>> +        return -EINVAL;
+>> +
+>> +    ret = _store_class_profile(dev, (void *)(long)&i);
+> 
+> Please just pass &i.
+
+Ack.
+
+> 
+> Thanks,
+> Armin Wolf
+> 
+>> +
+>> +    return ret ? ret : count;
+>> +}
+>>
+>>   static DEVICE_ATTR_RO(name);
+>>   static DEVICE_ATTR_RO(choices);
+>> +static DEVICE_ATTR_RW(profile);
+>> +
+>>   static struct attribute *profile_attrs[] = {
+>>       &dev_attr_name.attr,
+>>       &dev_attr_choices.attr,
+>> +    &dev_attr_profile.attr,
+>>       NULL
+>>   };
+>>   ATTRIBUTE_GROUPS(profile);
+> 
+
 
