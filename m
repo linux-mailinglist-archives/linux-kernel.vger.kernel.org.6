@@ -1,200 +1,111 @@
-Return-Path: <linux-kernel+bounces-398555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019A39BF2C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:08:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5DD9BF2D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24D9C1C26912
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:08:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD071C269F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA1D2076CE;
-	Wed,  6 Nov 2024 16:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BA52064FF;
+	Wed,  6 Nov 2024 16:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GVlxQEKN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpiLxwRe";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GVlxQEKN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpiLxwRe"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZAho2Uy"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17591203707;
-	Wed,  6 Nov 2024 16:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8F82064ED;
+	Wed,  6 Nov 2024 16:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909239; cv=none; b=BtzR9mdD4b+9TS6YiYApveTIa618ONN9Z+Aja0IlsbNqPaupQ3ACxfvR+G9XhiC5Jh9CBKfp4cXTXHpbeq4uFQrPSrSVWinnXV3l9K/8Y9gNJOEK4oN3McYYot4MRqOnwDv2jXHpzEghbElJvenaqQ3WKRfl9uEHn9Z/KFWV57I=
+	t=1730909298; cv=none; b=dYheR5te70OPabZ4x1TFQDhqysa+9mcBU+Z/ZZGj5vHsN+stZgJDBW4hYGDhZf45q40dAW+kTnfinneGEy7M8W5fCCzbdif/DznV2PrFhteiC4yYZcolBEBUADlQttP1tScnJy+hiL9b4LRODzkf12g9kwJArHZ/GuyzmPREgGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909239; c=relaxed/simple;
-	bh=yrnpiJhy1J/7RqZ/+CyJugHSccwtATWWeukq81MaSCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nom28SspPsPRgQFo5vPiCghkuFbd+UQGcSN1pGv87/s342kDFdjswuUQcYbm4dvx5e+V+g7eoWlaozW/0GH/2u2JdBnlXvgTjdKGdjfUnsnJKZ7gvtZS0+1Ws7x4Jxg0xSsa115bMK47TWxF9+ET95xBHR0m8bOBKBZ0aPWFrhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GVlxQEKN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpiLxwRe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GVlxQEKN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpiLxwRe; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 410DE1FD16;
-	Wed,  6 Nov 2024 16:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730909234;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oFK4lU6B12gDl5NcQ8bStKX2YCBIjE84h/WDX0M3oX0=;
-	b=GVlxQEKN3N/ZUMBOshLxms6mGsMue3UYHWVi1mIDw1tBV2ZPdp8hmRhKTc2D2GXij2WUOv
-	t8Hq06BbIeQd3N/c/ocBmmwjaAH9JW/ey6GolnmYyvA6vQ9VC3MA2r5aCZITpotTGEitmz
-	224sR5GS3zq/J9+1J6kkSgt5kzEFNuI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730909234;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oFK4lU6B12gDl5NcQ8bStKX2YCBIjE84h/WDX0M3oX0=;
-	b=TpiLxwReKDl7e0yEg9XXcp1Uuush7wNq9HBMtCqDXUg9gHoPtPNXBSUrQjivAzEFj/uHRG
-	7SDYa2bi1PlVhkDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GVlxQEKN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TpiLxwRe
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730909234;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oFK4lU6B12gDl5NcQ8bStKX2YCBIjE84h/WDX0M3oX0=;
-	b=GVlxQEKN3N/ZUMBOshLxms6mGsMue3UYHWVi1mIDw1tBV2ZPdp8hmRhKTc2D2GXij2WUOv
-	t8Hq06BbIeQd3N/c/ocBmmwjaAH9JW/ey6GolnmYyvA6vQ9VC3MA2r5aCZITpotTGEitmz
-	224sR5GS3zq/J9+1J6kkSgt5kzEFNuI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730909234;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oFK4lU6B12gDl5NcQ8bStKX2YCBIjE84h/WDX0M3oX0=;
-	b=TpiLxwReKDl7e0yEg9XXcp1Uuush7wNq9HBMtCqDXUg9gHoPtPNXBSUrQjivAzEFj/uHRG
-	7SDYa2bi1PlVhkDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F49D137C4;
-	Wed,  6 Nov 2024 16:07:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DkGAAzKUK2dLWgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 06 Nov 2024 16:07:14 +0000
-Date: Wed, 6 Nov 2024 17:07:08 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hagar@microsoft.com, broonie@kernel.org, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Linux btrfs <linux-btrfs@vger.kernel.org>,
-	linux-mips@vger.kernel.org
-Subject: Re: [PATCH 6.11 000/245] 6.11.7-rc1 review
-Message-ID: <20241106160708.GE31418@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20241106120319.234238499@linuxfoundation.org>
- <CA+G9fYtjpUJFFV=FdqvW+5K+JL5ZYN4sPfVDjQovqzd7cib39w@mail.gmail.com>
+	s=arc-20240116; t=1730909298; c=relaxed/simple;
+	bh=JJmKb8/dtMAe1mZtrEBDHhFb04BdwpMXEsX6P3zTUa8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TkMsp59MhejaoUSLz+MK+6bUjw/FaaJg8NkjhIACPIPXR1c4NbAMkmFQtLTJ7YeSHa25mwB98NWcToZOtLcUcBhsTOlYGuR/OdHl7CdzoJjYyLtfCbdpTaLabMHGHxyL1IG3cDdxq0m6Tie4AdOfIelO2s30Gtt6NiuAINQZbtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZAho2Uy; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so1937a12.1;
+        Wed, 06 Nov 2024 08:08:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730909296; x=1731514096; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uWVgiw1PMvx4ovMJaY9CohyriMrKQ0YReuKZjfQ3WO4=;
+        b=CZAho2UyeA2H4OVkUHPh3ENiw48WDEqZbA3clIxd5jCuwmHp5Sovne7sLEb/jEwGz2
+         KZSTF4/GWAM6i3bp+1ehDS0YqyRcI8//P2UZHSQ6ELvNAW9UdsuI6Rdr3atHljRxOP1n
+         rcSGC5lLn9kVb6B4Sd/+eukmadbSPFJlljo9O8EhR0S/rrQ3vYBax8xq4aKswnYavEUu
+         HOcqYZuJp22ssBawRTYLrk1BxkdVKKVjwvz8EJXU3e5WGby/YHa0RcPQYhBJDMWCQnRi
+         C8YeF2aQL7e+OlA+5kKx/CIxOzabjeIfXUkAobReZT0qA2HIZehQcHJnnW4K0AiFoIA7
+         F41w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730909296; x=1731514096;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uWVgiw1PMvx4ovMJaY9CohyriMrKQ0YReuKZjfQ3WO4=;
+        b=Pu2F1Ipl3FxlHfHmzEHKPW9ViDHwLQ42l+TcaW4ABWrP9p8bxH6sZvqw+KF6kyBEEd
+         YJjd7nPOGsbVvi0C0Apfsh6CoZP3vSIl6qRdxnY+Q82xw8H5vhAssPqmjkxlvMcZvNpb
+         kr9/pGkUzCWgGDEezgAXNB8UARFniy5TgAkaQW1kfCrhlzpmw44Irk4Gp1kk+/LncKF2
+         owez9XBOMcVVEp1/+k8bAAXEHND96PWCwjA+e2Im6K7uOI4MzBLwqFNVsmm+A+bT6oeq
+         FbGQfZbi78NnFiVOjM2hXe1casn6B1I66v7GRhGlUPGE/KhtAtnaN824IHvF4uGux85m
+         j7vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWa56MdaSzjQk+21wvPkxxdcyEvGU+Q+u4t9PgCeF/7IRzo4SdvKSOH13Pp/7Atz5jJHmF7aCnquzXWzYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDQzSXinfZRlHsNE11Cf/6C8jMRRB2fVylVLGfx40LXPeubbww
+	yJ8P1tAks2zr1EnJDuB0woTy/bWaoa5gzEZETTzhh7dg+JrKTQ9c
+X-Google-Smtp-Source: AGHT+IGy6qICRptlaOd6/ohReRo+vIf4ipnFxTOvETzFHoSmb5HUD3llQNz5vDEL/w1NyNuLGlrgNA==
+X-Received: by 2002:a17:90b:164e:b0:2e0:a77e:82ff with SMTP id 98e67ed59e1d1-2e93c1f2029mr33085079a91.33.1730909296163;
+        Wed, 06 Nov 2024 08:08:16 -0800 (PST)
+Received: from carrot.. (i114-180-55-233.s42.a014.ap.plala.or.jp. [114.180.55.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a4f9ef0sm1715476a91.3.2024.11.06.08.08.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 08:08:15 -0800 (PST)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot <syzbot+9982fb8d18eba905abe2@syzkaller.appspotmail.com>,
+	syzkaller-bugs@googlegroups.com,
+	bugreport@valiantsec.com
+Subject: [PATCH 0/2] nilfs2: fix null-ptr-deref bugs on block tracepoints
+Date: Thu,  7 Nov 2024 01:07:31 +0900
+Message-ID: <20241106160811.3316-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <672270b5.050a0220.3c8d68.052a.GAE@google.com>
+References: <672270b5.050a0220.3c8d68.052a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtjpUJFFV=FdqvW+5K+JL5ZYN4sPfVDjQovqzd7cib39w@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 410DE1FD16
-X-Spam-Score: -2.71
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.71 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_CC(0.00)[linuxfoundation.org,vger.kernel.org,lists.linux.dev,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de,microsoft.com,fb.com,toxicpanda.com,suse.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLe1zdo9uk7dz69twkrygihbgb)];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 06, 2024 at 03:12:46PM +0000, Naresh Kamboju wrote:
-> On Wed, 6 Nov 2024 at 12:26, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.11.7 release.
-> > There are 245 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.7-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> The mips gcc-12 allmodconfig build failed on the Linux stable-rc
-> linux-6.11.y branch.
-> 
-> 
-> First seen on Linux stable-rc v6.11.4-642-g0e21c72fc970
-> 
->   Good: v6.11.4-397-g4ccf0b49d5b6
->   Bad:   v6.11.4-642-g0e21c72fc970
-> 
-> mips:
->   build:
->     * gcc-12-allmodconfig
-> 
-> Build errors:
-> -------------
-> ERROR: modpost: "__cmpxchg_small" [fs/btrfs/btrfs.ko] undefined!
+Hi Andrew, please add this series to the queue for the next cycle.
 
-The patch "btrfs: fix error propagation of split bios" needs
-90a88784cdb7 ("MIPS: export __cmpxchg_small()")
+This series fixes null pointer dereference bugs that occur when using
+nilfs2 and two block-related tracepoints.
+
+Thanks,
+Ryusuke Konishi
+
+Ryusuke Konishi (2):
+  nilfs2: fix null-ptr-deref in block_touch_buffer tracepoint
+  nilfs2: fix null-ptr-deref in block_dirty_buffer tracepoint
+
+ fs/nilfs2/btnode.c  | 2 --
+ fs/nilfs2/gcinode.c | 4 +---
+ fs/nilfs2/mdt.c     | 1 -
+ fs/nilfs2/page.c    | 2 +-
+ 4 files changed, 2 insertions(+), 7 deletions(-)
+
+-- 
+2.43.0
+
 
