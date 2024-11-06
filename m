@@ -1,140 +1,102 @@
-Return-Path: <linux-kernel+bounces-399056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A40B9BFA4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 587849BFA4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:42:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E7D28330D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:42:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DEE92841F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A732020E024;
-	Wed,  6 Nov 2024 23:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002BD20E00C;
+	Wed,  6 Nov 2024 23:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNcDhYDU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwH0kuOl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09508383;
-	Wed,  6 Nov 2024 23:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F08720CCF9;
+	Wed,  6 Nov 2024 23:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730936526; cv=none; b=qKToZjfEAlpkQ1ovQjBOxeh2zpcm0DlW6Y3KqwPCMYM8aNZoTjdeLpVNUGIi/3JSCHankiu20j4Nyf9+Pro3ZM5z94HNDPVl62agy216JDW0B73+KxCtLTwz9ExHxQWM0PXd68iMzX2s27JTHOkDdzsHxSSi8berExnverkRHIc=
+	t=1730936553; cv=none; b=aygLsfjJTJ3ISDgCfmjXWyGq7Wc6HB7c7SgSfUmU+h/ePxRbzkXIQl/7lKBle1IydoZCsdTaeMkM5SujtBRzCk4/mluaYNVJjEi2YAgL4TivmC0zRKUkIb0/+dt5csWl8cEz6WXaSQ08R+qtRmGTSL9LIBZlFC4r3ik+RTNFzTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730936526; c=relaxed/simple;
-	bh=kwrvRtpnL9wQxwLPaB3tUfEYfC0qsi4v9251ehrqVeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PD4xv17BXDghJNDpHEr8L5ZO64hlZ0NhL99jb9lB5mJL3rPcbCHI9behQkA06L2Lui110aue4O7BpGu+/lMKdFSzSgT+VFINgdYKd4FHU0Rs41LnCqMRQyvQwmX5hq+vJQfbQMJVjKO+YwFAlfoxNYTUdEm8ensbd7OLzwtNck4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNcDhYDU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B36CC4CEC6;
-	Wed,  6 Nov 2024 23:42:05 +0000 (UTC)
+	s=arc-20240116; t=1730936553; c=relaxed/simple;
+	bh=B1q7o+npEoONKwZmnr+KFAXAIsKTSD/0UKSdelMk7Rs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=XDtmrlONR/laRtAIUf2TnTLdUnGmjgtNVaA/WQzuHrrLhzhIIYfm22mMgHWrpDHN/1IcxL7QE3dxPebHoe4emaQJbA8aQg/T9S0zdauvLZLW8CCwGihn20K2lJyQ6GrLS9I8b15uBU2sM4m/T2PJn8Rn2q7O6zlWO2mp580dEzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwH0kuOl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E15EC4CEC6;
+	Wed,  6 Nov 2024 23:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730936525;
-	bh=kwrvRtpnL9wQxwLPaB3tUfEYfC0qsi4v9251ehrqVeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XNcDhYDUdSPyfOdgNO8jvSiKfDe8h+ARB1B6QxdNU03dkrPGlTLnzCvdRheiGYXx1
-	 B0fy/y+1nCzSja3bozoUAkxbMghhz24mKLBCO4D+eUvdFDm7T9bDj+0ttPwPCxyXbe
-	 XI75HpGg+mXySsz+X8F+xGdbTewJAyk8FcjC3aEeB/cv2I1xb1XZaiA53EWRr/Et9H
-	 1UA2V4JDnDklDyVod1sHvdZnBvd+Z3qRDqKsyhqblgtYa7iBUPbr4uz8fFxZi5m3gX
-	 yKEr18QDqBxO3Kj4sWi0BdvCsFTzEmoCDVWPgn9ptfS0Mchoikhs3uTgGYj0RsbjPQ
-	 DAXgeyF+NcTpA==
-Date: Wed, 6 Nov 2024 15:42:03 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	hch@infradead.org, gregkh@linuxfoundation.org
-Subject: Re: [RFC] module: Strict per-modname namespaces
-Message-ID: <Zyv-yxClglfwvmUa@bombadil.infradead.org>
-References: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1730936552;
+	bh=B1q7o+npEoONKwZmnr+KFAXAIsKTSD/0UKSdelMk7Rs=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=iwH0kuOl6SbK91wua1CEGvb9JBuxe2cxK8n/n9kZUc5L8fzfw5wYuRirzPkDrGZek
+	 KdwDNVRDDDTWAb9e3kbg5JLHJVpSxwyzKkRhYI9AL70zGB1l6WfpiQR4etzY11307u
+	 adBO2eHBuIiCaqQYTL2Vhwm7Mc8/V5icEDQMAJ9De+fswN+KsItcD0m43hpMsJIlIP
+	 G/xlttdEJ24HVxhDkdeNrsh6JtxLF2wWTK+i5zgTBXm+BclywfXI9/3c7jyo0yfANr
+	 /Mqa39d5fm+n5A2bHd/qR0GODhSfXXES3pVRbZlrOvyUtbgjH/INsSy7lz3pZIku92
+	 PW/v8KdGFk43g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Nov 2024 01:42:28 +0200
+Message-Id: <D5FHSOW7V440.36E1YDA8Q2698@kernel.org>
+Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
+ be disabled on boot
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
+Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Paul Moore"
+ <paul@paul-moore.com>, <linux-kernel@vger.kernel.org>,
+ <christian@heusel.eu>
+X-Mailer: aerc 0.18.2
+References: <20241015193916.59964-1-zohar@linux.ibm.com>
+ <D5FG6TOVUY5W.3SUG1J3CDB3J5@kernel.org>
+ <321b247dcfaba5d9691919eec8476b3c6fc7875d.camel@HansenPartnership.com>
+ <D5FHDIMJBWQM.2GWFOR0198360@kernel.org>
+ <D5FHR6UVEH4G.1OE6D5PDU26X5@kernel.org>
+In-Reply-To: <D5FHR6UVEH4G.1OE6D5PDU26X5@kernel.org>
 
-On Wed, Nov 06, 2024 at 08:02:40PM +0100, Peter Zijlstra wrote:
-> Hi,
-> 
-> I've been wanting $topic for a while, and having just stumbled into the
-> whole namespace thing by accident, I figured I'd give it a go, most if
-> the hard parts seem to have already been done.
+On Thu Nov 7, 2024 at 1:40 AM EET, Jarkko Sakkinen wrote:
+> On Thu Nov 7, 2024 at 1:22 AM EET, Jarkko Sakkinen wrote:
+> > > I'm a bit confused here.  It's TPM2_PCR_Extend we have the trouble wi=
+th
+> > > (as Mimi says in her email that you quoted) not TPM2_GetRandom.
+> > >
+> > > The random number generator reseed occurs in a kernel thread that fir=
+es
+> > > about once a minute, so it doesn't show up in really any of the boot
+> > > timings.  Plus even with sessions added, what there now isn't a
+> > > significant overhead even to the running kernel given it's asynchrono=
+us
+> > > and called infrequently.
+> >
+> > Ah, right then we need the boot flag, and my earlier comments to the
+> > parameter apply. I've never used IMA so I don't actually even know in
+> > detail how it is using TPM.
+> >
+> > Now that I did some seek I mixed this up with the report:
+> >
+> > https://chaos.social/@gromit/113345582873908273
+> >
+> > Anyway concerning this issue and patch, my earlier comments still apply=
+.
+>
+> Makes me wonder tho why do we then export tpm_get_random() in the first
+> place? HWRNG does not needed that export, and the code does not have any
+> of the mentioned features.
 
-Neat, hch suggested something similar a while back
+I mean specifically the code for tpm_get_random() and tpm2_get_random().
 
-https://lore.kernel.org/all/ZCIiBHyrzDoTJPXT@bombadil.infradead.org/
-
-> It reserves and disallows imports on any "MODULE_${name}" namespace,
-> while it implicitly adds the same namespace to every module.
-
-That's simple enough, I like it.
-
-> This allows exports targeted at specific modules and no others -- one
-> random example included. I've hated the various kvm exports we've had
-> for a while, and strictly limiting them to the kvm module helps
-> alleviate some abuse potential.
-
-Yeah we also want:
-
-EXPORT_SYMBOL_NS_GPL(bdev_disk_changed, MODULE_loop);
-EXPORT_SYMBOL_NS_GPL(bdev_disk_changed, MODULE_dasd_kmod);
-
-But we might as well have EXPORT_SYMBOL_GPL_FOR() with the implied
-module list. We could then add just:
-
-
-EXPORT_SYMBOL_GPL_FOR(bdev_disk_changed, loop);
-
-But it would be nice to just also support this as well:
-
-EXPORT_SYMBOL_GPL_FOR(bdev_disk_changed, loop, dasd_kmod);
-
-That's possible perhaps something grotesque like this:
-
-#define _EXPORT_SYMBOL_GPL_FOR_EACH(name, module) EXPORT_SYMBOL_NS_GPL(name, MODULE_##module);
-
-#define _GET_MACRO(_1, _2, _3, _4, _5, NAME, ...) NAME
-
-#define _EXPORT_SYMBOL_GPL_FOR1(name, a) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a)
-
-#define _EXPORT_SYMBOL_GPL_FOR2(name, a, b) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, b)
-
-#define _EXPORT_SYMBOL_GPL_FOR3(name, a, b, c) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, b) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, c)
-
-#define _EXPORT_SYMBOL_GPL_FOR4(name, a, b, c, d) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, b) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, c) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, d)
-
-#define _EXPORT_SYMBOL_GPL_FOR5(name, a, b, c, d, e) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, a) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, b) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, c) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, d) \
-    _EXPORT_SYMBOL_GPL_FOR_EACH(name, e)
-
-#define EXPORT_SYMBOL_GPL_FOR(name, ...) \
-    _GET_MACRO(__VA_ARGS__, \
-               _EXPORT_SYMBOL_GPL_FOR5, \
-               _EXPORT_SYMBOL_GPL_FOR4, \
-               _EXPORT_SYMBOL_GPL_FOR3, \
-               _EXPORT_SYMBOL_GPL_FOR2, \
-               _EXPORT_SYMBOL_GPL_FOR1)(name, __VA_ARGS__)
-
-  Luis
+BR, Jarkko
 
