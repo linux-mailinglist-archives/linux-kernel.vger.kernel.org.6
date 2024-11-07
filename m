@@ -1,111 +1,76 @@
-Return-Path: <linux-kernel+bounces-400460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC809C0DF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:39:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD3E9C0DF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:39:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C221F2387D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:39:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C34D1C222AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C487217318;
-	Thu,  7 Nov 2024 18:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNAG+MJt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37D9217310;
+	Thu,  7 Nov 2024 18:39:54 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D362101BC;
-	Thu,  7 Nov 2024 18:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E422101BC;
+	Thu,  7 Nov 2024 18:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731004760; cv=none; b=QcSsvb3cre1HbOON5hXEpWYYo6gvzxpke1BCDC/sLibn+/EzSwHtVUHCNwJnhNYBHAP0oIzdVHKCUd0RAFl9zgNgjg1Kxeh76df6/Z582khWX7OPk8PkDg6xbg4y4TjL35UdGFJ3UT9aNy4t7hdYmeITmZ0LGTDIo5qURYmEs4c=
+	t=1731004794; cv=none; b=qIvLRlFuabJNihavoTauaRofMXZvx0YdLktxsPtSdy4CMgs5dtQpJjJ27wLsMdhYJkZ0GP3mbXCLeQ6J4fxtiRYA1xb8vNGZuqjSXHsJcXWuinWvE3BfjHINS5nNN79k4SDN48uQyCRu0R133is1w+9IUkHLJKsxrU0Y9/s+14s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731004760; c=relaxed/simple;
-	bh=hCkkdu73hQGPvGzbLfLCeST5jOjzoBQGbV91cnCWD0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CTaRnzFZq5q+3JS1F8vbOXuky00QXVIcPS9f3fcPkE7TzQevX8hrUFQbUK7+pWId8K9slXdFUSU98pEw1OV3UMpA4A5PL3Ybx87/hTgViMgHPY+o4o7mTgRReDFke/zpBhwU2auSmUyO1OMUappwGA0QbdiEN/gzsS9ygQ/TMzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNAG+MJt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35012C4CECC;
-	Thu,  7 Nov 2024 18:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731004758;
-	bh=hCkkdu73hQGPvGzbLfLCeST5jOjzoBQGbV91cnCWD0U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tNAG+MJtqHQORwp12W5tqpy9AAV068tUC/40ZMwFjqFKc50LIauzpv1OtqbuA3LQv
-	 jWUDMxma1PnUoWCF/mGwLDjr4W8tJqEdnWSaLhjaQbebBOPs7/bakm3BtSrFag/KGz
-	 wHr/0wKFTOSQNSU1SfeECNKsQw94TVXcMmR1q/6qpX6kWwd1K1hPsskytoBoaxMUrB
-	 WJ8snLcan8XDZOZsv8qeY2A9/CQl253SqDTnvIryx79ceR3wAirhjHfQryPnmkege4
-	 xIcOCgY875h/5nyPpAnBQ4+6CBjU+4sUpUPIM6mEZa7SWnTawONAMlak7Lom8rUjki
-	 vxF1qhLvwONyQ==
-Date: Thu, 7 Nov 2024 18:39:08 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dominik Karol =?UTF-8?B?UGnEhXRrb3dza2k=?=
- <dominik.karol.piatkowski@protonmail.com>
-Cc: lars@metafoo.de, gregkh@linuxfoundation.org,
- parthiban.veerasooran@microchip.com, christian.gromm@microchip.com,
- sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-fbdev@vger.kernel.org, Michael
- Hennerich <Michael.Hennerich@analog.com>
-Subject: Re: [PATCH 1/4] staging: iio: Remove TODO file
-Message-ID: <20241107183908.248ed108@jic23-huawei>
-In-Reply-To: <20241107172908.95530-2-dominik.karol.piatkowski@protonmail.com>
-References: <20241107172908.95530-1-dominik.karol.piatkowski@protonmail.com>
-	<20241107172908.95530-2-dominik.karol.piatkowski@protonmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731004794; c=relaxed/simple;
+	bh=Wz5EzWRmbP96dtKYFiUnMd4mqH4d3pyYsGGFXySZ7DQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qk07RkDLuPMRGnMhalUoBkAiCwPSBP+oLsM6h+oYBbZ+5EIoG+I6jIEzIVWlZK8qe03rpS3x+9ZSZNuOhGLJFEqUaluhmU0+dHjmoDSEy9GYU9dnHzNdsSPcBbdnphknYacxq3ZVUwp/9X/VcaGpUbze6iwnWecnQipqXfX2CL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5FCC4CECC;
+	Thu,  7 Nov 2024 18:39:52 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] kselftest/arm64: fp-stress signal delivery interval improvements
+Date: Thu,  7 Nov 2024 18:39:50 +0000
+Message-Id: <173100478595.985049.4978407619921174171.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241030-arm64-fp-stress-interval-v2-0-bd3cef48c22c@kernel.org>
+References: <20241030-arm64-fp-stress-interval-v2-0-bd3cef48c22c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 07 Nov 2024 17:30:51 +0000
-Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@protonmail.com> wro=
-te:
+On Wed, 30 Oct 2024 00:02:01 +0000, Mark Brown wrote:
+> One of the things that fp-stress does to stress the floating point
+> context switching is send signals to the test threads it spawns.
+> Currently we do this once per second but as suggested by Mark Rutland if
+> we increase this we can improve the chances of triggering any issues
+> with context switching the signal handling code.  Do a quick change to
+> increase the rate of signal delivery, trying to avoid excessive impact
+> on emulated platforms, and a further change to mitigate the impact that
+> this creates during startup.
+> 
+> [...]
 
-> Remove TODO file, as it only contains contact information.
->=20
-> Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@pr=
-otonmail.com>
-> ---
->  drivers/staging/iio/TODO | 5 -----
->  1 file changed, 5 deletions(-)
->  delete mode 100644 drivers/staging/iio/TODO
->=20
-> diff --git a/drivers/staging/iio/TODO b/drivers/staging/iio/TODO
-> deleted file mode 100644
-> index 0fa6a5500bdb..000000000000
-> --- a/drivers/staging/iio/TODO
-> +++ /dev/null
-> @@ -1,5 +0,0 @@
-> -2020-02-25
-> -
-> -
-> -Contact: Jonathan Cameron <jic23@kernel.org>.
-> -Mailing list: linux-iio@vger.kernel.org
+Applied to arm64 (for-next/kselftest), thanks!
 
-kernel.org entries tend not to get stale very quickly.
+[1/2] kselftest/arm64: Increase frequency of signal delivery in fp-stress
+      https://git.kernel.org/arm64/c/a3590d71a1ac
+[2/2] kselftest/arm64: Poll less often while waiting for fp-stress children
+      https://git.kernel.org/arm64/c/161e9925053c
 
-Indeed redundant.  I'll assume Greg will pick this up if he is
-happy with it.
-
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-Hmm. We should probably write a meaningful todo for the left over
-IIO drivers in staging beyond 'fix the driver, mostly ABI issues'
-but doing so involves going half the way to actually fixing them.
-
-Every now and then I moot just deleting them all and instead
-poke Analog to remind them these exist.
-
-Michael, consider this another poke :)
-
-Jonathan
+-- 
+Catalin
 
 
