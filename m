@@ -1,225 +1,164 @@
-Return-Path: <linux-kernel+bounces-399873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C449C05AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:24:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381EC9C05B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8459F283DBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:24:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A7D1C22330
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D20A20ADF9;
-	Thu,  7 Nov 2024 12:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0B620EA4A;
+	Thu,  7 Nov 2024 12:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXcVzkxG"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gsW5RuK/"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED2E1F4739;
-	Thu,  7 Nov 2024 12:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F9C1F668B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730982237; cv=none; b=g4odc737pj47XViWMo7sF6RZMDNQXFW393PfLcXXcgGIQH9YxVlBpAfVvv9nyroY3Q9Vl8ectksr6aa9X03oPY1lEoI0TrUGGow3hKpozR5/ThGqcD2MiWDqtt8C3DR3oQnk4bg0COCAnuouvU0stb2M0cZmO/pTiLgwDYBPeiY=
+	t=1730982321; cv=none; b=rk8FS0OMwDOLXSC67AtkEvVSsrng6fEe4Utgm/amDmDLWIqM+PZmz4rab2VLdSLFUbCByIslPe6DXLH1Zj5JcMnGdd3iU24DbK3enKi9kKj3GvpckPIddjdL3vPsckNh6ZcuVvt9OiKfchW3zLsKI6UykD+Pv9NzBdF3Ze3ElVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730982237; c=relaxed/simple;
-	bh=lOvVeVs6/OioTgLwwdvhBos+jrtm8bl9raVO7S2lDYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXas5ceq7nqiFDJuddCfxAR99Rp9Q83Ol9bnpQjygFfXHAXbDhxnJW9LZV6ATfHX3wLRLcn2bxRkpyytjoRzTOAGiMHHEA8GWq7q5bYuDKraxyFbDB4AimUHX/ht4SFoLweexYSIff5odBChEDGcD+/8FLy6ednhycfGg5lzRoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXcVzkxG; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c913aso1433117e87.1;
-        Thu, 07 Nov 2024 04:23:55 -0800 (PST)
+	s=arc-20240116; t=1730982321; c=relaxed/simple;
+	bh=uOHtoOGSDgDkow1wLA2awmZ3A8Qe3ptAdpnofZDjgqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ahQibMVlkpLxdLMtb8byZxEI0yrNrKniR1EgHg+z7O+CrPM8YVAwnNHAa96wz3fosDyZJd6w3Ce2IMaSbTanSNo1e61r5A5pTURyfgahJOBwsDEX7YlnvvdhOsrp/FPGBysp70jQa+Jzod0+ksaThWGH4TXKn/SLDmK0yYjtZMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gsW5RuK/; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3807e72c468so134408f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:25:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730982234; x=1731587034; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e5mEBnJVQCgTXAayGd8aqvDjLlsqmRz+483jS2oi5/Q=;
-        b=XXcVzkxGz++EDMv3Tc6NjGcv1+n0y8Ybr2/VmOmJF1/36rEQSopwso7eMf7WEjKjyx
-         DL35Pmy11LtIrPT4MNeDtew08d8ShRpUrxyVOyeLHELEUBIgnUgSyPZ+0lNXQgX7L+a5
-         7KcsCr8O7kjHUjYgojMHrP8L2x4WQTDX4sD9v6vndhPVcSKJ/MH8rMS6OhrKf/ZIgdcK
-         iHrB4dBZnAwY88Vompa2ogNZUWyi65RpbC4rvx95J05JEfpnEtchVdRYsFbfy39ysalJ
-         aHiM6pZY5GYrMEVmEeNXFiLQzWmGBBF0UOU1O08+BsqpnAg+mHIJAirdy1EsrXu+az0I
-         mBcg==
+        d=linaro.org; s=google; t=1730982317; x=1731587117; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lzbdXmjU7p6o20uBK8Vs/ZUnlHfeyC3jV0YTi+RLdZs=;
+        b=gsW5RuK/QVDvjg+NYAX3GtP5VTunCSDJIGe0M5t3ED9PufbRLLGCEYp7BKtAoIoKwg
+         k1ziHzQxjJWkq1QgynrKATcUyjVCu1Go/r2KFM6XGhaLgvojxIIQf0p4SjpMfUQe6OaZ
+         wcQ9AaE6to2Q20J8bZ1KwaH0UF2SvBRTS98XRch6vxmxABwXhwQ6FfB5kBPVnBiRgN5t
+         mrrh3HOoDTBkDfOXi9aMAsXe/LlfUZsYsm8KWLbNHlTlwkLlQhtT03MtZcw3VqGRHl4N
+         1GqjAi7hrdDOsFWtq0So6qjnNZWVHBO8fGAcInoOtr6wvsptaQ1VQZpFBOQg8ZJn9NRt
+         TDWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730982234; x=1731587034;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e5mEBnJVQCgTXAayGd8aqvDjLlsqmRz+483jS2oi5/Q=;
-        b=OOBBAJogSrq+jd3wf/IJ3VTEuqQGML6/TiqHWgWgNtub3DGvcHsX27xk9O+rSSisKn
-         pE70zRG3HtZdBGKKvA0bGU2Uxt9Z2atTy6XuZPqAgA0Nb0JlEswa0C0sdhxFPTpe4Brc
-         WUN1NEbB5CjR7+W7wyuco4ocjxQT7t3DLycb633g2aEExmiNHvI8y/qcw1zCjqaPc6JS
-         StpzABAItUpu64l4WNFlyvbaOD+ruWfMkdzXihtpt29fltaM9d/65Hp/cwYpKJbNnTVc
-         cNswKs5LTyp2Hg+VQZCIkuk9VjQZVtkcqDPoTVRzsruOCKTC7cgtgUqGqAGFCmdGS560
-         jtLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCu9xga/hTIi3qPhMzuB8c8jjFZ7HgeWY6/FK7n1I3/JkHNFKkU58k2vDK+ZDDAJSiEV3qaLBlkyyUXUZr@vger.kernel.org, AJvYcCVHMKPDCMlv6XtghPY566GdhN2ohCrGkv7EbsjIC3/XM9TV0O0XMI/FDDKGUisL5rFbzf9nHdRHGadL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9y9kAvsLNYXlgjdm4pCTr2wXLR1siB5kAexyqMBOSse/RouDj
-	9OJsLCi8MfjZscAM53H1Xyg1eCLl1sVot0ktBAHtmfDzCKSgRuKF
-X-Google-Smtp-Source: AGHT+IE5NOF+MyMOh9t0PoQGFx/p+V9qIGMTb9aDtyWJG88Z0H59EDALHldmpa4vGm3Ty1CexYNlxw==
-X-Received: by 2002:a05:6512:3c90:b0:539:ea54:8d22 with SMTP id 2adb3069b0e04-53b348d2696mr22712509e87.18.1730982233632;
-        Thu, 07 Nov 2024 04:23:53 -0800 (PST)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826aec00sm193887e87.240.2024.11.07.04.23.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 04:23:52 -0800 (PST)
-Date: Thu, 7 Nov 2024 13:23:49 +0100
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] dt-bindings: mtd: davinci: convert to yaml
-Message-ID: <ZyyxVQww6PcYWFJU@gmail.com>
-References: <20241107-ondie-v6-0-f70905dc12bf@gmail.com>
- <20241107-ondie-v6-2-f70905dc12bf@gmail.com>
- <5r6j26qwcxyppxicdqih6tskb2qxkb5phzjtwqv47iqb4qupkp@zxujctq7ot6k>
+        d=1e100.net; s=20230601; t=1730982317; x=1731587117;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lzbdXmjU7p6o20uBK8Vs/ZUnlHfeyC3jV0YTi+RLdZs=;
+        b=hVYAajemcuyjMlO4+4nBu9vShsw7Hrz1YDFgqGtSmWo7c17YipuFQhkJXJsdVtYUP8
+         MtvFKOqilFkOukVgDCu4JaB+nZO3PjsqWQ5G1VZrTM6Yp6Osv5wKsuLZRjSDwBjU54i1
+         /6Tdm8oBxKeTflVo3d4yIQpYRD15T8qlZNDWOt0ccgWK5svWmaLqQ1FeeiEQ675jpWkk
+         jcwDxCkxMYI0Df1x6uwfMkoqqYYbN7kOkYg0MoVJcOyzs9EhW1IeiVhdu+5iFqDCIGOV
+         4w3zuXX0ph4VOx3arvXiviW+pTDRWIVQa0ipUgUvNVEithuRbWNFaGszUkZfFLrqALN1
+         jQ7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwqcV0qiymr2UGvKjLabFQFpuqFDfN3Rga6iT/Aq4wey2E2La3greBCnhXEzuQAtyuUJ34bGB5uTLghBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpCz+EWLXRih/uOZx1U1Zui7N//TK+OsIjXI2cpGhR5qHwcAOu
+	gmYNlGIMzR0oenIZaUsgeObOe19xwXoYTfbAoouSOtRwwHT21WRSvqhX6pWNrY8=
+X-Google-Smtp-Source: AGHT+IFOgPssWZsDH1j5T86iLoVp1PjuAQf1YJ308gU5MuuoGMyMeA0iydRzzX36J0FJAIprsNb+6w==
+X-Received: by 2002:a05:6000:400b:b0:37e:d940:a9fe with SMTP id ffacd0b85a97d-381ef746475mr362301f8f.13.1730982316616;
+        Thu, 07 Nov 2024 04:25:16 -0800 (PST)
+Received: from [172.20.144.41] ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea5c1sm1625361f8f.81.2024.11.07.04.25.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 04:25:16 -0800 (PST)
+Message-ID: <0ce2df56-85be-44da-af23-cc5bee98e14d@linaro.org>
+Date: Thu, 7 Nov 2024 12:25:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GpFM4aHg++qMfh0c"
-Content-Disposition: inline
-In-Reply-To: <5r6j26qwcxyppxicdqih6tskb2qxkb5phzjtwqv47iqb4qupkp@zxujctq7ot6k>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: qcom: Add CAMCC clocks for
+ QCS8300
+To: Imran Shaik <quic_imrashai@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das
+ <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com>
+ <20241106-qcs8300-mm-patches-v3-3-f611a8f87f15@quicinc.com>
+Content-Language: en-US
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241106-qcs8300-mm-patches-v3-3-f611a8f87f15@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 11/6/24 11:51, Imran Shaik wrote:
+> The QCS8300 camera clock controller is mostly identical to SA8775P, but
+> QCS8300 has one additional clock and minor differences. Hence, reuse the
+> SA8775P camera bindings and add additional clock required for QCS8300.
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>   .../devicetree/bindings/clock/qcom,sa8775p-camcc.yaml    |  6 +++++-
+>   include/dt-bindings/clock/qcom,qcs8300-camcc.h           | 16 ++++++++++++++++
+>   2 files changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> index 36a60d8f5ae3..81623f59d11d 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
+> @@ -8,16 +8,20 @@ title: Qualcomm Camera Clock & Reset Controller on SA8775P
+>   
+>   maintainers:
+>     - Taniya Das <quic_tdas@quicinc.com>
+> +  - Imran Shaik <quic_imrashai@quicinc.com>
+>   
+>   description: |
+>     Qualcomm camera clock control module provides the clocks, resets and power
+>     domains on SA8775p.
+>   
+> -  See also: include/dt-bindings/clock/qcom,sa8775p-camcc.h
+> +  See also:
+> +    include/dt-bindings/clock/qcom,qcs8300-camcc.h
+> +    include/dt-bindings/clock/qcom,sa8775p-camcc.h
+>   
+>   properties:
+>     compatible:
+>       enum:
+> +      - qcom,qcs8300-camcc
+>         - qcom,sa8775p-camcc
+>   
+>     clocks:
+> diff --git a/include/dt-bindings/clock/qcom,qcs8300-camcc.h b/include/dt-bindings/clock/qcom,qcs8300-camcc.h
+> new file mode 100644
+> index 000000000000..fc535c847859
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,qcs8300-camcc.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_QCS8300_CAM_CC_H
+> +#define _DT_BINDINGS_CLK_QCOM_QCS8300_CAM_CC_H
+> +
+> +#include "qcom,sa8775p-camcc.h"
+> +
+> +/* QCS8300 introduces below new clocks compared to SA8775P */
+> +
+> +/* CAM_CC clocks */
+> +#define CAM_CC_TITAN_TOP_ACCU_SHIFT_CLK				86
+> +
+> +#endif
+> 
 
---GpFM4aHg++qMfh0c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 
-On Thu, Nov 07, 2024 at 11:17:14AM +0100, Krzysztof Kozlowski wrote:
-> On Thu, Nov 07, 2024 at 10:19:54AM +0100, Marcus Folkesson wrote:
-> > Convert the bindings to yaml format.
-> >=20
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
-> >  .../devicetree/bindings/mtd/davinci-nand.txt       |  94 -------------=
 --
-> >  .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 134 +++++++++++++=
-++++++++
-> >  2 files changed, 134 insertions(+), 94 deletions(-)
->=20
-> ...
->=20
-> > +allOf:
-> > +  - $ref: nand-controller.yaml
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - ti,davinci-nand
-> > +      - ti,keystone-nand
-> > +
-> > +  reg:
-> > +    items:
-> > +      - description:
-> > +          Access window.
->=20
-> Merge two lines. See other files how they do it.
-
-Ok
-
->=20
-> > +      - description:
-> > +          AEMIF control registers
->=20
-> Merge two lines
-
-Ok
-
->=20
-> > +
-> > +  "#address-cells":
-> > +    const: 1
-> > +
-> > +  "#size-cells":
-> > +    const: 0
->=20
-> These two properties are not needed, drop. I don't understand why did
-> they appear here. Changelog also does no explain it.
-
-Ok, I drop those.
-
-[...]
-
-> > +examples:
-> > +  - |
-> > +    bus {
-> > +      #address-cells =3D <2>;
-> > +      #size-cells =3D <1>;
-> > +
-> > +      nand-controller@2000000,0 {
-> > +        compatible =3D "ti,davinci-nand";
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +        reg =3D <0 0x02000000 0x02000000
-> > +        1 0x00000000 0x00008000>;
->=20
-> Two items must be encoded as two items, so two <> <>
-> Also messed alignment. See DTS coding style.
-
-Ok
-
->=20
-> > +
-> > +        ti,davinci-chipselect =3D <1>;
-> > +        ti,davinci-mask-ale =3D <0>;
-> > +        ti,davinci-mask-cle =3D <0>;
-> > +        ti,davinci-mask-chipsel =3D <0>;
-> > +
-> > +        ti,davinci-nand-buswidth =3D <16>;
-> > +        ti,davinci-ecc-mode =3D "hw";
-> > +        ti,davinci-ecc-bits =3D <4>;
-> > +        ti,davinci-nand-use-bbt;
-> > +
-> > +        partitions {
->=20
-> Where are the partitions documented? In which binding? Don't you miss
-> mtd.yaml? I think this binding misses some references, but I am not sure
-> which ones.
-
-I thought this covered it?
-
-+  partitions:
-+    $ref: /schemas/mtd/partitions/partitions.yaml
-
->=20
-> Best regards,
-> Krzysztof
->=20
-
-Thanks,
-Marcus Folkesson
-
---GpFM4aHg++qMfh0c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmcsr3IACgkQiIBOb1ld
-UjLyKxAAuaB0k58jrWRz6TcX8Bmicff94QbzPurIsl+uRngj83sqmSHvSHqZl0g0
-nv+48TxVVK0ZowVop2xs/gR2dUESfOKUz0iuuDmlUYV1ovv3tRDTNxWKgKc7PPEJ
-ZvTPBoOyq3VycCkdM49+DHkQFrfkMA26nhS1mEkCwfx1vgSIH0/4YTyw8MX2RfG+
-F14bhPCCbtiX2hX+1vS3wxWS48+0RGXEEJp8dps+kHWjdpWS/FPSbnM6pS3nP4EG
-2FMuzXeGYLN6hR8l8Zr2pG4v/11UUvSEn6x2/iw2NwFRprSpiOY9nnqo6moQwD3e
-2a+ayjLiBXxbXUZ03n95vtgrvhmjoTY7FtKHHeiIVgYzpAoiY8WAk68Z+71ja47g
-AhzDyLBTmNqGcc1lRzRfOTeQa9+2MAT1ok3fdDowukOjVq02uBnNgUshaRuxVVY2
-39+bJBKi88w6e1I+bVFe2wMqlEDc3znzVe+gHuuy4wIpOkVFRBD0zUwLJkBRt0xV
-5/czo53tj7Gzt2+J84PmeSaM5DcIrGwYwK4GJKbvD9cnGUmsDc4stra6fTsVA8Hj
-ABQ2KWAnIZkc9w5MdefpGz0CBIfO8uiXhNFL9YqfAvJyXuTjx5Q1VW5m8k5EImA3
-oxQj4ZU3I1CnwzzPsfiZihIvkbeMsk4mGL3JBFdh6m91W1iyv1E=
-=rTaQ
------END PGP SIGNATURE-----
-
---GpFM4aHg++qMfh0c--
+Best wishes,
+Vladimir
 
