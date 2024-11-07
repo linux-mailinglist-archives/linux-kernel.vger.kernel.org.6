@@ -1,84 +1,79 @@
-Return-Path: <linux-kernel+bounces-400743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF64B9C11AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:29:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F369C11AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1491AB211AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:29:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A311F24E57
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25116218D74;
-	Thu,  7 Nov 2024 22:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B66218D92;
+	Thu,  7 Nov 2024 22:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pissmail.com header.i=@pissmail.com header.b="PsPpROzq"
-Received: from mail.pissmail.com (mail.pissmail.com [173.249.47.55])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZyswXx54"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6254218306
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.47.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87121218D64
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731018545; cv=none; b=uuEVcd1wbkwnyrvrupXwkQ2my+3WW5uEpvEbj6CPTh7m+3IcTcoAuyWyLEMG17SE20GmxbyxlINomOVG8IZsAYI4n19S1pEf82TYB3naeURO857WZ67+LYvK+3Dz/kUtWcFxrjQVlBhLMDzuLEp2m+S/dEFpgL+NssEtUdkT6Zo=
+	t=1731018580; cv=none; b=OxSQQC/qF9tIuyTYnTJ4VHvcQ3puq5qYdk3m0P4plzGc5yrVM98d8C+ZwTavwClGZL0P9O3sL7Wd0FUwUua+jgKDEBO51Azq/lZXWwQjrUXU9/rpacZmIrqM0urTOxsJAYVdmG36p8JswQQOJh1y1jZY92yPynGpqHOM5TPMVG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731018545; c=relaxed/simple;
-	bh=+CD+TPpXt3lU4nxoxW3tMNT0OEn53ASawI0ed/NJeuo=;
-	h=MIME-Version:Date:From:To:Subject:Message-ID:Content-Type; b=bO2utDIqVyZKqdQyOmyu/dJUUT50K4FZwFaM/ua1g03heJ8pfGynctcv8UJ5gr8xwd/C2Bkpej60shFRculkS/IeqP9c4AwbP+4XSoQn+V1N9w3jUPofuTKm5wcF/Evto8BqFjQ5B+O6qtPTz9pa5NsN6w34lD/bFaVuc0vO/gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pissmail.com; spf=pass smtp.mailfrom=pissmail.com; dkim=pass (2048-bit key) header.d=pissmail.com header.i=@pissmail.com header.b=PsPpROzq; arc=none smtp.client-ip=173.249.47.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pissmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pissmail.com
+	s=arc-20240116; t=1731018580; c=relaxed/simple;
+	bh=St/6DyT7z6EJRIdONXdukFEuSQSXlgKKfl6cWEurTUA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=FybBvc+mPhhpRpVV9WDeUpf47nVJNuDKrckgsDfh2mEsqc0htyXL/vQJW1Uvvl5iRua3fHY0pgWVSqR3VAoz21yNYxuDEKVW8DSU2plNtL62ZnFQxGrA/3Luk4CHd6P662VeELh0sPpONmp10gR5SFOa4TuE9XOYTsVaQtO+PeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZyswXx54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB63AC4CECC;
+	Thu,  7 Nov 2024 22:29:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1731018580;
+	bh=St/6DyT7z6EJRIdONXdukFEuSQSXlgKKfl6cWEurTUA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZyswXx54idrLmADj6qzHP6GC8Y5KqAWcBDlDnbabLQ21CIZiFL3P6AGkupr9U+8qn
+	 84k2GlB+AE/dxI6fMTzv78ACKU4rJgQVsx4ek68t5jckK39uFUWYfRRtoyXpNPKoQP
+	 JKXA6+7X5XXU0YJJcHZb/8+36NZ5yQCQMGx1seWo=
+Date: Thu, 7 Nov 2024 14:29:38 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Marco Elver <elver@google.com>, Arnd Bergmann <arnd@kernel.org>,
+ Sabyrzhan Tasbolatov <snovitoll@gmail.com>, Andrey Konovalov
+ <andreyknvl@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: export copy_to_kernel_nofault
+Message-Id: <20241107142938.c38ce0a63add88af49216b2f@linux-foundation.org>
+In-Reply-To: <ZxigQIF59s3_h5PS@infradead.org>
+References: <20241018151112.3533820-1-arnd@kernel.org>
+	<ZxidW3lvA5Pqu71m@infradead.org>
+	<CANpmjNNK_viqTuPxywfvZSZSdWGRsb5-u1-oR=RZYTh7YKk8cQ@mail.gmail.com>
+	<Zxiev9UaoUlI1xs9@infradead.org>
+	<CANpmjNPvBnov-EFk1PNO4GEOF7XLG7S1bYYjg9i4Ej=ZzaA6ag@mail.gmail.com>
+	<ZxigQIF59s3_h5PS@infradead.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pissmail.com;
-	s=dkim; t=1731018541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wbAgVkV20NZc2t1V+rliA3gwoLS+YbYAyFl1eZkVZgM=;
-	b=PsPpROzqcHPpMhCVBXTSyTxZvzjDe2MWaiSqMcuLbisHlPfG+iRI2XQqi97J2f5Er+JEFb
-	r+D+k6ag0o88P6oUAPGG7aucS3hv9UAj9d1lyeBz3NH5HUHm13XJo1HiDQWQZkL7zzE7Vf
-	MAahLDVtNDuX2t/M/tSJ4Tizp9NxO1rIs/3BDcXJGjxcfEdm60Fibx19DKbizftbTVdSzW
-	30CxOusyTdrDKI2HPIXUbW5d78fclrxl0n9Rkna1pyX+9rL1E2ofHfeMms9Qbvfh9MhTp/
-	w92xV+r/o24iij4NlLB/cD3QOWoe+mRSoevgjnKuAEhLN0AnaKIBYbH+ddB5yA==
-Date: Thu, 07 Nov 2024 22:29:00 +0000
-From: mortodenoite@pissmail.com
-To: linux-kernel@vger.kernel.org
-Subject: Richard Stallman on the removal of Russian Linux maintainers
-Message-ID: <04341f4cf2dc9efedda3a261246582c8@pissmail.com>
-X-Sender: mortodenoite@pissmail.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spamd-Bar: /
-Authentication-Results: mail.pissmail.com;
-	auth=pass smtp.mailfrom=mortodenoite@pissmail.com
 
-[[[ To any NSA and FBI agents reading my email: please consider    ]]]
-[[[ whether defending the US Constitution against all enemies,     ]]]
-[[[ foreign or domestic, requires you to follow Snowden's example. ]]]
+On Wed, 23 Oct 2024 00:05:36 -0700 Christoph Hellwig <hch@infradead.org> wrote:
 
-Free software calls for giving people the freedom to cooperate.
-That means a group of people are free to cooperate when they all
-want to cooperate.
+> On Wed, Oct 23, 2024 at 09:02:23AM +0200, Marco Elver wrote:
+> > Another alternative is to just #ifndef MODULE the offending test case,
+> > so it's only available if built-in. No need to just make the whole
+> > test built-in only. I know there are users of this particular test
+> > that rely on it being a module.
+> 
+> That sounds good to me.
 
-But that is not the precise requirement.  That is a consequence of the
-requirements.  The precise requirement is that users be free to make
-and distribute copies of their modified versions as free software.
+We still don't have patch which does this, so this series is stalled.
 
-Those Russian have a moral right to distribute copies of their
-modified versions of Linux.  But they have no moral right to demand
-that the Linux developers _use_ those changes.  Whether you use
-someone else's changes should be up to you.
-
--- 
-Dr Richard Stallman (https://stallman.org)
-Chief GNUisance of the GNU Project (https://gnu.org)
-Founder, Free Software Foundation (https://fsf.org)
-Internet Hall-of-Famer (https://internethalloffame.org)
+Sabyrzhan, could you please consider this?
 
