@@ -1,119 +1,227 @@
-Return-Path: <linux-kernel+bounces-399077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26EAE9BFAC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:29:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2794F9BFAC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A596CB22569
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:29:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4411F229AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D824431;
-	Thu,  7 Nov 2024 00:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDF2522F;
+	Thu,  7 Nov 2024 00:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8oyJtXZ"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="QkA/XWXt"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D872119;
-	Thu,  7 Nov 2024 00:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F071FA4
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 00:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730939338; cv=none; b=j26x2MqV6N5mDQr3poWySx5SUa8fBhxZfnWFlH/kT+q7n72SDdHtN8qZDcphnNXCB04Irio1PcZ7keMToQt1awNUzIbDN/Okpl28NVJ3unUy8hxAq5RwaFuQYDfipUdk1lLJUqzspUhFALeWOQIw2GhIjZNGwPefE17Ki83aJkc=
+	t=1730939402; cv=none; b=PoXU0+0ETaCs3/7/hRAGhHR/xY8jR0RlriUn3c82ecm6XLZcm/tKEpl2r3e2SSMeUlc9J7XdpgUUjb4TZXT/mNhZkDQNLDoKClDIlLn/F7TisARCT+tJldl+Y/4I6/obUxFwMAVapsuJFx5gnyjenTUriFTBNPVcXrLSIdluEQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730939338; c=relaxed/simple;
-	bh=u+V3TUjDT6tl4Qikv/xjO+hVpAehJbG1ZbBddW98Vk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cj6aFN9e1yNKXAs+dN/VEBagJKrC0uRudML3d0WYjODg0kK5Ic2ZRJ2fCA9dwtmhVng/+OO58PEKRpOTr+CdI1E4I0JXNweaLPdpqjAW22fNeepPUQn502oLi6il4X/Kg6cYhSiZXd5YxTcr+2F5PgQaEfZzy4/91VNgtioUxm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8oyJtXZ; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-720d01caa66so319359b3a.2;
-        Wed, 06 Nov 2024 16:28:57 -0800 (PST)
+	s=arc-20240116; t=1730939402; c=relaxed/simple;
+	bh=McX3HCdht9EKGC5tsGAU7Hm6qKwhCcuRe91FXqG4oNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CiiArPeFa9WfKqQOlaNeRQQAxqtCX+ozT8rm3c74koeOeJlJf37CcXOrpr9tcgF1f/jJ1m7CwffYKPe1zYX17xFUZ0drT2XJSDWP8onRetM4KHhSa2V0Pvran2bU0i+rFdREBl0mfiUmix9Mwymlytm9fQw+By/ojEcT0YoE6jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=QkA/XWXt; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83abcfb9f37so17666939f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 16:29:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730939336; x=1731544136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VYXzdk9lxwEoLysvepNqwx+im1UnVK9BIgVBiniSw/M=;
-        b=Z8oyJtXZdNUzQHfksM0tuUmNj9R/AMEGDlV8xdi0ano0AwZlIPCiW1fQzmYBzVh6wC
-         lPhDcGNKywp11G315Du674a6wpcSxf6A7z9DXxn3eWfz9mSyZ7usEe9oZQB19F+0jRcf
-         2hCVnSghf2OoDOr2Bga3VAW2KTpSA3n5kjaEXc6RNGkw1LXeczY8dAZZHA7iNpkDuy66
-         RQWIJ0jeWqHFOxlT4jyRrHfRc5uWYalVEePvS03S6CAbDQjPEiCGCkfi1B8RZHFqoKhU
-         MnHCdfwk7QzoELdROd2EKbx3S0HhKg8VN0Dgf0fNSM1dbTVYlIBVKIkzdFS+KpoSUvui
-         oepg==
+        d=sifive.com; s=google; t=1730939398; x=1731544198; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E3Z19IHRqfxS578Ys483rX+/hvz8ULIan1ekFWOQaVI=;
+        b=QkA/XWXtzwhXM/h+5lapcBkGyUj1Kd9xDAp82yQFgBUobK68GRWbXcnq/AZ339PJDU
+         PDL0Qn7mPltsobBMfNjvWi+MG5x+69o+dTcDKLn91WC7YbE83+8YXrrHygy1PR5tmPY7
+         aTKA7GNAs9wOe6sZyh8CAR6T5oNk2GJi5yNO52fqXmZLwRHIncecKl13x9nkjE1j+Mmg
+         3DELnIFwr/JPIanV22FO0SvlJoTKFgvfOMFUkC5i2wAjc10GEO7nWKuLm5ZiFFLLuflY
+         4nLMeIKuOgZs1WfV+oXQE+lW3St149+95mlfIunw7jpVP0Sda4KmWUoqgjXO0TQk6r4E
+         oi7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730939336; x=1731544136;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VYXzdk9lxwEoLysvepNqwx+im1UnVK9BIgVBiniSw/M=;
-        b=WhZP2IfYGH1nYh88suvyVm5dynJev5qd5FT75rnSYX1+qphCoVgP8tX96IGJf1xTG7
-         uuiRr4+8zvgTFt2CKUMX2S2c9fut5HbAlXJGdrcCS4b/rgqbsBPlH2NehOdVv63g4fN2
-         ZjW9agKdGN7/0+eIEZqq/ERWQXOimFIgAUiWKShIvd1PLh5jweg3/619EczV3h8Vlx11
-         daFwfzOjg7cxYjju2++YHTUi1frRRsHzuOMV75YIMt9krY0+1rZM2PTB0xBE2pFtYb9o
-         gdl+YJ/FlhXpUlOBONQvqXBZgOCWBtRsyJ/0FAdyTCF1PgLQfuZda5HJAg4cUMgk8txh
-         lGpA==
-X-Gm-Message-State: AOJu0Yx6nMvW/J/jiRszKhDnx78v8hpeuW+dsU4fOJCzCEmQAaPWx6Mw
-	ZX/2eFlFwDGQZ3on25RmatBgUlzZUdTO4xCDjN/Ni0zd2Hs6JT7/lTuw7JRWwLs=
-X-Google-Smtp-Source: AGHT+IFH4AqsCRrHFg+2hmItJf3mAhC5s4wEgBOgd57FXKle0PnJ4fPQXbBqMcItUqW06CTs2FG5Dg==
-X-Received: by 2002:a05:6a00:2344:b0:71e:581f:7d7e with SMTP id d2e1a72fcca58-724080f8673mr214059b3a.15.1730939336165;
-        Wed, 06 Nov 2024 16:28:56 -0800 (PST)
-Received: from localhost.localdomain ([1.200.148.141])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-72407a56a3esm150255b3a.176.2024.11.06.16.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 16:28:55 -0800 (PST)
-From: Zenm Chen <zenmchen@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	pkshih@realtek.com,
-	kvalo@kernel.org,
-	rtl8821cerfe2@gmail.com,
-	usbwifi2024@gmail.com,
-	m.novosyolov@rosalinux.ru,
-	zenmchen@gmail.com
-Subject: [PATCH] wifi: rtw88: Add additional USB IDs for RTL8812BU
-Date: Thu,  7 Nov 2024 08:28:46 +0800
-Message-ID: <20241107002846.13748-1-zenmchen@gmail.com>
-X-Mailer: git-send-email 2.46.2
+        d=1e100.net; s=20230601; t=1730939398; x=1731544198;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E3Z19IHRqfxS578Ys483rX+/hvz8ULIan1ekFWOQaVI=;
+        b=Xoogsqj5IHH6E3CQw8pUyzh1j98ZskliRBoYyCo7VImO7tgtFLHfvPFx7k/kJtx8jM
+         jcUNZ5xgaKNG6lACCG7BpOolv8A/OEHRqQnQXLjAEvRj0IdkBVPLEc+TdQSnMjyrlPDn
+         JYeKbFF9hD5p+6hHSUH1Jr8YguPF//HV3k2aVqdKe7zLt+FP33Dw7iRfdm6sBeFReJir
+         RIZO/YzGv7LKgOGZ71clCpFE+gMIN0vFg/4yRbB3uFGknGcN3BpScBrAXHXHvOil2J6W
+         ZnG0J7e7RX7ibZscrvmlmaWvkYXfaRYg9PABJB6O1lrGa6WQe/LPn8ryq3z4Sub9k9lt
+         7z4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU1LuW7ERsGAWanTHnNVth22T6R5yCqSH44OcRzEoyEOM2c/XO3DS5+Dm1n2tMxDAd7qdf+/1G7Zc0CXbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy8I2Wihb0kyOBvpvEx3WOAx09wuFPUXGpUcTZhlPcZM5zRO+J
+	69czuyCYOT1byNUl+UrIt9WRL6fiOuTCigy3Se2iEURZvQL9u/arDJLm5cHqCrM=
+X-Google-Smtp-Source: AGHT+IEHbvezWSNRUJM0X1HoonUf45bTn5xrbNazcCjs5Xe/xtZ22FiANoIgp4EDA+vYIihd3QT+SA==
+X-Received: by 2002:a05:6602:3413:b0:83a:b235:2d74 with SMTP id ca18e2360f4ac-83b1c40d531mr4199202539f.7.1730939398525;
+        Wed, 06 Nov 2024 16:29:58 -0800 (PST)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de5f8d0ba8sm64230173.110.2024.11.06.16.29.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 16:29:58 -0800 (PST)
+Message-ID: <a9f59ffb-23e9-4c83-8d44-4c766e32b3bf@sifive.com>
+Date: Wed, 6 Nov 2024 18:29:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
+To: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
+ <20241028053220.346283-2-TroyMitchell988@gmail.com>
+ <846b4f2a-602e-431e-affc-0e995db5eee5@sifive.com>
+ <9dfb250c-d8a1-4536-8658-48b3a2585abd@gmail.com>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <9dfb250c-d8a1-4536-8658-48b3a2585abd@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Nick Morrow <usbwifi2024@gmail.com>
+Hi Troy,
 
-Add three additional USB IDs found in
-https://github.com/morrownr/88x2bu-20210702
-to support more RTL8812BU devices.
+On 2024-11-06 1:58 AM, Troy Mitchell wrote:
+> On 2024/11/2 11:48, Samuel Holland wrote:
+>> On 2024-10-28 12:32 AM, Troy Mitchell wrote:
+>>> The I2C of K1 supports fast-speed-mode and high-speed-mode,
+>>> and supports FIFO transmission.
+>>>
+>>> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+>>> ---
+>>>  .../bindings/i2c/spacemit,k1-i2c.yaml         | 51 +++++++++++++++++++
+>>>  1 file changed, 51 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
+>>> new file mode 100644
+>>> index 000000000000..57af66f494e7
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
+>>> @@ -0,0 +1,51 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/i2c/spacemit,k1-i2c.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: I2C controller embedded in SpacemiT's K1 SoC
+>>> +
+>>> +maintainers:
+>>> +  - Troy Mitchell <troymitchell988@gmail.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: spacemit,k1-i2c
+>>> +
+>>> +  reg:
+>>> +    maxItems: 2
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>
+>> Looking at the K1 user manual (9.1.4.77 RCPU I2C0 CLOCK RESET CONTROL
+>> REGISTER(RCPU_I2C0_CLK_RST)), I see two clocks (pclk, fclk) and a reset, which
+>> looks to be standard across the peripherals in this SoC. Please be sure that the
+>> binding covers all resources needed to use this peripheral.
+>
+> RCPU stands for Real-time CPU, which is typically used for low power consumption
+> applications.
+> We should be using the APBC_TWSIx_CLK_RST register, but it's not listed in the
+> user manual. However, you can find this register referenced in the K1 clock patch:
+> https://lore.kernel.org/all/SEYPR01MB4221AA2CA9C91A695FEFA777D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
 
-Signed-off-by: Nick Morrow <usbwifi2024@gmail.com>
-Signed-off-by: Zenm Chen <zenmchen@gmail.com>
----
- drivers/net/wireless/realtek/rtw88/rtw8822bu.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Ah, well that driver is missing most of the bus clocks. For example, from a
+quick comparison with the manual, the driver includes sdh_axi_aclk, but misses
+all of the PWM APB clocks at APBC_PWMx_CLK_RST bit 0.
 
-diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c b/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
-index ab620a0b1dfc..8883300fc6ad 100644
---- a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
-+++ b/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
-@@ -67,6 +67,12 @@ static const struct usb_device_id rtw_8822bu_id_table[] = {
- 	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* LiteOn */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x20f4, 0x808a, 0xff, 0xff, 0xff),
- 	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* TRENDnet TEW-808UBM */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x20f4, 0x805a, 0xff, 0xff, 0xff),
-+	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* TRENDnet TEW-805UBH */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x056e, 0x4011, 0xff, 0xff, 0xff),
-+	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* ELECOM WDB-867DU3S */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x2c4e, 0x0107, 0xff, 0xff, 0xff),
-+	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* Mercusys MA30H */
- 	{},
- };
- MODULE_DEVICE_TABLE(usb, rtw_8822bu_id_table);
--- 
-2.46.2
+If the clock gate exists in the hardware, even if it is enabled by default, it
+needs to be modeled in the devicetree.
+
+> Also, to see how to enable the I2C clock in the device tree (note that the
+> spacemit,apb_clock property is unused in the driver), check out the example here:
+> https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/boot/dts/spacemit/k1-x.dtsi#L1048
+
+The devicetree describes the hardware, irrespective of which features the driver
+may or may not use.
+
+>>> +
+>>> +  clock-frequency:
+>>> +    description:
+>>> +      Desired I2C bus clock frequency in Hz. As only fast and high-speed
+>>> +      modes are supported by hardware, possible values are 100000 and 400000.
+>>> +    enum: [100000, 400000]
+>>
+>> This looks wrong. In the manual I see:
+>>
+>> * Supports standard-mode operation up to 100 Kbps
+>> * Supports fast-mode operation up to 400Kbps
+>> * Supports high-speed mode (HS mode) slave operation up to 3.4Mbps(High-speed
+>> I2C only)
+>> * Supports high-speed mode (HS mode) master operation up to 3.3 Mbps (High-speed
+>> I2C only)
+>>
+>> So even ignoring HS mode, 100 kHz and 400 kHz are only the maximums, not fixed
+>> frequencies.
+> okay. I will fix it in next version.
+> and should I keep to ignore high-speed mode here?
+> if not, how about this:
+> 
+>   clock-frequency:
+>     description:
+>       Desired I2C bus clock frequency in Hz.
+>       K1 supports standard, fast, high-speed modes, from 1 to 3300000.
+>     default: 100000
+>     minimum: 1
+>     maximum: 3300000
+
+I don't know if high-speed mode should be included, since it requires some extra
+negotiation to use. Assuming it should be, that looks reasonable.
+
+Regards,
+Samuel
+
+>>
+>> Regards,
+>> Samuel
+>>
+>>> +    default: 100000
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - interrupts
+>>> +  - clocks
+>>> +
+>>> +unevaluatedProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    i2c@d4010800 {
+>>> +        compatible = "spacemit,k1-i2c";
+>>> +        reg = <0x0 0xd4010800 0x0 0x38>;
+>>> +        interrupt-parent = <&plic>;
+>>> +        interrupts = <36>;
+>>> +        clocks = <&ccu 90>;
+>>> +        clock-frequency = <100000>;
+>>> +    };
+>>> +
+>>> +...
+>>
+> 
 
 
