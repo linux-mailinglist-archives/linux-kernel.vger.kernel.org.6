@@ -1,196 +1,225 @@
-Return-Path: <linux-kernel+bounces-400019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC1F9C07D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:43:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B559C07D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 566D9B21492
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:43:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E511C23A30
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F3121262C;
-	Thu,  7 Nov 2024 13:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393B02101AB;
+	Thu,  7 Nov 2024 13:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BCpPFDx5"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2066.outbound.protection.outlook.com [40.107.220.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uzm/ufhS"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98129212194;
-	Thu,  7 Nov 2024 13:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987013; cv=fail; b=j8Ux30f/Fpwe1YxptneWjbokB46W0SWBMiMCuYUGnufJ8fvVum+lBuTQ5tGjI3tmN34SwnDB13l3fU7cLPlOK5oTDqgFpBUZCK1istkak8UWgpDoLdUeFyg+RjrPV63Irtpu5JMCJhm4hLW92bViQ6x+P5Ab94BSKjz34cONvCY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987013; c=relaxed/simple;
-	bh=s4KlbI3EEZT9FXUWs9A+PVXvZHEQ3u+hISC2TDPtXBY=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=Pd6ogtBzd44GR742GRlAx5hPf89sh4fTqRa/nBnquJNSqZcY0hBcL7UeCmwh4kD4oVfd9jomTINdm6/B4jy1+qTi60FkSRD/KdJ+K50PVoZTuPapzcAL8ZgoPr0HLGBrug8IpfISWjYso0HeKpt4EYRNKRKbv2cDclEwKNz8rLo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BCpPFDx5; arc=fail smtp.client-ip=40.107.220.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KI4D55sNBTgjB5OPQi9uOmz3Fr1/PaXW98pgKEy9D+zKRgN9Xc316Pal7ieoJz6+RokqVt9icpadzAi6sQRqMlGfdpZ2RbwMCHSNSYDcnzvIsf1XyJDEFwaf0INQWKDNyEJKIisKDmCtRyN3aQFE7Yl+8XhulYzefxjeYQvWFiQizIVZ1ZyrSbdZ6CGt88FtsT0B6M6zxpk+fgGU21/f226M4cWpdgm7XkjUkyPb3Ud/P9xJ6AMLKl9Cu/ThLZPHh/lSvwCerJfAVTGogy3TIC6LL3FCi2y+20nAXxpJe8OifllyYYLPE4qp9u2+22JWlkRFq4li6EZZcA7dkIQqDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=93UCXQkMwVwp4J56ui9goz17DD5Hoky9whI5ha8M3qk=;
- b=PfIFweXUZmO+GSTQPsFwzthN173KZpgMQHDaqnXQzSdVS5NvFCQLUgmemlgCk0n2tQLkvj8Q7UOP574cDq2Wkh16+rf+YXycnfV9S1KRXJKkjuLJemiskKvdzqCwVxymz0vi0VNAgte4B1BpqYtjgQcujh+79sPV3H1ubAJRUq3yNr3+XTEdpeYbVLy5ZMW7nSrIgvIv1XaNHWkSMWTOtXs7ZbCrNZ68MkVkrgE6L1zMB+mKJkXgnsz4CtNhQ9mEZzcXVcLwZAF5OhsoasKFJzMdFtK2shP9TRwf8Fj+cZ7Q5m89D5lHZvoi9QZxgAEQzGPvnfBSHS9/RH+s944cBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=93UCXQkMwVwp4J56ui9goz17DD5Hoky9whI5ha8M3qk=;
- b=BCpPFDx57eocZQH+MTMaTIe/1kGo1uLgHlRCry0eHpldX0oOWRo6/3L6aIYD4k/vSBRS49W/zBj9xfrbUaykwL2GLCVmg5M1wumosv9WFSch1SVbnF4T7U7a7V3RCraIxxKTCIMW7Ctl0hyKZQhI1fdO5gD3ZdG6nPUjaVi4fpolfTao6JDXNrmK97nFiXT7dpfVisAx0dUqVGPnkq0SU629BB/ecDYv5M28hvf0UpkQQBU2wAv/sMx/JAbmxh7ljLc4R2fwnx/nvP+w0xZdUcxwERoy8qjHN0gyYQBvMO3mVTzHYt40LtABiJ27WxFkwgD0URbTyU1v9UwRRLdXQQ==
-Received: from BN8PR15CA0061.namprd15.prod.outlook.com (2603:10b6:408:80::38)
- by PH0PR12MB7792.namprd12.prod.outlook.com (2603:10b6:510:281::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Thu, 7 Nov
- 2024 13:43:27 +0000
-Received: from BN3PEPF0000B06A.namprd21.prod.outlook.com
- (2603:10b6:408:80:cafe::7d) by BN8PR15CA0061.outlook.office365.com
- (2603:10b6:408:80::38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18 via Frontend
- Transport; Thu, 7 Nov 2024 13:43:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BN3PEPF0000B06A.mail.protection.outlook.com (10.167.243.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.0 via Frontend Transport; Thu, 7 Nov 2024 13:43:26 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 7 Nov 2024
- 05:43:15 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 7 Nov 2024 05:43:15 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 7 Nov 2024 05:43:15 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hagar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/126] 6.1.116-rc1 review
-In-Reply-To: <20241106120306.038154857@linuxfoundation.org>
-References: <20241106120306.038154857@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F362212194
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730987007; cv=none; b=goa/VrJJDxyvo/yPuU9P1NwZwBVH1mC5iwP5Q/zSrbUTPF1dlGCjFEjbpHt3JB/J2PPFJeOliRVjPSPy66NQwfbJHw+k2uoIKmEcEy3XVgwvtdQpl0DjdeXwVaY4MIRDLG/dpRZRDFhCkMJjuk9L+OOVbbgOuTBPabWYq7wKKM4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730987007; c=relaxed/simple;
+	bh=CdrkMSC49tDl2mQv1mqeIdQHcjwZw0A1/AnqT+7ETn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PWls3sNRRvFbf9xtzXlekQdyRfT9qudDEwarnNP0oKp0arrxi3T05jiP48c9TIQgYp4X3JGqp7xftkHmoeuxeE9MEMLJTFpwfgO59PCOekt5LDxU7f0FtzqfqrNffLuMI4vjQDrb0VfftDW+BSecclLL2rX14aX6gMBjkfGSH/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uzm/ufhS; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb58980711so9310721fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:43:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730987004; x=1731591804; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lTaMwPBJtQ/LdLyLH+A1iubTYFAHCFT/bM+1zUoljkk=;
+        b=Uzm/ufhSu0N3h3v3dXOQuvMA13OYmBekUA6S/NXSDYzShXiRBx2lvB5xJAGIUwh3Fy
+         6C5exFZP2KgHc62/ErY+9rUpVCzktIc11MWuY+40oBv0RB3sbnzmy3HYJTKSqeuJjBpy
+         uAIMgO02RElc5jAapyp5zuVKtBJTmv9JnwTQVaj8r1UYpoQbP7Myr1XVUz+ujXPcVt6x
+         9YUfr52K/eXrbV7EJKhx45U2zmQKkLWcmGSc8pesII5u4qdMNv71Ieb6VFLJV1IktX1u
+         SBDNaRy8JRfd931I2Mp+7vtkCwGursYpJFARprx5YdUXrJnooVvJ2r06MoK95ACIOSxH
+         XuoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730987004; x=1731591804;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lTaMwPBJtQ/LdLyLH+A1iubTYFAHCFT/bM+1zUoljkk=;
+        b=BUXDPBbyyqJZh4bzpu8r9ndmT05wdihAAylr0RRPYctANZSzpF2kEC0jvjZJov7hIX
+         MUXgDF6Z35b5bwGjNBpcdKLaWs4Q72GyJ1nKnGxOfJ/KmNfGR7FG2gCTiKCd1DdfFRwl
+         FpfFu6kSE3kZa2I11U/v8UCc5XklhVhbhX2TD1D2ZmzebQTWJrXse/qenMTz57UdzQ1a
+         K8RmR0jJ1MIZLq8gy/sJ62qNM9IfBmtg0SLhSCQ3RC4JgyZG8pOiV3dA3+iFnHFJ1Aiv
+         x+PY9oumAuaSlZW3XzRTbsupX0sVNJ8/9T72UOruhC40CBBdhnN7BzyQUUUqoREKpf1w
+         ah7w==
+X-Forwarded-Encrypted: i=1; AJvYcCU9YUnBPGM0rZBI68nTL2p23U5/S/NvWd+YF7lbE4n9bK3qjZBO7PgybRABsZdM3NRrlVtwkecteVaZ0jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbohN/yBJU1PcjyesHYYlG8Q5Vh1GmxOZzs7v3f9GG40oswhOo
+	ZbvbCeEkKaiQ1HfOa4LVEgqqggwotIElCuAZQh/ufUAHYDrponvrHcNilbL1cNs=
+X-Google-Smtp-Source: AGHT+IEEXrpAS4axbz2EtICI+fGeaZacL297HQJJZ5R8O8wDOSGkjXWDf4lfkDOD+6Bag7+pFG1qiQ==
+X-Received: by 2002:a05:651c:2209:b0:2fb:4c08:be08 with SMTP id 38308e7fff4ca-2fcbdf6ff42mr222407471fa.11.1730987003678;
+        Thu, 07 Nov 2024 05:43:23 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff178dfe0asm2220701fa.23.2024.11.07.05.43.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 05:43:22 -0800 (PST)
+Date: Thu, 7 Nov 2024 15:43:20 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sandor Yu <sandor.yu@nxp.com>
+Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	"jonas@kwiboo.se" <jonas@kwiboo.se>, "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, 
+	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"vkoul@kernel.org" <vkoul@kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, "mripard@kernel.org" <mripard@kernel.org>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, 
+	Oliver Brown <oliver.brown@nxp.com>, 
+	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "sam@ravnborg.org" <sam@ravnborg.org>
+Subject: Re: [PATCH v18 6/8] phy: freescale: Add DisplayPort/HDMI Combo-PHY
+ driver for i.MX8MQ
+Message-ID: <z6p6bewmykmufsghdojr4lvziurmmfpnrr5m4w3pfjlqzobpwr@zq2d2ukjvtac>
+References: <cover.1730172244.git.Sandor.yu@nxp.com>
+ <411e42c70e71dce33a80059f663fb6c58fb2ac8c.1730172244.git.Sandor.yu@nxp.com>
+ <efciuvoptv7qxwauswfseb6zlt5w4fmjdbm3huxfsn63a6bm7u@kfgkkvqoz5x4>
+ <PAXPR04MB9448F638D47B5495CF78007AF4522@PAXPR04MB9448.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <51bf578e-4e91-4341-8b94-211d2dc79acb@drhqmail201.nvidia.com>
-Date: Thu, 7 Nov 2024 05:43:15 -0800
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06A:EE_|PH0PR12MB7792:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5a29c921-226a-4bd0-1d47-08dcff32283c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZllqcktFbklZblBWbml4WkMyUGhpdEYrVlkrVXNwNFZSR0YvekRJMUhiSUNT?=
- =?utf-8?B?MER6SjNac01aTXVUWFBQUCtENVJRdUVNMWQyMEJCWjhYNEEyTDl6YWl5V3dX?=
- =?utf-8?B?aUE2RnU0aFJVMkZYNVlJVER2VitiSkRwR1N0SWNsdThaVWVKL3JKNUlXMXMw?=
- =?utf-8?B?dXFwNTIva1RIc2VVVjBIOWY3WDZzNHp3Z2N0eWtuSEFHR1c5MkVVUUdGZWw4?=
- =?utf-8?B?VjRzV0JINUxKK2N0RW4reGV6S0xSVFJyeFZ2MklrMWRtRndUaXhZMmlQdFNH?=
- =?utf-8?B?bVVnUVp2T2grQmVHVVI1ZzdyWWVzQUh3dHUvMHlWZGZHRGthODlmd2NVd3VF?=
- =?utf-8?B?eGtNZVREbkpnNFh6UXJKWnFEd2pUblY2RFNxcUNpNGF4ajE1MmtZenJnS3NO?=
- =?utf-8?B?aHM5YXRwUjRSbDc0K1d1WG1Td2xDemNiYkdQRURxR2N0UGFqWjdMUDdlQk9L?=
- =?utf-8?B?RTlRTEtHL2pjS013dC9FNTNybElTZUZDOEFTV3l3N3JHVU5XK3VJMWpwdXdB?=
- =?utf-8?B?NVFkaGQwSGFXMnpkSlB1U1oyNVI3RlE4c2tHRTVkalg1bG9Gc1lXN1BJUmpR?=
- =?utf-8?B?dDJmWnU3NEZNRkVzZkFkYkYyZlZnalFDMWxpbGJpZEw5dGpmZ3h4cjBVbkVw?=
- =?utf-8?B?cE9rZlVPdEI0S3o4VkcvNEs2OEZQMWRhM3pvdTlleXNhSk4xcUw0TXE4T3h5?=
- =?utf-8?B?YWkrS01wZmpVcGVNb3MrOGY0U0t6MmpPdUE4MDN5ZVUvU3BlYkpWSk4waGZ5?=
- =?utf-8?B?QWI1ZDZOcFllUDFsQ2FKeEJldlphRVlLbGZ5SVorRGFCNTFZc05pWi9TZTRO?=
- =?utf-8?B?cXVNZERobGFxaGpnK0lYbEFKZzhweXVTa2pKejVoVE1wRTJuR3hidkRUd1ZC?=
- =?utf-8?B?c1IxTWl1Wk5Pd1BBVE9xazluelN0VzNBQ21mV1hMUVVlWE15Ymg5ZnBSYzVi?=
- =?utf-8?B?bkNnZXRqWkI2QnRjNndaL2szUVdLMjdGNmdsNHZjdU1LZFk0YkdKOTdFeW0x?=
- =?utf-8?B?b3VhaUVtTVRmWTk5L0duR0hEWU1LTndwRmNPSExZUmVZc3R5TXB0MmQvT0VR?=
- =?utf-8?B?dXJjWWl6OXo0YkI3OWpPVWU2UmtBNzV6OFcxbHBCY0Y1eE15b3pHSFNRYWpD?=
- =?utf-8?B?VW5BYWFDWGpGYWRUUW1HL3hQNUxDZEVRYTI3dHpKU2pBbENwaGdidmc1YStm?=
- =?utf-8?B?UGN0QTNuM3N3Nkw2MDZaZG1TajgvNnFnTXZ0YjZPSGxTZ0pveWdjNzdsWVY3?=
- =?utf-8?B?WnJzbDdGV1ZYb1BFZlJ2cW5SQzQzN1dkSm81N0JBVGJLaEF3ajlYVWwvN1pT?=
- =?utf-8?B?aFlZaUVGR0loUG5VVFN1UzhsTFVxcDdwU0lUamFmSlNjT1BjZGtkR3Myc0RE?=
- =?utf-8?B?TjZtV2djMkN3cGpGZTZCWk5IRy9KMGpCQUtnblp1SEpUM1ZKZjQxaGJKVUxz?=
- =?utf-8?B?UFIyREtrVVJ5R2I3Yk5XeFRyZ0RUVlo2aU5XSC9Qd0lWTHd4RHJ3czNnV3VN?=
- =?utf-8?B?VGJSUVQ2TW54T1ROYlN5SllpSzJrUWNiOVI1dmxrWjJWaHp1YUl5cEJUTTZC?=
- =?utf-8?B?TzgrcnRma2dhczM1b3VvckFNbUl5WjYyTGlEU0xsblVjUDdORWNFZlk1a0RP?=
- =?utf-8?B?aDhHL0pvbkZEaVpTdlN0QTVmWTFwQitMSmZwZWZRSU9mczUzeExRMHhwR2o5?=
- =?utf-8?B?NWdzeDQxYTFWNUFiZ1NhK29UaWcvc3pqbWJQSTBOVGhwT2M1clRuT1NIeUhR?=
- =?utf-8?B?UmR1U2RSK0dIUTBDdWlDQUoyRTlJaDM3WjhycWxtdStDV29ENENSMjIySGYx?=
- =?utf-8?B?R09tdGM5RDdXYS80RjNBc3psZ1dUQTdVS3Q3VzRkaUtXZXQvQ00rRng1RnVE?=
- =?utf-8?B?NTV3STNGd0hWUjcrZ0l6VTVmSW1leGFNRXl1VEtNdkJZa3c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 13:43:26.6212
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a29c921-226a-4bd0-1d47-08dcff32283c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B06A.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7792
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB9448F638D47B5495CF78007AF4522@PAXPR04MB9448.eurprd04.prod.outlook.com>
 
-On Wed, 06 Nov 2024 13:03:21 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.116 release.
-> There are 126 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Nov 05, 2024 at 02:05:51PM +0000, Sandor Yu wrote:
+> > 
+> > On Tue, Oct 29, 2024 at 02:02:14PM +0800, Sandor Yu wrote:
+> > > Add Cadence HDP-TX DisplayPort and HDMI PHY driver for i.MX8MQ.
+> > >
+> > > Cadence HDP-TX PHY could be put in either DP mode or
+> > > HDMI mode base on the configuration chosen.
+> > > DisplayPort or HDMI PHY mode is configured in the driver.
+> > >
+> > > Signed-off-by: Sandor Yu <Sandor.yu@nxp.com>
+> > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > > ---
+> > > v17->v18:
+> > > - fix build error as code rebase to latest kernel version.
+> > >
+> > >  drivers/phy/freescale/Kconfig                |   10 +
+> > >  drivers/phy/freescale/Makefile               |    1 +
+> > >  drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c | 1337
+> > ++++++++++++++++++
+> > >  3 files changed, 1348 insertions(+)
+> > >  create mode 100644 drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c
+> > >
+> > > diff --git a/drivers/phy/freescale/Kconfig b/drivers/phy/freescale/Kconfig
+> > > index dcd9acff6d01a..2b1210367b31c 100644
+> > > --- a/drivers/phy/freescale/Kconfig
+> > > +++ b/drivers/phy/freescale/Kconfig
+
+[...]
+
+I'm sorry, my email client cut the email.
+
+> > > +static int cdns_hdptx_dp_configure(struct phy *phy,
+> > > +                                union phy_configure_opts *opts)
+> > > +{
+> > > +     struct cdns_hdptx_phy *cdns_phy = phy_get_drvdata(phy);
+> > > +
+> > > +     cdns_phy->dp.link_rate = opts->dp.link_rate;
+> > > +     cdns_phy->dp.lanes = opts->dp.lanes;
+> > 
+> > Shouldn't this be conditional on set_rate / set_lanes ?
 > 
-> Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
-> Anything received after that time might be too late.
+> PHY do not support reconfigure link rate and lane count.
+
+So, you don't support reconfiguring the rate / count, but you still copy
+the new rate and lanes into your driver data. That sounds strange.
+
+[...]
+
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.116-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+> > 
+> > > +
+> > > +static int cdns_hdptx_phy_set_mode(struct phy *phy, enum phy_mode
+> > mode, int submode)
+> > > +{
+> > > +     struct cdns_hdptx_phy *cdns_phy = phy_get_drvdata(phy);
+> > > +     int ret = 0;
+> > > +
+> > > +     if (mode == PHY_MODE_DP) {
+> > > +             hdptx_dp_phy_ref_clock_type(cdns_phy);
+> > > +
+> > > +             /* PHY power up */
+> > > +             ret = hdptx_dp_phy_power_up(cdns_phy);
+> > > +             if (ret < 0)
+> > > +                     return ret;
+> > > +
+> > > +             hdptx_dp_aux_cfg(cdns_phy);
+> > 
+> > Why? Don't power up the PHY if you haven't been told to.
 > 
-> thanks,
+> Power on the PHY to enable DP AUX, which is necessary for reading EDID and training the link.
+
+Call phy_power_on() from the DP driver.
+
 > 
-> greg k-h
+> > 
+> > > +     } else if (mode != PHY_MODE_HDMI) {
+> > > +             dev_err(&phy->dev, "Invalid PHY mode: %u\n", mode);
+> > > +             return -EINVAL;
+> > > +     }
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > > +static int cdns_hdptx_hdmi_configure(struct phy *phy,
+> > > +                                  union phy_configure_opts
+> > *opts)
+> > > +{
+> > > +     struct cdns_hdptx_phy *cdns_phy = phy_get_drvdata(phy);
+> > > +     int ret;
+> > > +
+> > > +     cdns_phy->hdmi.tmds_char_rate = opts->hdmi.tmds_char_rate;
+> > > +
+> > > +     /* Check HDMI FW alive before HDMI PHY init */
+> > > +     ret = hdptx_phy_check_alive(cdns_phy);
+> > > +     if (!ret) {
+> > > +             dev_err(cdns_phy->dev, "NO HDMI FW running\n");
+> > > +             return -ENXIO;
+> > > +     }
+> > > +
+> > > +     /* Configure PHY */
+> > > +     if (hdptx_hdmi_phy_cfg(cdns_phy, cdns_phy->hdmi.tmds_char_rate)
+> > < 0) {
+> > > +             dev_err(cdns_phy->dev, "failed to set phy pclock\n");
+> > > +             return -EINVAL;
+> > > +     }
+> > > +
+> > > +     ret = hdptx_hdmi_phy_power_up(cdns_phy);
+> > 
+> > it seems to be all over the place :-(
+> 
+> The PHY has different power-up rules depending on whether it's in DP or HDMI mode. 
+> In DP mode, it needs to power up first to enable DP AUX. 
+> In HDMI mode, it can power up last.
 
-All tests passing for Tegra ...
+The main question is why are you powering the PHY from the configure
+path at all? There is a phy_power_on() API which should be used by your
+HDMI / DP driver instead of handling that in an automagic way.
 
-Test results for stable-v6.1:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    115 tests:	115 pass, 0 fail
+> 
 
-Linux version:	6.1.116-rc1-g17b301e6e4bc
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+-- 
+With best wishes
+Dmitry
 
