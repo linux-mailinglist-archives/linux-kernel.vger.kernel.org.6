@@ -1,150 +1,146 @@
-Return-Path: <linux-kernel+bounces-400291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C402D9C0B7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:25:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA0B9C0B7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CF1285335
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:25:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01BD7282A27
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76172218593;
-	Thu,  7 Nov 2024 16:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C9C21731B;
+	Thu,  7 Nov 2024 16:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXtOYSPT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IvA92Rxh"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD88B217307;
-	Thu,  7 Nov 2024 16:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86C2217307
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730996381; cv=none; b=MU2hTd72o+1o5Rf3jpFjwBgdo+dQja7ngkZ+1S7WLb6mtwwKNFRZJq5eCr85ScEopSo/XCU4dGvysPMhKVuC+q1TPr/AP/ZLsam2iG46REes+iUdHgp5vjvemcRa7R/agttks6vFbQB6O9kMoQbk4yNvF7ar/5cnuUtxMegv+qA=
+	t=1730996443; cv=none; b=RznB12CZkmAicLJsH9tk7/hMNcjBn5qZA4lihuKgFPXV3dOA2QLq/vYhyz/WqPWO6JPJ2lw6CYqptKxOQQg62ujQx7v4DQ9lvXPBcF0+10hLv+Mm2MnBl+aeO6b9rMfCWukZ0sfAcXna1yYrllIZvqE3D9uxIa3wl4jCXkyEhTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730996381; c=relaxed/simple;
-	bh=SqxOv6okU/sodRwTyM+r4oFEioQMmC22R+3bohK4KUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=L2zPJtM++JcAXt9t33isI2v6YXLcXg7CB5OdO2Ce58rJcCv60xfbnWvGTQA+VzmFLSX5agZE5O8uNgm0CwTZhRYoR2X187ix17NxQJQXk0scKndu9Q19AIgnR2MKJMwRsvLjNjhWMwjDjxn1ew5Hx0GtrSLu/EpgVmCNs1P3VzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXtOYSPT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED68C4CECC;
-	Thu,  7 Nov 2024 16:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730996381;
-	bh=SqxOv6okU/sodRwTyM+r4oFEioQMmC22R+3bohK4KUo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=GXtOYSPT/H3r3SnyRnmLkGXZaW31eJexqtj829FQ1pCaIQBJOu1cV9PhStGxpY6ZN
-	 Bb21beAvVycEuV6K7ZTGhXlazBtYOCHmi2mcueLIWdYCQFCsJWuJ81a83lG24EcUJV
-	 +qkLwkysKWz+if7+TZV9P4BdsgCCYFUgO59gReLMFwKbj8oX4fWVoaLuENDN6I8mIv
-	 wsD3H98n+WJrIZxxfLol5NtKAtCH1YSpNiEQgNLi+0X61rGJ2vh66xxnsrR1cuE4kq
-	 LJqpU8MR+d7AqAYkvkAaQm8xNjNYWfBcDe3AGAMIhtOhGsTLHVjSRU79qpNRaPEUjm
-	 7+L1JZkquSGLg==
-Date: Thu, 7 Nov 2024 10:19:39 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Joerg Roedel <jroedel@suse.de>, Rob Herring <robh@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Anders Roxell <anders.roxell@linaro.org>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Xingang Wang <wangxingang5@huawei.com>
-Subject: Re: [PATCH RESEND] iommu/of: Fix pci_request_acs() before
- enumerating PCI devices
-Message-ID: <20241107161939.GA1618126@bhelgaas>
+	s=arc-20240116; t=1730996443; c=relaxed/simple;
+	bh=eP0G66ZHvZ6p8aDLP+KykiyCIg5mjIhYHWfKRwxuzaA=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=ANOR+glZJO+BdVbY+K7iTlFIgZgDjwhCUDvwMPVQCS6yMOo7UOvP0EXvmFrCgtKzpgMfZ0tEY49kPygumGXXpCXvJQ5Z+R8Yc4smhp2afM+dpxNnGfyF6SWW4UZIT/HoqCUIip5uRZeShaf2SXBZ6tsIbXGzPpq0DLQFwfBJ3/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IvA92Rxh; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e7fb84f999so16986277b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:20:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730996441; x=1731601241; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v57hY9ptVyUkWxpU5CBHz4hqYdCeNDSYBzpW7YMhHII=;
+        b=IvA92RxhUS4ZveIbX33wiVL0JsrN/35a77Yl8BxX7Eybsqu3gAYbzKF2fHbZMg//zo
+         SdCHqWefFwQf4dmiYyqL+BGiw0rdjTE2LUh1mPrQMGvINqx68I+MF2rr6PoMUQjXonsl
+         wXvxdW+vvCMfKZGOrTHeO2RMibbGnkV5yzmSjZAWc6P+AM+aBKtCL0Or9i8DKkb3E7gv
+         R8Hf1BhbDVfpMo0O10R/rKRsQrl5h2wW2JRuDp+SvRyZk8npny9EJ3p4YFnDOMZ2yaCR
+         V6D3PtZzn/pHanS3BxPIlXa8LbvRwwKCydTlfNuLV+HpazJdJoxfZmYtO08tcRR1gjlz
+         /hGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730996441; x=1731601241;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v57hY9ptVyUkWxpU5CBHz4hqYdCeNDSYBzpW7YMhHII=;
+        b=eCGYBM6qevRCVCL9iqiPNoc+O1c94g0Fl6Foq5NaHqLsTe4xFFJqDAUphVsUThktYT
+         tIdaOtNiByd9CV44Hk+Kc2iL/kyOv8usN0SrvT1MhfFA76bGO93ZFnYYaMu5SAX/jh6D
+         aAkpzT9jqfeaRAmX5poeXzVtU/ZjuHjkhengur3gJzd53G0yxQ0kcIxJ9WLMMb24+5FC
+         ani5eljMLcj4Pd9HM3pyuaqhbwy5vX4e/V3UfK8lgZwE2A4X61u89mkgDHPtKXN2Digo
+         ONZqCZIpUKmWg39DGXUPX7Ucexn2qsVQ/CblwBPxcrI/MJ3Ynmq1jhCqYKr0H8kl9Vki
+         O9Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbF+8iHRV8d5M1KiGhR6WNthMT6sicc8iejVBUzAOcAgkKb/aS+2tKPMy4kRs4xQQBDdQevb0IZXd8wok=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1k2Cn9ecRtgU/61GNow8wt8YaGfnK91Fj0SuZHTeuBiaNxjuL
+	2jqKbIt6mfIM2WOPK3GREZlPmRE8n1oxBMdn8Sro6Y466ug730TYNsZa/j9ooIG6KU+XkD3yGtG
+	/kFwAzQ==
+X-Google-Smtp-Source: AGHT+IHC0X+WZsmRaD10ygx7XOVdKB/UZb7/tV2Np4btpUBS2SgGAemSgZHBuWrvuUd2DVUs75+KuuMxxrqo
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:acc7:bda:7167:18d8])
+ (user=irogers job=sendgmr) by 2002:a05:690c:13:b0:6ea:8651:4b27 with SMTP id
+ 00721157ae682-6eadc1065acmr1207b3.5.1730996440734; Thu, 07 Nov 2024 08:20:40
+ -0800 (PST)
+Date: Thu,  7 Nov 2024 08:20:27 -0800
+Message-Id: <20241107162035.52206-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Subject: [PATCH v2 0/8] Refactor cpuid and metric table lookup code
+From: Ian Rogers <irogers@google.com>
+To: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ben Zong-You Xie <ben717@andestech.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Benjamin Gray <bgray@linux.ibm.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, 
+	"=?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?=" <clement.legoffic@foss.st.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Dima Kogan <dima@secretsauce.net>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 07, 2024 at 01:29:15PM +0530, Pavankumar Kondeti wrote:
-> From: Xingang Wang <wangxingang5@huawei.com>
-> 
-> When booting with devicetree, the pci_request_acs() is called after the
-> enumeration and initialization of PCI devices, thus the ACS is not
-> enabled. And ACS should be enabled when IOMMU is detected for the
-> PCI host bridge, so add check for IOMMU before probe of PCI host and call
-> pci_request_acs() to make sure ACS will be enabled when enumerating PCI
-> devices.
-> 
-> Fixes: 6bf6c24720d33 ("iommu/of: Request ACS from the PCI core when configuring IOMMU linkage")
-> Signed-off-by: Xingang Wang <wangxingang5@huawei.com>
-> Signed-off-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-> ---
-> Earlier this patch made it to linux-next but got dropped later as it
-> broke PCI on ARM Juno R1 board. AFAICT, this issue is never root caused,
-> so resending this patch to get attention again.
-> 
-> https://lore.kernel.org/all/1621566204-37456-1-git-send-email-wangxingang5@huawei.com/
-> 
-> The original problem that is being fixed by this patch still exists. In
-> my use case, all the PCI VF(s) assigned to a VM are sharing the same
-> group since these functions are attached under a Multi function PCIe root port 
+Xu Yang <xu.yang_2@nxp.com> reported issues with the system metric
+lookup:
+https://lore.kernel.org/linux-perf-users/20241106085441.3945502-1-xu.yang_2@nxp.com/
+These patches remove a lot of the logic relating CPUIDs to PMUs so
+that the PMU isn't part of the question when finding a metric table.
+For time reasons, it doesn't go as far as allowing system metrics
+without a metric table as a metric table is needed for metrics to
+refer to other metrics, and the refactoring of that resolution is a
+hassle.
 
-FWIW, here are the problem reports (which are buried in the thread
-above):
+Ian Rogers (7):
+  perf header: Move is_cpu_online to numa bench
+  perf header: Refactor get_cpuid to take a CPU for ARM
+  perf arm64 header: Use cpu argument in get_cpuid
+  perf header: Avoid transitive PMU includes
+  perf header: Pass a perf_cpu rather than a PMU to get_cpuid_str
+  perf jevents: Add map_for_cpu
+  perf pmu: Move pmu_metrics_table__find and remove ARM override
 
-  https://lore.kernel.org/all/01314d70-41e6-70f9-e496-84091948701a@samsung.com/ (Marek)
-  https://lore.kernel.org/all/CADYN=9JWU3CMLzMEcD5MSQGnaLyDRSKc5SofBFHUax6YuTRaJA@mail.gmail.com/ (Anders)
+Xu Yang (1):
+  perf jevents: fix breakage when do perf stat on system metric
 
-Given problem reports, the fact that the patch was acked and reviewed
-earlier means nothing.  We have to ensure that any issues are resolved
-before considering this patch again.
+ tools/perf/arch/arm64/util/arm-spe.c     | 14 +---
+ tools/perf/arch/arm64/util/header.c      | 73 ++++++++++-----------
+ tools/perf/arch/arm64/util/pmu.c         | 20 ------
+ tools/perf/arch/loongarch/util/header.c  |  4 +-
+ tools/perf/arch/powerpc/util/header.c    |  4 +-
+ tools/perf/arch/riscv/util/header.c      |  4 +-
+ tools/perf/arch/s390/util/header.c       |  6 +-
+ tools/perf/arch/x86/util/auxtrace.c      |  3 +-
+ tools/perf/arch/x86/util/header.c        |  5 +-
+ tools/perf/bench/numa.c                  | 53 +++++++++++++++
+ tools/perf/builtin-kvm.c                 |  4 +-
+ tools/perf/pmu-events/empty-pmu-events.c | 39 ++++++-----
+ tools/perf/pmu-events/jevents.py         | 39 ++++++-----
+ tools/perf/pmu-events/pmu-events.h       |  2 +-
+ tools/perf/tests/expr.c                  |  5 +-
+ tools/perf/util/env.c                    |  4 +-
+ tools/perf/util/expr.c                   |  6 +-
+ tools/perf/util/header.c                 | 82 ++++++++----------------
+ tools/perf/util/header.h                 | 23 +++----
+ tools/perf/util/pmu.c                    | 25 --------
+ tools/perf/util/pmu.h                    |  2 -
+ tools/perf/util/probe-event.c            |  1 +
+ 22 files changed, 189 insertions(+), 229 deletions(-)
 
-> emulated by the QEMU. This patch fixes that problem.
-> ---
->  drivers/iommu/of_iommu.c | 1 -
->  drivers/pci/of.c         | 8 +++++++-
->  2 files changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-> index e7a6a1611d19..f19db52388f5 100644
-> --- a/drivers/iommu/of_iommu.c
-> +++ b/drivers/iommu/of_iommu.c
-> @@ -141,7 +141,6 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
->  			.np = master_np,
->  		};
->  
-> -		pci_request_acs();
->  		err = pci_for_each_dma_alias(to_pci_dev(dev),
->  					     of_pci_iommu_init, &info);
->  		of_pci_check_device_ats(dev, master_np);
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index dacea3fc5128..dc90f4e45dd3 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -637,9 +637,15 @@ static int pci_parse_request_of_pci_ranges(struct device *dev,
->  
->  int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
->  {
-> -	if (!dev->of_node)
-> +	struct device_node *node = dev->of_node;
-> +
-> +	if (!node)
->  		return 0;
->  
-> +	/* Detect IOMMU and make sure ACS will be enabled */
-> +	if (of_property_read_bool(node, "iommu-map"))
-> +		pci_request_acs();
-> +
->  	bridge->swizzle_irq = pci_common_swizzle;
->  	bridge->map_irq = of_irq_parse_and_map_pci;
->  
-> 
-> ---
-> base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-> change-id: 20241107-pci_acs_fix-2239e0fb1768
-> 
-> Best regards,
-> -- 
-> Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-> 
+-- 
+2.47.0.199.ga7371fff76-goog
+
 
