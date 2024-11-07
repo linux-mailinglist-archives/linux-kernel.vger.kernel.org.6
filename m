@@ -1,63 +1,85 @@
-Return-Path: <linux-kernel+bounces-400400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5249C0CF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:34:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789049C0CF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBAABB2296B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA72E1C23A0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC04216A15;
-	Thu,  7 Nov 2024 17:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AC82170BA;
+	Thu,  7 Nov 2024 17:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fcuL6baI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="hBOHqBb+"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4878C6F31E;
-	Thu,  7 Nov 2024 17:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FAF21315C
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731000855; cv=none; b=MAGDUZ1seN6mELz+D82/BOVzF9h3G3r+lt0XcP7DnEiSFBYtkfHVV033nh12dFM6/snOiRwlzr7Adp5OWn/wf4u/9J/LMKIXYpm2nzhtRe5oAsQtUY/DbwiHRQQjE/FkF3K666SdOpBnMazmHbTmIcFndzneW3BVSL/Iw+Ay9xU=
+	t=1731000856; cv=none; b=jFrwgRpKZGM4P67hzkzPaL9/FrvHio4dgZJjCaf5gC/uGM2Xi9Iwr5+JZl4f7xGJNbVYYlsdYXaikZpKN547IBgdZhP7xZXKkHiup6G/PkVLMu1lp8tnRG7UH/i6h+QPQp0k1RFxiSHVJRMefJw42xhHvdpwv9xN42mTXp5Istk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731000855; c=relaxed/simple;
-	bh=YYSC3XP+Xu1i5ChZO0iBo/vwS/a0BiSV0IuwAD/KvkM=;
+	s=arc-20240116; t=1731000856; c=relaxed/simple;
+	bh=nZxe12R/t4PRr8xSkQrlsz5xDqGIXL6AbF80acmCNIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t91w9Fi9F2/y1MAPn7WMJT0S4VyaStoNyshalWpdGcZ1RyhCQr9gxLzwAyOLqtpLhPtXavjaXoiQiAthCLNtdzi/wuJ0bsJDjkwsLyVEIrS9CZ/y77gAqhvPNBf1wiT+tzpTBqofh8TeKGp3MwlTwt9n2EeHpf2q632rsqlGCss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fcuL6baI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Pkgq+RY7AQPvFR+4KdxNeNkDDn55db16uRcxckizCKs=; b=fcuL6baIaAxRq26mnxgBtCe6ga
-	YpGmAWy6fOBBWxtoCARbREs+MQnMmsPmOaxRn4F0W176w3I6JONIcWfZYIVL8ZV+D/CZgQsL61QaZ
-	fW+EEd42GoN/Inf9s7zdd0vQwlg4rC6Id2GR91KWmBjdwO9bYg8DMSoWMa0Ibr0QJaM4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t96OP-00CUOy-KK; Thu, 07 Nov 2024 18:34:01 +0100
-Date: Thu, 7 Nov 2024 18:34:01 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next 1/7] net: freescale: ucc_geth: Drop support for
- the "interface" DT property
-Message-ID: <d3b999f1-5e6b-444e-a579-b0af4a39caa6@lunn.ch>
-References: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
- <20241107170255.1058124-2-maxime.chevallier@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfx53cdLAzXZpUSNGgzc/tDFNh1u+eYWmulCSYuGxNyEuKSHsVlVf+TLpYv/6C4hSrhMgE/5b39EmTLfInBkmUbFsiv5x66yalKVbJIcVU17s1AsycV3aElIJVQ36MxKTbtp7C8O3VdH1FlHO80WcTyICEp/CYZ4iw5//KUhdRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=hBOHqBb+; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b1b224f6c6so75404785a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 09:34:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1731000854; x=1731605654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cWemB79fAe6SpnaBm2nNh5Iw35FC11YRxCP1qALK8Wo=;
+        b=hBOHqBb+FDn0R+DiMuPB0rOYtz7BMu2YO2i8MiM1V9/xjT64t01B1f5stcxSDJylQi
+         EE/AM9HoQ1xY54WjKSuu7PFjVTfH4pYC8aEdMfQbkQSwiDasE4rRQr83k9hwz+gHiNkQ
+         aPqh/qP4+W1T4wcNoQWqO86XjG1d3P+C4V1MPcV/FNY2rx0mozgqphYRScVGEYU5+lal
+         unDr5H+Ph7vEEWOfzyd62sk2YAMvJ0szNFvNlbL71dXh+daBnDVw0aq1O0Q/vEXdyWH8
+         7mSDJVTWa43QMm4dTUNrBueeR0TwSn+BLhSzkolavlZvzEeDDC32r4Pcf7gi6jwUkZaR
+         5DTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731000854; x=1731605654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWemB79fAe6SpnaBm2nNh5Iw35FC11YRxCP1qALK8Wo=;
+        b=XK2cGrOzcwwsV2MioePlAYOu8IQ+MjaSpjttlc+98AL1njYHpOGE0Q/bHhtEKh/oJw
+         6DRU6LV2UW362wEmjhh2tJ7+WfWFbppBAiXNgoJ8i+jt9Jru5cxyW2UMvxSjwL9eOt6u
+         sgUBnqsVD698xfBA0jUXrjDQk49p1huOAh09IMBcrzDwZBH1MY6CC/2OmiVQKXKrY69a
+         RZhsFHIqNJ9gYKDUL+sxmBhq6oIzHpUSZrUM3bckjpMG6z41/UNB6O5dLmYil2SHaqU7
+         ATSQPjLLJf8twrSsQoGLYMwD7vaO2odZhGHgb0aUNvH84jw5ikWZEErZfek/KAbgETgm
+         SQoQ==
+X-Gm-Message-State: AOJu0YxUBYzTLfxjXvBOZjQcNzazgnY04aqZTTi22M5VnOr7BmoLA87/
+	up/EYTuJ0PAp+b2WhXl8wifvf3PXA4MQwPADR6AtZrh+rS5ZGplkdkVRtbY8+HA=
+X-Google-Smtp-Source: AGHT+IF89BIZHtrWpN7In5LhF5z5/XKx84pBBultLGiUVGLDmfyvJdljNxUNIPKtS6p776sAZRxOMg==
+X-Received: by 2002:a05:6214:3909:b0:6d3:9292:6ce with SMTP id 6a1803df08f44-6d39d990990mr2468756d6.27.1731000854126;
+        Thu, 07 Nov 2024 09:34:14 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d39643b384sm9773336d6.91.2024.11.07.09.34.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 09:34:13 -0800 (PST)
+Date: Thu, 7 Nov 2024 12:34:12 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, yosryahmed@google.com,
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v3 12/13] mm: Add sysctl vm.compress-batching switch for
+ compress batching during swapout.
+Message-ID: <20241107173412.GE1172372@cmpxchg.org>
+References: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
+ <20241106192105.6731-13-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,30 +88,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241107170255.1058124-2-maxime.chevallier@bootlin.com>
+In-Reply-To: <20241106192105.6731-13-kanchana.p.sridhar@intel.com>
 
-On Thu, Nov 07, 2024 at 06:02:48PM +0100, Maxime Chevallier wrote:
-> In april 2007, ucc_geth was converted to phylib with :
+On Wed, Nov 06, 2024 at 11:21:04AM -0800, Kanchana P Sridhar wrote:
+> The sysctl vm.compress-batching parameter is 0 by default. If the platform
+> has Intel IAA, the user can run experiments with IAA compress batching of
+> large folios in zswap_store() as follows:
 > 
-> commit 728de4c927a3 ("ucc_geth: migrate ucc_geth to phylib").
-> 
-> In that commit, the device-tree property "interface", that could be used to
-> retrieve the PHY interface mode was deprecated.
-> 
-> DTS files that still used that property were converted along the way, in
-> the following commit, also dating from april 2007 :
-> 
-> commit 0fd8c47cccb1 ("[POWERPC] Replace undocumented interface properties in dts files")
-> 
-> 17 years later, there's no users of that property left and I hope it's
-> safe to say we can remove support from that in the ucc_geth driver,
-> making the probe() function a bit simpler.
+> sysctl vm.compress-batching=1
+> echo deflate-iaa > /sys/module/zswap/parameters/compressor
 
-17 years seems reasonable.
-
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+A sysctl seems uncalled for. Can't the batching code be gated on
+deflate-iaa being the compressor? It can still be generalized later if
+another compressor is shown to benefit from batching.
 
