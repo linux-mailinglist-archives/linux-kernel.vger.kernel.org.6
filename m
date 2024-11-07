@@ -1,157 +1,107 @@
-Return-Path: <linux-kernel+bounces-399661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D4B9C0273
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:34:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A12F9C0276
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FEF11C215A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:34:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7871C216D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EABA1EBFF4;
-	Thu,  7 Nov 2024 10:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9661A1EF93B;
+	Thu,  7 Nov 2024 10:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="j3/FQfCR"
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i719SMyb"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967151DF72F;
-	Thu,  7 Nov 2024 10:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3AC1EF0B7;
+	Thu,  7 Nov 2024 10:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975654; cv=none; b=HJ0jVQVDdINYqveDy/bYW/oKFQoSpf7wUhpFD1GsJdnCjdFj7cXdulqFaYsj4m2NhqNcwY96pk4/wvzjsVKJeVY8puLgF7O9tNmi1gs1qCU1xMQEwwLnvy6AV2RkP9liE9OdML9yTy3IoZQFOfAHqVLcl+p7zidgH3R/uzn4eTE=
+	t=1730975659; cv=none; b=a+crOnWGIR++kfPFXEyiPip1gBFTlEpFgqDlCWttg/7WZm6YAc0/Dr8EzuejEy+OLqbEQZ7G9bS1l2U02tTyVCiEk6CFuAETwN3o4luxkkA0mQhzL+k0fm3XjKr0BO3zJ4+j3d3a7Dw+YtwOuEaYO0wKS13i04AWMRnYlyuHCgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975654; c=relaxed/simple;
-	bh=Opi7PAEFaG+9SFGD2InUqdDcvGdzNbi6zSEJ/4Yro1c=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=qcvJO3QOaShBK1rBtbL2VRPovEPelirmCM69nI9U9QRpNRBMLhj2R+MHqIhfAWXtv81s7yfRilUIgj2VSa48jPv5OplMAJD0jPOW6AH9GWC3nd9OpynCm+a9I7WIwZ4/RXoB6yJtmnHZnkjEdd/sPWdlYMpQqp1zalsSHqiAmBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=j3/FQfCR; arc=none smtp.client-ip=159.100.248.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [144.217.248.100])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id C8F5B26761;
-	Thu,  7 Nov 2024 10:34:04 +0000 (UTC)
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay1.mymailcheap.com (Postfix) with ESMTPS id 3882E3E9D6;
-	Thu,  7 Nov 2024 10:33:57 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 3F88240078;
-	Thu,  7 Nov 2024 10:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1730975636; bh=Opi7PAEFaG+9SFGD2InUqdDcvGdzNbi6zSEJ/4Yro1c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j3/FQfCRb3jGhtZs+Jg/4sYOxXp/LBNLYVl7Q/o63HFNAKBR8Fx/Aq2nF/x4Y19BT
-	 FNnWOZRivnmkhCkISxGQVHLGD/ZaIGxKIgRhDAJBKYbGuOtrcH4g5kmOSoUrkr9wUo
-	 LOT7uPUu3KeacqZ4J8/XPhGYj+v6VeKgGpYQuY9g=
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 9B5CA40490;
-	Thu,  7 Nov 2024 10:33:55 +0000 (UTC)
+	s=arc-20240116; t=1730975659; c=relaxed/simple;
+	bh=uNbbwI0t3CnnRoq+xAfBqxnkdHvi8cAUfxzw4z32a18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tsBf9iTUY1ozLXCmfcVZ55jYsM0InLBnF2vsWZH5sA82+0pUPYOFK0eJV6yzhCYhCv6hOD7elj2ycMAQVSASMGOLSx1a5Wr/qdKxRO3XFs+W4qo9YjazMt0CdsFUDz2gw1+0ExCM8lDUPvfJ6doMveaIvWmMMcb7m6uRngZCl+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i719SMyb; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20ca388d242so8399655ad.2;
+        Thu, 07 Nov 2024 02:34:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730975657; x=1731580457; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qHCnQjwtQk6Ee4qEjCK4DR0rfCUXjzBPqylzEtsbdRg=;
+        b=i719SMybg7xh7+xQFf5Va0HkbC60BnwGYUcUEMHD/fxkuZeJKhE7Zk4aSozuUpOV3J
+         agzX3nHyjKZ+Ce7jIcxwAryfTVCOEOHSfRnX0p3OdQys6IZJnr+ACH1fFLh0esYLr8xl
+         H29fJREJA0Ae0H30JoQKtq6TWOBpGeFw2GczW+cJdZJ+rg1dHWyQe9zIWgJJkOCVcspv
+         B1k/2mrRC7Nb++nlJCEHJcASzmlWFQ3hsRflgbIZppgB0MQownfIyOvpx5USa4G8M3ZT
+         tuYehg/eldmaIn1ufrXKrJbtysPWSAwyaK3QH4AAvVLEodvdxWvfFfJPgN8EKpRneEmo
+         zd9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730975657; x=1731580457;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qHCnQjwtQk6Ee4qEjCK4DR0rfCUXjzBPqylzEtsbdRg=;
+        b=B/UECp1nVASw/MBzBfeDu01ppCtZx2i2HvShqZf7upwPXSkKnzpVnvpl/kdlHhCGkb
+         65iITGuwhT347UCJV7sTkZ7cquOa6w31GaUCZBjCY0KxobwZ3tV/WYKgYlJk2eRUi08O
+         nsaBx0+X2NlWzR7M8arIeLReIG+GyKHf/zNRU58TNr+VcFapjJOm1VaWFjkT2X+AWZXy
+         Ydg4n+SEouGBwsOJTCjXx8a++PeAYA0Rdpwt0/btjjXanZ23pmMiett4w02SjYkMf5U2
+         vaLEzN0FmUV9mqnpm4/Dz7gOVyzt5nQ8cHXTAatFJqt4a31AiGwmxyNkjpNTIamvgYxw
+         G8Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgtcExybXz7x32jH5znF2R9vxG7Inzxn3BW1rA7OCyLWaWHSqqK1RawYJi9U4s6cacbPvJab+dJ0CZ@vger.kernel.org, AJvYcCUpfr107qErkeMstdGa5ZalOPNBKo83oXYuob2PvGM3Kelufgoh3h+HSAU1Qp7Gt1GvWmk6omZRKfp26DQV@vger.kernel.org, AJvYcCXm+Tl4PXno9Q2N+1ZOVzw46Fa4Ojiqd8tWlmQPO5EQWIHdovaI5Pm+wllw2j7NEJgX3J/NJwuz@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx6pofLVpaBV+0w8Y8tQ9dWv715lJJBZkBjO5wC4xyvz5Nzww7
+	3pSG2V6jWdhrL9MvjnJayHQQqlSPdazyxigOi6qh3CzbVyAd1GU+
+X-Google-Smtp-Source: AGHT+IHkZfIEbD222fQn11aAU/4JCGtUmB7xX2nq1qct7iJZBs/q3eDUArv4HK7B8GzG/yGYnzOsoQ==
+X-Received: by 2002:a17:902:e884:b0:20b:3f70:2e05 with SMTP id d9443c01a7336-2111afd6c99mr328557145ad.41.1730975656993;
+        Thu, 07 Nov 2024 02:34:16 -0800 (PST)
+Received: from [192.168.0.104] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e42b8csm9056135ad.131.2024.11.07.02.34.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 02:34:16 -0800 (PST)
+Message-ID: <61a76bb1-f247-4e9e-b6ba-163fd8af4f69@gmail.com>
+Date: Thu, 7 Nov 2024 18:34:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 07 Nov 2024 18:33:55 +0800
-From: Mingcong Bai <jeffbai@aosc.io>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, Linux regressions mailing
- list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, rcu <rcu@vger.kernel.org>,
- sakiiily@aosc.io
-Subject: Re: [Regression] wifi problems since tg3 started throwing rcu stall
- warnings
-In-Reply-To: <ZyyQuTfMMSLwStf_@pavilion.home>
-References: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
- <ZxjLQzHKuR-w16hF@pavilion.home>
- <2b25a988-6965-48e4-a788-58dd8a776e06@leemhuis.info>
- <e2ffd3d06fad236ea900d4fb439b2240@aosc.io>
- <937c258b-f34c-4f63-949d-a5e7c8db714d@leemhuis.info>
- <ZyyQuTfMMSLwStf_@pavilion.home>
-Message-ID: <eee3b235c14a84289b2fe1a40c542363@aosc.io>
-X-Sender: jeffbai@aosc.io
-Organization: Anthon Open Source Community
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
+ MA35 family GMAC
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
+ schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20241106111930.218825-1-a0987203069@gmail.com>
+ <20241106111930.218825-2-a0987203069@gmail.com>
+ <12f4ea21-d83b-412c-9904-d9fe8f8a0167@lunn.ch>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <12f4ea21-d83b-412c-9904-d9fe8f8a0167@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.10 / 10.00];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ONE(0.00)[1];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[]
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 3F88240078
 
-Hi all,
 
-在 2024-11-07 18:04，Frederic Weisbecker 写道：
-> Le Thu, Nov 07, 2024 at 10:10:37AM +0100, Thorsten Leemhuis a écrit :
->> On 05.11.24 08:17, Mingcong Bai wrote:
->> > (CC-ing the laptop's owner so that she might help with further testing...)
->> > 在 2024-10-23 18:22，Linux regression tracking (Thorsten Leemhuis) 写道：
->> >> On 23.10.24 12:09, Frederic Weisbecker wrote:
->> >>> Le Wed, Oct 23, 2024 at 10:27:18AM +0200, Linux regression tracking
->> >>> (Thorsten Leemhuis) a écrit :
->> >>>>
->> >>>> Frederic, I noticed a report about a regression in bugzilla.kernel.org
->> >>>> that appears to be caused by the following change of yours:
->> >>>> 55d4669ef1b768 ("rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU
->> >>>> invocation")
->> >>> Are you sure about the commit? Below it says:
->> >> Not totally, but...
->> >>
->> >>>> As many (most?) kernel developers don't keep an eye on the bug tracker,
->> >>>> I decided to write this mail. To quote from
->> >>>> https://bugzilla.kernel.org/show_bug.cgi?id=219390:
->> >>>>
->> >>>>>  Mingcong Bai 2024-10-15 13:32:35 UTC
->> >>>>> Since aa162aa4aa383a0a714b1c36e8fcc77612ddd1a2 between v6.10.4 and
->> >>> Now that's aa162aa4aa383a0a714b1c36e8fcc77612ddd1a2 which I can't
->> >>> find in vanilla
->> >>> tree.
->> >> ...quite, as that is the commit-id of the backport to v6.10.5; and the
->> >> reporter reverted it there. Ideally of course that would have happened
->> >> on recent mainline. If you doubt, ask Mingcong Bai to check if a revert
->> >> there helps, too.
->> > Do we need any further information/testing on this issue? Please let me
->> > know if there's anything we can do as the issue still persists in 6.12.
->> 
->> Hmm, no reply from Frederic. Not sure why, maybe he is just away from
->> the keyboard for a few days. But if the reporter has a minute, it 
->> might
->> be wise to check if reverting that commit on top of 6.12-rc6 or newer
->> also fixes the problem, to rule out any interference from changes
->> specific to the stable series.
->> 
->> Ciao, Thorsten
-> 
-> Sorry for the lag, I still don't understand how this specific commit
-> can produce this issue. Can you please retry with and without this 
-> commit
-> reverted?
-> 
-> Thanks.
-
-Yes, we are on it. Should report back in six hours or so.
-
-Best Regards,
-Mingcong Bai
+Andrew Lunn 於 11/7/2024 2:13 AM 寫道:
+>> +  mac-id:
+>> +    maxItems: 1
+>> +    description:
+>> +      The interface of MAC.
+> Please could you expand on what this is?
+This property will be removed. Thanks.
+> 	Andrew
 
