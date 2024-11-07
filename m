@@ -1,225 +1,292 @@
-Return-Path: <linux-kernel+bounces-400726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58259C1176
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:04:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400F99C117A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E904D1C21AF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBCCB1F23A2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7144F218950;
-	Thu,  7 Nov 2024 22:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2AB218947;
+	Thu,  7 Nov 2024 22:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QyCSQT/h"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EVi/IgJn"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2089.outbound.protection.outlook.com [40.107.212.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF769216A32
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731017070; cv=none; b=u92uK7E4+K2g/ogeu0MjaMupRVOdS0rUwbW/33dcalmrB1z9w//4Mrou+XrnrmZBAHA5KKR9Qlb/4bewZrt9/7rqCrnBQBKI00yzAtSSBuyybcIqWZyJ+NQE62D7j1ngMDUXQfHeIhvT2ZfyPnmo8qKa0cP5rst3q1XXSL7KuwA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731017070; c=relaxed/simple;
-	bh=lpsB0Lhao14pSHuIsoNAfLMQVqkvehe9MRaIJTGgGQM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=en/LvKWJ4YcILZ9sdPPnsmjOrJBnbD7TElVttuRxNXlx//PlEOShQlO2h/g355hau5qYmftuLyewk0+x8DNuvQRgaopE2iKb+DQfP8xxILTkiVCj6bp17qzXPgJko9O3uOMHDfahxEL4rQNEDkkZ2ahrjuM6RQ/VOnYBqLsDOJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QyCSQT/h; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e290b8b69f8so2352907276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 14:04:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731017066; x=1731621866; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xbGhGQD3dLGHOdZf79vl2DnONOHtbHblmt/KrMX34JM=;
-        b=QyCSQT/hDiEnj+elNoSQ8RsnNXW/LbMbl4WOWB1gYBPSh8FDbk12Ea5Jc9At7jd+eM
-         LbJkpJX5AJMdwqH4/g8nDx9hhfGzx7yHhi3T9IZNVkrpNXJKKhFZE6y7OZHF2/6nROZV
-         D2Y7MfCoPfko6EUehfGjOVAtBZnGo8Q8spK5cassIymH5Y7Nn4hKUGjKTQjHF9wDUn1+
-         oHOuCn/mytsE34uh5wNbV4fsKe5fKljoCJo0n+Xeo0wkkdJ35eeUmQakOsEhjzRjI3gM
-         +CjMMa6EFDvNNWcjdYF2kQ1WgtgjXaZVtYrPrunaY4IvhEpFprdObgS6fqGn8NLI0qZ2
-         myQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731017066; x=1731621866;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xbGhGQD3dLGHOdZf79vl2DnONOHtbHblmt/KrMX34JM=;
-        b=gMJk/PJ4TYlgoekSk6EGS7NBgW2mlkMjCwD158wLaiQ4LFtVACzrz1NTGk+bgA/J7y
-         2KhdmcVkDoe73U5A6cFTonqbIccne7mZPgWlQmGY4LqK69fBVS10S7ZDII1PQFI93ZNm
-         MpqfJzF6ZU8LD3Q0hOgs0Mi4XMxSF2aGt1ofUUW6hfOBrMLjxGFn5mZxy8bsDyR1FK6n
-         TDPZNKI1HsFiipKzqWVGTA4+aQ1b9tPXg06QaawyHdAEZ3KRaUuIliClpQAfqIpFinBX
-         hlx0q08HPDtosGjf9Uhr+HG5FxHViWuXsk2ecSSxBvsmYior5Bluj2irUhBh6GVqLRY6
-         SRuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEu4IHjX+DVyt8NBvEFcbDvGDtP8UffpBbGlYCOhDUTiSGuByRm5GCzD660c7ZhXSfCUYQMVPsDcJi8hA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBSRbW5WfdNJ4XcrwAqCzwJunFCXPagbbr4TlVxyJN4QNNvUgN
-	vTG7oFFCmpMfuhBtFVplQQF/V30kctyU94bvNyExpyvIHIBeZN3M9K1FUFz0QdP7BGMCVeSF0JN
-	u9Q==
-X-Google-Smtp-Source: AGHT+IGAD4bX7VHgyHjrfJRov5ldRUBUOAvZsIHOxd9qJY11CpezC67q3aZc2w/ppTDS+z3xlmpJz1tjiN0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:a423:0:b0:e20:2502:be14 with SMTP id
- 3f1490d57ef6-e337f8df4fbmr490276.7.1731017066602; Thu, 07 Nov 2024 14:04:26
- -0800 (PST)
-Date: Thu, 7 Nov 2024 14:04:25 -0800
-In-Reply-To: <2d69e11d8afc90e16a2bed5769f812663c123c14.camel@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BA1217465;
+	Thu,  7 Nov 2024 22:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731017113; cv=fail; b=PG+VGqmNikmqjNbfyCbWHyrYrxGNLGNctnThdLFmkXpqRkmjVaQoHQaagxZlkm9DKKO34zJPAZUf+QzzMCa9yd05FlhvTOh6k51ct/ya0MqAgd4vsCq+QK4Pb55TIWvce8hDh51YmJCq7pvGyQw58XOd92LJFxzDEbwVGCWqu9A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731017113; c=relaxed/simple;
+	bh=Db0gKfbB9k19Ak+Rr9HHkiLcS3asGdPur27Wg1JPx1s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EQVv3OpvHiPtgSV7LPENh4/+in8tc15m3s6hYx8X3YC+5FVpNaaowo4f2GXaDns6wG7CTmY2uU3zLkftUpO4CRGfQUtZSJguEezc8JvXdYt4RVox0oaQJ1qqx9LOZA7C5RS7UPB58H2iY5zaUPBMv8nBOO0335YX0fJK4HtnLCc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EVi/IgJn; arc=fail smtp.client-ip=40.107.212.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JqxN2NF9GG5b/saNVB9tJWk3S8E6fv5bhl1YPYPDxQ6//K9kuRwV0KuwAd9FGTn92OUMWowtqSKzo/uBLNguzT4t03yZhslnS2hbVGiOF4kYwoKJXuhzhmjeXUmGhbFapaeBTwhVzGErAHNqjyYc1gm+dStfSEfh0ushhx/sJwpAnmn1LElEosh2Hn+dbM6bq7nCzoO1svdZs8N7AR0MvTQci2TtxgwY/ORPvR//tW1Dk7S/m8GhXGjywle7tR9EKgNpFCnj8MJXf1U3ddZdgmkqfosVkMhc0s+eg+vgvo5QGG1Pswl4oDDIIYlsT9LRLfTJtzXYPRhC25Vh8IGaxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uF35CYqioND6Ghm77pDrZ71mQAnPtXgJsHg0cWOS90E=;
+ b=t9FkNkCaMkYxDeVcycZd0ioJaVHuRTl+6QCn+YLbd4RW/s5phG8wBdivyhyYtDzg/0i9C5cVEJgQYbaZAF+KNulgJfdhZX3jhDW698F6o5fuIOTLWoH9G7tshM3dh27Sk56L2my74BNsJl1Wtdn1fLkNXmwWwVchMJP98812UC8ETlMsNlM6T+RF7Iba2nAANdSDYAGlszzSL5pNxRR7v3FHV76diCjowucCYQugAY1NCpApmztF9VLEeF73zTPiG+aNBnaeSK+1l3Z4x6bn7VsBY/J2IKCCcD8K/Oy9FwzsyI+SE9m0L4iJvQbLnl+ViKUUAO+GD0GRyEy2TIwcRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uF35CYqioND6Ghm77pDrZ71mQAnPtXgJsHg0cWOS90E=;
+ b=EVi/IgJnurDCJgBFwxCuxem2hFwKshDRchbiArbtixhOYixjvapmQviwYXe4jXqP6RUGK1Hzth2S5pzwQ6dFdmHm/Aykk/7tu7m18TxVVA6JI5+VAUe3JxDpjLHplSmvrQesv+PtJNbAxN3ifs2Dxf1BOBRL9iiH9rrLkvWJzVw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SA3PR12MB7857.namprd12.prod.outlook.com (2603:10b6:806:31e::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
+ 2024 22:05:08 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8137.019; Thu, 7 Nov 2024
+ 22:05:08 +0000
+Message-ID: <cbdc6ff5-627e-4237-a053-bbf2e77499da@amd.com>
+Date: Thu, 7 Nov 2024 16:05:05 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 17/20] ACPI: platform_profile: Check all profile
+ handler to calculate next
+To: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241107060254.17615-1-mario.limonciello@amd.com>
+ <20241107060254.17615-18-mario.limonciello@amd.com>
+ <989e7297-97f9-4d55-be28-78128572fed2@gmx.de>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <989e7297-97f9-4d55-be28-78128572fed2@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN1PR12CA0052.namprd12.prod.outlook.com
+ (2603:10b6:802:20::23) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1730120881.git.kai.huang@intel.com> <f7394b88a22e52774f23854950d45c1bfeafe42c.1730120881.git.kai.huang@intel.com>
- <ZyJOiPQnBz31qLZ7@google.com> <46ea74bcd8eebe241a143e9280c65ca33cb8dcce.camel@intel.com>
- <ZyPnC3K9hjjKAWCM@google.com> <37f497d9e6e624b56632021f122b81dd05f5d845.camel@intel.com>
- <ZyuDgLycfadLDg3A@google.com> <2d69e11d8afc90e16a2bed5769f812663c123c14.camel@intel.com>
-Message-ID: <Zy05af5Qxkc4uRtn@google.com>
-Subject: Re: [PATCH 3/3] KVM: VMX: Initialize TDX during KVM module load
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Tony Lindgren <tony.lindgren@intel.com>, Dave Hansen <dave.hansen@intel.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	Dan J Williams <dan.j.williams@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kristen@linux.intel.com" <kristen@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SA3PR12MB7857:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ca633c8-7c1f-40f6-8de0-08dcff783e3a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SkpDbGV4TWhQYjY3bkVvOCsrK3Y0N2lNUGVLUExDd0REdzlCOVBwQ0V0Vm1v?=
+ =?utf-8?B?cE5hNURWWkxDRWlYTjZrVG9YRnFWNzBPak1pWGE1SThTdk9oTDVuT2RSNkVG?=
+ =?utf-8?B?cVFFYzV2MktKT3Z0YklPeTI5ZjRzYk4vQVgyVXFjMkovQTVDZDVEZDlJNGZy?=
+ =?utf-8?B?VEZBMXF6QThyNWZjWUV4emdVQXlaRFl0cVF4NnB4MmgvSE9BMXlPQ0lpT3Rs?=
+ =?utf-8?B?MEVxcHh4V25PKzUyQlZYZUF6dVV5V2lYdjh6YUQ3aEdZdzNJelIxcm1DT0Q2?=
+ =?utf-8?B?QzJMb1J6QWJUcUNWNmhGcUwzenZGYzVwUDRkcEg2d2wvajcvanRpaHp5ZDJi?=
+ =?utf-8?B?U24yd21mYVRwd05IU0ViWmU2dHFoM1pwWllHUHkyT25lVVovRnVvTlEzUTNa?=
+ =?utf-8?B?dC9qL2NsLytnWkNzenZQSllXTG9nS2ZjYzBnVHk4UGswZVpWRkNlb2gzRFFl?=
+ =?utf-8?B?MnpZQzVpajl5S1MxMTBBOEFiWks0cGtBUzdjS284cGcvbEhpMldPUUdMVXRu?=
+ =?utf-8?B?dzlaN2VYaDRiZHJja0c1a20wTHl3c3ZobTZKRDEycE14a3FOVHpWdVJ5SU5R?=
+ =?utf-8?B?Z1NGR3VrMkhqNW1PT3ExUU11cnkwR255YmIvVjkrOWhha3JqSVoxMVQ3QVRL?=
+ =?utf-8?B?S0tGZ0F6N2xmUEtWaW42SGNxMmNTNk9RRWhxRW1nc3NIZWxzVW9xWXBIcU1o?=
+ =?utf-8?B?cWdXYXZnWE02WWJFaUFaWVRjUjRlai9OV3hlTFVVS2cxT3AwSm9BeGlLdUZ6?=
+ =?utf-8?B?dmRZT0k5MFZvSTBVN0UwczA2b1d4K2F4VVQ0cStxTEhuMEpXendrRW4xallV?=
+ =?utf-8?B?TjBuM05adXJTakdjR2ZtL2wrVzlFZUVZdmhBNUNMTmRua2Z0VUlHU3ZtSzdZ?=
+ =?utf-8?B?YkppUGlsWFVRSzhIa0Rhb29lWVhmMG5MRnd3QkwvVWNocm9JMW9aRTA0cWtZ?=
+ =?utf-8?B?WjN5ZlVCUmpRZUpvR1poZG9mWUtNVVhCcm5BdDQ4T1pCMmxXU1BqeUo1SVpT?=
+ =?utf-8?B?V2ptWXZ0TlZTeXl5R29XZ1U1UWhkQ0Y3YURFdWNGVUNXT09YdG45eEJ0R0kr?=
+ =?utf-8?B?bDBzeHUrc3J2MnYxbU16MEpBQndqaWUzaGNtd0FPcWx3WlN1SndNcW1INTcz?=
+ =?utf-8?B?TmdYWlF3UE16bTE1emd1Q3J0WUdhRFpDNTFzZ2RvMkpIZVdmYUErT2hQNjZv?=
+ =?utf-8?B?ZXAwUEZtMko3OTVZbmNjNEp1MEFWaFM4T0oyVDd5T0R5VEkxZzhDMDZQVXBI?=
+ =?utf-8?B?RTV0bWluUEIzRHlqRS9HS2gwL0VDQkVpd04rWllqOHZhU2lqZEFJaGR0UERO?=
+ =?utf-8?B?MUZPN3NzbVpSWEdCa1J4ajhQM3hvV0VlSU05QTZCMGZDbUwwdVEvdFNaenRh?=
+ =?utf-8?B?Z1BJUzNrZjRiSU5aYnNaUmd5aVFkNXZOaW1PK0ZnOUFadmZ0SGpJcUVJUWhr?=
+ =?utf-8?B?NXNQQ1k1UTBMTjJIRklZMHhnU29yUnFjYllZUVB1UERkV3FIalJLTVRwdHNw?=
+ =?utf-8?B?TjR4SjBnRXdRdHcvVGRYQkc4eGtXNzI2WFdndjUvTktQUkFERkJrTUdFSXN5?=
+ =?utf-8?B?bUFQWmIzYjZQLzhxdVdyRFZCUFFFZ2Z3TE1weXAwU2xPdjJIckdqbzI2UERS?=
+ =?utf-8?B?MUdPMitwUVYvejNqNGRabXlVSDgwOXpWcDV5aDJLRm90Z3dacytuMm43MVdK?=
+ =?utf-8?B?OFhTVkVaSDlVTzlYYzk0RWJEUGZWU1d0SmJOWEFlMUFxei8yVWNzekpXN2Y4?=
+ =?utf-8?Q?WGvfCC1NdjcDpgL4v1Sk4IgiShYb85wV/GUpzUc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Zi9hM05IN2FydXorODVvZFRYd01tWW9pSHA2R1dNdTBkKytENFJCbVc0N1dH?=
+ =?utf-8?B?L21tMDBGSVhkd0hyRGFPaDY0T1llRFZRK1QydXFmSTZnNE03WldVL3dDR3py?=
+ =?utf-8?B?VmQvWHN0QmRBMlgwMVFka2wxTkJiMGEvYTZGMk0yZS9iVVRDMHY4eWg0Vm9J?=
+ =?utf-8?B?dU1zbW5KN0YrdDloQnhGYUc3aFIyTG13WVBqME53MkRYNk9vQmpCVEVrOHRD?=
+ =?utf-8?B?dE5yOVB2T3d3QXl6SVpzOVEzaWFkYmFrWDNUejdJTUpZRWEzZklvZ2xVbGRl?=
+ =?utf-8?B?OHIwcjJ0Q201VUtmQkVyNFJtRzhBN0pndlZGZmdHbmNWUGkyc2pHSS9FTDJt?=
+ =?utf-8?B?ZUxiMGNBUHVGM0h4aGo1bksvZDl5YzFTcmdVNTdSbjc1RmtUaDZKamFuL09T?=
+ =?utf-8?B?Tk5qZnMrZjZrVzBJSjE5bmFOK3B6Z0s0Si9hVDJaMXRGSml1QkU5dkNDckdF?=
+ =?utf-8?B?bGtQVERReFBuVEZiN1gxWEJWTU9PbmxHU2s4dCs0V0xoU0FZM21PLzBvbmRT?=
+ =?utf-8?B?dTF5dDNZOUt3Ynd3ck9DSHV3SmwvNEJJVUdWMWdMdVg5Sis5QXRDcDlFeGti?=
+ =?utf-8?B?TDE0eTd3UVZ6eGUyaUZSQXdML3dXaENkZ3dsb3g4dGZWZEFBN0pON1hzWm5Z?=
+ =?utf-8?B?cWYzZG5zZkJnOU5oK2djdHB1K2kvMW5MdVROZ3o2WFlTREZPSzJuV3IxVXhT?=
+ =?utf-8?B?RUZ3TC9HREdjUU1oejV0ZnBIaWxuYk9hWGZ3akk2aFZMcGVPZlJ3YVNaNlV4?=
+ =?utf-8?B?QlJaZkJ6U05vUktvQk1jdldrWDc3blRZNXE3dmppb1hEejJibUVQWDZDK0lF?=
+ =?utf-8?B?TlB0Z2VGSjF2d2hkc0dWaGpwb0dmNTVjcGsybzVXZ0FMMTU5WUR6NmE1dnFI?=
+ =?utf-8?B?V1FNQUxUbE9pOGgzU1hTYjFIaWhqUGRiMmt3OEoxQmlMcTdvUTFxRWxzMTZU?=
+ =?utf-8?B?UVpRcUJyOVZwSU9IeG1JSy9CWEJCcDAxdEk4ZSt1Q1Iwa1orajdpVkh5VWtj?=
+ =?utf-8?B?WmwwMEhEVWNMR21Ncy95WjFZMlVBRkI1K1VEcnFXdzM5ZXRvTldFdEJJWXVV?=
+ =?utf-8?B?S1RMZmkvMEN2VFVjcVBKM2NVM0xpdXNrWitEa1ZHaVBRTTd1clcvSmtibGsx?=
+ =?utf-8?B?dytjaFlPSkYyeFJLK2VJRlJtaXJYODhLMmQ1V2YvakxiWituRUFOWWt1cjZ0?=
+ =?utf-8?B?LzhhQUxzc0RXUjIrdkY1dnl4Z2duUTNxSlVOK1hUbnEvRGt1eVpuTUNHUWFh?=
+ =?utf-8?B?WFZJVVdwNU9CNEZRQ3N3VnpWWU1LMWdLVFl3WHkxRExkdEVlcGtUMWloY3hJ?=
+ =?utf-8?B?aUMzTE1iaFkrZnpzVzR0aVY5N2IvelVjb040eUcwT1NjRVlTME5LSGk0Vno5?=
+ =?utf-8?B?WHArK2wydkpodjlmQm9qK1JCL1RETkZtOGFhZkpIYWpQR3JGQ25adXBtME44?=
+ =?utf-8?B?QWx5VWUvZit0T1I4amY2RU13T3Q3R01jMU0vYkNodEJCRlE3UVM2V2F6bWlD?=
+ =?utf-8?B?WDRjN0I2Z0dsRS9uTDE1T3BEb0k4UW1WMkNJTDhLNi9aNXEvUnRkZmVyNkVk?=
+ =?utf-8?B?dngyYzJ6SGdHeUcybkM2YlkrNVdWbjBzTEcvcm84ZWJrbkgvbVJTQ2VtN3Fx?=
+ =?utf-8?B?bFNZejVjWUVxYTRzaDRsNldIeFkyTlU2TTRPY3R4QWZmakZPb0VTOFpRZU1P?=
+ =?utf-8?B?azkxWXhMaXdtME00YnpOWnp0bjlLMi9VWHVweGZlQnB6L2pqYTROMzZwWU5O?=
+ =?utf-8?B?aG1BZmIrOHptVElNT2NNQXhVY1NPdld4R1VFRG8vMFdFakUwNE1uZWxTeW1R?=
+ =?utf-8?B?Q3JrQU1ndWgwTHlGek9Ydm9hZ29VZVBmdURxUkpzUjRxWlhNbndzLzFPdFFB?=
+ =?utf-8?B?NVRkVEY2eDVGanlHNTFZSTlMRWF4TnlNQzRPNXl1S01wV0JRY0hMZHQzVXN6?=
+ =?utf-8?B?MnZSM3dKVG5TOVh1ekxQRlpBcXVwV2p3TmRRTk44UTEyb2gwZ0dtN2RuM0dY?=
+ =?utf-8?B?N0NGTklrdHRwZGxQSyttZnlucVlZVktTaEk0dU5XUDFYU3NybVlZZFV6MGtj?=
+ =?utf-8?B?Y01aNjhVUFN0Q3R6UU9zbmRvbm5ENkNOMTNSOUFoNmhJYUgvZnUrUFQ0aHV1?=
+ =?utf-8?Q?fPHsYKfY3GX3ZFcK3i0k51qtI?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ca633c8-7c1f-40f6-8de0-08dcff783e3a
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 22:05:08.6348
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KRMqdOheXYl5IpMwSVCypFWS7kt22MUnWXsXmiSlq71PyyLAW50og25wh8Ti9ovh1Gm3IHI/iCsij5821ia3Lg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7857
 
-On Wed, Nov 06, 2024, Kai Huang wrote:
-> On Wed, 2024-11-06 at 07:01 -0800, Sean Christopherson wrote:
-> > On Wed, Nov 06, 2024, Kai Huang wrote:
-> > > For this we only disable TDX but continue to load module.  The reason is I think
-> > > this is similar to enable a specific KVM feature but the hardware doesn't
-> > > support it.  We can go further to check the return value of tdx_cpu_enable() to
-> > > distinguish cases like "module not loaded" and "unexpected error", but I really
-> > > don't want to go that far.
-> > 
-> > Hrm, tdx_cpu_enable() is a bit of a mess.  Ideally, there would be a separate
-> > "probe" API so that KVM could detect if TDX is supported.  Though maybe it's the
-> > TDX module itself is flawed, e.g. if TDH_SYS_INIT is literally the only way to
-> > detect whether or not a module is loaded.
+On 11/7/2024 02:58, Armin Wolf wrote:
+> Am 07.11.24 um 07:02 schrieb Mario Limonciello:
 > 
-> We can also use P-SEAMLDR SEAMCALL to query, but I see no difference between
-> using TDH_SYS_INIT.  If you are asking whether there's CPUID or MSR to query
-> then no.
-
-Doesn't have to be a CPUID or MSR, anything idempotent would work.  Which begs
-the question, is that P-SEAMLDR SEAMCALL query you have in mind idempotent? :-)
-
-> > So, absent a way to clean up tdx_cpu_enable(), maybe disable the module param if
-> > it returns -ENODEV, otherwise fail the module load?
+>> As multiple platform profile handlers might not all support the same
+>> profile, cycling to the next profile could have a different result
+>> depending on what handler are registered.
+>>
+>> Check what is active and supported by all handlers to decide what
+>> to do.
+>>
+>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> v5:
+>>   * Adjust mutex use
+>> ---
+>>   drivers/acpi/platform_profile.c | 23 ++++++++++++++---------
+>>   1 file changed, 14 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/ 
+>> platform_profile.c
+>> index 7f302ac4d3779..2c466f2d16b42 100644
+>> --- a/drivers/acpi/platform_profile.c
+>> +++ b/drivers/acpi/platform_profile.c
+>> @@ -411,34 +411,39 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
+>>
+>>   int platform_profile_cycle(void)
+>>   {
+>> +    enum platform_profile_option next = PLATFORM_PROFILE_LAST;
+>>       enum platform_profile_option profile;
+>> -    enum platform_profile_option next;
+>> +    unsigned long choices;
+>>       int err;
+>>
+>>       if (!class_is_registered(&platform_profile_class))
+>>           return -ENODEV;
+>>
+>>       scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>> -        if (!cur_profile)
+>> -            return -ENODEV;
+>> +        err = class_for_each_device(&platform_profile_class, NULL,
+>> +                        &profile, _aggregate_profiles);
+>> +        if (err)
+>> +            return err;
+>>
+>> -        err = cur_profile->profile_get(cur_profile, &profile);
+>> +        err = class_for_each_device(&platform_profile_class, NULL,
+>> +                        &choices, _aggregate_choices);
+>>           if (err)
+>>               return err;
+>>
+>> -        next = find_next_bit_wrap(cur_profile->choices, 
+>> PLATFORM_PROFILE_LAST,
+>> +        next = find_next_bit_wrap(&choices,
+>> +                      PLATFORM_PROFILE_LAST,
+>>                         profile + 1);
 > 
-> We can, but we need to assume cpuhp_setup_state_cpuslocked() itself will not
-> return -ENODEV (it is true now), otherwise we won't be able to distinguish
-> whether the -ENODEV was from cpuhp_setup_state_cpuslocked() or tdx_cpu_enable().
+> Could it be that this would lead to be "custom" profile being selected 
+> under some conditions?
+
+Yeah, you're right.  If all drivers supported custom then this could 
+happen.  I'll clear custom like this:
+
+		choices &= ~BIT(PLATFORM_PROFILE_CUSTOM);
+
+> Also _aggregate_profiles() expects profile to be initialized with 
+> PLATFORM_PROFILE_LAST.
+
+Will correct initialization in platform_profile_cycle() to this.
+
+	enum platform_profile_option profile = PLATFORM_PROFILE_LAST;
+
+But this also raises a good point.  If _aggregate_profiles() returns
+custom then this should be an error because next profile is undefined.
+So I'll catch that like this.
+		err = class_for_each_device()
+		if (err)
+			return err;
+		if (profile == PLATFORM_PROFILE_CUSTOM)
+			return -EINVAL;
 > 
-> Unless we choose to do tdx_cpu_enable() via on_each_cpu() separately.
+> Thanks,
+> Armin Wolf
 > 
-> Btw tdx_cpu_enable() itself will print "module not loaded" in case of -ENODEV,
-> so the user will be aware anyway if we only disable TDX but not fail module
-> loading.
+>>
+>> -        if (WARN_ON(next == PLATFORM_PROFILE_LAST))
+>> -            return -EINVAL;
+>> +        err = class_for_each_device(&platform_profile_class, NULL, 
+>> &next,
+>> +                        _store_class_profile);
+>>
+>> -        err = cur_profile->profile_set(cur_profile, next);
+>>           if (err)
+>>               return err;
+>>       }
+>>
+>>       sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>> -    return 0;
+>> +
+>> +    return err;
+>>   }
+>>   EXPORT_SYMBOL_GPL(platform_profile_cycle);
+>>
 
-That only helps if a human looks at dmesg before attempting to run a TDX VM on
-the host, and parsing dmesg to treat that particular scenario as fatal isn't
-something I want to recommend to end users.  E.g. if our platform configuration
-screwed up and failed to load a TDX module, then I want that to be surfaced as
-an alarm of sorts, not a silent "this platform doesn't support TDX" flag.
-
-> My concern is still the whole "different handling of error cases" seems over-
-> engineering.
-
-IMO, that's a symptom of the TDX enabling code not cleanly separating "probe"
-from "enable", and at a glance, that seems very solvable.  And I suspect that
-cleaning things up will allow for additional hardening.  E.g. I assume the lack
-of MOVDIR64B should be a WARN, but because KVM checks for MOVDIR64B before
-checking for basic TDX support, it's an non-commitalpr_warn().
-
-> > > 4) tdx_enable() fails.
-> > > 
-> > > Ditto to 3).
-> > 
-> > No, this should fail the module load.  E.g. most of the error conditions are
-> > -ENOMEM, which has nothing to do with host support for TDX.
-> > 
-> > > 5) tdx_get_sysinfo() fails.
-> > > 
-> > > This is a kernel bug since tdx_get_sysinfo() should always return valid TDX
-> > > sysinfo structure pointer after tdx_enable() is done successfully.  Currently we
-> > > just WARN() if the returned pointer is NULL and disable TDX only.  I think it's
-> > > also fine.
-> > > 
-> > > 6) TDX global metadata check fails, e.g., MAX_VCPUS etc.
-> > > 
-> > > Ditto to 3).  For this we disable TDX only.
-> > 
-> > Where is this code?
-> 
-> Please check:
-> 
-> https://github.com/intel/tdx/blob/tdx_kvm_dev-2024-10-25.1-host-metadata-v6-rebase/arch/x86/kvm/vmx/tdx.c
-> 
-> .. starting at line 3320.
-
-Before I forget, that code has a bug.  This
-
-	/* Check TDX module and KVM capabilities */
-	if (!tdx_get_supported_attrs(&tdx_sysinfo->td_conf) ||
-	    !tdx_get_supported_xfam(&tdx_sysinfo->td_conf))
-		goto get_sysinfo_err;
-
-will return '0' on error, instead of -EINVAL (or whatever it intends).
-
-Back to the main discussion, these checks are obvious "probe" failures and so
-should disable TDX without failing module load:
-
-	if (!tdp_mmu_enabled || !enable_mmio_caching)
-		return -EOPNOTSUPP;
-
-	if (!cpu_feature_enabled(X86_FEATURE_MOVDIR64B)) {
-		pr_warn("MOVDIR64B is reqiured for TDX\n");
-		return -EOPNOTSUPP;
-	}
-
-A kvm_find_user_return_msr() error is obviously a KVM bug, i.e. should definitely
-WARN and fail module module.  Ditto for kvm_enable_virtualization().
-
-The boot_cpu_has(X86_FEATURE_TDX_HOST_PLATFORM) that's buried in tdx_enable()
-really belongs in KVM.  Having it in both is totally fine, but KVM shouldn't do
-a bunch of work and _then_ check if all that work was pointless.
-
-I am ok treating everything at or after tdx_get_sysinfo() as fatal to module load,
-especially since, IIUC, TD_SYS_INIT can't be undone, i.e. KVM has crossed a point
-of no return.
-
-In short, assuming KVM can query if a TDX module is a loaded, I don't think it's
-all that much work to do:
-
-  static bool kvm_is_tdx_supported(void)
-  {
-	if (boot_cpu_has(X86_FEATURE_TDX_HOST_PLATFORM))
-		return false;
-
-	if (!<is TDX module loaded>)
-		return false;
-
-	if (!tdp_mmu_enabled || !enable_mmio_caching)
-		return false;
-
-	if (WARN_ON_ONCE(!cpu_feature_enabled(X86_FEATURE_MOVDIR64B)))
-		return false;
-
-	return true;
-  }
-
-  int __init tdx_bringup(void)
-  {
-	enable_tdx = enable_tdx && kvm_is_tdx_supported();
-	if (!enable_tdx)
-		return 0;
-
-	return __tdx_bringup();
-  }
 
