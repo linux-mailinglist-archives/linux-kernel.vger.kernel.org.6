@@ -1,204 +1,225 @@
-Return-Path: <linux-kernel+bounces-399619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC5E9C01BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:01:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403AE9C01CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:02:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0BCB282055
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE34A1F22F38
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25C61E7C1F;
-	Thu,  7 Nov 2024 10:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE071EBFF4;
+	Thu,  7 Nov 2024 10:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dEyWEJFP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2xj1YwUi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dEyWEJFP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2xj1YwUi"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ci4sasAT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k4bgUURb"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5921DFE09;
-	Thu,  7 Nov 2024 10:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D37C1E885A;
+	Thu,  7 Nov 2024 10:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730973679; cv=none; b=sG4wz07kx/TkKmHEwABL/F/n0NtitGUKvx76yUmeBuYWeiBQrfGeLcpCbOAsJ+A5zPoNFEHPaGmzRetCMedv4W1QxhIxUcvSAujjX64NZtg9jcbRQv9I9t7qXAI2gU5khd6eSHFxjWJ7TrNh9mPMlVLMSbxRc+IniscF80CSfL0=
+	t=1730973743; cv=none; b=sJ69eVkSyyxS4b9JGLEdlIfaM+6OTPvuV8ESySHWdyJQWxoN69YLk7F2DaZutxsFVL9AIQfQK1d6IazHhf5TsJ4b8EA7Y/7CYiUqJoTfh07Ta5IHURIu94y/APiZE2wVDoKG8XgNPoRQO6XITKg+fp+rHvLzMQ3HnGdsLNs3TEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730973679; c=relaxed/simple;
-	bh=xzy1a+XIjSNMU/9hC5QgXrBmdrtIFDc4aIusSqqZDyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afpsO4iCyCaS2PrdEr2RuLJpxqHuttj5LanvScfXQImj5tzLtyqvdMLYzswGWEQNws3qOWEVdKA6ve1oq52dEEFXFhCKTk68WO7goVY1XB75NUo40MMKtamBjxPboltCzeQkvTP82grytIxP6mlapUgpLB5qQJgS73NrFwUgCBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dEyWEJFP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2xj1YwUi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dEyWEJFP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2xj1YwUi; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A7AB91F8B8;
-	Thu,  7 Nov 2024 10:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730973669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GaeMriiFanSTTR3LXqn8YDithSvI9c9ELHnMZEcbcV4=;
-	b=dEyWEJFP9+7pFZto0mTwaAdpdbUBoE+E1Jnb17O6Oi86fWbGp9buUsewrMmL7rRrw3moYr
-	7jZVcuruN+WKKEap2Qyzs/K/w4zP/wOhIzGi/Uj7MGsu3rXbc5PvAc3OzqnOlCCWrtEDWa
-	0WJ825xm66rkDiQFnhSLi1ynKIJEEKY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730973669;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GaeMriiFanSTTR3LXqn8YDithSvI9c9ELHnMZEcbcV4=;
-	b=2xj1YwUi1NjJGe5xQRuOT/bgQX4rnzwsFc2ixDbkBGV6Ockj2AopBZIxrofb7O4+KoEdm5
-	e2c0LgeZSkEUZIBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dEyWEJFP;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2xj1YwUi
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730973669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GaeMriiFanSTTR3LXqn8YDithSvI9c9ELHnMZEcbcV4=;
-	b=dEyWEJFP9+7pFZto0mTwaAdpdbUBoE+E1Jnb17O6Oi86fWbGp9buUsewrMmL7rRrw3moYr
-	7jZVcuruN+WKKEap2Qyzs/K/w4zP/wOhIzGi/Uj7MGsu3rXbc5PvAc3OzqnOlCCWrtEDWa
-	0WJ825xm66rkDiQFnhSLi1ynKIJEEKY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730973669;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GaeMriiFanSTTR3LXqn8YDithSvI9c9ELHnMZEcbcV4=;
-	b=2xj1YwUi1NjJGe5xQRuOT/bgQX4rnzwsFc2ixDbkBGV6Ockj2AopBZIxrofb7O4+KoEdm5
-	e2c0LgeZSkEUZIBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 996BF139B3;
-	Thu,  7 Nov 2024 10:01:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2mJtJeWPLGd5fwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 10:01:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 53202A0AF4; Thu,  7 Nov 2024 11:01:05 +0100 (CET)
-Date: Thu, 7 Nov 2024 11:01:05 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Jan Kara <jack@suse.cz>, Asahi Lina <lina@asahilina.net>,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Sergio Lopez Pascual <slp@redhat.com>,
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
-Message-ID: <20241107100105.tktkxs5qhkjwkckg@quack3>
-References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
- <20241104105711.mqk4of6frmsllarn@quack3>
- <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
- <ZylHyD7Z+ApaiS5g@dread.disaster.area>
- <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
- <20241106121255.yfvlzcomf7yvrvm7@quack3>
- <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1730973743; c=relaxed/simple;
+	bh=CYIZ4InJfLSJ1hbtF82RJRg/Us0iUo2AybX8tPKT2wY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=epH1myM0qIWMMwlvYLYJ5zetMYPiR2S3VWzal+/Tenyxsnlh+eBOrMuht7f8s8dr3RD9dKZB4MyO3cRqL7XIq+QzgjbBsYrbsN68CzSt2XqSs94TltO+bYp4qusKUa0YblDH1co20BETpdeqSmAXtuzy8tMmWJ4IkBXJtpDrozk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ci4sasAT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k4bgUURb; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 23BA511401DD;
+	Thu,  7 Nov 2024 05:02:19 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 07 Nov 2024 05:02:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1730973739;
+	 x=1731060139; bh=Hd8IeJs9qp/ThzvdHUHNNNLGsqMD9xIcngR+XTuBn8I=; b=
+	Ci4sasATfHowO5XaTQ4QmX64j1pCahNSaj2Ox0KLoOpWUUKPFVNbQM1yuYDfIZY3
+	BWs0Ouo/ITVelMZ4/MdL297pq7hw5sfqLFDIGjYMTkU+MuAxM2I4w+dXFFw/NGS3
+	zOd2L6sFbThvoR2B6IKsXlC8MpoTL5st5tsjCNg3x3wdUI+t8e6nVk+bXzPfd3h2
+	7X31oH00oG5H0UrvXbQq293SmThVhDSmf62mOIuYOnUqbPtP0M7KIVNiLVJSBiWz
+	3T3bZ6oUsuRQFVuThAhoIcz+1PNoHRA+DfP9hd+7/wfWliFlBa6euqm0jiCmmWIr
+	PnzFL5jhhSVKbklB3I8Q8g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730973739; x=
+	1731060139; bh=Hd8IeJs9qp/ThzvdHUHNNNLGsqMD9xIcngR+XTuBn8I=; b=k
+	4bgUURbKgUXcKo3cN0VpHlZtq+uEyd0EyWh76Oyj8eaEPiF9wkP9S1qqlLAeybuh
+	aeyGUFw9KSo0YDdEsGZOsji7cPwjlnKc0H9rg5PmsLpvEAVgfKntXB18/RT8nUBe
+	eiATpIhqIE/BMH5EOoCDoigO73cTEAcvqzWDm8ldCB5vc8cr8Y17mgow/L4K01jk
+	u6k7kGrJ2nPjpIPf3I8JvkXwQJS3H2k9qvASsa4Xk7+IRMqIGNiUAX8W4GweEkUw
+	Wzg7iy/atBAcLJaBWw/oK97HfDaxwr8wkfY3N471jbl8WMqn8SBkeGk2JvN6h8Jy
+	8usUA2j4z0b8ZIv36KGpA==
+X-ME-Sender: <xms:KpAsZyrFiHyuA6O3TS8rGVibTIkf4GYurf5x7l_aoJqO08fl5Bgmhw>
+    <xme:KpAsZwrLDV5zg2zlstipBSp6vzvCTypeZE2sQ3fLYhtdOvNyijRYNR1gSzD8emaC5
+    GfopkVMbjJZdoeXO5o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeggdduudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpeekgfehfefhleeuieehheehudekveegudfhtedugeek
+    veeludeitdduhfehfeeludenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgnhhurd
+    horhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
+    rghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehjohhroheskegshihtvghsrdhorhhgpdhrtghpthhtohep
+    jhhonhdrghhrihhmmhesrghmugdrtghomhdprhgtphhtthhopehsrghnthhoshhhrdhshh
+    hukhhlrgesrghmugdrtghomhdprhgtphhtthhopehsuhhrrghvvggvrdhsuhhthhhikhhu
+    lhhprghnihhtsegrmhgurdgtohhmpdhrtghpthhtohepvhgrshgrnhhtrdhhvghguggvse
+    grmhgurdgtohhmpdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhm
+    pdhrtghpthhtohepuhgsihiijhgrkhesghhmrghilhdrtghomhdprhgtphhtthhopehkuh
+    hmrghrrghnrghnugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrnhguohhhsehg
+    ohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:KpAsZ3PH4kBKEWxA-7cYZYIPwqZyZbdtot7xYeoaNPwwlp58M5rpeg>
+    <xmx:KpAsZx6qpzzpHIrP5lGs0a6APEZh92MnfIRaM6t7bVr-GJAdeaKWzA>
+    <xmx:KpAsZx4nJorSFU0btoGBgqpzNOZN3u1wr4uPUSl5XAiLR959ifgiGA>
+    <xmx:KpAsZxg48q31vk2Ey-9ZKHHXG-T4b-622USRHNQdkD1Hp9TgNaAkSw>
+    <xmx:K5AsZwIpJOIcOobCAoNeCrLRaHD5B9xn72WIyb5UWUcK9jZ_zoPULsoM>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9E27A2220071; Thu,  7 Nov 2024 05:02:18 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
-X-Rspamd-Queue-Id: A7AB91F8B8
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Date: Thu, 07 Nov 2024 11:01:58 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jason Gunthorpe" <jgg@nvidia.com>, "Uros Bizjak" <ubizjak@gmail.com>
+Cc: "Joerg Roedel" <joro@8bytes.org>,
+ "Suravee Suthikulpanit" <suravee.suthikulpanit@amd.com>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ "Robin Murphy" <robin.murphy@arm.com>, vasant.hegde@amd.com,
+ "Kevin Tian" <kevin.tian@intel.com>, jon.grimm@amd.com,
+ santosh.shukla@amd.com, pandoh@google.com, kumaranand@google.com,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <4c9fd886-3305-4797-9091-3f9b0b9ee0b6@app.fastmail.com>
+In-Reply-To: <20241106134034.GN458827@nvidia.com>
+References: <20241101162304.4688-1-suravee.suthikulpanit@amd.com>
+ <20241101162304.4688-4-suravee.suthikulpanit@amd.com>
+ <ZyoP0IKVmxfesRU8@8bytes.org>
+ <323dcff2-6135-4b8a-85db-bccc315ddfdf@app.fastmail.com>
+ <CAFULd4Za4BQL+h9Xmra1TjB2oGGzPwru_y1xOrrAFSg==bfvgg@mail.gmail.com>
+ <20241106134034.GN458827@nvidia.com>
+Subject: Re: [PATCH v9 03/10] asm/rwonce: Introduce [READ|WRITE]_ONCE() support for
+ __int128
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 06-11-24 11:59:44, Dan Williams wrote:
-> Jan Kara wrote:
-> [..]
-> > > This WARN still feels like the wrong thing, though. Right now it is the
-> > > only thing in DAX code complaining on a page size/block size mismatch
-> > > (at least for virtiofs). If this is so important, I feel like there
-> > > should be a higher level check elsewhere, like something happening at
-> > > mount time or on file open. It should actually cause the operations to
-> > > fail cleanly.
-> > 
-> > That's a fair point. Currently filesystems supporting DAX check for this in
-> > their mount code because there isn't really a DAX code that would get
-> > called during mount and would have enough information to perform the check.
-> > I'm not sure adding a new call just for this check makes a lot of sense.
-> > But if you have some good place in mind, please tell me.
-> 
-> Is not the reason that dax_writeback_mapping_range() the only thing
-> checking ->i_blkbits because 'struct writeback_control' does writeback
-> in terms of page-index ranges?
 
-To be fair, I don't remember why we've put the assertion specifically into
-dax_writeback_mapping_range(). But as Dave explained there's much more to
-this blocksize == pagesize limitation in DAX than just doing writeback in
-terms of page-index ranges. The whole DAX entry tracking in xarray would
-have to be modified to properly support other entry sizes than just PTE &
-PMD sizes because otherwise the entry locking just doesn't provide the
-guarantees that are expected from filesystems (e.g. you could have parallel
-modifications happening to a single fs block in pagesize < blocksize case).
 
-> All other dax entry points are filesystem controlled that know the
-> block-to-pfn-to-mapping relationship.
-> 
-> Recall that dax_writeback_mapping_range() is historically for pmem
-> persistence guarantees to make sure that applications write through CPU
-> cache to media.
+On Wed, Nov 6, 2024, at 14:40, Jason Gunthorpe wrote:
+> On Wed, Nov 06, 2024 at 11:01:20AM +0100, Uros Bizjak wrote:
+>> On Wed, Nov 6, 2024 at 9:55=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> =
+wrote:
+>> >
+>> > On Tue, Nov 5, 2024, at 13:30, Joerg Roedel wrote:
+>> > > On Fri, Nov 01, 2024 at 04:22:57PM +0000, Suravee Suthikulpanit w=
+rote:
+>> > >>  include/asm-generic/rwonce.h   | 2 +-
+>> > >>  include/linux/compiler_types.h | 8 +++++++-
+>> > >>  2 files changed, 8 insertions(+), 2 deletions(-)
+>> > >
+>> > > This patch needs Cc:
+>> > >
+>> > >       Arnd Bergmann <arnd@arndb.de>
+>> > >       linux-arch@vger.kernel.org
+>> > >
+>> >
+>> > It also needs an update to the comment about why this is safe:
+>> >
+>> > >> +++ b/include/asm-generic/rwonce.h
+>> > >> @@ -33,7 +33,7 @@
+>> > >>   * (e.g. a virtual address) and a strong prevailing wind.
+>> > >>   */
+>> > >>  #define compiletime_assert_rwonce_type(t)                      =
+             \
+>> > >> -    compiletime_assert(__native_word(t) || sizeof(t) =3D=3D siz=
+eof(long long),  \
+>> > >> +    compiletime_assert(__native_word(t) || sizeof(t) =3D=3D siz=
+eof(__dword_type), \
+>> > >>              "Unsupported access size for {READ,WRITE}_ONCE().")
+>> >
+>> > As far as I can tell, 128-but words don't get stored atomically on
+>> > any architecture, so this seems wrong, because it would remove
+>> > the assertion on someone incorrectly using WRITE_ONCE() on a
+>> > 128-bit variable.
+>>=20
+>> READ_ONCE() and WRITE_ONCE() do not guarantee atomicity for double
+>> word types. They only guarantee (c.f. include/asm/generic/rwonce.h):
+>>=20
+>>  * Prevent the compiler from merging or refetching reads or writes. T=
+he
+>>  * compiler is also forbidden from reordering successive instances of
+>>  * READ_ONCE and WRITE_ONCE, but only when the compiler is aware of s=
+ome
+>>  * particular ordering. ...
+>>=20
+>> and later:
+>>=20
+>>  * Yes, this permits 64-bit accesses on 32-bit architectures. These w=
+ill
+>>  * actually be atomic in some cases (namely Armv7 + LPAE), but for ot=
+hers we
+>>  * rely on the access being split into 2x32-bit accesses for a 32-bit=
+ quantity
+>>  * (e.g. a virtual address) and a strong prevailing wind.
+>>=20
+>> This is the "strong prevailing wind", mentioned in the patch review a=
+t [1].
+>>=20
+>> [1] https://lore.kernel.org/lkml/20241016130819.GJ3559746@nvidia.com/
 
-Correct.
+I understand the special case for ARMv7VE. I think the more important
+comment in that file is
 
-> Presumably there are no cache coherency concerns with fuse and dax
-> writes from the guest side are not a risk of being stranded in CPU
-> cache. Host side filesystem writeback will take care of them when / if
-> the guest triggers a storage device cache flush, not a guest page cache
-> writeback.
+  * Use __READ_ONCE() instead of READ_ONCE() if you do not require any
+  * atomicity. Note that this may result in tears!
 
-I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
-should provide persistency guarantees on the file contents even in case of
-*host* power failure. So if the guest is directly mapping host's page cache
-pages through virtiofs, filemap_fdatawrite() call in the guest must result
-in fsync(2) on the host to persist those pages. And as far as I vaguely
-remember that happens by KVM catching the arch_wb_cache_pmem() calls and
-issuing fsync(2) on the host. But I could be totally wrong here.
+The entire point of compiletime_assert_rwonce_type() is to ensure
+that these are accesses fit the stricter definition, and I would
+prefer to not extend that to 64-bit architecture. If there are users
+that need the "once" behavior but not require atomicity of the
+access, can't that just use __READ_ONCE() instead?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Yes, there are two common uses for READ_ONCE, actually "read once" and
+> prevent compiler double read "optimizations". It doesn't matter if
+> things tear in this case because it would be used with cmpxchg or
+> something like that.
+>
+> The other is an atomic relaxed memory order read, which would
+> have to guarentee non-tearing.
+>
+> It is unfortunate the kernel has combined these two things, and we
+> probably have exciting bugs on 32 bit from places using the atomic
+> read variation on a u64..
+
+Right, at the minimum, we'd need to separate READ_ONCE()/WRITE_ONCE()
+from the smp_load_acquire()/smp_store_release() definitions in
+asm/barrier.h. Those certainly don't work beyond word size aside
+from a few special cases.
+
+>> FYI, Processors with AVX guarantee 128bit atomic access with SSE
+>> 128bit move instructions, see e.g. [2].
+>>=20
+>> [2] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D104688
+
+AVX instructions are not used in the kernel. If you want atomic
+loads, that has to rely on architecture specific instructions
+like cmpxchg16b on x86-64 or ldp on arm64. Actually using these
+requires checking the system_has_cmpxchg128() macro.
+
+   Arnd
 
