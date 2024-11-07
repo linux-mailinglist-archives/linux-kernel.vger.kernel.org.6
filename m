@@ -1,197 +1,200 @@
-Return-Path: <linux-kernel+bounces-399126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CDA9BFB53
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:22:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B23779BFB59
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:24:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7165E1F21E53
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D656C1C20FE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E274D26D;
-	Thu,  7 Nov 2024 01:22:20 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2D0C13D;
+	Thu,  7 Nov 2024 01:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="d1bQCfiy"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B74B2119;
-	Thu,  7 Nov 2024 01:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64704A33;
+	Thu,  7 Nov 2024 01:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730942540; cv=none; b=fEAnGAVweeerrp+xzCAHA9savYBWDamN10mODFXX8kXhuKUWdScCIdQm7epw8Kw4JbGheOXuEl0I/YtHvan42U3L1021/tFnNgb15ZPfMvLmC4fslTIRroepX5B/PwG7YjgPSD1KsIGfRHnf6KoLT2NVxN/Pf7wZiwNgOYqhDxY=
+	t=1730942669; cv=none; b=I9ApBOVL6X5jT7pK4CU6/ZYIsbAhQRxIi32cPez4azNbEZl8xOOOkvKIvvMfkHssAS+1yAqZu2/bTuv5OwZYAk6c+87IGagD82LizjE5wVDiQ5zpYEwlfCjbN1IrTftwjX/Ob1zkLJUwxmR4KpdAg5CpXeSYc3Eey3xjLALov1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730942540; c=relaxed/simple;
-	bh=yzUTunPGacOP0P5ML0vQADsd0Woqg4nvGKIEC5mNjWE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cbL4EvzGdLkZ9J0b/RxcS+cYWGFVY5HffZNwtAGEBjUTBz4X5xR32IYV1O4rXgC9Gc2rVhiatwpAcEJTU+2ETkJkhmhSLOjfB66snKpNTcvht1NsF3CaNrbVxsAi80FLmmae9rtDEIdDIlBzNQKVfOEJ40RTUA2QrDCRFxZEfpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XkPS74Y0hz4f3kKt;
-	Thu,  7 Nov 2024 09:21:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7E5491A018C;
-	Thu,  7 Nov 2024 09:22:12 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCXc4dBFixn_B1EBA--.54545S3;
-	Thu, 07 Nov 2024 09:22:11 +0800 (CST)
-Subject: Re: [PATCH 6.6 28/28] maple_tree: correct tree corruption on spanning
- store
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: stable@vger.kernel.org, gregkh@linuxfoundation.org,
- harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
- alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
- airlied@gmail.com, daniel@ffwll.ch, viro@zeniv.linux.org.uk,
- brauner@kernel.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org,
- hughd@google.com, willy@infradead.org, sashal@kernel.org,
- srinivasan.shanmugam@amd.com, chiahsuan.chung@amd.com, mingo@kernel.org,
- mgorman@techsingularity.net, chengming.zhou@linux.dev,
- zhangpeng.00@bytedance.com, chuck.lever@oracle.com,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- maple-tree@lists.infradead.org, linux-mm@kvack.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
- <20241024132225.2271667-1-yukuai1@huaweicloud.com>
- <20241024132225.2271667-13-yukuai1@huaweicloud.com>
- <7740a098-fe11-48f1-a693-df81ef769f08@lucifer.local>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <b677017c-81fb-0f3d-22b6-34d93c59942a@huaweicloud.com>
-Date: Thu, 7 Nov 2024 09:22:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730942669; c=relaxed/simple;
+	bh=htiHliatHTk2YE2/OnPKeoGnmqV4FdrX4L3DO6Hh9dk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YEkDLPaYkXVSit8CiFN/GfOsxlHtcYqgdjiIqk683bZYU3mV5fBWkqmgo7PuQN//wKdRisgh9/rtNlZMMCTEgRKthJWK4Qulz6fhjtBaS9qPnWfMzMq1+7xXJ31e7cgBVWDRTc8bBNQLT7kurKN/yGta3c7EHF8Jr++bFkJYUYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=d1bQCfiy; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730942663; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Itk8OfYSM9GTNcP70yeJZDtysL1LQL3shaXCUP4B5XU=;
+	b=d1bQCfiyVl3p31zdd2Ub8h8zVCYDeRD2MZKoUDpz42SXI3tqDDZ6/avsfU2itJSpFS6qihwrIzKjBrUGR/ZLHfrzZ48+VY3gq17tKsISji0sCfGwCF3hR4wF31c253OaSRp4OaSMVQ0KJtKWl8NCa9rb5C6fI1STM4tXFlWAcTU=
+Received: from 30.246.162.170(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WIthmGp_1730942661 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 07 Nov 2024 09:24:22 +0800
+Message-ID: <3460223b-a57b-4ca4-9d34-2b520cfa1f42@linux.alibaba.com>
+Date: Thu, 7 Nov 2024 09:24:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7740a098-fe11-48f1-a693-df81ef769f08@lucifer.local>
-Content-Type: text/plain; charset=gbk; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 2/2] PCI/AER: report fatal errors of RCiEP and EP
+ if link recoverd
+To: Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, mahesh@linux.ibm.com,
+ oohall@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com
+References: <20241106160238.GA1526691@bhelgaas>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20241106160238.GA1526691@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXc4dBFixn_B1EBA--.54545S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFWUAw4kuF1kGw1kXFW8JFb_yoW5Krykpa
-	yDGFWakr4DtF1xuF1vk3y0vas0y3s5tFWrJry5Kw10yF98tF9IqF9Y9w1YvFZ8uw4UGr1I
-	vFWYvanrCanayFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
 
-ÔÚ 2024/11/06 23:02, Lorenzo Stoakes Ð´µÀ:
-> On Thu, Oct 24, 2024 at 09:22:25PM +0800, Yu Kuai wrote:
-> 
->> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
->> index 5328e08723d7..c57b6fc4db2e 100644
->> --- a/lib/maple_tree.c
->> +++ b/lib/maple_tree.c
->> @@ -2239,6 +2239,8 @@ static inline void mas_node_or_none(struct ma_state *mas,
+
+åœ¨ 2024/11/7 00:02, Bjorn Helgaas å†™é“:
+> On Wed, Nov 06, 2024 at 05:03:39PM +0800, Shuai Xue wrote:
+>> The AER driver has historically avoided reading the configuration space of an
+>> endpoint or RCiEP that reported a fatal error, considering the link to that
+>> device unreliable. Consequently, when a fatal error occurs, the AER and DPC
+>> drivers do not report specific error types, resulting in logs like:
 >>
->>   /*
->>    * mas_wr_node_walk() - Find the correct offset for the index in the @mas.
->> + *                      If @mas->index cannot be found within the containing
->> + *                      node, we traverse to the last entry in the node.
->>    * @wr_mas: The maple write state
->>    *
->>    * Uses mas_slot_locked() and does not need to worry about dead nodes.
->> @@ -3655,7 +3657,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
->>   	return true;
+>> [  245.281980] pcieport 0000:30:03.0: EDR: EDR event received
+>> [  245.287466] pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+>> [  245.295372] pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+>> [  245.300849] pcieport 0000:30:03.0: AER: broadcast error_detected message
+>> [  245.307540] nvme nvme0: frozen state error detected, reset controller
+>> [  245.722582] nvme 0000:34:00.0: ready 0ms after DPC
+>> [  245.727365] pcieport 0000:30:03.0: AER: broadcast slot_reset message
+>>
+>> But, if the link recovered after hot reset, we can safely access AER status of
+>> the error device. In such case, report fatal error which helps to figure out the
+>> error root case.
+> 
+> Explain why we can access these registers after reset.  I think it's
+> important that these registers are sticky ("RW1CS" per spec).
+
+Yes, AER error status registers are Sticky and Write-1-to-clear. If we 
+does not read them after reset_subordinates, the registers will be 
+cleared in pci_error_handlers, e.g. nvme_err_handler
+
+   slot_reset() => nvme_slot_reset()
+     pci_restore_state()
+       pci_aer_clear_status()
+
+Will add the reason in commit log.
+
+> 
+>> After this patch, the logs like:
+>>
+>> [  414.356755] pcieport 0000:30:03.0: EDR: EDR event received
+>> [  414.362240] pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+>> [  414.370148] pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+>> [  414.375642] pcieport 0000:30:03.0: AER: broadcast error_detected message
+>> [  414.382335] nvme nvme0: frozen state error detected, reset controller
+>> [  414.645413] pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
+>> [  414.788016] nvme 0000:34:00.0: ready 0ms after DPC
+>> [  414.796975] nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
+>> [  414.807312] nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
+>> [  414.815305] nvme 0000:34:00.0:    [ 4] DLP                    (First)
+>> [  414.821768] pcieport 0000:30:03.0: AER: broadcast slot_reset message
+> 
+> Capitalize subject lines to match history (use "git log --oneline
+> drivers/pci/pcie/aer.c" to see it).
+> 
+> Remove timestamps since they don't help understand the problem.
+> 
+> Indent the quoted material two spaces.
+> 
+> Wrap commit log to fit in 75 columns (except the quoted material;
+> don't insert line breaks there).
+
+Will do.
+
+> 
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> ---
+>>   drivers/pci/pci.h      |  1 +
+>>   drivers/pci/pcie/aer.c | 50 ++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/pci/pcie/err.c |  6 +++++
+>>   3 files changed, 57 insertions(+)
+>>
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 0866f79aec54..143f960a813d 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -505,6 +505,7 @@ struct aer_err_info {
+>>   };
+>>   
+>>   int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info);
+>> +int aer_get_device_fatal_error_info(struct pci_dev *dev, struct aer_err_info *info);
+>>   void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
+>>   #endif	/* CONFIG_PCIEAER */
+>>   
+>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+>> index 13b8586924ea..0c1e382ce117 100644
+>> --- a/drivers/pci/pcie/aer.c
+>> +++ b/drivers/pci/pcie/aer.c
+>> @@ -1252,6 +1252,56 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
+>>   	return 1;
 >>   }
->>
->> -static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
->> +static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
->>   {
->>   	struct ma_state *mas = wr_mas->mas;
->>
->> @@ -3664,11 +3666,9 @@ static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
->>   		wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
->>   						  mas->offset);
->>   		if (ma_is_leaf(wr_mas->type))
->> -			return true;
->> +			return;
->>   		mas_wr_walk_traverse(wr_mas);
->> -
->>   	}
->> -	return true;
->>   }
->>   /*
->>    * mas_extend_spanning_null() - Extend a store of a %NULL to include surrounding %NULLs.
->> @@ -3899,8 +3899,8 @@ static inline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
->>   	memset(&b_node, 0, sizeof(struct maple_big_node));
->>   	/* Copy l_mas and store the value in b_node. */
->>   	mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
->> -	/* Copy r_mas into b_node. */
->> -	if (r_mas.offset <= r_mas.end)
->> +	/* Copy r_mas into b_node if there is anything to copy. */
->> +	if (r_mas.max > r_mas.last)
->>   		mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
->>   			   &b_node, b_node.b_end + 1);
->>   	else
->> --
->> 2.39.2
->>
+>>   
+>> +/**
+>> + * aer_get_device_fatal_error_info - read fatal error status from EP or RCiEP
+>> + * and store it to info
+>> + * @dev: pointer to the device expected to have a error record
+>> + * @info: pointer to structure to store the error record
+>> + *
+>> + * Return 1 on success, 0 on error.
 > 
-> This is a good example of where you've gone horribly wrong, this relies on
-> 31c532a8af57 ("maple_tree: add end of node tracking to the maple state") which
-> is not in 6.6.
-> 
-> You reverted (!!) my backported patch for this that _does not require this_
-> only to pull in 31c532a8af57 in order to apply the upstream version of my
-> fix over that.
-> 
-> This is totally unnecessary and I can't see why _on earth_ you would need
-> 31c532a8af57.
-> 
-> You need to correctly identify what patches need to be backported and _fix
-> merge conflicts_ accordingly, like I did with the patch that you decided to
-> revert.
-> 
-> In the kernel it is absolutely unacceptable to arbitrarily backport huge
-> amounts of patches you don't understand in order to avoid merge conflicts,
-> you may be breaking all kinds of things without realising.
-> 
-> You have to find the _minimal_ change and _fix merge conflicts_.
+> Backwards from the usual return value convention.
 
-Thanks for the suggestions, I do understand, however, I'll just give up
-this because I'm not confident to fix confilcts for maple tree. Other
-folks will have to this if they care about this cve for v6.6.
-> 
-> Stable is not a playground, it's what millions (billions?) of kernels rely
-> upon.
-> 
-> In any case, I think Liam's reply suggests that we should be looking at
-> maybe 1 thing to backport? If we even need to?
-
-Keep using xarray for patch 27 is wrong, I think. xarray is 32-bit and
-if the offset overflow, readdir will found nothing, this is more severe
-than the orignal cve.
-> 
-> Please in future be more cautious, and if you are unsure how to proceed,
-> cc- the relevant maintainers (+ all authors of patches you intend to
-> backport/revert) in an RFC. Thanks.
-
-Of course.
-
-Thanks,
-Kuai
+Yes. As @Keith pointed, aer_get_device_fatal_error_info() is copied from 
+  aer_get_device_error_info(), I will try to add a helper to reduce 
+duplication.
 
 > 
-> .
+>> + * Note that @info is reused among all error devices. Clear fields properly.
+>> + */
+>> +int aer_get_device_fatal_error_info(struct pci_dev *dev, struct aer_err_info *info)
+>> +{
+>> +	int type = pci_pcie_type(dev);
+>> +	int aer = dev->aer_cap;
+>> +	u32 aercc;
+>> +
+>> +	pci_info(dev, "type :%d\n", type);
 > 
+> I don't see this line in the sample output in the commit log.  Is this
+> debug that you intended to remove?
+
+
+Sorry, I missed this line, will remove it.
+
+> 
+>> +	/* Must reset in this function */
+>> +	info->status = 0;
+>> +	info->tlp_header_valid = 0;
+>> +	info->severity = AER_FATAL;
+>> +
+>> +	/* The device might not support AER */
+> 
+> Unnecessary comment.
+
+Will remove it.
+
+Thank you for valuable comments.
+
+Best Regards,
+Shuai
+
 
 
