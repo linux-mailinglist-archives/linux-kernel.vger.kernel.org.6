@@ -1,99 +1,147 @@
-Return-Path: <linux-kernel+bounces-400420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CDC9C0D53
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:53:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8716C9C0CD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFC171F235C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:53:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF601F21A0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11113215F58;
-	Thu,  7 Nov 2024 17:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0392161E0;
+	Thu,  7 Nov 2024 17:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=m3y3r.de header.i=@m3y3r.de header.b="VFjmvLPv"
-Received: from www17.your-server.de (www17.your-server.de [213.133.104.17])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0+I+pZ+V";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="87VveMgv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA49A192B88
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154C4DDBE;
+	Thu,  7 Nov 2024 17:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731001979; cv=none; b=W830IV0uA0FjiKHtMntzuHn8dvog2FdTLjDBKnnaDh8Y/QBh5jti8qnQbT7l7gRmzkjJr0Rki1aPzD22x5OO+UoSeq/WF2aBEtIqlDoYZmD/durDvJ2WvsDa1Xb3hKIOVamCrm0mp4J4++jG2vlppQi3PM7vooHYsbv2uq0taAQ=
+	t=1731000235; cv=none; b=unxnIFqvGnwxcxG1xKxi/HAN5xLQMGqzSiA9jc/vGdExzrIkbCxMpjmfuJDLsZIgEf/crs9G52pcQ/HCKYx/2B+Hpq5147RsANfKp3sXuxmnxfqDPaivbE9IasvPIEImdb22DUdgE+PqYg0J84tk+ZOjpjbrPNT4iT/Be793zuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731001979; c=relaxed/simple;
-	bh=B9WY8pOBlx7C+40DYzCL2YvHLteD18iSzwQkWNkaz6E=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=gVt6X4OjO6PnRnZoonzFangr/QCIEDS4gJC5vdEiNrKnAL1fboyplGfNOvnWg1GnijtmV3u7jEdZTMPERZaDwsFBpGqN7QHRalKHbjCDDV3bfxebdp7aWAmgJJFfCjPbuP47dwD4qizNubeYOSH9hDHHpRITMk0OcWT+aZzrVtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de; spf=pass smtp.mailfrom=m3y3r.de; dkim=pass (2048-bit key) header.d=m3y3r.de header.i=@m3y3r.de header.b=VFjmvLPv; arc=none smtp.client-ip=213.133.104.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m3y3r.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m3y3r.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=m3y3r.de;
-	s=default2402; h=Content-Type:MIME-Version:Message-ID:Date:In-Reply-To:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:References;
-	bh=thPhgEcNDpwIj4aeaAJhbiklbKHn88EvS02T+GGfNXg=; b=VFjmvLPvPTm2lOWFwLf3Jni88e
-	jLMpfcMG/D+us1YM1K/CJSJVrv0qJX2nmRq+EMAZf40YL5sXgw51VSUlN0ljivgQz6BTQLLzBazCv
-	iu24ZDwm0yN0lYxjhE7h6VKbczegE8oygzpWmxGI2PclG31SFmtME9usdscIlkjItcQtT0jfw5dUk
-	tzH1aI1GAPdVrSao+PlrdzQxv8gJAjtNvD0dBYkqWHo+SVe57nBOp0mQIqnKuCE5C/9kFAEPH+gIs
-	7SEBehd08t1evksDjSafGQMHbAk4Km9NKYsZkf9FOdNCoXaD+zAPvY6KkQ6lKcW2BOOiXPLS/ZP2y
-	Pn3nfxUA==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www17.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <thomas@m3y3r.de>)
-	id 1t96C9-0007he-0W;
-	Thu, 07 Nov 2024 18:21:21 +0100
-Received: from [94.31.73.225] (helo=DESKTOP-DQBDJ0U)
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <thomas@m3y3r.de>)
-	id 1t96C8-000Cco-1c;
-	Thu, 07 Nov 2024 18:21:20 +0100
-From: Thomas Meyer <thomas@m3y3r.de>
-To: Mike Galbraith <efault@gmx.de>
-Cc: peterz@infradead.org, bigeasy@linutronix.de, 
-	tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
- juri.lelli@redhat.com, 
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- ankur.a.arora@oracle.com
-Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
-In-Reply-To: <9df22ebbc2e6d426099bf380477a0ed885068896.camel@gmx.de>
- (message from Mike Galbraith on Thu, 17 Oct 2024 14:36:52 +0200)
-Date: Thu, 07 Nov 2024 18:21:32 +0100
-Message-ID: <87v7wzklib.fsf@DESKTOP-DQBDJ0U.localdomain>
+	s=arc-20240116; t=1731000235; c=relaxed/simple;
+	bh=49QShnwTvXfWfDU9BGK8+qb5vHln/TObeiAd4Y4FZ9M=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PfFhwE6FXrrNReTtbXaA+9gRl5cMaovOOsboGovQmnTlLs783VVIRL6AKybukI0oJB7+MtajYnD8Nzf2RyEW3wFScue/Vaqzjr+fI0hgjJxrpV6VXpfh6O6p+m7nCF800fkw4Pt5nWRrggweEW4n+04lqy69PHg8AqU/fhbHt4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0+I+pZ+V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=87VveMgv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 07 Nov 2024 17:23:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731000232;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qCSBGhstiht1T/Sfc+x1rHpc8E4QZNBzT7UKq50dECg=;
+	b=0+I+pZ+VAb2QGqTDn2JMeFECJY5jkKztJdpU0AEnUexGMiRG1637peGw3oJBH5/z/qkp0H
+	A2+zmGs1aqFoZJCees0A6AQy80ooeNSKQaSDS08Z+BfW+gDDUFotaqvKLUYCE3gR19ErZl
+	YPVaYuSecqxmlgDQqnyy1nc/MnASejzegj6Gz+crK6qMSF3iQF0lgQ8T0ZPeWP3giJ6buK
+	/AJXt5qvzSPogPWQOoPCwA9SqylM9rxc6IKyVUiuMoDjGgOhWcTJ9d0A5Hx5Ivpt1Uvk3y
+	KhXuLP1GzXpzlj/R9wMBXva98c4QfJDRUYzcKKys8tp+ql+cR0ByM3IT9azOvw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731000232;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qCSBGhstiht1T/Sfc+x1rHpc8E4QZNBzT7UKq50dECg=;
+	b=87VveMgvNZvwjmuJZLsl4iVB6DXjKo7cYu6258z9RyEwE4khrgDG7tKj0iysC+5EMKFnac
+	nEjkNfrfU1FK1UBQ==
+From: "tip-bot2 for Dr. David Alan Gilbert" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cleanups] x86/boot: Remove unused function atou()
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240913005753.1392431-1-linux@treblig.org>
+References: <20240913005753.1392431-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: thomas@m3y3r.de
-X-Virus-Scanned: Clear (ClamAV 1.0.5/27451/Thu Nov  7 10:32:19 2024)
+Message-ID: <173100023098.32228.13434805167417478105.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/cleanups branch of tip:
 
-Mike Galbraith <efault@gmx.de> writes:
-> Full per run summaries attached, high speed scroll version below.
->
-> desktop util 18.1% static voluntary - virgin source
-> desktop util 18.3% static voluntary - +lazy patches
-> desktop util 17.5% lazy             - ditto...
-> desktop util 17.0% lazy
-> desktop util 16.8% lazy
-> desktop util 17.8% full
-> desktop util 17.8% full
-> desktop util 17.8% full
+Commit-ID:     97ecb260d9c19aa044871ae2c89408c340717b61
+Gitweb:        https://git.kernel.org/tip/97ecb260d9c19aa044871ae2c89408c340717b61
+Author:        Dr. David Alan Gilbert <linux@treblig.org>
+AuthorDate:    Fri, 13 Sep 2024 01:57:53 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Thu, 07 Nov 2024 18:08:23 +01:00
 
-Can you please elaborate a bit more were those values, e.g. 18,1%, come from?
-How to get those? I couldn't find a connection to your raw data.
+x86/boot: Remove unused function atou()
 
-Sorry for asking this probably stupid question,
+I can't find any sign of atou() having been used. Remove it.
 
-mfg
-thomas
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20240913005753.1392431-1-linux@treblig.org
+---
+ arch/x86/boot/boot.h   | 1 -
+ arch/x86/boot/string.c | 8 --------
+ arch/x86/boot/string.h | 1 -
+ 3 files changed, 10 deletions(-)
+
+diff --git a/arch/x86/boot/boot.h b/arch/x86/boot/boot.h
+index 148ba5c..0f24f7e 100644
+--- a/arch/x86/boot/boot.h
++++ b/arch/x86/boot/boot.h
+@@ -305,7 +305,6 @@ void initregs(struct biosregs *regs);
+ int strcmp(const char *str1, const char *str2);
+ int strncmp(const char *cs, const char *ct, size_t count);
+ size_t strnlen(const char *s, size_t maxlen);
+-unsigned int atou(const char *s);
+ unsigned long long simple_strtoull(const char *cp, char **endp, unsigned int base);
+ size_t strlen(const char *s);
+ char *strchr(const char *s, int c);
+diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
+index c23f3b9..84f7a88 100644
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -88,14 +88,6 @@ size_t strnlen(const char *s, size_t maxlen)
+ 	return (es - s);
+ }
+ 
+-unsigned int atou(const char *s)
+-{
+-	unsigned int i = 0;
+-	while (isdigit(*s))
+-		i = i * 10 + (*s++ - '0');
+-	return i;
+-}
+-
+ /* Works only for digits and letters, but small and fast */
+ #define TOLOWER(x) ((x) | 0x20)
+ 
+diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
+index e5d2c6b..a5b05eb 100644
+--- a/arch/x86/boot/string.h
++++ b/arch/x86/boot/string.h
+@@ -24,7 +24,6 @@ extern size_t strlen(const char *s);
+ extern char *strstr(const char *s1, const char *s2);
+ extern char *strchr(const char *s, int c);
+ extern size_t strnlen(const char *s, size_t maxlen);
+-extern unsigned int atou(const char *s);
+ extern unsigned long long simple_strtoull(const char *cp, char **endp,
+ 					  unsigned int base);
+ long simple_strtol(const char *cp, char **endp, unsigned int base);
 
