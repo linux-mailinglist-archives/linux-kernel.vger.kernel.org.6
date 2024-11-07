@@ -1,97 +1,101 @@
-Return-Path: <linux-kernel+bounces-400608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BFA09C0FDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:37:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8083B9C0FE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:40:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B041F23AB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453B6283AE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E433F217F4E;
-	Thu,  7 Nov 2024 20:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE71521830B;
+	Thu,  7 Nov 2024 20:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0IhXNUa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="cu0iP1uJ"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1C92170C0;
-	Thu,  7 Nov 2024 20:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F56215F58;
+	Thu,  7 Nov 2024 20:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731011831; cv=none; b=NBjMEZ5shU/51sF9s2SpAKwvfvjWQ35QxX4xg/BXmxZ5Oxf9Cf613pVL+D3tnftb5BY/5xQMU0+5x2tBVHieu8j/tG+K6SJ31pcSIgnwYhnvEH1/P9v2liQ8wYjBXLtp0YLWYuPLaUGFfKqOfq4388oB+pogh0mF5eqcbf56V/I=
+	t=1731012035; cv=none; b=MMvFEjkNrtzrGpqdaRQOD7f2tH74eMdn1egipIofxm88HZRTjz48V1a8uaRaFcVcnnyPjU4eSgl4RhE25lksyRye1+7wR3lA9jxBYgfRTgY9BsyT3Bc1QkDM+hIINe3+leHdy5HY6Z71UogYgsY2AaJkknZwQJ+Ynd2HwfH6Alk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731011831; c=relaxed/simple;
-	bh=rub3oLZQNtnOdz/P12PwKjUUiaDdvSq1AfEULziS85I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qakHneWJhw194NVpS11NJvqhuwBSZr44VJjiqq+0grE5zOMbcFbxh6x3qgrVl3H2mx484+i7Eggs2ErPPIleP10wWq+RZ1/X7MJr3Pq4tt0RCp49ozEc3RDKW3eeLZr1PFMXt+UCyANNfdPQsYSX3T3eg9Sbm8+fMZuEKGD9MJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0IhXNUa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C65C4CECC;
-	Thu,  7 Nov 2024 20:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731011830;
-	bh=rub3oLZQNtnOdz/P12PwKjUUiaDdvSq1AfEULziS85I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=D0IhXNUajUjZbIFESthwQe6Unk+E4oCpRecMauktJRHpIe4/5RGYkT6HCWpra8Dv8
-	 fMgI4i2+nnAIqOzXFeyTohUW0FgZpbmqRC6wE/8a5iYIYdIzvPbugi83znsLT16FzX
-	 a/p0n8mjxEjtC1OFWEVrJWnD8qiSEzjFO/O8ayWuds0Vth0RLIJtdGNxBE9RLpGOxG
-	 +x3LjAAP9DBH2P50FTyji54fjBQvYZR7Q5t1mULJepH5eGhMdN29RWshwzRTqQd5Nh
-	 LMMKRhMGC0RwaSxJ6tPahkcH+jgCRCYXDyT5dcVrL+AIm1bm30LcLZQjZ/r0Vft17q
-	 cFGTS5rkFljqA==
-From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- Tang Bin <tangbin@cmss.chinamobile.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241107075440.2770-1-tangbin@cmss.chinamobile.com>
-References: <20241107075440.2770-1-tangbin@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoC: ux500: Remove redundant casts
-Message-Id: <173101182935.257604.16434756309882094543.b4-ty@kernel.org>
-Date: Thu, 07 Nov 2024 20:37:09 +0000
+	s=arc-20240116; t=1731012035; c=relaxed/simple;
+	bh=QmEJ/92e/5KKl0J82G9jGuO+viu8qplbsKVI8PVeB+s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iJORT0JV4qCRtNTD1e6pP6ZWR9VZr6rqXzMrWG+lUsoD/1Zz/3qLKA5sPD7lWGyFuJ7Pwbb8yzuRnX3c2dHJDkrqkoUJ328Kp6TemNOrIpijb+7Gp1d7+AKfErMLewoy0TFK6BlJzgZ+dfOkq6c4KWt1gfp5eYAWKoaswa3K2vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=cu0iP1uJ; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B0BF142C17
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1731012032; bh=c5Q27aMxn2IHD9z7o8rbqIJymOVbS+CuSNFmDhP/KfM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cu0iP1uJQge1qEo4onfLuj7MegS/bB1e/TeedlCjky3/IBj0QFLRn8RTGmsof3FRw
+	 J9y5a+0zFPvx4E2XBhNnP+roWj81iXZ0NGPpaUHgtBBDArW/7GehyezEvO1yk2/6jx
+	 VTxruwsWJTUKS/s+aeX1ql4rcDXm42uhYfIHfMLxlzD6y3QOYQTI5u2w67iJjAp98b
+	 AaaQ5jjVz8f9SzNBr0F/NJM4I8uv2u9XyQVNQzuWHZvryEFp2EiSCbqN6y+nKTCdCK
+	 CA8qIUCbvDoys+z7ZY+AHo2L4L2T8Zm4cAyUi1QlmQ2hSTlijPkRjyd4wNhtlGlDJs
+	 l+Pc2B4+BZidA==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id B0BF142C17;
+	Thu,  7 Nov 2024 20:40:32 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
+ mauro.chehab@linux.intel.com, kernel@collabora.com,
+ bob.beckett@collabora.com, nicolas.dufresne@collabora.com, Sebastian
+ Fricke <sebastian.fricke@collabora.com>
+Subject: Re: [PATCH 2/2] docs: media: Debugging guide for the media subsystem
+In-Reply-To: <20241028-media_docs_improve_v3-v1-2-2b1b486c223e@collabora.com>
+References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
+ <20241028-media_docs_improve_v3-v1-2-2b1b486c223e@collabora.com>
+Date: Thu, 07 Nov 2024 13:40:31 -0700
+Message-ID: <87h68i22ww.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Type: text/plain
 
-On Thu, 07 Nov 2024 15:54:40 +0800, Tang Bin wrote:
-> In the function ux500_msp_drv_probe, the 'int' type cast
-> in front of the PTR_ERR() macro is redundant, thus remove
-> it.
-> 
-> 
+Sebastian Fricke <sebastian.fricke@collabora.com> writes:
 
-Applied to
+> Provide a guide for developers on how to debug code with a focus on the
+> media subsystem. This document aims to provide a rough overview over the
+> possibilities and a rational to help choosing the right tool for the
+> given circumstances.
+>
+> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+> ---
+>  Documentation/process/debugging/index.rst          |   1 +
+>  .../debugging/media_specific_debugging_guide.rst   | 178 +++++++++++++++++++++
+>  2 files changed, 179 insertions(+)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Mostly overall comments here
 
-Thanks!
+- much of what's here seems redundant with your other new documents; you
+  seem to be going over the same list of tools?  Why not just talk about
+  the ones that are unique to the media subsystem?
 
-[1/1] ASoC: ux500: Remove redundant casts
-      commit: fa24fdc8ae9e6f6fe7a4f7676a4d8c14433a86c0
+- Please use the function() convention throughout.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+- Back in the ancient past when I was writing V4L2 drivers, one of my
+  biggest problems was figuring out why applications weren't getting
+  what they expected.  The vivi driver was most useful for finding
+  subtle differences...  One would use vivid now, but I suspect the
+  utility remains.
 
 Thanks,
-Mark
 
+jon
 
