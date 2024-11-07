@@ -1,132 +1,206 @@
-Return-Path: <linux-kernel+bounces-400213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07CA9C0A76
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:54:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006C59C0A78
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9594528408C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:54:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56AB4B22BD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBBD2144BE;
-	Thu,  7 Nov 2024 15:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49159213157;
+	Thu,  7 Nov 2024 15:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="rrqT6gFA"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Tg2iT9d1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="No6iMnSt"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8B71DFDAD;
-	Thu,  7 Nov 2024 15:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB3E1DFDAD;
+	Thu,  7 Nov 2024 15:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730994850; cv=none; b=UldgZOOT8WZb5kKlfu9n+Eu6l+LMaNR+qpX0+w4q+7bTkkZzFfx4f1z4Ri9J3Hr5dQXR9kvLp7I7S4Ki8Bod3snQAK3LJSAhtC/DR4gF3UQFq9kkqwCdOR8DnV120lS1dSvy0Ei79p91udUEgQIZaM4HI2zFhlskFNMBX+csV9w=
+	t=1730994887; cv=none; b=NgD5iHSmPN2wuW9a2dqr/tn+aGncW6PoiJa461n+Wz+KUe2ygymHlMMBSEJmWEA8fucjuwYyg6EuQZ9iXM3QyRhQxiaxBlBqWf1gywg8D2zasgXs8E6WjQ5xx2HFKIVS0AfvKkVh6wNSeKa2koCp4MCBTXexlby/A3NlIZQQmgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730994850; c=relaxed/simple;
-	bh=1nsN4o8Rhv0c/TJl1nsvTqsadFjyeracT4PKFIe6Vp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jh8E8ajgmsU+9CzIBX39Yur/+ERv3W1voxqwVnWNjCIRa17WQqZB2vU6ZHUXv8FqozjHXV6iOrL9QFTW6nm20a3saKNts2tQYynrt8o2AVKiglBq99h0dgcdL9VqI5Q4wZ5rRA7q+mYvCFglLRxOjVDUuvaAUUmAlqi4R8KvSVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=rrqT6gFA; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730994847;
-	bh=1nsN4o8Rhv0c/TJl1nsvTqsadFjyeracT4PKFIe6Vp4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rrqT6gFAU8ePobmVjSbGnD7Hv4+ydzi6gG5h2d2X01oRETsq2BIPBx6LLUUrvuYnm
-	 3ivIma0q1Z9Bkeb86mfJGEIgA1qT5XFO30MU67Fvnaljl5m+DYTjbuV2XlL968CAHG
-	 vL9Ijb4LfaPUiylvbGM/y/CgrYMce/Fxih6YyPj3GX5w6y6Gz5vmZM0485oUganLHv
-	 dEZa90IE0hhgwk/VCcqrK0/WN5xwc2PLOohH0MQHqiveU/ov4XrJcLFIbGAPPS2k6W
-	 K4QKbntC2v7jaz3aPsqgjts8R8wLXnGTuo1IQM7cKrazrtEVwR0Sg93BJe3CyIYVkB
-	 dzqw8NJF5f0Hg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XkmpR0prGzxsy;
-	Thu,  7 Nov 2024 10:54:07 -0500 (EST)
-Message-ID: <3326c8a1-36c7-476b-8afa-2957f5bd5426@efficios.com>
-Date: Thu, 7 Nov 2024 10:52:37 -0500
+	s=arc-20240116; t=1730994887; c=relaxed/simple;
+	bh=Ih5uy2mORL7zgF9t3dZwcn5wEoQiBF6asjcDp6PLZzg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TmvNjSkcyA/ZmzEziMtjD3lU1yu/eG6aRL9IqkUbqO9Ggl7F66BgbK/wXVv8MlIVC1afkTN+yEtfmWKiF1OZbGd1iXL0xb/kwrASqBQDpfFTJBCDiyWcR4dtXU3WHcjUPkPC68TxhLk9cZdskPSJOCa0yuaDIY8Xo4qr6SzH3+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Tg2iT9d1; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=No6iMnSt reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1730994884; x=1762530884;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=68iYgYZPtTrqGDWuMYx5z5BMV4YrJufQaee60Zp3m/s=;
+  b=Tg2iT9d1a8wGC2b2mUjr22O8jtfx+41gy5ql0WrvLBf9IHUSycxTJtSl
+   hh0a9zqFQ7nlmlHN0iSikAs0y4jCPASyE2i7cyiQXQkE73hqY1jT7xaJ+
+   zuYd0npBE6YGkq0rBj7oKXmU4Al8Qtyo4JDWH2ELRKqkHhVEAc6R6WuK4
+   FNFhUFaM+KnlB0HaFEgRCJkp8NalXpPVxmWBfM7xZ/zwv36VEnEsHzXhS
+   34WJxolpkzxGnC3Y9eDk9dpCH73OnMUIAUxwqsYxpdWIUf9cnKzwtO0oI
+   fNFNT2WZmaGU53gd4QAphAUH8lgfGk9j/wSqJGZFNDcPEd0sdohaKDZ1W
+   A==;
+X-CSE-ConnectionGUID: LKRP2YrGS4ONzZAbOb2EiA==
+X-CSE-MsgGUID: MDn25V+cRaaaZRjeLpSeFA==
+X-IronPort-AV: E=Sophos;i="6.12,135,1728943200"; 
+   d="scan'208";a="39916599"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 07 Nov 2024 16:54:41 +0100
+X-CheckPoint: {672CE2C1-19-5736D786-D50827BE}
+X-MAIL-CPID: C8E8D31C487399C5B2FEDBBF237F0518_2
+X-Control-Analysis: str=0001.0A682F17.672CE2C1.0089,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C6BCF16145B;
+	Thu,  7 Nov 2024 16:54:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1730994876;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=68iYgYZPtTrqGDWuMYx5z5BMV4YrJufQaee60Zp3m/s=;
+	b=No6iMnStLW+6z6qd0KOV7E/8Og4zat+TPgQM1mTFFG7ZRt2onLR3PI7q48V6fH+i8/55qZ
+	oMoyIXArrvKNSJoCqpRjnNJfWROoppfaT3AqxD+iQJdcaeG15xXy5sfBXIb57JwxfHYeJG
+	xqbEAAyOnnR26cmBp4zp8iGMFXRNh/S1nAa3R4zEqmIbikhN+v4JF1pOKTB1ehNG9i3SjF
+	OWYRS1wKwH1mXr/UvU1V9Ja+idGCa5y/LSzj8cRTbN2Elu6ZEcY92dZL2xIU6/CpJqzk25
+	6j2TLjRWumG4crJGCCw0SUoqdo889W+KeDEQWOhucpWXNMtN0KZE1n7fbe+whA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Pengfei Li <pengfei.li_1@nxp.com>, Frank Li <Frank.li@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, joao.goncalves@toradex.com, frieder.schrempf@kontron.de, marex@denx.de, hvilleneuve@dimonoff.com, peng.fan@nxp.com, m.othacehe@gmail.com, mwalle@kernel.org, Max.Merchel@ew.tq-group.com, hiago.franco@toradex.com, tharvey@gateworks.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, ping.bai@nxp.com, ye.li@nxp.com, aisheng.dong@nxp.com
+Subject: Re: [PATCH 2/3] arm64: dts: freescale: Add i.MX91 dtsi support
+Date: Thu, 07 Nov 2024 16:54:34 +0100
+Message-ID: <2966679.e9J7NaK4W3@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <ZyzXcktk/sjAtNCg@lizhi-Precision-Tower-5810>
+References: <20241108022703.1877171-1-pengfei.li_1@nxp.com> <20241108022703.1877171-3-pengfei.li_1@nxp.com> <ZyzXcktk/sjAtNCg@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] tracing: Add task_prctl_unknown tracepoint
-To: Marco Elver <elver@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Kees Cook <keescook@chromium.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
-References: <20241107122648.2504368-1-elver@google.com>
- <5b7defe4-09db-491e-b2fb-3fb6379dc452@efficios.com>
- <CANpmjNPWLOfXBMYV0_Eon6NgKPyDorTxwS4b67ZKz7hyz5i13A@mail.gmail.com>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <CANpmjNPWLOfXBMYV0_Eon6NgKPyDorTxwS4b67ZKz7hyz5i13A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2024-11-07 10:46, Marco Elver wrote:
-> On Thu, 7 Nov 2024 at 16:45, Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> On 2024-11-07 07:25, Marco Elver wrote:
->>> prctl() is a complex syscall which multiplexes its functionality based
->>> on a large set of PR_* options. Currently we count 64 such options. The
->>> return value of unknown options is -EINVAL, and doesn't distinguish from
->>> known options that were passed invalid args that also return -EINVAL.
->>>
->>> To understand if programs are attempting to use prctl() options not yet
->>> available on the running kernel, provide the task_prctl_unknown
->>> tracepoint.
->>>
->>> Note, this tracepoint is in an unlikely cold path, and would therefore
->>> be suitable for continuous monitoring (e.g. via perf_event_open).
->>>
->>> While the above is likely the simplest usecase, additionally this
->>> tracepoint can help unlock some testing scenarios (where probing
->>> sys_enter or sys_exit causes undesirable performance overheads):
->>>
->>>     a. unprivileged triggering of a test module: test modules may register a
->>>        probe to be called back on task_prctl_unknown, and pick a very large
->>>        unknown prctl() option upon which they perform a test function for an
->>>        unprivileged user;
->>>
->>>     b. unprivileged triggering of an eBPF program function: similar
->>>        as idea (a).
->>>
->>> Example trace_pipe output:
->>>
->>>     test-484     [000] .....   631.748104: task_prctl_unknown: comm=test option=1234 arg2=101 arg3=102 arg4=103 arg5=104
->>>
->>
->> My concern is that we start adding tons of special-case
->> tracepoints to the implementation of system calls which
->> are redundant with the sys_enter/exit tracepoints.
->>
->> Why favor this approach rather than hooking on sys_enter/exit ?
-> 
-> It's __extremely__ expensive when deployed at scale. See note in
-> commit description above.
+Hi Frank,
 
-I suspect you base the overhead analysis on the x86-64 implementation
-of sys_enter/exit tracepoint and especially the overhead caused by
-the SYSCALL_WORK_SYSCALL_TRACEPOINT thread flag, am I correct ?
+Am Donnerstag, 7. November 2024, 16:06:26 CET schrieb Frank Li:
+> On Thu, Nov 07, 2024 at 06:27:02PM -0800, Pengfei Li wrote:
+> > The i.MX 91 family features an Arm Cortex-A55 running at up to
+> > 1.4GHz, support for modern LPDDR4 memory to enable platform longevity,
+> > along with a rich set of peripherals targeting medical, industrial
+> > and consumer IoT market segments.
+> >
+> > The design of the i.MX91 platform is very similar to i.MX93.
+> > The mainly difference between i.MX91 and i.MX93 is as follows:
+> > - i.MX91 removed some clocks and modified the names of some clocks.
+> > - i.MX91 only has one A core
+>=20
+> - pinmux change
+>=20
+> >
+> > Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/imx91-pinfunc.h | 770 ++++++++++++++++++
+> >  arch/arm64/boot/dts/freescale/imx91.dtsi      |  66 ++
+> >  2 files changed, 836 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/freescale/imx91-pinfunc.h
+> >  create mode 100644 arch/arm64/boot/dts/freescale/imx91.dtsi
+> >
+> [snip]
+> > diff --git a/arch/arm64/boot/dts/freescale/imx91.dtsi b/arch/arm64/boot=
+/dts/freescale/imx91.dtsi
+> > new file mode 100644
+> > index 000000000000..a9f4c1fe61cc
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/freescale/imx91.dtsi
+> > @@ -0,0 +1,66 @@
+> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > +/*
+> > + * Copyright 2024 NXP
+> > + */
+> > +
+> > +#include "imx91-pinfunc.h"
+> > +#include "imx93.dtsi"
+> > +
+> > +&{/thermal-zones/cpu-thermal/cooling-maps/map0} {
+> > +	cooling-device =3D
+> > +		<&A55_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > +};
+> > +
+> > +&clk {
+> > +	compatible =3D "fsl,imx91-ccm";
+> > +};
+> > +
+> > +&eqos {
+> > +	clocks =3D <&clk IMX91_CLK_ENET1_QOS_TSN_GATE>,
+> > +			<&clk IMX91_CLK_ENET1_QOS_TSN_GATE>,
+> > +			<&clk IMX91_CLK_ENET_TIMER>,
+> > +			<&clk IMX91_CLK_ENET1_QOS_TSN>,
+> > +			<&clk IMX91_CLK_ENET1_QOS_TSN_GATE>;
+> > +	assigned-clocks =3D <&clk IMX91_CLK_ENET_TIMER>,
+> > +				<&clk IMX91_CLK_ENET1_QOS_TSN>;
+> > +	assigned-clock-parents =3D <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
+> > +					<&clk IMX93_CLK_SYS_PLL_PFD0_DIV2>;
+> > +};
+> > +
+> > +&fec {
+> > +	clocks =3D <&clk IMX91_CLK_ENET2_REGULAR_GATE>,
+> > +			<&clk IMX91_CLK_ENET2_REGULAR_GATE>,
+> > +			<&clk IMX91_CLK_ENET_TIMER>,
+> > +			<&clk IMX91_CLK_ENET2_REGULAR>,
+> > +			<&clk IMX93_CLK_DUMMY>;
+> > +	assigned-clocks =3D <&clk IMX91_CLK_ENET_TIMER>,
+> > +				<&clk IMX91_CLK_ENET2_REGULAR>;
+> > +	assigned-clock-parents =3D <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
+> > +					<&clk IMX93_CLK_SYS_PLL_PFD0_DIV2>;
+> > +	assigned-clock-rates =3D <100000000>, <250000000>;
+> > +};
+> > +
+> > +&i3c1 {
+> > +	clocks =3D <&clk IMX93_CLK_BUS_AON>,
+> > +			<&clk IMX93_CLK_I3C1_GATE>,
+> > +			<&clk IMX93_CLK_DUMMY>;
+> > +};
+> > +
+> > +&i3c2 {
+> > +	clocks =3D <&clk IMX93_CLK_BUS_WAKEUP>,
+> > +			<&clk IMX93_CLK_I3C2_GATE>,
+> > +			<&clk IMX93_CLK_DUMMY>;
+> > +};
+> > +
+> > +&tmu {
+> > +	status =3D "disabled";
+> > +};
+> > +
+> > +/* i.MX91 only has one A core */
+> > +/delete-node/ &A55_1;
+> > +
+> > +/* i.MX91 not has cm33 */
+> > +/delete-node/ &cm33;
+> > +
+> > +/* i.MX91 not has power-domain@44461800 */
+> > +/delete-node/ &mlmix;
+>=20
+> If someone want to use it in overlay file, /delete-node/ will not work.
 
-If that is causing a too large overhead, we should investigate if
-those can be improved instead of adding tracepoints in the
-implementation of system calls.
+Do you expect someone including this SoC-dtsi in an overlay?
+I personally don't, well I'll welcome other comments.
 
-Thanks,
+As imx93 is an upgrade to imx91, there is also the possibility to do it
+the other way around, similar to imx7s and imx7d. The latter one including
+imx7.dtsi and adding additionally peripherals.
 
-Mathieu
+Best regards
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
 
 
