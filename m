@@ -1,102 +1,225 @@
-Return-Path: <linux-kernel+bounces-400724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16089C1173
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:03:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C58259C1176
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:04:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88F912836B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E904D1C21AF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A0C218321;
-	Thu,  7 Nov 2024 22:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7144F218950;
+	Thu,  7 Nov 2024 22:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="anTApJyq"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QyCSQT/h"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409CB215C6D;
-	Thu,  7 Nov 2024 22:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF769216A32
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731017003; cv=none; b=G3u42krH5ZyeMgQDKIwMzJvdHZP2FrHe/WwVNHTm/nzo09NddbSrdlBs9mekh8Z70UCm0yqbxA9ejf5ezLZ5pZJBqaEuxaLBFITskh999/n74REXHJDXPSJCRuqzEQoJS5pOruxKEaxJu/rpJCaf3/2KL41peE5KbVKHyhffBQY=
+	t=1731017070; cv=none; b=u92uK7E4+K2g/ogeu0MjaMupRVOdS0rUwbW/33dcalmrB1z9w//4Mrou+XrnrmZBAHA5KKR9Qlb/4bewZrt9/7rqCrnBQBKI00yzAtSSBuyybcIqWZyJ+NQE62D7j1ngMDUXQfHeIhvT2ZfyPnmo8qKa0cP5rst3q1XXSL7KuwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731017003; c=relaxed/simple;
-	bh=qkK0amL98AbIIS/b4OPpm+hQwWpbUUOjYa7QJ2H5DuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sZAG9n4rkdcaZiC82DE8Iv2slw/vPsUgpWA7czhh7AnNcfo1wkc/Z+UVT6aS2x+7KsOzAW9ZfQMD4+9T7H/r4Yu+cDQwVXFteVQe8bQ/iP2PlWWe2XdLRQ60Mr+tNqIdEHbK+0LMI7GBfzUdKmJEC2EqnppWQnd6uf1Gi72xtSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=anTApJyq; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731016995;
-	bh=wUixlLA5DgEihjvV1A9082nTUUK+zEhB9qYoo60sBWs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=anTApJyqJPBY3BVeaYG9jUx8gH8mpy+Y3jpuM9K3NmgQfD/9iEintklgz/Uge0nxK
-	 ZFAVyi6FOBlXLX9ODee6pyA4AZ4UryL7bdFFZunJ+pYEdszrjJHlBOvFAMFbeVglVF
-	 0H8ap32HepW3gFDi8WyBBFsPHsag2jdG6hgY1/kzJ0W13wCOiQOrDirrg3KvbsUejU
-	 2B7MeBM0zHkdKz8e0YsxNagaeCUcwrNNYwzuZ8C9ajZO96dhfDzleS3z4ASqSdYUET
-	 BcZkAoSsg8M54MJr8VB3b9cT5npi8KS8csv7IOlJjt5SNz/Elfqj+bQF4UGm6XtU62
-	 7HQHRKKel0c8Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xkx0M6F7nz4w2K;
-	Fri,  8 Nov 2024 09:03:15 +1100 (AEDT)
-Date: Fri, 8 Nov 2024 09:03:17 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the btrfs tree
-Message-ID: <20241108090317.3eaad84e@canb.auug.org.au>
+	s=arc-20240116; t=1731017070; c=relaxed/simple;
+	bh=lpsB0Lhao14pSHuIsoNAfLMQVqkvehe9MRaIJTGgGQM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=en/LvKWJ4YcILZ9sdPPnsmjOrJBnbD7TElVttuRxNXlx//PlEOShQlO2h/g355hau5qYmftuLyewk0+x8DNuvQRgaopE2iKb+DQfP8xxILTkiVCj6bp17qzXPgJko9O3uOMHDfahxEL4rQNEDkkZ2ahrjuM6RQ/VOnYBqLsDOJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QyCSQT/h; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e290b8b69f8so2352907276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 14:04:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731017066; x=1731621866; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xbGhGQD3dLGHOdZf79vl2DnONOHtbHblmt/KrMX34JM=;
+        b=QyCSQT/hDiEnj+elNoSQ8RsnNXW/LbMbl4WOWB1gYBPSh8FDbk12Ea5Jc9At7jd+eM
+         LbJkpJX5AJMdwqH4/g8nDx9hhfGzx7yHhi3T9IZNVkrpNXJKKhFZE6y7OZHF2/6nROZV
+         D2Y7MfCoPfko6EUehfGjOVAtBZnGo8Q8spK5cassIymH5Y7Nn4hKUGjKTQjHF9wDUn1+
+         oHOuCn/mytsE34uh5wNbV4fsKe5fKljoCJo0n+Xeo0wkkdJ35eeUmQakOsEhjzRjI3gM
+         +CjMMa6EFDvNNWcjdYF2kQ1WgtgjXaZVtYrPrunaY4IvhEpFprdObgS6fqGn8NLI0qZ2
+         myQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731017066; x=1731621866;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xbGhGQD3dLGHOdZf79vl2DnONOHtbHblmt/KrMX34JM=;
+        b=gMJk/PJ4TYlgoekSk6EGS7NBgW2mlkMjCwD158wLaiQ4LFtVACzrz1NTGk+bgA/J7y
+         2KhdmcVkDoe73U5A6cFTonqbIccne7mZPgWlQmGY4LqK69fBVS10S7ZDII1PQFI93ZNm
+         MpqfJzF6ZU8LD3Q0hOgs0Mi4XMxSF2aGt1ofUUW6hfOBrMLjxGFn5mZxy8bsDyR1FK6n
+         TDPZNKI1HsFiipKzqWVGTA4+aQ1b9tPXg06QaawyHdAEZ3KRaUuIliClpQAfqIpFinBX
+         hlx0q08HPDtosGjf9Uhr+HG5FxHViWuXsk2ecSSxBvsmYior5Bluj2irUhBh6GVqLRY6
+         SRuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEu4IHjX+DVyt8NBvEFcbDvGDtP8UffpBbGlYCOhDUTiSGuByRm5GCzD660c7ZhXSfCUYQMVPsDcJi8hA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBSRbW5WfdNJ4XcrwAqCzwJunFCXPagbbr4TlVxyJN4QNNvUgN
+	vTG7oFFCmpMfuhBtFVplQQF/V30kctyU94bvNyExpyvIHIBeZN3M9K1FUFz0QdP7BGMCVeSF0JN
+	u9Q==
+X-Google-Smtp-Source: AGHT+IGAD4bX7VHgyHjrfJRov5ldRUBUOAvZsIHOxd9qJY11CpezC67q3aZc2w/ppTDS+z3xlmpJz1tjiN0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:a423:0:b0:e20:2502:be14 with SMTP id
+ 3f1490d57ef6-e337f8df4fbmr490276.7.1731017066602; Thu, 07 Nov 2024 14:04:26
+ -0800 (PST)
+Date: Thu, 7 Nov 2024 14:04:25 -0800
+In-Reply-To: <2d69e11d8afc90e16a2bed5769f812663c123c14.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/JgKSypWmO_Is+W0YgB_Oq5A";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+References: <cover.1730120881.git.kai.huang@intel.com> <f7394b88a22e52774f23854950d45c1bfeafe42c.1730120881.git.kai.huang@intel.com>
+ <ZyJOiPQnBz31qLZ7@google.com> <46ea74bcd8eebe241a143e9280c65ca33cb8dcce.camel@intel.com>
+ <ZyPnC3K9hjjKAWCM@google.com> <37f497d9e6e624b56632021f122b81dd05f5d845.camel@intel.com>
+ <ZyuDgLycfadLDg3A@google.com> <2d69e11d8afc90e16a2bed5769f812663c123c14.camel@intel.com>
+Message-ID: <Zy05af5Qxkc4uRtn@google.com>
+Subject: Re: [PATCH 3/3] KVM: VMX: Initialize TDX during KVM module load
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Tony Lindgren <tony.lindgren@intel.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	Dan J Williams <dan.j.williams@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kristen@linux.intel.com" <kristen@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
---Sig_/JgKSypWmO_Is+W0YgB_Oq5A
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Nov 06, 2024, Kai Huang wrote:
+> On Wed, 2024-11-06 at 07:01 -0800, Sean Christopherson wrote:
+> > On Wed, Nov 06, 2024, Kai Huang wrote:
+> > > For this we only disable TDX but continue to load module.  The reason is I think
+> > > this is similar to enable a specific KVM feature but the hardware doesn't
+> > > support it.  We can go further to check the return value of tdx_cpu_enable() to
+> > > distinguish cases like "module not loaded" and "unexpected error", but I really
+> > > don't want to go that far.
+> > 
+> > Hrm, tdx_cpu_enable() is a bit of a mess.  Ideally, there would be a separate
+> > "probe" API so that KVM could detect if TDX is supported.  Though maybe it's the
+> > TDX module itself is flawed, e.g. if TDH_SYS_INIT is literally the only way to
+> > detect whether or not a module is loaded.
+> 
+> We can also use P-SEAMLDR SEAMCALL to query, but I see no difference between
+> using TDH_SYS_INIT.  If you are asking whether there's CPUID or MSR to query
+> then no.
 
-Hi all,
+Doesn't have to be a CPUID or MSR, anything idempotent would work.  Which begs
+the question, is that P-SEAMLDR SEAMCALL query you have in mind idempotent? :-)
 
-The following commit is also in the btrfs-fixes tree as a different commit
-(but the same patch):
+> > So, absent a way to clean up tdx_cpu_enable(), maybe disable the module param if
+> > it returns -ENODEV, otherwise fail the module load?
+> 
+> We can, but we need to assume cpuhp_setup_state_cpuslocked() itself will not
+> return -ENODEV (it is true now), otherwise we won't be able to distinguish
+> whether the -ENODEV was from cpuhp_setup_state_cpuslocked() or tdx_cpu_enable().
+> 
+> Unless we choose to do tdx_cpu_enable() via on_each_cpu() separately.
+> 
+> Btw tdx_cpu_enable() itself will print "module not loaded" in case of -ENODEV,
+> so the user will be aware anyway if we only disable TDX but not fail module
+> loading.
 
-  f4c30cb4a62e ("btrfs: fix the length of reserved qgroup to free")
+That only helps if a human looks at dmesg before attempting to run a TDX VM on
+the host, and parsing dmesg to treat that particular scenario as fatal isn't
+something I want to recommend to end users.  E.g. if our platform configuration
+screwed up and failed to load a TDX module, then I want that to be surfaced as
+an alarm of sorts, not a silent "this platform doesn't support TDX" flag.
 
-This is commit
+> My concern is still the whole "different handling of error cases" seems over-
+> engineering.
 
-  2b084d820594 ("btrfs: fix the length of reserved qgroup to free")
+IMO, that's a symptom of the TDX enabling code not cleanly separating "probe"
+from "enable", and at a glance, that seems very solvable.  And I suspect that
+cleaning things up will allow for additional hardening.  E.g. I assume the lack
+of MOVDIR64B should be a WARN, but because KVM checks for MOVDIR64B before
+checking for basic TDX support, it's an non-commitalpr_warn().
 
-in the btrfs-fixes tree.
+> > > 4) tdx_enable() fails.
+> > > 
+> > > Ditto to 3).
+> > 
+> > No, this should fail the module load.  E.g. most of the error conditions are
+> > -ENOMEM, which has nothing to do with host support for TDX.
+> > 
+> > > 5) tdx_get_sysinfo() fails.
+> > > 
+> > > This is a kernel bug since tdx_get_sysinfo() should always return valid TDX
+> > > sysinfo structure pointer after tdx_enable() is done successfully.  Currently we
+> > > just WARN() if the returned pointer is NULL and disable TDX only.  I think it's
+> > > also fine.
+> > > 
+> > > 6) TDX global metadata check fails, e.g., MAX_VCPUS etc.
+> > > 
+> > > Ditto to 3).  For this we disable TDX only.
+> > 
+> > Where is this code?
+> 
+> Please check:
+> 
+> https://github.com/intel/tdx/blob/tdx_kvm_dev-2024-10-25.1-host-metadata-v6-rebase/arch/x86/kvm/vmx/tdx.c
+> 
+> .. starting at line 3320.
 
---=20
-Cheers,
-Stephen Rothwell
+Before I forget, that code has a bug.  This
 
---Sig_/JgKSypWmO_Is+W0YgB_Oq5A
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+	/* Check TDX module and KVM capabilities */
+	if (!tdx_get_supported_attrs(&tdx_sysinfo->td_conf) ||
+	    !tdx_get_supported_xfam(&tdx_sysinfo->td_conf))
+		goto get_sysinfo_err;
 
------BEGIN PGP SIGNATURE-----
+will return '0' on error, instead of -EINVAL (or whatever it intends).
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmctOSUACgkQAVBC80lX
-0GwuaQgAi4n5MrwpmwN3TxBglM6Fpv0G1PgpW45U9pZq8XGpUY9RTvrOFJJalJwC
-OdzqQSBH+YuQSDzyP8DOjMRP6SR8ENHH2pm6nRNWJaPnYDNByPh3XzJr6ftvQ8Xy
-JkDg8JYJl5CgCiDw12obTMTJYkeJpRwDtbZS61TcpP0fdecWG3+j4lEnunVFtQxa
-iq84NMKrmuCZg9eaKTmim/ac+PeiaeNuF28ZsNisBzd8Gjn3qVyiQtj7I10T3EE1
-ttWz9VqyAkTviCUHu9kQDRITTtbauRDaI8uX3QCj0sKggGpPnAXzA6IEec0haaaa
-7TjytF8mbosb5wq77BO7U1g2aRwtng==
-=Awqt
------END PGP SIGNATURE-----
+Back to the main discussion, these checks are obvious "probe" failures and so
+should disable TDX without failing module load:
 
---Sig_/JgKSypWmO_Is+W0YgB_Oq5A--
+	if (!tdp_mmu_enabled || !enable_mmio_caching)
+		return -EOPNOTSUPP;
+
+	if (!cpu_feature_enabled(X86_FEATURE_MOVDIR64B)) {
+		pr_warn("MOVDIR64B is reqiured for TDX\n");
+		return -EOPNOTSUPP;
+	}
+
+A kvm_find_user_return_msr() error is obviously a KVM bug, i.e. should definitely
+WARN and fail module module.  Ditto for kvm_enable_virtualization().
+
+The boot_cpu_has(X86_FEATURE_TDX_HOST_PLATFORM) that's buried in tdx_enable()
+really belongs in KVM.  Having it in both is totally fine, but KVM shouldn't do
+a bunch of work and _then_ check if all that work was pointless.
+
+I am ok treating everything at or after tdx_get_sysinfo() as fatal to module load,
+especially since, IIUC, TD_SYS_INIT can't be undone, i.e. KVM has crossed a point
+of no return.
+
+In short, assuming KVM can query if a TDX module is a loaded, I don't think it's
+all that much work to do:
+
+  static bool kvm_is_tdx_supported(void)
+  {
+	if (boot_cpu_has(X86_FEATURE_TDX_HOST_PLATFORM))
+		return false;
+
+	if (!<is TDX module loaded>)
+		return false;
+
+	if (!tdp_mmu_enabled || !enable_mmio_caching)
+		return false;
+
+	if (WARN_ON_ONCE(!cpu_feature_enabled(X86_FEATURE_MOVDIR64B)))
+		return false;
+
+	return true;
+  }
+
+  int __init tdx_bringup(void)
+  {
+	enable_tdx = enable_tdx && kvm_is_tdx_supported();
+	if (!enable_tdx)
+		return 0;
+
+	return __tdx_bringup();
+  }
 
