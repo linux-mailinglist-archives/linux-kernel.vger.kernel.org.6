@@ -1,187 +1,101 @@
-Return-Path: <linux-kernel+bounces-399707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2124D9C0330
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:02:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7349C0335
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D964E28604C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333611C2161D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CEE1F1303;
-	Thu,  7 Nov 2024 11:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF651F4733;
+	Thu,  7 Nov 2024 11:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8tB6yZ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lNkq8uuX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EAB1EE024;
-	Thu,  7 Nov 2024 11:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70131F4290;
+	Thu,  7 Nov 2024 11:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977356; cv=none; b=K4pyyE8yS60iTjhuc9GIlp0ygUEoDPysZMXpio4SOCWkOW9IxITrYcYs3mfErrC8RLiGmNJ2fjl2daE3zDMdVSUtCmpdo4N6zXcOaSQlM9zdydo/UuOw3gG0BTWudop/0z/uehG0AII+GMK/uWkDJ5To2W3h0LFlPTqo82SN73c=
+	t=1730977359; cv=none; b=mDmHfYpQ8EO9pCXElvYlpx2ltuxjo1HyC8CtdfXrIaGEbQvauGHrQ/zIaEcystmA15Xypq/WHnkfXNBpareRRWpyvF7sl1zT8P+bfUMTQbnVpHunmufnkiOXgEXr2GjNvQYDpEvOgCuUND0qklmFo1CNq6PTc5AmBy9UhhdkbmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977356; c=relaxed/simple;
-	bh=XPXzTBydfU0tNU9z2BgGa6DkHPQcDioWlU+fnXhanAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y359MTRV2GDhKtcQwx/2p15ovNIb1NNCghdDes/J9oO7r8J+HoP1G5UvUj1fyOwRG/2vA39fmT0FVa7SxVs/5XeLcLzu443QB1vl6uDk/CfzTilaTnmPvp6WnDJkycts9umbtZCkD86bw/kUgacyv8HsvIRqHP6fqrhG7gUrHc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8tB6yZ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1BDC4CED0;
-	Thu,  7 Nov 2024 11:02:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730977355;
-	bh=XPXzTBydfU0tNU9z2BgGa6DkHPQcDioWlU+fnXhanAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p8tB6yZ258syUr1ek0tZTtb+RurPUY+6mR2sE7oxFqCjYJtywTKHCgYnfD0eYt8mw
-	 GqgjRReTXPy3/m+SWUedidkbZRT/BYIdtaPeVo5wuHSmpg6uJmoPzOIKIEMr4PXB8x
-	 iKFoboncs9qeaL1Nxe7dlszu8WyV5hsUPztKea8g9rCpeXKjiVW4VZe1ETnAEdTKQH
-	 SeFG4JLYW3UVvFJtZUOTxdTEuPKu8NeqgXhznJDriEYHqgrN+etpVmaXuulaBpjPQB
-	 pzOH3d/HDqzIkLOg1Q+xQDUI4BnKgzIxC4tkDSx+4MhrjBQmxywSAE+nnCaLiQDRce
-	 r5GgHUzJIyYOQ==
-Date: Thu, 7 Nov 2024 12:02:31 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ASoC: dt-bindings: add stm32mp25 support for i2s
-Message-ID: <ynddlgloyliun6eiiep2ry6l5h2uqu7ujkusrptpqe74nvan7t@j44ltlokati3>
-References: <20241106152528.939232-1-olivier.moysan@foss.st.com>
- <20241106152528.939232-2-olivier.moysan@foss.st.com>
+	s=arc-20240116; t=1730977359; c=relaxed/simple;
+	bh=b0bTy290Gv4Pae9BlhjI0SkrHyDgzfB15dcSYgwkuhU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JF1toiCcvt32z/TsLIiO6QUY6wJveq92gglRI8g+mKsI7dsXvgWfWsWmansix02yP77sQkoTf5ffn4BYAltEQ0Q9AiYXh7Mr0bHlui4HwhTy4VQtgceH5omefX5G9QdMFlSihXx1aRTxhC93eyH4ukamjQ6QgGihJV4joWfYZ0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lNkq8uuX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730977355;
+	bh=b0bTy290Gv4Pae9BlhjI0SkrHyDgzfB15dcSYgwkuhU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lNkq8uuXecRWDRa2Ptic2EWcNh7IFeOscAVOFNFIJqBbRh2VZA7NRdn8eMKeWcNi1
+	 Ch4B7WgNl2Ca8+xjNc/v0fkK3lmS7xMhwYpv805KcoNyP3Kx63SEl5wjQwqpIA3y+l
+	 7dwTqO65OjBxvK4hHyrvRCsdRUtGLi9wqvCbSgMORdMPXWdmOUIVMWhupR+GZMMV5S
+	 8jiS89xYjKKHPeSi9/ywpl0QRo4jrheiYLoz2MT83m4kmOl6tIEmULpnmOcP75EUSw
+	 +oqsWtWHizEu8JVgRGWYtFPhMH8nUaUlEG2vNvExmV/+FX67SVQkmFWYNCplxSvD+n
+	 saI9kp/FNePFg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6B71F17E35E3;
+	Thu,  7 Nov 2024 12:02:35 +0100 (CET)
+Message-ID: <900eb529-9868-4455-8f13-3e6ce6c99983@collabora.com>
+Date: Thu, 7 Nov 2024 12:02:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241106152528.939232-2-olivier.moysan@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: mtk-sd: Fix error handle of probe function
+To: Andy-ld Lu <andy-ld.lu@mediatek.com>, ulf.hansson@linaro.org,
+ matthias.bgg@gmail.com, wenbin.mei@mediatek.com
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241107014714.24981-1-andy-ld.lu@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241107014714.24981-1-andy-ld.lu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 04:25:27PM +0100, Olivier Moysan wrote:
-> Add STM32MP25 support for STM32 I2S peripheral,
-> through "st,stm32mp25-i2s" compatible.
+Il 07/11/24 02:47, Andy-ld Lu ha scritto:
+> In the probe function, it goes to 'release_mem' label and returns after
+> some procedure failure. But if the clocks (partial or all) have been
+> enabled previously, they would not be disabled in msdc_runtime_suspend,
+> since runtime PM is not yet enabled for this case.
 > 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> ---
->  .../bindings/sound/st,stm32-i2s.yaml          | 60 +++++++++++++++----
->  1 file changed, 47 insertions(+), 13 deletions(-)
+> That cause mmc related clocks always on during system suspend and block
+> suspend flow. Below log is from a SDCard issue of MT8196 chromebook, it
+> returns -ETIMEOUT while polling clock stable in the msdc_ungate_clock()
+> and probe failed, but the enabled clocks could not be disabled anyway.
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml b/Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml
-> index 8978f6bd63e5..8f08f1f28a1b 100644
-> --- a/Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml
-> +++ b/Documentation/devicetree/bindings/sound/st,stm32-i2s.yaml
-> @@ -13,13 +13,11 @@ description:
->    The SPI/I2S block supports I2S/PCM protocols when configured on I2S mode.
->    Only some SPI instances support I2S.
->  
-> -allOf:
-> -  - $ref: dai-common.yaml#
-> -
->  properties:
->    compatible:
->      enum:
->        - st,stm32h7-i2s
-> +      - st,stm32mp25-i2s
->  
->    "#sound-dai-cells":
->      const: 0
-> @@ -28,18 +26,12 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> -    items:
-> -      - description: clock feeding the peripheral bus interface.
-> -      - description: clock feeding the internal clock generator.
-> -      - description: I2S parent clock for sampling rates multiple of 8kHz.
-> -      - description: I2S parent clock for sampling rates multiple of 11.025kHz.
-> +    minItems: 2
+> [  129.059253] clk_chk_dev_pm_suspend()
+> [  129.350119] suspend warning: msdcpll is on
+> [  129.354494] [ck_msdc30_1_sel : enabled, 1, 1, 191999939,   ck_msdcpll_d2]
+> [  129.362787] [ck_msdcpll_d2   : enabled, 1, 1, 191999939,         msdcpll]
+> [  129.371041] [ck_msdc30_1_ck  : enabled, 1, 1, 191999939, ck_msdc30_1_sel]
+> [  129.379295] [msdcpll         : enabled, 1, 1, 383999878,          clk26m]
+> 
+> Add a new 'release_clk' label and reorder the error handle functions to
+> make sure the clocks be disabled after probe failure.
+> 
+> Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
 
-Keep old list and just add minItms here
+Please add the relevant Fixes tag, as this is a fix and should be backported.
 
-> +    maxItems: 4
->  
->    clock-names:
-> -    items:
-> -      - const: pclk
-> -      - const: i2sclk
-> -      - const: x8k
-> -      - const: x11k
-> +    minItems: 2
+After which, I'll give you my R-b.
 
-Ditto
-
-> +    maxItems: 4
->  
->    interrupts:
->      maxItems: 1
-> @@ -79,6 +71,48 @@ required:
->    - dmas
->    - dma-names
->  
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: st,stm32h7-i2s
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: clock feeding the peripheral bus interface.
-> +            - description: clock feeding the internal clock generator.
-> +            - description: I2S parent clock for sampling rates multiple of 8kHz.
-> +            - description: I2S parent clock for sampling rates multiple of 11.025kHz.
-
-Instead: minItems: 4
-
-> +
-> +        clock-names:
-> +          items:
-> +            - const: pclk
-> +            - const: i2sclk
-> +            - const: x8k
-> +            - const: x11k
-
-ditto
-
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: st,stm32mp25-i2s
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: clock feeding the peripheral bus interface.
-> +            - description: clock feeding the internal clock generator.
-
-instead: maxItems: 2
-
-> +
-> +        clock-names:
-> +          items:
-> +            - const: pclk
-> +            - const: i2sclk
-
-ditto
-
-Thanks to this you keep the lists synchronized between variants - they
-share the items.
-
-Best regards,
-Krzysztof
+Cheers,
+Angelo
 
 
