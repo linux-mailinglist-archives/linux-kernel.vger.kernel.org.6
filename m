@@ -1,140 +1,90 @@
-Return-Path: <linux-kernel+bounces-399451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A30C9BFF02
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:24:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D7A9BFF2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1C0F1F22AEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF3F1F23DC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B014196C9B;
-	Thu,  7 Nov 2024 07:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g4F6QKs4"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB57194C8D;
-	Thu,  7 Nov 2024 07:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5889B194C8B;
+	Thu,  7 Nov 2024 07:33:45 +0000 (UTC)
+Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A7114293;
+	Thu,  7 Nov 2024 07:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730964262; cv=none; b=K0RdR2l/4LfaOBrw7G/leIw4kSBY/XCDXtxvdtl+gtRghKknwYSpWWnE0kS50cf3Fh4GQTDufGcCQldCA02wmdwPFSc4l6tvjemRnR3VFpPNL5MCU+ptfNyJH8RUJpMfoyLC4GL8J9AZb1X+081ecEeuD2d4HyX79Mr9IsdLE/Y=
+	t=1730964825; cv=none; b=t3mXI8RyTfmTzjNtddJANQlNaa2O8168uJFqiaMJki99Kecxq0pJi3lRPQMlGIA+TCgar/dz8rd2vrkEH/tGMTc9/W+bo3C9dfoZfni3tRH7f2mBWxAJFkp3lTWu+2dSLDZBMtMeNF8D/aC8wF2Mf3+25NWw/O2k/uFeqA15VXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730964262; c=relaxed/simple;
-	bh=yKSWaD2r7ugdR5FspLC7HV/vgzYdq3m9nwQC1wbrOIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AhzqWI3j7ZGpg2CGhJPBJVXtRrbxOmSjATgVCFmKlmqL6EIP80ynPmwVchR5DI7JWT6oT1zj1bypWacecLryCgJE69mPTE+QCeuiVjPml5rS/cwiwlriSY+dby41Xx5rEVT9x24r79FWRgU9steUlIfj4duNaKGwyxPMmqM2Dg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=g4F6QKs4; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730964251;
-	bh=UPI4SoD2Uxo9GAN+LEMJ7aAhd/xFEPLvAYe0FCQS6kE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=g4F6QKs4tEQB2n9AavFHSYyirjLlpE75uGsMAVaIvNPSRAnxiL/4OjM+psxyuya+v
-	 JgYfw0aXjGpqeLFzDAP5u8ec08NoW9uVxERdilPO6zNZOqPz04pwqy2i0bIYz+nDhd
-	 Huktxkd62GIDidm+j7c8zMezOfrFgFnZYUmL2Dgx8M850wlMTN/a3uM6MWgFnKOciR
-	 c6Wl1064xi4if3b7rYINWo7F5Pmh7IFKuljc1X42xcutwRys9j3McIufOuXkqjejSv
-	 Q9kr/LrZH1BInzTVeU9q9oC9sy6PAelvCOi0WvQntathotjfbEKLUqQOVTov3WjbDB
-	 ZytrLKbmn0Zhw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkYV303vSz4wcl;
-	Thu,  7 Nov 2024 18:24:10 +1100 (AEDT)
-Date: Thu, 7 Nov 2024 18:24:11 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <20241107182411.57e2b418@canb.auug.org.au>
+	s=arc-20240116; t=1730964825; c=relaxed/simple;
+	bh=wdHUfCI1TF5YK8JqBfUOtgrwF72O63sgu6UiYdzXN1I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V5uXuMWy/e8NZBL9RhWQ0ZZXKS66sgusnU4uDvLWZZdFMfI3wNtINxN871Mh4DZXU8egHM4Ce4gJi+I609cQgaNetfpQePvapD3tFO/G45SDPTTsARUZN6X6tMURW25RNpPUbKgH4Ly8corVIW/tbjZHfqCW8Jpf0vvokt4dZnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee9672c6d4e297-ec2ab;
+	Thu, 07 Nov 2024 15:33:36 +0800 (CST)
+X-RM-TRANSID:2ee9672c6d4e297-ec2ab
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9672c6d4f48a-59aaf;
+	Thu, 07 Nov 2024 15:33:36 +0800 (CST)
+X-RM-TRANSID:2ee9672c6d4f48a-59aaf
+From: liujing <liujing@cmss.chinamobile.com>
+To: mpe@ellerman.id.au
+Cc: npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	naveen@kernel.org,
+	maddy@linux.ibm.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] tty: hvc: Fix incorrect formatted output
+Date: Thu,  7 Nov 2024 15:33:32 +0800
+Message-Id: <20241107073332.5483-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0FYRoJmUHfD108fwEN7pmdT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/0FYRoJmUHfD108fwEN7pmdT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The termno parameter is defined as an unsigned int 
+in hvc_opal_probe(), So the output format should be %u instead of %d.
 
-Hi all,
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+---
+v1 -> V2: Modified the description of commit.
 
-In file included from rust/helpers/helpers.c:26:
-rust/helpers/spinlock.c: In function 'rust_helper___spin_lock_init':
-rust/helpers/spinlock.c:10:30: error: implicit declaration of function 'spi=
-nlock_check'; did you mean 'spin_lock_bh'? [-Wimplicit-function-declaration]
-   10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WA=
-IT_CONFIG);
-      |                              ^~~~~~~~~~~~~~
-      |                              spin_lock_bh
-rust/helpers/spinlock.c:10:30: error: passing argument 1 of '__raw_spin_loc=
-k_init' makes pointer from integer without a cast [-Wint-conversion]
-   10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WA=
-IT_CONFIG);
-      |                              ^~~~~~~~~~~~~~~~~~~~
-      |                              |
-      |                              int
-In file included from include/linux/wait.h:9,
-                 from include/linux/wait_bit.h:8,
-                 from include/linux/fs.h:6,
-                 from include/linux/highmem.h:5,
-                 from include/linux/bvec.h:10,
-                 from include/linux/blk_types.h:10,
-                 from include/linux/blkdev.h:9,
-                 from include/linux/blk-mq.h:5,
-                 from rust/helpers/blk.c:3,
-                 from rust/helpers/helpers.c:10:
-include/linux/spinlock.h:101:52: note: expected 'raw_spinlock_t *' {aka 'st=
-ruct raw_spinlock *'} but argument is of type 'int'
-  101 |   extern void __raw_spin_lock_init(raw_spinlock_t *lock, const char=
- *name,
-      |                                    ~~~~~~~~~~~~~~~~^~~~
+diff --git a/drivers/tty/hvc/hvc_opal.c b/drivers/tty/hvc/hvc_opal.c
+index 095c33ad10f8..1d2e7f2ce088 100644
+--- a/drivers/tty/hvc/hvc_opal.c
++++ b/drivers/tty/hvc/hvc_opal.c
+@@ -199,7 +199,7 @@ static int hvc_opal_probe(struct platform_device *dev)
+ 		/* Instanciate now to establish a mapping index==vtermno */
+ 		hvc_instantiate(termno, termno, ops);
+ 	} else {
+-		pr_err("hvc_opal: Device %pOF has duplicate terminal number #%d\n",
++		pr_err("hvc_opal: Device %pOF has duplicate terminal number #%u\n",
+ 		       dev->dev.of_node, termno);
+ 		return -ENXIO;
+ 	}
+-- 
+2.27.0
 
-Probably caused by commit
 
-  35772d627b55 ("sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT")
 
-at least reverting commit
-
-  dafc2d42c0a6 ("Merge branch into tip/master: 'sched/core'")
-
-makes the build work again for me - so I have done that for today.
-
-Without the revert CONFIG_PREEMPT_RT=3Dy, after the revert it is not set
-and spinlock_check is only defined for !defined(CONFIG_PREEMPT_RT).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0FYRoJmUHfD108fwEN7pmdT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcsaxsACgkQAVBC80lX
-0GzV+ggAgMPdpDsoCcH8oxUwjcWW3sDwKNwgPSPEddj1vVjTjQERuYxyxtCXTX+j
-qi28LFQx1OsBKpkUxAuT/9EcVmXKn8NIFzShJeVB6PJFWNRNVA9LBJGY1VVy8FHa
-E4mzdTQa/g4B9kvYWyKWc4CHwnaGT/PwsZuhyPaxmfyXK+10ZiPSqBwEdP4z5rTS
-wF5YlYNCY1Kr2wXoRq7gqr9CldWPxXUwX8FhSh3sb7nhokai9X6xQ3bk6ZoZ1nc+
-D3cL3Nhc32g7yElK8qPR2YBJY1oRGvenAfrdeahQzrqNpKAIrzHnpuvuh8+mboTE
-l1N4ysCo/2lN75nIRo59B1AZKupjCw==
-=q3BK
------END PGP SIGNATURE-----
-
---Sig_/0FYRoJmUHfD108fwEN7pmdT--
 
