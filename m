@@ -1,90 +1,132 @@
-Return-Path: <linux-kernel+bounces-399458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D7A9BFF2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:33:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7589BFF2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF3F1F23DC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 543F71F23DB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5889B194C8B;
-	Thu,  7 Nov 2024 07:33:45 +0000 (UTC)
-Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A7114293;
-	Thu,  7 Nov 2024 07:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857491953BD;
+	Thu,  7 Nov 2024 07:34:50 +0000 (UTC)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FFE14293;
+	Thu,  7 Nov 2024 07:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730964825; cv=none; b=t3mXI8RyTfmTzjNtddJANQlNaa2O8168uJFqiaMJki99Kecxq0pJi3lRPQMlGIA+TCgar/dz8rd2vrkEH/tGMTc9/W+bo3C9dfoZfni3tRH7f2mBWxAJFkp3lTWu+2dSLDZBMtMeNF8D/aC8wF2Mf3+25NWw/O2k/uFeqA15VXw=
+	t=1730964890; cv=none; b=DokUX26/yuRMfhfq8860w2MeIQ/LpZrLRBwCn696ib6b22DGae11PLEntB/h3snSDSAe6wQFDYEj/sWZPKVHgSTucElbwSmOMHyMeQfNVkn34nMrXxvEipIUwKOGaULNL3dzf40YaPHnnLj5LNNdkrqdyYVQ+73OSvEE6EUa9bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730964825; c=relaxed/simple;
-	bh=wdHUfCI1TF5YK8JqBfUOtgrwF72O63sgu6UiYdzXN1I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V5uXuMWy/e8NZBL9RhWQ0ZZXKS66sgusnU4uDvLWZZdFMfI3wNtINxN871Mh4DZXU8egHM4Ce4gJi+I609cQgaNetfpQePvapD3tFO/G45SDPTTsARUZN6X6tMURW25RNpPUbKgH4Ly8corVIW/tbjZHfqCW8Jpf0vvokt4dZnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee9672c6d4e297-ec2ab;
-	Thu, 07 Nov 2024 15:33:36 +0800 (CST)
-X-RM-TRANSID:2ee9672c6d4e297-ec2ab
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9672c6d4f48a-59aaf;
-	Thu, 07 Nov 2024 15:33:36 +0800 (CST)
-X-RM-TRANSID:2ee9672c6d4f48a-59aaf
-From: liujing <liujing@cmss.chinamobile.com>
-To: mpe@ellerman.id.au
-Cc: npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	naveen@kernel.org,
-	maddy@linux.ibm.com,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	liujing <liujing@cmss.chinamobile.com>
-Subject: [PATCH] tty: hvc: Fix incorrect formatted output
-Date: Thu,  7 Nov 2024 15:33:32 +0800
-Message-Id: <20241107073332.5483-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1730964890; c=relaxed/simple;
+	bh=vLjPd2KaGKlKUG1pxusDxEj/Bnk320EojQtkE1tS+M0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f2WQuHnNf/F+8yuIfVREzzQw5vfQXOeiQxoDq0YCGnDW8ya40dQcddyaCPXeIUP4vRFqCqtyBcJcyLi37W/ix5X7z/Fvj/3MGrITBc0pZOKiJiq9EL9UIltOLkZeSFgEgrTasjyw3OQMKKUbk329GUQFou27YPgeNj6NwOH4v70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e2974743675so614826276.1;
+        Wed, 06 Nov 2024 23:34:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730964886; x=1731569686;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jtqGlLXCDYuiMlu8oCZrg2JPREkhfGJubecJS/p7/Ww=;
+        b=kLIc1FtcOADSS7s0EGN48Zp42rK328K7EqbU2NGOJjx6/sCaAm/cSg0UGhZ2G0uRjQ
+         5teq0G+aFwibZqyXkDLegC24mpk28763kmhSUsqjWyyKXwQzg8FIBnSE3scoemIYrJO5
+         udtc7Xoy/F/146uB6f3bbh4VvoADrT/hXS1NSy42pGXBLEJyAtfAwkxfHQCJooJ9F83X
+         /jV2YgYJ8WVF5wp3ewiBGKSLrLL03jTKsr7gInr3y8OH0BkdRWF/z2zIUNUu8+a3eFOd
+         kiMjt8BUB83eo29QSFqu59uBf8T8bezS0VNrSwHyn1ZmzTE9YRVFHcFHibuU31imD/Kv
+         5gkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUV75JWpU+RyidFmo9vIHgnvralA0FbSbLMLya0jzZRZQ2/TixSAEsqIy4lzVDr3X1AhhsyTzXtCpqmkXw=@vger.kernel.org, AJvYcCVBgp2KTMRw9UUaLnN4Fue26PI2h+KaJ5grOZLhY8SdhcyT928uoQsip0yO25vLbtOSuppD5b5oywd7euDVQMwK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaBmD7nnoP6VaJsVM0vkPR+QMAGHimCt2n3DEW4UT25Wp13eeu
+	elfjZpU92LIY8Qqic7tpfitT8Ridn8v3fYYzhB33E+VAQ+DxL1/WPdBom2Wa
+X-Google-Smtp-Source: AGHT+IE8K8cYvejJms4VfG+ciUVxwqNl8bPWE5UnzciBqTXhfLw+0883IQCHqYNr0YdgUkwK/C/D2A==
+X-Received: by 2002:a05:6902:218b:b0:e33:16fe:ddd0 with SMTP id 3f1490d57ef6-e3377ba8866mr170314276.47.1730964886084;
+        Wed, 06 Nov 2024 23:34:46 -0800 (PST)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e336f1ba68dsm162691276.48.2024.11.06.23.34.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 23:34:45 -0800 (PST)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ea15a72087so4955247b3.1;
+        Wed, 06 Nov 2024 23:34:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVp6Dp8sLJlZx/lABrY28XI32LhJ4ixrKRHNMTJL4Q99+yYHtF4RXLhv1j4x+VmPngrUEWluRSXZTCtHYuKplwI@vger.kernel.org, AJvYcCXVvQF7RM98xK5ILWNEWISGO/puWhfi2XEaHvdwmeeakgmYduisJiC42LCVOW/76tBpoRl4KeLg0IYSD6A=@vger.kernel.org
+X-Received: by 2002:a05:690c:3808:b0:6ea:7e37:8cec with SMTP id
+ 00721157ae682-6ead5f4a647mr1652597b3.2.1730964884724; Wed, 06 Nov 2024
+ 23:34:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241011072509.3068328-2-davidgow@google.com> <20241011072509.3068328-3-davidgow@google.com>
+ <CAMuHMdUdotDYAgSDDrWi-TOj2o=5a53n452DydhD-Q0fjiGhew@mail.gmail.com>
+ <CAMuHMdVQ-Fmnti80_HoX1+6L8wNUghpuJzqpT_g0SJQG-oq6RQ@mail.gmail.com> <20241106131718.e0899c324941f63dc931f0fc@linux-foundation.org>
+In-Reply-To: <20241106131718.e0899c324941f63dc931f0fc@linux-foundation.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 Nov 2024 08:34:31 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVXkqxyu=+H_bxazxTLT8UBJuaDpctEcChRbTyXATPm1g@mail.gmail.com>
+Message-ID: <CAMuHMdVXkqxyu=+H_bxazxTLT8UBJuaDpctEcChRbTyXATPm1g@mail.gmail.com>
+Subject: Re: [PATCH 1/6] lib: math: Move kunit tests into tests/ subdir
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Gow <davidgow@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Brendan Higgins <brendanhiggins@google.com>, Rae Moar <rmoar@google.com>, 
+	Kees Cook <kees@kernel.org>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Luis Felipe Hernandez <luis.hernandez093@gmail.com>, 
+	quic_jjohnson@quicinc.com, macro@orcam.me.uk, tpiepho@gmail.com, 
+	ricardo@marliere.net, linux-kernel-mentees@lists.linuxfoundation.org, 
+	Nicolas Pitre <npitre@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The termno parameter is defined as an unsigned int 
-in hvc_opal_probe(), So the output format should be %u instead of %d.
+Hi Andrew,
 
-Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+On Wed, Nov 6, 2024 at 10:17=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+> On Wed, 6 Nov 2024 09:33:55 +0100 Geert Uytterhoeven <geert@linux-m68k.or=
+g> wrote:
+> > > This conflicts with "[PATCH] m68k: defconfig: Update defconfigs for
+> > > v6.12-rc1"[1].  Of course the proper way forward would be to add
+> > > "default KUNIT_ALL_TESTS" to all tests that still lack it, so I can
+> > > just never queue that patch ;-)
+> >
+> > What's the status of this series? I am asking because I am wondering if
+> > I should queue [1] for v6.13, or just drop it, and send a patch to add
+> > "default KUNIT_ALL_TESTS" instead.
+> >
+> > I saw the email from Andrew stating he applied it to his tree[2],
+> > but that seems to have been dropped silently, and never made it into
+> > linux-next?
+>
+> Yes, sorry.  Believe it or not, I do try to avoid spraying out too many
+> emails.  David will recall better than I, but things got messy.
+> https://lkml.kernel.org/r/20241009162719.0adaea37@canb.auug.org.au was
+> perhaps the cause.
 
----
-v1 -> V2: Modified the description of commit.
+Fair enough.
 
-diff --git a/drivers/tty/hvc/hvc_opal.c b/drivers/tty/hvc/hvc_opal.c
-index 095c33ad10f8..1d2e7f2ce088 100644
---- a/drivers/tty/hvc/hvc_opal.c
-+++ b/drivers/tty/hvc/hvc_opal.c
-@@ -199,7 +199,7 @@ static int hvc_opal_probe(struct platform_device *dev)
- 		/* Instanciate now to establish a mapping index==vtermno */
- 		hvc_instantiate(termno, termno, ops);
- 	} else {
--		pr_err("hvc_opal: Device %pOF has duplicate terminal number #%d\n",
-+		pr_err("hvc_opal: Device %pOF has duplicate terminal number #%u\n",
- 		       dev->dev.of_node, termno);
- 		return -ENXIO;
- 	}
--- 
-2.27.0
+> I'm sure David can being us up to date.
 
+Probably the best solution is to respin after v6.13-rc1, to be included
+in v6.13-rc2.
 
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
