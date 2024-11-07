@@ -1,200 +1,183 @@
-Return-Path: <linux-kernel+bounces-400032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EA49C07FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:48:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907389C0801
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:49:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457B51C22BB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:48:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EBF1B23872
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EBD212D03;
-	Thu,  7 Nov 2024 13:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F80212658;
+	Thu,  7 Nov 2024 13:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIdpGPRT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1OKZi6BC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n3Mgwdny";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1OKZi6BC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n3Mgwdny"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423D520FAB1;
-	Thu,  7 Nov 2024 13:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2E32101B7;
+	Thu,  7 Nov 2024 13:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987273; cv=none; b=uxwJA2k+6r8wWTmIjA29apkhqgW2gabY89uaN3Eb61w2oaJcZ2GLe/UmD8H9o6TBi3pZSC8iNcZ8Ux6YqiJZXGFP6NwSj/ItSq70uvnwV+u3zHe+n2bWfLpdHMkOXugL2U6tBPo8/tjwZ6pHsZMyLI7VdBQgXOBTtuUqcQAI7EQ=
+	t=1730987318; cv=none; b=s19BxVRIYIVRN5r1EUogOfwyG+NPYGwyvvU7/wy4UklfyI9akMaD4s9dGB+Dbru/c+DU4apbp45qq8r+iFGE0UMNkR6tM9v81iQ5uHIudORBUc84T1p2pBdj29sS55P5R5G7aoqaV6tOUHxbt/WUGwwmWWNUrPE+n4tqAC26IVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987273; c=relaxed/simple;
-	bh=R5/Rh95XUs1vezOrkVQPHF6VtUG3vorTYjXYS0Tb0eM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=QbI1qQDNUK7FGhSjQct2j6BUYtdM8T4G++/BPPrjOm8k5YyP0FXDHh4e/eoxaOprepNMwxycxw/1rUGZCbE8JJyiyFmbES73h4dMgDNA8EiqJS8VmhVcGedt4GrQwQsc0SGo3O9JpU8IxUdC/hjBuLix1Yt3zJswQktLdGXliXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIdpGPRT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A86EC4CECC;
-	Thu,  7 Nov 2024 13:47:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730987272;
-	bh=R5/Rh95XUs1vezOrkVQPHF6VtUG3vorTYjXYS0Tb0eM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=lIdpGPRTHsIejI8tgvoVEouYXethfkHjZFfSttCWTo0dogXlNqKzV/I1giZwgAX66
-	 eTLD1UDJCBSxdEIZ1t2Ci7gB+lrXw7kIAJym+08cwoidF1yZMjwmbefgBvHvBQu1oC
-	 l536MeNAdKeKUfAR7iYDRjPcBmaQu0h8zFhYPY1UMDKJqTwWwcpnHai8gRabCru98O
-	 87X8f7FLlmPMvySKTsGZl9yRLPzRnnjTRz6nwggQXHH1XGWa7o1gBgGLf1buLzh9U3
-	 JtPRMx+IPPNCU1EBw3DP6m2a5hF9H5ovSIYyy9sVs7CnZM/eQ5OCuveF3FSUGWcdf2
-	 npSHA+l71SIQw==
+	s=arc-20240116; t=1730987318; c=relaxed/simple;
+	bh=FIR9m+KAwxOXexgMI4F6oCqFvMySRuYgOPelLzIFeYI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bDeIo8quDmuXotiUA1B6ujjnhx5MJKcv0vINsf8zTVQLdRePTKTIpuipX666NKHZ+lscttzNduLfCjegcE1pCon0RxshFnAthZSwfrD9rvtqOdiZhkjuN4y0XIr9Nhrmwks1fqJvR+zoPu6l1dKx5GiUEkCLOnqEYMyFYZ3y1TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1OKZi6BC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n3Mgwdny; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1OKZi6BC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n3Mgwdny; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0283621C54;
+	Thu,  7 Nov 2024 13:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730987309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1NDC0Q63BjLNRamLBaugx7A+QFjoMu00RkiPdFw64DY=;
+	b=1OKZi6BCQ2no9O+8mpOXNppbb+sXcgHNpr6eUvBKJSTpBdoePxN1SySwEMSA2A8yD+nYaZ
+	/RKluQGCEgq2bmijK/ceLRYB3SYBonl2963eVdsxK2ynvTZonBHc1uNB4iqEImCUKoaSY+
+	UskPAa1Tto2CWl+qPUM2ZjFcWEAu2JE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730987309;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1NDC0Q63BjLNRamLBaugx7A+QFjoMu00RkiPdFw64DY=;
+	b=n3MgwdnydY7cDne0aVdPin3B5L2tw9/5baEdev4Zdbuov20tdiL3Y6uOvfbh4j4WCs3OW8
+	v6VEprhgE1zACiCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730987309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1NDC0Q63BjLNRamLBaugx7A+QFjoMu00RkiPdFw64DY=;
+	b=1OKZi6BCQ2no9O+8mpOXNppbb+sXcgHNpr6eUvBKJSTpBdoePxN1SySwEMSA2A8yD+nYaZ
+	/RKluQGCEgq2bmijK/ceLRYB3SYBonl2963eVdsxK2ynvTZonBHc1uNB4iqEImCUKoaSY+
+	UskPAa1Tto2CWl+qPUM2ZjFcWEAu2JE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730987309;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1NDC0Q63BjLNRamLBaugx7A+QFjoMu00RkiPdFw64DY=;
+	b=n3MgwdnydY7cDne0aVdPin3B5L2tw9/5baEdev4Zdbuov20tdiL3Y6uOvfbh4j4WCs3OW8
+	v6VEprhgE1zACiCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C80C6139B3;
+	Thu,  7 Nov 2024 13:48:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ss1nLyzFLGevTwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 07 Nov 2024 13:48:28 +0000
+Date: Thu, 07 Nov 2024 14:48:28 +0100
+Message-ID: <87zfmbgno3.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Takashi Iwai <tiwai@suse.de>,
+	linux-usb@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] usb: gadget: function: remove redundant else statement
+In-Reply-To: <20241107133348.22762-1-colin.i.king@gmail.com>
+References: <20241107133348.22762-1-colin.i.king@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 07 Nov 2024 15:47:48 +0200
-Message-Id: <D5FZRXBCH2B4.1GQIIVQHVB2XI@kernel.org>
-Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, "Peter Huewe" <peterhuewe@gmx.de>,
- "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>
-Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241107095138.78209-1-jarkko@kernel.org>
- <e015a939893d35efe75e598152725adcc2befdd8.camel@linux.ibm.com>
-In-Reply-To: <e015a939893d35efe75e598152725adcc2befdd8.camel@linux.ibm.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+X-Spam-Score: -1.80
+X-Spam-Flag: NO
 
-On Thu Nov 7, 2024 at 3:44 PM EET, Mimi Zohar wrote:
-> > +	tpm.disable_pcr_integrity_protection=3D [HW,TPM]
-> > +			Do not protect PCR registers from unintended physical
-> > +			access, or interposers in the bus by the means of
-> > +			having an encrypted and integrity protected session
->
-> "encrypted" isn't needed here.
+On Thu, 07 Nov 2024 14:33:48 +0100,
+Colin Ian King wrote:
+> 
+> After an initial range change on the insigned int alt being > 1
+> the only possible values for alt are 0 or 1. Therefore the else
+> statement for values other than 0 or 1 is redundant and can be
+> removed. Replace the else if (all == 1) check with just an else.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-fixing
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
 
->
-> > +			wrapped around TPM2_PCR_Extend command. Consider this
-> > +			in a situation where TPM is heavily utilized by
-> > +			IMA, thus protection causing a major performance hit,
-> > +			and the space where machines are deployed is by other
-> > +			means guarded.
-> > +
-> >  	tpm_suspend_pcr=3D[HW,TPM]
-> >  			Format: integer pcr id
-> >  			Specify that at suspend time, the tpm driver
-> > diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
-> > index cad0048bcc3c..e49a19fea3bd 100644
-> > --- a/drivers/char/tpm/tpm-buf.c
-> > +++ b/drivers/char/tpm/tpm-buf.c
-> > @@ -146,6 +146,26 @@ void tpm_buf_append_u32(struct tpm_buf *buf, const=
- u32 value)
-> >  }
-> >  EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
-> > =20
-> > +/**
-> > + * tpm_buf_append_handle() - Add a handle
-> > + * @chip:	&tpm_chip instance
-> > + * @buf:	&tpm_buf instance
-> > + * @handle:	a TPM object handle
-> > + *
-> > + * Add a handle to the buffer, and increase the count tracking the num=
-ber of
-> > + * handles in the command buffer. Works only for command buffers.
-> > + */
-> > +void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf,=
- u32 handle)
-> > +{
-> > +	if (buf->flags & TPM_BUF_TPM2B) {
-> > +		dev_err(&chip->dev, "Invalid buffer type (TPM2B)\n");
-> > +		return;
-> > +	}
-> > +
-> > +	tpm_buf_append_u32(buf, handle);
-> > +	buf->handles++;
-> > +}
-> > +
-> >  /**
-> >   * tpm_buf_read() - Read from a TPM buffer
-> >   * @buf:	&tpm_buf instance
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index 1e856259219e..cc443bcf15e8 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -14,6 +14,10 @@
-> >  #include "tpm.h"
-> >  #include <crypto/hash_info.h>
-> > =20
-> > +static bool disable_pcr_integrity_protection;
-> > +module_param(disable_pcr_integrity_protection, bool, 0444);
-> > +MODULE_PARM_DESC(disable_pcr_integrity_protection, "Disable TPM2_PCR_E=
-xtend encryption");
->
-> I like the name 'disable_pcr_integrity_protection.  However, the name and
-> description doesn't match.  Replace 'encryption' with 'integrity protecti=
-on'.
+Also worth to put the original discussion thread:
 
-Weird, I changed that. I don't know  how it ended up being like that.
-
->
-> > +
-> >  static struct tpm2_hash tpm2_hash_map[] =3D {
-> >  	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
-> >  	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
-> > @@ -232,18 +236,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pc=
-r_idx,
-> >  	int rc;
-> >  	int i;
-> > =20
-> > -	rc =3D tpm2_start_auth_session(chip);
-> > -	if (rc)
-> > -		return rc;
-> > +	if (!disable_pcr_integrity_protection) {
-> > +		rc =3D tpm2_start_auth_session(chip);
-> > +		if (rc)
-> > +			return rc;
-> > +	}
-> > =20
-> >  	rc =3D tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-> >  	if (rc) {
-> > -		tpm2_end_auth_session(chip);
-> > +		if (!disable_pcr_integrity_protection)
-> > +			tpm2_end_auth_session(chip);
-> >  		return rc;
-> >  	}
-> > =20
-> > -	tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
-> > -	tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-> > +	if (!disable_pcr_integrity_protection) {
-> > +		tpm_buf_append_name(chip, &buf, pcr_idx);
->
-> tpm_buf_append_name() parameters didn't change.  Don't remove the 'name' =
-field
-> here.
-
-Hmm... weird I'll check this. Maybe I had something left to staging...
-
->
->
-> > +		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-> > +	} else {
-> > +		tpm_buf_append_handle(chip, &buf, pcr_idx);
->
-
-> Or here.
-
-Here I think it is appropriate
-
->
-> > +		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
-> > +	}
-> > =20
-> >  	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
-> > =20
-> >=20
->
-> Mimi
+Link: https://lore.kernel.org/5f54ffd0-b5fe-4203-a626-c166becad362@gmail.com
 
 
-BR, Jarkko
+thanks,
+
+Takashi
+
+> ---
+>  drivers/usb/gadget/function/f_midi2.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/function/f_midi2.c b/drivers/usb/gadget/function/f_midi2.c
+> index 8285df9ed6fd..5f3f6e7700c7 100644
+> --- a/drivers/usb/gadget/function/f_midi2.c
+> +++ b/drivers/usb/gadget/function/f_midi2.c
+> @@ -1282,16 +1282,14 @@ static int f_midi2_set_alt(struct usb_function *fn, unsigned int intf,
+>  
+>  	if (intf != midi2->midi_if || alt > 1)
+>  		return 0;
+>  
+>  	if (alt == 0)
+>  		op_mode = MIDI_OP_MODE_MIDI1;
+> -	else if (alt == 1)
+> +	else
+>  		op_mode = MIDI_OP_MODE_MIDI2;
+> -	else
+> -		op_mode = MIDI_OP_MODE_UNSET;
+>  
+>  	if (midi2->operation_mode == op_mode)
+>  		return 0;
+>  
+>  	midi2->operation_mode = op_mode;
+>  
+> -- 
+> 2.39.5
+> 
 
