@@ -1,93 +1,105 @@
-Return-Path: <linux-kernel+bounces-400429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9419C0D6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:01:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCE79C0D71
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 934AA2830B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:01:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FD14B21554
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BCC216DE8;
-	Thu,  7 Nov 2024 18:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D498D2170A3;
+	Thu,  7 Nov 2024 18:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UxzJ7e9Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KB4eO8qI"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA69018C33B;
-	Thu,  7 Nov 2024 18:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFB418C33B;
+	Thu,  7 Nov 2024 18:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731002463; cv=none; b=IrYsjUdpDt5lHV/BT3xtmR97n3q08TEpdXq4KJ4YlcVrVuTemBk7AKmmGT4PbpU1bSNGd4e0j50/JY0ujVjeNApP/Rzg8er0rN47Lm2/dK7UqCEpquonPAla1PLgo+P9qAx6HggEjzEVmEMg2TagahiAaLRU1niY3YtpDYcmPgk=
+	t=1731002649; cv=none; b=iS3qd/QTvPDgjypEfXlKF89NZ0aSilGHXQtBMmVSsMurs5FHaXrvICKzv6Dz0/o7CSMBrYMjQVWClYGcm7B3ygUjwzz0Llu+ZO60y/It5BV6wrPU1GzEE1YNxyuueMxLN+JEbWHv7fDLzNnS+v+4xQPGNmbe6mKl85Ghr3Os9H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731002463; c=relaxed/simple;
-	bh=OJ28I0PlrfDGsM6GmEbYmkXlZzDvc4e7sr48tLGE4N4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=klcCgefCBOofS6FC+6/Roa8UmJwybrJ0eCP9M00TaCNcfyZytMjQ3++Aa3jxqS1HVN7CUdxifGPtLG7wdn/t3RwdHyBc5UaJOz8lax8gkE6PTZEP8D89vWgScW6QPA5ckPrMwppE6V5A1lSWMiY3K1+T+JWnisXHJVWU24cfhwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UxzJ7e9Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E14C4CECC;
-	Thu,  7 Nov 2024 18:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731002463;
-	bh=OJ28I0PlrfDGsM6GmEbYmkXlZzDvc4e7sr48tLGE4N4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UxzJ7e9QjvO/I1j2hWY+0GGF7em0kT08NpIA6x7rsC6EvHWCgkINyq3DVqJX15Tup
-	 xFpnF8Fzc2lnHPmsubtYMm2D7Rkv3FjBJxEGqKyoQp0WjBHXCEJdG0IjGuLrD5naF5
-	 Py3FVpgewow9h/nphteyLpyQ2VosR14VO15XBbst0yiR/B/w2UT+RxfNUXuoLGP10j
-	 juiyrYQFhGqRc4TzIvwst2QxlwDSLddqkTsD+vjMpWNJfTacVoGql1YLgXonE4d4On
-	 s3hX+XIpH24JpzpsMYrWoE/4aZ3TV/Uk6gmr/hK03z3ogzjE1yLGou4wtr//hIMw78
-	 WgtJHPzWo5JbQ==
-Date: Thu, 7 Nov 2024 18:00:59 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] dt-bindings: mtd: davinci: convert to yaml
-Message-ID: <20241107-hankie-stadium-a664fc460776@spud>
-References: <20241107-ondie-v7-0-98829fc8a958@gmail.com>
- <20241107-ondie-v7-2-98829fc8a958@gmail.com>
+	s=arc-20240116; t=1731002649; c=relaxed/simple;
+	bh=wG4g3Q0DH0DR3NZMvh0Nb97FxUYCyS196E49cYH7+WQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bZLXO2aarZbYE27LlVnHQ1K3e47LZURk/Y/3YimZKeHepYm7WCjl9n45o/UxspTTdKy1KLdDL4P0zfgwjgtICKoAGL0vfCJ+GxTp6Dw77+Dt8EfGz6pXMBlNswVJ+AjFrBHzyEgLusrP7xEh0ioNInhghyA7My7Bl1vSzm2eHLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KB4eO8qI; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 06FB520007;
+	Thu,  7 Nov 2024 18:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731002638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v9XGExYP+FD5xVE83+PPloi9X/IUrzdreygul4BmLSg=;
+	b=KB4eO8qIa2MRgT2At0Bdgd+UcoRM2YYL9KjNKlbF8yXXtpwRizS70pLAYRkcXi8dLVomi+
+	3omDI4Zr3vVMcPvLVcYxQ8+dMMa5t10R8cBe9Yn9E7jBEFoH+5uLrgKqxowz/g08KGIVnq
+	WG8rbEYxIS1P/nD20TGfDGuNX8ghZ4kEzMUuPhar1AIPyH5h0vEn9QTWhc5QGh3Tm+Y43M
+	qTlgd9H7dMtGCTJIYWCpnh+zxOwoQNEUmgYqOP39Zs0ojXN3ofFZ2xvMsdQQEx1Buzpq7L
+	vUrs/k/aXYhmd/k4PtLr3lhYTjmzCbSD6QJNoWPQySRXM4U1YzbaMq8WATpgeQ==
+Date: Thu, 7 Nov 2024 19:03:55 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Heiner
+ Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Herve Codina
+ <herve.codina@bootlin.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH net-next 2/7] net: freescale: ucc_geth: split
+ adjust_link for phylink conversion
+Message-ID: <20241107190355.7daafc3d@fedora.home>
+In-Reply-To: <Zyz-CcO1inN06mtm@shell.armlinux.org.uk>
+References: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
+	<20241107170255.1058124-3-maxime.chevallier@bootlin.com>
+	<Zyz-CcO1inN06mtm@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kOaLo4DZsENTEN9l"
-Content-Disposition: inline
-In-Reply-To: <20241107-ondie-v7-2-98829fc8a958@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
+Hello Russell,
 
---kOaLo4DZsENTEN9l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 7 Nov 2024 17:51:05 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-On Thu, Nov 07, 2024 at 02:47:08PM +0100, Marcus Folkesson wrote:
-> Convert the bindings to yaml format.
->=20
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> On Thu, Nov 07, 2024 at 06:02:49PM +0100, Maxime Chevallier wrote:
+> > Preparing the phylink conversion, split the adjust_link callbaclk, by
+> > clearly separating the mac configuration, link_up and link_down phases.  
+> 
+> I'm not entirely sure what the point of this patch is, given that in
+> patch 7, all this code gets deleted, or maybe moved?
+> 
+> If it's moved, it may be better in patch 7 to ensure that doesn't
+> happen, and move it in a separate patch - right now patch 7 is horrible
+> to review as there's no way to see what the changes are in these
+> link_up()/link_down() functions.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+I agree that it's hard to review indeed... I followed the documented
+approach of splitting-up the adjust_link callback then performing the
+conversion, but it's true that it doesn't really make patch 7 more
+readable.
 
---kOaLo4DZsENTEN9l
-Content-Type: application/pgp-signature; name="signature.asc"
+I can try to move things around and make patch 7 a bit more
+straightforward.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZy0AWgAKCRB4tDGHoIJi
-0oiPAQDSCtDLCED8EAoTptq5tkbjjT0G8TcgQnM388R0Vci7WgEA7mDZkTVF3Xay
-eySyrZhk3/YsgTE3xjB4qFV1xvlZJQQ=
-=LSHt
------END PGP SIGNATURE-----
+Maxime
 
---kOaLo4DZsENTEN9l--
 
