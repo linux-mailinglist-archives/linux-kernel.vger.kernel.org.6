@@ -1,104 +1,84 @@
-Return-Path: <linux-kernel+bounces-400154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB73A9C09A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FA79C09A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:08:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93061C23A36
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:07:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22DAB1C22B47
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D620213141;
-	Thu,  7 Nov 2024 15:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3BC21313F;
+	Thu,  7 Nov 2024 15:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dP9pm2RE"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ty4JSfUb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CABE12B63;
-	Thu,  7 Nov 2024 15:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE7712B63;
+	Thu,  7 Nov 2024 15:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730992068; cv=none; b=FDOJYNJGUz3BRTp2PYYDzyQS7xz7RALTZhndsnLR/K/ggIbL9dnaBNknVhv2YX/EM21uBFAS6RpgohNSNYfx10x7LzwnmK+5gefUxCHJst4OgEUAJRrLuR+UOVC5BGubifukBEzx0xEGNYmVoUrCb0MlRdpgbUIsyD1ExYpjmLc=
+	t=1730992126; cv=none; b=g0Z2MEV0sWMsk81/PpVsw0MLr9YSEqsM4tPEkBwhxkobKnlLo8UaSJeVJIsF7B1E+gd8rJ3MzTSMxNaZlcq+dQGxCE5wA3Xt42CDuu3yfOds3C1s41MagN0re3vhEchyuW1HVGIHrbcp8Nqyr9uRgNVVt6WmZINkqZzwe4UpaN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730992068; c=relaxed/simple;
-	bh=xKOvUerPn3VyDbYr7zXvyUQ+2qoxobuGQiEwrpAJ5QQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AWe/2mY5WuYLRckDmXNq37CUQgNQKD//Rbg4ONOBuRsgPUOQon5scTCAhLcE5qfbyXw+lzvJ94z5Ke+WqiL8AguBdce9mMwfSk7ggCi4H68fAszYwTMjaz0AuNMNEZpQiVyyJJivXG0Tr0ak0UuGvXgkX126cn/kP5qUkjPzw1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dP9pm2RE; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cec7cde922so1361373a12.3;
-        Thu, 07 Nov 2024 07:07:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730992065; x=1731596865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xut5uANNdDtOjyzKg93iapEPx9+ZuQl96I2xXgY4mz4=;
-        b=dP9pm2RE9NpojkdxcDC8vPpXXHdvVJkKt3J3WsKFN5FWa5LSv8OK5IHnpx9p/166R0
-         BEY/gLoWz4X9PKSizSoBib8xp2NFCH24Y9QTPZdsP/KgUG/7xFiaCFVQjefyP5kW1hXy
-         rODjXCWAw49tx2ytsi/aoTWm58M/kUIzJzXV4AqyV4ra9tgseiUthi9Lrke5BQRsWP+q
-         wCSaeVD/88oqIeoIbLhE4UZhNFL88Lz2Al/PQPu5lsPo9Rtu1R4wZiIhFsu3dL5wePsy
-         4xo9GP254Z/XD3dPSCekTLs0u0f/tuaNVhcCKcuJfWLxoxMkLwfgBAqxYmXFQttODBHL
-         7Gew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730992065; x=1731596865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xut5uANNdDtOjyzKg93iapEPx9+ZuQl96I2xXgY4mz4=;
-        b=Fo39z7AMfIHPpXR66itDSjx0AYoeDyfoPsGB4wDUE9Xo1RlNbx4V/pooO2Skl5pPUJ
-         ewXFeN2JxGlGeL94zC4KjDdnWYvZeXvBbIk9hd9fcVXkIx0Bk2/fUwd91iocnidRbhcP
-         vJxuOfEES/jCMc+timVBMBz4RMolktbfhNQuEFzyTummYX+8QS1V7Gzj1SiaEx51jGr5
-         UYWKm0vIGUoD3U9Nn9hV5UrMLANoRXOAdvAnjRXlAA9QNwH5XBcIkJB7nA5JvajHaCF4
-         MVaWXB4oB1B7uADCt90cr40hL0nUSr+LpNPwx8gc1H/orKYhQ6ETF5WGHnYSnw+Indw2
-         Oj3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+qYlRVAFpWQWby1cyiS7FdlkN92eWA35MEurUs6qqKOLtyB4NJ0PdytJX183ka+NuEiKorZoK@vger.kernel.org, AJvYcCXqma+nfnw4wmDUtqT8rnyo9I94U6Y2qecId9e7NoNwEOF4MMVJ+Y+Ou8Av/z6Xmr6RXVsK5bDv4ra6OAn7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKoA7eyYhvhjKX4LWBjNT9Z61BhkD79z+036EP85lI5PkYysLO
-	Atjm6WOPGHxvMEdNA9/yHt9dZllZhs7h6NFZF9ySd7XfEiTSQdu3LF1b4FNQliFFxpZLiqBSQCu
-	4ceKXstHDbZ2NBHoe/PnKCvTXxMU=
-X-Google-Smtp-Source: AGHT+IHmGFSGfQ19WWaaxQ8Z0FpbGEFwrYlrC9WBxC2VmqQTxw7OQltGqVjgjpwBcW+5Em/5bWm/biBsiRRby+lK1qU=
-X-Received: by 2002:a05:6402:270b:b0:5ce:bb37:c2e1 with SMTP id
- 4fb4d7f45d1cf-5cf08c0d7dbmr231474a12.19.1730992065265; Thu, 07 Nov 2024
- 07:07:45 -0800 (PST)
+	s=arc-20240116; t=1730992126; c=relaxed/simple;
+	bh=yROB/JSPfGg8ulwgUuxtnrZVFOSaC6aEtuR/Eigags8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXU9q4YwLPzG+K2SQYN7Xt/pLXLXQoJMDBqdTS+kRhHKmqiHwYiocuuPbf2lDd/RDaGMtTOlVcUt+Jx0uk0TJCQdkUuj8Jcvn49yO67M9AdQMps5sLhuF4ZogZrGCx3hhzZCVkqQ1TKqs5h0y9AAgu47T/BsdExo/ZN3zzPWKSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ty4JSfUb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C069C4CECC;
+	Thu,  7 Nov 2024 15:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730992126;
+	bh=yROB/JSPfGg8ulwgUuxtnrZVFOSaC6aEtuR/Eigags8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ty4JSfUb09Cg+HIJZ8WJJ80DrZK8OHt7CRsIYjnRf2Vk2oCVH7vRrfZ0O1+r/fvZv
+	 aTjTWbv/24l1jNkV9ezjcAcaF8uVX5UiuCUNSl2UyDkBEtKrdCjHd+lAkw8DDdp4Ev
+	 iI4sXBC+YI6pqqLvJrwimOplFsuE0WzFTCho2mVY=
+Date: Thu, 7 Nov 2024 16:08:25 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Qiu-ji Chen <chenqiuji666@gmail.com>
+Cc: linuxdrivers@attotech.com, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] [SCSI] esas2r: fix possible buffer overflow caused by
+ bad DMA value in esas2r_process_vda_ioctl()
+Message-ID: <2024110706-spoilage-driven-7523@gregkh>
+References: <20241107113617.402343-1-chenqiuji666@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106221434.2029328-2-joshua.hahnjy@gmail.com> <20241107002116.55528-1-sj@kernel.org>
-In-Reply-To: <20241107002116.55528-1-sj@kernel.org>
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-Date: Thu, 7 Nov 2024 10:07:34 -0500
-Message-ID: <CAN+CAwMoac3P5BwSq0jc=Vq79wwZFcV2SzRDmBY+pvm1NYnTyA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] memcg/hugetlb: Introduce memcg_accounts_hugetlb
-To: SeongJae Park <sj@kernel.org>
-Cc: shakeel.butt@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107113617.402343-1-chenqiuji666@gmail.com>
 
-On Wed, Nov 6, 2024 at 7:21=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote:
->
-> On Wed, 6 Nov 2024 14:14:33 -0800 Joshua Hahn <joshua.hahnjy@gmail.com> w=
-rote:
-> >
-> > Signed-of-by: Joshua Hahn <joshua.hahnjy@gmail.com>
->
-> Nit.  s/of/off/
->
->
-> Thanks,
-> SJ
+On Thu, Nov 07, 2024 at 07:36:17PM +0800, Qiu-ji Chen wrote:
+> In line 1854 of the file esas2r_ioctl.c, the function 
+> esas2r_process_vda_ioctl() is called with the parameter vi being assigned 
+> the value of a->vda_buffer. On line 1892, a->vda_buffer is stored in DMA 
+> memory with the statement 
+> a->vda_buffer = dma_alloc_coherent(&a->pcid->dev, ..., indicating that the 
+> parameter vi passed to the function is also stored in DMA memory. This 
+> suggests that the parameter vi could be altered at any time by malicious 
+> hardware.
 
-Thank you for the catch SJ, I'll include this in my v2.
+As James pointed out, "malicious hardware" is not a threat model that
+Linux worries about at this point in time, sorry.
 
-Have a great day!
-Joshua
+If you wish to have Linux care about this, random driver changes like
+this is not going to be the way forward, but rather, major things need
+to be rearchitected in order to "protect" the kernel from bad hardware.
+
+But really, if you can't trust the hardware, you have bigger problems,
+any software can't protect you from that :)
+
+sorry,
+
+greg k-h
 
