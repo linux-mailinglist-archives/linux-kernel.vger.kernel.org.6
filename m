@@ -1,136 +1,117 @@
-Return-Path: <linux-kernel+bounces-399984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE389C0762
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:29:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F47D9C0767
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:29:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A4331C2265F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80A5282F97
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799C421262F;
-	Thu,  7 Nov 2024 13:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705C2212191;
+	Thu,  7 Nov 2024 13:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mY0nfKNy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="eOuWMLVr"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F6321263B;
-	Thu,  7 Nov 2024 13:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A48520EA44;
+	Thu,  7 Nov 2024 13:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730986117; cv=none; b=RVDbt3BFtSuUApPANpJ/vDx1orRj95aDC/N20ro9HL5GLKoEGKL1YvDMcV8GtmPYNx39JW+0MmPNNklAGBhH8DQyC457yzdflUCr3ERzMShX9jLmppIIrw8O1zy/lPAg1DHhN7lXUREACAB5oGd5TOXYgQ28P31bg6k9oCzdiko=
+	t=1730986154; cv=none; b=hjNZVFpVzuLIS5t6HyhlietPuCeJlTlr+rDTLF1VBI8U9actmTf2gK2CpAsh1jRYZkpBTRB1WLbDkCVONU1wFvhssYQts9S2jAMt/OikwbNYYYt/SCM3ppIcwbZY5SHmTWM0XXVMPaeEBRAG21v+f2XZWztFXe6Vb2pdfqTcF70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730986117; c=relaxed/simple;
-	bh=2RAOkOtx/XBod3JHE2lakxJkE+9T16g9xaMC6BRX4co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aAm2Rv7WjwQ+ZzFJZOTOXXa/j02V9ADaS2O/XQdvFk1lqR6IVuZotrUdTndLnNhf1mEmF9pLwnFgV+DEHeKwHMnuz54snPDbl8f6jeldnTgYkym5FzZhG6VRloUzQxaqKL69zdIBaQhn3yAMFcbpx1M19xl7CjPYwE5yZZxUFQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mY0nfKNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B23E9C4CECC;
-	Thu,  7 Nov 2024 13:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730986117;
-	bh=2RAOkOtx/XBod3JHE2lakxJkE+9T16g9xaMC6BRX4co=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mY0nfKNymB/WReNI2oBhlEzK7AoxSEYZfc2NYMj+HWKA2a+2FQCpKi98Pr1H5tzYS
-	 vDHNZO482Y822JtaEafGVaJwKpriEVD+tNa63IMEGH9ZymM2s2qzRWsZOvRW00xw0d
-	 z4ZsD9VzhqphDiSGyqGaCHX3bhSpJ+UctmtZMhnd49m6L2CGMM9FstJJFJGvecvJ9O
-	 N1bITDe9mho5EWrFkmSClYRBOilyyAlBKPHT6cqY0SiG9r5blnL6HkgxlNuOioG/Gn
-	 iBudpSHeaUiICKPUAysfAc3owi8EkCuROXqgj7xGg69InjJv9g6k0SsUoJlv/Ix8Qg
-	 yV8mt6BaTRVrw==
-Date: Thu, 7 Nov 2024 13:28:30 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Pavel Machek <pavel@denx.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hagar@microsoft.com, chris.paterson2@renesas.com
-Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
-Message-ID: <7a791358-63ff-41e1-b7f0-e687df21047b@sirena.org.uk>
-References: <20241107064547.006019150@linuxfoundation.org>
- <Zyy4mfTry2gNQBH+@duo.ucw.cz>
+	s=arc-20240116; t=1730986154; c=relaxed/simple;
+	bh=nGx0+Cuv9QklJE82DvtuzYrtbZEfkyiaC0YZdU3kTYw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JN7vbWZJxb+K8rt/14y0j8JsiBecTcC2i1Cs9kDUSThEQrSCF69U+xcSrOE0/rXZUC4gew9L5cgXl7TN0JunpdP/xKs1/Pn9RUWNrPwJSJ9jeZ+0t0T7mT5pOKrNeUSTVmE0DM1XF35dXU91dng41zgIZy2kbX09S7uPGho4wDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=eOuWMLVr; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A75b3bH006198;
+	Thu, 7 Nov 2024 05:28:55 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=RQUI3MPS77oSCEsi7m5B+gU
+	JgI2pFXyx0c3nNVYyZeM=; b=eOuWMLVrgHNvD+WnWwXqRxsfUc6Dm3v3J9/xwPp
+	69N9LZR4dEjF6B5+uLc6iiyuQpb5WLeQQ0Hmp0kTOrlQW72AAayHa6NyaemPuSB2
+	4fHP0MrKpHJEhJ5a7xAFbzDix1wDQERCwrJcX+ZVEFy7uxJ4iTYbQdtsS8i/4b/C
+	OkmY9gxAtWu6CGj8kVD61JKNZ9/5Z+T4r5/ko7u2lZDnxBndVz5bCyUfMWVKn5jQ
+	SForX4ADbph+Ulv0nobW8r42GPjeTnNz+syjGjy+6O81RoIdkyvteZD2DqyCIFSJ
+	z9OBdaoNa10i0IenL250Pjf8RSyp8x4P0Q25PkjewSTHjLg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42rqj8rtpp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 05:28:55 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 7 Nov 2024 05:28:54 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 7 Nov 2024 05:28:54 -0800
+Received: from ubuntu-PowerEdge-T110-II.sclab.marvell.com (unknown [10.106.27.86])
+	by maili.marvell.com (Postfix) with ESMTP id 119243F708C;
+	Thu,  7 Nov 2024 05:28:54 -0800 (PST)
+From: Shinas Rasheed <srasheed@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <hgani@marvell.com>, <sedara@marvell.com>, <vimleshk@marvell.com>,
+        <thaller@redhat.com>, <wizhao@redhat.com>, <kheib@redhat.com>,
+        <egallen@redhat.com>, <konguyen@redhat.com>, <horms@kernel.org>,
+        <frank.feng@synaxg.com>, Shinas Rasheed <srasheed@marvell.com>
+Subject: [PATCH net v2 0/7] Double free fixes and NULL pointer checks
+Date: Thu, 7 Nov 2024 05:28:39 -0800
+Message-ID: <20241107132846.1118835-1-srasheed@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sfWKd7weCYNoidnb"
-Content-Disposition: inline
-In-Reply-To: <Zyy4mfTry2gNQBH+@duo.ucw.cz>
-X-Cookie: Professional driver on closed track.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: gMZ1EqnbI8k_qt8Dmp-i7dm6UtXOMRfA
+X-Proofpoint-ORIG-GUID: gMZ1EqnbI8k_qt8Dmp-i7dm6UtXOMRfA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
+Fix double frees which happen on reset scenarios, and add
+NULL pointer checks for when rare cases might trigger
+dereferences of such.
 
---sfWKd7weCYNoidnb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes:
+V2: Added more context in commit messages and split patches for each
+    commit fix
 
-On Thu, Nov 07, 2024 at 01:54:49PM +0100, Pavel Machek wrote:
-> Hi!
->=20
-> > This is the start of the stable review cycle for the 6.11.7 release.
-> > There are 249 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
->=20
-> CIP testing has problem with BeagleBone Black on 6.11:
->=20
-> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linu=
-x-6.11.y
+V1: https://lore.kernel.org/all/20241101103416.1064930-1-srasheed@marvell.com/
 
-My Beaglebone Black jobs ran fairly happily, eg:
+Shinas Rasheed (6):
+  octeon_ep: Fix null dereferences to IQ/OQ pointers
+  octeon_ep: add protective null checks in napi callbacks for cn9k cards
+  octeon_ep: add protective null checks in napi callbacks for cnxk cards
+  octeon_ep_vf: Fix null dereferences to IQ/OQ pointers
+  octeon_ep_vf: add protective null checks in napi callbacks for cn9k
+    cards
+  octeon_ep_vf: add protective null checks in napi callbacks for cnxk
+    cards
 
-   https://lava.sirena.org.uk/scheduler/job/951530
+Vimlesh Kumar (1):
+  octeon_ep: Add checks to fix double free crashes.
 
-Looking at your logs:
+ .../marvell/octeon_ep/octep_cn9k_pf.c         |  9 +++-
+ .../marvell/octeon_ep/octep_cnxk_pf.c         |  9 +++-
+ .../ethernet/marvell/octeon_ep/octep_main.c   | 42 ++++++++++++-------
+ .../net/ethernet/marvell/octeon_ep/octep_tx.c |  2 +
+ .../marvell/octeon_ep_vf/octep_vf_cn9k.c      |  8 +++-
+ .../marvell/octeon_ep_vf/octep_vf_cnxk.c      | 12 +++++-
+ .../marvell/octeon_ep_vf/octep_vf_main.c      |  3 ++
+ 7 files changed, 65 insertions(+), 20 deletions(-)
 
-   https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/829=
-5477303
+-- 
+2.25.1
 
-you seem to be seeing an infrastructure issue:
-
-* lava.pdu-reboot [pass]
-* lava.bootloader-commands [fail]
-* lava.uboot-commands [fail]
-* lava.uboot-action [fail]
-* lava.power-off [pass]
-* lava.job [fail]
-
-The job is failing in the bootloader:
-
-   https://lava.ciplatform.org/scheduler/job/1218595
-
-shows:
-
-| =3D> bootz 0x82000000 - 0x88000000
-| zimage: Bad magic!
-
-I didn't check but this almost always indicates that the download to the
-board was corrupted due to some image size having grown large enough to
-overwrite the adjacent image, you'll need to adjust the load addresses.
-
---sfWKd7weCYNoidnb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcswH4ACgkQJNaLcl1U
-h9BTXgf/Qp1HWuz+6JhL02Q+Qyah6EQftFxlkp0Pkpf2JGMlXKeMLOK/HbkilDo+
-diu7v2Y3TUrI35cxUQt19AgvrXkJn/Qz+RvoFmozjlONamTnYD47c/thpvr8BYV9
-OqnfKDUQGazNYLEl7M0q3E1yAlpzw2qZhzjdDmpoI0gtk11p/RkK5r44sCG5RhJE
-M0ikqZE4MRwFZTLLTIyssLmMl7zUUpYF3IMUGODUz/hAh8DFhesSN+JpcG2+2vv9
-2qwKXjKazKhgTfOgdVx8LA8b5LrqZpXbhQK7H/iroBhTKw3N7FU84hepU2IFyvX4
-LaxHUWKQoP9gp211zOKBP1RgBnK8vw==
-=bZFp
------END PGP SIGNATURE-----
-
---sfWKd7weCYNoidnb--
 
