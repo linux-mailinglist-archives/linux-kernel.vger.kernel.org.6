@@ -1,331 +1,195 @@
-Return-Path: <linux-kernel+bounces-400475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0080C9C0E1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:53:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766DD9C0E1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CC628494F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:53:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3B21C229C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E1C217330;
-	Thu,  7 Nov 2024 18:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E35217330;
+	Thu,  7 Nov 2024 18:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="I5W1Jtvq"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="mgx4Qmh8"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0D02101B0
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E704C215033
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731005629; cv=none; b=EdV6g2BZgxFDZSRCaTG7smzOJJbuG3+VriwQQ7hsX51ZoZvhbG0kwrkhCxON8SsRsop1Efv1fmtAFjPJvIcDknUz3sjb5hR0Kpa+uz9qHFd0gMcuPBuF87cYsvYKXaSEj9dJTI0f+4e9Be1prjdGGf1jAfMfv5MZToSOE4yH1cs=
+	t=1731005721; cv=none; b=O1WQK6UXxe1pmoNMyQAtuqL14NFE9/0DiTfTtCfazjmEQ2ev8CWROuE5b7X4B8KVVzpC7bqdEwqb6dnfnkkgFk6BiSLl+0kcGCI6s3Hr/yMARLYu390Eupww76oneK35Hl5vevMCeEcmRdzVd0NZ+1Vo3AhoZl1NVRagykluldM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731005629; c=relaxed/simple;
-	bh=Ozj9RiksTd04ePC/pn/8Uh282iT8Mr215DPOANye0Vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WTeOWCQ+E2n31Hdn1ae8btE9e8uJ+h2/TidAw3epPERwUeeqgHh880pWfxlTgteIq43xYn14/U5LCTTp3+LUEwWkRUuREqQ0VbtyALD4XingTwI4RlbPh5YlJvBTE2RYYEv7N36ObvJM/1VDYyRo736RcIuaDDxp/bFzgRPRnp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=I5W1Jtvq; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b31b66d2e3so64599685a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:53:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1731005626; x=1731610426; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l1CuDjKsYRjEGFe+TKoRAgWlmPg/3uy1Ak3gO25I4Jg=;
-        b=I5W1JtvqYMl6DNeyU0mmZchuKOHARnhwVJbSMBI+XoBRBwPXC+Q1k71MMw+McsBVHq
-         jyWk67oy64C3GqIuLBWZ8CaaLc7/15BMc/MKiI2iPGnIOAHH8RqTHG+Ewllt7e2h6mA6
-         J3QmxysUowagKrmFQHRKtLxhymRCjO1VcXEerc+wVbCKwi/PE5KjzkcRQFRp/poJJky+
-         BBjFdvnrktc6taEFfJmB3CRv0UJBwu5kONS+wgEBip8h9pkRHHmXepSyjfsXJH2XQiOJ
-         5NO9IlLDnopgBhlTJoThI0Jfqnqa7XMgAQooZ173ziJ0wUEH9tL2br+btAxTQK3FxV++
-         lVpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731005626; x=1731610426;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l1CuDjKsYRjEGFe+TKoRAgWlmPg/3uy1Ak3gO25I4Jg=;
-        b=Ai9haaI8Y3H+sXxBDL9+V2F6RBgA+q0ktxkJDy910vjSJiqTGyoX5x1UEAIu2pCNE5
-         COwxgW0JnZXrYCE7Nm5tmMQ4TS/3a1kXl76fntH1n1//nW8hmAmLIzsNOTZoYcmyVJb+
-         tOIO+C5YJqGhM15SObnzU+Qi8HGV+N2ZdAQlJbYYWyDSi0Pc9PTByvPLXfEn5M5qB1FF
-         8ARpfFD5q6i93vWyD/+Jj2BfOjb7CCoCFIkXtxpgtisC+JlwbL/+5nZmq3ev/4Xngau7
-         isQW2Oyg3gnsRNyQ+kt069Y+1Kih4Aw8scs+8q40MbviaLfTacUGOLRStUy1W/KC+SOI
-         rkSQ==
-X-Gm-Message-State: AOJu0YxWeSpgdc0PYGs5CLvu1B7J0UWWNJ98w+bGrkW4EJ7A5qar+BIs
-	mPuWsklw8WYK4XA26/pnzkRKY9YKE1J0rD6YoOCwVr9B4Gm+Ch7Xwqj4PQrVRGU=
-X-Google-Smtp-Source: AGHT+IFQA72Bggxxtu7CiC4RsRBOrNujGGLDPSKH3I4JgK7r308sntvvm3Fz4x0toz4RRZuo0ReGdA==
-X-Received: by 2002:a05:620a:1908:b0:7b1:3b5e:4b50 with SMTP id af79cd13be357-7b331eb107dmr31913285a.19.1731005625679;
-        Thu, 07 Nov 2024 10:53:45 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac427cfsm89472585a.30.2024.11.07.10.53.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 10:53:44 -0800 (PST)
-Date: Thu, 7 Nov 2024 13:53:40 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, yosryahmed@google.com,
-	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
-	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
-	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org,
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Subject: Re: [PATCH v3 13/13] mm: zswap: Compress batching with Intel IAA in
- zswap_store() of large folios.
-Message-ID: <20241107185340.GG1172372@cmpxchg.org>
-References: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
- <20241106192105.6731-14-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1731005721; c=relaxed/simple;
+	bh=4U39fzIcs8P5XDnNVHD8NIWWxFQkVupb0Soi/dDdLiE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZpWoDUrA0fvsaNESzWSYLRGLFnMzIfcMsNoE797DsNycQareW8rYa/zan0TnoKUxqs9/M8hyEV5KFR4YdkXVNgWG+H+WupGbj0KKbwx1ka653dK/s4w25EJ2G9CSxcFJUR5W9RTQOHDAVPd4eEljKfB3UZi+rBcceKqOh6cI8E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=mgx4Qmh8; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4A7IsNqo1264697
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 7 Nov 2024 10:54:24 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4A7IsNqo1264697
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1731005665;
+	bh=k6nTHCVMqZEVcSD8rZFi+NwZV+snJT8E9kBS9xynlKU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=mgx4Qmh8lvqcmmE+INd4apCE+u/Aa7Dy7kqqNtC/Nu7vgXJxh/miV+1b8lEg2/Hc2
+	 EZGwnFXbRZDQ6UYWlV3xlck38CwiU8YY5YshAQDUpaNb0hZ+z6CcIchwvlpH+pb/uc
+	 LgJNf4yueja1sfwKO/dMQ/XDzEPEXpNg8W2PgIOu/lAec7LpSJIFylFc/di/3YATvk
+	 9PMEltZ4GZ0B8Xo3hoyfJ08FCGhiS1hHBdpkVGwnpO6N7+H9mqXS2/aJ5lJb+frRut
+	 wRFDeRAfCOaaKImZIeW5p1QrGK617aFehUBJ19TsbKeSIrric3Fh5AWA7HQWBCa0Kl
+	 fzUILTv2VWgOw==
+Message-ID: <49b6c23b-dfd8-4874-bd6e-998dd039ed1a@zytor.com>
+Date: Thu, 7 Nov 2024 10:54:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106192105.6731-14-kanchana.p.sridhar@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
+From: Xin Li <xin@zytor.com>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, andrew.cooper3@citrix.com
+References: <20240916181000.416513-1-xin@zytor.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20240916181000.416513-1-xin@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 11:21:05AM -0800, Kanchana P Sridhar wrote:
-> +static void zswap_zpool_store_sub_batch(
-> +	struct zswap_store_pipeline_state *zst)
-
-There is a zswap_store_sub_batch() below, which does something
-completely different. Naming is hard, but please invest a bit more
-time into this to make this readable.
-
-> +{
-> +	u8 i;
-> +
-> +	for (i = 0; i < zst->nr_comp_pages; ++i) {
-> +		struct zswap_store_sub_batch_page *sbp = &zst->sub_batch[i];
-> +		struct zpool *zpool;
-> +		unsigned long handle;
-> +		char *buf;
-> +		gfp_t gfp;
-> +		int err;
-> +
-> +		/* Skip pages that had compress errors. */
-> +		if (sbp->error)
-> +			continue;
-> +
-> +		zpool = zst->pool->zpool;
-> +		gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
-> +		if (zpool_malloc_support_movable(zpool))
-> +			gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
-> +		err = zpool_malloc(zpool, zst->comp_dlens[i], gfp, &handle);
-> +
-> +		if (err) {
-> +			if (err == -ENOSPC)
-> +				zswap_reject_compress_poor++;
-> +			else
-> +				zswap_reject_alloc_fail++;
-> +
-> +			/*
-> +			 * An error should be propagated to other pages of the
-> +			 * same folio in the sub-batch, and zpool resources for
-> +			 * those pages (in sub-batch order prior to this zpool
-> +			 * error) should be de-allocated.
-> +			 */
-> +			zswap_store_propagate_errors(zst, sbp->batch_idx);
-> +			continue;
-> +		}
-> +
-> +		buf = zpool_map_handle(zpool, handle, ZPOOL_MM_WO);
-> +		memcpy(buf, zst->comp_dsts[i], zst->comp_dlens[i]);
-> +		zpool_unmap_handle(zpool, handle);
-> +
-> +		sbp->entry->handle = handle;
-> +		sbp->entry->length = zst->comp_dlens[i];
-> +	}
-> +}
-> +
+On 9/16/2024 11:10 AM, Xin Li (Intel) wrote:
+> The WFE, i.e., WAIT_FOR_ENDBRANCH, bit in the augmented CS of FRED
+> stack frame is set to 1 in missing-ENDBRANCH #CP exceptions.
+> 
+> The CPU will generate another missing-ENDBRANCH #CP if the WFE bit
+> is left set, because the CPU IBT will be set in the WFE state upon
+> completion of the following ERETS instruction and then the CPU will
+> resume from the instruction that just caused the previous #CP.
+> 
+> Clear WFE to avoid dead looping in missing-ENDBRANCH #CPs.
+> 
+> Describe the IBT story in the comment of ibt_clear_fred_wfe() using
+> Andrew Cooper's write-up.
+> 
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> ---
+> 
+> Changes since v1:
+> * Rewrite the comment of ibt_clear_fred_wfe() using Andrew Cooper's
+>    write-up (Andrew Cooper).
+> * Unconditionally clear WFE in missing-ENDBRANCH #CPs (Peter Zijlstra).
+> * Don't check X86_FEATURE_FRED in ibt_clear_fred_wfe() (Dave Hansen &
+>    Andrew Cooper).
+> ---
+>   arch/x86/kernel/cet.c | 32 ++++++++++++++++++++++++++++++++
+>   1 file changed, 32 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+> index d2c732a34e5d..d2cf6ee0d9a0 100644
+> --- a/arch/x86/kernel/cet.c
+> +++ b/arch/x86/kernel/cet.c
+> @@ -81,6 +81,36 @@ static void do_user_cp_fault(struct pt_regs *regs, unsigned long error_code)
+>   
+>   static __ro_after_init bool ibt_fatal = true;
+>   
 > +/*
-> + * Returns true if the entry was successfully
-> + * stored in the xarray, and false otherwise.
+> + * By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
+> + *
+> + * But, in original CET under IDT delivery, any transfer for
+> + * interrupt/exception/etc that does not change privilege will clobber the
+> + * WFE state because MSR_{U,S}_CET.WFE is intentionally set by microcode so
+> + * as to expect to find an ENDBR at the interrupt/exception/syscall entrypoint.
+> + *
+> + * In practice, this means interrupts and exceptions hitting the kernel, or
+> + * user interrupts, lose the WFE state of the interrupted context.  And
+> + * yes, this means that a well timed interrupt (to the precise instruction
+> + * boundary) will let an attacker sneak a bad function pointer past the
+> + * CET-IBT enforcement.
+> + *
+> + * In FRED, the WFE state of the interrupted context (even if it is the
+> + * same privilege) is preserved and restored, in order to close this hole.
+> + *
+> + * Therefore, the missing-ENDBRANCH #CP handler needs to clear WFE to avoid
+> + * dead looping, now that FRED is causing the state not to get lost.  Otherwise
+> + * if the WFE bit is left set in an intentional ibt selftest or when !ibt_fatal,
+> + * the CPU will generate another missing-ENDBRANCH #CP because the IBT will be
+> + * set in the WFE state upon completion of the following ERETS instruction and
+> + * then the CPU will resume from the instruction that just caused the previous
+> + * missing-ENDBRANCH #CP.
 > + */
-> +static bool zswap_store_entry(swp_entry_t page_swpentry,
-> +			      struct zswap_entry *entry)
+> +static void ibt_clear_fred_wfe(struct pt_regs *regs)
 > +{
-> +	struct zswap_entry *old = xa_store(swap_zswap_tree(page_swpentry),
-> +					   swp_offset(page_swpentry),
-> +					   entry, GFP_KERNEL);
-> +	if (xa_is_err(old)) {
-> +		int err = xa_err(old);
-> +
-> +		WARN_ONCE(err != -ENOMEM, "unexpected xarray error: %d\n", err);
-> +		zswap_reject_alloc_fail++;
-> +		return false;
-> +	}
-> +
-> +	/*
-> +	 * We may have had an existing entry that became stale when
-> +	 * the folio was redirtied and now the new version is being
-> +	 * swapped out. Get rid of the old.
-> +	 */
-> +	if (old)
-> +		zswap_entry_free(old);
-> +
-> +	return true;
+> +	regs->fred_cs.wfe = 0;
 > +}
 > +
-> +static void zswap_batch_compress_post_proc(
-> +	struct zswap_store_pipeline_state *zst)
-> +{
-> +	int nr_objcg_pages = 0, nr_pages = 0;
-> +	struct obj_cgroup *objcg = NULL;
-> +	size_t compressed_bytes = 0;
-> +	u8 i;
+>   static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+>   {
+>   	if ((error_code & CP_EC) != CP_ENDBR) {
+> @@ -88,6 +118,8 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+>   		return;
+>   	}
+>   
+> +	ibt_clear_fred_wfe(regs);
 > +
-> +	zswap_zpool_store_sub_batch(zst);
-> +
-> +	for (i = 0; i < zst->nr_comp_pages; ++i) {
-> +		struct zswap_store_sub_batch_page *sbp = &zst->sub_batch[i];
-> +
-> +		if (sbp->error)
-> +			continue;
-> +
-> +		if (!zswap_store_entry(sbp->swpentry, sbp->entry)) {
-> +			zswap_store_propagate_errors(zst, sbp->batch_idx);
-> +			continue;
-> +		}
-> +
-> +		/*
-> +		 * The entry is successfully compressed and stored in the tree,
-> +		 * there is no further possibility of failure. Grab refs to the
-> +		 * pool and objcg. These refs will be dropped by
-> +		 * zswap_entry_free() when the entry is removed from the tree.
-> +		 */
-> +		zswap_pool_get(zst->pool);
-> +		if (sbp->objcg)
-> +			obj_cgroup_get(sbp->objcg);
-> +
-> +		/*
-> +		 * We finish initializing the entry while it's already in xarray.
-> +		 * This is safe because:
-> +		 *
-> +		 * 1. Concurrent stores and invalidations are excluded by folio
-> +		 *    lock.
-> +		 *
-> +		 * 2. Writeback is excluded by the entry not being on the LRU yet.
-> +		 *    The publishing order matters to prevent writeback from seeing
-> +		 *    an incoherent entry.
-> +		 */
-> +		sbp->entry->pool = zst->pool;
-> +		sbp->entry->swpentry = sbp->swpentry;
-> +		sbp->entry->objcg = sbp->objcg;
-> +		sbp->entry->referenced = true;
-> +		if (sbp->entry->length) {
-> +			INIT_LIST_HEAD(&sbp->entry->lru);
-> +			zswap_lru_add(&zswap_list_lru, sbp->entry);
-> +		}
-> +
-> +		if (!objcg && sbp->objcg) {
-> +			objcg = sbp->objcg;
-> +		} else if (objcg && sbp->objcg && (objcg != sbp->objcg)) {
-> +			obj_cgroup_charge_zswap(objcg, compressed_bytes);
-> +			count_objcg_events(objcg, ZSWPOUT, nr_objcg_pages);
-> +			compressed_bytes = 0;
-> +			nr_objcg_pages = 0;
-> +			objcg = sbp->objcg;
-> +		}
-> +
-> +		if (sbp->objcg) {
-> +			compressed_bytes += sbp->entry->length;
-> +			++nr_objcg_pages;
-> +		}
-> +
-> +		++nr_pages;
-> +	} /* for sub-batch pages. */
-> +
-> +	if (objcg) {
-> +		obj_cgroup_charge_zswap(objcg, compressed_bytes);
-> +		count_objcg_events(objcg, ZSWPOUT, nr_objcg_pages);
-> +	}
-> +
-> +	atomic_long_add(nr_pages, &zswap_stored_pages);
-> +	count_vm_events(ZSWPOUT, nr_pages);
-> +}
-> +
-> +static void zswap_store_sub_batch(struct zswap_store_pipeline_state *zst)
-> +{
-> +	u8 i;
-> +
-> +	for (i = 0; i < zst->nr_comp_pages; ++i) {
-> +		zst->comp_dsts[i] = zst->acomp_ctx->buffers[i];
-> +		zst->comp_dlens[i] = PAGE_SIZE;
-> +	} /* for sub-batch pages. */
-> +
-> +	/*
-> +	 * Batch compress sub-batch "N". If IAA is the compressor, the
-> +	 * hardware will compress multiple pages in parallel.
-> +	 */
-> +	zswap_compress_batch(zst);
-> +
-> +	zswap_batch_compress_post_proc(zst);
+>   	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
+>   		regs->ax = 0;
+>   		return;
+> 
+> base-commit: fe85ee391966c4cf3bfe1c405314e894c951f521
 
-The control flow here is a mess. Keep loops over the same batch at the
-same function level. IOW, pull the nr_comp_pages loop out of
-zswap_batch_compress_post_proc() and call the function from the loop.
 
-Also give it a more descriptive name. If that's hard to do, then
-you're probably doing too many different things in it. Create
-functions for a specific purpose, don't carve up sequences at
-arbitrary points.
+Andrew,
 
-My impression after trying to read this is that the existing
-zswap_store() sequence could be a subset of the batched store, where
-you can reuse most code to get the pool, charge the cgroup, allocate
-entries, store entries, bump the stats etc. for both cases. Alas, your
-naming choices make it a bit difficult to be sure.
+can you please take another look?
 
-Please explore this direction. Don't worry about the CONFIG symbol for
-now, we can still look at this later.
+If there is no obvious problem, please give it a review-by?
 
-Right now, it's basically
+Thanks!
+     Xin
 
-	if (special case)
-		lots of duplicative code in slightly different order
-	regular store sequence
 
-and that isn't going to be maintainable.
-
-Look for a high-level sequence that makes sense for both cases. E.g.:
-
-	if (!zswap_enabled)
-		goto check_old;
-
-	get objcg
-
-	check limits
-
-	allocate memcg list lru
-
-	for each batch {
-		for each entry {
-			allocate entry
-			acquire objcg ref
-			acquire pool ref
-		}
-		compress
-		for each entry {
-			store in tree
-			add to lru
-			bump stats and counters
-		}
-	}
-
-	put objcg
-
-	return true;
-
-check_error:
-	...
-
-and then set up the two loops such that they also makes sense when the
-folio is just a single page.
 
