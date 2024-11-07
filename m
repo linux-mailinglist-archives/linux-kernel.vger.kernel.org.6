@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-399853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45239C0547
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:07:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30F89C054A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 951401F21FE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:07:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775E1282719
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CB520EA37;
-	Thu,  7 Nov 2024 12:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDMZ8ulT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0759620F5A1;
+	Thu,  7 Nov 2024 12:07:56 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F261DDA3B;
-	Thu,  7 Nov 2024 12:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7481F4725;
+	Thu,  7 Nov 2024 12:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730981241; cv=none; b=QOrVGMFNMr6FL9cpYY1Gqm3lw8JnWXOGAnGO3d2ku+v2gpYvA/Iz8FF++2PZqT/SUh+NEehj3JP/aroDSEhcFV24cEXsCtDyE2TEnU9/kNFmaClvLHXSkZAXF/xrqti1i21u0UhRAYG8mNMZ1+XpNQuuAEojlhFG3FNAJgsEw64=
+	t=1730981275; cv=none; b=c8CxBacsTS1XsRVKzLhIiH0jvxjuPprVq4g4stjC7PJBgWmcPWJ50/AzDHa3QJrpf0ttIOl7hsxmWYn39fPykqIJdCGI0sPx+Pn63r4Dgkqd2GgOMy/2KjnLHilshnO9rgEc3i96atSD9IinsU6jW4a+SRGKbU0Xye/gW4nU/xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730981241; c=relaxed/simple;
-	bh=aV/yt2FEb1VZzg2wB06BQaCHt8ud8wPjKu/vn4z79jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJtlInDeyEK2sx/FamZt0O2Yop9E/HtmGrCWr4+G9Bl3C7mQIr+IYMjVv18oue7eHCRL58QvtGPNuDi7zVNOTwkntLL55n/+C1pevOkInSj/GIxBWSMl4dCrejumHLWLR0CmwCn1dUN5o5XFIKPsjEazaqSulMQ4Iz8b7qbE7bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pDMZ8ulT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 625EAC4CECE;
-	Thu,  7 Nov 2024 12:07:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730981241;
-	bh=aV/yt2FEb1VZzg2wB06BQaCHt8ud8wPjKu/vn4z79jw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pDMZ8ulTbjtrs1CPEYWVqZaYocLftQbNkrAcfZ23VmAeQOLRGufOi7plIUtb+cFIb
-	 /DGPitjAtS7fa5uTTL2wfug9rAftXNWfJmkSnEdyYU28RZ3zUxWaB9o+GGjPum5ZbR
-	 9xMSLUPf1FbCXaP9k5Q++83n289UwsdZ4kZTXwwuBE67CpkpWVSdZke20094ufFlzV
-	 rE9S7PExl10BTTHSXFiC0blN5g7wik+xhwkV26Dr9kjppr8hAcCZfJHTPZ6hpQ++M1
-	 Qa7pCzEF5vkqc3RrNltjnbbhcRcVlhDVE7V1zcswY7TfxcpIxZ3zRES/FVQYxR14Mp
-	 T8j4wnXH2DxwQ==
-Date: Thu, 7 Nov 2024 12:07:16 +0000
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Message-ID: <20241107120716.rkymr4sedc5co2nx@thinkpad>
-References: <20241107230231.688e865b@canb.auug.org.au>
+	s=arc-20240116; t=1730981275; c=relaxed/simple;
+	bh=JkbbxpNAoiEdm28VK858af1vZODED05mCblO6voYd1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eM29oFsYQIonfNkCRkKAmQkkSEKZ5GCHMbDe8AWFpUISjtB4Tl7JVzO889IO7a0Lv4NHfS9VARWfIBg4UwgkiPLTkzxxQ100CaGJfFtaBNWwlrz1kv0wByAClAki57XMPwZXcbtoRnz67B3r1QZZlFjuCcbUABp4hPolWWXcb2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XkglL4gFFz1SGCJ;
+	Thu,  7 Nov 2024 20:06:06 +0800 (CST)
+Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id A6784140136;
+	Thu,  7 Nov 2024 20:07:49 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 7 Nov 2024 20:07:49 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 7 Nov
+ 2024 20:07:48 +0800
+Message-ID: <ccf33114-4ccd-ed2e-cdbf-84de8525911a@huawei.com>
+Date: Thu, 7 Nov 2024 20:07:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v1 2/2] hwmon: (acpi_power_meter) Fix fail to load module
+ on platform without _PMD method
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>
+References: <20241107032626.16682-1-lihuisong@huawei.com>
+ <20241107032626.16682-3-lihuisong@huawei.com>
+ <CAJZ5v0hcEn_XhBPLstFyvqE=2iCG51wvcbGHf2nKaFJU5ynytQ@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0hcEn_XhBPLstFyvqE=2iCG51wvcbGHf2nKaFJU5ynytQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241107230231.688e865b@canb.auug.org.au>
-
-On Thu, Nov 07, 2024 at 11:02:31PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the pci tree, today's linux-next build (i386 defconfig)
-> failed like this:
-> 
-> In file included from drivers/pci/msi/pcidev_msi.c:5:
-> drivers/pci/msi/../pci.h:862:1: error: expected identifier or '(' before '{' token
->   862 | {
->       | ^
-> drivers/pci/msi/../pci.h:861:20: error: 'of_pci_is_supply_present' declared 'static' but never defined [-Werror=unused-function]
->   861 | static inline bool of_pci_is_supply_present(struct device_node *np);
->       |                    ^~~~~~~~~~~~~~~~~~~~~~~~
-
-That's silly on me. Krzysztof, could you please fix it in the branch?
-
-- Mani
-
-> cc1: all warnings being treated as errors
-> 
-> Caused by commit
-> 
->   0a93ef0a2d90 ("PCI/pwrctl: Create pwrctl devices only if at least one power supply is present")
-> 
-> I have applied the following patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 7 Nov 2024 22:53:24 +1100
-> Subject: [PATCH] fixup for "PCI/pwrctl: Create pwrctl devices only if at least
->  one power supply is present"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/pci/pci.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 345db6844690..7dc82eac5b04 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -858,7 +858,7 @@ static inline int devm_of_pci_bridge_init(struct device *dev, struct pci_host_br
->  	return 0;
->  }
->  
-> -static inline bool of_pci_is_supply_present(struct device_node *np);
-> +static inline bool of_pci_is_supply_present(struct device_node *np)
->  {
->  	return false;
->  }
-> -- 
-> 2.45.2
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
 
-
--- 
-மணிவண்ணன் சதாசிவம்
+在 2024/11/7 18:55, Rafael J. Wysocki 写道:
+> On Thu, Nov 7, 2024 at 4:37 AM Huisong Li <lihuisong@huawei.com> wrote:
+>> As ACPI spec said, _PMD method is optional. The acpi_power_meter
+>> shouldn't fail to load when the platform hasn't _PMD method.
+>>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> How exactly is this related to the first patch?
+They're not related, they're just similar.
+Sorry, I should separate them😂
+Should I resend them now?
+>
+>> ---
+>>   drivers/hwmon/acpi_power_meter.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
+>> index 6c8a9c863528..2f1c9d97ad21 100644
+>> --- a/drivers/hwmon/acpi_power_meter.c
+>> +++ b/drivers/hwmon/acpi_power_meter.c
+>> @@ -680,8 +680,9 @@ static int setup_attrs(struct acpi_power_meter_resource *resource)
+>>   {
+>>          int res = 0;
+>>
+>> +       /* _PMD method is optional. */
+>>          res = read_domain_devices(resource);
+>> -       if (res)
+>> +       if (res != -ENODEV)
+>>                  return res;
+>>
+>>          if (resource->caps.flags & POWER_METER_CAN_MEASURE) {
+>> --
+>> 2.22.0
+>>
+>>
+> .
 
