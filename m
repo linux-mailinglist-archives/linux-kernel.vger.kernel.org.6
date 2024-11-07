@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-400222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DE39C0A91
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:58:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D6B9C0A93
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41A41B22C7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A77B1F23BA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A0C2144CD;
-	Thu,  7 Nov 2024 15:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892E2216A2B;
+	Thu,  7 Nov 2024 15:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r8zVS9q5"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LUTFAnTN"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9638F21502E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E593B215C7D
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730995056; cv=none; b=nEUd7tbXp1Z/2ZrKm5vPfXvW7xK1l0bYO3yXoeeHc4LadeJL77TchdRgqMu/wYPIbvi8wKbD/AyO4r3tX0IGn4Y6ZZ1/jlR6MaYfW0kmkAty9smCcG8WYRl36LBxDwigq3wrPE87j6Kng7MsthqBxrptmcPltB1TXvF1NNnTb40=
+	t=1730995063; cv=none; b=HP1twVKuS82Ro6LMSJG6GkrCAzEl4VdDzAv5l0E1H68IoeAgq8okJkJGOuXrnfNWS7DEAAKFlI6kz/iAIa9g0rJXWhiJFS7vytdTV+nHvQmKpVvodaC+U6HH4fdAIYLa4GB2iggCqzRr41dCx4HXmRRiPP0lN7va2aqnq/Sf9UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730995056; c=relaxed/simple;
-	bh=dkho66LvqDZBbZAtS2Bh1yyXAiAU3nt7Z/Ca6INmHfg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N66QOw7kRFfk7U9MZGr8vyPsbbdStZXQf71sCnk/pMvERwCKUMRK6A5Pe5gYoHUPvhHvhbIpbq+ch9Pe/EC5SbQFX9RvNstNbJ0H0hQeNGKGd6cQq9c7n3/quVHzdhpKseSuRsG+oSsG9Dm5Wwl9DsDeR0x0qgO4opc36tyW1cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r8zVS9q5; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4608dddaa35so363541cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 07:57:34 -0800 (PST)
+	s=arc-20240116; t=1730995063; c=relaxed/simple;
+	bh=l+DObQasvi/6Xq2khmhmb4dZWgP734wHYsM7eTH33dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C1+fUQYud4ILCj/5ciWxmdKbeWpLE4+yHihsoqV5zT1/WlMLfCp2JboWIXmB8Hlm6KVhY5D5ZJahnzb1awode3UgOFDFVy/PpjDnaq16AUhE4UMdMI9NyMkrlADPBkU6jxth9dhxtFm598pzaJ3hdtw7cfdZAlh5ekDaw+pIcnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LUTFAnTN; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso1006940f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 07:57:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730995053; x=1731599853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n+7ho61/oAoiWQbCyZG6AJoc8iLMZGuZ9+96uL2SaXc=;
-        b=r8zVS9q5gHrNbDktJcNrGrCqjiNGPjXAVNPYPINKICUp9P0hewoH2L4ICLjHkdM69r
-         TAA/tDCvrWodu6H9Bri0vqa9b7zQEQEOMr+TGn+P65LwxYamkTnv+xvFuEyqTNqyuvVV
-         TXz2cPwxd4m0LsrxSfs5nievL+1DTFsDrukhug+cmdN3cv7Cs0A+3MU9/VhS1KkFQ/8p
-         Of7b8rzY/ip6OL/ekMzstz3QDrzlUAcrsRXnkaxYVu/GRcoyydHtxAUYYLtEW3VBo3at
-         GQFvm1NXSeHYk5LXg4wfvnBvUrJisJH2w9AdY44muNrzG5o7bNrHq4d8+ZIShIUjqnXN
-         pCag==
+        d=suse.com; s=google; t=1730995060; x=1731599860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dYaS5I93b6CHSzPlC1ZkED66zJbctl9+EXrmhFffef4=;
+        b=LUTFAnTN7nR3i16CP4F+/6UCkiBJc84BPHmTVIUkMwU1gmpv2/0SgJkHP303FYjO3Z
+         xwquHTEs6evXEaG4KD7M8yhT8awRsJyQn21v2BYJ8qlE9JvGwSS2eLyCF9irC4dY/uWx
+         vUcYpEKYLBx545iIBdogPnV+mPEPr6mNfqBOl/cMLFlRDLkYJobCRQ7jE7rQqcP8YeAy
+         6Yi3sppXqJshgVpTyNm89fBYV4PieyQTyF4thOi5tXS11inqngD/FpKXVyWx0ZmMMSZG
+         icIsINxoZmYEjZTdgiyAkmlq4vzW8G9PwUpMI+aB3yMEX3CNszA1ekwhMMFoYfBabFm+
+         N+Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730995053; x=1731599853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n+7ho61/oAoiWQbCyZG6AJoc8iLMZGuZ9+96uL2SaXc=;
-        b=B2QFTfoYO8WhQqWpRqy+0AMfbNZDwdj8fvCE8E5zyz5PCn248EQQY1qEehJUMrlAbk
-         Xd5efG4AimhF5FzM2Zy5OtDG8mP8rwRkZ6neKdW74NeWVWfPRZV0HnFDZyLMYtYEEuJH
-         8EcldcEeU5Xv1Wnn4IivUnjmn/cRDUeYex/D8mhPTHaO8FQobyM3Tq91ZLFqnBapClOM
-         Xb6nIKqI1u7waZV9/HVLot1B5u0024HhVl/tHoxXjJUTT1LUY/30TXTeICyQrqafXU37
-         7VySUkMf5gfKujBxs+HoBCx6kFZEfPqZMLntKgK8GN7RvSxfC66rSi49zER9fa2ury9C
-         gEQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXe9gZWLv5AMlp2J4zAZOMutxMnoYRWLxJeQzl313BIGXsTr/ZvRsD9OkhDC4lbgcq2HwcXmDKJuDS7Ekg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjJwia/LWFzDpQLofob4Zen0Q6rDRPUKEeKDeoKy0/k/2JWXlb
-	/Fp7dDpvASZNzIdpLaaxDhpVJdNBbrR0Zy2FySTqyN85WG6beBviLeQDRcP83v/Hbpc5Wy+IJlX
-	kgGr90VNyNNT+rehp+DDlTzxbl8CWX80MQjJ8
-X-Gm-Gg: ASbGncsCGPWZMyOltx1tyoMUcfeR44CB+8kwgYzPGRD2Iiez8DS+8kmCW20kHg8rdk6
-	RyFGn2YTe6TPl94AiUlwdkNn6q9Q8UPeSv/yoF0bFEYeoDdvkMJvhzaJozY5S4hY=
-X-Google-Smtp-Source: AGHT+IHVKHBvB2cCzxWI5DhXsQxE1wxEcC6cL+BUBfk+cOX40yCQNgt2BOrt/ugueoPHNZE5j5DaoRIma6XSWf55aH0=
-X-Received: by 2002:a05:622a:4e8f:b0:460:3f4a:40a1 with SMTP id
- d75a77b69052e-462fa5a3211mr4869671cf.13.1730995053179; Thu, 07 Nov 2024
- 07:57:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730995060; x=1731599860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dYaS5I93b6CHSzPlC1ZkED66zJbctl9+EXrmhFffef4=;
+        b=hLvoeWcpcMRl5Cn1YTvAY/azRlowjHFMerQXJqvAR2IK7+e7ShHNk/cxWBGJ3xbJIa
+         jXoGGvC7UyiJ2kvpmTOPK5Hke+AweQ1xXZm/oXgpstv7fo3r8EOC+/T7UzmdccP1G5XF
+         9ombI+EXNbDRxBDYbZMLCf1IkJwLKpFz9dtPUa3p00d5jKZoZ931I6eT0hbvwdVzoHhN
+         lkFFwpeI1SX2yC0H2bkBjW+MVGjjfFXqDIHEcAGcKwTv0G/bU8U5l/WBXesgnSgITY8e
+         q9mLeJqVjuUgQMtmrYL4k8LZFHf6MP6jgPpVhf9CZt+4OFQ10MUx72z1bb7zdJkHTKuM
+         E7Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyfItaaF4OYUpzPpYOqimhIAUqXqKatOa1aXpKHrt4Aae0Crj3DI7Kc02y7SxhmR7X0gzr5JCqJrWVPDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqG5qdkQWIDMtQgs2y1gAO5ufQIXLJdPbhqY8gvUEe6JH1L6vr
+	1t8ERBRFFnjQEe368+50YEVeIYSFES93/tfsbHHYMzcBOKbWWD2p+EslDGBay24=
+X-Google-Smtp-Source: AGHT+IH16H440EzuwjvLQ01EZNJRi+gf45PSJTUyeL/cdhOUV+eoPSl0kyjyS2/6msX16cFMoq4JXA==
+X-Received: by 2002:a5d:6d0f:0:b0:37d:9565:4db2 with SMTP id ffacd0b85a97d-381c7a469cemr26773698f8f.6.1730995060329;
+        Thu, 07 Nov 2024 07:57:40 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e8dsm69230765e9.6.2024.11.07.07.57.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 07:57:38 -0800 (PST)
+Date: Thu, 7 Nov 2024 16:57:36 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] printk: Add force_con printk flag to not suppress
+ sysrq header msgs
+Message-ID: <ZyzjcLF-wleMTpoY@pathway.suse.cz>
+References: <20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107071600.9082-1-irogers@google.com> <20241107082807.ipb7xzqvs24tto2e@hippo>
-In-Reply-To: <20241107082807.ipb7xzqvs24tto2e@hippo>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 7 Nov 2024 07:57:21 -0800
-Message-ID: <CAP-5=fXn3GSR88=UVqZ6zxsuv6s+ZBMGY1A0U8D-_oU4sm10kQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/7] Refactor cpuid and metric table lookup code
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Huacai Chen <chenhuacai@kernel.org>, 
-	Bibo Mao <maobibo@loongson.cn>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Ben Zong-You Xie <ben717@andestech.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Benjamin Gray <bgray@linux.ibm.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Dima Kogan <dima@secretsauce.net>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com>
 
-On Thu, Nov 7, 2024 at 1:05=E2=80=AFAM Xu Yang <xu.yang_2@nxp.com> wrote:
->
-> Hi Ian Rogers,
->
-> On Wed, Nov 06, 2024 at 11:15:53PM -0800, Ian Rogers wrote:
-> > Xu Yang <xu.yang_2@nxp.com> reported issues with the system metric
-> > lookup:
-> > https://lore.kernel.org/linux-perf-users/20241106085441.3945502-1-xu.ya=
-ng_2@nxp.com/
-> > These patches remove a lot of the logic relating CPUIDs to PMUs so
-> > that the PMU isn't part of the question when finding a metric table.
-> > For time reasons, it doesn't go as far as allowing system metrics
-> > without a metric table as a metric table is needed for metrics to
-> > refer to other metrics, and the refactoring of that resolution is a
-> > hassle.
-> >
-> > Ian Rogers (7):
-> >   perf header: Move is_cpu_online to numa bench
-> >   perf header: Refactor get_cpuid to take a CPU for ARM
-> >   perf arm64 header: Use cpu argument in get_cpuid
-> >   perf header: Avoid transitive PMU includes
-> >   perf header: Pass a perf_cpu rather than a PMU to get_cpuid_str
-> >   perf jevents: Add map_for_cpu
-> >   perf pmu: Move pmu_metrics_table__find and remove ARM override
-> >
-> >  tools/perf/arch/arm64/util/arm-spe.c     | 14 +---
-> >  tools/perf/arch/arm64/util/header.c      | 73 ++++++++++-----------
-> >  tools/perf/arch/arm64/util/pmu.c         | 20 ------
-> >  tools/perf/arch/loongarch/util/header.c  |  4 +-
-> >  tools/perf/arch/powerpc/util/header.c    |  4 +-
-> >  tools/perf/arch/riscv/util/header.c      |  4 +-
-> >  tools/perf/arch/s390/util/header.c       |  6 +-
-> >  tools/perf/arch/x86/util/auxtrace.c      |  3 +-
-> >  tools/perf/arch/x86/util/header.c        |  5 +-
-> >  tools/perf/bench/numa.c                  | 51 +++++++++++++++
->
-> Meet error when build perf tool:
->
->   CC      util/levenshtein.o
->   CC      tests/mem.o
->   CC      util/mmap.o
-> bench/numa.c: In function =E2=80=98is_cpu_online=E2=80=99:
-> bench/numa.c:550:21: error: storage size of =E2=80=98statbuf=E2=80=99 isn=
-=E2=80=99t known
->   550 |         struct stat statbuf;
->       |                     ^~~~~~~
-> bench/numa.c:554:13: error: implicit declaration of function =E2=80=98sta=
-t=E2=80=99; did you mean =E2=80=98strcat=E2=80=99? [-Werror=3Dimplicit-func=
-tion-declaration]
->   554 |         if (stat(buf, &statbuf) !=3D 0)
->       |             ^~~~
->       |             strcat
-> bench/numa.c:578:13: error: implicit declaration of function =E2=80=98sys=
-fs__read_str=E2=80=99 [-Werror=3Dimplicit-function-declaration]
->   578 |         if (sysfs__read_str(buf, &str, &strlen) < 0)
->       |             ^~~~~~~~~~~~~~~
-> bench/numa.c:550:21: error: unused variable =E2=80=98statbuf=E2=80=99 [-W=
-error=3Dunused-variable]
->   550 |         struct stat statbuf;
->       |                     ^~~~~~~
->   CC      tests/cpumap.o
->   CC      tests/stat.o
->
-> After remove these errors, my issue is disappeared.
+On Tue 2024-11-05 16:45:07, Marcos Paulo de Souza wrote:
+> Hello,
+> 
+> This is the second version of the patchset. It now addresses comments
+> from John and Petr, while also mentioning that the current work solves
+> one issue on handle_sysrq when the printk messages are deferred.
+> 
+> The original cover-letter in is the v1.
+> 
+> Please review!
+> 
+> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> ---
+> Changes in v2:
+> - Mentioned that it fixes a bug related to loglevel= dance (suggested by John)
+> - Changed to loud_con to FORCE_CON (John, Petr)
+> - Don't skip printk delay if FORCE_CON is specified (John)
+> - Set FORCE_CON when LOG_CONT is handled (John)
+> - Changed force_con from a per-CPU variable to a global variable because
+>   we can't disable migration on the callsites. (John, Petr)
+> - Used is_printk_force_console() on boot_delay_msec(), since it's used
+>   when the message is stored, instead of setting is as an argument.
+> - Link to v1: https://lore.kernel.org/r/20241016-printk-loud-con-v1-0-065e4dad6632@suse.com
+> ---
+> Marcos Paulo de Souza (2):
+>       printk: Introduce FORCE_CON flag
+>       tty: sysrq: Use printk_force_console context on __handle_sysrq
 
-Thanks, I'll fix this in v2. I'll also add your patch to the front for
-the sake of backport fixing. If you could provide tags for my changes
-it would be appreciated.
+The patchset looks ready for linux-next from my POV. I am going to
+push it there tomorrow or on Monday unless anyone complains.
 
-Thanks,
-Ian
+There was some bike-shedding about the code style in the reviews.
+But the proposals did not look like a big win. I think that it
+is not worth a respin.
+
+Best Regards,
+Petr
 
