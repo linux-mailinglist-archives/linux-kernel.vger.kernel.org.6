@@ -1,275 +1,199 @@
-Return-Path: <linux-kernel+bounces-399181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F8BA9BFBE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:46:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360B99BFBEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:46:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F3E8281C46
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:46:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68D51F22C79
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAB011713;
-	Thu,  7 Nov 2024 01:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejYC5MmE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6884DDDA9
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 01:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659D8944E;
+	Thu,  7 Nov 2024 01:46:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138EA748F;
+	Thu,  7 Nov 2024 01:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730943970; cv=none; b=XEAYHJsQeR6itOKxxlrTDgW/pSxlnBJQj2GGh5IP6aIGxD23w80b02wkGKp1tiXBbVVmcDA29sCR9fVs5M2n6kLdLLPmtWaeGRTXMx7ak/nhzgA3piYYQ2K3Oxhj0dBOxIuvUykxsfplgVnDxpcMa+xv9O8ExtbEpfIGgtCZl+k=
+	t=1730943998; cv=none; b=GVvz6UPwiTN05QNmKRMYmttai3UfUzSW6Cid+vJ/D1VrfJoyx7Eme0mefIPVo92r29LNFbpd6Owa8zepOmBv5riv3VRVpszUccwnEP3MKVR7MBxdTyKZXd9lTKAQiJ87sF0GPyhLVZU3X4nzM/lFlvm1snqBas/EKzWJTlHfk4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730943970; c=relaxed/simple;
-	bh=D0KhrNrHO6v+scc86PXOTZqKNDZ5GEGYNMenvyi8Iw0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aLTqHzL7RPPtGN/oC6XwBFGA3jImBtUM7F9QPvp2kOJPLZBcgHkO2AQWhZkeuipYnZFwQypJfX2ffMf7jrWWMBrIKuTa+5CwVaUVHV5HRXhWfrxtV36RWVWHrdXbRRtcGnJsr3Z3re54aQydttTeRyjrBWX48jq1fv03hHX5cx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejYC5MmE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941AAC4CEC6;
-	Thu,  7 Nov 2024 01:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730943970;
-	bh=D0KhrNrHO6v+scc86PXOTZqKNDZ5GEGYNMenvyi8Iw0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ejYC5MmE7P97wL0XO3YDnvF8MNrFoVyr6uVJMfv0XqU2Fgyx9SfVmnLtepzAjDQid
-	 yrmoKgnDxU7NJ02CGZoaxeJQ5TOvag8g6BLdkrscRq7Ibb7WheDC2WSnSmIk7wGRdw
-	 bM7cFlrr1yv6xA3VzOcHgczDVUZjBlY84uZfEhiH3Y35whMV8v0L8emt9RDpmdVaGZ
-	 UQAahcdchHdbEsVDQkmE/hADP2hcd+qZ2cgiA4s4gwETqy7Ci4IGWFecS9FTyfBJ56
-	 1CVRxUnGpH6hK+ZjHXYX1kMmpQ5oir0D69Cq76xjYyurXySrduKnALQH87uTfZ6yBa
-	 71b3deJF8jg9w==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Zhiguo Niu <zhiguo.niu@unisoc.com>
-Subject: [PATCH] f2fs: clean up w/ F2FS_{BLK_TO_BYTES,BTYES_TO_BLK}
-Date: Thu,  7 Nov 2024 09:46:02 +0800
-Message-Id: <20241107014602.3638020-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1730943998; c=relaxed/simple;
+	bh=FPys9W0Cs1vLNX6SPasi1XihbVH3pJbnC+cqw91U8n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=srMp6UUlD7ZaRdseGlhkrPK1dX9FCQDmxtWN9lOTVvWr9SH+xll1dsgOsFrwJMcw3Exojswyyc6DEwBKm1OsHzcU0Aj2cWP1k2/x760VEFq1sQVjYj9bZ7IXkXylpDHJNegCGD+bk/PepvTW4r69VtUV3Tujx5xPDRUdJouj0Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DBB4497;
+	Wed,  6 Nov 2024 17:47:06 -0800 (PST)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F79D3F66E;
+	Wed,  6 Nov 2024 17:46:33 -0800 (PST)
+Date: Thu, 7 Nov 2024 01:46:10 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: Yangtao Li <tiny.windzz@gmail.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime
+ Ripard <mripard@kernel.org>, Nishanth Menon <nm@ti.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Vinod Koul
+ <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>, Parthiban <parthiban@linumiz.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] clk: sunxi-ng: a100: enable MMC clock
+ reparenting
+Message-ID: <20241107014610.23a1666d@minigeek.lan>
+In-Reply-To: <20241103020929.2298633f@minigeek.lan>
+References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
+	<20241031070232.1793078-9-masterr3c0rd@epochal.quest>
+	<20241031120857.60bc0d94@donnerap.manchester.arm.com>
+	<885047f813d0c55eae13f26b0bfe041d@epochal.quest>
+	<20241103020929.2298633f@minigeek.lan>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-f2fs doesn't support different blksize in one instance, so
-bytes_to_blks() and blks_to_bytes() are equal to F2FS_BYTES_TO_BLK
-and F2FS_BLK_TO_BYTES, let's use F2FS_BYTES_TO_BLK/F2FS_BLK_TO_BYTES
-instead for cleanup.
+On Sun, 3 Nov 2024 02:09:29 +0000
+Andre Przywara <andre.przywara@arm.com> wrote:
 
-Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c | 68 +++++++++++++++++++++-----------------------------
- 1 file changed, 29 insertions(+), 39 deletions(-)
+Hi,
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b33aca24b9ef..0e8390cbdb5b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1819,16 +1819,6 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
- 	return true;
- }
- 
--static inline u64 bytes_to_blks(struct inode *inode, u64 bytes)
--{
--	return (bytes >> inode->i_blkbits);
--}
--
--static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
--{
--	return (blks << inode->i_blkbits);
--}
--
- static int f2fs_xattr_fiemap(struct inode *inode,
- 				struct fiemap_extent_info *fieinfo)
- {
-@@ -1854,7 +1844,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
- 			return err;
- 		}
- 
--		phys = blks_to_bytes(inode, ni.blk_addr);
-+		phys = F2FS_BLK_TO_BYTES(ni.blk_addr);
- 		offset = offsetof(struct f2fs_inode, i_addr) +
- 					sizeof(__le32) * (DEF_ADDRS_PER_INODE -
- 					get_inline_xattr_addrs(inode));
-@@ -1886,7 +1876,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
- 			return err;
- 		}
- 
--		phys = blks_to_bytes(inode, ni.blk_addr);
-+		phys = F2FS_BLK_TO_BYTES(ni.blk_addr);
- 		len = inode->i_sb->s_blocksize;
- 
- 		f2fs_put_page(page, 1);
-@@ -1948,16 +1938,16 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 			goto out;
- 	}
- 
--	if (bytes_to_blks(inode, len) == 0)
--		len = blks_to_bytes(inode, 1);
-+	if (F2FS_BYTES_TO_BLK(len) == 0)
-+		len = F2FS_BLKSIZE;
- 
--	start_blk = bytes_to_blks(inode, start);
--	last_blk = bytes_to_blks(inode, start + len - 1);
-+	start_blk = F2FS_BYTES_TO_BLK(start);
-+	last_blk = F2FS_BYTES_TO_BLK(start + len - 1);
- 
- next:
- 	memset(&map, 0, sizeof(map));
- 	map.m_lblk = start_blk;
--	map.m_len = bytes_to_blks(inode, len);
-+	map.m_len = F2FS_BYTES_TO_BLK(len);
- 	map.m_next_pgofs = &next_pgofs;
- 	map.m_seg_type = NO_CHECK_TYPE;
- 
-@@ -1974,7 +1964,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	if (!compr_cluster && !(map.m_flags & F2FS_MAP_FLAGS)) {
- 		start_blk = next_pgofs;
- 
--		if (blks_to_bytes(inode, start_blk) < maxbytes)
-+		if (F2FS_BLK_TO_BYTES(start_blk) < maxbytes)
- 			goto prep_next;
- 
- 		flags |= FIEMAP_EXTENT_LAST;
-@@ -2011,14 +2001,14 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	} else if (compr_appended) {
- 		unsigned int appended_blks = cluster_size -
- 						count_in_cluster + 1;
--		size += blks_to_bytes(inode, appended_blks);
-+		size += F2FS_BLK_TO_BYTES(appended_blks);
- 		start_blk += appended_blks;
- 		compr_cluster = false;
- 	} else {
--		logical = blks_to_bytes(inode, start_blk);
-+		logical = F2FS_BLK_TO_BYTES(start_blk);
- 		phys = __is_valid_data_blkaddr(map.m_pblk) ?
--			blks_to_bytes(inode, map.m_pblk) : 0;
--		size = blks_to_bytes(inode, map.m_len);
-+			F2FS_BLK_TO_BYTES(map.m_pblk) : 0;
-+		size = F2FS_BLK_TO_BYTES(map.m_len);
- 		flags = 0;
- 
- 		if (compr_cluster) {
-@@ -2026,13 +2016,13 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 			count_in_cluster += map.m_len;
- 			if (count_in_cluster == cluster_size) {
- 				compr_cluster = false;
--				size += blks_to_bytes(inode, 1);
-+				size += F2FS_BLKSIZE;
- 			}
- 		} else if (map.m_flags & F2FS_MAP_DELALLOC) {
- 			flags = FIEMAP_EXTENT_UNWRITTEN;
- 		}
- 
--		start_blk += bytes_to_blks(inode, size);
-+		start_blk += F2FS_BYTES_TO_BLK(size);
- 	}
- 
- prep_next:
-@@ -2070,7 +2060,7 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
- 					struct readahead_control *rac)
- {
- 	struct bio *bio = *bio_ret;
--	const unsigned blocksize = blks_to_bytes(inode, 1);
-+	const unsigned int blocksize = F2FS_BLKSIZE;
- 	sector_t block_in_file;
- 	sector_t last_block;
- 	sector_t last_block_in_file;
-@@ -2080,8 +2070,8 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
- 
- 	block_in_file = (sector_t)index;
- 	last_block = block_in_file + nr_pages;
--	last_block_in_file = bytes_to_blks(inode,
--			f2fs_readpage_limit(inode) + blocksize - 1);
-+	last_block_in_file = F2FS_BYTES_TO_BLK(f2fs_readpage_limit(inode) +
-+							blocksize - 1);
- 	if (last_block > last_block_in_file)
- 		last_block = last_block_in_file;
- 
-@@ -2181,7 +2171,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 	struct bio *bio = *bio_ret;
- 	unsigned int start_idx = cc->cluster_idx << cc->log_cluster_size;
- 	sector_t last_block_in_file;
--	const unsigned blocksize = blks_to_bytes(inode, 1);
-+	const unsigned int blocksize = F2FS_BLKSIZE;
- 	struct decompress_io_ctx *dic = NULL;
- 	struct extent_info ei = {};
- 	bool from_dnode = true;
-@@ -2190,8 +2180,8 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 
- 	f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
- 
--	last_block_in_file = bytes_to_blks(inode,
--			f2fs_readpage_limit(inode) + blocksize - 1);
-+	last_block_in_file = F2FS_BYTES_TO_BLK(f2fs_readpage_limit(inode) +
-+							blocksize - 1);
- 
- 	/* get rid of pages beyond EOF */
- 	for (i = 0; i < cc->cluster_size; i++) {
-@@ -3957,7 +3947,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
- 	 * to be very smart.
- 	 */
- 	cur_lblock = 0;
--	last_lblock = bytes_to_blks(inode, i_size_read(inode));
-+	last_lblock = F2FS_BYTES_TO_BLK(i_size_read(inode));
- 
- 	while (cur_lblock < last_lblock && cur_lblock < sis->max) {
- 		struct f2fs_map_blocks map;
-@@ -4200,8 +4190,8 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	pgoff_t next_pgofs = 0;
- 	int err;
- 
--	map.m_lblk = bytes_to_blks(inode, offset);
--	map.m_len = bytes_to_blks(inode, offset + length - 1) - map.m_lblk + 1;
-+	map.m_lblk = F2FS_BYTES_TO_BLK(offset);
-+	map.m_len = F2FS_BYTES_TO_BLK(offset + length - 1) - map.m_lblk + 1;
- 	map.m_next_pgofs = &next_pgofs;
- 	map.m_seg_type = f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
- 						inode->i_write_hint);
-@@ -4212,7 +4202,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	if (err)
- 		return err;
- 
--	iomap->offset = blks_to_bytes(inode, map.m_lblk);
-+	iomap->offset = F2FS_BLK_TO_BYTES(map.m_lblk);
- 
- 	/*
- 	 * When inline encryption is enabled, sometimes I/O to an encrypted file
-@@ -4232,21 +4222,21 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 		if (WARN_ON_ONCE(map.m_pblk == NEW_ADDR))
- 			return -EINVAL;
- 
--		iomap->length = blks_to_bytes(inode, map.m_len);
-+		iomap->length = F2FS_BLK_TO_BYTES(map.m_len);
- 		iomap->type = IOMAP_MAPPED;
- 		iomap->flags |= IOMAP_F_MERGED;
- 		iomap->bdev = map.m_bdev;
--		iomap->addr = blks_to_bytes(inode, map.m_pblk);
-+		iomap->addr = F2FS_BLK_TO_BYTES(map.m_pblk);
- 	} else {
- 		if (flags & IOMAP_WRITE)
- 			return -ENOTBLK;
- 
- 		if (map.m_pblk == NULL_ADDR) {
--			iomap->length = blks_to_bytes(inode, next_pgofs) -
--								iomap->offset;
-+			iomap->length = F2FS_BLK_TO_BYTES(next_pgofs) -
-+							iomap->offset;
- 			iomap->type = IOMAP_HOLE;
- 		} else if (map.m_pblk == NEW_ADDR) {
--			iomap->length = blks_to_bytes(inode, map.m_len);
-+			iomap->length = F2FS_BLK_TO_BYTES(map.m_len);
- 			iomap->type = IOMAP_UNWRITTEN;
- 		} else {
- 			f2fs_bug_on(F2FS_I_SB(inode), 1);
--- 
-2.40.1
+> On Sat, 02 Nov 2024 18:44:41 -0300
+> Cody Eksal <masterr3c0rd@epochal.quest> wrote:
+> 
+> Hi Cody,
+> 
+> thanks for staying on this issue!
+> 
+> > On 2024/10/31 9:08 am, Andre Przywara wrote:  
+> > > Well, while this change indeed prevented that error message you mentioned,
+> > > but the SD card still doesn't work for me: it probes and I can mount a
+> > > filesystem on it, but then it hangs, for instance when running an "ls" on
+> > > it. It could be my setup (lacking DT or device issue or missing kernel
+> > > config), though, and the eMMC works for me this way, but it would be good
+> > > to have that sorted.     
+> > I'm investigating this now; it appears mmc2/eMMC is more consistent when
+> > CLK_NO_REPARENT is set  
+> 
+> What do you mean with "more consistent", exactly?
+> I still don't get why NO_REPARENT would help here in the first place:
+> we have three clocks as potential parents: OSC24MHz, PLL_PERIPH0,
+> PLL_PERIPH1. The first one is too slow for typical MMC rates, and
+> PERIPH1 is typically disabled (it's the same rates as PERIPH0, so
+> there is little need for it). So PERIPH0 is to clock to go, and I don't
+> see what NO_REPARENT would change here.
+> 
+> So those are my observations:
+> With NO_REPARENT (current mainline):
+> - SD card fails to probe:
+>   sunxi-mmc 4020000.mmc: fatal err update clk timeout
+> - SD card is still parented to PERIPH0-2x (probably because U-Boot set
+>   that up), but uses a divider of 256 for a clock rate of 4687500 Hz.
+>   This probably leads to the failures.
+> - eMMC works, but is parented to the 24MHz OSC, probably because U-Boot
+>   did not touch it. The clock rate is 12MHz, the read speed is 10MB/s.
+> With removing NO_REPARENT, so with this patch:
+> - SD cards probes, I can mount a VFAT fs on it, and sometimes "ls"
+>   that, but it hangs soon afterwards, for instance when trying to
+>   benchmark it.
+
+It turns out that this it due to a wrong DMA block size description in
+the MMC driver: the A100/A133 only supports 8K blocks, not 64K as
+currently advertised there. Patch for that here: [1]
+With that patch I see the SD card fully working, and at the correct
+speed, so this patch here is:
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Please add a Fixes tag and Cc: stable to the tags, like this:
+
+Fixes: fb038ce4db55 ("clk: sunxi-ng: add support for the Allwinner A100 CCU")
+Cc: stable@vger.kernel.org
+
+And make sure to also Cc: that address when sending that out. Or
+Chen-Yu adds the tags while committing, and we send this separately to stable?
+
+And maybe we can change the commit message to be a bit less vague, and
+just say while it's unknown why the flag was there in the first place,
+it doesn't make any sense and severely limits MMC transfer speeds.
+
+Cheers,
+Andre
+
+
+[1] https://lore.kernel.org/linux-sunxi/20241107014240.24669-1-andre.przywara@arm.com/T/#u
+
+> - SD clock is set up correctly: parent is PLL_PERIPH0-2x, rate is 50
+>   MHz, correct for High Speed@4bit and its 25MB/s bus speed.
+> - eMMC works fine, clock parent is PLL-PERIPH0-2x, rate is 100 MHz,
+>   correct for HS-200 (100 MHz * 8 bit * 2(DDR)). The read speed is
+>   72MB/s, which sounds alright, and might be a limitation of the flash
+>   chip.
+> 
+> So NO_REPARENT is always worse for me.
+> 
+> > > Also it would be good to know why CLK_SET_RATE_NO_REPARENT was put there
+> > > in the first place: I don't see it in any other MMC clocks in sunxi-ng, so
+> > > it wasn't just copied&pasted.    
+> > Seeing that mmc2 acts better with the flag, perhaps it was copy + pasted
+> > from that config. Or perhaps the issues we're running into comes from
+> > elsewhere in the chain. At the moment, that's only speculation, though;
+> > I'm waiting on a device that has an SD card slot so I can perform more
+> > testing myself and debug these issues.
+> >   
+> > > So was there a problem that this flag was supposed to fix? Is that
+> > > something that only applied to older kernels (back when the MMC patches
+> > > were first posted), and which has now been fixed/changed elsewhere?    
+> > Yangtao Li/Frank Lee assumably no longer works at Allwinner, as the email
+> > he used to submit this originally no longer exists, but I believe the same
+> > Yangtao is now a maintainer of the Allwinner cpufreq subsystem, and is
+> > CC'd on these patches. I'm sending this reply to him as well; perhaps he
+> > may have some additional insight.
+> >   
+> > > I feel a bit uneasy of just removing this just because it works(TM),
+> > > especially if it doesn't really (SD card for me, for instance).    
+> > I agree; I was quickly preparing V2 to hopefully get this in before the
+> > 6.13 window for the sunxi tree closed, and added this in last minute after
+> > verifying it worked on my current device, which lacks an SD card slot.
+> > 
+> > This patch can be skipped for now, as it's apparent MMC0/1 require a little
+> > more love before we can merge it in. I'll submit new patches in the future
+> > once this is figured out.  
+> 
+> This patch would be a fix anyway (with a Fixes: tag), so we can push it
+> still into 6.13, after -rc1, and it would be backported. So it's not as
+> critical, timing-wise.
+> 
+> Cheers,
+> Andre
+> 
+> > 
+> > Thanks!
+> > - Cody
+> >   
+> > > Cheers,
+> > > Andre
+> > >     
+> > >> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+> > >> ---
+> > >>  drivers/clk/sunxi-ng/ccu-sun50i-a100.c | 6 +++---
+> > >>  1 file changed, 3 insertions(+), 3 deletions(-)    
+> >   
+> 
+> 
 
 
