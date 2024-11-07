@@ -1,94 +1,117 @@
-Return-Path: <linux-kernel+bounces-400654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489EE9C1091
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:07:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039549C1094
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:08:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006741F21AAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6BC91F22766
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83989227B8E;
-	Thu,  7 Nov 2024 21:00:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AFE2185AE;
+	Thu,  7 Nov 2024 21:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvTpvvXV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9827F2194BA
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 21:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B35216420;
+	Thu,  7 Nov 2024 21:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731013205; cv=none; b=evvCekI96r1qMBhKOxuyW7xR0LZBksalF4khL8Hyhc87Wrzan2nplEIdCRD44yQ+8I0juZmauftaYshTdPPPfrQZ7MzpvHNRhAE2t69fm9h4cVXBycQJljXVdEUlIinrM4zBQ1+AHEQLun/Nsc7J6FivhJ+uP4TxovQdJzpETyQ=
+	t=1731013217; cv=none; b=lrdGI4LzL54yFQ41bk5kVX2QUWl19c2yyVYwmljXuopXjjy0QLszKU704IkHc5YASAclg7Ce0yQ4dFFmaHgwc2PDnz/5yfoqKmk8RfTkJ8xQ2XuQFC8N8zRC49FSAyVXsEiZ5OTqtEogecWx1bn5KXNf2qwbIku1T0OXCIlbK5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731013205; c=relaxed/simple;
-	bh=evuAZfwARYeCSa2cm2Nesuv6RzOCU1uIBVESmfQXmVQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=URKp7KqFF7WytuQjYnn4fY9lX1Y5vz0yXi9rGZ0LO7yW5pWbqELYd/VDdz9dmzAXmy1eyT6ETSbHUTHfaCRF0CnjX+xtQSyetj/vqf1dbP3iTskW23JEIwl+u+ab8da1BHoFA7gfcQ5bXCYwc1N83EHVoVzarEOOfisti/dsWE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c3ecaaabso17826245ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 13:00:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731013203; x=1731618003;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zTrEnJ1xflwqCs7uDGssRRRQgcKDE9FD9zPoC4Iw7Y4=;
-        b=JF0ruBhyrmaCsA3iK0fsWrf33OxkJ1LZKubATwClfpvoYV5S/QtBk3J6c3lF4OruDM
-         S1Wl9gm8ZYJzw/5zkLngPp1d0+sXAXrx980KP+9LlbZmKf+oqILPeTUPWLXW1pbu86Si
-         cFSd5bHJbGGXmToSDb02hW3Bvv6S1aRqcyLcv17C49gXYszGvrs6FA1qmnkqJ5deuxAg
-         3axpNHsObauKSDpZ4ah/jMQk51OYGA+9b2Y17SNaumrLtl/oujGOonafTqtTCwiz9xHj
-         llR2oRbCaFGsMP9uc7FlUfr+PqG+GTbmAjll9DveUmwbZnOXwLFkQ4G4vJl39Hkqfqeh
-         XcVg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2YkCqo/dfGo0aH/upRoKm0xIwQ3Rhpd6/JJzVh9T1WjmE/db/bsdTCenY5QiWbZ56LL0lmfXcHhGLMyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhMgyOJyUxIsBtIIvp5h7qTvSzRuwkj7R4Xx6eZ3UUnD/oglqS
-	/tv7+k3E1ZRJ1k3i5IcMn/ahlY4ya+By/H+gt8XGXmXuI/RVCwBEZTcThNHzPxuzvsGbJiFip9r
-	1rc+nYR4YN9IgdhTd6j2+RTSTqk6cvKLFnx426RmzvQzJJJzE7ytXtMs=
-X-Google-Smtp-Source: AGHT+IGrBL1U6cNT6RMq6kbV3aJN0roXyvrWF8AuSTpL3ICCq+J0m2t4mi8QINXdiS9OI26x/DXouMPb0CEyyz0ge6nm1QVBqTqi
+	s=arc-20240116; t=1731013217; c=relaxed/simple;
+	bh=abaUwEE9vgyuDZkMhWIDnLlkpxXpgz/cAX1JLnMW6Io=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZEI8N9KNw77a/KKSbJLQWdKKXCHtlJ8/8Mq3gyf+BVzx1I+oUxXp49xixGTunADEJenlvtYZ+AvdFpKp0v6ofpp2htB+wMq7IEBtiGd5PXym290z+gScATCAO3YK/I554N08DkVGa8tpwkeliQPUIZWYxJta26gH1FktNBjaAmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvTpvvXV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F82C4CECC;
+	Thu,  7 Nov 2024 21:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731013217;
+	bh=abaUwEE9vgyuDZkMhWIDnLlkpxXpgz/cAX1JLnMW6Io=;
+	h=From:Subject:Date:To:Cc:From;
+	b=NvTpvvXV3wiSN2wzG6XMuaLhJoQMV8fVwKUpvtQzL1tnnR/w2oNcDZ4+OHC0+sPBI
+	 MCNY0B0UVV4rFboUAE5UzKEvlizirny6t5fba+P/vPrk05ZGeKF8A3aw18LMQw40He
+	 UUxveFEAzRftSqElHprfsjulaARZTnKPIgsUZMAAa4bHHFUOrfKTjsCEzFNSJLT2z+
+	 sfcvd8GqHBRw6Axpg1KbPAcXLn32UwicvqKNjw/itM2YLpVMktdHd81m/+CGfKgYkg
+	 Q10dN2hUrB5+G06lo1jxddL58hUc+yTOHPzbEPhCaphM3ykpYrCMrL4pqR/f3unB4Z
+	 fEWlTYtYM8LuQ==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v3 0/2] fs: allow statmount to fetch the subtype and
+ devname
+Date: Thu, 07 Nov 2024 16:00:05 -0500
+Message-Id: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d96:b0:3a4:db10:742d with SMTP id
- e9e14a558f8ab-3a6f19900cemr6935535ab.3.1731013202847; Thu, 07 Nov 2024
- 13:00:02 -0800 (PST)
-Date: Thu, 07 Nov 2024 13:00:02 -0800
-In-Reply-To: <6723db4a.050a0220.35b515.0168.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672d2a52.050a0220.15a23d.01a1.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] WARNING: locking bug in trie_delete_elem
-From: syzbot <syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, frederic@kernel.org, 
-	haoluo@google.com, houtao@huaweicloud.com, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org, 
-	martin.lau@linux.dev, peterz@infradead.org, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFUqLWcC/3WMQQ7CIBBFr2Jm7ZgOaGtdeQ/jgsrQEhUMINE0v
+ bu0OxNdvp//3giRg+UIh9UIgbON1rsCcr2Cy6Bcz2h1YRCV2BJVNcak0t0/XUJpWlIN62ZnFJT
+ /I7Cxr6V1OhcebEw+vJd0pnn9VcmEhF0rO2V029SCjlcOjm8bH3qYM1n8VQVWOJtCKS33+ludp
+ ukDt3AKmt4AAAA=
+X-Change-ID: 20241106-statmount-3f91a7ed75fa
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>, 
+ Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1246; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=abaUwEE9vgyuDZkMhWIDnLlkpxXpgz/cAX1JLnMW6Io=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnLSpfGyoMPss40glOgHHEY5CBLo6BC/bgPGS5K
+ JS1mxPh21CJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZy0qXwAKCRAADmhBGVaC
+ FTagEACky1OeObGYBFFh9gZA6EDyF8nIWUGqGPr13e+NpiiOKTq9S3rOZtxmjpazKBrzndMhlnp
+ Nlb2h2oNMJEcG/PD4Z1ABF6aVUwTcWiv1xVgq+Z/ccSxeekHome7VQi/D1sEuD92ZMYExi86rSG
+ waTV68gIX0SxirJJMIHiCFdFK0pvfZCFborvARR1d5MgjUuZlHNriwTR7aKFw57OCp34IP4CTgp
+ HhFIGlWx7gNrtC5McOdRHaB+HTYY34QWaOmy55nBJFSbHMCvmTu9ntn+CzmdtV+o343JLkFAOwm
+ dx44zAlgiXtwW7YL3nxZ5uWoywQp9bIS9r08AXVJq9CV2vXNdhA5U3Zs1OffUW4+pVI1as1+vJm
+ kpSygmMDY5hD1iSL0gzcwSui0PtPGo2HeMy8VAcKXIgEIgHdzNWAK6RQZAKn1X3QF9GM+fd0fgx
+ QQajohcBnV79TTsRgBZkiFnQJFo14Kag+RaM/CmmC+4VTtBKkFwsPLVorOI9HgnlWaK5p7LJggL
+ AaB3A8+eI/6X5ptwfHBzMv6GO481q301fBRI9qAe3CwOY3TBdnNs5XPePn1iuPbYyPfTIHGaIwV
+ Srs+VZpf39a30142VG7kis8psiOusXDgcUmyqxFG8/jfFQV6L/1Om4G3AVMwEqCxgLimzLDEdR8
+ fxb+KwDC0gfvy/Q==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-syzbot has bisected this issue to:
+Meta has some internal logging that scrapes /proc/self/mountinfo today.
+I'd like to convert it to use listmount()/statmount(), so we can do a
+better job of monitoring with containers. We're missing some fields
+though. This patchset adds them.
 
-commit 4febce44cfebcb490b196d5d10ae9f403ca4c956
-Author: Thomas Gleixner <tglx@linutronix.de>
-Date:   Tue Oct 1 08:42:03 2024 +0000
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v3:
+- Unescape the result of ->show_devname
+- Move handling of nothing being emitted out of the switch statement
+- Link to v2: https://lore.kernel.org/r/20241106-statmount-v2-0-93ba2aad38d1@kernel.org
 
-    posix-timers: Cure si_sys_private race
+Changes in v2:
+- make statmount_fs_subtype
+- return fast if no subtype is emitted
+- new patch to allow statmount() to return devicename
+- Link to v1: https://lore.kernel.org/r/20241106-statmount-v1-1-b93bafd97621@kernel.org
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=129f2d87980000
-start commit:   f9f24ca362a4 Add linux-next specific files for 20241031
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=169f2d87980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-dashboard link: https://syzkaller.appspot.com/bug?extid=b506de56cbbb63148c33
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1387655f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ac5540580000
+---
+Jeff Layton (2):
+      fs: add the ability for statmount() to report the fs_subtype
+      fs: add the ability for statmount() to report the mnt_devname
 
-Reported-by: syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
-Fixes: 4febce44cfeb ("posix-timers: Cure si_sys_private race")
+ fs/namespace.c             | 68 ++++++++++++++++++++++++++++++++++++++++++----
+ include/uapi/linux/mount.h |  6 +++-
+ 2 files changed, 67 insertions(+), 7 deletions(-)
+---
+base-commit: 26213e1a6caa5a7f508b919059b0122b451f4dfe
+change-id: 20241106-statmount-3f91a7ed75fa
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
