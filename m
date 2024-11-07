@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-399855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37A59C054D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:08:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FEE9C0554
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D461C22446
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:08:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB60BB22AFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF4B20F5DD;
-	Thu,  7 Nov 2024 12:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFF220F5B2;
+	Thu,  7 Nov 2024 12:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V5hSW08C"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9kZKM3J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A360D1DDA3B
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52D220EA26;
+	Thu,  7 Nov 2024 12:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730981277; cv=none; b=M6BZkZA6Nz51wKdT3b9w34yWJaSwKILLSn3dMab7BU/xMN/EKJR2BYiAifL4PbVJMlFXZfPzkLuxBiTDM+QSdY6I117m5Vo3Lw3lvo423+0Tjb4y96sURWT7zBnpsfna1vt0vk4j0w+7YKafnIQlYB+lbDHtrhQtpmkEJHQ4i4o=
+	t=1730981293; cv=none; b=h19mkRlrdqW6fiEGoZtITuJ2Z3CnV44KWvKBcczgL3+9vg6xBnGGyhrDUKFADDPYPyiE/6T+hkb1rrQ+3o0cdCx3Up4iEIGclLjVO3UQ7zQ8Hhs50LK9zGNu8N9Fk2D0slySKNjnEFVH6SRRVCQ5MNl3vXpnkfKehyy0iqyHpjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730981277; c=relaxed/simple;
-	bh=rKbiX0VIxrlLI+Q9P5b/AZEQ9UB2kI1F2AvhStrh5jU=;
+	s=arc-20240116; t=1730981293; c=relaxed/simple;
+	bh=3pDMqBYbIse61cbzLdo+JGwA785g7t/Qa6s3J/DvTVU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kUg65Y5nffcpMelyctKPYhHbNwB+vn0KCq9t/wm62jnHT9PBLqfUCIyxHZwuyJfWYyPWWvCpi9kQd0xhdWlHUFAXtZYU1q1Rw4EjLU33IYnv0YwPSUu1hIcbuDOThV7rOxJO1/r9OGS6JP6PYrTmxV+lj1Lo8xUW0SQGjG/6NN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V5hSW08C; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so458002f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:07:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730981274; x=1731586074; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hAbn1Ykfp9his+u2uJIIvTrMc5YEiO1rQix+MP16MdI=;
-        b=V5hSW08CxTRHpnGrMua0u5xJDFUFtemXuMEYbZH5EB+KgW/WyULtQJZ1pKTPyQ4E4Y
-         +ztffunDMug5OBAntPcVllbVTn1JRARdi19QA5+Fm791IqtEprATHEjwMSH8qzXr+0i0
-         dEQ+RYHV+pUb+bWcOVffw6/fTpfixk05vlrEwmk7LDLXa5Q2C51OjxNze6KBJmNNJzE/
-         iw6xBWXN8IgXG+f6ePYDdIow6qmNmTFSXSYFKxPPDE69OirLDvx3bs5dNMaOl2cUx9QI
-         kj6Fk/SYo4P8WuPpDp4bG8C7pPajSQI3+aernUbSEV13rR+iu3wYuIS/ICTEKzyGYIKd
-         vzoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730981274; x=1731586074;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hAbn1Ykfp9his+u2uJIIvTrMc5YEiO1rQix+MP16MdI=;
-        b=SIXbRKQwwIx4rD5AvU8zmmYYSCzHhJ0FtWq5x35by5IOVNRvLcRZi0Qa8fvmqkmggQ
-         aU3pkq/Ci0PMzR+8R1VcsBz2Zm0ZXirYqYniHW6JwUWE/YAQX6x1a2ecuvF7+zd2VUkp
-         iB8UPKAJ+xiu3OihqLGdpaemMwCmnIkf6FD6a16BpnqGFzQqRiIP+FjI0nM5ZwXYs+EP
-         5I2ZhuFlLScNwn09q39+WNFpD/pCtXdjrIHAK9K6c4rFgWcjPqWdOjdXjuAchXeGNlJC
-         3ytXlRfkdYlA1y3gvnRmrrlaNy6Nwu+vKpnoyBIjCh550fPPcLlQAv3rjX9eVUUCvJkK
-         RKEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXM14dkhMZYvnuJ4Mi4uo0ejjOfptjB/qLuD2GXOQCcJW3P40OLu8kd2Nq32uSSteGwvvTvRhtir/CEdi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2qXVUEXX24CrgGGbt6QVK39auGCQg2+MOoDR6CjYEXm+fOXYD
-	sphY9FHsvgnxjNftDXuoNpfOKEmcx7ValOZBVXX7l8M8CXhzZcOtmKzHclgEnSk=
-X-Google-Smtp-Source: AGHT+IHC6ikPOTItf1oVoB8X5+KaaDLzrKVpzqSOI+8Bg2xedEwzv5KM2i7ux46gHe49N/Qx305z0A==
-X-Received: by 2002:a5d:6508:0:b0:37d:5084:b667 with SMTP id ffacd0b85a97d-380611593b8mr27756363f8f.33.1730981274007;
-        Thu, 07 Nov 2024 04:07:54 -0800 (PST)
-Received: from [172.16.24.72] ([89.101.134.25])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9719easm1599755f8f.9.2024.11.07.04.07.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 04:07:53 -0800 (PST)
-Message-ID: <975f4ecd-2029-469a-8ecf-fbd6397547d4@linaro.org>
-Date: Thu, 7 Nov 2024 12:07:52 +0000
+	 In-Reply-To:Content-Type; b=SChyJ6CikzEVSqTDafn1w21eewflDN4HLFi4noNtBCnE6O6tRUa3VfPbG4XB5DqKQFiCSXBPtyc8Q3CddCuJxoljfAh+QnflUsalbMNl8RgJKJP8XamK4SaZ3bMdtcdvTD/8Dxoq7/K3ShXkraWPhY9zij3w18sQ0/a7e+m9rB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9kZKM3J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EADFCC4CECC;
+	Thu,  7 Nov 2024 12:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730981292;
+	bh=3pDMqBYbIse61cbzLdo+JGwA785g7t/Qa6s3J/DvTVU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=u9kZKM3JxNbEiOdmXbXMH0dMviyQJk46SJGm3dIUkAjq3Zce3MruvYQdVXCflnZYM
+	 c31PuFmXo3z4QgcUfpvE5yZomemrx5sJ40LTBBhH5LxcFfS1MoD0prGMJayFeDFOhy
+	 xL9KM3cYp88N4TrwtImOObLYMBdT+O3zXLBeUShQpUVBfRY2MSnBkVqcj3l3t3Pnfs
+	 yiGAuGkIknhE8Oq/yB+4TW39aobUfedAfaHIx7VmjOjgU9IKDF4lvSKPSwFXLkV1un
+	 UtCjbopwBxMzAyZRqdJR64DOlDcD3QafffNB4YRaYoZog5IYINuR6pVRdqHesTwKf7
+	 SiqDk/JiMRVjg==
+Message-ID: <c487babb-84a5-4e47-a58f-75fec55cbabb@kernel.org>
+Date: Thu, 7 Nov 2024 13:08:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,50 +49,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
- bound access
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
- <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
- <81d6a054-e02a-7c98-0479-0e17076fabd7@quicinc.com>
- <ndlf4bsijb723cctkvd7hkwmo7plbzr3q2dhqc3tpyujbfcr3z@g4rvg5p7vhfs>
+Subject: Re: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
+To: Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: Taewan Kim <trunixs.kim@samsung.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>
+References: <20241021063903.793166-1-trunixs.kim@samsung.com>
+ <CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
+ <20241021063903.793166-4-trunixs.kim@samsung.com>
+ <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
+ <20241107103331.GA4818@www.linux-watchdog.org>
+ <589c40e1-6a1c-4ef7-b0d8-b761b132578a@kernel.org>
+ <20241107113325.GA5284@www.linux-watchdog.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <ndlf4bsijb723cctkvd7hkwmo7plbzr3q2dhqc3tpyujbfcr3z@g4rvg5p7vhfs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241107113325.GA5284@www.linux-watchdog.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2024 10:41, Dmitry Baryshkov wrote:
->> init_codecs() parses the payload received from firmware and . I don't think we
->> can control this part when we have something like this from a malicious firmware
->> payload
->> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->> ...
->> Limiting it to second iteration would restrict the functionality when property
->> HFI_PROPERTY_PARAM_CODEC_SUPPORTED is sent for supported number of codecs.
-> If you can have a malicious firmware (which is owned and signed by
-> Qualcomm / OEM), then you have to be careful and skip duplicates. So
-> instead of just adding new cap to core->caps, you have to go through
-> that array, check that you are not adding a duplicate (and report a
-> [Firmware Bug] for duplicates), check that there is an empty slot, etc.
+On 07/11/2024 12:33, Wim Van Sebroeck wrote:
+>>> Seems like you are having a hard day. 
+>>> The 3 patches are dropped. I presume that you will take them all through your tree then?
+>>
+>> I meant only this one patch, not entire patchset. The bindings and
+>> watchdog driver are for you. I commented only about this patch here - DTS.
+>>
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> Just ignoring the "extra" entries is not enough.
+> I added the first two patches again. Even when it sounds more logical to me to keep the 3 together.
 
-+1
+Thank you.
 
-This is a more rational argument. If you get a second message, you 
-should surely reinit the whole array i.e. update the array with the new 
-list, as opposed to throwing away the second message because it 
-over-indexes your local storage..
+> But that's a never ending discussion, so we won't go into that :-).
 
----
-bod
+DTS is hardware description independent from Linux, therefore always
+goes separate way than Linux drivers.
+
+Best regards,
+Krzysztof
+
 
