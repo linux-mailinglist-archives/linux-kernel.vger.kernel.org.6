@@ -1,165 +1,275 @@
-Return-Path: <linux-kernel+bounces-399180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07FF9BFBE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:45:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8BA9BFBE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:46:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB55A1C21EB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F3E8281C46
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42D438385;
-	Thu,  7 Nov 2024 01:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAB011713;
+	Thu,  7 Nov 2024 01:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2Ls9NQf"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejYC5MmE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5724117C79;
-	Thu,  7 Nov 2024 01:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6884DDDA9
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 01:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730943928; cv=none; b=tQsDWAnKhZNDVgXVvnAso4+JiMJfo1qfuvLzl8VGVvU0WScaAhXgPAl70GN6dtEJGAxro65HayoUcPhoLIPkfSdTD+lF110UwOTtaqg3VIleFx5IZxSRetqqpTKx6/rYbSxhchgjHR3WyhfsVTuMI/0m2pQCoCARGTZksd+zN68=
+	t=1730943970; cv=none; b=XEAYHJsQeR6itOKxxlrTDgW/pSxlnBJQj2GGh5IP6aIGxD23w80b02wkGKp1tiXBbVVmcDA29sCR9fVs5M2n6kLdLLPmtWaeGRTXMx7ak/nhzgA3piYYQ2K3Oxhj0dBOxIuvUykxsfplgVnDxpcMa+xv9O8ExtbEpfIGgtCZl+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730943928; c=relaxed/simple;
-	bh=RP9Kl3tnmn4fuc7dablnD70S71aiWfXucgn/B4KquYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VF00vQJ52AQINbVGpw3nuSo3ADGGxlLzjDmrAtuWEppnSv7WWjgGZB9uIZLv2FdDcWPV1QBX1uZshhvhsblsMjHk127AliSJma7Xp1JPFRokYWEwFFV9CCRhmDSzhoLYMgc7bkSkU4H37HzevrTK/awDM3JNRQC8jVcYb5bTxQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2Ls9NQf; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20ca388d242so4861885ad.2;
-        Wed, 06 Nov 2024 17:45:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730943926; x=1731548726; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=+p00YxKOs0bInMvcyB+P7dOZL1X8Zq2IMwA0EcrWBUw=;
-        b=D2Ls9NQfFPK/gmgBoUB4wmYzTV209xgr5TfgKu1n8zcuB/PoNqrUfznuPlRDqjSYba
-         BS3CWkgyVIC4dCRS+lJ0E7E4tHV1lMXSRAg9fMl0Jv4Q0ow7/IkEur08X0oF8yWNsedp
-         QuD3nGKyUAEI0Zq1/UVYcpymNpt8TZeQC8QoMmoulDK0Vxbm9ip9a1RIVhYeywVufR52
-         rEh4uOMIsaxXsF/A6vcnfn5Ee7MlERLS9fOlSAL40Ix1pyaUrlzUg9xv4jm4wMxPh0un
-         ENLAVdYNVqAO5Uj9QOM8RbCfynpW98raFd/d8+EvvQhvXBwUnsGIK8JIdeytZDBD1jnL
-         gz5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730943926; x=1731548726;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+p00YxKOs0bInMvcyB+P7dOZL1X8Zq2IMwA0EcrWBUw=;
-        b=Egov6rYMIb+hsCs0gMkOqk4Ke9W9Lh2ctg8SIcwhPI7Aw5cXcbKDcEhv37KNrXRs1w
-         hBxLBHvj0Cny0MZT9rhrZ1tiYCVqdqkm/Hb7DxtxJCv+YEVTEdaRVpMkFyjtepizUhyM
-         dyvK97Z9bWLF3lXvhFRdMbCYkrsVFy4u4ctH5khFUrXI62hL5Gk+cI6dB8DW2zBBSHOc
-         qVI2eYB3U31rZZEI5uumMI+FIE5MiyrJtzIdTtWXMwgpHXaK9zky0R0bZyiaXu4gmQBG
-         Lg35GqYSX0hwXWcWQE8j6bj6RL0E4pWuV7qz6FwZBcDZeZuX/h7LFJtf7zWxwnFePhU0
-         Xl8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVLhAVtNYruiWNeNmSTvEXtg7nSEUxdSrQNfFmSGBw+zUOxbduIolmLIywBLNfGy9bkqnuPi2PJcxVF@vger.kernel.org, AJvYcCVh/AfbzVCx/BwVLu4flqnDmp5FhBSZ3GBzopvGL4cXfPFy/55VpcZRPOHVgtQ6M4yM8UNKhABcE+ZU@vger.kernel.org, AJvYcCWn2L6Qsvw8NswlcKJL0d9pp+OXM6dhIFOdMdQyWUN81AiTSYQWTVQDZA4j19lyOWQbjXqwVmgMCi44@vger.kernel.org, AJvYcCXLSYPw7//TtZWzV5ju+LP1v9KHCu1z9uZUacia8wWdOksxY1LCF0nnOTblN4l9XKpOMXm+AIUXAb9EMKc=@vger.kernel.org, AJvYcCXTENGoesEpvRM25XnwPf1hFb/PHD+y6ChKV7a6A2GrynQIzIF7V0ANVV6Qn7isdZg+1PnsXrgErNsw1Olx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRJk8S/Px3lKTIIH4I8up2in4Bl+2YllxJr0KWUVBUuwiPXVRG
-	zJpozxUSPZrp4hkfv6PSb8twGINuD82qT6q47hxCE+pBHb/dcgHX
-X-Google-Smtp-Source: AGHT+IEYsIsrudryW9corBVyjAfoScGcO7wDmyEzHbL19yWzgOxw+c5e+cTjPS3eA4eTkgUaLwDIlA==
-X-Received: by 2002:a17:902:ea0a:b0:206:96bf:b0cf with SMTP id d9443c01a7336-2111ae27bddmr319831195ad.0.1730943925641;
-        Wed, 06 Nov 2024 17:45:25 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dde241sm1274895ad.81.2024.11.06.17.45.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 17:45:24 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <697a9596-f5aa-48d0-ad26-ebe06b831ee8@roeck-us.net>
-Date: Wed, 6 Nov 2024 17:45:22 -0800
+	s=arc-20240116; t=1730943970; c=relaxed/simple;
+	bh=D0KhrNrHO6v+scc86PXOTZqKNDZ5GEGYNMenvyi8Iw0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aLTqHzL7RPPtGN/oC6XwBFGA3jImBtUM7F9QPvp2kOJPLZBcgHkO2AQWhZkeuipYnZFwQypJfX2ffMf7jrWWMBrIKuTa+5CwVaUVHV5HRXhWfrxtV36RWVWHrdXbRRtcGnJsr3Z3re54aQydttTeRyjrBWX48jq1fv03hHX5cx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejYC5MmE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941AAC4CEC6;
+	Thu,  7 Nov 2024 01:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730943970;
+	bh=D0KhrNrHO6v+scc86PXOTZqKNDZ5GEGYNMenvyi8Iw0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ejYC5MmE7P97wL0XO3YDnvF8MNrFoVyr6uVJMfv0XqU2Fgyx9SfVmnLtepzAjDQid
+	 yrmoKgnDxU7NJ02CGZoaxeJQ5TOvag8g6BLdkrscRq7Ibb7WheDC2WSnSmIk7wGRdw
+	 bM7cFlrr1yv6xA3VzOcHgczDVUZjBlY84uZfEhiH3Y35whMV8v0L8emt9RDpmdVaGZ
+	 UQAahcdchHdbEsVDQkmE/hADP2hcd+qZ2cgiA4s4gwETqy7Ci4IGWFecS9FTyfBJ56
+	 1CVRxUnGpH6hK+ZjHXYX1kMmpQ5oir0D69Cq76xjYyurXySrduKnALQH87uTfZ6yBa
+	 71b3deJF8jg9w==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Zhiguo Niu <zhiguo.niu@unisoc.com>
+Subject: [PATCH] f2fs: clean up w/ F2FS_{BLK_TO_BYTES,BTYES_TO_BLK}
+Date: Thu,  7 Nov 2024 09:46:02 +0800
+Message-Id: <20241107014602.3638020-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] hwmon: pmbus: add driver for ltp8800-1a,
- ltp8800-4a, and ltp8800-2
-To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Yin <peteryin.openbmc@gmail.com>,
- Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
- Lukas Wunner <lukas@wunner.de>
-References: <20241106030918.24849-1-cedricjustine.encarnacion@analog.com>
- <20241106030918.24849-3-cedricjustine.encarnacion@analog.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241106030918.24849-3-cedricjustine.encarnacion@analog.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 11/5/24 19:09, Cedric Encarnacion wrote:
-> LTP8800-1A 54V, 150A DC/DC µModule Regulator with PMBus Interface
-> LTP8800-4A 54V, 200A DC/DC µModule Regulator with PMBus Interface
-> LTP8800-2 54V, 135A DC/DC μModule Regulator with PMBus Interface
-> 
-> The LTP8800 is a family of step-down μModule regulators that provides
-> microprocessor core voltage from 54V power distribution architecture. It
-> features telemetry monitoring of input/output voltage, input current,
-> output power, and temperature over PMBus.
-> 
-> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+f2fs doesn't support different blksize in one instance, so
+bytes_to_blks() and blks_to_bytes() are equal to F2FS_BYTES_TO_BLK
+and F2FS_BLK_TO_BYTES, let's use F2FS_BYTES_TO_BLK/F2FS_BLK_TO_BYTES
+instead for cleanup.
 
-Looking closer into the datasheets, I found that the PMBus commands are identical
-to those of ADP1055, and an extension of the ADP1050 driver to support ADP1055
-has been submitted.
+Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 68 +++++++++++++++++++++-----------------------------
+ 1 file changed, 29 insertions(+), 39 deletions(-)
 
-With this in mind, please explain why this series warrants a new driver instead
-of just extending the existing driver to support LTP8800.
-
-Thanks,
-Guenter
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index b33aca24b9ef..0e8390cbdb5b 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1819,16 +1819,6 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
+ 	return true;
+ }
+ 
+-static inline u64 bytes_to_blks(struct inode *inode, u64 bytes)
+-{
+-	return (bytes >> inode->i_blkbits);
+-}
+-
+-static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
+-{
+-	return (blks << inode->i_blkbits);
+-}
+-
+ static int f2fs_xattr_fiemap(struct inode *inode,
+ 				struct fiemap_extent_info *fieinfo)
+ {
+@@ -1854,7 +1844,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
+ 			return err;
+ 		}
+ 
+-		phys = blks_to_bytes(inode, ni.blk_addr);
++		phys = F2FS_BLK_TO_BYTES(ni.blk_addr);
+ 		offset = offsetof(struct f2fs_inode, i_addr) +
+ 					sizeof(__le32) * (DEF_ADDRS_PER_INODE -
+ 					get_inline_xattr_addrs(inode));
+@@ -1886,7 +1876,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
+ 			return err;
+ 		}
+ 
+-		phys = blks_to_bytes(inode, ni.blk_addr);
++		phys = F2FS_BLK_TO_BYTES(ni.blk_addr);
+ 		len = inode->i_sb->s_blocksize;
+ 
+ 		f2fs_put_page(page, 1);
+@@ -1948,16 +1938,16 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			goto out;
+ 	}
+ 
+-	if (bytes_to_blks(inode, len) == 0)
+-		len = blks_to_bytes(inode, 1);
++	if (F2FS_BYTES_TO_BLK(len) == 0)
++		len = F2FS_BLKSIZE;
+ 
+-	start_blk = bytes_to_blks(inode, start);
+-	last_blk = bytes_to_blks(inode, start + len - 1);
++	start_blk = F2FS_BYTES_TO_BLK(start);
++	last_blk = F2FS_BYTES_TO_BLK(start + len - 1);
+ 
+ next:
+ 	memset(&map, 0, sizeof(map));
+ 	map.m_lblk = start_blk;
+-	map.m_len = bytes_to_blks(inode, len);
++	map.m_len = F2FS_BYTES_TO_BLK(len);
+ 	map.m_next_pgofs = &next_pgofs;
+ 	map.m_seg_type = NO_CHECK_TYPE;
+ 
+@@ -1974,7 +1964,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	if (!compr_cluster && !(map.m_flags & F2FS_MAP_FLAGS)) {
+ 		start_blk = next_pgofs;
+ 
+-		if (blks_to_bytes(inode, start_blk) < maxbytes)
++		if (F2FS_BLK_TO_BYTES(start_blk) < maxbytes)
+ 			goto prep_next;
+ 
+ 		flags |= FIEMAP_EXTENT_LAST;
+@@ -2011,14 +2001,14 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	} else if (compr_appended) {
+ 		unsigned int appended_blks = cluster_size -
+ 						count_in_cluster + 1;
+-		size += blks_to_bytes(inode, appended_blks);
++		size += F2FS_BLK_TO_BYTES(appended_blks);
+ 		start_blk += appended_blks;
+ 		compr_cluster = false;
+ 	} else {
+-		logical = blks_to_bytes(inode, start_blk);
++		logical = F2FS_BLK_TO_BYTES(start_blk);
+ 		phys = __is_valid_data_blkaddr(map.m_pblk) ?
+-			blks_to_bytes(inode, map.m_pblk) : 0;
+-		size = blks_to_bytes(inode, map.m_len);
++			F2FS_BLK_TO_BYTES(map.m_pblk) : 0;
++		size = F2FS_BLK_TO_BYTES(map.m_len);
+ 		flags = 0;
+ 
+ 		if (compr_cluster) {
+@@ -2026,13 +2016,13 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			count_in_cluster += map.m_len;
+ 			if (count_in_cluster == cluster_size) {
+ 				compr_cluster = false;
+-				size += blks_to_bytes(inode, 1);
++				size += F2FS_BLKSIZE;
+ 			}
+ 		} else if (map.m_flags & F2FS_MAP_DELALLOC) {
+ 			flags = FIEMAP_EXTENT_UNWRITTEN;
+ 		}
+ 
+-		start_blk += bytes_to_blks(inode, size);
++		start_blk += F2FS_BYTES_TO_BLK(size);
+ 	}
+ 
+ prep_next:
+@@ -2070,7 +2060,7 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
+ 					struct readahead_control *rac)
+ {
+ 	struct bio *bio = *bio_ret;
+-	const unsigned blocksize = blks_to_bytes(inode, 1);
++	const unsigned int blocksize = F2FS_BLKSIZE;
+ 	sector_t block_in_file;
+ 	sector_t last_block;
+ 	sector_t last_block_in_file;
+@@ -2080,8 +2070,8 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
+ 
+ 	block_in_file = (sector_t)index;
+ 	last_block = block_in_file + nr_pages;
+-	last_block_in_file = bytes_to_blks(inode,
+-			f2fs_readpage_limit(inode) + blocksize - 1);
++	last_block_in_file = F2FS_BYTES_TO_BLK(f2fs_readpage_limit(inode) +
++							blocksize - 1);
+ 	if (last_block > last_block_in_file)
+ 		last_block = last_block_in_file;
+ 
+@@ -2181,7 +2171,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 	struct bio *bio = *bio_ret;
+ 	unsigned int start_idx = cc->cluster_idx << cc->log_cluster_size;
+ 	sector_t last_block_in_file;
+-	const unsigned blocksize = blks_to_bytes(inode, 1);
++	const unsigned int blocksize = F2FS_BLKSIZE;
+ 	struct decompress_io_ctx *dic = NULL;
+ 	struct extent_info ei = {};
+ 	bool from_dnode = true;
+@@ -2190,8 +2180,8 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 
+ 	f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
+ 
+-	last_block_in_file = bytes_to_blks(inode,
+-			f2fs_readpage_limit(inode) + blocksize - 1);
++	last_block_in_file = F2FS_BYTES_TO_BLK(f2fs_readpage_limit(inode) +
++							blocksize - 1);
+ 
+ 	/* get rid of pages beyond EOF */
+ 	for (i = 0; i < cc->cluster_size; i++) {
+@@ -3957,7 +3947,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
+ 	 * to be very smart.
+ 	 */
+ 	cur_lblock = 0;
+-	last_lblock = bytes_to_blks(inode, i_size_read(inode));
++	last_lblock = F2FS_BYTES_TO_BLK(i_size_read(inode));
+ 
+ 	while (cur_lblock < last_lblock && cur_lblock < sis->max) {
+ 		struct f2fs_map_blocks map;
+@@ -4200,8 +4190,8 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	pgoff_t next_pgofs = 0;
+ 	int err;
+ 
+-	map.m_lblk = bytes_to_blks(inode, offset);
+-	map.m_len = bytes_to_blks(inode, offset + length - 1) - map.m_lblk + 1;
++	map.m_lblk = F2FS_BYTES_TO_BLK(offset);
++	map.m_len = F2FS_BYTES_TO_BLK(offset + length - 1) - map.m_lblk + 1;
+ 	map.m_next_pgofs = &next_pgofs;
+ 	map.m_seg_type = f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
+ 						inode->i_write_hint);
+@@ -4212,7 +4202,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	if (err)
+ 		return err;
+ 
+-	iomap->offset = blks_to_bytes(inode, map.m_lblk);
++	iomap->offset = F2FS_BLK_TO_BYTES(map.m_lblk);
+ 
+ 	/*
+ 	 * When inline encryption is enabled, sometimes I/O to an encrypted file
+@@ -4232,21 +4222,21 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 		if (WARN_ON_ONCE(map.m_pblk == NEW_ADDR))
+ 			return -EINVAL;
+ 
+-		iomap->length = blks_to_bytes(inode, map.m_len);
++		iomap->length = F2FS_BLK_TO_BYTES(map.m_len);
+ 		iomap->type = IOMAP_MAPPED;
+ 		iomap->flags |= IOMAP_F_MERGED;
+ 		iomap->bdev = map.m_bdev;
+-		iomap->addr = blks_to_bytes(inode, map.m_pblk);
++		iomap->addr = F2FS_BLK_TO_BYTES(map.m_pblk);
+ 	} else {
+ 		if (flags & IOMAP_WRITE)
+ 			return -ENOTBLK;
+ 
+ 		if (map.m_pblk == NULL_ADDR) {
+-			iomap->length = blks_to_bytes(inode, next_pgofs) -
+-								iomap->offset;
++			iomap->length = F2FS_BLK_TO_BYTES(next_pgofs) -
++							iomap->offset;
+ 			iomap->type = IOMAP_HOLE;
+ 		} else if (map.m_pblk == NEW_ADDR) {
+-			iomap->length = blks_to_bytes(inode, map.m_len);
++			iomap->length = F2FS_BLK_TO_BYTES(map.m_len);
+ 			iomap->type = IOMAP_UNWRITTEN;
+ 		} else {
+ 			f2fs_bug_on(F2FS_I_SB(inode), 1);
+-- 
+2.40.1
 
 
