@@ -1,199 +1,204 @@
-Return-Path: <linux-kernel+bounces-399182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360B99BFBEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:46:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2087B9BFBFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68D51F22C79
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:46:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414631C2203E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659D8944E;
-	Thu,  7 Nov 2024 01:46:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138EA748F;
-	Thu,  7 Nov 2024 01:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4490918027;
+	Thu,  7 Nov 2024 01:50:43 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE8E2941C;
+	Thu,  7 Nov 2024 01:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730943998; cv=none; b=GVvz6UPwiTN05QNmKRMYmttai3UfUzSW6Cid+vJ/D1VrfJoyx7Eme0mefIPVo92r29LNFbpd6Owa8zepOmBv5riv3VRVpszUccwnEP3MKVR7MBxdTyKZXd9lTKAQiJ87sF0GPyhLVZU3X4nzM/lFlvm1snqBas/EKzWJTlHfk4Q=
+	t=1730944242; cv=none; b=uASPnUtGNMjK6le4cgLfX/7Pwd+8UYlpkU6wdgduNDAazaWkKJUNY/ja6Shn/osLAvjHbOL982Zy4y6SwqeWhSB9F92keNlq4kpnr7oZTvj7c42KjialnlT4413SglOHml+dOF1C4/ad6ozc1EnSAORfVHyQcMlwRD+btM82TT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730943998; c=relaxed/simple;
-	bh=FPys9W0Cs1vLNX6SPasi1XihbVH3pJbnC+cqw91U8n8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=srMp6UUlD7ZaRdseGlhkrPK1dX9FCQDmxtWN9lOTVvWr9SH+xll1dsgOsFrwJMcw3Exojswyyc6DEwBKm1OsHzcU0Aj2cWP1k2/x760VEFq1sQVjYj9bZ7IXkXylpDHJNegCGD+bk/PepvTW4r69VtUV3Tujx5xPDRUdJouj0Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DBB4497;
-	Wed,  6 Nov 2024 17:47:06 -0800 (PST)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F79D3F66E;
-	Wed,  6 Nov 2024 17:46:33 -0800 (PST)
-Date: Thu, 7 Nov 2024 01:46:10 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: Yangtao Li <tiny.windzz@gmail.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime
- Ripard <mripard@kernel.org>, Nishanth Menon <nm@ti.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Vinod Koul
- <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Viresh Kumar
- <viresh.kumar@linaro.org>, Parthiban <parthiban@linumiz.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/13] clk: sunxi-ng: a100: enable MMC clock
- reparenting
-Message-ID: <20241107014610.23a1666d@minigeek.lan>
-In-Reply-To: <20241103020929.2298633f@minigeek.lan>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
-	<20241031070232.1793078-9-masterr3c0rd@epochal.quest>
-	<20241031120857.60bc0d94@donnerap.manchester.arm.com>
-	<885047f813d0c55eae13f26b0bfe041d@epochal.quest>
-	<20241103020929.2298633f@minigeek.lan>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1730944242; c=relaxed/simple;
+	bh=xR5lZz9NvJ5n45Nxsz8hUbgIeGONq4q8Ynrva3cSZyQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Au2JyiHzvN3QF9SaXNfpouFUt6raV+HXBA0WqT3ansE+msr6qeS4uTwTCeQ9RruIucO5BkSx/aILwrbTE7ogAfZEDoJihDb5OtK6zvH5V0sXVqoEwQYMNIj8xGMMmX4EowjXX6frcL38oyBh50puCFj5XzJXxKlQOxFHcERAhW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XkQ4n2V4wz4f3lVx;
+	Thu,  7 Nov 2024 09:50:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2B8031A0197;
+	Thu,  7 Nov 2024 09:50:36 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCnzoLpHCxntP5FBA--.42261S4;
+	Thu, 07 Nov 2024 09:50:35 +0800 (CST)
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+To: chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	kolga@netapp.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	Trond.Myklebust@netapp.com,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: yukuai1@huaweicloud.com,
+	houtao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	lilingfeng@huaweicloud.com,
+	lilingfeng3@huawei.com
+Subject: [PATCH] nfsd: set acl_access/acl_default after getting successful
+Date: Thu,  7 Nov 2024 09:47:05 +0800
+Message-Id: <20241107014705.2509463-1-lilingfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnzoLpHCxntP5FBA--.42261S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxuryrAr18KF13JF4DJF1DJrb_yoWrCrWrpF
+	13ta1UCr48Gr1UXF45Aw18KF1rtF4Fya1UGr93CF1IvFW3uw15Jr1UCry8ZrW7JFWfXa47
+	Jr1jqwn2qw1DXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUOv38UUUUU
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-On Sun, 3 Nov 2024 02:09:29 +0000
-Andre Przywara <andre.przywara@arm.com> wrote:
+If getting acl_default fails, acl_access and acl_default will be released
+simultaneously. However, acl_access will still retain a pointer pointing
+to the released posix_acl, which will trigger a WARNING in
+nfs3svc_release_getacl like this:
 
-Hi,
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 26 PID: 3199 at lib/refcount.c:28
+refcount_warn_saturate+0xb5/0x170
+Modules linked in:
+CPU: 26 UID: 0 PID: 3199 Comm: nfsd Not tainted
+6.12.0-rc6-00079-g04ae226af01f-dirty #8
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.16.1-2.fc37 04/01/2014
+RIP: 0010:refcount_warn_saturate+0xb5/0x170
+Code: cc cc 0f b6 1d b3 20 a5 03 80 fb 01 0f 87 65 48 d8 00 83 e3 01 75
+e4 48 c7 c7 c0 3b 9b 85 c6 05 97 20 a5 03 01 e8 fb 3e 30 ff <0f> 0b eb
+cd 0f b6 1d 8a3
+RSP: 0018:ffffc90008637cd8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff83904fde
+RDX: dffffc0000000000 RSI: 0000000000000008 RDI: ffff88871ed36380
+RBP: ffff888158beeb40 R08: 0000000000000001 R09: fffff520010c6f56
+R10: ffffc90008637ab7 R11: 0000000000000001 R12: 0000000000000001
+R13: ffff888140e77400 R14: ffff888140e77408 R15: ffffffff858b42c0
+FS:  0000000000000000(0000) GS:ffff88871ed00000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000562384d32158 CR3: 000000055cc6a000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ? refcount_warn_saturate+0xb5/0x170
+ ? __warn+0xa5/0x140
+ ? refcount_warn_saturate+0xb5/0x170
+ ? report_bug+0x1b1/0x1e0
+ ? handle_bug+0x53/0xa0
+ ? exc_invalid_op+0x17/0x40
+ ? asm_exc_invalid_op+0x1a/0x20
+ ? tick_nohz_tick_stopped+0x1e/0x40
+ ? refcount_warn_saturate+0xb5/0x170
+ ? refcount_warn_saturate+0xb5/0x170
+ nfs3svc_release_getacl+0xc9/0xe0
+ svc_process_common+0x5db/0xb60
+ ? __pfx_svc_process_common+0x10/0x10
+ ? __rcu_read_unlock+0x69/0xa0
+ ? __pfx_nfsd_dispatch+0x10/0x10
+ ? svc_xprt_received+0xa1/0x120
+ ? xdr_init_decode+0x11d/0x190
+ svc_process+0x2a7/0x330
+ svc_handle_xprt+0x69d/0x940
+ svc_recv+0x180/0x2d0
+ nfsd+0x168/0x200
+ ? __pfx_nfsd+0x10/0x10
+ kthread+0x1a2/0x1e0
+ ? kthread+0xf4/0x1e0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x34/0x60
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+Kernel panic - not syncing: kernel: panic_on_warn set ...
 
-> On Sat, 02 Nov 2024 18:44:41 -0300
-> Cody Eksal <masterr3c0rd@epochal.quest> wrote:
-> 
-> Hi Cody,
-> 
-> thanks for staying on this issue!
-> 
-> > On 2024/10/31 9:08 am, Andre Przywara wrote:  
-> > > Well, while this change indeed prevented that error message you mentioned,
-> > > but the SD card still doesn't work for me: it probes and I can mount a
-> > > filesystem on it, but then it hangs, for instance when running an "ls" on
-> > > it. It could be my setup (lacking DT or device issue or missing kernel
-> > > config), though, and the eMMC works for me this way, but it would be good
-> > > to have that sorted.     
-> > I'm investigating this now; it appears mmc2/eMMC is more consistent when
-> > CLK_NO_REPARENT is set  
-> 
-> What do you mean with "more consistent", exactly?
-> I still don't get why NO_REPARENT would help here in the first place:
-> we have three clocks as potential parents: OSC24MHz, PLL_PERIPH0,
-> PLL_PERIPH1. The first one is too slow for typical MMC rates, and
-> PERIPH1 is typically disabled (it's the same rates as PERIPH0, so
-> there is little need for it). So PERIPH0 is to clock to go, and I don't
-> see what NO_REPARENT would change here.
-> 
-> So those are my observations:
-> With NO_REPARENT (current mainline):
-> - SD card fails to probe:
->   sunxi-mmc 4020000.mmc: fatal err update clk timeout
-> - SD card is still parented to PERIPH0-2x (probably because U-Boot set
->   that up), but uses a divider of 256 for a clock rate of 4687500 Hz.
->   This probably leads to the failures.
-> - eMMC works, but is parented to the 24MHz OSC, probably because U-Boot
->   did not touch it. The clock rate is 12MHz, the read speed is 10MB/s.
-> With removing NO_REPARENT, so with this patch:
-> - SD cards probes, I can mount a VFAT fs on it, and sometimes "ls"
->   that, but it hangs soon afterwards, for instance when trying to
->   benchmark it.
+Clear acl_access/acl_default first and set both of them only when both
+ACLs are successfully obtained.
 
-It turns out that this it due to a wrong DMA block size description in
-the MMC driver: the A100/A133 only supports 8K blocks, not 64K as
-currently advertised there. Patch for that here: [1]
-With that patch I see the SD card fully working, and at the correct
-speed, so this patch here is:
+Fixes: a257cdd0e217 ("[PATCH] NFSD: Add server support for NFSv3 ACLs.")
+Signed-off-by: Li Lingfeng <lilingfeng@huaweicloud.com>
+---
+ fs/nfsd/nfs3acl.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Please add a Fixes tag and Cc: stable to the tags, like this:
-
-Fixes: fb038ce4db55 ("clk: sunxi-ng: add support for the Allwinner A100 CCU")
-Cc: stable@vger.kernel.org
-
-And make sure to also Cc: that address when sending that out. Or
-Chen-Yu adds the tags while committing, and we send this separately to stable?
-
-And maybe we can change the commit message to be a bit less vague, and
-just say while it's unknown why the flag was there in the first place,
-it doesn't make any sense and severely limits MMC transfer speeds.
-
-Cheers,
-Andre
-
-
-[1] https://lore.kernel.org/linux-sunxi/20241107014240.24669-1-andre.przywara@arm.com/T/#u
-
-> - SD clock is set up correctly: parent is PLL_PERIPH0-2x, rate is 50
->   MHz, correct for High Speed@4bit and its 25MB/s bus speed.
-> - eMMC works fine, clock parent is PLL-PERIPH0-2x, rate is 100 MHz,
->   correct for HS-200 (100 MHz * 8 bit * 2(DDR)). The read speed is
->   72MB/s, which sounds alright, and might be a limitation of the flash
->   chip.
-> 
-> So NO_REPARENT is always worse for me.
-> 
-> > > Also it would be good to know why CLK_SET_RATE_NO_REPARENT was put there
-> > > in the first place: I don't see it in any other MMC clocks in sunxi-ng, so
-> > > it wasn't just copied&pasted.    
-> > Seeing that mmc2 acts better with the flag, perhaps it was copy + pasted
-> > from that config. Or perhaps the issues we're running into comes from
-> > elsewhere in the chain. At the moment, that's only speculation, though;
-> > I'm waiting on a device that has an SD card slot so I can perform more
-> > testing myself and debug these issues.
-> >   
-> > > So was there a problem that this flag was supposed to fix? Is that
-> > > something that only applied to older kernels (back when the MMC patches
-> > > were first posted), and which has now been fixed/changed elsewhere?    
-> > Yangtao Li/Frank Lee assumably no longer works at Allwinner, as the email
-> > he used to submit this originally no longer exists, but I believe the same
-> > Yangtao is now a maintainer of the Allwinner cpufreq subsystem, and is
-> > CC'd on these patches. I'm sending this reply to him as well; perhaps he
-> > may have some additional insight.
-> >   
-> > > I feel a bit uneasy of just removing this just because it works(TM),
-> > > especially if it doesn't really (SD card for me, for instance).    
-> > I agree; I was quickly preparing V2 to hopefully get this in before the
-> > 6.13 window for the sunxi tree closed, and added this in last minute after
-> > verifying it worked on my current device, which lacks an SD card slot.
-> > 
-> > This patch can be skipped for now, as it's apparent MMC0/1 require a little
-> > more love before we can merge it in. I'll submit new patches in the future
-> > once this is figured out.  
-> 
-> This patch would be a fix anyway (with a Fixes: tag), so we can push it
-> still into 6.13, after -rc1, and it would be backported. So it's not as
-> critical, timing-wise.
-> 
-> Cheers,
-> Andre
-> 
-> > 
-> > Thanks!
-> > - Cody
-> >   
-> > > Cheers,
-> > > Andre
-> > >     
-> > >> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
-> > >> ---
-> > >>  drivers/clk/sunxi-ng/ccu-sun50i-a100.c | 6 +++---
-> > >>  1 file changed, 3 insertions(+), 3 deletions(-)    
-> >   
-> 
-> 
+diff --git a/fs/nfsd/nfs3acl.c b/fs/nfsd/nfs3acl.c
+index 5e34e98db969..17579a032a5b 100644
+--- a/fs/nfsd/nfs3acl.c
++++ b/fs/nfsd/nfs3acl.c
+@@ -29,10 +29,12 @@ static __be32 nfsd3_proc_getacl(struct svc_rqst *rqstp)
+ {
+ 	struct nfsd3_getaclargs *argp = rqstp->rq_argp;
+ 	struct nfsd3_getaclres *resp = rqstp->rq_resp;
+-	struct posix_acl *acl;
++	struct posix_acl *acl = NULL, *dacl = NULL;
+ 	struct inode *inode;
+ 	svc_fh *fh;
+ 
++	resp->acl_access = NULL;
++	resp->acl_default = NULL;
+ 	fh = fh_copy(&resp->fh, &argp->fh);
+ 	resp->status = fh_verify(rqstp, &resp->fh, 0, NFSD_MAY_NOP);
+ 	if (resp->status != nfs_ok)
+@@ -56,19 +58,19 @@ static __be32 nfsd3_proc_getacl(struct svc_rqst *rqstp)
+ 			resp->status = nfserrno(PTR_ERR(acl));
+ 			goto fail;
+ 		}
+-		resp->acl_access = acl;
+ 	}
+ 	if (resp->mask & (NFS_DFACL|NFS_DFACLCNT)) {
+ 		/* Check how Solaris handles requests for the Default ACL
+ 		   of a non-directory! */
+-		acl = get_inode_acl(inode, ACL_TYPE_DEFAULT);
+-		if (IS_ERR(acl)) {
+-			resp->status = nfserrno(PTR_ERR(acl));
++		dacl = get_inode_acl(inode, ACL_TYPE_DEFAULT);
++		if (IS_ERR(dacl)) {
++			resp->status = nfserrno(PTR_ERR(dacl));
+ 			goto fail;
+ 		}
+-		resp->acl_default = acl;
+ 	}
+ 
++	resp->acl_access = acl;
++	resp->acl_default = dacl;
+ 	/* resp->acl_{access,default} are released in nfs3svc_release_getacl. */
+ out:
+ 	return rpc_success;
+-- 
+2.39.2
 
 
