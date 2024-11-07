@@ -1,106 +1,166 @@
-Return-Path: <linux-kernel+bounces-399547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A259C006F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:50:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798F29C0072
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FA44B217D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C47283B06
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B821D95BE;
-	Thu,  7 Nov 2024 08:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0611D8E0F;
+	Thu,  7 Nov 2024 08:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpxRIQoc"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="MndZh2uV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AZtEeqp5"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6411B1991CD;
-	Thu,  7 Nov 2024 08:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8137C38FB0;
+	Thu,  7 Nov 2024 08:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730969410; cv=none; b=GFnZwd69la29OamhyNQkJeD2yiFxbIuOFgzt8YRHv/F5gn0BrO4iH4g95tXp22AsUjZ68RPau+9f7D7DFUziBbh+V+0welotxOsGEUlF+L4LOO98gqDZG6D33evZgFelAsw73Vuoqf31AMiOgNWEZ9ALglmNX28qeVM93rM+b9U=
+	t=1730969513; cv=none; b=giDiXlO3ayyAstjhc4jLTBlwhg+tX9cLfwa1BzyMHkZS8YYHe1HH0uHeznvwwR4xlmKB1xssLRvqSdnpa2RWnr7YSQ4kXg18F2YjvtTed3jvOHsy7XnPggDk3o9nY/xr9JmJXj5yStJTbrsJGxIRJevOIv2HXsOCG/fnr2C7OJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730969410; c=relaxed/simple;
-	bh=H8MjRnjID1uTEDUAKHEgT4tFVgOx5diYG2ePznb9AV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XoftcMNowbRIivv1j3TKr7LA6W0m9yrDJzV9VDl/GKey/Jb8D6ycyzLTXg3gseMOwAD5M2AnWtYWyS0B4inSWAHmcU6YvQd4hNW1CSKmhE47ZRoWEzKGXfhgU27AtgYdk+2m4Zh4Al9oJmbn7xtOwfiC6y67oPQzcdV1AfIBDZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpxRIQoc; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2a96b242cso105369a91.3;
-        Thu, 07 Nov 2024 00:50:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730969409; x=1731574209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H8MjRnjID1uTEDUAKHEgT4tFVgOx5diYG2ePznb9AV4=;
-        b=cpxRIQoc9Cp0K+PNqhZQ3F68GIzVc0elHbE5ByovnwVL//wNxZeY61jB8XofIhYia3
-         cO3GdhiN7QkhFUNwcnl+6MN82wVR4LvMR/Yleek6wNJ24kdqLrDW2m0HMMSGYiyl0lY7
-         zlnIoIdXYez+YG7va/U9nnTGiyx9mBad9L3wi0elrD1v4lMXLgVERX5dvPQp20/Ejpat
-         xtExYnhqOGLPbY1nEV8V+CEk+mxjdoxpYqdoa8s+W4fU/yFtXXlEepvys6vIg1rK+QVl
-         7SZK/S+1BvqNdFOE2FXuNsoRML/Dg/YyIqN+85j2lGTC4ws+qa/iGbc2n/6NQc8f1uxI
-         ChZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730969409; x=1731574209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H8MjRnjID1uTEDUAKHEgT4tFVgOx5diYG2ePznb9AV4=;
-        b=cRn95lTGCUSgPiNMguTXeIWg7YqE6yHhUw0cqjBCwIc7z5S2gzw6+Is03XVxUih5rn
-         lj2W9Zp1AqPG02cKco4HyEwFrrENnbdhWnOuutVTryRZX8d6d2+lExBCTng+NV5BT99c
-         xbVLdNDMZioAyaF1GT9/eL4Eim7t8f3C+bcpuBNOGGDGvccVyGVTfDJTVQ0DWFBQaEZY
-         R1o1tDNEGyDxNGqFmcCEIcC36WzbPbuxNRSeT6IMDh/YsQBF0EVsHEu8h7xOYGQLs71p
-         jByyqztwJnUGsbr3WMU95sWal0nS5b5Ln4vd3TxiTcmFBANTNjPa0E23TZKPqbKOfVxa
-         esFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUccnCrndvPeOIahZCCCxEoiUX5Uy4XBgEio14yhE28nV7S51m779XXUMyDWKPadWZyARZhw1yPoSZFTmM=@vger.kernel.org, AJvYcCWF8bh0JkP2x3IA52QpYApBI2NED3Lc8HXXCiuSXuAbJpMc6Ed60tzW0z5hmJVTGjz370sqaDIH4bpnKasS0aM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm13dyX0IycXCTLSjMuG3R89IFNi9xRGQP65ik1c2uihy7Rsis
-	Y0pJtuelvnW4/skuKKsqCYsgRlUUcbNaizl74Ptn+odgC+dU7+gUO/NZB39Y1+eRvpH1wwBLUDL
-	PHDD4lZq0mgKLNE3+g7cl1aTllnE=
-X-Google-Smtp-Source: AGHT+IExNUP8piBVCyG0DG48joA3VriVvFmk5hGZt9eVqqXsAW1UKahoTZ4/Lr44ADXYzjoR4NSNTWrz2GnQdvMqqk4=
-X-Received: by 2002:a17:90b:4b85:b0:2e7:8a36:a9ad with SMTP id
- 98e67ed59e1d1-2e9ab0e6359mr185592a91.9.1730969408633; Thu, 07 Nov 2024
- 00:50:08 -0800 (PST)
+	s=arc-20240116; t=1730969513; c=relaxed/simple;
+	bh=+yCI5Y08iCTDBIHlMEsCVdskeck8YG+AF5B+AuVrptM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUllG/R6Ku6oeCY0QM6QNw7pCoJkXDXa5uR2YNkzc1tREbCpSIO9yXlYX/sK41WbmFIUBncoOH2WbDjTUM+dnxavxSTYBXdevWpXnS0c5XFQqSSGhvnd+hQGQN/WzY+sTG9K0A1CvzidSznypHqLdeUzpBkyt0mke98L+KQnMtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=MndZh2uV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AZtEeqp5; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 1AFEA11400CF;
+	Thu,  7 Nov 2024 03:51:49 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Thu, 07 Nov 2024 03:51:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1730969508; x=1731055908; bh=mLYrGgR7xi
+	150q2EmTJsQhEuZ8EEIYlqYshpmAVqwAA=; b=MndZh2uVrHvHfeaJ5TG5IL/gxz
+	YJN0BwRnjK9GWvfSKwzl3SucW5Bg1y58/rjXrg0wu4/Q6MhsJn2hvQIE+Nw0iFHd
+	IN1Gdr7U1MJ6l3aXYgzAFU8sziUAuct9olW6B2rD15gJNEd5cSQhN37JS1+CtSDD
+	bfjHcvQqCC6XsUexce/owwnb75kkcHkxnraJJEWsdaUPxRyraOQrDWcWN4GpeJlx
+	adL+2ME1OZLOnip770VBjYlOYhHXUw7IX8hce7vRiXDrO6FFMOFkUVjEe2oDJROF
+	Cgap/5N3rwYY6XZB0YrQpR2BQlB1V/Ei6OvNWaddfcUqar4hFGzoK9TIh28A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730969508; x=1731055908; bh=mLYrGgR7xi150q2EmTJsQhEuZ8EEIYlqYsh
+	pmAVqwAA=; b=AZtEeqp5+LeTdKCqHuRfHd8r+GNAtVtupKvrMZw+4HyhLXLYYkj
+	7RDJ6LJDn74vZCcv59CnM8woXwzIpRtJVwbGutDUn9bPCnZueLHCNqEtDVvgZFXi
+	aGOdFt8ABh5EEJb5wyLAkERwV8wp1Vuqyn+AHdyjPKjcIltw/izob2ngMbkJovAg
+	+tT/WEulzzBv8ysIfJHZ+dvA6tUxkv1zb8uPqYVYExwI7MtRhiYUi14bmxGkyQ4v
+	PSn74vI5mO8Lqmcx+O54QyqfxOzNAWSZhJIAHsq0SKqZDwDlRwQ0W2TMmcpThD1l
+	xGwX8TwS7WOGmGgcvlAAEqLczTxt2z05pFA==
+X-ME-Sender: <xms:o38sZ0lOQRl2ofk2myBjw8ppoWf03HTAMkpnMJh0ut9HGtkkPCeqeQ>
+    <xme:o38sZz0HZi6sh3K9wDoRWquxTBvX8Bh7jB69Bu9P6DcYcQx0lY-iPF3Fg_LKYJOmd
+    dMOPpQR7gLuJA>
+X-ME-Received: <xmr:o38sZyo7jvX2p-RBCfSqFZphhy9TP2591rph7qEWWZF9O8DmcSSggFyqKVA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdefgdduvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
+    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
+    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduiedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
+    hrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehm
+    rghrkhhgrhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehilhhpohdrjhgrrh
+    hvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhumhgrrdhh
+    vghguggvsegrmhgurdgtohhmpdhrtghpthhtoheplhhinhhugiesfigvihhsshhstghhuh
+    hhrdhnvght
+X-ME-Proxy: <xmx:o38sZwlZUpL4qbrMrjZprh8Ilz4XU7ZJYRGRpxdI9E3ezu_EKTJQsg>
+    <xmx:o38sZy3DnWeKTKmPQVValhjSlUJOJwi4yiLsKHgtAfHWmQX0_kWmwQ>
+    <xmx:o38sZ3sk6U9onJ_Cyf2F050PgoYVPmFddMh9Z_hDCRCN2rEQFMSA0A>
+    <xmx:o38sZ-WbDDvpcN4W2h7nxco1Urjv28hnh782NUFeBGRiYEnfo9_Xfw>
+    <xmx:pH8sZ7EAkOVurLCH7gTOErYUwS9H08xbNKQHIXj8b_IgklXALEEp8KiG>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 7 Nov 2024 03:51:46 -0500 (EST)
+Date: Thu, 7 Nov 2024 09:51:28 +0100
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Suma Hegde <suma.hegde@amd.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ drivers-x86 tree
+Message-ID: <2024110719-detective-directly-fbcf@gregkh>
+References: <20241107194007.1d247bde@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-simplify-arc-v1-1-a4ffc290f905@gmail.com>
- <ZylNvC8enwPG4IQ4@Boquns-Mac-mini.local> <CANiq72nQ6b1wO6i6zWW6ZWeQFN4SJVB28b216FDU70KmtCbaxA@mail.gmail.com>
- <CAJ-ks9=xW_WWZXB0CbDvU-3otkYs-TY+PSYeiPyidM58QujC3g@mail.gmail.com>
- <CAH5fLgjXXE32k2VuC9yGrNG7ib5vo7V+fsvRxWG0ijopK7MDCQ@mail.gmail.com>
- <CAJ-ks9=b=UEp9KCZ5_dE5yDKWZ1BEfnTkAtS4LiNQ4wzMgdT4A@mail.gmail.com>
- <CANiq72=MmpyquVfi=796v0BAmx6=yuy_gvzeRgUVPhpq8E4rrw@mail.gmail.com>
- <CAJ-ks9muM0RRtawt-C=vwT7b29rhsHbh1FjpX7LbJ=a05tLuPQ@mail.gmail.com>
- <CANiq72kBo4x7D92Xe7Wkvu=Jj+YmMH+-ARiovG+SHt9BYECbvg@mail.gmail.com> <CAJ-ks9kWuQEaj7DUqHm50jAS3ageYZktsiaJvJmava=76mJP5w@mail.gmail.com>
-In-Reply-To: <CAJ-ks9kWuQEaj7DUqHm50jAS3ageYZktsiaJvJmava=76mJP5w@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 7 Nov 2024 09:49:56 +0100
-Message-ID: <CANiq72mmoPtPz7KEAK49KvsD9tmVuVEVW5UWyxgdcXQY_4S_mg@mail.gmail.com>
-Subject: Re: [PATCH] rust: arc: remove unused PhantomData
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107194007.1d247bde@canb.auug.org.au>
 
-On Wed, Nov 6, 2024 at 8:09=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> Thanks, I forgot that "Fixes" changes are backported. This makes sense!
+On Thu, Nov 07, 2024 at 07:40:07PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in:
+> 
+>   drivers/platform/x86/amd/hsmp.c
+> 
+> between commit:
+> 
+>   9df193087b9e ("platform/x86/amd/hsmp: Create hsmp/ directory")
+> 
+> from the drivers-x86 tree and commit:
+> 
+>   b626816fdd7f ("sysfs: treewide: constify attribute callback of bin_is_visible()")
+> 
+> from the driver-core tree.
+> 
+> I fixed it up (I deleted the file and applied the following patch) and
+> can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 7 Nov 2024 19:36:12 +1100
+> Subject: [PATCH] fix up for "sysfs: treewide: constify attribute callback of
+>  bin_is_visible()"
+> 
+> interacting with "platform/x86/amd/hsmp: Create hsmp/ directory" from
+> the drivers-x86 tree.
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/platform/x86/amd/hsmp/plat.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/amd/hsmp/plat.c b/drivers/platform/x86/amd/hsmp/plat.c
+> index f8e74c0392ba..748bbc356484 100644
+> --- a/drivers/platform/x86/amd/hsmp/plat.c
+> +++ b/drivers/platform/x86/amd/hsmp/plat.c
+> @@ -75,7 +75,7 @@ static ssize_t hsmp_metric_tbl_plat_read(struct file *filp, struct kobject *kobj
+>  }
+>  
+>  static umode_t hsmp_is_sock_attr_visible(struct kobject *kobj,
+> -					 struct bin_attribute *battr, int id)
+> +					 const struct bin_attribute *battr, int id)
+>  {
+>  	u16 sock_ind;
+>  
 
-Sometimes they are, yeah, but things that should go into stable should
-be marked explicitly nevertheless.
+Change looks good, thanks!
 
-Cheers,
-Miguel
+greg k-h
 
