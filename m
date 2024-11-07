@@ -1,137 +1,200 @@
-Return-Path: <linux-kernel+bounces-400049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC91B9C0840
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:57:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EA49C07FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B30892859ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457B51C22BB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D421263E;
-	Thu,  7 Nov 2024 13:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EBD212D03;
+	Thu,  7 Nov 2024 13:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="f/h0W3EH"
-Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIdpGPRT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4578620F5AA;
-	Thu,  7 Nov 2024 13:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423D520FAB1;
+	Thu,  7 Nov 2024 13:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987845; cv=none; b=rq1agPNwpRFp8tLfOxUDCLI6076P/C2JuXFBUbLYG4yZ3S+e6iDX1pvvaie9ez3r7eIT7n3od8fvYiXBa/gx76cTvIWNi3AdeY2jwm4ehSq1uZvjJsuzIAeLJy1W1ju+cQZPZpE/WdRwJxwZUcAFLr+RJxYEdk9Qhcxu0O3/Ss8=
+	t=1730987273; cv=none; b=uxwJA2k+6r8wWTmIjA29apkhqgW2gabY89uaN3Eb61w2oaJcZ2GLe/UmD8H9o6TBi3pZSC8iNcZ8Ux6YqiJZXGFP6NwSj/ItSq70uvnwV+u3zHe+n2bWfLpdHMkOXugL2U6tBPo8/tjwZ6pHsZMyLI7VdBQgXOBTtuUqcQAI7EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987845; c=relaxed/simple;
-	bh=2fXu02djOUbW12f9rN17PdMppmReu0y1sKJC/M4mSbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wp+N+98stHsnGaG4sOwNe/hVOWZUKOxZFY1KrXbcUl7Op954ILiVS1v/51PERi7ktO3kiqSRRgOtwtf+46s6ZzHxmOD+J2SId9XYTuFnr4N/Rr+mSqVy8OcH89WoGjMKeSpW5OcWwFG6NuXVqrPwF19xbILJPywlTXG5Ds1VJgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=f/h0W3EH; arc=none smtp.client-ip=195.19.76.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id 434F81E745C14;
-	Thu,  7 Nov 2024 16:47:17 +0300 (MSK)
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id Sv7eHPjlQN2k; Thu,  7 Nov 2024 16:47:17 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id 116111E745C18;
-	Thu,  7 Nov 2024 16:47:17 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru 116111E745C18
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
-	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1730987237;
-	bh=yeTJJf0j6OBQT2TE53J81tDrRIh7LJlEe8Kf/bwPuZI=;
-	h=Message-ID:Date:MIME-Version:To:From;
-	b=f/h0W3EHkyzCEERzZftR+hy1q43FV1KmbtX2gggJbVv2ZeZ6wJGhCESrvazrLnf+X
-	 qCG3ZaYq/uGxy4AOLLKOktqR09pE3xRAg21TOJOIaym9S9D67ADvbapNKYXp8bQh3x
-	 k7bcIZLfhbGQTBPzvyNxEystZFxnqvXw4ZOGXChDB/xSrNPXaDjA91kqRPGAxFPzZf
-	 86ETu0yBw9LZ2zVffpwsUBnaXZ2PDAGv24k+MAp2z2ULjFmJ36b9gPlLIH4H/E4W4v
-	 Uv+HbvZOI3hTCy8VsfKgUvrTi8i2fZT+y9sbSgJaux9Zw5RT26Wf/JfMJcb41/+c7l
-	 GBf4rRWJRGJvA==
-X-Virus-Scanned: amavisd-new at rosalinux.ru
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NVhiVd6hBdlb; Thu,  7 Nov 2024 16:47:16 +0300 (MSK)
-Received: from [10.254.65.205] (unknown [92.242.54.217])
-	by mail.rosalinux.ru (Postfix) with ESMTPSA id 267F01E745C14;
-	Thu,  7 Nov 2024 16:47:16 +0300 (MSK)
-Message-ID: <57d4fa02-0b03-0a46-dc97-320fa5e5b540@rosalinux.ru>
-Date: Thu, 7 Nov 2024 16:47:15 +0300
+	s=arc-20240116; t=1730987273; c=relaxed/simple;
+	bh=R5/Rh95XUs1vezOrkVQPHF6VtUG3vorTYjXYS0Tb0eM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=QbI1qQDNUK7FGhSjQct2j6BUYtdM8T4G++/BPPrjOm8k5YyP0FXDHh4e/eoxaOprepNMwxycxw/1rUGZCbE8JJyiyFmbES73h4dMgDNA8EiqJS8VmhVcGedt4GrQwQsc0SGo3O9JpU8IxUdC/hjBuLix1Yt3zJswQktLdGXliXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIdpGPRT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A86EC4CECC;
+	Thu,  7 Nov 2024 13:47:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730987272;
+	bh=R5/Rh95XUs1vezOrkVQPHF6VtUG3vorTYjXYS0Tb0eM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=lIdpGPRTHsIejI8tgvoVEouYXethfkHjZFfSttCWTo0dogXlNqKzV/I1giZwgAX66
+	 eTLD1UDJCBSxdEIZ1t2Ci7gB+lrXw7kIAJym+08cwoidF1yZMjwmbefgBvHvBQu1oC
+	 l536MeNAdKeKUfAR7iYDRjPcBmaQu0h8zFhYPY1UMDKJqTwWwcpnHai8gRabCru98O
+	 87X8f7FLlmPMvySKTsGZl9yRLPzRnnjTRz6nwggQXHH1XGWa7o1gBgGLf1buLzh9U3
+	 JtPRMx+IPPNCU1EBw3DP6m2a5hF9H5ovSIYyy9sVs7CnZM/eQ5OCuveF3FSUGWcdf2
+	 npSHA+l71SIQw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH] wifi: rtw88: Add additional USB IDs for RTL8812BU
-Content-Language: en-US
-To: Zenm Chen <zenmchen@gmail.com>, linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, pkshih@realtek.com, kvalo@kernel.org,
- rtl8821cerfe2@gmail.com, usbwifi2024@gmail.com
-References: <20241107002846.13748-1-zenmchen@gmail.com>
-From: Mikhail Novosyolov <m.novosyolov@rosalinux.ru>
-In-Reply-To: <20241107002846.13748-1-zenmchen@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Nov 2024 15:47:48 +0200
+Message-Id: <D5FZRXBCH2B4.1GQIIVQHVB2XI@kernel.org>
+Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>
+Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241107095138.78209-1-jarkko@kernel.org>
+ <e015a939893d35efe75e598152725adcc2befdd8.camel@linux.ibm.com>
+In-Reply-To: <e015a939893d35efe75e598152725adcc2befdd8.camel@linux.ibm.com>
 
-07.11.2024 03:28, Zenm Chen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> From: Nick Morrow <usbwifi2024@gmail.com>
+On Thu Nov 7, 2024 at 3:44 PM EET, Mimi Zohar wrote:
+> > +	tpm.disable_pcr_integrity_protection=3D [HW,TPM]
+> > +			Do not protect PCR registers from unintended physical
+> > +			access, or interposers in the bus by the means of
+> > +			having an encrypted and integrity protected session
 >
-> Add three additional USB IDs found in
-> https://github.com/morrownr/88x2bu-20210702
-> to support more RTL8812BU devices.
+> "encrypted" isn't needed here.
+
+fixing
+
 >
-> Signed-off-by: Nick Morrow <usbwifi2024@gmail.com>
-> Signed-off-by: Zenm Chen <zenmchen@gmail.com>
-
-Signed-off-by: Mikhail Novosyolov <m.novosyolov@rosalinux.ru>
-
-> ---
->  drivers/net/wireless/realtek/rtw88/rtw8822bu.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> > +			wrapped around TPM2_PCR_Extend command. Consider this
+> > +			in a situation where TPM is heavily utilized by
+> > +			IMA, thus protection causing a major performance hit,
+> > +			and the space where machines are deployed is by other
+> > +			means guarded.
+> > +
+> >  	tpm_suspend_pcr=3D[HW,TPM]
+> >  			Format: integer pcr id
+> >  			Specify that at suspend time, the tpm driver
+> > diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+> > index cad0048bcc3c..e49a19fea3bd 100644
+> > --- a/drivers/char/tpm/tpm-buf.c
+> > +++ b/drivers/char/tpm/tpm-buf.c
+> > @@ -146,6 +146,26 @@ void tpm_buf_append_u32(struct tpm_buf *buf, const=
+ u32 value)
+> >  }
+> >  EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
+> > =20
+> > +/**
+> > + * tpm_buf_append_handle() - Add a handle
+> > + * @chip:	&tpm_chip instance
+> > + * @buf:	&tpm_buf instance
+> > + * @handle:	a TPM object handle
+> > + *
+> > + * Add a handle to the buffer, and increase the count tracking the num=
+ber of
+> > + * handles in the command buffer. Works only for command buffers.
+> > + */
+> > +void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf,=
+ u32 handle)
+> > +{
+> > +	if (buf->flags & TPM_BUF_TPM2B) {
+> > +		dev_err(&chip->dev, "Invalid buffer type (TPM2B)\n");
+> > +		return;
+> > +	}
+> > +
+> > +	tpm_buf_append_u32(buf, handle);
+> > +	buf->handles++;
+> > +}
+> > +
+> >  /**
+> >   * tpm_buf_read() - Read from a TPM buffer
+> >   * @buf:	&tpm_buf instance
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > index 1e856259219e..cc443bcf15e8 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -14,6 +14,10 @@
+> >  #include "tpm.h"
+> >  #include <crypto/hash_info.h>
+> > =20
+> > +static bool disable_pcr_integrity_protection;
+> > +module_param(disable_pcr_integrity_protection, bool, 0444);
+> > +MODULE_PARM_DESC(disable_pcr_integrity_protection, "Disable TPM2_PCR_E=
+xtend encryption");
 >
-> diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c b/drivers/n=
-et/wireless/realtek/rtw88/rtw8822bu.c
-> index ab620a0b1dfc..8883300fc6ad 100644
-> --- a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
-> +++ b/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
-> @@ -67,6 +67,12 @@ static const struct usb_device_id rtw_8822bu_id_tabl=
-e[] =3D {
->  	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* LiteOn *=
-/
->  	{ USB_DEVICE_AND_INTERFACE_INFO(0x20f4, 0x808a, 0xff, 0xff, 0xff),
->  	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* TRENDnet=
- TEW-808UBM */
-> +	{ USB_DEVICE_AND_INTERFACE_INFO(0x20f4, 0x805a, 0xff, 0xff, 0xff),
-> +	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* TRENDnet=
- TEW-805UBH */
-> +	{ USB_DEVICE_AND_INTERFACE_INFO(0x056e, 0x4011, 0xff, 0xff, 0xff),
-> +	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* ELECOM W=
-DB-867DU3S */
+> I like the name 'disable_pcr_integrity_protection.  However, the name and
+> description doesn't match.  Replace 'encryption' with 'integrity protecti=
+on'.
 
-> +	{ USB_DEVICE_AND_INTERFACE_INFO(0x2c4e, 0x0107, 0xff, 0xff, 0xff),
-> +	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* Mercusys=
- MA30H */
+Weird, I changed that. I don't know  how it ended up being like that.
 
-I have verified that the vendor website
+>
+> > +
+> >  static struct tpm2_hash tpm2_hash_map[] =3D {
+> >  	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+> >  	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+> > @@ -232,18 +236,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pc=
+r_idx,
+> >  	int rc;
+> >  	int i;
+> > =20
+> > -	rc =3D tpm2_start_auth_session(chip);
+> > -	if (rc)
+> > -		return rc;
+> > +	if (!disable_pcr_integrity_protection) {
+> > +		rc =3D tpm2_start_auth_session(chip);
+> > +		if (rc)
+> > +			return rc;
+> > +	}
+> > =20
+> >  	rc =3D tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+> >  	if (rc) {
+> > -		tpm2_end_auth_session(chip);
+> > +		if (!disable_pcr_integrity_protection)
+> > +			tpm2_end_auth_session(chip);
+> >  		return rc;
+> >  	}
+> > =20
+> > -	tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
+> > -	tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> > +	if (!disable_pcr_integrity_protection) {
+> > +		tpm_buf_append_name(chip, &buf, pcr_idx);
+>
+> tpm_buf_append_name() parameters didn't change.  Don't remove the 'name' =
+field
+> here.
 
-https://www.mercusys.com/en/download/ma30h#Software
+Hmm... weird I'll check this. Maybe I had something left to staging...
 
-suggests to download Realtek's 88x2bu driver for hardware v2.
+>
+>
+> > +		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> > +	} else {
+> > +		tpm_buf_append_handle(chip, &buf, pcr_idx);
+>
 
-This device also exists in the wild: https://linux-hardware.org/?id=3Dusb=
-:2c4e-0107
+> Or here.
 
-All hardware probes by that link show that this device did not work -- wa=
-s not supported by any in-kernel driver.
+Here I think it is appropriate
 
-LGTM.
+>
+> > +		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
+> > +	}
+> > =20
+> >  	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
+> > =20
+> >=20
+>
+> Mimi
 
->  	{},
->  };
->  MODULE_DEVICE_TABLE(usb, rtw_8822bu_id_table);
+
+BR, Jarkko
 
