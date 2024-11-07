@@ -1,107 +1,148 @@
-Return-Path: <linux-kernel+bounces-399307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72FF9BFD32
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:10:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA559BFD44
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9A631C213A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 488931F22C5F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDC1130A7D;
-	Thu,  7 Nov 2024 04:10:26 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3217719068E;
+	Thu,  7 Nov 2024 04:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vu5bxE0A"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0819B383
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C4923BB
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730952626; cv=none; b=BYWis9ar9HzejT0frsepWNHmSwQKPhHH3532ofyk/HjbKLBt/KCWrdxG7yBF116iBB56Z/heLHNgnuoGL8r5ENXP6DwljvRRtKHS+uLbw5j8yIITQUYl+n5TDsteprog+gyLvqKJhMQhu/wPKOTzCdibplsk8+/CdIhvtBc0fEA=
+	t=1730952923; cv=none; b=T1V0orSqWNxDps9T4SEUIJrsn0ek2/39gyEx1at63vGLD0eMTApKqHkGUuMvltrOKaAJX37uFyjo1ZPZAaRf77/0AjA8inRWQDCF3A9icCturqsJ0hPzOlFXpO6yLlEq0xgEQdgl6wsX7iYycnezWp1Y/dvLMqIUXHA+u/3BRqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730952626; c=relaxed/simple;
-	bh=Fkw0tJMdFi4Zy3vs0NNagndQtHC4ZbZf6DE8NMm5rOE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HX4P7pA3KPAtbH7+Gxfh+kG63OZSM77v7Ysb3h67JNbkbPnbG87FK1LBWphdXH+/QcYifXXPxLLo09NO8kIImFi0BLF8cYMxoJZnHBW2gsMm7/w6abyoZOmOJTjidxOKk7sxF5nf465myjRY7U7wgJX3kUPIDlG6kTeq8jDEkvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so6806375ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 20:10:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730952624; x=1731557424;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+6/LrJjlVkbq0wGRG4AxgEB3nqGzOCqxVbrtipiOyL4=;
-        b=TKAau7nVtQT1WmX0gGhuDNZx6yzOoJCcjBhZkqGlNQ0nLY463tY51eoZNdBxeXheQW
-         v8eQtWG/xRwcm5OwbMLiZ77UT5+Uw95QK8cnMANqHEgKeEpR2cIp7j1EB4bk3Wl/A492
-         2WI1EilqCTcdG6zGvoMGZhnn2IJS/3vinSAz39tBKtd0GjlMpEulWLMD4XdvTF5qntoD
-         a8nFI/V2SNW3eFTn4xSOCbldhuxWFaucw6k9Jv7jjqeK0cw6T97VizCbtLxSqbje9yO0
-         b9SsAiCtQq2CmddhPm5Hsz8o+VuSAYH/JKL/8AEZZE97CRS2vwMJZohLgTmodINPefVi
-         BhCg==
-X-Gm-Message-State: AOJu0Yxw6bledX7C0ykAOqr9WeC0EUINORIFByk2zzL4xDKZ4pddjj8s
-	CglUSFSqyV04fPQ4r6qAb+bGVtFfD1AGOKSa9wQlCWSvKOCMo3MFzd1PoXeIjMjYnevSRXkbhkO
-	YSvihFBi3njp4HKUq6iz3izmqzB7w/9aE0DgbOwEBHFmHiU46wBlBSC8=
-X-Google-Smtp-Source: AGHT+IGTyRqRBV0mbMOFB4QfBbv6/SEJMbS7ba7OnljUFP8oRq8Tlpz0wUNnU8Yh8YtBFfQXwlgGXqewSsVo/XxOecAGJh/oZVpY
+	s=arc-20240116; t=1730952923; c=relaxed/simple;
+	bh=SiPaqL+BmeOd+7FyFcnJgWc3ggue09Sw8p1+SLXG/JU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=WwhxZXdQyKcNrXrq8gSofRFbNlhmmRE80mkZMV7EnnSPWAG6cHULxKcjNWslYlKUCf5ODr1j5stUqX5cdpoeEUgXyrdE+MY0gjIoMB6kuYk7utJgiX0j+rdH2LUlIDmX41MCQUyjt5lKykMCmU8yuxbi03V2VTHm3T8FhH7r60o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Vu5bxE0A; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241107041512epoutp037d6838c263463791b8c56b93b29ab398~FlIDL5JlT2221622216epoutp03U
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:15:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241107041512epoutp037d6838c263463791b8c56b93b29ab398~FlIDL5JlT2221622216epoutp03U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1730952912;
+	bh=ZnbRqmEV1gtYIYxvir7XRo+fymtToxWX3JyVjsq//eI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Vu5bxE0AEjgpEKwNnuDMj3E//kCi3uHqJjg34bEAPOFVdK7sTvYdFE5pzZRZuPN1J
+	 oB/VVh8lG1RB5uL4sm4CcP7Z74e4REnNnddRQTWiOzlWgpIn/m4L18rnH/ItZzvPdI
+	 3EZ2UMXxcnuwlLI5DKJChj7dAi+dEAMVjzPhPprg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20241107041512epcas2p160a7a279f07e2c115de95bee2ca07d45~FlICszDrX1077410774epcas2p1B;
+	Thu,  7 Nov 2024 04:15:12 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.101]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XkTHz1JJBz4x9Q2; Thu,  7 Nov
+	2024 04:15:11 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A9.D9.09776.FCE3C276; Thu,  7 Nov 2024 13:15:11 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241107041510epcas2p28a5506042eeca912da5b665a04c3a6f0~FlIBefeMC0980409804epcas2p2c;
+	Thu,  7 Nov 2024 04:15:10 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241107041510epsmtrp255e89777f10f1d6af0ed3ff3cee9118a~FlIBdr45r2957029570epsmtrp2N;
+	Thu,  7 Nov 2024 04:15:10 +0000 (GMT)
+X-AuditID: b6c32a47-d53fa70000002630-24-672c3ecf44f2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A3.DF.35203.ECE3C276; Thu,  7 Nov 2024 13:15:10 +0900 (KST)
+Received: from asswp146.dsn.sec.samsung.com (unknown [10.229.19.146]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241107041510epsmtip246f6e995016448fdb6742e05465d4422~FlIBMeNXk1198011980epsmtip2y;
+	Thu,  7 Nov 2024 04:15:10 +0000 (GMT)
+From: Sowon Na <sowon.na@samsung.com>
+To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
+	alim.akhtar@samsung.com, kishon@kernel.org
+Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	sowon.na@samsung.com
+Subject: [PATCH 0/3] Support exynosautov920 ufs phy driver
+Date: Thu,  7 Nov 2024 13:15:01 +0900
+Message-ID: <20241107041509.824457-1-sowon.na@samsung.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1567:b0:3a6:b445:dc9e with SMTP id
- e9e14a558f8ab-3a6b445de24mr230301165ab.4.1730952624099; Wed, 06 Nov 2024
- 20:10:24 -0800 (PST)
-Date: Wed, 06 Nov 2024 20:10:24 -0800
-In-Reply-To: <672b7858.050a0220.350062.0256.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672c3db0.050a0220.350062.0286.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
-From: syzbot <syzbot+1fc6f64c40a9d143cfb6@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdljTXPe8nU66wdvT7BYP5m1js1iz9xyT
+	xfwj51gtjrb+Z7Z4Oesem8X58xvYLS7vmsNmMeP8PiaL/3t2sFv8/nmIyWLnnRPMDtwem1Z1
+	snn0bVnF6PF5k1wAc1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqt
+	kotPgK5bZg7QQUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLSvHS9
+	vNQSK0MDAyNToMKE7Ix1HXuYCvrZKpa9m8TewPiCpYuRk0NCwESieelDxi5GLg4hgR2MEicP
+	vWKDcD4xShz6dZEFwvnGKPFo4yX2LkYOsJZnndoQ8b2MEhPuH4Zq/8UoMXHvHCaQIjYBVYlr
+	DVUgpohApcTcZc4gJcwCvYwS/XfWgq0WFrCSuDb5GzOIzQJUvvL9P3YQmxcovufSGWaI8+Ql
+	Lq55zgYRF5Q4OfMJWC8zULx562yomnvsEuc+ukDYLhI3bl2Eek1Y4tXxLewQtpTE53d72SDs
+	fIn1D+9C2RUSdw/9h6q3l1h05ifYj8wCmhLrd+lDvKssceQW1FY+iY7Df6GhwCvR0SYE0agk
+	0XEe5G8QW0Ji1YvJUMM9JGZt+Q52pJBArET//bVMExjlZyH5ZRaSX2Yh7F3AyLyKUSy1oDg3
+	PbXYqMAYHqPJ+bmbGMEJUst9B+OMtx/0DjEycTAeYpTgYFYS4fWP0k4X4k1JrKxKLcqPLyrN
+	SS0+xGgKDN2JzFKiyfnAFJ1XEm9oYmlgYmZmaG5kamCuJM57r3VuipBAemJJanZqakFqEUwf
+	EwenVAOT672E2zHSm5/MW/1u5ux/E7tlNu9/MVtf6mfPU2P1I3u/bo57wctva8nxUHz9v+pd
+	s98taP+8IVzi9225tKodvKrVT6N9mP4IyCqo6K49GJWXGKDOu+/hxW1Mpwqmrtx36eMSh2sL
+	tjW6WHncstMP26nYN7P/gIK8+cLjx8Pry9K9/Sq2Cby4FcK6idVj4fwpUYWnAnUuTpEyikh8
+	Uvi/7SHblc6761ZOZi5686Y+5O+7OsEjK5IUAoUzO9fE6TB/ab1RdiOZY9KX5Qc5Is9f+KbF
+	4/L396vpL46Zc7vdVa4LzFr1QVPvYO5Ru+vdxRGHuw4vEj3292dg5N/L4elzdLWzlNOu8m0v
+	r1S7fGUHjxJLcUaioRZzUXEiACb0YxgZBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsWy7bCSvO45O510g+lztS0ezNvGZrFm7zkm
+	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLf4/fMQk8XOOyeYHbg9Nq3q
+	ZPPo27KK0ePzJrkA5igum5TUnMyy1CJ9uwSujHUde5gK+tkqlr2bxN7A+IKli5GDQ0LAROJZ
+	p3YXIxeHkMBuRolPh/cxdTFyAsUlJL692QNlC0vcbznCClH0g1Fid1c3K0gzm4CqxLWGKpC4
+	iEAjo8TzD5OZQRxmgYmMEufnHWEH6RYWsJK4NvkbM4jNAtSw8v0/sDgvUHzPpTPMEBvkJS6u
+	ec4GEReUODnzCQuIzQwUb946m3kCI98sJKlZSFILGJlWMUqmFhTnpucWGxYY5qWW6xUn5haX
+	5qXrJefnbmIEh66W5g7G7as+6B1iZOJgPMQowcGsJMLrH6WdLsSbklhZlVqUH19UmpNafIhR
+	moNFSZxX/EVvipBAemJJanZqakFqEUyWiYNTqoFpSsbKLWmPDNj2+t5wV924Lo+ZQ1Y6gOOF
+	xoqacI5ulbVep34KFh3qt5OUcy1Wddec2Peqx1aXZ+YZ+xtOhzR+/ePc9odhpnxte1/v/JsR
+	Wj7cJiIeCSsnebvxO8+WXabTMDfP049D+rd7x/viCc5C253lHf6L8j23+3vEO+Dbb0W5POPE
+	GTN7Z5cePxZwZd1sOf7crvN8MuvZL7tfaXzo3PH3lFKl9avfP44UKv592f3e2u/sZo0jRQlc
+	1nW8VUrFLHyOq/lYrWatqPY9sOC3WOmM/B9Bhoc/X479Pd1y6rN7DzOeNs/8nT5r1/JTFQHL
+	tLv+F53eUFIdfeq7WM17p7zr5/V44kqX8f7+FazEUpyRaKjFXFScCADUHDMqzAIAAA==
+X-CMS-MailID: 20241107041510epcas2p28a5506042eeca912da5b665a04c3a6f0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241107041510epcas2p28a5506042eeca912da5b665a04c3a6f0
+References: <CGME20241107041510epcas2p28a5506042eeca912da5b665a04c3a6f0@epcas2p2.samsung.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+This patchset introduces ExynosAuto v920 SoC ufs phy driver as
+Generic PHY driver framework.
 
-***
+Sowon Na (3):
+  dt-bindings: phy: Add ExynosAutov920 UFS PHY bindings
+  phy: samsung-ufs: support exynosauto ufs phy driver
+  arm64: dts: exynosautov920: add ufs phy for exynosautov920 SoC
 
-Subject: Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
-Author: lizhi.xu@windriver.com
+ .../bindings/phy/samsung,ufs-phy.yaml         |   1 +
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  11 ++
+ drivers/phy/samsung/Makefile                  |   1 +
+ drivers/phy/samsung/phy-exynosautov920-ufs.c  | 159 ++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.c         |   9 +-
+ drivers/phy/samsung/phy-samsung-ufs.h         |   4 +
+ 6 files changed, 182 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/phy/samsung/phy-exynosautov920-ufs.c
 
-add resched to avoid retry too frequently when rreq need to retry
+-- 
+2.45.2
 
-#syz test
-
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index b18c65ba5580..eb4fc1f62000 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -366,6 +366,7 @@ static void netfs_rreq_assess(struct netfs_io_request *rreq)
- 	//netfs_rreq_is_still_valid(rreq);
- 
- 	if (test_and_clear_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags)) {
-+		cond_resched();
- 		netfs_retry_reads(rreq);
- 		return;
- 	}
-@@ -512,9 +513,15 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq,
- 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 				__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
- 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-+				printk("async: %d, r: %p, %s\n", was_async, rreq, __func__);
-+				if (!was_async)
-+					cond_resched();
- 			} else if (!__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags)) {
- 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-+				printk("async: %d, r: %p, %s\n", was_async, rreq, __func__);
-+				if (!was_async)
-+					cond_resched();
- 			} else {
- 				__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
- 				error = -ENODATA;
 
