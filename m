@@ -1,154 +1,146 @@
-Return-Path: <linux-kernel+bounces-399861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4119C0566
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:12:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0635F9C056D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 929C91F2317F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3828E1C22784
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17D120F5A3;
-	Thu,  7 Nov 2024 12:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CF220F5D5;
+	Thu,  7 Nov 2024 12:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="mI0Z6m0z"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dJc8nwBW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A06F1EF0A2;
-	Thu,  7 Nov 2024 12:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F2B1EF0A2;
+	Thu,  7 Nov 2024 12:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730981551; cv=none; b=Kdh477neEF6p1xHbk3fHQY04g4AlsrAuYbtw6NNScVE6ZA6pyFHwqd5vNB9iLgDScBXDG4vlmEll2wnN5uZRb7mMqCHb6g1fUMQ3bq2OIm3sE9rw1/Tmp3W94w6dD19LzSvHBqst7keACXqhX90ywq/TE8heX109p3blUTS3bZQ=
+	t=1730981600; cv=none; b=eNvFnjUvTvso+BEWc5TMh2MbHBR5Iga0/Fxujf+fzkOvNBTEU40ouq4VTOKqThP+8v+fkUUJXUx3soXCu5f+fFuL+YvSvVIa070DJUsp41PPhfngqkNVTigpO7guN9kyNt/zZclEYHR9NTHemBE55xp7GjhrYPhoA+vR3hz3a5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730981551; c=relaxed/simple;
-	bh=vsLqRoEdFR9hHkmrpeJUIdZP5sUVqqDm0Uaa6MQ2lac=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s/POVwV30FSR5L2oWf/SWyM1Mz4k0rpeR1ak4VW9672cdiXTIHp+O2As6vNN8PSdlBPz3SYeF7hFY1wq8D9bz14cfOSDIq+GzhWDWYSAJUOLnDaV/Og98A4wWye4QxlELK99/szZ5yJyTV/9hPsRfETJNtZSx72WBV0HI2VMmKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=mI0Z6m0z; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 890d64029d0111efb88477ffae1fc7a5-20241107
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=f25RUPk9TIy6xzkE9UQQNfXoMOgGWKchZrGCuX5T+4g=;
-	b=mI0Z6m0zJSqAV0PBE8srzcTyXLw/k+mRI3/l26o7DJdV9h8hsj4u7nIfcctN3rhFRm9+rI9IpvtVlSwm8liIp05Ea4LNhrlfG4M4pPOoMcueu3mSvTlAQw1783bIGbr7AP94CmFLPiP8U18RGdfNubPWc2rSgReUOIOmTzS6L0Y=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:72483cb2-054d-400b-87af-984c9e1eccbd,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:8814b606-6ce0-4172-9755-bd2287e50583,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,UR
-	L:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 890d64029d0111efb88477ffae1fc7a5-20241107
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
-	(envelope-from <andy-ld.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1520273235; Thu, 07 Nov 2024 20:12:19 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 7 Nov 2024 20:12:17 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 7 Nov 2024 20:12:17 +0800
-From: Andy-ld Lu <andy-ld.lu@mediatek.com>
-To: <angelogioacchino.delregno@collabora.com>, <ulf.hansson@linaro.org>,
-	<matthias.bgg@gmail.com>, <wenbin.mei@mediatek.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Andy-ld Lu <andy-ld.lu@mediatek.com>
-Subject: [PATCH v2] mmc: mtk-sd: Fix error handle of probe function
-Date: Thu, 7 Nov 2024 20:11:21 +0800
-Message-ID: <20241107121215.5201-1-andy-ld.lu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1730981600; c=relaxed/simple;
+	bh=5HkENyU/mXnI0vymwFwn4toNd8urotXCsTDg5G3NN4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FjOfgndzHy/fhqgXlsfKS3Lf5ReYWLE8ndZlyXTrZvq9Z7ixNCBwsC+WHi7VFvXTNnnf46ffi/Ww6jE85mYzxk5EfgfK3Do9KCzlqyM/w5389jlagO+BkkGDEiSLgh/M1vGdUxDA7plv027H19lOyFZXde9oYqYG/ti4pLR4lIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dJc8nwBW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A77lu5d024485;
+	Thu, 7 Nov 2024 12:13:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZGrvKO6WetQbAviRFql6yE789UtuDEEjlFlK9GG7xJc=; b=dJc8nwBW+Xqp9ui5
+	7tZI2M/jti/iRHERq1kOUhlHsI2+e8382wIZzZ7Kl44UG8ogxE2jHnQiiCKuE1RQ
+	16js4JZH71QeC4g+KYfQDl9E7rRywYZ+OL3CsgeTbFrM/+J+bUlwpjZlLa1TaJ7i
+	yGIu5oNBH0epCZnjJg8tcFJHjjzVmfGwP9fSJRZifkcxW3TSprUg9jumbv96YUtN
+	L7bFl9V92/YKUEz5lhAMYgr5TqecKPAIoLgu3iZsL+AxUWWjEJFp90lx/RWBXPvV
+	VIBXRNAZwaGPErjuA599kn6Cdk2u1C0qQN+oLvEJ7KS1M4V221i2jOXnOmQLjEcT
+	Ta9MnQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r2ugvbtt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 12:13:02 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7CD16s018925
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 12:13:01 GMT
+Received: from [10.253.8.252] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
+ 04:12:56 -0800
+Message-ID: <9b2c6c35-cb72-4680-a59e-8515a3995b53@quicinc.com>
+Date: Thu, 7 Nov 2024 20:12:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/5] net: pcs: Add PCS driver for Qualcomm
+ IPQ9574 SoC
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Heiner Kallweit
+	<hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_luoj@quicinc.com>, <srinivas.kandagatla@linaro.org>,
+        <bartosz.golaszewski@linaro.org>, <vsmuthu@qti.qualcomm.com>,
+        <john@phrozen.org>
+References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
+ <20241101-ipq_pcs_rc1-v1-2-fdef575620cf@quicinc.com>
+ <8f55f21e-134e-4aa8-b1d5-fd502f05a022@lunn.ch>
+ <ec76fc73-79e5-4d09-ac4a-65efa60874fe@quicinc.com>
+ <3677dee8-f04f-45f0-8bfd-dd197ec71616@lunn.ch>
+Content-Language: en-US
+From: Lei Wei <quic_leiwei@quicinc.com>
+In-Reply-To: <3677dee8-f04f-45f0-8bfd-dd197ec71616@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BKT4tY0CMCeKZLvKV3u4ijDo1OTf-Omg
+X-Proofpoint-GUID: BKT4tY0CMCeKZLvKV3u4ijDo1OTf-Omg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0
+ clxscore=1015 impostorscore=0 malwarescore=0 bulkscore=0 mlxlogscore=556
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070094
 
-In the probe function, it goes to 'release_mem' label and returns after
-some procedure failure. But if the clocks (partial or all) have been
-enabled previously, they would not be disabled in msdc_runtime_suspend,
-since runtime PM is not yet enabled for this case.
 
-That cause mmc related clocks always on during system suspend and block
-suspend flow. Below log is from a SDCard issue of MT8196 chromebook, it
-returns -ETIMEOUT while polling clock stable in the msdc_ungate_clock()
-and probe failed, but the enabled clocks could not be disabled anyway.
 
-[  129.059253] clk_chk_dev_pm_suspend()
-[  129.350119] suspend warning: msdcpll is on
-[  129.354494] [ck_msdc30_1_sel : enabled, 1, 1, 191999939,   ck_msdcpll_d2]
-[  129.362787] [ck_msdcpll_d2   : enabled, 1, 1, 191999939,         msdcpll]
-[  129.371041] [ck_msdc30_1_ck  : enabled, 1, 1, 191999939, ck_msdc30_1_sel]
-[  129.379295] [msdcpll         : enabled, 1, 1, 383999878,          clk26m]
+On 11/4/2024 9:43 PM, Andrew Lunn wrote:
+> On Mon, Nov 04, 2024 at 07:14:59PM +0800, Lei Wei wrote:
+>>
+>>
+>> On 11/1/2024 9:00 PM, Andrew Lunn wrote:
+>>>> +config PCS_QCOM_IPQ
+>>>> +	tristate "Qualcomm IPQ PCS"
+>>>
+>>> Will Qualcomm only ever have one PCS driver?
+>>>
+>>> You probably want a more specific name so that when the next PCS
+>>> driver comes along, you have a reasonable consistent naming scheme.
+>>>
+>>
+>> We expect one PCS driver to support the 'IPQ' family of Qualcomm processors.
+>> While we are initially adding support for IPQ9574 SoC, this driver will be
+>> easily extendable later to other SoC in the IPQ family such as IPQ5332,
+>> IPQ5424 and others. Therefore we used the name with suffix '_IPQ'. Hope it
+>> is fine.
+> 
+> So are you saying after IPQ comes IPR? And then IPS? In order to have
+> a new PCS design, Marketing will allow you to throw away the whole IPQ
+> branding?
+> 
 
-Add a new 'release_clk' label and reorder the error handle functions to
-make sure the clocks be disabled after probe failure.
+OK. We will convert the name to make it more specific to the 
+architecture. 'PCS_QCOM_IPQ9574' can be used to signify this type of PCS 
+within IPQ SoC family. The driver will be re-used later for other IPQ 
+SoC using same architecture, with minimal driver extensions.
 
-Fixes: ffaea6ebfe9c ("mmc: mtk-sd: Use readl_poll_timeout instead of open-coded polling")
-Fixes: 7a2fa8eed936 ("mmc: mtk-sd: use devm_mmc_alloc_host")
-Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
----
-Changes in v2:
-- Add the relevant fixes tags.
-
----
- drivers/mmc/host/mtk-sd.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index a2750a45c1b7..022526a1f754 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -3007,7 +3007,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	ret = msdc_ungate_clock(host);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Cannot ungate clocks!\n");
--		goto release_mem;
-+		goto release_clk;
- 	}
- 	msdc_init_hw(host);
- 
-@@ -3017,14 +3017,14 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 					     GFP_KERNEL);
- 		if (!host->cq_host) {
- 			ret = -ENOMEM;
--			goto release_mem;
-+			goto release;
- 		}
- 		host->cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
- 		host->cq_host->mmio = host->base + 0x800;
- 		host->cq_host->ops = &msdc_cmdq_ops;
- 		ret = cqhci_init(host->cq_host, mmc, true);
- 		if (ret)
--			goto release_mem;
-+			goto release;
- 		mmc->max_segs = 128;
- 		/* cqhci 16bit length */
- 		/* 0 size, means 65536 so we don't have to -1 here */
-@@ -3064,9 +3064,10 @@ static int msdc_drv_probe(struct platform_device *pdev)
- end:
- 	pm_runtime_disable(host->dev);
- release:
--	platform_set_drvdata(pdev, NULL);
- 	msdc_deinit_hw(host);
-+release_clk:
- 	msdc_gate_clock(host);
-+	platform_set_drvdata(pdev, NULL);
- release_mem:
- 	if (host->dma.gpd)
- 		dma_free_coherent(&pdev->dev,
--- 
-2.46.0
+> 	Andrew
 
 
