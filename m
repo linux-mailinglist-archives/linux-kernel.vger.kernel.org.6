@@ -1,197 +1,171 @@
-Return-Path: <linux-kernel+bounces-400206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB18F9C0A4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:45:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C83CF9C0A4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:44:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976C82831AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90A9D283266
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ACB213152;
-	Thu,  7 Nov 2024 15:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="vXQCeu7q"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B33A79D0;
-	Thu,  7 Nov 2024 15:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67055213ED3;
+	Thu,  7 Nov 2024 15:44:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB99CA6F;
+	Thu,  7 Nov 2024 15:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730994351; cv=none; b=lSY7NvNT4/Qs7kVZ8AffNh9cJ1WlVHVQtzkVsbABuRPZehdqIPvOoQSDdHaJ2RvICb5uTWy6WpzatfTxSFRjT4JZHKPYZiWap3uXfG55lr+trvibx/FrLKylMAZAYk6voMEsfweIUbievwUnersuM0Rtz5LJ7PeJsDSMR9UULi0=
+	t=1730994279; cv=none; b=regG+wk8kXYOcc3ZqoqrXNYmy9XR9xT4Y/wkGtQKmJTLLMwX5dtAdvss0PFa1XozgsbxdOvXHWzc3/ZufdUGjd888Qf4FeaaqemCdG8jghJ2auoGSZ2eLfUqQP42qeYdatOhE6H414WAjgdL0U69P17JYe1AXkrsVZzJCjNePbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730994351; c=relaxed/simple;
-	bh=zXYIeR54dQzPkyOF6iyFHBGFz9ClgZEwKTaYqILqrhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lgOB904irqY1d+tlFto7pKEkDj5paz14LCfzuhWo4BiEngMjZgQwxoMbPNiH+5JumKDZJqsl0whoTMNcFcTzG1pLAHzfEEURPBcp8wMRIGmISOAV95aCn6j7MhBWFPfo2Ei99mXV43bbKKDWdUeipTzM9b+s6XVkRONIc9oOAAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=vXQCeu7q; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730994342;
-	bh=zXYIeR54dQzPkyOF6iyFHBGFz9ClgZEwKTaYqILqrhA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vXQCeu7qCY+Rx0XwRNX3obnwyQazNHm6gE9K+PzAQQJshUgA28WHpQ17/mL3/6laE
-	 EyIO2okdpant6Sc0t/O7Rkw/g4khzGzhx6hbhPA8yLpbIK4YM9cieU/SC3ja9TJMp2
-	 tjJ/zdfnZEm5pk23ZgiUp05qHK6xhi//dbSMCTk331Hp3q/mHw4Ro/Bzi6VlgOLFsh
-	 LOV/UCNbtwtdIfg48lzFPFmdOVuaYKRNNX1oTzUdRwL4fLkMIU33kyyxrCCMDYyfSo
-	 yA+OtGegirOx8kKhQ3CFaJ9Xxb/fkyWhJ1UFjOeijrHPFeQkLyTD6eocC0PejWY9Zu
-	 Im8m4mez7Uwyg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Xkmck1TPYzxTL;
-	Thu,  7 Nov 2024 10:45:42 -0500 (EST)
-Message-ID: <5b7defe4-09db-491e-b2fb-3fb6379dc452@efficios.com>
-Date: Thu, 7 Nov 2024 10:44:12 -0500
+	s=arc-20240116; t=1730994279; c=relaxed/simple;
+	bh=EOPW4AVkmGnwlloJwdaCDmemcz+5NZTsCNmZ/ikwm2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hLHrzqQMS5Jh8U+8u8PUQuPKGalHXfZ0vvGymQKiijFDkOJd7Q60mn6ZYdBpJDffuVBqqtmooRKK9hJ3BEGvM7t5H6j4gFO6KZHQBPREEdNRAO4UbnpS6OuFT1jacJJFccfF2AVjG5rXBMSDIryPp4EkOVkyLY3PPir/m3xq08s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79F4E1063;
+	Thu,  7 Nov 2024 07:45:05 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4639F3F66E;
+	Thu,  7 Nov 2024 07:44:35 -0800 (PST)
+Date: Thu, 7 Nov 2024 15:44:24 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Graham Woodward <graham.woodward@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] perf arm-spe: Add support for SPE Data Source
+ packet on AmpereOne
+Message-ID: <20241107154424.GD47850@e132581.arm.com>
+References: <20241106193740.6159-1-ilkka@os.amperecomputing.com>
+ <20241106193740.6159-3-ilkka@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] tracing: Add task_prctl_unknown tracepoint
-To: Marco Elver <elver@google.com>, Steven Rostedt <rostedt@goodmis.org>,
- Kees Cook <keescook@chromium.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
-References: <20241107122648.2504368-1-elver@google.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241107122648.2504368-1-elver@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106193740.6159-3-ilkka@os.amperecomputing.com>
 
-On 2024-11-07 07:25, Marco Elver wrote:
-> prctl() is a complex syscall which multiplexes its functionality based
-> on a large set of PR_* options. Currently we count 64 such options. The
-> return value of unknown options is -EINVAL, and doesn't distinguish from
-> known options that were passed invalid args that also return -EINVAL.
+On Wed, Nov 06, 2024 at 07:37:40PM +0000, Ilkka Koskinen wrote:
+> Warning: EXTERNAL SENDER, use caution when opening links or attachments.
 > 
-> To understand if programs are attempting to use prctl() options not yet
-> available on the running kernel, provide the task_prctl_unknown
-> tracepoint.
 > 
-> Note, this tracepoint is in an unlikely cold path, and would therefore
-> be suitable for continuous monitoring (e.g. via perf_event_open).
+> Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
 > 
-> While the above is likely the simplest usecase, additionally this
-> tracepoint can help unlock some testing scenarios (where probing
-> sys_enter or sys_exit causes undesirable performance overheads):
+> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> ---
+>  .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 +++++
+>  tools/perf/util/arm-spe.c                     | 39 +++++++++++++++++++
+>  2 files changed, 48 insertions(+)
 > 
->    a. unprivileged triggering of a test module: test modules may register a
->       probe to be called back on task_prctl_unknown, and pick a very large
->       unknown prctl() option upon which they perform a test function for an
->       unprivileged user;
+> diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> index 358c611eeddb..4bcd627e859f 100644
+> --- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> +++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> @@ -67,6 +67,15 @@ enum arm_spe_common_data_source {
+>         ARM_SPE_COMMON_DS_DRAM          = 0xe,
+>  };
 > 
->    b. unprivileged triggering of an eBPF program function: similar
->       as idea (a).
+> +enum arm_spe_ampereone_data_source {
+> +       ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE    = 0x0,
+> +       ARM_SPE_AMPEREONE_SLC                           = 0x3,
+> +       ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE             = 0x5,
+> +       ARM_SPE_AMPEREONE_DDR                           = 0x7,
+> +       ARM_SPE_AMPEREONE_L1D                           = 0x8,
+> +       ARM_SPE_AMPEREONE_L2D                           = 0x9,
+> +};
+> +
+>  struct arm_spe_record {
+>         enum arm_spe_sample_type type;
+>         int err;
+> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+> index b222557cc27a..40847a3d18b0 100644
+> --- a/tools/perf/util/arm-spe.c
+> +++ b/tools/perf/util/arm-spe.c
+> @@ -531,6 +531,44 @@ static void arm_spe__synth_data_source_common(const struct arm_spe_record *recor
+>         }
+>  }
 > 
-> Example trace_pipe output:
-> 
->    test-484     [000] .....   631.748104: task_prctl_unknown: comm=test option=1234 arg2=101 arg3=102 arg4=103 arg5=104
-> 
+> +/*
+> + * Source is IMPDEF. Here we convert the source code used on AmpereOne cores
+> + * to the common (Neoverse, Cortex) to avoid duplicating the decoding code.
+> + */
+> +static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
+> +                                                union perf_mem_data_src *data_src)
+> +{
+> +       struct arm_spe_record common_record;
+> +
+> +       switch (record->source) {
+> +       case ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE:
+> +               common_record.source = ARM_SPE_COMMON_DS_PEER_CORE;
+> +               break;
+> +       case ARM_SPE_AMPEREONE_SLC:
+> +               common_record.source = ARM_SPE_COMMON_DS_SYS_CACHE;
+> +               break;
+> +       case ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE:
+> +               common_record.source = ARM_SPE_COMMON_DS_REMOTE;
+> +               break;
+> +       case ARM_SPE_AMPEREONE_DDR:
+> +               common_record.source = ARM_SPE_COMMON_DS_DRAM;
+> +               break;
+> +       case ARM_SPE_AMPEREONE_L1D:
+> +               common_record.source = ARM_SPE_COMMON_DS_L1D;
+> +               break;
+> +       case ARM_SPE_AMPEREONE_L2D:
+> +               common_record.source = ARM_SPE_COMMON_DS_L2;
+> +               break;
+> +       default:
+> +               /* Assign a bogus value that's not used for common coding */
+> +               common_record.source = 0xffff;
 
-My concern is that we start adding tons of special-case
-tracepoints to the implementation of system calls which
-are redundant with the sys_enter/exit tracepoints.
+For unsupported source value, just bail out and no need to calling
+arm_spe__synth_data_source_common().
 
-Why favor this approach rather than hooking on sys_enter/exit ?
+It is good to use pr_warning_once() to print out warning log to remind
+users.
 
 Thanks,
+Leo
 
-Mathieu
-
-> Signed-off-by: Marco Elver <elver@google.com>
-> ---
-> v2:
-> * Remove "pid" in trace output (suggested by Steven).
-> ---
->   include/trace/events/task.h | 41 +++++++++++++++++++++++++++++++++++++
->   kernel/sys.c                |  3 +++
->   2 files changed, 44 insertions(+)
+> +               break;
+> +       }
+> +
+> +       common_record.op = record->op;
+> +       arm_spe__synth_data_source_common(&common_record, data_src);
+> +}
+> +
+>  static const struct data_src data_sources[] = {
+>         DS(MIDR_ALL_VERSIONS(MIDR_CORTEX_A720), data_source_common),
+>         DS(MIDR_ALL_VERSIONS(MIDR_CORTEX_A725), data_source_common),
+> @@ -541,6 +579,7 @@ static const struct data_src data_sources[] = {
+>         DS(MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2), data_source_common),
+>         DS(MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1), data_source_common),
+>         DS(MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2), data_source_common),
+> +       DS(MIDR_ALL_VERSIONS(MIDR_AMPERE1A), data_source_ampereone),
+>         {},
+>  };
 > 
-> diff --git a/include/trace/events/task.h b/include/trace/events/task.h
-> index 47b527464d1a..9202cb2524c4 100644
-> --- a/include/trace/events/task.h
-> +++ b/include/trace/events/task.h
-> @@ -56,6 +56,47 @@ TRACE_EVENT(task_rename,
->   		__entry->newcomm, __entry->oom_score_adj)
->   );
->   
-> +/**
-> + * task_prctl_unknown - called on unknown prctl() option
-> + * @task:	pointer to the current task
-> + * @option:	option passed
-> + * @arg2:	arg2 passed
-> + * @arg3:	arg3 passed
-> + * @arg4:	arg4 passed
-> + * @arg5:	arg5 passed
-> + *
-> + * Called on an unknown prctl() option.
-> + */
-> +TRACE_EVENT(task_prctl_unknown,
-> +
-> +	TP_PROTO(struct task_struct *task, int option, unsigned long arg2, unsigned long arg3,
-> +		 unsigned long arg4, unsigned long arg5),
-> +
-> +	TP_ARGS(task, option, arg2, arg3, arg4, arg5),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(	comm,		task->comm	)
-> +		__field(	int,		option)
-> +		__field(	unsigned long,	arg2)
-> +		__field(	unsigned long,	arg3)
-> +		__field(	unsigned long,	arg4)
-> +		__field(	unsigned long,	arg5)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(comm);
-> +		__entry->option = option;
-> +		__entry->arg2 = arg2;
-> +		__entry->arg3 = arg3;
-> +		__entry->arg4 = arg4;
-> +		__entry->arg5 = arg5;
-> +	),
-> +
-> +	TP_printk("comm=%s option=%d arg2=%ld arg3=%ld arg4=%ld arg5=%ld",
-> +		  __get_str(comm), __entry->option,
-> +		  __entry->arg2, __entry->arg3, __entry->arg4, __entry->arg5)
-> +);
-> +
->   #endif
->   
->   /* This part must be outside protection */
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 4da31f28fda8..dd0a71b68558 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -75,6 +75,8 @@
->   #include <asm/io.h>
->   #include <asm/unistd.h>
->   
-> +#include <trace/events/task.h>
-> +
->   #include "uid16.h"
->   
->   #ifndef SET_UNALIGN_CTL
-> @@ -2785,6 +2787,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->   		error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
->   		break;
->   	default:
-> +		trace_task_prctl_unknown(me, option, arg2, arg3, arg4, arg5);
->   		error = -EINVAL;
->   		break;
->   	}
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+> --
+> 2.47.0
+> 
+> 
 
