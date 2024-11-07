@@ -1,90 +1,70 @@
-Return-Path: <linux-kernel+bounces-400313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAFE9C0BBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:33:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277FA9C0BC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:35:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B9F1F21C3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:33:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05FA28321C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7502144D4;
-	Thu,  7 Nov 2024 16:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28699215F6C;
+	Thu,  7 Nov 2024 16:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CI/ZjVfZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uyc5LkOp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C70D20EA3B
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F9E212D22;
+	Thu,  7 Nov 2024 16:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730997202; cv=none; b=N+grnHztAsJxv1rJ7K7eZ6pekwFT9zg++Y2mWcjPjzoPu2U66IxT3hMkWxQvA1WVSwn4BzT6j0KNI9dkngZ9nxsDfmlm9K23kDEg8Tu9g4gr+vaS4Pna6MHBuVpMkqpyRmqawmEwclrERyNwwEK+XxGb4YSF3YS2rv5ILNXr7ns=
+	t=1730997307; cv=none; b=GGdkox5sH/ixmLf20BipsRiXBYATuKbus+o9ZU6h+d7nTnEiVZbJDu6y3LHpt7749TJgiVR+tnKOy/Dpu6R/PcA0vNY9tml/a7Hg2a/sIxOtdUtonVwUNOhJS/8kO9WqZqJq2TLiI4+8ihIIgCY62zL+KbNpDVrEMgFPTiZI7zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730997202; c=relaxed/simple;
-	bh=U23oG9a9FMHgGinXV3X6twp/WZMdaEXj+2yeviv2RE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SncUekfi3KzjQqLtbvPBl3dqL1PwJKO0H2A/YAlRSAWZw46ed7mR6YgX/BTBit7FkksliMLa6gRtP9FzZcGlltZBhG0javeXA9xLqrEV+UlKxSulKYT7GOLcoLgHgBwZQI1Z2QWb8l6uD5F2lceAi6/xWCYpftd3saotj5aj1FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CI/ZjVfZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730997200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rKaXCt87SZrJE1ltfcmTlkoLHVbc4XM9O+Be2Kjn8qg=;
-	b=CI/ZjVfZmupzR58uwbid+tfSGlu2+WGFncWnw8YkC5IheeGeInkpGVbf3aUtWkxpLCT5L/
-	JgxJ64ONWog/rKi1c8i05DP60nyipPdffdb7bczp960jPaE2APF+JjMX1A4HfgKj03QTGx
-	HcZXNvWgisixKZSfOkT7EFeu4xnPTtk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-457-fjVDyrNOO_eu_8GNli65Uw-1; Thu,
- 07 Nov 2024 11:33:16 -0500
-X-MC-Unique: fjVDyrNOO_eu_8GNli65Uw-1
-X-Mimecast-MFC-AGG-ID: fjVDyrNOO_eu_8GNli65Uw
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD07B19560AB;
-	Thu,  7 Nov 2024 16:33:11 +0000 (UTC)
-Received: from f39.redhat.com (unknown [10.39.192.153])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DEB141953880;
-	Thu,  7 Nov 2024 16:33:04 +0000 (UTC)
-From: Eder Zulian <ezulian@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: miguel.ojeda.sandonis@gmail.com,
-	tglx@linutronix.de,
-	williams@redhat.com,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	jlelli@redhat.com,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	will@kernel.org,
-	longman@redhat.com,
-	boqun.feng@gmail.com,
-	bigeasy@linutronix.de,
-	sfr@canb.auug.org.au,
-	hpa@zytor.com
-Subject: [PATCH v3 1/1] rust: helpers: Avoid raw_spin_lock initialization for PREEMPT_RT
-Date: Thu,  7 Nov 2024 17:32:23 +0100
-Message-ID: <20241107163223.2092690-2-ezulian@redhat.com>
-In-Reply-To: <20241107163223.2092690-1-ezulian@redhat.com>
-References: <20241107163223.2092690-1-ezulian@redhat.com>
+	s=arc-20240116; t=1730997307; c=relaxed/simple;
+	bh=WVukMqPCZ/St6naa+qTnbTU9PWTOYMZHCqJ2q93NY7M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HfSmE9cDJptm6dFS0ymbRJTaYPw2SJdyFwLVy2RDm3QAvUzx09P2ujLwyle+9MYaIzuxrCmxXC38x+VLKTs0SbW7cxyc7+BulC3lgjfSWGIU10KPUjamNWb0g9zboZ6ZszRjDguc93o2M4k+OBJN+0zc8R6ceWd45aN6CJCw0Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uyc5LkOp; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730997305; x=1762533305;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WVukMqPCZ/St6naa+qTnbTU9PWTOYMZHCqJ2q93NY7M=;
+  b=Uyc5LkOp8uOmu7K26M+vx1nR9F4yORbA8/EvLiTeYJaBJ/UCfcalIRua
+   JY6xq1OYzT1RoYZMMSCZanRVIIoVXINyE984kSbYoZYsgDUqw6AXywEQI
+   K3hhRb1cFXDFuZRfP36Wzdszzz5J2pK7vj4LRiDt8gPbB4CVBu8wfJUVX
+   o5Pa8rXyRhpwRA1WjG0/VECZrPrZmg544x/UPy8frlEqpUlxzwzVqzjZN
+   qj33NtFB20lIUZUajyYNWX9/rBlFzbBrN0J0qQTR5PQvb107BcqHMgmGn
+   Og1TKkReZlLvq+bohec9U9Ik90uqt5wPFO8OtCflfcqGEUDuGg10q7p2Z
+   w==;
+X-CSE-ConnectionGUID: WpJJM0IVQgGRmCH2knETSA==
+X-CSE-MsgGUID: KGUdOboVT7+ubu30yYDe5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="18480120"
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="18480120"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 08:35:04 -0800
+X-CSE-ConnectionGUID: QU95xq5dTMSGTBZYHU49LA==
+X-CSE-MsgGUID: T6lFau12S/2gThGVU1+C9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="89796988"
+Received: from mwajdecz-mobl.ger.corp.intel.com ([10.246.2.138])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 08:35:03 -0800
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+To: intel-xe@lists.freedesktop.org
+Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/4] Add iomem helpers for use from debugfs
+Date: Thu,  7 Nov 2024 17:34:44 +0100
+Message-Id: <20241107163448.2123-1-michal.wajdeczko@intel.com>
+X-Mailer: git-send-email 2.21.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,85 +72,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-When PREEMPT_RT=y, spin locks are mapped to rt_mutex types, so using
-spinlock_check() + __raw_spin_lock_init() to initialize spin locks is
-incorrect, and would cause build errors.
+This series attempts to promote helpers used by Xe [1] to libfs.
+Earlier attempt [2] with similar helper was unnoticed.
 
-Introduce __spin_lock_init() to initialize a spin lock with lockdep
-rquired information for PREEMPT_RT builds, and use it in the Rust
-helper.
+[1] https://patchwork.freedesktop.org/series/140848/#rev1
+[2] https://patchwork.freedesktop.org/series/133507/#rev1
 
-Fixes: d2d6422f8bd1 ("x86: Allow to enable PREEMPT_RT.")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409251238.vetlgXE9-lkp@intel.com/
-Signed-off-by: Eder Zulian <ezulian@redhat.com>
----
-V1 -> V2: Cleaned up style and addressed review comments
-V2 -> V3: Improved commit title and description and corrected the 'Fixed:'
-tag as per reviewer's suggestion
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
 
- include/linux/spinlock_rt.h | 15 +++++++--------
- rust/helpers/spinlock.c     |  8 ++++++--
- 2 files changed, 13 insertions(+), 10 deletions(-)
+Michal Wajdeczko (4):
+  iov_iter: Provide copy_iomem_to|from_iter()
+  libfs: Provide simple_read_from|write_to_iomem()
+  drm/xe: Add read/write debugfs helpers for GGTT node
+  drm/xe/pf: Expose access to the VF GGTT PTEs over debugfs
 
-diff --git a/include/linux/spinlock_rt.h b/include/linux/spinlock_rt.h
-index f9f14e135be7..f6499c37157d 100644
---- a/include/linux/spinlock_rt.h
-+++ b/include/linux/spinlock_rt.h
-@@ -16,22 +16,21 @@ static inline void __rt_spin_lock_init(spinlock_t *lock, const char *name,
- }
- #endif
- 
--#define spin_lock_init(slock)					\
-+#define __spin_lock_init(slock, name, key, percpu)		\
- do {								\
--	static struct lock_class_key __key;			\
--								\
- 	rt_mutex_base_init(&(slock)->lock);			\
--	__rt_spin_lock_init(slock, #slock, &__key, false);	\
-+	__rt_spin_lock_init(slock, name, key, percpu);		\
- } while (0)
- 
--#define local_spin_lock_init(slock)				\
-+#define _spin_lock_init(slock, percpu)				\
- do {								\
- 	static struct lock_class_key __key;			\
--								\
--	rt_mutex_base_init(&(slock)->lock);			\
--	__rt_spin_lock_init(slock, #slock, &__key, true);	\
-+	__spin_lock_init(slock, #slock, &__key, percpu);	\
- } while (0)
- 
-+#define spin_lock_init(slock)		_spin_lock_init(slock, false)
-+#define local_spin_lock_init(slock)	_spin_lock_init(slock, true)
-+
- extern void rt_spin_lock(spinlock_t *lock) __acquires(lock);
- extern void rt_spin_lock_nested(spinlock_t *lock, int subclass)	__acquires(lock);
- extern void rt_spin_lock_nest_lock(spinlock_t *lock, struct lockdep_map *nest_lock) __acquires(lock);
-diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
-index b7b0945e8b3c..5971fdf6f755 100644
---- a/rust/helpers/spinlock.c
-+++ b/rust/helpers/spinlock.c
-@@ -6,10 +6,14 @@ void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
- 				  struct lock_class_key *key)
- {
- #ifdef CONFIG_DEBUG_SPINLOCK
-+# if defined(CONFIG_PREEMPT_RT)
-+	__spin_lock_init(lock, name, key, false);
-+# else /*!CONFIG_PREEMPT_RT */
- 	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
--#else
-+# endif /* CONFIG_PREEMPT_RT */
-+#else /* !CONFIG_DEBUG_SPINLOCK */
- 	spin_lock_init(lock);
--#endif
-+#endif /* CONFIG_DEBUG_SPINLOCK */
- }
- 
- void rust_helper_spin_lock(spinlock_t *lock)
+ drivers/gpu/drm/xe/xe_ggtt.c                | 52 ++++++++++++++
+ drivers/gpu/drm/xe/xe_ggtt.h                |  7 ++
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c | 62 ++++++++++++++++
+ fs/libfs.c                                  | 78 +++++++++++++++++++++
+ include/linux/fs.h                          |  5 ++
+ include/linux/uio.h                         |  4 ++
+ lib/iov_iter.c                              | 42 +++++++++++
+ 7 files changed, 250 insertions(+)
+
 -- 
-2.47.0
+2.43.0
 
 
