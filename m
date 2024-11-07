@@ -1,124 +1,133 @@
-Return-Path: <linux-kernel+bounces-399700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8302A9C030C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:58:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3022C9C030F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F0B1F22474
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615FE1C21CF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD461F12F5;
-	Thu,  7 Nov 2024 10:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5A51F1303;
+	Thu,  7 Nov 2024 10:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+YK2QK3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PG/0YCm+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0415A1D932F;
-	Thu,  7 Nov 2024 10:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D2A1D932F;
+	Thu,  7 Nov 2024 10:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977128; cv=none; b=Ok7h1NJm5JVmWEW+NOIFZZO6jcwvv8enhqBetkq3gCc+MJ8TgyIFqgGEl7upX902bwACv63e0qAYQ4YkfCYo/sUqVy5clS0qaCH0c1MMQI5vqza3qD43OUiJZvq+arXPtEiv/rqUzvC7f5aS6ivoHZ1OfQ7DyujSurn0TJnGWu4=
+	t=1730977192; cv=none; b=WEHj11pDK+NDP3jtpBOIl9pfRHFmLPivWqC0BYbQJjxQZxpBYhp8TRwGi6T2Zu+bt2Q6ucxp5ZsL4EBWwu/YLNYF33bvV3sA8skBV4Kj1n8vusE2AdXGzxCQu5nTjt0tFW78buDrHWdV8GmsHSu3tGdaBdvL7tGkZYHqkgRhFbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977128; c=relaxed/simple;
-	bh=FvXI9LhKQeUyEplKY3xQXpUbOHKklovDwuvsPa0FIdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AWOzJkeIN7k2mYSS3Zt+QZbEv6ZKPH8tDBcGV30zKts4MOhuDe6/EsUUvCa5HFOCPcGc/9q5z+zQDWQ/HkZG3ryYREHrFcfTheFxi9fcQp7oSbBzdabB/SO84XhxgfHT1IN/aexcmvvz9VbVTG7soVfumubFx3FjxRudPdFclt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+YK2QK3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E57C4CED2;
-	Thu,  7 Nov 2024 10:58:47 +0000 (UTC)
+	s=arc-20240116; t=1730977192; c=relaxed/simple;
+	bh=ulJ1Mfc081n2BYrBwoce4yXqUrc0vALnBWkN8KQGmko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tsORp1fD0EwtoxgoaLEZ5g7IxGJfbNzQu2qhculKpWmuORniVqc7+vXA48qOHZBVWDb/m8bcCIKCOSk+PDD3qKGhNr7aiI+gH7ShAcDdqA2TJpMCKlTzhdEsNHxBx9wuiZFbTqbX35ocvLDIO1KHHhqOy9QNCjEfTj/sMeoWHdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PG/0YCm+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFAAC4CECC;
+	Thu,  7 Nov 2024 10:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730977127;
-	bh=FvXI9LhKQeUyEplKY3xQXpUbOHKklovDwuvsPa0FIdI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=D+YK2QK3bY9HMIGw7PP0W+FGdYOIyfbBhL+0ZUX2Uwb3cCnnVr6JKe3h51E+RfpXy
-	 cbAr7jN2qdrCy8yppAxovWKtk4pTu7aT/iu67eB6+dlXr0J4dbWMyugPo+qAzRkxjx
-	 FnuwV3DGweob7c7INN6/eW8aTBM15hdorcOUOV3jaqXu4mVHI910Aibx5t44XehpT4
-	 7EYwuPFJ0JGN1rv8/ogM3QXGKTGB7X0IgdjTkSulsBILJ7MclSvBuUtOFYuh5ETlnO
-	 lhlBbokNCT0KvPZ7xW6wyxpibDIId39j0iTXOd8R7/byF1HDrb+R41Vu9yCuEQLWbw
-	 ufIEu9kn8U3fQ==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-290d8d5332cso428415fac.2;
-        Thu, 07 Nov 2024 02:58:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUHW2Hf9IXHAzmh4qrOu0IBJtzf3roErtMFINdjjy8OiXjM+PQtQACw+YCkY/550iobqPUs5ihg7b0=@vger.kernel.org, AJvYcCUjkUmcUuTm9CNqmxOdbH0g6pdoRQzrwpfDmQ3aBr6bcwqcrj3YJlbRV8d7PsrvsJig+0iAr7kywZgqXCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp/fy1mowBeX8QkwmCO2pT2keHIGprMLGd/mQNHFVsorRD0nb9
-	kzhLqVZ99eZavSrBUXny1xhqWaxgn62nCHXyPF4fqs2fez0eYi/R7yoxS56sW8VJdWqrbJbfV8w
-	nDc1EcEvN2yRS9RiMWJRiMmHdx+I=
-X-Google-Smtp-Source: AGHT+IGaFG/lGWoIgTdUCj6fF06/lKof9rgBxrGEdVjSBcAfxC5ZYl2aCRdvEnk/gXTBVlwbjmLcKxom0jCcxDGADBs=
-X-Received: by 2002:a05:6870:780e:b0:288:5c55:dfd5 with SMTP id
- 586e51a60fabf-2949effac51mr24463758fac.31.1730977126802; Thu, 07 Nov 2024
- 02:58:46 -0800 (PST)
+	s=k20201202; t=1730977191;
+	bh=ulJ1Mfc081n2BYrBwoce4yXqUrc0vALnBWkN8KQGmko=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PG/0YCm+Gk0R9TdATEB0FHWvZYV137vwKutlJMVZZFB97xFyzXQ/iwt63QiSwVCCm
+	 gBz6zvnROaYLHBw3Y3KzF+FOlI59P1ux+H43FJnViU6rSazOPNJW3XdZqiiR530uno
+	 KL1OrG+2zSWhUK7VgjogS/YGyqWLpG3nD/JppHmAVxHJ4+kCK9X5fH9tCDYFBYPFxm
+	 BnvTvQC6mUNvpLIncGMQlShrGlcHHV5J+ogSqqgT4OJLlyVVXgsimec9jXl9jr0tfE
+	 BdabkaEmhF1LxidljxPqENQlI+Ax+/zwH+xudTC9VCT2OJ8ifM6sN2E+qSqcVIGzGm
+	 4BM99mndAZJ4Q==
+From: Conor Dooley <conor@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v6 0/2] PCI: microchip: support using either instance 1 or 2
+Date: Thu,  7 Nov 2024 10:59:33 +0000
+Message-ID: <20241107-aqueduct-petroleum-c002480ba291@spud>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104113615.1397410-1-ruanjinjie@huawei.com> <786c90d1-29e7-72a7-acc6-394b3bbaeb75@huawei.com>
-In-Reply-To: <786c90d1-29e7-72a7-acc6-394b3bbaeb75@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 7 Nov 2024 11:58:35 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jC9_03euACrmahnDRBgU=0O60p0rkChR2BVOxx0J2Pzw@mail.gmail.com>
-Message-ID: <CAJZ5v0jC9_03euACrmahnDRBgU=0O60p0rkChR2BVOxx0J2Pzw@mail.gmail.com>
-Subject: Re: [PATCH v2] PM: EM: Fix wrong return value in mtk_cpufreq_get_cpu_power()
-To: Jinjie Ruan <ruanjinjie@huawei.com>, viresh.kumar@linaro.org
-Cc: rafael@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, hector.yuan@mediatek.com, 
-	lukasz.luba@arm.com, qperret@google.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2148; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=fVyaqmi1x3CSNtda6SlOyTBYUpS/Zg4XH/v6iZNKKks=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOk6c2eXvrmxvr/yfpqwJov3vI4Pvh8/5EoXTJ7DdV9sX 3uW3qdfHaUsDGIcDLJiiiyJt/tapNb/cdnh3PMWZg4rE8gQBi5OAZjIm4UM/9N3Hk437PF1ea9w 1ma68d9LaW6Zj1flhWu3+W45EVn0bCPDHz6H957n1nvuC0wJ3f/KdpvHoa8S3EnixSLn9nq0p1p N5wIA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 7, 2024 at 2:50=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com> =
-wrote:
->
->
->
-> On 2024/11/4 19:36, Jinjie Ruan wrote:
-> > mtk_cpufreq_get_cpu_power() return 0 if the policy is NULL. Then in
-> > em_create_perf_table(), the later zero check for power is not invalid
-> > as power is uninitialized. As Lukasz suggested, it must return -EINVAL =
-when
-> > the 'policy' is not found. So return -EINVAL to fix it.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 4855e26bcf4d ("cpufreq: mediatek-hw: Add support for CPUFREQ HW"=
-)
-> > Suggested-by: Lukasz Luba <lukasz.luba@arm.com>
-> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->
-> Hi, could this be merged.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-It's for Viresh to take care of and please replace the "PM: EM:"
-prefix in the subject with the proper cpufreq driver one.
+The current driver and binding for PolarFire SoC's PCI controller assume
+that the root port instance in use is instance 1. The second reg
+property constitutes the region encompassing both "control" and "bridge"
+registers for both instances. In the driver, a fixed offset is applied to
+find the base addresses for instance 1's "control" and "bridge"
+registers. The BeagleV Fire uses root port instance 2, so something must
+be done so that software can differentiate. This series splits the
+second reg property in two, with dedicated "control" and "bridge"
+entries so that either instance can be used.
 
-Thanks!
+Cheers,
+Conor.
 
-> > ---
-> > v2:
-> > - Fix the driver instead of em_create_perf_table() as suggested.
-> > - Update the commit message.
-> > - Add Suggested-by.
-> > ---
-> >  drivers/cpufreq/mediatek-cpufreq-hw.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/me=
-diatek-cpufreq-hw.c
-> > index 8925e096d5b9..aeb5e6304542 100644
-> > --- a/drivers/cpufreq/mediatek-cpufreq-hw.c
-> > +++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
-> > @@ -62,7 +62,7 @@ mtk_cpufreq_get_cpu_power(struct device *cpu_dev, uns=
-igned long *uW,
-> >
-> >       policy =3D cpufreq_cpu_get_raw(cpu_dev->id);
-> >       if (!policy)
-> > -             return 0;
-> > +             return -EINVAL;
-> >
-> >       data =3D policy->driver_data;
-> >
+v6:
+- rework commit messages to use Bjorn's preferred "root port" and "root
+  complex" wording
+
+v5:
+- rebase on top of 6.11-rc1, which brought about a lot of driver change
+  due to the plda common driver creation - although little actually
+  changed in terms of the lines edited in this patch.
+
+v4:
+- fix a cocci warning reported off list about an inconsistent variable
+  used between IS_ERR() and PTR_ERR() calls.
+
+v3:
+- rename a variable in probe s/axi/apb/
+
+v2:
+- try the new reg format before the old one to avoid warnings in the
+  good case
+- reword $subject for 2/2
+
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+CC: Krzysztof Wilczyński <kw@linux.com>
+CC: Rob Herring <robh@kernel.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Conor Dooley <conor+dt@kernel.org>
+CC: linux-pci@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-riscv@lists.infradead.org
+
+Conor Dooley (2):
+  dt-bindings: PCI: microchip,pcie-host: fix reg properties
+  PCI: microchip: rework reg region handing to support using either root
+    port 1 or 2
+
+ .../bindings/pci/microchip,pcie-host.yaml     |  11 +-
+ .../pci/plda,xpressrich3-axi-common.yaml      |  14 ++-
+ .../bindings/pci/starfive,jh7110-pcie.yaml    |   7 ++
+ .../pci/controller/plda/pcie-microchip-host.c | 116 +++++++++---------
+ 4 files changed, 87 insertions(+), 61 deletions(-)
+
+-- 
+2.45.2
+
 
