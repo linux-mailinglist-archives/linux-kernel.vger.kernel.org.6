@@ -1,187 +1,196 @@
-Return-Path: <linux-kernel+bounces-399951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8818D9C06E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:09:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2449C06E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E95F1F211B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:09:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2AAA1F2147B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AA3212D14;
-	Thu,  7 Nov 2024 13:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7639020FA81;
+	Thu,  7 Nov 2024 13:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JlpjGINu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7p+O5oeG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="li+YKeYe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qjhD7veW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TNMLiVrI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E6920FA81;
-	Thu,  7 Nov 2024 13:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49CC21217B;
+	Thu,  7 Nov 2024 13:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730984647; cv=none; b=ndnCmeQHnpzyKBY0l2ek6ftMBlReLomY2+VSKhNJ59WBapwGQ7Vi4/q3HImtLCaZ8wwtp6TzHfszwlqaueGYoHPkvBpSft1+EHxuZ0YvtanOR3Sm1dw9BLBLTHYnIPv8o2JibbFC4eNiz18yP+gFXN9oI6wc1QqjusX8hmX1TDg=
+	t=1730984680; cv=none; b=kFHZPEGNhPYnerVWE67QA07T/O8vqF0wHyMaR4UwKaGmdZnzRvnUFEn6RByyDqqicsogiDyM09AIOFgmFu9GuaudmWamwEOAn/7/Uct10SQ17fy+9VdLqgowqdvRnmb1zlbm9kwxYm6Zh1D1srZZxTiBd8kZqnWDi4JmdKiPeEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730984647; c=relaxed/simple;
-	bh=vDqgovRvMgphw5tf+kmVrAuS2l4DsjIinILy2iRNZpA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=stnkqE04TPb06dZAxZZAETur29vmPQjHx08fLicbU2P+PAFQGw3y4ZjdUEvF846R7ooycsXD3hRe7yz2czlOWViHS7uFxFPUqFsiibm5v8wsbjParYTLxdIGlGtz9xERjmwPLGPYGmWllMW0tCEOuUblZ7hu1FcSOXlCiG7FQlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JlpjGINu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7p+O5oeG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=li+YKeYe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qjhD7veW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1730984680; c=relaxed/simple;
+	bh=alJhYjUGmAHiDkzk0RdRNv7iWlA7faKZ06xLb+2wABU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mz3igvrU2pfOEnGzYbz+oVfk9oCWxZDPZkzTYY/Q3rp1CJxLWkiQZRPRNC4FWr4eRAWln7xfm5+Nz98dZGsg6hO9PaFUgM1sIki9LKWSNd1DWj89Zd5ypsn2RDJW+Oq3kLskN1KvRHHdmGAYUCMfN5H7iXu0q9ll6u7nZKwX/gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TNMLiVrI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730984672;
+	bh=WHaVBwuwn8YA/BqwcIrDoO8GovcenlT0q9KCEoQJ1E4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TNMLiVrIj+l8iRCkn083Am6kV7TgibeQrvlHJA8TxN+gjAc5LkwfIxaEO/HSWcAvh
+	 vvND20njLdikIGnl84TCoTNV7kPtAwMUO+kKaOUW4Bj6I9Mg11M3uZadJz8TFXXDOf
+	 hgkEbvParfeA65XGtTzxXh5bCX+bmFNFgl7OGVKSAgtWWVxnFWWhLT203oEDBMrnEn
+	 MhLFdHyP0OLnZZmzP/Sxd8cEbsOa4eY17wOdHycERGRgHpDK6Ib4aDfPJ/ejNSiEvV
+	 j3p+iuH+N/0x66QUKdbwnp/cz9deXfJHwNzE5ea5wNY1RD27Tfsg2NLOw4jAjx/UaL
+	 dQO9HqMSBezQw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F0F00226C6;
-	Thu,  7 Nov 2024 13:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730984644; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CL8MWn98BwavmsKhCZf3gomXJlZ9cc1qGYfWgaXtDdw=;
-	b=JlpjGINu3X562POuGKB3BQTVrXw7h53487j3FpZHIuDu2DN/vWz4YrOUOBxA8CcV6uwRxG
-	eh7TnICSe86Zwbizv1Qno/lbuGVP56UI43trqStFl5ZcQNib42wIwghFNLfqMcWecEFnPJ
-	USR2kl4y6IznaedzkbZVtSlYxz2w9Is=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730984644;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CL8MWn98BwavmsKhCZf3gomXJlZ9cc1qGYfWgaXtDdw=;
-	b=7p+O5oeGTu/XdsCRTZw/sHGrXn3jLTiOacgP3QpL4l/WNLvwB+TsaviuG7hn5dB8+FACYq
-	1Adf4RQ8SFTJHUCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=li+YKeYe;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qjhD7veW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730984643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CL8MWn98BwavmsKhCZf3gomXJlZ9cc1qGYfWgaXtDdw=;
-	b=li+YKeYetWDWiXd9p0+VTnbKYMo13vNxaGzIgcfRiwMchnmT5ng2bx/CN0kdRVoXYdtWtj
-	b+ydn1EgX7FtBx98uFinUGwTxEn8XeDCfdHC86tRq8IjGHUSbxdtTDExm4T9ruKO5u1AGk
-	ZjuTA7TC1CVxLmqV5I/z371k7TM9NXM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730984643;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CL8MWn98BwavmsKhCZf3gomXJlZ9cc1qGYfWgaXtDdw=;
-	b=qjhD7veWdC4TLRFytrCrhe1RbFVm8iJvzpUhRyU6aCcun8+9rtH65Fhx/Wy/erpgy436uS
-	qBxgY9/nosNCZYCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B19EB1394A;
-	Thu,  7 Nov 2024 13:04:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id i/02KsO6LGd+PwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 07 Nov 2024 13:04:03 +0000
-Date: Thu, 07 Nov 2024 14:04:03 +0100
-Message-ID: <875xozi4ak.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc: Takashi Iwai <tiwai@suse.de>,	Paul Cercueil <paul@crapouillou.net>,
-	Simona Vetter <simona.vetter@ffwll.ch>,	Christian =?ISO-8859-1?Q?K=F6nig?=
- <christian.koenig@amd.com>,	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	linux-usb@vger.kernel.org,	Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,	"linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: usb: gadget: Add support for USB MIDI 2.0 function driver
-In-Reply-To: <5f54ffd0-b5fe-4203-a626-c166becad362@gmail.com>
-References: <5f54ffd0-b5fe-4203-a626-c166becad362@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xkj2l2yX1z4wcl;
+	Fri,  8 Nov 2024 00:04:31 +1100 (AEDT)
+Date: Fri, 8 Nov 2024 00:04:32 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, bigeasy@linutronix.de, boqun.feng@gmail.com
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20241108000432.335ec09a@canb.auug.org.au>
+In-Reply-To: <20241107103414.GT10375@noisy.programming.kicks-ass.net>
+References: <20241107182411.57e2b418@canb.auug.org.au>
+	<20241107103414.GT10375@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/GuOa5y9PukXOSTbXNSWK=T4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/GuOa5y9PukXOSTbXNSWK=T4
 Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: F0F00226C6
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 07 Nov 2024 13:30:12 +0100,
-Colin King (gmail) wrote:
-> 
-> Hi,
-> 
-> Static analysis has found a minor issue in the following commit:
-> 
-> commit 8b645922b22303cec4628dbbbf6c8553d1cdec87
-> Author: Takashi Iwai <tiwai@suse.de>
-> Date:   Tue Jul 25 08:22:00 2023 +0200
-> 
->     usb: gadget: Add support for USB MIDI 2.0 function driver
-> 
-> The issue is in function f_midi2_set_alt in
-> drivers/usb/gadget/function/f_midi2.c as follows:
-> 
->         if (intf != midi2->midi_if || alt > 1)
->                 return 0;
-> 
->         if (alt == 0)
->                 op_mode = MIDI_OP_MODE_MIDI1;
->         else if (alt == 1)
->                 op_mode = MIDI_OP_MODE_MIDI2;
->         else
->                 op_mode = MIDI_OP_MODE_UNSET;
-> 
-> 
-> the first if statement will return if alt is 2 or more, so at the
-> following cascaded if/else if/else statement alt is either 0 or 1,
-> hence the final else that sets op_mode = MIDI_OP_MODE_UNSET can never
-> be reached.
-> 
-> Either the last else statement is redundant and can be removed, or the
-> first if statement needs to check for alt > 2 rather than > 1. I'm not
-> sure which one is the valid fix to make. Any ideas?
+Hi Peter,
 
-We can fix in either way, as it won't happen practically :)
-I guess I thought of alt < 0, but it's an unsigned int, so this is
-nonsense.  I'd rather drop the redundant else statement.
+On Thu, 7 Nov 2024 11:34:14 +0100 Peter Zijlstra <peterz@infradead.org> wro=
+te:
+>
+> On Thu, Nov 07, 2024 at 06:24:11PM +1100, Stephen Rothwell wrote:
+> So I can't get RUST=3Dy, even though make rustavailable is happy.
+>=20
+> make LLVM=3D-19 allmodconfig does not get me RUST=3Dy
+>=20
+> I started out with tip/master, tried adding rust-next, then kbuild-next
+> gave up and tried next/master. Nada.
 
+Just on Linus' tree allmodconfig gives me:
 
-thanks,
+$ grep RUST .config
+CONFIG_RUSTC_VERSION=3D108100
+CONFIG_RUST_IS_AVAILABLE=3Dy
+CONFIG_RUSTC_LLVM_VERSION=3D180108
+CONFIG_RUST=3Dy
+CONFIG_RUSTC_VERSION_TEXT=3D"rustc 1.81.0"
+CONFIG_HAVE_RUST=3Dy
+CONFIG_RUST_FW_LOADER_ABSTRACTIONS=3Dy
+CONFIG_BLK_DEV_RUST_NULL=3Dm
+CONFIG_RADIO_TRUST=3Dm
+CONFIG_HID_THRUSTMASTER=3Dm
+CONFIG_THRUSTMASTER_FF=3Dy
+CONFIG_TRUSTED_KEYS=3Dm
+CONFIG_HAVE_TRUSTED_KEYS=3Dy
+CONFIG_TRUSTED_KEYS_TPM=3Dy
+CONFIG_TRUSTED_KEYS_TEE=3Dy
+CONFIG_TRUSTED_KEYS_CAAM=3Dy
+CONFIG_INTEGRITY_TRUSTED_KEYRING=3Dy
+CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=3Dy
+CONFIG_SYSTEM_TRUSTED_KEYRING=3Dy
+CONFIG_SYSTEM_TRUSTED_KEYS=3D""
+CONFIG_SECONDARY_TRUSTED_KEYRING=3Dy
+CONFIG_SECONDARY_TRUSTED_KEYRING_SIGNED_BY_BUILTIN=3Dy
+CONFIG_SAMPLES_RUST=3Dy
+CONFIG_SAMPLE_RUST_MINIMAL=3Dm
+CONFIG_SAMPLE_RUST_PRINT=3Dm
+CONFIG_SAMPLE_RUST_HOSTPROGS=3Dy
+CONFIG_RUST_DEBUG_ASSERTIONS=3Dy
+CONFIG_RUST_OVERFLOW_CHECKS=3Dy
+CONFIG_RUST_BUILD_ASSERT_ALLOW=3Dy
 
-Takashi
+$ rustc --version
+rustc 1.81.0
+
+> Anyway, I think the above needs something like this:
+>=20
+> ---
+> diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
+> index b7b0945e8b3c..5804a6062eb1 100644
+> --- a/rust/helpers/spinlock.c
+> +++ b/rust/helpers/spinlock.c
+> @@ -5,11 +5,16 @@
+>  void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
+>  				  struct lock_class_key *key)
+>  {
+> +#ifndef CONFIG_PREEMPT_RT
+>  #ifdef CONFIG_DEBUG_SPINLOCK
+>  	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+>  #else
+>  	spin_lock_init(lock);
+>  #endif
+> +#else
+> +	rt_mutex_base_init(&lock->lock);
+> +	__rt_spin_lock_init(lock, name, key, false);
+> +#endif
+>  }
+> =20
+>  void rust_helper_spin_lock(spinlock_t *lock)
+
+I will try to remember to add that to the tip tree merge tomorrow.
+
+> > Without the revert CONFIG_PREEMPT_RT=3Dy, after the revert it is not set
+> > and spinlock_check is only defined for !defined(CONFIG_PREEMPT_RT). =20
+>=20
+> Right, that moved PREEMPT_RT out of the preemption choice. Now I'm not
+> sure we want it =3Dy for all{yes,mod}config. Is the below the right
+> incantation to avoid this?
+>=20
+> ---
+> diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+> index 7c1b29a3a491..54ea59ff8fbe 100644
+> --- a/kernel/Kconfig.preempt
+> +++ b/kernel/Kconfig.preempt
+> @@ -88,7 +88,7 @@ endchoice
+> =20
+>  config PREEMPT_RT
+>  	bool "Fully Preemptible Kernel (Real-Time)"
+> -	depends on EXPERT && ARCH_SUPPORTS_RT
+> +	depends on EXPERT && ARCH_SUPPORTS_RT && !COMPILE_TEST
+>  	select PREEMPTION
+>  	help
+>  	  This option turns the kernel into a real-time kernel by replacing
+
+Yeah, that will do it.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/GuOa5y9PukXOSTbXNSWK=T4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcsuuAACgkQAVBC80lX
+0GwFRQgAiJthyCT5arGjsZIuXNRLlrmpjEVKqKamnlkxHwFt2Oz8D78hbkkL2TWQ
+8ad3gAtRFoQ53mnYabRlKM4ZvPQbsFFl8jVNHJG856Q6UvCBGj7Oi4rtNv8qDuVM
+8dJFibFQjBd9aU9xmc4cD7n/SeIQZ480aCzgcXhGYBFdOWuNxLEzVp8WA2UAHA1c
+wzazATVHHlpEF2ZIpLzbYG0fW9L/t/QKuEHc7iazFWPRrkfGi9EiT02QgojI855W
+WNIgYgVNbtLhFkdCjYYqdwdk76U+tARRLHXcBhv3jvyc8WPgrFy98e6+ew9njg1g
+UI2kcZNNXqY+6alhEPPqWQy+XfCswA==
+=Yhzi
+-----END PGP SIGNATURE-----
+
+--Sig_/GuOa5y9PukXOSTbXNSWK=T4--
 
