@@ -1,160 +1,110 @@
-Return-Path: <linux-kernel+bounces-399183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90719BFBEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:47:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43F09BFBF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:48:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25F791C219F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:47:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E57A81C21EA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B26FC0B;
-	Thu,  7 Nov 2024 01:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50C5FC0B;
+	Thu,  7 Nov 2024 01:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bYSeO+W5"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rLhPO/y4"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C40379F6;
-	Thu,  7 Nov 2024 01:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6947748F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 01:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730944048; cv=none; b=mKuHL7I3jvYWmF/oycY2SxPpFDrNI37Y8ZGVqPBCM0yAgO0gZIu6U/RAhEeDFpjkMf60UbRv2b8pn8g6by1I/iQyNhX+/R2yxY6ryVRqa60UvnSJjOdGJ20qdDqYH8/FzWOkuBtb0fZ+Q9pn5VmYEP7spDs2dIcaY8bU1Vmt/9Y=
+	t=1730944114; cv=none; b=Gh2wnUjVh31bBsuBhu4QG3aDBdNhuzWpRSdss3wk22RO0XKBwwbI5bq92VEG5C36u7ZbSWxjUXf1LovL6kYVVfiDcxRYoXjPeGuL6j1RtHr7iSfIR/B80aJI9voe7lm5Egu6Hiw57EBdKWoQKGKAGv+PCZPBWJUgIo33a4yHv9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730944048; c=relaxed/simple;
-	bh=rRk6cq2F/tp4Zcn90ksnzekGavL+iUlCGiUtZ73axNE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UI2alLYEcYhD1QhCR5t9MdFPiZ/m+Fyt3AaluTON5Erg/8C7oZJEHT0I3o6vAar1Ma8g2VPfD9TmdoR9wbIa3HGQi8ItbirDlyHNZlYzExklJ0thYndyaOfBdZusbCSXDYVvsNRWEW5YaIjrg4+LD0ScwK1yDR7Ydm3K+j0mxD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=bYSeO+W5; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 3b4858e69caa11efb88477ffae1fc7a5-20241107
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=3W5PDY06+vGKIgs/nnc6DCcFazFeqkExG65rOZ8TJMY=;
-	b=bYSeO+W50cK/AvrjmSKscoWuKjivWQPfkz4a+5Af9bVyl27r8gXfGIuckiyXrMAv9sPSuAA5QZMdbpSfNu/e6WYzP0Tz9XRqWGJb4W5xAWq9wkGWjOC3S5yf8HdkmMlDiJh4s14wNgWg4Y1y59r83hmLs/hfyFEzu9nzrm2B+0k=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:263391a9-8d72-4741-aaea-a742953a93ae,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:26c1ac06-6ce0-4172-9755-bd2287e50583,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 3b4858e69caa11efb88477ffae1fc7a5-20241107
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <andy-ld.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2031822430; Thu, 07 Nov 2024 09:47:22 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 7 Nov 2024 09:47:19 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 7 Nov 2024 09:47:19 +0800
-From: Andy-ld Lu <andy-ld.lu@mediatek.com>
-To: <angelogioacchino.delregno@collabora.com>, <ulf.hansson@linaro.org>,
-	<matthias.bgg@gmail.com>, <wenbin.mei@mediatek.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Andy-ld Lu <andy-ld.lu@mediatek.com>
-Subject: [PATCH] mmc: mtk-sd: Fix error handle of probe function
-Date: Thu, 7 Nov 2024 09:47:07 +0800
-Message-ID: <20241107014714.24981-1-andy-ld.lu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1730944114; c=relaxed/simple;
+	bh=V10QHZfYVQD9HFzRtETykMtC4OBrdMMBil6kxYAZ6Tc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZGwYE3mSNBvT57kI2MfVGjGSItVKB6e3IUZhBbytvtCo6NM1OrvhBf/mHW9uclfw+9QsnpJ7/Rr4cSKXv4Ycl04MQjE6u8+3My+xUBFIrXuGQmT9cUKG0HdJaPVURV/MY9d4Q4cm5NdCteiOPHWW0xwSzAqcS8fyWnIuB8xT6D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rLhPO/y4; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6eaa08a6fdbso7553497b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 17:48:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730944111; x=1731548911; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gL8t9nFQsC/c96Z20xSFXHjy1Xqit+dwKJbQYn+hSkQ=;
+        b=rLhPO/y4b8LGZ4XBgAVRdexrsvc2chYMesGpWLaPu81dB7z47zOgGWItHD/I3pedr2
+         toRmKIqJoP21AZ4Z80gdoc7svw8B13PmczLebNvQPyikOn9n0ShRj+cEAxOzmlVcFN/Z
+         RXTKVfxfQD1xmI3R8ZOwyWZ9sHc+ZitwvtYT/xiLtuLrDuh+Hjn+xIfA0kiujx0ciNCF
+         5X5daO8sCjB1lxS5rSsxs2cmhBr5CEi6yRH7wXKfvBP+G6CVozSuKAJIpoIOS9vqDYMJ
+         XK1wVgMGa2ECuoCpKcVclk+7HVkSIL6aGSya95XMGXr+1a6IBEyPgHuIeZITlysBaI/W
+         zmmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730944111; x=1731548911;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gL8t9nFQsC/c96Z20xSFXHjy1Xqit+dwKJbQYn+hSkQ=;
+        b=vFcJ1BBj7BUKeNbg1mKwnTTscAgZwWbL8J1Kh3nYdHTbzT2oKRqAaSM0eJJSuMItA7
+         iUhjOSCagutVJBBI+jkQpMMjpHHToglI4yN+pGFZ2aDDqx9qz94+wMYSqINyxaeXL/zy
+         q3sYovQo5fNICp9ltkXBT9Xu6km1RPnnxm2MOZq5MjIwWuC+Dpv3muQFrxuO831j1KAv
+         WBYuhWLPvrWkvlHdt4oUyZzPo4H5hXUuOKDMCCZzZkin8gc6jDHyhFujp0pl9WwRFoz7
+         z5VvWxYggpYY26UQifq2m99zIx38imo+SQWqzrEVzMhNG8D5YeUmxeArZiL24pkzN09z
+         LbdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIpmuBULdRQ+l/JGIlX4H6LDZhOWz7xNiMnopqWmce2p/veN7jfzwtyeRScsCn5CR5orNXcvwPwjl5cGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGfjDdcUhdclhLG10Go1XTlegrtxPs2J2jQi6QpVNzpmW23OGi
+	E8rI7xqM8Xx3Z+VLX8cPOKneCHwQ4yvRIiaTn7sDE/lEP2i0hvTXxIstlNM/Yb6pBstBykVse1K
+	/u8TMr1rTag==
+X-Google-Smtp-Source: AGHT+IH5q2CSopFJCMFNkDZJtYacCpApjZqhwnvyXYGycM9PriE3s7h0cVn2vA6Wb1UdS8o+oKwirsOazZ5VTA==
+X-Received: from ip.c.googlers.com ([fda3:e722:ac3:cc00:ef:85c8:ac13:4138])
+ (user=ipylypiv job=sendgmr) by 2002:a05:690c:6711:b0:6a9:3d52:79e9 with SMTP
+ id 00721157ae682-6ead169d03fmr2637b3.4.1730944111724; Wed, 06 Nov 2024
+ 17:48:31 -0800 (PST)
+Date: Thu,  7 Nov 2024 01:48:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--8.332800-8.000000
-X-TMASE-MatchedRID: OLc6pRZQUVIxZlmZjLleZjPDkSOzeDWWq6/EYzBxkJgifM7JMNHW6xnH
-	32sG9jpsk6w8yr9UCBOnpDsu3n08UYjHxngndevxjNvYZHpO13fRfRfl2l4F3mtl3YYsdIHcBtM
-	QoGDRYEdfcTZ8crFLktWHvGFXsGeXsEBAuoaUqK/il2r2x2PwtQrefVId6fzVYdn5x3tXIpc7Qm
-	s3AC7auwWJQuk93Z8PIHSszW9OO9ONBnVioBmwYZ4CIKY/Hg3AGdQnQSTrKGPEQdG7H66TyF82M
-	XkEdQ770NH2Sv6E5SYne4LyJjwYxKLlHqJF1Ux2JFezMmuBWhtUQBzN9bOMTg==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--8.332800-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 3EFFC2BAA1189F12C483A8F0D241AC66204B4ABBF44944DC8F2C2D7C342F09702000:8
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Message-ID: <20241107014827.3962940-1-ipylypiv@google.com>
+Subject: [PATCH] i2c: dev: Fix memory leak when underlying adapter does not
+ support I2C
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jean Delvare <jdelvare@suse.de>, 
+	Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Igor Pylypiv <ipylypiv@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-In the probe function, it goes to 'release_mem' label and returns after
-some procedure failure. But if the clocks (partial or all) have been
-enabled previously, they would not be disabled in msdc_runtime_suspend,
-since runtime PM is not yet enabled for this case.
+i2cdev_ioctl_rdwr() receives a buffer which is allocated by the caller.
 
-That cause mmc related clocks always on during system suspend and block
-suspend flow. Below log is from a SDCard issue of MT8196 chromebook, it
-returns -ETIMEOUT while polling clock stable in the msdc_ungate_clock()
-and probe failed, but the enabled clocks could not be disabled anyway.
-
-[  129.059253] clk_chk_dev_pm_suspend()
-[  129.350119] suspend warning: msdcpll is on
-[  129.354494] [ck_msdc30_1_sel : enabled, 1, 1, 191999939,   ck_msdcpll_d2]
-[  129.362787] [ck_msdcpll_d2   : enabled, 1, 1, 191999939,         msdcpll]
-[  129.371041] [ck_msdc30_1_ck  : enabled, 1, 1, 191999939, ck_msdc30_1_sel]
-[  129.379295] [msdcpll         : enabled, 1, 1, 383999878,          clk26m]
-
-Add a new 'release_clk' label and reorder the error handle functions to
-make sure the clocks be disabled after probe failure.
-
-Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
+Fixes: 97ca843f6ad3 ("i2c: dev: Check for I2C_FUNC_I2C before calling i2c_transfer")
+Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
 ---
- drivers/mmc/host/mtk-sd.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/i2c/i2c-dev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index a2750a45c1b7..022526a1f754 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -3007,7 +3007,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	ret = msdc_ungate_clock(host);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Cannot ungate clocks!\n");
--		goto release_mem;
-+		goto release_clk;
- 	}
- 	msdc_init_hw(host);
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index 61f7c4003d2f..5d15519ef737 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -247,8 +247,10 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+ 	int i, res;
  
-@@ -3017,14 +3017,14 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 					     GFP_KERNEL);
- 		if (!host->cq_host) {
- 			ret = -ENOMEM;
--			goto release_mem;
-+			goto release;
- 		}
- 		host->cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
- 		host->cq_host->mmio = host->base + 0x800;
- 		host->cq_host->ops = &msdc_cmdq_ops;
- 		ret = cqhci_init(host->cq_host, mmc, true);
- 		if (ret)
--			goto release_mem;
-+			goto release;
- 		mmc->max_segs = 128;
- 		/* cqhci 16bit length */
- 		/* 0 size, means 65536 so we don't have to -1 here */
-@@ -3064,9 +3064,10 @@ static int msdc_drv_probe(struct platform_device *pdev)
- end:
- 	pm_runtime_disable(host->dev);
- release:
--	platform_set_drvdata(pdev, NULL);
- 	msdc_deinit_hw(host);
-+release_clk:
- 	msdc_gate_clock(host);
-+	platform_set_drvdata(pdev, NULL);
- release_mem:
- 	if (host->dma.gpd)
- 		dma_free_coherent(&pdev->dev,
+ 	/* Adapter must support I2C transfers */
+-	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
++	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
++		kfree(msgs);
+ 		return -EOPNOTSUPP;
++	}
+ 
+ 	data_ptrs = kmalloc_array(nmsgs, sizeof(u8 __user *), GFP_KERNEL);
+ 	if (data_ptrs == NULL) {
 -- 
-2.46.0
+2.47.0.277.g8800431eea-goog
 
 
