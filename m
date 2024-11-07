@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-399219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018B29BFC3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:04:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D31999BFC3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:04:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA667285BFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:04:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49F65B22FF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF971D8E0F;
-	Thu,  7 Nov 2024 02:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7061DC05F;
+	Thu,  7 Nov 2024 02:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="edgyd72k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXnLDNzd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21391D6DDA;
-	Thu,  7 Nov 2024 02:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E0C13CFA6;
+	Thu,  7 Nov 2024 02:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730944830; cv=none; b=Mb9GHVRz9DMYfOMrJZi9ccWAH1gEcBQdfqTUTRRHUa7ePuW+8b5sUryVZQ6rttrOmrbrgXUdEPtqxS3Qqzs7FhbdjxtQPhACGmQaxQLQQO4D7f3oFaDDsUTqSlGM5tGOHAFibdP0S9fftxKfvGG04d5iVaQ6ooNJzlhYpj1IMQU=
+	t=1730944832; cv=none; b=Pi5aa5RrnS0KYPpJr7DtPcdmhQmArPxE5Ny/6IdB7wP1iGIG/jtMFgNaGsmXdmCTTVFng50N4EcJLOsJT/MUIVsBNqwchbUkoodMUSboz/81afzmm/CHh6xDsV4ZL9CcMBMcFVWmhKdiPoByRtzA76HBsWbScEmIrVV/GvSLb/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730944830; c=relaxed/simple;
-	bh=suI3XWLmTzVhY5fFAttLLgW5p99l4dCslb9Rfr3dJVY=;
+	s=arc-20240116; t=1730944832; c=relaxed/simple;
+	bh=532jMIfuDg1ogK3TC9C2/ZA3fr7KDNNjjlqo/f3sPYg=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=QwfPu3ibXwfJvms8SGuHIDZ4rzie4kJN557aiOFPOUKBBWOwX4l21XI1SdafiVKwhpNFHZglIj+MSvQWxCqYiKxCu7YMr8FcRaVy2lR6PenS9XJtYllhoJlzSs5k773jg7BxoHyD/NK73EeAdiS67iWlwM5+ET9NuPqOnadEfMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=edgyd72k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF6DC4CEC6;
-	Thu,  7 Nov 2024 02:00:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=FTcLxyHuij90kteTGy7NT2yca13YeYnEyp6ro2DKjtke4X26KsmhqypAmVy+I0GK5ziCcZMHisFI/8C3s4b9pCldx2l6FBb0J8i1zAArUSEBONE/WwFJpbPtooqC4co4M6zyoGqIPRCvIWW6kfxY4ej2e+LHtcV8OC7cVMcpxnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXnLDNzd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 248E1C4CEC6;
+	Thu,  7 Nov 2024 02:00:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730944829;
-	bh=suI3XWLmTzVhY5fFAttLLgW5p99l4dCslb9Rfr3dJVY=;
+	s=k20201202; t=1730944832;
+	bh=532jMIfuDg1ogK3TC9C2/ZA3fr7KDNNjjlqo/f3sPYg=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=edgyd72ktj7OygPUtVnH5hbl6WphzvoMr5zaS+VELi9RMIXxtdltDVf3dUz7rTRSR
-	 NLcGMrwVeLvVKaxncLJ8DwsbjJ0g565L5/du4NkM60gabfGU9HRcjl2i598jNbLEII
-	 FKrYgTWKfvWLDIt5vfRVHPGzafHD54S/j62qUhYJNqnnNuh1uU2viOO5jRA1tu/+lg
-	 HcyMN8YP15AkmN+CMH2UwVI4A1H9dqI/rc7ATZveGr8MWRct3Fw21arJFkS0EJxEGt
-	 KGXhLQjsm+oRk9dCdAf0Nb5+VwJU9NApUWRtohLjDP/9DuE4jD15CIEG+byljl5t28
-	 CVsOrVxC5xtAQ==
+	b=TXnLDNzdApu7oeS1R6H0JZK8Dxd1G3cqHvafNb5LVehyv2AHPqKjJFlkAsm2izw7Z
+	 QYDRM8GrQRfwnUPza4CoFg0TbJu8Ais2ApPnTw44ufAfV/qm4Po7DtKY2S9TEjUpYf
+	 Vppt4H4PmBEk58s0ZtzCE8r5Qjq7IHb/w3/wTzszLch1RI4wDygdESNkFTYLdTelvd
+	 2Vz877ApPOsFBw8+jCjYcM0FrWAmpqtxwX2nTeqP827XcSs4Tmw0MnVw/uhzkjKlJJ
+	 neC8/MueAP6wFYnL8fgTHnyrXAicmdZjMHewxtiaMB2eOepRCfIdcpgfQudIb3xLp0
+	 Kl2dt9r/Wp17Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1C23809A80;
-	Thu,  7 Nov 2024 02:00:39 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70A9D3809A80;
+	Thu,  7 Nov 2024 02:00:42 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/2] bnxt_en: ethtool: Improve wildcard l4proto on
- ip4/ip6 ntuple rules
+Subject: Re: [PATCHv2 net-next] net: broadcom: use ethtool string helpers
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173094483824.1489169.3032891223925266977.git-patchwork-notify@kernel.org>
-Date: Thu, 07 Nov 2024 02:00:38 +0000
-References: <cover.1730778566.git.dxu@dxuuu.xyz>
-In-Reply-To: <cover.1730778566.git.dxu@dxuuu.xyz>
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- michael.chan@broadcom.com, kuba@kernel.org, martin.lau@linux.dev,
- kernel-team@meta.com
+ <173094484124.1489169.8971635919773008705.git-patchwork-notify@kernel.org>
+Date: Thu, 07 Nov 2024 02:00:41 +0000
+References: <20241104205317.306140-1-rosenp@gmail.com>
+In-Reply-To: <20241104205317.306140-1-rosenp@gmail.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, justin.chen@broadcom.com,
+ florian.fainelli@broadcom.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ bcm-kernel-feedback-list@broadcom.com, rafal@milecki.pl, opendmb@gmail.com,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon,  4 Nov 2024 21:13:18 -0700 you wrote:
-> This patchset improves wildcarding over l4proto on ip4 and ip6 nutple
-> rules. Previous support required setting l4proto explicitly to 0xFF if
-> you wanted wildcard, which ethtool (naturally) did not do. For example,
-> this command would fail with -EOPNOSUPP:
+On Mon,  4 Nov 2024 12:53:17 -0800 you wrote:
+> The latter is the preferred way to copy ethtool strings.
 > 
->     ethtool -N eth0 flow-type ip6 dst-ip $IP6 context 1
+> Avoids manually incrementing the pointer. Cleans up the code quite well.
 > 
-> [...]
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  v2: split off bnx2x changes.
+>  .../ethernet/broadcom/asp2/bcmasp_ethtool.c   |  6 +++---
+>  drivers/net/ethernet/broadcom/bcm63xx_enet.c  | 12 +++++------
+>  drivers/net/ethernet/broadcom/bcmsysport.c    | 20 +++++--------------
+>  drivers/net/ethernet/broadcom/bgmac.c         |  3 +--
+>  .../net/ethernet/broadcom/genet/bcmgenet.c    |  6 +++---
+>  drivers/net/phy/bcm-phy-lib.c                 |  3 +--
+>  6 files changed, 19 insertions(+), 31 deletions(-)
 
 Here is the summary with links:
-  - [net-next,v3,1/2] bnxt_en: ethtool: Remove ip4/ip6 ntuple support for IPPROTO_RAW
-    https://git.kernel.org/netdev/net-next/c/050eb2cebb9e
-  - [net-next,v3,2/2] bnxt_en: ethtool: Support unset l4proto on ip4/ip6 ntuple rules
-    https://git.kernel.org/netdev/net-next/c/5f143efd3804
+  - [PATCHv2,net-next] net: broadcom: use ethtool string helpers
+    https://git.kernel.org/netdev/net-next/c/fda960354eac
 
 You are awesome, thank you!
 -- 
