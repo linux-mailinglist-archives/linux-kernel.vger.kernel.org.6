@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-399489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5229BFFB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:09:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0232D9BFFB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8231F2255A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:09:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797131F23374
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1A11D54D3;
-	Thu,  7 Nov 2024 08:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AA01D3644;
+	Thu,  7 Nov 2024 08:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="WkRDY5D8"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1FOwYpW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D38117DE36;
-	Thu,  7 Nov 2024 08:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB03B1CF7BB
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730966956; cv=none; b=F/pG+Bu0AaXmGstiztEJQu96Lx6lqBTr/1/iPPz84bIcXTIqppJbKgq+WDG3I1heh2olK+qwT+zi7OgIkMhoqzznBLSLlIvG4ACszDf08dsLyTr8zrsz8pfx5K0YWcHuOQtyRCT5iDj6LBhuAruNjP13ktf1xtequjSl5uNZT84=
+	t=1730966964; cv=none; b=IpbIJmgg6t2Ay7EzAUOOYctJeKbwODgMuRyWOnSm6osx368f/85CgqVJFAGr7hN2PtwRdI4OKdR64zYnovGGxkgzqAbvK1xAfaDbBBFT6nyoeNbSP8eF3AGoVYgIWW9eBDMbVs7txnQCilFefE0wEEiMsbyF1SvBVPh5QntR0O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730966956; c=relaxed/simple;
-	bh=xN93vbxTt1KARVgg9O/phRnB94KjPdT5gScJ//vyk4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qjWTBK+SuCHHzbMRZAFaJ56XTUD5lsAiFpabiNJYDWkWfwgA7o3hBKrgXBptffQZMTiSNu8Xf4zUsZZKPdSthfRDx5xT693OZck5QKDPDYDJn+pDms8DrOvwwoGjZpacyq0WkyiISi4WMjAMNxuJy27qCVyUCgqiDn2l9Mjfne0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=WkRDY5D8; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730966878; x=1731571678; i=w_armin@gmx.de;
-	bh=+sD67PMdHq3t7fB6r4132ZHSKpmpOxOGf4hTSOkDNlE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WkRDY5D8U10s+r0IdropUaQr3mwW4MHHroJ2VVy5Yr7pavLefp/rBWyyg8TdbkLm
-	 Jq1QoeUTGE7tDvrEY0Q7zuH1BOsLY6gUScEAdGQlbOvPQ8JE7Ud+fYZm/NhWXMWpK
-	 8w0cbYRIsgV2hg/+/hLnIrvOfimrGAAVrmOpoXJG2A31Z5EI+R/fs0BNb57KK/TYe
-	 ETViZmEtMzw6aY2YgYRa02KrBWl12SIoS2gmd2+JrpRBSGupLjDzcZVxWaplSefmo
-	 aIICGVSk//D8RJMMNK7tqilmHfAHZybuMOpBY+5QXPw65IaBSjq+sGjwT5Tyl+mBI
-	 hQMV1H0ZMzpGM0NpYQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MQ5vc-1tUs7a2I4W-00Qg28; Thu, 07
- Nov 2024 09:07:58 +0100
-Message-ID: <44462a90-5151-4b49-830e-528bc5451030@gmx.de>
-Date: Thu, 7 Nov 2024 09:07:52 +0100
+	s=arc-20240116; t=1730966964; c=relaxed/simple;
+	bh=OJ4qKLhDnrQM+7VYMQsTUZS7sbbVTE531znMDXJYjcE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QPa24yPocWlSX6W4pPR8GirIrfDkZtEVCI2pZhAcsRxxcyNBMbIEqTtSeZWdSK6JkrA6dCQxBOLutfHwBiE40zU7Br4AdnanQqWFAAOVVzTuxhxpJWsfIU3ahCJoV6BGeywnCIB8CsuWy2viNf357VGTRwckE1Y9k3iXPgJ1uUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1FOwYpW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE41DC4CECC;
+	Thu,  7 Nov 2024 08:09:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730966964;
+	bh=OJ4qKLhDnrQM+7VYMQsTUZS7sbbVTE531znMDXJYjcE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=q1FOwYpWAIzDL9xpdnx9IAIepNGIMajpBNJWw5og933jGPw9afWUFLtakb7XPevFu
+	 bnhiGqDFwrQkhRmGjVjkcZQ6iK4I+D6DPdtJ1clnVG/9JD5MJOJ4x9l4nHGRYTTzSK
+	 DdOZpF9FlIsChvhBPgmnbvobYKzuoWkt6omtVZ3TjuEtLWcJkmVcxqmz2aUEm9lP4m
+	 x+TxoKpep2II94mwUAmS5yQylvmLDxzxtMFoLHsXakEYZzOIiMQ2h6d73FTT964JOK
+	 OQw60+7jVNh94feQaNSlV0+nlZSoCZ7xMo1gyrQXbsnVZHgPjtr5WGKqXw1sSXqr/i
+	 2IdwrCbIGUIIQ==
+Message-ID: <3f5de1be-43a0-469f-837c-15c61297c823@kernel.org>
+Date: Thu, 7 Nov 2024 16:09:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,150 +49,260 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/20] platform/x86/dell: dell-pc: Create platform
- device
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241107060254.17615-1-mario.limonciello@amd.com>
- <20241107060254.17615-3-mario.limonciello@amd.com>
+Cc: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org,
+ Zhiguo Niu <zhiguo.niu@unisoc.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up w/ F2FS_{BLK_TO_BYTES,
+ BTYES_TO_BLK}
+To: Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <20241107014602.3638020-1-chao@kernel.org>
+ <CAHJ8P3LUTz9XGji5Xa2Jy-KeSuaG9HhtDhxz_aM1hE=-K+zsGw@mail.gmail.com>
 Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241107060254.17615-3-mario.limonciello@amd.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CAHJ8P3LUTz9XGji5Xa2Jy-KeSuaG9HhtDhxz_aM1hE=-K+zsGw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SMQWaSNdx1FuesT/I28AtdxEBOPax+cWkkuE/rRc6UY7kGdwXA2
- MRsf0zGrYruuYk5e6Zv0ZEuo5qJCxt8F2QTp6xtPMGHLMJcyYnbqgLtJzf09jFrD40OBAEo
- fUMZ744S5NoUQfpFWQYPqpAJI2C5LAEOxZ6ILC9tO8RP6tzW0qBR4Sdpcx4lbRTC1jpiW45
- LzGMJtInkzM0rBBwyoDcA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Kj58pHIuaf8=;DMZmlhuVjlZKLOxJ2ObNdWoBhBT
- F+9ovY68nEZ5XBA3j8GQS+S6VuXyKVezFv2ACLk8ow24YVOBdMd2dY+qKPPruwt09wM6NDHyM
- 7O/wl4k9HWYaFsImBJ4Ytwdhtn41uWpx3EokA+o3z+Dmo6ahvV6azjW/Eq2lJ0/8pGokdhJAn
- xfQo9gog0fn3RkqVBxSpX8+W7HQmGWgP3XYFvgPEP1JsEq958sXmOj1rVLf6U1vluJDcol/bj
- 9Som1Xg9rkLLecuQU4WvFg6dh2D7BE6E6bMHhYA+VlEttndkN4T0qiYmo94mFRyt/g3jzkVSF
- XS4l8tNorR8nlYVcMTDFJMsesR2F2X40Y2WboroAHnuiHJxHq0u4q6IlcDD4BFXMHTmHx5fIB
- 3xJgbkmaqPkTElxpWRUlwkUiKFbmeqf/4j3yYceAUfwYyHznwe5eA0Rg5TL8jAao9jphLNEfY
- Se9EvP0+MAnVf9C0dA0i6lLvLHbV4J+iuXlrqSnovdovbyzFYYi6NUlbUb6zyRpUpuQACgglf
- vToQ30ER7KwDnzo1BtcNng+EKi9leGXZVSrjMrten6T8bWH0D9aCBFMouJCR2jRRmBOCX0bIz
- 8dhVw23fNXvi3yHSuG63qjZBcjN0DhI3aqVKKmuViivetuI6IrxyzxoOfrA6+34oYw3e4AjBy
- 8hUvLwFpW8u4o9wpIOHIepURhgSLXC8s6K4dzIf0c2yaXSvE+P/gaipkbo6LMP3olQvmfWUfJ
- IbWsvvdMS2zCOwaxBDKMeIcJfhFdO1jfpf4q3hocp3WPfrsdvuWq68rwx7ShrJ1HbIoxZPagp
- DriyMoLZESxB0K4Aav3HhxbT2H2d+HtVtFAqMJal2zf+s=
+Content-Transfer-Encoding: 8bit
 
-Am 07.11.24 um 07:02 schrieb Mario Limonciello:
+On 2024/11/7 11:19, Zhiguo Niu wrote:
+> Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+> 于2024年11月7日周四 09:50写道：
+>>
+>> f2fs doesn't support different blksize in one instance, so
+>> bytes_to_blks() and blks_to_bytes() are equal to F2FS_BYTES_TO_BLK
+>> and F2FS_BLK_TO_BYTES, let's use F2FS_BYTES_TO_BLK/F2FS_BLK_TO_BYTES
+>> instead for cleanup.
+>>
+>> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+> feel free to add:
+> Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 
-> In order to have a device for the platform profile core to reference
-> create a platform device for dell-pc.
->
-> While doing this change the memory allocation for the thermal handler
-> to be device managed to follow the lifecycle of that device.
->
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v5:
->   * use platform_device_register_simple()
-> ---
->   drivers/platform/x86/dell/dell-pc.c | 32 +++++++++++++++++++++--------
->   1 file changed, 23 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/=
-dell/dell-pc.c
-> index 3cf79e55e3129..0cd9b26572b61 100644
-> --- a/drivers/platform/x86/dell/dell-pc.c
-> +++ b/drivers/platform/x86/dell/dell-pc.c
-> @@ -18,10 +18,13 @@
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/platform_profile.h>
-> +#include <linux/platform_device.h>
->   #include <linux/slab.h>
->
->   #include "dell-smbios.h"
->
-> +static struct platform_device *platform_device;
-> +
->   static const struct dmi_system_id dell_device_table[] __initconst =3D =
-{
->   	{
->   		.ident =3D "Dell Inc.",
-> @@ -244,9 +247,15 @@ static int thermal_init(void)
->   	if (!supported_modes)
->   		return 0;
->
-> -	thermal_handler =3D kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
-> -	if (!thermal_handler)
-> +	platform_device =3D platform_device_register_simple("dell-pc", -1, NUL=
-L, 0);
+I encounter filesystem corruption w/ this patch while testing generic/051,
+since we missed to cast bytes/blk argument to unsigned long long type.
 
-Please keep using PLATFORM_DEVID_NONE here.
+-#define F2FS_BYTES_TO_BLK(bytes)	((bytes) >> F2FS_BLKSIZE_BITS)
+-#define F2FS_BLK_TO_BYTES(blk)		((blk) << F2FS_BLKSIZE_BITS)
++#define F2FS_BYTES_TO_BLK(bytes)	((unsigned long long)(bytes) >> F2FS_BLKSIZE_BITS)
++#define F2FS_BLK_TO_BYTES(blk)		((unsigned long long)(blk) << F2FS_BLKSIZE_BITS)
+
+Will fix this in a separate patch.
 
 Thanks,
-Armin Wolf
 
-> +	if (!platform_device)
->   		return -ENOMEM;
-> +
-> +	thermal_handler =3D devm_kzalloc(&platform_device->dev, sizeof(*therma=
-l_handler), GFP_KERNEL);
-> +	if (!thermal_handler) {
-> +		ret =3D -ENOMEM;
-> +		goto cleanup_platform_device;
-> +	}
->   	thermal_handler->name =3D "dell-pc";
->   	thermal_handler->profile_get =3D thermal_platform_profile_get;
->   	thermal_handler->profile_set =3D thermal_platform_profile_set;
-> @@ -262,20 +271,25 @@ static int thermal_init(void)
->
->   	/* Clean up if failed */
->   	ret =3D platform_profile_register(thermal_handler);
-> -	if (ret) {
-> -		kfree(thermal_handler);
-> -		thermal_handler =3D NULL;
-> -	}
-> +	if (ret)
-> +		goto cleanup_thermal_handler;
-> +
-> +	return 0;
-> +
-> +cleanup_thermal_handler:
-> +	thermal_handler =3D NULL;
-> +
-> +cleanup_platform_device:
-> +	platform_device_unregister(platform_device);
->
->   	return ret;
->   }
->
->   static void thermal_cleanup(void)
->   {
-> -	if (thermal_handler) {
-> +	if (thermal_handler)
->   		platform_profile_remove();
-> -		kfree(thermal_handler);
-> -	}
-> +	platform_device_unregister(platform_device);
->   }
->
->   static int __init dell_init(void)
+> thanks!
+>> ---
+>>   fs/f2fs/data.c | 68 +++++++++++++++++++++-----------------------------
+>>   1 file changed, 29 insertions(+), 39 deletions(-)
+>>
+>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> index b33aca24b9ef..0e8390cbdb5b 100644
+>> --- a/fs/f2fs/data.c
+>> +++ b/fs/f2fs/data.c
+>> @@ -1819,16 +1819,6 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
+>>          return true;
+>>   }
+>>
+>> -static inline u64 bytes_to_blks(struct inode *inode, u64 bytes)
+>> -{
+>> -       return (bytes >> inode->i_blkbits);
+>> -}
+>> -
+>> -static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
+>> -{
+>> -       return (blks << inode->i_blkbits);
+>> -}
+>> -
+>>   static int f2fs_xattr_fiemap(struct inode *inode,
+>>                                  struct fiemap_extent_info *fieinfo)
+>>   {
+>> @@ -1854,7 +1844,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
+>>                          return err;
+>>                  }
+>>
+>> -               phys = blks_to_bytes(inode, ni.blk_addr);
+>> +               phys = F2FS_BLK_TO_BYTES(ni.blk_addr);
+>>                  offset = offsetof(struct f2fs_inode, i_addr) +
+>>                                          sizeof(__le32) * (DEF_ADDRS_PER_INODE -
+>>                                          get_inline_xattr_addrs(inode));
+>> @@ -1886,7 +1876,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
+>>                          return err;
+>>                  }
+>>
+>> -               phys = blks_to_bytes(inode, ni.blk_addr);
+>> +               phys = F2FS_BLK_TO_BYTES(ni.blk_addr);
+>>                  len = inode->i_sb->s_blocksize;
+>>
+>>                  f2fs_put_page(page, 1);
+>> @@ -1948,16 +1938,16 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>                          goto out;
+>>          }
+>>
+>> -       if (bytes_to_blks(inode, len) == 0)
+>> -               len = blks_to_bytes(inode, 1);
+>> +       if (F2FS_BYTES_TO_BLK(len) == 0)
+>> +               len = F2FS_BLKSIZE;
+>>
+>> -       start_blk = bytes_to_blks(inode, start);
+>> -       last_blk = bytes_to_blks(inode, start + len - 1);
+>> +       start_blk = F2FS_BYTES_TO_BLK(start);
+>> +       last_blk = F2FS_BYTES_TO_BLK(start + len - 1);
+>>
+>>   next:
+>>          memset(&map, 0, sizeof(map));
+>>          map.m_lblk = start_blk;
+>> -       map.m_len = bytes_to_blks(inode, len);
+>> +       map.m_len = F2FS_BYTES_TO_BLK(len);
+>>          map.m_next_pgofs = &next_pgofs;
+>>          map.m_seg_type = NO_CHECK_TYPE;
+>>
+>> @@ -1974,7 +1964,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>          if (!compr_cluster && !(map.m_flags & F2FS_MAP_FLAGS)) {
+>>                  start_blk = next_pgofs;
+>>
+>> -               if (blks_to_bytes(inode, start_blk) < maxbytes)
+>> +               if (F2FS_BLK_TO_BYTES(start_blk) < maxbytes)
+>>                          goto prep_next;
+>>
+>>                  flags |= FIEMAP_EXTENT_LAST;
+>> @@ -2011,14 +2001,14 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>          } else if (compr_appended) {
+>>                  unsigned int appended_blks = cluster_size -
+>>                                                  count_in_cluster + 1;
+>> -               size += blks_to_bytes(inode, appended_blks);
+>> +               size += F2FS_BLK_TO_BYTES(appended_blks);
+>>                  start_blk += appended_blks;
+>>                  compr_cluster = false;
+>>          } else {
+>> -               logical = blks_to_bytes(inode, start_blk);
+>> +               logical = F2FS_BLK_TO_BYTES(start_blk);
+>>                  phys = __is_valid_data_blkaddr(map.m_pblk) ?
+>> -                       blks_to_bytes(inode, map.m_pblk) : 0;
+>> -               size = blks_to_bytes(inode, map.m_len);
+>> +                       F2FS_BLK_TO_BYTES(map.m_pblk) : 0;
+>> +               size = F2FS_BLK_TO_BYTES(map.m_len);
+>>                  flags = 0;
+>>
+>>                  if (compr_cluster) {
+>> @@ -2026,13 +2016,13 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>                          count_in_cluster += map.m_len;
+>>                          if (count_in_cluster == cluster_size) {
+>>                                  compr_cluster = false;
+>> -                               size += blks_to_bytes(inode, 1);
+>> +                               size += F2FS_BLKSIZE;
+>>                          }
+>>                  } else if (map.m_flags & F2FS_MAP_DELALLOC) {
+>>                          flags = FIEMAP_EXTENT_UNWRITTEN;
+>>                  }
+>>
+>> -               start_blk += bytes_to_blks(inode, size);
+>> +               start_blk += F2FS_BYTES_TO_BLK(size);
+>>          }
+>>
+>>   prep_next:
+>> @@ -2070,7 +2060,7 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
+>>                                          struct readahead_control *rac)
+>>   {
+>>          struct bio *bio = *bio_ret;
+>> -       const unsigned blocksize = blks_to_bytes(inode, 1);
+>> +       const unsigned int blocksize = F2FS_BLKSIZE;
+>>          sector_t block_in_file;
+>>          sector_t last_block;
+>>          sector_t last_block_in_file;
+>> @@ -2080,8 +2070,8 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
+>>
+>>          block_in_file = (sector_t)index;
+>>          last_block = block_in_file + nr_pages;
+>> -       last_block_in_file = bytes_to_blks(inode,
+>> -                       f2fs_readpage_limit(inode) + blocksize - 1);
+>> +       last_block_in_file = F2FS_BYTES_TO_BLK(f2fs_readpage_limit(inode) +
+>> +                                                       blocksize - 1);
+>>          if (last_block > last_block_in_file)
+>>                  last_block = last_block_in_file;
+>>
+>> @@ -2181,7 +2171,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>>          struct bio *bio = *bio_ret;
+>>          unsigned int start_idx = cc->cluster_idx << cc->log_cluster_size;
+>>          sector_t last_block_in_file;
+>> -       const unsigned blocksize = blks_to_bytes(inode, 1);
+>> +       const unsigned int blocksize = F2FS_BLKSIZE;
+>>          struct decompress_io_ctx *dic = NULL;
+>>          struct extent_info ei = {};
+>>          bool from_dnode = true;
+>> @@ -2190,8 +2180,8 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>>
+>>          f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
+>>
+>> -       last_block_in_file = bytes_to_blks(inode,
+>> -                       f2fs_readpage_limit(inode) + blocksize - 1);
+>> +       last_block_in_file = F2FS_BYTES_TO_BLK(f2fs_readpage_limit(inode) +
+>> +                                                       blocksize - 1);
+>>
+>>          /* get rid of pages beyond EOF */
+>>          for (i = 0; i < cc->cluster_size; i++) {
+>> @@ -3957,7 +3947,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
+>>           * to be very smart.
+>>           */
+>>          cur_lblock = 0;
+>> -       last_lblock = bytes_to_blks(inode, i_size_read(inode));
+>> +       last_lblock = F2FS_BYTES_TO_BLK(i_size_read(inode));
+>>
+>>          while (cur_lblock < last_lblock && cur_lblock < sis->max) {
+>>                  struct f2fs_map_blocks map;
+>> @@ -4200,8 +4190,8 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>>          pgoff_t next_pgofs = 0;
+>>          int err;
+>>
+>> -       map.m_lblk = bytes_to_blks(inode, offset);
+>> -       map.m_len = bytes_to_blks(inode, offset + length - 1) - map.m_lblk + 1;
+>> +       map.m_lblk = F2FS_BYTES_TO_BLK(offset);
+>> +       map.m_len = F2FS_BYTES_TO_BLK(offset + length - 1) - map.m_lblk + 1;
+>>          map.m_next_pgofs = &next_pgofs;
+>>          map.m_seg_type = f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
+>>                                                  inode->i_write_hint);
+>> @@ -4212,7 +4202,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>>          if (err)
+>>                  return err;
+>>
+>> -       iomap->offset = blks_to_bytes(inode, map.m_lblk);
+>> +       iomap->offset = F2FS_BLK_TO_BYTES(map.m_lblk);
+>>
+>>          /*
+>>           * When inline encryption is enabled, sometimes I/O to an encrypted file
+>> @@ -4232,21 +4222,21 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>>                  if (WARN_ON_ONCE(map.m_pblk == NEW_ADDR))
+>>                          return -EINVAL;
+>>
+>> -               iomap->length = blks_to_bytes(inode, map.m_len);
+>> +               iomap->length = F2FS_BLK_TO_BYTES(map.m_len);
+>>                  iomap->type = IOMAP_MAPPED;
+>>                  iomap->flags |= IOMAP_F_MERGED;
+>>                  iomap->bdev = map.m_bdev;
+>> -               iomap->addr = blks_to_bytes(inode, map.m_pblk);
+>> +               iomap->addr = F2FS_BLK_TO_BYTES(map.m_pblk);
+>>          } else {
+>>                  if (flags & IOMAP_WRITE)
+>>                          return -ENOTBLK;
+>>
+>>                  if (map.m_pblk == NULL_ADDR) {
+>> -                       iomap->length = blks_to_bytes(inode, next_pgofs) -
+>> -                                                               iomap->offset;
+>> +                       iomap->length = F2FS_BLK_TO_BYTES(next_pgofs) -
+>> +                                                       iomap->offset;
+>>                          iomap->type = IOMAP_HOLE;
+>>                  } else if (map.m_pblk == NEW_ADDR) {
+>> -                       iomap->length = blks_to_bytes(inode, map.m_len);
+>> +                       iomap->length = F2FS_BLK_TO_BYTES(map.m_len);
+>>                          iomap->type = IOMAP_UNWRITTEN;
+>>                  } else {
+>>                          f2fs_bug_on(F2FS_I_SB(inode), 1);
+>> --
+>> 2.40.1
+>>
+>>
+>>
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
 
