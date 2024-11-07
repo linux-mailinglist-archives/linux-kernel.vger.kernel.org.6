@@ -1,141 +1,99 @@
-Return-Path: <linux-kernel+bounces-399711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD9B9C0346
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:04:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8459C0349
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29413B23DF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC35A1C21F8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7BC1F1300;
-	Thu,  7 Nov 2024 11:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F6D1D363D;
+	Thu,  7 Nov 2024 11:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mKSn6NzV"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AOjC2qNw"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD1E1DDC02
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02361373;
+	Thu,  7 Nov 2024 11:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977413; cv=none; b=Gky3mMBcH0w36KroJQcWKLN+Y3DDETbOWYKArpsnCanaRb9x7UjHtPX+YDQYNo43fqJ4Gl7FmoTIDOr2jpQYr20K4DxHy6iMcaCEmX1oglye3U76yfXCMfj8Ju8hB2HDB6v9xezVER9l+lmiGlKHjlG2z8KooNIh23yVI0a2sB0=
+	t=1730977453; cv=none; b=PxR45fGOVu0raSga8OZYMj0v6drc4/RLk857o8irq3mrdce6Qcc6ybhSSjGCRk4tDQ2nYJDVIUmrRxH3ZNTfwKaGM3bdHRfMY/YaRyNjT0YV8d+cMg7+TMfS6laX+9QiHXTfEK9z6O1da2msWkdAkOmD+tFds1ir+zxD4WXEuNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977413; c=relaxed/simple;
-	bh=iKqHLh3bNr2wiOOfMS8E4rI2cZXV3K1Eoc3xapH75k0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pSXA8YrhuB082Fz6UUBHX/6roThCeOCpoaHQe4o/1zmd3Ms2HD/Kpk7sTQog4jVCPFQdNB2fjnba+WCA5KcsBpQGqC9qr8KIB/OFUVsT+58UfTIyHVLfuIRu/uBthVQmY9Oecu93TWJiZ8FKfTdUAVM6Q2SN8vlrR+hDd76l+6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mKSn6NzV; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb599aac99so8230371fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 03:03:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730977410; x=1731582210; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c7dxiZ8Fn938cvUHlpbreYp+QiVxqNRUNjMx6Af0FIQ=;
-        b=mKSn6NzVGrVdNuUq88sBaX5qRrLUpG+qP+GZn/gcPN1GU2zn4eiaL326zglvl/a/Mm
-         z9UuCuLMJhTSKVRitpEj3kYV7iDsCZ2sRgcB8tTt0tdyWIoTIeRZyaFyuLYbGx/m8Osl
-         qOqu5HKAmRNAKVVwDoeoY3EcEr+vkgBPf77QNpk+nDhPl+8YTVMO6ZFJeAeKMRb5i8qh
-         SBRDMLMrW2fvzawtO8JOu+V7nqyJ6LOYrK7IuWCggIQyBQK+C9SvqYn+u0pL9ZDx0wHs
-         1ZPLA7VEtQ7XGfpaZK2xdVr5JX6WmXz2J67hBbnFpDq+QGaidjzecRFegR3oenjWj+OZ
-         YLZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730977410; x=1731582210;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c7dxiZ8Fn938cvUHlpbreYp+QiVxqNRUNjMx6Af0FIQ=;
-        b=FkbDZHcE3zQFT282QEKD6rG/kbDIgUwjxVdG0ojynCVw4IaJI8Wtgt+9Hc9f4lsfT0
-         L1j8I+g9Eh4fR5EoNY8TTg1u15g/4pO5nBKA+0DQpw8sxMTyaim+P1Dh1uCxUaGnKpvt
-         2eSlUlVR24y3WXaW3sgJNa+dpxHPn+bfq72FwU4Ze5+7KDRFJZGB34dLWJw0DNPtGbjd
-         QdIbKdIAoR1ZLrM131vkYbtWK5hCd9TDjiBPtvdInFi2KzHeBmtMHVhG5dgNcy0rESRe
-         VzVNcDkwc1cH/bP9ds9lw7yzQVWAvMFLJFp7Ktnawi3PIwbfB9nsThOyZVWGiyZW7ETn
-         LCSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbUOAMea8l1I5cBdhL++I0I+GqegNq+21NMIfLHKl+aRbMcLpXgYhB+o/QRvXNm4lmUex926j7yAt2yRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv81LSOef0few3eJXRxzwsM1Fm/u/f3lJ6PRcfy+D3y+AJAuaW
-	iMtrYBpRXuqOGFDa2tXfMPLyeIUycSNlhIKLlzIufdM+mRHH4PZ7xhdzG4E0Vno=
-X-Google-Smtp-Source: AGHT+IGkKqe7h6NG8eXy+EJWj58RLL4weWM4MhZIOwjQm0gzdnZebYaYcD9o/zoPPSweNcBX3lKpig==
-X-Received: by 2002:a2e:be0d:0:b0:2fb:8774:440c with SMTP id 38308e7fff4ca-2fedb7a2a10mr113601441fa.10.1730977410130;
-        Thu, 07 Nov 2024 03:03:30 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff179a5f72sm1694561fa.93.2024.11.07.03.03.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 03:03:28 -0800 (PST)
-Date: Thu, 7 Nov 2024 13:03:27 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	quic_ppratap@quicinc.com, quic_jackp@quicinc.com
-Subject: Re: [PATCH] RFC: arm64: dts: qcom: Disable USB U1/U2 entry for QC
- targets
-Message-ID: <trrbjd574futtatooisumtqp4idqerb5ji2g3nvdesiedlitdd@c6u7wuqhh4r3>
-References: <20241107073650.13473-1-quic_kriskura@quicinc.com>
+	s=arc-20240116; t=1730977453; c=relaxed/simple;
+	bh=slKSHyyrpH08lOUmIwOolaT0TYsVF5P5RcNmJWsE9JI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WftdDEGNoppm9H9j+Omv7Yigha4NmPm5WN1FiMCdTfj1s9fgDRoJbAF/NMkKMinTpYtRqIyZOxRtqdbC+VrKvfohOhSOY6j5zRYDHGjoyerfZMm1EJw3QAPFw1oSPtEw7cbAsyFLoxdEArnYJ4fFiwNiMkLgB+9sgs6GqBmo9UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AOjC2qNw; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730977449;
+	bh=slKSHyyrpH08lOUmIwOolaT0TYsVF5P5RcNmJWsE9JI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AOjC2qNwONp6VivyirmZI01GGHr0yA4PwxISQQbbznkDiz8xuWX0n9oNqVo9o6h1P
+	 mowVA20Mbhgj4Ck9eI8GCEL/7AogRz2B3QUkxJ5CJWdfU/eHJs95WhLv7a+2df+kQr
+	 Mq6qmF1QlPUzovydpAV6n2r4bUXQPSVJulfG7tg8pKNCy9GzYcJfrHPItZwLz13o5u
+	 B6dNB21xvRXZUYpYiUIKpoN9hqVQzjNrDo5KYLNyDCbmtuOrJ4vtqVDteeO+97jDXK
+	 UnMmKhlUAnIERktjI5TQMhN8/1GAklUo7Qtmq4x0Dp3U5obkHTOqGxNWPP65PN7OXs
+	 bhbeiGCTlChcg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8842E17E35E0;
+	Thu,  7 Nov 2024 12:04:09 +0100 (CET)
+Message-ID: <55c07154-8917-4273-9e91-39433474bbf2@collabora.com>
+Date: Thu, 7 Nov 2024 12:04:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107073650.13473-1-quic_kriskura@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8186: Move wakeup to MTU3 to get
+ working suspend
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Wojciech Macek <wmacek@google.com>
+References: <20241106-mt8186-suspend-with-usb-wakeup-v1-1-07734a4c8236@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241106-mt8186-suspend-with-usb-wakeup-v1-1-07734a4c8236@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 07, 2024 at 01:06:50PM +0530, Krishna Kurapati wrote:
-> Enabling U1 and U2 power-saving states can lead to stability and
-> performance issues, particularly for latency-sensitive or high-
-> throughput applications. These low-power link states are intended
-> to reduce power consumption by allowing the device to enter partial
-> low-power modes during idle periods. However, they can sometimes
-> result in unexpected behavior. Over the years, some of the issues
-> seen are as follows:
+Il 06/11/24 22:01, Nícolas F. R. A. Prado ha scritto:
+> The current DT has the wakeup-source and mediatek,syscon-wakeup
+> properties in the XHCI nodes, which configures USB wakeup after powering
+> down the XHCI hardware block. However, since the XHCI controller is
+> behind an MTU3 (USB3 DRD controller), the MTU3 only gets powered down
+> after USB wakeup has been configured, causing the system to detect a
+> wakeup, and results in broken suspend support as the system resumes
+> immediately.
 > 
-> 1. In device mode of operation, when UVC is active, enabling U1/U2
-> is sometimes causing packets drops due to delay in entry/exit of
-> intermittent low power states. These packet drops are often reflected
-> as Missed Isochronous transfers as the controller was not able to
-> send the packet in that microframe interval and hence glitches are
-> seen on the final transmitted video output.
+> Move the wakeup properties to the MTU3 nodes so that USB wakeup is only
+> enabled after the MTU3 has powered down.
 > 
-> 2. On QCS6490-Rb3Gen2 Vision kit, ADB connection is heavily unstable
-> when U1/U2 is enabled. Often when link enters U2, there is a re-
-> enumeration seen and device is unusable for many use cases.
+> With this change in place, it is possible to suspend and resume, and
+> also to wakeup through USB, as tested on the Google Steelix (Lenovo 300e
+> Yoga Chromebook Gen 4).
 > 
-> 3. On QCS8300/QCS9100, it is observed that when Link enters U2, when
-> the cable is disconnected and reconnected to host PC in HS, there
-> is no link status change interrupt seen and the plug-in in HS doesn't
-> show up a bus reset and enumeration failure happens.
-> 
-> 4. On older targets like SM8150/SM8250/SM8350, there have been
-> throughput issues seen during tethering use cases.
-> 
-> To avoid such issues, the USB team at Qualcomm added these quirks
-> to all targets in the past 4-5 years and extensive testing was done.
-> Although these are intermittent power states, disabling them didn't
-> cause any major increase in power numbers.
-> 
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> ---
-> If this is fine, the patch would be made into a series, disabling
-> U1/U2 for all mobile and QCS targets.
-> 
->  arch/arm64/boot/dts/qcom/sm8150.dtsi | 4 ++++
->  arch/arm64/boot/dts/qcom/sm8250.dtsi | 4 ++++
->  arch/arm64/boot/dts/qcom/sm8350.dtsi | 4 ++++
->  arch/arm64/boot/dts/qcom/sm8450.dtsi | 2 ++
+> Fixes: f6c3e61c5486 ("arm64: dts: mediatek: mt8186: Add MTU3 nodes")
+> Reported-by: Wojciech Macek <wmacek@google.com>
+> Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Should the same set of quirks be applied to SAR2130P too?
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
->  4 files changed, 14 insertions(+)
-> 
 
--- 
-With best wishes
-Dmitry
 
