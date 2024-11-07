@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-399471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72DD9BFF60
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:49:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0769D9BFF64
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:52:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D318B21F43
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:49:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C08872836AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E9C199FBB;
-	Thu,  7 Nov 2024 07:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E511199FBB;
+	Thu,  7 Nov 2024 07:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OHuNbvct"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kSmzYDnD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC8D7F9
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 07:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA93C7F9;
+	Thu,  7 Nov 2024 07:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730965765; cv=none; b=YZVgze+x/4uwQyECWQcSQdyZIroWiry1ukORjf5cuUL3O05zKL3Rj4o9+RdAXINGrReS42zN9sC95DsDQnG2PCYsjNfxieK/9AcsDLp0EIqDBOYvfpGobv3dWYlRB1Uvu5FzQ5pKBzZaq6OnB80MucIld92NTxhDEG2T2myrEZg=
+	t=1730965932; cv=none; b=aTkU0P0DcTN1Uxuvu+hB51VIBZa7Ok3lfRjVd3gBOnZWEeq5tfbEd19ltMM/BrLi70rbpGaK4WlKY2AZOsWEvToNegyimyb0dMNsyCY+PmWhbG0XDD+THgkI9Bsqz+7+mlNh98l9wLuDxudFOgw4LlWK5UTabLa0emThWf09reY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730965765; c=relaxed/simple;
-	bh=Z5KIa5+EjcYXaQtJ5CUKjRCce+Nn4x5tsG3QRpALwRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QT4C6UVkucZnSfkXdjrKx/5oKdcQaHM/oU2xQfygKq2xf7NaTlC0BUbnXSwjrfQ2dvaIbrPJKL58HGxeXlhXgLZrLFluBWL5QgRI6CpCAmq605aY98DST6yjKAlXwCD4rX3RbpAG/+Lqix4wmy56PC3ebmAAEVp7Sl7/oJuFVeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OHuNbvct; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e4b7409fso746348e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 23:49:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730965762; x=1731570562; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z5KIa5+EjcYXaQtJ5CUKjRCce+Nn4x5tsG3QRpALwRQ=;
-        b=OHuNbvctu8vBzcDDUrwSu2OJvVy8Tkncf+rvvfNc+pbkub/JY18xzUzWqpa2TQI40D
-         j0yxdvJxcGw34ZRr6/vtNBXAoQpWQ/XYAvD3aMFdsUsscFzH7d6Oy1Z7EeD2EKaCuC8q
-         CKtQnuUzsKT9OxSCDQjruh9lNXDNZWrjW1Wbo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730965762; x=1731570562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z5KIa5+EjcYXaQtJ5CUKjRCce+Nn4x5tsG3QRpALwRQ=;
-        b=XLJyUqqLLJeseeNuOa9T4Wejt+VHwfGSIKd6kXFmGDghtlndNSp8DA8N5gWw9M8hAP
-         tFWnXG6IdxORijHD9Uz3AljF4oJMZ5sj/TeuVJSP1pX6EQeBzCM0utGMD6c8u3r865S0
-         zuv0FYoYLHu+N1vCIxpI6dUj/G2wiANqbOHZvIjUiiAJEUNuu430WBQGhD/8DM80s9Xb
-         Mjw+MSHUUkLIuunXoSJd2MIF1SXX1bwJ5Ox2J9AMBbQA8rj4W4vDuq6++M/7vEquc3gJ
-         WEE6kEvhAR+0pAfE9sqwDWhaWKNHjQP8w6zMPeOvvUAdt9qrYzgy+3kcF5Y0JFJ3BtIu
-         Sijg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9+lf5j+vSY7wHOxenbgD2ErK//2TmuqV1g3mPO0MHXPLyl7BubzpP0B5XZxb+8oydvTaZ4MTtfXhG9LY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys22Drwlm8Pnnm3uPSV+KjZG4Ist7gUrLsrtiSg0rDYAaBUI8Y
-	H0+fquR3DFlHGWIOTx7+2qogY7jvZH+jrRd5VlVyoCtGw9YycWTQG+qoaOtH3so1jvQ1tNsIxKm
-	mxfaDlM9CPbtcpwwg82dlCpd4O/PJE1mdfCPo
-X-Google-Smtp-Source: AGHT+IGxn2pSbneZDHgWnWUCDZaUop/6c6chaGYhHrU991goYLF9CZhKqopx6hRuSSwvbSM+DLDtcwV7tpySQOVxgHc=
-X-Received: by 2002:a05:6512:1086:b0:539:fcaa:d0ca with SMTP id
- 2adb3069b0e04-53d81971b63mr724012e87.13.1730965761512; Wed, 06 Nov 2024
- 23:49:21 -0800 (PST)
+	s=arc-20240116; t=1730965932; c=relaxed/simple;
+	bh=J0pFelGI6UXDknfUUyLJLhId2Fq5FdYWTBRv6hxyuyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UpJVi1X2rR9+RbTYrmRtq1ffBLNUfEIrWd0t2yKjnYgPIB/QwMfzI9NQuwV39y9mlMUbDqBUUaTd9mnZche9xs22PpntXL0VdAqlo1MNHFMWAjhExQWjh/VivC/ZxsV+zuureQU1h5gnYm51QB1PZfptMtOKmQx9D6MInqQcLq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kSmzYDnD; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730965931; x=1762501931;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J0pFelGI6UXDknfUUyLJLhId2Fq5FdYWTBRv6hxyuyo=;
+  b=kSmzYDnDgO2iyCvMXWY1CX80Csa2S1PIuWJp+sv9+v1g4uUhl4gSk5rl
+   dLKPFMZE8gQtc04T1WhigQt/hONlFuMUGxXlmyXJzbtDeOv+tUmAA25xe
+   tTuaoL1mhosZQGAKRudh3R0P3eqcJ7/IRxJ8V8SY0ZPjJxp26Gxd0Pk9W
+   8w5s5vFGg4bfATL4Uuss+YIBygpnFuH6s3K/AK4WGH62AtiIba65YmWCw
+   Be2Bujv87Gt0u9+QV3+d6vJbRAQy+LOHAHFfY2i931sSk3jFzGK4QfJ4F
+   OwvUvo/5CIhECcVZJu8zTvjBMmiW0GpW+yA76gx4GNJlTuYuCU6+yRYJc
+   g==;
+X-CSE-ConnectionGUID: xDdqm1lhSW2ZzfjBbZbVGQ==
+X-CSE-MsgGUID: UITAr/W2SbiKt/t9iOM2Vg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30218228"
+X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
+   d="scan'208";a="30218228"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 23:52:10 -0800
+X-CSE-ConnectionGUID: piRu/EcCQ7iosVDkkHf0/w==
+X-CSE-MsgGUID: oVn+CG2MR1WdLMqYPKOn9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
+   d="scan'208";a="85764686"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 23:52:08 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t8xJF-0000000CAxS-25XW;
+	Thu, 07 Nov 2024 09:52:05 +0200
+Date: Thu, 7 Nov 2024 09:52:05 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	Frank Li <Frank.Li@nxp.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mathias Nyman <mathias.nyman@intel.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Niklas Neronin <niklas.neronin@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] xhci: Don't use "proxy" headers
+Message-ID: <ZyxxpTR-r6dsRTe6@smile.fi.intel.com>
+References: <20240923153139.3701266-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107074603.31998-1-yunfei.dong@mediatek.com> <20241107074603.31998-4-yunfei.dong@mediatek.com>
-In-Reply-To: <20241107074603.31998-4-yunfei.dong@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 7 Nov 2024 15:49:10 +0800
-Message-ID: <CAGXv+5F3+65gTsmz7Dzrm3QchmKnTECAGzLwJW9uT5aM_jLeMw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] media: mediatek: vcodec: add description for vsi struct
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>, 
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923153139.3701266-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Nov 7, 2024 at 3:46=E2=80=AFPM Yunfei Dong <yunfei.dong@mediatek.co=
-m> wrote:
->
-> If the video shared information (vsi) is changed accidentally,
-> will leading to play h264 bitstream fail if the firmware won't
-> be changed at the same time. Marking the shared struct with
-> "shared interface with firmware".
->
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+On Mon, Sep 23, 2024 at 06:31:31PM +0300, Andy Shevchenko wrote:
+> Update header inclusions to follow IWYU (Include What You Use)
+> principle.
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Mathias, any comments on this change?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
