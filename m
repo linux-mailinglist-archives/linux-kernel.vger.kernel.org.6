@@ -1,141 +1,187 @@
-Return-Path: <linux-kernel+bounces-399949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056109C06E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:08:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8818D9C06E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:09:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37CAC1C25327
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:08:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E95F1F211B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCB6212630;
-	Thu,  7 Nov 2024 13:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AA3212D14;
+	Thu,  7 Nov 2024 13:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mhWrCUDK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JlpjGINu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7p+O5oeG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="li+YKeYe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qjhD7veW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C852318FDAF;
-	Thu,  7 Nov 2024 13:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E6920FA81;
+	Thu,  7 Nov 2024 13:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730984565; cv=none; b=cm7625cdOxyDbDe8TMLb4iq1so/La/a1X78luQyk4UNwYGkEJTsH4JGqC2fgAwiniEjwnMvUoNbERQv24Wa7YiG9Y8v/3fC/TTVvacq+KeTovmGsjCLj7Qa6el0obUnz2qoTX/DSOztir7sNfFXzO12n/nwCFW+HuxAK4Xdwbzo=
+	t=1730984647; cv=none; b=ndnCmeQHnpzyKBY0l2ek6ftMBlReLomY2+VSKhNJ59WBapwGQ7Vi4/q3HImtLCaZ8wwtp6TzHfszwlqaueGYoHPkvBpSft1+EHxuZ0YvtanOR3Sm1dw9BLBLTHYnIPv8o2JibbFC4eNiz18yP+gFXN9oI6wc1QqjusX8hmX1TDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730984565; c=relaxed/simple;
-	bh=Q5eJ21ao+jRGGxWc8MkbOwkHyJAqCopFmQVRGsteduI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XV5+ZM7uBb6zcFo7VPJSSpBG5dGnMH1mmgQgwnJpCMk51fpkmsUOwstoiC6xf7aAzvT61uTWBE1yAVu7ekXF1reY0SMxJ+sGmuVwaOd/qzDslqWlQmgjuLC7bApG8Ukyz2D0A/Tmea/Nt4s8dv2OaVnf1828ExVUznfFUHuSM8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mhWrCUDK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7BSA0g026843;
-	Thu, 7 Nov 2024 13:02:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zjMEzIwO5XRwVmt4k+ipj4p9aNaB01gtFhf9NaL+N5A=; b=mhWrCUDKop9hs+NZ
-	FK/gLuUi50SNzuXC9bK+jzaQfCyRBk+ux+eTrMzP9cTjLvWyC+jvfrptFxL8sOrS
-	kJ7VBDsUQOxPSmRjwwQdVhmc4y0f15kwBYK/hArT/DfSOdiOiE3g7rjpx3qov/r3
-	wwoZQldoo1t8MWRuceG/xXbmV2iav4PpnizCH2m26fCTQGn9YW0k5zA2Nme3S2Wk
-	nNUVkboN/X7g8Ly4m5+91Jf5VzHAelaxYAW+cyMj/uraP9+z95oOIgDkeVIXaepP
-	spHwMh1IY4Vl29cOyrFxIwhcTm3GA3Evd5iAXOzUYcYuvgwuZigR6B2lmwQIaA04
-	42WM7Q==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qfdx7kj2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 13:02:39 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7D2cgk015298
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Nov 2024 13:02:38 GMT
-Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
- 05:02:36 -0800
-Message-ID: <57544d01-a7c6-1ea6-d408-ffe1678e0b5e@quicinc.com>
-Date: Thu, 7 Nov 2024 18:32:33 +0530
+	s=arc-20240116; t=1730984647; c=relaxed/simple;
+	bh=vDqgovRvMgphw5tf+kmVrAuS2l4DsjIinILy2iRNZpA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=stnkqE04TPb06dZAxZZAETur29vmPQjHx08fLicbU2P+PAFQGw3y4ZjdUEvF846R7ooycsXD3hRe7yz2czlOWViHS7uFxFPUqFsiibm5v8wsbjParYTLxdIGlGtz9xERjmwPLGPYGmWllMW0tCEOuUblZ7hu1FcSOXlCiG7FQlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JlpjGINu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7p+O5oeG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=li+YKeYe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qjhD7veW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F0F00226C6;
+	Thu,  7 Nov 2024 13:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730984644; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CL8MWn98BwavmsKhCZf3gomXJlZ9cc1qGYfWgaXtDdw=;
+	b=JlpjGINu3X562POuGKB3BQTVrXw7h53487j3FpZHIuDu2DN/vWz4YrOUOBxA8CcV6uwRxG
+	eh7TnICSe86Zwbizv1Qno/lbuGVP56UI43trqStFl5ZcQNib42wIwghFNLfqMcWecEFnPJ
+	USR2kl4y6IznaedzkbZVtSlYxz2w9Is=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730984644;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CL8MWn98BwavmsKhCZf3gomXJlZ9cc1qGYfWgaXtDdw=;
+	b=7p+O5oeGTu/XdsCRTZw/sHGrXn3jLTiOacgP3QpL4l/WNLvwB+TsaviuG7hn5dB8+FACYq
+	1Adf4RQ8SFTJHUCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=li+YKeYe;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qjhD7veW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730984643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CL8MWn98BwavmsKhCZf3gomXJlZ9cc1qGYfWgaXtDdw=;
+	b=li+YKeYetWDWiXd9p0+VTnbKYMo13vNxaGzIgcfRiwMchnmT5ng2bx/CN0kdRVoXYdtWtj
+	b+ydn1EgX7FtBx98uFinUGwTxEn8XeDCfdHC86tRq8IjGHUSbxdtTDExm4T9ruKO5u1AGk
+	ZjuTA7TC1CVxLmqV5I/z371k7TM9NXM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730984643;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CL8MWn98BwavmsKhCZf3gomXJlZ9cc1qGYfWgaXtDdw=;
+	b=qjhD7veWdC4TLRFytrCrhe1RbFVm8iJvzpUhRyU6aCcun8+9rtH65Fhx/Wy/erpgy436uS
+	qBxgY9/nosNCZYCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B19EB1394A;
+	Thu,  7 Nov 2024 13:04:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id i/02KsO6LGd+PwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 07 Nov 2024 13:04:03 +0000
+Date: Thu, 07 Nov 2024 14:04:03 +0100
+Message-ID: <875xozi4ak.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Colin King (gmail)" <colin.i.king@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>,	Paul Cercueil <paul@crapouillou.net>,
+	Simona Vetter <simona.vetter@ffwll.ch>,	Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>,	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	linux-usb@vger.kernel.org,	Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,	"linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: usb: gadget: Add support for USB MIDI 2.0 function driver
+In-Reply-To: <5f54ffd0-b5fe-4203-a626-c166becad362@gmail.com>
+References: <5f54ffd0-b5fe-4203-a626-c166becad362@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
- bound access
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
- <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
- <81d6a054-e02a-7c98-0479-0e17076fabd7@quicinc.com>
- <ndlf4bsijb723cctkvd7hkwmo7plbzr3q2dhqc3tpyujbfcr3z@g4rvg5p7vhfs>
- <975f4ecd-2029-469a-8ecf-fbd6397547d4@linaro.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <975f4ecd-2029-469a-8ecf-fbd6397547d4@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xS44rOyOJjeonwoRVjXVxmDm_vV352QC
-X-Proofpoint-ORIG-GUID: xS44rOyOJjeonwoRVjXVxmDm_vV352QC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=750
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070101
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: F0F00226C6
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.01
+X-Spam-Flag: NO
 
-
-On 11/7/2024 5:37 PM, Bryan O'Donoghue wrote:
-> On 07/11/2024 10:41, Dmitry Baryshkov wrote:
->>> init_codecs() parses the payload received from firmware and . I don't think we
->>> can control this part when we have something like this from a malicious firmware
->>> payload
->>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->>> ...
->>> Limiting it to second iteration would restrict the functionality when property
->>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED is sent for supported number of codecs.
->> If you can have a malicious firmware (which is owned and signed by
->> Qualcomm / OEM), then you have to be careful and skip duplicates. So
->> instead of just adding new cap to core->caps, you have to go through
->> that array, check that you are not adding a duplicate (and report a
->> [Firmware Bug] for duplicates), check that there is an empty slot, etc.
->>
->> Just ignoring the "extra" entries is not enough.
-Thinking of something like this
-
-for_each_set_bit(bit, &core->dec_codecs, MAX_CODEC_NUM) {
-    if (core->codecs_count >= MAX_CODEC_NUM)
-        return;
-    cap = &caps[core->codecs_count++];
-    if (cap->codec == BIT(bit)) --> each code would have unique bitfield
-        return;
-> +1
+On Thu, 07 Nov 2024 13:30:12 +0100,
+Colin King (gmail) wrote:
 > 
-> This is a more rational argument. If you get a second message, you should surely
-> reinit the whole array i.e. update the array with the new list, as opposed to
-> throwing away the second message because it over-indexes your local storage..
-That would be incorrect to overwrite the array with new list, whenever new
-payload is received.
+> Hi,
+> 
+> Static analysis has found a minor issue in the following commit:
+> 
+> commit 8b645922b22303cec4628dbbbf6c8553d1cdec87
+> Author: Takashi Iwai <tiwai@suse.de>
+> Date:   Tue Jul 25 08:22:00 2023 +0200
+> 
+>     usb: gadget: Add support for USB MIDI 2.0 function driver
+> 
+> The issue is in function f_midi2_set_alt in
+> drivers/usb/gadget/function/f_midi2.c as follows:
+> 
+>         if (intf != midi2->midi_if || alt > 1)
+>                 return 0;
+> 
+>         if (alt == 0)
+>                 op_mode = MIDI_OP_MODE_MIDI1;
+>         else if (alt == 1)
+>                 op_mode = MIDI_OP_MODE_MIDI2;
+>         else
+>                 op_mode = MIDI_OP_MODE_UNSET;
+> 
+> 
+> the first if statement will return if alt is 2 or more, so at the
+> following cascaded if/else if/else statement alt is either 0 or 1,
+> hence the final else that sets op_mode = MIDI_OP_MODE_UNSET can never
+> be reached.
+> 
+> Either the last else statement is redundant and can be removed, or the
+> first if statement needs to check for alt > 2 rather than > 1. I'm not
+> sure which one is the valid fix to make. Any ideas?
 
-Regards,
-Vikash
+We can fix in either way, as it won't happen practically :)
+I guess I thought of alt < 0, but it's an unsigned int, so this is
+nonsense.  I'd rather drop the redundant else statement.
+
+
+thanks,
+
+Takashi
 
