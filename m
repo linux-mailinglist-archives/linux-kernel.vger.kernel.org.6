@@ -1,193 +1,112 @@
-Return-Path: <linux-kernel+bounces-399275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0119BFCEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:21:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850669BFCEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C399B226A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:21:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBFCA283E56
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AA417A5BD;
-	Thu,  7 Nov 2024 03:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B35839E4;
+	Thu,  7 Nov 2024 03:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pjo5hqvz"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JKZK8TUM"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5A06FBF;
-	Thu,  7 Nov 2024 03:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCA717C61
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 03:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730949656; cv=none; b=UWV4uj3aFnvKNUbnKkyBRojP0YJvduz4SzfDY2V6g2oMw6LYqKGOsceE5Lo1WjX+ZQ7HPjJF9U2QeHlFw6uriO2pL7qZZV3FNfPcIbQQp2ZzsLgYIo3udqmYPM8fgweGX6QpS8Mc6dPLT+sa9zDLA/SBHVuUzDTpAkTNByAWIgs=
+	t=1730949787; cv=none; b=SLurjd02UBzhDZK+GWTrRa5S1tHXTD0e8TuXYosPkFn6kB8Dxq33UL2dqS3HEQzb4U2GDZZ9tG6Sb7FXS0GxjWd2Ssc/ya0V3zJ4/CaSpOGKhS7grYJLR6sm7LECMN0FUkaL6jmtjN/k2cB1Rbsp6MLj8dx/+IN2873+8NFIkWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730949656; c=relaxed/simple;
-	bh=MfgIsmThhu9LXOQDEMR7hFNs+rsV9Z5JVos+Z0mGxsw=;
+	s=arc-20240116; t=1730949787; c=relaxed/simple;
+	bh=Kn0K1WJ3zLDjBXja8dDUfylLVNYWZTyIXMqYGjddd6o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2yNn2CbDrOPk8+d5SEIFVh1Q/oaM1wpLT9w9/oUsOTlx2KZQwTfeFv6MIqnApSNjeRbS3K4HdZhC06rsKd+VIsjzZhSvaIggnnyBME3aWRTt/zv+jB5B5wypY2pWj216byAHu6zwfTbbGw+5cPylhHXCjNOLYYoRZjPKq6Ln08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pjo5hqvz; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20ca1b6a80aso5835335ad.2;
-        Wed, 06 Nov 2024 19:20:54 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hfx+cq633EyfYUlwinLe0pzFoE5eGR5apUkE2u+Nmkk8A+3k4zQX232RPI4nU8Mnr9OOy/snCAv15/Rq8f63V7x0IjzvDLRvJAimqk+QKRKXHFCGIjtydOwWce022aw6izhWdb0p/hZrOyE2lPE49sM+/8L/aGYjtJDOy2lFeq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JKZK8TUM; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20ca4877690so49875ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 19:23:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730949654; x=1731554454; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730949785; x=1731554585; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R8jNzrElX9RmiBjTI8h4pv70akApgYg9F+hG3zefMUQ=;
-        b=Pjo5hqvzeBgJLYQ6ITzLTC6JbEEpdqyPnKJmdBLJloqI59GnepRNto+dWyB8WV4XpM
-         gi0/bAGspN7lmq24pgZZhnUcA/jbC9REUY+K8JwQO3dU/UQOQCVjbYo4Sdgo4MYj1c8b
-         uzPMB+gYV3/ffkFjaeL9a30TbGuW++5K1KSlsVTxUU3NmgsiGKQ1dxb4Gl8Yt4PGc4MP
-         mTRZxteS8AOd8vDzEXFbxIpqqTTdtKmmTXpn6c6JWdPNPL/gjAs48ZIe1klQ/+JbOxz5
-         /s9djrUmVGS/qUDgOuj+CcnUT3Dvvzp6PNIboTJ76XHsablyh58+ftDnrXuSk4LSIPzF
-         c6DQ==
+        bh=UcDVaMJj03dteYAJkz9AeR1LSqYoJuu/dpBE5eqcCQY=;
+        b=JKZK8TUMauXyPNWEXymV6bbHHFOtQlAYcyr9sYrCGVbIl7a7vWlh/su/TEN2qepn2g
+         Nff90LBC7N1cvkgFqrCjrnRpgJyGR8On5P6QJwGmrIu6pXEUK2k7OEgjn0A8akJN6MGb
+         c7egcQzWxSg9uFsbQmpYP8CuSedv7OJg2/E7arBZk496rXoQN69YTKBrY52SGeqzAjIg
+         sth/Di0ceqLfRoYsd4inbH95p3PrL6LUfkN0fIQqhNaC9+obqGXNsH/lextzrQcj6dSu
+         9ZWH0T4nam2VzQwO0AJGEbqhvWn+yM1xataDeHch9K7uWJmewAkNWss5ztuvRqeWEluz
+         0FeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730949654; x=1731554454;
+        d=1e100.net; s=20230601; t=1730949785; x=1731554585;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R8jNzrElX9RmiBjTI8h4pv70akApgYg9F+hG3zefMUQ=;
-        b=kpDecBy5T6kzrhOgCpP0HbFP5EDObQCpj66fVQUPDXE7A6rV532Lr+9cFdi/eJGIvA
-         qIEjzIh0xSdmowssIuttYaME2hCrJlVj5E18llk+NULqjzT8Sg6ydP2pRelfm6k2eDgf
-         eDSs3ySOMmn5e36KwNUBDgFyR4cv7DdD3dMFMZ2tAps5hO5SKu/+5Hlf98n5s9/sL5GR
-         M+2ysUt0JjFXkKgGv23UJxDToz6hsVXitR++pejSSgt8Yi5No0jTqzslkPOts2dQd7Rp
-         juQsQLxivELB95KID4anIx+QNUKEkX9QqtbWllMI3q9fZ6+r/22EfvBj9Wz6Ldl4YUVT
-         7Zpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVI455pR1yOG/ukx0aynzat/lXjW6zWHdzDfGZe+XHSye03thh5wRcPzDMe2k0m9066Rtc2rszqZ1c=@vger.kernel.org, AJvYcCXCoICHzrFeDH6FE2RDwV7/Q6CY5mUD7OkZiOnFX5ez38zDvTPc0Mc3Xn6cRNgTuReAZLcUvqDLvlw5bn6Bb38x@vger.kernel.org, AJvYcCXNHhbS4yHWYhILHaM8h9lIijG4/GcKrxdWkfLBCq+LojgK8wfo0qOcfpWI4koSyoAcPWel5EYYsJQPyDaN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbYRWbRrAUoTROEBm9In9kNx0QxdO3vlRSrwnk/sV+b/Q19gwE
-	tvbY89eqHTz8k6PZCnnPDUaNRycrfs8nVAq4YJ+ElZq4FncYi+bz
-X-Google-Smtp-Source: AGHT+IFP7jI8N7MZAQEh3fKVwbjpLCzLZAOp+2qk1ae0Rl9Avg2cfhgX+kUyGo3POLdRxL4zyEhtHA==
-X-Received: by 2002:a17:903:985:b0:210:f07d:b3d9 with SMTP id d9443c01a7336-2111af1757amr325782555ad.6.1730949653768;
-        Wed, 06 Nov 2024 19:20:53 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc803dsm2208695ad.12.2024.11.06.19.20.52
+        bh=UcDVaMJj03dteYAJkz9AeR1LSqYoJuu/dpBE5eqcCQY=;
+        b=Ytinxag72yPwVboYPZHSLnZdVG/yd1teBxtTDVzZ6kHERy6nMWa8Bry94I4VEOqLVe
+         IEpnYlDYDzrDpeID0aX8uTA+ZeyWiVSA0Dxbgm/JvggRcWr4T0YmQajEr52VH5aU1Sp+
+         OhWVIIJ2EhedxYIzt5IQ9DwkVU5kGphYHOEqUSx5rEThiNHVPM0MwnMn2wHE0X3Weryq
+         NWuNZyiyhBZ9XXsPv18NDeCuBGCZthX2B09dTNpWebY/LardRaHlcb+mGBGmpKDN4RQS
+         5e0W6NtFUTZi3TPBXvOzPcHqUdjc2Sd6Q7jKuy+XTFAZjGkflYGFuar5Z/h5QX9bhf45
+         YMbg==
+X-Gm-Message-State: AOJu0YzTvli/TS9oZiqKrmUfMAmxsBNHVdFHy+opWoIIFP17ZdKhMJlT
+	CznOZKwOjEK6KZw4Wp+S8DPyrMMmnATie6YOLBrma+nepY5O9beE7lG8l9ww1Q==
+X-Gm-Gg: ASbGncuvhJuo6N04A9w5TLu++O291c9OQAl9DKzMDmlbmbXJG5WIGPrmCiylSSpG2f/
+	voXs8hRNy3LodXPcIaNOzQyzumY36sncRHrGLj8VGGxdkOkaVre3C3PbuEzWl1M667D+N/Uwe+R
+	aJVR8qT9U8f5ydOFzri8iOcNVL/xzbXNnj7fmkDKChT8tgV/WwhrhZSABtQeBZBAjxjasgSPtKN
+	09NgBMaEOirXxnxvSKcq8zZtJ5o+HIynyH7o751PnjUfW6OvpsGCuh4tclXBR3PhQmskTf0aKGY
+	sBGYussGBJ2D9TI=
+X-Google-Smtp-Source: AGHT+IEFwhh8NRuB/JLQMZ6mTzv6ppqBPAviAwKltC9QpMQ9BlPtvedliFAxuofWHPriSJtz/W4ibg==
+X-Received: by 2002:a17:902:d488:b0:20b:b48d:6ae with SMTP id d9443c01a7336-211749815f3mr2124615ad.13.1730949785462;
+        Wed, 06 Nov 2024 19:23:05 -0800 (PST)
+Received: from google.com (180.145.227.35.bc.googleusercontent.com. [35.227.145.180])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407864ebasm347717b3a.14.2024.11.06.19.23.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 19:20:52 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id A156F41F52FB; Thu, 07 Nov 2024 10:20:49 +0700 (WIB)
-Date: Thu, 7 Nov 2024 10:20:49 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, will@kernel.org,
-	robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
-	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	baolu.lu@linux.intel.com, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	yi.l.liu@intel.com, aik@amd.com, zhangfei.gao@linaro.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v7 13/13] Documentation: userspace-api: iommufd: Update
- vIOMMU
-Message-ID: <ZywyEUmL4HvM8B9v@archie.me>
-References: <cover.1730836219.git.nicolinc@nvidia.com>
- <7e4302064e0d02137c1b1e139342affc0485ed3f.1730836219.git.nicolinc@nvidia.com>
- <ZywQP3_TpdttuCy8@archie.me>
- <ZywZcSidYCWkJgrw@Asurada-Nvidia>
+        Wed, 06 Nov 2024 19:23:04 -0800 (PST)
+Date: Thu, 7 Nov 2024 03:23:01 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: linux-kernel@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH 8/8] binder: use per-vma lock in page installation
+Message-ID: <ZywylcwmJFiVvkhb@google.com>
+References: <20241105200258.2380168-1-cmllamas@google.com>
+ <20241106225534.3388-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fVTjkEpn9ekAW5rv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZywZcSidYCWkJgrw@Asurada-Nvidia>
+In-Reply-To: <20241106225534.3388-1-hdanton@sina.com>
 
+On Thu, Nov 07, 2024 at 06:55:34AM +0800, Hillf Danton wrote:
+> On Tue,  5 Nov 2024 20:02:50 +0000 Carlos Llamas <cmllamas@google.com>
+> > Use per-vma locking for concurrent page installations, this minimizes
+> > contention with unrelated vmas improving performance. The mmap_lock is
+> > still acquired when needed though, e.g. before folio_walk_start().
+> > 
+> Is the locking order correct in this patch?
+> 
+> 	lock vma
+> 	lock vma->vm_mm
 
---fVTjkEpn9ekAW5rv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry, I've also fixed this issue in v2.
 
-On Wed, Nov 06, 2024 at 05:35:45PM -0800, Nicolin Chen wrote:
-> On Thu, Nov 07, 2024 at 07:56:31AM +0700, Bagas Sanjaya wrote:
-> > On Tue, Nov 05, 2024 at 12:04:29PM -0800, Nicolin Chen wrote:
-> > > With the introduction of the new object and its infrastructure, updat=
-e the
-> > > doc to reflect that and add a new graph.
-> > >=20
-> > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > > Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> > > ---
-> > >  Documentation/userspace-api/iommufd.rst | 69 +++++++++++++++++++++++=
-+-
-> > >  1 file changed, 68 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/=
-userspace-api/iommufd.rst
-> > > index 2deba93bf159..a8b7766c2849 100644
-> > > --- a/Documentation/userspace-api/iommufd.rst
-> > > +++ b/Documentation/userspace-api/iommufd.rst
-> > > @@ -63,6 +63,37 @@ Following IOMMUFD objects are exposed to userspace:
-> > >    space usually has mappings from guest-level I/O virtual addresses =
-to guest-
-> > >    level physical addresses.
-> > > =20
-> > > +- IOMMUFD_OBJ_VIOMMU, representing a slice of the physical IOMMU ins=
-tance,
-> > > +  passed to or shared with a VM. It may be some HW-accelerated virtu=
-alization
-> > > +  features and some SW resources used by the VM. For examples:
-> > > +  * Security namespace for guest owned ID, e.g. guest-controlled cac=
-he tags
-> > > +  * Non-device-affiliated event reporting, e.g. invalidation queue e=
-rrors
-> > > +  * Access to a sharable nesting parent pagetable across physical IO=
-MMUs
-> > > +  * Virtualization of various platforms IDs, e.g. RIDs and others
-> > > +  * Delivery of paravirtualized invalidation
-> > > +  * Direct assigned invalidation queues
-> > > +  * Direct assigned interrupts
-> >=20
-> > The bullet list above is outputted in htmldocs build as long-running pa=
-ragraph
-> > instead.
->=20
-> Oh, I overlooked this list.
->=20
-> Would the following change be okay?
->=20
-> -------------------------------------------------
-> diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/user=
-space-api/iommufd.rst
-> index 0ef22b3ca30b..011cbc71b6f5 100644
-> --- a/Documentation/userspace-api/iommufd.rst
-> +++ b/Documentation/userspace-api/iommufd.rst
-> @@ -68,2 +68,3 @@ Following IOMMUFD objects are exposed to userspace:
->    features and some SW resources used by the VM. For examples:
-> +
->    * Security namespace for guest owned ID, e.g. guest-controlled cache t=
-ags
-> @@ -75,2 +76,3 @@ Following IOMMUFD objects are exposed to userspace:
->    * Direct assigned interrupts
-> +
->    Such a vIOMMU object generally has the access to a nesting parent page=
-table
-> -------------------------------------------------
->=20
-> The outputted html is showing a list with this.
+I was trying to avoid having to vma_lookup() again after switching
+locks. However, this seems unavoidable so I've fixed the locking order
+and I've also switched to get_user_pages_remote(). This seems like a
+better option now.
 
-Yup, that's right!
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---fVTjkEpn9ekAW5rv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZywyBQAKCRD2uYlJVVFO
-o05dAPoCkLQClFT+zDGmYdVx68XDBEfdBl1CCmp2FZ3jz4uFtAEAqVIZoqERkKzk
-iTAIm9NwYZC9ESLhO1HMIWvngDLktgw=
-=Xpoe
------END PGP SIGNATURE-----
-
---fVTjkEpn9ekAW5rv--
+--
+Carlos Llamas
 
