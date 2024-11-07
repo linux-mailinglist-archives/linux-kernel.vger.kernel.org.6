@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-400038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6709C0818
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:51:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE379C0825
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:51:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F242833F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:51:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90652283906
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0296A21264A;
-	Thu,  7 Nov 2024 13:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18113212D04;
+	Thu,  7 Nov 2024 13:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lvO/ImY7"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="UL9C46wI"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AA820FA81
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A583212649;
+	Thu,  7 Nov 2024 13:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987470; cv=none; b=KOGe/OWn3MN+Jwr57BDyjhM+JTMbambipO36zv9I/jNlsEn6SQBAHU74vhTwC7ETDP6/eMbI2fjTTwZo+wp6Kw4sWuHatiYLtglXIvYO+PoFlwPOV5J19j66OCe7y4tHtH/7LnENpU5RvLjW5ME2/aDTO1lqCubQWoi1bw2mwqE=
+	t=1730987491; cv=none; b=nKQ6yz5jYMevNac8AEQTWv7BuuTHdp9sElDUY3KoMWFG9wZXBIijIBgiE32rYoNqNvLtVqu5dHXRvzfhzW5pgMyBsfn5L3eLGP5MKWjWDkNmdgxF0KNQQHXq4V7HZLbKBcXDqTK/bH4FZJp1elBDoTMbMfZFG4t+1kLm2NHo+ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987470; c=relaxed/simple;
-	bh=trEKegl2FHDDStbX9laY/xAPw7CpJ4etahs2VyqANbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O2Y8h3fEuaJ7UheMQzsLhNjI11oRf/gOl6juSUgikQYa5BChUcYVoWGRMv/mWlFiYd0Na7h3LrNexVWM8LoyCA83KmWMOqs0yqiyB7UWb/rAvPmaope22A8QxACIYjigU/I6stz4AULO+CjbnGWVoJITo+abS5I4mII+op+U4nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lvO/ImY7; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-46090640f0cso6419001cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:51:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1730987467; x=1731592267; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MIdUd/kCIltm47uXGOxpew8sXLXKVDb07NKzjiDMo00=;
-        b=lvO/ImY7jRb4oJ9GCI9PAcPoKzU8ue9XWUKzZ2Oj31iiV4ldUmm5I9/exvW6/5I7Xh
-         U5cd03+ShgHyW8a0hE7SmjPXYK1U2aDZ20PnFhph63ttAhNyw2+8tVPyPMd5PMD2KGpi
-         2ADBNbqvByTwbuB8sfOezqqGI6CnnIAzLsNwc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730987467; x=1731592267;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MIdUd/kCIltm47uXGOxpew8sXLXKVDb07NKzjiDMo00=;
-        b=PrYA253bctJPH86iU8KWaIahpYxdIXO0vrnZpIsqwB9YFdSZ4e+CZTtNOboei3vsP/
-         AZ4YgnL7ye+g/bP6W5zKxlQL+/iYMO9TaFBUIpSYeeJqgdK3JsP5iDxjEqL62MUJQ4yI
-         ZIiXgRG2Gn0R8lNHJhikzosbuDCHPleWqUr3slb2b24Jxt74RPlQjBp75Gbgz9fymarh
-         BbkuJVKcuY5ChskcwtDfcQo673+SZKiqr5eWIKJRBJKZBeDaSz+qNewbMBHd8e6btZQD
-         ECuESv12IytwuTJNPgylS/q/6cAMGudSgpmwbS19jjLsgD1BjZSutGnbtm4hrExJ94/6
-         KAfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjxRO/1OsqMA/DM0R6MP4UpdaPOvkxCsYUepgJ5ymRZeAbv32R0zjKV6e9WT/j0Qna7nleW47lX7bKziM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIq9aCkfhoTxxbYyptJQQ/DpJFooQ+aB0CU5CQmPZWWTBCSD4C
-	p9/MNmxMClSWnXaAMburdpg4dCxEyaVCsm4MwW2f0EI1Ry2Uz279GXbj+Tv2Qosg0HATaxL35Mu
-	mTvbORh0NNDyC2mMyXIxCdB8R3vK0paYv+tv3yg==
-X-Google-Smtp-Source: AGHT+IGMnmumBMb+3kuOO+F0xYzmD0dh5oV9KLJbqWkglpw859Yu8qzT99hqpfqG9orBIBT6bwMX6D9jL0g85BVP+Fs=
-X-Received: by 2002:a05:622a:492:b0:460:4ef4:6377 with SMTP id
- d75a77b69052e-462b8646b74mr411352341cf.6.1730987466753; Thu, 07 Nov 2024
- 05:51:06 -0800 (PST)
+	s=arc-20240116; t=1730987491; c=relaxed/simple;
+	bh=zTRFksBbsZzucVoizkgeACRdDVFfkWx96qifjGvnPlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pp9HgXCgeWlXbNy34fso9WfD5q5DGxh3kccDFPlmxDS5kOTvimC8rAueR0NFzqiO3BOgIEepj4Oqs3S2i3FgsWxGDjoRu+C2iIVByX7IFfzGgqImEx8HmYo1qIqp5CYp+pUQGCUKCYPnSGwBrcSfCYJUzv8UkzY5mhiaToUuC7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=UL9C46wI; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HX5GOJc4ky/+VuvmS4Zsp8lqZ9shMfpMhaTLW2ZnQSg=; b=UL9C46wIqeoRxhjiykWkxyJJxP
+	LxD3vx0burgeau+IFu4BtQ1bd4iQaUyO8wGDlQFjSSzjVim1OAyTgxSELRPGo8NRGhfsf9CjlP9N3
+	HZTKi77yo+zIhDj1Fs+nyPuU3dJSBv53oWw85C7IQpdGW8nNn4/cUfpr347PIVIKysgAkAn8oUyuK
+	Hctki9lGI0O4ZDVyFcaMj6PkPZrhXzkcqblrCpgJ74TIT4fuuiap/C/FQxWP4HkbUq7YQae/QqSKN
+	PeMmvMI4MJH0LmDVpHAvSu/9Jl/cXF/ipe+/DuG8tzexcAe7/T3M8DSjsk+1OcFjFznnygLIABiM+
+	ihKq9SpQ==;
+Received: from i53875b28.versanet.de ([83.135.91.40] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t92ua-0006Xa-JT; Thu, 07 Nov 2024 14:51:00 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: lee@kernel.org, jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+ srinivas.pandruvada@linux.intel.com, bentiss@kernel.org,
+ dmitry.torokhov@gmail.com, pavel@ucw.cz, ukleinek@debian.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, stable@vger.kernel.org
+Subject:
+ Re: [PATCH v9 1/9] HID: hid-sensor-hub: don't use stale platform-data on
+ remove
+Date: Thu, 07 Nov 2024 14:50:59 +0100
+Message-ID: <4934964.GXAFRqVoOG@diego>
+In-Reply-To: <nycvar.YFH.7.76.2411071358210.20286@cbobk.fhfr.pm>
+References:
+ <20241107114712.538976-1-heiko@sntech.de>
+ <20241107114712.538976-2-heiko@sntech.de>
+ <nycvar.YFH.7.76.2411071358210.20286@cbobk.fhfr.pm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106-statmount-v2-0-93ba2aad38d1@kernel.org> <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
-In-Reply-To: <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 7 Nov 2024 14:50:56 +0100
-Message-ID: <CAJfpeguufK_JN7y1ePMM6F4yZ5UCWbi-EJhoiWUsJpwG9vxXKw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fs: add the ability for statmount() to report the
- mount devicename
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 6 Nov 2024 at 20:53, Jeff Layton <jlayton@kernel.org> wrote:
->
-> /proc/self/mountinfo displays the devicename for the mount, but
-> statmount() doesn't yet have a way to return it. Add a new
-> STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
-> offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
-> the return mask if there is a device string.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/namespace.c             | 25 ++++++++++++++++++++++++-
->  include/uapi/linux/mount.h |  3 ++-
->  2 files changed, 26 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 52ab892088f08ad71647eff533dd6f3025bbae03..d4ed2cb5de12c86b4da58626441e072fc109b2ff 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5014,6 +5014,19 @@ static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
->                 seq_puts(seq, sb->s_subtype);
->  }
->
-> +static int statmount_mnt_devname(struct kstatmount *s, struct seq_file *seq)
-> +{
-> +       struct super_block *sb = s->mnt->mnt_sb;
-> +       struct mount *r = real_mount(s->mnt);
-> +
-> +       if (sb->s_op->show_devname)
-> +               return sb->s_op->show_devname(seq, s->mnt->mnt_root);
+Hi Jiri,
 
-I think the resulting string should be unescaped just like statmount_mnt_root().
+Am Donnerstag, 7. November 2024, 13:59:04 CET schrieb Jiri Kosina:
+> On Thu, 7 Nov 2024, Heiko Stuebner wrote:
+> 
+> > The hid-sensor-hub creates the individual device structs and transfers them
+> > to the created mfd platform-devices via the platform_data in the mfd_cell.
+> > 
+> > Before e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous reads")
+> > the sensor-hub was managing access centrally, with one "completion" in the
+> > hub's data structure, which needed to be finished on removal at the latest.
+> > 
+> > The mentioned commit then moved this central management to each hid sensor
+> > device, resulting on a completion in each struct hid_sensor_hub_device.
+> > The remove procedure was adapted to go through all sensor devices and
+> > finish any pending "completion".
+> > 
+> > What this didn't take into account was, platform_device_add_data() that is
+> > used by mfd_add{_hotplug}_devices() does a kmemdup on the submitted
+> > platform-data. So the data the platform-device gets is a copy of the
+> > original data, meaning that the device worked on a different completion
+> > than what sensor_hub_remove() currently wants to access.
+> > 
+> > To fix that, use device_for_each_child() to go through each child-device
+> > similar to how mfd_remove_devices() unregisters the devices later and
+> > with that get the live platform_data to finalize the correct completion.
+> > 
+> > Fixes: e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous reads")
+> > Cc: stable@vger.kernel.org
+> > Acked-by: Benjamin Tissoires <bentiss@kernel.org>
+> > Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> 
+> Acked-by: Jiri Kosina <jkosina@suse.com>
+> 
+> Are you planning to merge this together with the rest of the set, or do 
+> you want me to expedite it? I'll be happy to apply it separately as a 
+> proper fix.
 
-The same goes for the option strings, which went in last cycle.
+This change was more or less a surprise find, because I wanted to make
+the platform_data pointer in the mfd_cell struct const and this the hid
+sensor hub stood out as doing something strange ;-) .
 
-I see no reason to require users of this interface to implement
-unescaping themselves.  Others beside libmount probably won't do it
-and will be surprised when encountering escaped strings because they
-are rare.
+So patch 2 of this series actually depends on this change to not cause
+build errors.
 
-Thanks,
-Miklos
+But seeing that we're after -rc6 alredy, I would assume the brunt of the
+mcu series might need to wait after 6.13-rc1 anyway - but I guess that
+depends on how Lee sees things ;-) .
+
+
+Heiko
+
+
 
