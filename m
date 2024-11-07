@@ -1,168 +1,170 @@
-Return-Path: <linux-kernel+bounces-399311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B169BFD4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:15:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F1619BFD57
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FA22837B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:15:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB214B21C09
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F81F19259F;
-	Thu,  7 Nov 2024 04:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7E618D65C;
+	Thu,  7 Nov 2024 04:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dDQwc9FW"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijvKq8C+"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C4218A943
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC9CDF59;
+	Thu,  7 Nov 2024 04:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730952924; cv=none; b=kah3XEK2eiEeoYGVK+Od2QD467I7e8iE8P0L0eBwYMm6T6ou20TF8RQ5/8d0OX6Rfx15hV4WzaAoobMErtTDp8tsMr+cWBvH2GpilcyoppSLkq0BYHx3xt5ewZemnhS8P/6e6jeKhTnbGSVFgHGUy0eCc/6Ylz0z05D2JaN167E=
+	t=1730953250; cv=none; b=oiXq5upn3ldf+LR8Uvrnoxtser24ZRiynmm8MQAbYZGQhzFW1xb1Kyu7SG16DumYz/LmIGXkN3k5tO20tqC4aJau1xa2IoqGVDSbfN5Tnip3uPgpo/9XOdhToy2hraRDXe0E/jAjzN55wJOfIqXemEE9E/m1meT4Ujpqrc/Eyxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730952924; c=relaxed/simple;
-	bh=QABnyB8t+mbVYTcrOswPKfJYqmTUQ3Cu656Yo1uCteo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=CsqRAZjl/WZ3OJfq+9TeWH403zKgywqRvnzLTGsHvbLdicjb/QsE7cg/1m2CqFaLI7SXMi20WZvU8xClKb7FMPU9fScmy+TJhFZoBZs91G7fEXmel/6M3pZ572tppxvv6GQ/+u1WNafTVZsVvCsQFgoWCSOqPKxz8w/aZ8PTJto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dDQwc9FW; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241107041512epoutp01f282f8a0aaa886092998cfa0b948577b~FlIDJnGZ81802418024epoutp01W
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:15:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241107041512epoutp01f282f8a0aaa886092998cfa0b948577b~FlIDJnGZ81802418024epoutp01W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730952912;
-	bh=ukknsEvSKS0z9N9R800ie8XJb8IbzjMM+uty81RzwcI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dDQwc9FW7LMv7giFvrvSLFCo0xV63d7AUqEe6Vo4neDYmMX5ipj8snsfC6fJ8l3lJ
-	 f6zk8qpAB1y/rytQ1ADDt6QHSwp23+saGy80wGup4o7rm5V06lC26G5u81ouGCNMwT
-	 dsNzYBPtq8+FSGopthXKShb9ZLfOSyilfah4gEoQ=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20241107041512epcas2p45cbe2eea0868a323e667c1222e9c8f4f~FlIC3Qr6I2962829628epcas2p4a;
-	Thu,  7 Nov 2024 04:15:12 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.98]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XkTHz3gQkz4x9QJ; Thu,  7 Nov
-	2024 04:15:11 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	10.60.09770.FCE3C276; Thu,  7 Nov 2024 13:15:11 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241107041511epcas2p2aab4dd983341ecc193252cd21135da96~FlIBwq9ls2218122181epcas2p2i;
-	Thu,  7 Nov 2024 04:15:11 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241107041511epsmtrp1f7919bbea45eb98748129264dc03882a~FlIBvuBnR2424024240epsmtrp1c;
-	Thu,  7 Nov 2024 04:15:11 +0000 (GMT)
-X-AuditID: b6c32a46-00dfa7000000262a-40-672c3ecfca21
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	64.DF.35203.FCE3C276; Thu,  7 Nov 2024 13:15:11 +0900 (KST)
-Received: from asswp146.dsn.sec.samsung.com (unknown [10.229.19.146]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241107041510epsmtip2906c77d8ffd733eb1614da97622eaf05~FlIBig7MX1190811908epsmtip2d;
-	Thu,  7 Nov 2024 04:15:10 +0000 (GMT)
-From: Sowon Na <sowon.na@samsung.com>
-To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
-	alim.akhtar@samsung.com, kishon@kernel.org
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	sowon.na@samsung.com
-Subject: [PATCH 3/3] arm64: dts: exynosautov920: add ufs phy for
- exynosautov920 SoC
-Date: Thu,  7 Nov 2024 13:15:05 +0900
-Message-ID: <20241107041509.824457-5-sowon.na@samsung.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241107041509.824457-1-sowon.na@samsung.com>
+	s=arc-20240116; t=1730953250; c=relaxed/simple;
+	bh=RwRfFAaA14v1KhFdJzVgKfI1kH9FS6nlOGTV/TreVI8=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=VyJ2UE2evsJ8Ahk0kRRu14JjoSJc/XyeqWWSH86NV06YG5Nr4FOQ6yskOEmrtwI7NByHP2k4Ckcu2H3km27749HxT6ga1MuPjBm0KZqCz/R23cj2w0aMi8VR/+FSScTVPliIySJUhUbw6iU6jZCKwiSEEhF5A7njkNdIbEdG31o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijvKq8C+; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2113da91b53so3967625ad.3;
+        Wed, 06 Nov 2024 20:20:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730953248; x=1731558048; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=P+IQhpL4e5Uo9lQJ0o9uzJmHF+9L3o1PKgI9OcfzQkk=;
+        b=ijvKq8C+umdur0DVDjUAsqaD9phoJav1ZX2eOxl9SXVjMSlBfiiPIgjvp5DS3UUgRX
+         DJptj5RV2f9u/fXMSdrtrGU0RrIzQX3ayt+g3gHzQZucPstyvOdOX6yhQrJapauE27d3
+         FfTYoij887S1DV7hkYDXBdOdvfcwZi0ijLNPIJ9BLzA/pJyDb7weqZzy1h3PaCym25RI
+         +DYDHQcwNi9T5TzM7DznEedg6Mi909n0sfJEMJKu5Anaq86UJh/RbBXtfkO6RcZ1VwlP
+         JL3ye2AOxzSUelsEulHsX4Q/8KseL0n3UppqcEM4A8NMcZqlSLwW/jvv2BlgaxsBHM+C
+         ctKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730953248; x=1731558048;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P+IQhpL4e5Uo9lQJ0o9uzJmHF+9L3o1PKgI9OcfzQkk=;
+        b=wS1deroSUKTaQdpMb5dL/KYkHFuSafI5L48v/OoL9o5fc9rqriNJ4o7DRdSOw/gVIF
+         RFv1csdmpXBrs69C4ShnCeRvjJm0lgaUYZKS208AtiioUbDhZimDO8TK9koULlcJMonC
+         2FXJ6JD7NvekV1T0Bl6R3vA6SHeDeE1D1J395aHVhSvC6byuyrvGzpTC4NWDmWHpdL2F
+         Tt8lQPxpNuTWVbwSjDE2BCZtUzr8Ue/2FOZWFrx8pb7yGaL9f+qS7sqiXbFHxzV9Jc+3
+         9Rl2oJH80VMZsaTp2rJbr7uCRlRDwyuVF5op4cx9q8iOKEMpxGcEJSASkqcc5/TkW0od
+         HVoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFtI9j+0Zjfukt97QhSZ8tS0taUfI39f1djqfoMPiyRe8qpnLbVbR4lTxKK80ieEPKM6auXzD114CWlQhe@vger.kernel.org, AJvYcCURYzbth3ZCQZvzdl0Vm17aBAJOOO1xsnLemwZ7xTuOr+Ki2iXLyiK6976YEK8u6d8w+Ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsZGXH9kZl2w7PSxXHI2qHbfH9N+fm19IBbS90s/QqEKdDtk4g
+	eopqTQTHasnqtjW0bj0h6pdGAuY+feWTWrlT04A04ozD4oAX1j2hL43UjTL4
+X-Google-Smtp-Source: AGHT+IG79uYcUwF9lFYUeqaifpaRzERnIc8rQuJ5hk5cLFMMa1tPt4Z2qXs9P2uWg0OS8aU5m7Ue1w==
+X-Received: by 2002:a17:902:ea0d:b0:210:f69c:bebe with SMTP id d9443c01a7336-210f69cc47cmr459585375ad.38.1730953247999;
+        Wed, 06 Nov 2024 20:20:47 -0800 (PST)
+Received: from dw-tp ([129.41.58.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc826fsm2926855ad.11.2024.11.06.20.20.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 20:20:47 -0800 (PST)
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+To: Gautam Menghani <gautam@linux.ibm.com>, mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] KVM: PPC: Book3S HV: Mask off LPCR_MER for a vCPU before running it to avoid spurious interrupts
+In-Reply-To: <20241028090411.34625-1-gautam@linux.ibm.com>
+Date: Thu, 07 Nov 2024 09:46:40 +0530
+Message-ID: <87ttcjwudz.fsf@gmail.com>
+References: <20241028090411.34625-1-gautam@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmhe55O510g3tHJC0ezNvGZrFm7zkm
-	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLf4/fMQk8XOOyeYHbg9Nq3q
-	ZPPo27KK0ePzJrkA5qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRb
-	JRefAF23zBygg5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BeYFesWJucWleel6
-	eaklVoYGBkamQIUJ2RkLF65gK3jLUXGrYzpjA+My9i5GDg4JAROJX/9Cuxi5OIQEdjBKvFjY
-	zAbhfGKUeHL+LjOE841RYmrzb6YuRk6wjg1fpkNV7QWq2t7LCOH8YpR4dGwHC8hcNgFViWsN
-	VSCmiEClxNxlziAlzAK9jBL9d9aygAwSFgiVmHPxISuIzQJUPv3lfHYQm1fASqL75DFmiGXy
-	EhfXPGcDsTkFrCVmXXsKVSMocXLmE7A5zEA1zVtng10qIfCTXWL36pmMEM0uQINmsULYwhKv
-	jm9hh7ClJF72t0HZ+RLrH95lg7ArJO4e+s8CYdtLLDrzExxGzAKaEut36UOCS1niyC2otXwS
-	HYf/QkORV6KjTQiiUUmi4/wcaFBJSKx6MRlquIfEgxdzweJCAn2MEivn1kxgVJiF5JlZSJ6Z
-	hbB3ASPzKkax1ILi3PTUYqMCI3j0JufnbmIEp04ttx2MU95+0DvEyMTBeIhRgoNZSYTXP0o7
-	XYg3JbGyKrUoP76oNCe1+BCjKTCoJzJLiSbnA5N3Xkm8oYmlgYmZmaG5kamBuZI4773WuSlC
-	AumJJanZqakFqUUwfUwcnFINTOsDli2UXZryr2r/zGPb5c250qvOJsWY8Yln/RFyP/nxwuek
-	nvXhLv9qDPknHjrDfeph8/t6s2M9m4Pllp2y22bPoOZ3/fb56a93rop3rYv5+W13+Z0pTTkV
-	DYcvmsWu9Lj39snnjMuHWM/NyvkjJJfHf4ozIb/VK2JNkcTnrQ/bkiuTBQyfas7tYqwRcqpn
-	OKN2/LmJ9pmLq6sN3MwY+uaKlHfNrea1+jshUFN42+GX94SYomJvrw9uNPx385N/0d/X7iZB
-	++/OrtE6mP6vP1PG1mGN+H++rdaMUSLfFcW/9LV/6TFIipXhfZIy64fgtKacZ3k3Pa/OvNRx
-	UKm97tjkc9enzfIxbRfiFko+psRSnJFoqMVcVJwIACZV95MmBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsWy7bCSvO55O510g+alLBYP5m1js1iz9xyT
-	xfwj51gtjrb+Z7Z4Oesem8X58xvYLS7vmsNmMeP8PiaL/3t2sFv8/nmIyWLnnRPMDtwem1Z1
-	snn0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJXxsKFK9gK3nJU3OqYztjAuIy9i5GTQ0LARGLD
-	l+lsILaQwG5GiVlrdSHiEhLf3uxhgrCFJe63HGHtYuQCqvnBKLHh7iWgBAcHm4CqxLWGKpC4
-	iEAjo8TzD5OZQRxmgYmMEufnHQHbICwQLLHgbBMriM0C1DD95XywOK+AlUT3yWPMEBvkJS6u
-	eQ52BaeAtcSsa0/ZIS6ykni6dSFUvaDEyZlPWEBsZqD65q2zmScwCsxCkpqFJLWAkWkVo2Rq
-	QXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZwqGtp7mDcvuqD3iFGJg7GQ4wSHMxKIrz+Udrp
-	QrwpiZVVqUX58UWlOanFhxilOViUxHnFX/SmCAmkJ5akZqemFqQWwWSZODilGpiWNrLMWPQm
-	YJ1sru+3x2+kbD8GSG6SurZ08tb373LFJi/Is/XcffUir9SWRO69eTNM84Wiyn3u3nviZFlk
-	Y150xyfp7sZXP7d6/5NwrlN6zVLbwb97e9ObbpFLYkfs3X0PKK2/ExHLlHSp6fiThHO5TFvW
-	WQv9aqn8tSn9lf/NJ9fuTBU/ECjhsX7qjOOTWYtDgmM406ar15XFF/0wNY7XnswQ+J1v0/ZQ
-	mZ4SQ618w25OHvH9ojumLli4d8uMrEn/Fn9b/vbWH5Obq6YbhuvHhxSvXSN6gGOnuYjy3VXn
-	3s7//ZX7iNcutZeOfcY9ubJXfYySsrYXpKxJvHhYUPH0U6kbP5p0OzTsvX84nbutxFKckWio
-	xVxUnAgAqagXNeQCAAA=
-X-CMS-MailID: 20241107041511epcas2p2aab4dd983341ecc193252cd21135da96
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241107041511epcas2p2aab4dd983341ecc193252cd21135da96
-References: <20241107041509.824457-1-sowon.na@samsung.com>
-	<CGME20241107041511epcas2p2aab4dd983341ecc193252cd21135da96@epcas2p2.samsung.com>
 
-Add UFS Phy for exynosautov920
+Gautam Menghani <gautam@linux.ibm.com> writes:
 
-Like exynosautov9, this also uses fixed-rate clock nodes until clock driver
-has been supported. The clock nodes are initialized on bootloader stage
-thus we don't need to control them so far.
+> Running a L2 vCPU (see [1] for terminology) with LPCR_MER bit set and no
+> pending interrupts results in that L2 vCPU getting an infinite flood of
+> spurious interrupts. The 'if check' in kvmhv_run_single_vcpu() sets the
+> LPCR_MER bit if there are pending interrupts.
+>
+> The spurious flood problem can be observed in 2 cases:
+> 1. Crashing the guest while interrupt heavy workload is running
+>   a. Start a L2 guest and run an interrupt heavy workload (eg: ipistorm)
+>   b. While the workload is running, crash the guest (make sure kdump
+>      is configured)
+>   c. Any one of the vCPUs of the guest will start getting an infinite
+>      flood of spurious interrupts.
+>
+> 2. Running LTP stress tests in multiple guests at the same time
+>    a. Start 4 L2 guests.
+>    b. Start running LTP stress tests on all 4 guests at same time.
+>    c. In some time, any one/more of the vCPUs of any of the guests will
+>       start getting an infinite flood of spurious interrupts.
+>
+> The root cause of both the above issues is the same:
+> 1. A NMI is sent to a running vCPU that has LPCR_MER bit set.
+> 2. In the NMI path, all registers are refreshed, i.e, H_GUEST_GET_STATE
+>    is called for all the registers.
+> 3. When H_GUEST_GET_STATE is called for LPCR, the vcpu->arch.vcore->lpcr
+>    of that vCPU at L1 level gets updated with LPCR_MER set to 1, and this
+>    new value is always used whenever that vCPU runs, regardless of whether
+>    there was a pending interrupt.
+> 4. Since LPCR_MER is set, the vCPU in L2 always jumps to the external
+>    interrupt handler, and this cycle never ends.
+>
+> Fix the spurious flood by masking off the LPCR_MER bit before running a
+> L2 vCPU to ensure that it is not set if there are no pending interrupts.
+>
+> [1] Terminology:
+> 1. L0 : PAPR hypervisor running in HV mode
+> 2. L1 : Linux guest (logical partition) running on top of L0
+> 3. L2 : KVM guest running on top of L1
+>
+> Fixes: ec0f6639fa88 ("KVM: PPC: Book3S HV nestedv2: Ensure LPCR_MER bit is passed to the L0")
+> Cc: stable@vger.kernel.org # v6.8+
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+> v1 -> v2:
+> 1. Removed the macro which was silently clearing LPCR_MER bit from vcore->lpcr
+> and instead just masked it off while sending it to kvmhv_run_single_vcpu().
+> Added an inline comment describing the reason to avoid anyone tipping
+> it over. (Suggested by Ritesh in an internal review)
+>
+> v2 -> v3:
+> 1. Moved the masking of LPCR_MER from kvmppc_vcpu_run_hv() to
+> kvmhv_run_single_vcpu() (Suggested by Michael Ellerman)
+>
+>  arch/powerpc/kvm/book3s_hv.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> index 8f7d7e37bc8c..0ed5c5c7a350 100644
+> --- a/arch/powerpc/kvm/book3s_hv.c
+> +++ b/arch/powerpc/kvm/book3s_hv.c
+> @@ -4892,6 +4892,18 @@ int kvmhv_run_single_vcpu(struct kvm_vcpu *vcpu, u64 time_limit,
+>  							   BOOK3S_INTERRUPT_EXTERNAL, 0);
+>  			else
+>  				lpcr |= LPCR_MER;
+> +		} else {
+> +			/*
+> +			 * L1's copy of L2's LPCR (vcpu->arch.vcore->lpcr) can get its MER bit
+> +			 * unexpectedly set - for e.g. during NMI handling when all register
+> +			 * states are synchronized from L0 to L1. L1 needs to inform L0 about
+> +			 * MER=1 only when there are pending external interrupts.
+> +			 * In the above if check, MER bit is set if there are pending
+> +			 * external interrupts. Hence, explicity mask off MER bit
+> +			 * here as otherwise it may generate spurious interrupts in L2 KVM
+> +			 * causing an endless loop, which results in L2 guest getting hung.
+> +			 */
+> +			lpcr &= ~LPCR_MER;
+>  		}
 
-Signed-off-by: Sowon Na <sowon.na@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+I think we had enough discussions on v1 internally and v2 on mailing
+list. So I am comfortable giving... 
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index c759134c909e..505ba04722de 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -361,6 +361,17 @@ pinctrl_aud: pinctrl@1a460000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x1a460000 0x10000>;
- 		};
-+
-+		ufs_0_phy: phy@16e04000 {
-+			compatible = "samsung,exynosautov920-ufs-phy";
-+			reg = <0x16e04000 0x4000>;
-+			reg-names = "phy-pma";
-+			clocks = <&xtcxo>;
-+			clock-names = "ref_clk";
-+			samsung,pmu-syscon = <&pmu_system_controller>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	timer {
--- 
-2.45.2
+LGTM. Please feel free to add - 
 
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
+>  	} else if (vcpu->arch.pending_exceptions ||
+>  		   vcpu->arch.doorbell_request ||
+> -- 
+> 2.47.0
 
