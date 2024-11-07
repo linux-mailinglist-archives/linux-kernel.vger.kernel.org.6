@@ -1,169 +1,140 @@
-Return-Path: <linux-kernel+bounces-399318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7239BFD64
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:31:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403209BFD65
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:37:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20971F22A95
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3DBEB224EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DB818A926;
-	Thu,  7 Nov 2024 04:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6490018A926;
+	Thu,  7 Nov 2024 04:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fd1utv2v"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iH6F1Gud"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AD4372;
-	Thu,  7 Nov 2024 04:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219B9372
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730953890; cv=none; b=OaKyWiznfrPQyBjtVbExmtYcy3Db6c0to/3/PXAoi9DUx7REodsMzr+JKL5a4iTmRr6X2HnSwRdxXcMyKGzilomS6UgC7pYXBnLW6vSms/1B0Ubp5lEbB9nqyBh7gDrIJgDziml19Yrtf1vXaDzSk4fRQSTrebeHhmzOMobEGjw=
+	t=1730954242; cv=none; b=Go8CQJsMu+207thGy+koTai/Bzg+8qhSZ/a3h+6ffAjbCmI1ugHv+wdsWIkMp2bqQ59w4ELRfd/QYcxGb9CxpWE9/HYPiw8c0nDa9mLgvrQRNPykvxlBHqW1ztTscFd4Tg7+OOOZZvvkF1zBqw6Mq2UTh8Sddw/rEsz58EF3/ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730953890; c=relaxed/simple;
-	bh=YBg7K16J6QX1rjvLstPMBbbo5WtxqTKH7wW9aPT0AZ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+5ANXUBkeTGhd0sv4v2ZKz+NztiVCJ7dsMThrQVDPvgeOAeJqR5NiJjCUJF6UT5dobIUcWCE/kS9spsb7A8XF5gEkEsTK2HWjn5Mj/8/l+UNeL5UqfB6E3lrRxCLaFEe9E17lbWXBemESsufmVKQ0m0jHHPafdIji/4GECHhc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fd1utv2v; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e59dadebso442194e87.0;
-        Wed, 06 Nov 2024 20:31:28 -0800 (PST)
+	s=arc-20240116; t=1730954242; c=relaxed/simple;
+	bh=djtiKxfwMXlElXRqkoZlRIe/1URcPNqKmbd8HmdJso4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=t1iG1Iy2IqwsBFKeW0E08rVqVMEzr9VzT3GK8NntJyMyQoEAu/9uWQWCEgEoZMHyAYCgK8DVnstBHj3dX/ISFgU0juuHg9/BqHDzK+7wAU80xZdmmnBKHKQ8vwKpvSszPa5tygl4d07+y/xJFcWTqeP93uqqVUDE+NjU/RvSnQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iH6F1Gud; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso341206b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 20:37:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730953886; x=1731558686; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1730954240; x=1731559040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gRkCg2WwREvUvmuCgqmdpMrJhtUN4b15M25FgIXyNck=;
-        b=fd1utv2vDvtxA1ocDqYlYBCPOmUJf8+L1rLsw6jun8KWhkMfg2a3bsieU7bwxgdlpS
-         5cHPBCEg2XavHAiQfW4NpQfCx71hKZ+1p796yjl39zvKSSbJNX9Z2qIF3D+gqNVFWSA5
-         zT97VSfY7Hbl5C+mXMG/J/DBuoisTzYFIlXJBd5WG5rmM+QQzUDFbt0kXktzLck2u3r0
-         QKGFDLA4+EJTdxJwL3+jjxLL83U4XTZHvXAZl3koa7h/sUK63zVRlOJJL5fSii6Qhc0t
-         xO6THJHlsCjHwJgkeVunAQfHaz+9sIKaE3J03818b08Wg8O4cYyKstmhfnhMc1aB1scC
-         ccXg==
+        bh=PGFL4n7hAh2FjnL+CWJ4ErGkXKiKPRoUD1KeW9udQmQ=;
+        b=iH6F1Gud2M0xARS+jGfbfsSIoQDRX8pfNfKL8fpggXUNbaskaWOeUI5OQuCaxDl2Tz
+         NC9L2TyRew0xqQcbAjKxYv7MTIOeZofKV/cvehvxDExbccm9o52IhjX5gtJxAx0UyrCt
+         Lq8p89mpIKHpCCvgIj3WBBvEM7iAfXIak5InjdSQ2k85kfwzpSW53PbMjs0n+lOyy3/e
+         Xjbu6O2c3p/zs7l0CmC2ylPGPfCxGa4VAYyO4LOSfRmZbyASIEOOogtHyr9pE46i8pNO
+         FSIEd01079ZncXPhcziCUye0yztklno0DZa7xxJfZDkYcJEEtHIx6uUrm6nsk1ZNJvZf
+         A0uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730953886; x=1731558686;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730954240; x=1731559040;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gRkCg2WwREvUvmuCgqmdpMrJhtUN4b15M25FgIXyNck=;
-        b=rCElltuVUtbHscOiAQ26952GITRHfFj8PE3f2kJsUDGR5QccsgjbRZhps9jW6s6FZf
-         nqkiUUgzK1cKtn7wQRJ0rtCxza2Vzf5ho4EJDJbyrGfc6fDBBlI8csVIvbOSHyBzHD1X
-         05idM4kVz4/b/lNsoU4qfhQzQBWqhcQMlBBLgJdbWR8UEglyoEEz65Z87aVCsgQO4MeP
-         ABrP95BmLN9wA3mctr+6UU69E38E/oezBDFGVj94+Gqd50DVXpIf+doImct48CrFdoPA
-         UdVufeS4V7MmvvYXbnC3F4N2yFt5sEQCV/zLfTVfbxTsBroin+C2U+nOSWNDwZfWMpxC
-         b9bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKKiJ11ja4MivW2l5oeZKVr/fgOhKpreugawEVSHziL8HPkH/2O5/YXsn2XRxzkKYjGBn/OFNn218=@vger.kernel.org, AJvYcCUvT4GOwWysGpP1YTZ8i6yOL/DpBLUkHkdx1m1crp290jKsPp+M43e5vQg5JnvqcvysuAF0QBYkFXr03czO@vger.kernel.org, AJvYcCVzMkBvixUrm3h25sYsUXGOVQM96BxIDhB9Mv/YKEQsly8JGTR1TCrBlMV5yxLDy/abImTmxq5aLvKcOOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg6B/szyvn3zVcqHa+961kvcgg12lq1SerWMG4Po3+VXDrde3H
-	+mGBzqA0jdVTW3q+hYg74iXs9yDEqFEFC/iYo3XtRRDiRIZUbq/UHHpc7uyqFgU5dd+u8Iz5Lps
-	kRAjQ60guFSR5Amrp7q6Xu0kXcWY=
-X-Google-Smtp-Source: AGHT+IGIhdamdcK2Mig+wvTrARkH1ryi6qF4sZog+7cY1AgdHa+yA2DoDJJhgLAndDq6NuItiG8RULDjmcrB7BNtDcY=
-X-Received: by 2002:a05:6512:3d06:b0:53a:1e5:572a with SMTP id
- 2adb3069b0e04-53b348f9926mr22052439e87.16.1730953886244; Wed, 06 Nov 2024
- 20:31:26 -0800 (PST)
+        bh=PGFL4n7hAh2FjnL+CWJ4ErGkXKiKPRoUD1KeW9udQmQ=;
+        b=AYkDRg0U81jVK3OshhCoEU91mA0SUbbeMxTdhdl99Bi2VR9/QrVUqqwRS+XycsDreJ
+         BOBMGQczXDNG8khEcpQJfsKpbAfP6cWZjOGFWxzDP7LN+rAhrWFmoZTgbscONdfRPJ+B
+         DYLH9s4wPS+H2MrMtUFuX9R+Hab66ZCbFmRAc/oWf01BRAGikHuH41ISMSD+LzAYFhKm
+         Bbf2AGOz/5fV+vpcjpNrvvxSrCP7QHI3DKlBtBE8oCKHCwAuEVkyjkKPwmcN5VfPgclw
+         aB1gr0PfPYY2vDbmkB2wphn/LWlwBj3XDfw1XxBTNJsRiBxidPouiaWgyTntzQ/ur7DO
+         3TTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtcZW6SSfxV9qM3ckNvuhbdDP89OtZwooQAwx1XnGazyLPLfoezcChWOOmekSGOZtuTPCZejwc+guM9V8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcCQtRisSkzVvivVGcnaeP1LSCtZOH91K4XqDAYT7aouskfH7I
+	crj5WvJuqMNSljB+9bWwPBiVKCJALXb0nQUIz5oBxrbiV5g95JhfDe+tuW2EibU=
+X-Google-Smtp-Source: AGHT+IGiwavu5UGXq8CrIZC04nV302KesPSHi8v8p/O2mVfLRC0J4FG7JTtV0e6d9EK7h/RxeaKDAg==
+X-Received: by 2002:a05:6a00:2341:b0:71e:6489:d18 with SMTP id d2e1a72fcca58-7206306ed64mr58685515b3a.22.1730954240433;
+        Wed, 06 Nov 2024 20:37:20 -0800 (PST)
+Received: from localhost.localdomain ([121.37.54.139])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a4f566sm445337b3a.171.2024.11.06.20.37.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 20:37:19 -0800 (PST)
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	jean-philippe <jean-philippe@linaro.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	baolu.lu@linux.intel.com,
+	shamiali2008@gmail.com
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Zhangfei Gao <zhangfei.gao@linaro.org>
+Subject: [PATCH v2] iommufd: modify iommufd_fault_iopf_enable limitation
+Date: Thu,  7 Nov 2024 04:37:11 +0000
+Message-Id: <20241107043711.116-1-zhangfei.gao@linaro.org>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20241028113209.123-1-zhangfei.gao@linaro.org>
+References: <20241028113209.123-1-zhangfei.gao@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102073718.64040-1-yesanishhere@gmail.com> <Zyb8U3lSvYP0UeuN@archie.me>
-In-Reply-To: <Zyb8U3lSvYP0UeuN@archie.me>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Wed, 6 Nov 2024 20:31:14 -0800
-Message-ID: <CABCoZhAV0+MK6FEDRpojHoW4opfqNaYCtTrBTjA8O8+yurLr2A@mail.gmail.com>
-Subject: Re: [PATCH] ALSA: machine: update documentation
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
-	corbet@lwn.net, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Mark,
+iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
+because the PRI might be a shared resource and current iommu
+subsystem is not ready to support enabling/disabling PRI on a VF
+without any impact on others.
 
-Do you have any comments, or should I
-go ahead and respin the patch to address
-the review comments?
+However, we have devices that appear as PCI but are actually on the
+AMBA bus. These fake PCI devices have PASID capability, support
+stall as well as SRIOV, so remove the limitation for these devices.
 
-On Sat, Nov 2, 2024 at 9:30=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail.com>=
- wrote:
->
-> On Sat, Nov 02, 2024 at 12:37:18AM -0700, anish kumar wrote:
-> > +Additionaly below example macro can be used to register cpu, codec and
-> > +platform dai.
-> > +
-> > +SND_SOC_DAILINK_DEFS(wm2200_cpu_dsp,
-> > +     DAILINK_COMP_ARRAY(COMP_CPU("samsung-i2s.0")),
-> > +     DAILINK_COMP_ARRAY(COMP_CODEC("spi0.0", "wm0010-sdi1")),
-> > +     DAILINK_COMP_ARRAY(COMP_PLATFORM("samsung-i2s.0")));
-> > +
->
-> Make the macro usage a literal code block:
->
-> ---- >8 ----
-> diff --git a/Documentation/sound/soc/machine.rst b/Documentation/sound/so=
-c/machine.rst
-> index af7bad7ba13455..8788953cd160f5 100644
-> --- a/Documentation/sound/soc/machine.rst
-> +++ b/Documentation/sound/soc/machine.rst
-> @@ -76,9 +76,9 @@ either dai name or device tree node but not both. Also,=
- names used here
->  for cpu/codec/platform dais should be globally unique.
->
->  Additionaly below example macro can be used to register cpu, codec and
-> -platform dai.
-> +platform dai::
->
-> -SND_SOC_DAILINK_DEFS(wm2200_cpu_dsp,
-> +  SND_SOC_DAILINK_DEFS(wm2200_cpu_dsp,
->         DAILINK_COMP_ARRAY(COMP_CPU("samsung-i2s.0")),
->         DAILINK_COMP_ARRAY(COMP_CODEC("spi0.0", "wm0010-sdi1")),
->         DAILINK_COMP_ARRAY(COMP_PLATFORM("samsung-i2s.0")));
->
-> >  Machine Power Map
-> > ------------------
-> > +---------------------------
->
-> Keep the section underline length as-is.
->
-> >  Machine Controls
-> > -----------------
-> > +-----------------------
->
-> Likewise.
->
-> > +Clocking Controls:
-> > +=E2=80=94-----------------
-> > +
->
-> Fix the underline to render the section name as a heading:
->
-> ---- >8 ----
-> diff --git a/Documentation/sound/soc/machine.rst b/Documentation/sound/so=
-c/machine.rst
-> index 8788953cd160f5..bdb9dfc5d88e45 100644
-> --- a/Documentation/sound/soc/machine.rst
-> +++ b/Documentation/sound/soc/machine.rst
-> @@ -113,8 +113,8 @@ Machine Controls
->  Machine specific audio mixer controls can be added in the DAI init funct=
-ion.
->
->
-> -Clocking Controls:
-> -=E2=80=94-----------------
-> +Clocking Controls
-> +-----------------
->
->  As previously noted, clock configuration is handled within the machine d=
-river.
->  For details on the clock APIs that the machine driver can utilize for
->
-> Thanks.
->
-> --
-> An old man doll... just what I always wanted! - Clara
+Co-developed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/iommufd/fault.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
+index 80efef1c127d..c5b0aa719948 100644
+--- a/drivers/iommu/iommufd/fault.c
++++ b/drivers/iommu/iommufd/fault.c
+@@ -10,6 +10,7 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/pci.h>
++#include <linux/pci-ats.h>
+ #include <linux/poll.h>
+ #include <uapi/linux/iommufd.h>
+ 
+@@ -27,8 +28,12 @@ static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
+ 	 * resource between PF and VFs. There is no coordination for this
+ 	 * shared capability. This waits for a vPRI reset to recover.
+ 	 */
+-	if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
+-		return -EINVAL;
++	if (dev_is_pci(dev)) {
++		struct pci_dev *pdev = to_pci_dev(dev);
++
++		if (pdev->is_virtfn && pci_pri_supported(pdev))
++			return -EINVAL;
++	}
+ 
+ 	mutex_lock(&idev->iopf_lock);
+ 	/* Device iopf has already been on. */
+-- 
+2.25.1
+
 
