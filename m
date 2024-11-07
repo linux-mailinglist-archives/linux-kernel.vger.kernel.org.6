@@ -1,163 +1,264 @@
-Return-Path: <linux-kernel+bounces-399487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E249BFFB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:06:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DDB9BFFB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A18DB22DC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:06:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C0E1C2141E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEE41DE2D4;
-	Thu,  7 Nov 2024 08:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QeF9c7or"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B200517DE36;
+	Thu,  7 Nov 2024 08:07:30 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF031D1E64;
-	Thu,  7 Nov 2024 08:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F33F1940AA
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730966731; cv=none; b=H/2otNpPwCh0wCwM8pKFnOjUHI/uwkdzDc4bDPEDVqLU/jw/3rTlRiQfkIzlR3CNu4T7hI+SS9ByTLidrEiTquBYDUnjVU/EcXuTRl6ybBsgYtHKwCX1i3mk2U6RoEmapoCQUjak2LPMWRdcbKGpV9exqAhaGpm5mAmjJWX2yo0=
+	t=1730966850; cv=none; b=jDAzvjkO6d8Ag3UyoPWipkHKXuoOEcC1V+CxgtWVFnvuwe6XaOvCFd/nDMqYi8wNKnXU26S8wioeiviBizf+nJVeWSSzn9LBG8CzQHtipnGRwmZXYt1UPvCEF8kJtfLex55k1AB+9i2sceXvrj+jjYYvx9oxBmG/KUoo8jT9jkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730966731; c=relaxed/simple;
-	bh=ijQGLShwBSYLLvUxnqStEBbxxKosoO9akZv2TZgOhm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QlN2eV9LYYLz+qmgehyv9ezqptLQYDmjs/LOshp22GnNyLJgWoRthpVdC4i/Y+qOtB0z6LlUkgdgz1Sb57QqDiIoMmKtIzOLwI2sus6pkLKrH39PZAh75v57W3fO9c0PY/wzK4UOWshrR1kayFczjOs6JK5TZrQw5cTTB6WzPc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QeF9c7or; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730966730; x=1762502730;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ijQGLShwBSYLLvUxnqStEBbxxKosoO9akZv2TZgOhm8=;
-  b=QeF9c7orDp5Fyv0cvEbuI4hz23+6YBB4ZLmLAQNpDciC1IXSIHEk8p7w
-   nTWRq3wMLkU3n/XNR260OQPHcKb3pgJEt0PpsxF1tn047WmUkCKl4BmT6
-   P1CS1BrpgDZzPZzSuZ78BoBzjMYwsFlaThsZ6+HDir0hoUHPYYrldynbU
-   z09XLTKEpxWR/mwGDbP8LwHw6L/hMvNaflh4NQQPPsdjyRzU6RtPGoTFk
-   lsENwIifcrONmJjRlS5WVbQWPPZRXuHZt7hrW/aXwMxd/y27ybLIwIU6r
-   90OW0M1odrBdzd4UOuu+3PgumjkdAd1suid8wchE/z2+qPKMSqi5D631z
-   A==;
-X-CSE-ConnectionGUID: ay1I34sZSqWycgBsOuIMjg==
-X-CSE-MsgGUID: zU1ciVjCRB+GkPNZc77APw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="34721893"
-X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
-   d="scan'208";a="34721893"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 00:05:29 -0800
-X-CSE-ConnectionGUID: wqVESQ92SL+6HCg6lj+7Zg==
-X-CSE-MsgGUID: KD/u0kr5TeWTurn3071+qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
-   d="scan'208";a="85320413"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 00:05:25 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t8xW6-0000000CB9y-3n1y;
-	Thu, 07 Nov 2024 10:05:22 +0200
-Date: Thu, 7 Nov 2024 10:05:22 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-	"Sabau, Radu bogdan" <Radu.Sabau@analog.com>,
-	Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): Support adp1051 and adp1055
-Message-ID: <Zyx0wqJnOwGfto_F@smile.fi.intel.com>
-References: <20241106090311.17536-1-alexisczezar.torreno@analog.com>
- <20241106090311.17536-3-alexisczezar.torreno@analog.com>
- <ZytSCD0dViGp-l2b@smile.fi.intel.com>
- <55825e91-b111-4689-bb3e-ede2c241728d@roeck-us.net>
- <ZyuSzPXnxRYG4Gk3@smile.fi.intel.com>
- <PH0PR03MB6351F678D8FDC9C28174E9EBF15C2@PH0PR03MB6351.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1730966850; c=relaxed/simple;
+	bh=2V47KTTKsgSskEbASEagPIL6uX+vROs65N/OXrhxkPQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZTvGLj77jAZAvDyAxvkNtbBrpqTTrZchCnKGV7xOzK8DN3BZswfpSGLDSAsaRzDvnksWqybP7l44LU9omVlIG5lyY/t1cFG8qNNabAI0rRW6SIIYswOJvMKmxgZzqoI5sJyTCR7FWTIo1EqkeLZz6URQyP2llSULgannKyKNvjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c9886eccso8443035ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 00:07:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730966847; x=1731571647;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ywJI1RizHtNoeacvYINknT2lGhzvBKSC2a9W7mPrTPM=;
+        b=Tp7aBhywG2pz4s6S0aUOUFVU3CVMJdINw3+8iDOp3DUNR2PTImDzNDjqnpfF1mS3+h
+         5s1MXEmtv0gftLUHRDXvVuCAw05JkOdqzofco7BwKCq/qNHQJtm891Drpji5JIDDVOMP
+         5eYBWjZrZop5s4xdARDkzMEo7mDyGkiGGevdN+ZSm0AVFhzpOLVDDiYXhtNuwxlV7YB+
+         ugp7waP1DjkSK3cFAeiBtMCG2mb9jVKiKqTjlVQ98uL0/iLitl2HgMXdufP46VEgPaCH
+         WnIzEg9SHM6Um3iIm+M2hW0PLpD++Ia1MRZ/R9tFggdZV33bQtxH2BLFl3CDk15Gu4oO
+         40jA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOhnmBh5m5E83VyCd8J2kBT7toYXqw4ghVB28qYAhZPZT3imUN3R4Z9x+b1wXvCue20KT51z5geFgd4S0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysg3ko2r/b3G7Fs/sB0cyHhON+dVEzcrh5Nt2vCdufqjkL/41c
+	yYLL74EFMbiEoabz77mzIviI5J4HFTmd3rYvrun/pBHUkL3J72XE3V6+G5IyWZUM3XwsKBR8gf6
+	MmDS/DVRRxSl6+O8fSq+jf7OVgY3Ehsvavt7PWon925qVPO1fSK5fyig=
+X-Google-Smtp-Source: AGHT+IEgxTDOf22PP8xGLXCGHRNIFNamlBck6mUdYtXnATlVLH8RqNQe6U5sblaKTwdz/YsZQqy/hhGd92ZMAF2xqA2tfPCsLsEI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH0PR03MB6351F678D8FDC9C28174E9EBF15C2@PH0PR03MB6351.namprd03.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a92:c249:0:b0:3a6:b0d0:ee2d with SMTP id
+ e9e14a558f8ab-3a6ed0b4b99mr3107245ab.9.1730966847509; Thu, 07 Nov 2024
+ 00:07:27 -0800 (PST)
+Date: Thu, 07 Nov 2024 00:07:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672c753f.050a0220.31356.0003.GAE@google.com>
+Subject: [syzbot] [hfs?] possible deadlock in hfsplus_file_fsync
+From: syzbot <syzbot+44707a660bc78e5dc95c@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 07, 2024 at 01:17:04AM +0000, Torreno, Alexis Czezar wrote:
-> > -----Original Message-----
-> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Sent: Thursday, November 7, 2024 12:01 AM
-> > On Wed, Nov 06, 2024 at 07:55:30AM -0800, Guenter Roeck wrote:
-> > > On 11/6/24 03:24, Andy Shevchenko wrote:
-> > > > On Wed, Nov 06, 2024 at 05:03:11PM +0800, Alexis Cezar Torreno wrote:
+Hello,
 
-...
+syzbot found the following issue on:
 
-> > > Is that an official tag ? Frankly, if so, I think it is quite useless
-> > > in the patch description because datasheet locations keep changing.
-> > > I think it is much better to provide a link in the driver documentation.
-> > 
-> > I believe it's semi-official, meaning that people use it from time to time.
-> > I'm fine with the Link in the documentation. Actually with any solution that
-> > saves the respective link in the kernel source tree (either in form of commit
-> > message or documentation / comments in the code).
-> 
-> Will add the blank line after description. 
-> Am I right to understand that we leave this as is? No need to add driver link
-> in patch description since it is in driver documentation?
+HEAD commit:    1ffec08567f4 Add linux-next specific files for 20241104
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b23587980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dfea72efa3e2aef2
+dashboard link: https://syzkaller.appspot.com/bug?extid=44707a660bc78e5dc95c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Add it to the documentation.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-...
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3f67fb217f30/disk-1ffec085.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/73c0895ed6c3/vmlinux-1ffec085.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/80c6f613afd1/bzImage-1ffec085.xz
 
-> > > > > +static struct pmbus_driver_info adp1055_info = {
-> > > > > +	.pages = 1,
-> > > > > +	.format[PSC_VOLTAGE_IN] = linear,
-> > > > > +	.format[PSC_VOLTAGE_OUT] = linear,
-> > > > > +	.format[PSC_CURRENT_IN] = linear,
-> > > > > +	.format[PSC_TEMPERATURE] = linear,
-> > > > > +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN |
-> > PMBUS_HAVE_VOUT
-> > > > > +		   | PMBUS_HAVE_IOUT | PMBUS_HAVE_TEMP2 |
-> > PMBUS_HAVE_TEMP3
-> > > > > +		   | PMBUS_HAVE_POUT | PMBUS_HAVE_STATUS_VOUT
-> > > > > +		   | PMBUS_HAVE_STATUS_IOUT |
-> > PMBUS_HAVE_STATUS_INPUT
-> > > > > +		   | PMBUS_HAVE_STATUS_TEMP,
-> > > >
-> > > > Ditto.
-> > >
-> > > That one slipped through with the original driver submission.
-> > > I thought that checkpatch complains about that, but it turns out that
-> > > it doesn't. I agree, though, that the usual style should be used.
-> > 
-> > Oh, okay, that's up to you then.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+44707a660bc78e5dc95c@syzkaller.appspotmail.com
 
-> I based my code style on the original, but I agree that the usual style
-> should be followed.  
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc5-next-20241104-syzkaller #0 Not tainted
+------------------------------------------------------
+syz.3.810/9889 is trying to acquire lock:
+ffff888024cf09b8 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:817 [inline]
+ffff888024cf09b8 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}, at: hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
 
-> I will change it to follow the usual style.
+but task is already holding lock:
+ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
+ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
 
-No, please be consistent with the existing style. If you want to change it,
-add an additional patch to do that for the _existing_ code first and base your
-patch on top of that.
-
-> Should I leave the original untouched or should I format it too?
-
--- 
-With Best Regards,
-Andy Shevchenko
+which lock already depends on the new lock.
 
 
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&q->q_usage_counter(io)#17){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1510/0x2490 block/blk-mq.c:3069
+       __submit_bio+0x2c2/0x560 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+       submit_bh fs/buffer.c:2819 [inline]
+       block_read_full_folio+0x93b/0xcd0 fs/buffer.c:2446
+       filemap_read_folio+0x14b/0x630 mm/filemap.c:2366
+       do_read_cache_folio+0x3f5/0x850 mm/filemap.c:3826
+       do_read_cache_page+0x30/0x200 mm/filemap.c:3892
+       read_mapping_page include/linux/pagemap.h:1005 [inline]
+       __hfs_bnode_create+0x487/0x770 fs/hfsplus/bnode.c:440
+       hfsplus_bnode_find+0x237/0x10c0 fs/hfsplus/bnode.c:486
+       hfsplus_brec_find+0x183/0x570 fs/hfsplus/bfind.c:172
+       hfsplus_brec_read+0x2b/0x110 fs/hfsplus/bfind.c:211
+       hfsplus_find_cat+0x17f/0x5d0 fs/hfsplus/catalog.c:202
+       hfsplus_iget+0x483/0x680 fs/hfsplus/super.c:83
+       hfsplus_fill_super+0xc4d/0x1be0 fs/hfsplus/super.c:504
+       get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&tree->tree_lock#2){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       hfsplus_find_init+0x14a/0x1c0 fs/hfsplus/bfind.c:28
+       hfsplus_rename_cat+0x157/0x1090 fs/hfsplus/catalog.c:447
+       hfsplus_rename+0x12e/0x1c0 fs/hfsplus/dir.c:552
+       vfs_rename+0xbdb/0xf00 fs/namei.c:5054
+       do_renameat2+0xd94/0x13f0 fs/namei.c:5211
+       __do_sys_rename fs/namei.c:5258 [inline]
+       __se_sys_rename fs/namei.c:5256 [inline]
+       __x64_sys_rename+0x82/0x90 fs/namei.c:5256
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&sb->s_type->i_mutex_key#23/4){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1693
+       vfs_rename+0x6a2/0xf00 fs/namei.c:5025
+       do_renameat2+0xd94/0x13f0 fs/namei.c:5211
+       __do_sys_rename fs/namei.c:5258 [inline]
+       __se_sys_rename fs/namei.c:5256 [inline]
+       __x64_sys_rename+0x82/0x90 fs/namei.c:5256
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+       inode_lock include/linux/fs.h:817 [inline]
+       hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
+       __loop_update_dio+0x1a4/0x500 drivers/block/loop.c:204
+       loop_set_status+0x62b/0x8f0 drivers/block/loop.c:1289
+       lo_ioctl+0xcbc/0x1f50
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:907 [inline]
+       __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &sb->s_type->i_mutex_key#23 --> &tree->tree_lock#2 --> &q->q_usage_counter(io)#17
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&q->q_usage_counter(io)#17);
+                               lock(&tree->tree_lock#2);
+                               lock(&q->q_usage_counter(io)#17);
+  lock(&sb->s_type->i_mutex_key#23);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.3.810/9889:
+ #0: ffff88801efacb60 (&lo->lo_mutex){+.+.}-{4:4}, at: loop_set_status+0x2a/0x8f0 drivers/block/loop.c:1251
+ #1: ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
+ #1: ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
+ #2: ffff8881423fbb00 (&q->q_usage_counter(queue)){+.+.}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
+ #2: ffff8881423fbb00 (&q->q_usage_counter(queue)){+.+.}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 9889 Comm: syz.3.810 Not tainted 6.12.0-rc5-next-20241104-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+ inode_lock include/linux/fs.h:817 [inline]
+ hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
+ __loop_update_dio+0x1a4/0x500 drivers/block/loop.c:204
+ loop_set_status+0x62b/0x8f0 drivers/block/loop.c:1289
+ lo_ioctl+0xcbc/0x1f50
+ blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f89dbd7e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f89dcaf0038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f89dbf35f80 RCX: 00007f89dbd7e719
+RDX: 0000000020001300 RSI: 0000000000004c04 RDI: 0000000000000004
+RBP: 00007f89dbdf139e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f89dbf35f80 R15: 00007ffdb32a6ed8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
