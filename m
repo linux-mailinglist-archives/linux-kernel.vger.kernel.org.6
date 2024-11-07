@@ -1,176 +1,99 @@
-Return-Path: <linux-kernel+bounces-400706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE0F9C113B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:46:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4401F9C113C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:47:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E260285BFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081A2285BFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F00C21833C;
-	Thu,  7 Nov 2024 21:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A323A2185B3;
+	Thu,  7 Nov 2024 21:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArIf0MEg"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pgQhXYxE"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEB9DDBE;
-	Thu,  7 Nov 2024 21:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6929B1940AA
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 21:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731015989; cv=none; b=rC6KuEk59oDEykb4PoGsw8v3z9Mw9KYOVZgca9WGi2CTUaurr71/r6xg+tMdTH/s4ugIrWvexLtvUHN+qpws59VMOFdJpR4wTTVewurF9JPFvc6qjVIBTfpBAP8u/k1lPmgSS3lzYWBNehstHJbpz91sZuVfIMMh/Z4hxNnQnM0=
+	t=1731016042; cv=none; b=YWcp1DxkBhnMQ2pDqRwJS9z8VxTTHo4WehZBBgOILI41JwLnvoWe6eNL+TTKYKyWFUB6PqIiaYeSorgE/GHIQJGE87fGOOdh7D9/+l/Mx01uUNXSz0MkkkdkbzZcdGsmbNrVTn6vwciu2MWO+y9j8nCg8hJMQ6jrVg0Kpp/s8oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731015989; c=relaxed/simple;
-	bh=Fb0MiIbLCXPXmfhjTJQInLRGdtkD2HZ0eZUS1xVTb5U=;
+	s=arc-20240116; t=1731016042; c=relaxed/simple;
+	bh=7Vzi0dFJvYhmESZb/ld30Zb5ZAH3BkRQjZgk0CFl3Ak=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vBjMqKH7N1bGj8vcAhIVxeQw7a1iMbBLOzrfPArKbLbVrDSTCmcNTLR4xbFC2TsJ67JSDCEqubXXeCGUIfY+movxcv7TEPGNCAAGlEaHf3YGit2n+rouA0jKEgDabukNvYqMh3cVaEndwj0tMbSgKH/8gGaQ++9LFWQOoA65jDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ArIf0MEg; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e290554afb4so1565918276.0;
-        Thu, 07 Nov 2024 13:46:27 -0800 (PST)
+	 To:Cc:Content-Type; b=C72lvUBITXw/aZmQfhGsMaKAQa4Pa4//LbiXyNNaCO+1QP/4BtJdTarGB2x3RRR6KiAS/81QOwJYz3BrXkSDF0DtzZ9rll4kFoFmozPKevSNTiX/mkaHvvVQp1MF+FOaFoO8TAY4Pi8SFTLgqVdEKBzRZ7xLI9chI2yuyDL5eEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pgQhXYxE; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e617ef81so1270e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 13:47:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731015987; x=1731620787; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731016038; x=1731620838; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FboSWRAZe89SlRX3X2Htv47szgsz9jQ5dqHGQjAOzbQ=;
-        b=ArIf0MEgm33gKAbPYwV1AjNkxuRGemCcamapWafCkxxvstXdBHceXz5bEOPTZO8PO9
-         EC3pqC1YkQ38biNdCZgyNXAaeD1Z3ioYQS661y1Bj4bCulW4kAgsW8MFWXWM19cvYtrD
-         7N8gEfEGT722tOeYfkDJgKdYcEjTJeoz2WjehR9fbVGVf2NT0hl8JA8HF9CZaFAZQPnt
-         vPOoQQ6Qi5/FyDutttLiIu4SW20O0uCr05mr20jRNM8216/56vwmLgKRQ8nBXDX9o+Kp
-         zjwJC1tw+NgQ6sjyEFyMiWZD16yu/zWfzpIYTFbooC5UKKQ5cPbX+y7edskIyvCv+Tsh
-         MT8g==
+        bh=7Vzi0dFJvYhmESZb/ld30Zb5ZAH3BkRQjZgk0CFl3Ak=;
+        b=pgQhXYxEqmY/IkgQGtxOWwmNUj6T0jmRTkob7zeiNP5D9/+wqckWEMkFa2vkJ+JN5b
+         JBQT5NROTymJbsQ4OO6OVah1RBVh0N9dQrEcXde/Ry4zfVviHktg06JBrAhT7Z0PNY/t
+         O3MSpbaEYhndkWSOwJsdzV3ofXQicPhXt3Gu/Iui7SZhvnrsUDWAve3kCtQ2lSWyWrdR
+         A7ubly24LU/7taKfPV5azxnqYvv3IHn+ufJjVlGVhsJPwpHO40Uugp0tqdzqd/U4LNgP
+         +usY0z1WpzhkxgKfLP5LTZ49frPjC4y9WOBhX/awZYyoAKDnpHmgyeQihDmLsYpUpS34
+         09hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731015987; x=1731620787;
+        d=1e100.net; s=20230601; t=1731016038; x=1731620838;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FboSWRAZe89SlRX3X2Htv47szgsz9jQ5dqHGQjAOzbQ=;
-        b=k0oVqvl9RoUwMppgTQsP89aty4OWTUnoDbHQ7XVPlFsBPxstcFgnCyY9FJWJJ1Fxsc
-         bpRl9kw2Ks9sN5zLpqwgtwimgKKVFYv5Wx1DgDa+rhYoZcUScXus/4qmtA3ZFfLfnRqu
-         cuMh+N53w9qEBmteANBTVuix8TuL+ZCrYXIEuqPQ051lqg4gXMV6j2KC1RuSgmCLrRKP
-         zPa9AjK92ofzLOWGAlMsJP5T43j4O8r9NYmMx4Qrd7aYTlXv8L5zD279x2/gSH7bjBpx
-         YLIX5sSkdgQSmlM6jfku1HuZX2Uq30A6/z3RQFUD3r7iWq9nre6BTiT127TBKkgjRC+/
-         5Ztw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEfaQPcAV9miEiXLt2jJvPlIESlZQk2KRSq8DjjBWtCR7GHj+ivD5c36XQtKGEmd6Avc4KTD0YalPSptOu0TPCEA==@vger.kernel.org, AJvYcCXLWMeZ0LfYtKvwr3lfhop8Ktp5e7/MknOHK2JoclI0q51ZRPk2xpU9EMphSenGTWNvlRV6HechDxMO7s4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPJUaIV+7oW2bINA9SgmB+vyILe1oMgQYyRpVi6Md+kw4p9ir0
-	YskqBbE2vxb8UwI1bq0B/FuZ39x805Mg53lg37JjKOQ+hfCvcbyPl9aMTfFwlmdqGejoaXl20dU
-	/1FcicvVg9BTJg5yzNqKz6zQFMWc=
-X-Google-Smtp-Source: AGHT+IFJ4F8u/Qi41tFeFHe2VfD76MJ6LUbm1txagiXutEZGZ9e21KrJTm+bLI2badHgdk7pOKxKK3Q0JIZvXar+rds=
-X-Received: by 2002:a05:6902:c06:b0:e30:dc1e:d81f with SMTP id
- 3f1490d57ef6-e337f86cdfdmr762098276.21.1731015986825; Thu, 07 Nov 2024
- 13:46:26 -0800 (PST)
+        bh=7Vzi0dFJvYhmESZb/ld30Zb5ZAH3BkRQjZgk0CFl3Ak=;
+        b=lOIxwrEp5moB5n9mmig/m3A0S+b8U5tyweW35OlUnwoe6Hr9qCcQuWSxH533u9ewOX
+         aft9WXcj+P0NVcKftuYrWshwwOcEMkxoz+A7hq9ImWBveaRwm0+CRIAAhpMxB7O6A/MD
+         g+kov4SbOeT3QOXOMMwqr+EZKMO0KTaPhMvAReg0oUEusOrW9bKFFfZdackNJtdKYoNI
+         vA7Q9Wp3iVqX1yGYxqJT+mbeyK9Y9E4A5jDbySC9ngVQiJjs6Up22Om+rRDbHPgDoUyW
+         rDf0Kb4uqWDeLN3S8K3bG32w4GmCXQJBbygM3rVYSOS/ykAUj8MoxlHVnUYl1nwQ2OMH
+         aH5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVxmj8DmBS6iwLb3Nydm23vzzDb3cZRvnEp27eVP+uzClPoUpOWvE5Q/wbgi7B8XVehRQRIK3tPtb3KLho=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy56kWd0n3E2AnS3NvHx0gvbR6JgLW2xyKrFXM7/iKhN+oLTL/C
+	Ikg7dzdGtBFdvrWrXm3yf8Pl7W6wygPrEOSD+X5tAQXq4DOT3qPeccRs3S/4zjnrQYv5MAEWS8U
+	b+xgcf8ctdp/dW73d1D71U+XkK/immDSmmCrR
+X-Gm-Gg: ASbGncvjYG2fuKcEWtH2PgpE6wyE/nwCaFrYgI+uJWciFp5BeGcTHkPhPp+BqbKdoSB
+	kR3B8Ma8S/z5VQP8lALiKQMFT9JuYTgX1T9n4oNHA6Iq2NN7+Ow73oMBFYb4=
+X-Google-Smtp-Source: AGHT+IEVRtK3vBDQYo5QQzy8bf3W+78vm5grPnlmuPgEABF22YxhCkrdYd+v15ki6kcv6n3lBxfTPf/JP57XDaNq62Q=
+X-Received: by 2002:ac2:5b87:0:b0:52e:8a42:f152 with SMTP id
+ 2adb3069b0e04-53d812536c6mr463638e87.5.1731016038083; Thu, 07 Nov 2024
+ 13:47:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106234518.115234-1-benjamin@engflow.com>
-In-Reply-To: <20241106234518.115234-1-benjamin@engflow.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Thu, 7 Nov 2024 13:46:19 -0800
-Message-ID: <CAH0uvohodYgZ9hL=fRauk_85+sNjAVvjdB1UxKouMLLURYTbuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf trace: do not lose last events in a race
-To: Benjamin Peterson <benjamin@engflow.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+References: <cover.1730360798.git.zhengqi.arch@bytedance.com> <63c92f1e2a2fa6267490ab9fad5b090316b39b98.1730360798.git.zhengqi.arch@bytedance.com>
+In-Reply-To: <63c92f1e2a2fa6267490ab9fad5b090316b39b98.1730360798.git.zhengqi.arch@bytedance.com>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 7 Nov 2024 22:46:42 +0100
+Message-ID: <CAG48ez3y7UgzMZUvEqN6-O0b7gpwhdto9xb5gBTeknTuKuPcbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] mm: make zap_pte_range() handle full within-PMD range
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de, 
+	muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org, 
+	zokeefe@google.com, rientjes@google.com, peterx@redhat.com, 
+	catalin.marinas@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Benjamin,
+On Thu, Oct 31, 2024 at 9:14=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedance.co=
+m> wrote:
+> In preparation for reclaiming empty PTE pages, this commit first makes
+> zap_pte_range() to handle the full within-PMD range, so that we can more
+> easily detect and free PTE pages in this function in subsequent commits.
+>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-Without your patch (no output):
-perf $ ./perf trace -e syscalls:sys_enter_exit_group true
-perf $
-
-With your patch:
-
-perf $ ./perf trace -e syscalls:sys_enter_exit_group true
-     0.000 true/1530009 syscalls:sys_enter_exit_group()
-
-The result looks good.
-
-Tested-by: Howard Chu <howardchu95@gmail.com>
-
-Thanks,
-Howard
-
-On Wed, Nov 6, 2024 at 3:45=E2=80=AFPM Benjamin Peterson <benjamin@engflow.=
-com> wrote:
->
-> If a perf trace event selector specifies a maximum number of events to ou=
-tput
-> (i.e., "/nr=3DN/" syntax), the event printing handler, trace__event_handl=
-er,
-> disables the event selector after the maximum number events are
-> printed. Furthermore, trace__event_handler checked if the event selector =
-was
-> disabled before doing any work. This avoided exceeding the maximum number=
- of
-> events to print if more events were in the buffer before the selector was
-> disabled. However, the event selector can be disabled for reasons other t=
-han
-> exceeding the maximum number of events. In particular, when the traced
-> subprocess exits, the main loop disables all event selectors. This meant =
-the
-> last events of a traced subprocess might be lost to the printing handler'=
-s
-> short-circuiting logic.
->
-> This nondeterministic problem could be seen by running the following many=
- times:
->
->   $ perf trace -e syscalls:sys_enter_exit_group true
->
-> trace__event_handler should simply check for exceeding the maximum number=
- of
-> events to print rather than the state of the event selector.
->
-> Fixes: a9c5e6c1e9bff ("perf trace: Introduce per-event maximum number of =
-events property")
-> Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
-> ---
->  tools/perf/builtin-trace.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
->
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index d3f11b90d025..f6179b13b8b4 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -3096,13 +3096,8 @@ static int trace__event_handler(struct trace *trac=
-e, struct evsel *evsel,
->  {
->         struct thread *thread;
->         int callchain_ret =3D 0;
-> -       /*
-> -        * Check if we called perf_evsel__disable(evsel) due to, for inst=
-ance,
-> -        * this event's max_events having been hit and this is an entry c=
-oming
-> -        * from the ring buffer that we should discard, since the max eve=
-nts
-> -        * have already been considered/printed.
-> -        */
-> -       if (evsel->disabled)
-> +
-> +       if (evsel->nr_events_printed >=3D evsel->max_events)
->                 return 0;
->
->         thread =3D machine__findnew_thread(trace->host, sample->pid, samp=
-le->tid);
-> --
-> 2.39.5
->
->
+Reviewed-by: Jann Horn <jannh@google.com>
 
