@@ -1,110 +1,149 @@
-Return-Path: <linux-kernel+bounces-400360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A726E9C0C61
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:06:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73C79C0C62
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DBDB1F24EB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE7351C225C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6797521A4CC;
-	Thu,  7 Nov 2024 17:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E4021A6E8;
+	Thu,  7 Nov 2024 17:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="BpnqCnfK"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="onUeVimL"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6811D218943;
-	Thu,  7 Nov 2024 17:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED133218926;
+	Thu,  7 Nov 2024 17:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730998992; cv=none; b=FMTHOAc88y0/8bt4qOT2Biw0dN0eymQ58peboG2rQBbMD+++bDiazxnEVnDAV2HBukXsiZLFCNoCnXqn8IFrhIBdv0kuZBrPbMkUKRnsjejK77h6NSqO8qRIBZAu6PZZMru+l4y85PsEAlFQjYWZO1Vz1j8XLSHtQY4Y4UulMQY=
+	t=1730998992; cv=none; b=lRK4RLrbkNAxhU4i6Pc7o2qbDeYkxfx4pzZFxpFgJ//gJgUu4YONUAoU8tq91yPqzmv6j/4OOl+q67W5rnu6x2TgerCDK/AWZ1OZg04dDiMUleBeGh2SfSoei+Bk+OqYTaH81tmpztMXS8rhS4RgI3rrx/ALpRfpvVi0jMoJqFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730998992; c=relaxed/simple;
-	bh=oSFXD5koz0bnImj9AwyYkdxZ8tPIPU4UsWyonhEengo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=blwodvHpEIYAN4/8dU53Ca/IndAWdWhbUuLHV27GpB83Cl78tVT3rMIPr2N+p7wFylLtQln2Fb/M0rSZJU1n4K8NyObMufFrEr9l3zkX3+C+7k9LKifSqDcv7K53YUZzTBR/OmRT6UfvwvPseWesyn1NuA1ijj6LDbeH1gAKPKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=BpnqCnfK; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.118.162] (254C2715.nat.pool.telekom.hu [37.76.39.21])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 8F22EE45C6;
+	bh=k0yu1/Y5rJI29hQ/Px/qnbUakHKIlZNEvsiA2wA1xcE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=C9bA9HMWdEID+16hAi9yuxMQXZyKXl+sxRIIJpoYu/Yn6JvTWE7Nd6InSLTyp8fCt/vcQa81ryGuA+GO1h0SLZV717UB18PD7+P3TvU3uLsv0qvFIB/Vwe8GPs5RjB13qkfxH+ESoUqfRQ+0uDSq7NiJ3n/cBF6owv4ENIjiNik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=onUeVimL; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DA5CF24000F;
 	Thu,  7 Nov 2024 17:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1730998988;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730998988;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J8Y4yxwqnDss/PAt3TvJTQZaFUiFNkqCyH+WUzWqZ+0=;
-	b=BpnqCnfK6paMF8VZfQRRstEiqTuNScpMIG+3G++5XW5BrMctDBkggFEewyZ/BgZq/IF0d1
-	sMqPF//On8YSIJQn5ZEV3oMfcp+Wc0HX6V4+u05kTFFd+vD9a3sjyvjvVGxzP6V2jxwgne
-	BDnfVYOgibAncBmXyCvYJ89yLLrHUpDdo8bMa/cfm1h5YRnCK7LI0kFf08sBQ3Yk2/i6Wm
-	SeF7ur38iUAFXruhHaxIUX5Q0eQoJz1WR1WNAzUXFFBBPAykIOdpT1cI+6LTI9ui1gVVlQ
-	VLTZc55/awDuslj/d1qBA06JYThR3IBpftx3ZdxqXMEHF9MMqHY1FTHoH7hpHw==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Thu, 07 Nov 2024 18:02:52 +0100
-Subject: [PATCH v3 11/14] dt-bindings: nvmem: Add compatible for MS8917
+	bh=ieXv3A9kxi1oiDoWVCrTOD/LdxKXt/5GSXMVPC2fY/Q=;
+	b=onUeVimLn8ullBgTFXI7baXvAnAAGSkhEmAY8tektIzmNlAMO6JAFQz8uGqrO0bRCTRgAZ
+	j6MMuSTh2LjyYUcgPV8IlUorg2+tnJ3uP2CL6PKmhG8zuG2Jw1Wuvp9NObSlQP/5fjZE82
+	INPQvnNlWZ0eEW2mfK2aiBdtCln1iol5W03mZ1cyQgQaiKLp56I1KfHTzMapyopiKqFjfG
+	Joyy0vdhg7bebRqKGEFzYdUgwLBBle+cMMe9GtTsIvkLw7flwkBe7xtMdfSKT1gqoBrlaW
+	BY7n1tYhqm+Z0MpR5L079xYvA/g8YtnKvrrV8+m0066lKzt9ZbWX3/+HtqMg/A==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Herve Codina <herve.codina@bootlin.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH net-next 5/7] net: freescale: ucc_geth: Simplify frame length check
+Date: Thu,  7 Nov 2024 18:02:52 +0100
+Message-ID: <20241107170255.1058124-6-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
+References: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241107-msm8917-v3-11-6ddc5acd978b@mainlining.org>
-References: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
-In-Reply-To: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730998970; l=923;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=oSFXD5koz0bnImj9AwyYkdxZ8tPIPU4UsWyonhEengo=;
- b=axyFfUUUmlynf287+B+lJntJQpFF7gZ61q6QZ+h1SpZFBfKAWEfcIvyn6otQLPh4MfXuI+oye
- HZPjM6djw1hBU/qH1KsfK8EF76KMUPXFFZVrwFNu7vCm+H2AkaE4wZf
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Document the QFPROM block found on MSM8917.
+The frame length check is configured when the phy interface is setup.
+However, it's configured according to an internal flag that is always
+false. So, just make so that we disable the relevant bit in the MACCFG2
+register upon accessing it for other MAC configuration operations.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/freescale/ucc_geth.c | 21 +++------------------
+ drivers/net/ethernet/freescale/ucc_geth.h |  1 -
+ 2 files changed, 3 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-index 80845c722ae46611c722effeaaf014a0caf76e4a..4d81f98ed37a3a12f01d444dbfa77badcc09c22d 100644
---- a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-@@ -26,6 +26,7 @@ properties:
-           - qcom,ipq9574-qfprom
-           - qcom,msm8226-qfprom
-           - qcom,msm8916-qfprom
-+          - qcom,msm8917-qfprom
-           - qcom,msm8974-qfprom
-           - qcom,msm8976-qfprom
-           - qcom,msm8996-qfprom
-
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index 13b8f8401c81..052f06d6f312 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -1205,22 +1205,6 @@ static int init_mac_station_addr_regs(u8 address_byte_0,
+ 	return 0;
+ }
+ 
+-static int init_check_frame_length_mode(int length_check,
+-					u32 __iomem *maccfg2_register)
+-{
+-	u32 value = 0;
+-
+-	value = in_be32(maccfg2_register);
+-
+-	if (length_check)
+-		value |= MACCFG2_LC;
+-	else
+-		value &= ~MACCFG2_LC;
+-
+-	out_be32(maccfg2_register, value);
+-	return 0;
+-}
+-
+ static int init_preamble_length(u8 preamble_length,
+ 				u32 __iomem *maccfg2_register)
+ {
+@@ -1304,6 +1288,9 @@ static int adjust_enet_interface(struct ucc_geth_private *ugeth)
+ 
+ 	/*                    Set MACCFG2                    */
+ 	maccfg2 = in_be32(&ug_regs->maccfg2);
++
++	/* Disable frame length check */
++	maccfg2 &= ~MACCFG2_LC;
+ 	maccfg2 &= ~MACCFG2_INTERFACE_MODE_MASK;
+ 	if ((ugeth->max_speed == SPEED_10) ||
+ 	    (ugeth->max_speed == SPEED_100))
+@@ -1365,8 +1352,6 @@ static int adjust_enet_interface(struct ucc_geth_private *ugeth)
+ 		put_device(&tbiphy->mdio.dev);
+ 	}
+ 
+-	init_check_frame_length_mode(ug_info->lengthCheckRx, &ug_regs->maccfg2);
+-
+ 	ret_val = init_preamble_length(ug_info->prel, &ug_regs->maccfg2);
+ 	if (ret_val != 0) {
+ 		if (netif_msg_probe(ugeth))
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.h b/drivers/net/ethernet/freescale/ucc_geth.h
+index c08a56b7c9fe..11e490398f18 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.h
++++ b/drivers/net/ethernet/freescale/ucc_geth.h
+@@ -1088,7 +1088,6 @@ struct ucc_geth_info {
+ 	u8 miminumInterFrameGapEnforcement;
+ 	u8 backToBackInterFrameGap;
+ 	int ipAddressAlignment;
+-	int lengthCheckRx;
+ 	u32 mblinterval;
+ 	u16 nortsrbytetime;
+ 	u8 fracsiz;
 -- 
 2.47.0
 
