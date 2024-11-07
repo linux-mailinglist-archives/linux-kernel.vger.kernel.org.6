@@ -1,215 +1,278 @@
-Return-Path: <linux-kernel+bounces-399904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213529C0618
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:44:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2489C061F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:46:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F1E2845A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:44:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D42B28470A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590E520F5CB;
-	Thu,  7 Nov 2024 12:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F1420FAA9;
+	Thu,  7 Nov 2024 12:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="Kk1W20y4"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HzCZ+WfQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BF720F5A3
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94CC18FDAF;
+	Thu,  7 Nov 2024 12:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730983452; cv=none; b=PgTyO1jQfYJ7K187hkzxPN6GDnXV9veWSCFMvizLQTrfkg/J4usaqFsWwPB+Qsx+vTAIx434CBkc4OG1yVlA5wQsIojPypupkYvuoJIERBuD2Pk0Ly1expXiIE4D1yape3si+fgPcWp7RSh9OUsDkjZxd0PqjdryHvwArEqU48I=
+	t=1730983601; cv=none; b=SzG2BZ+fDTPWNAoku3ZA55rCjktF6uiWHDJJqDyS9yTytpMySK2sW07IuFJG3jH3aDzH8WA3qy3Ff5ebn3SsEJSr2cP0BatlfmWg1UWFHyYeMoEY0ejKghvIW2K/hb1Uqo40DMcHmX4/t2L3vp82Xf0znWtlyNn2ZYk8CsKtxn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730983452; c=relaxed/simple;
-	bh=OggBClXw1X0WYOAp9UFgYJXpstndQoQeXklKfzIx+V4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bdswdMHVfMbo+rAhuweIc5585Wvt/lB9Cko5LaFXNifbrHRkmdicMBFa8wg5dMdY5NffDYmsZxg8RecfpoHG3ScBHmv8El74rqxY6MsE6aCApOmN3xD5JHygLkUxk9RdoB1VENgLv7288Iy4YeS0ON9QOlQKeJLkYJEJdmvW9k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=Kk1W20y4; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e292926104bso870967276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:44:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1730983449; x=1731588249; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DoT2KYwKhbZKBbmPOKYlp7YSWvEMOgYbaeZiWtUEgo4=;
-        b=Kk1W20y4g5O60axwt06G9q55JyUyC7ww/hriDx/3c12bAlBPDGXIiwZLkWroC7xb3u
-         giF5AlvJfLuOyChGCx/At6MAS1m7EOHf514OJFBDRZQM5N1jeU5BuYLCWM8U5b+asz4Y
-         NokRxKsgevw6wtXHr2oyTz19FjxNqD2G1eoMo2A/UdVqsF8px/73wWJq5V5SQU/C9SCM
-         MSdCFG6jcem6LM1MOG7DTG8j0GJ2uYu9nP92KwadM8GN8WGByc6x44ZVfy7NML+Lwach
-         ScWz6wOxcSqgmE0fOIzVUDkDS21nOln5nFR4N4zotjk9Myy6hzDaimGnFYDANw1fSEzk
-         +nKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730983449; x=1731588249;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DoT2KYwKhbZKBbmPOKYlp7YSWvEMOgYbaeZiWtUEgo4=;
-        b=LW43jXdwHBPuxnyq7c0PFhUCIaBkHgrxD7ONyF5Zccx8lf1lywWgaQVTihEOGxlJq6
-         Dsj1rzsP+3j0BSZPOfKmXVSoFUhx1e31s1LXDZveyG88VCVM/Kv/HZ9Ug/J/210I3/Wx
-         WXRDKoXjdGOGfeRVD57ibxpTsh3zsvsimhUx2Sqd4Hk6c2t410cWQelJ9ACw2N8RVyo2
-         jugRHCyHmuk5ZN/9nJDq/G3uiKijxxZtDr7/LdigB3chjZQnPSPwCXNtUoPqZ8K7vsHY
-         p8Y7HZ3VGv7/TuuDNeQ4MTRNDgG+SGXlMcoBPypQP+ASwH3z/Ce9tUpHb5Di026ZA9eF
-         dy/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtM0iP2U8VJ57f5I3I6xRlN5HXYeMmRvbDXO6tDPWLoSojzLjXTEdDd9knlSyXUz0xaIpqwendA6oNY24=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9wkkHKgBrym9/rhzeCkqX0fIJlDrEHG05ZaJecIgXIFL3Jl2c
-	innmmCAvFTTBYqTQMA/1ItI8QuYzB69CXDUvyFKLjjZ/cZSaWhqSxFB2okfxnucKYG85FlMFn8L
-	kQGM6tUR63nTV2CQFxW6DatbRqfsu+VCSqIUeAg==
-X-Google-Smtp-Source: AGHT+IHAwSP2WkrlVmT2PSuiqke4KuCVLABNPv4HEHmf4muee6fSbW/yq0MXZe6+DtmJJ7sfMlYhkRttS/InmJBj+wo=
-X-Received: by 2002:a05:690c:91:b0:6e7:e493:2da8 with SMTP id
- 00721157ae682-6e9d8b002a0mr395596007b3.36.1730983448142; Thu, 07 Nov 2024
- 04:44:08 -0800 (PST)
+	s=arc-20240116; t=1730983601; c=relaxed/simple;
+	bh=FndvmB1rkjxqwtNR8nW7HxAElLMIxYHC1dMWvLxxVkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HuFIz+k9Bw9MCXzj+7Op3RLeIzsotKx5DVZP+PoILTzGCck8I0aCdBriFL6Mb1L54NwSNgOL8zmKiUvZUcjiwciDaSpY1F+Nl38gfrsWa1SjgTE/9OkJd8pXyyFqIMwSyrv7yLzxJ9D4CeIV6e/n0saoz/33/dxREpZiC+FxTus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HzCZ+WfQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7Bk2P0010071;
+	Thu, 7 Nov 2024 12:46:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QHsAQsRyk5dmGx34cg4kQQm2JHmC82RobriQOq+FEDQ=; b=HzCZ+WfQLy5WlJ4m
+	iVfMXE74jxCs2I3S4mkLOIOWnQoFhbhyic8rMl+uVAXnKH69JrOeFmj4YXWOSpMM
+	puaPlyyecoyjWl3733gQEvjHaUyIKeGv5t1UeH7zCPfOzhpwmwC1dACc/EFD87vc
+	NYVni/jDYKE4oEeSDorLcJJ3xXUEbNebbFRbSD/QnMozwMOATa4KAxVoGE2Sx6Do
+	D9nX2WxJmxahmvf+8SQSKonM+qWS4nAvx3o0iWSXvFjfPAMbKc4kv4qXnW6eQzWd
+	JXigJkWdT43Lp0u+KMDnveDc601NBstYn2HoFm2/qz6XQf1UTAJh0/knH2eZ0IyR
+	qPXwOw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qn73ee3f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 12:46:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7CkIAn001013
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 12:46:18 GMT
+Received: from [10.206.104.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
+ 04:46:12 -0800
+Message-ID: <49e1a6b6-683f-4826-b67e-8354a10a785d@quicinc.com>
+Date: Thu, 7 Nov 2024 18:16:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
- <20241029-imx219_fixes-v1-2-b45dc3658b4e@ideasonboard.com> <ZySV3KKXSyIreRI4@kekkonen.localdomain>
-In-Reply-To: <ZySV3KKXSyIreRI4@kekkonen.localdomain>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 7 Nov 2024 12:43:52 +0000
-Message-ID: <CAPY8ntDF8W+xRBXbe=LYpg21LL7-svhCySTSJHRNiDzQs4Xw5Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] media: i2c: imx219: make HBLANK r/w to allow longer exposures
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Jai Luthra <jai.luthra@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] drm/msm/adreno: Add support for ACD
+To: <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul
+	<sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Viresh Kumar
+	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20241012-gpu-acd-v1-0-1e5e91aa95b6@quicinc.com>
+ <20241012-gpu-acd-v1-1-1e5e91aa95b6@quicinc.com>
+ <4aeec9f1-720b-400c-9582-d02847db2ac7@linaro.org>
+ <43404449-1830-4651-a85a-54404b1d35bc@quicinc.com>
+ <56a976d6-7dd6-4001-b6a8-268ed7d787d2@linaro.org>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <56a976d6-7dd6-4001-b6a8-268ed7d787d2@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: yHWK68YwBmCBlk4I8YCF_76lLrtMySNS
+X-Proofpoint-GUID: yHWK68YwBmCBlk4I8YCF_76lLrtMySNS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1015 phishscore=0
+ lowpriorityscore=0 mlxscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070099
 
-Hi Sakari
+On 11/7/2024 2:25 PM, neil.armstrong@linaro.org wrote:
+> On 06/11/2024 02:44, Akhil P Oommen wrote:
+>> On 11/4/2024 9:14 PM, neil.armstrong@linaro.org wrote:
+>>> On 11/10/2024 22:29, Akhil P Oommen wrote:
+>>>> ACD a.k.a Adaptive Clock Distribution is a feature which helps to
+>>>> reduce
+>>>> the power consumption. In some chipsets, it is also a requirement to
+>>>> support higher GPU frequencies. This patch adds support for GPU ACD by
+>>>> sending necessary data to GMU and AOSS. The feature support for the
+>>>> chipset is detected based on devicetree data.
+>>>>
+>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>>> ---
+>>>>    drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 81 +++++++++++++++++++++++++
+>>>> +++-------
+>>>>    drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+>>>>    drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 36 ++++++++++++++++
+>>>>    drivers/gpu/drm/msm/adreno/a6xx_hfi.h | 21 +++++++++
+>>>>    4 files changed, 124 insertions(+), 15 deletions(-)
+>>>>
+>>>
+>>> <snip>
+>>>
+>>>> +
+>>>> +static int a6xx_hfi_enable_acd(struct a6xx_gmu *gmu)
+>>>> +{
+>>>> +    struct a6xx_hfi_acd_table *acd_table = &gmu->acd_table;
+>>>> +    struct a6xx_hfi_msg_feature_ctrl msg = {
+>>>> +        .feature = HFI_FEATURE_ACD,
+>>>> +        .enable = 1,
+>>>> +        .data = 0,
+>>>> +    };
+>>>> +    int ret;
+>>>> +
+>>>> +    if (!acd_table->enable_by_level)
+>>>> +        return 0;
+>>>> +
+>>>> +    /* Enable ACD feature at GMU */
+>>>> +    ret = a6xx_hfi_send_msg(gmu, HFI_H2F_FEATURE_CTRL, &msg,
+>>>> sizeof(msg), NULL, 0);
+>>>> +    if (ret) {
+>>>> +        DRM_DEV_ERROR(gmu->dev, "Unable to enable ACD (%d)\n", ret);
+>>>> +        return ret;
+>>>> +    }
+>>>> +
+>>>> +    /* Send ACD table to GMU */
+>>>> +    ret = a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_ACD, &msg, sizeof(msg),
+>>>> NULL, 0);
+>>>
+>>> This looks wrong, in this exact code, you never use the acd_table...
+>>> perhaps it should be acd_table here
+>>
+>> Whoops! Weirdly gmu didn't explode when I tested.
+>>
+>> Thanks for your keen eye.
+> 
+> You're welcome !
+> 
+> I've been trying to enable this on SM8650, but HFI_H2F_MSG_ACD fails.
+> 
+> My changes:
+> ================><================================
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/
+> msm/adreno/a6xx_hfi.c
+> index 7c96d6f8aaa9..bd9d586f245e 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> @@ -682,7 +682,7 @@ static int a6xx_hfi_enable_acd(struct a6xx_gmu *gmu)
+>         }
+> 
+>         /* Send ACD table to GMU */
+> -       ret = a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_ACD, &acd_table,
+> sizeof(*acd_table), NULL, 0);
+> +       ret = a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_ACD, &acd_table,
 
-On Fri, 1 Nov 2024 at 08:48, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
->
-> Hi Jai,
->
-> On Tue, Oct 29, 2024 at 02:27:36PM +0530, Jai Luthra wrote:
-> > From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> >
-> > The HBLANK control was read-only, and always configured such
-> > that the sensor HTS register was 3448. This limited the maximum
-> > exposure time that could be achieved to around 1.26 secs.
-> >
-> > Make HBLANK read/write so that the line time can be extended,
-> > and thereby allow longer exposures (and slower frame rates).
-> > Retain the overall HTS setting when changing modes rather than
-> > resetting it to a default.
->
-> It looks like this changes horizontal blanking at least in some cases. Does
-> this also work as expected in binned modes, for instance?
->
-> Many sensors have image quality related issues on untested albeit
-> functional line length values.
->
-> So my question is: how has this been validated?
+&acd_table -> acd_table here?
 
-Validated by Sony, or others?
-I've tested a range of values in all modes and not observed any image
-quality issues.
+-Akhil
 
-From previous discussions with Sony, they always provide their big
-spreadsheet of register values for the specific mode and frame rate
-requested. I don't think they even officially state that changing
-VTS/FRM_LENGTH_LINES to change the framerate is permitted.
-There are some Sony datasheets (eg imx258) that state "set to X. Any
-other value please confirm with Sony", but that isn't the case for the
-imx219 datasheet. I take that as it is permitted within the defined
-ranges.
+> sizeof(struct a6xx_hfi_acd_table), NULL, 0);
+>         if (ret) {
+>                 DRM_DEV_ERROR(gmu->dev, "Unable to send ACD table
+> (%d)\n", ret);
+>                 return ret;
+> ================><================================
+> 
+> with the appropriate qcom,opp-acd-level in DT taken from downstream, I get:
+> [    6.946184] platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0
+> [msm]] *ERROR* Message (null) id 4 timed out waiting for response
+> [    6.958697] platform 3d6a000.gmu: [drm:a6xx_hfi_start [msm]] *ERROR*
+> Unable to send ACD table (-110)
+> 
+> is there something missing ?
+> 
+> Neil
+> 
+>>
+>> -Akhil.
+>>
+>>>
+>>>> +    if (ret) {
+>>>> +        DRM_DEV_ERROR(gmu->dev, "Unable to ACD table (%d)\n", ret);
+>>>> +        return ret;
+>>>> +    }
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>>    static int a6xx_hfi_send_test(struct a6xx_gmu *gmu)
+>>>>    {
+>>>>        struct a6xx_hfi_msg_test msg = { 0 };
+>>>> @@ -756,6 +788,10 @@ int a6xx_hfi_start(struct a6xx_gmu *gmu, int
+>>>> boot_state)
+>>>>        if (ret)
+>>>>            return ret;
+>>>>    +    ret = a6xx_hfi_enable_acd(gmu);
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +
+>>>>        ret = a6xx_hfi_send_core_fw_start(gmu);
+>>>>        if (ret)
+>>>>            return ret;
+>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h b/drivers/gpu/drm/
+>>>> msm/adreno/a6xx_hfi.h
+>>>> index 528110169398..51864c8ad0e6 100644
+>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>>>> @@ -151,12 +151,33 @@ struct a6xx_hfi_msg_test {
+>>>>        u32 header;
+>>>>    };
+>>>>    +#define HFI_H2F_MSG_ACD 7
+>>>> +#define MAX_ACD_STRIDE 2
+>>>> +
+>>>> +struct a6xx_hfi_acd_table {
+>>>> +    u32 header;
+>>>> +    u32 version;
+>>>> +    u32 enable_by_level;
+>>>> +    u32 stride;
+>>>> +    u32 num_levels;
+>>>> +    u32 data[16 * MAX_ACD_STRIDE];
+>>>> +};
+>>>> +
+>>>>    #define HFI_H2F_MSG_START 10
+>>>>      struct a6xx_hfi_msg_start {
+>>>>        u32 header;
+>>>>    };
+>>>>    +#define HFI_H2F_FEATURE_CTRL 11
+>>>> +
+>>>> +struct a6xx_hfi_msg_feature_ctrl {
+>>>> +    u32 header;
+>>>> +    u32 feature;
+>>>> +    u32 enable;
+>>>> +    u32 data;
+>>>> +};
+>>>> +
+>>>>    #define HFI_H2F_MSG_CORE_FW_START 14
+>>>>      struct a6xx_hfi_msg_core_fw_start {
+>>>>
+>>>
+>>> Thanks,
+>>> Neil
+>>
+> 
 
-  Dave
-
-> >
-> > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > ---
-> >  drivers/media/i2c/imx219.c | 35 +++++++++++++++++++++++------------
-> >  1 file changed, 23 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> > index f98aad74fe584a18e2fe7126f92bf294762a54e3..de9230d4ad81f085640be254db9391ae7ad20773 100644
-> > --- a/drivers/media/i2c/imx219.c
-> > +++ b/drivers/media/i2c/imx219.c
-> > @@ -76,8 +76,10 @@
-> >
-> >  #define IMX219_VBLANK_MIN            32
-> >
-> > -/* HBLANK control - read only */
-> > -#define IMX219_PPL_DEFAULT           3448
-> > +/* HBLANK control range */
-> > +#define IMX219_PPL_MIN                       3448
-> > +#define IMX219_PPL_MAX                       0x7ff0
-> > +#define IMX219_REG_HTS                       CCI_REG16(0x0162)
-> >
-> >  #define IMX219_REG_LINE_LENGTH_A     CCI_REG16(0x0162)
-> >  #define IMX219_REG_X_ADD_STA_A               CCI_REG16(0x0164)
-> > @@ -422,6 +424,10 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
-> >               cci_write(imx219->regmap, IMX219_REG_VTS,
-> >                         format->height + ctrl->val, &ret);
-> >               break;
-> > +     case V4L2_CID_HBLANK:
-> > +             cci_write(imx219->regmap, IMX219_REG_HTS,
-> > +                       format->width + ctrl->val, &ret);
-> > +             break;
-> >       case V4L2_CID_TEST_PATTERN_RED:
-> >               cci_write(imx219->regmap, IMX219_REG_TESTP_RED,
-> >                         ctrl->val, &ret);
-> > @@ -496,12 +502,11 @@ static int imx219_init_controls(struct imx219 *imx219)
-> >                                          V4L2_CID_VBLANK, IMX219_VBLANK_MIN,
-> >                                          IMX219_VTS_MAX - mode->height, 1,
-> >                                          mode->vts_def - mode->height);
-> > -     hblank = IMX219_PPL_DEFAULT - mode->width;
-> > +     hblank = IMX219_PPL_MIN - mode->width;
-> >       imx219->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_ops,
-> > -                                        V4L2_CID_HBLANK, hblank, hblank,
-> > +                                        V4L2_CID_HBLANK, hblank,
-> > +                                        IMX219_PPL_MIN - mode->width,
-> >                                          1, hblank);
-> > -     if (imx219->hblank)
-> > -             imx219->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> >       exposure_max = mode->vts_def - 4;
-> >       exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
-> >               exposure_max : IMX219_EXPOSURE_DEFAULT;
-> > @@ -842,6 +847,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >       crop->top = (IMX219_NATIVE_HEIGHT - crop->height) / 2;
-> >
-> >       if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
-> > +             u32 prev_hts = format->width + imx219->hblank->val;
-> >               int exposure_max;
-> >               int exposure_def;
-> >               int hblank;
-> > @@ -861,13 +867,18 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >                                        exposure_max, imx219->exposure->step,
-> >                                        exposure_def);
-> >               /*
-> > -              * Currently PPL is fixed to IMX219_PPL_DEFAULT, so hblank
-> > -              * depends on mode->width only, and is not changeble in any
-> > -              * way other than changing the mode.
-> > +              * Retain PPL setting from previous mode so that the
-> > +              * line time does not change on a mode change.
-> > +              * Limits have to be recomputed as the controls define
-> > +              * the blanking only, so PPL values need to have the
-> > +              * mode width subtracted.
-> >                */
-> > -             hblank = IMX219_PPL_DEFAULT - mode->width;
-> > -             __v4l2_ctrl_modify_range(imx219->hblank, hblank, hblank, 1,
-> > -                                      hblank);
-> > +             hblank = prev_hts - mode->width;
-> > +             __v4l2_ctrl_modify_range(imx219->hblank,
-> > +                                      IMX219_PPL_MIN - mode->width,
-> > +                                      IMX219_PPL_MAX - mode->width,
-> > +                                      1, IMX219_PPL_MIN - mode->width);
-> > +             __v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> >       }
-> >
-> >       return 0;
-> >
->
-> --
-> Kind regards,
->
-> Sakari Ailus
 
