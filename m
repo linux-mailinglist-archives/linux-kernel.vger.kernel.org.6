@@ -1,100 +1,152 @@
-Return-Path: <linux-kernel+bounces-399772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8EB9C03FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:29:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC359C0400
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A51B23397
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC42A1C217ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791D3200125;
-	Thu,  7 Nov 2024 11:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="lIEIxhXW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695AF1F76A6;
+	Thu,  7 Nov 2024 11:29:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3E4200132
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C881F76AE;
+	Thu,  7 Nov 2024 11:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730978977; cv=none; b=B3VTPCtUXrHZVrp/7arpo7tCVphZMHw1xRajFZWCVmJ7w2yhhXEcP6CNOnCfEtBfMptHnyGUVbqDgrIdPLLnfCpwyhetm6jWlU7mZ6mnbvrjApVjO1A53AlS7YMsNDnZCerqhdRQxaGhZmSF35qJrWb6UW5a9sExIgYtOAzJrn0=
+	t=1730978998; cv=none; b=sJVj8CqvxQFXBi9a6YQ8G594w0Cfn5s/btfFnL2fkTFGdQx+2+OegIsDSbuwHdpRnUSMF11vDZ075PtjGszge1wO6tSA4cn4WE/cD1qun8NhvhhzhNIUPVcpgf9Y3a16q0Mh2JT4wgNLAPI99ThCKpavVzVzKqPP5Mv9YXeuPIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730978977; c=relaxed/simple;
-	bh=Y+E+oJPmW3y1BzJ2os8q7ckXlis6FAbEtly1hlfqQjg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DTdEhD5H74hsQEwIh99qSatF3S2NTVkNgCsDriadb+jAlpLakoE9hkEqTfSvh87SpQRvNghxr3YmKS7Z+dNOd0au4LoKSaR3Y6+2u9URsP8/V1zn8ahD5YXXD4+Np4oSYeACInIe+2YMwssSohck1vKQoN4+MDWnjGFewSwuh/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=lIEIxhXW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730978971;
-	bh=nrjbtAPdhIcAlgAV7NujXI6QsiUwiA3bnjCu+yPjnXY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lIEIxhXWsTbljLBFi7X0QovZJjQVTZ26Df6phbYHs3YG380sHO08erH3WYcn4Mw9V
-	 2MGy44pxqPNu61obgb+FVTsxZ0bTMPgE7OlLcj8b5d69BzS2N37o+euibIQyxSlFC4
-	 +wtVWFN0o8hqkyuf6dtRIPl6bnerOS0WGJeknORV+r5x0dsJ6iHmgXXO/77etoOeDu
-	 nspWpHHIgQx/CXiKiwWHeZDYTU7jIcLF5m9ALYokd3n/U5LUVsS5OtjPLx/SkQ/RKK
-	 2yHARHBPE3OkbFtPRnUrmMwI+kZtSdlFgc0jXWDDqshkRHLD/sm73EiJKb+1rAAQBm
-	 rnhVtwfjOZpPg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xkfx66dngz4wcj;
-	Thu,  7 Nov 2024 22:29:30 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Yang Li <yang.lee@linux.alibaba.com>, npiggin@gmail.com,
- christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Yang Li
- <yang.lee@linux.alibaba.com>, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] powerpc/machdep: Remove duplicated include in svm.c
-In-Reply-To: <20241107010259.46308-1-yang.lee@linux.alibaba.com>
-References: <20241107010259.46308-1-yang.lee@linux.alibaba.com>
-Date: Thu, 07 Nov 2024 22:29:32 +1100
-Message-ID: <87msibcmeb.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1730978998; c=relaxed/simple;
+	bh=xj7Kavv7JMaQJGhBu/e09GscaMomEYRc0o8Oyg59+TM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WxdWYIVX4c5zsUHCRGAr1LO3WPkx10BWXA1GaJuZcnxgInyLx5Q7i5gHgmNj+4+qaO9ofQWh32ECaM/HKTjdDIbk3o+blI8to/oMTOopmKNJIhHE7b/nVWhERh5FbgAs1Uwlp0hXfzpDCIOzkN6ECC8MmaBfJ7xiTUqwVf/W3oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XkfxS5PTcz6LD8b;
+	Thu,  7 Nov 2024 19:29:48 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9D3F81400DD;
+	Thu,  7 Nov 2024 19:29:52 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 7 Nov
+ 2024 12:29:51 +0100
+Date: Thu, 7 Nov 2024 11:29:50 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 20/27] cxl/extent: Process DCD events and realize
+ region extents
+Message-ID: <20241107112950.00000384@Huawei.com>
+In-Reply-To: <20241105-dcd-type2-upstream-v6-20-85c7fa2140fe@intel.com>
+References: <20241105-dcd-type2-upstream-v6-0-85c7fa2140fe@intel.com>
+	<20241105-dcd-type2-upstream-v6-20-85c7fa2140fe@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Yang Li <yang.lee@linux.alibaba.com> writes:
-> The header files linux/mem_encrypt.h is included twice in svm.c,
-> so one inclusion of each can be removed.
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11750
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-> ---
->  arch/powerpc/platforms/pseries/svm.c | 1 -
->  1 file changed, 1 deletion(-)
+On Tue, 05 Nov 2024 12:38:42 -0600
+ira.weiny@intel.com wrote:
 
-The two includes only appear in linux-next, and they both come from
-different trees. They are required in each tree to avoid breaking the
-build.
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> A dynamic capacity device (DCD) sends events to signal the host for
+> changes in the availability of Dynamic Capacity (DC) memory.  These
+> events contain extents describing a DPA range and meta data for memory
+> to be added or removed.  Events may be sent from the device at any time.
+> 
+> Three types of events can be signaled, Add, Release, and Force Release.
+> 
+> On add, the host may accept or reject the memory being offered.  If no
+> region exists, or the extent is invalid, the extent should be rejected.
+> Add extent events may be grouped by a 'more' bit which indicates those
+> extents should be processed as a group.
+> 
+> On remove, the host can delay the response until the host is safely not
+> using the memory.  If no region exists the release can be sent
+> immediately.  The host may also release extents (or partial extents) at
+> any time.  Thus the 'more' bit grouping of release events is of less
+> value and can be ignored in favor of sending multiple release capacity
+> responses for groups of release events.
+> 
+> Force removal is intended as a mechanism between the FM and the device
+> and intended only when the host is unresponsive, out of sync, or
+> otherwise broken.  Purposely ignore force removal events.
+> 
+> Regions are made up of one or more devices which may be surfacing memory
+> to the host.  Once all devices in a region have surfaced an extent the
+> region can expose a corresponding extent for the user to consume.
+> Without interleaving a device extent forms a 1:1 relationship with the
+> region extent.  Immediately surface a region extent upon getting a
+> device extent.
+> 
+> Per the specification the device is allowed to offer or remove extents
+> at any time.  However, anticipated use cases can expect extents to be
+> offered, accepted, and removed in well defined chunks.
+> 
+> Simplify extent tracking with the following restrictions.
+> 
+> 	1) Flag for removal any extent which overlaps a requested
+> 	   release range.
+> 	2) Refuse the offer of extents which overlap already accepted
+> 	   memory ranges.
+> 	3) Accept again a range which has already been accepted by the
+> 	   host.  Eating duplicates serves three purposes.  First, this
+> 	   simplifies the code if the device should get out of sync with
+> 	   the host.  And it should be safe to acknowledge the extent
+> 	   again.  Second, this simplifies the code to process existing
+> 	   extents if the extent list should change while the extent
+> 	   list is being read.  Third, duplicates for a given region
+> 	   which are seen during a race between the hardware surfacing
+> 	   an extent and the cxl dax driver scanning for existing
+> 	   extents will be ignored.
+> 
+> 	   NOTE: Processing existing extents is done in a later patch.
+> 
+> Management of the region extent devices must be synchronized with
+> potential uses of the memory within the DAX layer.  Create region extent
+> devices as children of the cxl_dax_region device such that the DAX
+> region driver can co-drive them and synchronize with the DAX layer.
+> Synchronization and management is handled in a subsequent patch.
+> 
+> Tag support within the DAX layer is not yet supported.  To maintain
+> compatibility legacy DAX/region processing only tags with a value of 0
+> are allowed.  This defines existing DAX devices as having a 0 tag which
+> makes the most logical sense as a default.
+> 
+> Process DCD events and create region devices.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+I gave this on v5, but meh here it is again (obviously subject to
+Li Ming's fix which maybe can just get rolled in whilst applying)
 
-So no one can merge this patch until the two trees are merged into mainline.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-cheers
 
-> diff --git a/arch/powerpc/platforms/pseries/svm.c b/arch/powerpc/platforms/pseries/svm.c
-> index c5d0f92c7969..384c9dc1899a 100644
-> --- a/arch/powerpc/platforms/pseries/svm.c
-> +++ b/arch/powerpc/platforms/pseries/svm.c
-> @@ -10,7 +10,6 @@
->  #include <linux/memblock.h>
->  #include <linux/mem_encrypt.h>
->  #include <linux/cc_platform.h>
-> -#include <linux/mem_encrypt.h>
->  #include <asm/machdep.h>
->  #include <asm/svm.h>
->  #include <asm/swiotlb.h>
-> -- 
-> 2.32.0.3.g01195cf9f
 
