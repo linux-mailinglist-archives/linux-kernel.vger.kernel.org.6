@@ -1,177 +1,166 @@
-Return-Path: <linux-kernel+bounces-399891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A018C9C05E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:36:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB959C05EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:37:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C901C215C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:36:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E187AB21E0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4284120EA28;
-	Thu,  7 Nov 2024 12:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38891DBB37;
+	Thu,  7 Nov 2024 12:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="LTV0SmFW"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0uKlMri"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8C41DBB37;
-	Thu,  7 Nov 2024 12:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573881DE8BF
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730982980; cv=none; b=J770IccyPqIw/d27LRt9yQuoNeVB+bmj4hDzSCAgTwzqFNvFG/9rUPHbO7QgTn/LnqBylKOYFJUNGPFuj6RH5YNW8kYdMXj+bcJmLuZ8tCvFcp8G7EJCK4IJcIRV8X8j6Rkts5daQqtSymOHRhugun29K3syQVCefnZnRZuB4TQ=
+	t=1730983025; cv=none; b=oO4B2fYDDGkrIZYdwbCprGrlFMJAg780+EQAZosZCeuZSgWNmZQY3bO51ByphDQ2HEb7ffXShm+bwodSNwLLGvjFrtuP5tU+D2MoSO2Cp5CUs/awJzGR8q4mGJvpXoQG76g2scmYtKoVqhYjOwkinDKXve8rukuXYwPuuya2xwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730982980; c=relaxed/simple;
-	bh=sbTkvX8zM0W1nvhz0TmDavDt9oWt6BvbZDyjOdFFuEk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=upOmFe6utKaCabM6t3LaPBAZX5M0aIVuhDB1mNzUSglN9l3ip6EGBRR56f+bO7gOOAcFWY4GGtvhi7Nq9/fawQwO2wLwJw5lFMFCj5uzPPNhUIpsfMbBYcxuEBpkwXxcGnj6st6LXCTZHdCNfrUAszqHuU99cGwgceWUXM9Nm1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=LTV0SmFW reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 6a0efdbee279e3f4; Thu, 7 Nov 2024 13:36:10 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 6C24D6A9668;
-	Thu,  7 Nov 2024 13:36:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1730982970;
-	bh=sbTkvX8zM0W1nvhz0TmDavDt9oWt6BvbZDyjOdFFuEk=;
-	h=From:Subject:Date;
-	b=LTV0SmFWBwFcuu5qUQXxZgMjO2cVOZeC6a06xIaED1U8zW8ZIbelPs9EgsbvOddiE
-	 qh8ec92HFDjju7Ix8zA32rMEd3WmadNODtaLDd2wsCGHejn6xvnNwJ3pT91TfDI7jr
-	 /ND44+62Qw5rvCi5vrxtpVzTGHb4Ejt73ZjvWp5MNxbLcgmxkOuMSt5Lz2U7Db3LNr
-	 W+P8cY4KXj+Es5ox45aS4JfTm7+d7YWreG9RKrgkq7sv/21AOtM4n76FaHzd83NqW0
-	 lZcR9q1TPkUjdFLeUus46PfUbM8C7eSD+UR73jGrpfiIA4RJ7/uG+kO0u4wJsEhEh3
-	 XPPrvEXfK3wug==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Subject:
- [PATCH v1] cpufreq: intel_pstate: Rearrange locking in
- hybrid_init_cpu_capacity_scaling()
-Date: Thu, 07 Nov 2024 13:36:10 +0100
-Message-ID: <12554508.O9o76ZdvQC@rjwysocki.net>
+	s=arc-20240116; t=1730983025; c=relaxed/simple;
+	bh=MEsj55o4EmkgBfjC1zpGgfB0Zs8cxzdmgxLbp413KQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bCzdezHtNvzg94TGmwLWOrQ7gf4WDiGgvBG/fZ6G8bFY/wuyuVkixGCCb5Nc7MpzyqK6O1KG/JFEU5lof5wnwi1Awu9f7y5XbpB8Iy1Ie91rlEjuFo25udvgZ4vMBkuSm6BOq0D/95KgzDByeIvfy+VfaXayjefYq/B6W20I3V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0uKlMri; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C54C4CECE
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730983025;
+	bh=MEsj55o4EmkgBfjC1zpGgfB0Zs8cxzdmgxLbp413KQ8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=D0uKlMrihjD6SH+yHSlQKLZ/lJHqeDkReZLPPHkGv0YJP2cfLD4WVEKWsjke0qunV
+	 9uC5gcfB0GfvVkoiuoF3zePr6BL8R64v7cnbRcrmt5SQmU66lZwKsbV9ZtCJd/xwR3
+	 UpDOEb7AQ9ZO+Pgwy7d4ojuzG1GRdyblaFJmKKjzzFx0DrkCvDtQNEo2d3DLhAwrWU
+	 KzZ7Kh6GgYTaDwvh31iNdQwKDl5nJ9s5hfnODEBrB5RMnhkn9j2juP+K+NXEKcP3l7
+	 soHdrzK2JsBvegwiJsUqxNxRFDon9WeVZZkaAc+uQnyKXmJ7iTRRABGokKez+vhmbz
+	 +gGG7T34rI4Yw==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a4031f69fso151049766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:37:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXAZL/nTm6GKEbJ20H/yJYfdnxBIe1zptWhMGd6zzuPvkq0oLJ6G2a1Wu/gTgdRhw5bn4Jbl73ssG54428=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf0qV5Xjo089e63C+TEmwgd+7H01u6SG857PktFeEf30/smHTf
+	iDhEWcpRIrtPotPuMtqC0rezHjfAxIjzYRuMsFM+NgQmELHrsslE5NShPh/D/3BnIYJlXNnSX8x
+	fy9rO8vgyfwCbTFxb141AuGt365M=
+X-Google-Smtp-Source: AGHT+IF2RysN7UesHkecrcQUjZMLfbPdk1ZD/VYBHVdqfIKntBEjsJMrZFtwhFzLz5Rln5WwAQu3UDOD5S5nng3nnRE=
+X-Received: by 2002:a17:907:6eac:b0:a9a:7f91:8c76 with SMTP id
+ a640c23a62f3a-a9de5a3e0ebmr4598218266b.0.1730983023546; Thu, 07 Nov 2024
+ 04:37:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20241107032859.18276-1-zhaoqunqin@loongson.cn>
+In-Reply-To: <20241107032859.18276-1-zhaoqunqin@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 7 Nov 2024 20:36:51 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5A144ubJ6WD68y7f6sN3j=g-eWVqZ6mhko9nzTgM=xYA@mail.gmail.com>
+Message-ID: <CAAhV-H5A144ubJ6WD68y7f6sN3j=g-eWVqZ6mhko9nzTgM=xYA@mail.gmail.com>
+Subject: Re: [PATCH] arch: loongarch: fix loongarch S3 WARNING
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: kernel@xen0n.name, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeggdegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprhhitggrrhguohdrnhgvrhhiqdgtrghluggvrhhonheslhhinhh
-X-DCC--Metrics: v370.home.net.pl 0; Body=4 Fuz1=4 Fuz2=4
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi, Qunqin,
 
-Notice that hybrid_init_cpu_capacity_scaling() only needs to hold
-hybrid_capacity_lock around __hybrid_init_cpu_capacity_scaling()
-calls, so introduce a "locked" wrapper around the latter and call
-it from the former.  This allows to drop a local variable and a
-label that are not needed any more.
+At first, the subject should be "LoongArch: Fix warnings during S3 suspend"=
+.
 
-Also, rename __hybrid_init_cpu_capacity_scaling() to
-__hybrid_refresh_cpu_capacity_scaling() for consistency.
+On Thu, Nov 7, 2024 at 11:29=E2=80=AFAM Qunqin Zhao <zhaoqunqin@loongson.cn=
+> wrote:
+>
+> The enable_gpe_wakeup() function may call the preempt_schedule_common()
+> function, resulting in a thread switch and causing the CPU to be in an
+> interrupt enable state after the enable_gpe_wakeup() function returns,
+> leading to the warning as follow. Calling enable_gap_wakeup() before
+Second, I think enable_gap_wakeup() should be enable_gpe_wakeup() here.
 
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-This is on top of
-
-https://lore.kernel.org/linux-pm/12555220.O9o76ZdvQC@rjwysocki.net/
-
----
- drivers/cpufreq/intel_pstate.c |   35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
-
-Index: linux-pm/drivers/cpufreq/intel_pstate.c
-===================================================================
---- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-+++ linux-pm/drivers/cpufreq/intel_pstate.c
-@@ -1028,26 +1028,29 @@ static void hybrid_update_cpu_capacity_s
- 	}
- }
- 
--static void __hybrid_init_cpu_capacity_scaling(void)
-+static void __hybrid_refresh_cpu_capacity_scaling(void)
- {
- 	hybrid_max_perf_cpu = NULL;
- 	hybrid_update_cpu_capacity_scaling();
- }
- 
--static void hybrid_init_cpu_capacity_scaling(bool refresh)
-+static void hybrid_refresh_cpu_capacity_scaling(void)
- {
--	bool disable_itmt = false;
-+	guard(mutex)(&hybrid_capacity_lock);
- 
--	mutex_lock(&hybrid_capacity_lock);
-+	__hybrid_refresh_cpu_capacity_scaling();
-+}
- 
-+static void hybrid_init_cpu_capacity_scaling(bool refresh)
-+{
- 	/*
- 	 * If hybrid_max_perf_cpu is set at this point, the hybrid CPU capacity
- 	 * scaling has been enabled already and the driver is just changing the
- 	 * operation mode.
- 	 */
- 	if (refresh) {
--		__hybrid_init_cpu_capacity_scaling();
--		goto unlock;
-+		hybrid_refresh_cpu_capacity_scaling();
-+		return;
- 	}
- 
- 	/*
-@@ -1056,19 +1059,13 @@ static void hybrid_init_cpu_capacity_sca
- 	 * do not do that when SMT is in use.
- 	 */
- 	if (hwp_is_hybrid && !sched_smt_active() && arch_enable_hybrid_capacity_scale()) {
--		__hybrid_init_cpu_capacity_scaling();
--		disable_itmt = true;
--	}
--
--unlock:
--	mutex_unlock(&hybrid_capacity_lock);
--
--	/*
--	 * Disabling ITMT causes sched domains to be rebuilt to disable asym
--	 * packing and enable asym capacity.
--	 */
--	if (disable_itmt)
-+		hybrid_refresh_cpu_capacity_scaling();
-+		/*
-+		 * Disabling ITMT causes sched domains to be rebuilt to disable asym
-+		 * packing and enable asym capacity.
-+		 */
- 		sched_clear_itmt_support();
-+	}
- }
- 
- static bool hybrid_clear_max_perf_cpu(void)
-@@ -1404,7 +1401,7 @@ static void intel_pstate_update_limits_f
- 	mutex_lock(&hybrid_capacity_lock);
- 
- 	if (hybrid_max_perf_cpu)
--		__hybrid_init_cpu_capacity_scaling();
-+		__hybrid_refresh_cpu_capacity_scaling();
- 
- 	mutex_unlock(&hybrid_capacity_lock);
- }
+> local_irq_disable() to fix this waring.
+>
+> [ C0] WARNING: ... at kernel/time/timekeeping.c:845 ktime_get+0xbc/0xc8
+> [ C0]         ...
+> [ C0] Call Trace:
+> [ C0] [<90000000002243b4>] show_stack+0x64/0x188
+> [ C0] [<900000000164673c>] dump_stack_lvl+0x60/0x88
+> [ C0] [<90000000002687e4>] __warn+0x8c/0x148
+> [ C0] [<90000000015e9978>] report_bug+0x1c0/0x2b0
+> [ C0] [<90000000016478e4>] do_bp+0x204/0x3b8
+> [ C0] [<90000000025b1924>] exception_handlers+0x1924/0x10000
+> [ C0] [<9000000000343bbc>] ktime_get+0xbc/0xc8
+> [ C0] [<9000000000354c08>] tick_sched_timer+0x30/0xb0
+> [ C0] [<90000000003408e0>] __hrtimer_run_queues+0x160/0x378
+> [ C0] [<9000000000341f14>] hrtimer_interrupt+0x144/0x388
+> [ C0] [<9000000000228348>] constant_timer_interrupt+0x38/0x48
+> [ C0] [<90000000002feba4>] __handle_irq_event_percpu+0x64/0x1e8
+> [ C0] [<90000000002fed48>] handle_irq_event_percpu+0x20/0x80
+> [ C0] [<9000000000306b9c>] handle_percpu_irq+0x5c/0x98
+> [ C0] [<90000000002fd4a0>] generic_handle_domain_irq+0x30/0x48
+> [ C0] [<9000000000d0c7b0>] handle_cpu_irq+0x70/0xa8
+> [ C0] [<9000000001646b30>] handle_loongarch_irq+0x30/0x48
+> [ C0] [<9000000001646bc8>] do_vint+0x80/0xe0
+> [ C0] [<90000000002aea1c>] finish_task_switch.isra.0+0x8c/0x2a8
+> [ C0] [<900000000164e34c>] __schedule+0x314/0xa48
+> [ C0] [<900000000164ead8>] schedule+0x58/0xf0
+> [ C0] [<9000000000294a2c>] worker_thread+0x224/0x498
+> [ C0] [<900000000029d2f0>] kthread+0xf8/0x108
+> [ C0] [<9000000000221f28>] ret_from_kernel_thread+0xc/0xa4
+> [ C0]
+> [ C0] ---[ end trace 0000000000000000 ]---
+Finally, I think you should enable some config options to produce such
+warnings? Because I haven't observed it.
 
 
+Huacai
 
+>
+> And move enable_pci_wakeup() before local_irq_disable(), just in
+> case interrupt is enabled after the execution of enable_pci_wakeup()
+>
+> Fixes: 366bb35a8e48 ("LoongArch: Add suspend (ACPI S3) support")
+> Signed-off-by: Qunqin Zhao <zhaoqunqin@loongson.cn>
+> ---
+>  arch/loongarch/power/suspend.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/loongarch/power/suspend.c b/arch/loongarch/power/suspen=
+d.c
+> index c9e594925..d0dc375b0 100644
+> --- a/arch/loongarch/power/suspend.c
+> +++ b/arch/loongarch/power/suspend.c
+> @@ -28,6 +28,13 @@ struct saved_registers {
+>  };
+>  static struct saved_registers saved_regs;
+>
+> +void arch_suspend_disable_irqs(void)
+> +{
+> +       enable_gpe_wakeup();
+> +       enable_pci_wakeup();
+> +       local_irq_disable();
+> +}
+> +
+>  void loongarch_common_suspend(void)
+>  {
+>         save_counter();
+> @@ -61,9 +68,6 @@ void loongarch_common_resume(void)
+>
+>  int loongarch_acpi_suspend(void)
+>  {
+> -       enable_gpe_wakeup();
+> -       enable_pci_wakeup();
+> -
+>         loongarch_common_suspend();
+>
+>         /* processor specific suspend */
+>
+> base-commit: 73adbd92f3223dc0c3506822b71c6b259d5d537b
+> --
+> 2.43.0
+>
 
