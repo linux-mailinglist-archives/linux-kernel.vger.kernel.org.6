@@ -1,170 +1,123 @@
-Return-Path: <linux-kernel+bounces-400036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692839C080F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6709C0818
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28224282FCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F242833F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBE121219D;
-	Thu,  7 Nov 2024 13:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0296A21264A;
+	Thu,  7 Nov 2024 13:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrocHux1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lvO/ImY7"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84952114;
-	Thu,  7 Nov 2024 13:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AA820FA81
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987433; cv=none; b=mXeICyvdBPu/ccWsN6l0HVlMlQ31bGdVqb9DP7Vgl4qRA7X0bU+PHp2o2GP2eftU0Lxh+EDgUF9LZWyMwkFiLS984mog/hmC03O73Z7tJ7f3QJG6b3jsq231db5X21F4ui5Oo5eCQg2iOh7eFrZi8iac32+f3aAdSAUQRPAZ1Q0=
+	t=1730987470; cv=none; b=KOGe/OWn3MN+Jwr57BDyjhM+JTMbambipO36zv9I/jNlsEn6SQBAHU74vhTwC7ETDP6/eMbI2fjTTwZo+wp6Kw4sWuHatiYLtglXIvYO+PoFlwPOV5J19j66OCe7y4tHtH/7LnENpU5RvLjW5ME2/aDTO1lqCubQWoi1bw2mwqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987433; c=relaxed/simple;
-	bh=2oNyuRYFX7LMeihmTBqPHzHGKYUDIV+hO1bH84GomYw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=n8c7/Ho6t/PD3e54Y/54+DLUIDTskLlM+MQen0RvdEZzuhSrXwIbH479YWDkIMy13UuEwTdaty1teFHbORsiF14cwShj7HndQcMaDZkEywU8Gtzq2AYUz/t4wNGS+R0hG+ZcBtT+J8pYQSpHy2ZqKUj6iKijy7LsTO7aiunV30U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrocHux1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC81C4CECC;
-	Thu,  7 Nov 2024 13:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730987432;
-	bh=2oNyuRYFX7LMeihmTBqPHzHGKYUDIV+hO1bH84GomYw=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=GrocHux10lvM2z8Ibettax4mHigWpqCKo8UiQ8k0QcXGxP7RRmvvBjfkQgAjBt0A5
-	 NNon2SkyRrNbMZSEGc0mWLkrduppmCHMnn5FZ118t3MDGiFWue1Cal4sxAx+R/U6Pc
-	 KbO0cyMRmJukuTwFbvAoc2QDr5/m3dXGDpnQI7Hs9NbzzFfvvfXcb1ZNhZ3rnW/O2s
-	 VeJiZElICy94k6yKMZDQO7E5U1P0osUIW4SfxJ1COIZptIrkB8cfhePaNY/463Szd9
-	 RLS2U7Udcuo3ZsS9c6ckWBQ7BENPtNH9+81PLx8wZxPvlaXD52t/ds/EMfGKJWHk4T
-	 lbqpvsKzAIbUQ==
+	s=arc-20240116; t=1730987470; c=relaxed/simple;
+	bh=trEKegl2FHDDStbX9laY/xAPw7CpJ4etahs2VyqANbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O2Y8h3fEuaJ7UheMQzsLhNjI11oRf/gOl6juSUgikQYa5BChUcYVoWGRMv/mWlFiYd0Na7h3LrNexVWM8LoyCA83KmWMOqs0yqiyB7UWb/rAvPmaope22A8QxACIYjigU/I6stz4AULO+CjbnGWVoJITo+abS5I4mII+op+U4nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lvO/ImY7; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-46090640f0cso6419001cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:51:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1730987467; x=1731592267; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MIdUd/kCIltm47uXGOxpew8sXLXKVDb07NKzjiDMo00=;
+        b=lvO/ImY7jRb4oJ9GCI9PAcPoKzU8ue9XWUKzZ2Oj31iiV4ldUmm5I9/exvW6/5I7Xh
+         U5cd03+ShgHyW8a0hE7SmjPXYK1U2aDZ20PnFhph63ttAhNyw2+8tVPyPMd5PMD2KGpi
+         2ADBNbqvByTwbuB8sfOezqqGI6CnnIAzLsNwc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730987467; x=1731592267;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MIdUd/kCIltm47uXGOxpew8sXLXKVDb07NKzjiDMo00=;
+        b=PrYA253bctJPH86iU8KWaIahpYxdIXO0vrnZpIsqwB9YFdSZ4e+CZTtNOboei3vsP/
+         AZ4YgnL7ye+g/bP6W5zKxlQL+/iYMO9TaFBUIpSYeeJqgdK3JsP5iDxjEqL62MUJQ4yI
+         ZIiXgRG2Gn0R8lNHJhikzosbuDCHPleWqUr3slb2b24Jxt74RPlQjBp75Gbgz9fymarh
+         BbkuJVKcuY5ChskcwtDfcQo673+SZKiqr5eWIKJRBJKZBeDaSz+qNewbMBHd8e6btZQD
+         ECuESv12IytwuTJNPgylS/q/6cAMGudSgpmwbS19jjLsgD1BjZSutGnbtm4hrExJ94/6
+         KAfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjxRO/1OsqMA/DM0R6MP4UpdaPOvkxCsYUepgJ5ymRZeAbv32R0zjKV6e9WT/j0Qna7nleW47lX7bKziM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIq9aCkfhoTxxbYyptJQQ/DpJFooQ+aB0CU5CQmPZWWTBCSD4C
+	p9/MNmxMClSWnXaAMburdpg4dCxEyaVCsm4MwW2f0EI1Ry2Uz279GXbj+Tv2Qosg0HATaxL35Mu
+	mTvbORh0NNDyC2mMyXIxCdB8R3vK0paYv+tv3yg==
+X-Google-Smtp-Source: AGHT+IGMnmumBMb+3kuOO+F0xYzmD0dh5oV9KLJbqWkglpw859Yu8qzT99hqpfqG9orBIBT6bwMX6D9jL0g85BVP+Fs=
+X-Received: by 2002:a05:622a:492:b0:460:4ef4:6377 with SMTP id
+ d75a77b69052e-462b8646b74mr411352341cf.6.1730987466753; Thu, 07 Nov 2024
+ 05:51:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 07 Nov 2024 15:50:28 +0200
-Message-Id: <D5FZTYOGY3IO.4SKIAS11102D@kernel.org>
-Cc: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "open list" <linux-kernel@vger.kernel.org>,
- "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>, "open list:SECURITY
- SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Remove the documentation from tpm2-sessions.c
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>,
- <linux-integrity@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>,
- "Jason Gunthorpe" <jgg@ziepe.ca>
-X-Mailer: aerc 0.18.2
-References: <20241107112023.5731-1-jarkko@kernel.org>
-In-Reply-To: <20241107112023.5731-1-jarkko@kernel.org>
+MIME-Version: 1.0
+References: <20241106-statmount-v2-0-93ba2aad38d1@kernel.org> <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
+In-Reply-To: <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 7 Nov 2024 14:50:56 +0100
+Message-ID: <CAJfpeguufK_JN7y1ePMM6F4yZ5UCWbi-EJhoiWUsJpwG9vxXKw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fs: add the ability for statmount() to report the
+ mount devicename
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu Nov 7, 2024 at 1:20 PM EET, Jarkko Sakkinen wrote:
-> Nobody will maintain this, i.e. it is destined to rotten. It is better to
-> just rip it off, and not have duplicate stuff that is already in the kern=
-el
-> documentation and function headers.
+On Wed, 6 Nov 2024 at 20:53, Jeff Layton <jlayton@kernel.org> wrote:
 >
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> /proc/self/mountinfo displays the devicename for the mount, but
+> statmount() doesn't yet have a way to return it. Add a new
+> STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
+> offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
+> the return mask if there is a device string.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  drivers/char/tpm/tpm2-sessions.c | 68 ++------------------------------
->  1 file changed, 3 insertions(+), 65 deletions(-)
+>  fs/namespace.c             | 25 ++++++++++++++++++++++++-
+>  include/uapi/linux/mount.h |  3 ++-
+>  2 files changed, 26 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-ses=
-sions.c
-> index a7c1b162251b..ff00e9483564 100644
-> --- a/drivers/char/tpm/tpm2-sessions.c
-> +++ b/drivers/char/tpm/tpm2-sessions.c
-> @@ -1,71 +1,9 @@
->  // SPDX-License-Identifier: GPL-2.0
-> -
->  /*
-> - * Copyright (C) 2018 James.Bottomley@HansenPartnership.com
-> - *
-> - * Cryptographic helper routines for handling TPM2 sessions for
-> - * authorization HMAC and request response encryption.
-> - *
-> - * The idea is to ensure that every TPM command is HMAC protected by a
-> - * session, meaning in-flight tampering would be detected and in
-> - * addition all sensitive inputs and responses should be encrypted.
-> - *
-> - * The basic way this works is to use a TPM feature called salted
-> - * sessions where a random secret used in session construction is
-> - * encrypted to the public part of a known TPM key.  The problem is we
-> - * have no known keys, so initially a primary Elliptic Curve key is
-> - * derived from the NULL seed (we use EC because most TPMs generate
-> - * these keys much faster than RSA ones).  The curve used is NIST_P256
-> - * because that's now mandated to be present in 'TCG TPM v2.0
-> - * Provisioning Guidance'
-> - *
-> - * Threat problems: the initial TPM2_CreatePrimary is not (and cannot
-> - * be) session protected, so a clever Man in the Middle could return a
-> - * public key they control to this command and from there intercept
-> - * and decode all subsequent session based transactions.  The kernel
-> - * cannot mitigate this threat but, after boot, userspace can get
-> - * proof this has not happened by asking the TPM to certify the NULL
-> - * key.  This certification would chain back to the TPM Endorsement
-> - * Certificate and prove the NULL seed primary had not been tampered
-> - * with and thus all sessions must have been cryptographically secure.
-> - * To assist with this, the initial NULL seed public key name is made
-> - * available in a sysfs file.
-> - *
-> - * Use of these functions:
-> - *
-> - * The design is all the crypto, hash and hmac gunk is confined in this
-> - * file and never needs to be seen even by the kernel internal user.  To
-> - * the user there's an init function tpm2_sessions_init() that needs to
-> - * be called once per TPM which generates the NULL seed primary key.
-> - *
-> - * These are the usage functions:
-> + * Copyright (c) 2018 James Bottomley <James.Bottomley@HansenPartnership=
-.com>
->   *
-> - * tpm2_start_auth_session() which allocates the opaque auth structure
-> - *	and gets a session from the TPM.  This must be called before
-> - *	any of the following functions.  The session is protected by a
-> - *	session_key which is derived from a random salt value
-> - *	encrypted to the NULL seed.
-> - * tpm2_end_auth_session() kills the session and frees the resources.
-> - *	Under normal operation this function is done by
-> - *	tpm_buf_check_hmac_response(), so this is only to be used on
-> - *	error legs where the latter is not executed.
-> - * tpm_buf_append_name() to add a handle to the buffer.  This must be
-> - *	used in place of the usual tpm_buf_append_u32() for adding
-> - *	handles because handles have to be processed specially when
-> - *	calculating the HMAC.  In particular, for NV, volatile and
-> - *	permanent objects you now need to provide the name.
-> - * tpm_buf_append_hmac_session() which appends the hmac session to the
-> - *	buf in the same way tpm_buf_append_auth does().
-> - * tpm_buf_fill_hmac_session() This calculates the correct hash and
-> - *	places it in the buffer.  It must be called after the complete
-> - *	command buffer is finalized so it can fill in the correct HMAC
-> - *	based on the parameters.
-> - * tpm_buf_check_hmac_response() which checks the session response in
-> - *	the buffer and calculates what it should be.  If there's a
-> - *	mismatch it will log a warning and return an error.  If
-> - *	tpm_buf_append_hmac_session() did not specify
-> - *	TPM_SA_CONTINUE_SESSION then the session will be closed (if it
-> - *	hasn't been consumed) and the auth structure freed.
-> + * Cryptographic helper routines for handling TPM2 sessions for authoriz=
-ation
-> + * HMAC and request response encryption.
->   */
-> =20
->  #include "tpm.h"
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 52ab892088f08ad71647eff533dd6f3025bbae03..d4ed2cb5de12c86b4da58626441e072fc109b2ff 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5014,6 +5014,19 @@ static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
+>                 seq_puts(seq, sb->s_subtype);
+>  }
+>
+> +static int statmount_mnt_devname(struct kstatmount *s, struct seq_file *seq)
+> +{
+> +       struct super_block *sb = s->mnt->mnt_sb;
+> +       struct mount *r = real_mount(s->mnt);
+> +
+> +       if (sb->s_op->show_devname)
+> +               return sb->s_op->show_devname(seq, s->mnt->mnt_root);
 
-So no means to slander this. I just checked the kdoc's and also
-documentation and they have all the content needed. So it is better
-to focus to maintaining those and not have duplicate copies.
+I think the resulting string should be unescaped just like statmount_mnt_root().
 
-If there is a detail here missing from those I'd advice to contribute
-that but I could not spot anything...
+The same goes for the option strings, which went in last cycle.
 
-BR, Jarkko
+I see no reason to require users of this interface to implement
+unescaping themselves.  Others beside libmount probably won't do it
+and will be surprised when encountering escaped strings because they
+are rare.
+
+Thanks,
+Miklos
 
