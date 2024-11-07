@@ -1,75 +1,47 @@
-Return-Path: <linux-kernel+bounces-399879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A85E9C05C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:27:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2091B9C05CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E27C1C21F21
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:27:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8961F23E1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3A20F5D0;
-	Thu,  7 Nov 2024 12:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E398B20F5C7;
+	Thu,  7 Nov 2024 12:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qd7q8zc6"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDZm0qDs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E5120EA26
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AEE20F5B7;
+	Thu,  7 Nov 2024 12:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730982455; cv=none; b=DSq2Udhz03GrbrObCGCWhGprZPHAW2bs11x4Yp6n2rGVH55MX8psFaV7tqm9upBheHXNQYwd4mbmXgQtWy9ob20Zh7/iVdkX+v3xWYUPSXI9kNJZQkBgHPk7HqE2djGy4kcHBuRLvmdIWf39WsLodOFn0EChYpOAMV633TPKfoU=
+	t=1730982463; cv=none; b=B8nq+BDipTrWH3mYQR4jCO+JCs3xcR74t/s+57Mq8lp9W671OQYA5Bxv6vwZCBy7TD/6tGI3XGQaLINjpMw+/+d6GP2hFtGLwmcVqZvWQDaeqjkxXdKpPyb/kWFz/gC3hiacAm96gDiQtt9Feb6ELc0l390WJ6RzJtNYtj8MQi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730982455; c=relaxed/simple;
-	bh=7fW7Or4bv3LMfGfA2w7Yy7Fn1KUAaH8JSTS4G9X+14g=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uGmgsD2r4ulwtVOR0p+wX15IevAh3458hBPnUDz92z9oBLZHIZRTndoqTEg2V/DFy6cg+vqNqEh3P0odRkM11VPV+Zj4kNbn8U4i0IzUon4mwwuzKUGIKrRSka5pmW9c6aoXGNdIYCBELe2wMj0eF+Qr/fYoOri5uwmXSplmCuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qd7q8zc6; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431ac30d379so7487435e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:27:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730982452; x=1731587252; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yn4k/AKEEWXzHMELIUTj4UPwDIVmAaYKV7woWIMbon4=;
-        b=Qd7q8zc6dcKrmbRpiJ884Zyp0HqueDdhBZoA1CtjVSY1fvW5gaSirxyCguGq+ObETV
-         tqQzLSu2tZ3aruV7vz+5uHQW7xpkmtYs5V0VElDYtYq/XLLePBtVnDM4TkhZjly5EIq6
-         7ZIT/2/A2l7+BsBX/V3e7vx1yo2Cmt0wOsi/iVympCTzYvtgdC4+NokVDcilZAfUN2OP
-         p2m1r8tS2kFPKd5tdg2N+laj6fKeVkdPkeXdS4g/XFAoQbb3CP0lEAITQrhfDUeYEkRR
-         s9VlOAPfQpINvr4tbLwz6ZIbVrtlEVPy5B+riQh3YNluNO1I8Gmpgj18ocXWcb7O4RTL
-         ynEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730982452; x=1731587252;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Yn4k/AKEEWXzHMELIUTj4UPwDIVmAaYKV7woWIMbon4=;
-        b=q69WNman9PgYh5r9F3fKw7iOuX46r87JZR6OWcECx9LOL/ZE86M8FUsEChosjjWtCp
-         nLXFdA0rOJPKFGHNPrhPsCgGKqOwUrRzro18yr4a6hFCGwuSwiTFz+WdBg16FS/1EaSt
-         wm1nWbfTpCwTBc9XuRA/KdYVf4pcv31evCYKea0JVkX9/F+yzDXpG72lRrO8QP6JFL7W
-         r9QQQO9gZyUThijp0kJPpk5t0e2HgymqZ1+ukJm6Y/GQmwr975SgL/TungRf7PD7E0WA
-         qj3E08GCItnHgfzbJYVDlBg4Ue30M5GC2jlWRpZr14L8kISmOJsPQAJPAglvv25zA68N
-         0Yag==
-X-Forwarded-Encrypted: i=1; AJvYcCVrVk7mlA2Lz//fuJeyOYl2ASr/ziR8BQhsYcnsxKkVpWeYau6cGeG6ABvsiDXxizdXMKrL8S9PqcWB5sI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfdvXQYg1Qr9j6M6wlKXMHwJ7Cm1BdrUj5pBYGo5uNG5sOtRME
-	hicuiQ221AjbIyqxkg/OyUb8HrCnUP2mgXmF//mcGx6Xky7EqugAprdGJf9WTJw=
-X-Google-Smtp-Source: AGHT+IEKl+yBhKl9P9rAWF3Zv0iPAWAueK1s6Y0V7M3SqQDjTXl7EEXZlWLjrPZCLIWLZ6AL8CGk/w==
-X-Received: by 2002:a5d:49c2:0:b0:37d:39c1:4d3 with SMTP id ffacd0b85a97d-380610f2ea6mr32205866f8f.6.1730982452121;
-        Thu, 07 Nov 2024 04:27:32 -0800 (PST)
-Received: from [172.16.23.252] ([89.101.134.25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6b3611sm58072005e9.13.2024.11.07.04.27.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 04:27:31 -0800 (PST)
-Message-ID: <3c0b7fb7-5e51-4b7b-bc48-3034470dcb0f@linaro.org>
-Date: Thu, 7 Nov 2024 13:27:30 +0100
+	s=arc-20240116; t=1730982463; c=relaxed/simple;
+	bh=TnwC1JH2SMPjiUI+V5r4vt7vcJF+1LBt8EShLlaGUHs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KsbtgCxYhdx0mUssJNx4aUsROhzGFf3+EGDbgHcEUSozSntNMXIskLnwTcAEhkppjDwk7t6J6ZLtoVQQLePG6OhAF6frAU4YBwUjlX7fRu/LxRi1Em3wdst2ilIaCpaYhyGQjSwRR7WYoT1ctr01+jfKigC6q0ULIZEHtLpJePY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDZm0qDs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2E32C4CECC;
+	Thu,  7 Nov 2024 12:27:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730982462;
+	bh=TnwC1JH2SMPjiUI+V5r4vt7vcJF+1LBt8EShLlaGUHs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IDZm0qDseQwJfyLNu3Y5gM1bV+kkicRCqMtwBEL8zPEGZx7ZpyHR5FVNrg95LukE9
+	 lmCnx4EmSZtL/elILuT0fS101i/ncmPV10mhAsIvRNchISdHnL2rkz8zobFquwF64t
+	 di4+BphJ+/R1fNd4pZJAb7hPVdE3+FSuv11SQV0E86e8Iw5/qo5FJSMkGIYrrs0bTt
+	 lRkku+nA9V17HSsSinD9WFaQ1RIDtqmEVFqFA/2jOi058wZlujBLgLalvfutnkmIDi
+	 JceS/6IIq4tmYzls+yIQ72smP2ZAegzQZnTuBgWRPqz8eWuUbZNJD3DZR0JPyyqEH5
+	 hut1PGv91mw/w==
+Message-ID: <e712dee2-9f53-4647-9d6c-633aa61bf494@kernel.org>
+Date: Thu, 7 Nov 2024 13:27:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,96 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-sm8650: Keep UFS PHY GDSCs ALWAYS_ON
-To: manivannan.sadhasivam@linaro.org, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
- Nitin Rawat <quic_nitirawa@quicinc.com>, stable@vger.kernel.org
-References: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
- <20241107-ufs-clk-fix-v1-2-6032ff22a052@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241107-ufs-clk-fix-v1-2-6032ff22a052@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v6 2/2] dt-bindings: mtd: davinci: convert to yaml
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241107-ondie-v6-0-f70905dc12bf@gmail.com>
+ <20241107-ondie-v6-2-f70905dc12bf@gmail.com>
+ <5r6j26qwcxyppxicdqih6tskb2qxkb5phzjtwqv47iqb4qupkp@zxujctq7ot6k>
+ <ZyyxVQww6PcYWFJU@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZyyxVQww6PcYWFJU@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2024 12:58, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On 07/11/2024 13:23, Marcus Folkesson wrote:
+>>
+>>> +
+>>> +        ti,davinci-chipselect = <1>;
+>>> +        ti,davinci-mask-ale = <0>;
+>>> +        ti,davinci-mask-cle = <0>;
+>>> +        ti,davinci-mask-chipsel = <0>;
+>>> +
+>>> +        ti,davinci-nand-buswidth = <16>;
+>>> +        ti,davinci-ecc-mode = "hw";
+>>> +        ti,davinci-ecc-bits = <4>;
+>>> +        ti,davinci-nand-use-bbt;
+>>> +
+>>> +        partitions {
+>>
+>> Where are the partitions documented? In which binding? Don't you miss
+>> mtd.yaml? I think this binding misses some references, but I am not sure
+>> which ones.
 > 
-> In SM8650, UFS PHY GDSCs doesn't support hardware retention. So using
-> RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs will get
-> powered down during suspend, causing the UFS PHY to loose its state. And
-> this will lead to UFS error similar to below during resume:
+> I thought this covered it?
 > 
-> ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
-> ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
-> ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: 5
-> ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback(): scsi_bus_resume+0x0/0x84 returns 5
-> ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
-> 
-> Cc: stable@vger.kernel.org # 6.8
-> Fixes: c58225b7e3d7 ("clk: qcom: add the SM8650 Global Clock Controller driver, part 1")
-> Suggested-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->   drivers/clk/qcom/gcc-sm8650.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm8650.c b/drivers/clk/qcom/gcc-sm8650.c
-> index fd9d6544bdd5..ddc38caf7160 100644
-> --- a/drivers/clk/qcom/gcc-sm8650.c
-> +++ b/drivers/clk/qcom/gcc-sm8650.c
-> @@ -3480,7 +3480,7 @@ static struct gdsc ufs_phy_gdsc = {
->   		.name = "ufs_phy_gdsc",
->   	},
->   	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-> +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
->   };
->   
->   static struct gdsc ufs_mem_phy_gdsc = {
-> @@ -3489,7 +3489,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
->   		.name = "ufs_mem_phy_gdsc",
->   	},
->   	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
-> +	.flags = POLL_CFG_GDSCR | ALWAYS_ON,
->   };
->   
->   static struct gdsc usb30_prim_gdsc = {
-> 
+> +  partitions:
+> +    $ref: /schemas/mtd/partitions/partitions.yaml
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
+O, yes, I somehow totally missed it. It's fine, thanks for explaining.
 
-Thanks!
-Neil
+Best regards,
+Krzysztof
+
 
