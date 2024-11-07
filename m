@@ -1,80 +1,88 @@
-Return-Path: <linux-kernel+bounces-400162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7839C09BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:11:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA229C09CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB111C23BDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 345CD28598A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423C5213132;
-	Thu,  7 Nov 2024 15:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF87213156;
+	Thu,  7 Nov 2024 15:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GcwXKl/0"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="AuRYnwfl"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC3D212D21;
-	Thu,  7 Nov 2024 15:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614E9213132
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730992291; cv=none; b=LLzR6ARabUyS3iDKYwBAOxfBSzNPoH5Gz7B09fcnFA/OPDz/AFQNPV1nsycNku+M1YCsSPqL4qBq3cjVl7EjudC12pwRmVwuR1ZODWgxGkXnIZxLya9BwyrbdfrD8w46HiCMeAW92bJLwZZcpCiMR4ewgINsg2G18wrHl03+mlE=
+	t=1730992449; cv=none; b=MDXiZdggmtAVYsHKDqPjap7iYKWeIP3PTm0Q5uCOXcxlg4dP1Yr/FExqOYcwVD8ks9sxkRpkhoBaEt+21Lbqae5Ca6jr99UccMsYITyRtpyKHXRDHrGrgUESO34Cf4jICh8VzacQx1H+mmL8UvqPeh58envaSKv63VCBK5gH3+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730992291; c=relaxed/simple;
-	bh=lOH8IR6oNmISd8P9/400Syn+vXGVnV+xRyVybav+6/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWETVZ5IcSZQBG0gHo2MtH74viQwl2H1agyxn+9RW9crUDjsZEjWPAv6gceGeEbehM/+UwSkkRfhxbmY64vZdsZYgOZQ0wlFuzdW7I+r0+zHlUurKccSnr1EC8nbw6X1tb7xAieGqWpjTUPTFVkYXfgAC//Zb+WUkSIfEjt7MVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GcwXKl/0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=lOH8IR6oNmISd8P9/400Syn+vXGVnV+xRyVybav+6/4=; b=GcwXKl/0RlcOcFK2YRezBEjMK/
-	ihG+29MixzmbaIkP/MKW4/lfJ0ns05vE0df3BbeJXE19wPpwYrPqp/c71VzLx3vSWiLtOJcJjw6Dj
-	SYzT76y0U46dL1QQPL67hGwvx/91LMHBNbbr7vKmoo5ZJwPq/N7acY2AhZyQbtiq7Q7Npbz6RVMpH
-	cl+7VdLLpEQ8fFOcwcrT1s69fQfeEzT64QKnfNr7BNnQYkO/Hi2/UZDnm8IOimisUlsc/CZZFdVfo
-	5a9ziz/U9RJO+mKnEFnkmDNyQjpsCdTTQot3kjwQnFcPD1+uBfXU0PT00eJJBpTYKNKlVetJIaNSF
-	4ItjoKEw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t94AR-00000007OtG-1oXV;
-	Thu, 07 Nov 2024 15:11:27 +0000
-Date: Thu, 7 Nov 2024 07:11:27 -0800
-From: 'Christoph Hellwig' <hch@infradead.org>
-To: ??? <jangsub.yi@samsung.com>
-Cc: 'Christoph Hellwig' <hch@infradead.org>, ulf.hansson@linaro.org,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	junwoo80.lee@samsung.com, sh8267.baek@samsung.com,
-	wkon.kim@samsung.com
-Subject: Re: [PATCH] mmc: Add config_host callback to set a mmc queue
-Message-ID: <ZyzYnw0PgpyViFdf@infradead.org>
-References: <CGME20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c@epcas1p2.samsung.com>
- <20241106051347.969-1-jangsub.yi@samsung.com>
- <ZyxelKdmXXiSVL1g@infradead.org>
- <000001db30f4$4a749770$df5dc650$@samsung.com>
+	s=arc-20240116; t=1730992449; c=relaxed/simple;
+	bh=c85BsSZmQ0DhmZ5RtLeu+wH/FlicBcGBJ2jXQmcD3WE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SReYWRQkC3DjvBrkjVfXEJ+niCxUCWWhgnHOOhYqsZUd9UWq4j+Lb58TKehKscd8bl/FPooS2I/EGmRAwQwQTnBv7aS6BOSZC0FhDy502nEe8BurBDamYbrx8Gn+rtieFXHvGMBZPEA2CI6u+uG7SfTBw47wVN1C7XWk0diZnrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=AuRYnwfl; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-82-224.bstnma.fios.verizon.net [173.48.82.224])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4A7FD6CD003523
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 10:13:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1730992388; bh=pKZuY20VF6iSUTl+wgAMwKSZaeVnqSJpO1FMvnPZu7o=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=AuRYnwflDdH6klPK1+jb4T2h8jxEHKo+/qwBMfPLAr2LVkWrz827CFcnN7eYOIyeH
+	 Zv+ZFukYvGg+vqurrSJ1ot8gtimmRRTqgByBer1/ankCeQDCcJ4ZKieTxPuyDI3A7J
+	 dwuJTx2S4KXVuwniRfrl2iFcHPwfHut9AQ3sFvg3msIw67O7spxuYU1UbGen7g2HC1
+	 IJPbVoW51xPjR2RRnC6z1kxaDE7oW9ZWxB9MxTSSX4zRaorx7KB10cvpOE7/ghfTVg
+	 hTsva2OvpS+pJXhNkkEaXhUbKQWsWu1CToNL5asTkQtSQQKuPfamxxgPaX61MV9Zvn
+	 h+1hQCmf2gAQA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 3D12415C02FA; Thu, 07 Nov 2024 10:13:06 -0500 (EST)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: adilger.kernel@dilger.ca, alexjlzheng@gmail.com
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: Re: [RESEND PATCH] ext4: disambiguate the return value of ext4_dio_write_end_io()
+Date: Thu,  7 Nov 2024 10:12:52 -0500
+Message-ID: <173099237654.321265.14598292051529807032.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240919082539.381626-1-alexjlzheng@tencent.com>
+References: <20240919082539.381626-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000001db30f4$4a749770$df5dc650$@samsung.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 07, 2024 at 06:06:11PM +0900, ??? wrote:
-> Currently, there is no way to configure a request queue on the host side.
-> Although there are various exported symbols in kernel/block/blk-settings.c
-> that can be used to configure a request queue, users cannot utilize them
-> as needed.
 
-If you actually provided a user and didn't just try to offend the kernel
-maintainers by submitting dead code I could explain you in detail why
-youre idea is flawed.
+On Thu, 19 Sep 2024 16:25:39 +0800, alexjlzheng@gmail.com wrote:
+> The commit 91562895f803 ("ext4: properly sync file size update after O_SYNC
+> direct IO") causes confusion about the meaning of the return value of
+> ext4_dio_write_end_io().
+> 
+> Specifically, when the ext4_handle_inode_extension() operation succeeds,
+> ext4_dio_write_end_io() directly returns count instead of 0.
+> 
+> [...]
 
+Applied, thanks!
+
+[1/1] ext4: disambiguate the return value of ext4_dio_write_end_io()
+      commit: e88d17afcf8364c353942e951f8e968f66bfcaa0
+
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
 
