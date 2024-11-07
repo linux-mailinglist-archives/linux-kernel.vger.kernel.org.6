@@ -1,131 +1,173 @@
-Return-Path: <linux-kernel+bounces-399540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303249C0058
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:46:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7859C005F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:47:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8651B23D11
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:46:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C542E1F2291E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726DA1D9665;
-	Thu,  7 Nov 2024 08:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642421D95BE;
+	Thu,  7 Nov 2024 08:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IH2mq9Gv"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iEyYs2Nz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575731D63F1;
-	Thu,  7 Nov 2024 08:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FA4FBF0;
+	Thu,  7 Nov 2024 08:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730969167; cv=none; b=Vq3GE3unP3gXiIOBDhOlKrRQJLVq5TmuKx28oWGm2pzKXRmyiDXgv2fpo7gXAKxyJzLH8vrqwgWncvoetsXzD/avFsNSgaqyGl4KQF+ueY+VLThz9C/eK0sgspQRgQLtVjlffTCG7kxdT/1uTojiIj5Vgp419QvdzVEVZS3D2p8=
+	t=1730969245; cv=none; b=QbWcDJYkeqVNyb1VSNJGyrlDYkDjKiwc2HpLIh6lWqxwOea3kROo+rUS7lbNv/PM6XPzA2exaAyKxFNTX7gmXL+o9OBgEa48P7slPSan+GL+ZGWoeprGHnd9U+GZbyrRytC1cpjHLF48t0lhXFyxj+0D2DSjuGoWcqy5wRuaDK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730969167; c=relaxed/simple;
-	bh=XVpC0vL4dSyCmv2UW97S7ZmNuXpcUPzT4PIDs5lfG8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GtF2y0EBLdKer10QccwBNKSssKkRoeM6ZfvCdREdcqB/dbWz6gw5XOR8t6ocYIwrIHpJ9zmAr7DbV+jKH18W93uVrmJ8Q2KIuDUgnUfHesV2u3PAk5S+EkpoDA1RIHxHKcKpVx9Wqh44m+FI2+xJ7ehZYKq12acae9cJFlFUAjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IH2mq9Gv; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21145812538so6671105ad.0;
-        Thu, 07 Nov 2024 00:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730969165; x=1731573965; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=87ab9pEUneStoi9BaOdzV5RSJLTcxraQ1crI3Oaa3hQ=;
-        b=IH2mq9GvscLKdOQhH62pH1q1oTlMWAd50oc4ByDSSXZP5dY8qHoeFkVajnVJ5POxE5
-         OhfuG7tsbA+ZHtwN2y+pVMkoVO7kH+oT3+J404XhD6ZtLZUTrphf+dHMwhRl5tWJiGIt
-         4ip5GkKPtvXR2NMKI94shZCelEOKlGTHJQadEdOoMpwQgRN98CSK8mDdU9IyjCPa7D+t
-         PPP4KN2xANoS80sKCkWpXQ1lRQhNzLu8dKjB6CZSNyzHJ7UAgGDmTm0ElRxrXTv1tzaz
-         WU63+NnquIqDi0RER858BuC3YF1NkaMoHRgbe6Q4gk2bLn3pSESvZoGjF8rK1ucmvQrs
-         NayQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730969165; x=1731573965;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=87ab9pEUneStoi9BaOdzV5RSJLTcxraQ1crI3Oaa3hQ=;
-        b=uF4l7TlxagIloHyMliGyxIpTHHxspsbXs+XgrkeoXCtfdouIXJCe1ZVQ0bea6UxIge
-         6CmEnD4FMtEzNr9o16H4WWZG9s+7wu3nbl3+4momAy5mL1EQcYW7UX7x6p5d6wdJQU/f
-         E/GBoNtrjP0u8Nuph0FH12YcrCAyb6yVGwIkcKzG7CcYlhHaHmR6lHZanQdKmFsXFXOC
-         eZ8sZx+1aecE9D+WJoewaPWznHsLVMOrq0et30O5T6DX+tuz7qCM2DLQNwhY8M3ubi4m
-         hpF/NFFmoXcqdPOR9uk0FjGbkLsbhok50x2mF47EiY0v646Pv1Ndxpuq0i47i7qQ+OpO
-         grIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUlg4YayVgkquaWxQ4m5IDWCwjEnKo9bUINymUgq1g9S304BpbcewBowk075iVLnhpymHc6y+LUBR3RWU=@vger.kernel.org, AJvYcCX76uEzQ/VegDWXIv539vRI7YRQaLfJnixHhkJqmTP3ZMzYMkJCr32gbXT01u6wZ4QaSs4vEjzSpMmC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLFaw8q7s7ZC14iyBHWAMuAJn6vAYehe/1kCmWGDiWroBJ1Xnd
-	ew8tL1lY2e48vEzrVFNRMqU5PHDW7SlNf7DJvqhsz6bn+glgIYay
-X-Google-Smtp-Source: AGHT+IFz4+e7Z2dki2CDZSqJI+sHIwVnHGysxySVe4iL7eIJ99BC/qHJhwQYwiRrf8nHppSz5sSqpQ==
-X-Received: by 2002:a17:903:189:b0:20f:c225:f28c with SMTP id d9443c01a7336-210c6c9417amr578558895ad.52.1730969165604;
-        Thu, 07 Nov 2024 00:46:05 -0800 (PST)
-Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6b656sm7299435ad.254.2024.11.07.00.46.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 00:46:05 -0800 (PST)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: alexjlzheng@gmail.com
-Cc: alexjlzheng@tencent.com,
-	chandanbabu@kernel.org,
-	dchinner@redhat.com,
-	djwong@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] xfs: fix extent length after xfs_alloc_compute_diff()
-Date: Thu,  7 Nov 2024 16:46:02 +0800
-Message-ID: <20241107084602.185986-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
-In-Reply-To: <20241107070300.13535-1-alexjlzheng@tencent.com>
-References: <20241107070300.13535-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1730969245; c=relaxed/simple;
+	bh=9/KGz9Eqf8L6AckABuzu+EnLUD9DwMieaH9zCgdF3uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOflHzBPrHCpSpaivq6D4nBwfIh8CHiJf8eSNJdZ1XayXyLQI8vGlYnQI67xd+vnOX6xNYBy3ZxJbtVf/Wc+QVTkpvtQe07yCu8xTNOrfg/jjyYplOy9BY/zLE77ZQ+m58t9K0xBF7sqPU321LWg5l6vKNITKbu1ZT93AzEz0mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iEyYs2Nz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5117C4CECC;
+	Thu,  7 Nov 2024 08:47:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730969245;
+	bh=9/KGz9Eqf8L6AckABuzu+EnLUD9DwMieaH9zCgdF3uY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iEyYs2NzyAXwOllRBBtt61ypuqxImxlWvXnXclkI+SY0H11AsXGNwgA4M28QqrGx1
+	 cTP6PdDqgbXb/ad96I9TiWi4/nFjzo245/xxRb1HYzvT8a20x0obqGnSVnu4vgrPdT
+	 WUqBeuazkGU+kk8ysYcvbheWdPOl/e7uyTJxviJg=
+Date: Thu, 7 Nov 2024 09:47:05 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
+	lethal@linux-sh.org, g.liakhovetski@gmx.de,
+	ysato@users.sourceforge.jp, ulrich.hecht+renesas@gmail.com,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/9] serial: sh-sci: Check if TX data was written to
+ device in .tx_empty()
+Message-ID: <2024110747-kite-pacemaker-6216@gregkh>
+References: <20241106120118.1719888-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241106120118.1719888-3-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106120118.1719888-3-claudiu.beznea.uj@bp.renesas.com>
 
-On Thu,  7 Nov 2024 15:03:00 +0800, alexjlzheng@gmail.com wrote:
-> After xfs_alloc_compute_diff(), the length of the candidate extent
-> may change, so make necessary corrections to args->len.
+On Wed, Nov 06, 2024 at 02:01:11PM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
+> is called. The uart_suspend_port() calls 3 times the
+> struct uart_port::ops::tx_empty() before shutting down the port.
+> 
+> According to the documentation, the struct uart_port::ops::tx_empty()
+> API tests whether the transmitter FIFO and shifter for the port is
+> empty.
+> 
+> The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
+> transmit FIFO through the FDR (FIFO Data Count Register). The data units
+> in the FIFOs are written in the shift register and transmitted from there.
+> The TEND bit in the Serial Status Register reports if the data was
+> transmitted from the shift register.
+> 
+> In the previous code, in the tx_empty() API implemented by the sh-sci
+> driver, it is considered that the TX is empty if the hardware reports the
+> TEND bit set and the number of data units in the FIFO is zero.
+> 
+> According to the HW manual, the TEND bit has the following meaning:
+> 
+> 0: Transmission is in the waiting state or in progress.
+> 1: Transmission is completed.
+> 
+> It has been noticed that when opening the serial device w/o using it and
+> then switch to a power saving mode, the tx_empty() call in the
+> uart_port_suspend() function fails, leading to the "Unable to drain
+> transmitter" message being printed on the console. This is because the
+> TEND=0 if nothing has been transmitted and the FIFOs are empty. As the
+> TEND=0 has double meaning (waiting state, in progress) we can't
+> determined the scenario described above.
+> 
+> Add a software workaround for this. This sets a variable if any data has
+> been sent on the serial console (when using PIO) or if the DMA callback has
+> been called (meaning something has been transmitted).
+> 
+> Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  fs/xfs/libxfs/xfs_alloc.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/tty/serial/sh-sci.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-> index 22bdbb3e9980..6a5e6cc7a259 100644
-> --- a/fs/xfs/libxfs/xfs_alloc.c
-> +++ b/fs/xfs/libxfs/xfs_alloc.c
-> @@ -1069,6 +1069,10 @@ xfs_alloc_cur_check(
->  	if (bnew == NULLAGBLOCK)
->  		goto out;
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index df523c744423..8e2d534401fa 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -153,6 +153,7 @@ struct sci_port {
+>  	int				rx_trigger;
+>  	struct timer_list		rx_fifo_timer;
+>  	int				rx_fifo_timeout;
+> +	atomic_t			first_time_tx;
+
+Don't use an atomic variable for an informational thing like this, it is
+racy and doesn't work properly.  Either use a real lock (because you
+care about the locking stuff here), or just use a boolean and live with
+any potential races.
+
+
+
+>  	u16				hscif_tot;
 >  
-> +	args->len = XFS_EXTLEN_MIN(bnoa + lena - bnew, args->maxlen);
-> +	if (args->len < acur->len)
-> +		goto out;
+>  	bool has_rtscts;
+> @@ -850,6 +851,7 @@ static void sci_transmit_chars(struct uart_port *port)
+>  {
+>  	struct tty_port *tport = &port->state->port;
+>  	unsigned int stopped = uart_tx_stopped(port);
+> +	struct sci_port *s = to_sci_port(port);
+>  	unsigned short status;
+>  	unsigned short ctrl;
+>  	int count;
+> @@ -885,6 +887,7 @@ static void sci_transmit_chars(struct uart_port *port)
+>  		}
+>  
+>  		sci_serial_out(port, SCxTDR, c);
+> +		atomic_set(&s->first_time_tx, 1);
+>  
+>  		port->icount.tx++;
+>  	} while (--count > 0);
+> @@ -1241,6 +1244,8 @@ static void sci_dma_tx_complete(void *arg)
+>  	if (kfifo_len(&tport->xmit_fifo) < WAKEUP_CHARS)
+>  		uart_write_wakeup(port);
+>  
+> +	atomic_set(&s->first_time_tx, 1);
 > +
->  	/*
->  	 * Deactivate a bnobt cursor with worse locality than the current best.
->  	 */
-> -- 
-> 2.41.1
+>  	if (!kfifo_is_empty(&tport->xmit_fifo)) {
+>  		s->cookie_tx = 0;
+>  		schedule_work(&s->work_tx);
+> @@ -2076,6 +2081,10 @@ static unsigned int sci_tx_empty(struct uart_port *port)
+>  {
+>  	unsigned short status = sci_serial_in(port, SCxSR);
+>  	unsigned short in_tx_fifo = sci_txfill(port);
+> +	struct sci_port *s = to_sci_port(port);
+> +
+> +	if (!atomic_read(&s->first_time_tx))
+> +		return TIOCSER_TEMT;
 
-Sorry, I must have misunderstood the intent of the code when sending this
-patch. In fact, args->len should not be changed.
+See, what happens here if the value changes right after you check it?
+Being an atomic doesn't mean anything :(
 
-But my starting point is I was wondering what will happen if
-xfs_alloc_compute_diff()'s changes to bnew cause the extent's remaining
-length to be less than args->len? So I have send a new patch:
-https://lore.kernel.org/linux-xfs/20241107084044.182463-1-alexjlzheng@tencent.com/T/#u
+thanks,
 
-Also, am I missing some key code to ensure that the above situation does
-not occur?
-
-Jinliang Zheng :)
+greg k-h
 
