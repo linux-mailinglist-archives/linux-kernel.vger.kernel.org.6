@@ -1,331 +1,247 @@
-Return-Path: <linux-kernel+bounces-400397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D789C0CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:33:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DAB9C0CF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C7D284FD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:32:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034941F240F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06C3215F58;
-	Thu,  7 Nov 2024 17:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8175B2170A7;
+	Thu,  7 Nov 2024 17:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="zcc/GNvw"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KADhDm/2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B94925771
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731000774; cv=none; b=qAMlUp9sOHNHr8mD2xevUK7lDf5MgXtmSD8HlaBVWSpvEJavpjRdj7PhibLWRNuwIJnAZmyhc3tfVxgPdeaGnnSDKTUSSZUvE5qaTtqEvTnFBiLgscwW4vLax1KeyKPYBw685ecYJsrUkSSa+c9dniY1AelZB4bMu0Ll9a74fHg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731000774; c=relaxed/simple;
-	bh=dDS3Av2u4bLCuCO6fr0uDRNY9hzb3IazY71L1OrrI/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SnZzzk+OTbm6kci8Z7oRSnTIpw2yNUrgznnvDxOgoDb+aWxV19YZTHPMU4/d2/WvQq7Pf+YwrKYo28gdfY61ckoJX2onw384Fn5ddCeF9cY+z/bczJdZvZKdy2WXJqByhEQlQdlNqlXgUobZ81WpeOh/Xe0/agb4e5rQsemPX1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=zcc/GNvw; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: lina@asahilina.net)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id BDEC141A48;
-	Thu,  7 Nov 2024 17:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1731000768;
-	bh=dDS3Av2u4bLCuCO6fr0uDRNY9hzb3IazY71L1OrrI/w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=zcc/GNvwd0sM9yseZCLm0MqKSUwqsKljhMn9rxNEcueHP1vXqufyh5NB78/4xU14b
-	 zPfOxgjGPtMA7KJDER3szdZJ3cX99KMn5eDgjh4hwXx9dIuE7jiwNXp+hUAPaOY7/R
-	 TgspuMQwjTw2/O0f0hyFZkOWqzIgVtGk8yNzSKzjNO8iLSZRWs9jxX1ZF71sBW7LSc
-	 GeMlFLm42deYIEyG96HQXkbrq/YOo8NvyaFQm5DofGQitMot6eAJnYd07vqdebx4C9
-	 M/R0FdqpnaGmEzqkCj6bWZ/iwb1vpzGIFoiH6McvtliAB45o/oRap04IsKUhYTXeLG
-	 Yghq3R0Tq3xbw==
-Message-ID: <64d386e8-6684-4213-8aba-7d1daf94f2cf@asahilina.net>
-Date: Fri, 8 Nov 2024 02:32:47 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082CE216E10;
+	Thu,  7 Nov 2024 17:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731000781; cv=fail; b=foFuH6VJnP9fD9wjCzRCZKZflq78dgy17wQ58IYAXQDUYtxLuu+aPUYn22aW6yNOvUTUagwfRUiY8iktEYJdDxr+kWvRTNxMLqrX8viZFEz7pWK/zU3Rd6Fg998QVF+CnseWleAdolUgvsO2s0c20X/O/qIB2xtpP2OPy02G8SM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731000781; c=relaxed/simple;
+	bh=m4Nmn7sB0poidWz60N52Qf7kRT4r5UVBIjqjT1oRigU=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IF5vJF1OCJxc+wjZ2gSeiQdhXxJtb2szSXTs0r+PJSMzVCPv52idwbL1Lt1GSUhXxw/L9BVGL2Ej0D5jk2Wr8RfrUcYy+Fg+Yv/+7vJvHnjq8UdTXktHHTWfxXOJVqLQzvKpvjrHS3PhCqNCpZiQqK9E1v+bH7MqCcF+oFPgsHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KADhDm/2; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731000780; x=1762536780;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=m4Nmn7sB0poidWz60N52Qf7kRT4r5UVBIjqjT1oRigU=;
+  b=KADhDm/2iz6Gn76rw91driIWriRLex+mVjq8N+R8ZU0mi/Ivek21ivWd
+   TkXfbv2mz+cu95NyUQ4aDiabuEuHBux/AP4SDeU+dVIagOar7tekrREKa
+   Et9gcfsqgljrEv8ZTMPKNWrZx4+S4UwTR04dRVj9Y75qAyV+lb2rx68h3
+   fohX/kI9NwXntUUMlG0cVpTgFrO0YuUlB/MYQULMuk7+DFn5MlnghFEg3
+   4wIs13Lu9lwd6mTiGrsS7eXNbG2dMqVSMOODe+ExlAuoDwfWL8Pmnhq3+
+   AAhdmm6VfBoFpqfTKDCXsz/vsu8BJxRIp75yoZltsGX/VETT7t7DSODzN
+   A==;
+X-CSE-ConnectionGUID: fw3U73vkRf+lLWQJW0ojmg==
+X-CSE-MsgGUID: 94+sv2WVT5WiHWsmrJw/aw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="42233668"
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="42233668"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 09:32:59 -0800
+X-CSE-ConnectionGUID: WYAY+f4kToy4hpYi0fNJ6g==
+X-CSE-MsgGUID: /lUKjWZuTUyYBYyuCiAZRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="85967591"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Nov 2024 09:33:00 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 7 Nov 2024 09:32:58 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 7 Nov 2024 09:32:58 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 7 Nov 2024 09:32:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AompA+bmVx+0uz/HScMbVwsKN3sDA60ldMJOCAHB4xlQG06tunHtpny5IdtLSkVWUq4iKmH/3XGL5a9XXbEQ82wLu1IQwUGzZ3/Jq6oSmBFh64ZQXEtu8NOPKUWe+eyVjq3SMHDOYDyHvxh8edI8+D3BXEPMVNo6RJB3PpokVCPRVzdN7fSrLGTI0v1yadqlN+nKqLboSPqCIBtjY2kzjwmhqsJZkOfNqtzbOANGjJELshQRpKQ4cn14Xp1mOpiQpd8RXfJVxWkkWiLbmUgw55U/9H+UAtEukZ/vFdjI01up/ATk6RSiYK3OGMo6FAQTqed9yA4ZWEt5G0p0E6Khvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FkjEaglUZeoHarUgrbfCCDAIibltcULxnvshJelLAoY=;
+ b=aLMHR0x0ixHkHa5zonTH5c8OmFtdgu1+IGZglEf6dTC71R1OoN6dUMK87G3RMhAIRzjckeS2jkYw27pJO4FUpZ04Nv+N/cOLEQfz2NZvcDz1M6pLXiwJ+tMOoHg88c358SAKidssKt4OxAOGIAJ07ZppM+We9Gx1cSWqA4UQCne1ObtyOqOMkaUSCM7XQYUARmu+bwoheDS8G7FMsPnexNN+rfaDo1hMMaJDBGHsFv76abn8w9KWlFp6BQC5SRfSlJ4Dl/+066j0YhrQfCyqCbfggtzS9duGV0Nj5PFCKDcAkNUTxJ/gXSV8NvEELgK9m2ZVZhBvG+9Lq138evw0tw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by PH8PR11MB6880.namprd11.prod.outlook.com (2603:10b6:510:228::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
+ 2024 17:32:55 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8137.019; Thu, 7 Nov 2024
+ 17:32:55 +0000
+Message-ID: <d0df4187-4ebb-4a28-aade-8e119a4b216c@intel.com>
+Date: Thu, 7 Nov 2024 09:32:54 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 6/9] ice: use <linux/packing.h> for Tx and Rx
+ queue context data
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Daniel Machon <daniel.machon@microchip.com>, Vladimir Oltean
+	<olteanv@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "Przemek
+ Kitszel" <przemyslaw.kitszel@intel.com>, Masahiro Yamada
+	<masahiroy@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>
+References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
+ <20241025-packing-pack-fields-and-ice-implementation-v2-6-734776c88e40@intel.com>
+ <20241029145011.4obrgprcaksworlq@DEN-DL-M70577>
+ <8e1a742c-380c-4faf-a6c2-3fa67689c57e@intel.com>
+ <62387bab-f42a-4981-9664-76c439e2aadb@intel.com>
+ <bda38b6e-73df-4ca5-8606-b4701a4db482@stanley.mountain>
+ <5ff708b8-1c6e-4d53-ad64-d370c081121a@intel.com>
+ <cdbf7a65-024b-40e0-b096-29537476c82a@stanley.mountain>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <cdbf7a65-024b-40e0-b096-29537476c82a@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0224.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::19) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Fix __wp_page_copy_user fallback path for remote mm
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Sergio Lopez Pascual <slp@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-References: <20241101-mm-remote-pfn-v1-1-080b609270b7@asahilina.net>
- <c00226ea-6e29-4432-a1c4-a25e9e05df9c@redhat.com>
- <2d8380b9-3d03-4263-b5bf-7e0227c83ba9@asahilina.net>
- <0977a33b-8318-43a5-a5a1-4eb8c93ca270@redhat.com>
-Content-Language: en-US
-From: Asahi Lina <lina@asahilina.net>
-In-Reply-To: <0977a33b-8318-43a5-a5a1-4eb8c93ca270@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|PH8PR11MB6880:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1186f70-d9be-41f8-6f57-08dcff5236f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WFpyRGZpNWllczZYUUMxTFF4NVdrZmJhQ1QyRkJEOG4wTzRPNnM4c2JpOXJP?=
+ =?utf-8?B?Vlcyb0dEMzg4ZmpFbUFoNERmanQvZlo5dXRNNEtQRHhKV1Fzc2RjSDBoQ3V1?=
+ =?utf-8?B?emxIeUZrSzRqZXVqbm5QYmJOd2F2Z0I5RDQ1aFpYTDRTTUFLY3ZZZ3JaVVlU?=
+ =?utf-8?B?Ti9uMC9FbEhtcWVoRHVTR21DMm5zKzRiaVB3S0JDdFh3cEpVQ3dMUlQ3MlVX?=
+ =?utf-8?B?d1FwakloUG96Zmsvelh1Rjhya2dFZ2lOb21DVTJqR0ZVa01sdEROYjRqa0kr?=
+ =?utf-8?B?VjdFWWdnSDVPSGppR1JHMFVtSjlJU1JwTHVKVjlzU0hqSkJ6ZjNTN1pBZ2JB?=
+ =?utf-8?B?V01VcGpjUGpnQXg2N0h2V0p5ZHl6bktwYXE3WkNCZmhZVnBCMFo3SWVHUTRO?=
+ =?utf-8?B?Uk1wWW90a2hlNkxqalhBU2tIbnNicGZVT0drNUZuK1pHNHpOSVhHb0YwbTJH?=
+ =?utf-8?B?SFJBb1pIRFpvbTlpT1htN29UeTZxaWQ3aXJ2cmR3R3c3RzNpSXJPMit2OCtL?=
+ =?utf-8?B?RE9hK1djNDBWZy9oNXhma0dhdS9JRUp3bjMyMFVtUTFWYTBUdlhoSXJmQURs?=
+ =?utf-8?B?OTFtbDZQbnducE12MHBIRmh4ZWpMa2U0VDl5TlNidHFTQXdDeXpwOXZuYnYr?=
+ =?utf-8?B?bFUyMlJ4b1dKaVdyOGVQR2NSTkZ6a1pvQ00rWXRSK3dHMXArWjRURnVxQ2RG?=
+ =?utf-8?B?cHpyM2Jzd05aUlQ4Y20rOTBjaUJlbGVVa2dMNHU3MWtJSzdhcm1FclM1enFx?=
+ =?utf-8?B?cW1OMEJTZjQzNXJaTDZVeHVNQ0FGK2JqQnU5Yk9KTGVIT3BwRjZDQ29ZUWF6?=
+ =?utf-8?B?a0FYQm1jdzR1b3Y5MWdMUm5SUHl3K1kzUEhaeUJodjRnVTdycEhCQ1NaVVpK?=
+ =?utf-8?B?TDdCQm5aWkRxdTkrTnlHYTVFU3JwOEJZSDNHMjhCdG4wWmE1QkdYWDQ1MFlu?=
+ =?utf-8?B?NmZZRUJjRzYvTEp3QXlDWERPSTg0NGV1b3FkbEFzMExTL1hCWERIRGJyRDd2?=
+ =?utf-8?B?N0svVG5vcWhDTlduZ0lsME9OWkdrbEhRaC9rT2FYeDExb1hTdXMwZ2g3ZGZh?=
+ =?utf-8?B?d0x0ZXZWV240bDdxcGF4am1NUFp5M0NmUllwUWI2QW56S0VPS2NDQkdBbE1F?=
+ =?utf-8?B?eGpwbVhNK0svKzRwT2JrVy9XeWYveTg1dnBSTFNnSkFJdEgvV21EWGZ6RzZq?=
+ =?utf-8?B?SnNOYW1FQzFETjF0TnQvRGhjUXNpTk1sMHIyQWdVaXFPQlJWdmNCc3l2ZlpM?=
+ =?utf-8?B?UEtXZ3JOTWhEV0ZCYUwzMVZ6WklNSWdsVDh1TzVzMkFNTXRZMURvMGQ1Nmp6?=
+ =?utf-8?B?RFNaNUxiKzV5Rk5FN292WHVqWncrZDZPTmJESHhkcGJWVmErWlVhdDlLRG1X?=
+ =?utf-8?B?Wm0zZUNxY0Jra3ZOSjdCUzJmMFY5YmNyQzA0Q0xYQzBrdnU3NG1NOGRNSlor?=
+ =?utf-8?B?eWZsWGIxVGRRN0xyVkJqNW83d09ybTZiZzRTRVVlcGRkai9jNWlTdXpFblQr?=
+ =?utf-8?B?SHNmUDlGM202ZzVTK29HTmRWVW9HdnowKzJnWEVGSHJYQXZ6RzZoQzJlRVYx?=
+ =?utf-8?B?dHZ0S3RCTjZyMmljMDQzb21ORmxOQ1h0RGgxeDQrYjJDSVFCSS9zZ2pkNlBn?=
+ =?utf-8?B?bWNzWE9EWllGSitQSmI1OHhyemZjNjFGZ0lLMjZia2t0TUt6OG1UMHU1YUJM?=
+ =?utf-8?B?MzR5K21HSjZXY0dKenFMS09kODBaaVNZMHVOL3k0azJKekEyclBWUnpGQlVz?=
+ =?utf-8?Q?7YIk+2PGETW6wy9eCtW5zCBUbQjahy3RcJ0b01G?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZnBMaHdja003VFFkRGw1cWlFc3BKSU8rMWJPYy9xTlpmd1dFTStoZ2dUcU00?=
+ =?utf-8?B?c2FOMVBWU2s4UG5Rd1lxZXBMZ2FUbmJxb3BoTWtkU00yMGlrL1RDTGVmWWlG?=
+ =?utf-8?B?UXBieXZ6NkswMW83ZnBPcHY2VWJ2RmMzL2tvRjd2RldFakZRT09zTUhycWVr?=
+ =?utf-8?B?dmF4c3Y2M1pFNmt4bERSNzhGTmpkYkJyUCtvcFRmQmZ4bTlVelpTaHliMk90?=
+ =?utf-8?B?cW84MXU0TVBkOStHeU52YTV1K3krUk1pS0NtYXhXS1U0bzhWdUJocFNRbzAx?=
+ =?utf-8?B?MEJmM1dYQUFTeXVGeis1RHRoR3BCT1F0MmJaR2pEMVkvS3c2dTBCMHpjNmtt?=
+ =?utf-8?B?b0xUVUVkM3doZExWT2QxMmZueTZQeGtId29RblBxQzRWMWVYRFNGK1NSb3Ja?=
+ =?utf-8?B?WjVXTk94dHp1cHVvU3g0dFdiTUlCcFVZQmdBVU5iN2pIZDNVZ3RYOEhNalBm?=
+ =?utf-8?B?R0YyMm93T2xxRXVqZEpNWDdQUmt6bFhuRkp1MW9aRGtESndHVEd2VHIxNlQ4?=
+ =?utf-8?B?QkFhdzUvdHJtL2hCZnNuRkE1SzNIRXd3elJuRXhEYW8zQ1MzQmIraTUwTzhU?=
+ =?utf-8?B?aFVCYjFadHN2YWZwMlY3dUdya3IxZWtqbjZ5djBtMU85Y04vN2VGam11SlI0?=
+ =?utf-8?B?c1ZRWTREK0Z6UHFDaWdJTlluWStIcml1NHA5MGFiOEl6dlNFbENXL3RyRERR?=
+ =?utf-8?B?c2lWd2RaSHlLUzVMZ3hxc0wwUGlsL0EyTEdkK3hFWStDcEVhQTRYVi9JTmZp?=
+ =?utf-8?B?TWdrRFc3Vkl2ZnZmZFQyZ0NkN3d2VjhaS3NqRUtaZXlzREhEUkU0Q1lMa0li?=
+ =?utf-8?B?b3pld0QwRzM1SFVDTmFPbStnbEk0REh0aXdNODN2bHl5SmdZTldLOUhtVXdP?=
+ =?utf-8?B?RjVwZUJBZUdNcGwyaGpmeURCcHV6c3kzKzZtUVNnelpkeGxyMGZmVTBlYWJu?=
+ =?utf-8?B?aW1NeEpzemNnWVFJK0pSaFZrb0NoaGFMMllEVFVVNzZ5TU9DdDJXbGFvODZk?=
+ =?utf-8?B?OXgwbVgwd0VtRCtaWFRXS3hrdHRqNDUrWHJ5QWF6SHA3Wmtac3V1anpPMCt3?=
+ =?utf-8?B?OGhvR3ZwVkxwY1lxb0Z0cXhiQkJwT0E0bE5zQWZ1bmNlaGphMmJGNzJRRVpk?=
+ =?utf-8?B?Wm9qTU1TSllrN3YyZmViZVlZaUpGTmZkNDlIY1JUbmFGNTdtZS9Hc2VCVXJU?=
+ =?utf-8?B?ZWN1L0VhV0ZpZ0E0eWVtd2p0bHFiRXdnUzQvVzR2OWt0ZUhyQTJQMHFlbHNE?=
+ =?utf-8?B?aGdKcjN0Q3FVeVFNKzlEdEhmR3VqK3RMYk5Nd2c3K2VmaWgvclJDVFRtTXd6?=
+ =?utf-8?B?eWZBZFA0VmZ3OFlyMkNCYzlWMFZ3YnJjUTZZMlI4bHF1NGdmd0tvS3Ayd3BL?=
+ =?utf-8?B?YXkxTDVldm5GeklTaWJWSlFoc0p6cWgvMUVSNmhDMmY5bXU1aSsyZnhZQmkz?=
+ =?utf-8?B?TXRGOU1BRUR3Yy9qeSsyY0dxS05udWRZRXhJcEhta09vemJidG54WFV3UnVO?=
+ =?utf-8?B?YndHNHJaRi9heW9rNXcxTmNKQjYvL3JiTGlGOFVLbHIxVFlxcU8xbGcvOXRP?=
+ =?utf-8?B?bGZ2TzVUNG1Xaks1Si9oc2hmbGlRTmV0WkpEQVF0OW9qOUZ6M1FvTVYvdTll?=
+ =?utf-8?B?TGllVHRTWlQ5SDJmekNTK3prSXBuTzA2QW5OQWM3ZTZaN0o3d0RnSzRVakNa?=
+ =?utf-8?B?Z0hoVkltLzBwaGo2WWdXbFQrZk4xVGFrNG00aklianVYU2ppaVVOSlZOb2ti?=
+ =?utf-8?B?bTNlSGdzV2VwYU85WjBOeExJbHRiaTl0bW5LbHBHRVVLUzhvZlYzOFdZbzBD?=
+ =?utf-8?B?dmZzVXZrZ3dBOUZTSm9Wc3IxbGFSWnJER1NhTENzKzRiaXBNT0s2SElLS3VU?=
+ =?utf-8?B?cUtLQklBa2IvZ0diS1FZbHh2Tm9uQmZqUG9icGpHc0NnMjJuNnhNL05KclJx?=
+ =?utf-8?B?Y2NtbDIrL3p5T3FuZEtIQzZQWFJsQWkrLzM5K2RWN2VJaFI2Nm1ETG9LZ0lX?=
+ =?utf-8?B?ZzlwVzZMb3JTcnNuQm0ySUNVcVduRG0wbFlYY1MrVHRKWHVQUnNPQ3JqUzI0?=
+ =?utf-8?B?TStHNDh5Y2k0VG5iMUV3WFpYOXBFQzVCZUQwQUd1dU1WTXdWUUppL29PK1l2?=
+ =?utf-8?B?Ynp4cC9BRlp0enh3Y0JXZ2RGeElPaTdoUTZNUTFIMmx5V1JGYUtIWFVlNTRX?=
+ =?utf-8?B?NHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1186f70-d9be-41f8-6f57-08dcff5236f2
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 17:32:55.5571
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8KllzpM2ml4Lzx5ltDSbga6ln1b4+i8e6eaYjJChigBmcAgX5YqlN5mSJ7s5CreDk0L2zYk9APrq/BVt0BhaT3CXS7p5N4bMn8r0hH57C2Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6880
+X-OriginatorOrg: intel.com
 
-On 11/8/24 2:14 AM, David Hildenbrand wrote:
-> On 07.11.24 17:43, Asahi Lina wrote:
->> On 11/5/24 9:03 PM, David Hildenbrand wrote:
->>> On 01.11.24 13:08, Asahi Lina wrote:
->>>> If the source page is a PFN mapping, we copy back from userspace.
->>>> However, if this fault is a remote access, we cannot use
->>>> __copy_from_user_inatomic. Instead, use access_remote_vm() in this
->>>> case.
->>>>
->>>> Fixes WARN and incorrect zero-filling when writing to CoW mappings in
->>>> a remote process, such as when using gdb on a binary present on a DAX
->>>> filesystem.
->>>>
->>>> [  143.683782] ------------[ cut here ]------------
->>>> [  143.683784] WARNING: CPU: 1 PID: 350 at mm/memory.c:2904
->>>> __wp_page_copy_user+0x120/0x2bc
->>>> [  143.683793] CPU: 1 PID: 350 Comm: gdb Not tainted 6.6.52 #1
->>>> [  143.683794] Hardware name: linux,dummy-virt (DT)
->>>> [  143.683795] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS
->>>> BTYPE=--)
->>>> [  143.683796] pc : __wp_page_copy_user+0x120/0x2bc
->>>> [  143.683798] lr : __wp_page_copy_user+0x254/0x2bc
->>>> [  143.683799] sp : ffff80008272b8b0
->>>> [  143.683799] x29: ffff80008272b8b0 x28: 0000000000000000 x27:
->>>> ffff000083bad580
->>>> [  143.683801] x26: 0000000000000000 x25: 0000fffff7fd5000 x24:
->>>> ffff000081db04c0
->>>> [  143.683802] x23: ffff00014f24b000 x22: fffffc00053c92c0 x21:
->>>> ffff000083502150
->>>> [  143.683803] x20: 0000fffff7fd5000 x19: ffff80008272b9d0 x18:
->>>> 0000000000000000
->>>> [  143.683804] x17: ffff000081db0500 x16: ffff800080fe52a0 x15:
->>>> 0000fffff7fd5000
->>>> [  143.683804] x14: 0000000000bb1845 x13: 0000000000000080 x12:
->>>> ffff80008272b880
->>>> [  143.683805] x11: ffff000081d13600 x10: ffff000081d13608 x9 :
->>>> ffff000081d1360c
->>>> [  143.683806] x8 : ffff000083a16f00 x7 : 0000000000000010 x6 :
->>>> ffff00014f24b000
->>>> [  143.683807] x5 : ffff00014f24c000 x4 : 0000000000000000 x3 :
->>>> ffff000083582000
->>>> [  143.683807] x2 : 0000000000000f80 x1 : 0000fffff7fd5000 x0 :
->>>> 0000000000001000
->>>> [  143.683808] Call trace:
->>>> [  143.683809]  __wp_page_copy_user+0x120/0x2bc
->>>> [  143.683810]  wp_page_copy+0x98/0x5c0
->>>> [  143.683813]  do_wp_page+0x250/0x530
->>>> [  143.683814]  __handle_mm_fault+0x278/0x284
->>>> [  143.683817]  handle_mm_fault+0x64/0x1e8
->>>> [  143.683819]  faultin_page+0x5c/0x110
->>>> [  143.683820]  __get_user_pages+0xc8/0x2f4
->>>> [  143.683821]  get_user_pages_remote+0xac/0x30c
->>>> [  143.683823]  __access_remote_vm+0xb4/0x368
->>>> [  143.683824]  access_remote_vm+0x10/0x1c
->>>> [  143.683826]  mem_rw.isra.0+0xc4/0x218
->>>> [  143.683831]  mem_write+0x18/0x24
->>>> [  143.683831]  vfs_write+0xa0/0x37c
->>>> [  143.683834]  ksys_pwrite64+0x7c/0xc0
->>>> [  143.683834]  __arm64_sys_pwrite64+0x20/0x2c
->>>> [  143.683835]  invoke_syscall+0x48/0x10c
->>>> [  143.683837]  el0_svc_common.constprop.0+0x40/0xe0
->>>> [  143.683839]  do_el0_svc+0x1c/0x28
->>>> [  143.683841]  el0_svc+0x3c/0xdc
->>>> [  143.683846]  el0t_64_sync_handler+0x120/0x12c
->>>> [  143.683848]  el0t_64_sync+0x194/0x198
->>>> [  143.683849] ---[ end trace 0000000000000000 ]---
->>>>
->>>> Signed-off-by: Asahi Lina <lina@asahilina.net>
->>>> ---
->>>>    mm/memory.c | 7 ++++++-
->>>>    1 file changed, 6 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/memory.c b/mm/memory.c
->>>> index
->>>> 3ccee51adfbbd007b24331fe6874265f231a877b..dba25d9734063ac02cdaeb0a5cd5432473f6372e 100644
->>>> --- a/mm/memory.c
->>>> +++ b/mm/memory.c
->>>> @@ -3081,13 +3081,18 @@ static inline int __wp_page_copy_user(struct
->>>> page *dst, struct page *src,
->>>>                update_mmu_cache_range(vmf, vma, addr, vmf->pte, 1);
->>>>        }
->>>>    +    /* If the mm is a remote mm, copy in the page using
->>>> access_remote_vm() */
->>>> +    if (current->mm != mm) {
->>>> +        if (access_remote_vm(mm, (unsigned long)uaddr, kaddr,
->>>> PAGE_SIZE, 0) != PAGE_SIZE)
+
+
+On 10/31/2024 12:46 AM, Dan Carpenter wrote:
+> On Wed, Oct 30, 2024 at 01:34:47PM -0700, Jacob Keller wrote:
+>>
+>>
+>> On 10/30/2024 4:19 AM, Dan Carpenter wrote:
+>>> Always just ignore the tool when it if it's not useful.
 >>>
->>> access_remote_vm() will do a mmap_read_lock_killable() and then call
->>> into get_user_page_vma_remote() -- fortunately read-access, otherwise
->>> we'd be in trouble :) .
+>>> CHECK_PACKED_FIELDS_ macros are just build time asserts, right?  I can easily
+>>> just hard code Smatch to ignore CHECK_PACKED_FIELDS_* macros.  I'm just going to
+>>> go ahead an do that in the ugliest way possible.  If we have a lot of these then
+>>> I'll do it properly.
 >>>
->>> So we should already be holding the mmap read lock from the previous
->>> access_remote_vm() users (who we end up here) ... doesn't this complain
->>> with lockdep about recursive locking?
->>>
->>> I keep forgetting locking rules, so I might just be wrong.
 >>
->> You're right, this complains with lockdep:
+>> We have 2 for ice, and likely a handful for some of the drivers Vladimir
+>> is working on. More may happen in the future, but the number is likely
+>> to unlikely to grow quickly.
 >>
->> [   23.154031]
->> [   23.154093] ============================================
->> [   23.154193] WARNING: possible recursive locking detected
->> [   23.154229] 6.6.52 #2 Not tainted
->> [   23.154270] --------------------------------------------
->> [   23.154306] gdb/349 is trying to acquire lock:
->> [   23.154343] ffff0000862e3450 (&mm->mmap_lock){++++}-{3:3}, at:
->> __access_remote_vm+0x3c/0x3a8
->> [   23.154431]
->> [   23.154431] but task is already holding lock:
->> [   23.154474] ffff0000862e3450 (&mm->mmap_lock){++++}-{3:3}, at:
->> __access_remote_vm+0x3c/0x3a8
->> [   23.154553]
->> [   23.154553] other info that might help us debug this:
->> [   23.154598]  Possible unsafe locking scenario:
->> [   23.154598]
->> [   23.154641]        CPU0
->> [   23.154665]        ----
->> [   23.154685]   lock(&mm->mmap_lock);
->> [   23.154712]   lock(&mm->mmap_lock);
->> [   23.154741]
->> [   23.154741]  *** DEADLOCK ***
->> [   23.154741]
->> [   23.154790]  May be due to missing lock nesting notation
->> [   23.154790]
->> [   23.154838] 2 locks held by gdb/349:
->> [   23.154868]  #0: ffff0000835b53f8 (sb_writers#4){.+.+}-{0:0}, at:
->> vfs_write+0x84/0x2e0
->> [   23.154945]  #1: ffff0000862e3450 (&mm->mmap_lock){++++}-{3:3}, at:
->> __access_remote_vm+0x3c/0x3a8
->> [   23.155023]
->> [   23.155023] stack backtrace:
->> [   23.155060] CPU: 5 PID: 349 Comm: gdb Not tainted 6.6.52 #2
->> [   23.155112] Hardware name: linux,dummy-virt (DT)
->> [   23.155148] Call trace:
->> [   23.155167]  dump_backtrace+0x98/0x118
->> [   23.155209]  show_stack+0x18/0x24
->> [   23.155240]  dump_stack_lvl+0x60/0xac
->> [   23.155292]  dump_stack+0x18/0x24
->> [   23.155320]  print_deadlock_bug+0x260/0x34c
->> [   23.155364]  validate_chain+0x364/0x4c0
->> [   23.155393]  __lock_acquire+0x564/0xb64
->> [   23.155420]  lock_acquire.part.0+0x9c/0x1bc
->> [   23.155448]  lock_acquire+0x9c/0x140
->> [   23.155477]  down_read_killable+0x44/0x158
->> [   23.155521]  __access_remote_vm+0x3c/0x3a8
->> [   23.155562]  __wp_page_copy_user+0x13c/0x3a8
->> [   23.155611]  wp_page_copy+0x98/0x4d8
->> [   23.155640]  do_wp_page+0x290/0x594
->> [   23.155671]  __handle_mm_fault+0x258/0x25c
->> [   23.155712]  handle_mm_fault+0x64/0x1f0
->> [   23.155755]  faultin_page+0x64/0x138
->> [   23.155798]  __get_user_pages+0x11c/0x340
->> [   23.155843]  get_user_pages_remote+0xc4/0x404
->> [   23.155895]  __access_remote_vm+0xf4/0x3a8
->> [   23.155922]  access_remote_vm+0x10/0x1c
->> [   23.155952]  mem_rw.isra.0+0xc4/0x218
->> [   23.155996]  mem_write+0x18/0x24
->> [   23.156023]  vfs_write+0xa4/0x2e0
->> [   23.156066]  ksys_pwrite64+0x7c/0xc0
->> [   23.156109]  __arm64_sys_pwrite64+0x20/0x2c
->> [   23.156152]  invoke_syscall+0x48/0x10c
->> [   23.156196]  el0_svc_common.constprop.0+0x40/0xe0
->> [   23.156249]  do_el0_svc+0x1c/0x28
->> [   23.156293]  el0_svc+0x54/0x140
->> [   23.156334]  el0t_64_sync_handler+0x120/0x12c
->> [   23.156384]  el0t_64_sync+0x194/0x198
+>> I was thinking of making them empty definitions if __CHECKER__, but
+>> ignoring them in smatch would be easier on my end :D
 >>
->> I guess the locking implementation is recursive so that's why this
->> didn't actually deadlock...
->>
->> I'm not sure what the right way to do this is then. The underlying
->> reason why the fallback code is being called is that do_wp_page() calls
->> vm_normal_page(), which returns NULL for VM_PFNMAP pages. So vmf->page
->> is NULL and __wp_page_copy_user has to use the fallback path. However,
->> the reason GUP works is that follow_page_pte() and friends have a
->> specific fallback path for the pte_devmap() case that grabs a struct
->> page anyway. Maybe similar logic should be in do_wp_page() so it can
->> grab a struct page for PFN mappings too?
 > 
-> There is currently WIP to remove pte_devmap() and make vm_normal_page()
-> return these pages as well.
-> 
-> But that would not be in VM_PFNMAP mappings, because VM_PFNMAP means
-> "don't you ever look at the struct page".
-> 
-> Likely, you do not have a VM_PFNMAP mapping here but instead a
-> VM_MIXEDMAP mapping(or likely no special mapping at all)?
-> 
-> vm_normal_page() returns NULL for pte_devmap(), independent of
-> VM_PFNMAP, because pte_special() should succeed on them.
-> 
-> 
-> 
-> I recall that there is still a problem with false-positives on
-> folio_test_anon() with ZONE_DEVICE pages, so it's maybe not that
-> easy ... and the whole get_dev_pagemap() stuff is nasty.
-> 
-> Likely we would have to do what GUP does, and temporarily grab a pgmap
-> reference. Gah.
-> 
-> 
-> So if we sort out the pagemap stuff and the possibly wrong
-> folio_test_anon() on some ZONE_DEVICE pages (but not all, because IIRC
-> DEVICE_PRIVATE can be anon ...), it might be doable.
-> 
-> But it sounds ugly, especially because that code might change soon and
-> not require messing with ZONE_DEVICE pages on that level.
-> 
-> And then, we'd not be able to handle VM_PFNMAP cleanly ...
-> 
-> 
-> Maybe we could test if the PFN has a directmap and simply read using
-> that? I mean, that's what kmap_local_page() ends up doing on systems
-> without highmem ... and without !defined(HASHED_PAGE_VIRTUAL) && !
-> defined(WANT_PAGE_VIRTUAL) the kmap_local_page() really just is a
-> page_to_virt(), which is mostly mapping a PFN to the corresponding
-> virtual address ...
-> 
-> But it doesn't universally work ...
-> 
->>
->> Or if the problem is just the lock, would just eliding the locking work?
->> I guess that only works if all the calls into wp_page_copy() are
->> guaranteed to hold the mmap lock already, but I don't know if that is
->> true...
-> 
-> The whole "GUP recursively calling into GUP" code looks concerning.
-> Could we even trigger a case where we get a recursive page fault handler
-> call, because of some odd race? (concurrent MADV_DONTNEED or similar)
-> 
-> I think we should much rather fail this remote fault if there is no easy
-> way to make it work right now.
-> 
-> At least I suspect this is primarily a "debugger" scenario that didn't
-> work so far and we could leave it "not working because not supported" in
-> a nicer way?
-> 
-> 
-> If this really must succeed, I can spend some time thinking about how to
-> do this cleaner ...
+> Adding them to __CHECKER__ works too.
+Jakub suggested implementing the checks in modpost, which means the
+CHECK_PACKED_FIELDS macros won't be merged.
 
-Well, this breaks debuggers in general on a virtiofs VM mounted with
-DAX, which is a sensible use case I think. One reason to use DAX is
-avoiding duplication of the page cache between the host and the guest
-(or multiple guests).
+I saw you did end up updating smatch to handle this, so wanted to let
+you know it looks like it won't be necessary now.
 
-I think the main reason not that many people are trying DAX across the
-board for virtiofs is various bugs that have been slowly fixed, and this
-would be one of the remaining ones...
-
-(Full disclosure: For the use case I'm working on we're no longer
-mounting the whole rootfs with DAX right now (only a subset) since we're
-still evaluating the performance, but I'd like to keep the option open
-and having it break debuggers is kind of a blocker...)
-
-~~ Lina
-
+Thanks,
+Jake
 
