@@ -1,54 +1,70 @@
-Return-Path: <linux-kernel+bounces-400551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85059C0F15
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:39:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0259C0F0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:38:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4D71F24077
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44AEE1F23D94
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B9E217F3F;
-	Thu,  7 Nov 2024 19:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021702178F7;
+	Thu,  7 Nov 2024 19:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="W2Vp3uB9"
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jOKbW4WC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7146C186E58;
-	Thu,  7 Nov 2024 19:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9885682C60;
+	Thu,  7 Nov 2024 19:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731008374; cv=none; b=rTQCYa4K9UoPRqQvaSniTyZ+6T1BMG5Szofwf2I1wqlyf3voeSqfyUJc/Cwc6j6ZX3ay6uiAOpuvSJBXgvWG3KQg+2JGPCpQ8E5KKVgQ3R8fEwHQ9muzVxxH5mM2r9E8dKpW10wXiIK/7Y7GyN6WLxcCOp0wWVaZ8ixLgv1IQ+U=
+	t=1731008306; cv=none; b=OHSTGAJ9N76DFL/nqi8J/L0s0M8V3t1XuOo9879VZ87cISw3sQoV5iWHow3t57l6N5GUTtjQzbsDnm/5dn9xSCO0v+m4S99XvOw2Dmgt0DySnl8UCZWaGfxNaagJoil/DuoItCqYKpDqQ0n5F6ePMFLqjglti7SgBHw6FWsrpXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731008374; c=relaxed/simple;
-	bh=a0V4ZAX1uXH7Q8uG1fWn9rcEYNMN1igKOsPXDjSlMVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=iXZ0N+G2dBStPpokNShr+0BJztzqNG0CV9eyYiAkRLMtY4QVyMi9+gnRe72VGP/1kzATRIdS0I4osOCLveSJzlKeq28XRT5F3hw8x8Qm1VtUTVNmdRdpyD4K8CJ3ZaOq9gOQfKb6KFG/zBfrzrpv6qh3CKKU7CnqeH7n0qL8wT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=W2Vp3uB9; arc=none smtp.client-ip=80.12.242.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 98KjtS5UwLh3P98KjtGfY0; Thu, 07 Nov 2024 20:38:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731008302;
-	bh=KQrN8ZfDGEPmTxbn63U6Uo/Ca02SoRadPI1etr8OWXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=W2Vp3uB955uj8QfxlIP1bEOE1eqKlbdZE70RH2xiFfYksIb+hHyzlU3RG3SEf6RJb
-	 Rg3uCU4Apbf9Kbf1240w3Iu9xLFXzEhxDT5WYRpZMzTPUS5NqTl9eFUkxQGgCQLGxG
-	 54P90zQ6sA31suRAYimt7kk0LsK/bQ9s1rC8KKDQKzjOkEv3jrDuYtk/Fdasnqvp/8
-	 WubU3ClY43wanWDtEfY2+aCBiAcfmuDlA/k6/Y9tbVLOkjZAhpgHvZIW+ZvncnsN5W
-	 fgxyJnjEMu/MvL6VtdecJxFxKb2AgBU6m4Ljd6OPhhSCniwfLso5hYiIihPpwplTFc
-	 okWBBQQmymQNw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 07 Nov 2024 20:38:22 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <4bd12695-075d-474c-b720-d295cc6028ce@wanadoo.fr>
-Date: Thu, 7 Nov 2024 20:38:20 +0100
+	s=arc-20240116; t=1731008306; c=relaxed/simple;
+	bh=4QQERWIIDTIqGdAubffihvqRN5EkCOX4rfD+7MhTHI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hzMZ8OIqDtcjuKFsWh/Zd9jXNZRSdQleAUSRTaJeAPKinh4G8dUHOioh93T3IUDenbDHp1LTG6foMnrRDEimaQp97yoVd7I98pMZbfEME6FRXcfV7WyvhKQUUEBQJBbbwZtfQW29qC4x5c0te9jE38kwat43p1Sg0g+GX/mb5rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jOKbW4WC; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731008305; x=1762544305;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4QQERWIIDTIqGdAubffihvqRN5EkCOX4rfD+7MhTHI8=;
+  b=jOKbW4WCvxuoySkpEwHnSdnVjTPW9GN6LW6XOH3bnrRBmdXKkRaStEa5
+   wxdt3ywVLjKRYHkHYSFpW0PQlwBPTRoiqo7twRRH2VaNMbIZONwlGJ1TB
+   PG3J3Y5BzDxfLYKWvT1jVWqS0TFBO1msz7NI/ki10rVekbkDpQT4pvEI9
+   +Ucn/vqdLkEfQm2YcLzTpZFTg+HGyE595tAataVwa9QCpvdQ7rKs2zb4f
+   WQ8HT7AFp91xztphUgEYacWbIgSTH2VTXqPTr1hDgr2MdSPEd7xGACCvw
+   7p3xwGmYCVb+2kKjm5OqJEv1PvSpxKFVyFyX5qZQ1xALwY6PNOGhzgHk8
+   Q==;
+X-CSE-ConnectionGUID: 236SP3InQvmV4odp1OPGcg==
+X-CSE-MsgGUID: oIKmord6SWi2fC/ZYx/wlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="34566080"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="34566080"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 11:38:24 -0800
+X-CSE-ConnectionGUID: iWvrQI6OSGeo38jXAJNI2A==
+X-CSE-MsgGUID: lRgIYtJSRBmmLXUUpxM54A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="85146686"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 11:38:25 -0800
+Received: from [10.212.68.83] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.83])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 74B1420B5703;
+	Thu,  7 Nov 2024 11:38:22 -0800 (PST)
+Message-ID: <a6f60420-e6fc-4b9d-8487-7ca8d3dc56e9@linux.intel.com>
+Date: Thu, 7 Nov 2024 14:38:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,120 +72,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] iio: adc: vf610_adc: use devm_* and
- dev_err_probe() to simple code
-To: Frank Li <Frank.Li@nxp.com>
-References: <20241107191842.3002319-1-Frank.Li@nxp.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Haibo Chen <haibo.chen@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- imx@lists.linux.dev,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-In-Reply-To: <20241107191842.3002319-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v1] perf stat: Expand metric+unit buffer size
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241106004818.2174593-1-irogers@google.com>
+ <126ebac6-fb52-4c3c-b364-0b423e164d40@linux.intel.com>
+ <CAP-5=fV3RuvU0N_bt7R-ZMs2nX1_wfKh30PA59u3MW0TF4nzBg@mail.gmail.com>
+ <06c73597-5b23-4759-9101-6594cc13cabc@linux.intel.com>
+ <Zy0P1POgAe_fkLBF@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <Zy0P1POgAe_fkLBF@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Le 07/11/2024 à 20:18, Frank Li a écrit :
-> Use devm_* and dev_err_probe() simplify probe function and remove
-> vf610_adc_remove(). Change type of 'vref_uv' to int because
-> regulator_get_voltage() return type is int.
+
+
+On 2024-11-07 2:07 p.m., Namhyung Kim wrote:
+> Hi Kan,
 > 
-> Reviewed-by: Haibo Chen <haibo.chen-3arQi8VN3Tc@public.gmane.org>
-> Signed-off-by: Frank Li <Frank.Li-3arQi8VN3Tc@public.gmane.org>
-> ---
-> Change from v2 to v3
-> - change vref_uv to int from u32 to fix below warning
-> | Reported-by: kernel test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411070633.NIrO7Ert-lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org/
-> smatch warnings:
-> drivers/iio/adc/vf610_adc.c:857 vf610_adc_probe() warn: unsigned 'info->vref_uv' is never less than zero.
+> On Wed, Nov 06, 2024 at 11:23:15AM -0500, Liang, Kan wrote:
+>>
+>>
+>> On 2024-11-06 11:04 a.m., Ian Rogers wrote:
+>>> On Wed, Nov 6, 2024 at 7:27 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2024-11-05 7:48 p.m., Ian Rogers wrote:
+>>>>> Long metric names combined with units may exceed the metric_bf and
+>>>>> lead to truncation. Double metric_bf in size to avoid this.
+>>>>>
+>>>>> Signed-off-by: Ian Rogers <irogers@google.com>
+>>>>> ---
+>>>>>  tools/perf/util/stat-shadow.c | 2 +-
+>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+>>>>> index 8c9292aa61d3..6b531d4f58a3 100644
+>>>>> --- a/tools/perf/util/stat-shadow.c
+>>>>> +++ b/tools/perf/util/stat-shadow.c
+>>>>> @@ -507,7 +507,7 @@ static void generic_metric(struct perf_stat_config *config,
+>>>>>       if (!metric_events[i]) {
+>>>>>               if (expr__parse(&ratio, pctx, metric_expr) == 0) {
+>>>>>                       char *unit;
+>>>>> -                     char metric_bf[64];
+>>>>> +                     char metric_bf[128];
+>>>>
+>>>> I thin there is already a MAX_EVENT_NAME.
+>>>> Can we similarly define a MAX_METRIC_NAME for it?
+>>>
+>>> So in this case the buffer needs to be big enough to hold the metric
+>>> name, the unit from the scaleunit (e.g. the "%" from "100%"). I'd
+>>> prefer we used dynamic memory allocation to having hard coded limits,
+>>> just to avoid a "640K ought to be enough for anybody," moment.
+>>> Although this change is implicitly a hard coded limit, sigh. There is
+>>> also the metric only name length:
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/builtin-stat.c?h=perf-tools-next#n160
+>>> That looked like it was planned to be dynamically computed but then
+>>> the patch adding that never materialized - meaning "standard"
+>>> metric-only output has its own cut-off rules at 20 characters. I'd
+>>> rather wait on doing a larger cleanup and do this quick fix for now,
+>>> mainly as I have enough to do.
+>>
+>> OK
 > 
-> vim +857 drivers/iio/adc/vf610_adc.c
+> Can I assume it as Acked-by?
 > 
-> Change from v1 to v2
-> - add Haibo's review tag
-> ---
->   drivers/iio/adc/vf610_adc.c | 79 ++++++++++---------------------------
->   1 file changed, 20 insertions(+), 59 deletions(-)
+
+Yes.
+
+Acked-by: Kan Liang <kan.liang@linux.intel.com>
+
+Thanks,
+Kan
+> Thanks,
+> Namhyung
 > 
-> diff --git a/drivers/iio/adc/vf610_adc.c b/drivers/iio/adc/vf610_adc.c
-> index 4d83c12975c53..a6a0ada8a102f 100644
-> --- a/drivers/iio/adc/vf610_adc.c
-> +++ b/drivers/iio/adc/vf610_adc.c
-> @@ -160,7 +160,7 @@ struct vf610_adc {
->   	/* lock to protect against multiple access to the device */
->   	struct mutex lock;
->   
-> -	u32 vref_uv;
-> +	int vref_uv;
->   	u32 value;
->   	struct regulator *vref;
->   
-> @@ -823,10 +823,8 @@ static int vf610_adc_probe(struct platform_device *pdev)
->   	int ret;
->   
->   	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct vf610_adc));
-> -	if (!indio_dev) {
-> -		dev_err(&pdev->dev, "Failed allocating iio device\n");
-> -		return -ENOMEM;
-> -	}
-> +	if (!indio_dev)
-> +		return dev_err_probe(&pdev->dev, -ENOMEM, "Failed allocating iio device\n");
->   
->   	info = iio_priv(indio_dev);
->   	info->dev = &pdev->dev;
-> @@ -842,27 +840,22 @@ static int vf610_adc_probe(struct platform_device *pdev)
->   	ret = devm_request_irq(info->dev, irq,
->   				vf610_adc_isr, 0,
->   				dev_name(&pdev->dev), indio_dev);
-> -	if (ret < 0) {
-> -		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n", irq);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		dev_err_probe(&pdev->dev, ret, "failed requesting irq, irq = %d\n", irq);
-
-missing return?
-
->   
-> -	info->clk = devm_clk_get(&pdev->dev, "adc");
-> -	if (IS_ERR(info->clk)) {
-> -		dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
-> -						PTR_ERR(info->clk));
-> -		return PTR_ERR(info->clk);
-> -	}
-> +	info->clk = devm_clk_get_enabled(&pdev->dev, "adc");
-> +	if (IS_ERR(info->clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(info->clk),
-> +				     "failed getting clock, err = %ld\n",
-> +				     PTR_ERR(info->clk));
-
-No need to add an extra PTR_ERR(info->clk)
-
->   
->   	info->vref = devm_regulator_get(&pdev->dev, "vref");
-
-With the change to devm_regulator_get_enable_read_voltage(), is it still 
-needed?
-
-CJ
-
->   	if (IS_ERR(info->vref))
->   		return PTR_ERR(info->vref);
->   
-> -	ret = regulator_enable(info->vref);
-> -	if (ret)
-> -		return ret;
-> -
-> -	info->vref_uv = regulator_get_voltage(info->vref);
-> +	info->vref_uv = devm_regulator_get_enable_read_voltage(&pdev->dev, "vref");
-> +	if (info->vref_uv < 0)
-> +		return info->vref_uv;
->   
->   	device_property_read_u32_array(dev, "fsl,adck-max-frequency", info->max_adck_rate, 3);
->   
-
-...
 
 
