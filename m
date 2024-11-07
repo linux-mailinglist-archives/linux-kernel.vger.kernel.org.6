@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-399786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC1F9C0431
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:36:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F019C0437
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:36:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239901F23505
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:36:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 829E1B23ADF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60ED820C491;
-	Thu,  7 Nov 2024 11:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BF420EA33;
+	Thu,  7 Nov 2024 11:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kn9VKanB"
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCzSWyTl"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEB820ADE3;
-	Thu,  7 Nov 2024 11:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A626820ADF9;
+	Thu,  7 Nov 2024 11:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730979345; cv=none; b=UtJOTWKm0vGExTTpBNsX/Cn1Th3cdix7QzTLlN6SSn/YXpziL4ji0wZYpdGDAl8PhVbfyjjcl9nRncBtjKodGDdR4MhUdrxxWBdu4VFS5SNg4RsvGNzw2LYMrxIB82ouVliHFjIgU5rdJXqH/PdAre7rs7jBpsEKmzBPd/KWSXg=
+	t=1730979347; cv=none; b=dh5lbbZ4edRen9v/t2q/i+qtBmR60HrNvSGkB9fUncEM1O/gt29KnaffANg22r4gpAfRsNXsp+nFBMEQ5dOG3ZIkJPXh7Ne2S1rbSx5e9UGLpZZHxQbQ6zxpqzOAZ88OnA0xkRODhlkOlm8fxsvEbBSuqnbeQf/7XhBpXW1cH14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730979345; c=relaxed/simple;
-	bh=iwb6A/WrE2ZrNOlT8qvszwX1KjXS1iW3wO4bT9b6iKE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lf+8YMiblYL5x5qxdGSFZskaKIICvmmJkKCdLw68jLOf9seqWN90ZapsMP2MEhQ2A+p8l8xZ3wZhWkIY7IfvLLaZQQ8kf5nQ42ZuODr0yqv7+qqGUaLICu0ie4iky78Yw3dsskVeYfHrvaK1O4cHO5W/iMVpaK9Cy8Yn5npjn1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kn9VKanB; arc=none smtp.client-ip=209.85.215.195
+	s=arc-20240116; t=1730979347; c=relaxed/simple;
+	bh=Ij+tzPSSPvTDBQ9Gr6H2PmIeNLG22aGkm0mInih5Zck=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lPAeD72TG79nHIvgMX0urjFUi3sjCraiepVP5M9nrn8y6bfedSCZx7BpMcDz1WWMp6yohwhZYvHiv3i+ozjPdFKNjmsW4VxapNXnGn4R3AkVmmsUC6jTQe/vsSKZ/E+mwGpHf0efp4LT9jabqcu5t5jJRVkhPkBCBX35WgebaPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCzSWyTl; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7ed9c16f687so616580a12.0;
-        Thu, 07 Nov 2024 03:35:43 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so7334175e9.3;
+        Thu, 07 Nov 2024 03:35:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730979343; x=1731584143; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730979344; x=1731584144; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UFllrcNplJfXvc3JYxfFMjq1JjZGEEGxP3YevvvzffE=;
-        b=Kn9VKanBrDF7E9azGLiUaGOb4oFmDH9VmVuc5PZiLCYl7fvEgZdIc5B5I9pFf4SEfE
-         DErRjchymm3J1x/yHO/jfWz7XI7DT4wOAgqqGPDrFx3uFHvrFsmJqwuC/2l6TSj+OQ5W
-         RM6Kr4BBuqqJ/blUNAjWLqsvZhI0L3rgWckNpHKM14X2CaOckql5KDHgUwIrsgUQpG/c
-         LgqjebESXlP1hMRjAq74NolwxI3znY6a/hKTf6Qg6HIVgmrQsJn2Y65RKJmkKGuODgYW
-         e5xk5OPQ+hMTZ63AFKHbxfE3AmdtER6kZDE2KDAHYhdKh3SMLYpABxdyv0KExh6KukVb
-         JwJA==
+        bh=OaBkOv781JMYQ+4+nvNZuXl65rn+9aoP5vlDFGjYlcg=;
+        b=WCzSWyTlucTnhJvVENisKnDApH9qr50nDWwKZDCUpuKzqnLAqquI3U8aY/sZan71OU
+         hkSEpMx/W3xQG1Wptrc1HF72+21iVk0V3+kHN7GpYTr2NUx3zoWaOm59Ck2FDHVMnmk6
+         JG4C5MEITyxH5jCYADTEThI8F/2sS3Vq1RE4H9VdHC5QuM4NYnQtbIXoafeFseae/x4u
+         9kx8XfbudqJggwkppTKoW2F3J5omS15B0/OAxJRa482ByCnw4BkkvILNg+yhhQhgxVUT
+         yzJAYgZUnkmMUfC7Pl6tLuAfI5j5AhFJNiLFvVrkpgPpQwBbWB90ikZOHLrBwdiY/bjL
+         MIEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730979343; x=1731584143;
+        d=1e100.net; s=20230601; t=1730979344; x=1731584144;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UFllrcNplJfXvc3JYxfFMjq1JjZGEEGxP3YevvvzffE=;
-        b=a9NChBqEIlkMzpr0A9MX6uAfTjig0AZnBBJQJQDUNXGetSV4ma8gRDWYrnW1OAjhsL
-         p9xBtVwOS15wYRJvlAy0c0U91Lpdn0qfSGS07gMYJMuRcC1wq0KOBWkaGpO+CLc7M0gR
-         EyAE6wJsjjgHbKKjUkiGdjU4JA8jqNIfI4kbxG69mZg2cublCXnzgBWSy92w8EVCLFIO
-         0NtH0NB7wGA7Y9v56qFeM6a0ZopiR/z1oavE0Wzj4Pfa+1I5JJxXp6VnIlricsP4gNWq
-         RUuavMePehgVPu5Ez119gqM4HUl4laCZkV2TfcqWZDsPe2ooRSWgOIT90I8mRaQm9N9Y
-         dkFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk5r/UCvqnTCsjhiw7s2eSZiJZUXMFnvVaPXA22j7uDeXuSApGdOJZQciC8VsEDzXgd+SYBsjjFg1DZ6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO8pOsjV8WZnMTpzLWnMwzwjvaQbYnmsP7hgLq0n3HegNHayUI
-	HplcpeKoPj1MxSMKaezZPUUpkKH2zhx6IW+DK/Lg4n0fPN7LH2Vqrb+64aej9zpCWQ==
-X-Google-Smtp-Source: AGHT+IHVQckpKKeRxWwlO06HnNLKcQJcOgeNJfUh49nxpk7hi5cfeokkoR7BCZsoz2H8+b6ACDpG9g==
-X-Received: by 2002:a05:6a20:244a:b0:1db:e82f:36e4 with SMTP id adf61e73a8af0-1dc17ae102bmr1017797637.22.1730979342997;
-        Thu, 07 Nov 2024 03:35:42 -0800 (PST)
-Received: from tom-QiTianM540-A739.. ([106.39.42.118])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a541cfbsm3257801a91.18.2024.11.07.03.35.39
+        bh=OaBkOv781JMYQ+4+nvNZuXl65rn+9aoP5vlDFGjYlcg=;
+        b=TkHaVQV0Bozwb/V/1+jyl9pfKFbyNgg5Kq+bEp+1bZOtm6lhMbx5QQ6Ri/PonoohWn
+         fbbFV08nrWZFPE3pczUNtESMu1cL7dlDMqJCnkPwAp3flzl+AJS0TKUHB4XtjpMMFx+u
+         +pSFUDvLX+ComC9UEDHc1bjZL5Ws/vt+wiBNyrCkrjBvUvztavoicqSVhEVXGy4bUeSB
+         zyPQhUruWzGU0SG4vQjaodCYi9ILXNqUxN6qM/vTE2sK3jhbwR7bwur220BUq1PF4Ud+
+         ojKjHtgDknKzoGL/mIvm0pdREUXssHmVxxQS19g8LYb/AcWiYyNgJ+15Cs+GcEjcX1EH
+         h0BA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaMl9j7CiUEHz8KobQiT1uaAoR/v38DLjdtdatFsqaEhUsJGWxWs8TaG4LIB5wQ5PKik63g0lGH4ug7mQ=@vger.kernel.org, AJvYcCW542rQKRXImmV0HpnJmWGmQeexF9AnJQYB2g1l5LcmXTFD/o/KmbcwpNEcJRBSXErMmo3D1QXDhr/vHpxqcE6ewO4MJQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHK4hW4aDDx59Hyx4sOlSMVbI1ly2K059AsGML/00VT//FROEr
+	1iskRSx1ebXsaAcSTPJOrEPWfPyhykBGYI/5rwCbkYBbl0p+H7rX
+X-Google-Smtp-Source: AGHT+IEyM/7JxWuq9Z/OOvJe1MfE73+DdYcPVlV24qPT7Kr5Zl2BJ5O2OV5ENjYY2wp/Ki1vzRuvSQ==
+X-Received: by 2002:a05:600c:1ca9:b0:431:50cb:2398 with SMTP id 5b1f17b1804b1-4328323f576mr198429105e9.2.1730979343772;
+        Thu, 07 Nov 2024 03:35:43 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0561e88sm21203925e9.19.2024.11.07.03.35.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 03:35:42 -0800 (PST)
-From: Qiu-ji Chen <chenqiuji666@gmail.com>
-To: johan@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Qiu-ji Chen <chenqiuji666@gmail.com>
-Subject: [PATCH v2] USB: serial: ftdi_sio: Fix atomicity violation in get_serial_info()
-Date: Thu,  7 Nov 2024 19:35:34 +0800
-Message-Id: <20241107113534.402265-1-chenqiuji666@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 07 Nov 2024 03:35:43 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jorge Lopez <jorge.lopez2@hp.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] platform/x86: hp: hp-bioscfg: remove redundant if statement
+Date: Thu,  7 Nov 2024 11:35:43 +0000
+Message-Id: <20241107113543.17137-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Our static checker found a bug where set_serial_info() uses a mutex, but
-get_serial_info() does not. Fortunately, the impact of this is relatively
-minor. It doesn't cause a crash or any other serious issues. However, if a
-race condition occurs between set_serial_info() and get_serial_info(),
-there is a chance that the data returned by get_serial_info() will be
-inconsistent.
+The if statement performs the same action if the strcmp result is
+true or false since there is identical code on both branches. The
+if statement is redundant and can be replaced with just one call
+to sysfs_remove_group.
 
-Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
-Fixes: 3ae36bed3a93 ("fdti_sio: switch to ->[sg]et_serial()")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Similar issues have been submitted or confirmed: 
-https://lore.kernel.org/all/20241002125845.785464707@linuxfoundation.org/ 
-https://lore.kernel.org/all/20241106095819.15194-1-chenqiuji666@gmail.com/
----
-V2:
-Revised the description, placed the reference link below "---".
-Used the correct patch prefix.
-Thanks Johan Hovold for helpful suggestion.
----
- drivers/usb/serial/ftdi_sio.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../platform/x86/hp/hp-bioscfg/passwdobj-attributes.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index c6f17d732b95..e07c5e3eb18c 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -1443,9 +1443,11 @@ static void get_serial_info(struct tty_struct *tty, struct serial_struct *ss)
- 	struct usb_serial_port *port = tty->driver_data;
- 	struct ftdi_private *priv = usb_get_serial_port_data(port);
+diff --git a/drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c b/drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c
+index 35936c05e45b..187b372123ed 100644
+--- a/drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c
++++ b/drivers/platform/x86/hp/hp-bioscfg/passwdobj-attributes.c
+@@ -531,14 +531,9 @@ void hp_exit_password_attributes(void)
+ 		struct kobject *attr_name_kobj =
+ 			bioscfg_drv.password_data[instance_id].attr_name_kobj;
  
-+	mutex_lock(&priv->cfg_lock);
- 	ss->flags = priv->flags;
- 	ss->baud_base = priv->baud_base;
- 	ss->custom_divisor = priv->custom_divisor;
-+	mutex_unlock(&priv->cfg_lock);
- }
- 
- static int set_serial_info(struct tty_struct *tty, struct serial_struct *ss)
+-		if (attr_name_kobj) {
+-			if (!strcmp(attr_name_kobj->name, SETUP_PASSWD))
+-				sysfs_remove_group(attr_name_kobj,
+-						   &password_attr_group);
+-			else
+-				sysfs_remove_group(attr_name_kobj,
+-						   &password_attr_group);
+-		}
++		if (attr_name_kobj)
++			sysfs_remove_group(attr_name_kobj,
++					   &password_attr_group);
+ 	}
+ 	bioscfg_drv.password_instances_count = 0;
+ 	kfree(bioscfg_drv.password_data);
 -- 
-2.34.1
+2.39.5
 
 
