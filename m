@@ -1,188 +1,152 @@
-Return-Path: <linux-kernel+bounces-399146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353859BFB96
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:34:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF119BFBA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBC2C2835E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F948283A85
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACF519309C;
-	Thu,  7 Nov 2024 01:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Me28Xocn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QSsK2W3n"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C67198840;
+	Thu,  7 Nov 2024 01:31:47 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014C419067A;
-	Thu,  7 Nov 2024 01:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91886192B88;
+	Thu,  7 Nov 2024 01:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730943103; cv=none; b=J3Yf7E9CKMzSO/ldpD66csQuMu8kd9u5ClVCA3nNNCspQZE53hCqxRHp/TV0+A6X02GMeekVm0uWTWvP27PzfTddqzMaDoQV2zcMpyRhkWdYM0DWzeuOyHZWn7QSYvxrbF0lKqm3TvFv98/ikE59qm6d5RYSE5Me7gLe5xCU1yA=
+	t=1730943107; cv=none; b=smHXXZCfIapyGBujQJ7TSo3IZdtxmSZFZH/CExQFUGejJUtb+JWPUWJ7Wfkd8DNWkAihl+ljw8pIlPSm9pW8pinJIMpb27sRODwYC9kzGq7YwnZAbxshd3WoTOFh+KTGyfN0acduQg/gS852s6tYa1MGk3pT6qHr08yrD9CG9hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730943103; c=relaxed/simple;
-	bh=PJtCthtm4M0QrLviTwnmjFA5kdRQfJP8g3xyZ1EkDu4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gEEcHmWBySir9vuyKv14/RhbDBH8fOO5HAaUspkoYOhmK+xX2aJDxIsOT8xGYmRiKYgFrq2af0M2dfv9e1yOIDI0UloGXt8zF5Lueb8UL/wPu3qHESXQsqLyBNOEyIKoTBU72GSptnbbAwqyi0HGq7H+NSvctMH9Jvp2kBqoaEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Me28Xocn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QSsK2W3n; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 07 Nov 2024 01:31:39 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730943100;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HTtOvon9IwJ729l+wIxqIR9Pk1g/4MQ0PATa+5s/4cI=;
-	b=Me28Xocnz431XkjZ69SSKbuXUNOihI+BTmT5msERYiQnmFe0+hzILnErf7psAgvsF6AZ3x
-	YTF4YvzCQoMLM0OvLtHkXajkjTbQzXJvd9uEWI0uvsriPaZocHXR+9V9XUA7Zwjt6Xbk94
-	71LbuA7VXtgKQc+TIJNkRqkiQmPD35uAobvQta3tkaUiC8h8nvEWf4nvg1LnRHQt5PXD+M
-	i4uduka7RrR8fMkxCAp2AC86UlINEV0yitlY8vf6mZ91F64s/Zsys6x+mkw/tml/NRo2bs
-	PSDhKmJJWqaB6ZZtLluZoal3DCRmvAFg2Xt5TaCtSv+r9+mfqKGsimo+6+bG6Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730943100;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HTtOvon9IwJ729l+wIxqIR9Pk1g/4MQ0PATa+5s/4cI=;
-	b=QSsK2W3n8lz5f+8VH36RbaSiGuLVmCgnLErPeTXoNN/FdFU+KOmLLWGwjJK/Al2k4NrzF3
-	+5e2Y8lztjyE1RAA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] signal: Split up __sigqueue_alloc()
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241105064213.371410037@linutronix.de>
-References: <20241105064213.371410037@linutronix.de>
+	s=arc-20240116; t=1730943107; c=relaxed/simple;
+	bh=SnoIDL63G3LXoykevZWwegZPXoJfoGkT7hgUBMu0BW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cayeATySqUORHsa6ssiSb70KQr/wvkdUYJxTEZkD/LfGlGl9qSRQKSEaqhd21vz2bTc/1llyeWYSWZ3hIuGhqzdAlUZHqGq9lLok1yBb/T3rVrWBpJo42svXpXAQ7lzYcMTo6vryOoOOwEd1KmQmqhmf0B2ejFVptXg0vbNG+Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XkPcc0Dlyz10PVw;
+	Thu,  7 Nov 2024 09:29:20 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 170C81402CB;
+	Thu,  7 Nov 2024 09:31:41 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 7 Nov 2024 09:31:40 +0800
+Message-ID: <ccb3c255-3323-971c-ebd2-29069d621914@huawei.com>
+Date: Thu, 7 Nov 2024 09:31:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173094309953.32228.8770388453597481954.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+Content-Language: en-US
+To: <brendan.higgins@linux.dev>, <davidgow@google.com>, <rmoar@google.com>,
+	<skhan@linuxfoundation.org>, <rf@opensource.cirrus.com>,
+	<linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-The following commit has been merged into the timers/core branch of tip:
+Gentle Ping.
 
-Commit-ID:     5cac427f7971b0619ebbfc131ef81fcf229c3c01
-Gitweb:        https://git.kernel.org/tip/5cac427f7971b0619ebbfc131ef81fcf229c3c01
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 05 Nov 2024 09:14:38 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 07 Nov 2024 02:14:44 +01:00
-
-signal: Split up __sigqueue_alloc()
-
-To cure the SIG_IGN handling for posix interval timers, the preallocated
-sigqueue needs to be embedded into struct k_itimer to prevent life time
-races of all sorts.
-
-Reorganize __sigqueue_alloc() so the ucounts retrieval and the
-initialization can be used independently.
-
-No functional change.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/all/20241105064213.371410037@linutronix.de
-
----
- kernel/signal.c | 52 ++++++++++++++++++++++++++++++++----------------
- 1 file changed, 35 insertions(+), 17 deletions(-)
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index ba7159b..dbd4247 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -396,16 +396,9 @@ void task_join_group_stop(struct task_struct *task)
- 	task_set_jobctl_pending(task, mask | JOBCTL_STOP_PENDING);
- }
- 
--/*
-- * allocate a new signal queue record
-- * - this may be called without locks if and only if t == current, otherwise an
-- *   appropriate lock must be held to stop the target task from exiting
-- */
--static struct sigqueue *
--__sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
--		 int override_rlimit, const unsigned int sigqueue_flags)
-+static struct ucounts *sig_get_ucounts(struct task_struct *t, int sig,
-+				       int override_rlimit)
- {
--	struct sigqueue *q = NULL;
- 	struct ucounts *ucounts;
- 	long sigpending;
- 
-@@ -424,19 +417,44 @@ __sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
- 	if (!sigpending)
- 		return NULL;
- 
--	if (override_rlimit || likely(sigpending <= task_rlimit(t, RLIMIT_SIGPENDING))) {
--		q = kmem_cache_alloc(sigqueue_cachep, gfp_flags);
--	} else {
-+	if (unlikely(!override_rlimit && sigpending > task_rlimit(t, RLIMIT_SIGPENDING))) {
-+		dec_rlimit_put_ucounts(ucounts, UCOUNT_RLIMIT_SIGPENDING);
- 		print_dropped_signal(sig);
-+		return NULL;
- 	}
- 
--	if (unlikely(q == NULL)) {
-+	return ucounts;
-+}
-+
-+static void __sigqueue_init(struct sigqueue *q, struct ucounts *ucounts,
-+			    const unsigned int sigqueue_flags)
-+{
-+	INIT_LIST_HEAD(&q->list);
-+	q->flags = sigqueue_flags;
-+	q->ucounts = ucounts;
-+}
-+
-+/*
-+ * allocate a new signal queue record
-+ * - this may be called without locks if and only if t == current, otherwise an
-+ *   appropriate lock must be held to stop the target task from exiting
-+ */
-+static struct sigqueue *__sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
-+					 int override_rlimit, const unsigned int sigqueue_flags)
-+{
-+	struct ucounts *ucounts = sig_get_ucounts(t, sig, override_rlimit);
-+	struct sigqueue *q;
-+
-+	if (!ucounts)
-+		return NULL;
-+
-+	q = kmem_cache_alloc(sigqueue_cachep, gfp_flags);
-+	if (!q) {
- 		dec_rlimit_put_ucounts(ucounts, UCOUNT_RLIMIT_SIGPENDING);
--	} else {
--		INIT_LIST_HEAD(&q->list);
--		q->flags = sigqueue_flags;
--		q->ucounts = ucounts;
-+		return NULL;
- 	}
-+
-+	__sigqueue_init(q, ucounts, sigqueue_flags);
- 	return q;
- }
- 
+On 2024/10/24 17:43, Jinjie Ruan wrote:
+> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
+> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
+> has assigned before, and the error path only free the suite->log's stream
+> memory but not set it to NULL in string_stream_destroy(), so the later
+> string_stream_clear() of suite->log in kunit_init_suite() will cause
+> below UAF bug.
+> 
+> Set stream pointer to NULL after free in string_stream_destroy()
+> to fix it.
+> 
+> 	Unable to handle kernel paging request at virtual address 006440150000030d
+> 	Mem abort info:
+> 	  ESR = 0x0000000096000004
+> 	  EC = 0x25: DABT (current EL), IL = 32 bits
+> 	  SET = 0, FnV = 0
+> 	  EA = 0, S1PTW = 0
+> 	  FSC = 0x04: level 0 translation fault
+> 	Data abort info:
+> 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> 	[006440150000030d] address between user and kernel address ranges
+> 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> 	Dumping ftrace buffer:
+> 	   (ftrace buffer empty)
+> 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
+> 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
+> 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+> 	Hardware name: linux,dummy-virt (DT)
+> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> 	pc : string_stream_clear+0x54/0x1ac
+> 	lr : string_stream_clear+0x1a8/0x1ac
+> 	sp : ffffffc080b47410
+> 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
+> 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
+> 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
+> 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
+> 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
+> 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
+> 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
+> 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
+> 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
+> 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
+> 	Call trace:
+> 	 string_stream_clear+0x54/0x1ac
+> 	 __kunit_test_suites_init+0x108/0x1d8
+> 	 kunit_exec_run_tests+0xb8/0x100
+> 	 kunit_module_notify+0x400/0x55c
+> 	 notifier_call_chain+0xfc/0x3b4
+> 	 blocking_notifier_call_chain+0x68/0x9c
+> 	 do_init_module+0x24c/0x5c8
+> 	 load_module+0x4acc/0x4e90
+> 	 init_module_from_file+0xd4/0x128
+> 	 idempotent_init_module+0x2d4/0x57c
+> 	 __arm64_sys_finit_module+0xac/0x100
+> 	 invoke_syscall+0x6c/0x258
+> 	 el0_svc_common.constprop.0+0x160/0x22c
+> 	 do_el0_svc+0x44/0x5c
+> 	 el0_svc+0x48/0xb8
+> 	 el0t_64_sync_handler+0x13c/0x158
+> 	 el0t_64_sync+0x190/0x194
+> 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
+> 	---[ end trace 0000000000000000 ]---
+> 	Kernel panic - not syncing: Oops: Fatal exception
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  lib/kunit/string-stream.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
+> index 54f4fdcbfac8..00ad518b730b 100644
+> --- a/lib/kunit/string-stream.c
+> +++ b/lib/kunit/string-stream.c
+> @@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
+>  
+>  	string_stream_clear(stream);
+>  	kfree(stream);
+> +	stream = NULL;
+>  }
+>  
+>  static void resource_free_string_stream(void *p)
 
