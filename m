@@ -1,151 +1,176 @@
-Return-Path: <linux-kernel+bounces-399552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB6B9C00A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:57:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BA99C00A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:57:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808BA2844AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A80E1C20FDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6B71DFD96;
-	Thu,  7 Nov 2024 08:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D463B1DF258;
+	Thu,  7 Nov 2024 08:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DOWGEyii"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ZrhR2YFi"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4452F1DF963
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503C91DE3B7;
+	Thu,  7 Nov 2024 08:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730969785; cv=none; b=XP9zDvuV1R9ZFMm2KDPvoSIJpdrgR1aDnS3sjCBtQYy78ipBQ2KxBYuv7qcgVHY5vdbWTpLjePt5cK1/xEZ0V3xa/hjW6UZkduDuJDzHl3ozZpCWGJRPej/CdKFGRgycTI/C2dDsUE+CNIRNal9RGi3QVb5UEWo2PlQ5sNReAaM=
+	t=1730969865; cv=none; b=jESq/l4RdG5kiWXA2WqfXZiI4fNlW6AZiUmKJv5jMVjSGEU0aUOZsyHAODdpQs9Zhi0+I5aNeEaUqPrQrr08MoXS4t1UONAl07ZFfO+MDtIDnmKTwJ77dXpmWAs/K3QofWYmHlwZZSP8KAiPzKlnSZvjZcQ93NbnJvNG5E2I2HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730969785; c=relaxed/simple;
-	bh=CQNAGnUoGDZggfHjbjLDDTG4ahs/y5NdKS86iF+tVc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ijdkokGc/algM1u2Q50wMooWX7a+lH/x5kXL2J7EEbjPEV7RV2nx12CiFoVmXjp/zCmNDTmeXP340IbcJsh5B9Hk3kfD3KodEABcj/rbjh0iz0nnrKACbhEDqZRLFxGAn+7iuTywZHZAm+W7D7wMse5BaKfiNffcAANp9LDQdWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DOWGEyii; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37ed3bd6114so426984f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 00:56:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730969781; x=1731574581; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NgQ+roLUSesIOXxkTR1/vCOejYMqb2hchyHM3frNze0=;
-        b=DOWGEyiioKf63jsRA47ytgGZm5GjDARsMjZqT0cSdmFwlKW/B/lquzOxQz+ndnowmt
-         q4auX5OE9Ock28shSoT7Ah+BkODCKE+VxxcdGO9SBa25dIT331EqNBPPjsCRYdlroSD1
-         /vfCXmjZCtmGB+6h4cfCmO2Q4fH4mPQS/GVed4Mh2k15O7EVSgsqS8C6yccUJEqSKl/6
-         ZzBa8zxTwnTvBSNlxyDn8jguY+nQVtyGd5qoZpXSsGHzR/Jj7qfUqWqOad+DvihIBXMK
-         z4cwary2KqOSUkgOyy356tC9eofy7LGd9UtRgiY5K9vCXL5vvDbRJZ05mSEpOuqTobHw
-         TVZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730969781; x=1731574581;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NgQ+roLUSesIOXxkTR1/vCOejYMqb2hchyHM3frNze0=;
-        b=S4j62ZEVdAKWrIaTDFs/0D5sDMMMc84LCzR39DXkdGBYGrFu0kJaki0ScVIZUDwAar
-         mMrEuVcNYEi0tbyzgdVKK46VSKrJWv2CaObSxfdnztBqu/9SR3mCj2LHktPMjrWlAaif
-         SM8PcGeLAj7Ipoz2T+BALEP3xKThBNwQEhenIQSD0StKDzwsfiIgF4my/KEGv6VfUVPv
-         4EeHijd5MnP1N4SBRltneG5Ol7qxCnq+bxXFRrjcFyaHHWv3HvRrzfx17e4+GHJ7nrI8
-         SG2zN8SPRs/phDyyCgnJ5O/D1x6bJRHZowB6GQG7HREDkfdPhhkbCbz6l5VeAWSLuoBj
-         WowA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwYfJXcU+sGt1zJpjSerVAYsRh4bnZCEMCwIvY0HPU5bZ0hJuPFAfysEtmuywhMvR1qyfaxcxsQRgdYDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA/du6wVL0NkQJisFZCqXwzeth8BQ9BHwBeMqyaLnJfahAIdY6
-	b7+tsRErKHGj/RP6/yT6fs3hp3Xph4wmAsoIxma5yb4FDxBfdoif/QTN0fnGcTw=
-X-Google-Smtp-Source: AGHT+IFXLdmKW/NhLS7COiH0rxP4pldjP5IIgC/oTWxhlDbhZ9wQ9LD2MxcsYmvJtsQzv8dU50mXfQ==
-X-Received: by 2002:a5d:6d8a:0:b0:37c:d244:bdb1 with SMTP id ffacd0b85a97d-381c7a5e8c9mr16982507f8f.26.1730969781547;
-        Thu, 07 Nov 2024 00:56:21 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea653sm1096170f8f.65.2024.11.07.00.56.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 00:56:21 -0800 (PST)
-Date: Thu, 7 Nov 2024 09:56:18 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, anna-maria@linutronix.de,
-	frederic@kernel.org, tglx@linutronix.de, jstultz@google.com,
-	sboyd@kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	andrew@lunn.ch, hkallweit1@gmail.com, tmgross@umich.edu,
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v5 6/7] rust: Add read_poll_timeout functions
-Message-ID: <ZyyAsjsz05AlkOBd@pathway.suse.cz>
-References: <20241101010121.69221-1-fujita.tomonori@gmail.com>
- <20241101010121.69221-7-fujita.tomonori@gmail.com>
- <ZyvhDbNAhPTqIoVi@boqun-archlinux>
+	s=arc-20240116; t=1730969865; c=relaxed/simple;
+	bh=5Y2bIJcXUVeRq/52yqMTXRgAjwKnGM1KYGlk8qkGwzY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g9Iryy0MlptYsu2mHl3FZTGPmoU74bRqv/FZimkL6/bgd1dDMgfEsWwwKaadX726/9+vPtIcCZQ1l4cuvJ/+/j/5Zs2KaUV0kE41m5tSnL5ZYVjLf2p8oN3G+IGemfZbCswLTAEzy9+rOU36/7pQkifJGiaXRAPOMmfLkVferx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ZrhR2YFi; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 32480891FD;
+	Thu,  7 Nov 2024 09:57:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1730969861;
+	bh=Juwn84S5vUX2aH6VsMCIM7pJOc3sVKVbXwLzJq3+1Jw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZrhR2YFiEJSDeBRViCLCwwv1sJXOY5/PxxKtfkmDpYRzjSvJ3eD0Qa4qprD8iQL0l
+	 pXeIEbpBGEL9otKCUwP7JWKDD+ARP/I8NhmAfEg2HbfmZ5UNdhY9ru5TidVLzqXbMj
+	 A0wrsfk6WfA0HYpJYSXxSJM5Bo1zAX7Sv23x3dc+3K6fSuwCV3gMmGFvNjAwNioF/L
+	 RMsghUxgakjOvRqqyBlTd38hxkcpWDNSwpclWRZqUlYPsLbrnXOfT/7X5uCLlH/QM+
+	 WzAid5hldGQDCNnMn+fryDoJQWqEPgbnYhvY80xkjaBXSWAtggPFqXZ+/CEZ2zhla1
+	 KMGuP4MN/+zYA==
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v11 1/3] dt-bindings: display: Add powertip,{st7272|hx8238a} as DT Schema description
+Date: Thu,  7 Nov 2024 09:57:03 +0100
+Message-Id: <20241107085705.490940-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyvhDbNAhPTqIoVi@boqun-archlinux>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed 2024-11-06 13:35:09, Boqun Feng wrote:
-> On Fri, Nov 01, 2024 at 10:01:20AM +0900, FUJITA Tomonori wrote:
-> > Add read_poll_timeout functions which poll periodically until a
-> > condition is met or a timeout is reached.
-> > 
-> > C's read_poll_timeout (include/linux/iopoll.h) is a complicated macro
-> > and a simple wrapper for Rust doesn't work. So this implements the
-> > same functionality in Rust.
-> > 
-> > The C version uses usleep_range() while the Rust version uses
-> > fsleep(), which uses the best sleep method so it works with spans that
-> > usleep_range() doesn't work nicely with.
-> > 
-> > Unlike the C version, __might_sleep() is used instead of might_sleep()
-> > to show proper debug info; the file name and line
-> > number. might_resched() could be added to match what the C version
-> > does but this function works without it.
-> > 
-> > The sleep_before_read argument isn't supported since there is no user
-> > for now. It's rarely used in the C version.
-> > 
-> > For the proper debug info, readx_poll_timeout() and __might_sleep()
-> > are implemented as a macro. We could implement them as a normal
-> > function if there is a clean way to get a null-terminated string
-> > without allocation from core::panic::Location::file().
-> > 
-> 
-> So printk() actually support printing a string with a precison value,
-> that is: a format string "%.*s" would take two inputs, one for the length
-> and the other for the pointer to the string, for example you can do:
-> 
-> 	char *msg = "hello";
-> 
-> 	printk("%.*s\n", 5, msg);
-> 
-> This is similar to printf() in glibc [1].
-> 
-> If we add another __might_sleep_precision() which accepts a file name
-> length:
-> 
-> 	void __might_sleep_precision(const char *file, int len, int line)
-> 
-> then we don't need to use macro here, I've attached a diff based
-> on your whole patchset, and it seems working.
-> 
-> Cc printk folks to if they know any limitation on using precision.
+This patch provides the DT Schema description of:
+- powertip,st7272  320 x 240 LCD display
+- powertip,hx8238a 320 x 240 LCD display
 
-I am not aware of any printk() limitation here. The "%.*s" format
-should work the same way as in printf() in the userspace.
+Used with the different HW revisions of btt3 devices.
 
-Best Regards,
-Petr
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+
+Changes for v9:
+- New patch
+
+Changes for v10:
+- None
+
+Changes for v11:
+- Combine both separate dt-bindings patches for powertip,st7272 and
+  powertip,hx8238a into one
+- Drop the quotes for in "title" entry of powertip*.yaml files
+---
+ .../display/panel/powertip,hx8238a.yaml       | 29 +++++++++++++++++++
+ .../display/panel/powertip,st7272.yaml        | 29 +++++++++++++++++++
+ 2 files changed, 58 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/panel/powertip,st7272.yaml
+
+diff --git a/Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml b/Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml
+new file mode 100644
+index 000000000000..b7d74faeb5d5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/powertip,hx8238a.yaml
+@@ -0,0 +1,29 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/powertip,hx8238a.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Powertip Electronic Technology Co. 320 x 240 LCD panel
++
++maintainers:
++  - Lukasz Majewski <lukma@denx.de>
++
++allOf:
++  - $ref: panel-dpi.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: powertip,hx8238a
++      - {} # panel-dpi, but not listed here to avoid false select
++
++  height-mm: true
++  panel-timing: true
++  port: true
++  power-supply: true
++  width-mm: true
++
++additionalProperties: false
++
++...
+diff --git a/Documentation/devicetree/bindings/display/panel/powertip,st7272.yaml b/Documentation/devicetree/bindings/display/panel/powertip,st7272.yaml
+new file mode 100644
+index 000000000000..f3622800f13f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/powertip,st7272.yaml
+@@ -0,0 +1,29 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/powertip,st7272.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Powertip Electronic Technology Co. 320 x 240 LCD panel
++
++maintainers:
++  - Lukasz Majewski <lukma@denx.de>
++
++allOf:
++  - $ref: panel-dpi.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: powertip,st7272
++      - {} # panel-dpi, but not listed here to avoid false select
++
++  height-mm: true
++  panel-timing: true
++  port: true
++  power-supply: true
++  width-mm: true
++
++additionalProperties: false
++
++...
+-- 
+2.39.5
 
 
