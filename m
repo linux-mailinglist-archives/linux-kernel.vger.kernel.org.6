@@ -1,161 +1,119 @@
-Return-Path: <linux-kernel+bounces-399735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75EC39C0395
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:13:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA2D9C0397
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9848A1C20E46
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B8E1F2427F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3225C1E32DC;
-	Thu,  7 Nov 2024 11:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lSnGu9hS"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8411F4708;
+	Thu,  7 Nov 2024 11:14:36 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C851F4279
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40891E2601;
+	Thu,  7 Nov 2024 11:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730978020; cv=none; b=JysmoxP6ppSYg38eD5xn7Fs7HWeDcFZi3aUVQ45pIdPnCmxS7rtwArZ2tZedGS5JyDmUmGnxiWY5sRK7CiD6oTNfscYf+gkpYc5rowBNqIF+7Rw43bcuvkc30ZIkE2jXh75TIwZmvoBD4fkZVW7L45xii6T7lT1vVPPC370csRk=
+	t=1730978076; cv=none; b=YktkMje6v6Xo3OAapx8WWJG+TaGAYsW+jEizmzZ9wB9NIe4WvRxT7UaP0aU1AUMxmdsasPaBtmjk4tRceMiQBWZHet4fxAwkjZ8ycPfFsEt492MGDQ/lHP7l/wTENhko/VE5jI63gL5/XUAaJ0fFfdBJ1lvOoCrCMJLg7PHDXNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730978020; c=relaxed/simple;
-	bh=xR5pdVfgkT00dQCFk3s5OdvuMU6MRoAKCsf2yaeddaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKyfDmJo6TQxhXL7DCOpDJFXwNB9Uvi0D7VXf1RTBdYlvThLRqI7omUwwtQw8CPyM3LbuiEIbn/6ZuUpaSmj8Lg4YzEPWQT5JL4lBC4Y6YTGp3OYIem5J6FswBNozRCVvM3Qt/W5RwKqCqdSnvOv2oEKfI6sSBNvdF1fVhHwim8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lSnGu9hS; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cacb76e924so1225983a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 03:13:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730978017; x=1731582817; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4/3w+/l9YSjeY64zgTCdy6DkO3ioqAuiza1Q3OTguoY=;
-        b=lSnGu9hShRAOAbvPcyVlUCNhjuxCEGSSTaglVb7wLmiBxVsN1Zfba+56fBnYe6gnp9
-         V/V1Trkl2bae4H7gBRrx1J6zOMKQssUXQc/CGQoAX5MV0l4wKLyYRkIQScn21LxTMzh/
-         77QpwhUzFv8IYrPOiY2z4xIPD3FOwwAWqvynfX4lRr32RDz1oDq3/oFMW74KbOuMU3Wl
-         qXlz1ahRQ8OLfGCjARdx9lFQsJT3WChfXReWQuFVN0BFmsfCEMEBJT2jtcx+KA4SQsL6
-         ON2mC3fw8xddtbOLIrnMdZGVX8bnbeNLQ7/cOIXmHMewHvEOlwUK1AsWgvCxSCDSleKj
-         +tWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730978017; x=1731582817;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/3w+/l9YSjeY64zgTCdy6DkO3ioqAuiza1Q3OTguoY=;
-        b=KMZbfFX4FcesEdw32thrrWsSH13w8IfekYSShaSnwkV2xF9/JFX6wEbyUFciil0Jlx
-         G1vVV0FqiD8w65YW3Vumq6e2250veSIAZof94XFCC/c5MuRQj2wjNQG7jrJwZeU0ZB9d
-         GHGJSElGQ0aKEigEv93ahJW1kUA6xYsVJkj3uPDdWnzI3DGQY9A7s98cYtN4Ce2F8xD0
-         vMfZ5VtXNzFd1GfppBp3wKUubU8IpltCLtqpRbQzR34+zZMsAjkM4lYabj0oAWPl+Pdk
-         sEm6QG4d45751mhLWJE8GFKFf635sQlQPHrQpSl9Lx5Sq8IFI/6lEB9qj8jhHEF502T/
-         WhFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUei3Xx1nsUDNwsk+dZH1YcAACnEAnGp/zZ5xanzUn2NouExlzqeV/MiHr56x1nbtjQqkAVtm0JgE9hlb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj/j9uNmqEP/J4snDrNU28AvD/kzirqFEd+13TLUuDSKfSn4/g
-	+tgg9svLvVER9Cqt8QXHQNQ8xUepNUix0XqXkVHPqEtiHoC/pGzZYsy8qW4gTg==
-X-Google-Smtp-Source: AGHT+IEF+y4T/yBDvNKsM1yFvgAPhXYXn3816WCOJX1Gqz/PtM2p2O/kE8pi/kOMGYXwMKuR2W+sFQ==
-X-Received: by 2002:a05:6402:5188:b0:5ce:d3a9:ae76 with SMTP id 4fb4d7f45d1cf-5ced3a9b427mr9874492a12.3.1730978017061;
-        Thu, 07 Nov 2024 03:13:37 -0800 (PST)
-Received: from thinkpad ([89.101.134.25])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03c7cabbsm658776a12.79.2024.11.07.03.13.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 03:13:36 -0800 (PST)
-Date: Thu, 7 Nov 2024 11:13:34 +0000
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: jingoohan1@gmail.com, bhelgaas@google.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, frank.li@nxp.com,
-	imx@lists.linux.dev, kernel@pengutronix.de,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
- dw_pcie_suspend_noirq()
-Message-ID: <20241107111334.n23ebkbs3uhxivvm@thinkpad>
-References: <20241107084455.3623576-1-hongxing.zhu@nxp.com>
+	s=arc-20240116; t=1730978076; c=relaxed/simple;
+	bh=wKksMUfW/1iTIUd2EHFCVSqjEASCCmtdjLb41c6jTOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V0CsZMvjvWtbgFH1yoFUNml6anLt6NvgcNN4yZ4r8QjHdQNd+6FmMV/xcQlEgmWC4ZHqhd3A4JeJ/8GMKV6igkB7SqO+YdYlssjbVqoSg9MrM5rfjw7ZwO3tgBEGWlwuoOw0iyy0VBYVSgCvfI9+ty9PqznaQBzXFgdm3Yd4h7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XkfZW6h0nz20snH;
+	Thu,  7 Nov 2024 19:13:23 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id EF6A3140136;
+	Thu,  7 Nov 2024 19:14:31 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 7 Nov 2024 19:14:31 +0800
+Message-ID: <8364b0cd-5171-7e76-d450-6593395dce61@huawei.com>
+Date: Thu, 7 Nov 2024 19:14:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] PM: EM: Fix wrong return value in
+ mtk_cpufreq_get_cpu_power()
+Content-Language: en-US
+To: "Rafael J. Wysocki" <rafael@kernel.org>, <viresh.kumar@linaro.org>
+CC: <matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
+	<hector.yuan@mediatek.com>, <lukasz.luba@arm.com>, <qperret@google.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+References: <20241104113615.1397410-1-ruanjinjie@huawei.com>
+ <786c90d1-29e7-72a7-acc6-394b3bbaeb75@huawei.com>
+ <CAJZ5v0jC9_03euACrmahnDRBgU=0O60p0rkChR2BVOxx0J2Pzw@mail.gmail.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <CAJZ5v0jC9_03euACrmahnDRBgU=0O60p0rkChR2BVOxx0J2Pzw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241107084455.3623576-1-hongxing.zhu@nxp.com>
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On Thu, Nov 07, 2024 at 04:44:55PM +0800, Richard Zhu wrote:
-> Before sending PME_TURN_OFF, don't test the LTSSM stat. Since it's safe
-> to send PME_TURN_OFF message regardless of whether the link is up or
-> down. So, there would be no need to test the LTSSM stat before sending
-> PME_TURN_OFF message.
+
+
+On 2024/11/7 18:58, Rafael J. Wysocki wrote:
+> On Thu, Nov 7, 2024 at 2:50 AM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+>>
+>>
+>>
+>> On 2024/11/4 19:36, Jinjie Ruan wrote:
+>>> mtk_cpufreq_get_cpu_power() return 0 if the policy is NULL. Then in
+>>> em_create_perf_table(), the later zero check for power is not invalid
+>>> as power is uninitialized. As Lukasz suggested, it must return -EINVAL when
+>>> the 'policy' is not found. So return -EINVAL to fix it.
+>>>
+>>> Cc: stable@vger.kernel.org
+>>> Fixes: 4855e26bcf4d ("cpufreq: mediatek-hw: Add support for CPUFREQ HW")
+>>> Suggested-by: Lukasz Luba <lukasz.luba@arm.com>
+>>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>>
+>> Hi, could this be merged.
 > 
+> It's for Viresh to take care of and please replace the "PM: EM:"
+> prefix in the subject with the proper cpufreq driver one.
 
-What is the incentive to send PME_Turn_Off when link is not up?
+Thank you for your kind reminder.
 
-> Remove the L2 poll too, after the PME_TURN_OFF message is sent out.
-> Because the re-initialization would be done in dw_pcie_resume_noirq().
 > 
-
-As Krishna explained, host needs to wait until the endpoint acks the message
-(just to give it some time to do cleanups). Then only the host can initiate
-D3Cold. It matters when the device supports L2.
-
-- Mani
-
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  .../pci/controller/dwc/pcie-designware-host.c | 20 ++++---------------
->  1 file changed, 4 insertions(+), 16 deletions(-)
+> Thanks!
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index f86347452026..64c49adf81d2 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -917,7 +917,6 @@ static int dw_pcie_pme_turn_off(struct dw_pcie *pci)
->  int dw_pcie_suspend_noirq(struct dw_pcie *pci)
->  {
->  	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> -	u32 val;
->  	int ret = 0;
->  
->  	/*
-> @@ -927,23 +926,12 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
->  	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
->  		return 0;
->  
-> -	/* Only send out PME_TURN_OFF when PCIE link is up */
-> -	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
-> -		if (pci->pp.ops->pme_turn_off)
-> -			pci->pp.ops->pme_turn_off(&pci->pp);
-> -		else
-> -			ret = dw_pcie_pme_turn_off(pci);
-> -
-> +	if (pci->pp.ops->pme_turn_off) {
-> +		pci->pp.ops->pme_turn_off(&pci->pp);
-> +	} else {
-> +		ret = dw_pcie_pme_turn_off(pci);
->  		if (ret)
->  			return ret;
-> -
-> -		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
-> -					PCIE_PME_TO_L2_TIMEOUT_US/10,
-> -					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
-> -		if (ret) {
-> -			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
-> -			return ret;
-> -		}
->  	}
->  
->  	dw_pcie_stop_link(pci);
-> -- 
-> 2.37.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+>>> ---
+>>> v2:
+>>> - Fix the driver instead of em_create_perf_table() as suggested.
+>>> - Update the commit message.
+>>> - Add Suggested-by.
+>>> ---
+>>>  drivers/cpufreq/mediatek-cpufreq-hw.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/mediatek-cpufreq-hw.c
+>>> index 8925e096d5b9..aeb5e6304542 100644
+>>> --- a/drivers/cpufreq/mediatek-cpufreq-hw.c
+>>> +++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
+>>> @@ -62,7 +62,7 @@ mtk_cpufreq_get_cpu_power(struct device *cpu_dev, unsigned long *uW,
+>>>
+>>>       policy = cpufreq_cpu_get_raw(cpu_dev->id);
+>>>       if (!policy)
+>>> -             return 0;
+>>> +             return -EINVAL;
+>>>
+>>>       data = policy->driver_data;
+>>>
 
