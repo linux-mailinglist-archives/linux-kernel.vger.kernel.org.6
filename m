@@ -1,199 +1,155 @@
-Return-Path: <linux-kernel+bounces-400253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 682179C0AFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:13:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2A39C0B06
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E4F1C21C2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:13:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D201F22159
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3843218591;
-	Thu,  7 Nov 2024 16:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4422185B9;
+	Thu,  7 Nov 2024 16:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="GyswEzpa"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="aDXIj9hg"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0B6215F58;
-	Thu,  7 Nov 2024 16:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF1F216A2C;
+	Thu,  7 Nov 2024 16:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730995784; cv=none; b=K7kXFta5iYaY9MnLSSFs7KT0jGud53dWKsi/eAUsZMfT3b3pVu4k0FbMpmiQ3Zw4vqBXPhZfXjbbRwUdD2iLMTiV7EcBwo6OIP8t0t8Mi9nP/3VUd8lDDGyioiGRwnEQCwihw/PSPywwJ848Md6rMwSEjHy50Z9A2QHFu7XkAWo=
+	t=1730995808; cv=none; b=P1Zh1LVVLLDd0Rp2bklEv3IVWIsuv1qnIKBJ0QW07uEyneVmqFORvH4NQdSFZdLG7cGqEs7pGRFFeZkA7kIPlatOhKaV2LJnuR5Q/O5d4L8NAE6RfFc67waRwYfrzzU3VyGJekUgvbGK/pv5NB19cEc5BY8PcM3TeSxW8qe3w1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730995784; c=relaxed/simple;
-	bh=mVcg5Zlmse1S5SWLaXb3eWkRBh4cqZa0Xc/8eY8VLzg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T8TaKXjOqu4x3tvrdWwuAqdZIoIJQm3NaPTnXhYLthyFe5P+GDpGUm/dKaiuqoGk/wXRjsGE/x/JsvICY3ngGnaLe+/eN0TpdpiZxteS2LDjkMclHeT9tC9TQghLa5dOQC+ob5c9Ccmm5HJxVxogFWupBX2cZHbk/4ipXqtqsvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=GyswEzpa; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7DfH1j009809;
-	Thu, 7 Nov 2024 08:09:33 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=yVp1qu6FAe8bUfCe0RbPkjfyV
-	LJGl8wEv7NgzvQxUfo=; b=GyswEzpaBiGhVItE9bzIbgMCr7izK879dZkE85y+p
-	R+3uwv/YAHCsaZzX+SZK47Zx6Nr2fcaq+caTASr8sRnh64owHZ9EjKeHVudSAkGr
-	TGBMwb3/1HwAHraASSBU/3Ey5NkmTyxWmPnwfdpEomqFgqDOxvOiLkGKHtjDtz0b
-	GP3NatJNW81LpGCOzYac5o5SjiNrDQyKMGwaA6x2tB2df7RN+L58DLS+haiRsX7t
-	HSDmG0Nt2X5DaOq2t2tTlHn8UKu7Kxg/77mKEN1CbiGdmZSwYoCLOJOz5sDLSiO6
-	tr3j/5dN+cB+575lAg3GatNqHNoIYcehI/CBPr1W9WoeA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42rxn5gcdv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 08:09:33 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 7 Nov 2024 08:09:32 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 7 Nov 2024 08:09:32 -0800
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id 67E433F7050;
-	Thu,  7 Nov 2024 08:09:28 -0800 (PST)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <jiri@resnulli.us>, <edumazet@google.com>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: [net-next PATCH v12 12/12] Documentation: octeontx2: Add Documentation for RVU representors
-Date: Thu, 7 Nov 2024 21:38:39 +0530
-Message-ID: <20241107160839.23707-13-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241107160839.23707-1-gakula@marvell.com>
-References: <20241107160839.23707-1-gakula@marvell.com>
+	s=arc-20240116; t=1730995808; c=relaxed/simple;
+	bh=bQz6/FZvMynqNz7pri7XLl1TMOY9sqbE9V7VCPdO+fQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uma5bg4crBxHkIi1tdPI4vkNmIc3PWsV4K0qHev/fpyyQVV76vq21yng8Ctj1QKVcCpfeh3JQvdmUnBKdHTpyUPKV0IOR/xE47rQM6oAr0RusbMaiyNiGZZ72vg0+mZc0cQcVtt8q1cnBRdVOmFXws7DDQq4Xh5p78QX41SvmxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=aDXIj9hg; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: lina@asahilina.net)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 2074841A48;
+	Thu,  7 Nov 2024 16:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1730995796;
+	bh=bQz6/FZvMynqNz7pri7XLl1TMOY9sqbE9V7VCPdO+fQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=aDXIj9hgkaCTiWlDRpvCgN2CPunlkqvjXB+oFMRipx9estnAof3MZeq70K8pP5e0f
+	 At/EC3KUYXkpAmMe/ow/gVlpBBaNA7bKNPMRi90KIspEWCYTyB7cpPTdByyp27cQQX
+	 Jt4Slw6RJeMsxjdKZjqx/r+uV1T0dcrrjMrZoVumNzzmdn4FhPm8/WcqlG2mASLbco
+	 LSh+wbpZpr4//TTV3MWo7NbrTUn5bx7tqhEiEnNF1kdwXVgMVGRv0M2//gX700njzh
+	 uZ1u+G2g6PL4EqfKnk4OR6AbN4tR9/rf32LH4tdL1haVgUE8dOiELedFVXBpmJizNY
+	 SrO6+uVija92g==
+Message-ID: <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
+Date: Fri, 8 Nov 2024 01:09:54 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-GUID: MhKRTfan-QLMpAFyvNjnbsIZmxD7unIy
-X-Proofpoint-ORIG-GUID: MhKRTfan-QLMpAFyvNjnbsIZmxD7unIy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
+To: Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Sergio Lopez Pascual
+ <slp@redhat.com>, linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
+ <20241104105711.mqk4of6frmsllarn@quack3>
+ <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
+ <ZylHyD7Z+ApaiS5g@dread.disaster.area>
+ <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
+ <20241106121255.yfvlzcomf7yvrvm7@quack3>
+ <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
+ <20241107100105.tktkxs5qhkjwkckg@quack3>
+Content-Language: en-US
+From: Asahi Lina <lina@asahilina.net>
+In-Reply-To: <20241107100105.tktkxs5qhkjwkckg@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Adds documentation for creating and configuring rvu port representors
 
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
----
- .../ethernet/marvell/octeontx2.rst            | 91 +++++++++++++++++++
- 1 file changed, 91 insertions(+)
 
-diff --git a/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst b/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
-index 1e196cb9ce25..af7db0e91f6b 100644
---- a/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
-+++ b/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
-@@ -14,6 +14,7 @@ Contents
- - `Basic packet flow`_
- - `Devlink health reporters`_
- - `Quality of service`_
-+- `RVU representors`_
- 
- Overview
- ========
-@@ -340,3 +341,93 @@ Setup HTB offload
-         # tc class add dev <interface> parent 1: classid 1:2 htb rate 10Gbit prio 2 quantum 188416
- 
-         # tc class add dev <interface> parent 1: classid 1:3 htb rate 10Gbit prio 2 quantum 32768
-+
-+
-+RVU Representors
-+================
-+
-+RVU representor driver adds support for creation of representor devices for
-+RVU PFs' VFs in the system. Representor devices are created when user enables
-+the switchdev mode.
-+Switchdev mode can be enabled either before or after setting up SRIOV numVFs.
-+All representor devices share a single NIXLF but each has a dedicated Rx/Tx
-+queues. RVU PF representor driver registers a separate netdev for each
-+Rx/Tx queue pair.
-+
-+Current HW does not support built-in switch which can do L2 learning and
-+forwarding packets between representee and representor. Hence, packet path
-+between representee and it's representor is achieved by setting up appropriate
-+NPC MCAM filters.
-+Transmit packets matching these filters will be loopbacked through hardware
-+loopback channel/interface (i.e, instead of sending them out of MAC interface).
-+Which will again match the installed filters and will be forwarded.
-+This way representee => representor and representor => representee packet
-+path is achieved. These rules get installed when representors are created
-+and gets active/deactivate based on the representor/representee interface state.
-+
-+Usage example:
-+
-+ - Change device to switchdev mode::
-+
-+	# devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
-+
-+ - List of representor devices on the system::
-+
-+	# ip link show
-+	Rpf1vf0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000 link/ether f6:43:83:ee:26:21 brd ff:ff:ff:ff:ff:ff
-+	Rpf1vf1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000 link/ether 12:b2:54:0e:24:54 brd ff:ff:ff:ff:ff:ff
-+	Rpf1vf2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000 link/ether 4a:12:c4:4c:32:62 brd ff:ff:ff:ff:ff:ff
-+	Rpf1vf3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000 link/ether ca:cb:68:0e:e2:6e brd ff:ff:ff:ff:ff:ff
-+	Rpf2vf0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000 link/ether 06:cc:ad:b4:f0:93 brd ff:ff:ff:ff:ff:ff
-+
-+
-+To delete the representors devices from the system. Change the device to legacy mode.
-+
-+ - Change device to legacy mode::
-+
-+	# devlink dev eswitch set pci/0002:1c:00.0 mode legacy
-+
-+RVU representors can be managed using devlink ports
-+(see :ref:`Documentation/networking/devlink/devlink-port.rst <devlink_port>`) interface.
-+
-+ - Show devlink ports of representors::
-+
-+	# devlink port
-+	pci/0002:1c:00.0/0: type eth netdev Rpf1vf0 flavour physical port 0 splittable false
-+	pci/0002:1c:00.0/1: type eth netdev Rpf1vf1 flavour pcivf controller 0 pfnum 1 vfnum 1 external false splittable false
-+	pci/0002:1c:00.0/2: type eth netdev Rpf1vf2 flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
-+	pci/0002:1c:00.0/3: type eth netdev Rpf1vf3 flavour pcivf controller 0 pfnum 1 vfnum 3 external false splittable false
-+
-+Function attributes
-+===================
-+
-+The RVU representor support function attributes for representors.
-+Port function configuration of the representors are supported through devlink eswitch port.
-+
-+MAC address setup
-+-----------------
-+
-+RVU representor driver support devlink port function attr mechanism to setup MAC
-+address. (refer to Documentation/networking/devlink/devlink-port.rst)
-+
-+ - To setup MAC address for port 2::
-+
-+	# devlink port function set pci/0002:1c:00.0/2 hw_addr 5c:a1:1b:5e:43:11
-+	# devlink port show pci/0002:1c:00.0/2
-+	pci/0002:1c:00.0/2: type eth netdev Rpf1vf2 flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
-+	function:
-+		hw_addr 5c:a1:1b:5e:43:11
-+
-+
-+TC offload
-+==========
-+
-+The rvu representor driver implements support for offloading tc rules using port representors.
-+
-+ - Drop packets with vlan id 3::
-+
-+	# tc filter add dev Rpf1vf0 protocol 802.1Q parent ffff: flower vlan_id 3 vlan_ethtype ipv4 skip_sw action drop
-+
-+ - Redirect packets with vlan id 5 and IPv4 packets to eth1, after stripping vlan header.::
-+
-+	# tc filter add dev Rpf1vf0 ingress protocol 802.1Q flower vlan_id 5 vlan_ethtype ipv4 skip_sw action vlan pop action mirred ingress redirect dev eth1
--- 
-2.25.1
+On 11/7/24 7:01 PM, Jan Kara wrote:
+> On Wed 06-11-24 11:59:44, Dan Williams wrote:
+>> Jan Kara wrote:
+>> [..]
+>>>> This WARN still feels like the wrong thing, though. Right now it is the
+>>>> only thing in DAX code complaining on a page size/block size mismatch
+>>>> (at least for virtiofs). If this is so important, I feel like there
+>>>> should be a higher level check elsewhere, like something happening at
+>>>> mount time or on file open. It should actually cause the operations to
+>>>> fail cleanly.
+>>>
+>>> That's a fair point. Currently filesystems supporting DAX check for this in
+>>> their mount code because there isn't really a DAX code that would get
+>>> called during mount and would have enough information to perform the check.
+>>> I'm not sure adding a new call just for this check makes a lot of sense.
+>>> But if you have some good place in mind, please tell me.
+>>
+>> Is not the reason that dax_writeback_mapping_range() the only thing
+>> checking ->i_blkbits because 'struct writeback_control' does writeback
+>> in terms of page-index ranges?
+> 
+> To be fair, I don't remember why we've put the assertion specifically into
+> dax_writeback_mapping_range(). But as Dave explained there's much more to
+> this blocksize == pagesize limitation in DAX than just doing writeback in
+> terms of page-index ranges. The whole DAX entry tracking in xarray would
+> have to be modified to properly support other entry sizes than just PTE &
+> PMD sizes because otherwise the entry locking just doesn't provide the
+> guarantees that are expected from filesystems (e.g. you could have parallel
+> modifications happening to a single fs block in pagesize < blocksize case).
+> 
+>> All other dax entry points are filesystem controlled that know the
+>> block-to-pfn-to-mapping relationship.
+>>
+>> Recall that dax_writeback_mapping_range() is historically for pmem
+>> persistence guarantees to make sure that applications write through CPU
+>> cache to media.
+> 
+> Correct.
+> 
+>> Presumably there are no cache coherency concerns with fuse and dax
+>> writes from the guest side are not a risk of being stranded in CPU
+>> cache. Host side filesystem writeback will take care of them when / if
+>> the guest triggers a storage device cache flush, not a guest page cache
+>> writeback.
+> 
+> I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
+> should provide persistency guarantees on the file contents even in case of
+> *host* power failure. So if the guest is directly mapping host's page cache
+> pages through virtiofs, filemap_fdatawrite() call in the guest must result
+> in fsync(2) on the host to persist those pages. And as far as I vaguely
+> remember that happens by KVM catching the arch_wb_cache_pmem() calls and
+> issuing fsync(2) on the host. But I could be totally wrong here.
+
+I don't think that's how it actually works, at least on arm64.
+arch_wb_cache_pmem() calls dcache_clean_pop() which is either dc cvap or
+dc cvac. Those are trapped by HCR_EL2<TPC>, and that is never set by KVM.
+
+There was some discussion of this here:
+https://lore.kernel.org/all/20190702055937.3ffpwph7anvohmxu@US-160370MP2.local/
+
+But I'm not sure that all really made sense then.
+
+msync() and fsync() should already provide persistence. Those end up
+calling vfs_fsync_range(), which becomes a FUSE fsync(), which fsyncs
+(or fdatasyncs) the whole file. What I'm not so sure is whether there
+are any other codepaths that also need to provide those guarantees which
+*don't* end up calling fsync on the VFS. For example, the manpages kind
+of imply munmap() syncs, though as far as I can tell that's not actually
+the case. If there are missing sync paths, then I think those might just
+be broken right now...
+
+~~ Lina
 
 
