@@ -1,96 +1,160 @@
-Return-Path: <linux-kernel+bounces-399674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B0E9C02A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:42:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1340E9C02A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38EE8281E5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC8DB281DA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540E11EE034;
-	Thu,  7 Nov 2024 10:42:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1B71EBFF4
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 10:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704B81F12EA;
+	Thu,  7 Nov 2024 10:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8OZ3wlc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23631EBFF4;
+	Thu,  7 Nov 2024 10:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730976165; cv=none; b=FmHeZfcpN89QoQNFdjCr2js7tg/0MoLC2kwI+FhPwm7A3bpMebjcASymhRefvutk8lVS4eMuf6fdTOoCn5nvye7LKEI89QqOKkGcx4kDtZeob5nmIPQDeJSBcqZ4d7n2PrVZmlLKP02hDo4I/auEbVfDjl0n0f1yvLTchr5m9rU=
+	t=1730976166; cv=none; b=FOrS2z8DESv+D3bN5TjjLyhisWskdt7x11mk5GSZxYQDVzt43CHNGkEPZReHYHAstQ9VXxmBI+zLOTOtGBVseTNua7AAEpq8T2681YfngzUOf7fvZnV/76zx6lhinxUiiNSKTNuJlOEMhmtPhhahsqfJIkJu4F6hz7l/Y0RPzvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730976165; c=relaxed/simple;
-	bh=GazuDk2dGCtXW6F67WD4+J5kAdo5lRk++17dUiQgWOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UcMUelr0Sb0/xcxEloahSgQm0XiExrGO5p2RRTSivfLQ18NCjmVmX+gOVLi/GUW8JcmpnpS2wVtWAcBTaeyhUsa4Q1uaJ8LQQlNDMgPknmRLOGqB2BObZ03milRHLOOS4Nox0PSYBfls9+PBqc7soGzpmjRAxJwQRtZ8gp/211Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F98B497;
-	Thu,  7 Nov 2024 02:43:11 -0800 (PST)
-Received: from [10.1.30.33] (unknown [10.1.30.33])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15D5F3F66E;
-	Thu,  7 Nov 2024 02:42:39 -0800 (PST)
-Message-ID: <c6a3db17-9d07-4337-b500-c65bc5ec9db1@arm.com>
-Date: Thu, 7 Nov 2024 10:42:38 +0000
+	s=arc-20240116; t=1730976166; c=relaxed/simple;
+	bh=zRpLMPauPAGsguakIW/QvonIxsET1BLwl9GokVEGwV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UscnuOP0SY8di2oBSuxUov4J13BwQwhVtqu+oBiyspO2l1tQpSk0fChaOvMccTsMcJeR9T01RH3iE7VvjQ4PY2hmNGw3GryNvFe2F2dXn0+9EogX0U4dz38ojuD9qUyH/QZzjo43l7wbdsofC2frF4NhOfzU/p48RhxJStVHtdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8OZ3wlc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00357C4CED5;
+	Thu,  7 Nov 2024 10:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730976166;
+	bh=zRpLMPauPAGsguakIW/QvonIxsET1BLwl9GokVEGwV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M8OZ3wlcajF1rIxpljzudGvrLEbmx5u37+maFP1H89DCtImzheudXJ9KP8hwt0en4
+	 BTuWP8KiNnbSWlylUFeQjMN1vkwX1JCQAkCmSjy3SS4OS4N3VpRYZpDvOOPEsH9+DV
+	 N0nW4yjp0oGu1o4YEBuZwGmHLSwC+62y2zBLsMt0H5WTTf86WUK+SJFJQEjN5Z2ySz
+	 4XqQM5yWzkN+68L6sxJVJLChcYTplT3PW6KKO0OjyGLLPNfBoyqxR3+pPfgHEKqJRA
+	 WOolivOhB2caeqtonBa0wZhEieWhRemKVnA44Yihy2mQFS7CmE3LB7/uWfj0pwxZtI
+	 XkFzE6GwCqCFA==
+Date: Thu, 7 Nov 2024 11:42:43 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org, bsegall@google.com,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: FAILED: Patch "posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER
+ on clone" failed to apply to v6.6-stable tree
+Message-ID: <ZyyZo7cFy0xvfcJr@pavilion.home>
+References: <20241106020901.164614-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panthor: Lock XArray when getting entries for the
- VM
-To: Liviu Dudau <liviu.dudau@arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jann Horn <jannh@google.com>
-References: <20241106185806.389089-1-liviu.dudau@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241106185806.389089-1-liviu.dudau@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106020901.164614-1-sashal@kernel.org>
 
-On 06/11/2024 18:58, Liviu Dudau wrote:
-> Similar to cac075706f29 ("drm/panthor: Fix race when converting
-> group handle to group object") we need to use the XArray's internal
-> locking when retrieving a vm pointer from there.
+Le Tue, Nov 05, 2024 at 09:09:00PM -0500, Sasha Levin a écrit :
+> The patch below does not apply to the v6.6-stable tree.
+> If someone wants it applied there, or to any other stable or longterm
+> tree, then please email the backport, including the original git commit
+> id to <stable@vger.kernel.org>.
 > 
-> v2: Removed part of the patch that was trying to protect fetching
-> the heap pointer from XArray, as that operation is protected by
-> the @pool->lock.
-> 
-> Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
-> Reported-by: Jann Horn <jannh@google.com>
-> Cc: Boris Brezillon <boris.brezillon@collabora.com>
-> Cc: Steven Price <steven.price@arm.com>
-> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> Thanks,
+> Sasha
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+Please try this one instead:
 
-> ---
->  drivers/gpu/drm/panthor/panthor_mmu.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index 8ca85526491e6..46b84a557d9cc 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -1580,7 +1580,9 @@ panthor_vm_pool_get_vm(struct panthor_vm_pool *pool, u32 handle)
->  {
->  	struct panthor_vm *vm;
->  
-> +	xa_lock(&pool->xa);
->  	vm = panthor_vm_get(xa_load(&pool->xa, handle));
-> +	xa_unlock(&pool->xa);
->  
->  	return vm;
->  }
+From eb2b3ebf29a859e788fe1cee9ca67d8e7ee580e9 Mon Sep 17 00:00:00 2001
+From: Benjamin Segall <bsegall@google.com>
+Date: Fri, 25 Oct 2024 18:35:35 -0700
+Subject: [PATCH] posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER on clone
 
+When cloning a new thread, its posix_cputimers are not inherited, and
+are cleared by posix_cputimers_init(). However, this does not clear the
+tick dependency it creates in tsk->tick_dep_mask, and the handler does
+not reach the code to clear the dependency if there were no timers to
+begin with.
+
+Thus if a thread has a cputimer running before clone/fork, all
+descendants will prevent nohz_full unless they create a cputimer of
+their own.
+
+Fix this by entirely clearing the tick_dep_mask in copy_process().
+(There is currently no inherited state that needs a tick dependency)
+
+Process-wide timers do not have this problem because fork does not copy
+signal_struct as a baseline, it creates one from scratch.
+
+Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
+Signed-off-by: Ben Segall <bsegall@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/xm26o737bq8o.fsf@google.com
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ include/linux/tick.h | 8 ++++++++
+ kernel/fork.c        | 2 ++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index 9459fef5b857..9701c571a5cf 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -252,12 +252,19 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
+ 	if (tick_nohz_full_enabled())
+ 		tick_nohz_dep_set_task(tsk, bit);
+ }
++
+ static inline void tick_dep_clear_task(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit)
+ {
+ 	if (tick_nohz_full_enabled())
+ 		tick_nohz_dep_clear_task(tsk, bit);
+ }
++
++static inline void tick_dep_init_task(struct task_struct *tsk)
++{
++	atomic_set(&tsk->tick_dep_mask, 0);
++}
++
+ static inline void tick_dep_set_signal(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit)
+ {
+@@ -291,6 +298,7 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
+ 				     enum tick_dep_bits bit) { }
+ static inline void tick_dep_clear_task(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit) { }
++static inline void tick_dep_init_task(struct task_struct *tsk) { }
+ static inline void tick_dep_set_signal(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit) { }
+ static inline void tick_dep_clear_signal(struct signal_struct *signal,
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 32ffbc1c96ba..525937981971 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -99,6 +99,7 @@
+ #include <linux/stackprotector.h>
+ #include <linux/user_events.h>
+ #include <linux/iommu.h>
++#include <linux/tick.h>
+ 
+ #include <asm/pgalloc.h>
+ #include <linux/uaccess.h>
+@@ -2417,6 +2418,7 @@ __latent_entropy struct task_struct *copy_process(
+ 	acct_clear_integrals(p);
+ 
+ 	posix_cputimers_init(&p->posix_cputimers);
++	tick_dep_init_task(p);
+ 
+ 	p->io_context = NULL;
+ 	audit_set_context(p, NULL);
+-- 
+2.46.0
 
