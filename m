@@ -1,102 +1,101 @@
-Return-Path: <linux-kernel+bounces-400476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0EB9C0E1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:54:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E2F9C0E21
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82D871C228CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:54:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0218E1C227F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E59217449;
-	Thu,  7 Nov 2024 18:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822E8217454;
+	Thu,  7 Nov 2024 18:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTwoAU7h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgIYwLi7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A936316419;
-	Thu,  7 Nov 2024 18:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60A316419;
+	Thu,  7 Nov 2024 18:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731005688; cv=none; b=IQWP1wcU26cFICS9SwQwuqyqzdjvdMa8ChS/KCvq19Pv1MNOw+0IUg4SY0xdBLzLc/HOCgAAt52iQ1g57Dyv+9cPf8qUGGpAE27ILr1TwvLjC1pDpNSAo8gBAXHZtRRn4XfcofrpZ8+aPS4S7HCfPjM2+FVGaDMtMJD4bISqEYk=
+	t=1731005827; cv=none; b=ijwBVvEQDOCvIANyPDZE8qfkZemVjsieawuswqBL2grcQ0rcbeRtjgVbhO1vjW+DttMvqwwwwqgfRK2Be+HxO8ch4fkjM7mfP3AKU22qMENGHom7LG7E8sB3FOovLmRGdMVrACKbMSQ/pXlGcNnBIcFu8FP2Ok+7yCoEMDsyTI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731005688; c=relaxed/simple;
-	bh=MhCtJqMxCesP9UetCsJ3TB7513bZMiDxVKi77MUHvmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1UStdIOw15SZwWN186PSEiDewMBujdDwXEzR4F6mYf0xg46UEB0OzcjH9be6IjejucMZc5eXrwYexIPpqO9VgqbwgEn6Wx24v1ugL3qz0CZWjga7kjafb1ZVth22QBiCc6CzjI/cBnFEa5VsZCVi7fG4itdFasAY6vIXPEymAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTwoAU7h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24081C4CECC;
-	Thu,  7 Nov 2024 18:54:48 +0000 (UTC)
+	s=arc-20240116; t=1731005827; c=relaxed/simple;
+	bh=KgoHIHK9HSb6L4DrF2oE0One5R4DZ781NKRZgIxJ9WY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jXDRBm/stEpz0VmbxWO+lOgoLhBGwVO1VynrVP8dhS5AYa+fqXvjCjOSW38GP1HwC+cjIQnyDzB/8S2VsgJtoRPcDKaDJNCyl7RG1xjVixSQSS5cRQ0dFSA1a0paARmXGHBdh92G7E8vaychgLdZP6B9id2By3w0jneNr2LQq+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgIYwLi7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51920C4CECC;
+	Thu,  7 Nov 2024 18:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731005688;
-	bh=MhCtJqMxCesP9UetCsJ3TB7513bZMiDxVKi77MUHvmg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KTwoAU7hfKTnCJkvgb//e6A5EICdebjw0RCS1bna2xXVZUfDSvLgLDw7fOaZG5r6z
-	 mbi+Tt22FcAxPtRsJXdbxhCip1EJsA6zfPPmiQTW5DtqCteTrVrGbW+zesHMDB8uVq
-	 ujiB4MUFD6PV99zsP1qwg/WeS2rwsgR5in4w6iAOVkuYVi4SnT1pIoXghVlCATKwqF
-	 Yof03QLPdwGLBQDhJ2PmKZ87VgLJ4rjkeySioNdOwrodHMmUtp5dfeo+D/s8dOLtUL
-	 7rKAQn4ThNQCU/3EkDrydMwhZbw3D947As6U2Pf7/gto3RYnZOmfT6zJCmOYYp/uvH
-	 3QZ4HanGX8ReQ==
-Date: Thu, 7 Nov 2024 08:54:47 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Luca Boccassi <bluca@debian.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>, kvm@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: cgroup2 freezer and kvm_vm_worker_thread()
-Message-ID: <Zy0M9yv7xIiKB_Xi@slm.duckdns.org>
-References: <ZyAnSAw34jwWicJl@slm.duckdns.org>
- <nlcen6mwyduof423wzfyf3gmvt77uqywzikby2gionpu4mz6za@635i633henks>
+	s=k20201202; t=1731005827;
+	bh=KgoHIHK9HSb6L4DrF2oE0One5R4DZ781NKRZgIxJ9WY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mgIYwLi7ktL2jSfCAsPyLqRx7a6ei91eNs+6dUKcH1gFAAGZ9+dHls+DacAUNXPJ5
+	 gTTLUT5+0ziG+qb1NbEIonnll2MyFN7EwL9HE/5qn+AEkPUpqhxl6k25ZSXBbXLOJG
+	 2xrLEKXnWzq8JLIHKTvu3UsdFznzh19SJkqO+6+MZiA4gW1QPe2fbAR2iWm7y/jNnP
+	 mZkybGoxK3mNd1+ECX1WFx9fw+psU0LMpFDtln4YVb1/ssFL7EWRb30itWt2X8dtTS
+	 8WI7AkNcTxGx6GOADYkx6v/FuBYeJgyeOEYa/9VIXQfGrBrSMsq+0STPNPLj8E1aHF
+	 0lzjqnRmfUvUA==
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org,
+	"Ariel Almog" <ariela@nvidia.com>,
+	"Aditya Prabhune" <aprabhune@nvidia.com>,
+	"Hannes Reinecke" <hare@suse.de>,
+	"Heiner Kallweit" <hkallweit1@gmail.com>,
+	"Arun Easi" <aeasi@marvell.com>,
+	"Jonathan Chocron" <jonnyc@amazon.com>,
+	"Bert Kenward" <bkenward@solarflare.com>,
+	"Matt Carlson" <mcarlson@broadcom.com>,
+	"Kai-Heng Feng" <kai.heng.feng@canonical.com>,
+	"Jean Delvare" <jdelvare@suse.de>,
+	"Alex Williamson" <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v1 0/2] Fix read permissions for VPD attributes
+Date: Thu,  7 Nov 2024 20:56:55 +0200
+Message-ID: <cover.1731005223.git.leonro@nvidia.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <nlcen6mwyduof423wzfyf3gmvt77uqywzikby2gionpu4mz6za@635i633henks>
 
-Hello,
+From: Leon Romanovsky <leonro@nvidia.com>
 
-On Thu, Nov 07, 2024 at 07:05:46PM +0100, Michal Koutný wrote:
-...
-> I'd first ask why the kvm_vm_worker_thread needs to be in the KVM task's
-> cgroup (and copy its priority at creation time but no later adjustments)?
-> 
-> If it can remain inside root cgroup (like any other good kthread) its
-> job may be even chunked into periodic/deferred workqueue pieces with no
-> kthread per KVM at all.
+Changelog:
+v1: 
+ * Changed implementation from open-read-to-everyone to be opt-in
+ * Removed stable and Fixes tags, as it seems like feature now.
+v0: https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
 
-That'd be better but I suppose kvm wants them in the same cgroup for a
-reason.
+--------------------------------------------------------------------------
+Hi,
 
-> If there are resource control/charging concerns, I was thinking about
-> the approach of cloning from the KVM task and never returning to
-> userspace, which I see you already discussed with PF_USER_WORKER (based
-> on #1). All context would be regularly inherited and no migration would
-> be needed.
-> 
-> (I remember issues with the kvm_vm_worker_thread surviving lifespan of
-> KVM task and preventing removal of the cgroup. Not sure if that was only
-> a race or there's real need for doing some cleanups on an exited task.)
-> 
-> As for #2, I'm not sure there's a good criterion for what to ignore.
-> Here it could possibly be PF_KTHREAD or PF_NOFREEZE (I get the latter
-> has purpose for system-wide (or v1) freezer). Generally, we can't tell
-> what's the effect of thread's liveliness so it seems better to
-> conservatively treat the cgroup as unfrozen.
+The Vital Product Data (VPD) sysfs file is not readable by unprivileged
+users. This limitation is not necessary and can be removed at least for
+devices which are known as safe.
 
-It'd have to be a separate flag which explicitly says that the task is
-exempt from cgroup2 freezer, so yeah, it'd be best if we can avoid this
-option.
+Thanks
 
-Thanks.
+Leon Romanovsky (2):
+  PCI/sysfs: Change read permissions for VPD attributes
+  net/mlx5: Enable unprivileged read of PCI VPD file
+
+ drivers/net/ethernet/mellanox/mlx5/core/main.c | 1 +
+ drivers/pci/vpd.c                              | 9 ++++++++-
+ include/linux/pci.h                            | 7 ++++++-
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
 -- 
-tejun
+2.47.0
+
 
