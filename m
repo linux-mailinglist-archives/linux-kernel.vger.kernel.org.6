@@ -1,158 +1,225 @@
-Return-Path: <linux-kernel+bounces-399306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE88A9BFD2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:05:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEEC9BFD2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 140C8B2286A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:04:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA071F22E04
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC4118FDDF;
-	Thu,  7 Nov 2024 04:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CBF18DF62;
+	Thu,  7 Nov 2024 04:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="kmdR20TA"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HVfkJiBG"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2063.outbound.protection.outlook.com [40.107.95.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6994218FDA3
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730952275; cv=none; b=oKLM9vixuskE/yYv4VWWhVgIDHUIC9EytAuHhwKbPHn7Anof2tGTPLfx3C4zqanV9HWjihq80X4jV61wxRHtWYXNZcpEnSCckRAeEWaTLwM4RSsfMsWmkE3HmGu1qF4vayRMji/uFMaokkuV6xX0Pp+cVbmNJw/8C2wxtE829PQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730952275; c=relaxed/simple;
-	bh=27tTQU34NjaE5CtqewEl6SGPHLgY5q1n0RMT5Wz6yn4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CU2G4YTK4Us5e6ObaQJGPVzIY6wRZTB+C8H4nxhOc3X6ow5AoMEEwIPOkL5wVR8O8To/F6meTo40ziftTAbs0scB2LmTIOAte0Y5CXoktVbK87FCaNfQlhNRxroJuK9qEYzTyPHMCEe9geVg7AuOARHYnjGlyRVvdy7zN0LSEZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=kmdR20TA; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730952230; x=1731557030; i=efault@gmx.de;
-	bh=I7GZsvRdDLC/Y4aETXsL4gaFGf8/Kwwk5pLerMnWhV8=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kmdR20TAmwkRZs1Zyllaxh3H94E1WJRw5aRu9EKUfbhean6sEUw32VwBwhERoi2l
-	 tL+UfvbJSe2UMEuP2r2Y/QoE+DE+iMy92DaUuDNVx9WOF7Yj9nE+JTw9NbALaB6X5
-	 8rs9Hw9FnrQeje2M54j2dzkxOdIQWhh+dDrP9yhC5v/3CkPtGDyNatEaTy4m5VnEc
-	 AJS+tXGn2obykrWjjJ4QV8Xc0bF70zZWtDxVf5WvWzlXUz5fk298mD1Cb0C8MwPMy
-	 v9635eNjABxuUi0yrx/d62Zw+FT+tcl8+Ue0GdPXusz/qj8LGDVifYbzKxQPjAQ6d
-	 gpRadwcG98ObUT43FQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.61]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M1Ygz-1t7WAf26bD-00EcdL; Thu, 07
- Nov 2024 05:03:50 +0100
-Message-ID: <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-From: Mike Galbraith <efault@gmx.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Phil Auld <pauld@redhat.com>, mingo@redhat.com, juri.lelli@redhat.com, 
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
- linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com,  youssefesmat@chromium.org, tglx@linutronix.de
-Date: Thu, 07 Nov 2024 05:03:49 +0100
-In-Reply-To: <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
-References: <20241101125659.GY14555@noisy.programming.kicks-ass.net>
-	 <20241101133822.GC689589@pauld.westford.csb>
-	 <20241101142649.GX9767@noisy.programming.kicks-ass.net>
-	 <20241101144225.GD689589@pauld.westford.csb>
-	 <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
-	 <20241101200704.GE689589@pauld.westford.csb>
-	 <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
-	 <20241104130515.GB749675@pauld.westford.csb>
-	 <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
-	 <20241106135346.GL24862@noisy.programming.kicks-ass.net>
-	 <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
-	 <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC83417D355;
+	Thu,  7 Nov 2024 04:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730952263; cv=fail; b=TwSBR9LzrAkRsoiy9O4dlwUujoD/qsA0O8B5w82jtmydoVbHbtukLhFxwGb9Zecy5nRwdTF5IGTTtf0VFE3F5OeeRB+Y8t7vFUfEq4S/UrtVcXG6di1k1UaUZ96WZsiGhmtaCHieGfG4TwrAVidxKwpfniLmzTwBp5M7Cc5oM3k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730952263; c=relaxed/simple;
+	bh=Zbp+JMnMXwsrqGHR6VnzXX41uQzKAFdKFwoZ3gaeEW8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3uCSADbeenLEPGcgHkf2MRnzVaSSo+8duNwNjXcdmb6zXCVJsz+zccx93DfRZllPdYtcP0xB7/a6vp1VjQVltps19WO+wrevMDBd1YCbCJbtI8xY9IOwj/KUoskylGcfcjm7tEFjHqy2WnUVpavZH2JKYV85ZO6STtfU28rC54=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HVfkJiBG; arc=fail smtp.client-ip=40.107.95.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J46wkMXyQZoKDvrCVYEuf6C/TCcJ67c5XpXflbxVThQY+LiEvmmwy8olPNFDCrbmDgZNA6LUHC0Jyx6mfcGfe7J8NVI6mgoSF1aknAKvdzcbpY82UfJSGzME5MPWiT8c8AqFhCHro8QUoHEcCUw/3QZFUY4dhrKrdZFMRmi21W8el2vt872+BPlR9urPA40udnmcGLJGEYEblSl+I1AaAHHCisGH4DDwnPQQSJxSHVyJuPUczbeZAadb75ooKVRFR5au64x4oTUpdOuCFfd3MUYwdwRKJEJ218YLEBtgIpPOXAG1mcRLWXsajHUZLuEZcHyFcdkX5a6AFKl4QaiEow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1X9rUaQdMQ/aBmME9MScxeedMtfk6+zS+QPYIrEuSQE=;
+ b=BO9/lIGaSpIg1rc4ANeGPsTW2twJkFbfz+Gc9GeP7qBWU+/9jlh/xChSWhPrQbS/f3uWz2Wg68D31zTJ+xR28HyYgwQFX5mV9gFWOXCNdn6mTdru3ytzmUzqrXYYfhfPHs/HUQncjv/8ty493/TuezLciFV9xc4r2dFF2tNVbuZDf4VuZoa3o8SR74sF6wkZ6MwM3ZRtRnLmovh5MBBOdVlofmEBZ+Mwd9Io+WUza7cJFmAffvE1fqji0M2VWW5rG6LeriVIPaaR9ma6+/rMrwc83J2QpSZZoObSS855sDt+NVpKRTRLb8BNxlDhb0rrrWB/chj3GoXmfN2ODN/b0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1X9rUaQdMQ/aBmME9MScxeedMtfk6+zS+QPYIrEuSQE=;
+ b=HVfkJiBGqpA3bxrMe8ICUuqtjkkxYN6ybAUA70NAWxj/lT7B0hA5wx8W55igbVxy7HRzOTUxjdcZleyV/uRQK8EPBXWcSb4qw+ki+7HqqYsocOxB062u+/7dyYuL2f1v+Fb51G0oFN5ocPFXcvmfKHBP3pNGLPRBtOEK06ITVt1P9wJM39qiYgvZXl6Ko5gIN52LHECbUmr63h2j9D4XF0579Hu+NgInveBi/NLgXDADnfm/Mz7lYirbxEZKsHO/gQFYmf0d3YCaraVO83vMfIp3nHpMW65419/P4PczjoYAUlGMJly91swpGGeO1Gk8Q29nkSGbkYhS0ZpDzFP3Xg==
+Received: from MN2PR11CA0020.namprd11.prod.outlook.com (2603:10b6:208:23b::25)
+ by DS0PR12MB8504.namprd12.prod.outlook.com (2603:10b6:8:155::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
+ 2024 04:04:18 +0000
+Received: from BL6PEPF0001AB73.namprd02.prod.outlook.com
+ (2603:10b6:208:23b:cafe::5c) by MN2PR11CA0020.outlook.office365.com
+ (2603:10b6:208:23b::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19 via Frontend
+ Transport; Thu, 7 Nov 2024 04:04:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF0001AB73.mail.protection.outlook.com (10.167.242.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8137.17 via Frontend Transport; Thu, 7 Nov 2024 04:04:18 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 6 Nov 2024
+ 20:04:12 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 6 Nov 2024 20:04:11 -0800
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 6 Nov 2024 20:04:10 -0800
+Date: Wed, 6 Nov 2024 20:04:09 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
+	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
+	<robin.murphy@arm.com>, <dwmw2@infradead.org>, <shuah@kernel.org>,
+	<iommu@lists.linux.dev>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<baolu.lu@linux.intel.com>, <eric.auger@redhat.com>,
+	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
+	<yi.l.liu@intel.com>, <aik@amd.com>, <zhangfei.gao@linaro.org>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v7 13/13] Documentation: userspace-api: iommufd: Update
+ vIOMMU
+Message-ID: <Zyw8OUTLrG3Yx+Yx@Asurada-Nvidia>
+References: <cover.1730836219.git.nicolinc@nvidia.com>
+ <7e4302064e0d02137c1b1e139342affc0485ed3f.1730836219.git.nicolinc@nvidia.com>
+ <ZywQP3_TpdttuCy8@archie.me>
+ <ZywZcSidYCWkJgrw@Asurada-Nvidia>
+ <ZywyEUmL4HvM8B9v@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:EomAJGyprbJXddmBsrCJ50FDwlMbd/BuTiVIRK/4MR9/atRKU8y
- OQutsLt0seXtCnUmZr1RLu0t2UE9sCFTQ2txfGdx2L4LImjlDeaXtoabcQQmN2/i4O9kixW
- GHZFgc0zFi791jTAesZNdC0dGidiCDC05/KQWBepafDje41fY38o1jORc2UKnXiRAwn14ho
- ZzSs6XdXk9VC6yki9DHeg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:efSZEt1cm2E=;ZRtiXivjKz3L6x9yWYeGcZA7Je6
- fZ4wukKjduxHoTbU7xKn/JSTsfE5yc8kOzkBma6F3r/7KwBZLr3yQxJcaVxjdcvpb24nmZRYL
- Jv69kS9V66xuslpQSRhlofIme4jO+YPUQwDem6paGhHc9aAs3Oe6EG21G2ckOL5u+mf8LBm3h
- HJUac5MxtwkePp/odemK6NtFZd6FXbPtzAyoPLFfyerPf30bmm1LXUZErgJZPGapScFZCpLEY
- 6KDfZq48ERUKK+QLJC6RqSgbD50biNj6NQvMA3haSnhopmqxCYgQQjnFa4X2pTRXe2IGO8LZ6
- 1JVvQ3t3u8zQi/LaZvTOD5rvAvWLTPtvZt9Mdk1aA033vKcCkmE8krMSyxCgSjkboR9F6PjmR
- glxeeC73YP80fQWUL/JGqP4akNbgd4cL6Yz2CQkExGmhbvHt72R2EQJ0KCkq2glajsfhJdnP8
- TSNwocEOvdNyOF2KjUQp4guyiigh0jrCJp0mgF6wESuPzsT1QCb3ULY5XQPiWgB5zKbHcBtXd
- bjMRbj8QhOwsa9ShmGRQQ1LaKDv4zbUUNVq9fE7XSLVRMBItjtCl1GQkqElCH9JOAA9W0nqYB
- EFKxPPK34QKSJmzF+rO5Jk4mpFasguez+eJQC2dWIzrNEIw1mOlJkOfFW9LzPP9JWk2wIVPs0
- +KOmeYCq8Y7YjNjMxKYHO3f0S0XZiDcaa5eJhq3G1NxO8vBim08dfTl7Tol+4iijiPipbiaB6
- YGISfyof4esCaFElSvHyKT9SO/hvMEY9Rfks/0SzwWGIeOank0BoPfCcsHTe1sgfmU0xQNc/5
- LZedcnf6yhYkJRDJXfcI1GdYVQyxEz9qM20plT8YRInK6T5oGI6ur9hUO2b5gXDEbDPKjE++O
- Xxy1cAwYEih9cgHlXNTOh5LlnUGwqCsdSZu7FmCSbV569JI+raDghHajQ
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZywyEUmL4HvM8B9v@archie.me>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB73:EE_|DS0PR12MB8504:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a1329aa-35a9-4ebd-fbc1-08dcfee140d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Rn++p/ct/uakTl92Uu11DIZ6Jh/3FsX73q6BX70Tr+9K+ShJNxHzyJTH8MNp?=
+ =?us-ascii?Q?VOTjEAX4F4w0eA4ZoqlDiPKiqWMJmifmxZahEKkfSDWzDiTqu5uwH/9Z8Juw?=
+ =?us-ascii?Q?O1eyuZ1Kb3FN7xDaDfGnQ9JYmlT3M8lK89fZ6lzV3NbojR08ADMR6I1DzQha?=
+ =?us-ascii?Q?EG/Favj3ojQwwwlPuG9cFpzclSwytQEsSIQYceFqnCmKdq2+SBh6aX2PLGNH?=
+ =?us-ascii?Q?iJ9OMyZRvdK6/GppEq3OJleG7ELCY+IqnrlaDCs1rDuRlYIe99skpgBO7zAT?=
+ =?us-ascii?Q?jSyedhsH2LhEH9mmfd46Da1Se2wypA4utO1YkVAwClXFwLb79ZpY2GuVM8J+?=
+ =?us-ascii?Q?B2o++HgOXdYOToOgPxIuVMGcS5arDSNuRAcCEuKRnus23AfqlBi3jGRuwcpi?=
+ =?us-ascii?Q?ux21i6mggwPkDEhNmy0HmiFQac30SDNIRCmno3Ke5Y792lJnHBm8vFXa2pSo?=
+ =?us-ascii?Q?9roVsMcjJZ7AtZqSmWOGRNkCY6GmTcblc25L+1cTNVCMzViWztTitOHIwPjN?=
+ =?us-ascii?Q?EyxnCEqzolXp+3bOPrDqtx+weuL6AJaQxuK2n0ostJb9VcZULPETn+Y2SGmc?=
+ =?us-ascii?Q?Aad//fMLMt1KAI6B7JS5R+M7uWOfvD1nj13vkP0PKfLTaFWxPChqZNp0KNGb?=
+ =?us-ascii?Q?2sE9PaZtQvxtsMJ2UdWQmv223yRYIqGG89aSn5oUqSg7Jt1fb6alYW8eO5vu?=
+ =?us-ascii?Q?1h7kF9lNTKi2hjcMtHqNhI6bePnilqo8/tayYMnF9HlKnMdwnq/m2IEHCgNb?=
+ =?us-ascii?Q?aNUv/23jW330+FQ5KlAWRm/LKglNWpBPZPgmparM5f1CofFmbbL/0foSVaKf?=
+ =?us-ascii?Q?gOxBZGPeTi4nDBEd0oyDQ0qHBi7YCnc9PzjDKVMy5xedHnfRwXGQUeiZ4ATH?=
+ =?us-ascii?Q?M49s3HEFMYBU6iw8VE/M0/aD1rshnfRrUtOhPYJ77v+o6o+EHVPTrjJa8/oY?=
+ =?us-ascii?Q?YLMTzQ+ka1g1xa5Zoo/gF9/nKi7ZGpQuA3YOIPtXDpJJw6VLnC+Hh6IQk31b?=
+ =?us-ascii?Q?DsAXwg8V3Zf7Qu9MxSEwqj16wLaJFLSWteleEgLXMSEQyapqh9bnvRTyfjAN?=
+ =?us-ascii?Q?eWuC8Tpva4j2i7flmHD562DgsNrd/NjXkYuOf1K2E3SMyO09yM0GKTLvf4Uu?=
+ =?us-ascii?Q?vRt1ryHlNlKIzXbPyO/6Qe0cxvK2ZGH6uQdj/Ii+8aYXW7FCEvLrcSYyDUIF?=
+ =?us-ascii?Q?3SLf7YVc0yFW3ygc41tYHIreodfaiT5SnUYbAeTqeR2I5EJm7ywqIb8sqkEL?=
+ =?us-ascii?Q?nsQ5bfv0/XuosRgEfI2f4g/X+qqD1JukVuljZrPPzWZmTVuqVmr83s4IAQfp?=
+ =?us-ascii?Q?kodpFseb0DQGaTC8zdMFqnKSpR/Ips4ReFSw5TgFR4JxFj5v7B3AXI2kX8BP?=
+ =?us-ascii?Q?d1eFfemaEDWDwniP8QA+9Kbdx3jYVm7NrKUqcGEkSQbmBQBYBQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 04:04:18.6870
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a1329aa-35a9-4ebd-fbc1-08dcfee140d2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB73.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8504
 
-On Wed, 2024-11-06 at 16:22 +0100, Mike Galbraith wrote:
->
-> Hm, if we try to bounce a preempted task and fail, the wakeup_preempt()
-> call won't happen.
+On Thu, Nov 07, 2024 at 10:20:49AM +0700, Bagas Sanjaya wrote:
+> On Wed, Nov 06, 2024 at 05:35:45PM -0800, Nicolin Chen wrote:
+> > On Thu, Nov 07, 2024 at 07:56:31AM +0700, Bagas Sanjaya wrote:
+> > > On Tue, Nov 05, 2024 at 12:04:29PM -0800, Nicolin Chen wrote:
+> > > > With the introduction of the new object and its infrastructure, update the
+> > > > doc to reflect that and add a new graph.
+> > > > 
+> > > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > > > Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> > > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> > > > ---
+> > > >  Documentation/userspace-api/iommufd.rst | 69 ++++++++++++++++++++++++-
+> > > >  1 file changed, 68 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/userspace-api/iommufd.rst
+> > > > index 2deba93bf159..a8b7766c2849 100644
+> > > > --- a/Documentation/userspace-api/iommufd.rst
+> > > > +++ b/Documentation/userspace-api/iommufd.rst
+> > > > @@ -63,6 +63,37 @@ Following IOMMUFD objects are exposed to userspace:
+> > > >    space usually has mappings from guest-level I/O virtual addresses to guest-
+> > > >    level physical addresses.
+> > > >  
+> > > > +- IOMMUFD_OBJ_VIOMMU, representing a slice of the physical IOMMU instance,
+> > > > +  passed to or shared with a VM. It may be some HW-accelerated virtualization
+> > > > +  features and some SW resources used by the VM. For examples:
+> > > > +  * Security namespace for guest owned ID, e.g. guest-controlled cache tags
+> > > > +  * Non-device-affiliated event reporting, e.g. invalidation queue errors
+> > > > +  * Access to a sharable nesting parent pagetable across physical IOMMUs
+> > > > +  * Virtualization of various platforms IDs, e.g. RIDs and others
+> > > > +  * Delivery of paravirtualized invalidation
+> > > > +  * Direct assigned invalidation queues
+> > > > +  * Direct assigned interrupts
+> > > 
+> > > The bullet list above is outputted in htmldocs build as long-running paragraph
+> > > instead.
+> > 
+> > Oh, I overlooked this list.
+> > 
+> > Would the following change be okay?
+> > 
+> > -------------------------------------------------
+> > diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/userspace-api/iommufd.rst
+> > index 0ef22b3ca30b..011cbc71b6f5 100644
+> > --- a/Documentation/userspace-api/iommufd.rst
+> > +++ b/Documentation/userspace-api/iommufd.rst
+> > @@ -68,2 +68,3 @@ Following IOMMUFD objects are exposed to userspace:
+> >    features and some SW resources used by the VM. For examples:
+> > +
+> >    * Security namespace for guest owned ID, e.g. guest-controlled cache tags
+> > @@ -75,2 +76,3 @@ Following IOMMUFD objects are exposed to userspace:
+> >    * Direct assigned interrupts
+> > +
+> >    Such a vIOMMU object generally has the access to a nesting parent pagetable
+> > -------------------------------------------------
+> > 
+> > The outputted html is showing a list with this.
+> 
+> Yup, that's right!
 
-Zzzt, wrong, falling through still leads to the bottom of a wakeup with
-its preempt check...
+Thank you! Would it be possible for you to give a Reviewed-by,
+given the condition of squashing this diff?
 
-> Bouncing preempted tasks is double edged sword..
+Likely, Jason will help squash it when taking this v7 via his
+iommufd tree. So, we might not respin a v8.
 
-..but that bit is pretty intriguing.  From the service latency and
-utilization perspective only at decision time (prime mission), it's an
-obvious win to migrate to an idle CPU.
-
-It's also a clear win for communication latency when buddies are NOT
-popular but misused end to end latency measurement tools ala TCP_RR
-with only microscopic concurrency. For the other netperf modes of
-operation, there's no shortage of concurrency to salvage *and get out
-of the communication stream*, and I think that applies to wide swaths
-of the real world.  What makes it intriguing is the cross-over point
-where "stacking is the stupidest idea ever" becomes "stacking may put
-my and my buddy's wide butts directly in our own communication stream,
-but that's less pain than what unrelated wide butts inflict on top of
-higher LLC vs L2 latency".
-
-For UDP_STREAM (async to the bone), there is no such a point, it would
-seemingly prefer its buddy call from orbit, but for its more reasonable
-TCP brother and ilk, there is.
-
-Sample numbers (talk), interference is 8 unbound 88% compute instances,
-box is crusty ole 8 rq i7-4790.
-
-UDP_STREAM-1    unbound    Avg:  47135  Sum:    47135
-UDP_STREAM-1    stacked    Avg:  39602  Sum:    39602
-UDP_STREAM-1    cross-smt  Avg:  61599  Sum:    61599
-UDP_STREAM-1    cross-core Avg:  67680  Sum:    67680
-
-(distancia muy bueno!)
-
-TCP_STREAM-1    unbound    Avg:  26299  Sum:    26299
-TCP_STREAM-1    stacked    Avg:  27893  Sum:    27893
-TCP_STREAM-1    cross-smt  Avg:  16728  Sum:    16728
-TCP_STREAM-1    cross-core Avg:  13877  Sum:    13877
-
-(idiota, distancia NO bueno, castillo inflable muy bueno!)
-
-Service latency dominates.. not quite always, and bouncing tasks about
-is simultaneously the only sane thing to do and pure evil... like
-everything else in sched land, making it a hard game to win :)
-
-I built that patch out of curiosity, and yeah, set_next_task_fair()
-finding a cfs_rq->curr ends play time pretty quickly.  Too bad my
-service latency is a bit dinged up, bouncing preempted wakees about
-promises to be interesting.
-
-	-Mike
+Nicolin
 
