@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-400257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C848C9C0B14
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:14:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E60979C0B15
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:14:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E7EB23D52
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B981C22F47
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE47217322;
-	Thu,  7 Nov 2024 16:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217BE215037;
+	Thu,  7 Nov 2024 16:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P03Vbxhr"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epJMQqkN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C26217316;
-	Thu,  7 Nov 2024 16:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780ED215009
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730995921; cv=none; b=XCJet83dYItVIAZN1UKuOZ9sR0kglVS2Z8Nsby/yGHBXEt0AZaPqoogveIq6JcR2TK5j98/e2U1T+Mv7GV566TcawMkDWQRoHzqvapl3CxemQWuhOYJfNubZABdxN6c7RC4x6NDMV+p6LdpAB+0E/as0287wU9kytLcKDI4Cp5s=
+	t=1730995960; cv=none; b=W/Up7LX4YCZrESWJebLe/3cs1Wk0pbDKenfKcjtyH5hYUZQJhq+mi0uwTjVYYQmFhLkVDL6jOyQM4kOXIw1BcEcD+LYMT4fKkGqmdMuvOUgwm8WGwlzML3glASbioxayGgiXBtTOxsEZSjLEkdedmLkWs3SkCV5nbKw+o3JdUWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730995921; c=relaxed/simple;
-	bh=NfXPc0KoeadFdO2NlcX/HenhhfnnZL96KLA3VoTh+40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EstsvoNBU+FPy1OWHAfSb8CkwVx2NBCcO93dimw8OZcjSdgpnaQayBmD5g+CDaV4MrFN4xVIC3p58SO//LEEm4StNV1Cz+P0yBhlyChyVxLGbxlAAjP/3lb88Kyp44p36Eda1tO/ZWqQLIG6gvdev6fPFZjS6RVmxCD66JfgQf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P03Vbxhr; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=d3xSlIqNLv2BbfbJf9pBWeu+m2edFwZPJAVYYpuoIZ0=; b=P03VbxhrcsEfH1OfWf112PNvuo
-	ba2WxcL4nnoJBm1F0memqsCnsLXkjsJErdoMV4bN6KQC8HvdsOSdiMIBuTOcSLFilnl8kFZ9LgJ1A
-	2fYoaP2KwtXcPw2Ai145PEkvWxxHW3N8HBTJykwCWy2dZQLIgnh+mV0+cjMDthA+eoreDC3lJg1cl
-	TTVQiACxzUpJYS69KeovrSNW0FzKlkl5i6jfUSM2p0wwf/l9V0af+QcvBSXmiapWcj1sE9b/MQNeG
-	vu+wSFqjFwHxRMwwtwyfQBDtyhgUhMS1Fzr2anEVaxH6ES6jASPfyY2wCvASVhB6oYNfFrqTDwX48
-	ZITi72pQ==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t956t-00000006wwX-3nJo;
-	Thu, 07 Nov 2024 16:11:52 +0000
-Message-ID: <464b1628-957a-485b-87d9-47636491de22@infradead.org>
-Date: Thu, 7 Nov 2024 08:11:45 -0800
+	s=arc-20240116; t=1730995960; c=relaxed/simple;
+	bh=HkyzQfU/YWQ94VKF6hjA3/zJTW/2/cuXNMB+jvmGzs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lj3XLUW/W+RjANfgCcVzKXE6ZQms09NlDtrf9bjFFG/FwscHOViJ6zv+REj9QwuiYuR18iM7Nyl110YLo7S+0/64c3m6zZEXG1yYWhM3P+081cwuIwThCNQsPrSc9SAsNNRMVqmpKvjBFdWbs+QcGpasCfe4xnVEiZTql+RuRCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epJMQqkN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B154C4CED2
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730995960;
+	bh=HkyzQfU/YWQ94VKF6hjA3/zJTW/2/cuXNMB+jvmGzs0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=epJMQqkNM+ESNJjXDFaeoY+XigvHL9vtmzMOhtHMKqNwxuIUHYFhsSiXRDP3410Lr
+	 JntpGF6JZTkMwTGNLlM+citARYCJ+ttCYETJ/Lj4qeo8iMX1SXBwoMKymtgt66iFGi
+	 U+HbuHuhiJcbXdRG2HmT8hk+3lYemPdzJ2URbNQFcu1d7r5XyVJQ2eabjA3B3gTETI
+	 fxyDuFsQslPrktBprSNAQLDWPM1OgFWsMu/9OkN/EaxsBSN0hD3Da5yrqd1XOvtcMe
+	 wlqg7s0dLmm8sKXWo6MZtuZiVKqnW5PjGOZ3qwRnGrwUQpj7SN/A/jdCmWMoRujs0Y
+	 pYtakgmFVcNMg==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb51f39394so9924421fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:12:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU9A0hdqWeFj4vwJ3EoMmt5Vr7V9dsBUMUAABE0QCDJMfEps220VQ/IqslulcOGAuW5hNAPhOP3ML8+qyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz21FT9dS36OVA+y6J6XCcF7IwBOT3lnMcBMMMMG8f0Zs9JoxRp
+	zkJh5ruppzT+Qo9cq89K6omZRTUtDlo04m9tV3P1rjMtZkpRA7wMHlrlD/KsS3VBkpz5noviPXo
+	oBeh0O0HBZNrBY3neo6kN0higkvc=
+X-Google-Smtp-Source: AGHT+IGSIFu3S2G+gZU6ZHKD5uBYHmfwUrb6PGP4MRbADkkQI2Kzfvxe395OTiakIVHFYTrU97KxqBuwCB+5rzdSmtI=
+X-Received: by 2002:a2e:be9a:0:b0:2fb:58c0:de5b with SMTP id
+ 38308e7fff4ca-2fcbdfb098emr241770151fa.11.1730995958249; Thu, 07 Nov 2024
+ 08:12:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Documentation/mm: Fix spelling in hwpoison.rst
-To: Abhinav Saxena <xandfury@gmail.com>,
- linux-kernel-mentees@lists.linuxfoundation.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
- Zhihao Cheng <chengzhihao1@huawei.com>, Richard Weinberger <richard@nod.at>
-References: <20241107063042.106228-1-xandfury@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241107063042.106228-1-xandfury@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240605101610.2824747-6-ardb+git@google.com> <20241107155941.GAZyzj7bhkavHswsI3@fat_crate.local>
+In-Reply-To: <20241107155941.GAZyzj7bhkavHswsI3@fat_crate.local>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 7 Nov 2024 17:12:27 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEy0B3Jf_njyign-WuPup-hEB4a9C3dPk4xrZzH9mz4Ww@mail.gmail.com>
+Message-ID: <CAMj1kXEy0B3Jf_njyign-WuPup-hEB4a9C3dPk4xrZzH9mz4Ww@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] x86: Rid .head.text of all abs references
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>, 
+	Brian Gerst <brgerst@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 7 Nov 2024 at 17:00, Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Wed, Jun 05, 2024 at 12:16:11PM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > This series removes the last remaining absolute symbol references from
+> > .head.text. Doing so is necessary because code in this section may be
+> > called from a 1:1 mapping of memory, which deviates from the mapping
+> > this code was linked and/or relocated to run at. This is not something
+> > that the toolchains support: even PIC/PIE code is still assumed to
+> > execute from the same mapping that it was relocated to run from by the
+> > startup code or dynamic loader. This means we are basically on our own
+> > here, and need to add measures to ensure the code works as expected in
+> > this manner.
+> >
+> > Given that the startup code needs to create the kernel virtual mapping
+> > in the page tables, early references to some kernel virtual addresses
+> > are valid even if they cannot be dereferenced yet. To avoid having to
+> > make this distinction at build time, patches #3 and #4 replace such
+> > valid references with RIP-relative references with an offset applied.
+> >
+> > Patches #1 and #2 remove some absolute references from .head.text that
+> > don't need to be there in the first place.
+> >
+> > Changes since v2:
+> > - Rebase onto v6.10-rc2
+> > - Tweak commit log of patch #3
+> >
+> > Changes since v1/RFC:
+> > - rename va_offset to p2v_offset
+> > - take PA of _text in C code directly
+> >
+> > Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Brian Gerst <brgerst@gmail.com>
+> >
+> > Ard Biesheuvel (4):
+> >   x86/sev: Avoid WARN()s in early boot code
+> >   x86/xen/pvh: Move startup code into .ref.text
+> >   x86/boot/64: Determine VA/PA offset before entering C code
+> >   x86/boot/64: Avoid intentional absolute symbol references in
+> >     .head.text
+>
+> Those look forgotten in my mbox. Do we still want them to go somewhere?
+>
 
+I'll get back to this next cycle. Patch #2 has become redundant now,
+and I need to incorporate some feedback from Tom into patch #1.
 
-On 11/6/24 10:30 PM, Abhinav Saxena wrote:
-> Fix spelling of "focusses" to "focuses" to follow standard English usage.
-> 
-
-We accept British spellings.
-
-internet says:
-"Both spellings are acceptable in American and British English."
-
-"Focused" is the past tense of the verb "focus" and can also be used as an adjective to mean clear. For example, "She had a focused approach in training". 
-The plural of the noun "focus" can be either "foci" or "focuses". 
-
-    FOCUS definition and meaning | Collins English Dictionary
-    ), plural, 3rd person singular present tense focuses , focusing , past tense, past participle focused language note: The spellings...
-    Collins Dictionary
-
-Focussed vs Focused | Spelling, Explanation & Examples - QuillBot
-Sep 10, 2024 — Published on September 10, 2024 by Trevor Marshall, MSc. Revised on October 29, 2024. Both focussed and focused are ac...
-QuillBot
-Spelling Tips: Focused or Focussed? | Australia's Best Writing Tips
-May 7, 2020 — Summary: Focused or Focussed? 'Focused' and 'focussed' are two spellings of the same word: Focused (one 's') is the sta...
-getproofed.com.au
-
-    Show all
-
-"
-> Checkpatch.pl reported this issue.
-> 
-> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
-> ---
->  Documentation/mm/hwpoison.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/mm/hwpoison.rst b/Documentation/mm/hwpoison.rst
-> index 483b72aa7c11..dd02fae484dc 100644
-> --- a/Documentation/mm/hwpoison.rst
-> +++ b/Documentation/mm/hwpoison.rst
-> @@ -17,7 +17,7 @@ To quote the overview comment::
->  	hardware as being corrupted usually due to a 2bit ECC memory or cache
->  	failure.
->  
-> -	This focusses on pages detected as corrupted in the background.
-> +	This focuses on pages detected as corrupted in the background.
->  	When the current CPU tries to consume corruption the currently
->  	running process can just be killed directly instead. This implies
->  	that if the error cannot be handled for some reason it's safe to
-
--- 
-~Randy
-
+I imagine #3 and #4 should still apply, and they could be taken
+independently, but there is no urgency.
 
