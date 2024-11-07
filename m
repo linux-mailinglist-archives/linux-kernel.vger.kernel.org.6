@@ -1,174 +1,138 @@
-Return-Path: <linux-kernel+bounces-400377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9049C0CAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:17:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2519C0CB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55A6EB223BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:17:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF3C1C2437F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D61F215F7A;
-	Thu,  7 Nov 2024 17:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79E0215F71;
+	Thu,  7 Nov 2024 17:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YFvxOr0y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pFRHwlaG";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YFvxOr0y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pFRHwlaG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLnNPBEe"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56048212F0E;
-	Thu,  7 Nov 2024 17:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3239212EF0;
+	Thu,  7 Nov 2024 17:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730999857; cv=none; b=b7dyaiYr9TkknCZSypXhLXi/V9EsevYcM3kcnKSFMQtBPRYbwqOJIhS2D+mpEPcI2/qwfLWLKYEMfyiSrx5SmY6SV/Pk7B0zkjiVciAMuPu1SbZhUb7wJd1TsZ6wAP7waEvFhW5I9Z5Sldp1EusKsAuCXGjejKtMaAcuBt+hxbs=
+	t=1730999904; cv=none; b=HiWATJGyJBxS/zheoqwZit5JcDv7WZH9mWOikvFeQp7lDkrBBQXr/bLU5b8WJGLasbv4z4EiYqlBU5X4vIlmQBwJcVDxHVTxzNpU2pUdkVsaxZwgYVTKjv3Ot28xoctpZMELbIKCALAbDPengLHM4ZhIh7CxADgP9b1QttoosFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730999857; c=relaxed/simple;
-	bh=VaWW2DFFCTYdWWQET8wM9ft5WooLa1sb93u/KZLj/tE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fq+BJxA2yo57U/Dwt4bFtMRI2EHnaHTlOb9FD+21vxvF8JivbrebFE1yyuhfk4CTGSoWC1voBMWJAZeewxR4qEJTwquOFjI6/6ZALDjgJT98R9yGzkO7LXV/XkWqiQFy3XbqbycixJZJY+vumQEJFUwY7D6NsZOv49SjoVaP6yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YFvxOr0y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pFRHwlaG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YFvxOr0y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pFRHwlaG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 028C421BFB;
-	Thu,  7 Nov 2024 17:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730999847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YhoKKPeq71OZQU120h9eJbeH9ItIKhio+QA5rswmTvw=;
-	b=YFvxOr0yG4k6SQz3DkIoAdgT2FepLe+IVy1eAA3+5Y8CSk4tzp2ParPNmN9zhdGJy7A2+/
-	Lj5zMetC8Gtqx3iTqVJur3vJzcDhEW8QJSf6UV0SbAfEpSkAHq/ecGBS6+Jcj8ANjh2Okk
-	cWPokzVwNnrz20duuoQ0t7dpYS4zM18=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730999847;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YhoKKPeq71OZQU120h9eJbeH9ItIKhio+QA5rswmTvw=;
-	b=pFRHwlaGozfWjtN3xsl4gqo9c35jTZcQ3dEHjJZBss74QgmeDu72qilebst3c60oxdAFGO
-	cVzXwIvPZWefVQAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730999847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YhoKKPeq71OZQU120h9eJbeH9ItIKhio+QA5rswmTvw=;
-	b=YFvxOr0yG4k6SQz3DkIoAdgT2FepLe+IVy1eAA3+5Y8CSk4tzp2ParPNmN9zhdGJy7A2+/
-	Lj5zMetC8Gtqx3iTqVJur3vJzcDhEW8QJSf6UV0SbAfEpSkAHq/ecGBS6+Jcj8ANjh2Okk
-	cWPokzVwNnrz20duuoQ0t7dpYS4zM18=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730999847;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YhoKKPeq71OZQU120h9eJbeH9ItIKhio+QA5rswmTvw=;
-	b=pFRHwlaGozfWjtN3xsl4gqo9c35jTZcQ3dEHjJZBss74QgmeDu72qilebst3c60oxdAFGO
-	cVzXwIvPZWefVQAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EAB71139B3;
-	Thu,  7 Nov 2024 17:17:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7mlLOSb2LGfAGQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 17:17:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 898C9A08FE; Thu,  7 Nov 2024 18:17:26 +0100 (CET)
-Date: Thu, 7 Nov 2024 18:17:26 +0100
-From: Jan Kara <jack@suse.cz>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] ext4: Use str_yes_no() helper function
-Message-ID: <20241107171726.w3izawdg237qngit@quack3>
-References: <20241104233204.7771-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1730999904; c=relaxed/simple;
+	bh=3L2w8sk0IewHmNOdYMkEGuOpJA2AnrnOMzLbeG9YLuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nQEpS9oYPkmZAFjdNbzmAdoIT/v5nB170AP4GLKwGPbLF+V4IU7CC7XAK1GEK+3jx908XkTckYU77iXhGP5dX0Rqity9Fhdtq3Sy+Ea9Y8P68t2VBZTlAaVG0Iihad1BayD5aLhVKRa0zP1hPqzb5ULjD19mnteTCXVyEegLqjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLnNPBEe; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso18194841fa.2;
+        Thu, 07 Nov 2024 09:18:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730999901; x=1731604701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lCQcscgVQW9TCpLgV+TKeC9YuIl0nvTbO9Vm0LDTTMo=;
+        b=aLnNPBEeUJH1AuwAIHa0E6zd9qLGKzGsU9oWcmZmohExhKuQGux2Se/HZu3iiWDP9c
+         B89PtbRxw11WcENltxtGgK0bkZHlZjEQ1xpwYZq0Znq0Na1b+yIXmuica92c45n579Jc
+         3ARx05Dl3JtTgsVc1P6M9d8BGAz76DoBqR+8C78ka2EANWm2sGOfFJTiYa19a/VsUTrv
+         +pKipyh6GXPDSVSY286AGiZj2YhvnYRqJbKVlmzHiA8oCiBcwfrYtDgvCorNJkouugZ3
+         VrsQJMRTqsNJTHsW98R5gYkEWnbSn9LeUsR672Klz9+5KULA+5YU6hTyr5dWl30cJAKm
+         CF2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730999901; x=1731604701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lCQcscgVQW9TCpLgV+TKeC9YuIl0nvTbO9Vm0LDTTMo=;
+        b=fxJiG7c932g2lLvp4FIJl0KLsvTtWxH4XZIkTFMJ/DpkJjuOcRHtTsmHBTqomCo4NV
+         vXuO0VxhJR7m70U6mv5SaYCLnIwatagcgpuWwdOM36zT8jNWyCEnj60Y9ABekGL4T/PW
+         wSjuvOMa9Xfw4xG3DXMySR9vT6ptPiZ83fto4S7DP1N9kj9r8Run6wXo8grj3yAiMTe4
+         qGTlwBzBnifzjbyEsRDe5WQR3e+15Rs5u8W90oRqzrpH8ua2XoasmRhKhq5VpoYZQmNP
+         dDnXhzB0SDWJCxuFS2Uel9pgMEyWtdADwryq+BB9I0roqqxzoWxYO2CoIfMPiwhfDHco
+         W/cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU01vfrIcCUfz19KwTjRiQQHK91/V1M7cD2ShrEnXYJXutdPp3Hch3IxC6B642itMo3yEo9m2Pa2G8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6Py5pOymfqA0JpVmtuAiLIJHo7uUqcZtMAbV6pja9ls1P0dU/
+	hK4Y7JdWh4sAQL6fWN379PaqIlFNUbAH0lych14lbhxA36AHw4zdAt2TUMCmvSlHSck9+1BwTVP
+	0kKJALYZ1oJkUBAtcLVDZPmQeUqYKVvXzALc=
+X-Google-Smtp-Source: AGHT+IEwkOTrQhYLXYKOVmXFMdan5Xz1LVGnbN+vdBDj11DstOSVIbAfHtM4ppHEWuEpf40Q1zC+Rcgp0Eu169Gf63E=
+X-Received: by 2002:a2e:ab0d:0:b0:2fa:c0b5:ac8c with SMTP id
+ 38308e7fff4ca-2ff1f68df7fmr2046251fa.21.1730999900430; Thu, 07 Nov 2024
+ 09:18:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104233204.7771-2-thorsten.blum@linux.dev>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241105045535.84071-1-yesanishhere@gmail.com>
+In-Reply-To: <20241105045535.84071-1-yesanishhere@gmail.com>
+From: anish kumar <yesanishhere@gmail.com>
+Date: Thu, 7 Nov 2024 09:18:09 -0800
+Message-ID: <CABCoZhAK7wTrUFouz306QJ_i1ytgo6cLEKemc_5qhez6Wo-1Zg@mail.gmail.com>
+Subject: Re: [PATCH] drivers: core: Clarify EPROBE_DEFER retry mechanism
+To: corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 05-11-24 00:32:05, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_yes_no() helper function.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Hello Jonathan,
 
-OK. Feel free to add:
+Wondering if you have any comments?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Mon, Nov 4, 2024 at 8:55=E2=80=AFPM anish kumar <yesanishhere@gmail.com>=
+ wrote:
+>
+> The existing documentation for EPROBE_DEFER explains its purpose
+> and usage, but does not specify when deferred probes are retried.
+> This patch adds information about the retry mechanism to provide
+> a more complete explanation of how EPROBE_DEFER works.
+>
+> Specifically, it clarifies that:
+>
+> 1. Deferred probes are added to a pending list
+> 2. A successful probe of any device triggers moving all devices
+>    from the pending list to an active list
+> 3. A workqueue processes the active list to retry deferred probes
+>
+> This additional context helps developers better understand the
+> behavior and implications of using EPROBE_DEFER in their drivers.
+>
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
 > ---
->  fs/ext4/mballoc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index d73e38323879..4d8e82cb90fd 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -5711,7 +5711,7 @@ static void ext4_mb_show_ac(struct ext4_allocation_context *ac)
->  			(unsigned long)ac->ac_b_ex.fe_logical,
->  			(int)ac->ac_criteria);
->  	mb_debug(sb, "%u found", ac->ac_found);
-> -	mb_debug(sb, "used pa: %s, ", ac->ac_pa ? "yes" : "no");
-> +	mb_debug(sb, "used pa: %s, ", str_yes_no(ac->ac_pa));
->  	if (ac->ac_pa)
->  		mb_debug(sb, "pa_type %s\n", ac->ac_pa->pa_type == MB_GROUP_PA ?
->  			 "group pa" : "inode pa");
-> @@ -6056,7 +6056,7 @@ static bool ext4_mb_discard_preallocations_should_retry(struct super_block *sb,
->  	}
->  
->  out_dbg:
-> -	mb_debug(sb, "freed %d, retry ? %s\n", freed, ret ? "yes" : "no");
-> +	mb_debug(sb, "freed %d, retry ? %s\n", freed, str_yes_no(ret));
->  	return ret;
->  }
->  
-> -- 
-> 2.47.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  Documentation/driver-api/driver-model/driver.rst | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/driver-api/driver-model/driver.rst b/Documenta=
+tion/driver-api/driver-model/driver.rst
+> index 06f818b1d622..c86b948d0dfe 100644
+> --- a/Documentation/driver-api/driver-model/driver.rst
+> +++ b/Documentation/driver-api/driver-model/driver.rst
+> @@ -171,10 +171,13 @@ released all resources it allocated.
+>  Optionally, probe() may return -EPROBE_DEFER if the driver depends on
+>  resources that are not yet available (e.g., supplied by a driver that
+>  hasn't initialized yet).  The driver core will put the device onto the
+> -deferred probe list and will try to call it again later. If a driver
+> -must defer, it should return -EPROBE_DEFER as early as possible to
+> -reduce the amount of time spent on setup work that will need to be
+> -unwound and reexecuted at a later time.
+> +deferred probe list and will retry again as and when a device or driver
+> +gets added to the system. A successful probe of any device will trigger
+> +moving all devices from pending list to active list. A workqueue process=
+es
+> +the active list to retry deferred probes. If a driver must defer, it
+> +should return -EPROBE_DEFER as early as possible to reduce the amount
+> +of time spent on setup work that will need to be unwound and reexecuted
+> +at a later time.
+>
+>  .. warning::
+>        -EPROBE_DEFER must not be returned if probe() has already created
+> --
+> 2.39.3 (Apple Git-146)
+>
 
