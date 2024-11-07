@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-399930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E38D9C067B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:59:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E89979C067E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:00:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562C01F21DBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B651F2146B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8A0217914;
-	Thu,  7 Nov 2024 12:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB44212181;
+	Thu,  7 Nov 2024 12:53:26 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04DC212171;
-	Thu,  7 Nov 2024 12:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD18B217904;
+	Thu,  7 Nov 2024 12:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730984003; cv=none; b=AT5vgSV+8ra0DgUMZ58qlL/kpECPzhmXKBmYEDdEO0/GW0PorBGznT9bt/oMJy7HrnKWCkEJoQGa92j7/lXWlqDFiPgWNFYuqhqUh61ZOXKrr3L9vgMNFpEPrHrU1Pn7zGVEcdkHI4cuXZ7pO0Xx2DZ8Znzkzl3GiC+iLMjRCro=
+	t=1730984005; cv=none; b=iMFcP8oV84ebOHDc6bo5wx+wpEhaRo+soONOpBlUIgw/L3Sq2K21Djpvp9TxSfdeIOP0FTv4TC4nJQG44DeNJ449+PEtVA8H7nscThQYHgAaTSuExV1Le3nGTUmfmisg6mxvFBs0EUe6avuuVWB5PgbdtVUjS/hh3i86tA+STxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730984003; c=relaxed/simple;
-	bh=w//oz49RFW0FGN6kIjlGyOVQ8mNTqSaIM/vtfz2beh4=;
+	s=arc-20240116; t=1730984005; c=relaxed/simple;
+	bh=03KkwZiPQBOVnf4NMbcHta8rWedhXrG6c2Fui05BMnc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oNSpUqrDvw4UmlcUi6LTx/D3Ca6zxYSym2hEwagjXJIEj4/ksoapxzIYD9GlRhqcwQKOKZOsWP7B1kjJ5thhfO9bir/RPhLqDMzjMP8tXy8G/lPHkj4q16n5rtD+bAiZqoGfab0QUPM+Z8gizAuwo7EJljTzKDCgGhbeK3ek7E8=
+	 MIME-Version; b=lNObJPFbo070QshNTH0oOJ9ZzMBchPWLYL0WGulUvhUAOWa3jBmGBIV62kAUnZ+KxSBlT1D0ElzjGJ+DlmuLCR2Y/pAZs6SGe3TfDaTOEMR+NrrAQn+Hkack/PoB0Etd3UUiGE06zc1zGZdRC7geK60puQo+ZRgw6dzErIqpIac=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A5BB497;
-	Thu,  7 Nov 2024 04:53:51 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B8381063;
+	Thu,  7 Nov 2024 04:53:53 -0800 (PST)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 594383F66E;
-	Thu,  7 Nov 2024 04:53:19 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 619973F66E;
+	Thu,  7 Nov 2024 04:53:21 -0800 (PST)
 From: Leo Yan <leo.yan@arm.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Adrian Hunter <adrian.hunter@intel.com>,
@@ -45,9 +45,9 @@ To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v2 2/3] perf cpumap: Add more tests for CPU map merging
-Date: Thu,  7 Nov 2024 12:53:07 +0000
-Message-Id: <20241107125308.41226-3-leo.yan@arm.com>
+Subject: [PATCH v2 3/3] perf cpumap: Add checking for reference counter
+Date: Thu,  7 Nov 2024 12:53:08 +0000
+Message-Id: <20241107125308.41226-4-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241107125308.41226-1-leo.yan@arm.com>
 References: <20241107125308.41226-1-leo.yan@arm.com>
@@ -59,72 +59,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add additional tests for CPU map merging to cover more cases.
-
-These tests include different types of arguments, such as when one CPU
-map is a subset of another, as well as cases with or without overlap
-between the two maps.
+For the CPU map merging test, add an extra check for the reference
+counter before releasing the last CPU map.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- tools/perf/tests/cpumap.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ tools/perf/tests/cpumap.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/tools/perf/tests/cpumap.c b/tools/perf/tests/cpumap.c
-index 7f189d57232f..f8187a801b8e 100644
+index f8187a801b8e..5ed7ff072ea3 100644
 --- a/tools/perf/tests/cpumap.c
 +++ b/tools/perf/tests/cpumap.c
-@@ -156,21 +156,45 @@ static int test__cpu_map_print(struct test_suite *test __maybe_unused, int subte
- 	return 0;
- }
- 
--static int test__cpu_map_merge(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
-+static int __test__cpu_map_merge(const char *lhs, const char *rhs, int nr, const char *expected)
- {
--	struct perf_cpu_map *a = perf_cpu_map__new("4,2,1");
--	struct perf_cpu_map *b = perf_cpu_map__new("4,5,7");
-+	struct perf_cpu_map *a = perf_cpu_map__new(lhs);
-+	struct perf_cpu_map *b = perf_cpu_map__new(rhs);
- 	char buf[100];
- 
- 	perf_cpu_map__merge(&a, b);
--	TEST_ASSERT_VAL("failed to merge map: bad nr", perf_cpu_map__nr(a) == 5);
-+	TEST_ASSERT_VAL("failed to merge map: bad nr", perf_cpu_map__nr(a) == nr);
+@@ -167,6 +167,15 @@ static int __test__cpu_map_merge(const char *lhs, const char *rhs, int nr, const
  	cpu_map__snprint(a, buf, sizeof(buf));
--	TEST_ASSERT_VAL("failed to merge map: bad result", !strcmp(buf, "1-2,4-5,7"));
-+	TEST_ASSERT_VAL("failed to merge map: bad result", !strcmp(buf, expected));
+ 	TEST_ASSERT_VAL("failed to merge map: bad result", !strcmp(buf, expected));
  	perf_cpu_map__put(b);
++
++	/*
++	 * If 'b' is a superset of 'a', 'a' points to the same map with the
++	 * map 'b'. In this case, the owner 'b' has released the resource above
++	 * but 'a' still keeps the ownership, the reference counter should be 1.
++	 */
++	TEST_ASSERT_VAL("unexpected refcnt: bad result",
++			refcount_read(perf_cpu_map__refcnt(a)) == 1);
++
  	perf_cpu_map__put(a);
  	return 0;
  }
- 
-+static int test__cpu_map_merge(struct test_suite *test __maybe_unused,
-+			       int subtest __maybe_unused)
-+{
-+	int ret;
-+
-+	ret = __test__cpu_map_merge("4,2,1", "4,5,7", 5, "1-2,4-5,7");
-+	if (ret)
-+		return ret;
-+	ret = __test__cpu_map_merge("1-8", "6-9", 9, "1-9");
-+	if (ret)
-+		return ret;
-+	ret = __test__cpu_map_merge("1-8,12-20", "6-9,15", 18, "1-9,12-20");
-+	if (ret)
-+		return ret;
-+	ret = __test__cpu_map_merge("4,2,1", "1", 3, "1-2,4");
-+	if (ret)
-+		return ret;
-+	ret = __test__cpu_map_merge("1", "4,2,1", 3, "1-2,4");
-+	if (ret)
-+		return ret;
-+	ret = __test__cpu_map_merge("1", "1", 1, "1");
-+	return ret;
-+}
-+
- static int __test__cpu_map_intersect(const char *lhs, const char *rhs, int nr, const char *expected)
- {
- 	struct perf_cpu_map *a = perf_cpu_map__new(lhs);
 -- 
 2.34.1
 
