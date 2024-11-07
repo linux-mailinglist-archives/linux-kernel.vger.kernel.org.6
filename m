@@ -1,188 +1,232 @@
-Return-Path: <linux-kernel+bounces-400144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C019C0985
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:01:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BA79C0989
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:02:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153E3284C0B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:01:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F1B284F55
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A3B1E04AF;
-	Thu,  7 Nov 2024 15:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF77021315D;
+	Thu,  7 Nov 2024 15:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qi0dQ+/Q"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2060.outbound.protection.outlook.com [40.107.92.60])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FdpwDVlB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B8917C79
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730991689; cv=fail; b=WPwzYOByF9MiXpBlB1rmfHPaXmZZnLLrQcEqB+LDEBfw7gkHFwVm8mRpXnHuasCm8ltS+JyRUSqD/7qLIu2hcAbcU1aWYdfdCOjyDeQv3eRBqe2OyMwqn8yluHdKjh8JQcLyTZ8xQ692brf7HlQJS7kpwbfIU7DV+jDHKH9J9DM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730991689; c=relaxed/simple;
-	bh=pK7OQEPdQrYteHfDVBdLBKOAOk0s7WrWG38HbSp3DlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b1ZW7NJ+UU49TnkIH3ju1/NPGFxx0cr9SbsW2nPHm5/ga6hq9xKDfdRbXG2CYwjcRgm83O/wzSqbuQOutxk96Bn8KKBfUjzuh3wHsRPHbjTrSNGijhnnkTfYjS89qSnFcGqrwY9+rn3nC2HH/3rTDudkfX5o+vvvrY8aIBOWI2E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qi0dQ+/Q; arc=fail smtp.client-ip=40.107.92.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GKZCDCixFCxC9aqEDnK+XdrPYGERR61dQ7533oOeWkPNoLRIgo25r6vHl9CQ2JJYjnV4HMw4jlBZz8k2nJDiLB3quTnMsumLK1xsMjx0Zp6wKvcfmZCFGHwSfYPUqmOYTXJHWstTRlEKjw3JLwyE7tY9pu0J99hlEz3PBTIrTj5euk9+FH7SN5Fbka0tUfMYrCxisT22089Tgm4JLjFVUBPxofnTHotlmY5MEjzfb8XJzKHrO5lxfuK8j1+mEGDIu6VnkI2+hrI+XvBhpLKKojQqaaUo50vmxGLicxPa2o/thQNseaKwvhX6zT2lJBc9hR+iB5ZzoU+oD675/DkUVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pESU1KtUBrjBkQhO539T0j7c0FTuq+g2WpkM49IHpn8=;
- b=l828OBoV8howQlCNRDvbgiG9aciamF8XNNyE7VlM2dJHSz+11yk0Bqs++gHNka1jzn7/VIH0IOJZ4CCj7NN1GiXWhxdqFIwmLxwQSSW3rxdasj9o+iJGfKhOyKG8yVjHM3XOrC8Ix+kb5sBiRY36y9mu8FDdrwcNplscfpWYtWoGqcLsu3UM/a0u1HaHKXxBq7sgorO2XdLoQSJv7wQun/Ym9k9fiynT/nWJh75nId+O8G+fgVBzmO2fr06Uz8Xg5QN3Im0/Phdnty2zziPWDaF/6x6on+CVjBu9qV2ajbnJHDYhwRWF1PHsEZ/pio4KN6nPEJ3vPVN4kF2ewcuXaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pESU1KtUBrjBkQhO539T0j7c0FTuq+g2WpkM49IHpn8=;
- b=qi0dQ+/QdsGdSnHkliTshIzOMCuLom41m7FIaIv7lTs8fKymGI/h4YCY4ndrB8LSVTQY3PMkIvZ6LtLzvVj9Sro2+vShQENHjDbfTTrFqcdZJey2417D7qmYdGGP+AUWMt/0X6QfETTFVm3tZ9sp5/Kv2fEHD3X2/Dl6O40UWkFXUSOrQ79WrDluRwOOg57AXVvJ2enrAe6ToDDTKmZDa/93gaJcJRQlXUmE5kvk9tE8rgE1wJpsdWDJ6VRK3AOt4RF+VDAAlXheOkuqnhWJUhIjUD3HLK6TNYDlKOOk/IdRcGAGL7B/P8q5OBoC7/6FMXUaUZVZP+yJ+Zjx/ReKaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- IA1PR12MB6019.namprd12.prod.outlook.com (2603:10b6:208:3d5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
- 2024 15:01:14 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%7]) with mapi id 15.20.8137.019; Thu, 7 Nov 2024
- 15:01:14 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-mm@kvack.org, Ryan Roberts <ryan.roberts@arm.com>,
- Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>,
- Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
- John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] mm/huge_memory: add two new (yet used) functions
- for folio_split()
-Date: Thu, 07 Nov 2024 10:01:11 -0500
-X-Mailer: MailMate (1.14r6065)
-Message-ID: <7C0C7025-DBCF-4544-8E95-1E781CA94710@nvidia.com>
-In-Reply-To: <C9096636-C91B-42C0-A236-F3B7D9876489@nvidia.com>
-References: <20241101150357.1752726-1-ziy@nvidia.com>
- <20241101150357.1752726-2-ziy@nvidia.com>
- <e6ppwz5t4p4kvir6eqzoto4y5fmdjdxdyvxvtw43ncly4l4ogr@7ruqsay6i2h2>
- <C9096636-C91B-42C0-A236-F3B7D9876489@nvidia.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR19CA0045.namprd19.prod.outlook.com
- (2603:10b6:208:19b::22) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA56212F0C
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730991719; cv=none; b=OveYXXNmM9w1ZIWTDq/mwvZ23Ksxs4YvRhfr+tOt8DcSMY96IYRQ99igMV6QXPWv43xD90QYXkq6dMVUkaMKZCaj0YxHtQ+QHBdrhOV1SvA0Q+afenq0CJGWEiS0hT0wzEUDx+rb4FRRO667ejzm+ndqsz39S5x9RvsNI9nbjKg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730991719; c=relaxed/simple;
+	bh=BcCssuJkh8gL1YcujKqWtRxdJh22MLP0AR8iUfe8AW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3xndFYPe5uvI5VNeHoSbzKCj9Hb5fG+gDwKIXeRqvok840neI9g8uqA3av9ReeTHCfHm5d+M8P3dYHLKQqN49FqoIgxUxg20/3H3QKzaNdNC1nROTYCjLkZKSVcMuretdiPI7FBGrl/ASK7NsaWUxPy4SOzyBstMYgr+XGM5JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FdpwDVlB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730991716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4Xmu1kxDhzwlZgXeOwsE6gEAR/pvNGajgUpVujRUjeE=;
+	b=FdpwDVlBwYHCzAeAtgoXYapnx7s/sN1KzHCggcDyIpW9wccWVYW30en8CvlVzGGMVgQhSG
+	DvDNY3y3uY4wgrNQ9Z3oyS/RPWmZXuvWjq+v6EX/G2HvVdUgvGY1MwYzr1AfwYeir0FUB7
+	kU3Fh4dmlMmIPbDxuOd4zo1adkPzS6g=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-mn_anOkVPdeC4022HdKA7A-1; Thu,
+ 07 Nov 2024 10:01:50 -0500
+X-MC-Unique: mn_anOkVPdeC4022HdKA7A-1
+X-Mimecast-MFC-AGG-ID: mn_anOkVPdeC4022HdKA7A
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B7A81955EB9;
+	Thu,  7 Nov 2024 15:01:47 +0000 (UTC)
+Received: from f39 (unknown [10.39.192.153])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C2F81953882;
+	Thu,  7 Nov 2024 15:01:43 +0000 (UTC)
+Date: Thu, 7 Nov 2024 16:01:38 +0100
+From: Eder Zulian <ezulian@redhat.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <ZyzWUirB25EYTTOO@f39>
+References: <20241107182411.57e2b418@canb.auug.org.au>
+ <20241107103414.GT10375@noisy.programming.kicks-ass.net>
+ <20241108000432.335ec09a@canb.auug.org.au>
+ <20241107141212.GB34695@noisy.programming.kicks-ass.net>
+ <cade359b-8e58-4031-b21b-3c47e0dcf3af@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA1PR12MB6019:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e9bc07b-661e-4607-2277-08dcff3d060e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oiD4+/7xDHzxd2H38VvGfKaZTOjhEJD6LmRjUmUNCioeqzAeujWA3OEkyeyH?=
- =?us-ascii?Q?bkyHzE2jRWymtYsfJjmbEJ0yYaIKnRYzTmm+ZKZWsx6pg2ZKT9MeHNQLEyGl?=
- =?us-ascii?Q?yR8Tc+52q4Q4C3PoGfvSV35EGys6pMOPuyOjc/TTrnbOHnv7WWsk1hsPBbC5?=
- =?us-ascii?Q?C/T0TM0vhZB4BFI/NQlcT6POumTELtTLyY2ClWzZEMeItdKRBMyHO3h1JLaC?=
- =?us-ascii?Q?H+1zWY72Rk/+nUbcqFuJaaeDhqYgy90dTAnx/du72rUFCEGY3alBPvzOYbWa?=
- =?us-ascii?Q?JrWWpGVnWaKXfhIpfqBl+9JPuGMy35eEoIW/vZujL5Bnd6u/QPIBf+ULTlbQ?=
- =?us-ascii?Q?/M9HBq5BDJ+u2Oo47Vzt+rpavPGzKg6wcFmTGu7OUF7C79lkV4lqf9PvTOHA?=
- =?us-ascii?Q?61PBbPWs8/PK8qahCleNi7WBV9vKkGo3i6iL4bodqPFVaVuW439cy6hAtUPV?=
- =?us-ascii?Q?317Ss5dScmtOLYGeNOjnvsItPxUn7BRtPgH93FS06urP+WjHL/pvGSqvNS2/?=
- =?us-ascii?Q?/iaEjqhyPOIK4NwLr9onvN547M5AiLZaEleXpKDaiLNz1Hoqy7Eraz3nxLIf?=
- =?us-ascii?Q?l5DINh/ECJA+jQLvlj2bKTkY/7t373/78VgD0K1HmsEfT1pnbdDEgRcaB3/B?=
- =?us-ascii?Q?BT6TcwuVkjh72YZGkxn6WhbJqa9RQvYhqCnLzSBUk24MdxBLM8jxgnu30UyT?=
- =?us-ascii?Q?5rseCefZ5KPdHtaNgQR0hMEpYsnLs/E+SPbkzeR3wehxHP11ngtnfDaza265?=
- =?us-ascii?Q?yYweuCcMlpQ5wgocLa950M/0Qqzi4j0majQqjWBdvN6X1rtUF3FsMnL5Hs+J?=
- =?us-ascii?Q?8T06dx7bsk06Y4waekkFBz+a0hH3CM+TCtPTOCmHNtzPcJ3p7IexCHlVICa8?=
- =?us-ascii?Q?Pdf+vhmNKWe+rPGUhHv++9H9UZ3DL3kCDC2QIae/eqdEYDn8q0I43i9YH4wl?=
- =?us-ascii?Q?5b5HhDXRbM6dhFCWnDBxdVeJOHn56jMjsgdnf279M8NScvg9FAVxWxqc8BzK?=
- =?us-ascii?Q?hHgqkuRuEXTaZHtcBfxxFVejoD6Gd/dW6OVJ+nZNeV8BxfrWejKF9iRbp1Ay?=
- =?us-ascii?Q?2uZLCLNV0PkcrapAiuwRgT9yMSxHscx7pOz1SaHf/Gfy47b0+Xny64IoStct?=
- =?us-ascii?Q?rui0AR8nDwS14bh23DlcF6tVoXMaHCZzibZ7CLAr0oteTiYFCC8x/PakqRXt?=
- =?us-ascii?Q?630bducw4xOOGBvTUu+k0hjWIF6ZAQzcD6vgO1B/npuSeuUZvDtpnZUNL+n2?=
- =?us-ascii?Q?FEBKVe38x1TEF/BExZY8vGBzDol+WZUJ4VCF1rNSyJzo7XVVt5vmH71iJmCB?=
- =?us-ascii?Q?4vtnk+B7CnpNXZ5HAOdhl4jy?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ucwVJUsofIkgz0Xo0QxTL9HKcfda6eNqwC0PvnXSlXPjCgrtS242MXYMHm6O?=
- =?us-ascii?Q?Xl5hKWBTApR4tH4qgtdISfJ26hS9IdNuWShW05Fd3Jezx+tzsxDyi8z7QSTR?=
- =?us-ascii?Q?o3CfZiuPYxcicjBmOGYye4rseLZsr7IY8/jbsFJZaHHV4KXlnJUcpWemA0vj?=
- =?us-ascii?Q?dRn1gs7cq5MBbxgDcCKPabVfGy6v01F0Q1ySgdO2GWUBGEwBr3GBfHQMMKU4?=
- =?us-ascii?Q?iADEwE/K6ERPkj+lhMmgKC/Ved9WjxbBONZ5vT6AaHXkJOJaYuGYX33z+NL1?=
- =?us-ascii?Q?MCqagOaxf+EO62tDCIjE7EUWEdIgyUFgNTrVRQCwd7k/9ZKsB5xak0jVliod?=
- =?us-ascii?Q?JHgxwpVRHDfqXMREcqwYbI4osqupZyCosi8QixZvWmHAJcawxe2k1N0P97Rf?=
- =?us-ascii?Q?DfHMZ7XWmj/AZtCHU6SPEy8a/4dFGJvov70Bb7PEpEIp9YpN/WicmTwmpOW2?=
- =?us-ascii?Q?e1oIwMBPkqKuI5EEyfgN/rIwPDlSOrmojf2kuUMo5mIUwRq4x0cDUda9N8cC?=
- =?us-ascii?Q?/sh7167mScJ/YNJX5zTp1oc7Ugpe+/7jWhtnc/brywKC+kP8sDjmWK8LjS5Z?=
- =?us-ascii?Q?PnLJRbKPAmWS1amHNnwgP3dYY4wMVqyXK8VI+Lqnn1qg2s465xzWxadVnZa4?=
- =?us-ascii?Q?xQuxe0eWlXmu5qOZpzH6U0S3L6eFrYCIVNe5exkqgu77BLfHDSeN16ZFgUJD?=
- =?us-ascii?Q?nqaP8XJIRzkfuwcCCAhZ9F9UP+mrJaD3PTqkPotSpptEnW/cNho5V6HoTHBM?=
- =?us-ascii?Q?dKjYOYHNHY4uYqVn1tsZ98gNFzsNFiflz2fO82EtZRnP45f8ibvEY+fB06Dz?=
- =?us-ascii?Q?dlQEypvDkjLqTAXY3nvMVQL7Lno5TrR66De6WAdRAJU/clUUpcmyauUlHhF2?=
- =?us-ascii?Q?8nGYBaQAUFBNPYxEUVlpi7LrHVzuKy91yYrWduzYGk9FHk0T1PrEh+H1A6e1?=
- =?us-ascii?Q?dU0boXUKrzto7as4EFm65fpNq/VNNVscoLSEruO8kf7dmGPc3wBl71mldjP5?=
- =?us-ascii?Q?0iUx6Zy+zfbh1IQ8rJO40s7F1k7TbJoVHVeZdpbNJae1oi//wdip0g+FZczJ?=
- =?us-ascii?Q?JpckLunquvc/B7eVvZHuVYMFyrSEQQ6AECB3HQ67T8KqwX48euqwaOFFZkpO?=
- =?us-ascii?Q?fXX1RR6A7Ab9CNqmFVwdwu0d7jJLIcvQqLMu9pAbK39REltfvhdlaBos6Woj?=
- =?us-ascii?Q?W3mcCJemxORA44LoauWdY8nTSaVivmAavNEYLdTxYfc01MlAJGoROxITkmLP?=
- =?us-ascii?Q?mIkamsQimtNzNHo0kHEO2XSlAQ3c8pQMF3775N5mHABT7XzRR9mGQE7KHfIG?=
- =?us-ascii?Q?WJEEAyGucMEQ25uWJM/1xhEK5BxVG9ZTA9POjRsqKd+npO6Gpl2cB22rZkHI?=
- =?us-ascii?Q?ht0P5KpCS5+WmpLUH8PvIH4Ml42a/Eqv+RX4vYY+hAaOLR3aG0R8ZTlilVk+?=
- =?us-ascii?Q?y9xyouU/r8Pqpx3gVOQFrlsEFiaAF0Ell3se2CgEAn/CE56+bTmp+2LzN6pm?=
- =?us-ascii?Q?JfiDdbw04yORtfK5VuJeyiafdQBi3EGe/M7cLWuFBO3VcovNL/drDJvAiSTd?=
- =?us-ascii?Q?0HIYCB7dVCAwIgONvGAkb6Qo6YoX6X6v7zRKT/6F?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e9bc07b-661e-4607-2277-08dcff3d060e
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 15:01:14.0495
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lHGDCltsUoaGrLdABG/AWCt6Nveq/XCTp7yy3QoiFc19dEL93B3S3orREca7TSxs
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6019
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cade359b-8e58-4031-b21b-3c47e0dcf3af@app.fastmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
->>
->>> +
->>> +		if (mapping) {
->>> +			/*
->>> +			 * uniform split has xas_split_alloc() called before
->>> +			 * irq is disabled, since xas_nomem() might not be
->>> +			 * able to allocate enough memory.
->>> +			 */
->>> +			if (uniform_split)
->>> +				xas_split(xas, folio, old_order);
->>> +			else {
->>> +				xas_set_order(xas, folio->index, split_order);
->>> +				xas_set_err(xas, -ENOMEM);
->>> +				if (xas_nomem(xas, 0))
->>
->> 0 gfp?
->
-> This is inside lru_lock and allocation cannot sleep, so I am not sure
-> current_gfp_context(mapping_gfp_mask(mapping) &	GFP_RECLAIM_MASK); can
-> be used.
->
-> I need Matthew to help me out about this.
+On Thu, Nov 07, 2024 at 06:22:31AM -0800, Boqun Feng wrote:
+> 
+> 
+> On Thu, Nov 7, 2024, at 6:12 AM, Peter Zijlstra wrote:
+> > On Fri, Nov 08, 2024 at 12:04:32AM +1100, Stephen Rothwell wrote:
+> >> Hi Peter,
+> >> 
+> >> On Thu, 7 Nov 2024 11:34:14 +0100 Peter Zijlstra <peterz@infradead.org> wrote:
+> >> >
+> >> > On Thu, Nov 07, 2024 at 06:24:11PM +1100, Stephen Rothwell wrote:
+> >> > So I can't get RUST=y, even though make rustavailable is happy.
+> >> > 
+> >> > make LLVM=-19 allmodconfig does not get me RUST=y
+> >> > 
+> >> > I started out with tip/master, tried adding rust-next, then kbuild-next
+> >> > gave up and tried next/master. Nada.
+> >> 
+> >> Just on Linus' tree allmodconfig gives me:
+> >> 
+> >> $ grep RUST .config
+> >> CONFIG_RUSTC_VERSION=108100
+> >> CONFIG_RUST_IS_AVAILABLE=y
+> >> CONFIG_RUSTC_LLVM_VERSION=180108
+> >> CONFIG_RUST=y
+> >> CONFIG_RUSTC_VERSION_TEXT="rustc 1.81.0"
+> >> CONFIG_HAVE_RUST=y
+> >> CONFIG_RUST_FW_LOADER_ABSTRACTIONS=y
+> >> CONFIG_BLK_DEV_RUST_NULL=m
+> >> CONFIG_RADIO_TRUST=m
+> >> CONFIG_HID_THRUSTMASTER=m
+> >> CONFIG_THRUSTMASTER_FF=y
+> >> CONFIG_TRUSTED_KEYS=m
+> >> CONFIG_HAVE_TRUSTED_KEYS=y
+> >> CONFIG_TRUSTED_KEYS_TPM=y
+> >> CONFIG_TRUSTED_KEYS_TEE=y
+> >> CONFIG_TRUSTED_KEYS_CAAM=y
+> >> CONFIG_INTEGRITY_TRUSTED_KEYRING=y
+> >> CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=y
+> >> CONFIG_SYSTEM_TRUSTED_KEYRING=y
+> >> CONFIG_SYSTEM_TRUSTED_KEYS=""
+> >> CONFIG_SECONDARY_TRUSTED_KEYRING=y
+> >> CONFIG_SECONDARY_TRUSTED_KEYRING_SIGNED_BY_BUILTIN=y
+> >> CONFIG_SAMPLES_RUST=y
+> >> CONFIG_SAMPLE_RUST_MINIMAL=m
+> >> CONFIG_SAMPLE_RUST_PRINT=m
+> >> CONFIG_SAMPLE_RUST_HOSTPROGS=y
+> >> CONFIG_RUST_DEBUG_ASSERTIONS=y
+> >> CONFIG_RUST_OVERFLOW_CHECKS=y
+> >> CONFIG_RUST_BUILD_ASSERT_ALLOW=y
+> >> 
+> >> $ rustc --version
+> >> rustc 1.81.0
+> >
+> > Yeah, I'm not sure what's going on. I occasionally get rust stuff, but
+> > mostly when I try allyesconfig. Weirdness.
+> >
+> >> > Anyway, I think the above needs something like this:
+> >> > 
+> >> > ---
+> >> > diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
+> >> > index b7b0945e8b3c..5804a6062eb1 100644
+> >> > --- a/rust/helpers/spinlock.c
+> >> > +++ b/rust/helpers/spinlock.c
+> >> > @@ -5,11 +5,16 @@
+> >> >  void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
+> >> >  				  struct lock_class_key *key)
+> >> >  {
+> >> > +#ifndef CONFIG_PREEMPT_RT
+> >> >  #ifdef CONFIG_DEBUG_SPINLOCK
+> >> >  	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+> >> >  #else
+> >> >  	spin_lock_init(lock);
+> >> >  #endif
+> >> > +#else
+> >> > +	rt_mutex_base_init(&lock->lock);
+> >> > +	__rt_spin_lock_init(lock, name, key, false);
+> >> > +#endif
+> >> >  }
+> >> >  
+> >> >  void rust_helper_spin_lock(spinlock_t *lock)
+> >> 
+> >> I will try to remember to add that to the tip tree merge tomorrow.
+> >
+> > Boqun, could you test the above and make it happen?
+> >
+> 
+> FYI, Eder is already working on this:
+> 
+> https://lore.kernel.org/rust-for-linux/20241106211215.2005909-1-ezulian@redhat.com/
+> 
+> Eder, could you Cc locking for the next version?
 
-Talked to Matthew about this, will use GFP_NOWAIT here, since we can fail
-here and probably should not get into atomic reserves.
+Yes, sure.
 
-Best Regards,
-Yan, Zi
+By the way, I'm using linux-next/master here and I think I had to make
+(MITIGATION_RETHUNK && KASAN) false at some point for x86_64 to get RUST=y.
+
+$ grep -i '_rust\|preempt_rt\|debug_spin' .config | grep -v '#'
+CONFIG_RUSTC_VERSION=108200
+CONFIG_RUST_IS_AVAILABLE=y
+CONFIG_RUSTC_LLVM_VERSION=170006
+CONFIG_PREEMPT_RT=y
+CONFIG_RUST=y
+CONFIG_RUSTC_VERSION_TEXT="rustc 1.82.0 (f6e511eec 2024-10-15) (Fedora 1.82.0-1.fc39)"
+CONFIG_HAVE_RUST=y
+CONFIG_HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC=y
+CONFIG_DEBUG_SPINLOCK=y
+CONFIG_RUST_OVERFLOW_CHECKS=y
+
+> 
+> Regards,
+> Boqun
+> 
+> >> > > Without the revert CONFIG_PREEMPT_RT=y, after the revert it is not set
+> >> > > and spinlock_check is only defined for !defined(CONFIG_PREEMPT_RT).  
+> >> > 
+> >> > Right, that moved PREEMPT_RT out of the preemption choice. Now I'm not
+> >> > sure we want it =y for all{yes,mod}config. Is the below the right
+> >> > incantation to avoid this?
+> >> > 
+> >> > ---
+> >> > diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+> >> > index 7c1b29a3a491..54ea59ff8fbe 100644
+> >> > --- a/kernel/Kconfig.preempt
+> >> > +++ b/kernel/Kconfig.preempt
+> >> > @@ -88,7 +88,7 @@ endchoice
+> >> >  
+> >> >  config PREEMPT_RT
+> >> >  	bool "Fully Preemptible Kernel (Real-Time)"
+> >> > -	depends on EXPERT && ARCH_SUPPORTS_RT
+> >> > +	depends on EXPERT && ARCH_SUPPORTS_RT && !COMPILE_TEST
+> >> >  	select PREEMPTION
+> >> >  	help
+> >> >  	  This option turns the kernel into a real-time kernel by replacing
+> >> 
+> >> Yeah, that will do it.
+> >
+> > OK, I'll write it up and stick that in tip/sched/core along with them
+> > patches that's causing the grief :-)
+> >
+> > Attachments:
+> > * signature.asc
+> 
+
 
