@@ -1,124 +1,90 @@
-Return-Path: <linux-kernel+bounces-399071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549A49BFA8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:04:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C8E9BFA91
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851DD1C21070
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A9C1F2283F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8527E1;
-	Thu,  7 Nov 2024 00:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B44EC0;
+	Thu,  7 Nov 2024 00:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K61K9P6y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsQ0t20I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43EB366;
-	Thu,  7 Nov 2024 00:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF952621;
+	Thu,  7 Nov 2024 00:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730937840; cv=none; b=WsbHrpa8YEY1jJg6lvpjXN2DsyLTKE1TPM8z9dQM0jNm7CcIaMVcakEoPUDt9F05qbyMU8cS7AcD9T7IHbCrQjEitAfM3orloEK8R4+osnoUe/eNeXVu5TqIQ9q5Kio9YFLKvPRPBfbznZeuLrDg8wvyHmFr0DjM8nuSewBHa3k=
+	t=1730938201; cv=none; b=M9yMITpiJUOwMSaqEM4LJFvjGsVw9gKjLbO5+z0sd/wOwNCfo/2nIR+aThtiCQiCCiqkKL1UBYuA45pOBqI8lxplMeB7HhlCftQ/Gt5Yjddzunv0vtZ4F8eXwlPCt/yP4ioSMoakt/w+NZwoTOgAUPfYCACD7tPpy3JpWzXvZro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730937840; c=relaxed/simple;
-	bh=eVEmG1rSKK40HDhb0BAxP+hhaDqvTIM19ehnylrrkp8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QKUqgI+fAwkEeqqLbcu35pmeIFL1SDYP6qYjbumpw3KcnoJlsnPZfphhy/38xRvFfQW1+4EId2nXlWsY8FkDmAyv32VpUorKq9IeQFSSThnzoLq29gXAPMLG5duwUVX++A1iscnatWrWjAxDL7TWF2QcsE0p0ufYoeKvy4YOy8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K61K9P6y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038F1C4CEC6;
-	Thu,  7 Nov 2024 00:03:59 +0000 (UTC)
+	s=arc-20240116; t=1730938201; c=relaxed/simple;
+	bh=ahJJ66zHU05O74HVdHJzt0TPlEhGTsvZ3dF1zQoUn14=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r6g3F+JcMo/I+ENo3f5FvSrhxBnzT6Ppp7w0Ffs5HfoZW3Q+51EgRQKYRXWyH0GCutcJuhs2AzTNxur03senSYL8bFM2hLqRE1rh8xGM+uZ4C+1LTfRsAouAXG8fxiA1cyLSskDvkC8SKPcgcuCyyGcflL5FtNvhKshhwg2qZPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsQ0t20I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB8EC4CEC6;
+	Thu,  7 Nov 2024 00:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730937840;
-	bh=eVEmG1rSKK40HDhb0BAxP+hhaDqvTIM19ehnylrrkp8=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=K61K9P6ydcGQi5cqBLWNFs3jtlfhJR650f1adgcqvScwkUNizYypzhYM9//ew/UTn
-	 qIuj2sNTdofzn4jGFrzt7hmUxZsK9HlYY8LqXd4afnaWNZdF6d52RXPj7kXmxI9suy
-	 pX4zuB3ZB/5KzMu1csPNa3z78AlL1CNvAJ3wDLzz9HmOSMYAcskkj9Vaxom15kuUrc
-	 rYaLPjmAZfaY/R6cUtR4tOHdtLzzBTfwOvFdRF+AJDMzUB9FZWu/rRTxEFpL0LA/Dq
-	 rKtJ8jAp1CjxCiN5r0dwq+eIez35ji1ghbpxJt+PCbbAgFUkd0qVMNNzXW756xiUTx
-	 VEP4tgdc7ZyiA==
+	s=k20201202; t=1730938200;
+	bh=ahJJ66zHU05O74HVdHJzt0TPlEhGTsvZ3dF1zQoUn14=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lsQ0t20IwarFbJ2em6VqcpTNT2X+mVuMHAgvasRwD7LNz3KqPPAjmuy79qAsMUi5x
+	 iSD3EiSrHUF+45lkum9NSMz7qLI5KgcJeKH15ObrWOWIOChavCj0p5Wq3SiNU97oe6
+	 ltkzg1D5wDTFztIGseIaLdsHCHb1FyjYksIU8ZSobLt7DmSWOTrtson85eo/441p1L
+	 ymOd74czcubFQaCVCOQTtP30rH0Hdc13vw7g9ut9oOO15v8c1WY5JwGBFTTpgYzi/V
+	 I0U/VeBxLpw9r2MeITtxlxiLGPdST8eJMo53yLmnoY5s1hSfnAa0rX0HEJUwaHBSjj
+	 4UFJ8m9Q2v6cQ==
+Date: Wed, 6 Nov 2024 16:09:58 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+ Sanman Pradhan <sanman.p211993@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, netdev@vger.kernel.org, alexanderduyck@fb.com,
+ kernel-team@meta.com, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+ mohsin.bashr@gmail.com, sanmanpradhan@meta.com, andrew+netdev@lunn.ch,
+ vadim.fedorenko@linux.dev, jdamato@fastly.com, sdf@fomichev.me,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next] eth: fbnic: Add PCIe hardware statistics
+Message-ID: <20241106160958.6d287fd8@kernel.org>
+In-Reply-To: <76fdd29a-c7fa-4b99-ae63-cce17c91dae9@lunn.ch>
+References: <20241106122251.GC5006@unreal>
+	<20241106171257.GA1529850@bhelgaas>
+	<76fdd29a-c7fa-4b99-ae63-cce17c91dae9@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 07 Nov 2024 02:03:56 +0200
-Message-Id: <D5FI94F98BS0.2JMJGMV9W5GBC@kernel.org>
-Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Paul Moore"
- <paul@paul-moore.com>, <linux-kernel@vger.kernel.org>,
- <christian@heusel.eu>
-Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
- be disabled on boot
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241015193916.59964-1-zohar@linux.ibm.com>
- <D5FG6TOVUY5W.3SUG1J3CDB3J5@kernel.org>
- <321b247dcfaba5d9691919eec8476b3c6fc7875d.camel@HansenPartnership.com>
- <D5FHDIMJBWQM.2GWFOR0198360@kernel.org>
- <84fcb3e29f3aa1ea7a5b638307e500608bc8b11a.camel@linux.ibm.com>
-In-Reply-To: <84fcb3e29f3aa1ea7a5b638307e500608bc8b11a.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu Nov 7, 2024 at 1:52 AM EET, Mimi Zohar wrote:
-> On Thu, 2024-11-07 at 01:22 +0200, Jarkko Sakkinen wrote:
-> > On Thu Nov 7, 2024 at 12:52 AM EET, James Bottomley wrote:
-> > >=20
-> > > I'm a bit confused here.  It's TPM2_PCR_Extend we have the trouble wi=
-th
-> > > (as Mimi says in her email that you quoted) not TPM2_GetRandom.
-> > >=20
-> > > The random number generator reseed occurs in a kernel thread that fir=
-es
-> > > about once a minute, so it doesn't show up in really any of the boot
-> > > timings.  Plus even with sessions added, what there now isn't a
-> > > significant overhead even to the running kernel given it's asynchrono=
-us
-> > > and called infrequently.
-> >=20
-> > Ah, right then we need the boot flag, and my earlier comments to the
-> > parameter apply. I've never used IMA so I don't actually even know in
-> > detail how it is using TPM.
->
-> Huh?  A simple explanation is that IMA-measurement maintains a measuremen=
-t list,
-> similar to the pre-boot event log.  Each IMA-measurement record extends t=
-he TPM
-> PCR (default PCR 10).
->
-> Assuming IMA is enabled in the kernel, then just add "ima_policy=3Dtcb" o=
-r
-> "ima_policy=3Dcritical_data" on the boot command line.  To view the measu=
-rement
-> records, cat <securityfs>/integrity/ima/ascii_runtime_measurements.  Norm=
-ally
-> the IMA policy specified on the boot command line is replaced with a fine=
-r
-> grained custom policy.
+On Wed, 6 Nov 2024 18:36:16 +0100 Andrew Lunn wrote:
+> > How would this be done in the PCI core?  As far as I can tell, all
+> > these registers are device-specific and live in some device BAR.  
+> 
+> Is this a licences PCIe core?
+> 
+> Could the same statistics appear in other devices which licence the
+> same core? Maybe this needs pulling out into a helper?
 
-I'll try to figure out how to test it regularly. And yeah we need the
-flag obviously.
+The core is licensed but I believe the _USER in the defines names means
+the stats sit in the integration logic not the licensed IP. I could be
+wrong.
 
-I have my (CI compatible) framework that I run regularly with upstream
-that I've mentioned a few times earlier.
+> If this is true, other uses of this core might not be networking
+> hardware, so ethtool -S would not be the best interfaces. Then they
+> should appear in debugfs?
 
-https://codeberg.org/jarkko/linux-tpmdd-test
-
-How would I would make all files in /etc get to get the checksums, and
-how can I generate legit and illegit change to some file in that tree?
-
-No need to address how to implement that to my framework, I can figure
-that out. I just would love throw something so that any performance
-regressions will be catched right at the get go, i.e. before they
-end up to the mainline.
-
-> Mimi
-
-BR, Jarkko
+I tried to push back on adding PCIe config to network tooling,
+and nobody listened. Look at all the PCI stuff in devlink params.
+Some vendors dump PCIe signal integrity into ethtool -S
 
