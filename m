@@ -1,350 +1,139 @@
-Return-Path: <linux-kernel+bounces-400031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D3C9C07FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:48:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D6A9C07F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2928287CB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4A5D1C22116
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C291212655;
-	Thu,  7 Nov 2024 13:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5619A212D0F;
+	Thu,  7 Nov 2024 13:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWnkWJa7"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIEmzkj5"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59765212D3A;
-	Thu,  7 Nov 2024 13:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6B421218E;
+	Thu,  7 Nov 2024 13:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987260; cv=none; b=HXFlF6nN6Amsli5Sf9dJNXguEEjXOyg/Qj/ry4BKA4h0o8qpmc2Muns4RjnICaMD02xZ+jfOLsvgsZ1bwKG6f/jBx9VQVX5Uk1Jlh9vT/5lp1uFLP9H4XbgzYB3NyrMhtsjR0dUIN626EYmvWAox3iBQQ3PODa+XKIIjf6M6Uro=
+	t=1730987249; cv=none; b=o21LvZ9za0qMSHA7ZJTHZVCNZ44fyH0MhIysthCLOzr6cpWA2/tGRBBbi6JRzXQROnhRhiX2Kmsp73vxWAieQwX4n7P8n14uyMx02gS43gGIKTPbL+CtTayWMruI+PEVwfkf4rxxe9HopbrYamFpVx+GmbcSmOwp7Dkju9crtv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987260; c=relaxed/simple;
-	bh=2/qLSSMsB+YGfZQhvTE/L3JLsSPTvmuQFzCCfyhNHy0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lag/+0ZBGtyH+1u9xKDiip/FUvGXdNqY52JZsZnmOsnOgKX2lytO3903RR6kiz9q4GFMjWLsEClYK2USCVStOk/bM8Wu64IZUawHi/rzeSDZk9nXtQV3H+QLIv5HxXIOiSrGoIjaLdbv6zk5knIC07USSFhbEOhsbtTyp3h9kRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWnkWJa7; arc=none smtp.client-ip=209.85.208.172
+	s=arc-20240116; t=1730987249; c=relaxed/simple;
+	bh=RFk3924VrW1xb5x1DFkPBcmjcDaZmpuHPPQS5Fg3iuQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aIaBSSZMc2UGH+wjHPqy8bM6GkQssj4VCFhQ1rMenJO+dZilOeLyfGO+vQZPDhLFNCAVjJExwz0/VXAV1tXdVInW7PFcBRHK7FSSQFjL7Wd5rQKFz5yWb8UyvmfizLik01YM/s0ElAxKLwgDIO1ctZHblBC4YfrFqemCX9vh1Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UIEmzkj5; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb51f39394so8156191fa.2;
-        Thu, 07 Nov 2024 05:47:38 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb5743074bso8436741fa.1;
+        Thu, 07 Nov 2024 05:47:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730987256; x=1731592056; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SwlYA1btjVElIAnpXjyhLJRCjG01im8ol94Q+fCfTTE=;
-        b=KWnkWJa791VUPDsxa/Wcyc10V1/pqoojNP14yiSLNwZ+m4nmSVHQZAYQKV92Rw29hV
-         cM1ofQasqrCOsuhM3KviSZ9w1bCHEZgiSu4xhvmuq+9OcNHJ2Vn1lvIfSGga6BiZzVC9
-         NT12iTWpzkv+cTIaho2iMeFrA75HclTRygLSvtBJzVmEW1lsYODg6SKx/M3y/jh1Q6SM
-         68l7dHgfYqiFllhMyJqhNqmFHQ71+mkHrWoX3mm+ng2NI7cSn0hgYrF/7dGkwjgp3OJZ
-         v7An/0w418/jnUAjdcRQoHZpXYjMvfKcbqlPC0atblOCTUFfVhX/ZZoGGfPia9hKfcqr
-         E61A==
+        d=gmail.com; s=20230601; t=1730987245; x=1731592045; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0on35LMoILRFRct1tStDDPXY9cyBuAggEZbNv9uoPFU=;
+        b=UIEmzkj5z5E/SHpn4DBVPJiPQVcoxOF84IsetVdqwV1AKgfJg43bahdnb8FxD+6Acu
+         ubvWZotNJ4K1BWJltsZNDIHG5kYppeyY+etSR1aW5fSvG1Tg1lDnEWko2075Ukllajw/
+         d/OJgpMCaBNUJVWXyeYZIRieswQffL4Uao1ZCASvHo88GV/oP0NAlVkRJv1jHtuxg3xj
+         wpeLhQn9dolAEhxpHs0ginnyTAFjE21wsO72IogHaabxbYuEUoPdgDZM21h/OOgk4K+A
+         8Oh1fdKnlUdPDs+StIVox6IDs7oSaJz3ggkoZ0JXiAuL3sKrOi3kXWRTyjSyH323RpX9
+         ao2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730987256; x=1731592056;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730987245; x=1731592045;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SwlYA1btjVElIAnpXjyhLJRCjG01im8ol94Q+fCfTTE=;
-        b=hg39NYZy/w+1WZjXxfy9k2zG/X2C3rSgjesMeci1g11rflzf3J9hwGDDixyOJPll4G
-         IqZfwyAmqHDLqejVubpyGSzf8QPCOSZdSJOMBeycZNevhku9suP/5yF54G9pf6aBxrCW
-         w6jtkoi1W1Zux/ybSMrFT5gg+di4LfQxWigbJhqTO6bUkmPf3LJFvC0Upsi0Npi5xYbC
-         ZvsC2ue6wPyGe/iioeuEHJQl3GwUirTMO6qJfAJ9wl7sq44G8HNM4Z9wQuU9Oq9FGNGo
-         Uxc3xZyhoBG5TRqAxwxgQ/j+yhnQh03tJWQP2sHOITdAFDwX6lS7ajsXe+MuI0+LSxUo
-         LAvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNLM81cYhJpvn5b9UyIJtudXSwKnAR1ip7CSiWI3+hcWCFJb4vu2VbaPiUF3MQsqy8FKOMD/+ZtOSM@vger.kernel.org, AJvYcCXa1GHt6JKy/kh+Iud6ie+Ro+D0JDo5fQ6N6VZZhTcjCAylLt775E+aD3WJQyq6DZU1MyLuyK4TB6dC4DIs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1GdsClyGAD9JUzO79HldF7QOyAb25FTIc/bbI18DbxGowKcbe
-	bqBNr1gfUIBpbyMvd5Qln5ZhU68ZY4QHrNN8+/8DywlvVeQsGhIg
-X-Google-Smtp-Source: AGHT+IEUfsk10liiiVYX0eA0dh8gtt8gDUg1Da0/H5cFNiBMGxanEKBd6tr0eAZ2J9V8JMeMnmrYdA==
-X-Received: by 2002:a2e:b88d:0:b0:2fb:3d86:d932 with SMTP id 38308e7fff4ca-2fcbdfaea70mr225554551fa.12.1730987256239;
-        Thu, 07 Nov 2024 05:47:36 -0800 (PST)
-Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff179d80f5sm2276591fa.105.2024.11.07.05.47.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 05:47:35 -0800 (PST)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Thu, 07 Nov 2024 14:47:08 +0100
-Subject: [PATCH v7 2/2] dt-bindings: mtd: davinci: convert to yaml
+        bh=0on35LMoILRFRct1tStDDPXY9cyBuAggEZbNv9uoPFU=;
+        b=CZt1YYfsdqT6K1ZK/s6UwEKy7jWF2XqgEe7xi5BSROTuhxyaBKN0NN9xjpW3NYJ1kD
+         4lAbre+vuUr/rZ9y7tyq2PYU1p8r2FOMYN+IgGsEctHfDoSR2YAxgICo1HAuVhaY9fKC
+         o6ms4OFo5nOc1f2zy6MT+LjLts/jqcfCIW7aaQVq9IeNDUQ0xmOpLWWkvUsYn0sau3RX
+         gCcR+PgtjExSGQ58LdXiW1KvefvNaOHLbPv8KiRWOWvyDDMq3SwEhDZ6jsii5JQoxRBt
+         qaXQR+m1dQktZifjjJzEDtE8KSOR7V3ikFoE4XnUN1X7fp8/FSFHJVxYLBCeR0/JC7h8
+         VLpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoRpcASuoOXnHQo2GQ2TE7SIebwF0DjbKfWfbcDfZuscBnEr1VIjOChG9KgIZY5RAsY4AvfAD9T0rQfetc@vger.kernel.org, AJvYcCXaJ4X8Oyx6dOg8bG+zFccI+NNtyZj4cTC6nwFxdgT6zaJtGI6Bu5Of1m8dap7xsll673TlxVDEOHfu@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBAGD9LQ7UVlYbDGIeiY3yDAihsudHbijN0ieSW/Yl8KGj+gS4
+	uLoTSi5W+lnwxTK5BeqriqJgBDyFu0YtcVh8FoGGm1/GBGSG/50KVyF32/hxfYHGLGKZmbsoCaS
+	ja3Pb9iw05zO6YDgmDF+0ZB/UYnk=
+X-Google-Smtp-Source: AGHT+IEFnkyx9mt/m4+C/bADWUR23kL5+W4hrTa+9//vSMQM1VLtLBdN3fRu+hcFzKzPTrZcZ/NxVbPCE/GiT6Q9ONA=
+X-Received: by 2002:a05:651c:220a:b0:2fa:ce87:b7da with SMTP id
+ 38308e7fff4ca-2ff1e980065mr36591fa.18.1730987244974; Thu, 07 Nov 2024
+ 05:47:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241107-ondie-v7-2-98829fc8a958@gmail.com>
-References: <20241107-ondie-v7-0-98829fc8a958@gmail.com>
-In-Reply-To: <20241107-ondie-v7-0-98829fc8a958@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7384;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=2/qLSSMsB+YGfZQhvTE/L3JLsSPTvmuQFzCCfyhNHy0=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBnLMTtG07LNg4JYqu7NmLP520DK4Gq/5PPdFsIQ
- MgK6lTmWkeJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZyzE7QAKCRCIgE5vWV1S
- MtxVEACOwZhrLHujlDlNF9EwUI6XmxCQMRT3EOolqltfeok7sjLQFX+q+W8DGTh4+5btamn5kkw
- tbwADKyS26KwjRwt5nPAgG2nudi5e1+m/j+WyUz2Y+laKMUEvRazLhaaDiJJWTENeNyWw/We2Tl
- 74PoosEHWZcBrR9dvQJXJPc2H12n7E6ggnzQNA/LBNu2lwP+7HsHxxOTJCDzabzU5KYIWQ2mmBf
- 0ja970XQGTG9gYfwX6INaRymH3KYfHNXpD06+1MCoBEi0J12chbcUlZ5fA86bG73yze2ucfIarE
- CyuN4I/wRGo3I4qNoNOW4XRC2P8wTVl0XXjVfnz0ztNQqWkIbnrKtmR4cLqwyyOhStUK3CxOi/t
- GIXpyRhDbt3QlLVJ0C7ds/yNznZCIgksoRuabppenGWJJB3xPLEYDe4fp0n+LBHerZoVgGHDkpb
- AQHG3D/MXFxH0ffcHJZiDF5r2YX8jIT76KDjEy9q+j23VSp1wF3lJnvsMMT6rxfe5KV7uldN2ct
- zH4nVIHq3BHw0li15WMEUessc6eyYPn4HeqH5F/zPd6jUdVPpLJzj9J1kl4QVyjKppd9P9QSYAW
- K5pC5jZlbmJ7nyyuTR2WePm3TnY0CFNasoIIljJS6SxMrllLedpd2UpiqAChBvZ5x/swgekJXq8
- ToVrJdvlILMTqcQ==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+References: <20241101162304.4688-1-suravee.suthikulpanit@amd.com>
+ <20241101162304.4688-4-suravee.suthikulpanit@amd.com> <ZyoP0IKVmxfesRU8@8bytes.org>
+ <323dcff2-6135-4b8a-85db-bccc315ddfdf@app.fastmail.com> <CAFULd4Za4BQL+h9Xmra1TjB2oGGzPwru_y1xOrrAFSg==bfvgg@mail.gmail.com>
+ <20241106134034.GN458827@nvidia.com> <4c9fd886-3305-4797-9091-3f9b0b9ee0b6@app.fastmail.com>
+ <20241107133725.GD520535@nvidia.com>
+In-Reply-To: <20241107133725.GD520535@nvidia.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 7 Nov 2024 14:47:12 +0100
+Message-ID: <CAFULd4YDSRzMAvxunw=vfC-jw3xHPRjg=+X6mDONUXSSnU=7Xw@mail.gmail.com>
+Subject: Re: [PATCH v9 03/10] asm/rwonce: Introduce [READ|WRITE]_ONCE()
+ support for __int128
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, 
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, Robin Murphy <robin.murphy@arm.com>, vasant.hegde@amd.com, 
+	Kevin Tian <kevin.tian@intel.com>, jon.grimm@amd.com, santosh.shukla@amd.com, 
+	pandoh@google.com, kumaranand@google.com, 
+	Linux-Arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the bindings to yaml format.
+On Thu, Nov 7, 2024 at 2:37=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wro=
+te:
+>
+> On Thu, Nov 07, 2024 at 11:01:58AM +0100, Arnd Bergmann wrote:
+>
+> > >> and later:
+> > >>
+> > >>  * Yes, this permits 64-bit accesses on 32-bit architectures. These =
+will
+> > >>  * actually be atomic in some cases (namely Armv7 + LPAE), but for o=
+thers we
+> > >>  * rely on the access being split into 2x32-bit accesses for a 32-bi=
+t quantity
+> > >>  * (e.g. a virtual address) and a strong prevailing wind.
+> > >>
+> > >> This is the "strong prevailing wind", mentioned in the patch review =
+at [1].
+> > >>
+> > >> [1] https://lore.kernel.org/lkml/20241016130819.GJ3559746@nvidia.com=
+/
+> >
+> > I understand the special case for ARMv7VE. I think the more important
+> > comment in that file is
+> >
+> >   * Use __READ_ONCE() instead of READ_ONCE() if you do not require any
+> >   * atomicity. Note that this may result in tears!
+>
+> That makes sense, let's just use that and there is no need to change
+> anything here?
+>
+> Uros?
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- .../devicetree/bindings/mtd/davinci-nand.txt       |  94 ----------------
- .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 124 +++++++++++++++++++++
- 2 files changed, 124 insertions(+), 94 deletions(-)
+Yes, preloading "old" value for try_cmpxchg loop does not need to be
+atomic (cmpxchg will fail in case teared value is preloaded and loop
+will be retried). So, __READ_ONCE() is perfectly OK to be used in this
+series.
 
-diff --git a/Documentation/devicetree/bindings/mtd/davinci-nand.txt b/Documentation/devicetree/bindings/mtd/davinci-nand.txt
-deleted file mode 100644
-index eb8e2ff4dbd2901b3c396f2e66c1f590a32dcf67..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/mtd/davinci-nand.txt
-+++ /dev/null
-@@ -1,94 +0,0 @@
--Device tree bindings for Texas instruments Davinci/Keystone NAND controller
--
--This file provides information, what the device node for the davinci/keystone
--NAND interface contains.
--
--Documentation:
--Davinci DM646x - https://www.ti.com/lit/ug/sprueq7c/sprueq7c.pdf
--Kestone - https://www.ti.com/lit/ug/sprugz3a/sprugz3a.pdf
--
--Required properties:
--
--- compatible:			"ti,davinci-nand"
--				"ti,keystone-nand"
--
--- reg:				Contains 2 offset/length values:
--				- offset and length for the access window.
--				- offset and length for accessing the AEMIF
--				control registers.
--
--- ti,davinci-chipselect:	number of chipselect. Indicates on the
--				davinci_nand driver which chipselect is used
--				for accessing the nand.
--				Can be in the range [0-3].
--
--Recommended properties :
--
--- ti,davinci-mask-ale:		mask for ALE. Needed for executing address
--				phase. These offset will be added to the base
--				address for the chip select space the NAND Flash
--				device is connected to.
--				If not set equal to 0x08.
--
--- ti,davinci-mask-cle:		mask for CLE. Needed for executing command
--				phase. These offset will be added to the base
--				address for the chip select space the NAND Flash
--				device is connected to.
--				If not set equal to 0x10.
--
--- ti,davinci-mask-chipsel:	mask for chipselect address. Needed to mask
--				addresses for given chipselect.
--
--- nand-ecc-mode:		operation mode of the NAND ecc mode. ECC mode
--				valid values for davinci driver:
--				- "none"
--				- "soft"
--				- "hw"
--
--- ti,davinci-ecc-bits:		used ECC bits, currently supported 1 or 4.
--
--- nand-bus-width:		buswidth 8 or 16. If not present 8.
--
--- nand-on-flash-bbt:		use flash based bad block table support. OOB
--				identifier is saved in OOB area. If not present
--				false.
--
--Deprecated properties:
--
--- ti,davinci-ecc-mode:		operation mode of the NAND ecc mode. ECC mode
--				valid values for davinci driver:
--				- "none"
--				- "soft"
--				- "hw"
--
--- ti,davinci-nand-buswidth:	buswidth 8 or 16. If not present 8.
--
--- ti,davinci-nand-use-bbt:	use flash based bad block table support. OOB
--				identifier is saved in OOB area. If not present
--				false.
--
--Nand device bindings may contain additional sub-nodes describing partitions of
--the address space. See mtd.yaml for more detail. The NAND Flash timing
--values must be programmed in the chip select’s node of AEMIF
--memory-controller (see Documentation/devicetree/bindings/memory-controllers/
--davinci-aemif.txt).
--
--Example(da850 EVM ):
--
--nand_cs3@62000000 {
--	compatible = "ti,davinci-nand";
--	reg = <0x62000000 0x807ff
--	       0x68000000 0x8000>;
--	ti,davinci-chipselect = <1>;
--	ti,davinci-mask-ale = <0>;
--	ti,davinci-mask-cle = <0>;
--	ti,davinci-mask-chipsel = <0>;
--	nand-ecc-mode = "hw";
--	ti,davinci-ecc-bits = <4>;
--	nand-on-flash-bbt;
--
--	partition@180000 {
--		label = "ubifs";
--		reg = <0x180000 0x7e80000>;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/mtd/ti,davinci-nand.yaml b/Documentation/devicetree/bindings/mtd/ti,davinci-nand.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..ed24b0ea86e5ccc795882ae52275c39a25fabad3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/ti,davinci-nand.yaml
-@@ -0,0 +1,124 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mtd/ti,davinci-nand.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI DaVinci NAND controller
-+
-+maintainers:
-+  - Marcus Folkesson <marcus.folkesson@gmail.com>
-+
-+allOf:
-+  - $ref: nand-controller.yaml
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,davinci-nand
-+      - ti,keystone-nand
-+
-+  reg:
-+    items:
-+      - description: Access window.
-+      - description: AEMIF control registers.
-+
-+  partitions:
-+    $ref: /schemas/mtd/partitions/partitions.yaml
-+
-+  ti,davinci-chipselect:
-+    description:
-+      Number of chipselect. Indicate on the davinci_nand driver which
-+      chipselect is used for accessing the nand.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3]
-+
-+  ti,davinci-mask-ale:
-+    description:
-+      Mask for ALE. Needed for executing address phase. These offset will be
-+      added to the base address for the chip select space the NAND Flash
-+      device is connected to.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    default: 0x08
-+
-+  ti,davinci-mask-cle:
-+    description:
-+      Mask for CLE. Needed for executing command phase. These offset will be
-+      added to the base address for the chip select space the NAND Flash device
-+      is connected to.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    default: 0x10
-+
-+  ti,davinci-mask-chipsel:
-+    description:
-+      Mask for chipselect address. Needed to mask addresses for given
-+      chipselect.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    default: 0
-+
-+  ti,davinci-ecc-bits:
-+    description: Used ECC bits.
-+    enum: [1, 4]
-+
-+  ti,davinci-ecc-mode:
-+    description: Operation mode of the NAND ECC mode.
-+    $ref: /schemas/types.yaml#/definitions/string
-+    enum: [none, soft, hw, on-die]
-+    deprecated: true
-+
-+  ti,davinci-nand-buswidth:
-+    description: Bus width to the NAND chip.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [8, 16]
-+    default: 8
-+    deprecated: true
-+
-+  ti,davinci-nand-use-bbt:
-+    type: boolean
-+    description:
-+      Use flash based bad block table support. OOB identifier is saved in OOB
-+      area.
-+    deprecated: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - ti,davinci-chipselect
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    bus {
-+      #address-cells = <2>;
-+      #size-cells = <1>;
-+
-+      nand-controller@2000000,0 {
-+        compatible = "ti,davinci-nand";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        reg = <0 0x02000000 0x02000000>,
-+              <1 0x00000000 0x00008000>;
-+
-+        ti,davinci-chipselect = <1>;
-+        ti,davinci-mask-ale = <0>;
-+        ti,davinci-mask-cle = <0>;
-+        ti,davinci-mask-chipsel = <0>;
-+
-+        ti,davinci-nand-buswidth = <16>;
-+        ti,davinci-ecc-mode = "hw";
-+        ti,davinci-ecc-bits = <4>;
-+        ti,davinci-nand-use-bbt;
-+
-+        partitions {
-+          compatible = "fixed-partitions";
-+          #address-cells = <1>;
-+          #size-cells = <1>;
-+
-+          partition@0 {
-+            label = "u-boot env";
-+            reg = <0 0x020000>;
-+          };
-+        };
-+      };
-+    };
+Please note that __READ_ONCE() uses  __unqual_scalar_typeof()
+operator, so at least patch at [1] to teach __uqual_scalar_typeof()
+about __int128 is needed.
 
--- 
-2.47.0
+[1] https://lore.kernel.org/lkml/CAFULd4Z86uiH+w+1N36kOuhYZ5_ZkQkaEN6nyPh8V=
+NJth3WNhg@mail.gmail.com/
 
+Uros.
 
