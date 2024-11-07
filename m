@@ -1,153 +1,229 @@
-Return-Path: <linux-kernel+bounces-399321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA98F9BFD6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B4AB9BFD70
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779EA282C3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:40:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2349283B41
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8B018E35D;
-	Thu,  7 Nov 2024 04:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6215C191473;
+	Thu,  7 Nov 2024 04:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PvFPJMiV"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="D4DJthtB"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D461C16F84F
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC65823CE
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730954429; cv=none; b=d0V+o+d9iti3riBzSGdUzk0mYbSJQXLu6LUG9YcfHkkUq+Tq1okYAD8NMWNxR5iaBfzyZm995SGvQavvVusQN0TWWoWNerIuaTzxz5GsAoWSxqY+RcxWpQEM94HqU27eqbUaypTil9wYRz14BoqPi79HQar05w4B9RLo01THrb8=
+	t=1730954735; cv=none; b=WGwZZjXFICmIzMEwLDkQ1WVaoWlVWuOf+fisCAPYXHIxFS0/vK4C+/pF5Me89Yp2F2jEB4QGiYMtf7GXA1qWXZg0G30u/pZryqjwvFNPLEOaL4LAQ9HAdgU0OPTih++CTGaNXBfYtf6dCzxEkB4fhfOVr7HxE+5P9qcwwMIfJXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730954429; c=relaxed/simple;
-	bh=C8T98Sa2leDE2aVBOiD4LYqi1ctZER7DeoVbj0OUT30=;
+	s=arc-20240116; t=1730954735; c=relaxed/simple;
+	bh=u5u6J+p9KvxvHcLEKvZFthjYircE+5q68XJQEzSYMDc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cze+R2W8MTx0TkPHw+QpGNDQPeL+WfRQdLNIfyl3jbxWVB+bZni1DqdUJB++AQgtYdKHNuQQ4ofq6+Ra6tAc28YvhmR3yUtZ3npoJT81IuABvic+DlopoffAFamzhn0HfSql660zT31Ak4rt/ACsLGdCwPFMANuAdHhnaTNSJF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PvFPJMiV; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f7606199so423400e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 20:40:27 -0800 (PST)
+	 To:Cc:Content-Type; b=pOchFIkRI3wGux1Af0y/LDJOJZMQQJW8CeaASRTCVW9t5N2zR3s90r/ggH3AvtiykpiQYh6musTWtKo+J2BNu/dcy46v9ZC8GmRTFSrDpHjBvBKe+3d2cYxYJBOsR9iZtAWCFolKcPgFJgozhcbfC7qqUI3GGM6smv/ZE9uhQiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=D4DJthtB; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ee36621734so87154a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 20:45:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730954426; x=1731559226; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kS3PhzgV8hPWd3Nz2X4ljMHj7vMg0QaN6Lo6Vk67xTw=;
-        b=PvFPJMiVJrkV09j9H1MGmKBOzCmaX7ra8RLYOpaOfG3SaruL4LfoUd2vIz9gLbhj4P
-         L6jTbu+eKPvUAXnVNszwz4XACU3OHBBPU7hhphAWYvql9xksdtfXuz9crvpwZyWTfSzq
-         VVLnz+qAYASc98vsJNtx1W6g0WgYR5WFvozGvppBNnK36MyK4OLdiYJxdF+P2+WfXq5A
-         SBEjsqN1yA59U8J2IlPQ8QFb9w3rTjciJwpEGBGnIaKGjcVy0X2u5sJLTkKkwqZv5xkp
-         ZC9UJis0TxDC8DZ50wqPe6gxqDGAYJSWCA1c7T+dFgLuKWoWKdyssY2FhHR54qi65nCk
-         dclg==
+        d=purestorage.com; s=google2022; t=1730954732; x=1731559532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xtOHfAy5aCt+GGU4uG0UwF/fwe6/CQNExXJXCksm6QA=;
+        b=D4DJthtBMP+5YFEPKWqq1UNMquLc9EpZtZS9byu2MLwoeNmhRqehYHJQPHSJCs1prv
+         UIu/OqLmCRwsfy75NgR1w9sQLC+1MhBKNp0eOwMf1QPvdfT40fCYmTb4OzbLS6UHhx8E
+         Ji88ixS+tPdIOufSA+MIi7tz5Vx7JIIxcshbX3Puej5aXVwSYIZbw33q5gdScJJLyfMh
+         gktm/X8PFQqiDktfnUEb+R5lhhtiuRs95a1OcvosP5ZLQIZKticUrJfv3tBKlD7TdEz5
+         HQ9lOg0Zt/9GpX8WKTCL5suHvX5VE15WhaSoHtLaRGG/dcb1PVNPqgyHOs253eDms/rQ
+         MzWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730954426; x=1731559226;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kS3PhzgV8hPWd3Nz2X4ljMHj7vMg0QaN6Lo6Vk67xTw=;
-        b=C341FSSLuYpNgn3CTxUUNPJnTAPG6Im+iHeYERl+eQevgvqdV83RaqAwuGs0Fzmzs9
-         6igtHmeQHgbXCV8Iq5hDRdruOwz6Kn1B6G9MgiNfO5pqY5d59JT29/GKzzB1KtkFk/Mn
-         g8CmNqH7XD9kKM+falhCMnYDlCXYM6R4kb2FIAsqUFClnxsdLrpT2tRsHGMOsaTUEuJ7
-         QfI1lwPmClM58wPwOnexgXQw+eYD1lv4e3ofD5uyRcpScKcgvebytXmEM/pkkygRHJQM
-         tMdLpIoy2x6NMXyyvxBgqdmf5YT2B+Oa1prW2qqF/AdSmmiZGcYjGcFvU131WSRyOgkG
-         4J6g==
-X-Forwarded-Encrypted: i=1; AJvYcCX7t59yhnTEQ2CUWHW+ogB8SdhRNbRdCO0McoVk5i06wCYSk/V41DNpgoyEetxrKbMteOxa2Z6zrmG9yKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt2nLw4UITE9lwxWjv0AwHz9cxyemrGf6WJxdzyvDCyQZYuyXZ
-	tWw5t4x9zIxtDUrbH3n1V5CaEnrpj9E290+1cqd4hh0fsLyX/p1zigNQ+X0AHdgyuB0JXgy9lqS
-	Fr2Sk+BuSQYEmLNXNBra+zUI1e5VxoBdawXoaew==
-X-Google-Smtp-Source: AGHT+IE6mu02yFj3cbKRiS8rNaWfTch6NvNc8XHMgEPjm27a3mfwdePPbwFloVV4AAmL3acydHk3/qanmVOZP5ve+pE=
-X-Received: by 2002:a05:6512:110e:b0:539:f2f6:c70f with SMTP id
- 2adb3069b0e04-53d828e3da4mr206716e87.8.1730954425978; Wed, 06 Nov 2024
- 20:40:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730954732; x=1731559532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xtOHfAy5aCt+GGU4uG0UwF/fwe6/CQNExXJXCksm6QA=;
+        b=HqzhJ7XFXTuobSWtk3niL6zYjTD6PoU5dL3XVEeiLWUMRhnzpXqZQ/i3UozVPrfxKq
+         MC7UcncwMdCoyRyjsD0NSkXcIO08+Qk6pPiRFPfHI9iQKb6Hd28BlPx98mk+48jGJLcO
+         9u3is3dSfQoLG/l2pVdXO/kVtkY0gGBxUtO6aRxrBiT5cLkd8h12cQ5ieW93A8yc+QwK
+         C36bhEQdqcfqRJBEGmSreWg6AemGPxI11+1zJbi9YOxNC2glWJTXMb9ZZyY/PyxQbjOZ
+         rL7bb81BXzE89PaaNVUZBcY7ApwOmbg/WtvEnEUVcu4dM6OMpUnhYMEz/bIu1xl2BBO1
+         LSaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeWdV39Q5+AyhtrgnSIiaNvzSuEGA43UrWbHtH3r5hMj/aYACQuHWvY8o/R3u4XmaOk+bDmuGZ1axsrSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg48/LkRca5RBPzpGyI75jnidtnUquC562xPFehokTodXDwyeP
+	ZWgaq28VNMXiTeUGrIGF6R9dYG+P78msON/wwYrgakV2FH34fkFDzEDNl4RCPaKsHkluR8fbQ7p
+	IdygEPXoh++pU2ooecjDXCP7qItmBZdaRR5iLcwJQKrjLGcgT7SSvCg==
+X-Google-Smtp-Source: AGHT+IF4MWWFPUVr+eNFH0BUtu6VV1JsBn+uZvnKv9TrBQ2BkQChJZMyB/ggEyuXbM2f+zU63HsozJ4K0luvG0cxQxA=
+X-Received: by 2002:a17:90b:33c9:b0:2e2:af5b:a18d with SMTP id
+ 98e67ed59e1d1-2e9a4b305e8mr1026480a91.4.1730954732197; Wed, 06 Nov 2024
+ 20:45:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028113209.123-1-zhangfei.gao@linaro.org> <CABQgh9H9HWaKRP=rFvXf90PjfVP1M6YpwfLcYTZH1hWET6GPsw@mail.gmail.com>
- <20241106135944.GP458827@nvidia.com> <fcef9cb1-797a-496a-9ef5-1e2f530dc8f6@linux.intel.com>
-In-Reply-To: <fcef9cb1-797a-496a-9ef5-1e2f530dc8f6@linux.intel.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Thu, 7 Nov 2024 04:40:15 +0000
-Message-ID: <CABQgh9E=AKgN=QqewH+HPyHEk8bYzABnEuj3UiWwpHMYUNFrhg@mail.gmail.com>
-Subject: Re: [PATCH] iommufd: modify iommufd_fault_iopf_enable limitation
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	jean-philippe <jean-philippe@linaro.org>, shamiali2008@gmail.com, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
+References: <20241101034647.51590-1-csander@purestorage.com>
+ <20241101034647.51590-2-csander@purestorage.com> <CY8PR12MB71958512F168E2C172D0BE05DC502@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <CADUfDZofFwy12oZYTmm3TE314RM79EGsxV6bKEBRMVFv8C3jNg@mail.gmail.com>
+ <CY8PR12MB71953FD36C70ACACEBE3DBA1DC522@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <CADUfDZqanDo+v_jap7pQire86QkfaDQE4HvhvVBb64YqKNgRHg@mail.gmail.com>
+ <CY8PR12MB7195FDC4A280F4CD7EA219ABDC532@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <CADUfDZon6QbURp7TqB6dvE4Ewb_To2EDyUTQ=spNCorXDy0DbQ@mail.gmail.com> <ZywnmDQIxzgV3uJe@x130>
+In-Reply-To: <ZywnmDQIxzgV3uJe@x130>
+From: Caleb Sander <csander@purestorage.com>
+Date: Wed, 6 Nov 2024 20:45:20 -0800
+Message-ID: <CADUfDZq0E-GJZxFD4gR7qqpHqcQ2d4cy-Duz7SYMpOZTRvOcKA@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/2] mlx5/core: deduplicate {mlx5_,}eq_update_ci()
+To: Saeed Mahameed <saeed@kernel.org>
+Cc: Parav Pandit <parav@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 7 Nov 2024 at 01:52, Baolu Lu <baolu.lu@linux.intel.com> wrote:
+On Wed, Nov 6, 2024 at 6:36=E2=80=AFPM Saeed Mahameed <saeed@kernel.org> wr=
+ote:
 >
-> On 11/6/24 21:59, Jason Gunthorpe wrote:
-> > On Wed, Nov 06, 2024 at 05:47:09AM +0000, Zhangfei Gao wrote:
-> >> On Mon, 28 Oct 2024 at 11:32, Zhangfei Gao<zhangfei.gao@linaro.org> wrote:
-> >>> iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
-> >>> because the PRI might be a shared resource and current iommu
-> >>> subsystem is not ready to support enabling/disabling PRI on a VF
-> >>> without any impact on others.
-> >>>
-> >>> However, we have devices that appear as PCI but are actually on the
-> >>> AMBA bus. These fake PCI devices have PASID capability, support
-> >>> stall as well as SRIOV, so remove the limitation for these devices.
-> >>>
-> >>> Signed-off-by: Zhangfei Gao<zhangfei.gao@linaro.org>
-> >>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
-> >>> ---
-> >>>   drivers/iommu/iommufd/fault.c | 9 +++++++--
-> >>>   1 file changed, 7 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
-> >>> index bca956d496bd..8b3e34250dae 100644
-> >>> --- a/drivers/iommu/iommufd/fault.c
-> >>> +++ b/drivers/iommu/iommufd/fault.c
-> >>> @@ -10,6 +10,7 @@
-> >>>   #include <linux/module.h>
-> >>>   #include <linux/mutex.h>
-> >>>   #include <linux/pci.h>
-> >>> +#include <linux/pci-ats.h>
-> >>>   #include <linux/poll.h>
-> >>>   #include <uapi/linux/iommufd.h>
-> >>>
-> >>> @@ -27,8 +28,12 @@ static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
-> >>>           * resource between PF and VFs. There is no coordination for this
-> >>>           * shared capability. This waits for a vPRI reset to recover.
-> >>>           */
-> >>> -       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
-> >>> -               return -EINVAL;
-> >>> +       if (dev_is_pci(dev)) {
-> >>> +               struct pci_dev *pdev = to_pci_dev(dev);
-> >>> +
-> >>> +               if (pdev->is_virtfn && pci_pri_supported(pdev))
-> >>> +                       return -EINVAL;
-> >>> +       }
-> >>>
-> >>>          mutex_lock(&idev->iopf_lock);
-> >>>          /* Device iopf has already been on. */
-> >>>
-> >> Hi, Jason
+> On 06 Nov 15:44, Caleb Sander wrote:
+> >On Tue, Nov 5, 2024 at 9:44=E2=80=AFPM Parav Pandit <parav@nvidia.com> w=
+rote:
 > >>
-> >> Would you mind also taking a look at this.
-> > Lu? Are you OK with this?
+> >>
+> >> > From: Caleb Sander <csander@purestorage.com>
+> >> > Sent: Tuesday, November 5, 2024 9:36 PM
+> >> >
+> >> > On Mon, Nov 4, 2024 at 9:22=E2=80=AFPM Parav Pandit <parav@nvidia.co=
+m> wrote:
+> >> > >
+> >> > >
+> >> > >
+> >> > > > From: Caleb Sander <csander@purestorage.com>
+> >> > > > Sent: Monday, November 4, 2024 3:49 AM
+> >> > > >
+> >> > > > On Sat, Nov 2, 2024 at 8:55=E2=80=AFPM Parav Pandit <parav@nvidi=
+a.com> wrote:
+> >> > > > >
+> >> > > > >
+> >> > > > >
+> >> > > > > > From: Caleb Sander Mateos <csander@purestorage.com>
+> >> > > > > > Sent: Friday, November 1, 2024 9:17 AM
+> >> > > > > >
+> >> > > > > > The logic of eq_update_ci() is duplicated in mlx5_eq_update_=
+ci().
+> >> > > > > > The only additional work done by mlx5_eq_update_ci() is to
+> >> > > > > > increment
+> >> > > > > > eq->cons_index. Call eq_update_ci() from mlx5_eq_update_ci()=
+ to
+> >> > > > > > eq->avoid
+> >> > > > > > the duplication.
+> >> > > > > >
+> >> > > > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> >> > > > > > ---
+> >> > > > > >  drivers/net/ethernet/mellanox/mlx5/core/eq.c | 9 +--------
+> >> > > > > >  1 file changed, 1 insertion(+), 8 deletions(-)
+> >> > > > > >
+> >> > > > > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> >> > > > > > b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> >> > > > > > index 859dcf09b770..078029c81935 100644
+> >> > > > > > --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> >> > > > > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> >> > > > > > @@ -802,19 +802,12 @@ struct mlx5_eqe *mlx5_eq_get_eqe(struc=
+t
+> >> > > > > > mlx5_eq *eq, u32 cc)  }  EXPORT_SYMBOL(mlx5_eq_get_eqe);
+> >> > > > > >
+> >> > > > > >  void mlx5_eq_update_ci(struct mlx5_eq *eq, u32 cc, bool arm=
+)  {
+> >> > > > > > -     __be32 __iomem *addr =3D eq->doorbell + (arm ? 0 : 2);
+> >> > > > > > -     u32 val;
+> >> > > > > > -
+> >> > > > > >       eq->cons_index +=3D cc;
+> >> > > > > > -     val =3D (eq->cons_index & 0xffffff) | (eq->eqn << 24);
+> >> > > > > > -
+> >> > > > > > -     __raw_writel((__force u32)cpu_to_be32(val), addr);
+> >> > > > > > -     /* We still want ordering, just not swabbing, so add a=
+ barrier */
+> >> > > > > > -     wmb();
+> >> > > > > > +     eq_update_ci(eq, arm);
+> >> > > > > Long ago I had similar rework patches to get rid of
+> >> > > > > __raw_writel(), which I never got chance to push,
+> >> > > > >
+> >> > > > > Eq_update_ci() is using full memory barrier.
+> >> > > > > While mlx5_eq_update_ci() is using only write memory barrier.
+> >> > > > >
+> >> > > > > So it is not 100% deduplication by this patch.
+> >> > > > > Please have a pre-patch improving eq_update_ci() to use wmb().
+> >> > > > > Followed by this patch.
+> >> > > >
+> >> > > > Right, patch 1/2 in this series is changing eq_update_ci() to us=
+e
+> >> > > > writel() instead of __raw_writel() and avoid the memory barrier:
+> >> > > > https://lore.kernel.org/lkml/20241101034647.51590-1-
+> >> > > > csander@purestorage.com/
+> >> > > This patch has two bugs.
+> >> > > 1. writel() writes the MMIO space in LE order. EQ updates are in B=
+E order.
+> >> > > So this will break on ppc64 BE.
+> >> >
+> >> > Okay, so this should be writel(cpu_to_le32(val), addr)?
+> >> >
+> >> That would break the x86 side because device should receive in BE form=
+at regardless of cpu endianness.
+> >> Above code will write in the LE format.
+> >>
+> >> So an API foo_writel() need which does
+> >> a. write memory barrier
+> >> b. write to MMIO space but without endineness conversion.
+> >
+> >Got it, thanks. writel(bswap_32(val, addr)) should work, then? I
+> >suppose it may introduce a second bswap on BE architectures, but
+> >that's probably worth it to avoid the memory barrier.
+> >
 >
-> This change looks good to me. But the s-o-b chain would make more sense
-> if we can make it like this,
+> The existing mb() needs to be changed to wmb(), this will provide a more
+> efficient fence on most architectures.
 >
-> Co-developed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Zhangfei Gao<zhangfei.gao@linaro.org>
->
-> With this addressed,
->
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> I don't understand why you are still discussing the use of writel(), yes
+> it will work but you are introducing two unconditional swaps per doorbell
+> write.
 
-Thanks Baolu,
-Have fixed it.
+Well, no memory fence is cheaper still than a wmb(). But it's your
+driver, so if you prefer to use wmb() rather than switch to writel(),
+that's fine. I'll update the patch series.
+As for the bytes swaps in writel(bswap_32(val), addr), it would still
+be 1 on LE architectures, but 2 instead of 0 on BE architectures.
+Certainly a bit inefficient, but probably less overhead than the
+memory barrier currently adds on strongly-ordered architectures.
 
-Thanks
+>
+> Just replace the existing mb with wmb() in eq_update_ci()
+>
+> And if you have time to write one extra patch, please reuse eq_update_ci(=
+)
+> inside mlx5_eq_update_ci().
+>
+> mlx5_eq_update_ci(eq, cc, arm) {
+>         eq->cons_index +=3D cc;
+>         eq_update_ci(eq, arm);
+> }
+>
+> So we won't have two different implementations of EQ doorbell ringing
+> anymore.
+
+Isn't this what my patch 2 (at the start of this reply chain) already
+does? If you are suggesting something else, please clarify.
+
+Thanks for the reviews,
+Caleb
 
