@@ -1,129 +1,124 @@
-Return-Path: <linux-kernel+bounces-400525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E5A9C0EC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:20:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CE19C0ECA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D121C25F3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D741C25F2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C414A197A9E;
-	Thu,  7 Nov 2024 19:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9C5217677;
+	Thu,  7 Nov 2024 19:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gDtQIWDL"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d3MoWKu6"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644CC125D6;
-	Thu,  7 Nov 2024 19:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F927E782
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 19:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731007192; cv=none; b=R88VpvXNMj4RjhvRrWkZVbq5OXOO+hLMIIqiUl2Q5MBJOf7xPISPq1H88eV83a5IySDN8EARsPPYnus8UlCibJHTZJJN6K89CZBVACoqC+PzQeMM2Hh9G/EFWLfZf3FT+c7EdYQAX6/Nal+kznjRxzzVkvmkAYoRnEezEYJDsqM=
+	t=1731007194; cv=none; b=aTfJUOKp+luyEPuTl4SQthVH/EuSGWAOwYf8pE+0egFp9CKuu7jXX89Xim6Np208+eFVGBQjalHmQgemOE1CncH6zF11tHdK42RWNc98y0wHeqbDNWR4NQE53fkUMBJn/nkJ2hrGV+DyT33/KI4MfEY0lOEKOvNV1kw5YoqzJfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731007192; c=relaxed/simple;
-	bh=eN0VRTCZM2WBAT9cgFw9DTUrSpwbJpwTFubfXheWoYM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/51DJil1lM8PMUKMDBzWHspHQzgKRBfQcVQh4VZR+c40/ernYQUawKyhakNwEjdnvYAIHxDz5Yut/mMR+zKg6naw6c7mLbn2BsQH9BfuTkSK8q74q6kBCdYoIN/KeZLtDdIcN64vkz8nE2euBVKJcYh0QdwJ+yaVW2uwofgVCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=gDtQIWDL; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731007190; x=1762543190;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=eN0VRTCZM2WBAT9cgFw9DTUrSpwbJpwTFubfXheWoYM=;
-  b=gDtQIWDLMjJ/NAXUg/qRikxvG4HqzfhgG4r4dHvHws/40uaGZuxCQ/9t
-   sTSIQbUP6K/7C5E71dauPy19cjgAadtaMRF7bjAfwxWkKFilEAXdb4igA
-   FJZiFQFuPb2rsq+vrJiLS6unN/q9xofBi4zTENhSS+BdVxY9dHO6p/S2X
-   PypCitc64VGpdmIAjIvVelyRdmvGo1Z4uEuMuGbsc9IOphLdZ+RcVzchW
-   jCGsw8ucyej7zIpSxYJf23+2ro76EaYTTvVF/d352jwol6zfHv9Azkj+f
-   G2pCNbAIweBg2MKnkBs3l5Bs88oviLrGiIh3oU0Y/QIXJx9IIVGc7koz6
-   w==;
-X-CSE-ConnectionGUID: MDDVaqVhRqenuoSd1grXjg==
-X-CSE-MsgGUID: wGoZR4F7TSiOLGn00rOoNA==
-X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
-   d="scan'208";a="34539067"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Nov 2024 12:19:43 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 7 Nov 2024 12:19:22 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 7 Nov 2024 12:19:20 -0700
-Date: Thu, 7 Nov 2024 19:19:19 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-CC: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
-	<joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
-	Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, <netdev@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 0/9] Support external snapshots on dwmac1000
-Message-ID: <20241107191919.sngc2x664lp7jeg2@DEN-DL-M70577>
-References: <20241106090331.56519-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1731007194; c=relaxed/simple;
+	bh=epwaAKL6z/vr9Qa+iuSsEHyh1Wat9F+jzorfnphZDzs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n66BU1AF/z7OEQlQ4+zht4U959G8p0ZAnqn+4LUKw5j12mclZTzJ+5Dy0SYxvIjAfEXDdmI8urHG2hgB2Ha17Zcn7WYVNxKhFyW0kKIh3tw5uzjIeuss/usEsnVf2oyLH5uWoRCb/d5oMxYQaO6DE4eS6mrSTMnwg7g1PRH9uw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d3MoWKu6; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9e8522c10bso197756466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 11:19:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731007190; x=1731611990; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lz0x5nr+zytSDXNC3TjwSD3fvnHBp9KDDJ6PheBe2/4=;
+        b=d3MoWKu6pPBAzFgNqaU3krvxA15JrwZvuqpes6Bmtkqqmy33+zUMVoYz5fvla2rG7k
+         vdsAbifq8VWLLH4l8sdmuxOwQqbb/Z4PS8ZTOfFwCCTPVCicevrZ5AZLlqCC8YliTafY
+         x/4wkJhKC0QxegGywqJSdov4/bY/j7j6Ji9ca1wGUKlrrk3bQBhVCd/uIAzzCGghyy/6
+         AyTUxiMCRS8SlGpzAcIa0rch5EySGbAJjdEWhPeNa9FHwyh6O/T/lJaNJCGGzb5rk2ol
+         8wFgqnNV1otmG5eJd682ocbtsnP4XYIsnA8jrxv+g2ewbfLgZHBsM8vZ9QStNB/AXcjT
+         kJ9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731007190; x=1731611990;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lz0x5nr+zytSDXNC3TjwSD3fvnHBp9KDDJ6PheBe2/4=;
+        b=SRUsUiv0bW1Kiq9GpatETS/S6GfxJAuD5bOScdyhk5gxodlMT7jDkM1cSIXdtcSy0b
+         LQkmfCRiAOkiHFae4zI+iS8ej/5lczGHY42SCWJLzjb9pcSPdqKgvAc8OZ3M/JIA8f1z
+         xMz7Pa/R7Ul7HXwW41mb6xXofZQf0Ec7GKrmDtPZx1WFQNe139C0d57x0CdXk6q46Bc/
+         /vLZxRJFqBoo47xfJIYsqP3LVFvgD/8kK2IldBuHZXl/nitUYuyar8eNdhzCw/AU4PfM
+         xQy2ld4RrPZ0wtcE3d6T2TM+UfX3lq3xQw2Fyi4HslxNgc/7KQNkUBjP0ub3pk13sJDI
+         sC8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkBUvWVucIX07f2ED4oNTKZC+BPbHzrfNTsRrtdj4g37cOppnpfZnAcCmFF3ggKjGvmGgel8zrmoFw1uc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMG9LIEcD6FL79Z7LUi10oCHlCkKg1ZuQHVEqPJDW2kwCUQ0Cv
+	OS4Bq3+GlH+LZp7z9+5fWzuBE0KsdpCz7PE8ES1rzNFATzNIoN3J
+X-Google-Smtp-Source: AGHT+IEkLuumkMpxInzmBkBdOYglzCszz1XgQbRnyBEWkOKX6vYSz1RY83BmnkN2yhVDyd8CXPOasg==
+X-Received: by 2002:a17:907:f1aa:b0:a9e:b174:9cf7 with SMTP id a640c23a62f3a-a9eec993bbfmr62509066b.13.1731007189753;
+        Thu, 07 Nov 2024 11:19:49 -0800 (PST)
+Received: from DevOne.. ([85.206.117.188])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0abea92sm133553066b.85.2024.11.07.11.19.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 11:19:49 -0800 (PST)
+From: Gediminas Repecka <gediminas.repecka@gmail.com>
+To: mst@redhat.com
+Cc: jasowang@redhat.com,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Gediminas Repecka <gediminas.repecka@gmail.com>
+Subject: [PATCH] vdpa: vdpa_sim: vdpa_sim_net: fixed cofing style issues
+Date: Thu,  7 Nov 2024 21:19:41 +0200
+Message-Id: <20241107191941.37300-1-gediminas.repecka@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106090331.56519-1-maxime.chevallier@bootlin.com>
 
-> Hi,
-> 
-> This V3 is just a rebase a V2 on top of net-next to address some minor
-> conflicts. No changes were made.
-> 
-> This series is another take on the pervious work [1] done by
-> Alexis Lothoré, that fixes the support for external snapshots
-> timestamping in GMAC3-based devices.
-> 
-> Details on why this is needed are mentionned on the cover [2] from V1.
-> 
-> This V2 addresses multiple issues found in V1 :
-> 
->  - The PTP_TCR register is configured from multiple places, as reported
->    by Alexis, so we need to make sure that the extts configuration
->    doesn't interfere with the hwtstamp configuration.
-> 
->  - The interrupt management in V1 was incomplete, as the interrupt
->    wasn't correctly acked.
-> 
->  - This series also makes so that we only enable the extts interrupt
->    when necessary.
-> 
-> [1]: https://lore.kernel.org/netdev/20230616100409.164583-1-alexis.lothore@bootlin.com/
-> [2]: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
-> 
-> Thanks Alexis for laying the groundwork for this,
-> 
-> Best regards,
-> 
-> Maxime
-> 
-> Link to V1: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
-> Link to V2: https://lore.kernel.org/netdev/20241104170251.2202270-1-maxime.chevallier@bootlin.com/
+Fixed coding style issues reported by checkpatch script
+---
+ drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Hi Maxime,
+diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+index 6caf09a1907b..0705aff74cf3 100644
+--- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
++++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+@@ -53,7 +53,7 @@ struct vdpasim_cq_stats {
+ 	u64 errors;
+ };
 
-Dont know much about this particular driver, but the patches looked good
-to me!
+-struct vdpasim_net{
++struct vdpasim_net {
+ 	struct vdpasim vdpasim;
+ 	struct vdpasim_dataq_stats tx_stats;
+ 	struct vdpasim_dataq_stats rx_stats;
+@@ -293,7 +293,7 @@ static int vdpasim_net_get_stats(struct vdpasim *vdpasim, u16 idx,
+ 	unsigned int start;
+ 	int err = -EMSGSIZE;
 
-For the series:
+-	switch(idx) {
++	switch (idx) {
+ 	case 0:
+ 		do {
+ 			start = u64_stats_fetch_begin(&net->rx_stats.syncp);
+@@ -543,7 +543,7 @@ static struct vdpa_mgmt_dev mgmt_dev = {
+ 	.ops = &vdpasim_net_mgmtdev_ops,
+ 	.config_attr_mask = (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR |
+ 			     1 << VDPA_ATTR_DEV_NET_CFG_MTU |
+-		             1 << VDPA_ATTR_DEV_FEATURES),
++			     1 << VDPA_ATTR_DEV_FEATURES),
+ 	.max_supported_vqs = VDPASIM_NET_VQ_NUM,
+ 	.supported_features = VDPASIM_NET_FEATURES,
+ };
 
-Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
+2.34.1
+
 
