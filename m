@@ -1,166 +1,177 @@
-Return-Path: <linux-kernel+bounces-399890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C229C05E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:35:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A018C9C05E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DC51F222AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:35:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C901C215C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D8920C474;
-	Thu,  7 Nov 2024 12:35:36 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4284120EA28;
+	Thu,  7 Nov 2024 12:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="LTV0SmFW"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371FB1E9096
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8C41DBB37;
+	Thu,  7 Nov 2024 12:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730982936; cv=none; b=eToY7gmb0/1o1Kz1F9Aru76f54x1POfvo0SJYj8GNxK1TeyBYyj+ZzCKOayo6WQozhGCBK8Xn+1qT4MbTzDq3T8Z5Q31PqgPISFnSDUYtGsOehx0+4Nzpx51SYOoOuWg9V1qMElbsRiaImlkyoeS1p9LjJl3vsyIiu0KPjJJviM=
+	t=1730982980; cv=none; b=J770IccyPqIw/d27LRt9yQuoNeVB+bmj4hDzSCAgTwzqFNvFG/9rUPHbO7QgTn/LnqBylKOYFJUNGPFuj6RH5YNW8kYdMXj+bcJmLuZ8tCvFcp8G7EJCK4IJcIRV8X8j6Rkts5daQqtSymOHRhugun29K3syQVCefnZnRZuB4TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730982936; c=relaxed/simple;
-	bh=bHYyx9VSQMMVjl5yxNco7V3t9XCwwSZayOdt/JyZkP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDNotFQ0uZc+dntSePWidzKq9BalUElIkHn524NRRb697vutDZ3pagzwl49rdGWJavAOVMvaUM72T/HPEBko4wMGjqaMfYNFfDCUB2R5ZuaoMZtY/YC1UC6uEAFgcanI2en72F/C0quxdo07AZo8VCCUOmPjoULL02ybfxosSvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21F6EC4CECC;
-	Thu,  7 Nov 2024 12:35:32 +0000 (UTC)
-Date: Thu, 7 Nov 2024 12:35:26 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Marsden <greg.marsden@oracle.com>,
-	Ivan Ivanov <ivan.ivanov@suse.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-Message-ID: <Zyy0DpOIu63isKZR@arm.com>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <ZyPxhF34JjT3Ky9K@arm.com>
- <083d9e98-b6b8-4702-a700-24aea95cef9e@arm.com>
+	s=arc-20240116; t=1730982980; c=relaxed/simple;
+	bh=sbTkvX8zM0W1nvhz0TmDavDt9oWt6BvbZDyjOdFFuEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=upOmFe6utKaCabM6t3LaPBAZX5M0aIVuhDB1mNzUSglN9l3ip6EGBRR56f+bO7gOOAcFWY4GGtvhi7Nq9/fawQwO2wLwJw5lFMFCj5uzPPNhUIpsfMbBYcxuEBpkwXxcGnj6st6LXCTZHdCNfrUAszqHuU99cGwgceWUXM9Nm1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=LTV0SmFW reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 6a0efdbee279e3f4; Thu, 7 Nov 2024 13:36:10 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 6C24D6A9668;
+	Thu,  7 Nov 2024 13:36:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1730982970;
+	bh=sbTkvX8zM0W1nvhz0TmDavDt9oWt6BvbZDyjOdFFuEk=;
+	h=From:Subject:Date;
+	b=LTV0SmFWBwFcuu5qUQXxZgMjO2cVOZeC6a06xIaED1U8zW8ZIbelPs9EgsbvOddiE
+	 qh8ec92HFDjju7Ix8zA32rMEd3WmadNODtaLDd2wsCGHejn6xvnNwJ3pT91TfDI7jr
+	 /ND44+62Qw5rvCi5vrxtpVzTGHb4Ejt73ZjvWp5MNxbLcgmxkOuMSt5Lz2U7Db3LNr
+	 W+P8cY4KXj+Es5ox45aS4JfTm7+d7YWreG9RKrgkq7sv/21AOtM4n76FaHzd83NqW0
+	 lZcR9q1TPkUjdFLeUus46PfUbM8C7eSD+UR73jGrpfiIA4RJ7/uG+kO0u4wJsEhEh3
+	 XPPrvEXfK3wug==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Subject:
+ [PATCH v1] cpufreq: intel_pstate: Rearrange locking in
+ hybrid_init_cpu_capacity_scaling()
+Date: Thu, 07 Nov 2024 13:36:10 +0100
+Message-ID: <12554508.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <083d9e98-b6b8-4702-a700-24aea95cef9e@arm.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeggdegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprhhitggrrhguohdrnhgvrhhiqdgtrghluggvrhhonheslhhinhh
+X-DCC--Metrics: v370.home.net.pl 0; Body=4 Fuz1=4 Fuz2=4
 
-On Wed, Nov 06, 2024 at 11:37:58AM +0000, Ryan Roberts wrote:
-> On 31/10/2024 21:07, Catalin Marinas wrote:
-> > So, first of all, I'd like to understand the overall maintainability
-> > impact better. I assume you tested mostly defconfig. If you run an
-> > allmodconfig build with make -k, how many build failures do you get with
-> > this patchset? Similarly for some distro configs.
-> 
-> I've roughly done:
-> 
->     make alldefconfig &&
->         ./scripts/config --enable CONFIG_ARM64_BOOT_TIME_PAGE_SIZE &&
-> 	make -s -j`nproc` -k &> allmodconfig.log
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Is it alldefconfig or allmodconfig? The former has a lot less symbols
-enabled than even defconfig (fairly close to allnoconfig actually):
+Notice that hybrid_init_cpu_capacity_scaling() only needs to hold
+hybrid_capacity_lock around __hybrid_init_cpu_capacity_scaling()
+calls, so introduce a "locked" wrapper around the latter and call
+it from the former.  This allows to drop a local variable and a
+label that are not needed any more.
 
-$ make defconfig
-$ grep -v "^#\|^$" .config | wc -l
-4449
+Also, rename __hybrid_init_cpu_capacity_scaling() to
+__hybrid_refresh_cpu_capacity_scaling() for consistency.
 
-$ make alldefconfig
-$ grep -v "^#\|^$" .config | wc -l
-713
+No intentional functional impact.
 
-$ make allmodconfig
-$ grep -v "^#\|^$" .config | wc -l
-14401
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-> In the end, I decided to go for r'(\S+\.[ch]):.*(error|note):', which is any
-> files described as having an error or being the callsite of the thing with the
-> error. I think this is likely most accurate from eyeballing the log:
+This is on top of
 
-I think that's good enough to give us a rough idea.
+https://lore.kernel.org/linux-pm/12555220.O9o76ZdvQC@rjwysocki.net/
 
-> |            |     C&H files | percentage of |
-> | directory  |      w/ error | all C&H files |
-> |------------|---------------|---------------|
-> | arch/arm64 |             7 |          1.3% |
-> | drivers    |           127 |          0.4% |
-> | fs         |            25 |          1.1% |
-> | include    |            27 |          0.4% |
-> | init       |             1 |          8.3% |
-> | kernel     |             7 |          1.3% |
-> | lib        |             1 |          0.2% |
-> | mm         |             6 |          3.2% |
-> | net        |             7 |          0.4% |
-> | security   |             2 |          0.8% |
-> | sound      |            21 |          0.8% |
-> |------------|---------------|---------------|
-> | TOTAL      |           231 |          0.4% |
-> |------------|---------------|---------------|
+---
+ drivers/cpufreq/intel_pstate.c |   35 ++++++++++++++++-------------------
+ 1 file changed, 16 insertions(+), 19 deletions(-)
 
-This doesn't look that bad _if_ you actually built most modules. But if
-it was alldefconfig, you likely missed the majority of modules.
-
-> > Do we have any better way to detect this other than actual compilation
-> > on arm64? Can we hack something around COMPILE_TEST like redefine
-> > PAGE_SIZE (for modules only) to a variable so that we have a better
-> > chance of detecting build failures when modules are only tested on other
-> > architectures?
-> 
-> I can certainly look into this. But if the concern is that drivers are not being
-> compiled against arm64, what is the likelyhood of them being compiled against
-> COMPILE_TEST?
-
-Hopefully some CIs out there catching them. Well, if we are to fix them
-anyway, we might as well eventually force a non-const PAGE_SIZE
-generically even if it returns a constant.
-
-I'm building allmod now with something like below (and some hacks in
-arch and core code to use STATIC_PAGE_* as I did not apply your
-patches). alldefconfig passes with my hacks but, as you can see, the
-non-const PAGE_SIZE kicks in only if MODULE is defined. So, not an
-accurate test, just to get a feel of the modules problem.
-
-----------8<---------------------------
-diff --git a/arch/arm64/include/asm/page-def.h b/arch/arm64/include/asm/page-def.h
-index 792e9fe881dc..71a761f86b15 100644
---- a/arch/arm64/include/asm/page-def.h
-+++ b/arch/arm64/include/asm/page-def.h
-@@ -12,7 +12,19 @@
+Index: linux-pm/drivers/cpufreq/intel_pstate.c
+===================================================================
+--- linux-pm.orig/drivers/cpufreq/intel_pstate.c
++++ linux-pm/drivers/cpufreq/intel_pstate.c
+@@ -1028,26 +1028,29 @@ static void hybrid_update_cpu_capacity_s
+ 	}
+ }
  
- /* PAGE_SHIFT determines the page size */
- #define PAGE_SHIFT		CONFIG_PAGE_SHIFT
--#define PAGE_SIZE		(_AC(1, UL) << PAGE_SHIFT)
-+#define STATIC_PAGE_SIZE	(_AC(1, UL) << PAGE_SHIFT)
-+#define STATIC_PAGE_MASK	(~(STATIC_PAGE_SIZE-1))
-+
-+#if !defined(MODULE) || defined(__ASSEMBLY__)
-+#define PAGE_SIZE		STATIC_PAGE_SIZE
-+#else
-+static inline unsigned long __runtime_page_size(void)
-+{
-+	return 1UL << PAGE_SHIFT;
+-static void __hybrid_init_cpu_capacity_scaling(void)
++static void __hybrid_refresh_cpu_capacity_scaling(void)
+ {
+ 	hybrid_max_perf_cpu = NULL;
+ 	hybrid_update_cpu_capacity_scaling();
+ }
+ 
+-static void hybrid_init_cpu_capacity_scaling(bool refresh)
++static void hybrid_refresh_cpu_capacity_scaling(void)
+ {
+-	bool disable_itmt = false;
++	guard(mutex)(&hybrid_capacity_lock);
+ 
+-	mutex_lock(&hybrid_capacity_lock);
++	__hybrid_refresh_cpu_capacity_scaling();
 +}
-+#define PAGE_SIZE		(__runtime_page_size())
-+#endif
-+
- #define PAGE_MASK		(~(PAGE_SIZE-1))
  
- #endif /* __ASM_PAGE_DEF_H */
-----------8<---------------------------
++static void hybrid_init_cpu_capacity_scaling(bool refresh)
++{
+ 	/*
+ 	 * If hybrid_max_perf_cpu is set at this point, the hybrid CPU capacity
+ 	 * scaling has been enabled already and the driver is just changing the
+ 	 * operation mode.
+ 	 */
+ 	if (refresh) {
+-		__hybrid_init_cpu_capacity_scaling();
+-		goto unlock;
++		hybrid_refresh_cpu_capacity_scaling();
++		return;
+ 	}
+ 
+ 	/*
+@@ -1056,19 +1059,13 @@ static void hybrid_init_cpu_capacity_sca
+ 	 * do not do that when SMT is in use.
+ 	 */
+ 	if (hwp_is_hybrid && !sched_smt_active() && arch_enable_hybrid_capacity_scale()) {
+-		__hybrid_init_cpu_capacity_scaling();
+-		disable_itmt = true;
+-	}
+-
+-unlock:
+-	mutex_unlock(&hybrid_capacity_lock);
+-
+-	/*
+-	 * Disabling ITMT causes sched domains to be rebuilt to disable asym
+-	 * packing and enable asym capacity.
+-	 */
+-	if (disable_itmt)
++		hybrid_refresh_cpu_capacity_scaling();
++		/*
++		 * Disabling ITMT causes sched domains to be rebuilt to disable asym
++		 * packing and enable asym capacity.
++		 */
+ 		sched_clear_itmt_support();
++	}
+ }
+ 
+ static bool hybrid_clear_max_perf_cpu(void)
+@@ -1404,7 +1401,7 @@ static void intel_pstate_update_limits_f
+ 	mutex_lock(&hybrid_capacity_lock);
+ 
+ 	if (hybrid_max_perf_cpu)
+-		__hybrid_init_cpu_capacity_scaling();
++		__hybrid_refresh_cpu_capacity_scaling();
+ 
+ 	mutex_unlock(&hybrid_capacity_lock);
+ }
 
--- 
-Catalin
+
+
 
