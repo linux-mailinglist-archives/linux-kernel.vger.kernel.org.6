@@ -1,138 +1,225 @@
-Return-Path: <linux-kernel+bounces-399872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA97E9C0598
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:22:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C449C05AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5248F1F2333B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8459F283DBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F29F20EA3C;
-	Thu,  7 Nov 2024 12:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D20A20ADF9;
+	Thu,  7 Nov 2024 12:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyH8oLa/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXcVzkxG"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574D215B0F2;
-	Thu,  7 Nov 2024 12:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED2E1F4739;
+	Thu,  7 Nov 2024 12:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730982149; cv=none; b=apaTtoapT0KaYlDJVPLz88IVcRBnAldQ2QsAoo7I71FqvRKcTh7v4Cqmx6USoZuwhvIwyP5wjZKL8NAqcqPct/HYVSu0qMfYjNsN6HL7BKnqubujgPcbO4R/mx+0o5LuzjQd6MzBztacaDbjINgNY9bADjb3zU+VV76KfFy7HQ8=
+	t=1730982237; cv=none; b=g4odc737pj47XViWMo7sF6RZMDNQXFW393PfLcXXcgGIQH9YxVlBpAfVvv9nyroY3Q9Vl8ectksr6aa9X03oPY1lEoI0TrUGGow3hKpozR5/ThGqcD2MiWDqtt8C3DR3oQnk4bg0COCAnuouvU0stb2M0cZmO/pTiLgwDYBPeiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730982149; c=relaxed/simple;
-	bh=0ehXCKHIOPCCq9mrRk5qMzO/ClbaBbTy81K+ZzoNS7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=orkHLHcAvIlnyrxydnxHVVlq6xmLnREyd73gwn19hxLHF+UOVhbrvECOAuqhWNyxOthBv3b/3Tj8JUTCTFLkI/NZckpUH3934qrWu9H+YAyIj8IcoVf+Gjlnc1Ej+LxR09CRXb/HAyF6m4kNUZ698RUWIJPP2Lx0o3GrRk/qBFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyH8oLa/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EAC4C4CECC;
-	Thu,  7 Nov 2024 12:22:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730982149;
-	bh=0ehXCKHIOPCCq9mrRk5qMzO/ClbaBbTy81K+ZzoNS7w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AyH8oLa/oDuDBmvyjFTKWTkfPaf6Yd8yvo/PJQY9fYDxO2evuC+oqskGGVZ/9Lx9f
-	 JwC0/4nvbCse0R4iXjzFbdtGvS1KJPEojsLBnslgumuV2RP7L9xKbT7DWan6kma2yM
-	 h6zbfsSyZknsSW4mtUEh6duJfSH4fQEawQLASbNLqa0Ha5WK/NVaQE83mHddWhD/+Y
-	 7UUoVCkGjfxvgvMuztGwA5WhvFPFjok3t6+VRehTyFNz3SzTqTopYHdWHuMxZVNX3T
-	 gPJqn9VcUzlGDK9O20hg+4gJfNQfOs9ZhvNJa0yH/4nfZru8MwqPLvFxjQZndnBylI
-	 zsieX2o2S7n3g==
-Message-ID: <4009f4ee-2c55-4a4f-8805-eafe7efc0147@kernel.org>
-Date: Thu, 7 Nov 2024 13:22:23 +0100
+	s=arc-20240116; t=1730982237; c=relaxed/simple;
+	bh=lOvVeVs6/OioTgLwwdvhBos+jrtm8bl9raVO7S2lDYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXas5ceq7nqiFDJuddCfxAR99Rp9Q83Ol9bnpQjygFfXHAXbDhxnJW9LZV6ATfHX3wLRLcn2bxRkpyytjoRzTOAGiMHHEA8GWq7q5bYuDKraxyFbDB4AimUHX/ht4SFoLweexYSIff5odBChEDGcD+/8FLy6ednhycfGg5lzRoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXcVzkxG; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c913aso1433117e87.1;
+        Thu, 07 Nov 2024 04:23:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730982234; x=1731587034; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e5mEBnJVQCgTXAayGd8aqvDjLlsqmRz+483jS2oi5/Q=;
+        b=XXcVzkxGz++EDMv3Tc6NjGcv1+n0y8Ybr2/VmOmJF1/36rEQSopwso7eMf7WEjKjyx
+         DL35Pmy11LtIrPT4MNeDtew08d8ShRpUrxyVOyeLHELEUBIgnUgSyPZ+0lNXQgX7L+a5
+         7KcsCr8O7kjHUjYgojMHrP8L2x4WQTDX4sD9v6vndhPVcSKJ/MH8rMS6OhrKf/ZIgdcK
+         iHrB4dBZnAwY88Vompa2ogNZUWyi65RpbC4rvx95J05JEfpnEtchVdRYsFbfy39ysalJ
+         aHiM6pZY5GYrMEVmEeNXFiLQzWmGBBF0UOU1O08+BsqpnAg+mHIJAirdy1EsrXu+az0I
+         mBcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730982234; x=1731587034;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e5mEBnJVQCgTXAayGd8aqvDjLlsqmRz+483jS2oi5/Q=;
+        b=OOBBAJogSrq+jd3wf/IJ3VTEuqQGML6/TiqHWgWgNtub3DGvcHsX27xk9O+rSSisKn
+         pE70zRG3HtZdBGKKvA0bGU2Uxt9Z2atTy6XuZPqAgA0Nb0JlEswa0C0sdhxFPTpe4Brc
+         WUN1NEbB5CjR7+W7wyuco4ocjxQT7t3DLycb633g2aEExmiNHvI8y/qcw1zCjqaPc6JS
+         StpzABAItUpu64l4WNFlyvbaOD+ruWfMkdzXihtpt29fltaM9d/65Hp/cwYpKJbNnTVc
+         cNswKs5LTyp2Hg+VQZCIkuk9VjQZVtkcqDPoTVRzsruOCKTC7cgtgUqGqAGFCmdGS560
+         jtLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCu9xga/hTIi3qPhMzuB8c8jjFZ7HgeWY6/FK7n1I3/JkHNFKkU58k2vDK+ZDDAJSiEV3qaLBlkyyUXUZr@vger.kernel.org, AJvYcCVHMKPDCMlv6XtghPY566GdhN2ohCrGkv7EbsjIC3/XM9TV0O0XMI/FDDKGUisL5rFbzf9nHdRHGadL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9y9kAvsLNYXlgjdm4pCTr2wXLR1siB5kAexyqMBOSse/RouDj
+	9OJsLCi8MfjZscAM53H1Xyg1eCLl1sVot0ktBAHtmfDzCKSgRuKF
+X-Google-Smtp-Source: AGHT+IE5NOF+MyMOh9t0PoQGFx/p+V9qIGMTb9aDtyWJG88Z0H59EDALHldmpa4vGm3Ty1CexYNlxw==
+X-Received: by 2002:a05:6512:3c90:b0:539:ea54:8d22 with SMTP id 2adb3069b0e04-53b348d2696mr22712509e87.18.1730982233632;
+        Thu, 07 Nov 2024 04:23:53 -0800 (PST)
+Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826aec00sm193887e87.240.2024.11.07.04.23.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 04:23:52 -0800 (PST)
+Date: Thu, 7 Nov 2024 13:23:49 +0100
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] dt-bindings: mtd: davinci: convert to yaml
+Message-ID: <ZyyxVQww6PcYWFJU@gmail.com>
+References: <20241107-ondie-v6-0-f70905dc12bf@gmail.com>
+ <20241107-ondie-v6-2-f70905dc12bf@gmail.com>
+ <5r6j26qwcxyppxicdqih6tskb2qxkb5phzjtwqv47iqb4qupkp@zxujctq7ot6k>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] arm64: dts: qcom: qcs8300: add TRNG node
-To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_sravank@quicinc.com
-References: <20241107121513.641281-1-quic_yrangana@quicinc.com>
- <20241107121513.641281-3-quic_yrangana@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241107121513.641281-3-quic_yrangana@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 07/11/2024 13:15, Yuvaraj Ranganathan wrote:
-> The qcs8300 SoC has a True Random Number Generator, add the node with
-> the correct compatible set.
-> 
-> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> index 2c35f96c3f28..39c0c6b8516d 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> @@ -588,6 +588,11 @@ &clk_virt SLAVE_QUP_CORE_0 0>,
->  			};
->  		};
-> 
-> +		rng: rng@10d2000 {
-
-Drop unused label.
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="GpFM4aHg++qMfh0c"
+Content-Disposition: inline
+In-Reply-To: <5r6j26qwcxyppxicdqih6tskb2qxkb5phzjtwqv47iqb4qupkp@zxujctq7ot6k>
 
 
-Best regards,
-Krzysztof
+--GpFM4aHg++qMfh0c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Nov 07, 2024 at 11:17:14AM +0100, Krzysztof Kozlowski wrote:
+> On Thu, Nov 07, 2024 at 10:19:54AM +0100, Marcus Folkesson wrote:
+> > Convert the bindings to yaml format.
+> >=20
+> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > ---
+> >  .../devicetree/bindings/mtd/davinci-nand.txt       |  94 -------------=
+--
+> >  .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 134 +++++++++++++=
+++++++++
+> >  2 files changed, 134 insertions(+), 94 deletions(-)
+>=20
+> ...
+>=20
+> > +allOf:
+> > +  - $ref: nand-controller.yaml
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - ti,davinci-nand
+> > +      - ti,keystone-nand
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description:
+> > +          Access window.
+>=20
+> Merge two lines. See other files how they do it.
+
+Ok
+
+>=20
+> > +      - description:
+> > +          AEMIF control registers
+>=20
+> Merge two lines
+
+Ok
+
+>=20
+> > +
+> > +  "#address-cells":
+> > +    const: 1
+> > +
+> > +  "#size-cells":
+> > +    const: 0
+>=20
+> These two properties are not needed, drop. I don't understand why did
+> they appear here. Changelog also does no explain it.
+
+Ok, I drop those.
+
+[...]
+
+> > +examples:
+> > +  - |
+> > +    bus {
+> > +      #address-cells =3D <2>;
+> > +      #size-cells =3D <1>;
+> > +
+> > +      nand-controller@2000000,0 {
+> > +        compatible =3D "ti,davinci-nand";
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +        reg =3D <0 0x02000000 0x02000000
+> > +        1 0x00000000 0x00008000>;
+>=20
+> Two items must be encoded as two items, so two <> <>
+> Also messed alignment. See DTS coding style.
+
+Ok
+
+>=20
+> > +
+> > +        ti,davinci-chipselect =3D <1>;
+> > +        ti,davinci-mask-ale =3D <0>;
+> > +        ti,davinci-mask-cle =3D <0>;
+> > +        ti,davinci-mask-chipsel =3D <0>;
+> > +
+> > +        ti,davinci-nand-buswidth =3D <16>;
+> > +        ti,davinci-ecc-mode =3D "hw";
+> > +        ti,davinci-ecc-bits =3D <4>;
+> > +        ti,davinci-nand-use-bbt;
+> > +
+> > +        partitions {
+>=20
+> Where are the partitions documented? In which binding? Don't you miss
+> mtd.yaml? I think this binding misses some references, but I am not sure
+> which ones.
+
+I thought this covered it?
+
++  partitions:
++    $ref: /schemas/mtd/partitions/partitions.yaml
+
+>=20
+> Best regards,
+> Krzysztof
+>=20
+
+Thanks,
+Marcus Folkesson
+
+--GpFM4aHg++qMfh0c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmcsr3IACgkQiIBOb1ld
+UjLyKxAAuaB0k58jrWRz6TcX8Bmicff94QbzPurIsl+uRngj83sqmSHvSHqZl0g0
+nv+48TxVVK0ZowVop2xs/gR2dUESfOKUz0iuuDmlUYV1ovv3tRDTNxWKgKc7PPEJ
+ZvTPBoOyq3VycCkdM49+DHkQFrfkMA26nhS1mEkCwfx1vgSIH0/4YTyw8MX2RfG+
+F14bhPCCbtiX2hX+1vS3wxWS48+0RGXEEJp8dps+kHWjdpWS/FPSbnM6pS3nP4EG
+2FMuzXeGYLN6hR8l8Zr2pG4v/11UUvSEn6x2/iw2NwFRprSpiOY9nnqo6moQwD3e
+2a+ayjLiBXxbXUZ03n95vtgrvhmjoTY7FtKHHeiIVgYzpAoiY8WAk68Z+71ja47g
+AhzDyLBTmNqGcc1lRzRfOTeQa9+2MAT1ok3fdDowukOjVq02uBnNgUshaRuxVVY2
+39+bJBKi88w6e1I+bVFe2wMqlEDc3znzVe+gHuuy4wIpOkVFRBD0zUwLJkBRt0xV
+5/czo53tj7Gzt2+J84PmeSaM5DcIrGwYwK4GJKbvD9cnGUmsDc4stra6fTsVA8Hj
+ABQ2KWAnIZkc9w5MdefpGz0CBIfO8uiXhNFL9YqfAvJyXuTjx5Q1VW5m8k5EImA3
+oxQj4ZU3I1CnwzzPsfiZihIvkbeMsk4mGL3JBFdh6m91W1iyv1E=
+=rTaQ
+-----END PGP SIGNATURE-----
+
+--GpFM4aHg++qMfh0c--
 
