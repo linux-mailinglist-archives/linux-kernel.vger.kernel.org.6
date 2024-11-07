@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-400197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8059C0A32
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACA89C0A31
 	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:35:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 418F8283795
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3AF6283644
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22783213ECE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22020213EC7;
 	Thu,  7 Nov 2024 15:35:38 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47002213158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F9A212D0C
 	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730993737; cv=none; b=Btg/u4V2rNjffBdPvsTKc3QU/qLVEHh6nlVbijLG5bJWCoOJcmLuGY6dxqf0Hi+EUHfozWpNirQb4SMfCplDpv7C+I30CPksk7ehkpTpfTgbg5XRNeVM+LEqQbnqSF90RcmK091BYlfbCN5ZxSfWv2/aEq/TQ1lxOUVDhlJeoA4=
+	t=1730993737; cv=none; b=sep+MJiCVsG/WkHZiDWmVluX4FyuEgiCEgw8fkZcW6SIU1uXtJAKh+Q+FISf8qVc/wfn7truIb69cT9VxkdXFSqHHpMNkzEeasmikOVulm1oEuO8PSfIVAIX57AEzbP8qeCrKIqq6aHtAmF/Ab1SZ2u6E3HTJqAGDZAtafxVNz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730993737; c=relaxed/simple;
-	bh=YqDuZZASfsbZbJh36sPWJxerqHJHk525rmka0yjYpsY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KAazLz/rs2crJMaFYxBYGLxhS7NmqUju091w12MqUNvG+Z0hlbUJQi9aGavkfpQIaq0FRNPM/jRYnx1Gitf1tTT5nd2DXSiucpQ28ipZWRHjHdt6JJLJVH6B//PC0X8JuStNjV4WWU4EVeihcKu8fvS9G2iB2OEJXsDNoSAG5QE=
+	bh=CnC2sd8Oao1J21P/qBvL/HWz3WS+2cdCs0teDxRpgrQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=cI04242knuYz5/959NLueMc639Vp0CKeS2+oUoGP/9+6gOdTULN8arwYZDcTKO/Wo2T8GICvDVbQyyu37452UCT1iPRqS1BDq3CJeMc3UQZWJJULWbTm40TpgzvdUH3VTBINqkMihncyPYZLXwddpRfe8xYwTZ3Dxm1A7WPStv8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <jre@pengutronix.de>)
-	id 1t94Xf-0005DD-Pg; Thu, 07 Nov 2024 16:35:27 +0100
+	id 1t94Xf-0005DD-RL; Thu, 07 Nov 2024 16:35:27 +0100
 From: Jonas Rebmann <jre@pengutronix.de>
-Subject: [PATCH 0/2] spi: imx: support word delay in ecspi
-Date: Thu, 07 Nov 2024 16:35:19 +0100
-Message-Id: <20241107-imx-spi-word-delay-v1-0-2a969214d796@pengutronix.de>
+Date: Thu, 07 Nov 2024 16:35:20 +0100
+Subject: [PATCH 1/2] spi: imx: pass struct spi_transfer to
+ prepare_transfer()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,10 +44,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADfeLGcC/x3MTQqAIBBA4avErBsYpUV2lWgROtVAaSj0g3j3p
- OW3eC9D4iicYGgyRL4kSfAVqm3AbrNfGcVVgybdKSKDcjyYTsE7RIeO9/lFrZwltZDprYUanpE
- Xef7pOJXyAebrH9VkAAAA
-X-Change-ID: 20241009-imx-spi-word-delay-21dc01f098cc
+Message-Id: <20241107-imx-spi-word-delay-v1-1-2a969214d796@pengutronix.de>
+References: <20241107-imx-spi-word-delay-v1-0-2a969214d796@pengutronix.de>
+In-Reply-To: <20241107-imx-spi-word-delay-v1-0-2a969214d796@pengutronix.de>
 To: Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
  Sascha Hauer <s.hauer@pengutronix.de>, 
  Pengutronix Kernel Team <kernel@pengutronix.de>, 
@@ -63,40 +63,78 @@ X-SA-Exim-Mail-From: jre@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The i.MX SPI controller supports inserting a configurable delay between
-subsequent words, which is needed for some slower devices that couldn't
-keep up otherwise.
-
-This patch series introduces support for the word delay parameters for
-i.MX51 onwards.
-
-The SPI clock (CSRC=0) was chosen as the clock source over the also
-available 32.768 KHz Low-Frequency Reference Clock (CSRC=1). The sample
-period control bits (SAMPLE_PERIOD) are set to the selected word delay
-converted to SPI clock cycles. A deviation from the requested number of
-wait cycles and the actual word delay was observed via both software
-timings and oscilloscope measurements and accounted for.
-
-The Chip Select Delay Control bits in the Sample Period Control Register
-remain zero.
-
-Behaviour on i.MX35 and earlier, where the CSPI interface is used,
-remains unchanged.
+In an upcoming patch, mx51_ecspi_prepare_transfer() needs access to the
+word_delay parameter. To enable controller-specific handling of such
+per-transfer parameters, extend the prepare_transfer() function of the
+spi_imx_devtype_data interface to take a struct spi_transfer argument,
+update all controller-specific implementations accordingly.
 
 Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
 ---
-Jonas Rebmann (2):
-      spi: imx: pass struct spi_transfer to prepare_transfer()
-      spi: imx: support word delay
+ drivers/spi/spi-imx.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
- drivers/spi/spi-imx.c | 106 ++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 90 insertions(+), 16 deletions(-)
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241009-imx-spi-word-delay-21dc01f098cc
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index 85bd1a82a34eb4bc76a4b4528e087fc2ebfa8b85..65a8303b80b1191cd2c19d61f88836e7fd3c7ae9 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -71,7 +71,8 @@ struct spi_imx_data;
+ struct spi_imx_devtype_data {
+ 	void (*intctrl)(struct spi_imx_data *spi_imx, int enable);
+ 	int (*prepare_message)(struct spi_imx_data *spi_imx, struct spi_message *msg);
+-	int (*prepare_transfer)(struct spi_imx_data *spi_imx, struct spi_device *spi);
++	int (*prepare_transfer)(struct spi_imx_data *spi_imx, struct spi_device *spi,
++				struct spi_transfer *t);
+ 	void (*trigger)(struct spi_imx_data *spi_imx);
+ 	int (*rx_available)(struct spi_imx_data *spi_imx);
+ 	void (*reset)(struct spi_imx_data *spi_imx);
+@@ -649,7 +650,7 @@ static void mx51_configure_cpha(struct spi_imx_data *spi_imx,
+ }
+ 
+ static int mx51_ecspi_prepare_transfer(struct spi_imx_data *spi_imx,
+-				       struct spi_device *spi)
++				       struct spi_device *spi, struct spi_transfer *t)
+ {
+ 	u32 ctrl = readl(spi_imx->base + MX51_ECSPI_CTRL);
+ 	u32 clk;
+@@ -774,7 +775,7 @@ static int mx31_prepare_message(struct spi_imx_data *spi_imx,
+ }
+ 
+ static int mx31_prepare_transfer(struct spi_imx_data *spi_imx,
+-				 struct spi_device *spi)
++				 struct spi_device *spi, struct spi_transfer *t)
+ {
+ 	unsigned int reg = MX31_CSPICTRL_ENABLE | MX31_CSPICTRL_HOST;
+ 	unsigned int clk;
+@@ -878,7 +879,7 @@ static int mx21_prepare_message(struct spi_imx_data *spi_imx,
+ }
+ 
+ static int mx21_prepare_transfer(struct spi_imx_data *spi_imx,
+-				 struct spi_device *spi)
++				 struct spi_device *spi, struct spi_transfer *t)
+ {
+ 	unsigned int reg = MX21_CSPICTRL_ENABLE | MX21_CSPICTRL_HOST;
+ 	unsigned int max = is_imx27_cspi(spi_imx) ? 16 : 18;
+@@ -953,7 +954,7 @@ static int mx1_prepare_message(struct spi_imx_data *spi_imx,
+ }
+ 
+ static int mx1_prepare_transfer(struct spi_imx_data *spi_imx,
+-				struct spi_device *spi)
++				struct spi_device *spi, struct spi_transfer *t)
+ {
+ 	unsigned int reg = MX1_CSPICTRL_ENABLE | MX1_CSPICTRL_HOST;
+ 	unsigned int clk;
+@@ -1304,7 +1305,7 @@ static int spi_imx_setupxfer(struct spi_device *spi,
+ 		spi_imx->target_burst = t->len;
+ 	}
+ 
+-	spi_imx->devtype_data->prepare_transfer(spi_imx, spi);
++	spi_imx->devtype_data->prepare_transfer(spi_imx, spi, t);
+ 
+ 	return 0;
+ }
 
-Best regards,
 -- 
-Jonas Rebmann <jre@pengutronix.de>
+2.39.5
 
 
