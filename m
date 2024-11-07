@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-400296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F21C9C0B83
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:26:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1959C0B84
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A9CA1C23BB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:26:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63991F2109B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A21C218D9E;
-	Thu,  7 Nov 2024 16:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A75218D9F;
+	Thu,  7 Nov 2024 16:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OaglWSka"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TigUJTlb"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F53A218D75
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A41218D9C
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730996451; cv=none; b=BVMHiSjicmSlflFu9AJ6zy/keF/FqGmxBk6gznGEu0ex2rdx0MIK3BZ3/Nb/uhHcXkyuP2/zCY5/481aHvc88c4ULydVLgrRFpYF+Tj3p4GCzqiFKj2+obfDlXShB43w+/oVQ3O+hJtyPNxBFST3urpqtASJcRqHcwMf/+9+QII=
+	t=1730996454; cv=none; b=k0LsZD+XJ5ji4FoFqsyKKbirj/Q3JZiqiBvStBlmwB/J+VCXCDCpXtceUZLKoGomlcMi6AXzOikA+ktdYaYZwobGHjAWj/XeFSMywhzg8TUjODEdN/xcBEd87wz4jx7+VrQYAiDk0cfyg/nGmHQPPLiGREugjrSSdCWP2VE2q4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730996451; c=relaxed/simple;
-	bh=OHfFGp0ifWb+zyyGJptLLNowSsK7ixiaUATGyiRfl38=;
+	s=arc-20240116; t=1730996454; c=relaxed/simple;
+	bh=Y+vKqYUCxSTt4LSzTKZWPT5tUEvVlBLoT2ItWD2c1T0=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=MiR59uKu8S5FyYThSiahwAQ4quLGpSBeFG6yLtk7inAfTv7aVx3PhZcAbNkpvrkdHFxpqNE1jzBuIOaWAEgHwZQT9neqzOIkco4XHnleCRrzHmPfVNRlSnWssT/kqdhv7KTuapj4Wxk34Lf3D4p0oWBmn9PdBUUvi8X2K6xB9K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OaglWSka; arc=none smtp.client-ip=209.85.219.202
+	 To:Content-Type; b=HkIx4cgnSI5fVWXs2Cmy6gs/+dz+2vmJ+NHTXKUyBXlqdMUi9dJBMIYU+7gVqX1eNxH6nwKNgBjfn+17bm2TYUaaK2d0IcvnS0fAVIMgIpIfrvME86Zs+k5rrJKJU0WAPM1j3eAkIJ6mgmwrQuyys/qf7CKHcZYaCrA+e4VXvHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TigUJTlb; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30df208cadso2753780276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:20:50 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e32e8436adso15600147b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:20:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730996449; x=1731601249; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730996451; x=1731601251; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cITlh9ATOoPVTRO1t6obQAYHyRTBK7FrpPuOEFqdekQ=;
-        b=OaglWSkaljUPgg4eVEsSCQX2Nr0aFgb5yZ9D7HsF+RpKKsdiEFay1LmjPh+7atoe/T
-         IFkRb1uLrX7pA4TnAOf79eNM7ILpg1vPfgX5y5QDfEy2R6AUN0EFAUAh7G1eq0gc8Fb+
-         ICyjm0qHw9DvHfrX8svdw3G5gWgjgbkF4xTLHl2Stth7hnohWcM/p/VvEeANKzB32sXB
-         tmtQl+zuXue6o7p1k2K51+JnvYdBz7vjfarlkcJzdxrLusQDQveVMGEen5zexJ9CjHRF
-         dpRhjp7aOLJscmb02417GG+hZoO9vSgtbE736exp7WqoK4XA5FAo1U+4Wcozws7SK26k
-         cbsA==
+        bh=0JtSX1ivElzP67Gy896L9Ack6oYznxDX7izzc96bZIU=;
+        b=TigUJTlbcdzBY865SF6TLU6X/36VeQI3ZTNC4uTDQZFQJYYJkBAxuRx+K+f53SMgfy
+         t7Qi+YTKICuy5pqQAVs/c3FSG7HXbGWHzf/AdzQARPhEs4QoLJPryQ7lBT7AKdDL8T7F
+         genJS5hKBtSIeDfiNcdBeAK/STK80P2STSnZ/xdMPILTQeufTAOJeh77yW6jXaHBS5PA
+         AlWsBIXijR346CfOlXArkF71uVPe+utcp/QneDZ0Q/GJF2kAsmHD4GOT4i3yUzXLAAbu
+         QrY2Slc7YSTTH+iiJ4U+bA7g2lEVEuhjscL8heV+o4BpqC9Pu5hiXKiPHG+w3VhQBUq5
+         LQvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730996449; x=1731601249;
+        d=1e100.net; s=20230601; t=1730996451; x=1731601251;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cITlh9ATOoPVTRO1t6obQAYHyRTBK7FrpPuOEFqdekQ=;
-        b=YfRO0E3DqPCp32pWWz0jHEjp/xCLyFOG98gUsyaY5nitdQKX7PNH/15mnPq1cdk1rY
-         olsQj/GtqxYcmPc6H7vTfE9xZR+nKuuEaLaIdH+HAJLoDvEq7PKEO9CcsaoTAez+i3WM
-         JXc9mW9JsVxKOHG3Cu4+ID6mHk8SB3q79hfBQQM7oPH1YRC9tWmMJjT6yzVG4bey7Lj3
-         dgos9/YKVqy7xvg5fyHks5L8dt9VpQS6EIoT7CUiXcWOhvjXHAjSBnqzNaf6JRsEkDon
-         ZRY6gkn98+Xk3UHZanY5zevFN5qeQFr4lbqtTuetNAA2+Rmcui8G6TB+p1zm5zw/8Obp
-         GxcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUa3qQ73wYh3HMtspTxY+6xsDyqbOGmaNh6vBSc9LpaxZ//8evBQrSPiuc3fWs1yYBGNwC4WqJSBV3tCfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyACHI3me0ET1mjrM+3r2AgyRpSNCkMcQs8HSoG1W2g3fM0Qr1q
-	dqR+SBjciZzWT8rn2UfFN5zdnEh/4VqYH+gtKS/zqpuzoW3dWIO20Wcc/pLUgBnpDsq2VkD0C4i
-	pGAYpAA==
-X-Google-Smtp-Source: AGHT+IG1fNyhU6PNjCD8QiB4AIaYMuHJ0Ff8pcK56s0BAFMRxuWOpx7ZU0605y5qL9fF+7F7l6kf2Vho1N3/
+        bh=0JtSX1ivElzP67Gy896L9Ack6oYznxDX7izzc96bZIU=;
+        b=FZLIuLoRE2oHollGvNne5DXGOxE7j5iRFGaKa6zhYBNKIztmLmOHh7Gve5vY0DMRDB
+         iCOv7Bdqx3eD4eyosPXAgVWAZv1ePWY7mHqdHOgCVEp4TOMrG013pdup7GdbOdLhUl+n
+         TSWMon5iyspSDvhl7PcnzIf+vG1WjnzIb0oWKVOrVAkf1RD1zenW9ybaMHCBLP2Oin+9
+         Tc9HwwAJHmy53z4FZnExsH+cm1dIpecGhRkLo8e6VLp0lYMHyTLRue5j0OyPAfWEcYH3
+         w5z2qaCt1WJ3GHHPqWWmw1YoYi5Vt4zi4GTHFxZw/HBFoT6aVd/l3JErC1fbAQlqxyf1
+         O8zA==
+X-Forwarded-Encrypted: i=1; AJvYcCV65a1NbbyLfUbSbCI+aFgOFJTSG40cHSNX2pG5e/GNUZNjdCXYJhWUio9DtgHA9LqSiBCZ3cJsIn8aRWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLciVgVBHSMCuvWV2o3dRY6DS9qkDRi75td2T8swoWI3yJ6uNE
+	sf/DFt93cuxSF8dcRTyI4lZKCKLDg0sINDwLdz3/0FUi5RwijEviIAahuoHKBKJrFqGc2osuW/F
+	JWwlNXQ==
+X-Google-Smtp-Source: AGHT+IE0rx0KSxGHx6soYbCIVed3oUzDZtt0AEkgb4Fc4ntlPFe4VEdCSprC19W+Uf9rSJ3fRj2/Oar0I4CM
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:acc7:bda:7167:18d8])
- (user=irogers job=sendgmr) by 2002:a25:ef08:0:b0:e26:3788:9ea2 with SMTP id
- 3f1490d57ef6-e337e037c8emr122276.0.1730996449164; Thu, 07 Nov 2024 08:20:49
+ (user=irogers job=sendgmr) by 2002:a81:a788:0:b0:6e3:14c3:379a with SMTP id
+ 00721157ae682-6eadbe8b9c4mr2657b3.0.1730996451467; Thu, 07 Nov 2024 08:20:51
  -0800 (PST)
-Date: Thu,  7 Nov 2024 08:20:31 -0800
+Date: Thu,  7 Nov 2024 08:20:32 -0800
 In-Reply-To: <20241107162035.52206-1-irogers@google.com>
-Message-Id: <20241107162035.52206-5-irogers@google.com>
+Message-Id: <20241107162035.52206-6-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241107162035.52206-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-Subject: [PATCH v2 4/8] perf arm64 header: Use cpu argument in get_cpuid
+Subject: [PATCH v2 5/8] perf header: Avoid transitive PMU includes
 From: Ian Rogers <irogers@google.com>
 To: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
 	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
@@ -97,126 +97,52 @@ To: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
 	linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-Use the cpu to read the MIDR file requested. If the "any" value (-1)
-is passed that keep the behavior of returning the first MIDR file that
-can be read.
+Currently satisfied via header.h. Note, pmu.h includes parse-events.h.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/arch/arm64/util/header.c | 63 ++++++++++++++---------------
- tools/perf/util/header.h            |  1 +
- 2 files changed, 31 insertions(+), 33 deletions(-)
+ tools/perf/tests/expr.c       | 2 ++
+ tools/perf/util/env.c         | 1 +
+ tools/perf/util/probe-event.c | 1 +
+ 3 files changed, 4 insertions(+)
 
-diff --git a/tools/perf/arch/arm64/util/header.c b/tools/perf/arch/arm64/util/header.c
-index 760c21784713..f0907daad3ae 100644
---- a/tools/perf/arch/arm64/util/header.c
-+++ b/tools/perf/arch/arm64/util/header.c
-@@ -14,55 +14,52 @@
- #define MIDR_REVISION_MASK      GENMASK(3, 0)
- #define MIDR_VARIANT_MASK	GENMASK(23, 20)
+diff --git a/tools/perf/tests/expr.c b/tools/perf/tests/expr.c
+index e3aa9d4fcf3a..d60f1ac1d720 100644
+--- a/tools/perf/tests/expr.c
++++ b/tools/perf/tests/expr.c
+@@ -4,6 +4,8 @@
+ #include "util/expr.h"
+ #include "util/hashmap.h"
+ #include "util/header.h"
++#include "util/pmu.h"
++#include "util/pmus.h"
+ #include "util/smt.h"
+ #include "tests.h"
+ #include <math.h>
+diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+index 93cabdd7ff43..e2843ca2edd9 100644
+--- a/tools/perf/util/env.c
++++ b/tools/perf/util/env.c
+@@ -12,6 +12,7 @@
+ #include <sys/utsname.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include "pmu.h"
+ #include "pmus.h"
+ #include "strbuf.h"
+ #include "trace/beauty/beauty.h"
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index a580aa2cd512..d399c7e03341 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -40,6 +40,7 @@
+ #include "session.h"
+ #include "string2.h"
+ #include "strbuf.h"
++#include "parse-events.h"
  
--static int _get_cpuid(char *buf, size_t sz, struct perf_cpu_map *cpus)
-+static int _get_cpuid(char *buf, size_t sz, struct perf_cpu cpu)
- {
-+	char path[PATH_MAX];
-+	FILE *file;
- 	const char *sysfs = sysfs__mountpoint();
--	struct perf_cpu cpu;
--	int idx, ret = EINVAL;
- 
-+	assert(cpu.cpu != -1);
- 	if (!sysfs || sz < MIDR_SIZE)
- 		return EINVAL;
- 
--	perf_cpu_map__for_each_cpu(cpu, idx, cpus) {
--		char path[PATH_MAX];
--		FILE *file;
--
--		scnprintf(path, PATH_MAX, "%s/devices/system/cpu/cpu%d" MIDR,
--			  sysfs, cpu.cpu);
--
--		file = fopen(path, "r");
--		if (!file) {
--			pr_debug("fopen failed for file %s\n", path);
--			continue;
--		}
--
--		if (!fgets(buf, MIDR_SIZE, file)) {
--			fclose(file);
--			continue;
--		}
--		fclose(file);
-+	scnprintf(path, PATH_MAX, "%s/devices/system/cpu/cpu%d" MIDR, sysfs, cpu.cpu);
- 
--		/* got midr break loop */
--		ret = 0;
--		break;
-+	file = fopen(path, "r");
-+	if (!file) {
-+		pr_debug("fopen failed for file %s\n", path);
-+		return EINVAL;
- 	}
- 
--	return ret;
-+	if (!fgets(buf, MIDR_SIZE, file)) {
-+		pr_debug("Failed to read file %s\n", path);
-+		fclose(file);
-+		return EINVAL;
-+	}
-+	fclose(file);
-+	return 0;
- }
- 
--int get_cpuid(char *buf, size_t sz, struct perf_cpu cpu __maybe_unused)
-+int get_cpuid(char *buf, size_t sz, struct perf_cpu cpu)
- {
--	struct perf_cpu_map *cpus = perf_cpu_map__new_online_cpus();
--	int ret;
-+	struct perf_cpu_map *cpus;
-+	int idx;
-+
-+	if (cpu.cpu != -1)
-+		return _get_cpuid(buf, sz, cpu);
- 
-+	cpus = perf_cpu_map__new_online_cpus();
- 	if (!cpus)
- 		return EINVAL;
- 
--	ret = _get_cpuid(buf, sz, cpus);
--
--	perf_cpu_map__put(cpus);
-+	perf_cpu_map__for_each_cpu(cpu, idx, cpus) {
-+		int ret = _get_cpuid(buf, sz, cpu);
- 
--	return ret;
-+		if (ret == 0)
-+			return 0;
-+	}
-+	return EINVAL;
- }
- 
- char *get_cpuid_str(struct perf_pmu *pmu)
-@@ -78,7 +75,7 @@ char *get_cpuid_str(struct perf_pmu *pmu)
- 		return NULL;
- 
- 	/* read midr from list of cpus mapped to this pmu */
--	res = _get_cpuid(buf, MIDR_SIZE, pmu->cpus);
-+	res = get_cpuid(buf, MIDR_SIZE, perf_cpu_map__min(pmu->cpus));
- 	if (res) {
- 		pr_err("failed to get cpuid string for PMU %s\n", pmu->name);
- 		free(buf);
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index b77f89de12dd..3bb768455a60 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -11,6 +11,7 @@
- #include <linux/types.h>
- #include "env.h"
- #include "pmu.h"
-+#include <perf/cpumap.h>
- 
- enum {
- 	HEADER_RESERVED		= 0,	/* always cleared */
+ #include <subcmd/pager.h>
+ #include <linux/ctype.h>
 -- 
 2.47.0.199.ga7371fff76-goog
 
