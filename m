@@ -1,117 +1,137 @@
-Return-Path: <linux-kernel+bounces-399595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945259C015C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:45:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5639C015F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35071C2186B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAE01F23959
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25FA1E0DBA;
-	Thu,  7 Nov 2024 09:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC311DFE37;
+	Thu,  7 Nov 2024 09:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HZXF82rw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="kpuJ00vw"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031A9372;
-	Thu,  7 Nov 2024 09:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4D9372
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730972749; cv=none; b=mDLhdgm9RAOT5iNueaebJa+z92vYbuOV2uNTGaq2z0dHnzsvP/jW/2IOiaY1VSXAIkXafE51rdRyKX4SALO+mNFnzmF8fGxGQiqUx2h3IfAjJQKQHYIbhfuBh91L+ZzMG/tYGseRj45cIh9NIfu8YCCoP1ucg+nsS6jF7SepcoM=
+	t=1730972898; cv=none; b=YH2Uh+iKWwAlpNuZCL++AO/1sR+GNKPLsuLz/wH2D9HfIMlDMjHGvMA2QEsJoBUxVQKfeKV8MiUI6uzY/wsc0VKcLSgrgkeJZG7nuxygSF/yp2o3WNjY4C45i6t6DmJAnwSL8DIfofeYNVZAXxaXGHP30k3jZy23VirMBzYJDy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730972749; c=relaxed/simple;
-	bh=PqoizVj8OyvEeeSjCvB6UcJ2ogs3bCJ1y+agmRj5f/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oy0yTH128Vnk5EqSccxLxnlzQK7iW28vo/jVyThsuNU39fnFvf0K5AAOwZYA5/TssxCOSHeF1y4cADXlQbtDR8asCAkuw3x7kfW3wfrYIAzE9x9v7DQBwkO4RpNS/QRDK8RclCy/HsOPrkd5/k22YhjriqAEZUHItoqYhL2OgHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HZXF82rw; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730972749; x=1762508749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PqoizVj8OyvEeeSjCvB6UcJ2ogs3bCJ1y+agmRj5f/Y=;
-  b=HZXF82rw+JEKUA195hep9X+PJTgPcBGmuqXMeok1IyIlOxSLMSErPF3F
-   yLh+xD5QJFpcBI9GXHTQCeklLgoPkS7ghg6xENzACE0gjs4svi3vgmfJF
-   8BPIghRWubpDqrceltPQ2bWqH/noF5/aBKoAM+ipnpHgQ1oTI87UL3T/Z
-   RntfC9t59f/0Jk5Ue72D3KQu5zYY93+Lt0JDLqaZT13TMes1QWefyQpE0
-   YU9dqAx1YVO0OT50ha480g8f+18PqfUVZP1sViWLEkhOzD9gXmTDtnZN5
-   BIa4RL3h2IxPGGAlG23MYT7hLOO/cQicmHJHx6Hyuj1wodPxs+yplwt1h
-   w==;
-X-CSE-ConnectionGUID: 0FsbCrp5Sy6aQkGoLRgXAA==
-X-CSE-MsgGUID: gyilO5gHSVizKQCCOPPn0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="42210411"
-X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
-   d="scan'208";a="42210411"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 01:45:48 -0800
-X-CSE-ConnectionGUID: O1NINg1TS7WgGAW3KnUGCQ==
-X-CSE-MsgGUID: EMLW/tBDRcOK9fQLgrm8Zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
-   d="scan'208";a="85132720"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 07 Nov 2024 01:45:45 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 1828260D; Thu, 07 Nov 2024 11:45:44 +0200 (EET)
-Date: Thu, 7 Nov 2024 11:45:43 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
-	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
-	mmikowski@kfocus.org, linux-kernel@vger.kernel.org,
-	Gil Fine <gil.fine@linux.intel.com>
-Subject: Re: USB-C DisplayPort display failing to stay active with Intel
- Barlow Ridge USB4 controller, power-management related issue?
-Message-ID: <20241107094543.GL275077@black.fi.intel.com>
-References: <20241023073931.GH275077@black.fi.intel.com>
- <20241023174413.451710ea@kf-ir16>
- <20241024154341.GK275077@black.fi.intel.com>
- <20241031095542.587e8aa6@kf-ir16>
- <20241101072155.GW275077@black.fi.intel.com>
- <20241101181334.25724aff@kf-ir16>
- <20241104060159.GY275077@black.fi.intel.com>
- <20241105141627.5e5199b3@kf-ir16>
- <20241106060635.GJ275077@black.fi.intel.com>
- <20241106110134.1871a7f6@kf-ir16>
+	s=arc-20240116; t=1730972898; c=relaxed/simple;
+	bh=iVgbH+lAvaG2pNt7F7N+EDHBA3qvrz7NPoPIAPRDDDA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MLFHzvYPT74cEfShyNA/P6B8uFXPAUKk1dQc9ykwK0LlkV4B65bgwXR5Bz7dCHos8jCNuhBqktTd5eUneR7BajheT2K0GZ7s2HJ+RIMd9J1kXEqYWOWVF2TJdFHBmzwu9D4Z+QFcbIwKMQlCr7Ti7WUAI3lQ6/w4BtAQwotj75o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=kpuJ00vw; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730972815; x=1731577615; i=efault@gmx.de;
+	bh=APsGBx91vrDSd/CB+epRMT4hkZnKIgwf4feNwSI5O8o=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kpuJ00vwSylAFUj21BBvDxyrRr18vWO2CMCTzVCK9seafcy3d5FPkrJAR1TeeMPh
+	 d9F4Ew2q1H9lWkh2iYmjAbPkXqmiBLoIEigDqdUtX8HjwnWddmrg98EMX6TxeVgFl
+	 boTi5eyrS41Bp8tmVWmTy5N9AfhVh4FvjPShF6K9WSppWM2gKwIB4ZO1sitG3pvwm
+	 zmql3mc7s8KnfbJdv2xqKewu6d5EYVJ4m4bImuptVQrPm1yoOIlIJAI2SEdetUoFg
+	 9Rw108CMPD2XacNAzcz3fMejuAvlrtDEI/qViRWjfSsQ2SrEV8/wTFYRsqg5mhpTu
+	 nq0W6flOGHuGkzCTOg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.61]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mo6qp-1tcJeO2rKV-00cCmV; Thu, 07
+ Nov 2024 10:46:55 +0100
+Message-ID: <982456f0abca321b874b7974bdf17d1a605c3d38.camel@gmx.de>
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+From: Mike Galbraith <efault@gmx.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Phil Auld <pauld@redhat.com>, mingo@redhat.com, juri.lelli@redhat.com, 
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+ linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+ wuyun.abel@bytedance.com,  youssefesmat@chromium.org, tglx@linutronix.de
+Date: Thu, 07 Nov 2024 10:46:53 +0100
+In-Reply-To: <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
+References: <20241101125659.GY14555@noisy.programming.kicks-ass.net>
+	 <20241101133822.GC689589@pauld.westford.csb>
+	 <20241101142649.GX9767@noisy.programming.kicks-ass.net>
+	 <20241101144225.GD689589@pauld.westford.csb>
+	 <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
+	 <20241101200704.GE689589@pauld.westford.csb>
+	 <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
+	 <20241104130515.GB749675@pauld.westford.csb>
+	 <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
+	 <20241106135346.GL24862@noisy.programming.kicks-ass.net>
+	 <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
+	 <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
+	 <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241106110134.1871a7f6@kf-ir16>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qfoUNMzbyNDru2pP55rsiVV6EwDf6ffCCFkJH3pWFAI7aPe4MD6
+ WF+l5cJNYegJxMl2Lv78Ns/aB9bEkT7jbsln2pdrDR4lsEaZvYSm+HwfeRvdkfto6DjOi3M
+ MfCblHmlQwMHGgoiIqis0/Fxuhlkzjoe3wNpKS6kGGCPVhN4KW+Q8sr84RxThcBn/3GvUwQ
+ gvw/HUBM2CZdXkTX48c4w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:tquZ7aVLoh4=;lfNMr4oDIWoNqhms1gFPJBMl9Sx
+ v0z0LPmVIP0WNge9X4R+y7Uc+lWYsQYfEYiJP7SUCD1kc+dCie5071MDe0IFz73b+YGEBjM+1
+ 1Mj1S3uuIT1q2CVeHCxVlwY3TylbOqkAjxifOHqU9467NrWXguar9tgK+SgYrDfyLeFnYZbYa
+ Wix4Kx52v6DzjM5JfN2VaGxRNSqXAkbx2PsyX45xLJir32vS20ALI7209+MMeYeLzOG8qoU8Z
+ WhLWKe6y1XdxUMIg3yr6vUwvhfpMJz7RBDTLfshKRolH+GJDykvxvhZRfSnL3zq11CQG5EliI
+ KZDmenPrLp2Bk9LjBqXay6hHPcO0Ce5xJ4ajpAFQ2l7QlA5JYWtgHPeMzcaoDsXnPgtbtHsGC
+ aUUjDnWRxXnnIIyRtouHB574IcTMwKRFDis22/yT0jUcgLhDDxkjQa8Am+EFVgG80N+P01k3r
+ 7gMY348hOrcl50oYce7FLf0jx70GG2Crdn0zYOe/HSXbgHFY16wvBT0cTKWJoYDc82rRLZdDp
+ wrODIIS/EjxCa6lpJ78kqPo0HT6nwMpkFem8OJIE+fI0dk6j0e17YBCIi2oW7/2HyT14k2SKW
+ 1YgCs0ZaCwcOKFS2dRZblCgjuTFs6ksYz1GJPLy5QTrIEWDAxglFhRVUXt063dQ5DVRe2Cnte
+ gRuj3YCSEuuOntpvx9sn8vLGr28v4MlxP3AfwjRAa4ttdsxAe/4Nq5e17CCtxmxYlbZHdoRNO
+ KW7hBwSw0ZXD4iUCoHWwm35kh0beWEMg6xSGu5FbvWx/HCw6pRI8R7k+a2OUjT8L7D/uzMy62
+ G6i/gaNjwsqZ8bJHQ9voijSw==
 
-Hi,
+On Thu, 2024-11-07 at 05:03 +0100, Mike Galbraith wrote:
+>
+> I built that patch out of curiosity, and yeah, set_next_task_fair()
+> finding a cfs_rq->curr ends play time pretty quickly.
 
-On Wed, Nov 06, 2024 at 11:01:34AM -0600, Aaron Rainbolt wrote:
-> > Unfortunately that does not help here. I need to figure something else
-> > how to detect the redrive case with this firmware but first, does this
-> > work in Windows? I mean if you install Windows to this same system
-> > does it work as expected?
-> 
-> It does work as expected under Windows 11, with one major caveat. We
-> used a Windows 11 ISO with a setup.exe created on April 05 2023 for
-> installing the test system, and after initial installation it behaved
-> exactly the same way as Linux behaves now (displays going blank soon
-> after being plugged in). However, after installing all available
-> Windows updates, the issue resolved, and the displays worked exactly as
-> intended (the screens are recognized when attached and do not end up
-> disconnecting after a timeout).
-> 
-> Would it be helpful to test on Windows 11, and provide a report and
-> system logs?
+The below improved uptime, and trace_printk() says it's doing the
+intended, so I suppose I'll add a feature and see what falls out.
 
-Unfortunately, I don't know anything about Windows ;-)
+=2D--
+ kernel/sched/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-However, I asked our Thunderbolt hardware/firmware team about this, if
-they have any idea how it was solved in Windows side. Might take a
-couple of days though.
+=2D-- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3794,7 +3794,7 @@ static int ttwu_runnable(struct task_str
+ 		int queue_flags =3D DEQUEUE_NOCLOCK;
+
+ 		if (p->se.sched_delayed)
+-			queue_flags |=3D DEQUEUE_DELAYED;
++			queue_flags |=3D (DEQUEUE_DELAYED | DEQUEUE_SLEEP);
+
+ 		/*
+ 		 * Since we're not current anywhere *AND* hold pi_lock, dequeue
+@@ -3802,7 +3802,7 @@ static int ttwu_runnable(struct task_str
+ 		 * case further along the ttwu() path.
+ 		 */
+ 		if (rq->nr_running > 1 && p->nr_cpus_allowed > 1) {
+-			dequeue_task(rq, p, DEQUEUE_SLEEP | queue_flags);
++			dequeue_task(rq, p, queue_flags);
+ 			return 0;
+ 		}
+
+
+
+
 
