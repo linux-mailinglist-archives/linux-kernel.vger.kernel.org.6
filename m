@@ -1,229 +1,239 @@
-Return-Path: <linux-kernel+bounces-399322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4AB9BFD70
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:45:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7198D9BFD74
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:57:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2349283B41
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D9D284085
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6215C191473;
-	Thu,  7 Nov 2024 04:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495E01898FC;
+	Thu,  7 Nov 2024 04:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="D4DJthtB"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NmDuaeBL"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2068.outbound.protection.outlook.com [40.107.92.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC65823CE
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730954735; cv=none; b=WGwZZjXFICmIzMEwLDkQ1WVaoWlVWuOf+fisCAPYXHIxFS0/vK4C+/pF5Me89Yp2F2jEB4QGiYMtf7GXA1qWXZg0G30u/pZryqjwvFNPLEOaL4LAQ9HAdgU0OPTih++CTGaNXBfYtf6dCzxEkB4fhfOVr7HxE+5P9qcwwMIfJXc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730954735; c=relaxed/simple;
-	bh=u5u6J+p9KvxvHcLEKvZFthjYircE+5q68XJQEzSYMDc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pOchFIkRI3wGux1Af0y/LDJOJZMQQJW8CeaASRTCVW9t5N2zR3s90r/ggH3AvtiykpiQYh6musTWtKo+J2BNu/dcy46v9ZC8GmRTFSrDpHjBvBKe+3d2cYxYJBOsR9iZtAWCFolKcPgFJgozhcbfC7qqUI3GGM6smv/ZE9uhQiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=D4DJthtB; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ee36621734so87154a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 20:45:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1730954732; x=1731559532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xtOHfAy5aCt+GGU4uG0UwF/fwe6/CQNExXJXCksm6QA=;
-        b=D4DJthtBMP+5YFEPKWqq1UNMquLc9EpZtZS9byu2MLwoeNmhRqehYHJQPHSJCs1prv
-         UIu/OqLmCRwsfy75NgR1w9sQLC+1MhBKNp0eOwMf1QPvdfT40fCYmTb4OzbLS6UHhx8E
-         Ji88ixS+tPdIOufSA+MIi7tz5Vx7JIIxcshbX3Puej5aXVwSYIZbw33q5gdScJJLyfMh
-         gktm/X8PFQqiDktfnUEb+R5lhhtiuRs95a1OcvosP5ZLQIZKticUrJfv3tBKlD7TdEz5
-         HQ9lOg0Zt/9GpX8WKTCL5suHvX5VE15WhaSoHtLaRGG/dcb1PVNPqgyHOs253eDms/rQ
-         MzWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730954732; x=1731559532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xtOHfAy5aCt+GGU4uG0UwF/fwe6/CQNExXJXCksm6QA=;
-        b=HqzhJ7XFXTuobSWtk3niL6zYjTD6PoU5dL3XVEeiLWUMRhnzpXqZQ/i3UozVPrfxKq
-         MC7UcncwMdCoyRyjsD0NSkXcIO08+Qk6pPiRFPfHI9iQKb6Hd28BlPx98mk+48jGJLcO
-         9u3is3dSfQoLG/l2pVdXO/kVtkY0gGBxUtO6aRxrBiT5cLkd8h12cQ5ieW93A8yc+QwK
-         C36bhEQdqcfqRJBEGmSreWg6AemGPxI11+1zJbi9YOxNC2glWJTXMb9ZZyY/PyxQbjOZ
-         rL7bb81BXzE89PaaNVUZBcY7ApwOmbg/WtvEnEUVcu4dM6OMpUnhYMEz/bIu1xl2BBO1
-         LSaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeWdV39Q5+AyhtrgnSIiaNvzSuEGA43UrWbHtH3r5hMj/aYACQuHWvY8o/R3u4XmaOk+bDmuGZ1axsrSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg48/LkRca5RBPzpGyI75jnidtnUquC562xPFehokTodXDwyeP
-	ZWgaq28VNMXiTeUGrIGF6R9dYG+P78msON/wwYrgakV2FH34fkFDzEDNl4RCPaKsHkluR8fbQ7p
-	IdygEPXoh++pU2ooecjDXCP7qItmBZdaRR5iLcwJQKrjLGcgT7SSvCg==
-X-Google-Smtp-Source: AGHT+IF4MWWFPUVr+eNFH0BUtu6VV1JsBn+uZvnKv9TrBQ2BkQChJZMyB/ggEyuXbM2f+zU63HsozJ4K0luvG0cxQxA=
-X-Received: by 2002:a17:90b:33c9:b0:2e2:af5b:a18d with SMTP id
- 98e67ed59e1d1-2e9a4b305e8mr1026480a91.4.1730954732197; Wed, 06 Nov 2024
- 20:45:32 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37F9EC0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730955468; cv=fail; b=BhRWHTzwU9VmK6aoJ3mhKyLc3eXnyVVjOf0x47VIr2N0OA0zJlUDkSiVcc9xu3DRC5H4Ul3JoN02nNbtar/CmT03kX4Ovx+6YthMDdGlk0l1G51bvC62YWXWOT/3+SnL/VgWz9MxnOUp3bmFqFAA9KDDDLhc+6uHXu+G3yEiet0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730955468; c=relaxed/simple;
+	bh=IqZPBV0bIOjVPvltzGUM9tn0F7VHOVv+mhmHH3v5Jk0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GFNXvg2LNdy7ixUrpgNc5iXQVG6a8GWc4yvRgq4E6wJVK4t5hHdK6HTygQq/9Vo+CD/H9aRnnstCwv9+61544lxKyQazRnVHMyr33YLdz/eZ1ut0leVamLLePVCn0j9AvtmayNpaiFNrgM9HtIqpV/VOtS2JEwd0QHzbBvqCwwE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NmDuaeBL; arc=fail smtp.client-ip=40.107.92.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KCtFWJFj8mQYOXeg8p/Gd/W/rz4RmwLORVmK2NwS32xOOAmRLnco1e8feQk876oDMSXjYMg24QKVwcuQ/WCqzWntcTNelWmygxOa72zlA7JS8pT4fAWmsrovQv1D5VNd4cdzxEKf7n29cxjlyZ41UPGepoN3B6LjDKGZH9m2TT7UZosTQX4sBysD6Nwmov9ICBP4DKVhsB+UDo+wZ/LrQg4j9ZqlL4DXRjeG46H/6ihDm2/ltEDi4Si2CeZXSwRDoCifqI6s4oz05cE4T34uNwHgw83+cuA1xwDJtPb8fjXNyuo/2l7NNBXDyuf+vbavL/34K5DyuldOQPmmaECDfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CUEoSiOSst9JkNifn00xI5TE3pWfd+xO+FyxjfbPKuU=;
+ b=IFcooKF7h0QJzUsxYIkeS8qZATTt/GVeuBU2+/DNy3KZIjxSP901rkc9wq2L1IjFCgZidzz3OBbQ01VvNKu4xM9aNs95+yJf9O/w/VGmcnqLgpPHyIh4GOzWFDHc0TS0qXO9Kx7quBhZGnEpx/tlgkhQuv04hDYTvwcJ/jq6fJH2I8oyDDv4gEHI+zMIXFu4alNNdOllrRHLuZAjhrbREq95QX7wtw/sqfSW1FZMzTdFjuYASRt7Dl6PZ2KDozbepRvyozqkfNqKVYtA8LCtCPLf+vIw+oy24CSIIwo0cmNpUXFLroA4kJ5A+TqHOZgZ+TuBoQYvdRaE1cLk566Pqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CUEoSiOSst9JkNifn00xI5TE3pWfd+xO+FyxjfbPKuU=;
+ b=NmDuaeBL+nCc5hfjoNHAQLMfj15LEkxcjz1VV8lWSAQd27zCeXPbhoLAXiM1en734G4SbL0DLG2KzCSGSVyPrpSR5SuwKyYnNv5NRTfqMoZTIoRxSwwFUcmxZzsJEMzXces0UQT1vw14WG+NNUqoCmKyHsCBS94jZV2VaXfialvf2jLmToLuN3Oh5q6zmjVrPzy0SLHiNyDdQr4VZtlQUjMTnu/BAgxdQcaRgY37kIHKvlJvkgWjSQq1Z4iz2SepHNn5gsz822JfGHotmPisQsaKOWX8dShEneegNgf9ivTn7nID/vPkCPL+8kEF68mJ5FSV1YkeO8lgIfOatoqkZg==
+Received: from BL1P221CA0026.NAMP221.PROD.OUTLOOK.COM (2603:10b6:208:2c5::27)
+ by CY5PR12MB6203.namprd12.prod.outlook.com (2603:10b6:930:24::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Thu, 7 Nov
+ 2024 04:57:43 +0000
+Received: from BL6PEPF00020E64.namprd04.prod.outlook.com
+ (2603:10b6:208:2c5:cafe::c9) by BL1P221CA0026.outlook.office365.com
+ (2603:10b6:208:2c5::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19 via Frontend
+ Transport; Thu, 7 Nov 2024 04:57:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF00020E64.mail.protection.outlook.com (10.167.249.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8137.17 via Frontend Transport; Thu, 7 Nov 2024 04:57:43 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 6 Nov 2024
+ 20:57:26 -0800
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 6 Nov 2024
+ 20:57:26 -0800
+Message-ID: <8943a8bd-644f-48fe-8502-6150c993c445@nvidia.com>
+Date: Wed, 6 Nov 2024 20:57:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101034647.51590-1-csander@purestorage.com>
- <20241101034647.51590-2-csander@purestorage.com> <CY8PR12MB71958512F168E2C172D0BE05DC502@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CADUfDZofFwy12oZYTmm3TE314RM79EGsxV6bKEBRMVFv8C3jNg@mail.gmail.com>
- <CY8PR12MB71953FD36C70ACACEBE3DBA1DC522@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CADUfDZqanDo+v_jap7pQire86QkfaDQE4HvhvVBb64YqKNgRHg@mail.gmail.com>
- <CY8PR12MB7195FDC4A280F4CD7EA219ABDC532@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CADUfDZon6QbURp7TqB6dvE4Ewb_To2EDyUTQ=spNCorXDy0DbQ@mail.gmail.com> <ZywnmDQIxzgV3uJe@x130>
-In-Reply-To: <ZywnmDQIxzgV3uJe@x130>
-From: Caleb Sander <csander@purestorage.com>
-Date: Wed, 6 Nov 2024 20:45:20 -0800
-Message-ID: <CADUfDZq0E-GJZxFD4gR7qqpHqcQ2d4cy-Duz7SYMpOZTRvOcKA@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/2] mlx5/core: deduplicate {mlx5_,}eq_update_ci()
-To: Saeed Mahameed <saeed@kernel.org>
-Cc: Parav Pandit <parav@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/1] mm/gup: avoid an unnecessary allocation call for
+ FOLL_LONGTERM cases
+To: David Hildenbrand <david@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, Vivek Kasireddy
+	<vivek.kasireddy@intel.com>, Dave Airlie <airlied@redhat.com>, Gerd Hoffmann
+	<kraxel@redhat.com>, Matthew Wilcox <willy@infradead.org>, Christoph Hellwig
+	<hch@infradead.org>, Jason Gunthorpe <jgg@nvidia.com>, Peter Xu
+	<peterx@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Daniel Vetter
+	<daniel.vetter@ffwll.ch>, Dongwon Kim <dongwon.kim@intel.com>, Hugh Dickins
+	<hughd@google.com>, Junxiao Chang <junxiao.chang@intel.com>, Mike Kravetz
+	<mike.kravetz@oracle.com>, Oscar Salvador <osalvador@suse.de>,
+	<linux-stable@vger.kernel.org>
+References: <20241105032944.141488-1-jhubbard@nvidia.com>
+ <f747223e-042f-40f4-841c-1c8019dc8510@redhat.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <f747223e-042f-40f4-841c-1c8019dc8510@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E64:EE_|CY5PR12MB6203:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e7265d4-568b-44f0-0621-08dcfee8b6f6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L043dG9yOWlyemUvSjlrbW83OGFyempxUFZPNFV3c1VvK0hLMnUvUFY1S3B0?=
+ =?utf-8?B?T0ZUZ1Bqd3JSazlGMllDeE5qblh3bTJ2VTZucWtGNnF1dDdRSEtqcXhwbGhQ?=
+ =?utf-8?B?N1dpVUhMYzhXRnNVVE16akJXUTFGUEVoNklJOUF0VitGcVUxOHU1VElyeXc0?=
+ =?utf-8?B?cnE2clhVb3ZqdTVoRDBjRFRTY3BBOTFaYmxEeFdxbm9yTitsL0Z2alFQZG1D?=
+ =?utf-8?B?cDQ2M29jaXpUZSsvYU1PeVJBK2gxeHEyQm9VZUlsU01oOUNNaHA4WmRCQ0pi?=
+ =?utf-8?B?SXFOR0RJelBvZkJwOVh1UHZ5Zi9rbldIelNvRE5aVVBaNDZOV2JEalB3NEhD?=
+ =?utf-8?B?Sm4wRlhEVzhaZkp0YjlOTXRJWGMvTlRIVGRqLytVeEZHU3FCRjMyK2FMSWxs?=
+ =?utf-8?B?d1A1eTZXOThPUnBCVmhnR2JJRWpCV2c1NnJTSU1TSkpqQVZ5UDVib0JMaDRN?=
+ =?utf-8?B?L0RpSmlFbHYyTmp3YS82Z1lSNGI1VW5zcjZtVEVKd0xiV1o1Yk1ZbEVKVVdC?=
+ =?utf-8?B?T0hGMENEVTR2d3RObmNTckFjdEpjZENkUmY0cDJNWFRHZHdZa2QyUnFLOEht?=
+ =?utf-8?B?QmExMDdFbVpsSGpiVVdzOWtDUVg1TExSaURrenhLVzNnRmY2MUtnekdPZnly?=
+ =?utf-8?B?L1QwWUY3K1o1NkNxeno3UHYzb0V3c3VnSUxxenBRMGRmMXZ0YjlvcUUwdkRV?=
+ =?utf-8?B?Vm5qelJWSTZhUnFhR1c2L1BYMFRkSkJYQkJONzJpWVhLRktJOFBsSExNZFl0?=
+ =?utf-8?B?ajh6ckg1K1NmVWlPRjhnYnNCeFBHc0ZTdW00SzRhdXBKOE9yd0ovWmFjWGZC?=
+ =?utf-8?B?TEE2RXE2V2ZPTU1NN1BPNURPWlVjVG9RL1VsYzMzb0ErMEJtaUFEV1p0RVZq?=
+ =?utf-8?B?RE9BUHByWFN5d0dKY0p1MHppVnFuVExVTnNQVXNtQmc0MGYyZ3p6Nzhrdkoy?=
+ =?utf-8?B?RWU2cERFWU0rT2NlTlMwVStFY1A5S3lORDM4b0pudENEQmFYNmVaWWJuT2dT?=
+ =?utf-8?B?dlNCeVNyYUJScktaZ21hS1ZuZXpBU2ZUMFJLYVA2L0RlS1BYbmNuVXE3THVT?=
+ =?utf-8?B?Wk12OGNneUR6MVcrcCs3RTN5SEc4d2JvWlh4cXlPSG1kZTQ5UVJ3UTBUYmoy?=
+ =?utf-8?B?MWFucWVUUU5sS050aHpUMFg5SzF0QUdtTVF0RWd6VnNVTWJ4V1d6VTV3SnRv?=
+ =?utf-8?B?WG9LaHlmNkFmdXJUcy9yNFNyVjc3NnFwV2tOOCtBcWJtYXFQSUMwOGhQVjJY?=
+ =?utf-8?B?VWxXWmZHVHplcm9GSlJKcFlrWVQ0dGxINXRHdW02Nkl3dmJZbHZySCtYeUJN?=
+ =?utf-8?B?aVllVGlINjFrNDBSOWJLZ2dBcDNpbjdQaGJhbXhaWStWTDV0d3o3dnRUb0py?=
+ =?utf-8?B?WGE4OC96Nk9lcVh1NnJ3d0RpTWhkNUxpWDd1c3N3a0tCZXZWQzA4S2x5dVhO?=
+ =?utf-8?B?ZFZUcVM1S2VaY2RNcGlCOS9kTjU1anZCOElvSzR2MGxIb2t3dkV4Z0dveVRR?=
+ =?utf-8?B?cEJGa0V4NUtQTTQrUzdQN3Jwd2o1cVk4MFNXOWM1cVVQNURPZDRLdEc1bnlF?=
+ =?utf-8?B?ejJMN1FhMm4raDFxWk9vU0hub01KcFRGL3dsQS9OYXdrdWRQaE1nSTl6VkxY?=
+ =?utf-8?B?STZvd2ZYcjFzQzdMdTFpWU81aFUyc2pLQittSFFvclY4NDM3Tlc3Z3hIbXI2?=
+ =?utf-8?B?Q0JWVVJBT2Uxb1FneHhkSXE1aXEzN3NaMS9aRmUyeGZ4RWVZckloV1N6UU5Y?=
+ =?utf-8?B?L2NMMHpadW01SDMzcXFwRWdqOEtYOUdzSXYvUlBmUFlJQUVaUTRMMXNoRzJl?=
+ =?utf-8?B?NFBwM2xxWVVpUTg4cnNsbG0yb0ZDdFErQ1VqVldCR0ZQNDdBYkxDUkJWQk1Z?=
+ =?utf-8?B?M0cvOUhQTVhnUnVhbDRuVmJtN2xQbjVyVGlnVnJ0TXQ3U0E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 04:57:43.3181
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e7265d4-568b-44f0-0621-08dcfee8b6f6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E64.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6203
 
-On Wed, Nov 6, 2024 at 6:36=E2=80=AFPM Saeed Mahameed <saeed@kernel.org> wr=
-ote:
->
-> On 06 Nov 15:44, Caleb Sander wrote:
-> >On Tue, Nov 5, 2024 at 9:44=E2=80=AFPM Parav Pandit <parav@nvidia.com> w=
-rote:
-> >>
-> >>
-> >> > From: Caleb Sander <csander@purestorage.com>
-> >> > Sent: Tuesday, November 5, 2024 9:36 PM
-> >> >
-> >> > On Mon, Nov 4, 2024 at 9:22=E2=80=AFPM Parav Pandit <parav@nvidia.co=
-m> wrote:
-> >> > >
-> >> > >
-> >> > >
-> >> > > > From: Caleb Sander <csander@purestorage.com>
-> >> > > > Sent: Monday, November 4, 2024 3:49 AM
-> >> > > >
-> >> > > > On Sat, Nov 2, 2024 at 8:55=E2=80=AFPM Parav Pandit <parav@nvidi=
-a.com> wrote:
-> >> > > > >
-> >> > > > >
-> >> > > > >
-> >> > > > > > From: Caleb Sander Mateos <csander@purestorage.com>
-> >> > > > > > Sent: Friday, November 1, 2024 9:17 AM
-> >> > > > > >
-> >> > > > > > The logic of eq_update_ci() is duplicated in mlx5_eq_update_=
-ci().
-> >> > > > > > The only additional work done by mlx5_eq_update_ci() is to
-> >> > > > > > increment
-> >> > > > > > eq->cons_index. Call eq_update_ci() from mlx5_eq_update_ci()=
- to
-> >> > > > > > eq->avoid
-> >> > > > > > the duplication.
-> >> > > > > >
-> >> > > > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> >> > > > > > ---
-> >> > > > > >  drivers/net/ethernet/mellanox/mlx5/core/eq.c | 9 +--------
-> >> > > > > >  1 file changed, 1 insertion(+), 8 deletions(-)
-> >> > > > > >
-> >> > > > > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> >> > > > > > b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> >> > > > > > index 859dcf09b770..078029c81935 100644
-> >> > > > > > --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> >> > > > > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> >> > > > > > @@ -802,19 +802,12 @@ struct mlx5_eqe *mlx5_eq_get_eqe(struc=
-t
-> >> > > > > > mlx5_eq *eq, u32 cc)  }  EXPORT_SYMBOL(mlx5_eq_get_eqe);
-> >> > > > > >
-> >> > > > > >  void mlx5_eq_update_ci(struct mlx5_eq *eq, u32 cc, bool arm=
-)  {
-> >> > > > > > -     __be32 __iomem *addr =3D eq->doorbell + (arm ? 0 : 2);
-> >> > > > > > -     u32 val;
-> >> > > > > > -
-> >> > > > > >       eq->cons_index +=3D cc;
-> >> > > > > > -     val =3D (eq->cons_index & 0xffffff) | (eq->eqn << 24);
-> >> > > > > > -
-> >> > > > > > -     __raw_writel((__force u32)cpu_to_be32(val), addr);
-> >> > > > > > -     /* We still want ordering, just not swabbing, so add a=
- barrier */
-> >> > > > > > -     wmb();
-> >> > > > > > +     eq_update_ci(eq, arm);
-> >> > > > > Long ago I had similar rework patches to get rid of
-> >> > > > > __raw_writel(), which I never got chance to push,
-> >> > > > >
-> >> > > > > Eq_update_ci() is using full memory barrier.
-> >> > > > > While mlx5_eq_update_ci() is using only write memory barrier.
-> >> > > > >
-> >> > > > > So it is not 100% deduplication by this patch.
-> >> > > > > Please have a pre-patch improving eq_update_ci() to use wmb().
-> >> > > > > Followed by this patch.
-> >> > > >
-> >> > > > Right, patch 1/2 in this series is changing eq_update_ci() to us=
-e
-> >> > > > writel() instead of __raw_writel() and avoid the memory barrier:
-> >> > > > https://lore.kernel.org/lkml/20241101034647.51590-1-
-> >> > > > csander@purestorage.com/
-> >> > > This patch has two bugs.
-> >> > > 1. writel() writes the MMIO space in LE order. EQ updates are in B=
-E order.
-> >> > > So this will break on ppc64 BE.
-> >> >
-> >> > Okay, so this should be writel(cpu_to_le32(val), addr)?
-> >> >
-> >> That would break the x86 side because device should receive in BE form=
-at regardless of cpu endianness.
-> >> Above code will write in the LE format.
-> >>
-> >> So an API foo_writel() need which does
-> >> a. write memory barrier
-> >> b. write to MMIO space but without endineness conversion.
-> >
-> >Got it, thanks. writel(bswap_32(val, addr)) should work, then? I
-> >suppose it may introduce a second bswap on BE architectures, but
-> >that's probably worth it to avoid the memory barrier.
-> >
->
-> The existing mb() needs to be changed to wmb(), this will provide a more
-> efficient fence on most architectures.
->
-> I don't understand why you are still discussing the use of writel(), yes
-> it will work but you are introducing two unconditional swaps per doorbell
-> write.
+On 11/5/24 12:42 AM, David Hildenbrand wrote:
+> On 05.11.24 04:29, John Hubbard wrote:
+...
+> Yeah, I was only adding it because I stumbled over it. It might not be a problem, because we simply "skip" if we find a folio that was already isolated (possibly by us). What might happen is that we unnecessarily drain the LRU.
+> 
+> __collapse_huge_page_isolate() scans the compound_pagelist() list, before try-locking and isolating. But it also just "fails" instead of retrying forever.
+> 
+> Imagine the page tables looking like the following (e.g., COW in a MAP_PRIVATE file mapping that supports large folios)
+> 
+>                ------ F0P2 was replaced by a new (small) folio
+>               |
+> [ F0P0 ] [ F0P1 ] [ F1P0 ] [F0P3 ]
+> 
+> F0P0: Folio 0, page 0
+> 
+> Assume we try pinning that range and end up in collect_longterm_unpinnable_folios() with:
+> 
+> F0, F0, F1, F0
+> 
+> 
+> Assume F0 and F1 are not long-term pinnable.
+> 
+> i = 0: We isolate F0
+> i = 1: We see that it is the same F0 and skip
+> i = 2: We isolate F1
+> i = 3: We see !folio_test_lru() and do a lru_add_drain_all() to then
+>         fail folio_isolate_lru()
+> 
+> So the drain in i=3 could be avoided by scanning the list, if we already isolated that one. Working better than I originally thought.
 
-Well, no memory fence is cheaper still than a wmb(). But it's your
-driver, so if you prefer to use wmb() rather than switch to writel(),
-that's fine. I'll update the patch series.
-As for the bytes swaps in writel(bswap_32(val), addr), it would still
-be 1 on LE architectures, but 2 instead of 0 on BE architectures.
-Certainly a bit inefficient, but probably less overhead than the
-memory barrier currently adds on strongly-ordered architectures.
+Thanks for spelling out that case, I was having trouble visualizing it,
+but now it's clear.
 
->
-> Just replace the existing mb with wmb() in eq_update_ci()
->
-> And if you have time to write one extra patch, please reuse eq_update_ci(=
-)
-> inside mlx5_eq_update_ci().
->
-> mlx5_eq_update_ci(eq, cc, arm) {
->         eq->cons_index +=3D cc;
->         eq_update_ci(eq, arm);
-> }
->
-> So we won't have two different implementations of EQ doorbell ringing
-> anymore.
+OK, so looking at this, I think it could be extended to more than just
+"skip the drain". It seems like we should also avoid counting the folio
+(the existing code seems wrong).
 
-Isn't this what my patch 2 (at the start of this reply chain) already
-does? If you are suggesting something else, please clarify.
+So I think this approach would be correct, does it seem accurate to
+you as well? Here:
 
-Thanks for the reviews,
-Caleb
+diff --git a/mm/gup.c b/mm/gup.c
+index ad0c8922dac3..ab8e706b52f0 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2324,11 +2324,21 @@ static unsigned long collect_longterm_unpinnable_folios(
+  
+  	for (i = 0; i < pofs->nr_entries; i++) {
+  		struct folio *folio = pofs_get_folio(pofs, i);
++		struct folio *tmp_folio;
+  
++		/*
++		 * Two checks to see if this folio has already been collected.
++		 * The first check is quick, and the second check is thorough.
++		 */
+  		if (folio == prev_folio)
+  			continue;
+  		prev_folio = folio;
+  
++		list_for_each_entry(tmp_folio, movable_folio_list, lru) {
++			if (folio == tmp_folio)
++				continue;
++		}
++
+  		if (folio_is_longterm_pinnable(folio))
+  			continue;
+
+
+
+I need to test this more thoroughly, though, with a directed gup test (I'm not sure we
+have one yet).
+  
+
+thanks,
+-- 
+John Hubbard
+
 
