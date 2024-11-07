@@ -1,191 +1,139 @@
-Return-Path: <linux-kernel+bounces-399558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A289C00B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:59:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210909C00AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5451D1C21606
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7FED1F234D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194731DE3C5;
-	Thu,  7 Nov 2024 08:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11851DF728;
+	Thu,  7 Nov 2024 08:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="BzfQq4Wh"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="RymHR9Bh"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1E71DE8A1;
-	Thu,  7 Nov 2024 08:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCFF1DEFC4
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730969951; cv=none; b=ZSZnLctCSPA8aLxgkGVYW7s+ePP0iU1P2gkGrZYjhfN/o20IVYp0Dk/Yx+k/yxVvYqdZl86BEva1ean/CQzLXWm60Ni8yfy2bX19ELUZjso9tmAYX3zMmu/7IIzF1Kk4aZLIC1O0V+4kACAw7/enD/aQTJgyRwvXIIzgrBmtCvE=
+	t=1730969898; cv=none; b=rpxkV0WaqaCzxg90zH1p0urCtRwiewE0wcAMoLLgvI2U4a//6PRxG+ZzgEAJz4BhNbL9yct5PQS3Jte1p63vOYJ8Sirw20CTxiKX6rd01rrDXFPsxt6x37RUEgI8iVbERGu2kDTyGe/65t+qR7nYOe5pBIv5ALFsDdQvKdx/mhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730969951; c=relaxed/simple;
-	bh=HzLdsoyErUhSMOpPXvjwxrQ36OAZ/NZ49E4akJD+32Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fV1HMnBg3BeFQI3Md5928dVXVoZ9/r/2HIFpiIvq24uLVWvETh3gjHNBOaRWEVyP3Kuswqo1eFkeVfHWz19hIMHxbVcRfQY0IA6EVCLpEHAwLJdm3uV/+xoxovTjSAWeHCGP/YuD1pQ6DhWyd2bgYwEY1R7CCFgZ/S36z0Lu3II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=BzfQq4Wh; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730969883; x=1731574683; i=w_armin@gmx.de;
-	bh=SU68SlzFV1+44QFj6alvL+ek3vrtw9Tg/Xom2jzheOI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=BzfQq4WhyXJHuQMsGo+YjzSEB88Tsp+31J7CZ/H5N49LlewSR+SR+APNrQtQYQOf
-	 8vEC5Syf0/xSzmIdA5VGGZV2xHp6O8MPbPmHAztNep4tdY/45Dtt3YuzcNy+LWqAg
-	 QeycrPW2SOUWpJgOg0s281LXhine1Lp1Hvn4+QdWIlznd/VXuJEr9yBtKyu3UWEWh
-	 pMiYB6QghJrLjGcKG7SrPz9sHAvm1WYk5Ab8YXDcZ4AM6GS8OVRd+oxhEjnCwQUIC
-	 oiprU48SsubS+UN7D8G/NamfkWB0SAswH+NYfoe9PzMYLJiCLrX2Y/6spXRyin3ik
-	 MgyY/Az1hpXGD2N2QQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N3bX1-1trlIu1n4l-012b44; Thu, 07
- Nov 2024 09:58:03 +0100
-Message-ID: <989e7297-97f9-4d55-be28-78128572fed2@gmx.de>
-Date: Thu, 7 Nov 2024 09:58:01 +0100
+	s=arc-20240116; t=1730969898; c=relaxed/simple;
+	bh=XrCKTdSFrneJtpr4KeJ/1FrI8UZO5czXGK0I+q8xUNg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EvMgIxeCN2mdLcrhgUDre1uokmqM3a/E2/wRyXS2JI/W4d79wil/+++I/x7YsP2CuLxryPaaKYaxkWC+cx0J7fjkm0bEWD4Nb6hfhuuIkg7kVLglRmsZOOZDU+RtldSkWVh7HzfcP1E6huf1Kw4BmEJy6bhjtr4RgD0QVJ8Uxt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=RymHR9Bh; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460ad0440ddso3694911cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 00:58:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1730969893; x=1731574693; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=I8US13aD05PtGROBNY39A0+lWIja+wUH11z2O2DFmBA=;
+        b=RymHR9Bh0pgRR0IgSOT1+bFskjCR/mYgDnSV7HKzrbTZ9eRwNDWMKx1scs6Gnq4wss
+         8zqZwYZI9jWagHV1/Fr+wp47gCtksRxi7j3DCAy0wRqMD+ItwLItkW5pxrsLiVKezUTf
+         k6ND8RTgrxZix8Br4q1FaULboE4itmWIvlMXM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730969893; x=1731574693;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I8US13aD05PtGROBNY39A0+lWIja+wUH11z2O2DFmBA=;
+        b=HxbeweQirRn1z2Bau6WH5/lmQKA5HwXz3bdEgW2Kq2Hn1IF92NmwNsjXpE0nghF2GK
+         2aCLhsKZsum3JLuM0UfDW/s/pKrw+4wAMpXqdIip+LBwbRLTMY7sHjZMkq0zV4/hJQT6
+         g5FXIPDSM8jmX33aWrFA3+Q6xQtavPDldwrn6XlcY2JGcjSmhbwT35tsK4uUAw/fFYny
+         0r2xUk/Uybl0MRpvwTFT0YULDhRqIDfSrFX4Lls9qkPOZQTfMVeZw1gHiTWgaW559f8U
+         u4Y7oMS4BGdNSQov7R0259OKYgmcolJhsEOSKxVrFZET2EwDg8AHGMWc8zIEu7gTncTk
+         kjMw==
+X-Gm-Message-State: AOJu0Yy9HbwW5NMhwkM0FzAwpqWqPSp3yxWiAdtE1IP5TF5aFhdihB90
+	4GBbM0+d2bWpwMjdwFPYVcClswefo4198XjAqOI+o6rv3njsch3UEtvRmeFn0YYbZcKDjAH10z4
+	oBKkOf8aJj+k/z+z9GF4xlc82EC3P7M4z49TBgA==
+X-Google-Smtp-Source: AGHT+IHxPaWfeaWr7QYviaFixyD3GiKGEj6bLFLoEq9c1pZwSytCfLOCtXu+dknJoRl+41zTEmU1wKDp6CHqkFdc/0c=
+X-Received: by 2002:a05:622a:1a0a:b0:462:f690:d202 with SMTP id
+ d75a77b69052e-462f690d251mr43546551cf.40.1730969892756; Thu, 07 Nov 2024
+ 00:58:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 17/20] ACPI: platform_profile: Check all profile
- handler to calculate next
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241107060254.17615-1-mario.limonciello@amd.com>
- <20241107060254.17615-18-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241107060254.17615-18-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PAE0GQ1MrZHtmTNxHNxsLPfPreWTFJw2PB8Sxs7HmXojgcieSuk
- nKuHTAwAoy4jZ++8i8SBjIRCLsXCyjp0Ybt5JLbswP3pZ8vO9zSIlbpb+iUzqKoyZtadgHg
- BLKrlXa6U54QQfGOQ7K0ztWiYSBRmAhcQrRvxi6uUMyKHROjS124slASfNpA7P/kVMi4NxL
- 4Ai413MWYPh6c7kXYrA6Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:D20ULot7zzw=;pr6llb1Et0ycvoUwAgxRDEOctQU
- MaFXaSV9tb+BFKQIve7O6GxHkzUViurHWvnHor//YA83q4EwF7W+lxl+q7XV4KCZZ7slzDlH2
- Kr4v6EYke6jKgN43phUX90FDL7OzSL6MycF6wzWzDGJnyUVGvbByV6W/OqQjYCpwHqbYD9Uq+
- 5zJ0n7/qeJw9f3r1ijw6LbFJ/o7sfAhLBC3pvOT7nKlWEtsW7Skf4GsMtCDh6rW3EK0vbfIJy
- nUk0Jblk/aGEsDHCJdtViLBtdflXb5rX7POndi/WB7hmKl9f5xTY1ki+9+0yowtlPsU/zBkA1
- EMTv1/zFDzw7xuoE6H+ifdNUOIwStLmyu0RGRn06jUlxUPrMuNR7iTyCkJvlG0RncapW8eO3h
- C6z2XQlPl3v76imExu4qoTYeQH9+LEmXnUjz4kx6WRACXCjkEKiAl1jtuuNX1jDrpBgcbRsLO
- 1BCdIXlbo8T2DiUl750MKSRD2equHKsOQMkDCV1cK3h5y99QFS1T4o8D8V/dkIBxJ8poMQPDi
- weIf4bL1rsjFvvA/hXMWGB7v1v5UIt4C1+Z24tpK1vz4V2q3W2N8pXIQpIOwSE2xtjjAF+z9w
- fx00gUvHhqvbOYbwVC2cvtaEr+fmps4ccsMiQ6rQn5t0qDf2n9r8C2TISeSTxICA9ZPbeOcax
- wuwblqjXSU7qIRx8SrCJerRuhUPzxtH1TWeCuGu6fYcB30Ixwvw8URJ2AMFD9gpbatCkgJ2zu
- MuSXWbE7ogvpgxPr/SI6KUSHdYBTAtJ17eXcKn3q1Fogy2uB2S+x4zqVyyhaAhwLKpy36r01O
- rGq7sWjbqXtNzvMP4EGH3b3txyQq0amVtztzFawMP0W73f7qVwLFFrhvXjIqiAYbHbgX/15Kq
- UQaSEOpS4twnqrsChcHzldInJ4V3nk058mnVtc4VWQOFXT6YMe+PGJnRQ
+References: <20241024164726.77485-1-hreitz@redhat.com>
+In-Reply-To: <20241024164726.77485-1-hreitz@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 7 Nov 2024 09:58:02 +0100
+Message-ID: <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
+Subject: Re: [PATCH] virtio-fs: Query rootmode during mount
+To: Hanna Czenczek <hreitz@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	virtualization@lists.linux.dev, Miklos Szeredi <mszeredi@redhat.com>, 
+	German Maglione <gmaglione@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Am 07.11.24 um 07:02 schrieb Mario Limonciello:
+On Thu, 24 Oct 2024 at 18:47, Hanna Czenczek <hreitz@redhat.com> wrote:
 
-> As multiple platform profile handlers might not all support the same
-> profile, cycling to the next profile could have a different result
-> depending on what handler are registered.
->
-> Check what is active and supported by all handlers to decide what
-> to do.
->
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v5:
->   * Adjust mutex use
-> ---
->   drivers/acpi/platform_profile.c | 23 ++++++++++++++---------
->   1 file changed, 14 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index 7f302ac4d3779..2c466f2d16b42 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -411,34 +411,39 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
->
->   int platform_profile_cycle(void)
->   {
-> +	enum platform_profile_option next =3D PLATFORM_PROFILE_LAST;
->   	enum platform_profile_option profile;
-> -	enum platform_profile_option next;
-> +	unsigned long choices;
->   	int err;
->
->   	if (!class_is_registered(&platform_profile_class))
->   		return -ENODEV;
->
->   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> -		if (!cur_profile)
-> -			return -ENODEV;
-> +		err =3D class_for_each_device(&platform_profile_class, NULL,
-> +					    &profile, _aggregate_profiles);
-> +		if (err)
-> +			return err;
->
-> -		err =3D cur_profile->profile_get(cur_profile, &profile);
-> +		err =3D class_for_each_device(&platform_profile_class, NULL,
-> +					    &choices, _aggregate_choices);
->   		if (err)
->   			return err;
->
-> -		next =3D find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LA=
-ST,
-> +		next =3D find_next_bit_wrap(&choices,
-> +					  PLATFORM_PROFILE_LAST,
->   					  profile + 1);
+> To be able to issue INIT (and GETATTR), we need to at least partially
+> initialize the super_block structure, which is currently done via
+> fuse_fill_super_common().
 
-Could it be that this would lead to be "custom" profile being selected und=
-er some conditions?
-Also _aggregate_profiles() expects profile to be initialized with PLATFORM=
-_PROFILE_LAST.
+What exactly is needed to be initialized?
+
+> @@ -1762,18 +1801,12 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>         sb->s_d_op = &fuse_dentry_operations;
+>
+>         mutex_lock(&fuse_mutex);
+> -       err = -EINVAL;
+> -       if (ctx->fudptr && *ctx->fudptr)
+> -               goto err_unlock;
+> -
+>         err = fuse_ctl_add_conn(fc);
+>         if (err)
+>                 goto err_unlock;
+>
+>         list_add_tail(&fc->entry, &fuse_conn_list);
+>         sb->s_root = root_dentry;
+> -       if (ctx->fudptr)
+> -               *ctx->fudptr = fud;
+
+This is wrong, because we need the fuse_mutex protection for checking
+and setting the private_data on the fuse device file.
+
+If this split is needed (which I'm not sure) then fud allocation
+should probably be moved to part2 instead of moving the *ctx->fudptr
+setup to part1.
+
+
+> @@ -1635,8 +1657,16 @@ static void virtio_kill_sb(struct super_block *sb)
+>         struct fuse_mount *fm = get_fuse_mount_super(sb);
+>         bool last;
+>
+> -       /* If mount failed, we can still be called without any fc */
+> -       if (sb->s_root) {
+> +       /*
+> +        * Only destroy the connection after full initialization, i.e.
+> +        * once s_root is set (see commit d534d31d6a45d).
+> +        * One exception: For virtio-fs, we call INIT before s_root is
+> +        * set so we can determine the root node's mode.  We must call
+> +        * DESTROY after INIT.  So if an error occurs during that time
+> +        * window (specifically in fuse_make_root_inode()), we still
+> +        * need to call virtio_fs_conn_destroy() here.
+> +        */
+> +       if (sb->s_root || (fm->fc && fm->fc->initialized && !fm->submount)) {
+
+How could fm->submount be set if sb->s_root isn't?  Or sb->s_root set
+and fc->initialized isn't?
+
+Seems it would be sufficient to check fm->fc->initialized, no?
 
 Thanks,
-Armin Wolf
-
->
-> -		if (WARN_ON(next =3D=3D PLATFORM_PROFILE_LAST))
-> -			return -EINVAL;
-> +		err =3D class_for_each_device(&platform_profile_class, NULL, &next,
-> +					    _store_class_profile);
->
-> -		err =3D cur_profile->profile_set(cur_profile, next);
->   		if (err)
->   			return err;
->   	}
->
->   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> -	return 0;
-> +
-> +	return err;
->   }
->   EXPORT_SYMBOL_GPL(platform_profile_cycle);
->
+Miklos
 
