@@ -1,243 +1,97 @@
-Return-Path: <linux-kernel+bounces-400134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064729C095B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:54:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87D29C0960
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:55:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1341C23892
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:53:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9C42835A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8257E2139C9;
-	Thu,  7 Nov 2024 14:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F122212EE1;
+	Thu,  7 Nov 2024 14:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNCa6TUE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwabX0Bt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1245212F13;
-	Thu,  7 Nov 2024 14:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F761DFDB8;
+	Thu,  7 Nov 2024 14:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730991181; cv=none; b=CIQ2eb2mSBRg8gL/DxrfMoT2DwlkeVlaStOYgYwspmtMbNw5E61mBVBAn6t+AsrdIJGmqDoNsUxbGZZnYRcgmlFT/XzqUbAjuFryOVd12ufmwWnqLwkn8226wtXCJnPR1UkLJ+iH6/0Ldy/Ux9cLB15jm40+CEm9Bvg9eiW7avU=
+	t=1730991319; cv=none; b=ZMRnql0ifdCHCObUXbOqJ2rhFVoDE7x4WNcHoLEOge/PeLdJ6AVRpviDB6XqxjVBGn6CGAgedkzVPn0zWhOA9eXzab7iVFGH7oULR3AiV5h5k/XlKpu1BxDiy/jnxKxiKo3iNuj6guZNc306YHXH1IQQ9NLJX7XGyErv0479c8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730991181; c=relaxed/simple;
-	bh=aF5UWRxmpeI2jfApNUrAdqNXT9wZqj6b1Dborwa4GoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yc3S5wBRj1pfmymLqqQK2Sjbf/dIcZJFKKMdq17HMcPDBd8yLQZs9RD/gI7swfwhnTeWuDVbcWuINF5sQhgMz9N1hWjfM1V8BPz0X3TgBg06QJRvebXVIua0Poi1rCikpaSLYPzP1CEiJviLOeDvqqmBRbJsq58DtXd8X8Dz4Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNCa6TUE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC241C4CECC;
-	Thu,  7 Nov 2024 14:52:59 +0000 (UTC)
+	s=arc-20240116; t=1730991319; c=relaxed/simple;
+	bh=K5+gjFHFUygX0x3HkOo96uYxYFByfgO4woehcB3CLcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LToLFlk6+AC+nJxjKXOVCaCmoDlSm86MBlEPtmX6/eRGRkt7Qscipq6sr/jogMmWdFPABqEmNtvAJ2D5ZeF9HA336hLw1yNkwCVwPgduszwKXay+SvaiyhG1EPe3dsZ+unLsTvIBP4Ls+/xyywvjm339M7w1pXaFK/RXhfZv5JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwabX0Bt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DFD0C4CECC;
+	Thu,  7 Nov 2024 14:55:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730991181;
-	bh=aF5UWRxmpeI2jfApNUrAdqNXT9wZqj6b1Dborwa4GoA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SNCa6TUEBx7JwU3aP10vL5rJXIEUBibgAdOd0nIz3Yyby1wvnt9d5BsRzT6WS1XBq
-	 AH8P4S6qazho8ykpqwWkxEXfg6di6xiQZQ+NSMB9OYb6S9ETxMFvof4jxgFS1xowop
-	 jAo47OqgtKNHXkIKubI6UxmcPLxRcseFD3u8d3Hi90+RxROoTxgDA8oSsusNqHj4L3
-	 3i+0vDG52FRdJv1xCGu/5akmpDOAPFA7Gn0kZYBVnW26koH8qy82Q2wU9Y16XejSJZ
-	 h+I/ClGGEWo2aiMrOss26XJ+U2cukZp+VsM8VQMfNpnUN0+JglIDVU1thcj+KQVcTL
-	 e3HS5r/E57cvg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] perf-probe: Replace unacceptable characters when generating event name
-Date: Thu,  7 Nov 2024 23:52:58 +0900
-Message-ID:  <173099117811.2431889.17590362733353379842.stgit@mhiramat.roam.corp.google.com>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-In-Reply-To:  <173099112488.2431889.1181692857521683304.stgit@mhiramat.roam.corp.google.com>
-References:  <173099112488.2431889.1181692857521683304.stgit@mhiramat.roam.corp.google.com>
-User-Agent: StGit/0.19
+	s=k20201202; t=1730991318;
+	bh=K5+gjFHFUygX0x3HkOo96uYxYFByfgO4woehcB3CLcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gwabX0Bt3r9b/wEYR2LijvJ9TbY6clKCOV+tUc8Uz7aIdmmksaSERHaKFMq0DnKS8
+	 ZDKuHgspcp1t3w6V5jVEKCyes+oN7Xr4KX9HosFYNuU6QNFlEV8Rdbz/k1TRnlncsQ
+	 Z/rg2AK3hT03kdyageX10zr3112y+mvFur5OJs+ZtmSKIjB2N82SZr6Vt87phG+uRz
+	 oxBKWy/qgv2WJYnmKuA8oSkN2LGHHB0QHih9Y6hH8UHdU6VZPdxTis2MUTmf1kBGP1
+	 JhgOMgxnvZV18xlI47L4zP8dEdNpPvdbyBmWNr/piOiX+pMGdmBiaPMHsQEiJ+AHQx
+	 n6TFcgbCt/4aA==
+Date: Thu, 7 Nov 2024 14:55:12 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hagar@microsoft.com
+Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
+Message-ID: <df4c9a3b-7fb2-42fd-ab10-94cfa7e70979@sirena.org.uk>
+References: <20241107064547.006019150@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IUTVW+fggAyrcTk5"
+Content-Disposition: inline
+In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
+X-Cookie: Professional driver on closed track.
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Replace unacceptable characters with '_' when generating event name from
-the probing function name. This is not for C program. For the C program,
-it will continue to remove suffixes.
-Note that this language checking depends on the debuginfo. So without the
-debuginfo, perf probe will always replaces unacceptable characters with
-'_'.
+--IUTVW+fggAyrcTk5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For example.
+On Thu, Nov 07, 2024 at 07:47:28AM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.7 release.
+> There are 249 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-$ ./perf probe -x cro3 -D \"cro3::cmd::servo::run_show\"
-p:probe_cro3/cro3_cmd_servo_run_show /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3:0x197530
+Tested-by: Mark Brown <broonie@kernel.org>
 
-$ ./perf probe -x /work/go/example/outyet/main -D 'main.(*Server).poll'
-p:probe_main/main_Server_poll /work/go/example/outyet/main:0x353040
+--IUTVW+fggAyrcTk5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v2:
-  - Check dwarf language instead of checking wildcards.
----
- tools/perf/util/probe-event.c  |   32 +++++++++++++++++++++++++-------
- tools/perf/util/probe-event.h  |    3 ++-
- tools/perf/util/probe-finder.c |   15 +++++++++++++++
- tools/perf/util/probe-finder.h |    6 +++++-
- 4 files changed, 47 insertions(+), 9 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index 31e257c84cd1..9eaf0fc7975a 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2771,7 +2771,7 @@ int show_perf_probe_events(struct strfilter *filter)
- 
- static int get_new_event_name(char *buf, size_t len, const char *base,
- 			      struct strlist *namelist, bool ret_event,
--			      bool allow_suffix)
-+			      bool allow_suffix, bool not_C_symname)
- {
- 	int i, ret;
- 	char *p, *nbase;
-@@ -2782,10 +2782,24 @@ static int get_new_event_name(char *buf, size_t len, const char *base,
- 	if (!nbase)
- 		return -ENOMEM;
- 
--	/* Cut off the dot suffixes (e.g. .const, .isra) and version suffixes */
--	p = strpbrk(nbase, ".@");
--	if (p && p != nbase)
--		*p = '\0';
-+	if (not_C_symname) {
-+		/* Replace non-alnum with '_' */
-+		char *s, *d;
-+
-+		s = d = nbase;
-+		do {
-+			if (*s && !isalnum(*s)) {
-+				if (d != nbase && *(d - 1) != '_')
-+					*d++ = '_';
-+			} else
-+				*d++ = *s;
-+		} while (*s++);
-+	} else {
-+		/* Cut off the dot suffixes (e.g. .const, .isra) and version suffixes */
-+		p = strpbrk(nbase, ".@");
-+		if (p && p != nbase)
-+			*p = '\0';
-+	}
- 
- 	/* Try no suffix number */
- 	ret = e_snprintf(buf, len, "%s%s", nbase, ret_event ? "__return" : "");
-@@ -2874,6 +2888,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 				       bool allow_suffix)
- {
- 	const char *event, *group;
-+	bool not_C_symname = true;
- 	char buf[64];
- 	int ret;
- 
-@@ -2888,8 +2903,10 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 			(strncmp(pev->point.function, "0x", 2) != 0) &&
- 			!strisglob(pev->point.function))
- 			event = pev->point.function;
--		else
-+		else {
- 			event = tev->point.realname;
-+			not_C_symname = !is_known_C_lang(tev->lang);
-+		}
- 	}
- 	if (pev->group && !pev->sdt)
- 		group = pev->group;
-@@ -2900,7 +2917,8 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
- 
- 	/* Get an unused new event name */
- 	ret = get_new_event_name(buf, sizeof(buf), event, namelist,
--				 tev->point.retprobe, allow_suffix);
-+				 tev->point.retprobe, allow_suffix,
-+				 not_C_symname);
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
-index 7e3b6c3d1f74..6516105f43e2 100644
---- a/tools/perf/util/probe-event.h
-+++ b/tools/perf/util/probe-event.h
-@@ -57,7 +57,8 @@ struct probe_trace_event {
- 	char				*event;	/* Event name */
- 	char				*group;	/* Group name */
- 	struct probe_trace_point	point;	/* Trace point */
--	int				nargs;	/* Number of args */
-+	int					nargs;	/* Number of args */
-+	int					lang;	/* Dwarf language code */
- 	bool				uprobes;	/* uprobes only */
- 	struct probe_trace_arg		*args;	/* Arguments */
- };
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 630e16c54ed5..13ff45d3d6a4 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -35,6 +35,19 @@
- /* Kprobe tracer basic type is up to u64 */
- #define MAX_BASIC_TYPE_BITS	64
- 
-+bool is_known_C_lang(int lang)
-+{
-+	switch (lang) {
-+	case DW_LANG_C89:
-+	case DW_LANG_C:
-+	case DW_LANG_C99:
-+	case DW_LANG_C11:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- /*
-  * Probe finder related functions
-  */
-@@ -1272,6 +1285,8 @@ static int add_probe_trace_event(Dwarf_Die *sc_die, struct probe_finder *pf)
- 		ret = -ENOMEM;
- 		goto end;
- 	}
-+	tev->lang = dwarf_srclang(dwarf_diecu(sc_die, &pf->cu_die,
-+										  NULL, NULL));
- 
- 	pr_debug("Probe point found: %s+%lu\n", tev->point.symbol,
- 		 tev->point.offset);
-diff --git a/tools/perf/util/probe-finder.h b/tools/perf/util/probe-finder.h
-index 3add5ff516e1..04a52d5fd568 100644
---- a/tools/perf/util/probe-finder.h
-+++ b/tools/perf/util/probe-finder.h
-@@ -26,6 +26,9 @@ static inline int is_c_varname(const char *name)
- #include "dwarf-aux.h"
- #include "debuginfo.h"
- 
-+/* Check the language code is known C */
-+bool is_known_C_lang(int lang);
-+
- /* Find probe_trace_events specified by perf_probe_event from debuginfo */
- int debuginfo__find_trace_events(struct debuginfo *dbg,
- 				 struct perf_probe_event *pev,
-@@ -103,7 +106,8 @@ struct line_finder {
- 	Dwarf_Die		sp_die;
- 	int			found;
- };
--
-+#else
-+#define is_known_C_lang(lang) (false)
- #endif /* HAVE_DWARF_SUPPORT */
- 
- #endif /*_PROBE_FINDER_H */
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcs1M8ACgkQJNaLcl1U
+h9Ct0Qf/WZL5vpyyXrZS9JZqKeUYwjJtFkwo1GFXPKOSBifK9MG8hmHHQVLbLmj6
+VUuutYsYJgry35r4NPCw3mGTqg+P3zyY3MIDPZYhXlv7figi9a0NabbHe4QEC/Ti
+0ExFu5oIuJq2XfWyzG+1WCpURuPNVh6+wuv+POg6ufnN37ODQu7NjMOyYDqc/F0H
+E71YdviNzQ+ljILNxZeV0GstCmjQ8ak4L8vuJoC1kBN8SkQqvdR3QEz0DLy/hBxz
+WrBhu5Uk3jIZsycj0NkSHHt59HmY9v8TLXh/MOcF3w+JTjQUgrPXxIQGtNvHukvJ
+MjCqfOVk6PZ8pggPFl3u0O6OAWoR3A==
+=PX4Z
+-----END PGP SIGNATURE-----
 
+--IUTVW+fggAyrcTk5--
 
