@@ -1,185 +1,158 @@
-Return-Path: <linux-kernel+bounces-400026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67679C07F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:47:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD55A9C07F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:48:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755D6286DC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:47:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57F02B22FF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F00321219B;
-	Thu,  7 Nov 2024 13:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B5E21263F;
+	Thu,  7 Nov 2024 13:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CQMi4t57"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IotH8Ip8"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02441EF0A2;
-	Thu,  7 Nov 2024 13:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16072212632;
+	Thu,  7 Nov 2024 13:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987239; cv=none; b=lGoAg90c5hOhHg0aI55WS7NFM4/DzXCPVlCYmadZ6N49zCaNHEI7c9p22hQUDoVEMcHEUtGhhtGn0YOCfCMuB6ncC0lfrZxc8ZdeR8+Ic4wOY7VA9pCxFJ6q161FzWF1p8aG8KALzxGU+s3aENmP8nDsV4y3AhvTS+UMs6qyxhk=
+	t=1730987255; cv=none; b=S3gIcUld9BbTcKSVrX9KjDLgRdu3UYKTHX5h8h+u+0bE6NEIrRY+pT2tYmHn+NyuGsk656rZJMdkJw4f/hcocAYnGE79ov8+4TD3tbr3L4eyDNWPR07Wcne5JojafuNolCB3+9JLIInxDv8JC6GscuwBnnDc0yvZ//BRz4y3YaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987239; c=relaxed/simple;
-	bh=xE1dVbC+YVeuhiAWZuW8loujE3dbs7eHJ5Jqu+o7fVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+nh1MS/6ElfgyhetC3zYPpfNnbPxGUGYNs6QOYvIQZxmulhaj5+rmx9XjNeg9rajHCpsF0/5fna+fYhYyppUzH90YRWJGJV43VMjY3RFnNjDJGHfYnyI914KrBiXPmZ3IuszFedrm7S6AlsADn+WHqsHy/JP5Sk0Bqy6ajmKws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CQMi4t57; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730987238; x=1762523238;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xE1dVbC+YVeuhiAWZuW8loujE3dbs7eHJ5Jqu+o7fVE=;
-  b=CQMi4t57JXzrLESH3kWmkDvrNB3bpgC7ieVOFE231fIEOtCjuT0TCwQt
-   trLKTdW6SGRCFYTRbBSCCgEnY+5GJsibTjTtjXXryxe7On3r5f3hbVK3W
-   WIC97lIDqWCoRgZ3gZL6xFlr5s5lxoi+GqomVAue2kQsFfnUG1o3P365y
-   2wTwIFQl6mG9rV1BHGEo8v7Hx4RpAkGHccdd7p+sDHCzCftHSNyl5bmQW
-   Sny7tel/+55u0WLQypvZbgkBwWJvNAHT8gGAWB0mE47el35qxLr2eUgC1
-   f2g8QExZchoSzZxoYlPlxhohmgkOQTLYoGL5Cov4OZghQWbxGQCP1s9g/
-   w==;
-X-CSE-ConnectionGUID: ko1mUnOBRP2E7o9tKSXzUw==
-X-CSE-MsgGUID: F7WCITSLS22Com5qM7/Itg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="30943318"
-X-IronPort-AV: E=Sophos;i="6.12,266,1728975600"; 
-   d="scan'208";a="30943318"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 05:47:17 -0800
-X-CSE-ConnectionGUID: SemUo1zQRMOmOkgican78Q==
-X-CSE-MsgGUID: SVH4Q6TfS7GZrjkG68indA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,266,1728975600"; 
-   d="scan'208";a="89615619"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 07 Nov 2024 05:47:13 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t92qt-000qJ6-35;
-	Thu, 07 Nov 2024 13:47:11 +0000
-Date: Thu, 7 Nov 2024 21:46:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: oe-kbuild-all@lists.linux.dev, Roberto Sassu <roberto.sassu@huawei.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
-Message-ID: <202411072138.bgOIL36O-lkp@intel.com>
-References: <20241107095138.78209-1-jarkko@kernel.org>
+	s=arc-20240116; t=1730987255; c=relaxed/simple;
+	bh=WJ8sjTdsEHCnUnC4snAJGRK47JStvms0dYfAUbD7xRU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rix1vheywFrqYaLqQePKPFieXwGSxK/MBbCV/RuNTrRPxVvbV7SSsdX+612DfqNgphlIzduDoEHKvH3lIXF5FUvCJI2Y0tces+NTqpmb2Fy6pJJGk9FxM9WlqgBR1VDA3qZi7mf0adwf4OQbLaibRCY4OiisHrPGW7uJ2029cqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IotH8Ip8; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so15460391fa.0;
+        Thu, 07 Nov 2024 05:47:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730987252; x=1731592052; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vV/uqLIwRRvbtNIiu4DCWvHhI+US/wd1+j/rWmR1oUI=;
+        b=IotH8Ip8B5pd77ZtwMXJDlaCWoMAdZWJ1oBgJJXCFUDS3hoI8SPnKbUAjReRKK9enU
+         KA9HN3JYslWPU+zUExfZDz9rZFJlY8pDUGk+KRWyLAE8tu4/bu9V3NwvgkVIMnkXkzFx
+         CrXgD7dqh9Khnqf5R/soSQTcsggAl8AR02WKeA7cwtYFOdzVhepKF/dY80hWupGO/XBw
+         M3FJjLAGXZSMOa1vyUdszi5YoaFqvnAg5Fcea79CKEeaY3MprKaybLNzVD0zD/EneQd2
+         4+7QrE9kcCz7xV9t9NqaOomXlpakpmL3MNRtb4sm997Xg5eSR9lJHiwb/38ji6CagNRx
+         /MiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730987252; x=1731592052;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vV/uqLIwRRvbtNIiu4DCWvHhI+US/wd1+j/rWmR1oUI=;
+        b=V8c8B/RGZ2N6NGKI2WSbDDRmu7xXeQwDzO4b7xVvBptjiB2WYKYUQtJuWkX3o+kFEh
+         Pwm7I+SnWrVLbZP4g49oDnMV4cts+SiDf+wAx83ZdGOPyD9MeZqc0FkdNwI3tnNWlfq8
+         HoKkYDUlJbpru49YWYLafDqeHuEO4V1CTGksDyP9sVG17RFLk3EAFXbGhqRlSl2XrNEb
+         ahacX+TjejujrB6yGGKLSVHYycb2QjB5ah/tRz+8A6ERtvJ6+KWIk67Um6kg0Xt0haY6
+         CBPYZqY7v2MXuxZI6n6vS8aLbxO8XGn5ebglzP6XCmS8Fz56vL80fdXlti0s8KfhzTPQ
+         48Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHOEkl1VP9y4vPfsq3pnOGOPJ+g1d7GMCN7z7T4WR2+iFWMu9NHUISa9QO5pFG4WG9qEdw0i5tqrR1@vger.kernel.org, AJvYcCWwWAWNWiDdgOLXm+hRan67HqszazxK/PtDQBlujB5xK08vx1IQgJw858xBuG2WggSLb14bF8nhy2CPBOE4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGQ3QnCQJOq+nmeVeVC8H6i3criEqGM/dqTFej3UE+GIdc5PNQ
+	6feP3doZ01sOOO0ahaG2XBXELNs3D236JKSdyUqJgUzwqO1a9FeF
+X-Google-Smtp-Source: AGHT+IEhC6iR33eZ4lfH/xse0Rl2l82Dcz6hdxKltt3wqF0Dap5B4TG2pXRT6K+E3wxcui88TP6z+Q==
+X-Received: by 2002:a05:651c:985:b0:2f3:eca4:7c32 with SMTP id 38308e7fff4ca-2fedb82fd05mr190609691fa.38.1730987251737;
+        Thu, 07 Nov 2024 05:47:31 -0800 (PST)
+Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff179d80f5sm2276591fa.105.2024.11.07.05.47.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 05:47:31 -0800 (PST)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v7 0/2] Add support for "on-die" ECC on Davinci.
+Date: Thu, 07 Nov 2024 14:47:06 +0100
+Message-Id: <20241107-ondie-v7-0-98829fc8a958@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107095138.78209-1-jarkko@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANrELGcC/2XOwW7DIAwG4FepOI8JG0hgp71HtQMxpkVakymZo
+ k5V3n2kEhrKjr/l77cfYuE58yLeTg8x85qXPI0l9C8nQdcwXljmWLJAhQaUAjmNMbMMiiMldMm
+ ZTpTdr5lTvj97zh8lX/PyPc0/z9oV9umxYQWpZNAxBAZLzsf3yy3kz1eabmJvWLFVWBUWpcGB7
+ aKjfjBHpVtlq9JFGeujJ42Ilo7KtKqryhSVkh98ij44+PehbZWryhalDFAwRGSZj6r7U6D6qrr
+ 9Vq+8spEAh9Sqbdt+AZNSmrCoAQAA
+X-Change-ID: 20241001-ondie-a0edcf28f846
+To: Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1776;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=WJ8sjTdsEHCnUnC4snAJGRK47JStvms0dYfAUbD7xRU=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBnLMTjRhoFLSc1KkTea75CbUx52FGWIca8jGOUh
+ 0Q/vRra0rmJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZyzE4wAKCRCIgE5vWV1S
+ Mh7EEACUOTW2UOgo3EXokp3j2lSn1V+dkGhtTDeUWImo2wEb1sycObdGPel8gSlhFkPDHn01bMr
+ oiSMtL/aubKsmvJQUBbtlSxjVdrEnEtWb9GnSoi3weGG/QQpZ1SiwT1ze9Ut1aV4ijLqDIk3ddM
+ uEcSpN/mtO5B8TUhjLLSgyhqUQIpFnZe1qbk/uf0D9ZifWjzqdOUldGR+jrunKlbJpcKx1P87P6
+ pEmlKd1lcmdtjbHXKd6l2tXnL5D7ynAX5j2n7snakuvrpHbjJ5Ihu13PfcLtmOWnGukRl4I/QvO
+ EfO4EPASrK6MCmPciRTvIRAys/9gvakWTWxxmAcJ/wN/C3NBx1XHUeno+qWo8LFZDs91c+yoaRZ
+ vqANAQNoO8kFqkC2Y1L7SllTfHeQqjAq/9rlrki7IzghHtT+zt5sIP3JehcrFkMlcmbs9pPYccf
+ WtTS0HemX4MQzC2RaWofyWkJpKwdVEoDO03ZY3MPyaXlqXJq+7uU3POkBikru68BAM0KZO6iKvO
+ CyikwH9U20RJExmh+68oNHxzqynnt4wxhd5kOSzKQh2gADfZJQ/7h+MyScrqDQ4RJ9hm/kKmS0z
+ R7eOqaUVLXvaMeetgEnzss6OB2jsOYjRMgg9HHR0appS+WBNeT/Wejnn0+BIT1xo38qlu9zBAPJ
+ sz6qkoXmCuk7M6g==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-Hi Jarkko,
+Some chips, e.g. Micron MT29F1G08ABBFAH4, has a mandatory on-die ECC.
+Add "on-die" as ECC engine type in order to be compatible with those.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+Changes in v7:
+- Merged description lines
+- Dropped #address-cells & #size-cells
+- Rearrange reg property in example
+- Link to v6: https://lore.kernel.org/r/20241107-ondie-v6-0-f70905dc12bf@gmail.com
 
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.12-rc6 next-20241106]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Changes in v6:
+- Rework the example snippet
+- Link to v5: https://lore.kernel.org/r/20241008-ondie-v5-0-041ca4ccc5ee@gmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jarkko-Sakkinen/tpm-Opt-in-in-disable-PCR-integrity-protection/20241107-175515
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20241107095138.78209-1-jarkko%40kernel.org
-patch subject: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241107/202411072138.bgOIL36O-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411072138.bgOIL36O-lkp@intel.com/reproduce)
+Changes in v5:
+- change "additionalProperties: true" to "unevaluatedProperties: false"
+- Link to v4: https://lore.kernel.org/r/20241006-ondie-v4-0-ff9b9fd9a81d@gmail.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411072138.bgOIL36O-lkp@intel.com/
+Changes in v4:
+- Silent errors in `make  dt_binding_check  DT_SCHEMA_FILES=ti,davinci-nand.yaml`
+- Link to v3: https://lore.kernel.org/r/20241005-ondie-v3-0-459d9c32225c@gmail.com
 
-All errors (new ones prefixed by >>):
+Changes in v3:
+- Fix formatting issues in yaml file
+- Link to v2: https://lore.kernel.org/r/20241002-ondie-v2-0-318156d8c7b4@gmail.com
 
-   drivers/char/tpm/tpm2-cmd.c: In function 'tpm2_pcr_extend':
->> drivers/char/tpm/tpm2-cmd.c:253:17: error: too few arguments to function 'tpm_buf_append_name'
-     253 |                 tpm_buf_append_name(chip, &buf, pcr_idx);
-         |                 ^~~~~~~~~~~~~~~~~~~
-   In file included from drivers/char/tpm/tpm.h:27,
-                    from drivers/char/tpm/tpm2-cmd.c:14:
-   include/linux/tpm.h:504:6: note: declared here
-     504 | void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
-         |      ^~~~~~~~~~~~~~~~~~~
+Changes in v2:
+- Convert dt-bindings file to yaml
+- Link to v1: https://lore.kernel.org/r/20241001-ondie-v1-0-a3daae15c89d@gmail.com
 
+---
+Marcus Folkesson (2):
+      mtd: nand: davinci: add support for on-die ECC engine type
+      dt-bindings: mtd: davinci: convert to yaml
 
-vim +/tpm_buf_append_name +253 drivers/char/tpm/tpm2-cmd.c
+ .../devicetree/bindings/mtd/davinci-nand.txt       |  94 ----------------
+ .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 124 +++++++++++++++++++++
+ drivers/mtd/nand/raw/davinci_nand.c                |   5 +-
+ 3 files changed, 128 insertions(+), 95 deletions(-)
+---
+base-commit: 200289db261f0c8131a5756133e9d30966289c3b
+change-id: 20241001-ondie-a0edcf28f846
 
-   222	
-   223	/**
-   224	 * tpm2_pcr_extend() - extend a PCR value
-   225	 *
-   226	 * @chip:	TPM chip to use.
-   227	 * @pcr_idx:	index of the PCR.
-   228	 * @digests:	list of pcr banks and corresponding digest values to extend.
-   229	 *
-   230	 * Return: Same as with tpm_transmit_cmd.
-   231	 */
-   232	int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-   233			    struct tpm_digest *digests)
-   234	{
-   235		struct tpm_buf buf;
-   236		int rc;
-   237		int i;
-   238	
-   239		if (!disable_pcr_integrity_protection) {
-   240			rc = tpm2_start_auth_session(chip);
-   241			if (rc)
-   242				return rc;
-   243		}
-   244	
-   245		rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-   246		if (rc) {
-   247			if (!disable_pcr_integrity_protection)
-   248				tpm2_end_auth_session(chip);
-   249			return rc;
-   250		}
-   251	
-   252		if (!disable_pcr_integrity_protection) {
- > 253			tpm_buf_append_name(chip, &buf, pcr_idx);
-   254			tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-   255		} else {
-   256			tpm_buf_append_handle(chip, &buf, pcr_idx);
-   257			tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
-   258		}
-   259	
-   260		tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
-   261	
-   262		for (i = 0; i < chip->nr_allocated_banks; i++) {
-   263			tpm_buf_append_u16(&buf, digests[i].alg_id);
-   264			tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
-   265				       chip->allocated_banks[i].digest_size);
-   266		}
-   267	
-   268		if (!disable_pcr_integrity_protection)
-   269			tpm_buf_fill_hmac_session(chip, &buf);
-   270		rc = tpm_transmit_cmd(chip, &buf, 0, "attempting extend a PCR value");
-   271		if (!disable_pcr_integrity_protection)
-   272			rc = tpm_buf_check_hmac_response(chip, &buf, rc);
-   273	
-   274		tpm_buf_destroy(&buf);
-   275	
-   276		return rc;
-   277	}
-   278	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Marcus Folkesson <marcus.folkesson@gmail.com>
+
 
