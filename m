@@ -1,281 +1,255 @@
-Return-Path: <linux-kernel+bounces-400106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18509C0908
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:35:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD789C0904
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:35:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4A8282D82
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:35:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987B91F22FE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B908C212D12;
-	Thu,  7 Nov 2024 14:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB5F212F09;
+	Thu,  7 Nov 2024 14:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iO9uN22R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgEAApSE"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D009212175
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4876212EF4;
+	Thu,  7 Nov 2024 14:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730990121; cv=none; b=Kylwn6u3JdadNIGF3pcoRNs50CzxOdX3NYhuufgmTmJPebxAkH/eE+ZPOSUGdWzH86sqgcHPyRjj0ZpRkCbtB+igXofsavyvy1CWzcGnSgD3nWYXH0FQzcKayS/KSK9jwYl4ajeZ5WUs2H1praBmDVPwoSkbbY5KUL7SlWU4X6A=
+	t=1730990081; cv=none; b=egk6dPg4dauq0HpFhdkk1JhmGHDIIUKXjzIz7ze0/WJSweIx3+Y+TUn0FAgSg2P6jMcIDdPNzr09SEKmCivQj1Vn8i0jr9NXqaMZZlup4YSG8ZO6oMuV0QC2QgsIf52YyXYFofAWHcu9qV5fW8sT4CDjJefnYaPHq1+mDMTRPMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730990121; c=relaxed/simple;
-	bh=Rd4T6c6BtHhsaA2f79nDvsm6zwkjSKTFnsyimdRxapA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=MEMHQI+cm11MsmgNZLUcf2z314gwQZh67cHS5KontyWqo1Dp/D8yv4KHSVqiaVNzCSBdqkcZ535KOgjrvvWpVVldtogx20zxfEwccicZn875GaS0lK+PG8ybK38HKHIyVf7/qRVZRqOyxDHg9SAvAs3+9PnpishiMMGqNT/NkAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iO9uN22R; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730990120; x=1762526120;
-  h=date:from:to:cc:subject:message-id;
-  bh=Rd4T6c6BtHhsaA2f79nDvsm6zwkjSKTFnsyimdRxapA=;
-  b=iO9uN22RsLscz7m082WDKbYWyos0XPT+sQdPjP05qdOnjpntEubsUmnx
-   UOSm+hJ3EFTpyp7AkIqIYEPYtgdYO6d1T3F/e6+ugGoO+v/kklFhHGdnJ
-   54gJSC2GALL/yS42XPrZCGgNxz5ycBIy0o/g0BBEvDZ6QNGrkQy7ruZgb
-   Ae2GTDBJGfAfx1wVUaN8mTAY4+wWcpCcjqCHYSNerpVvdDVdVYhOhgfwc
-   /x9FrUKFxYSURsf5UixR1wBBUixZ4SvrSJpyn1Q5pUaT2cnt/HKVbnqG+
-   OJbSoUX7+c0CACbwyzMeKx/WPRGcW95j2xgpfx5Xb7XIio13OcGyxqfuO
-   Q==;
-X-CSE-ConnectionGUID: rlS3mxmBTryz6uvyktniZg==
-X-CSE-MsgGUID: fPN91314SoOpgq6shs2Ppw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="30254120"
-X-IronPort-AV: E=Sophos;i="6.12,266,1728975600"; 
-   d="scan'208";a="30254120"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 06:35:17 -0800
-X-CSE-ConnectionGUID: Kf4OTpLZRjqQ7/RVng9peA==
-X-CSE-MsgGUID: bhJJalg+QeWIPxWeJ+4ltQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,266,1728975600"; 
-   d="scan'208";a="89628598"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 07 Nov 2024 06:35:15 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t93bN-000qM6-34;
-	Thu, 07 Nov 2024 14:35:13 +0000
-Date: Thu, 07 Nov 2024 22:34:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD SUCCESS
- 49a17639508c3b35f90ca829e60dddeeeb750e74
-Message-ID: <202411072216.HMeHq3yQ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1730990081; c=relaxed/simple;
+	bh=+VXnf4L4+EUCWLwDDfo++V6wLUGKACpR+5t67b887/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUjvuOD7DGDMO3WQ7l5BTslTfsYgp4NaWDQclKckdxk8z1fRXe2r7uaxAAX74ATS5xw7lK3R1gS9/cJRyJZFxmHxfWHXovCPee1L+JnHyf3VIDR3k7v/Sy2jp1STlzTGQ2tevUD2lEn5jC4B9NCqwZGSDWypKV9pTtsajZodHrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgEAApSE; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso1305620a12.0;
+        Thu, 07 Nov 2024 06:34:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730990078; x=1731594878; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F75piWahFu3xEvjEvyJygjFoe6Wvi89gUM0KanR4MpI=;
+        b=UgEAApSEtFKXlkZE1aCTy+Y6B8ZzSxcPSCtfvDVhaZ39Iwx180Cth7QESwVCduOT6l
+         lYRpsU133msEZqjtdQacBaRilM59Wv5ulMZtzTq3Oj9m+GRU5gdFvbqJwM4IGrcdNVT6
+         R05JvKbef3yh+bZEyrsOohcBiFhAzrYSXbTV07wPaiOTNGZOk610eFdhgN6Fbl4+vNz2
+         /odtplgVzEPe1Nw0Vyik7rOadcvUnTR65TyGx5YT63Jhir4ToVBwUoWsmjRHB3D4IN94
+         M1Oc8m9nXCy6jD8Lt7/WYlJMtbprL5Y32Q4zLOqBXVOjkGKrgC3Myq0IbFNBaCLU8IQv
+         9COg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730990078; x=1731594878;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F75piWahFu3xEvjEvyJygjFoe6Wvi89gUM0KanR4MpI=;
+        b=BgL3UGp974SOuobeGZNSqBDtsxul+BDEsbt8QE7NawDXfJBxXbrS61XpuFZY4vOZmS
+         OH0IqwdCDH8wL6Ncv9uLL9kQgcC+9OfY4u6/UFt89P4btHRis+gUQjXurRVLatUD4V9O
+         X8fOA3WWuzoK5t9uI0SiHi/qBqDtoJuwiVRWb9Sd2mnodgewMLhK5di4DpDdzx9379DG
+         XPwYga3A93yg/OLPE4R6KMw7A0bbY06Mrk1WqLWUbqu1jo54jPmBuXPgUi5ib4Olxm8B
+         P7dBu4+PN0GIKBZ6xS5CnZ9GwhectjuYdECaWvn8WEphk+MEDbJH82Ornj176ynUL0+s
+         y+JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWd9T7VfcyFsosenOAbMvmJTEnVnLtje5KqlqokubZkHUG2N3e1QigTinXm3jrWr8bXmfUEZyT84CP0aYdM@vger.kernel.org, AJvYcCXj3ZDLYoyJZXeIMuCCKGc4/EnZbc+lAdBJzKnlafJy7L+Kt2ztA40Mb4x1qiQNTE6xJFruDAW+E12f@vger.kernel.org
+X-Gm-Message-State: AOJu0YyECZmnakiNOmQXiMrScbxY17F0O7oYd1jY+QeBklZVnSCD0LtA
+	1yasaofP3qv4wgSbPZjJCSyL0PN/1AeuOIxMbySL2aa92+sydqPM
+X-Google-Smtp-Source: AGHT+IGd4G0KS5uDfvxPoW9U4SNRhx7uhG/Wy5chDr4KEWTlLa8sOsBZ4tHb3V9I4IDAQQJgFfqRmg==
+X-Received: by 2002:a05:6402:50cc:b0:5cb:7780:f1f6 with SMTP id 4fb4d7f45d1cf-5cbbf94ebeamr31344872a12.33.1730990077700;
+        Thu, 07 Nov 2024 06:34:37 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03bb7fcasm880381a12.52.2024.11.07.06.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 06:34:37 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-actions@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: clock: actions,owl-cmu: convert to YAML
+Date: Thu,  7 Nov 2024 16:34:31 +0200
+Message-ID: <20241107143431.728669-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-branch HEAD: 49a17639508c3b35f90ca829e60dddeeeb750e74  softirq: Use a dedicated thread for timer wakeups on PREEMPT_RT.
+Convert the Actions Semi Owl CMU bindings to DT schema.
 
-elapsed time: 729m
+Changes during conversion:
+ - Since all Actions Semi Owl SoCs utilize the internal low frequency
+   oscillator as a parent for some clocks, require it.
 
-configs tested: 189
-configs skipped: 7
+Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+---
+v3: list the headers in the description
+v3: match properties: order with required:
+v3: add clocks as a required property
+v3: drop unused example node label
+v3: use the preferred four-space indentation for dts example
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+v2: drop address and size cells from example
+---
+ .../bindings/clock/actions,owl-cmu.txt        | 52 ----------------
+ .../bindings/clock/actions,owl-cmu.yaml       | 60 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 61 insertions(+), 53 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                          axs103_defconfig    gcc-14.2.0
-arc                     haps_hs_smp_defconfig    clang-20
-arc                   randconfig-001-20241107    gcc-14.2.0
-arc                   randconfig-002-20241107    gcc-14.2.0
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                          gemini_defconfig    gcc-14.2.0
-arm                           h3600_defconfig    gcc-14.2.0
-arm                           imxrt_defconfig    gcc-14.2.0
-arm                        multi_v7_defconfig    clang-20
-arm                             mxs_defconfig    clang-20
-arm                         nhk8815_defconfig    clang-20
-arm                         orion5x_defconfig    clang-20
-arm                   randconfig-001-20241107    gcc-14.2.0
-arm                   randconfig-002-20241107    gcc-14.2.0
-arm                   randconfig-003-20241107    gcc-14.2.0
-arm                   randconfig-004-20241107    gcc-14.2.0
-arm                             rpc_defconfig    gcc-14.2.0
-arm                       spear13xx_defconfig    clang-20
-arm                       versatile_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-arm64                               defconfig    clang-20
-arm64                 randconfig-001-20241107    gcc-14.2.0
-arm64                 randconfig-002-20241107    gcc-14.2.0
-arm64                 randconfig-003-20241107    gcc-14.2.0
-arm64                 randconfig-004-20241107    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20241107    gcc-14.2.0
-csky                  randconfig-002-20241107    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-20
-hexagon               randconfig-001-20241107    gcc-14.2.0
-hexagon               randconfig-002-20241107    gcc-14.2.0
-i386                             allmodconfig    clang-19
-i386                              allnoconfig    clang-19
-i386                             allyesconfig    clang-19
-i386        buildonly-randconfig-001-20241107    clang-19
-i386        buildonly-randconfig-002-20241107    clang-19
-i386        buildonly-randconfig-003-20241107    clang-19
-i386        buildonly-randconfig-004-20241107    clang-19
-i386        buildonly-randconfig-005-20241107    clang-19
-i386        buildonly-randconfig-006-20241107    clang-19
-i386                                defconfig    clang-19
-i386                  randconfig-001-20241107    clang-19
-i386                  randconfig-002-20241107    clang-19
-i386                  randconfig-003-20241107    clang-19
-i386                  randconfig-004-20241107    clang-19
-i386                  randconfig-005-20241107    clang-19
-i386                  randconfig-006-20241107    clang-19
-i386                  randconfig-011-20241107    clang-19
-i386                  randconfig-012-20241107    clang-19
-i386                  randconfig-013-20241107    clang-19
-i386                  randconfig-014-20241107    clang-19
-i386                  randconfig-015-20241107    clang-19
-i386                  randconfig-016-20241107    clang-19
-loongarch                        alldefconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20241107    gcc-14.2.0
-loongarch             randconfig-002-20241107    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                         amcore_defconfig    clang-20
-m68k                          atari_defconfig    gcc-14.2.0
-m68k                        m5307c3_defconfig    clang-20
-m68k                          multi_defconfig    gcc-14.2.0
-m68k                           sun3_defconfig    clang-20
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                        bcm47xx_defconfig    clang-20
-mips                         db1xxx_defconfig    clang-20
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20241107    gcc-14.2.0
-nios2                 randconfig-002-20241107    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-12
-openrisc                  or1klitex_defconfig    clang-20
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-20
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-12
-parisc                randconfig-001-20241107    gcc-14.2.0
-parisc                randconfig-002-20241107    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                        cell_defconfig    clang-20
-powerpc                      chrp32_defconfig    clang-20
-powerpc                   currituck_defconfig    clang-20
-powerpc                        icon_defconfig    clang-20
-powerpc                   motionpro_defconfig    clang-20
-powerpc                     mpc5200_defconfig    clang-20
-powerpc                 mpc834x_itx_defconfig    clang-20
-powerpc                  mpc885_ads_defconfig    clang-20
-powerpc                      pasemi_defconfig    clang-20
-powerpc                      pcm030_defconfig    gcc-14.2.0
-powerpc                      ppc64e_defconfig    clang-20
-powerpc               randconfig-001-20241107    gcc-14.2.0
-powerpc               randconfig-002-20241107    gcc-14.2.0
-powerpc               randconfig-003-20241107    gcc-14.2.0
-powerpc                     sequoia_defconfig    gcc-14.2.0
-powerpc                     tqm8541_defconfig    gcc-14.2.0
-powerpc                     tqm8555_defconfig    clang-20
-powerpc64             randconfig-003-20241107    gcc-14.2.0
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                            allyesconfig    gcc-14.2.0
-riscv                               defconfig    gcc-12
-riscv                 randconfig-001-20241107    gcc-14.2.0
-riscv                 randconfig-002-20241107    gcc-14.2.0
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20241107    gcc-14.2.0
-s390                  randconfig-002-20241107    gcc-14.2.0
-s390                       zfcpdump_defconfig    clang-20
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                         apsh4a3a_defconfig    clang-20
-sh                                  defconfig    gcc-12
-sh                        edosk7760_defconfig    clang-20
-sh                          lboxre2_defconfig    gcc-14.2.0
-sh                            migor_defconfig    gcc-14.2.0
-sh                    randconfig-001-20241107    gcc-14.2.0
-sh                    randconfig-002-20241107    gcc-14.2.0
-sh                           se7712_defconfig    clang-20
-sh                           sh2007_defconfig    clang-20
-sparc                            allmodconfig    gcc-14.2.0
-sparc                       sparc32_defconfig    gcc-14.2.0
-sparc                       sparc64_defconfig    clang-20
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20241107    gcc-14.2.0
-sparc64               randconfig-002-20241107    gcc-14.2.0
-um                               alldefconfig    gcc-14.2.0
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20241107    gcc-14.2.0
-um                    randconfig-002-20241107    gcc-14.2.0
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20241107    clang-19
-x86_64      buildonly-randconfig-002-20241107    clang-19
-x86_64      buildonly-randconfig-003-20241107    clang-19
-x86_64      buildonly-randconfig-004-20241107    clang-19
-x86_64      buildonly-randconfig-005-20241107    clang-19
-x86_64      buildonly-randconfig-006-20241107    clang-19
-x86_64                              defconfig    clang-19
-x86_64                                  kexec    clang-19
-x86_64                                  kexec    gcc-12
-x86_64                randconfig-001-20241107    clang-19
-x86_64                randconfig-002-20241107    clang-19
-x86_64                randconfig-003-20241107    clang-19
-x86_64                randconfig-004-20241107    clang-19
-x86_64                randconfig-005-20241107    clang-19
-x86_64                randconfig-006-20241107    clang-19
-x86_64                randconfig-011-20241107    clang-19
-x86_64                randconfig-012-20241107    clang-19
-x86_64                randconfig-013-20241107    clang-19
-x86_64                randconfig-014-20241107    clang-19
-x86_64                randconfig-015-20241107    clang-19
-x86_64                randconfig-016-20241107    clang-19
-x86_64                randconfig-071-20241107    clang-19
-x86_64                randconfig-072-20241107    clang-19
-x86_64                randconfig-073-20241107    clang-19
-x86_64                randconfig-074-20241107    clang-19
-x86_64                randconfig-075-20241107    clang-19
-x86_64                randconfig-076-20241107    clang-19
-x86_64                               rhel-8.3    gcc-12
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20241107    gcc-14.2.0
-xtensa                randconfig-002-20241107    gcc-14.2.0
+diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+deleted file mode 100644
+index d19885b7c..000000000
+--- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
++++ /dev/null
+@@ -1,52 +0,0 @@
+-* Actions Semi Owl Clock Management Unit (CMU)
+-
+-The Actions Semi Owl Clock Management Unit generates and supplies clock
+-to various controllers within the SoC. The clock binding described here is
+-applicable to S900, S700 and S500 SoC's.
+-
+-Required Properties:
+-
+-- compatible: should be one of the following,
+-	"actions,s900-cmu"
+-	"actions,s700-cmu"
+-	"actions,s500-cmu"
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- clocks: Reference to the parent clocks ("hosc", "losc")
+-- #clock-cells: should be 1.
+-- #reset-cells: should be 1.
+-
+-Each clock is assigned an identifier, and client nodes can use this identifier
+-to specify the clock which they consume.
+-
+-All available clocks are defined as preprocessor macros in corresponding
+-dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h or
+-actions,s500-cmu.h header and can be used in device tree sources.
+-
+-External clocks:
+-
+-The hosc clock used as input for the plls is generated outside the SoC. It is
+-expected that it is defined using standard clock bindings as "hosc".
+-
+-Actions Semi S900 CMU also requires one more clock:
+- - "losc" - internal low frequency oscillator
+-
+-Example: Clock Management Unit node:
+-
+-        cmu: clock-controller@e0160000 {
+-                compatible = "actions,s900-cmu";
+-                reg = <0x0 0xe0160000 0x0 0x1000>;
+-                clocks = <&hosc>, <&losc>;
+-                #clock-cells = <1>;
+-                #reset-cells = <1>;
+-        };
+-
+-Example: UART controller node that consumes clock generated by the clock
+-management unit:
+-
+-        uart: serial@e012a000 {
+-                compatible = "actions,s900-uart", "actions,owl-uart";
+-                reg = <0x0 0xe012a000 0x0 0x2000>;
+-                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+-                clocks = <&cmu CLK_UART5>;
+-        };
+diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
+new file mode 100644
+index 000000000..1717099b7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/actions,owl-cmu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Actions Semi Owl Clock Management Unit (CMU)
++
++maintainers:
++  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++description: |
++  The Actions Semi Owl Clock Management Unit generates and supplies clock
++  to various controllers within the SoC.
++
++  See also::
++    include/dt-bindings/clock/actions,s500-cmu.h
++    include/dt-bindings/clock/actions,s700-cmu.h
++    include/dt-bindings/clock/actions,s900-cmu.h
++
++properties:
++  compatible:
++    enum:
++      - actions,s500-cmu
++      - actions,s700-cmu
++      - actions,s900-cmu
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Host oscillator source
++      - description: Internal low frequency oscillator source
++
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@e0160000 {
++        compatible = "actions,s900-cmu";
++        reg = <0xe0160000 0x1000>;
++        clocks = <&hosc>, <&losc>;
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 420d06d37..652c9822a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2016,7 +2016,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/actions.yaml
+-F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
++F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.yaml
+ F:	Documentation/devicetree/bindings/dma/owl-dma.yaml
+ F:	Documentation/devicetree/bindings/i2c/i2c-owl.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/actions,owl-sirq.yaml
+-- 
+2.43.0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
