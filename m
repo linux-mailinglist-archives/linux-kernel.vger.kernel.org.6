@@ -1,139 +1,137 @@
-Return-Path: <linux-kernel+bounces-400028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D6A9C07F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:47:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC91B9C0840
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:57:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4A5D1C22116
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B30892859ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5619A212D0F;
-	Thu,  7 Nov 2024 13:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D421263E;
+	Thu,  7 Nov 2024 13:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIEmzkj5"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="f/h0W3EH"
+Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6B421218E;
-	Thu,  7 Nov 2024 13:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4578620F5AA;
+	Thu,  7 Nov 2024 13:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987249; cv=none; b=o21LvZ9za0qMSHA7ZJTHZVCNZ44fyH0MhIysthCLOzr6cpWA2/tGRBBbi6JRzXQROnhRhiX2Kmsp73vxWAieQwX4n7P8n14uyMx02gS43gGIKTPbL+CtTayWMruI+PEVwfkf4rxxe9HopbrYamFpVx+GmbcSmOwp7Dkju9crtv0=
+	t=1730987845; cv=none; b=rq1agPNwpRFp8tLfOxUDCLI6076P/C2JuXFBUbLYG4yZ3S+e6iDX1pvvaie9ez3r7eIT7n3od8fvYiXBa/gx76cTvIWNi3AdeY2jwm4ehSq1uZvjJsuzIAeLJy1W1ju+cQZPZpE/WdRwJxwZUcAFLr+RJxYEdk9Qhcxu0O3/Ss8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987249; c=relaxed/simple;
-	bh=RFk3924VrW1xb5x1DFkPBcmjcDaZmpuHPPQS5Fg3iuQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aIaBSSZMc2UGH+wjHPqy8bM6GkQssj4VCFhQ1rMenJO+dZilOeLyfGO+vQZPDhLFNCAVjJExwz0/VXAV1tXdVInW7PFcBRHK7FSSQFjL7Wd5rQKFz5yWb8UyvmfizLik01YM/s0ElAxKLwgDIO1ctZHblBC4YfrFqemCX9vh1Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UIEmzkj5; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb5743074bso8436741fa.1;
-        Thu, 07 Nov 2024 05:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730987245; x=1731592045; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0on35LMoILRFRct1tStDDPXY9cyBuAggEZbNv9uoPFU=;
-        b=UIEmzkj5z5E/SHpn4DBVPJiPQVcoxOF84IsetVdqwV1AKgfJg43bahdnb8FxD+6Acu
-         ubvWZotNJ4K1BWJltsZNDIHG5kYppeyY+etSR1aW5fSvG1Tg1lDnEWko2075Ukllajw/
-         d/OJgpMCaBNUJVWXyeYZIRieswQffL4Uao1ZCASvHo88GV/oP0NAlVkRJv1jHtuxg3xj
-         wpeLhQn9dolAEhxpHs0ginnyTAFjE21wsO72IogHaabxbYuEUoPdgDZM21h/OOgk4K+A
-         8Oh1fdKnlUdPDs+StIVox6IDs7oSaJz3ggkoZ0JXiAuL3sKrOi3kXWRTyjSyH323RpX9
-         ao2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730987245; x=1731592045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0on35LMoILRFRct1tStDDPXY9cyBuAggEZbNv9uoPFU=;
-        b=CZt1YYfsdqT6K1ZK/s6UwEKy7jWF2XqgEe7xi5BSROTuhxyaBKN0NN9xjpW3NYJ1kD
-         4lAbre+vuUr/rZ9y7tyq2PYU1p8r2FOMYN+IgGsEctHfDoSR2YAxgICo1HAuVhaY9fKC
-         o6ms4OFo5nOc1f2zy6MT+LjLts/jqcfCIW7aaQVq9IeNDUQ0xmOpLWWkvUsYn0sau3RX
-         gCcR+PgtjExSGQ58LdXiW1KvefvNaOHLbPv8KiRWOWvyDDMq3SwEhDZ6jsii5JQoxRBt
-         qaXQR+m1dQktZifjjJzEDtE8KSOR7V3ikFoE4XnUN1X7fp8/FSFHJVxYLBCeR0/JC7h8
-         VLpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWoRpcASuoOXnHQo2GQ2TE7SIebwF0DjbKfWfbcDfZuscBnEr1VIjOChG9KgIZY5RAsY4AvfAD9T0rQfetc@vger.kernel.org, AJvYcCXaJ4X8Oyx6dOg8bG+zFccI+NNtyZj4cTC6nwFxdgT6zaJtGI6Bu5Of1m8dap7xsll673TlxVDEOHfu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBAGD9LQ7UVlYbDGIeiY3yDAihsudHbijN0ieSW/Yl8KGj+gS4
-	uLoTSi5W+lnwxTK5BeqriqJgBDyFu0YtcVh8FoGGm1/GBGSG/50KVyF32/hxfYHGLGKZmbsoCaS
-	ja3Pb9iw05zO6YDgmDF+0ZB/UYnk=
-X-Google-Smtp-Source: AGHT+IEFnkyx9mt/m4+C/bADWUR23kL5+W4hrTa+9//vSMQM1VLtLBdN3fRu+hcFzKzPTrZcZ/NxVbPCE/GiT6Q9ONA=
-X-Received: by 2002:a05:651c:220a:b0:2fa:ce87:b7da with SMTP id
- 38308e7fff4ca-2ff1e980065mr36591fa.18.1730987244974; Thu, 07 Nov 2024
- 05:47:24 -0800 (PST)
+	s=arc-20240116; t=1730987845; c=relaxed/simple;
+	bh=2fXu02djOUbW12f9rN17PdMppmReu0y1sKJC/M4mSbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wp+N+98stHsnGaG4sOwNe/hVOWZUKOxZFY1KrXbcUl7Op954ILiVS1v/51PERi7ktO3kiqSRRgOtwtf+46s6ZzHxmOD+J2SId9XYTuFnr4N/Rr+mSqVy8OcH89WoGjMKeSpW5OcWwFG6NuXVqrPwF19xbILJPywlTXG5Ds1VJgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=f/h0W3EH; arc=none smtp.client-ip=195.19.76.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rosalinux.ru (Postfix) with ESMTP id 434F81E745C14;
+	Thu,  7 Nov 2024 16:47:17 +0300 (MSK)
+Received: from mail.rosalinux.ru ([127.0.0.1])
+	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id Sv7eHPjlQN2k; Thu,  7 Nov 2024 16:47:17 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rosalinux.ru (Postfix) with ESMTP id 116111E745C18;
+	Thu,  7 Nov 2024 16:47:17 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru 116111E745C18
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
+	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1730987237;
+	bh=yeTJJf0j6OBQT2TE53J81tDrRIh7LJlEe8Kf/bwPuZI=;
+	h=Message-ID:Date:MIME-Version:To:From;
+	b=f/h0W3EHkyzCEERzZftR+hy1q43FV1KmbtX2gggJbVv2ZeZ6wJGhCESrvazrLnf+X
+	 qCG3ZaYq/uGxy4AOLLKOktqR09pE3xRAg21TOJOIaym9S9D67ADvbapNKYXp8bQh3x
+	 k7bcIZLfhbGQTBPzvyNxEystZFxnqvXw4ZOGXChDB/xSrNPXaDjA91kqRPGAxFPzZf
+	 86ETu0yBw9LZ2zVffpwsUBnaXZ2PDAGv24k+MAp2z2ULjFmJ36b9gPlLIH4H/E4W4v
+	 Uv+HbvZOI3hTCy8VsfKgUvrTi8i2fZT+y9sbSgJaux9Zw5RT26Wf/JfMJcb41/+c7l
+	 GBf4rRWJRGJvA==
+X-Virus-Scanned: amavisd-new at rosalinux.ru
+Received: from mail.rosalinux.ru ([127.0.0.1])
+	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NVhiVd6hBdlb; Thu,  7 Nov 2024 16:47:16 +0300 (MSK)
+Received: from [10.254.65.205] (unknown [92.242.54.217])
+	by mail.rosalinux.ru (Postfix) with ESMTPSA id 267F01E745C14;
+	Thu,  7 Nov 2024 16:47:16 +0300 (MSK)
+Message-ID: <57d4fa02-0b03-0a46-dc97-320fa5e5b540@rosalinux.ru>
+Date: Thu, 7 Nov 2024 16:47:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101162304.4688-1-suravee.suthikulpanit@amd.com>
- <20241101162304.4688-4-suravee.suthikulpanit@amd.com> <ZyoP0IKVmxfesRU8@8bytes.org>
- <323dcff2-6135-4b8a-85db-bccc315ddfdf@app.fastmail.com> <CAFULd4Za4BQL+h9Xmra1TjB2oGGzPwru_y1xOrrAFSg==bfvgg@mail.gmail.com>
- <20241106134034.GN458827@nvidia.com> <4c9fd886-3305-4797-9091-3f9b0b9ee0b6@app.fastmail.com>
- <20241107133725.GD520535@nvidia.com>
-In-Reply-To: <20241107133725.GD520535@nvidia.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 7 Nov 2024 14:47:12 +0100
-Message-ID: <CAFULd4YDSRzMAvxunw=vfC-jw3xHPRjg=+X6mDONUXSSnU=7Xw@mail.gmail.com>
-Subject: Re: [PATCH v9 03/10] asm/rwonce: Introduce [READ|WRITE]_ONCE()
- support for __int128
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, 
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, Robin Murphy <robin.murphy@arm.com>, vasant.hegde@amd.com, 
-	Kevin Tian <kevin.tian@intel.com>, jon.grimm@amd.com, santosh.shukla@amd.com, 
-	pandoh@google.com, kumaranand@google.com, 
-	Linux-Arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH] wifi: rtw88: Add additional USB IDs for RTL8812BU
+Content-Language: en-US
+To: Zenm Chen <zenmchen@gmail.com>, linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, pkshih@realtek.com, kvalo@kernel.org,
+ rtl8821cerfe2@gmail.com, usbwifi2024@gmail.com
+References: <20241107002846.13748-1-zenmchen@gmail.com>
+From: Mikhail Novosyolov <m.novosyolov@rosalinux.ru>
+In-Reply-To: <20241107002846.13748-1-zenmchen@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 7, 2024 at 2:37=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wro=
-te:
+07.11.2024 03:28, Zenm Chen =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> From: Nick Morrow <usbwifi2024@gmail.com>
 >
-> On Thu, Nov 07, 2024 at 11:01:58AM +0100, Arnd Bergmann wrote:
+> Add three additional USB IDs found in
+> https://github.com/morrownr/88x2bu-20210702
+> to support more RTL8812BU devices.
 >
-> > >> and later:
-> > >>
-> > >>  * Yes, this permits 64-bit accesses on 32-bit architectures. These =
-will
-> > >>  * actually be atomic in some cases (namely Armv7 + LPAE), but for o=
-thers we
-> > >>  * rely on the access being split into 2x32-bit accesses for a 32-bi=
-t quantity
-> > >>  * (e.g. a virtual address) and a strong prevailing wind.
-> > >>
-> > >> This is the "strong prevailing wind", mentioned in the patch review =
-at [1].
-> > >>
-> > >> [1] https://lore.kernel.org/lkml/20241016130819.GJ3559746@nvidia.com=
+> Signed-off-by: Nick Morrow <usbwifi2024@gmail.com>
+> Signed-off-by: Zenm Chen <zenmchen@gmail.com>
+
+Signed-off-by: Mikhail Novosyolov <m.novosyolov@rosalinux.ru>
+
+> ---
+>  drivers/net/wireless/realtek/rtw88/rtw8822bu.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c b/drivers/n=
+et/wireless/realtek/rtw88/rtw8822bu.c
+> index ab620a0b1dfc..8883300fc6ad 100644
+> --- a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
+> +++ b/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
+> @@ -67,6 +67,12 @@ static const struct usb_device_id rtw_8822bu_id_tabl=
+e[] =3D {
+>  	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* LiteOn *=
 /
-> >
-> > I understand the special case for ARMv7VE. I think the more important
-> > comment in that file is
-> >
-> >   * Use __READ_ONCE() instead of READ_ONCE() if you do not require any
-> >   * atomicity. Note that this may result in tears!
->
-> That makes sense, let's just use that and there is no need to change
-> anything here?
->
-> Uros?
+>  	{ USB_DEVICE_AND_INTERFACE_INFO(0x20f4, 0x808a, 0xff, 0xff, 0xff),
+>  	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* TRENDnet=
+ TEW-808UBM */
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(0x20f4, 0x805a, 0xff, 0xff, 0xff),
+> +	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* TRENDnet=
+ TEW-805UBH */
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(0x056e, 0x4011, 0xff, 0xff, 0xff),
+> +	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* ELECOM W=
+DB-867DU3S */
 
-Yes, preloading "old" value for try_cmpxchg loop does not need to be
-atomic (cmpxchg will fail in case teared value is preloaded and loop
-will be retried). So, __READ_ONCE() is perfectly OK to be used in this
-series.
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(0x2c4e, 0x0107, 0xff, 0xff, 0xff),
+> +	  .driver_info =3D (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* Mercusys=
+ MA30H */
 
-Please note that __READ_ONCE() uses  __unqual_scalar_typeof()
-operator, so at least patch at [1] to teach __uqual_scalar_typeof()
-about __int128 is needed.
+I have verified that the vendor website
 
-[1] https://lore.kernel.org/lkml/CAFULd4Z86uiH+w+1N36kOuhYZ5_ZkQkaEN6nyPh8V=
-NJth3WNhg@mail.gmail.com/
+https://www.mercusys.com/en/download/ma30h#Software
 
-Uros.
+suggests to download Realtek's 88x2bu driver for hardware v2.
+
+This device also exists in the wild: https://linux-hardware.org/?id=3Dusb=
+:2c4e-0107
+
+All hardware probes by that link show that this device did not work -- wa=
+s not supported by any in-kernel driver.
+
+LGTM.
+
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(usb, rtw_8822bu_id_table);
 
