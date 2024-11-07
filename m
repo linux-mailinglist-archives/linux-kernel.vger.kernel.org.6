@@ -1,130 +1,156 @@
-Return-Path: <linux-kernel+bounces-399588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4439C0126
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:31:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270779C0124
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:30:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF645B21F77
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2451C2132B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B9C1DF266;
-	Thu,  7 Nov 2024 09:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VT/oxgNO"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B512F1E0090;
+	Thu,  7 Nov 2024 09:30:50 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F8318785B
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E5118785B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730971884; cv=none; b=ATOcDb9tpSA1OTwX3cOpib/45mJPCPTz+oKA1XZb0HlJCbxRAv/B6bzGCGKWn6ZZ51HvtZStqE6BPTWI2Ur1/FIU4j4nmCQ4vMM/WEWh45JyvRx+6aPPE7qxwtSmT8onJ0sch0gRDSm9cRK7ZoBdbBeU9/YUQb8YqmOctotFM3I=
+	t=1730971850; cv=none; b=Vt8ccYJ8FmnTmkZxxZJCOC8dw0gXKc7B3ihKfXS5QzB1sRorfDMheXPqAA9xQpZjy7O1l9FqiO//3Y+8fgly8ahmoFTfyoSRLA7M2iMomXvXDIwMjcAsQynV5ipPfXt7KoVHCIEQspORbFKkJtaFMRb4tWaRaxVAkaSVn57msJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730971884; c=relaxed/simple;
-	bh=zhh5UkiTs5SGsZEgIEockHkIU+5XUlkgxmSOpqQuviI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VndhdhPuuQyJ7Pg1MzsQA5XYwxuLYA7BiW/KRKOvDCK52Z22DCzR1fo8JceyiccU1NoPV4DLO7aajFQLFeoaAR/AThp4JVaqfaX7GIOudTqWf94h4JPRs1jgXiieN2EFwh8x2KTXGlVqV3EpiruxHYKZI/x6k6lwebBKyHhBqS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VT/oxgNO; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e59746062fso594938a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:31:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730971882; x=1731576682; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JeMAIR9iEI5n6d08kWR1HWHfaPm/uZGrAZ7QGzkzYV8=;
-        b=VT/oxgNOfYxt9rtGat/s2ZxzRlOj9RVxas+lCpnP03I9k2AgyU/NkVIVQQQLIn9jPp
-         J3XgM+q9uwR+CNJfGCkzva0r1FPRQF19O8QCyFiXLQgSbU97EfOw56alKuC7SE1kYF+G
-         maL5nRAvXccUufZk8btpqNn7fDYUlfb1ntKoQlFuxU3HgdA23MjagIPr6kLjsULP5OzM
-         xenKVMRVx4LSixaULs7B3xh0Kj13qGOp+S4YqOVR1dsH3GaefGFJA69SSzcTaTei71dw
-         arHE7pB2KkPkdmzf6R6xoHmateLVAcYWNoeG8K39I6JupCtmF9/9VoJWJox7roVz5h+k
-         LvYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730971882; x=1731576682;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JeMAIR9iEI5n6d08kWR1HWHfaPm/uZGrAZ7QGzkzYV8=;
-        b=qFtwPQEz+NvNBMdMoIid5tOn9Gecg30ui9ZBeJVJs7jjfb6XAaOB4NQu9CAIMcMjIn
-         57qhZRgqaaMukQx7qDfQPiOHVjJkSAeP9VJNj8Qt2etwcPuLb6aMipig+8xe0ZwZN9bH
-         nuLwccOfJCz4n6T+4tasujIUpcOXmVjkicInf8wO2IvqtL/ljeBgg8gqBaaPVFmnPE7w
-         9A1qbuh8Dgb/vhMJfIflnWaXa4OgowxYj+W5pyEMn9sxQd//YzDuhOex11MR0DsGFo5B
-         0/95V1gzjsqgqEuV0QMXn9sGQykY3H0RL+zwAODpv+zTIDa+DRwJGY6yThSoCRE+a87Y
-         vIzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnSz9+aWsb59AqJ6Cn/eBXV4ho+w4LKuJ+qBWbt8Tz7szBFkOYsOqxb6qb0tYEDTpjjM82s2O9NyYjFZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2dAjcu1NCUnTmn4jeIo39GpmRZydM/D/R2cBL0FtcHKoRlaUC
-	dRtyVopoj9DNS8E3gCv9dizTFQPqkTC2c1FUhphQyaabL6dnGF4+
-X-Google-Smtp-Source: AGHT+IFrRRrnlLAowFtunzpTvMHx7ihaYENBpR9i88LgwFXGyQ6Dgby+fj35g8yAa++m97kR3E8MSA==
-X-Received: by 2002:a17:90b:5444:b0:2e2:8995:dd1b with SMTP id 98e67ed59e1d1-2e9aaff9a68mr467311a91.3.1730971882207;
-        Thu, 07 Nov 2024 01:31:22 -0800 (PST)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a4fae10sm3015116a91.11.2024.11.07.01.31.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 01:31:21 -0800 (PST)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 181048015D;
-	Thu,  7 Nov 2024 17:37:59 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: tudor.ambarus@linaro.org,
-	pratyush@kernel.org,
-	mwalle@kernel.org,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH] mtd: spi-nor: core: replace dummy buswidth from addr to data
-Date: Thu,  7 Nov 2024 17:30:16 +0800
-Message-Id: <20241107093016.151448-1-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730971850; c=relaxed/simple;
+	bh=TE/FjZYR/pBtlZmPji9S9Kbk5gMAhad7ZI3OqmvakB8=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PWtiyjTw3r+1dOc5Z33+5fh3Yu0j8zGU8LXWvcpt3/rUpqhahJ8OpTNcdfWruJuO1rj0oA4KcgnHNE13u7vvI3js7bdwkCsP7AmeSkfMkbvaKcuP1ST/c0rYCzSsFB2JyGMxZU37B+Z5DZB/er9cMubs115lJ1vF+suTt78MUYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XkcG55QMNz1SDql;
+	Thu,  7 Nov 2024 17:29:01 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 93DC61401F4;
+	Thu,  7 Nov 2024 17:30:44 +0800 (CST)
+Received: from [10.174.178.120] (10.174.178.120) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 7 Nov 2024 17:30:43 +0800
+Message-ID: <673991ef-90d0-456f-ae75-8d70bff3ea4d@huawei.com>
+Date: Thu, 7 Nov 2024 17:30:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+CC: <mawupeng1@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <x86@kernel.org>, <xrivendell7@gmail.com>,
+	<wang1315768607@163.com>, <fleischermarius@gmail.com>,
+	<dave.hansen@linux.intel.com>, <luto@kernel.org>, <peterz@infradead.org>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+	<akpm@linux-foundation.org>
+Subject: Re: [PATCH v1] x86/mm/pat: fix VM_PAT handling when fork() fails in
+ copy_page_range()
+To: <david@redhat.com>, <peterx@redhat.com>
+References: <20241029210331.1339581-1-david@redhat.com> <ZyKl_cRRUmZGbp9G@x1n>
+ <8c494db6-1def-44ea-84ef-51d0140bddf3@redhat.com>
+ <7e860861-c7cb-401f-ac92-61db92fa4d8b@huawei.com>
+ <262aa19c-59fe-420a-aeae-0b1866a3e36b@redhat.com>
+From: mawupeng <mawupeng1@huawei.com>
+In-Reply-To: <262aa19c-59fe-420a-aeae-0b1866a3e36b@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-The default dummy cycle for Macronix SPI NOR flash in Octal Output
-Read Mode(1-1-8) is 20.
 
-Currently, the dummy buswidth is set according to the address bus width.
-In the 1-1-8 mode, this means the dummy buswidth is 1. When converting
-dummy cycles to bytes, this results in 20 x 1 / 8 = 2 bytes, causing the
-host to read data 4 cycles too early.
+On 2024/11/7 17:08, David Hildenbrand wrote:
+> On 07.11.24 09:43, mawupeng wrote:
+>>
+>>
+>> On 2024/10/31 17:47, David Hildenbrand wrote:
+>>> On 30.10.24 22:32, Peter Xu wrote:
+>>>> On Tue, Oct 29, 2024 at 10:03:31PM +0100, David Hildenbrand wrote:
+>>>>> If track_pfn_copy() fails, we already added the dst VMA to the maple
+>>>>> tree. As fork() fails, we'll cleanup the maple tree, and stumble over
+>>>>> the dst VMA for which we neither performed any reservation nor copied
+>>>>> any page tables.
+>>>>>
+>>>>> Consequently untrack_pfn() will see VM_PAT and try obtaining the
+>>>>> PAT information from the page table -- which fails because the page
+>>>>> table was not copied.
+>>>>>
+>>>>> The easiest fix would be to simply clear the VM_PAT flag of the dst VMA
+>>>>> if track_pfn_copy() fails. However, the whole thing is about "simply"
+>>>>> clearing the VM_PAT flag is shaky as well: if we passed track_pfn_copy()
+>>>>> and performed a reservation, but copying the page tables fails, we'll
+>>>>> simply clear the VM_PAT flag, not properly undoing the reservation ...
+>>>>> which is also wrong.
+>>>>
+>>>> David,
+>>>>
+>>>
+>>> Hi Peter,
+>>>
+>>>> Sorry to not have chance yet reply to your other email..
+>>>>
+>>>> The only concern I have with the current fix to fork() is.. we started to
+>>>> have device drivers providing fault() on PFNMAPs as vfio-pci does, then I
+>>>> think it means we could potentially start to hit the same issue even
+>>>> without fork(), but as long as the 1st pgtable entry of the PFNMAP range is
+>>>> not mapped when the process with VM_PAT vma exit()s, or munmap() the vma.
+>>>
+>>> As these drivers are not using remap_pfn_range, there is no way they could currently get VM_PAT set.
+>>>
+>>> So what you describe is independent of the current state we are fixing here, and this fix should sort out the issues with current VM_PAT handling.
+>>>
+>>> It indeed is an interesting question how to handle reservations when *not* using remap_pfn_range() to cover the whole area.
+>>>
+>>> remap_pfn_range() handles VM_PAT automatically because it can do it: it knows that the whole range will map consecutive PFNs with the same protection, and we expect not parts of the range suddenly getting unmapped (and any driver that does that is buggy).
+>>>
+>>> This behavior is, however, not guaranteed to be the case when remap_pfn_range() is *not* called on the whole range.
+>>>
+>>> For that case (i.e., vfio-pci) I still wonder if the driver shouldn't do the reservation and leave VM_PAT alone.
+>>>
+>>> In the driver, we'd do the reservation once and not worry about fork() etc ... and we'd undo the reservation once the last relevant VM_PFNMAP VMA is gone or the driver let's go of the device. I assume there are already mechanisms in place to deal with that to some degree, because the driver cannot go away while any VMA still has the VM_PFNMAP mapping -- otherwise something would be seriously messed up.
+>>>
+>>> Long story short: let's look into not using VM_PAT for that use case.
+>>>
+>>> Looking at the VM_PAT issues we had over time, not making it more complicated sounds like a very reasonable thing to me :)
+>>
+>> Hi David,
+>>
+>> The VM_PAT reservation do seems complicated. It can trigger the same warning in get_pat_info if remap_p4d_range fails:
+>>
+>> remap_pfn_range
+>>    remap_pfn_range_notrack
+>>      remap_pfn_range_internal
+>>        remap_p4d_range    // page allocation can failed here
+>>      zap_page_range_single
+>>        unmap_single_vma
+>>          untrack_pfn
+>>            get_pat_info
+>>              WARN_ON_ONCE(1);
+>>
+>> Any idea on this problem?
+> 
+> In remap_pfn_range(), if remap_pfn_range_notrack() fails, we call untrack_pfn(), to undo the tracking.
+> 
+> The problem is that zap_page_range_single() shouldn't do that untrack_pfn() call.
+> 
+> That should be fixed by Peter's patch:
+> 
+> https://lore.kernel.org/all/20240712144244.3090089-1-peterx@redhat.com/T/#u
 
-Since the protocol data buswidth is always greater than or equal to the
-address buswidth. Setting the dummy buswidth to match the data buswidth
-increases the likelihood that the dummy cycle-to-byte conversion will be
-divisible, preventing the host from reading data prematurely.
+Thank you for your prompt reply.
 
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/spi-nor/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This do fix this issue.
 
-diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-index f9c189ed7353..c7aceaa8a43f 100644
---- a/drivers/mtd/spi-nor/core.c
-+++ b/drivers/mtd/spi-nor/core.c
-@@ -89,7 +89,7 @@ void spi_nor_spimem_setup_op(const struct spi_nor *nor,
- 		op->addr.buswidth = spi_nor_get_protocol_addr_nbits(proto);
- 
- 	if (op->dummy.nbytes)
--		op->dummy.buswidth = spi_nor_get_protocol_addr_nbits(proto);
-+		op->dummy.buswidth = spi_nor_get_protocol_data_nbits(proto);
- 
- 	if (op->data.nbytes)
- 		op->data.buswidth = spi_nor_get_protocol_data_nbits(proto);
--- 
-2.25.1
+> 
 
 
