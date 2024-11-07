@@ -1,73 +1,79 @@
-Return-Path: <linux-kernel+bounces-399617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B09F9C01B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:00:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E009C01B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED451F23D91
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:00:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BB7A1F23359
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5522E1E764B;
-	Thu,  7 Nov 2024 10:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4102D1DFD9E;
+	Thu,  7 Nov 2024 10:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YHkQTghs"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iuMB/u/4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC4D1E6339
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 10:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA8B1E04BB
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 10:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730973613; cv=none; b=QXUB7RmzJntrcR4c6Cw/VoK4AK+MBaixVBqlXhrPXFpF1Af8WEPXypnHggNDEBxClb1EB4VRwfOnwDVGoI3jEmRSiNQnclnIVwNgICtwvduNkFho6jkmu5B90tZlfS6ZFEO0DNbWjKTfR/Yd98KSeIRkhdLQYQNjVz9bJK5kvSo=
+	t=1730973649; cv=none; b=GfvrB5pLW7Qi7zieL8S1A834qG2q6UmMIARi/iRk8Rc4BkEZZgdCumhsNafgyggB7O6w6GdTFDBMIzx8typHHeDiwdTudNn9aZb+LA00XuOhPfdXApNcI3sGM5REREhq3dRuJ1ZI1LnFRorbMqUA5ao+7YPNnUWiA9qlZnwdgho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730973613; c=relaxed/simple;
-	bh=TRanJs9ePaxX/riCnO0so01k5BCuXb4pkZrMsFxRULg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XXNSL/y7DZMyOLnoar6fVScEwFlfLsh4FeftdsfxYDHh6VZRhhRpkIKyzBzhnOhl/Pi/datAY2uPFymW7Up6GNheA6jw5+Q6BG5DoJeuHZgQ2qoStrxaYIWWZb++XcpFJKwwZiV6gET/rWGKfiDQCPHCGojzly/+bKB7SNzdulA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YHkQTghs; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so657501f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 02:00:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730973609; x=1731578409; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R02EDs+did3sWf/l/M/xZDeb+Ibpap6rP6djlTEoJvs=;
-        b=YHkQTghsBm8V784J7+Uy1a9e45npNlPTkNMHwKGvvccALUdtY7Y3DSgvLv6t2CoSR9
-         iDGQfJSo2WZQKzkCvec5xreljkCLVEiPkDsnoEP1cKWVrI3cWzIxkLtLSdgk7W4hMjb7
-         IHvXrPpdAGAWAg7dPI+TwdQcUS3trnVTbCARUyqv1KRGEniQnES5K5Xjo368fGR7V5X4
-         8d3KqDTQVT2kVteDXmwsmP4h2cl2BusSTE2ulxbkq/84qVBqaFpNc0kJ5Z064/n+0mLW
-         aaPiS+lYG1kk9yMak5DbiVrHlbIFM2nvmAOJi8lEhQH6bkNWeYgnISB6KgZ2kde9SCtE
-         +aUA==
+	s=arc-20240116; t=1730973649; c=relaxed/simple;
+	bh=aqjoNKp2S9Ndl0SDCZhvztC+Qxb1K+IZewbpE7vLWNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nYABUEjjOU4jRmDSRO+HmedNfLu3qTk4hahfvX9VkmWY2H09n8SfJKuvykvqySXJm70yqjpAokhyiCv2KHeTFYodRS1HQvc7j3CA9xst8R6qFaxTwmX4xIKSuOkV+NyBLnzfRdBD4dHTnJhvoOqIH2+QxgVeM7/tb8jh2kyFDl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iuMB/u/4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730973646;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wMRls0F9ydo7Vi4Rq8kDlXTiyUFTrT/9Qwqc8sG653I=;
+	b=iuMB/u/4q1NTxTKaxYOlcJTsi4c4t3hyhPlX+nIq/TlsFLUC2BQ9+QoSTSU4V5gCKsj0JL
+	CJiIruCf43NFk3LhKoW/eVKMhRUXDo+rhcBRY5Sz6tRjvwdM/nUrjDAAo2gWlKL1fMX64r
+	HE5FKMcQa2mq3+kh84FdNeDC9JYacDc=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-339-LONkTl1zPDeeWpRu1oj-Xg-1; Thu, 07 Nov 2024 05:00:45 -0500
+X-MC-Unique: LONkTl1zPDeeWpRu1oj-Xg-1
+X-Mimecast-MFC-AGG-ID: LONkTl1zPDeeWpRu1oj-Xg
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a2c3e75f0so56479166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 02:00:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730973609; x=1731578409;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1730973642; x=1731578442;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R02EDs+did3sWf/l/M/xZDeb+Ibpap6rP6djlTEoJvs=;
-        b=cGzh8kPLeqPhynoBHqEh5V5CCvFiGOvnEVnqiu+aRLcXbGW45a6M8jxRsxhLjcahDj
-         Mz9RyJ9pVCETFDxS985b7U8g4Wx7Tn3zqf8PVKIaTGrZK9SqiI7BYa9OXhwoL/RSZdtT
-         JTGTsFpYEPoRLKcMsJZQlZ41CcyZzTOkR18mDe3x2cdZbTdJx2Q7iF8fHslEhM+qU9YL
-         CNLIypbBhb0Gu1v8/fDLRPdXDOEKLnJg4w/QbjMCxLU2uZF2wRV3rXCAJ/9hd+EvieR4
-         nFIOwYAKZgZ9rK6lzg8dQkwwXVq500tnJADp4Kyb2zu6I/oEJovjMxJohr7sjPdNq6Re
-         TPFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYix+/JwuhfQO3eC0GD6rKPx2Br9PIOgoBEK7z1x2LnHKc+Xu3SuORko7fUneTOm0aEZOlzXKfazmmmcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMIATOy99yrdlmUghhEFx61UQdyKMSBOd3LFkAIPoQvgs3EKCn
-	IjGCzeONXIFrLdmq2IlrBakl36aLk7xxHokz6hnsy8la0p23dqmxoenIXGtR3qg=
-X-Google-Smtp-Source: AGHT+IEffb2xJDgmV6dLSuFyO1fmxJvqSnlcu1KUumgCd4EHyMTsYXx5V2d5rZ79w6rYl9OZ0LDdOw==
-X-Received: by 2002:a5d:47ac:0:b0:37d:48f2:e749 with SMTP id ffacd0b85a97d-381c7a4636cmr23082414f8f.10.1730973608986;
-        Thu, 07 Nov 2024 02:00:08 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05e5871sm17547405e9.37.2024.11.07.02.00.05
+        bh=wMRls0F9ydo7Vi4Rq8kDlXTiyUFTrT/9Qwqc8sG653I=;
+        b=OJ2JmS3JN04hPUGzhJyybwaEicVXX4nmVKUeaJiPWV3dVCWebd1qEj0BtGP8a71QBE
+         xWfmDEWuiHk6itgQCGYf/Etru0cHeA2lMvYSZDLymuS3D6HS9olEtIN9iJjyyW/1XEt4
+         AzZTPvKeQN6d4/wsuAZj4YHOk7GPNo3lEHSbizOAebFONaTg+NqESwK7MrUziuloKrd5
+         x4IAF5zLCm09Agc7bwFN3veAroYQAcm3HVb8/E8PkRzVXaOHC2RpKsCJ7KJYlvkgam9/
+         ZOW05OffMVIfnIZ5Z5MGYleGGhrTifc5Kd6XsYHp8TqsfOtBr8DHBZC7sjgvKlClsBO6
+         AvaA==
+X-Gm-Message-State: AOJu0YxDfSTeUVKRtignm1wNf2gOruAwJ77yqdXGHLv0hzdEJYqN4FDx
+	AT1su5Rt6twZT39gB6deGlr0ZSXexiG4sbk4FHsOVWd7/lconJcf3eHBtAD8h+p6Xd1wjvTDXBy
+	g9AwZ1h4zBLkBrCi+wzylSK1FrpQq8V2bzjp6aGB47YL+Sndze+pgaT9wXKJkQ0tEqM6tQg==
+X-Received: by 2002:a17:907:2d8d:b0:a99:482c:b2b9 with SMTP id a640c23a62f3a-a9e654f8c64mr2022863266b.29.1730973641826;
+        Thu, 07 Nov 2024 02:00:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH+UiHY6KfVKme49Q9BKA6KUY4URDrdyvHhjCJaFYWZ6LZ65QWLQegd4LMhZnQOySL8p+kcuQ==
+X-Received: by 2002:a17:907:2d8d:b0:a99:482c:b2b9 with SMTP id a640c23a62f3a-a9e654f8c64mr2022860366b.29.1730973641439;
+        Thu, 07 Nov 2024 02:00:41 -0800 (PST)
+Received: from ?IPV6:2003:cf:d711:bb59:b996:2e0b:622e:25cc? (p200300cfd711bb59b9962e0b622e25cc.dip0.t-ipconnect.de. [2003:cf:d711:bb59:b996:2e0b:622e:25cc])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0e2f0b5sm70060566b.192.2024.11.07.02.00.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 02:00:07 -0800 (PST)
-Message-ID: <91916297-8156-44d9-b56f-9a67e651a9a4@tuxon.dev>
-Date: Thu, 7 Nov 2024 12:00:05 +0200
+        Thu, 07 Nov 2024 02:00:40 -0800 (PST)
+Message-ID: <ae437cf6-caa2-4f9a-9ffa-bdc7873a99eb@redhat.com>
+Date: Thu, 7 Nov 2024 11:00:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,214 +81,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Subject: Re: [PATCH] virtio-fs: Query rootmode during mount
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ virtualization@lists.linux.dev, Miklos Szeredi <mszeredi@redhat.com>,
+ German Maglione <gmaglione@redhat.com>, Stefan Hajnoczi
+ <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Vivek Goyal <vgoyal@redhat.com>
+References: <20241024164726.77485-1-hreitz@redhat.com>
+ <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
 Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
- "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <35dc7414-f5bd-4ed4-bfa1-f723f4f0078c@tuxon.dev>
- <TY3PR01MB11346A4814F83FE296A1DED8886922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB1134648BF51F1B52BFE34DD6D86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <fbfa9179-2f52-429f-8b69-f7f4064e796b@tuxon.dev>
- <TYCPR01MB11332EF1A8D064C491D8F261286932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <f7c57e76-b890-491f-880d-62d060b7b31e@tuxon.dev>
- <TYCPR01MB11332BE2EDB318950B9C7B54C86932@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <TY3PR01MB113469FC8A9F49D9B1FA432FD86932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <0b73544b-0253-43b9-b631-6578b48eaca8@tuxon.dev>
- <TY3PR01MB1134689573A785E91A9041E1886932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <5bcdc677-e61e-4312-a19b-57b4600685d3@tuxon.dev>
- <TY3PR01MB1134690F9D37E3BB4814D864386932@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <d64243fe-48ea-4cb5-b6d6-e9f820e1b8a3@tuxon.dev>
-In-Reply-To: <d64243fe-48ea-4cb5-b6d6-e9f820e1b8a3@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hanna Czenczek <hreitz@redhat.com>
+In-Reply-To: <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi, all,
+On 07.11.24 09:58, Miklos Szeredi wrote:
+> On Thu, 24 Oct 2024 at 18:47, Hanna Czenczek <hreitz@redhat.com> wrote:
+>
+>> To be able to issue INIT (and GETATTR), we need to at least partially
+>> initialize the super_block structure, which is currently done via
+>> fuse_fill_super_common().
+> What exactly is needed to be initialized?
 
-On 03.09.2024 17:48, claudiu beznea wrote:
-> 
-> 
-> On 03.09.2024 16:45, Biju Das wrote:
->> Hi Claudiu,
->>
->>> -----Original Message-----
->>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>> Sent: Tuesday, September 3, 2024 1:57 PM
->>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
->>>
->>>
->>>
->>> On 03.09.2024 15:37, Biju Das wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>>> Sent: Tuesday, September 3, 2024 1:26 PM
->>>>> To: Biju Das <biju.das.jz@bp.renesas.com>; Ulf Hansson
->>>>> <ulf.hansson@linaro.org>
->>>>> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
->>>>> krzk+dt@kernel.org; conor+dt@kernel.org; p.zabel@pengutronix.de;
->>>>> geert+renesas@glider.be; magnus.damm@gmail.com;
->>>>> gregkh@linuxfoundation.org; mturquette@baylibre.com;
->>>>> sboyd@kernel.org; Yoshihiro Shimoda
->>>>> <yoshihiro.shimoda.uh@renesas.com>;
->>>>> linux-phy@lists.infradead.org; devicetree@vger.kernel.org;
->>>>> linux-kernel@vger.kernel.org; linux- renesas-soc@vger.kernel.org;
->>>>> linux-usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->>>>> linux- clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu Beznea
->>>>> <claudiu.beznea.uj@bp.renesas.com>
->>>>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
->>>>> RZ/G3S SoC
->>>>>
->>>>>
->>>>>
->>>>> On 03.09.2024 15:00, Biju Das wrote:
->>>>>>
->>>>>>
->>>>>>> -----Original Message-----
->>>>>>> From: Biju Das <biju.das.jz@bp.renesas.com>
->>>>>>> Sent: Tuesday, September 3, 2024 12:07 PM
->>>>>>> To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>; Ulf Hansson
->>>>>>> <ulf.hansson@linaro.org>
->>>>>>> Cc: vkoul@kernel.org; kishon@kernel.org; robh@kernel.org;
->>>>>>> krzk+dt@kernel.org; conor+dt@kernel.org; p.zabel@pengutronix.de;
->>>>>>> geert+renesas@glider.be; magnus.damm@gmail.com;
->>>>>>> gregkh@linuxfoundation.org; mturquette@baylibre.com;
->>>>>>> sboyd@kernel.org; Yoshihiro Shimoda
->>>>>>> <yoshihiro.shimoda.uh@renesas.com>;
->>>>>>> linux-phy@lists.infradead.org; devicetree@vger.kernel.org;
->>>>>>> linux-kernel@vger.kernel.org; linux- renesas-soc@vger.kernel.org;
->>>>>>> linux-usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->>>>>>> linux- clk@vger.kernel.org; linux-pm@vger.kernel.org; Claudiu
->>>>>>> Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>> Subject: RE: [PATCH 00/16] Add initial USB support for the Renesas
->>>>>>> RZ/G3S SoC
->>>>>>>
->>>>>>> Hi Claudiu,
->>>>>>>
->>>>>>>> -----Original Message-----
->>>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>>>>>> Sent: Tuesday, September 3, 2024 12:00 PM
->>>>>>>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
->>>>>>>> RZ/G3S SoC
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 03.09.2024 13:31, Biju Das wrote:
->>>>>>>>>>> During boot clr USB PWR READY signal in TF-A.
->>>>>>>>>>> STR case, suspend set USB PWR READY signal in TF-A.
->>>>>>>>>>> STR case, resume clr USB PWR READY signal in TF-A.
->>>>>>>>>> As I said previously, it can be done in different ways. My point
->>>>>>>>>> was to let Linux set what it needs for all it's devices to work.
->>>>>>>>>> I think the way to go forward is a
->>>>>>>> maintainer decision.
->>>>>>>>>
->>>>>>>>> I agree, there can be n number of solution for a problem.
->>>>>>>>>
->>>>>>>>> Since you modelled system state signal (USB PWRRDY) as reset
->>>>>>>>> control signal, it is reset/DT maintainer's decision to say the
->>>>>>>>> final word whether this signal fits in reset
->>>>>>>> system framework or not?
->>>>>>>>
->>>>>>>> I was thinking:
->>>>>>>> 1/ Geert would be the best to say if he considers it OK to handle this
->>>>>>>>    in Linux
->>>>>>>
->>>>>>> I agree Geert is the right person for taking SYSTEM decisions,
->>>>>>> since the signal is used only during state transitions (Table
->>>>>>> 41.6.4 AWO to ALL_ON and 41.6.3 ALL_ON to AWO)
->>>>>>
->>>>>> One more info, as per [1], this USB PWRRDY signal setting to be before Linux kernel boots.
->>>>>
->>>>> The "controlled by" column mentions CA-55 on PWRRDY signal control
->>>>> line and it is b/w steps "DDR exits from retention mode" and  "clock
->>>>> start settings for system bus and peripheral modules". AFAICT, after DDR exists retention mode
->>> Linux is ready to run.
->>>>
->>>> DDR retention exit happens in TF-A and it jumps into reset code where it executes BL2 in TF_A. Bl2
->>> checks for warm or cold reset.
->>>> If it is warm reset, it sets required minimal clocks/resets and pass
->>>> the control to linux by calling the SMC callback handler. Which in turn calls resume(step 11-->14)
->>> path.
->>>
->>> Is this from HW manual or some specific documentation? I'm referring at "resume" == "steps 11-->14"
->>>
->>>>
->>>> Step 8, Cortex-A55 Exit from DDR retention mode (when using) Setting
->>>> for exiting form DDR retention mode Step 9, Cortex-A55 USB PHY PWRRDY
->>>> signal control (if use USB) SYS_USB_PWRRDY Step 10, Cortex-A55 PCIe
->>>> RST_RSM_B signal control (if use PCIe) SYS_PCIE_RST_RSM_B
->>>
->>> Note *if use*: how does the TF-A know if USB/PCIe is used by Linux? The documentation mention to set
->>> it *if use*. Same note is on ALL_ON to VBATT transition documentation (namely "if using USB", "if
->>> using PCIe"). If TF-A will do this it should set this signals unconditionally. It will not be
->>> something wrong though. We don't know at the moment what this involves in terms of power consumption,
->>> if it means something...
->>
->> IIUC,
->> The only information we have is,
->>
->> "SYS_USB_PWRRDY and SYS_PCIE_RST_RSM_B are used when transition from ALL_ON to AWO (or from AWO to ALL_ON).
->> "When turning off USB PHY and PCIe PHY, if they are not controlled, PHY may break"
->>
->> ALL_ON to AWO_MODE state transition: 
->> USB/PCIe are part of PD_ISOVCC power domain and before turning PD_ISOVCC to off,
->> we need to set USBPWRRDY signal.
->>
->> AWO_MODE to ALL_ON state transition:
->>
->> Turn on PD_ISOVCC first, then clr USBPWRRDY signal for USB usage in linux.
->>
->> Maybe we need to ask hw team, exact usage of USBPWRRDY signal other than state transition.
-> 
-> As you may already know, this is open for quite some time and is ongoing.
+It isn’t much, but I believe it’s most of fuse_fill_super_common() 
+(without restructuring the code so flags returned by INIT are put into a 
+separate structure and then re-joined into sb and fc later).
 
-I got more clarification about the USB PWRRDY signal from the HW team.
+fuse_send_init() reads sb->s_bdi->ra_pages, process_init_reply() writes 
+it and sb->s_time_gran, ->s_flags, ->s_stack_depth, ->s_export_op, and 
+->s_iflags.  In addition, process_init_reply() depends on several flags 
+and objects in fc being set up (among those are fc->dax and 
+fc->default_permissions), which is done by fuse_fill_super_common().
 
-The conclusion is that the USB PWRRDY is a signal controlled by SYSC
-controller that goes to the USB PHY and it tells the USB PHY if the power
-supply is ready or not.
+So I think what we need from fuse_fill_super_common() is:
+- fuse_sb_defaults() (so these values can then be overwritten by 
+process_init_reply()),
+- fuse_dax_conn_alloc(),
+- fuse_bdi_init(),
+- fc->default_permissions at least, but I’d just take the fc->[flag] 
+setting block as a whole then.
 
-In the diagram at [1] the PWRRDY signal need to be asserted/de-asserted
-before/after G6, G7, G8, G9, G10 signals.
+I assume we’ll also want the SB_MANDLOCK check then, and 
+rcu_assign_pointer().  Then we might as well also set the block sizes 
+and the subtype.
 
-Philipp,
+The problem is that I don’t know the order things in 
+fuse_fill_super_common() need to be in, and fuse_dev_alloc_install() is 
+called before fuse_bdi_init(), so I didn’t want to move that.
 
-Can you please confirm that you don't want this signal to be implemented as
-a reset signal to know clearly your input on it? I would like to start
-looking for another approach in that case.
+So what I understand is that calling fuse_dev_alloc_install() there 
+isn’t necessary?  I’m happy to move that to part 2, as you suggest, but 
+I’m not sure we can really omit much from part 1 without changing how 
+process_init_reply() operates.  We could in theory delay 
+process_init_reply() until after GETATTR (and thus after setting 
+s_root), but that seems kind of wrong, and would still require setting 
+up BDI and DAX for fuse_send_init().
 
-Thank you,
-Claudiu Beznea
-
-[1] https://pasteboard.co/0a1zYBFZXZVb.png
-
-> 
+>> @@ -1762,18 +1801,12 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>>          sb->s_d_op = &fuse_dentry_operations;
 >>
->> Cheers,
->> Biju
+>>          mutex_lock(&fuse_mutex);
+>> -       err = -EINVAL;
+>> -       if (ctx->fudptr && *ctx->fudptr)
+>> -               goto err_unlock;
+>> -
+>>          err = fuse_ctl_add_conn(fc);
+>>          if (err)
+>>                  goto err_unlock;
 >>
+>>          list_add_tail(&fc->entry, &fuse_conn_list);
+>>          sb->s_root = root_dentry;
+>> -       if (ctx->fudptr)
+>> -               *ctx->fudptr = fud;
+> This is wrong, because we need the fuse_mutex protection for checking
+> and setting the private_data on the fuse device file.
+>
+> If this split is needed (which I'm not sure) then fud allocation
+> should probably be moved to part2 instead of moving the *ctx->fudptr
+> setup to part1.
+>
+>
+>> @@ -1635,8 +1657,16 @@ static void virtio_kill_sb(struct super_block *sb)
+>>          struct fuse_mount *fm = get_fuse_mount_super(sb);
+>>          bool last;
 >>
+>> -       /* If mount failed, we can still be called without any fc */
+>> -       if (sb->s_root) {
+>> +       /*
+>> +        * Only destroy the connection after full initialization, i.e.
+>> +        * once s_root is set (see commit d534d31d6a45d).
+>> +        * One exception: For virtio-fs, we call INIT before s_root is
+>> +        * set so we can determine the root node's mode.  We must call
+>> +        * DESTROY after INIT.  So if an error occurs during that time
+>> +        * window (specifically in fuse_make_root_inode()), we still
+>> +        * need to call virtio_fs_conn_destroy() here.
+>> +        */
+>> +       if (sb->s_root || (fm->fc && fm->fc->initialized && !fm->submount)) {
+> How could fm->submount be set if sb->s_root isn't?
+
+fuse_get_tree_submount(), specifically fuse_fill_super_submount() whose 
+error path leads to deactivate_locked_super(), can fail before 
+sb->s_root is set.
+
+Still, the idea was rather to make it clear that this condition (INIT 
+sent but s_root not set) is unique to non-submounts, so as not to mess 
+with the submount code unintentionally.
+
+> Or sb->s_root set
+> and fc->initialized isn't?
+
+That would be the non-virtio-fs non-submount case (fuse_fill_super()), 
+where s_root is set first and INIT sent after.
+
+Hanna
+
+> Seems it would be sufficient to check fm->fc->initialized, no?
+>
+> Thanks,
+> Miklos
+>
+
 
