@@ -1,180 +1,104 @@
-Return-Path: <linux-kernel+bounces-399796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F4F9C0451
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:40:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96459C0455
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 535432819C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:40:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5446FB2368D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807A820EA3D;
-	Thu,  7 Nov 2024 11:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D747620CCC7;
+	Thu,  7 Nov 2024 11:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gG+DmtcU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Sq1sgyWj"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B3B20EA29
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675DC20B1FF;
+	Thu,  7 Nov 2024 11:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730979601; cv=none; b=BFy8zVLoV9BsHRE8rzQ+gSMxJ7mhe1YQkBv4T8Nh8px0cfOUnah+2gp/dGQn+QQBaokq1V8uLVECH6QjvO/29LW1enzuFfvh91xQF4pVedtgtDbsdVRXwhBT0eVsojVfmSrkY9yMgfWDXHcL0PaUoV6wtmg+7uMQGT57VS12jgU=
+	t=1730979618; cv=none; b=gD9ySLSAIviWTZLB2hKA4MKMWqEoIgIoyyap92fW2cz6lMC4EQwtEF7RYCoYJciXWRBOHdA4lK8b43+KxuvUNz/tZ/Y3uCy3FHBLKQnKma1gx0BKL32SpugEEgvyTRB441dbz20eb5gQYDSQub+Vyf3QReu8YUT4XEBF0jfCmaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730979601; c=relaxed/simple;
-	bh=Dr1wnbMAcJ85mpqEQLLTPIf5QuKyNUdsjtKtaj8po5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VgJEIb940P2w/o8dry+ZcTXMX5xB+mEoWjMQ8p7pNpPXyjHn3QB6r4JeGG+3mugSIB6WPWaEJxBRbz1bH7w6pCSyRclZYXABww5i6SzYJPMgCqY0z5gYNCeAb6DCHaSh61KtjdnPGBll44e4VgpT03OOh5QvfsspmfYgj7HJ/ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gG+DmtcU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730979599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sU82hUgjAkYityCy1/Sw+2BlAMEi+LklRUiq4lsDGRk=;
-	b=gG+DmtcUeVBgKP7GCruSWKAcPZaCPcq0SWNfjhigFS7qBcRmZ2PgXp2dCfb0n7lg6g+A/V
-	gvgB41mOUyem2eFH9JTWNNMBsLT6xKmKJPFG44WFB5ypZRbbstyansDklz8oYgalzRvwmQ
-	LtuFNnX62ML+tu6Hynh8uUJbsGFOdto=
-Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com
- [209.85.160.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-7Yiq-ZVZN8Wv0Gdq9xaDNw-1; Thu, 07 Nov 2024 06:39:58 -0500
-X-MC-Unique: 7Yiq-ZVZN8Wv0Gdq9xaDNw-1
-X-Mimecast-MFC-AGG-ID: 7Yiq-ZVZN8Wv0Gdq9xaDNw
-Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-288ba66682dso828130fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 03:39:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730979597; x=1731584397;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sU82hUgjAkYityCy1/Sw+2BlAMEi+LklRUiq4lsDGRk=;
-        b=Ysln61y48s8LEc+09NIZSW6DMcteURNYfTUxheKnsR5JUDA0OO164G/fideFdTUWE/
-         DJDEUs72FOnZPyBNQSSaz14dW3b+jeN8z5vrnb1VBmt50oSAIzrwCOMGGbxnD9BwEeTC
-         /DvYyLLQDOessdvekEGWHCusq93zqVBGQPJ+9QuCnTA4eDGR+PjOYNOftAqbPl1AxZHa
-         BDq+aaiUQOJSw42Km7CBgog1ceFDJmBUqabIM2rudhIBc/bLthhiOOLIaMCP0RfzqfzO
-         l2DL47KygKNmYlF943XBN2rU1/cAvilRKJhFrk1zhHJ+UkbsAhrN6+FDh5B43IxX/jC8
-         01Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXcnpJGvCKNWVNirLrQtMngdu/1N6eueDK4MefkgW9hpCVwtNe+jYCJm2HP2J1vncof8Nnjd6w8uVsRfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxoi05GFGXV9Ws7VBa9ZyuOZ0QcvIApgEg8Ux2igBaUfXKiVZw9
-	j6k0rXl19dfbzWq8HotTJJEOj5+kHCGbynGPQsPqE7fu41Y3fnyeUn5OnE2mNPX2QHqirrDZ6Ly
-	3KL+++hQp88bOhBaYaMYnvx5pcWpfz/pDl/Kye2EvlPo9pzuMtgjZfIhosZZvGw==
-X-Received: by 2002:a05:6871:5308:b0:261:1f7d:cf71 with SMTP id 586e51a60fabf-2949effac5dmr21562497fac.34.1730979597365;
-        Thu, 07 Nov 2024 03:39:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFDq5fRIg01uNlVXiEtEZlPbiE6ggdZh6AZ5Ace6mGwQwi7O64CogCmEIHArE+Zd2OoFSmPhA==
-X-Received: by 2002:a05:6871:5308:b0:261:1f7d:cf71 with SMTP id 586e51a60fabf-2949effac5dmr21562466fac.34.1730979596959;
-        Thu, 07 Nov 2024 03:39:56 -0800 (PST)
-Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546c3d9cdsm296879fac.1.2024.11.07.03.39.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 03:39:56 -0800 (PST)
-Message-ID: <41b0155f-bec4-4563-a92c-b30b0f5f9997@redhat.com>
-Date: Thu, 7 Nov 2024 12:39:51 +0100
+	s=arc-20240116; t=1730979618; c=relaxed/simple;
+	bh=D7rbhEZbPVLV80yEFgUNCtjx3x34/eUF5UyQRanTe5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OuEX+deE0RUuBqUHqVu/cTbzCPHzVgBeQsZiT6XUFBNo/7NG9NHyCpq3+ujQE1Nm+1kDost1pgLVSg4KHHG8V3B9L/5JFyt5TZCZJgQBhH8sfOFv5wH/oFpjTU/B30oAbc3pkKAEmRNyoKE5jbmi+1uJcdzQH3MwsrcuC2G4pQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Sq1sgyWj; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730979612;
+	bh=4NmQnCvufRHSAjEVpJjKsFCxXn7czIle4IH1QXp8Ipk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Sq1sgyWj1mzem+ks//phn2bbrrbFP+ob7gOnsAlrbAl6LKjpGnKuiCIC/GNGPRmii
+	 MEZm3IBiRX+XLVcbFXhz0qjT95Z/gV/JgP/TnXYywIRAMciAQ0Ht3d0LE/AMRdzJl9
+	 iugOQRSp3WKrt0lw9T9qugJI4RqFOWCp8wiBaFk6K9BccUJghPUqMln7OY3+B6Gj7y
+	 sEWpC1zbIkyUYMl+OQykuYuOKYYJzlag/bX1VLEmHSUwbz3Bzcbu6rCXvA958yTeku
+	 +lJQFLecgYn+mfbyyeT3O/l+OVACu8+dVlEQ5TUCp2/ZHPZd0GgznCB96Yf4zThP3v
+	 e9JXbeajTg2Wg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xkg9R1Jz6z4x1w;
+	Thu,  7 Nov 2024 22:40:11 +1100 (AEDT)
+Date: Thu, 7 Nov 2024 22:40:12 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Corbet
+ <corbet@lwn.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the iio tree
+Message-ID: <20241107224012.2981aa90@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 4/4] virtio_net: Update rss when set queue
-To: Joe Damato <jdamato@fastly.com>, Philo Lu <lulie@linux.alibaba.com>,
- netdev@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
- xuanzhuo@linux.alibaba.com, eperezma@redhat.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- andrew@daynix.com, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20241104085706.13872-1-lulie@linux.alibaba.com>
- <20241104085706.13872-5-lulie@linux.alibaba.com>
- <ZyqAovoIOYkNvtys@LQ3V64L9R2>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <ZyqAovoIOYkNvtys@LQ3V64L9R2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/CzVIJh=gUOnwcJEdglu.mFK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 11/5/24 21:31, Joe Damato wrote:
-> On Mon, Nov 04, 2024 at 04:57:06PM +0800, Philo Lu wrote:
->> RSS configuration should be updated with queue number. In particular, it
->> should be updated when (1) rss enabled and (2) default rss configuration
->> is used without user modification.
->>
->> During rss command processing, device updates queue_pairs using
->> rss.max_tx_vq. That is, the device updates queue_pairs together with
->> rss, so we can skip the sperate queue_pairs update
->> (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
->>
->> Also remove the `vi->has_rss ?` check when setting vi->rss.max_tx_vq,
->> because this is not used in the other hash_report case.
->>
->> Fixes: c7114b1249fa ("drivers/net/virtio_net: Added basic RSS support.")
->> Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
->> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
->> ---
->>  drivers/net/virtio_net.c | 65 +++++++++++++++++++++++++++++++---------
->>  1 file changed, 51 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->> index 59d9fdf562e0..189afad3ffaa 100644
->> --- a/drivers/net/virtio_net.c
->> +++ b/drivers/net/virtio_net.c
->> @@ -3394,15 +3394,59 @@ static void virtnet_ack_link_announce(struct virtnet_info *vi)
->>  		dev_warn(&vi->dev->dev, "Failed to ack link announce.\n");
->>  }
->>  
->> +static bool virtnet_commit_rss_command(struct virtnet_info *vi);
->> +
->> +static void virtnet_rss_update_by_qpairs(struct virtnet_info *vi, u16 queue_pairs)
->> +{
->> +	u32 indir_val = 0;
->> +	int i = 0;
->> +
->> +	for (; i < vi->rss_indir_table_size; ++i) {
->> +		indir_val = ethtool_rxfh_indir_default(i, queue_pairs);
->> +		vi->rss.indirection_table[i] = indir_val;
->> +	}
->> +	vi->rss.max_tx_vq = queue_pairs;
->> +}
->> +
->>  static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
->>  {
->>  	struct virtio_net_ctrl_mq *mq __free(kfree) = NULL;
->> -	struct scatterlist sg;
->> +	struct virtio_net_ctrl_rss old_rss;
->>  	struct net_device *dev = vi->dev;
->> +	struct scatterlist sg;
->>  
->>  	if (!vi->has_cvq || !virtio_has_feature(vi->vdev, VIRTIO_NET_F_MQ))
->>  		return 0;
->>  
->> +	/* Firstly check if we need update rss. Do updating if both (1) rss enabled and
->> +	 * (2) no user configuration.
->> +	 *
->> +	 * During rss command processing, device updates queue_pairs using rss.max_tx_vq. That is,
->> +	 * the device updates queue_pairs together with rss, so we can skip the sperate queue_pairs
->> +	 * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
->> +	 */
->> +	if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
-> 
-> Does there need to be an error case when:
-> 
-> vi->has_rss && netif_is_rxfh_configured(dev)
-> 
-> to return EINVAL? I noted that other drivers don't let users adjust
-> the queue count and return error in this case.
+--Sig_/CzVIJh=gUOnwcJEdglu.mFK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-AFAICS the above is orthogonal to this patch - i.e. lack of check is
-pre-existing and not introduced here. I'm not 110% sure the lack of
-check is illegit, but I think it should eventually handled with a
-separate patch/series.
+Hi all,
 
-Thanks,
+After merging the iio tree, today's linux-next build (htmldocs) produced
+this warning:
 
-Paolo
+include/linux/iio/iio.h:628: warning: Function parameter or struct member '=
+__private' not described in 'iio_dev'
+include/linux/iio/iio.h:628: warning: Excess struct member 'priv' descripti=
+on in 'iio_dev'
 
+Introduced by commit
+
+  9a5a2483bc60 ("iio: Mark iio_dev::priv member with __private")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CzVIJh=gUOnwcJEdglu.mFK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcspxwACgkQAVBC80lX
+0Gw15ggAoCsHExabqc1FtunzoupihcwRg+kDnx7K5qC884C/B6vwyY5X9vETS2et
+lfmkuUF5eXOURHer/P9ghdnRIqg9xY3YP8t3L3PvLMSM4teOF+6y9Vm/75+huv8C
+9YFDvRaLvB+y2K4UrI0A1poLVDuhOQIAqnQIpPBFNigiJ4WLf1gL8WDv+zEnuBXE
+GVui3m0iUrNpUYQJwpwIKyxBz87x7QFKigIwfzfF9GN0ID8JYCksuu7THP40OKSY
+U55+xJImd/EoDm972uVsaaC4vHe1DYE0C/VRdc5J9ElfH3jLS+4diSvaoDA4pzNy
+2/tSz6xO5mlFxhoiK7TMi+9d6zxW8A==
+=Q+UE
+-----END PGP SIGNATURE-----
+
+--Sig_/CzVIJh=gUOnwcJEdglu.mFK--
 
