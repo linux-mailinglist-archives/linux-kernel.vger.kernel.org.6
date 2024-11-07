@@ -1,167 +1,191 @@
-Return-Path: <linux-kernel+bounces-400473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 175409C0E16
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:52:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5472D9C0E18
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:52:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443821C226FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:52:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75964B2304E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16652101B0;
-	Thu,  7 Nov 2024 18:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6862170D6;
+	Thu,  7 Nov 2024 18:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hrz+FwxY"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s8ucNsaw"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B192D16419
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8089E2101B0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731005532; cv=none; b=iASTGv73OdPjTKSqvfHeOBhTpJD4/L+CQPzyXzhPgAqNhQSvV+kAVgbGjonWX2HNj2ahZIqMfkiX+iLinmsP1rHfi+MGQkj3gXnIXveXWId/0/UaLgAO6RvOljFjgkzPH5SV1MMHbYyMOqXSDDugRs27T3HOxG1pyhPFz0Go3bA=
+	t=1731005564; cv=none; b=gtn3VaACCBgwC1frOGVjr95/Ecf6VKRjnpjEfzp6fOeQrTRYGZh+kI7HZnU/SPkhQH4K8mkoqnQRoYteCPpR40GQjgkYi7SMeExyBPXMpfO9Y+FQ7ny/kas12pE153J/w1ueqa9RvRxDIO/PaDl8XQax7EAdMTy49RQBG5TrUFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731005532; c=relaxed/simple;
-	bh=5waiBhM4WgYuhJy35YT7HAoT0amIFBAEf40b0y5+l1E=;
+	s=arc-20240116; t=1731005564; c=relaxed/simple;
+	bh=z8ThK9cupI19VYwlYoPetHO7sa1yXqdBUhTL1+gjxQA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oeg+QYsElG+XlCgsSizMUTB44gzSBmhy4gqf2Ub/IpQRkDHVOzbrsczDACSZAsILvjSCZ3d8WFT9RwIf5sEzg6aN8Ese3d0DEtgFpYhoNn4kF8zqAfbv3Uuwit+4mfohZcipLzYDywSjsV/wMPl0cGq2XyxOKW8+qQwGCluCmo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hrz+FwxY; arc=none smtp.client-ip=209.85.214.182
+	 To:Cc:Content-Type; b=jvar6wuj1Md1nViDpalIiYw6xulm4I60irFZzlMXwfrm3a5Caf0q3A8ljkBj7vItkyMTHOa0MFqQklvSgtE3+9qqz52a4fyVBqApTj62WSKf8MROdSxGHu9tk+mSJdk1t9Ker6XAnYtfv7zUBHUiDN+6/R29bb1sHi2qJHZpOAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s8ucNsaw; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c8ac50b79so17935ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:52:10 -0800 (PST)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460b295b9eeso24751cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:52:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731005530; x=1731610330; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731005561; x=1731610361; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8eBN8ymnBc8p9QxnxQVe7atvkFMrTJybu6XE4oODfEs=;
-        b=hrz+FwxYGYN82LQZbxjuKZUX8SjvAhdIDbIrCMhFmO362zqqrZEmVp7StxM0l0t3PG
-         W3M4Rv7SUc/gXRbAqOaMe8mGPWJ3gl8jdgh0CmaYhQjgfBYvNaN0kBbQc3KXG7gAm5lc
-         QPnoux262PhYvhER4WR8NmKDhk0uoMyY+iL+LRnC8SnSTJXMyIX7z4n9WELGleyGTJUJ
-         UcTbWFIn4om72ZYsEFKvULEcsJK8FS0/r9dtS0XgS9PTQhGbMJtoCBv00VdW+B3gbWur
-         gEAE968x28ebHSxUDYtPNXm2niMUO38jt7r0Os9GY5CFKpjiSIUCQVtUxJAWPpvJU+Yx
-         Oqyg==
+        bh=rSPZp/vkkxm4PmcRnhLRUlap3/JSxQYD2+2CrIS/7/A=;
+        b=s8ucNsawbUta4d4HyT8JMVNSU3t/niQREY0VTk6urhh+dSvIOIB53qusQcP6PmeDJ3
+         9NT4h2sueQk0feR3nFLPU2CK0yb1UCrbg8Y4jRaJldGN4miJGtfXUSsLqjoLSI7hDiU/
+         /LDP6AHeRunk7JXSmRA9Z01Vgjk0nClRsW6Fyn+nQRx48f3d6w2gBF/sXIfqCIHeItIM
+         mVvoGc9E7pynIbbmXRPlHc3a6ZPP9sXXDalW+JVtHcRyClcqavi6a+oolXDIwwh7y+VR
+         c9UgP/1cnWWyOAW2IqTcua0f2LDsFJR7EPchryGe3EWSta6wK4EPZ3eTB2kXQxM/+NIF
+         MMtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731005530; x=1731610330;
+        d=1e100.net; s=20230601; t=1731005561; x=1731610361;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8eBN8ymnBc8p9QxnxQVe7atvkFMrTJybu6XE4oODfEs=;
-        b=PSRxN3iYrHx7eetOW+xGain20UUGjY3WzEoByi9gbOZTv/SpGjWmUGdTDILMI90hx/
-         sy3x9XWo53UrkIkm5hMunKjwz5MEUbOmru2VumYnZiJDzr7LoiIKWUWQlm+xpceATXN7
-         IJBxG/P2FmWVU8srF9GReoXRe1f8u9/rUE3HXfxDrMhkZAKa+ajcoYMIQRol74+a1t4m
-         ZiemsWzO7VKz0F2WvTqlHyuP1DUXaWAvqRkiswEMjCM3JKMET5WtwUvXVDxoNYieyklA
-         jvQRsTQRSjlUA8KMRDLirAiBAiqVLALx5gT7W4m04zS1fbI3f1i2lCP0r4YZu0lF0vfe
-         VczQ==
-X-Gm-Message-State: AOJu0YyB4h9kKTtEezFOeUmyUEkHVqBvJXohoTHfjQj60aiU17B9e5WW
-	79ioVgcTRov/ynpmK1Y5gya0wP4n03FaN6r4lT5YGT8MrViP7VH8rAsWlWyLrt9hyaBZ7flWEOL
-	oAugfP/vc99LpLAsJmHTsZh2LRzXHi44JBKSj
-X-Gm-Gg: ASbGncugZ+nJaLDtqGv+A3ce86CW9Bf6m6L6MjgnQKgMMlQEm4wkPaOR2PyVZIl3cHF
-	u+/EUcVW+sI5L1NQtclv/340P/UDvwvpt0EIkD1QljZu6U1LvGr4EwH4avpwTqaE=
-X-Google-Smtp-Source: AGHT+IGvx7KFsyMX5+AYcMaGovXO3S3lUt1B/FRKeJuNVZEWZxKDX6Uv2YyfvW7lg1pESwLCE/Oq1UyOTpc16+leygo=
-X-Received: by 2002:a17:903:41ce:b0:205:60ef:18af with SMTP id
- d9443c01a7336-211749d3e94mr3901475ad.29.1731005529781; Thu, 07 Nov 2024
- 10:52:09 -0800 (PST)
+        bh=rSPZp/vkkxm4PmcRnhLRUlap3/JSxQYD2+2CrIS/7/A=;
+        b=MHSZ2KNfFthS7/wTWUtrCRm2sgHoLhCxHpym/JMl9zgUqmUTic77hbNwpIVPcO9VCT
+         OmsuntqNV3QZrjZLmLs1MYa54zyHq+x67uEZkd6JB40cm9eMCMtyW6HtoqzEB9MaZvSV
+         H+kaqq0Wxs+QNuDgNMW9HJj92jcCucLGVLy8ocpSg/2oi0Id6uMv5stuYUB/AVzw5Qub
+         mVg2SzKx9rzlDDCeocmpK45zBfHbajC1LIXVy68iSE4KIbDMg+f/j2TbCTa9MfHN4xQg
+         doT/Cnfkyz2AYp2SbaEpQ4rWx4gFRIt+nD6HS5sGE+nZnJqeMs/gwabD6pyHPEt35eTj
+         JH4A==
+X-Forwarded-Encrypted: i=1; AJvYcCX2jbG8p8Ccoe9avQPDtn5y7YCxbBmnAZWm1WYaLh0bjg9x4Ph+TrhSn4DBV/x87KzF20R2JKmH7LgoD0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFL3TjPuMo0NZ4Hh5b5sueDT4zx7aG6gPUSiRvx9oFk9rHvlEG
+	2eL2Km3T2yrSArk+V3QyTTtSfJHKQszj2bkU+xbP4GI97rknhxQhc9al3V1uNMhzcPLQKIojDxG
+	4S0KiEW6CPowroBaWY+n/cmvKf34MGsW1NVxV
+X-Gm-Gg: ASbGncu+KsKbwsS/svoWy3UUW1ESJb0QT7UwpGB+5BwsajqgMCGQaQGVoHqL4PXKzsR
+	ivhQiiDaQJ2cRoR/Ig3dGeZDmEEzBqYezsc0erXXKb6iwWcZvj0/720zSh/5skw==
+X-Google-Smtp-Source: AGHT+IF6Lz40AZM4gEZbd60uLeRf+A4xggcfUbVS+7mikK/NnN35Bv/xCssdb3WwArmt3jlGxIU4f7Mp0FwQ1aJHskk=
+X-Received: by 2002:a05:622a:14d4:b0:462:9e4:de13 with SMTP id
+ d75a77b69052e-462fa58dddcmr5947181cf.9.1731005561078; Thu, 07 Nov 2024
+ 10:52:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026121758.143259-1-irogers@google.com>
-In-Reply-To: <20241026121758.143259-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 7 Nov 2024 10:51:58 -0800
-Message-ID: <CAP-5=fXf9HtqKZyvfXNbKLTB-dL_Ax5Hd0_Gn1J-y0T1SE9wLQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] Prefer sysfs/JSON events also when no PMU is provided
-To: Atish Patra <atishp@rivosinc.com>, James Clark <james.clark@linaro.org>, 
-	linux-perf-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Ben Gainey <ben.gainey@arm.com>, 
-	Junhao He <hejunhao3@huawei.com>, linux-riscv@lists.infradead.org, beeman@rivosinc.com, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>
+References: <20241107040239.2847143-1-cmllamas@google.com> <20241107040239.2847143-9-cmllamas@google.com>
+ <CAJuCfpHM8J0S4dXhxmVuFSTUV0czg1CTFpf_C=k7M57T9qh-VQ@mail.gmail.com>
+ <Zyz--bjvkVXngc5U@google.com> <CAJuCfpHAsgDgqjWmxqwGPxs_i184mrzMSAUZ9fj9PN8eJcGdvQ@mail.gmail.com>
+ <Zy0EyMVq0xEdyKNt@google.com> <CAJuCfpF2ZyEPfV_rTsftnc=XKCiwGG2-mL67Bt6o3tEBWn+KwQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpF2ZyEPfV_rTsftnc=XKCiwGG2-mL67Bt6o3tEBWn+KwQ@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 7 Nov 2024 10:52:30 -0800
+Message-ID: <CAJuCfpF7Q-uD+Tdyoar_djw+LwckgAbH1uZOABqoRe2=gpGN-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] binder: use per-vma lock in page installation
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Barry Song <v-songbaohua@oppo.com>, Hillf Danton <hdanton@sina.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 26, 2024 at 5:18=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
+On Thu, Nov 7, 2024 at 10:27=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
 >
-> At the RISC-V summit the topic of avoiding event data being in the
-> RISC-V PMU kernel driver came up. There is a preference for sysfs/JSON
-> events being the priority when no PMU is provided so that legacy
-> events maybe supported via json. Originally Mark Rutland also
-> expressed at LPC 2023 that doing this would resolve bugs on ARM Apple
-> M? processors, but James Clark more recently tested this and believes
-> the driver issues there may not have existed or have been resolved. In
-> any case, it is inconsistent that with a PMU event names avoid legacy
-> encodings, but when wildcarding PMUs (ie without a PMU with the event
-> name) the legacy encodings have priority.
+> On Thu, Nov 7, 2024 at 10:19=E2=80=AFAM Carlos Llamas <cmllamas@google.co=
+m> wrote:
+> >
+> > On Thu, Nov 07, 2024 at 10:04:23AM -0800, Suren Baghdasaryan wrote:
+> > > On Thu, Nov 7, 2024 at 9:55=E2=80=AFAM Carlos Llamas <cmllamas@google=
+.com> wrote:
+> > > > On Thu, Nov 07, 2024 at 08:16:39AM -0800, Suren Baghdasaryan wrote:
+> > > > > On Wed, Nov 6, 2024 at 8:03=E2=80=AFPM Carlos Llamas <cmllamas@go=
+ogle.com> wrote:
+> > > > > > +static int binder_page_insert(struct binder_alloc *alloc,
+> > > > > > +                             unsigned long addr,
+> > > > > > +                             struct page *page)
+> > > > > > +{
+> > > > > > +       struct mm_struct *mm =3D alloc->mm;
+> > > > > > +       struct vm_area_struct *vma;
+> > > > > > +       int ret =3D -ESRCH;
+> > > > > > +
+> > > > > > +       if (!mmget_not_zero(mm))
+> > > > > > +               return -ESRCH;
+> > > > > > +
+> > > > > > +       /* attempt per-vma lock first */
+> > > > > > +       vma =3D lock_vma_under_rcu(mm, addr);
+> > > > > > +       if (!vma)
+> > > > > > +               goto lock_mmap;
+> > > > > > +
+> > > > > > +       if (binder_alloc_is_mapped(alloc))
+> > > > >
+> > > > > I don't think you need this check here. lock_vma_under_rcu() ensu=
+res
+> > > > > that the VMA was not detached from the tree after locking the VMA=
+, so
+> > > > > if you got a VMA it's in the tree and it can't be removed (becaus=
+e
+> > > > > it's locked). remove_vma()->vma_close()->vma->vm_ops->close() is
+> > > > > called after VMA gets detached from the tree and that won't happe=
+n
+> > > > > while VMA is locked. So, if lock_vma_under_rcu() returns a VMA,
+> > > > > binder_alloc_is_mapped() has to always return true. A WARN_ON() c=
+heck
+> > > > > here to ensure that might be a better option.
+> > > >
+> > > > Yes we are guaranteed to have _a_ non-isolated vma. However, the ch=
+eck
+> > > > validates that it's the _expected_ vma. IIUC, our vma could have be=
+en
+> > > > unmapped (clearing alloc->mapped) and a _new_ unrelated vma could h=
+ave
+> > > > gotten the same address space assigned?
+> > >
+> > > No, this should never happen. lock_vma_under_rcu() specifically check=
+s
+> > > the address range *after* it locks the VMA:
+> > > https://elixir.bootlin.com/linux/v6.11.6/source/mm/memory.c#L6026
+> >
+> > The scenario I'm describing is the following:
+> >
+> > Proc A                          Proc B
+> >                                 mmap(addr, binder_fd)
+> > binder_page_insert()
+> > mmget_not_zero()
+> >                                 munmap(addr)
+> >                                 alloc->mapped =3D false;
+> >                                 [...]
+> >                                 // mmap other vma but same addr
+> >                                 mmap(addr, other_fd)
+> >
+> > vma =3D lock_vma_under_rcu()
+> >
+> > Isn't there a chance for the vma that Proc A receives is an unrelated
+> > vma that was placed in the same address range?
 >
-> The patch doing this work was reverted in a v6.10 release candidate
-> as, even though the patch was posted for weeks and had been on
-> linux-next for weeks without issue, Linus was in the habit of using
-> explicit legacy events with unsupported precision options on his
-> Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
-> where ARM decided to call the events bus_cycles and cycles, the latter
-> being also a legacy event name. ARM haven't renamed the cycles event
-> to a more consistent cpu_cycles and avoided the problem. With these
-> changes the problematic event will now be skipped, a large warning
-> produced, and perf record will continue for the other PMU events. This
-> solution was proposed by Arnaldo.
->
-> Two minor changes have been added to help with the error message and
-> to work around issues occurring with "perf stat metrics (shadow stat)
-> test".
->
-> The patches have only been tested on my x86 non-hybrid laptop.
+> Ah, I see now. The VMA is a valid one and at the address we specified
+> but it does not belong to the binder. Yes, then you do need this
+> check.
 
-Hi Atish and James,
+Is this scenario possible?:
 
-Could I get your tags for this series?
+ Proc A                          Proc B
+                                 mmap(addr, binder_fd)
+ binder_page_insert()
+ mmget_not_zero()
+                                 munmap(addr)
+                                 alloc->mapped =3D false;
+                                 [...]
+                                 // mmap other vma but same addr
+                                 mmap(addr, other_fd)
+                                 mmap(other_addr, binder_fd)
+ vma =3D lock_vma_under_rcu(addr)
 
-The patches were originally motivated by wanting to make the behavior
-of events parsed like "cycles" match that of "cpu/cycles/", the PMU is
-wildcarded to "cpu" in the first case. This was divergent because of
-ARM we switched from preferring legacy (type =3D PERF_TYPE_HARDWARE,
-config =3D PERF_COUNT_HW_CPU_CYCLES) to sysfs/json (type=3D<core PMU's
-type>, config=3D<encoding from event>) when a PMU name was given. This
-aligns with RISC-V wanting to use json encodings to avoid complexity
-in the PMU driver.
-
-James, could you show the neoverse with the cmn PMU behavior for perf
-record of "cycles:pp" due to sensitivities there.
-
-Thanks,
-Ian
-
-
-
-
-> Ian Rogers (4):
->   perf evsel: Add pmu_name helper
->   perf stat: Fix find_stat for mixed legacy/non-legacy events
->   perf record: Skip don't fail for events that don't open
->   perf parse-events: Reapply "Prefer sysfs/JSON hardware events over
->     legacy"
->
->  tools/perf/builtin-record.c    | 22 +++++++---
->  tools/perf/util/evsel.c        | 10 +++++
->  tools/perf/util/evsel.h        |  1 +
->  tools/perf/util/parse-events.c | 26 +++++++++---
->  tools/perf/util/parse-events.l | 76 +++++++++++++++++-----------------
->  tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
->  tools/perf/util/pmus.c         | 20 +++++++--
->  tools/perf/util/stat-shadow.c  |  3 +-
->  8 files changed, 145 insertions(+), 73 deletions(-)
->
-> --
-> 2.47.0.163.g1226f6d8fa-goog
->
+If so, I think your binder_alloc_is_mapped() check will return true
+but the binder area is mapped at a different other_addr. To avoid that
+I think you can check that "addr" still belongs to [alloc->vm_start,
+alloc->buffer_size] after you obtained and locked the VMA.
 
