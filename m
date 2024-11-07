@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-399590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD979C0133
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:34:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14049C013C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:36:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1234F1F22410
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:34:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56562826C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2201DFDB4;
-	Thu,  7 Nov 2024 09:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5131E1328;
+	Thu,  7 Nov 2024 09:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDmU/BG+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdGjq0Zf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C90BC2ED;
-	Thu,  7 Nov 2024 09:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222701E0DE8;
+	Thu,  7 Nov 2024 09:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730972052; cv=none; b=c9KY7BA/cAI4AMpiMz9Uaf+O7jYN02uJVZvXLURwn3Zj1bj9mSzdtwgP5dOfzHi+wv03w6D3e9e6DR7UhVdu6o/PGyhnI2Xmsz3j4obZ6Jhn0geY+7/kkPvUBLFkyU33BqnbD8YP163I+hXHWNiVNjY8CJLDJu3B52PCgiAjs2g=
+	t=1730972160; cv=none; b=MJEX48WaLRVCyuQp42cRpMhkvODntmKeL6uyzyGtvEjJ1UAw5J9TUOgNkIU4JSXPwezpFDfjg7sjKsw9d9aHfdIfh6sa+2ojVXFRgGyMHJl/K9h+fi/kroksayj+7nMgSBJg0e2gMbny8UL0ePIphCtH+m9oarVhna+oubZIWNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730972052; c=relaxed/simple;
-	bh=inESUDudB5HfcmBBNbqKRZ9XUBmBgBiXWRXYsjc867w=;
+	s=arc-20240116; t=1730972160; c=relaxed/simple;
+	bh=z0EMH3BSodvg7MBZbSUNTqdl3EtSk3Bp5Q3d0ObDLLA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=blVVKIsRQANl1vtswnLy2VKot323XRtEYsNUAHaxiZJxYvpDcmA66t2IqTDZH2HnTNyd5tpbe2Ha/PRjKTYqgc4WKgYbCZJgzOaf/qleSKc6Qw/KhE1D/9VqbhyCxtLVqeQwjx31061RYE2vAM4K6rfPzpPu3HzyO4s1SGmCyyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDmU/BG+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA0CC4CECC;
-	Thu,  7 Nov 2024 09:34:09 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=YPJc95RKaL3nlZBv8WRYZDknJtAM9a1vGZ4LqOIgkPdMDjjL34q6U0wsB3uOJIhasCNFXkm5IToO0TF8js7IrEy46dJAyNCMbwN1y1nIQh5txLiDj3dtXxBl7ozNvuLx/XIpDPcGzUzd8uKQ/WEeioBbxK5uK0C/ne+MtSmKng8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdGjq0Zf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2848C4CECC;
+	Thu,  7 Nov 2024 09:35:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730972052;
-	bh=inESUDudB5HfcmBBNbqKRZ9XUBmBgBiXWRXYsjc867w=;
+	s=k20201202; t=1730972159;
+	bh=z0EMH3BSodvg7MBZbSUNTqdl3EtSk3Bp5Q3d0ObDLLA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TDmU/BG+hRQ9l6HbOxYsJpcI7R6NBTvpKAIO4HPYxDJGII5+3TfrHvN97Lw+aVVc+
-	 CwRkbTfdyzRCzhiKC8fFwwUgv8YRsACnwa4aetSX7sS0kwDgYID+LGBVuJLmQU32PG
-	 v2oNSrhsewmgkNMel2A91E5fuxBwJpUBLGcow+koUVxCE28Se6DKBJ1d6Dm6FimWlX
-	 rbRaei7/WoHrz8V+EF1zRv26wEK1wn1Zl8q52T7+VFQdDCoku4khl0yxrgy5JZjj8N
-	 UZ15HV1X6c29/Q0YWDiho0yaNrXLOvajBXR1i3qWtfjfeah76pgm8j9kPMq+dTDdyg
-	 vTnqXqjLqYBgw==
-Message-ID: <a0e3d45f-d982-4961-9945-3c81c0380806@kernel.org>
-Date: Thu, 7 Nov 2024 10:34:07 +0100
+	b=bdGjq0ZfYHtePVydCB367KuxRjcuxKCkXsjzJnrjLyjQfeZNfLnPMKsKcb1Y3oqVw
+	 5wz1udYXfO4MKlRsnacFyKTc0pSY2vUiK0UZGNN+aXQud73C1arSsNn+f0iyejLHtx
+	 Iie3etfnsMvMSyDhK8PlaIX89bZPJs7ZL+YFH0LHsn3YdNhaBRHg31Udc8RGO9hhGP
+	 ACS4OUlteZXYnX/ph6MiEuNxzDM2IzBach4AZoiJEh3HDnmrvLhaiuWnXRPcAuE0Ky
+	 fV0f4/ZkXOzSjfsA/g8qtmXMhxFyoS8SELtGAFV+7nFbysPia6mut56LWTj/7WorOl
+	 LE3I2TrvDMllw==
+Message-ID: <6e4ef0cc-1695-4956-af27-94ab28a4404b@kernel.org>
+Date: Thu, 7 Nov 2024 10:35:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the watchdog tree with the
- samsung-krzk tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>
-Cc: Byoungtae Cho <bt.cho@samsung.com>, Guenter Roeck <linux@roeck-us.net>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Sunyeal Hong <sunyeal.hong@samsung.com>, Taewan Kim
- <trunixs.kim@samsung.com>, Wim Van Sebroeck <wim@linux-watchdog.org>
-References: <20241107165933.3e8b5af5@canb.auug.org.au>
+Subject: Re: [PATCH v3 3/4] dt-bindings: PCI: qcom,pcie-sa8255p: Document ECAM
+ compliant PCIe root complex
+To: Mayank Rana <quic_mrana@quicinc.com>, jingoohan1@gmail.com,
+ manivannan.sadhasivam@linaro.org, will@kernel.org, lpieralisi@kernel.org,
+ kw@linux.com, robh@kernel.org, bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_krichai@quicinc.com
+References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
+ <20241106221341.2218416-4-quic_mrana@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,30 +103,42 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241107165933.3e8b5af5@canb.auug.org.au>
+In-Reply-To: <20241106221341.2218416-4-quic_mrana@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2024 06:59, Stephen Rothwell wrote:
-> Hi all,
+On 06/11/2024 23:13, Mayank Rana wrote:
+> On SA8255p, PCIe root complex is managed by firmware using power-domain
+> based handling. This root complex is configured as ECAM compliant.
+> Document required configuration to enable PCIe root complex.
 > 
-> Today's linux-next merge of the watchdog tree got a conflict in:
-> 
->   arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> 
-> between commit:
-> 
->   ef1c2a54cbc7 ("arm64: dts: exynosautov920: add peric1, misc and hsi0/1 clock DT nodes")
-> 
-> from the samsung-krzk tree and commit:
-> 
->   3595a523d043 ("arm64: dts: exynosautov920: add watchdog DT node")
+> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+> ---
+>  .../bindings/pci/qcom,pcie-sa8255p.yaml       | 103 ++++++++++++++++++
 
-The main problem is above patch should have never been taken to watchdog
-tree. I never agreed on that. I never acked it. It is against SoC
-policies which are always requesting entire DTS to go through SoC tree.
+NAK
 
-Please drop the patch from watchdog. Or revert it.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+BTW, you also Cc-ed incorrect addresses :/
 
 Best regards,
 Krzysztof
