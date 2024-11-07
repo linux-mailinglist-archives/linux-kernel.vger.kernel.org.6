@@ -1,185 +1,113 @@
-Return-Path: <linux-kernel+bounces-400117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0610E9C092D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:46:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E618B9C0943
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66729B23C93
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E811C23827
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B7820FABC;
-	Thu,  7 Nov 2024 14:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3EF212F06;
+	Thu,  7 Nov 2024 14:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v+IPHwEv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t9KPoXuB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="HgnlWPA9"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67360D26D;
-	Thu,  7 Nov 2024 14:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550AE20ADDC;
+	Thu,  7 Nov 2024 14:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730990781; cv=none; b=sXnC61e6CHdu4w9POW4UG7+66+OAtyDuITZDnlcJ/znfiuJo4pnwUUoZgHgrkzBq0xQ3EEnFp79S4XqLQBDZDrtozVM/0wSc518OYFTvR/BTNkNfBUIEo+oUd5OYqJ3QGRt5J7Gvk7iiPwJq2un2iHDttVuecMl032Sdsj7XKug=
+	t=1730991023; cv=none; b=p0w62mY8wTcEUl2Q0DF3EypLoKS7Ri3Notyv3kTyJ759ezAs8eie1cCVvA0ZCUGpYNhTvTOcbadf8NOoV1WPTug3ps6bqsMMMyjle+vITU0bLpq4fLJ94SeCp3mpV+QFfGbxd2TrOTjui3EKLccs08F4YzAJ8DPbLbgjnAlpgrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730990781; c=relaxed/simple;
-	bh=xnrJGvrF0iJtEcPBf+JqnEvTtjZFpCqmwFqaKDKfi7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXVigewfDk2rOshOWZvdSwo3H8qVFty3t7mZbbDnyH4os4K4ronaGH8RLWpYE+byaIYWlw8I7KJBeAcyUvAF0SplUKJU5dwO2DnVtU51nHLv5U5OJULaT2cCRRwp7ObBdyjR54utXFRiOWiOO7N2wyA0sXhjOEdEUDWPL08qR18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v+IPHwEv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t9KPoXuB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 7 Nov 2024 15:46:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730990778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lf8IFW1Zxm4tPan11xYmLhqPW8h4IUX94lDCVbtrDPs=;
-	b=v+IPHwEvnCie7SbcViLFuNRQ4M2kuJaGTF9XRybuxDvob5QjTdkbvnqqwOrBT+HwsSYrph
-	CxZOp596XvjPvYmn7x6AWSJu8nd0G5EFqwaMXHeukwN8CPduge3VRkb7nvIufdKP5rQksg
-	FmqIG87RK0pawjvjpLUiZfbR8XnKf0qJUpZ8PqT5C9JFmEAFzyHBLY6BxTKRM6/ZsNqCcz
-	kUyIguaQDzae5AAGv+uiQJJeLNLvRio5VOdF+Au6rN3BaNYXMIafyvFGZNkvzrmbi2Dfve
-	eTqe7sbnd1HXk57CR8cff5U8qhsEImbZaO/U960S8b/n0ujyHaU8qekFm1n3Og==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730990778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lf8IFW1Zxm4tPan11xYmLhqPW8h4IUX94lDCVbtrDPs=;
-	b=t9KPoXuBGnSfUeP/SDa6MKN+xfXZb3TJo8BZ9K40MhNTeaDYlWvkn78bxA0iP/LxdG7/Oy
-	npOd2K9sD0s1iwAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: "Lai, Yi" <yi1.lai@linux.intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
-Message-ID: <20241107144617.MjCWysud@linutronix.de>
-References: <20240624152732.1231678-1-bigeasy@linutronix.de>
- <20240624152732.1231678-3-bigeasy@linutronix.de>
- <Zx9Losv4YcJowaP/@ly-workstation>
- <Zx-B0wK3xqRQsCOS@localhost.localdomain>
- <20241029172126.5XY8vLBH@linutronix.de>
- <20241030140721.pZzb9D-u@linutronix.de>
- <ZyJUzhzHGDu5CLdi@localhost.localdomain>
+	s=arc-20240116; t=1730991023; c=relaxed/simple;
+	bh=3O72Z+3ro0YdY4QPvLsYsBDWaP5dAZLcJHG4CDkfOL0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KCocm/HO79NxUKab+FqrlBuPIFsW8UxDzEKGcwmwFHO6rnpM8GNFWBGWGVlofjOSaTjUhvg/F15DrVXsMWuzcQIS1jSJT4ZWoVCcYBh4t1skyd87hYAzg0fFa0Kac2Z4YTVt2lU6RedZ1xcLvbcM4PranVR3kr/UEEi6R0grvMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=HgnlWPA9; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7BUge3024535;
+	Thu, 7 Nov 2024 15:50:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=lgjTU7mFnOg/SBXD0HtS+z
+	UHuNPPBH2haMWI1pZhhns=; b=HgnlWPA96eHXz3S4FZAHm3+T+EFIJmDLiRoMcv
+	NmgrgaaUPXqqzaz0hQrQAFAKaZEtSp9VDEaGS7T3X+UohfzQSk5fmMCg5yV+72zw
+	524zAgOu6ukTT9FY/kBIuUu27QuvHUCILUlfC1x8dy/bNOWz8Bs3bxObxrkHPaNZ
+	WzUAWpNB0blG4IwYsUQBpOQW1mAB/+4w/HD2UWalKiIo4pP80bMqutcYpLkeuk7e
+	P/MSgVhQwup0QfFzJYc0RKlFRJCPh/TPuEbfZuQcswD9ihocbwOPfydG8LJNEiNn
+	EloRXtEn7tFkkx18ZXbYQIqmJ/GSMxJdofbE/DD9t9hS+3BA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42nd05q0mn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 15:50:08 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5CFD84002D;
+	Thu,  7 Nov 2024 15:48:29 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7D3482BA0A7;
+	Thu,  7 Nov 2024 15:47:36 +0100 (CET)
+Received: from localhost (10.48.86.132) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 7 Nov
+ 2024 15:47:36 +0100
+From: Olivier Moysan <olivier.moysan@foss.st.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/2] ASoC: stm32: i2s: add stm32mp25 support
+Date: Thu, 7 Nov 2024 15:47:10 +0100
+Message-ID: <20241107144712.1305638-1-olivier.moysan@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZyJUzhzHGDu5CLdi@localhost.localdomain>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 2024-10-30 16:46:22 [+0100], Frederic Weisbecker wrote:
-> This needs more thoughts. We must make sure that the parent is put _after_
-> the child because it's dereferenced on release, for example:
-=E2=80=A6
-> put_event()
->    free_event()
->       irq_work_sync(&event->pending_irq);
->       =3D=3D=3D=3D> IRQ or irq_workd
->       perf_event_wakeup()
->          ring_buffer_wakeup()
-> 	    event =3D event->parent;
-> 	    rcu_dereference(event->rb);
->=20
-> And now after this patch it's possible that this happens after
-> the parent has been released.
->=20
-> We could put the parent from the child's free_event() but some
-> places (inherit_event()) may call free_event() on a child without
-> having held a reference to the parent.
->=20
-> Also note that with this patch the task may receive late irrelevant
-> signals after the event is removed. It's probably not that bad but
-> still... This could be a concern for exec(), is there a missing
-> task_work_run() there before flush_signal_handlers()?
+Update STM32 I2S driver and binding to support STM32MP25 SoCs.
 
-So if this causes so much pain, what about taking only one item at a
-item? The following passes the test, too:
+Changes in v2:
+- Rearrange clocks and clock-names ranges depending on compatible.
 
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index c969f1f26be58..fc796ffddfc74 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -206,7 +206,7 @@ bool task_work_cancel(struct task_struct *task, struct =
-callback_head *cb)
- void task_work_run(void)
- {
- 	struct task_struct *task =3D current;
--	struct callback_head *work, *head, *next;
-+	struct callback_head *work, *head;
-=20
- 	for (;;) {
- 		/*
-@@ -214,17 +214,7 @@ void task_work_run(void)
- 		 * work_exited unless the list is empty.
- 		 */
- 		work =3D READ_ONCE(task->task_works);
--		do {
--			head =3D NULL;
--			if (!work) {
--				if (task->flags & PF_EXITING)
--					head =3D &work_exited;
--				else
--					break;
--			}
--		} while (!try_cmpxchg(&task->task_works, &work, head));
--
--		if (!work)
-+		if (!work && !(task->flags & PF_EXITING))
- 			break;
- 		/*
- 		 * Synchronize with task_work_cancel_match(). It can not remove
-@@ -232,13 +222,24 @@ void task_work_run(void)
- 		 * But it can remove another entry from the ->next list.
- 		 */
- 		raw_spin_lock_irq(&task->pi_lock);
-+		do {
-+			head =3D NULL;
-+			if (work) {
-+				head =3D READ_ONCE(work->next);
-+			} else {
-+				if (task->flags & PF_EXITING)
-+					head =3D &work_exited;
-+				else
-+					break;
-+			}
-+		} while (!try_cmpxchg(&task->task_works, &work, head));
- 		raw_spin_unlock_irq(&task->pi_lock);
-=20
--		do {
--			next =3D work->next;
--			work->func(work);
--			work =3D next;
-+		if (!work)
-+			break;
-+		work->func(work);
-+
-+		if (head)
- 			cond_resched();
--		} while (work);
- 	}
- }
+Olivier Moysan (2):
+  ASoC: dt-bindings: add stm32mp25 support for i2s
+  ASoC: stm32: i2s: add stm32mp25 support
 
-Sebastian
+ .../bindings/sound/st,stm32-i2s.yaml          |  36 ++-
+ sound/soc/stm/stm32_i2s.c                     | 211 ++++++++++++++++--
+ 2 files changed, 222 insertions(+), 25 deletions(-)
+
+
+base-commit: 2fd094b86c8ae266b618359e4154ab94e806a412
+-- 
+2.25.1
+
 
