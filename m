@@ -1,116 +1,199 @@
-Return-Path: <linux-kernel+bounces-400079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2248E9C08AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:17:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D72A9C08B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:17:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1081F24207
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:17:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 681151C22142
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D848D212D08;
-	Thu,  7 Nov 2024 14:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYiCvvep"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02517212F0B;
+	Thu,  7 Nov 2024 14:17:29 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B56212634;
-	Thu,  7 Nov 2024 14:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97627212D0A
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730989036; cv=none; b=t8LCRDcKOzVR/nC+qJ2tnl9SQSe6pIyA52N9OS62VLZv7Tpd02z8t9jzK+dW+t5UgATrqNDtIYZC8bQeDIzyw9llnI6P3TAskMVV7D4kMm1w0eIanRxJvaok7JBlAIyU+vEOfgQ0y7JQfTMO0vwjR59Gk5t5uoIcCHIcdcrSvNo=
+	t=1730989048; cv=none; b=O30bnUGCjFrCqEKWNmXvBrsqjxMA1vuXBVeDLvniSLgFSWPjCupl/GgyuLya3K9tNAjXgb7D5AadW25V6PeqeACrlSGuq5Pe216UNzNeegiTSKzWMfnEACtvZ8M09d4K5/M1EXCdayrbxA+wq5fiX9i9RLz9vH2nos1g9AOGKZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730989036; c=relaxed/simple;
-	bh=1ZeCVZgPH/kOnyaxWlMqGKsZACS9tx+o+cY6bqcmEN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsF9bPgEDQadHVQEWAEoDSOzew02jS3CTI6JflvKUom2ryBR+13gRr+C1SUH9AyksdrXLx5mixpsQQRdOXuZkke+FL0GzEf83We9Qt18cIG7++jHEg0fD0sNJk8Whrm7s9cnvMqDHwfGdA1xlwNlo5Va3Sn0Isj52OgsljjRGN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYiCvvep; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBBC1C4CECC;
-	Thu,  7 Nov 2024 14:17:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730989035;
-	bh=1ZeCVZgPH/kOnyaxWlMqGKsZACS9tx+o+cY6bqcmEN8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=cYiCvvepTtsyaQnS8aP05ZyqWvA+pOcOfzehGXa+MMeyGDdVCXgY12+VIaU8XoGQl
-	 LvKWvXqqy8HviYjqiNtLNIv7LmmCqLO5iJ1iCMOB1KHeesodEeLQ1Rf+t8oq/Sk3we
-	 419kvRhHtBhUwVQiXc3EcuBB7k4pLkLFTT1S86oXqeSU/FUshh0YkWF/B3u1GEIom4
-	 NS9fhkCSVX1CxYE7BAfAzGf4OzRTh8HnPGyRhTZAkW4+awed/tPhLGNWC7eo8YpZh+
-	 nY8RLFCefOnpxgZw3B+N/iBUYb6NTWosvpZQ8QE6QxHrbhgf1YnAX6ANftYJFIZpG6
-	 ZqoVQdE5tKFhA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7A316CE09F6; Thu,  7 Nov 2024 06:17:15 -0800 (PST)
-Date: Thu, 7 Nov 2024 06:17:15 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
-	Frederic Weisbecker <frederic@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [paulmckrcu:dev.2024.11.01a] [rcutorture] 622baf5d79:
- WARNING:at_kernel/rcu/rcutorture.c:#rcutorture_one_extend_check[rcutorture]
-Message-ID: <0e7a3c71-d62f-46d9-95c6-ab908e35c275@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202411051012.f9224879-lkp@intel.com>
- <1092459d-48e2-4839-a84d-c38d96fa2a36@paulmck-laptop>
- <ZyxeC9WVcbdTAu0x@xsang-OptiPlex-9020>
- <7b36e5d1-e936-41af-aa2b-9b0cd102f341@paulmck-laptop>
- <ZyzJa9tR0503k70s@xsang-OptiPlex-9020>
+	s=arc-20240116; t=1730989048; c=relaxed/simple;
+	bh=Jmsjnvo/mYhQC6p51aohBQRVSe8tJbufYbklqjr+kb4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Bcd2BwD+NHEOZSBkYugCFvGdMfLWowdetU5at1bFgWT5nvcNqMBg3VGbVT8yl6vcImhGtK8YSC975kJeyohsGcXidPP0ZJblUqk9x/V3KMIWr2q0CbdbfeA2g+oBV+VAxMrkpJIYFml8E2qNjoXbfIh5oB0YrDtUAChgv09kCtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3ba4fcf24so13300855ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 06:17:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730989046; x=1731593846;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PxSOewJNrcE57wGsLs4ZbSOd88D1xzAGk/SbXSI7wJ8=;
+        b=NfkKPWAosGt6Rcn8GhmQ16KYpWXV2mpC9hxpIEHK0npYCeGx73BC+Ba6RdSxvs9WKV
+         1JshdZfvmhl+S67SmoVof4+qZJQl8XT1ywCCsqyidG/A1ya/RoamFAagrGvHygjbkSkM
+         IBl5EgEXx5fmW9OUzWMK5Zb4XUT70wqDOkFzTZyoy4whYxkdVT7jUVIcnGRHs78I/bot
+         TQrtUA6iG/vvW9mElK+NWegnS/+ivaPRYQmYZiiFRWIhtG4M6k8T6vZAzWKMJOXM1LfC
+         HWbH6KGNSM7ndg20n62rNKgMZXy1FRA8phb/HgUOIDmB/3TiDVtOZ/CI9AZmQGdnGRUL
+         VlGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnDDySfxhXiE3Ymsj/p6Jh4ieBxZP4oP35ZRbLF9CksXSiRPJSGAGot7pKx645AlL01oNjl9r6anzybiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBdrUdPKf4W6bRcda/Q9+hoiuRyPC/Vw9d3Hn7FJSBpopqt9HJ
+	yslDVV/kBn9GFVHgtoazhby0C9Mrrw6RuQJFI+zBAT0jO0lplQHUlYBw8rtUtf7ZooiR5HYFj5U
+	fhsaSMwDkJibT5RgrXgovk5SLwK865Rl3kfjcgKlOTAryzFWCvwg9DGk=
+X-Google-Smtp-Source: AGHT+IGhyMeR1NYKxyYHUkVYHHSy5c8l2ZIoxS9lnMoGNm6PPCmWmfWStIRg7+4grNGm1xsAFSNLjgagDhcLL2kcLC9Ytb9+8Oox
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyzJa9tR0503k70s@xsang-OptiPlex-9020>
+X-Received: by 2002:a05:6e02:148e:b0:3a6:b0d0:ee2d with SMTP id
+ e9e14a558f8ab-3a6f0945f80mr1451815ab.9.1730989045710; Thu, 07 Nov 2024
+ 06:17:25 -0800 (PST)
+Date: Thu, 07 Nov 2024 06:17:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672ccbf5.050a0220.35fcc6.0034.GAE@google.com>
+Subject: [syzbot] [net?] [s390?] general protection fault in __smc_diag_dump (3)
+From: syzbot <syzbot+271fed3ed6f24600c364@syzkaller.appspotmail.com>
+To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
+	edumazet@google.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 07, 2024 at 10:06:35PM +0800, Oliver Sang wrote:
-> hi, Paul,
-> 
-> On Thu, Nov 07, 2024 at 06:01:15AM -0800, Paul E. McKenney wrote:
-> > On Thu, Nov 07, 2024 at 02:28:27PM +0800, Oliver Sang wrote:
-> > > hi, Paul,
-> > > 
-> > > On Wed, Nov 06, 2024 at 12:07:37PM -0800, Paul E. McKenney wrote:
-> > > > On Tue, Nov 05, 2024 at 01:00:53PM +0800, kernel test robot wrote:
-> > > > > 
-> > > > > 
-> > > > > Hello,
-> > > > > 
-> > > > > kernel test robot noticed "WARNING:at_kernel/rcu/rcutorture.c:#rcutorture_one_extend_check[rcutorture]" on:
-> > > > > 
-> > > > > commit: 622baf5d79169496973d50fc43636469e6af02b7 ("rcutorture: Make rcutorture_one_extend() check reader state")
-> > > > > https://github.com/paulmckrcu/linux dev.2024.11.01a
-> > > > 
-> > > > This is an old commit that failed to handle any torture_type other than
-> > > > "rcu", including the "srcu" that you tested with.  It has since been
-> > > > replaced by a series of newer commits fixing this and other bugs, with
-> > > > the current version here:
-> > > > 
-> > > > c815d319a933 ("rcutorture: Make rcutorture_one_extend() check reader state")
-> > > > 
-> > > > Does this one work for you?
-> > > 
-> > > yes, this one works. issue gone when we run same test case up to 20 times.
-> > > 
-> > > d5e74d8e46e8e45c 622baf5d79169496973d50fc436 c815d319a9331530032be3df69c
-> > > ---------------- --------------------------- ---------------------------
-> > >        fail:runs  %reproduction    fail:runs  %reproduction    fail:runs
-> > >            |             |             |             |             |
-> > >            :6          100%           6:6            0%            :20    dmesg.EIP:rcutorture_one_extend_check
-> > >            :6          100%           6:6            0%            :20    dmesg.WARNING:at_kernel/rcu/rcutorture.c:#rcutorture_one_extend_check[rcutorture]
-> > 
-> > Again, thank you!  Would you like me to apply your Tested-by to the
-> > resulting commit?
-> 
-> sure! thanks
-> 
-> Tested-by: kernel test robot <oliver.sang@intel.com>
+Hello,
 
-Thank you again, and I will apply this on my next rebase.
+syzbot found the following issue on:
 
-							Thanx, Paul
+HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1480ca5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1673a5aaa7e19b23
+dashboard link: https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c38287980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b0d0a7980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/df7d94abc0db/disk-c2ee9f59.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1945eac19921/vmlinux-c2ee9f59.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/19b610273055/bzImage-c2ee9f59.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+271fed3ed6f24600c364@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000002c03: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: probably user-memory-access in range [0x0000000000016018-0x000000000001601f]
+CPU: 1 UID: 0 PID: 5244 Comm: syz-executor189 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+RIP: 0010:__smc_diag_dump.constprop.0+0x3e2/0x2500 net/smc/smc_diag.c:89
+Code: 4c 8b b3 58 05 00 00 4d 85 f6 0f 84 f6 02 00 00 e8 63 55 d2 f6 49 8d 7e 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 86 1c 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffffc90003467160 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffff88802f600000 RCX: ffffffff88fe4534
+RDX: 0000000000002c03 RSI: ffffffff8aba62ed RDI: 0000000000016018
+RBP: ffff88802f13c5e0 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000001 R11: 00000000000a2001 R12: 0000000000000000
+R13: ffff888011d50000 R14: 0000000000016000 R15: 0000000000000002
+FS:  00007f3a23bc56c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000140 CR3: 0000000029904000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
+ smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
+ netlink_dump+0x552/0xcc0 net/netlink/af_netlink.c:2326
+ __netlink_dump_start+0x6d9/0x980 net/netlink/af_netlink.c:2441
+ netlink_dump_start include/linux/netlink.h:339 [inline]
+ smc_diag_handler_dump+0x1fb/0x240 net/smc/smc_diag.c:251
+ __sock_diag_cmd net/core/sock_diag.c:249 [inline]
+ sock_diag_rcv_msg+0x437/0x790 net/core/sock_diag.c:287
+ netlink_rcv_skb+0x165/0x410 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg net/socket.c:744 [inline]
+ ____sys_sendmsg+0x9ae/0xb40 net/socket.c:2607
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2661
+ __sys_sendmsg+0x117/0x1f0 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3a23c170d9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 1f 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3a23bc5238 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f3a23c9b408 RCX: 00007f3a23c170d9
+RDX: 000000000400c000 RSI: 0000000020000140 RDI: 0000000000000003
+RBP: 00007f3a23c9b400 R08: 00007f3a23bc56c0 R09: 00007f3a23bc56c0
+R10: 00007f3a23bc56c0 R11: 0000000000000246 R12: 00007f3a23c9b40c
+R13: 0000000000000010 R14: 00007ffe883f4f60 R15: 00007ffe883f5048
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+RIP: 0010:__smc_diag_dump.constprop.0+0x3e2/0x2500 net/smc/smc_diag.c:89
+Code: 4c 8b b3 58 05 00 00 4d 85 f6 0f 84 f6 02 00 00 e8 63 55 d2 f6 49 8d 7e 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 86 1c 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffffc90003467160 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffff88802f600000 RCX: ffffffff88fe4534
+RDX: 0000000000002c03 RSI: ffffffff8aba62ed RDI: 0000000000016018
+RBP: ffff88802f13c5e0 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000001 R11: 00000000000a2001 R12: 0000000000000000
+R13: ffff888011d50000 R14: 0000000000016000 R15: 0000000000000002
+FS:  00007f3a23bc56c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000140 CR3: 0000000029904000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	4c 8b b3 58 05 00 00 	mov    0x558(%rbx),%r14
+   7:	4d 85 f6             	test   %r14,%r14
+   a:	0f 84 f6 02 00 00    	je     0x306
+  10:	e8 63 55 d2 f6       	call   0xf6d25578
+  15:	49 8d 7e 18          	lea    0x18(%r14),%rdi
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 86 1c 00 00    	jne    0x1cba
+  34:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  3b:	fc ff df
+  3e:	4d                   	rex.WRB
+  3f:	8b                   	.byte 0x8b
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
