@@ -1,110 +1,291 @@
-Return-Path: <linux-kernel+bounces-400352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A47D9C0C4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:05:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150949C0C59
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D180A281F19
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97CFE1F253BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BA12185AE;
-	Thu,  7 Nov 2024 17:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DB62194B7;
+	Thu,  7 Nov 2024 17:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="kEDdVhZX"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bCqqahRH"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54166217F29;
-	Thu,  7 Nov 2024 17:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAFA217F59;
+	Thu,  7 Nov 2024 17:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730998989; cv=none; b=OZQcCxDOZChnhOVsMlkHmhmodvB/TRUyf+V1PxcOp55KO5kcxOQFPT3WKbgaUkTOlHewn+AcYfI2WcQvo91v7WjImBqQSMP284KG/cxAfuk7LUYPDIOKqIN0eTuMjBEa+zEzKMBN6g8WThI8jACGDv5ys/G30aDd9Ezb9gLr390=
+	t=1730998991; cv=none; b=DcCNq5jlLHmpCEPKtfkcfyEl4WAVK0erBkZdA94HRNoVzck4u/IcAWp52vnJXq6NAnmbNvbzBxi8E2Cvfau/7EvHkun7JcAHju1rBIyDBkp/uuoSL3b8VrX/ME7duWn7301VgjxUxUkgp9TXVvh0iNRriBC+u7AEWlo1D4leMCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730998989; c=relaxed/simple;
-	bh=HpsJRRqcEB7ubb20AIGzwyE59bS3PSN7BTK6n02gdPE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=toq5o8fPic6WL/1r3p8xLtxYAv1xTL7whw+q9YpmqMAtvWmz0wSTd9TWhLdrKn4aBPktnWeWzWu67lxA+4qYPLPTk2HiK0HwCdMhBUq+Ju+gyj0D2V4hmV2gwzBWLonIyvcZJdiJPurPDmSV25rt6nRYBMxtVGHlcXxjUtjNVk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=kEDdVhZX; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.118.162] (254C2715.nat.pool.telekom.hu [37.76.39.21])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 7F515E45BA;
-	Thu,  7 Nov 2024 17:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1730998984;
+	s=arc-20240116; t=1730998991; c=relaxed/simple;
+	bh=TGSgG8gr771S5yQR36PuqiSZvpyrD5H+zrJl8lWCzSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NC7dze6GPoXhmndFetVz8u8wwydl2esYD6knJ2YJspVtIWQ4kkL7RcPuHNZjU4CAcjLRaVgVKSMxNYh3eb195fgbm9meX3INxwZo/rpgNn7+AxBRfDoVs9BffplotxQ41LvVQ2miENMgVOz2g9tf31VHOxU8Eu2SW/w+VIHnzl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bCqqahRH; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7389124000C;
+	Thu,  7 Nov 2024 17:03:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730998986;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pJVsYRZf77zXzY1oz4aX5qV6KoAi5dZCp6QEtJjBO5E=;
-	b=kEDdVhZXNK78WFQugHEvzi38i6K1hfYYZ5AdcV9j+M1iz6xGKGobgS7XIGs2SUi39dXWqk
-	ZM1bu2VtQZ3QLEZYSWHhKyXPQjCfKxDLHYGB3U4NpbbZW48SOrvnBrnYzCLQWEDK6e6gIy
-	WwhMWAxH8mX5jdbOCaAH9mgmNUN1loArrESxIe+rHCcNyMz/eN9F6EI9DV5qNU45RISNSm
-	TnbeOkC6Um8hzdkISRM3US9LweFRkoDlIzX3D9sAfVTjW4knX5SS5fdIZOzv0HBsNeADQh
-	gBnLIFGGfV8j4+YrEAce8n+4r9CLlsogxBOUYfC4fKZ2eiW/6KtC7szJWx8aqA==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Thu, 07 Nov 2024 18:02:49 +0100
-Subject: [PATCH v3 08/14] dt-bindings: thermal: tsens: Add MSM8937
+	bh=/OIHtLMZkxEV/Oyp2/QAah8NX9N1TbK+edYr1szDhOY=;
+	b=bCqqahRHO3JrBHh0x5HoXxqlYj//i5bNSpDBjfSKwzFm+tGGoyHFpGD4EYGZSvuVL0ZFdv
+	YIZHrOBOznb7CJfampH2O+YsYz9n4o8YJPiN7JzEf3xEOo9TqPyRBGvkSfkIkbCLaOL75y
+	PoQYwQ/sql87eqggXFPV1XPkWqEnK5PQaF1J5EpGmbTkLSk/crJxLzHnNemtB4WREsIRMa
+	K+tJdyXshnzHykX3CmGE+kYYJUw8PkCNzjuOFGyPi3mtgpH9G/hGzbSxespwJKDf7Wocjj
+	mFl9MZ4n0C2cAWxAzNsrXYav0IP0+0YTGqRoyHBMpA54hpx9r8YSC3k29S4gBg==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Herve Codina <herve.codina@bootlin.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH net-next 2/7] net: freescale: ucc_geth: split adjust_link for phylink conversion
+Date: Thu,  7 Nov 2024 18:02:49 +0100
+Message-ID: <20241107170255.1058124-3-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
+References: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241107-msm8917-v3-8-6ddc5acd978b@mainlining.org>
-References: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
-In-Reply-To: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730998970; l=935;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=HpsJRRqcEB7ubb20AIGzwyE59bS3PSN7BTK6n02gdPE=;
- b=cGwGyNO8XN/GQLArpKASfGZHiyWTyIaZIA9bC6H45VQ+wd4cQHvoxBAWGmxbKjQI31v4j5AXu
- cmLOT5488zlBVLWP4B6GTFpqYlaixsNUS8PTl9Ako2h9s45FHMAnEFn
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Document the compatible string for tsens v1.4 block found in MSM8937.
+Preparing the phylink conversion, split the adjust_link callbaclk, by
+clearly separating the mac configuration, link_up and link_down phases.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/freescale/ucc_geth.c | 180 +++++++++++-----------
+ 1 file changed, 93 insertions(+), 87 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-index a12fddc8195500a0e7bdd51952a558890b35935c..f51656b672030b12ea0405fd392af11056093be7 100644
---- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-+++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-@@ -39,6 +39,7 @@ properties:
-       - description: v1 of TSENS
-         items:
-           - enum:
-+              - qcom,msm8937-tsens
-               - qcom,msm8956-tsens
-               - qcom,msm8976-tsens
-               - qcom,qcs404-tsens
-
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index 80540c817c4e..6286cd185a35 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -1548,105 +1548,111 @@ static void ugeth_activate(struct ucc_geth_private *ugeth)
+ 	__netdev_watchdog_up(ugeth->ndev);
+ }
+ 
+-/* Called every time the controller might need to be made
+- * aware of new link state.  The PHY code conveys this
+- * information through variables in the ugeth structure, and this
+- * function converts those variables into the appropriate
+- * register values, and can bring down the device if needed.
+- */
+-
+-static void adjust_link(struct net_device *dev)
++static void ugeth_link_up(struct ucc_geth_private *ugeth,
++			  struct phy_device *phy,
++			  phy_interface_t interface, int speed, int duplex)
+ {
+-	struct ucc_geth_private *ugeth = netdev_priv(dev);
+-	struct ucc_geth __iomem *ug_regs;
+-	struct ucc_fast __iomem *uf_regs;
+-	struct phy_device *phydev = ugeth->phydev;
++	struct ucc_geth __iomem *ug_regs = ugeth->ug_regs;
++	struct ucc_fast __iomem *uf_regs = ugeth->uccf->uf_regs;
++	u32 tempval = in_be32(&ug_regs->maccfg2);
++	u32 upsmr = in_be32(&uf_regs->upsmr);
+ 	int new_state = 0;
+ 
+-	ug_regs = ugeth->ug_regs;
+-	uf_regs = ugeth->uccf->uf_regs;
+-
+-	if (phydev->link) {
+-		u32 tempval = in_be32(&ug_regs->maccfg2);
+-		u32 upsmr = in_be32(&uf_regs->upsmr);
+-		/* Now we make sure that we can be in full duplex mode.
+-		 * If not, we operate in half-duplex mode. */
+-		if (phydev->duplex != ugeth->oldduplex) {
+-			new_state = 1;
+-			if (!(phydev->duplex))
+-				tempval &= ~(MACCFG2_FDX);
+-			else
+-				tempval |= MACCFG2_FDX;
+-			ugeth->oldduplex = phydev->duplex;
+-		}
++	/* Now we make sure that we can be in full duplex mode.
++	 * If not, we operate in half-duplex mode.
++	 */
++	if (duplex != ugeth->oldduplex) {
++		new_state = 1;
++		if (duplex == DUPLEX_HALF)
++			tempval &= ~(MACCFG2_FDX);
++		else
++			tempval |= MACCFG2_FDX;
++		ugeth->oldduplex = duplex;
++	}
+ 
+-		if (phydev->speed != ugeth->oldspeed) {
+-			new_state = 1;
+-			switch (phydev->speed) {
+-			case SPEED_1000:
+-				tempval = ((tempval &
+-					    ~(MACCFG2_INTERFACE_MODE_MASK)) |
+-					    MACCFG2_INTERFACE_MODE_BYTE);
+-				break;
+-			case SPEED_100:
+-			case SPEED_10:
+-				tempval = ((tempval &
+-					    ~(MACCFG2_INTERFACE_MODE_MASK)) |
+-					    MACCFG2_INTERFACE_MODE_NIBBLE);
+-				/* if reduced mode, re-set UPSMR.R10M */
+-				if ((ugeth->phy_interface == PHY_INTERFACE_MODE_RMII) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_ID) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RTBI)) {
+-					if (phydev->speed == SPEED_10)
+-						upsmr |= UCC_GETH_UPSMR_R10M;
+-					else
+-						upsmr &= ~UCC_GETH_UPSMR_R10M;
+-				}
+-				break;
+-			default:
+-				if (netif_msg_link(ugeth))
+-					pr_warn(
+-						"%s: Ack!  Speed (%d) is not 10/100/1000!",
+-						dev->name, phydev->speed);
+-				break;
++	if (speed != ugeth->oldspeed) {
++		new_state = 1;
++		switch (speed) {
++		case SPEED_1000:
++			tempval = ((tempval &
++				    ~(MACCFG2_INTERFACE_MODE_MASK)) |
++				    MACCFG2_INTERFACE_MODE_BYTE);
++			break;
++		case SPEED_100:
++		case SPEED_10:
++			tempval = ((tempval &
++				    ~(MACCFG2_INTERFACE_MODE_MASK)) |
++				    MACCFG2_INTERFACE_MODE_NIBBLE);
++			/* if reduced mode, re-set UPSMR.R10M */
++			if (interface == PHY_INTERFACE_MODE_RMII ||
++			    phy_interface_mode_is_rgmii(interface) ||
++			    interface == PHY_INTERFACE_MODE_RTBI) {
++				if (speed == SPEED_10)
++					upsmr |= UCC_GETH_UPSMR_R10M;
++				else
++					upsmr &= ~UCC_GETH_UPSMR_R10M;
+ 			}
+-			ugeth->oldspeed = phydev->speed;
++			break;
++		default:
++			if (netif_msg_link(ugeth))
++				pr_warn("%s:  Speed (%d) is not 10/100/1000!",
++					netdev_name(ugeth->ndev), speed);
++			break;
+ 		}
++		ugeth->oldspeed = speed;
++	}
+ 
+-		if (!ugeth->oldlink) {
+-			new_state = 1;
+-			ugeth->oldlink = 1;
+-		}
++	if (!ugeth->oldlink) {
++		new_state = 1;
++		ugeth->oldlink = 1;
++	}
+ 
+-		if (new_state) {
+-			/*
+-			 * To change the MAC configuration we need to disable
+-			 * the controller. To do so, we have to either grab
+-			 * ugeth->lock, which is a bad idea since 'graceful
+-			 * stop' commands might take quite a while, or we can
+-			 * quiesce driver's activity.
+-			 */
+-			ugeth_quiesce(ugeth);
+-			ugeth_disable(ugeth, COMM_DIR_RX_AND_TX);
++	if (new_state) {
++		/*
++		 * To change the MAC configuration we need to disable
++		 * the controller. To do so, we have to either grab
++		 * ugeth->lock, which is a bad idea since 'graceful
++		 * stop' commands might take quite a while, or we can
++		 * quiesce driver's activity.
++		 */
++		ugeth_quiesce(ugeth);
++		ugeth_disable(ugeth, COMM_DIR_RX_AND_TX);
+ 
+-			out_be32(&ug_regs->maccfg2, tempval);
+-			out_be32(&uf_regs->upsmr, upsmr);
++		out_be32(&ug_regs->maccfg2, tempval);
++		out_be32(&uf_regs->upsmr, upsmr);
+ 
+-			ugeth_enable(ugeth, COMM_DIR_RX_AND_TX);
+-			ugeth_activate(ugeth);
+-		}
+-	} else if (ugeth->oldlink) {
+-			new_state = 1;
+-			ugeth->oldlink = 0;
+-			ugeth->oldspeed = 0;
+-			ugeth->oldduplex = -1;
++		ugeth_enable(ugeth, COMM_DIR_RX_AND_TX);
++		ugeth_activate(ugeth);
+ 	}
+ 
+-	if (new_state && netif_msg_link(ugeth))
+-		phy_print_status(phydev);
++	if (netif_msg_link(ugeth))
++		phy_print_status(phy);
++}
++
++static void ugeth_link_down(struct ucc_geth_private *ugeth)
++{
++	ugeth->oldlink = 0;
++	ugeth->oldspeed = 0;
++	ugeth->oldduplex = -1;
++}
++
++/* Called every time the controller might need to be made
++ * aware of new link state.  The PHY code conveys this
++ * information through variables in the ugeth structure, and this
++ * function converts those variables into the appropriate
++ * register values, and can bring down the device if needed.
++ */
++
++static void adjust_link(struct net_device *dev)
++{
++	struct ucc_geth_private *ugeth = netdev_priv(dev);
++	struct phy_device *phydev = ugeth->phydev;
++
++	if (phydev->link)
++		ugeth_link_up(ugeth, phydev, phydev->interface,
++			      phydev->speed, phydev->duplex);
++	else
++		ugeth_link_down(ugeth);
+ }
+ 
+ /* Initialize TBI PHY interface for communicating with the
 -- 
 2.47.0
 
