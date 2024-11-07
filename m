@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-399805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7490A9C046C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:45:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A00049C0472
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FD82830DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:45:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52566282CA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D4B20E317;
-	Thu,  7 Nov 2024 11:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E857E20ADCE;
+	Thu,  7 Nov 2024 11:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pf/XT8Qy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="baIei2VM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B9D20C488;
-	Thu,  7 Nov 2024 11:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C755815B0F2
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730979866; cv=none; b=m6jETGb7A/8wOTt7rzT67YmQS3xhyxXK2/15nWjaVaexbVeJYtyCZjo2sdxAEfRXmXcZ+cmnwjrFyv9IyIQDI/mOUlkLIDnt1OOjmMBx5NhbwpGIryIui2M4gGdMx013mewKglEgVFBE4p0QqW6tS1a4w4ADbbcWV8ADz3mM3YE=
+	t=1730979958; cv=none; b=EcGnJcCmcq+YZ/YZy7P/asYDiMfmvMFlIRlTdWB1HqTCGMqcGaOIlJ5GqyEbfRwOPmHE3T17egovaZf6U4d+7JX63Ato/WMaIApe57nrJZMTqKiESXabMPstdN8pVsiAnEqHl6ht0wIWTJCyH+8LymBp0TiD8EwVmjNeh4rjk44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730979866; c=relaxed/simple;
-	bh=We1tizgp6+CrhO05WmQLAXoXUBOb6hkJgmh4mu+qU9c=;
+	s=arc-20240116; t=1730979958; c=relaxed/simple;
+	bh=8o4ZlsbN/83dpA2r6AFMzSLTgFmivq5iT0OHld+yKi8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t152KXSLohd/MUaV8qIs/39/j00sdLHC31RkmoEjSSI9KFjzb3aw8CqWh7b/GRAPAmjqwwKMDCS0SBosqXtkTaYx+UelIHueZv4blPul6QIZEDfRDXYq4LFbUitbZwFNsA6obbIEiwF1GLDf6biXxgcguWoFNo+fMRo6V/vXnVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pf/XT8Qy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F33ADC4CECC;
-	Thu,  7 Nov 2024 11:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730979865;
-	bh=We1tizgp6+CrhO05WmQLAXoXUBOb6hkJgmh4mu+qU9c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Pf/XT8QyNRsFfDEr9bG5jPCQ/LjbX1QPgoS34/4L8YtytTAEW4/NlNYGT2DsCf/Yx
-	 ZKv5PqJi5i154oBu2csLqKqA9VTwTjQe7a0HTy5k7PyXSy1PrImZFbJMUNhDjmGqju
-	 2mcmNYFcd6n9le9QWtmm8b1ZVYV3eRWdhcVFjW/uPxh3gFesZPnHL4c2gdqOU6nalg
-	 hCIL07XPKA/DdOep2ml4TB021pHM7qF/OfHva1VMtlYAWQ5kvY4PxnonGD9wOFJxFa
-	 6lR7aVldCVL1lIDxFKhyjbkqWpqlk1IG1pZRsGt55H41Km80IXomChro/ZObN+kgz6
-	 vn9sjhwSqwscA==
-Message-ID: <2c368f5a-4b58-45de-8140-21b2f7af4d12@kernel.org>
-Date: Thu, 7 Nov 2024 12:44:17 +0100
+	 In-Reply-To:Content-Type; b=lEgCZa7t9zWv3VMHRvn2X0cgOn2fYDbiu3lYBNFEI/jE/M1qywtCVYu6mH5/siC47Nd9/q6cvTTHnf7EqZzQlIVrudBCGL2JoO8SD98YwAqiiFN6rULlgyR5Gdmb/jSvZpgeBk/zN2+mpA0NPCQhblmkaIUNTAURW1IkhtkrWdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=baIei2VM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730979955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8bCnP9403Z99+tF9uquHAPYB7nlg8pf/oQAUghnzYyc=;
+	b=baIei2VM3gne+xv8Cx1NbOwq4qFw8AJlGEbe0xEAN/sAYS5eOXRFIQBXhWlVVsY/RBv13H
+	iBtgG5YwUAs+LLX895J7lIMlK9ASpgzsyLLyrK5YSXhffMdiaxCG/YpobLNfmFJnUGyUWN
+	Xdt064Z+cYz0y6z8pqA2Pp6R4vWV9vg=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-362-429bbWj7PG-RCzvpoViy1w-1; Thu, 07 Nov 2024 06:45:54 -0500
+X-MC-Unique: 429bbWj7PG-RCzvpoViy1w-1
+X-Mimecast-MFC-AGG-ID: 429bbWj7PG-RCzvpoViy1w
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a99fd71e777so75416966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 03:45:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730979951; x=1731584751;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8bCnP9403Z99+tF9uquHAPYB7nlg8pf/oQAUghnzYyc=;
+        b=PvLuKBZsSJIkODy1T8VXKABuA32xs5q/GzTwkV/NyRt+LXbwhXIqAmJ+J7Tg/nOdbK
+         Ac8HtGP/JA23bDSvbkNRlTpb3JBCvaxi2CCx/0p9zQJY6TiVHjCbxFoS6dwNNN23xRU/
+         RYaWjxmSD6WwLgA6XxX1qu6uocKCRmhnAXozavWccJov8c7SbirdwoKzGZwnn0XxwH8j
+         G0G2yf+NsOEa9u3fe+4/O+l5CrDLT2cWjbi6KdGsAldNL3j6V+Yww2OrkgCBH1V0gK73
+         RzP/++0Kp5ognz8AvrAMfIJ5n1HjPQQsdIKJMPR69OeUqH5N1opN+p5jM78ouDKKPi4n
+         p6vA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzVoJpdCo2FjTYFwDhRVZc5MI5VJUEnmn8dh8p9ME6dlCgIP1yWjI5BTa0TZC6NnpjveyND84JvZqVzno=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1L29ZC2cZT4BygC2hK9kOIFUlcPwZT0CpeSN3X4+gKec/Ujfx
+	12OIjvh+M7KGK0w4sosfiiODwQgXmAhNhA71jfgnvOd9nWTOTsGKwjrfT6G6Arj5G78Ouojz6Ep
+	N3HEBtvn10s7mootmpCs02aGeP808Wq7XQQn+dRgx/lTLCu/LtTiuo615yb9aIQ==
+X-Received: by 2002:a17:907:2cc2:b0:a99:f861:ebd with SMTP id a640c23a62f3a-a9ee74bbbd6mr71296566b.14.1730979951521;
+        Thu, 07 Nov 2024 03:45:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGjEa/cDXmsHFDdKP3G1NdW3oe41pc7rWH8MGIDNROSNf6aA07yr12W74sOrI2Q5jzUVRS7iA==
+X-Received: by 2002:a17:907:2cc2:b0:a99:f861:ebd with SMTP id a640c23a62f3a-a9ee74bbbd6mr71292866b.14.1730979951055;
+        Thu, 07 Nov 2024 03:45:51 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4b90esm83709066b.65.2024.11.07.03.45.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 03:45:50 -0800 (PST)
+Message-ID: <028717bf-e10c-4876-9be4-1b41661c447c@redhat.com>
+Date: Thu, 7 Nov 2024 12:45:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,132 +82,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: soc: ti: pruss: Add clocks for ICSSG
-To: MD Danish Anwar <danishanwar@ti.com>, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, ssantosh@kernel.org, nm@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, s-anna@ti.com, kristo@kernel.org, srk@ti.com,
- Roger Quadros <rogerq@kernel.org>
-References: <20241107104557.1442800-1-danishanwar@ti.com>
- <20241107104557.1442800-2-danishanwar@ti.com>
- <7f0a73c3-9977-4d07-b996-683ed18e4724@kernel.org>
- <8156fd61-c476-4b58-b3b2-e8bc4f93035e@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <8156fd61-c476-4b58-b3b2-e8bc4f93035e@ti.com>
+Subject: Re: [PATCH v1 1/1] media: atomisp: Remove License information
+ boilerplate
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Jonathan Bergh <bergh.jonathan@gmail.com>,
+ Roshan Khatri <topofeverest8848@gmail.com>,
+ Dipendra Khadka <kdipendra88@gmail.com>,
+ Sergio de Almeida Cipriano Junior <sergiosacj@riseup.net>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Kartik Kulkarni <kartik.koolks@gmail.com>,
+ Kathara Sasikumar <katharasasikumar007@gmail.com>,
+ Tchadel Icard <hello@tchadelicard.fr>, Kate Hsuan <hpa@redhat.com>,
+ Colin Ian King <colin.i.king@gmail.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Andy Shevchenko <andy@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20240923105539.3569110-1-andriy.shevchenko@linux.intel.com>
+ <20241107123233.495dc548@foz.lan> <20241107124238.694fc4ef@foz.lan>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241107124238.694fc4ef@foz.lan>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2024 12:36, MD Danish Anwar wrote:
+Hi,
+
+On 7-Nov-24 12:42 PM, Mauro Carvalho Chehab wrote:
+> Em Thu, 7 Nov 2024 12:32:33 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 > 
-> 
-> On 07/11/24 5:01 pm, Krzysztof Kozlowski wrote:
->> On 07/11/2024 11:45, MD Danish Anwar wrote:
->>> Add clocks, assigned-clocks and assigned-clock-parents for ICSSG
+>> Em Mon, 23 Sep 2024 13:53:06 +0300
+>> Andy Shevchenko <andriy.shevchenko@linux.intel.com> escreveu:
 >>
->> Why? We see what you are doing from the diff, no point to repeat it. I
->> don't understand why you are doing it.
->>
+>>> We have the respective SPDX identifiers that are already being applied
+>>> to the files in question. Remove the License information boilerplate.
 >>>
->>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 >>> ---
->>>  .../devicetree/bindings/soc/ti/ti,pruss.yaml          | 11 +++++++++++
->>>  1 file changed, 11 insertions(+)
 >>>
->>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->>> index 3cb1471cc6b6..cf4c5884d8be 100644
->>> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->>> @@ -92,6 +92,17 @@ properties:
->>>      description: |
->>>        This property is as per sci-pm-domain.txt.
->>>  
->>> +  clocks:
->>> +    items:
->>> +      - description: ICSSG_CORE Clock
->>> +      - description: ICSSG_ICLK Clock
->>> +
->>> +  assigned-clocks:
->>> +    maxItems: 1
->>> +
->>> +  assigned-clock-parents:
->>> +    maxItems: 1
+>>> Here to fix one of the missed TODO item before moving from staging.
+>>> This depends on 20240923085652.3457117-1-andriy.shevchenko@linux.intel.com.
+>>> But can be applied before that (it's trivial to adjust).
+>>>
+>>>  drivers/staging/media/atomisp/i2c/atomisp-gc0310.c  | 10 ----------
+>>>  drivers/staging/media/atomisp/i2c/atomisp-gc2235.c  | 10 ----------
+>>>  .../media/atomisp/i2c/atomisp-libmsrlisthelper.c    | 11 -----------
+>>>  drivers/staging/media/atomisp/i2c/atomisp-mt9m114.c | 11 -----------
+>>>  drivers/staging/media/atomisp/i2c/atomisp-ov2722.c  | 10 ----------
+>>>  drivers/staging/media/atomisp/i2c/gc2235.h          | 13 -------------
+>>>  drivers/staging/media/atomisp/i2c/mt9m114.h         | 11 -----------
+>>>  drivers/staging/media/atomisp/i2c/ov2722.h          | 11 -----------
+>>>  drivers/staging/media/atomisp/include/hmm/hmm.h     | 11 -----------  
 >>
->> Why? This is really not needed, so you need to explain why you are doing
->> things differently than entire Linux kernel / DT bindings.
+>> Hmm... there's no SPDX for hmm.h header. We need to ensure that all files
+>> have SPDX license before removing the boilerplate.
 >>
+>>>  drivers/staging/media/atomisp/include/hmm/hmm_bo.h  | 11 -----------
+>>>  .../staging/media/atomisp/include/hmm/hmm_common.h  | 11 -----------  
+>>
+>> Same for the above and for other header files.
 > 
-> I need to add this to the device tree node
-> 
-> +		clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
-> +			 <&k3_clks 81 20>; /* icssg0_iclk */
-> +		assigned-clocks = <&k3_clks 81 0>;
-> +		assigned-clock-parents = <&k3_clks 81 2>;
-> 
-> But without the above change in the binding I am getting below errors
-> while running dtbs check.
-> 
-> /workdir/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtb: icssg@30000000:
-> 'assigned-clock-parents', 'assigned-clocks' do not match any of the
-> regexes: '^(pru|rtu|txpru)@[0-9a-f]+$', '^pa-stats@[a-f0-9]+$',
-> 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$', 'interrupt-controller@[a-f0-9]+$',
-> 'mdio@[a-f0-9]+$', 'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$',
-> 'mii-rt@[a-f0-9]+$', 'pinctrl-[0-9]+'
-> +/workdir/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtb: icssg@30080000:
-> 'anyOf' conditional failed, one must be fixed:
-> 
-> To fix this warning I added these in the binding and the warnings were
-> fixed.
+> Nevermind. I didn't show enough context while checking it. All files
+> have SPDX. Patch LGTM.
 
-nah, cannot reproduce. Just be sure you work on recent kernel (last time
-you were sending it on some ancient stuff) and your packages are
-updated, including dt schema and other kernel dependencies.
+That is good to hear.
 
-Best regards,
-Krzysztof
+Note I've included this + a bunch of other atomisp patches in an
+atomisp pull-request for 6.13, see:
+
+https://lore.kernel.org/linux-media/51e5e1cf-8aff-44fc-b40c-a0074a770a69@redhat.com/
+
+(in case you have not seen that yet)
+
+Regards,
+
+Hans
+
 
 
