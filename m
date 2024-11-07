@@ -1,116 +1,179 @@
-Return-Path: <linux-kernel+bounces-400047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462B99C083C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:57:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15FB9C0702
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:13:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4568B215DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:56:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 014551C225A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2B821263A;
-	Thu,  7 Nov 2024 13:56:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF5210189;
+	Thu,  7 Nov 2024 13:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IzMhYrP/"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6552F20F5AA;
-	Thu,  7 Nov 2024 13:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777FF20B1E2
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987811; cv=none; b=JrC8PiAaxFINzymortJjSjk9uCVqie7c44YFo0hEiv1zUghJepPTqlxdbpZfx666Zaff/rMFHD+ozTAzQR2LIfJiyqiZ5VXOGdC214XU3dBrpWZv1Y0yUqFkV320d1xrQYxNqeJ5hFpo0MjT7rNi+l6dXXmUjmo1aFv4Z9W5TUU=
+	t=1730985209; cv=none; b=Jir16ib/A7/GllbU6jhBEdVK0J9034oJpgqyCXU+nCF41sUEZeGhCdYdWjyWryQ3OeaAGVPT9xFwt43twR9QdLJpl7onhNeDXrtw/9dNlive0IDsBPYVkdOLYQ/RBvwIINo+RVtTJc7LjMOaAwkuuZKZW+v1LZ7YKas759a8qkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987811; c=relaxed/simple;
-	bh=7v/jldVNPehBirnoJkZk0fUgltTH/iaWGYa4s4Cqmj0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mk4McP2LNQeX9YVta3Ttp+buwVB1UlNMuilIvD4C3UQpSrs4+UxBM16JHSTW05EmQh0yycMNqFUQUAwF6jOCkvb4gewyblesLvCJwd7NUHpeHVKbjeDSmEV+9DrGs+bNhAwsRKuSaxLeAIH0yN1kwAjhMCLLWh4nc3yB+5P6bAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xkk952JS5z6K99D;
-	Thu,  7 Nov 2024 21:55:05 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id A05BF140856;
-	Thu,  7 Nov 2024 21:56:45 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 7 Nov
- 2024 14:56:44 +0100
-Date: Mon, 28 Oct 2024 17:05:21 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Robert Budai <robert.budai@analog.com>
-CC: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
-	<Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, "Ramona
- Gradinariu" <ramona.gradinariu@analog.com>, Antoniu Miclaus
-	<antoniu.miclaus@analog.com>, Jonathan Cameron <jic23@kernel.org>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Jagath Jog J
-	<jagathjog1996@gmail.com>, <linux-iio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <robi_budai@yahoo.com>
-Subject: Re: [PATCH 0/5] Add support for ADIS16550 and ADIS16550W
-Message-ID: <20241028170521.0000325c@Huawei.com>
-In-Reply-To: <20241028123550.9128-1-robert.budai@analog.com>
-References: <20241028123550.9128-1-robert.budai@analog.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1730985209; c=relaxed/simple;
+	bh=uWk5CDbKBE+0Upzlu5L9d69lbRYzU7Rb2/U6YK53UL8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aQgz8ia5rWHixqvCjoLvTCqI4DoXxe3Mvdfkl10Z4bckOwPv/8l7d1h67dusNT3RuKdxoQ/T3+52DVQ7lavXXCK+S5b7TRxHSap8boZgWCBCjsC4C3AS121Fd+3Xt5Kg6sYZWB/W+/njUgT4SutWi1BMWEIg/KOHCaRXykdsd7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IzMhYrP/; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso3567437a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:13:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730985206; x=1731590006; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dkRFP/ItFb5WDAzbU2gxOOSb/gxt1VwIrm9lhX+SPlw=;
+        b=IzMhYrP/ygaHO6m6xVpnUWuu2EwnPxEUp5AQic6syq52AsYX2ELRjPJo4ZojE3gSxJ
+         cMgKGl6OXRZz1dnCpwgRiVEc/9hFhnrRcmBlWK5DJ5EPwFtUxvG7Cfoshp1+wWmUhSb6
+         qH09dL/cCsPxiVgX9C5+mVt9ZA/Dxv2EYZyyo8QQP9dXA4j71DYDJ+EbQxejmynOZM+1
+         Vgh1R6wKsQACgA+iMJPU9H6FAGyu1dhllwMwaFr7tH5HAI6aInmKAfupH0ZZYj38h3Ul
+         ebqEBh/p05eGAgpWhXHeM0uiCdqj1WdpHRmjId38GNoNnloHzrg+5UESBowAOjTwopG3
+         dg9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730985206; x=1731590006;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dkRFP/ItFb5WDAzbU2gxOOSb/gxt1VwIrm9lhX+SPlw=;
+        b=Q/tZjaZIUUkh+lQo21zbn5gfKldsXyZXIhZoZe47fpw4eBKy2mG3oq2IuVGvtdeC8X
+         nhFcLhjPMBw4ytxW912g1wy1+XTFYiw5kVa//FQUfaTYgVTgx2e6eoGybEAbRSKqWvsT
+         TOdjquZmdfoWRs7tY8+vQsujf0sQ4a6AyzBdsDs1GJF2wMnP54HLC8IaMVvOnLVtmGaV
+         WpIUKFpOaTZgoTupTVRjYTkmde0RH/q3AlojZaWB807DRT4RZo7ZyvRMijGIx023o/tw
+         9qwS3GZJ3+kSpVa+y8tOzXYnfofOLl7GKC5iaJTOwvm+TB80TYVFY39StySIMei7s4Pw
+         RdnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMhHu11ObJkEMa61p+m4Vm9NviV6tabCIPDNtrG+A8LpGIzuqwGmeAU9KLC6RjsiGtZfCH0yvA9tZRd9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsUygqMOV3sCRYTx0NQdEkhny0jfAhM5rJ2/g7fZXYmn5LKDp6
+	sdRU1ruqNN31DcejmNB7lTbV/1OrjaY0X+edvywW5ujnpIgNFPx+AYguFBmAD1Bi+LvSix6jnlv
+	IiB38dYv7TkkO4mhl6h/agkED/cwnSde85eYd
+X-Google-Smtp-Source: AGHT+IHGLBexlZAWpgdsFS22YeIWuGJCQgULOCsTd82+PRJkPntMbA/+HK9VSU+CXKZJE9w3KwQbyR4uRXuPPEPh9MQ=
+X-Received: by 2002:a50:fa91:0:b0:5cf:6b5:ea29 with SMTP id
+ 4fb4d7f45d1cf-5cf06b5ea8bmr730455a12.0.1730985205646; Thu, 07 Nov 2024
+ 05:13:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20241107-ipmr_rcu-v1-1-ad0cba8dffed@debian.org>
+In-Reply-To: <20241107-ipmr_rcu-v1-1-ad0cba8dffed@debian.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 7 Nov 2024 14:13:14 +0100
+Message-ID: <CANn89iL-L8iBwp=rq-YwAeeoUY2MTjr5akWm=S=k7ckpkaEy+Q@mail.gmail.com>
+Subject: Re: [PATCH net] ipmr: Fix access to mfc_cache_list without lock held
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Oct 2024 14:35:42 +0200
-Robert Budai <robert.budai@analog.com> wrote:
+On Thu, Nov 7, 2024 at 12:03=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> Accessing `mr_table->mfc_cache_list` is protected by an RCU lock. In the
+> following code flow, the lock is not held, causing the following error
+> when `RCU_PROVE` is not held.
+>
+>         6.12.0-rc5-kbuilder-01145-gbac17284bdcb #33 Tainted: G           =
+ E    N
+>         -----------------------------
+>         net/ipv4/ipmr_base.c:313 RCU-list traversed in non-reader section=
+!!
+>
+>         rcu_scheduler_active =3D 2, debug_locks =3D 1
+>                    2 locks held by RetransmitAggre/3519:
+>                     #0: ffff88816188c6c0 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}=
+, at: __netlink_dump_start+0x8a/0x290
+>                     #1: ffffffff83fcf7a8 (rtnl_mutex){+.+.}-{3:3}, at: rt=
+nl_dumpit+0x6b/0x90
+>
+>         stack backtrace:
+>                     lockdep_rcu_suspicious
+>                     mr_table_dump
+>                     ipmr_rtm_dumproute
+>                     rtnl_dump_all
+>                     rtnl_dumpit
+>                     netlink_dump
+>                     __netlink_dump_start
+>                     rtnetlink_rcv_msg
+>                     netlink_rcv_skb
+>                     netlink_unicast
+>                     netlink_sendmsg
+>
+> Fix accessing `mfc_cache_list` without holding the RCU read lock. Adds
+> `rcu_read_lock()` and `rcu_read_unlock()` around `mr_table_dump()` to
+> prevent RCU-list traversal in non-reader section.
+>
+> Since `mr_table_dump()` is the only function that touches the list, that
+> might be the only critical section in `ipmr_rtm_dumproute()` that needs
+> to be protected in ipmr_rtm_dumproute().
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Fixes: cb167893f41e ("net: Plumb support for filtering ipv4 and ipv6 mult=
+icast route dumps")
+> ---
+>  net/ipv4/ipmr.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
+> index 089864c6a35eec146a1ba90c22d79245f8e48158..bb855f32f328024f384a2fa58=
+f42fc227705206e 100644
+> --- a/net/ipv4/ipmr.c
+> +++ b/net/ipv4/ipmr.c
+> @@ -2612,8 +2612,10 @@ static int ipmr_rtm_dumproute(struct sk_buff *skb,=
+ struct netlink_callback *cb)
+>                         NL_SET_ERR_MSG(cb->extack, "ipv4: MR table does n=
+ot exist");
+>                         return -ENOENT;
+>                 }
+> +               rcu_read_lock();
+>                 err =3D mr_table_dump(mrt, skb, cb, _ipmr_fill_mroute,
+>                                     &mfc_unres_lock, &filter);
+> +               rcu_read_unlock();
+>                 return skb->len ? : err;
+>         }
+>
+>
 
-> The ADIS16550 is a complete inertial system that includes a triaxis gyros=
-cope
-> and a triaxis accelerometer. Each inertial sensor in the ADIS16550 combin=
-es
-> industry leading MEMS only technology with signal conditioning that optim=
-izes
-> dynamic performance. The factory calibration characterizes each sensor fo=
-r
-> sensitivity, bias, and alignment. As a result, each sensor has its own dy=
-namic
-> compensation formulas that provide accurate sensor measurements.
+What about net/ipv6/ip6mr.c ip6mr_rtm_dumproute() ?
 
+In my opinion, since we still hold RTNL in these paths, we should
+change the lockdep annotation.
 
-Dropping the more marketing parts of this preferred.  Second
-sentence doesn't add much that we care about.
-The rest is fine.
+Then later we can remove RTNL from these dump operations.
 
->=20
-> Nuno S=E1 (3):
->   iio: imu: adis: Add custom ops struct
->   iio: imu: adis: Add DIAG_STAT register size
->   iio: imu: adis16550: add adis16550 support
->=20
-> Ramona Gradinariu (2):
->   dt-bindings: iio: Add adis16550 bindings
->   docs: iio: add documentation for adis16550 driver
->=20
->  .../bindings/iio/imu/adi,adis16550.yaml       |   95 ++
->  Documentation/iio/adis16550.rst               |  389 ++++++
->  Documentation/iio/index.rst                   |    1 +
->  MAINTAINERS                                   |   10 +
->  drivers/iio/imu/Kconfig                       |   13 +
->  drivers/iio/imu/Makefile                      |    1 +
->  drivers/iio/imu/adis.c                        |   33 +-
->  drivers/iio/imu/adis16550.c                   | 1228 +++++++++++++++++
->  include/linux/iio/imu/adis.h                  |   33 +-
->  9 files changed, 1788 insertions(+), 15 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis165=
-50.yaml
->  create mode 100644 Documentation/iio/adis16550.rst
->  create mode 100644 drivers/iio/imu/adis16550.c
->=20
+diff --git a/net/ipv4/ipmr_base.c b/net/ipv4/ipmr_base.c
+index 271dc03fc6dbd9b35db4d5782716679134f225e4..f0af12a2f70bcdf5ba54321bf7e=
+bebe798318abb
+100644
+--- a/net/ipv4/ipmr_base.c
++++ b/net/ipv4/ipmr_base.c
+@@ -310,7 +310,8 @@ int mr_table_dump(struct mr_table *mrt, struct sk_buff =
+*skb,
+        if (filter->filter_set)
+                flags |=3D NLM_F_DUMP_FILTERED;
 
+-       list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list) {
++       list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list,
++                               lockdep_rtnl_is_held()) {
+                if (e < s_e)
+                        goto next_entry;
+                if (filter->dev &&
 
