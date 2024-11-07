@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-400600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495C29C0FBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:31:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC5F9C0FBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:32:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC61284A67
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029A7284CEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EFE21830B;
-	Thu,  7 Nov 2024 20:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0DF2194AA;
+	Thu,  7 Nov 2024 20:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtzFQwre"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7SjE5uz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7670D21830A
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 20:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE0D218314
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 20:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731011443; cv=none; b=qpyB0a9J10ydR7mMWxMCVE/veHtGk1XaHXmXG8JiyEjxGTM/NfMPGuH8ZeXI9BnfrOb8efqM7rilG2aGk13MKKutJIfjnh0ixQeHyOjh60Kacz8NRiT4uItDbU/249xzUHEFHT+n2ENrK7hXvjojJrPmSdtmoOvnCCK7f/VgWI0=
+	t=1731011445; cv=none; b=OP5qpTxeNevLFO1uTowZzBgLD4qNJ3bXSuIVJNwi0vJL3jOWC1lAQSU7lkyfLqdcJ+1Zsx85DAt5p8QrBZgmqjINhWVjy+P5vD0ZqQRxcm80aFFPwLlgbiv93WkDNqYWUXgAT/xGazPvIbJjjGunji5KlNoVAvDdOk7ralMa5Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731011443; c=relaxed/simple;
-	bh=qS6CXdrqUCjtuvc8yxy0I2OHxYoRkeaHGHzfvSGgpKw=;
+	s=arc-20240116; t=1731011445; c=relaxed/simple;
+	bh=EYuGwPoXdKxAgBqaNBZh+1hyRDGNtUBv9XJ3c5kvPiw=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=lCt6dj6w8E9fwIZG5JTzFd37uxQW8Clx6wLcdF4nKWYtdPQL5sMAKOJ5trlaStHcduD8p5tkqMMaycGwPfA00mgMYxA2ismGRCr7IpDRv8wl8FkAP6H6c2tIg8pZBX4v/4jxVJtyn8GeJtZQIxceWvT615p9NCweW7XcUVUvgZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DtzFQwre; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12C4C4CED2;
-	Thu,  7 Nov 2024 20:30:42 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ZibEpxThrF/MwUd9+CJmK+h5FH1dkWuYbZ0Myx64yQdtEDv5XZb3Zzfk1PYe30+OiZqQCtE0dNHwGkfU1YOOPS/mCQE2ngwvGjNaASO+WsBqOAQeObkhY/9CPwNaOhdstJpPbD2Mw940C2rIotCnfAX7FB7LvxM475hy4wC4BcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7SjE5uz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A4F2C4CECC;
+	Thu,  7 Nov 2024 20:30:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731011443;
-	bh=qS6CXdrqUCjtuvc8yxy0I2OHxYoRkeaHGHzfvSGgpKw=;
+	s=k20201202; t=1731011444;
+	bh=EYuGwPoXdKxAgBqaNBZh+1hyRDGNtUBv9XJ3c5kvPiw=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DtzFQwrePm7CJX07yC/vNRHp6OiV4DE0xSkLUNtwN2WQ+bqVPYFz8RdQYJvhnu38d
-	 ThSBQ739qtn6nFfLN6Caf4Vqjy1iOFpzukqQfmnVkdj11eZLANnp0sICJFP5Mc/R75
-	 3sd4cPWbYFgp8hWSgRn///3JPojdZITkmLm+PqSbOmxk2PLiBIvLRF4gY0j7lgvCaJ
-	 SSm1dNgOI4KD0n5TmfjTEV4Ci93n06SILsUoqPURW14N9lwUo8hERA3qObPYU6LCu9
-	 dPTMcAveGisEnrbmN9EalTdpkxfG6eoRZbFL2n7RctUmQHVOHR2ZHZ3+juzvE5xBIv
-	 vIsRytIZWzU7Q==
+	b=U7SjE5uz79zkZdtsINzKOjTg987S4JtDbVfzXHQWRkysn3NF38Rj5IE2b81EqXd+a
+	 k8lt66PjfWNNlamfVO83pCQ8VrXWZlrszmmnREZbLo9OvZmHHbqJsPoJ3q5allxHBW
+	 ByMp5C8RoUxEjXfjGT59CLXNGIQ6fpAaIpPp3rFYDaSpQJS7AXoE0Ul3IyTJjCbhc8
+	 UrTgR8yuEOblgrpZiAHhWBPUd9M0DOJ7Fx9c+D5cgHpf4yY5mgcKRm9q6JIr4SIbMv
+	 PG5mZQDapg+oxmEYhaVFVwmL2UWZOe2pI6ZiyaHSlEovOFmrNjiIJdy/puoFA1YEpC
+	 KbSV0KyzAcnkw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 723663809A80;
-	Thu,  7 Nov 2024 20:30:53 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB3593809A80;
+	Thu,  7 Nov 2024 20:30:54 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH V3] f2fs: fix to avoid use GC_AT when setting
- gc_mode as GC_URGENT_LOW or GC_URGENT_MID
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid potential deadlock in
+ f2fs_record_stop_reason()
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <173101145199.2084993.8756265891137961200.git-patchwork-notify@kernel.org>
-Date: Thu, 07 Nov 2024 20:30:51 +0000
-References: <1730171569-10757-1-git-send-email-zhiguo.niu@unisoc.com>
-In-Reply-To: <1730171569-10757-1-git-send-email-zhiguo.niu@unisoc.com>
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>
-Cc: jaegeuk@kernel.org, chao@kernel.org, ke.wang@unisoc.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Hao_hao.Wang@unisoc.com
+ <173101145349.2084993.4012866127488813376.git-patchwork-notify@kernel.org>
+Date: Thu, 07 Nov 2024 20:30:53 +0000
+References: <20241022083623.2641434-1-chao@kernel.org>
+In-Reply-To: <20241022083623.2641434-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 29 Oct 2024 11:12:49 +0800 you wrote:
-> If gc_mode is set to GC_URGENT_LOW or GC_URGENT_MID, cost benefit GC
-> approach should be used, but if ATGC is enabled at the same time,
-> Age-threshold approach will be selected, which can only do amount of
-> GC and it is much less than the numbers of CB approach.
+On Tue, 22 Oct 2024 16:36:23 +0800 you wrote:
+> syzbot reports deadlock issue of f2fs as below:
 > 
-> some traces:
->   f2fs_gc-254:48-396     [007] ..... 2311600.684028: f2fs_gc_begin: dev = (254,48), gc_type = Background GC, no_background_GC = 0, nr_free_secs = 0, nodes = 1053, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
->   f2fs_gc-254:48-396     [007] ..... 2311600.684527: f2fs_get_victim: dev = (254,48), type = No TYPE, policy = (Background GC, LFS-mode, Age-threshold), victim = 10, cost = 4294364975, ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 44898
->   f2fs_gc-254:48-396     [007] ..... 2311600.714835: f2fs_gc_end: dev = (254,48), ret = 0, seg_freed = 0, sec_freed = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
->   f2fs_gc-254:48-396     [007] ..... 2311600.714843: f2fs_background_gc: dev = (254,48), wait_ms = 50, prefree = 0, free = 44898
->   f2fs_gc-254:48-396     [007] ..... 2311600.771785: f2fs_gc_begin: dev = (254,48), gc_type = Background GC, no_background_GC = 0, nr_free_secs = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:
->   f2fs_gc-254:48-396     [007] ..... 2311600.772275: f2fs_gc_end: dev = (254,48), ret = -61, seg_freed = 0, sec_freed = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.12.0-rc3-syzkaller-00087-gc964ced77262 #0 Not tainted
+> ------------------------------------------------------
+> kswapd0/79 is trying to acquire lock:
+> ffff888011824088 (&sbi->sb_lock){++++}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2199 [inline]
+> ffff888011824088 (&sbi->sb_lock){++++}-{3:3}, at: f2fs_record_stop_reason+0x52/0x1d0 fs/f2fs/super.c:4068
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,V3] f2fs: fix to avoid use GC_AT when setting gc_mode as GC_URGENT_LOW or GC_URGENT_MID
-    https://git.kernel.org/jaegeuk/f2fs/c/296b8cb34e65
+  - [f2fs-dev,v2] f2fs: fix to avoid potential deadlock in f2fs_record_stop_reason()
+    https://git.kernel.org/jaegeuk/f2fs/c/f10a890308a7
 
 You are awesome, thank you!
 -- 
