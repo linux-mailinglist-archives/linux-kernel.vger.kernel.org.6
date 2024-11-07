@@ -1,135 +1,117 @@
-Return-Path: <linux-kernel+bounces-399249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BD39BFC86
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:27:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BED9BFC88
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A537C1C21DDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459791F22598
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798AF4AEE0;
-	Thu,  7 Nov 2024 02:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28FC282FB;
+	Thu,  7 Nov 2024 02:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imVxp8Xb"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EbBlB+C6"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58619179A3;
-	Thu,  7 Nov 2024 02:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89F5374CB
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 02:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730946431; cv=none; b=tiDi54Hx4bmplj8e6e+Hc4XZyzPEhFv0emQN8t4RorW8+0uXQ++T8zitHFluWe8V+p1SXUjKiZ3OFGiQ6yFJRhNyZnzrA4DSFHdOFMZzmCwQ6lcqzOV8hWJfrCyeuHSJT7wdxLdHmqlJ1F8Q0aFsUwhxKKWe/CKhVF3DVDYH1sk=
+	t=1730946437; cv=none; b=OfVuCqJmIogP1hRuCdPke4Fa1G6+RDaqh16/dfOMYAip6YzUkWReSoXMl3gRQujYEtBOl6ZC7/tAf1nPolD9tLIdBbVgqWVOhA33phv2gh+hXWZ+kuFLOwNpsoZyR5+NuU39/w1BhbeTIMuojJy9uNLD9UGlk/Spg1+AbIuGdlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730946431; c=relaxed/simple;
-	bh=fHs5q4k5rq5BftA5sdq7a8kaK37gZbgEBMtkn06uELA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N8AHS0eBxDteBogg5RZqYrOBQoASnJIyfanZjTLkH4T04DZd8WnXFpk80o2i6oNH9SZ3L1jUt2aQiySCj5+t5gj44s8PXUgLIW3ifazchzs/zSnkb1XdgWkOXHQyIyxdtg6vf1XdLHXsQO6Zu0kGC8F4Qb/DFBQaoZMqYCBRy78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imVxp8Xb; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-84fed1ff217so1126499241.1;
-        Wed, 06 Nov 2024 18:27:10 -0800 (PST)
+	s=arc-20240116; t=1730946437; c=relaxed/simple;
+	bh=66r6xIbtsr7gOmnkCVDORMzU1xLzP2MTzmFr5wrTId4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F56NN1FYJ3l3zwpNWx1SuBD07URNXSb9PFJkWHQpZRFxQzNrUqgBbsFStHT0pFBoyH0yYR8MV8wFcltA3yNfUyAsYizfjnp543aPHUtwIycSjGyOd13KsdFKm2u8uDN2GpEw2WXmZwVsD4wO9XJw/ulPW4aE+wwmTxbJuW4rfWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EbBlB+C6; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83aacecc8efso48171839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 18:27:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730946429; x=1731551229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bDB0vac9yZpc1+41LDWOLCqJ1t14TIX2ljxErRQNdMI=;
-        b=imVxp8XbJ+wA2/rRFMtNRhhCNjMs+yRrzzORtzLjPghRHItO5e73ZRMZSTdx7gnPA7
-         WkMePWsb8jXlSsATPY5CUeYXtO2bmXIt7vkVm2b/nNbTkggR3Fl9Ex2wdfJxPitzdAlG
-         4YRWy78HL1UMtkL6up4sRWJBjcUaE9xHpK7Gk+I65RUhjH/jYDaI7TS0Nn7rRC+tVt2m
-         ggKtPKaDjwsg4U82i5LAQUXKqofRhwY4bO6JpgwQFr/KidvF/GGUgh88aISPay795Qqj
-         tg2HZXLYGljeVfjkAoafKKzdXwBgvw2gOdTu/2Zr/IDdCzcytG2V1tfAW+yHKqdvhUNU
-         vMYw==
+        d=linuxfoundation.org; s=google; t=1730946435; x=1731551235; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4FH1qWWHPqfjxtFSCDAPzAW+vNNLwYck5jhkRuC++H4=;
+        b=EbBlB+C6mf7iHciSZRpTrepmxQbxceALYBc0Ul39MsefmAqq0ovSsUNmJe9c8DudFD
+         8ubTGLqbC7ZxqFLIW+l0avl/RodIQvw+eQATbnuya+CtxxpEKOW14mHemAEro6JaB4LK
+         bRk9RAgMTXWudfuFhVXkJHX1Wmx4oEMHy6j70=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730946429; x=1731551229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bDB0vac9yZpc1+41LDWOLCqJ1t14TIX2ljxErRQNdMI=;
-        b=bCvj65DXZBhZXr8x1nulhgPt8lTf8yuFCiwIb1+uUfUY/i8Tw6DBQb6iMpBhHgNe/U
-         PEoAWend5meJzX/DxLZQDSBvMrrA0xV/RO0MtLf02pXPy7ugnC7UzCNrgTTHd7bkHiuk
-         w1FDrJKAqExC+BmHm77u5DEOe59O2hWYAhLTh0O3UnbOLoD2WGQCqu7mqo/VQUwNjG8C
-         oavlbxGFjR8BP9ps1kwa5a/6emG9KJz1XoI801XABBSGtih8FkhNcptMTQmvi8J2X88u
-         dkfJP7fofNusk9Ru6b5mjNOkJ4NfquviA5ejLBWYH1u/abx138M0ase/1unbTOVqqzMM
-         GXxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcqn1dpOLHU0QkrGiQkOv9z4MoKmNBszqBDWtar9CZWO2MvYA1WkuPBl6pbOarXqBsJi1yjCYi1Wii7GH8+g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN2BnMIjga1OlQ+TJVM4AJzJjw7hyQFSJAHK8TGHDM/ZnPBAhp
-	woU2ZKaTYiNBSQJ1eE6F5NXlGkNYfcWVSgjjmJlosWOcH6a4RGMatJK8SQoEEoHLq3uwqZ+SLVz
-	Y2Vd0AqL9BI5x30aLvkaH9pfnQGw=
-X-Google-Smtp-Source: AGHT+IGR1uyWzsnFIIFD2l2Z6YE/azZSGlygVbco85VucmCYuQpkaeZfeEX1wZ8HeqtFCnH2L+sTVjza+FwdPrIaoDw=
-X-Received: by 2002:a05:6102:41aa:b0:49c:7af:2ec4 with SMTP id
- ada2fe7eead31-4a9c24eb93amr1423192137.13.1730946429122; Wed, 06 Nov 2024
- 18:27:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730946435; x=1731551235;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4FH1qWWHPqfjxtFSCDAPzAW+vNNLwYck5jhkRuC++H4=;
+        b=FGDcM7jXQBCNLoi8VrBAYA0s25nOmxw4jwLeG0Q+sT89zDWal//ccK2ffg/GR9zge6
+         jeKe5G7X2hMYReX1sRkXU3wVgPCCMxNYV8bDl07YPQqEsTE0EE1jSzD4VpWgzNcyDmQc
+         493rdegLggqW6HoK1TRayuPNQY4kv/31YfJSAz82bcCNGDR51i2YV0aQpxfgfO037b8o
+         3CrSdHR9RUhGrY+HGwxZJ8zMyGFaFnDr4HxAJcZTxtVUPZlV8poIF8TI9CG3SkKk9af4
+         XONs48hDfHV2dlLXeN34vHt+XwNS9N0ztnYOy/Vc8knUDXzW0JktDbSUd8GRoMUbUZ6z
+         78yw==
+X-Forwarded-Encrypted: i=1; AJvYcCXY1V1kXiSuKGzNBz/kdwVwRx6hQ+ZHbHtMSSDZ+9x6kuulZFJ5qd0ICw7ycKTTZRoskJv3K1MxOuCdtYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaIVUNBXys6Pajru9+t4GF42769eJVB18eg1c2z8uArQw7pkQ3
+	x+SXAFHD+JtCCLJ8DUG/CyPr628TkZSs1kltU+4hJs/xxXBXQpr5DU5NTSMmbp0=
+X-Google-Smtp-Source: AGHT+IESzjzRALUubFg8iGwDGC3CrFswWkMFRdL0oHQ8Pifeb0Ths28JWJDs7h8xJNjRe6OJO4cxpg==
+X-Received: by 2002:a05:6e02:1808:b0:3a1:a2b4:6665 with SMTP id e9e14a558f8ab-3a6e8964e55mr14571395ab.12.1730946434806;
+        Wed, 06 Nov 2024 18:27:14 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6eacaa0f5sm736305ab.29.2024.11.06.18.27.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 18:27:14 -0800 (PST)
+Message-ID: <0f9b8729-67d6-43ee-a484-4f58bd08ecc0@linuxfoundation.org>
+Date: Wed, 6 Nov 2024 19:27:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105022143.1087112-1-alistair.francis@wdc.com> <CANiq72=L=CMUBu7jBn0H2Wb8vupYzOYFrSQ_9gyFZj_w2JU_uQ@mail.gmail.com>
-In-Reply-To: <CANiq72=L=CMUBu7jBn0H2Wb8vupYzOYFrSQ_9gyFZj_w2JU_uQ@mail.gmail.com>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Thu, 7 Nov 2024 12:26:43 +1000
-Message-ID: <CAKmqyKPv9DrvisrLOWX=i2qqKbRbNz40__FSGm6piC_0y94m_g@mail.gmail.com>
-Subject: Re: [PATCH] rust: bindings: Support some inline static functions
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	ojeda@kernel.org, boqun.feng@gmail.com, a.hindborg@kernel.org, 
-	benno.lossin@proton.me, aliceryhl@google.com, tmgross@umich.edu, 
-	gary@garyguo.net, Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/151] 6.6.60-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241106120308.841299741@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241106120308.841299741@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 5, 2024 at 7:32=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Nov 5, 2024 at 3:22=E2=80=AFAM Alistair Francis <alistair23@gmail=
-.com> wrote:
-> >
-> > If this is accepted or at least Acked I can work on removing the
-> > existing rust_helper_* functions and convert them to be auto-generated.
->
-> Yeah, we have tracked the feature for a long time, please see:
->
->     https://github.com/Rust-for-Linux/linux/issues/353
->
-> So it is definitely in our plan to use (assuming it works).
->
-> But, yeah, we would need the patch with the conversions, to show how
-> it would look in practice (i.e. comparing before/after etc.), i.e. the
-> usual kernel rule.
+On 11/6/24 05:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.60 release.
+> There are 151 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.60-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Great! I have done the conversions in a patch series here:
-https://lore.kernel.org/lkml/20241107020831.1561063-1-alistair.francis@wdc.=
-com/T/#t
+Compiled and booted on my test system. No dmesg regressions.
 
->
-> > +       --allowlist-function crypto_shash_descsize
->
-> We probably should put this into something similar to
-> `rust/bindgen_parameters` (and remove this variable).
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Fixed in https://lore.kernel.org/lkml/20241107020831.1561063-1-alistair.fra=
-ncis@wdc.com/T/#t
-
->
-> > +       @cp /tmp/bindgen/extern.c $(src)/
->
-> I don't think we can use/assume `/tmp` -- we will need
-> `--wrap-static-fns-path` or similar.
-
-Fixed in https://lore.kernel.org/lkml/20241107020831.1561063-1-alistair.fra=
-ncis@wdc.com/T/#t
-
-Alistair
-
->
-> Thanks for trying out the new feature!
->
-> Cheers,
-> Miguel
+thanks,
+-- Shuah
 
