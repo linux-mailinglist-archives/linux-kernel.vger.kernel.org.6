@@ -1,134 +1,181 @@
-Return-Path: <linux-kernel+bounces-399503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612569BFFEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:24:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6A59BFFED
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937411C213C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A18283C31
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C790D1DB551;
-	Thu,  7 Nov 2024 08:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD54917DE36;
+	Thu,  7 Nov 2024 08:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NHHb/LY+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QMR/LTIA"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B631D9A41;
-	Thu,  7 Nov 2024 08:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789241D88DD
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730967865; cv=none; b=KPVPibPz0nHQ26X3mWZebHBQt1NHUef2OcfFTb1Cht7CoMhEG7zBrpFpM15MRD0VvlpASlcGyMNJb2jYViJ2dVMlxQ2vHqhKvKnihBAEarhy+6QUGC1SZDDis8SxrbrIFr9UkCdcdy7jKSSijDzTODkXPsP2CiN3hZ9+tdFhhec=
+	t=1730967907; cv=none; b=qsfL/sy4KmISQcKxedYnSYXdxGoqGKD5158fOz3rBtZAAwN4RHe9iliCVtYgE/CgVdUdsUTu7StNQQlRrfp+P4pg+Cn5eJy+8uA6o6rf+Bqie6BNb17oYOmQSjb6LWlyd8T2bbuyxeohSHqsTccuVPZCWVboILi0NZl7j0b1kyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730967865; c=relaxed/simple;
-	bh=ZtErKcyBvKlUjFKcadq0MkUgvpGH0gPnGcyK4+5rQCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SIrQcK8pp/5Dy0SRtQmMHv++Z/qTf5gJzoK1cIMRzPkK+4Y22VpoGTR6md6W+lBQJlobZM9C1k4aMPQPlDtU0ifDglemfMHrpHJ6t2zBln6Ywj8LnPEu2aZ+uCfhHRyeUmC2CFBLuYrQdUsmqGhb9m6qDhvLUW6RmcK/bwAwNHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NHHb/LY+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A77DjC2013243;
-	Thu, 7 Nov 2024 08:24:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7TrpguMEdSksTaqBAC65MSDO/ym6FXsg7gAMIzCbcrU=; b=NHHb/LY+6FKlCmVG
-	QYm+fBWa+xRpEWWwsXtcgZv25h7Jg7r/Kd8BaTE/Ied4TLwEpi9bY0ElJlWO5EvR
-	qpUqhidS7biGQv34Bfv74wskiZDEevVP8rLgQxHg3nPPQZEUuVUwDIVYMegE3sP7
-	mQ01hBfrnJlHLc971J89TKzcM0BdehAMupzcdsb5IZGS2lZRCPGxZFpmsopGwciC
-	sV9DbMPzDKLF3+/Nh0vR7AHHi4kw37gvSSxWl/axyUAnsG7lBnH+W6Nhm4T+37xi
-	U8cPWJl3ccUfPzNOiLKfw7dmRnKQjRyoQV3EaVj+EZ6yFaxOOL+DgW835QQkrFrw
-	Vu/9xg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qp2rwmn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 08:24:19 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A78OIlY032387
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Nov 2024 08:24:18 GMT
-Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
- 00:24:15 -0800
-Message-ID: <647a32b9-94e4-ce9d-ed9a-771d32fe7784@quicinc.com>
-Date: Thu, 7 Nov 2024 13:54:13 +0530
+	s=arc-20240116; t=1730967907; c=relaxed/simple;
+	bh=4BGrJLScVZuQqgHXqLMQtm6GQK8gcTiM4ZXedyMnqx0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D2h8ZUK8CMsMYzs2O1e6BV8D8cQ5Iv53ktmvs7pOh43AhtxpAcYcP2vQvBUUj/8kaM4F57MLYh1u6w0aod2lY4sxaNUTT3B3EUkPjW/y+GyAL9Jkzffm+EfeTlFQf7++Zx7L01uIGtb0NLBAo7EcJNuIe8PnURiAdx4bjz1uMaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QMR/LTIA; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30cd709b40so1250533276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 00:25:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730967904; x=1731572704; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGhRaLwgb6WVIdBGRr1tkcKbLwKCrcqHl71ppprFKvY=;
+        b=QMR/LTIAT7mq6nFS+RcXrJU3IECbqRMT7TSv4dTePg7/HGHcorvl/PnNr6B9K+wzr1
+         bH55OpsnXVDanIYIEyjfQsDI/tsCjzpI0z/3xjzJK91tDdpJCUCjyd/T/oV2FYVHam6u
+         8RTIU1b3rvd/eESFculITzazgnyDxEGnMOTayUJRO3u4JbmpIPIK0v5LcIFPlsiZ1iec
+         DPcTwgrkfwtcpBy3oXgVI2kifu3hmGrPN94RGp0jtDahx4KA71IJFLhhqbdiRfYGVfTC
+         KTxiQxz0EIe/sqQ2saaiUQDlw263ljIfft+ptaYAGzUbVZKCFtZ2l1SeKITTkuftKWZX
+         G9/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730967904; x=1731572704;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGhRaLwgb6WVIdBGRr1tkcKbLwKCrcqHl71ppprFKvY=;
+        b=LyVes/eiuXQBNoZqE0CY9m7ygYVW8nWzEmr+lLv4BU4WdY/wm7kM9r/GHXzhkqaZr5
+         cLji4llNUmyVKcYuZ8pJoZ9a1mjw4I+T4+tY8CoNWWyhQ2qYTujws7hj/RsOs2LLmBRj
+         Oom/NBzpjKRPSfJdHPokaAAoFy+rfKkwY6hgOAEvfZZ/ldsCCewf7R8b9Ajv+Wq8To8R
+         BbhqEySHaeRt1U1PiTvylNp/UVN+kbg9QxUvSQklYA79ClapxIz+onBa2jVCU1lIxYLk
+         mfifPBADsmOOx8mVRZYkelvV3ISrpN/rSS6lW0opoVSrSrZTP2R+hMyvxy8H+D7ejcYG
+         PAfg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7EA/mSVDkHDMwBgzfpE11nuVOIi4nfGPXJbncgsl2nLcAqcsg3PlYQ1/ObX/vk6B2WM08Sgq9PAHKFKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqbnrEklwmpfhIsOFD6K6hTuN4x7nCgTNPK1JNniLDgI170TYW
+	CRbTSCIKRRoMZrpK43CjGE71EnUW6l4oUE6A4tsmXJHNhnnLRF1rD95lIUlLkq9v7WBVaJciYQ=
+	=
+X-Google-Smtp-Source: AGHT+IGKApV4pLTstVZBfNTnB9kI/yOx0XaDKSNs1NJZP0R4EVrNuUnwTT/oWpllImRadHPWEXtYyU1GiA==
+X-Received: from liuweina.c.googlers.com ([fda3:e722:ac3:cc00:99:2717:ac13:e22f])
+ (user=wnliu job=sendgmr) by 2002:a25:aace:0:b0:e28:f35b:c719 with SMTP id
+ 3f1490d57ef6-e3087bd6066mr76652276.6.1730967904402; Thu, 07 Nov 2024 00:25:04
+ -0800 (PST)
+Date: Thu,  7 Nov 2024 08:25:02 +0000
+In-Reply-To: <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
- bound access
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
- <640fe933-078d-4bf5-815c-7db0eb8b9de4@linaro.org>
- <7f350d73-65dd-097e-8b4a-e9a23472aa28@quicinc.com>
- <d39c7613-fda1-417c-a205-daddbc378bc3@linaro.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <d39c7613-fda1-417c-a205-daddbc378bc3@linaro.org>
+Mime-Version: 1.0
+References: <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241107082502.4060233-1-wnliu@google.com>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+From: Weinan Liu <wnliu@google.com>
+To: jpoimboe@kernel.org
+Cc: acme@kernel.org, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, andrii.nakryiko@gmail.com, 
+	broonie@kernel.org, fweimer@redhat.com, indu.bhagat@oracle.com, 
+	irogers@google.com, jolsa@kernel.org, jordalgo@meta.com, jremus@linux.ibm.com, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-toolchains@vger.kernel.org, linux-trace-kernel@vger.kerne.org, 
+	luto@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com, 
+	mingo@kernel.org, namhyung@kernel.org, peterz@infradead.org, 
+	rostedt@goodmis.org, sam@gentoo.org, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rfWd1Ona_nvMTFFel25ZTW8fvzs638V2
-X-Proofpoint-ORIG-GUID: rfWd1Ona_nvMTFFel25ZTW8fvzs638V2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- bulkscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- mlxlogscore=977 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070063
 
+> diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
+...
+> +static int find_fre(struct sframe_section *sec, struct sframe_fde *fde,
+> +		    unsigned long ip, struct unwind_user_frame *frame)
+> +{
+> +	unsigned char fde_type = SFRAME_FUNC_FDE_TYPE(fde->info);
+> +	unsigned char fre_type = SFRAME_FUNC_FRE_TYPE(fde->info);
+> +	unsigned char offset_count, offset_size;
+> +	s32 cfa_off, ra_off, fp_off, ip_off;
+> +	void __user *f, *last_f = NULL;
+> +	unsigned char addr_size;
+> +	u32 last_fre_ip_off = 0;
+> +	u8 fre_info = 0;
+> +	int i;
+> +
+> +	addr_size = fre_type_to_size(fre_type);
+> +	if (!addr_size)
+> +		return -EINVAL;
+> +
+> +	ip_off = ip - (sec->sframe_addr + fde->start_addr);
 
-On 11/6/2024 3:53 PM, Bryan O'Donoghue wrote:
-> On 06/11/2024 07:25, Vikash Garodia wrote:
->>>>            cap = &caps[core->codecs_count++];
->>>>            cap->codec = BIT(bit);
->>>>            cap->domain = VIDC_SESSION_TYPE_ENC;
->>>>
->>> I don't see how codecs_count could be greater than the control, since you
->>> increment by one on each loop but >= is fine too I suppose.
->> Assume the payload from malicious firmware is packed like below
->> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->> .....
->> for 32 or more instances of above type
-> 
-> But you do this
-> 
->           cap = &caps[core->codecs_count++];
-> 
-> for each bit.
-Yes. Let say that packet is written more than 32 times in the payload response
-from bad firmware and each has 1 bit set. core->codecs_count would be
-incremented beyond the allocated space.
+nit: Since we already know wether the ip_off should mask or not, I think we don't have to check fde_type and mask the ip_off everytime.
+	ip_off = (fde_type == SFRAME_FDE_TYPE_PCINC) ? ip_off : ip_off % fde->rep_size;
 
-Regards,
-Vikash
-
-> 
-> Anyway consider Dmitry's input re only calling this function once instead.
-> 
-> ---
-> bod
+> +
+> +	f = (void __user *)sec->fres_addr + fde->fres_off;
+> +
+> +	for (i = 0; i < fde->fres_num; i++) {
+> +		u32 fre_ip_off;
+> +
+> +		SFRAME_GET_USER(fre_ip_off, f, addr_size);
+> +
+> +		if (fre_ip_off < last_fre_ip_off)
+> +			return -EINVAL;
+> +
+> +		last_fre_ip_off = fre_ip_off;
+> +
+> +		if (fde_type == SFRAME_FDE_TYPE_PCINC) {
+> +			if (ip_off < fre_ip_off)
+> +				break;
+> +		} else {
+> +			/* SFRAME_FDE_TYPE_PCMASK */
+> +			if (ip_off % fde->rep_size < fre_ip_off)
+> +				break;
+> +		}
+> +
+> +		SFRAME_GET_USER(fre_info, f, 1);
+> +
+> +		offset_count = SFRAME_FRE_OFFSET_COUNT(fre_info);
+> +		offset_size  = offset_size_enum_to_size(SFRAME_FRE_OFFSET_SIZE(fre_info));
+> +
+> +		if (!offset_count || !offset_size)
+> +			return -EINVAL;
+> +
+> +		last_f = f;
+> +		f += offset_count * offset_size;
+> +	}
+> +
+> +	if (!last_f)
+> +		return -EINVAL;
+> +
+> +	f = last_f;
+> +
+> +	SFRAME_GET_USER(cfa_off, f, offset_size);
+> +	offset_count--;
+> +
+> +	ra_off = sec->ra_off;
+> +	if (!ra_off) {
+> +		if (!offset_count--)
+> +			return -EINVAL;
+> +
+> +		SFRAME_GET_USER(ra_off, f, offset_size);
+> +	}
+> +
+> +	fp_off = sec->fp_off;
+> +	if (!fp_off && offset_count) {
+> +		offset_count--;
+> +		SFRAME_GET_USER(fp_off, f, offset_size);
+> +	}
+> +
+> +	if (offset_count)
+> +		return -EINVAL;
+> +
+> +	frame->cfa_off = cfa_off;
+> +	frame->ra_off = ra_off;
+> +	frame->fp_off = fp_off;
+> +	frame->use_fp = SFRAME_FRE_CFA_BASE_REG_ID(fre_info) == SFRAME_BASE_REG_FP;
+> +
+> +	return 0;
+> +}
 
