@@ -1,369 +1,326 @@
-Return-Path: <linux-kernel+bounces-400139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85A39C0973
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:58:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23B89C0978
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF661C226D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:58:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B82284EB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C53212EE3;
-	Thu,  7 Nov 2024 14:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E80A213148;
+	Thu,  7 Nov 2024 14:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="md29J8U7"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvMP+NNH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26323210186
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91098DDBE;
+	Thu,  7 Nov 2024 14:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730991462; cv=none; b=q9USpqFJHIQSRtIG3cpi99cC8QLYjvJZQYF8bdQ2RxcQkUIHv/efxv8GOevc5OA6cARFJSb5ixsCH3cTCFjVyo/aUEiubJIsKbls6q4i7Jtj2Y0vQqautM8GCxc5lUVrWSvAvl+9nEDzOf6hDUR5H86ow4bqNc9OkU/Y/Ijfqdk=
+	t=1730991479; cv=none; b=reECl4+P6mg+sOY86GwmwvgMFCdCaRdV7Z7g3FWsrHfN7RfhJgGbnbsPXQL0tT4+Zih/s2BD/TcgzTFg6Kj/ogsI3+mez2zA7+QkCh4WsaIPFo8XEfO1+DzTrhBXOORwVLHGJHu0ev4Cm2y93ZGdAPpr4DasFHUF/HuCCMQWVQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730991462; c=relaxed/simple;
-	bh=BLY94gMzJV8bl1rs8ITlqHgcrX3WJaZb1Ugt48De6Y8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HKZ9+b38WM04vrKW3OYKMlfdjVskAR5PtJ7Y/xVUrtYoLI8o26Mivyl8ZdHLnWfmH6RJmFncaL/LjpiOG2AYZseN5f5AOwridVb416xwvSPBmy8a8DdtjbSQVTY61zMIWTNrzs+0DbcE3GpgCHv9w8TpJTMBC4TFIyZA+ktHLaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=md29J8U7; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43163667f0eso9411295e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 06:57:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730991458; x=1731596258; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lqk0qjxtF+D8UlnS4c7pFGqetkwdoGFt8LgY3js1r6w=;
-        b=md29J8U7/VHYYyn33wxR9udL2DoXIsYHTWs+uzv6i93xcwWP6pwa8L3qDFYa/chAyK
-         0BlcLGpcFDjYqz+OyX9iv7dVeajesA9oePaPntYSRh1FXM01yWkgeNLG/A72YNJyu1HN
-         ehMAgVj6Vmhgwv74vVmo/E8lNlsk5SPbSHHiIGyLDLcfYsP4gvEUGjkZ1+qD88ZRHe+8
-         2fWXwtl5hI8PX8AS3Us3tvx+scbgVhYENouumy3gRya4m3zOiC9t52AkcseDguGd5FSY
-         swUOon8XtuU4+SiN45YcuiCX+pN8xqRGIrtPMzMl4kJMsuSD4B6PdKkq1GkStSfo5hvb
-         SPkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730991458; x=1731596258;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lqk0qjxtF+D8UlnS4c7pFGqetkwdoGFt8LgY3js1r6w=;
-        b=EsAuvpFIZEDjAzMjfgwDM3PWHwqn+NmcAVdDPqJxrcQ69690Ko/DoiZ7wnUz/T6Cqi
-         yRwpAfQJfOPWZ6IR2s0KNCuyliN2kjIwohynBs/PnkjHODWMz0elMTEKY4Q8nl30wmlr
-         x7a0ZX9yiW8PvOjQYAI/0PxPmHhLPcfuytK17n88OM1FL+nkWXgO1FwJUnOQgw6is4gu
-         tyUtmLvdRgAGdGFs10hosoQQrgXHsNGzGkD52hjgFfLmBAYEoO2hRjFOV8i+QQn52BHu
-         dz9ZeJdHMYhvruuQ4+0cUX6MM7zpJCYAB+1hWKpk3ZJq305tOlrdINpJU50kAALEX6fv
-         jzkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfH7oi/rvdh7+qjarZ2erOEXtkG6SEYgu2XckUTejkUEOyX7Y/F75uv2nOd3qPyNYKp2aAsqJJE+wQhh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVvyndfmsnqP7xIx0fq7b6m88jPmmVIpOv5IdhLJZECFdHk/uk
-	p7V7IddjIfZJ2IDYFIDYSoUibrfrBLXq47WCuSAXYiWz0l3ixq8+qF9h+pdwRX8=
-X-Google-Smtp-Source: AGHT+IFutcR0bwD8WGqeYpA0PxXHK8DXeXLoWqc0ukDAw+4BGJ+GPCxRmhBmc2u0+oKs2PA+/pN2iw==
-X-Received: by 2002:a05:600c:3c9d:b0:42f:823d:dddd with SMTP id 5b1f17b1804b1-4328327e6ddmr198325885e9.27.1730991458265;
-        Thu, 07 Nov 2024 06:57:38 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e56sm66186115e9.2.2024.11.07.06.57.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 06:57:37 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Markus Mayer <mmayer@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] memory: Switch back to struct platform_driver::remove()
-Date: Thu,  7 Nov 2024 15:57:16 +0100
-Message-ID:  <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1730991479; c=relaxed/simple;
+	bh=M4S98JDjsFROzC5PxUC6VGIl3bST1BESEp9JZA+bpvw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DlMGavCvIAHpm3CrDtUbQb+wy0EALbyhB6FTzT30NcPwX/Qx5RO7REYEKJcTiN/Dm9i6Wt1l3zpJz4aI5T18+l2QDwnXt5jegFqyH+Am6sdfet92qM19U36RpjAB6s1ydZ71yZH2+/eXcFA/6MMZOMG+Z1FZsUjmVHoNa9l4Yj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvMP+NNH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12DAEC4CEDF;
+	Thu,  7 Nov 2024 14:57:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730991479;
+	bh=M4S98JDjsFROzC5PxUC6VGIl3bST1BESEp9JZA+bpvw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LvMP+NNHkqr1qpYAoXqBNXM/Lofit7EsnKl2oDdqAZC7DRL+4LW3jvGbUSCh1SAVS
+	 xBEdmSGze2t6WwKjz2VKJWFgq1mRpOQwhku9hz/mcWHNOdWim/ON4rVZnf7ThBRPWU
+	 4iVum+b89UhlJsUyZErxHONiF13v3WPHBh9gYdf8d3l5TYkJxakGXhZmSAZB14UCq+
+	 ruCOUz5FaqqIzUYSDYZsuFlE/U2G9xSAI6UxFlx0jTTzBMFVRlix1QoCWR6L88wuOO
+	 EYOWK56R0j/8u0KJaH50PErWf5wiYSvhaTylEz3BdM47NPPoTnLy6mTvm4x9xWYSuU
+	 RqjG1N0npclxg==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so12164811fa.3;
+        Thu, 07 Nov 2024 06:57:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU08G87vO/FTjovw7wyWseq6QKri2vkP7XnvYeXBPIpwaXrHyMplUtd4qei0YP/IZ7PCezwqiMGxlfwtatX@vger.kernel.org, AJvYcCVIbMRV8HSs9PTKxOMbgqt1Im9o6VkN39aLsa4JtrjxJHPc1nY1nrh9hkstVPU1IF2cacrRUyEOvoJJ@vger.kernel.org, AJvYcCVjLrU6f0fbPUuzpAys0ywuIgBjX/Cr9BkH2ztaU8a2+Ej+ILnbcV2x4hoUtVoXuXQEkMt6E9tuvWyH@vger.kernel.org, AJvYcCW1Q7/1Ra3rPkPJscC4JNJTTYMGIb2RMKIywfBlB4mDSmy2url0Pbj4LJ2u4zWejM4HMeiCY5p07s+cD66C@vger.kernel.org, AJvYcCX/6nOELzkaR5NgixkYzv0bNNMPuuZS2Lpsy+njPakq27qynmUjA3vKqmd92UMDABXK1iNyx+UF1ct3gQ==@vger.kernel.org, AJvYcCXVxm1MfIPDqfpULQEuFsgQQ0Q1MmGiPwqAy49ZigAq17WZNjYVDDOCRwnxtkrXZVjs8HnTIyuS13Iv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7yoLKFLSO7jgcRK9KKasFosF/ko7qVwE712NV0R+BHvzL8pQR
+	Q4PzB6NPwg9h6rU1LO7CMMpJAhaGH5E8eYXy9y5Zg4M0A1d7tB5eH5Rw0hn/NvgFvdnEXfb6ET9
+	CFpKgnoQkY+FeMAjavB+QpldOaF4=
+X-Google-Smtp-Source: AGHT+IFmA951ptQc8QsAZHvAxoThsua6J9myv4Rqxp385MmoQlKPZK+102ZqWTI42l02aJur+dP9PjfQJFka7w66Msc=
+X-Received: by 2002:a05:651c:2210:b0:2fb:5035:7e4 with SMTP id
+ 38308e7fff4ca-2fedb75775fmr136721401fa.5.1730991477370; Thu, 07 Nov 2024
+ 06:57:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9746; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=BLY94gMzJV8bl1rs8ITlqHgcrX3WJaZb1Ugt48De6Y8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnLNVM5QHSsQ7HgmkC6FzXKigeL1KUUWrXvsJ6O VJasoc4Mn+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZyzVTAAKCRCPgPtYfRL+ TigRB/0bxEq95zaC2k3YuORkpdyWmyAoPbkwl6e0yDuizDWC8tUPgkPxjP6tjGCeLnO0fqtTk3M y5yD+Jo9qpEaO8Q4tCyiWZ/2EMw2eXve2+L6l/hFHq1HwUcDe3uru2yXBaXpbrOgNAuMKRlpApR 4KoXUXbQETaAPe5MhVphrGW+dxWzf5I0XHMXefWcg2fHXsoz2EI5hKEk0c25S3dI4tM4RZFqnfK 08Pp2+RlDKgDMTRbstCJeYXCYZxKahvwrIhg6AK9FP6yPsTpc8rlMvQsdBx6zilVYUex/dBgxeO pXTfPBqNmRn6mTjrN6Qu5lwEUnReoNrvyOCiooTUjAvWL240
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+References: <20241102175115.1769468-1-xur@google.com> <CAK7LNASdBPtq4vaK0XZQvxicOY15qJFsnqkO2_us4AU4ppHw6A@mail.gmail.com>
+ <CAF1bQ=R-7z9+57fji4Mn=ZVUgwSniGQ-8H4=42tFunxyp69Wzw@mail.gmail.com>
+In-Reply-To: <CAF1bQ=R-7z9+57fji4Mn=ZVUgwSniGQ-8H4=42tFunxyp69Wzw@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 7 Nov 2024 23:57:20 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARpXOm1R_BVsH-fSC4ZzQqstHj0amzX8fu6=USwTD91Tw@mail.gmail.com>
+Message-ID: <CAK7LNARpXOm1R_BVsH-fSC4ZzQqstHj0amzX8fu6=USwTD91Tw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] Add AutoFDO and Propeller support for Clang build
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	Stephane Eranian <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers.
+On Thu, Nov 7, 2024 at 4:00=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+>
+> On Wed, Nov 6, 2024 at 8:09=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
+> >
+> > On Sun, Nov 3, 2024 at 2:51=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > This patch series is to integrate AutoFDO and Propeller support into
+> > > the Linux kernel. AutoFDO is a profile-guided optimization technique
+> > > that leverages hardware sampling to enhance binary performance.
+> > > Unlike Instrumentation-based FDO (iFDO), AutoFDO offers a user-friend=
+ly
+> > > and straightforward application process. While iFDO generally yields
+> > > superior profile quality and performance, our findings reveal that
+> > > AutoFDO achieves remarkable effectiveness, bringing performance close
+> > > to iFDO for benchmark applications.
+> > >
+> > > Propeller is a profile-guided, post-link optimizer that improves
+> > > the performance of large-scale applications compiled with LLVM. It
+> > > operates by relinking the binary based on an additional round of runt=
+ime
+> > > profiles, enabling precise optimizations that are not possible at
+> > > compile time.  Similar to AutoFDO, Propeller too utilizes hardware
+> > > sampling to collect profiles and apply post-link optimizations to imp=
+rove
+> > > the benchmark=E2=80=99s performance over and above AutoFDO.
+> > >
+> > > Our empirical data demonstrates significant performance improvements
+> > > with AutoFDO and Propeller, up to 10% on microbenchmarks and up to 5%
+> > > on large warehouse-scale benchmarks. This makes a strong case for the=
+ir
+> > > inclusion as supported features in the upstream kernel.
+> > >
+> > > Background
+> > >
+> > > A significant fraction of fleet processing cycles (excluding idle tim=
+e)
+> > > from data center workloads are attributable to the kernel. Ware-house
+> > > scale workloads maximize performance by optimizing the production ker=
+nel
+> > > using iFDO (a.k.a instrumented PGO, Profile Guided Optimization).
+> > >
+> > > iFDO can significantly enhance application performance but its use
+> > > within the kernel has raised concerns. AutoFDO is a variant of FDO th=
+at
+> > > uses the hardware=E2=80=99s Performance Monitoring Unit (PMU) to coll=
+ect
+> > > profiling data. While AutoFDO typically yields smaller performance
+> > > gains than iFDO, it presents unique benefits for optimizing kernels.
+> > >
+> > > AutoFDO eliminates the need for instrumented kernels, allowing a sing=
+le
+> > > optimized kernel to serve both execution and profile collection. It a=
+lso
+> > > minimizes slowdown during profile collection, potentially yielding
+> > > higher-fidelity profiling, especially for time-sensitive code, compar=
+ed
+> > > to iFDO. Additionally, AutoFDO profiles can be obtained from producti=
+on
+> > > environments via the hardware=E2=80=99s PMU whereas iFDO profiles req=
+uire
+> > > carefully curated load tests that are representative of real-world
+> > > traffic.
+> > >
+> > > AutoFDO facilitates profile collection across diverse targets.
+> > > Preliminary studies indicate significant variation in kernel hot spot=
+s
+> > > within Google=E2=80=99s infrastructure, suggesting potential performa=
+nce gains
+> > > through target-specific kernel customization.
+> > >
+> > > Furthermore, other advanced compiler optimization techniques, includi=
+ng
+> > > ThinLTO and Propeller can be stacked on top of AutoFDO, similar to iF=
+DO.
+> > > ThinLTO achieves better runtime performance through whole-program
+> > > analysis and cross module optimizations. The main difference between
+> > > traditional LTO and ThinLTO is that the latter is scalable in time an=
+d
+> > > memory.
+> > >
+> > > This patch series adds AutoFDO and Propeller support to the kernel. T=
+he
+> > > actual solution comes in six parts:
+> > >
+> > > [P 1] Add the build support for using AutoFDO in Clang
+> > >
+> > >       Add the basic support for AutoFDO build and provide the
+> > >       instructions for using AutoFDO.
+> > >
+> > > [P 2] Fix objtool for bogus warnings when -ffunction-sections is enab=
+led
+> > >
+> > > [P 3] Adjust symbol ordering in text output sections
+> > >
+> > > [P 4] Add markers for text_unlikely and text_hot sections
+> > >
+> > > [P 5] Enable =E2=80=93ffunction-sections for the AutoFDO build
+> > >
+> > > [P 6] Enable Machine Function Split (MFS) optimization for AutoFDO
+> > >
+> > > [P 7] Add Propeller configuration to the kernel build
+> > >
+> > > Patch 1 provides basic AutoFDO build support. Patches 2 to 6 further
+> > > enhance the performance of AutoFDO builds and are functionally depend=
+ent
+> > > on Patch 1. Patch 7 enables support for Propeller and is dependent on
+> > > patch 2 to patch 4.
+> > >
+> > > Caveats
+> > >
+> > > AutoFDO is compatible with both GCC and Clang, but the patches in thi=
+s
+> > > series are exclusively applicable to LLVM 17 or newer for AutoFDO and
+> > > LLVM 19 or newer for Propeller. For profile conversion, two different
+> > > tools could be used, llvm_profgen or create_llvm_prof. llvm_profgen
+> > > needs to be the LLVM 19 or newer, or just the LLVM trunk. Alternative=
+ly,
+> > > create_llvm_prof v0.30.1 or newer can be used instead of llvm-profgen=
+.
+> > >
+> > > Additionally, the build is only supported on x86 platforms equipped
+> > > with PMU capabilities, such as LBR on Intel machines. More
+> > > specifically:
+> > >  * Intel platforms: works on every platform that supports LBR;
+> > >    we have tested on Skylake.
+> > >  * AMD platforms: tested on AMD Zen3 with the BRS feature. The kernel
+> > >    needs to be configured with =E2=80=9CCONFIG_PERF_EVENTS_AMD_BRS=3D=
+y", To
+> > >    check, use
+> > >    $ cat /proc/cpuinfo | grep =E2=80=9C brs=E2=80=9D
+> > >    For the AMD Zen4, AMD LBRV2 is supported, but we suspect a bug wit=
+h
+> > >    AMD LBRv2 implementation in Genoa which blocks the usage.
+> > >
+> > > For ARM, we plan to send patches for SPE-based Propeller when
+> > > AutoFDO for Arm is ready.
+> > >
+> > > Experiments and Results
+> > >
+> > > Experiments were conducted to compare the performance of AutoFDO-opti=
+mized
+> > > kernel images (version 6.9.x) against default builds.. The evaluation
+> > > encompassed both open source microbenchmarks and real-world productio=
+n
+> > > services from Google and Meta. The selected microbenchmarks included =
+Neper,
+> > > a network subsystem benchmark, and UnixBench which is a comprehensive=
+ suite
+> > > for assessing various kernel operations.
+> > >
+> > > For Neper, AutoFDO optimization resulted in a 6.1% increase in throug=
+hput
+> > > and a 10.6% reduction in latency. UnixBench saw a 2.2% improvement in=
+ its
+> > > index score under low system load and a 2.6% improvement under high s=
+ystem
+> > > load.
+> > >
+> > > For further details on the improvements observed in Google and Meta's
+> > > production services, please refer to the LLVM discourse post:
+> > > https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo=
+-including-thinlto-and-propeller/79108
+> > >
+> > > Thanks,
+> > >
+> > > Rong Xu and Han Shen
+> >
+> >
+> > I applied this series to linux-kbuild.
+> >
+>
+> Thanks for taking the patch!
+>
+> > As I mentioned before, I do not like #ifdef because
+> > it hides (not fixes) issues only for default cases.
+>
+> We followed the suggestion and removed most of the #if (or #ifdef) in
+> the linker script.
+> I just checked: there are two #ifdef remaining:
+> (1) in the propeller patch for .llvm_bb_addr_map
+> (2) in linker script patch for arch/sparc/kernel/vmlinux.lds.S.
+>
+> I think it's likely safe to remove the checks for head_64.o in
+> non-SPARC64 builds and .llvm_bb_addr_map symbols in non-propeller builds.
+>
+> SPARC64 builds should always produce head_64.o, and non-SPARC64
+> builds shouldn't.
+>
+> Propeller builds always generate .llvm_bb_addr_map symbols, and the
+> linker will omit the section if it's empty in non-propeller builds.
+>
+> Keeping the checks is harmless and might slightly reduce linker
+> workload for matching.
+> But If you'd prefer to remove them, I'm happy to provide a patch.
 
-Convert all platform drivers below drivers/memory to use .remove(), with
-the eventual goal to drop struct platform_driver::remove_new(). As
-.remove() and .remove_new() have the same prototypes, conversion is done
-by just changing the structure member name in the driver initializer.
 
-A few white space changes are included to make indention consistent.
+I am talking about the #ifdef in include/asm-generic/vmlinux.lds.h
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
-Hello,
 
-I did a single patch for all of drivers/memory. While I usually prefer
-to do one logical change per patch, this seems to be overengineering
-here as the individual changes are really trivial and shouldn't be much
-in the way for stable backports. But I'll happily split the patch if you
-prefer it split. Also if you object the indentation stuff, I can rework
-that.
+Yeah, it is me who (reluctantly) accepted cb87481ee89d.
 
-This is based on yesterday's next, if conflicts arise when you apply it
-at some later time and don't want to resolve them, feel free to just
-drop the changes to the conflicting files. I'll notice and followup at a
-later time then. Or ask me for a fixed resend. (Having said that, I
-recommend b4 am -3 + git am -3 which should resolve most conflicts just
-fine.)
+Now, the #ifdef has become a little more complicated.
+The default case is safe, but there are hidden issues.
 
-Best regards
-Uwe
+Some issues are easy to fix, so I sent some patches.
+https://lore.kernel.org/linux-kbuild/20241106161445.189399-1-masahiroy@kern=
+el.org/T/#t
+https://lore.kernel.org/linux-kbuild/20241106161445.189399-1-masahiroy@kern=
+el.org/T/#m4e4fa70386696e903b68d3fe1d7277e9a63fbefe
+https://lore.kernel.org/linux-kbuild/20241107111519.GA15424@willie-the-truc=
+k/T/#mccf6d49ddd11c90dcc583d7a68934bb3311da880
 
- drivers/memory/brcmstb_dpfe.c            | 2 +-
- drivers/memory/brcmstb_memc.c            | 2 +-
- drivers/memory/emif.c                    | 2 +-
- drivers/memory/fsl-corenet-cf.c          | 2 +-
- drivers/memory/fsl_ifc.c                 | 2 +-
- drivers/memory/jz4780-nemc.c             | 2 +-
- drivers/memory/mtk-smi.c                 | 4 ++--
- drivers/memory/omap-gpmc.c               | 2 +-
- drivers/memory/renesas-rpc-if.c          | 6 +++---
- drivers/memory/samsung/exynos5422-dmc.c  | 6 +++---
- drivers/memory/stm32-fmc2-ebi.c          | 6 +++---
- drivers/memory/tegra/tegra186-emc.c      | 2 +-
- drivers/memory/tegra/tegra210-emc-core.c | 2 +-
- drivers/memory/ti-emif-pm.c              | 2 +-
- 14 files changed, 21 insertions(+), 21 deletions(-)
+For example, see e41f501d3912.
 
-diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
-index 5028467b2dc9..08d9e05b1b33 100644
---- a/drivers/memory/brcmstb_dpfe.c
-+++ b/drivers/memory/brcmstb_dpfe.c
-@@ -934,7 +934,7 @@ static struct platform_driver brcmstb_dpfe_driver = {
- 		.of_match_table = brcmstb_dpfe_of_match,
- 	},
- 	.probe = brcmstb_dpfe_probe,
--	.remove_new = brcmstb_dpfe_remove,
-+	.remove = brcmstb_dpfe_remove,
- 	.resume = brcmstb_dpfe_resume,
- };
- 
-diff --git a/drivers/memory/brcmstb_memc.c b/drivers/memory/brcmstb_memc.c
-index 4f17a93aa028..c87b37e2c1f0 100644
---- a/drivers/memory/brcmstb_memc.c
-+++ b/drivers/memory/brcmstb_memc.c
-@@ -283,7 +283,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(brcmstb_memc_pm_ops, brcmstb_memc_suspend,
- 
- static struct platform_driver brcmstb_memc_driver = {
- 	.probe = brcmstb_memc_probe,
--	.remove_new = brcmstb_memc_remove,
-+	.remove = brcmstb_memc_remove,
- 	.driver = {
- 		.name		= "brcmstb_memc",
- 		.of_match_table	= brcmstb_memc_of_match,
-diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
-index 99eb7d1baa5f..2e1ecae9e959 100644
---- a/drivers/memory/emif.c
-+++ b/drivers/memory/emif.c
-@@ -1159,7 +1159,7 @@ MODULE_DEVICE_TABLE(of, emif_of_match);
- 
- static struct platform_driver emif_driver = {
- 	.probe		= emif_probe,
--	.remove_new	= emif_remove,
-+	.remove		= emif_remove,
- 	.shutdown	= emif_shutdown,
- 	.driver = {
- 		.name = "emif",
-diff --git a/drivers/memory/fsl-corenet-cf.c b/drivers/memory/fsl-corenet-cf.c
-index f47d05f7c5c5..ecd6c1955153 100644
---- a/drivers/memory/fsl-corenet-cf.c
-+++ b/drivers/memory/fsl-corenet-cf.c
-@@ -249,7 +249,7 @@ static struct platform_driver ccf_driver = {
- 		.of_match_table = ccf_matches,
- 	},
- 	.probe = ccf_probe,
--	.remove_new = ccf_remove,
-+	.remove = ccf_remove,
- };
- 
- module_platform_driver(ccf_driver);
-diff --git a/drivers/memory/fsl_ifc.c b/drivers/memory/fsl_ifc.c
-index 15e919c24f81..27e041178c09 100644
---- a/drivers/memory/fsl_ifc.c
-+++ b/drivers/memory/fsl_ifc.c
-@@ -316,7 +316,7 @@ static struct platform_driver fsl_ifc_ctrl_driver = {
- 		.of_match_table = fsl_ifc_match,
- 	},
- 	.probe       = fsl_ifc_ctrl_probe,
--	.remove_new  = fsl_ifc_ctrl_remove,
-+	.remove      = fsl_ifc_ctrl_remove,
- };
- 
- static int __init fsl_ifc_init(void)
-diff --git a/drivers/memory/jz4780-nemc.c b/drivers/memory/jz4780-nemc.c
-index fb6db2ffe71b..1a8161514d03 100644
---- a/drivers/memory/jz4780-nemc.c
-+++ b/drivers/memory/jz4780-nemc.c
-@@ -407,7 +407,7 @@ static const struct of_device_id jz4780_nemc_dt_match[] = {
- 
- static struct platform_driver jz4780_nemc_driver = {
- 	.probe		= jz4780_nemc_probe,
--	.remove_new	= jz4780_nemc_remove,
-+	.remove		= jz4780_nemc_remove,
- 	.driver	= {
- 		.name	= "jz4780-nemc",
- 		.of_match_table = of_match_ptr(jz4780_nemc_dt_match),
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index 2bc034dff691..5710348f72f6 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -616,7 +616,7 @@ static const struct dev_pm_ops smi_larb_pm_ops = {
- 
- static struct platform_driver mtk_smi_larb_driver = {
- 	.probe	= mtk_smi_larb_probe,
--	.remove_new = mtk_smi_larb_remove,
-+	.remove = mtk_smi_larb_remove,
- 	.driver	= {
- 		.name = "mtk-smi-larb",
- 		.of_match_table = mtk_smi_larb_of_ids,
-@@ -838,7 +838,7 @@ static const struct dev_pm_ops smi_common_pm_ops = {
- 
- static struct platform_driver mtk_smi_common_driver = {
- 	.probe	= mtk_smi_common_probe,
--	.remove_new = mtk_smi_common_remove,
-+	.remove = mtk_smi_common_remove,
- 	.driver	= {
- 		.name = "mtk-smi-common",
- 		.of_match_table = mtk_smi_common_of_ids,
-diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index c8a0d82f9c27..50eb9f49512b 100644
---- a/drivers/memory/omap-gpmc.c
-+++ b/drivers/memory/omap-gpmc.c
-@@ -2743,7 +2743,7 @@ MODULE_DEVICE_TABLE(of, gpmc_dt_ids);
- 
- static struct platform_driver gpmc_driver = {
- 	.probe		= gpmc_probe,
--	.remove_new	= gpmc_remove,
-+	.remove		= gpmc_remove,
- 	.driver		= {
- 		.name	= DEVICE_NAME,
- 		.of_match_table = of_match_ptr(gpmc_dt_ids),
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 7fbd36fa1a1b..55209ca43a96 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -794,10 +794,10 @@ static const struct of_device_id rpcif_of_match[] = {
- MODULE_DEVICE_TABLE(of, rpcif_of_match);
- 
- static struct platform_driver rpcif_driver = {
--	.probe	= rpcif_probe,
--	.remove_new = rpcif_remove,
-+	.probe = rpcif_probe,
-+	.remove = rpcif_remove,
- 	.driver = {
--		.name =	"rpc-if",
-+		.name = "rpc-if",
- 		.of_match_table = rpcif_of_match,
- 	},
- };
-diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-index 7d80322754fa..dfc5ee54a9b7 100644
---- a/drivers/memory/samsung/exynos5422-dmc.c
-+++ b/drivers/memory/samsung/exynos5422-dmc.c
-@@ -1570,10 +1570,10 @@ static const struct of_device_id exynos5_dmc_of_match[] = {
- MODULE_DEVICE_TABLE(of, exynos5_dmc_of_match);
- 
- static struct platform_driver exynos5_dmc_platdrv = {
--	.probe	= exynos5_dmc_probe,
--	.remove_new = exynos5_dmc_remove,
-+	.probe = exynos5_dmc_probe,
-+	.remove = exynos5_dmc_remove,
- 	.driver = {
--		.name	= "exynos5-dmc",
-+		.name = "exynos5-dmc",
- 		.of_match_table = exynos5_dmc_of_match,
- 	},
- };
-diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
-index 566c225f71c0..2f1e2d7d54b5 100644
---- a/drivers/memory/stm32-fmc2-ebi.c
-+++ b/drivers/memory/stm32-fmc2-ebi.c
-@@ -1814,9 +1814,9 @@ static const struct of_device_id stm32_fmc2_ebi_match[] = {
- MODULE_DEVICE_TABLE(of, stm32_fmc2_ebi_match);
- 
- static struct platform_driver stm32_fmc2_ebi_driver = {
--	.probe	= stm32_fmc2_ebi_probe,
--	.remove_new = stm32_fmc2_ebi_remove,
--	.driver	= {
-+	.probe = stm32_fmc2_ebi_probe,
-+	.remove = stm32_fmc2_ebi_remove,
-+	.driver = {
- 		.name = "stm32_fmc2_ebi",
- 		.of_match_table = stm32_fmc2_ebi_match,
- 		.pm = &stm32_fmc2_ebi_pm_ops,
-diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
-index 33d67d251719..bc807d7fcd4e 100644
---- a/drivers/memory/tegra/tegra186-emc.c
-+++ b/drivers/memory/tegra/tegra186-emc.c
-@@ -406,7 +406,7 @@ static struct platform_driver tegra186_emc_driver = {
- 		.sync_state = icc_sync_state,
- 	},
- 	.probe = tegra186_emc_probe,
--	.remove_new = tegra186_emc_remove,
-+	.remove = tegra186_emc_remove,
- };
- module_platform_driver(tegra186_emc_driver);
- 
-diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
-index 78ca1d6c0977..2d5d8245a1d3 100644
---- a/drivers/memory/tegra/tegra210-emc-core.c
-+++ b/drivers/memory/tegra/tegra210-emc-core.c
-@@ -2051,7 +2051,7 @@ static struct platform_driver tegra210_emc_driver = {
- 		.pm = &tegra210_emc_pm_ops,
- 	},
- 	.probe = tegra210_emc_probe,
--	.remove_new = tegra210_emc_remove,
-+	.remove = tegra210_emc_remove,
- };
- 
- module_platform_driver(tegra210_emc_driver);
-diff --git a/drivers/memory/ti-emif-pm.c b/drivers/memory/ti-emif-pm.c
-index 592f70e9c8e5..df362ecc59e9 100644
---- a/drivers/memory/ti-emif-pm.c
-+++ b/drivers/memory/ti-emif-pm.c
-@@ -330,7 +330,7 @@ static const struct dev_pm_ops ti_emif_pm_ops = {
- 
- static struct platform_driver ti_emif_driver = {
- 	.probe = ti_emif_probe,
--	.remove_new = ti_emif_remove,
-+	.remove = ti_emif_remove,
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.of_match_table = ti_emif_of_match,
+When CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=3Dy or
+CONFIG_LTO_CLANG=3Dy or CONFIG_AUTOFDO_CLANG=3Dy or
+CONFIG_PROPELLER_CLANG=3Dy, the .text.startup sections
+will go to TEXT_MAIN instead of INIT_TEXT.
+This is not a fatal issue, but we cannot reuse memory for .text.startup
+sections.
 
-base-commit: 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
--- 
-2.45.2
+Removing the #ifdef (i.e. reverting cb87481ee89d) is more difficult
+because we need to take a closer look at potential impacts for all
+architectures.
 
+I understood you did not want to take a risk to break random architectures,
+so I decided to postpone the #ifdef issue and accept your patch set.
+
+--=20
+Best Regards
+Masahiro Yamada
 
