@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-399955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885DE9C06F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:10:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D1D9C06F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9DE1F218CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:10:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271B21C25BFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B5A213EC7;
-	Thu,  7 Nov 2024 13:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047FC20FA9B;
+	Thu,  7 Nov 2024 13:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MniWMyBj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="coBCSr1N"
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D6B20FAB9;
-	Thu,  7 Nov 2024 13:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E3A1EF087;
+	Thu,  7 Nov 2024 13:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730984827; cv=none; b=bF1zvGUccrx5dCFcAkAZz1ReDEFW+9EDfnDwDO8kSmZtuwtoyegvhbUOFY2B0pJeF338VZ+nXfD4Ow05rUGV5h7I35ZY35PI1WzcXQGUfcaJ/+EXJNRJm4usGdHNIzThbyqrVqi6flhcuiqf8l35Ca4Po/NBDlO0h7+KYAvUS8s=
+	t=1730984961; cv=none; b=d6pfpH0GEOX0noA3WBRQz4NuJrr1uTpQcbijsv6TjIrnXv+/wv/8B0hPWaOw6S7aRKT+MT0l8L65kSddcUxK++5bjvl+rVvnHp6T+lUIRhR1+mQd2KsD/hGNx4TwJ64c9SkHXE7GXS1rTAr/iiwtT7Ud87f9Xv6pmyXHROb7myg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730984827; c=relaxed/simple;
-	bh=lEUFZriDhDkjVwUILii4JZwb1zW3y17U2hvnZ0QMi6w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Svk64W81rrkqGAr+MTcaHWVmMWp7oIkYsZjwjQEzapDGBsosebIfHcxoyN625NpzXy3XBF2eewAU5vAyR8q7uw0DI/qcNkcAE+ncLRdENNeSiJyJlsQ5yclYqsHBGARdI1tsvlHMhXo0SkqRK1kscwuZrdyorucoVeCnCPcBerE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MniWMyBj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A63CC4CED2;
-	Thu,  7 Nov 2024 13:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730984826;
-	bh=lEUFZriDhDkjVwUILii4JZwb1zW3y17U2hvnZ0QMi6w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=MniWMyBjz3113myrrNYUNfEtyzo49n0WO2n2fb+b2ivnphHxvhZnmEI/Wcx6jbUqN
-	 WQ1+CW8foD0JpjPqsr6Mk1hYaWcH7sl0+Q3xCAOTqGREKVTT9GNKC3/VdDmWGB9T0O
-	 PhzNJj59spsFB3RZl5X5UbBkrxJ1MFdHnN7xElDUn+oqVfSVo2ByFXart7R0ClGRY/
-	 pYK254+klX9qGE5XI5PvsZ6Ir7ajZvc0iMME/Iun9U2rUSuI3hWrIdYZfs9a6H2h93
-	 NCBe7/GIvHILhRMa3lOo5XpKKAUqAwonKE+LyM51sLZp5rnX2u+LMDsu7Ye87RWKRr
-	 PVk5hcqKi9RPg==
-From: Mark Brown <broonie@kernel.org>
-To: alsa-devel@alsa-project.org, 
- Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-Cc: Vijendar.Mukunda@amd.com, Basavaraj.Hiregoudar@amd.com, 
- Sunil-kumar.Dommati@amd.com, syed.sabakareem@amd.com, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
- Daniel Baluta <daniel.baluta@nxp.com>, 
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
- Emil Velikov <emil.velikov@collabora.com>, 
- "moderated list:SOUND - SOUND OPEN FIRMWARE (SOF) DRIVERS" <sound-open-firmware@alsa-project.org>, 
- "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, 
- open list <linux-kernel@vger.kernel.org>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-In-Reply-To: <20241106142658.1240929-1-venkataprasad.potturu@amd.com>
-References: <20241106142658.1240929-1-venkataprasad.potturu@amd.com>
-Subject: Re: [PATCH v2] ASoC: SOF: amd: Fix for incorrect DMA ch status
- register offset
-Message-Id: <173098482166.15423.8670682010126055534.b4-ty@kernel.org>
-Date: Thu, 07 Nov 2024 13:07:01 +0000
+	s=arc-20240116; t=1730984961; c=relaxed/simple;
+	bh=ndYeiWWQYLtL7TF3TcK62YMSZ1lDWFKJazxfBAVTPlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b0bN59hyNEwb8i4qt9+gyjBSOtoe57oHjvvYwM7CIAlImj7N4EMGOSThNkezFxR5UXGmcuv0zcsQ/iicmDahcV90GL4O22zbwNe+6RPIMJgkrJwIB9H18Zla5v6KGyMvNd8/GFr1sUiN5/3LzR+aFTh5BRSpS3YKhWieJxLLi34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=coBCSr1N; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26d8so3597225a12.1;
+        Thu, 07 Nov 2024 05:09:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730984957; x=1731589757; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/6wp4Vr/2hV/oyu+TDytxISxtShsM2Q5KzogwygMg8=;
+        b=coBCSr1NoeGx2euv0ldNzezgadzWtiivvmqsoRkZWA1ffXZQfu8AUvZDY5ktB+t/9V
+         dUmhuVi9rDQ5DIk2KZC/VxTasSA/07SL2w7EABK8MHUxk4Ff95MassTGP7VoDvMB0l0Z
+         UOtM1Xlaf2L4hK+mNVbNAdzpUcxF/atHmWyzgPxJc/1qngF9LqNdUYHSg8PRShtm1uti
+         MngezW+dQP3JGv1GY8Ud2aA26a+wlkkYHJzpG1DV8oN3GgHimA8dzoyB56GXZ9owQYYh
+         HwqTF837jxwWESo/QrUfy7nUOfliAJ42b43AwQntf294HU1iRlF9c4BtByiRuWlgU39A
+         jsjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730984957; x=1731589757;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K/6wp4Vr/2hV/oyu+TDytxISxtShsM2Q5KzogwygMg8=;
+        b=nQ9A11sj0q7l0E54ujBZEXANhW5yZDbYnoqrTdtXPCE45VFVjUpVcoNe1Le6ZBcae/
+         Z5NZsAaH/lFfdYsZ2tSQbzD48ZZ8SWP6TDrixFxDXKLOplvDRtX0Wqiya/tz+72OfSXa
+         i0hQShGj09XQA4K35lerEnN9FTZ30rg5KHLXxkvxMwp+bVCK2G/DRjxEQ2WwSkfMWTWd
+         x/9awbmpazWOoxSszVVrlU7F3Yptvs5TayDFs178hO1uOZli8HI3yfhkRbaQqivhNkAK
+         Hyffs6yAopbuMFojltJVNXKDkl3VD5GdZEzjV3I8U3ciwuYl5bQ85oy7enV6/h+t1Nhr
+         4XSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUadaitpbK6v64arlpjtONUGxwNg/kNDNXdlKns4UWCSczYvicVFt+UoawhOKpZC+aY9aByHhng@vger.kernel.org, AJvYcCUinWfes4gS+C9Vl0OxrpBlaVCLfxnNY52pSU2Y0q/DIJhk7c2h3O2T1p5P7qQHlPTLYaD74SIOh7SP3NA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVaDhFK2fpjf9laK5om/iXVjuT+fE1Y1V9ZP+muoQaT+HJ86/i
+	UjtoNAuJDnwBBQyobZb1eL5rHahVSATIc9UqboTpAJghBuSzvHLXVhOI+R73KO6OUiUQdnAmvKj
+	66LG6YFm8+ZCgd8bry07N5740POu7PKBlzhmyQTnP
+X-Google-Smtp-Source: AGHT+IHMRqAMb9qqvjoZV614aRHMfqr78BddJOQ4xmoEAJatsbpYvBBe3NjyU9djOgo4/3zKeZh4hspP4AJB2HRzio8=
+X-Received: by 2002:a17:907:843:b0:a9e:85f8:2a6d with SMTP id
+ a640c23a62f3a-a9ed4c92521mr298548166b.11.1730984956797; Thu, 07 Nov 2024
+ 05:09:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+References: <20241107124116.579108-1-chenqiuji666@gmail.com> <00d84e12-4c14-4a6b-a5cd-83d81ac90855@redhat.com>
+In-Reply-To: <00d84e12-4c14-4a6b-a5cd-83d81ac90855@redhat.com>
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+Date: Thu, 7 Nov 2024 21:09:05 +0800
+Message-ID: <CANgpojUf53ncbYqQRmfMG6R9WYQHSyPGU=LkWVK-MonNDGa8gQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: fix a possible null pointer dereference in setup_zone_pageset()
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 06 Nov 2024 19:56:57 +0530, Venkata Prasad Potturu wrote:
-> DMA ch status register offset change in acp7.0 platform
-> 
-> Incorrect DMA channel status register offset check lead to
-> firmware boot failure.
-> 
-> [   14.432497] snd_sof_amd_acp70 0000:c4:00.5: ------------[ DSP dump start ]------------
-> [   14.432533] snd_sof_amd_acp70 0000:c4:00.5: Firmware boot failure due to timeout
-> [   14.432549] snd_sof_amd_acp70 0000:c4:00.5: fw_state: SOF_FW_BOOT_IN_PROGRESS (3)
-> [   14.432610] snd_sof_amd_acp70 0000:c4:00.5: invalid header size 0x71c41000. FW oops is bogus
-> [   14.432626] snd_sof_amd_acp70 0000:c4:00.5: unexpected fault 0x71c40000 trace 0x71c40000
-> [   14.432642] snd_sof_amd_acp70 0000:c4:00.5: ------------[ DSP dump end ]------------
-> [   14.432657] snd_sof_amd_acp70 0000:c4:00.5: error: failed to boot DSP firmware -5
-> [   14.432672] snd_sof_amd_acp70 0000:c4:00.5: fw_state change: 3 -> 4
-> [   14.433260] dmic-codec dmic-codec: ASoC: Unregistered DAI 'dmic-hifi'
-> [   14.433319] snd_sof_amd_acp70 0000:c4:00.5: fw_state change: 4 -> 0
-> [   14.433358] snd_sof_amd_acp70 0000:c4:00.5: error: sof_probe_work failed err: -5
-> 
-> [...]
+Hello, the previous patch did not correctly check and release the
+relevant pointers. Version 2 has fixed these issues. Thank you for
+your response.
 
-Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: SOF: amd: Fix for incorrect DMA ch status register offset
-      commit: 94debe5eaa0adaa24a6de4a8e5f138be7381eb9e
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+On Thu, Nov 7, 2024 at 8:53=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 07.11.24 13:41, Qiu-ji Chen wrote:
+> > The function call alloc_percpu() returns a pointer to the memory addres=
+s,
+> > but it hasn't been checked. Our static analysis tool indicates that nul=
+l
+> > pointer dereference may exist in pointer zone->per_cpu_pageset. It is
+> > always safe to judge the null pointer before use.
+> >
+> > Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+> > Cc: stable@vger.kernel.org
+> > Fixes: 9420f89db2dd ("mm: move most of core MM initialization to mm/mm_=
+init.c")
+> > ---
+> > V2:
+> > Fixed the incorrect code logic.
+> > Thanks David Hildenbrand for helpful suggestion.
+> > ---
+> >   mm/page_alloc.c | 6 ++++++
+> >   1 file changed, 6 insertions(+)
+> >
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 8afab64814dc..7c8a74fd02d6 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -5703,8 +5703,14 @@ void __meminit setup_zone_pageset(struct zone *z=
+one)
+> >       /* Size may be 0 on !SMP && !NUMA */
+> >       if (sizeof(struct per_cpu_zonestat) > 0)
+> >               zone->per_cpu_zonestats =3D alloc_percpu(struct per_cpu_z=
+onestat);
+> > +     if (!zone->per_cpu_zonestats)
+> > +             return;
+> >
+> >       zone->per_cpu_pageset =3D alloc_percpu(struct per_cpu_pages);
+> > +     if (!zone->per_cpu_pageset) {
+> > +             free_percpu(zone->per_cpu_zonestats);
+> > +             return;
+> > +     }
+> >       for_each_possible_cpu(cpu) {
+> >               struct per_cpu_pages *pcp;
+> >               struct per_cpu_zonestat *pzstats;
+>
+> Unmodified patch, likely not what you wanted to send?
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
