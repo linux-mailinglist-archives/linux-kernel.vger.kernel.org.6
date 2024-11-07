@@ -1,123 +1,97 @@
-Return-Path: <linux-kernel+bounces-400034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2DB79C0805
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:49:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2679C080B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:49:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DE63B218A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65B1FB2282A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02CD21262C;
-	Thu,  7 Nov 2024 13:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DAF212654;
+	Thu,  7 Nov 2024 13:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOyjClu4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYG5uvqV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0884D9450;
-	Thu,  7 Nov 2024 13:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118789450;
+	Thu,  7 Nov 2024 13:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987359; cv=none; b=oBrs4d0yI3VABKFuC4aQefhCgFyv3I9qzuxy0s6O6Pw65QC89YUj8VBGzGc0WygVhdeyrutYL8SRHg+RJvzYxvWNO/gg0ACAwcXoYbkYILwH0ssmPw04+huHSZvWjZqBD1EuTBs7KApxxxc+bF83EhA73aix32AB433TpE99DWw=
+	t=1730987368; cv=none; b=dg/aYmOSMWTxQYim62bBzjNa4OuOYHKirX3IaqA0prSdixtLm2GWlUWkcGJykJIc2MXnRGr7gmC8pEV/gtBVJMMWkjndD0dYVYFz+NONP0OxazyIPVRZWzWju7Yvqjy/y7ck5g0do4pV6mDerjJFX6AJf1zMnX237oGByEGQaL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987359; c=relaxed/simple;
-	bh=xkdSuqK3r0vUf8de9C7k1IoPlQeMvXHhSuucCxgETxU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=gD4z8CEcw1zQeXU70kaL8ys5YBfJw7WgrvKL82kt5JHf9Uq3l6iw5nDKoj7KQzpvc0TXvk6x7iBsURU7NIWlaDwHtqHD1nbJ+CVRvmLEADjdg2hoa3DQ4PErvj4DhErJKRV5VUaXD9Sc7/+s2VxJE2FIZlo+cd1edVUAkxS7ais=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOyjClu4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13768C4CECC;
-	Thu,  7 Nov 2024 13:49:17 +0000 (UTC)
+	s=arc-20240116; t=1730987368; c=relaxed/simple;
+	bh=S0uqOs3OT6EK95y6+TWKk54ktPxmXunkL0Meh8SJuYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l92nafGO6RWDB9LuY1eH4JpixzY8d/t/gM0A+8c56NVaWjpv/1J/+P6kcnGgwnkDwDiurcJqVBLoYgKKHgYIz5LS+728gXo7J626sl3+74W5nz5H9DyYCJCRZH/a+aL8c8Qd7x3m/c55o9vmfPI9xEh6GX0KVB0iPyNChn9lkG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYG5uvqV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 238D3C4CECC;
+	Thu,  7 Nov 2024 13:49:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730987358;
-	bh=xkdSuqK3r0vUf8de9C7k1IoPlQeMvXHhSuucCxgETxU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=QOyjClu4O3NmeTBrShlXT/WKsAjeF3REe16UvfDGP4OkrgVMdToegp9LoVHvDbYab
-	 JoTEzZUgoNDDuK6Zd8HO5p2goqt5rdeSCQ7aAdtDXJEOzEXfbANGDw7DavIgVf0Xa/
-	 5SbNNzox7et6gMqEjX5OhKI7VcfDF2YaCyBmx+/mZJk2+V6lQykOVqHyq+2zO8ohYQ
-	 L6fwQoCTJ2Vwlr9lujOK2NfLv2LENsiI9MLMBCGq2uG7zcLtCR21ezGFR04Kmp4vqr
-	 ASV5PbPylogay7VjWfjkalIlmBsjD4fu3YrA8rvwyNExqCARJfy5y09OmgF91l3ZQW
-	 kKPrnZ9pRXFGw==
+	s=k20201202; t=1730987367;
+	bh=S0uqOs3OT6EK95y6+TWKk54ktPxmXunkL0Meh8SJuYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BYG5uvqV1qG+r8SzZ+S/m/8pX/OIMtpoY65PYUCgqTNe0dgwnqPLlOGqWlTkuOupe
+	 vttwl0bGLW0XkFvIgZC7EQZKPP9lzgKnVvjNLOHBRdLxNVFq7Ue7T/TgWa1KiJ79zG
+	 DMQUmZT0c59LgycD2zOz24CADf8FqBe8vQ62Dw46ijWORv7s3e85uU44TNJg7i0DLc
+	 3p9tqYqud3+8ldxqvCr9cpzmDtNEaAS0oliQyIwX3Wdq9xXkAKBtIbOXO7lvEeN3ER
+	 JUgo0gavVnZSeZl8Yxrt9FEd9sBskMTf330daFnHXsfJSdNDPCeNvj0qiRdOCI+4vq
+	 uWsPp6hauXTXw==
+Date: Thu, 7 Nov 2024 14:49:20 +0100
+From: Carlos Maiolino <cem@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, 
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, John Garry <john.g.garry@oracle.com>, 
+	Catherine Hoang <catherine.hoang@oracle.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, 
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org, Dave Chinner <david@fromorbit.com>, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [ANNOUNCE v2] work tree for untorn filesystem writes
+Message-ID: <3x7l6ydqn3azs4m73lggzyznntojagkcclrkrgxecncascd6qq@wmuvbowt7nxp>
+References: <20241106005740.GM2386201@frogsfrogsfrogs>
+ <20241106-zerkleinern-verzweifeln-7ec8173c56ad@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 07 Nov 2024 15:49:14 +0200
-Message-Id: <D5FZT0QPHL0O.231WD6VUHC48X@kernel.org>
-Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
- <linux-integrity@vger.kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
- "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>
-X-Mailer: aerc 0.18.2
-References: <20241107095138.78209-1-jarkko@kernel.org>
- <76d9ae11c339b589a8ec94f010e7439b7ce7d283.camel@HansenPartnership.com>
-In-Reply-To: <76d9ae11c339b589a8ec94f010e7439b7ce7d283.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106-zerkleinern-verzweifeln-7ec8173c56ad@brauner>
 
-On Thu Nov 7, 2024 at 3:20 PM EET, James Bottomley wrote:
-> On Thu, 2024-11-07 at 11:51 +0200, Jarkko Sakkinen wrote:
-> [...]
-> > +void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 at=
-tributes, u8 *passphrase, int
-> > passphrase_len)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* offset tells us where the=
- sessions area begins */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int offset =3D buf->handles =
-* 4 + TPM_HEADER_SIZE;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 len =3D 9 + passphrase_l=
-en;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (tpm_buf_length(buf) !=3D=
- offset) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0/* not the first session so update the existing
-> > length */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0len +=3D get_unaligned_be32(&buf->data[offset]);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0put_unaligned_be32(len, &buf->data[offset]);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u32(buf, len);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* auth handle */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u32(buf, TPM2=
-_RS_PW);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* nonce */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u16(buf, 0);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* attributes */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u8(buf, 0);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* passphrase */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u16(buf, pass=
-phrase_len);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append(buf, passphra=
-se, passphrase_len);
-> > +}
-> > +
->
-> The rest of the code looks fine, but if you're going to extract this as
-> a separate function instead of doing the open coded struct
-> tpm2_null_auth that was there originally, you should probably extract
-> and use the tpm2_buf_append_auth() function in trusted_tpm2.c
+On Wed, Nov 06, 2024 at 10:50:21AM +0100, Christian Brauner wrote:
+> On Tue, Nov 05, 2024 at 04:57:40PM -0800, Darrick J. Wong wrote:
+> > Hi everyone,
+> > 
+> > Here's a slightly updated working branch for the filesystem side of
+> > atomic write changes for 6.13:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-05
+> > 
+> > This branch is, like yesterday's, based off of axboe's
+> > for-6.13/block-atomic branch:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block-atomic
+> > 
+> > The only difference is that I added Ojaswin's Tested-by: tags to the end
+> > of the xfs series.  I have done basic testing with the shell script at
+> > the end of this email and am satisfied that it at least seems to do the
+> > (limited) things that I think we're targeting for 6.13.
+> > 
+> > Christian: Could you pull this fs-atomic branch into your vfs.git work
+> > for 6.13, please?
+> 
+> Of course!
+> 
+> I did git pull fs-atomic_2024-11-05 from your tree. It should show up in
+> -next tomorrow.
 
-So this was straight up from Mimi's original patch :-)
+I just saw this message Christian, please ignore my previous email, my
+apologies.
 
-Hmm... was there duplicate use for this in the patch? I'll check this.
-
->
-> James
-
-BR, Jarkko
+Carlos
 
