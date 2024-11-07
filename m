@@ -1,101 +1,109 @@
-Return-Path: <linux-kernel+bounces-400099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738E49C08F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:33:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1270D9C08F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:33:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF9A1F24050
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:33:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85FF0B2324A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CECE212F08;
-	Thu,  7 Nov 2024 14:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3451212D11;
+	Thu,  7 Nov 2024 14:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="FchbBPjb";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="FchbBPjb"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IdZYx/sO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="flJjDiqq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41D9212EF9;
-	Thu,  7 Nov 2024 14:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCC2DDBE;
+	Thu,  7 Nov 2024 14:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730989979; cv=none; b=HXnlPYZBTemnT/j/Dq7eRA8E9ufUFO3XHGxZ+46gwyrv8tOLRwhqEZ6E62/w2rjLOLuOusX0DgpGZ87XuWocm8MxsVK/R2N583YAfW129uL282RHIzvImO1XoTvIIso0ywaryCcenKGneTtthMJnN6RqNUhz7/+87+BR5126bzI=
+	t=1730989997; cv=none; b=NsFd+7XAo2ul5thTnMU+sV/JHT2aREUD2YIR9CzYLGmJTePW7sOM82jaDHffdWWcJmndgexPQMihNi2tAmt3dWHo21JJXxYuPkakDiGCZRWrjlVhVuKrUZsFUjRZC41s+Y+RqSd9qQDJNOa47786I2MYIYoFFRPqD0mwi58RlhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730989979; c=relaxed/simple;
-	bh=Z3+zd1AF7jv9N9TXPDOkFMx7gdtgHAKbmQWI6UUUfFQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bwGMJgIwbTQejymh2NmwqPxWuF2AcL+wl8mj0uzr4gD4nn3vmac+aDymfFQ2nG+UlY68k4iG1SnccPdqVBYeBP/Djgr4zmU5o13DoAQtWJKavKHDqjJJXxDebFMbC3oW4XdBXBeqLMd+YW5hmV3Ap6zdHQmNmWRSZ6lir9jXNkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=FchbBPjb; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=FchbBPjb; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1730989976;
-	bh=Z3+zd1AF7jv9N9TXPDOkFMx7gdtgHAKbmQWI6UUUfFQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=FchbBPjbrglgS90uDIo2w9cLyce0tEWEyCoPB5dLU3PLbHXqDqPIucHVkNSqlm3Sh
-	 /x3bXXbsxWytiGdcqT5KZq4Nb54WhtAoAV0Zm1zUIdEem/MCfFd5d7xKHf3sQcR5WO
-	 oAJI+dMpphFgj9t+R5St2oAE8moDSznKAYFHHbh0=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 815961286F67;
-	Thu, 07 Nov 2024 09:32:56 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id g_y-6ENM4dOl; Thu,  7 Nov 2024 09:32:56 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1730989976;
-	bh=Z3+zd1AF7jv9N9TXPDOkFMx7gdtgHAKbmQWI6UUUfFQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=FchbBPjbrglgS90uDIo2w9cLyce0tEWEyCoPB5dLU3PLbHXqDqPIucHVkNSqlm3Sh
-	 /x3bXXbsxWytiGdcqT5KZq4Nb54WhtAoAV0Zm1zUIdEem/MCfFd5d7xKHf3sQcR5WO
-	 oAJI+dMpphFgj9t+R5St2oAE8moDSznKAYFHHbh0=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A19401286F64;
-	Thu, 07 Nov 2024 09:32:55 -0500 (EST)
-Message-ID: <646143dcb1fc2abe8b53172bb8ac24fe54246dda.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2] [SCSI] esas2r: fix possible array out-of-bounds
- caused by bad DMA value in esas2r_process_vda_ioctl()
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Qiu-ji Chen <chenqiuji666@gmail.com>, linuxdrivers@attotech.com, 
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, stable@vger.kernel.org
-Date: Thu, 07 Nov 2024 09:32:52 -0500
-In-Reply-To: <20241107141647.760771-1-chenqiuji666@gmail.com>
-References: <20241107141647.760771-1-chenqiuji666@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1730989997; c=relaxed/simple;
+	bh=T6JAQLWAu30J1pPe9xHQ/jQRAjDtzjyrN6wBKTeqVl4=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=jxQh9YIlxcB8EuEWphRO7gCK6eA2GxD1dd3yzc0xrG08+/tcBy60KCEbOx99vbJn7RupSPCjIKwOJdmvj1CqdAw6c9m0CYlDKYdm4kEoiM8uAI26u5gQFnvgDpC4GtqgkWqkb255tj1cuY0TcOEtLhuh8mVVGDj3SUEe5rPhzo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IdZYx/sO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=flJjDiqq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 07 Nov 2024 14:33:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730989986;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=qhlCqOIeJg1V8GCtkeCwwDWxlFZtoh0P3xbDu2WT33Q=;
+	b=IdZYx/sOJscWaVXIeRp4dUSooZ0Y6FQpwCDG0OfgEeJPBCtmwphgL3E64GVQ3BTzi5RM+T
+	1wAjvKxcQa43yQiWYogmLd1u2PxUW3BOEdh3wHBsuLGs7YRlyKpN2plYJi5tWq7nLcbJal
+	pc5Ehw+HftiJkH9hsrqhs7LvnsuLuW1oCpn3YqenLWlbFrkrYf6GhmUIh4CUTzoZYVB134
+	HcnnyV7V1qDiQv6Tm01hTRIRA2Nsfy9f5Uc8XxVhYmTzbqopOU66rS7hVS+rga+Q4uTYKl
+	W1H19jYOloLO3LPMqAeN5yWAKBD+sMRxhzrAfXYnzhlaIL/J8v0lRs4bLLA2kw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730989986;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=qhlCqOIeJg1V8GCtkeCwwDWxlFZtoh0P3xbDu2WT33Q=;
+	b=flJjDiqqmxSpBHx5zi2u5OZH+FB/kXVmPLrNaHIqfSEqAsC+tzRmFZgTIxxgHdf1SVZY/8
+	2okTbQcN0K/8PpAw==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched: No PREEMPT_RT=y for all{yes,mod}config
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <173098998528.32228.2093818743217685683.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-11-07 at 22:16 +0800, Qiu-ji Chen wrote:
-> In line 1854 of the file esas2r_ioctl.c, the function 
-> esas2r_process_vda_ioctl() is called with the parameter vi being
-> assigned the value of a->vda_buffer. On line 1892, a->vda_buffer is
-> stored in DMA memory with the statement a->vda_buffer =
-> dma_alloc_coherent(&a->pcid->dev, ..., indicating that the 
-> parameter vi passed to the function is also stored in DMA memory.
-> This suggests that the parameter vi could be altered at any time by
-> malicious hardware.
+The following commit has been merged into the sched/core branch of tip:
 
-Absent a specific threat (such as TPM with an interposer) this isn't a
-vector the kernel protects against (we have to believe what hardware
-says unless we know it to be specifically buggy about something). 
-However, even supposing a PCI Interposer were considered a threat, the
-answer now is hardware based: SPDM/PCI-IDE.
+Commit-ID:     fe9beaaa802d44d881b165430b3239a9d7bebf30
+Gitweb:        https://git.kernel.org/tip/fe9beaaa802d44d881b165430b3239a9d7bebf30
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Thu, 07 Nov 2024 15:21:54 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 07 Nov 2024 15:25:05 +01:00
 
-Regards,
+sched: No PREEMPT_RT=y for all{yes,mod}config
 
-James
+While PREEMPT_RT is undoubtedly totally awesome, it does not, at this
+time, make sense to have all{yes,mod}config select it.
 
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 35772d627b55 ("sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/Kconfig.preempt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+index 7c1b29a..54ea59f 100644
+--- a/kernel/Kconfig.preempt
++++ b/kernel/Kconfig.preempt
+@@ -88,7 +88,7 @@ endchoice
+ 
+ config PREEMPT_RT
+ 	bool "Fully Preemptible Kernel (Real-Time)"
+-	depends on EXPERT && ARCH_SUPPORTS_RT
++	depends on EXPERT && ARCH_SUPPORTS_RT && !COMPILE_TEST
+ 	select PREEMPTION
+ 	help
+ 	  This option turns the kernel into a real-time kernel by replacing
 
