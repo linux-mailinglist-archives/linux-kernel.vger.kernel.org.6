@@ -1,183 +1,123 @@
-Return-Path: <linux-kernel+bounces-400033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907389C0801
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:49:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2DB79C0805
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EBF1B23872
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:49:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DE63B218A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F80212658;
-	Thu,  7 Nov 2024 13:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02CD21262C;
+	Thu,  7 Nov 2024 13:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1OKZi6BC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n3Mgwdny";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1OKZi6BC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n3Mgwdny"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOyjClu4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2E32101B7;
-	Thu,  7 Nov 2024 13:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0884D9450;
+	Thu,  7 Nov 2024 13:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987318; cv=none; b=s19BxVRIYIVRN5r1EUogOfwyG+NPYGwyvvU7/wy4UklfyI9akMaD4s9dGB+Dbru/c+DU4apbp45qq8r+iFGE0UMNkR6tM9v81iQ5uHIudORBUc84T1p2pBdj29sS55P5R5G7aoqaV6tOUHxbt/WUGwwmWWNUrPE+n4tqAC26IVc=
+	t=1730987359; cv=none; b=oBrs4d0yI3VABKFuC4aQefhCgFyv3I9qzuxy0s6O6Pw65QC89YUj8VBGzGc0WygVhdeyrutYL8SRHg+RJvzYxvWNO/gg0ACAwcXoYbkYILwH0ssmPw04+huHSZvWjZqBD1EuTBs7KApxxxc+bF83EhA73aix32AB433TpE99DWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987318; c=relaxed/simple;
-	bh=FIR9m+KAwxOXexgMI4F6oCqFvMySRuYgOPelLzIFeYI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bDeIo8quDmuXotiUA1B6ujjnhx5MJKcv0vINsf8zTVQLdRePTKTIpuipX666NKHZ+lscttzNduLfCjegcE1pCon0RxshFnAthZSwfrD9rvtqOdiZhkjuN4y0XIr9Nhrmwks1fqJvR+zoPu6l1dKx5GiUEkCLOnqEYMyFYZ3y1TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1OKZi6BC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n3Mgwdny; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1OKZi6BC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n3Mgwdny; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0283621C54;
-	Thu,  7 Nov 2024 13:48:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730987309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1NDC0Q63BjLNRamLBaugx7A+QFjoMu00RkiPdFw64DY=;
-	b=1OKZi6BCQ2no9O+8mpOXNppbb+sXcgHNpr6eUvBKJSTpBdoePxN1SySwEMSA2A8yD+nYaZ
-	/RKluQGCEgq2bmijK/ceLRYB3SYBonl2963eVdsxK2ynvTZonBHc1uNB4iqEImCUKoaSY+
-	UskPAa1Tto2CWl+qPUM2ZjFcWEAu2JE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730987309;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1NDC0Q63BjLNRamLBaugx7A+QFjoMu00RkiPdFw64DY=;
-	b=n3MgwdnydY7cDne0aVdPin3B5L2tw9/5baEdev4Zdbuov20tdiL3Y6uOvfbh4j4WCs3OW8
-	v6VEprhgE1zACiCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730987309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1NDC0Q63BjLNRamLBaugx7A+QFjoMu00RkiPdFw64DY=;
-	b=1OKZi6BCQ2no9O+8mpOXNppbb+sXcgHNpr6eUvBKJSTpBdoePxN1SySwEMSA2A8yD+nYaZ
-	/RKluQGCEgq2bmijK/ceLRYB3SYBonl2963eVdsxK2ynvTZonBHc1uNB4iqEImCUKoaSY+
-	UskPAa1Tto2CWl+qPUM2ZjFcWEAu2JE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730987309;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1NDC0Q63BjLNRamLBaugx7A+QFjoMu00RkiPdFw64DY=;
-	b=n3MgwdnydY7cDne0aVdPin3B5L2tw9/5baEdev4Zdbuov20tdiL3Y6uOvfbh4j4WCs3OW8
-	v6VEprhgE1zACiCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C80C6139B3;
-	Thu,  7 Nov 2024 13:48:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Ss1nLyzFLGevTwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 07 Nov 2024 13:48:28 +0000
-Date: Thu, 07 Nov 2024 14:48:28 +0100
-Message-ID: <87zfmbgno3.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-usb@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] usb: gadget: function: remove redundant else statement
-In-Reply-To: <20241107133348.22762-1-colin.i.king@gmail.com>
-References: <20241107133348.22762-1-colin.i.king@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1730987359; c=relaxed/simple;
+	bh=xkdSuqK3r0vUf8de9C7k1IoPlQeMvXHhSuucCxgETxU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=gD4z8CEcw1zQeXU70kaL8ys5YBfJw7WgrvKL82kt5JHf9Uq3l6iw5nDKoj7KQzpvc0TXvk6x7iBsURU7NIWlaDwHtqHD1nbJ+CVRvmLEADjdg2hoa3DQ4PErvj4DhErJKRV5VUaXD9Sc7/+s2VxJE2FIZlo+cd1edVUAkxS7ais=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOyjClu4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13768C4CECC;
+	Thu,  7 Nov 2024 13:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730987358;
+	bh=xkdSuqK3r0vUf8de9C7k1IoPlQeMvXHhSuucCxgETxU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=QOyjClu4O3NmeTBrShlXT/WKsAjeF3REe16UvfDGP4OkrgVMdToegp9LoVHvDbYab
+	 JoTEzZUgoNDDuK6Zd8HO5p2goqt5rdeSCQ7aAdtDXJEOzEXfbANGDw7DavIgVf0Xa/
+	 5SbNNzox7et6gMqEjX5OhKI7VcfDF2YaCyBmx+/mZJk2+V6lQykOVqHyq+2zO8ohYQ
+	 L6fwQoCTJ2Vwlr9lujOK2NfLv2LENsiI9MLMBCGq2uG7zcLtCR21ezGFR04Kmp4vqr
+	 ASV5PbPylogay7VjWfjkalIlmBsjD4fu3YrA8rvwyNExqCARJfy5y09OmgF91l3ZQW
+	 kKPrnZ9pRXFGw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Score: -1.80
-X-Spam-Flag: NO
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Nov 2024 15:49:14 +0200
+Message-Id: <D5FZT0QPHL0O.231WD6VUHC48X@kernel.org>
+Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ <linux-integrity@vger.kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>
+X-Mailer: aerc 0.18.2
+References: <20241107095138.78209-1-jarkko@kernel.org>
+ <76d9ae11c339b589a8ec94f010e7439b7ce7d283.camel@HansenPartnership.com>
+In-Reply-To: <76d9ae11c339b589a8ec94f010e7439b7ce7d283.camel@HansenPartnership.com>
 
-On Thu, 07 Nov 2024 14:33:48 +0100,
-Colin Ian King wrote:
-> 
-> After an initial range change on the insigned int alt being > 1
-> the only possible values for alt are 0 or 1. Therefore the else
-> statement for values other than 0 or 1 is redundant and can be
-> removed. Replace the else if (all == 1) check with just an else.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Thu Nov 7, 2024 at 3:20 PM EET, James Bottomley wrote:
+> On Thu, 2024-11-07 at 11:51 +0200, Jarkko Sakkinen wrote:
+> [...]
+> > +void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 at=
+tributes, u8 *passphrase, int
+> > passphrase_len)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* offset tells us where the=
+ sessions area begins */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int offset =3D buf->handles =
+* 4 + TPM_HEADER_SIZE;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 len =3D 9 + passphrase_l=
+en;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (tpm_buf_length(buf) !=3D=
+ offset) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0/* not the first session so update the existing
+> > length */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0len +=3D get_unaligned_be32(&buf->data[offset]);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0put_unaligned_be32(len, &buf->data[offset]);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u32(buf, len);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* auth handle */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u32(buf, TPM2=
+_RS_PW);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* nonce */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u16(buf, 0);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* attributes */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u8(buf, 0);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* passphrase */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append_u16(buf, pass=
+phrase_len);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm_buf_append(buf, passphra=
+se, passphrase_len);
+> > +}
+> > +
+>
+> The rest of the code looks fine, but if you're going to extract this as
+> a separate function instead of doing the open coded struct
+> tpm2_null_auth that was there originally, you should probably extract
+> and use the tpm2_buf_append_auth() function in trusted_tpm2.c
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
+So this was straight up from Mimi's original patch :-)
 
-Also worth to put the original discussion thread:
+Hmm... was there duplicate use for this in the patch? I'll check this.
 
-Link: https://lore.kernel.org/5f54ffd0-b5fe-4203-a626-c166becad362@gmail.com
+>
+> James
 
-
-thanks,
-
-Takashi
-
-> ---
->  drivers/usb/gadget/function/f_midi2.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/function/f_midi2.c b/drivers/usb/gadget/function/f_midi2.c
-> index 8285df9ed6fd..5f3f6e7700c7 100644
-> --- a/drivers/usb/gadget/function/f_midi2.c
-> +++ b/drivers/usb/gadget/function/f_midi2.c
-> @@ -1282,16 +1282,14 @@ static int f_midi2_set_alt(struct usb_function *fn, unsigned int intf,
->  
->  	if (intf != midi2->midi_if || alt > 1)
->  		return 0;
->  
->  	if (alt == 0)
->  		op_mode = MIDI_OP_MODE_MIDI1;
-> -	else if (alt == 1)
-> +	else
->  		op_mode = MIDI_OP_MODE_MIDI2;
-> -	else
-> -		op_mode = MIDI_OP_MODE_UNSET;
->  
->  	if (midi2->operation_mode == op_mode)
->  		return 0;
->  
->  	midi2->operation_mode = op_mode;
->  
-> -- 
-> 2.39.5
-> 
+BR, Jarkko
 
