@@ -1,138 +1,127 @@
-Return-Path: <linux-kernel+bounces-399847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052DB9C0534
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:04:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573D89C052E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:04:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9F72826B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889AA1C21DB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C1620B1E7;
-	Thu,  7 Nov 2024 12:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152A4209F4B;
+	Thu,  7 Nov 2024 12:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="URPzzogG"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BflWPUhJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4561E1043
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6057A1E1043;
+	Thu,  7 Nov 2024 12:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730981051; cv=none; b=Ry5v5ZN4/2kIVREgjECDhMlnLs8a6XA972VcUGlCUT33kHxDwnC7LOSLBZuD6YOFz15wudS1VsRoIqkoGhm6vNna3I1RFTk+WvDXKJslskpzdUK9liDmPt5nzSEOaiwOIYAJQvyDCdOQdc8J4FmjxqIJYBs4j46OTiNZBzAgBac=
+	t=1730981044; cv=none; b=prssGHZoGga3PNqzeQkyet3K0ryYBnIbxyJIRgtucaIY2o1l5FbBvYwAyQHxAGR/mBBcnX8B53wveCNcheEvurisEJZg6kSQMRc29nFBqwysXB+zCzmCBPxaGHQ2ctWlY//S71sHqg2KKx/hgJdv2UkVBOgkQVZac8+REqUm62w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730981051; c=relaxed/simple;
-	bh=FD9SybItjrWYCxkvJ10uBzmtydWDzUdUjR+CbBgU2z4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TpFyqKePEF7Hy1gcIGwOidYOYa9zDGWKYx6W5n+r30Ix7N9GMEVK5qKZ0jbLfv2UVhYHwbvnzXSxC4pSCFFHSSFTNNXY5e2LYQtdBkX8RnLau3zwjTvriYtEhxoRhTEK28lEck0bCF+sey9xEmsoazMxrBONb7awWj/TlEZZ+Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=URPzzogG; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e30eca40c44so882799276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:04:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730981049; x=1731585849; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NSPWmvzriU7n4zt5eFjV3QM91IvIEi4Is4DeNEfxm2U=;
-        b=URPzzogGZXqR3LeNLyVEpXgIKQVLMXcyS4Bnh5CpQjV4LnwmW3w+aaaMyImetYPqG/
-         Qn3iLtTZtm6D23NFtq07fykN7jnmyQaoh2Ogi+BhSqcm2/o8owZwsDk4DE6I7APQn0Oo
-         ghQIfGfTXSZRcPhZsni7CmAbGKHuA8Ib0HrS/MWKXt5odw/BfFQPsL8qFSOyBsJ6IeHh
-         vHA5Iqt6AOHIX1Ei9eXg1wXJl6lTx3TosSX8ov5EQ156d5+JTNSqjO5ZA8By669VLfxS
-         AaN7qTexAahzU8frZOQ1FnQn4mT0vlgmEk6Qcc6C4Ngyj0M6m7vdwfeFZ99Tx/8MKkZb
-         ijqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730981049; x=1731585849;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NSPWmvzriU7n4zt5eFjV3QM91IvIEi4Is4DeNEfxm2U=;
-        b=muNMgykRSxwnnGVfLE8L2SysRcIuSojZf3b9bBEQ6YkjSxkiddKBN77J/8b+S79NB0
-         bf2LCovHno/vXaoGYCvcsRHRMT91hPwYv9ZQsyCV5RdVVND+AkWcvWHWmWrmtWi7ayGB
-         H6c3yZx2T5KCO9gOZ4jCbAKcud2ZH28pYMJtBuD+fxYijOOe5WhC98D9QZnHK3Z2ETBm
-         s9hRb2Ho0SWKKGsw7SNIlvwD03qMWGdf9P3ZB8ByuVTKwXe5GxeyE4ussLof32qinGXw
-         U1H/WCxDzbIuexLKlBafzvPZRr57UXWuMbwtNqg3+X9myukKlW+ieNeDTD8jqBMOMUeL
-         7BpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSIphFRJNq+bfMyfj7VqevagU7gzXijB3wd74BmZbHakJ/oX1Q5xI/EqY5u13Pi9cTyfDflA1XATM2RvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxES20qcN31IVAqZIvvJqpHHIFI11zOwO92r8K2RcIonSLXRbZ0
-	JmXJ4lQMci/bOxU8FBCBkbEIIvW621fecYKkWPfkkVNq7MrWUvbw1SZIPKT+E9vdXqe74HxLHGh
-	JeIS2yb+Rxm3PDWc4Z6dejOsipG496I1Z/StNng==
-X-Google-Smtp-Source: AGHT+IHv9mgUbimlGT5mX5UyhqitGAJmHvxVkXQPT0TuyKjaYEJSoXqczA0NpCvvlC2PQwJhFcmZoanLH7+Ypxxf7Kc=
-X-Received: by 2002:a05:690c:b98:b0:6ea:7015:99c2 with SMTP id
- 00721157ae682-6ea70159addmr188580517b3.40.1730981049268; Thu, 07 Nov 2024
- 04:04:09 -0800 (PST)
+	s=arc-20240116; t=1730981044; c=relaxed/simple;
+	bh=sArRfQxYfZMbU4cikQr6WIkfm8lZA8u6rZoXTALLxCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWPRgcPKScDm7udAKx3HwQGRZOkHPYWfMEqB1OdV1vDN0fRNB8s3SHudb5uC7U6nRoYTA9Xd5osD7pXeeGxAgD1YHcSqkkZWzQpFuO80K5bvxFkViE/N4OuV7VE/SEq9L1FyAf65NDm+7u6CbUheF2HJWmzHZBS5JFSl0jbiFC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BflWPUhJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC72C4CECE;
+	Thu,  7 Nov 2024 12:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730981044;
+	bh=sArRfQxYfZMbU4cikQr6WIkfm8lZA8u6rZoXTALLxCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BflWPUhJYIFqeW3zSsVxyh0NT3DMX3jnwUuFKmhROEuiSvm8X6O4VsSDqT3oSQpC6
+	 ieHY4miugx3sANh939P2rMLcQh6SyRa4hUS3CZRhSsGYF+KilCSElqSBppi6vQgzj/
+	 WLv4zGAWrqNgJjwbL3G4JNNVNH2Q20Uc3NpSZch15jvegKLxr+vHPx/h8Q/A/ySzHX
+	 FOc7GB2fKWgr2gf7ASFsVPtfY/RGtFuVHb/IkzXNxsooYsqy62v/MVSgP5Mp7Z9MuD
+	 +LVOGXjXv2VVVtNurR999VgxrrpleHCzK8eajIVsxJCj+lzpG+KPy/xqXTY5udzjrz
+	 q9wG6gAta9gUQ==
+Date: Thu, 7 Nov 2024 14:03:57 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Sanman Pradhan <sanman.p211993@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, netdev@vger.kernel.org,
+	alexanderduyck@fb.com, kernel-team@meta.com, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, mohsin.bashr@gmail.com, sanmanpradhan@meta.com,
+	andrew+netdev@lunn.ch, jdamato@fastly.com, sdf@fomichev.me,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next] eth: fbnic: Add PCIe hardware statistics
+Message-ID: <20241107120357.GL5006@unreal>
+References: <20241106122251.GC5006@unreal>
+ <20241106171257.GA1529850@bhelgaas>
+ <76fdd29a-c7fa-4b99-ae63-cce17c91dae9@lunn.ch>
+ <20241106160958.6d287fd8@kernel.org>
+ <20241107082327.GI5006@unreal>
+ <b35f536e-1eb0-4b7b-85f4-df94d76927d6@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105180444.770951-1-quic_rajkbhag@quicinc.com>
- <49a6ec0d-8a0b-49aa-a9eb-1174cff930f6@kernel.org> <cmvfpctliqggra33u6ituguoxh3jxcuxiyjpbtcjbcgpu6lhoi@4zdthfkc2ed3>
- <692503b8-cf39-4d6b-b70e-910fcc710d69@kernel.org>
-In-Reply-To: <692503b8-cf39-4d6b-b70e-910fcc710d69@kernel.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 7 Nov 2024 12:03:57 +0000
-Message-ID: <CAA8EJpqMCbyK0dodMNyfs8dNjV2QoB2nyWm233eOS9xo8BaFJg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 0/5] wifi: ath12k: Add wifi device node with WSI
- for QCN9274 in RDP433
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org, 
-	linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b35f536e-1eb0-4b7b-85f4-df94d76927d6@linux.dev>
 
-On Thu, 7 Nov 2024 at 11:29, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 07/11/2024 12:06, Dmitry Baryshkov wrote:
-> > On Thu, Nov 07, 2024 at 11:23:20AM +0100, Krzysztof Kozlowski wrote:
-> >> On 05/11/2024 19:04, Raj Kumar Bhagat wrote:
-> >>> The RDP433 is a Qualcomm Reference Design Platform based on the
-> >>> IPQ9574. It features three QCN9274 WiFi devices connected to PCIe1,
-> >>> PCIe2, and PCIe3. These devices are also interconnected via a WLAN
-> >>> Serial Interface (WSI) connection. This WSI connection is essential
-> >>> for exchanging control information among these devices.
-> >>>
-> >>> This patch series describes the WSI interface found in QCN9274 in
-> >>> device tree and uses this device tree node in the Ath12k driver to get the
-> >>> details of WSI connection for Multi Link Operation (MLO) among multiple
-> >>> QCN9274 devices.
-> >>>
-> >>> NOTES:
-> >>> 1. As ath12k MLO patches are not ready yet, this patchset does not apply
-> >>>    to the ath.git ath-next branch and that's why the patchset is marked
-> >>>    as RFC. These are the work-in-progress patches we have at the moment.
-> >>>    The full set of MLO patches is available at:
-> >>>    https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git/log/?h=ath12k-mlo-qcn9274
-> >>>
-> >>> 2. The dependency marked below applies only to the DTS patch. The
-> >>>    dt-bindings patches do not have this dependency.
-> >>>
-> >>> Depends-On: [PATCH V7 0/4] Add PCIe support for IPQ9574
-> >>> Link: https://lore.kernel.org/linux-pci/20240801054803.3015572-1-quic_srichara@quicinc.com/
-> >>>
-> >>> v3:
-> >>> - Created a separate binding "qcom,ath12k-wsi.yaml" to describe ath12k PCI
-> >>>   devices with WSI interface.
-> >>
-> >> Thanks for the changes. When you finish with testing/RFC, please send
-> >> proper version for review (just remember to keep numbering, next one is
-> >> v4 regardless whether this is RFC or not).
-> >
-> > Isn't the 'RFC' being an invitation for review per the nature of the tag
-> > itself?
->
-> No, RFC means patch is not ready, might change. This was brought on the
-> lists multiple times and some maintainers clearly ignore RFC. Including me.
+On Thu, Nov 07, 2024 at 11:30:23AM +0000, Vadim Fedorenko wrote:
+> On 07/11/2024 08:23, Leon Romanovsky wrote:
+> > On Wed, Nov 06, 2024 at 04:09:58PM -0800, Jakub Kicinski wrote:
+> > > On Wed, 6 Nov 2024 18:36:16 +0100 Andrew Lunn wrote:
+> > > > > How would this be done in the PCI core?  As far as I can tell, all
+> > > > > these registers are device-specific and live in some device BAR.
+> > > > 
+> > > > Is this a licences PCIe core?
+> > > > 
+> > > > Could the same statistics appear in other devices which licence the
+> > > > same core? Maybe this needs pulling out into a helper?
+> > > 
+> > > The core is licensed but I believe the _USER in the defines names means
+> > > the stats sit in the integration logic not the licensed IP. I could be
+> > > wrong.
+> > > 
+> > > > If this is true, other uses of this core might not be networking
+> > > > hardware, so ethtool -S would not be the best interfaces. Then they
+> > > > should appear in debugfs?
+> > > 
+> > > I tried to push back on adding PCIe config to network tooling,
+> > > and nobody listened. Look at all the PCI stuff in devlink params.
+> > > Some vendors dump PCIe signal integrity into ethtool -S
+> > 
+> > Can you please give an example? I grepped various keywords and didn't
+> > find anything suspicious.
+> 
+> Hmm...
 
-Thanks, point noted. I'll stop marking my patches with RFC tag.
+Ohh, I looked in some other place.
 
--- 
-With best wishes
-Dmitry
+> 
+> [root@host ~]# ethtool -i eth0 | grep driver
+> driver: mlx5_core
+> [root@host ~]# ethtool -S eth0 | grep pci
+>      rx_pci_signal_integrity: 1
+>      tx_pci_signal_integrity: 1471
+>      outbound_pci_stalled_rd: 0
+>      outbound_pci_stalled_wr: 0
+>      outbound_pci_stalled_rd_events: 0
+>      outbound_pci_stalled_wr_events: 0
+> 
+> Isn't it a PCIe statistics?
+
+I didn't do full archaeological research and stopped at 2017 there these
+counters were updated to use new API, but it looks like they there from
+stone age.
+
+It was a mistake to put it there and they should be moved to PCI core
+together with other hundreds debug counters which ConnectX devices have
+but don't expose yet.
+
+Thanks
 
