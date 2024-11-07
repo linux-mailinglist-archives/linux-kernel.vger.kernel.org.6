@@ -1,140 +1,194 @@
-Return-Path: <linux-kernel+bounces-399315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBC79BFD5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:21:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8ED39BFD60
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:22:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22ADCB21833
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 457041F229B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187A31885A5;
-	Thu,  7 Nov 2024 04:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B5319004A;
+	Thu,  7 Nov 2024 04:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UjXXwFec"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nPn467A4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5ED1B815
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA24185B5F;
+	Thu,  7 Nov 2024 04:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730953273; cv=none; b=N9wtxFR6DWIeIRYAY85a4Tx3iV97A4PS55yhM56Wc2jDJqm6M7/QkfHDL6nSsG+CqVa3CtPv6Aeqsy/hwRDkhfCrEK6z4TpiAEI99IfBqsKCiZ7sypcDpNSCQ/jEdjbJT5KMZTYdkB6agSTeEply+2RKsg9j5oEP+gENQo3XroM=
+	t=1730953322; cv=none; b=TfdeRt1+xyhL5yxdjgS4iY8p7R5nyNqkxvgw6447pGUxUgvXHJORd1XuPICTrmpVkCZr2PRGOcSAAUSVo9wm9Sr3PdT4J6WQbmqOLiCh6R5DFRYiXeH7DX0Kyp8JZHBt1DjwB2KdSzeJ8lWkD/lLPYuX/LguqrX+SgnIh/40Sog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730953273; c=relaxed/simple;
-	bh=kEgZNofGmCHtVgS/myiHMNITxztZaqIdvuTY483cdoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IjhmKQlso8EG4JB148sS18hzkCREELqQNo0p365b1cWw1gTHO+jCT7Jz5KHUbMrXaMga3w8DfIK8oqXJSNOo/t6Ax0LWnK6hJRu/wBbwze71NzSAbATOVyQoQwvBFzWwSRcGYAWRXrpZHKWZvHDFT/zRWIcKwne/BvZsQMDVtOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UjXXwFec; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A73fG4j009789;
-	Thu, 7 Nov 2024 04:20:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=G500xfm2jOBkULiRFKYuziqZWRhAOk2Dm8/VcpPcT
-	xw=; b=UjXXwFecKD+zQO2Emf58D6m3sQaMc4m/0zw/bXGKDlX2Br8zMjRwt+eNg
-	an8H5xOv4tPSMMXRbh8/jebBe6PK+pCfNWNige2WCB5xvfzTB4lNInT3lRBOSbE9
-	GuxIAJ1m46idlRCv9yKIjlg9B7yu6SPVTZW1o4+EX1c93NqdWTQZ9Gc9TDqpDOgk
-	vc3LDdZxzN9tEAkTeWwPnyUaPBILvbepSPcgbCIfU/bGKwcJOl6yRAunY6cIDNaE
-	0gkbs9qLs31N7ZXERw2mOrOap3Wdy/LcDvb1Wd4a8Cq8PdIuQ7+cdekN/CrfrT9J
-	yMBl8vUhXGE0JefE3O5pFHw5N+WeA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rnudg56h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 04:20:52 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A74KpLj020832;
-	Thu, 7 Nov 2024 04:20:51 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rnudg56e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 04:20:51 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A71oVlQ019096;
-	Thu, 7 Nov 2024 04:20:50 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p0mj7dtw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 04:20:50 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A74Klfc57934216
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Nov 2024 04:20:47 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 281602004B;
-	Thu,  7 Nov 2024 04:20:47 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2867420043;
-	Thu,  7 Nov 2024 04:20:45 +0000 (GMT)
-Received: from ltcrain34-lp2.aus.stglabs.ibm.com (unknown [9.3.101.41])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Nov 2024 04:20:44 +0000 (GMT)
-From: Narayana Murty N <nnmlinux@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        linux-kernel@vger.kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, maddy@linux.ibm.com, naveen@kernel.org,
-        vaibhav@linux.ibm.com, ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
-Subject: [PATCH] powerpc/pseries/eeh: Fix get PE state translation
-Date: Wed,  6 Nov 2024 22:20:27 -0600
-Message-ID: <20241107042027.338065-1-nnmlinux@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1730953322; c=relaxed/simple;
+	bh=x1GdMOh3arTXFvBx2uNVn2vtEdkSMO/HtDKxEyTy4g0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDap+vgIO8w83dZ8EzNtuvxAvozbnMiWPwzMDaEgYT73NJRha0EqM9TEJRkjKaVukQT9e5YICwp7ceYrREGnKnlQ+zbUXmBsORjgmetWTJckiIFuYuaFYifMtZ7zay4Vc1iiXTYOWu8J7WMrAd5IEbgZyAroFdYY0rmYYWQRX7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nPn467A4; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730953321; x=1762489321;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=x1GdMOh3arTXFvBx2uNVn2vtEdkSMO/HtDKxEyTy4g0=;
+  b=nPn467A4HPRBmnxrZ99NEvfR3rGXYt/1b7qvS/rtw5YJRiGTr4yGshjQ
+   ATTeXaCt9ddmhuxSShTsaGB0kh9qavEKYsvhkLQ7DprBcF1x/xVTiEj3s
+   p5efX5vJijYPIRdmXAOVh5StYNf+QmWi2PpeGNF/W2bzdRicgbyUUK9ls
+   7nCjIMK+SARhUSHUHVCO5rpQWmwoxrhts4qMt5FrODh/QIv4E9LvGvSXG
+   v3RhKljLBhv65ayJnMjTdEyzE9b+9cLrD3uKevoGd1AG9YqEF3XC5TELi
+   /UR/ilhvC7/Bp9tJ6uBO5f+irEq4tat5n9teGp1t+CHJnTD0v/5OVcw+f
+   w==;
+X-CSE-ConnectionGUID: zZ6VmV8ETKWV6Dg51DftXw==
+X-CSE-MsgGUID: J/pOHhrCRmmZh8YFLUQYYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="34557140"
+X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
+   d="scan'208";a="34557140"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 20:22:00 -0800
+X-CSE-ConnectionGUID: VNw69FuVREWsBZMH8gQ3eQ==
+X-CSE-MsgGUID: I7THNe+oQu2XtDn3yfgL3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
+   d="scan'208";a="89750882"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 06 Nov 2024 20:21:56 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8u1p-000pow-0Q;
+	Thu, 07 Nov 2024 04:21:53 +0000
+Date: Thu, 7 Nov 2024 12:21:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>,
+	Ivan Delalande <colona@arista.com>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Boris Pismenny <borisp@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mptcp@lists.linux.dev, Dmitry Safonov <0x7f454c46@gmail.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH net 1/6] net/diag: Do not race on dumping MD5 keys with
+ adding new MD5 keys
+Message-ID: <202411071218.G7g6a8JG-lkp@intel.com>
+References: <20241106-tcp-md5-diag-prep-v1-1-d62debf3dded@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: mK7DeQXtkOlVp490AQDdrD9OdMNEByH0
-X-Proofpoint-GUID: g2t97kBqqIh4sRjtkjPa6LFTvW37jXDJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1011 bulkscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=962 phishscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070030
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106-tcp-md5-diag-prep-v1-1-d62debf3dded@gmail.com>
 
-The PE Reset State "0" obtained from RTAS calls
-ibm_read_slot_reset_[state|state2] indicates that
-the Reset is deactivated and the PE is not in the MMIO
-Stopped or DMA Stopped state.
+Hi Dmitry,
 
-With PE Reset State "0", the MMIO and DMA is allowed for
-the PE. The function pseries_eeh_get_state() is currently
-not indicating that to the caller because of  which the
-drivers are unable to resume the MMIO and DMA activity.
-The patch fixes that by reflecting what is actually allowed.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
----
- arch/powerpc/platforms/pseries/eeh_pseries.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+[auto build test WARNING on 2e1b3cc9d7f790145a80cb705b168f05dab65df2]
 
-diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
-index 1893f66371fa..b12ef382fec7 100644
---- a/arch/powerpc/platforms/pseries/eeh_pseries.c
-+++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
-@@ -580,8 +580,10 @@ static int pseries_eeh_get_state(struct eeh_pe *pe, int *delay)
- 
- 	switch(rets[0]) {
- 	case 0:
--		result = EEH_STATE_MMIO_ACTIVE |
--			 EEH_STATE_DMA_ACTIVE;
-+		result = EEH_STATE_MMIO_ACTIVE	|
-+			 EEH_STATE_DMA_ACTIVE	|
-+			 EEH_STATE_MMIO_ENABLED	|
-+			 EEH_STATE_DMA_ENABLED;
- 		break;
- 	case 1:
- 		result = EEH_STATE_RESET_ACTIVE |
+url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Safonov-via-B4-Relay/net-diag-Do-not-race-on-dumping-MD5-keys-with-adding-new-MD5-keys/20241107-025054
+base:   2e1b3cc9d7f790145a80cb705b168f05dab65df2
+patch link:    https://lore.kernel.org/r/20241106-tcp-md5-diag-prep-v1-1-d62debf3dded%40gmail.com
+patch subject: [PATCH net 1/6] net/diag: Do not race on dumping MD5 keys with adding new MD5 keys
+config: arm64-randconfig-003-20241107 (https://download.01.org/0day-ci/archive/20241107/202411071218.G7g6a8JG-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411071218.G7g6a8JG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411071218.G7g6a8JG-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from net/ipv4/tcp_diag.c:9:
+   In file included from include/linux/net.h:24:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> net/ipv4/tcp_diag.c:70:3: warning: variable 'md5sig_count' is uninitialized when used here [-Wuninitialized]
+      70 |                 md5sig_count++;
+         |                 ^~~~~~~~~~~~
+   net/ipv4/tcp_diag.c:60:36: note: initialize the variable 'md5sig_count' to silence this warning
+      60 |         unsigned int attrlen, md5sig_count;
+         |                                           ^
+         |                                            = 0
+   5 warnings generated.
+
+
+vim +/md5sig_count +70 net/ipv4/tcp_diag.c
+
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  54  
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  55  static int tcp_diag_put_md5sig(struct sk_buff *skb,
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  56  			       const struct tcp_md5sig_info *md5sig,
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  57  			       struct nlmsghdr *nlh)
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  58  {
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  59  	size_t key_size = sizeof(struct tcp_diag_md5sig);
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  60  	unsigned int attrlen, md5sig_count;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  61  	const struct tcp_md5sig_key *key;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  62  	struct tcp_diag_md5sig *info;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  63  	struct nlattr *attr;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  64  
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  65  	/*
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  66  	 * Userspace doesn't like to see zero-filled key-values, so
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  67  	 * allocating too large attribute is bad.
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  68  	 */
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  69  	hlist_for_each_entry_rcu(key, &md5sig->head, node)
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31 @70  		md5sig_count++;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  71  	if (md5sig_count == 0)
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  72  		return 0;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  73  
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  74  	attrlen = skb_availroom(skb) - NLA_HDRLEN;
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  75  	md5sig_count = min(md5sig_count, attrlen / key_size);
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  76  	attr = nla_reserve(skb, INET_DIAG_MD5SIG, md5sig_count * key_size);
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  77  	if (!attr)
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  78  		return -EMSGSIZE;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  79  
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  80  	info = nla_data(attr);
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  81  	memset(info, 0, md5sig_count * key_size);
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  82  	hlist_for_each_entry_rcu(key, &md5sig->head, node) {
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  83  		/* More keys on a socket than pre-allocated space available */
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  84  		if (md5sig_count-- == 0) {
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  85  			nlh->nlmsg_flags |= NLM_F_DUMP_INTR;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  86  			break;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  87  		}
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  88  		tcp_diag_md5sig_fill(info++, key);
+4a6144fbc706b3c Dmitry Safonov 2024-11-06  89  	}
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  90  
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  91  	return 0;
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  92  }
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  93  #endif
+c03fa9bcacd9ac0 Ivan Delalande 2017-08-31  94  
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
