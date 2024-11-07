@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-400292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA0B9C0B7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:25:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5C99C0B7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01BD7282A27
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A39881C23834
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C9C21731B;
-	Thu,  7 Nov 2024 16:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682822185B9;
+	Thu,  7 Nov 2024 16:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IvA92Rxh"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zUcVm2ZX"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86C2217307
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CF9217320
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730996443; cv=none; b=RznB12CZkmAicLJsH9tk7/hMNcjBn5qZA4lihuKgFPXV3dOA2QLq/vYhyz/WqPWO6JPJ2lw6CYqptKxOQQg62ujQx7v4DQ9lvXPBcF0+10hLv+Mm2MnBl+aeO6b9rMfCWukZ0sfAcXna1yYrllIZvqE3D9uxIa3wl4jCXkyEhTU=
+	t=1730996445; cv=none; b=cCSnGjdlOeD+nxc23ir7h4BY1/glRxGefkLMo4YwVvGHqRy24qS6gQDcajQotf0v//Il0NpBNFD+7HJ5cYdldS1Aal0itjY9/w6WPxnu61kD336HoFHJiyDyTHUL7nQXWCyStC6dHCAzzwMR1/+mgWB+DCke5XVRoC8NAJIB6rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730996443; c=relaxed/simple;
-	bh=eP0G66ZHvZ6p8aDLP+KykiyCIg5mjIhYHWfKRwxuzaA=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=ANOR+glZJO+BdVbY+K7iTlFIgZgDjwhCUDvwMPVQCS6yMOo7UOvP0EXvmFrCgtKzpgMfZ0tEY49kPygumGXXpCXvJQ5Z+R8Yc4smhp2afM+dpxNnGfyF6SWW4UZIT/HoqCUIip5uRZeShaf2SXBZ6tsIbXGzPpq0DLQFwfBJ3/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IvA92Rxh; arc=none smtp.client-ip=209.85.128.201
+	s=arc-20240116; t=1730996445; c=relaxed/simple;
+	bh=OQ+ILS6ZdIDbpDd6fnm+5OYFklVHCZ8ERtWBLEZnFyg=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Cc:Content-Type; b=LWw2WkNUX8beA2Np/9wQDbD6nQiAAvfuPVYBKKf+2NohM3Y8hbVvlOrfqrA87OoxAaciHFccwjPX/DIX//IxIhCBq2McpqA2B+Db8oPGzTDrDtpFpzHrh9pQAJtcJDTRgrqrg2UrAr0QfO1vTtRRnieooJWEkJQfBBJFTAxVtFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zUcVm2ZX; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e7fb84f999so16986277b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:20:41 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e32ff6f578eso2897818276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:20:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730996441; x=1731601241; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=v57hY9ptVyUkWxpU5CBHz4hqYdCeNDSYBzpW7YMhHII=;
-        b=IvA92RxhUS4ZveIbX33wiVL0JsrN/35a77Yl8BxX7Eybsqu3gAYbzKF2fHbZMg//zo
-         SdCHqWefFwQf4dmiYyqL+BGiw0rdjTE2LUh1mPrQMGvINqx68I+MF2rr6PoMUQjXonsl
-         wXvxdW+vvCMfKZGOrTHeO2RMibbGnkV5yzmSjZAWc6P+AM+aBKtCL0Or9i8DKkb3E7gv
-         R8Hf1BhbDVfpMo0O10R/rKRsQrl5h2wW2JRuDp+SvRyZk8npny9EJ3p4YFnDOMZ2yaCR
-         V6D3PtZzn/pHanS3BxPIlXa8LbvRwwKCydTlfNuLV+HpazJdJoxfZmYtO08tcRR1gjlz
-         /hGA==
+        d=google.com; s=20230601; t=1730996443; x=1731601243; darn=vger.kernel.org;
+        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Zi7/BGIzk4kmPbaIIn5N5Q89D8reWg5dpAnu28NGJw=;
+        b=zUcVm2ZXhGnSypH0GLkeSotuc0HUk4N/11XDq7hA1rvqRRCuts+swxtmwH8mby9NYG
+         FjPmoUKFr7AYaBUm+ridTTXCuC0L5AzkyI2y171yuta8Nem/IG+AQX5jvIMSv0de6LEd
+         1hs2CfsGXyalmc5dPq7VBzh6/W+r+vzlV4N8DAOtavaWVaLt9lmX5FqpgvkHjpRXsXAx
+         Oi1WgYyrmu4beez7OADsPLKcUDMKTbGRilw5olJeN+/bagoRtc0ZXgbe+6wcLiDKri6I
+         XrMs5M6mE3VS7jtwNBZfw5FE3xP8nAjxru+zbvP8riHx4UVz5gbFjkrOy3xTAafQw/45
+         uEug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730996441; x=1731601241;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v57hY9ptVyUkWxpU5CBHz4hqYdCeNDSYBzpW7YMhHII=;
-        b=eCGYBM6qevRCVCL9iqiPNoc+O1c94g0Fl6Foq5NaHqLsTe4xFFJqDAUphVsUThktYT
-         tIdaOtNiByd9CV44Hk+Kc2iL/kyOv8usN0SrvT1MhfFA76bGO93ZFnYYaMu5SAX/jh6D
-         aAkpzT9jqfeaRAmX5poeXzVtU/ZjuHjkhengur3gJzd53G0yxQ0kcIxJ9WLMMb24+5FC
-         ani5eljMLcj4Pd9HM3pyuaqhbwy5vX4e/V3UfK8lgZwE2A4X61u89mkgDHPtKXN2Digo
-         ONZqCZIpUKmWg39DGXUPX7Ucexn2qsVQ/CblwBPxcrI/MJ3Ynmq1jhCqYKr0H8kl9Vki
-         O9Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbF+8iHRV8d5M1KiGhR6WNthMT6sicc8iejVBUzAOcAgkKb/aS+2tKPMy4kRs4xQQBDdQevb0IZXd8wok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1k2Cn9ecRtgU/61GNow8wt8YaGfnK91Fj0SuZHTeuBiaNxjuL
-	2jqKbIt6mfIM2WOPK3GREZlPmRE8n1oxBMdn8Sro6Y466ug730TYNsZa/j9ooIG6KU+XkD3yGtG
-	/kFwAzQ==
-X-Google-Smtp-Source: AGHT+IHC0X+WZsmRaD10ygx7XOVdKB/UZb7/tV2Np4btpUBS2SgGAemSgZHBuWrvuUd2DVUs75+KuuMxxrqo
+        d=1e100.net; s=20230601; t=1730996443; x=1731601243;
+        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Zi7/BGIzk4kmPbaIIn5N5Q89D8reWg5dpAnu28NGJw=;
+        b=I4sd1KQu1Z7RTafiimg5erKyCF5EedOt+TcOhhWsCBnIUu87bInQViePvePHOfR4iR
+         8ljVY61Evl22HQJFOxqeS5vrGAX/4xQVhXl5WSbZv/MLd54LhZ40rXRFhzUUJFQ276l3
+         mZAusNcPWGRMlgY8GwPCqx+imvUur8g9kGsRPFReQ9l+a4RJMd/+fTy3/C8MlQEBAffy
+         log/BEFKj2lV5ClxhS0MyItOcU5wgw93ZwdD9vp5BCGN7XWKHJgROe1SjUMi4EOQGgj/
+         O9b4P3rUvJkAyQ7c2S7Os63uS3EO2lvO7w2QUFAhOynHzZRFhHKk45jNsg3wo4j7OBii
+         kiGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgVrx1xN5fvuUJ9wEJTN2M4DyYdc+2CZ2QV1laDEudtRIgWUIOL8qfICvFtQRao6zlGK6ghAw7mnWwWXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8h2joUczFk6ga9wUwGkUoOUWfbi6dSACvCFWJyhX7+Yvmuvj+
+	E43pG5SUWa1hKNkY0q9VkdeozVMBT6O2pY3b6IpjD152nwXnXLi6XC7fRvVGNZdT16CNulb6eCc
+	sIhM43Q==
+X-Google-Smtp-Source: AGHT+IH0/hEWrV52DVmrj7Z6n0WIT9Ut3IVouygX8jmB/XLHKPkNRIO9up6ksFd2vuXYZmCZkrEILwBAMRRP
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:acc7:bda:7167:18d8])
- (user=irogers job=sendgmr) by 2002:a05:690c:13:b0:6ea:8651:4b27 with SMTP id
- 00721157ae682-6eadc1065acmr1207b3.5.1730996440734; Thu, 07 Nov 2024 08:20:40
+ (user=irogers job=sendgmr) by 2002:a25:d843:0:b0:e29:7454:e773 with SMTP id
+ 3f1490d57ef6-e337e1d738cmr33276.5.1730996442881; Thu, 07 Nov 2024 08:20:42
  -0800 (PST)
-Date: Thu,  7 Nov 2024 08:20:27 -0800
-Message-Id: <20241107162035.52206-1-irogers@google.com>
+Date: Thu,  7 Nov 2024 08:20:28 -0800
+In-Reply-To: <20241107162035.52206-1-irogers@google.com>
+Message-Id: <20241107162035.52206-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241107162035.52206-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-Subject: [PATCH v2 0/8] Refactor cpuid and metric table lookup code
+Subject: [PATCH v2 1/8] perf jevents: fix breakage when do perf stat on system metric
 From: Ian Rogers <irogers@google.com>
 To: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
 	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
@@ -92,54 +95,111 @@ To: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
 	"Dr. David Alan Gilbert" <linux@treblig.org>, linux-arm-kernel@lists.infradead.org, 
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-riscv@lists.infradead.org
+Cc: stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Xu Yang <xu.yang_2@nxp.com> reported issues with the system metric
-lookup:
-https://lore.kernel.org/linux-perf-users/20241106085441.3945502-1-xu.yang_2@nxp.com/
-These patches remove a lot of the logic relating CPUIDs to PMUs so
-that the PMU isn't part of the question when finding a metric table.
-For time reasons, it doesn't go as far as allowing system metrics
-without a metric table as a metric table is needed for metrics to
-refer to other metrics, and the refactoring of that resolution is a
-hassle.
+From: Xu Yang <xu.yang_2@nxp.com>
 
-Ian Rogers (7):
-  perf header: Move is_cpu_online to numa bench
-  perf header: Refactor get_cpuid to take a CPU for ARM
-  perf arm64 header: Use cpu argument in get_cpuid
-  perf header: Avoid transitive PMU includes
-  perf header: Pass a perf_cpu rather than a PMU to get_cpuid_str
-  perf jevents: Add map_for_cpu
-  perf pmu: Move pmu_metrics_table__find and remove ARM override
+When do perf stat on sys metric, perf tool output nothing now:
+$ perf stat -a -M imx95_ddr_read.all -I 1000
+$
 
-Xu Yang (1):
-  perf jevents: fix breakage when do perf stat on system metric
+This command runs on an arm64 machine and the Soc has one DDR hw pmu
+except one armv8_cortex_a55 pmu. Their maps show as follows:
 
- tools/perf/arch/arm64/util/arm-spe.c     | 14 +---
- tools/perf/arch/arm64/util/header.c      | 73 ++++++++++-----------
- tools/perf/arch/arm64/util/pmu.c         | 20 ------
- tools/perf/arch/loongarch/util/header.c  |  4 +-
- tools/perf/arch/powerpc/util/header.c    |  4 +-
- tools/perf/arch/riscv/util/header.c      |  4 +-
- tools/perf/arch/s390/util/header.c       |  6 +-
- tools/perf/arch/x86/util/auxtrace.c      |  3 +-
- tools/perf/arch/x86/util/header.c        |  5 +-
- tools/perf/bench/numa.c                  | 53 +++++++++++++++
- tools/perf/builtin-kvm.c                 |  4 +-
- tools/perf/pmu-events/empty-pmu-events.c | 39 ++++++-----
- tools/perf/pmu-events/jevents.py         | 39 ++++++-----
- tools/perf/pmu-events/pmu-events.h       |  2 +-
- tools/perf/tests/expr.c                  |  5 +-
- tools/perf/util/env.c                    |  4 +-
- tools/perf/util/expr.c                   |  6 +-
- tools/perf/util/header.c                 | 82 ++++++++----------------
- tools/perf/util/header.h                 | 23 +++----
- tools/perf/util/pmu.c                    | 25 --------
- tools/perf/util/pmu.h                    |  2 -
- tools/perf/util/probe-event.c            |  1 +
- 22 files changed, 189 insertions(+), 229 deletions(-)
+const struct pmu_events_map pmu_events_map[] = {
+{
+	.arch = "arm64",
+	.cpuid = "0x00000000410fd050",
+	.event_table = {
+		.pmus = pmu_events__arm_cortex_a55,
+		.num_pmus = ARRAY_SIZE(pmu_events__arm_cortex_a55)
+	},
+	.metric_table = {
+		.pmus = NULL,
+		.num_pmus = 0
+	}
+},
 
+static const struct pmu_sys_events pmu_sys_event_tables[] = {
+{
+	.event_table = {
+		.pmus = pmu_events__freescale_imx95_sys,
+		.num_pmus = ARRAY_SIZE(pmu_events__freescale_imx95_sys)
+	},
+	.metric_table = {
+		.pmus = pmu_metrics__freescale_imx95_sys,
+		.num_pmus = ARRAY_SIZE(pmu_metrics__freescale_imx95_sys)
+	},
+	.name = "pmu_events__freescale_imx95_sys",
+},
+
+Currently, pmu_metrics_table__find() will return NULL when only do perf
+stat on sys metric. Then parse_groups() will never be called to parse
+sys metric_name, finally perf tool will exit directly. This should be a
+common problem. To fix the issue, this will keep the logic before commit
+f20c15d13f01 ("perf pmu-events: Remember the perf_events_map for a PMU")
+to return a empty metric table rather than a NULL pointer. This should
+be fine since the removed part just check if the table match provided
+metric_name. Without these code, the code in parse_groups() will also
+check the validity of metrci_name too.
+
+Fixes: f20c15d13f01 ("perf pmu-events: Remember the perf_events_map for a PMU")
+Cc: stable@vger.kernel.org
+Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+Acked-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/pmu-events/empty-pmu-events.c | 12 +-----------
+ tools/perf/pmu-events/jevents.py         | 12 +-----------
+ 2 files changed, 2 insertions(+), 22 deletions(-)
+
+diff --git a/tools/perf/pmu-events/empty-pmu-events.c b/tools/perf/pmu-events/empty-pmu-events.c
+index 2b7516946ded..b8719dab264d 100644
+--- a/tools/perf/pmu-events/empty-pmu-events.c
++++ b/tools/perf/pmu-events/empty-pmu-events.c
+@@ -585,17 +585,7 @@ const struct pmu_metrics_table *perf_pmu__find_metrics_table(struct perf_pmu *pm
+         if (!map)
+                 return NULL;
+ 
+-        if (!pmu)
+-                return &map->metric_table;
+-
+-        for (size_t i = 0; i < map->metric_table.num_pmus; i++) {
+-                const struct pmu_table_entry *table_pmu = &map->metric_table.pmus[i];
+-                const char *pmu_name = &big_c_string[table_pmu->pmu_name.offset];
+-
+-                if (pmu__name_match(pmu, pmu_name))
+-                           return &map->metric_table;
+-        }
+-        return NULL;
++	return &map->metric_table;
+ }
+ 
+ const struct pmu_events_table *find_core_events_table(const char *arch, const char *cpuid)
+diff --git a/tools/perf/pmu-events/jevents.py b/tools/perf/pmu-events/jevents.py
+index 6e71b09dbc2a..70f4fd5395fb 100755
+--- a/tools/perf/pmu-events/jevents.py
++++ b/tools/perf/pmu-events/jevents.py
+@@ -1101,17 +1101,7 @@ const struct pmu_metrics_table *perf_pmu__find_metrics_table(struct perf_pmu *pm
+         if (!map)
+                 return NULL;
+ 
+-        if (!pmu)
+-                return &map->metric_table;
+-
+-        for (size_t i = 0; i < map->metric_table.num_pmus; i++) {
+-                const struct pmu_table_entry *table_pmu = &map->metric_table.pmus[i];
+-                const char *pmu_name = &big_c_string[table_pmu->pmu_name.offset];
+-
+-                if (pmu__name_match(pmu, pmu_name))
+-                           return &map->metric_table;
+-        }
+-        return NULL;
++	return &map->metric_table;
+ }
+ 
+ const struct pmu_events_table *find_core_events_table(const char *arch, const char *cpuid)
 -- 
 2.47.0.199.ga7371fff76-goog
 
