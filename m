@@ -1,100 +1,139 @@
-Return-Path: <linux-kernel+bounces-399652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFED9C025C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:28:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1CE9C025E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED4F11C21224
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:28:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FC821F22CA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F24C1EE02E;
-	Thu,  7 Nov 2024 10:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B6A1EC019;
+	Thu,  7 Nov 2024 10:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IWGkMPNy"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="D43XTnAb"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743F31EBFF4
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 10:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D85C1EBFE4;
+	Thu,  7 Nov 2024 10:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975305; cv=none; b=LHvO3j2f6K/Fk9dSzqsp0+9y0JnKJBO7RuPPGiU/Q04Z0w85cCLjr6QJzoYSsP3xYejos1GXJ2uVD6ctElFsZQjav0t2VRUA/FhkC77DEAqihLvS9z9kfWZkRdjR72xLn/9VfBk6Z6OOmnVWnnnXxPWXA0pgSj9qrZPJBBKntsE=
+	t=1730975400; cv=none; b=jq3KWV455SSeSsmAiXQO1SATTgmuTbhSkGiWrUHt3cV69l+7S2NWBhGJ4AbwBtzuSQDFmgl90PdD/YhiOCCFUkJvLo0JeyIaHaGNrfUzm/OdetoaXv6bRPPxQEsamPZW7L17Ox4kGbKUhXLCVqvhZJOHvooNlFeudSaxS7DitFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975305; c=relaxed/simple;
-	bh=zPW4RQP7ib3AAsmmMOe3wNgaOxasplolWrA9JBpP+Fg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rinZ1mcUMEy0s9rL9DC4YeVVfq20VPLBU+A6kg+MWEOu/jqtDKNpaKfUcDbcc9NEFxdsigCk78cZazh5zqvhnf1iqbey5OlXIGm4rJnNDwA2NWaPq0a0/6JXN51sLCvod6rE/0s2II5rqDDq7/wFDO3IMjPZh1U6pc+R8B0QZY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IWGkMPNy; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5ee1e04776cso431220eaf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 02:28:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730975302; x=1731580102; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zPW4RQP7ib3AAsmmMOe3wNgaOxasplolWrA9JBpP+Fg=;
-        b=IWGkMPNyTPtr2/xbW2b9E0AGBASrOFT/hZl6RzCkEBgS8d2AtBCD4/6v97ltX9LUXO
-         TgNscLBvqyFeRhbM40xoDZhDc5LXcHOq+NBsO35pSj8jzguF0OD09AtobrUT/CRrCjGp
-         pNeU+2QPjK0zaSklHNLVJy4wBNP23wpvITZeJqRWFggQRjBoK9OI8sfjV8A+vgHDufpZ
-         22ywpeLFF87znVQAXdvv3+Lf1ZJkv9LiySyUhgeAyfVrlqvVkwXOeltDTGRxKCzexP5/
-         5ay4TPxVDnfKG0Z4fkxEbhc90pPwztv9DNWRtKC1Ha+0e8gD0WImF11uY6DQf5mEpabE
-         N7ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730975302; x=1731580102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zPW4RQP7ib3AAsmmMOe3wNgaOxasplolWrA9JBpP+Fg=;
-        b=svfefys0I2YmA7VCt+5ffpt50u6UqUsuwnrfc1SrhS8UcREDhrSgwsF/OByxPj+jh+
-         VlBn4A2Yw291gIdTWnKojQRbbdbtZOLlpt7P4e+T0Hlz4T8lWrVERDtmEs+TX+SQ+Rqz
-         v9agw68T708q6h4GCbAFFToOu91jyGcjqXPDQWWh/qkiN6IIja1unL434YZJsyYUA8LG
-         YXJytWLY5j4ar5dFlKAfCYdkRZXMC5oi9GER1scaFydHiR3CmrfylKOj00/MSSKSEGT2
-         m6CWohr7nDOqXw2oRDgriBqZQKy0QOGlDJwXdl+u1bkH4KX+uPwZ6Z8sCGyROv+06W5K
-         YLiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSbWFpasmE4VnOaQM10B+9Jd6KE245CUF10xObXEDr0whcjwoY7nteEp6G1dB6IV03WrqRp1P1BXM5t3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyNwdnmMb/60ApPU3OHlghbGd2UHoz1FRQCs7WIt524RfS6Rgg
-	RFDWAEdhLBN4aIeM087oRLpfXf35LHThxgm2P4n/WNAi9P75a0NaxfPO2Zk6LONlJmlIjzFANFX
-	jI7pzMRBhOeH+aatZU5w/FUCuJYs15BDfqvC3Xg==
-X-Google-Smtp-Source: AGHT+IFMKnoCwjkJOKUaR+JuoWoKm+qaHvhzoPAEmFGwh8CvhPiJdL6CFrkZE6oR1vfLCGTQ5HTejc7OEk/6lvThH0w=
-X-Received: by 2002:a05:6820:99c:b0:5eb:fc8c:46ad with SMTP id
- 006d021491bc7-5ee4ed7aea9mr564587eaf.0.1730975302375; Thu, 07 Nov 2024
- 02:28:22 -0800 (PST)
+	s=arc-20240116; t=1730975400; c=relaxed/simple;
+	bh=88kx15I9N++ufjc07ANmGyqlt+GZp1jTP2oNRgfI4C8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=arkHG9b6lPMK/NK+qcZNDtno+QyGZWlPyn4h5iUcBiwbAJGASFUePLFRZ1WOh1asclAjtiX9wGkolGHtNcvbfr95cRCx219ChKS4kUQjB99bU/JJzTAAX8A66ExOAtxZrhvKEP6zbLLj8yaGpz+q1oLUKI7opDkpeum9fSxkhSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=D43XTnAb; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730975393;
+	bh=Kt+ZN/aY4+hqs6IsnkxGJmU/NYZTgVYmalRrUQtKFfo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=D43XTnAb2ZPndqox5EhUlczKhLTgUITnEUl/d0xngtlPx6eGop+5RrM6W3sbtzQOy
+	 eUTJLngXvvbJbDm+KRZ4hG4m3rkwx/Dm3yPTx6q8BM8wO0AxK68j1vs5f873EJR8Fc
+	 g/5VTDeFZZFYeqoiViIxUm7PKY4D739BQsLOahYVfOLVHR9TV4QPvlzJFVlOqg0xpk
+	 9BNT84tXNyn0ISvzGES3QKfaVqFCb7n4LPoig/KBBs2mTrwSMbNFHx55ceC1Vwols6
+	 pQCtx5oTLOr1uePrrmLPiVzd4Nst/aKkI4AiKPbdQ2wFed3I4oFRTaMXTjZmT9AE0M
+	 npUGYebHHJ44A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkdcJ40S9z4wxx;
+	Thu,  7 Nov 2024 21:29:52 +1100 (AEDT)
+Date: Thu, 7 Nov 2024 21:29:54 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, James Bottomley
+ <James.Bottomley@HansenPartnership.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the scsi-mkp tree
+Message-ID: <20241107212954.4da462cf@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-wcn36xx-memory-allocation-v1-1-5ec901cf37b6@mainlining.org>
-In-Reply-To: <20241104-wcn36xx-memory-allocation-v1-1-5ec901cf37b6@mainlining.org>
-From: Loic Poulain <loic.poulain@linaro.org>
-Date: Thu, 7 Nov 2024 11:27:46 +0100
-Message-ID: <CAMZdPi_-uH6dk8KcrPRzNGJjX6YjkoNsYM1EJKJu5BYzrhd8gg@mail.gmail.com>
-Subject: Re: [PATCH] wifi: wcn36xx: fix channel survey memory allocation size
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Kalle Valo <kvalo@kernel.org>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
-	Kalle Valo <quic_kvalo@quicinc.com>, wcn36xx@lists.infradead.org, 
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/MW/i7fdfDbWW5_BnyDBKQHx";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/MW/i7fdfDbWW5_BnyDBKQHx
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 4 Nov 2024 at 21:00, Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> wrote:
->
-> KASAN reported a memory allocation issue in wcn->chan_survey
-> due to incorrect size calculation.
-> This commit uses kcalloc to allocate memory for wcn->chan_survey,
-> ensuring proper initialization and preventing the use of uninitialized
-> values when there are no frames on the channel.
->
-> Fixes: 29696e0aa413 ("wcn36xx: Track SNR and RSSI for each RX frame")
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-.org>
+Hi all,
 
-Acked-by: Loic Poulain <loic.poulain@linaro.org>
+After merging the scsi-mkp tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/ufs/core/ufs-mcq.c: In function 'ufshcd_mcq_sq_cleanup':
+drivers/ufs/core/ufs-mcq.c:580:9: error: 'rtc' undeclared (first use in thi=
+s function)
+  580 |         rtc =3D FIELD_GET(SQ_ICU_ERR_CODE_MASK, readl(reg));
+      |         ^~~
+drivers/ufs/core/ufs-mcq.c:580:9: note: each undeclared identifier is repor=
+ted only once for each function it appears in
+
+Caused by commit
+
+  bedea6f472ab ("Merge branch 'for-next' of git://git.kernel.org/pub/scm/li=
+nux/kernel/git/mkp/scsi.git")
+
+The automatic merge resolution didn't work out right.
+
+I have applied the following fix up patch (that may be needed when the
+scsi and scsi-mkp trees are merged):=20
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 7 Nov 2024 21:21:01 +1100
+Subject: [PATCH] bad automatic merge fixup for scsi-mkp merge
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/ufs/core/ufs-mcq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+index fa25e9ac2804..18ca95e5b68c 100644
+--- a/drivers/ufs/core/ufs-mcq.c
++++ b/drivers/ufs/core/ufs-mcq.c
+@@ -539,7 +539,7 @@ int ufshcd_mcq_sq_cleanup(struct ufs_hba *hba, int task=
+_tag)
+ 	struct scsi_cmnd *cmd =3D lrbp->cmd;
+ 	struct ufs_hw_queue *hwq;
+ 	void __iomem *reg, *opr_sqd_base;
+-	u32 nexus, id, val;
++	u32 nexus, id, val, rtc;
+ 	int err;
+=20
+ 	if (hba->quirks & UFSHCD_QUIRK_MCQ_BROKEN_RTC)
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/MW/i7fdfDbWW5_BnyDBKQHx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcslqIACgkQAVBC80lX
+0GzI2Qf/eeM2Y3CdMRoj+nKe1Dw3DT9jG+9J7mSR16zzGIrEk6yRQuUmFEwBcYJL
+arvqvYfvUosViSgDeuH/FvvbcQfzeGsQkR3rETpn6ZnxJlrtY/jzx4lp0T1gjbXa
+WqD/To645S7ToXaykskiDyfQJQFfFoPV7hEqv5OhSZ4exUdslUwAMuZOjY6aBiNK
++OhEzy8eK+G3XhjptmP2bi3L9GFK5qr8rDoJiSSA/wUlFDQqruT9AmOiG6hEr0Rc
+WGDGpbS0ahm/oIFGVT4Y6Tguqe9FVsyzDqdy8YEboJVKtYslEHAZ7oZVEp2xLs0p
+yvlKEY50Z2JAwvAyHhTAyvK6/VG7dw==
+=00bQ
+-----END PGP SIGNATURE-----
+
+--Sig_/MW/i7fdfDbWW5_BnyDBKQHx--
 
