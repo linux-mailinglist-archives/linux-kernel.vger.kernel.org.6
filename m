@@ -1,230 +1,173 @@
-Return-Path: <linux-kernel+bounces-399724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E699C0374
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:10:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3C79C0376
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:10:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E8B284990
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2DE81C21EE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7C51F429C;
-	Thu,  7 Nov 2024 11:10:10 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12C31DF985;
+	Thu,  7 Nov 2024 11:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aNzATdl/"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474B41EE00C;
-	Thu,  7 Nov 2024 11:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07821F4283
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977810; cv=none; b=cq8VQ+wmoRpumSZdNNkGe9R54ie8K9OTpVDuga3l0Ye8GB+Z0kr/1a/WJzgZrqkJVI/8/lvV4kjJ7+6628knW2FQ9NBDNCM6W4n3l9JzBO0EdgQwyIPZnhZYkWv9yysZctXChhQ1cARrULs0DkLrfpFXx+xs1uzkMk7AGLWwhog=
+	t=1730977825; cv=none; b=QBN2AvozsL3aQUrYhSyylYBTfeZ2/3TMVu+ADA1bsqmYTzhOOg0wsMtkP2sJVtP5pubaJkVcKsU1IPiKmoXx0xZ9LsseU0ggkGss9mrZ4IRhfblBRv1oSFu5kliBYyc7yjw3xote2vtfjXPrJI+UIjQ6AUzhSG8GHQ74jTBAM1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977810; c=relaxed/simple;
-	bh=kKb7R5SC4UDIPDX6X16du9DvvNtKnjNrWcLF0p25FMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z4YM1wP0z8uKT6+/cYKPRUSUpcPX7W82jiS9V8ZkhypJ9ySJE0FzOzCe26EVS4d4f3+20O51QU9Fw0jRlD7QEkGkTVlE1EVxohxZf5JY+DBVsvi12b42eLaYDJBayB5LWYsNcrjMXL2ecWSW9VgoZ9jU2Q2a935mdn6Uz6prHZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XkfSP4P1WzpZDy;
-	Thu,  7 Nov 2024 19:08:05 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8A293180AEA;
-	Thu,  7 Nov 2024 19:09:59 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Nov 2024 19:09:59 +0800
-Message-ID: <30ab6359-2ad6-4be0-bf73-59ae454811a9@huawei.com>
-Date: Thu, 7 Nov 2024 19:09:52 +0800
+	s=arc-20240116; t=1730977825; c=relaxed/simple;
+	bh=37kX0iguOchGjTsjVooGWla8IG+1es7xHB2HUS6IKT4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=FYbeO+w0tNRSpLXH0Uf98nWcGr3XIjrQ/7LRTqzTZ7LzgzWXUzRG3OGE3KVTQvIIc1OEcJ3Ul0+zrYm4tirMe5sgiOxTNNPjloupWQiXECvJsuYjH0VJbZeoo9DtkXu7KVKwqcjVEqNpYql6Svoi4mutEfk1OSqUg/6xdlqGhrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=aNzATdl/; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241107111020epoutp0418d0b22ca98fec31ce85a9626d5510e0~Fqyg0LflK2068620686epoutp04R
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:10:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241107111020epoutp0418d0b22ca98fec31ce85a9626d5510e0~Fqyg0LflK2068620686epoutp04R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1730977820;
+	bh=ErKfMAXhZvdimd8V3JdwYYUKfdLTT3qW9UBaUsKeldo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=aNzATdl/6Xsybk1ZhZd+qgVEIfJmeN+FJT8LZgfGoMWmZk0W+YHWuUPpXXmmv7nXJ
+	 9T3qsEm7kAo6je1wgy4ZaWDrMWGhYGp4cDum4zXHizhsW8KBdtsql6+R2gzAbIAezk
+	 fnFWlDshQh1dciK9zVxEG98AgUUT0A9smYOzhmNE=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241107111020epcas5p35c58aefff30ecfb19db8d3c7f11a20ed~FqygPLB2d1390413904epcas5p31;
+	Thu,  7 Nov 2024 11:10:20 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4XkfVy503Dz4x9Pp; Thu,  7 Nov
+	2024 11:10:18 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9B.2E.08574.A10AC276; Thu,  7 Nov 2024 20:10:18 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20241107111017epcas5p4a7ecdad34dd6f9ce081ee12658f1ed84~Fqyd7UcuY2857628576epcas5p45;
+	Thu,  7 Nov 2024 11:10:17 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241107111017epsmtrp1223a24bc11b44ec128052649356a522e~Fqyd6o-FS1010610106epsmtrp16;
+	Thu,  7 Nov 2024 11:10:17 +0000 (GMT)
+X-AuditID: b6c32a44-6dbff7000000217e-8f-672ca01a640a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D2.E5.18937.910AC276; Thu,  7 Nov 2024 20:10:17 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241107111016epsmtip20c4b0a66a9d4db901980a397f922e43c~Fqyccu3gI1024010240epsmtip2v;
+	Thu,  7 Nov 2024 11:10:16 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Sowon Na'" <sowon.na@samsung.com>, <robh@kernel.org>,
+	<krzk@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
+	<kishon@kernel.org>
+Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20241107041509.824457-3-sowon.na@samsung.com>
+Subject: RE: [PATCH 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
+ bindings
+Date: Thu, 7 Nov 2024 16:40:15 +0530
+Message-ID: <040601db3105$a07bb160$e1731420$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-To: Jesper Dangaard Brouer <hawk@kernel.org>,
-	=?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <zhangkun09@huawei.com>, <fanghaiqing@huawei.com>,
-	<liuyonglong@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
- Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew
- Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, kernel-team
-	<kernel-team@cloudflare.com>, Viktor Malik <vmalik@redhat.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
- <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
- <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
- <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
- <18ba4489-ad30-423e-9c54-d4025f74c193@kernel.org>
- <b8b7818a-e44b-45f5-91c2-d5eceaa5dd5b@kernel.org>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <b8b7818a-e44b-45f5-91c2-d5eceaa5dd5b@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIBMTEpWuihsUcp3o3pzj8nZnl7oAJCJM3HAaAIt8OyQJcJoA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmpq7UAp10g7nTVC3W7D3HZDH/yDlW
+	i6Ot/5ktXs66x2Zx/vwGdovLu+awWcw4v4/J4v+eHewWv38eYrLYeecEswOXx6ZVnWwefVtW
+	MXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6Dr
+	lpkDdIuSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQ
+	wMDIFKgwITvj5ZndTAXHuSouf7vJ1MD4haOLkZNDQsBE4uOPXSxdjFwcQgK7GSXW/T/ODpIQ
+	EvjEKNE/SxoiAWT/nT+XGaaj8dlyJojETkaJ0237mSGcF4wST35+ZwKpYhPQldixuI0NJCEi
+	MJFRYvvzv0AJDg5mgVqJ/Z0mIDWcAtYSd6Y3sILYwgIBElebe8BsFgEViflTV4OdwStgKfH/
+	xCpGCFtQ4uTMJywgNrOAvMT2t3OgLlKQ+Pl0GViviICTxLQjF9ghasQlXh49wg5yg4TAVA6J
+	x8f2skM0uEhs3HOFEcIWlnh1fAtUXEriZX8blJ0tcfziLDYIu0Kiu/UjVNxeYuejmywQv2hK
+	rN+lD7GLT6L39xOwFyUEeCU62oQgqlUlmt9dZYGwpSUmdnezQtgeEkuvHmGewKg4C8lns5B8
+	NgvJB7MQli1gZFnFKJlaUJybnppsWmCYl1oOj+/k/NxNjOCUquWyg/HG/H96hxiZOBgPMUpw
+	MCuJ8PpHaacL8aYkVlalFuXHF5XmpBYfYjQFBvdEZinR5HxgUs8riTc0sTQwMTMzM7E0NjNU
+	Eud93To3RUggPbEkNTs1tSC1CKaPiYNTqoGJzXJ9h+rWjuQQo6XMP0y5l+qGrZi+y+50QmYH
+	R/+uWrN5Kx6FHH3j2O6b8IsruOrt0V/T/Vec6Wh757o2n+WyUHiDxvpe+1cyzzdwnhA5MPPc
+	wWe+nncu6bQu7OtYWPgp0rvN8emVhxHF7Fa305fpz9tzqpvxhQNrh0W5a+rX5N+Wl++tMM1q
+	PPl0ZctuByZ3leXXLxn9Teo//+vtwVevv7CGvryl/1vwa1SX15GZeX8+LbLsr1u9OHTe/EsV
+	NbdseezmmU/qbooRvWCUlnzsq3z1j26DAr2OG998olW3hwSdkhGqPP9dkOmi6rf/0ZtNjJ57
+	LrxvHxo15UFSRHzX4cvfjJ/36B1t25fD/81fiaU4I9FQi7moOBEA4Od7IjIEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42LZdlhJXldygU66wYUJuhZr9p5jsph/5Byr
+	xdHW/8wWL2fdY7M4f34Du8XlXXPYLGac38dk8X/PDnaL3z8PMVnsvHOC2YHLY9OqTjaPvi2r
+	GD0+b5ILYI7isklJzcksSy3St0vgynh5ZjdTwXGuisvfbjI1MH7h6GLk5JAQMJFofLacqYuR
+	i0NIYDujxIbnF9khEtIS1zdOgLKFJVb+e84OUfSMUeLphr8sIAk2AV2JHYvb2EASIgLTGSX2
+	rfnBDJJgFmhklLjYwQbRsZtRYvPq7WAJTgFriTvTG1hBbGEBP4nrR7vBbBYBFYn5U1eDreMV
+	sJT4f2IVI4QtKHFy5hMWiKHaEk9vPoWy5SW2v53DDHGegsTPp8vA5ogIOElMO3KBHaJGXOLl
+	0SPsExiFZyEZNQvJqFlIRs1C0rKAkWUVo2hqQXFuem5ygaFecWJucWleul5yfu4mRnBUaQXt
+	YFy2/q/eIUYmDsZDjBIczEoivP5R2ulCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZVzOlOEBNIT
+	S1KzU1MLUotgskwcnFINTLOU9i7efn7drBuGaxLXK5WduZ27gHmT+V/dn8cuyy7YLr12dwo/
+	++7Twkd2sf4M5FcP/fS1YkHDDP+4tkxm61NbgS4TMjvJsFL8onJE36OHZtaLnN6/uZPp6dyw
+	lWVFvYKaeHvO6u7/MmyOOS2fpGfzCxYX9kzcudHmt54+i0bS4SKXdH3120fOZqa4+Frp7P2x
+	++rbZ1HZMRJpmStlb766G7fAao/1tA/GfakZJs9XWqyaNqnu0Kx51/MehTxb0THzPVtQWvXE
+	pZcnnQ1Y4ebQfW1TQ0hlmpwcdxLPm1Qds59tRmdNmSbqRLDl7pp880SIdmaTxcfswGcKAh61
+	94VlN3yd+erElh0Zt7dKK7EUZyQaajEXFScCAKnpBAoZAwAA
+X-CMS-MailID: 20241107111017epcas5p4a7ecdad34dd6f9ce081ee12658f1ed84
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241107041511epcas2p285a5b52a6784e509977a1574f7c9ee4a
+References: <20241107041509.824457-1-sowon.na@samsung.com>
+	<CGME20241107041511epcas2p285a5b52a6784e509977a1574f7c9ee4a@epcas2p2.samsung.com>
+	<20241107041509.824457-3-sowon.na@samsung.com>
 
-On 2024/11/6 23:57, Jesper Dangaard Brouer wrote:
+Hi Sowon
 
-...
+> -----Original Message-----
+> From: Sowon Na <sowon.na@samsung.com>
+> Sent: Thursday, November 7, 2024 9:45 AM
+> To: robh@kernel.org; krzk@kernel.org; conor+dt@kernel.org;
+> vkoul@kernel.org; alim.akhtar@samsung.com; kishon@kernel.org
+> Cc: krzk+dt@kernel.org; linux-kernel@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
+> sowon.na@samsung.com
+> Subject: [PATCH 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
+> bindings
+> 
+> Add samsung,exynosautov920-ufs-phy compatible for ExynosAuto v920 SoC.
+> 
+> Signed-off-by: Sowon Na <sowon.na@samsung.com>
+> ---
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
->>
->> Some more info from production servers.
->>
->> (I'm amazed what we can do with a simple bpftrace script, Cc Viktor)
->>
->> In below bpftrace script/oneliner I'm extracting the inflight count, for
->> all page_pool's in the system, and storing that in a histogram hash.
->>
->> sudo bpftrace -e '
->>   rawtracepoint:page_pool_state_release { @cnt[probe]=count();
->>    @cnt_total[probe]=count();
->>    $pool=(struct page_pool*)arg0;
->>    $release_cnt=(uint32)arg2;
->>    $hold_cnt=$pool->pages_state_hold_cnt;
->>    $inflight_cnt=(int32)($hold_cnt - $release_cnt);
->>    @inflight=hist($inflight_cnt);
->>   }
->>   interval:s:1 {time("\n%H:%M:%S\n");
->>    print(@cnt); clear(@cnt);
->>    print(@inflight);
->>    print(@cnt_total);
->>   }'
->>
->> The page_pool behavior depend on how NIC driver use it, so I've run this on two prod servers with drivers bnxt and mlx5, on a 6.6.51 kernel.
->>
->> Driver: bnxt_en
->> - kernel 6.6.51
->>
->> @cnt[rawtracepoint:page_pool_state_release]: 8447
->> @inflight:
->> [0]             507 |                                        |
->> [1]             275 |                                        |
->> [2, 4)          261 |                                        |
->> [4, 8)          215 |                                        |
->> [8, 16)         259 |                                        |
->> [16, 32)        361 |                                        |
->> [32, 64)        933 |                                        |
->> [64, 128)      1966 |                                        |
->> [128, 256)   937052 |@@@@@@@@@                               |
->> [256, 512)  5178744 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->> [512, 1K)     73908 |                                        |
->> [1K, 2K)    1220128 |@@@@@@@@@@@@                            |
->> [2K, 4K)    1532724 |@@@@@@@@@@@@@@@                         |
->> [4K, 8K)    1849062 |@@@@@@@@@@@@@@@@@@                      |
->> [8K, 16K)   1466424 |@@@@@@@@@@@@@@                          |
->> [16K, 32K)   858585 |@@@@@@@@                                |
->> [32K, 64K)   693893 |@@@@@@                                  |
->> [64K, 128K)  170625 |@                                       |
->>
->> Driver: mlx5_core
->>   - Kernel: 6.6.51
->>
->> @cnt[rawtracepoint:page_pool_state_release]: 1975
->> @inflight:
->> [128, 256)         28293 |@@@@                               |
->> [256, 512)        184312 |@@@@@@@@@@@@@@@@@@@@@@@@@@@        |
->> [512, 1K)              0 |                                   |
->> [1K, 2K)            4671 |                                   |
->> [2K, 4K)          342571 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
->> [4K, 8K)          180520 |@@@@@@@@@@@@@@@@@@@@@@@@@@@        |
->> [8K, 16K)          96483 |@@@@@@@@@@@@@@                     |
->> [16K, 32K)         25133 |@@@                                |
->> [32K, 64K)          8274 |@                                  |
->>
->>
->> The key thing to notice that we have up-to 128,000 pages in flight on
->> these random production servers. The NIC have 64 RX queue configured,
->> thus also 64 page_pool objects.
->>
+>  Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I realized that we primarily want to know the maximum in-flight pages.
+> diff --git a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+> b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+> index f402e31bf58d..d70ffeb6e824 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
+> @@ -18,6 +18,7 @@ properties:
+>        - google,gs101-ufs-phy
+>        - samsung,exynos7-ufs-phy
+>        - samsung,exynosautov9-ufs-phy
+> +      - samsung,exynosautov920-ufs-phy
+>        - tesla,fsd-ufs-phy
 > 
-> So, I modified the bpftrace oneliner to track the max for each page_pool in the system.
-> 
-> sudo bpftrace -e '
->  rawtracepoint:page_pool_state_release { @cnt[probe]=count();
->   @cnt_total[probe]=count();
->   $pool=(struct page_pool*)arg0;
->   $release_cnt=(uint32)arg2;
->   $hold_cnt=$pool->pages_state_hold_cnt;
->   $inflight_cnt=(int32)($hold_cnt - $release_cnt);
->   $cur=@inflight_max[$pool];
->   if ($inflight_cnt > $cur) {
->     @inflight_max[$pool]=$inflight_cnt;}
->  }
->  interval:s:1 {time("\n%H:%M:%S\n");
->   print(@cnt); clear(@cnt);
->   print(@inflight_max);
->   print(@cnt_total);
->  }'
-> 
-> I've attached the output from the script.
-> For unknown reason this system had 199 page_pool objects.
+>    reg:
+> --
+> 2.45.2
 
-Perhaps some of those page_pool objects are per_cpu page_pool
-objects from net_page_pool_create()?
 
-It would be good if the pool_size for those page_pool objects
-is printed too.
-
-> 
-> The 20 top users:
-> 
-> $ cat out02.inflight-max | grep inflight_max | tail -n 20
-> @inflight_max[0xffff88829133d800]: 26473
-> @inflight_max[0xffff888293c3e000]: 27042
-> @inflight_max[0xffff888293c3b000]: 27709
-> @inflight_max[0xffff8881076f2800]: 29400
-> @inflight_max[0xffff88818386e000]: 29690
-> @inflight_max[0xffff8882190b1800]: 29813
-> @inflight_max[0xffff88819ee83800]: 30067
-> @inflight_max[0xffff8881076f4800]: 30086
-> @inflight_max[0xffff88818386b000]: 31116
-> @inflight_max[0xffff88816598f800]: 36970
-> @inflight_max[0xffff8882190b7800]: 37336
-> @inflight_max[0xffff888293c38800]: 39265
-> @inflight_max[0xffff888293c3c800]: 39632
-> @inflight_max[0xffff888293c3b800]: 43461
-> @inflight_max[0xffff888293c3f000]: 43787
-> @inflight_max[0xffff88816598f000]: 44557
-> @inflight_max[0xffff888132ce9000]: 45037
-> @inflight_max[0xffff888293c3f800]: 51843
-> @inflight_max[0xffff888183869800]: 62612
-> @inflight_max[0xffff888113d08000]: 73203
-> 
-> Adding all values together:
-> 
->  grep inflight_max out02.inflight-max | awk 'BEGIN {tot=0} {tot+=$2; printf "total:" tot "\n"}' | tail -n 1
-> 
-> total:1707129
-> 
-> Worst case we need a data structure holding 1,707,129 pages.
-
-For 64 bit system, that means about 54MB memory overhead for tracking those
-inflight pages if 16 byte memory of metadata needed for each page, I guess
-that is ok for those large systems.
-
-> Fortunately, we don't need a single data structure as this will be split
-> between 199 page_pool's.
-
-It would be good to have an average value for the number of inflight pages,
-so that we might be able to have a statically allocated memory to satisfy
-the mostly used case, and use the dynamically allocated memory if/when
-necessary.
-
-> 
-> --Jesper
 
