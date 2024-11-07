@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-400107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3009C0909
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:36:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24A39C0910
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2774228470A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:36:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CC131F24449
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C553212622;
-	Thu,  7 Nov 2024 14:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E75212D39;
+	Thu,  7 Nov 2024 14:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L+jzJzpd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pZQ12oA0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6761F12E9;
-	Thu,  7 Nov 2024 14:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB88212175;
+	Thu,  7 Nov 2024 14:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730990140; cv=none; b=Rl+OmuOU+bAfFMk4EtdR0xWhV5UHymbhHJLcAyjtYvx5zTqKKSn/GHWr2ZAT2Ti9AjD9HA21LTmpT4nkDWPkBwQPYpq7VEuE36x1Ni9l70MFEWhDMtH7g3eNAZa9nMhdb0uRn5OXQGV7M35s4yVfQ3CRS+qFzHygWhzaaiHfcV0=
+	t=1730990189; cv=none; b=kL2gPEH9FyhGy0PLmyV04T7D+T7z+Q68OpzgwI/YnZpmJ7WoyYFwnWDqtfIcFGpDc08RnudRlF3jhSE0DikIB19u9RKAzBpK4RVIuhZYRI6x7Q26HDHvf8mi0VWw6NcyqBMbT+51BiKC+1perXU8Hvm7Jb+Ubs+Ff5QYTBWwe3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730990140; c=relaxed/simple;
-	bh=0bvBWhP3o1it9RosdYcoyvWAiMGDsRPKKiA96goMZbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=joY42wlkQAITQvluFzEIEaaF1MBlRDxRJTl1utYs8P00u2CtK3Ib4Jb1sLW/9O9HdvXLDkWoeJxSC2Fq8bD1gofbtcu0tk2qWFe4hM7bR0uXTtwbS9uKkD4W1wM8zPN1OZi2jHs+s60GQBrXyaHWKZnJCMxcqI0l+vGTKT+yyUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L+jzJzpd; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730990138; x=1762526138;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=0bvBWhP3o1it9RosdYcoyvWAiMGDsRPKKiA96goMZbo=;
-  b=L+jzJzpdLGuYNB23bq9dQztxSVcfBx2jBzmQYvDI5S5/Cyhs5aT53wMU
-   IHnIT9a/F+ZHrvf9TPiDoy/VrKnFdPZIWnrxMoCE9fgxe1Kf3U8B0WJ9R
-   xBHP7K7lb0o5+JDLTI6ui2G1FRpGL+aAEze8iRXO8EJJhgeqqcLnlek/u
-   XEE7yn8+2uz003X5uZCRfXnVRxedVTDfvPgT+HEDDwxBrskZbUHPzSBa1
-   fOjoN37dlWnDmKGwJIVshZVzkAODOQbEIo6nOyYxU0FhFBc45ObpWdi2k
-   WJir0Z6r0o2fBFE2rzigPnTYbtli+hpHVyxFiStwMHOj9s1L1pKuw6Ugb
-   A==;
-X-CSE-ConnectionGUID: 4ZBmzRNHT8SdLTmI9OPvIA==
-X-CSE-MsgGUID: RE1kjWFSREqRrdNCbDrV+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="56231705"
-X-IronPort-AV: E=Sophos;i="6.12,266,1728975600"; 
-   d="scan'208";a="56231705"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 06:35:36 -0800
-X-CSE-ConnectionGUID: EqCyjF5PRo+FEKGBGlHFcw==
-X-CSE-MsgGUID: QHBWuasCTaGhnrz9JWSwuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,266,1728975600"; 
-   d="scan'208";a="108374991"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 06:35:35 -0800
-Received: from [10.212.68.83] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.83])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 79A0C20B5703;
-	Thu,  7 Nov 2024 06:35:33 -0800 (PST)
-Message-ID: <20a6d424-c3a5-4fa9-b5d4-bcbe684a4a6f@linux.intel.com>
-Date: Thu, 7 Nov 2024 09:35:32 -0500
+	s=arc-20240116; t=1730990189; c=relaxed/simple;
+	bh=QzVkdpJnt/ZuRmSGunY3JW7fmbO2fr/0K6tHnuLCOfY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Mzv+tzaqUxXnR8Hu+rR3WIlYWty2OqiRPPMJfCibj5QSOhTQtsviM2Kfy8LIUkVWuNi1Wc8caC8j3XqgMXCYQeJYATTN+LYJ5FEmCzUEVYg1Uhql9pBVfDpmBe3UqZ6O5zIq/Fj6Pk1U+H3IUSOmFHyWb1AkWoSA6nFKS1JLdV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pZQ12oA0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A75hrql002118;
+	Thu, 7 Nov 2024 14:36:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	z+3wHS3gqApFtMhQvOyrWRXfCH4jhD5FMxIgxyYjq3c=; b=pZQ12oA0yQWZatlq
+	gf8DsHhL3z6BoGYBmgVrPBBD3dW26JuFT263GX94ZvdN3oGDivQmEFL5E4a148rR
+	SIQ/NznCtP3AWX4Ne8GfDjEi9pC5qWeoIWIHHKFCxjMx7tNuTeh59ijZ/jCmmhcb
+	7F57vI+XY/VLffCVW9xyAZEF0nC9ro5U4XdcpxnhLwa+HsMMygCjk/Bccnd1/O4+
+	/OTtdLQpKMUqYjTVeaupa+eI77ISu9sO7KE18nNaFKkXPkgBSdqU9n8t0EAEU26b
+	CtS/RF8OIwi5+BX7YR+DkaeBYAF8Y/rUbwYXEuLkMNfXTyG6Bpl63cIY3aQ3gRot
+	vPhlfA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r072n2r0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 14:36:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7EZwUs009870
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 14:35:58 GMT
+Received: from [10.206.104.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
+ 06:35:52 -0800
+Message-ID: <6e67ae77-a116-422c-a07b-77e991a664ea@quicinc.com>
+Date: Thu, 7 Nov 2024 20:05:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,204 +64,253 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/22] perf jevents: Add br metric group for branch
- statistics on Intel
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Perry Taylor <perry.taylor@intel.com>, Samantha Alt
- <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>,
- Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
-References: <20240926175035.408668-1-irogers@google.com>
- <20240926175035.408668-8-irogers@google.com>
+Subject: Re: [PATCH RFC 1/3] drm/msm/adreno: Add support for ACD
+To: <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul
+	<sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Viresh Kumar
+	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20241012-gpu-acd-v1-0-1e5e91aa95b6@quicinc.com>
+ <20241012-gpu-acd-v1-1-1e5e91aa95b6@quicinc.com>
+ <4aeec9f1-720b-400c-9582-d02847db2ac7@linaro.org>
+ <43404449-1830-4651-a85a-54404b1d35bc@quicinc.com>
+ <56a976d6-7dd6-4001-b6a8-268ed7d787d2@linaro.org>
+ <49e1a6b6-683f-4826-b67e-8354a10a785d@quicinc.com>
+ <85eaeaca-850d-47d4-b81d-b23f25084d81@linaro.org>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240926175035.408668-8-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <85eaeaca-850d-47d4-b81d-b23f25084d81@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ifBweuF2nDAoe7kEjNp7oTRinqJqKB89
+X-Proofpoint-GUID: ifBweuF2nDAoe7kEjNp7oTRinqJqKB89
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
+ adultscore=0 malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070114
 
-
-
-On 2024-09-26 1:50 p.m., Ian Rogers wrote:
-> The br metric group for branches itself comprises metric groups for
-> total, taken, conditional, fused and far metric groups using json
-> events. Conditional taken and not taken metrics are specific to
-> Icelake and later generations, so the presence of the event is used to
-> determine whether the metric should exist.
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/pmu-events/intel_metrics.py | 138 +++++++++++++++++++++++++
->  1 file changed, 138 insertions(+)
+On 11/7/2024 8:01 PM, neil.armstrong@linaro.org wrote:
+> On 07/11/2024 13:46, Akhil P Oommen wrote:
+>> On 11/7/2024 2:25 PM, neil.armstrong@linaro.org wrote:
+>>> On 06/11/2024 02:44, Akhil P Oommen wrote:
+>>>> On 11/4/2024 9:14 PM, neil.armstrong@linaro.org wrote:
+>>>>> On 11/10/2024 22:29, Akhil P Oommen wrote:
+>>>>>> ACD a.k.a Adaptive Clock Distribution is a feature which helps to
+>>>>>> reduce
+>>>>>> the power consumption. In some chipsets, it is also a requirement to
+>>>>>> support higher GPU frequencies. This patch adds support for GPU
+>>>>>> ACD by
+>>>>>> sending necessary data to GMU and AOSS. The feature support for the
+>>>>>> chipset is detected based on devicetree data.
+>>>>>>
+>>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>>>>> ---
+>>>>>>     drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 81 +++++++++++++++++++
+>>>>>> ++++++
+>>>>>> +++-------
+>>>>>>     drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+>>>>>>     drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 36 ++++++++++++++++
+>>>>>>     drivers/gpu/drm/msm/adreno/a6xx_hfi.h | 21 +++++++++
+>>>>>>     4 files changed, 124 insertions(+), 15 deletions(-)
+>>>>>>
+>>>>>
+>>>>> <snip>
+>>>>>
+>>>>>> +
+>>>>>> +static int a6xx_hfi_enable_acd(struct a6xx_gmu *gmu)
+>>>>>> +{
+>>>>>> +    struct a6xx_hfi_acd_table *acd_table = &gmu->acd_table;
+>>>>>> +    struct a6xx_hfi_msg_feature_ctrl msg = {
+>>>>>> +        .feature = HFI_FEATURE_ACD,
+>>>>>> +        .enable = 1,
+>>>>>> +        .data = 0,
+>>>>>> +    };
+>>>>>> +    int ret;
+>>>>>> +
+>>>>>> +    if (!acd_table->enable_by_level)
+>>>>>> +        return 0;
+>>>>>> +
+>>>>>> +    /* Enable ACD feature at GMU */
+>>>>>> +    ret = a6xx_hfi_send_msg(gmu, HFI_H2F_FEATURE_CTRL, &msg,
+>>>>>> sizeof(msg), NULL, 0);
+>>>>>> +    if (ret) {
+>>>>>> +        DRM_DEV_ERROR(gmu->dev, "Unable to enable ACD (%d)\n", ret);
+>>>>>> +        return ret;
+>>>>>> +    }
+>>>>>> +
+>>>>>> +    /* Send ACD table to GMU */
+>>>>>> +    ret = a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_ACD, &msg, sizeof(msg),
+>>>>>> NULL, 0);
+>>>>>
+>>>>> This looks wrong, in this exact code, you never use the acd_table...
+>>>>> perhaps it should be acd_table here
+>>>>
+>>>> Whoops! Weirdly gmu didn't explode when I tested.
+>>>>
+>>>> Thanks for your keen eye.
+>>>
+>>> You're welcome !
+>>>
+>>> I've been trying to enable this on SM8650, but HFI_H2F_MSG_ACD fails.
+>>>
+>>> My changes:
+>>> ================><================================
+>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/
+>>> msm/adreno/a6xx_hfi.c
+>>> index 7c96d6f8aaa9..bd9d586f245e 100644
+>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>>> @@ -682,7 +682,7 @@ static int a6xx_hfi_enable_acd(struct a6xx_gmu *gmu)
+>>>          }
+>>>
+>>>          /* Send ACD table to GMU */
+>>> -       ret = a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_ACD, &acd_table,
+>>> sizeof(*acd_table), NULL, 0);
+>>> +       ret = a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_ACD, &acd_table,
+>>
+>> &acd_table -> acd_table here?
 > 
-> diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-> index 58e243695f0a..09f7b7159e7c 100755
-> --- a/tools/perf/pmu-events/intel_metrics.py
-> +++ b/tools/perf/pmu-events/intel_metrics.py
-> @@ -123,6 +123,143 @@ def Tsx() -> Optional[MetricGroup]:
->    ], description="Breakdown of transactional memory statistics")
->  
->  
-> +def IntelBr():
-> +  ins = Event("instructions")
-> +
-> +  def Total() -> MetricGroup:
-> +    br_all = Event ("BR_INST_RETIRED.ALL_BRANCHES", "BR_INST_RETIRED.ANY")
-> +    br_m_all = Event("BR_MISP_RETIRED.ALL_BRANCHES",
-> +                     "BR_INST_RETIRED.MISPRED",
-> +                     "BR_MISP_EXEC.ANY")
-> +    br_clr = None
-> +    try:
-> +      br_clr = Event("BACLEARS.ANY", "BACLEARS.ALL")
-> +    except:
-> +      pass
+> Damn, good catch !
+> 
+> Ok so it didn't explode anymore, but still fails:
+> =====
+> [    7.083258] platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0
+> [msm]] *ERROR* Message HFI_H2F_MSG_GX_BW_PERF_VOTE id 7 timed out
+> waiting for response
+> [    7.149709] platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0
+> [msm]] *ERROR* Unexpected message id 7 on the response queue
+> [    7.149744] platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0
+> [msm]] *ERROR* The HFI response queue is unexpectedly empty
+> [    7.165163] platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0
+> [msm]] *ERROR* Unexpected message id 8 on the response queue
+> [    7.165188] platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0
+> [msm]] *ERROR* The HFI response queue is unexpectedly empty
+> ====
+> 
+> Seems with ACD enabled, first vote can take up to 100ms, and downstream
+> has 1s timeout, with a larger timeout I got it to work !
 
-There is no guarantee to the event name. It could be changed later.
-The renaming already occurred several times, even for architectural events.
+Yes, there is an additional overhead during first perf vote. Thanks for
+the heads up. I am yet to test with fixes.
 
-I think we should test all events' presence, not just a few of them.
+-Akhil.
 
-There could be some effort in the future to sync with the event list for
-each new generation and check if there is a renaming.
-
-Thanks,
-Kan
-> +
-> +    br_r = d_ratio(br_all, interval_sec)
-> +    ins_r = d_ratio(ins, br_all)
-> +    misp_r = d_ratio(br_m_all, br_all)
-> +    clr_r = d_ratio(br_clr, interval_sec) if br_clr else None
-> +
-> +    return MetricGroup("br_total", [
-> +        Metric("br_total_retired",
-> +               "The number of branch instructions retired per second.", br_r,
-> +               "insn/s"),
-> +        Metric(
-> +            "br_total_mispred",
-> +            "The number of branch instructions retired, of any type, that were "
-> +            "not correctly predicted as a percentage of all branch instrucions.",
-> +            misp_r, "100%"),
-> +        Metric("br_total_insn_between_branches",
-> +               "The number of instructions divided by the number of branches.",
-> +               ins_r, "insn"),
-> +        Metric("br_total_insn_fe_resteers",
-> +               "The number of resync branches per second.", clr_r, "req/s"
-> +               ) if clr_r else None
-> +    ])
-> +
-> +  def Taken() -> MetricGroup:
-> +    br_all = Event("BR_INST_RETIRED.ALL_BRANCHES", "BR_INST_RETIRED.ANY")
-> +    br_m_tk = None
-> +    try:
-> +      br_m_tk = Event("BR_MISP_RETIRED.NEAR_TAKEN",
-> +                      "BR_MISP_RETIRED.TAKEN_JCC",
-> +                      "BR_INST_RETIRED.MISPRED_TAKEN")
-> +    except:
-> +      pass
-> +    br_r = d_ratio(br_all, interval_sec)
-> +    ins_r = d_ratio(ins, br_all)
-> +    misp_r = d_ratio(br_m_tk, br_all) if br_m_tk else None
-> +    return MetricGroup("br_taken", [
-> +        Metric("br_taken_retired",
-> +               "The number of taken branches that were retired per second.",
-> +               br_r, "insn/s"),
-> +        Metric(
-> +            "br_taken_mispred",
-> +            "The number of retired taken branch instructions that were "
-> +            "mispredicted as a percentage of all taken branches.", misp_r,
-> +            "100%") if misp_r else None,
-> +        Metric(
-> +            "br_taken_insn_between_branches",
-> +            "The number of instructions divided by the number of taken branches.",
-> +            ins_r, "insn"),
-> +    ])
-> +
-> +  def Conditional() -> Optional[MetricGroup]:
-> +    try:
-> +      br_cond = Event("BR_INST_RETIRED.COND",
-> +                      "BR_INST_RETIRED.CONDITIONAL",
-> +                      "BR_INST_RETIRED.TAKEN_JCC")
-> +      br_m_cond = Event("BR_MISP_RETIRED.COND",
-> +                        "BR_MISP_RETIRED.CONDITIONAL",
-> +                        "BR_MISP_RETIRED.TAKEN_JCC")
-> +    except:
-> +      return None
-> +
-> +    br_cond_nt = None
-> +    br_m_cond_nt = None
-> +    try:
-> +      br_cond_nt = Event("BR_INST_RETIRED.COND_NTAKEN")
-> +      br_m_cond_nt = Event("BR_MISP_RETIRED.COND_NTAKEN")
-> +    except:
-> +      pass
-> +    br_r = d_ratio(br_cond, interval_sec)
-> +    ins_r = d_ratio(ins, br_cond)
-> +    misp_r = d_ratio(br_m_cond, br_cond)
-> +    taken_metrics = [
-> +        Metric("br_cond_retired", "Retired conditional branch instructions.",
-> +               br_r, "insn/s"),
-> +        Metric("br_cond_insn_between_branches",
-> +               "The number of instructions divided by the number of conditional "
-> +               "branches.", ins_r, "insn"),
-> +        Metric("br_cond_mispred",
-> +               "Retired conditional branch instructions mispredicted as a "
-> +               "percentage of all conditional branches.", misp_r, "100%"),
-> +    ]
-> +    if not br_m_cond_nt:
-> +      return MetricGroup("br_cond", taken_metrics)
-> +
-> +    br_r = d_ratio(br_cond_nt, interval_sec)
-> +    ins_r = d_ratio(ins, br_cond_nt)
-> +    misp_r = d_ratio(br_m_cond_nt, br_cond_nt)
-> +
-> +    not_taken_metrics = [
-> +        Metric("br_cond_retired", "Retired conditional not taken branch instructions.",
-> +               br_r, "insn/s"),
-> +        Metric("br_cond_insn_between_branches",
-> +               "The number of instructions divided by the number of not taken conditional "
-> +               "branches.", ins_r, "insn"),
-> +        Metric("br_cond_mispred",
-> +               "Retired not taken conditional branch instructions mispredicted as a "
-> +               "percentage of all not taken conditional branches.", misp_r, "100%"),
-> +    ]
-> +    return MetricGroup("br_cond", [
-> +        MetricGroup("br_cond_nt", not_taken_metrics),
-> +        MetricGroup("br_cond_tkn", taken_metrics),
-> +    ])
-> +
-> +  def Far() -> Optional[MetricGroup]:
-> +    try:
-> +      br_far = Event("BR_INST_RETIRED.FAR_BRANCH")
-> +    except:
-> +      return None
-> +
-> +    br_r = d_ratio(br_far, interval_sec)
-> +    ins_r = d_ratio(ins, br_far)
-> +    return MetricGroup("br_far", [
-> +        Metric("br_far_retired", "Retired far control transfers per second.",
-> +               br_r, "insn/s"),
-> +        Metric(
-> +            "br_far_insn_between_branches",
-> +            "The number of instructions divided by the number of far branches.",
-> +            ins_r, "insn"),
-> +    ])
-> +
-> +  return MetricGroup("br", [Total(), Taken(), Conditional(), Far()],
-> +                     description="breakdown of retired branch instructions")
-> +
-> +
->  def main() -> None:
->    global _args
->  
-> @@ -150,6 +287,7 @@ def main() -> None:
->        Rapl(),
->        Smi(),
->        Tsx(),
-> +      IntelBr(),
->    ])
->  
->  
+> 
+> Thanks,
+> Neil
+>>
+>> -Akhil
+>>
+>>> sizeof(struct a6xx_hfi_acd_table), NULL, 0);
+>>>          if (ret) {
+>>>                  DRM_DEV_ERROR(gmu->dev, "Unable to send ACD table
+>>> (%d)\n", ret);
+>>>                  return ret;
+>>> ================><================================
+>>>
+>>> with the appropriate qcom,opp-acd-level in DT taken from downstream,
+>>> I get:
+>>> [    6.946184] platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0
+>>> [msm]] *ERROR* Message (null) id 4 timed out waiting for response
+>>> [    6.958697] platform 3d6a000.gmu: [drm:a6xx_hfi_start [msm]] *ERROR*
+>>> Unable to send ACD table (-110)
+>>>
+>>> is there something missing ?
+>>>
+>>> Neil
+>>>
+>>>>
+>>>> -Akhil.
+>>>>
+>>>>>
+>>>>>> +    if (ret) {
+>>>>>> +        DRM_DEV_ERROR(gmu->dev, "Unable to ACD table (%d)\n", ret);
+>>>>>> +        return ret;
+>>>>>> +    }
+>>>>>> +
+>>>>>> +    return 0;
+>>>>>> +}
+>>>>>> +
+>>>>>>     static int a6xx_hfi_send_test(struct a6xx_gmu *gmu)
+>>>>>>     {
+>>>>>>         struct a6xx_hfi_msg_test msg = { 0 };
+>>>>>> @@ -756,6 +788,10 @@ int a6xx_hfi_start(struct a6xx_gmu *gmu, int
+>>>>>> boot_state)
+>>>>>>         if (ret)
+>>>>>>             return ret;
+>>>>>>     +    ret = a6xx_hfi_enable_acd(gmu);
+>>>>>> +    if (ret)
+>>>>>> +        return ret;
+>>>>>> +
+>>>>>>         ret = a6xx_hfi_send_core_fw_start(gmu);
+>>>>>>         if (ret)
+>>>>>>             return ret;
+>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h b/drivers/gpu/drm/
+>>>>>> msm/adreno/a6xx_hfi.h
+>>>>>> index 528110169398..51864c8ad0e6 100644
+>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+>>>>>> @@ -151,12 +151,33 @@ struct a6xx_hfi_msg_test {
+>>>>>>         u32 header;
+>>>>>>     };
+>>>>>>     +#define HFI_H2F_MSG_ACD 7
+>>>>>> +#define MAX_ACD_STRIDE 2
+>>>>>> +
+>>>>>> +struct a6xx_hfi_acd_table {
+>>>>>> +    u32 header;
+>>>>>> +    u32 version;
+>>>>>> +    u32 enable_by_level;
+>>>>>> +    u32 stride;
+>>>>>> +    u32 num_levels;
+>>>>>> +    u32 data[16 * MAX_ACD_STRIDE];
+>>>>>> +};
+>>>>>> +
+>>>>>>     #define HFI_H2F_MSG_START 10
+>>>>>>       struct a6xx_hfi_msg_start {
+>>>>>>         u32 header;
+>>>>>>     };
+>>>>>>     +#define HFI_H2F_FEATURE_CTRL 11
+>>>>>> +
+>>>>>> +struct a6xx_hfi_msg_feature_ctrl {
+>>>>>> +    u32 header;
+>>>>>> +    u32 feature;
+>>>>>> +    u32 enable;
+>>>>>> +    u32 data;
+>>>>>> +};
+>>>>>> +
+>>>>>>     #define HFI_H2F_MSG_CORE_FW_START 14
+>>>>>>       struct a6xx_hfi_msg_core_fw_start {
+>>>>>>
+>>>>>
+>>>>> Thanks,
+>>>>> Neil
+>>>>
+>>>
+>>
+> 
 
 
