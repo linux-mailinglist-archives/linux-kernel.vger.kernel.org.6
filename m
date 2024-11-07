@@ -1,157 +1,161 @@
-Return-Path: <linux-kernel+bounces-399355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B096A9BFDE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:58:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDFC9BFDEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16AB1C21883
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:58:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644F61F23B6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EAA192B73;
-	Thu,  7 Nov 2024 05:58:24 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E846B192B96;
+	Thu,  7 Nov 2024 05:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pdzSwEeB"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740F41373
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 05:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4001373;
+	Thu,  7 Nov 2024 05:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730959103; cv=none; b=ob+qK+Bqvxv1Lk7mkSCHeDBUqhznQSJVrthuNM6Py9ZDgV8K7RhW/jkReuomSBPi7hRiBERQX1I1mXrIPCe0m6ZRI+wu0mA9SzViE/pZwrG1v2wUrqfDZ8k8T3SjQHaJ4CP6ztsrtVGVM6Kdk8gQqHDuJW0h99SOSU34/gX1J3k=
+	t=1730959183; cv=none; b=hzLb93AzUTlByp3wHqJiEiGbuaDH8q/ura2kUKC2Djt45t9dtWUHg+CSIPiKURnyUAlgefIlSn3cSXkgN3Or9aIPLISNW7fKu3EfLmtNf9GDCiUjzXU/njQhBGZLpmd1lrv50aEDgwgoWiUCmBTLgKP6F887LoHhe7cIYgESAz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730959103; c=relaxed/simple;
-	bh=TtvNLsztBPy0zs8g+oV4hlOi8ytKwSEr88E7hTRbZQA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WPSDC59SmwexYtSACjb3gkk6+GWBDOkSe2OimrnbVgKuD01AKPYYJuuV1yA7RbWPl+yZRP93Q3PG1DxIRcx/NnhQDEm/Q33sPj0LYOSevi1w7sp0ZuYjjpqPTl7UdI3viKI2tZntobmZ+A79H0BXunuciskl4vsQx3gUzDutn18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aed4f24a9so74259939f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 21:58:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730959101; x=1731563901;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RyzH1+D1riYKLpQmd6S/+/x309u82v8WwRqkCXFXsVg=;
-        b=YoiUHNNsYbONzK9zce8gizwVciS9CdKqNTByJVOvMIaS271kZwd87xtVa5lxBXmLnf
-         aRynWpohjFHgsBhXy77rD6tr8bsx4JwszSmojoCMTMUuvvQPtGjfFAjtrfsj6itRNcYI
-         57/AcwiTKKD6Es3acLknds28DIdvESgmMOoO5TXMVLeKKS5dSvQ4g4Q3a/68j41v6vh/
-         Q6Slkwgb+x+nrXYYFU1Ep5YuyM1qIB5PjPMyYkQQsa3sv7A4mIQ51g1GRjyNLfVNF4dX
-         ovuy5RV2NFHfXQeB4R3OfFystvj7yux6a63GX8t2D4ddeIY/VNtZPD5nsUbwR3a1LDQT
-         tr0A==
-X-Gm-Message-State: AOJu0Ywzyg9i/cJ3B+tJk0ucTtb4cqML6/Y5lq3C3WFbVVtdRDF3hkXs
-	pE7hqUOiRffUz4tBXfzGipAAb8rj0OY2OVrisqlp/OzgiBFSjH4f5THF54cg7fakkaB34k2eLw9
-	vyggFdIgjfoelJaB+P6X/PDRB57dHEoRmW/M8sDCaGiJBBCadk0q+8B0=
-X-Google-Smtp-Source: AGHT+IEBd99IaXnejO31Y/Znxnnh5RBoGMe+haqctkOEMDqV8GY5Umyg2Rf4J8fyfeecP8qLU4OFFXTVVoZQx4YWpP2kA2bQG5Ep
+	s=arc-20240116; t=1730959183; c=relaxed/simple;
+	bh=3gVsYa5o1RR9TW/ssHuewXxeNa9OXJrmNpNyWsJoafU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JEH0eQN1s2TT33gxVvE3cPzpNG/SiQSCOin0V8GH7OWspB+j+7RwjzXN3sftbhS7160y7yChpdOHOf+Jdyr6B/e29tQjUVpOsojNWed2W916qklnwYN/jERT9b+QaH1sIDXT/uwlmXsPskqHWQ6tVaHZ52C0Ex2jyTspJgFafqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pdzSwEeB; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730959174;
+	bh=im7kK2GUGTddb6uaUh9r3kMzjLr0O462UiQsQZM1fF8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=pdzSwEeBCd/cSkXxiBc6CL8+kAA7Hk21wNGFT1ASFhOrNc/Z5L38BKkaB75ZfZtjk
+	 oMN8ftuzrOp3fjgFOQhvAHdBbxMtY4AMYSpsLr1gWB5EssId1kmTrbuBNRTeL6iYAW
+	 hRnvTaE+fLIy+m6V0u0r4CAuSHSaAj1tXGjmh9+dHSX/tXA3ADwyRKWsulD86ueCIq
+	 kzhZZMAPFy0aPqj/KThibGBudIGUCb35Q6L7PIeePV7DCsllTP0X7+O9yipZ9tbanP
+	 HUv1kcplrcqp2BX7ZbBWVX/m6QryEhXtmnMCcCENJtFe8GypgptEXQXx5ricpGqcDh
+	 iWJrrbBq8tizA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkWcN3j9Jz4wxf;
+	Thu,  7 Nov 2024 16:59:31 +1100 (AEDT)
+Date: Thu, 7 Nov 2024 16:59:33 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Wim Van Sebroeck <wim@iguana.be>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Byoungtae Cho <bt.cho@samsung.com>, Guenter Roeck <linux@roeck-us.net>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Sunyeal Hong <sunyeal.hong@samsung.com>,
+ Taewan Kim <trunixs.kim@samsung.com>, Wim Van Sebroeck
+ <wim@linux-watchdog.org>
+Subject: linux-next: manual merge of the watchdog tree with the samsung-krzk
+ tree
+Message-ID: <20241107165933.3e8b5af5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1707:b0:39f:5e18:239d with SMTP id
- e9e14a558f8ab-3a6b02fbee5mr225546495ab.15.1730959101663; Wed, 06 Nov 2024
- 21:58:21 -0800 (PST)
-Date: Wed, 06 Nov 2024 21:58:21 -0800
-In-Reply-To: <672b7858.050a0220.350062.0256.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672c56fd.050a0220.350062.028a.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
-From: syzbot <syzbot+1fc6f64c40a9d143cfb6@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/+0fLBGM_F3N5gQ9oR1b.suH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+--Sig_/+0fLBGM_F3N5gQ9oR1b.suH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-***
+Hi all,
 
-Subject: Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
-Author: lizhi.xu@windriver.com
+Today's linux-next merge of the watchdog tree got a conflict in:
 
-add limit to avoid retry too frequently when rreq need to retry
+  arch/arm64/boot/dts/exynos/exynosautov920.dtsi
 
-#syz test
+between commit:
 
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index c40e226053cc..b09a22442de6 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -182,6 +182,7 @@ static void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error
- {
- 	struct netfs_io_subrequest *subreq = priv;
- 
-+	printk("subreq: %p, transfed: %ld, %s\n", priv, transferred_or_error, __func__);
- 	if (transferred_or_error < 0) {
- 		netfs_read_subreq_terminated(subreq, transferred_or_error, was_async);
- 		return;
-@@ -295,6 +296,7 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
- 			netfs_stat(&netfs_n_rh_zero);
- 			slice = netfs_prepare_read_iterator(subreq);
- 			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-+			printk("1subreq: %p, transfed: %ld, %s\n", subreq, __func__);
- 			netfs_read_subreq_terminated(subreq, 0, false);
- 			goto done;
- 		}
-@@ -302,6 +304,7 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
- 		if (source == NETFS_READ_FROM_CACHE) {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
- 			slice = netfs_prepare_read_iterator(subreq);
-+			printk("subreq: %p, transfed: %ld, %s\n", subreq, __func__);
- 			netfs_read_cache_to_pagecache(rreq, subreq);
- 			goto done;
- 		}
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index b18c65ba5580..f75429a4e743 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -465,6 +465,7 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq,
- 				  int error, bool was_async)
- {
- 	struct netfs_io_request *rreq = subreq->rreq;
-+	static int rtt = 0;
- 
- 	switch (subreq->source) {
- 	case NETFS_READ_FROM_CACHE:
-@@ -506,15 +507,24 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq,
- 	if (!error && subreq->transferred < subreq->len) {
- 		if (test_bit(NETFS_SREQ_HIT_EOF, &subreq->flags)) {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_hit_eof);
-+			rtt = 0;
- 		} else {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_short);
- 			if (subreq->transferred > subreq->consumed) {
-+				rtt++;
-+				if (rtt < 16) {
- 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 				__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
- 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-+				}
-+				printk("1async: %d, r: %p, transed: %lu, sub req length: %lu, retry times: %d, %s\n", was_async, rreq, subreq->transferred, subreq->len, rtt, __func__);
- 			} else if (!__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags)) {
-+				rtt++;
-+				if (rtt < 16) {
- 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-+				}
-+				printk("async: %d, r: %p, transed: %lu, sub req length: %lu, retry times: %d, %s\n", was_async, rreq, subreq->transferred, subreq->len, rtt, __func__);
- 			} else {
- 				__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
- 				error = -ENODATA;
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 0b8086f58ad5..d80af1aa74e4 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -714,7 +714,7 @@ p9_virtio_create(struct p9_client *client, const char *devname, char *args)
- 	mutex_unlock(&virtio_9p_lock);
- 
- 	if (!found) {
--		pr_err("no channels available for device %s\n", devname);
-+		pr_err_ratelimited("no channels available for device %s\n", devname);
- 		return ret;
- 	}
- 
+  ef1c2a54cbc7 ("arm64: dts: exynosautov920: add peric1, misc and hsi0/1 cl=
+ock DT nodes")
+
+from the samsung-krzk tree and commit:
+
+  3595a523d043 ("arm64: dts: exynosautov920: add watchdog DT node")
+
+from the watchdog tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index c759134c909e,2b3e8debda3d..000000000000
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@@ -172,17 -172,26 +172,37 @@@
+  			reg =3D <0x10000000 0x24>;
+  		};
+ =20
+ +		cmu_misc: clock-controller@10020000 {
+ +			compatible =3D "samsung,exynosautov920-cmu-misc";
+ +			reg =3D <0x10020000 0x8000>;
+ +			#clock-cells =3D <1>;
+ +
+ +			clocks =3D <&xtcxo>,
+ +				 <&cmu_top DOUT_CLKCMU_MISC_NOC>;
+ +			clock-names =3D "oscclk",
+ +				      "noc";
+ +		};
+ +
++ 		watchdog_cl0: watchdog@10060000 {
++ 			compatible =3D "samsung,exynosautov920-wdt";
++ 			reg =3D <0x10060000 0x100>;
++ 			interrupts =3D <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>;
++ 			clocks =3D <&xtcxo>, <&xtcxo>;
++ 			clock-names =3D "watchdog", "watchdog_src";
++ 			samsung,syscon-phandle =3D <&pmu_system_controller>;
++ 			samsung,cluster-index =3D <0>;
++ 		};
++=20
++ 		watchdog_cl1: watchdog@10070000 {
++ 			compatible =3D "samsung,exynosautov920-wdt";
++ 			reg =3D <0x10070000 0x100>;
++ 			interrupts =3D <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>;
++ 			clocks =3D <&xtcxo>, <&xtcxo>;
++ 			clock-names =3D "watchdog", "watchdog_src";
++ 			samsung,syscon-phandle =3D <&pmu_system_controller>;
++ 			samsung,cluster-index =3D <1>;
++ 		};
++=20
+  		gic: interrupt-controller@10400000 {
+  			compatible =3D "arm,gic-v3";
+  			#interrupt-cells =3D <3>;
+
+--Sig_/+0fLBGM_F3N5gQ9oR1b.suH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcsV0UACgkQAVBC80lX
+0GypPwgAhEr3GuUnqdTN1ajzSkTQAoHYn/QbcUIX8aWuQQsvHOq55/m3cftuSq90
+9FDVDcQ07zZB5sY6UnsdtMn8TBExeKUzseRJ9Fztanp6+8zlQzCMN33dTgxqqw2r
+8pFLV7UYiqhUBWQRVGjlmcVA27Ra5wq3Uyq8nz9DAg10R0GA2qqFN1EVtbB3zkit
+A4rHlgu4tW5J3ONIbpTdICEBK/HmDigddwbcCEzEDGr8sRSQq7Ss4oZd8SiQtguF
+4pqAZN7XzpsYvZVeEDm6qGBsR3zqFkPosOxJz3Zzr7KEoH9VuPweAnYluvI3WODT
+EKf0HZYjC84ul84z+UB26kcdSVOXkA==
+=oqE/
+-----END PGP SIGNATURE-----
+
+--Sig_/+0fLBGM_F3N5gQ9oR1b.suH--
 
