@@ -1,162 +1,92 @@
-Return-Path: <linux-kernel+bounces-399561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D53A9C00CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:06:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F83C9C00D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED981C2145D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:06:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87226B21D2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EAC1DF72F;
-	Thu,  7 Nov 2024 09:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF2819CC36;
+	Thu,  7 Nov 2024 09:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ub8tWipb"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BBf2jHxi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF1C19CC36
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B77C1D3644;
+	Thu,  7 Nov 2024 09:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730970378; cv=none; b=ucG4nNUpM+w19qOWLR02gKbbr/VmOzcWF2Jgmh6zj1bDiHrsNkNwG9x1DtpDxqVMC1S73hKU+HF1Azyv7HH417zYI0NtUsr672E2oJM+H/Euhvgilwr7iJvsug+q9bWe90M9VnypQnftha0knGixcMkb2gjqINi4LF26fPjRtFw=
+	t=1730970423; cv=none; b=aMOtWA/vwUDI4xZ4JGVT2s8nrw1dbUZZ6pU/58v78suY2zD9n8XNakRMg+8QCLFMX7bJSV9w56qygxsGMGWXGBPwavgazFqYS+Umihx2stvzfjXVdpCsQeRZkeZ84djPfQ3ozbCYtDzkHFkx/yRuwAFf7tbShG+eCycfegwkvGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730970378; c=relaxed/simple;
-	bh=bN3mzRF8CNzos9XmGraREi5v2QGaaOW3HmAT6PZsdk0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ZmFGDSlju1VHofE0XZH1a4bo9A8d6PQT2GRM9/qWSbP/q/Hd4C8h/lmvi0hg5F+j7UrUVGKizDKy1HSkYjfP8hyHINUdsKSNlg2dKljKvG7N9YSQjDKTlRjo12cFdo6KbtuAjaUkxPfvc4MuRjKBM4iQXPagD8yqWj90WOXy370=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ub8tWipb; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241107090613epoutp04504acf482673d0b0947b1ec65ac8a26d~FpGIX7_kB0467704677epoutp04A
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:06:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241107090613epoutp04504acf482673d0b0947b1ec65ac8a26d~FpGIX7_kB0467704677epoutp04A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730970373;
-	bh=JpLAukNeiMEzR5m7gPRVGbXL1gM2R7NAa2tSdIk0+84=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Ub8tWipbrqaNjJHkjqnD4TbN6j4Tx4FrvCWKaFAIt49CG9TUJ/6Pg/QzpFyor+EAr
-	 3hOYVs4diFkp+jq8kgptBbxEbU84I8ikHX4Toq1GjdaGqpJHLk+pBA+H+kFPF85ETI
-	 pjr8RgEcH/U+tKXsntiksesU/hVgbZwMBdYxroe8=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241107090612epcas1p138eb0444d64175f1ad94686c27d5c0dc~FpGICRTUh3022630226epcas1p1B;
-	Thu,  7 Nov 2024 09:06:12 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.36.226]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Xkblm1pLXz4x9Py; Thu,  7 Nov
-	2024 09:06:12 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-	epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1F.20.09398.4038C276; Thu,  7 Nov 2024 18:06:12 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241107090611epcas1p31994e0df204941e07a3b2da78818a3c8~FpGHWuM9G0971909719epcas1p3N;
-	Thu,  7 Nov 2024 09:06:11 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241107090611epsmtrp1d388819330bba1fc79bd35f4ccee5540~FpGHWGTyJ0191801918epsmtrp1c;
-	Thu,  7 Nov 2024 09:06:11 +0000 (GMT)
-X-AuditID: b6c32a39-5f9f8700000024b6-a8-672c83044a5d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	97.39.18937.3038C276; Thu,  7 Nov 2024 18:06:11 +0900 (KST)
-Received: from jangsubyi03 (unknown [10.253.100.135]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241107090611epsmtip2063278b5db7039ad8c8fdc0304f6507e~FpGHJBeEX3091630916epsmtip2R;
-	Thu,  7 Nov 2024 09:06:11 +0000 (GMT)
-From: "???" <jangsub.yi@samsung.com>
-To: "'Christoph Hellwig'" <hch@infradead.org>
-Cc: <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <junwoo80.lee@samsung.com>,
-	<sh8267.baek@samsung.com>, <wkon.kim@samsung.com>
-In-Reply-To: <ZyxelKdmXXiSVL1g@infradead.org>
-Subject: RE: [PATCH] mmc: Add config_host callback to set a mmc queue
-Date: Thu, 7 Nov 2024 18:06:11 +0900
-Message-ID: <000001db30f4$4a749770$df5dc650$@samsung.com>
+	s=arc-20240116; t=1730970423; c=relaxed/simple;
+	bh=7/gT3e2vF+8UozxHJgGUXtyS5R6CJXcTb7xN5x7/23w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9uErVL1QN3lmmfB5nFGegdlD1TVqynhThpOdeV+WkQ9WxMQUwpRwjqQTCHnyN4UA6EZ1ePRRE3HP1eRPDcOwk7h1owPqrrZJqes+xTGuOGLQII8EwlLLRuCie2DaLv0SUg/RkPvtiNI/+waEAyb05hyTtkXcBhzFqRmEfBGrvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BBf2jHxi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38E7C4CECC;
+	Thu,  7 Nov 2024 09:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730970421;
+	bh=7/gT3e2vF+8UozxHJgGUXtyS5R6CJXcTb7xN5x7/23w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BBf2jHxifnL7H1g+Vm7TeOEdKsqy1LobDuvow7xQ7UngAz4pnuCG7WCGlZfIoXtvi
+	 wFBrHMWP3bjhuYfwFKE3k7/rqFSyfdfa8C1lfoBhHC43esCAAJC47PsI4E6dyD168J
+	 IXi42o19MKbEIGCASO1iCOS6daVhzyY0KLjw7I/M=
+Date: Thu, 7 Nov 2024 10:06:41 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hagar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 4.19 000/349] 4.19.323-rc2 review
+Message-ID: <2024110723-bonus-glacier-710e@gregkh>
+References: <20241107063342.964868073@linuxfoundation.org>
+ <CAMuHMdUi=gLLJp2zLgq4bQ-PMXdB1hOZus-5zRSKYS-71cQJsA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQH5zy9MrK58XqKdq8KPmuKMwnV7FAHbhmEtAfVDB6SyT7dXEA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIJsWRmVeSWpSXmKPExsWy7bCmri5Ls066wfRNnBanJyxistj1t5nJ
-	4vKuOWwWR/73M1pcO3OC1eL42nCLzZe+sTiwe2xeoeVx59oeNo++LasYPT5vkgtgicq2yUhN
-	TEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAHar6RQlphTChQK
-	SCwuVtK3synKLy1JVcjILy6xVUotSMkpMCvQK07MLS7NS9fLSy2xMjQwMDIFKkzIzlg88xhT
-	QQt3xbRZ8Q2MHzi6GDk5JARMJD6+vMraxcjFISSwg1FiV28PG4TziVGiY8lKFjjnVc8qVpiW
-	GdeeQCV2Mkoc2LebCcJ5xSixeM4rJpAqNgEViZdzv7GD2CICuhJnF75gBCliFljDKNF+aSMj
-	SIITKNH4ehEbiC0s4CrxaNkFsDgLUPPrp0fBmnkFLCVeXpsGZQtKnJwJspoTaJCBxPtz85kh
-	bHmJ7W/nMEOcpyDx8+kyVojFThJbH0xigqgRkZjd2cYMcoSEQCuHxIXDv4CGcgA5LhLL99dC
-	9ApLvDq+hR3ClpJ42d8GZRdLHHj2iAXCrpHY0fCVCcK2l2hubWaDmM8n8e5rDyvESF6JjjYh
-	CFNFYmufGszEjXumQV3pITH13BX2CYyKs5A8NgvJY7OQPDYLyQMLGFlWMYqlFhTnpqcWGxaY
-	wmM7OT93EyM4bWpZ7mCc/vaD3iFGJg7GQ4wSHMxKIrz+UdrpQrwpiZVVqUX58UWlOanFhxhN
-	gWE9kVlKNDkfmLjzSuINTSwNTMyMTCyMLY3NlMR5z1wpSxUSSE8sSc1OTS1ILYLpY+LglGpg
-	WnHxduEhiSrmB/LzNs49JWnhqHVGr3vGZtHsvlnrTGP5rhry6i9N9k1dbzF7OcNzyRUee68E
-	VPHd2f1TyD54HVvr7tX1ko0/nrnmZ5kujpzOvyPGcbtM8uM26yUOAVUVK/86hpnovTFQ4JL5
-	OWvlkq0ei2xlAq+mXVL7q6hi7r7hxePl21JOMk9L6k+ZHjfpRHpG/MQAw4eTP++5tbT26HFt
-	tpRFAZOeh1jO7zGTO1sZcDa0/uf2/daxB6v6+hXuebFv7DXT8XOKOVb37r+39MPoubpvl4Ql
-	Gt+sSdroP31me+ccdhORKf2T22er1zbpzMjS7RPjmJK773S6am+3snLqFd+q6Am7O1qjWAqV
-	WIozEg21mIuKEwFGpupBJAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSvC5zs066waE7+hanJyxistj1t5nJ
-	4vKuOWwWR/73M1pcO3OC1eL42nCLzZe+sTiwe2xeoeVx59oeNo++LasYPT5vkgtgieKySUnN
-	ySxLLdK3S+DKWDzzGFNBC3fFtFnxDYwfOLoYOTkkBEwkZlx7wtLFyMUhJLCdUaL7xHa2LkYO
-	oISUxIdPKRCmsMThw8UQJS8YJbZf2M8O0ssmoCLxcu43MFtEQFfi7MIXjCBFzAKbGCXe/lvP
-	DNGxhlHi0LUmFpAqTqCqxteL2EBsYQFXiUfLLjCC2CxAk14/PQo2iVfAUuLltWlQtqDEyZlP
-	wHqZBYwkzh3azwZhy0tsfzuHGeIDBYmfT5exQlzhJLH1wSQmiBoRidmdbcwTGIVnIRk1C8mo
-	WUhGzULSsoCRZRWjaGpBcW56bnKBoV5xYm5xaV66XnJ+7iZGcNxoBe1gXLb+r94hRiYOxkOM
-	EhzMSiK8/lHa6UK8KYmVValF+fFFpTmpxYcYpTlYlMR5lXM6U4QE0hNLUrNTUwtSi2CyTByc
-	Ug1Mk+Neuk67r+36XPnwt1JXzqa2lDMiLEd3+Kw8zfDrwo05l8p1X/WzPhb6GuB79kXczenb
-	ZT58+bXtifzN6nJNnYyN5pLmE/82Lmn1XbQ8ac/xKxNDHz4/IF7sul9206SZC/d2953oq5vJ
-	ERZf+mXe6h/ZNle/vJKcffB8s+SlkO1ipiuul212m5npHvb2Qqr6qfXlzsLuL9Y+mBh48kCs
-	ZzbnZsaHmtNZPT+eYvTu2eIb/ErM7jfLiYtzLcTl5aPOX1lYFv2Pf4dgtU6ZyazJhzedXng8
-	iuGWOtuUGffaTDZnOdROVLNbohZVnb87Sfm75ZkDxiVrBGX1GuevVdM2PaBQaswg+TbOiFv+
-	9L+p/5VYijMSDbWYi4oTAS1GEyMKAwAA
-X-CMS-MailID: 20241107090611epcas1p31994e0df204941e07a3b2da78818a3c8
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c
-References: <CGME20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c@epcas1p2.samsung.com>
-	<20241106051347.969-1-jangsub.yi@samsung.com>
-	<ZyxelKdmXXiSVL1g@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUi=gLLJp2zLgq4bQ-PMXdB1hOZus-5zRSKYS-71cQJsA@mail.gmail.com>
 
-> On Wed, Nov 06, 2024 at 02:13:47PM +0900, Jangsub Yi wrote:
-> > From: "jangsub.yi" <jangsub.yi@samsung.com>
-> >
-> > Currently, there is no way to set up a host-dependent MMC queue.
-> > In UFS driver, it is possible to configure the request queue in
-> > ufshcd_slave_configure.
-> >
-> > There are cases where we need to configure and check the current state
-> > of the request queue on the host operation. For example,
-> > mmc_queue->in_recovery, in_flight, mmc_queue->queue->queue_flag, etc.
-> >
-> > Additionally, since the timeout setting may be longer depending on the
-> > device, block layer settings such as timeout are also required.
-> >
-> > To add the configuration for the MMC queue, I will add the
-> > corresponding code and initially try to add it during initialization in
-> block.c.
-> > The detailed implementation will be done on the host side.
+On Thu, Nov 07, 2024 at 09:37:51AM +0100, Geert Uytterhoeven wrote:
+> Hi Greg,
 > 
-> This seems to lack an actual user and thus just creates dead code.
+> On Thu, Nov 7, 2024 at 7:47 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > This is the start of the stable review cycle for the 4.19.323 release.
+> > There are 349 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat, 09 Nov 2024 06:33:12 +0000.
+> > Anything received after that time might be too late.
 > 
-Currently, there is no way to configure a request queue on the host side.
-Although there are various exported symbols in kernel/block/blk-settings.c
-that can be used to configure a request queue, users cannot utilize them
-as needed.
- For example, I want to change the timeout setting by calling 
-blk_queue_rq_timeout(). Because 60 seconds is too long depending
-on the device. Therefore, we need a method for independent configuration
-for each host.
+> > Biju Das <biju.das@bp.renesas.com>
+> >     dt-bindings: power: Add r8a774b1 SYSC power domain definitions
+> 
+> Same question as yesterday: why is this being backported (to multiple
+> stable trees)? It is (only a small subset of) new hardware support.
+> 
+> > Stable-dep-of: 8a7d12d674ac ("net: usb: usbnet: fix name regression")
+> 
+> This is completely unrelated?
 
+Yes, sorry, was getting to build breaks first, then dropping stuff like
+this, it's now gone.
+
+greg k-h
 
