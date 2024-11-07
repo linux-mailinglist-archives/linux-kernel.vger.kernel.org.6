@@ -1,90 +1,86 @@
-Return-Path: <linux-kernel+bounces-399072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C8E9BFA91
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:10:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3B49BFAA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A9C1F2283F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C52502839DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B44EC0;
-	Thu,  7 Nov 2024 00:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5653E23CE;
+	Thu,  7 Nov 2024 00:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsQ0t20I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGhbfO9z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF952621;
-	Thu,  7 Nov 2024 00:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28604A06;
+	Thu,  7 Nov 2024 00:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730938201; cv=none; b=M9yMITpiJUOwMSaqEM4LJFvjGsVw9gKjLbO5+z0sd/wOwNCfo/2nIR+aThtiCQiCCiqkKL1UBYuA45pOBqI8lxplMeB7HhlCftQ/Gt5Yjddzunv0vtZ4F8eXwlPCt/yP4ioSMoakt/w+NZwoTOgAUPfYCACD7tPpy3JpWzXvZro=
+	t=1730938879; cv=none; b=r0SLMbYhSo3E1suOZqsypnUUn852GFgYU2hTRKG+wdwCBHJhGtEDo7k181/mUJSTQGK7MdebpAdccXbDII35mgVK3bCZ6W3MxcQ0ZKnlgqEkbNUn1HWPqOOv1b+s92kcpguayoMOQKgvw4C1tthOyVckJt4PU1/A0eMx9WRnXsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730938201; c=relaxed/simple;
-	bh=ahJJ66zHU05O74HVdHJzt0TPlEhGTsvZ3dF1zQoUn14=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r6g3F+JcMo/I+ENo3f5FvSrhxBnzT6Ppp7w0Ffs5HfoZW3Q+51EgRQKYRXWyH0GCutcJuhs2AzTNxur03senSYL8bFM2hLqRE1rh8xGM+uZ4C+1LTfRsAouAXG8fxiA1cyLSskDvkC8SKPcgcuCyyGcflL5FtNvhKshhwg2qZPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsQ0t20I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB8EC4CEC6;
-	Thu,  7 Nov 2024 00:09:59 +0000 (UTC)
+	s=arc-20240116; t=1730938879; c=relaxed/simple;
+	bh=psQixYFDJlslInBMg5OWxzp6Dooki/nhJXKMLVZag20=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jrsTC3kBhV0peXazUQ02JBl/wlG4nsNEEU2nUSX3z1W8a5DvSkoF0bk+JbpOD/zVIxbuRuQD6WEhH9tBRkagdeiEgcS40DeBIN5fVU31KqxrNe1gxWnLK8ytL+NJ1odyjcUPLYc0F8BHz4hbJ6fEfHecDAPw0y6G2RNHHW6wjl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGhbfO9z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D4DC4CEC6;
+	Thu,  7 Nov 2024 00:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730938200;
-	bh=ahJJ66zHU05O74HVdHJzt0TPlEhGTsvZ3dF1zQoUn14=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lsQ0t20IwarFbJ2em6VqcpTNT2X+mVuMHAgvasRwD7LNz3KqPPAjmuy79qAsMUi5x
-	 iSD3EiSrHUF+45lkum9NSMz7qLI5KgcJeKH15ObrWOWIOChavCj0p5Wq3SiNU97oe6
-	 ltkzg1D5wDTFztIGseIaLdsHCHb1FyjYksIU8ZSobLt7DmSWOTrtson85eo/441p1L
-	 ymOd74czcubFQaCVCOQTtP30rH0Hdc13vw7g9ut9oOO15v8c1WY5JwGBFTTpgYzi/V
-	 I0U/VeBxLpw9r2MeITtxlxiLGPdST8eJMo53yLmnoY5s1hSfnAa0rX0HEJUwaHBSjj
-	 4UFJ8m9Q2v6cQ==
-Date: Wed, 6 Nov 2024 16:09:58 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Leon Romanovsky <leon@kernel.org>,
- Sanman Pradhan <sanman.p211993@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, netdev@vger.kernel.org, alexanderduyck@fb.com,
- kernel-team@meta.com, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
- mohsin.bashr@gmail.com, sanmanpradhan@meta.com, andrew+netdev@lunn.ch,
- vadim.fedorenko@linux.dev, jdamato@fastly.com, sdf@fomichev.me,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-Subject: Re: [PATCH net-next] eth: fbnic: Add PCIe hardware statistics
-Message-ID: <20241106160958.6d287fd8@kernel.org>
-In-Reply-To: <76fdd29a-c7fa-4b99-ae63-cce17c91dae9@lunn.ch>
-References: <20241106122251.GC5006@unreal>
-	<20241106171257.GA1529850@bhelgaas>
-	<76fdd29a-c7fa-4b99-ae63-cce17c91dae9@lunn.ch>
+	s=k20201202; t=1730938879;
+	bh=psQixYFDJlslInBMg5OWxzp6Dooki/nhJXKMLVZag20=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VGhbfO9z/u8YWwDARFmjp/GW8EdnwxG2DiPRgeChafJfRbG1Jy3DwaBobEpjFIk8P
+	 6gU6PzaxB+Cv66s68jAaRDpcc339rzyBHT0NZg3rYr7/uSw8a/cV06wrSJOTrEdAor
+	 fKogoY5K5GwvHWfntQNN9rY8D3NsTbFSMZhqtoZAaex989Mn0zUKRqRpieG5Q/smA/
+	 iyCo7MZCPKFMP4/NBfz1FLAopqyCtGTFfkOYHa7V/reqjqbitlUVVl+a2pXDTC8zx9
+	 a91/EA/3Qhbn3VuhYiNlNo6HzersFJAmAx+gGaRIZ1oTHF6tnaY0ZO0jKkQGIpDoJp
+	 2Igq0t/MyPlQQ==
+From: SeongJae Park <sj@kernel.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	shakeel.butt@linux.dev,
+	hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	muchun.song@linux.dev,
+	akpm@linux-foundation.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 1/2] memcg/hugetlb: Introduce memcg_accounts_hugetlb
+Date: Wed,  6 Nov 2024 16:21:16 -0800
+Message-Id: <20241107002116.55528-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241106221434.2029328-2-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 6 Nov 2024 18:36:16 +0100 Andrew Lunn wrote:
-> > How would this be done in the PCI core?  As far as I can tell, all
-> > these registers are device-specific and live in some device BAR.  
+On Wed, 6 Nov 2024 14:14:33 -0800 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+
+> This patch isolates the check for whether memcg accounts hugetlb.
+> This condition can only be true if the memcg mount option
+> memory_hugetlb_accounting is on, which includes hugetlb usage
+> in memory.current.
 > 
-> Is this a licences PCIe core?
-> 
-> Could the same statistics appear in other devices which licence the
-> same core? Maybe this needs pulling out into a helper?
+> Signed-of-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 
-The core is licensed but I believe the _USER in the defines names means
-the stats sit in the integration logic not the licensed IP. I could be
-wrong.
+Nit.  s/of/off/
 
-> If this is true, other uses of this core might not be networking
-> hardware, so ethtool -S would not be the best interfaces. Then they
-> should appear in debugfs?
 
-I tried to push back on adding PCIe config to network tooling,
-and nobody listened. Look at all the PCI stuff in devlink params.
-Some vendors dump PCIe signal integrity into ethtool -S
+Thanks,
+SJ
+
+[...]
 
