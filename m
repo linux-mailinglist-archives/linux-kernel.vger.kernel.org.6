@@ -1,75 +1,81 @@
-Return-Path: <linux-kernel+bounces-399076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB129BFABD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:26:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EAE9BFAC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:29:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5964B22562
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:26:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A596CB22569
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559214A1A;
-	Thu,  7 Nov 2024 00:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D824431;
+	Thu,  7 Nov 2024 00:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="GcuEPhOU"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8oyJtXZ"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226AA802;
-	Thu,  7 Nov 2024 00:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D872119;
+	Thu,  7 Nov 2024 00:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730939171; cv=none; b=a+WGyOZSyDacFMQTSZLZUQ6zmcPMQ+aSEh9meoiSh3/oGO62g+GxZacdyKX3dvXwHm9v8f4ifNUzax6y3xsjs2zGyreV3VL7U6cpkgaKJcqRvBT5QwN88lj5aVAwJHgjt71ksJFG58Zdrc9wbquK3MZWh4BZyCAqboMMLLEHjDI=
+	t=1730939338; cv=none; b=j26x2MqV6N5mDQr3poWySx5SUa8fBhxZfnWFlH/kT+q7n72SDdHtN8qZDcphnNXCB04Irio1PcZ7keMToQt1awNUzIbDN/Okpl28NVJ3unUy8hxAq5RwaFuQYDfipUdk1lLJUqzspUhFALeWOQIw2GhIjZNGwPefE17Ki83aJkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730939171; c=relaxed/simple;
-	bh=V24g0XjdSR3KmWIINIhNa7poMXefzESQmJIU/pn1fvY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hSIYmBbrMkN4QO9uflY+equv0IlKCV7erOFYrB1VUl5u6HptfsUtDo7lbXqGfVKOCHC2JzPtVgLySZH6KELbfLat+WcroPBE5XLPJ2/osW1RTZlcXiNRNZfTpFG5QfzCGzs1bSGExj4srP9C1Z5rwHHi5aEByckQ1G9GTowwqnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=GcuEPhOU; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1730939338; c=relaxed/simple;
+	bh=u+V3TUjDT6tl4Qikv/xjO+hVpAehJbG1ZbBddW98Vk4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cj6aFN9e1yNKXAs+dN/VEBagJKrC0uRudML3d0WYjODg0kK5Ic2ZRJ2fCA9dwtmhVng/+OO58PEKRpOTr+CdI1E4I0JXNweaLPdpqjAW22fNeepPUQn502oLi6il4X/Kg6cYhSiZXd5YxTcr+2F5PgQaEfZzy4/91VNgtioUxm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8oyJtXZ; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-720d01caa66so319359b3a.2;
+        Wed, 06 Nov 2024 16:28:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1730939167; x=1762475167;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=o5X7qYpliwdH19RR4mFHMESmrmvrEXsbWaPIcg8nulk=;
-  b=GcuEPhOUlgqTYMEgkC6e3DRWt+mnIrigSylhoH28864yaXWs73HzTf70
-   AEo61eOWN6WejInQx8IDlPUTlNUyd0i8KhoPHluQj+d6tlwuKUCkQpuIW
-   vpbA6eXeZ8I3VtAN932RXUBflUdBx6tc2Qe483/RkJ61qHD/LAswk8foP
-   M=;
-X-IronPort-AV: E=Sophos;i="6.11,264,1725321600"; 
-   d="scan'208";a="440863737"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 00:26:03 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:54833]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.34.224:2525] with esmtp (Farcaster)
- id 0136e4bc-95e4-44c1-b368-efeaa6636554; Thu, 7 Nov 2024 00:26:02 +0000 (UTC)
-X-Farcaster-Flow-ID: 0136e4bc-95e4-44c1-b368-efeaa6636554
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 7 Nov 2024 00:26:01 +0000
-Received: from 6c7e67c6786f.amazon.com (10.106.101.27) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Thu, 7 Nov 2024 00:25:57 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <devnull+0x7f454c46.gmail.com@kernel.org>
-CC: <0x7f454c46@gmail.com>, <borisp@nvidia.com>, <colona@arista.com>,
-	<davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<geliang@kernel.org>, <horms@kernel.org>, <john.fastabend@gmail.com>,
-	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <martineau@kernel.org>,
-	<matttbe@kernel.org>, <mptcp@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>
-Subject: Re: [PATCH net 5/6] net/diag: Limit TCP-MD5-diag array by max attribute length
-Date: Wed, 6 Nov 2024 16:25:55 -0800
-Message-ID: <20241107002555.57247-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241106-tcp-md5-diag-prep-v1-5-d62debf3dded@gmail.com>
-References: <20241106-tcp-md5-diag-prep-v1-5-d62debf3dded@gmail.com>
+        d=gmail.com; s=20230601; t=1730939336; x=1731544136; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VYXzdk9lxwEoLysvepNqwx+im1UnVK9BIgVBiniSw/M=;
+        b=Z8oyJtXZdNUzQHfksM0tuUmNj9R/AMEGDlV8xdi0ano0AwZlIPCiW1fQzmYBzVh6wC
+         lPhDcGNKywp11G315Du674a6wpcSxf6A7z9DXxn3eWfz9mSyZ7usEe9oZQB19F+0jRcf
+         2hCVnSghf2OoDOr2Bga3VAW2KTpSA3n5kjaEXc6RNGkw1LXeczY8dAZZHA7iNpkDuy66
+         RQWIJ0jeWqHFOxlT4jyRrHfRc5uWYalVEePvS03S6CAbDQjPEiCGCkfi1B8RZHFqoKhU
+         MnHCdfwk7QzoELdROd2EKbx3S0HhKg8VN0Dgf0fNSM1dbTVYlIBVKIkzdFS+KpoSUvui
+         oepg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730939336; x=1731544136;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VYXzdk9lxwEoLysvepNqwx+im1UnVK9BIgVBiniSw/M=;
+        b=WhZP2IfYGH1nYh88suvyVm5dynJev5qd5FT75rnSYX1+qphCoVgP8tX96IGJf1xTG7
+         uuiRr4+8zvgTFt2CKUMX2S2c9fut5HbAlXJGdrcCS4b/rgqbsBPlH2NehOdVv63g4fN2
+         ZjW9agKdGN7/0+eIEZqq/ERWQXOimFIgAUiWKShIvd1PLh5jweg3/619EczV3h8Vlx11
+         daFwfzOjg7cxYjju2++YHTUi1frRRsHzuOMV75YIMt9krY0+1rZM2PTB0xBE2pFtYb9o
+         gdl+YJ/FlhXpUlOBONQvqXBZgOCWBtRsyJ/0FAdyTCF1PgLQfuZda5HJAg4cUMgk8txh
+         lGpA==
+X-Gm-Message-State: AOJu0Yx6nMvW/J/jiRszKhDnx78v8hpeuW+dsU4fOJCzCEmQAaPWx6Mw
+	ZX/2eFlFwDGQZ3on25RmatBgUlzZUdTO4xCDjN/Ni0zd2Hs6JT7/lTuw7JRWwLs=
+X-Google-Smtp-Source: AGHT+IFH4AqsCRrHFg+2hmItJf3mAhC5s4wEgBOgd57FXKle0PnJ4fPQXbBqMcItUqW06CTs2FG5Dg==
+X-Received: by 2002:a05:6a00:2344:b0:71e:581f:7d7e with SMTP id d2e1a72fcca58-724080f8673mr214059b3a.15.1730939336165;
+        Wed, 06 Nov 2024 16:28:56 -0800 (PST)
+Received: from localhost.localdomain ([1.200.148.141])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-72407a56a3esm150255b3a.176.2024.11.06.16.28.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 16:28:55 -0800 (PST)
+From: Zenm Chen <zenmchen@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	pkshih@realtek.com,
+	kvalo@kernel.org,
+	rtl8821cerfe2@gmail.com,
+	usbwifi2024@gmail.com,
+	m.novosyolov@rosalinux.ru,
+	zenmchen@gmail.com
+Subject: [PATCH] wifi: rtw88: Add additional USB IDs for RTL8812BU
+Date: Thu,  7 Nov 2024 08:28:46 +0800
+Message-ID: <20241107002846.13748-1-zenmchen@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,79 +83,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D040UWB003.ant.amazon.com (10.13.138.8) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
-Date: Wed, 06 Nov 2024 18:10:18 +0000
-> From: Dmitry Safonov <0x7f454c46@gmail.com>
-> 
-> Currently TCP-MD5 keys are dumped as an array of
-> (struct tcp_diag_md5sig). All the keys from a socket go
-> into the same netlink attribute. The maximum amount of TCP-MD5 keys on
-> any socket is limited by /proc/sys/net/core/optmem_max, which post
-> commit 4944566706b2 ("net: increase optmem_max default value") is now by
-> default 128 KB. With the help of selftest I've figured out that equals
-> to 963 keys, without user having to increase optmem_max:
-> > test_set_md5() [963/1024]: Cannot allocate memory
-> 
-> The maximum length of nlattr is limited by typeof(nlattr::nla_len),
-> which is (U16_MAX - 1). When there are too many keys the array written
-> overflows the netlink attribute. Here is what one can see on a test,
-> with no adjustments to optmem_max defaults:
-> 
-> > recv() = 65180
-> > socket: 10.0.254.1:7013->0.0.0.0:0 (intf 3)
-> >      family: 2 state: 10 timer: 0 retrans: 0
-> >      expires: 0 rqueu: 0 wqueue: 1 uid: 0 inode: 456
-> >              attr type: 8 (5)
-> >              attr type: 15 (8)
-> >              attr type: 21 (12)
-> >              attr type: 22 (6)
-> >              attr type: 2 (252)
-> >              attr type: 18 (64804)
-> > recv() = 130680
-> > socket: 10.0.254.1:7013->0.0.0.0:0 (intf 3)
-> >      family: 2 state: 10 timer: 0 retrans: 0
-> >      expires: 0 rqueu: 0 wqueue: 1 uid: 0 inode: 456
-> >              attr type: 8 (5)
-> >              attr type: 15 (8)
-> >              attr type: 21 (12)
-> >              attr type: 22 (6)
-> >              attr type: 2 (252)
-> >              attr type: 18 (64768)
-> >              attr type: 29555 (25966)
-> > recv() = 130680
-> > socket: 10.0.254.1:7013->0.0.0.0:0 (intf 3)
-> >      family: 2 state: 10 timer: 0 retrans: 0
-> >      expires: 0 rqueu: 0 wqueue: 1 uid: 0 inode: 456
-> >              attr type: 8 (5)
-> >              attr type: 15 (8)
-> >              attr type: 21 (12)
-> >              attr type: 22 (6)
-> >              attr type: 2 (252)
-> >              attr type: 18 (64768)
-> >              attr type: 29555 (25966)
-> >              attr type: 8265 (8236)
-> 
-> Here attribute type 18 is INET_DIAG_MD5SIG, the following nlattr types
-> are junk made of tcp_diag_md5sig's content.
-> 
-> Here is the overflow of the nlattr size:
-> >>> hex(64768)
-> '0xfd00'
-> >>> hex(130300)
-> '0x1fcfc'
-> 
-> Limit the size of (struct tcp_diag_md5sig) array in the netlink reply by
-> maximum attribute length. Not perfect as NLM_F_DUMP_INTR will be set on
-> the netlink header flags, but the userspace can differ if it's due to
-> inconsistency or due to maximum size of the netlink attribute.
-> 
-> In a following patch set, I'm planning to address this and re-introduce
-> TCP-MD5-diag that actually works.
+From: Nick Morrow <usbwifi2024@gmail.com>
 
-Given the issue has not been reported so far (I think), we can wait for
-the series rather than backporting this.
+Add three additional USB IDs found in
+https://github.com/morrownr/88x2bu-20210702
+to support more RTL8812BU devices.
+
+Signed-off-by: Nick Morrow <usbwifi2024@gmail.com>
+Signed-off-by: Zenm Chen <zenmchen@gmail.com>
+---
+ drivers/net/wireless/realtek/rtw88/rtw8822bu.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c b/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
+index ab620a0b1dfc..8883300fc6ad 100644
+--- a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
++++ b/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
+@@ -67,6 +67,12 @@ static const struct usb_device_id rtw_8822bu_id_table[] = {
+ 	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* LiteOn */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x20f4, 0x808a, 0xff, 0xff, 0xff),
+ 	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* TRENDnet TEW-808UBM */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x20f4, 0x805a, 0xff, 0xff, 0xff),
++	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* TRENDnet TEW-805UBH */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x056e, 0x4011, 0xff, 0xff, 0xff),
++	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* ELECOM WDB-867DU3S */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x2c4e, 0x0107, 0xff, 0xff, 0xff),
++	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* Mercusys MA30H */
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(usb, rtw_8822bu_id_table);
+-- 
+2.46.2
+
 
