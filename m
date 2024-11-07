@@ -1,49 +1,80 @@
-Return-Path: <linux-kernel+bounces-399896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7459C05FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:40:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EBA9C0602
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87E21C22393
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C323C1C21E45
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F3C20F5AA;
-	Thu,  7 Nov 2024 12:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFE820F5B9;
+	Thu,  7 Nov 2024 12:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmtHNgc5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIHFXHOr"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3051DB534;
-	Thu,  7 Nov 2024 12:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F74920E335;
+	Thu,  7 Nov 2024 12:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730983228; cv=none; b=XS8RI0hKdKhik+2ZAjp7tjMLMY4JChwDlxOJVjoWel7JSZPJwaEL3RpeBmYNpYi6IbjcmC0MK/KVC2TDpEP4TtmrqhE+oey1ZzB9hKrK5BNAk9IXXssMYP/wy+xLuGoIS0LtCibEv96da2wKd4Yg/fOe9dvNOoERPsIikZWw24U=
+	t=1730983288; cv=none; b=HjdpCE0zXUSuPI83ORNmpDgp8otBwZqkoNzDWNrKvULTt8nxlEfDdTbAcIR8t0SzheNcjIA5y3Oh0wyVV82tmpBIf/5ZvwYgAlxEXtOYA17M1cqITR+EMbFABdaHpLnGM7WaJPlZtLQv4IYU6H1mRN4q+FTNQwkDd3CLnkkmEIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730983228; c=relaxed/simple;
-	bh=VZ/R76eZ40KfZxIQM47Eo9NR0UwGvAKmLQ8wW76gHE8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=q3vXZhR4Lhe6E//Sck0fS0SKfmdxiJysf6ker/PwNn4mfzBoAaNH5GPZvR6XbUAU8eTYhe44GIpRSaKLUBgNU0pOj/pdZd4BDBN5QgRVjD880YpMRHmZcTsVQw1ZxnvwtAh/Jsrbs9NRavrUIp7YziQcf4LW6tO4syRn8cncxZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmtHNgc5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF80C4CECC;
-	Thu,  7 Nov 2024 12:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730983226;
-	bh=VZ/R76eZ40KfZxIQM47Eo9NR0UwGvAKmLQ8wW76gHE8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RmtHNgc5aEh2jxi4LKZXroPeeq47lr+t5xy/sjX88jCya+GqX/J23XpfTXiHkbo+P
-	 RkA8aL9tmby/TCWLNUuHku7wuB8l63MMBCBNrFM9wX0+3Ymg8fydtjGDkRIgzVX6Bs
-	 vtTE28ikWXgdpm4UILIzcRJ+/JYjeuX3+/r+CFtodst2X9BkJa/4/cYOlCgl/3nuRA
-	 AwcqX74NgvsR86bxTMveB+M1h+M5NmIk9+D7LGHotpxVd3EY36gpbiOP9OVqkOg2Wh
-	 IYM2FJN7T9qe5mjoTjKMgcgO82f1BhXBcVrVaHb8TJwEvm0CQ4uES1rNlZP1vHwC6v
-	 88HD52YJcLtBQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F763809A80;
-	Thu,  7 Nov 2024 12:40:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730983288; c=relaxed/simple;
+	bh=eTTTENaIGNiTLj2YunjZefAQuF22mOyhiCx5w9nZZew=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ttWI0UlbzXtT2m2hmoVpQhzpyJDPq4LoWnpdc6pxIIiocBnjr9+zKh7+Nsyx5v1ig26EVyNucObL9ZCWSBKpVva4m2yWJQk82llGuehVsWd8AU8bxFeQGEswOGJo2Vl+QoJiFDHV9/mzSQUj4kVWbmDSQ4am5H0032J8TMfktw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIHFXHOr; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-20cdbe608b3so9267655ad.1;
+        Thu, 07 Nov 2024 04:41:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730983287; x=1731588087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c2CJ986UJvVOmnYCWRFgLTfaGLueWOJGgrSGwHXq3Is=;
+        b=kIHFXHOr0EtakkTcCtGF6OSVlDqVsdklA9JeCUgzsrMbQXxe6W/I8Hq6p3qvPf4OGR
+         8Wu+X2Ux+DkQ9hYf2g5EOmGd3R+E9ypOxvck0xuRRe6s/Fp9i/yMV2CHO4X5SqRKfRkA
+         4+UNJrR4ejvZ9Dras9z9NL4iRxDjbtdOb6sPql/wraQ92WQP2e/QKjVgdfXqMMr9HgIx
+         E9eWoeEQzt83cOX/EDmZlOEfLwgx2giS/zj6cdy8C9fzrLm/0lUfuRf/82Em0phTSREy
+         S3/lAr328kbsPHxQTLTPCz/sXLClft2JuCK+o7tnPp5IRKFh2DKetBeNRj8HhEmddYv6
+         YYbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730983287; x=1731588087;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c2CJ986UJvVOmnYCWRFgLTfaGLueWOJGgrSGwHXq3Is=;
+        b=ZLv6o2HHmetv0ULJKsyurx4l2qHizZLIQ7nmeaFNKDEjMCgYzAGjJTdpFAMqnRJpw0
+         ScZf3V9wrOQGn6n1kOhTmLyfZ7dcDFTEU6dEnZXmTC2VY6tWY7Z4oN3a+E5FY4ylHry8
+         O8zpTiF1leQY6IyBs2894yYciNpDRMuSrf3fapUUNIluGk3S0KCY+87QtYHLO5tpSveA
+         tHdUDnu+JxBIeAKkzoyV+eisi7LavFbvyMN89LchZbW1ujwmA7HORUntOf4aug1YkoGT
+         saGkq83fL3zUk2m8r5y/z98SWXhgY299e7tHzkivM3quwepiEs4iHwq1Pv61eGse2y9U
+         +Urg==
+X-Forwarded-Encrypted: i=1; AJvYcCW32AaPb08H7zFO0DWoq7lTbZWTvOK3m9r11Lrx+BtKd9PTks4N1rOPPSZrr2XrSkfuTBRnrZEFal5gmRw=@vger.kernel.org, AJvYcCX2gLzuUAdly01uGst/sp2LUVL5a6hg7eyzC+7WeUuiLcPyil0t6AGnl8Kjtpeokw3rpqaDUxmV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKQ8V9LXRWWG9ApYxfq51aY3OJmcDEkTDUL9s9My1BSmU6zNuc
+	3I7LDGeR5Mvg0HVgn1g6kbFS/Si0XJMgL/DAHrSZcT+ziU8hZy/e
+X-Google-Smtp-Source: AGHT+IGnJExR3DC/2QmwR+Z4/bRRQ9XGraI5dktdBuzJBr3CYwDgrgMxEs3TmN+2BvNAJj3RrnQ0dA==
+X-Received: by 2002:a17:902:db06:b0:20c:af5c:fc90 with SMTP id d9443c01a7336-2117d46ca7dmr8861825ad.49.1730983286612;
+        Thu, 07 Nov 2024 04:41:26 -0800 (PST)
+Received: from tom-QiTianM540-A739.. ([106.39.42.118])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e41480sm11130145ad.116.2024.11.07.04.41.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 04:41:26 -0800 (PST)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] mm: fix a possible null pointer dereference in setup_zone_pageset()
+Date: Thu,  7 Nov 2024 20:41:16 +0800
+Message-Id: <20241107124116.579108-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,56 +82,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next v8 0/3] net: wwan: t7xx: Add t7xx debug ports
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173098323525.1650074.3036692889717501713.git-patchwork-notify@kernel.org>
-Date: Thu, 07 Nov 2024 12:40:35 +0000
-References: <20241104094436.466861-1-jinjian.song@fibocom.com>
-In-Reply-To: <20241104094436.466861-1-jinjian.song@fibocom.com>
-To: Jinjian Song <jinjian.song@fibocom.com>
-Cc: chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
- haijun.liu@mediatek.com, m.chetan.kumar@linux.intel.com,
- ricardo.martinez@linux.intel.com, loic.poulain@linaro.org,
- ryazanov.s.a@gmail.com, johannes@sipsolutions.net, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, angelogioacchino.delregno@collabora.com,
- linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com, corbet@lwn.net,
- linux-mediatek@lists.infradead.org, helgaas@kernel.org,
- danielwinkler@google.com, korneld@google.com, andrew+netdev@lunn.ch,
- horms@kernel.org
 
-Hello:
+The function call alloc_percpu() returns a pointer to the memory address,
+but it hasn't been checked. Our static analysis tool indicates that null
+pointer dereference may exist in pointer zone->per_cpu_pageset. It is
+always safe to judge the null pointer before use.
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+Cc: stable@vger.kernel.org
+Fixes: 9420f89db2dd ("mm: move most of core MM initialization to mm/mm_init.c")
+---
+V2:
+Fixed the incorrect code logic.
+Thanks David Hildenbrand for helpful suggestion.
+---
+ mm/page_alloc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-On Mon,  4 Nov 2024 17:44:33 +0800 you wrote:
-> Add support for t7xx WWAN device to debug by ADB (Android Debug Bridge)
-> port and MTK MIPCi (Modem Information Process Center) port.
-> 
-> Application can use ADB (Android Debug Bridge) port to implement
-> functions (shell, pull, push ...) by ADB protocol commands.
-> 
-> Application can use MIPC (Modem Information Process Center) port
-> to debug antenna tuner or noise profiling through this MTK modem
-> diagnostic interface.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v8,1/3] wwan: core: Add WWAN ADB and MIPC port type
-    https://git.kernel.org/netdev/net-next/c/495e7c8e9601
-  - [net-next,v8,2/3] net: wwan: t7xx: Add debug ports
-    https://git.kernel.org/netdev/net-next/c/61329a1152dd
-  - [net-next,v8,3/3] net: wwan: t7xx: Unify documentation column width
-    https://git.kernel.org/netdev/net-next/c/238f2ca1e61f
-
-You are awesome, thank you!
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 8afab64814dc..7c8a74fd02d6 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5703,8 +5703,14 @@ void __meminit setup_zone_pageset(struct zone *zone)
+ 	/* Size may be 0 on !SMP && !NUMA */
+ 	if (sizeof(struct per_cpu_zonestat) > 0)
+ 		zone->per_cpu_zonestats = alloc_percpu(struct per_cpu_zonestat);
++	if (!zone->per_cpu_zonestats)
++		return;
+ 
+ 	zone->per_cpu_pageset = alloc_percpu(struct per_cpu_pages);
++	if (!zone->per_cpu_pageset) {
++		free_percpu(zone->per_cpu_zonestats);
++		return;
++	}
+ 	for_each_possible_cpu(cpu) {
+ 		struct per_cpu_pages *pcp;
+ 		struct per_cpu_zonestat *pzstats;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
 
