@@ -1,56 +1,109 @@
-Return-Path: <linux-kernel+bounces-399563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F83C9C00D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA72F9C00D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87226B21D2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:07:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39537B21D47
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF2819CC36;
-	Thu,  7 Nov 2024 09:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ABB1DFDB9;
+	Thu,  7 Nov 2024 09:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BBf2jHxi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PXsTGgqH"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B77C1D3644;
-	Thu,  7 Nov 2024 09:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EBF19CC36
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730970423; cv=none; b=aMOtWA/vwUDI4xZ4JGVT2s8nrw1dbUZZ6pU/58v78suY2zD9n8XNakRMg+8QCLFMX7bJSV9w56qygxsGMGWXGBPwavgazFqYS+Umihx2stvzfjXVdpCsQeRZkeZ84djPfQ3ozbCYtDzkHFkx/yRuwAFf7tbShG+eCycfegwkvGE=
+	t=1730970391; cv=none; b=qfvHvCFip8t15wuttCpdktG4AaCmJNXWG0loeobEp7E9FrYv96kd95tcbIA75ckNu4RDYByTABKzx6eki5AufSGbRdXfJQwGCBwkOI0AcGzpSRyFbsJ2X0+mXtrSZK8AMZhgpmOP9qyAP+/1+vb9rzKfxG3LeqWt1G3p+yn+O8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730970423; c=relaxed/simple;
-	bh=7/gT3e2vF+8UozxHJgGUXtyS5R6CJXcTb7xN5x7/23w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9uErVL1QN3lmmfB5nFGegdlD1TVqynhThpOdeV+WkQ9WxMQUwpRwjqQTCHnyN4UA6EZ1ePRRE3HP1eRPDcOwk7h1owPqrrZJqes+xTGuOGLQII8EwlLLRuCie2DaLv0SUg/RkPvtiNI/+waEAyb05hyTtkXcBhzFqRmEfBGrvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BBf2jHxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38E7C4CECC;
-	Thu,  7 Nov 2024 09:07:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730970421;
-	bh=7/gT3e2vF+8UozxHJgGUXtyS5R6CJXcTb7xN5x7/23w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BBf2jHxifnL7H1g+Vm7TeOEdKsqy1LobDuvow7xQ7UngAz4pnuCG7WCGlZfIoXtvi
-	 wFBrHMWP3bjhuYfwFKE3k7/rqFSyfdfa8C1lfoBhHC43esCAAJC47PsI4E6dyD168J
-	 IXi42o19MKbEIGCASO1iCOS6daVhzyY0KLjw7I/M=
-Date: Thu, 7 Nov 2024 10:06:41 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hagar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 4.19 000/349] 4.19.323-rc2 review
-Message-ID: <2024110723-bonus-glacier-710e@gregkh>
-References: <20241107063342.964868073@linuxfoundation.org>
- <CAMuHMdUi=gLLJp2zLgq4bQ-PMXdB1hOZus-5zRSKYS-71cQJsA@mail.gmail.com>
+	s=arc-20240116; t=1730970391; c=relaxed/simple;
+	bh=itIxTccP1xTFO0inuTIAI+RJnFggZSY/uZsDkw9QLY0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g20kcLyg4UOr6qQRzsXyV/2Zkdcy6xugqDeQJfsQqjCQdIc4zLzyfg+ZKRLMr97pvziI1UzjNK5LEgIFuURMPU/DkPLtSdQOOW8GThVATawu74z0DE3O56ZD2AfRnJpawg/771sL/6RXZsu4vaD04oyOxarBAnKhtKXD8tqYmuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PXsTGgqH; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26d8so3187292a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:06:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730970388; x=1731575188; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LDS79c1EbW77w8pj3qSP6QnMmTuMvK8jjpykFUSlOEE=;
+        b=PXsTGgqHncQsAhZ0QS6rl4X+1Kd714gvpuejPmxJTXgx6goYxBTTuAQE/1LUXm90/z
+         w/mZtfIKRDi/wTxmmUBrwYcMcgLPut+7hibejQ+17DUBHP5w/3nZbTcCtNMJp4zDdiP5
+         CpnVuoH9xuI6GMIZE3ecOr+D13uZUPG6eTqjDohJtKqK4Jn1dIXw9A9m732Sjx7fJ5Xd
+         ++ubApZjj+n/yi7++yVuEUCisq3kRUjChKgO6WInuahnmufuLsQVvmPDCyagk2EVDtJf
+         yOJ859mfd7TCs5VZSiJuKhokTG8Nayt2JNoCsV3mglJgJZTXxK4pgMR9eKZQeaVpXqFE
+         tTZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730970388; x=1731575188;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LDS79c1EbW77w8pj3qSP6QnMmTuMvK8jjpykFUSlOEE=;
+        b=CO2C1IL7aqaJSc6Ih6/CwDhwVdEt0PoTA6lxjk38KZj78JJor5fSTrr1BM4EQ8nUcj
+         hE3aRoLYNa83tn1DGO2+ykd41ZAzQQHLwGaEyjcZgoxUGTjKAiwydpgpujWfn3yUFHj9
+         iOp5bbHYGB6BEqljBeh6tSFwizQMu3+/z9RcWBjUEFa3p0bqvicoALPyQiKdlvrTQtFy
+         ggrCGmko/yqoDULPBrzjVJAGr5rAdCqdrQ5andEeULiIx9HxcAn6WanMzZqn0EolfmlD
+         SlCDebAQopHMu9lOc2IbYlvhPpPuRG8wut/qOxMZJHyNtqlDf4v29yZ3j4CYuujSnM00
+         VRtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxTsLDnzY7aCC4rnEXQVFIXIj0G7wKatW8Jkg51+6nLztfH7/muh0zC6tPoee5GVoNNVLleYsBJ5my4lE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaROoRuZ6jeTCa4S4JoSJN4HxSIy3EHoAbcVjU83irTNoquTbB
+	K9pLHQed0o9x+t8qPePbrMtMz+iNVVDrOrcxHW+vVen4N41vB4CfbbK7Pl7jWCk=
+X-Google-Smtp-Source: AGHT+IFON3UoYGa4dZUjWhusmO+MQQIyUIBnD4omw89HENTEvvSMRWoF17W5/XTmfi7sq10ML4ePGw==
+X-Received: by 2002:a17:907:930d:b0:a9a:ca:4436 with SMTP id a640c23a62f3a-a9ed4cb3071mr214594766b.13.1730970387092;
+        Thu, 07 Nov 2024 01:06:27 -0800 (PST)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0defba9sm63637066b.165.2024.11.07.01.06.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 01:06:26 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 7 Nov 2024 10:06:53 +0100
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 05/12] PCI: of_property: Assign PCI instead of CPU bus
+ address to dynamic bridge nodes
+Message-ID: <ZyyDLaWsikcNw4wT@apocalypse>
+References: <20241104150521.r4hbsurw4dbzlxpg@thinkpad>
+ <20241104234937.GA1446920@bhelgaas>
+ <20241106143511.2ao7nwjrxi3tiatt@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,33 +113,68 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUi=gLLJp2zLgq4bQ-PMXdB1hOZus-5zRSKYS-71cQJsA@mail.gmail.com>
+In-Reply-To: <20241106143511.2ao7nwjrxi3tiatt@thinkpad>
 
-On Thu, Nov 07, 2024 at 09:37:51AM +0100, Geert Uytterhoeven wrote:
-> Hi Greg,
-> 
-> On Thu, Nov 7, 2024 at 7:47 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > This is the start of the stable review cycle for the 4.19.323 release.
-> > There are 349 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 09 Nov 2024 06:33:12 +0000.
-> > Anything received after that time might be too late.
-> 
-> > Biju Das <biju.das@bp.renesas.com>
-> >     dt-bindings: power: Add r8a774b1 SYSC power domain definitions
-> 
-> Same question as yesterday: why is this being backported (to multiple
-> stable trees)? It is (only a small subset of) new hardware support.
-> 
-> > Stable-dep-of: 8a7d12d674ac ("net: usb: usbnet: fix name regression")
-> 
-> This is completely unrelated?
+Hi Manivannan,
 
-Yes, sorry, was getting to build breaks first, then dropping stuff like
-this, it's now gone.
+On 14:35 Wed 06 Nov     , Manivannan Sadhasivam wrote:
+> On Mon, Nov 04, 2024 at 05:49:37PM -0600, Bjorn Helgaas wrote:
+> > On Mon, Nov 04, 2024 at 08:35:21PM +0530, Manivannan Sadhasivam wrote:
+> > > On Mon, Nov 04, 2024 at 09:54:57AM +0100, Andrea della Porta wrote:
+> > > > On 22:39 Sat 02 Nov     , Manivannan Sadhasivam wrote:
+> > > > > On Mon, Oct 28, 2024 at 03:07:22PM +0100, Andrea della Porta wrote:
+> > > > > > When populating "ranges" property for a PCI bridge, of_pci_prop_ranges()
+> > > > > > incorrectly use the CPU bus address of the resource. Since this is a PCI-PCI
+> > > > > > bridge, the window should instead be in PCI address space. Call
+> > > > > > pci_bus_address() on the resource in order to obtain the PCI bus
+> > > > > > address.
+> > > > > 
+> > > > > of_pci_prop_ranges() could be called for PCI devices also (not just PCI
+> > > > > bridges), right?
+> > > > 
+> > > > Correct. Please note however that while the PCI-PCI bridge has the parent
+> > > > address in CPU space, an endpoint device has it in PCI space: here we're
+> > > > focusing on the bridge part. It probably used to work before since in many
+> > > > cases the CPU and PCI address are the same, but it breaks down when they
+> > > > differ.
+> > > 
+> > > When you say 'focusing', you are specifically referring to the
+> > > bridge part of this API I believe. But I don't see a check for the
+> > > bridge in your change, which is what concerning me. Am I missing
+> > > something?
+> > 
+> > I think we want this change for all devices in the PCI address
+> > domain, including PCI-PCI bridges and endpoints, don't we?  All those
+> > "ranges" addresses should be in the PCI domain.
+> > 
+> 
+> Yeah, right. I was slightly confused by the commit message. Maybe including a
+> sentence about how the change will work fine for endpoint devices would help.
+> Also, why it went unnoticed till now (ie., both CPU and PCI addresses are same
+> in many SoCs).
 
-greg k-h
+Sorry for the (admittedly) confusing explanation from my side. What I would
+have really liked to convey is that although the root complex (that is itself
+a bridge) is the ultimate 'translator' between CPU and PCI addresses, all the
+other entities are of course under PCI address space. In fact, any resource
+submitted to of_pci_set_address() is intended to be a PCI bus address,
+and this is valid for both sub-bridges and EPs.
+
+> 
+> Also there should be a fixes tag (also CC stable) since this is a potential bug
+> fix.
+
+Sure. I think it could be better to resend this specific patch (and maybe also the 
+patch "of: address: Preserve the flags portion on 1:1 dma-ranges mapping", which
+is also a kind of bugfix) as standalone ones instead of prerequisites for the RP1
+patchset, if it's not a concern to anyone...
+
+Regards,
+Andrea
+
+> 
+> - Mani
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
