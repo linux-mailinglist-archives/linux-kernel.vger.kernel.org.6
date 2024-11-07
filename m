@@ -1,546 +1,513 @@
-Return-Path: <linux-kernel+bounces-400765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2E19C11FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:49:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E279C11FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF211F225DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB871284AA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C1F2185BD;
-	Thu,  7 Nov 2024 22:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21590218D64;
+	Thu,  7 Nov 2024 22:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PO5DfP04"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ygf/Xm9Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816861DC04A
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EED1DF989;
+	Thu,  7 Nov 2024 22:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731019791; cv=fail; b=rh2hsfTwhW4ho1vQRjRBvl+T+j87/ZziKTjJ4bP6CYcDYedoL2DD5Tj6Q7aistp5B8PnqMRGvIKqqGXNCznRvOxTG1xyOH3EMxDmFkD5+UgcNadIO0TDyc5X8Pzx1rqhNaAi+sbsQhRrPEaNYXmuax+alr8EvInU42UQdHXrUZo=
+	t=1731019842; cv=fail; b=bsS0uRRDoBJjQuwRQrdv/DelkVQ8WwVVgJWq90/3R74wPrP9puaGEwuP941Gr3GIkiUNdpkF6eGPLyuf4yLUi9xGbxuGjWwHNuLtaDdA+e874nFUYRh5c+e5OKcbxTP+mRHRjCSwTbvtERE/Qb8Cm/gEeCZVWu2EXdTWDVspJy4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731019791; c=relaxed/simple;
-	bh=fDoCUSwlgqNKLc/HK54eDGvKp7QYSr+P1x/nWnGoeus=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lZA9oLOqJKyWMZXd9Y7Xe2nBAh1P19Npjj3lzGiJahv9UoUIZqWJJy7Ep6lgzEHKk+qVv+z/QdXyo4joM7xx1a60gXAG+z5KkbxLr7O4o6sMZe1MkB4raFeiKpPDOgQ3S541rF3cfyOXyMiDziijpRpnqJ9N53Y6kWJvu4Jnxvg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PO5DfP04; arc=fail smtp.client-ip=198.175.65.16
+	s=arc-20240116; t=1731019842; c=relaxed/simple;
+	bh=xIjrekqteTeTWXeZZ3FinwRvTlENDQDnO+5tRJSeSvQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sz7vs5VTShcc8onjX0J2k1ItF8afByFyWGWjK4g0dwUq7Eza81avzQA7f/NZ3qXVTakXGDsP4FAb083NPYR62DbJGQtgLR3YE4IBig8+LVl45zvXcNi4lR6OEtS0p29xYLx1vv/LSSHyDI6BxcQGhI+fDzKH/Gz9PfiRdz8DRww=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ygf/Xm9Y; arc=fail smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731019790; x=1762555790;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=fDoCUSwlgqNKLc/HK54eDGvKp7QYSr+P1x/nWnGoeus=;
-  b=PO5DfP043dg+nvMjQRej8xu9S1WlsFtExSEmQ/AZ/HKK8JEatosuu7O2
-   Xmya+ON9ywnEQ4ocemU+XY794Jmjjv/EcnmwuLeprs0UdG5LbcW3FxU3H
-   jraAi8fCg3EGOTUY4fAC16nWxx+1PiB+ih3MElFNN7/UZp20meY35yTqV
-   X8gjzzAN+ugnSGB1G8b5zmi2L3lkpWIik7M/bvc0K/wfyZJjeCEyrh3qd
-   m0Fb7/jI17Ed0flpFI3WqAVgnc0wZPmljMZfbjamHJK++MI3x3bKZbgNE
-   pkf3KKIu/fZIQOBJSCPkkp3sKFTKkMXPINRayROQYKroqrTZ36xy50A6o
-   w==;
-X-CSE-ConnectionGUID: szXKpeHZSPCnMF/sSQHTTw==
-X-CSE-MsgGUID: baxZQXUKSKSihgE++0E0eg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31050761"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31050761"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 14:49:46 -0800
-X-CSE-ConnectionGUID: q1gH6pcPTHmVVb8fde8a1g==
-X-CSE-MsgGUID: OnCygkFESTyfjwQWMeS5bA==
+  t=1731019840; x=1762555840;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=xIjrekqteTeTWXeZZ3FinwRvTlENDQDnO+5tRJSeSvQ=;
+  b=Ygf/Xm9YxCwEGiUfkQs8i6rDNhUHU5m4XxC8MkZIHTeUJCgVCpk7yGH1
+   pGB9CdW9KphmpiUgfcZDllW4r6f7Syf3j0ctx/gZN3j/iYQmS6jiuA3QK
+   F1donPOEgL6OAOPJyQjVjrgynmcHF12qD/JGa+5nS08YY+SKdHkwOXWzf
+   SC8g0EKX5KElKYFKPegzxNjcy7AcT/hy7zJsmO/RNGlrXXtRX/YIPRGqA
+   NZvG+fYJPIgPvfHTZ4Ut/8LFnsXxDXQ9VR2ETqrQsC/9/XKO6NuY8BhH7
+   z9hqAjoynZ0hQCnPj2HzunvmZh/JjWcrSCSfnZfqW5rLi3gys8M2dkYg3
+   g==;
+X-CSE-ConnectionGUID: OtvjVKSBSU6rTAbjJyFfVw==
+X-CSE-MsgGUID: RUOKhQMUR8e534ilBZITpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="42265200"
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="42265200"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 14:50:39 -0800
+X-CSE-ConnectionGUID: wQ0w7/OmRCOsKxLFzYVyvQ==
+X-CSE-MsgGUID: gUT3gvyAR3yQR135Pgfh9w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
-   d="scan'208";a="84883270"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Nov 2024 14:49:45 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+   d="scan'208";a="116124295"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Nov 2024 14:50:39 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 7 Nov 2024 14:49:44 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ 15.1.2507.39; Thu, 7 Nov 2024 14:50:37 -0800
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 7 Nov 2024 14:49:44 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ 15.1.2507.39 via Frontend Transport; Thu, 7 Nov 2024 14:50:37 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 7 Nov 2024 14:49:44 -0800
+ 15.1.2507.39; Thu, 7 Nov 2024 14:50:37 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S2PoKMY783Whh3IcMVT/IZixoHk3rONwnndA2Yp7aiNGO04ohNy2tlsBgWJEOg8q+ybCaP/owuJ6mToi+/uYRm3zuX+M9l6rEn/sRORUl+8PLRaI4cVbn3l2brfoTZ9nJk1A1l1PEWyLj9ITWRnKB3CLfMMGCeM68FKEOXOg5oPCalsBpv9+uWaKAvj7nxvsB0qYknTe1tPqLZRDNUMm2u7G4vNSbhvcbxfMJcLKhhNOJV+SdXKQEwXJj0/ALyJH2AQPzxXHsFH7BC1u5w+Z10FEk57TPvrs5M7CQtadwiH9KYHz6rxNVj9i7qe64H7l26tLDFkOwxKuVxj1CPTQ6A==
+ b=WeCHbyFNrWDNt9WG7ic0dLCJLI6pE2vE1CJu0NhRLl9A1vOELd2QFDisx4gM8G1t4EEK83MiklrkO0zQePUOOSuDZVOIv2YHgLrs21bDVeE5r6sVqIrmyHM0izlwurZkBUHyyCbNzGBZ09xwtPJYgsJrzNuOZddWnfZTzFb4mj1EVBD/r6KBfb+LKyPqL3IwEIbFyoUePtfxCAbqqcd9YS+pOt2iJdRCxRBovZnvP1cCE1dOrOv1IH6KwVsBnkClCK/uQChhWlty6rerDxBg51FwiJWPUJ4ai2LaDtye4ssV6pz/lq60CwCGCN4izMRzVi9/UGt1EP9O2T7DgVJczQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=58OzcucVp/kHOjZiyKhE4iuGVJMucx3zZFStvwnq0tI=;
- b=ERPtSwWzPIQ2URABzUCFqh36j0e8omttGsA4dxWsOGr5g2Y5h22hqi5zzQ3132RxnR153m2uJj7tR/xku7kAZWtKFxbFrp8O8vfeNCumfjkJOvJoE3IZaMDKGKVzwY5HE9zLyNaORtUrvR79mGpBYWKEzmqBLAT2AEvSI9fYpYEPJ9axOMnqk3L6sY5Uv3gF1q9WQPPtOPgwGkyDiUPr6CmJSghYyzrpNeOspUquNyFs5qBAHvHoZkSi4nVPKDzChxLpJRBe82pxrhfYJaxD/W5cStWQVrmXz1NL6f/VHL6xguDHFNVusYpV77HRSu68/4mnsVn5dYwPUXdKWQs8Tg==
+ bh=yzy4OZ1qPg6MqQDx+mMe3EKe8898CczU3yzwfjxMvoA=;
+ b=ON9mfgR8CrS2/eLMI+rXd6YKJC4rWYXU+RPc8oSiE4L0l2zmHdNtWynmsUubzDPFj6aIiGD4dUEHT0vUTLMXAhsKX6r8Is2l3z3dpbq+HNq1AaGUuH3ijflh4cBvw7342ukaaDcmwW5DEkAJovPkby7cxEebFJl8dfYctNRE3+sByT62TmQb1KV3PcfkSprXCXkfa/dNrqrMtkxVCuBZU5OcWKyEUMcotUhTRu76bKB4W9myIvQbdysEWOLOK7BGWFRATAFEu9c0CVpHQyGtHZDNlbHKmQGtYxhzKBinjKYOiD6hB1b16umT82rOoxWdMNYqz/5KybPYel6yLn3PXQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB2854.namprd11.prod.outlook.com (2603:10b6:a02:c9::12)
- by DM4PR11MB8202.namprd11.prod.outlook.com (2603:10b6:8:18b::6) with
+Received: from SJ0PR11MB5678.namprd11.prod.outlook.com (2603:10b6:a03:3b8::22)
+ by SJ2PR11MB8401.namprd11.prod.outlook.com (2603:10b6:a03:539::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
- 2024 22:49:42 +0000
-Received: from BYAPR11MB2854.namprd11.prod.outlook.com
- ([fe80::8a98:4745:7147:ed42]) by BYAPR11MB2854.namprd11.prod.outlook.com
- ([fe80::8a98:4745:7147:ed42%7]) with mapi id 15.20.8114.020; Thu, 7 Nov 2024
- 22:49:42 +0000
-Date: Thu, 7 Nov 2024 17:49:36 -0500
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-CC: "Gupta, Anshuman" <anshuman.gupta@intel.com>, "Deak, Imre"
-	<imre.deak@intel.com>, Miquel Raynal <miquel.raynal@bootlin.com>, "Richard
- Weinberger" <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, "De
- Marchi, Lucas" <lucas.demarchi@intel.com>, Thomas
- =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	"Weil, Oren jer" <oren.jer.weil@intel.com>, "linux-mtd@lists.infradead.org"
-	<linux-mtd@lists.infradead.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 06/10] mtd: intel-dg: wake card on operations
-Message-ID: <Zy1EAIPEaY8Wlh-h@intel.com>
-References: <20241022104119.3149051-1-alexander.usyskin@intel.com>
- <20241022104119.3149051-7-alexander.usyskin@intel.com>
- <Zx-mPQSHXv5Teq_j@intel.com>
- <CY5PR11MB621157335FFB1089F49CEF8B954A2@CY5PR11MB6211.namprd11.prod.outlook.com>
- <CY5PR11MB6366EF9CA6552ADF6E01A557ED4B2@CY5PR11MB6366.namprd11.prod.outlook.com>
- <Zyk5kueKlusKlwqM@intel.com>
- <CY5PR11MB636622B23A3646D58A70A920ED522@CY5PR11MB6366.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CY5PR11MB636622B23A3646D58A70A920ED522@CY5PR11MB6366.namprd11.prod.outlook.com>
-X-ClientProxiedBy: MW4PR04CA0289.namprd04.prod.outlook.com
- (2603:10b6:303:89::24) To BYAPR11MB2854.namprd11.prod.outlook.com
- (2603:10b6:a02:c9::12)
+ 2024 22:50:34 +0000
+Received: from SJ0PR11MB5678.namprd11.prod.outlook.com
+ ([fe80::812:6f53:13d:609c]) by SJ0PR11MB5678.namprd11.prod.outlook.com
+ ([fe80::812:6f53:13d:609c%4]) with mapi id 15.20.8114.028; Thu, 7 Nov 2024
+ 22:50:34 +0000
+From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "yosryahmed@google.com"
+	<yosryahmed@google.com>, "nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com"
+	<ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>, "herbert@gondor.apana.org.au"
+	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org"
+	<ardb@kernel.org>, "ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>, "Accardi, Kristen C"
+	<kristen.c.accardi@intel.com>, "zanussi@kernel.org" <zanussi@kernel.org>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh"
+	<vinodh.gopal@intel.com>, "Sridhar, Kanchana P"
+	<kanchana.p.sridhar@intel.com>
+Subject: RE: [PATCH v3 13/13] mm: zswap: Compress batching with Intel IAA in
+ zswap_store() of large folios.
+Thread-Topic: [PATCH v3 13/13] mm: zswap: Compress batching with Intel IAA in
+ zswap_store() of large folios.
+Thread-Index: AQHbMIESeDDekiFHHEqRnEEQm8zAvbKsK7YAgAA9ZfA=
+Date: Thu, 7 Nov 2024 22:50:34 +0000
+Message-ID: <SJ0PR11MB5678EE2AC8DCCD7E7E8B0AD2C95C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+References: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
+ <20241106192105.6731-14-kanchana.p.sridhar@intel.com>
+ <20241107185340.GG1172372@cmpxchg.org>
+In-Reply-To: <20241107185340.GG1172372@cmpxchg.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR11MB5678:EE_|SJ2PR11MB8401:EE_
+x-ms-office365-filtering-correlation-id: 0f3cccf9-b150-48fd-1cec-08dcff7e96e7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?VxqR4Pc2PS++YQHRYwgnG6/inICAvyn/HubX45NJICxMJcHwQorG+GqnUIrK?=
+ =?us-ascii?Q?Neh3E2gOw+MGRJZBQMXcfuGGP0y4FlxU9jUs6mQMvpbzk/Mg86KTiDM85v+x?=
+ =?us-ascii?Q?bikPi47IFFU3Ns8zCs0NFTKM3z8+O5h30WhqJKV/NGNW/40OrfQKB+cJP+FI?=
+ =?us-ascii?Q?agrYB2Z8LIbeXPYyfCQfX8Yy0y4sN8wKX8annkb89x2ZpbXNywMGFO3wkR6d?=
+ =?us-ascii?Q?4ZbUgH4Eh6U3ylLxb9tl16m2dPQcKfUlBa+KLfNo0yKa7g6YAAZ3oz0418iG?=
+ =?us-ascii?Q?WndlEda0XRW5E14+2FaBV7UdNB6nJeugliROD7N47xE5HbbWnJqAnYPyAF85?=
+ =?us-ascii?Q?0tWo+WRnQ7BCFpD62ySiU/BZKMArtB4KswZbAMhviikZ1nfbXGXJoOlbLgoC?=
+ =?us-ascii?Q?0YZnY7XrMKmFBRr+33szexN0g8tTWx+R0G7z9j8kNB8TPkctsxQ09SGQwGRt?=
+ =?us-ascii?Q?6MTKlhC3Ypkg4TO6Mxx+ntgfd+1F+YPHyYwLtqLbqUPH4H3SB7/ujDpxDZgf?=
+ =?us-ascii?Q?tdUmpD5UZiOXsgd4XukOcfkV5/qMGUfhw1jadvYB62UEzk5Yc097xSzhIkhX?=
+ =?us-ascii?Q?JdrGRIzjobJVspmeA2AaMSr7lkXb4cN2eU/V4PdgESsDMcxPI9kh8aOiZNmj?=
+ =?us-ascii?Q?dPyNT4kf9E7GnQoApnCTdxT5aoLRkuzNliqprYQCMpflpHmNCxCENU7LEuIW?=
+ =?us-ascii?Q?J6BtUXwVrqMraHloD7tDEzGMpjvb12nq1Qug/9NM1qDq2ZClyHCjCqGZ7VZj?=
+ =?us-ascii?Q?ha7C7fEAxG2X8ptmDvegJ82p3+aLAdoxdAQH7YUukxaOBlhD0SnZItgURJtL?=
+ =?us-ascii?Q?IiYAU4hgu5UA+0BRRHxSCFuecK75c2Mjm4advIjw9XYx04f5dndxhyDPtcM6?=
+ =?us-ascii?Q?XE1kZjxGEjDY9IQsYxdpifK9AWO8wy8IBvveBZ9DNEiBXZ0T7VhbojUOG91g?=
+ =?us-ascii?Q?3epY2F//8eXRu7yWTAO4ITT0kagkI9ULmjzWcH/66ln5s85reVyn582Ld0+f?=
+ =?us-ascii?Q?SZSOjs94QTRUaa6gsBzILdxI70zbH+QGc2YmvOlwPIL/+Sj6CLEO+my/H5/3?=
+ =?us-ascii?Q?oVsa/AUNVVzF9E3jvNwijw+ViZUv9augk7Udfv40LUW8fsn+K7gfZA7Y0IXM?=
+ =?us-ascii?Q?17ZrILOQSu/k0i4fipHBLUb8Hic88qHVx67lWivyzGILzOjDohELzEUTsicO?=
+ =?us-ascii?Q?4IAGQL78o8iLcRooIlJcg1mNzcllhXHeufJwSV4zbJEIb+PvNx2C3m6rfNj9?=
+ =?us-ascii?Q?pu8svLP+wr9Go7bjQfhOYhEBDmqPYp09B83p0KJLhS8WE5I3fcCog4D434Ln?=
+ =?us-ascii?Q?eX/RxqCxqF9m2FZccSBKkTrkSlh0iaKAaaxnO1MVgZp01EOeJLfdd84fDp3q?=
+ =?us-ascii?Q?wg0UT68=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5678.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?N1+KWuAUxYsZmJPjkR0Cj+nmHEEOoZ7cXeIuHTEcPIk4SNJ9aJR2VXXqUNd+?=
+ =?us-ascii?Q?IwL9SmegR7iKK/M+AraiI9Ea0BSq4HBVgeJTbJfdAtaUDIXBa6ulc+VcuAMd?=
+ =?us-ascii?Q?LJO8adBxV/j9S5zfYgv/5dgLFc8BDEcWFqN++Dvw9Dw3CDeBd5+FyJpYUHEy?=
+ =?us-ascii?Q?hiBiPwxGdX1W8URMleCo6IfnCIopRYS8r9jcyR/hI9gLAGGDBu/LNg5WzLDe?=
+ =?us-ascii?Q?Eq1AF7uZ8lm6PGDdwE2NA3aSgS9LX6tl6plBjIvu9XQ1m/gg9nApn6HmZCPH?=
+ =?us-ascii?Q?22ZSlR1g2NA9+X/lXELQxGMnbRgNi0rEZzxplmazFTz7SIw1EN/pK5RoDpQj?=
+ =?us-ascii?Q?98nee8nPVyLWh4L6KacPACpKCsyAx+lE+A+behJa3K/GxqaDr5btNJf+nVvx?=
+ =?us-ascii?Q?70eVSOYRmDm9OY68pbhq630ps5udrRPp2GJanbBMRYdnc/tMsdYxpUBsJyJ1?=
+ =?us-ascii?Q?Qf/zbyLLXPzCxkXOtAe/ruoF/D5mu4vIVi3+H/9xA8cSb7hJHxoWR6YMhi8p?=
+ =?us-ascii?Q?W1o+QtiAbfQmWBdlRKPGj+vXZxBPjPEwQzb8W8CmEygEbnje74JtNLBHakSj?=
+ =?us-ascii?Q?ulY4UJbyotwX9o1xvzA81IA2QkF1hlDeHyYhtYk6HDQQE8JVKWv+SNMdTQPZ?=
+ =?us-ascii?Q?qQifZKy6RH5tMH0gHlImfsHDlQrPGJk85x1HrMp/O8AWlrmE0D/Y+s6UyqIC?=
+ =?us-ascii?Q?TI4Q3m90zcSvEY3kt91sldu++riQCNcHB6Q4tSZfSuZHf5jTTRN0/GHjQA83?=
+ =?us-ascii?Q?Cs6BG6QxqLbjyhhvqikE1IVJ4iv+qurP/43ab7xRFsBM/7cNkA7wvcHEDu+L?=
+ =?us-ascii?Q?+pb7T06oi5qp1yBFF6JytXgF0MOvLtkRadwn5pm8tDr3x7WF0Ov3wGneEQbm?=
+ =?us-ascii?Q?75diR/zLV/V9VbQkCjCRq6I8sMKkyaDVVCBQ2KqcsnuDzEG5YYWBxcL6y7zP?=
+ =?us-ascii?Q?YWG5Q/LGPRPgjjlihNOhiwhW42cdgK5JRqZtpAvcl2n6g3XWxtlGWTqkZRan?=
+ =?us-ascii?Q?VsxzI1jCPagpF6EAsQ4sNmg6dsq0XXCiogkVaaxb/xxwo4QTiQex6qUtK3HE?=
+ =?us-ascii?Q?bIh8JJp8OpAfcPPK5SHD5J8pfiIze6LlbIBquzeHtJkGW5DIpW74xP1GAY9y?=
+ =?us-ascii?Q?nm2xtcuJjFrLxY7mZDzii5vg1vrdRv0xhugn7ZuHDG4oZOwRwauo1KC1Sh/y?=
+ =?us-ascii?Q?xzfIkkBGejWVdzj56ukADO79I+ZbN6u3NovSDxZWqX2GZCW6RqA6xdWIdCaT?=
+ =?us-ascii?Q?qBKE6j+xZUuWxA4tlR/Od9q1ZDZfdfzolzeLjeGBpaEOnquFvpu1kQI8BuX8?=
+ =?us-ascii?Q?v9nC71R2J5N6v7hn3fVG/T71dps3zk0Rn0Pd7TPUghHeWbUdm+k8zLN5/JlR?=
+ =?us-ascii?Q?FmX2uFlIpWMgOl/pAinttoNw6+C+NUO98fiyNFRPfKyUNIawBnbHvJNSpCyY?=
+ =?us-ascii?Q?5AKqpaQ9iDYh11T+IyvQhzbrVK8vpMEIRYeMGiPAaOY/3Bxwl2tF4UeJjAdC?=
+ =?us-ascii?Q?WQ8lop91YYoyNq1akVlxLlvZxiVaA3tLNU3heKGBdL+8jNPH/vFHVY/4K8yV?=
+ =?us-ascii?Q?1mV6YixZnqK67b7OzMfQ2jvPW4gcdVXHFn0nnezhHquCN5OTt+D9Wzp9YZyq?=
+ =?us-ascii?Q?bg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB2854:EE_|DM4PR11MB8202:EE_
-X-MS-Office365-Filtering-Correlation-Id: 48090505-e6d4-46c5-ecf3-08dcff7e77d9
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?UAKxrfNxLz1MufIrSLw16GLMdpWLZNrDJ5w+S2JyomW/jbt5pl1gHb20Vp?=
- =?iso-8859-1?Q?gYhYOsyU6bii9wyOvMsaE5QYoNhU1HKhohpPS3AnVkVPRjSmf3+ha1D7fI?=
- =?iso-8859-1?Q?OlGN1mmpqQzaftOIWepprR/DjEYnrsVNY+BH67/phESgz59a0lmLEbYYKo?=
- =?iso-8859-1?Q?MQsvA6qChPVTsmqikA7BSu9byomv+lYcv5DSjVzZ2m0XQgbabErK6uwWuX?=
- =?iso-8859-1?Q?ZZKYfCMIrO+B/NYHSRKopGnTEW/SrajepTwqejVMbDQ8AARbrnz881xtxt?=
- =?iso-8859-1?Q?Z5I2uKTG2XT1ys5PiHyF3LRXjPG2RXKbsuQ9iU8qhHdFbo33evR1ISvOmk?=
- =?iso-8859-1?Q?ZEDzUl6hu5bRO31JdOTsTPdOW26MaOxyZj5HOo9Jv10lNNeCteC71yEEjF?=
- =?iso-8859-1?Q?VKJmkwIzPLzXs3aJDI0DUwB2WfR12EEbTCBn44jTY1psDvr+X3CLNn0hGn?=
- =?iso-8859-1?Q?HSaAX/O/qvOUIsySr+y1mkzq7da66H9bNh6oDIh+kIYVaJmDg5V3Y+lT6H?=
- =?iso-8859-1?Q?U5cXkPf5YTiDSPAvbqCAHY3x3NZn3K2VQgBiz7lQmGFfsLO2PTZM01mwxh?=
- =?iso-8859-1?Q?WHK8dGW9HmQKSaGg4mBivHNCOeXuFmx+pnBcZfkKfeGmpwenorGHG4dP3/?=
- =?iso-8859-1?Q?BSp4DumzvA8JVymXxUfm08kMW/vDI7hyDs3dwiu7d0fnkAYYp4anHKK8JE?=
- =?iso-8859-1?Q?tZh+aK0HaRSeAWuNn1D23HHUrNwJnNJjLGZgSR6i43FyYnOl4dMw3AmDZ7?=
- =?iso-8859-1?Q?kMahqM/oALkppgU81Y/eDOCbuq4xHw97FYV+4SVotxMU9Cy2dtGSxCboi7?=
- =?iso-8859-1?Q?S6mETIm+OCgsj5lEWqrZEROlefBbdAdT9U8GO+AniKUm0PJx32HPfmzXNj?=
- =?iso-8859-1?Q?ox5T1Azum65a7p/IEZBPm/BxjVTP41SK8rjNSNAG+IiJhM9H9PNH/z1fP2?=
- =?iso-8859-1?Q?2gusjDGuuEJNGDe/qnYZbx5/PtEFLIJeJRvih2MvbujIsguVmHOTcW9FcQ?=
- =?iso-8859-1?Q?+nscnMTWt4khC01395ehzuguVTOo5rzJWMw/acAZBK7RXi4xR9WCbXe88M?=
- =?iso-8859-1?Q?znlfsv14XlCAYv2S61ZQFX0JKn9szXC9jfbPvTZlbQtIGvvcFMgPgwc28v?=
- =?iso-8859-1?Q?z6RmAJ3+aFhQkskJRMHqpuOatFAzswPpQ2I8SBeWX4bcM9h3YsePhM4MtQ?=
- =?iso-8859-1?Q?TC8AKBo7NQfZcfmRkZGMH56gTjE5iUgZBu4mofS/C7IhdohJDXcJu65e+M?=
- =?iso-8859-1?Q?h9P+jatmQeZZYiq7lUrdFrtX8ihqPcdQBZamfW+m++o5s4qO5RxV+xGPnQ?=
- =?iso-8859-1?Q?wpw5b34zx4+0q4mfbJidGu9TVj1ze9+hYhby4fLn1x2ENluM5eGXsWrKSo?=
- =?iso-8859-1?Q?OQUQFsHgNm?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2854.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?L2/5NBlx5pP1/9FQAGy9RGBz2jjByLd/jXUdK+/NjnDnbVHwXkSmEVtGKa?=
- =?iso-8859-1?Q?6Sq1uFV9hoaBk38caui5+KNVUpbMODy9N6dYVrcDBsrLuwQXTGKDsch2lJ?=
- =?iso-8859-1?Q?LkW1EKriKIKSe0Z3oldgRxvvia/olo9qF8w8Q09Uu1C+nyotIBT/Ry/7AI?=
- =?iso-8859-1?Q?/WVXjf4o6xJkZEvy9t2BRFrW31bK6NT6CjCX2nwfhp81N+SJkoMSWPrD8E?=
- =?iso-8859-1?Q?XWtgZisVx9zTcchTvGhtMlEGkzFMTrJh14Lg5/7mBeDcqMoxd+QP4Inly+?=
- =?iso-8859-1?Q?ZTF3VxUFZZwVbdPWNoM/nFuPVCkR+69ejU+wfDdXzG+RDTjOfDnASyuh8F?=
- =?iso-8859-1?Q?d+dQ4Q1FgzkbNY57Eevk208T+wq27KEKTOPst48B4sjL0beXAkb8hYhIKV?=
- =?iso-8859-1?Q?/orUjkE5JyULSyuWTOVtlWABNvJk8d4oEZvrrboKN/S/e/VgNXDZmIOFvy?=
- =?iso-8859-1?Q?XyvcT2M+0PH06f8p0WNxZmjQdJU8X4/lCWXjkpqSMoGmAgM0/x4cL5Q/e0?=
- =?iso-8859-1?Q?Rx9ChH1nih25jRiFTR+jxhoDv1EdnvSxcD7J78garGS27A8jiy8id5+G7F?=
- =?iso-8859-1?Q?ObSkofwCMdi8EFgiuJTv/H4V6+obMvwWXT/juEJItb81uEJ9iQ4MIXj7w2?=
- =?iso-8859-1?Q?Wulx4YUyojDMYBboaH1xm3i+Pyd1sZsNCvsghiBOFggnoPXPo3LQpqEuct?=
- =?iso-8859-1?Q?xMP+3T5Zom7Pz/ulIWgScagnn3xMEhZfPR/GisYSpZuDtLXyFm98hgYXbX?=
- =?iso-8859-1?Q?SoC5tBoEAN/Z2tT4WzCnExoHxcXYCDnPwDpqpEazMdukflKeiO5Nrvv0TN?=
- =?iso-8859-1?Q?sjh9z5xlaUJCeHO648+byCtCbxOhpeKXJSl1/5fu7FfGAc5ePuEUJBdaAm?=
- =?iso-8859-1?Q?9/RQnSHcZPVxXKdPqIIcWV7A450Kx4kwniOejiHwX44tKYvzRF29PjeT4Z?=
- =?iso-8859-1?Q?b4TxDuPKJd44tyva+cTru1D4WKe8TnxwOpLcrH7DxyeJdX7KnhsqXFNb8o?=
- =?iso-8859-1?Q?sQJlsir2WrVSinNeuMynAWpqPT6QwTJ4Dd/sSJlKHzG+x5zMf7MAVhXgJE?=
- =?iso-8859-1?Q?2OsEehvcsDRX9XQADd+Yxj+s34afJCZJxWnL/pqeAR6XzGPbjZ7BfHGCXv?=
- =?iso-8859-1?Q?dL4gJSgRsnvuksMT2ODbhkThgiYYYjPB3N2BgXAp0pKJI9Gw2MJhUu77+2?=
- =?iso-8859-1?Q?fCvSdF+IPfnNrary9DVCBg55ElysKbPvCSVCpiEtDCx3KRONZ89IkQEuic?=
- =?iso-8859-1?Q?MdEtytC8BGOrZ3CaSt9zWDiw8QT2ebzebwAeM/bL+aKVjNTXWqrBqacSKW?=
- =?iso-8859-1?Q?0/EoeLbgXd7fYRn0yuh7BgU+3VUdsCIUBZ629kyoq7AsqvZ1DDa+xe5niq?=
- =?iso-8859-1?Q?P6AFF0yFYjpK0/X60yADI9mIJ/fWhVHXMeXkrzrxIWVXFxygP3sF4Y18c0?=
- =?iso-8859-1?Q?FLwalzX/dI8ORuJBU0fnVfHWIL7zK4dNCjXdQtGkV7t3ynBSJRZE3x5oK+?=
- =?iso-8859-1?Q?P8dkLNnGZ5WhGmPEl8QiZYTn3F044PiFbywDMcUg3kcHEVoeAJQs1I+z6F?=
- =?iso-8859-1?Q?RDjuq/WBjC/Sa+eZbVu6fJ2bBh8xvb2myjOpWjSy6pBn+6uirZlZovj+Kc?=
- =?iso-8859-1?Q?yT82UaVWpoX/WwE2Orz2APdeZjk55v91AhgCeAd04XJaeh6z2t3UwMMw?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48090505-e6d4-46c5-ecf3-08dcff7e77d9
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2854.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 22:49:42.3934
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5678.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f3cccf9-b150-48fd-1cec-08dcff7e96e7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2024 22:50:34.2126
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ahd52+EpCTyDPchy7InF8cPOYU/WUG3bQsNptOt8CycNuYc6MDnLV+FenaQ80Dh9HrKezQwwY8FDHj/ZDOln8g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8202
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oBfnaC+Z3Nx5W3fsVBBIQParTrU6yJ69iIRWa3owmKPPiLuUNQbD01syhBoDn6R7X4FYA2nVnYsBfXeJ3EysxaNCLRD+c9a6uc/flCfTcMM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8401
 X-OriginatorOrg: intel.com
 
-On Tue, Nov 05, 2024 at 07:17:53AM -0500, Usyskin, Alexander wrote:
-> > -----Original Message-----
-> > From: Vivi, Rodrigo <rodrigo.vivi@intel.com>
-> > Sent: Monday, November 4, 2024 11:16 PM
-> > To: Usyskin, Alexander <alexander.usyskin@intel.com>
-> > Cc: Gupta, Anshuman <anshuman.gupta@intel.com>; Deak, Imre
-> > <imre.deak@intel.com>; Miquel Raynal <miquel.raynal@bootlin.com>;
-> > Richard Weinberger <richard@nod.at>; Vignesh Raghavendra
-> > <vigneshr@ti.com>; De Marchi, Lucas <lucas.demarchi@intel.com>; Thomas
-> > Hellström <thomas.hellstrom@linux.intel.com>; Maarten Lankhorst
-> > <maarten.lankhorst@linux.intel.com>; Maxime Ripard <mripard@kernel.org>;
-> > Thomas Zimmermann <tzimmermann@suse.de>; David Airlie
-> > <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Jani Nikula
-> > <jani.nikula@linux.intel.com>; Joonas Lahtinen
-> > <joonas.lahtinen@linux.intel.com>; Tvrtko Ursulin <tursulin@ursulin.net>;
-> > Weil, Oren jer <oren.jer.weil@intel.com>; linux-mtd@lists.infradead.org; dri-
-> > devel@lists.freedesktop.org; intel-gfx@lists.freedesktop.org; linux-
-> > kernel@vger.kernel.org
-> > Subject: Re: [PATCH 06/10] mtd: intel-dg: wake card on operations
-> > 
-> > On Tue, Oct 29, 2024 at 11:24:36AM +0000, Usyskin, Alexander wrote:
-> > > > -----Original Message-----
-> > > > From: Gupta, Anshuman <anshuman.gupta@intel.com>
-> > > > Sent: Monday, October 28, 2024 5:02 PM
-> > > > To: Vivi, Rodrigo <rodrigo.vivi@intel.com>; Usyskin, Alexander
-> > > > <alexander.usyskin@intel.com>; Deak, Imre <imre.deak@intel.com>
-> > > > Cc: Miquel Raynal <miquel.raynal@bootlin.com>; Richard Weinberger
-> > > > <richard@nod.at>; Vignesh Raghavendra <vigneshr@ti.com>; De Marchi,
-> > > > Lucas <lucas.demarchi@intel.com>; Thomas Hellström
-> > > > <thomas.hellstrom@linux.intel.com>; Maarten Lankhorst
-> > > > <maarten.lankhorst@linux.intel.com>; Maxime Ripard
-> > <mripard@kernel.org>;
-> > > > Thomas Zimmermann <tzimmermann@suse.de>; David Airlie
-> > > > <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Jani Nikula
-> > > > <jani.nikula@linux.intel.com>; Joonas Lahtinen
-> > > > <joonas.lahtinen@linux.intel.com>; Tvrtko Ursulin <tursulin@ursulin.net>;
-> > > > Weil, Oren jer <oren.jer.weil@intel.com>; linux-mtd@lists.infradead.org;
-> > dri-
-> > > > devel@lists.freedesktop.org; intel-gfx@lists.freedesktop.org; linux-
-> > > > kernel@vger.kernel.org
-> > > > Subject: RE: [PATCH 06/10] mtd: intel-dg: wake card on operations
-> > > >
-> > > >
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Vivi, Rodrigo <rodrigo.vivi@intel.com>
-> > > > > Sent: Monday, October 28, 2024 8:27 PM
-> > > > > To: Usyskin, Alexander <alexander.usyskin@intel.com>; Gupta,
-> > Anshuman
-> > > > > <anshuman.gupta@intel.com>; Deak, Imre <imre.deak@intel.com>
-> > > > > Cc: Miquel Raynal <miquel.raynal@bootlin.com>; Richard Weinberger
-> > > > > <richard@nod.at>; Vignesh Raghavendra <vigneshr@ti.com>; De Marchi,
-> > > > > Lucas <lucas.demarchi@intel.com>; Thomas Hellström
-> > > > > <thomas.hellstrom@linux.intel.com>; Maarten Lankhorst
-> > > > > <maarten.lankhorst@linux.intel.com>; Maxime Ripard
-> > > > <mripard@kernel.org>;
-> > > > > Thomas Zimmermann <tzimmermann@suse.de>; David Airlie
-> > > > > <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Jani Nikula
-> > > > > <jani.nikula@linux.intel.com>; Joonas Lahtinen
-> > > > > <joonas.lahtinen@linux.intel.com>; Tvrtko Ursulin
-> > <tursulin@ursulin.net>;
-> > > > > Weil, Oren jer <oren.jer.weil@intel.com>; linux-mtd@lists.infradead.org;
-> > dri-
-> > > > > devel@lists.freedesktop.org; intel-gfx@lists.freedesktop.org; linux-
-> > > > > kernel@vger.kernel.org
-> > > > > Subject: Re: [PATCH 06/10] mtd: intel-dg: wake card on operations
-> > > > >
-> > > > > On Tue, Oct 22, 2024 at 01:41:15PM +0300, Alexander Usyskin wrote:
-> > > > > > Enable runtime PM in mtd driver to notify graphics driver that whole
-> > > > > > card should be kept awake while nvm operations are performed
-> > through
-> > > > > > this driver.
-> > > > > >
-> > > > > > CC: Lucas De Marchi <lucas.demarchi@intel.com>
-> > > > > > Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-> > > > > > ---
-> > > > > >  drivers/mtd/devices/mtd-intel-dg.c | 73
-> > > > > > +++++++++++++++++++++++++-----
-> > > > > >  1 file changed, 61 insertions(+), 12 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/mtd/devices/mtd-intel-dg.c
-> > > > > > b/drivers/mtd/devices/mtd-intel-dg.c
-> > > > > > index 4951438e8faf..3d53f35478e8 100644
-> > > > > > --- a/drivers/mtd/devices/mtd-intel-dg.c
-> > > > > > +++ b/drivers/mtd/devices/mtd-intel-dg.c
-> > > > > > @@ -15,11 +15,14 @@
-> > > > > >  #include <linux/module.h>
-> > > > > >  #include <linux/mtd/mtd.h>
-> > > > > >  #include <linux/mtd/partitions.h>
-> > > > > > +#include <linux/pm_runtime.h>
-> > > > > >  #include <linux/string.h>
-> > > > > >  #include <linux/slab.h>
-> > > > > >  #include <linux/sizes.h>
-> > > > > >  #include <linux/types.h>
-> > > > > >
-> > > > > > +#define INTEL_DG_NVM_RPM_TIMEOUT 500
-> > > > > > +
-> > > > > >  struct intel_dg_nvm {
-> > > > > >  	struct kref refcnt;
-> > > > > >  	struct mtd_info mtd;
-> > > > > > @@ -462,6 +465,7 @@ static int intel_dg_mtd_erase(struct mtd_info
-> > > > *mtd,
-> > > > > struct erase_info *info)
-> > > > > >  	loff_t from;
-> > > > > >  	size_t len;
-> > > > > >  	size_t total_len;
-> > > > > > +	int ret = 0;
-> > > > > >
-> > > > > >  	if (WARN_ON(!nvm))
-> > > > > >  		return -EINVAL;
-> > > > > > @@ -476,20 +480,28 @@ static int intel_dg_mtd_erase(struct
-> > mtd_info
-> > > > > *mtd, struct erase_info *info)
-> > > > > >  	total_len = info->len;
-> > > > > >  	addr = info->addr;
-> > > > > >
-> > > > > > +	ret = pm_runtime_resume_and_get(mtd->dev.parent);
-> > > > > > +	if (ret < 0) {
-> > > > > > +		dev_err(&mtd->dev, "rpm: get failed %d\n", ret);
-> > > > > > +		return ret;
-> > > > > > +	}
-> > > > > > +
-> > > > > >  	guard(mutex)(&nvm->lock);
-> > > > > >
-> > > > > >  	while (total_len > 0) {
-> > > > > >  		if (!IS_ALIGNED(addr, SZ_4K) || !IS_ALIGNED(total_len,
-> > > > > SZ_4K)) {
-> > > > > >  			dev_err(&mtd->dev, "unaligned erase %llx %zx\n",
-> > > > > addr, total_len);
-> > > > > >  			info->fail_addr = addr;
-> > > > > > -			return -ERANGE;
-> > > > > > +			ret = -ERANGE;
-> > > > > > +			goto out;
-> > > > > >  		}
-> > > > > >
-> > > > > >  		idx = idg_nvm_get_region(nvm, addr);
-> > > > > >  		if (idx >= nvm->nregions) {
-> > > > > >  			dev_err(&mtd->dev, "out of range");
-> > > > > >  			info->fail_addr = MTD_FAIL_ADDR_UNKNOWN;
-> > > > > > -			return -ERANGE;
-> > > > > > +			ret = -ERANGE;
-> > > > > > +			goto out;
-> > > > > >  		}
-> > > > > >
-> > > > > >  		from = addr - nvm->regions[idx].offset; @@ -505,14 +517,18
-> > > > > @@
-> > > > > > static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info
-> > > > *info)
-> > > > > >  		if (bytes < 0) {
-> > > > > >  			dev_dbg(&mtd->dev, "erase failed with %zd\n",
-> > > > > bytes);
-> > > > > >  			info->fail_addr += nvm->regions[idx].offset;
-> > > > > > -			return bytes;
-> > > > > > +			ret = bytes;
-> > > > > > +			goto out;
-> > > > > >  		}
-> > > > > >
-> > > > > >  		addr += len;
-> > > > > >  		total_len -= len;
-> > > > > >  	}
-> > > > > >
-> > > > > > -	return 0;
-> > > > > > +out:
-> > > > > > +	pm_runtime_mark_last_busy(mtd->dev.parent);
-> > > > > > +	pm_runtime_put_autosuspend(mtd->dev.parent);
-> > > > > > +	return ret;
-> > > > > >  }
-> > > > > >
-> > > > > >  static int intel_dg_mtd_read(struct mtd_info *mtd, loff_t from,
-> > > > > > size_t len, @@ -541,17 +557,25 @@ static int
-> > intel_dg_mtd_read(struct
-> > > > > mtd_info *mtd, loff_t from, size_t len,
-> > > > > >  	if (len > nvm->regions[idx].size - from)
-> > > > > >  		len = nvm->regions[idx].size - from;
-> > > > > >
-> > > > > > +	ret = pm_runtime_resume_and_get(mtd->dev.parent);
-> > > > > > +	if (ret < 0) {
-> > > > > > +		dev_err(&mtd->dev, "rpm: get failed %zd\n", ret);
-> > > > > > +		return ret;
-> > > > > > +	}
-> > > > > > +
-> > > > > >  	guard(mutex)(&nvm->lock);
-> > > > > >
-> > > > > >  	ret = idg_read(nvm, region, from, len, buf);
-> > > > > >  	if (ret < 0) {
-> > > > > >  		dev_dbg(&mtd->dev, "read failed with %zd\n", ret);
-> > > > > > -		return ret;
-> > > > > > +	} else {
-> > > > > > +		*retlen = ret;
-> > > > > > +		ret = 0;
-> > > > > >  	}
-> > > > > >
-> > > > > > -	*retlen = ret;
-> > > > > > -
-> > > > > > -	return 0;
-> > > > > > +	pm_runtime_mark_last_busy(mtd->dev.parent);
-> > > > > > +	pm_runtime_put_autosuspend(mtd->dev.parent);
-> > > > > > +	return ret;
-> > > > > >  }
-> > > > > >
-> > > > > >  static int intel_dg_mtd_write(struct mtd_info *mtd, loff_t to, size_t
-> > > > > > len, @@ -580,17 +604,25 @@ static int intel_dg_mtd_write(struct
-> > > > mtd_info
-> > > > > *mtd, loff_t to, size_t len,
-> > > > > >  	if (len > nvm->regions[idx].size - to)
-> > > > > >  		len = nvm->regions[idx].size - to;
-> > > > > >
-> > > > > > +	ret = pm_runtime_resume_and_get(mtd->dev.parent);
-> > > > > > +	if (ret < 0) {
-> > > > > > +		dev_err(&mtd->dev, "rpm: get failed %zd\n", ret);
-> > > > > > +		return ret;
-> > > > > > +	}
-> > > > > > +
-> > > > > >  	guard(mutex)(&nvm->lock);
-> > > > > >
-> > > > > >  	ret = idg_write(nvm, region, to, len, buf);
-> > > > > >  	if (ret < 0) {
-> > > > > >  		dev_dbg(&mtd->dev, "write failed with %zd\n", ret);
-> > > > > > -		return ret;
-> > > > > > +	} else {
-> > > > > > +		*retlen = ret;
-> > > > > > +		ret = 0;
-> > > > > >  	}
-> > > > > >
-> > > > > > -	*retlen = ret;
-> > > > > > -
-> > > > > > -	return 0;
-> > > > > > +	pm_runtime_mark_last_busy(mtd->dev.parent);
-> > > > > > +	pm_runtime_put_autosuspend(mtd->dev.parent);
-> > > > > > +	return ret;
-> > > > > >  }
-> > > > > >
-> > > > > >  static void intel_dg_nvm_release(struct kref *kref) @@ -722,6
-> > +754,17
-> > > > > > @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
-> > > > > >  		n++;
-> > > > > >  	}
-> > > > > >
-> > > > > > +	pm_runtime_enable(device);
-> > > > > > +
-> > > > > > +	pm_runtime_set_autosuspend_delay(device,
-> > > > > INTEL_DG_NVM_RPM_TIMEOUT);
-> > > > > > +	pm_runtime_use_autosuspend(device);
-> > > > >
-> > > > > something looks strange here...
-> > > > > on the functions above you get and put references for the parent device
-> > > > > directly.
-> > > > > But here you enable the rpm for this device.
-> > > > >
-> > > > > If I remember correctly from some old experiments, the rpm is smart
-> > enough
-> > > > > and wake up the parent before waking up the child. So I'm wondering if
-> > we
-> > > > > should only do the child without the parent.
-> > > > Agree parent can't runtime suspend ind if it has active child.
-> > > > Let this driver have it's own get/put routine instead of parent.
-> > > > Thanks,
-> > > > Anshuman Gupta.
-> > >
-> > > I need to wake DG card before the MTD device is established to scan the
-> > partition table on flash.
-> > > Thus, if I move rpm down to MTD device I should enable and take parent
-> > (auxiliary device) rpm anyway.
-> > 
-> > That's the part that I'm not sure if I agree. if I remember from some
-> > experiments in the past,
-> > when you call to wake up the child, the parent will wakeup first anyway.
-> > 
-> The child (mtd device) does not exist at this point of time.
-> To create MTD device, the partition table should be provided
-> and it read directly from flash that should be powered to do read.
 
-I don't understand... you have the mtd->dev at this point... this is
-the one you should be touching, not the mtd->dev.parent... even at the
-probe, but moreover on everywhere else as well.
+> -----Original Message-----
+> From: Johannes Weiner <hannes@cmpxchg.org>
+> Sent: Thursday, November 7, 2024 10:54 AM
+> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> yosryahmed@google.com; nphamcs@gmail.com;
+> chengming.zhou@linux.dev; usamaarif642@gmail.com;
+> ryan.roberts@arm.com; Huang, Ying <ying.huang@intel.com>;
+> 21cnbao@gmail.com; akpm@linux-foundation.org; linux-
+> crypto@vger.kernel.org; herbert@gondor.apana.org.au;
+> davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
+> ebiggers@google.com; surenb@google.com; Accardi, Kristen C
+> <kristen.c.accardi@intel.com>; zanussi@kernel.org; Feghali, Wajdi K
+> <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+> Subject: Re: [PATCH v3 13/13] mm: zswap: Compress batching with Intel IAA
+> in zswap_store() of large folios.
+>=20
+> On Wed, Nov 06, 2024 at 11:21:05AM -0800, Kanchana P Sridhar wrote:
+> > +static void zswap_zpool_store_sub_batch(
+> > +	struct zswap_store_pipeline_state *zst)
+>=20
+> There is a zswap_store_sub_batch() below, which does something
+> completely different. Naming is hard, but please invest a bit more
+> time into this to make this readable.
 
-> 
-> > > Considering above, is this move is justified?
-> > > Also, MTD drivers tend to enable parent rpm, not its own one.
-> > 
-> > What other drivers are you looking for reference?
-> 
-> drivers/mtd/nand/raw/tegra_nand.c
-> drivers/mtd/nand/raw/renesas-nand-controller.c
-> drivers/mtd/maps/physmap-core.c
+Thanks Johannes, for the comments. Yes, I agree the naming could
+be better.
 
-I see they getting pdev->dev... not the parent...
+>=20
+> > +{
+> > +	u8 i;
+> > +
+> > +	for (i =3D 0; i < zst->nr_comp_pages; ++i) {
+> > +		struct zswap_store_sub_batch_page *sbp =3D &zst-
+> >sub_batch[i];
+> > +		struct zpool *zpool;
+> > +		unsigned long handle;
+> > +		char *buf;
+> > +		gfp_t gfp;
+> > +		int err;
+> > +
+> > +		/* Skip pages that had compress errors. */
+> > +		if (sbp->error)
+> > +			continue;
+> > +
+> > +		zpool =3D zst->pool->zpool;
+> > +		gfp =3D __GFP_NORETRY | __GFP_NOWARN |
+> __GFP_KSWAPD_RECLAIM;
+> > +		if (zpool_malloc_support_movable(zpool))
+> > +			gfp |=3D __GFP_HIGHMEM | __GFP_MOVABLE;
+> > +		err =3D zpool_malloc(zpool, zst->comp_dlens[i], gfp, &handle);
+> > +
+> > +		if (err) {
+> > +			if (err =3D=3D -ENOSPC)
+> > +				zswap_reject_compress_poor++;
+> > +			else
+> > +				zswap_reject_alloc_fail++;
+> > +
+> > +			/*
+> > +			 * An error should be propagated to other pages of
+> the
+> > +			 * same folio in the sub-batch, and zpool resources for
+> > +			 * those pages (in sub-batch order prior to this zpool
+> > +			 * error) should be de-allocated.
+> > +			 */
+> > +			zswap_store_propagate_errors(zst, sbp->batch_idx);
+> > +			continue;
+> > +		}
+> > +
+> > +		buf =3D zpool_map_handle(zpool, handle, ZPOOL_MM_WO);
+> > +		memcpy(buf, zst->comp_dsts[i], zst->comp_dlens[i]);
+> > +		zpool_unmap_handle(zpool, handle);
+> > +
+> > +		sbp->entry->handle =3D handle;
+> > +		sbp->entry->length =3D zst->comp_dlens[i];
+> > +	}
+> > +}
+> > +
+> > +/*
+> > + * Returns true if the entry was successfully
+> > + * stored in the xarray, and false otherwise.
+> > + */
+> > +static bool zswap_store_entry(swp_entry_t page_swpentry,
+> > +			      struct zswap_entry *entry)
+> > +{
+> > +	struct zswap_entry *old =3D
+> xa_store(swap_zswap_tree(page_swpentry),
+> > +					   swp_offset(page_swpentry),
+> > +					   entry, GFP_KERNEL);
+> > +	if (xa_is_err(old)) {
+> > +		int err =3D xa_err(old);
+> > +
+> > +		WARN_ONCE(err !=3D -ENOMEM, "unexpected xarray error:
+> %d\n", err);
+> > +		zswap_reject_alloc_fail++;
+> > +		return false;
+> > +	}
+> > +
+> > +	/*
+> > +	 * We may have had an existing entry that became stale when
+> > +	 * the folio was redirtied and now the new version is being
+> > +	 * swapped out. Get rid of the old.
+> > +	 */
+> > +	if (old)
+> > +		zswap_entry_free(old);
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static void zswap_batch_compress_post_proc(
+> > +	struct zswap_store_pipeline_state *zst)
+> > +{
+> > +	int nr_objcg_pages =3D 0, nr_pages =3D 0;
+> > +	struct obj_cgroup *objcg =3D NULL;
+> > +	size_t compressed_bytes =3D 0;
+> > +	u8 i;
+> > +
+> > +	zswap_zpool_store_sub_batch(zst);
+> > +
+> > +	for (i =3D 0; i < zst->nr_comp_pages; ++i) {
+> > +		struct zswap_store_sub_batch_page *sbp =3D &zst-
+> >sub_batch[i];
+> > +
+> > +		if (sbp->error)
+> > +			continue;
+> > +
+> > +		if (!zswap_store_entry(sbp->swpentry, sbp->entry)) {
+> > +			zswap_store_propagate_errors(zst, sbp->batch_idx);
+> > +			continue;
+> > +		}
+> > +
+> > +		/*
+> > +		 * The entry is successfully compressed and stored in the tree,
+> > +		 * there is no further possibility of failure. Grab refs to the
+> > +		 * pool and objcg. These refs will be dropped by
+> > +		 * zswap_entry_free() when the entry is removed from the
+> tree.
+> > +		 */
+> > +		zswap_pool_get(zst->pool);
+> > +		if (sbp->objcg)
+> > +			obj_cgroup_get(sbp->objcg);
+> > +
+> > +		/*
+> > +		 * We finish initializing the entry while it's already in xarray.
+> > +		 * This is safe because:
+> > +		 *
+> > +		 * 1. Concurrent stores and invalidations are excluded by folio
+> > +		 *    lock.
+> > +		 *
+> > +		 * 2. Writeback is excluded by the entry not being on the LRU
+> yet.
+> > +		 *    The publishing order matters to prevent writeback from
+> seeing
+> > +		 *    an incoherent entry.
+> > +		 */
+> > +		sbp->entry->pool =3D zst->pool;
+> > +		sbp->entry->swpentry =3D sbp->swpentry;
+> > +		sbp->entry->objcg =3D sbp->objcg;
+> > +		sbp->entry->referenced =3D true;
+> > +		if (sbp->entry->length) {
+> > +			INIT_LIST_HEAD(&sbp->entry->lru);
+> > +			zswap_lru_add(&zswap_list_lru, sbp->entry);
+> > +		}
+> > +
+> > +		if (!objcg && sbp->objcg) {
+> > +			objcg =3D sbp->objcg;
+> > +		} else if (objcg && sbp->objcg && (objcg !=3D sbp->objcg)) {
+> > +			obj_cgroup_charge_zswap(objcg,
+> compressed_bytes);
+> > +			count_objcg_events(objcg, ZSWPOUT,
+> nr_objcg_pages);
+> > +			compressed_bytes =3D 0;
+> > +			nr_objcg_pages =3D 0;
+> > +			objcg =3D sbp->objcg;
+> > +		}
+> > +
+> > +		if (sbp->objcg) {
+> > +			compressed_bytes +=3D sbp->entry->length;
+> > +			++nr_objcg_pages;
+> > +		}
+> > +
+> > +		++nr_pages;
+> > +	} /* for sub-batch pages. */
+> > +
+> > +	if (objcg) {
+> > +		obj_cgroup_charge_zswap(objcg, compressed_bytes);
+> > +		count_objcg_events(objcg, ZSWPOUT, nr_objcg_pages);
+> > +	}
+> > +
+> > +	atomic_long_add(nr_pages, &zswap_stored_pages);
+> > +	count_vm_events(ZSWPOUT, nr_pages);
+> > +}
+> > +
+> > +static void zswap_store_sub_batch(struct zswap_store_pipeline_state
+> *zst)
+> > +{
+> > +	u8 i;
+> > +
+> > +	for (i =3D 0; i < zst->nr_comp_pages; ++i) {
+> > +		zst->comp_dsts[i] =3D zst->acomp_ctx->buffers[i];
+> > +		zst->comp_dlens[i] =3D PAGE_SIZE;
+> > +	} /* for sub-batch pages. */
+> > +
+> > +	/*
+> > +	 * Batch compress sub-batch "N". If IAA is the compressor, the
+> > +	 * hardware will compress multiple pages in parallel.
+> > +	 */
+> > +	zswap_compress_batch(zst);
+> > +
+> > +	zswap_batch_compress_post_proc(zst);
+>=20
+> The control flow here is a mess. Keep loops over the same batch at the
+> same function level. IOW, pull the nr_comp_pages loop out of
+> zswap_batch_compress_post_proc() and call the function from the loop.
 
-> 
-> > 
-> > >
-> > > - -
-> > > Thanks,
-> > > Sasha
-> > >
-> > >
-> > >
-> > > > >
-> > > > > Cc: Imre Deak <imre.deak@intel.com>
-> > > > > Cc: Anshuman Gupta <anshuman.gupta@intel.com>
-> > > > >
-> > > > > > +
-> > > > > > +	ret = pm_runtime_resume_and_get(device);
-> > > > > > +	if (ret < 0) {
-> > > > > > +		dev_err(device, "rpm: get failed %d\n", ret);
-> > > > > > +		goto err_norpm;
-> > > > > > +	}
-> > > > > > +
-> > > > > >  	nvm->base = devm_ioremap_resource(device, &invm->bar);
-> > > > > >  	if (IS_ERR(nvm->base)) {
-> > > > > >  		dev_err(device, "mmio not mapped\n"); @@ -744,9 +787,13
-> > > > > @@ static
-> > > > > > int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
-> > > > > >
-> > > > > >  	dev_set_drvdata(&aux_dev->dev, nvm);
-> > > > > >
-> > > > > > +	pm_runtime_put(device);
-> > > > > >  	return 0;
-> > > > > >
-> > > > > >  err:
-> > > > > > +	pm_runtime_put(device);
-> > > > > > +err_norpm:
-> > > > > > +	pm_runtime_disable(device);
-> > > > > >  	kref_put(&nvm->refcnt, intel_dg_nvm_release);
-> > > > > >  	return ret;
-> > > > > >  }
-> > > > > > @@ -758,6 +805,8 @@ static void intel_dg_mtd_remove(struct
-> > > > > auxiliary_device *aux_dev)
-> > > > > >  	if (!nvm)
-> > > > > >  		return;
-> > > > > >
-> > > > > > +	pm_runtime_disable(&aux_dev->dev);
-> > > > > > +
-> > > > > >  	mtd_device_unregister(&nvm->mtd);
-> > > > > >
-> > > > > >  	dev_set_drvdata(&aux_dev->dev, NULL);
-> > > > > > --
-> > > > > > 2.43.0
-> > > > > >
+I see. Got it.
+
+>=20
+> Also give it a more descriptive name. If that's hard to do, then
+> you're probably doing too many different things in it. Create
+> functions for a specific purpose, don't carve up sequences at
+> arbitrary points.
+>=20
+> My impression after trying to read this is that the existing
+> zswap_store() sequence could be a subset of the batched store, where
+> you can reuse most code to get the pool, charge the cgroup, allocate
+> entries, store entries, bump the stats etc. for both cases. Alas, your
+> naming choices make it a bit difficult to be sure.
+
+Apologies for the naming choices. I will fix this. As I was trying to expla=
+in
+in the commit log, my goal was to minimize failure points, since each failu=
+re
+point requires unwinding state, which adds latency. Towards this goal, I tr=
+ied
+to alloc all entries upfront, and fail early to prevent unwinding state.
+Especially since the upfront work being done for the batch, is needed in
+any case (e.g. zswap_alloc_entries()).
+
+This is where the trade-offs between treating the existing zswap_store()
+sequence as a subset of the batched store are not very clear. I tried to
+optimize the batched store for batching, while following the logical
+structure of zswap_store().
+
+>=20
+> Please explore this direction. Don't worry about the CONFIG symbol for
+> now, we can still look at this later.
+
+Definitely, I will think some more about this.
+
+>=20
+> Right now, it's basically
+>=20
+> 	if (special case)
+> 		lots of duplicative code in slightly different order
+> 	regular store sequence
+>=20
+> and that isn't going to be maintainable.
+>=20
+> Look for a high-level sequence that makes sense for both cases. E.g.:
+>=20
+> 	if (!zswap_enabled)
+> 		goto check_old;
+>=20
+> 	get objcg
+>=20
+> 	check limits
+>=20
+> 	allocate memcg list lru
+>=20
+> 	for each batch {
+> 		for each entry {
+> 			allocate entry
+> 			acquire objcg ref
+> 			acquire pool ref
+> 		}
+> 		compress
+> 		for each entry {
+> 			store in tree
+> 			add to lru
+> 			bump stats and counters
+> 		}
+> 	}
+>=20
+> 	put objcg
+>=20
+> 	return true;
+>=20
+> check_error:
+> 	...
+>=20
+> and then set up the two loops such that they also makes sense when the
+> folio is just a single page.
+
+Thanks for this suggestion! I will explore this kind of structure. I hope
+I have provided some explanations as to why I pursued the existing
+batching structure. One other thing I wanted to add was the
+"future proofing" you alluded to earlier (which I will fix). Many of
+my design choices were motivated by minimizing latency gaps
+(e.g. from state unwinding in case of errors) in the batch compress
+pipeline when a reclaim batch of any-order folios is potentially
+sent to zswap.
+
+Thanks again,
+Kanchana
 
