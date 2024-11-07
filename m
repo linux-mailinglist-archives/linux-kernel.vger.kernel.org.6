@@ -1,32 +1,32 @@
-Return-Path: <linux-kernel+bounces-400745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22269C11B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:31:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF64B9C11AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:29:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895131F2511F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:31:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1491AB211AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7024F212D30;
-	Thu,  7 Nov 2024 22:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25116218D74;
+	Thu,  7 Nov 2024 22:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pissmail.com header.i=@pissmail.com header.b="q4c7XSoA"
+	dkim=pass (2048-bit key) header.d=pissmail.com header.i=@pissmail.com header.b="PsPpROzq"
 Received: from mail.pissmail.com (mail.pissmail.com [173.249.47.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C7CEC0
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6254218306
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.47.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731018698; cv=none; b=DE206+wzWwBb8VzHME6/8v11E3t7RMYPmcNbKoVTm9NDAL97pSo0kgrsIPLGayG1Rv9qXbPxoKZrGPYVf7sWVMqHhms+fjml+KBK11d2QJnXNwTEgb9oWGX/OymnJxxso/1kz3O8VA/pqHMyXkoUgh7IRKsCN+9yqFIYvi9lvRI=
+	t=1731018545; cv=none; b=uuEVcd1wbkwnyrvrupXwkQ2my+3WW5uEpvEbj6CPTh7m+3IcTcoAuyWyLEMG17SE20GmxbyxlINomOVG8IZsAYI4n19S1pEf82TYB3naeURO857WZ67+LYvK+3Dz/kUtWcFxrjQVlBhLMDzuLEp2m+S/dEFpgL+NssEtUdkT6Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731018698; c=relaxed/simple;
+	s=arc-20240116; t=1731018545; c=relaxed/simple;
 	bh=+CD+TPpXt3lU4nxoxW3tMNT0OEn53ASawI0ed/NJeuo=;
-	h=MIME-Version:Date:From:To:Subject:Message-ID:Content-Type; b=gtEMXjFZmtyBf7wyOI+cXRWqjDq4l1om9iM5nyo6p/YXeyKAl+3r41mXA9Ktsusr70P2TsN0tedItGEWGXF8Coh4sJSg5nxXssb949h87yv5iL5wCf1i42yLIMeHgNcbHScS/WxwWpEm7WpdAikyFAVG8YOq94Im1J3zCYjK5qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pissmail.com; spf=pass smtp.mailfrom=pissmail.com; dkim=pass (2048-bit key) header.d=pissmail.com header.i=@pissmail.com header.b=q4c7XSoA; arc=none smtp.client-ip=173.249.47.55
+	h=MIME-Version:Date:From:To:Subject:Message-ID:Content-Type; b=bO2utDIqVyZKqdQyOmyu/dJUUT50K4FZwFaM/ua1g03heJ8pfGynctcv8UJ5gr8xwd/C2Bkpej60shFRculkS/IeqP9c4AwbP+4XSoQn+V1N9w3jUPofuTKm5wcF/Evto8BqFjQ5B+O6qtPTz9pa5NsN6w34lD/bFaVuc0vO/gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pissmail.com; spf=pass smtp.mailfrom=pissmail.com; dkim=pass (2048-bit key) header.d=pissmail.com header.i=@pissmail.com header.b=PsPpROzq; arc=none smtp.client-ip=173.249.47.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pissmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pissmail.com
 Precedence: bulk
@@ -36,21 +36,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pissmail.com;
-	s=dkim; t=1731018334;
+	s=dkim; t=1731018541;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
 	bh=wbAgVkV20NZc2t1V+rliA3gwoLS+YbYAyFl1eZkVZgM=;
-	b=q4c7XSoAtF0VrSZ6ufUfpF200PFlrDff3pYHDS/N/1Qro73bV3xyqpJQX1RhzpRAmpKFb+
-	vo2byTyKxuabIyKatFxybCn28P25cV3gMJhjM3vm9uGuZrElLfAJVAa1CDu+Lt5NeTfQAQ
-	WocIaM2uj+8Jc9FfNYCwDe3wkXdM0m2cnZQ2dIMwLY3iXEj6smV5d+bZkarXswOicGv3kL
-	6yIBuUG48RBlWWCtY0TN2GqYYAa/bC5LCIo3yF5ErrN2RsSvMBVhMqeVMU64BUNWS/N9tC
-	3M5p4CMIrdjkBNA5fS9J2191IvSduCuOwb/0DIv9IO2tf7SKRao+rODXy2dpbQ==
-Date: Thu, 07 Nov 2024 22:25:33 +0000
+	b=PsPpROzqcHPpMhCVBXTSyTxZvzjDe2MWaiSqMcuLbisHlPfG+iRI2XQqi97J2f5Er+JEFb
+	r+D+k6ag0o88P6oUAPGG7aucS3hv9UAj9d1lyeBz3NH5HUHm13XJo1HiDQWQZkL7zzE7Vf
+	MAahLDVtNDuX2t/M/tSJ4Tizp9NxO1rIs/3BDcXJGjxcfEdm60Fibx19DKbizftbTVdSzW
+	30CxOusyTdrDKI2HPIXUbW5d78fclrxl0n9Rkna1pyX+9rL1E2ofHfeMms9Qbvfh9MhTp/
+	w92xV+r/o24iij4NlLB/cD3QOWoe+mRSoevgjnKuAEhLN0AnaKIBYbH+ddB5yA==
+Date: Thu, 07 Nov 2024 22:29:00 +0000
 From: mortodenoite@pissmail.com
 To: linux-kernel@vger.kernel.org
 Subject: Richard Stallman on the removal of Russian Linux maintainers
-Message-ID: <a52180ee7fe5ab1e55fa549d0391e019@pissmail.com>
+Message-ID: <04341f4cf2dc9efedda3a261246582c8@pissmail.com>
 X-Sender: mortodenoite@pissmail.com
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
