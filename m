@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-399704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96FE9C031A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:01:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3128D9C026E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:33:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB09D1C21CE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:01:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EACF0282107
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3E21EE024;
-	Thu,  7 Nov 2024 11:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A001EC012;
+	Thu,  7 Nov 2024 10:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="QmV8O2Os"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09A71373;
-	Thu,  7 Nov 2024 11:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQTqBeA4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4641DF72F;
+	Thu,  7 Nov 2024 10:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977264; cv=none; b=ubuTf34+Ev0NkWiVADo7AbEYNhf8/zngkiExkwht1uQh3KtHC5XTeyD2zkOBKwCUJNuOPg9odNJ5JB0UKN574KsQh9jjqQYhXRPTti/fY2FbdGvWCATckcwcm+/3d8nuNZ6w0I4GsptCgFP2v2VfqrTxdISh2JsAlTbrUco4V70=
+	t=1730975627; cv=none; b=C/YgfXJuHkivg/mGpZVGldz8A40Rwq/64oNJNfqLptiqIQlVTAR9aGqmyMXe+d+I0i1VB1eGIlowonbrnRLRtQceaX1AOD06rDazJAWf1Rl8wAq60KdhwjQnc07eMV954j2XPjq1K3OBZQt83iIobO+oVWKcBvMkW44uT6+Phkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977264; c=relaxed/simple;
-	bh=bkxxQT0ywZ+RAU3jBxc18hVZFtgf6aogb7G4KtK1nhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNQyL7Yf/41jj8Xn9vL487imNIqz/Ikj+NWlIU6HIwTsPzsYmvA3umq5+E5N7rkc4C9LWBb09eS1vAd2lY3MlgPqHKJb1S/5b6SxsUIfTde+qiaOh9hh4VJ0U/OdvWC7CyFbuW7dyaIFnyQjIElR9f7sCAwpVHx3FhGjb8owBWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=QmV8O2Os; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id 0485940A06; Thu,  7 Nov 2024 11:33:31 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 0485940A06
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20180602; t=1730975612;
-	bh=bkxxQT0ywZ+RAU3jBxc18hVZFtgf6aogb7G4KtK1nhk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QmV8O2OsnEKHTeXWL2yUMNdkZmtV18s3l1A0wMrvm/yCqpCvsfwDX1WwKx+YsZgmv
-	 1D9NAG0ffFkeFhzcPoEbOuKInQOHo0AWuMmXPO7bIY0PcVyJ+gZ1WCi8FNqAqZ+eZu
-	 SyFHUaZxyptoPue5zAt/M/pKYi0mId8MFOI9oMFI=
-Date: Thu, 7 Nov 2024 11:33:31 +0100
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Taewan Kim <trunixs.kim@samsung.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Byoungtae Cho <bt.cho@samsung.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
-Message-ID: <20241107103331.GA4818@www.linux-watchdog.org>
-References: <20241021063903.793166-1-trunixs.kim@samsung.com>
- <CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
- <20241021063903.793166-4-trunixs.kim@samsung.com>
- <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
+	s=arc-20240116; t=1730975627; c=relaxed/simple;
+	bh=e7o9LlJzfoBPuKxtfb83WAlaH+j48IlEZOapk8Po72E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pyFgC9niX4r2W+xDb+X5nLogzzglh04ccNDDPENr2s6pomL/XMGOEMTRLo0rDZA+mMN4zXJSsh/UNqRwGcaOx5PqJbwEzroNU2p3p0eYHhjTHLTYgdUC7ALeecficQQr5Eo7obpeg5tK+ImQKd+STNeGnJ0mOtkgUhKMBy++J9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQTqBeA4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DCE9C4CECC;
+	Thu,  7 Nov 2024 10:33:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730975626;
+	bh=e7o9LlJzfoBPuKxtfb83WAlaH+j48IlEZOapk8Po72E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jQTqBeA4cVwWhKtSFSSXb2/WnP3E4cljfi7X2Y8A7EjcrU8MTGyThneeuaF+H/1kq
+	 r2UehETa69jWBO6kC1M3SeIXoEFTmPoPBKBQCU7qCMU5sfIBAf/UXsmi/WvLEyriuh
+	 2g24C6zodhhwdlqYmFfr8bNulixDAwWFXSfEDjZ4SSpKF5fFOHLmSpy9pkZF2JPIje
+	 8BSMHzu+W29ykSWfh3D4PbW6p8ed+p41eiNIrgRbSKLjzkVauCeEQh1L1VP4Tsacr2
+	 OafDrTg6UGpv4o/Jl3sctrU5IsGo/6PTA8xuF8fOkdoizo4pJ4m5w6z5F/3munZ2ng
+	 Gi/WhF42BtXng==
+From: Conor Dooley <conor@kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] polarfire gpio driver follow-ups
+Date: Thu,  7 Nov 2024 10:33:39 +0000
+Message-ID: <20241107-avatar-clapper-93eb34ad0e0c@spud>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
-User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Developer-Signature: v=1; a=openpgp-sha256; l=865; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=8vEb3ii1bsfqiTgrr1CV8vvF13UPNJWUFk+0ewZ++nw=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOk605sPMHO1/u3/WlKhl3iL4fgakSet9vdfzTFNMfiVv iyNPfx2RykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACZyooPhv5OQgAuH+M1bd2+/ 9Dr1f/GeTeunuk9gEupYzbYhjYEr5BIjw+oP8x4wb9s/2f3r7b3KP2YveHny2hEB/YNFEjmar5W NzRkB
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-Hi Krzystof,
+From: Conor Dooley <conor.dooley@microchip.com>
 
-> On 21/10/2024 08:39, Taewan Kim wrote:
-> > From: Byoungtae Cho <bt.cho@samsung.com>
-> > 
-> > Adds two watchdog devices for ExynosAutoV920 SoC.
-> > 
-> > Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-> > Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
-> > ---
-> >  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> 
-> How did this happen that this patch was taken to watchdog? There is no
-> Ack here from me.
-> 
-> Drop this patch from watchdog, I do no agree to take it via that tree.
-> 
-> Best regards,
-> Krzysztof
-> 
+Yo,
 
-Seems like you are having a hard day. 
-The 3 patches are dropped. I presume that you will take them all through your tree then?
+I realised last week, while rebasing the interrupt portion of the
+driver, that coregpio a compatible in the kernel as well as a dts user.
+Given how long the driver has taken to even get partially accepted, I
+waited to get it to gpio/for-next rather than showing up with last
+minute additions to it.
 
-Kind regards,
-Wim.
+Cheers,
+Conor.
 
-PS: the patches are:
-[PATCH v3 1/3] dt-bindings: watchdog: Document ExynosAutoV920 watchdog bindings
-[PATCH v3 2/3] watchdog: s3c2410_wdt: add support for exynosautov920 SoC
-[PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: linux-kernel@vger.kernel.org
+CC: linux-gpio@vger.kernel.org
+
+Conor Dooley (2):
+  gpio: mpfs: add CoreGPIO support
+  MAINTAINERS: add gpio driver to PolarFire entry
+
+ MAINTAINERS              |  1 +
+ drivers/gpio/gpio-mpfs.c | 38 +++++++++++++++++++++++++++++++++-----
+ 2 files changed, 34 insertions(+), 5 deletions(-)
+
+-- 
+2.45.2
 
 
