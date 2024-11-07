@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-400024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558169C07E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:45:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFF59C078D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:33:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184E82863DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598971C2277F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7DC20FAB1;
-	Thu,  7 Nov 2024 13:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6613213130;
+	Thu,  7 Nov 2024 13:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DU+1MsVd"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ni6taHqX"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AAAEAC7
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6ED212F03;
+	Thu,  7 Nov 2024 13:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987115; cv=none; b=mJrydUalRrztrpUIAY9T3lh17hemzgLqbWeXnt7dbEZWLWNUjxhazG8c1gVqPwnsyHYBxxAj9xjmuRopialzrwjkPofD8JE9th200QHme1ioeHg9k88ANb1JJERHWU7BvLSFW8Nl2+qpz3px5XAW+9b6FAWQYiX8K79rd328a4A=
+	t=1730986306; cv=none; b=TkbmvdIJxfZ5t+EH4zf1tbWSPnYHP930c+1sj8C2448MPB0uDy+cagqWmBPQTVZ1FWGFcGwNTPiBAGCsl2B4/TXxmun7syePylff9T2flljrasitkDYnkMxKWtBTNnscrr3EZOvEtoEWitAK/3ZC+0SZueTfMj5RDlLslmBZtgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987115; c=relaxed/simple;
-	bh=7dXks9Wg5DwoNadhwKqjULHIrjO397kLI7QsVsJWPbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnyIXwOyNgBhpFR1DVqVdyhqoIiFHJ4aroaarAiGVk/uey1a/cRdbytPZT1orpuegoZq99mb2OZsYnoHmz6h1H5mG/yiMQQwFYhAoJj+oIeWuMV8PtuMbA3AkpTu2SwVOkLNjjbobgIooqapq0Eyn3mpTupwI2ii6EogiRV+z0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DU+1MsVd; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so8819351fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:45:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730987111; x=1731591911; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYfmjInTwSrf8wkLQDjO5520/3amtQeI91RgnNq7ubc=;
-        b=DU+1MsVdKm718jbYtocN1OwGGDu5RQVZJ9IlJNa1zZeoY26vAKKjZAr5m1qzO3Ba5U
-         kxjkOyu326/Rx9aNM0g1nizmpDUHIX5na+gQ8/8LBpyGKJqTV8JquO2A++Y55hOycmFd
-         7msDHwxyAwYCImRh9ncu+RGROj01H932CV/bAE5iUabQYT76HUqMyBHyaxdxdemccfxo
-         /l4pb5/C+4f8G5VOusf+iQLIVX38REclp0bRq8GM63qM270r/msPO0e128SJIwlE+fIx
-         p5F/59LkXlKX6i79aDEfXevy5mO7rFx9Q98rqOMtmKjb8hEuD4+vElOBJuPMhNqMhNup
-         QvPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730987111; x=1731591911;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oYfmjInTwSrf8wkLQDjO5520/3amtQeI91RgnNq7ubc=;
-        b=rnPxWNfisSRNqqtPNFsqyuMPDvZhC3N2YK6U4+ujTmXXjMgLjJPOqRBVcFEgIDivWX
-         pmtj/o81I8znwMp/ZFzxSiEmhpJloiUmGOGqzreVEvrJF0KceMDvmS/mDuXzBG/JhNvC
-         sJJmsjWA8kpYV1Gys6KtwjwzresWOMTLfdChyzvcS+O3JTIRkhKaTs+1+uUGFwko6zYU
-         1z01L1GGttwxrraQ4R1BDXN1bbMSgvlBk/cdal/A867gUBrLN5FZ+8cxGsvKw05F60nP
-         CZsAm7koh3jWh58esIctXhtrK/M7DIHAfC1HLJAd9J1mpLqaE9vcGOBQAiKd7DAghJV+
-         k47A==
-X-Forwarded-Encrypted: i=1; AJvYcCUG3gPvSH16lBTQhEXtDaoT9Av+Snuum3ymwdwj6rd+/CjYiIc7dgAyRkMG5jM9xiDRZ1r8DaPrRhVu0Zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgGp7ZdjM4m6p35Qle99r6JIY9d2Wp/NmkDBZcDxLa9zZWI5kX
-	036vemsAnZQKk+JSGzrTDJOJAIqhepeXiKo5EUihQcNfzeYGRHCx10knSiow/pg=
-X-Google-Smtp-Source: AGHT+IFl+p0mMdxu5dSXrUkocxo9piGoG3Bvth7m60W3yHUYwLPE2t5/+pSBydipp+y555REAJVHHg==
-X-Received: by 2002:a05:651c:543:b0:2fb:628c:2580 with SMTP id 38308e7fff4ca-2ff1e88880amr264501fa.2.1730987111409;
-        Thu, 07 Nov 2024 05:45:11 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff178f3ba1sm2202531fa.35.2024.11.07.05.45.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 05:45:10 -0800 (PST)
-Date: Thu, 7 Nov 2024 15:45:08 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Manikandan Muralidharan <manikandan.m@microchip.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com, 
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux@armlinux.org.uk, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, varshini.rajendran@microchip.com, dharma.b@microchip.com, 
-	arnd@arndb.de, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 4/4] ARM: configs: at91: Enable Microchip's MIPI DSI
- Host Controller support
-Message-ID: <6r4nna5i63eo7oo2xoclqxpuodbttvxceuwn2yl4to7aqti3md@i2wtdzhsj4fp>
-References: <20241106093429.157131-1-manikandan.m@microchip.com>
- <20241106093429.157131-5-manikandan.m@microchip.com>
+	s=arc-20240116; t=1730986306; c=relaxed/simple;
+	bh=O4Ly+TUbcNgizUM1IEqHG6sZzsVmPfKjoOUUN/qY6OU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p/8CQouaBs2ah26gvH+Fec5EWpfqIw7IIJM9s92mFCwRQdo55k3ilusUEaJUvtNYEdHNhxWd0U71gC6DyDVZCPiMgJuJTxzAnocuP9P9t89jpfntYMgpcK6273YIJHRRM2/Mg6QE50A9b3IWG/06KN6UleVw+TD3v9b9HGfL3is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ni6taHqX; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7DH96r005049;
+	Thu, 7 Nov 2024 08:31:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=dQpYsJYMGMBaCtPWFQEdS4VtUyv
+	uxNAP5yuT99fgGKs=; b=ni6taHqX7Bw0dtal2mrYy6giiWs6ZaacLzdUoS1d6Xk
+	i/e5Tg89fGBcSS4Ei/I4FsJc+qtWxYVlJ5kQvnWg4TZrQ+0TBBsFDyS9VK7nmLEP
+	6s3N1y0NdrAitBR8qDjycbpBNI2GxEbn96xZWogh9ysFWD87+AZajRr0c4Bz2Fdd
+	8B9an8NeTFDwUCL281uqYX6bg7HF8YU6KJwR5JQ1piWSzUEqgAcmK6QWUQHVKDrX
+	k/y+FZQLXKBmHgvTFpDve2jj0ZMTpZalrWSIrzQTPFscaP3QfusjM7lcMNeGW9vi
+	PDytharrL02fBQPdMOFFpnTStrwroWxJ7mhKnPUBEXw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 42rsdks7u8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 08:31:41 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4A7DVe36034819
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 7 Nov 2024 08:31:40 -0500
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Thu, 7 Nov 2024 08:31:40 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Thu, 7 Nov 2024 08:31:40 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Thu, 7 Nov 2024 08:31:40 -0500
+Received: from localhost.localdomain ([10.48.65.12])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4A7DVUGq019172;
+	Thu, 7 Nov 2024 08:31:32 -0500
+From: Darius Berghe <darius.berghe@analog.com>
+To: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <jic23@kernel.org>, <darius.berghe@analog.com>
+Subject: [PATCH v2 0/3] iio: imu: add devices to adis16480 driver
+Date: Thu, 7 Nov 2024 15:45:14 +0200
+Message-ID: <20241107134517.3089112-1-darius.berghe@analog.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106093429.157131-5-manikandan.m@microchip.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: 9U0tJdebFaLj8DpJ0aeVvT0QEAxdarBj
+X-Proofpoint-ORIG-GUID: 9U0tJdebFaLj8DpJ0aeVvT0QEAxdarBj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 mlxlogscore=999 clxscore=1015 mlxscore=0 suspectscore=0
+ priorityscore=1501 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070105
 
-On Wed, Nov 06, 2024 at 03:04:29PM +0530, Manikandan Muralidharan wrote:
-> Enable the Microchip's DSI controller wrapper driver that uses
-> the Synopsys DesignWare MIPI DSI host controller bridge.
+Thanks for the review and input Jonathan, I've addressed the 2 points
+you raised in V1, here's the breakdown.
 
-... It used on the board ABC DEF.
+Changes in v2:
+ - document in the commit description the main differences between 
+   the newly added and the already supported devices
+ - make adis16487 fallback compatible with adis16485 since they are
+   functionally equivalent
 
-> 
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> ---
->  arch/arm/configs/at91_dt_defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/configs/at91_dt_defconfig b/arch/arm/configs/at91_dt_defconfig
-> index 2022a7fca0f9..3ff89e27e770 100644
-> --- a/arch/arm/configs/at91_dt_defconfig
-> +++ b/arch/arm/configs/at91_dt_defconfig
-> @@ -145,6 +145,7 @@ CONFIG_VIDEO_OV7740=m
->  CONFIG_DRM=y
->  CONFIG_DRM_ATMEL_HLCDC=y
->  CONFIG_DRM_MICROCHIP_LVDS_SERIALIZER=y
-> +CONFIG_DRM_MICROCHIP_DW_MIPI_DSI=y
->  CONFIG_DRM_PANEL_SIMPLE=y
->  CONFIG_DRM_PANEL_EDP=y
->  CONFIG_FB_ATMEL=y
-> -- 
-> 2.25.1
-> 
+Darius Berghe (3):
+  iio: imu: adis16480: add devices to adis16480 driver
+  iio: imu: adis16480: add devices to adis16480 - docs
+  dt-bindings: iio: adis16480: add devices to adis16480
+
+ .../bindings/iio/imu/adi,adis16480.yaml       |  5 ++
+ Documentation/iio/adis16480.rst               |  3 +
+ drivers/iio/imu/adis16480.c                   | 75 +++++++++++++++++++
+ 3 files changed, 83 insertions(+)
 
 -- 
-With best wishes
-Dmitry
+2.46.1
+
 
