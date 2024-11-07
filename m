@@ -1,108 +1,197 @@
-Return-Path: <linux-kernel+bounces-399122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E079BFB45
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:18:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CDA9BFB53
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7323283D97
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7165E1F21E53
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D668A79F5;
-	Thu,  7 Nov 2024 01:18:41 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E274D26D;
+	Thu,  7 Nov 2024 01:22:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9CE79F6;
-	Thu,  7 Nov 2024 01:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B74B2119;
+	Thu,  7 Nov 2024 01:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730942321; cv=none; b=DN7igjg3OGM0e6h0V6FLlUxMdNAip8Qk/ujFxHZbxy/4bXZHI8PkpMbczKrOj1hvndeOXwTdlI0YWGyBg4DgGfhSp19VgMgwxOr9c+ImLcQYVYfvbUWzkj+MMQg2i68zp8mS6uceMGALSsVmWPfeRwKV1pcwLddZT5gGfB7hxAk=
+	t=1730942540; cv=none; b=fEAnGAVweeerrp+xzCAHA9savYBWDamN10mODFXX8kXhuKUWdScCIdQm7epw8Kw4JbGheOXuEl0I/YtHvan42U3L1021/tFnNgb15ZPfMvLmC4fslTIRroepX5B/PwG7YjgPSD1KsIGfRHnf6KoLT2NVxN/Pf7wZiwNgOYqhDxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730942321; c=relaxed/simple;
-	bh=TA+YjaFzbIJ3QWx6+XPLwyJ47JqlFrfEdxMALTCLQuo=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Gmd649LWMa9BIycogwlC65Tv9kv359Vtw5maO9IRWGXjFvkTpsmyBZdwU1RW1SDEVCun/30oLCQo0hvly6aBVkXMuaC+rCyoydfkmZNa96u2yfnxc+z0oRyabg8cWskgBW8CsxC3Be4824OlZSXXs2LeYo+MwXfIs/2wir2o4LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XkPLv0QdFz20pNZ;
-	Thu,  7 Nov 2024 09:17:27 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9B3961402E2;
-	Thu,  7 Nov 2024 09:18:34 +0800 (CST)
-Received: from [10.67.110.237] (10.67.110.237) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Nov 2024 09:18:34 +0800
-Subject: Re: [PATCH] crypto: inside-secure - Fix the return value of
- safexcel_xcbcmac_cra_init()
-To: Antoine Tenart <atenart@kernel.org>, <davem@davemloft.net>,
-	<herbert@gondor.apana.org.au>, <pliem@maxlinear.com>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241031112755.2949815-1-lihuafei1@huawei.com>
- <173082242323.5505.14169181853894683603@kwain>
-From: Li Huafei <lihuafei1@huawei.com>
-Message-ID: <b4fd8b58-1736-d2ef-0c81-6cb97a7987d4@huawei.com>
-Date: Thu, 7 Nov 2024 09:18:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+	s=arc-20240116; t=1730942540; c=relaxed/simple;
+	bh=yzUTunPGacOP0P5ML0vQADsd0Woqg4nvGKIEC5mNjWE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cbL4EvzGdLkZ9J0b/RxcS+cYWGFVY5HffZNwtAGEBjUTBz4X5xR32IYV1O4rXgC9Gc2rVhiatwpAcEJTU+2ETkJkhmhSLOjfB66snKpNTcvht1NsF3CaNrbVxsAi80FLmmae9rtDEIdDIlBzNQKVfOEJ40RTUA2QrDCRFxZEfpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XkPS74Y0hz4f3kKt;
+	Thu,  7 Nov 2024 09:21:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7E5491A018C;
+	Thu,  7 Nov 2024 09:22:12 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCXc4dBFixn_B1EBA--.54545S3;
+	Thu, 07 Nov 2024 09:22:11 +0800 (CST)
+Subject: Re: [PATCH 6.6 28/28] maple_tree: correct tree corruption on spanning
+ store
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: stable@vger.kernel.org, gregkh@linuxfoundation.org,
+ harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
+ alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
+ airlied@gmail.com, daniel@ffwll.ch, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+ hughd@google.com, willy@infradead.org, sashal@kernel.org,
+ srinivasan.shanmugam@amd.com, chiahsuan.chung@amd.com, mingo@kernel.org,
+ mgorman@techsingularity.net, chengming.zhou@linux.dev,
+ zhangpeng.00@bytedance.com, chuck.lever@oracle.com,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ maple-tree@lists.infradead.org, linux-mm@kvack.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+ <20241024132225.2271667-1-yukuai1@huaweicloud.com>
+ <20241024132225.2271667-13-yukuai1@huaweicloud.com>
+ <7740a098-fe11-48f1-a693-df81ef769f08@lucifer.local>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <b677017c-81fb-0f3d-22b6-34d93c59942a@huaweicloud.com>
+Date: Thu, 7 Nov 2024 09:22:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <173082242323.5505.14169181853894683603@kwain>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf500004.china.huawei.com (7.202.181.242)
+In-Reply-To: <7740a098-fe11-48f1-a693-df81ef769f08@lucifer.local>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXc4dBFixn_B1EBA--.54545S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFWUAw4kuF1kGw1kXFW8JFb_yoW5Krykpa
+	yDGFWakr4DtF1xuF1vk3y0vas0y3s5tFWrJry5Kw10yF98tF9IqF9Y9w1YvFZ8uw4UGr1I
+	vFWYvanrCanayFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-
-On 2024/11/6 0:00, Antoine Tenart wrote:
-> Quoting Li Huafei (2024-10-31 12:27:55)
->> The commit 320406cb60b6 ("crypto: inside-secure - Replace generic aes
->> with libaes") replaced crypto_alloc_cipher() with kmalloc(), but did not
->> modify the handling of the return value. When kmalloc() returns NULL,
->> PTR_ERR_OR_ZERO(NULL) returns 0, but in fact, the memory allocation has
->> failed, and -ENOMEM should be returned.
->>
->> Fixes: 320406cb60b6 ("crypto: inside-secure - Replace generic aes with libaes")
->> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+ÔÚ 2024/11/06 23:02, Lorenzo Stoakes Ð´µÀ:
+> On Thu, Oct 24, 2024 at 09:22:25PM +0800, Yu Kuai wrote:
 > 
-> Acked-by: Antoine Tenart <atenart@kernel.org>
-> 
-> Thanks!
-> 
-
-Thank you for reviewing.
-
->> ---
->>  drivers/crypto/inside-secure/safexcel_hash.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+>> index 5328e08723d7..c57b6fc4db2e 100644
+>> --- a/lib/maple_tree.c
+>> +++ b/lib/maple_tree.c
+>> @@ -2239,6 +2239,8 @@ static inline void mas_node_or_none(struct ma_state *mas,
 >>
->> diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
->> index e17577b785c3..f44c08f5f5ec 100644
->> --- a/drivers/crypto/inside-secure/safexcel_hash.c
->> +++ b/drivers/crypto/inside-secure/safexcel_hash.c
->> @@ -2093,7 +2093,7 @@ static int safexcel_xcbcmac_cra_init(struct crypto_tfm *tfm)
->>  
->>         safexcel_ahash_cra_init(tfm);
->>         ctx->aes = kmalloc(sizeof(*ctx->aes), GFP_KERNEL);
->> -       return PTR_ERR_OR_ZERO(ctx->aes);
->> +       return ctx->aes == NULL ? -ENOMEM : 0;
->>  }
->>  
->>  static void safexcel_xcbcmac_cra_exit(struct crypto_tfm *tfm)
->> -- 
->> 2.25.1
+>>   /*
+>>    * mas_wr_node_walk() - Find the correct offset for the index in the @mas.
+>> + *                      If @mas->index cannot be found within the containing
+>> + *                      node, we traverse to the last entry in the node.
+>>    * @wr_mas: The maple write state
+>>    *
+>>    * Uses mas_slot_locked() and does not need to worry about dead nodes.
+>> @@ -3655,7 +3657,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+>>   	return true;
+>>   }
 >>
+>> -static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+>> +static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
+>>   {
+>>   	struct ma_state *mas = wr_mas->mas;
+>>
+>> @@ -3664,11 +3666,9 @@ static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+>>   		wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
+>>   						  mas->offset);
+>>   		if (ma_is_leaf(wr_mas->type))
+>> -			return true;
+>> +			return;
+>>   		mas_wr_walk_traverse(wr_mas);
+>> -
+>>   	}
+>> -	return true;
+>>   }
+>>   /*
+>>    * mas_extend_spanning_null() - Extend a store of a %NULL to include surrounding %NULLs.
+>> @@ -3899,8 +3899,8 @@ static inline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
+>>   	memset(&b_node, 0, sizeof(struct maple_big_node));
+>>   	/* Copy l_mas and store the value in b_node. */
+>>   	mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
+>> -	/* Copy r_mas into b_node. */
+>> -	if (r_mas.offset <= r_mas.end)
+>> +	/* Copy r_mas into b_node if there is anything to copy. */
+>> +	if (r_mas.max > r_mas.last)
+>>   		mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
+>>   			   &b_node, b_node.b_end + 1);
+>>   	else
+>> --
+>> 2.39.2
+>>
+> 
+> This is a good example of where you've gone horribly wrong, this relies on
+> 31c532a8af57 ("maple_tree: add end of node tracking to the maple state") which
+> is not in 6.6.
+> 
+> You reverted (!!) my backported patch for this that _does not require this_
+> only to pull in 31c532a8af57 in order to apply the upstream version of my
+> fix over that.
+> 
+> This is totally unnecessary and I can't see why _on earth_ you would need
+> 31c532a8af57.
+> 
+> You need to correctly identify what patches need to be backported and _fix
+> merge conflicts_ accordingly, like I did with the patch that you decided to
+> revert.
+> 
+> In the kernel it is absolutely unacceptable to arbitrarily backport huge
+> amounts of patches you don't understand in order to avoid merge conflicts,
+> you may be breaking all kinds of things without realising.
+> 
+> You have to find the _minimal_ change and _fix merge conflicts_.
+
+Thanks for the suggestions, I do understand, however, I'll just give up
+this because I'm not confident to fix confilcts for maple tree. Other
+folks will have to this if they care about this cve for v6.6.
+> 
+> Stable is not a playground, it's what millions (billions?) of kernels rely
+> upon.
+> 
+> In any case, I think Liam's reply suggests that we should be looking at
+> maybe 1 thing to backport? If we even need to?
+
+Keep using xarray for patch 27 is wrong, I think. xarray is 32-bit and
+if the offset overflow, readdir will found nothing, this is more severe
+than the orignal cve.
+> 
+> Please in future be more cautious, and if you are unsure how to proceed,
+> cc- the relevant maintainers (+ all authors of patches you intend to
+> backport/revert) in an RFC. Thanks.
+
+Of course.
+
+Thanks,
+Kuai
+
+> 
 > .
 > 
+
 
