@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-400573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D909C0F7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:57:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC209C0F7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E726C1C2290A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:57:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 699D01C228B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179A9217F47;
-	Thu,  7 Nov 2024 19:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EE3217F51;
+	Thu,  7 Nov 2024 19:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mi+CeQPx"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I0i3ZjBA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124B6212647;
-	Thu,  7 Nov 2024 19:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B76E185B56;
+	Thu,  7 Nov 2024 19:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731009432; cv=none; b=WUvZrVFHtuXF0GOAYoiGn2bjl8i4qzmJdfC3VJFDqgY0hTWF8dbfqwicxkNDHqEBrATd5qt/jKjHAMMQ9WStxlhjiAigG1bVkiQnGz836TnZcJX5yNgNBvhVn9aNmZi6pA54ku51OQJy7FioGR/jgJfgmtIBn8z5VTDT4DnX4ws=
+	t=1731009576; cv=none; b=WVNx48IIT014VPXASGvyG/8wrHyilsTX0URRMdVVMB2JOQHhaISe8zvdnvoZp1rrYa0eOlp8nvRxjzEno2ymMsdiNeXVgoxcfMl4Cgk8OO+ulpjRuxtMAuEncdMy1aOoY+I2jmRH0Nx4jTtuMRVPyF9+WTFhcSUxpsz28zf6FSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731009432; c=relaxed/simple;
-	bh=BKWOZyhPqGJkAHWy1pq16mZS1iO2g6Wx9wjSOBnY9zM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bF0SfJJwKDB0tCNr5Efm0Od02qYB3r77u1jt7qVGruUTsPVL2SCeALAADae2rfQSWf+89ARM9icx0yYgIEsGys2gpF2FQ1UlbXfmDkWFcTQXaJEEQbwQVziOrntJMuwHPNgkVduY1Li9G2MAbBm6NXPHoKDUrdGviYZUKHqsN9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mi+CeQPx; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso1083112a12.3;
-        Thu, 07 Nov 2024 11:57:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731009430; x=1731614230; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=an2BYNiIr73igzGk85ed/xzWIMGUOMf6NrRC8wQUZs8=;
-        b=Mi+CeQPx1KUprxWtNzto6GxcoyBnKjPnJhWgrgWN+8RVMUBqj++3bIdHdmurqrAAfW
-         otkmc4W0yd2ePhC8qSRxDlzGfAMuz2IJoafuj688yP2AIA/tlR4tu2CuBIQ5WZNqDl1P
-         dN2k2S7PNnOkHt/ONmVJPlmNCTROJtDKVvaali2CxHXDA5X2pCXjUZ4nL3Sd67Sv+kcp
-         e4POmaIpoiKo491Q++83EK9ZPYBpKNyTYbzW/5cdahisC4laBBYtiluBO4ErALF9YUre
-         WpkgQRlnjPoKsy6PAw7E9uETRHoWfg63K9z7+hDDpZ6lwd6Mj9m6dgwwPRdPiQGRRAhG
-         K2/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731009430; x=1731614230;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=an2BYNiIr73igzGk85ed/xzWIMGUOMf6NrRC8wQUZs8=;
-        b=Kn3OaGc2BZB4HYbujyJBK435iC0+h/MoFf9q0A4IKyOphBg4QRZ+9g0kzLlEiJsY6R
-         KxGWs+Z+dE2Qypi1owGHyCKFtx5nNWWok2Gev1htbSEV/BZv6IJmgc0/lC2uICgK9wjz
-         I9WIoD+cVKtvhMXJwR6t74IpHFtwSbedPI9vWDXA91+4W0JzJd/4d7oebjIA9N46vkGo
-         d50TDkFQboNZnUlhXW7TQ7ZFBnq8TeW7TjNA0pKO/IgaMJqz31MnYxUgo3UyybL7zmZm
-         J4g3bhsB+BiTJvjwxPzpI2Mpo/DT2v4Bf+1X8sBjKZQkgeMF1U48GApipNvNqkasRRZN
-         EHNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjw65a6lGcuEGl0G/96aJglSLf22B4ltEjw9Vw7OzKDcjiCzB+7HUY5LEaAbhx5rCH1NfXhlID@vger.kernel.org, AJvYcCVIr52N6EwXkzW7bD70OBp7gYDot0S2VJsb0DjuXak9lDpuYUc6u++PRvkxCi9qInCdduf5mN6kV4RoxNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5iFTBa3nNtPHWkcDPguMIwAXhm2RZyBZ/lZOn5vdmqHiL75K9
-	WSguhuX+HXYl6wQFQU5ScA/EVpbPJkLVXz6ByePfE5FZvaOQJXb1
-X-Google-Smtp-Source: AGHT+IGWKkyQMuhl6Kr/q78tAwrtwpl4iyFS4D6+f3uYixcQQxdahlH8PTYfYlM1ueNiXKuIDzqkvg==
-X-Received: by 2002:a05:6a20:244f:b0:1d7:3d:6008 with SMTP id adf61e73a8af0-1dc2292f687mr306169637.13.1731009429534;
-        Thu, 07 Nov 2024 11:57:09 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a55bf59sm3965802a91.29.2024.11.07.11.57.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 11:57:08 -0800 (PST)
-Message-ID: <c4d2f6eb-c29c-4f1f-a5ec-217c12d29051@gmail.com>
-Date: Thu, 7 Nov 2024 11:57:07 -0800
+	s=arc-20240116; t=1731009576; c=relaxed/simple;
+	bh=rijvYVmFp7ynL2m4/4rsZld4yyWRMNxMrbcGtzDTqgY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dByNdBrFDyn+lCFEo27Bbz5NSfASq0CrS8FjrOpEMfERwRcZ6fnxqb4IocZSUgIWppILNswFSTgQIu4Drl9rBN2N3HbDAg8ZVcfcJ/UvS1moM7uBsT8mnakPVR1ZE2CsvMoLVbUny20rWI93n0SujUWx9cdQMRYgHnmLOpHKkw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I0i3ZjBA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7HLZ1E002419;
+	Thu, 7 Nov 2024 19:58:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3QZKuqF/aG6/NjKxZLSKoy5isRvzlW/MuReXxPZweKY=; b=I0i3ZjBAW38wBua+
+	PxKmEfSvnqcSt7Xc8+cc2VXXirbftuMMNV+QNYWZezzm6IJi8LOPnrrlr/33qnhH
+	Cd+rm+7JqzIPKvckDtr+SyfBnfyof2r4flxB5pSbEd6uP1xlgCx5xgntAd/CFJOk
+	0Hr0pniozWvczjdvZbmZBwz6QcICYg68W5LfRAIlrcKXwkbvG9DljPXL2blkwElX
+	EBc3twYma/z5oz7KqPkF90WQogpeVTP0RMLt70SJPQ2fKJLms2Jvocku8CH3EoI/
+	gjDJu0Y0zPbCTETFQJ+NzyzxPxVKzH8HB062giw5dOMmg8mqlpA/QgnHzoD25iWv
+	wRUA7Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r07hp0e0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 19:58:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7JwwJR020827
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 19:58:58 GMT
+Received: from [10.110.42.132] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
+ 11:58:57 -0800
+Message-ID: <51fbe076-fb80-4162-ab76-e2f8b31696ae@quicinc.com>
+Date: Thu, 7 Nov 2024 11:58:56 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,77 +64,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hagar@microsoft.com, broonie@kernel.org
-References: <20241107064547.006019150@linuxfoundation.org>
+Subject: Re: [PATCH] net: qrtr: mhi: synchronize qrtr and mhi preparation
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Hemant Kumar
+	<quic_hemantk@quicinc.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        "Maxim
+ Kochetkov" <fido_max@inbox.ru>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        "Bjorn Andersson" <bjorn.andersson@oss.qualcomm.com>,
+        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bhaumik Bhatt <bbhatt@codeaurora.org>,
+        "Johan
+ Hovold" <johan@kernel.org>
+References: <20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com>
+ <20241107112734.v2ik6ipnebetjene@thinkpad>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
-In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20241107112734.v2ik6ipnebetjene@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5iAnTAfCUqr8tjwAZlwDrPoggZfeUV_2
+X-Proofpoint-ORIG-GUID: 5iAnTAfCUqr8tjwAZlwDrPoggZfeUV_2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxlogscore=999 malwarescore=0 phishscore=0 adultscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070157
 
-On 11/6/24 22:47, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.7 release.
-> There are 249 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 09 Nov 2024 06:45:18 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.7-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+On 11/7/2024 3:27 AM, Manivannan Sadhasivam wrote:
+> On Mon, Nov 04, 2024 at 05:29:37PM -0800, Chris Lew wrote:
+>> From: Bhaumik Bhatt <bbhatt@codeaurora.org>
+>>
+>> The call to qrtr_endpoint_register() was moved before
+>> mhi_prepare_for_transfer_autoqueue() to prevent a case where a dl
+>> callback can occur before the qrtr endpoint is registered.
+>>
+>> Now the reverse can happen where qrtr will try to send a packet
+>> before the channels are prepared. Add a wait in the sending path to
+>> ensure the channels are prepared before trying to do a ul transfer.
+>>
+>> Fixes: 68a838b84eff ("net: qrtr: start MHI channel after endpoit creation")
+>> Reported-by: Johan Hovold <johan@kernel.org>
+>> Closes: https://lore.kernel.org/linux-arm-msm/ZyTtVdkCCES0lkl4@hovoldconsulting.com/
+>> Signed-off-by: Bhaumik Bhatt <bbhatt@codeaurora.org>
+>> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> 
+> I think we need to have the check in 'mhi_queue()' instead of waiting for the
+> channels in client drivers. Would it be a problem if qrtr returns -EAGAIN from
+> qcom_mhi_qrtr_send() instead of waiting for the channel?
+> 
+
+The packet would get dropped which usually ends up causing some 
+functional problem down the line.
+
+I can add retry handling for EAGAIN in qcom_mhi_qrtr_send().
+
+Downstream we had also seen some issue where we received EAGAIN because 
+the ring buffer was full. I think we saw issues doing a dumb retry so we 
+triggered the retry on getting a ul_callback().
+
+We would need to differentiate between this kind of EAGAIN from a 
+ringbuf full EAGAIN.
+
+> - Mani
+> 
+>> ---
+>>   net/qrtr/mhi.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/net/qrtr/mhi.c b/net/qrtr/mhi.c
+>> index 69f53625a049..5b7268868bbd 100644
+>> --- a/net/qrtr/mhi.c
+>> +++ b/net/qrtr/mhi.c
+>> @@ -15,6 +15,7 @@ struct qrtr_mhi_dev {
+>>   	struct qrtr_endpoint ep;
+>>   	struct mhi_device *mhi_dev;
+>>   	struct device *dev;
+>> +	struct completion prepared;
+>>   };
+>>   
+>>   /* From MHI to QRTR */
+>> @@ -53,6 +54,10 @@ static int qcom_mhi_qrtr_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
+>>   	if (skb->sk)
+>>   		sock_hold(skb->sk);
+>>   
+>> +	rc = wait_for_completion_interruptible(&qdev->prepared);
+>> +	if (rc)
+>> +		goto free_skb;
+>> +
+>>   	rc = skb_linearize(skb);
+>>   	if (rc)
+>>   		goto free_skb;
+>> @@ -85,6 +90,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
+>>   	qdev->mhi_dev = mhi_dev;
+>>   	qdev->dev = &mhi_dev->dev;
+>>   	qdev->ep.xmit = qcom_mhi_qrtr_send;
+>> +	init_completion(&qdev->prepared);
+>>   
+>>   	dev_set_drvdata(&mhi_dev->dev, qdev);
+>>   	rc = qrtr_endpoint_register(&qdev->ep, QRTR_EP_NID_AUTO);
+>> @@ -97,6 +103,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
+>>   		qrtr_endpoint_unregister(&qdev->ep);
+>>   		return rc;
+>>   	}
+>> +	complete_all(&qdev->prepared);
+>>   
+>>   	dev_dbg(qdev->dev, "Qualcomm MHI QRTR driver probed\n");
+>>   
+>>
+>> ---
+>> base-commit: 1ffec08567f426a1c593e038cadc61bdc38cb467
+>> change-id: 20241104-qrtr_mhi-dfec353030af
+>>
+>> Best regards,
+>> -- 
+>> Chris Lew <quic_clew@quicinc.com>
+>>
+> 
 
