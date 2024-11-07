@@ -1,94 +1,71 @@
-Return-Path: <linux-kernel+bounces-400211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64D99C0A71
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:52:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E9F9C0A72
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:52:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A0B3B22C2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:52:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3DE6B22FAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CE2215C43;
-	Thu,  7 Nov 2024 15:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cu9+qsIu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6551215F41;
+	Thu,  7 Nov 2024 15:52:08 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C7C2144A5;
-	Thu,  7 Nov 2024 15:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493D7215009;
+	Thu,  7 Nov 2024 15:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730994721; cv=none; b=UGIPSem/Clrbe/lXf9EWuPE3HTZRHEflmUnMJwHp5yy7Cl5rnvQ/f0gI18l0KDtc2XwbWF7k5505hOLeRp9AlomYbwDKqnxVgqQxwpTkkUdGGpOmcHGzXdaBN0ZDtMxrb+VxN/GwgsofJ/hHiUsdsOYKazFyeG06d0Nj5rH3VT8=
+	t=1730994728; cv=none; b=DlQPWjZuBFubCSauL8jIerMy7ymlYH8xiLosPVWYPHwGMJuWF3NoKorM7GL+JtJ8pbpmiNFm2i3QgN2n/kasW+V26uwRgmY5MEBtXdJXrerjjG7n/l3Jl262neYz7rhaD8TMCaGPYCplSzgKb5eKnCjzlHa6SJ7UtcHaezeXmhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730994721; c=relaxed/simple;
-	bh=f+KXBENsmoNNMukSkOnmzKaUFO1dC8kFhS5KRSuuJHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qvqq8KPco4dv2HsYjvlkoZkMrNg6vdBsclshBuDZiB6TgCIfegGt9+EjO9Owmjk1AzFGkU1qEi8B1lpt+qdeKAb7+jxPip8DxHckoSeQ/lCTlvazSO0WMJKE2ZNFXNdIywH4SulLURYRkx+ozK5OERoUMneorrurKRgD3u9gLUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cu9+qsIu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD88C4CECC;
-	Thu,  7 Nov 2024 15:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730994721;
-	bh=f+KXBENsmoNNMukSkOnmzKaUFO1dC8kFhS5KRSuuJHE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cu9+qsIuGgslK6gaMJvw+dFv1QvgkBuNJ4Jr3P+99lqd6liN9qLEgm/tfg/C2rm42
-	 icW5Ciw2mhgSJzfX5/dpieDZTsKuBEArYy89skFRpbo09M8i0OE4auiBr9GRLO+cV3
-	 QBkhVmgdIZZwl91Sp2vbDGEAWaJT5yTMuKIdzA68Y0ljvQOFZlY/N39GOC/kKKy3gH
-	 bdgpln+rWvgLKttCeGheEb8FBZAt0jdOGLIrSeA00GYWlKudCrwYZJ/qtXaygeVNn8
-	 C+wDfnkeqaXOHfEZwn/xwdzEgQKVOvOwRFsXr27/0hCNiJ139lKDyKvp2sqxnw26q7
-	 bXyMPEMGx56YQ==
-Date: Thu, 7 Nov 2024 09:51:59 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 01/10] dt-bindings: soc: mobileye: set `#clock-cells =
- <1>` for all compatibles
-Message-ID: <173099471894.2769888.8233833580662075395.robh@kernel.org>
-References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
- <20241106-mbly-clk-v2-1-84cfefb3f485@bootlin.com>
+	s=arc-20240116; t=1730994728; c=relaxed/simple;
+	bh=rzHw7h3FqPIbEuZPFVQQ+0e+1YTCpOWbB2QLfeOTCH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E8qLx4hVC7ZNRnIyGg0NNqEIX/IiW4kobij0DfZ0tW3YAsDtpOlVaUL1FM1UjwNCS/3u9ZS8XjSFYkeog/EWrdvpjCyOhpLnBceKdvKKOwwUKdwq6W6arfU2oAkn6mtlomUxsyUrV79dDpAUhiqqy1aAIy7VCV4QyL9yT1LZPng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3387C4CECC;
+	Thu,  7 Nov 2024 15:52:05 +0000 (UTC)
+Date: Thu, 7 Nov 2024 10:52:11 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Marco Elver <elver@google.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Kees Cook
+ <keescook@chromium.org>, Masami Hiramatsu <mhiramat@kernel.org>, Andrew
+ Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Dmitry
+ Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v2 1/2] tracing: Add task_prctl_unknown tracepoint
+Message-ID: <20241107105211.3275831b@gandalf.local.home>
+In-Reply-To: <CANpmjNPWLOfXBMYV0_Eon6NgKPyDorTxwS4b67ZKz7hyz5i13A@mail.gmail.com>
+References: <20241107122648.2504368-1-elver@google.com>
+	<5b7defe4-09db-491e-b2fb-3fb6379dc452@efficios.com>
+	<CANpmjNPWLOfXBMYV0_Eon6NgKPyDorTxwS4b67ZKz7hyz5i13A@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106-mbly-clk-v2-1-84cfefb3f485@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 7 Nov 2024 16:46:47 +0100
+Marco Elver <elver@google.com> wrote:
 
-On Wed, 06 Nov 2024 17:03:52 +0100, Théo Lebrun wrote:
-> Some compatibles expose a single clock. For those, we used to let them
-> using `#clock-cells = <0>` (ie <&olb> reference rather than <&olb 0>).
+> > My concern is that we start adding tons of special-case
+> > tracepoints to the implementation of system calls which
+> > are redundant with the sys_enter/exit tracepoints.
+> >
+> > Why favor this approach rather than hooking on sys_enter/exit ?  
 > 
-> Switch away from that: enforce a cell for all compatibles. This is more
-> straight forward, and avoids devicetree changes whenever a compatible
-> goes from exposing a single clock to multiple ones. Also, dt-bindings
-> get simpler.
-> 
-> *This is an ABI break*. Change it while EyeQ5 platform support is at its
-> infancy, without any user. More clocks might hide in each OLB as some
-> registers are still unknown.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
->  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 24 +---------------------
->  1 file changed, 1 insertion(+), 23 deletions(-)
-> 
+> It's __extremely__ expensive when deployed at scale. See note in
+> commit description above.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Agreed. The sys_enter/exit trace events make all syscalls go the slow path,
+which can be quite expensive.
 
+-- Steve
 
