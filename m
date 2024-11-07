@@ -1,209 +1,152 @@
-Return-Path: <linux-kernel+bounces-400709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBF89C1143
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:49:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABDF9C1146
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:50:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098AA1F24248
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:49:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F39E1F233FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169BC218934;
-	Thu,  7 Nov 2024 21:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D0021892F;
+	Thu,  7 Nov 2024 21:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="E8EmcCXB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KvuT9W+s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD3B215C75;
-	Thu,  7 Nov 2024 21:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C57213EC7
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 21:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731016130; cv=none; b=lTuc0CAtL+PBxlt8o2W4HT9gUdVMuvhxzVkJKETwhYTWUc2y9ESKcYhKjsg8IvK6Q3Bl1WuELpZt5DLjM416625vcgvbU1cZySqxt3cqmNm+jDItSU6plwkkpsfxg64q8xBcdUWGxYS69oowCgOHvujt4ZX4tHgcQebWb1Jpe4A=
+	t=1731016221; cv=none; b=Q4d/H46VfloVGdkB49xHgixfZmYOLRKNObAQgnrHYZBUiujW+uZ9OiMQY6QTPaTWRQTbaTAWQHU8AAEpY/jWrMcCAU8OhuZybJ9WaSNLNYgtq3D+c/kMpsK9QrGukZY7MwqDjqMfR/Y9xStGYcn3F5PX7E3EFVqchWmigXKQBwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731016130; c=relaxed/simple;
-	bh=PeQlXo2Ahx/xh5UvvNM1rbtLq5tpIaIE8VYhMvhm39Q=;
+	s=arc-20240116; t=1731016221; c=relaxed/simple;
+	bh=pst33w5MBGaHwFI2CZYkiWO99oANTIkX7lPh4MyoqE4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ua0jbqfbcXAqqvMZqg/49CocAKeBj3qafVs0i1+Y2idVdUOJfQ3UGCoxW+M4zGif6lIKkp8TyFkM44AmazsRoevqtVBw5gw3+A5yIID5auaeVvVD2adEPob8JQ/KbSrdiKphhAahdesJXOSiI/7t4lmUHqFgs1y8zf3HtDOmEps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=E8EmcCXB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4488222A;
-	Thu,  7 Nov 2024 22:48:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1731016117;
-	bh=PeQlXo2Ahx/xh5UvvNM1rbtLq5tpIaIE8VYhMvhm39Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E8EmcCXBPQLn2G8m3bndqJh2vq27Fal3Jcdai/2AjpmVWno6i5K2w3/N6VeEwOf6M
-	 WQk108+cZS5u+DDvdCXijHMwhSNeAcVN8zYfYIezrks9WwCkx3/ZZ6u0g7jRvdDo/m
-	 PdiMnGoa0t3pYs/9rSA4e7/Fqcgv3qw0HIAl6jt4=
-Date: Thu, 7 Nov 2024 23:48:39 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v6] media: uvcvideo: Fix crash during unbind if gpio unit
- is in use
-Message-ID: <20241107214839.GG31474@pendragon.ideasonboard.com>
-References: <20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=unVhbezMpBmvAE3TrA0QeCW12t/bLXQRVzZk3yrzi/rgfHe6D4Zyrrf6wllG637+2r9BvnUP+Na2ZOSIHbK6Ogy1zsaIhWHIXE/PFLI8SiygxbimNtTN9JUgW6h8JFYbvVnInDjsIh2xCW5vFknhklvH3ymoWl9/rjLDtXp2FC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KvuT9W+s; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731016219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l18LLKMDfqxNEVCeijQW2WIw0xKoPj/t5wcWlYhyNaQ=;
+	b=KvuT9W+sBIQcOv35KNv3pQwfIhKorpiMaNtlZ0XdGIqrHQRdRMBusKJdJKqKoifsySlQAA
+	up6ObSlWY21IAXXpomZbzvy8F9GcZzwmpr/C5XfHg4CZpOu0UhOjAPmbQrBFi7bdVDGzRE
+	o9MprPjdnHMj3DMawHH+Cr26n/19nig=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-299-T-bzoMXXOmGpLHwZxCUpMA-1; Thu, 07 Nov 2024 16:50:17 -0500
+X-MC-Unique: T-bzoMXXOmGpLHwZxCUpMA-1
+X-Mimecast-MFC-AGG-ID: T-bzoMXXOmGpLHwZxCUpMA
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c934295846so983839a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 13:50:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731016217; x=1731621017;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l18LLKMDfqxNEVCeijQW2WIw0xKoPj/t5wcWlYhyNaQ=;
+        b=gM+SQx2Mw2kTwzu6gXjlFbtORLE2EbTHD8HeQ6CkFWFLUQtLC2PiayxPHjSWFxtfbH
+         lyxr0RScrTdj99TCyQMYzwLolONYyXeLuHH3k0fv+vwbSdtnoJb6d8y93VvDHHa6zsLr
+         uhlhKbFsXm2SLGB0mMxhDrfor1EbTf3GLG0QOd3TySx0mu9iFDSO9f/0+O420hGRtzej
+         mEiBShm+KpieEPFWQDB5c2AK9HR3xcBCzjewxyhfeHq9kabGBnUwlMtNgZNFIl8zH+8x
+         9zFnfwzyRV071jbVzU6Ymy3xioznlxpA6kovCvi1XxrPpayd4un2iUppwtLNJ3WCNI4t
+         jmRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOkBmjZ6lTL1ulE9j7PHCT6fqTaBNzUcUiGxGSuzsCcHNG9XvjiN6wDvvxKBB9xnpfKYAa05RAMoPmhOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1NdFuoQbRtazliGOPxCacp1QHAvdAT0wwmH3UjW+/MDJIdbau
+	qPFf/rMPxFtoSaYZbD6S/vTl1z/WXIHDkDkLwx4zAxjOmaH70tzGxpAFWIdkVlGV4ljUqfByhCQ
+	qsysJQ/ZUOrKPrU/hDmHccSonT9MPaglmMXo2NKrV/6Zj4Z0AWLCa34hQwjejJA==
+X-Received: by 2002:a05:6402:2744:b0:5cf:c5d:3821 with SMTP id 4fb4d7f45d1cf-5cf0c5d389fmr236606a12.32.1731016216617;
+        Thu, 07 Nov 2024 13:50:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH6nDc50TzAQL4eJHDTWajE9g/rEFVvsViceWaZynJTGUxmlB32dBLzNO6F7e97OIiqtIhyXg==
+X-Received: by 2002:a05:6402:2744:b0:5cf:c5d:3821 with SMTP id 4fb4d7f45d1cf-5cf0c5d389fmr236573a12.32.1731016216212;
+        Thu, 07 Nov 2024 13:50:16 -0800 (PST)
+Received: from redhat.com ([2a02:14f:179:39a6:9751:f8aa:307a:2952])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf08ca5bdesm439054a12.11.2024.11.07.13.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 13:50:14 -0800 (PST)
+Date: Thu, 7 Nov 2024 16:50:06 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Cc: dtatulea@nvidia.com, jasowang@redhat.com, shannon.nelson@amd.com,
+	sashal@kernel.org, alvaro.karsz@solid-run.com,
+	christophe.jaillet@wanadoo.fr, steven.sistare@oracle.com,
+	bilbao@vt.edu, xuanzhuo@linux.alibaba.com, johnah.palmer@oracle.com,
+	eperezma@redhat.com, cratiu@nvidia.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Carlos Bilbao <cbilbao@digitalocean.com>
+Subject: Re: [PATCH v3 1/2] vdpa/mlx5: Set speed and duplex of vDPA devices
+ to UNKNOWN
+Message-ID: <20241107164932-mutt-send-email-mst@kernel.org>
+References: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
+ <20240904151115.205622-2-carlos.bilbao.osdev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org>
+In-Reply-To: <20240904151115.205622-2-carlos.bilbao.osdev@gmail.com>
 
-Hi Ricardo,
+On Wed, Sep 04, 2024 at 10:11:14AM -0500, Carlos Bilbao wrote:
+> From: Carlos Bilbao <cbilbao@digitalocean.com>
+> 
+> Initialize the speed and duplex fields in virtio_net_config to UNKNOWN.
+> This is needed because mlx5_vdpa vDPA devices currently do not support the
+> VIRTIO_NET_F_SPEED_DUPLEX feature which reports speed and duplex.
 
-Thank you for the patch.
+I see no logic here. Without this feature bit, guests will not read
+this field, why do we suddenly need to initialize it?
 
-On Wed, Nov 06, 2024 at 08:36:07PM +0000, Ricardo Ribalda wrote:
-> We used the wrong device for the device managed functions. We used the
-> usb device, when we should be using the interface device.
+> Add
+> needed helper cpu_to_mlx5vdpa32() to convert endianness of speed.
 > 
-> If we unbind the driver from the usb interface, the cleanup functions
-> are never called. In our case, the IRQ is never disabled.
-> 
-> If an IRQ is triggered, it will try to access memory sections that are
-> already free, causing an OOPS.
-> 
-> We cannot use the function devm_request_threaded_irq here. The devm_*
-> clean functions may be called after the main structure is released by
-> uvc_delete.
-> 
-> Luckily this bug has small impact, as it is only affected by devices
-> with gpio units and the user has to unbind the device, a disconnect will
-> not trigger this error.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
 > ---
-> Changes in v6:
-> - Rename cleanup as deinit
-> - Move cleanup to the beginning of the uvc_unregister_video.
-> - Fix commit message.
-> - Link to v5: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v5-1-8623fa51a74f@chromium.org
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> Changes in v5:
-> - Revert non refcount, that belongs to a different set
-> - Move cleanup to a different function
-> - Link to v4: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org
-> 
-> Changes in v4: Thanks Laurent.
-> - Remove refcounted cleaup to support devres.
-> - Link to v3: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v3-1-c0959c8906d3@chromium.org
-> 
-> Changes in v3: Thanks Sakari.
-> - Rename variable to initialized.
-> - Other CodeStyle.
-> - Link to v2: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org
-> 
-> Changes in v2: Thanks to Laurent.
-> - The main structure is not allocated with devres so there is a small
->   period of time where we can get an irq with the structure free. Do not
->   use devres for the IRQ.
-> - Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 28 +++++++++++++++++++++-------
->  drivers/media/usb/uvc/uvcvideo.h   |  1 +
->  2 files changed, 22 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index a96f6ca0889f..cd13bf01265d 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
->  	struct gpio_desc *gpio_privacy;
->  	int irq;
->  
-> -	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
-> +	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
->  					       GPIOD_IN);
->  	if (IS_ERR_OR_NULL(gpio_privacy))
->  		return PTR_ERR_OR_ZERO(gpio_privacy);
->  
->  	irq = gpiod_to_irq(gpio_privacy);
->  	if (irq < 0)
-> -		return dev_err_probe(&dev->udev->dev, irq,
-> +		return dev_err_probe(&dev->intf->dev, irq,
->  				     "No IRQ for privacy GPIO\n");
->  
->  	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
-> @@ -1329,15 +1329,27 @@ static int uvc_gpio_parse(struct uvc_device *dev)
->  static int uvc_gpio_init_irq(struct uvc_device *dev)
->  {
->  	struct uvc_entity *unit = dev->gpio_unit;
-> +	int ret;
->  
->  	if (!unit || unit->gpio.irq < 0)
->  		return 0;
->  
-> -	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
-> -					 uvc_gpio_irq,
-> -					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
-> -					 IRQF_TRIGGER_RISING,
-> -					 "uvc_privacy_gpio", dev);
-> +	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
-> +				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
-> +				   IRQF_TRIGGER_RISING,
-> +				   "uvc_privacy_gpio", dev);
-> +
-> +	unit->gpio.initialized = !ret;
-> +
-> +	return ret;
-> +}
-> +
-> +static void uvc_gpio_deinit(struct uvc_device *dev)
-> +{
-> +	if (!dev->gpio_unit || !dev->gpio_unit->gpio.initialized)
-> +		return;
-> +
-> +	free_irq(dev->gpio_unit->gpio.irq, dev);
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> index b56aae3f7be3..41ca268d43ff 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -173,6 +173,11 @@ static __virtio16 cpu_to_mlx5vdpa16(struct mlx5_vdpa_dev *mvdev, u16 val)
+>  	return __cpu_to_virtio16(mlx5_vdpa_is_little_endian(mvdev), val);
 >  }
 >  
->  /* ------------------------------------------------------------------------
-> @@ -1934,6 +1946,8 @@ static void uvc_unregister_video(struct uvc_device *dev)
->  {
->  	struct uvc_streaming *stream;
->  
-> +	uvc_gpio_deinit(dev);
+> +static __virtio32 cpu_to_mlx5vdpa32(struct mlx5_vdpa_dev *mvdev, u32 val)
+> +{
+> +	return __cpu_to_virtio32(mlx5_vdpa_is_little_endian(mvdev), val);
+> +}
 > +
->  	list_for_each_entry(stream, &dev->streams, list) {
->  		/* Nothing to do here, continue. */
->  		if (!video_is_registered(&stream->vdev))
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 07f9921d83f2..965a789ed03e 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -234,6 +234,7 @@ struct uvc_entity {
->  			u8  *bmControls;
->  			struct gpio_desc *gpio_privacy;
->  			int irq;
-> +			bool initialized;
->  		} gpio;
->  	};
+>  static u16 ctrl_vq_idx(struct mlx5_vdpa_dev *mvdev)
+>  {
+>  	if (!(mvdev->actual_features & BIT_ULL(VIRTIO_NET_F_MQ)))
+> @@ -3433,6 +3438,13 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
+>  	init_rwsem(&ndev->reslock);
+>  	config = &ndev->config;
 >  
-> 
-> ---
-> base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
-> change-id: 20241031-uvc-crashrmmod-666de3fc9141
+> +	/*
+> +	 * mlx5_vdpa vDPA devices currently don't support reporting or
+> +	 * setting the speed or duplex.
+> +	 */
+> +	config->speed  = cpu_to_mlx5vdpa32(mvdev, SPEED_UNKNOWN);
+> +	config->duplex = DUPLEX_UNKNOWN;
+> +
+>  	if (add_config->mask & BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)) {
+>  		err = config_func_mtu(mdev, add_config->net.mtu);
+>  		if (err)
+> -- 
+> 2.34.1
 
--- 
-Regards,
-
-Laurent Pinchart
 
