@@ -1,176 +1,104 @@
-Return-Path: <linux-kernel+bounces-400372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8309C0CA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:12:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 537769C0CA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:14:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83C8A1C222FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:12:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA756B221EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF9D215C7D;
-	Thu,  7 Nov 2024 17:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD5A2161F3;
+	Thu,  7 Nov 2024 17:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Zy+yXrSi"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uULRFAyY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCE3155398
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730999566; cv=fail; b=mkw8RNN1qeItgmJgRmxHdmrWVfR1gJr4ouLlr3fxzpfC2xPq1at/lznwux4LYzBXGy8pXaYOpwos2wccickcC1T2PB30YdIikkvTq46CbzXJYyxwDPdfvmiOO73DZz0sxItdmX1LxPAceN6Dg0Eu0j3bWCItucX+IhkoEA2oLeo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730999566; c=relaxed/simple;
-	bh=t+lpoD3144d/0924cGE9UwIqrn9yafyZQul9rNKI5oA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GdUw6Y1yIAEIrbm/bYWDebIdQQsFoKRxw+NRqHfPqJdT9oXw0Pad58VVDQpOqLfGcNnruJYndGQUCesEooawv5RH2lSmqjqRHzAD4Ln1WjgoQxKa1insojlGET80WRX73Du6EJLJfRcDYpsGO1D9OIXL/4CDIdlh3GR4GHQpXI0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Zy+yXrSi; arc=fail smtp.client-ip=40.107.94.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x8iyGd3x+0j7yRmra29P6P08WHcLjEPwUtY6zneymoUFbPkDSWHsqn0sXUlaTQBjyQIQz1NrMgDjEJ9UKRR5XNTt901OVf1JxCWenz9imbCEfvNsxS/ntKGsCPNWxX8FZj2A3PdIq3Mux7i6pwm1/4S30lcwnxACq7ecXx0HiWOfeWEeYT79wCugIXEsRCxL+MtkQgG7zNOEwtYPLtJ+9A+vsiuQHsgq1hX71FEDRidhxin0Ki9wUlZC/KlDr0mAhXwM8fFbGlxDvQelQdC0p1P3AW1IlvCCRuwkvvi3h+AG53pBZlyj2e3NOsnnjJUCY2IOLQIk/vh6hLSgwt/WEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=udFC8v0Bf5b9gGwNFNn24f6p4ihimGb6fLkLJ/a5Hqw=;
- b=B2rWiGsmsu1ZeeaJwq++eyJ2DYGmsZd9DrTDVgJLAkRzEtV1nRcYzSYKZ1mOZGX07hoEO2f4tiIdb5WcbUavyJHlQwhUNDjxZS729PYCnuw7aKl+YVWrN9kZFrT87Z/9m5p9/LToqjvBcW5ghIxSy2dSVDS/y3Z6ee1/sgjDkt49kB9CXM+VRDXXEXlbwdDllfjUi5dzRGOjtpkjDiLPvlaI0SY7InjIMeKwn6QLBixsluzoInwLGhVo98MmA9tsPxAQ5+PM98r0fmLcHsq2o+3X/6Pm5FfKDge8aQHFt811/C7fxQYLMMcCaWgFQOXrMqhwsn79YTwklhl0N/UIbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=udFC8v0Bf5b9gGwNFNn24f6p4ihimGb6fLkLJ/a5Hqw=;
- b=Zy+yXrSidxvBxzVhbDpNcUMom230gHd7q1BrJe5G4Oyb91Y1vZT/1HIxzAqm7/Z3aOI/cc6cP81WtzYVe7h+f6AIONaliwmaYLzbB7YHlK8UTyVi96o/SYn68/odDel/8AKbvx6jPuRB1rwk7jmy+LmZjrS1LYndcKkel5ZNAwlObLaix85rLKkgdQjZ3mJV+9cJFQYMYQLoYs1g0kYpOrdtfhbAFpShxnhfBkzInZn0zFoNLgnWEp9eyLxQoPtQ5c4d9JBn5dgvHTnoI/WOvh6Ok1vVlN2+LNZICUAnbXzut+GhaXxJLrX8a3ry1SQ30CYOl2AnCHPzZK5i4pLt7A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by BN5PR12MB9464.namprd12.prod.outlook.com (2603:10b6:408:2ab::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
- 2024 17:12:38 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
- 17:12:38 +0000
-Date: Thu, 7 Nov 2024 13:12:37 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	jean-philippe <jean-philippe@linaro.org>, baolu.lu@linux.intel.com,
-	shamiali2008@gmail.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iommufd: modify iommufd_fault_iopf_enable limitation
-Message-ID: <20241107171237.GA539304@nvidia.com>
-References: <20241028113209.123-1-zhangfei.gao@linaro.org>
- <20241107043711.116-1-zhangfei.gao@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107043711.116-1-zhangfei.gao@linaro.org>
-X-ClientProxiedBy: MN2PR04CA0031.namprd04.prod.outlook.com
- (2603:10b6:208:d4::44) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289EC20EA31;
+	Thu,  7 Nov 2024 17:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730999675; cv=none; b=YFe1y3fOIImFIvachRFvqNMsCawSYl0xq2Mdd5LkfVr6PLs2Qkyg5fy1ESIlX0ugFJgaoyOw0oNmlz+lTGqKXkalSFRy8cx5qeea211bmVq6LegY/vgzRZfw8eKk0+3CKco2qT67rBlM9QVv2yb2zdTz/qrQoCJEiVr/aJcpQik=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730999675; c=relaxed/simple;
+	bh=s8InXNkjz+RkUSdZrAGt/lVrdMO2Ugj4585SCiiIGnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RGtvoDkcM3F1rp/eHbOcBX8qEXONsIfaPoihf5dd7SKtCmQD4fyY+ozHhG7y1tcpG9qLPLpeMMT1wT73b1DEDjqCSuSUbbLXvBMl/fIRQb39aB6aaPe/B8sx5HcQDciMJWfjRfjIsj64dAxPcFtQQ7I/1mADaVrHLSfOczzxF4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uULRFAyY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EBD1C4CECC;
+	Thu,  7 Nov 2024 17:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730999673;
+	bh=s8InXNkjz+RkUSdZrAGt/lVrdMO2Ugj4585SCiiIGnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uULRFAyYrsXZSdU8EBd42H5ClcH6eNbSP+EnWgaSm7492MWFWK3KMnPnhGTIDzQf2
+	 IyfN6k257RmMUOVv1BdgEblo345mSGQ8oD5237eR10/eOfaxAsa4gsZ8jUjXQAzq5D
+	 w/PCSuyFRX4bhW3rErWih/xCW6GM/yk43zoloW6T0ol+pg3aJLO4u0EW1gvsLacc6+
+	 t5crRtPYvbvNhhBwD52rQfLnlKJJ7FVGvAuluQxPKpWyZPxrTjH82pUDfgF4O4ZzwF
+	 eX1rjQcdyd6kJTvNtVqSMq+FDF9MSG4w3/fpnElokHNAC9lOK9sx0NpHvDWKGAHR6F
+	 IjPppmTEvgsmg==
+Date: Thu, 7 Nov 2024 18:14:29 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: dev: Fix memory leak when underlying adapter does
+ not support I2C
+Message-ID: <jc76qean5mqxba4nh5qdocxhl5aa7r4epryyviqkyktbu6grog@u43wzsaki23k>
+References: <20241107014827.3962940-1-ipylypiv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BN5PR12MB9464:EE_
-X-MS-Office365-Filtering-Correlation-Id: 664d7d77-7e42-480a-4652-08dcff4f614a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iPvwpD+P/BI05rKyMNXUCkNLZx3cRO+rLLwC+KglYgdLm+uLYcBkelgcd3uU?=
- =?us-ascii?Q?598G+2o0ZwJPnlp7NQWvbzvK2Y6ekyAKtcg4hruQOLNd9fpiu83LZKLI8c+f?=
- =?us-ascii?Q?PYK8GvJQw3MTGgSM1RghHpTXq5gU6iEYQ5wPedal5TK7uE9ElXIAj2GgjE4F?=
- =?us-ascii?Q?5q5ArIiSrJxfTh2Z8JrkD+kRPHxr96MHPxUFi48HJ/Z6PyEF7mNWp4kpj40L?=
- =?us-ascii?Q?x/6P6+pSH5R7LSmmVroElzZFnnKNB/XjR9E+/HziF9Fh9lZzWW0iTYKta88B?=
- =?us-ascii?Q?M+ZTnkHze8WO9ZfEyLL/MCSkBMz02X7iJqZFkLFq1Jv85lfkNvLUd/vuvP+c?=
- =?us-ascii?Q?JbWGCi4iJfzdQkQzeXasJHgTc1cw2v9gFHpbzknsjI4ijwclaX6m6KM6CQZa?=
- =?us-ascii?Q?vPqnM+x93CdS7WwpiOIIyT9wW83XcxM+6uZ7bOcxjdvV/uGtXzlb8iocfOCS?=
- =?us-ascii?Q?gPPUHup5pGf8X5Y/JdZuMU5FSCc5XjECXl3FulOy7jEyi4im2JlXOM1655wG?=
- =?us-ascii?Q?EcyXQWZ8K0J8a7W/Dzi+VuV/69gKTE6eScdOuqa5JL0u6Uq4VUoEkc+ST+9a?=
- =?us-ascii?Q?fdXP/mP7HxqRuzFJ7+okPSL7mSbBuE8j86IYwioi1bOSbWoaTT6b65TCQJUE?=
- =?us-ascii?Q?zxN4WZkFDx54oWwdk+mdOCEQ8NV4AiEb0We0UhewigsDc01FLJi9sFPyrbqi?=
- =?us-ascii?Q?OGsba616mUXCEDQgczcxW0g89RJSLiSAEoAt/9xTmS353ydpnoct+IuMaUbX?=
- =?us-ascii?Q?XCzat3JSkMZjwmGP8wMGPFXKF9LntqDYT0Gy58aEQCpFS4CWVz+8sag8L9oW?=
- =?us-ascii?Q?LJSnaPR5t2V4JKhFtplTKNsxHwv/x1kr35y93l80N43FgV3vT9LxolN329cz?=
- =?us-ascii?Q?abc/9cadBKtaNrPPydYNhz7swB+hSLRbJpFFgijm0AzrdEzn++kkyRzgf/P4?=
- =?us-ascii?Q?tSgUGXwGC3J7w0oxsIsF5s2WeI2x2Ai8hpnQH59i4I3ZN9VEhwlFVMBCFjkT?=
- =?us-ascii?Q?jzB4z/7h6Hi9KbKBn0pIFtmZMHRq6Cvh9FCXVhjbQO5J+QeV/slgevCfeBdy?=
- =?us-ascii?Q?1pUGoJhSscDZQ9yaXLfwspVVGCRYtR8x6dA+cQN15+4z75CHKk/7Xvq4M9TT?=
- =?us-ascii?Q?sM/J6khINyHLcvFMNU4MscsyfSodoU8PYdD/6r2dR78TItnxCWnndRu36zlr?=
- =?us-ascii?Q?QoVjx3pUBOzsGP4dtc/T+RLoTZtoHeLGyJaaf/c8poYaaRbTGr7rgYYjtUZf?=
- =?us-ascii?Q?VFKb1vCJvPpIh3pt5pNXOuTPOrOijiX2wUGWeuEEr1TNGlROytorr3r5TmS6?=
- =?us-ascii?Q?hDni4+Yho1vLYykZA47RMfNg?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5eFsLSi1pV3bD8iJm+kUMeIgs2GtFSyhYNg1zXXHacVXJ5YdXihu6ZoM+obt?=
- =?us-ascii?Q?0Byaw6ewNQs9dcdICc2MuoP7gMwLkXJuBFwVNIRJ0rLnQcSmZUYOYfdFmB58?=
- =?us-ascii?Q?sfhzr7+RSirr21ipVBTP9YlPA7oVvZMmpKq8eylDNTHLi0JgHobMqVLXnLbx?=
- =?us-ascii?Q?8V311f/J37H7wKkTBJ1WLr6m64y3Uocb5DrlNEH9Ih6H273V6Z9NcT7XHAKd?=
- =?us-ascii?Q?xysME8X4/KvdM2JLYiGegt0KDWTfrLN+KhuS+3jy8U2SMRkVX34icLbRQ3ji?=
- =?us-ascii?Q?L1DQb1nR4jJBiKO0EMB7Y8nnUU//qNkFxj2XUd9Sd8J6qqobeZiiHrC2xl0y?=
- =?us-ascii?Q?+xlyu6Aux+XuMFCCt5UJUf3ThjjzwjMiG0t+4ZQZnPC1uyvLWhZRQ4HGv+K4?=
- =?us-ascii?Q?gS3Zjp4x2i54neJP+EgYzTzJ76Uqpn2A1CnQY9xSqFi/OMN+MRchoSMAttYe?=
- =?us-ascii?Q?UCR7zBuL7ENIRXCVbkeV7JqXe0WQoWwt8Z2irEHQhd3H/tRT+6MGMFNaeaE2?=
- =?us-ascii?Q?ViKOQ746AOsobotRfqKy9MUQuvMqEhXZi8yjsAn4QysYgh36mKlXIwc6R3hU?=
- =?us-ascii?Q?L5F33J0y9aJP2LLGj47fM7I/rUk/Bi8qSsIjdFzCrpdtD+9olyjzC6s96xjm?=
- =?us-ascii?Q?e0wEhxMfTuxyH04RxoC+ybIl3zClvNbbL1sGt+wD383SGjq/s7HQumwbOlgA?=
- =?us-ascii?Q?UcVLraCHqCNS5cgSn301aH5xIkj7uB1F6oIfUTXUg3asuN4zJ+ERSbvu2xtZ?=
- =?us-ascii?Q?7GkQqm276qfbgtvqbYZSUYLcqyPO7WxKMZq6uSksU7/a6LuVx1MthscgAll1?=
- =?us-ascii?Q?p+QeDm1KZMcRlWOA0DiildLt8rjRelE/NdOj6MWfrYwnWEcIXI6h9o/hzr12?=
- =?us-ascii?Q?rHD0DMTujc/oMQxhmyzyeHt65g/Emhvr312+xTta959SauzA57byjZdnn61n?=
- =?us-ascii?Q?xgMtvk2bzfGr3GboKX0HzWEBxAAcpX9T2GhANydx80LvfAFTy0sHhBYrRUfb?=
- =?us-ascii?Q?1ZqLbMEROihPBHOEA8P7aSOg/MYhhJPO2NrS3KH6Id0JBfU+cCUYsrPoM8LV?=
- =?us-ascii?Q?xJatg0cmn46ix0LJhVUZI+4kNGXwXJ1AirwoJYxsBB8id1r+gNHY3Q22iRSr?=
- =?us-ascii?Q?C1GN+kWB84eBUd9nNb7BoJwIdUD9bS5M/S+eTqsslvOCGIzBu+D9/MbF4H/3?=
- =?us-ascii?Q?mb9MSpahcrXsquXnzkLiceed16toATaQLmNdEVfbK+A7OuSh7Fo1dzwGSLj/?=
- =?us-ascii?Q?XRRnXSuQHfd/EmLVUZyPEwtlNfqrUf9fjSTzz0ceBu1po4zcyYUMrx9BpCFE?=
- =?us-ascii?Q?Fi2toGpU7bTqmfDce1E84loGcbbvacF2vUTnO3zdR0+rOkAipC+tz2rgBp+M?=
- =?us-ascii?Q?navhCiEnYdC4eO1UTHzu4TFY3IBwU5Do8kCpP36xJzLDSVaMu4kmSuSniqC+?=
- =?us-ascii?Q?MsaUYdNJIcWwxbjSCiFWBi6B4sc+jrdDJNOKQ0v0IyCF8gT2BuWO5nWwPDq1?=
- =?us-ascii?Q?3JPbppkHM4FDNYnAtCqUBcoMWH2OeEIUzd8UfrmmtXDU5Fo26ykzlf8OqPO5?=
- =?us-ascii?Q?NYwPTnV/2mV4tmP1YGSE8QBpHInXrB1snZqz9ACH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 664d7d77-7e42-480a-4652-08dcff4f614a
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 17:12:38.1975
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: //lg+g+WuQJr2ZCy/8xkTwrefd/N2DF2O+JRVP7Xzg2yRF72fdTVH5D4e5kO17uN
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9464
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107014827.3962940-1-ipylypiv@google.com>
 
-On Thu, Nov 07, 2024 at 04:37:11AM +0000, Zhangfei Gao wrote:
-> iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
-> because the PRI might be a shared resource and current iommu
-> subsystem is not ready to support enabling/disabling PRI on a VF
-> without any impact on others.
-> 
-> However, we have devices that appear as PCI but are actually on the
-> AMBA bus. These fake PCI devices have PASID capability, support
-> stall as well as SRIOV, so remove the limitation for these devices.
-> 
-> Co-developed-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Hi Igor,
+
+that's a good catch, but...
+
+On Thu, Nov 07, 2024 at 01:48:27AM +0000, Igor Pylypiv wrote:
+> i2cdev_ioctl_rdwr() receives a buffer which is allocated by the caller.
+
+This needs to be a bit re-written. In the commit log you should
+describe what the patch does. You are telling where the buffer is
+allocated.
+
+> Fixes: 97ca843f6ad3 ("i2c: dev: Check for I2C_FUNC_I2C before calling i2c_transfer")
+> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
 > ---
->  drivers/iommu/iommufd/fault.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+>  drivers/i2c/i2c-dev.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+> index 61f7c4003d2f..5d15519ef737 100644
+> --- a/drivers/i2c/i2c-dev.c
+> +++ b/drivers/i2c/i2c-dev.c
+> @@ -247,8 +247,10 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+>  	int i, res;
+>  
+>  	/* Adapter must support I2C transfers */
+> -	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
+> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+> +		kfree(msgs);
+>  		return -EOPNOTSUPP;
 
-Applied to iommufd thanks
+Please, don't free it here, free it where it has been allocated,
+i.e. in compat_i2cdev_ioctl().
 
-Jason
+Andi
+
+> +	}
+>  
+>  	data_ptrs = kmalloc_array(nmsgs, sizeof(u8 __user *), GFP_KERNEL);
+>  	if (data_ptrs == NULL) {
+> -- 
+> 2.47.0.277.g8800431eea-goog
+> 
 
