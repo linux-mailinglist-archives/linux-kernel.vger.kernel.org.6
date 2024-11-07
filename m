@@ -1,124 +1,97 @@
-Return-Path: <linux-kernel+bounces-400082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D743F9C08BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:18:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DCF9C088B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152271C21F58
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:18:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489EE1F21D3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FBF212D13;
-	Thu,  7 Nov 2024 14:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE48F212D11;
+	Thu,  7 Nov 2024 14:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="QetVRRgG"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hL4c5O4/"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA62212164;
-	Thu,  7 Nov 2024 14:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C709F1E049C
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730989068; cv=none; b=idmuE0nPuTmpopWG9il4Ada4+QaiA/B6cy7Uy1BWtxmTRrMw6kroMwSPUCXye5RZIuarEOdkNXjwcbJHfXW5fatF/rvUeL2VU+k0OsRhJUTnqPv3wNO4+30niW1Ttnf/+Uoxc/SO7Wh3RMYrxmN3orAfkSh0cXvLU7GTprBfQ4A=
+	t=1730988604; cv=none; b=DmcZCKKmrSRyNy15N03rieWfMF7fSKDOOuKTzmcYoIoG88MZYBDgLtCVU75qN7/SKoudnELslPqToitzSkC/hYRl+sGF2xoxIfbTsAwqFaZ83eSUFWB7gfGtFWOBMFr2/NKgyTwXUaK2cmpWjCqg6gfaQhHoWMy64caU1taY7G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730989068; c=relaxed/simple;
-	bh=Fm1zpy+fNmmSrwiAXW+famhfnfU9ILSbYobTRaQC/ys=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=fCFgOGE7Or2zlY0QWHj+8x41vhG/skBkTrxMDb6BNDKBtismPYB7GqgUz7/gHaBOB+L7QC6GMCnEdIfmRXcfDwJ7N3MJ/oRteds2pSy5CFbEGflNgH7isGm+vlVEoDvnTi5tu1fqhAc03PlGSpF9vCAOrFvLWeCioMeIu7hmXhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=QetVRRgG; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1730988604; c=relaxed/simple;
+	bh=tHjFq+/O19qv89wgRqbvlqo6SSp58vCEdx28oCQlBJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhXFNl9HxvFxDFClsH9ATTtB1Rjy7kuSmIItlHB87NFaU0PR90zrtdoWCUg3b3+K/sDDLcy/+tcoelvysBEc3MBO0bpAkP27V1vvEDm3OxHu51P9c1XJUq7XPuHO0tQ1J0NOHSer3rLa53lYYYf1V0j3dYCX4CF4VMrWzCs5Kb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hL4c5O4/; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=G6CNBA3+KEhWUklW0A3SaT/tzIPRGpTeEqARX2gKGac=; b=hL4c5O4/kUaatkivHjsnsEix4v
+	vAHBe5F5KQGb3H70jNmYd5MCRkh1T2HgAPQteM98OCp8YEvuTCUvQ2XOOQgqWeC5Y0tNUGN8Kl9A9
+	3skzym5Sr2+QFB1sOg45xPRNOAkaK2GJgDpsGvx8h/WU7xliBzuqj64mXK3E+KaL2R3yDL6BEgXAy
+	IzJj1MS0PruDAE9/rMIVm2X/iagroSv0/x1wJ8W1ndtZ4Xezs/DrwrN+lHvdiKHR1uzfs6FITZI6s
+	mj7lVd9s6mwFewQ/sJtCviwtxxwXYXwLSVJUIzFpxys5yVdnByp8MCqZDaxNf/6tziJSpPDOo8D9J
+	EVnMbSEw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t93Ck-0000000C8j1-0iQt;
+	Thu, 07 Nov 2024 14:09:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 665123006AB; Thu,  7 Nov 2024 15:09:45 +0100 (CET)
+Date: Thu, 7 Nov 2024 15:09:45 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Phil Auld <pauld@redhat.com>, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+Message-ID: <20241107140945.GA34695@noisy.programming.kicks-ass.net>
+References: <20241101200704.GE689589@pauld.westford.csb>
+ <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
+ <20241104130515.GB749675@pauld.westford.csb>
+ <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
+ <20241106135346.GL24862@noisy.programming.kicks-ass.net>
+ <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
+ <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
+ <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
+ <982456f0abca321b874b7974bdf17d1a605c3d38.camel@gmx.de>
+ <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1730988545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nfCiWb167VnGXmqmnUWRqEBySAPrNU+qdZTF1ehmBTg=;
-	b=QetVRRgGq8wyM3ZZpQE1NvypY1a8AGGzAav+vWhxsadpLFvHi5bLwjxpp7UuBNJDYUwT2Y
-	yIV16FY+JQ2RoCzPPKbJPiE2H0pREpT/ZEYUwlzH+GGZ74OX5nSI7BrWlr8X3Rxup/opgY
-	lqNFpz2hnG90ZjG95wMaMUKt5xvaQmcHnSUGN5Tr4elt34959hOqnU6WaRQ2r/LbOuUm+N
-	4XovsGG25b8+QjwSdArzQJAQdSB7uxMSnVIrqLopwItK4gr4BCM1P7sO36gD/ULUEWF20W
-	cIaiei/TxDLcHodIx50xsG7F4CzS6SepeVKwMNUD8Dk1GOVGgvnxK613d2Ebjg==
-Date: Thu, 07 Nov 2024 15:09:02 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: apw@canonical.com, joe@perches.com, dwaipayanray1@gmail.com,
- lukas.bulwahn@gmail.com, workflows@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, wens@csie.org
-Subject: Re: [PATCH v2 0/3] Make Helped-by tag supported
-In-Reply-To: <87h68k4esb.fsf@trenco.lwn.net>
-References: <cover.1730874296.git.dsimic@manjaro.org>
- <87h68k4esb.fsf@trenco.lwn.net>
-Message-ID: <cabfa180845df30bfb7a541a701a57e9@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
 
-Hello Jonathan,
-
-On 2024-11-06 15:28, Jonathan Corbet wrote:
-> Dragan Simic <dsimic@manjaro.org> writes:
+On Thu, Nov 07, 2024 at 03:02:36PM +0100, Mike Galbraith wrote:
+> On Thu, 2024-11-07 at 10:46 +0100, Mike Galbraith wrote:
+> > On Thu, 2024-11-07 at 05:03 +0100, Mike Galbraith wrote:
+> > >
+> > > I built that patch out of curiosity, and yeah, set_next_task_fair()
+> > > finding a cfs_rq->curr ends play time pretty quickly.
+> >
+> > The below improved uptime, and trace_printk() says it's doing the
+> > intended, so I suppose I'll add a feature and see what falls out.
 > 
->> This is a short series that adds Helped-by tag to the list of accepted
->> tags in scripts/checkpatch.pl, and describes the intended use of this 
->> new
->> tag in Documentation/process/submitting-patches.rst.
->> 
->> The proposed Helped-by tag fits well to indicate someone had helped 
->> with
->> the development of a patch, to the level that doesn't warrant 
->> providing
->> a Co-developed-by tag, but is much more than it would've been 
->> indicated
->> by providing a Suggested-by tag.
-> 
-> The documentation is meant to cover our existing conventions, rather
-> than to drive new ones - usually, at least.  There are exactly 11
-> commits in the history with Helped-by, suggesting we're not really at 
-> an
-> established convention at this point.  Given that there has been some
-> resistance to inventing new tags, are we sure that we want this one?
+> From netperf, I got.. number tabulation practice.  Three runs of each
+> test with and without produced nothing but variance/noise.
 
-Thanks for your response.
+Make it go away then.
 
-Of course, the documentation would be updated only if the first patch
-in this series becomes accepted, i.e. if Helped-by becomes supported
-in checkpatch.pl.  I'm sorry if I wasn't clear enough.
-
-It's usually said that necessity is mother of invention, which is the
-case here.  In a few words, I've got another patch pending merging [1]
-that a couple of people helped me with.  What they did is more than
-what Suggested-by tags would indicate, but doesn't really warrant
-Co-developed-by + Signed-off-by pairs or tags.  Having Helped-by tags
-provided for both of them would fit pretty much perfectly.
-
-It was very similar, if not the same, when it comes to the development
-that led to a few commits already containing Helped-by tags. [2]  Sure,
-that isn't a whole lot of such commits, but this may be a good point
-to decide what to do with Helped-by tags in the future.
-
-I'm fully aware that we may be reluctant to supporting additional tags,
-because we may then end up with a whole bunch of strange tags that might
-be a bit hard to understand and use properly, but I think that adding
-Helped-by to the supported tag list may actually be a good thing to do.
-As described above, Helped-by fits very well between the Suggested-by
-tag and the Co-developed-by + Signed-off-by pair of tags, and I think
-that providing the right level of attribution may be beneficial.
-
-[1] 
-https://lore.kernel.org/linux-sunxi/129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org/T/#u
-[2] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=grep&q=Helped-by
+If you could write a Changelog for you inspired bit and stick my cleaned
+up version under it, I'd be much obliged.
 
