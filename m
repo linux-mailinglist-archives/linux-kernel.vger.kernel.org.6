@@ -1,336 +1,193 @@
-Return-Path: <linux-kernel+bounces-399274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1F49BFCEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:19:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0119BFCEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D831F22868
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:19:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C399B226A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73E174E09;
-	Thu,  7 Nov 2024 03:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AA417A5BD;
+	Thu,  7 Nov 2024 03:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3Z2gx/w"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pjo5hqvz"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5A41863F
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 03:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5A06FBF;
+	Thu,  7 Nov 2024 03:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730949556; cv=none; b=ousrQfjCITq6qpAfA76T7WvxMvfODdJt6fiaWeHicREdP5ld2fEWd80KSXeObgBmfpJL0ilHbfwfy1nk2f+6uR+u8omkZ9n42o/WXFjoiJmGA92r5BgABEDntf2XkVdNrdwMlKee1DF5LTME4KDAY7siH34B3LgI6i0gVli4bag=
+	t=1730949656; cv=none; b=UWV4uj3aFnvKNUbnKkyBRojP0YJvduz4SzfDY2V6g2oMw6LYqKGOsceE5Lo1WjX+ZQ7HPjJF9U2QeHlFw6uriO2pL7qZZV3FNfPcIbQQp2ZzsLgYIo3udqmYPM8fgweGX6QpS8Mc6dPLT+sa9zDLA/SBHVuUzDTpAkTNByAWIgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730949556; c=relaxed/simple;
-	bh=J6IVV0RPagciuJQYvm1eHDaj0TUPJZ3O62COugVfxsE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lU8SoRaR3ZNEJt414Ls0PY6KZXdUsyOb52HxnDVjah6nhj0LyTZCZvkt+DOorvU+OO3V7zaFFHp6+91lf/iMOOQ4HwkolC0hW+ctwxVIE1MSRDNQCmVUkmb++eC8SZxLqYMYrUDwxcp/c2+JHjD50D1Kd0cpOB6Av0+Jx6BZ/EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a3Z2gx/w; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1730949656; c=relaxed/simple;
+	bh=MfgIsmThhu9LXOQDEMR7hFNs+rsV9Z5JVos+Z0mGxsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2yNn2CbDrOPk8+d5SEIFVh1Q/oaM1wpLT9w9/oUsOTlx2KZQwTfeFv6MIqnApSNjeRbS3K4HdZhC06rsKd+VIsjzZhSvaIggnnyBME3aWRTt/zv+jB5B5wypY2pWj216byAHu6zwfTbbGw+5cPylhHXCjNOLYYoRZjPKq6Ln08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pjo5hqvz; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3807e72c468so66504f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 19:19:13 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20ca1b6a80aso5835335ad.2;
+        Wed, 06 Nov 2024 19:20:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730949552; x=1731554352; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9i6iU2j4fsq9YuVwHW6fI2V1rvkHGx0ZfuUTvvlwbmo=;
-        b=a3Z2gx/wQ0hz69VOBYHvG70vJ1PNsYDAWI0pj8qyBYQLNwEg8DHDbptrRIPO0QSDud
-         UW+KpiahKItZ3nF5Ai+bJLA/MesedppfWy9os7uj7/XZ/u2T6tG6VAzJAaAK9TipvdXU
-         Kx8jHAcCCR+J0J57Ab4e1n3uo8SG0x+U30s40Ftkhl6fIMVPpam5K6CIATSWUjN/B3Fn
-         kZLghkUgDF2YrVzmtlroFiNl72iCi0N2eDqmTa5AxEpFwJyCIV5/VDDNEdzviqltaWvJ
-         P5IWZ3ydBfJGwnApxoQfFNOoSi4Y+T5uGRbg9xQz7tvNmYAUzUHOTY4YdSPMT4xW6PRz
-         arAg==
+        d=gmail.com; s=20230601; t=1730949654; x=1731554454; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R8jNzrElX9RmiBjTI8h4pv70akApgYg9F+hG3zefMUQ=;
+        b=Pjo5hqvzeBgJLYQ6ITzLTC6JbEEpdqyPnKJmdBLJloqI59GnepRNto+dWyB8WV4XpM
+         gi0/bAGspN7lmq24pgZZhnUcA/jbC9REUY+K8JwQO3dU/UQOQCVjbYo4Sdgo4MYj1c8b
+         uzPMB+gYV3/ffkFjaeL9a30TbGuW++5K1KSlsVTxUU3NmgsiGKQ1dxb4Gl8Yt4PGc4MP
+         mTRZxteS8AOd8vDzEXFbxIpqqTTdtKmmTXpn6c6JWdPNPL/gjAs48ZIe1klQ/+JbOxz5
+         /s9djrUmVGS/qUDgOuj+CcnUT3Dvvzp6PNIboTJ76XHsablyh58+ftDnrXuSk4LSIPzF
+         c6DQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730949552; x=1731554352;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9i6iU2j4fsq9YuVwHW6fI2V1rvkHGx0ZfuUTvvlwbmo=;
-        b=SCtdTUJC+g6abLccXfBnzDc36DN95qLu97ZagXBfRrC68YggljNU4c9eJbzbrSkiZj
-         yWv1OOrXgM8zOvgHRr6DRIMUokgdTQdFLzXB7p51xTG1RAxVEX7hU5n8xDrONUgnfv1R
-         EWXqHeVQF5Le+ctTlG3MBQpjjHzbYOVPBOWfOxzTsguF6MPhtehu3i3xyVTFfuuXdmiM
-         NXl6Prg0gvvKcYcSWRl2Jr2tHGiSfDFlfUfOy6rc7o35z+QRAARkNNL7Xxx/ji1+xda5
-         sC4ea6pHDOSaQuD/lhnYwvM9QKlYNRYAU0f/e2hfqLOIOQs+t5gIWnAhyBb9tEAODwg3
-         udbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVi2uA7g2Qw+8bmb7T1J4xUv3sKCn++X8Mg69v7qvqQxKCcN81pWnUBLgrgCop24zNofAFoG5DObZu25Iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHwXtFy5d7rwRZLbqTo2R1p/cEdhE2/FeHlG489qt6LczMFW2N
-	4Fct6VSpilrxPiuduL/KTa9+ag7AAtfCJuX7ckasGCctUT0cZKj+yqs3SYa+pabldHXOI3qp2q5
-	gB3B06XcKAH9Bhi7gosKdVZKIkawFOc+V
-X-Google-Smtp-Source: AGHT+IF5IR4Uor1FQMJzAE08YCFSu5KhOkkxnvUkSEc0CHM5BbOv2wVieBgTO1nP8Ry51Ykxh1hUVd9B0ZmhCSDGAYw=
-X-Received: by 2002:a05:600c:548d:b0:431:5632:448d with SMTP id
- 5b1f17b1804b1-432ae84c727mr6600365e9.9.1730949552125; Wed, 06 Nov 2024
- 19:19:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730949654; x=1731554454;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R8jNzrElX9RmiBjTI8h4pv70akApgYg9F+hG3zefMUQ=;
+        b=kpDecBy5T6kzrhOgCpP0HbFP5EDObQCpj66fVQUPDXE7A6rV532Lr+9cFdi/eJGIvA
+         qIEjzIh0xSdmowssIuttYaME2hCrJlVj5E18llk+NULqjzT8Sg6ydP2pRelfm6k2eDgf
+         eDSs3ySOMmn5e36KwNUBDgFyR4cv7DdD3dMFMZ2tAps5hO5SKu/+5Hlf98n5s9/sL5GR
+         M+2ysUt0JjFXkKgGv23UJxDToz6hsVXitR++pejSSgt8Yi5No0jTqzslkPOts2dQd7Rp
+         juQsQLxivELB95KID4anIx+QNUKEkX9QqtbWllMI3q9fZ6+r/22EfvBj9Wz6Ldl4YUVT
+         7Zpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVI455pR1yOG/ukx0aynzat/lXjW6zWHdzDfGZe+XHSye03thh5wRcPzDMe2k0m9066Rtc2rszqZ1c=@vger.kernel.org, AJvYcCXCoICHzrFeDH6FE2RDwV7/Q6CY5mUD7OkZiOnFX5ez38zDvTPc0Mc3Xn6cRNgTuReAZLcUvqDLvlw5bn6Bb38x@vger.kernel.org, AJvYcCXNHhbS4yHWYhILHaM8h9lIijG4/GcKrxdWkfLBCq+LojgK8wfo0qOcfpWI4koSyoAcPWel5EYYsJQPyDaN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbYRWbRrAUoTROEBm9In9kNx0QxdO3vlRSrwnk/sV+b/Q19gwE
+	tvbY89eqHTz8k6PZCnnPDUaNRycrfs8nVAq4YJ+ElZq4FncYi+bz
+X-Google-Smtp-Source: AGHT+IFP7jI8N7MZAQEh3fKVwbjpLCzLZAOp+2qk1ae0Rl9Avg2cfhgX+kUyGo3POLdRxL4zyEhtHA==
+X-Received: by 2002:a17:903:985:b0:210:f07d:b3d9 with SMTP id d9443c01a7336-2111af1757amr325782555ad.6.1730949653768;
+        Wed, 06 Nov 2024 19:20:53 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc803dsm2208695ad.12.2024.11.06.19.20.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 19:20:52 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id A156F41F52FB; Thu, 07 Nov 2024 10:20:49 +0700 (WIB)
+Date: Thu, 7 Nov 2024 10:20:49 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, will@kernel.org,
+	robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	baolu.lu@linux.intel.com, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, zhangfei.gao@linaro.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v7 13/13] Documentation: userspace-api: iommufd: Update
+ vIOMMU
+Message-ID: <ZywyEUmL4HvM8B9v@archie.me>
+References: <cover.1730836219.git.nicolinc@nvidia.com>
+ <7e4302064e0d02137c1b1e139342affc0485ed3f.1730836219.git.nicolinc@nvidia.com>
+ <ZywQP3_TpdttuCy8@archie.me>
+ <ZywZcSidYCWkJgrw@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107014602.3638020-1-chao@kernel.org>
-In-Reply-To: <20241107014602.3638020-1-chao@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Thu, 7 Nov 2024 11:19:01 +0800
-Message-ID: <CAHJ8P3LUTz9XGji5Xa2Jy-KeSuaG9HhtDhxz_aM1hE=-K+zsGw@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up w/ F2FS_{BLK_TO_BYTES, BTYES_TO_BLK}
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, Zhiguo Niu <zhiguo.niu@unisoc.com>, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fVTjkEpn9ekAW5rv"
+Content-Disposition: inline
+In-Reply-To: <ZywZcSidYCWkJgrw@Asurada-Nvidia>
+
+
+--fVTjkEpn9ekAW5rv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-=E4=BA=8E2024=E5=B9=B411=E6=9C=887=E6=97=A5=E5=91=A8=E5=9B=9B 09:50=E5=86=
-=99=E9=81=93=EF=BC=9A
->
-> f2fs doesn't support different blksize in one instance, so
-> bytes_to_blks() and blks_to_bytes() are equal to F2FS_BYTES_TO_BLK
-> and F2FS_BLK_TO_BYTES, let's use F2FS_BYTES_TO_BLK/F2FS_BLK_TO_BYTES
-> instead for cleanup.
->
-> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-feel free to add:
-Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-thanks!
-> ---
->  fs/f2fs/data.c | 68 +++++++++++++++++++++-----------------------------
->  1 file changed, 29 insertions(+), 39 deletions(-)
->
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index b33aca24b9ef..0e8390cbdb5b 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1819,16 +1819,6 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t=
- pos, size_t len)
->         return true;
->  }
->
-> -static inline u64 bytes_to_blks(struct inode *inode, u64 bytes)
-> -{
-> -       return (bytes >> inode->i_blkbits);
-> -}
-> -
-> -static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
-> -{
-> -       return (blks << inode->i_blkbits);
-> -}
-> -
->  static int f2fs_xattr_fiemap(struct inode *inode,
->                                 struct fiemap_extent_info *fieinfo)
->  {
-> @@ -1854,7 +1844,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
->                         return err;
->                 }
->
-> -               phys =3D blks_to_bytes(inode, ni.blk_addr);
-> +               phys =3D F2FS_BLK_TO_BYTES(ni.blk_addr);
->                 offset =3D offsetof(struct f2fs_inode, i_addr) +
->                                         sizeof(__le32) * (DEF_ADDRS_PER_I=
-NODE -
->                                         get_inline_xattr_addrs(inode));
-> @@ -1886,7 +1876,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
->                         return err;
->                 }
->
-> -               phys =3D blks_to_bytes(inode, ni.blk_addr);
-> +               phys =3D F2FS_BLK_TO_BYTES(ni.blk_addr);
->                 len =3D inode->i_sb->s_blocksize;
->
->                 f2fs_put_page(page, 1);
-> @@ -1948,16 +1938,16 @@ int f2fs_fiemap(struct inode *inode, struct fiema=
-p_extent_info *fieinfo,
->                         goto out;
->         }
->
-> -       if (bytes_to_blks(inode, len) =3D=3D 0)
-> -               len =3D blks_to_bytes(inode, 1);
-> +       if (F2FS_BYTES_TO_BLK(len) =3D=3D 0)
-> +               len =3D F2FS_BLKSIZE;
->
-> -       start_blk =3D bytes_to_blks(inode, start);
-> -       last_blk =3D bytes_to_blks(inode, start + len - 1);
-> +       start_blk =3D F2FS_BYTES_TO_BLK(start);
-> +       last_blk =3D F2FS_BYTES_TO_BLK(start + len - 1);
->
->  next:
->         memset(&map, 0, sizeof(map));
->         map.m_lblk =3D start_blk;
-> -       map.m_len =3D bytes_to_blks(inode, len);
-> +       map.m_len =3D F2FS_BYTES_TO_BLK(len);
->         map.m_next_pgofs =3D &next_pgofs;
->         map.m_seg_type =3D NO_CHECK_TYPE;
->
-> @@ -1974,7 +1964,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_=
-extent_info *fieinfo,
->         if (!compr_cluster && !(map.m_flags & F2FS_MAP_FLAGS)) {
->                 start_blk =3D next_pgofs;
->
-> -               if (blks_to_bytes(inode, start_blk) < maxbytes)
-> +               if (F2FS_BLK_TO_BYTES(start_blk) < maxbytes)
->                         goto prep_next;
->
->                 flags |=3D FIEMAP_EXTENT_LAST;
-> @@ -2011,14 +2001,14 @@ int f2fs_fiemap(struct inode *inode, struct fiema=
-p_extent_info *fieinfo,
->         } else if (compr_appended) {
->                 unsigned int appended_blks =3D cluster_size -
->                                                 count_in_cluster + 1;
-> -               size +=3D blks_to_bytes(inode, appended_blks);
-> +               size +=3D F2FS_BLK_TO_BYTES(appended_blks);
->                 start_blk +=3D appended_blks;
->                 compr_cluster =3D false;
->         } else {
-> -               logical =3D blks_to_bytes(inode, start_blk);
-> +               logical =3D F2FS_BLK_TO_BYTES(start_blk);
->                 phys =3D __is_valid_data_blkaddr(map.m_pblk) ?
-> -                       blks_to_bytes(inode, map.m_pblk) : 0;
-> -               size =3D blks_to_bytes(inode, map.m_len);
-> +                       F2FS_BLK_TO_BYTES(map.m_pblk) : 0;
-> +               size =3D F2FS_BLK_TO_BYTES(map.m_len);
->                 flags =3D 0;
->
->                 if (compr_cluster) {
-> @@ -2026,13 +2016,13 @@ int f2fs_fiemap(struct inode *inode, struct fiema=
-p_extent_info *fieinfo,
->                         count_in_cluster +=3D map.m_len;
->                         if (count_in_cluster =3D=3D cluster_size) {
->                                 compr_cluster =3D false;
-> -                               size +=3D blks_to_bytes(inode, 1);
-> +                               size +=3D F2FS_BLKSIZE;
->                         }
->                 } else if (map.m_flags & F2FS_MAP_DELALLOC) {
->                         flags =3D FIEMAP_EXTENT_UNWRITTEN;
->                 }
->
-> -               start_blk +=3D bytes_to_blks(inode, size);
-> +               start_blk +=3D F2FS_BYTES_TO_BLK(size);
->         }
->
->  prep_next:
-> @@ -2070,7 +2060,7 @@ static int f2fs_read_single_page(struct inode *inod=
-e, struct folio *folio,
->                                         struct readahead_control *rac)
->  {
->         struct bio *bio =3D *bio_ret;
-> -       const unsigned blocksize =3D blks_to_bytes(inode, 1);
-> +       const unsigned int blocksize =3D F2FS_BLKSIZE;
->         sector_t block_in_file;
->         sector_t last_block;
->         sector_t last_block_in_file;
-> @@ -2080,8 +2070,8 @@ static int f2fs_read_single_page(struct inode *inod=
-e, struct folio *folio,
->
->         block_in_file =3D (sector_t)index;
->         last_block =3D block_in_file + nr_pages;
-> -       last_block_in_file =3D bytes_to_blks(inode,
-> -                       f2fs_readpage_limit(inode) + blocksize - 1);
-> +       last_block_in_file =3D F2FS_BYTES_TO_BLK(f2fs_readpage_limit(inod=
-e) +
-> +                                                       blocksize - 1);
->         if (last_block > last_block_in_file)
->                 last_block =3D last_block_in_file;
->
-> @@ -2181,7 +2171,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, =
-struct bio **bio_ret,
->         struct bio *bio =3D *bio_ret;
->         unsigned int start_idx =3D cc->cluster_idx << cc->log_cluster_siz=
-e;
->         sector_t last_block_in_file;
-> -       const unsigned blocksize =3D blks_to_bytes(inode, 1);
-> +       const unsigned int blocksize =3D F2FS_BLKSIZE;
->         struct decompress_io_ctx *dic =3D NULL;
->         struct extent_info ei =3D {};
->         bool from_dnode =3D true;
-> @@ -2190,8 +2180,8 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, =
-struct bio **bio_ret,
->
->         f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
->
-> -       last_block_in_file =3D bytes_to_blks(inode,
-> -                       f2fs_readpage_limit(inode) + blocksize - 1);
-> +       last_block_in_file =3D F2FS_BYTES_TO_BLK(f2fs_readpage_limit(inod=
-e) +
-> +                                                       blocksize - 1);
->
->         /* get rid of pages beyond EOF */
->         for (i =3D 0; i < cc->cluster_size; i++) {
-> @@ -3957,7 +3947,7 @@ static int check_swap_activate(struct swap_info_str=
-uct *sis,
->          * to be very smart.
->          */
->         cur_lblock =3D 0;
-> -       last_lblock =3D bytes_to_blks(inode, i_size_read(inode));
-> +       last_lblock =3D F2FS_BYTES_TO_BLK(i_size_read(inode));
->
->         while (cur_lblock < last_lblock && cur_lblock < sis->max) {
->                 struct f2fs_map_blocks map;
-> @@ -4200,8 +4190,8 @@ static int f2fs_iomap_begin(struct inode *inode, lo=
-ff_t offset, loff_t length,
->         pgoff_t next_pgofs =3D 0;
->         int err;
->
-> -       map.m_lblk =3D bytes_to_blks(inode, offset);
-> -       map.m_len =3D bytes_to_blks(inode, offset + length - 1) - map.m_l=
-blk + 1;
-> +       map.m_lblk =3D F2FS_BYTES_TO_BLK(offset);
-> +       map.m_len =3D F2FS_BYTES_TO_BLK(offset + length - 1) - map.m_lblk=
- + 1;
->         map.m_next_pgofs =3D &next_pgofs;
->         map.m_seg_type =3D f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
->                                                 inode->i_write_hint);
-> @@ -4212,7 +4202,7 @@ static int f2fs_iomap_begin(struct inode *inode, lo=
-ff_t offset, loff_t length,
->         if (err)
->                 return err;
->
-> -       iomap->offset =3D blks_to_bytes(inode, map.m_lblk);
-> +       iomap->offset =3D F2FS_BLK_TO_BYTES(map.m_lblk);
->
->         /*
->          * When inline encryption is enabled, sometimes I/O to an encrypt=
-ed file
-> @@ -4232,21 +4222,21 @@ static int f2fs_iomap_begin(struct inode *inode, =
-loff_t offset, loff_t length,
->                 if (WARN_ON_ONCE(map.m_pblk =3D=3D NEW_ADDR))
->                         return -EINVAL;
->
-> -               iomap->length =3D blks_to_bytes(inode, map.m_len);
-> +               iomap->length =3D F2FS_BLK_TO_BYTES(map.m_len);
->                 iomap->type =3D IOMAP_MAPPED;
->                 iomap->flags |=3D IOMAP_F_MERGED;
->                 iomap->bdev =3D map.m_bdev;
-> -               iomap->addr =3D blks_to_bytes(inode, map.m_pblk);
-> +               iomap->addr =3D F2FS_BLK_TO_BYTES(map.m_pblk);
->         } else {
->                 if (flags & IOMAP_WRITE)
->                         return -ENOTBLK;
->
->                 if (map.m_pblk =3D=3D NULL_ADDR) {
-> -                       iomap->length =3D blks_to_bytes(inode, next_pgofs=
-) -
-> -                                                               iomap->of=
-fset;
-> +                       iomap->length =3D F2FS_BLK_TO_BYTES(next_pgofs) -
-> +                                                       iomap->offset;
->                         iomap->type =3D IOMAP_HOLE;
->                 } else if (map.m_pblk =3D=3D NEW_ADDR) {
-> -                       iomap->length =3D blks_to_bytes(inode, map.m_len)=
-;
-> +                       iomap->length =3D F2FS_BLK_TO_BYTES(map.m_len);
->                         iomap->type =3D IOMAP_UNWRITTEN;
->                 } else {
->                         f2fs_bug_on(F2FS_I_SB(inode), 1);
-> --
-> 2.40.1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+On Wed, Nov 06, 2024 at 05:35:45PM -0800, Nicolin Chen wrote:
+> On Thu, Nov 07, 2024 at 07:56:31AM +0700, Bagas Sanjaya wrote:
+> > On Tue, Nov 05, 2024 at 12:04:29PM -0800, Nicolin Chen wrote:
+> > > With the introduction of the new object and its infrastructure, updat=
+e the
+> > > doc to reflect that and add a new graph.
+> > >=20
+> > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > > Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> > > ---
+> > >  Documentation/userspace-api/iommufd.rst | 69 +++++++++++++++++++++++=
++-
+> > >  1 file changed, 68 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/=
+userspace-api/iommufd.rst
+> > > index 2deba93bf159..a8b7766c2849 100644
+> > > --- a/Documentation/userspace-api/iommufd.rst
+> > > +++ b/Documentation/userspace-api/iommufd.rst
+> > > @@ -63,6 +63,37 @@ Following IOMMUFD objects are exposed to userspace:
+> > >    space usually has mappings from guest-level I/O virtual addresses =
+to guest-
+> > >    level physical addresses.
+> > > =20
+> > > +- IOMMUFD_OBJ_VIOMMU, representing a slice of the physical IOMMU ins=
+tance,
+> > > +  passed to or shared with a VM. It may be some HW-accelerated virtu=
+alization
+> > > +  features and some SW resources used by the VM. For examples:
+> > > +  * Security namespace for guest owned ID, e.g. guest-controlled cac=
+he tags
+> > > +  * Non-device-affiliated event reporting, e.g. invalidation queue e=
+rrors
+> > > +  * Access to a sharable nesting parent pagetable across physical IO=
+MMUs
+> > > +  * Virtualization of various platforms IDs, e.g. RIDs and others
+> > > +  * Delivery of paravirtualized invalidation
+> > > +  * Direct assigned invalidation queues
+> > > +  * Direct assigned interrupts
+> >=20
+> > The bullet list above is outputted in htmldocs build as long-running pa=
+ragraph
+> > instead.
+>=20
+> Oh, I overlooked this list.
+>=20
+> Would the following change be okay?
+>=20
+> -------------------------------------------------
+> diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/user=
+space-api/iommufd.rst
+> index 0ef22b3ca30b..011cbc71b6f5 100644
+> --- a/Documentation/userspace-api/iommufd.rst
+> +++ b/Documentation/userspace-api/iommufd.rst
+> @@ -68,2 +68,3 @@ Following IOMMUFD objects are exposed to userspace:
+>    features and some SW resources used by the VM. For examples:
+> +
+>    * Security namespace for guest owned ID, e.g. guest-controlled cache t=
+ags
+> @@ -75,2 +76,3 @@ Following IOMMUFD objects are exposed to userspace:
+>    * Direct assigned interrupts
+> +
+>    Such a vIOMMU object generally has the access to a nesting parent page=
+table
+> -------------------------------------------------
+>=20
+> The outputted html is showing a list with this.
+
+Yup, that's right!
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--fVTjkEpn9ekAW5rv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZywyBQAKCRD2uYlJVVFO
+o05dAPoCkLQClFT+zDGmYdVx68XDBEfdBl1CCmp2FZ3jz4uFtAEAqVIZoqERkKzk
+iTAIm9NwYZC9ESLhO1HMIWvngDLktgw=
+=Xpoe
+-----END PGP SIGNATURE-----
+
+--fVTjkEpn9ekAW5rv--
 
