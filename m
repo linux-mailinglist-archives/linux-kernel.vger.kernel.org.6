@@ -1,141 +1,260 @@
-Return-Path: <linux-kernel+bounces-400227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1740F9C0AA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:00:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED9E9C0AA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 804A8B232D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7250C1C2219D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C51E20F5D1;
-	Thu,  7 Nov 2024 16:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876F4215C60;
+	Thu,  7 Nov 2024 16:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VAB9gnmC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0Pdl6im"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31C439FD9
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABCC6FB0;
+	Thu,  7 Nov 2024 16:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730995218; cv=none; b=A2YWh0bW8qRmvtFJqW8JvBZm4ZZcxBxKXAhSdrWsPibjzuuelydZYy9AvpzLkpTVpxfaCNgK4iajkT4/R6WWCQ6fbFbQo+6rV4Vw2WH3Knyprjd+4wjZAHaCb5BdvgFVJ7CtFB1nY8t57nil7Ergfw9JDXhYS1Oe/3kSUUoFtsw=
+	t=1730995279; cv=none; b=ZanktVT5XKAthJol2LM+Xazd7UcdjTouaSXV/BkaA0UOdxFgQ1Ohz5FeaNykAX/Z/UIw8VA8wGy0TrfKDF2GIrO9mI2OiSj6QeW30j8q2w5QS2x8Nm1yqRcBHeHNzeR9+J10IBXY14EozCCHz0X/SYOt31xoqmOoCTNHopJw1BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730995218; c=relaxed/simple;
-	bh=sBHlkErscr9+GFUnpD8ABqMeqfPqU8KmpOIfgz2zKgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aiVvE04HvDuC2ENhhP6kDDqRNdzXYQTTERKSFV4fCRgp2KJyvlVduXgnRSsEMEDj9UxmqKzwlRHxj73MkfIgurC+I9fuYqwGCDipVdioc+Q73oOIDVgvyUvt1t89gCUFYqudCJp/XpuMjYBA2zr0kCns7xv+u4Aw+EbZ2wA8GFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VAB9gnmC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 777FD40E0163;
-	Thu,  7 Nov 2024 16:00:13 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id UFWkTac5j3LY; Thu,  7 Nov 2024 16:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730995204; bh=b6JMfsS/ndFMVoqf3LtlBh9GE/Pw2tdXt3t3VZYw2ew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VAB9gnmC3EdSClWHXKT+cYAhbc5G4sMEyXwpSuTchlR3h/IDgnPZ9yDgqsJxpqwqW
-	 2O+n6E4sp2DrPFCZLCjj4PTK3ojGwCvoEfkov6fpnpJ/hY7O6oWb5aH21wWY3/x1EN
-	 AikpokvePMRwhVJjgSU36/SHfjoNrSs8EW/d3Jr1xtOlUBtzwEgmU403dW8bqV58Zf
-	 lYF4PcjSmr5nXza4oOgK9zItA/FC92X3/DRb6BVtfoSiWyWIAfirygOhKAYneDReGa
-	 mPtw2nPR4Pe2c7DcPfF1V67AT6xHoRKAcpw7tiskIO/kI1WThER+1tyRbt5Jtxi+tg
-	 l0qqIEmlWvEFSEQCuHE/SPc8O1dCtqt0WupZpuVfvLGpqnYvDPj3B40tm7jMmmzUth
-	 vIyl7kTjaXj9lTipByYDJSCSql2xN0z4lGVN0okb4D4gGjESdYewRtlO0SRb14Ljab
-	 Thfr4XHHzOYjFaAN73TEsG9w+AZdkyUYCM1Mj/INbsABi7eVJMi6wq8IeRbhOsp9fQ
-	 Q7159OoFZZWGfTCgSi8rvRre90n/XJObtGiVFbStwGkjVdUzRNSvqrHLhhiNepnWKd
-	 jUnsVdm4Ym1mWznyAMgVgwcgCPm8H95evRh4C6HU3BRgrgjM588W1OvpVpfHgDUdp4
-	 mqcQBKRtVLmietB7YxL+Bc+k=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C7FED40E0261;
-	Thu,  7 Nov 2024 15:59:52 +0000 (UTC)
-Date: Thu, 7 Nov 2024 16:59:41 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Kees Cook <keescook@chromium.org>, Brian Gerst <brgerst@gmail.com>
-Subject: Re: [PATCH v3 0/4] x86: Rid .head.text of all abs references
-Message-ID: <20241107155941.GAZyzj7bhkavHswsI3@fat_crate.local>
-References: <20240605101610.2824747-6-ardb+git@google.com>
+	s=arc-20240116; t=1730995279; c=relaxed/simple;
+	bh=+DNeMhf4/QAjfH4tX1M2fXMMTGcpvoQmFrscaEi7qVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z4yAvgeuTH4hpeQSvxlH72w8LE15aHz1ki9vYZRDxExdmoWstGIRdvTK9VmYbb87EE1pI/T46pvYI+xxfxdjwxJupQg9Ex+YwcTCfgkggycfJJxApwQeXizXPYOiqkUiG6t2mweDm1aEQZ3aklUzVz8YA0dK7gwet1dujXS1/Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q0Pdl6im; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2cc469c62so829479a91.2;
+        Thu, 07 Nov 2024 08:01:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730995277; x=1731600077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9GsBpHXBN7WYjyLsOqeXFU2jUxVAbP9Ec9maZf8+ATk=;
+        b=Q0Pdl6imViz34D+aJ8EyfMe9OIniEUZ4+Tx+Zp9P+jHE6kHKcDDuRe6o9rv1vQ1utB
+         QlS9gpL9gysvPWEtjkTM8/R/rppQ+3e1sOMeOFpCcgLWkF//vm+rCC3n9t54RtwzdTQv
+         i+Z9OuC0Jpd5AxLFpjyEdFtu6o9RU8R1/095INlJVIHjjrKUjgPS1Oj0uQQz48MmBMa2
+         Wti73LZkNegeOqTUvNstWZCsrNcWVPeGrDNwz0X6eHspa7WxvttTtW6ob7wXqsSDorX4
+         1iZM9oJKgGyKunQrwkDsj8Jg294rKF+dGMd86nZzDNnnQiDj4pSSff9xZxSy5HmYX7je
+         DHMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730995277; x=1731600077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9GsBpHXBN7WYjyLsOqeXFU2jUxVAbP9Ec9maZf8+ATk=;
+        b=CKmxOuuSJ0NaxPH0Pl12izHJ+RJ4pqPmyXCev/27QO0ujLRkqxGzY+5kbrdEY9uoiQ
+         YLGKW41bZ1SNcLgyS5hXvwoWSYqdrdkGKbsoF37rGgQRS0iWsCHm9ToG7pLuT6Pe6U/A
+         ndFjcm9eh4/j0OK+AWn+B9CzBsj/+uAgQU3mNy0u0MqBfgPzUdtEYquACS9Tf2iMCALD
+         y5XSe1ywcB6l9Tpnr6CbrmpnuNpre9bOU0hPrlWJwoh076NyZsLyqZuYO557mqjkqykj
+         lBXq9FPaYlChxpQQko6LA5On4N3iHt/ZfJUdWhDQ8eFllsWQyl4FNUIvW+CdGih3Gs0z
+         HQxg==
+X-Forwarded-Encrypted: i=1; AJvYcCU82lnNXjpqtq4zRewbuztBq5UTu9NxR/wgPvHReeLFVwcIWrCSUfMT5YrOf1f0xyGaolw=@vger.kernel.org, AJvYcCW8wyeXPGwXMWCsJdc1h/D6bHIRHjyWUUlV6ugWhF2ndJoqO6G6lb8id23svI6iUOgBLksQhPrlJK/Hdg+SvmAxvRgV@vger.kernel.org, AJvYcCXpfJ7gqEbC+vjOLjc8zX3sdOz6vp2fA5DPcmQ0l2A6yNqWHPJdVFSB8GOlZbgZSkwM5y6RXY9Gel4HJVDq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBe/kEfNB5RDwaBEtd3wD+sSKAMJeQyizHXatvrP6a6qFgmvIM
+	8i+4KkaqKL5noCMFvX0fctfNnWlRB811YtRlsriR8yLdyhsy96/XQ9GfY3q7DvcznJPHZ83W8v8
+	RiJWq/DhyZGHtn2LGidLMi0Om0xNlM8/E
+X-Google-Smtp-Source: AGHT+IEB2f7SlTnpo6K8Xm46OWu/LpB+oG0oeij4NBEcfG4ee4/a4WvRtBx8gMEgYRVXPQe/sna3Y/rLtNIYBwjZFTQ=
+X-Received: by 2002:a17:90b:2d8c:b0:2e2:d3f6:6efc with SMTP id
+ 98e67ed59e1d1-2e94c50d05amr32746040a91.28.1730995277245; Thu, 07 Nov 2024
+ 08:01:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240605101610.2824747-6-ardb+git@google.com>
+References: <20240903174603.3554182-1-andrii@kernel.org> <20240903174603.3554182-5-andrii@kernel.org>
+ <20241106-transparent-athletic-ammonite-586af8@leitao> <CAEf4Bza3+WYN8dstn1v99yeh+G0cjAeRQy8d5GAbvvecLmbO0A@mail.gmail.com>
+ <20241107-uncovered-swinging-bull-1e812e@leitao>
+In-Reply-To: <20241107-uncovered-swinging-bull-1e812e@leitao>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 7 Nov 2024 08:01:05 -0800
+Message-ID: <CAEf4BzanXs4yAexVXdAp-Q-0anmOVCYx+GObvaHPVDnXobkdSA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/8] uprobes: travers uprobe's consumer list locklessly
+ under SRCU protection
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
+	akpm@linux-foundation.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 05, 2024 at 12:16:11PM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> This series removes the last remaining absolute symbol references from
-> .head.text. Doing so is necessary because code in this section may be
-> called from a 1:1 mapping of memory, which deviates from the mapping
-> this code was linked and/or relocated to run at. This is not something
-> that the toolchains support: even PIC/PIE code is still assumed to
-> execute from the same mapping that it was relocated to run from by the
-> startup code or dynamic loader. This means we are basically on our own
-> here, and need to add measures to ensure the code works as expected in
-> this manner.
-> 
-> Given that the startup code needs to create the kernel virtual mapping
-> in the page tables, early references to some kernel virtual addresses
-> are valid even if they cannot be dereferenced yet. To avoid having to
-> make this distinction at build time, patches #3 and #4 replace such
-> valid references with RIP-relative references with an offset applied.
-> 
-> Patches #1 and #2 remove some absolute references from .head.text that
-> don't need to be there in the first place.
-> 
-> Changes since v2:
-> - Rebase onto v6.10-rc2
-> - Tweak commit log of patch #3
-> 
-> Changes since v1/RFC:
-> - rename va_offset to p2v_offset
-> - take PA of _text in C code directly
-> 
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Brian Gerst <brgerst@gmail.com>
-> 
-> Ard Biesheuvel (4):
->   x86/sev: Avoid WARN()s in early boot code
->   x86/xen/pvh: Move startup code into .ref.text
->   x86/boot/64: Determine VA/PA offset before entering C code
->   x86/boot/64: Avoid intentional absolute symbol references in
->     .head.text
+On Thu, Nov 7, 2024 at 3:35=E2=80=AFAM Breno Leitao <leitao@debian.org> wro=
+te:
+>
+> Hello Andrii,
+>
+> On Wed, Nov 06, 2024 at 08:25:25AM -0800, Andrii Nakryiko wrote:
+> > On Wed, Nov 6, 2024 at 4:03=E2=80=AFAM Breno Leitao <leitao@debian.org>=
+ wrote:
+> > > On Tue, Sep 03, 2024 at 10:45:59AM -0700, Andrii Nakryiko wrote:
+> > > > uprobe->register_rwsem is one of a few big bottlenecks to scalabili=
+ty of
+> > > > uprobes, so we need to get rid of it to improve uprobe performance =
+and
+> > > > multi-CPU scalability.
+> > > >
+> > > > First, we turn uprobe's consumer list to a typical doubly-linked li=
+st
+> > > > and utilize existing RCU-aware helpers for traversing such lists, a=
+s
+> > > > well as adding and removing elements from it.
+> > > >
+> > > > For entry uprobes we already have SRCU protection active since befo=
+re
+> > > > uprobe lookup. For uretprobe we keep refcount, guaranteeing that up=
+robe
+> > > > won't go away from under us, but we add SRCU protection around cons=
+umer
+> > > > list traversal.
+> > >
+> > > I am seeing the following message in a kernel with RCU_PROVE_LOCKING:
+> > >
+> > >         kernel/events/uprobes.c:937 RCU-list traversed without holdin=
+g the required lock!!
+> > >
+> > > It seems the SRCU is not held, when coming from mmap_region ->
+> > > uprobe_mmap. Here is the message I got in my debug kernel. (sorry for
+> > > not decoding it, but, the stack trace is clear enough).
+> > >
+> > >          WARNING: suspicious RCU usage
+> > >            6.12.0-rc5-kbuilder-01152-gc688a96c432e #26 Tainted: G    =
+    W   E    N
+> > >            -----------------------------
+> > >            kernel/events/uprobes.c:938 RCU-list traversed without hol=
+ding the required lock!!
+> > >
+> > > other info that might help us debug this:
+> > >
+> > > rcu_scheduler_active =3D 2, debug_locks =3D 1
+> > >            3 locks held by env/441330:
+> > >             #0: ffff00021c1bc508 (&mm->mmap_lock){++++}-{3:3}, at: vm=
+_mmap_pgoff+0x84/0x1d0
+> > >             #1: ffff800089f3ab48 (&uprobes_mmap_mutex[i]){+.+.}-{3:3}=
+, at: uprobe_mmap+0x20c/0x548
+> > >             #2: ffff0004e564c528 (&uprobe->consumer_rwsem){++++}-{3:3=
+}, at: filter_chain+0x30/0xe8
+> > >
+> > > stack backtrace:
+> > >            CPU: 4 UID: 34133 PID: 441330 Comm: env Kdump: loaded Tain=
+ted: G        W   E    N 6.12.0-rc5-kbuilder-01152-gc688a96c432e #26
+> > >            Tainted: [W]=3DWARN, [E]=3DUNSIGNED_MODULE, [N]=3DTEST
+> > >            Hardware name: Quanta S7GM 20S7GCU0010/S7G MB (CG1), BIOS =
+3D22 07/03/2024
+> > >            Call trace:
+> > >             dump_backtrace+0x10c/0x198
+> > >             show_stack+0x24/0x38
+> > >             __dump_stack+0x28/0x38
+> > >             dump_stack_lvl+0x74/0xa8
+> > >             dump_stack+0x18/0x28
+> > >             lockdep_rcu_suspicious+0x178/0x2c8
+> > >             filter_chain+0xdc/0xe8
+> > >             uprobe_mmap+0x2e0/0x548
+> > >             mmap_region+0x510/0x988
+> > >             do_mmap+0x444/0x528
+> > >             vm_mmap_pgoff+0xf8/0x1d0
+> > >             ksys_mmap_pgoff+0x184/0x2d8
+> > >
+> > >
+> > > That said, it seems we want to hold the SRCU, before reaching the
+> > > filter_chain(). I hacked a bit, and adding the lock in uprobe_mmap()
+> > > solves the problem, but, I might be missing something, since I am not=
+ familiar
+> > > with this code.
+> > >
+> > > How does the following patch look like?
+> > >
+> > > commit 1bd7bcf03031ceca86fdddd8be2e5500497db29f
+> > > Author: Breno Leitao <leitao@debian.org>
+> > > Date:   Mon Nov 4 06:53:31 2024 -0800
+> > >
+> > >     uprobes: Get SRCU lock before traverseing the list
+> > >
+> > >     list_for_each_entry_srcu() is being called without holding the lo=
+ck,
+> > >     which causes LOCKDEP (when enabled with RCU_PROVING) to complain =
+such
+> > >     as:
+> > >
+> > >             kernel/events/uprobes.c:937 RCU-list traversed without ho=
+lding the required lock!!
+> > >
+> > >     Get the SRCU uprobes_srcu lock before calling filter_chain(), whi=
+ch
+> > >     needs to have the SRCU lock hold, since it is going to call
+> > >     list_for_each_entry_srcu().
+> > >
+> > >     Signed-off-by: Breno Leitao <leitao@debian.org>
+> > >     Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list loc=
+klessly under SRCU protection")
+> > >
+> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > index 4b52cb2ae6d62..cc9d4ddeea9a6 100644
+> > > --- a/kernel/events/uprobes.c
+> > > +++ b/kernel/events/uprobes.c
+> > > @@ -1391,6 +1391,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+> > >         struct list_head tmp_list;
+> > >         struct uprobe *uprobe, *u;
+> > >         struct inode *inode;
+> > > +       int srcu_idx;
+> > >
+> > >         if (no_uprobe_events())
+> > >                 return 0;
+> > > @@ -1409,6 +1410,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+> > >
+> > >         mutex_lock(uprobes_mmap_hash(inode));
+> > >         build_probe_list(inode, vma, vma->vm_start, vma->vm_end, &tmp=
+_list);
+> > > +       srcu_idx =3D srcu_read_lock(&uprobes_srcu);
+> >
+> > Thanks for catching that (production testing FTW, right?!).
+>
+> Correct. I am running some hosts with RCU_PROVING and I am finding some
+> cases where RCU protected areas are touched without holding the RCU read
+> lock.
+>
+> > But I think you a) adding wrong RCU protection flavor (it has to be
+> > rcu_read_lock_trace()/rcu_read_unlock_trace(), see uprobe_apply() for
+> > an example) and b) I think this is the wrong place to add it. We
+> > should add it inside filter_chain(). filter_chain() is called from
+> > three places, only one of which is already RCU protected (that's the
+> > handler_chain() case). But there is also register_for_each_vma(),
+> > which needs RCU protection as well.
+>
+> Thanks for the guidance!
+>
+> My initial plan was to protect filter_chain(), but, handler_chain()
+> already has the lock. Is it OK to get into a critical section in a
+> nested form?
+>
+> The code will be something like:
+>
+> handle_swbp() {
+>         rcu_read_lock_trace();
+>         handler_chain() {
+>                 filter_chain() {
+>                         rcu_read_lock_trace();
+>                         list_for_each_entry_rcu()
+>                         rcu_read_lock_trace();
+>                 }
+>         }
+>         rcu_read_lock_trace();
+> }
+>
+> Is this nested locking fine?
+>
 
-Those look forgotten in my mbox. Do we still want them to go somewhere?
+Yes, it's totally fine to nest RCU lock regions.
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> Thanks
+> --breno
 
