@@ -1,167 +1,179 @@
-Return-Path: <linux-kernel+bounces-399592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0419C013B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:36:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C2D9C0154
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BE6F1C213CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42AB428366A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88501E1043;
-	Thu,  7 Nov 2024 09:36:00 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FAE1E25FC;
+	Thu,  7 Nov 2024 09:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0SAGYnEL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="deeMevBn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0SAGYnEL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="deeMevBn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A548B1E0DED
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8E01D79BB;
+	Thu,  7 Nov 2024 09:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730972160; cv=none; b=aZd/XMDtuCn9gEV1kXm/7QqlDvLcs4uTOZNUzUhcohhGKCUq0j8/R6UYVPF2ZQV5/2yQyh45HUUevtfQ0WE7ID3H7i0a8THigepp8L/qITpxr3bqRB3vU9361IiQuT4IcSOi+WakiRT0P5Tp1RNdaQoFBf6yXkcyNjnuJ1+XbtM=
+	t=1730972444; cv=none; b=N2ECkEFhcLQRqGMpdbLcc4/7J4pGtokGF13eR3L5b0zUC3EkqOpQjKlT3PVkyrEZWHYVwpIdrgc8EIsb8kFERSq1WFWbCGkoklsu3DOyoKhYkJyYrQ/TcXawe/x3Gp/Yeh4FPMkTPaiNTPBoB7GEaITYY/wLEtW5kvRMCRIz8s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730972160; c=relaxed/simple;
-	bh=VQi/YAj6fn3bpq7JZNWqkMSXEsRQrA/ULc92Lb/zmEU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RQD9n8uEA8dfzPs7QoNgIF9op9m0Ztl3LNwiB9Hj6t8SZ9p8r49YyVwZHLHjuuzq19Qvwh64eycTY6Rl3d6WDaoHMws5a0Je3cM1gCRNBu8rjjYPuWCDgeET8wKH5T8jqvuuDA6zCYjKyv9kwU5Pm7QSqlI6cWtzlcy2rpu3Fu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so8830255ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:35:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730972158; x=1731576958;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MOl0qqtOmTWHIbRQiST5WY9uhJbGKOWmM6OMiHRavwI=;
-        b=XIE/KNnvoTj68+dKg2PWinaQf7y2EWiNfppaiGkwOOS6tQbw0HHss6CAD9ZkKtZYNP
-         wLxwXv9nQ/5BkZakSSnP+jdq8dA2FQFk7UxI/yD8DVtwtYzrYy7M7lMPwhB9n+amEfVV
-         vJw9cm4IQKxxWqymuqt+qiDiEmBjYAPRPIp5izdJr52BGChwfU4wh5+XcygXoDGY6YQ7
-         rm1jvzKSRhjR6q6ISHxghlLmU/nRbfgziV7hUxB8aA8EzIsF2BW9zO65/evOK/EOCqeG
-         0xDJ+u3H9jcEiQDYwaKSj5oCHXLvLqITJTY+Bv6UyL1Mu5ggr4zJm3H+9zkFzS80qmTv
-         i4lw==
-X-Gm-Message-State: AOJu0YzBTlE4N7PQYOYt1EguqmCY0UdcEDQtFg3fegjsVpAB7WnqEZ/0
-	kAPCWTY2+DAt8EjSHhGtyLKZkpy2qjikKWCOkZU/awr1hcltO3hJqonA+TI2qFCjJPtywA88z1X
-	hLUAVORE/uufFhX1Iofb8WK9kEY4x1wHhPqJ6tQ9ovxGVvQYeWGGKI5E=
-X-Google-Smtp-Source: AGHT+IEWGX/E8xyQQ4aaNaX8OZPw42dlMRgUrwjRyJ9drUnixxUnsAFYnMYIr27y91RMaOyQrazH4WHyWios6w5Jjl8QUUvri8E7
+	s=arc-20240116; t=1730972444; c=relaxed/simple;
+	bh=cQ7+E9wE9oPZkBrWC40qBHj5F/WnrP2dolgWrrMIO4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C3IJ6Q8Pxh+7dns1qQ3NkEdrNAy08FLX12dmsOHeS2Mizm28MEBxemKIsnvgTXIHGVLK3KCGfHMVcRDGeol7WDEab2DRLExbYzNPZSI7d5SRWqqjd0C2U0igY4xrlt3YrCtCRXEnKLHAoBqvrea9ob7kyj2cVgjafdirpJOwPJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0SAGYnEL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=deeMevBn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0SAGYnEL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=deeMevBn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ADD9921BC2;
+	Thu,  7 Nov 2024 09:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730972440; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EhVyyo5JGxlVGXlp6VoYKjgmSm3GnU0oOYcZRfTeVls=;
+	b=0SAGYnELBskamWnC1+iL6Jw3ZT1YhrW74LQH+M1yptKZe4fDRtrisVKJYMoWZSdCjj1eUV
+	7d0sIDfd35n32BjtV5aahb68UFEt3ZIVkjQcscBYDOeqsGXFUEQlyqN7ZGz9aUAClKY4hU
+	wtE8I/QYdae6NC+PmPSWcjZ7YF3GSW0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730972440;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EhVyyo5JGxlVGXlp6VoYKjgmSm3GnU0oOYcZRfTeVls=;
+	b=deeMevBnDgOQ8KIkUC9NBX7gHCJCFKXUnGeumSOOz1LniH28iFMkuBDfmGy/dIAky86DHb
+	bmMjmky0ctuvJYCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0SAGYnEL;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=deeMevBn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730972440; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EhVyyo5JGxlVGXlp6VoYKjgmSm3GnU0oOYcZRfTeVls=;
+	b=0SAGYnELBskamWnC1+iL6Jw3ZT1YhrW74LQH+M1yptKZe4fDRtrisVKJYMoWZSdCjj1eUV
+	7d0sIDfd35n32BjtV5aahb68UFEt3ZIVkjQcscBYDOeqsGXFUEQlyqN7ZGz9aUAClKY4hU
+	wtE8I/QYdae6NC+PmPSWcjZ7YF3GSW0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730972440;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EhVyyo5JGxlVGXlp6VoYKjgmSm3GnU0oOYcZRfTeVls=;
+	b=deeMevBnDgOQ8KIkUC9NBX7gHCJCFKXUnGeumSOOz1LniH28iFMkuBDfmGy/dIAky86DHb
+	bmMjmky0ctuvJYCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4495139B3;
+	Thu,  7 Nov 2024 09:40:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lb4WKBiLLGfMeAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 09:40:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 64F14A0AF4; Thu,  7 Nov 2024 10:40:40 +0100 (CET)
+Date: Thu, 7 Nov 2024 10:40:40 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] fs: add the ability for statmount() to report the
+ mount devicename
+Message-ID: <20241107094040.2gcshh466b7zslva@quack3>
+References: <20241106-statmount-v2-0-93ba2aad38d1@kernel.org>
+ <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d11:b0:3a5:e7a5:afc with SMTP id
- e9e14a558f8ab-3a6b028898dmr258882275ab.2.1730972157945; Thu, 07 Nov 2024
- 01:35:57 -0800 (PST)
-Date: Thu, 07 Nov 2024 01:35:57 -0800
-In-Reply-To: <672b7858.050a0220.350062.0256.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672c89fd.050a0220.49393.0175.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
-From: syzbot <syzbot+1fc6f64c40a9d143cfb6@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
+X-Rspamd-Queue-Id: ADD9921BC2
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Wed 06-11-24 14:53:06, Jeff Layton wrote:
+> /proc/self/mountinfo displays the devicename for the mount, but
+> statmount() doesn't yet have a way to return it. Add a new
+> STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
+> offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
+> the return mask if there is a device string.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-***
+Just one question below:
 
-Subject: Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
-Author: lizhi.xu@windriver.com
+> @@ -5078,6 +5091,12 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  		if (seq->count == sm->fs_subtype)
+>  			return 0;
+>  		break;
+> +	case STATMOUNT_MNT_DEVNAME:
+> +		sm->mnt_devname = seq->count;
+> +		ret = statmount_mnt_devname(s, seq);
+> +		if (seq->count == sm->mnt_devname)
 
-add limit to avoid retry too frequently when rreq need to retry
+Why this odd check? Why don't you rather do:
+		if (ret)
+?
 
-#syz test
+> +			return ret;
+> +		break;
+>  	default:
+>  		WARN_ON_ONCE(true);
+>  		return -EINVAL;
 
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index b1a66a6e6bc2..1863258cd9db 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -87,6 +87,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
- 
- 		netfs_prepare_dio_read_iterator(subreq);
- 		slice = subreq->len;
-+		printk("subrq: %p, %s\n", subreq, __func__);
- 		rreq->netfs_ops->issue_read(subreq);
- 
- 		size -= slice;
-diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
-index 72a435e5fc6d..ac9ca11b091f 100644
---- a/fs/netfs/iterator.c
-+++ b/fs/netfs/iterator.c
-@@ -63,6 +63,7 @@ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
- 	pg_size = array_size(max_pages, sizeof(*pages));
- 	pages = (void *)bv + bv_size - pg_size;
- 
-+	printk("bvsize: %lu, pg_size: %lu, cnt: %lu, np: %u, max_p: %u, %s\n", bv_size, pg_size, count, npages, max_pages, __func__);
- 	while (count && npages < max_pages) {
- 		ret = iov_iter_extract_pages(orig, &pages, count,
- 					     max_pages - npages, extraction_flags,
-@@ -98,6 +99,7 @@ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
- 	}
- 
- 	iov_iter_bvec(new, orig->data_source, bv, npages, orig_len - count);
-+	printk("ret: %d, npages: %u, orig len: %lu, count: %lu, %s\n", ret, npages, orig_len, count, __func__);
- 	return npages;
- }
- EXPORT_SYMBOL_GPL(netfs_extract_user_iter);
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index b18c65ba5580..4e244dfb23bf 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -465,6 +465,7 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq,
- 				  int error, bool was_async)
- {
- 	struct netfs_io_request *rreq = subreq->rreq;
-+	static int rtt = 0;
- 
- 	switch (subreq->source) {
- 	case NETFS_READ_FROM_CACHE:
-@@ -506,12 +507,18 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq,
- 	if (!error && subreq->transferred < subreq->len) {
- 		if (test_bit(NETFS_SREQ_HIT_EOF, &subreq->flags)) {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_hit_eof);
-+			rtt = 0;
- 		} else {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_short);
- 			if (subreq->transferred > subreq->consumed) {
-+				rtt++;
-+				if (rtt < 50) {
- 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 				__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
- 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-+				}
-+				printk("subreq: %p, 1async: %d, r: %p, transed: %lu, sub req length: %lu, retry times: %d, subreq consume: %d, subreq list empty: %d, %s\n",
-+					subreq, was_async, rreq, subreq->transferred, subreq->len, rtt, subreq->consumed, list_empty(&rreq->subrequests), __func__);
- 			} else if (!__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags)) {
- 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index 819c75233235..b7d22f04593c 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -83,6 +83,7 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
- 	if (!err)
- 		subreq->transferred += total;
- 
-+	printk("subreq: %p, err: %d, total: %d, transfed: %d, %s\n", subreq, err, total, subreq->transferred, __func__);
- 	netfs_read_subreq_terminated(subreq, err, false);
- }
- 
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 0b8086f58ad5..d80af1aa74e4 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -714,7 +714,7 @@ p9_virtio_create(struct p9_client *client, const char *devname, char *args)
- 	mutex_unlock(&virtio_9p_lock);
- 
- 	if (!found) {
--		pr_err("no channels available for device %s\n", devname);
-+		pr_err_ratelimited("no channels available for device %s\n", devname);
- 		return ret;
- 	}
- 
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
