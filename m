@@ -1,102 +1,80 @@
-Return-Path: <linux-kernel+bounces-400160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1019C09B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:11:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7839C09BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:11:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5DD28533D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB111C23BDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3061D21312F;
-	Thu,  7 Nov 2024 15:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423C5213132;
+	Thu,  7 Nov 2024 15:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CSbWQbUC"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GcwXKl/0"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69F4212EF7;
-	Thu,  7 Nov 2024 15:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC3D212D21;
+	Thu,  7 Nov 2024 15:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730992279; cv=none; b=LNyXkMxm6OBuFvue2TAuwWy7VvB7vwRXwF3S1Tqmb5FZF8Q4IRm9mduNV1A49vQeud8M7hlkhTVHq8+CehsIgP5zJqlKaPTh7WX8o1xL65q9wN0VXbelycAbbFUhPP4lZqQdx1vcihjI9z12e/6W3f0K2idb71XTWGI392wooQg=
+	t=1730992291; cv=none; b=LLzR6ARabUyS3iDKYwBAOxfBSzNPoH5Gz7B09fcnFA/OPDz/AFQNPV1nsycNku+M1YCsSPqL4qBq3cjVl7EjudC12pwRmVwuR1ZODWgxGkXnIZxLya9BwyrbdfrD8w46HiCMeAW92bJLwZZcpCiMR4ewgINsg2G18wrHl03+mlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730992279; c=relaxed/simple;
-	bh=HBKzX96U7sDVHpeC5yhWKW4KghAqWyiEPx7ier2Dsl4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GLeqIFXkVCN8jnLUj0sroIChIoeg5LNbKwh1N8gdZExwHlo0EFlKYWBVUi6Zkie9/iWzaFsflatC3cZBug/cSCqcbEF5t9lUrCgEXfb2Hs0VsCp3utezEWRRJjj2jgUdKBk0Ij4/RQU9/CXBOUoaqoFXR0hEAsSlzB8xX4Oy7FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CSbWQbUC; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730992276;
-	bh=HBKzX96U7sDVHpeC5yhWKW4KghAqWyiEPx7ier2Dsl4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=CSbWQbUCv7Mj7M/sCkFxcJnd6nL74U4c5a/I92TbnfZ+L+9GCUx9Qf1R/gH6s61V5
-	 1qlUthsvXGnseJKNWjOieIflZGI5ZMZfk++FmXpza56eLWHPOS5s0MtzU4tyUqxgws
-	 XDlwtNvmGvvSu0ST4F38OSKMor8egsTNaFZ6/p5Bu11ZjDS5t2Uk0f8a1GFZCV3H/q
-	 EQhaFIfBctZvyGzLedxBw+LzkqTHMW8HH6QuJIgRYtZ4OG1NO0EfxkxrcR27CZWnaF
-	 unai/LQkFhuwyglTer65Xpq9v3x4TCfM0ojLDdvkmnNcX8V+1u2x2czjKuLazFJiWe
-	 VEelvyzTu2BPw==
-Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::580])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A859817E36AF;
-	Thu,  7 Nov 2024 16:11:14 +0100 (CET)
-Message-ID: <2df57a64a4736dbfc25d514faac03d8f431d83f1.camel@collabora.com>
-Subject: Re: [PATCH v6 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2
- profile support
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>, Sebastian Fricke
-	 <sebastian.fricke@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Alex Bee <knaerzche@gmail.com>, Benjamin Gaignard	
- <benjamin.gaignard@collabora.com>, Detlev Casanova	
- <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Thu, 07 Nov 2024 10:11:13 -0500
-In-Reply-To: <7ceb8209-c292-46bc-88e4-2e19a5ed5fda@kwiboo.se>
-References: <20240909192522.1076704-1-jonas@kwiboo.se>
-	 <71159f58-be8b-41a4-9fed-522e09a7a564@kwiboo.se>
-	 <20241025103022.yuaepqxllwi7gghb@basti-XPS-13-9310>
-	 <07674bcb4b7650c21bbb3dbe9855b2240444d4f3.camel@collabora.com>
-	 <ab14cb57f3ef22c486afad9eb4aa9abec1b33dd2.camel@collabora.com>
-	 <7ceb8209-c292-46bc-88e4-2e19a5ed5fda@kwiboo.se>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1730992291; c=relaxed/simple;
+	bh=lOH8IR6oNmISd8P9/400Syn+vXGVnV+xRyVybav+6/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWETVZ5IcSZQBG0gHo2MtH74viQwl2H1agyxn+9RW9crUDjsZEjWPAv6gceGeEbehM/+UwSkkRfhxbmY64vZdsZYgOZQ0wlFuzdW7I+r0+zHlUurKccSnr1EC8nbw6X1tb7xAieGqWpjTUPTFVkYXfgAC//Zb+WUkSIfEjt7MVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GcwXKl/0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lOH8IR6oNmISd8P9/400Syn+vXGVnV+xRyVybav+6/4=; b=GcwXKl/0RlcOcFK2YRezBEjMK/
+	ihG+29MixzmbaIkP/MKW4/lfJ0ns05vE0df3BbeJXE19wPpwYrPqp/c71VzLx3vSWiLtOJcJjw6Dj
+	SYzT76y0U46dL1QQPL67hGwvx/91LMHBNbbr7vKmoo5ZJwPq/N7acY2AhZyQbtiq7Q7Npbz6RVMpH
+	cl+7VdLLpEQ8fFOcwcrT1s69fQfeEzT64QKnfNr7BNnQYkO/Hi2/UZDnm8IOimisUlsc/CZZFdVfo
+	5a9ziz/U9RJO+mKnEFnkmDNyQjpsCdTTQot3kjwQnFcPD1+uBfXU0PT00eJJBpTYKNKlVetJIaNSF
+	4ItjoKEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t94AR-00000007OtG-1oXV;
+	Thu, 07 Nov 2024 15:11:27 +0000
+Date: Thu, 7 Nov 2024 07:11:27 -0800
+From: 'Christoph Hellwig' <hch@infradead.org>
+To: ??? <jangsub.yi@samsung.com>
+Cc: 'Christoph Hellwig' <hch@infradead.org>, ulf.hansson@linaro.org,
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	junwoo80.lee@samsung.com, sh8267.baek@samsung.com,
+	wkon.kim@samsung.com
+Subject: Re: [PATCH] mmc: Add config_host callback to set a mmc queue
+Message-ID: <ZyzYnw0PgpyViFdf@infradead.org>
+References: <CGME20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c@epcas1p2.samsung.com>
+ <20241106051347.969-1-jangsub.yi@samsung.com>
+ <ZyxelKdmXXiSVL1g@infradead.org>
+ <000001db30f4$4a749770$df5dc650$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000001db30f4$4a749770$df5dc650$@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Jonas,
+On Thu, Nov 07, 2024 at 06:06:11PM +0900, ??? wrote:
+> Currently, there is no way to configure a request queue on the host side.
+> Although there are various exported symbols in kernel/block/blk-settings.c
+> that can be used to configure a request queue, users cannot utilize them
+> as needed.
 
-Le vendredi 25 octobre 2024 à 22:13 +0200, Jonas Karlman a écrit :
-> On 2024-10-25 19:47, Nicolas Dufresne wrote:
-> > Le vendredi 25 octobre 2024 à 08:54 -0400, Nicolas Dufresne a écrit :
-> > > Le vendredi 25 octobre 2024 à 12:30 +0200, Sebastian Fricke a écrit :
-> > > > Hey Jonas,
-> > > > 
+If you actually provided a user and didn't just try to offend the kernel
+maintainers by submitting dead code I could explain you in detail why
+youre idea is flawed.
 
-[...]
-
-> > 
-> > I'm done, there is only cosmetic comment, if you respin quickly, I'm sure we can
-> > get this one in soon.
-> 
-> Thanks!, I will respin a v7 with the nits fixed later this weekend :-)
-
-I simply wanted to check with you if everything was going well with this V7.
-Feel free to ping for help.
-
-Nicolas
 
