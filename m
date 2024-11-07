@@ -1,187 +1,223 @@
-Return-Path: <linux-kernel+bounces-400254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45BB9C0B07
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:13:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC35A9C0B20
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:15:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36389B22A40
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:13:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18E8E1C232F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442572185B5;
-	Thu,  7 Nov 2024 16:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7E02170AD;
+	Thu,  7 Nov 2024 16:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Dc3RdW6w"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011032.outbound.protection.outlook.com [52.101.65.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U0UHJf1F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB09216DEB;
-	Thu,  7 Nov 2024 16:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730995808; cv=fail; b=NzkJxr4vaHK2xF42r6TbJVJeP0cgYFYNgUY8tQSsu3UxC4sGJPshFKBYOPl14zyLaJMOrsat3thVEfH5MlGYvS2TBWRIPwjhwcmti3pyyHbp2vjMj1ZC+E+O/qO/46dlKKAjDhW/HEjNGtbiYoXX5HGNG/T+BR8NGdaGSWw/Ihg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730995808; c=relaxed/simple;
-	bh=H98LhaEXY8FKf5zr/lGGFpHNe8/IIHspbYpU+2NWBLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=I6f6n0NWJ0aRe+ta2b6Q7rRITJtU3CPTIo7ed0gg7Q4xJBcfBzM0vINNSQG2+MDo6L2ioiuoLSfhP1L7ceM7Z1mivRsPubEbtKSg/wjayXjuZ6BPGvqZ3rhLHjf45fuATDzPNUUmA41Tq/HXeTWq1g5kxxZeS2H7RdeaFnyvuOk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Dc3RdW6w; arc=fail smtp.client-ip=52.101.65.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i4KaHqTaPQt834ofmxDNnOMNVQ1dKI+AJupfJo+TabCC3inh/jvHK34u20KyU8Owjopo7bvlDIrgYUYLt0gfLzN7LsJ/RpKLNeQ4AQkP4IPrvggMO8d/9nlgmgGlLeomV6KG7/GSaw296eI2E+JvxeUj+fIxV8pf7veJbSEwghx/hvI5k4yFLGyCGMPN3Whpk0Vwf6k1Sra2DVzFwLdFioDFGgpczfvf97O82G2BdjGkOysNG91+5xIXcf5wxCXedAZpn4wslFY03sF4YW96oB7d+2KbJW7Tmu67gbUMerte/H+A7AaukoTX0zs7xBtC2zooM9hLVtC07Riv0CxVHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ekxa2E/MJp/T6VV6vBEWa0FKkWLiS4MepydyaoKjTBw=;
- b=TVNCxqhpzvnxbGcQyiUWeC7AwLM9baXaBBVpmb+KaR+v49JzgMxDA+9FomlDevDluLXw+7Nkaitm+HwPS5MYPcZALuggMkE5mRIKUFSNgGWEZvoOBajz1JgiiwvALNYJooXuIYaAYMfXrJZ3L3JU9xdKbWNte2ADu6vhzmsX7fcHJfq2vV6cLGCnv/3yqR7QvHOnPeiHoSCGsJDSvk88DbYNmmAaJTbVN/mVJ/yn5pJlf5+fdKtlxdkz5JWRBLVa26tJ/1aCoED0hPGVS+sxXyz8XBuPHBgV2M1u5JnkhDAv8fUbzVZScsTplxolXHWBGD1MYcdvka2Jua8zYaPyIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ekxa2E/MJp/T6VV6vBEWa0FKkWLiS4MepydyaoKjTBw=;
- b=Dc3RdW6wRo8NkmoMnuur7dQOQW8DOFH9UIcZ+uo1a3Quz/0Vg6upMTIG90W95br5Ev4EI2MmADCNNUAFZWz5DzNq1MMEWtPOLNV5dnZwJuP9IgTEIzvjH7BKe3+/V3C9bUKsWg31Dv74nHNDzRwD6EfmQJJeKEAF1+A5ZP72L6mVDnuvtZttG2MMJ6duS0LDXnIgEzg3QCgPx04h6SPkJAPc7YBx5R408rtX/YWkq+gvhkTk4OJyRgbBC7UuuD9kAU7+603t/OQXvQQarM/CSxDjHfNgNOJ8GKPNa7zu9/kZBs5oyxIEVX7SOZU1UY8JQXGSCoCR7AOXG81XGeqkgg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM7PR04MB6838.eurprd04.prod.outlook.com (2603:10a6:20b:10a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
- 2024 16:10:03 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
- 16:10:03 +0000
-Date: Thu, 7 Nov 2024 11:09:54 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	shengjiu.wang@gmail.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: imx93: Add SPDIF IPG clk
-Message-ID: <ZyzmUvMHQCZDKp9K@lizhi-Precision-Tower-5810>
-References: <20241107102008.3626023-1-shengjiu.wang@nxp.com>
- <20241107102008.3626023-2-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107102008.3626023-2-shengjiu.wang@nxp.com>
-X-ClientProxiedBy: SJ0PR13CA0024.namprd13.prod.outlook.com
- (2603:10b6:a03:2c0::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897A8216E01;
+	Thu,  7 Nov 2024 16:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730996027; cv=none; b=SQljbLt0+An862TeCkvlfo6z3MpiWgYDJ9FO8Eyhg1BHm6GSKZR+v4T3HecCgR+dERSy/FrIwu2ckXyjb9hdg7OyXjm9rTDNFjJj9lRk2m3i9bOhxkRpwDhyliNEQeXF5BNvMmLdqd3mR4oMzDxArtTvYrwM+Uk2MdqTVtwPg7E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730996027; c=relaxed/simple;
+	bh=2KVewH6gbI7QLh7PVS2aZtluQpiu+xwJYuj2THd+jEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SgqTlqXujj156i9L8rBwuPH1JqbhrXs8EqEFGtcKSiYnKoh9il6az22eY3OGyH2gLJmtThl8OQV4sbrGxh1zapiXB7piqF9e4lA8R15oddI0HES0P+TMYFOgorS6GlGK9h1jPoC/AHVlYtoEREHMuDXPNoLufKuEIubM3YMsEqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U0UHJf1F; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730996026; x=1762532026;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2KVewH6gbI7QLh7PVS2aZtluQpiu+xwJYuj2THd+jEs=;
+  b=U0UHJf1FehyvNyR4baVv3C2xtrQl88Wk828y0eRt1eYlEpIgxf9pJ/yM
+   w+XMQNK29M/45rY/CqnNoDupPQTwqJuix2+O/9tKfHYB7JsoZigysM7/+
+   hY07y82R5DRdq1kMx483lJNMBc+aQ2weHGhvsNoMyfvoc+lDhxO8nF8Xa
+   IPocP1V5SPUfCXJ4fR7yet3fNhb9rSd7acFbU8LpCvHNkX9il5Uz8dgFM
+   qPaUzlwW7owZxPTbBO3yHhqj79wnE649FND7n6/E2EV3+f2Yx1mhlKwZZ
+   BDcEf474hgLbMY/Zgeh02h0h2uIyS1bU76mAi0G82ttGvk0gkj4+plOLO
+   g==;
+X-CSE-ConnectionGUID: mxvHTS4iTk2q69c4t3Uhuw==
+X-CSE-MsgGUID: Q9axvU3rQDuUyTM0Ikh18A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41955674"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41955674"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 08:13:45 -0800
+X-CSE-ConnectionGUID: Hskh+WlhRZWk5VW1fdVZYA==
+X-CSE-MsgGUID: zYG0p20DTfOrFToP1OQp0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="90258131"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by orviesa004.jf.intel.com with ESMTP; 07 Nov 2024 08:13:41 -0800
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Magnus Karlsson <magnus.karlsson@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v4 00/19] xdp: a fistful of generic changes (+libeth_xdp)
+Date: Thu,  7 Nov 2024 17:10:07 +0100
+Message-ID: <20241107161026.2903044-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM7PR04MB6838:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2accc5fb-c4bb-402d-0a86-08dcff46a360
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2yzfzacvqdP5wC9Xu6A7mk6sh54ZKcaxzAiDKQtFa4xwYNyJgl5MP2StCHQZ?=
- =?us-ascii?Q?p0ODn7oCAcjAK6PCSSAjNDAhvVMGisiWVRmNDWNFiRE/9Cmz1+g0cR/XEofu?=
- =?us-ascii?Q?Ay7YOOxhd3q4fhafg2ZQx3owZx6IofimWNN8dy44EtNivDTpPfUnjMGREqkS?=
- =?us-ascii?Q?yMQ9BfCv9CjbuU0+KpPAgK/DEUU8JfqRVtP/G36FtLrmF0WoE6KtDb8bSlT3?=
- =?us-ascii?Q?I7gRPR/FskbyIAkyYBfgdlXQ1OKwk3zAYZhOsjS0L/p6z6NU6+t0rYd8bXcI?=
- =?us-ascii?Q?2o5aE4TcpHxNRxHBRibC5+kRInLWN86bC44IFpVSW4j/zbRiZks2oCBuGF58?=
- =?us-ascii?Q?2JuRjVpyfJA54MPKCIXX8wV0YxEkMQ5XLRmpHHEO5a6AHwF87z4V+EkgwuBm?=
- =?us-ascii?Q?nAyd0HvolW6eCs5JM7T3xvKZRwxNLyJREDmIaLG3M2whLUxDN6VF5ZSbCmiz?=
- =?us-ascii?Q?xGuSBVI6R9HyuxzdGDWdq2Y/rfYlLC8VnksqAEqqus8APDBmEqDj4ZWdriOu?=
- =?us-ascii?Q?Q2la1t7cR2EVESIHXE8dfAw1bUd9JC8D+JDENfE0hiQwF0XQ1PGDb4wYhYMp?=
- =?us-ascii?Q?Zz7SBDyq8r+RF/lkaoQGb53M6Q3j5JyWXrg18L5QX+y8T9DoxDytygUArRzx?=
- =?us-ascii?Q?te6FqCmyuKaqI86Tsu4C1ozzxqFoRtbH0X4cywhYzUT7wl8+izhfIvELMH+7?=
- =?us-ascii?Q?/zZFuaRDYW3f5Spfmlic2ZwhOrxwLVJRFAfuJADCFTEU1bYo1gfYfo7uvdBu?=
- =?us-ascii?Q?V8u01agWkHEL5Iy67BBJCeezTY4t4W7WByCVQJTMkO4ZbWZeiEtyWDfGw8iC?=
- =?us-ascii?Q?QPs5jMP+xnLVD0ubZHxMwKQlQPv+glzFeTSC5VI//tpnAjVUHlDIMB04E0mx?=
- =?us-ascii?Q?0gbLtS1AsqbqJq8ZG/hKYDwnnIbZ4l0/xaQC+h0jjxnI+KwH/q/t3h+DMq/P?=
- =?us-ascii?Q?lZEhqx+CbfeL9glYxqJIxY6bQYh7aiPQrx9E+Bgy+EVNyREXs/L7cMn120g2?=
- =?us-ascii?Q?anm5O1Hsj43/148JgRO30w8ZmaXlBPiIIJJKGWKaJlzWcSroTA1mCFiYmFZs?=
- =?us-ascii?Q?NHHJKpxw306AEw9uieNvN0juffTLUbV9Ed8GCzMiTnej2iF/2ufugaSItuVY?=
- =?us-ascii?Q?GAQpOHTckBWtCsraXu+xOl57v8t/o7FR7RSGf5pPN/w/220+xn1WuD/ZKgu6?=
- =?us-ascii?Q?HP8NvVffTxM+2c2kICYTZp29Bcur2/28GFT1RGkvBx+Ffk1+6lOeLUdzWK4b?=
- =?us-ascii?Q?UxpvbYxrEbDXeC2Qq1xgW5qiP/NN/26N1/jxuQFii4cdQ9BVgsNl4ymfEsZb?=
- =?us-ascii?Q?Z6C64fPWY1+8EEUve4ve1wvIeLvD+I3pt2+5IjULvJvxPqGvDfB7YZ27b56C?=
- =?us-ascii?Q?UVxZ4So=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wbhrm+YAumYGH/LN9NNoKvjESIwHfg6CMkUBhYKXI/uHOaFxrzDYj+4ffYBI?=
- =?us-ascii?Q?00DYfniAjHiPTCn0uXGI2OJh8RK8caL9BLDNhdmE1uN8Rux2xUlf/YMg3Kv3?=
- =?us-ascii?Q?CTFjrxCOYr4syF4j5VKIeZ1fiL1PDNJGYZqrds2GZHRZf48ZNgYQ4G1eTlS6?=
- =?us-ascii?Q?yObIo74NKgAKrEe+L1Nq5J3q2TvQnJMiAWRyk/a2P9mD1eoG0iPwXo6QLLau?=
- =?us-ascii?Q?1TdxIES2qMjgrxcbkHn4F8dXGRX/pbehRI3X+LxSWzI0tDix2ZFM6BNHM4YD?=
- =?us-ascii?Q?D9c+l1HT9giMq8zUPm5ttfAvnwXYnS/uHJPY+V/B8FE5B/C8+qXs4RchcnS2?=
- =?us-ascii?Q?PxSWEqTVMuIzMwuEk4K4FfSS1RW2sBdKN7rdYPsvmv6nNuhS1LgJVaXET7bA?=
- =?us-ascii?Q?CmUv5LUadA8z1520X5qDRThu89oU6L2t5t3mimvW8KiGuX+aaybzVUBJUFui?=
- =?us-ascii?Q?Q9Hj08t8h9nyUeKenE7WRi/qqKqz8fTLp5etBdXhMH0oq9E7GM06tWElT/dn?=
- =?us-ascii?Q?FT1tPY3QyhAsSjDmTwOmQxMZSQt2kw6awMyRG3FZPF7gtfvFuzqivCfbzWO+?=
- =?us-ascii?Q?WVqjD8EDV+YhFI3Y0vc1QPHR9iVPtOqoLfr5ek6+vnc4YiLDrt5WSgUwYz9x?=
- =?us-ascii?Q?V33cdOrS0irQ13ecqS+EbVMTKrD/ZGxnRDVlXWJvf1KBTkHp8q9I18LZ/Zmz?=
- =?us-ascii?Q?QZtZDEclUYJJwXPIpKU/oC/R3AvOiA6jzQmRG+FQEywNBayrv82y4NG9Lsbv?=
- =?us-ascii?Q?9YZRz895qdlKwCosqcrYK9qBbCUzdJEi70xr1RCHKYryGMTNO/f5+avqlTfv?=
- =?us-ascii?Q?hMN69NPNpXCI8kuRF5xytCb4YIHHaEWoYYcFc3YWO/ZqbFfF7sTFpwyYHBPp?=
- =?us-ascii?Q?kWO1BWyKRIkdr5rLtb6OTgOEovgaVNNHDRiRGK1MQT6eM10gUFZN22XJAynl?=
- =?us-ascii?Q?7qY0pGLeRvz20AVlocPBZCD5GDKgH8yCCbcEi4mLc0LSFPnnfdcGRA1v+W5P?=
- =?us-ascii?Q?oPrazIU0wz8Pumu+aZldPwdFgrnuLyg5lZvEwCBhcC8l1Ix91J8MN1VHPcTQ?=
- =?us-ascii?Q?4RiImHBTMgxz/ONQ/6ZeGyl+80HyziaCfT1+roQXa4VmQzs0abmBDtUgUbz3?=
- =?us-ascii?Q?jyp352VhIt6vsOpgPja6q4KLtkNjsDOtsVZjLjkNPE/NqAHN869VgaJV07AV?=
- =?us-ascii?Q?3H+OzPRvneUYsRRMqtQcbSM2D1d/bjJIdGWp0PCeD4WLCWsKqXImh5IGgwJ0?=
- =?us-ascii?Q?mxPl5ocBCgTer/hE7PdoPxmEmzSJyhiADdZh37YQ6GZf5wHwjEr3MSHXREf8?=
- =?us-ascii?Q?NmnLepx3V1Q3fj5lfMMYbxjZxRuP3AFseGG29IuICJNZ3n0MeszI88mLkM5K?=
- =?us-ascii?Q?beAKgu88z98cxlqmZmM94c3du5MZVztsj+g8R18XcGMh9sqzdKAuTw+yQyBj?=
- =?us-ascii?Q?hwrvHe/aEry76k0Tt2wX1CLh3fcwmU/XmjmgEZgzpeUX1vH4AO5BsmlajRN5?=
- =?us-ascii?Q?pLYokQ8dcBSYS/D3YpIA5o6xzvFJrfFTxcU7WNe+zVKdV/7f6Ok5HAGnDRtb?=
- =?us-ascii?Q?5ps8/bNr0hOiu0SYlpvXwJ2FXzvEZNDil5OMlrh4?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2accc5fb-c4bb-402d-0a86-08dcff46a360
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 16:10:03.5204
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FbDHxGTQ9Ju/qus7WPvUDUmZKnVxvHSYbtLGe6vjtCNz1n4hQU4LLmv7L2i3+lCi3Y3bpfrUuAX36RfbyZ/2lw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6838
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 07, 2024 at 06:20:06PM +0800, Shengjiu Wang wrote:
-> Add SPDIF IPG clk. The SPDIF IPG clock and root clock share
-> same clock gate.
+XDP for idpf is currently 5 chapters:
+* convert Rx to libeth;
+* convert Tx and stats to libeth;
+* generic XDP and XSk code changes (this);
+* actual XDP for idpf via libeth_xdp;
+* XSk for idpf (^).
 
-nit: wrap at 75 char
->
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
+Part III does the following:
+* does some cleanups with marking read-only bpf_prog and xdp_buff
+  arguments const for some generic functions;
+* allows attaching already registered XDP memory model to Rxq info;
+* allows mixing pages from several Page Pools within one XDP frame;
+* optimizes &xdp_frame structure and removes no-more-used field;
+* adds generic functions to build skbs from xdp_buffs (regular and
+  XSk) and attach frags to xdp_buffs (regular and XSk);
+* adds helper to optimize XSk xmit in drivers;
+* extends libeth Rx to support XDP requirements (headroom etc.) on Rx;
+* adds libeth_xdp -- libeth module with common XDP and XSk routines.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+They are implemented mostly as inlines with inline callback arguments.
+They will be then uninlined in the drivers with sane function sizes,
+but without any indirect calls.
+All those inlines and macros really removes tons of driver code, which
+is mostly the same across the drivers minus HW-specific part. You just
+basically need functions which read Rx descriptors and fill Tx
+descriptors, call a couple macros and that's it. The rest is written
+once in libeth_xdp.
+All exception and cold code are external. Error handling etc, anything
+that don't happen at line rates, are external. Only the hottest things
+are inlined ensuring driver code doesn't bloat for no gain and that
+cold code won't push hot code into more cachelines than wanted.
 
->  include/dt-bindings/clock/imx93-clock.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/dt-bindings/clock/imx93-clock.h b/include/dt-bindings/clock/imx93-clock.h
-> index 6c685067288b..c393fad3a346 100644
-> --- a/include/dt-bindings/clock/imx93-clock.h
-> +++ b/include/dt-bindings/clock/imx93-clock.h
-> @@ -209,5 +209,6 @@
->  #define IMX91_CLK_ENET2_REGULAR     204
->  #define IMX91_CLK_ENET2_REGULAR_GATE		205
->  #define IMX91_CLK_ENET1_QOS_TSN_GATE		206
-> +#define IMX93_CLK_SPDIF_IPG		207
->
->  #endif
-> --
-> 2.34.1
->
+Note on diffstat: don't be scared, almost 1500 lines are documentation
+explaining everything in details. The actual new code is around 2500.
+
+Alexander Lobakin (18):
+  jump_label: export static_key_slow_{inc,dec}_cpuslocked()
+  skbuff: allow 2-4-argument skb_frag_dma_map()
+  unroll: add generic loop unroll helpers
+  bpf, xdp: constify some bpf_prog * function arguments
+  xdp, xsk: constify read-only arguments of some static inline helpers
+  xdp: allow attaching already registered memory model to xdp_rxq_info
+  page_pool: make page_pool_put_page_bulk() actually handle array of
+    pages
+  page_pool: allow mixing PPs within one bulk
+  xdp: get rid of xdp_frame::mem.id
+  xdp: add generic xdp_buff_add_frag()
+  xdp: add generic xdp_build_skb_from_buff()
+  xsk: align &xdp_buff_xsk harder
+  xsk: allow attaching XSk pool via xdp_rxq_info_reg_mem_model()
+  xsk: make xsk_buff_add_frag really add a frag via
+    __xdp_buff_add_frag()
+  xsk: add generic XSk &xdp_buff -> skb conversion
+  xsk: add helper to get &xdp_desc's DMA and meta pointer in one go
+  libeth: support native XDP and register memory model
+  libeth: add a couple of XDP helpers (libeth_xdp)
+
+Toke Høiland-Jørgensen (1):
+  xdp: register system page pool as an XDP memory model
+
+ drivers/net/ethernet/intel/libeth/Kconfig     |    6 +
+ drivers/net/ethernet/intel/libeth/Makefile    |    6 +
+ include/net/libeth/types.h                    |  102 +-
+ include/net/page_pool/types.h                 |    6 +-
+ drivers/net/ethernet/intel/libeth/priv.h      |   37 +
+ include/linux/bpf.h                           |   12 +-
+ include/linux/filter.h                        |    9 +-
+ include/linux/netdevice.h                     |    7 +-
+ include/linux/skbuff.h                        |   49 +-
+ include/linux/unroll.h                        |   43 +
+ include/net/libeth/rx.h                       |    6 +-
+ include/net/libeth/tx.h                       |   34 +-
+ include/net/libeth/xdp.h                      | 1864 +++++++++++++++++
+ include/net/libeth/xsk.h                      |  684 ++++++
+ include/net/xdp.h                             |  185 +-
+ include/net/xdp_sock_drv.h                    |   52 +-
+ include/net/xsk_buff_pool.h                   |   12 +-
+ .../net/ethernet/freescale/dpaa/dpaa_eth.c    |    2 +-
+ drivers/net/ethernet/intel/i40e/i40e_xsk.c    |   30 +-
+ drivers/net/ethernet/intel/ice/ice_xsk.c      |   32 +-
+ drivers/net/ethernet/intel/libeth/rx.c        |   22 +-
+ drivers/net/ethernet/intel/libeth/tx.c        |   39 +
+ drivers/net/ethernet/intel/libeth/xdp.c       |  444 ++++
+ drivers/net/ethernet/intel/libeth/xsk.c       |  264 +++
+ drivers/net/veth.c                            |    4 +-
+ kernel/bpf/cpumap.c                           |    2 +-
+ kernel/bpf/devmap.c                           |    8 +-
+ kernel/jump_label.c                           |    2 +
+ net/bpf/test_run.c                            |    4 +-
+ net/core/dev.c                                |   20 +-
+ net/core/filter.c                             |   41 +-
+ net/core/page_pool.c                          |   60 +-
+ net/core/skbuff.c                             |    2 +-
+ net/core/xdp.c                                |  311 ++-
+ net/xdp/xsk_buff_pool.c                       |   40 +
+ 35 files changed, 4220 insertions(+), 221 deletions(-)
+ create mode 100644 drivers/net/ethernet/intel/libeth/priv.h
+ create mode 100644 include/net/libeth/xdp.h
+ create mode 100644 include/net/libeth/xsk.h
+ create mode 100644 drivers/net/ethernet/intel/libeth/tx.c
+ create mode 100644 drivers/net/ethernet/intel/libeth/xdp.c
+ create mode 100644 drivers/net/ethernet/intel/libeth/xsk.c
+
+---
+From v3[0]:
+* rebase on top of the latest net-next to solve conflict (Jakub);
+* 09: use iterative approach instead of recursive to not blow the stack
+  (Toke);
+* 12: rephrase the commitmsg since the functionality changed, so that
+  it's not actual anymore (Toke);
+* align &xdp_buff_xsk a bit harder since its alignment degraded
+  recently;
+* pick RBs from Toke.
+
+From v2[1]:
+* cover: rename the series;
+* collect RBs and Acks from Maciej;
+* 007: reword the commitmsg;
+* 011: fix typos in the commitmsg (M);
+* 012: 'ts' -> 'tsize' (M; not 'truesize' to fit into 80 cols =\);
+* 016: fix the intro sentence (M);
+* no functional changes.
+
+From v1[2]:
+* rebase on top of the latest net-next;
+* no other changes.
+
+[0] https://lore.kernel.org/netdev/20241030165201.442301-1-aleksander.lobakin@intel.com
+[1] https://lore.kernel.org/netdev/20241015145350.4077765-1-aleksander.lobakin@intel.com
+[2] https://lore.kernel.org/netdev/20241009152756.3113697-1-aleksander.lobakin@intel.com
+-- 
+2.47.0
+
 
