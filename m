@@ -1,117 +1,170 @@
-Return-Path: <linux-kernel+bounces-399962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0B39C0719
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:19:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7CA9C071D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:20:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8730282939
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:19:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45ABB282A33
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A936620FAA8;
-	Thu,  7 Nov 2024 13:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A615F20F5C8;
+	Thu,  7 Nov 2024 13:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qoPZCD8f"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/6LpVKs"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7581E1048;
-	Thu,  7 Nov 2024 13:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E57F20B1E2
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730985557; cv=none; b=qMxSB26wMCRWpkn+wsWmlVF0wUpIR0hSwU1Fo0WdYM8KB5uop63OphiLenLKJJPCSTBLfU108vkfZMJS7EezFPC9Zxnn8+PfgxhyT3Qlk72Tbt2WD0NQW8BqyWDfyJDG2M71T0D0NcMug80W0trtxE4DjL01mTiZ1mu9y5fbnpU=
+	t=1730985605; cv=none; b=g/rh/R0m+6ICLO+e9/NbFEId+rGJjwoHFc31mQHqvwx0wkuEjGz4+6wXcSvwu8AgmR6ufzxfYlOhVXcCqNK+trVIre/os6pTzJbEu5tifbAzehOM2X6tSHnZU+hCryBo8Ds950Gjodxgtyri/gi6vpe8ekz1IuKqE28VhLxqb/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730985557; c=relaxed/simple;
-	bh=30P4jNopQuStNnLTtJAXBWFkFvii1xYHKPCCcFEL/Cw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=We0WCtIQDmiYOpyGp473EeFlNCbxxSjOiWiPpNROcynHE0Lwc5aqGQ3//VfgN+c0CdLGgfw1YDiOAsUQAoEGsf9SwkCD9FMhHQHYLXh75StInpiu0w5Y/Qbm6t4GfmHfRBJsq+UlZfGwUJlAhZrP0AYYVSdSow6fWfvNK+4fzlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qoPZCD8f; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=1o0PT+VvYeF2Yc1hTEqEhN6nNmR8jwyG9x4O7dGE/Wk=; b=qo
-	PZCD8fmKsuqe8MM0+5HAxgA1V6sLxp1dxWT6dgRzFLKJ+Uj612/2my5BcrbEkzNKu2cGnhqk12oGB
-	/a4BAt4NCaZn7xVX092i/qM2JCfjxaohRr5xqBfTcg7hjl+yJ2+6TiiQ3PRLlum+gfT49bcro6kXI
-	u2un0pipZbINs5Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t92PO-00CSlH-Qe; Thu, 07 Nov 2024 14:18:46 +0100
-Date: Thu, 7 Nov 2024 14:18:46 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Joey Lu <a0987203069@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	richardcochran@gmail.com, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, ychuang3@nuvoton.com, schung@nuvoton.com,
-	yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
- MA35 family GMAC
-Message-ID: <9455e2f6-b41d-476e-bda9-fc01958e48d5@lunn.ch>
-References: <20241106111930.218825-1-a0987203069@gmail.com>
- <20241106111930.218825-2-a0987203069@gmail.com>
- <f3c6b67f-5c15-43e2-832e-28392fbe52ec@lunn.ch>
- <21a00f02-7f2f-46da-a67f-be3e64019303@gmail.com>
+	s=arc-20240116; t=1730985605; c=relaxed/simple;
+	bh=8Lih6DhehXBAqDMjsLTGIz7ix4IflIUk9DO9S82uEMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kn5PHu3CUU2yZTNsKt8pgj7r6v0HgFakCeBzt9u4rhAykBQqD6aAGTNTHIo+TQSiSEltpOv/gmR6k4ihBNF5nEFpEyEuwbKcnp62WUKEGTvLYQOZ9t+HHwDzEgBreO+yNXRhKB+zoC1U03zS6fT2tDDaWhLWua+0keIxzGUpXhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/6LpVKs; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e63c8678so984820e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:20:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730985601; x=1731590401; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YDf2NcC0f0OAvQ6euts6Mr0SJI1EgmdWSDeyu54808c=;
+        b=m/6LpVKs6Scl2FArngtTDOh+aWiPTYd6/THQgVBIaZfeEQ1L8q2vNZNBcUZYxX/png
+         rqQDar5WyPl3ybL+AhYmDXgL9iw4VApR49MVEfPfvqLZj8oH2KBSBXaV6Icsr96rQcxL
+         fcuorxm8Riu/UKk6RLW4isYGryoqN9OmLnB938+meI1Z06gzolwJJeC+FYYRx/Yqo5mn
+         R67kQAvxz6zq+aLbpZnWUocNBkEOdEl222ECsIKRQ8Uvck8PKOrgr4uTbsVwl5vLHaj1
+         WtyVuPYOE4TNs31i/T6J8xMlRVDqoygeTMVwW3/vx0pMCXTqyB1UIqxK0H3tFgdMgx+K
+         POlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730985601; x=1731590401;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YDf2NcC0f0OAvQ6euts6Mr0SJI1EgmdWSDeyu54808c=;
+        b=S/UCCchc6gyLE5f8Ko/DXfpif1k01Crtq7VVA1AOlq0B+F8LIBoqcL4N7tdfrKN0UZ
+         cWoM7LJ9tZ+WN2GX3Z4ciLgytYXJyLHqI53niBpuZxnqawevZPjCTed05wdB2xnj/xzK
+         rfYBIHzgLPv/lN/JCkCLNIlWcuqofqpl3U1LAgvgYokkGsS4eYAgBLAtWg/Fj9b0vCKo
+         X1jqvsQuYAjN/FR0d22g799CxZ8bjyPZ22HiaPi2PnUyarq25KiDZREv3CNTCidS45Qk
+         rv8YKyAZ4GsOqnlO3vb7Bk43tazYt8QCljuh6ZcIiocU40AmOoJeDLst5EtmJHM7WhKw
+         TpTQ==
+X-Gm-Message-State: AOJu0YwXHVEbeevKi+0TA5ZbkAiljCgEXpne1rU7z1Q3ewffwqHYyB0P
+	BAjSYc1na7hzLUieHdtwidLhbpSNr2Ws9EG2gLAMDJ6G5wUVU+AMNGeSBatMlqdG++jN+jfKR+0
+	svQdmn7le0efASeVddKEFlBmOnsNSp0AyTMw=
+X-Google-Smtp-Source: AGHT+IFdqNiLC15lQE/7sY8FBQ2TivwrpUK733HpgKSn3hHnJ9knQwIHuj3/iWbsp5LMUuWyBIJjj5rNtlzqQfak4iI=
+X-Received: by 2002:a2e:a805:0:b0:2fb:3445:a4af with SMTP id
+ 38308e7fff4ca-2fedb791e43mr125012041fa.21.1730985601015; Thu, 07 Nov 2024
+ 05:20:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <21a00f02-7f2f-46da-a67f-be3e64019303@gmail.com>
+References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-4-brgerst@gmail.com>
+In-Reply-To: <20241105155801.1779119-4-brgerst@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 7 Nov 2024 14:19:49 +0100
+Message-ID: <CAFULd4YaLj4neQ-pK2UKSgBtn2HrtN03wh-9ahtS6CfVYP22jA@mail.gmail.com>
+Subject: Re: [PATCH v5 03/16] x86/stackprotector: Remove stack protector test scripts
+To: Brian Gerst <brgerst@gmail.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 07, 2024 at 06:31:26PM +0800, Joey Lu wrote:
-> Dear Andrew,
-> 
-> Thank you for your reply.
-> 
-> Andrew Lunn 於 11/7/2024 2:13 AM 寫道:
-> > > +  phy-mode:
-> > > +    enum:
-> > > +      - rmii
-> > > +      - rgmii-id
-> > The phy-mode deepened on the board design. All four rgmii values are
-> > valid.
-> I will add them.
-> > > +
-> > > +  tx_delay:
-> > > +    maxItems: 1
-> > > +    description:
-> > > +      Control transmit clock path delay in nanoseconds.
-> > > +
-> > > +  rx_delay:
-> > > +    maxItems: 1
-> > > +    description:
-> > > +      Control receive clock path delay in nanoseconds.
-> > If you absolutely really need these, keep them, but i suggest you drop
-> > them. They just cause confusion, when ideally we want the PHY to be
-> > adding RGMII delays, not the MAC.
-> > 
-> > If you do need them, then they should be in pS.
-> 
-> I will fix it.
-> 
-> We have customers who use a fixed link instead of a PHY, so these properties
-> may be necessary.
+On Tue, Nov 5, 2024 at 4:58=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wrot=
+e:
+>
+> With GCC 8.1 now the minimum supported compiler for x86, these scripts
+> are no longer needed.
+>
+> Signed-off-by: Brian Gerst <brgerst@gmail.com>
 
-That is a legitimate use case which can require the MAC to add delays,
-but i generally try to get the switch on the other end to add the
-delays, just to keep with the uniform setup.
+Reviewed-by: Uros Bizjak <ubizjak@gmail.com>
 
-Also, please take a look at ethernet-controller.yaml, these should be
-called rx-internal-delay-ps & tx-internal-delay-ps.
-
-	Andrew
+> ---
+>  arch/x86/Kconfig                          | 11 +----------
+>  scripts/gcc-x86_32-has-stack-protector.sh |  8 --------
+>  scripts/gcc-x86_64-has-stack-protector.sh |  4 ----
+>  3 files changed, 1 insertion(+), 22 deletions(-)
+>  delete mode 100755 scripts/gcc-x86_32-has-stack-protector.sh
+>  delete mode 100755 scripts/gcc-x86_64-has-stack-protector.sh
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index aa7fac6817c5..45021d57fd9f 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -278,7 +278,7 @@ config X86
+>         select HAVE_FUNCTION_ARG_ACCESS_API
+>         select HAVE_SETUP_PER_CPU_AREA
+>         select HAVE_SOFTIRQ_ON_OWN_STACK
+> -       select HAVE_STACKPROTECTOR              if CC_HAS_SANE_STACKPROTE=
+CTOR
+> +       select HAVE_STACKPROTECTOR
+>         select HAVE_STACK_VALIDATION            if HAVE_OBJTOOL
+>         select HAVE_STATIC_CALL
+>         select HAVE_STATIC_CALL_INLINE          if HAVE_OBJTOOL
+> @@ -418,15 +418,6 @@ config PGTABLE_LEVELS
+>         default 3 if X86_PAE
+>         default 2
+>
+> -config CC_HAS_SANE_STACKPROTECTOR
+> -       bool
+> -       default $(success,$(srctree)/scripts/gcc-x86_64-has-stack-protect=
+or.sh $(CC) $(CLANG_FLAGS)) if 64BIT
+> -       default $(success,$(srctree)/scripts/gcc-x86_32-has-stack-protect=
+or.sh $(CC) $(CLANG_FLAGS))
+> -       help
+> -         We have to make sure stack protector is unconditionally disable=
+d if
+> -         the compiler produces broken code or if it does not let us cont=
+rol
+> -         the segment on 32-bit kernels.
+> -
+>  menu "Processor type and features"
+>
+>  config SMP
+> diff --git a/scripts/gcc-x86_32-has-stack-protector.sh b/scripts/gcc-x86_=
+32-has-stack-protector.sh
+> deleted file mode 100755
+> index 9459ca4f0f11..000000000000
+> --- a/scripts/gcc-x86_32-has-stack-protector.sh
+> +++ /dev/null
+> @@ -1,8 +0,0 @@
+> -#!/bin/sh
+> -# SPDX-License-Identifier: GPL-2.0
+> -
+> -# This requires GCC 8.1 or better.  Specifically, we require
+> -# -mstack-protector-guard-reg, added by
+> -# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D81708
+> -
+> -echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -m32 -O0 -f=
+stack-protector -mstack-protector-guard-reg=3Dfs -mstack-protector-guard-sy=
+mbol=3D__stack_chk_guard - -o - 2> /dev/null | grep -q "%fs"
+> diff --git a/scripts/gcc-x86_64-has-stack-protector.sh b/scripts/gcc-x86_=
+64-has-stack-protector.sh
+> deleted file mode 100755
+> index f680bb01aeeb..000000000000
+> --- a/scripts/gcc-x86_64-has-stack-protector.sh
+> +++ /dev/null
+> @@ -1,4 +0,0 @@
+> -#!/bin/sh
+> -# SPDX-License-Identifier: GPL-2.0
+> -
+> -echo "int foo(void) { char X[200]; return 3; }" | $* -S -x c -m64 -O0 -m=
+cmodel=3Dkernel -fno-PIE -fstack-protector - -o - 2> /dev/null | grep -q "%=
+gs"
+> --
+> 2.47.0
+>
 
