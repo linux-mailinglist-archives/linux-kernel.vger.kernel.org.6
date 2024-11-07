@@ -1,106 +1,376 @@
-Return-Path: <linux-kernel+bounces-400448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9A89C0DA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:16:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC84C9C0DA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6687D1F2521A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4155C286408
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2266E2170D0;
-	Thu,  7 Nov 2024 18:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9AC217469;
+	Thu,  7 Nov 2024 18:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pGQCKrzF"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="MZRCH3QW"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C37F188A3B;
-	Thu,  7 Nov 2024 18:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDEF217445
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731003382; cv=none; b=ZqiF/ePPeRtFX8PkGKMnBkUqRUIafhM582OmgNB3Ay/Dzs9Bq3XKGSv8yRYOFaOywqPeQYF/0AU9Eu9VfxEFFni7P+cJWSlIiAMS4MQ+MK9t2EB1yH138f2sBFUJ2v6dXO4iCd3c8TFYVu6lbJk+cyqQt8xb7eIkAqOHzk4GKRE=
+	t=1731003395; cv=none; b=nAPXF2ZBsiNq1TZ8oKpRiQI/dtoOIbjOrGvcw8rTcc9QScyBr9EbdOV8KO8SrqsmfEyLaK8BtWiE7LrEtb6mze7dTkD4mN/eTT4rHr0CybBsocUaPO0QrEJeunNcmKfXYayp/9mwk3cPtjLTjLUNroxWuUQHHgwAESwoT/9jOnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731003382; c=relaxed/simple;
-	bh=tFHO/BZcxZoVyiqklKE/cJRqRtT8jk9I2aIRLc+QAd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dQgesZxYWKiF0yzN7MEIgE7CRkpm1GWPZKWLauPpu4rBXrSpP7oA6BHvs3avg543eVb4lcTqgmW4NCHkxVPVpf41RAmnaFmZhyIFaOrpUGOu0qc2JNiwa2rOTnJfmNvfHQclLcg7EIGVPaVBUdVJYWWXF9YE9xyIi33lnDK6150=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pGQCKrzF; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C9DFC20005;
-	Thu,  7 Nov 2024 18:16:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731003378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7aH+YamaB5+L+7dV8UCOYyw7UnZu/8epHdr5FqD/+g8=;
-	b=pGQCKrzFC4Tjz/QbNUrWfas+lfJ3l8p0TO7a+cS3Gul4L9PmHWkojBPeePUxqTIJ/5vZAn
-	OI2nE0iQF6m/GX8JOHjO7uJ6l+5pYUD8TBv1t9X9Tnu/HZIE8u1AvZlLADNHO8LL52BYkz
-	PPliKyEPVRFd5ozDa+i4qYFJDKcw4OPHMVfL3HmBe/sk1Dcbb1BoIDoUZ9cwpfq4yhlGRL
-	AQ8o8YKibuEqD18udqEyR1c37RkMjKGSvtmy5NLSMb5Jo/AYJB0B+kHBynMUCqszF1FW9r
-	9Wz+STl+q0eTekgOIUwiIzhK+IoDBfD/Cj5CYOSer3yqGJIcUBmnEPQlkvSQjQ==
-Date: Thu, 7 Nov 2024 19:16:17 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Herve Codina
- <herve.codina@bootlin.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next 4/7] net: freescale: ucc_geth: Fix WOL
- configuration
-Message-ID: <20241107191617.00e0584a@fedora.home>
-In-Reply-To: <83151aa4-62e9-4be9-ae64-a728be004dae@lunn.ch>
-References: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
-	<20241107170255.1058124-5-maxime.chevallier@bootlin.com>
-	<83151aa4-62e9-4be9-ae64-a728be004dae@lunn.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731003395; c=relaxed/simple;
+	bh=TNSvQr92VWQPFIT2bRAB1EKLGKC4ptx4ATsF6e6OW8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IApnZKWuqTDXZtYWEqH66uHB11yKuUlBTpEHxvHDGZw1YHTl8CAKL1kIo/aW2v1jNg0MG9hI/kykI1gVuunF5qriWfInm4aDgi94MYevPowpSSenKU5nHT2r1FwZ/Ha/BDGGv4KL8myTmGbqlPtbDuRywGGHAtYRhRahs09/Qzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=MZRCH3QW; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cbd00dd21cso7917616d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:16:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1731003391; x=1731608191; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LT3GIhZWy3LXsRY3e6h3hL2tN1+NJNn1KDxPTV/jnhg=;
+        b=MZRCH3QWeO63aOD4dhq3xA4GbcVFl20WB1g8rIaDP7kVs2aoMoktnOM0SEU1aJcw66
+         92V0mQPsY3QbjdPhxh1+AppQD3byxg4Qmtmsf+UbGYBB32l5byNU0te8rxtJ6oXCuVSp
+         juW9sOLJqRUvr53MnL52As5xYaHzJ8VE4jeE/FlGsNWICKxVUNqLTejHSrYQLNgeDb7Q
+         QwvrFfWnVdw6KYNd6wRZ7pMewWxtlcBecnnoddZX3ybBQYkmeKiHQtPgcJjWWge2r1bu
+         YtpHYHTWSmWf5E/AqUl3vEn0kbEuKSFDg7pAGtGOkr0OeqYIRcdUBf0vhheOJRvQiQDq
+         zLnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731003391; x=1731608191;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LT3GIhZWy3LXsRY3e6h3hL2tN1+NJNn1KDxPTV/jnhg=;
+        b=X9JjLPUMEDtMa5/vyT3tLIN7WUfrTboWkHsZTg1/XmdUznt0W5r/2b8AuCDrffe1N6
+         A5TeXgfW4clJKVlOCzmGfu2xjOM3ioDFGi/A3LMsZbp9snUycD+ZfXcKOFNUKL7w5OZa
+         v/kTnr6YR48KdEQ0Nj5SLEZObYS0NFE33WOfxUuxKIvAGluA5jklgw8a7OAEg0CRg71z
+         cMDvJd/ZqSJeTAFahRCmwjVn1LpGsJjPFogXYGYsV7H/OPFlPYdBt9CB8kAqbrCFY8Ew
+         GJo66h15XXCv80C7gw+vtNoFAeCsAlESyFY0Zk/7HyVlRe0gOBuvlyzl6pCfuSLOfJYm
+         8ODQ==
+X-Gm-Message-State: AOJu0YytB8gpzJgxUlHMXpXFmgbK+zUNSTliA1oyj5QPZuhc9EvhM74l
+	ICZPFrMxvOBya+qENehHfz5fyfPk2/EOQnSAfq1nO3tNLtOaxAOsU/wG6v0GYdI=
+X-Google-Smtp-Source: AGHT+IEtGIPkFNfIe3ZLKSC/bfgLuayig4eF10hn6pDIwuPddRsvkklThlidE4dnzDL2R+b2quJ1XQ==
+X-Received: by 2002:a05:6214:5992:b0:6ce:2357:8a36 with SMTP id 6a1803df08f44-6d39cf9b6f2mr14196506d6.7.1731003391475;
+        Thu, 07 Nov 2024 10:16:31 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3961f4a0fsm10136816d6.41.2024.11.07.10.16.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 10:16:30 -0800 (PST)
+Date: Thu, 7 Nov 2024 13:16:26 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, yosryahmed@google.com,
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v3 13/13] mm: zswap: Compress batching with Intel IAA in
+ zswap_store() of large folios.
+Message-ID: <20241107181626.GF1172372@cmpxchg.org>
+References: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
+ <20241106192105.6731-14-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106192105.6731-14-kanchana.p.sridhar@intel.com>
 
-Hello Andrew,
-
-On Thu, 7 Nov 2024 18:49:00 +0100
-Andrew Lunn <andrew@lunn.ch> wrote:
-
-> > +	if (phydev)
-> > +		phy_ethtool_get_wol(phydev, wol);
-> > +
-> >  	if (qe_alive_during_sleep())
-> >  		wol->supported |= WAKE_MAGIC;  
+On Wed, Nov 06, 2024 at 11:21:05AM -0800, Kanchana P Sridhar wrote:
+> If the system has Intel IAA, and if sysctl vm.compress-batching is set to
+> "1", zswap_store() will call crypto_acomp_batch_compress() to compress up
+> to SWAP_CRYPTO_BATCH_SIZE (i.e. 8) pages in large folios in parallel using
+> the multiple compress engines available in IAA hardware.
 > 
-> So get WoL will return whatever methods the PHY supports, plus
-> WAKE_MAGIC is added because i assume the MAC can do that. So depending
-> on the PHY, it could be the full list:
-
-> > +	if (wol->wolopts & WAKE_PHY)
-> > +		ret = phy_ethtool_set_wol(phydev, wol);  
+> On platforms with multiple IAA devices per socket, compress jobs from all
+> cores in a socket will be distributed among all IAA devices on the socket
+> by the iaa_crypto driver.
 > 
-> Here, the code only calls into the PHY for WAKE_PHY, when in fact the
-> PHY could be handling WAKE_UCAST, WAKE_MCAST, WAKE_ARP etc.
+> With deflate-iaa configured as the zswap compressor, and
+> sysctl vm.compress-batching is enabled, the first time zswap_store() has to
+> swapout a large folio on any given cpu, it will allocate the
+> pool->acomp_batch_ctx resources on that cpu, and set pool->can_batch_comp
+> to BATCH_COMP_ENABLED. It will then proceed to call the main
+> __zswap_store_batch_core() compress batching function. Subsequent calls to
+> zswap_store() on the same cpu will go ahead and use the acomp_batch_ctx by
+> checking the pool->can_batch_comp status.
 > 
-> So these conditions are wrong. It could we be that X years ago when
-> this code was added only WAKE_PHY and WAKE_MAGIC existed?
+> Hence, we allocate the per-cpu pool->acomp_batch_ctx resources only on an
+> as-needed basis, to reduce memory footprint cost. The cost is not incurred
+> on cores that never get to swapout a large folio.
+> 
+> This patch introduces the main __zswap_store_batch_core() function for
+> compress batching. This interface represents the extensible compress
+> batching architecture that can potentially be called with a batch of
+> any-order folios from shrink_folio_list(). In other words, although
+> zswap_store() calls __zswap_store_batch_core() with exactly one large folio
+> in this patch, we can reuse this interface to reclaim a batch of folios, to
+> significantly improve the reclaim path efficiency due to IAA's parallel
+> compression capability.
+> 
+> The newly added functions that implement batched stores follow the
+> general structure of zswap_store() of a large folio. Some amount of
+> restructuring and optimization is done to minimize failure points
+> for a batch, fail early and maximize the zswap store pipeline occupancy
+> with SWAP_CRYPTO_BATCH_SIZE pages, potentially from multiple
+> folios. This is intended to maximize reclaim throughput with the IAA
+> hardware parallel compressions.
+> 
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  include/linux/zswap.h |  84 ++++++
+>  mm/zswap.c            | 625 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 709 insertions(+)
+> 
+> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+> index 9ad27ab3d222..6d3ef4780c69 100644
+> --- a/include/linux/zswap.h
+> +++ b/include/linux/zswap.h
+> @@ -31,6 +31,88 @@ struct zswap_lruvec_state {
+>  	atomic_long_t nr_disk_swapins;
+>  };
+>  
+> +/*
+> + * struct zswap_store_sub_batch_page:
+> + *
+> + * This represents one "zswap batching element", namely, the
+> + * attributes associated with a page in a large folio that will
+> + * be compressed and stored in zswap. The term "batch" is reserved
+> + * for a conceptual "batch" of folios that can be sent to
+> + * zswap_store() by reclaim. The term "sub-batch" is used to describe
+> + * a collection of "zswap batching elements", i.e., an array of
+> + * "struct zswap_store_sub_batch_page *".
+> + *
+> + * The zswap compress sub-batch size is specified by
+> + * SWAP_CRYPTO_BATCH_SIZE, currently set as 8UL if the
+> + * platform has Intel IAA. This means zswap can store a large folio
+> + * by creating sub-batches of up to 8 pages and compressing this
+> + * batch using IAA to parallelize the 8 compress jobs in hardware.
+> + * For e.g., a 64KB folio can be compressed as 2 sub-batches of
+> + * 8 pages each. This can significantly improve the zswap_store()
+> + * performance for large folios.
+> + *
+> + * Although the page itself is represented directly, the structure
+> + * adds a "u8 batch_idx" to represent an index for the folio in a
+> + * conceptual "batch of folios" that can be passed to zswap_store().
+> + * Conceptually, this allows for up to 256 folios that can be passed
+> + * to zswap_store(). If this conceptual number of folios sent to
+> + * zswap_store() exceeds 256, the "batch_idx" needs to become u16.
+> + */
+> +struct zswap_store_sub_batch_page {
+> +	u8 batch_idx;
+> +	swp_entry_t swpentry;
+> +	struct obj_cgroup *objcg;
+> +	struct zswap_entry *entry;
+> +	int error; /* folio error status. */
+> +};
+> +
+> +/*
+> + * struct zswap_store_pipeline_state:
+> + *
+> + * This stores state during IAA compress batching of (conceptually, a batch of)
+> + * folios. The term pipelining in this context, refers to breaking down
+> + * the batch of folios being reclaimed into sub-batches of
+> + * SWAP_CRYPTO_BATCH_SIZE pages, batch compressing and storing the
+> + * sub-batch. This concept could be further evolved to use overlap of CPU
+> + * computes with IAA computes. For instance, we could stage the post-compress
+> + * computes for sub-batch "N-1" to happen in parallel with IAA batch
+> + * compression of sub-batch "N".
+> + *
+> + * We begin by developing the concept of compress batching. Pipelining with
+> + * overlap can be future work.
+> + *
+> + * @errors: The errors status for the batch of reclaim folios passed in from
+> + *          a higher mm layer such as swap_writepage().
+> + * @pool: A valid zswap_pool.
+> + * @acomp_ctx: The per-cpu pointer to the crypto_acomp_ctx for the @pool.
+> + * @sub_batch: This is an array that represents the sub-batch of up to
+> + *             SWAP_CRYPTO_BATCH_SIZE pages that are being stored
+> + *             in zswap.
+> + * @comp_dsts: The destination buffers for crypto_acomp_compress() for each
+> + *             page being compressed.
+> + * @comp_dlens: The destination buffers' lengths from crypto_acomp_compress()
+> + *              obtained after crypto_acomp_poll() returns completion status,
+> + *              for each page being compressed.
+> + * @comp_errors: Compression errors for each page being compressed.
+> + * @nr_comp_pages: Total number of pages in @sub_batch.
+> + *
+> + * Note:
+> + * The max sub-batch size is SWAP_CRYPTO_BATCH_SIZE, currently 8UL.
+> + * Hence, if SWAP_CRYPTO_BATCH_SIZE exceeds 256, some of the
+> + * u8 members (except @comp_dsts) need to become u16.
+> + */
+> +struct zswap_store_pipeline_state {
+> +	int *errors;
+> +	struct zswap_pool *pool;
+> +	struct crypto_acomp_ctx *acomp_ctx;
+> +	struct zswap_store_sub_batch_page *sub_batch;
+> +	struct page **comp_pages;
+> +	u8 **comp_dsts;
+> +	unsigned int *comp_dlens;
+> +	int *comp_errors;
+> +	u8 nr_comp_pages;
+> +};
 
-Ah that's right indeed. So yeah my changes aren't enough, I'll go over
-that patch again.
+Why are these in the public header?
 
-Thanks for spotting this,
+>  unsigned long zswap_total_pages(void);
+>  bool zswap_store(struct folio *folio);
+>  bool zswap_load(struct folio *folio);
+> @@ -45,6 +127,8 @@ bool zswap_never_enabled(void);
+>  #else
+>  
+>  struct zswap_lruvec_state {};
+> +struct zswap_store_sub_batch_page {};
+> +struct zswap_store_pipeline_state {};
+> 
+>  static inline bool zswap_store(struct folio *folio)
+>  {
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 2af736e38213..538aac3fb552 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -255,6 +255,12 @@ static int zswap_create_acomp_ctx(unsigned int cpu,
+>  				  char *tfm_name,
+>  				  unsigned int nr_reqs);
+>  
+> +static bool __zswap_store_batch_core(
+> +	int node_id,
+> +	struct folio **folios,
+> +	int *errors,
+> +	unsigned int nr_folios);
+> +
 
-Maxime
+Please reorder the functions to avoid forward decls.
+
+>  /*********************************
+>  * pool functions
+>  **********************************/
+> @@ -1626,6 +1632,12 @@ static ssize_t zswap_store_page(struct page *page,
+>  	return -EINVAL;
+>  }
+>  
+> +/*
+> + * Modified to use the IAA compress batching framework implemented in
+> + * __zswap_store_batch_core() if sysctl vm.compress-batching is 1.
+> + * The batching code is intended to significantly improve folio store
+> + * performance over the sequential code.
+
+This isn't helpful, please delete.
+
+>  bool zswap_store(struct folio *folio)
+>  {
+>  	long nr_pages = folio_nr_pages(folio);
+> @@ -1638,6 +1650,38 @@ bool zswap_store(struct folio *folio)
+>  	bool ret = false;
+>  	long index;
+>  
+> +	/*
+> +	 * Improve large folio zswap_store() latency with IAA compress batching,
+> +	 * if this is enabled by setting sysctl vm.compress-batching to "1".
+> +	 * If enabled, the large folio's pages are compressed in parallel in
+> +	 * batches of SWAP_CRYPTO_BATCH_SIZE pages. If disabled, every page in
+> +	 * the large folio is compressed sequentially.
+> +	 */
+
+Same here. Reduce to "Try to batch compress large folios, fall back to
+processing individual subpages if that fails."
+
+> +	if (folio_test_large(folio) && READ_ONCE(compress_batching)) {
+> +		pool = zswap_pool_current_get();
+
+There is an existing zswap_pool_current_get() in zswap_store(), please
+reorder the sequence so you don't need to add an extra one.
+
+> +		if (!pool) {
+> +			pr_err("Cannot setup acomp_batch_ctx for compress batching: no current pool found\n");
+
+This is unnecessary.
+
+> +			goto sequential_store;
+> +		}
+> +
+> +		if (zswap_pool_can_batch(pool)) {
+
+This function is introduced in another patch, where it isn't
+used. Please add functions and callers in the same patch.
+
+> +			int error = -1;
+> +			bool store_batch = __zswap_store_batch_core(
+> +						folio_nid(folio),
+> +						&folio, &error, 1);
+> +
+> +			if (store_batch) {
+> +				zswap_pool_put(pool);
+> +				if (!error)
+> +					ret = true;
+> +				return ret;
+> +			}
+> +		}
+
+Please don't future proof code like this, only implement what is
+strictly necessary for the functionality in this patch. You're only
+adding a single caller with nr_folios=1, so it shouldn't be a
+parameter, and the function shouldn't have a that batch_idx loop.
+
+> +		zswap_pool_put(pool);
+> +	}
+> +
+> +sequential_store:
+> +
+>  	VM_WARN_ON_ONCE(!folio_test_locked(folio));
+>  	VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+>  
+> @@ -1724,6 +1768,587 @@ bool zswap_store(struct folio *folio)
+>  	return ret;
+>  }
+>  
+> +/*
+> + * Note: If SWAP_CRYPTO_BATCH_SIZE exceeds 256, change the
+> + * u8 stack variables in the next several functions, to u16.
+> + */
+> +
+> +/*
+> + * Propagate the "sbp" error condition to other batch elements belonging to
+> + * the same folio as "sbp".
+> + */
+> +static __always_inline void zswap_store_propagate_errors(
+> +	struct zswap_store_pipeline_state *zst,
+> +	u8 error_batch_idx)
+> +{
+
+Please observe surrounding coding style on how to wrap >80 col
+function signatures.
+
+Don't use __always_inline unless there is a clear, spelled out
+performance reason. Since it's an error path, that's doubtful.
+
+Please use a consistent namespace for all this:
+
+CONFIG_ZSWAP_BATCH
+zswap_batch_store()
+zswap_batch_alloc_entries()
+zswap_batch_add_folios()
+zswap_batch_compress()
+
+etc.
+
+Again, order to avoid forward decls.
+
+Try to keep the overall sequence of events between zswap_store() and
+zswap_batch_store() similar as much as possible for readability.
 
