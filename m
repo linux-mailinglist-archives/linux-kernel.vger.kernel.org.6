@@ -1,107 +1,205 @@
-Return-Path: <linux-kernel+bounces-399662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A12F9C0276
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:34:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E486B9C0279
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7871C216D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:34:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742D71F22D90
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9661A1EF93B;
-	Thu,  7 Nov 2024 10:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89421EC015;
+	Thu,  7 Nov 2024 10:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i719SMyb"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UlTBs7Vj"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3AC1EF0B7;
-	Thu,  7 Nov 2024 10:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1A31EF957;
+	Thu,  7 Nov 2024 10:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975659; cv=none; b=a+crOnWGIR++kfPFXEyiPip1gBFTlEpFgqDlCWttg/7WZm6YAc0/Dr8EzuejEy+OLqbEQZ7G9bS1l2U02tTyVCiEk6CFuAETwN3o4luxkkA0mQhzL+k0fm3XjKr0BO3zJ4+j3d3a7Dw+YtwOuEaYO0wKS13i04AWMRnYlyuHCgk=
+	t=1730975662; cv=none; b=trgGa6kdJxFtcanmD1xHp1W8cSHaGB0T5VYqTPfupIgCidT8SI5aAUTmMSoGz+kYXiJKu69VRrWbgigig5HkrgOZvC7/6KL14piLh7eB7iAodFM8PA4M5muupFxtPXkk6DhGmlszLHYm/H7RauYfjU7Th1jatUcE8c4ZJkU7qEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975659; c=relaxed/simple;
-	bh=uNbbwI0t3CnnRoq+xAfBqxnkdHvi8cAUfxzw4z32a18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tsBf9iTUY1ozLXCmfcVZ55jYsM0InLBnF2vsWZH5sA82+0pUPYOFK0eJV6yzhCYhCv6hOD7elj2ycMAQVSASMGOLSx1a5Wr/qdKxRO3XFs+W4qo9YjazMt0CdsFUDz2gw1+0ExCM8lDUPvfJ6doMveaIvWmMMcb7m6uRngZCl+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i719SMyb; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20ca388d242so8399655ad.2;
-        Thu, 07 Nov 2024 02:34:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730975657; x=1731580457; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qHCnQjwtQk6Ee4qEjCK4DR0rfCUXjzBPqylzEtsbdRg=;
-        b=i719SMybg7xh7+xQFf5Va0HkbC60BnwGYUcUEMHD/fxkuZeJKhE7Zk4aSozuUpOV3J
-         agzX3nHyjKZ+Ce7jIcxwAryfTVCOEOHSfRnX0p3OdQys6IZJnr+ACH1fFLh0esYLr8xl
-         H29fJREJA0Ae0H30JoQKtq6TWOBpGeFw2GczW+cJdZJ+rg1dHWyQe9zIWgJJkOCVcspv
-         B1k/2mrRC7Nb++nlJCEHJcASzmlWFQ3hsRflgbIZppgB0MQownfIyOvpx5USa4G8M3ZT
-         tuYehg/eldmaIn1ufrXKrJbtysPWSAwyaK3QH4AAvVLEodvdxWvfFfJPgN8EKpRneEmo
-         zd9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730975657; x=1731580457;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qHCnQjwtQk6Ee4qEjCK4DR0rfCUXjzBPqylzEtsbdRg=;
-        b=B/UECp1nVASw/MBzBfeDu01ppCtZx2i2HvShqZf7upwPXSkKnzpVnvpl/kdlHhCGkb
-         65iITGuwhT347UCJV7sTkZ7cquOa6w31GaUCZBjCY0KxobwZ3tV/WYKgYlJk2eRUi08O
-         nsaBx0+X2NlWzR7M8arIeLReIG+GyKHf/zNRU58TNr+VcFapjJOm1VaWFjkT2X+AWZXy
-         Ydg4n+SEouGBwsOJTCjXx8a++PeAYA0Rdpwt0/btjjXanZ23pmMiett4w02SjYkMf5U2
-         vaLEzN0FmUV9mqnpm4/Dz7gOVyzt5nQ8cHXTAatFJqt4a31AiGwmxyNkjpNTIamvgYxw
-         G8Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgtcExybXz7x32jH5znF2R9vxG7Inzxn3BW1rA7OCyLWaWHSqqK1RawYJi9U4s6cacbPvJab+dJ0CZ@vger.kernel.org, AJvYcCUpfr107qErkeMstdGa5ZalOPNBKo83oXYuob2PvGM3Kelufgoh3h+HSAU1Qp7Gt1GvWmk6omZRKfp26DQV@vger.kernel.org, AJvYcCXm+Tl4PXno9Q2N+1ZOVzw46Fa4Ojiqd8tWlmQPO5EQWIHdovaI5Pm+wllw2j7NEJgX3J/NJwuz@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx6pofLVpaBV+0w8Y8tQ9dWv715lJJBZkBjO5wC4xyvz5Nzww7
-	3pSG2V6jWdhrL9MvjnJayHQQqlSPdazyxigOi6qh3CzbVyAd1GU+
-X-Google-Smtp-Source: AGHT+IHkZfIEbD222fQn11aAU/4JCGtUmB7xX2nq1qct7iJZBs/q3eDUArv4HK7B8GzG/yGYnzOsoQ==
-X-Received: by 2002:a17:902:e884:b0:20b:3f70:2e05 with SMTP id d9443c01a7336-2111afd6c99mr328557145ad.41.1730975656993;
-        Thu, 07 Nov 2024 02:34:16 -0800 (PST)
-Received: from [192.168.0.104] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e42b8csm9056135ad.131.2024.11.07.02.34.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 02:34:16 -0800 (PST)
-Message-ID: <61a76bb1-f247-4e9e-b6ba-163fd8af4f69@gmail.com>
-Date: Thu, 7 Nov 2024 18:34:12 +0800
+	s=arc-20240116; t=1730975662; c=relaxed/simple;
+	bh=GdPkNij5uRuIRcfdX8ROhlbpgpqbYAwDU62bGqcUMTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mzoiy156tOVhrjdHqjUK8GuQB7kdEL/5Yf4oIO5frXS8vOu6dBc55wYbV06VlGdveYeZXPMLSBnYv0OLEX8wc3CxgDQxg35Aneor4gbcoSVHuFDTzqPSCeeyiqHLowVsJL3ZC02UVO7Ju0ngx5HiGhBrC3THIpedXsVsp4myclQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UlTBs7Vj; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZEhrxBfkl+ezMdMe20vSmeDJt/NhTYOrtbjHQ9AC7FA=; b=UlTBs7Vjp0KH+BCSFFR9u+cPiE
+	mer0FUSbint5J3zARZtrxwyor7kaXbdNjxK+Hwgzij5ousLDzwx8jWyi4jfHth64kRgLFCWg0sBt3
+	GEM4eAXMjMO0hHcr9eBs+hCrnIYKow63cLiN6rP9RtARRTEIM/HQTyn/lEeAKvQFxZhIvWvegscD2
+	3vvUpKsrY+aof+cSgHSg14W5Ab4CPIk2WP9RXB3ITajswJXJiba8xqWLXAin1nbXGb0mzXGEzdZJu
+	8A92CvGy/IwiOXETq2aev4Ve5KeEFFmrMfqDlIwHY++fpGOePhDs/dRr4peItDPkZMkND+TYbCGi4
+	Y601PvFA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8zqA-00000006SoD-3A9n;
+	Thu, 07 Nov 2024 10:34:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8AB6E300446; Thu,  7 Nov 2024 11:34:14 +0100 (CET)
+Date: Thu, 7 Nov 2024 11:34:14 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	bigeasy@linutronix.de, boqun.feng@gmail.com
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20241107103414.GT10375@noisy.programming.kicks-ass.net>
+References: <20241107182411.57e2b418@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
- MA35 family GMAC
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
- schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20241106111930.218825-1-a0987203069@gmail.com>
- <20241106111930.218825-2-a0987203069@gmail.com>
- <12f4ea21-d83b-412c-9904-d9fe8f8a0167@lunn.ch>
-Content-Language: en-US
-From: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <12f4ea21-d83b-412c-9904-d9fe8f8a0167@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tr0K/SScsBSn7Puz"
+Content-Disposition: inline
+In-Reply-To: <20241107182411.57e2b418@canb.auug.org.au>
 
 
-Andrew Lunn 於 11/7/2024 2:13 AM 寫道:
->> +  mac-id:
->> +    maxItems: 1
->> +    description:
->> +      The interface of MAC.
-> Please could you expand on what this is?
-This property will be removed. Thanks.
-> 	Andrew
+--tr0K/SScsBSn7Puz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 07, 2024 at 06:24:11PM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>=20
+> In file included from rust/helpers/helpers.c:26:
+> rust/helpers/spinlock.c: In function 'rust_helper___spin_lock_init':
+> rust/helpers/spinlock.c:10:30: error: implicit declaration of function 's=
+pinlock_check'; did you mean 'spin_lock_bh'? [-Wimplicit-function-declarati=
+on]
+>    10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_=
+WAIT_CONFIG);
+>       |                              ^~~~~~~~~~~~~~
+>       |                              spin_lock_bh
+> rust/helpers/spinlock.c:10:30: error: passing argument 1 of '__raw_spin_l=
+ock_init' makes pointer from integer without a cast [-Wint-conversion]
+>    10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_=
+WAIT_CONFIG);
+>       |                              ^~~~~~~~~~~~~~~~~~~~
+>       |                              |
+>       |                              int
+> In file included from include/linux/wait.h:9,
+>                  from include/linux/wait_bit.h:8,
+>                  from include/linux/fs.h:6,
+>                  from include/linux/highmem.h:5,
+>                  from include/linux/bvec.h:10,
+>                  from include/linux/blk_types.h:10,
+>                  from include/linux/blkdev.h:9,
+>                  from include/linux/blk-mq.h:5,
+>                  from rust/helpers/blk.c:3,
+>                  from rust/helpers/helpers.c:10:
+> include/linux/spinlock.h:101:52: note: expected 'raw_spinlock_t *' {aka '=
+struct raw_spinlock *'} but argument is of type 'int'
+>   101 |   extern void __raw_spin_lock_init(raw_spinlock_t *lock, const ch=
+ar *name,
+>       |                                    ~~~~~~~~~~~~~~~~^~~~
+>=20
+
+So I can't get RUST=3Dy, even though make rustavailable is happy.
+
+make LLVM=3D-19 allmodconfig does not get me RUST=3Dy
+
+I started out with tip/master, tried adding rust-next, then kbuild-next
+gave up and tried next/master. Nada.
+
+Anyway, I think the above needs something like this:
+
+---
+diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
+index b7b0945e8b3c..5804a6062eb1 100644
+--- a/rust/helpers/spinlock.c
++++ b/rust/helpers/spinlock.c
+@@ -5,11 +5,16 @@
+ void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
+ 				  struct lock_class_key *key)
+ {
++#ifndef CONFIG_PREEMPT_RT
+ #ifdef CONFIG_DEBUG_SPINLOCK
+ 	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
+ #else
+ 	spin_lock_init(lock);
+ #endif
++#else
++	rt_mutex_base_init(&lock->lock);
++	__rt_spin_lock_init(lock, name, key, false);
++#endif
+ }
+=20
+ void rust_helper_spin_lock(spinlock_t *lock)
+
+
+> Probably caused by commit
+>=20
+>   35772d627b55 ("sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT")
+>=20
+> at least reverting commit
+>=20
+>   dafc2d42c0a6 ("Merge branch into tip/master: 'sched/core'")
+>=20
+> makes the build work again for me - so I have done that for today.
+>=20
+> Without the revert CONFIG_PREEMPT_RT=3Dy, after the revert it is not set
+> and spinlock_check is only defined for !defined(CONFIG_PREEMPT_RT).
+
+Right, that moved PREEMPT_RT out of the preemption choice. Now I'm not
+sure we want it =3Dy for all{yes,mod}config. Is the below the right
+incantation to avoid this?
+
+---
+diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
+index 7c1b29a3a491..54ea59ff8fbe 100644
+--- a/kernel/Kconfig.preempt
++++ b/kernel/Kconfig.preempt
+@@ -88,7 +88,7 @@ endchoice
+=20
+ config PREEMPT_RT
+ 	bool "Fully Preemptible Kernel (Real-Time)"
+-	depends on EXPERT && ARCH_SUPPORTS_RT
++	depends on EXPERT && ARCH_SUPPORTS_RT && !COMPILE_TEST
+ 	select PREEMPTION
+ 	help
+ 	  This option turns the kernel into a real-time kernel by replacing
+
+
+
+--tr0K/SScsBSn7Puz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmcsl5sACgkQdkfhpEvA
+5LrfsxAAprHnpBRHIVyYBtU7438EY7YMn8aFaYmGQRYM7WwCmE6gfsTbItUhRuaz
+UYI2mT6IWp/Nl9ghUifI+rXTHTOjFlONRCJG+HAiOR+7IjDrjQ1cEA46/LqUgezL
+dZYfe/mX/JwORUO+AhrfTpqYPeKMmAvPTsKsxBFam81ogi+hpHTRs/wPKAGhl0fZ
+jxRwwe0AodEVIqsBuJR+x6/0XmyGPYiKuG+eS2FUWwLLcp8gtF16OMuVNOGI5MnR
+wDSF8FduP9Le5T5WPGkdKndtzpaUXXL7BVtY+5waRXNzEz0vrcBHMBaSgkgLwr0f
+jZmOnhsV/IkgCuEGF0/t0OE0XfHJbhlRewkG5Uub9L5vaU+yOBLcSZ7WqYzF0b5S
+ZymqW9FTBxol9wDu+loKP4gJ+xg19z/oPsynJHBzuvBH7XnaqeCvkZG6qgPUj1Fx
+4YntvQmIUlzNvNpxQb3Qb0HDOMm1JWn3QQLHgzq2tq6XiCjizLvdJdQRzhWvyV4Q
+L20oUWvQzH3Qat9vZTZ3yRmn1hjf1zfUSpVJfrZ4crxNK7WjhyzDCMbKaIjSPd1y
+AVJ7f6uPS7bTZODBVcu7HTj3XBNecktrjrYmwDLlLfMkcrjt7UbkBTNTToqZJzmc
+a/RK/SGtiN95JR3syh7HBKTStLilaYlayKWHEPFSKnSF5M2ro8c=
+=+ov9
+-----END PGP SIGNATURE-----
+
+--tr0K/SScsBSn7Puz--
 
