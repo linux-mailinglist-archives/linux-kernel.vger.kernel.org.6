@@ -1,100 +1,157 @@
-Return-Path: <linux-kernel+bounces-400816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DFD9C12BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:50:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B909C12B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:49:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9834A1F21430
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60A7B1F23456
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776681E6DC1;
-	Thu,  7 Nov 2024 23:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DA31E5718;
+	Thu,  7 Nov 2024 23:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="TNxsKsbl"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="EBtdjaAH"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E9D1D8E01
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 23:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BDE1D86ED;
+	Thu,  7 Nov 2024 23:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731023408; cv=none; b=iqtPBFm0iAkgX8UGiB2EqNKzD7MszENtMsAsXf5Lh9Oil+NY8tIeSTfBTyTxL1kAxGvvYSyNQmYkmJc66rBzgkf039nrhdosiL8QYZ2XPdFUAkK9aKOVy11xtvRg++G4ZULSl9UhjbAong1kDLtTaPjwzDXqaIZIY2WoaLQKOlI=
+	t=1731023381; cv=none; b=NzbVXgKP7IMiP/7qApJFwA4nWOD2/hcfNFDJMfXhiubavSvXBQw+v2epYLXe5IDrmwflcXUtKZB7rVqGHcbriU+0/VNscz0T18ovHfQTUBF60i2M3VPmoxoHKEEgGYIqi/zmQJSDf6h/WgVVPLjs93Oyr81XsWcMz6l+ZvJbmwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731023408; c=relaxed/simple;
-	bh=H3FV3rDslQoSdCp5mi94gpGHIG5Z7OkgG69XqEyk/z0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=csOrF6RkUrbsGXoH14amUeazKc/RHpZZhfuS4jyWR++J0GvHgSgXAPeL+Y12pZmKlWdmAgDr8JaPtW4Xpq0f0/RIkfHSmd9Q/bppvXxKsJG0giXGi33rHYJHJEy5T75YaV7Vx0cShI+4qfU3SKYgUx7smL3qdBArRQgw1lMX9q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=TNxsKsbl; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([92.33.209.142])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4A7NnS0K1358141
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 7 Nov 2024 15:49:30 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4A7NnS0K1358141
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731023371;
-	bh=6/NZdcb+eDKEKjxoHsmpevhdQTab0euX6eRxoZJgkCI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=TNxsKsbl2bYJHr8Lp9IHi1/5UQNgm/T2lVslLy6DOky83NacHCRET77qbRl9aMUPZ
-	 SaA2rU1flLT0h/O3do1YzwSoTrLaawRvmrK+zAIIxP6a+PCMZzUtHC94oop07hGc30
-	 l+BUZrOUcL3whJYklm5hR3IF9JgH9uuoKAql20HpsrcKgDLxBDF7LlvZSuXQ+vBK5D
-	 8G+n2rFfWy6Dmmb7BXkjqMAPMFY+xT+OBg/SbpiP6659nsCH0CGFUn8mulFEYYjdZZ
-	 2gVvShhGHVXExQat5ymc/mBa8Qi8LiuicGS/F9if8lHG2NzCXl0L3ZmooC+tCatYdP
-	 5b72lr9S5QmDQ==
-Date: Fri, 08 Nov 2024 00:49:22 +0100
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Sohil Mehta <sohil.mehta@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/cpufeatures: Free up unused feature bits
-User-Agent: K-9 Mail for Android
-In-Reply-To: <3492e85d-4aaa-4dd7-9e6a-c8fdc2aa2178@intel.com>
-References: <20241107233000.2742619-1-sohil.mehta@intel.com> <7ff32a10-1950-434b-8820-bb7c3b408544@intel.com> <3492e85d-4aaa-4dd7-9e6a-c8fdc2aa2178@intel.com>
-Message-ID: <74338393-4F39-4A04-83B1-BA64CE2D2FDA@zytor.com>
+	s=arc-20240116; t=1731023381; c=relaxed/simple;
+	bh=p2kk6Hi41/Ro/71xlCn7nSIBe3j3Ua27rEHjt50nD+I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KnNR2dKeQJTtxnVtOxwojegV8A+yBy5z6t2iATZy1foGh6tAPt5RjfkHHALcTxbwP1L39TauXCnY5hTIF18i5h4DocOIWFhjr6ir6iwQqe8gWotCVlfnDSBYuIivlmb9uy/ca9/WR1ncOyB6qQQI6S3DXlrehQFB749praTGowA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=EBtdjaAH; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1731023377;
+	bh=p2kk6Hi41/Ro/71xlCn7nSIBe3j3Ua27rEHjt50nD+I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=EBtdjaAHWRxXhfz8E3EXbIwgrYhv9xSEM8jRmHASRjDiZmfjWDvgig5I9KA9TGwAn
+	 bwdtQtrW1Bi0FszAYf2ySq2ONGvFI2J3CVBilPvpDpXMKBc6lrJtCgKXbMRKyW3jco
+	 VF4nI772R2yLDrWDipnNyKv8g13a51byGXbFfS9JWNsdyXOcQboImaKqivg1Cev/sp
+	 M+CND0O1jc0barD0lqTXMXWYagjLffmHPhNpocbUjPlJaHU9vzCFkaKqO9Rn+006o+
+	 V2pQvSP8NUUXX96YEnIE3K++DWYjy0bIJJSPOT4Rooygp1UWLep5HZmlQJdxUKxBLt
+	 jj8Zwer5xhkdw==
+Received: from [192.168.68.112] (ppp118-210-167-185.adl-adc-lon-bras34.tpg.internode.on.net [118.210.167.185])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id EB6136B922;
+	Fri,  8 Nov 2024 07:49:33 +0800 (AWST)
+Message-ID: <ed77d57facaaef0be796b4c6a742dc7bf3bff479.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus handling
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, Patrick Williams
+	 <patrick@stwcx.xyz>, "wim@linux-watchdog.org" <wim@linux-watchdog.org>, 
+	"linux@roeck-us.net"
+	 <linux@roeck-us.net>
+Cc: "joel@jms.id.au" <joel@jms.id.au>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+ <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
+ <linux-watchdog@vger.kernel.org>, "Peter.Yin@quantatw.com"
+ <Peter.Yin@quantatw.com>, "Patrick_NC_Lin@wiwynn.com"
+ <Patrick_NC_Lin@wiwynn.com>, "Bonnie_Lo@wiwynn.com" <Bonnie_Lo@wiwynn.com>,
+  "DELPHINE_CHIU@wiwynn.com" <DELPHINE_CHIU@wiwynn.com>, BMC-SW
+ <BMC-SW@aspeedtech.com>,  "chnguyen@amperecomputing.com"
+ <chnguyen@amperecomputing.com>
+Date: Fri, 08 Nov 2024 10:19:32 +1030
+In-Reply-To: <TYZPR06MB5203053A004676F51322DECFB25C2@TYZPR06MB5203.apcprd06.prod.outlook.com>
+References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
+	 <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
+	 <ZyUcIIb1dtoNhX00@heinlein.vulture-banana.ts.net>
+	 <a0faca9a6ec7f4acdfa2f29b4ffb94b5392aea6b.camel@codeconstruct.com.au>
+	 <TYZPR06MB5203053A004676F51322DECFB25C2@TYZPR06MB5203.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On November 8, 2024 12:44:57 AM GMT+01:00, Sohil Mehta <sohil=2Emehta@intel=
-=2Ecom> wrote:
->On 11/7/2024 3:36 PM, Dave Hansen wrote:
->> On 11/7/24 15:30, Sohil Mehta wrote:
->>> Linux defined feature bits X86_FEATURE_P3 and X86_FEATURE_P4 are not
->>> used anywhere, neither are they visible to userspace=2E
->>> commit f31d731e4467 ("x86: use X86_FEATURE_NOPL in alternatives") got
->>> rid of the last usage=2E Remove the related mappings and code=2E
->>=20
->> Hah, not referenced since 2008!  This one seems like a no-brainer=2E
->
->Thankfully, it wasn't referenced anywhere=2E For a couple of minutes I wa=
-s
->wondering why all family 6 CPUs are marked as Pentium 3 on 32-bit=2E
->
->> @@ -628,11 +628,6 @@ static void init_intel(struct cpuinfo_x86 *c)
->>  		if (p)
->>  			strcpy(c->x86_model_id, p);
->>  	}
->
->Here=2E=2E
->
->> -	if (c->x86 =3D=3D 6)
->> -		set_cpu_cap(c, X86_FEATURE_P3);
->
+Hi Chin-Ting,
 
-Be careful - these bits are used in module strings and so modutils need to=
- understand them=2E
+On Thu, 2024-11-07 at 05:35 +0000, Chin-Ting Kuo wrote:
+> Hi Andrew,
+>=20
+> Thanks for the check.
+>=20
+> > -----Original Message-----
+> > From: Andrew Jeffery <andrew@codeconstruct.com.au>
+> > Sent: Monday, November 4, 2024 8:02 AM
+> > Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus
+> > handling
+> >=20
+> > On Fri, 2024-11-01 at 14:21 -0400, Patrick Williams wrote:
+> > > On Fri, Nov 01, 2024 at 08:11:59PM +0800, Chin-Ting Kuo wrote:
+> > > > The boot status mapping rule follows the latest design guide
+> > > > from
+> > > > the OpenBMC shown as below.
+> > > > https://github.com/openbmc/docs/blob/master/designs/bmc-reboot-caus=
+e
+> > > > -update.md#proposed-design
+> > > > - WDIOF_EXTERN1=C2=A0=C2=A0 =3D> system is reset by Software
+> > > > - WDIOF_CARDRESET =3D> system is reset by WDT SoC reset
+> > > > - Others=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D>=
+ other reset events, e.g., power on reset.
+> > >=20
+> > > I'm quite surprised that the above is relevant for a kernel
+> > > driver at
+> > > all.=C2=A0 Isn't "EXTERN1" a name of a real watchdog signal from your
+> > > hardware (my recollection is that there are 2 external
+> > > watchdogs).
+> >=20
+> > I think you may be referring to WDTRST1 (and WDTRST2) here.
+> >=20
+>=20
+> WDTRST1, wdt_ext, is a pulse signal generated when WDT timeout
+> occurs. However, depending on the HW board design, wdt_ext doesn=E2=80=99=
+t
+> always affect the system reset. Thus, EXTERN1 boot status can be
+> ignored in ASPEED WDT driver and just implement "CARDRESET" and
+> "others" types since EXTERN1 is not always affected/controlled by WDT
+> controller directly. Or, an additional property in dts can be added
+> to
+> distinguish whether the current EXTRST# reset event is triggered by
+> wdt_ext signal.
+
+Yep, I understand how it works. I was responding to Patrick's query to
+clear up some confusion around the watchdog signal names.
+
+> >=20
+> > >=20
+> > > Having said that, it was known that there would need to be
+> > > changes to
+> > > the driver because some of these conditions were not adequately
+> > > exposed at all.=C2=A0 I'm just still surprised that we're needing to
+> > > reference that document as part of these changes.
+> >=20
+> > I think the main question is whether an internal, graceful
+> > (userspace-
+> > requested) reset is a reasonable use of WDIOF_EXTERN[12]. My
+> > feeling no. I
+> > wonder whether defining a new flag (WDIOF_REBOOT?
+> > WDIOF_GRACEFUL?) in the UAPI would be acceptable?
+> >=20
+>=20
+> Agree, but this is out of the scope of this patch series and can be
+> discussed and
+> implemented in the other future patches.
+
+I disagree, because then you're changing the userspace-visible
+behaviour of the driver yet again. I don't prefer the proposed patch as
+the way forward because I think it is abusing the meaning of
+WDIOF_EXTERN1. I think the concept needs input from the watchdog
+maintainers.
+
+Andrew
 
