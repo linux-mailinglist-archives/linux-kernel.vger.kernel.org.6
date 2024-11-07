@@ -1,139 +1,160 @@
-Return-Path: <linux-kernel+bounces-399655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689EA9C0267
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:31:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA749C0269
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2731B21FE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:31:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B896B22196
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4947F1EE011;
-	Thu,  7 Nov 2024 10:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3B91EC00D;
+	Thu,  7 Nov 2024 10:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JsQmeBLw"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OI23klle"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CEB126C01;
-	Thu,  7 Nov 2024 10:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DF61DF72F;
+	Thu,  7 Nov 2024 10:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975492; cv=none; b=lnPPAlVWHQ5mF3hNxT9T8p6Ppj1f82YuTLPgSQMTvn8CFpvcz9arXGcYimoV7hUzc23t3C/BG5p9gWmJK81QTe7BhkQY+ORZFBS0an+3CSQWjiPjaLKLAK6N4XUoq7OoenCyMddl0abbKvsm4ZUswWV8GdTF5PtKQ39Gc7M6LCg=
+	t=1730975549; cv=none; b=F4/dNY0LZ/MCubLFA52jZMQUO1PJ6FUA8scJk0qYd4A+qArGr/wGE6mofHE/d1DMucgnvNNqRdbLLVXU3wnad7W/MZQdwT0UAm2Shew1P+Y4shotFHQv+0JGGTOXkNVC3AKsbRBuuU+/GAJO04/gcTWeqiJ/jREjM1KA2/AqGHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975492; c=relaxed/simple;
-	bh=s01lhGxF6c+BY6hecobKUX5p0GXhI8o0kpCOdT8gEm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OEQFqipLuvOz6bmvfvVKgMFHB7iH/nk+FtYX7b5xsEWU0rcj/bozoWFlZiKWcXlbNTVtdU+HrHia6L448jufGtPoZx/Cl1vpR+3BulrqXdYyc9gmSOMgJpx+35EDmeymY+bM/FV3c/mktptG3Zab5NuLgTM6vpRAycySiXz4mME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JsQmeBLw; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-720be27db74so631429b3a.1;
-        Thu, 07 Nov 2024 02:31:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730975491; x=1731580291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YkraiRUrks+s5pcHcVdDbNI0v0htZdI4Vc5A2KCgS+Q=;
-        b=JsQmeBLwHEBVZ66qeR1s+AlGm4poFvCNduM00c+xKnwxiUd5drEMViG0//8Mo1jtAB
-         XXM2ToIwa1XTJtJnDLr/XUV6LzGbS9bmBcZxhPGEVbYyFl8d5IitDCLGA4VHMZF4h5Ru
-         Oyt2dRShhuJxhLzXKAEPNP6gzp5+sXieFbe8HbRHHWfYQOztHdx6AdJExq043dLLDpO/
-         jelbxwDKXyh1ZX1U+fD4CF0ZM7/VnHZCu1OChUwE+8jwJzaV9NnRjeEp4Wj4/Qz6jgPF
-         GuocvQiOqHFRFSoP+pb8GtbTloCa1CU6hvpxZiM8etdtlV0TqI9A6aO6gNnZRSbT/wyq
-         kRlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730975491; x=1731580291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YkraiRUrks+s5pcHcVdDbNI0v0htZdI4Vc5A2KCgS+Q=;
-        b=UIzIMoLFz2lUC6g+k+C4GC2Ev4FuaKOhTuuvg+yUgJED1kYvU/dPfme57ydc67e7cL
-         LB5gKWQKTIO0H7rxI4rBWJIYKCMQ3jb4Zm3ib+H9+9/DnDciDC4X8J8j2NoY3GGHb8bj
-         vjT+pjvceI+jVpRRNy1KZJ686uJ0SlOlu6BC1JSm845k1zN5xI0eTi5WnRcoWzwA6U48
-         8FUOdxAbLtV49xRkWf4wejcnxuNAgnabi5kof2maIIAFhPUEj61ZO/zhgxw6JTiRZuex
-         EpTIm1b2SEOTy+4aXYZvXlMymgTD3bp/caz2v0+tJiybK+LFaDXPZ8ETMtMBuRK+bMs1
-         KgOg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5QRRVRl5yVlxH+yeQ77VSZWOjSTozR7TSspYnH5N9eEZbWz6ok2o2SR6/iLu88x8DICz4F8c/@vger.kernel.org, AJvYcCV3zQXZE8Hr5fdXBnIehYjVoTFlZv2lsEvJmkaXG4bJHO4UoLpa5LeUN67DQOjmv3x3bS6CPP2CxEm9I/q9@vger.kernel.org, AJvYcCW8axgcyZap6UWKGt17fcjSotaiccm0xOp+BmhXmO6ee5KeNMwfZ3+jZ6w2nbUp/wCJJTPGOnqNi9S9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+RyQkuTK3fOLBmPlrDlNXNblFPeaBxa8RqUNZSuWNBfnas0OO
-	+hhqDkeqJw62k6d7hqhmSJLybiBr/5FPCCk++SLzEM62rfL2R7xr
-X-Google-Smtp-Source: AGHT+IGNwXAlJHaBXrnsGeXwGA4utGjnJr02l8IicuB7Vk/ooEjnqYAWwWmqFY6U2v0+nQynuABSkQ==
-X-Received: by 2002:a05:6a00:3ccf:b0:71e:60d9:910d with SMTP id d2e1a72fcca58-7240c8b7bbemr916513b3a.6.1730975490635;
-        Thu, 07 Nov 2024 02:31:30 -0800 (PST)
-Received: from [192.168.0.104] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078609ddsm1196578b3a.22.2024.11.07.02.31.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 02:31:30 -0800 (PST)
-Message-ID: <21a00f02-7f2f-46da-a67f-be3e64019303@gmail.com>
-Date: Thu, 7 Nov 2024 18:31:26 +0800
+	s=arc-20240116; t=1730975549; c=relaxed/simple;
+	bh=zftwGZWn+NcFfV7ZloooFrWn7zlJGxlcpjkWe9gYlLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+apbQwBjOVFd3GYhB6fiBrs0sMt4skqsZYg5iszYYlTI7ABeg2aM3HyN+MLaJquITwA3xvbRVYbRyh46km1aDiOt62zJTmNULnEyGIvQcnOTKfmcRaSamlNa68EPHZuCDWXlj7ZjJbUsnZAg5u+88qUgECvLMogKkhnwVPtRA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OI23klle; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79463C4CECC;
+	Thu,  7 Nov 2024 10:32:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730975548;
+	bh=zftwGZWn+NcFfV7ZloooFrWn7zlJGxlcpjkWe9gYlLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OI23klleBHMR0yzZMj7BsFVm4O+KNdGs/7UUvwVXWHjpXv/n5jQLG1C67sir353t7
+	 QAaUwp4EBT0Bp5lCxEBaMkHyW5ey7t2ygkVp4p2gf+89jF5cfr4Tml8Ye3oWIop1xC
+	 42aXwmNCGZUrr+69BqAdHxKPlTQNBmS8g/urcJiuY2NUjuQeZ4PHtqAZKwiB9Ls+U/
+	 geFO7qhxeR9FYwJXt+oZ//RsmCQ0n3N3yhuFhV0ogLa+Uws1sab3Uwc3GxPt2KI3HY
+	 AORK05G2cJipRQkw1pvuqEJIosZvTR8d7EJRPwGTMqG6iGQJdik87oVGqASmg0pY/E
+	 EnKrRvAvyRiQQ==
+Date: Thu, 7 Nov 2024 11:32:26 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org, bsegall@google.com,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: FAILED: Patch "posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER
+ on clone" failed to apply to v5.10-stable tree
+Message-ID: <ZyyXOhXF2xNA3luS@pavilion.home>
+References: <20241106021231.182968-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
- MA35 family GMAC
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
- schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20241106111930.218825-1-a0987203069@gmail.com>
- <20241106111930.218825-2-a0987203069@gmail.com>
- <f3c6b67f-5c15-43e2-832e-28392fbe52ec@lunn.ch>
-Content-Language: en-US
-From: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <f3c6b67f-5c15-43e2-832e-28392fbe52ec@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106021231.182968-1-sashal@kernel.org>
 
-Dear Andrew,
+Le Tue, Nov 05, 2024 at 09:12:31PM -0500, Sasha Levin a �crit :
+> The patch below does not apply to the v5.10-stable tree.
+> If someone wants it applied there, or to any other stable or longterm
+> tree, then please email the backport, including the original git commit
+> id to <stable@vger.kernel.org>.
 
-Thank you for your reply.
+Please try this one:
 
-Andrew Lunn 於 11/7/2024 2:13 AM 寫道:
->> +  phy-mode:
->> +    enum:
->> +      - rmii
->> +      - rgmii-id
-> The phy-mode deepened on the board design. All four rgmii values are
-> valid.
-I will add them.
->> +
->> +  tx_delay:
->> +    maxItems: 1
->> +    description:
->> +      Control transmit clock path delay in nanoseconds.
->> +
->> +  rx_delay:
->> +    maxItems: 1
->> +    description:
->> +      Control receive clock path delay in nanoseconds.
-> If you absolutely really need these, keep them, but i suggest you drop
-> them. They just cause confusion, when ideally we want the PHY to be
-> adding RGMII delays, not the MAC.
->
-> If you do need them, then they should be in pS.
+From 9f41884fa9493382e59a0d42b2084d37b36bec06 Mon Sep 17 00:00:00 2001
+From: Benjamin Segall <bsegall@google.com>
+Date: Fri, 25 Oct 2024 18:35:35 -0700
+Subject: [PATCH] posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER on clone
 
-I will fix it.
+When cloning a new thread, its posix_cputimers are not inherited, and
+are cleared by posix_cputimers_init(). However, this does not clear the
+tick dependency it creates in tsk->tick_dep_mask, and the handler does
+not reach the code to clear the dependency if there were no timers to
+begin with.
 
-We have customers who use a fixed link instead of a PHY, so these 
-properties may be necessary.
+Thus if a thread has a cputimer running before clone/fork, all
+descendants will prevent nohz_full unless they create a cputimer of
+their own.
 
-> 	Andrew
+Fix this by entirely clearing the tick_dep_mask in copy_process().
+(There is currently no inherited state that needs a tick dependency)
 
-Thanks!
+Process-wide timers do not have this problem because fork does not copy
+signal_struct as a baseline, it creates one from scratch.
 
-BR,
+Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
+Signed-off-by: Ben Segall <bsegall@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/xm26o737bq8o.fsf@google.com
+---
+ include/linux/tick.h | 8 ++++++++
+ kernel/fork.c        | 2 ++
+ 2 files changed, 10 insertions(+)
 
-Joey
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index a90a8f7759a2..fe38aaacebf0 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -247,12 +247,19 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
+ 	if (tick_nohz_full_enabled())
+ 		tick_nohz_dep_set_task(tsk, bit);
+ }
++
+ static inline void tick_dep_clear_task(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit)
+ {
+ 	if (tick_nohz_full_enabled())
+ 		tick_nohz_dep_clear_task(tsk, bit);
+ }
++
++static inline void tick_dep_init_task(struct task_struct *tsk)
++{
++	atomic_set(&tsk->tick_dep_mask, 0);
++}
++
+ static inline void tick_dep_set_signal(struct signal_struct *signal,
+ 				       enum tick_dep_bits bit)
+ {
+@@ -286,6 +293,7 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
+ 				     enum tick_dep_bits bit) { }
+ static inline void tick_dep_clear_task(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit) { }
++static inline void tick_dep_init_task(struct task_struct *tsk) { }
+ static inline void tick_dep_set_signal(struct signal_struct *signal,
+ 				       enum tick_dep_bits bit) { }
+ static inline void tick_dep_clear_signal(struct signal_struct *signal,
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 8b8a5a172b15..f54d32bcdb21 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -96,6 +96,7 @@
+ #include <linux/kasan.h>
+ #include <linux/scs.h>
+ #include <linux/io_uring.h>
++#include <linux/tick.h>
+ 
+ #include <asm/pgalloc.h>
+ #include <linux/uaccess.h>
+@@ -2053,6 +2054,7 @@ static __latent_entropy struct task_struct *copy_process(
+ 	acct_clear_integrals(p);
+ 
+ 	posix_cputimers_init(&p->posix_cputimers);
++	tick_dep_init_task(p);
+ 
+ 	p->io_context = NULL;
+ 	audit_set_context(p, NULL);
+-- 
+2.46.0
+
+
 
 
