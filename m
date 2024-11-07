@@ -1,80 +1,51 @@
-Return-Path: <linux-kernel+bounces-399566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 383899C00E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:08:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6809C00E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B004A1F22BE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:08:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D411C2117D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B5D1DF983;
-	Thu,  7 Nov 2024 09:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6734F1DF990;
+	Thu,  7 Nov 2024 09:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KTQ5B8JX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="jb7Em/BW"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9757D19CC36
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5FF19CC36;
+	Thu,  7 Nov 2024 09:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730970524; cv=none; b=PiQ4jAQLZWG4nPkotrOGbjFwzIdj8Eresrtqd3/qAsINmKH3uMGTVRAqYsyzZ4PuPMFQi1Ye1NKpXHa0Ux5zN0wtBzNX2eXX6XK7IIZI6ix3wN0EMiDg9xzXw3gCCkE5hMarwxnLRPsmWCvl1+qLbf+uk2YRYBR0WWLFUy4Nh2s=
+	t=1730970649; cv=none; b=sYzV1OzOHUp+v87LmXCZqVgq1yPIq8dHuqeL7W0tw4rpN+9MrSNu+ThgH/FYV68G6DQouNNNlN+amJKoPjnrCVSdc1GHhBm/jduQnHua4yTeRzTXkpFE5sXbCtgZjuKnn1QFFTxsaF7Hj6b/IgvWkO/mFS5II6xawdocK3Hbwtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730970524; c=relaxed/simple;
-	bh=aw8AE5OIPyi2E0eJ7n6EJiugOtNZYzKxN9wuamYqb/Y=;
+	s=arc-20240116; t=1730970649; c=relaxed/simple;
+	bh=XFbXvqD/jQw/+iOBT3KvNI1VPhFdHlmpiR2+WzKl1ug=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ufuVSYk1HoC3mgzgzKGMX/4rhbmapEBO6cPlI5kypaqnvR6yyQyK4vDMZO7uF5TPpgGWOrPGG68LR+S7AJnsnpHeqB726/Z6YBedoW+22TFdjQ3NUzoxkupKEXoAzawZAiCNfov8EmC6YucPQ0wmj8m5wetRyZQbg+UrmqNf/Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KTQ5B8JX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730970521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0meNM07myzn3is5raBypJ2GqO2kjL/WthYw31DeaoP8=;
-	b=KTQ5B8JXbCVxYOTUSpZ6poh2U2wJfED8nnUAMN/ohjiK2DMbXQgWwlxv6Vrp2kngQLc4Xz
-	gAUY2ZT8lIEap+qTshvNlxb9MiYNeYdvHXfO1w0G0RePRVpZ+MuuV4YoX5mjosPY/kpWEs
-	PN2DhK0Ms0s5Z8vDbK6wriAdKk+3CMg=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-N2RqEszCP0WgOzZkeYCCfw-1; Thu, 07 Nov 2024 04:08:38 -0500
-X-MC-Unique: N2RqEszCP0WgOzZkeYCCfw-1
-X-Mimecast-MFC-AGG-ID: N2RqEszCP0WgOzZkeYCCfw
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d52ccc50eso346480f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:08:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730970517; x=1731575317;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0meNM07myzn3is5raBypJ2GqO2kjL/WthYw31DeaoP8=;
-        b=LzjBAm5uDVoGqV+6Rs65/mO08HB7epaJy36RLwWzqWXbKHMbgSx6/IxoPvKgtemNe9
-         Dl/N6mTQB0SMUsoeuKhp0byaABDtIPm4TmkUU25wK1DDV0Zc+84161TjFH21lolEAp9B
-         tw0FMWBOqqs5n1Igq7HdjnJKyfptkbV5Ryn0voQuNi728cp7TJWle6yuc+Ny+0Vq3fHy
-         vuKNDBD72e+QzaQ1m1QNwgPy9oz704Z628SS0YNCilxt30cz46SgWUgA4inoTHEB/im8
-         JpnyFNF1POZ4tLqrdxfEFTcSjpxGWAAJukAibjRONynE0H/uBiVaQ0sFQFxXl7l2s5wD
-         QPug==
-X-Gm-Message-State: AOJu0YwnsYom7p9GPNY6XPdF5dxImKfB1LIHi6OCesa9IkMf8hmW6BY6
-	Uem0kq90kLdlcQeCnHTdxVBkfTlMd/7F/i5ptDrsu4W9vt1/ee9HZauWF3DPtRJjppWe5O7YmNz
-	ZZjm2M1Ab4ZmvzIv0ZlHGWxloBhrHQCv4xQlLHVUCS0SFMPS3uU8WBTylPyPCKA==
-X-Received: by 2002:a5d:6083:0:b0:37d:5436:4a1 with SMTP id ffacd0b85a97d-380610f2575mr27034467f8f.3.1730970517009;
-        Thu, 07 Nov 2024 01:08:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGvCo6R0E36eHL3mVJJdgbo4MIPSW7JGglfq3iQYyLaXodctJtVqRjYr0Br2VH5NzJ1E10zWg==
-X-Received: by 2002:a5d:6083:0:b0:37d:5436:4a1 with SMTP id ffacd0b85a97d-380610f2575mr27034434f8f.3.1730970516541;
-        Thu, 07 Nov 2024 01:08:36 -0800 (PST)
-Received: from ?IPV6:2003:cb:c708:7900:b88e:c72a:abbd:d3d9? (p200300cbc7087900b88ec72aabbdd3d9.dip0.t-ipconnect.de. [2003:cb:c708:7900:b88e:c72a:abbd:d3d9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea5e4sm1156790f8f.77.2024.11.07.01.08.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 01:08:35 -0800 (PST)
-Message-ID: <262aa19c-59fe-420a-aeae-0b1866a3e36b@redhat.com>
-Date: Thu, 7 Nov 2024 10:08:34 +0100
+	 In-Reply-To:Content-Type; b=YjxoAdDAOO6BzPVr8OkS1L21EVEOfMzlF+i3Z3ghyrrWjdQ81EP51ec4xAv3npdSYvE1J59LNv5jwLn+5DtzaBQXXT4y2HD9g4p7zIs25XOBngnhpTw5JuofKkz8taNtqU1P9O+jCDpuZp/9iWC6KyyRcVZmdvTedliMHNNHPtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=jb7Em/BW; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=cl5PL/KuYw8ZhPK6A/ezmssuClpkjogZlBtDO8rhwuQ=; t=1730970646;
+	x=1731402646; b=jb7Em/BWiNrKHc7SW6Dk7kg48FbHo3nL94QFzWbU83Bd0sEhjR1iCyVMAaKcj
+	5qQhdadzj5/noFTuF/FnbhJ/B8mXgqGXV8Shf6qDMe+lAyrtg1poFdEtfXu4TL4RPUHxGQJdQYmG9
+	Ktj8B82OnXVyp845QxZtEV8ol/QW4KSy/6hG2LD44Q/rov74K4q5tphEFbKc+BcoJWuLTOFJ7BJt0
+	UXYzxN/bwXvz/o4NSlAC0RHteFk8YTUONZp9zTvKOF0cxunsbu9aDm5w+yUNvdqBDwWzou85KJD++
+	1WRgHGTeNQiNAxFpUbUSTeg9tO+F4dhys+hEr03vHpHswrLIpg==;
+Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t8yXG-00058N-HI; Thu, 07 Nov 2024 10:10:38 +0100
+Message-ID: <937c258b-f34c-4f63-949d-a5e7c8db714d@leemhuis.info>
+Date: Thu, 7 Nov 2024 10:10:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,150 +53,201 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] x86/mm/pat: fix VM_PAT handling when fork() fails in
- copy_page_range()
-To: mawupeng <mawupeng1@huawei.com>, peterx@redhat.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
- xrivendell7@gmail.com, wang1315768607@163.com, fleischermarius@gmail.com,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
- akpm@linux-foundation.org
-References: <20241029210331.1339581-1-david@redhat.com> <ZyKl_cRRUmZGbp9G@x1n>
- <8c494db6-1def-44ea-84ef-51d0140bddf3@redhat.com>
- <7e860861-c7cb-401f-ac92-61db92fa4d8b@huawei.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <7e860861-c7cb-401f-ac92-61db92fa4d8b@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [Regression] wifi problems since tg3 started throwing rcu stall
+ warnings
+To: Mingcong Bai <jeffbai@aosc.io>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, rcu <rcu@vger.kernel.org>, sakiiily@aosc.io
+References: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
+ <ZxjLQzHKuR-w16hF@pavilion.home>
+ <2b25a988-6965-48e4-a788-58dd8a776e06@leemhuis.info>
+ <e2ffd3d06fad236ea900d4fb439b2240@aosc.io>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-MW
+In-Reply-To: <e2ffd3d06fad236ea900d4fb439b2240@aosc.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1730970646;d18e9836;
+X-HE-SMSGID: 1t8yXG-00058N-HI
 
-On 07.11.24 09:43, mawupeng wrote:
-> 
-> 
-> On 2024/10/31 17:47, David Hildenbrand wrote:
->> On 30.10.24 22:32, Peter Xu wrote:
->>> On Tue, Oct 29, 2024 at 10:03:31PM +0100, David Hildenbrand wrote:
->>>> If track_pfn_copy() fails, we already added the dst VMA to the maple
->>>> tree. As fork() fails, we'll cleanup the maple tree, and stumble over
->>>> the dst VMA for which we neither performed any reservation nor copied
->>>> any page tables.
+On 05.11.24 08:17, Mingcong Bai wrote:
+> (CC-ing the laptop's owner so that she might help with further testing...)
+> 在 2024-10-23 18:22，Linux regression tracking (Thorsten Leemhuis) 写道：
+>> On 23.10.24 12:09, Frederic Weisbecker wrote:
+>>> Le Wed, Oct 23, 2024 at 10:27:18AM +0200, Linux regression tracking
+>>> (Thorsten Leemhuis) a écrit :
 >>>>
->>>> Consequently untrack_pfn() will see VM_PAT and try obtaining the
->>>> PAT information from the page table -- which fails because the page
->>>> table was not copied.
+>>>> Frederic, I noticed a report about a regression in bugzilla.kernel.org
+>>>> that appears to be caused by the following change of yours:
+>>>> 55d4669ef1b768 ("rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU
+>>>> invocation")
+>>> Are you sure about the commit? Below it says:
+>> Not totally, but...
+>>
+>>>> As many (most?) kernel developers don't keep an eye on the bug tracker,
+>>>> I decided to write this mail. To quote from
+>>>> https://bugzilla.kernel.org/show_bug.cgi?id=219390:
 >>>>
->>>> The easiest fix would be to simply clear the VM_PAT flag of the dst VMA
->>>> if track_pfn_copy() fails. However, the whole thing is about "simply"
->>>> clearing the VM_PAT flag is shaky as well: if we passed track_pfn_copy()
->>>> and performed a reservation, but copying the page tables fails, we'll
->>>> simply clear the VM_PAT flag, not properly undoing the reservation ...
->>>> which is also wrong.
+>>>>>  Mingcong Bai 2024-10-15 13:32:35 UTC
+>>>>> Since aa162aa4aa383a0a714b1c36e8fcc77612ddd1a2 between v6.10.4 and
+>>> Now that's aa162aa4aa383a0a714b1c36e8fcc77612ddd1a2 which I can't
+>>> find in vanilla
+>>> tree.
+>> ...quite, as that is the commit-id of the backport to v6.10.5; and the
+>> reporter reverted it there. Ideally of course that would have happened
+>> on recent mainline. If you doubt, ask Mingcong Bai to check if a revert
+>> there helps, too.
+> Do we need any further information/testing on this issue? Please let me
+> know if there's anything we can do as the issue still persists in 6.12.
+
+Hmm, no reply from Frederic. Not sure why, maybe he is just away from
+the keyboard for a few days. But if the reporter has a minute, it might
+be wise to check if reverting that commit on top of 6.12-rc6 or newer
+also fixes the problem, to rule out any interference from changes
+specific to the stable series.
+
+Ciao, Thorsten
+
+>>> Also I'm failing to see an immediate issue between the below stacktrace
+>>> and the above commit. So are we sure about that reference?
 >>>
->>> David,
+>>> Thanks.
 >>>
->>
->> Hi Peter,
->>
->>> Sorry to not have chance yet reply to your other email..
 >>>
->>> The only concern I have with the current fix to fork() is.. we started to
->>> have device drivers providing fault() on PFNMAPs as vfio-pci does, then I
->>> think it means we could potentially start to hit the same issue even
->>> without fork(), but as long as the 1st pgtable entry of the PFNMAP range is
->>> not mapped when the process with VM_PAT vma exit()s, or munmap() the vma.
->>
->> As these drivers are not using remap_pfn_range, there is no way they could currently get VM_PAT set.
->>
->> So what you describe is independent of the current state we are fixing here, and this fix should sort out the issues with current VM_PAT handling.
->>
->> It indeed is an interesting question how to handle reservations when *not* using remap_pfn_range() to cover the whole area.
->>
->> remap_pfn_range() handles VM_PAT automatically because it can do it: it knows that the whole range will map consecutive PFNs with the same protection, and we expect not parts of the range suddenly getting unmapped (and any driver that does that is buggy).
->>
->> This behavior is, however, not guaranteed to be the case when remap_pfn_range() is *not* called on the whole range.
->>
->> For that case (i.e., vfio-pci) I still wonder if the driver shouldn't do the reservation and leave VM_PAT alone.
->>
->> In the driver, we'd do the reservation once and not worry about fork() etc ... and we'd undo the reservation once the last relevant VM_PFNMAP VMA is gone or the driver let's go of the device. I assume there are already mechanisms in place to deal with that to some degree, because the driver cannot go away while any VMA still has the VM_PFNMAP mapping -- otherwise something would be seriously messed up.
->>
->> Long story short: let's look into not using VM_PAT for that use case.
->>
->> Looking at the VM_PAT issues we had over time, not making it more complicated sounds like a very reasonable thing to me :)
+>>>>> v6.10.5, the Broadcom Tigon3 Ethernet interface (tg3) found on Apple
+>>>>> MacBook Pro (15'', Mid 2010) would throw many rcu stall errors during
+>>>>> boot up, causing peripherals such as the wireless card to misbehave:
+>>>>>
+>>>>> [   24.153855] rcu: INFO: rcu_preempt detected expedited stalls on
+>>>>> CPUs/tasks: { 2-.... } 21 jiffies s: 973 root: 0x4/.
+>>>>> [   24.166938] rcu: blocking rcu_node structures (internal RCU debug):
+>>>>> [   24.177800] Sending NMI from CPU 3 to CPUs 2:
+>>>>> [   24.183113] NMI backtrace for cpu 2
+>>>>> [   24.183119] CPU: 2 PID: 1049 Comm: NetworkManager Not tainted
+>>>>> 6.10.5-aosc-main #1
+>>>>> [   24.183123] Hardware name: Apple Inc. MacBookPro6,2/Mac-
+>>>>> F22586C8, BIOS    MBP61.88Z.005D.B00.1804100943 04/10/18
+>>>>> [   24.183125] RIP: 0010:__this_module+0x2d3d1/0x4f310 [tg3]
+>>>>> [   24.183135] Code: c3 cc cc cc cc 0f 1f 40 00 90 90 90 90 90 90
+>>>>> 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 89 f6 48
+>>>>> 03 77 30 8b 06 <31> f6 31 ff c3 cc cc cc cc 66 0f 1f 44 00 00 90 90
+>>>>> 90 90 90 90 90
+>>>>> [   24.183138] RSP: 0018:ffffbf1a011d75e8 EFLAGS: 00000082
+>>>>> [   24.183141] RAX: 0000000000000000 RBX: ffffa04ec78f8a00 RCX:
+>>>>> 0000000000000000
+>>>>> [   24.183143] RDX: 0000000000000000 RSI: ffffbf1a00fb007c RDI:
+>>>>> ffffa04ec78f8a00
+>>>>> [   24.183145] RBP: 0000000000000b50 R08: 0000000000000000 R09:
+>>>>> 0000000000000000
+>>>>> [   24.183147] R10: 0000000000000000 R11: 0000000000000000 R12:
+>>>>> 0000000000000216
+>>>>> [   24.183148] R13: ffffbf1a011d7624 R14: ffffa04ec78f8a08 R15:
+>>>>> ffffa04ec78f8b40
+>>>>> [   24.183151] FS:  00007f4c524b2140(0000)
+>>>>> GS:ffffa05007d00000(0000) knlGS:0000000000000000
+>>>>> [   24.183153] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>> [   24.183155] CR2: 00007f7025eae3e8 CR3: 00000001040f8000 CR4:
+>>>>> 00000000000006f0
+>>>>> [   24.183157] Call Trace:
+>>>>> [   24.183162]  <NMI>
+>>>>> [   24.183167]  ? nmi_cpu_backtrace+0xbf/0x140
+>>>>> [   24.183175]  ? nmi_cpu_backtrace_handler+0x11/0x20
+>>>>> [   24.183181]  ? nmi_handle+0x61/0x160
+>>>>> [   24.183186]  ? default_do_nmi+0x42/0x110
+>>>>> [   24.183191]  ? exc_nmi+0x1bd/0x290
+>>>>> [   24.183194]  ? end_repeat_nmi+0xf/0x53
+>>>>> [   24.183203]  ? __this_module+0x2d3d1/0x4f310 [tg3]
+>>>>> [   24.183207]  ? __this_module+0x2d3d1/0x4f310 [tg3]
+>>>>> [   24.183210]  ? __this_module+0x2d3d1/0x4f310 [tg3]
+>>>>> [   24.183213]  </NMI>
+>>>>> [   24.183214]  <TASK>
+>>>>> [   24.183215]  __this_module+0x31828/0x4f310 [tg3]
+>>>>> [   24.183218]  ? __this_module+0x2d390/0x4f310 [tg3]
+>>>>> [   24.183221]  __this_module+0x398e6/0x4f310 [tg3]
+>>>>> [   24.183225]  __this_module+0x3baf8/0x4f310 [tg3]
+>>>>> [   24.183229]  __this_module+0x4733f/0x4f310 [tg3]
+>>>>> [   24.183233]  ? _raw_spin_unlock_irqrestore+0x25/0x70
+>>>>> [   24.183237]  ? __this_module+0x398e6/0x4f310 [tg3]
+>>>>> [   24.183241]  __this_module+0x4b943/0x4f310 [tg3]
+>>>>> [   24.183244]  ? delay_tsc+0x89/0xf0
+>>>>> [   24.183249]  ? preempt_count_sub+0x51/0x60
+>>>>> [   24.183254]  __this_module+0x4be4b/0x4f310 [tg3]
+>>>>> [   24.183258]  __dev_open+0x103/0x1c0
+>>>>> [   24.183265]  __dev_change_flags+0x1bd/0x230
+>>>>> [   24.183269]  ? rtnl_getlink+0x362/0x400
+>>>>> [   24.183276]  dev_change_flags+0x26/0x70
+>>>>> [   24.183280]  do_setlink+0xe16/0x11f0
+>>>>> [   24.183286]  ? __nla_validate_parse+0x61/0xd40
+>>>>> [   24.183295]  __rtnl_newlink+0x63d/0x9f0
+>>>>> [   24.183301]  ? kmem_cache_alloc_node_noprof+0x12b/0x360
+>>>>> [   24.183308]  ? kmalloc_trace_noprof+0x11e/0x350
+>>>>> [   24.183312]  ? rtnl_newlink+0x2e/0x70
+>>>>> [   24.183316]  rtnl_newlink+0x47/0x70
+>>>>> [   24.183320]  rtnetlink_rcv_msg+0x152/0x400
+>>>>> [   24.183324]  ? __netlink_sendskb+0x68/0x90
+>>>>> [   24.183329]  ? netlink_unicast+0x237/0x290
+>>>>> [   24.183333]  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+>>>>> [   24.183336]  netlink_rcv_skb+0x5b/0x110
+>>>>> [   24.183343]  netlink_unicast+0x1a4/0x290
+>>>>> [   24.183347]  netlink_sendmsg+0x222/0x4a0
+>>>>> [   24.183350]  ? proc_get_long.constprop.0+0x116/0x210
+>>>>> [   24.183358]  ____sys_sendmsg+0x379/0x3b0
+>>>>> [   24.183363]  ? copy_msghdr_from_user+0x6d/0xb0
+>>>>> [   24.183368]  ___sys_sendmsg+0x86/0xe0
+>>>>> [   24.183372]  ? addrconf_sysctl_forward+0xf3/0x270
+>>>>> [   24.183378]  ? _copy_from_iter+0x8b/0x570
+>>>>> [   24.183384]  ? __pfx_addrconf_sysctl_forward+0x10/0x10
+>>>>> [   24.183388]  ? _raw_spin_unlock+0x19/0x50
+>>>>> [   24.183392]  ? proc_sys_call_handler+0xf3/0x2f0
+>>>>> [   24.183397]  ? trace_hardirqs_on+0x29/0x90
+>>>>> [   24.183401]  ? __fdget+0xc2/0xf0
+>>>>> [   24.183405]  __sys_sendmsg+0x5b/0xc0
+>>>>> [   24.183410]  ? syscall_trace_enter+0x110/0x1b0
+>>>>> [   24.183416]  do_syscall_64+0x64/0x150
+>>>>> [   24.183423]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>>>>
+>>>>> I have bisected the error to this commit. Reverting it caused no
+>>>>> new or
+>>>>> perceivable issues on both the MacBook and a Zen4-based laptop.
+>>>>
+>>>> [...]
+>>>>
+>>>>>> Ohh, and when you say "causing peripherals such as the wireless
+>>>>>> card to
+>>>>>> misbehave" what exactly do you mean?
+>>>>>
+>>>>> When the kernel throws rcu stall messages, the wireless card on the
+>>>>> MacBook may fail to discover and/or connect to wireless networks -
+>>>>> not a
+>>>>> consistent behaviour but I suppose that something in the kernel got
+>>>>> stuck.
+>>>>
+>>>> See the ticket for more details and dmesg logs; the problem still
+>>>> happens with 6.12-rc. The reporter is CCed.
+>>>>
+>>>> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker'
+>>>> hat)
+>>>> -- 
+>>>> Everything you wanna know about Linux kernel regression tracking:
+>>>> https://linux-regtracking.leemhuis.info/about/#tldr
+>>>> If I did something stupid, please tell me, as explained on that page.
+>>>>
+>>>> P.S.: let me use this mail to also add the report to the list of
+>>>> tracked
+>>>> regressions to ensure it's doesn't fall through the cracks:
+>>>>
+>>>> #regzbot introduced: 55d4669ef1b76823083caecfab12a8bd2ccdcf64
+>>>> #regzbot from: Mingcong Bai <jeffbai@aosc.io>
+>>>> #regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219390
+>>>> #regzbot title: rcu: wifi problems since tg3 started throwing rcu stall
+>>>> warnings
+>>>> #regzbot ignore-activity
+>>>>
+>>>
+>>>
 > 
-> Hi David,
 > 
-> The VM_PAT reservation do seems complicated. It can trigger the same warning in get_pat_info if remap_p4d_range fails:
-> 
-> remap_pfn_range
->    remap_pfn_range_notrack
->      remap_pfn_range_internal
->        remap_p4d_range	// page allocation can failed here
->      zap_page_range_single
->        unmap_single_vma
->          untrack_pfn
->            get_pat_info
->              WARN_ON_ONCE(1);
-> 
-> Any idea on this problem?
-
-In remap_pfn_range(), if remap_pfn_range_notrack() fails, we call 
-untrack_pfn(), to undo the tracking.
-
-The problem is that zap_page_range_single() shouldn't do that 
-untrack_pfn() call.
-
-That should be fixed by Peter's patch:
-
-https://lore.kernel.org/all/20240712144244.3090089-1-peterx@redhat.com/T/#u
-
--- 
-Cheers,
-
-David / dhildenb
 
 
