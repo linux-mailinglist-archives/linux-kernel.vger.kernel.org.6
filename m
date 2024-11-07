@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-400293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5C99C0B7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:25:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34119C0B81
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A39881C23834
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:25:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337501F221CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682822185B9;
-	Thu,  7 Nov 2024 16:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8906F218953;
+	Thu,  7 Nov 2024 16:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zUcVm2ZX"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bw6IXehJ"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CF9217320
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FD1218928
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730996445; cv=none; b=cCSnGjdlOeD+nxc23ir7h4BY1/glRxGefkLMo4YwVvGHqRy24qS6gQDcajQotf0v//Il0NpBNFD+7HJ5cYdldS1Aal0itjY9/w6WPxnu61kD336HoFHJiyDyTHUL7nQXWCyStC6dHCAzzwMR1/+mgWB+DCke5XVRoC8NAJIB6rI=
+	t=1730996447; cv=none; b=EwP/JKRQteA8OnJ2StK8XC1GAJuByvhkQlZ6rqkgoFvaKjSbiaPbZoFJqzcAIkUVR1cVN4iQVepHvzP+C9NKlLrMn+JoJK4gKV/G+htnSYnDxJq72k1b5ogG9a6WgbZrXyX4EV6JJ//jotgdZDBsf5gKq3sBU1R+9Dz2y+WfOCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730996445; c=relaxed/simple;
-	bh=OQ+ILS6ZdIDbpDd6fnm+5OYFklVHCZ8ERtWBLEZnFyg=;
+	s=arc-20240116; t=1730996447; c=relaxed/simple;
+	bh=7oem3ThhepX9gsZkLkU3ubM5v/EmPX06HEqwbDIU+q4=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=LWw2WkNUX8beA2Np/9wQDbD6nQiAAvfuPVYBKKf+2NohM3Y8hbVvlOrfqrA87OoxAaciHFccwjPX/DIX//IxIhCBq2McpqA2B+Db8oPGzTDrDtpFpzHrh9pQAJtcJDTRgrqrg2UrAr0QfO1vTtRRnieooJWEkJQfBBJFTAxVtFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zUcVm2ZX; arc=none smtp.client-ip=209.85.219.202
+	 To:Content-Type; b=iDZ6/eT3v9pZ6UP2YwDs0WIKBf2XI3XPy1fGS0NvdEi6nAHOrYUWQeGxbOUxg66pqpD4bdL+EKiBx4hnErrd0a0lbzsWXR/bAa9YIvqYpUOfgAwiFaEQaI7516o2KA+9S0UVN4EaDrO3pSVJN6STK2WQyiwjF06zU4ZxZtxyQuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bw6IXehJ; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e32ff6f578eso2897818276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:20:43 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea8a238068so19814967b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:20:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730996443; x=1731601243; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Zi7/BGIzk4kmPbaIIn5N5Q89D8reWg5dpAnu28NGJw=;
-        b=zUcVm2ZXhGnSypH0GLkeSotuc0HUk4N/11XDq7hA1rvqRRCuts+swxtmwH8mby9NYG
-         FjPmoUKFr7AYaBUm+ridTTXCuC0L5AzkyI2y171yuta8Nem/IG+AQX5jvIMSv0de6LEd
-         1hs2CfsGXyalmc5dPq7VBzh6/W+r+vzlV4N8DAOtavaWVaLt9lmX5FqpgvkHjpRXsXAx
-         Oi1WgYyrmu4beez7OADsPLKcUDMKTbGRilw5olJeN+/bagoRtc0ZXgbe+6wcLiDKri6I
-         XrMs5M6mE3VS7jtwNBZfw5FE3xP8nAjxru+zbvP8riHx4UVz5gbFjkrOy3xTAafQw/45
-         uEug==
+        d=google.com; s=20230601; t=1730996445; x=1731601245; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l25I5Jel5U2/0S9AyIDPTs5/QytgoUZMY3CNnmJZTzE=;
+        b=bw6IXehJkYX4+BylYkDNFo3v8i1Zha1jQ7CrufGEmzY7ZL70rx23yE7mh0TG98s9qa
+         WowOS5guH95BGTOKoOvJZ9leIId9buWx1Q+Cpp604ni+ThgEBO5gi8p3FdNDd6sSyOxD
+         u1FqF5Jq8/c0W0zHXNEVjgxhWjwAl2glo2dfS84vpRjAvXlpEUZCPLN5K69rAxK1BEiA
+         JXTAjRw+MsRxMsYS1Tx7/l1Z7XZzJgDyeHqfoOKG6qC4BlKajjGtJr7qIQ/TKtxDiUzW
+         +MkVJUQ+qkCbs1ziswB9+jus9Gp0T1uCicaMg7i/Gqf8YyN+furRmQ+fVqLd1YNkPH08
+         S1PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730996443; x=1731601243;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Zi7/BGIzk4kmPbaIIn5N5Q89D8reWg5dpAnu28NGJw=;
-        b=I4sd1KQu1Z7RTafiimg5erKyCF5EedOt+TcOhhWsCBnIUu87bInQViePvePHOfR4iR
-         8ljVY61Evl22HQJFOxqeS5vrGAX/4xQVhXl5WSbZv/MLd54LhZ40rXRFhzUUJFQ276l3
-         mZAusNcPWGRMlgY8GwPCqx+imvUur8g9kGsRPFReQ9l+a4RJMd/+fTy3/C8MlQEBAffy
-         log/BEFKj2lV5ClxhS0MyItOcU5wgw93ZwdD9vp5BCGN7XWKHJgROe1SjUMi4EOQGgj/
-         O9b4P3rUvJkAyQ7c2S7Os63uS3EO2lvO7w2QUFAhOynHzZRFhHKk45jNsg3wo4j7OBii
-         kiGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgVrx1xN5fvuUJ9wEJTN2M4DyYdc+2CZ2QV1laDEudtRIgWUIOL8qfICvFtQRao6zlGK6ghAw7mnWwWXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8h2joUczFk6ga9wUwGkUoOUWfbi6dSACvCFWJyhX7+Yvmuvj+
-	E43pG5SUWa1hKNkY0q9VkdeozVMBT6O2pY3b6IpjD152nwXnXLi6XC7fRvVGNZdT16CNulb6eCc
-	sIhM43Q==
-X-Google-Smtp-Source: AGHT+IH0/hEWrV52DVmrj7Z6n0WIT9Ut3IVouygX8jmB/XLHKPkNRIO9up6ksFd2vuXYZmCZkrEILwBAMRRP
+        d=1e100.net; s=20230601; t=1730996445; x=1731601245;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l25I5Jel5U2/0S9AyIDPTs5/QytgoUZMY3CNnmJZTzE=;
+        b=ZHYMzGWwxviop0+TIEWeE1JtQdlKhAmj7RGqaV0lVdWG/BFnlHIUe99RYkMUk8WV68
+         1Z+aVgj+0N2WLMLpEX6W8pgmhnmmOILK0+/8lP3VLjeFWCimyEr/o2jw6L/3eiRhqzMa
+         jcVu2muTtD4oORtLkVtzfsYV8Td9SkgqSwBXEsauqXlaR9HxJt532vbvumLdlHJwM9Ic
+         IF5tlDxxDeXwjk8M+OEaH4jj26xYx+P8lFp+L0XBt/cTqzD73eYk0B0U62pczt0hnfPO
+         qVGQ3ezB9/piddmzTTvopLOvdM9xczox2sip626HLuf/WuKldDYS4WKzSdAnJqKv9+RP
+         2gMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaB2JUA6kVmZ2lGaYVswgYRSvmCQKUXc+6a1iLpAHuTZefnxY/MjqjEddVP7wRcb5QCnAheLYYbobvJrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjgJ08pRTq0xwcGfqecFqipdEp4ajf1PXbu2YcEBVareQxK0Iq
+	k+DlLfYkVbD0UxXDLKmbMVZ/Gjj88USYia/qV7dgTctwRZj5fBB+QqN+vZexcK1IR0jninRVNlK
+	G5jegfg==
+X-Google-Smtp-Source: AGHT+IFnTI4IcNJ51YDO3rsAiQCbXWeV3EQq6I2FsC+sGE3SpDVNd7WlWxpa52LoAfCUNYpttoUYsg4Abinq
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:acc7:bda:7167:18d8])
- (user=irogers job=sendgmr) by 2002:a25:d843:0:b0:e29:7454:e773 with SMTP id
- 3f1490d57ef6-e337e1d738cmr33276.5.1730996442881; Thu, 07 Nov 2024 08:20:42
- -0800 (PST)
-Date: Thu,  7 Nov 2024 08:20:28 -0800
+ (user=irogers job=sendgmr) by 2002:a05:690c:6313:b0:6e3:6414:80c5 with SMTP
+ id 00721157ae682-6eadbedccc8mr2287b3.0.1730996445083; Thu, 07 Nov 2024
+ 08:20:45 -0800 (PST)
+Date: Thu,  7 Nov 2024 08:20:29 -0800
 In-Reply-To: <20241107162035.52206-1-irogers@google.com>
-Message-Id: <20241107162035.52206-2-irogers@google.com>
+Message-Id: <20241107162035.52206-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241107162035.52206-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-Subject: [PATCH v2 1/8] perf jevents: fix breakage when do perf stat on system metric
+Subject: [PATCH v2 2/8] perf header: Move is_cpu_online to numa bench
 From: Ian Rogers <irogers@google.com>
 To: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
 	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
@@ -95,111 +95,172 @@ To: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
 	"Dr. David Alan Gilbert" <linux@treblig.org>, linux-arm-kernel@lists.infradead.org, 
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-riscv@lists.infradead.org
-Cc: stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-From: Xu Yang <xu.yang_2@nxp.com>
+The helper function is only used in the NUMA benchmark as typically
+online CPUs are determined through
+perf_cpu_map__new_online_cpus(). Reduce the scope of the function for
+now.
 
-When do perf stat on sys metric, perf tool output nothing now:
-$ perf stat -a -M imx95_ddr_read.all -I 1000
-$
-
-This command runs on an arm64 machine and the Soc has one DDR hw pmu
-except one armv8_cortex_a55 pmu. Their maps show as follows:
-
-const struct pmu_events_map pmu_events_map[] = {
-{
-	.arch = "arm64",
-	.cpuid = "0x00000000410fd050",
-	.event_table = {
-		.pmus = pmu_events__arm_cortex_a55,
-		.num_pmus = ARRAY_SIZE(pmu_events__arm_cortex_a55)
-	},
-	.metric_table = {
-		.pmus = NULL,
-		.num_pmus = 0
-	}
-},
-
-static const struct pmu_sys_events pmu_sys_event_tables[] = {
-{
-	.event_table = {
-		.pmus = pmu_events__freescale_imx95_sys,
-		.num_pmus = ARRAY_SIZE(pmu_events__freescale_imx95_sys)
-	},
-	.metric_table = {
-		.pmus = pmu_metrics__freescale_imx95_sys,
-		.num_pmus = ARRAY_SIZE(pmu_metrics__freescale_imx95_sys)
-	},
-	.name = "pmu_events__freescale_imx95_sys",
-},
-
-Currently, pmu_metrics_table__find() will return NULL when only do perf
-stat on sys metric. Then parse_groups() will never be called to parse
-sys metric_name, finally perf tool will exit directly. This should be a
-common problem. To fix the issue, this will keep the logic before commit
-f20c15d13f01 ("perf pmu-events: Remember the perf_events_map for a PMU")
-to return a empty metric table rather than a NULL pointer. This should
-be fine since the removed part just check if the table match provided
-metric_name. Without these code, the code in parse_groups() will also
-check the validity of metrci_name too.
-
-Fixes: f20c15d13f01 ("perf pmu-events: Remember the perf_events_map for a PMU")
-Cc: stable@vger.kernel.org
-Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-Acked-by: Ian Rogers <irogers@google.com>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/pmu-events/empty-pmu-events.c | 12 +-----------
- tools/perf/pmu-events/jevents.py         | 12 +-----------
- 2 files changed, 2 insertions(+), 22 deletions(-)
+ tools/perf/bench/numa.c  | 53 ++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/header.c | 51 --------------------------------------
+ tools/perf/util/header.h |  1 -
+ 3 files changed, 53 insertions(+), 52 deletions(-)
 
-diff --git a/tools/perf/pmu-events/empty-pmu-events.c b/tools/perf/pmu-events/empty-pmu-events.c
-index 2b7516946ded..b8719dab264d 100644
---- a/tools/perf/pmu-events/empty-pmu-events.c
-+++ b/tools/perf/pmu-events/empty-pmu-events.c
-@@ -585,17 +585,7 @@ const struct pmu_metrics_table *perf_pmu__find_metrics_table(struct perf_pmu *pm
-         if (!map)
-                 return NULL;
+diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
+index 1fbd7c947abc..19be2aaf4dc0 100644
+--- a/tools/perf/bench/numa.c
++++ b/tools/perf/bench/numa.c
+@@ -27,6 +27,7 @@
+ #include <sys/resource.h>
+ #include <sys/wait.h>
+ #include <sys/prctl.h>
++#include <sys/stat.h>
+ #include <sys/types.h>
+ #include <linux/kernel.h>
+ #include <linux/time64.h>
+@@ -35,6 +36,7 @@
  
--        if (!pmu)
--                return &map->metric_table;
--
--        for (size_t i = 0; i < map->metric_table.num_pmus; i++) {
--                const struct pmu_table_entry *table_pmu = &map->metric_table.pmus[i];
--                const char *pmu_name = &big_c_string[table_pmu->pmu_name.offset];
--
--                if (pmu__name_match(pmu, pmu_name))
--                           return &map->metric_table;
--        }
--        return NULL;
-+	return &map->metric_table;
+ #include "../util/header.h"
+ #include "../util/mutex.h"
++#include <api/fs/fs.h>
+ #include <numa.h>
+ #include <numaif.h>
+ 
+@@ -533,6 +535,57 @@ static int parse_cpu_list(const char *arg)
+ 	return 0;
  }
  
- const struct pmu_events_table *find_core_events_table(const char *arch, const char *cpuid)
-diff --git a/tools/perf/pmu-events/jevents.py b/tools/perf/pmu-events/jevents.py
-index 6e71b09dbc2a..70f4fd5395fb 100755
---- a/tools/perf/pmu-events/jevents.py
-+++ b/tools/perf/pmu-events/jevents.py
-@@ -1101,17 +1101,7 @@ const struct pmu_metrics_table *perf_pmu__find_metrics_table(struct perf_pmu *pm
-         if (!map)
-                 return NULL;
- 
--        if (!pmu)
--                return &map->metric_table;
--
--        for (size_t i = 0; i < map->metric_table.num_pmus; i++) {
--                const struct pmu_table_entry *table_pmu = &map->metric_table.pmus[i];
--                const char *pmu_name = &big_c_string[table_pmu->pmu_name.offset];
--
--                if (pmu__name_match(pmu, pmu_name))
--                           return &map->metric_table;
--        }
--        return NULL;
-+	return &map->metric_table;
++/*
++ * Check whether a CPU is online
++ *
++ * Returns:
++ *     1 -> if CPU is online
++ *     0 -> if CPU is offline
++ *    -1 -> error case
++ */
++static int is_cpu_online(unsigned int cpu)
++{
++	char *str;
++	size_t strlen;
++	char buf[256];
++	int status = -1;
++	struct stat statbuf;
++
++	snprintf(buf, sizeof(buf),
++		"/sys/devices/system/cpu/cpu%d", cpu);
++	if (stat(buf, &statbuf) != 0)
++		return 0;
++
++	/*
++	 * Check if /sys/devices/system/cpu/cpux/online file
++	 * exists. Some cases cpu0 won't have online file since
++	 * it is not expected to be turned off generally.
++	 * In kernels without CONFIG_HOTPLUG_CPU, this
++	 * file won't exist
++	 */
++	snprintf(buf, sizeof(buf),
++		"/sys/devices/system/cpu/cpu%d/online", cpu);
++	if (stat(buf, &statbuf) != 0)
++		return 1;
++
++	/*
++	 * Read online file using sysfs__read_str.
++	 * If read or open fails, return -1.
++	 * If read succeeds, return value from file
++	 * which gets stored in "str"
++	 */
++	snprintf(buf, sizeof(buf),
++		"devices/system/cpu/cpu%d/online", cpu);
++
++	if (sysfs__read_str(buf, &str, &strlen) < 0)
++		return status;
++
++	status = atoi(str);
++
++	free(str);
++	return status;
++}
++
+ static int parse_setup_cpu_list(void)
+ {
+ 	struct thread_data *td;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index a6386d12afd7..55c28e4377ec 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -987,57 +987,6 @@ static int write_dir_format(struct feat_fd *ff,
+ 	return do_write(ff, &data->dir.version, sizeof(data->dir.version));
  }
  
- const struct pmu_events_table *find_core_events_table(const char *arch, const char *cpuid)
+-/*
+- * Check whether a CPU is online
+- *
+- * Returns:
+- *     1 -> if CPU is online
+- *     0 -> if CPU is offline
+- *    -1 -> error case
+- */
+-int is_cpu_online(unsigned int cpu)
+-{
+-	char *str;
+-	size_t strlen;
+-	char buf[256];
+-	int status = -1;
+-	struct stat statbuf;
+-
+-	snprintf(buf, sizeof(buf),
+-		"/sys/devices/system/cpu/cpu%d", cpu);
+-	if (stat(buf, &statbuf) != 0)
+-		return 0;
+-
+-	/*
+-	 * Check if /sys/devices/system/cpu/cpux/online file
+-	 * exists. Some cases cpu0 won't have online file since
+-	 * it is not expected to be turned off generally.
+-	 * In kernels without CONFIG_HOTPLUG_CPU, this
+-	 * file won't exist
+-	 */
+-	snprintf(buf, sizeof(buf),
+-		"/sys/devices/system/cpu/cpu%d/online", cpu);
+-	if (stat(buf, &statbuf) != 0)
+-		return 1;
+-
+-	/*
+-	 * Read online file using sysfs__read_str.
+-	 * If read or open fails, return -1.
+-	 * If read succeeds, return value from file
+-	 * which gets stored in "str"
+-	 */
+-	snprintf(buf, sizeof(buf),
+-		"devices/system/cpu/cpu%d/online", cpu);
+-
+-	if (sysfs__read_str(buf, &str, &strlen) < 0)
+-		return status;
+-
+-	status = atoi(str);
+-
+-	free(str);
+-	return status;
+-}
+-
+ #ifdef HAVE_LIBBPF_SUPPORT
+ static int write_bpf_prog_info(struct feat_fd *ff,
+ 			       struct evlist *evlist __maybe_unused)
+diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+index a63a361f20f4..e91e89d22537 100644
+--- a/tools/perf/util/header.h
++++ b/tools/perf/util/header.h
+@@ -196,7 +196,6 @@ int write_padded(struct feat_fd *fd, const void *bf,
+ 
+ #define MAX_CACHE_LVL 4
+ 
+-int is_cpu_online(unsigned int cpu);
+ int build_caches_for_cpu(u32 cpu, struct cpu_cache_level caches[], u32 *cntp);
+ 
+ /*
 -- 
 2.47.0.199.ga7371fff76-goog
 
