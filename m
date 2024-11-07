@@ -1,154 +1,91 @@
-Return-Path: <linux-kernel+bounces-400553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4829C0F1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:40:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47E79C0F21
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1B8285699
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:40:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C82C1F24374
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B9E21791E;
-	Thu,  7 Nov 2024 19:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57624218314;
+	Thu,  7 Nov 2024 19:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zhgwGXl3"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="buQ533qM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FA7195B1A
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 19:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DEC217F5B;
+	Thu,  7 Nov 2024 19:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731008420; cv=none; b=H4nvfOuuiaDZ5H2AJ8uJmf4r4tavFSo2/IfpdyF7ENELbzjf+etIqwEnD+VQhf3AT75WhpI6ZAaWLkuqt3qCbFWecxwXJag94SoCZjoujeI3P2Q9+ZBP/rjBSJL41KVL9gEmGAaRWqH5JL3ya9YVsDTIyWgkfYW46xwFsVc9oVI=
+	t=1731008422; cv=none; b=Ukb19jfvEJfmJ8hMdBsi0gVdddNXADnCc+DhyrPKw5wEYCiEGQACa3Cj0rQ0UbZ8BjvWdt6N3BsH0oILUX9tI+rru6XYpX0fZzP/VjppyGDRIRXRbh5j/Uo8wUI/19x5wjQLlSpaZHqPrTOpLdUi1eJLxmNSZMHNQFoAkChcw9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731008420; c=relaxed/simple;
-	bh=Hqpenv6p1LWFDwIjrHP2BsQXKPVjR2b5HZRJ4ZqChTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SYMU3aue78hwRol1Gzjbrg9eCn1IUEERBSGUiOpZV8G0KW5FajATMkr4MZyzs5eD8SSbFGc4JdmLOpGxsrp0H5R0iJ4o2hjRJtAOjQYYRCU8uTytxhkvM1QCdHKQXQuz8umXtm6ZXlUaf0iFOAmjRMXr8eAPUsLlK29ZJe+zZDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zhgwGXl3; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c947c00f26so3151a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 11:40:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731008417; x=1731613217; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nd/75cbpPjgH2M9LbK7DZEh2TDCTCcgqhG32wv/Y+KM=;
-        b=zhgwGXl3wArw+w/R+l2xwrB7BtISB3OVqwvwQb25nE3DEQQIzxXLJAeaXnBIey8KEm
-         QGhhbyxjo7IFQqdJsmCPANVISzFCfdy/I4FKQq5PF8Hp5zl7BtPb7CC/vekWhkIMj2zg
-         D/bFPg/XZzFy+MXHR+ERBnN4gzFH4VWYfMEG7Otcl4p67K08Mm9tusAY+PPnDthmNoRA
-         P9kyYFgFkzTO2y8yQa6Xy7ikMrKqZvAbvVftR6SDSyCcqP8Fmo1R1ehIlNnMNDy+EODS
-         qzuHEwueFO+yBz6cxzUoDlpWPxo79ZjCFP27QRsyDckDofFAGrQeeIlKwD9VkPvXDCKS
-         Cluw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731008417; x=1731613217;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nd/75cbpPjgH2M9LbK7DZEh2TDCTCcgqhG32wv/Y+KM=;
-        b=twxoy3HXSsbXTCHxMoAFZAUocPTsbfRt/vlPTbmbnlFDURjWSMoovzfNmtoOKxvizl
-         sF3/Ns6J7ZQdC+yl+Iz75i+D0VsBVw2P2P1CCIIYVQpsrL+tfRzrUrb2Op5iRE1xCKi2
-         FIx/LFzTw31hAhnegC2MGON6OHtT3nBpaid2X8DsesVBEv6jCXwQwa5P3DH2bP6E4s+y
-         gn29IX41e4oALrjVWatbMLt0J2MsRsVsC5D1ixq9hX0EiLLRxTEKqTv9TUH/QAQSH4KU
-         B3ybwPcHUC+bc2yxlB8xozmCKy1w8vlA8OawXUws+EyHGEkEAW8ac2jBBakS40FFRYvF
-         S7DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpURh2MmL06Wf14uujP9KDyKHDLepKyMc7r7dPu/cRpLPlW7Ckyx/o+DMfljjak/lV2gJFxbExreuCaas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmgfmiTqegNfHxCSHBNtLFyCiBwvSEvXnvdtEOCv6DcZqFIxbk
-	ciGhVWCb3Q36R0sWWXVT/egMNmkmty6RVvVwOJq8Wj2E6X8Qt6opRGxJROKBLmcjxX/P7Zy0Tww
-	uwcrHjCUITDoKvyMOVkTlXfQ2k//XQW/NIUiF
-X-Gm-Gg: ASbGncvuwoiHnoKhYyYAl+19s/x8v4vhPR06U/+kwogIv3Xhty7GfkdNHAmonpOSHUM
-	xbfnMrHXHOP37Wn0kOZx8KAP/dSEnqSMy1RDoOsCUsZc06HyjyhpAsyu9frMvBw==
-X-Google-Smtp-Source: AGHT+IEBiwFNQfuoAxFiltxJ2hrjOfio8RnmCYl6hN2gWLInsahzd3pu0ISjskuePHQ29yF2SOFAso1eK087KsDFWnI=
-X-Received: by 2002:aa7:c846:0:b0:5ce:b7c5:4b3c with SMTP id
- 4fb4d7f45d1cf-5cefbcb8d85mr748450a12.5.1731008416865; Thu, 07 Nov 2024
- 11:40:16 -0800 (PST)
+	s=arc-20240116; t=1731008422; c=relaxed/simple;
+	bh=fPJifo0hs/HtqMuzhM0IPkRT1/JDj+9uahX1NfxyrUc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Bgvcun+yz37JjiILrr9iMpc89/C4OmcfsTPp8ozItXA4f1xX1CfVOpjSNA5By/ymthIm/AtJw8CamuVa8CufZHgtw2iU1E2xd8nECVAOUaPNtuM1hUn5ZWxnS3uaud0bn63AOKfJyV4onBAkLgATMnnfFoitivaMi92spBR9zFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=buQ533qM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37189C4CED3;
+	Thu,  7 Nov 2024 19:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731008422;
+	bh=fPJifo0hs/HtqMuzhM0IPkRT1/JDj+9uahX1NfxyrUc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=buQ533qMeCQsSwVJcenjrONe8GJnZCkE6VdFeihdB7FL94IwamfqFUoNSi4kECgg7
+	 /QwFZWnRiMYoWgTX0FUlpoCFXz4cRO6sQa9I1vjTYLMdV5zkaP03mZ9AENKgjTDUGK
+	 oKUiSuSzedbLGF14jK8l6KQQ/2sRg5ZZVnBzSvkniVovzNIrNFTmdEOH7ub/m6Cp5I
+	 Fi4jEFa9z1CUFIkSnA3zv3bNHurNV3A1o83zhqWdrdCa5569W2udpuzCJ2dcv/dbPD
+	 ungpareBlN08V/kuNVxlefjyo6qHnS7MEaI6L4HD8DKgENnwd00oB/R0DmCVR5JFbr
+	 7R3vV+6o/XGqA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEBD3809A80;
+	Thu,  7 Nov 2024 19:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
- <20241030-extended-modversions-v8-1-93acdef62ce8@google.com>
- <874j4tcbhf.fsf@mpe.ellerman.id.au> <ZyMJaFcF4dTTzNgK@bombadil.infradead.org>
- <CAGSQo02H_RwtLpdt4E_LWKjzGvryY_7s20e4QhhA5B7N0LPxVA@mail.gmail.com> <ZyM2cHGaIT9vFOGq@bombadil.infradead.org>
-In-Reply-To: <ZyM2cHGaIT9vFOGq@bombadil.infradead.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Thu, 7 Nov 2024 11:40:05 -0800
-Message-ID: <CAGSQo00=H8iUAP9FwSxgT3kdBmBrzsdWqA0kh5f_5FsBLxyBUQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/3] modules: Support extended MODVERSIONS info
-To: Luis Chamberlain <mcgrof@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	Lucas De Marchi <lucas.de.marchi@gmail.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] rxrpc: Fix missing locking causing hanging calls
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173100843124.2072933.507089538126045621.git-patchwork-notify@kernel.org>
+Date: Thu, 07 Nov 2024 19:40:31 +0000
+References: <726660.1730898202@warthog.procyon.org.uk>
+In-Reply-To: <726660.1730898202@warthog.procyon.org.uk>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, marc.dionne@auristor.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Adding Lucas DeMarchi to the thread after voicing an interest in the
-modpost patch.
+Hello:
 
-On Thu, Oct 31, 2024 at 12:49=E2=80=AFAM Luis Chamberlain <mcgrof@kernel.or=
-g> wrote:
->
-> On Wed, Oct 30, 2024 at 10:06:12PM -0700, Matthew Maurer wrote:
-> > On Wed, Oct 30, 2024 at 9:37=E2=80=AFPM Luis Chamberlain <mcgrof@kernel=
-.org> wrote:
-> > >
-> > > On Thu, Oct 31, 2024 at 12:22:36PM +1100, Michael Ellerman wrote:
-> > > > Matthew Maurer <mmaurer@google.com> writes:
-> > > > > Adds a new format for MODVERSIONS which stores each field in a se=
-parate
-> > > > > ELF section. This initially adds support for variable length name=
-s, but
-> > > > > could later be used to add additional fields to MODVERSIONS in a
-> > > > > backwards compatible way if needed. Any new fields will be ignore=
-d by
-> > > > > old user tooling, unlike the current format where user tooling ca=
-nnot
-> > > > > tolerate adjustments to the format (for example making the name f=
-ield
-> > > > > longer).
-> > > > >
-> > > > > Since PPC munges its version records to strip leading dots, we re=
-produce
-> > > > > the munging for the new format. Other architectures do not appear=
- to
-> > > > > have architecture-specific usage of this information.
-> > > > >
-> > > > > Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-> > > > > Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> > > > > ---
-> > > > >  arch/powerpc/kernel/module_64.c | 24 ++++++++++-
-> > > >
-> > > > Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-> > >
-> > > Michael, Matthew, why make everyone deal with this instead of just
-> > > making this an arch thing and ppc would be the only one doing it?
-> > >
-> > >   Luis
-> > >
-> >
-> > I'm not sure I understand - the PPC changes are in an arch-specific
-> > directory, and triggered through the arch-implemented callback
-> > mod_frob_arch_sections. What would you like done to make it more of an
-> > arch-thing?
->
-> Sorry, yes, I see that now, that's what I get for late night patch
-> review. Nevermidn, this all looks good to me now.
->
->   Luis
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 06 Nov 2024 13:03:22 +0000 you wrote:
+> If a call gets aborted (e.g. because kafs saw a signal) between it being
+> queued for connection and the I/O thread picking up the call, the abort
+> will be prioritised over the connection and it will be removed from
+> local->new_client_calls by rxrpc_disconnect_client_call() without a lock
+> being held.  This may cause other calls on the list to disappear if a race
+> occurs.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] rxrpc: Fix missing locking causing hanging calls
+    https://git.kernel.org/netdev/net/c/fc9de52de38f
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
