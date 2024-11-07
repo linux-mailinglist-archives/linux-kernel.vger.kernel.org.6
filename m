@@ -1,200 +1,159 @@
-Return-Path: <linux-kernel+bounces-399750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914489C03BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:20:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2AE09C03C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:20:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C6DC1F22DBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:20:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971EC282CDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896541F5821;
-	Thu,  7 Nov 2024 11:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A851F4FDF;
+	Thu,  7 Nov 2024 11:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F/rg4CI8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMIYWxih"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1235D1F4714;
-	Thu,  7 Nov 2024 11:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6DA1F4272;
+	Thu,  7 Nov 2024 11:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730978413; cv=none; b=gBhBGTGMR0SwE1y8fkItWkrMdrxfRrvMTFrvqtNOmK2mlnXWKJyGpj7HvJwCw0vAo4PaTPtS/Qvke/gNAf5Z5TieWKcZzwvpfwMRkqouue9hLUfIp8YiSfn1OfdPDgc8PvOrE4nwwgkTQXB1RPNp+ykie6iYDPvsTCCMe0lbYMA=
+	t=1730978437; cv=none; b=KWyIUPQy2wSxdcM29IRRdJY44NBG/3D2OYbaT21rst507hPklfpBdKodgoqx4GG6bmPdtb6M+oEcfdaz1j1Gr3v9YXnKQWp55H6YcfSgxvf1wFCDk4qch48EGK98rZPfocwKINN52mc2MwRanks7Se8aLD18DuEe753myZBKHhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730978413; c=relaxed/simple;
-	bh=D7hGGVMQw07xKXCnq82A7pvUfvt2UhcDjA2KRum3A1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hy8wqVorQ9jCirX8YW71KI8/g+EK6vGRIpdNWxPd3os7iVUI7jYVHmCfNOL5OZ7WsKcVPZo1eS++n3TWwb6LSGJ8SNPvCJKQYLr/xTPYA6lKHtx3cmXqWlvPvh+CojQLryFNfh7NMRAZIEgixJN9MMb1HF5Gti7bO52Xh3dPgQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F/rg4CI8; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730978412; x=1762514412;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D7hGGVMQw07xKXCnq82A7pvUfvt2UhcDjA2KRum3A1o=;
-  b=F/rg4CI8dF1DUGQK/3HgSGflLINeDLpt/Xv7eEzwwpO3MU/cUhQegGCa
-   126Pli4NN/360JsZ625zdp1VjO2XRhzC+HRmmC3gm/MGSmq9VKKBjITzY
-   HlQ95I68sd/WqfOKKS/UC9YVu4CivQ4dXVdo0M3tDjTVajdPhC2daxxmj
-   cctuzG+Il8zIMLHBTuSf6/3vBFIGtiordsMVTf4eyFuCnqnT/ZkzDZvXZ
-   t2qFoJm77D7ZLbujbxfKzec0cDMinfCUxJeaWQpA2P/iXq7ebaY0xGsu0
-   Qtwt8EyzVx7W5kdREMCQqVLjsxZ/HHqkDipvhiJjuJlwFFE65XWwuxNX8
-   w==;
-X-CSE-ConnectionGUID: LrqVbYMOSKqxnFMf3lANPg==
-X-CSE-MsgGUID: JozsFIQ/Sv+T9gZHZ1o/8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="41432982"
-X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
-   d="scan'208";a="41432982"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 03:20:11 -0800
-X-CSE-ConnectionGUID: WRqTtAxQQZ2Ai+NyHZftRw==
-X-CSE-MsgGUID: PaPrMed1SDaEVMw9ozT2ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
-   d="scan'208";a="108319149"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 07 Nov 2024 03:20:07 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t90YX-000q9g-2L;
-	Thu, 07 Nov 2024 11:20:05 +0000
-Date: Thu, 7 Nov 2024 19:20:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alistair Francis <alistair23@gmail.com>, alex.gaynor@gmail.com,
-	benno.lossin@proton.me, gary@garyguo.net,
-	linux-kernel@vger.kernel.org, ojeda@kernel.org,
-	rust-for-linux@vger.kernel.org, bjorn3_gh@protonmail.com,
-	alistair.francis@wdc.com, me@kloenk.dev, a.hindborg@kernel.org,
-	tmgross@umich.edu, boqun.feng@gmail.com, aliceryhl@google.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	alistair23@gmail.com
-Subject: Re: [PATCH 06/13] rust: helpers: Remove mutex helper
-Message-ID: <202411071903.OV35vZIP-lkp@intel.com>
-References: <20241107020831.1561063-7-alistair.francis@wdc.com>
+	s=arc-20240116; t=1730978437; c=relaxed/simple;
+	bh=xF8ZbGW400Arsn35oIvMaUkwIQp/crqb3h+5bmD2B1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jpTodcY9vEjOOdJu3gBxPFSW61Qs0RjTnwpbvencp7qAvXrwIiPXBMKTjQjteDCYlNcl3g325Ta7gtvoSJqIo6mPo/OlGKk6Otx2FmU1mGJf9SJB5nYpBQfUONWExoWcfSV5ScPSwz2Y4VzYYw+DMD7xFAf5urmERujExUoPlcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMIYWxih; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBABC4CECC;
+	Thu,  7 Nov 2024 11:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730978435;
+	bh=xF8ZbGW400Arsn35oIvMaUkwIQp/crqb3h+5bmD2B1U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dMIYWxihqJd2f7YIyVUdr4osx65WrXPDKZzzCQHlutrf5SGCIsLYofcQxeo+ZtIeO
+	 riio+hhM/Bc76/6iuFMJja+tmVZQsFqNglzqhnAEHRj2eIZMnm4tH+zISlro4nrBcc
+	 OrDWGGYAQMR/2Rkl4CJfO0iOFGS4jsyavDa9KIhRCNgr9SDoxYEZfJh57kVUZQrG0Z
+	 KTIbsGeF36UlNemRx1SYrsuHW1uT7rN09GWb8J4/MKXh+IAwzYImOenVv2KVmqquhR
+	 /lsfnD9khFPook7TByWQqwzutMAqiz5Piv6qFqAvwcS9IHuAfi7TL7Wyrq4r+D49f1
+	 Hsxh0Jg7tqZGA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org (open list),
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH] tpm: Remove the documentation from tpm2-sessions.c
+Date: Thu,  7 Nov 2024 13:20:22 +0200
+Message-ID: <20241107112023.5731-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107020831.1561063-7-alistair.francis@wdc.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Alistair,
+Nobody will maintain this, i.e. it is destined to rotten. It is better to
+just rip it off, and not have duplicate stuff that is already in the kernel
+documentation and function headers.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm2-sessions.c | 68 ++------------------------------
+ 1 file changed, 3 insertions(+), 65 deletions(-)
 
-[auto build test ERROR on v6.12-rc6]
-[also build test ERROR on linus/master]
-[cannot apply to rust/rust-next next-20241106]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Francis/rust-bindings-Support-some-inline-static-functions/20241107-101321
-base:   v6.12-rc6
-patch link:    https://lore.kernel.org/r/20241107020831.1561063-7-alistair.francis%40wdc.com
-patch subject: [PATCH 06/13] rust: helpers: Remove mutex helper
-config: arm64-randconfig-003-20241107 (https://download.01.org/0day-ci/archive/20241107/202411071903.OV35vZIP-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411071903.OV35vZIP-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411071903.OV35vZIP-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/arm64/kernel/asm-offsets.c:12:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   505 |                            item];
-   |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   512 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-   |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   525 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   4 warnings generated.
-   In file included from rust/helpers/helpers.c:12:
-   In file included from rust/helpers/page.c:4:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/arm64/include/asm/cacheflush.h:11:
-   In file included from include/linux/kgdb.h:19:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   505 |                            item];
-   |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   512 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-   |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   525 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   4 warnings generated.
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   rust/extern.c:1:10: fatal error: 'bindings/bindings_helper.h' file not found
-   1 | #include "bindings/bindings_helper.h"
-   |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 error generated.
-   make[3]: *** [scripts/Makefile.build:229: rust/extern.o] Error 1 shuffle=940008358
->> error[E0425]: cannot find function `mutex_lock` in crate `bindings`
-   --> rust/kernel/sync/lock/mutex.rs:110:28
-   |
-   110   |         unsafe { bindings::mutex_lock(ptr) };
-   |                            ^^^^^^^^^^ help: a function with a similar name exists: `mutex_unlock`
-   |
-   ::: rust/bindings/bindings_generated.rs:24140:5
-   |
-   24140 |     pub fn mutex_unlock(lock: *mut mutex);
-   |     ------------------------------------- similarly named function `mutex_unlock` defined here
-
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index a7c1b162251b..ff00e9483564 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -1,71 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+-
+ /*
+- * Copyright (C) 2018 James.Bottomley@HansenPartnership.com
+- *
+- * Cryptographic helper routines for handling TPM2 sessions for
+- * authorization HMAC and request response encryption.
+- *
+- * The idea is to ensure that every TPM command is HMAC protected by a
+- * session, meaning in-flight tampering would be detected and in
+- * addition all sensitive inputs and responses should be encrypted.
+- *
+- * The basic way this works is to use a TPM feature called salted
+- * sessions where a random secret used in session construction is
+- * encrypted to the public part of a known TPM key.  The problem is we
+- * have no known keys, so initially a primary Elliptic Curve key is
+- * derived from the NULL seed (we use EC because most TPMs generate
+- * these keys much faster than RSA ones).  The curve used is NIST_P256
+- * because that's now mandated to be present in 'TCG TPM v2.0
+- * Provisioning Guidance'
+- *
+- * Threat problems: the initial TPM2_CreatePrimary is not (and cannot
+- * be) session protected, so a clever Man in the Middle could return a
+- * public key they control to this command and from there intercept
+- * and decode all subsequent session based transactions.  The kernel
+- * cannot mitigate this threat but, after boot, userspace can get
+- * proof this has not happened by asking the TPM to certify the NULL
+- * key.  This certification would chain back to the TPM Endorsement
+- * Certificate and prove the NULL seed primary had not been tampered
+- * with and thus all sessions must have been cryptographically secure.
+- * To assist with this, the initial NULL seed public key name is made
+- * available in a sysfs file.
+- *
+- * Use of these functions:
+- *
+- * The design is all the crypto, hash and hmac gunk is confined in this
+- * file and never needs to be seen even by the kernel internal user.  To
+- * the user there's an init function tpm2_sessions_init() that needs to
+- * be called once per TPM which generates the NULL seed primary key.
+- *
+- * These are the usage functions:
++ * Copyright (c) 2018 James Bottomley <James.Bottomley@HansenPartnership.com>
+  *
+- * tpm2_start_auth_session() which allocates the opaque auth structure
+- *	and gets a session from the TPM.  This must be called before
+- *	any of the following functions.  The session is protected by a
+- *	session_key which is derived from a random salt value
+- *	encrypted to the NULL seed.
+- * tpm2_end_auth_session() kills the session and frees the resources.
+- *	Under normal operation this function is done by
+- *	tpm_buf_check_hmac_response(), so this is only to be used on
+- *	error legs where the latter is not executed.
+- * tpm_buf_append_name() to add a handle to the buffer.  This must be
+- *	used in place of the usual tpm_buf_append_u32() for adding
+- *	handles because handles have to be processed specially when
+- *	calculating the HMAC.  In particular, for NV, volatile and
+- *	permanent objects you now need to provide the name.
+- * tpm_buf_append_hmac_session() which appends the hmac session to the
+- *	buf in the same way tpm_buf_append_auth does().
+- * tpm_buf_fill_hmac_session() This calculates the correct hash and
+- *	places it in the buffer.  It must be called after the complete
+- *	command buffer is finalized so it can fill in the correct HMAC
+- *	based on the parameters.
+- * tpm_buf_check_hmac_response() which checks the session response in
+- *	the buffer and calculates what it should be.  If there's a
+- *	mismatch it will log a warning and return an error.  If
+- *	tpm_buf_append_hmac_session() did not specify
+- *	TPM_SA_CONTINUE_SESSION then the session will be closed (if it
+- *	hasn't been consumed) and the auth structure freed.
++ * Cryptographic helper routines for handling TPM2 sessions for authorization
++ * HMAC and request response encryption.
+  */
+ 
+ #include "tpm.h"
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
