@@ -1,141 +1,90 @@
-Return-Path: <linux-kernel+bounces-400341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922799C0C16
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:00:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C3669C0C17
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB9B284703
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:00:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D2361C222FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49011216A38;
-	Thu,  7 Nov 2024 17:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC38824A3;
+	Thu,  7 Nov 2024 17:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qh23v4IK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXaGhoDS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F7521315B;
-	Thu,  7 Nov 2024 17:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A3A212F0E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730998810; cv=none; b=qQRaozqSpHyuZ0Nlg9qq6zv0+YyJ8zPoTnSgcVxlECRr8k+9kV7XR615P0FCw1f/GQCJ+f6nSELPCcim6AOqjzVYyovPfGJpf4lyrDKTYtGbOV3Ej/NUPNhzuSDhUBQRsBZpqwB674DLyfQjrgnOu6S6NbhK4tmR6dI3qQ9Vwgk=
+	t=1730998825; cv=none; b=UtcZj/iq4JuZpQeD6j4R24YQJ8p/8dB2YsDNIhpEHaaZCWGBR2UdVp5L5oz5ZewHBPwdlGBIR+vVoATczn/zkb61HOElhQv6bm8YGffsQ5y0L1fh2M+U5tDnsAehLYlgxlk5om1mqml2BrKApDd6SV7JzjEyp6jWoKRfeQP1vRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730998810; c=relaxed/simple;
-	bh=LxlQsyn16YGpTarQqk1LdGdxRMkwoMFrL36XAWtSuzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lae47DXx37WARMr74zO6e9iohKH1fWs+cQO4bvuB+G/VE1odee/XADVTFjIxrpMkM1zh2KmE7E9XDlhpfjTYm6LwVtJQ17dVpdK7Zrq+O3/zL5s1ANapr/UqNoycFdERgvn+PN/ZQUdizvizfHInULgKw//pwaLiMTyTlVArKYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qh23v4IK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2273DC4CECC;
-	Thu,  7 Nov 2024 17:00:10 +0000 (UTC)
+	s=arc-20240116; t=1730998825; c=relaxed/simple;
+	bh=fmEMZSN8aYDktJAftW6kTuaO7wJAwwzSFJuKFKEOrmI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LbpFsHe1QKn/5SDuQKzkCi+EdS/dg8XVv68zmkoCkh5KODyy0+jflrHfYK+zpOCZ4bDTYUYIPxJUcgDJJUdZ/WdVUUZXQUJbpnJMGqH4ZZfJ45MXhGvhAtAWVoi1rcs0OMdy0V91Ts9VKP7bKbinfXAkVN3C+bYZct5PF9Hlv5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXaGhoDS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 204B8C4CECD;
+	Thu,  7 Nov 2024 17:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730998810;
-	bh=LxlQsyn16YGpTarQqk1LdGdxRMkwoMFrL36XAWtSuzQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qh23v4IK6diLbyoPZVVoeajvDEI3N5TNXcreMxWkyj7+VOSBaLFTZeGnIlWmGpLrD
-	 IwG/iN4uj3Bq2/KFE0j+1GWYLuQoivwBqbSIKsoGzSytFsmJm4fWklCMZiBrKjCMe+
-	 sh9IL5btYLTqPIenPELF/NeoboymXm2Hnwfu7udISwEwDaOWkEupCufJr8WHUm8m+z
-	 z4uBMGLe4/o6RCwXIgTEilQpgsFiBVriAP6kE3Q6stX+QcOHeXUS2UZg3gono0TFIQ
-	 9f8ZJ3H4VxD4UTUlCSSJsZNEXncOSpCIivbDK+Qxowq/FUa/uuJqPfIfgnUxdFj+GL
-	 8aw9tDwz5QxHw==
-Received: by pali.im (Postfix)
-	id 4757AB94; Thu,  7 Nov 2024 18:00:02 +0100 (CET)
-Date: Thu, 7 Nov 2024 18:00:02 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: mvebu: Use for_each_of_range() iterator for parsing
- "ranges"
-Message-ID: <20241107170002.wz7wkqmtyqiiaswl@pali>
-References: <20241107153255.2740610-1-robh@kernel.org>
+	s=k20201202; t=1730998824;
+	bh=fmEMZSN8aYDktJAftW6kTuaO7wJAwwzSFJuKFKEOrmI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bXaGhoDSo3pT7F+q6VnOjjxAJKmMyTf3z43Vw6z3BrqOuoGzRAup2kUvvObIE3bsx
+	 YmMIgnVEo7EwHtOKAmdylTlqn6vThURcB8YPWkE58fsaQqXgyaiqptHx/ERu0tZP0M
+	 /wxwRFenyvfTGxbp1M6NqafnaH6cKXWDL7gB1Cz8taM6FICIaKlJCsbR6GZ449xv4Z
+	 AFHHO0Q0j2D0JuSkw5muppQSdEz5lsitrJjEecaHNXR1Yx+bR4rJqtd36F+bbdAv4+
+	 ZWO0a0kZQoFMBoAWQQNckpCCnRzXQOemPJB2EEu/UMgA7tt0LFchvRLD90gh1AleDo
+	 f0NyZ8bXMlHtw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Cheng Ming Lin <linchengming884@gmail.com>
+Cc: tudor.ambarus@linaro.org,  pratyush@kernel.org,  mwalle@kernel.org,
+  miquel.raynal@bootlin.com,  richard@nod.at,  vigneshr@ti.com,
+  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  alvinzhou@mxic.com.tw,  leoyu@mxic.com.tw,  Cheng Ming Lin
+ <chengminglin@mxic.com.tw>
+Subject: Re: [PATCH] mtd: spi-nor: core: replace dummy buswidth from addr to
+ data
+In-Reply-To: <20241107093016.151448-1-linchengming884@gmail.com> (Cheng Ming
+	Lin's message of "Thu, 7 Nov 2024 17:30:16 +0800")
+References: <20241107093016.151448-1-linchengming884@gmail.com>
+Date: Thu, 07 Nov 2024 17:00:21 +0000
+Message-ID: <mafs0cyj77zdm.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107153255.2740610-1-robh@kernel.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 
-On Thursday 07 November 2024 09:32:55 Rob Herring (Arm) wrote:
-> The mvebu "ranges" is a bit unusual with its own encoding of addresses,
-> but it's still just normal "ranges" as far as parsing is concerned.
-> Convert mvebu_get_tgt_attr() to use the for_each_of_range() iterator
-> instead of open coding the parsing.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> Compile tested only.
+On Thu, Nov 07 2024, Cheng Ming Lin wrote:
 
-I see no reason for such change, which was even non tested at all and
-does not fix any issue. There are more important issues in the driver,
-it was decided that bug fixes are not going to be included (yet).
+> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+>
+> The default dummy cycle for Macronix SPI NOR flash in Octal Output
+> Read Mode(1-1-8) is 20.
+>
+> Currently, the dummy buswidth is set according to the address bus width.
+> In the 1-1-8 mode, this means the dummy buswidth is 1. When converting
+> dummy cycles to bytes, this results in 20 x 1 / 8 = 2 bytes, causing the
+> host to read data 4 cycles too early.
+>
+> Since the protocol data buswidth is always greater than or equal to the
+> address buswidth. Setting the dummy buswidth to match the data buswidth
+> increases the likelihood that the dummy cycle-to-byte conversion will be
+> divisible, preventing the host from reading data prematurely.
 
-> ---
->  drivers/pci/controller/pci-mvebu.c | 26 +++++++++-----------------
->  1 file changed, 9 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
-> index 29fe09c99e7d..d4e3f1e76f84 100644
-> --- a/drivers/pci/controller/pci-mvebu.c
-> +++ b/drivers/pci/controller/pci-mvebu.c
-> @@ -1179,37 +1179,29 @@ static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
->  			      unsigned int *tgt,
->  			      unsigned int *attr)
->  {
-> -	const int na = 3, ns = 2;
-> -	const __be32 *range;
-> -	int rlen, nranges, rangesz, pna, i;
-> +	struct of_range range;
-> +	struct of_range_parser parser;
->  
->  	*tgt = -1;
->  	*attr = -1;
->  
-> -	range = of_get_property(np, "ranges", &rlen);
-> -	if (!range)
-> +	if (of_pci_range_parser_init(&parser, np))
->  		return -EINVAL;
->  
-> -	pna = of_n_addr_cells(np);
-> -	rangesz = pna + na + ns;
-> -	nranges = rlen / sizeof(__be32) / rangesz;
-> -
-> -	for (i = 0; i < nranges; i++, range += rangesz) {
-> -		u32 flags = of_read_number(range, 1);
-> -		u32 slot = of_read_number(range + 1, 1);
-> -		u64 cpuaddr = of_read_number(range + na, pna);
-> +	for_each_of_range(&parser, &range) {
->  		unsigned long rtype;
-> +		u32 slot = upper_32_bits(range.bus_addr);
->  
-> -		if (DT_FLAGS_TO_TYPE(flags) == DT_TYPE_IO)
-> +		if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_IO)
->  			rtype = IORESOURCE_IO;
-> -		else if (DT_FLAGS_TO_TYPE(flags) == DT_TYPE_MEM32)
-> +		else if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_MEM32)
->  			rtype = IORESOURCE_MEM;
->  		else
->  			continue;
->  
->  		if (slot == PCI_SLOT(devfn) && type == rtype) {
-> -			*tgt = DT_CPUADDR_TO_TARGET(cpuaddr);
-> -			*attr = DT_CPUADDR_TO_ATTR(cpuaddr);
-> +			*tgt = DT_CPUADDR_TO_TARGET(range.cpu_addr);
-> +			*attr = DT_CPUADDR_TO_ATTR(range.cpu_addr);
->  			return 0;
->  		}
->  	}
-> -- 
-> 2.45.2
-> 
+Makes sense.
+
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
+-- 
+Regards,
+Pratyush Yadav
 
