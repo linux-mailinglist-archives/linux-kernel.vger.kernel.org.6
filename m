@@ -1,95 +1,128 @@
-Return-Path: <linux-kernel+bounces-400331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8239C0BFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:50:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466C49C0BED
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:45:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E668CB2180C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:50:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A9E1F216FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A137216E09;
-	Thu,  7 Nov 2024 16:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C896215C7F;
+	Thu,  7 Nov 2024 16:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gXGx+7RO"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGwe81Pj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0C4216A20;
-	Thu,  7 Nov 2024 16:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643F9DDBE;
+	Thu,  7 Nov 2024 16:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730998225; cv=none; b=bL2VXOtHHO053asl+ZfksUboCC//5je09p6LPxHs1ylFJCNmC6yjlc1LEk+NWq6GL3aRuhQHsHhfHDBV98QGsA0cDKmqTYP0YWhKl2oUi0lyGaxoyjvuoe0/2rD9fT4t3AEKKvMirlmbAOklour6AwoCXqFTQrjWQe9ZmBJx8Wc=
+	t=1730997940; cv=none; b=MPCATpW3Ar9xKNCI7SWUgd4os+RdzcKZCV3mbUC5/Ce4AdkodqOSsOpJ7FSvGWwVQ2NEmZ1iPsxhc3Uk70ypUql72EaVMuIwJMn8Pkb7J27t4uCfGJUx9nPy0if+Kic5IdgbK/supLNhBaBvJVkkpbtEUIIqoownfN1KS/IWTDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730998225; c=relaxed/simple;
-	bh=rNoa7mRnZwJ/KTYmtyEmTizUmSewi0zvkmHKYsN3uZ0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Zgnw1SaWyo9lf+SfRIFPQatUobelTkl+ZWFcIy3PW/ioeTOAD15JyYPK6d1C7XJ9W/8GIHCMMfcaMYSvP+ITrwSnID9S5hjIv9zSvbWAu3Pfdzsaq3rxskAY6ShlXyn+lZ5McKsD+p4vllsO7ibhJSALbUwyi5hfbzD2xNxTvmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gXGx+7RO; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A7F1842C18
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1730997903; bh=OF2OmjsYyh2AJqblU+JyZH89+Sa1MgWYtrIS8n5K7Ws=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gXGx+7RO6HDb3juKi+lieA6V3k5D5CQCRJtDFFlC/Auyj7ecgvC75gsk2GbQMWnR9
-	 tAiFGOKBhLUo8H4SNKnKGTbCJjpDl7YORhXHowmUcanCWekbkJ0JyjUclO6JTrM/D6
-	 r0R3NkL8Bb3BtyXzfcJp5n565K/otB5fuTOQIfy7z2k8ob946Na6e1BnN2OSqW8dxf
-	 Qw9WaoMAf/eUr1m3eSdzgZvZplMulQ/xEIqWrXele+12cK2s64xn1U8rBCQDB2MAmi
-	 ZdqDwYCKsK3hP2M5vMO85DwVLIZRARDIbaVbeYvvb+BM4M6nU5+Gz7GSZkSjDmtRtv
-	 r7E+9CS1cCZ6Q==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id A7F1842C18;
-	Thu,  7 Nov 2024 16:45:03 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
- mauro.chehab@linux.intel.com, kernel@collabora.com,
- bob.beckett@collabora.com, nicolas.dufresne@collabora.com, Sebastian
- Fricke <sebastian.fricke@collabora.com>
-Subject: Re: [PATCH 0/2] Documentation: Debugging guide
-In-Reply-To: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
-References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
-Date: Thu, 07 Nov 2024 09:45:02 -0700
-Message-ID: <87ttcj0z8x.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1730997940; c=relaxed/simple;
+	bh=Be7kVOqc9oDldRngyHDx9b/u8eyDM+L+Oo7d4LCyzzE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Apa3JuB32dA4V7uPYobV3x9+AECx76zuISWmXy29OV0nb71CtIeFsUn76uZMO+tWw2w8s1SiLKDtrDQZtwhmmqQpJpL78GICEMP3JyAj6pXwBVugIwZxBTTxzwG33ABzBx0fgTtEaVbQqv32s7mhFSc4tnespcvPyGuw3s6PMo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGwe81Pj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 671C3C4CECC;
+	Thu,  7 Nov 2024 16:45:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730997939;
+	bh=Be7kVOqc9oDldRngyHDx9b/u8eyDM+L+Oo7d4LCyzzE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=qGwe81PjHYQN7GxX/Ql27Z+dHxd7xgchW+3Pfzi52Lo8B20FXA+byY1BJC6ZrUHYY
+	 h9oZpbQIfGI6qHDfPdKwHo5TLsYFSzywTAWXLxvusHMZvIA7g8YDvnksK7adgv/S8/
+	 +5QzeqPPauL9SaNfaW0DoMmLaeMU8CRaf4D7wmgU1PKN+YDcstXnKzQhNYa5A6MYWP
+	 6fMHRKp9oRcA/lPRbROwSNasiAAvbxpxSH2TKErlHDKVx+zjZuKUXD8DzixxhyeOvB
+	 3nc8GJ05I127RIjYNsuyQRBN3lyesC/CbUBtm4RAjF3SEJyL5a9YJ/jKOcweSwU0fM
+	 gf+GDGvF+QNOA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Nov 2024 18:45:35 +0200
+Message-Id: <D5G3K1QSPRNS.153H4EMMWEEBU@kernel.org>
+Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>
+X-Mailer: aerc 0.18.2
+References: <20241107095138.78209-1-jarkko@kernel.org>
+ <e015a939893d35efe75e598152725adcc2befdd8.camel@linux.ibm.com>
+ <D5FZRXBCH2B4.1GQIIVQHVB2XI@kernel.org>
+ <7f77c0e8b481fd813b3a76b84d33d8db62e235f7.camel@linux.ibm.com>
+In-Reply-To: <7f77c0e8b481fd813b3a76b84d33d8db62e235f7.camel@linux.ibm.com>
 
-Sebastian Fricke <sebastian.fricke@collabora.com> writes:
+On Thu Nov 7, 2024 at 4:00 PM EET, Mimi Zohar wrote:
+> On Thu, 2024-11-07 at 15:47 +0200, Jarkko Sakkinen wrote:
+> > On Thu Nov 7, 2024 at 3:44 PM EET, Mimi Zohar wrote:
+> > > >=20
+> > > > @@ -232,18 +236,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u3=
+2 pcr_idx,
+> > > >  	int rc;
+> > > >  	int i;
+> > > > =20
+> > > > -	rc =3D tpm2_start_auth_session(chip);
+> > > > -	if (rc)
+> > > > -		return rc;
+> > > > +	if (!disable_pcr_integrity_protection) {
+> > > > +		rc =3D tpm2_start_auth_session(chip);
+> > > > +		if (rc)
+> > > > +			return rc;
+> > > > +	}
+> > > > =20
+> > > >  	rc =3D tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+> > > >  	if (rc) {
+> > > > -		tpm2_end_auth_session(chip);
+> > > > +		if (!disable_pcr_integrity_protection)
+> > > > +			tpm2_end_auth_session(chip);
+> > > >  		return rc;
+> > > >  	}
+> > > > =20
+> > > > -	tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
+> > > > -	tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> > > > +	if (!disable_pcr_integrity_protection) {
+> > > > +		tpm_buf_append_name(chip, &buf, pcr_idx);
+> > >=20
+> > > tpm_buf_append_name() parameters didn't change.  Don't remove the 'na=
+me' field
+> > > here.
+> >=20
+> > Hmm... weird I'll check this. Maybe I had something left to staging...
 
-> The series contains:
-> - a general debugging guide split into debugging for driver developers and
-> debugging from userspace
-> - a new summary page for all media related documentation. This is inspired by
-> other subsystems, which first of all allows a user to find the subsystem
-> under the subsystems page and secondly eases general navigation through the
-> documentation that is sprinkled onto multiple places.
-> - a guide on how to debug code in the media subsystem, which points to the
-> parts of the general documentation and adds own routines.
+Yes! This was correct in my clone but not in the patch.
 
-So I am just getting into looking at this; the fact that I had a hard
-time applying the series has not helped...
+Clearly a sign that I wait until next week before sending a new version
+:-)
 
-> base-commit: 8c64f4cdf4e6cc5682c52523713af8c39c94e6d5
 
-That is ... 6.9?  Why are you basing your patches on such an ancient
-kernel?  If you want me to apply them for 6.12 (not guaranteed in any
-case, it's getting late) you'll need to bring them forward to current
-docs-next.
+> >=20
+> > >=20
+> > >=20
+> > > > +		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> > > > +	} else {
+> > > > +		tpm_buf_append_handle(chip, &buf, pcr_idx);
+> > >=20
+> >=20
+> > > Or here.
+> >=20
+> > Here I think it is appropriate
+>
+> Agreed
 
-Thanks,
+Great
 
-jon
+BR, Jarkko
 
