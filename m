@@ -1,119 +1,77 @@
-Return-Path: <linux-kernel+bounces-399736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA2D9C0397
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:14:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EA39C039B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:15:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B8E1F2427F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:14:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5134B23E0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8411F4708;
-	Thu,  7 Nov 2024 11:14:36 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4BF1F5826;
+	Thu,  7 Nov 2024 11:15:12 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40891E2601;
-	Thu,  7 Nov 2024 11:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06A41E2601;
+	Thu,  7 Nov 2024 11:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730978076; cv=none; b=YktkMje6v6Xo3OAapx8WWJG+TaGAYsW+jEizmzZ9wB9NIe4WvRxT7UaP0aU1AUMxmdsasPaBtmjk4tRceMiQBWZHet4fxAwkjZ8ycPfFsEt492MGDQ/lHP7l/wTENhko/VE5jI63gL5/XUAaJ0fFfdBJ1lvOoCrCMJLg7PHDXNU=
+	t=1730978111; cv=none; b=HLPR7HDc+TdvyLm2RYywfG1dSkk52zG3zDB7353ckUmy0s/esERe8e8Rx38iBp08I6SEwVqqvKmyyTR/gh1ZVqTs9MVt4Nd3yut0OVuf4nlmj6ZBMn7lFyVGzbcKMBuNWV6bL0mj0O5OHTVEJLDgLtDmiuzVBGZrKrnUx07OxSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730978076; c=relaxed/simple;
-	bh=wKksMUfW/1iTIUd2EHFCVSqjEASCCmtdjLb41c6jTOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V0CsZMvjvWtbgFH1yoFUNml6anLt6NvgcNN4yZ4r8QjHdQNd+6FmMV/xcQlEgmWC4ZHqhd3A4JeJ/8GMKV6igkB7SqO+YdYlssjbVqoSg9MrM5rfjw7ZwO3tgBEGWlwuoOw0iyy0VBYVSgCvfI9+ty9PqznaQBzXFgdm3Yd4h7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XkfZW6h0nz20snH;
-	Thu,  7 Nov 2024 19:13:23 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id EF6A3140136;
-	Thu,  7 Nov 2024 19:14:31 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Nov 2024 19:14:31 +0800
-Message-ID: <8364b0cd-5171-7e76-d450-6593395dce61@huawei.com>
-Date: Thu, 7 Nov 2024 19:14:30 +0800
+	s=arc-20240116; t=1730978111; c=relaxed/simple;
+	bh=2LlS07VGD01giKtgjCL9ae2DBifBD2gvXNjiUbKjUmg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y8vYWE9GtsSsbj7ZyHNkq1uMz+cBtsbEMkw9mAcZs2Iwg2hKL71qJCRlh0Qjfag6egfiB51jGAXv1dOH/hBq75isFoTrqHLoRbPb5lI1xovIilj9ShOAnlOr5H2z5chaf5TUgTU9htRalTGRN4kBhHOOozWqVRN6DB1TMovLv2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Thu, 7 Nov
+ 2024 19:15:00 +0800
+Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Thu, 7 Nov 2024 19:15:00 +0800
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
+	<ratbert@faraday-tech.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <jacky_chou@aspeedtech.com>
+Subject: [net-next 0/3] Add Aspeed G7 FTGMAC100 support
+Date: Thu, 7 Nov 2024 19:14:57 +0800
+Message-ID: <20241107111500.4066517-1-jacky_chou@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2] PM: EM: Fix wrong return value in
- mtk_cpufreq_get_cpu_power()
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>, <viresh.kumar@linaro.org>
-CC: <matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
-	<hector.yuan@mediatek.com>, <lukasz.luba@arm.com>, <qperret@google.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-References: <20241104113615.1397410-1-ruanjinjie@huawei.com>
- <786c90d1-29e7-72a7-acc6-394b3bbaeb75@huawei.com>
- <CAJZ5v0jC9_03euACrmahnDRBgU=0O60p0rkChR2BVOxx0J2Pzw@mail.gmail.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <CAJZ5v0jC9_03euACrmahnDRBgU=0O60p0rkChR2BVOxx0J2Pzw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Content-Type: text/plain
 
+The Aspeed 7th generation SoC features features three FTGMAC100.
+The main difference from the previous generation is that the 
+FTGMAC100 adds support for 64-bit DMA capability. Another change
+is that the RMII/RGMII pin strap configuration is changed to be set 
+in the bit 20 fo register 0x50.
 
+Jacky Chou (3):
+  dt-bindings: net: ftgmac100: support for AST2700
+  net: faraday: Add ARM64 in FTGMAC100 for AST2700
+  net: ftgmac100: Support for AST2700
 
-On 2024/11/7 18:58, Rafael J. Wysocki wrote:
-> On Thu, Nov 7, 2024 at 2:50 AM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
->>
->>
->>
->> On 2024/11/4 19:36, Jinjie Ruan wrote:
->>> mtk_cpufreq_get_cpu_power() return 0 if the policy is NULL. Then in
->>> em_create_perf_table(), the later zero check for power is not invalid
->>> as power is uninitialized. As Lukasz suggested, it must return -EINVAL when
->>> the 'policy' is not found. So return -EINVAL to fix it.
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: 4855e26bcf4d ("cpufreq: mediatek-hw: Add support for CPUFREQ HW")
->>> Suggested-by: Lukasz Luba <lukasz.luba@arm.com>
->>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->>
->> Hi, could this be merged.
-> 
-> It's for Viresh to take care of and please replace the "PM: EM:"
-> prefix in the subject with the proper cpufreq driver one.
+ .../bindings/net/faraday,ftgmac100.yaml       |  3 +-
+ drivers/net/ethernet/faraday/Kconfig          |  5 +-
+ drivers/net/ethernet/faraday/ftgmac100.c      | 62 ++++++++++++++-----
+ drivers/net/ethernet/faraday/ftgmac100.h      | 10 +++
+ 4 files changed, 59 insertions(+), 21 deletions(-)
 
-Thank you for your kind reminder.
+-- 
+2.25.1
 
-> 
-> Thanks!
-> 
->>> ---
->>> v2:
->>> - Fix the driver instead of em_create_perf_table() as suggested.
->>> - Update the commit message.
->>> - Add Suggested-by.
->>> ---
->>>  drivers/cpufreq/mediatek-cpufreq-hw.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/mediatek-cpufreq-hw.c
->>> index 8925e096d5b9..aeb5e6304542 100644
->>> --- a/drivers/cpufreq/mediatek-cpufreq-hw.c
->>> +++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
->>> @@ -62,7 +62,7 @@ mtk_cpufreq_get_cpu_power(struct device *cpu_dev, unsigned long *uW,
->>>
->>>       policy = cpufreq_cpu_get_raw(cpu_dev->id);
->>>       if (!policy)
->>> -             return 0;
->>> +             return -EINVAL;
->>>
->>>       data = policy->driver_data;
->>>
 
