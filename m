@@ -1,173 +1,112 @@
-Return-Path: <linux-kernel+bounces-399481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4059BFF79
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:59:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EC29BFF77
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:59:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E1DB1C2185D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:59:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02E5AB223DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA157F9;
-	Thu,  7 Nov 2024 07:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8470D19A2A3;
+	Thu,  7 Nov 2024 07:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eiTX2o2H"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HybzMa06"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE2417DE36;
-	Thu,  7 Nov 2024 07:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB63B17DE36
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 07:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730966388; cv=none; b=sc5qQz2iAINGI/ld000jMgU9g1IP9fPNVGtJJ2Tuadr9VLCD3qlsiH7qv5XEyT4e3+j72H2mM5viaiQ3QHdjlsAmS238AYmcC2ADgXI/CE+J5PtW4ZekI3BgU7olpajfxpuvYHOq4dMGTWHSMIczMseGnxx/OHMnQ7Mo252kx8Y=
+	t=1730966371; cv=none; b=Nsps9PN2Y0QeMVtUrCwvg+sfl9eItxZfvCHQnm5m/RtMjDgp+WyAzSCR0oH0Iihk+ksFwt5QSmM32nKSeInqa747XFMcBR5z9Mir46bET3rE+r0wi3mogbwRKMRcQe1ved20SRwiZ4ZJpuuo1aLrzsOHxXE4QFGj2TnpJBmLVPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730966388; c=relaxed/simple;
-	bh=O3P+QT8RqJpciDPv0u8HzpYTQchGjvvDTB1vWGDNx9A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=NiGOfUb1E84Yt30PU+1A9RlVkB6qI8FX3L0ohZQBsP8I8SPkI8LDOm72BEGYFEc6/i+6LdqfKP5AZyNE3oVw5GLYiLMjDdxzZlwbCHyFrU9H6nE8jU1jHDffKccOP1giRigrHMYOfRcXuvkqcQSMpv6bQCky3Bp0i6+rKJRX2zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eiTX2o2H; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A741Klr002000;
-	Thu, 7 Nov 2024 07:59:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=d6d278GifGfNmgfl6SgiM2
-	wyCkICizf2JQ410uFCu4M=; b=eiTX2o2HL5H9ANeNxHrOBe1+lRnQpgsrWqMZN3
-	sg0enC6ojdHldvAGCMhKr4EIxb71gbjapLf8QGJdDb4aSsCCC1bwArNx9NjnRzFb
-	mu0Hb+JJN6Baac7RZuYUuh1Ku2+SYv+UIZTQECw0Z9nM6mCev2jOWiqjM4GzU6+y
-	cqKh5HQnx3r0AwIRZ2krYrczEBZ2bt2CtL1KdB0gdf344yrLV6Xxl7jhtE6bemfP
-	LqpZhCAbAlYlkIzTfwK+oilwZKhsMokMnYxuOtR4NdmPyswYvvnEdVrtCp8L7GoJ
-	vL5p0b/zLzI+2lB1pxVWRr62jZw/AfJTdT/eNdRGgEBAkQCg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r072m0fc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 07:59:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A77xMcW001137
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Nov 2024 07:59:22 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 6 Nov 2024 23:59:18 -0800
-From: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-Date: Thu, 7 Nov 2024 13:29:15 +0530
-Subject: [PATCH RESEND] iommu/of: Fix pci_request_acs() before enumerating
- PCI devices
+	s=arc-20240116; t=1730966371; c=relaxed/simple;
+	bh=aI1Gn3wfvYIU7Ie1yMvVPfIc5l4MzgNxCYAI6UHRYME=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TN0ONt1WJWAiXJapkT7frAppX3D+DyWCbCMp0JbZ6zIMiMWIVG1eTuisyZjEqTD99M3LrHOsXjsSJlCjlyeBqChGJSyCdMfZmTvefr1gwkwpFbYUp1mlg0bPbSlbvGnqj/jkCiT5jSBa5RtFu+rcX5iIvCwzb/LROkeYOPxiDoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HybzMa06; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730966367;
+	bh=aI1Gn3wfvYIU7Ie1yMvVPfIc5l4MzgNxCYAI6UHRYME=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HybzMa06wlpVsA/FuzUXrFhnpDNIzaj2Kup3/lRz+TlU+E3mzf7VohaNn87AqzVHZ
+	 b4BmZ4yk6pXk7sbeIvlNNHzii17UTH5pxjfnirK3+tS4bFNzUK40vEBbuMbGjc3zCj
+	 C952MVVR0P0c8ROS+jNWMjTp+aMmVFBhCaEB9pqY++3pjUCyVjSDSIVnGut0b+n2wZ
+	 /wIEtpo2Dd1KgUeBwoK3i0Tx8dHIjdEt6/D2jXbJkLwAjSKRiyNq3wpHQfP5fPopGv
+	 dY/h7/6mKK51KOvZ64hgAiQ9aqM1McWUtIRY1oMvHXQiZ/Kz6G8eWxL00N9BUJz89I
+	 Uf3HznadwIzpw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4A27D17E121E;
+	Thu,  7 Nov 2024 08:59:27 +0100 (CET)
+Date: Thu, 7 Nov 2024 08:59:23 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Steven Price <steven.price@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v2] drm/panthor: Lock XArray when getting entries for
+ the VM
+Message-ID: <20241107085923.06707a10@collabora.com>
+In-Reply-To: <20241106185806.389089-1-liviu.dudau@arm.com>
+References: <20241106185806.389089-1-liviu.dudau@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFJzLGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQwNz3YLkzPjE5OL4tMwKXSMjY8tUg7QkQ3MzCyWgjoKiVKAw2LRopSD
- XYFc/F6XY2loAnsqmrWUAAAA=
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        "Robin
- Murphy" <robin.murphy@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>
-CC: Joerg Roedel <jroedel@suse.de>, Rob Herring <robh@kernel.org>,
-        "Marek
- Szyprowski" <m.szyprowski@samsung.com>,
-        Anders Roxell
-	<anders.roxell@linaro.org>, <iommu@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        Xingang Wang
-	<wangxingang5@huawei.com>,
-        Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-X-Mailer: b4 0.13-dev-83828
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: nbmcMKrkHS8BS2iYeBLUo55vRVtzp7rt
-X-Proofpoint-GUID: nbmcMKrkHS8BS2iYeBLUo55vRVtzp7rt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 mlxscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- adultscore=0 malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070060
 
-From: Xingang Wang <wangxingang5@huawei.com>
+On Wed,  6 Nov 2024 18:58:06 +0000
+Liviu Dudau <liviu.dudau@arm.com> wrote:
 
-When booting with devicetree, the pci_request_acs() is called after the
-enumeration and initialization of PCI devices, thus the ACS is not
-enabled. And ACS should be enabled when IOMMU is detected for the
-PCI host bridge, so add check for IOMMU before probe of PCI host and call
-pci_request_acs() to make sure ACS will be enabled when enumerating PCI
-devices.
+> Similar to cac075706f29 ("drm/panthor: Fix race when converting
+> group handle to group object") we need to use the XArray's internal
+> locking when retrieving a vm pointer from there.
+> 
+> v2: Removed part of the patch that was trying to protect fetching
+> the heap pointer from XArray, as that operation is protected by
+> the @pool->lock.
+> 
+> Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
+> Reported-by: Jann Horn <jannh@google.com>
+> Cc: Boris Brezillon <boris.brezillon@collabora.com>
 
-Fixes: 6bf6c24720d33 ("iommu/of: Request ACS from the PCI core when configuring IOMMU linkage")
-Signed-off-by: Xingang Wang <wangxingang5@huawei.com>
-Signed-off-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
----
-Earlier this patch made it to linux-next but got dropped later as it
-broke PCI on ARM Juno R1 board. AFAICT, this issue is never root caused,
-so resending this patch to get attention again.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-https://lore.kernel.org/all/1621566204-37456-1-git-send-email-wangxingang5@huawei.com/
-
-The original problem that is being fixed by this patch still exists. In
-my use case, all the PCI VF(s) assigned to a VM are sharing the same
-group since these functions are attached under a Multi function PCIe root port 
-emulated by the QEMU. This patch fixes that problem.
----
- drivers/iommu/of_iommu.c | 1 -
- drivers/pci/of.c         | 8 +++++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index e7a6a1611d19..f19db52388f5 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -141,7 +141,6 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
- 			.np = master_np,
- 		};
- 
--		pci_request_acs();
- 		err = pci_for_each_dma_alias(to_pci_dev(dev),
- 					     of_pci_iommu_init, &info);
- 		of_pci_check_device_ats(dev, master_np);
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index dacea3fc5128..dc90f4e45dd3 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -637,9 +637,15 @@ static int pci_parse_request_of_pci_ranges(struct device *dev,
- 
- int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
- {
--	if (!dev->of_node)
-+	struct device_node *node = dev->of_node;
-+
-+	if (!node)
- 		return 0;
- 
-+	/* Detect IOMMU and make sure ACS will be enabled */
-+	if (of_property_read_bool(node, "iommu-map"))
-+		pci_request_acs();
-+
- 	bridge->swizzle_irq = pci_common_swizzle;
- 	bridge->map_irq = of_irq_parse_and_map_pci;
- 
-
----
-base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-change-id: 20241107-pci_acs_fix-2239e0fb1768
-
-Best regards,
--- 
-Pavankumar Kondeti <quic_pkondeti@quicinc.com>
+> Cc: Steven Price <steven.price@arm.com>
+> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 8ca85526491e6..46b84a557d9cc 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -1580,7 +1580,9 @@ panthor_vm_pool_get_vm(struct panthor_vm_pool *pool, u32 handle)
+>  {
+>  	struct panthor_vm *vm;
+>  
+> +	xa_lock(&pool->xa);
+>  	vm = panthor_vm_get(xa_load(&pool->xa, handle));
+> +	xa_unlock(&pool->xa);
+>  
+>  	return vm;
+>  }
 
 
