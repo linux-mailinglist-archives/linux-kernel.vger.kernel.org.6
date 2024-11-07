@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-399534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14239C0046
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:45:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 967C49C004A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF31B2299F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:45:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E12B1F21F4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6A11D86CB;
-	Thu,  7 Nov 2024 08:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A071DD88F;
+	Thu,  7 Nov 2024 08:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="n+9ol5ZB"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="M/4lmfPE"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD4E1DB929
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0EF1D9341
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730969104; cv=none; b=YrHOKlyRy5DJRetdSmyeh6fhOj+v1ABVDo64ETr6GP4UB+ZlfPvO4t3q0ZJsr0WTHjfhscx86uLLhOlhwD8zC23RgeHjnkWKs9z/nJwQ3Vfl1edCBxU2X5laEwnBTMWUDBNGq2Qo0qQPB8tcnKrgyfUEVaT+u4mPkybahVrIKY4=
+	t=1730969107; cv=none; b=IIeKsAtw9uAWrjZkoJMp+Efz4stIs+hIwUf/Z4iz89LFixdXFJU0PsHcKcAHJ99OL2VJ0xE2n0wXpPFUz38FtefKyN9rSCdh/9PN9thMpPMMhQZmhTNH/CukpeSGSzlGQ6tqHEp33DkI7PVZjLR7WJMa8MdFlCG+rZ4gSnVyxpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730969104; c=relaxed/simple;
-	bh=KmVety4S3tMKVBXbZov2MYMhJzVvHQBcnZc1dUS7ra4=;
+	s=arc-20240116; t=1730969107; c=relaxed/simple;
+	bh=H0z/cKKO/vGA2TVwHat1Uphf6X+ZhbN7sSt0JKrbcn4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Ka/lIr1VnRjxD0GoX4QjdGZNiIZ48NEPkJ+Fb57MKx+BblLJQ/AV0nRDijOQ0zKVJs4EIs/5qfL7FXaFA9D9949f7fdVhuH4t76f8UWbu1ZacAzCGebAQVuJkdOTupU7SPvBkS0NXUSxKu+VOd3+F9J3LdMyB7ATHujs/PBA2RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=n+9ol5ZB; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version:Content-Type; b=gBokuMQVeDjIkfm+P01/j64/ydlQSat08tYV61bqSm569HybpLJzyXJKbvr5kZgW4t4KMw3rTF2Gkma0dAKN1Xo2Rh9ed4FemA4ETj7jBHCHKA1HpbWYVpu9lMh1Uo018X2VEeWSkZj4kZCm9beruBf9ubjau32+oqrAGhQmgjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=M/4lmfPE; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730969098;
-	bh=6lO1i2T84ndIiemHa44KairFoUH5eTyzgz+EAUTjUz0=;
+	s=201909; t=1730969101;
+	bh=qv+lXZk9AxiBXOukRl42TWk9GVsab/O46laDxhRM5hE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=n+9ol5ZBXqiUvR60eSXCHaCKSI4AS153n/KbJhPT4eyl+rYuEwngam1ATuqLkvef4
-	 dAWK+epBzyvDu9IGJW1Bd81U2DcoGFjsoWiY3cCqLTgynpDhkGBqIk9QcO+3ryVxj/
-	 j3qDnzLfa4fQ9dpMmUxraPZAlmqK6BW+7fBa5vWe9eZ77yksIjgd9+qJwKp2MNY0iZ
-	 Ud9HElKRW0JzjNJ2eKFBYUVMmTajyGtfXtgxSWnBC4kYjV5FvT+iqNlkTSiEaT6Zgx
-	 m2iyrzbxi3qbT5GdT7iFq24VpJAUUnKYiyZtwETE7W4ihLXO8CoIns1NW7zvOEz9wS
-	 /3LQl+BY/wGJA==
+	b=M/4lmfPEFRH6/1lbGXZBiuQuWuN2f8FgVMgompeW9KGF6Se4j/TxtUiG5cI8liugR
+	 DKqNkDPNEh9c8Dsncmnhna5GB/rb/gUG0Sf4CeGKiVe5fELEqOus4gH96I2F0P5539
+	 b3wn8WIYcWynrYfX9RKuvDYCQ7shNlF+dqtmKr1uhmpFyNpgL3mOWcEA6V+G3Wcv/G
+	 KEH0oZh3ZfLj7EZBtS2poxP7EoIohkWX9Q7qGxnnEN9gNRwXyN3kuTMIUpThnoC7f+
+	 6ixUqafHF1r/Rm2cC7JqJq5OjIW6VIWnCqRD/lynN3imW71Lhgo3FhmD0fDC5nrgYC
+	 /DeAjY60zFUrA==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkbHG43zTz4x1w;
-	Thu,  7 Nov 2024 19:44:58 +1100 (AEDT)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkbHK1YtXz4xFt;
+	Thu,  7 Nov 2024 19:45:01 +1100 (AEDT)
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-In-Reply-To: <b6ad2f1ee9887af3ca5ecade2a56f4acda517a85.1728512263.git.christophe.leroy@csgroup.eu>
-References: <b6ad2f1ee9887af3ca5ecade2a56f4acda517a85.1728512263.git.christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH] powerpc/vdso: Flag VDSO64 entry points as functions
-Message-Id: <173096894628.18315.17865156706800926912.b4-ty@ellerman.id.au>
+To: linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20241013102957.548291-1-mpe@ellerman.id.au>
+References: <20241013102957.548291-1-mpe@ellerman.id.au>
+Subject: Re: [PATCH v2] powerpc/64: Remove maple platform
+Message-Id: <173096894650.18315.14444465278023846329.b4-ty@ellerman.id.au>
 Date: Thu, 07 Nov 2024 19:42:26 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,29 +63,22 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Oct 2024 00:17:57 +0200, Christophe Leroy wrote:
-> On powerpc64 as shown below by readelf, vDSO functions symbols have
-> type NOTYPE.
+On Sun, 13 Oct 2024 21:29:57 +1100, Michael Ellerman wrote:
+> The maple platform was added in 2004 [1], to support the "Maple" 970FX
+> evaluation board.
 > 
-> $ powerpc64-linux-gnu-readelf -a arch/powerpc/kernel/vdso/vdso64.so.dbg
-> ELF Header:
->   Magic:   7f 45 4c 46 02 02 01 00 00 00 00 00 00 00 00 00
->   Class:                             ELF64
->   Data:                              2's complement, big endian
->   Version:                           1 (current)
->   OS/ABI:                            UNIX - System V
->   ABI Version:                       0
->   Type:                              DYN (Shared object file)
->   Machine:                           PowerPC64
->   Version:                           0x1
-> ...
+> It was later used for IBM JS20/JS21 machines, as well as the Bimini
+> machine, aka "Yellow Dog Powerstation".
+> 
+> Sadly all those machines have passed into memory, and there's been no
+> evidence for years that anyone is still using any of them.
 > 
 > [...]
 
 Applied to powerpc/next.
 
-[1/1] powerpc/vdso: Flag VDSO64 entry points as functions
-      https://git.kernel.org/powerpc/c/0161bd38c24312853ed5ae9a425a1c41c4ac674a
+[1/1] powerpc/64: Remove maple platform
+      https://git.kernel.org/powerpc/c/62f8f307c80e99ab18d38aa1a5bbbc18128ee5f8
 
 cheers
 
