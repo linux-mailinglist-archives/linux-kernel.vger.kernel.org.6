@@ -1,264 +1,206 @@
-Return-Path: <linux-kernel+bounces-399488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DDB9BFFB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:07:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5229BFFB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:09:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C0E1C2141E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8231F2255A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B200517DE36;
-	Thu,  7 Nov 2024 08:07:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1A11D54D3;
+	Thu,  7 Nov 2024 08:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="WkRDY5D8"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F33F1940AA
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D38117DE36;
+	Thu,  7 Nov 2024 08:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730966850; cv=none; b=jDAzvjkO6d8Ag3UyoPWipkHKXuoOEcC1V+CxgtWVFnvuwe6XaOvCFd/nDMqYi8wNKnXU26S8wioeiviBizf+nJVeWSSzn9LBG8CzQHtipnGRwmZXYt1UPvCEF8kJtfLex55k1AB+9i2sceXvrj+jjYYvx9oxBmG/KUoo8jT9jkI=
+	t=1730966956; cv=none; b=F/pG+Bu0AaXmGstiztEJQu96Lx6lqBTr/1/iPPz84bIcXTIqppJbKgq+WDG3I1heh2olK+qwT+zi7OgIkMhoqzznBLSLlIvG4ACszDf08dsLyTr8zrsz8pfx5K0YWcHuOQtyRCT5iDj6LBhuAruNjP13ktf1xtequjSl5uNZT84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730966850; c=relaxed/simple;
-	bh=2V47KTTKsgSskEbASEagPIL6uX+vROs65N/OXrhxkPQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZTvGLj77jAZAvDyAxvkNtbBrpqTTrZchCnKGV7xOzK8DN3BZswfpSGLDSAsaRzDvnksWqybP7l44LU9omVlIG5lyY/t1cFG8qNNabAI0rRW6SIIYswOJvMKmxgZzqoI5sJyTCR7FWTIo1EqkeLZz6URQyP2llSULgannKyKNvjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c9886eccso8443035ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 00:07:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730966847; x=1731571647;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ywJI1RizHtNoeacvYINknT2lGhzvBKSC2a9W7mPrTPM=;
-        b=Tp7aBhywG2pz4s6S0aUOUFVU3CVMJdINw3+8iDOp3DUNR2PTImDzNDjqnpfF1mS3+h
-         5s1MXEmtv0gftLUHRDXvVuCAw05JkOdqzofco7BwKCq/qNHQJtm891Drpji5JIDDVOMP
-         5eYBWjZrZop5s4xdARDkzMEo7mDyGkiGGevdN+ZSm0AVFhzpOLVDDiYXhtNuwxlV7YB+
-         ugp7waP1DjkSK3cFAeiBtMCG2mb9jVKiKqTjlVQ98uL0/iLitl2HgMXdufP46VEgPaCH
-         WnIzEg9SHM6Um3iIm+M2hW0PLpD++Ia1MRZ/R9tFggdZV33bQtxH2BLFl3CDk15Gu4oO
-         40jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOhnmBh5m5E83VyCd8J2kBT7toYXqw4ghVB28qYAhZPZT3imUN3R4Z9x+b1wXvCue20KT51z5geFgd4S0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysg3ko2r/b3G7Fs/sB0cyHhON+dVEzcrh5Nt2vCdufqjkL/41c
-	yYLL74EFMbiEoabz77mzIviI5J4HFTmd3rYvrun/pBHUkL3J72XE3V6+G5IyWZUM3XwsKBR8gf6
-	MmDS/DVRRxSl6+O8fSq+jf7OVgY3Ehsvavt7PWon925qVPO1fSK5fyig=
-X-Google-Smtp-Source: AGHT+IEgxTDOf22PP8xGLXCGHRNIFNamlBck6mUdYtXnATlVLH8RqNQe6U5sblaKTwdz/YsZQqy/hhGd92ZMAF2xqA2tfPCsLsEI
+	s=arc-20240116; t=1730966956; c=relaxed/simple;
+	bh=xN93vbxTt1KARVgg9O/phRnB94KjPdT5gScJ//vyk4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qjWTBK+SuCHHzbMRZAFaJ56XTUD5lsAiFpabiNJYDWkWfwgA7o3hBKrgXBptffQZMTiSNu8Xf4zUsZZKPdSthfRDx5xT693OZck5QKDPDYDJn+pDms8DrOvwwoGjZpacyq0WkyiISi4WMjAMNxuJy27qCVyUCgqiDn2l9Mjfne0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=WkRDY5D8; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730966878; x=1731571678; i=w_armin@gmx.de;
+	bh=+sD67PMdHq3t7fB6r4132ZHSKpmpOxOGf4hTSOkDNlE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WkRDY5D8U10s+r0IdropUaQr3mwW4MHHroJ2VVy5Yr7pavLefp/rBWyyg8TdbkLm
+	 Jq1QoeUTGE7tDvrEY0Q7zuH1BOsLY6gUScEAdGQlbOvPQ8JE7Ud+fYZm/NhWXMWpK
+	 8w0cbYRIsgV2hg/+/hLnIrvOfimrGAAVrmOpoXJG2A31Z5EI+R/fs0BNb57KK/TYe
+	 ETViZmEtMzw6aY2YgYRa02KrBWl12SIoS2gmd2+JrpRBSGupLjDzcZVxWaplSefmo
+	 aIICGVSk//D8RJMMNK7tqilmHfAHZybuMOpBY+5QXPw65IaBSjq+sGjwT5Tyl+mBI
+	 hQMV1H0ZMzpGM0NpYQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MQ5vc-1tUs7a2I4W-00Qg28; Thu, 07
+ Nov 2024 09:07:58 +0100
+Message-ID: <44462a90-5151-4b49-830e-528bc5451030@gmx.de>
+Date: Thu, 7 Nov 2024 09:07:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c249:0:b0:3a6:b0d0:ee2d with SMTP id
- e9e14a558f8ab-3a6ed0b4b99mr3107245ab.9.1730966847509; Thu, 07 Nov 2024
- 00:07:27 -0800 (PST)
-Date: Thu, 07 Nov 2024 00:07:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672c753f.050a0220.31356.0003.GAE@google.com>
-Subject: [syzbot] [hfs?] possible deadlock in hfsplus_file_fsync
-From: syzbot <syzbot+44707a660bc78e5dc95c@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/20] platform/x86/dell: dell-pc: Create platform
+ device
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241107060254.17615-1-mario.limonciello@amd.com>
+ <20241107060254.17615-3-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241107060254.17615-3-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SMQWaSNdx1FuesT/I28AtdxEBOPax+cWkkuE/rRc6UY7kGdwXA2
+ MRsf0zGrYruuYk5e6Zv0ZEuo5qJCxt8F2QTp6xtPMGHLMJcyYnbqgLtJzf09jFrD40OBAEo
+ fUMZ744S5NoUQfpFWQYPqpAJI2C5LAEOxZ6ILC9tO8RP6tzW0qBR4Sdpcx4lbRTC1jpiW45
+ LzGMJtInkzM0rBBwyoDcA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Kj58pHIuaf8=;DMZmlhuVjlZKLOxJ2ObNdWoBhBT
+ F+9ovY68nEZ5XBA3j8GQS+S6VuXyKVezFv2ACLk8ow24YVOBdMd2dY+qKPPruwt09wM6NDHyM
+ 7O/wl4k9HWYaFsImBJ4Ytwdhtn41uWpx3EokA+o3z+Dmo6ahvV6azjW/Eq2lJ0/8pGokdhJAn
+ xfQo9gog0fn3RkqVBxSpX8+W7HQmGWgP3XYFvgPEP1JsEq958sXmOj1rVLf6U1vluJDcol/bj
+ 9Som1Xg9rkLLecuQU4WvFg6dh2D7BE6E6bMHhYA+VlEttndkN4T0qiYmo94mFRyt/g3jzkVSF
+ XS4l8tNorR8nlYVcMTDFJMsesR2F2X40Y2WboroAHnuiHJxHq0u4q6IlcDD4BFXMHTmHx5fIB
+ 3xJgbkmaqPkTElxpWRUlwkUiKFbmeqf/4j3yYceAUfwYyHznwe5eA0Rg5TL8jAao9jphLNEfY
+ Se9EvP0+MAnVf9C0dA0i6lLvLHbV4J+iuXlrqSnovdovbyzFYYi6NUlbUb6zyRpUpuQACgglf
+ vToQ30ER7KwDnzo1BtcNng+EKi9leGXZVSrjMrten6T8bWH0D9aCBFMouJCR2jRRmBOCX0bIz
+ 8dhVw23fNXvi3yHSuG63qjZBcjN0DhI3aqVKKmuViivetuI6IrxyzxoOfrA6+34oYw3e4AjBy
+ 8hUvLwFpW8u4o9wpIOHIepURhgSLXC8s6K4dzIf0c2yaXSvE+P/gaipkbo6LMP3olQvmfWUfJ
+ IbWsvvdMS2zCOwaxBDKMeIcJfhFdO1jfpf4q3hocp3WPfrsdvuWq68rwx7ShrJ1HbIoxZPagp
+ DriyMoLZESxB0K4Aav3HhxbT2H2d+HtVtFAqMJal2zf+s=
 
-Hello,
+Am 07.11.24 um 07:02 schrieb Mario Limonciello:
 
-syzbot found the following issue on:
+> In order to have a device for the platform profile core to reference
+> create a platform device for dell-pc.
+>
+> While doing this change the memory allocation for the thermal handler
+> to be device managed to follow the lifecycle of that device.
+>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v5:
+>   * use platform_device_register_simple()
+> ---
+>   drivers/platform/x86/dell/dell-pc.c | 32 +++++++++++++++++++++--------
+>   1 file changed, 23 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/=
+dell/dell-pc.c
+> index 3cf79e55e3129..0cd9b26572b61 100644
+> --- a/drivers/platform/x86/dell/dell-pc.c
+> +++ b/drivers/platform/x86/dell/dell-pc.c
+> @@ -18,10 +18,13 @@
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+>   #include <linux/platform_profile.h>
+> +#include <linux/platform_device.h>
+>   #include <linux/slab.h>
+>
+>   #include "dell-smbios.h"
+>
+> +static struct platform_device *platform_device;
+> +
+>   static const struct dmi_system_id dell_device_table[] __initconst =3D =
+{
+>   	{
+>   		.ident =3D "Dell Inc.",
+> @@ -244,9 +247,15 @@ static int thermal_init(void)
+>   	if (!supported_modes)
+>   		return 0;
+>
+> -	thermal_handler =3D kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
+> -	if (!thermal_handler)
+> +	platform_device =3D platform_device_register_simple("dell-pc", -1, NUL=
+L, 0);
 
-HEAD commit:    1ffec08567f4 Add linux-next specific files for 20241104
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b23587980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dfea72efa3e2aef2
-dashboard link: https://syzkaller.appspot.com/bug?extid=44707a660bc78e5dc95c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Please keep using PLATFORM_DEVID_NONE here.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Thanks,
+Armin Wolf
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3f67fb217f30/disk-1ffec085.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/73c0895ed6c3/vmlinux-1ffec085.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/80c6f613afd1/bzImage-1ffec085.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+44707a660bc78e5dc95c@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc5-next-20241104-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.3.810/9889 is trying to acquire lock:
-ffff888024cf09b8 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:817 [inline]
-ffff888024cf09b8 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}, at: hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
-
-but task is already holding lock:
-ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
-ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&q->q_usage_counter(io)#17){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1510/0x2490 block/blk-mq.c:3069
-       __submit_bio+0x2c2/0x560 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
-       submit_bh fs/buffer.c:2819 [inline]
-       block_read_full_folio+0x93b/0xcd0 fs/buffer.c:2446
-       filemap_read_folio+0x14b/0x630 mm/filemap.c:2366
-       do_read_cache_folio+0x3f5/0x850 mm/filemap.c:3826
-       do_read_cache_page+0x30/0x200 mm/filemap.c:3892
-       read_mapping_page include/linux/pagemap.h:1005 [inline]
-       __hfs_bnode_create+0x487/0x770 fs/hfsplus/bnode.c:440
-       hfsplus_bnode_find+0x237/0x10c0 fs/hfsplus/bnode.c:486
-       hfsplus_brec_find+0x183/0x570 fs/hfsplus/bfind.c:172
-       hfsplus_brec_read+0x2b/0x110 fs/hfsplus/bfind.c:211
-       hfsplus_find_cat+0x17f/0x5d0 fs/hfsplus/catalog.c:202
-       hfsplus_iget+0x483/0x680 fs/hfsplus/super.c:83
-       hfsplus_fill_super+0xc4d/0x1be0 fs/hfsplus/super.c:504
-       get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&tree->tree_lock#2){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       hfsplus_find_init+0x14a/0x1c0 fs/hfsplus/bfind.c:28
-       hfsplus_rename_cat+0x157/0x1090 fs/hfsplus/catalog.c:447
-       hfsplus_rename+0x12e/0x1c0 fs/hfsplus/dir.c:552
-       vfs_rename+0xbdb/0xf00 fs/namei.c:5054
-       do_renameat2+0xd94/0x13f0 fs/namei.c:5211
-       __do_sys_rename fs/namei.c:5258 [inline]
-       __se_sys_rename fs/namei.c:5256 [inline]
-       __x64_sys_rename+0x82/0x90 fs/namei.c:5256
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&sb->s_type->i_mutex_key#23/4){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1693
-       vfs_rename+0x6a2/0xf00 fs/namei.c:5025
-       do_renameat2+0xd94/0x13f0 fs/namei.c:5211
-       __do_sys_rename fs/namei.c:5258 [inline]
-       __se_sys_rename fs/namei.c:5256 [inline]
-       __x64_sys_rename+0x82/0x90 fs/namei.c:5256
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&sb->s_type->i_mutex_key#23){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:817 [inline]
-       hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
-       __loop_update_dio+0x1a4/0x500 drivers/block/loop.c:204
-       loop_set_status+0x62b/0x8f0 drivers/block/loop.c:1289
-       lo_ioctl+0xcbc/0x1f50
-       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &sb->s_type->i_mutex_key#23 --> &tree->tree_lock#2 --> &q->q_usage_counter(io)#17
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&q->q_usage_counter(io)#17);
-                               lock(&tree->tree_lock#2);
-                               lock(&q->q_usage_counter(io)#17);
-  lock(&sb->s_type->i_mutex_key#23);
-
- *** DEADLOCK ***
-
-3 locks held by syz.3.810/9889:
- #0: ffff88801efacb60 (&lo->lo_mutex){+.+.}-{4:4}, at: loop_set_status+0x2a/0x8f0 drivers/block/loop.c:1251
- #1: ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
- #1: ffff8881423fbac8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
- #2: ffff8881423fbb00 (&q->q_usage_counter(queue)){+.+.}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
- #2: ffff8881423fbb00 (&q->q_usage_counter(queue)){+.+.}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 9889 Comm: syz.3.810 Not tainted 6.12.0-rc5-next-20241104-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- down_write+0x99/0x220 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:817 [inline]
- hfsplus_file_fsync+0xe8/0x4d0 fs/hfsplus/inode.c:311
- __loop_update_dio+0x1a4/0x500 drivers/block/loop.c:204
- loop_set_status+0x62b/0x8f0 drivers/block/loop.c:1289
- lo_ioctl+0xcbc/0x1f50
- blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f89dbd7e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f89dcaf0038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f89dbf35f80 RCX: 00007f89dbd7e719
-RDX: 0000000020001300 RSI: 0000000000004c04 RDI: 0000000000000004
-RBP: 00007f89dbdf139e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f89dbf35f80 R15: 00007ffdb32a6ed8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +	if (!platform_device)
+>   		return -ENOMEM;
+> +
+> +	thermal_handler =3D devm_kzalloc(&platform_device->dev, sizeof(*therma=
+l_handler), GFP_KERNEL);
+> +	if (!thermal_handler) {
+> +		ret =3D -ENOMEM;
+> +		goto cleanup_platform_device;
+> +	}
+>   	thermal_handler->name =3D "dell-pc";
+>   	thermal_handler->profile_get =3D thermal_platform_profile_get;
+>   	thermal_handler->profile_set =3D thermal_platform_profile_set;
+> @@ -262,20 +271,25 @@ static int thermal_init(void)
+>
+>   	/* Clean up if failed */
+>   	ret =3D platform_profile_register(thermal_handler);
+> -	if (ret) {
+> -		kfree(thermal_handler);
+> -		thermal_handler =3D NULL;
+> -	}
+> +	if (ret)
+> +		goto cleanup_thermal_handler;
+> +
+> +	return 0;
+> +
+> +cleanup_thermal_handler:
+> +	thermal_handler =3D NULL;
+> +
+> +cleanup_platform_device:
+> +	platform_device_unregister(platform_device);
+>
+>   	return ret;
+>   }
+>
+>   static void thermal_cleanup(void)
+>   {
+> -	if (thermal_handler) {
+> +	if (thermal_handler)
+>   		platform_profile_remove();
+> -		kfree(thermal_handler);
+> -	}
+> +	platform_device_unregister(platform_device);
+>   }
+>
+>   static int __init dell_init(void)
 
