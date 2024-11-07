@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-400452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28989C0DB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:27:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2169C0DBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD521C2264D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F4641C21FA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811672170C9;
-	Thu,  7 Nov 2024 18:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73A92170B1;
+	Thu,  7 Nov 2024 18:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gjT+5qAO"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHc/Vz3C"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A0A20F5DA
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6F8215C6D;
+	Thu,  7 Nov 2024 18:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731004060; cv=none; b=JM/SEk4nY1sI1sLhmcBB1Fm0zk9OW1TLvadn10YBumWQZuaVNoFnrFxrKUMlAKTBkbKGL1/6rTVvK9rfNxtPSDHEWE/jGEezm2x2EqjZ5v6GgGBxCBTJ/BGqIqbKH5CBshZXaK69NqfCC1KLzix/TgGLH8iL22ntJQDr34PdP08=
+	t=1731004088; cv=none; b=aNE5L4Kib3tdhX9XGryh6fsO5CQ+jZfKRvEvPFG9iRFoOTPC1KIe3jzFkmUltejD2Q1VBuQbavMkNKME9Z3x8mUGOnhSz7PtyajK1qotBakZBP+8aqO2GOdb7Wv96z1MIkWuAxRTxMGtCERRc2RxdQqY1uRr7S+ZXWyUXl3rffw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731004060; c=relaxed/simple;
-	bh=20LrKDdXKwohLrR7m/+QaoGSjbWanGlIA0WTQG1VuBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N+fAM+ZHp6G8fCYwPuu7bZw9tGZXJtL3+/Brij/EgzMcP4XRfJDIdiLVwNBXahLj7zmvhDamCkGkDsFDSkE9e88MB/Crs29bGxJfbhNLE9cl1js3bTRfrN+QZ0/aDilnA2LhHCeUahtLqVQhherGejjmOTrxhOe+S6tdl0fAKs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gjT+5qAO; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-29538198f2fso852416fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:27:37 -0800 (PST)
+	s=arc-20240116; t=1731004088; c=relaxed/simple;
+	bh=q0y9Ud73LqQhwuyN5EYgcTOcG4RR/oexyr3NTsuez9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fi65drhnLHnSHZJ8Oyl5nVgWG/ov0gBGIqAaACPRan28gDZqRtLcvmoLXDkSm4TCLTm59EKF07ugkMd6222lwFK9lj60VS84/NrWBKNTIVHQZuZYxHT4urK8pZFi14ZH8WbCZ1aaUM+TfBMBrGJSY5bEfkkDWlV2pfRXbwJCPcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHc/Vz3C; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a6b4ca29bso172649866b.3;
+        Thu, 07 Nov 2024 10:28:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731004057; x=1731608857; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uVnaoenE/nrPuz7L1JcnZlXT27mO9irch1BC/+wWZcY=;
-        b=gjT+5qAOs6q+hOnTQLfvkunfI2tkPZ9VwKkZIDzUu2L0pYWahtTs8cwco7Pf2qe0sM
-         mx7+dQaKkcwEpx6cq6+3VeVOJgBThU4Yx0TSL2CvOI1xNLYjl7oikVhmSCFNKyTj5MFw
-         VU6z8LSL4lMtVha4IyXb41aT1LcvQ+f87OsIUlRpX43S3z6sUSEHOv+ghc7ggObIx/z7
-         wdPRKnNx9coOdSrl3Tzg8OkeqYwpVoLsbNOBDbfsogk0/txzNVM8gIGT/Q555/+CUb4x
-         1Cz9CkvESPRyz5SHYrUNKMbstSRlUI14EKnIpG0MbYqt4+D2j1cBUF19sl+L4spzDyxY
-         q/rQ==
+        d=gmail.com; s=20230601; t=1731004085; x=1731608885; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BVfDmuHs5p+fa/eZewzS61BcpvU/96M31o+p3JFZkE4=;
+        b=UHc/Vz3CibD4VZ/PQK8TjHY3HQYciIJFwE0t3BY4tnAK71e7+3lwL6t24u3ctMq1vU
+         OU11Do4FVdpy8bqKwcvFOGsPQLtzGq2wQJnsLTeFFYFBAqsXN4T4u+IsAl5EbkS6zFvO
+         DWlFNN6Uand2MH26rtqZ/UL4tzFLrUukNAJG8L8NlU9afRyztI7G2Vf5zIl7xGQhV825
+         BhcjpS2sblMGF3A3czLtRmkR7voQHJwQtnZeC62itu18+xUKFqAumzMjF6eVvigZJha7
+         ANrpKnICUTkZdYz6OnpQfls8DZh9MEIujiiTypdQHs96lWNkHhnLJQxwN3nj2B7bjO1x
+         Reyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731004057; x=1731608857;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uVnaoenE/nrPuz7L1JcnZlXT27mO9irch1BC/+wWZcY=;
-        b=LFSTMOFcu1HgP9BpikeNpxlsMCloxml26ICaNNHddp870LYpsl6NHamS13w8icFdH4
-         ikqMb+NStgumBBD8d07ezyspVf4IoK/nM6QVfgI70fghRnRySGYuGeUbIWv3z9zHRMST
-         tl33B3zsOJnnNGOr0XlXZZg9KSx3bq+LpaaPnTRBrtqszJzMroyH1ggHyrJzIuFtBToA
-         H3tiCbL4PB76cntkQyzOQO1THXvXZao2NehMrbjjEeF5/3c78fV88lJ0kqHKjRRJvUJF
-         1W2/zzciDrGP1z7SFVUJ9QPnYlp7ka7ihP9MunHL/x0f1oLGh5601BHX1Mnd3fFfS34Z
-         cQUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWA43eE7B+X6k8ECNX2tNkphTWML7VDwg7J0wLxvFgicqSmhv9rbBx/6pFwHk8QYRPWjj9ZXwKYtPmsFko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu2llYM+56PBZWF9f78dlYe0RniywGI1ZCiZUBB01kYavvvWJT
-	4nXFDDmGFRMKNGcGZ3Mm475fP306IJt2om6Ppw6WqEXrNsu2BOjnaE/zUQXJdAA=
-X-Google-Smtp-Source: AGHT+IHmQOgwVXtosc5C3zjOqsrNAr1v/lfSp7QNRqpm1iXYwNBCmnKvsMh+W3pIhyccXko0ObQGvA==
-X-Received: by 2002:a05:6871:5891:b0:288:59d3:2a03 with SMTP id 586e51a60fabf-2949f07a886mr21485563fac.39.1731004056679;
-        Thu, 07 Nov 2024 10:27:36 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546f3f58dsm490090fac.49.2024.11.07.10.27.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 10:27:35 -0800 (PST)
-Message-ID: <26049689-238e-4f04-9a68-db002ed5c1e0@kernel.dk>
-Date: Thu, 7 Nov 2024 11:27:34 -0700
+        d=1e100.net; s=20230601; t=1731004085; x=1731608885;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BVfDmuHs5p+fa/eZewzS61BcpvU/96M31o+p3JFZkE4=;
+        b=SrACeHOq1eUCainOyx0P1j5WAqJECmIVg0p63AYUBmViz7HEiFc+qj8ve163UZpslB
+         fv6r9/C/Uk0qNsjy10UqL5nsLnyU1cTvLqKtCGc6G+ax6pG/oqeNaiifPQpTDoUuZAHS
+         I0iyxWhmfnAT727+2GXFVZbsE0jBUPECX7uvLzszdzNITT6d0SVthhgyCzC3ikWc0XJj
+         wvmHI5n/GEpN+0syZSsPD2/fRufwY6y3Ri5cCQpYfg6Mr+4HqTiNzQzs+RmT8a/P5w0s
+         /RXWDS2S0mcyVH/ecL71YTfMw1FQSYBC0+dM/d7cvio0ahkQ50xkPbHiX8Om1r274rl1
+         04jw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFZEF8Sga07UgZbPMpgKitOJqJjhrlUoDVrgeMtXXXl+tGkJwfzXM8dddUJx+m5hAtsAJAtMDd@vger.kernel.org, AJvYcCWbhaHE8yKzwxnm6W3KTE1exzFv3t6aZzcb7wF5enlq5ZdPrc3cWqJlqJtFXLT5ID8vzyGn1d2beAoMS3OO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+F1DIzvFH+CLFgtImtFr9J46MsJwBBOfnYsFe/uo2rCHt/CdU
+	BAcRbPpkBCL1hXNci1CKi+oUglVUmsuUqNWtpv3UCovCyROmem6AUKr3vWGdYGJ/72G2BGNMGEh
+	VfiSTmSBarpyltzBinZa6pl7+rX6wyFFg
+X-Google-Smtp-Source: AGHT+IGslwSAq9MKLCz5wDbzj4kAH/gRj6dZGwgC/ErBas1EoEfksgehPaVh61S2Yyo9MRL9FoNIMTkD5gDBNsZaKPA=
+X-Received: by 2002:a17:907:31c3:b0:a9a:522a:eddd with SMTP id
+ a640c23a62f3a-a9eeae9b963mr113080266b.11.1731004084816; Thu, 07 Nov 2024
+ 10:28:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] bio_split() error handling rework
-To: John Garry <john.g.garry@oracle.com>, song@kernel.org,
- yukuai3@huawei.com, hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
- Johannes.Thumshirn@wdc.com
-References: <20241031095918.99964-1-john.g.garry@oracle.com>
- <e0a82859-6c9e-43d4-b6ee-4b96fa193fa9@oracle.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <e0a82859-6c9e-43d4-b6ee-4b96fa193fa9@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241106221434.2029328-1-joshua.hahnjy@gmail.com>
+ <20241106221434.2029328-3-joshua.hahnjy@gmail.com> <o7dpwewfztqpkidrhvpdm57ikid4yswygag5gkjplfwdfkl54l@bs6oh2t4jp7z>
+In-Reply-To: <o7dpwewfztqpkidrhvpdm57ikid4yswygag5gkjplfwdfkl54l@bs6oh2t4jp7z>
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+Date: Thu, 7 Nov 2024 13:27:53 -0500
+Message-ID: <CAN+CAwNSMXP-Z5PVL_Q129nN-aP80XB0Y-Sm+C-XdHBinvWoxw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] memcg/hugetlb: Deprecate hugetlb memcg
+ try-commit-cancel charging
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	muchun.song@linux.dev, akpm@linux-foundation.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/6/24 11:49 PM, John Garry wrote:
-> On 31/10/2024 09:59, John Garry wrote:
-> 
-> Hi Jens,
-> 
-> Could you kindly consider picking up this series via the block tree?
-> 
-> Please note that the raid 0/1/10 atomic write support in https://lore.kernel.org/linux-block/20241101144616.497602-1-john.g.garry@oracle.com/ depends on this series, so maybe you would also be willing to pick that one up (when it's fully reviewed). Or create a branch with all the block changes, like which was done for the atomic writes XFS support.
+On Wed, Nov 6, 2024 at 6:50=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.dev=
+> wrote:
+>
+> Please cleanup mem_cgroup_cancel_charge() and mem_cgroup_commit_charge()
+> as well as there will be no users after this patch.
+>
 
-The series doesn't apply to for-6.13/block - the 3rd patch for bio
-splitting conflicts with:
+Hi Shakeel,
 
-commit b35243a447b9fe6457fa8e1352152b818436ba5a
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Mon Aug 26 19:37:54 2024 +0200
+Thank you for your feedback. Unfortunately, it seems like even after this
+patch removes the references from hugetlb.c, there are still some
+references from other files.
 
-    block: rework bio splitting
+mem_cgroup_cancel_charge:
+  - memcontrol-v1.c~__mem_cgroup_clear_mc(void)
 
-which was in long before for-6.13/block, which it's supposed to be based
-on?
+mem_cgroup_commit_charge:
+  - memcontrol.c~charge_memcg(struct folio *folio, struct mem_cgroup...)
 
-Please double check and resend a v4.
+In fact, in my patch, I add an extra call to charge_memcg. I think for this
+case, it makes sense to just extract out the functionality from
+mem_cgroup_commit_charge (3 lines) and expand it out inside charge_memcg,
+and get rid of mem_cgroup_commit_charge.
 
--- 
-Jens Axboe
+On the other hand, handling mem_cgroup_cancel_charge seems to be a bit
+different. Now, all of its references are purely in memcontrol-v1.c.
+I think in this case, it makes sense to migrate the function declaration
+& definition into memcontrol-v1.c, and remove it from memcontrol.c.
+Perhaps at a later date, a cleanup in memcontrol-v1 may find that it makes
+sense to remove the function, but for now, I think we should just move it.
+
+I hope this makes sense. Thank you again for your feedback!
+Joshua
 
