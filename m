@@ -1,229 +1,170 @@
-Return-Path: <linux-kernel+bounces-399607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B130D9C0189
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:53:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014249C018D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:54:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40A1E1F23BAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:53:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61388B22D7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B471F429E;
-	Thu,  7 Nov 2024 09:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71A51EE026;
+	Thu,  7 Nov 2024 09:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="clJYYhss"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M4UkN8PB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AB81EC014
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840631EE01B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730973117; cv=none; b=asmhNFBG0iq1U47IkPLTwwHlVHFWi5pIserboF417ImFsGsZt5sIiVBz95WJyZMX1wjm9yXOsP9tk/sYgj/ijqFwu26ieZSlTh8l0uOmgG95baqGjpi9rUUzN8ETEy9ncf+tQ5voAdbejeHgXTjC7VGJq3/t0jxAY7wNua+RKGs=
+	t=1730973132; cv=none; b=h+kikSIp7QR2PWy0klosTvuJqDxmmCOmCYsT8b2CKgaTpuTUWzCVBBg1QMTdgA9MDpimnvFh3y9Uc+VOnNnAkZaG+DiqchK+WUIewiqZe44Qo0TQIV9Agg8mmyDSEHKlgnZAYBRQO5PTA5P/aHXkIf7VnsbmZ3R7s5QlEPmNnWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730973117; c=relaxed/simple;
-	bh=jPV78dINbSzeUtKgCIE0S+PYALb5LTriV8X07iC3y8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I0Gb9vM9BdHcD24PHNRFodhsojgdIAbOmGRdWJWBJjRxSpnvCP42k51e4Ov76TAe4rLiNQSGOeQMQ4e9itILR8WDP4j9ygyt+wuiWCv44YlvgrXlcid47BYHe1mzGa1so68E8Uhc07lQ3RwFELHBKbT39xRojHY1rldtiULeTGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=clJYYhss; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so1119834e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:51:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730973113; x=1731577913; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MNGDZFn6BFfHOXHdbqmi5GIr1NOgRIL8yzEY3j9R85k=;
-        b=clJYYhssctvQPCrGxUa8H+CpQ7MywEceNAZBmStt0H+5K6+4IkEi3mQ64ujtkwPtNE
-         Vl65kt2KicZdto8ii6C5xBOHHeKD2IxkqT4gg0UsQiHjoqt5ZvScgdR0VYU6ztjQXAyi
-         SI9xdEg4USciXc3/L/hPOTxU2xtnmD3AFxYX8=
+	s=arc-20240116; t=1730973132; c=relaxed/simple;
+	bh=lXItsEWUXZFt109+Ui6NjhDPYawsgqJMEGuIDDt4Iso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BKlB/JXszxxuV0teixBLUW/u0iWgQePf4s7FY+m2lOcCifMH71o7kKtHchm+AWmXaY5YhuQt2D3hBRFDV1O60O1uq2mjYnskuiLtj953N1Iwdop/mNKCGimtNwdci9Ly6XXf7+tUHK5AgcolqiLY+koKLr0PaEt92LjYPrhKYhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M4UkN8PB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730973129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VEUV28AwOvWa6u7nd82oecUGAe8DexY8QGwvcMosJck=;
+	b=M4UkN8PB8APi5NiMaDcL6SI1wPUKFMtO5IehN8YOluFBxH1zL4pGfaa7jCNXKOiTCcM2s8
+	CAth+f51k61tZ4z11971J8k4bqk227EdJN+7IfOGOWMmCsrinFbZVGCwqroSKiXboRoDo6
+	5JvwmCudTPO49cvYRSiV3oIjmxJgVZs=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-691-WTZ-gFQ3PsCYpr0znCA8-g-1; Thu, 07 Nov 2024 04:52:07 -0500
+X-MC-Unique: WTZ-gFQ3PsCYpr0znCA8-g-1
+X-Mimecast-MFC-AGG-ID: WTZ-gFQ3PsCYpr0znCA8-g
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a9a2ae49a32so51570966b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:52:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730973113; x=1731577913;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MNGDZFn6BFfHOXHdbqmi5GIr1NOgRIL8yzEY3j9R85k=;
-        b=WpbVAaIWyVlDGIY/4p9sDcsLS2IVsl8jlUW5clPJ2wSNMOVV2dHB7P3BPTEuT5n4vO
-         fK/9XwEoL6pzfn2Be8hOVHTQngBW4l+F8nZssde9gXMA/YDlFZPw+TMK5QlBWIW7rvET
-         KXVWRFuNp/jxTsTWPWRbIUqHuO9p4QtMNqiHSbuzGmxhgQgjd067vBXxrj6MPCUb7Z+Z
-         J1x1oj5k1giIMIYGAExqAue+RR4JajZ4ySNQMjsSa5CnsLBQhMX4tQBtL/jP+mGoSdrB
-         fr1yIKZ8WdsSkwO1JR7Qwxn1Lqa+QVCkqFuYYMweIdxFx/KRxSI/+/aSi5QpiCI+ou+v
-         yrsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ2WC0CSVE0yUcUkVbUfdJIJRCBtpd7h+Mky2fqT2RbCsOg7MmBzbqlkFcZvaFdK1Yw+4muUis7OLY6jg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlQOzgLzFVRXmRak3hkuW+ZhRr4ChGqY1yynLtoFDHax7gc2ZV
-	kPsSI39qlxWgUZM9QaWL7Dwpak1TnGcpvXOuU91D4wpYqNLvp6fly3hCO80baKI936CbPi+zaI/
-	8KcOWeKZFhwH/waJtbWopim/V5ZlYi9AUAjiOUrH4r2beZidzzA==
-X-Google-Smtp-Source: AGHT+IEnXPQWMP+Dvcvi+dUp8x3Ks93IzGCACftaRF0ayAabRXNIc0K3QoU6l6e3upA/E3kiCMYfJSgDzYjB+oi7sEs=
-X-Received: by 2002:a05:6512:3ca9:b0:535:6aa9:9868 with SMTP id
- 2adb3069b0e04-53d8408370amr240812e87.19.1730973113190; Thu, 07 Nov 2024
- 01:51:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730973126; x=1731577926;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VEUV28AwOvWa6u7nd82oecUGAe8DexY8QGwvcMosJck=;
+        b=N50RHal6USoG+atxMFeQ4c3c7JnDmfcJN5qOwqU2WZUCyjnqnb4itkz+MP5K914Z4u
+         u7RHfc4CiWv1zMXKDy2yBPn241Xup91yjT/TlveYmSsfzkEQOmUlRCl1LfMeUPrP9Q1Q
+         Vv+o1nfLgFYjCKQkeXDR9uTTslbutudgajWmGNKGiVv11yAQOefQbOmrkP4XwI0K1DNI
+         skphO5ZBKu77lhKIVykzGKc5iK7VuiPLCTG9vyAmhGE9OkDLm+owrQX5t97A8h/eyV6Y
+         VmFZUAXfqwFpYgFviap186j/pbHvoi43mPYK8v0NE6VwEa89JupyiknRPwqb+5ZiUQfn
+         4tlA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Ihuaux3UE8ceJcuRQpAu7QTLpr36XaGKlJbSsW4iKZkY+Xk1d5K9hSmFjUsSevIDE66vtM3CkS7tZz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYBej1a8JbJy1qgkBQd/Nx272+fHB45Z0BX9HdYo/fIPIHMQe0
+	Xlk+1HdpDDYiQtVMTLKxElfBh+htO1r4ZrjVNJKnWvOjyS0Ze6l/n7dMKIm/XHTwadyGWttWmFE
+	A+e+7cilsz0gLZ1uRMQf3ie8OLIOCvRDS7ZO2oqRIhdwLroqbhgNjTuyA39PV1q3FUXS+Dw==
+X-Received: by 2002:a17:907:7b8c:b0:a99:f91e:4abb with SMTP id a640c23a62f3a-a9ee74c45a5mr33910166b.27.1730973125749;
+        Thu, 07 Nov 2024 01:52:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH/D+Goumtn5kexsx3EjigJMrNxwxMpZhpEgJ5ovlt1GNGtnNirFQ2WOtraU1wN/4QnVQoDbQ==
+X-Received: by 2002:a17:907:7b8c:b0:a99:f91e:4abb with SMTP id a640c23a62f3a-a9ee74c45a5mr33907466b.27.1730973125315;
+        Thu, 07 Nov 2024 01:52:05 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc4c6fsm68706766b.132.2024.11.07.01.52.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 01:52:04 -0800 (PST)
+Message-ID: <73f56b53-f02c-49ca-bfc5-67eb51e852b6@redhat.com>
+Date: Thu, 7 Nov 2024 10:52:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241012064333.27269-1-yunfei.dong@mediatek.com> <20241012064333.27269-4-yunfei.dong@mediatek.com>
-In-Reply-To: <20241012064333.27269-4-yunfei.dong@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 7 Nov 2024 17:51:42 +0800
-Message-ID: <CAGXv+5Fc98b_VTYopo38t1O3M1G+pyAzAQzUeu917UFKSRLZaQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] media: mediatek: vcodec: Get SRC buffer from
- bitstream instead of M2M
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
-	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] platform/x86: asus-wmi: Use
+ platform_profile_cycle()
+To: Armin Wolf <W_Armin@gmx.de>, corentin.chary@gmail.com, luke@ljones.dev,
+ mohamed.ghanmi@supcom.tn
+Cc: srinivas.pandruvada@linux.intel.com, ilpo.jarvinen@linux.intel.com,
+ Michael@phoronix.com, casey.g.bowman@intel.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241107003811.615574-1-W_Armin@gmx.de>
+ <20241107003811.615574-3-W_Armin@gmx.de>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241107003811.615574-3-W_Armin@gmx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 12, 2024 at 2:44=E2=80=AFPM Yunfei Dong <yunfei.dong@mediatek.c=
-om> wrote:
->
-> Getting the SRC buffer from M2M will pick a different than the one
-> used for current decode operation when the SRC buffer is removed
-> from ready list.
->
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+Hi,
+
+On 7-Nov-24 1:38 AM, Armin Wolf wrote:
+> Replace throttle_thermal_policy_switch_next() with
+> platform_profile_cycle() to reduce code duplication and avoid a
+> potential race condition with the platform profile handler.
+> 
+> Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
 > ---
->  .../vcodec/decoder/vdec/vdec_av1_req_lat_if.c     | 13 +++++++------
->  .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c     | 15 +++++++--------
->  2 files changed, 14 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1=
-_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av=
-1_req_lat_if.c
-> index 90217cc8e242..a744740ba5f1 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1_req_la=
-t_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1_req_la=
-t_if.c
-> @@ -1062,19 +1062,20 @@ static inline void vdec_av1_slice_vsi_to_remote(s=
-truct vdec_av1_slice_vsi *vsi,
->
->  static int vdec_av1_slice_setup_lat_from_src_buf(struct vdec_av1_slice_i=
-nstance *instance,
->                                                  struct vdec_av1_slice_vs=
-i *vsi,
-> +                                                struct mtk_vcodec_mem *b=
-s,
->                                                  struct vdec_lat_buf *lat=
-_buf)
->  {
-> -       struct vb2_v4l2_buffer *src;
-> +       struct mtk_video_dec_buf *src_buf_info;
->         struct vb2_v4l2_buffer *dst;
->
-> -       src =3D v4l2_m2m_next_src_buf(instance->ctx->m2m_ctx);
-> -       if (!src)
-> +       src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
-ffer);
-> +       if (!src_buf_info)
->                 return -EINVAL;
-
-This doesn't make sense.
-
-First of all, you are getting the container of bs, and
-mtk_video_dec_buf.bs_buffer is at a non-zero offset, so even if bs is NULL,
-container_of(bs, struct mtk_video_dec_buf, bs_buffer) is not going to be
-NULL.
-
-Second, vdec_av1_slice_setup_lat_from_src_buf() is called from
-vdec_av1_slice_setup_lat(), which itself is called from
-vdec_av1_slice_lat_decode(). Earlier in that function, bs is already
-checked. If bs is NULL, it's considered a request to flush the decoder.
-
-The other changes look OK. It's just the check that seems meaningless.
-
->
-> -       lat_buf->vb2_v4l2_src =3D src;
-> +       lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
->
->         dst =3D &lat_buf->ts_info;
-> -       v4l2_m2m_buf_copy_metadata(src, dst, true);
-> +       v4l2_m2m_buf_copy_metadata(lat_buf->vb2_v4l2_src, dst, true);
->         vsi->frame.cur_ts =3D dst->vb2_buf.timestamp;
->
->         return 0;
-> @@ -1724,7 +1725,7 @@ static int vdec_av1_slice_setup_lat(struct vdec_av1=
-_slice_instance *instance,
->         struct vdec_av1_slice_vsi *vsi =3D &pfc->vsi;
->         int ret;
->
-> -       ret =3D vdec_av1_slice_setup_lat_from_src_buf(instance, vsi, lat_=
-buf);
-> +       ret =3D vdec_av1_slice_setup_lat_from_src_buf(instance, vsi, bs, =
-lat_buf);
->         if (ret)
->                 return ret;
->
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9=
-_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp=
-9_req_lat_if.c
-> index 3dceb668ba1c..c50a454ab4f7 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
-t_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
-t_if.c
-> @@ -712,19 +712,18 @@ int vdec_vp9_slice_setup_single_from_src_to_dst(str=
-uct vdec_vp9_slice_instance *
+>  drivers/platform/x86/asus-wmi.c | 24 +-----------------------
+>  1 file changed, 1 insertion(+), 23 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index ce60835d0303..ba8b6d028f9f 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -3755,28 +3755,6 @@ static int throttle_thermal_policy_set_default(struct asus_wmi *asus)
+>  	return throttle_thermal_policy_write(asus);
 >  }
->
->  static int vdec_vp9_slice_setup_lat_from_src_buf(struct vdec_vp9_slice_i=
-nstance *instance,
-> +                                                struct mtk_vcodec_mem *b=
-s,
->                                                  struct vdec_lat_buf *lat=
-_buf)
+> 
+> -static int throttle_thermal_policy_switch_next(struct asus_wmi *asus)
+> -{
+> -	u8 new_mode = asus->throttle_thermal_policy_mode + 1;
+> -	int err;
+> -
+> -	if (new_mode > PLATFORM_PROFILE_MAX)
+> -		new_mode = ASUS_THROTTLE_THERMAL_POLICY_DEFAULT;
+> -
+> -	asus->throttle_thermal_policy_mode = new_mode;
+> -	err = throttle_thermal_policy_write(asus);
+> -	if (err)
+> -		return err;
+> -
+> -	/*
+> -	 * Ensure that platform_profile updates userspace with the change to ensure
+> -	 * that platform_profile and throttle_thermal_policy_mode are in sync.
+> -	 */
+> -	platform_profile_notify();
+> -
+> -	return 0;
+> -}
+> -
+>  static ssize_t throttle_thermal_policy_show(struct device *dev,
+>  				   struct device_attribute *attr, char *buf)
 >  {
-> -       struct vb2_v4l2_buffer *src;
-> -       struct vb2_v4l2_buffer *dst;
-> +       struct mtk_video_dec_buf *src_buf_info;
->
-> -       src =3D v4l2_m2m_next_src_buf(instance->ctx->m2m_ctx);
-> -       if (!src)
-> +       src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
-ffer);
-> +       if (!src_buf_info)
->                 return -EINVAL;
-
-Same thing here.
-
-> -       lat_buf->vb2_v4l2_src =3D src;
-> +       lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
->
-> -       dst =3D &lat_buf->ts_info;
-> -       v4l2_m2m_buf_copy_metadata(src, dst, true);
-> +       v4l2_m2m_buf_copy_metadata(lat_buf->vb2_v4l2_src, &lat_buf->ts_in=
-fo, true);
->         return 0;
->  }
->
-> @@ -1154,7 +1153,7 @@ static int vdec_vp9_slice_setup_lat(struct vdec_vp9=
-_slice_instance *instance,
->         struct vdec_vp9_slice_vsi *vsi =3D &pfc->vsi;
->         int ret;
->
-> -       ret =3D vdec_vp9_slice_setup_lat_from_src_buf(instance, lat_buf);
-> +       ret =3D vdec_vp9_slice_setup_lat_from_src_buf(instance, bs, lat_b=
-uf);
->         if (ret)
->                 goto err;
->
+> @@ -4301,7 +4279,7 @@ static void asus_wmi_handle_event_code(int code, struct asus_wmi *asus)
+>  		if (asus->fan_boost_mode_available)
+>  			fan_boost_mode_switch_next(asus);
+>  		if (asus->throttle_thermal_policy_dev)
+> -			throttle_thermal_policy_switch_next(asus);
+> +			platform_profile_cycle();
+>  		return;
+> 
+>  	}
 > --
-> 2.46.0
->
->
+> 2.39.5
+> 
+
 
