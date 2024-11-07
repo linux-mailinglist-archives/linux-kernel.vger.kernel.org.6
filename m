@@ -1,132 +1,99 @@
-Return-Path: <linux-kernel+bounces-400040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE379C0825
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:51:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CE79C081A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90652283906
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F2D7B222A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18113212D04;
-	Thu,  7 Nov 2024 13:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6649621262F;
+	Thu,  7 Nov 2024 13:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="UL9C46wI"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dWYuPazp"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A583212649;
-	Thu,  7 Nov 2024 13:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF70212D0E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987491; cv=none; b=nKQ6yz5jYMevNac8AEQTWv7BuuTHdp9sElDUY3KoMWFG9wZXBIijIBgiE32rYoNqNvLtVqu5dHXRvzfhzW5pgMyBsfn5L3eLGP5MKWjWDkNmdgxF0KNQQHXq4V7HZLbKBcXDqTK/bH4FZJp1elBDoTMbMfZFG4t+1kLm2NHo+ZI=
+	t=1730987478; cv=none; b=GDtby06zDp9mEYT9kufzvrNlT5Yp55plfqhTDf95wV8Qyf31UvVQftTY2kpyrXW4tj5eVA50qeZf2RvOUXo5Rig3cxGvBYyd7MExUyDIl1nZeaeCzgad36q99f1QLVMrSybj4u+T66bVBuyTqd1d00t+wonx4wlkQMnbaBJB1Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987491; c=relaxed/simple;
-	bh=zTRFksBbsZzucVoizkgeACRdDVFfkWx96qifjGvnPlM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pp9HgXCgeWlXbNy34fso9WfD5q5DGxh3kccDFPlmxDS5kOTvimC8rAueR0NFzqiO3BOgIEepj4Oqs3S2i3FgsWxGDjoRu+C2iIVByX7IFfzGgqImEx8HmYo1qIqp5CYp+pUQGCUKCYPnSGwBrcSfCYJUzv8UkzY5mhiaToUuC7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=UL9C46wI; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HX5GOJc4ky/+VuvmS4Zsp8lqZ9shMfpMhaTLW2ZnQSg=; b=UL9C46wIqeoRxhjiykWkxyJJxP
-	LxD3vx0burgeau+IFu4BtQ1bd4iQaUyO8wGDlQFjSSzjVim1OAyTgxSELRPGo8NRGhfsf9CjlP9N3
-	HZTKi77yo+zIhDj1Fs+nyPuU3dJSBv53oWw85C7IQpdGW8nNn4/cUfpr347PIVIKysgAkAn8oUyuK
-	Hctki9lGI0O4ZDVyFcaMj6PkPZrhXzkcqblrCpgJ74TIT4fuuiap/C/FQxWP4HkbUq7YQae/QqSKN
-	PeMmvMI4MJH0LmDVpHAvSu/9Jl/cXF/ipe+/DuG8tzexcAe7/T3M8DSjsk+1OcFjFznnygLIABiM+
-	ihKq9SpQ==;
-Received: from i53875b28.versanet.de ([83.135.91.40] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t92ua-0006Xa-JT; Thu, 07 Nov 2024 14:51:00 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: lee@kernel.org, jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
- srinivas.pandruvada@linux.intel.com, bentiss@kernel.org,
- dmitry.torokhov@gmail.com, pavel@ucw.cz, ukleinek@debian.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, stable@vger.kernel.org
-Subject:
- Re: [PATCH v9 1/9] HID: hid-sensor-hub: don't use stale platform-data on
- remove
-Date: Thu, 07 Nov 2024 14:50:59 +0100
-Message-ID: <4934964.GXAFRqVoOG@diego>
-In-Reply-To: <nycvar.YFH.7.76.2411071358210.20286@cbobk.fhfr.pm>
-References:
- <20241107114712.538976-1-heiko@sntech.de>
- <20241107114712.538976-2-heiko@sntech.de>
- <nycvar.YFH.7.76.2411071358210.20286@cbobk.fhfr.pm>
+	s=arc-20240116; t=1730987478; c=relaxed/simple;
+	bh=NcVjILp/caZepFFB60+3XLNmk+XNW05BoJNj51Dg95o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6BXCPnnVrH2eM7r2LWSu11zKOM01qtDglPuBeqKqihnSgzFRG1vYUgoPeWIcr+Z3Bso8SYraO48iu5CgTJ7kg7lIql4zWXbTCChtfBmz3cUnfAUFC6+Hdt5BmndU5MMPlFS7NP5WnoZ/c++YHeiZX5gZ0lpivMWsKPUQZHZCIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dWYuPazp; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so8995381fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:51:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730987474; x=1731592274; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NcVjILp/caZepFFB60+3XLNmk+XNW05BoJNj51Dg95o=;
+        b=dWYuPazp9WM/9vSSOM4D3EsSjWlJhI0SMs7FoOP5jm9yR4CWngxyCWOwYzy7RcP+X0
+         QUipNMMuUFOq73NTu7IrUOa9gXvShW91Y99VNupmDZ6GX0DCRGUA6F6H4iIClU+soubf
+         B+tJYfjToPeIvtqaoETJuO2xOQl6vaVxFtbwnrpwJo5lSTcmimu6F1zJRmDn+521mJUY
+         A1KxpZ3A860jwm5j0ZzE3OlDlftdswJfEUTU6cpwOolZbhujR0GBMiStNEYXNCPPX7Ok
+         K4IMqkSCOUTGwoWvayYcX0c1CUsKNYjO/ekW55yY9HLT1jb9XkSo0gRGjzr5LfzEogAF
+         2fvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730987474; x=1731592274;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NcVjILp/caZepFFB60+3XLNmk+XNW05BoJNj51Dg95o=;
+        b=PuOQB9b67FgNCMSp5PodRqD28OZN90j0Y6Of0xRulrKfQUwryDg72Fk1yBuAPfZ/KT
+         7m+TA4A8UMQiqBSZ2cKMxZsMyh+Mqy7xMTfRV3VaCxl+5YKyHMf//ehctnbyxlYq29H2
+         P0PlcutLYoOj44xT4HK4yci9YewasP5zpV+R2LSjqSY3OccQ+taHE/fnR2qj5+B0iA/K
+         aN/N7SGLs76SF2Zv0DpNkBM6A/cQ6lsYnLY6ENLtC9CH7t7VgVQt+fvMo2E7ocrLZc7c
+         CBo1QbqNTeiYHV8M6pQIAQicOpanaQq1urLVZdf8EDW70i3Kk3dSzvdlOWNlCRkIg+tF
+         wr+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXLvH3dYrumHnBvw9knMAWlZffL5Vtphj0MjUVR+Vf3Kc5rvFxG+CSfhgwvwQFjAwrjrJgU6lwCvSlGNno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaWXa7iEloDHLCM2um5NMYbvqPzxblpiH9FWHQCG3JJ+ebmiXm
+	Tc+jf1ufr2lbDSPhP+oY3to1UXea+N80mzXB1I86VXS1tHfSCcwmCI4QOvESPvIZ/3dHDl7FpJ3
+	7TiiUUEAR1RIdTngiVZN2jp9jPh1g0Ije5dBYAw==
+X-Google-Smtp-Source: AGHT+IGiWq7PtiVgzCFFWXw5DpnT7owotNtkDOgrZOKmEF+j8eLRrqW6X8/sDWUO8xLANvzfCAOHbn0yaa5j804ukJc=
+X-Received: by 2002:a05:651c:1596:b0:2fc:ba7a:c97a with SMTP id
+ 38308e7fff4ca-2fedb83155emr127846251fa.39.1730987473829; Thu, 07 Nov 2024
+ 05:51:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20241014-armv7-cacheinfo-v2-0-38ab76d2b7fa@linaro.org> <20241014-armv7-cacheinfo-v2-1-38ab76d2b7fa@linaro.org>
+In-Reply-To: <20241014-armv7-cacheinfo-v2-1-38ab76d2b7fa@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 7 Nov 2024 14:51:02 +0100
+Message-ID: <CACRpkdZ8--4fKxT6+AbYSvTbA7-7EM_HutNVPT7yS90NN1r5nw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ARM: add CLIDR accessor functions
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+On Mon, Oct 14, 2024 at 3:55=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
 
-Am Donnerstag, 7. November 2024, 13:59:04 CET schrieb Jiri Kosina:
-> On Thu, 7 Nov 2024, Heiko Stuebner wrote:
-> 
-> > The hid-sensor-hub creates the individual device structs and transfers them
-> > to the created mfd platform-devices via the platform_data in the mfd_cell.
-> > 
-> > Before e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous reads")
-> > the sensor-hub was managing access centrally, with one "completion" in the
-> > hub's data structure, which needed to be finished on removal at the latest.
-> > 
-> > The mentioned commit then moved this central management to each hid sensor
-> > device, resulting on a completion in each struct hid_sensor_hub_device.
-> > The remove procedure was adapted to go through all sensor devices and
-> > finish any pending "completion".
-> > 
-> > What this didn't take into account was, platform_device_add_data() that is
-> > used by mfd_add{_hotplug}_devices() does a kmemdup on the submitted
-> > platform-data. So the data the platform-device gets is a copy of the
-> > original data, meaning that the device worked on a different completion
-> > than what sensor_hub_remove() currently wants to access.
-> > 
-> > To fix that, use device_for_each_child() to go through each child-device
-> > similar to how mfd_remove_devices() unregisters the devices later and
-> > with that get the live platform_data to finalize the correct completion.
-> > 
-> > Fixes: e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous reads")
-> > Cc: stable@vger.kernel.org
-> > Acked-by: Benjamin Tissoires <bentiss@kernel.org>
-> > Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> 
-> Acked-by: Jiri Kosina <jkosina@suse.com>
-> 
-> Are you planning to merge this together with the rest of the set, or do 
-> you want me to expedite it? I'll be happy to apply it separately as a 
-> proper fix.
+> Add functions to read the CLIDR, Cache Level ID Register.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-This change was more or less a surprise find, because I wanted to make
-the platform_data pointer in the mfd_cell struct const and this the hid
-sensor hub stood out as doing something strange ;-) .
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-So patch 2 of this series actually depends on this change to not cause
-build errors.
-
-But seeing that we're after -rc6 alredy, I would assume the brunt of the
-mcu series might need to wait after 6.13-rc1 anyway - but I guess that
-depends on how Lee sees things ;-) .
-
-
-Heiko
-
-
+Yours,
+Linus Walleij
 
