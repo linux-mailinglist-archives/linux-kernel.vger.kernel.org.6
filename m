@@ -1,160 +1,163 @@
-Return-Path: <linux-kernel+bounces-399486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2277B9BFFAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:06:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E249BFFB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 544C01C21A6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:06:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A18DB22DC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFDC199FBB;
-	Thu,  7 Nov 2024 08:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEE41DE2D4;
+	Thu,  7 Nov 2024 08:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nOENropn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QeF9c7or"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5A51DB372;
-	Thu,  7 Nov 2024 08:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF031D1E64;
+	Thu,  7 Nov 2024 08:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730966725; cv=none; b=OR7gMfRodkU41jv8UrWOWzXkjNNNn0spRiCY7T7nCGlQj3IM0YtlDCO/1KkgtfSv9gCSQMsoYEdg1bnbZzApFXwkOO7VG83nmi9EvqTV4MFei3DvJjJf/PU4F9ZkSdhrM7StE/fa5fnrBqnBaxGK0OhKAVVH0xmB35MaJT8NCuU=
+	t=1730966731; cv=none; b=H/2otNpPwCh0wCwM8pKFnOjUHI/uwkdzDc4bDPEDVqLU/jw/3rTlRiQfkIzlR3CNu4T7hI+SS9ByTLidrEiTquBYDUnjVU/EcXuTRl6ybBsgYtHKwCX1i3mk2U6RoEmapoCQUjak2LPMWRdcbKGpV9exqAhaGpm5mAmjJWX2yo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730966725; c=relaxed/simple;
-	bh=+Qv4Z6158Iv+7BItSSfBSo/w9yMs1NxgL3uRJbM2cjc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=HcAxrCdtB9RIiSuKIDKhVNPcnHEbPLNhUG1BtCyPBaqWcGao9BVMBwd9x8pAVunKLYGYE3oLJb6UWD1VQU0HSYRGNfHBnU8dHh3shKYGI+g45bypPq9wo0HjRE7nFfKZ2HfrxENUBTSrb5X9rPXo94xa1RXhfct8Quq4VYEg6as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nOENropn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A71HEOr005306;
-	Thu, 7 Nov 2024 08:05:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=MNn9gnfQccnQWE3qEzReoQ4ozshVH41Oucj/8xiR6Lc=; b=nO
-	ENropnDKqLHTrBHMAZCNnWViyfAo5E1a/k72vD+BCmq9IOMYawtUMchOuRwNUC/R
-	HdxgHZiyZpMaijq08wZ5c6hVNTgdQkOUpKNAE7ZuoXoZJUsnJMcazWAdEoJo/MTn
-	P6hZ4CcA2M32mnXag/5fjfn9vGES8/iLtfSZUnfmd5jATwouQkiDHAyJftgf/G1p
-	Tf+tfV4CyflFvLCKiUXNajvRTZlMNXOpBM/WUEZKKh0hs7RaBCMUqpLWGCmMwgNw
-	akcP56rLv+Y7QKOD7XN6/YEq4cDSKCqwLfKJqVw1ZtmpjvP1BhWj00K8nsv8fsOW
-	YE93ojAWREWSL40W71Cg==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qvg3vf9j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 08:05:20 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A785G1d004533;
-	Thu, 7 Nov 2024 08:05:16 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 42nd5mu5nw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 07 Nov 2024 08:05:16 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A785DfI004498;
-	Thu, 7 Nov 2024 08:05:15 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-sartgarg-hyd.qualcomm.com [10.213.105.147])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 4A785FUa004527;
-	Thu, 07 Nov 2024 08:05:15 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2339771)
-	id E2F105013D2; Thu,  7 Nov 2024 13:35:14 +0530 (+0530)
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
-        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
-        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com,
-        quic_narepall@quicinc.com, kernel@quicinc.com,
-        Sarthak Garg <quic_sartgarg@quicinc.com>
-Subject: [PATCH V1 3/3] mmc: sdhci-msm: Limit HS mode frequency to 37.5MHz
-Date: Thu,  7 Nov 2024 13:35:05 +0530
-Message-Id: <20241107080505.29244-4-quic_sartgarg@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241107080505.29244-1-quic_sartgarg@quicinc.com>
-References: <20241107080505.29244-1-quic_sartgarg@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LkANyD9lYgCDZA9MYRePx1y3Fhq-FenZ
-X-Proofpoint-GUID: LkANyD9lYgCDZA9MYRePx1y3Fhq-FenZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
- suspectscore=0 bulkscore=0 phishscore=0 adultscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070060
+	s=arc-20240116; t=1730966731; c=relaxed/simple;
+	bh=ijQGLShwBSYLLvUxnqStEBbxxKosoO9akZv2TZgOhm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QlN2eV9LYYLz+qmgehyv9ezqptLQYDmjs/LOshp22GnNyLJgWoRthpVdC4i/Y+qOtB0z6LlUkgdgz1Sb57QqDiIoMmKtIzOLwI2sus6pkLKrH39PZAh75v57W3fO9c0PY/wzK4UOWshrR1kayFczjOs6JK5TZrQw5cTTB6WzPc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QeF9c7or; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730966730; x=1762502730;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ijQGLShwBSYLLvUxnqStEBbxxKosoO9akZv2TZgOhm8=;
+  b=QeF9c7orDp5Fyv0cvEbuI4hz23+6YBB4ZLmLAQNpDciC1IXSIHEk8p7w
+   nTWRq3wMLkU3n/XNR260OQPHcKb3pgJEt0PpsxF1tn047WmUkCKl4BmT6
+   P1CS1BrpgDZzPZzSuZ78BoBzjMYwsFlaThsZ6+HDir0hoUHPYYrldynbU
+   z09XLTKEpxWR/mwGDbP8LwHw6L/hMvNaflh4NQQPPsdjyRzU6RtPGoTFk
+   lsENwIifcrONmJjRlS5WVbQWPPZRXuHZt7hrW/aXwMxd/y27ybLIwIU6r
+   90OW0M1odrBdzd4UOuu+3PgumjkdAd1suid8wchE/z2+qPKMSqi5D631z
+   A==;
+X-CSE-ConnectionGUID: ay1I34sZSqWycgBsOuIMjg==
+X-CSE-MsgGUID: zU1ciVjCRB+GkPNZc77APw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="34721893"
+X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
+   d="scan'208";a="34721893"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 00:05:29 -0800
+X-CSE-ConnectionGUID: wqVESQ92SL+6HCg6lj+7Zg==
+X-CSE-MsgGUID: KD/u0kr5TeWTurn3071+qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
+   d="scan'208";a="85320413"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 00:05:25 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t8xW6-0000000CB9y-3n1y;
+	Thu, 07 Nov 2024 10:05:22 +0200
+Date: Thu, 7 Nov 2024 10:05:22 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"Sabau, Radu bogdan" <Radu.Sabau@analog.com>,
+	Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): Support adp1051 and adp1055
+Message-ID: <Zyx0wqJnOwGfto_F@smile.fi.intel.com>
+References: <20241106090311.17536-1-alexisczezar.torreno@analog.com>
+ <20241106090311.17536-3-alexisczezar.torreno@analog.com>
+ <ZytSCD0dViGp-l2b@smile.fi.intel.com>
+ <55825e91-b111-4689-bb3e-ede2c241728d@roeck-us.net>
+ <ZyuSzPXnxRYG4Gk3@smile.fi.intel.com>
+ <PH0PR03MB6351F678D8FDC9C28174E9EBF15C2@PH0PR03MB6351.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH0PR03MB6351F678D8FDC9C28174E9EBF15C2@PH0PR03MB6351.namprd03.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-For Qualcomm SoCs with level shifter delays are seen on receivers data
-path due to latency added by level shifter.
+On Thu, Nov 07, 2024 at 01:17:04AM +0000, Torreno, Alexis Czezar wrote:
+> > -----Original Message-----
+> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Sent: Thursday, November 7, 2024 12:01 AM
+> > On Wed, Nov 06, 2024 at 07:55:30AM -0800, Guenter Roeck wrote:
+> > > On 11/6/24 03:24, Andy Shevchenko wrote:
+> > > > On Wed, Nov 06, 2024 at 05:03:11PM +0800, Alexis Cezar Torreno wrote:
 
-To bring these delays in normal range and avoid CMD CRC errors
-reduce frequency for HS mode SD cards to 37.5MHz for targets which has
-level shifter.
+...
 
-Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
----
- drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> > > Is that an official tag ? Frankly, if so, I think it is quite useless
+> > > in the patch description because datasheet locations keep changing.
+> > > I think it is much better to provide a link in the driver documentation.
+> > 
+> > I believe it's semi-official, meaning that people use it from time to time.
+> > I'm fine with the Link in the documentation. Actually with any solution that
+> > saves the respective link in the kernel source tree (either in form of commit
+> > message or documentation / comments in the code).
+> 
+> Will add the blank line after description. 
+> Am I right to understand that we leave this as is? No need to add driver link
+> in patch description since it is in driver documentation?
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 16325c21de52..5e1dc06c4707 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -138,6 +138,8 @@
- /* Max load for eMMC Vdd-io supply */
- #define MMC_VQMMC_MAX_LOAD_UA	325000
- 
-+#define LEVEL_SHIFTER_HIGH_SPEED_FREQ	37500000
-+
- #define msm_host_readl(msm_host, host, offset) \
- 	msm_host->var_ops->msm_readl_relaxed(host, offset)
- 
-@@ -287,6 +289,7 @@ struct sdhci_msm_host {
- 	bool use_cdr;
- 	u32 transfer_mode;
- 	bool updated_ddr_cfg;
-+	bool uses_level_shifter;
- 	bool uses_tassadar_dll;
- 	u32 dll_config;
- 	u32 ddr_config;
-@@ -366,6 +369,11 @@ static void msm_set_clock_rate_for_bus_mode(struct sdhci_host *host,
- 
- 	mult = msm_get_clock_mult_for_bus_mode(host);
- 	desired_rate = clock * mult;
-+
-+	if (curr_ios.timing == MMC_TIMING_SD_HS && desired_rate == 50000000
-+		&& msm_host->uses_level_shifter)
-+		desired_rate = LEVEL_SHIFTER_HIGH_SPEED_FREQ;
-+
- 	rc = dev_pm_opp_set_rate(mmc_dev(host->mmc), desired_rate);
- 	if (rc) {
- 		pr_err("%s: Failed to set clock at rate %u at timing %d\n",
-@@ -2372,6 +2380,8 @@ static inline void sdhci_msm_get_of_property(struct platform_device *pdev,
- 
- 	of_property_read_u32(node, "qcom,dll-config", &msm_host->dll_config);
- 
-+	msm_host->uses_level_shifter = of_property_read_bool(node, "qcom,use-level-shifter");
-+
- 	if (of_device_is_compatible(node, "qcom,msm8916-sdhci"))
- 		host->quirks2 |= SDHCI_QUIRK2_BROKEN_64_BIT_DMA;
- }
+Add it to the documentation.
+
+...
+
+> > > > > +static struct pmbus_driver_info adp1055_info = {
+> > > > > +	.pages = 1,
+> > > > > +	.format[PSC_VOLTAGE_IN] = linear,
+> > > > > +	.format[PSC_VOLTAGE_OUT] = linear,
+> > > > > +	.format[PSC_CURRENT_IN] = linear,
+> > > > > +	.format[PSC_TEMPERATURE] = linear,
+> > > > > +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN |
+> > PMBUS_HAVE_VOUT
+> > > > > +		   | PMBUS_HAVE_IOUT | PMBUS_HAVE_TEMP2 |
+> > PMBUS_HAVE_TEMP3
+> > > > > +		   | PMBUS_HAVE_POUT | PMBUS_HAVE_STATUS_VOUT
+> > > > > +		   | PMBUS_HAVE_STATUS_IOUT |
+> > PMBUS_HAVE_STATUS_INPUT
+> > > > > +		   | PMBUS_HAVE_STATUS_TEMP,
+> > > >
+> > > > Ditto.
+> > >
+> > > That one slipped through with the original driver submission.
+> > > I thought that checkpatch complains about that, but it turns out that
+> > > it doesn't. I agree, though, that the usual style should be used.
+> > 
+> > Oh, okay, that's up to you then.
+
+> I based my code style on the original, but I agree that the usual style
+> should be followed.  
+
+> I will change it to follow the usual style.
+
+No, please be consistent with the existing style. If you want to change it,
+add an additional patch to do that for the _existing_ code first and base your
+patch on top of that.
+
+> Should I leave the original untouched or should I format it too?
+
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
 
