@@ -1,134 +1,153 @@
-Return-Path: <linux-kernel+bounces-399320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D6B9BFD69
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:40:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA98F9BFD6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224671C2164A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:40:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779EA282C3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAD118E35D;
-	Thu,  7 Nov 2024 04:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8B018E35D;
+	Thu,  7 Nov 2024 04:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XkS3s5av"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PvFPJMiV"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C6916F84F;
-	Thu,  7 Nov 2024 04:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D461C16F84F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730954416; cv=none; b=X4h28LXMP2zNlHVCcfiYsSrsYGyIYJzFRH7hSlOsvRa77DHCyBzvqw2cFzS7aluCo4qndmQTr3V2LIUYclQayV9xRrJ8+exwfMcsVrFVNuxUkZPm8P1zricG8q9T2F7RQPtN6mdawAmcU76yWBmnWe5591HdQg1XFoGPCnrMUw8=
+	t=1730954429; cv=none; b=d0V+o+d9iti3riBzSGdUzk0mYbSJQXLu6LUG9YcfHkkUq+Tq1okYAD8NMWNxR5iaBfzyZm995SGvQavvVusQN0TWWoWNerIuaTzxz5GsAoWSxqY+RcxWpQEM94HqU27eqbUaypTil9wYRz14BoqPi79HQar05w4B9RLo01THrb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730954416; c=relaxed/simple;
-	bh=BfAEohdM0vDwKb9sgDnbFHLUvNH+sE4GWLdTjMmb2p8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kzVsv4JybyAyVnKcgH1SfMwUrKP3kBDEK8GT8OauNUZWMSRT+wCxl7foABN2HF96z1o1sPfzKnI45kmWoSEYMeQyz38DAEFsq7LiEUfFzzQIYzDwoS0H8A80+Ufwt2mJVtxh7YI8rU8bIDrg1OiXiPQQGllVj5ptXf9f2Biopik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XkS3s5av; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A74duqZ038732;
-	Wed, 6 Nov 2024 22:39:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730954396;
-	bh=Smefj2JoEA0WPG52LM77apkAI/T2PGFdONYOL+motPc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=XkS3s5aviT4YQUW9oziQzJW6u7Bro4/lKQu+nhITyJ3FWeMMBgKHPdiCvf3XfYk0F
-	 OG92pn/kgYNHmm3ixrduzFui++aQrBOqt4o6ehwYFFtnnd4pPrvvd7ZUi4W28gXSp/
-	 onx1CA9J309HF8s+B05TVJjqb/atwEU5K2hvIHTY=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A74duqG023536
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 6 Nov 2024 22:39:56 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 6
- Nov 2024 22:39:55 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 6 Nov 2024 22:39:55 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A74dsnc005772;
-	Wed, 6 Nov 2024 22:39:55 -0600
-Date: Thu, 7 Nov 2024 10:09:54 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-CC: Bjorn Helgaas <helgaas@kernel.org>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>,
-        <manivannan.sadhasivam@linaro.org>, <kishon@kernel.org>,
-        <u.kleine-koenig@pengutronix.de>, <cassel@kernel.org>,
-        <dlemoal@kernel.org>, <yoshihiro.shimoda.uh@renesas.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
- "ti,keystone-pcie" compatible
-Message-ID: <4fc87e39-ae2f-4ac9-ace3-26b2b79e2297@ti.com>
-References: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
- <20241106154945.GA1526156@bhelgaas>
- <20241106160520.GD2745640@rocinante>
+	s=arc-20240116; t=1730954429; c=relaxed/simple;
+	bh=C8T98Sa2leDE2aVBOiD4LYqi1ctZER7DeoVbj0OUT30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cze+R2W8MTx0TkPHw+QpGNDQPeL+WfRQdLNIfyl3jbxWVB+bZni1DqdUJB++AQgtYdKHNuQQ4ofq6+Ra6tAc28YvhmR3yUtZ3npoJT81IuABvic+DlopoffAFamzhn0HfSql660zT31Ak4rt/ACsLGdCwPFMANuAdHhnaTNSJF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PvFPJMiV; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f7606199so423400e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 20:40:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730954426; x=1731559226; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kS3PhzgV8hPWd3Nz2X4ljMHj7vMg0QaN6Lo6Vk67xTw=;
+        b=PvFPJMiVJrkV09j9H1MGmKBOzCmaX7ra8RLYOpaOfG3SaruL4LfoUd2vIz9gLbhj4P
+         L6jTbu+eKPvUAXnVNszwz4XACU3OHBBPU7hhphAWYvql9xksdtfXuz9crvpwZyWTfSzq
+         VVLnz+qAYASc98vsJNtx1W6g0WgYR5WFvozGvppBNnK36MyK4OLdiYJxdF+P2+WfXq5A
+         SBEjsqN1yA59U8J2IlPQ8QFb9w3rTjciJwpEGBGnIaKGjcVy0X2u5sJLTkKkwqZv5xkp
+         ZC9UJis0TxDC8DZ50wqPe6gxqDGAYJSWCA1c7T+dFgLuKWoWKdyssY2FhHR54qi65nCk
+         dclg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730954426; x=1731559226;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kS3PhzgV8hPWd3Nz2X4ljMHj7vMg0QaN6Lo6Vk67xTw=;
+        b=C341FSSLuYpNgn3CTxUUNPJnTAPG6Im+iHeYERl+eQevgvqdV83RaqAwuGs0Fzmzs9
+         6igtHmeQHgbXCV8Iq5hDRdruOwz6Kn1B6G9MgiNfO5pqY5d59JT29/GKzzB1KtkFk/Mn
+         g8CmNqH7XD9kKM+falhCMnYDlCXYM6R4kb2FIAsqUFClnxsdLrpT2tRsHGMOsaTUEuJ7
+         QfI1lwPmClM58wPwOnexgXQw+eYD1lv4e3ofD5uyRcpScKcgvebytXmEM/pkkygRHJQM
+         tMdLpIoy2x6NMXyyvxBgqdmf5YT2B+Oa1prW2qqF/AdSmmiZGcYjGcFvU131WSRyOgkG
+         4J6g==
+X-Forwarded-Encrypted: i=1; AJvYcCX7t59yhnTEQ2CUWHW+ogB8SdhRNbRdCO0McoVk5i06wCYSk/V41DNpgoyEetxrKbMteOxa2Z6zrmG9yKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt2nLw4UITE9lwxWjv0AwHz9cxyemrGf6WJxdzyvDCyQZYuyXZ
+	tWw5t4x9zIxtDUrbH3n1V5CaEnrpj9E290+1cqd4hh0fsLyX/p1zigNQ+X0AHdgyuB0JXgy9lqS
+	Fr2Sk+BuSQYEmLNXNBra+zUI1e5VxoBdawXoaew==
+X-Google-Smtp-Source: AGHT+IE6mu02yFj3cbKRiS8rNaWfTch6NvNc8XHMgEPjm27a3mfwdePPbwFloVV4AAmL3acydHk3/qanmVOZP5ve+pE=
+X-Received: by 2002:a05:6512:110e:b0:539:f2f6:c70f with SMTP id
+ 2adb3069b0e04-53d828e3da4mr206716e87.8.1730954425978; Wed, 06 Nov 2024
+ 20:40:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106160520.GD2745640@rocinante>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241028113209.123-1-zhangfei.gao@linaro.org> <CABQgh9H9HWaKRP=rFvXf90PjfVP1M6YpwfLcYTZH1hWET6GPsw@mail.gmail.com>
+ <20241106135944.GP458827@nvidia.com> <fcef9cb1-797a-496a-9ef5-1e2f530dc8f6@linux.intel.com>
+In-Reply-To: <fcef9cb1-797a-496a-9ef5-1e2f530dc8f6@linux.intel.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Thu, 7 Nov 2024 04:40:15 +0000
+Message-ID: <CABQgh9E=AKgN=QqewH+HPyHEk8bYzABnEuj3UiWwpHMYUNFrhg@mail.gmail.com>
+Subject: Re: [PATCH] iommufd: modify iommufd_fault_iopf_enable limitation
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	jean-philippe <jean-philippe@linaro.org>, shamiali2008@gmail.com, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 07, 2024 at 01:05:20AM +0900, Krzysztof Wilczyński wrote:
+On Thu, 7 Nov 2024 at 01:52, Baolu Lu <baolu.lu@linux.intel.com> wrote:
+>
+> On 11/6/24 21:59, Jason Gunthorpe wrote:
+> > On Wed, Nov 06, 2024 at 05:47:09AM +0000, Zhangfei Gao wrote:
+> >> On Mon, 28 Oct 2024 at 11:32, Zhangfei Gao<zhangfei.gao@linaro.org> wrote:
+> >>> iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
+> >>> because the PRI might be a shared resource and current iommu
+> >>> subsystem is not ready to support enabling/disabling PRI on a VF
+> >>> without any impact on others.
+> >>>
+> >>> However, we have devices that appear as PCI but are actually on the
+> >>> AMBA bus. These fake PCI devices have PASID capability, support
+> >>> stall as well as SRIOV, so remove the limitation for these devices.
+> >>>
+> >>> Signed-off-by: Zhangfei Gao<zhangfei.gao@linaro.org>
+> >>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+> >>> ---
+> >>>   drivers/iommu/iommufd/fault.c | 9 +++++++--
+> >>>   1 file changed, 7 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
+> >>> index bca956d496bd..8b3e34250dae 100644
+> >>> --- a/drivers/iommu/iommufd/fault.c
+> >>> +++ b/drivers/iommu/iommufd/fault.c
+> >>> @@ -10,6 +10,7 @@
+> >>>   #include <linux/module.h>
+> >>>   #include <linux/mutex.h>
+> >>>   #include <linux/pci.h>
+> >>> +#include <linux/pci-ats.h>
+> >>>   #include <linux/poll.h>
+> >>>   #include <uapi/linux/iommufd.h>
+> >>>
+> >>> @@ -27,8 +28,12 @@ static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
+> >>>           * resource between PF and VFs. There is no coordination for this
+> >>>           * shared capability. This waits for a vPRI reset to recover.
+> >>>           */
+> >>> -       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
+> >>> -               return -EINVAL;
+> >>> +       if (dev_is_pci(dev)) {
+> >>> +               struct pci_dev *pdev = to_pci_dev(dev);
+> >>> +
+> >>> +               if (pdev->is_virtfn && pci_pri_supported(pdev))
+> >>> +                       return -EINVAL;
+> >>> +       }
+> >>>
+> >>>          mutex_lock(&idev->iopf_lock);
+> >>>          /* Device iopf has already been on. */
+> >>>
+> >> Hi, Jason
+> >>
+> >> Would you mind also taking a look at this.
+> > Lu? Are you OK with this?
+>
+> This change looks good to me. But the s-o-b chain would make more sense
+> if we can make it like this,
+>
+> Co-developed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Zhangfei Gao<zhangfei.gao@linaro.org>
+>
+> With this addressed,
+>
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-Hello Krzysztof,
+Thanks Baolu,
+Have fixed it.
 
-> Hello,
-> 
-> [...]
-> > > I suppose that "data->mode" will default to zero for v3.65a prior to
-> > > this commit, corresponding to "DW_PCIE_UNKNOWN_TYPE" rather than the
-> > > correct value of "DW_PCIE_RC_TYPE". Since I don't have an SoC with the
-> > > v3.65a version of the controller, I cannot test it out, but I presume
-> > > that the "INVALID device type 0" error will be displayed. Though the probe
-> > > will not fail since the "default" case doesn't return an error code, the
-> > > controller probably will not be functional as the configuration associated
-> > > with the "DW_PCIE_RC_TYPE" case has been skipped. Hence, I believe that
-> > > this fix should be backported.
-> > 
-> > I guess nobody really cares too much since it's been broken for almost
-> > four years.
-> > 
-> > But indeed, sounds like it should have a stable tag and maybe a commit
-> > log hint about what the failure looks like.
-> 
-> Added Cc for stable releases.  Siddharth, let me know how to update the
-> commit log per Bjorn feedback, so I can do it directly on the branch.
-
-The existing commit message could be replaced by the following:
-
-------------------------------------------------------------------------
-commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
-Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
-device data ("struct ks_pcie_of_data"). However it failed to set the mode
-for "ti,keystone-pcie" compatible.
-
-Since the mode defaults to "DW_PCIE_UNKNOWN_TYPE", the following error
-message is displayed:
-	"INVALID device type 0"
-for the v3.65a controller. Despite the driver probing successfully, the
-controller may not be functional in the Root Complex mode of operation.
-
-So, set the mode as Root Complex for "ti,keystone-pcie" compatible to fix
-this.
-------------------------------------------------------------------------
-
-Regards,
-Siddharth.
+Thanks
 
