@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-399229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089769BFC59
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:08:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28CC9BFC5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B974A288CA3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F8611C2289F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A0E18039;
-	Thu,  7 Nov 2024 02:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244C54EB51;
+	Thu,  7 Nov 2024 02:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbdUEZsE"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GsHHVtxC"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784BF17543;
-	Thu,  7 Nov 2024 02:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96688405F7;
+	Thu,  7 Nov 2024 02:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730945323; cv=none; b=tFy9VYZ6nY9U4Y04z2LSk9l2Op5R5qplWBQfLWN9x8a2af+k9hWn0G+NSnxQeojAAnnaiKqkhNrCZLVGgkwUJDaBH0qPogH++DlcnPQ5TwqqbHCBSiMGcj33+2xV8m5pTjyIPz35+J8J+EjmfMu9BlHqRUe0rLI6E1EQeEiJKeA=
+	t=1730945328; cv=none; b=OcDcIiWoIeOfbyIwf7z70GhKZclJbfP1tUPXR9h0sw+YxgT1899Z60fbqJbBsprwRlMQ2GfJiZmRJXEV3xiHrPJq5vuE+7sYCmnN/W2ugPpx1LJeiVONSoTCSqGR4qy/VT+/UyjzhUi60d+02EsFWvMlF8Mkz+mqdO+yZ0/3YyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730945323; c=relaxed/simple;
-	bh=eKe+f4LZFe3OuR6c2Utbe+jqby1mM22HqL1RD9tKyVg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UuSBua6PjG9cHkUoilmnYDIxXvDqPcUYloHI8A7plvtV16tcMuZnQaQuvcTlgEbEIWGrAlc5YoyQzIhon25VUbIvx7jjKKJcwmySkIBSCNTSrb9fmKv0IpFli8y/pdCSuT+jUr/VyJzCY97lwGZkIvPKngvSGMcJ1n9CW1QAktE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbdUEZsE; arc=none smtp.client-ip=209.85.215.178
+	s=arc-20240116; t=1730945328; c=relaxed/simple;
+	bh=7cu9PKpMg7PIT036BMkB/S+nqDpY4cTVeq6Cz3UwXuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uVLk8kHDbP3mXAxEszVUbqwPOYGxtiS65I2KVPRDNCcLE6NyDY/z/wZu07xE3QJpqEmvgezKQMeSiV9I6tO+trLntHY+pC/x1+fRozhoh3L0DIWGLicYOnXGyGfEb4jAj6bCeP7KfIU2I7UN+dX4KL0574oIQ4+vBV3yx4Ps9rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GsHHVtxC; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea8de14848so350639a12.2;
-        Wed, 06 Nov 2024 18:08:41 -0800 (PST)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ee4c57b037so404606a12.0;
+        Wed, 06 Nov 2024 18:08:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730945321; x=1731550121; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aPjHlId0uyQw9OURqHh1PA2htdOUV/LJvhLM1w7edWA=;
-        b=RbdUEZsEJfw8OI09djsSQngHfZU6aZMHmmS4XX7NV68xYdqAf6YO+fxqs2ie6Co60v
-         X+ei/S7eVDV44YTWFP1otLjjTM7UFmXrUzNR+61ZrFYdMj+8LCZ02Bp+BDBzbb8LYyHu
-         87FCyQV0ykk7AikcuV6lvmRfjL7bBlxhjEQKrqjHop2GRZ5CkbPx3q4F+KKILanuCYZK
-         yjmvVefXLXcwJE+DVJ+ZXb9zM5z3GDMN1t0jf8sTbHapQYKjSbSMZ9OUWlLAb/KMZru+
-         hDoUCn1CoFnQqKX6d7kmTTx/XFKi4zuXpQvKmx9MSGBgee6OYxEW/CJ1BvLR2Yj67yge
-         uu/A==
+        d=gmail.com; s=20230601; t=1730945326; x=1731550126; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c8uiK/Ic0Cv9zs1Cmhd/sJuJ73EalyYXJTfTOVDE8k0=;
+        b=GsHHVtxCI+j86hBbEPkmNbB16vM1dfdgvSn0piIWNTc2p0aj2rLbMVlRCnkyCj9HIM
+         iHsC42vnXLgSoK3XB3/GNiyiwQh4g5/HqwnZRfLefxZClSK7l109kZMO818Bh6fyE6z0
+         L/y9swG3cyxXs8an+1927FladQLJMsXnclrCHbmnzVvHyljw9c4inRlQq0J499V0OusW
+         0izhHRLTzKtFYvjhqjyYcrD0LXCiCZZEETFDxHLsWZX76JyeYoMjGaQR6eWxMA6cVES/
+         nO3FTiUu0IGZBlUTYU1NK8eHmdYkGo4TxPi0/7ssrklW6evfX6/PojWrrND201n2rG0e
+         hJzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730945321; x=1731550121;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aPjHlId0uyQw9OURqHh1PA2htdOUV/LJvhLM1w7edWA=;
-        b=rp5fsqmuhOuDDXviqt033zNnLQy4EmpBI8v1d1pbgXIaHoXWQDTJO02fiMqKPxFp+2
-         vpVq8coZ7wwi0fveOxCHbpO9YQDpZwG9is0E9pWAUmgJIF7YkKnwrtH6AnGjO8JyKn/u
-         8/5Wxv2C/U+BqQV8S2dmPtJFA737mJRPyru+8SXsIeX+JwMdzR8o9P3y4ikEQYluw+BB
-         3gxos/B6MsO8B5PPdw3xDjt3pEVfNBP7zGgtl0it/WA9ZEh5pV4fIwiTRlP1wvWFQwFd
-         U0l75gTwTRNs54xZ/QUWLegcN5BdLwmX+ttHJekBkcut1tNaesCOi7e9D2bBcqF4gg0L
-         +0TA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6OaNCduhDuhJNHUpBQc5b/K87KS4aKfDprMdeSs2NJie5C3OP2tjHDbpUNf242nDHE9I/AmY2bGER7hGMX0E=@vger.kernel.org, AJvYcCXjPPh6HjfUX3OA4uDvPWNX+7rkT+bfvEWxQMpVUWIuTLJaI5/6tp7G+dXG683Vr8ZLkk1e1ruVvL46WHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxKDDtQD+2NlMYw4CclrEbfMv+PVfDP2x5FhkjiBA+ix3aWpIx
-	RI9onuQ0kzB05bJvjfZGxFgceBFXzMHvhQXRf5jmchyuWXeNHhyW
-X-Google-Smtp-Source: AGHT+IGgjJjumWPR6joaiukcrNiDoySbjcTkhpP/INyzhzU8CO09ocpI7zrqIpcOduO8MAFjAWvu2A==
-X-Received: by 2002:a05:6a20:3d87:b0:1db:ff5a:23e5 with SMTP id adf61e73a8af0-1dc12886ffbmr744303637.4.1730945320503;
-        Wed, 06 Nov 2024 18:08:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730945326; x=1731550126;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c8uiK/Ic0Cv9zs1Cmhd/sJuJ73EalyYXJTfTOVDE8k0=;
+        b=BR/6IEnBV3n9Dp0mTTtYOSx/Nn4uhGg3KcIuLVDxDMwZke8dC/LMcROzHurF5/EAo7
+         ZQPtEYFjLIsfvcJndymmKvtOn6gInNjxumCcOTUA5rV/4h5BZv999SrorHTPx3C/f/TJ
+         SHun32cM+lw9vEMUroCuQrnHdmxFD0Xjjli1bn+febhY8MZ4rCc5Y/wuMlYf2efkL2tR
+         ilaSw7vWeInNbu8M+lccRjJKyPzWGay3ynJGPXQgmguKJSVwu9b0L93/keWTZFCh5311
+         27aAFw+C43sZ8CnYa63zWPFq3pjh/bPhMvUmLt9YGJvAuGLy4wKw+BZ1rXKHfByZGNAl
+         SBXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzS2ll5Dy5IYUehOayXpoourJFcq2twbTA/ijxLnuChhmTKa4ZLssDDUJJBU13BE2aWO/vqqLkJyZo0u4=@vger.kernel.org, AJvYcCXRr7F3dTE2/06NoPoZQrBkl0fu6Fu42nkjkq5/+LA5kK0LGmBGkiuz3ahReoEVvlD2o9Ddxo7SO102pH+C4xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya0NHJyWw7hwt6gXbisO3ZJBDFeXUga6R7PLHtDH3oT6RIg/kY
+	sMSy/az2npdpab9Lqq5NQIuQ5TAhkEG+4EuFauttqhj3qCivtd6d
+X-Google-Smtp-Source: AGHT+IHSZ18e093uRS+GpjjWCpbTJ2osSEj2Jz1jCRDcfKw2MooH+iEJg9ij210Kp4gtbGIk81dMww==
+X-Received: by 2002:a17:90b:48c4:b0:2e2:d17e:1ef7 with SMTP id 98e67ed59e1d1-2e94c298d32mr29364096a91.3.1730945325807;
+        Wed, 06 Nov 2024 18:08:45 -0800 (PST)
 Received: from toolbox.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5f98b3sm2549916a91.32.2024.11.06.18.08.35
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5f98b3sm2549916a91.32.2024.11.06.18.08.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 18:08:39 -0800 (PST)
+        Wed, 06 Nov 2024 18:08:45 -0800 (PST)
 From: Alistair Francis <alistair23@gmail.com>
 X-Google-Original-From: Alistair Francis <alistair.francis@wdc.com>
 To: alex.gaynor@gmail.com,
@@ -80,29 +82,29 @@ To: alex.gaynor@gmail.com,
 	boqun.feng@gmail.com,
 	aliceryhl@google.com
 Cc: alistair23@gmail.com
-Subject: [PATCH 00/13] rust: bindings: Auto-generate inline static functions
-Date: Thu,  7 Nov 2024 12:08:18 +1000
-Message-ID: <20241107020831.1561063-1-alistair.francis@wdc.com>
+Subject: [PATCH 01/13] rust: bindings: Support some inline static functions
+Date: Thu,  7 Nov 2024 12:08:19 +1000
+Message-ID: <20241107020831.1561063-2-alistair.francis@wdc.com>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241107020831.1561063-1-alistair.francis@wdc.com>
+References: <20241107020831.1561063-1-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 The kernel includes a large number of static inline functions that are
 defined in header files. One example is the crypto_shash_descsize()
 function which is defined in hash.h as
 
-```
 static inline unsigned int crypto_shash_descsize(struct crypto_shash *tfm)
 {
-        return tfm->descsize;
+	return tfm->descsize;
 }
-```
 
 bindgen is currently unable to generate bindings to these functions as
 they are not publically exposed (they are static after all).
@@ -153,56 +155,153 @@ kconfig-ed out will fail to link as the function being called isn't built
 Due to these failures we use a allow-list system (where functions must
 be manually enabled).
 
-This series adds support for bindgen generating wrappers for inline statics and
-then converts the existing helper functions to this new method. This doesn't
-work for C macros, so we can't reamove all of the helper functions, but we
-can remove most.
-
-Alistair Francis (13):
-  rust: bindings: Support some inline static functions
-  rust: helpers: Remove blk helper
-  rust: helpers: Remove build_bug helper
-  rust: helpers: Remove err helper
-  rust: helpers: Remove kunit helper
-  rust: helpers: Remove mutex helper
-  rust: helpers: Remove some page helpers
-  rust: helpers: Remove rbtree helper
-  rust: helpers: Remove some refcount helpers
-  rust: helpers: Remove signal helper
-  rust: helpers: Remove some spinlock helpers
-  rust: helpers: Remove some task helpers
-  rust: helpers: Remove uaccess helpers
-
- rust/.gitignore                 |  2 ++
- rust/Makefile                   | 36 ++++++++++++++++++++++++++++++---
- rust/bindgen_static_functions   | 31 ++++++++++++++++++++++++++++
- rust/bindings/bindings_helper.h |  5 +++++
- rust/bindings/lib.rs            |  4 ++++
- rust/exports.c                  |  1 +
- rust/helpers/blk.c              | 14 -------------
- rust/helpers/build_bug.c        |  9 ---------
- rust/helpers/err.c              | 19 -----------------
- rust/helpers/helpers.c          | 13 ++----------
- rust/helpers/kunit.c            |  9 ---------
- rust/helpers/mutex.c            | 15 --------------
- rust/helpers/page.c             |  5 -----
- rust/helpers/rbtree.c           |  9 ---------
- rust/helpers/refcount.c         | 10 ---------
- rust/helpers/signal.c           |  9 ---------
- rust/helpers/spinlock.c         | 10 ---------
- rust/helpers/task.c             | 10 ---------
- rust/helpers/uaccess.c          | 15 --------------
- 19 files changed, 78 insertions(+), 148 deletions(-)
+Link: https://github.com/rust-lang/rust-bindgen/discussions/2405
+Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+---
+ rust/.gitignore               |  2 ++
+ rust/Makefile                 | 36 ++++++++++++++++++++++++++++++++---
+ rust/bindgen_static_functions |  6 ++++++
+ rust/bindings/lib.rs          |  4 ++++
+ rust/exports.c                |  1 +
+ 5 files changed, 46 insertions(+), 3 deletions(-)
  create mode 100644 rust/bindgen_static_functions
- delete mode 100644 rust/helpers/blk.c
- delete mode 100644 rust/helpers/build_bug.c
- delete mode 100644 rust/helpers/err.c
- delete mode 100644 rust/helpers/kunit.c
- delete mode 100644 rust/helpers/mutex.c
- delete mode 100644 rust/helpers/rbtree.c
- delete mode 100644 rust/helpers/signal.c
- delete mode 100644 rust/helpers/uaccess.c
 
+diff --git a/rust/.gitignore b/rust/.gitignore
+index d3829ffab80ba..741a180238013 100644
+--- a/rust/.gitignore
++++ b/rust/.gitignore
+@@ -1,10 +1,12 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ bindings_generated.rs
++bindings_generated_static.rs
+ bindings_helpers_generated.rs
+ doctests_kernel_generated.rs
+ doctests_kernel_generated_kunit.c
+ uapi_generated.rs
+ exports_*_generated.h
++extern.c
+ doc/
+ test/
+diff --git a/rust/Makefile b/rust/Makefile
+index b5e0a73b78f3e..4ea5ce96440d0 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -10,14 +10,17 @@ always-$(CONFIG_RUST) += exports_core_generated.h
+ # for Rust only, thus there is no header nor prototypes.
+ obj-$(CONFIG_RUST) += helpers/helpers.o
+ CFLAGS_REMOVE_helpers/helpers.o = -Wmissing-prototypes -Wmissing-declarations
++CFLAGS_REMOVE_extern.o = -Wmissing-prototypes -Wmissing-declarations -Wdiscarded-qualifiers
+ 
+ always-$(CONFIG_RUST) += libmacros.so
+ no-clean-files += libmacros.so
+ 
+-always-$(CONFIG_RUST) += bindings/bindings_generated.rs bindings/bindings_helpers_generated.rs
+-obj-$(CONFIG_RUST) += alloc.o bindings.o kernel.o
++always-$(CONFIG_RUST) += bindings/bindings_generated.rs bindings/bindings_helpers_generated.rs \
++	bindings/bindings_generated_static.rs
++obj-$(CONFIG_RUST) += alloc.o bindings.o kernel.o extern.o
+ always-$(CONFIG_RUST) += exports_alloc_generated.h exports_helpers_generated.h \
+-    exports_bindings_generated.h exports_kernel_generated.h
++    exports_bindings_generated.h exports_bindings_static_generated.h \
++    exports_kernel_generated.h
+ 
+ always-$(CONFIG_RUST) += uapi/uapi_generated.rs
+ obj-$(CONFIG_RUST) += uapi.o
+@@ -275,6 +278,20 @@ quiet_cmd_bindgen = BINDGEN $@
+ 		-o $@ -- $(bindgen_c_flags_final) -DMODULE \
+ 		$(bindgen_target_cflags) $(bindgen_target_extra)
+ 
++quiet_cmd_bindgen_static = BINDGEN $@
++      cmd_bindgen_static = \
++	$(BINDGEN) $< $(bindgen_target_flags) \
++		--use-core --with-derive-default --ctypes-prefix core::ffi --no-layout-tests \
++		--no-debug '.*' --enable-function-attribute-detection \
++		--experimental --wrap-static-fns \
++		--wrap-static-fns-path $(src)/extern.c \
++		$(bindgen_static_functions) \
++		-o $@ -- $(bindgen_c_flags_final) -DMODULE \
++		$(bindgen_target_cflags) $(bindgen_target_extra)
++
++$(src)/extern.c: $(obj)/bindings/bindings_generated_static.rs
++	@sed -i 's|rust/bindings|bindings|g' $@
++
+ $(obj)/bindings/bindings_generated.rs: private bindgen_target_flags = \
+     $(shell grep -Ev '^#|^$$' $(src)/bindgen_parameters)
+ $(obj)/bindings/bindings_generated.rs: private bindgen_target_extra = ; \
+@@ -283,6 +300,15 @@ $(obj)/bindings/bindings_generated.rs: $(src)/bindings/bindings_helper.h \
+     $(src)/bindgen_parameters FORCE
+ 	$(call if_changed_dep,bindgen)
+ 
++$(obj)/bindings/bindings_generated_static.rs: private bindgen_target_flags = \
++    $(shell grep -Ev '^#|^$$' $(src)/bindgen_parameters)
++$(obj)/bindings/bindings_generated_static.rs: private bindgen_static_functions = \
++    $(shell grep -Ev '^#|^$$' $(src)/bindgen_static_functions)
++$(obj)/bindings/bindings_generated_static.rs: $(src)/bindings/bindings_helper.h \
++	$(src)/bindgen_static_functions \
++    $(src)/bindgen_parameters FORCE
++	$(call if_changed_dep,bindgen_static)
++
+ $(obj)/uapi/uapi_generated.rs: private bindgen_target_flags = \
+     $(shell grep -Ev '^#|^$$' $(src)/bindgen_parameters)
+ $(obj)/uapi/uapi_generated.rs: $(src)/uapi/uapi_helper.h \
+@@ -329,6 +355,9 @@ $(obj)/exports_helpers_generated.h: $(obj)/helpers/helpers.o FORCE
+ $(obj)/exports_bindings_generated.h: $(obj)/bindings.o FORCE
+ 	$(call if_changed,exports)
+ 
++$(obj)/exports_bindings_static_generated.h: $(obj)/extern.o FORCE
++	$(call if_changed,exports)
++
+ $(obj)/exports_kernel_generated.h: $(obj)/kernel.o FORCE
+ 	$(call if_changed,exports)
+ 
+@@ -410,6 +439,7 @@ $(obj)/build_error.o: $(src)/build_error.rs $(obj)/compiler_builtins.o FORCE
+ $(obj)/bindings.o: $(src)/bindings/lib.rs \
+     $(obj)/compiler_builtins.o \
+     $(obj)/bindings/bindings_generated.rs \
++    $(obj)/bindings/bindings_generated_static.rs \
+     $(obj)/bindings/bindings_helpers_generated.rs FORCE
+ 	+$(call if_changed_rule,rustc_library)
+ 
+diff --git a/rust/bindgen_static_functions b/rust/bindgen_static_functions
+new file mode 100644
+index 0000000000000..1f24360daeb38
+--- /dev/null
++++ b/rust/bindgen_static_functions
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0
++
++# Don't generate structs
++--blocklist-type '.*'
++
++--allowlist-function blk_mq_rq_to_pdu
+diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
+index 93a1a3fc97bc9..63b915a8e4fbf 100644
+--- a/rust/bindings/lib.rs
++++ b/rust/bindings/lib.rs
+@@ -33,6 +33,10 @@ mod bindings_raw {
+         env!("OBJTREE"),
+         "/rust/bindings/bindings_generated.rs"
+     ));
++    include!(concat!(
++        env!("OBJTREE"),
++        "/rust/bindings/bindings_generated_static.rs"
++    ));
+ }
+ 
+ // When both a directly exposed symbol and a helper exists for the same function,
+diff --git a/rust/exports.c b/rust/exports.c
+index e5695f3b45b7a..e4bd5b694beb2 100644
+--- a/rust/exports.c
++++ b/rust/exports.c
+@@ -19,6 +19,7 @@
+ #include "exports_alloc_generated.h"
+ #include "exports_helpers_generated.h"
+ #include "exports_bindings_generated.h"
++#include "exports_bindings_static_generated.h"
+ #include "exports_kernel_generated.h"
+ 
+ // For modules using `rust/build_error.rs`.
 -- 
 2.47.0
 
