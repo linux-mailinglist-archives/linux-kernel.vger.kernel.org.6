@@ -1,180 +1,147 @@
-Return-Path: <linux-kernel+bounces-400444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BA59C0D9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:15:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3919C0DA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:16:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D621F251D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:15:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F5C28678C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E2721A4AA;
-	Thu,  7 Nov 2024 18:12:30 +0000 (UTC)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604ED217330;
+	Thu,  7 Nov 2024 18:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/yC47T0"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E6D219C8E;
-	Thu,  7 Nov 2024 18:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5080C2170D3;
+	Thu,  7 Nov 2024 18:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731003150; cv=none; b=pP7AVT+2QkgFj4GnJxtxFx1U/TeUlVujLgvd1UOw1dOBi8wmNbrR8oW7LiGSwATHP3IvJKM2kxejq48KkEClkFpml2go/I18gkHieW4dXzFYtsHYnugsmItA2ObgTANneuJM3UL55nnc4s4MxPIX+mp5UxuxwD5OLSuLCFA6y+k=
+	t=1731003303; cv=none; b=IyzHuudDkw/beYdqhj2as5dCcwetB7DelYeS4llp0P+0FCL2vLhgPP6drLCAr8+CXKquH+TbFdc0DIbCXm7pDQNCieBLuV80I7wb0n50oTkjIN2DWu22JwWcTD3rKLmbXjWnSD3kpfkmgjHPjW+FBogk3eZMYXAb7x3YHw0W5pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731003150; c=relaxed/simple;
-	bh=WEVapGRSibcZWnAdVZddqFwRKnfxfw/1NS5vjEqInk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eZpaa2LoqRdJyhZNq0LgfP+UjvprmgIQlDB91N9yZDHRLU7o3vlPw4PUlWue8hQXDjj2HirwKCHwGvCcw5sRPw3GGkJ9J8gQxfUNc1Q8iJNb/z7TWh0NG1XM59eD9wbDEII1Eupoyq9a/ZW/+MiX+LKsNhoAVXTh777eSZlM0pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+	s=arc-20240116; t=1731003303; c=relaxed/simple;
+	bh=BiWZx9utTVPbugYmmLchlJQEL4iQC+XA08BO9EJFLG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YluHJoXI7Ps45IVTHj2jkcgEeuIQ//UF+Z+ow2QKFwOpancsencqiIcf1VBhcMWxM1AvInI0Fx4StOZ10GAA1aW5tnR2nIMHDp7jS3maQF5CeHYxdKVSiSyZDpumENuSR69HErF7OxopwU9f2fUMD5W+n3wWPsS1ZZryP7LvvRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/yC47T0; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so998772b3a.1;
-        Thu, 07 Nov 2024 10:12:28 -0800 (PST)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea0ff74b15so949326a12.3;
+        Thu, 07 Nov 2024 10:15:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731003301; x=1731608101; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fUPi5nxVIg8EhFR2eIIdqyLXPKoto2/NVhlsl2Rn0qo=;
+        b=c/yC47T09zHCOSlA0YO9ObwbM1J7ozeOB4zrbpPvxaOOCtTKhEd0lMSV2Tr6CnqrOL
+         qjjXYpwjU1adS24hg4DyQL7ZDhXp3bL+Tzi7BtO52Xq4w9If+gqHbIusrBt4YUIo/lq3
+         +/RAgM4ck/Rp2u+EI5ZGe/Hq+2mdZkAbVe45mcaJ6A7YaRsTqADe9gmFA25KeDNwLhKN
+         OdDp6rhRvTwRbL/nyJnwc2gouJCz+3z2dXuUiJzjLlwyq5wKy9kxHrBf8l5/mqWoByQS
+         PAngi5DCkDAD4YJ8yg/rYXWRO3jjuRksWD46M/QF5T2reWKukb63dtsdRokJYzTXk2BD
+         WPBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731003148; x=1731607948;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731003301; x=1731608101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hx/2wnbdQkN8QIuIPvLKCg6kXWPOICXSJLx031omQYg=;
-        b=Tj0i9yj6pePhg9vzsQGcUN+3wdeGYuz2yj6O9O2X+YzW59xocecyD0XRz3iubD7XyU
-         CXtPAuMZEoJTIt6V5CqYxiopqmAxVfEFHttH1Q8uqXnMa4IL2/K7zGaG6vNQaAV3yk7T
-         P1Y2X2UikAUVj5bEpZX+xpNj1JDRBUwbUr7szUq6JC4RtNpyDuJiJOnTR54mZejp83YR
-         81pXaDy1PB1l8YcFtO10I9xz4SyDAySf2MatOKGvzoGmZqoL3LcVJFy1uY6X2toBz+jV
-         ApYMsKTfW3mcyxlNbP+NUdz4I4rH2UmsYJ5dLG7RCOoxr7YogcphkqCFA3NBgFxgEHGo
-         qh6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8zgzKoYTsd1riwuyf77qQQ4acZbHXOky+btR7JKb5SoBa1J/K8aNZNEVUySWfxUrZKYdkOqnKwxWKBZ+SxHpu@vger.kernel.org, AJvYcCWAolXk9pJ1F/bUEzDw2uzLGr2V2fF9S5CiXAG3KZljpq5vZWwvqo2lC/R6Wvf/y+jT9c6twuosSet702A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz85khEF+VLsAsFoY9eu09RVH63nnK5KCjKzy0lGAIfvU5M0qVE
-	hHHLYy3907U0EiFqZBoCdoEW0pESH5xAO8CgyGHDL7JqvKruM7mHvE4+
-X-Google-Smtp-Source: AGHT+IGaWDZqmfbW85mkzCyEVanG3EM2BoxuAf/uYsm7sCeaTKZTZkIR3DakFqzP8SMfT4gbBpyovQ==
-X-Received: by 2002:a05:6a00:84d:b0:720:9a03:b6dc with SMTP id d2e1a72fcca58-72412986e46mr408154b3a.18.1731003147709;
-        Thu, 07 Nov 2024 10:12:27 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a18f24sm1866818b3a.152.2024.11.07.10.12.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 10:12:27 -0800 (PST)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	shuah@kernel.org,
-	horms@kernel.org,
-	almasrymina@google.com,
-	sdf@fomichev.me,
-	willemb@google.com,
-	petrm@nvidia.com,
-	jdamato@fastly.com
-Subject: [PATCH net-next v8 12/12] selftests: ncdevmem: Add automated test
-Date: Thu,  7 Nov 2024 10:12:11 -0800
-Message-ID: <20241107181211.3934153-13-sdf@fomichev.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241107181211.3934153-1-sdf@fomichev.me>
-References: <20241107181211.3934153-1-sdf@fomichev.me>
+        bh=fUPi5nxVIg8EhFR2eIIdqyLXPKoto2/NVhlsl2Rn0qo=;
+        b=okVg6P3Z8Eulut35i3x1mEBCuigPU1FWUtYfc9F1w6lcVZsFUwO6vNVtEphoyv8Iel
+         aycWTfqq+AgRzwwkGO8zebv+HscrjYJVgqCAai+BwXHMGExIIBM4sp8a+MMa8ZAdak64
+         24R4bvSM7jr+NAhw4j8G81d+YtDeCjs9kY0ryDVZa0K9+Ey2elaTshPbIuq/waws/9rU
+         TrAXK1z+Yl4nOw5YqlO1VFWahqubD1LHOwnxZnNOTIL+dUmytjhMCYM/DOOyUlnrqRzw
+         p6/4oYJjf7EOm2PAqqHnuDcilGbkFYffQz2IeFiucATeH/geMgxc/aoBzM7B3bVGCR0n
+         Yx+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU0opPsmgGddKAnBJLQtlsCmxbsquQZBsphSBMAvntt49hA96iQ5+I3RlLfPD0eH12ZNEgoRE9egNJiwM2iJnzAvQ==@vger.kernel.org, AJvYcCU8VuUwTbo7Ams13z6unOe8/bGWqAKsEAAuS1NLJULS28KkhN7+CjGk3SHvt16GrZSW2l2kMKgmY96qjuGGRLtJT8wt@vger.kernel.org, AJvYcCVEdtQjlMsvVlyGoq+g1QK/ksoHNOOa9TCNrHl8FXkm8lcK3KOyt4Styla2afyuVMAXABd4s7wRfJQBncc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkWoBRksFaN6bOgyR+k3vGDZIsWFdXgqLJmEyPxAACI2A10RQ4
+	uvc5vJInhysontOCeFGZAu5DAW5Od22m1XURdLKHD7O2O085yZf5sskj8mIvx7++t/RIwO6KI9f
+	Bz6kMSc/6XsKJuhr/f8YsGZFZ+Bc=
+X-Google-Smtp-Source: AGHT+IGtKJdBSvLXMi4/lO+OxpJfltwU5r91XxNiE8zYieRtr4Rys/welSksZArBUxTfljeNGLoHrRicb1fPZYoxLnA=
+X-Received: by 2002:a17:90b:4c06:b0:2e2:cd11:c9b with SMTP id
+ 98e67ed59e1d1-2e9b16eb849mr153796a91.3.1731003301540; Thu, 07 Nov 2024
+ 10:15:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org>
+In-Reply-To: <20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 7 Nov 2024 10:14:49 -0800
+Message-ID: <CAEf4BzaktmbL0T4a1i-hR4SCYYDSNUO1AWAY4UujefecyMUz8g@mail.gmail.com>
+Subject: Re: [PATCH] uprobes: get RCU trace lock before list iteration
+To: Breno Leitao <leitao@debian.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Only RX side for now and small message to test the setup.
-In the future, we can extend it to TX side and to testing
-both sides with a couple of megs of data.
+On Thu, Nov 7, 2024 at 9:16=E2=80=AFAM Breno Leitao <leitao@debian.org> wro=
+te:
+>
+> Acquire RCU trace lock in filter_chain() to protect
+> list_for_each_entry_rcu() iteration, protecting the list iteration in a
+> RCU read section.
+>
+> Prior to this fix, list_for_each_entry_srcu() was called without holding
+> the required lock, triggering warnings when RCU_PROVING is enabled:
+>
+>         kernel/events/uprobes.c:937 RCU-list traversed without holding th=
+e required lock!!
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list locklessly =
+under SRCU protection")
+> ---
+>  kernel/events/uprobes.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-  make \
-  	-C tools/testing/selftests \
-  	TARGETS="drivers/hw/net" \
-  	install INSTALL_PATH=~/tmp/ksft
+LGTM, thanks
 
-  scp ~/tmp/ksft ${HOST}:
-  scp ~/tmp/ksft ${PEER}:
+Reviewed-by: Andrii Nakryiko <andrii@kernel.org>
 
-  cfg+="NETIF=${DEV}\n"
-  cfg+="LOCAL_V6=${HOST_IP}\n"
-  cfg+="REMOTE_V6=${PEER_IP}\n"
-  cfg+="REMOTE_TYPE=ssh\n"
-  cfg+="REMOTE_ARGS=root@${PEER}\n"
-
-  echo -e "$cfg" | ssh root@${HOST} "cat > ksft/drivers/net/net.config"
-  ssh root@${HOST} "cd ksft && ./run_kselftest.sh -t drivers/net:devmem.py"
-
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- .../testing/selftests/drivers/net/hw/Makefile |  1 +
- .../selftests/drivers/net/hw/devmem.py        | 45 +++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100755 tools/testing/selftests/drivers/net/hw/devmem.py
-
-diff --git a/tools/testing/selftests/drivers/net/hw/Makefile b/tools/testing/selftests/drivers/net/hw/Makefile
-index 182348f4bd40..1c6a77480923 100644
---- a/tools/testing/selftests/drivers/net/hw/Makefile
-+++ b/tools/testing/selftests/drivers/net/hw/Makefile
-@@ -3,6 +3,7 @@
- TEST_PROGS = \
- 	csum.py \
- 	devlink_port_split.py \
-+	devmem.py \
- 	ethtool.sh \
- 	ethtool_extended_state.sh \
- 	ethtool_mm.sh \
-diff --git a/tools/testing/selftests/drivers/net/hw/devmem.py b/tools/testing/selftests/drivers/net/hw/devmem.py
-new file mode 100755
-index 000000000000..1223f0f5c10c
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/hw/devmem.py
-@@ -0,0 +1,45 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+
-+from lib.py import ksft_run, ksft_exit
-+from lib.py import ksft_eq, KsftSkipEx
-+from lib.py import NetDrvEpEnv
-+from lib.py import bkg, cmd, rand_port, wait_port_listen
-+from lib.py import ksft_disruptive
-+
-+
-+def require_devmem(cfg):
-+    if not hasattr(cfg, "_devmem_probed"):
-+        port = rand_port()
-+        probe_command = f"./ncdevmem -f {cfg.ifname}"
-+        cfg._devmem_supported = cmd(probe_command, fail=False, shell=True).ret == 0
-+        cfg._devmem_probed = True
-+
-+    if not cfg._devmem_supported:
-+        raise KsftSkipEx("Test requires devmem support")
-+
-+
-+@ksft_disruptive
-+def check_rx(cfg) -> None:
-+    cfg.require_v6()
-+    require_devmem(cfg)
-+
-+    port = rand_port()
-+    listen_cmd = f"./ncdevmem -l -f {cfg.ifname} -s {cfg.v6} -p {port}"
-+
-+    with bkg(listen_cmd) as socat:
-+        wait_port_listen(port)
-+        cmd(f"echo -e \"hello\\nworld\"| socat -u - TCP6:[{cfg.v6}]:{port}", host=cfg.remote, shell=True)
-+
-+    ksft_eq(socat.stdout.strip(), "hello\nworld")
-+
-+
-+def main() -> None:
-+    with NetDrvEpEnv(__file__) as cfg:
-+        ksft_run([check_rx],
-+                 args=(cfg, ))
-+    ksft_exit()
-+
-+
-+if __name__ == "__main__":
-+    main()
--- 
-2.47.0
-
+>
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index fa04b14a7d72353adc440742016b813da6c812d2..afdaa45a43ac3948f7983175e=
+da808c989e8738a 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1103,11 +1103,13 @@ static bool filter_chain(struct uprobe *uprobe, s=
+truct mm_struct *mm)
+>         bool ret =3D false;
+>
+>         down_read(&uprobe->consumer_rwsem);
+> +       rcu_read_lock_trace();
+>         list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_re=
+ad_lock_trace_held()) {
+>                 ret =3D consumer_filter(uc, mm);
+>                 if (ret)
+>                         break;
+>         }
+> +       rcu_read_unlock_trace();
+>         up_read(&uprobe->consumer_rwsem);
+>
+>         return ret;
+>
+> ---
+> base-commit: 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
+> change-id: 20241107-rcu_probe-bef660d84990
+>
+> Best regards,
+> --
+> Breno Leitao <leitao@debian.org>
+>
 
