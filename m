@@ -1,134 +1,151 @@
-Return-Path: <linux-kernel+bounces-400402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAE49C0CFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:35:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3C09C0D04
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:36:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 061351C2350D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF95B1C2290C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151BE216A0B;
-	Thu,  7 Nov 2024 17:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470902170A7;
+	Thu,  7 Nov 2024 17:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aRcWTz16"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="E8dRmb2p"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044C619146E;
-	Thu,  7 Nov 2024 17:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731000933; cv=none; b=ubNMIIJfNcXdbfIqC1C/sNTwSFsTTr/5TNydc2/kFqhVnwfmJMsp3TLV+QoaVcRvBcgUOov65g6U8Lw7VJMW290bPKWzJjhV202Ii3uqNPvRvHK4oft4jSla1pHgH3DiRdxRAaf6SRwIMp3VO86qny8vJHIwqtRYjlPnsLRE+/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731000933; c=relaxed/simple;
-	bh=Fh7b2FLtKZz1fA4g8oA+3ghKoAEai4NjPZV7Xf1oozk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b96Xt12KrN3pK6p69PwKwxr5X5kfjnFKCuPlacwFbL74bed5lAZtr7BjeE+o5dapd4dnDFt21YNXOPOdWU1svbE+H1LDVFhWjy4e0N97R/X0FBxuqr4Y1awF/BjuZlWy+EYqAQpuGPfbtucosjMOdf0j0qEKnnxeQEWXem6Fjyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aRcWTz16; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731000932; x=1762536932;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Fh7b2FLtKZz1fA4g8oA+3ghKoAEai4NjPZV7Xf1oozk=;
-  b=aRcWTz16TUHgBzLWg7iZNieF6DjCw66a2RX85jQE0dCPCXEJlXrBH+tv
-   a/0w4fNlNKDcftFLXUpLJJDxIzLVSgT4G3gnZvIvUpiiCe5LGJEi9spI8
-   oG9SonGjWDL7Yd3poXDH1MImoz41g81PSyqrUzX2Gid1KvRA17ETXzFgh
-   jyRjNTrUcwubLtx1QnbWVeazfQXLqhLwAI33z17Acaxz17Y3gApvhab8U
-   Yt+Q4Uqtnoso3hsOFOPCfdSO6+yX8vaikvzoxLhukADI2A7aXsMVfh9EG
-   9KCHvla1eDL/o3m41ca45xYAPZ3zIal8RHx58n/XeQTHHK7greuw1NDej
-   g==;
-X-CSE-ConnectionGUID: v25X8baQRfipD62DFZq4ZQ==
-X-CSE-MsgGUID: h2QtzfW+S/SaEuT1iiQYGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="30281676"
-X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
-   d="scan'208";a="30281676"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 09:35:31 -0800
-X-CSE-ConnectionGUID: sRYe6437RISlO9BLWn+mog==
-X-CSE-MsgGUID: Hd+P5H2JSPSX7Ag2FJXLJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
-   d="scan'208";a="84786005"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 07 Nov 2024 09:35:27 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t96Pk-000qY8-39;
-	Thu, 07 Nov 2024 17:35:24 +0000
-Date: Fri, 8 Nov 2024 01:35:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vabhav Sharma <vabhav.sharma@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, frank.li@nxp.com,
-	pankaj.gupta@nxp.com, daniel.baluta@nxp.com,
-	silvano.dininno@nxp.com, V.Sethi@nxp.com,
-	meenakshi.aggarwal@nxp.com, Vabhav Sharma <vabhav.sharma@nxp.com>,
-	Franck LENORMAND <franck.lenormand@nxp.com>
-Subject: Re: [PATCH v3 4/4] firmware: imx: secvio: Add support for SNVS
- secvio and tamper via SCFW
-Message-ID: <202411080130.F3kATjgU-lkp@intel.com>
-References: <20241107-secvio-v3-4-ea27f1e9ced4@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31A318FDAF
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731000996; cv=pass; b=MG89m6WW0y+CzNd4nsJKmfBlWQFUGQqUjQ+qzvP0VLLhlcU9xxlLndzjHLcKvjxRXT9FtRX1wLVJu7pm57i9REOrvXJ6RD+NKyv+8Ojiw7jHCHnNwaHCuImRFOMolDW8AoRZzi1L/XKNSR4wndifAGcMlR+/oZtpFTKMp/qvcRM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731000996; c=relaxed/simple;
+	bh=tmi2nS1gdek7p67aDiDFxjBr8kVvPuBXwned2YzOIWk=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=sQSjK6gOVuQJRC4SqsPoqrSkOgPSVcrtqvj9d/ZqEjgo9ctY3UxtgTPgdK1BKm3NUnfevMmh0VA0pec0eQjT3uSx8Bp7x5W2M/FQKL/hpp2Ino/8QTL6Rh+mtsxPwga2FoPgNbOyQpTQP2N+G/nwI8EoDRPxb1hqsfKZvecL7BI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=E8dRmb2p; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731000973; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=WswQFc65ea2XwcO+AzVo7CwOc9qlyRNM963ccb0A6zeXtQ4+FNoaSFHEkxfSNsTPw04yZ7qSo45zMJS5njVK2muHQa+ddD0Enej3Q7UfBl7M8VwosfBNJ4lZjHjTm0Xfii/8eWGq7nFbp6sD5IqJ7i/IQBryv/Kw5ATUmjR0I8A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731000973; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PdE4ykKNJSNlV1pRPYoOXM/Kn1pAZdReh7vgzLa8+BU=; 
+	b=UE1e02WMQxXDaqrR6m9KRuV2f68nAPYVMOfJUYCOL33+gnn3O7Uh/LKc+yZ6kuba9IVihW0tAQjQjoBhr0nD2ESOHEEwu9V/FcfzGSzftnBoeXDPYkRNCQrtE2HfAFwpOq8DkhgVeKVpgAFFuSFk3y8xVEU32Xq8VIBc3wlBjcU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
+	dmarc=pass header.from=<bob.beckett@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731000973;
+	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=PdE4ykKNJSNlV1pRPYoOXM/Kn1pAZdReh7vgzLa8+BU=;
+	b=E8dRmb2p7qs43YSwYmzCW9k9mjTDeR6gL7jee+5btXiB2ITC3VGzQbdagqYYBh8z
+	ra1xSbRavbSf0At/dCtBLa8inkl7+7E8PliQePOt/HY07nYo+1UrX5hgq6D8A0lMen8
+	W03+cHA5NKJxix1Mra6Oa54ctb1nVmru1sMqW4po=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1731000942359211.08673613865676; Thu, 7 Nov 2024 09:35:42 -0800 (PST)
+Date: Thu, 07 Nov 2024 17:35:42 +0000
+From: Robert Beckett <bob.beckett@collabora.com>
+To: "Keith Busch" <kbusch@kernel.org>
+Cc: "Jens Axboe" <axboe@kernel.dk>, "Christoph Hellwig" <hch@lst.de>,
+	"Sagi Grimberg" <sagi@grimberg.me>, "kernel" <kernel@collabora.com>,
+	"linux-nvme" <linux-nvme@lists.infradead.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <19307b23f01.fcb555461012595.2202335253480073101@collabora.com>
+In-Reply-To: <Zyz2oiQ2pco15HHT@kbusch-mbp>
+References: <ZyE0kYvRZbek7H_g@kbusch-mbp.dhcp.thefacebook.com>
+ <20241107165131.3462171-1-bob.beckett@collabora.com> <Zyz2oiQ2pco15HHT@kbusch-mbp>
+Subject: Re: [PATCH] nvme-pci: 512 byte dma pool segment quirk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107-secvio-v3-4-ea27f1e9ced4@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-Hi Vabhav,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on 9852d85ec9d492ebef56dc5f229416c925758edc]
+ ---- On Thu, 07 Nov 2024 17:19:30 +0000  Keith Busch  wrote ---=20
+ > On Thu, Nov 07, 2024 at 04:50:46PM +0000, Bob Beckett wrote:
+ > > @@ -611,7 +612,7 @@ static blk_status_t nvme_pci_setup_prps(struct nvm=
+e_dev *dev,
+ > >  =C2=A0=C2=A0=C2=A0=C2=A0}
+ > > =20
+ > >  =C2=A0=C2=A0=C2=A0=C2=A0nprps =3D DIV_ROUND_UP(length, NVME_CTRL_PAGE=
+_SIZE);
+ > > -=C2=A0=C2=A0=C2=A0=C2=A0if (nprps <=3D (256 / 8)) {
+ > > +=C2=A0=C2=A0=C2=A0=C2=A0if (nprps small_dmapool_seg_size / 8)) {
+ > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0pool =3D dev->prp_sma=
+ll_pool;
+ > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0iod->nr_allocations =
+=3D 0;
+ > >  =C2=A0=C2=A0=C2=A0=C2=A0} else {
+ >=20
+ > We have a constant expression currently, and this is changing it a full
+ > division in the IO path. :(
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vabhav-Sharma/dt-bindings-firmware-imx-add-nvmem-phandle/20241107-134504
-base:   9852d85ec9d492ebef56dc5f229416c925758edc
-patch link:    https://lore.kernel.org/r/20241107-secvio-v3-4-ea27f1e9ced4%40nxp.com
-patch subject: [PATCH v3 4/4] firmware: imx: secvio: Add support for SNVS secvio and tamper via SCFW
-config: nios2-randconfig-r131-20241107 (https://download.01.org/0day-ci/archive/20241108/202411080130.F3kATjgU-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241108/202411080130.F3kATjgU-lkp@intel.com/reproduce)
+yeah, that's fair. Does it get high enough throughput that this is a signif=
+icant issue here? (I have little intuition for this driver).
+how about pre-computing the nprps threshold during pool creation where we d=
+etect the quirk, it would then be variable comparison instead of a const co=
+mparison, but no divide?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411080130.F3kATjgU-lkp@intel.com/
+ >=20
+ > Could we leave the pool selection check size as-is and just say the cost
+ > of the quirk is additional memory overhead?
+ >=20
+ > > @@ -2700,8 +2701,9 @@ static int nvme_setup_prp_pools(struct nvme_dev =
+*dev)
+ > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return -ENOMEM;
+ > > =20
+ > >  =C2=A0=C2=A0=C2=A0=C2=A0/* Optimisation for I/Os between 4k and 128k =
+*/
+ > > -=C2=A0=C2=A0=C2=A0=C2=A0dev->prp_small_pool =3D dma_pool_create("prp =
+list 256", dev->dev,
+ > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+256, 256, 0);
+ > > +=C2=A0=C2=A0=C2=A0=C2=A0dev->prp_small_pool =3D dma_pool_create("prp =
+list small", dev->dev,
+ > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+dev->small_dmapool_seg_size,
+ > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+dev->small_dmapool_seg_size, 0);
+ >=20
+ > I think it should work if we only change the alignment property of the
+ > pool. Something like this:
+ >=20
+ > =C2=A0=C2=A0=C2=A0=C2=A0if (dev->ctrl.quirks & NVME_QUIRK_SMALL_DMAPOOL_=
+512)
+ > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev->prp_small_pool =3D =
+dma_pool_create("prp list 256", dev->dev,
+ > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0   =
+   256, 512, 0);
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/firmware/imx/imx-scu-secvio.c:59:15: sparse: sparse: symbol 'scdev' was not declared. Should it be static?
->> drivers/firmware/imx/imx-scu-secvio.c:387:37: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void [noderef] __user *to @@     got void * @@
-   drivers/firmware/imx/imx-scu-secvio.c:387:37: sparse:     expected void [noderef] __user *to
-   drivers/firmware/imx/imx-scu-secvio.c:387:37: sparse:     got void *
->> drivers/firmware/imx/imx-scu-secvio.c:399:46: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *from @@     got void * @@
-   drivers/firmware/imx/imx-scu-secvio.c:399:46: sparse:     expected void const [noderef] __user *from
-   drivers/firmware/imx/imx-scu-secvio.c:399:46: sparse:     got void *
+I actually already tested a change of 512, 512 while keeping the 256 devisi=
+on above during testing (i.e. waste half of the segment). I'll confirm with=
+ a test again against latest and send a v2 assuming it tests fine.
 
-vim +/scdev +59 drivers/firmware/imx/imx-scu-secvio.c
+ > =C2=A0=C2=A0=C2=A0=C2=A0else
+ > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev->prp_small_pool =3D =
+dma_pool_create("prp list 256", dev->dev,
+ > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0   =
+   256, 256, 0);
+ >=20
 
-    56	
-    57	static struct platform_driver imx_secvio_sc_driver;
-  > 58	struct platform_device *pdev;
-  > 59	struct device *scdev;
-    60	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
