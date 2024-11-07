@@ -1,99 +1,80 @@
-Return-Path: <linux-kernel+bounces-400707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4401F9C113C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:47:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A74C9C113D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081A2285BFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:47:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AC14B22090
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A323A2185B3;
-	Thu,  7 Nov 2024 21:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA402185BA;
+	Thu,  7 Nov 2024 21:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pgQhXYxE"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E9hf2LNW"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6929B1940AA
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 21:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5E1217F39
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 21:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731016042; cv=none; b=YWcp1DxkBhnMQ2pDqRwJS9z8VxTTHo4WehZBBgOILI41JwLnvoWe6eNL+TTKYKyWFUB6PqIiaYeSorgE/GHIQJGE87fGOOdh7D9/+l/Mx01uUNXSz0MkkkdkbzZcdGsmbNrVTn6vwciu2MWO+y9j8nCg8hJMQ6jrVg0Kpp/s8oA=
+	t=1731016053; cv=none; b=AHOY2DSV9RCQuKtjMzKM6+1e698ZNGxmdkYhnd6LqKCHcogKeGqe8HXpg2QpAOE9N0QN5qYEYA9Skr9jpNDv6BEtzLBBX5HWyJNRZSBVoKZYqqcIX9f9/paD8i+wDsfHJ/RRm3acMfY//TqM/t886gdguiNggIIIClbA7zsM5uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731016042; c=relaxed/simple;
-	bh=7Vzi0dFJvYhmESZb/ld30Zb5ZAH3BkRQjZgk0CFl3Ak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C72lvUBITXw/aZmQfhGsMaKAQa4Pa4//LbiXyNNaCO+1QP/4BtJdTarGB2x3RRR6KiAS/81QOwJYz3BrXkSDF0DtzZ9rll4kFoFmozPKevSNTiX/mkaHvvVQp1MF+FOaFoO8TAY4Pi8SFTLgqVdEKBzRZ7xLI9chI2yuyDL5eEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pgQhXYxE; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e617ef81so1270e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 13:47:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731016038; x=1731620838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Vzi0dFJvYhmESZb/ld30Zb5ZAH3BkRQjZgk0CFl3Ak=;
-        b=pgQhXYxEqmY/IkgQGtxOWwmNUj6T0jmRTkob7zeiNP5D9/+wqckWEMkFa2vkJ+JN5b
-         JBQT5NROTymJbsQ4OO6OVah1RBVh0N9dQrEcXde/Ry4zfVviHktg06JBrAhT7Z0PNY/t
-         O3MSpbaEYhndkWSOwJsdzV3ofXQicPhXt3Gu/Iui7SZhvnrsUDWAve3kCtQ2lSWyWrdR
-         A7ubly24LU/7taKfPV5azxnqYvv3IHn+ufJjVlGVhsJPwpHO40Uugp0tqdzqd/U4LNgP
-         +usY0z1WpzhkxgKfLP5LTZ49frPjC4y9WOBhX/awZYyoAKDnpHmgyeQihDmLsYpUpS34
-         09hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731016038; x=1731620838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Vzi0dFJvYhmESZb/ld30Zb5ZAH3BkRQjZgk0CFl3Ak=;
-        b=lOIxwrEp5moB5n9mmig/m3A0S+b8U5tyweW35OlUnwoe6Hr9qCcQuWSxH533u9ewOX
-         aft9WXcj+P0NVcKftuYrWshwwOcEMkxoz+A7hq9ImWBveaRwm0+CRIAAhpMxB7O6A/MD
-         g+kov4SbOeT3QOXOMMwqr+EZKMO0KTaPhMvAReg0oUEusOrW9bKFFfZdackNJtdKYoNI
-         vA7Q9Wp3iVqX1yGYxqJT+mbeyK9Y9E4A5jDbySC9ngVQiJjs6Up22Om+rRDbHPgDoUyW
-         rDf0Kb4uqWDeLN3S8K3bG32w4GmCXQJBbygM3rVYSOS/ykAUj8MoxlHVnUYl1nwQ2OMH
-         aH5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxmj8DmBS6iwLb3Nydm23vzzDb3cZRvnEp27eVP+uzClPoUpOWvE5Q/wbgi7B8XVehRQRIK3tPtb3KLho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy56kWd0n3E2AnS3NvHx0gvbR6JgLW2xyKrFXM7/iKhN+oLTL/C
-	Ikg7dzdGtBFdvrWrXm3yf8Pl7W6wygPrEOSD+X5tAQXq4DOT3qPeccRs3S/4zjnrQYv5MAEWS8U
-	b+xgcf8ctdp/dW73d1D71U+XkK/immDSmmCrR
-X-Gm-Gg: ASbGncvjYG2fuKcEWtH2PgpE6wyE/nwCaFrYgI+uJWciFp5BeGcTHkPhPp+BqbKdoSB
-	kR3B8Ma8S/z5VQP8lALiKQMFT9JuYTgX1T9n4oNHA6Iq2NN7+Ow73oMBFYb4=
-X-Google-Smtp-Source: AGHT+IEVRtK3vBDQYo5QQzy8bf3W+78vm5grPnlmuPgEABF22YxhCkrdYd+v15ki6kcv6n3lBxfTPf/JP57XDaNq62Q=
-X-Received: by 2002:ac2:5b87:0:b0:52e:8a42:f152 with SMTP id
- 2adb3069b0e04-53d812536c6mr463638e87.5.1731016038083; Thu, 07 Nov 2024
- 13:47:18 -0800 (PST)
+	s=arc-20240116; t=1731016053; c=relaxed/simple;
+	bh=ZjMTrypOCLiv7Bi6Q4Bpin1/tA6zpIghK2T0gLJUjl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n6FO4d7bvrZWZCxBX0scgJmPZhb1+S54Ax5clP+qde+zx6krIeU9KOzKR8lne+c/Ga9L4i038zKKcHagZUNJtCEINILyulkfkGw4xkskBIpMaQJfqszm17LyeYXkiUsJ4dzmp/rtP1qWl21o7gLKyvAc3X7fU+In6PHcCfwHGUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E9hf2LNW; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 7 Nov 2024 16:47:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731016049;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qarMuCg0HGS35PYy0J8BN981Pv54hF+gUjLbfxxnw+Y=;
+	b=E9hf2LNWj1e7/ZPzTJO7Juokv0iohsMaRnbtFPR+Na/llK0NrPQVP4uOubz0/G9tW1l7nD
+	28cBXHRXIWCkXH5Y1bb+fPpi1CEK0cR/p93Fnxmh5xBNx3skwA4T2qJfr25PHJkMkpNu/r
+	2pZ3Es0rM5p8EaQcxfUUtg/XGRhRciQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH] bcachefs: Correct the description of the '--bucket=size'
+ options
+Message-ID: <7bjapkeooupak7m5itzhxfthvxxdvdm3de35m7kbjwkhpbdgtw@ped6xt6h6u7i>
+References: <20241016015026.1555670-1-youling.tang@linux.dev>
+ <da24a338-72ba-4148-be01-359d740a5aba@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730360798.git.zhengqi.arch@bytedance.com> <63c92f1e2a2fa6267490ab9fad5b090316b39b98.1730360798.git.zhengqi.arch@bytedance.com>
-In-Reply-To: <63c92f1e2a2fa6267490ab9fad5b090316b39b98.1730360798.git.zhengqi.arch@bytedance.com>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 7 Nov 2024 22:46:42 +0100
-Message-ID: <CAG48ez3y7UgzMZUvEqN6-O0b7gpwhdto9xb5gBTeknTuKuPcbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] mm: make zap_pte_range() handle full within-PMD range
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de, 
-	muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org, 
-	zokeefe@google.com, rientjes@google.com, peterx@redhat.com, 
-	catalin.marinas@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <da24a338-72ba-4148-be01-359d740a5aba@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 31, 2024 at 9:14=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedance.co=
-m> wrote:
-> In preparation for reclaiming empty PTE pages, this commit first makes
-> zap_pte_range() to handle the full within-PMD range, so that we can more
-> easily detect and free PTE pages in this function in subsequent commits.
->
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+On Thu, Oct 31, 2024 at 04:05:44PM +0800, Youling Tang wrote:
+> Hi, Kent
+> 
+> Give you a friendly ping. 🙂
+> 
+> BTW, is the following patch needed?
+> [1] https://lore.kernel.org/linux-bcachefs/20240709011134.79954-1-youling.tang@linux.dev/
+> [2] https://lore.kernel.org/linux-bcachefs/20240924025350.3948674-1-youling.tang@linux.dev/
+> [3] https://lore.kernel.org/linux-bcachefs/20240927084042.1516361-1-youling.tang@linux.dev/
+> [4] https://lore.kernel.org/linux-bcachefs/20241016014911.1555607-1-youling.tang@linux.dev/
 
-Reviewed-by: Jann Horn <jannh@google.com>
+Sorry, been behind :)
+
+All those are in my bcachefs-testing branch now
 
