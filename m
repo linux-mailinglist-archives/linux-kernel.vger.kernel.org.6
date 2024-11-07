@@ -1,90 +1,181 @@
-Return-Path: <linux-kernel+bounces-399689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9634D9C02DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:48:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DF09C02D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:48:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470A31F22490
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BD61C20DAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEE31EF097;
-	Thu,  7 Nov 2024 10:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06E01EF93B;
+	Thu,  7 Nov 2024 10:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i9RoF566"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rWLcUu72";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t552Yf66";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rWLcUu72";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t552Yf66"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321111EABA1
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 10:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DD817A58F;
+	Thu,  7 Nov 2024 10:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730976521; cv=none; b=pIzLOUm8ofl0sIGufEMFuTmfXdzPjvSMbkmaMgohILSuQpos5mF+OIuM1MwNCuf6q8msTsyoLXAcVKhVId5f/bVpfqZNdtEGJZrWFHPOcVvio+yOLADYYUFybvINq6AodJJBDGa7vMAZo7yczrZ4MlOpEXpm9MawJ9VXBEVJnDY=
+	t=1730976506; cv=none; b=gHswV7t8ka7pSBB2IGvMiqvVUVLRzYL40OmOBaOXe4+BXd/2JJGO16VO+aq3Q3ZAHRqYj1ZpqBNMV9PdUZ87OXxl8gqtG0XJMQ+2FHdSiRuQZ7tp/jkMOzXPHKwCcjE37tk+IZwH8KZKzwnIawPGakEsoO3DSw5qYHhTfEDmQ9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730976521; c=relaxed/simple;
-	bh=Sdy3ffOIi7k8Sjn9zIVT7VcbkCSMRxGWs0fyYz9MKkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JYYlpsOHYzOmc759ZXuWFnvn+/2gimvowhKPH8G72K2oVYFKZG+6T6aLS86QT3K8F8NMxkJITnsBxUdDJ6VdkjpWq4wZd4lYF3Jjmg1AkuykFMGEyTXHqGSCi/vAaa91qIK046VKkCf3tzkBAZzUXSjVuFCli0yRfGALIxetpEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i9RoF566; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730976518;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KFE8a5vA6V3Hg5gG1lNgnbGvgCy1xfGED61Xl0i9E8U=;
-	b=i9RoF566EevHPQ7Z5ZbY3TBkMmoYawiVDMxzkPXpz/+dPFy+pn7nU1hs3G8N+Xp8jCFcat
-	gfexKSDIw5p8L65qEeppbmR1DXtdHmF5OQslaWg8ePjEtqsQUDhszGLhF84j0Zor2bBZo+
-	CYliTOZ2wGAqW3cv8chvmFo5TVckdfE=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [RESEND PATCH] nfs: Annotate struct pnfs_commit_array with __counted_by()
-Date: Thu,  7 Nov 2024 11:48:20 +0100
-Message-ID: <20241107104820.1620-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1730976506; c=relaxed/simple;
+	bh=9O0Ayc1aEVsCrw/KWC7S0y36AOZ8qcqLeXk9SQjlwqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lb+mzEbKdDCYWctHyEsQ6JLnPZurLRpGUUlGyspfjSVVOyrT25CIit8zgTz1lvee3+c2ekoaQH4qJ7BGD55HQmxdc0qsuEX+LQRxcQRs7LxheBA3cH/PIkR8VRvA5kvKCNUn3ctk3+JpLW0W465+HDFMrSphbVqkUDKtjh/CnBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rWLcUu72; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t552Yf66; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rWLcUu72; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t552Yf66; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 594F31FF27;
+	Thu,  7 Nov 2024 10:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730976502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6UPUFifVx/sDL8OBqGnGORkZaytvo4SMCQ920FxC64c=;
+	b=rWLcUu72F5rpYh1NIvqJ9VXWI13IDxzkdFdXRJJ3cYGjXojlr/106NOxh2BQakv2+e8b7J
+	7AP6yc3MbKhqsoYlpSr/M0XVwVI3eMdSPvmthRb9CBj8Dz9dA8WsvfNEuJUPH1e68eGIFu
+	3J+84AVtf4qicDQxX0Rxg2jKzi6GwFQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730976502;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6UPUFifVx/sDL8OBqGnGORkZaytvo4SMCQ920FxC64c=;
+	b=t552Yf66KnRL5CUJZ/vZuv6kKIUaWqvrRPXi0vNXd/73F5yCvIgeo+VgYpTcI1s2obnspI
+	emM8VjGSJTKxsGCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rWLcUu72;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=t552Yf66
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730976502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6UPUFifVx/sDL8OBqGnGORkZaytvo4SMCQ920FxC64c=;
+	b=rWLcUu72F5rpYh1NIvqJ9VXWI13IDxzkdFdXRJJ3cYGjXojlr/106NOxh2BQakv2+e8b7J
+	7AP6yc3MbKhqsoYlpSr/M0XVwVI3eMdSPvmthRb9CBj8Dz9dA8WsvfNEuJUPH1e68eGIFu
+	3J+84AVtf4qicDQxX0Rxg2jKzi6GwFQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730976502;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6UPUFifVx/sDL8OBqGnGORkZaytvo4SMCQ920FxC64c=;
+	b=t552Yf66KnRL5CUJZ/vZuv6kKIUaWqvrRPXi0vNXd/73F5yCvIgeo+VgYpTcI1s2obnspI
+	emM8VjGSJTKxsGCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C3881394A;
+	Thu,  7 Nov 2024 10:48:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BwSXEvaaLGeREAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 10:48:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id ECC61A0AF4; Thu,  7 Nov 2024 11:48:21 +0100 (CET)
+Date: Thu, 7 Nov 2024 11:48:21 +0100
+From: Jan Kara <jack@suse.cz>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
+	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
+	jlayton@kernel.org, josef@toxicpanda.com
+Subject: Re: [RFC bpf-next fanotify 1/5] fanotify: Introduce fanotify
+ fastpath handler
+Message-ID: <20241107104821.xpu45m3volgixour@quack3>
+References: <20241029231244.2834368-1-song@kernel.org>
+ <20241029231244.2834368-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029231244.2834368-2-song@kernel.org>
+X-Rspamd-Queue-Id: 594F31FF27
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com,toxicpanda.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Add the __counted_by compiler attribute to the flexible array member
-buckets to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Tue 29-10-24 16:12:40, Song Liu wrote:
+> fanotify fastpath handler enables handling fanotify events within the
+> kernel, and thus saves a trip to the user space. fanotify fastpath handler
+> can be useful in many use cases. For example, if a user is only interested
+> in events for some files in side a directory, a fastpath handler can be
+> used to filter out irrelevant events.
+> 
+> fanotify fastpath handler is attached to fsnotify_group. At most one
+> fastpath handler can be attached to a fsnotify_group. The attach/detach
+> of fastpath handlers are controlled by two new ioctls on the fanotify fds:
+> FAN_IOC_ADD_FP and FAN_IOC_DEL_FP.
+> 
+> fanotify fastpath handler is packaged in a kernel module. In the future,
+> it is also possible to package fastpath handler in a BPF program. Since
+> loading modules requires CAP_SYS_ADMIN, _loading_ fanotify fastpath
+> handler in kernel modules is limited to CAP_SYS_ADMIN. However,
+> non-SYS_CAP_ADMIN users can _attach_ fastpath handler loaded by sys admin
+> to their fanotify fds. To make fanotify fastpath handler more useful
+> for non-CAP_SYS_ADMIN users, a fastpath handler can take arguments at
+> attach time.
 
-Compile-tested only.
+Hum, I'm not sure I'd be fine as an sysadmin to allow arbitary users to
+attach arbitrary filters to their groups. I might want some filters for
+priviledged programs which know what they are doing (e.g. because the
+filters are expensive) and other filters may be fine for anybody. But
+overall I'd think we'll soon hit requirements for permission control over
+who can attach what... Somebody must have created a solution for this
+already?
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- include/linux/nfs_xdr.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
-index 12d8e47bc5a3..559273a0f16d 100644
---- a/include/linux/nfs_xdr.h
-+++ b/include/linux/nfs_xdr.h
-@@ -1336,7 +1336,7 @@ struct pnfs_commit_array {
- 	struct rcu_head rcu;
- 	refcount_t refcount;
- 	unsigned int nbuckets;
--	struct pnfs_commit_bucket buckets[];
-+	struct pnfs_commit_bucket buckets[] __counted_by(nbuckets);
- };
- 
- struct pnfs_ds_commit_info {
+								Honza
 -- 
-2.47.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
