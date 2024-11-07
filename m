@@ -1,345 +1,178 @@
-Return-Path: <linux-kernel+bounces-400412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BF79C0D29
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:46:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412B59C0D2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:46:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60031C229EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012B6282EEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375E5216E03;
-	Thu,  7 Nov 2024 17:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432D1215F58;
+	Thu,  7 Nov 2024 17:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PRR4YdW8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIwlieGN"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AEA1922F5;
-	Thu,  7 Nov 2024 17:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B641917E6;
+	Thu,  7 Nov 2024 17:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731001564; cv=none; b=aJAGuz/IJesJu5MRHwluIT4bI1wr+sUPlKiIdUjmlgJcWMYnx+NoECHeJjzvFc3blytz0X/wT9CUMkB8JqYCfZCsnX+NmxllRZJrcRN0k5KHRaW2BoOl/ctPABJttKXgqhuYplw94nS7PQN5ttQFDoQGDediOy7P8SQEC6fsuqQ=
+	t=1731001598; cv=none; b=tPdxqYoLcMhaTYGpFyNCtQ48AHEoa6u7xkON2pAy0SguVYWKkHSr2pPKA14wWr43OGi6NBHBTt+m7wuiNAQK4icf5LjlYHMOQ3xRXwGQJ8lAkZX/+y3q9WnF6cMmlSBi2fObN6P/pRyu8S0zh855rVlpZ8QdoZoxRkRCBCtXMMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731001564; c=relaxed/simple;
-	bh=990WymFtFuY3Lz0BaB8FYNRJv0S92EJSQT8b7B/4NpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uZVbpZ23wSxnCDe4jGqGs+woef7PO81sicdFhY98vKz1sbMjanwcj8+LrAATCb9JNpnsuPHglC5Ydg6e70TGidq6Gzc46yyUPFwRz0Y3zN9xTS50QLVS8VTfpYwnscEWLRpm/syYbrZjBLglo5JRFSX6nWMd+vy+9UIjP4ytx2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PRR4YdW8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7HLaRt022083;
-	Thu, 7 Nov 2024 17:45:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Weey5qQzj6+LWDZBt5gOARQNS8yki2lQrekpBvAmHfk=; b=PRR4YdW8eFIEGijD
-	yV8V+a2qEAsif02A+qsNNIZorogbDHlEjaYvoJjnq4czns1nOM9F6TgbxUkNoth+
-	rgiwDhc+yRU8ETaqWKLaKgVa8lJWmoYmVt/ZrNb/sJ2KuP8IajLVuYaJNhbhlIwD
-	5TDkVnzq3MgUcGzVm9HHWUmO7RasjjdG7hvkIUBjWXi+HXXg4lK1vXu5JOPlExWf
-	dNaDEOFd8Jjyd7k7eUkWBszeCByZx+F8Xwy89iiP+BuxI7a6uvfcQDYPwIECGRMg
-	rZBdTc1miT9P3ouezz/QXh8Ha7CkpXFzz0gVnQnWteA+BJ64ZM2oVNZNpbmHWpTY
-	mnHpUw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r3c1d8e1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 17:45:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7HjcOq022056
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Nov 2024 17:45:38 GMT
-Received: from [10.110.112.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
- 09:45:37 -0800
-Message-ID: <7cfc0657-e8f4-45a8-95e2-668476ffce17@quicinc.com>
-Date: Thu, 7 Nov 2024 09:45:37 -0800
+	s=arc-20240116; t=1731001598; c=relaxed/simple;
+	bh=ZxzQ0We0q+DhXqbnl6jCcwR6CouP+vqd2q3mHq7HMuc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nP/frYNGSHyfu9z4sbclLG04fpGMuUIvwFEcmQv0FnLmHja1PVye7ATX2ZG4aPc7JDxfsaeujwPNgNbrg4WkvPHJ/5SoJQMYRfqZHU7g7YUwseGueG0qyWnmOHJ5u/IDoEGeD4G1z07QtRc552JnUWDl6lUspEc2i90S5yNCrss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EIwlieGN; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2113da91b53so9656535ad.3;
+        Thu, 07 Nov 2024 09:46:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731001596; x=1731606396; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oCDm5TkIQ8O2flDWJYV9Rk95Ql5sknkttmMph639aPA=;
+        b=EIwlieGNnzGp9oY1x6sR3yWfZkHLd7v3SEhFQsZ0ExvOvIC36Ki31qsUrvWwGsOUId
+         4y5PYL6YVi8UklQCi+OhmVomObzhMx0nFCdtqhLX/tbutX1ZC/9pe80zQFVlGxvcbqSC
+         w0gdl7Hgavrc9iqjpxPYrk5VkmZN/9hPkGwHH1ubxAgY2GlG8nklYDbMPpvtu8xmZ1H/
+         6gmhEE1uK3TAyvZyALnuYx3S5JHhfjGWIsFd+FpwN+3/FcdTLHZbqGBiR4xEaqCKCXpe
+         toYOMsF0rOp3JqwW0zjrJLG2rb8nnxmtjZov3200mejr32F0CUlZfl+Tv1gqqr6OqWC6
+         v9Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731001596; x=1731606396;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oCDm5TkIQ8O2flDWJYV9Rk95Ql5sknkttmMph639aPA=;
+        b=W6C/WxXJ+1yUhTR2RFzjSq7VOVaa8xO+/+s055FVIOQzEt2Mg1XbsnBbVs0AOO6h/V
+         gEmU/JwwXpi0l+u9LQ3xjZ/7qWiE77MMQ5+v3VJ7DvNzC7KzsUDlgMhYlqQg4ScRLOR/
+         7rxdBoXajFJH/B5MvM2gWBpxzTfflqr/WS4IV1o/Yj9Lq0DET32foWccBPTOLs0Tpf6v
+         Jai/QFxfwDQpbJjKPweOK7pEWJ6Q7+jD02Ak8lTZ6axO0+YIVHRvmgFyHzwkrbK2i90K
+         GT1Er++SscRxCcCURaYGw7/wLWMO0ilfPWTzyTs7Cym6TUWq1LM1n4eULA/N15G9mchQ
+         bkGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFkrQp3jD2SuIrsJ/J+KPjmQUxAT+OxEARKRrGfL5gri14RtmH7PShU6HfNFVNMyD1WY/gwps9cIBgRnE=@vger.kernel.org, AJvYcCVsJUshWjrK4FkORu0avddltPimHKUd2oIDh/F9XiNpCjFDa//Xy35oFn/rh0lYjvbdc36VifG8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVMVvbaVj1/8LfYwPL/csfgJZ+DMJ/5piY67gAGPYiDt4BOERN
+	3Mk/yqK/a2dUoQlqLxylOIJz+1ZNGpcD7JHT18fyrOp66zlHzJFO68K/M4aASPLp9dJi9ZZ5Ea+
+	Kt3uBBTzSsj3EKFAkS95ha93qyWQ=
+X-Google-Smtp-Source: AGHT+IFS61YErhMGyE1e7CSJuHP5D8rTcf7usM+suyIOxoVkHE7OEYndNdtcdrJqPiyHkl23c5alRySs4G0b9f6FhnM=
+X-Received: by 2002:a17:90b:17cb:b0:2e2:cef9:8f68 with SMTP id
+ 98e67ed59e1d1-2e9b16ee943mr34257a91.4.1731001596434; Thu, 07 Nov 2024
+ 09:46:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] PCI: qcom: Add Qualcomm SA8255p based PCIe root
- complex functionality
-To: <neil.armstrong@linaro.org>, <jingoohan1@gmail.com>,
-        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
-        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_krichai@quicinc.com>
-References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
- <20241106221341.2218416-5-quic_mrana@quicinc.com>
- <a1f03a33-22b2-4023-8185-d15abc72bc8a@linaro.org>
-Content-Language: en-US
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <a1f03a33-22b2-4023-8185-d15abc72bc8a@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YMQHitao4muXWLKMZOY8CsBJaoxnk0Xy
-X-Proofpoint-ORIG-GUID: YMQHitao4muXWLKMZOY8CsBJaoxnk0Xy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 clxscore=1011
- spamscore=0 phishscore=0 priorityscore=1501 adultscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070138
+References: <20241106-tcp-md5-diag-prep-v1-5-d62debf3dded@gmail.com> <20241107002555.57247-1-kuniyu@amazon.com>
+In-Reply-To: <20241107002555.57247-1-kuniyu@amazon.com>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Thu, 7 Nov 2024 17:46:25 +0000
+Message-ID: <CAJwJo6aB+GL2fiJDmm=zq_dNOu4pS_6c8NOgKzYgbiEG2e3xmQ@mail.gmail.com>
+Subject: Re: [PATCH net 5/6] net/diag: Limit TCP-MD5-diag array by max
+ attribute length
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: devnull+0x7f454c46.gmail.com@kernel.org, borisp@nvidia.com, 
+	colona@arista.com, davem@davemloft.net, dsahern@kernel.org, 
+	edumazet@google.com, geliang@kernel.org, horms@kernel.org, 
+	john.fastabend@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	martineau@kernel.org, matttbe@kernel.org, mptcp@lists.linux.dev, 
+	netdev@vger.kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 7 Nov 2024 at 00:26, Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+>
+> From: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
+> Date: Wed, 06 Nov 2024 18:10:18 +0000
+> > From: Dmitry Safonov <0x7f454c46@gmail.com>
+> >
+> > Currently TCP-MD5 keys are dumped as an array of
+> > (struct tcp_diag_md5sig). All the keys from a socket go
+> > into the same netlink attribute. The maximum amount of TCP-MD5 keys on
+> > any socket is limited by /proc/sys/net/core/optmem_max, which post
+> > commit 4944566706b2 ("net: increase optmem_max default value") is now by
+> > default 128 KB. With the help of selftest I've figured out that equals
+> > to 963 keys, without user having to increase optmem_max:
+> > > test_set_md5() [963/1024]: Cannot allocate memory
+> >
+> > The maximum length of nlattr is limited by typeof(nlattr::nla_len),
+> > which is (U16_MAX - 1). When there are too many keys the array written
+> > overflows the netlink attribute. Here is what one can see on a test,
+> > with no adjustments to optmem_max defaults:
+> >
+> > > recv() = 65180
+> > > socket: 10.0.254.1:7013->0.0.0.0:0 (intf 3)
+> > >      family: 2 state: 10 timer: 0 retrans: 0
+> > >      expires: 0 rqueu: 0 wqueue: 1 uid: 0 inode: 456
+> > >              attr type: 8 (5)
+> > >              attr type: 15 (8)
+> > >              attr type: 21 (12)
+> > >              attr type: 22 (6)
+> > >              attr type: 2 (252)
+> > >              attr type: 18 (64804)
+> > > recv() = 130680
+> > > socket: 10.0.254.1:7013->0.0.0.0:0 (intf 3)
+> > >      family: 2 state: 10 timer: 0 retrans: 0
+> > >      expires: 0 rqueu: 0 wqueue: 1 uid: 0 inode: 456
+> > >              attr type: 8 (5)
+> > >              attr type: 15 (8)
+> > >              attr type: 21 (12)
+> > >              attr type: 22 (6)
+> > >              attr type: 2 (252)
+> > >              attr type: 18 (64768)
+> > >              attr type: 29555 (25966)
+> > > recv() = 130680
+> > > socket: 10.0.254.1:7013->0.0.0.0:0 (intf 3)
+> > >      family: 2 state: 10 timer: 0 retrans: 0
+> > >      expires: 0 rqueu: 0 wqueue: 1 uid: 0 inode: 456
+> > >              attr type: 8 (5)
+> > >              attr type: 15 (8)
+> > >              attr type: 21 (12)
+> > >              attr type: 22 (6)
+> > >              attr type: 2 (252)
+> > >              attr type: 18 (64768)
+> > >              attr type: 29555 (25966)
+> > >              attr type: 8265 (8236)
+> >
+> > Here attribute type 18 is INET_DIAG_MD5SIG, the following nlattr types
+> > are junk made of tcp_diag_md5sig's content.
+> >
+> > Here is the overflow of the nlattr size:
+> > >>> hex(64768)
+> > '0xfd00'
+> > >>> hex(130300)
+> > '0x1fcfc'
+> >
+> > Limit the size of (struct tcp_diag_md5sig) array in the netlink reply by
+> > maximum attribute length. Not perfect as NLM_F_DUMP_INTR will be set on
+> > the netlink header flags, but the userspace can differ if it's due to
+> > inconsistency or due to maximum size of the netlink attribute.
+> >
+> > In a following patch set, I'm planning to address this and re-introduce
+> > TCP-MD5-diag that actually works.
+>
+> Given the issue has not been reported so far (I think), we can wait for
+> the series rather than backporting this.
 
+Yeah, my concern is that ss or or other tools may interrupt the
+md5keys from overflow as other netlink attributes and either show
+non-meaningful things or even hide some socket information (as if an
+attribute is met the second time, from what I read in ss code, it will
+put the last met attribute of the same type over previous pointers and
+print only that).
 
-On 11/7/2024 12:45 AM, neil.armstrong@linaro.org wrote:
-> Hi,
-> 
-> On 06/11/2024 23:13, Mayank Rana wrote:
->> On SA8255p ride platform, PCIe root complex is firmware managed as well
->> configured into ECAM compliant mode. This change adds functionality to
->> enable resource management (system resource as well PCIe controller and
->> PHY configuration) through firmware, and enumerating ECAM compliant root
->> complex.
->>
->> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
->> ---
->>   drivers/pci/controller/dwc/Kconfig     |   1 +
->>   drivers/pci/controller/dwc/pcie-qcom.c | 116 +++++++++++++++++++++++--
->>   2 files changed, 108 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/Kconfig 
->> b/drivers/pci/controller/dwc/Kconfig
->> index b6d6778b0698..0fe76bd39d69 100644
->> --- a/drivers/pci/controller/dwc/Kconfig
->> +++ b/drivers/pci/controller/dwc/Kconfig
->> @@ -275,6 +275,7 @@ config PCIE_QCOM
->>       select PCIE_DW_HOST
->>       select CRC8
->>       select PCIE_QCOM_COMMON
->> +    select PCI_HOST_COMMON
->>       help
->>         Say Y here to enable PCIe controller support on Qualcomm SoCs. 
->> The
->>         PCIe controller uses the DesignWare core plus Qualcomm-specific
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c 
->> b/drivers/pci/controller/dwc/pcie-qcom.c
->> index ef44a82be058..2cb74f902baf 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->> @@ -21,7 +21,9 @@
->>   #include <linux/limits.h>
->>   #include <linux/init.h>
->>   #include <linux/of.h>
->> +#include <linux/of_pci.h>
->>   #include <linux/pci.h>
->> +#include <linux/pci-ecam.h>
->>   #include <linux/pm_opp.h>
->>   #include <linux/pm_runtime.h>
->>   #include <linux/platform_device.h>
->> @@ -254,10 +256,12 @@ struct qcom_pcie_ops {
->>     * @ops: qcom PCIe ops structure
->>     * @override_no_snoop: Override NO_SNOOP attribute in TLP to enable 
->> cache
->>     * snooping
->> +  * @firmware_managed: Set if PCIe root complex is firmware managed
->>     */
->>   struct qcom_pcie_cfg {
->>       const struct qcom_pcie_ops *ops;
->>       bool override_no_snoop;
->> +    bool firmware_managed;
->>       bool no_l0s;
->>   };
->> @@ -1415,6 +1419,10 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
->>       .no_l0s = true,
->>   };
->> +static const struct qcom_pcie_cfg cfg_fw_managed = {
->> +    .firmware_managed = true,
->> +};
->> +
->>   static const struct dw_pcie_ops dw_pcie_ops = {
->>       .link_up = qcom_pcie_link_up,
->>       .start_link = qcom_pcie_start_link,
->> @@ -1566,6 +1574,51 @@ static irqreturn_t 
->> qcom_pcie_global_irq_thread(int irq, void *data)
->>       return IRQ_HANDLED;
->>   }
->> +static void qcom_pci_free_msi(void *ptr)
->> +{
->> +    struct dw_pcie_rp *pp = (struct dw_pcie_rp *)ptr;
->> +
->> +    if (pp && pp->has_msi_ctrl)
->> +        dw_pcie_free_msi(pp);
->> +}
->> +
->> +static int qcom_pcie_ecam_host_init(struct pci_config_window *cfg)
->> +{
->> +    struct device *dev = cfg->parent;
->> +    struct dw_pcie_rp *pp;
->> +    struct dw_pcie *pci;
->> +    int ret;
->> +
->> +    pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
->> +    if (!pci)
->> +        return -ENOMEM;
->> +
->> +    pci->dev = dev;
->> +    pp = &pci->pp;
->> +    pci->dbi_base = cfg->win;
->> +    pp->num_vectors = MSI_DEF_NUM_VECTORS;
->> +
->> +    ret = dw_pcie_msi_host_init(pp);
->> +    if (ret)
->> +        return ret;
->> +
->> +    pp->has_msi_ctrl = true;
->> +    dw_pcie_msi_init(pp);
->> +
->> +    ret = devm_add_action_or_reset(dev, qcom_pci_free_msi, pp);
->> +    return ret;
->> +}
->> +
->> +/* ECAM ops */
->> +const struct pci_ecam_ops pci_qcom_ecam_ops = {
->> +    .init        = qcom_pcie_ecam_host_init,
->> +    .pci_ops    = {
->> +        .map_bus    = pci_ecam_map_bus,
->> +        .read        = pci_generic_config_read,
->> +        .write        = pci_generic_config_write,
->> +    }
->> +};
->> +
->>   static int qcom_pcie_probe(struct platform_device *pdev)
->>   {
->>       const struct qcom_pcie_cfg *pcie_cfg;
->> @@ -1580,11 +1633,52 @@ static int qcom_pcie_probe(struct 
->> platform_device *pdev)
->>       char *name;
->>       pcie_cfg = of_device_get_match_data(dev);
->> -    if (!pcie_cfg || !pcie_cfg->ops) {
->> -        dev_err(dev, "Invalid platform data\n");
->> +    if (!pcie_cfg) {
->> +        dev_err(dev, "No platform data\n");
->> +        return -EINVAL;
->> +    }
->> +
->> +    if (!pcie_cfg->firmware_managed && !pcie_cfg->ops) {
->> +        dev_err(dev, "No platform ops\n");
->>           return -EINVAL;
->>       }
->> +    pm_runtime_enable(dev);
->> +    ret = pm_runtime_get_sync(dev);
->> +    if (ret < 0)
->> +        goto err_pm_runtime_put;
->> +
->> +    if (pcie_cfg->firmware_managed) {
->> +        struct pci_host_bridge *bridge;
->> +        struct pci_config_window *cfg;
->> +
->> +        bridge = devm_pci_alloc_host_bridge(dev, 0);
->> +        if (!bridge) {
->> +            ret = -ENOMEM;
->> +            goto err_pm_runtime_put;
->> +        }
->> +
->> +        of_pci_check_probe_only();
->> +        /* Parse and map our Configuration Space windows */
->> +        cfg = gen_pci_init(dev, bridge, &pci_qcom_ecam_ops);
->> +        if (IS_ERR(cfg)) {
->> +            ret = PTR_ERR(cfg);
->> +            goto err_pm_runtime_put;
->> +        }
->> +
->> +        bridge->sysdata = cfg;
->> +        bridge->ops = (struct pci_ops *)&pci_qcom_ecam_ops.pci_ops;
->> +        bridge->msi_domain = true;
->> +
->> +        ret = pci_host_probe(bridge);
->> +        if (ret) {
->> +            dev_err(dev, "pci_host_probe() failed:%d\n", ret);
->> +            goto err_pm_runtime_put;
->> +        }
->> +
->> +        return ret;
->> +    }
->> +
->>       pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
->>       if (!pcie)
->>           return -ENOMEM;
->> @@ -1593,11 +1687,6 @@ static int qcom_pcie_probe(struct 
->> platform_device *pdev)
->>       if (!pci)
->>           return -ENOMEM;
->> -    pm_runtime_enable(dev);
->> -    ret = pm_runtime_get_sync(dev);
->> -    if (ret < 0)
->> -        goto err_pm_runtime_put;
->> -
->>       pci->dev = dev;
->>       pci->ops = &dw_pcie_ops;
->>       pp = &pci->pp;
->> @@ -1739,9 +1828,13 @@ static int qcom_pcie_probe(struct 
->> platform_device *pdev)
->>   static int qcom_pcie_suspend_noirq(struct device *dev)
->>   {
->> -    struct qcom_pcie *pcie = dev_get_drvdata(dev);
->> +    struct qcom_pcie *pcie;
->>       int ret = 0;
->> +    if (of_device_is_compatible(dev->of_node, "qcom,pcie-sa8255p"))
-> 
-> Can't you use if (pcie_cfg->firmware_managed) here instead ?
-yes, although with firmware managed mode, struct qcom_pcie *pcie is not 
-allocated, and just
-to get access to pcie_cfg for this check, I took this approach. I am 
-thiking to do allocating struct qcom_pcie *pcie and using it in future 
-if we need more other related functionality which needs usage of this 
-structure for functionality like global interrupt etc.
+Regarding reports, one has to have U16_MAX / sizeof(struct
+tcp_diag_md5sig) = 655 keys on a socket. Probably, not many people use
+BGP with that many peers.
 
-Although if you still prefer to allocate struct qcom_pcie based memory 
-to access pcie_cfg, then I can consider to update in next patchset. 
-Please suggest.
->> +        return 0;
->> +
->> +    pcie = dev_get_drvdata(dev);
->>       /*
->>        * Set minimum bandwidth required to keep data path functional 
->> during
->>        * suspend.
->> @@ -1795,9 +1888,13 @@ static int qcom_pcie_suspend_noirq(struct 
->> device *dev)
->>   static int qcom_pcie_resume_noirq(struct device *dev)
->>   {
->> -    struct qcom_pcie *pcie = dev_get_drvdata(dev);
->> +    struct qcom_pcie *pcie;
->>       int ret;
->> +    if (of_device_is_compatible(dev->of_node, "qcom,pcie-sa8255p"))
-> 
-> Ditto
-> 
->> +        return 0;
->> +
->> +    pcie = dev_get_drvdata(dev);
->>       if (pm_suspend_target_state != PM_SUSPEND_MEM) {
->>           ret = icc_enable(pcie->icc_cpu);
->>           if (ret) {
->> @@ -1830,6 +1927,7 @@ static const struct of_device_id 
->> qcom_pcie_match[] = {
->>       { .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
->>       { .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
->>       { .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
->> +    { .compatible = "qcom,pcie-sa8255p", .data = &cfg_fw_managed },
->>       { .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
->>       { .compatible = "qcom,pcie-sa8775p", .data = &cfg_1_34_0},
->>       { .compatible = "qcom,pcie-sc7280", .data = &cfg_1_9_0 },
-> 
-> Thanks,
-> Neil
+I'm fine moving that to later net-next patches; I've sent it only
+because the above seemed concerning to me.
 
-Regards,
-Mayank
+Thanks,
+             Dmitry
 
