@@ -1,107 +1,94 @@
-Return-Path: <linux-kernel+bounces-399178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C37D9BFBE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:45:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD779BFBC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFF7CB21879
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CBDF1C2192F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F382618D65A;
-	Thu,  7 Nov 2024 01:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E0B17BD6;
+	Thu,  7 Nov 2024 01:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNyWj4hX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="K9C7ho5a"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B37D18C34B;
-	Thu,  7 Nov 2024 01:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EFD1854;
+	Thu,  7 Nov 2024 01:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730943842; cv=none; b=bYefv7WWQsDLVJ4P4+0nsS+MTujAKIO3BLk5JCzH3qR8xk3b9loacU1h972159uDIgoeB8MpUp99iRIf5y3DE3WfongRDNz2Y4DoxJv9ap/88iEFVPWD/VYANFICsvW1gfAdjrH/gGIU/xqURm7s1oMv0cgxQ4I02f6iyDF4Aok=
+	t=1730943582; cv=none; b=ShCfsHQsOW9Bs+vD9F2ip1CQmAQeflYlyBZu6hd5VyJiKjSFKX62RyVLe/lg38/TbPdic7FdTG/ae/0extDIfOJ5PVC3WT2JoQ3HkrmKFSxoRg9ASBX5rWp1Kf4qzj1KNg/8DToIivak0yevP92lwC/BDKH5NAPFeBvjG67kZbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730943842; c=relaxed/simple;
-	bh=vmq9jrn8vuSD3VpJFg9vZzUggmSUeit7J7xVMGFrJhg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uemY8r3dcXKBzHs704MGnOK5UMJ+8JjwDuWJGFCTUXi78K4/X/j3DV1JB7Pqpc83VtEuECjmg2yKC+xh0csfw24m4P5wzjS0EZ/6LCr4o1mRxlZ2E1gt7gXdyX+RgFOxSQG7Ria7NhfO4/O+DVRL8UwetCkQztZBxLk5jLBYkUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNyWj4hX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC4BC4CEC6;
-	Thu,  7 Nov 2024 01:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730943842;
-	bh=vmq9jrn8vuSD3VpJFg9vZzUggmSUeit7J7xVMGFrJhg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SNyWj4hXoSwtKFE4Q23qDjAbNQV2HYafmT6nfUhsCGj9bJC1XOa/8scYdkfYM6zdj
-	 4PtEtBF0uPRREIwL7lgIH8w9Rss3EgVdkR/dT+GNsrpHOdr7q9lIX5JS5qKH6oBzLP
-	 g3XgNT2cdhbFuf2e4JcEv7KlSMnuxUPwN5D/E8X9PlX0yjjbweoTHyTjW1nlskRBBd
-	 rIvle74315XTZEpG7Q7owSb+06aLjmK5wVYhfct1/A+rsJ4x5SOg8HXa+HAcv6V/KL
-	 AZx46JsJ2IDBxapUvJgrlXfLsxqNc4syQGUNE8BrDKf1xnOFZ/ZPwadSVTMrmjfX+3
-	 ytP5fOQ0Kn7JA==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 07 Nov 2024 01:39:25 +0000
-Subject: [PATCH v2 6/6] kselftest/arm64: Test signal handler state
- modification in fp-stress
+	s=arc-20240116; t=1730943582; c=relaxed/simple;
+	bh=v+wSnkxB7K8ZEE4ZN48hk/OOcNbesDZwgQE7ZDFhLoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JuVrFhRA24zf7XSSV0/kPZ9itRQnym4nduhq1C79RvrylLIt8rl0eNZOkDprTl92Ky0H5xY8W4Ggu7VmBF+cjR6VZxbeKKZtItxP1CVEccuViJRMqx8M2oUdqb98LQKubrSMnr5FDf9PIprigGtMTsSV0Dzke1mAxebVce//rPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=K9C7ho5a; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730943576; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=H7nMDuaCmHzuDu+vzqYAf2Ao4YDpMJQ1LC3DQ9Aqn/w=;
+	b=K9C7ho5ay4idmQnra9UP+1CAbHC4BZhFkImts3t/RQ3AfCwKstTgzy55/fByz334PotzNPUUzrEYi46U0w3WjIP3GPzkBZ6V8zsPgKOdzU1P0BeXCqKR2SF1X6n7e4o+J8x4zcUXERiuNnO3ezG7Yxf8ogogggYyc2+++pKCKd4=
+Received: from 30.74.144.126(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIthrqX_1730943574 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 07 Nov 2024 09:39:36 +0800
+Message-ID: <ef09f0d0-c8c1-408f-85d9-31fa8de13a92@linux.alibaba.com>
+Date: Thu, 7 Nov 2024 09:39:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] arm64: dts: sprd: sc9863a: fix in-ports property
+To: Stanislav Jakubek <stano.jakubek@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1730918663.git.stano.jakubek@gmail.com>
+ <5318a47282b8c15a3135fd12dacedb8aa70592e2.1730918663.git.stano.jakubek@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <5318a47282b8c15a3135fd12dacedb8aa70592e2.1730918663.git.stano.jakubek@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241107-arm64-fp-stress-irritator-v2-6-c4b9622e36ee@kernel.org>
-References: <20241107-arm64-fp-stress-irritator-v2-0-c4b9622e36ee@kernel.org>
-In-Reply-To: <20241107-arm64-fp-stress-irritator-v2-0-c4b9622e36ee@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1345; i=broonie@kernel.org;
- h=from:subject:message-id; bh=vmq9jrn8vuSD3VpJFg9vZzUggmSUeit7J7xVMGFrJhg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnLBtTWoXA4eHd6zfw971HD8lilDRJqnyTNW/1R2WW
- DSk3ur+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZywbUwAKCRAk1otyXVSH0NxLB/
- 0QhT6wTv8THELHvP8ObPV5Wls/EzSymSLag6pDrd4ya2LZ50x0Q6/+4Yni77XBfDvIMGDzADqk9d1y
- pPC6kx+WhBONPXVYzCcG+oeucfATYVRlJem/srypiq84viWGUdETPLB3tyJun/CcptYd37d2PNrhcP
- cOakCK+6UKQjnTZYU2ERhh1zRPHoavzLs/5eBz54TqQBgsLVd37WPGHVh/gKjlkLLucyFfpNCATfqT
- /vKAnFfvgVjPegyVyYXKfFpee2BIk+e92YdZTYJHREdL19GhFfMhDfWbMgDI2U0lpW/swoLG0QXSMn
- aKXv8WLvIqS08/7aj4Zn88rMvcrV7N
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Currently in fp-stress we test signal delivery to the test threads by
-sending SIGUSR2 which simply counts how many signals are delivered. The
-test programs now also all have a SIGUSR1 handler which for the threads
-doing userspace testing additionally modifies the floating point register
-state in the signal handler, verifying that when we return the saved
-register state is restored from the signal context as expected. Switch over
-to triggering that to validate that we are restoring as expected.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/fp/fp-stress.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/arm64/fp/fp-stress.c b/tools/testing/selftests/arm64/fp/fp-stress.c
-index faac24bdefeb9436e2daf20b7250d0ae25ca23a7..3d477249dee0632b662b48582433d39323d18e18 100644
---- a/tools/testing/selftests/arm64/fp/fp-stress.c
-+++ b/tools/testing/selftests/arm64/fp/fp-stress.c
-@@ -221,7 +221,7 @@ static void child_output(struct child_data *child, uint32_t events,
- static void child_tickle(struct child_data *child)
- {
- 	if (child->output_seen && !child->exited)
--		kill(child->pid, SIGUSR2);
-+		kill(child->pid, SIGUSR1);
- }
- 
- static void child_stop(struct child_data *child)
+On 2024/11/7 03:05, Stanislav Jakubek wrote:
+> This property is called "in-ports", not "in-port", fix it.
+> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 
--- 
-2.39.2
+LGTM.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
+> ---
+> Changes in V2:
+> - new patch
+> 
+>   arch/arm64/boot/dts/sprd/sc9863a.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/sprd/sc9863a.dtsi b/arch/arm64/boot/dts/sprd/sc9863a.dtsi
+> index e5a2857721e2..31172ac44adc 100644
+> --- a/arch/arm64/boot/dts/sprd/sc9863a.dtsi
+> +++ b/arch/arm64/boot/dts/sprd/sc9863a.dtsi
+> @@ -288,7 +288,7 @@ etf_little_out: endpoint {
+>   				};
+>   			};
+>   
+> -			in-port {
+> +			in-ports {
+>   				port {
+>   					etf_little_in: endpoint {
+>   						remote-endpoint =
 
