@@ -1,181 +1,136 @@
-Return-Path: <linux-kernel+bounces-400041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3001D9C0827
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:52:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4159C082A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B390D1F2304D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:52:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11A91B233BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BD21263C;
-	Thu,  7 Nov 2024 13:51:47 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7ED21262C;
+	Thu,  7 Nov 2024 13:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="FVk4UzMz";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="FVk4UzMz"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D733920FA81;
-	Thu,  7 Nov 2024 13:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8382220FA81;
+	Thu,  7 Nov 2024 13:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987506; cv=none; b=Lnr/wmKBQluIk//xiVgJECzrqhw6LRR+WKwb/kkAHzW6QFfSeVvrwO2QiV4RI2Zf7PRl6r1evLCjFZw9ID65J1uaWTjA2CxLszAbXOGqxo4+eou2KcyoD3sMWZUNrcVkpH6tb2oy7zE7NY3y6PHOWGnfM8k5NAHWaDhjJ7KOQXY=
+	t=1730987529; cv=none; b=RG8d6eVws+/yOI0AZGYJTVFg+dsVqcQd66NfqcluCqEY5IEDGXIJChZslyWB91Bn6sPlr8jRSODcKZpiaHQSzMbfPaVYMhNbJXUNlnJ/4zVJX13v9CcaKw27hssxq8BM+Pk6MoN8bcTvOKaNH3CN3GQV9iRQzs7BbsiOPN60+Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987506; c=relaxed/simple;
-	bh=LgDglSd2Tl30/NhTA8ahbONVX/UT2nPSjobAt9t/8TM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jyoxnld3JtN0kbLEW1oXFZQwxMkctyZsHpeeFgtZ0GlEnS58pGw/2u1OlnABzpb9cE5lxTuuAAv0y39V/7XKXmxlAkwc3HgPgRk1HsMr7iE8DwtofiRouC+7oEn/XHCbXKCufWgtQeJYwtjk9MiVBfUW9MRzadstkLzOFyLgbUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso152513366b.1;
-        Thu, 07 Nov 2024 05:51:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730987503; x=1731592303;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rQJA6TLiur9Q4EwskLjUkkQv1x5PCBZE3Fan5TuCjs=;
-        b=keECATEFSvteiowvuSiPiKaDX3hYBfIQ4Ax0hzfsghQttoXFFyleIgPgQD5OndXE7W
-         tXKSYOTHWelGGT3y2Ob5KaYHARbr80I/seYQRbzK7awN7ffqv7FdEvkurA79tra4pQad
-         J5Ze3u0HZXDisADKKuGZjrRmkkdn6/wnKxzXb8pGJI5nvGbaeyXkdp1cUM5Kt08z5pQd
-         SEJANMHn3MEvP+zE6fOTewJ1Z0qBTRsfxrUn6Do8x5JYbRJW9P60bnnAjarXD5Pel8SO
-         ubrPHC84CafnGus18MGoOcZfty3xCNqxQIXbymrW9LMCHG+R9of4PhtEJ+udB9em3Aqm
-         ynmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT6u13lJksB6NApNghpXgQOo+o30miCTpjKiWnIb5cxbEsAQ/0N7hHIW4FwNXB3tvCqKz3MIyI@vger.kernel.org, AJvYcCWTdpo1j0YoLPL0O1qQMNwF/FZkH+/C2apKmOHMyS2jJncNT0p4/tEkDeG4juAvy0ri5pksXoZwk/kwB5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU1pAH75O+k92OstGD2gjDFppuNitZTugidFYZahNq0a6eAKDh
-	dz5yjc25yL1sHKpfUM/RZzJyVm1KnT1cPnJlXJP5YLNI/7syMVIH
-X-Google-Smtp-Source: AGHT+IGoo8F9F3Fjhf8nh9EXZc/ifYsGipeFQIjD1SpfFQkyRYvZ/6GIfr8uzn9KVXziCfUUTrLe6w==
-X-Received: by 2002:a17:907:31cb:b0:a9a:296:b501 with SMTP id a640c23a62f3a-a9de5f660a2mr4356554466b.26.1730987502953;
-        Thu, 07 Nov 2024 05:51:42 -0800 (PST)
-Received: from gmail.com (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0e2e92esm96786266b.182.2024.11.07.05.51.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 05:51:42 -0800 (PST)
-Date: Thu, 7 Nov 2024 05:51:40 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Eric Dumazet <edumazet@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net] ipmr: Fix access to mfc_cache_list without lock held
-Message-ID: <20241107-invisible-skylark-of-attack-e44be1@leitao>
-References: <20241107-ipmr_rcu-v1-1-ad0cba8dffed@debian.org>
- <CANn89iL-L8iBwp=rq-YwAeeoUY2MTjr5akWm=S=k7ckpkaEy+Q@mail.gmail.com>
+	s=arc-20240116; t=1730987529; c=relaxed/simple;
+	bh=GgoWWJlxURJ1HeK6ZNXcXEMbIMwTJeBVOTlimc4RSe8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YhzseuOGEuJKMX6kJSy2pMc0tx+v9JJJ5V6FLmleZk5MNRrujJCN3UcepIm2aD11Jbp3bzri9XdZJ65JbjbvmUBVeF/IXWVMOUNgPBdvQHvfjHKwk4nJXbW8CbqC4UoaZ80kIUJbC1sXdcNyI3Bd3AUuGSpB7DxQxzWMh2wshic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=FVk4UzMz; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=FVk4UzMz; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1730987526;
+	bh=GgoWWJlxURJ1HeK6ZNXcXEMbIMwTJeBVOTlimc4RSe8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=FVk4UzMzLFPcuKuNBF5rj58ThdWMts/19excLQSrXXXgkdTp5sPWcnpxVzF+r12jH
+	 y5XkjmsjeOc6lpp7yJBZ4KXknkJNE/TEH0M23CUiwUJW8LrdA2o/Cj42DzfKKd87za
+	 uSw1M2lrWhX9WphB799tbLAHgfDDan8gN6CJ5pfc=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6EDA01286544;
+	Thu, 07 Nov 2024 08:52:06 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id udYK4MnnoXrs; Thu,  7 Nov 2024 08:52:06 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1730987526;
+	bh=GgoWWJlxURJ1HeK6ZNXcXEMbIMwTJeBVOTlimc4RSe8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=FVk4UzMzLFPcuKuNBF5rj58ThdWMts/19excLQSrXXXgkdTp5sPWcnpxVzF+r12jH
+	 y5XkjmsjeOc6lpp7yJBZ4KXknkJNE/TEH0M23CUiwUJW8LrdA2o/Cj42DzfKKd87za
+	 uSw1M2lrWhX9WphB799tbLAHgfDDan8gN6CJ5pfc=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7281B1286301;
+	Thu, 07 Nov 2024 08:52:05 -0500 (EST)
+Message-ID: <10296fd8b0fcbf1d813577ef41738ffea12b70d1.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org, 
+ Jonathan Corbet <corbet@lwn.net>, Peter Huewe <peterhuewe@gmx.de>, Jason
+ Gunthorpe <jgg@ziepe.ca>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, Mimi Zohar
+ <zohar@linux.ibm.com>,  linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 07 Nov 2024 08:52:02 -0500
+In-Reply-To: <D5FZT0QPHL0O.231WD6VUHC48X@kernel.org>
+References: <20241107095138.78209-1-jarkko@kernel.org>
+	 <76d9ae11c339b589a8ec94f010e7439b7ce7d283.camel@HansenPartnership.com>
+	 <D5FZT0QPHL0O.231WD6VUHC48X@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iL-L8iBwp=rq-YwAeeoUY2MTjr5akWm=S=k7ckpkaEy+Q@mail.gmail.com>
 
-Hello Eric,
-
-On Thu, Nov 07, 2024 at 02:13:14PM +0100, Eric Dumazet wrote:
-> On Thu, Nov 7, 2024 at 12:03 PM Breno Leitao <leitao@debian.org> wrote:
-> >
-> > Accessing `mr_table->mfc_cache_list` is protected by an RCU lock. In the
-> > following code flow, the lock is not held, causing the following error
-> > when `RCU_PROVE` is not held.
-> >
-> >         6.12.0-rc5-kbuilder-01145-gbac17284bdcb #33 Tainted: G            E    N
-> >         -----------------------------
-> >         net/ipv4/ipmr_base.c:313 RCU-list traversed in non-reader section!!
-> >
-> >         rcu_scheduler_active = 2, debug_locks = 1
-> >                    2 locks held by RetransmitAggre/3519:
-> >                     #0: ffff88816188c6c0 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x8a/0x290
-> >                     #1: ffffffff83fcf7a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x6b/0x90
-> >
-> >         stack backtrace:
-> >                     lockdep_rcu_suspicious
-> >                     mr_table_dump
-> >                     ipmr_rtm_dumproute
-> >                     rtnl_dump_all
-> >                     rtnl_dumpit
-> >                     netlink_dump
-> >                     __netlink_dump_start
-> >                     rtnetlink_rcv_msg
-> >                     netlink_rcv_skb
-> >                     netlink_unicast
-> >                     netlink_sendmsg
-> >
-> > Fix accessing `mfc_cache_list` without holding the RCU read lock. Adds
-> > `rcu_read_lock()` and `rcu_read_unlock()` around `mr_table_dump()` to
-> > prevent RCU-list traversal in non-reader section.
-> >
-> > Since `mr_table_dump()` is the only function that touches the list, that
-> > might be the only critical section in `ipmr_rtm_dumproute()` that needs
-> > to be protected in ipmr_rtm_dumproute().
-> >
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > Fixes: cb167893f41e ("net: Plumb support for filtering ipv4 and ipv6 multicast route dumps")
-> > ---
-> >  net/ipv4/ipmr.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
-> > index 089864c6a35eec146a1ba90c22d79245f8e48158..bb855f32f328024f384a2fa58f42fc227705206e 100644
-> > --- a/net/ipv4/ipmr.c
-> > +++ b/net/ipv4/ipmr.c
-> > @@ -2612,8 +2612,10 @@ static int ipmr_rtm_dumproute(struct sk_buff *skb, struct netlink_callback *cb)
-> >                         NL_SET_ERR_MSG(cb->extack, "ipv4: MR table does not exist");
-> >                         return -ENOENT;
-> >                 }
-> > +               rcu_read_lock();
-> >                 err = mr_table_dump(mrt, skb, cb, _ipmr_fill_mroute,
-> >                                     &mfc_unres_lock, &filter);
-> > +               rcu_read_unlock();
-> >                 return skb->len ? : err;
-> >         }
-> >
-> >
+On Thu, 2024-11-07 at 15:49 +0200, Jarkko Sakkinen wrote:
+> On Thu Nov 7, 2024 at 3:20 PM EET, James Bottomley wrote:
+> > On Thu, 2024-11-07 at 11:51 +0200, Jarkko Sakkinen wrote:
+> > [...]
+> > > +void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf
+> > > *buf,
+> > > +                        u8 attributes, u8 *passphrase, int
+> > > passphrase_len)
+> > > +{
+> > > +       /* offset tells us where the sessions area begins */
+> > > +       int offset = buf->handles * 4 + TPM_HEADER_SIZE;
+> > > +       u32 len = 9 + passphrase_len;
+> > > +
+> > > +       if (tpm_buf_length(buf) != offset) {
+> > > +               /* not the first session so update the existing
+> > > length */
+> > > +               len += get_unaligned_be32(&buf->data[offset]);
+> > > +               put_unaligned_be32(len, &buf->data[offset]);
+> > > +       } else {
+> > > +               tpm_buf_append_u32(buf, len);
+> > > +       }
+> > > +       /* auth handle */
+> > > +       tpm_buf_append_u32(buf, TPM2_RS_PW);
+> > > +       /* nonce */
+> > > +       tpm_buf_append_u16(buf, 0);
+> > > +       /* attributes */
+> > > +       tpm_buf_append_u8(buf, 0);
+> > > +       /* passphrase */
+> > > +       tpm_buf_append_u16(buf, passphrase_len);
+> > > +       tpm_buf_append(buf, passphrase, passphrase_len);
+> > > +}
+> > > +
+> > 
+> > The rest of the code looks fine, but if you're going to extract
+> > this as a separate function instead of doing the open coded struct
+> > tpm2_null_auth that was there originally, you should probably
+> > extract and use the tpm2_buf_append_auth() function in
+> > trusted_tpm2.c
 > 
-> What about net/ipv6/ip6mr.c ip6mr_rtm_dumproute() ?
+> So this was straight up from Mimi's original patch :-)
 
-That one might require as well.
+Yes, I had the same comment prepped for that too.
 
-> In my opinion, since we still hold RTNL in these paths, we should
-> change the lockdep annotation.
+> Hmm... was there duplicate use for this in the patch? I'll check
+> this.
 
-I don't have much experience mixing locks like this. Is it safe to mix
-and match rtnl and RCUs like this?
+The original open coded the empty auth append with struct
+tpm2_null_auth since it's the only user.  However, since we do have
+another user in trusted keys, it might make sense to consolidate.
 
-I have the impression that, when iterating a RCU protected list *without* being in the read-side
-critical sections, the RCU doesn't know that someone might be traversing
-the list, and remove the element mid air (mroute_clean_tables()?). Is
-this model incorrect?
+James
 
-> Then later we can remove RTNL from these dump operations.
-
-Do you mean that, execute the dump operation without holding the RTNL,
-thus, relying solely on RCU?
-
-> diff --git a/net/ipv4/ipmr_base.c b/net/ipv4/ipmr_base.c
-> index 271dc03fc6dbd9b35db4d5782716679134f225e4..f0af12a2f70bcdf5ba54321bf7ebebe798318abb
-> 100644
-> --- a/net/ipv4/ipmr_base.c
-> +++ b/net/ipv4/ipmr_base.c
-> @@ -310,7 +310,8 @@ int mr_table_dump(struct mr_table *mrt, struct sk_buff *skb,
->         if (filter->filter_set)
->                 flags |= NLM_F_DUMP_FILTERED;
-> 
-> -       list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list) {
-> +       list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list,
-> +                               lockdep_rtnl_is_held()) {
->                 if (e < s_e)
->                         goto next_entry;
->                 if (filter->dev &&
-
-Clarifying next steps: Would you like me to review/test and submit, or
-are you planning to send it officially?
-
-Thanks for your feedback,
---breno
 
