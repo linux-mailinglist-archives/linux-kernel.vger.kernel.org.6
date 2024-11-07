@@ -1,160 +1,98 @@
-Return-Path: <linux-kernel+bounces-399646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A0F9C024F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:27:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086659C0251
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7081F229D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:27:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39CD91C212E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B8D1EC00E;
-	Thu,  7 Nov 2024 10:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906CE1E9083;
+	Thu,  7 Nov 2024 10:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eP/941cF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Depln833"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857E41DE4EA;
-	Thu,  7 Nov 2024 10:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DA91EBA1B;
+	Thu,  7 Nov 2024 10:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975233; cv=none; b=L+tubU9hgzSYZ4NcqgH2L26VUUPuFSUuiDpVISh5JLHDcxa8fyt5O9KIoud5eI6rBQjB+dNRudtnmxvELu81aFTkdxcfCB4e/5rST9sbnbt4wJm4mdCTH5S6RT5BP1goF60RcgXNTPgKjzHpzWd6gwbxeyzGcsz7+j6Dzau8Xm8=
+	t=1730975240; cv=none; b=uDmDy1LZWQQKjOuyVWPzTjsGnYu2GKtTINeb7UvdjTNukiiu+htzpa+ViBTnq56GtzlfLxmuCzBfmLAaPrirIVEpLoepivZ97XR871jzc5Thnoy+W4o/2O0XfUEMmMeRdBLbmkqs8Zb0JN/CftK5oRjHTjOvJDR/5uuv5+INrrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975233; c=relaxed/simple;
-	bh=w7LlA+d3P8tWpqL1R1qmf9z0LDa4pqyuLrV0Uk8F5P8=;
+	s=arc-20240116; t=1730975240; c=relaxed/simple;
+	bh=En01lEFzgOPGQXLGM59354SFtFYp8jJ+HyqefB6L7B0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=opUz9OTBtg3zrSYx7viVMR6EI+E2FCaFA7/7Kj61lg0G+ftk2zFvf+SF/qm8mFscG9axpoI26cK5dh9p4PvlJWhLY+kSrUpskW11tXgQZXyUwqliJ0Ts7ULpaxYGk4UaOpKMQ/YCNdrlMQDftxHzVX+RSapAZIClwpNfly7rJOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eP/941cF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB8EBC4CED2;
-	Thu,  7 Nov 2024 10:27:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oAGtyQ9Yzjp/ti2M1oSsjfvHNazlgSaCYvS+3C7mrsHBi8kbVdrfKQ/Okfq6Okylpm8DD7PeGiWGagNGyuQ3Fz4YXV8EDbT5JL0A9tXtd9BUGt2fBH4hSthc/RWA3VN0ykGL0nDUwIDDqPZ/jsrPR4zYbANolvh6eEIojFnmKn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Depln833; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA31EC4CECC;
+	Thu,  7 Nov 2024 10:27:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730975233;
-	bh=w7LlA+d3P8tWpqL1R1qmf9z0LDa4pqyuLrV0Uk8F5P8=;
+	s=k20201202; t=1730975239;
+	bh=En01lEFzgOPGQXLGM59354SFtFYp8jJ+HyqefB6L7B0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eP/941cF+syt8TdVfS5qQgfgNj+beEkbClcA9CLeVPm0+Qv+9fFrpv7ADx4ne9kya
-	 fSxgRGC+pBQcgKdDiKfCoelY3kcc0v0krcY0d0v1k/fIc86iN5JyRG/ZDt+nfyutVu
-	 PVkvfEw0EacbzcsignpQdB93vNGMF8MbcAwtDQuibrX0B662P0sDTIwZoSNH3crUb1
-	 Gs331qaoflK88MxqVayxOEegQq+I233Je6dDyHToVdCu82bHCcwkUIn8JzuK59bVyY
-	 oeZ8wj0jaf/9XeXCJurRHTSzc2Et5RqV/IuRzkHenjFGgk2tHmYfzJgmwavwYBBIh8
-	 1OFFzDYpagQpw==
-Date: Thu, 7 Nov 2024 11:27:10 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: stable@vger.kernel.org, bsegall@google.com,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: FAILED: Patch "posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER
- on clone" failed to apply to v5.4-stable tree
-Message-ID: <ZyyV_oFz2cqfB7x0@pavilion.home>
-References: <20241106021327.183601-1-sashal@kernel.org>
+	b=Depln833HUhQdWj9mbw7EYMsxsRGv2PNoy+lUZeWyuRLxx0wfT8A4KxsOh6/D0pjm
+	 zmfZhbqIZgxZvnnFkc5xsx+gfu8+yLISkeWawf/I6ZOdgiiqI45TWBM6IrB70TcDJx
+	 CIpo9I3A8xm/fEorK2F1kxHvCmBr33eSjqiN+5RvtiEmo2BmdTafi4svI/CV4IjWZS
+	 kNTNomDUQZ8gsebRCoKCgC+j5RXvvQ5aWCjQ44Cs3ELTFBbFg5VvFoWiLZbBuARtuz
+	 FsvFYSWyxDq5PKqDW/ono8JE818OcmG99A6wL+9xEZ+3DtsxmEX60tCRbgEi7oF/88
+	 zlYolXFD+nOHA==
+Date: Thu, 7 Nov 2024 11:27:14 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Vabhav Sharma <vabhav.sharma@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, frank.li@nxp.com, 
+	pankaj.gupta@nxp.com, daniel.baluta@nxp.com, silvano.dininno@nxp.com, V.Sethi@nxp.com, 
+	meenakshi.aggarwal@nxp.com
+Subject: Re: [PATCH v3 1/4] dt-bindings: firmware: imx: add nvmem phandle
+Message-ID: <tot4nynjw7mjvb34jxkjdcdvumhxmkhrjucle3dgcqionbjaqr@mqeo3rcj2b4o>
+References: <20241107-secvio-v3-0-ea27f1e9ced4@nxp.com>
+ <20241107-secvio-v3-1-ea27f1e9ced4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106021327.183601-1-sashal@kernel.org>
+In-Reply-To: <20241107-secvio-v3-1-ea27f1e9ced4@nxp.com>
 
-Le Tue, Nov 05, 2024 at 09:13:26PM -0500, Sasha Levin a écrit :
-> The patch below does not apply to the v5.4-stable tree.
-> If someone wants it applied there, or to any other stable or longterm
-> tree, then please email the backport, including the original git commit
-> id to <stable@vger.kernel.org>.
+On Thu, Nov 07, 2024 at 06:42:39AM +0100, Vabhav Sharma wrote:
+> nvmem phandle is required by secvio driver to
+> read fuse.
 > 
-> Thanks,
-> Sasha
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/firmware/fsl,scu.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/firmware/fsl,scu.yaml b/Documentation/devicetree/bindings/firmware/fsl,scu.yaml
+> index 557e524786c2..1cc86fed6c27 100644
+> --- a/Documentation/devicetree/bindings/firmware/fsl,scu.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/fsl,scu.yaml
+> @@ -112,6 +112,9 @@ properties:
+>            - const: rx2
+>            - const: rx3
+>            - const: gip3
 
-Please try this:
+Missing blank line
 
-From 6b742b3fa045260c3b13e7747332e9d34ca7bbe9 Mon Sep 17 00:00:00 2001
-From: Benjamin Segall <bsegall@google.com>
-Date: Fri, 25 Oct 2024 18:35:35 -0700
-Subject: [PATCH] posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER on clone
+> +  nvmem:
+> +    description:
+> +      phandle of NVMEM driver provided by the SCU
 
-When cloning a new thread, its posix_cputimers are not inherited, and
-are cleared by posix_cputimers_init(). However, this does not clear the
-tick dependency it creates in tsk->tick_dep_mask, and the handler does
-not reach the code to clear the dependency if there were no timers to
-begin with.
+driver? Please describe hardware, not driver. I think I gave you such
+comment last time.
 
-Thus if a thread has a cputimer running before clone/fork, all
-descendants will prevent nohz_full unless they create a cputimer of
-their own.
+Best regards,
+Krzysztof
 
-Fix this by entirely clearing the tick_dep_mask in copy_process().
-(There is currently no inherited state that needs a tick dependency)
-
-Process-wide timers do not have this problem because fork does not copy
-signal_struct as a baseline, it creates one from scratch.
-
-Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
-Signed-off-by: Ben Segall <bsegall@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/xm26o737bq8o.fsf@google.com
----
- include/linux/tick.h | 8 ++++++++
- kernel/fork.c        | 2 ++
- 2 files changed, 10 insertions(+)
-
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index cf6c92060929..4634af47f8c2 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -244,12 +244,19 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
- 	if (tick_nohz_full_enabled())
- 		tick_nohz_dep_set_task(tsk, bit);
- }
-+
- static inline void tick_dep_clear_task(struct task_struct *tsk,
- 				       enum tick_dep_bits bit)
- {
- 	if (tick_nohz_full_enabled())
- 		tick_nohz_dep_clear_task(tsk, bit);
- }
-+
-+static inline void tick_dep_init_task(struct task_struct *tsk)
-+{
-+	atomic_set(&tsk->tick_dep_mask, 0);
-+}
-+
- static inline void tick_dep_set_signal(struct signal_struct *signal,
- 				       enum tick_dep_bits bit)
- {
-@@ -283,6 +290,7 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
- 				     enum tick_dep_bits bit) { }
- static inline void tick_dep_clear_task(struct task_struct *tsk,
- 				       enum tick_dep_bits bit) { }
-+static inline void tick_dep_init_task(struct task_struct *tsk) { }
- static inline void tick_dep_set_signal(struct signal_struct *signal,
- 				       enum tick_dep_bits bit) { }
- static inline void tick_dep_clear_signal(struct signal_struct *signal,
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 1728aa77861c..ce795a61874a 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -94,6 +94,7 @@
- #include <linux/livepatch.h>
- #include <linux/thread_info.h>
- #include <linux/stackleak.h>
-+#include <linux/tick.h>
- 
- #include <asm/pgtable.h>
- #include <asm/pgalloc.h>
-@@ -1956,6 +1957,7 @@ static __latent_entropy struct task_struct *copy_process(
- 	acct_clear_integrals(p);
- 
- 	posix_cputimers_init(&p->posix_cputimers);
-+	tick_dep_init_task(p);
- 
- 	p->io_context = NULL;
- 	audit_set_context(p, NULL);
--- 
-2.46.0
 
