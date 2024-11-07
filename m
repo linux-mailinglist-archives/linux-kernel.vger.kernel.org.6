@@ -1,246 +1,126 @@
-Return-Path: <linux-kernel+bounces-399636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3C89C0204
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:14:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EB59C0206
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:14:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C275283012
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:14:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 631FDB2279E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD8F1EABD7;
-	Thu,  7 Nov 2024 10:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9560B1EBFE3;
+	Thu,  7 Nov 2024 10:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PMIS4rej"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OaQU6j6S"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD17195F22;
-	Thu,  7 Nov 2024 10:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4FF1E909C;
+	Thu,  7 Nov 2024 10:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730974440; cv=none; b=QgiB9hPxEQS9bmHHQ1AhHPvILPAejRgTS6xraXsyeerwtd5OG36hNnL++bb80uhaftxBcxYhUj7IE1vlmNVLbhPsxpxxggbC6bXNwIk//KPq+VxMP9/5StDSmlQiLRvGdxnByRwHpxiIgheAsifegkIZFGx1UZp4DYZ+Kshdv3Q=
+	t=1730974471; cv=none; b=f80WpH00tgevIQ6aZtA2qeSDkh3gx7hn6ifUWuDKlnlTFtJIyNC6ISt2apNXyh9SYa1cyKUiEA2EijGuV0hHkKw93YXqUibakhHq01fOJttJtiO1gHYkEcZnqozh0QH7AuCTMsTAR2h4XWz69WuAzx6UDwc8KgomkRVpUGu09M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730974440; c=relaxed/simple;
-	bh=qGL+owtZbc1lnLogLE8XlKsc16UpGYGBcPFpDTZdqk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LUmOkQw4sZqIZWaETlMx5E9xt7R0lLQWLRYPXNAbCvYgv4USnP0JSnlS5JyiM8yE5oSubAM+W/rSNPokrBwQu1vqcDPPuSD/t5BNERYuSaRYWEUpisdPsXsaTVCjfCbIs02m9psQ6CjNscDzahf4ba8e2Wq6/20ScfNOFwJopk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PMIS4rej; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730974430;
-	bh=qGL+owtZbc1lnLogLE8XlKsc16UpGYGBcPFpDTZdqk8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PMIS4rejvUGx/AV6FPb0rxG6CIyLbGVPSXwSi7+sIZiYQHrjVICYMJVtJXOtTPAdH
-	 6u8ODv5ojFaKj2YGjTQM2PyZqe2HxzMi6lv6BHSjkPAGGkqZwWXlpmUq6/T18/6l7u
-	 UwcaaBQmEoDd6HDAYJgG2L0teyNoKRleZe44H2lfPHEDqOxAL5Wi7L7QLGYin/Ty9p
-	 ueGV0nEaVFr2TKjIHKGo6dEfbqfTNa+iG7Rj9YyTwYNfaQHJeYdFde4zdIOXnWG0lM
-	 Gj3286ptUSdpdcucpF/tFxLhAodvljsUWC0U8/ASc8ypnlF3tukG1lTBnT+UR+ZhGR
-	 8xB1kl4GiTHAg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DF58717E14FB;
-	Thu,  7 Nov 2024 11:13:49 +0100 (CET)
-Message-ID: <c7c5e802-3df8-4218-865f-81a207c517cd@collabora.com>
-Date: Thu, 7 Nov 2024 11:13:49 +0100
+	s=arc-20240116; t=1730974471; c=relaxed/simple;
+	bh=ATL7M1Loql/H/FRX3t4w/EVdlm8l7Pns6lcCMDqmGZA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TNCycED6dpZ5gYF4GaFKlsqGCj9M4B1ieQdnOxhBRGq5AJjpuQcENlbA4GvfMEkoLTximtiDiwEOqTYw6/HqKqoLyVzTwOI4fPpL88uGC39jp6p0H4SRrZyal4bTTtGsGYSp1wiQPrPzkGc2LN/QAF2y674OTEumvPQsTKUbFyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OaQU6j6S; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A7AE9W4007164;
+	Thu, 7 Nov 2024 04:14:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730974449;
+	bh=aAHPUbNs7M6QgxqG12AlzIrLLtSFknGoPRYn8hsW/Zw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=OaQU6j6SxZvQsqeOTwkdonkxFSNlzp2aNOpoUBETx19mczhRBENskfTOQwQwzkJf3
+	 eJ5s1A3cAQl4HnuXJO43ks7DkRxRouVydG5hpdoS5b0J9mU3TSKJFx5lkCPDZ6DVnY
+	 X2RiH1Y5B4PQzpdASA03OC8fF9I3Rnkv7z0MXHa8=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A7AE9p3104642
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 7 Nov 2024 04:14:09 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 7
+ Nov 2024 04:14:08 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 7 Nov 2024 04:14:08 -0600
+Received: from localhost (prasanth-server.dhcp.ti.com [172.24.227.197])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A7AE7rb006059;
+	Thu, 7 Nov 2024 04:14:07 -0600
+Date: Thu, 7 Nov 2024 15:44:06 +0530
+From: Prasanth Mantena <p-mantena@ti.com>
+To: Bhavya Kapoor <b-kapoor@ti.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <nm@ti.com>,
+        <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <s-sinha@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j722s-evm: Enable support for mcu_i2c0
+Message-ID: <20241107101406.6bj4xbiguzuwt5db@prasanth-server>
+References: <20241105091224.23453-1-b-kapoor@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2,1/1] i2c: mediatek: add runtime PM operations and bus
- regulator control
-To: Zoie Lin <zoie.lin@mediatek.com>, Qii Wang <qii.wang@mediatek.com>,
- Andi Shyti <andi.shyti@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, teddy.chen@mediatek.com
-References: <20241106125212.27362-1-zoie.lin@mediatek.com>
- <20241106125212.27362-2-zoie.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241106125212.27362-2-zoie.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241105091224.23453-1-b-kapoor@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Il 06/11/24 13:52, Zoie Lin ha scritto:
-> This commit introduces support for runtime PM operations in
-> the I2C driver, enabling runtime suspend and resume functionality.
+On 14:42, Bhavya Kapoor wrote:
+> Enable support for mcu_i2c0 and add pinmux required to bring out the
+> mcu_i2c0 signals on 40-pin RPi expansion header on the J722S EVM.
 > 
-> Although in the most platforms, the bus power of i2c are always
-> on, some platforms disable the i2c bus power in order to meet
-> low power request.
-> 
-> This implementation includes bus regulator control to facilitate
-> proper handling of the bus power based on platform requirements.
-> 
-> Signed-off-by: Zoie Lin <zoie.lin@mediatek.com>
+> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+> Signed-off-by: Shreyash Sinha <s-sinha@ti.com>
 > ---
->   drivers/i2c/busses/i2c-mt65xx.c | 77 ++++++++++++++++++++++++++++-----
->   1 file changed, 65 insertions(+), 12 deletions(-)
+>  arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-> index 5bd342047d59..4209daec1efa 100644
-> --- a/drivers/i2c/busses/i2c-mt65xx.c
-> +++ b/drivers/i2c/busses/i2c-mt65xx.c
-
-..snip..
-
-> @@ -1370,6 +1373,40 @@ static int mtk_i2c_parse_dt(struct device_node *np, struct mtk_i2c *i2c)
->   	return 0;
->   }
->   
-> +static int mtk_i2c_runtime_suspend(struct device *dev)
-> +{
-> +	struct mtk_i2c *i2c = dev_get_drvdata(dev);
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> index a00f4a7d20d9..796287c76b69 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> @@ -406,6 +406,13 @@ &main_uart5 {
+>  
+>  &mcu_pmx0 {
+>  
+> +	mcu_i2c0_pins_default: mcu-i2c0-default-pins {
+> +		pinctrl-single,pins = <
+> +			J722S_MCU_IOPAD(0x048, PIN_INPUT, 0) /* (E11) MCU_I2C0_SDA */
+> +			J722S_MCU_IOPAD(0x044, PIN_INPUT, 0) /* (B13) MCU_I2C0_SCL */
+> +		>;
+> +	};
 > +
-> +	clk_bulk_disable(I2C_MT65XX_CLK_MAX, i2c->clocks);
-> +	if (i2c->adap.bus_regulator)
-> +		regulator_disable(i2c->adap.bus_regulator);
+>  	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
+>  		pinctrl-single,pins = <
+>  			J722S_MCU_IOPAD(0x038, PIN_INPUT, 0) /* (D8) MCU_MCAN0_RX */
+> @@ -812,3 +819,10 @@ &main_mcan0 {
+>  &mcu_gpio0 {
+>  	status = "okay";
+>  };
 > +
-> +	return 0;
-> +}
-> +
-> +static int mtk_i2c_runtime_resume(struct device *dev)
-> +{
-> +	int ret = 0;
-> +	struct mtk_i2c *i2c = dev_get_drvdata(dev);
+> +&mcu_i2c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mcu_i2c0_pins_default>;
+> +	clock-frequency = <400000>;
+> +	status = "okay";
+> +};
 
-	struct mtk_i2c *i2c = dev_get_drvdata(dev);
-	int ret;
+Reviewed-by: Prasanth Babu Mantena <p-mantena@ti.com>
 
-> +
-> +	if (i2c->adap.bus_regulator) {
-> +		ret = regulator_enable(i2c->adap.bus_regulator);
-> +		if (ret) {
-> +			dev_err(dev, "enable regulator failed!\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	ret = clk_bulk_enable(I2C_MT65XX_CLK_MAX, i2c->clocks);
-> +	if (ret) {
-> +		if (i2c->adap.bus_regulator)
-> +			regulator_disable(i2c->adap.bus_regulator);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static int mtk_i2c_probe(struct platform_device *pdev)
->   {
->   	int ret = 0;
-> @@ -1472,13 +1509,18 @@ static int mtk_i2c_probe(struct platform_device *pdev)
->   		}
->   	}
->   
-> -	ret = clk_bulk_prepare_enable(I2C_MT65XX_CLK_MAX, i2c->clocks);
-> +	ret = clk_bulk_prepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->   	if (ret) {
-> -		dev_err(&pdev->dev, "clock enable failed!\n");
->   		return ret;
->   	}
-> +
-> +	platform_set_drvdata(pdev, i2c);
-> +
-> +	ret = mtk_i2c_runtime_resume(i2c->dev);
-> +	if (ret < 0)
-> +		goto err_clk_bulk_unprepare;
->   	mtk_i2c_init_hw(i2c);
-> -	clk_bulk_disable(I2C_MT65XX_CLK_MAX, i2c->clocks);
-> +	mtk_i2c_runtime_suspend(i2c->dev);
->   
->   	ret = devm_request_irq(&pdev->dev, irq, mtk_i2c_irq,
->   			       IRQF_NO_SUSPEND | IRQF_TRIGGER_NONE,
-> @@ -1486,19 +1528,22 @@ static int mtk_i2c_probe(struct platform_device *pdev)
->   	if (ret < 0) {
->   		dev_err(&pdev->dev,
->   			"Request I2C IRQ %d fail\n", irq);
-> -		goto err_bulk_unprepare;
-> +		goto err_clk_bulk_unprepare;
->   	}
-> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 1000);
-
-You had comments from me and from Andi on this delay, and you completely ignored
-both of us.
-
-We're still waiting for an answer to our question.
-
-
-> +	pm_runtime_use_autosuspend(&pdev->dev);
-> +	pm_runtime_enable(&pdev->dev);
-
-devm_pm_runtime_enable() please.
-
->   
->   	i2c_set_adapdata(&i2c->adap, i2c);
->   	ret = i2c_add_adapter(&i2c->adap);
->   	if (ret)
-> -		goto err_bulk_unprepare;
-> -
-> -	platform_set_drvdata(pdev, i2c);
-> +		goto err_pm_runtime_disable;
->   
->   	return 0;
->   
-> -err_bulk_unprepare:
-> +err_pm_runtime_disable:
-> +	pm_runtime_disable(&pdev->dev);
-> +err_clk_bulk_unprepare:
->   	clk_bulk_unprepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->   
->   	return ret;
-> @@ -1510,6 +1555,7 @@ static void mtk_i2c_remove(struct platform_device *pdev)
->   
->   	i2c_del_adapter(&i2c->adap);
->   
-> +	pm_runtime_disable(&pdev->dev);
->   	clk_bulk_unprepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->   }
->   
-> @@ -1518,6 +1564,10 @@ static int mtk_i2c_suspend_noirq(struct device *dev)
->   	struct mtk_i2c *i2c = dev_get_drvdata(dev);
->   
->   	i2c_mark_adapter_suspended(&i2c->adap);
-> +
-> +	if (!pm_runtime_status_suspended(dev))
-> +		mtk_i2c_runtime_suspend(dev);
-> +
->   	clk_bulk_unprepare(I2C_MT65XX_CLK_MAX, i2c->clocks);
->   
->   	return 0;
-> @@ -1536,7 +1586,8 @@ static int mtk_i2c_resume_noirq(struct device *dev)
->   
->   	mtk_i2c_init_hw(i2c);
->   
-> -	clk_bulk_disable(I2C_MT65XX_CLK_MAX, i2c->clocks);
-> +	if (pm_runtime_status_suspended(dev))
-> +		mtk_i2c_runtime_suspend(dev);
-
-You want to resume, not to suspend, in a resume handler.
-
->   
->   	i2c_mark_adapter_resumed(&i2c->adap);
->   
-> @@ -1546,6 +1597,8 @@ static int mtk_i2c_resume_noirq(struct device *dev)
->   static const struct dev_pm_ops mtk_i2c_pm = {
->   	NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_i2c_suspend_noirq,
->   				  mtk_i2c_resume_noirq)
-> +	SET_RUNTIME_PM_OPS(mtk_i2c_runtime_suspend, mtk_i2c_runtime_resume,
-> +			   NULL)
->   };
->   
->   static struct platform_driver mtk_i2c_driver = {
-
-
-
+> -- 
+> 2.34.1
+> 
+> 
 
