@@ -1,106 +1,85 @@
-Return-Path: <linux-kernel+bounces-400390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88159C0CD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:29:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC67A9C0CE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:31:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69513B22729
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:29:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E4F284A48
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B519C21620D;
-	Thu,  7 Nov 2024 17:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288D02170B8;
+	Thu,  7 Nov 2024 17:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gxzwkbqg"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="XXKhWSP6"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1178DDBE
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF97216DE3;
+	Thu,  7 Nov 2024 17:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731000564; cv=none; b=rUBFYO6xDj68XbU1A3aNVrg+h2n297ESb5BNdhP0nAo5j3NpdItp6mAMLcwIAGqmW+w6tWBMpzXA/EYrjtZTZbb+7BwBmY+oM6ry8HGmFtN8GUndyE9db1CKNXdFJAME0uIuAzaTuPMRIp8e61FfxAypt6tinZuW/ndp7wVeAJg=
+	t=1731000662; cv=none; b=kiXuqLisOWl2h3WSkqYuiwsb00FW+dNbw3kkKuHttdT5sUbJ+o9bb4qiM0dlnbUQnGurL3yvAuVetqm0/iyu7/VlRPARUc3LRqPW+jva59tycsz0rjuphTUcctuCEfN0RGTf/0uojMJRkFWK/iqYB9sTNvOR9+Xg7kb2PXG+zyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731000564; c=relaxed/simple;
-	bh=GLhZ5IsmgwaX7xwyGAImLOlKHAH8HMGdBhfDUIuPfdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qs9pOkdd45+5WXgmD5qMhtxDSvLZ/pXdvEiR7YQjprqHgQOb1+g7EoVuQJ2uHIMg5ot+xF2pTpzALZqwIY8c/i9xOVvn8x/RJl2CzeokfXkilz7UjcEmxL9PL0/2b9KCIKkIwWgw3tcin8Yl+pyhgFIlh5x1ecjqtIt1tRCV1Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gxzwkbqg; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7f3f184985bso939906a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 09:29:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731000562; x=1731605362; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GLhZ5IsmgwaX7xwyGAImLOlKHAH8HMGdBhfDUIuPfdY=;
-        b=GxzwkbqgF2uTcNa1DeUg/OtrLqEYBp46pXT/omilwqcNvriMlRQUWvoP9vCTsC5rEr
-         l6jqMXIRY6KQ/T0SE0F6cLTSp9bNZV6lBo99KwbjUpKM5XuJFM7sTzWnN3oa1OFJRiNF
-         4YILlM2My2YOUXPpPGvb8wZLdu8KHnHqmQ2FGjz6bdBpBMLRv25iSMUAtaOIzoF4U1yc
-         EJLsgtNcULKM8iKv2PdV+P10f9lNQwtam/p5aJ1AXQKYGcPnWdwFm3jimAzyrqvg4yLB
-         DQ3WcP0g1Q9Jdg4KjW6Q2hz96QI2neNLnNZIIBpqm4zuP3//4zEUQXHRFGPvE0lwbnFI
-         ilvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731000562; x=1731605362;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GLhZ5IsmgwaX7xwyGAImLOlKHAH8HMGdBhfDUIuPfdY=;
-        b=N2RdLfFHMYB+XKGjAsvnygIAKOMais2jieIlTdqPn110RiaLpF8vSYTx4tjb+yRF+J
-         NCQmgz5mz69IWjpW8xjzSbiHCQclalhwGUkTAOkFffK/6uk9aUA/NKpwXuYb0Tdhw6Xt
-         k4huDwacIYQ7V8Dazk9std/24tzgTERyImstS0c8O0IU/agS1Jo3NXeem5VhHPC34G8+
-         ym6s++QjXxU9BAAoEQEPH8Dst0v1fkNKwYBctNlsF/NG0USfiAESYiHkdCGaceloHEzx
-         bRp5QEVaOPR+l1GKemmnQmlE769myGkGhY36lRWPnPQIqY1qXLHE1nA1iRce80CLBYOC
-         fXzQ==
-X-Gm-Message-State: AOJu0YxeipHK2d3bzXYXKA3KW7B7LUJc6eB4DL4avArnoBEuHq9RgJ1/
-	EhWWCSUzMKsPhMN3GSL+H8qbu5YcietRQNjbzGoJ9JjXulV/BvKZ+UsecBxMkJr8JWI2qXlJZFa
-	V9M/o//hStTguYOKEwMn2wzasFMs=
-X-Google-Smtp-Source: AGHT+IGkBkyjC0D8UPk1uZJC9YSuqP3z1kMcZD2n3wHUMqDe55S56nr0cbOcmGMgT4Q31VwH1PLmZsVVvK2SDgFPUHI=
-X-Received: by 2002:a17:90b:2dc5:b0:2e2:e31a:220e with SMTP id
- 98e67ed59e1d1-2e9b13e90a7mr75394a91.8.1731000562022; Thu, 07 Nov 2024
- 09:29:22 -0800 (PST)
+	s=arc-20240116; t=1731000662; c=relaxed/simple;
+	bh=DGNFU7sXY8nxTWRDfpiShCdLXxJ7RRd5W4g1wy9oGZA=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=N37gZiERK87YKPyWzQ4VfYpaRsNJLCk+j8WXSDJgcucMBHHHp4ULgWZBVe/IN+iZzQCRJ34L/XM3UcSuGwdoX8TWO++PIaZXljjJigkxeLp5BIpcL4eLQiwWfdZK7QfSRwCN1oXRmDix+v1PbRdhNCzygZw0pLX5r3zOnpdNkWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=XXKhWSP6; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1731000652; x=1731259852;
+	bh=/8djxCnsO+tFNzNR9N609OFJyho5I7jhO1PgaDM6cDw=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=XXKhWSP69oy24UtJm5CRY5tin+nuesLYu1XaO6KEb6KaHJ1wjUefqu/5vlZQ8QDgD
+	 ns9N+i1nCJY2sOYT8pYiva8Hvzz4Dh1WuCXKe9LWJtmrm4LaK9p9Lbfc2OlDFWUdlo
+	 JvdH1dHwdNJhJXCxgCUg4vbfyyhOGP0MhL0NrX1D6tJOBQU2HFhR4raSuWVLtHX0Hd
+	 fI05FegkMa02rA3OrV95bVPNZLUtdsql7qM5hrpDq6cU5REWC0vQ2JRPk5f0Z2BlvY
+	 pYU7pQtdT1ku+ccldI/pxpCbeF1x6GqXmXtVbntTOdrJYedP8Cfz/g490qevo2qKPu
+	 JhzV7chafcmrw==
+Date: Thu, 07 Nov 2024 17:30:48 +0000
+To: jic23@kernel.org, lars@metafoo.de, gregkh@linuxfoundation.org, parthiban.veerasooran@microchip.com, christian.gromm@microchip.com, sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-staging@lists.linux.dev, linux-fbdev@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Subject: [PATCH 0/4] staging: Remove contact information from TODO files
+Message-ID: <20241107172908.95530-1-dominik.karol.piatkowski@protonmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 2c73f128d512200b086d91bf6c91aa220cbe864c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918031537.588965-1-masahiroy@kernel.org> <CAK7LNAQjKNrAK8ffZiz7qOKRFcUqQds5bMjdOXKPd0gedzhjYw@mail.gmail.com>
-In-Reply-To: <CAK7LNAQjKNrAK8ffZiz7qOKRFcUqQds5bMjdOXKPd0gedzhjYw@mail.gmail.com>
-From: Max Filippov <jcmvbkbc@gmail.com>
-Date: Thu, 7 Nov 2024 09:29:19 -0800
-Message-ID: <CAMo8BfJG9EPAoLqPRwq8DNvMOy9Q0BOYcZ8fV4W5f+B7X9bqOQ@mail.gmail.com>
-Subject: Re: [PATCH] xtensa: annotate dtb_start variable as static __initdata
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Chris Zankel <chris@zankel.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 8:51=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
-g> wrote:
->
-> On Wed, Sep 18, 2024 at 12:15=E2=80=AFPM Masahiro Yamada <masahiroy@kerne=
-l.org> wrote:
-> >
-> > The 'dtb_start' variable is only used within arch/xtensa/kernel/setup.c=
-.
-> > Mark it as 'static'.
-> >
-> > It is only used by parse_tag_fdt() and init_arch(), both of which are
-> > annotated as __init. Therefore, dtb_start can be annotated as __initdat=
-a,
-> > so it will discarded after boot.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
->
-> Ping?
+Some TODO files contained contact information - it is redundant, as it
+can be found in MAINTAINERS file. It can also get stale easily. This
+series removes that.
 
-Thanks. Applied to my xtensa tree.
+Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
+onmail.com>
 
--- Max
+Dominik Karol Pi=C4=85tkowski (4):
+  staging: iio: Remove TODO file
+  staging: sm750fb: Remove TODO contact information
+  staging: rtl8723bs: Remove TODO contact information
+  staging: most: Remove TODO contact information
+
+ drivers/staging/iio/TODO       | 5 -----
+ drivers/staging/most/TODO      | 7 -------
+ drivers/staging/rtl8723bs/TODO | 3 ---
+ drivers/staging/sm750fb/TODO   | 5 -----
+ 4 files changed, 20 deletions(-)
+ delete mode 100644 drivers/staging/iio/TODO
+
+--=20
+2.34.1
+
+
 
