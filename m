@@ -1,216 +1,176 @@
-Return-Path: <linux-kernel+bounces-400371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26BAC9C0CA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:12:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8309C0CA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2651C22287
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:12:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83C8A1C222FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E065215017;
-	Thu,  7 Nov 2024 17:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF9D215C7D;
+	Thu,  7 Nov 2024 17:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BKBcjveg"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Zy+yXrSi"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0D0155398
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730999557; cv=none; b=S0CY1juqzZEfRlZDRe4Z8c5vUyzNS2PJDfUl/dco72t920tFAwI9oy0cDC4GiG0L33xLmQ1k+oVQzYtn4e5LjZ55Z6kU9dPB5yDQKBOkzSX2V2skZIBVPxTuDqA+ydLrKv6t3jt3RtyTKscl5ocnAbu84ste/5YjWcpfadioXDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730999557; c=relaxed/simple;
-	bh=Fko8ahXBkH5aH664McIMR1mSzMhk8KH28E/TtmDGays=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VTk0oerHftahnq4byGYbDeS6KujC0kHYK4K2058OdKTmlwc2AcuOTGa3Hv2aP2F4wr3DVvJ3CMxPID/13Kv4i8P2SXM7o7XxToCar7vij3EYslyFsM/l+Z/+cNwLuHTKtUzXQl9NHyeeYwFlLczJCMaY/TyNFSEzSRW9pewLm/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BKBcjveg; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20ca4877690so161825ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 09:12:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730999556; x=1731604356; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5NWh57MfDRD05DzT/rzXr1TJz9IgYGlNmYb4EAOieGo=;
-        b=BKBcjvegV0tVSapGX0HSXKi7K1H7eTQmbjUonKWhwBSZwp7p55yQUKK5Tt4W04mX9J
-         KffkGsVvXpVlwAy2Al68gs6Vgm9/nWG5AZfUsuncK1oE/DMBh8p3DezYn46s/qswImVj
-         6qeqm+A/c/lgwvEIHnLQ57a1+pyrxp7Wq48y+RC98iXwRQHASdlT2YBizjOsPm6qfS0j
-         1f80fWYOGXq/HV5yuD1pwHfE2uxqPnIz+8ICGCIU2bHD6tUC7/dYDYRB89aVwcjEUp4c
-         vnXpzg7uFsngKjkPco7rDZmF8HSa+HmTkoRBDtCEn7mtZXW61RQU6kVoo5het+dG9eeb
-         +79A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730999556; x=1731604356;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5NWh57MfDRD05DzT/rzXr1TJz9IgYGlNmYb4EAOieGo=;
-        b=GdPymont6NrmTC7Yh3fhvzMvvvlDKL+ov5qLjR7VRq5Qex2sZQcOmbQAkshup4e4mv
-         hbt7Cbq36yGijNUw82bbK3zvgyV2p0Rf92Wjbubc7MM9LuNAgKRIZjUQAxk4lWeW0Le+
-         4Mg66OsYPFJ1S6N5ShBSguEi0SpEa152MhDwrzQKXDTFYBcACQHPf2u8Asnsg/2pNz4n
-         3XG76x6j7MYtT0J19YAcG7L1Gxe6D6+piofq2tKmn50jHXybgKWnGGlquTtYmryPIwSg
-         dPjvAq7zCiBDhkfcy4v2ZsJHcfuhlAiTfHOeN9U6k/pEvPRW6Gl37YDtVeO/ijDZ+mGe
-         0tEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJOwLnNoRuGA5ytmIPSYdjcBheM8vLShI7bYZnzN6imb5vTIlAQ4hVZ2fKT4X8dAmDeL59aUkmbY21owc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBM5tRbq6PO7c8RdGSQCenyr7F4V90rDLKDCrBZYXKHisXaFBA
-	NBJWDjL/fmKPTMdX+oI9RfQua+8cpzRsxr9mjwgk0qBCpADTFDf/8maIsDqQVPMdlauaDsLh625
-	Uk+LcKL2v+4wW68z4CbaEkBaJ5NyeyKQ9OTkb
-X-Gm-Gg: ASbGnctSiirTcILbteD5iHqHBu2gnc+c4z+Ht2xSfnOtjwYSUg882Ye0qB7getzf7XO
-	30EbSmioqjoqMyXWL7DBHAYdwTs6tbRCAf1gk0UGYnygS+qEeJlPaoMXJafqZNqk=
-X-Google-Smtp-Source: AGHT+IEpMNMu/yZ92qvLmOnuklE7ty5UbDfNsSGZQy8H1saraOvpqVzLvr+TkG5LQ9RC7i5mxNV+DpzJOwqrKT/v+OM=
-X-Received: by 2002:a17:903:234a:b0:20c:675d:920f with SMTP id
- d9443c01a7336-21174a00513mr3732345ad.25.1730999555396; Thu, 07 Nov 2024
- 09:12:35 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCE3155398
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 17:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730999566; cv=fail; b=mkw8RNN1qeItgmJgRmxHdmrWVfR1gJr4ouLlr3fxzpfC2xPq1at/lznwux4LYzBXGy8pXaYOpwos2wccickcC1T2PB30YdIikkvTq46CbzXJYyxwDPdfvmiOO73DZz0sxItdmX1LxPAceN6Dg0Eu0j3bWCItucX+IhkoEA2oLeo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730999566; c=relaxed/simple;
+	bh=t+lpoD3144d/0924cGE9UwIqrn9yafyZQul9rNKI5oA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GdUw6Y1yIAEIrbm/bYWDebIdQQsFoKRxw+NRqHfPqJdT9oXw0Pad58VVDQpOqLfGcNnruJYndGQUCesEooawv5RH2lSmqjqRHzAD4Ln1WjgoQxKa1insojlGET80WRX73Du6EJLJfRcDYpsGO1D9OIXL/4CDIdlh3GR4GHQpXI0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Zy+yXrSi; arc=fail smtp.client-ip=40.107.94.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x8iyGd3x+0j7yRmra29P6P08WHcLjEPwUtY6zneymoUFbPkDSWHsqn0sXUlaTQBjyQIQz1NrMgDjEJ9UKRR5XNTt901OVf1JxCWenz9imbCEfvNsxS/ntKGsCPNWxX8FZj2A3PdIq3Mux7i6pwm1/4S30lcwnxACq7ecXx0HiWOfeWEeYT79wCugIXEsRCxL+MtkQgG7zNOEwtYPLtJ+9A+vsiuQHsgq1hX71FEDRidhxin0Ki9wUlZC/KlDr0mAhXwM8fFbGlxDvQelQdC0p1P3AW1IlvCCRuwkvvi3h+AG53pBZlyj2e3NOsnnjJUCY2IOLQIk/vh6hLSgwt/WEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=udFC8v0Bf5b9gGwNFNn24f6p4ihimGb6fLkLJ/a5Hqw=;
+ b=B2rWiGsmsu1ZeeaJwq++eyJ2DYGmsZd9DrTDVgJLAkRzEtV1nRcYzSYKZ1mOZGX07hoEO2f4tiIdb5WcbUavyJHlQwhUNDjxZS729PYCnuw7aKl+YVWrN9kZFrT87Z/9m5p9/LToqjvBcW5ghIxSy2dSVDS/y3Z6ee1/sgjDkt49kB9CXM+VRDXXEXlbwdDllfjUi5dzRGOjtpkjDiLPvlaI0SY7InjIMeKwn6QLBixsluzoInwLGhVo98MmA9tsPxAQ5+PM98r0fmLcHsq2o+3X/6Pm5FfKDge8aQHFt811/C7fxQYLMMcCaWgFQOXrMqhwsn79YTwklhl0N/UIbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=udFC8v0Bf5b9gGwNFNn24f6p4ihimGb6fLkLJ/a5Hqw=;
+ b=Zy+yXrSidxvBxzVhbDpNcUMom230gHd7q1BrJe5G4Oyb91Y1vZT/1HIxzAqm7/Z3aOI/cc6cP81WtzYVe7h+f6AIONaliwmaYLzbB7YHlK8UTyVi96o/SYn68/odDel/8AKbvx6jPuRB1rwk7jmy+LmZjrS1LYndcKkel5ZNAwlObLaix85rLKkgdQjZ3mJV+9cJFQYMYQLoYs1g0kYpOrdtfhbAFpShxnhfBkzInZn0zFoNLgnWEp9eyLxQoPtQ5c4d9JBn5dgvHTnoI/WOvh6Ok1vVlN2+LNZICUAnbXzut+GhaXxJLrX8a3ry1SQ30CYOl2AnCHPzZK5i4pLt7A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by BN5PR12MB9464.namprd12.prod.outlook.com (2603:10b6:408:2ab::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
+ 2024 17:12:38 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
+ 17:12:38 +0000
+Date: Thu, 7 Nov 2024 13:12:37 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	jean-philippe <jean-philippe@linaro.org>, baolu.lu@linux.intel.com,
+	shamiali2008@gmail.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iommufd: modify iommufd_fault_iopf_enable limitation
+Message-ID: <20241107171237.GA539304@nvidia.com>
+References: <20241028113209.123-1-zhangfei.gao@linaro.org>
+ <20241107043711.116-1-zhangfei.gao@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107043711.116-1-zhangfei.gao@linaro.org>
+X-ClientProxiedBy: MN2PR04CA0031.namprd04.prod.outlook.com
+ (2603:10b6:208:d4::44) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926175035.408668-1-irogers@google.com> <20240926175035.408668-10-irogers@google.com>
- <0d48bf82-5de2-4928-bd15-1c5abfd4f087@linux.intel.com>
-In-Reply-To: <0d48bf82-5de2-4928-bd15-1c5abfd4f087@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 7 Nov 2024 09:12:23 -0800
-Message-ID: <CAP-5=fWGGQh_Kwr5mWPQv6RO=o8bk2mmShJ6MjR9i1v42e0Ziw@mail.gmail.com>
-Subject: Re: [PATCH v4 09/22] perf jevents: Add ports metric group giving
- utilization on Intel
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Perry Taylor <perry.taylor@intel.com>, 
-	Samantha Alt <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BN5PR12MB9464:EE_
+X-MS-Office365-Filtering-Correlation-Id: 664d7d77-7e42-480a-4652-08dcff4f614a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iPvwpD+P/BI05rKyMNXUCkNLZx3cRO+rLLwC+KglYgdLm+uLYcBkelgcd3uU?=
+ =?us-ascii?Q?598G+2o0ZwJPnlp7NQWvbzvK2Y6ekyAKtcg4hruQOLNd9fpiu83LZKLI8c+f?=
+ =?us-ascii?Q?PYK8GvJQw3MTGgSM1RghHpTXq5gU6iEYQ5wPedal5TK7uE9ElXIAj2GgjE4F?=
+ =?us-ascii?Q?5q5ArIiSrJxfTh2Z8JrkD+kRPHxr96MHPxUFi48HJ/Z6PyEF7mNWp4kpj40L?=
+ =?us-ascii?Q?x/6P6+pSH5R7LSmmVroElzZFnnKNB/XjR9E+/HziF9Fh9lZzWW0iTYKta88B?=
+ =?us-ascii?Q?M+ZTnkHze8WO9ZfEyLL/MCSkBMz02X7iJqZFkLFq1Jv85lfkNvLUd/vuvP+c?=
+ =?us-ascii?Q?JbWGCi4iJfzdQkQzeXasJHgTc1cw2v9gFHpbzknsjI4ijwclaX6m6KM6CQZa?=
+ =?us-ascii?Q?vPqnM+x93CdS7WwpiOIIyT9wW83XcxM+6uZ7bOcxjdvV/uGtXzlb8iocfOCS?=
+ =?us-ascii?Q?gPPUHup5pGf8X5Y/JdZuMU5FSCc5XjECXl3FulOy7jEyi4im2JlXOM1655wG?=
+ =?us-ascii?Q?EcyXQWZ8K0J8a7W/Dzi+VuV/69gKTE6eScdOuqa5JL0u6Uq4VUoEkc+ST+9a?=
+ =?us-ascii?Q?fdXP/mP7HxqRuzFJ7+okPSL7mSbBuE8j86IYwioi1bOSbWoaTT6b65TCQJUE?=
+ =?us-ascii?Q?zxN4WZkFDx54oWwdk+mdOCEQ8NV4AiEb0We0UhewigsDc01FLJi9sFPyrbqi?=
+ =?us-ascii?Q?OGsba616mUXCEDQgczcxW0g89RJSLiSAEoAt/9xTmS353ydpnoct+IuMaUbX?=
+ =?us-ascii?Q?XCzat3JSkMZjwmGP8wMGPFXKF9LntqDYT0Gy58aEQCpFS4CWVz+8sag8L9oW?=
+ =?us-ascii?Q?LJSnaPR5t2V4JKhFtplTKNsxHwv/x1kr35y93l80N43FgV3vT9LxolN329cz?=
+ =?us-ascii?Q?abc/9cadBKtaNrPPydYNhz7swB+hSLRbJpFFgijm0AzrdEzn++kkyRzgf/P4?=
+ =?us-ascii?Q?tSgUGXwGC3J7w0oxsIsF5s2WeI2x2Ai8hpnQH59i4I3ZN9VEhwlFVMBCFjkT?=
+ =?us-ascii?Q?jzB4z/7h6Hi9KbKBn0pIFtmZMHRq6Cvh9FCXVhjbQO5J+QeV/slgevCfeBdy?=
+ =?us-ascii?Q?1pUGoJhSscDZQ9yaXLfwspVVGCRYtR8x6dA+cQN15+4z75CHKk/7Xvq4M9TT?=
+ =?us-ascii?Q?sM/J6khINyHLcvFMNU4MscsyfSodoU8PYdD/6r2dR78TItnxCWnndRu36zlr?=
+ =?us-ascii?Q?QoVjx3pUBOzsGP4dtc/T+RLoTZtoHeLGyJaaf/c8poYaaRbTGr7rgYYjtUZf?=
+ =?us-ascii?Q?VFKb1vCJvPpIh3pt5pNXOuTPOrOijiX2wUGWeuEEr1TNGlROytorr3r5TmS6?=
+ =?us-ascii?Q?hDni4+Yho1vLYykZA47RMfNg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5eFsLSi1pV3bD8iJm+kUMeIgs2GtFSyhYNg1zXXHacVXJ5YdXihu6ZoM+obt?=
+ =?us-ascii?Q?0Byaw6ewNQs9dcdICc2MuoP7gMwLkXJuBFwVNIRJ0rLnQcSmZUYOYfdFmB58?=
+ =?us-ascii?Q?sfhzr7+RSirr21ipVBTP9YlPA7oVvZMmpKq8eylDNTHLi0JgHobMqVLXnLbx?=
+ =?us-ascii?Q?8V311f/J37H7wKkTBJ1WLr6m64y3Uocb5DrlNEH9Ih6H273V6Z9NcT7XHAKd?=
+ =?us-ascii?Q?xysME8X4/KvdM2JLYiGegt0KDWTfrLN+KhuS+3jy8U2SMRkVX34icLbRQ3ji?=
+ =?us-ascii?Q?L1DQb1nR4jJBiKO0EMB7Y8nnUU//qNkFxj2XUd9Sd8J6qqobeZiiHrC2xl0y?=
+ =?us-ascii?Q?+xlyu6Aux+XuMFCCt5UJUf3ThjjzwjMiG0t+4ZQZnPC1uyvLWhZRQ4HGv+K4?=
+ =?us-ascii?Q?gS3Zjp4x2i54neJP+EgYzTzJ76Uqpn2A1CnQY9xSqFi/OMN+MRchoSMAttYe?=
+ =?us-ascii?Q?UCR7zBuL7ENIRXCVbkeV7JqXe0WQoWwt8Z2irEHQhd3H/tRT+6MGMFNaeaE2?=
+ =?us-ascii?Q?ViKOQ746AOsobotRfqKy9MUQuvMqEhXZi8yjsAn4QysYgh36mKlXIwc6R3hU?=
+ =?us-ascii?Q?L5F33J0y9aJP2LLGj47fM7I/rUk/Bi8qSsIjdFzCrpdtD+9olyjzC6s96xjm?=
+ =?us-ascii?Q?e0wEhxMfTuxyH04RxoC+ybIl3zClvNbbL1sGt+wD383SGjq/s7HQumwbOlgA?=
+ =?us-ascii?Q?UcVLraCHqCNS5cgSn301aH5xIkj7uB1F6oIfUTXUg3asuN4zJ+ERSbvu2xtZ?=
+ =?us-ascii?Q?7GkQqm276qfbgtvqbYZSUYLcqyPO7WxKMZq6uSksU7/a6LuVx1MthscgAll1?=
+ =?us-ascii?Q?p+QeDm1KZMcRlWOA0DiildLt8rjRelE/NdOj6MWfrYwnWEcIXI6h9o/hzr12?=
+ =?us-ascii?Q?rHD0DMTujc/oMQxhmyzyeHt65g/Emhvr312+xTta959SauzA57byjZdnn61n?=
+ =?us-ascii?Q?xgMtvk2bzfGr3GboKX0HzWEBxAAcpX9T2GhANydx80LvfAFTy0sHhBYrRUfb?=
+ =?us-ascii?Q?1ZqLbMEROihPBHOEA8P7aSOg/MYhhJPO2NrS3KH6Id0JBfU+cCUYsrPoM8LV?=
+ =?us-ascii?Q?xJatg0cmn46ix0LJhVUZI+4kNGXwXJ1AirwoJYxsBB8id1r+gNHY3Q22iRSr?=
+ =?us-ascii?Q?C1GN+kWB84eBUd9nNb7BoJwIdUD9bS5M/S+eTqsslvOCGIzBu+D9/MbF4H/3?=
+ =?us-ascii?Q?mb9MSpahcrXsquXnzkLiceed16toATaQLmNdEVfbK+A7OuSh7Fo1dzwGSLj/?=
+ =?us-ascii?Q?XRRnXSuQHfd/EmLVUZyPEwtlNfqrUf9fjSTzz0ceBu1po4zcyYUMrx9BpCFE?=
+ =?us-ascii?Q?Fi2toGpU7bTqmfDce1E84loGcbbvacF2vUTnO3zdR0+rOkAipC+tz2rgBp+M?=
+ =?us-ascii?Q?navhCiEnYdC4eO1UTHzu4TFY3IBwU5Do8kCpP36xJzLDSVaMu4kmSuSniqC+?=
+ =?us-ascii?Q?MsaUYdNJIcWwxbjSCiFWBi6B4sc+jrdDJNOKQ0v0IyCF8gT2BuWO5nWwPDq1?=
+ =?us-ascii?Q?3JPbppkHM4FDNYnAtCqUBcoMWH2OeEIUzd8UfrmmtXDU5Fo26ykzlf8OqPO5?=
+ =?us-ascii?Q?NYwPTnV/2mV4tmP1YGSE8QBpHInXrB1snZqz9ACH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 664d7d77-7e42-480a-4652-08dcff4f614a
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 17:12:38.1975
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: //lg+g+WuQJr2ZCy/8xkTwrefd/N2DF2O+JRVP7Xzg2yRF72fdTVH5D4e5kO17uN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9464
 
-On Thu, Nov 7, 2024 at 7:00=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.co=
-m> wrote:
->
->
->
-> On 2024-09-26 1:50 p.m., Ian Rogers wrote:
-> > The ports metric group contains a metric for each port giving its
-> > utilization as a ratio of cycles. The metrics are created by looking
-> > for UOPS_DISPATCHED.PORT events.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/pmu-events/intel_metrics.py | 33 ++++++++++++++++++++++++--
-> >  1 file changed, 31 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-ev=
-ents/intel_metrics.py
-> > index f4707e964f75..3ef4eb868580 100755
-> > --- a/tools/perf/pmu-events/intel_metrics.py
-> > +++ b/tools/perf/pmu-events/intel_metrics.py
-> > @@ -1,12 +1,13 @@
-> >  #!/usr/bin/env python3
-> >  # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> >  from metric import (d_ratio, has_event, max, CheckPmu, Event, JsonEnco=
-deMetric,
-> > -                    JsonEncodeMetricGroupDescriptions, LoadEvents, Met=
-ric,
-> > -                    MetricGroup, MetricRef, Select)
-> > +                    JsonEncodeMetricGroupDescriptions, Literal, LoadEv=
-ents,
-> > +                    Metric, MetricGroup, MetricRef, Select)
-> >  import argparse
-> >  import json
-> >  import math
-> >  import os
-> > +import re
-> >  from typing import Optional
-> >
-> >  # Global command line arguments.
-> > @@ -260,6 +261,33 @@ def IntelBr():
-> >                       description=3D"breakdown of retired branch instru=
-ctions")
-> >
-> >
-> > +def IntelPorts() -> Optional[MetricGroup]:
-> > +  pipeline_events =3D json.load(open(f"{_args.events_path}/x86/{_args.=
-model}/pipeline.json"))
-> > +
-> > +  core_cycles =3D Event("CPU_CLK_UNHALTED.THREAD_P_ANY",
-> > +                      "CPU_CLK_UNHALTED.DISTRIBUTED",
-> > +                      "cycles")
-> > +  # Number of CPU cycles scaled for SMT.
-> > +  smt_cycles =3D Select(core_cycles / 2, Literal("#smt_on"), core_cycl=
-es)
-> > +
-> > +  metrics =3D []
-> > +  for x in pipeline_events:
-> > +    if "EventName" in x and re.search("^UOPS_DISPATCHED.PORT", x["Even=
-tName"]):
-> > +      name =3D x["EventName"]
-> > +      port =3D re.search(r"(PORT_[0-9].*)", name).group(0).lower()
-> > +      if name.endswith("_CORE"):
-> > +        cyc =3D core_cycles
-> > +      else:
-> > +        cyc =3D smt_cycles
-> > +      metrics.append(Metric(port, f"{port} utilization (higher is bett=
-er)",
-> > +                            d_ratio(Event(name), cyc), "100%"))
->
->
-> The generated metric highly depends on the event name, which is very
-> fragile. We will probably have the same event in a new generation, but
-> with a different name. Long-term maintenance could be a problem.
-> Is there an idea regarding how to sync the event names for new generation=
-s?
+On Thu, Nov 07, 2024 at 04:37:11AM +0000, Zhangfei Gao wrote:
+> iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
+> because the PRI might be a shared resource and current iommu
+> subsystem is not ready to support enabling/disabling PRI on a VF
+> without any impact on others.
+> 
+> However, we have devices that appear as PCI but are actually on the
+> AMBA bus. These fake PCI devices have PASID capability, support
+> stall as well as SRIOV, so remove the limitation for these devices.
+> 
+> Co-developed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/iommu/iommufd/fault.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 
-I agree with the idea that it is fragile, it is also strangely robust
-as you say, new generations will gain support if they follow the same
-naming convention. We have tests that load bearing metrics exists on
-our platforms so maybe the appropriate place to test for existence is
-in Weilin's metrics test.
+Applied to iommufd thanks
 
-
-> Maybe we should improve the event generation script and do an automatic
-> check to tell which metrics are missed. Then we may decide if updating
-> the new event name, dropping the metric or adding a different metric.
-
-So I'm not sure it is a bug to not have the metric, if it were we
-could just throw rather than return None. We're going to run the
-script for every model including old models like nehalem, so I've
-generally kept it as None. I think doing future work on testing is
-probably best. It would also indicate use of the metric if people
-notice it missing (not that the script aims for that :-) ).
-
-Thanks,
-Ian
-
-> Thanks,
-> Kan
->
-> > +  if len(metrics) =3D=3D 0:
-> > +    return None
-> > +
-> > +  return MetricGroup("ports", metrics, "functional unit (port) utiliza=
-tion -- "
-> > +                     "fraction of cycles each port is utilized (higher=
- is better)")
-> > +
-> > +
-> >  def IntelSwpf() -> Optional[MetricGroup]:
-> >    ins =3D Event("instructions")
-> >    try:
-> > @@ -352,6 +380,7 @@ def main() -> None:
-> >        Smi(),
-> >        Tsx(),
-> >        IntelBr(),
-> > +      IntelPorts(),
-> >        IntelSwpf(),
-> >    ])
-> >
->
+Jason
 
