@@ -1,117 +1,140 @@
-Return-Path: <linux-kernel+bounces-399450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B60F9BFEFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:20:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A30C9BFF02
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B431F224F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1C0F1F22AEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7D5198A08;
-	Thu,  7 Nov 2024 07:20:11 +0000 (UTC)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B014196C9B;
+	Thu,  7 Nov 2024 07:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g4F6QKs4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E931822E5;
-	Thu,  7 Nov 2024 07:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB57194C8D;
+	Thu,  7 Nov 2024 07:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730964010; cv=none; b=cu8JR2IrSf7kUJOuyxxxqs93+pIp7udKZjYKHafTB76p9FsWxa7Zdogcmugu8qM2Da7GNjyyl17ojS6GlAWL0yGvRyExXDg5gvRLavFDr7IF40vq0ylJyMPHDgxJEsnSmACQzsw4Ibb/582u6KzDYVxEwXuqZzEaOOYXrfmSVqE=
+	t=1730964262; cv=none; b=K0RdR2l/4LfaOBrw7G/leIw4kSBY/XCDXtxvdtl+gtRghKknwYSpWWnE0kS50cf3Fh4GQTDufGcCQldCA02wmdwPFSc4l6tvjemRnR3VFpPNL5MCU+ptfNyJH8RUJpMfoyLC4GL8J9AZb1X+081ecEeuD2d4HyX79Mr9IsdLE/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730964010; c=relaxed/simple;
-	bh=jzMCEh7dCrZM991y0x/C9WexSFPZ3+w2RZz+fYTmyAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTGibLUKSlC+93Xur9iQOTsSJXMTHwheNWNv1b5UtGncTJmtlowAL089A6yHImEwtVuS/m9x6zdpRolVPfFZFX0UKnAqGHHgS5WVA9F2mPCsSK90PDpu0O53xMyojNkoTkfiERd5VagTOoBPnfDqgGeA7CczTkFzGZSuQs8AP84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2114214c63eso5177565ad.3;
-        Wed, 06 Nov 2024 23:20:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730964008; x=1731568808;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f87EsgUx9jRfU6fOaKBBba12po3/P9HypMoaCZO0Ifc=;
-        b=wJMlvis4P7ccJ2M9V0TAzFocBhxlwYmGADHJNpq8Z6JcAGoz2Y/hyqFkBkR2N5OGy7
-         OwMBBbTRmUFlj9RBiqMyQDB1SnRyBZr6yfGK1modOlRz3aWBhZaVbLzobAKN9ve5zaux
-         GUQhTu4UhVOCypeccX27c5PF15kcfGKdq3aDW/Uvd//fduW1FbJe8KSoB6sxy2PxbjuW
-         UF9E3yhU/gU8+N3HnqJTSjKCmIxwnKkGfVporDFqrw6yts7G/GFUbX056csBJA33q5iZ
-         31dqc43xlIeKxTfhh3KTCiM2MDXTfQjqUeYYTeFMvHn358VgL3dlF0jkGnv3TwqWoM12
-         J2oA==
-X-Forwarded-Encrypted: i=1; AJvYcCW00i0UxQLB6VOa8999GMft6f9oguZyb5lG2E8LGZKZ51LQpSMR1ikJ6UUuqhNcYOaUR8ReaWuHYzkJkew=@vger.kernel.org, AJvYcCWJh/bTXh4GGt/4vFKLt0jXKLAN5a9qBTRXZE2opQweUI4VleMQmgVJysk84Nq4+vuywvqjt/F4pesX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ0wX7oYYbVV4ZPY2N1SCSt2OkCcrb2r0kukgbcnTx+4qnc/yj
-	903YAMwUZfNGwqWFBw4XLa+jF1tG9/x/hKejPAkeb3RwijtMryecuEpMsGbG
-X-Google-Smtp-Source: AGHT+IGgjRJm1tBjzyx6VNtbd57u2h7PQMgL45gBSJk4BeJmz+8g81AStqWX2H8l0t6FV1sYafgWiQ==
-X-Received: by 2002:a17:902:f547:b0:20d:2848:2bee with SMTP id d9443c01a7336-210c6892da8mr604716545ad.16.1730964008443;
-        Wed, 06 Nov 2024 23:20:08 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e58e5bsm5833335ad.195.2024.11.06.23.20.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 23:20:07 -0800 (PST)
-Date: Thu, 7 Nov 2024 16:20:05 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-	Frank Li <frank.li@nxp.com>, "mani@kernel.org" <mani@kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at
- some platforms
-Message-ID: <20241107072005.GA378841@rocinante>
-References: <AS8PR04MB8676998092241543AEABFAAB8C532@AS8PR04MB8676.eurprd04.prod.outlook.com>
- <20241106222933.GA1543549@bhelgaas>
- <AS8PR04MB8676C98C4001DDC4851035B18C5C2@AS8PR04MB8676.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1730964262; c=relaxed/simple;
+	bh=yKSWaD2r7ugdR5FspLC7HV/vgzYdq3m9nwQC1wbrOIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AhzqWI3j7ZGpg2CGhJPBJVXtRrbxOmSjATgVCFmKlmqL6EIP80ynPmwVchR5DI7JWT6oT1zj1bypWacecLryCgJE69mPTE+QCeuiVjPml5rS/cwiwlriSY+dby41Xx5rEVT9x24r79FWRgU9steUlIfj4duNaKGwyxPMmqM2Dg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=g4F6QKs4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730964251;
+	bh=UPI4SoD2Uxo9GAN+LEMJ7aAhd/xFEPLvAYe0FCQS6kE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=g4F6QKs4tEQB2n9AavFHSYyirjLlpE75uGsMAVaIvNPSRAnxiL/4OjM+psxyuya+v
+	 JgYfw0aXjGpqeLFzDAP5u8ec08NoW9uVxERdilPO6zNZOqPz04pwqy2i0bIYz+nDhd
+	 Huktxkd62GIDidm+j7c8zMezOfrFgFnZYUmL2Dgx8M850wlMTN/a3uM6MWgFnKOciR
+	 c6Wl1064xi4if3b7rYINWo7F5Pmh7IFKuljc1X42xcutwRys9j3McIufOuXkqjejSv
+	 Q9kr/LrZH1BInzTVeU9q9oC9sy6PAelvCOi0WvQntathotjfbEKLUqQOVTov3WjbDB
+	 ZytrLKbmn0Zhw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkYV303vSz4wcl;
+	Thu,  7 Nov 2024 18:24:10 +1100 (AEDT)
+Date: Thu, 7 Nov 2024 18:24:11 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip tree
+Message-ID: <20241107182411.57e2b418@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB8676C98C4001DDC4851035B18C5C2@AS8PR04MB8676.eurprd04.prod.outlook.com>
+Content-Type: multipart/signed; boundary="Sig_/0FYRoJmUHfD108fwEN7pmdT";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello,
+--Sig_/0FYRoJmUHfD108fwEN7pmdT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > But I don't think you responded to the race question.  What happens here?
-> > 
-> >   if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
-> >     --> link goes down here <--
-> >     pci->pp.ops->pme_turn_off(&pci->pp);
-> > 
-> > You decide the LTSSM is active and the link is up.  Then the link goes down.
-> > Then you send PME_Turn_off.  Now what?
-> > 
-> > If it's safe to try to send PME_Turn_off regardless of whether the link is up or
-> > down, there would be no need to test the LTSSM state.
-> I made a local tests on i.MX95/i.MX8QM/i.MX8MP/i.MX8MM/i.MX8MQ, and
-> confirm that it's safe to send PME_TURN_OFF although the link is down.
-> You're right. It's no need to test LTSSM state here.
-> So do the L2 poll listed above after PME_TURN_OFF is sent.
-> 
-> Since the 6.13 merge window is almost closed.
-> How about I prepare another Fix patch to do the following items for incoming
-> 6.14?
-> - Before sending PME_TURN_OFF, don't test the LTSSM stat.
-> - Remove the L2 stat poll, after sending PME_TURN_OFF.
+Hi all,
 
-If the changes aren't too involved, then I would rather fix it or drop the
-not needed code now, before we sent the Pull Request.
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-So, feel free to sent a small patch against the current branch, or simply
-let me know how do you wish the current code to be changed, so I can do it
-against the current branch.
+In file included from rust/helpers/helpers.c:26:
+rust/helpers/spinlock.c: In function 'rust_helper___spin_lock_init':
+rust/helpers/spinlock.c:10:30: error: implicit declaration of function 'spi=
+nlock_check'; did you mean 'spin_lock_bh'? [-Wimplicit-function-declaration]
+   10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WA=
+IT_CONFIG);
+      |                              ^~~~~~~~~~~~~~
+      |                              spin_lock_bh
+rust/helpers/spinlock.c:10:30: error: passing argument 1 of '__raw_spin_loc=
+k_init' makes pointer from integer without a cast [-Wint-conversion]
+   10 |         __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WA=
+IT_CONFIG);
+      |                              ^~~~~~~~~~~~~~~~~~~~
+      |                              |
+      |                              int
+In file included from include/linux/wait.h:9,
+                 from include/linux/wait_bit.h:8,
+                 from include/linux/fs.h:6,
+                 from include/linux/highmem.h:5,
+                 from include/linux/bvec.h:10,
+                 from include/linux/blk_types.h:10,
+                 from include/linux/blkdev.h:9,
+                 from include/linux/blk-mq.h:5,
+                 from rust/helpers/blk.c:3,
+                 from rust/helpers/helpers.c:10:
+include/linux/spinlock.h:101:52: note: expected 'raw_spinlock_t *' {aka 'st=
+ruct raw_spinlock *'} but argument is of type 'int'
+  101 |   extern void __raw_spin_lock_init(raw_spinlock_t *lock, const char=
+ *name,
+      |                                    ~~~~~~~~~~~~~~~~^~~~
 
-Thank you!
+Probably caused by commit
 
-	Krzysztof
+  35772d627b55 ("sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT")
+
+at least reverting commit
+
+  dafc2d42c0a6 ("Merge branch into tip/master: 'sched/core'")
+
+makes the build work again for me - so I have done that for today.
+
+Without the revert CONFIG_PREEMPT_RT=3Dy, after the revert it is not set
+and spinlock_check is only defined for !defined(CONFIG_PREEMPT_RT).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0FYRoJmUHfD108fwEN7pmdT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcsaxsACgkQAVBC80lX
+0GzV+ggAgMPdpDsoCcH8oxUwjcWW3sDwKNwgPSPEddj1vVjTjQERuYxyxtCXTX+j
+qi28LFQx1OsBKpkUxAuT/9EcVmXKn8NIFzShJeVB6PJFWNRNVA9LBJGY1VVy8FHa
+E4mzdTQa/g4B9kvYWyKWc4CHwnaGT/PwsZuhyPaxmfyXK+10ZiPSqBwEdP4z5rTS
+wF5YlYNCY1Kr2wXoRq7gqr9CldWPxXUwX8FhSh3sb7nhokai9X6xQ3bk6ZoZ1nc+
+D3cL3Nhc32g7yElK8qPR2YBJY1oRGvenAfrdeahQzrqNpKAIrzHnpuvuh8+mboTE
+l1N4ysCo/2lN75nIRo59B1AZKupjCw==
+=q3BK
+-----END PGP SIGNATURE-----
+
+--Sig_/0FYRoJmUHfD108fwEN7pmdT--
 
