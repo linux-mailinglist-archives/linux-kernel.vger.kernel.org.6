@@ -1,113 +1,87 @@
-Return-Path: <linux-kernel+bounces-399402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863699BFE78
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:31:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1509BFE75
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:30:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80DC1C211D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0EC71C210A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6E2195B18;
-	Thu,  7 Nov 2024 06:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eV3EFoAx"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55402502B1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3D3194A44;
 	Thu,  7 Nov 2024 06:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wKSDEfFX"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AAF1426C;
+	Thu,  7 Nov 2024 06:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730961048; cv=none; b=XYonAjtYGx2Aml5k7wZz59t8f0ipdGT8T6PkNNubMfcMiZLC+dLEwq833F2d2J70KEwurFXGjvuiki9nGqafp5g2ygZXqku0I0HWSisFcAvEfDgEIfBzbFPNZUTDZiFSCZTdzFFLxiBwpwTQ7d9ls6Z2dWXkem0UD8upLFdtT2w=
+	t=1730961047; cv=none; b=eGyvD4Ki+YuyE28jkp2kjkjtS2wWOSNUTcd2CRC0GfFyQudNUGIdqdj3od4NnFQ+k8i2YCdkb3z+2fymVEJuudeU6dQgM0Vv3GthK4G8rCkmqbLITLljCEiRiETcYyY97hZSdfHMnq24LOOzZwF+udNKutQN/sX3WVFDuOiHJSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730961048; c=relaxed/simple;
-	bh=GgDJgOiNgVI8N8G/EOt8OU1m3SnBYIsSsjBtbkTqLBw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kqbj3j9MY/7cpPQkOp5bZ54XxImsZsmoGr4gdYV69mJTCkr3r8WLbI0CxPvqaFug/6xuOlWYkNNBjVg2M8nzFWclDOXxEP4L7gQPD6diqaoKRoJDRsBi9hhYUvlSNpBCgxTuMcVcVFdKxEG8HWvk8NHG7iSV5sYM1nGLqry4I3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eV3EFoAx; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2eb9dde40so492238a91.0;
-        Wed, 06 Nov 2024 22:30:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730961046; x=1731565846; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=owbnmuQZ9HZHq+2PC9PglRkgSxwQfmb/ODC1/woQOnw=;
-        b=eV3EFoAxcthLvxTiziJi2Y7pT5m2LivM6z2GR3l+Sg9JaKnSiXJO5izGM2RuU+NZxJ
-         ZllBIbUVI+XDBRh02Grmze77hSC3y7f1nciofuVjQ6eFpcfllQImmiXXxnjVRooKU3uN
-         SLdmw0fFe3FnU4Tu5roT1iFV1gCTh3Wp3co5FpzinU4K7qFqanRe1ZjOwg8TGbl5BtSC
-         AVRMkgWIBBYqogT6WnLMU3/VonMuV3T+FzUwbwbsPXjLouiAQOMIbnDGZJ9ysOLAKu33
-         77mscIhNHmzeZa3LCEZl47yCbkeG7jlTJLc30aQRLWb4kD4R8+lUQjx093/lkcpzkINY
-         5g1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730961046; x=1731565846;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=owbnmuQZ9HZHq+2PC9PglRkgSxwQfmb/ODC1/woQOnw=;
-        b=hI56HEUPOd1gz43WvWg4e9mqzTgk6nq0DRnaNSM992uE5Q+gkxJY23fTuCJAVLx8xc
-         ZX1+6bjH7Ga2ndhZ/Y4qNHGsxlWYBwNW48Z8o3yMdI3bbHsYNPMtaz+1n5UPvQ6TcVsJ
-         BytGrOAGFtAxb/cPuLWuUlI/ziJ4CQ7/zaZYLqJzsbBmdklF8ZcAR/O/aQYtttJTFsIM
-         GQ53gJFDyshg8NqI1Rg6K4H1VFGfVtpITAPQtx3VrEeb2FNDH/adsmnTNWhm3nn4668s
-         eLsLlzdxyVlW5ScjjW0SktuL7eYUQUybGA+kuc8ngoZklekPXaOoB5mJ+2SkZQMLFcT1
-         hXsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYxSm3Od2O/PtVou0DGlpDOPJ/fAkwNp42gDYn8FfSCsbLQLhiLbjhVVFfuDtcNhoTxNiOnqjBlRc=@vger.kernel.org, AJvYcCX8HyOWF+He+uNbJKYSQC7gtzoa8T3OgF8S3f0Sf42z2/6XihvpcWDclVkEOD9kkS95bdroDiBo3EpnEQVH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUsHoeC248Ma6iWfT1YA07K+0LZFrY+CZtidJpAOgzo9KmlY0W
-	Sm11LdctkpYD9QLGrv9uDPE+NNNtOni2L8gBXbLV18TivOaYS3q+
-X-Google-Smtp-Source: AGHT+IH5NUn/Vle+lUfKJAyWvt6cNdPb2EL1M58IFWaao2+0AiOU34caE+ttcYy32beMitPvhN5i/A==
-X-Received: by 2002:a17:90b:2dd1:b0:2da:7536:2b8c with SMTP id 98e67ed59e1d1-2e9ab0a37bdmr8694a91.36.1730961046515;
-        Wed, 06 Nov 2024 22:30:46 -0800 (PST)
-Received: from 1337.tail8aa098.ts.net (ms-studentunix-nat0.cs.ucalgary.ca. [136.159.16.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5f8f4e2sm725206a91.26.2024.11.06.22.30.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 22:30:46 -0800 (PST)
-From: Abhinav Saxena <xandfury@gmail.com>
-To: linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Matthew Wilcox <willy@infradead.org>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Richard Weinberger <richard@nod.at>,
-	Abhinav Saxena <xandfury@gmail.com>
-Subject: [PATCH 2/2] Documentation/mm: Fix trailing whitespace in page_cache.rst
-Date: Wed,  6 Nov 2024 23:30:42 -0700
-Message-Id: <20241107063042.106228-2-xandfury@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241107063042.106228-1-xandfury@gmail.com>
-References: <20241107063042.106228-1-xandfury@gmail.com>
+	s=arc-20240116; t=1730961047; c=relaxed/simple;
+	bh=b9X/uaE7mdNzyDuyL39w7Td+pQgj7Kk0Bc8AT00Pto0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+jLeYwPXQIesDGLU8XwqxpkmRGKGIUWYJsvwYhBpLl0/b3hs4ARUVTyjfDBzR7wCBiT/f++LWpv3AMcvi+81tT8cTsITrwHLU5ZvYZTfqmkxox2BFX5z4N6PVRypmoAcusZs79TtsFNSeGHCFHsrvjukY+u7YgqevYtGiElW2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wKSDEfFX; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=z4fFsBMuTr+/KR25exKOqxWxItnrYFoxknfnC8WF7ps=; b=wKSDEfFXwTzUDlFsihcQe8EYfO
+	6xIyzYo+5puAUMNLTL62x+Ed7o5GIibqFSnJT9V6FEoaTOGXjTbS4qN7U7Dhm2dLW4Bq0fh4K6gEN
+	bJ9PzN0bog//XGnLUk43BSC3BYRAnMbDPQRaxGIsoT/JRSBa3UoKh3vhjDlxCVJfUAAKRZ1oZxIHk
+	KIvEiX6ko1oXhTqGsdWhUwRatJIfImftXBX9sOfLa9JigRa4bd4ICTYQ4kGZJNMmEMSD8bpJAgK8x
+	SXxZEAIr9AG/0h/vK66hKeRhHnkFIx5WW++z5xjzu6BFsSV2bYyEqzLki4d0RX7+Mz8kQH05iwbHz
+	s8vWcYOA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8w2W-00000005qSl-2VDF;
+	Thu, 07 Nov 2024 06:30:44 +0000
+Date: Wed, 6 Nov 2024 22:30:44 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Jangsub Yi <jangsub.yi@samsung.com>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, junwoo80.lee@samsung.com,
+	sh8267.baek@samsung.com, wkon.kim@samsung.com
+Subject: Re: [PATCH] mmc: Add config_host callback to set a mmc queue
+Message-ID: <ZyxelKdmXXiSVL1g@infradead.org>
+References: <CGME20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c@epcas1p2.samsung.com>
+ <20241106051347.969-1-jangsub.yi@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106051347.969-1-jangsub.yi@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Remove trailing whitespace from page_cache.rst. Fix detected by
-checkpatch.pl.
+On Wed, Nov 06, 2024 at 02:13:47PM +0900, Jangsub Yi wrote:
+> From: "jangsub.yi" <jangsub.yi@samsung.com>
+> 
+> Currently, there is no way to set up a host-dependent MMC queue.
+> In UFS driver, it is possible to configure the request queue in
+> ufshcd_slave_configure.
+> 
+> There are cases where we need to configure and check the current
+> state of the request queue on the host operation. For example,
+> mmc_queue->in_recovery, in_flight, mmc_queue->queue->queue_flag, etc.
+> 
+> Additionally, since the timeout setting may be longer depending
+> on the device, block layer settings such as timeout are also required.
+> 
+> To add the configuration for the MMC queue, I will add the corresponding
+> code and initially try to add it during initialization in block.c.
+> The detailed implementation will be done on the host side.
 
-Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
----
- Documentation/mm/page_cache.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/mm/page_cache.rst b/Documentation/mm/page_cache.rst
-index 138d61f869df..13425fd5c8fb 100644
---- a/Documentation/mm/page_cache.rst
-+++ b/Documentation/mm/page_cache.rst
-@@ -12,4 +12,4 @@ Folios
- ======
- 
- The folio is the unit of memory management within the page cache.
--Operations 
-+Operations
--- 
-2.34.1
+This seems to lack an actual user and thus just creates dead code.
 
 
