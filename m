@@ -1,190 +1,119 @@
-Return-Path: <linux-kernel+bounces-399194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1969BFC05
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9692B9BFC06
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D5331F22D98
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6251F22658
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E656711713;
-	Thu,  7 Nov 2024 01:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB7514A8B;
+	Thu,  7 Nov 2024 01:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSpuR07G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="beA0IjCq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JwU9kLsU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4688D6AA7;
-	Thu,  7 Nov 2024 01:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAD61863F;
+	Thu,  7 Nov 2024 01:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730944512; cv=none; b=MdEPaiT6S+GvjPq0VdPH0VYYvD5XoCjGuZGzTKmA/W7RjFnqpkeME211wsOi9Gpq7tLt/AuAKIGY/s1dq4JEAvcl6gWgPOvtymVLHciQvA9Fq9zvDLAVjLB9MxosQRuyQDVHBeDGgiY6yO4hTqfiLLIAR9VxGPBiBK/3+CFS/GU=
+	t=1730944523; cv=none; b=us4/pie2nyYjXYE6BPcEz0ByyWCTYzIuQt9EO8gRmNEvkqRAE3/XnfWnyzjXHxWYY0HtLrVO2NVFACjtAz54Dd3Zw+ovt2JtdfsKDjv6/ic2geZuzqnHpXUQJDB9rnRYG7DvpAQsTq/Ie7JLXHYDimx5tbDfxYhmDRHoAOcd66g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730944512; c=relaxed/simple;
-	bh=1xEJP8hUSWgJKDUDvotNdbEBTPP3pEWjaolJ2nxwfD0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=jg36ges1I1A208RqG+O2F4/7LNk0zK4bu2NElKP20G/EgUSwIhdeS2Um5h3bAX9Nhyx3ltmlVStqZwYKxK+aGma4kLUZ6IUyaj5osKunySm934M52Q9W+s2yxJ/yidUyrRuPWxHRprsYLPtVMG+wWUgzCvPRkfNbOZsnkmQzHyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSpuR07G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC25C4CED2;
-	Thu,  7 Nov 2024 01:55:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730944511;
-	bh=1xEJP8hUSWgJKDUDvotNdbEBTPP3pEWjaolJ2nxwfD0=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=aSpuR07GNPIyxT7T98J2JGW4Mu5EKkRQ2Y0ON+S48GPbJO8d0QZ71rN89zaqLPtCs
-	 6dR+ylt0rhYiRiQEJalfQ+QQ3KkiD+f9PUC9xI1mcMnNrtwP6kl9tY6A8fbHwWTPwz
-	 /ocTQUOex3hUElCJzG/B1IBwZVmgIfadScRyBKMsnDR0nhnpA3LWVhlNmwKjodhF6H
-	 6TD+i1SMzJvJWX2weYVPrkF/kLAmqoS9fTRWGCKudo0YAaeUgr4I8beWKS/5A043XP
-	 +ZUbWY0oUEmp/IAOu0D18nDqQI65KO69x2MWNIV6F+OeoZbYyV3xrDMDvFZJ9VYnOf
-	 Jc0t3Il0eu36Q==
+	s=arc-20240116; t=1730944523; c=relaxed/simple;
+	bh=kDekRCLr+NF2MQ1qVzVsOMVeBpe9K+eR1IW2MKnj0+I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FABj/YQOKuj4+egA/yVyYxswCfef3/tKTlHaIfAGR+5I8KtUxrzgkPaNXl9TlIerDSHrQpOuyGZf4KwIoBMaqxinB4logdmzHSR1+eDW49ZXTgfjXYVo063fCU88dAA8tlrAOuJdh2wlz+GnuxfQhWVFC2eKlECRuZZezzxpgiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=beA0IjCq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JwU9kLsU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730944520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yHuhaXluNZvcHKNGAX2RD73UJnUTFKyvNvfGTuAweb8=;
+	b=beA0IjCqm47gFCy89nu4n0Dxtzy1E+7+aas/Y1g+KmukfMhBuU71scU80r/XnXFsowGUmJ
+	mQ4Wc/NRX13L1JHzW2x4ZR15YEncQ6RnXomxULoxVwN1Icv27k7c3zeG+YC+PnsMsViG6R
+	xSrdGyh9E1eX3yYG9znKOTdOiC68l/Ms69DJJj+uRhIZHJYMevBdV9x+ASDJEOyXgbUndV
+	iA0OHdABekjjgNKpNKqbTxTaCroKWOam6xFDWJmGL1vyTj3q7m+Q7pv5A0mX64VgC2f5vg
+	ShsuvGmKlR9mXV0OATaBsve5RRAnLieUIcOULHFz4NyuNI1T0/FBB3HJ/a2xTw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730944520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yHuhaXluNZvcHKNGAX2RD73UJnUTFKyvNvfGTuAweb8=;
+	b=JwU9kLsUjzScL+bTQAUuqUKzQ6xlhvPWMtjdq2Mqwcmn8FLp2FvxsqqY8B5Y+DihwGO3XY
+	or1fNp0fCihjGOCw==
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas
+ Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v3 02/13] rust: hrtimer: introduce hrtimer support
+In-Reply-To: <20241017-hrtimer-v3-v6-12-rc2-v3-2-59a75cbb44da@kernel.org>
+References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
+ <20241017-hrtimer-v3-v6-12-rc2-v3-2-59a75cbb44da@kernel.org>
+Date: Thu, 07 Nov 2024 02:55:20 +0100
+Message-ID: <87v7wzoliv.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 07 Nov 2024 03:55:07 +0200
-Message-Id: <D5FKM963NJ6O.3BGXETHW2FC5K@kernel.org>
-Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
- be disabled on boot
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Paul Moore"
- <paul@paul-moore.com>, <linux-kernel@vger.kernel.org>,
- <christian@heusel.eu>, "Ken Goldman" <kgold@linux.ibm.com>
-X-Mailer: aerc 0.18.2
-References: <20241015193916.59964-1-zohar@linux.ibm.com>
- <D5FG6TOVUY5W.3SUG1J3CDB3J5@kernel.org>
- <321b247dcfaba5d9691919eec8476b3c6fc7875d.camel@HansenPartnership.com>
- <D5FHDIMJBWQM.2GWFOR0198360@kernel.org>
- <84fcb3e29f3aa1ea7a5b638307e500608bc8b11a.camel@linux.ibm.com>
- <D5FI94F98BS0.2JMJGMV9W5GBC@kernel.org>
- <0bca8c26693d28093a1cf4dd2df1dcc985cbf252.camel@linux.ibm.com>
-In-Reply-To: <0bca8c26693d28093a1cf4dd2df1dcc985cbf252.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Thu Nov 7, 2024 at 3:07 AM EET, Mimi Zohar wrote:
-> On Thu, 2024-11-07 at 02:03 +0200, Jarkko Sakkinen wrote:
-> > On Thu Nov 7, 2024 at 1:52 AM EET, Mimi Zohar wrote:
-> > > On Thu, 2024-11-07 at 01:22 +0200, Jarkko Sakkinen wrote:
-> > > > On Thu Nov 7, 2024 at 12:52 AM EET, James Bottomley wrote:
-> > > > >=20
-> > > > > I'm a bit confused here.  It's TPM2_PCR_Extend we have the troubl=
-e with
-> > > > > (as Mimi says in her email that you quoted) not TPM2_GetRandom.
-> > > > >=20
-> > > > > The random number generator reseed occurs in a kernel thread that=
- fires
-> > > > > about once a minute, so it doesn't show up in really any of the b=
-oot
-> > > > > timings.  Plus even with sessions added, what there now isn't a
-> > > > > significant overhead even to the running kernel given it's asynch=
-ronous
-> > > > > and called infrequently.
-> > > >=20
-> > > > Ah, right then we need the boot flag, and my earlier comments to th=
-e
-> > > > parameter apply. I've never used IMA so I don't actually even know =
-in
-> > > > detail how it is using TPM.
-> > >=20
-> > > Huh?  A simple explanation is that IMA-measurement maintains a measur=
-ement list,
-> > > similar to the pre-boot event log.  Each IMA-measurement record exten=
-ds the TPM
-> > > PCR (default PCR 10).
-> > >=20
-> > > Assuming IMA is enabled in the kernel, then just add "ima_policy=3Dtc=
-b" or
-> > > "ima_policy=3Dcritical_data" on the boot command line.  To view the m=
-easurement
-> > > records, cat <securityfs>/integrity/ima/ascii_runtime_measurements.  =
-Normally
-> > > the IMA policy specified on the boot command line is replaced with a =
-finer
-> > > grained custom policy.
-> >=20
-> > I'll try to figure out how to test it regularly. And yeah we need the
-> > flag obviously.
-> >=20
-> > I have my (CI compatible) framework that I run regularly with upstream
-> > that I've mentioned a few times earlier.
-> >=20
-> > https://codeberg.org/jarkko/linux-tpmdd-test
-> >=20
-> > How would I would make all files in /etc get to get the checksums, and
-> > how can I generate legit and illegit change to some file in that tree?
-> >=20
-> > No need to address how to implement that to my framework, I can figure
-> > that out. I just would love throw something so that any performance
-> > regressions will be catched right at the get go, i.e. before they
-> > end up to the mainline.
->
-> Yes, I still need to look at it.  FYI, the IMA policy cannot be defined i=
-n terms
-> of pathnames.  For testing, we've been loopback mounting a filesystem and
-> defining policy rules based on the UUID of the filesystem.  If you're usi=
-ng
-> SELinux, then rules can be defined in terms of SELinux labels. There are =
-other
-> methods of identifying files.  Ken's been working on new IMA documentatio=
-n[1],
-> which can be viewed here
-> https://ima-doc.readthedocs.io/en/latest/ima-concepts.html .
->
-> Here are some examples as to how to locally verify the IMA measurement li=
-st and
-> the boot aggregate.
->
-> 1. To locally verify the IMA measurement list matches TPM PCR-10, use evm=
-ctl
-> (ima-evm-utils).  For example,
->
-> a. An IMA measurement list without integrity violations
-> (/sys/kernel/security/ima/violations)
->
-> evmctl ima_measurement /sys/kernel/security/ima/binary_runtime_measuremen=
-ts
->
-> b. An IMA measurement list with integrity violations
->
-> evmctl ima_measurement --ignore-violations
-> /sys/kernel/security/ima/binary_runtime_measurements
->
-> 2. To locally verify the 'boot_aggregate' record, the first record in the=
- IMA
-> measurement list, use "evmctl ima_boot_aggregate -v" and compare the resu=
-lting
-> hash with the one in the boot_aggregate record.
+Andreas!
 
-Thanks! I write an issue based on this to my Codeberg repository, and
-purge it once the time. I'll start by that and later on formalize
-some commits or perhaps IMA specific buildroot config...
+On Thu, Oct 17 2024 at 15:04, Andreas Hindborg wrote:
+> +impl<T> Timer<T> {
+> +    /// Return an initializer for a new timer instance.
+> +    pub fn new() -> impl PinInit<Self>
+> +    where
+> +        T: TimerCallback,
+> +    {
+> +        pin_init!(Self {
+> +            // INVARIANTS: We initialize `timer` with `hrtimer_init` below.
+> +            timer <- Opaque::ffi_init(move |place: *mut bindings::hrtimer| {
+> +                // SAFETY: By design of `pin_init!`, `place` is a pointer live
+> +                // allocation. hrtimer_init will initialize `place` and does not
+> +                // require `place` to be initialized prior to the call.
+> +                unsafe {
+> +                    bindings::hrtimer_init(
+> +                        place,
+> +                        bindings::CLOCK_MONOTONIC as i32,
+> +                        bindings::hrtimer_mode_HRTIMER_MODE_REL,
+> +                    );
+> +                }
+> +
+> +                // SAFETY: `place` is pointing to a live allocation, so the deref
+> +                // is safe.
+> +                let function =
+> +                    unsafe { core::ptr::addr_of_mut!((*place).function) };
 
-As far as the patch goes, I thought that I refine the patch myself, and
-save everyone's time and nervers from unnecessary reviews rounds. It
-does not make any radical changes to the approach.
+I assume you are sending a new version of this series due to the
+reported build issue.
 
-See https://lore.kernel.org/linux-integrity/20241107004708.108667-1-jarkko@=
-kernel.org/
+If so, can you please rebase against
 
-I cannot take reviewed/tested-by's from any of the authors but if you
-can check that it works for you I can surely send it Linus without
-further tags than three SOB's :-) That said happy to get at least
-tested-by from someone.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
 
-I'll send a PR to Linus as soon as possible.
+It contains the new hrtimer_setup() function, which initializes the
+timer including the callback function pointer.
 
->  =20
-> [1] https://github.com/linux-integrity/ima-doc
-> [2] https://github.com/linux-integrity/ima-evm-utils/tree/next-testing/
->
-> Mimi
+Thanks,
 
-BR, Jarkko
+        tglx
 
