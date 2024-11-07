@@ -1,152 +1,161 @@
-Return-Path: <linux-kernel+bounces-399614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE089C019C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:55:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69379C01A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:58:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89817282A5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:55:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B000283C1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AAA1E47B6;
-	Thu,  7 Nov 2024 09:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA891E47B6;
+	Thu,  7 Nov 2024 09:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENKwowgL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlXOyZvr"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9181D88DD;
-	Thu,  7 Nov 2024 09:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DE6194A70;
+	Thu,  7 Nov 2024 09:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730973325; cv=none; b=DXqVhB3zis6oooEyzPTtxfb8yUs5fz5Nao/46TSsPF7VnFXU0eyCTRneHutcIpvJak19ALbFugBwwauqcndFaGALyfEHapOUZLdFPHuWCxMI0jvckIVFqts4N4FDjit7JH9XIsCZjCEEIE2JSlBF8wdbSmQk6tcKUcV25KnXorI=
+	t=1730973480; cv=none; b=Ds+jLRp6tfgxQNNJ7P+K/TGtaY/TsizB2pcVu54bTcz6wk7VQo13iIqWHYfXEBd8eXGe7PFHdyAC1A/jd1QzpuNrmkBm6NqcZ23g3Fvza8dgM8w7dL+evJNA8GbXQ15bYjB7mMVvVFcbtyHKUXnbjGsycCP8IebLDgWgHD1T0NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730973325; c=relaxed/simple;
-	bh=a4HyRyODtowaVDsUMDKqZNaXgLemsNYEz1lYpYzWUjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZ10cDkN61BES4OGYvMeSsBLnEY4xt3lwiJX8fZyNs/mQj0cPAARlyZaBt9yFXXhfS17IBgSv157bZvEZhpyqU9XhvZZ6xlQSxT3kuUnYH1TAu7qKhqnp/osEusoXgtGE9O5RfyqdtpqxfV3ZRova+16GZuQ3AnHKQveHKkeUrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENKwowgL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72AC5C4CECC;
-	Thu,  7 Nov 2024 09:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730973324;
-	bh=a4HyRyODtowaVDsUMDKqZNaXgLemsNYEz1lYpYzWUjs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ENKwowgLng2hBY/5ukqfdOe8fk3pIoxCmxgE2CRK16CTVqp2GslQZW0Z4JprcJn/L
-	 Iamn7idsseaD0Cm2n84sLopMQPN9IS3c9SJ1HdH/Aq5UqIbOpP8P3lerp/u+GPmkFa
-	 AuVGPtvCqsojrfnbVf4cd48QU/NgLKCYBW8wwWwonWjFLIgVMEbSPTS5hhwVPtJ2Fn
-	 Dhw5NDm649Hk/BzEHN2z6ye7R98OQ729Sz5gZhUY02LAmVOsVICRCEdutqxwxJHiuL
-	 KCLv3vSWcBnEJpW8e0r3kzau78YIlhsi79UjAS8aC9jn+eEQA/agvZQ71AA/Qf4fzr
-	 wl6BpR3yQpn8g==
-Message-ID: <f9f66565-6356-4b61-8653-1e9c006b892c@kernel.org>
-Date: Thu, 7 Nov 2024 10:55:16 +0100
+	s=arc-20240116; t=1730973480; c=relaxed/simple;
+	bh=gHV9IguVe4/fNXzmzpXujryVT7rjBVHv1XiIwGs67K0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UJHydKaCop7vkYYUsnJhQ4yKtLx0UFs4R151DvABVOHaEBPS9v81XnGRmsohGqFLnOerK3V1Qk8gRDth4+5FfH3zA7RDfCx5LP4d3PO8jVq264IJ1T1D8i6zww6NpqW1Z3o9BtOSR8kDCzhFI6tIjtQFUt+iqQgPxKknYNBX+DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlXOyZvr; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431ac30d379so6327625e9.1;
+        Thu, 07 Nov 2024 01:57:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730973477; x=1731578277; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dpKqltND5M1sTSxc7zhIf0AXALdPonkygyogIkTEVY4=;
+        b=PlXOyZvruKnQ98vOESG47QuMkzlJbRVK32g3BYMMZysGJFpTjFlJWlBqmYKlDkgqfk
+         1JJSA0uhqoU5dqWO51//pf4heYJ7aK2ZqbvdP/lZi1Y/MVpAu2HZCoHKrLOOwi7MKSgL
+         zSnGpcP5Oi57N9KTC+3121mJ+hpRE1R6PhvIHaWCxbkS1M7Q/7huL6T8ohxZKtmYPkF0
+         Ac7wC1cww5VoaFsY6SAhvilcmd8Mur0YxnG57MmmWL9MdoNl/TOkZTHqNmzbR2MAmKUP
+         vEHFyYErjYiAKWCsekrzcCLic+uBLiEfkg+OFlfq1bfyXaQR+Zs4IioajM9K9eNSeyBl
+         LALA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730973477; x=1731578277;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dpKqltND5M1sTSxc7zhIf0AXALdPonkygyogIkTEVY4=;
+        b=HO0JA8//qJ/V1PiDPndV0aAyEowSqIWW37Jn6XyWzTVO6TGoBqezB1nE38XZ5dC4D/
+         6inX2ou+46g1UYSZEu/+upQIh/X0aNBXiT100i0f5xG380TpVPilYRUgn6c+QjPq2oJO
+         rZ6Hu/yZq5FEw5p+VkU9C48VhZfSuxz0CaQgHKnG8jMqPaOH6n05koR6RHkliVYm5ed3
+         AWo84XlvkifXPUY5rqDAZg+m1cPYYbR0KaRK4dZnyDgeQ9D5sXJg4+jpvWwBx/sCSDwR
+         zCT85cqtiA9ag5cAuxTTa5WQx+PYCRjcAZI7Z1P5YODxxqsCZ3ao6phvS8HK/kwupTOF
+         SGvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw9x1XSsKvB73rjPvF90PSqTM8UCrJ9hIrrTOeJXQS4riVtOoqDTz2Bgy0ZUfgb7WG9F6nIVUwRy1xatw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF1AUcbqgKCbB6+9JQ0suPDSaVbxu3NiFKphRlfnU04tVgK7jo
+	FeSXEoo5fmS7A/ajlvW/50AKTxOx0C00rLb1LejtQA9WMPBy6vDK
+X-Google-Smtp-Source: AGHT+IGzLToOEcix7DkuYcrqXxDDjq6bxBUxopWjxkVCGQdAefWYR0OGNd28kso8FNdruwrZQL4QuA==
+X-Received: by 2002:a05:600c:1d16:b0:42e:d4a2:ce67 with SMTP id 5b1f17b1804b1-431ae9c440cmr374619435e9.17.1730973477180;
+        Thu, 07 Nov 2024 01:57:57 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97ce0fsm1248509f8f.33.2024.11.07.01.57.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 01:57:56 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][V2][next] fs/9p: replace functions v9fs_cache_{register|unregister} with direct calls
+Date: Thu,  7 Nov 2024 09:57:56 +0000
+Message-Id: <20241107095756.10261-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: usb: snps,dwc3: Add
- snps,filter-se0-fsls-eop quirk
-To: Krishna Kurapati <quic_kriskura@quicinc.com>,
- Uttkarsh Aggarwal <quic_uaggarwa@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Felipe Balbi <balbi@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com
-References: <20241017114055.13971-1-quic_uaggarwa@quicinc.com>
- <20241017114055.13971-2-quic_uaggarwa@quicinc.com>
- <gclvciv5cmrcut6qvo3kh3ycutqt5sot5k4i2nwics6myhuxvq@cf6ajwflxdlc>
- <1129e0a7-6bd0-416e-8c56-6b8d75600c4e@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1129e0a7-6bd0-416e-8c56-6b8d75600c4e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 07/11/2024 07:17, Krishna Kurapati wrote:
-> 
-> 
-> On 10/18/2024 11:57 AM, Krzysztof Kozlowski wrote:
->> On Thu, Oct 17, 2024 at 05:10:54PM +0530, Uttkarsh Aggarwal wrote:
->>> Adding a new 'snps,filter-se0-fsls-eop quirk' DT quirk to dwc3 core to set
->>> GUCTL1 BIT 29. When set, controller will ignore single SE0 glitch on the
->>> linestate during transmission. Only two or more SE0 is considered as
->>> valid EOP on FS/LS port. This bit is applicable only in FS in device mode
->>> and FS/LS mode of operation in host mode.
->>
->> Why this is not device/compatible specific? Just like all other quirks
->> pushed last one year.
-> 
-> Hi Krzysztof,
-> 
->   Apologies for a late reply from our end.
-> 
->   In DWC3 core/dwc3-qcom atleast, there have been no compatible specific 
-> quirks added. 
+The helper functions v9fs_cache_register and v9fs_cache_unregister are
+trivial helper functions that don't offer any extra functionality and
+are unncessary. Replace them with direct calls to v9fs_init_inode_cache
+and v9fs_destroy_inode_cache respectively to simplify the code.
 
-Nothing stops from adding these, I think.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
 
-> Also since this is a property of the Synopsys controller
-> hardware and not QC specific one, can we add it in bindings itself. 
-> Because this is a property other vendors might also use and adding it 
-> via compatible might not be appropriate.
+V1: originally cleaned up v9fs_cache_register to just a direct call
+    to v9fs_init_inode_cache.
+V2: replace v9fs_cache_register and v9fs_cache_unregister with direct
+    calls and change subject line
 
-This does no answer my question. I don't see how this is not related to
-one specific piece of SoC.
+---
+ fs/9p/v9fs.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-If you claim this is board-related, not SoC, give some arguments.
-Repeating the same is just no helping.
-
-Best regards,
-Krzysztof
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 281a1ed03a04..77e9c4387c1d 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -659,21 +659,6 @@ static void v9fs_destroy_inode_cache(void)
+ 	kmem_cache_destroy(v9fs_inode_cache);
+ }
+ 
+-static int v9fs_cache_register(void)
+-{
+-	int ret;
+-
+-	ret = v9fs_init_inode_cache();
+-	if (ret < 0)
+-		return ret;
+-	return ret;
+-}
+-
+-static void v9fs_cache_unregister(void)
+-{
+-	v9fs_destroy_inode_cache();
+-}
+-
+ /**
+  * init_v9fs - Initialize module
+  *
+@@ -686,7 +671,7 @@ static int __init init_v9fs(void)
+ 	pr_info("Installing v9fs 9p2000 file system support\n");
+ 	/* TODO: Setup list of registered trasnport modules */
+ 
+-	err = v9fs_cache_register();
++	err = v9fs_init_inode_cache();
+ 	if (err < 0) {
+ 		pr_err("Failed to register v9fs for caching\n");
+ 		return err;
+@@ -709,7 +694,7 @@ static int __init init_v9fs(void)
+ 	v9fs_sysfs_cleanup();
+ 
+ out_cache:
+-	v9fs_cache_unregister();
++	v9fs_destroy_inode_cache();
+ 
+ 	return err;
+ }
+@@ -722,7 +707,7 @@ static int __init init_v9fs(void)
+ static void __exit exit_v9fs(void)
+ {
+ 	v9fs_sysfs_cleanup();
+-	v9fs_cache_unregister();
++	v9fs_destroy_inode_cache();
+ 	unregister_filesystem(&v9fs_fs_type);
+ }
+ 
+-- 
+2.39.5
 
 
