@@ -1,121 +1,154 @@
-Return-Path: <linux-kernel+bounces-399730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3323B9C0388
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:11:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502689C0372
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD82285D2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3301F215A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC971F7084;
-	Thu,  7 Nov 2024 11:10:37 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498181F4299;
+	Thu,  7 Nov 2024 11:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E8Yoffr3"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E871F6680;
-	Thu,  7 Nov 2024 11:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22CD1DFE2F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977836; cv=none; b=skrWbP9bOkTrms3YwgNDaK6c9krYyofrTVWOplqQuelKk+USM2FwP37mOpdTcCgTxYIux7FxvA/lBIaUZyHnTGtdDYkNqRFp32iRTVIjqxAxfTTgZnu7rWHyHwiDWSFgMJ2kCpRBeXpoOhZrAoUcaoVVufrojD2IQAeoIHgk3kI=
+	t=1730977793; cv=none; b=UQkINjmKsUof5RSeIoeyGl4bbVtp1l8m1dwdh96ZTmLvFEKJB0x52cxZFQLUhYde1v8DJafUGv+FyuCBBl/+QbEpyHTh61E0UKzfUySGBOkBSEF3EbYL4cyDIlTygmIlnO/+RAMamWaymZZGuqKCDG86dtOYdIuYKfcnkCbtW3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977836; c=relaxed/simple;
-	bh=qWDhbIEFWCOCwM370sGSBoKdqofWiHM85gaoBK1VQNk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fG5gELsDnbohBGPbxpG3B0U0NI6kMdJl+z7EesX022yI7r/9qbK94rG2WRf2En8DI84aoHB8RhyzGaETrJ8VUcJQDq4PIFIEyJsUOEU9EQmRE8ADXeOYdQsk4zEBWxD7l9GoHcJxswDBRu8ppgsF2hKGhmTOPVQEUz1jy9U1Gtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XkfT7637Rz1SGC6;
-	Thu,  7 Nov 2024 19:08:43 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id C45F41A0188;
-	Thu,  7 Nov 2024 19:10:26 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by kwepemf100017.china.huawei.com
- (7.202.181.16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 7 Nov
- 2024 19:10:25 +0800
-From: Zizhi Wo <wozizhi@huawei.com>
-To: <netfs@lists.linux.dev>, <dhowells@redhat.com>, <jlayton@kernel.org>,
-	<brauner@kernel.org>
-CC: <hsiangkao@linux.alibaba.com>, <jefflexu@linux.alibaba.com>,
-	<zhujia.zj@bytedance.com>, <linux-erofs@lists.ozlabs.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wozizhi@huawei.com>, <libaokun1@huawei.com>, <yangerkun@huawei.com>,
-	<houtao1@huawei.com>, <yukuai3@huawei.com>
-Subject: [PATCH v2 5/5] netfs/fscache: Add a memory barrier for FSCACHE_VOLUME_CREATING
-Date: Thu, 7 Nov 2024 19:06:49 +0800
-Message-ID: <20241107110649.3980193-6-wozizhi@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241107110649.3980193-1-wozizhi@huawei.com>
-References: <20241107110649.3980193-1-wozizhi@huawei.com>
+	s=arc-20240116; t=1730977793; c=relaxed/simple;
+	bh=8aHD7W6Ht8fDQwB3vAXgXnkNqgUDKXUBZpBsZgLrdl8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=J646YHeqmoAG3LwRDiJ/lkjusjfytfFPsKC0La1+aGfHsItll5nUtGv1MDlTw8/2CXsh4V4I3hXW+pKDwOtE+04xtaUe2IK8JnbfbFJAbKLmXkQYtGUPLf2oAu0KsXFb/2/GeTr4ahV0NU6xIuQZFy6iphnfbAQEkR63rZ42HdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E8Yoffr3; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730977788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gIlgsYE+XXSE/ly7Hc6W6Z99lO+NKZkrAF66GCW0yX0=;
+	b=E8Yoffr30msIKibeYjRjIs/Wej2+J04iMd6+/PcdlBV2/+PE7rkRqcIQ0QFDFmccAnJHJk
+	l57qvngsJs9ckoSYMgxPAqiQkrM93rJjH1gi4OkKW9mPSXiUvoYtj4PxcakGmgNtD3Yh/I
+	s3yRDXxZrtU3nBsncpI8b0Mqob6e7+M=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: Alex Markuze <amarkuze@redhat.com>, Xiubo Li <xiubli@redhat.com>,  Ilya
+ Dryomov <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] ceph: ceph: fix out-of-bound array access when
+ doing a file read
+In-Reply-To: <yvmwdvnfzqz3efyoypejvkd4ihn5viagy4co7f4pquwrlvjli6@t7k6uihd2pp3>
+	(Goldwyn Rodrigues's message of "Wed, 6 Nov 2024 15:40:44 -0500")
+References: <yvmwdvnfzqz3efyoypejvkd4ihn5viagy4co7f4pquwrlvjli6@t7k6uihd2pp3>
+Date: Thu, 07 Nov 2024 11:09:38 +0000
+Message-ID: <87ldxvuwp9.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-In fscache_create_volume(), there is a missing memory barrier between the
-bit-clearing operation and the wake-up operation. This may cause a
-situation where, after a wake-up, the bit-clearing operation hasn't been
-detected yet, leading to an indefinite wait. The triggering process is as
-follows:
+(CC'ing Alex)
 
-  [cookie1]                [cookie2]                  [volume_work]
-fscache_perform_lookup
-  fscache_create_volume
-                        fscache_perform_lookup
-                          fscache_create_volume
-			                        fscache_create_volume_work
-                                                  cachefiles_acquire_volume
-                                                  clear_and_wake_up_bit
-    test_and_set_bit
-                            test_and_set_bit
-                              goto maybe_wait
-      goto no_wait
+On Wed, Nov 06 2024, Goldwyn Rodrigues wrote:
 
-In the above process, cookie1 and cookie2 has the same volume. When cookie1
-enters the -no_wait- process, it will clear the bit and wake up the waiting
-process. If a barrier is missing, it may cause cookie2 to remain in the
--wait- process indefinitely.
+> Hi Xiubo,
+>
+>> BTW, so in the following code:
+>>=20
+>> 1202                 idx =3D 0;
+>> 1203                 if (ret <=3D 0)
+>> 1204                         left =3D 0;
+>> 1205                 else if (off + ret > i_size)
+>> 1206                         left =3D i_size - off;
+>> 1207                 else
+>> 1208                         left =3D ret;
+>>=20
+>> The 'ret' should be larger than '0', right ?
+>>=20
+>> If so we do not check anf fix it in the 'else if' branch instead?
+>>=20
+>> Because currently the read path code won't exit directly and keep=20
+>> retrying to read if it found that the real content length is longer than=
+=20
+>> the local 'i_size'.
+>>=20
+>> Again I am afraid your current fix will break the MIX filelock semantic ?
+>
+> Do you think changing left to ssize_t instead of size_t will
+> fix the problem?
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 4b8d59ebda00..f8955773bdd7 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
+t *ki_pos,
+>  	if (ceph_inode_is_shutdown(inode))
+>  		return -EIO;
+>=20=20
+> -	if (!len)
+> +	if (!len || !i_size)
+>  		return 0;
+>  	/*
+>  	 * flush any page cache pages in this range.  this
+> @@ -1087,7 +1087,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
+t *ki_pos,
+>  		size_t page_off;
+>  		bool more;
+>  		int idx;
+> -		size_t left;
+> +		ssize_t left;
+>  		struct ceph_osd_req_op *op;
+>  		u64 read_off =3D off;
+>  		u64 read_len =3D len;
+>
 
-In commit 3288666c7256 ("fscache: Use clear_and_wake_up_bit() in
-fscache_create_volume_work()"), barriers were added to similar operations
-in fscache_create_volume_work(), but fscache_create_volume() was missed.
+I *think* (although I haven't tested it) that you're patch should work as
+well.  But I also think it's a bit more hacky: the overflow will still be
+there:
 
-By combining the clear and wake operations into clear_and_wake_up_bit() to
-fix this issue.
+		if (ret <=3D 0)
+			left =3D 0;
+		else if (off + ret > i_size)
+			left =3D i_size - off;
+		else
+			left =3D ret;
+		while (left > 0) {
+			// ...
+		}
 
-Fixes: bfa22da3ed65 ("fscache: Provide and use cache methods to lookup/create/free a volume")
-Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
-Acked-by: David Howells <dhowells@redhat.com>
----
- fs/netfs/fscache_volume.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+If 'i_size' is '0', 'left' (which is now signed) will now have a negative
+value in the 'else if' branch and the loop that follows will not be
+executed.  My version will simply set 'ret' to '0' before this 'if'
+construct.
 
-diff --git a/fs/netfs/fscache_volume.c b/fs/netfs/fscache_volume.c
-index cb75c07b5281..ced14ac78cc1 100644
---- a/fs/netfs/fscache_volume.c
-+++ b/fs/netfs/fscache_volume.c
-@@ -322,8 +322,7 @@ void fscache_create_volume(struct fscache_volume *volume, bool wait)
- 	}
- 	return;
- no_wait:
--	clear_bit_unlock(FSCACHE_VOLUME_CREATING, &volume->flags);
--	wake_up_bit(&volume->flags, FSCACHE_VOLUME_CREATING);
-+	clear_and_wake_up_bit(FSCACHE_VOLUME_CREATING, &volume->flags);
- }
- 
- /*
--- 
-2.39.2
+So, in my opinion, what needs to be figured out is whether this will cause
+problems on the MDS side or not.  Because on the kernel client, it should
+be safe to ignore reads to an inode that has size set to '0', even if
+there's already data available to be read.  Eventually, the inode metadata
+will get updated and by then we can retry the read.
 
+Unfortunately, the MDS continues to be a huge black box for me and the
+locking code in particular is very tricky.  I'd rather defer this for
+anyone that is familiar with the code.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
