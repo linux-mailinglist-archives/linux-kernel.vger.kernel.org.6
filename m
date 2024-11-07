@@ -1,106 +1,78 @@
-Return-Path: <linux-kernel+bounces-400686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297C49C10EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:25:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EB19C10EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC131C22A07
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:25:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC53D1C22758
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC47218D6D;
-	Thu,  7 Nov 2024 21:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C2F218927;
+	Thu,  7 Nov 2024 21:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LPEoxixV"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b11a6pBn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5858E218313;
-	Thu,  7 Nov 2024 21:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD47217F38;
+	Thu,  7 Nov 2024 21:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731014640; cv=none; b=Nrx90KxIFKpaD6IRKnI7bzWvINTlLHIp78IFQGcfkaVK3sUj0plwv/AsDmvA7CMEi1TWVmJ9xF5f36tYCJqgj3ab9wkOfYrL+UsEmyixcvP6kCBZ211FGz4WwH1ZRveSzxMip2BNhKRAoEKqTPJdFjKFE2rvQJ8i+fSJPCvB6Lw=
+	t=1731014631; cv=none; b=IfmhKulim3htXtBjIn8lW/kTqCTf/MJ+PsbvlbnGa2g4iq55DI/Fl5NmWB0zyfv+CSLRRSI/BWhb9Fu+zVvON9kWI06qn7GCOu5dKMiEbbLDqX0432nPUrt8GdRC/Mcfj9DMJA+uzZcMLpiS+lr0nlmpVPzk2DwOK2D+YaHlTRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731014640; c=relaxed/simple;
-	bh=9LkBI3C6kD8JEl0wtx2VRjvRgTzIRnyR2AgW3nixLQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/zlJa8PnkREHDeeB7HwfCOsx32aWQSVwTmkyM6mjSQ3BYGFQwBaUumywabt8qp9RoDA8MQxpSnrxot96nlqrcVys6LPdnH7SIfyWIh/WvEle3PMuGY+Mo43T+XOn/QpX4UaP2U4pCkh0Zh09y9TuTEIYXso+FuGybaCQXfL5DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LPEoxixV; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=3pYTYYb1/To+QdfwUXIh4HFvD0hPTWesxwO7yD+UceQ=; b=LPEoxixVx1h+sI2xi7uE4kQwiD
-	RfC13yFgeGed7ODGQutbaI09XspRgPleBbDnESvLfjl7IZlEC51YJVB58leFKBDZvZsRv6J203nqv
-	WmGi2lu71l2NzQDM0EXpvDkOU7OnawZG8EFFrypmIMsee3xjWmk5TwBeIbyUMQWoqcd0fa3xhUZJ7
-	A2UYHGHcLU4QgtqC6uJVQD4I/aCXl3b6pm2jX+yTBhEhwov3v4hyeLl5KJnjcItvP2dsZpKsrH4S4
-	foeeTDT7CEUtIWWk3j4z+S6trc4nVp5Bx95nhhOH6uC8OO7GIq+cnZCdi10Z9v3Mvs+4OFwDHlaPS
-	v4ujPg8w==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t99ys-00000007R39-2i5x;
-	Thu, 07 Nov 2024 21:23:55 +0000
-Message-ID: <c8b67896-b1d1-45fd-aab4-6ff8ce64a1e6@infradead.org>
-Date: Thu, 7 Nov 2024 13:23:49 -0800
+	s=arc-20240116; t=1731014631; c=relaxed/simple;
+	bh=lo4kyEKR5iqvJadoiUBYO6kTriOSw1Azyo6gI4YsYnw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=H3azJ36qyAH5gZA9631QV3XSakubZMl24SCJnUnZBeM1GwNlc0XLeGBvax/t8icWlhOM3HSBJVMV93ESicNCbuX8LRxus0BgRTBo+y6gHmh4qLdwwdmWqWbsr9L2TAACjRzaegs+QvAb1qvWqvqSC/iR1EcvtDrUNChVQ6vqsEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b11a6pBn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3614C4CECC;
+	Thu,  7 Nov 2024 21:23:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731014631;
+	bh=lo4kyEKR5iqvJadoiUBYO6kTriOSw1Azyo6gI4YsYnw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=b11a6pBnf9ueFJGCIrjJMjSad7BA5vuaB7Nq5ZHLtEqLMi5lBin7d+3LsRca/ASmA
+	 6q/gP2JHY4OZpoqDwMAQDa6qLC+HFmLcohXDDQpek21fo2S6BP8mVJhREO2lZhG4nA
+	 PV7EPSMlUnRIg930RxHbURrwVtpdzN0fuxaX0SIhC/3dRIKMy/KUtrurDBNMCjUIBt
+	 eco1k6bPK7e8EOT+4wioSgdx+yj3j16v/zBiyqplIcTt8N7vVVrud2uTpujzrwtK8Y
+	 Ze7Fa3Ux08TzJci9SUz7LUSVzVFTlOwwZj4skN8PKatRo2nfKlj2XkG054O2uA5q8s
+	 HTV7ec+e+9Vew==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710D83809A80;
+	Thu,  7 Nov 2024 21:24:01 +0000 (UTC)
+Subject: Re: [GIT PULL] Networking for v6.12-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241107204533.2224043-1-kuba@kernel.org>
+References: <20241107204533.2224043-1-kuba@kernel.org>
+X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241107204533.2224043-1-kuba@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.12-rc7
+X-PR-Tracked-Commit-Id: 71712cf519faeed529549a79559c06c7fc250a15
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: bfc64d9b7e8cac82be6b8629865e137d962578f8
+Message-Id: <173101464003.2100977.10337123877056671078.pr-tracker-bot@kernel.org>
+Date: Thu, 07 Nov 2024 21:24:00 +0000
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] docs: Add guides section for debugging
-To: Jonathan Corbet <corbet@lwn.net>,
- Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
- mauro.chehab@linux.intel.com, kernel@collabora.com,
- bob.beckett@collabora.com, nicolas.dufresne@collabora.com
-References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
- <20241028-media_docs_improve_v3-v1-1-2b1b486c223e@collabora.com>
- <87ldxu235z.fsf@trenco.lwn.net>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <87ldxu235z.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi,
+The pull request you sent on Thu,  7 Nov 2024 12:45:33 -0800:
 
-On 11/7/24 12:35 PM, Jonathan Corbet wrote:
-> Sebastian Fricke <sebastian.fricke@collabora.com> writes:
-> 
->> This idea was formed after noticing that new developers experience
->> certain difficulty to navigate within the multitude of different
->> debugging options in the Kernel and while there often is good
->> documentation for the tools, the developer has to know first that they
->> exist and where to find them.
->> Add a general debugging section to the Kernel documentation, as an
->> easily locatable entry point to other documentation and as a general
->> guideline for the topic.
->>
->> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
->> ---
->>  Documentation/index.rst                            |   2 +
->>  .../driver_development_debugging_guide.rst         | 206 +++++++++++++++
->>  Documentation/process/debugging/general_advice.rst |  48 ++++
->>  Documentation/process/debugging/index.rst          |  21 ++
->>  .../debugging/userspace_debugging_guide.rst        | 278 +++++++++++++++++++++
->>  5 files changed, 555 insertions(+)
->>
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.12-rc7
 
-You two have probably already gone over this, but I would not go
-looking into Documentation/process/ at all for debugging advice.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/bfc64d9b7e8cac82be6b8629865e137d962578f8
 
-IOW, I think that these docs belong somewhere else.
-
+Thank you!
 
 -- 
-~Randy
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
