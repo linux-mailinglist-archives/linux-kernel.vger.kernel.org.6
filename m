@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-400109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD50A9C0913
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:38:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A499C0918
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:39:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 533CBB232B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711701F24434
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5897E212D25;
-	Thu,  7 Nov 2024 14:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CD6212D13;
+	Thu,  7 Nov 2024 14:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EzIyusrH"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="opIhrEKd"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42952101B7
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC31E049C;
+	Thu,  7 Nov 2024 14:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730990295; cv=none; b=O/lqb4wicxEQkzVHUAvwWAePVT1dYPYasTo+c7C2a19YNBo9zs+UppF81KDEr5s+tRDPx7rqxrMnxt53sP1DlPB3hDcYe/w+4A92+SirTmcpXR5zr0Szt6SMy4ftk0oczD+OTchX+Wn2aPYuUTBm9oIp1c9f5Ni/hXVJheato/Y=
+	t=1730990377; cv=none; b=QubvcFGFPBdX++4cqj2A+NhQ7G707FKKIV5XpU9L/mbyU9FBm3CyvuZUOQQCnO1EcaBmGJ4RSyYjD/g+zc2fiWexFZ0S4wPiHwm8Mb/ZfsJzR3WKeEHgB074Rn3meKzYpNGfTp1ggkCoy1Y7OhpsQE/v8QfiWdut1BzOcbk3Xao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730990295; c=relaxed/simple;
-	bh=+//tYRZ2pj95k/0HCphckqrFk8TZ2PPvWYm549pQdRw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=CzHpSyGkrBNg8r9QJNwFRLVqPgnhAdZhXIkq9tiKAatjm8iMfEhpd1Xy+PTIO5Kt24Sa6es5eBZWBA2ro/sq0EdFweos6aBL7P4dM7j6dfgTfzftUHrXCyVMl22qJhYcyNQhDCWOiFc7a0EOvcvnjBHRwmHzH3SrLyFyMmkQ9Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EzIyusrH; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-720e94d36c8so1977967b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 06:38:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1730990292; x=1731595092; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wL5FDRhPfeyJSPnDftlIi6tQzypn+DUnCGufSshoMeI=;
-        b=EzIyusrHV94mk4XVJUBBEGWKqlESovVcB0Ns6bS50L0rklCD0grAN0X/eM4hluy5KG
-         ozXNR8HlIXUE+0J5LyPlw5OC99vjmz6dLZ5+l15hnx3X7ENTt0Puy+tYWj3h04fCZhB2
-         lSd6nYJN7VYRe+IWpdiZUxC3e0Djsav/wCLLM8gU2pj9uGF2+1ehnsjs6bNAaaRK9blr
-         s9EU3aCKiOpxF+swNULGBGmLyCBB6QlfdrU+Cosdsxr4FbN9Zm137FDdingqm7Oc92AP
-         oahhqPGAQwra4KdTAS2CkhA8NcZyHwP8Za1IbaqvJz//D4H6bvfyq0B0JI25mBp/mymY
-         1SGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730990292; x=1731595092;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wL5FDRhPfeyJSPnDftlIi6tQzypn+DUnCGufSshoMeI=;
-        b=OyLgYGTgBxc13JOi8jqaB3Yw2668D/4crJBq5+8IqRhRdazW5NFpEs0QJ4hmCyngvR
-         edqXDb1PnkHjlL3j3TIhs3bksdLABnBpAK/cpS5IDpdaEqKAzDwRf41oUhDxY4CXwP6n
-         WiJmIJA+5ETtQiNKe/IapTjfoeelnaT02+frp0vqmM5fVQFotuIMLlGrayUfziruLYvS
-         M2mie7L4nVT2byPhghjny6EFHV4zLcY3EsSAu7EGXC0mzOb8+F05836WPPm3GBYXGqyp
-         V6VfMOUQANPIfalF0qmrfKWfP1I3J5EF5HaDGtvY8ZxI+hBSqpmkphv/MNjOVt7HBvyk
-         +PEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoUkike263gLIaS9Q8Ro+Zd4CdyHsd08zbh6ATam4grqdA2t21xnLjIEfjtc04gLnUKL56e95vRTVVRLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZckEx+UpwTo+J65/4xm1ITfi0KKBBXKDbETmQHXQmn9MokIqC
-	SnpxVOaD2vYXFncaSsour0qbqVLIh1ijCYEtEah4/NVIvubM7SDamt577kcZtiU=
-X-Google-Smtp-Source: AGHT+IG20qa8SvuiM/MDu1UgLQkGwgxBXyCUgUI6UBnitN6mJQysCwLmO4P4trtchp727A7EvWqetQ==
-X-Received: by 2002:a05:6a20:d81a:b0:1d9:3acf:8bdd with SMTP id adf61e73a8af0-1dc1e465066mr272204637.22.1730990292157;
-        Thu, 07 Nov 2024 06:38:12 -0800 (PST)
-Received: from 5CG3510V44-KVS.localdomain ([203.208.189.12])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5e9eb5sm1478629a12.45.2024.11.07.06.38.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 06:38:11 -0800 (PST)
-From: Jinhui Guo <guojinhui.liam@bytedance.com>
-To: bhelgaas@google.com,
-	macro@orcam.me.uk
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	guojinhui.liam@bytedance.com
-Subject: [RFC] PCI: Fix the issue of link speed downgrade after link retraining
-Date: Thu,  7 Nov 2024 22:37:58 +0800
-Message-Id: <20241107143758.12643-1-guojinhui.liam@bytedance.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1730990377; c=relaxed/simple;
+	bh=j5z94PtQoW59kPS8kdY5s2UwbCijAPL8dnOom8ujCx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ef8ZzJ7Wd5lCprIRDz/7NVlnpirDH1dmXZxK5VskW5E3RoeyeHgpFo55JfsQdH7er3jMJJjoYQcSpJSERq68l+AypK6cxoPofSxleKT0Le/IVWXgR2FuS1AtyQYS/hIn2bjUJrLq1yHc1v+Z6u9VDXX47qgvG179cRdJjP2IMDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=opIhrEKd; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ZZOQcMyQbmxyWBdUsa1OX+zK2dTEt1bfIdzEjlEc8/8=; b=opIhrEKdUxXdObcwcbY3zAHNca
+	cw646wFzSEw9NGheDwGJMHSLN8TLzoFy15ULJQm4svLfen20cm4NnyTO3t62ZuFPWefo8VNYay8uU
+	0uVQPu1g/AURghetQiZreJ4TMAZLAmH3WxtrfW8YIXfOPv36kDyKj20KeJ0ym6LNMVjBqR1el0DTt
+	dAmg9rl8RwdMwdXvWV3+j82jpVNXQ33UCNS2NhSlRHb0tlzBxNV1tU1fKZMKo6kNmh6evRVFL+ZIK
+	aMhX2bBOorvoyK7ezT8dq5+ife4ORGRacYPzZdZ4F3iWEUT9Qeivq2MudXYP+mGu1XBhOCjgR8WZN
+	ZAb5u3Zg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t93fX-0000000C8u3-1gng;
+	Thu, 07 Nov 2024 14:39:31 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D51083006AB; Thu,  7 Nov 2024 15:39:30 +0100 (CET)
+Date: Thu, 7 Nov 2024 15:39:30 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	bigeasy@linutronix.de, boqun.feng@gmail.com
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20241107143930.GC38786@noisy.programming.kicks-ass.net>
+References: <20241107182411.57e2b418@canb.auug.org.au>
+ <20241107103414.GT10375@noisy.programming.kicks-ass.net>
+ <CANiq72kkiwaMpeKgNLYiCSMX_VK7a+6Xu4iQrDiB_cpnXpokxg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kkiwaMpeKgNLYiCSMX_VK7a+6Xu4iQrDiB_cpnXpokxg@mail.gmail.com>
 
-The link speed is downgraded to 2.5 GT/s when a Samsung NVMe device
-is hotplugged into a Intel PCIe root port [8086:0db0].
+On Thu, Nov 07, 2024 at 03:31:27PM +0100, Miguel Ojeda wrote:
+> On Thu, Nov 7, 2024 at 11:34 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > So I can't get RUST=y, even though make rustavailable is happy.
+> 
+> If you get the chance, please check in e.g. `menuconfig` the unmet `depends on`.
+> 
+> It could be e.g. the `!CALL_PADDING` one if you have an older `rustc`
+> than Stephen.
 
-```
-+-[0000:3c]-+-00.0  Intel Corporation Ice Lake Memory Map/VT-d
-|           ...
-|           +02.0-[3d]----00.0  Samsung Electronics Co Ltd Device a80e
-```
+So menuconfig prints that as a giant line without wrapping, but instead
+forces me to press 'right-arrow' to scrol that.
 
-Some printing information can be obtained when the issue emerges.
-"Card present" is reported twice via external interrupts due to
-a slight tremor when the Samsung NVMe device is plugged in.
-The failure of the link activation for the first time leads to
-the link speed of the root port being mistakenly downgraded to 2.5G/s.
+So I can't readily read or even copy/paste it :-(
 
-```
-[ 8223.419682] pcieport 0000:3d:02.0: pciehp: Slot(1): Card present
-[ 8224.449714] pcieport 0000:3d:02.0: broken device, retraining non-functional downstream link at 2.5GT/s
-[ 8225.518723] pcieport 0000:3d:02.0: pciehp: Slot(1): Card present
-[ 8225.518726] pcieport 0000:3d:02.0: pciehp: Slot(1): Link up
-```
+http://peterz.broke-it.net/sekrit/allmodconfig
 
-To avoid wrongly setting the link speed to 2.5GT/s, only allow
-specific pcie devices to perform link retrain.
+Is what I get from: make LLVM=-19 allmodconfig
 
-Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
-Signed-off-by: Jinhui Guo <guojinhui.liam@bytedance.com>
----
- drivers/pci/quirks.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+It has:
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index dccb60c1d9cc..59858156003b 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -91,7 +91,8 @@ int pcie_failed_link_retrain(struct pci_dev *dev)
- 	int ret = -ENOTTY;
- 
- 	if (!pci_is_pcie(dev) || !pcie_downstream_port(dev) ||
--	    !pcie_cap_has_lnkctl2(dev) || !dev->link_active_reporting)
-+	    !pcie_cap_has_lnkctl2(dev) || !dev->link_active_reporting ||
-+		!pci_match_id(ids, dev))
- 		return ret;
- 
- 	pcie_capability_read_word(dev, PCI_EXP_LNKCTL2, &lnkctl2);
-@@ -119,8 +120,7 @@ int pcie_failed_link_retrain(struct pci_dev *dev)
- 	}
- 
- 	if ((lnksta & PCI_EXP_LNKSTA_DLLLA) &&
--	    (lnkctl2 & PCI_EXP_LNKCTL2_TLS) == PCI_EXP_LNKCTL2_TLS_2_5GT &&
--	    pci_match_id(ids, dev)) {
-+	    (lnkctl2 & PCI_EXP_LNKCTL2_TLS) == PCI_EXP_LNKCTL2_TLS_2_5GT) {
- 		u32 lnkcap;
- 
- 		pci_info(dev, "removing 2.5GT/s downstream link speed restriction\n");
--- 
-2.20.1
+CONFIG_RUSTC_VERSION=108200
 
+Which is what I installed today from debian/unstable, because the
+version from debian/testing was too old to satisfy make rustavailable.
 
