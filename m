@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-399213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D279BFC2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:02:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D639BFC2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028381C22151
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7CA9283034
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00091196DB1;
-	Thu,  7 Nov 2024 01:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DB6199EA8;
+	Thu,  7 Nov 2024 01:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1+PoBRFE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6mwbhBBK"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R46gcOBs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yzUfhIhi"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8C21946BB;
-	Thu,  7 Nov 2024 01:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E29919580F;
+	Thu,  7 Nov 2024 01:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730944789; cv=none; b=FzO9CAy+HqIbUBdpgfT+a6RXU4hXw7fI19o96k8UNoh3y/5axhHmFnfSWbwYCwBJIXBgWzu580Q30gYFa3c8J8vx4EgpkbvzEcEn+PG3Kt9Ilpa+NK8lQWLkk/vnM6L+4bgHLRau+wjBrvyzrYOZY2rh1WCPzL8NLt+A0+RmnRA=
+	t=1730944790; cv=none; b=Vqs1e4FD//iPoH64Om7jHpx/LEcPIwh25j0+S5fxfVGg9jE6JH+wGr2+yRk8fh+AKQAeJcF+xs7fAopiEuBvGFE7Zgk7FbaIACqE0CN3ZV/MIpDm/8Sac4h0d4VfnSli2YX3pDtSzCRqJ2bEfghOEgKBYXMFAzgxi3tWMBul5uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730944789; c=relaxed/simple;
-	bh=+NWyGmIBRLf60BxChGae4OoLSKfA/GdEKswgJssbH6k=;
+	s=arc-20240116; t=1730944790; c=relaxed/simple;
+	bh=w9gSU+/HrNSADsKZGWP80Hybk4NfjjEZ1GmYYpPeD8g=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Mg0norkyu7JcduuH8YkDcKRWIx6FpE9Alz1uk5djVfjXxt4rZ4OpJoXOk9H8EaXWLGgwq9PyRWOMoOS8pgZscYDpoHFF/aezVtTDjEQuu3mM2u/Cf5mM/HlYinF2UlFqg6LmaKjDzLB5yyDnZ9zlteQ8+DbUbbcbnSSF/BTh9Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1+PoBRFE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6mwbhBBK; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=BcUaAzur/PrjpG0odR97RWNxs43sykuvNwO+O/2pFJSme/ooskwm8/qgc6IuhR+Jyc2fKY94HA5AeoO5knBwG1zeCjAxC+FJd8kytd12hRZB0DHomny3g/xnHGQobxdOfIz1pV1FlFU+y9zDOe9K3+n0LsVekVE7zy6qu/gW2Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R46gcOBs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yzUfhIhi; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 07 Nov 2024 01:59:45 -0000
+Date: Thu, 07 Nov 2024 01:59:46 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730944786;
+	s=2020; t=1730944787;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3UHyao/p45JcQ9GLYHJq3mhQQ2YU5BUXNNCBYzX2Xh8=;
-	b=1+PoBRFEUtz1EPabX1xBpmndWgkBt2rhqjjQx6NvwDi9GExh034elQZXT0qEbscbgrYSdu
-	FZB3rGxFCxBrhptVos+QVOx9nk4z5TgLffiQRO0NmybBs/THrXdtH3qDdbY0soQydi7jHD
-	YoR7EpesXtmAYl7bb47oFqopgAMXODXqMhzkRVbgvev/WuiuEuOraW6w/Od9eF2Uoxl7bq
-	qXjfJMjutDeUMsjeQtKd4NRqKzeUyOnirmoVZH0q9y/+vm3kRSOVlIAMaPsonp8qNpnVrD
-	OzSg2adwtZUIna+YwuhlP7GIKCbkFHs3tfvSVNBPDS4ehCLZZWM7lMeWI9gN9g==
+	bh=UDswLsdhFohehK7Z3m+hb1OC+kk2/GFvcDHs+M69O90=;
+	b=R46gcOBsDM/gtD1jothB/csN7yQkCNGzA2bIQQoeVoa//PQ8vWnfS9ai9qWL6RcuAzbLGi
+	Mooew6Gy9cuZxv4ED5CqjEhRLyXfNfAT3vGZzlgyXwZ47bEbWECrVtr4yP0eXmbD1s9iNq
+	t5YJHmo7rRhrgWj6/GrONeCwMH7MsktzVo55atR0JJilIL8VKGbMiFUMXj/BYFNxpjZJQm
+	9tJaRYL5GzoT7+d9Oz5DNYeDndURQVC/8o0TW0HFpaqoU27B/PnzPBiJJ0TWbwaVPst4kd
+	+kSxXjQySGqOucYL6Qvn7fr67WCbv7UiKOQAKaI3ZJjbF9s4m5p++osVnMnk0w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730944786;
+	s=2020e; t=1730944787;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3UHyao/p45JcQ9GLYHJq3mhQQ2YU5BUXNNCBYzX2Xh8=;
-	b=6mwbhBBKd8ez1tvPuqeDKzI4y+B196w6WKWKM516j7Xf9HxVe0YNnmNVhBk/UX4UsNq+on
-	DCl8CRxwNaFEW5BA==
+	bh=UDswLsdhFohehK7Z3m+hb1OC+kk2/GFvcDHs+M69O90=;
+	b=yzUfhIhiBw3LLuVy70l3UU/p4RzzdAYSznLYa1TqNnws6sUe78P2oITo0IPbNrD/tVuky/
+	fkBNSRxB3lqc1HAQ==
 From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core]
- _RESEND_PATCH_v2_04_19_wifi_rt2x00_Remove_redundant_hrtimer_init_
+Subject: [tip: timers/core] drm/i915/request: Remove unnecessary modification
+ of hrtimer:: Function
 Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
- Kalle Valo <kvalo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C66116057f788e18a6603d50a554417eee459e02c=2E17303?=
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C50f865045aa672a9730343ad131543da332b1d8d=2E17303?=
  =?utf-8?q?86209=2Egit=2Enamcao=40linutronix=2Ede=3E?=
-References: =?utf-8?q?=3C66116057f788e18a6603d50a554417eee459e02c=2E173038?=
+References: =?utf-8?q?=3C50f865045aa672a9730343ad131543da332b1d8d=2E173038?=
  =?utf-8?q?6209=2Egit=2Enamcao=40linutronix=2Ede=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,7 +73,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173094478554.32228.2627084733345548575.tip-bot2@tip-bot2>
+Message-ID: <173094478690.32228.794880718976009614.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,40 +83,88 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     48baf9fa4884e5ccf6ef8fa7099693696ebc6975
-Gitweb:        https://git.kernel.org/tip/48baf9fa4884e5ccf6ef8fa7099693696ebc6975
+Commit-ID:     482a483cfe5bafeb5408532321cd607bae127a2b
+Gitweb:        https://git.kernel.org/tip/482a483cfe5bafeb5408532321cd607bae127a2b
 Author:        Nam Cao <namcao@linutronix.de>
-AuthorDate:    Thu, 31 Oct 2024 16:14:18 +01:00
+AuthorDate:    Thu, 31 Oct 2024 16:14:16 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 07 Nov 2024 02:47:05 +01:00
+CommitterDate: Thu, 07 Nov 2024 02:47:04 +01:00
 
-_RESEND_PATCH_v2_04_19_wifi_rt2x00_Remove_redundant_hrtimer_init_
+drm/i915/request: Remove unnecessary modification of hrtimer:: Function
 
-rt2x00usb_probe() executes a hrtimer_init() for txstatus_timer. Afterwards,
-rt2x00lib_probe_dev() is called which also initializes this txstatus_timer
-with the same settings.
+When a request is created, the hrtimer is not initialized and only its
+'function' field is set to NULL. The hrtimer is only initialized when the
+request is enqueued. The point of setting 'function' to NULL is that, it
+can be used to check whether hrtimer_try_to_cancel() should be called while
+retiring the request.
 
-Remove the redundant hrtimer_init() call in rt2x00usb_probe().
+This "trick" is unnecessary, because hrtimer_try_to_cancel() already does
+its own check whether the timer is armed. If the timer is not armed,
+hrtimer_try_to_cancel() returns 0.
+
+Fully initialize the timer when the request is created, which allows to
+make the hrtimer::function field private once all users of hrtimer_init()
+are converted to hrtimer_setup(), which requires a valid callback function
+to be set.
+
+Because hrtimer_try_to_cancel() returns 0 if the timer is not armed, the
+logic to check whether to call i915_request_put() remains equivalent.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Kalle Valo <kvalo@kernel.org>
-Link: https://lore.kernel.org/all/66116057f788e18a6603d50a554417eee459e02c.1730386209.git.namcao@linutronix.de
----
- drivers/net/wireless/ralink/rt2x00/rt2x00usb.c | 2 --
- 1 file changed, 2 deletions(-)
+Link: https://lore.kernel.org/all/50f865045aa672a9730343ad131543da332b1d8d.1730386209.git.namcao@linutronix.de
 
-diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
-index 8fd22c6..a6d5014 100644
---- a/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt2x00usb.c
-@@ -823,8 +823,6 @@ int rt2x00usb_probe(struct usb_interface *usb_intf,
+---
+ drivers/gpu/drm/i915/i915_request.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_request.c b/drivers/gpu/drm/i915/i915_request.c
+index 519e096..8f62cfa 100644
+--- a/drivers/gpu/drm/i915/i915_request.c
++++ b/drivers/gpu/drm/i915/i915_request.c
+@@ -273,11 +273,6 @@ i915_request_active_engine(struct i915_request *rq,
+ 	return ret;
+ }
  
- 	INIT_WORK(&rt2x00dev->rxdone_work, rt2x00usb_work_rxdone);
- 	INIT_WORK(&rt2x00dev->txdone_work, rt2x00usb_work_txdone);
--	hrtimer_init(&rt2x00dev->txstatus_timer, CLOCK_MONOTONIC,
--		     HRTIMER_MODE_REL);
+-static void __rq_init_watchdog(struct i915_request *rq)
+-{
+-	rq->watchdog.timer.function = NULL;
+-}
+-
+ static enum hrtimer_restart __rq_watchdog_expired(struct hrtimer *hrtimer)
+ {
+ 	struct i915_request *rq =
+@@ -294,6 +289,14 @@ static enum hrtimer_restart __rq_watchdog_expired(struct hrtimer *hrtimer)
+ 	return HRTIMER_NORESTART;
+ }
  
- 	retval = rt2x00usb_alloc_reg(rt2x00dev);
- 	if (retval)
++static void __rq_init_watchdog(struct i915_request *rq)
++{
++	struct i915_request_watchdog *wdg = &rq->watchdog;
++
++	hrtimer_init(&wdg->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	wdg->timer.function = __rq_watchdog_expired;
++}
++
+ static void __rq_arm_watchdog(struct i915_request *rq)
+ {
+ 	struct i915_request_watchdog *wdg = &rq->watchdog;
+@@ -304,8 +307,6 @@ static void __rq_arm_watchdog(struct i915_request *rq)
+ 
+ 	i915_request_get(rq);
+ 
+-	hrtimer_init(&wdg->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	wdg->timer.function = __rq_watchdog_expired;
+ 	hrtimer_start_range_ns(&wdg->timer,
+ 			       ns_to_ktime(ce->watchdog.timeout_us *
+ 					   NSEC_PER_USEC),
+@@ -317,7 +318,7 @@ static void __rq_cancel_watchdog(struct i915_request *rq)
+ {
+ 	struct i915_request_watchdog *wdg = &rq->watchdog;
+ 
+-	if (wdg->timer.function && hrtimer_try_to_cancel(&wdg->timer) > 0)
++	if (hrtimer_try_to_cancel(&wdg->timer) > 0)
+ 		i915_request_put(rq);
+ }
+ 
 
