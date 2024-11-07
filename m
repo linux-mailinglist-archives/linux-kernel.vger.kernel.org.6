@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-400325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1707A9C0BE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:44:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED8D9C0BE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10363B20D2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752761F23D67
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3735E21620D;
-	Thu,  7 Nov 2024 16:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBDE2161F5;
+	Thu,  7 Nov 2024 16:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="rGXufeGC"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="MtFYysou"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03E4215C6D
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2055A215037;
+	Thu,  7 Nov 2024 16:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730997834; cv=none; b=oc8gdy5vuKxVcNQkOsHTY4pK6EgEJWcDsmSGTefGynJeGWAR0pYG9FFNmYdyObJT9SFewBFLUzBzBSYh/h0D9MRuMXJ5nqMFq3tFeVHfQqeSRggzO58Q/L9whL4GiQhz5NK3KmQ527Lo+5gDiZeSp6NWI13eFvax5t5SzvruhoU=
+	t=1730997862; cv=none; b=Z0SY4dDwjYRaRCzflr/zv8wW8zuxrLxPNlACOA9/0t9sbVt1nXDeNShoMSXcFS31lvcqc48gdxwHDUgYf143y80mq7iawe4tEEPX2mKuIgJXQiEwP7gl6FZWniXZ9i1UOXZK8S8vL9GTHRs1aBcPROCk3gHrvLck2nbgDA5Pw0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730997834; c=relaxed/simple;
-	bh=MZNJSWYVCpMEpguf8qtSqYK+wdgMTcBu1I1DBUNzm2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RzuHUI62IA7x4TeQpvsabjjcT+Up6vGXKgXHNa5l29OlmfkwjhD5ROlpYD+tn3aSEKhGseysBzLh4oLqsHNMRWJg3I9cKAi/mHW4h4YVAZii9OlIJECP52NTnzsSfzsHauNEEpXr2ICGyC/FhPcFDiziO4YYwjPmPFXj8M5m1pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=rGXufeGC; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: lina@asahilina.net)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id B118241A48;
-	Thu,  7 Nov 2024 16:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1730997829;
-	bh=MZNJSWYVCpMEpguf8qtSqYK+wdgMTcBu1I1DBUNzm2g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=rGXufeGCPMMvi1AkgS6SWE/OsSvNvAd3rkKnQOgza45SpQjKtj/3gy0G6DVt7d/Hr
-	 Y3HIUZ9VY4avkjRatiwP3Yme6Bjo+rzMevCvF8Cq1v5USjUH6DCFI+ZZHtZ15G1A9L
-	 pPKFRq4GOBwlYFcSSKmi7acSXUV/rC3Qmlu/v/Eqn5YXaHWFg7XrrLkbF3WOXw0/wq
-	 s2ocrae8zX0gpZQ3AEaVwJa6aYrK+aYfiPkLeCnfwPX4SFx+MPmRKDIfD1oEfk71kZ
-	 UpbCjQiB+QXyaoD73UUyVUgnwwpy11YcgdZxmJQa4GZOZ4Cgpp0h0MzBAOJlJhuphN
-	 XN3rjqI0XUjEw==
-Message-ID: <2d8380b9-3d03-4263-b5bf-7e0227c83ba9@asahilina.net>
-Date: Fri, 8 Nov 2024 01:43:48 +0900
+	s=arc-20240116; t=1730997862; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=XwmDswNgfu6hCURw1eh7EFMQuiZwYmvjs/jG1RbgjY9BADMEPvLOLXBI00t/ucba4rTY46MhrGkxK2VXWHObLK7osc+vthI60ztGaxKyS9NPiA2lv4wtNsC0ht6YJeOgZUNhJR2bbcal4i1u1supZC6IQbpZcETtpqBxP8HylCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=MtFYysou; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730997857; x=1731602657; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MtFYysou3CHMXezDJSruCi+KdEvsil+gcURiS3Rb9QNQMXqEJ0nqSL+A+Y9+KL4H
+	 XDpDN7Td4ZhIFLybO/vh1chTFJHsTma1+NCVQOfw0sIzeN6AKxnSt2rO3lgyFjiZU
+	 F7KQe0+J7mowtiovFbZknaDrQedFQBiASJe/asfFqznx+PkqvDIWxLYRM2sSdkVsR
+	 XM+o1wRY5WmPMJ/UqzK1KCdcyru3Lb4IN9HKKltGFl9YCt8raJuIrYAQfcs+iMcMV
+	 FxlhqwdPNZZnY0nhYU3j8SnQwOT1Oknqk7/1Gir/zdMi/Qs6AaMWn+YqaNSJn3gZV
+	 ceilw50bQamry9PMkg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.34.156]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M6UZv-1tBZf62pcf-001dg2; Thu, 07
+ Nov 2024 17:44:17 +0100
+Message-ID: <177ed6af-1b3f-47e1-a061-909df724622d@gmx.de>
+Date: Thu, 7 Nov 2024 17:44:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,200 +55,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: Fix __wp_page_copy_user fallback path for remote mm
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Sergio Lopez Pascual <slp@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-References: <20241101-mm-remote-pfn-v1-1-080b609270b7@asahilina.net>
- <c00226ea-6e29-4432-a1c4-a25e9e05df9c@redhat.com>
-Content-Language: en-US
-From: Asahi Lina <lina@asahilina.net>
-In-Reply-To: <c00226ea-6e29-4432-a1c4-a25e9e05df9c@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:iZhjYk1Mlkj/RK68UtE09D6HNmPHeBa6qMbblH5TdW2m5cIHNrU
+ FWIoJ2a5st3zaNXAySiyK44vG66xCHJixfOEkHt7VwQJPbRLTNwwr2tWUPWShktu9ekMt9j
+ M680sgRLA7aaFxkPFAIQyeRNFhcFBvM4CI6kQ0CXi0IJyD5ABLpNCQdhoUR6JFz3Exyi8XT
+ 5MmddOaWD14oHdiwZPJKw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:j4zPOd+VDe8=;I0XJWyCN8f90SUzg59ZfYuGqSo/
+ d4gT+uit0gxDjKpuC0p/glH97RH+z1E6OzfsbNHDR7RC2GYtQj8ygTws8QTn7S6u8ayOFlAkv
+ FOqPRscey3IzGsaFQCmQBv6xdOivruha1EfcPYnzrVWBNSR1k+bS88YO0YXQaUAzB0MO8AvHF
+ 23RY01jk15DGeYgtqxGRN19JgRYQt6MaTfYSkomJMcrdRtvfjiLVfPbaAaDsDFN01LZqt3+gz
+ xq8I8zwvU1oQ75XWVNF0c2NbVodvJBfsJaPNtdjtjobNhtpGzbO9s4FEPgxwThPV4RACEFXLF
+ 23VLtb81vWV5UJpp66grgeYwXMxxWmeHWVUx4B3WnmCXtCEnt+vA2wRaK3xeS2ZOP1449qgrp
+ ySC+FTdEvJN26rtwoqvd5OWbwWBEBAXamKQNzOkyXgVefCoZ9423y/v6sWG321/o+Stzv1ZWZ
+ CH2XYgQaEyRuz9AWthsos9TQEszfh0K2FVVSEFJXga/y10OGI6MnPUp8/qIT5i1g0kM5h1H3C
+ CtJv1IKJsHSFMQ7hJ2XGtZ8AIdqj5xszgxBXmPgAqcjKGKftoEhOJAyyBRJHMkbCiJEolwD/o
+ ehkZaDWxQXCniYedG6Dj7GTNANCpVQRg2yJDeZlL73GFQNQIKEh9O7WevUCpz7zZ5PDW5uf7A
+ g/2xv+GTiKIhIvrdkIYRyS8h6BfZdqyPELgwy4lj7z/qse1IfQMzaMxB7TZ5gf5MqHWSHLtK+
+ JfVmhU0FI73xWXbbCLqhEJ9wZZKCENvrE9JNDhQ40LM/7PlJpHu1jogQGsSO0LXL5SIHIMoK3
+ EfYdH+Hgh7YZm7T0fI5LxAzw==
 
-On 11/5/24 9:03 PM, David Hildenbrand wrote:
-> On 01.11.24 13:08, Asahi Lina wrote:
->> If the source page is a PFN mapping, we copy back from userspace.
->> However, if this fault is a remote access, we cannot use
->> __copy_from_user_inatomic. Instead, use access_remote_vm() in this case.
->>
->> Fixes WARN and incorrect zero-filling when writing to CoW mappings in
->> a remote process, such as when using gdb on a binary present on a DAX
->> filesystem.
->>
->> [  143.683782] ------------[ cut here ]------------
->> [  143.683784] WARNING: CPU: 1 PID: 350 at mm/memory.c:2904
->> __wp_page_copy_user+0x120/0x2bc
->> [  143.683793] CPU: 1 PID: 350 Comm: gdb Not tainted 6.6.52 #1
->> [  143.683794] Hardware name: linux,dummy-virt (DT)
->> [  143.683795] pstate: 61400005 (nZCv daif +PAN -UAO -TCO +DIT -SSBS
->> BTYPE=--)
->> [  143.683796] pc : __wp_page_copy_user+0x120/0x2bc
->> [  143.683798] lr : __wp_page_copy_user+0x254/0x2bc
->> [  143.683799] sp : ffff80008272b8b0
->> [  143.683799] x29: ffff80008272b8b0 x28: 0000000000000000 x27:
->> ffff000083bad580
->> [  143.683801] x26: 0000000000000000 x25: 0000fffff7fd5000 x24:
->> ffff000081db04c0
->> [  143.683802] x23: ffff00014f24b000 x22: fffffc00053c92c0 x21:
->> ffff000083502150
->> [  143.683803] x20: 0000fffff7fd5000 x19: ffff80008272b9d0 x18:
->> 0000000000000000
->> [  143.683804] x17: ffff000081db0500 x16: ffff800080fe52a0 x15:
->> 0000fffff7fd5000
->> [  143.683804] x14: 0000000000bb1845 x13: 0000000000000080 x12:
->> ffff80008272b880
->> [  143.683805] x11: ffff000081d13600 x10: ffff000081d13608 x9 :
->> ffff000081d1360c
->> [  143.683806] x8 : ffff000083a16f00 x7 : 0000000000000010 x6 :
->> ffff00014f24b000
->> [  143.683807] x5 : ffff00014f24c000 x4 : 0000000000000000 x3 :
->> ffff000083582000
->> [  143.683807] x2 : 0000000000000f80 x1 : 0000fffff7fd5000 x0 :
->> 0000000000001000
->> [  143.683808] Call trace:
->> [  143.683809]  __wp_page_copy_user+0x120/0x2bc
->> [  143.683810]  wp_page_copy+0x98/0x5c0
->> [  143.683813]  do_wp_page+0x250/0x530
->> [  143.683814]  __handle_mm_fault+0x278/0x284
->> [  143.683817]  handle_mm_fault+0x64/0x1e8
->> [  143.683819]  faultin_page+0x5c/0x110
->> [  143.683820]  __get_user_pages+0xc8/0x2f4
->> [  143.683821]  get_user_pages_remote+0xac/0x30c
->> [  143.683823]  __access_remote_vm+0xb4/0x368
->> [  143.683824]  access_remote_vm+0x10/0x1c
->> [  143.683826]  mem_rw.isra.0+0xc4/0x218
->> [  143.683831]  mem_write+0x18/0x24
->> [  143.683831]  vfs_write+0xa0/0x37c
->> [  143.683834]  ksys_pwrite64+0x7c/0xc0
->> [  143.683834]  __arm64_sys_pwrite64+0x20/0x2c
->> [  143.683835]  invoke_syscall+0x48/0x10c
->> [  143.683837]  el0_svc_common.constprop.0+0x40/0xe0
->> [  143.683839]  do_el0_svc+0x1c/0x28
->> [  143.683841]  el0_svc+0x3c/0xdc
->> [  143.683846]  el0t_64_sync_handler+0x120/0x12c
->> [  143.683848]  el0t_64_sync+0x194/0x198
->> [  143.683849] ---[ end trace 0000000000000000 ]---
->>
->> Signed-off-by: Asahi Lina <lina@asahilina.net>
->> ---
->>   mm/memory.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index
->> 3ccee51adfbbd007b24331fe6874265f231a877b..dba25d9734063ac02cdaeb0a5cd5432473f6372e 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -3081,13 +3081,18 @@ static inline int __wp_page_copy_user(struct
->> page *dst, struct page *src,
->>               update_mmu_cache_range(vmf, vma, addr, vmf->pte, 1);
->>       }
->>   +    /* If the mm is a remote mm, copy in the page using
->> access_remote_vm() */
->> +    if (current->mm != mm) {
->> +        if (access_remote_vm(mm, (unsigned long)uaddr, kaddr,
->> PAGE_SIZE, 0) != PAGE_SIZE)
-> 
-> access_remote_vm() will do a mmap_read_lock_killable() and then call
-> into get_user_page_vma_remote() -- fortunately read-access, otherwise
-> we'd be in trouble :) .
-> 
-> So we should already be holding the mmap read lock from the previous
-> access_remote_vm() users (who we end up here) ... doesn't this complain
-> with lockdep about recursive locking?
-> 
-> I keep forgetting locking rules, so I might just be wrong.
+Hi Greg
 
-You're right, this complains with lockdep:
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-[   23.154031]
-[   23.154093] ============================================
-[   23.154193] WARNING: possible recursive locking detected
-[   23.154229] 6.6.52 #2 Not tainted
-[   23.154270] --------------------------------------------
-[   23.154306] gdb/349 is trying to acquire lock:
-[   23.154343] ffff0000862e3450 (&mm->mmap_lock){++++}-{3:3}, at:
-__access_remote_vm+0x3c/0x3a8
-[   23.154431]
-[   23.154431] but task is already holding lock:
-[   23.154474] ffff0000862e3450 (&mm->mmap_lock){++++}-{3:3}, at:
-__access_remote_vm+0x3c/0x3a8
-[   23.154553]
-[   23.154553] other info that might help us debug this:
-[   23.154598]  Possible unsafe locking scenario:
-[   23.154598]
-[   23.154641]        CPU0
-[   23.154665]        ----
-[   23.154685]   lock(&mm->mmap_lock);
-[   23.154712]   lock(&mm->mmap_lock);
-[   23.154741]
-[   23.154741]  *** DEADLOCK ***
-[   23.154741]
-[   23.154790]  May be due to missing lock nesting notation
-[   23.154790]
-[   23.154838] 2 locks held by gdb/349:
-[   23.154868]  #0: ffff0000835b53f8 (sb_writers#4){.+.+}-{0:0}, at:
-vfs_write+0x84/0x2e0
-[   23.154945]  #1: ffff0000862e3450 (&mm->mmap_lock){++++}-{3:3}, at:
-__access_remote_vm+0x3c/0x3a8
-[   23.155023]
-[   23.155023] stack backtrace:
-[   23.155060] CPU: 5 PID: 349 Comm: gdb Not tainted 6.6.52 #2
-[   23.155112] Hardware name: linux,dummy-virt (DT)
-[   23.155148] Call trace:
-[   23.155167]  dump_backtrace+0x98/0x118
-[   23.155209]  show_stack+0x18/0x24
-[   23.155240]  dump_stack_lvl+0x60/0xac
-[   23.155292]  dump_stack+0x18/0x24
-[   23.155320]  print_deadlock_bug+0x260/0x34c
-[   23.155364]  validate_chain+0x364/0x4c0
-[   23.155393]  __lock_acquire+0x564/0xb64
-[   23.155420]  lock_acquire.part.0+0x9c/0x1bc
-[   23.155448]  lock_acquire+0x9c/0x140
-[   23.155477]  down_read_killable+0x44/0x158
-[   23.155521]  __access_remote_vm+0x3c/0x3a8
-[   23.155562]  __wp_page_copy_user+0x13c/0x3a8
-[   23.155611]  wp_page_copy+0x98/0x4d8
-[   23.155640]  do_wp_page+0x290/0x594
-[   23.155671]  __handle_mm_fault+0x258/0x25c
-[   23.155712]  handle_mm_fault+0x64/0x1f0
-[   23.155755]  faultin_page+0x64/0x138
-[   23.155798]  __get_user_pages+0x11c/0x340
-[   23.155843]  get_user_pages_remote+0xc4/0x404
-[   23.155895]  __access_remote_vm+0xf4/0x3a8
-[   23.155922]  access_remote_vm+0x10/0x1c
-[   23.155952]  mem_rw.isra.0+0xc4/0x218
-[   23.155996]  mem_write+0x18/0x24
-[   23.156023]  vfs_write+0xa4/0x2e0
-[   23.156066]  ksys_pwrite64+0x7c/0xc0
-[   23.156109]  __arm64_sys_pwrite64+0x20/0x2c
-[   23.156152]  invoke_syscall+0x48/0x10c
-[   23.156196]  el0_svc_common.constprop.0+0x40/0xe0
-[   23.156249]  do_el0_svc+0x1c/0x28
-[   23.156293]  el0_svc+0x54/0x140
-[   23.156334]  el0t_64_sync_handler+0x120/0x12c
-[   23.156384]  el0t_64_sync+0x194/0x198
+Thanks
 
-I guess the locking implementation is recursive so that's why this
-didn't actually deadlock...
-
-I'm not sure what the right way to do this is then. The underlying
-reason why the fallback code is being called is that do_wp_page() calls
-vm_normal_page(), which returns NULL for VM_PFNMAP pages. So vmf->page
-is NULL and __wp_page_copy_user has to use the fallback path. However,
-the reason GUP works is that follow_page_pte() and friends have a
-specific fallback path for the pte_devmap() case that grabs a struct
-page anyway. Maybe similar logic should be in do_wp_page() so it can
-grab a struct page for PFN mappings too?
-
-Or if the problem is just the lock, would just eliding the locking work?
-I guess that only works if all the calls into wp_page_copy() are
-guaranteed to hold the mmap lock already, but I don't know if that is
-true...
-
-~~ Lina
-
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
