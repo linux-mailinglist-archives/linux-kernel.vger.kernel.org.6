@@ -1,182 +1,99 @@
-Return-Path: <linux-kernel+bounces-399884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9760F9C05D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:30:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC209C05D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50CFF1F21C9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:30:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45872815B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23582101B9;
-	Thu,  7 Nov 2024 12:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E1820FA84;
+	Thu,  7 Nov 2024 12:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLt1LscA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TseUTXg8"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7062101A4;
-	Thu,  7 Nov 2024 12:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A468200B93;
+	Thu,  7 Nov 2024 12:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730982588; cv=none; b=h1pbqmr/i7mfIXX6WF8Rh9+n8gz/BgVPxUS9Xd0DrMyIGNME1QVCrOgspCblw8sC95NjC1kd4cnxlwn+Ab+eaJxrcTpH6ACuupI43wT/9nRRvYKbCDUkHX9gc+YDe8eUveOvHQ0a4mXlSuRjNsycBOgABLmjc6X3vOpIUgABVBQ=
+	t=1730982602; cv=none; b=YWLBRD/T+G4Ct8FZ6/QHgHYMAw2elxemVIkGopcIcn4tcMNKp7wuwUfKxw5RdnCy/czaUI0rFv7roEZX6fRS0971wfzFVltxR6Uq6T5Jd2n0dYrybSAQOV4sYhobC8nkfCcw1gVSKYzexFbxkCPIUnzO6CKlsVOqKCQ035TKwKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730982588; c=relaxed/simple;
-	bh=NrEV4iAZN0aliHTzyP3alx8+mfS5kV8sLdO0OPZy9zY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mk14a8Q2gSrfUrufhkRMLzQSIXCo+MS3uVprOX7R+kwH5v+uKPBqFNcpysI9PGn8/zr5SjugSq65kbELegiJLS13vhFv8pe9rMF7Jfi/XC2EKjFZNwZp3Zc7mx/1/SMPKHLsLvXO8KOUdTdBSfxOGRjEXtVJvvKyhOINFW9nLu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLt1LscA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5637C4CED2;
-	Thu,  7 Nov 2024 12:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730982587;
-	bh=NrEV4iAZN0aliHTzyP3alx8+mfS5kV8sLdO0OPZy9zY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=JLt1LscAzbLbz4jXQOAxppFBWpowV+pDW2x6NkVQeFkEuPYugn8FIiwZhzdxfxFeW
-	 HzhR1KM8iT0OsAZ8BbgwYw/ANqTnGMCQOxVpeIDk8LuiMPA0k9D3uoSK9otgCquIHS
-	 30F90ArfTx/PdTokvY1DtOL9Du2bPgtKvpvQ/CaXJRSZQOKgBqpw7Bkd3inRLQ76tG
-	 1VZdWxGLrLAdrDcZY0UsdG/tE/NUb6TCbWcxyatIFWpHrb9JSCAquU9U+tePbFmXaB
-	 rCi3fBbFE2xFtwRp2hrvLug7fENjgzwXSlzjS3U/xaJpUZ115nA6/AgvCacVRveMEN
-	 /isp1nQRqCm1Q==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Thu, 07 Nov 2024 14:29:30 +0200
-Subject: [PATCH net-next v2 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
- to priority map for RX
+	s=arc-20240116; t=1730982602; c=relaxed/simple;
+	bh=9UJ51zCp7wFqF/ltQGzkqv1QEUcQEdNvnUFBhAv+OvE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YF+IDDEFB9bCDVej/rNWdQt4BD37qA/5KE5DgGaWsw55IuwhRkw44PuC87KK2sChIHeiN8irWRwUsJ9JD6vEJcCFdYrFfL3KcVOZyj7NLSBiI1Ggb6eB2BH5ocnMAzGUHQNjVvNXdLYSY0b3vLHfd+Q8iJRhHXRdLkikkxoPLa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TseUTXg8; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730982597;
+	bh=9UJ51zCp7wFqF/ltQGzkqv1QEUcQEdNvnUFBhAv+OvE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TseUTXg8aYui9PetXY++xfEKHvzIkL108Spbu+2pRgYESsPB/z0XT192r4r4XDDUG
+	 rOUVEV1tCflaYxFHUPx+wvBjqjZxpUk0IKChZYjccyrOeotMc9cmfDWUxqci8YJvMx
+	 vqFKvpllM0rdm9ifsMTTvx6aTwMtLaM9hq+oD3QKT9zmR+ppNy1PGoTlsNSRNwwbT6
+	 CVhADPi8Gn4iN841t9T/o6qQyUmta5PCBOOpkzSnI0q8MKE8pVJhfGOEK0QCJ/hUu2
+	 TSBxGbMOfWkHu0fAwbIja2WifkwbFep/f+HvocZcJHpEoaPjsqq5DTWLn0z5lVjvwB
+	 IzUovG/SKhmcQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5ADE217E3624;
+	Thu,  7 Nov 2024 13:29:57 +0100 (CET)
+Message-ID: <451c8f42-f8eb-4734-a19a-1e9a2694ce34@collabora.com>
+Date: Thu, 7 Nov 2024 13:29:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mmc: mtk-sd: Fix error handle of probe function
+To: Andy-ld Lu <andy-ld.lu@mediatek.com>, ulf.hansson@linaro.org,
+ matthias.bgg@gmail.com, wenbin.mei@mediatek.com
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241107121215.5201-1-andy-ld.lu@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241107121215.5201-1-andy-ld.lu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241107-am65-cpsw-multi-rx-dscp-v2-2-9e9cd1920035@kernel.org>
-References: <20241107-am65-cpsw-multi-rx-dscp-v2-0-9e9cd1920035@kernel.org>
-In-Reply-To: <20241107-am65-cpsw-multi-rx-dscp-v2-0-9e9cd1920035@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: linux-omap@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, srk@ti.com, Pekka Varis <p-varis@ti.com>, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3364; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=NrEV4iAZN0aliHTzyP3alx8+mfS5kV8sLdO0OPZy9zY=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBnLLKx3sRmt/4x9giNnh1pnVhDarGvXWedi/5k8
- 0rxZdpLLpqJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZyyysQAKCRDSWmvTvnYw
- k0PbD/wJm+z+1i5O7IO8HfrlRGQ4ZkkgAXW387plEg2xN9CsLML5cFzsDJXuQSRfqm0DVmiB4B0
- 7fKvYwigtS6YxpK3DkhNGK6CYVXB85exGSE9ak9LT5M7dUjpkrUWxJdFFiFTnVkuA0lGd4IWM4y
- 2gwYCLvrj8hJSNsPjUUu3ZUGM/Bqfou3yMTH+Rhl9YnnIZaL9TEYxofsEMKWnvDcsu8DdwcmzWi
- XIMixFHVrGsVORaYq1l2zjXbS5fubFagQ2YPzJQWfkaZbYqdKHEpg8vlojv/tQC8HuHl8K6hpsl
- WhEPFL7dLpGLR1hLndYiqxjxc4mcoGzxR2t7lHskqBbFy8Sbf2J5o5d3x7ElfteBHuMl0IBh9XV
- v5HC4N5ThC1ctM/WSI3KNcw/Ly6z7PtwLctbJgFfqvj90kppvMStgkNrWLmy/xUhAocy4HVryiV
- V4IaUKrDJ4DhKuFUVMco4QwjEw+xndzEKx5wBi8ehjWXC19aZl6mz9r62uNjBMckBn9I6Q8sBy2
- uhyS5euhdTopmbG9Tzy9IZ/KuvKhfIhBY0fUnBjPnLob5eouP/4TWcWvtqRLOO3gCZ42b29xaIA
- YF4vUPiBL/9+qBCEDHM1GEWgUeHxpDbyXCiABiArmx+tqtw5yF1UyoV7Xgje14qoyDjEMaD+TvK
- idX50VQETRt8DNA==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
 
-AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
-appropriate priority queue via DSCP to Priority mapping registers
-(CPSW_PN_RX_PRI_MAP_REG).
+Il 07/11/24 13:11, Andy-ld Lu ha scritto:
+> In the probe function, it goes to 'release_mem' label and returns after
+> some procedure failure. But if the clocks (partial or all) have been
+> enabled previously, they would not be disabled in msdc_runtime_suspend,
+> since runtime PM is not yet enabled for this case.
+> 
+> That cause mmc related clocks always on during system suspend and block
+> suspend flow. Below log is from a SDCard issue of MT8196 chromebook, it
+> returns -ETIMEOUT while polling clock stable in the msdc_ungate_clock()
+> and probe failed, but the enabled clocks could not be disabled anyway.
+> 
+> [  129.059253] clk_chk_dev_pm_suspend()
+> [  129.350119] suspend warning: msdcpll is on
+> [  129.354494] [ck_msdc30_1_sel : enabled, 1, 1, 191999939,   ck_msdcpll_d2]
+> [  129.362787] [ck_msdcpll_d2   : enabled, 1, 1, 191999939,         msdcpll]
+> [  129.371041] [ck_msdc30_1_ck  : enabled, 1, 1, 191999939, ck_msdc30_1_sel]
+> [  129.379295] [msdcpll         : enabled, 1, 1, 383999878,          clk26m]
+> 
+> Add a new 'release_clk' label and reorder the error handle functions to
+> make sure the clocks be disabled after probe failure.
+> 
+> Fixes: ffaea6ebfe9c ("mmc: mtk-sd: Use readl_poll_timeout instead of open-coded polling")
+> Fixes: 7a2fa8eed936 ("mmc: mtk-sd: use devm_mmc_alloc_host")
+> Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
 
-We use the upper 3 bits of the DSCP field that indicate IP Precedence
-to map traffic to 8 priority queues.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 50 ++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 0520e9f4bea7..65fbf6727e02 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -71,6 +71,8 @@
- #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
- #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
- 
-+#define AM65_CPSW_PORTN_REG_CTL			0x004
-+#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
- #define AM65_CPSW_PORTN_REG_SA_L		0x308
- #define AM65_CPSW_PORTN_REG_SA_H		0x30c
- #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
-@@ -94,6 +96,10 @@
- /* AM65_CPSW_PORT_REG_PRI_CTL */
- #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
- 
-+/* AM65_CPSW_PN_REG_CTL */
-+#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
-+#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
-+
- /* AM65_CPSW_PN_TS_CTL register fields */
- #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
- #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
-@@ -176,6 +182,49 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
- 	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
- }
- 
-+#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
-+#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
-+static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
-+{
-+	int reg_ofs;
-+	int bit_ofs;
-+	u32 val;
-+
-+	if (dscp > AM65_CPSW_DSCP_MAX)
-+		return -EINVAL;
-+
-+	if (pri > AM65_CPSW_PRI_MAX)
-+		return -EINVAL;
-+
-+	reg_ofs = (dscp / 8) * 4;	/* reg offset to this dscp */
-+	bit_ofs = 4 * (dscp % 8);	/* bit offset to this dscp */
-+	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-+	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
-+	val |= pri << bit_ofs;			/* set */
-+	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-+	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-+
-+	return 0;
-+}
-+
-+static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
-+{
-+	int dscp, pri;
-+	u32 val;
-+
-+	/* Map IP Precedence field to Priority */
-+	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
-+		pri = dscp >> 3; /* Extract IP Precedence */
-+		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
-+	}
-+
-+	/* enable port IPV4 and IPV6 DSCP for this port */
-+	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-+	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
-+		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
-+	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-+}
-+
- static void am65_cpsw_sl_ctl_reset(struct am65_cpsw_port *port)
- {
- 	cpsw_sl_reset(port->slave.mac_sl, 100);
-@@ -921,6 +970,7 @@ static int am65_cpsw_nuss_ndo_slave_open(struct net_device *ndev)
- 	common->usage_count++;
- 
- 	am65_cpsw_port_set_sl_mac(port, ndev->dev_addr);
-+	am65_cpsw_port_enable_dscp_map(port);
- 
- 	if (common->is_emac_mode)
- 		am65_cpsw_init_port_emac_ale(port);
-
--- 
-2.34.1
 
 
