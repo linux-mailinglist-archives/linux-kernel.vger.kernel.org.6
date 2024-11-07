@@ -1,155 +1,112 @@
-Return-Path: <linux-kernel+bounces-399498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555E59BFFDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:22:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89EEB9BFFD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:21:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ADB028423C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:22:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCFD1C21439
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D881D8DFE;
-	Thu,  7 Nov 2024 08:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2A21D1E64;
+	Thu,  7 Nov 2024 08:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="aq80zYA0"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYzUNY6h"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339D518754F;
-	Thu,  7 Nov 2024 08:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E067784A2B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730967760; cv=none; b=HlkZkhLjkSrOgBi0/Ns13H04O1+X2QJxiEQkkdU876/IanaBYDASpZN+Jb8LEdfPsj8c2wN7T+l9iGtVeq5FpW88n9mJg/wDRcrVzmPWkO66qSeufPPa3qw3CoFEhuPvGvL2l84xlWyB4bYxZiRvvoZUmaBe0i7qaneEuRVPJDI=
+	t=1730967696; cv=none; b=uPR4ifnT4EXOWnyWOmG5PbPPbTt8L6PfkGNAClxvRXp6pS2vG2uW2ZVHHNvFcOsYoXxaPsesI65qCHvqAOso59BhKC/b0Kkf4uTZeRP7tVxLQjyQ2Sfu2tVNkbk4p6TEUgPo/PszgKMzwoeoM/4cc1NZah2fdoQGjhGG/j71MU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730967760; c=relaxed/simple;
-	bh=85d95EOC6Oqte7fumLBOEHPQaqEGaDtfepiLhrIjU2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hSOn3JPKCgpcfdzFIPvYDlHBoJ8QMPAE/YmrBRJAJM/Fi38yWqevnXXnPUim/Gans/6F/LaXYC3T8tXWJaa0QsI4j+SnGHvNlDO/b5cIe2Aq6EmtPQDUBoVl82mPIenzoOZX7le8uybwQKTaDWrrJcBddsPiQdIyU6O0gNJ+y+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=aq80zYA0; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730967677; x=1731572477; i=w_armin@gmx.de;
-	bh=I9hvSUFaE10X2EU9MI0Ox4sZPM3HYsfCnT+OYayOcG4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=aq80zYA0oOf7lRL5GuVgjXeYTr6oVKkb9jEk2X/7Y49VrxyrI70/MNg8dQ3pXi1W
-	 IO2ecXMRWrPMQ1VrqIFTkIZlYQUQU1dVFBB02Mj3pTTAFHHMVpor4GLmxQHIMMYi3
-	 Q9D4nGqJjN9dpDMSkZ7Gh7Hb6zFwFv1dbo3l2dnfuyMMvJCoWR6KqeRtFteWjWnuO
-	 BD+HzkIQS9gzrtGakcwuvphDCZq7D/CNisxJBlCJsCfrJ5kpRmomXrpOuNLx/FZ1h
-	 rAfAeeSKAjrph+/+c851PZT+iA1IgZJB8VHD0vwMUFw4prs1qWlZSzeCTB3nPF1cx
-	 d7CW3zmPVmzIXbrDYA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MxlzC-1u1SWQ3g1G-00xLN5; Thu, 07
- Nov 2024 09:21:17 +0100
-Message-ID: <cf6eb834-2337-4f5c-87e3-012713301912@gmx.de>
-Date: Thu, 7 Nov 2024 09:21:14 +0100
+	s=arc-20240116; t=1730967696; c=relaxed/simple;
+	bh=5VOR5CG5z5tJAz08GO5kOR/f1vtcXPoi8DLyImsNBw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y8ha8bUbipRAlR9qFzC8awCcwEpfd11zL5nt+d/6/GFpuOJ28tsWKlL/5wCJY2f5AgIhu/aLKbX4GDgI4EYrbXZUZWjcv95uGw5Qd0L1x6O11tX7vDR5bT3wKbyuS4vrxC0I90Cz6dKoywbwQL3Zd5bxzqEPoXRvC0d66SrA4+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYzUNY6h; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ed49ec0f1so112426866b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 00:21:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730967693; x=1731572493; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5VOR5CG5z5tJAz08GO5kOR/f1vtcXPoi8DLyImsNBw4=;
+        b=RYzUNY6hCnBHHs+xgjecA7g1urvnrvAwS81r9XVcE57Sj26xHKKs3fcIskdCH37aee
+         sApl+FFGGyYsEMis1v0yLf16Lmx+wXeH8g/n2T3CU8e0RhPSvCJukBIWi9GWqEnbOENk
+         034m3WvX+YJ/6CqGMQqzyqmZDsYNHVIMJ2qD6O6VU2mpyATt6qok9HpNfeHPT4ch3L0v
+         QIWCioPZMAK15xnV9EsAVPzol84pxjlSHkg42B+TBYmnPBvPvTf2FG6J8r4iDPXDw8UR
+         m+SU2ILxQowSw5I33dgWTDaQaTdqh3XxOd6Riuag5Pe+yrkciLAgtUe5fV6TV/pJ9GSl
+         d1Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730967693; x=1731572493;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5VOR5CG5z5tJAz08GO5kOR/f1vtcXPoi8DLyImsNBw4=;
+        b=HDVha+ZA3qkj9YAYFx6CySyy2EPEktFma4o4HxD36LWIoP3sjb74dK/Q3qA3M/kjm2
+         XLmLFd0G05JIBhJlIYl5ZM56HdTFi4SZVtDGyKYYZW7F1BcnpoQCX8tThCALc4rCNuGb
+         p7D3EpklTv1W755VbhIZQXHspSM7db5OLwpNBjfqGJrax1q5ywQqlju3I9PQ6SIfLBZY
+         1yfq6HH3H1+LQD9Pqun8GiV+/ZpV2VShbfwKMjLes1b94f7lM7aPYgPDpJ7gTLKsRahG
+         a37L/gsVmaIMUzhNX7I/04QAYsjYzLCEwkoe9KyO3rh1fujRYO+IwbHcn7gzvtZQFPVC
+         IFkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUk5nIymM9PokPW68MZ0bbFqyYHZcsLqORuZvOT8JlLRa26jLO6O2e69MRaeHKQmu1T4rVQN9jllFc3TPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeAy63ChCwXVA9fquxRhTKwA0B9U5nv4askc9oArpS1uS1ciH5
+	+eniWCc1onhnkEy5Xjtoj8Q+5fvID2YXj4b2jvy1/bhxb/BSMxuPM+Rk54S0uERJyvXdQsP8zjJ
+	kKH3PX4hC539EpIKRT1ArRr9Di4o=
+X-Google-Smtp-Source: AGHT+IGzp4ZhM15P5BuZqJNwFlSO7u7lx6xlY6hASCP8GFqOKEug7q8+mJvAPBHNOu1UYfSi3ksydcl56G/UnZhJGfY=
+X-Received: by 2002:a17:907:9622:b0:a99:5234:c56c with SMTP id
+ a640c23a62f3a-a9ee74cae8amr8688466b.33.1730967692918; Thu, 07 Nov 2024
+ 00:21:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/20] ACPI: platform_profile: Unregister class and
- sysfs group on module unload
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241107060254.17615-1-mario.limonciello@amd.com>
- <20241107060254.17615-10-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241107060254.17615-10-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20241017075725.207384-1-giedriuswork@gmail.com>
+ <CALt+6nqxMZjuZuOKaj8Cx4dcNZx0n-0F9aa97d-vZoMWeN=bOw@mail.gmail.com> <Zyk8dFthM0EA2A_K@intel.com>
+In-Reply-To: <Zyk8dFthM0EA2A_K@intel.com>
+From: =?UTF-8?Q?Giedrius_Statkevi=C4=8Dius?= <giedriuswork@gmail.com>
+Date: Thu, 7 Nov 2024 10:21:21 +0200
+Message-ID: <CALt+6nrS2aRHYCyrba5uBUXsHdPntELdj0MYPbv69PupHBKMtA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/i915/lspcon: do not hardcode settle timeout
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Ankit Nautiyal <ankit.k.nautiyal@intel.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DNDRuxiUduqoXNutn07yCfcVzwa3VRWGUqD4YjURJO3LwV8KSsh
- +uhOh7PNOQ28hAv9h5MQPGh7LmWGXlyPeG/juYQ0PyDb6S5HcSdZKtn/C6SjMfGbPO7btLx
- UwtqxyyF6KWnmRB6aaE8nBFQyhlPJrM7RLw2Aelm5e9ZUU5GLnNyFi5QG7B4Ur7uS+olPcT
- WEg3uzveIbtRIynuEPrIg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZkfA+QeJLX8=;MVnF8T7iuOxwegsUGTaYTgahovS
- cawtppZF6g215yjMCh9U3kVxU5X89op57n4N8/Ew1Zu8VgfyTURnbaR5L2TeOXT4HenKLkNrY
- ijBR/x/8PXQGhVPAlCcvolBuR811eoelEJTSVu8ycPttz42nFy9GvtXLuEHdrNtn4wdBJzpqy
- /ZC6xQVK0GwqaMpooImBFU6IYmozslE75V+mG0uXeuFGPU95Qfa7XxCokiGiA/h3rf+EGldbJ
- E4pNDg7GKH0Mc4qRkYJCFT61B1beCe22z0CMMyKtAUrmzTs3PxAGjmas/w8H9ZvFpqewP00WR
- GqBnoVBaKSULr8JsUY0PrZfpPgjsT9BD3G+zcyXVo41uhGaADSmPaOUROwYFQKzj9rEosUSfA
- R4gl5dXejQpqDno+hghk8O6Trgpgvssg5Sxequ+Q03fPGS7Bv2h17V9UVmjrxxkRdEIpxwft6
- TbmIgXiKaUIgwBVP49shvzQUK98sWaAhoCw+zS0offHyvDwro37LzBTf2eWXU2g9W2V7Dne9t
- WINUvBGXwQUsLxplxdlaOVlWtU8IbKIsYPpifh9yCVxr5Fzuuq9e9PInP964Cam0AnC2dRlUc
- he19xMX4ZafBa2H2+vDKi0yxkUAwCz0dyzErN/T4+Eir/Ha4wMzGcjyP0soMQWZuBhvl32x5E
- r9QXZjMX8/XQBFSSGyx/E0pekvWfyEH8NR/v9XvwJbYREiDdZIc/t+rYpOXVWzv2c7+8/kWWY
- X8a3PBMRD5sDqoYn1JSTWIlVr8n718CeqCmu2NmK4GjaJ2NLI2XmSNW4wvNWCZB2AQZuHfd4t
- oX6rzXWiwWkXvcTMv9CZzUgdyqXXY5KE/S2Uegc+kM0vam/XHSlyh8NE+6P6pfDqViqSWGphm
- ShnnXtT+qQrPpefulGi+rtmktrE2Ex1m5PtH9BfEZZKhQjfvbhrRcIlU9
 
-Am 07.11.24 um 07:02 schrieb Mario Limonciello:
+Hello,
 
-> The class and sysfs group are no longer needed when the platform profile
-> core is a module and unloaded.
+On Mon, 4 Nov 2024 at 23:28, Rodrigo Vivi <rodrigo.vivi@intel.com> wrote:
 >
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/acpi/platform_profile.c | 7 +++++++
->   1 file changed, 7 insertions(+)
+> On Mon, Nov 04, 2024 at 02:09:46PM +0200, Giedrius Statkevi=C4=8Dius wrot=
+e:
+> > Hello,
+> >
+> > Kind ping.
 >
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index 652034b71ee9b..9caf070f77f6a 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -224,6 +224,13 @@ int platform_profile_remove(struct platform_profile=
-_handler *pprof)
->   }
->   EXPORT_SYMBOL_GPL(platform_profile_remove);
+> There was a pipe underun in CI... I honestly don't believe this patch is
+> causing it, but anyway I decided to trigger a retest there before I push =
+this.
 >
-> +static void __exit platform_profile_exit(void)
-> +{
-> +	class_unregister(&platform_profile_class);
-> +	sysfs_remove_group(acpi_kobj, &platform_profile_group);
+> Thanks for the patch and review.
 
-This will crash should the class still not exist.
+I don't see that on my laptop. Resuming sometimes still doesn't work but
+this helps a little from my testing. I will continue the investigation.
 
-I suggest you register the class and the legacy sysfs group during module =
-initialization, and
-add a is_visible() callback to the legacy sysfs group. Then you can use sy=
-sfs_update_group() to
-update the visibility of the sysfs files when platform profiles come and g=
-o.
-
-Also please squash this patch with the patch introducing the class infrast=
-ructure.
-
-Thanks,
-Armin Wolf
-
-> +}
-> +module_exit(platform_profile_exit);
-> +
->   MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
->   MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
->   MODULE_LICENSE("GPL");
+Best regards,
+Giedrius
 
