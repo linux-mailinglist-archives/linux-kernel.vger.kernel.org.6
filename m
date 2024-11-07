@@ -1,872 +1,356 @@
-Return-Path: <linux-kernel+bounces-400606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED299C0FD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:35:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 818639C0FD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23D91B21444
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E9D283450
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C02218300;
-	Thu,  7 Nov 2024 20:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97481217F4E;
+	Thu,  7 Nov 2024 20:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DvQ+Fh+T"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eWu+cpfm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F11D210186;
-	Thu,  7 Nov 2024 20:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FE02170C0;
+	Thu,  7 Nov 2024 20:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731011708; cv=none; b=Mypxo4dkzRjekxFB4tyTPLwYvl2l73Ld3BAKjxW72P0YMtvYgde+zdGNdxBi3ooSJhYOKtFmm4DXI+HFBjW+dEgO3hfFu2TYe/T6wSVFUe5QQGzk2nWap4AZMSaeB843RX1xw0iILHGfuYixK0b0D6xS1gtTQqLsvouz/lMj0Dc=
+	t=1731011772; cv=none; b=DqtxZYW/0Pfn56svgtAMK1sGHBciIbiRWsZS2Db4KU99io/JO1oKs2hO6mxmvvdg+O7DRuJWVfptD0ctb6kodNCweBTjnTPW+euv0cUGBL7m5DL3d3g2sXgzMbDSkZaM5TSOLuqE/EccImfcmPNOHRduPBW8Iclw9SwiQtPiduA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731011708; c=relaxed/simple;
-	bh=19hW8PuCgxIPzbUowxpzz/rix8WFwj+jKUS8LmciWGA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JDLmSvU+93yxBkgvtGfTzHaLiyR5ze6qzDCEUnx2efZUHiZvkwnu9epJzKU5Dzev5vH3cgmgBJvF2FrcyjTPfP0jRAfYAUx0jFopNa41g37Y8aRDUgLoJ2QLWCm45yNS2+IjNcdlPZTot8k8T1lm2VsOj7pRkicOGFbsFDRQgU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DvQ+Fh+T; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1892842C17
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1731011705; bh=DFw9ZsVMxMIKa+nOzXr4cmBSgYZp9HpUQquoar8CQoc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DvQ+Fh+TNLH+1NAdomYSn+J7tk+DR59I7dLWOTFDtM3ch0OHen/QL2XQgbUSTIEEq
-	 ZG0DASTbv6Olq1nkfYQohV0zQbfd0qZg4zgsRNGTU7f4ZhyMjzps0V/vNktO5iQsOz
-	 YoQnTsTbLtsLSb34HgFnABOuaMAZtX9gMiBA0zfjD57Ed9JLwEcXsmqpdRj3IBHFxG
-	 8oaL88Ta8minJsoP2Wk+w3uNA7jtz5AJqi2EIpCrZ4yuOOCOyF8aJy07hqda6FIcl7
-	 8dy/9ptAMuQn+AlAQoKx4qg1y7U7LMkEFbLMH6PXLNSiOg9huM5V/ibU9L9+RSvOEM
-	 GLN1yA6Iw7AIg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 1892842C17;
-	Thu,  7 Nov 2024 20:35:05 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
- mauro.chehab@linux.intel.com, kernel@collabora.com,
- bob.beckett@collabora.com, nicolas.dufresne@collabora.com, Sebastian
- Fricke <sebastian.fricke@collabora.com>
-Subject: Re: [PATCH 1/2] docs: Add guides section for debugging
-In-Reply-To: <20241028-media_docs_improve_v3-v1-1-2b1b486c223e@collabora.com>
-References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
- <20241028-media_docs_improve_v3-v1-1-2b1b486c223e@collabora.com>
-Date: Thu, 07 Nov 2024 13:35:04 -0700
-Message-ID: <87ldxu235z.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1731011772; c=relaxed/simple;
+	bh=XfqqrtBGoSGJ2BwEfPXR/s3qyCN+FjRyQHY0z68HSak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXlkvFPbwo6E81AdVLMnaRcgyfyCp8P/bg9KFGG+GIPKdRQQrk7Rk3vxlKxPhmC7cX8yxDIp+NqYhvXO/Eq8VExAPaXF04gysqDUdlg4qm1fR3GGui+2O05ELse7n+zwx2T11DXZN7fgKCIrQTg4sHT1xuncFeH3MqoFZnGjWQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eWu+cpfm; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731011771; x=1762547771;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XfqqrtBGoSGJ2BwEfPXR/s3qyCN+FjRyQHY0z68HSak=;
+  b=eWu+cpfmzKwgF0I6y0RrefIUklJ/x9LzzZMsMKD7TbVye0nNwOUq5WUE
+   ukw/Yi9NZ5b3FUtlrp3E93i5EMcTdUzf9U+OsPhLcrqPPfWbPnJELF36f
+   Ige/jCBn2BQ2Z78cnDrOQ6mRuVOUAvaE6HmFv+x7VkdAmrvPvSgPAM2qE
+   oYw4tcfIe99VTHDaOfa1z/sSdNu+V01Um+Px1dYYpe8Kd6uFIUO4O81N+
+   NM8VFcqBHtDjlH9XtBZhT7iqP+vhlQjmPYG/NBjDtHjwYbUAxqoxAGsgL
+   k0fSCjcK57dKx1+u7TIm6t+34NKbBJWsG7AYNMKfm9Tskiv/PuVqjMC+c
+   g==;
+X-CSE-ConnectionGUID: rTEn5CG5RduTTUMkvK3z1g==
+X-CSE-MsgGUID: MGMd/teGSv2I4p3A/PFkEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41439442"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41439442"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 12:36:10 -0800
+X-CSE-ConnectionGUID: HAtO8oC8QT6krMNPj4K8JA==
+X-CSE-MsgGUID: nhO0GC84RjmtJKwCFbdd+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="122739705"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.171])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 12:36:09 -0800
+Date: Thu, 7 Nov 2024 12:36:07 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Huang, Ying" <ying.huang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Gregory Price <gourry@gourry.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alejandro Lucero <alucerop@amd.com>,
+	Ben Cheatham <benjamin.cheatham@amd.com>
+Subject: Re: [PATCH] cxl: Rename ACPI_CEDT_CFMWS_RESTRICT_TYPE2/TYPE3
+Message-ID: <Zy0kt2i9C6eirhPN@aschofie-mobl2.lan>
+References: <20241104084110.583710-1-ying.huang@intel.com>
+ <ZyrUFMutrN_uJvPe@aschofie-mobl2.lan>
+ <878qtx6q0d.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878qtx6q0d.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
-Sebastian Fricke <sebastian.fricke@collabora.com> writes:
+On Wed, Nov 06, 2024 at 10:43:30AM +0800, Ying Huang wrote:
+> Alison Schofield <alison.schofield@intel.com> writes:
+> 
+> > On Mon, Nov 04, 2024 at 04:41:10PM +0800, Ying Huang wrote:
+> >> According to the description of the "Window Restrictions" field of
+> >> "CFMWS Structure" in the CXL spec v3.1 section 9.18.1.3: CXL Fixed
+> >> Memory Window Structure (CFMWS), the bit 0 of "Window Restrictions" is
+> >> formerly known as "CXL Type 2 Memory" and renamed to "Device
+> >> Coherent", while the bit 1 is formerly known as "CXL Type 3 Memory"
+> >> and renamed to "Host-only Coherent".  Because type 3 memory can only
+> >> be host-only coherent before, while it can be host-only coherent or
+> >> device coherent with "Back-Invalidate" now.
+> >> 
+> >> To avoid confusion about type 2/3 memory and device/host-only coherent
+> >> in Linux kernel, the patch renames corresponding bit definition from
+> >> ACPI_CEDT_CFMWS_RESTRICT_TYPE2/TYPE3 to
+> >> ACPI_CEDT_CFMWS_RESTRICT_DEVMEM/HOSTONLYMEM.  This makes the kernel
+> >> code consistent with the spec too.
+> >> 
+> >> The patch also renames the corresponding cxl_decoder flags
+> >> CXL_DECODER_F_TYPE2/TYPE3 to CXL_DECODER_F_DEVMEM/HOSTONLYMEM.
+> >> 
+> >> No functionality change is expected.
+> >> 
+> >> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> >> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> >> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> >> Reviewed-by: Gregory Price <gourry@gourry.net>
+> >> Cc: Dan Williams <dan.j.williams@intel.com>
+> >> Cc: Dave Jiang <dave.jiang@intel.com>
+> >> Cc: Alison Schofield <alison.schofield@intel.com>
+> >> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> >> Cc: Ira Weiny <ira.weiny@intel.com>
+> >> Cc: Alejandro Lucero <alucerop@amd.com>
+> >> Cc: Ben Cheatham <benjamin.cheatham@amd.com>
+> >> ---
+> >>  drivers/cxl/acpi.c           |  8 ++++----
+> >>  drivers/cxl/core/port.c      |  8 ++++----
+> >>  drivers/cxl/cxl.h            | 14 +++++++-------
+> >>  include/acpi/actbl1.h        | 10 +++++-----
+> >>  tools/testing/cxl/test/cxl.c | 18 +++++++++---------
+> >>  5 files changed, 29 insertions(+), 29 deletions(-)
+> >> 
+> >> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> >> index 82b78e331d8e..aca8cbb7540d 100644
+> >> --- a/drivers/cxl/acpi.c
+> >> +++ b/drivers/cxl/acpi.c
+> >> @@ -115,10 +115,10 @@ static unsigned long cfmws_to_decoder_flags(int restrictions)
+> >>  {
+> >>  	unsigned long flags = CXL_DECODER_F_ENABLE;
+> >>  
+> >> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE2)
+> >> -		flags |= CXL_DECODER_F_TYPE2;
+> >> -	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_TYPE3)
+> >> -		flags |= CXL_DECODER_F_TYPE3;
+> >> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_DEVMEM)
+> >> +		flags |= CXL_DECODER_F_DEVMEM;
+> >> +	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM)
+> >> +		flags |= CXL_DECODER_F_HOSTONLYMEM;
+> >>  	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_VOLATILE)
+> >>  		flags |= CXL_DECODER_F_RAM;
+> >>  	if (restrictions & ACPI_CEDT_CFMWS_RESTRICT_PMEM)
+> >> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> >> index a5e6f3d23cfb..8524714968fd 100644
+> >> --- a/drivers/cxl/core/port.c
+> >> +++ b/drivers/cxl/core/port.c
+> >> @@ -125,8 +125,8 @@ static DEVICE_ATTR_RO(name)
+> >>  
+> >>  CXL_DECODER_FLAG_ATTR(cap_pmem, CXL_DECODER_F_PMEM);
+> >>  CXL_DECODER_FLAG_ATTR(cap_ram, CXL_DECODER_F_RAM);
+> >> -CXL_DECODER_FLAG_ATTR(cap_type2, CXL_DECODER_F_TYPE2);
+> >> -CXL_DECODER_FLAG_ATTR(cap_type3, CXL_DECODER_F_TYPE3);
+> >> +CXL_DECODER_FLAG_ATTR(cap_type2, CXL_DECODER_F_DEVMEM);
+> >> +CXL_DECODER_FLAG_ATTR(cap_type3, CXL_DECODER_F_HOSTONLYMEM);
+> >>  CXL_DECODER_FLAG_ATTR(locked, CXL_DECODER_F_LOCK);
+> >>  
+> > Hi Ying,
+> 
+> Hi, Alison,
+> 
+> >
+> > The commit log explains that type3 can now be 'either/or', so does
+> > cap_type3_show() need to emit true for either:
+> > 	(flags & CXL_DECODER_F_HOSTONLYMEM)
+> > 	or
+> > 	(flags & CXL_DECODER_F_DEVMEM) & 'back invalidate')
+> >
+> > Does this explanation in the ABI need updating:
+> > What:           /sys/bus/cxl/devices/decoderX.Y/cap_{pmem,ram,type2,type3}
+> > Date:           June, 2021
+> > KernelVersion:  v5.14
+> > Contact:        linux-cxl@vger.kernel.org
+> > Description:
+> >                 (RO) When a CXL decoder is of devtype "cxl_decoder_root", it
+> >                 represents a fixed memory window identified by platform
+> >                 firmware. A fixed window may only support a subset of memory
+> >                 types. The 'cap_*' attributes indicate whether persistent
+> >                 memory, volatile memory, accelerator memory, and / or expander
+> >                 memory may be mapped behind this decoder's memory window.
+> 
+> I think so too.  However, I prefer to keep this patch just mechanic
+> renaming and do these changes in another patch.  Do you agree?
+> 
 
-> This idea was formed after noticing that new developers experience
-> certain difficulty to navigate within the multitude of different
-> debugging options in the Kernel and while there often is good
-> documentation for the tools, the developer has to know first that they
-> exist and where to find them.
-> Add a general debugging section to the Kernel documentation, as an
-> easily locatable entry point to other documentation and as a general
-> guideline for the topic.
->
-> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
-> ---
->  Documentation/index.rst                            |   2 +
->  .../driver_development_debugging_guide.rst         | 206 +++++++++++++++
->  Documentation/process/debugging/general_advice.rst |  48 ++++
->  Documentation/process/debugging/index.rst          |  21 ++
->  .../debugging/userspace_debugging_guide.rst        | 278 +++++++++++++++=
-++++++
->  5 files changed, 555 insertions(+)
->
-> diff --git a/Documentation/index.rst b/Documentation/index.rst
-> index 36e61783437c..be19f0a79a6a 100644
-> --- a/Documentation/index.rst
-> +++ b/Documentation/index.rst
-> @@ -57,6 +57,7 @@ Various other manuals with useful information for all k=
-ernel developers.
->     dev-tools/testing-overview
->     kernel-hacking/index
->     trace/index
-> +   process/debugging/index
->     fault-injection/index
+I don't know. I was just questioning where and how far the naming scheme
+needs to change.
 
-Please, let's not add this to the top-level page.  I've been through a
-multi-year struggle trying to trim that page down to the point where it
-is possible to actually find something of interest there.  Everybody
-wants their stuff up front, but please link this from the process guide
-instead.=20
+Maybe Jonathan, as the Suggested-by, can chime in and move this ahead.
 
->     livepatch/index
->     rust/index
-> @@ -76,6 +77,7 @@ developers seeking information on the kernel's user-spa=
-ce APIs.
->     The kernel build system <kbuild/index>
->     admin-guide/reporting-issues.rst
->     User-space tools <tools/index>
-> +   process/debugging/userspace_debugging_guide.rst
->     userspace-api/index
 
-...and linking it twice from that page is even worse...
-
->  See also: the `Linux man pages <https://www.kernel.org/doc/man-pages/>`_,
-> diff --git a/Documentation/process/debugging/driver_development_debugging=
-_guide.rst b/Documentation/process/debugging/driver_development_debugging_g=
-uide.rst
-> new file mode 100644
-> index 000000000000..f3d9c2c192c4
-> --- /dev/null
-> +++ b/Documentation/process/debugging/driver_development_debugging_guide.=
-rst
-> @@ -0,0 +1,206 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Debugging advice for driver development
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +This document serves as a general starting point and lookup for debuggin=
-g device
-> +drivers.
-> +While this guide focuses on debugging that requires re-compiling the
-> +module/kernel, the :doc:`userspace debugging guide
-> +</process/debugging/userspace_debugging_guide>` will guide
-> +you through tools like dynamic debug, ftrace and other tools useful for
-> +debugging issues and behavior.
-> +For general debugging advice, see the :doc:`general advice document
-> +</process/debugging/general_advice>`.
-> +
-> +.. contents::
-> +    :depth: 3
-
-Not sure this is necessary for these short files, but whatever
-
-> +The following sections show you the available tools.
-> +
-> +Printk & friends
-> +----------------
-
-When referencing the function, say printk() - that's the convention we
-use.=20
-
-> +
-> +These are derivatives of printf() with varying destinations and support =
-for
-> +being dynamically turned on or off, or lack thereof.
-> +
-> +Simple printk
-> +~~~~~~~~~~~~~
-> +
-> +The classic, can be used to great effect for quick and dirty development
-> +of new modules or to extract arbitrary necessary data for troubleshootin=
-g.
-> +
-> +Prerequisite: `CONFIG_PRINTK` (usually enabled by default)
-> +
-> +**Pros**:
-> +
-> +- No need to learn anything, simple to use
-> +- Easy to modify exactly to your needs (formatting of the data (See:
-> +  :doc:`/core-api/printk-formats`), visibility in the log)
-> +- Can cause delays in the execution of the code (beneficial to confirm w=
-hether
-> +  timing is a factor)
-> +
-> +**Cons**:
-> +
-> +- Requires rebuilding the kernel/module
-> +- Can cause delays in the execution of the code (which can cause issues =
-to be
-> +  not reproducible)
-> +
-> +For the full documentation see :doc:`/core-api/printk-basics`
-> +
-> +Trace_printk
-> +~~~~~~~~~~~~
-> +
-> +Prerequisite: `CONFIG_DYNAMIC_FTRACE` & `#include <linux/ftrace.h>`
-> +
-> +It is a tiny bit less comfortable to use than printk(), because you will=
- have
-> +to read the messages from the trace file (See: :ref:`read_ftrace_log`
-> +instead of from the kernel log, but very useful when printk() adds unwan=
-ted
-> +delays into the code execution, causing issues to be flaky or hidden.)
-> +
-> +If the processing of this still causes timing issues then you can try
-> +trace_puts().
-> +
-> +For the full Documentation see trace_printk()
-> +
-> +dev_dbg
-> +~~~~~~~
-> +
-> +Print statement, which can be targeted by :ref:`process/debugging/usersp=
-ace_debugging_guide:dynamic debug`
-
-It would still be nice to stick to the line-length limit wherever
-possible.  Here it is possible.
-
-> +that contains additional information about the device used within the co=
-ntext.
-> +
-> +**When is it appropriate to leave a debug print in the code?**
-> +
-> +Permanent debug statements have to be useful for a developer to troubles=
-hoot
-> +driver misbehavior. Judging that is a bit more of an art than a science,=
- but
-> +some guidelines are in the :ref:`Coding style guidelines <process/coding=
--style:13) printing kernel messages>`
-
-Here too.
-
-Working drivers are supposed to be quiet, though, so I think the real
-answer to this question is "almost never".
-
-> +Custom printk
-> +~~~~~~~~~~~~~
-> +
-> +Example::
-> +
-> +  #define core_dbg(fmt, arg...) do { \
-> +	  if (core_debug) \
-> +		  printk(KERN_DEBUG pr_fmt("core: " fmt), ## arg); \
-> +	  } while (0)
-> +
-> +**When should you do this?**
-> +
-> +It is better to just use a pr_debug(), which can later be turned on/off =
-with
-> +dynamic debug. Additionally, a lot of drivers activate these prints via a
-> +variable like `core_debug` set by a module parameter. However, Module
-
-If you really want to mark up that name, it should probably be ``literal``
-
-> +parameters `are not recommended anymore
-> +<https://lore.kernel.org/all/2024032757-surcharge-grime-d3dd@gregkh>`_.
-> +
-> +Ftrace
-> +------
-> +
-> +Creating a custom Ftrace tracepoint
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This seems ... minimal.  It would be good to have, if nothing else, a
-paragraph explaining what a tracepoint is and how it might be useful.
-
-> +Here is a basic description of :ref:`how to implement new tracepoints
-> +<trace/tracepoints:usage>`.
-> +
-> +For the full event tracing documentation see :doc:`/trace/events`
-> +
-> +For the full Ftrace documentation see :doc:`/trace/ftrace`
-> +
-> +DebugFS
-> +-------
-> +
-> +Prerequisite: `CONFIG_DEBUG_FS` & `#include <linux/debugfs.h>`
-> +
-> +DebugFS differs from the other approaches of debugging, as it doesn't wr=
-ite
-> +messages to the kernel log nor add traces to the code. Instead it allows=
- the
-> +developer to handle a set of files.
-> +With these files you can either store values of variables or make
-> +register/memory dumps or you can make these files writable and modify
-> +values/settings in the driver.
-> +
-> +Possible use-cases among others:
-> +
-> +- Store register values
-> +- Keep track of variables
-> +- Store errors
-> +- Store settings
-> +- Toggle a setting like debug on/off
-> +- Error injection
-> +
-> +This is especially useful, when the size of a data dump would be hard to=
- digest
-> +as part of the general kernel log (for example when dumping raw bitstrea=
-m data)
-> +or when you are not interested in all the values all the time, but with =
-the
-> +possibility to inspect them.
-> +
-> +The general idea is:
-> +
-> +- Create a directory during probe (`struct dentry *parent =3D
-> +  debugfs_create_dir("my_driver", NULL);`)
-
-Again, I think this wants to be literal, not italic?
-
-> +- Create a file (`debugfs_create_u32("my_value", 444, parent, &my_variab=
-le);`)
-> +
-> +  - In this example the file is found in `/sys/kernel/debug/my_driver/my=
-_value`
-> +    (with read permissions for user/group/all)
-> +  - any update of `my_variable` will update the value in the file
-
-That's a bit of a strange way to put it.  I would say that any read of
-the file will return the current contents of the variable.
-
-> +- Clean up the folder when removing the device
-> +  (`debugfs_remove_recursive(parent);`)
-> +
-> +For the full documentation see :doc:`/filesystems/debugfs`.
-> +
-> +KASAN, UBSAN, lockdep and other error checkers
-> +----------------------------------------------
-> +
-> +KASAN (Kernel Address Sanitizer)
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Prerequisite: `CONFIG_KASAN`
-> +
-> +KASAN is a dynamic memory error detector that helps to find use-after-fr=
-ee and
-> +out-of-bounds bugs. It uses compile-time instrumentation to check every =
-memory
-> +access.
-> +
-> +For the full documentation see :doc:`/dev-tools/kasan`.
-> +
-> +UBSAN (Undefined Behavior Sanitizer)
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Prerequisite: `CONFIG_UBSAN`
-> +
-> +UBSAN relies on compiler instrumentation and runtime checks to detect un=
-defined
-> +behavior. It is designed to find a variety of issues, including signed i=
-nteger
-> +overflow, array index out of bounds, and more.
-> +
-> +For the full documentation see :doc:`/dev-tools/ubsan`
-> +
-> +lockdep (Lock Dependency Validator)
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +Prerequisite: `CONFIG_DEBUG_LOCKDEP`
-> +
-> +lockdep is a runtime lock dependency validator that detects potential de=
-adlocks
-> +and other locking-related issues in the kernel.
-> +It tracks lock acquisitions and releases, building a dependency graph th=
-at is
-> +analyzed for potential deadlocks.
-> +lockdep is especially useful for validating the correctness of lock orde=
-ring in
-> +the kernel.
-> +
-> +For the full documentation see :doc:`/RCU/lockdep`
-
-That is anything but full documentation of lockdep; it's really only
-about RCU.  I wish (hint :) that we had proper documentation for lockdep
-that we could link here.  For the purposes of a reader who needs this
-level of guide, though, linking deep into RCU is not likely to be
-helpful.=20
-
-> +device coredump
-> +---------------
-> +
-> +Prerequisite: `#include <linux/devcoredump.h>`
-> +
-> +Provides the infrastructure for a driver to provide arbitrary data to us=
-erland.
-> +It is most often used in conjunction with udev or similar userland appli=
-cation
-> +to listen for kernel uevents, which indicate that the dump is ready. Ude=
-v has
-> +rules to copy that file somewhere for long-term storage and analysis, as=
- by
-> +default, the data for the dump is automatically cleaned up after 5 minut=
-es.
-> +That data is analyzed with driver-specific tools or GDB.
-> +
-> +You can find an example implementation at:
-> +`drivers/media/platform/qcom/venus/core.c
-> +<https://elixir.bootlin.com/linux/v6.11.6/source/drivers/media/platform/=
-qcom/venus/core.c#L30>`__
-> +
-> +**Copyright** =C2=A92024 : Collabora
-> diff --git a/Documentation/process/debugging/general_advice.rst b/Documen=
-tation/process/debugging/general_advice.rst
-> new file mode 100644
-> index 000000000000..631430656d53
-> --- /dev/null
-> +++ b/Documentation/process/debugging/general_advice.rst
-> @@ -0,0 +1,48 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +General debugging advice
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Depending on the issue, a different set of tools is available to track d=
-own the
-> +problem or even to realize whether there is one in the first place.
-> +
-> +As a first step you have to figure out what kind of issue you want to de=
-bug.
-> +Depending on the answer, your methodology and choice of tools may vary.
-> +
-> +Do I need to debug with limited access?
-> +---------------------------------------
-> +
-> +Do you have limited access to the machine or are you unable to stop the =
-running
-> +execution?
-> +
-> +In this case your debugging capability depends on built-in debugging sup=
-port of
-> +provided distro kernel.
-> +The :doc:`/process/debugging/userspace_debugging_guide` provides a brief
-> +overview over range of possible debugging tools in that situation. You c=
-an
-> +check the capability of your kernel, in most cases, by looking into conf=
-ig file
-> +within the /boot folder.
-> +
-> +Do I have root access to the system?
-> +------------------------------------
-> +
-> +Are you easily able to replace the module in question or to install a new
-> +kernel?
-> +
-> +In that case your range of available tools is a lot bigger, you can find=
- the
-> +tools in the :doc:`/process/debugging/driver_development_debugging_guide=
-`.
-> +
-> +Is timing a factor?
-> +-------------------
-> +
-> +It is important to understand if the problem you want to debug manifests=
- itself
-> +consistently (i.e. given a set of inputs you always get the same, incorr=
-ect
-> +output), or inconsistently. If it manifests itself inconsistently, some =
-timing
-> +factor might be at play. If inserting delays into the code does change t=
-he
-> +behavior, then quite likely timing is a factor.
-> +
-> +When timing does alter the outcome of the code execution using a simple
-> +printk() for debugging purposes won't work, a similar alternative is to =
-use
-
-I'd s/won't/may not/
-
-> +trace_printk() , which logs the debug messages to the trace file instead=
- of the
-> +kernel log.
-> +
-> +**Copyright** =C2=A92024 : Collabora
-> diff --git a/Documentation/process/debugging/index.rst b/Documentation/pr=
-ocess/debugging/index.rst
-> new file mode 100644
-> index 000000000000..c200ede7c955
-> --- /dev/null
-> +++ b/Documentation/process/debugging/index.rst
-> @@ -0,0 +1,21 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Debugging advice for Linux Kernel developers
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-
-This file needs an introductory paragraph (at least) saying what it is
-about.  A simple directory listing is not hugely useful.
-
-An alternative might be to turn your "general advice" document into the
-index.rst file.
-
-> +.. toctree::
-> +   :maxdepth: 1
-> +
-> +   general_advice
-> +   driver_development_debugging_guide
-> +   userspace_debugging_guide
-> +
-> +.. only::  subproject and html
-> +
-> +   Indices
-> +   =3D=3D=3D=3D=3D=3D=3D
-> +
-> +   * :ref:`genindex`
-> +
-> +**Copyright** =C2=A92024 : Collabora
-> diff --git a/Documentation/process/debugging/userspace_debugging_guide.rs=
-t b/Documentation/process/debugging/userspace_debugging_guide.rst
-> new file mode 100644
-> index 000000000000..0afe35c468a9
-> --- /dev/null
-> +++ b/Documentation/process/debugging/userspace_debugging_guide.rst
-> @@ -0,0 +1,278 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +Userspace debugging advice
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +
-> +A brief overview of common tools to debug the Linux Kernel from userspac=
-e.
-> +For debugging advice aimed at driver developer go :doc:`here
-> +</process/debugging/driver_development_debugging_guide>`.
-> +For general debugging advice, see :doc:`general-debugging-guide
-> +</process/debugging/general_advice>`.
-> +
-> +.. contents::
-> +    :depth: 3
-> +
-> +The following sections show you the available tools.
-> +
-> +Dynamic debug
-> +-------------
-> +
-> +Mechanism to filter what ends up in the kernel log by dis-/en-abling log
-> +messages.
-> +
-> +Prerequisite: `CONFIG_DYNAMIC_DEBUG`
-> +
-> +.. _valid_dyndbg_prints:
-> +
-> +Dynamic debug is only able to target:
-> +
-> +- pr_debug()
-> +- dev_dbg()
-> +- print_hex_dump_debug()
-> +- print_hex_dump_bytes()
-
-It would, of course, be nice to set up kerneldoc for all of those
-functions so that these lines link through to something useful.  The
-last one has kerneldoc, it just needs to be pulled in somewhere.
-
-> +Therefore the usability of this tool is, as of now, quite limited as the=
-re is
-> +no uniform rule for adding debug prints to the codebase, resulting in a =
-variety
-> +of ways these prints are implemented.
-> +
-> +Also, note that most debug statements are implemented as a variation of
-> +dprintk(), which have to be activated via a parameter in respective modu=
-le,
-> +dynamic debug is unable to do that step for you.
-> +
-> +Here is one example, that enables all available pr_debug() 's within the=
- file::
-> +
-> +  $ alias ddcmd=3D'echo $* > /proc/dynamic_debug/control'
-> +  $ ddcmd '-p; file v4l2-h264.c +p'
-
-It seems to me that the alias just obfuscates things, why bother?
-
-> +  $ grep =3Dp /proc/dynamic_debug/control
-> +   drivers/media/v4l2-core/v4l2-h264.c:372 [v4l2_h264]print_ref_list_b =
-=3Dp
-> +   "ref_pic_list_b%u (cur_poc %u%c) %s"
-> +   drivers/media/v4l2-core/v4l2-h264.c:333 [v4l2_h264]print_ref_list_p =
-=3Dp
-> +   "ref_pic_list_p (cur_poc %u%c) %s\n"
-
-What does this output tell the reader?
-
-> +**When should you use this over** `Ftrace`_ **?**
-
-All that markup to link five lines down?
-
-> +- When the code contains one of the :ref:`valid print statements
-> +  <valid_dyndbg_prints>` or when you have added multiple pr_debug()
-
-Do we really need to go through adding the label and markup just to link
-a half-screen up the page?
-
-> +  statements during development
-> +- When timing is not an issue, meaning if multiple pr_debug() statements=
- in
-> +  the code won't cause delays
-> +- When you care more about receiving specific log messages than tracing =
-the
-> +  pattern of how a function is called
-> +
-> +For the full documentation see :doc:`/admin-guide/dynamic-debug-howto`
-> +
-> +Ftrace
-> +------
-> +
-> +Prerequisite: `CONFIG_DYNAMIC_FTRACE`
-> +
-> +You can find the tracing folder in either `/sys/kernel/` or `/sys/debug/=
-kernel/`.
-
-Maybe tell the poor reader what "the tracing folder" is?
-
-> +Some of the most important operations for debugging are:
-> +
-> +- You can perform a function trace by adding a function name to the
-> +  `set_ftrace_filter` file (which accepts any function name found within=
- the
-> +  `available_filter_functions` file) or you can specifically disable cer=
-tain
-> +  functions by adding their names to the `set_ftrace_notrace` file (More=
- info
-> +  at: :ref:`trace/ftrace:dynamic ftrace`).
-> +- In order to find out where the calls originates from you can activate =
-the
-> +  `func_stack_trace` option under `options/func_stack_trace`.
-> +- Tracing the children of a function call and showing the return values =
-is
-> +  possible by adding the desired function in the `set_graph_function` fi=
-le
-> +  (requires config `FUNCTION_GRAPH_RETVAL`) more info at
-> +  :ref:`trace/ftrace:dynamic ftrace with the function graph tracer`.
-> +
-> +For the full Ftrace documentation see :doc:`/trace/ftrace`
-> +
-> +Or you could also trace for specific events by :ref:`using event tracing
-> +<trace/events:2. using event tracing>`, which can be defined as describe=
-d here:
-> +:ref:`Creating a custom Ftrace tracepoint
-> +<process/debugging/driver_development_debugging_guide:ftrace>`.
-> +
-> +For the full Ftrace event tracing documentation see :doc:`/trace/events`
-> +
-> +.. _read_ftrace_log:
-> +
-> +Reading the ftrace log
-> +~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +The `trace` file can be read just like any other file (`cat`, `tail`, `h=
-ead`,
-> +`vim`, etc.), the size of the file is limited by the `buffer_size_kb` (`=
-`echo
-> +1000 > buffer_size_kb``). The :ref:`trace/ftrace:trace_pipe` will behave
-> +similar to the `trace` file, but whenever you read from the file the con=
-tent is
-> +consumed.
-> +
-> +Kernelshark
-> +~~~~~~~~~~~
-> +
-> +A GUI interface to visualize the traces as a graph and list view from the
-> +output of the `trace-cmd
-> +<https://git.kernel.org/pub/scm/utils/trace-cmd/trace-cmd.git/>`__ appli=
-cation.
-> +
-> +For the full documentation see `<https://kernelshark.org/Documentation.h=
-tml>`__
-> +
-> +Perf & alternatives
-> +-------------------
-> +
-> +The tools mentioned above provide ways to inspect kernel code, results, =
-variable values, etc.
-> +Sometimes you have to find out first where to look and for those cases, =
-a box of
-> +performance tracking tools can help you to frame the issue.
-> +
-> +Why should you do a performance analysis?
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +A performance analysis is a good first step when among other reasons:
-> +
-> +- you cannot define the issue
-> +- you do not know where it occurs
-> +- the running system should not be interrupted or it is a remote system,=
- where
-> +  you cannot install a new module/kernel
-> +
-> +How to do a simple analysis with linux tools?
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +For the start of a performance analysis, you can start with the usual to=
-ols
-> +like:
-> +
-> +- `top` / `htop` / `atop` (*get an overview of the system load, see spik=
-es on
-> +  specific processes*)
-> +- `mpstat -P ALL` (*look at the load distribution among CPUs*)
-> +- `iostat -x` (*observe input and output devices utilization and perform=
-ance*)
-> +- `vmstat` (*overview of memory usage on the system*)
-> +- `pidstat` (*similar to* `vmstat` *but per process, to dial it down to =
-the
-> +  target*)
-> +- `strace -tp $PID` (*once you know the process, you can figure out how =
-it
-> +  communicates with the Kernel*)
-> +
-> +These should help to narrow down the areas to look at sufficiently.
-> +
-> +Diving deeper with perf
-> +~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +The **perf** tool provides a series of metrics and events to further dia=
-l down
-> +on issues.
-> +
-> +Prerequisite: build or install perf on your system
-> +
-> +Gather statistics data for finding all files starting with `gcc` in `/us=
-r`::
-> +
-> +  # perf stat -d find /usr -name 'gcc*' | wc -l
-> +
-> +   Performance counter stats for 'find /usr -name gcc*':
-> +
-> +     1277.81 msec    task-clock             #    0.997 CPUs utilized
-> +     9               context-switches       #    7.043 /sec
-> +     1               cpu-migrations         #    0.783 /sec
-> +     704             page-faults            #  550.943 /sec
-> +     766548897       cycles                 #    0.600 GHz              =
-           (97.15%)
-> +     798285467       instructions           #    1.04  insn per cycle   =
-           (97.15%)
-> +     57582731        branches               #   45.064 M/sec            =
-           (2.85%)
-> +     3842573         branch-misses          #    6.67% of all branches  =
-           (97.15%)
-> +     281616097       L1-dcache-loads        #  220.390 M/sec            =
-           (97.15%)
-> +     4220975         L1-dcache-load-misses  #    1.50% of all L1-dcache =
-accesses   (97.15%)
-> +     <not supported> LLC-loads
-> +     <not supported> LLC-load-misses
-> +
-> +   1.281746009 seconds time elapsed
-> +
-> +   0.508796000 seconds user
-> +   0.773209000 seconds sys
-> +
-> +
-> +  52
-> +
-> +The availability of events and metrics depends on the system you are run=
-ning.
-> +
-> +For the full documentation see
-> +`<https://perf.wiki.kernel.org/index.php/Main_Page>`__
-> +
-> +Perfetto
-> +~~~~~~~~
-> +
-> +A set of tools to measure and analyze how well applications and systems =
-perform.
-> +You can use it to:
-> +
-> +* identify bottlenecks
-> +* optimize code
-> +* make software run faster and more efficiently.
-> +
-> +**What is the difference between perfetto and perf?**
-> +
-> +* perf is tool as part of and specialized for the Linux Kernel and has C=
-LI user
-> +  interface.
-> +* perfetto cross-platform performance analysis stack, has extended
-> +  functionality into userspace and provides a WEB user interface.
-> +
-> +For the full documentation see `<https://perfetto.dev/docs/>`__
-> +
-> +Kernel panic analysis tools
-> +---------------------------
-> +
-> +  To analyse the crash dump please use `Kdump` & `Kexec`.
-
-Those will not *analyze* a crash dump.
-
-> +  For the full documentation see the :doc:`/admin-guide/kdump/kdump`
-> +
-> +  In order to find the corresponding line in the code you can use `faddr=
-2line
-> +  <https://elixir.bootlin.com/linux/v6.11.6/source/scripts/faddr2line>`_=
-_, note
-> +  that you need to enable `CONFIG_DEBUG_INFO` for that to work.
-> +
-> +  An alternative to using `faddr2line` is the use of `objdump` (and it's
-> +  derivatives for the different platforms like `aarch64-linux-gnu-objdum=
-p`),
-> +  take this line as an example:
-> +
-> +  `[  +0.000240]  rkvdec_device_run+0x50/0x138 [rockchip_vdec]`.
-> +
-> +  We can find the corresponding line of code by executing::
-> +
-> +    aarch64-linux-gnu-objdump -dS drivers/staging/media/rkvdec/rockchip-=
-vdec.ko | grep rkvdec_device_run\>: -A 40
-> +    0000000000000ac8 <rkvdec_device_run>:
-> +     ac8:	d503201f 	nop
-> +     acc:	d503201f 	nop
-> +    {
-> +     ad0:	d503233f 	paciasp
-> +     ad4:	a9bd7bfd 	stp	x29, x30, [sp, #-48]!
-> +     ad8:	910003fd 	mov	x29, sp
-> +     adc:	a90153f3 	stp	x19, x20, [sp, #16]
-> +     ae0:	a9025bf5 	stp	x21, x22, [sp, #32]
-> +        const struct rkvdec_coded_fmt_desc *desc =3D ctx->coded_fmt_desc;
-> +     ae4:	f9411814 	ldr	x20, [x0, #560]
-> +        struct rkvdec_dev *rkvdec =3D ctx->dev;
-> +     ae8:	f9418015 	ldr	x21, [x0, #768]
-> +        if (WARN_ON(!desc))
-> +     aec:	b4000654 	cbz	x20, bb4 <rkvdec_device_run+0xec>
-> +        ret =3D pm_runtime_resume_and_get(rkvdec->dev);
-> +     af0:	f943d2b6 	ldr	x22, [x21, #1952]
-> +        ret =3D __pm_runtime_resume(dev, RPM_GET_PUT);
-> +     af4:	aa0003f3 	mov	x19, x0
-> +     af8:	52800081 	mov	w1, #0x4                   	// #4
-> +     afc:	aa1603e0 	mov	x0, x22
-> +     b00:	94000000 	bl	0 <__pm_runtime_resume>
-> +        if (ret < 0) {
-> +     b04:	37f80340 	tbnz	w0, #31, b6c <rkvdec_device_run+0xa4>
-> +        dev_warn(rkvdec->dev, "Not good\n");
-> +     b08:	f943d2a0 	ldr	x0, [x21, #1952]
-> +     b0c:	90000001 	adrp	x1, 0 <rkvdec_try_ctrl-0x8>
-> +     b10:	91000021 	add	x1, x1, #0x0
-> +     b14:	94000000 	bl	0 <_dev_warn>
-> +        *bad =3D 1;
-> +     b18:	d2800001 	mov	x1, #0x0                   	// #0
-> +     ...
-> +
-> +  Meaning, in this line from the crash dump::
-> +
-> +    [  +0.000240]  rkvdec_device_run+0x50/0x138 [rockchip_vdec]
-> +
-> +  I can take the `0x50` as offset, which I have to add to the base addre=
-ss
-> +  of the corresponding function, which I find in this line::
-> +
-> +    0000000000000ac8 <rkvdec_device_run>:
-> +
-> +  The result of `0xac8 + 0x50 =3D 0xb18`
-> +  And when I search for that address within the function I get the
-> +  following line::
-> +
-> +    *bad =3D 1;
-> +    b18:      d2800001        mov     x1, #0x0
-> +
-> +**Copyright** =C2=A92024 : Collabora
-
-Thanks,
-
-jon
+> --
+> Best Regards,
+> Huang, Ying
+> 
+> >
+> >>  static ssize_t target_type_show(struct device *dev,
+> >> @@ -326,14 +326,14 @@ static struct attribute *cxl_decoder_root_attrs[] = {
+> >>  
+> >>  static bool can_create_pmem(struct cxl_root_decoder *cxlrd)
+> >>  {
+> >> -	unsigned long flags = CXL_DECODER_F_TYPE3 | CXL_DECODER_F_PMEM;
+> >> +	unsigned long flags = CXL_DECODER_F_HOSTONLYMEM | CXL_DECODER_F_PMEM;
+> >>  
+> >>  	return (cxlrd->cxlsd.cxld.flags & flags) == flags;
+> >>  }
+> >>  
+> >>  static bool can_create_ram(struct cxl_root_decoder *cxlrd)
+> >>  {
+> >> -	unsigned long flags = CXL_DECODER_F_TYPE3 | CXL_DECODER_F_RAM;
+> >> +	unsigned long flags = CXL_DECODER_F_HOSTONLYMEM | CXL_DECODER_F_RAM;
+> >>  
+> >>  	return (cxlrd->cxlsd.cxld.flags & flags) == flags;
+> >>  }
+> >> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> >> index 0fc96f8bf15c..b9083ce1cf74 100644
+> >> --- a/drivers/cxl/cxl.h
+> >> +++ b/drivers/cxl/cxl.h
+> >> @@ -315,13 +315,13 @@ resource_size_t cxl_rcd_component_reg_phys(struct device *dev,
+> >>   * Additionally indicate whether decoder settings were autodetected,
+> >>   * user customized.
+> >>   */
+> >> -#define CXL_DECODER_F_RAM   BIT(0)
+> >> -#define CXL_DECODER_F_PMEM  BIT(1)
+> >> -#define CXL_DECODER_F_TYPE2 BIT(2)
+> >> -#define CXL_DECODER_F_TYPE3 BIT(3)
+> >> -#define CXL_DECODER_F_LOCK  BIT(4)
+> >> -#define CXL_DECODER_F_ENABLE    BIT(5)
+> >> -#define CXL_DECODER_F_MASK  GENMASK(5, 0)
+> >> +#define CXL_DECODER_F_RAM         BIT(0)
+> >> +#define CXL_DECODER_F_PMEM        BIT(1)
+> >> +#define CXL_DECODER_F_DEVMEM      BIT(2)
+> >> +#define CXL_DECODER_F_HOSTONLYMEM BIT(3)
+> >> +#define CXL_DECODER_F_LOCK        BIT(4)
+> >> +#define CXL_DECODER_F_ENABLE      BIT(5)
+> >> +#define CXL_DECODER_F_MASK        GENMASK(5, 0)
+> >>  
+> >>  enum cxl_decoder_type {
+> >>  	CXL_DECODER_DEVMEM = 2,
+> >> diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
+> >> index 199afc2cd122..e195909928df 100644
+> >> --- a/include/acpi/actbl1.h
+> >> +++ b/include/acpi/actbl1.h
+> >> @@ -551,11 +551,11 @@ struct acpi_cedt_cfmws_target_element {
+> >>  
+> >>  /* Values for Restrictions field above */
+> >>  
+> >> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE2      (1)
+> >> -#define ACPI_CEDT_CFMWS_RESTRICT_TYPE3      (1<<1)
+> >> -#define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE   (1<<2)
+> >> -#define ACPI_CEDT_CFMWS_RESTRICT_PMEM       (1<<3)
+> >> -#define ACPI_CEDT_CFMWS_RESTRICT_FIXED      (1<<4)
+> >> +#define ACPI_CEDT_CFMWS_RESTRICT_DEVMEM        (1)
+> >> +#define ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM   (1<<1)
+> >> +#define ACPI_CEDT_CFMWS_RESTRICT_VOLATILE      (1<<2)
+> >> +#define ACPI_CEDT_CFMWS_RESTRICT_PMEM          (1<<3)
+> >> +#define ACPI_CEDT_CFMWS_RESTRICT_FIXED         (1<<4)
+> >>  
+> >>  /* 2: CXL XOR Interleave Math Structure */
+> >>  
+> >> diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
+> >> index 90d5afd52dd0..9d919fc99f6b 100644
+> >> --- a/tools/testing/cxl/test/cxl.c
+> >> +++ b/tools/testing/cxl/test/cxl.c
+> >> @@ -209,7 +209,7 @@ static struct {
+> >>  			},
+> >>  			.interleave_ways = 0,
+> >>  			.granularity = 4,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M * 4UL,
+> >> @@ -224,7 +224,7 @@ static struct {
+> >>  			},
+> >>  			.interleave_ways = 1,
+> >>  			.granularity = 4,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M * 8UL,
+> >> @@ -239,7 +239,7 @@ static struct {
+> >>  			},
+> >>  			.interleave_ways = 0,
+> >>  			.granularity = 4,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M * 4UL,
+> >> @@ -254,7 +254,7 @@ static struct {
+> >>  			},
+> >>  			.interleave_ways = 1,
+> >>  			.granularity = 4,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M * 8UL,
+> >> @@ -269,7 +269,7 @@ static struct {
+> >>  			},
+> >>  			.interleave_ways = 0,
+> >>  			.granularity = 4,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M * 4UL,
+> >> @@ -284,7 +284,7 @@ static struct {
+> >>  			},
+> >>  			.interleave_ways = 0,
+> >>  			.granularity = 4,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_VOLATILE,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M,
+> >> @@ -301,7 +301,7 @@ static struct {
+> >>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+> >>  			.interleave_ways = 0,
+> >>  			.granularity = 4,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M * 8UL,
+> >> @@ -317,7 +317,7 @@ static struct {
+> >>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+> >>  			.interleave_ways = 1,
+> >>  			.granularity = 0,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M * 8UL,
+> >> @@ -333,7 +333,7 @@ static struct {
+> >>  			.interleave_arithmetic = ACPI_CEDT_CFMWS_ARITHMETIC_XOR,
+> >>  			.interleave_ways = 2,
+> >>  			.granularity = 0,
+> >> -			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_TYPE3 |
+> >> +			.restrictions = ACPI_CEDT_CFMWS_RESTRICT_HOSTONLYMEM |
+> >>  					ACPI_CEDT_CFMWS_RESTRICT_PMEM,
+> >>  			.qtg_id = FAKE_QTG_ID,
+> >>  			.window_size = SZ_256M * 16UL,
+> >> -- 
+> >> 2.39.2
+> >> 
 
