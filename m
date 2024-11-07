@@ -1,83 +1,61 @@
-Return-Path: <linux-kernel+bounces-400174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C279C09F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:22:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BAC9C09F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD781C219EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663291F21878
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9004D212F0E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3E6213134;
 	Thu,  7 Nov 2024 15:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="a1PxrKQT"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxY+5tfQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A3E2101A4
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE68212EF7;
+	Thu,  7 Nov 2024 15:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730992962; cv=none; b=MU8Q5mpOvNmj4Ta4dUoZYfCledV1EIHgXxU8WbACLhrQN004zMGsupGXEIbN8jHnI/aOYmUWs1F4J7sEigm9W4f6wSMbMH8Om5j0//XAvWwnj9iF+JbX43YavBDaZHUeHwv1AZ3molTFhhSZQljsODKYLR13RUXtPFuH1NYElnc=
+	t=1730992962; cv=none; b=ryDHeZcPSE6Iv526kd26EU0VWKKsBhmLFJEcWB/ZxjiTS7O/QMOO+U5j9p9oY+H2kIhRxk8zeUjMYjMsGHOGryTg4iMtNrQY6xIQEE29i7nq97C5kO3+kC1Xw0oIdnxwOgAfBSNEXp/EKB4c7hYh7mIgv/QRGdxuEyrXUutOH/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730992962; c=relaxed/simple;
-	bh=yZzPj+S3u5gvcmdJRGOLPng8XXYaZ8nHj1Jpw34CFY4=;
+	bh=vKrgrqu16tNf3GZ8c9u9NoA7wIjTcJf1oi4Jnf+fPAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ug5F4FgS9j99Ct2RPkyE9QprGmoEUJRTXqXUUxa5LWk3YeMMQtM+lVk8CDPstSgiI2FTa+9sgJX+gSncgyg+kiUjEqlCP/NybxdrI1HqWLUoNeeU7LKQzwtF2rK/TO62KSSv5M9kTMfelU2HoLQsiBnsZgy4BlGRs2ZDK+njF7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=a1PxrKQT; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43163667f0eso9679125e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 07:22:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730992958; x=1731597758; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rCAcCQ6qsmbrV6y2QMruXJGY8kO9+Qk1uO7BP3FUMLE=;
-        b=a1PxrKQTF7S1PoinnaWYM1VpR1nQ+wKBs6AoqorP78NaFrIf9HuGFYOw90iilpyzK2
-         yRjMFLv2j+RJTTWa71ieMS0KjFpmFTF/9cOPKqfIkyAlmbJmK/wAStXJFna9FgqEvNJo
-         29GKhQi3hhS0ZYqIYnGm4SsAetTS/wd4jUOEFnY0lIn1bFMIIydu0xtgMiJmmNBpYDk4
-         resVSXA314gN8DuDTzQxBgYsyYCSZE/PmCtjaWgmzdNx5/2H/rXTordgSIRiq+dZHghY
-         HM+G1V+QwidGkbKpTQD/fSsXzSC07OYSS0yVHRH927vKlrI56hkDYmOcJ16Nm0ashmJQ
-         VfYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730992958; x=1731597758;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rCAcCQ6qsmbrV6y2QMruXJGY8kO9+Qk1uO7BP3FUMLE=;
-        b=HjhuPSnbIPMkJSh1IM3UlYRibJTUZjmEg7PRCxfdyRMAYsz9x4NLtraRkQGUiYruHM
-         WP88SWA7UQt0lMJI8JZuxTkHQgmRCDh+IFKSa6lYrUbff/U/UfXhwfpZJ8nD6rlLDdMA
-         NtA8nnl+enfaDjJMJnNriU3ESiz05q91y7rcPngk+ieY8Ym95YCVmt1iriIohw77VTcR
-         ojjAVbE2kzYRFZ6AQEcabyNNSJNi4bKm44qSSjLfWw+YMswrCdsdQDA8Oparby6d7bXK
-         /leVK3hh0WVQbUVhS23YMwKSeVHPBDKDnB8/Qq7IZkKvl6kc5rBdHqFZ+Q0b25LcyTcr
-         d0zw==
-X-Forwarded-Encrypted: i=1; AJvYcCV19lTP3utZsArpnAf359sQv3Jf7IdErb2zFP3D4yBCiTSIK4gO/JQ9bkeIPnvFIFgQKT60G7pujHW/UlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSTyfsisSYzNOcD4BLRdOcuVZBWfa8Z+KL9PpLtoIgWcykf/TX
-	6L8nM/5R4uVGnootdir+H+UqM5on4vtg8sTGJCCEJcBWoetxarQaYdybSF9Vpmk=
-X-Google-Smtp-Source: AGHT+IEI95bLI86Nm8Fgyp7vcjEB4yzdUf4zU2Dc3Ql8nKqgrC3xz3DrVC2UDxTmz9fy9a7hdd2qPA==
-X-Received: by 2002:a5d:59ae:0:b0:37d:4436:4505 with SMTP id ffacd0b85a97d-381c7a6da29mr21197696f8f.32.1730992958277;
-        Thu, 07 Nov 2024 07:22:38 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea4ebsm2005865f8f.69.2024.11.07.07.22.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 07:22:38 -0800 (PST)
-Date: Thu, 7 Nov 2024 16:22:35 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] printk: Introduce FORCE_CON flag
-Message-ID: <ZyzbO5StIhsLv_EP@pathway.suse.cz>
-References: <20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com>
- <20241105-printk-loud-con-v2-1-bd3ecdf7b0e4@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LSaml2XvTBtvxWge04hNkeTAemmAcpwrIJrWVeQ/yVVNpekeyGdI0XXSiiqkW+WJUKXOO/ta3HMiC0qzhtEHVb5AOifRwChxGniVX7PsCjX3crF2KZbbTgEmwue6SmKdhVRchEKcrZF1WgHy7hg/UsrC6D1qozt4aseZDxzkeiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gxY+5tfQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC5E2C4CECD;
+	Thu,  7 Nov 2024 15:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730992960;
+	bh=vKrgrqu16tNf3GZ8c9u9NoA7wIjTcJf1oi4Jnf+fPAI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gxY+5tfQpoXsobtdJ7qYsD9j4ozcCqxy59kGPVve+qbdf87c3JH1wA5SsDMqWIyt4
+	 amOAkaK5DJtTbTAZHRDme5pYgmjWd1Q5O+ze3Ddtcu86Q18DfzYKQu6+R8Xx0iQFVJ
+	 ehtLQ7nUdJRhWq+mTGQCJuXeFdL2AkeHljt6GOsqjHAnfn2opCpU1AT7AlXjdEXMjN
+	 /oGjf/fZ2PPjUhOAgpdVWAfG9PGMguBmR3p6NlKN8RfFTkrK5cq6aiYnc7axQbFJch
+	 7o8/DpB3urd+FMcvAJ2DVtMTuu74MWcx4wqfDoiSzrXRvf3TmlHC5GPmlNr8+wJDoM
+	 84yEtArgSO+VQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t94LJ-000000004HS-1bjy;
+	Thu, 07 Nov 2024 16:22:42 +0100
+Date: Thu, 7 Nov 2024 16:22:41 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Qiu-ji Chen <chenqiuji666@gmail.com>, dtwlin@gmail.com,
+	elder@kernel.org, greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com
+Subject: Re: [PATCH v3] staging: greybus: uart: Fix atomicity violation in
+ get_serial_info()
+Message-ID: <ZyzbQQGEaBRIRYi1@hovoldconsulting.com>
+References: <20241107113337.402042-1-chenqiuji666@gmail.com>
+ <2024110724-overbuilt-liquid-3734@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,56 +64,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105-printk-loud-con-v2-1-bd3ecdf7b0e4@suse.com>
+In-Reply-To: <2024110724-overbuilt-liquid-3734@gregkh>
 
-On Tue 2024-11-05 16:45:08, Marcos Paulo de Souza wrote:
-> Introduce FORCE_CON flag to printk. The new flag will make it possible to
-> create a context where printk messages will never be suppressed.
+On Thu, Nov 07, 2024 at 04:11:00PM +0100, Greg Kroah-Hartman wrote:
+> On Thu, Nov 07, 2024 at 07:33:37PM +0800, Qiu-ji Chen wrote:
+> > Our static checker found a bug where set_serial_info() uses a mutex, but 
+> > get_serial_info() does not. Fortunately, the impact of this is relatively 
+> > minor. It doesn't cause a crash or any other serious issues. However, if a 
+> > race condition occurs between set_serial_info() and get_serial_info(), 
+> > there is a chance that the data returned by get_serial_info() will be 
+> > meaningless.
 > 
-> This mechanism will be used in the next patch to create a force_con
-> context on sysrq handling, removing an existing workaround on the
-> loglevel global variable. The workaround existed to make sure that sysrq
-> header messages were sent to all consoles, but this doesn't work with
-> deferred messages because the loglevel might be restored to its original
-> value before a console flushes the messages.
+> Trailing whitespace :(
 > 
-> Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> You should fix your editor to highlight this so it doesn't keep showing
+> up.
+> 
+> > 
+> > Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+> > Fixes: 0aad5ad563c8 ("greybus/uart: switch to ->[sg]et_serial()")
 
-Looks good:
+> - You have marked a patch with a "Fixes:" tag for a commit that is in an
+>   older released kernel, yet you do not have a cc: stable line in the
+>   signed-off-by area at all, which means that the patch will not be
+>   applied to any older kernel releases.  To properly fix this, please
+>   follow the documented rules in the
+>   Documentation/process/stable-kernel-rules.rst file for how to resolve
+>   this.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+The CC-stable tag was left out on purpose (on my request IIRC) as this
+is not fixing anything that's really a problem and is basically just
+shutting the static checker up.
 
-Just a nit below.
+I believe this was also reflected in the commit message of v2 (even if
+"inconsistent" may have been a better word than "meaningless").
 
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -1319,11 +1319,11 @@ static void boot_delay_msec(int level)
->  {
->  	unsigned long long k;
->  	unsigned long timeout;
-> +	bool suppress = !is_printk_force_console() &&
-> +			suppress_message_printing(level);
->  
-> -	if ((boot_delay == 0 || system_state >= SYSTEM_RUNNING)
-> -		|| suppress_message_printing(level)) {
-> +	if ((boot_delay == 0 || system_state >= SYSTEM_RUNNING) || suppress)
->  		return;
-
-These spaghetti conditions are hard to follow. I would personally
-prefer:
-
-	if ((boot_delay == 0)
-		return;
-
-	if (system_state >= SYSTEM_RUNNING)
-		return;
-
-	if (suppress_message_printing(level) &&	!is_printk_force_console())
-		return;
-
-But I do not resist on it.
-
-
-Best Regards,
-Petr
+Johan
 
