@@ -1,159 +1,141 @@
-Return-Path: <linux-kernel+bounces-399752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AE09C03C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:20:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C96A9C03C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:21:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971EC282CDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08E431F21E43
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A851F4FDF;
-	Thu,  7 Nov 2024 11:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2491D1F5820;
+	Thu,  7 Nov 2024 11:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMIYWxih"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4tnokIW"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6DA1F4272;
-	Thu,  7 Nov 2024 11:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7851F1303
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730978437; cv=none; b=KWyIUPQy2wSxdcM29IRRdJY44NBG/3D2OYbaT21rst507hPklfpBdKodgoqx4GG6bmPdtb6M+oEcfdaz1j1Gr3v9YXnKQWp55H6YcfSgxvf1wFCDk4qch48EGK98rZPfocwKINN52mc2MwRanks7Se8aLD18DuEe753myZBKHhc=
+	t=1730978458; cv=none; b=NjbVu1pKFdAdYCgEJvMGREfNatwO28fwxwNVdciYUjRiuEgpMNh7RYx1hWRgQTcYaoX5381NUUogLwC+deuqRu8N3H96dZ2ip9mD35x4/CCU5AOVUtgAQljj7rkLkSnsIaFB0OFxX0hkSFKcRtYOmzsW+knmtMCp9kgDJyMxvLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730978437; c=relaxed/simple;
-	bh=xF8ZbGW400Arsn35oIvMaUkwIQp/crqb3h+5bmD2B1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jpTodcY9vEjOOdJu3gBxPFSW61Qs0RjTnwpbvencp7qAvXrwIiPXBMKTjQjteDCYlNcl3g325Ta7gtvoSJqIo6mPo/OlGKk6Otx2FmU1mGJf9SJB5nYpBQfUONWExoWcfSV5ScPSwz2Y4VzYYw+DMD7xFAf5urmERujExUoPlcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMIYWxih; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBABC4CECC;
-	Thu,  7 Nov 2024 11:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730978435;
-	bh=xF8ZbGW400Arsn35oIvMaUkwIQp/crqb3h+5bmD2B1U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dMIYWxihqJd2f7YIyVUdr4osx65WrXPDKZzzCQHlutrf5SGCIsLYofcQxeo+ZtIeO
-	 riio+hhM/Bc76/6iuFMJja+tmVZQsFqNglzqhnAEHRj2eIZMnm4tH+zISlro4nrBcc
-	 OrDWGGYAQMR/2Rkl4CJfO0iOFGS4jsyavDa9KIhRCNgr9SDoxYEZfJh57kVUZQrG0Z
-	 KTIbsGeF36UlNemRx1SYrsuHW1uT7rN09GWb8J4/MKXh+IAwzYImOenVv2KVmqquhR
-	 /lsfnD9khFPook7TByWQqwzutMAqiz5Piv6qFqAvwcS9IHuAfi7TL7Wyrq4r+D49f1
-	 Hsxh0Jg7tqZGA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH] tpm: Remove the documentation from tpm2-sessions.c
-Date: Thu,  7 Nov 2024 13:20:22 +0200
-Message-ID: <20241107112023.5731-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730978458; c=relaxed/simple;
+	bh=92JvbYXS43ziuksMmLoy3p90KRD5zpG7v6wF1/+S9Us=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uvn/+jDahe1At2MT1BwThGGI5PtFWOK6PxqAI4/9qjQUbhQvByrna5oyK+sjePTozeL0h0308wTZHjpXLizA4QzPfBSGBPGEUBz80BrOmWrBcgM12d6hHCZ63RPqnPdyPqFgHu6hk17DTy7XHdEbnc5+cWNZQ/kSeanqMsRVUBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4tnokIW; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso7821941fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 03:20:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730978455; x=1731583255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LMQuG+gv/bCMQPE5TTdrdRCToXNDQpmIiwozDBgG3Mk=;
+        b=Z4tnokIWh8kzKKOjRd40F2qWtlpPLQcV3ENx+S6lrwEQlUNmsKNWfCdjyOe/BMccOm
+         +3UjZ6sdA4zyc75cqml0w619J2kPo+DE30v1yvAAcQ/e8tU8oSXbvm+F1Sb/L15cMTir
+         frtvIm8WXlGFHUi4xNdYW6yyOop8xs+AfAWZ8k/uq1jB8+onE/2y7M8gG0WWcrehiuno
+         WRI/TJyl4mS5hiw4wFNBmHbMjKNhAdsl+hC1881wINVBYUXX1MwYZ0HwuQcXb6r5Jb4l
+         RT2HaeTTd9JeGsSYEj0LcUcow8qx8oaO88HmQCXvnGLwjecXHpTPZd9/D4HcKE4ltUNG
+         CpZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730978455; x=1731583255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LMQuG+gv/bCMQPE5TTdrdRCToXNDQpmIiwozDBgG3Mk=;
+        b=X+ZDVS4vRp59DS+YIlGLxsGrQEhgM72/k/5R/48uEtitGyfhdotgengc9qiU/cU0aa
+         ShGI4Bx5aGVo+U4ikydBMvATHfCUu7w9E+lRi7DdRdEIfD/RNWj49EsBxN7pt54Si/HL
+         Hc4ouN5l3i2seIsFlNkCs4x1Zl3zs1aCTGZ/rPgMAvjegH7LJyF3yYlfe1dM4lHu3Ew2
+         POYQ2VvauSKpjkB4E5j1UrWX82E/78KAKut83203L068AC2XD3PcyxQpdS54kpdofbJJ
+         CBb2yTnBN+KMpx2qZ6b0oX5ijfe3z69wMN9YljRXlVBI2SxC8dY3vhF6khCwgQh/HC//
+         KDvQ==
+X-Gm-Message-State: AOJu0YzhuasdEDpjPxR9ycuRWq2N3YTyLl+fS/BRXU25cmFnBvTmKKLJ
+	4J0ulB9d5lHQUvZgF1KwJN0z+S4SwnGbFtGI34yjphx7dgi5FrTAnCL4OiWR3GpRgsam7jSzTo1
+	4EQDaSHX1j5xMhz05+2gybQH9DZfsuM3MJEw=
+X-Google-Smtp-Source: AGHT+IFRUwAYPMwNcogpWfAJRdM7aiS/DsPiSrIa91as6QTUqdQTwFy0U6vv9Sp5y+ka7BcLe31/aaDmxYYX6L5YGMg=
+X-Received: by 2002:a2e:a586:0:b0:2fb:5ebe:ed40 with SMTP id
+ 38308e7fff4ca-2fedb781c43mr121935651fa.15.1730978454632; Thu, 07 Nov 2024
+ 03:20:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-7-brgerst@gmail.com>
+In-Reply-To: <20241105155801.1779119-7-brgerst@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 7 Nov 2024 12:20:43 +0100
+Message-ID: <CAFULd4b9RqWD5uaZEzejQfzJ4cH85sCgbTaHJdg-qJ-OaLJiWA@mail.gmail.com>
+Subject: Re: [PATCH v5 06/16] x86/relocs: Handle R_X86_64_REX_GOTPCRELX relocations
+To: Brian Gerst <brgerst@gmail.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Nobody will maintain this, i.e. it is destined to rotten. It is better to
-just rip it off, and not have duplicate stuff that is already in the kernel
-documentation and function headers.
+On Tue, Nov 5, 2024 at 4:58=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wrot=
+e:
+>
+> Clang may produce R_X86_64_REX_GOTPCRELX relocations when redefining the
+> stack protector location.  Treat them as another type of PC-relative
+> relocation.
+>
+> Signed-off-by: Brian Gerst <brgerst@gmail.com>
+> ---
+>  arch/x86/tools/relocs.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+> index 6afe2e5e9102..7d7fc7f0a250 100644
+> --- a/arch/x86/tools/relocs.c
+> +++ b/arch/x86/tools/relocs.c
+> @@ -32,6 +32,11 @@ static struct relocs         relocs32;
+>  static struct relocs           relocs32neg;
+>  static struct relocs           relocs64;
+>  # define FMT PRIu64
+> +
+> +#ifndef R_X86_64_REX_GOTPCRELX
+> +#define R_X86_64_REX_GOTPCRELX 42
+> +#endif
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- drivers/char/tpm/tpm2-sessions.c | 68 ++------------------------------
- 1 file changed, 3 insertions(+), 65 deletions(-)
+The next patch (7/16) introduces the above definition to
+arch/x86/include/asm/elf.h. If you swap patches 6 and 7 in the series,
+you won't have to introduce the above conditional definition.
 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index a7c1b162251b..ff00e9483564 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -1,71 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
--
- /*
-- * Copyright (C) 2018 James.Bottomley@HansenPartnership.com
-- *
-- * Cryptographic helper routines for handling TPM2 sessions for
-- * authorization HMAC and request response encryption.
-- *
-- * The idea is to ensure that every TPM command is HMAC protected by a
-- * session, meaning in-flight tampering would be detected and in
-- * addition all sensitive inputs and responses should be encrypted.
-- *
-- * The basic way this works is to use a TPM feature called salted
-- * sessions where a random secret used in session construction is
-- * encrypted to the public part of a known TPM key.  The problem is we
-- * have no known keys, so initially a primary Elliptic Curve key is
-- * derived from the NULL seed (we use EC because most TPMs generate
-- * these keys much faster than RSA ones).  The curve used is NIST_P256
-- * because that's now mandated to be present in 'TCG TPM v2.0
-- * Provisioning Guidance'
-- *
-- * Threat problems: the initial TPM2_CreatePrimary is not (and cannot
-- * be) session protected, so a clever Man in the Middle could return a
-- * public key they control to this command and from there intercept
-- * and decode all subsequent session based transactions.  The kernel
-- * cannot mitigate this threat but, after boot, userspace can get
-- * proof this has not happened by asking the TPM to certify the NULL
-- * key.  This certification would chain back to the TPM Endorsement
-- * Certificate and prove the NULL seed primary had not been tampered
-- * with and thus all sessions must have been cryptographically secure.
-- * To assist with this, the initial NULL seed public key name is made
-- * available in a sysfs file.
-- *
-- * Use of these functions:
-- *
-- * The design is all the crypto, hash and hmac gunk is confined in this
-- * file and never needs to be seen even by the kernel internal user.  To
-- * the user there's an init function tpm2_sessions_init() that needs to
-- * be called once per TPM which generates the NULL seed primary key.
-- *
-- * These are the usage functions:
-+ * Copyright (c) 2018 James Bottomley <James.Bottomley@HansenPartnership.com>
-  *
-- * tpm2_start_auth_session() which allocates the opaque auth structure
-- *	and gets a session from the TPM.  This must be called before
-- *	any of the following functions.  The session is protected by a
-- *	session_key which is derived from a random salt value
-- *	encrypted to the NULL seed.
-- * tpm2_end_auth_session() kills the session and frees the resources.
-- *	Under normal operation this function is done by
-- *	tpm_buf_check_hmac_response(), so this is only to be used on
-- *	error legs where the latter is not executed.
-- * tpm_buf_append_name() to add a handle to the buffer.  This must be
-- *	used in place of the usual tpm_buf_append_u32() for adding
-- *	handles because handles have to be processed specially when
-- *	calculating the HMAC.  In particular, for NV, volatile and
-- *	permanent objects you now need to provide the name.
-- * tpm_buf_append_hmac_session() which appends the hmac session to the
-- *	buf in the same way tpm_buf_append_auth does().
-- * tpm_buf_fill_hmac_session() This calculates the correct hash and
-- *	places it in the buffer.  It must be called after the complete
-- *	command buffer is finalized so it can fill in the correct HMAC
-- *	based on the parameters.
-- * tpm_buf_check_hmac_response() which checks the session response in
-- *	the buffer and calculates what it should be.  If there's a
-- *	mismatch it will log a warning and return an error.  If
-- *	tpm_buf_append_hmac_session() did not specify
-- *	TPM_SA_CONTINUE_SESSION then the session will be closed (if it
-- *	hasn't been consumed) and the auth structure freed.
-+ * Cryptographic helper routines for handling TPM2 sessions for authorization
-+ * HMAC and request response encryption.
-  */
- 
- #include "tpm.h"
--- 
-2.47.0
+Uros.
 
+> +
+>  #else
+>  # define FMT PRIu32
+>  #endif
+> @@ -226,6 +231,7 @@ static const char *rel_type(unsigned type)
+>                 REL_TYPE(R_X86_64_PC16),
+>                 REL_TYPE(R_X86_64_8),
+>                 REL_TYPE(R_X86_64_PC8),
+> +               REL_TYPE(R_X86_64_REX_GOTPCRELX),
+>  #else
+>                 REL_TYPE(R_386_NONE),
+>                 REL_TYPE(R_386_32),
+> @@ -860,6 +866,7 @@ static int do_reloc64(struct section *sec, Elf_Rel *r=
+el, ElfW(Sym) *sym,
+>
+>         case R_X86_64_PC32:
+>         case R_X86_64_PLT32:
+> +       case R_X86_64_REX_GOTPCRELX:
+>                 /*
+>                  * PC relative relocations don't need to be adjusted unle=
+ss
+>                  * referencing a percpu symbol.
+> --
+> 2.47.0
+>
 
