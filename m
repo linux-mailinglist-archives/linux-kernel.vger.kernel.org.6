@@ -1,69 +1,96 @@
-Return-Path: <linux-kernel+bounces-400202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA6A9C0A41
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:40:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8D69C0A44
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249631F236A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 513592843E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A062139CE;
-	Thu,  7 Nov 2024 15:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABBF215003;
+	Thu,  7 Nov 2024 15:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXqnWT70"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DBC212D07;
-	Thu,  7 Nov 2024 15:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA5E212D07;
+	Thu,  7 Nov 2024 15:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730994018; cv=none; b=K+ktUs7NGM5DMXbuwtJLGK7St6ur0XW/liWFZswk+NpOiVLum1YPJUIRRHSjqa2YKg0mXTSLD3mcQwjlmbyUiVCkmFoU9cU/Bu11+4wxwe18myke/Oq91W06GXcuChhKCrjCOEABebnF1nMc89iKzvrgir/64hagwyZciHn8kHY=
+	t=1730994021; cv=none; b=Q7BGY+n/mugdxfEh9A1R7MKqAXZlaPAs3kZ1GFJUeOeAt1SBE/yr+RJSKp5wQ7H3vcMavYOb5rbGj7Py1G90eTgCgcpm42HJQ+BC6KcJXyZGcc6tf98jD7EHKm/bWVKQmmtTIkPHUBj6yp9rXArIFwwxM4didOKeI4+P9MH1Zh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730994018; c=relaxed/simple;
-	bh=GN85DQ8GT3OLecMcZypUXFbyGyUxDPAtwS2VSzX9syw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZZAJAQhEkWE8KF+WCOJXbgEK2j6r12N9woi2NWSScSfEPsXpV47SSbLP1bx0Z8OvPRgs4UlgE8DWBtE9Rjc1fGbbfV+R0P/IjLTR8wfuokOUCSASFbI8mxW50rtSDpHYaUSdppn+EEO1RHpWEzGcI9JRYOp7eB6VsRRURQHU+Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73BE9C4CECC;
-	Thu,  7 Nov 2024 15:40:17 +0000 (UTC)
-Date: Thu, 7 Nov 2024 10:40:22 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Zheng Yejian <zhengyejian@huaweicloud.com>, <oe-lkp@lists.linux.dev>,
- <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
- <linux-trace-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>
-Subject: Re: [linux-next:master] [tracing]  49e4154f4b:
- INFO:task_blocked_for_more_than#seconds
-Message-ID: <20241107104022.47f2b527@gandalf.local.home>
-In-Reply-To: <202411072207.b2321310-oliver.sang@intel.com>
-References: <202411072207.b2321310-oliver.sang@intel.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730994021; c=relaxed/simple;
+	bh=99mRawCrYiyprXONM9QgUaVEZFk1e6ntZv9bAFDjUBA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OuzEbWt4P7dQIGsqn4rt7iN3OxMdJRmg+1BuO95VRtoc+vdxi2NiLFSUf5JAqq29NwLIT7WRDcG310cNBytOhzmg+maAVuFWMLvrbqNdPFXsyO3AzkkfX6PPZ/WsKkwhkPibt2GuCVicevfawuXYblHHomHrZM1PtxvbhWSw0Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXqnWT70; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A2FC4CECC;
+	Thu,  7 Nov 2024 15:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730994020;
+	bh=99mRawCrYiyprXONM9QgUaVEZFk1e6ntZv9bAFDjUBA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WXqnWT70L0uCsEMEDK0W4BHqJtQFvcQOJlDNjWU4nZ2yiaoHXoGT6jULrpZoLXDpZ
+	 xQDxiRHnIv265cNFOrWyYVbUfRHoA7ubXSwOGT1dwby2BJZUnkpM8rowKrOfl6ywdj
+	 PKJWjcRdcLN/XCOcss+aZvp6dO5GAhgUvuFzat3S0NHeViZsFGIht2fDaDpEi8IeGG
+	 oUdTtS/jQ4vQSo1sbDsJbdSd41HCboKC3HGbyDM/mn37r2G6G9H7o9nN3wugYQc2F3
+	 +VsupFAUlMbOBIFNIHS1bKRWGVuPxjFI8d90RNmB6HznQQNauTrwY9BcvsVGtmPc74
+	 g8oL3FtWgeMMA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34BA63809A80;
+	Thu,  7 Nov 2024 15:40:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 0/1] BPF verifier documentation cleanup
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173099403000.2004583.8555324576230265420.git-patchwork-notify@kernel.org>
+Date: Thu, 07 Nov 2024 15:40:30 +0000
+References: <20241107063708.106340-1-xandfury@gmail.com>
+In-Reply-To: <20241107063708.106340-1-xandfury@gmail.com>
+To: Abhinav Saxena <xandfury@gmail.com>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org, bpf@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, corbet@lwn.net
 
-On Thu, 7 Nov 2024 22:25:23 +0800
-kernel test robot <oliver.sang@intel.com> wrote:
+Hello:
 
-> kernel test robot noticed "INFO:task_blocked_for_more_than#seconds" on:
+This patch was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Wed,  6 Nov 2024 23:37:07 -0700 you wrote:
+> Hi everyone,
 > 
-> commit: 49e4154f4b16345da5e219b23ed9737a6e735bc1 ("tracing: Remove TRACE_EVENT_FL_FILTERED logic")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> I am interested in contributing to the BPF subsystem, starting with
+> documentation cleanup. The patch removes trailing whitespace from the
+> verifier documentation to maintain consistent formatting.
 > 
-> [test failed on linux-next/master 850f22c42f4b0a14a015aecc26f46f9948ded6dd]
+> I have tested this patch with scripts/checkpatch.pl and it reports no
+> issues.
 > 
-> in testcase: boot
+> [...]
 
-The commit in question does not even get executed in the boot process
-(unless you have tracing on boot enabled). So I'll simply ignore this.
+Here is the summary with links:
+  - [1/1] docs: bpf: verifier: remove trailing whitespace
+    https://git.kernel.org/bpf/bpf-next/c/342f751e15c3
 
--- Steve
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
