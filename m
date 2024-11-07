@@ -1,81 +1,73 @@
-Return-Path: <linux-kernel+bounces-400755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324289C11E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:36:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9529C11EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 644B11C22B66
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A87E284E2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA61218D74;
-	Thu,  7 Nov 2024 22:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285DA2185B1;
+	Thu,  7 Nov 2024 22:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UxrT6Ut+"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="bqlfb6jf"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C38EC0
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FBA21766E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731018969; cv=none; b=COPQwY600eRxtvdRa8lu0jEyloX3/POEXIMjK7Fi5CE6AAEDK2q+N5nAJVRWcPLmz3xIjoCo6h+KUrqzg/E5YFb9HY81z4xmvKs8Qx8mbRfZDRJ03FQudcdwK0+N5soF3MPvf94QqKvPaUfBbbz3rYVQfTGWo/4T8ZNHiaPD+04=
+	t=1731019105; cv=none; b=iiHtb8RJ5gBYopifKriN5bNL/c3e476MHZqGqI5Rqp6hCdv9aE//c719YbHI5eTwiVfXe3U7RUhGRkWsPHzr37hRtxRGNOR/hDxEXOgumN/jkIukZNhI5XQLGiUl9E3Ogu75/0SddX8pKffpcJMS9KluJXtZ8KgVEO+gkyzAsWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731018969; c=relaxed/simple;
-	bh=bCL4mPl+uKiO5OLaD6a26tnCZQrNfn7ckvad7so5gY4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rmTuqBoiLljhTYmQrbO7XKmmkpfk8UYf/FloS+jGsqg67QtGGPfQPa5MS9+Nm67BYRDO8osB4jBhpaqcByH6Db5wiQeCDYDrbk7oDPFViBYrBnZ6CA719VbHejH3eK23nmD36HonU/jTCecaYElmfcknBbIgR/eeDA4V+OmP7ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UxrT6Ut+; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e5fee32e76so916892b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 14:36:07 -0800 (PST)
+	s=arc-20240116; t=1731019105; c=relaxed/simple;
+	bh=VKdNQh3bXS+51IiXDHYAOf+7QeZT+DkLAK5ZUVQq5qg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XCADGl5n0p/G0eQE2PGMpT2oQ4iNzI9P80o0I797a0S+tLht/kYFX4x/LOCctlpwV5ZftbCxfgaUF3fyrpSSEwXAXSDghGyP5SGy6IVvAg/pNNyklaDDSDtPyLyDabXzQgslJvIoRs65cQ3m8aShLzF8FVM7udPSxXxRjGQ033Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=bqlfb6jf; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-72097a5ca74so1266819b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 14:38:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731018967; x=1731623767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PTqplkmd1oO+cDQ02FzVSJQIEeacVX2zBVF1DfowAhY=;
-        b=UxrT6Ut+rmFmb0zhoQRNv6AVbLA8UUo/iVnr2ZleVa2yPZFKhhSheLIp0I0QfaDP/d
-         bTdzrMec2xuLbSfwFS6OyNIozd6HlmC8FtB8HyK1CU13AuvqDN1Ug7ArwesFm4qbcEa5
-         gPLkW/Qm5qeHPSCsWoguWdiSN1N2NFs/JztzYYjCRbneN5MjzXh0rUSi/KFxs1Y0xZx1
-         WBOz5/fotQFJgT4V2Ti2lpOlBXRAAxAZMfT5LN51lhv0aF2J5GnrWjjl9gPvwrQkEhGr
-         DeHVXw0NMtutXKmLKOyXADt75RqSXBfFgenqUB2OltFdGCl6ZoYP+KZ2JaZF2+/vf0Jm
-         OcYg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731019102; x=1731623902; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p4UvGiQRb/HT4pWVa0ytwnByFfKeVrmx8fuvu8SCUmU=;
+        b=bqlfb6jfdMiOuQu2C9k4wjxNogXkjaTTS8pudbb0sFJb5j3dmocvc4aKyCzeOlQTan
+         HKcnp4GnEfIoQqrpULvPkfoBWsWuc2g/wL+n8Dl7McBQ7aTvVI4GGSDFpgqjcS/GpeNr
+         Fyt/eGPL9mzhlyOuO9nVPFPTD9hO1cz7QUWOR4PG/7nwadov8frpucd7g8JKso0/tiKp
+         lzo5tomva1B+0lvsXFYysnBdwe5D2jnySo4r0nXi92YqXOZSi4YolpuTdFFRBY7CiS/L
+         lPJoou7rO7GYgPFwsSHBACzuOSHymMkUoGHo1p1kjYcODJHk2TaSm4hhU9QX36YnU9vl
+         eaQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731018967; x=1731623767;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PTqplkmd1oO+cDQ02FzVSJQIEeacVX2zBVF1DfowAhY=;
-        b=GbefN6YMa3/Zz+vA8HiJBEGDPX9jm0tpVROKY0Ci/0uBWXNNZfuQB/ZR61ZfarsQs0
-         qj+vVMslIonFX5f/yOkTV2ZzxTjryvqpMtdVTTCE7wbSqdcXBbU9v63zzG0dUibj78vy
-         48/5ud0+pjjYRj+3fB/IOabzIbXjsg/HjlRU58iLOQm0PGPsb0jnbDY6LzCpzWaG1LBU
-         USAJmatuefXsPcUwKt+bKccPNLC+phtlpus/x1WoNWiKrVcxbuWHI4/mgz7VA2v5UWof
-         w6Fk3mOYo1ZzjR1qz4UCiUHOzCJKR/gJ1YKU9U+1ZUnokQtcIEneGBehKudxbNsRB1Vb
-         QQew==
-X-Forwarded-Encrypted: i=1; AJvYcCXykoM4BoTCO36HwUaRQBA4jeSICcM5m19FCFOw2H0eYG6hdMJocETjkqUEyHEPBnlNQtleWyuQDl2KW2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIUH3kmS1B4qNkH36QJORCLEEo/Qe5k94GZlcJBrUpbWhYCrWg
-	pY0IlKpFzq3Dqjrk3IPRCR/XhrzMw6B8MoxDz2hEsfgZ4p7wzAU9m/VpbVyulERbvMFZD1cR73U
-	AIws=
-X-Google-Smtp-Source: AGHT+IGk7/iCDuk7k11o8jqdaJjFfjiiCG/HkKL3ykX33IYYarQ6sNKSrJTzYjDQNIvyDfW43TEcTg==
-X-Received: by 2002:a05:6808:15a0:b0:3e6:1ea5:6b30 with SMTP id 5614622812f47-3e7946aec3fmr1081232b6e.24.1731018966766;
-        Thu, 07 Nov 2024 14:36:06 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cca4fbfsm457821b6e.24.2024.11.07.14.36.05
+        d=1e100.net; s=20230601; t=1731019102; x=1731623902;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p4UvGiQRb/HT4pWVa0ytwnByFfKeVrmx8fuvu8SCUmU=;
+        b=kGZUSA37imKrmDv+ftI3qCzb3BojeMs1L2RZbJJfQS/X19iJNivWd5+X4r0tXdubBS
+         sFTvPgVNMoy2/oq2SjYrVHy14+SjiUh88TdfWMT2ZBwmQn00MKvFKMurr3gxU4k2sW9v
+         5tikC+uOKHn8YkCgJk1Y2g2i7lOGruB9aSC6fuQaHn6hbepLYkB+/lTWMyOlHGk5d5UX
+         ZXCzcvFv5gvXImEsrKR5XMiY4AaTwcoCVYLic4Iegb+ZOPvWlvSBtA1r+0fgYv3Yhzyz
+         dvSrBgpOo9Tm2qcW3L7hZ3WSH+BkRyCrp8nyqal98vcXhe/FUMbrmFKFZlCqNysj0Ag9
+         2xaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYChVAYQrJlzB2Y4ykTjN8z0Ros8l4vni7UF7JZyZtaWGei747w7ssDr5Rawczi0zJmQgGysO0FS3wR5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywps6eicjSMMFxvH0f/C+v+i64pQygDr5GLlFoFXhlxAVXFN8Cg
+	38297xwM7bWOzQfOsOv7FLyMmE8dAMUZhtjd+IGhqw9Sp7nf1kCNTNT0JOwWiKzkFl1RrqZM3hL
+	5
+X-Google-Smtp-Source: AGHT+IFAGtuApDVBC1UkjKkykQeZF5MXvTyzKLNYeIltKFs6LOqDwTb8M1Xi2bDrIl1p0NkIIZMN6Q==
+X-Received: by 2002:a05:6a00:2d1d:b0:71d:f7ea:89f6 with SMTP id d2e1a72fcca58-7241337ff2cmr967888b3a.18.1731019102464;
+        Thu, 07 Nov 2024 14:38:22 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240799bae1sm2227897b3a.94.2024.11.07.14.38.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 14:36:06 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-block@vger.kernel.org, zhangguopeng <zhangguopeng@kylinos.cn>
-Cc: hch@lst.de, ming.lei@redhat.com, yukuai3@huawei.com, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241107104258.29742-1-zhangguopeng@kylinos.cn>
-References: <20241107104258.29742-1-zhangguopeng@kylinos.cn>
-Subject: Re: [PATCH v2] block: Replace sprintf() with sysfs_emit()
-Message-Id: <173101896555.1015163.9216450575734590168.b4-ty@kernel.dk>
-Date: Thu, 07 Nov 2024 15:36:05 -0700
+        Thu, 07 Nov 2024 14:38:21 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Thu, 07 Nov 2024 14:38:03 -0800
+Subject: [PATCH for-next] riscv: Fix default misaligned access trap
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,28 +76,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Message-Id: <20241107-fix_handle_misaligned_load-v1-1-07d7852c9991@rivosinc.com>
+X-B4-Tracking: v=1; b=H4sIAEpBLWcC/x2MUQqDMBAFryL73UAiYoNXKSVE87QLMSmJiCDe3
+ cXPYYY5qaIwKg3NSQU7V85JwLwamn4+LVAchKnVbWeMfquZDyciRLiVq4+8JAQXsw/KjrD9NGq
+ re5AM/gVSP/MPzbmohGOj73Xdb2hvE3YAAAA=
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Jesse Taube <Mr.Bossman075@gmail.com>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1457; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=VKdNQh3bXS+51IiXDHYAOf+7QeZT+DkLAK5ZUVQq5qg=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ7quY3DQugNfPO5piW6yZa5ew5bzfNoD8wCj4588whYz/
+ stWcljVUcrCIMbBICumyMJzrYG59Y5+2VHRsgkwc1iZQIYwcHEKwERMzRn+SsYtWs3wxcjIbrtm
+ HStfXDZL/MX/2YH7JRg7t910+MlVwMgw+3bI/Yvh37/NmPj1uqu+18zTPV4Cf2Rqp2UesE9z83v
+ ECgA=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
+Commit d1703dc7bc8e ("RISC-V: Detect unaligned vector accesses
+supported") removed the default handlers for handle_misaligned_load()
+and handle_misaligned_store(). When the kernel is compiled without
+RISCV_SCALAR_MISALIGNED, these handlers are never defined, causing
+compilation errors.
 
-On Thu, 07 Nov 2024 18:42:58 +0800, zhangguopeng wrote:
-> Per Documentation/filesystems/sysfs.rst, show() should only use
-> sysfs_emit() or sysfs_emit_at() when formatting the value to be
-> returned to user space.
-> 
-> No functional change intended.
-> 
-> 
-> [...]
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+Fixes: d1703dc7bc8e ("RISC-V: Detect unaligned vector accesses supported")
+---
+ arch/riscv/include/asm/entry-common.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Applied, thanks!
+diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include/asm/entry-common.h
+index 7b32d2b08bb6..c2808561df81 100644
+--- a/arch/riscv/include/asm/entry-common.h
++++ b/arch/riscv/include/asm/entry-common.h
+@@ -25,7 +25,19 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
+ void handle_page_fault(struct pt_regs *regs);
+ void handle_break(struct pt_regs *regs);
+ 
++#ifdef CONFIG_RISCV_SCALAR_MISALIGNED
+ int handle_misaligned_load(struct pt_regs *regs);
+ int handle_misaligned_store(struct pt_regs *regs);
++#else
++static inline int handle_misaligned_load(struct pt_regs *regs)
++{
++	return -1;
++}
++
++static inline int handle_misaligned_store(struct pt_regs *regs)
++{
++	return -1;
++}
++#endif
+ 
+ #endif /* _ASM_RISCV_ENTRY_COMMON_H */
 
-[1/1] block: Replace sprintf() with sysfs_emit()
-      commit: 8e71afb94d6ed59055b67dadbc423c70104f21a9
-
-Best regards,
+---
+base-commit: 74741a050b79d31d8d2eeee12c77736596d0a6b2
+change-id: 20241107-fix_handle_misaligned_load-8be86cb0806e
 -- 
-Jens Axboe
-
-
+- Charlie
 
 
