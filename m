@@ -1,363 +1,87 @@
-Return-Path: <linux-kernel+bounces-399394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45199BFE63
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:18:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4939BFE3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABF3DB228D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:18:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01AC51F23D4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30C2194C85;
-	Thu,  7 Nov 2024 06:18:19 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53353190679;
+	Thu,  7 Nov 2024 06:12:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36A5193071;
-	Thu,  7 Nov 2024 06:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7392F194089
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 06:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730960299; cv=none; b=u3GIRw4l58OUhGvekenedmCxtSohCeNpNYjgGepoSdfElrY4oJDkh7EDmpYvIBaqkmIhULOLasVhFIME2+xK7hOkeETfGjBvHavCcEs2pSoP24dP78nd2pPWNZafnfm3w9+jS1YLEcF9V2RiSB7DDhKvCADBkK+4FfunJGJjqos=
+	t=1730959926; cv=none; b=iHrvPkjHd5jLuRsT502aTtuyw5GmIA/NuKbO7d2CG0fRga/nqaMaSawUA58atcYAOwAqnC/sbPeB+LDJg0XZGl28d6GNr6hJrqCU28UvDKpKCXsQHetKHXehVD2AJ/W6h/NQeZknxfhQ4nwv4IkIjoM2feVknQTk7yjwCBxnKOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730960299; c=relaxed/simple;
-	bh=eKJGhOPlnFlS70bPwzrw6aHnQhhTj3ccfQFpPLvB0VQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mtR5XBPsEP+GbpHQxtHgEn5+Orq0RnbTs1mksYGUm9ZpFCCpsbNQwi8UKfWwoLTciZsKMMYgfOHdYFNn2k8FUO566Fa2yxeHPt3+TCZgISMaFerxJ9gNY20MKy09OSj6CteUvaqxNUh8Hq+HeVw3qFZnciQx/G1RJosRsyyL3Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XkWzj3Yg7zpXfc;
-	Thu,  7 Nov 2024 14:16:17 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 750B9140337;
-	Thu,  7 Nov 2024 14:18:11 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Nov 2024 14:18:10 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>,
-	<tangchengchang@huawei.com>
-Subject: [PATCH v2 for-next] RDMA/hns: Fix different dgids mapping to the same dip_idx
-Date: Thu, 7 Nov 2024 14:11:48 +0800
-Message-ID: <20241107061148.2010241-1-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1730959926; c=relaxed/simple;
+	bh=kJ09/lMHxbmOz8JDjhvty8nnO+wHW9DF3cKDxHabsVI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=S/MWaBTkaXUVz90xJtB5RPzK+L92IkV7i35ZrKKqk1OGpJjTP6MjxbRv4LnXmDdeCNDlK5o14zZmoYZ1XB2O5f/MzrvziFYiJEZShKLW9Ld1ilkYYw06hoTlDJPCz7YUeIq2it3VyRM2a5ex1xsYRY4btKIKUAspjOloSNgDp+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83b567c78c3so152675239f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 22:12:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730959924; x=1731564724;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I4teBTFNvXh5bzx1qVqv24mt40bKPvUWhk+WVNIHqaA=;
+        b=SrSgEU4FRE6RdOk0PAxMsXgQgR1EqPrfgockrq8ADHEtUyedd9HbEu2ZiI+YTY+PRS
+         EMdgfqopT5bDXKUsTg6HgEGx6x4VaCzLG4rX18FIUrOFg8I2w+2nhjrrzauu+8T2k5OT
+         XBK/RXBWmfiFzeRxV4HJCJ9jXnOSTfCV3lSG0gw0l6mCrF4AqdEgF6N41sbgcpeN/P1S
+         X3jrwYkomWzzHtvpgUf64r+L8BlALBUfxRzy9o1mplM7cWM7AL4ypPmiUwv1Bd2UPvY8
+         XTyw6EqabEpN6yLEWMgnDRq9HAzVtmJX3WiqV9T3ZwtV/n6btIlAuV+VGcxky6aSab45
+         otYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBeVTdDszuCegPVRkC2E6UCfIf5wp/Voiv5oLZmTZOhw7NE03w4WaJmff7dqlcW+Uz81PZeqPT/TVoqFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFpvhQCwi62OzYwEF4JIbUBL6GahZVLSlAtG1hosC9rsQ8pDxY
+	uD0pWJ0DK7vetoehBpA/vBOGPxJMq/PeKdqdZmNg4rz8OhnOJbuMXf9K/Q2hHdleEvqCaxl7kLh
+	0efFhk+iUcWSW35CgU0AHmezzqRdt8r0dJWyl5KV4BGKHZp5Gdb50SRk=
+X-Google-Smtp-Source: AGHT+IF6XBD/7WAeIK8IlHUomzmVP7ZKws83LrRsHqM956IFWY/OFmLNYR+Xp/SSQQ5nLnVSApUkTBLm4n/T6p/u9jW5KQBEh+/d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+X-Received: by 2002:a05:6e02:152d:b0:3a6:ad8c:9173 with SMTP id
+ e9e14a558f8ab-3a6e895f367mr19074795ab.10.1730959923749; Wed, 06 Nov 2024
+ 22:12:03 -0800 (PST)
+Date: Wed, 06 Nov 2024 22:12:03 -0800
+In-Reply-To: <20241107054740.p8xGy%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672c5a33.050a0220.350062.028b.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] kernel BUG in clear_inode (2)
+From: syzbot <syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Feng Fang <fangfeng4@huawei.com>
+Hello,
 
-DIP algorithm requires a one-to-one mapping between dgid and dip_idx.
-Currently a queue 'spare_idx' is used to store QPN of QPs that use
-DIP algorithm. For a new dgid, use a QPN from spare_idx as dip_idx.
-This method lacks a mechanism for deduplicating QPN, which may result
-in different dgids sharing the same dip_idx and break the one-to-one
-mapping requirement.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-This patch replaces spare_idx with xarray and introduces a refcnt of
-a dip_idx to indicate the number of QPs that using this dip_idx.
+Reported-by: syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com
+Tested-by: syzbot+ac2116e48989e84a2893@syzkaller.appspotmail.com
 
-The state machine for dip_idx management is implemented as:
+Tested on:
 
-* The entry at an index in xarray is empty -- This indicates that the
-  corresponding dip_idx hasn't been created.
+commit:         ff7afaec Merge tag 'nfs-for-6.12-3' of git://git.linux..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=106f2e30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2a6113a06ffd9630
+dashboard link: https://syzkaller.appspot.com/bug?extid=ac2116e48989e84a2893
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15f0df40580000
 
-* The entry at an index in xarray is not empty but with 0 refcnt --
-  This indicates that the corresponding dip_idx has been created but
-  not used as dip_idx yet.
-
-* The entry at an index in xarray is not empty and with non-0 refcnt --
-  This indicates that the corresponding dip_idx is being used by refcnt
-  number of DIP QPs.
-
-Fixes: eb653eda1e91 ("RDMA/hns: Bugfix for incorrect association between dip_idx and dgid")
-Fixes: f91696f2f053 ("RDMA/hns: Support congestion control type selection according to the FW")
-Signed-off-by: Feng Fang <fangfeng4@huawei.com>
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
----
-v1 -> v2:
-* Use xarray instead of bitmaps as Leon suggested.
-* v1: https://lore.kernel.org/all/20240906093444.3571619-10-huangjunxian6@hisilicon.com/
----
- drivers/infiniband/hw/hns/hns_roce_device.h | 11 +--
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 96 +++++++++++++++------
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |  2 +-
- drivers/infiniband/hw/hns/hns_roce_main.c   |  2 -
- drivers/infiniband/hw/hns/hns_roce_qp.c     |  7 +-
- 5 files changed, 74 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-index 9b51d5a1533f..560a1d9de408 100644
---- a/drivers/infiniband/hw/hns/hns_roce_device.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-@@ -489,12 +489,6 @@ struct hns_roce_bank {
- 	u32 next; /* Next ID to allocate. */
- };
-
--struct hns_roce_idx_table {
--	u32 *spare_idx;
--	u32 head;
--	u32 tail;
--};
--
- struct hns_roce_qp_table {
- 	struct hns_roce_hem_table	qp_table;
- 	struct hns_roce_hem_table	irrl_table;
-@@ -503,7 +497,7 @@ struct hns_roce_qp_table {
- 	struct mutex			scc_mutex;
- 	struct hns_roce_bank bank[HNS_ROCE_QP_BANK_NUM];
- 	struct mutex bank_mutex;
--	struct hns_roce_idx_table	idx_table;
-+	struct xarray			dip_xa;
- };
-
- struct hns_roce_cq_table {
-@@ -658,6 +652,7 @@ struct hns_roce_qp {
- 	u8			tc_mode;
- 	u8			priority;
- 	spinlock_t flush_lock;
-+	struct hns_roce_dip *dip;
- };
-
- struct hns_roce_ib_iboe {
-@@ -984,8 +979,6 @@ struct hns_roce_dev {
- 	enum hns_roce_device_state state;
- 	struct list_head	qp_list; /* list of all qps on this dev */
- 	spinlock_t		qp_list_lock; /* protect qp_list */
--	struct list_head	dip_list; /* list of all dest ips on this dev */
--	spinlock_t		dip_list_lock; /* protect dip_list */
-
- 	struct list_head        pgdir_list;
- 	struct mutex            pgdir_mutex;
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index d1c075fb0ad8..36e7cedfd106 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -2553,20 +2553,19 @@ static void hns_roce_free_link_table(struct hns_roce_dev *hr_dev)
- 	free_link_table_buf(hr_dev, &priv->ext_llm);
- }
-
--static void free_dip_list(struct hns_roce_dev *hr_dev)
-+static void free_dip_entry(struct hns_roce_dev *hr_dev)
- {
- 	struct hns_roce_dip *hr_dip;
--	struct hns_roce_dip *tmp;
--	unsigned long flags;
-+	unsigned long idx;
-
--	spin_lock_irqsave(&hr_dev->dip_list_lock, flags);
-+	xa_lock(&hr_dev->qp_table.dip_xa);
-
--	list_for_each_entry_safe(hr_dip, tmp, &hr_dev->dip_list, node) {
--		list_del(&hr_dip->node);
-+	xa_for_each(&hr_dev->qp_table.dip_xa, idx, hr_dip) {
-+		__xa_erase(&hr_dev->qp_table.dip_xa, hr_dip->dip_idx);
- 		kfree(hr_dip);
- 	}
-
--	spin_unlock_irqrestore(&hr_dev->dip_list_lock, flags);
-+	xa_unlock(&hr_dev->qp_table.dip_xa);
- }
-
- static struct ib_pd *free_mr_init_pd(struct hns_roce_dev *hr_dev)
-@@ -2974,7 +2973,7 @@ static void hns_roce_v2_exit(struct hns_roce_dev *hr_dev)
- 		hns_roce_free_link_table(hr_dev);
-
- 	if (hr_dev->pci_dev->revision == PCI_REVISION_ID_HIP09)
--		free_dip_list(hr_dev);
-+		free_dip_entry(hr_dev);
- }
-
- static int hns_roce_mbox_post(struct hns_roce_dev *hr_dev,
-@@ -4694,26 +4693,49 @@ static int modify_qp_rtr_to_rts(struct ib_qp *ibqp, int attr_mask,
- 	return 0;
- }
-
-+static int alloc_dip_entry(struct xarray *dip_xa, u32 qpn)
-+{
-+	struct hns_roce_dip *hr_dip;
-+	int ret;
-+
-+	hr_dip = xa_load(dip_xa, qpn);
-+	if (hr_dip)
-+		return 0;
-+
-+	hr_dip = kzalloc(sizeof(*hr_dip), GFP_KERNEL);
-+	if (!hr_dip)
-+		return -ENOMEM;
-+
-+	ret = xa_err(xa_store(dip_xa, qpn, hr_dip, GFP_KERNEL));
-+	if (ret)
-+		kfree(hr_dip);
-+
-+	return ret;
-+}
-+
- static int get_dip_ctx_idx(struct ib_qp *ibqp, const struct ib_qp_attr *attr,
- 			   u32 *dip_idx)
- {
- 	const struct ib_global_route *grh = rdma_ah_read_grh(&attr->ah_attr);
- 	struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
--	u32 *spare_idx = hr_dev->qp_table.idx_table.spare_idx;
--	u32 *head =  &hr_dev->qp_table.idx_table.head;
--	u32 *tail =  &hr_dev->qp_table.idx_table.tail;
-+	struct xarray *dip_xa = &hr_dev->qp_table.dip_xa;
-+	struct hns_roce_qp *hr_qp = to_hr_qp(ibqp);
- 	struct hns_roce_dip *hr_dip;
--	unsigned long flags;
-+	unsigned long idx;
- 	int ret = 0;
-
--	spin_lock_irqsave(&hr_dev->dip_list_lock, flags);
-+	ret = alloc_dip_entry(dip_xa, ibqp->qp_num);
-+	if (ret)
-+		return ret;
-
--	spare_idx[*tail] = ibqp->qp_num;
--	*tail = (*tail == hr_dev->caps.num_qps - 1) ? 0 : (*tail + 1);
-+	xa_lock(dip_xa);
-
--	list_for_each_entry(hr_dip, &hr_dev->dip_list, node) {
--		if (!memcmp(grh->dgid.raw, hr_dip->dgid, GID_LEN_V2)) {
-+	xa_for_each(dip_xa, idx, hr_dip) {
-+		if (hr_dip->qp_cnt &&
-+		    !memcmp(grh->dgid.raw, hr_dip->dgid, GID_LEN_V2)) {
- 			*dip_idx = hr_dip->dip_idx;
-+			hr_dip->qp_cnt++;
-+			hr_qp->dip = hr_dip;
- 			goto out;
- 		}
- 	}
-@@ -4721,19 +4743,24 @@ static int get_dip_ctx_idx(struct ib_qp *ibqp, const struct ib_qp_attr *attr,
- 	/* If no dgid is found, a new dip and a mapping between dgid and
- 	 * dip_idx will be created.
- 	 */
--	hr_dip = kzalloc(sizeof(*hr_dip), GFP_ATOMIC);
--	if (!hr_dip) {
--		ret = -ENOMEM;
--		goto out;
-+	xa_for_each(dip_xa, idx, hr_dip) {
-+		if (hr_dip->qp_cnt)
-+			continue;
-+
-+		*dip_idx = idx;
-+		memcpy(hr_dip->dgid, grh->dgid.raw, sizeof(grh->dgid.raw));
-+		hr_dip->dip_idx = idx;
-+		hr_dip->qp_cnt++;
-+		hr_qp->dip = hr_dip;
-+		break;
- 	}
-
--	memcpy(hr_dip->dgid, grh->dgid.raw, sizeof(grh->dgid.raw));
--	hr_dip->dip_idx = *dip_idx = spare_idx[*head];
--	*head = (*head == hr_dev->caps.num_qps - 1) ? 0 : (*head + 1);
--	list_add_tail(&hr_dip->node, &hr_dev->dip_list);
-+	/* This should never happen. */
-+	if (WARN_ON_ONCE(!hr_qp->dip))
-+		ret = -ENOSPC;
-
- out:
--	spin_unlock_irqrestore(&hr_dev->dip_list_lock, flags);
-+	xa_unlock(dip_xa);
- 	return ret;
- }
-
-@@ -5587,6 +5614,20 @@ static int hns_roce_v2_destroy_qp_common(struct hns_roce_dev *hr_dev,
- 	return ret;
- }
-
-+static void put_dip_ctx_idx(struct hns_roce_dev *hr_dev,
-+			    struct hns_roce_qp *hr_qp)
-+{
-+	struct hns_roce_dip *hr_dip = hr_qp->dip;
-+
-+	xa_lock(&hr_dev->qp_table.dip_xa);
-+
-+	hr_dip->qp_cnt--;
-+	if (!hr_dip->qp_cnt)
-+		memset(hr_dip->dgid, 0, GID_LEN_V2);
-+
-+	xa_unlock(&hr_dev->qp_table.dip_xa);
-+}
-+
- int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
- {
- 	struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
-@@ -5600,6 +5641,9 @@ int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
- 	spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
- 	flush_work(&hr_qp->flush_work.work);
-
-+	if (hr_qp->cong_type == CONG_TYPE_DIP)
-+		put_dip_ctx_idx(hr_dev, hr_qp);
-+
- 	ret = hns_roce_v2_destroy_qp_common(hr_dev, hr_qp, udata);
- 	if (ret)
- 		ibdev_err_ratelimited(&hr_dev->ib_dev,
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-index 3b3c6259ace0..1c593fcf1143 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -1347,7 +1347,7 @@ struct hns_roce_v2_priv {
- struct hns_roce_dip {
- 	u8 dgid[GID_LEN_V2];
- 	u32 dip_idx;
--	struct list_head node; /* all dips are on a list */
-+	u32 qp_cnt;
- };
-
- struct fmea_ram_ecc {
-diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
-index 49315f39361d..ae24c81c9812 100644
---- a/drivers/infiniband/hw/hns/hns_roce_main.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_main.c
-@@ -1135,8 +1135,6 @@ int hns_roce_init(struct hns_roce_dev *hr_dev)
-
- 	INIT_LIST_HEAD(&hr_dev->qp_list);
- 	spin_lock_init(&hr_dev->qp_list_lock);
--	INIT_LIST_HEAD(&hr_dev->dip_list);
--	spin_lock_init(&hr_dev->dip_list_lock);
-
- 	ret = hns_roce_register_device(hr_dev);
- 	if (ret)
-diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
-index 2ad03ecdbf8e..7d67cefe549c 100644
---- a/drivers/infiniband/hw/hns/hns_roce_qp.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
-@@ -1573,14 +1573,10 @@ int hns_roce_init_qp_table(struct hns_roce_dev *hr_dev)
- 	unsigned int reserved_from_bot;
- 	unsigned int i;
-
--	qp_table->idx_table.spare_idx = kcalloc(hr_dev->caps.num_qps,
--					sizeof(u32), GFP_KERNEL);
--	if (!qp_table->idx_table.spare_idx)
--		return -ENOMEM;
--
- 	mutex_init(&qp_table->scc_mutex);
- 	mutex_init(&qp_table->bank_mutex);
- 	xa_init(&hr_dev->qp_table_xa);
-+	xa_init(&qp_table->dip_xa);
-
- 	reserved_from_bot = hr_dev->caps.reserved_qps;
-
-@@ -1607,5 +1603,4 @@ void hns_roce_cleanup_qp_table(struct hns_roce_dev *hr_dev)
- 		ida_destroy(&hr_dev->qp_table.bank[i].ida);
- 	mutex_destroy(&hr_dev->qp_table.bank_mutex);
- 	mutex_destroy(&hr_dev->qp_table.scc_mutex);
--	kfree(hr_dev->qp_table.idx_table.spare_idx);
- }
---
-2.33.0
-
+Note: testing is done by a robot and is best-effort only.
 
