@@ -1,115 +1,239 @@
-Return-Path: <linux-kernel+bounces-400120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E329C0939
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:49:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C9059C0948
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:51:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEF891F24846
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:49:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDA51C23639
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ADD212D39;
-	Thu,  7 Nov 2024 14:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477D8212F0F;
+	Thu,  7 Nov 2024 14:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="flRiIlGM"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrTTNVLG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5D32E3EB;
-	Thu,  7 Nov 2024 14:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6075A212D0A;
+	Thu,  7 Nov 2024 14:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730990938; cv=none; b=gn0tonUwbtLQ6VzSgqsWcs0FN9dBN+GNn4OkLv0KWaiyQybmqN4kl7k0zYP351C9wPL/uWj6d60wMOKxauXe5kQ56sWuJdldBg/vfm+lE7TbgKu6lJhgjvgzJzfFMxKEZYXMVK8wccuZYHm0yxjxtTjxu0sYASTY5X+gmXL2hbU=
+	t=1730991041; cv=none; b=KF1Pi/XPDLudh8YngSWkiZQfPfA67vcde1o+dVB+msGB+TC37M7B+cQcpsCi76LIWCTnP+2MThiJtBS2OtFzEQrbtQgQ/22JT7mxsvCvyF+GDNWJ4Qna7UZbVZY3sNkS09h1k6wrpVeM9OzLonE7Zn9dIQT+6XIdUY0eU16SK94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730990938; c=relaxed/simple;
-	bh=PMaxsGwxGP8L4PO1DN8e3RJXl9QLLdw9+O0d3SdJ8eY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dJ5R3zFd2d54+nQRnYgMrxbQkWvu9tdwKTNlW92+mCD1htHTX5bjEJO0BrAFugq0vHO/Ksy5VdjrO1n1DB7I/rwlVQOrKG5P6OgLEuvxXd87l4zA4F1hVtp1jIKVA6+Lg1IpF+Krk7wFAVaUjra6GPQ9FlZY8q7ETy3BV/emGs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=flRiIlGM; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2da8529e1so146954a91.1;
-        Thu, 07 Nov 2024 06:48:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730990937; x=1731595737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RXm90BM0e3g7s1YWkLkcrwlJUU8mJYPnf6cKrFICdi0=;
-        b=flRiIlGMAtQmtuYTMkQnm2VgwbdsY5AHlFS6ci3S62JSN+Z9Svqu5azwU1eM9PGkJm
-         n2dh9rEosSsPFd+39I74URhJKZHgfUIHTWxGDh16USnKXLD4OSRXmFf3XfsGfQvKuhpp
-         OSDhoiW6f7qaz5OmkMnzZTBQ2i/WLw/p075VG8yCWE5HHqT4xZqpmC41N8TOWldvwpZo
-         XNONP8Pw4y17xlsKEdjCa5oej9wvWuyIP1IUd5IKhSSs1Nt5mbTrwtb4KCv+eCU8z4JJ
-         OnG05KN4ZwtorXmbxQSaSvf3qlycP7cRNDuxO6jnG/yvlZjQwNFHwKMA5dR+NQMHOx+j
-         SjHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730990937; x=1731595737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RXm90BM0e3g7s1YWkLkcrwlJUU8mJYPnf6cKrFICdi0=;
-        b=DuxqAoI5BVYUQZbkII0e7Odlc8RDzRsQq5JXMDiu0G7C+Jr910KqHqIPqtSMxIWsgI
-         uMlu8hm7Us7xm0Rn/m4ZY5PBdmd/lR4muXWaSQAf8BDlh8K69FLu/Zv0iI/9DnIfWsCB
-         8wkEFx8zBJ0OTrIvvWoc8bb9TexgC+I2dC5Qe9Zx2ZC/7WiSUdOUOpdiF/4lDXaZTDZa
-         MRL/LWdayMtSR0bRlht4ob1iAj4WFBH1KjYyiF4NsryptYNdq7/+419oLfMhNkV3fssI
-         I5GtkauYyFhgBsn/Fr3AENc6PIVXAKrcWevNYIttdnfrZwAGxVbmsSlYAtNL6uItyYYc
-         K2ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWuZpjZpjm9OEAXMbQLsfoFNrpYoI/bPWE9y+Fq1Z4OXY93K+aZSR9TVH+hEWzHYoD62kyD8DQ0EH6KTWw=@vger.kernel.org, AJvYcCXsmE0q8wCyw84sAlQ1A5qGLYNxjgikRV2LB1iq4ToxUqHQyJ3ws3mN54ZIGzB1ELKUJVIInWx7KDyyTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6EMztd9R3C9bn3LCQfpwJDbh1jep2pVZSndhHn64NxxYR9Q6H
-	L82y2AQhsH81sLIfeYGjHUzL89GvEF71WbKda+VbR48IzT4cWmJGLOixSM+mo+VOueefx7raM4Y
-	vaNE1QYoVRC6NdiL8mZJPL7/K1OA=
-X-Google-Smtp-Source: AGHT+IF6MTLRk+KPqBxLL/3eKuTaPnNkJqCH3RcYZkvvpiuKj+qMr8AQtN2jNM6akkFBI+9DuceGHfPfFxYiDX6ziAM=
-X-Received: by 2002:a17:90b:4c11:b0:2e7:8a36:a9ad with SMTP id
- 98e67ed59e1d1-2e9afcc285emr90333a91.9.1730990936627; Thu, 07 Nov 2024
- 06:48:56 -0800 (PST)
+	s=arc-20240116; t=1730991041; c=relaxed/simple;
+	bh=jRpyuqPS/RfPxFE82RRibgYz8lq1+WOk8OnAFcqr9HY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TseYEo9Sc1rogDpsbz6SqeZrzllntPZvdl3T5EDO0NCyrZvyJvbm/SuKHvd6oTBQEsPO6BCgeafQXB2hZhBcAIPEHYI6S+e2uh8JcWkoZvKypBSbbXu819N199ik9jwWJFqJxUcovGwklrpp5+8ociNIZWuWem51q4EcIayKLCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrTTNVLG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3FA6C4CECC;
+	Thu,  7 Nov 2024 14:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730991041;
+	bh=jRpyuqPS/RfPxFE82RRibgYz8lq1+WOk8OnAFcqr9HY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HrTTNVLGr0k6BbKW0dEb6ZIQo/RQQdIVrWJQhWAQa6JALjw5Uelh67HLaTrZXT/Je
+	 mIj8OIN2KIw7OAdV8IRlUiwd1QctmZrFFKGXfzc0aWRWBVRkbHZd3v4Ma0JjAH5r4o
+	 RllAPWRCzhb8AxRbCdK9JWFR5uvuvXaq57Bcp6JVx0/+/n0Vcd0FTwQpD0C13UseaK
+	 zsbYe92XLKd6seRM8ug+RJKv9lk+J/tjBGwOyqeU8B+pQc9OZ32dNHSW1nTVwFmSDB
+	 FF5TUjLYtNLjZJdK1mLn10lmaVO1g0mDZm3TMUsuhwXHoQmZjhgnckwVIp3naxiGmO
+	 N7zfMcFtrOHMw==
+Date: Thu, 7 Nov 2024 16:50:34 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 07/17] dma-mapping: Implement link/unlink ranges API
+Message-ID: <20241107145034.GO5006@unreal>
+References: <cover.1730298502.git.leon@kernel.org>
+ <f8c7f160c9ae97fef4ccd355f9979727552c7374.1730298502.git.leon@kernel.org>
+ <51c5a5d5-6f90-4c42-b0ef-b87791e00f20@arm.com>
+ <20241104091048.GA25041@lst.de>
+ <20241104121924.GC35848@ziepe.ca>
+ <20241104125302.GA11168@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107182411.57e2b418@canb.auug.org.au> <20241107103414.GT10375@noisy.programming.kicks-ass.net>
- <CANiq72kkiwaMpeKgNLYiCSMX_VK7a+6Xu4iQrDiB_cpnXpokxg@mail.gmail.com> <20241107143930.GC38786@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241107143930.GC38786@noisy.programming.kicks-ass.net>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 7 Nov 2024 15:48:43 +0100
-Message-ID: <CANiq72nobVS2t9pEMP=xs3HCh5-qZwp7yzswvSCqPw4Cb=BCZQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, bigeasy@linutronix.de, boqun.feng@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104125302.GA11168@lst.de>
 
-On Thu, Nov 7, 2024 at 3:39=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> So menuconfig prints that as a giant line without wrapping, but instead
-> forces me to press 'right-arrow' to scrol that.
+On Mon, Nov 04, 2024 at 01:53:02PM +0100, Christoph Hellwig wrote:
+> On Mon, Nov 04, 2024 at 08:19:24AM -0400, Jason Gunthorpe wrote:
+> > > That's a good point.  Only mapped through host bridge P2P can even
+> > > end up here, so the address is a perfectly valid physical address
+> > > in the host.  But I'm not sure if all arch_sync_dma_for_device
+> > > implementations handle IOMMU memory fine.
+> > 
+> > I was told on x86 if you do a cache flush operation on MMIO there is a
+> > chance it will MCE. Recently had some similar discussions about ARM
+> > where it was asserted some platforms may have similar.
+> 
+> On x86 we never flush caches for DMA operations anyway, so x86 isn't
+> really the concern here, but architectures that do cache incoherent DMA
+> to PCIe devices.  Which isn't a whole lot as most SOCs try to avoid that
+> for PCIe even if they lack DMA coherent for lesser peripherals, but I bet
+> there are some on arm/arm64 and maybe riscv or mips.
+> 
+> > It would be safest to only call arch flushing calls on memory that is
+> > mapped cachable. We can assume that a P2P target is never CPU
+> > mapped cachable, regardless of how the DMA is routed.
+> 
+> Yes.  I.e. force DMA_ATTR_SKIP_CPU_SYNC for P2P.
 
-Yeah, it is bad, I also suffer from that :(
+What do you think?
 
-We should improve it.
-
-> Which is what I installed today from debian/unstable, because the
-> version from debian/testing was too old to satisfy make rustavailable.
-
-Something is amiss here -- Debian Testing should be fine (I test it
-regularly using the Docker image), since has 1.82 too:
-
-    https://packages.debian.org/trixie/rustc
-
-I double-checked manually the `debian:testing` image:
-
-    # apt show rustc
-    Package: rustc
-    Version: 1.82.0+dfsg1-2
-
-Cheers,
-Miguel
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 38bcb3ecceeb..065bdace3344 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -559,14 +559,19 @@ static bool blk_rq_dma_map_iova(struct request *req, struct device *dma_dev,
+ {
+ 	enum dma_data_direction dir = rq_dma_dir(req);
+ 	unsigned int mapped = 0;
++	unsigned long attrs = 0;
+ 	int error = 0;
+ 
+ 	iter->addr = state->addr;
+ 	iter->len = dma_iova_size(state);
++	if (req->cmd_flags & REQ_P2PDMA) {
++		attrs |= DMA_ATTR_SKIP_CPU_SYNC;
++		req->cmd_flags &= ~REQ_P2PDMA;
++	}
+ 
+ 	do {
+ 		error = dma_iova_link(dma_dev, state, vec->paddr, mapped,
+-				vec->len, dir, 0);
++				vec->len, dir, attrs);
+ 		if (error)
+ 			goto error_unmap;
+ 		mapped += vec->len;
+@@ -578,7 +583,7 @@ static bool blk_rq_dma_map_iova(struct request *req, struct device *dma_dev,
+ 
+ 	return true;
+ error_unmap:
+-	dma_iova_destroy(dma_dev, state, mapped, rq_dma_dir(req), 0);
++	dma_iova_destroy(dma_dev, state, mapped, rq_dma_dir(req), attrs);
+ 	iter->status = errno_to_blk_status(error);
+ 	return false;
+ }
+@@ -633,7 +638,6 @@ bool blk_rq_dma_map_iter_start(struct request *req, struct device *dma_dev,
+ 			 * P2P transfers through the host bridge are treated the
+ 			 * same as non-P2P transfers below and during unmap.
+ 			 */
+-			req->cmd_flags &= ~REQ_P2PDMA;
+ 			break;
+ 		default:
+ 			iter->status = BLK_STS_INVAL;
+@@ -644,6 +648,8 @@ bool blk_rq_dma_map_iter_start(struct request *req, struct device *dma_dev,
+ 	if (blk_can_dma_map_iova(req, dma_dev) &&
+ 	    dma_iova_try_alloc(dma_dev, state, vec.paddr, total_len))
+ 		return blk_rq_dma_map_iova(req, dma_dev, state, iter, &vec);
++
++	req->cmd_flags &= ~REQ_P2PDMA;
+ 	return blk_dma_map_direct(req, dma_dev, iter, &vec);
+ }
+ EXPORT_SYMBOL_GPL(blk_rq_dma_map_iter_start);
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 62980ca8f3c5..5fe30fbc42b0 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -23,6 +23,7 @@ struct mmu_interval_notifier;
+  * HMM_PFN_WRITE - if the page memory can be written to (requires HMM_PFN_VALID)
+  * HMM_PFN_ERROR - accessing the pfn is impossible and the device should
+  *                 fail. ie poisoned memory, special pages, no vma, etc
++ * HMM_PFN_P2PDMA - P@P page, not bus mapped
+  * HMM_PFN_P2PDMA_BUS - Bus mapped P2P transfer
+  * HMM_PFN_DMA_MAPPED - Flag preserved on input-to-output transformation
+  *                      to mark that page is already DMA mapped
+@@ -41,6 +42,7 @@ enum hmm_pfn_flags {
+ 	HMM_PFN_ERROR = 1UL << (BITS_PER_LONG - 3),
+ 
+ 	/* Sticky flag, carried from Input to Output */
++	HMM_PFN_P2PDMA     = 1UL << (BITS_PER_LONG - 5),
+ 	HMM_PFN_P2PDMA_BUS = 1UL << (BITS_PER_LONG - 6),
+ 	HMM_PFN_DMA_MAPPED = 1UL << (BITS_PER_LONG - 7),
+ 
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 4ef2b3815212..b2ec199c2ea8 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -710,6 +710,7 @@ dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
+ 	struct page *page = hmm_pfn_to_page(pfns[idx]);
+ 	phys_addr_t paddr = hmm_pfn_to_phys(pfns[idx]);
+ 	size_t offset = idx * map->dma_entry_size;
++	unsigned long attrs = 0;
+ 	dma_addr_t dma_addr;
+ 	int ret;
+ 
+@@ -740,6 +741,9 @@ dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
+ 
+ 	switch (pci_p2pdma_state(p2pdma_state, dev, page)) {
+ 	case PCI_P2PDMA_MAP_THRU_HOST_BRIDGE:
++		attrs |= DMA_ATTR_SKIP_CPU_SYNC;
++		pfns[idx] |= HMM_PFN_P2PDMA;
++		fallthrough;
+ 	case PCI_P2PDMA_MAP_NONE:
+ 		break;
+ 	case PCI_P2PDMA_MAP_BUS_ADDR:
+@@ -752,7 +756,8 @@ dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
+ 
+ 	if (dma_use_iova(state)) {
+ 		ret = dma_iova_link(dev, state, paddr, offset,
+-				    map->dma_entry_size, DMA_BIDIRECTIONAL, 0);
++				    map->dma_entry_size, DMA_BIDIRECTIONAL,
++				    attrs);
+ 		if (ret)
+ 			return DMA_MAPPING_ERROR;
+ 
+@@ -793,6 +798,7 @@ bool hmm_dma_unmap_pfn(struct device *dev, struct hmm_dma_map *map, size_t idx)
+ 	struct dma_iova_state *state = &map->state;
+ 	dma_addr_t *dma_addrs = map->dma_list;
+ 	unsigned long *pfns = map->pfn_list;
++	unsigned long attrs = 0;
+ 
+ #define HMM_PFN_VALID_DMA (HMM_PFN_VALID | HMM_PFN_DMA_MAPPED)
+ 	if ((pfns[idx] & HMM_PFN_VALID_DMA) != HMM_PFN_VALID_DMA)
+@@ -801,14 +807,16 @@ bool hmm_dma_unmap_pfn(struct device *dev, struct hmm_dma_map *map, size_t idx)
+ 
+ 	if (pfns[idx] & HMM_PFN_P2PDMA_BUS)
+ 		; /* no need to unmap bus address P2P mappings */
+-	else if (dma_use_iova(state))
++	else if (dma_use_iova(state)) {
++		if (pfns[idx] & HMM_PFN_P2PDMA)
++			attrs |= DMA_ATTR_SKIP_CPU_SYNC;
+ 		dma_iova_unlink(dev, state, idx * map->dma_entry_size,
+-				map->dma_entry_size, DMA_BIDIRECTIONAL, 0);
+-	else if (dma_need_unmap(dev))
++				map->dma_entry_size, DMA_BIDIRECTIONAL, attrs);
++	} else if (dma_need_unmap(dev))
+ 		dma_unmap_page(dev, dma_addrs[idx], map->dma_entry_size,
+ 			       DMA_BIDIRECTIONAL);
+ 
+-	pfns[idx] &= ~(HMM_PFN_DMA_MAPPED | HMM_PFN_P2PDMA_BUS);
++	pfns[idx] &= ~(HMM_PFN_DMA_MAPPED | HMM_PFN_P2PDMA | HMM_PFN_P2PDMA_BUS);
+ 	return true;
+ }
+ EXPORT_SYMBOL_GPL(hmm_dma_unmap_pfn);
 
