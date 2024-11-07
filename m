@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-400093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B78D9C08E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:29:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650D29C08E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E444E284746
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:29:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29EA52844EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA908212D0A;
-	Thu,  7 Nov 2024 14:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594B621263C;
+	Thu,  7 Nov 2024 14:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WpXfZWMF"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VJ8LmmHL"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914C929CF4;
-	Thu,  7 Nov 2024 14:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552B51F8EFF
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730989774; cv=none; b=rWp2itFz0u6ylqN/37n29iQM0g8ONnPjN1+/LfgVMMQpjvHf4beRdV/SfGTJ+NdqM5cFvBIpijXjr4MjoeP3P5bpwKkOLh8zTUbMtpys5TBQ85fDuSeSHcegERoUdzaPDqb3BU6WSec7+hsN7qjTy1V6rqMi5YzSosqjWV1aqm0=
+	t=1730989825; cv=none; b=WXvYFLETutmZV+ap5dG9HvL9JW/9Ne4IJzidlT8PM1/lmkfCfyWgtiw/KNVU0rKUkmssEj/I/tmFvTJiSNRo+VtrZAnxhfqR/l/RRG22bRJSq+NrVM2rktWAN+QvSPik4/4xghE6Wm8CX0o4976+8d2YR7dWqz7pAqDIoOSnOa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730989774; c=relaxed/simple;
-	bh=qTJCPmQc0wQPBA2t7FrvNJQ16tzLCuQde9NWc/cfJes=;
+	s=arc-20240116; t=1730989825; c=relaxed/simple;
+	bh=TAEzMu+Gin5KjCOvmsrL+Snzm+CtcbZNBbO/cyWIm0Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbrArvSpr+TtEfsMroVqq9MqeYMWcTapH8sS0Kk1LnMmJ8i4BwZ5qc3gmENV2rkM9V4vD3a/9dlOeqkcLHmzUKngbXWCm7yuAXifDtpC1dP5yg8/q7LYlwTGTLDvU7DMS0jPmnYp4DkO96sMBxwxZuejYJKldoCrBp17WYKIgws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WpXfZWMF; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0CBE640E0261;
-	Thu,  7 Nov 2024 14:29:27 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id hgWXCkSHF6Hg; Thu,  7 Nov 2024 14:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730989762; bh=CpUSF5wV943nizZbTHFsAvrf8peZivoamSj5AQOYqJg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WpXfZWMFRF5y5R+ioYc3w7GP+hIGkgzbVfsM8qPcriZ+3iC534kr1LRL+I2tMObag
-	 0Z+pq3c+PeV/2W2H//suly6l/wQxUaooRGZei6O63O65g7pp/oPurHUzt8xStpMsqr
-	 0lTC+uTnm4ajBfhdbCkrpJEiwRKfN90EyRTsxcA6loRME/FSbNGgZdTHhrF3E4CKal
-	 4w2ynibYDKeIbfR/6Omndza4dNTQmSB1Ugwi+rPgCHc9yIWqb3pQsErOjNiAsQjWqK
-	 BycMwJ8rWLb83Dj+eShm+uhiAAFEfv0oefOIiks8v6TyYnuN7Yaxhm1+JmoYskay2g
-	 DgK+ohuZhgMhVWg+Qe5HBaRYrYm6NBXVRKhnm+VbEsFG84Zxr8ys2uOYHIb1Jp6eQY
-	 qN7NWwORvI5fEerafRrv5uQUIfKj+2H886bxGhLyr3sDJbNdTzIby333DN+te1WcAs
-	 2NRpAcESBhoRjdUOdcCmsZbrawHx2EsWF/RJ2P3D2vuqtc5QpgnaVybIaWxzuHjYQ9
-	 UKJyUwPOoICwBBmO2e4RG0BH8xFcJzqaAYIh8k9U4wFub5MVuTkH/xrEdzhzDz5Ltz
-	 dm5PqOghgZkrjWNfWVMWnsMiVOrKRJHUHNPOh23K+ZWlu1zgXBIIgrc09D2WKRFVIf
-	 0UB7TAysopDld7Zeh/dIQmTY=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 671E840E0163;
-	Thu,  7 Nov 2024 14:29:05 +0000 (UTC)
-Date: Thu, 7 Nov 2024 15:28:56 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org
-Subject: Re: [RFC 03/14] x86/apic: Populate .read()/.write() callbacks of
- Secure AVIC driver
-Message-ID: <20241107142856.GBZyzOqHvusxcskYR1@fat_crate.local>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-4-Neeraj.Upadhyay@amd.com>
- <20241106181655.GYZyuyl0zDTTmlMKzz@fat_crate.local>
- <72878fd9-6b04-4336-a409-8118c4306171@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRxWCm0ZgdSC2AKJMkQzX7DBsw/qxx7F+UmeuCsnvfg8s/xyypo4dLSDrPxSQNmuKJ/tZ+Fmef/RfhuK4W7H+CAPryzNAUIQgD2NiQmSd16U0dhghpE5dJbvmIVDPK5sGfl7tSbjxD9p5BOKJpqsAG0N+JTcRKLiWWVOzgNHfU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VJ8LmmHL; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso243115ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 06:30:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730989823; x=1731594623; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g4jj7NaM8ebNsLZnLFGel4o8JmTgydoOO7gZabyYqYI=;
+        b=VJ8LmmHL3PejCAdGiAcgagzk+AFbFfu3IJYMhre5IBWVBSTbjb9YadEjjR2Wv8ZpkD
+         1oR84Yf9HwLVxAfd6Sm1ZWXVaQVZcDBbdkGq2pGzkxn0xDbtIjCJEdDtk/JFjOT3c3IZ
+         rncHX5rLZHU4kVh0RlGuUEeT7V1L0Z5MaAdOIN7hbv30i+MFI2JMdE/SkHdoOAyEbnjR
+         mlbFujhfxvKuxsG9omdwqze80GE9Ac2PMo/8qJ8eGZ00FC8eDBTZmOOdkRKIvy1o2wHd
+         kt74qQemEejoYv9KwsWW3Bui28tYv0ktli+uBjjfmv3p9utlHD45KFTolsy9o0c1y5mJ
+         QoZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730989823; x=1731594623;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g4jj7NaM8ebNsLZnLFGel4o8JmTgydoOO7gZabyYqYI=;
+        b=WeR8lmzbtOroj28hytvGCLYQHBgRzQs6KzBHXtQkQq7+CA85TCasep83menaHbvIvq
+         zhq38peXH1qLUFeZjoXYOCtg7DZqxgyII4isU8ZInvJFZ3Uz2HBOdKjUu/jTT+PM+I1T
+         chRbi6p5p3aN0MK5Y3gvAjLokGiUS0gKopoc6idD2A9zrm08mmDkUdvUrrQvUhzz33IW
+         GX4ubHtnmZTiTsefMKWDanjufPIXgwUS23+yPqo3JanQoIL/yaTK/+GYG+ykAM4A2iM6
+         A1TRnFI+2sa9gtNLPFXzJxPxvA3V/CjJzN6kwh4jPekNgXD9eaYt8wDUq2Ey2FCrmgzN
+         t8nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsUZJXazZtTaO/Z+G0zD4xewyVb96gf5H34sC5fcShIShuLHv6HFxol8FQr0ikVUPm3886LyzuTu0rH2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyff/eAZPYfoF7Kz8W/8yXwWmQ7n5elBJjQs5OKbWNP9We1rzAq
+	JVhVh5AqDLJ/YagnkDhCCZTeWHqCqQkYbG1UXj1SHmE1ZnR9OjIq6pcq9GFX+Q==
+X-Gm-Gg: ASbGncvxYH0EO1Z3bRq/iV/sqfAI/nQfKVt7Xv2g+KRPn9ZzIibZfr4wa+d/QN00N4y
+	jX7hkeKwoRWMhzWrilyP31Lj/RzuSICMbWACRtISCa4YpgwuwfcX+ETOIXl8YIKgl1gY5svziqp
+	k6OtvPv3F3YmzqzvrNf450hZHHn0urcz61gZTehIwbZbRFCZHKGEXb2L8rZli90+eAT00slyAiE
+	BlveLl3XTq5cWPC/ap4udD45aiG9kgOCb3depH2D/jtmPD+t2v76I9jyczwMA4rIAJO4Bv6rJnp
+	ev+Kotcgqm1jyqM=
+X-Google-Smtp-Source: AGHT+IE5xkk5xcfZQG6k2w7Yp5qHTNWB+BlI4rkftFRMvcg4wn1XqKUDUPxuKa8K+2RkiUayjPDnoQ==
+X-Received: by 2002:a05:6e02:b46:b0:3a6:b8f5:7166 with SMTP id e9e14a558f8ab-3a6e7a31954mr4512975ab.12.1730989823089;
+        Thu, 07 Nov 2024 06:30:23 -0800 (PST)
+Received: from google.com (180.145.227.35.bc.googleusercontent.com. [35.227.145.180])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5ed9eesm1485806a12.48.2024.11.07.06.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 06:30:22 -0800 (PST)
+Date: Thu, 7 Nov 2024 14:30:18 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: Re: [PATCH v2 1/8] Revert "binder: switch alloc->mutex to spinlock_t"
+Message-ID: <ZyzO-vbufELmBlvf@google.com>
+References: <20241107040239.2847143-1-cmllamas@google.com>
+ <20241107040239.2847143-2-cmllamas@google.com>
+ <2024110742-setup-clothing-44b8@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <72878fd9-6b04-4336-a409-8118c4306171@amd.com>
+In-Reply-To: <2024110742-setup-clothing-44b8@gregkh>
 
-On Thu, Nov 07, 2024 at 09:02:16AM +0530, Neeraj Upadhyay wrote:
-> Intention of doing per reg is to be explicit about which registers
-> are accessed from backing page, which from hv and which are not allowed
-> access. As access (and their perms) are per-reg and not range-based, this
-> made sense to me. Also, if ranges are used, I think 16-byte aligned
-> checks are needed for the range. If using ranges looks more logical grouping
-> here, I can update it as per the above range groupings.
+On Thu, Nov 07, 2024 at 09:56:16AM +0100, Greg Kroah-Hartman wrote:
+> On Thu, Nov 07, 2024 at 04:02:23AM +0000, Carlos Llamas wrote:
+> > This reverts commit 7710e2cca32e7f3958480e8bd44f50e29d0c2509.
+> > 
+> > In preparation for concurrent page installations, restore the original
+> > alloc->mutex which will serialize zap_page_range_single() against page
+> > installations in subsequent patches (instead of the mmap_sem).
+> > 
+> > Cc: Mukesh Ojha <quic_mojha@quicinc.com>
+> > [cmllamas: fix trivial conflict due to 2c10a20f5e84a]
+> 
+> Nit, commits have the full name in them as well, not just the sha1 one,
+> i.e.:
+> 	2c10a20f5e84 ("binder_alloc: Fix sleeping function called from invalid context")
+>
 
-Is this list of registers going to remain or are we going to keep adding to
-it so that the ranges become contiguous?
+Sounds good, done for v3.
 
-And yes, there is some merit to explicitly naming them but you can also put
-that in a comment once above those functions too.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Cheers,
+Carlos Llamas
 
