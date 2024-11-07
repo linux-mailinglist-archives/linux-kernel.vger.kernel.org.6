@@ -1,191 +1,212 @@
-Return-Path: <linux-kernel+bounces-399573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E249C00F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:17:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9AE29C00F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:18:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33FCB2839DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1901F22DEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2C1DFE29;
-	Thu,  7 Nov 2024 09:17:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D711DC05D;
+	Thu,  7 Nov 2024 09:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZAs6bZQI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C63192B73;
-	Thu,  7 Nov 2024 09:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D76E126C01
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730971041; cv=none; b=FC4IKH4sREazhcStCxiOFxZ7RU+eWQWeiFzPbXgtxx5SGYcCFnCX9CBbzwOFXypIXuGXj4JylRC/95sJct7IzusdW+1sD7n0DhgqrBVYOX6FrwkySAL17hCv8z4MT76MIFS2nyYlVbdrbGJ5s5cw2O1copqgkLdH/J0RnFqTxKY=
+	t=1730971091; cv=none; b=SVXDatpXjvVan38hiCSVxS73wsUZM3wdv2UTxIzmWalfOuEewubkp4qJOxRWt/b548HI7oFfpqnIFsNfWLaVEbjjokIcAE2cJefPRMAEQAejgAsrs7Qqbl42MAI8f8CcW4tXKwXCEkKbIbilqZRfyJyHqQTP99wyoree+lkpDIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730971041; c=relaxed/simple;
-	bh=SkfFvecVs2l+s2XYosQTMeR4oTOSQgmyAuYa8UD0azU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pp9zutdRka1BGMtmWUYpxOpqUbpNU02Oz851T0HsQU7pFzww7QoJMzurxUAJkUorekLCfMAPWw0vZTypoEYCENjF9/Wx0slDUuD/ZLo2ZHznTBOVdUMUZkgmZm+AH3+ZJDsrHJrCP4+Wa46LLebS8OTJYGBkzNeGJYh8XU/6BG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B28FBC4CECC;
-	Thu,  7 Nov 2024 09:17:18 +0000 (UTC)
-Message-ID: <94f7c775-10bd-46d5-bc89-a18533dcab68@xs4all.nl>
-Date: Thu, 7 Nov 2024 10:17:16 +0100
+	s=arc-20240116; t=1730971091; c=relaxed/simple;
+	bh=CmVphk5HnzRr9iFL/NZcM2i71JfryJy3cZgbIgsnpNw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bLNUKh21B86DJJ9cjfaeTq6a+Qwlm/X8/mdffLAvmWSTD48o22l/ZBcjgHI4WHFjReqGArO3HQ/Ca8Yp698DGIQ4zkospZSS6vCZ+018xFK8RDSANyluUuRw2SBKjCalcsWfs7cm+XxwzY9eSDjRk3/6eg+Seh9/Y6P+3zanZ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZAs6bZQI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730971087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CmVphk5HnzRr9iFL/NZcM2i71JfryJy3cZgbIgsnpNw=;
+	b=ZAs6bZQIWFOI87WhWZ7H+Ki54oKFh65AoLB+iGMMwAYq+dn+xG4wQZe1iokvtEsYYjsg3o
+	yAQKWtGNqHfBgo7fDzxHdDVNELQpO01A8HLARn9Upk4vCfx19Hv9JnNQ55/kYYNs5nVtQT
+	h8TRX7RtvZJ5HZ26xp4HBRZxAgl8djM=
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
+ [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-hBplO9iOONK35XXa5FCHNQ-1; Thu, 07 Nov 2024 04:18:06 -0500
+X-MC-Unique: hBplO9iOONK35XXa5FCHNQ-1
+X-Mimecast-MFC-AGG-ID: hBplO9iOONK35XXa5FCHNQ
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7181ca4eca5so782364a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:18:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730971086; x=1731575886;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CmVphk5HnzRr9iFL/NZcM2i71JfryJy3cZgbIgsnpNw=;
+        b=oYobu4NM1k3qpXhPY3YcEmh09/MDufwfO8rL5IKxZsJRpTxaDTL+FOHTJe1MM3MqAq
+         v9ZsMEbN0/3mfk2rYHKrS37tBD5VUm0o17oeap56UNEhkV8D6jdQ57sCaj75DNtqMc4a
+         u7DE6QKYX27uSlE9+DalwVhGgCdrloG4M7I12ljBzL/aLQm9FQmsc9ixxbClDNIzoafb
+         hYkL1RkphMX5A1ZOR0jvegqIG8ublQYx7EyWBF1XfiRIt12UkRuKaWc9szAqs1I2C+Ly
+         TgxE89ui0T0pE5Rz7QQ0stlMg1zS2+qGRSnPM6/Qs4cgqk2HsEs3c7pk+z8HdqXUp0Oq
+         F/fA==
+X-Gm-Message-State: AOJu0YwGpHqse+9W6ys2s4jelbrB2jJnNadBtw5p3oMV83VWF6qW4yur
+	0CEOJZ2NAZ6h/Py+O1xJMM4agyjEwlo0HR32DAgMLagdLA1+jx3EAUuwZgWAMS+79f9Yjxi5woh
+	SfbGODAgVLk+hVcCfCkwhEFe7YAnAIg/IZaWzqlmYC1XyYO9qNpFTCJ9FoNYrpQ==
+X-Received: by 2002:a05:6871:7a5:b0:270:4d48:6be2 with SMTP id 586e51a60fabf-29051c581bemr38495147fac.26.1730971085919;
+        Thu, 07 Nov 2024 01:18:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHxVuDCN+kUd2BLd1VEmyXUjRDGkSSx/KgtfiR0mwWkoNFmy2UU8+iWUjMXBXD7zPGbuSVtYw==
+X-Received: by 2002:a05:6871:7a5:b0:270:4d48:6be2 with SMTP id 586e51a60fabf-29051c581bemr38495122fac.26.1730971085599;
+        Thu, 07 Nov 2024 01:18:05 -0800 (PST)
+Received: from [10.32.64.113] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546ce5938sm253621fac.20.2024.11.07.01.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 01:18:05 -0800 (PST)
+Message-ID: <1c27295862e10dd958c01ef3ab5ef2f3757e446b.camel@redhat.com>
+Subject: Re: [PATCH] drm/sched: Improve teardown documentation
+From: Philipp Stanner <pstanner@redhat.com>
+To: Luben Tuikov <ltuikov89@gmail.com>, Matthew Brost
+ <matthew.brost@intel.com>,  Danilo Krummrich <dakr@kernel.org>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin
+ <tursulin@igalia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Date: Thu, 07 Nov 2024 10:18:01 +0100
+In-Reply-To: <20241105143137.71893-2-pstanner@redhat.com>
+References: <20241105143137.71893-2-pstanner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: videobuf2-core: copy vb planes unconditionally
-To: Tomasz Figa <tfiga@chromium.org>, Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: m.szyprowski@samsung.com, mchehab@kernel.org, yunkec@chromium.org,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, andre.draszik@linaro.org,
- kernel-team@android.com, willmcvicker@google.com, stable@vger.kernel.org
-References: <20241106121802.2939237-1-tudor.ambarus@linaro.org>
- <CAAFQd5B51wa1dD3FzHKxsg4VaA_bHzUrFGmA19q8jUybsMuS0Q@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <CAAFQd5B51wa1dD3FzHKxsg4VaA_bHzUrFGmA19q8jUybsMuS0Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 07/11/2024 00:41, Tomasz Figa wrote:
-> On Wed, Nov 6, 2024 at 9:18 PM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->>
->> Copy the relevant data from userspace to the vb->planes unconditionally
->> as it's possible some of the fields may have changed after the buffer
->> has been validated.
->>
->> Keep the dma_buf_put(planes[plane].dbuf) calls in the first
->> `if (!reacquired)` case, in order to be close to the plane validation code
->> where the buffers were got in the first place.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 95af7c00f35b ("media: videobuf2-core: release all planes first in __prepare_dmabuf()")
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  .../media/common/videobuf2/videobuf2-core.c   | 28 ++++++++++---------
->>  1 file changed, 15 insertions(+), 13 deletions(-)
->>
-> 
-> Thanks for the fix.
-> 
-> Acked-by: Tomasz Figa <tfiga@chromium.org>
-> 
-> (We probably need some tests to verify this behavior... It seems like
-> the way v4l2-compliance is implemented [1] would only trigger the
-> !reacquired case on most drivers.)
-> 
-> [1] https://git.linuxtv.org/v4l-utils.git/tree/utils/v4l2-compliance/v4l2-test-buffers.cpp#n2071
-> (just queuing all imported buffers in order and re-queuing them
-> exactly as they are dequeued [2])
-> [2] https://git.linuxtv.org/v4l-utils.git/tree/utils/v4l2-compliance/v4l2-test-buffers.cpp#n1299
+On Tue, 2024-11-05 at 15:31 +0100, Philipp Stanner wrote:
+> If jobs are still enqueued in struct drm_gpu_scheduler.pending_list
+> when drm_sched_fini() gets called, those jobs will be leaked since
+> that
+> function stops both job-submission and (automatic) job-cleanup. It
+> is,
+> thus, up to the driver to take care of preventing leaks.
+>=20
+> The related function drm_sched_wqueue_stop() also prevents automatic
+> job
+> cleanup.
+>=20
+> Those pitfals are not reflected in the documentation, currently.
+>=20
+> Explicitly inform about the leak problem in the docstring of
+> drm_sched_fini().
+>=20
+> Additionally, detail the purpose of drm_sched_wqueue_{start,stop} and
+> hint at the consequences for automatic cleanup.
+>=20
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-I'll see if I can improve that test.
+Got an off-list (mail from dri-devel apparently got lost) RB from
+Christian.
 
-Regards,
+Applied to drm-misc-next.
 
-	Hans
+P.
 
-> 
-> Best regards,
-> Tomasz
-> 
->> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
->> index f07dc53a9d06..c0cc441b5164 100644
->> --- a/drivers/media/common/videobuf2/videobuf2-core.c
->> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
->> @@ -1482,18 +1482,23 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
->>                         }
->>                         vb->planes[plane].dbuf_mapped = 1;
->>                 }
->> +       } else {
->> +               for (plane = 0; plane < vb->num_planes; ++plane)
->> +                       dma_buf_put(planes[plane].dbuf);
->> +       }
->>
->> -               /*
->> -                * Now that everything is in order, copy relevant information
->> -                * provided by userspace.
->> -                */
->> -               for (plane = 0; plane < vb->num_planes; ++plane) {
->> -                       vb->planes[plane].bytesused = planes[plane].bytesused;
->> -                       vb->planes[plane].length = planes[plane].length;
->> -                       vb->planes[plane].m.fd = planes[plane].m.fd;
->> -                       vb->planes[plane].data_offset = planes[plane].data_offset;
->> -               }
->> +       /*
->> +        * Now that everything is in order, copy relevant information
->> +        * provided by userspace.
->> +        */
->> +       for (plane = 0; plane < vb->num_planes; ++plane) {
->> +               vb->planes[plane].bytesused = planes[plane].bytesused;
->> +               vb->planes[plane].length = planes[plane].length;
->> +               vb->planes[plane].m.fd = planes[plane].m.fd;
->> +               vb->planes[plane].data_offset = planes[plane].data_offset;
->> +       }
->>
->> +       if (reacquired) {
->>                 /*
->>                  * Call driver-specific initialization on the newly acquired buffer,
->>                  * if provided.
->> @@ -1503,9 +1508,6 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
->>                         dprintk(q, 1, "buffer initialization failed\n");
->>                         goto err_put_vb2_buf;
->>                 }
->> -       } else {
->> -               for (plane = 0; plane < vb->num_planes; ++plane)
->> -                       dma_buf_put(planes[plane].dbuf);
->>         }
->>
->>         ret = call_vb_qop(vb, buf_prepare, vb);
->> --
->> 2.47.0.199.ga7371fff76-goog
->>
+> ---
+> Hi,
+>=20
+> in our discussion about my proposed waitque-cleanup for this problem
+> Sima suggested [1] that we document the problems first and by doing
+> so get
+> to a consenus what the problems actually are and how we could solve
+> them.
+>=20
+> This is my proposal for documenting the leaks on teardown. Feedback
+> very
+> welcome.
+>=20
+> P.
+>=20
+> [1]
+> https://lore.kernel.org/dri-devel/ZtidJ8S9THvzkQ-6@phenom.ffwll.local/
+> ---
+> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 23 +++++++++++++++++++++--
+> =C2=A01 file changed, 21 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
+> b/drivers/gpu/drm/scheduler/sched_main.c
+> index e97c6c60bc96..3dfa9db89484 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1333,6 +1333,19 @@ EXPORT_SYMBOL(drm_sched_init);
+> =C2=A0 * @sched: scheduler instance
+> =C2=A0 *
+> =C2=A0 * Tears down and cleans up the scheduler.
+> + *
+> + * This stops submission of new jobs to the hardware through
+> + * drm_sched_backend_ops.run_job(). Consequently,
+> drm_sched_backend_ops.free_job()
+> + * will not be called for all jobs still in
+> drm_gpu_scheduler.pending_list.
+> + * There is no solution for this currently. Thus, it is up to the
+> driver to make
+> + * sure that
+> + *=C2=A0 a) drm_sched_fini() is only called after for all submitted jobs
+> + *=C2=A0=C2=A0=C2=A0=C2=A0 drm_sched_backend_ops.free_job() has been cal=
+led or that
+> + *=C2=A0 b) the jobs for which drm_sched_backend_ops.free_job() has not
+> been called
+> + *=C2=A0=C2=A0=C2=A0=C2=A0 after drm_sched_fini() ran are freed manually=
+.
+> + *
+> + * FIXME: Take care of the above problem and prevent this function
+> from leaking
+> + * the jobs in drm_gpu_scheduler.pending_list under any
+> circumstances.
+> =C2=A0 */
+> =C2=A0void drm_sched_fini(struct drm_gpu_scheduler *sched)
+> =C2=A0{
+> @@ -1428,8 +1441,10 @@ EXPORT_SYMBOL(drm_sched_wqueue_ready);
+> =C2=A0
+> =C2=A0/**
+> =C2=A0 * drm_sched_wqueue_stop - stop scheduler submission
+> - *
+> =C2=A0 * @sched: scheduler instance
+> + *
+> + * Stops the scheduler from pulling new jobs from entities. It also
+> stops
+> + * freeing jobs automatically through
+> drm_sched_backend_ops.free_job().
+> =C2=A0 */
+> =C2=A0void drm_sched_wqueue_stop(struct drm_gpu_scheduler *sched)
+> =C2=A0{
+> @@ -1441,8 +1456,12 @@ EXPORT_SYMBOL(drm_sched_wqueue_stop);
+> =C2=A0
+> =C2=A0/**
+> =C2=A0 * drm_sched_wqueue_start - start scheduler submission
+> - *
+> =C2=A0 * @sched: scheduler instance
+> + *
+> + * Restarts the scheduler after drm_sched_wqueue_stop() has stopped
+> it.
+> + *
+> + * This function is not necessary for 'conventional' startup. The
+> scheduler is
+> + * fully operational after drm_sched_init() succeeded.
+> =C2=A0 */
+> =C2=A0void drm_sched_wqueue_start(struct drm_gpu_scheduler *sched)
+> =C2=A0{
 
 
