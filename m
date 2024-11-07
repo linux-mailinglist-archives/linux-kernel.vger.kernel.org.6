@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-399934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9A99C0688
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:01:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576EF9C068E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57AE8B20A80
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175F028496C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEC2212637;
-	Thu,  7 Nov 2024 12:54:54 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC5F212D0F;
+	Thu,  7 Nov 2024 12:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwdYUcVX"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F340D20FAB4;
-	Thu,  7 Nov 2024 12:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F4B210198;
+	Thu,  7 Nov 2024 12:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730984094; cv=none; b=ZOIiWKDEpUaRSJUznHaPi+cszYB5FukxcRx33L0PCSHDeHexqM1eyS7uB2WbFCQCXmBQKkka7vBKwwSR4XCidQZv3/3p9T2tR1KL2iwYv17+xggF17Xn9/22VoczEExAQSyJP/anP/q7l1Md/6P4xVLOWj1cYzAr42uu5gjNXPE=
+	t=1730984200; cv=none; b=MKnPT9zD7Jp64YoN2VAEY0DDCC1HUApOnYInvZqPbDX/uWklD4SLro9gZQzWSPPOcMATbtTxyR+NppXuscIMk1/HGf7GxnsEK2Ngu+A+6lON5q75hFyFSM5PAunpP687NrTxSabrx+1l0MsE52SVpKss24ts+CRzj/GpThGu15o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730984094; c=relaxed/simple;
-	bh=wnh7WqRNWHKMBy8pYlw+oqHdI5pZKHsfzU9zXFAxNeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSvEXIWYECL8p2R8MbMGtoqK0H4Boev8yGmjZnnZHsZvFF8uD2Ox0MAIfP1Iw2SfRAUXK91+JP71Pp+DmZz7qq6tX5ywnZAJS3qAkWJ9EC/qHUpXFeMLuYPdvoV98WVZTthDpWS+6M1wH/oCh4TDh05WIe0CQwhx++nNLS511Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 18A9D1C00A0; Thu,  7 Nov 2024 13:54:50 +0100 (CET)
-Date: Thu, 7 Nov 2024 13:54:49 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hagar@microsoft.com, broonie@kernel.org,
-	chris.paterson2@renesas.com
-Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
-Message-ID: <Zyy4mfTry2gNQBH+@duo.ucw.cz>
-References: <20241107064547.006019150@linuxfoundation.org>
+	s=arc-20240116; t=1730984200; c=relaxed/simple;
+	bh=90LuHD8laAu8s+2lzOXwrI1PNKvtP9Qf1hO/C06hHiA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=igUJF5Q7X/LpNwZdy58mY2JZBQq0Q1sOekR6TGcTQs+wzAwZ4Q+425RWvQc2whRhjwaKqCJtvGGrRcTMwgZwMhf+tizKKCW76cbiV15Kp96NBM9fJZsMfZYOKTC8ccFS2FXEKzZYgi+uSYjkKgO6kbq012F3r8r+nA16pV6yW3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwdYUcVX; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-71e5130832aso644958b3a.0;
+        Thu, 07 Nov 2024 04:56:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730984197; x=1731588997; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UdA7nsCFTrN7tSAJGLMrxfIWlfUIz0l1LxRNiQDm5GY=;
+        b=SwdYUcVX7XCdGKsHHJ5fOVxauPK5ka2h8D6TkmIltEyfRVN3M8K+Fqgw8Y27F97Vfg
+         utPCvIDDbKwRn83nJaiOvBy1oQkpMb2vLSWyBMMy2qN574+nTY13CThtQPHoh+a9HT/V
+         aPAQtX3gaKWNA0AsPPz/ke6MmNq6TDwJe4D0owobgP/If3s4R+lwM4u9G6aH3g4GiVbU
+         d+V2p1iNUDE2E54gCehJgIOR+wuWa9JOG2HwDeYRntjwb15N0vTOJoiaq7/KJydnmuoF
+         LcfQ9K91nLRUrA00lLfr3qWYhq8/u7FUJp/JEPUeP6uydr62bp9iu4wFce2ypLdWsMZs
+         NWVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730984197; x=1731588997;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UdA7nsCFTrN7tSAJGLMrxfIWlfUIz0l1LxRNiQDm5GY=;
+        b=Q6lFo95I5HSSL1PNv1zmVYP0seFuv+G5WdZNqm7qr+EusN9/CHMbpEaxEMOA/6l0yd
+         Fzdqcu2d6mETCRLbjwqpVxorGM82zcBqEXWFkosQSQmnhPnd8BXyiL6xrtmLEmlATZmk
+         KK+YntoWe77PCDZj1YrQxG/CPvdQOJdNw2q4FPGobv+G+MlQZ+3rk/NpyE7i+mtbdrnI
+         DyOuC0JZCMOpyESSI6bAUGzsPS8sl09sVCS86fW9NclvHBlIc7HVQFYQDpAw2jxd82S3
+         1EkxcPGS6LYmELteo5SmmU9aRKaBAuwbZVDHqpQ9/KJfAEitMqXQmCyBxbAITZRDdg/D
+         qelA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNMiwLDQrApEAmsFSUvACkp9xKeOXpBQOdnXG/myF6QCi/wdQHvPV+9QoA/ITGksh9WYSEfcgYBV0sJwaRF6yC@vger.kernel.org, AJvYcCURoJY6x6UqwSQuBqQx4I/UZnClVb8O1V20pepQjIPlmth9j8KwGyNHFACKx8UBOW2CX0z1gPvN@vger.kernel.org, AJvYcCUUnhHsJBOltsm38fiHwROBjOKZB6iHIuz0+3P6hixuRaOLhuU8JIgO4SOZp5eV31Vu7I4=@vger.kernel.org, AJvYcCXY1ir9jFN5NcJy0xy6rGCvFLW3WHUjSuOMXyZN8Ab+louiALklPJxcZUUE/b3o7CjWCdmQmdgDtShMvoBD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNiLviUwnh/bQI1qxmKADlvJ30XAMkHn3snRNxEm7wwQtjMVRg
+	35tbvzvc6Vn8qsh5hRDIY/wA41l0zXmP24orHorZT7k7CGZi4f4Z
+X-Google-Smtp-Source: AGHT+IEzr1IifU6MMH+fx8wH4FyqoykSy74KB4WKiRH4KzZnH1+yiCSFlPrFXP4KUGKs3piToboQvA==
+X-Received: by 2002:a05:6a00:987:b0:71e:6ed:9108 with SMTP id d2e1a72fcca58-720c9883499mr30639483b3a.2.1730984196934;
+        Thu, 07 Nov 2024 04:56:36 -0800 (PST)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240785ffeesm1441651b3a.3.2024.11.07.04.56.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 04:56:36 -0800 (PST)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: pabeni@redhat.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	horms@kernel.org,
+	dsahern@kernel.org,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	roopa@nvidia.com,
+	razor@blackwall.org,
+	gnault@redhat.com,
+	bigeasy@linutronix.de,
+	hawk@kernel.org,
+	idosch@nvidia.com,
+	dongml2@chinatelecom.cn,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	bridge@lists.linux.dev,
+	bpf@vger.kernel.org
+Subject: [PATCH net-next v5 0/9] net: ip: add drop reasons to input route
+Date: Thu,  7 Nov 2024 20:55:52 +0800
+Message-Id: <20241107125601.1076814-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="acHZ4brnx10MN/2v"
-Content-Disposition: inline
-In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
+In this series, we mainly add some skb drop reasons to the input path of
+ip routing, and we make the following functions return drop reasons:
 
---acHZ4brnx10MN/2v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  fib_validate_source()
+  ip_route_input_mc()
+  ip_mc_validate_source()
+  ip_route_input_slow()
+  ip_route_input_rcu()
+  ip_route_input_noref()
+  ip_route_input()
+  ip_mkroute_input()
+  __mkroute_input()
+  ip_route_use_hint()
 
-Hi!
+And following new skb drop reasons are added:
 
-> This is the start of the stable review cycle for the 6.11.7 release.
-> There are 249 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+  SKB_DROP_REASON_IP_LOCAL_SOURCE
+  SKB_DROP_REASON_IP_INVALID_SOURCE
+  SKB_DROP_REASON_IP_LOCALNET
+  SKB_DROP_REASON_IP_INVALID_DEST
 
-CIP testing has problem with BeagleBone Black on 6.11:
+Changes since v4:
+- in the 6th patch: remove the unneeded "else" in ip_expire()
+- in the 8th patch: delete the unneeded comment in __mkroute_input()
+- in the 9th patch: replace "return 0" with "return SKB_NOT_DROPPED_YET"
+  in ip_route_use_hint()
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.11.y
+Changes since v3:
+- don't refactor fib_validate_source/__fib_validate_source, and introduce
+  a wrapper for fib_validate_source() instead in the 1st patch.
+- some small adjustment in the 4-7 patches
 
-(I'm cc-ing Chris, and may be able to do further analysis).
+Changes since v2:
+- refactor fib_validate_source and __fib_validate_source to make
+  fib_validate_source return drop reasons
+- add the 9th and 10th patches to make this series cover the input route
+  code path
 
-6.6, 5.15, 5.4 pass our testing, too:
+Changes since v1:
+- make ip_route_input_noref/ip_route_input_rcu/ip_route_input_slow return
+  drop reasons, instead of passing a local variable to their function
+  arguments.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.15.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.14.y
+Menglong Dong (9):
+  net: ip: make fib_validate_source() support drop reasons
+  net: ip: make ip_route_input_mc() return drop reason
+  net: ip: make ip_mc_validate_source() return drop reason
+  net: ip: make ip_route_input_slow() return drop reasons
+  net: ip: make ip_route_input_rcu() return drop reasons
+  net: ip: make ip_route_input_noref() return drop reasons
+  net: ip: make ip_route_input() return drop reasons
+  net: ip: make ip_mkroute_input/__mkroute_input return drop reasons
+  net: ip: make ip_route_use_hint() return drop reasons
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+ include/net/dropreason-core.h   |  26 ++++
+ include/net/ip_fib.h            |  12 ++
+ include/net/route.h             |  34 ++---
+ net/bridge/br_netfilter_hooks.c |  11 +-
+ net/core/lwt_bpf.c              |   6 +-
+ net/ipv4/fib_frontend.c         |  17 ++-
+ net/ipv4/icmp.c                 |   2 +-
+ net/ipv4/ip_fragment.c          |  11 +-
+ net/ipv4/ip_input.c             |  20 ++-
+ net/ipv4/ip_options.c           |   2 +-
+ net/ipv4/route.c                | 211 ++++++++++++++++++--------------
+ net/ipv6/seg6_local.c           |  14 +--
+ 12 files changed, 225 insertions(+), 141 deletions(-)
 
-Best regards,
-                                                                Pavel
+-- 
+2.39.5
 
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---acHZ4brnx10MN/2v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZyy4mQAKCRAw5/Bqldv6
-8rwbAKC/HOkY89DuqtQGStaubX8I5inAZgCfUAH/oMKx8b9yCKZg9elpk/sbwGA=
-=ukZZ
------END PGP SIGNATURE-----
-
---acHZ4brnx10MN/2v--
 
