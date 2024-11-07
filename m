@@ -1,240 +1,129 @@
-Return-Path: <linux-kernel+bounces-400522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3E89C0EC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:19:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E5A9C0EC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:20:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C9341F2809A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:19:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D121C25F3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66197194AD6;
-	Thu,  7 Nov 2024 19:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C414A197A9E;
+	Thu,  7 Nov 2024 19:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIABmJhO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gDtQIWDL"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DD9125D6;
-	Thu,  7 Nov 2024 19:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644CC125D6;
+	Thu,  7 Nov 2024 19:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731007134; cv=none; b=lN0knDI80SRBN9XVdik5FKmBvKMSghX62byi06TToa+MrYINfNQkf8knD5q0cAtdDN3WoJCVVHc1ibB5hgqYWBTvKYJTmJoP6BB7AsWMotY4kmQ+Dc6DbSWnLhOQNXbuLkxDlfa1nK77lzQH+1jauarGXjpnPj6wx3PbsNxDVig=
+	t=1731007192; cv=none; b=R88VpvXNMj4RjhvRrWkZVbq5OXOO+hLMIIqiUl2Q5MBJOf7xPISPq1H88eV83a5IySDN8EARsPPYnus8UlCibJHTZJJN6K89CZBVACoqC+PzQeMM2Hh9G/EFWLfZf3FT+c7EdYQAX6/Nal+kznjRxzzVkvmkAYoRnEezEYJDsqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731007134; c=relaxed/simple;
-	bh=tUz0GhcRj0ZxROqC6ULAO/ba2Gcn5tZO8oBwGXYih7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sN2bJatnUxPpYMe6vlHlvrhi+eJleUgH0AgvyTtpBCPkqTniN21XYlXARpdLEAb0bkEII9FnKx0ciDe88tk61Tkg41Fkq1FglEGz3y7dP9Jd+w01mYfOgPpG6gN8mpZZ6WDH/ij61EymxrwDGOSYk/Rs743DPf5UNa60uxuM1Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIABmJhO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E73C4CECC;
-	Thu,  7 Nov 2024 19:18:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731007134;
-	bh=tUz0GhcRj0ZxROqC6ULAO/ba2Gcn5tZO8oBwGXYih7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FIABmJhOPM5gQ7aJobDAz51TgVD4v06smmwBLjo+3W+IRu0fwDcA2/6HEgiUoSa3E
-	 ZiichYPLU5m8WkFGTlGAL1/bVqe//nbrD55Jtn8P0bXqcQ58cwdjGbTUMQAGT3V67R
-	 oV6PsAeZvk05AEdHaHBCXlWhJ83NO5OvgKwvDA2ldVCWKtZWhKhzhjx555gHxYc6Kn
-	 tRV7gfxi1Z3azWFgw66neiEJVh48t5RBrAVSdtKWOt3UurvhGCX9d2x5+CCNrbuWVa
-	 8y3YX/LpV3B7HxG56PTNNkzccFmtoVuEHNhNMMph5xwjU95xoe0KlJzWfejQj60Bpj
-	 Ujmu/DK6ORCnw==
-Date: Thu, 7 Nov 2024 11:18:50 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Daniel Wagner <dwagner@suse.de>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@rivosinc.com>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Yury Norov <yury.norov@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 16/31] perf dwarf-regs: Pass accurate disassembly
- machine to get_dwarf_regnum
-Message-ID: <Zy0SmlDrmksra_OD@google.com>
-References: <20241005195541.380070-1-irogers@google.com>
- <20241005195541.380070-17-irogers@google.com>
- <20241007170755.03697b9178ed3dcac24dfa21@kernel.org>
- <CAP-5=fU4hTL1hfB7-FpMnFopJJriZAOXY_8iakW5yHC_gfhTWg@mail.gmail.com>
+	s=arc-20240116; t=1731007192; c=relaxed/simple;
+	bh=eN0VRTCZM2WBAT9cgFw9DTUrSpwbJpwTFubfXheWoYM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/51DJil1lM8PMUKMDBzWHspHQzgKRBfQcVQh4VZR+c40/ernYQUawKyhakNwEjdnvYAIHxDz5Yut/mMR+zKg6naw6c7mLbn2BsQH9BfuTkSK8q74q6kBCdYoIN/KeZLtDdIcN64vkz8nE2euBVKJcYh0QdwJ+yaVW2uwofgVCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=gDtQIWDL; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731007190; x=1762543190;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=eN0VRTCZM2WBAT9cgFw9DTUrSpwbJpwTFubfXheWoYM=;
+  b=gDtQIWDLMjJ/NAXUg/qRikxvG4HqzfhgG4r4dHvHws/40uaGZuxCQ/9t
+   sTSIQbUP6K/7C5E71dauPy19cjgAadtaMRF7bjAfwxWkKFilEAXdb4igA
+   FJZiFQFuPb2rsq+vrJiLS6unN/q9xofBi4zTENhSS+BdVxY9dHO6p/S2X
+   PypCitc64VGpdmIAjIvVelyRdmvGo1Z4uEuMuGbsc9IOphLdZ+RcVzchW
+   jCGsw8ucyej7zIpSxYJf23+2ro76EaYTTvVF/d352jwol6zfHv9Azkj+f
+   G2pCNbAIweBg2MKnkBs3l5Bs88oviLrGiIh3oU0Y/QIXJx9IIVGc7koz6
+   w==;
+X-CSE-ConnectionGUID: MDDVaqVhRqenuoSd1grXjg==
+X-CSE-MsgGUID: wGoZR4F7TSiOLGn00rOoNA==
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="34539067"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Nov 2024 12:19:43 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 7 Nov 2024 12:19:22 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 7 Nov 2024 12:19:20 -0700
+Date: Thu, 7 Nov 2024 19:19:19 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+CC: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+	<joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
+	Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, <netdev@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 0/9] Support external snapshots on dwmac1000
+Message-ID: <20241107191919.sngc2x664lp7jeg2@DEN-DL-M70577>
+References: <20241106090331.56519-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fU4hTL1hfB7-FpMnFopJJriZAOXY_8iakW5yHC_gfhTWg@mail.gmail.com>
+In-Reply-To: <20241106090331.56519-1-maxime.chevallier@bootlin.com>
 
-Hello,
-
-Sorry for the late reply.
-
-On Mon, Oct 07, 2024 at 08:46:59AM -0700, Ian Rogers wrote:
-> On Mon, Oct 7, 2024 at 1:08â€¯AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > On Sat,  5 Oct 2024 12:55:26 -0700
-> > Ian Rogers <irogers@google.com> wrote:
-> >
-> > > Rather than pass 0/EM_NONE, use the value computed in the disasm
-> > > struct arch. Switch the EM_NONE case to EM_HOST, rewriting EM_NONE if
-> > > it were passed to get_dwarf_regnum. Pass a flags value as
-> > > architectures like csky need the flags to determine the ABI variant.
-> > >
-> >
-> > Does this change the command output when we use it for cross-build
-> > environment? E.g. remote arch is different from host arch? If so,
-> > please add output examples with/without this change.
+> Hi,
 > 
-> The cases where this would apply are small as get_arch_regnum is only
-> implemented for x86. get_dwarf_regnum likewise only works for x86 and
-> it is only called by annotate.
-
-Yep, it's used only in the data type profiling.  I don't expect it to
-work in the cross environment yet.  This change moves it closer to the
-working state though. :)
-
-
-> In this code without this patch the behavior is to return -ENOTSUP, ie
-> the code is set up to fail and this code just makes it not fail for
-> the x86 case (when not on x86) with code that is well tested on x86.
-> The code exists as x86 registers may be the same dwarf number but have
-> different names: e.g. rax, eax, ax, al. I'm not sure this reaches a
-> high complexity level for extensive testing. I'll see if I can grab an
-> x86 perf.data file to analyze on ARM, but I don't think doing this
-> should gate the series.
-
-Yep, as I said it's not supported yet and I don't think that's the goal
-of this patch series.  So probably it's ok to merge it without the
-extensive testing.
-
-Thanks,
-Namhyung
-
+> This V3 is just a rebase a V2 on top of net-next to address some minor
+> conflicts. No changes were made.
 > 
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > ---
-> > >  tools/perf/util/annotate.c           | 6 +++---
-> > >  tools/perf/util/dwarf-regs.c         | 8 ++++++--
-> > >  tools/perf/util/include/dwarf-regs.h | 5 +++--
-> > >  3 files changed, 12 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> > > index 37ce43c4eb8f..b1d98da79be8 100644
-> > > --- a/tools/perf/util/annotate.c
-> > > +++ b/tools/perf/util/annotate.c
-> > > @@ -2292,7 +2292,7 @@ static int extract_reg_offset(struct arch *arch, const char *str,
-> > >       if (regname == NULL)
-> > >               return -1;
-> > >
-> > > -     op_loc->reg1 = get_dwarf_regnum(regname, 0);
-> > > +     op_loc->reg1 = get_dwarf_regnum(regname, arch->e_machine, arch->e_flags);
-> > >       free(regname);
-> > >
-> > >       /* Get the second register */
-> > > @@ -2305,7 +2305,7 @@ static int extract_reg_offset(struct arch *arch, const char *str,
-> > >               if (regname == NULL)
-> > >                       return -1;
-> > >
-> > > -             op_loc->reg2 = get_dwarf_regnum(regname, 0);
-> > > +             op_loc->reg2 = get_dwarf_regnum(regname, arch->e_machine, arch->e_flags);
-> > >               free(regname);
-> > >       }
-> > >       return 0;
-> > > @@ -2405,7 +2405,7 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
-> > >                               return -1;
-> > >
-> > >                       if (*s == arch->objdump.register_char)
-> > > -                             op_loc->reg1 = get_dwarf_regnum(s, 0);
-> > > +                             op_loc->reg1 = get_dwarf_regnum(s, arch->e_machine, arch->e_flags);
-> > >                       else if (*s == arch->objdump.imm_char) {
-> > >                               op_loc->offset = strtol(s + 1, &p, 0);
-> > >                               if (p && p != s + 1)
-> > > diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.c
-> > > index 7c01bc4d7e5b..1321387f6948 100644
-> > > --- a/tools/perf/util/dwarf-regs.c
-> > > +++ b/tools/perf/util/dwarf-regs.c
-> > > @@ -70,7 +70,7 @@ __weak int get_arch_regnum(const char *name __maybe_unused)
-> > >  }
-> > >
-> > >  /* Return DWARF register number from architecture register name */
-> > > -int get_dwarf_regnum(const char *name, unsigned int machine)
-> > > +int get_dwarf_regnum(const char *name, unsigned int machine, unsigned int flags __maybe_unused)
-> > >  {
-> > >       char *regname = strdup(name);
-> > >       int reg = -1;
-> > > @@ -84,8 +84,12 @@ int get_dwarf_regnum(const char *name, unsigned int machine)
-> > >       if (p)
-> > >               *p = '\0';
-> > >
-> > > +     if (machine == EM_NONE) {
-> > > +             /* Generic arch - use host arch */
-> > > +             machine = EM_HOST;
-> > > +     }
-> > >       switch (machine) {
-> > > -     case EM_NONE:   /* Generic arch - use host arch */
-> > > +     case EM_HOST:
-> > >               reg = get_arch_regnum(regname);
-> > >               break;
-> > >       default:
-> > > diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/include/dwarf-regs.h
-> > > index f4f87ded5e3d..ee0a734564c7 100644
-> > > --- a/tools/perf/util/include/dwarf-regs.h
-> > > +++ b/tools/perf/util/include/dwarf-regs.h
-> > > @@ -93,12 +93,13 @@ int get_arch_regnum(const char *name);
-> > >   * name: architecture register name
-> > >   * machine: ELF machine signature (EM_*)
-> > >   */
-> > > -int get_dwarf_regnum(const char *name, unsigned int machine);
-> > > +int get_dwarf_regnum(const char *name, unsigned int machine, unsigned int flags);
-> > >
-> > >  #else /* HAVE_LIBDW_SUPPORT */
-> > >
-> > >  static inline int get_dwarf_regnum(const char *name __maybe_unused,
-> > > -                                unsigned int machine __maybe_unused)
-> > > +                                unsigned int machine __maybe_unused,
-> > > +                                unsigned int flags __maybe_unused)
-> > >  {
-> > >       return -1;
-> > >  }
-> > > --
-> > > 2.47.0.rc0.187.ge670bccf7e-goog
-> > >
-> >
-> >
-> > --
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> This series is another take on the pervious work [1] done by
+> Alexis Lothoré, that fixes the support for external snapshots
+> timestamping in GMAC3-based devices.
+> 
+> Details on why this is needed are mentionned on the cover [2] from V1.
+> 
+> This V2 addresses multiple issues found in V1 :
+> 
+>  - The PTP_TCR register is configured from multiple places, as reported
+>    by Alexis, so we need to make sure that the extts configuration
+>    doesn't interfere with the hwtstamp configuration.
+> 
+>  - The interrupt management in V1 was incomplete, as the interrupt
+>    wasn't correctly acked.
+> 
+>  - This series also makes so that we only enable the extts interrupt
+>    when necessary.
+> 
+> [1]: https://lore.kernel.org/netdev/20230616100409.164583-1-alexis.lothore@bootlin.com/
+> [2]: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
+> 
+> Thanks Alexis for laying the groundwork for this,
+> 
+> Best regards,
+> 
+> Maxime
+> 
+> Link to V1: https://lore.kernel.org/netdev/20241029115419.1160201-1-maxime.chevallier@bootlin.com/
+> Link to V2: https://lore.kernel.org/netdev/20241104170251.2202270-1-maxime.chevallier@bootlin.com/
+
+Hi Maxime,
+
+Dont know much about this particular driver, but the patches looked good
+to me!
+
+For the series:
+
+Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
 
