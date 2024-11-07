@@ -1,109 +1,216 @@
-Return-Path: <linux-kernel+bounces-400100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1270D9C08F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:33:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1AF9C08FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:34:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85FF0B2324A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:33:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08C6EB20EC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3451212D11;
-	Thu,  7 Nov 2024 14:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313B4212D0E;
+	Thu,  7 Nov 2024 14:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IdZYx/sO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="flJjDiqq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLs0+dJr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCC2DDBE;
-	Thu,  7 Nov 2024 14:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3471E049C;
+	Thu,  7 Nov 2024 14:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730989997; cv=none; b=NsFd+7XAo2ul5thTnMU+sV/JHT2aREUD2YIR9CzYLGmJTePW7sOM82jaDHffdWWcJmndgexPQMihNi2tAmt3dWHo21JJXxYuPkakDiGCZRWrjlVhVuKrUZsFUjRZC41s+Y+RqSd9qQDJNOa47786I2MYIYoFFRPqD0mwi58RlhE=
+	t=1730990049; cv=none; b=AxYzwjzi7jvX4e0zDaINr+c/qaOX1730zKcnnQLiC0X9ttBdnNs/vWNAMm+DTa13GBldsmDmb2nIIYmde2lSfMBgnIpFWiITRN73ILjmgTihZhpXPUtlMMZ5jLnhq/9qHt4SbuxT6zreXz+BKatCPuYUkxGZ0yfrMARSXwr2uTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730989997; c=relaxed/simple;
-	bh=T6JAQLWAu30J1pPe9xHQ/jQRAjDtzjyrN6wBKTeqVl4=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=jxQh9YIlxcB8EuEWphRO7gCK6eA2GxD1dd3yzc0xrG08+/tcBy60KCEbOx99vbJn7RupSPCjIKwOJdmvj1CqdAw6c9m0CYlDKYdm4kEoiM8uAI26u5gQFnvgDpC4GtqgkWqkb255tj1cuY0TcOEtLhuh8mVVGDj3SUEe5rPhzo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IdZYx/sO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=flJjDiqq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 07 Nov 2024 14:33:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730989986;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=qhlCqOIeJg1V8GCtkeCwwDWxlFZtoh0P3xbDu2WT33Q=;
-	b=IdZYx/sOJscWaVXIeRp4dUSooZ0Y6FQpwCDG0OfgEeJPBCtmwphgL3E64GVQ3BTzi5RM+T
-	1wAjvKxcQa43yQiWYogmLd1u2PxUW3BOEdh3wHBsuLGs7YRlyKpN2plYJi5tWq7nLcbJal
-	pc5Ehw+HftiJkH9hsrqhs7LvnsuLuW1oCpn3YqenLWlbFrkrYf6GhmUIh4CUTzoZYVB134
-	HcnnyV7V1qDiQv6Tm01hTRIRA2Nsfy9f5Uc8XxVhYmTzbqopOU66rS7hVS+rga+Q4uTYKl
-	W1H19jYOloLO3LPMqAeN5yWAKBD+sMRxhzrAfXYnzhlaIL/J8v0lRs4bLLA2kw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730989986;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=qhlCqOIeJg1V8GCtkeCwwDWxlFZtoh0P3xbDu2WT33Q=;
-	b=flJjDiqqmxSpBHx5zi2u5OZH+FB/kXVmPLrNaHIqfSEqAsC+tzRmFZgTIxxgHdf1SVZY/8
-	2okTbQcN0K/8PpAw==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: No PREEMPT_RT=y for all{yes,mod}config
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1730990049; c=relaxed/simple;
+	bh=PZ0qlphJcD8vX64gcDaorA5K5So48tJfKoWbNIH4d5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CqT/2wrPFD5J45RXLUc4H3ileg4B1ycVvlFoiCDRZ7RVBvzTjAL3GyUp2BgI9fF8ajjeoQyeflpbY9rwcUIBLGOcaqY5SSs3M+TpL+aXOyDux/M5iwFQA29rg+InGx/R+c0e0HyeiVzKL8lZmRIlC72IyqMTOOeSAC8wv+EufcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLs0+dJr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 935D0C4CECC;
+	Thu,  7 Nov 2024 14:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730990049;
+	bh=PZ0qlphJcD8vX64gcDaorA5K5So48tJfKoWbNIH4d5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aLs0+dJrOkCwh+rGYeR+BNamanHu9Yy6X6Nr3eJEp8SwlcPvp5BGy/oVovkQzpdFh
+	 v14otvCmmY2CqP/Z9qC1yAUCFc+UFbLBP1jH481MZGzBBgd7sjI9E+Sg06rVN/2PVF
+	 UNYighYZmct23f2LtAd7/5KzI6OUY0pArTzJxNVC+TI6O7UEzLKm+XdzMltHQgBjzh
+	 DUe5+DRhEk5IyUyDjsRT/wkLiIz9jaC5wXFw8VX7T6qQb/3QgJaHq2/lvr/rGTYbq7
+	 UeML0mOZA8LdYdZnIHpKiUdPzTEURQokiB/qQtOF2tvp1EoPArLfdhxBMkwhDLsUJQ
+	 23W38BsTUXytQ==
+Date: Thu, 7 Nov 2024 14:34:04 +0000
+From: Simon Horman <horms@kernel.org>
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: andrew@lunn.ch, arun.ramadoss@microchip.com,
+	UNGLinuxDriver@microchip.com, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, richardcochran@gmail.com
+Subject: Re: [PATCH net-next 2/5] net: phy: microchip_ptp : Add ptp library
+ for Microchip phys
+Message-ID: <20241107143404.GV4507@kernel.org>
+References: <20241104090750.12942-1-divya.koppera@microchip.com>
+ <20241104090750.12942-3-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173098998528.32228.2093818743217685683.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104090750.12942-3-divya.koppera@microchip.com>
 
-The following commit has been merged into the sched/core branch of tip:
+On Mon, Nov 04, 2024 at 02:37:47PM +0530, Divya Koppera wrote:
+> Add ptp library for Microchip phys
+> 1-step and 2-step modes are supported, over Ethernet and UDP(ipv4, ipv6)
+> 
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+> ---
+>  drivers/net/phy/microchip_ptp.c | 990 ++++++++++++++++++++++++++++++++
+>  1 file changed, 990 insertions(+)
+>  create mode 100644 drivers/net/phy/microchip_ptp.c
+> 
+> diff --git a/drivers/net/phy/microchip_ptp.c b/drivers/net/phy/microchip_ptp.c
 
-Commit-ID:     fe9beaaa802d44d881b165430b3239a9d7bebf30
-Gitweb:        https://git.kernel.org/tip/fe9beaaa802d44d881b165430b3239a9d7bebf30
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 07 Nov 2024 15:21:54 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 07 Nov 2024 15:25:05 +01:00
+...
 
-sched: No PREEMPT_RT=y for all{yes,mod}config
+> +static bool mchp_ptp_get_sig_tx(struct sk_buff *skb, u16 *sig)
+> +{
+> +	struct ptp_header *ptp_header;
+> +	int type;
+> +
+> +	type = ptp_classify_raw(skb);
+> +	if (type == PTP_CLASS_NONE)
+> +		return false;
+> +
+> +	ptp_header = ptp_parse_header(skb, type);
+> +	if (!ptp_header)
+> +		return false;
+> +
+> +	*sig = htons(ptp_header->sequence_id);
 
-While PREEMPT_RT is undoubtedly totally awesome, it does not, at this
-time, make sense to have all{yes,mod}config select it.
+Hi Divya,
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Fixes: 35772d627b55 ("sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/Kconfig.preempt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The type of *sig is u16, a host-byte order integer.
+But htons() returns __be16, a big-endian integer.
+This does not seem right.
 
-diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
-index 7c1b29a..54ea59f 100644
---- a/kernel/Kconfig.preempt
-+++ b/kernel/Kconfig.preempt
-@@ -88,7 +88,7 @@ endchoice
- 
- config PREEMPT_RT
- 	bool "Fully Preemptible Kernel (Real-Time)"
--	depends on EXPERT && ARCH_SUPPORTS_RT
-+	depends on EXPERT && ARCH_SUPPORTS_RT && !COMPILE_TEST
- 	select PREEMPTION
- 	help
- 	  This option turns the kernel into a real-time kernel by replacing
+Likewise, in the caller, and beyond, if these are big-endian integers
+then appropriate types - probably __be16 - should be used.
+
+Flagged by Sparse.
+
+> +
+> +	return true;
+> +}
+
+...
+
+> +static struct mchp_ptp_rx_ts *mchp_ptp_get_rx_ts(struct mchp_ptp_clock *ptp_clock)
+> +{
+> +	struct phy_device *phydev = ptp_clock->phydev;
+> +	struct mchp_ptp_rx_ts *rx_ts = NULL;
+> +	u32 sec, nsec;
+> +	u16 seq;
+> +	int rc;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_INGRESS_NS_HI(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +	if (!(rc & MCHP_PTP_RX_INGRESS_NS_HI_TS_VALID)) {
+> +		phydev_err(phydev, "RX Timestamp is not valid!\n");
+> +		goto error;
+> +	}
+> +	nsec = (rc & GENMASK(13, 0)) << 16;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_INGRESS_NS_LO(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +	nsec |= rc;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_INGRESS_SEC_HI(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +	sec = rc << 16;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_INGRESS_SEC_LO(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +	sec |= rc;
+> +
+> +	seq = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			   MCHP_PTP_RX_MSG_HEADER2(BASE_PORT(ptp_clock)));
+> +	if (seq < 0)
+
+seq is unsigned; it can never be less than 0.
+
+Flagged by Smatch.
+
+> +		goto error;
+> +
+> +	rx_ts = kzalloc(sizeof(*rx_ts), GFP_KERNEL);
+> +	if (!rx_ts)
+> +		return NULL;
+> +
+> +	rx_ts->seconds = sec;
+> +	rx_ts->nsec = nsec;
+> +	rx_ts->seq_id = seq;
+> +
+> +error:
+> +	return rx_ts;
+> +}
+
+...
+
+> +static bool mchp_ptp_get_tx_ts(struct mchp_ptp_clock *ptp_clock,
+> +			       u32 *sec, u32 *nsec, u16 *seq)
+> +{
+> +	struct phy_device *phydev = ptp_clock->phydev;
+> +	int rc;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_TX_EGRESS_NS_HI(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		return false;
+> +	if (!(rc & MCHP_PTP_TX_EGRESS_NS_HI_TS_VALID))
+> +		return false;
+> +	*nsec = (rc & GENMASK(13, 0)) << 16;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_TX_EGRESS_NS_LO(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		return false;
+> +	*nsec = *nsec | rc;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_TX_EGRESS_SEC_HI(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		return false;
+> +	*sec = rc << 16;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_TX_EGRESS_SEC_LO(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		return false;
+> +	*sec = *sec | rc;
+> +
+> +	*seq = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			    MCHP_PTP_TX_MSG_HEADER2(BASE_PORT(ptp_clock)));
+> +	if (*seq < 0)
+
+Likewise, *seq is unsigned; it can never be less than 0.
+
+> +		return false;
+> +
+> +	return true;
+> +}
+
+...
 
