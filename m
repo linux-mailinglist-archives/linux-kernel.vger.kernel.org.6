@@ -1,2114 +1,1005 @@
-Return-Path: <linux-kernel+bounces-400366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643D89C0C75
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:09:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E589C0C73
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7898F1C22D8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:09:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D28C1C213FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C3721FDB3;
-	Thu,  7 Nov 2024 17:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7385821FD86;
+	Thu,  7 Nov 2024 17:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="kC4eu8Un"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cV4RJ02K"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6C9216DE7;
-	Thu,  7 Nov 2024 17:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45462194AA;
+	Thu,  7 Nov 2024 17:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730998998; cv=none; b=h1ZI6VSPqTt9nqByt7ZWk+T6TpMDyop9wFDkzJtzQzePM/0g+h5Nta+/o9FzmvSnwVBJycIvs23JGzmjoZpDhzLZFVVp6C+cWDE3JBO8IkfZFgZeJeumUN6ZPs9XmWZmktHdNRx5wdepC+7H6m/H5iIrvVaBGflw6fl0vIcTBV8=
+	t=1730998996; cv=none; b=JH1E9OtP7GVFThmzP4STl83zh3O15JAhJ+q+0XcxslzFM/2e0koTG5B5GulR59UuSyg6MXJC5jIqbHLUlfjjSR7e92jsqOFRPgx7VW1+WIJYn6xAdAmcKa2l8TcK3zyh8+pXw80V/L0OcNqPBZ1yxg+4qkoGwOOhtv0HjgRUt+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730998998; c=relaxed/simple;
-	bh=rpnMxo36Tob8+PWnDpJfJXBBXFt0Kxg9duZR243hjgU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dtjMK3jSw/Eb2EFH/skNvPbNDbOlo6TlGxPf5GrUnqonZUZTmyD7LKrQh2Z2LIsxkNMuc8JzY7FoIH/WmxGwPEUBs+KMHxRxx37jaSll0cCdLMmoUSrtaRcGgvOXOMBGfq/pw99RnnBJ7ROELUjoh9lCE7GznWIZ9OVJ827n5eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=kC4eu8Un; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.118.162] (254C2715.nat.pool.telekom.hu [37.76.39.21])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 1A5C2E45C7;
+	s=arc-20240116; t=1730998996; c=relaxed/simple;
+	bh=KJBAmMwAem737ua9u2IveMUP2U+vzQ0HKfPPQ1G5cZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HFBV15U0RVVg3Gu9KB0CCx3onZ+CZQLzEcmXoIAUPnJwgDl7VAkcQHPHiYvDtEEWbI96Gj4D1F72WF8pLlcchpdLm8G/OFNkxtwcrPpoWB0ZTydXUXvErWaA5EbjTtsECT6AewGdSd/pH3YjuG0HoGFQM50He6I1WSHRMlpWnQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cV4RJ02K; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 84051240010;
 	Thu,  7 Nov 2024 17:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1730998990;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730998990;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KcVAxQ2qNrm5pTAfHNxkoVCIISQ0fzOXw9ZW+beb0LI=;
-	b=kC4eu8Unqcj2tqnq2ctG93LlM4Onu4dNvpICe8ovX5iRsZaStds6zQI8/Z60hwf5Q1rC8y
-	uik2KNHYQMbcxifJQDZQS57gCG8BudUvVkqua45wZ4FLv5wwNa0x6VDcu9QckXCmYPrnS/
-	ZtncNsOrEowvjOnPNHikbHCwkfJwl8Sna3kyXGLLOAxF6E7dyWquqeFNrMOAPOezbnHI34
-	3PHqZC82dRVdmkJs2V9VMVgLMoUNLcVkgP8p+V4tLDWh1gjwQgT1q4m/DAV3kaM8sUXKO3
-	4VMuNUxeoKjjwMdXYhh0irPX+KOHcKDHFb6UX20a5evIZhtXrhs50Ns5uh5LFg==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Thu, 07 Nov 2024 18:02:53 +0100
-Subject: [PATCH v3 12/14] arm64: dts: qcom: Add initial support for MSM8917
+	bh=yGftyA+3TjwSi4jztRcRdZXVFb6mlDb7o3s4PkJNec8=;
+	b=cV4RJ02KulSkgy7RoPhzVTZJoHOnokc8SIhumyIm1XDfLvi2PsRUYkad+zKyL335ejELsQ
+	Y9CY7cESyynqwEcvi4oFnTMfnyL2TN2AvEy1ErWhNaOMAr72tTRo2pAnax9ZV/Wsolh9Cc
+	EvHku5U/O/Mmwe+vpNW9q7c1fqSLrBjLEb+QlRVix1wHInTgXS7bdpJdmxhawFzgNTIoeP
+	9N7x5H/ze4AUdSRdQ9CELYGGWrCMbU02tuAnZksGplckvoP1Wc7D4wTLBRuHBttZ8d/oDj
+	PMEKgiM6U78DBac+qh8fsmqBGR01FTHRyXtS1EfB9SAv6VNKAlCP3+P0LHd+Ug==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Herve Codina <herve.codina@bootlin.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH net-next 7/7] net: freescale: ucc_geth: phylink conversion
+Date: Thu,  7 Nov 2024 18:02:54 +0100
+Message-ID: <20241107170255.1058124-8-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
+References: <20241107170255.1058124-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241107-msm8917-v3-12-6ddc5acd978b@mainlining.org>
-References: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
-In-Reply-To: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Lee Jones <lee@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730998970; l=47863;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=B5Z8fPXbvD1BxOhp4pmFnNIL8xcwbzvHS6Wq7l2OA4Y=;
- b=3ikWQbe+D5fJHD2CKgZQyuXcT3MYAuIjUFKU/mDOSTDF4+uTh95xY+fnaw3mFi6q8k8SnIgZ6
- 7o6IaBKuHVkCgAHTlKN//v3HpNcd1sXY7DGhiSnFXrJzCgirMYf7ahZ
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-From: Otto Pflüger <otto.pflueger@abscue.de>
+ucc_geth is quite capable in terms of supported interfaces, and even
+includes an externally controlled PCS (well, TBI). Port that driver to
+phylink.
 
-Add initial support for MSM8917 SoC.
-
-Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
-[reword commit, rebase, fix schema errors]
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- arch/arm64/boot/dts/qcom/msm8917.dtsi | 2007 +++++++++++++++++++++++++++++++++
- 1 file changed, 2007 insertions(+)
+ drivers/net/ethernet/freescale/Kconfig        |   3 +-
+ drivers/net/ethernet/freescale/ucc_geth.c     | 516 ++++++++----------
+ drivers/net/ethernet/freescale/ucc_geth.h     |  13 +-
+ .../net/ethernet/freescale/ucc_geth_ethtool.c |  61 +--
+ 4 files changed, 236 insertions(+), 357 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8917.dtsi b/arch/arm64/boot/dts/qcom/msm8917.dtsi
-new file mode 100644
-index 0000000000000000000000000000000000000000..f7446dd7d44c9f2db6d309a817c0e58cbd143b5c
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8917.dtsi
-@@ -0,0 +1,2007 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <dt-bindings/clock/qcom,gcc-msm8917.h>
-+#include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/qcom-rpmpd.h>
-+#include <dt-bindings/soc/qcom,apr.h>
-+#include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
-+#include <dt-bindings/thermal/thermal.h>
-+
-+/ {
-+	interrupt-parent = <&intc>;
-+
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	aliases {
-+		mmc0 = &sdhc_1; /* SDC1 eMMC slot */
-+		mmc1 = &sdhc_2; /* SDC2 SD card slot */
-+	};
-+
-+	chosen { };
-+
-+	clocks {
-+		sleep_clk: sleep-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
-+
-+		xo_board: xo-board {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x100>;
-+			next-level-cache = <&l2_0>;
-+			enable-method = "psci";
-+			clocks = <&apcs>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
-+			power-domains = <&cpu_pd0>;
-+			power-domain-names = "psci";
-+		};
-+
-+		cpu1: cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x101>;
-+			next-level-cache = <&l2_0>;
-+			enable-method = "psci";
-+			clocks = <&apcs>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
-+			power-domains = <&cpu_pd1>;
-+			power-domain-names = "psci";
-+		};
-+
-+		cpu2: cpu@102 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x102>;
-+			next-level-cache = <&l2_0>;
-+			enable-method = "psci";
-+			clocks = <&apcs>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
-+			power-domains = <&cpu_pd2>;
-+			power-domain-names = "psci";
-+		};
-+
-+		cpu3: cpu@103 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x103>;
-+			next-level-cache = <&l2_0>;
-+			enable-method = "psci";
-+			clocks = <&apcs>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
-+			power-domains = <&cpu_pd3>;
-+			power-domain-names = "psci";
-+		};
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+
-+				core2 {
-+					cpu = <&cpu2>;
-+				};
-+
-+				core3 {
-+					cpu = <&cpu3>;
-+				};
-+			};
-+		};
-+
-+		domain-idle-states {
-+			cluster_pwrdn: cluster-gdhs {
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x41000043>;
-+				entry-latency-us = <240>;
-+				exit-latency-us = <280>;
-+				min-residency-us = <806>;
-+			};
-+
-+			cluster_pc: cluster-power-collapse {
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x41000053>;
-+				entry-latency-us = <700>;
-+				exit-latency-us = <1000>;
-+				min-residency-us = <6500>;
-+			};
-+
-+			cluster_ret: cluster-retention {
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x41000023>;
-+				entry-latency-us = <700>;
-+				exit-latency-us = <650>;
-+				min-residency-us = <1972>;
-+			};
-+
-+		};
-+
-+		idle-states {
-+			entry-method = "psci";
-+
-+			cpu_sleep_0: cpu-sleep-0 {
-+				compatible = "arm,idle-state";
-+				idle-state-name = "standalone-power-collapse";
-+				arm,psci-suspend-param = <0x40000003>;
-+				entry-latency-us = <125>;
-+				exit-latency-us = <180>;
-+				min-residency-us = <595>;
-+				local-timer-stop;
-+			};
-+		};
-+
-+		l2_0: l2-cache {
-+			compatible = "cache";
-+			cache-level = <2>;
-+			cache-unified;
-+		};
-+
-+		cpu_opp_table: opp-table-cpu {
-+			compatible = "operating-points-v2";
-+			opp-shared;
-+
-+			opp-960000000 {
-+				opp-hz = /bits/ 64 <960000000>;
-+			};
-+
-+			opp-1094400000 {
-+				opp-hz = /bits/ 64 <1094400000>;
-+			};
-+
-+			opp-1248000000 {
-+				opp-hz = /bits/ 64 <1248000000>;
-+			};
-+
-+			opp-1401600000 {
-+				opp-hz = /bits/ 64 <1401600000>;
-+			};
-+		};
-+	};
-+
-+	firmware {
-+		scm: scm {
-+			compatible = "qcom,scm-msm8916", "qcom,scm";
-+			clocks = <&gcc GCC_CRYPTO_CLK>,
-+				 <&gcc GCC_CRYPTO_AXI_CLK>,
-+				 <&gcc GCC_CRYPTO_AHB_CLK>;
-+			clock-names = "core", "bus", "iface";
-+			#reset-cells = <1>;
-+
-+			qcom,dload-mode = <&tcsr 0x6100>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		/* We expect the bootloader to fill in the reg */
-+		reg = <0 0x80000000 0 0>;
-+	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+
-+		cluster_pd: power-domain-cluster {
-+			#power-domain-cells = <0>;
-+			domain-idle-states = <&cluster_pwrdn>, <&cluster_ret>, <&cluster_pc>;
-+		};
-+
-+		cpu_pd0: power-domain-cpu0 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&cluster_pd>;
-+			domain-idle-states = <&cpu_sleep_0>;
-+		};
-+
-+		cpu_pd1: power-domain-cpu1 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&cluster_pd>;
-+			domain-idle-states = <&cpu_sleep_0>;
-+		};
-+
-+		cpu_pd2: power-domain-cpu2 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&cluster_pd>;
-+			domain-idle-states = <&cpu_sleep_0>;
-+		};
-+
-+		cpu_pd3: power-domain-cpu3 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&cluster_pd>;
-+			domain-idle-states = <&cpu_sleep_0>;
-+		};
-+	};
-+
-+	rpm: remoteproc {
-+		compatible = "qcom,msm8917-rpm-proc", "qcom,rpm-proc";
-+
-+		smd-edge {
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
-+			qcom,ipc = <&apcs 8 0>;
-+			qcom,smd-edge = <15>;
-+
-+			rpm_requests: rpm-requests {
-+				compatible = "qcom,rpm-msm8917", "qcom,smd-rpm";
-+				qcom,smd-channels = "rpm_requests";
-+
-+				rpmcc: clock-controller {
-+					compatible = "qcom,rpmcc-msm8917", "qcom,rpmcc";
-+					#clock-cells = <1>;
-+					clocks = <&xo_board>;
-+					clock-names = "xo";
-+				};
-+
-+				rpmpd: power-controller {
-+					compatible = "qcom,msm8917-rpmpd";
-+					#power-domain-cells = <1>;
-+					operating-points-v2 = <&rpmpd_opp_table>;
-+
-+					rpmpd_opp_table: opp-table {
-+						compatible = "operating-points-v2";
-+
-+						rpmpd_opp_ret: opp1 {
-+							opp-level = <RPM_SMD_LEVEL_RETENTION>;
-+						};
-+
-+						rpmpd_opp_ret_plus: opp2 {
-+							opp-level = <RPM_SMD_LEVEL_RETENTION_PLUS>;
-+						};
-+
-+						rpmpd_opp_min_svs: opp3 {
-+							opp-level = <RPM_SMD_LEVEL_MIN_SVS>;
-+						};
-+
-+						rpmpd_opp_low_svs: opp4 {
-+							opp-level = <RPM_SMD_LEVEL_LOW_SVS>;
-+						};
-+
-+						rpmpd_opp_svs: opp5 {
-+							opp-level = <RPM_SMD_LEVEL_SVS>;
-+						};
-+
-+						rpmpd_opp_svs_plus: opp6 {
-+							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
-+						};
-+
-+						rpmpd_opp_nom: opp7 {
-+							opp-level = <RPM_SMD_LEVEL_NOM>;
-+						};
-+
-+						rpmpd_opp_nom_plus: opp8 {
-+							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
-+						};
-+
-+						rpmpd_opp_turbo: opp9 {
-+							opp-level = <RPM_SMD_LEVEL_TURBO>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		qseecom_mem: qseecom@85b00000 {
-+			reg = <0x0 0x85b00000 0x0 0x800000>;
-+			no-map;
-+		};
-+
-+		smem@86300000 {
-+			compatible = "qcom,smem";
-+			reg = <0x0 0x86300000 0x0 0x100000>;
-+			no-map;
-+
-+			hwlocks = <&tcsr_mutex 3>;
-+			qcom,rpm-msg-ram = <&rpm_msg_ram>;
-+		};
-+
-+		reserved@86400000 {
-+			reg = <0x0 0x86400000 0x0 0x400000>;
-+			no-map;
-+		};
-+
-+		mpss_mem: mpss@86800000 {
-+			/*
-+			 * The memory region for the mpss firmware is generally
-+			 * relocatable and could be allocated dynamically.
-+			 * However, many firmware versions tend to fail when
-+			 * loaded to some special addresses, so it is hard to
-+			 * define reliable alloc-ranges.
-+			 *
-+			 * alignment = <0x0 0x400000>;
-+			 * alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-+			 */
-+			reg = <0x0 0x86800000 0x0 0>; /* size is device-specific */
-+			no-map;
-+			status = "disabled";
-+		};
-+
-+		rmtfs@92100000 {
-+			compatible = "qcom,rmtfs-mem";
-+			reg = <0x0 0x92100000 0x0 0x180000>;
-+			no-map;
-+
-+			qcom,client-id = <1>;
-+		};
-+
-+		adsp_mem: adsp {
-+			size = <0x0 0x1100000>;
-+			alignment = <0x0 0x100000>;
-+			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-+			no-map;
-+			status = "disabled";
-+		};
-+
-+		mba_mem: mba {
-+			size = <0x0 0x100000>;
-+			alignment = <0x0 0x100000>;
-+			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-+			no-map;
-+			status = "disabled";
-+		};
-+
-+		venus_mem: venus {
-+			size = <0x0 0x400000>;
-+			alignment = <0x0 0x100000>;
-+			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-+			no-map;
-+			status = "disabled";
-+		};
-+
-+		wcnss_mem: wcnss {
-+			size = <0x0 0x700000>;
-+			alignment = <0x0 0x100000>;
-+			alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
-+			no-map;
-+			status = "disabled";
-+		};
-+	};
-+
-+	smp2p-adsp {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <443>, <429>;
-+
-+		interrupts = <GIC_SPI 291 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apcs 10>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <2>;
-+
-+		adsp_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		adsp_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smp2p-modem {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupts = <GIC_SPI 27 IRQ_TYPE_EDGE_RISING>;
-+
-+		qcom,ipc = <&apcs 8 14>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		modem_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		modem_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smp2p-wcnss {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <451>, <431>;
-+
-+		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
-+
-+		qcom,ipc = <&apcs 8 18>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <4>;
-+
-+		wcnss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcnss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smsm {
-+		compatible = "qcom,smsm";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		mboxes = <0>, <&apcs 13>, <0>, <&apcs 19>;
-+
-+		apps_smsm: apps@0 {
-+			reg = <0>;
-+
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		hexagon_smsm: hexagon@1 {
-+			reg = <1>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		wcnss_smsm: wcnss@6 {
-+			reg = <6>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_EDGE_RISING>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	soc: soc@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0 0xffffffff>;
-+		compatible = "simple-bus";
-+
-+		rpm_msg_ram: sram@60000 {
-+			compatible = "qcom,rpm-msg-ram";
-+			reg = <0x60000 0x8000>;
-+		};
-+
-+		usb_hs_phy: phy@6c000 {
-+			compatible = "qcom,usb-hs-28nm-femtophy";
-+			reg = <0x6c000 0x200>;
-+			#phy-cells = <0>;
-+			clocks = <&xo_board>,
-+				 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
-+				 <&gcc GCC_USB2A_PHY_SLEEP_CLK>;
-+			clock-names = "ref", "ahb", "sleep";
-+			resets = <&gcc GCC_QUSB2_PHY_BCR>,
-+				 <&gcc GCC_USB2_HS_PHY_ONLY_BCR>;
-+			reset-names = "phy", "por";
-+			status = "disabled";
-+		};
-+
-+		qfprom: qfprom@a4000 {
-+			compatible = "qcom,msm8917-qfprom", "qcom,qfprom";
-+			reg = <0xa4000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			tsens_base1: base1@1d8 {
-+				reg = <0x1d8 1>;
-+				bits = <0 8>;
-+			};
-+
-+			tsens_s5_p1: s5-p1@1d9 {
-+				reg = <0x1d9 1>;
-+				bits = <0 6>;
-+			};
-+
-+			tsens_s5_p2: s5-p2@1d9 {
-+				reg = <0x1d9 2>;
-+				bits = <6 6>;
-+			};
-+
-+			tsens_s6_p1: s6-p1@1da {
-+				reg = <0x1da 2>;
-+				bits = <4 6>;
-+			};
-+
-+			tsens_s6_p2: s6-p2@1db {
-+				reg = <0x1db 1>;
-+				bits = <2 6>;
-+			};
-+
-+			tsens_s7_p1: s7-p1@1dc {
-+				reg = <0x1dc 1>;
-+				bits = <0 6>;
-+			};
-+
-+			tsens_s7_p2: s7-p2@1dc {
-+				reg = <0x1dc 2>;
-+				bits = <6 6>;
-+			};
-+
-+			tsens_s8_p1: s8-p1@1dd {
-+				reg = <0x1dd 2>;
-+				bits = <4 6>;
-+			};
-+
-+			tsens_s8_p2: s8-p2@1de {
-+				reg = <0x1de 1>;
-+				bits = <2 6>;
-+			};
-+
-+			tsens_base2: base2@1df {
-+				reg = <0x1df 1>;
-+				bits = <0 8>;
-+			};
-+
-+			tsens_mode: mode@210 {
-+				reg = <0x210 1>;
-+				bits = <0 3>;
-+			};
-+
-+			tsens_s0_p1: s0-p1@210 {
-+				reg = <0x210 2>;
-+				bits = <3 6>;
-+			};
-+
-+			tsens_s0_p2: s0-p2@211 {
-+				reg = <0x211 1>;
-+				bits = <1 6>;
-+			};
-+
-+			tsens_s1_p1: s1-p1@211 {
-+				reg = <0x211 2>;
-+				bits = <7 6>;
-+			};
-+
-+			tsens_s1_p2: s1-p2@212 {
-+				reg = <0x212 2>;
-+				bits = <5 6>;
-+			};
-+
-+			tsens_s2_p1: s2-p1@213 {
-+				reg = <0x213 2>;
-+				bits = <3 6>;
-+			};
-+
-+			tsens_s2_p2: s2-p2@214 {
-+				reg = <0x214 1>;
-+				bits = <1 6>;
-+			};
-+
-+			tsens_s3_p1: s3-p1@214 {
-+				reg = <0x214 2>;
-+				bits = <7 6>;
-+			};
-+
-+			tsens_s3_p2: s3-p2@215 {
-+				reg = <0x215 2>;
-+				bits = <5 6>;
-+			};
-+
-+			tsens_s4_p1: s4-p1@216 {
-+				reg = <0x216 2>;
-+				bits = <3 6>;
-+			};
-+
-+			tsens_s4_p2: s4-p2@217 {
-+				reg = <0x217 1>;
-+				bits = <1 6>;
-+			};
-+
-+			tsens_s9_p1: s9-p1@230{
-+				reg = <0x230 1>;
-+				bits = <0 6>;
-+			};
-+
-+			tsens_s9_p2: s9-p2@230 {
-+				reg = <0x230 2>;
-+				bits = <6 6>;
-+			};
-+
-+			tsens_s10_p1: s10-p1@231 {
-+				reg = <0x231 2>;
-+				bits = <4 6>;
-+			};
-+
-+			tsens_s10_p2: s10-p2@232 {
-+				reg = <0x232 1>;
-+				bits = <2 6>;
-+			};
-+		};
-+
-+		rng@e3000 {
-+			compatible = "qcom,prng";
-+			reg = <0xe3000 0x1000>;
-+			clocks = <&gcc GCC_PRNG_AHB_CLK>;
-+			clock-names = "core";
-+		};
-+
-+		tsens: thermal-sensor@4a9000 {
-+			compatible = "qcom,msm8937-tsens", "qcom,tsens-v1";
-+			reg = <0x4a9000 0x1000>,
-+			      <0x4a8000 0x1000>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "uplow";
-+			nvmem-cells = <&tsens_mode>,
-+				      <&tsens_base1>, <&tsens_base2>,
-+				      <&tsens_s0_p1>, <&tsens_s0_p2>,
-+				      <&tsens_s1_p1>, <&tsens_s1_p2>,
-+				      <&tsens_s2_p1>, <&tsens_s2_p2>,
-+				      <&tsens_s3_p1>, <&tsens_s3_p2>,
-+				      <&tsens_s4_p1>, <&tsens_s4_p2>,
-+				      <&tsens_s5_p1>, <&tsens_s5_p2>,
-+				      <&tsens_s6_p1>, <&tsens_s6_p2>,
-+				      <&tsens_s7_p1>, <&tsens_s7_p2>,
-+				      <&tsens_s8_p1>, <&tsens_s8_p2>,
-+				      <&tsens_s9_p1>, <&tsens_s9_p2>,
-+				      <&tsens_s10_p1>, <&tsens_s10_p2>;
-+			nvmem-cell-names = "mode",
-+					   "base1", "base2",
-+					   "s0_p1", "s0_p2",
-+					   "s1_p1", "s1_p2",
-+					   "s2_p1", "s2_p2",
-+					   "s3_p1", "s3_p2",
-+					   "s4_p1", "s4_p2",
-+					   "s5_p1", "s5_p2",
-+					   "s6_p1", "s6_p2",
-+					   "s7_p1", "s7_p2",
-+					   "s8_p1", "s8_p2",
-+					   "s9_p1", "s9_p2",
-+					   "s10_p1", "s10_p2";
-+			#qcom,sensors = <11>;
-+			#thermal-sensor-cells = <1>;
-+		};
-+
-+		restart@4ab000 {
-+			compatible = "qcom,pshold";
-+			reg = <0x4ab000 0x4>;
-+		};
-+
-+		tlmm: pinctrl@1000000 {
-+			compatible = "qcom,msm8917-pinctrl";
-+			reg = <0x1000000 0x300000>;
-+			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			gpio-ranges = <&tlmm 0 0 134>;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			blsp1_uart1_default: blsp1-uart1-default-state {
-+				pins = "gpio0", "gpio1", "gpio2", "gpio3";
-+				function = "blsp_uart1";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			blsp1_uart1_sleep: blsp1-uart1-sleep-state {
-+				pins = "gpio0", "gpio1", "gpio2", "gpio3";
-+				function = "gpio";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			blsp1_uart2_default: blsp1-uart2-default-state {
-+				pins = "gpio4", "gpio5";
-+				function = "blsp_uart2";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			blsp1_uart2_sleep: blsp1-uart2-sleep-state {
-+				pins = "gpio4", "gpio5";
-+				function = "gpio";
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
-+			i2c2_default: i2c2-default-state {
-+				pins = "gpio6", "gpio7";
-+				function = "blsp_i2c2";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			i2c2_sleep: i2c2-sleep-state {
-+				pins = "gpio6", "gpio7";
-+				function = "gpio";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			i2c3_default: i2c3-default-state {
-+				pins = "gpio10", "gpio11";
-+				function = "blsp_i2c3";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			i2c3_sleep: i2c3-sleep-state {
-+				pins = "gpio10", "gpio11";
-+				function = "gpio";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			i2c4_default: i2c4-default-state {
-+				pins = "gpio14", "gpio15";
-+				function = "blsp_i2c4";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			i2c4_sleep: i2c4-sleep-state {
-+				pins = "gpio14", "gpio15";
-+				function = "gpio";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			i2c5_default: i2c5-default-state {
-+				pins = "gpio18", "gpio19";
-+				function = "blsp_i2c5";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			i2c5_sleep: i2c5-sleep-state {
-+				pins = "gpio18", "gpio19";
-+				function = "gpio";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			sdc1_clk_on: sdc1-clk-on-state {
-+				pins = "sdc1_clk";
-+				bias-disable;
-+				drive-strength = <16>;
-+			};
-+
-+			sdc1_clk_off: sdc1-clk-off-state {
-+				pins = "sdc1_clk";
-+				bias-disable;
-+				drive-strength = <2>;
-+			};
-+
-+			sdc1_cmd_on: sdc1-cmd-on-state {
-+				pins = "sdc1_cmd";
-+				bias-disable;
-+				drive-strength = <10>;
-+			};
-+
-+			sdc1_cmd_off: sdc1-cmd-off-state {
-+				pins = "sdc1_cmd";
-+				bias-disable;
-+				drive-strength = <2>;
-+			};
-+
-+			sdc1_data_on: sdc1-data-on-state {
-+				pins = "sdc1_data";
-+				bias-pull-up;
-+				drive-strength = <10>;
-+			};
-+
-+			sdc1_data_off: sdc1-data-off-state {
-+				pins = "sdc1_data";
-+				bias-pull-up;
-+				drive-strength = <2>;
-+			};
-+
-+			sdc1_rclk_on: sdc1-rclk-on-state {
-+				pins = "sdc1_rclk";
-+				bias-pull-down;
-+			};
-+
-+			sdc1_rclk_off: sdc1-rclk-off-state {
-+				pins = "sdc1_rclk";
-+				bias-pull-down;
-+			};
-+
-+			sdc2_clk_on: sdc2-clk-on-state {
-+				pins = "sdc2_clk";
-+				drive-strength = <16>;
-+				bias-disable;
-+			};
-+
-+			sdc2_clk_off: sdc2-clk-off-state {
-+				pins = "sdc2_clk";
-+				bias-disable;
-+				drive-strength = <2>;
-+			};
-+
-+			sdc2_cmd_on: sdc2-cmd-on-state {
-+				pins = "sdc2_cmd";
-+				bias-pull-up;
-+				drive-strength = <10>;
-+			};
-+
-+			sdc2_cmd_off: sdc2-cmd-off-state {
-+				pins = "sdc2_cmd";
-+				bias-pull-up;
-+				drive-strength = <2>;
-+			};
-+
-+			sdc2_cd_on: cd-on-state {
-+				pins = "gpio67";
-+				function = "gpio";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			sdc2_cd_off: cd-off-state {
-+				pins = "gpio67";
-+				function = "gpio";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+
-+			sdc2_data_on: sdc2-data-on-state {
-+				pins = "sdc2_data";
-+				bias-pull-up;
-+				drive-strength = <10>;
-+			};
-+
-+			sdc2_data_off: sdc2-data-off-state {
-+				pins = "sdc2_data";
-+				bias-pull-up;
-+				drive-strength = <2>;
-+			};
-+
-+			spi3_default: spi3-default-state {
-+				cs-pins {
-+					pins = "gpio10";
-+					function = "blsp_spi3";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+
-+				spi-pins {
-+					pins = "gpio8", "gpio9", "gpio11";
-+					function = "blsp_spi3";
-+					drive-strength = <12>;
-+					bias-disable;
-+				};
-+			};
-+
-+			spi3_sleep: spi3-sleep-state {
-+				cs-pins {
-+					pins = "gpio10";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+
-+				spi-pins {
-+					pins = "gpio8", "gpio9", "gpio11";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-pull-down;
-+				};
-+			};
-+
-+			spi6_default: spi6-default-state {
-+				cs0-pins {
-+					pins = "gpio47";
-+					function = "blsp_spi6";
-+					drive-strength = <16>;
-+					bias-disable;
-+				};
-+
-+				cs1-pins {
-+					pins = "gpio22";
-+					function = "blsp_spi6";
-+					drive-strength = <16>;
-+					bias-disable;
-+				};
-+
-+				spi-pins {
-+					pins = "gpio20", "gpio21", "gpio23";
-+					function = "blsp_spi6";
-+					drive-strength = <16>;
-+					bias-disable;
-+				};
-+			};
-+
-+			spi6_sleep: spi6-sleep-state {
-+				cs0-pins {
-+					pins = "gpio47";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+
-+				cs1-pins {
-+					pins = "gpio22";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+
-+				spi-pins {
-+					pins = "gpio20", "gpio21", "gpio23";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-pull-down;
-+				};
-+			};
-+
-+			wcnss_pin_a: wcnss-active-state {
-+				wcss-wlan-pins {
-+					pins = "gpio79", "gpio80";
-+					function = "wcss_wlan";
-+					drive-strength = <6>;
-+					bias-pull-up;
-+
-+				};
-+
-+				wcss-wlan0-pins {
-+					pins = "gpio78";
-+					function = "wcss_wlan0";
-+					drive-strength = <6>;
-+					bias-pull-up;
-+
-+				};
-+
-+				wcss-wlan1-pins {
-+					pins = "gpio77";
-+					function = "wcss_wlan1";
-+					drive-strength = <6>;
-+					bias-pull-up;
-+
-+				};
-+
-+				wcss-wlan2-pins {
-+					pins = "gpio76";
-+					function = "wcss_wlan2";
-+					drive-strength = <6>;
-+					bias-pull-up;
-+
-+				};
-+			};
-+		};
-+
-+		gcc: clock-controller@1800000 {
-+			compatible = "qcom,gcc-msm8917";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x1800000 0x80000>;
-+			clocks = <&xo_board>,
-+				 <&sleep_clk>,
-+				 <&mdss_dsi0_phy 1>,
-+				 <&mdss_dsi0_phy 0>;
-+			clock-names = "xo",
-+				      "sleep_clk",
-+				      "dsi0pll",
-+				      "dsi0pllbyte";
-+		};
-+
-+		tcsr_mutex: hwlock@1905000 {
-+			compatible = "qcom,tcsr-mutex";
-+			reg = <0x1905000 0x20000>;
-+			#hwlock-cells = <1>;
-+		};
-+
-+		tcsr: syscon@1937000 {
-+			compatible = "qcom,tcsr-msm8917", "syscon";
-+			reg = <0x1937000 0x30000>;
-+		};
-+
-+		mdss: display-subsystem@1a00000 {
-+			compatible = "qcom,mdss";
-+			reg = <0x1a00000 0x1000>,
-+			      <0x1ab0000 0x1040>;
-+			reg-names = "mdss_phys", "vbif_phys";
-+
-+			power-domains = <&gcc MDSS_GDSC>;
-+
-+			clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+				 <&gcc GCC_MDSS_AXI_CLK>,
-+				 <&gcc GCC_MDSS_VSYNC_CLK>;
-+			clock-names = "iface",
-+				      "bus",
-+				      "vsync";
-+
-+			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			status = "disabled";
-+
-+			mdp: display-controller@1a01000 {
-+				compatible = "qcom,msm8917-mdp5", "qcom,mdp5";
-+				reg = <0x1a01000 0x89000>;
-+				reg-names = "mdp_phys";
-+
-+				interrupt-parent = <&mdss>;
-+				interrupts = <0>;
-+
-+				power-domains = <&gcc MDSS_GDSC>;
-+
-+				clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+					 <&gcc GCC_MDSS_AXI_CLK>,
-+					 <&gcc GCC_MDSS_MDP_CLK>,
-+					 <&gcc GCC_MDSS_VSYNC_CLK>;
-+				clock-names = "iface",
-+					      "bus",
-+					      "core",
-+					      "vsync";
-+
-+				iommus = <&apps_iommu 0x15>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						mdp5_intf1_out: endpoint {
-+							remote-endpoint = <&mdss_dsi0_in>;
-+						};
-+					};
-+				};
-+			};
-+
-+			mdss_dsi0: dsi@1a94000 {
-+				compatible = "qcom,mdss-dsi-ctrl";
-+				reg = <0x1a94000 0x300>;
-+				reg-names = "dsi_ctrl";
-+
-+				interrupt-parent = <&mdss>;
-+				interrupts = <4>;
-+
-+				assigned-clocks = <&gcc BYTE0_CLK_SRC>,
-+						  <&gcc PCLK0_CLK_SRC>;
-+				assigned-clock-parents = <&mdss_dsi0_phy 0>,
-+							 <&mdss_dsi0_phy 1>;
-+
-+				clocks = <&gcc GCC_MDSS_MDP_CLK>,
-+					 <&gcc GCC_MDSS_AHB_CLK>,
-+					 <&gcc GCC_MDSS_AXI_CLK>,
-+					 <&gcc GCC_MDSS_BYTE0_CLK>,
-+					 <&gcc GCC_MDSS_PCLK0_CLK>,
-+					 <&gcc GCC_MDSS_ESC0_CLK>;
-+				clock-names = "mdp_core",
-+					      "iface",
-+					      "bus",
-+					      "byte",
-+					      "pixel",
-+					      "core";
-+				phys = <&mdss_dsi0_phy>;
-+
-+				operating-points-v2 = <&mdss_dsi0_opp_table>;
-+				power-domains = <&rpmpd MSM8917_VDDCX>;
-+
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						mdss_dsi0_in: endpoint {
-+							remote-endpoint = <&mdp5_intf1_out>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						mdss_dsi0_out: endpoint {
-+						};
-+					};
-+				};
-+
-+				mdss_dsi0_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					opp-125000000 {
-+						opp-hz = /bits/ 64 <125000000>;
-+						required-opps = <&rpmpd_opp_svs>;
-+					};
-+
-+					opp-187500000 {
-+						opp-hz = /bits/ 64 <187500000>;
-+						required-opps = <&rpmpd_opp_nom>;
-+					};
-+				};
-+			};
-+
-+			mdss_dsi0_phy: phy@1a94a00 {
-+				compatible = "qcom,dsi-phy-28nm-8937";
-+				reg = <0x1a94a00 0xd4>,
-+				      <0x1a94400 0x280>,
-+				      <0x1a94b80 0x30>;
-+				reg-names = "dsi_pll",
-+					    "dsi_phy",
-+					    "dsi_phy_regulator";
-+
-+				#clock-cells = <1>;
-+				#phy-cells = <0>;
-+
-+				clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+					 <&xo_board>;
-+				clock-names = "iface", "ref";
-+			};
-+		};
-+
-+		apps_iommu: iommu@1e20000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			#iommu-cells = <1>;
-+			compatible = "qcom,msm8917-iommu", "qcom,msm-iommu-v1";
-+			ranges = <0 0x1e20000 0x20000>;
-+
-+			clocks = <&gcc GCC_SMMU_CFG_CLK>,
-+				 <&gcc GCC_APSS_TCU_CLK>;
-+			clock-names = "iface", "bus";
-+
-+			qcom,iommu-secure-id = <17>;
-+
-+			/* VFE */
-+			iommu-ctx@14000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x14000 0x1000>;
-+				interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* MDP_0 */
-+			iommu-ctx@15000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x15000 0x1000>;
-+				interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* VENUS_NS */
-+			iommu-ctx@16000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x16000 0x1000>;
-+				interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+		};
-+
-+		gpu_iommu: iommu@1f08000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			#iommu-cells = <1>;
-+
-+			compatible = "qcom,msm8917-iommu", "qcom,msm-iommu-v1";
-+
-+			ranges = <0 0x1f08000 0x10000>;
-+			clocks = <&gcc GCC_SMMU_CFG_CLK>,
-+				 <&gcc GCC_GFX_TCU_CLK>;
-+			clock-names = "iface", "bus";
-+			qcom,iommu-secure-id = <18>;
-+
-+			iommu-ctx@0 {
-+				compatible = "qcom,msm-iommu-v2-ns";
-+				reg = <0 0x1000>;
-+				interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+		};
-+
-+		gpu: gpu@1c00000 {
-+			compatible = "qcom,adreno-306.32", "qcom,adreno";
-+			reg = <0x1c00000 0x20000>;
-+			reg-names = "kgsl_3d0_reg_memory";
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "kgsl_3d0_irq";
-+			clock-names = "core",
-+				      "iface",
-+				      "mem_iface",
-+				      "alt_mem_iface",
-+				      "gfx3d";
-+			clocks = <&gcc GCC_OXILI_GFX3D_CLK>,
-+				 <&gcc GCC_OXILI_AHB_CLK>,
-+				 <&gcc GCC_BIMC_GFX_CLK>,
-+				 <&gcc GCC_BIMC_GPU_CLK>,
-+				 <&gcc GFX3D_CLK_SRC>;
-+			power-domains = <&gcc OXILI_GX_GDSC>;
-+			operating-points-v2 = <&gpu_opp_table>;
-+			#cooling-cells = <2>;
-+
-+			iommus = <&gpu_iommu 0>;
-+
-+			status = "disabled";
-+
-+			gpu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-598000000 {
-+					opp-hz = /bits/ 64 <598000000>;
-+				};
-+
-+				opp-523200000 {
-+					opp-hz = /bits/ 64 <523200000>;
-+				};
-+
-+				opp-484800000 {
-+					opp-hz = /bits/ 64 <484800000>;
-+				};
-+
-+				opp-400000000 {
-+					opp-hz = /bits/ 64 <400000000>;
-+				};
-+
-+				opp-270000000 {
-+					opp-hz = /bits/ 64 <270000000>;
-+				};
-+
-+				opp-19200000 {
-+					opp-hz = /bits/ 64 <19200000>;
-+				};
-+			};
-+		};
-+
-+		spmi_bus: spmi@200f000 {
-+			compatible = "qcom,spmi-pmic-arb";
-+			reg = <0x200f000 0x001000>,
-+			      <0x2400000 0x800000>,
-+			      <0x2c00000 0x800000>,
-+			      <0x3800000 0x200000>,
-+			      <0x200a000 0x002100>;
-+			reg-names = "core",
-+				    "chnls",
-+				    "obsrvr",
-+				    "intr",
-+				    "cnfg";
-+			interrupt-names = "periph_irq";
-+			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
-+			qcom,ee = <0>;
-+			qcom,channel = <0>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+			interrupt-controller;
-+			#interrupt-cells = <4>;
-+		};
-+
-+		bam_dmux_dma: dma-controller@4044000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0x4044000 0x19000>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
-+
-+			num-channels = <6>;
-+			qcom,num-ees = <1>;
-+			qcom,powered-remotely;
-+
-+			status = "disabled";
-+		};
-+
-+		sdhc_1: mmc@7824900 {
-+			compatible = "qcom,sdhci-msm-v4";
-+			reg = <0x7824900 0x500>,
-+			      <0x7824000 0x800>;
-+			reg-names = "hc", "core";
-+
-+			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hc_irq", "pwr_irq";
-+			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-+				 <&gcc GCC_SDCC1_APPS_CLK>,
-+				 <&xo_board>;
-+			clock-names = "iface", "core", "xo";
-+			power-domains = <&rpmpd MSM8917_VDDCX>;
-+			mmc-hs200-1_8v;
-+			mmc-hs400-1_8v;
-+			mmc-ddr-1_8v;
-+			bus-width = <8>;
-+			non-removable;
-+			status = "disabled";
-+		};
-+
-+		sdhc_2: mmc@7864900 {
-+			compatible = "qcom,sdhci-msm-v4";
-+			reg = <0x7864900 0x500>,
-+			      <0x7864000 0x800>;
-+			reg-names = "hc", "core";
-+
-+			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hc_irq", "pwr_irq";
-+			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&gcc GCC_SDCC2_APPS_CLK>,
-+				 <&xo_board>;
-+			clock-names = "iface", "core", "xo";
-+			power-domains = <&rpmpd MSM8917_VDDCX>;
-+			bus-width = <4>;
-+			status = "disabled";
-+		};
-+
-+		blsp1_dma: dma-controller@7884000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0x7884000 0x1f000>;
-+			interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "bam_clk";
-+			qcom,controlled-remotely;
-+			#dma-cells = <1>;
-+			num-channels = <12>;
-+			qcom,num-ees = <4>;
-+			qcom,ee = <0>;
-+		};
-+
-+		blsp2_dma: dma-controller@7ac4000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0x7ac4000 0x1d000>;
-+			interrupts = <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP2_AHB_CLK>;
-+			clock-names = "bam_clk";
-+			qcom,controlled-remotely;
-+			#dma-cells = <1>;
-+			num-channels = <10>;
-+			qcom,num-ees = <4>;
-+			qcom,ee = <0>;
-+		};
-+
-+		blsp1_uart1: serial@78af000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x78af000 0x200>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp1_dma 0>, <&blsp1_dma 1>;
-+			dma-names = "tx", "rx";
-+			pinctrl-0 = <&blsp1_uart1_default>;
-+			pinctrl-1 = <&blsp1_uart1_sleep>;
-+			pinctrl-names = "default", "sleep";
-+			status = "disabled";
-+		};
-+
-+		blsp1_uart2: serial@78b0000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x78b0000 0x200>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp1_dma 2>, <&blsp1_dma 3>;
-+			dma-names = "tx", "rx";
-+			pinctrl-0 = <&blsp1_uart2_default>;
-+			pinctrl-1 = <&blsp1_uart2_sleep>;
-+			pinctrl-names = "default", "sleep";
-+			status = "disabled";
-+		};
-+
-+		blsp_i2c2: i2c@78b6000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0x78b6000 0x600>;
-+			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp1_dma 6>, <&blsp1_dma 7>;
-+			dma-names = "tx", "rx";
-+			pinctrl-0 = <&i2c2_default>;
-+			pinctrl-1 = <&i2c2_sleep>;
-+			pinctrl-names = "default", "sleep";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		blsp_i2c3: i2c@78b7000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0x78b7000 0x600>;
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp1_dma 8>, <&blsp1_dma 9>;
-+			dma-names = "tx", "rx";
-+			pinctrl-0 = <&i2c3_default>;
-+			pinctrl-1 = <&i2c3_sleep>;
-+			pinctrl-names = "default", "sleep";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		blsp_spi3: spi@78b7000 {
-+			compatible = "qcom,spi-qup-v2.2.1";
-+			reg = <0x78b7000 0x600>;
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_QUP3_SPI_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp1_dma 8>, <&blsp1_dma 9>;
-+			dma-names = "tx", "rx";
-+			pinctrl-0 = <&spi3_default>;
-+			pinctrl-1 = <&spi3_sleep>;
-+			pinctrl-names = "default", "sleep";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		blsp_i2c4: i2c@78b8000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0x78b8000 0x500>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp1_dma 10>, <&blsp1_dma 11>;
-+			dma-names = "tx", "rx";
-+			pinctrl-0 = <&i2c4_default>;
-+			pinctrl-1 = <&i2c4_sleep>;
-+			pinctrl-names = "default", "sleep";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		blsp_i2c5: i2c@7af5000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0x7af5000 0x600>;
-+			interrupts = <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP2_QUP1_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP2_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp2_dma 4>, <&blsp2_dma 5>;
-+			dma-names = "tx", "rx";
-+			pinctrl-0 = <&i2c5_default>;
-+			pinctrl-1 = <&i2c5_sleep>;
-+			pinctrl-names = "default", "sleep";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		blsp_spi6: spi@7af6000 {
-+			compatible = "qcom,spi-qup-v2.2.1";
-+			reg = <0x7af6000 0x600>;
-+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP2_QUP2_SPI_APPS_CLK>,
-+				 <&gcc GCC_BLSP2_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp2_dma 6>, <&blsp2_dma 7>;
-+			dma-names = "tx", "rx";
-+			pinctrl-0 = <&spi6_default>;
-+			pinctrl-1 = <&spi6_sleep>;
-+			pinctrl-names = "default", "sleep";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		usb: usb@78db000 {
-+			compatible = "qcom,ci-hdrc";
-+			reg = <0x78db000 0x200>,
-+			      <0x78db200 0x200>;
-+			interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_USB_HS_AHB_CLK>,
-+				 <&gcc GCC_USB_HS_SYSTEM_CLK>;
-+			clock-names = "iface", "core";
-+			assigned-clocks = <&gcc GCC_USB_HS_SYSTEM_CLK>;
-+			assigned-clock-rates = <80000000>;
-+			resets = <&gcc GCC_USB_HS_BCR>;
-+			reset-names = "core";
-+			phy_type = "ulpi";
-+			dr_mode = "otg";
-+			hnp-disable;
-+			srp-disable;
-+			adp-disable;
-+			ahb-burst-config = <0>;
-+			phy-names = "usb-phy";
-+			phys = <&usb_hs_phy>;
-+			status = "disabled";
-+			#reset-cells = <1>;
-+		};
-+
-+		wcnss: remoteproc@a204000 {
-+			compatible = "qcom,pronto-v3-pil", "qcom,pronto";
-+			reg = <0xa204000 0x2000>,
-+			      <0xa202000 0x1000>,
-+			      <0xa21b000 0x3000>;
-+			reg-names = "ccu", "dxe", "pmu";
-+
-+			memory-region = <&wcnss_mem>;
-+
-+			interrupts-extended = <&intc GIC_SPI 149 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
-+
-+			power-domains = <&rpmpd MSM8917_VDDCX>,
-+					<&rpmpd MSM8917_VDDMX>;
-+			power-domain-names = "cx", "mx";
-+
-+			qcom,smem-states = <&wcnss_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			pinctrl-0 = <&wcnss_pin_a>;
-+			pinctrl-names = "default";
-+
-+			status = "disabled";
-+
-+			wcnss_iris: iris {
-+				clocks = <&rpmcc RPM_SMD_RF_CLK2>;
-+				clock-names = "xo";
-+			};
-+
-+			smd-edge {
-+				interrupts = <GIC_SPI 142 IRQ_TYPE_EDGE_RISING>;
-+
-+				mboxes = <&apcs 17>;
-+				qcom,smd-edge = <6>;
-+				qcom,remote-pid = <4>;
-+
-+				label = "pronto";
-+
-+				wcnss_ctrl: wcnss {
-+					compatible = "qcom,wcnss";
-+					qcom,smd-channels = "WCNSS_CTRL";
-+
-+					qcom,mmio = <&wcnss>;
-+
-+					wcnss_bt: bluetooth {
-+						compatible = "qcom,wcnss-bt";
-+					};
-+
-+					wcnss_wifi: wifi {
-+						compatible = "qcom,wcnss-wlan";
-+
-+						interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-+							     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-+						interrupt-names = "tx", "rx";
-+
-+						qcom,smem-states = <&apps_smsm 10>, <&apps_smsm 9>;
-+						qcom,smem-state-names = "tx-enable",
-+									"tx-rings-empty";
-+					};
-+				};
-+			};
-+		};
-+
-+		intc: interrupt-controller@b000000 {
-+			compatible = "qcom,msm-qgic2";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0xb000000 0x1000>,
-+			      <0xb002000 0x1000>;
-+		};
-+
-+		apcs: mailbox@b011000 {
-+			compatible = "qcom,msm8939-apcs-kpss-global", "syscon";
-+			reg = <0xb011000 0x1000>;
-+			#mbox-cells = <1>;
-+			clocks = <&a53pll>, <&gcc GPLL0_EARLY>, <&rpmcc RPM_SMD_XO_CLK_SRC>;
-+			clock-names = "pll", "aux", "ref";
-+			#clock-cells = <0>;
-+		};
-+
-+		a53pll: clock@b016000 {
-+			compatible = "qcom,msm8939-a53pll";
-+			reg = <0xb016000 0x40>;
-+			clocks = <&xo_board>;
-+			clock-names = "xo";
-+			#clock-cells = <0>;
-+			operating-points-v2 = <&pll_opp_table>;
-+
-+			pll_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-960000000 {
-+					opp-hz = /bits/ 64 <960000000>;
-+				};
-+
-+				opp-1094400000 {
-+					opp-hz = /bits/ 64 <1094400000>;
-+				};
-+
-+				opp-1248000000 {
-+					opp-hz = /bits/ 64 <1248000000>;
-+				};
-+
-+				opp-1401600000 {
-+				      opp-hz = /bits/ 64 <1401600000>;
-+				};
-+			};
-+		};
-+
-+		watchdog@b017000 {
-+			compatible = "qcom,apss-wdt-qcs404", "qcom,kpss-wdt";
-+			reg = <0xb017000 0x1000>;
-+			clocks = <&sleep_clk>;
-+		};
-+
-+		timer@b120000 {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			compatible = "arm,armv7-timer-mem";
-+			reg = <0xb120000 0x1000>;
-+			clock-frequency = <19200000>;
-+
-+			frame@b121000 {
-+				frame-number = <0>;
-+				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb121000 0x1000>,
-+				      <0xb122000 0x1000>;
-+			};
-+
-+			frame@b123000 {
-+				frame-number = <1>;
-+				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb123000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b124000 {
-+				frame-number = <2>;
-+				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb124000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b125000 {
-+				frame-number = <3>;
-+				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb125000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b126000 {
-+				frame-number = <4>;
-+				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb126000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b127000 {
-+				frame-number = <5>;
-+				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb127000 0x1000>;
-+				status = "disabled";
-+			};
-+
-+			frame@b128000 {
-+				frame-number = <6>;
-+				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xb128000 0x1000>;
-+				status = "disabled";
-+			};
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		clock-frequency = <19200000>;
-+	};
-+
-+	thermal_zones: thermal-zones {
-+		aoss-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 0>;
-+
-+			trips {
-+				aoss_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+			};
-+		};
-+
-+		camera-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 3>;
-+
-+			trips {
-+				camera_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+			};
-+		};
-+
-+		cpuss1-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 4>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpuss1_alert0>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
-+			trips {
-+				cpuss1_crit: cpuss1-crit {
-+					temperature = <100000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+
-+				cpuss1_alert0: trip-point0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				cpuss1_alert1: trip-point1 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+			};
-+		};
-+
-+		cpu0-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 5>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu0_alert1>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
-+			trips {
-+				cpu0_crit: cpu-crit {
-+					temperature = <100000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+
-+				cpu0_alert0: trip-point0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				cpu0_alert1: trip-point1 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+			};
-+		};
-+
-+		cpu1-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 6>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu1_alert1>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
-+			trips {
-+				cpu1_crit: cpu-crit {
-+					temperature = <100000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+
-+				cpu1_alert0: trip-point0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+
-+				cpu1_alert1: trip-point1 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+
-+		cpu2-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 7>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu2_alert1>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
-+			trips {
-+				cpu2_crit: cpu-crit {
-+					temperature = <100000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+
-+				cpu2_alert0: trip-point0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+
-+				cpu2_alert1: trip-point1 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+
-+		cpu3-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 8>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu3_alert1>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
-+			trips {
-+				cpu3_crit: cpu-crit {
-+					temperature = <100000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+
-+				cpu3_alert0: trip-point0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+
-+				cpu3_alert1: trip-point1 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+
-+		gpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 9>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu_alert>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
-+			trips {
-+				gpu_crit: gpu-crit {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+
-+				gpu_alert: trip-point0 {
-+					temperature = <70000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+			};
-+
-+		};
-+
-+		mdm-core-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 1>;
-+
-+			trips {
-+				mdm_core_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+			};
-+		};
-+
-+		q6-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 2>;
-+
-+			trips {
-+				q6_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <2000>;
-+					type = "hot";
-+				};
-+			};
-+		};
-+	};
+diff --git a/drivers/net/ethernet/freescale/Kconfig b/drivers/net/ethernet/freescale/Kconfig
+index 75401d2a5fb4..a2d7300925a8 100644
+--- a/drivers/net/ethernet/freescale/Kconfig
++++ b/drivers/net/ethernet/freescale/Kconfig
+@@ -81,8 +81,7 @@ config UCC_GETH
+ 	tristate "Freescale QE Gigabit Ethernet"
+ 	depends on QUICC_ENGINE && PPC32
+ 	select FSL_PQ_MDIO
+-	select PHYLIB
+-	select FIXED_PHY
++	select PHYLINK
+ 	help
+ 	  This driver supports the Gigabit Ethernet mode of the QUICC Engine,
+ 	  which is available on some Freescale SOCs.
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index 0ec4ea95ad6d..df74ebd8dbe8 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -26,7 +26,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/mii.h>
+ #include <linux/phy.h>
+-#include <linux/phy_fixed.h>
++#include <linux/phylink.h>
+ #include <linux/workqueue.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -34,6 +34,7 @@
+ #include <linux/of_mdio.h>
+ #include <linux/of_net.h>
+ #include <linux/platform_device.h>
++#include <linux/rtnetlink.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/irq.h>
+@@ -1258,89 +1259,6 @@ static int init_min_frame_len(u16 min_frame_length,
+ 	return 0;
+ }
+ 
+-static int adjust_enet_interface(struct ucc_geth_private *ugeth)
+-{
+-	struct ucc_geth_info *ug_info;
+-	struct ucc_geth __iomem *ug_regs;
+-	struct ucc_fast __iomem *uf_regs;
+-	u32 upsmr, maccfg2;
+-	u16 value;
+-
+-	ugeth_vdbg("%s: IN", __func__);
+-
+-	ug_info = ugeth->ug_info;
+-	ug_regs = ugeth->ug_regs;
+-	uf_regs = ugeth->uccf->uf_regs;
+-
+-	/*                    Set MACCFG2                    */
+-	maccfg2 = in_be32(&ug_regs->maccfg2);
+-
+-	/* Disable frame length check */
+-	maccfg2 &= ~MACCFG2_LC;
+-	maccfg2 &= ~MACCFG2_INTERFACE_MODE_MASK;
+-	if ((ugeth->max_speed == SPEED_10) ||
+-	    (ugeth->max_speed == SPEED_100))
+-		maccfg2 |= MACCFG2_INTERFACE_MODE_NIBBLE;
+-	else if (ugeth->max_speed == SPEED_1000)
+-		maccfg2 |= MACCFG2_INTERFACE_MODE_BYTE;
+-	maccfg2 |= ug_info->padAndCrc;
+-	out_be32(&ug_regs->maccfg2, maccfg2);
+-
+-	/*                    Set UPSMR                      */
+-	upsmr = in_be32(&uf_regs->upsmr);
+-	upsmr &= ~(UCC_GETH_UPSMR_RPM | UCC_GETH_UPSMR_R10M |
+-		   UCC_GETH_UPSMR_TBIM | UCC_GETH_UPSMR_RMM);
+-	if ((ugeth->phy_interface == PHY_INTERFACE_MODE_RMII) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_ID) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RTBI)) {
+-		if (ugeth->phy_interface != PHY_INTERFACE_MODE_RMII)
+-			upsmr |= UCC_GETH_UPSMR_RPM;
+-		switch (ugeth->max_speed) {
+-		case SPEED_10:
+-			upsmr |= UCC_GETH_UPSMR_R10M;
+-			fallthrough;
+-		case SPEED_100:
+-			if (ugeth->phy_interface != PHY_INTERFACE_MODE_RTBI)
+-				upsmr |= UCC_GETH_UPSMR_RMM;
+-		}
+-	}
+-	if ((ugeth->phy_interface == PHY_INTERFACE_MODE_TBI) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RTBI)) {
+-		upsmr |= UCC_GETH_UPSMR_TBIM;
+-	}
+-	if (ugeth->phy_interface == PHY_INTERFACE_MODE_SGMII)
+-		upsmr |= UCC_GETH_UPSMR_SGMM;
+-
+-	out_be32(&uf_regs->upsmr, upsmr);
+-
+-	/* Disable autonegotiation in tbi mode, because by default it
+-	comes up in autonegotiation mode. */
+-	/* Note that this depends on proper setting in utbipar register. */
+-	if ((ugeth->phy_interface == PHY_INTERFACE_MODE_TBI) ||
+-	    (ugeth->phy_interface == PHY_INTERFACE_MODE_RTBI)) {
+-		struct ucc_geth_info *ug_info = ugeth->ug_info;
+-		struct phy_device *tbiphy;
+-
+-		if (!ug_info->tbi_node)
+-			pr_warn("TBI mode requires that the device tree specify a tbi-handle\n");
+-
+-		tbiphy = of_phy_find_device(ug_info->tbi_node);
+-		if (!tbiphy)
+-			pr_warn("Could not get TBI device\n");
+-
+-		value = phy_read(tbiphy, ENET_TBI_MII_CR);
+-		value &= ~0x1000;	/* Turn off autonegotiation */
+-		phy_write(tbiphy, ENET_TBI_MII_CR, value);
+-
+-		put_device(&tbiphy->mdio.dev);
+-	}
+-
+-	return 0;
+-}
+-
+ static int ugeth_graceful_stop_tx(struct ucc_geth_private *ugeth)
+ {
+ 	struct ucc_fast_private *uccf;
+@@ -1512,113 +1430,6 @@ static void ugeth_activate(struct ucc_geth_private *ugeth)
+ 	__netdev_watchdog_up(ugeth->ndev);
+ }
+ 
+-static void ugeth_link_up(struct ucc_geth_private *ugeth,
+-			  struct phy_device *phy,
+-			  phy_interface_t interface, int speed, int duplex)
+-{
+-	struct ucc_geth __iomem *ug_regs = ugeth->ug_regs;
+-	struct ucc_fast __iomem *uf_regs = ugeth->uccf->uf_regs;
+-	u32 tempval = in_be32(&ug_regs->maccfg2);
+-	u32 upsmr = in_be32(&uf_regs->upsmr);
+-	int new_state = 0;
+-
+-	/* Now we make sure that we can be in full duplex mode.
+-	 * If not, we operate in half-duplex mode.
+-	 */
+-	if (duplex != ugeth->oldduplex) {
+-		new_state = 1;
+-		if (duplex == DUPLEX_HALF)
+-			tempval &= ~(MACCFG2_FDX);
+-		else
+-			tempval |= MACCFG2_FDX;
+-		ugeth->oldduplex = duplex;
+-	}
+-
+-	if (speed != ugeth->oldspeed) {
+-		new_state = 1;
+-		switch (speed) {
+-		case SPEED_1000:
+-			tempval = ((tempval &
+-				    ~(MACCFG2_INTERFACE_MODE_MASK)) |
+-				    MACCFG2_INTERFACE_MODE_BYTE);
+-			break;
+-		case SPEED_100:
+-		case SPEED_10:
+-			tempval = ((tempval &
+-				    ~(MACCFG2_INTERFACE_MODE_MASK)) |
+-				    MACCFG2_INTERFACE_MODE_NIBBLE);
+-			/* if reduced mode, re-set UPSMR.R10M */
+-			if (interface == PHY_INTERFACE_MODE_RMII ||
+-			    phy_interface_mode_is_rgmii(interface) ||
+-			    interface == PHY_INTERFACE_MODE_RTBI) {
+-				if (speed == SPEED_10)
+-					upsmr |= UCC_GETH_UPSMR_R10M;
+-				else
+-					upsmr &= ~UCC_GETH_UPSMR_R10M;
+-			}
+-			break;
+-		default:
+-			if (netif_msg_link(ugeth))
+-				pr_warn("%s:  Speed (%d) is not 10/100/1000!",
+-					netdev_name(ugeth->ndev), speed);
+-			break;
+-		}
+-		ugeth->oldspeed = speed;
+-	}
+-
+-	if (!ugeth->oldlink) {
+-		new_state = 1;
+-		ugeth->oldlink = 1;
+-	}
+-
+-	if (new_state) {
+-		/*
+-		 * To change the MAC configuration we need to disable
+-		 * the controller. To do so, we have to either grab
+-		 * ugeth->lock, which is a bad idea since 'graceful
+-		 * stop' commands might take quite a while, or we can
+-		 * quiesce driver's activity.
+-		 */
+-		ugeth_quiesce(ugeth);
+-		ugeth_disable(ugeth, COMM_DIR_RX_AND_TX);
+-
+-		out_be32(&ug_regs->maccfg2, tempval);
+-		out_be32(&uf_regs->upsmr, upsmr);
+-
+-		ugeth_enable(ugeth, COMM_DIR_RX_AND_TX);
+-		ugeth_activate(ugeth);
+-	}
+-
+-	if (netif_msg_link(ugeth))
+-		phy_print_status(phy);
+-}
+-
+-static void ugeth_link_down(struct ucc_geth_private *ugeth)
+-{
+-	ugeth->oldlink = 0;
+-	ugeth->oldspeed = 0;
+-	ugeth->oldduplex = -1;
+-}
+-
+-/* Called every time the controller might need to be made
+- * aware of new link state.  The PHY code conveys this
+- * information through variables in the ugeth structure, and this
+- * function converts those variables into the appropriate
+- * register values, and can bring down the device if needed.
+- */
+-
+-static void adjust_link(struct net_device *dev)
+-{
+-	struct ucc_geth_private *ugeth = netdev_priv(dev);
+-	struct phy_device *phydev = dev->phydev;
+-
+-	if (phydev->link)
+-		ugeth_link_up(ugeth, phydev, phydev->interface,
+-			      phydev->speed, phydev->duplex);
+-	else
+-		ugeth_link_down(ugeth);
+-}
+-
+ /* Initialize TBI PHY interface for communicating with the
+  * SERDES lynx PHY on the chip.  We communicate with this PHY
+  * through the MDIO bus on each controller, treating it as a
+@@ -1666,32 +1477,152 @@ static void uec_configure_serdes(struct net_device *dev)
+ 	put_device(&tbiphy->mdio.dev);
+ }
+ 
+-/* Configure the PHY for dev.
+- * returns 0 if success.  -1 if failure
+- */
+-static int init_phy(struct net_device *dev)
++static bool phy_interface_mode_is_reduced(phy_interface_t interface)
++{
++	return phy_interface_mode_is_rgmii(interface) ||
++	       interface == PHY_INTERFACE_MODE_RMII ||
++	       interface == PHY_INTERFACE_MODE_RTBI;
++}
++
++static void ugeth_mac_link_up(struct phylink_config *config, struct phy_device *phy,
++			      unsigned int mode, phy_interface_t interface,
++			      int speed, int duplex, bool tx_pause, bool rx_pause)
+ {
+-	struct ucc_geth_private *priv = netdev_priv(dev);
+-	struct ucc_geth_info *ug_info = priv->ug_info;
+-	struct phy_device *phydev;
++	struct net_device *ndev = to_net_dev(config->dev);
++	struct ucc_geth_private *ugeth = netdev_priv(ndev);
++	struct ucc_geth_info *ug_info = ugeth->ug_info;
++	struct ucc_geth __iomem *ug_regs = ugeth->ug_regs;
++	struct ucc_fast __iomem *uf_regs = ugeth->uccf->uf_regs;
++	u32 old_maccfg2, maccfg2 = in_be32(&ug_regs->maccfg2);
++	u32 old_upsmr, upsmr = in_be32(&uf_regs->upsmr);
+ 
+-	priv->oldlink = 0;
+-	priv->oldspeed = 0;
+-	priv->oldduplex = -1;
++	old_maccfg2 = maccfg2;
++	old_upsmr = upsmr;
+ 
+-	phydev = of_phy_connect(dev, ug_info->phy_node, &adjust_link, 0,
+-				priv->phy_interface);
+-	if (!phydev) {
+-		dev_err(&dev->dev, "Could not attach to PHY\n");
+-		return -ENODEV;
++	/* No length check */
++	maccfg2 &= ~MACCFG2_LC;
++	maccfg2 &= ~MACCFG2_INTERFACE_MODE_MASK;
++	upsmr &= ~(UCC_GETH_UPSMR_RPM | UCC_GETH_UPSMR_R10M |
++		   UCC_GETH_UPSMR_TBIM | UCC_GETH_UPSMR_RMM);
++
++	if (speed == SPEED_10 || speed == SPEED_100)
++		maccfg2 |= MACCFG2_INTERFACE_MODE_NIBBLE;
++	else if (speed == SPEED_1000)
++		maccfg2 |= MACCFG2_INTERFACE_MODE_BYTE;
++
++	maccfg2 |= ug_info->padAndCrc;
++
++	if (phy_interface_mode_is_reduced(interface)) {
++
++		if (interface != PHY_INTERFACE_MODE_RMII)
++			upsmr |= UCC_GETH_UPSMR_RPM;
++
++		switch (speed) {
++		case SPEED_10:
++			upsmr |= UCC_GETH_UPSMR_R10M;
++			fallthrough;
++		case SPEED_100:
++			if (interface != PHY_INTERFACE_MODE_RTBI)
++				upsmr |= UCC_GETH_UPSMR_RMM;
++		}
+ 	}
+ 
+-	if (priv->phy_interface == PHY_INTERFACE_MODE_SGMII)
+-		uec_configure_serdes(dev);
++	if (interface == PHY_INTERFACE_MODE_TBI ||
++	    interface == PHY_INTERFACE_MODE_RTBI)
++		upsmr |= UCC_GETH_UPSMR_TBIM;
++
++	if (interface == PHY_INTERFACE_MODE_SGMII)
++		upsmr |= UCC_GETH_UPSMR_SGMM;
+ 
+-	phy_set_max_speed(phydev, priv->max_speed);
++	if (duplex == DUPLEX_HALF)
++		maccfg2 &= ~(MACCFG2_FDX);
++	else
++		maccfg2 |= MACCFG2_FDX;
+ 
+-	return 0;
++	if (maccfg2 != old_maccfg2 || upsmr != old_upsmr) {
++		/*
++		 * To change the MAC configuration we need to disable
++		 * the controller. To do so, we have to either grab
++		 * ugeth->lock, which is a bad idea since 'graceful
++		 * stop' commands might take quite a while, or we can
++		 * quiesce driver's activity.
++		 */
++		ugeth_quiesce(ugeth);
++		ugeth_disable(ugeth, COMM_DIR_RX_AND_TX);
++
++		out_be32(&ug_regs->maccfg2, maccfg2);
++		out_be32(&uf_regs->upsmr, upsmr);
++
++		ugeth_enable(ugeth, COMM_DIR_RX_AND_TX);
++		ugeth_activate(ugeth);
++	}
++
++	if (interface == PHY_INTERFACE_MODE_SGMII)
++		uec_configure_serdes(ndev);
++
++	if (!phylink_autoneg_inband(mode)) {
++		ug_info->aufc = 0;
++		ug_info->receiveFlowControl = rx_pause;
++		ug_info->transmitFlowControl = tx_pause;
++
++		init_flow_control_params(ug_info->aufc,
++					 ug_info->receiveFlowControl,
++					 ug_info->transmitFlowControl,
++					 ug_info->pausePeriod,
++					 ug_info->extensionField,
++					 &ugeth->uccf->uf_regs->upsmr,
++					 &ugeth->ug_regs->uempr,
++					 &ugeth->ug_regs->maccfg1);
++	}
++
++	ugeth_enable(ugeth, COMM_DIR_RX_AND_TX);
++}
++
++static void ugeth_mac_link_down(struct phylink_config *config,
++				unsigned int mode, phy_interface_t interface)
++{
++	struct net_device *ndev = to_net_dev(config->dev);
++	struct ucc_geth_private *ugeth = netdev_priv(ndev);
++
++	ugeth_disable(ugeth, COMM_DIR_RX_AND_TX);
++}
++
++static void ugeth_mac_config(struct phylink_config *config, unsigned int mode,
++			     const struct phylink_link_state *state)
++{
++	struct net_device *ndev = to_net_dev(config->dev);
++	struct ucc_geth_private *ugeth = netdev_priv(ndev);
++	struct ucc_geth_info *ug_info = ugeth->ug_info;
++	u16 value;
++
++	if (state->interface == PHY_INTERFACE_MODE_TBI ||
++	    state->interface == PHY_INTERFACE_MODE_RTBI) {
++		struct phy_device *tbiphy;
++
++		if (!ug_info->tbi_node)
++			pr_warn("TBI mode requires that the device tree specify a tbi-handle\n");
++
++		tbiphy = of_phy_find_device(ug_info->tbi_node);
++		if (!tbiphy)
++			pr_warn("Could not get TBI device\n");
++
++		value = phy_read(tbiphy, ENET_TBI_MII_CR);
++		value &= ~0x1000;	/* Turn off autonegotiation */
++		phy_write(tbiphy, ENET_TBI_MII_CR, value);
++
++		put_device(&tbiphy->mdio.dev);
++	}
++
++	if (phylink_autoneg_inband(mode)) {
++		ug_info->aufc = 1;
++
++		init_flow_control_params(ug_info->aufc, 1, 1,
++					 ug_info->pausePeriod,
++					 ug_info->extensionField,
++					 &ugeth->uccf->uf_regs->upsmr,
++					 &ugeth->ug_regs->uempr,
++					 &ugeth->ug_regs->maccfg1);
++	}
+ }
+ 
+ static void ugeth_dump_regs(struct ucc_geth_private *ugeth)
+@@ -1963,7 +1894,6 @@ static void ucc_geth_set_multi(struct net_device *dev)
+ static void ucc_geth_stop(struct ucc_geth_private *ugeth)
+ {
+ 	struct ucc_geth __iomem *ug_regs = ugeth->ug_regs;
+-	struct phy_device *phydev = ugeth->ndev->phydev;
+ 
+ 	ugeth_vdbg("%s: IN", __func__);
+ 
+@@ -1972,7 +1902,7 @@ static void ucc_geth_stop(struct ucc_geth_private *ugeth)
+ 	 * Must be done before disabling the controller
+ 	 * or deadlock may happen.
+ 	 */
+-	phy_stop(phydev);
++	phylink_stop(ugeth->phylink);
+ 
+ 	/* Disable the controller */
+ 	ugeth_disable(ugeth, COMM_DIR_RX_AND_TX);
+@@ -3214,12 +3144,6 @@ static int ucc_geth_init_mac(struct ucc_geth_private *ugeth)
+ 		goto err;
+ 	}
+ 
+-	err = adjust_enet_interface(ugeth);
+-	if (err) {
+-		netif_err(ugeth, ifup, dev, "Cannot configure net device, aborting\n");
+-		goto err;
+-	}
+-
+ 	/*       Set MACSTNADDR1, MACSTNADDR2                */
+ 	/* For more details see the hardware spec.           */
+ 	init_mac_station_addr_regs(dev->dev_addr[0],
+@@ -3231,12 +3155,6 @@ static int ucc_geth_init_mac(struct ucc_geth_private *ugeth)
+ 				   &ugeth->ug_regs->macstnaddr1,
+ 				   &ugeth->ug_regs->macstnaddr2);
+ 
+-	err = ugeth_enable(ugeth, COMM_DIR_RX_AND_TX);
+-	if (err) {
+-		netif_err(ugeth, ifup, dev, "Cannot enable net device, aborting\n");
+-		goto err;
+-	}
+-
+ 	return 0;
+ err:
+ 	ucc_geth_stop(ugeth);
+@@ -3259,10 +3177,10 @@ static int ucc_geth_open(struct net_device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	err = init_phy(dev);
++	err = phylink_of_phy_connect(ugeth->phylink, ugeth->dev->of_node, 0);
+ 	if (err) {
+-		netif_err(ugeth, ifup, dev, "Cannot initialize PHY, aborting\n");
+-		return err;
++		dev_err(&dev->dev, "Could not attach to PHY\n");
++		return -ENODEV;
+ 	}
+ 
+ 	err = ucc_geth_init_mac(ugeth);
+@@ -3278,7 +3196,7 @@ static int ucc_geth_open(struct net_device *dev)
+ 		goto err;
+ 	}
+ 
+-	phy_start(dev->phydev);
++	phylink_start(ugeth->phylink);
+ 	napi_enable(&ugeth->napi);
+ 	netdev_reset_queue(dev);
+ 	netif_start_queue(dev);
+@@ -3305,7 +3223,7 @@ static int ucc_geth_close(struct net_device *dev)
+ 
+ 	cancel_work_sync(&ugeth->timeout_work);
+ 	ucc_geth_stop(ugeth);
+-	phy_disconnect(dev->phydev);
++	phylink_disconnect_phy(ugeth->phylink);
+ 
+ 	free_irq(ugeth->ug_info->uf_info.irq, ugeth->ndev);
+ 
+@@ -3339,7 +3257,7 @@ static void ucc_geth_timeout_work(struct work_struct *work)
+ 		ucc_geth_stop(ugeth);
+ 		ucc_geth_init_mac(ugeth);
+ 		/* Must start PHY here */
+-		phy_start(dev->phydev);
++		phylink_start(ugeth->phylink);
+ 		netif_tx_start_all_queues(dev);
+ 	}
+ 
+@@ -3381,10 +3299,12 @@ static int ucc_geth_suspend(struct platform_device *ofdev, pm_message_t state)
+ 		setbits32(ugeth->uccf->p_uccm, UCC_GETH_UCCE_MPD);
+ 		setbits32(&ugeth->ug_regs->maccfg2, MACCFG2_MPE);
+ 		ucc_fast_enable(ugeth->uccf, COMM_DIR_RX_AND_TX);
+-	} else if (!(ugeth->wol_en & WAKE_PHY)) {
+-		phy_stop(ndev->phydev);
+ 	}
+ 
++	rtnl_lock();
++	phylink_suspend(ugeth->phylink, ugeth->wol_en);
++	rtnl_unlock();
++
+ 	return 0;
+ }
+ 
+@@ -3418,12 +3338,9 @@ static int ucc_geth_resume(struct platform_device *ofdev)
+ 		}
+ 	}
+ 
+-	ugeth->oldlink = 0;
+-	ugeth->oldspeed = 0;
+-	ugeth->oldduplex = -1;
+-
+-	phy_stop(ndev->phydev);
+-	phy_start(ndev->phydev);
++	rtnl_lock();
++	phylink_resume(ugeth->phylink);
++	rtnl_unlock();
+ 
+ 	napi_enable(&ugeth->napi);
+ 	netif_device_attach(ndev);
+@@ -3438,13 +3355,12 @@ static int ucc_geth_resume(struct platform_device *ofdev)
+ 
+ static int ucc_geth_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+ {
++	struct ucc_geth_private *ugeth = netdev_priv(dev);
++
+ 	if (!netif_running(dev))
+ 		return -EINVAL;
+ 
+-	if (!dev->phydev)
+-		return -ENODEV;
+-
+-	return phy_mii_ioctl(dev->phydev, rq, cmd);
++	return phylink_mii_ioctl(ugeth->phylink, rq, cmd);
+ }
+ 
+ static const struct net_device_ops ucc_geth_netdev_ops = {
+@@ -3452,7 +3368,6 @@ static const struct net_device_ops ucc_geth_netdev_ops = {
+ 	.ndo_stop		= ucc_geth_close,
+ 	.ndo_start_xmit		= ucc_geth_start_xmit,
+ 	.ndo_validate_addr	= eth_validate_addr,
+-	.ndo_change_carrier     = fixed_phy_change_carrier,
+ 	.ndo_set_mac_address	= ucc_geth_set_mac_addr,
+ 	.ndo_set_rx_mode	= ucc_geth_set_multi,
+ 	.ndo_tx_timeout		= ucc_geth_timeout,
+@@ -3492,6 +3407,12 @@ static int ucc_geth_parse_clock(struct device_node *np, const char *which,
+ 	return 0;
+ }
+ 
++struct phylink_mac_ops ugeth_mac_ops = {
++	.mac_link_up = ugeth_mac_link_up,
++	.mac_link_down = ugeth_mac_link_down,
++	.mac_config = ugeth_mac_config,
 +};
-
++
+ static int ucc_geth_probe(struct platform_device* ofdev)
+ {
+ 	struct device *device = &ofdev->dev;
+@@ -3499,8 +3420,10 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 	struct net_device *dev = NULL;
+ 	struct ucc_geth_private *ugeth = NULL;
+ 	struct ucc_geth_info *ug_info;
++	struct device_node *phy_node;
++	struct phylink *phylink;
+ 	struct resource res;
+-	int err, ucc_num, max_speed = 0;
++	int err, ucc_num;
+ 	const unsigned int *prop;
+ 	phy_interface_t phy_interface;
+ 
+@@ -3538,26 +3461,19 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 	ug_info->uf_info.regs = res.start;
+ 	ug_info->uf_info.irq = irq_of_parse_and_map(np, 0);
+ 
+-	ug_info->phy_node = of_parse_phandle(np, "phy-handle", 0);
+-	if (!ug_info->phy_node && of_phy_is_fixed_link(np)) {
+-		/*
+-		 * In the case of a fixed PHY, the DT node associated
+-		 * to the PHY is the Ethernet MAC DT node.
+-		 */
+-		err = of_phy_register_fixed_link(np);
+-		if (err)
+-			return err;
+-		ug_info->phy_node = of_node_get(np);
+-	}
+-
+ 	/* Find the TBI PHY node.  If it's not there, we don't support SGMII */
+ 	ug_info->tbi_node = of_parse_phandle(np, "tbi-handle", 0);
+ 
+-	prop = of_get_property(ug_info->phy_node, "interface", NULL);
+-	if (prop) {
+-		dev_err(&ofdev->dev,
+-			"Device-tree property 'interface' is no longer supported. Please use 'phy-connection-type' instead.");
+-		goto err_put_tbi;
++	phy_node = of_parse_phandle(np, "phy-handle", 0);
++	if (phy_node) {
++		prop = of_get_property(phy_node, "interface", NULL);
++		if (prop) {
++			dev_err(&ofdev->dev,
++				"Device-tree property 'interface' is no longer supported. Please use 'phy-connection-type' instead.");
++			of_node_put(phy_node);
++			goto err_put_tbi;
++		}
++		of_node_put(phy_node);
+ 	}
+ 
+ 	err = of_get_phy_mode(np, &phy_interface);
+@@ -3566,28 +3482,13 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 		goto err_put_tbi;
+ 	}
+ 
+-	/* get speed, or derive from PHY interface */
+-	if (max_speed == 0)
+-		switch (phy_interface) {
+-		case PHY_INTERFACE_MODE_GMII:
+-		case PHY_INTERFACE_MODE_RGMII:
+-		case PHY_INTERFACE_MODE_RGMII_ID:
+-		case PHY_INTERFACE_MODE_RGMII_RXID:
+-		case PHY_INTERFACE_MODE_RGMII_TXID:
+-		case PHY_INTERFACE_MODE_TBI:
+-		case PHY_INTERFACE_MODE_RTBI:
+-		case PHY_INTERFACE_MODE_SGMII:
+-			max_speed = SPEED_1000;
+-			break;
+-		default:
+-			max_speed = SPEED_100;
+-			break;
+-		}
+-
+-	if (max_speed == SPEED_1000) {
++	if (phy_interface == PHY_INTERFACE_MODE_GMII ||
++	    phy_interface_mode_is_rgmii(phy_interface) ||
++	    phy_interface == PHY_INTERFACE_MODE_TBI ||
++	    phy_interface == PHY_INTERFACE_MODE_RTBI ||
++	    phy_interface == PHY_INTERFACE_MODE_SGMII) {
+ 		unsigned int snums = qe_get_num_of_snums();
+ 
+-		/* configure muram FIFOs for gigabit operation */
+ 		ug_info->uf_info.urfs = UCC_GETH_URFS_GIGA_INIT;
+ 		ug_info->uf_info.urfet = UCC_GETH_URFET_GIGA_INIT;
+ 		ug_info->uf_info.urfset = UCC_GETH_URFSET_GIGA_INIT;
+@@ -3616,7 +3517,7 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 	dev = devm_alloc_etherdev(&ofdev->dev, sizeof(*ugeth));
+ 	if (!dev) {
+ 		err = -ENOMEM;
+-		goto err_deregister_fixed_link;
++		goto err_put_tbi;
+ 	}
+ 
+ 	ugeth = netdev_priv(dev);
+@@ -3643,23 +3544,50 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 	dev->max_mtu = 1518;
+ 
+ 	ugeth->msg_enable = netif_msg_init(debug.msg_enable, UGETH_MSG_DEFAULT);
+-	ugeth->phy_interface = phy_interface;
+-	ugeth->max_speed = max_speed;
+ 
+-	/* Carrier starts down, phylib will bring it up */
+-	netif_carrier_off(dev);
++	ugeth->phylink_config.dev = &dev->dev;
++	ugeth->phylink_config.type = PHYLINK_NETDEV;
++
++	ugeth->phylink_config.mac_capabilities =
++		MAC_SYM_PAUSE | MAC_10 | MAC_100 | MAC_1000FD;
++
++	__set_bit(PHY_INTERFACE_MODE_MII,
++		  ugeth->phylink_config.supported_interfaces);
++	__set_bit(PHY_INTERFACE_MODE_RMII,
++		  ugeth->phylink_config.supported_interfaces);
++	__set_bit(PHY_INTERFACE_MODE_GMII,
++		  ugeth->phylink_config.supported_interfaces);
++	phy_interface_set_rgmii(ugeth->phylink_config.supported_interfaces);
++
++	if (ug_info->tbi_node) {
++		__set_bit(PHY_INTERFACE_MODE_SGMII,
++			  ugeth->phylink_config.supported_interfaces);
++		__set_bit(PHY_INTERFACE_MODE_TBI,
++			  ugeth->phylink_config.supported_interfaces);
++		__set_bit(PHY_INTERFACE_MODE_RTBI,
++			  ugeth->phylink_config.supported_interfaces);
++	}
++
++	phylink = phylink_create(&ugeth->phylink_config, dev_fwnode(&dev->dev),
++				 phy_interface, &ugeth_mac_ops);
++	if (IS_ERR(phylink)) {
++		err = PTR_ERR(phylink);
++		goto err_put_tbi;
++	}
++
++	ugeth->phylink = phylink;
+ 
+ 	err = devm_register_netdev(&ofdev->dev, dev);
+ 	if (err) {
+ 		if (netif_msg_probe(ugeth))
+ 			pr_err("%s: Cannot register net device, aborting\n",
+ 			       dev->name);
+-		goto err_deregister_fixed_link;
++		goto err_destroy_phylink;
+ 	}
+ 
+ 	err = of_get_ethdev_address(np, dev);
+ 	if (err == -EPROBE_DEFER)
+-		goto err_deregister_fixed_link;
++		goto err_destroy_phylink;
+ 
+ 	ugeth->ug_info = ug_info;
+ 	ugeth->dev = device;
+@@ -3668,12 +3596,11 @@ static int ucc_geth_probe(struct platform_device* ofdev)
+ 
+ 	return 0;
+ 
+-err_deregister_fixed_link:
+-	if (of_phy_is_fixed_link(np))
+-		of_phy_deregister_fixed_link(np);
++err_destroy_phylink:
++	phylink_destroy(phylink);
+ err_put_tbi:
+ 	of_node_put(ug_info->tbi_node);
+-	of_node_put(ug_info->phy_node);
++
+ 	return err;
+ }
+ 
+@@ -3681,13 +3608,10 @@ static void ucc_geth_remove(struct platform_device* ofdev)
+ {
+ 	struct net_device *dev = platform_get_drvdata(ofdev);
+ 	struct ucc_geth_private *ugeth = netdev_priv(dev);
+-	struct device_node *np = ofdev->dev.of_node;
+ 
+ 	ucc_geth_memclean(ugeth);
+-	if (of_phy_is_fixed_link(np))
+-		of_phy_deregister_fixed_link(np);
++	phylink_destroy(ugeth->phylink);
+ 	of_node_put(ugeth->ug_info->tbi_node);
+-	of_node_put(ugeth->ug_info->phy_node);
+ }
+ 
+ static const struct of_device_id ucc_geth_match[] = {
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.h b/drivers/net/ethernet/freescale/ucc_geth.h
+index 42fbbdf14ff2..0a3c2645e16b 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.h
++++ b/drivers/net/ethernet/freescale/ucc_geth.h
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/list.h>
++#include <linux/phylink.h>
+ #include <linux/if_ether.h>
+ 
+ #include <soc/fsl/qe/immap_qe.h>
+@@ -1074,6 +1075,9 @@ struct ucc_geth_tad_params {
+ 	u16 vid;
+ };
+ 
++struct phylink;
++struct phylink_config;
++
+ /* GETH protocol initialization structure */
+ struct ucc_geth_info {
+ 	struct ucc_fast_info uf_info;
+@@ -1124,7 +1128,6 @@ struct ucc_geth_info {
+ 	u32 eventRegMask;
+ 	u16 pausePeriod;
+ 	u16 extensionField;
+-	struct device_node *phy_node;
+ 	struct device_node *tbi_node;
+ 	u8 weightfactor[NUM_TX_QUEUES];
+ 	u8 interruptcoalescingmaxvalue[NUM_RX_QUEUES];
+@@ -1209,14 +1212,12 @@ struct ucc_geth_private {
+ 	u16 skb_dirtytx[NUM_TX_QUEUES];
+ 
+ 	struct ugeth_mii_info *mii_info;
+-	phy_interface_t phy_interface;
+-	int max_speed;
+ 	uint32_t msg_enable;
+-	int oldspeed;
+-	int oldduplex;
+-	int oldlink;
+ 	int wol_en;
+ 
++	struct phylink *phylink;
++	struct phylink_config phylink_config;
++
+ 	struct device_node *node;
+ };
+ 
+diff --git a/drivers/net/ethernet/freescale/ucc_geth_ethtool.c b/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
+index 2a085f8f34b2..661521960cba 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
++++ b/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
+@@ -103,26 +103,18 @@ static const char rx_fw_stat_gstrings[][ETH_GSTRING_LEN] = {
+ static int
+ uec_get_ksettings(struct net_device *netdev, struct ethtool_link_ksettings *cmd)
+ {
+-	struct phy_device *phydev = netdev->phydev;
+-
+-	if (!phydev)
+-		return -ENODEV;
+-
+-	phy_ethtool_ksettings_get(phydev, cmd);
++	struct ucc_geth_private *ugeth = netdev_priv(netdev);
+ 
+-	return 0;
++	return phylink_ethtool_ksettings_get(ugeth->phylink, cmd);
+ }
+ 
+ static int
+ uec_set_ksettings(struct net_device *netdev,
+ 		  const struct ethtool_link_ksettings *cmd)
+ {
+-	struct phy_device *phydev = netdev->phydev;
+-
+-	if (!phydev)
+-		return -ENODEV;
++	struct ucc_geth_private *ugeth = netdev_priv(netdev);
+ 
+-	return phy_ethtool_ksettings_set(phydev, cmd);
++	return phylink_ethtool_ksettings_set(ugeth->phylink, cmd);
+ }
+ 
+ static void
+@@ -130,15 +122,8 @@ uec_get_pauseparam(struct net_device *netdev,
+                      struct ethtool_pauseparam *pause)
+ {
+ 	struct ucc_geth_private *ugeth = netdev_priv(netdev);
+-	struct phy_device *phydev = netdev->phydev;
+-
+-	if (phydev)
+-		pause->autoneg = phydev->autoneg;
+ 
+-	if (ugeth->ug_info->receiveFlowControl)
+-		pause->rx_pause = 1;
+-	if (ugeth->ug_info->transmitFlowControl)
+-		pause->tx_pause = 1;
++	return phylink_ethtool_get_pauseparam(ugeth->phylink, pause);
+ }
+ 
+ static int
+@@ -146,31 +131,11 @@ uec_set_pauseparam(struct net_device *netdev,
+                      struct ethtool_pauseparam *pause)
+ {
+ 	struct ucc_geth_private *ugeth = netdev_priv(netdev);
+-	struct phy_device *phydev = netdev->phydev;
+-	int ret = 0;
+ 
+ 	ugeth->ug_info->receiveFlowControl = pause->rx_pause;
+ 	ugeth->ug_info->transmitFlowControl = pause->tx_pause;
+ 
+-	if (phydev && phydev->autoneg) {
+-		if (netif_running(netdev)) {
+-			/* FIXME: automatically restart */
+-			netdev_info(netdev, "Please re-open the interface\n");
+-		}
+-	} else {
+-		struct ucc_geth_info *ug_info = ugeth->ug_info;
+-
+-		ret = init_flow_control_params(ug_info->aufc,
+-					ug_info->receiveFlowControl,
+-					ug_info->transmitFlowControl,
+-					ug_info->pausePeriod,
+-					ug_info->extensionField,
+-					&ugeth->uccf->uf_regs->upsmr,
+-					&ugeth->ug_regs->uempr,
+-					&ugeth->ug_regs->maccfg1);
+-	}
+-
+-	return ret;
++	return phylink_ethtool_set_pauseparam(ugeth->phylink, pause);
+ }
+ 
+ static uint32_t
+@@ -344,13 +309,8 @@ uec_get_drvinfo(struct net_device *netdev,
+ static void uec_get_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
+ {
+ 	struct ucc_geth_private *ugeth = netdev_priv(netdev);
+-	struct phy_device *phydev = netdev->phydev;
+ 
+-	wol->supported = 0;
+-	wol->wolopts = 0;
+-
+-	if (phydev)
+-		phy_ethtool_get_wol(phydev, wol);
++	phylink_ethtool_get_wol(ugeth->phylink, wol);
+ 
+ 	if (qe_alive_during_sleep())
+ 		wol->supported |= WAKE_MAGIC;
+@@ -361,19 +321,14 @@ static void uec_get_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
+ static int uec_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
+ {
+ 	struct ucc_geth_private *ugeth = netdev_priv(netdev);
+-	struct phy_device *phydev = netdev->phydev;
+ 	int ret = 0;
+ 
+ 	if (wol->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
+ 		return -EINVAL;
+-	else if ((wol->wolopts & WAKE_PHY) && !phydev)
+-		return -EINVAL;
+ 	else if (wol->wolopts & WAKE_MAGIC && !qe_alive_during_sleep())
+ 		return -EINVAL;
+ 
+-	if (wol->wolopts & WAKE_PHY)
+-		ret = phy_ethtool_set_wol(phydev, wol);
+-
++	ret = phylink_ethtool_set_wol(ugeth->phylink, wol);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.47.0
 
