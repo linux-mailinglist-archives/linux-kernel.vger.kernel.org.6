@@ -1,112 +1,94 @@
-Return-Path: <linux-kernel+bounces-400210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7072F9C0A6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:51:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64D99C0A71
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2818D1F23A84
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:51:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A0B3B22C2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBB12144C2;
-	Thu,  7 Nov 2024 15:51:48 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CE2215C43;
+	Thu,  7 Nov 2024 15:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cu9+qsIu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B12212D0A;
-	Thu,  7 Nov 2024 15:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C7C2144A5;
+	Thu,  7 Nov 2024 15:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730994707; cv=none; b=D8E+PYHRspeDxur/U6zubMBF22iSA42RAeO/VI+L0+hUgPnZiSlTv2szejTHhrvd8QCvymgqZx/52FuwRDbYYotOIxkWwtS4d9AA+ARbfjj5bDFzmflxMJz5VEFSTva/BkREx6LYIH9wIX1oR0b+VNvUVbWC7dCdRcWKIVcDki4=
+	t=1730994721; cv=none; b=UGIPSem/Clrbe/lXf9EWuPE3HTZRHEflmUnMJwHp5yy7Cl5rnvQ/f0gI18l0KDtc2XwbWF7k5505hOLeRp9AlomYbwDKqnxVgqQxwpTkkUdGGpOmcHGzXdaBN0ZDtMxrb+VxN/GwgsofJ/hHiUsdsOYKazFyeG06d0Nj5rH3VT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730994707; c=relaxed/simple;
-	bh=JBCbyGpHifILsR5zwpFwW6YVuy+DOgR5psjt/C5H+5Y=;
+	s=arc-20240116; t=1730994721; c=relaxed/simple;
+	bh=f+KXBENsmoNNMukSkOnmzKaUFO1dC8kFhS5KRSuuJHE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZLse5e/m1WwZrAmJE6GxT/9dA9b7yAlp5ILOPuW3yaICEK6GsGboVKHV7X+8ErFsgPQOdS4DLtFG6d894wyiramTlAJCW/J4vdOUgqxyyOv5MLfgObhABIDQGdnj+1mFL6BfyA89j0aqo4xANDCUTpv8fHt0MDYgyf0yS60y3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cbcd71012so13062275ad.3;
-        Thu, 07 Nov 2024 07:51:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730994706; x=1731599506;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N9NhJb+I4bTmcgAw+kIq6z6voIYV2ULWb+V9qVrjjB0=;
-        b=LpEnavfIpoLZAHya2boEUGzt/TNToOXV6ztB+o9Ovxp+CNDOnoPIHmlIxQ0/L9CjKF
-         U4ZZ7pt8Gf4mTShJWK8YeIgHUKvDfNWSgEjni/YVrbFiO3DzgQpVCtFE/d0jLOl/YwJH
-         izCBRmFzguCzfctoNleq+aK5Fv18yPB9K1P4TUP2FFMbhYtVNon2Puio46PBTRI6HKEV
-         5FQQMaaPkm4ghR2itJe32jaN/NpYKB7MN0hq+R4YGunum9svv1CHDnjmt3OFrkKLRpKX
-         p0/h3F2vCzmvVykFyo5TEdKqNJr571uybDIL+ZiUQt+zK/4c/HbpCcWuGO5T7VGsL1yM
-         vyww==
-X-Forwarded-Encrypted: i=1; AJvYcCWeqh/4oCJrfiCRpfljy2DVbkAtKWsbMHTdQY+YyCROO/YG+kGKlhBjeXx4ODyD5V+/bkB2UAbJlmaXqG8=@vger.kernel.org, AJvYcCXnpZr3e+0PkX/fVYo1jYL3hfr7DbMd6+FoBTy8zAa3XW7FiQDdZW71ZOkOIyYx96CtcKnkZ5K+Gv96@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVF7zNakYDIzAFCiCK0FT/SdP70P1C9DLJowQSnrdcZssZbMAl
-	z1sEA2GUVBpcvmeyGV3nWMDPb7ZN6Z0Je+Hpgah6DUniFcACrH//Kx8mBEv0+v8=
-X-Google-Smtp-Source: AGHT+IHnweMolaV2847a3ZQj9C/f/36UY00gUp5/lxxYk1TyR7otOR6IyNHX0MWvdqNR0mQnnK+moQ==
-X-Received: by 2002:a17:902:7786:b0:20c:79bf:6793 with SMTP id d9443c01a7336-2111aec8486mr239229975ad.3.1730994705711;
-        Thu, 07 Nov 2024 07:51:45 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e5c5d6sm13570965ad.217.2024.11.07.07.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 07:51:45 -0800 (PST)
-Date: Fri, 8 Nov 2024 00:51:44 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com,
-	manivannan.sadhasivam@linaro.org, kishon@kernel.org,
-	u.kleine-koenig@pengutronix.de, cassel@kernel.org,
-	dlemoal@kernel.org, yoshihiro.shimoda.uh@renesas.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
- "ti,keystone-pcie" compatible
-Message-ID: <20241107155144.GB1297107@rocinante>
-References: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
- <20241106154945.GA1526156@bhelgaas>
- <20241106160520.GD2745640@rocinante>
- <4fc87e39-ae2f-4ac9-ace3-26b2b79e2297@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qvqq8KPco4dv2HsYjvlkoZkMrNg6vdBsclshBuDZiB6TgCIfegGt9+EjO9Owmjk1AzFGkU1qEi8B1lpt+qdeKAb7+jxPip8DxHckoSeQ/lCTlvazSO0WMJKE2ZNFXNdIywH4SulLURYRkx+ozK5OERoUMneorrurKRgD3u9gLUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cu9+qsIu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD88C4CECC;
+	Thu,  7 Nov 2024 15:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730994721;
+	bh=f+KXBENsmoNNMukSkOnmzKaUFO1dC8kFhS5KRSuuJHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cu9+qsIuGgslK6gaMJvw+dFv1QvgkBuNJ4Jr3P+99lqd6liN9qLEgm/tfg/C2rm42
+	 icW5Ciw2mhgSJzfX5/dpieDZTsKuBEArYy89skFRpbo09M8i0OE4auiBr9GRLO+cV3
+	 QBkhVmgdIZZwl91Sp2vbDGEAWaJT5yTMuKIdzA68Y0ljvQOFZlY/N39GOC/kKKy3gH
+	 bdgpln+rWvgLKttCeGheEb8FBZAt0jdOGLIrSeA00GYWlKudCrwYZJ/qtXaygeVNn8
+	 C+wDfnkeqaXOHfEZwn/xwdzEgQKVOvOwRFsXr27/0hCNiJ139lKDyKvp2sqxnw26q7
+	 bXyMPEMGx56YQ==
+Date: Thu, 7 Nov 2024 09:51:59 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 01/10] dt-bindings: soc: mobileye: set `#clock-cells =
+ <1>` for all compatibles
+Message-ID: <173099471894.2769888.8233833580662075395.robh@kernel.org>
+References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
+ <20241106-mbly-clk-v2-1-84cfefb3f485@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <4fc87e39-ae2f-4ac9-ace3-26b2b79e2297@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106-mbly-clk-v2-1-84cfefb3f485@bootlin.com>
 
-Hello,
 
-> > Added Cc for stable releases.  Siddharth, let me know how to update the
-> > commit log per Bjorn feedback, so I can do it directly on the branch.
+On Wed, 06 Nov 2024 17:03:52 +0100, Théo Lebrun wrote:
+> Some compatibles expose a single clock. For those, we used to let them
+> using `#clock-cells = <0>` (ie <&olb> reference rather than <&olb 0>).
 > 
-> The existing commit message could be replaced by the following:
+> Switch away from that: enforce a cell for all compatibles. This is more
+> straight forward, and avoids devicetree changes whenever a compatible
+> goes from exposing a single clock to multiple ones. Also, dt-bindings
+> get simpler.
 > 
-> ------------------------------------------------------------------------
-> commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
-> Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
-> device data ("struct ks_pcie_of_data"). However it failed to set the mode
-> for "ti,keystone-pcie" compatible.
+> *This is an ABI break*. Change it while EyeQ5 platform support is at its
+> infancy, without any user. More clocks might hide in each OLB as some
+> registers are still unknown.
 > 
-> Since the mode defaults to "DW_PCIE_UNKNOWN_TYPE", the following error
-> message is displayed:
-> 	"INVALID device type 0"
-> for the v3.65a controller. Despite the driver probing successfully, the
-> controller may not be functional in the Root Complex mode of operation.
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 24 +---------------------
+>  1 file changed, 1 insertion(+), 23 deletions(-)
 > 
-> So, set the mode as Root Complex for "ti,keystone-pcie" compatible to fix
-> this.
-> ------------------------------------------------------------------------
 
-Done.  See the following:
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-  - https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/keystone&id=5a938ed9481b0c06cb97aec45e722a80568256fd
-
-Thank you!
-
-	Krzysztof
 
