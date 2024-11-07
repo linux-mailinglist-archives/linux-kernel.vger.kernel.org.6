@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-400670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE1F9C10C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:14:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFC19C10C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F86D284125
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE1F1F226AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C513218306;
-	Thu,  7 Nov 2024 21:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0880E21859A;
+	Thu,  7 Nov 2024 21:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNi0fj2U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddgLfsBk"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3041EC015;
-	Thu,  7 Nov 2024 21:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9111EC015;
+	Thu,  7 Nov 2024 21:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731014068; cv=none; b=J4pRqhQyg7it6k627g1QsHekjrr6y6VAjNKuURZEXR3/N8Ko47o28v8ki2usDnawCLRtisoXTw+iapY1RBG+z0cZwFUseWIHfjN0Py25sW2DloAr7o4pWBvo1mXjVNW4x19m5LkYbSoYbGnS8AfC8aMZ7gkMnRih1gOUuFxMWG8=
+	t=1731014074; cv=none; b=iyDnUIj7OyOtD+kQ+tI4b7FvK/OZSmg6vD620beq6T5Hprwu7VQy5JExWAmnRAgyCcSplgk++Gpj975iv/PByLRFTpFwg9WAW3Pgnx+MKxZl8Q+EFb0kGbri6LUE46Co2l1ZZrk5LDtDSHVRHDGIKOreBjy1I2zMeg+gg0bqa+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731014068; c=relaxed/simple;
-	bh=ZFf0oKUD2+C7jjnMzBMYtfku4VcDgPlKl/yJVrNDWZg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TRDDYis6qC1uN6iyWZGmMj4EZTb7461LaHCBzkC12jfeFC4vfP3u+PaxQ2/6hTyp7bcvlhG7jLEU9r2oKD+VF48f8mEFbWSD+ORntJg/m+ZxfzQVAujy2JsVg+2Q2mqTt4XCdqT/boLYSHTEShWcZtkEOpdYryvL78teAFECSrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNi0fj2U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32EF2C4CECC;
-	Thu,  7 Nov 2024 21:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731014068;
-	bh=ZFf0oKUD2+C7jjnMzBMYtfku4VcDgPlKl/yJVrNDWZg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=tNi0fj2UjokHys1e6cdlzyCWXWyUOumjpH6GrQvquCd8r8HKn2ZF8o6PELgn/+1QM
-	 ENaSkKwnCZuesR+OJZvEDLJP6zIqdnHzbxsvvUE9jr685SOMilrkgIC49VRYBCHstW
-	 MUX8eY2cepbSoZOERpEhYMIAVEvGHzSiDU7ojBjoN/84Ep6rzBo/dxzw5/DXnnN409
-	 JZwxM0mWu188a9qz81Pdd8QDQvAQkDGs2Qpfw1iaYHpr9ZfIsrD4/W1RidGK37xc6N
-	 nuqi5Ydl1Lmln/SqU2fK4QPJhq/k5vIT9wwHwFI2dTYmnwusjhEoA5QT58JeIjUo7k
-	 3N9kTO2Sr/o3w==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Thu, 07 Nov 2024 22:14:23 +0100
-Subject: [PATCH] arm64: dts: qcom: sa8775p: Use valid node names for GPI
- DMAs
+	s=arc-20240116; t=1731014074; c=relaxed/simple;
+	bh=pqjgTpcgdJf0vXPdIAuto0LnqO8V02lIDQngJ9eq3fE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cp4dkBcEpiOT2ffqaFLUxGlBWjKi/aunnLl7pMizzosJqFqZvGaH30A9n0Sg4S+U7eh+cw27YHViMu/70nO1093ha6EthkHy4jLTrrC5MRHZfRHMJYqUIcj76PesexjBH7f1hotzB+mbXzCu8oDeWF0uTGrLLrIhjzuBgXOM1wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddgLfsBk; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460ace055d8so9033361cf.1;
+        Thu, 07 Nov 2024 13:14:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731014072; x=1731618872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7uKO2TXaFtTXkQxrGMFy3dzEippfijU9bG+tCuCJOR0=;
+        b=ddgLfsBkYYM9udRleiXoSEuqem6I4Y0bleO/M36efKUuJwC1Y5T95MkJgjouUCLY1W
+         2SlEVi6Nr3wuAoS5rfSl57kWhvJT9yzJU+4u2Fo3ChEqlqFdYbtOEf39o7yORKX7kcfb
+         p5XudMx2vtiBeKdWQOoDApFWr5JNG89iNgRjomhN+iSvSVfv3mFOKw1U7Aj5CheaCkgR
+         eBni2Zu4w5tBxfBJTXckfbgNT6smyrlwHQ3nqH9w7udSMb3dfiNnZ8m2fOzuaSXoTqrn
+         trheqT8ss95vMZHA7feC2d23KncOFVbsF/CPCG1FNfhlZn46o0ui7lRhY3X33aRtVbjY
+         12kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731014072; x=1731618872;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7uKO2TXaFtTXkQxrGMFy3dzEippfijU9bG+tCuCJOR0=;
+        b=f3bUi/EN4aK9XE2m3GYYyoTpDTzLR5+xalMZzuVkJnI6KL5Jh3IZdZOC5f7Gn4YR/S
+         rItN7yG6N+7+IfEHT0eG3yGoHUtLbD74P1kU9OHPypmKl301PxEcOq+4HrdEri6Py/JK
+         dzEoBcubrMK0JVCWcMIumF3RQZAjqwWKG3TNpmnKx43hzgAA6Ceu9UhHnZ4bQjzLBTrY
+         V88+pENjma7hX47vnkJWWAqb/8d5nlM3IfV97XVHFDHFXpM5Dh4G4JWnD3E8DL0fNYly
+         nYbLvzPWjQTJJMlSGeyz2Hhpyk6lwAV/VXgrrHKjhy/zdvwHiPQIe+NEfniFnpE1sQp0
+         uQKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUv2TWRM7Y9vXeG8rkPRAMecothiLeVQWaaT9siF9+bsOpyz5vSLUTg3be6IXm90ScDULKv6I6iL1A=@vger.kernel.org, AJvYcCVvIv4Ncm2J5pzroafUYF/BhwknxofWcVX2zdAEq0ZjQ8qnTVLxecQjjC+D5P2kSL47WAwkYWoHJOmkfJx0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4R6YSCZB4ehNCHXzkWbJeg8N3CqlNJUtdvrfq3QJsdX08IfJU
+	jvGkdntpJtjtvuj8wxP/fNZvZq4u7pOx7woTtol4kTI9VYbmH/EF
+X-Google-Smtp-Source: AGHT+IEQO315sJ58AjAImU5jNkUQnktZ/9GnYkEh96OypdQQhSv+PNXvH4Sz82UfLiseFX3Nn+MBsA==
+X-Received: by 2002:a05:6214:5348:b0:6d3:5af5:2a58 with SMTP id 6a1803df08f44-6d39e1ee70bmr5395506d6.33.1731014071767;
+        Thu, 07 Nov 2024 13:14:31 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3962089fesm11486116d6.61.2024.11.07.13.14.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 13:14:31 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: andi.shyti@kernel.org
+Cc: dianders@chromium.org,
+	rmk@dyn-67.arm.linux.org.uk,
+	max.schwarz@online.de,
+	david.wu@rock-chips.com,
+	heiko@sntech.de,
+	vz@mleia.com,
+	wsa@kernel.org,
+	manabian@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH v3 1/3] i2c: lpc2k: Add check for clk_enable()
+Date: Thu,  7 Nov 2024 21:14:26 +0000
+Message-Id: <20241107211428.32273-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241107-topic-sa8775_dma-v1-1-eb633e07b007@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAK4tLWcC/x3MQQqAIBBA0avErBNUFKWrRITZVLNIRSMC6e5Jy
- 7f4v0LBTFhg6CpkvKlQDA2i78AfLuzIaG0GyaUSght2xUSeFWeN0fN6OuYVas2VNWJx0LKUcaP
- nX47T+342FwzSYgAAAA==
-X-Change-ID: 20241107-topic-sa8775_dma-c4e5504871ba
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- kernel test robot <lkp@intel.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731014064; l=2133;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=t8sIaao5aUmofXx5nPK/DWLzkESSVbxj4nYd8Ou7MZI=;
- b=rQS3rSte/kOJhXjV/04uRW0S5Wo8X6jvPFgRr9/o7I3n0hP7aeOd8mXDPnCuqomhZ0njDUm7s
- TjJjLSlQTFAC1ZFsAHBOO3jAAUcGo998p+X3zw/HY+1ncxPrf0l2zuv
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Transfer-Encoding: 8bit
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Add check for the return value of clk_enable() in order to catch the
+potential exception.
 
-As pointed out by Intel's robot, the node name doesn't adhere to
-dt-bindings.
-
-Fix errors like this one:
-
-qcs9100-ride.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
-
-Fixes: 34d17ccb5db8 ("arm64: dts: qcom: sa8775p: Add GPI configuration")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411080206.vFLRjIBZ-lkp@intel.com/
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changelog:
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 9f315a51a7c14cd4116ec5a66a60285361d343f1..ebfa049515c63a0f1a333315dd370e6f78501129 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -854,7 +854,7 @@ ipcc: mailbox@408000 {
- 			#mbox-cells = <2>;
- 		};
- 
--		gpi_dma2: qcom,gpi-dma@800000  {
-+		gpi_dma2: dma-controller@800000  {
- 			compatible = "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x00800000 0x0 0x60000>;
- 			#dma-cells = <3>;
-@@ -1345,7 +1345,7 @@ &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 
- 		};
- 
--		gpi_dma0: qcom,gpi-dma@900000  {
-+		gpi_dma0: dma-controller@900000  {
- 			compatible = "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x00900000 0x0 0x60000>;
- 			#dma-cells = <3>;
-@@ -1770,7 +1770,7 @@ &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 			};
- 		};
- 
--		gpi_dma1: qcom,gpi-dma@a00000  {
-+		gpi_dma1: dma-controller@a00000  {
- 			compatible = "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x00a00000 0x0 0x60000>;
- 			#dma-cells = <3>;
-@@ -2225,7 +2225,7 @@ &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ALWAYS>,
- 			};
- 		};
- 
--		gpi_dma3: qcom,gpi-dma@b00000  {
-+		gpi_dma3: dma-controller@b00000  {
- 			compatible = "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x00b00000 0x0 0x58000>;
- 			#dma-cells = <3>;
+v2 -> v3:
 
+1. Roll back unsuitable dev_err_probe() to dev_err()
+
+v1 -> v2:
+
+1. Remove the Fixes tag.
+2. Use dev_err_probe to simplify error handling.
 ---
-base-commit: 74741a050b79d31d8d2eeee12c77736596d0a6b2
-change-id: 20241107-topic-sa8775_dma-c4e5504871ba
+ drivers/i2c/busses/i2c-lpc2k.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/i2c/busses/i2c-lpc2k.c b/drivers/i2c/busses/i2c-lpc2k.c
+index 9fb33cbf7419..ea9831f34cd6 100644
+--- a/drivers/i2c/busses/i2c-lpc2k.c
++++ b/drivers/i2c/busses/i2c-lpc2k.c
+@@ -442,8 +442,14 @@ static int i2c_lpc2k_suspend(struct device *dev)
+ static int i2c_lpc2k_resume(struct device *dev)
+ {
+ 	struct lpc2k_i2c *i2c = dev_get_drvdata(dev);
++	int ret;
++
++	ret = clk_enable(i2c->clk);
++	if (ret) {
++		dev_err(dev, "failed to enable clock: %d\n", ret);
++		return ret;
++	}
+ 
+-	clk_enable(i2c->clk);
+ 	i2c_lpc2k_reset(i2c);
+ 
+ 	return 0;
 -- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+2.25.1
 
 
