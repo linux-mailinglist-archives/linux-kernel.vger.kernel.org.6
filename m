@@ -1,165 +1,324 @@
-Return-Path: <linux-kernel+bounces-399638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8850F9C0209
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:15:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11679C0210
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39AA71F216A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80766283616
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAC21EBA1D;
-	Thu,  7 Nov 2024 10:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E0D1EBFE4;
+	Thu,  7 Nov 2024 10:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rdhp+9da"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZwJVaoj"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A541E8856;
-	Thu,  7 Nov 2024 10:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6502019ABCB;
+	Thu,  7 Nov 2024 10:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730974496; cv=none; b=okwR2INAHm5ywsU5k5m5tVTJe3G5MU2GO3GKs9nrsd/SwYYt7yZHgVGrrjLfT2/2OqRQRzjC+igsBSxiyQ++Ue14Yf/3z2kgIqIXDsc8o11cRBGVyos0sifjZ8dk8+aaG2zOJ04o8j43l+sKws1nqewJ+ejiT81YAi0l7tBsB4M=
+	t=1730974559; cv=none; b=A3PsaJjRWUCgmjUjm6Az83n9L/P4nvLOk1R9XPsXG2N5bTfLxRypOw/bey1zFxNKZAgFTbXXK9whyqNmHVrmNeFNbo1R4AA4kty1mKNTsP5B051GbC+QMB6952q8bFqtlmVNd91qmsq+Hr+iHO9oTg5v3IosB4IEkOvPIqEdRc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730974496; c=relaxed/simple;
-	bh=w5g82WZeZTzWD79OqJf1UTmTavO98j4tPfUoxbpEwQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckfVaL0tkWSxjZ0I1xjIWBrZl/fSWM8NoEKEM6mxEvij/DA9Sino3wCRo/bq8WjVXvw3komhqSMm6sKAdQZzfyQNa+9gTtXdX78ZBV7jEsnFICh8QczQ0FO7svhSPamkT/+d3pKeyQ8Z4YN2fIQHMrky1ymtGgVn/NosoKGW0bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rdhp+9da; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F4EC4CED2;
-	Thu,  7 Nov 2024 10:14:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730974495;
-	bh=w5g82WZeZTzWD79OqJf1UTmTavO98j4tPfUoxbpEwQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rdhp+9daubb7PiW1j9ix67RZN+smC9IvZ+YXxVYxT76Xv22mO9/e47Vicp5aHctle
-	 GGL0ZMwC2u4zM2vIg9j8P3jlNrD9/nFtyzftPktwI3GVCQ2gICfpsCe2QTLyV4yb2m
-	 ggNGKqt02AqlqyVeD/Xr/z1rZwfWryZuE6lTxL5Ql6tPUX+udDxqcjtrcEN4ATPTjy
-	 tSZ3w/sYHEN4R46ejmuapnMYIz9gahX4Vwm2wUUvqTFidPORSnLxy7IDidnwiao2TB
-	 G5iBxwBXUOA8NM/g/ud6dPcWIpjBL4D4r5QbmBdQEP6hKL+XW6TDc+cnuBUH3w42Pi
-	 CS0RYZKH99rcA==
-Date: Thu, 7 Nov 2024 11:14:52 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: stable@vger.kernel.org, bsegall@google.com,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: FAILED: Patch "posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER
- on clone" failed to apply to v6.1-stable tree
-Message-ID: <ZyyTHGkchGzeHBx3@pavilion.home>
-References: <20241106021018.179970-1-sashal@kernel.org>
+	s=arc-20240116; t=1730974559; c=relaxed/simple;
+	bh=CLnyjHafwPfEPk6khrd+w+ls6AiJpgKD9HVj4fkhFVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tu9o33cGY+4ZpkTTnzK1xzub02ZCCqeGz1gZJWrl24SVPHAgP4xkAcHVevwoC8YdfG2bJc8AtosAtU+kcSoQVoalbf+IMtCv/xR9WxVEX+ExlDfXEC459ZfvVfBfRYLKXwmTsqW2oZQm/MWpRXM/shRMIDWn/APbRg8UoKfzG0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZwJVaoj; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cbca51687so7630735ad.1;
+        Thu, 07 Nov 2024 02:15:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730974558; x=1731579358; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6uC1tGDKghOkea1zNnMHJyn2LWZSucub90BQiLOEDDk=;
+        b=AZwJVaojM/oUAjaJ5jh+axr6JtCSO0Lg8TYoPuKqhyVALTofnnol31zFXtOVn7r0m1
+         Anj2TPfzleEnUjsRoyJ9Sv2aKpiJ8Oh3cT83YVTwa0HPH1NVtYHXQXQCuTjJJFzVFluY
+         mer811Gw5Uc+Ozuem4iwZHdOxuVYoDjJRu3IQCRDs1TBzURVxPGP/lFkf1QQj73tJs6p
+         EIB+iCXATOVXcTOvf7TH8KX5wheN/fuWnNzoLLB2/0JL1eBWpnLLDe6RtFVdy8suJ2eh
+         949SYhSR/rDIcNoPABnQNz7+ftyXXjx0GcvYVs42iNv+hrJRZsm5vJnht4OryoQNMF4E
+         qtgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730974558; x=1731579358;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6uC1tGDKghOkea1zNnMHJyn2LWZSucub90BQiLOEDDk=;
+        b=KErtGzURw28X84PadAF5ItKG/R577NZsbBzI++5FAjMbPsNyGXx2VLZe5sIWzi9F0t
+         cfGavGcGP3QrPo+d/UWRHpDQtNhuMNIrwhVSXAb7N9ZVqMuweyDJkiUP3wk9ZsiEPImn
+         EGi7bcUrSnPd8VFUu7N/67cv5wzLmdOnX9hL6z6RgcekLnzfaPNLsvBop9t+EzY4MA6c
+         lWxT819dHtzhwxsuuKtAvrEW7BlU+aRzlSJ+Rfqrgerab8cp42NaVech2NOoRVCrok/R
+         wUXw5enL1fyzM8qTu7oSO7iCeHFrzPnKSvSCrQwHz9GHrUgvUBGiahsHeL1f6I+w+yG8
+         HWNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIMip4CHsfdQGNBQTXKVAJWILCGyx4hRfur8ujeEiRs9tRgM5Tr0A/4R7fEvtzf2UXYfDYYfsR64bFA8Ix@vger.kernel.org, AJvYcCUkUzqKpdEbaOGYh1Ejt40dA0c0bFIBoRmc643pqn1pCpzdLXHBun6Wjb7ygSGoWYP+O4WG8Rnd+sY4@vger.kernel.org, AJvYcCWgf5IudBFtMDDNPz6TInAeNrp+dVuZPzC3g563gkzoCmQ1Asb5OVoDiMUrh/v5dLe+gGuPke4v@vger.kernel.org
+X-Gm-Message-State: AOJu0YycvBIGaevWukvx9XOrhFsauGdzwLJPxvWw2+c2DbaxMlo+Y0bd
+	ez4g8FkTRJSDTtvKoqNWFRnYgsjGbH5LAFPI6DCSA0+D2d3eqrlm
+X-Google-Smtp-Source: AGHT+IG072GIpekpia0RPF6UHV7Q1vjZLLM17qv655ofL8si24CR7LuYWccsfVgbbHuGdYv/1tSAPA==
+X-Received: by 2002:a17:902:9009:b0:20c:968e:4dcd with SMTP id d9443c01a7336-2111aec8494mr240923005ad.7.1730974557542;
+        Thu, 07 Nov 2024 02:15:57 -0800 (PST)
+Received: from [192.168.0.104] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddc940sm8817035ad.58.2024.11.07.02.15.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 02:15:57 -0800 (PST)
+Message-ID: <7c2f6af3-5686-452a-8d8a-191899b3d225@gmail.com>
+Date: Thu, 7 Nov 2024 18:15:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
+ MA35 family GMAC
+To: Conor Dooley <conor@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
+ schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20241106111930.218825-1-a0987203069@gmail.com>
+ <20241106111930.218825-2-a0987203069@gmail.com>
+ <20241106-bloated-ranch-be94506d360c@spud>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <20241106-bloated-ranch-be94506d360c@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106021018.179970-1-sashal@kernel.org>
 
-Hi,
+Dear Conor,
 
-Le Tue, Nov 05, 2024 at 09:10:17PM -0500, Sasha Levin a �crit :
-> The patch below does not apply to the v6.1-stable tree.
-> If someone wants it applied there, or to any other stable or longterm
-> tree, then please email the backport, including the original git commit
-> id to <stable@vger.kernel.org>.
+Thank you for your reply.
 
+Conor Dooley 於 11/6/2024 11:44 PM 寫道:
+> On Wed, Nov 06, 2024 at 07:19:28PM +0800, Joey Lu wrote:
+>> Create initial schema for Nuvoton MA35 family Gigabit MAC.
+>>
+>> Signed-off-by: Joey Lu <a0987203069@gmail.com>
+>> ---
+>>   .../bindings/net/nuvoton,ma35xx-dwmac.yaml    | 163 ++++++++++++++++++
+>>   1 file changed, 163 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/net/nuvoton,ma35xx-dwmac.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/nuvoton,ma35xx-dwmac.yaml b/Documentation/devicetree/bindings/net/nuvoton,ma35xx-dwmac.yaml
+>> new file mode 100644
+>> index 000000000000..f4d24ca872b2
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/net/nuvoton,ma35xx-dwmac.yaml
+>> @@ -0,0 +1,163 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/net/nuvoton,ma35xx-dwmac.yaml#
+> The filename needs to match the compatible.
+I will fix it.
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Nuvoton DWMAC glue layer controller
+>> +
+>> +maintainers:
+>> +  - Joey Lu <yclu4@nuvoton.com>
+>> +
+>> +description:
+>> +  Nuvoton 10/100/1000Mbps Gigabit Ethernet MAC Controller is based on
+>> +  Synopsys DesignWare MAC (version 3.73a).
+>> +
+>> +# We need a select here so we don't match all nodes with 'snps,dwmac'
+>> +select:
+>> +  properties:
+>> +    compatible:
+>> +      contains:
+>> +        enum:
+>> +          - nuvoton,ma35d1-dwmac
+>> +  required:
+>> +    - compatible
+>> +
+>> +allOf:
+>> +  - $ref: snps,dwmac.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    - items:
+>> +        - enum:
+>> +            - nuvoton,ma35d1-dwmac
+>> +        - const: snps,dwmac-3.70a
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    minItems: 2
+>> +    items:
+>> +      - description: MAC clock
+>> +      - description: PTP clock
+>> +
+>> +  clock-names:
+>> +    minItems: 2
+>> +    contains:
+>> +      - enum:
+>> +          - stmmaceth
+>> +          - ptp_ref
+> This can just be an items list like interrupt-names, since the clocks
+> property has a fixed order.
+I will fix it.
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +  interrupt-names:
+>> +    items:
+>> +      - const: macirq
+> This name carries no information, this is an interrupt for a mac after
+> all. You don't need a name since you only have one interrupt.
+This interrupt name is an argument required by the stmmac driver to 
+obtain interrupt information.
+>> +  nuvoton,sys:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description: phandle to access GCR (Global Control Register) registers.
+> Why do you need a phandle to this? You appear to have multiple dwmacs on
+> your device if the example is anything to go by, how come you don't need
+> to access different portions of this depending on which dwmac instance
+> you are?
+On our platform, a system register is required to specify the TX/RX 
+clock path delay control, switch modes between RMII and RGMII, and 
+configure other related settings.
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  reset-names:
+>> +    items:
+>> +      - const: stmmaceth
+>> +
+>> +  mac-id:
+>> +    maxItems: 1
+>> +    description:
+>> +      The interface of MAC.
+> A vendor prefix is required for custom properties, but I don't think you
+> need this and actually it is a bandaid for some other information you're
+> missing. Probably related to your nuvoton,sys property only being a
+> phandle with no arguments.
+This property will be removed.
+>> +
+>> +  phy-mode:
+>> +    enum:
+>> +      - rmii
+>> +      - rgmii-id
+>> +
+>> +  tx_delay:
+> Needs constraints, a type, a vendor prefix and a unit suffix. No
+> underscores in property names either. See the amlogic dwmac binding for
+> an example.
+I will fix it.
+>> +    maxItems: 1
+>> +    description:
+>> +      Control transmit clock path delay in nanoseconds.
+>> +
+>> +  rx_delay:
+> Ditto here.
+I will fix it.
+>
+>> +    maxItems: 1
+>> +    description:
+>> +      Control receive clock path delay in nanoseconds.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - interrupt-names
+>> +  - clocks
+>> +  - clock-names
+>> +  - nuvoton,sys
+>> +  - resets
+>> +  - reset-names
+>> +  - mac-id
+>> +  - phy-mode
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+>> +    #include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
+>> +    //Example 1
+>> +    eth0: ethernet@40120000 {
+> The eth0 label is not used, drop it.
+The label is used in dtsi and dts.
+>> +        compatible = "nuvoton,ma35d1-dwmac";
+>> +        reg = <0x0 0x40120000 0x0 0x10000>;
+>> +        interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+>> +        interrupt-names = "macirq";
+>> +        clocks = <&clk EMAC0_GATE>, <&clk EPLL_DIV8>;
+>> +        clock-names = "stmmaceth", "ptp_ref";
+>> +
+>> +        nuvoton,sys = <&sys>;
+>> +        resets = <&sys MA35D1_RESET_GMAC0>;
+>> +        reset-names = "stmmaceth";
+>> +        mac-id = <0>;
+>> +
+>> +        clk_csr = <4>;
+> This property is not documented.
+This unused property will be removed.
+>
+> Cheers,
+> Conor.
+>
+>> +        phy-mode = "rgmii-id";
+>> +        phy-handle = <&eth_phy0>;
+>> +        mdio0 {
+>> +            compatible = "snps,dwmac-mdio";
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +
+>> +            eth_phy0: ethernet-phy@0 {
+>> +                reg = <0>;
+>> +            };
+>> +        };
+>> +    };
+>> +
+>> +  - |
+>> +    //Example 2
+>> +    eth1: ethernet@40130000 {
+>> +        compatible = "nuvoton,ma35d1-dwmac";
+>> +        reg = <0x0 0x40130000 0x0 0x10000>;
+>> +        interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+>> +        interrupt-names = "macirq";
+>> +        clocks = <&clk EMAC1_GATE>, <&clk EPLL_DIV8>;
+>> +        clock-names = "stmmaceth", "ptp_ref";
+>> +
+>> +        nuvoton,sys = <&sys>;
+>> +        resets = <&sys MA35D1_RESET_GMAC1>;
+>> +        reset-names = "stmmaceth";
+>> +        mac-id = <1>;
+>> +
+>> +        clk_csr = <4>;
+>> +        phy-mode = "rmii";
+>> +        phy-handle = <&eth_phy1>;
+>> +        mdio1 {
+>> +            compatible = "snps,dwmac-mdio";
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +
+>> +            eth_phy1: ethernet-phy@1 {
+>> +                reg = <1>;
+>> +            };
+>> +        };
+>> +    };
+>> -- 
+>> 2.34.1
 
-Can you try with this updated version on the failing trees?
+Thanks!
 
-Thanks.
+BR,
 
----
-From b5b62a0c48448c4bf7cc0ff8c3f3736ced489939 Mon Sep 17 00:00:00 2001
-From: Benjamin Segall <bsegall@google.com>
-Date: Fri, 25 Oct 2024 18:35:35 -0700
-Subject: [PATCH] posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER on clone
-
-When cloning a new thread, its posix_cputimers are not inherited, and
-are cleared by posix_cputimers_init(). However, this does not clear the
-tick dependency it creates in tsk->tick_dep_mask, and the handler does
-not reach the code to clear the dependency if there were no timers to
-begin with.
-
-Thus if a thread has a cputimer running before clone/fork, all
-descendants will prevent nohz_full unless they create a cputimer of
-their own.
-
-Fix this by entirely clearing the tick_dep_mask in copy_process().
-(There is currently no inherited state that needs a tick dependency)
-
-Process-wide timers do not have this problem because fork does not copy
-signal_struct as a baseline, it creates one from scratch.
-
-Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
-Signed-off-by: Ben Segall <bsegall@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/xm26o737bq8o.fsf@google.com
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- include/linux/tick.h | 8 ++++++++
- kernel/fork.c        | 2 ++
- 2 files changed, 10 insertions(+)
-
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 9459fef5b857..9701c571a5cf 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -252,12 +252,19 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
- 	if (tick_nohz_full_enabled())
- 		tick_nohz_dep_set_task(tsk, bit);
- }
-+
- static inline void tick_dep_clear_task(struct task_struct *tsk,
- 				       enum tick_dep_bits bit)
- {
- 	if (tick_nohz_full_enabled())
- 		tick_nohz_dep_clear_task(tsk, bit);
- }
-+
-+static inline void tick_dep_init_task(struct task_struct *tsk)
-+{
-+	atomic_set(&tsk->tick_dep_mask, 0);
-+}
-+
- static inline void tick_dep_set_signal(struct task_struct *tsk,
- 				       enum tick_dep_bits bit)
- {
-@@ -291,6 +298,7 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
- 				     enum tick_dep_bits bit) { }
- static inline void tick_dep_clear_task(struct task_struct *tsk,
- 				       enum tick_dep_bits bit) { }
-+static inline void tick_dep_init_task(struct task_struct *tsk) { }
- static inline void tick_dep_set_signal(struct task_struct *tsk,
- 				       enum tick_dep_bits bit) { }
- static inline void tick_dep_clear_signal(struct signal_struct *signal,
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 8dd46baee4c3..09a935724bd9 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -97,6 +97,7 @@
- #include <linux/scs.h>
- #include <linux/io_uring.h>
- #include <linux/bpf.h>
-+#include <linux/tick.h>
- 
- #include <asm/pgalloc.h>
- #include <linux/uaccess.h>
-@@ -2183,6 +2184,7 @@ static __latent_entropy struct task_struct *copy_process(
- 	acct_clear_integrals(p);
- 
- 	posix_cputimers_init(&p->posix_cputimers);
-+	tick_dep_init_task(p);
- 
- 	p->io_context = NULL;
- 	audit_set_context(p, NULL);
--- 
-2.46.0
+Joey
 
 
