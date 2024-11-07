@@ -1,92 +1,155 @@
-Return-Path: <linux-kernel+bounces-399511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852749C000A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:35:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555E59BFFDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70971C21782
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ADB028423C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC981DCB2B;
-	Thu,  7 Nov 2024 08:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D881D8DFE;
+	Thu,  7 Nov 2024 08:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UzQjyS4s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="aq80zYA0"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4531D7985;
-	Thu,  7 Nov 2024 08:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339D518754F;
+	Thu,  7 Nov 2024 08:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730968484; cv=none; b=mb7dV7YbZR85Jgnjj8dioswETsWHmvmI+fxrtAu7x9K61k0VXeTziE0gBF9CsqEi+JXQvlD2I6fHkTRuOrcY5jJVJNlVLGCr4lC1vLUBWbN2oxdSk0uAmvzDXlck9GWGRvJqWtzo7YmHsFAtrmDsaLuHN2PnhWCHZCP+qxp7VpQ=
+	t=1730967760; cv=none; b=HlkZkhLjkSrOgBi0/Ns13H04O1+X2QJxiEQkkdU876/IanaBYDASpZN+Jb8LEdfPsj8c2wN7T+l9iGtVeq5FpW88n9mJg/wDRcrVzmPWkO66qSeufPPa3qw3CoFEhuPvGvL2l84xlWyB4bYxZiRvvoZUmaBe0i7qaneEuRVPJDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730968484; c=relaxed/simple;
-	bh=e1p9ZMW7teYCEnbCKcr1SaIZsmbiLbiyA0aRfo9a4ng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gt4az2+sNb+ofCzL07r8whPAyQivGnIc2s4LGdbu/NXr6il/Fl3j7DJpjbPMEg7b3eaFxBc0tLJ6vQIEz6/DDqTUXgEOVJdgzVhhyBRbCtUXUgRa52jLVN6/Wtvl1ydUjlYkT/1CC91VrbWKXGIZ59fGYB8JW7WTftK0/epL/78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UzQjyS4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E930C4CED0;
-	Thu,  7 Nov 2024 08:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730968484;
-	bh=e1p9ZMW7teYCEnbCKcr1SaIZsmbiLbiyA0aRfo9a4ng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UzQjyS4swRtw9uZAsUgKWPt1NpHPotdwa7Ov8LPJB0RozbK0EqW/j1nBtFuY3aJKp
-	 6K+5P+ChTG/5Sis5ylhVYIKzG2lDx9xU7sRlUlBqxW8Z6ukAfGh+5RoZqhmHTYb3w7
-	 Kpg4842dFA9rM5cvz82UrpI0eEiNEMkrOCfk3UEo=
-Date: Thu, 7 Nov 2024 09:17:44 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Anders Roxell <anders.roxell@linaro.org>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Xingang Wang <wangxingang5@huawei.com>
-Subject: Re: [PATCH RESEND] iommu/of: Fix pci_request_acs() before
- enumerating PCI devices
-Message-ID: <2024110759-refusal-mayflower-2522@gregkh>
-References: <20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com>
+	s=arc-20240116; t=1730967760; c=relaxed/simple;
+	bh=85d95EOC6Oqte7fumLBOEHPQaqEGaDtfepiLhrIjU2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hSOn3JPKCgpcfdzFIPvYDlHBoJ8QMPAE/YmrBRJAJM/Fi38yWqevnXXnPUim/Gans/6F/LaXYC3T8tXWJaa0QsI4j+SnGHvNlDO/b5cIe2Aq6EmtPQDUBoVl82mPIenzoOZX7le8uybwQKTaDWrrJcBddsPiQdIyU6O0gNJ+y+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=aq80zYA0; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730967677; x=1731572477; i=w_armin@gmx.de;
+	bh=I9hvSUFaE10X2EU9MI0Ox4sZPM3HYsfCnT+OYayOcG4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=aq80zYA0oOf7lRL5GuVgjXeYTr6oVKkb9jEk2X/7Y49VrxyrI70/MNg8dQ3pXi1W
+	 IO2ecXMRWrPMQ1VrqIFTkIZlYQUQU1dVFBB02Mj3pTTAFHHMVpor4GLmxQHIMMYi3
+	 Q9D4nGqJjN9dpDMSkZ7Gh7Hb6zFwFv1dbo3l2dnfuyMMvJCoWR6KqeRtFteWjWnuO
+	 BD+HzkIQS9gzrtGakcwuvphDCZq7D/CNisxJBlCJsCfrJ5kpRmomXrpOuNLx/FZ1h
+	 rAfAeeSKAjrph+/+c851PZT+iA1IgZJB8VHD0vwMUFw4prs1qWlZSzeCTB3nPF1cx
+	 d7CW3zmPVmzIXbrDYA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MxlzC-1u1SWQ3g1G-00xLN5; Thu, 07
+ Nov 2024 09:21:17 +0100
+Message-ID: <cf6eb834-2337-4f5c-87e3-012713301912@gmx.de>
+Date: Thu, 7 Nov 2024 09:21:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 09/20] ACPI: platform_profile: Unregister class and
+ sysfs group on module unload
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241107060254.17615-1-mario.limonciello@amd.com>
+ <20241107060254.17615-10-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241107060254.17615-10-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DNDRuxiUduqoXNutn07yCfcVzwa3VRWGUqD4YjURJO3LwV8KSsh
+ +uhOh7PNOQ28hAv9h5MQPGh7LmWGXlyPeG/juYQ0PyDb6S5HcSdZKtn/C6SjMfGbPO7btLx
+ UwtqxyyF6KWnmRB6aaE8nBFQyhlPJrM7RLw2Aelm5e9ZUU5GLnNyFi5QG7B4Ur7uS+olPcT
+ WEg3uzveIbtRIynuEPrIg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZkfA+QeJLX8=;MVnF8T7iuOxwegsUGTaYTgahovS
+ cawtppZF6g215yjMCh9U3kVxU5X89op57n4N8/Ew1Zu8VgfyTURnbaR5L2TeOXT4HenKLkNrY
+ ijBR/x/8PXQGhVPAlCcvolBuR811eoelEJTSVu8ycPttz42nFy9GvtXLuEHdrNtn4wdBJzpqy
+ /ZC6xQVK0GwqaMpooImBFU6IYmozslE75V+mG0uXeuFGPU95Qfa7XxCokiGiA/h3rf+EGldbJ
+ E4pNDg7GKH0Mc4qRkYJCFT61B1beCe22z0CMMyKtAUrmzTs3PxAGjmas/w8H9ZvFpqewP00WR
+ GqBnoVBaKSULr8JsUY0PrZfpPgjsT9BD3G+zcyXVo41uhGaADSmPaOUROwYFQKzj9rEosUSfA
+ R4gl5dXejQpqDno+hghk8O6Trgpgvssg5Sxequ+Q03fPGS7Bv2h17V9UVmjrxxkRdEIpxwft6
+ TbmIgXiKaUIgwBVP49shvzQUK98sWaAhoCw+zS0offHyvDwro37LzBTf2eWXU2g9W2V7Dne9t
+ WINUvBGXwQUsLxplxdlaOVlWtU8IbKIsYPpifh9yCVxr5Fzuuq9e9PInP964Cam0AnC2dRlUc
+ he19xMX4ZafBa2H2+vDKi0yxkUAwCz0dyzErN/T4+Eir/Ha4wMzGcjyP0soMQWZuBhvl32x5E
+ r9QXZjMX8/XQBFSSGyx/E0pekvWfyEH8NR/v9XvwJbYREiDdZIc/t+rYpOXVWzv2c7+8/kWWY
+ X8a3PBMRD5sDqoYn1JSTWIlVr8n718CeqCmu2NmK4GjaJ2NLI2XmSNW4wvNWCZB2AQZuHfd4t
+ oX6rzXWiwWkXvcTMv9CZzUgdyqXXY5KE/S2Uegc+kM0vam/XHSlyh8NE+6P6pfDqViqSWGphm
+ ShnnXtT+qQrPpefulGi+rtmktrE2Ex1m5PtH9BfEZZKhQjfvbhrRcIlU9
 
-On Thu, Nov 07, 2024 at 01:29:15PM +0530, Pavankumar Kondeti wrote:
-> From: Xingang Wang <wangxingang5@huawei.com>
-> 
-> When booting with devicetree, the pci_request_acs() is called after the
-> enumeration and initialization of PCI devices, thus the ACS is not
-> enabled. And ACS should be enabled when IOMMU is detected for the
-> PCI host bridge, so add check for IOMMU before probe of PCI host and call
-> pci_request_acs() to make sure ACS will be enabled when enumerating PCI
-> devices.
-> 
-> Fixes: 6bf6c24720d33 ("iommu/of: Request ACS from the PCI core when configuring IOMMU linkage")
-> Signed-off-by: Xingang Wang <wangxingang5@huawei.com>
-> Signed-off-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
+Am 07.11.24 um 07:02 schrieb Mario Limonciello:
+
+> The class and sysfs group are no longer needed when the platform profile
+> core is a module and unloaded.
+>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
-> Earlier this patch made it to linux-next but got dropped later as it
-> broke PCI on ARM Juno R1 board. AFAICT, this issue is never root caused,
-> so resending this patch to get attention again.
-> 
-> https://lore.kernel.org/all/1621566204-37456-1-git-send-email-wangxingang5@huawei.com/
+>   drivers/acpi/platform_profile.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
+file.c
+> index 652034b71ee9b..9caf070f77f6a 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -224,6 +224,13 @@ int platform_profile_remove(struct platform_profile=
+_handler *pprof)
+>   }
+>   EXPORT_SYMBOL_GPL(platform_profile_remove);
+>
+> +static void __exit platform_profile_exit(void)
+> +{
+> +	class_unregister(&platform_profile_class);
+> +	sysfs_remove_group(acpi_kobj, &platform_profile_group);
 
-Please don't resend known-broken patches.  Please fix them up before
-resending, otherwise we will just ignore this one as well as obviously
-we can not take such a thing (nor should you want us to.)
+This will crash should the class still not exist.
 
-thanks,
+I suggest you register the class and the legacy sysfs group during module =
+initialization, and
+add a is_visible() callback to the legacy sysfs group. Then you can use sy=
+sfs_update_group() to
+update the visibility of the sysfs files when platform profiles come and g=
+o.
 
-greg k-h
+Also please squash this patch with the patch introducing the class infrast=
+ructure.
+
+Thanks,
+Armin Wolf
+
+> +}
+> +module_exit(platform_profile_exit);
+> +
+>   MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
+>   MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
+>   MODULE_LICENSE("GPL");
 
