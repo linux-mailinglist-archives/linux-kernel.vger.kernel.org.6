@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-399537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 198039C0050
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:45:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF059C0051
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:46:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A375CB23312
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1BC1C212A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98191D9A5F;
-	Thu,  7 Nov 2024 08:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F791DF24B;
+	Thu,  7 Nov 2024 08:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="ji9j7QV+"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="kX4qxduv"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC6C1D9A41
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2701DE3B7
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 08:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730969109; cv=none; b=oxBwKNF7d5WIGm2HCFvjAsdYJben3irVUZ3G262ub1BjgzVaUklIIata7GsG4XCImgvHdYIL49hWxTYXBgcc7Eke2gxcqMQVd2wuscS3PvK7Ka1UEoAJFrwxb58OlQ3T9EQKswqYAZAbUw9ddEGEkU3i7FNBvZcbJT0O6AdyB6c=
+	t=1730969110; cv=none; b=qdkWAfTdEg7F1nvTMpxh+8R76URZROjko3cDtwp4d6Zz1gIueYyGqUMsz1B5VHlbouJca4zqLfGslztdVx6N7Jwq9OQ5Wg5e1U5pParM6Tmh6RQTeGunfOwGrqPGXh6UVQ6K4VqK6M8VA0CMV1YpIxLdDZ/wCu33agqTpJuHrz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730969109; c=relaxed/simple;
-	bh=9uA4jtAqewGWM09+wgzmWVi5vAHoTeP/t3cHJ6njvGY=;
+	s=arc-20240116; t=1730969110; c=relaxed/simple;
+	bh=go2Y9sLUoGP6MktCeaNU+KOuKZhmIfOTlSOSX1xdaTI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=msYRHmHhenJBqV9pAXAkFew91SWgRumIluIzSoWFGDcBaw4PUfMn8lvmkso0a++64soJgmspmraDaYaNea9X1hTiyDcK5WvvkO4tqmh0POnx939Vn/nXplWOXFXZDuh9ZxAfoIwHHxtxjY8+0Efcl+MDv45jPRPJkndqgXxsxWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=ji9j7QV+; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version:Content-Type; b=fCZLGMecmgOnjd/Vb61unEFeORLTajAQAt3kinIM6cWNwUIFut1/8mEqXrck3DpBRXbpDTzyxoladRhYuK+K0vAejmHgMlE/7LI8kVja5CM3H2RNB7AXPeCYUWos014C0QZxALCvbu9qUppkmK/ATlDaI1RNQii18lah6L0o5Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=kX4qxduv; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730969102;
-	bh=S8Ka+i9mImv1flw2WDBI2y32Prf/adbg6BktMA4093U=;
+	s=201909; t=1730969104;
+	bh=WMyBavOsB1vyHHQFOuRy967yIlTqEEkAgUL/cePEBWA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ji9j7QV+46G8MEsSAj3VjkjAOWZd6UM4NdmTUhMRHOna1YH1tMUyt1u9fJoPiYq9O
-	 dO5qHdv8wTripRntiFjndmiC9FAwyD9vsJLUJJpWJjX/G9x197HTFt3hZ7FgxT3DaP
-	 Dd4sUJITu//HOBTvqCOEdrJG5JUWxMpoIh9QTMZ3Xo7UuqAWHV4zxrcxy39dzpAJK6
-	 XKOe/RCn1M+VHrUrZiFFfwhukTpHfCmBkKYby/t7evZIzghhMYkK7jeNZZnoAtlmVH
-	 icwSe6J2odIsf9phYPWsnCMlbU1Hg625hetGqNTBEbtTxUQ9/qlK3y1fHjpTSCIjFa
-	 F7Aa5isHQKf9Q==
+	b=kX4qxduvkMx+ddJt2Hh/5SP/EPrFmi9O11yxW+tGM2U0l32mPnQIUVgE5ZdWyx1BD
+	 H9FPDtLosWrxFPtO3zta5el1A0XMr/b2ln+T8yLLyogbF9KtbS5oS1V+eyupcA7/5U
+	 DawML6hqLBnuYSMiRw3tJvxnDixLCdXRp2dKG1FqBsuOMbAvFfdJfNhb3Vu+F2LcsA
+	 /6hOU75SqX0dN0g5J498wYmbHE9X2/xG1HoaRzbuF7vTu3AlCYPBO1afQU+qsHckjt
+	 hYnVhuMjm3SZYxvg1yNQ8a28kggvgG7oqqK/qNEM4oBLQcHlXGi56+i0LFKxXC4KL2
+	 mxdeqnH6RrLGA==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkbHL4PvJz4xG4;
-	Thu,  7 Nov 2024 19:45:02 +1100 (AEDT)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkbHN18gZz4xGC;
+	Thu,  7 Nov 2024 19:45:04 +1100 (AEDT)
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
 To: linuxppc-dev@lists.ozlabs.org, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: kasan-dev@googlegroups.com, linux-mm@kvack.org, Marco Elver <elver@google.com>, Alexander Potapenko <glider@google.com>, Heiko Carstens <hca@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Hari Bathini <hbathini@linux.ibm.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Donet Tom <donettom@linux.ibm.com>, Pavithra Prakash <pavrampu@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <cover.1729271995.git.ritesh.list@gmail.com>
-References: <cover.1729271995.git.ritesh.list@gmail.com>
-Subject: Re: [PATCH v3 00/12] powerpc/kfence: Improve kfence support (mainly Hash)
-Message-Id: <173096894640.18315.14301465980059494153.b4-ty@ellerman.id.au>
+Cc: linux-mm@kvack.org, Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>, Sourabh Jain <sourabhjain@linux.ibm.com>, Hari Bathini <hbathini@linux.ibm.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Madhavan Srinivasan <maddy@linux.ibm.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Donet Tom <donettom@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>, Sachin P Bappalige <sachinpb@linux.ibm.com>
+In-Reply-To: <a2afc3d6481a87a305e89cfc4a3f3d2a0b8ceab3.1729146153.git.ritesh.list@gmail.com>
+References: <a2afc3d6481a87a305e89cfc4a3f3d2a0b8ceab3.1729146153.git.ritesh.list@gmail.com>
+Subject: Re: [PATCH v4 1/3] powerpc/fadump: Refactor and prepare fadump_cma_init for late init
+Message-Id: <173096894636.18315.15962335864180582252.b4-ty@ellerman.id.au>
 Date: Thu, 07 Nov 2024 19:42:26 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,44 +63,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Fri, 18 Oct 2024 22:59:41 +0530, Ritesh Harjani (IBM) wrote:
-> v2 -> v3:
-> ============
-> 1. Addressed review comments from Christophe in patch-1: To check for
->    is_kfence_address before doing search in exception tables.
->    (Thanks for the review!)
-> 
-> 2. Separate out patch-1, which will need a separate tree for inclusion and
->    review from kfence/kasan folks since it's a kfence kunit test.
+On Fri, 18 Oct 2024 21:47:55 +0530, Ritesh Harjani (IBM) wrote:
+> We anyway don't use any return values from fadump_cma_init(). Since
+> fadump_reserve_mem() from where fadump_cma_init() gets called today,
+> already has the required checks.
+> This patch makes this function return type as void. Let's also handle
+> extra cases like return if fadump_supported is false or dump_active, so
+> that in later patches we can call fadump_cma_init() separately from
+> setup_arch().
 > 
 > [...]
 
 Applied to powerpc/next.
 
-[01/12] powerpc: mm/fault: Fix kfence page fault reporting
-        https://git.kernel.org/powerpc/c/06dbbb4d5f7126b6307ab807cbf04ecfc459b933
-[02/12] book3s64/hash: Remove kfence support temporarily
-        https://git.kernel.org/powerpc/c/47780e7eae783674b557cc16cf6852c0ce9dbbe9
-[03/12] book3s64/hash: Refactor kernel linear map related calls
-        https://git.kernel.org/powerpc/c/8b1085523fd22bf29a097d53c669a7dcf017d5ea
-[04/12] book3s64/hash: Add hash_debug_pagealloc_add_slot() function
-        https://git.kernel.org/powerpc/c/cc5734481b3c24ddee1551f9732d743453bca010
-[05/12] book3s64/hash: Add hash_debug_pagealloc_alloc_slots() function
-        https://git.kernel.org/powerpc/c/ff8631cdc23ad42f662a8510c57aeb0555ac3d5f
-[06/12] book3s64/hash: Refactor hash__kernel_map_pages() function
-        https://git.kernel.org/powerpc/c/43919f4154bebbef0a0d3004f1b022643d21082c
-[07/12] book3s64/hash: Make kernel_map_linear_page() generic
-        https://git.kernel.org/powerpc/c/685d942d00d8b0edf8431869028e23eac6cc4bab
-[08/12] book3s64/hash: Disable debug_pagealloc if it requires more memory
-        https://git.kernel.org/powerpc/c/47dd2e63d42a7a1b0a9c374d3a236f58b97c19e6
-[09/12] book3s64/hash: Add kfence functionality
-        https://git.kernel.org/powerpc/c/8fec58f503b296af87ffca3898965e3054f2b616
-[10/12] book3s64/radix: Refactoring common kfence related functions
-        https://git.kernel.org/powerpc/c/b5fbf7e2c6a403344e83139a14322f0c42911f2d
-[11/12] book3s64/hash: Disable kfence if not early init
-        https://git.kernel.org/powerpc/c/76b7d6463fc504ac266472f5948b83902dfca4c6
-[12/12] book3s64/hash: Early detect debug_pagealloc size requirement
-        https://git.kernel.org/powerpc/c/8846d9683884fa9ef5bb160011a748701216e186
+[1/3] powerpc/fadump: Refactor and prepare fadump_cma_init for late init
+      https://git.kernel.org/powerpc/c/adfaec30ffaceecd565e06adae367aa944acc3c9
+[2/3] powerpc/fadump: Reserve page-aligned boot_memory_size during fadump_reserve_mem
+      https://git.kernel.org/powerpc/c/6faeac507beb2935d9171a01c3877b0505689c58
+[3/3] powerpc/fadump: Move fadump_cma_init to setup_arch() after initmem_init()
+      https://git.kernel.org/powerpc/c/05b94cae1c47f94588c3e7096963c1007c4d9c1d
 
 cheers
 
