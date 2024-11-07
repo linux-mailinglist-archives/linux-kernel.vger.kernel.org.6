@@ -1,128 +1,98 @@
-Return-Path: <linux-kernel+bounces-399118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D799BFB34
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:13:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7B49BFB38
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F36B71C20F54
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:13:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8721C20E91
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06C779DC;
-	Thu,  7 Nov 2024 01:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="CqsV2jyj"
-Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E6B747F
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 01:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3C2BA50;
+	Thu,  7 Nov 2024 01:14:24 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 9BB77624;
+	Thu,  7 Nov 2024 01:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730942013; cv=none; b=P4RS6yWXe3dovgMFkjFbaN3c6F8TZv1YPQwZ+Po9/TJTO5wp0I7PmZIuiiLEWOJkitQSfCYVyydbYZXu702NHWRMTo07WogYb0styGRDe7yHBI+pwU+dDPsgCJbRjwIV5qXtOnZcBnD8FFZcMEM+LgN9P7B0yn+N1yIdXcvrBOI=
+	t=1730942064; cv=none; b=pztnYHFsoCFYhSNPtC7urm4DB2Jz+Wfshj5fBom9DKF9M/icENrvSzKbUFNrsFHUr61OEBBGg5WWeBObQAd+ZECotQI2J98h75cAKG0nVqNecLY4CDywwQfp20+INp2mgyOrwGSdMtO0m+XIUALbhRaIOMVtjly/ASIM5S0B68M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730942013; c=relaxed/simple;
-	bh=LZMniHjad37aI8M4+HIokqUCgv67FbeDnjc1o+KI7Xg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gmILkIRMGqV6lseZvR7jtAzpYtZmak157ZamDdJ+osBXMNNM7HFj/E/AnyZc5BWOTDozRwX8ej7XlwNFonOplx1Jf54ukMViiRTmiSqfhioZOAPfFQdaH2NCmfO8d+tSkXHkerU6xJmKsYHAQ+Gp54UswzNwPpEGmClqFKGwvbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=CqsV2jyj; arc=none smtp.client-ip=17.58.6.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1730942011;
-	bh=/Z8pbzoiYHHbyzDW0mAYhvoe7YxtHhV7s/+GMcuWY7M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=CqsV2jyj+nlc6dsYuy6mDFmEWe9cCWEtT9eLnwYzvV/myKcWCOJHTc0onOoxjiSdX
-	 Hw7AIP/8xDvUHut7VbeXo3dmKKW8i4fFRd9DTUUQs7LEJ6GX3tDkWN3rnbM59U9Jz0
-	 6HIxmmb6M/Bp5JxTxdsCNYHIUZaMGOnAzCUOH6/bxXurGcbM30MT+yCQv/Bk3iUUuM
-	 9bj9pWI+PEMOjI1dLM5BMtravUdcXZPXWl8s4ycOSzLYIo7u3+6+wzIa++CgkQnZXD
-	 aRe7vCV6l6db7mGmOfQWsUJXo2t1gNcpsIpbhDCPqxT8L0Bf6JQdV8LIjrv1GFA2/O
-	 Jsc237xCY6zuA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id AC4493A028D;
-	Thu,  7 Nov 2024 01:13:27 +0000 (UTC)
-Message-ID: <98b7f3d3-ca42-4acb-96f8-284f2a52e1ba@icloud.com>
-Date: Thu, 7 Nov 2024 09:13:21 +0800
+	s=arc-20240116; t=1730942064; c=relaxed/simple;
+	bh=wdYNjXTXOpW7VNLN4lVYFboD+B1sbsImAPPoIXLzBBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=XUjS1mMmZcQWlmhjuAA9Hz9nf/MiLKJzj5UXjxLtAXh8nVMtyYS+rG5908Liwr5Mg7vRWv9Lb8iLEd1IStzZu9mxglY1KCXSw/ypoOetod+VYlAz47hQLrm79KfEkCG8Mw8NnkUt1zHw3VEz98nq5muQjUKAVX1eGOA22sY9Aho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id A5DCB601059CF;
+	Thu,  7 Nov 2024 09:14:07 +0800 (CST)
+Message-ID: <8f57aa57-596c-174f-27b3-19d8aa60cc89@nfschina.com>
+Date: Thu, 7 Nov 2024 09:14:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kernel/resource: Simplify API __devm_release_region()
- implementation
-To: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241017-release_region_fix-v1-1-84a3e8441284@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH] wifi: rtlwifi: rtl8821ae: phy: restore removed code to
+ fix infinite loop
 Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20241017-release_region_fix-v1-1-84a3e8441284@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+To: Ping-Ke Shih <pkshih@realtek.com>, Colin Ian King
+ <colin.i.king@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Cc: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <c39feb8063924701b99965e6b650c993@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: mjpiRp24yEdEUGUydOANRzHe3bsLSmg7
-X-Proofpoint-GUID: mjpiRp24yEdEUGUydOANRzHe3bsLSmg7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-06_20,2024-11-06_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- clxscore=1015 bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0
- phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2411070007
 
-On 2024/10/17 23:34, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> Simplify __devm_release_region() implementation by dedicated
-> API devres_release() which have below advantages than current
-> __release_region() + devres_destroy():
-> 
-> It is simpler if __devm_release_region() is undoing what
-> __devm_request_region() did, otherwise, it can avoid wrong and
-> undesired __release_region().
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
-> linux-next tree has similar fixes as shown below:
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=0ee4dcafda9576910559f0471a3d6891daf9ab92
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
+On 2024/11/7 08:51, Ping-Ke Shih wrote:
+> Colin Ian King <colin.i.king@gmail.com> wrote:
+>> A previous clean-up fix removed the assignment of v2 inside a while loop
+>> that turned it into an infinite loop. Fix this by restoring the assignment
+>> of v2 from array[] so that v2 is updated inside the loop.
+>>
+>> Fixes: cda37445718d ("wifi: rtlwifi: rtl8821ae: phy: remove some useless code")
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-gentle ping (^^) (^^)
-sorry for this noise.
+Thanks for your correction. I'm sorry for this stupid mistake.
 
-linux-next has one more similar fix as below:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=2396eefa075a31884d3336e1e94db47a0bd2a456
+Reviewed-by: Su Hui <suhui@nfschina.com>
 
-> ---
->  kernel/resource.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/kernel/resource.c b/kernel/resource.c
-> index b730bd28b422..8d619c449a73 100644
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@ -1673,8 +1673,7 @@ void __devm_release_region(struct device *dev, struct resource *parent,
->  {
->  	struct region_devres match_data = { parent, start, n };
->  
-> -	__release_region(parent, start, n);
-> -	WARN_ON(devres_destroy(dev, devm_region_release, devm_region_match,
-> +	WARN_ON(devres_release(dev, devm_region_release, devm_region_match,
->  			       &match_data));
->  }
->  EXPORT_SYMBOL(__devm_release_region);
-> 
-> ---
-> base-commit: 9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
-> change-id: 20241017-release_region_fix-2aa7f93367e0
-> 
-> Best regards,
-
+> I tested RTL8812AE/8821AE. Luckily, parsing current PHY register parameters
+> never falls into the check condition.
+>
+> Tested-by: Ping-Ke Shih <pkshih@realtek.com>
+>> ---
+>>   drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>> b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>> index 1be51ea3f3c8..0d4d787e8be5 100644
+>> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/phy.c
+>> @@ -2033,8 +2033,10 @@ static bool _rtl8821ae_phy_config_bb_with_pgheaderfile(struct ieee80211_hw *hw,
+>>                          if (!_rtl8821ae_check_condition(hw, v1)) {
+>>                                  i += 2; /* skip the pair of expression*/
+>>                                  v2 = array[i+1];
+>> -                               while (v2 != 0xDEAD)
+>> +                               while (v2 != 0xDEAD) {
+>>                                          i += 3;
+>> +                                       v2 = array[i + 1];
+>> +                               }
+>>                          }
+>>                  }
+>>          }
+>> --
+>> 2.39.5
 
