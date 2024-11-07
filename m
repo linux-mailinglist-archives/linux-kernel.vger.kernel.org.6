@@ -1,114 +1,130 @@
-Return-Path: <linux-kernel+bounces-399586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB189C0122
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4439C0126
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:31:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81D44B21ECB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:30:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF645B21F77
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A04E194AD8;
-	Thu,  7 Nov 2024 09:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B9C1DF266;
+	Thu,  7 Nov 2024 09:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O31T7Sux"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VT/oxgNO"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A1DBA2D
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F8318785B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730971815; cv=none; b=imPCPlulZhDYy02wIx3LGRe4r2+R5YCDJUx+Uena09lMrgaJ6WZkB/5Jc9hWsAY3cXIVnY+aJvtZdTw3FiR6ThKjuVFEtz/kd9fWx2D4xQbjWoPdQhgvQ+GLjQ/lSG8ZVHzb3xtFN9md0WiHRMBSVLmQcxUSD2ylJPLXv0hoaW0=
+	t=1730971884; cv=none; b=ATOcDb9tpSA1OTwX3cOpib/45mJPCPTz+oKA1XZb0HlJCbxRAv/B6bzGCGKWn6ZZ51HvtZStqE6BPTWI2Ur1/FIU4j4nmCQ4vMM/WEWh45JyvRx+6aPPE7qxwtSmT8onJ0sch0gRDSm9cRK7ZoBdbBeU9/YUQb8YqmOctotFM3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730971815; c=relaxed/simple;
-	bh=ECBRb1H0TgVscUduxBMQPxRkHND3R6pcvjRm2pPWj/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwbsVxe6z7PDyjRzlOuiI0ZIUO6WxexXf+Z+0urnqcwBrvqJ+jaUWpeIWmtTnK7By+xY4EnMedxBuefSZhzY1HoQG6ALZkjHi9wWoVnfTsJ59mOdgaH6jB3V/Nh+LcxDjSAo4f+o2rSJJFfoGAFOAsOMbjKP4AIqMC4ZasRfMpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O31T7Sux; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730971813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zP+DJ0/7LJ4723YZGZpKMGkLZrefkCQcMD0ml6N+XeE=;
-	b=O31T7SuxcMBigd65BzWrMFvAweyOT+NSJfh4FjrmPhMUDO4r6RUH37LplJda5HiF44m/Kd
-	v4fkfZ+p8J0XaByNTEtShr4lIO//XaSRtVIqXHZNzLMBx4VtvT1sOfP54VhcQzc6C2vt9h
-	p0v6DgKg3Ot6LBfyFki21xXdFsYfPUc=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-619-hAfAq9TUOdq7hQ4jkyeavg-1; Thu,
- 07 Nov 2024 04:30:08 -0500
-X-MC-Unique: hAfAq9TUOdq7hQ4jkyeavg-1
-X-Mimecast-MFC-AGG-ID: hAfAq9TUOdq7hQ4jkyeavg
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D5BE1955F57;
-	Thu,  7 Nov 2024 09:30:07 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.155])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B7EA1956054;
-	Thu,  7 Nov 2024 09:30:04 +0000 (UTC)
-Date: Thu, 7 Nov 2024 17:30:00 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
-	dyoung@redhat.com, daniel.kiper@oracle.com, noodles@fb.com,
-	lijiang@redhat.com, kexec@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v3 1/2] x86/mm: rename the confusing local variable in
- early_memremap_is_setup_data()
-Message-ID: <ZyyImAlkcpTHlszJ@MiWiFi-R3L-srv>
-References: <20240911081615.262202-1-bhe@redhat.com>
- <20240911081615.262202-2-bhe@redhat.com>
- <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
- <ZyGDlYsg6YWNXSVo@MiWiFi-R3L-srv>
- <8c81835b-97fe-a0b3-a860-0bbd5c0341f6@amd.com>
- <ZyL8WDTw9F3laupG@MiWiFi-R3L-srv>
- <20241101161849.GCZyT_aSMcGIXnGr1-@fat_crate.local>
- <ZyVxBbGYsEjifLgp@MiWiFi-R3L-srv>
- <20241102110618.GAZyYHquhmVJd4yM9O@fat_crate.local>
- <20241106112052.GCZytRFKTESZI8_3qD@fat_crate.local>
+	s=arc-20240116; t=1730971884; c=relaxed/simple;
+	bh=zhh5UkiTs5SGsZEgIEockHkIU+5XUlkgxmSOpqQuviI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VndhdhPuuQyJ7Pg1MzsQA5XYwxuLYA7BiW/KRKOvDCK52Z22DCzR1fo8JceyiccU1NoPV4DLO7aajFQLFeoaAR/AThp4JVaqfaX7GIOudTqWf94h4JPRs1jgXiieN2EFwh8x2KTXGlVqV3EpiruxHYKZI/x6k6lwebBKyHhBqS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VT/oxgNO; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e59746062fso594938a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:31:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730971882; x=1731576682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JeMAIR9iEI5n6d08kWR1HWHfaPm/uZGrAZ7QGzkzYV8=;
+        b=VT/oxgNOfYxt9rtGat/s2ZxzRlOj9RVxas+lCpnP03I9k2AgyU/NkVIVQQQLIn9jPp
+         J3XgM+q9uwR+CNJfGCkzva0r1FPRQF19O8QCyFiXLQgSbU97EfOw56alKuC7SE1kYF+G
+         maL5nRAvXccUufZk8btpqNn7fDYUlfb1ntKoQlFuxU3HgdA23MjagIPr6kLjsULP5OzM
+         xenKVMRVx4LSixaULs7B3xh0Kj13qGOp+S4YqOVR1dsH3GaefGFJA69SSzcTaTei71dw
+         arHE7pB2KkPkdmzf6R6xoHmateLVAcYWNoeG8K39I6JupCtmF9/9VoJWJox7roVz5h+k
+         LvYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730971882; x=1731576682;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JeMAIR9iEI5n6d08kWR1HWHfaPm/uZGrAZ7QGzkzYV8=;
+        b=qFtwPQEz+NvNBMdMoIid5tOn9Gecg30ui9ZBeJVJs7jjfb6XAaOB4NQu9CAIMcMjIn
+         57qhZRgqaaMukQx7qDfQPiOHVjJkSAeP9VJNj8Qt2etwcPuLb6aMipig+8xe0ZwZN9bH
+         nuLwccOfJCz4n6T+4tasujIUpcOXmVjkicInf8wO2IvqtL/ljeBgg8gqBaaPVFmnPE7w
+         9A1qbuh8Dgb/vhMJfIflnWaXa4OgowxYj+W5pyEMn9sxQd//YzDuhOex11MR0DsGFo5B
+         0/95V1gzjsqgqEuV0QMXn9sGQykY3H0RL+zwAODpv+zTIDa+DRwJGY6yThSoCRE+a87Y
+         vIzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnSz9+aWsb59AqJ6Cn/eBXV4ho+w4LKuJ+qBWbt8Tz7szBFkOYsOqxb6qb0tYEDTpjjM82s2O9NyYjFZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2dAjcu1NCUnTmn4jeIo39GpmRZydM/D/R2cBL0FtcHKoRlaUC
+	dRtyVopoj9DNS8E3gCv9dizTFQPqkTC2c1FUhphQyaabL6dnGF4+
+X-Google-Smtp-Source: AGHT+IFrRRrnlLAowFtunzpTvMHx7ihaYENBpR9i88LgwFXGyQ6Dgby+fj35g8yAa++m97kR3E8MSA==
+X-Received: by 2002:a17:90b:5444:b0:2e2:8995:dd1b with SMTP id 98e67ed59e1d1-2e9aaff9a68mr467311a91.3.1730971882207;
+        Thu, 07 Nov 2024 01:31:22 -0800 (PST)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a4fae10sm3015116a91.11.2024.11.07.01.31.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 01:31:21 -0800 (PST)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id 181048015D;
+	Thu,  7 Nov 2024 17:37:59 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: tudor.ambarus@linaro.org,
+	pratyush@kernel.org,
+	mwalle@kernel.org,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: [PATCH] mtd: spi-nor: core: replace dummy buswidth from addr to data
+Date: Thu,  7 Nov 2024 17:30:16 +0800
+Message-Id: <20241107093016.151448-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106112052.GCZytRFKTESZI8_3qD@fat_crate.local>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
 
-On 11/06/24 at 12:20pm, Borislav Petkov wrote:
-> On Sat, Nov 02, 2024 at 12:06:18PM +0100, Borislav Petkov wrote:
-> > Ok, I'll take your 2/2 next week and you can then send the cleanup ontop.
-> 
-> OMG what a mess this is. Please test the below before I apply it.
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-Just got a machine and building kernel, will report here when testing is
-done.
+The default dummy cycle for Macronix SPI NOR flash in Octal Output
+Read Mode(1-1-8) is 20.
 
-> 
-> Then, when you do the cleanup, do the following:
-> 
-> - merge early_memremap_is_setup_data() with memremap_is_setup_data() into
->   a common __memremap_is_setup_data() and then add a bool early which
->   determines which memremap variant is called.
-> 
-> - unify the @size argument by dropping it and using a function local size.
->   What we have there now is the definition of bitrot. :-\
-> 
-> - replace all sizeof(*data), sizeof(struct setup_data) with a macro definition
->   above the functions to unify it properly.
-> 
-> What an ugly mess... :-\
+Currently, the dummy buswidth is set according to the address bus width.
+In the 1-1-8 mode, this means the dummy buswidth is 1. When converting
+dummy cycles to bytes, this results in 20 x 1 / 8 = 2 bytes, causing the
+host to read data 4 cycles too early.
 
-Will clean them all up as suggested. Thanks.
+Since the protocol data buswidth is always greater than or equal to the
+address buswidth. Setting the dummy buswidth to match the data buswidth
+increases the likelihood that the dummy cycle-to-byte conversion will be
+divisible, preventing the host from reading data prematurely.
+
+Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+---
+ drivers/mtd/spi-nor/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+index f9c189ed7353..c7aceaa8a43f 100644
+--- a/drivers/mtd/spi-nor/core.c
++++ b/drivers/mtd/spi-nor/core.c
+@@ -89,7 +89,7 @@ void spi_nor_spimem_setup_op(const struct spi_nor *nor,
+ 		op->addr.buswidth = spi_nor_get_protocol_addr_nbits(proto);
+ 
+ 	if (op->dummy.nbytes)
+-		op->dummy.buswidth = spi_nor_get_protocol_addr_nbits(proto);
++		op->dummy.buswidth = spi_nor_get_protocol_data_nbits(proto);
+ 
+ 	if (op->data.nbytes)
+ 		op->data.buswidth = spi_nor_get_protocol_data_nbits(proto);
+-- 
+2.25.1
 
 
