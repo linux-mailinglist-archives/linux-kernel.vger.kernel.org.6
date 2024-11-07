@@ -1,205 +1,204 @@
-Return-Path: <linux-kernel+bounces-399618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E009C01B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:00:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC5E9C01BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:01:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BB7A1F23359
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:00:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0BCB282055
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4102D1DFD9E;
-	Thu,  7 Nov 2024 10:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25C61E7C1F;
+	Thu,  7 Nov 2024 10:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iuMB/u/4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dEyWEJFP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2xj1YwUi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dEyWEJFP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2xj1YwUi"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA8B1E04BB
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 10:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5921DFE09;
+	Thu,  7 Nov 2024 10:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730973649; cv=none; b=GfvrB5pLW7Qi7zieL8S1A834qG2q6UmMIARi/iRk8Rc4BkEZZgdCumhsNafgyggB7O6w6GdTFDBMIzx8typHHeDiwdTudNn9aZb+LA00XuOhPfdXApNcI3sGM5REREhq3dRuJ1ZI1LnFRorbMqUA5ao+7YPNnUWiA9qlZnwdgho=
+	t=1730973679; cv=none; b=sG4wz07kx/TkKmHEwABL/F/n0NtitGUKvx76yUmeBuYWeiBQrfGeLcpCbOAsJ+A5zPoNFEHPaGmzRetCMedv4W1QxhIxUcvSAujjX64NZtg9jcbRQv9I9t7qXAI2gU5khd6eSHFxjWJ7TrNh9mPMlVLMSbxRc+IniscF80CSfL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730973649; c=relaxed/simple;
-	bh=aqjoNKp2S9Ndl0SDCZhvztC+Qxb1K+IZewbpE7vLWNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYABUEjjOU4jRmDSRO+HmedNfLu3qTk4hahfvX9VkmWY2H09n8SfJKuvykvqySXJm70yqjpAokhyiCv2KHeTFYodRS1HQvc7j3CA9xst8R6qFaxTwmX4xIKSuOkV+NyBLnzfRdBD4dHTnJhvoOqIH2+QxgVeM7/tb8jh2kyFDl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iuMB/u/4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730973646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1730973679; c=relaxed/simple;
+	bh=xzy1a+XIjSNMU/9hC5QgXrBmdrtIFDc4aIusSqqZDyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=afpsO4iCyCaS2PrdEr2RuLJpxqHuttj5LanvScfXQImj5tzLtyqvdMLYzswGWEQNws3qOWEVdKA6ve1oq52dEEFXFhCKTk68WO7goVY1XB75NUo40MMKtamBjxPboltCzeQkvTP82grytIxP6mlapUgpLB5qQJgS73NrFwUgCBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dEyWEJFP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2xj1YwUi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dEyWEJFP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2xj1YwUi; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A7AB91F8B8;
+	Thu,  7 Nov 2024 10:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730973669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wMRls0F9ydo7Vi4Rq8kDlXTiyUFTrT/9Qwqc8sG653I=;
-	b=iuMB/u/4q1NTxTKaxYOlcJTsi4c4t3hyhPlX+nIq/TlsFLUC2BQ9+QoSTSU4V5gCKsj0JL
-	CJiIruCf43NFk3LhKoW/eVKMhRUXDo+rhcBRY5Sz6tRjvwdM/nUrjDAAo2gWlKL1fMX64r
-	HE5FKMcQa2mq3+kh84FdNeDC9JYacDc=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-339-LONkTl1zPDeeWpRu1oj-Xg-1; Thu, 07 Nov 2024 05:00:45 -0500
-X-MC-Unique: LONkTl1zPDeeWpRu1oj-Xg-1
-X-Mimecast-MFC-AGG-ID: LONkTl1zPDeeWpRu1oj-Xg
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a2c3e75f0so56479166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 02:00:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730973642; x=1731578442;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMRls0F9ydo7Vi4Rq8kDlXTiyUFTrT/9Qwqc8sG653I=;
-        b=OJ2JmS3JN04hPUGzhJyybwaEicVXX4nmVKUeaJiPWV3dVCWebd1qEj0BtGP8a71QBE
-         xWfmDEWuiHk6itgQCGYf/Etru0cHeA2lMvYSZDLymuS3D6HS9olEtIN9iJjyyW/1XEt4
-         AzZTPvKeQN6d4/wsuAZj4YHOk7GPNo3lEHSbizOAebFONaTg+NqESwK7MrUziuloKrd5
-         x4IAF5zLCm09Agc7bwFN3veAroYQAcm3HVb8/E8PkRzVXaOHC2RpKsCJ7KJYlvkgam9/
-         ZOW05OffMVIfnIZ5Z5MGYleGGhrTifc5Kd6XsYHp8TqsfOtBr8DHBZC7sjgvKlClsBO6
-         AvaA==
-X-Gm-Message-State: AOJu0YxDfSTeUVKRtignm1wNf2gOruAwJ77yqdXGHLv0hzdEJYqN4FDx
-	AT1su5Rt6twZT39gB6deGlr0ZSXexiG4sbk4FHsOVWd7/lconJcf3eHBtAD8h+p6Xd1wjvTDXBy
-	g9AwZ1h4zBLkBrCi+wzylSK1FrpQq8V2bzjp6aGB47YL+Sndze+pgaT9wXKJkQ0tEqM6tQg==
-X-Received: by 2002:a17:907:2d8d:b0:a99:482c:b2b9 with SMTP id a640c23a62f3a-a9e654f8c64mr2022863266b.29.1730973641826;
-        Thu, 07 Nov 2024 02:00:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH+UiHY6KfVKme49Q9BKA6KUY4URDrdyvHhjCJaFYWZ6LZ65QWLQegd4LMhZnQOySL8p+kcuQ==
-X-Received: by 2002:a17:907:2d8d:b0:a99:482c:b2b9 with SMTP id a640c23a62f3a-a9e654f8c64mr2022860366b.29.1730973641439;
-        Thu, 07 Nov 2024 02:00:41 -0800 (PST)
-Received: from ?IPV6:2003:cf:d711:bb59:b996:2e0b:622e:25cc? (p200300cfd711bb59b9962e0b622e25cc.dip0.t-ipconnect.de. [2003:cf:d711:bb59:b996:2e0b:622e:25cc])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0e2f0b5sm70060566b.192.2024.11.07.02.00.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 02:00:40 -0800 (PST)
-Message-ID: <ae437cf6-caa2-4f9a-9ffa-bdc7873a99eb@redhat.com>
-Date: Thu, 7 Nov 2024 11:00:39 +0100
+	bh=GaeMriiFanSTTR3LXqn8YDithSvI9c9ELHnMZEcbcV4=;
+	b=dEyWEJFP9+7pFZto0mTwaAdpdbUBoE+E1Jnb17O6Oi86fWbGp9buUsewrMmL7rRrw3moYr
+	7jZVcuruN+WKKEap2Qyzs/K/w4zP/wOhIzGi/Uj7MGsu3rXbc5PvAc3OzqnOlCCWrtEDWa
+	0WJ825xm66rkDiQFnhSLi1ynKIJEEKY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730973669;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GaeMriiFanSTTR3LXqn8YDithSvI9c9ELHnMZEcbcV4=;
+	b=2xj1YwUi1NjJGe5xQRuOT/bgQX4rnzwsFc2ixDbkBGV6Ockj2AopBZIxrofb7O4+KoEdm5
+	e2c0LgeZSkEUZIBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dEyWEJFP;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2xj1YwUi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730973669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GaeMriiFanSTTR3LXqn8YDithSvI9c9ELHnMZEcbcV4=;
+	b=dEyWEJFP9+7pFZto0mTwaAdpdbUBoE+E1Jnb17O6Oi86fWbGp9buUsewrMmL7rRrw3moYr
+	7jZVcuruN+WKKEap2Qyzs/K/w4zP/wOhIzGi/Uj7MGsu3rXbc5PvAc3OzqnOlCCWrtEDWa
+	0WJ825xm66rkDiQFnhSLi1ynKIJEEKY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730973669;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GaeMriiFanSTTR3LXqn8YDithSvI9c9ELHnMZEcbcV4=;
+	b=2xj1YwUi1NjJGe5xQRuOT/bgQX4rnzwsFc2ixDbkBGV6Ockj2AopBZIxrofb7O4+KoEdm5
+	e2c0LgeZSkEUZIBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 996BF139B3;
+	Thu,  7 Nov 2024 10:01:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2mJtJeWPLGd5fwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 10:01:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 53202A0AF4; Thu,  7 Nov 2024 11:01:05 +0100 (CET)
+Date: Thu, 7 Nov 2024 11:01:05 +0100
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Jan Kara <jack@suse.cz>, Asahi Lina <lina@asahilina.net>,
+	Dave Chinner <david@fromorbit.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Sergio Lopez Pascual <slp@redhat.com>,
+	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
+Message-ID: <20241107100105.tktkxs5qhkjwkckg@quack3>
+References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
+ <20241104105711.mqk4of6frmsllarn@quack3>
+ <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
+ <ZylHyD7Z+ApaiS5g@dread.disaster.area>
+ <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
+ <20241106121255.yfvlzcomf7yvrvm7@quack3>
+ <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virtio-fs: Query rootmode during mount
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- virtualization@lists.linux.dev, Miklos Szeredi <mszeredi@redhat.com>,
- German Maglione <gmaglione@redhat.com>, Stefan Hajnoczi
- <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Vivek Goyal <vgoyal@redhat.com>
-References: <20241024164726.77485-1-hreitz@redhat.com>
- <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
-Content-Language: en-US
-From: Hanna Czenczek <hreitz@redhat.com>
-In-Reply-To: <CAJfpeguWjwXtM4VJYP2+-0KK5Jkz80eKpWc-ST+yMuKL6Be0=w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
+X-Rspamd-Queue-Id: A7AB91F8B8
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 07.11.24 09:58, Miklos Szeredi wrote:
-> On Thu, 24 Oct 2024 at 18:47, Hanna Czenczek <hreitz@redhat.com> wrote:
->
->> To be able to issue INIT (and GETATTR), we need to at least partially
->> initialize the super_block structure, which is currently done via
->> fuse_fill_super_common().
-> What exactly is needed to be initialized?
+On Wed 06-11-24 11:59:44, Dan Williams wrote:
+> Jan Kara wrote:
+> [..]
+> > > This WARN still feels like the wrong thing, though. Right now it is the
+> > > only thing in DAX code complaining on a page size/block size mismatch
+> > > (at least for virtiofs). If this is so important, I feel like there
+> > > should be a higher level check elsewhere, like something happening at
+> > > mount time or on file open. It should actually cause the operations to
+> > > fail cleanly.
+> > 
+> > That's a fair point. Currently filesystems supporting DAX check for this in
+> > their mount code because there isn't really a DAX code that would get
+> > called during mount and would have enough information to perform the check.
+> > I'm not sure adding a new call just for this check makes a lot of sense.
+> > But if you have some good place in mind, please tell me.
+> 
+> Is not the reason that dax_writeback_mapping_range() the only thing
+> checking ->i_blkbits because 'struct writeback_control' does writeback
+> in terms of page-index ranges?
 
-It isn’t much, but I believe it’s most of fuse_fill_super_common() 
-(without restructuring the code so flags returned by INIT are put into a 
-separate structure and then re-joined into sb and fc later).
+To be fair, I don't remember why we've put the assertion specifically into
+dax_writeback_mapping_range(). But as Dave explained there's much more to
+this blocksize == pagesize limitation in DAX than just doing writeback in
+terms of page-index ranges. The whole DAX entry tracking in xarray would
+have to be modified to properly support other entry sizes than just PTE &
+PMD sizes because otherwise the entry locking just doesn't provide the
+guarantees that are expected from filesystems (e.g. you could have parallel
+modifications happening to a single fs block in pagesize < blocksize case).
 
-fuse_send_init() reads sb->s_bdi->ra_pages, process_init_reply() writes 
-it and sb->s_time_gran, ->s_flags, ->s_stack_depth, ->s_export_op, and 
-->s_iflags.  In addition, process_init_reply() depends on several flags 
-and objects in fc being set up (among those are fc->dax and 
-fc->default_permissions), which is done by fuse_fill_super_common().
+> All other dax entry points are filesystem controlled that know the
+> block-to-pfn-to-mapping relationship.
+> 
+> Recall that dax_writeback_mapping_range() is historically for pmem
+> persistence guarantees to make sure that applications write through CPU
+> cache to media.
 
-So I think what we need from fuse_fill_super_common() is:
-- fuse_sb_defaults() (so these values can then be overwritten by 
-process_init_reply()),
-- fuse_dax_conn_alloc(),
-- fuse_bdi_init(),
-- fc->default_permissions at least, but I’d just take the fc->[flag] 
-setting block as a whole then.
+Correct.
 
-I assume we’ll also want the SB_MANDLOCK check then, and 
-rcu_assign_pointer().  Then we might as well also set the block sizes 
-and the subtype.
+> Presumably there are no cache coherency concerns with fuse and dax
+> writes from the guest side are not a risk of being stranded in CPU
+> cache. Host side filesystem writeback will take care of them when / if
+> the guest triggers a storage device cache flush, not a guest page cache
+> writeback.
 
-The problem is that I don’t know the order things in 
-fuse_fill_super_common() need to be in, and fuse_dev_alloc_install() is 
-called before fuse_bdi_init(), so I didn’t want to move that.
+I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
+should provide persistency guarantees on the file contents even in case of
+*host* power failure. So if the guest is directly mapping host's page cache
+pages through virtiofs, filemap_fdatawrite() call in the guest must result
+in fsync(2) on the host to persist those pages. And as far as I vaguely
+remember that happens by KVM catching the arch_wb_cache_pmem() calls and
+issuing fsync(2) on the host. But I could be totally wrong here.
 
-So what I understand is that calling fuse_dev_alloc_install() there 
-isn’t necessary?  I’m happy to move that to part 2, as you suggest, but 
-I’m not sure we can really omit much from part 1 without changing how 
-process_init_reply() operates.  We could in theory delay 
-process_init_reply() until after GETATTR (and thus after setting 
-s_root), but that seems kind of wrong, and would still require setting 
-up BDI and DAX for fuse_send_init().
-
->> @@ -1762,18 +1801,12 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
->>          sb->s_d_op = &fuse_dentry_operations;
->>
->>          mutex_lock(&fuse_mutex);
->> -       err = -EINVAL;
->> -       if (ctx->fudptr && *ctx->fudptr)
->> -               goto err_unlock;
->> -
->>          err = fuse_ctl_add_conn(fc);
->>          if (err)
->>                  goto err_unlock;
->>
->>          list_add_tail(&fc->entry, &fuse_conn_list);
->>          sb->s_root = root_dentry;
->> -       if (ctx->fudptr)
->> -               *ctx->fudptr = fud;
-> This is wrong, because we need the fuse_mutex protection for checking
-> and setting the private_data on the fuse device file.
->
-> If this split is needed (which I'm not sure) then fud allocation
-> should probably be moved to part2 instead of moving the *ctx->fudptr
-> setup to part1.
->
->
->> @@ -1635,8 +1657,16 @@ static void virtio_kill_sb(struct super_block *sb)
->>          struct fuse_mount *fm = get_fuse_mount_super(sb);
->>          bool last;
->>
->> -       /* If mount failed, we can still be called without any fc */
->> -       if (sb->s_root) {
->> +       /*
->> +        * Only destroy the connection after full initialization, i.e.
->> +        * once s_root is set (see commit d534d31d6a45d).
->> +        * One exception: For virtio-fs, we call INIT before s_root is
->> +        * set so we can determine the root node's mode.  We must call
->> +        * DESTROY after INIT.  So if an error occurs during that time
->> +        * window (specifically in fuse_make_root_inode()), we still
->> +        * need to call virtio_fs_conn_destroy() here.
->> +        */
->> +       if (sb->s_root || (fm->fc && fm->fc->initialized && !fm->submount)) {
-> How could fm->submount be set if sb->s_root isn't?
-
-fuse_get_tree_submount(), specifically fuse_fill_super_submount() whose 
-error path leads to deactivate_locked_super(), can fail before 
-sb->s_root is set.
-
-Still, the idea was rather to make it clear that this condition (INIT 
-sent but s_root not set) is unique to non-submounts, so as not to mess 
-with the submount code unintentionally.
-
-> Or sb->s_root set
-> and fc->initialized isn't?
-
-That would be the non-virtio-fs non-submount case (fuse_fill_super()), 
-where s_root is set first and INIT sent after.
-
-Hanna
-
-> Seems it would be sufficient to check fm->fc->initialized, no?
->
-> Thanks,
-> Miklos
->
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
