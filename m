@@ -1,101 +1,108 @@
-Return-Path: <linux-kernel+bounces-400711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEE79C1148
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:50:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D039C114A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:51:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF361C20F3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:50:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C147CB22CFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76431155398;
-	Thu,  7 Nov 2024 21:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E2621893C;
+	Thu,  7 Nov 2024 21:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LhadDNr3"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ON1Eja4m"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A86C218925
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 21:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4482218929;
+	Thu,  7 Nov 2024 21:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731016248; cv=none; b=LEBnQxhyPfHgdf82ADMsCS0K+yxZMw+OSoZYt7KPONHtLXy+tb6Opb4ka+abstCIj8p0wbeELFqVfethNNl6+wR06u+MWoSfLWV4XUWAmq602FxqPvx1SOGqLGAn9jihLYiX4VseYZWf/YIvBLVI44NXSrovNCqWMitxBgBeZiU=
+	t=1731016274; cv=none; b=GDTX30okW/R19tXD9EaEYESc2kv1EcKxHf1xN7t+7aqF3qcTjivGDefMdq2J32kFdjRVwrbyXURdIJJ2BI1Viedsw0XTCI1p9FyzS3CKzgWUQX0lhKlmr+RjmF8io87D6nbaNxo2iQfu9GtCrGw9RtHYbkqdVV0pUoUCdruKTmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731016248; c=relaxed/simple;
-	bh=AB3VetWowFNRSSAyq19Xh0K4n5acDdQvX5pj6womwf8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LKKsdlIWI1IAaMXZoxEfzI+yManQr5dFGpJu7rh5SYfVOvonxtMqrRYrfFmUwjFkVmez+uGm0D1Q0AuOBp9GOrhABSuyhjgjU0P/clbGmdgBYz/9p6ZAuRiO2ALqZpfXeGRMgIUuo8TxCr3vIx6cSgjNXHtGPaXPhYU12e1GGjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LhadDNr3; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e617ef81so1342e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 13:50:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731016245; x=1731621045; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AB3VetWowFNRSSAyq19Xh0K4n5acDdQvX5pj6womwf8=;
-        b=LhadDNr33r4a1ZKXZOkC5OmfqvqXUnoAciiV0o5/Yj2PztfqFF5XmqzAtN0CT4hSWt
-         f09YtizJEnD1i/HLe/J36Nj2+IyiZJvJRfrM3KUOBZ5bIX1D05jyWauwJrvLen2SbDaW
-         ahgj15hZG1vasw6MsV2EKzbfZzls39hdDdpvIzh9c3lyVq1YYe2Ua7R2E6B4Di7CMXLR
-         ZoX2fGhYWf445KErwNcOLQtTKzoqHTu1QfntuYz5AOKRc20/L5feto5SbTdBHHszKWQy
-         tq7CXbPBGVYjlrrdy3ENoholUT3URmLarvASJJO3lYPlrwFN7oBkglGgOo4bycVie3uP
-         bDGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731016245; x=1731621045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AB3VetWowFNRSSAyq19Xh0K4n5acDdQvX5pj6womwf8=;
-        b=rDISejqEtUXMc1Z/61P/nSVvTTmFWfi3i08pZnYgTzppTBySFRukc/jblwg+RikIGB
-         ACniVEgABKXBdaFcPEqKUU36DtpoBf3DPRfwq3YoSIdNz4ieXOSYVKkuDD26uzhm8lRX
-         oKDbIlA9RR84oENCpHdT7RMuJdyxr4jXQWfh5R8u5y7FWbdm9i78l9fWyJW30gQ//+Br
-         m2YNJDj+j2moSMeY1qKE0m0aznajGBODaf7ukxyri/UD4Us8muXtxJ/7D4zaKgBGlhwk
-         Z5W1R7u9Getl7vR7on8cZOkKXhPcUajn0e3cOipxuM1zM3VrM9taEQhyjxR6CXKSuozw
-         Jnvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxoz7I9VWux3sYYmUAsF6wL2ZB7OJ6XBPJTj2dyJ5AMxQ+aVKvGlSCPeVPeySf2VghMnEg/GTgFgXciMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXy3yMiwb6gbWdz3PoHSDT8quliFRJjajSIFCStJhPPOeQ5scL
-	Hu9tOKC4zgQGx280YwAuoRvQ7p/YFOnyQJhIl4oupq9OcT8Kv6o3GnBmPjfwumcTOxoKpLknpVK
-	FEiqElrz3/t3+2aRL2nCOhmv+LGkRUY39l2eoihHfp0W+UM7/4w9r
-X-Gm-Gg: ASbGnctP8fyui+S5CfuAUei6QYFQiIor35NvP5dk8qhtGp0ybZO45UU6AOttQhJ8b3j
-	jbJxm+Mh96fjTtOKp8PsWGUrHX4ZeCDjPM9f9Kitsp1wNMJI+6M7UYWSuJvg=
-X-Google-Smtp-Source: AGHT+IGpfJyng1ypm6WmdqDsCpVtRQMeVt+IanXMJj9qVi9mK3YhK0vSfywum2VMxnQjfI9QtpUNvTgo1l7+Rua648Y=
-X-Received: by 2002:a05:6512:1143:b0:530:baaa:ee10 with SMTP id
- 2adb3069b0e04-53d8122ba4bmr445801e87.3.1731016244822; Thu, 07 Nov 2024
- 13:50:44 -0800 (PST)
+	s=arc-20240116; t=1731016274; c=relaxed/simple;
+	bh=gnfMehFRVgC3i7JZlRyYVOEofZhOBk9nr7mH0h+jCQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rms2vpuIcRrhU4PZ86gkYx5t+vG1MH8WknvhJOiKAavlpG9/W3sQdz1p0c+HT8H1d6n87VvXXv25Np/ZtfAk34apPzDYjK59/bLQgD87QtAi+G72mC8mydewGr2ow1SfyDZfM5k0GBrCRM7M8wcsV5fdq33YpgT4uNLYTDvrTCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ON1Eja4m; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A8B5C792;
+	Thu,  7 Nov 2024 22:51:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731016261;
+	bh=gnfMehFRVgC3i7JZlRyYVOEofZhOBk9nr7mH0h+jCQU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ON1Eja4mVSkyAxLdcbciHncKvFErykxTb1wG1oXOsap+ugjMen/ij+cgkTF3yYHUo
+	 p+voyfYD7XbI35GPB6mpkgUqqaSovylKrnpPbVNTzIxULW5EJYFhxZHG72FX5ngyuV
+	 2PrCf3R1rsv/fVJqInPXxRJDdlckdMtvhtD5wI0M=
+Date: Thu, 7 Nov 2024 23:51:04 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Reorder uvc_status_init()
+Message-ID: <20241107215104.GH31474@pendragon.ideasonboard.com>
+References: <20241022-order_status-v1-1-3904fafca340@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730360798.git.zhengqi.arch@bytedance.com> <1639ac32194f2b2590852f410fd3ce3595eb730b.1730360798.git.zhengqi.arch@bytedance.com>
-In-Reply-To: <1639ac32194f2b2590852f410fd3ce3595eb730b.1730360798.git.zhengqi.arch@bytedance.com>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 7 Nov 2024 22:50:08 +0100
-Message-ID: <CAG48ez2t3-dhJibxBpM-C6_0=vqKC4kU8Edu-G082ONpd6jT_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] mm: introduce do_zap_pte_range()
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de, 
-	muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org, 
-	zokeefe@google.com, rientjes@google.com, peterx@redhat.com, 
-	catalin.marinas@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241022-order_status-v1-1-3904fafca340@chromium.org>
 
-On Thu, Oct 31, 2024 at 9:14=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedance.co=
-m> wrote:
-> This commit introduces do_zap_pte_range() to actually zap the PTEs, which
-> will help improve code readability and facilitate secondary checking of
-> the processed PTEs in the future.
->
-> No functional change.
->
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Hi Ricardo,
 
-Reviewed-by: Jann Horn <jannh@google.com>
+Thank you for the patch.
+
+On Tue, Oct 22, 2024 at 08:37:13AM +0000, Ricardo Ribalda wrote:
+> Only initialize the input device if the interrupt endpoint has been
+> properly initialized.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/usb/uvc/uvc_status.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+> index 06c867510c8f..02c90acf6964 100644
+> --- a/drivers/media/usb/uvc/uvc_status.c
+> +++ b/drivers/media/usb/uvc/uvc_status.c
+> @@ -262,8 +262,6 @@ int uvc_status_init(struct uvc_device *dev)
+>  	if (ep == NULL)
+>  		return 0;
+>  
+> -	uvc_input_init(dev);
+> -
+>  	dev->status = kzalloc(sizeof(*dev->status), GFP_KERNEL);
+>  	if (!dev->status)
+>  		return -ENOMEM;
+> @@ -289,6 +287,8 @@ int uvc_status_init(struct uvc_device *dev)
+>  		dev->status, sizeof(*dev->status), uvc_status_complete,
+>  		dev, interval);
+>  
+> +	uvc_input_init(dev);
+> +
+>  	return 0;
+>  }
+>  
+> 
+> ---
+> base-commit: 698b6e3163bafd61e1b7d13572e2c42974ac85ec
+> change-id: 20241022-order_status-b1d985f7423c
+
+-- 
+Regards,
+
+Laurent Pinchart
 
