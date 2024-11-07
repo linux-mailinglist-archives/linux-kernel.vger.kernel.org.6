@@ -1,205 +1,194 @@
-Return-Path: <linux-kernel+bounces-400556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19C99C0F2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:41:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB009C0F2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2126D1C244E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AA821F242C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3300217F37;
-	Thu,  7 Nov 2024 19:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941B521731F;
+	Thu,  7 Nov 2024 19:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uJpWna98"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bwuntsgj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB390197552
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 19:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8D7216447;
+	Thu,  7 Nov 2024 19:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731008445; cv=none; b=R9kgtEfuBmXhoT4vFBFPgHFO1jn0ZOAb5UW1h3PhmoldUluEiYLzTOPqdB/IVP3+sCUp1L3XSNSXrmmZh2x1riPLklVIs+pPpPEgKjjrwL4j+50ypU5VSw04VtCxxtjumdBeHc+N/L+ejvsvRd41hrYoZbJk9krtQUkOVfKuWr0=
+	t=1731008458; cv=none; b=jF+05wWTFPcWsJbu4ghFoD3DGhF5gfHEefsN76sdEN/H9n33snljZyTwKxT/rc7CTrR1eZHxRhGa5u58+p9HX58aJ7IwB392EtEmeS3E/zrXRVo0sL6fARJk7zS3+5zOdyrTkxHjxzptPqniHz6m+CDyMlKDwA1+bPDL0YeoG+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731008445; c=relaxed/simple;
-	bh=AnTmRrjA61MDTCB8wCQ3eZKcNr4gws5COVKHuXE/58Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPmtrNrDC4xEThiBuJPdk82hPhhn62rZuU6mI5lUNCPdoRnbvVL6uiA6SYTjGivDCzol1x+rnqdSnl2yH4zmNy4q4APsXE4GMtuTaIkuPluqr7XfkwZD2INmzmc0GcRO3DEsTV7xTyMywzXSv1o8pf5RzcMrHi9ny+8EtOOFS9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uJpWna98; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c87b0332cso31925ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 11:40:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731008443; x=1731613243; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9WW2M/zrPiixk4hko3fb3umsjN/5n31gu9wf2EYkVyM=;
-        b=uJpWna98dZ0ifYAyk0BLeEE2CzaqYTgKz6E+nKhXG2hHRhQXwa/c5jPyxK3j0IvGnl
-         fkvpeOi2TLIPH5mpK2KgunDmibaNz3MOTF9dmolfwGdEFOOYo5zj5xKw7uzfzFPT4il9
-         PU8LtytQ7VQDiwaQJX4/wKqkThc2/KFVjMLGmwN2BXRYxlzOkp0Z5Wa2FqGqwUWooM7N
-         jQinI1v9Fi16R+mrz8c+WS0a6iVEgqp4uOMR4NFl82hoA3UsMlZhr/9SJiI7DAVoBRZi
-         LEqSbQz6hPupSMaEvje9sTLw2JZcZVPAh3nG05IfH/fvz4qfCHgNFV1oN05krpVQjZSG
-         DiPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731008443; x=1731613243;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9WW2M/zrPiixk4hko3fb3umsjN/5n31gu9wf2EYkVyM=;
-        b=OLNmTIzgL6wZ+CayLyJlWlC+tJIMjmA4MgS/mFp9E7ui/U6TfH5m2YjLAM2x4TbTPd
-         ymt8wRb8+MR9JmV4C18JhQRDpNxuMNhoFH+NFWOrrm5tcJOdn/OvbWgXHEJb/4mMPB6m
-         2c2VrHLqiggBJoOrkXGaTVtTAYCfP6UNy7zntmp1aUD+2EL0qqoFVJLjgE0alTghtnjN
-         rKprPBSG7PVzoN48fDKh5JCLEyjBy6eLmMjLJYWzpz6MoLOb0Q4ziQt9246gBErjKmz0
-         /KYNMps0uv2Am7iIFtd9yIx/mj5NNxqpo9azduzxDtv6qruIWqNzWcgQ9XfAtRlXmoRm
-         BLYg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1+Kh3TWRYfiJYbKF1Ina8PxINRjWfbxYSiw8q+M+Bx60R9Fdd2q8c68sMJRAsT0fRbDzqDcKK1ECY988=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHMUootZkhDF/Wrzs+RDlmZ03kvnlFR5cemoUny3eo9f6dzITA
-	6Gca/pSPa1PUz31uxKVKD9L272mcFB1j41us4WhzQ4yvE2pLmOpwOa2gh3M/fw==
-X-Gm-Gg: ASbGnctxDacG3UEiIZlrLffkkOdonZvgMTy+FWr9V1BBsEuXF+QOIIOz6j7bxf2cIws
-	zQHywsWtvNmu3HB9QDyUzDLEoCuz10xMsVyCJVsHL2OXw6Mu5ugeCCGnv0k9bPi+ck2106CV68/
-	dzJWPoMn/tWEv38x/RWuEaxb6icAzYD2e6cZ2bJ5L0Fqi8XCHro2som26dFCqHY7J0GMl69JgUo
-	iWPL66NI8n78HEnOZsro1dvRoAwRWiVIlJuoRIiEnkgmZdew9jJrAYFI/odX1N5d9seU2d3Pmic
-	jTA8RR0LRA0ilD0=
-X-Google-Smtp-Source: AGHT+IGcgVZMgZnGOAogHgVjHlUi4I/gqmaNw35XjRAZqfqeFMn9BPSB2S23GRNQgwdSLIwlv2vyyw==
-X-Received: by 2002:a17:902:e751:b0:206:b7b2:4876 with SMTP id d9443c01a7336-211749a4515mr4224165ad.20.1731008442734;
-        Thu, 07 Nov 2024 11:40:42 -0800 (PST)
-Received: from google.com (180.145.227.35.bc.googleusercontent.com. [35.227.145.180])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a56a30sm2068079b3a.188.2024.11.07.11.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 11:40:42 -0800 (PST)
-Date: Thu, 7 Nov 2024 19:40:38 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Barry Song <v-songbaohua@oppo.com>, Hillf Danton <hdanton@sina.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: Re: [PATCH v2 8/8] binder: use per-vma lock in page installation
-Message-ID: <Zy0Xth2yU9Bqg_an@google.com>
-References: <20241107040239.2847143-1-cmllamas@google.com>
- <20241107040239.2847143-9-cmllamas@google.com>
- <CAJuCfpHM8J0S4dXhxmVuFSTUV0czg1CTFpf_C=k7M57T9qh-VQ@mail.gmail.com>
- <Zyz--bjvkVXngc5U@google.com>
- <CAJuCfpHAsgDgqjWmxqwGPxs_i184mrzMSAUZ9fj9PN8eJcGdvQ@mail.gmail.com>
- <Zy0EyMVq0xEdyKNt@google.com>
- <CAJuCfpF2ZyEPfV_rTsftnc=XKCiwGG2-mL67Bt6o3tEBWn+KwQ@mail.gmail.com>
- <CAJuCfpF7Q-uD+Tdyoar_djw+LwckgAbH1uZOABqoRe2=gpGN-Q@mail.gmail.com>
- <Zy0WBH45qgzIZrke@google.com>
+	s=arc-20240116; t=1731008458; c=relaxed/simple;
+	bh=ZiLvEMXcWk3EnlXkmWOiJoDNigYaUUBGA9qbxDSnzUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uJVVEiVjcwGG95wGUk7TmC7ku1n/bGIU9eDy4tZuxZ02RJcppjzvVw54Uk04GGHyVZO8OzCaPL3MZbUbX3qVa5m51kKv8yZKXGvvw870Af55HZtOtYZqDPck/Jdv1ZDcI5YlasNu38OBXbrfNOZwa670IHdnynxiAT75t93zALE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bwuntsgj; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731008457; x=1762544457;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZiLvEMXcWk3EnlXkmWOiJoDNigYaUUBGA9qbxDSnzUE=;
+  b=bwuntsgj9UZyy4AaDRUAjNxbrAcuQvCW2UERFgHG9vWNE2SMjuF80ikw
+   OKfxb6nvscUevrjVffqQcgbVrBgXfDQ4pFtUaRYJU8R2rEHt4TZU95PYZ
+   0Mn/pqIqy7oqDFKqswbCtBVbicEX1dszt6Y3cMafwsbh8Y+OX9Nq3jCF3
+   HLOWQ9I9flBBKf60M3pdYfiCFbKks7a1kmYUu+4anuoea7bSeNaezbiMN
+   c2B/SkDRTCUTyP2+VGyaJt1lJHqTvIZTj2UQNldC5SN9F5xQkY6uXs9Zw
+   xjQTe/mQzaPn5SYpcr/b6c2e5r5Wy68Xd7r8sJD+yTjw9QP2sD3eAdr4g
+   w==;
+X-CSE-ConnectionGUID: 2gGnNH1ZRZe96viWLuEeRA==
+X-CSE-MsgGUID: 1qhrpANWS+eE8KRsAIjFyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="56271328"
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="56271328"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 11:40:56 -0800
+X-CSE-ConnectionGUID: 8diFUQnRTBqpJudeHxV87g==
+X-CSE-MsgGUID: yb097d/eQf2HXs6Mu1tSfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,135,1728975600"; 
+   d="scan'208";a="84728163"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 11:40:56 -0800
+Received: from [10.212.68.83] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.83])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 5A72420B5705;
+	Thu,  7 Nov 2024 11:40:51 -0800 (PST)
+Message-ID: <393bbcf0-aebd-450c-ad0b-e6140f1272b4@linux.intel.com>
+Date: Thu, 7 Nov 2024 14:40:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zy0WBH45qgzIZrke@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/5] x86: perf: Refactor misc flag assignments
+To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+ Sean Christopherson <seanjc@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org
+References: <20241107190336.2963882-1-coltonlewis@google.com>
+ <20241107190336.2963882-5-coltonlewis@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20241107190336.2963882-5-coltonlewis@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 07, 2024 at 07:33:24PM +0000, Carlos Llamas wrote:
-> On Thu, Nov 07, 2024 at 10:52:30AM -0800, Suren Baghdasaryan wrote:
-> > On Thu, Nov 7, 2024 at 10:27 AM Suren Baghdasaryan <surenb@google.com> wrote:
-> > >
-> > > On Thu, Nov 7, 2024 at 10:19 AM Carlos Llamas <cmllamas@google.com> wrote:
-> > > >
-> > > > On Thu, Nov 07, 2024 at 10:04:23AM -0800, Suren Baghdasaryan wrote:
-> > > > > On Thu, Nov 7, 2024 at 9:55 AM Carlos Llamas <cmllamas@google.com> wrote:
-> > > > > > On Thu, Nov 07, 2024 at 08:16:39AM -0800, Suren Baghdasaryan wrote:
-> > > > > > > On Wed, Nov 6, 2024 at 8:03 PM Carlos Llamas <cmllamas@google.com> wrote:
-> > > > > > > > +static int binder_page_insert(struct binder_alloc *alloc,
-> > > > > > > > +                             unsigned long addr,
-> > > > > > > > +                             struct page *page)
-> > > > > > > > +{
-> > > > > > > > +       struct mm_struct *mm = alloc->mm;
-> > > > > > > > +       struct vm_area_struct *vma;
-> > > > > > > > +       int ret = -ESRCH;
-> > > > > > > > +
-> > > > > > > > +       if (!mmget_not_zero(mm))
-> > > > > > > > +               return -ESRCH;
-> > > > > > > > +
-> > > > > > > > +       /* attempt per-vma lock first */
-> > > > > > > > +       vma = lock_vma_under_rcu(mm, addr);
-> > > > > > > > +       if (!vma)
-> > > > > > > > +               goto lock_mmap;
-> > > > > > > > +
-> > > > > > > > +       if (binder_alloc_is_mapped(alloc))
-> > > > > > >
-> > > > > > > I don't think you need this check here. lock_vma_under_rcu() ensures
-> > > > > > > that the VMA was not detached from the tree after locking the VMA, so
-> > > > > > > if you got a VMA it's in the tree and it can't be removed (because
-> > > > > > > it's locked). remove_vma()->vma_close()->vma->vm_ops->close() is
-> > > > > > > called after VMA gets detached from the tree and that won't happen
-> > > > > > > while VMA is locked. So, if lock_vma_under_rcu() returns a VMA,
-> > > > > > > binder_alloc_is_mapped() has to always return true. A WARN_ON() check
-> > > > > > > here to ensure that might be a better option.
-> > > > > >
-> > > > > > Yes we are guaranteed to have _a_ non-isolated vma. However, the check
-> > > > > > validates that it's the _expected_ vma. IIUC, our vma could have been
-> > > > > > unmapped (clearing alloc->mapped) and a _new_ unrelated vma could have
-> > > > > > gotten the same address space assigned?
-> > > > >
-> > > > > No, this should never happen. lock_vma_under_rcu() specifically checks
-> > > > > the address range *after* it locks the VMA:
-> > > > > https://elixir.bootlin.com/linux/v6.11.6/source/mm/memory.c#L6026
-> > > >
-> > > > The scenario I'm describing is the following:
-> > > >
-> > > > Proc A                          Proc B
-> > > >                                 mmap(addr, binder_fd)
-> > > > binder_page_insert()
-> > > > mmget_not_zero()
-> > > >                                 munmap(addr)
-> > > >                                 alloc->mapped = false;
-> > > >                                 [...]
-> > > >                                 // mmap other vma but same addr
-> > > >                                 mmap(addr, other_fd)
-> > > >
-> > > > vma = lock_vma_under_rcu()
-> > > >
-> > > > Isn't there a chance for the vma that Proc A receives is an unrelated
-> > > > vma that was placed in the same address range?
-> > >
-> > > Ah, I see now. The VMA is a valid one and at the address we specified
-> > > but it does not belong to the binder. Yes, then you do need this
-> > > check.
-> > 
-> > Is this scenario possible?:
-> > 
-> >  Proc A                          Proc B
-> >                                  mmap(addr, binder_fd)
-> >  binder_page_insert()
-> >  mmget_not_zero()
-> >                                  munmap(addr)
-> >                                  alloc->mapped = false;
-> >                                  [...]
-> >                                  // mmap other vma but same addr
-> >                                  mmap(addr, other_fd)
-> >                                  mmap(other_addr, binder_fd)
-> >  vma = lock_vma_under_rcu(addr)
-> > 
-> > If so, I think your binder_alloc_is_mapped() check will return true
-> > but the binder area is mapped at a different other_addr. To avoid that
-> > I think you can check that "addr" still belongs to [alloc->vm_start,
-> > alloc->buffer_size] after you obtained and locked the VMA.
+
+
+On 2024-11-07 2:03 p.m., Colton Lewis wrote:
+> Break the assignment logic for misc flags into their own respective
+> functions to reduce the complexity of the nested logic.
 > 
-> Wait, I thought that vm_ops->close() was called with the mmap_lock in
-> exclusive mode. This is where binder clears the alloc->mapped. If this
-> is not the case (was it ever?), then I'd definitely need to fix this.
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+> ---
 
-On a second though, we don't need the mmap_sem in exclusive mode. When
-we acquire the vma through lock_vma_under_rcu() we guarantee it's not
-isolated and if our alloc->mapped is set, that means it has not been
-unmapped either. So we are good to proceed.
+Acked-by: Kan Liang <kan.liang@linux.intel.com>
 
---
-Carlos Llamas
+Thanks,
+Kan
+>  arch/x86/events/core.c            | 32 +++++++++++++++++++++++--------
+>  arch/x86/include/asm/perf_event.h |  2 ++
+>  2 files changed, 26 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index d19e939f3998..9fdc5fa22c66 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -3011,16 +3011,35 @@ unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
+>  	return regs->ip + code_segment_base(regs);
+>  }
+>  
+> +static unsigned long common_misc_flags(struct pt_regs *regs)
+> +{
+> +	if (regs->flags & PERF_EFLAGS_EXACT)
+> +		return PERF_RECORD_MISC_EXACT_IP;
+> +
+> +	return 0;
+> +}
+> +
+> +unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+> +{
+> +	unsigned long guest_state = perf_guest_state();
+> +	unsigned long flags = common_misc_flags(regs);
+> +
+> +	if (!(guest_state & PERF_GUEST_ACTIVE))
+> +		return flags;
+> +
+> +	if (guest_state & PERF_GUEST_USER)
+> +		return flags & PERF_RECORD_MISC_GUEST_USER;
+> +	else
+> +		return flags & PERF_RECORD_MISC_GUEST_KERNEL;
+> +}
+> +
+>  unsigned long perf_arch_misc_flags(struct pt_regs *regs)
+>  {
+>  	unsigned int guest_state = perf_guest_state();
+> -	int misc = 0;
+> +	unsigned long misc = common_misc_flags(regs);
+>  
+>  	if (guest_state) {
+> -		if (guest_state & PERF_GUEST_USER)
+> -			misc |= PERF_RECORD_MISC_GUEST_USER;
+> -		else
+> -			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
+> +		misc |= perf_arch_guest_misc_flags(regs);
+>  	} else {
+>  		if (user_mode(regs))
+>  			misc |= PERF_RECORD_MISC_USER;
+> @@ -3028,9 +3047,6 @@ unsigned long perf_arch_misc_flags(struct pt_regs *regs)
+>  			misc |= PERF_RECORD_MISC_KERNEL;
+>  	}
+>  
+> -	if (regs->flags & PERF_EFLAGS_EXACT)
+> -		misc |= PERF_RECORD_MISC_EXACT_IP;
+> -
+>  	return misc;
+>  }
+>  
+> diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+> index feb87bf3d2e9..d95f902acc52 100644
+> --- a/arch/x86/include/asm/perf_event.h
+> +++ b/arch/x86/include/asm/perf_event.h
+> @@ -538,7 +538,9 @@ struct x86_perf_regs {
+>  
+>  extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
+>  extern unsigned long perf_arch_misc_flags(struct pt_regs *regs);
+> +extern unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs);
+>  #define perf_arch_misc_flags(regs)	perf_arch_misc_flags(regs)
+> +#define perf_arch_guest_misc_flags(regs)	perf_arch_guest_misc_flags(regs)
+>  
+>  #include <asm/stacktrace.h>
+>  
+
 
