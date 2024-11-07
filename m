@@ -1,201 +1,148 @@
-Return-Path: <linux-kernel+bounces-399289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C8F9BFD14
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:53:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2489BFD23
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:03:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319B01C21978
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:53:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10F01B22190
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EFD188CDC;
-	Thu,  7 Nov 2024 03:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78001422AB;
+	Thu,  7 Nov 2024 04:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="WntTDZwM"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r6Szh8dG"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D218BEC;
-	Thu,  7 Nov 2024 03:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A890915E97
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 04:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730951617; cv=none; b=pFccPe6/EW72b/u7cb1EHiEAwcelQITmAfMppqUKb3Vl7F7RRVaTCMQ0EPXSpHn/vX37dvjOka0DfbFVg4FR0YFgzbkxEykMb8/Q9ihXOsAy5c4USYjo6CcHjuRKkUShLKUyZnzfufVMvrCD052nSjkWJQ5YEnBa2QAPALgHRFY=
+	t=1730952174; cv=none; b=tXFs0KlCXKyZyxEEM9eBVc9ajQVynIf0LJ3/et/xXmempWCF2T3DqsIHyPbAcpziGSEWoy5cnp/D8ZmcUfJ2DsR7k2gePLgBI95aHMHuF6+7hsu9kKZ8fQdZm2sE7CP2qtpuiMGNQLhmDiEc9QDrhsGHFGkbtbK9CFm4K2s47O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730951617; c=relaxed/simple;
-	bh=fNBzH+ehpVvC6j0AIj+7ga742STXZolR0UGIQ3BzUDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QUof481vzKtK8M/LDTxF4P2MzlbHB7Gb+GE2d5mbnmompW36pBKe0mJFgpH21ZHq+ml3LqIrHP9hBVaav9TQALnIsYTUhdd1e0jZZSN8v7dPM+AZClp3TMlcoNImN2RNB+GkM4DwOOEGTITyOj+LzkwFLTutl8o5tPfzr0y/WOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=WntTDZwM; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
-	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A722ojG007809;
-	Thu, 7 Nov 2024 03:53:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pps0720; bh=y3AScQJQ1dUFE
-	BaGOnwifpUCr3+cWWYTvmur2UwtFUY=; b=WntTDZwMmwsd8qA+CmmNpRZChWay3
-	A6ehFzmxV1L9sgcyL9Stemzc/83mDxWwYgXn2hEA01sRhYONrLd8zKG9i7o8A31+
-	fA7wgZqQOCPT5qZ/ku2uOzHWsrezpJyTnDvRlesCEMskFAGFgSGX4mDaIe4rteRn
-	gZIrcKiPB+ufxXZFXxIe+V6uLITz8m06xAiCtUAWihiuFVbJT04luP2QTnZxRnXR
-	BzpUvXLfRDVUcOgAQFvrKNdTRvtnJae+MCD+mVsZ5Y9IeGW5vh1TtgZuWg7C+yNs
-	kyrllqddJOBMzlWkiWTsMNvHcmpMrie4lrhnweGwE8NhfBPRoxjQ9zlyQ==
-Received: from p1lg14878.it.hpe.com ([16.230.97.204])
-	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 42rg8j2h3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 03:53:10 +0000 (GMT)
-Received: from localhost (unknown [192.58.206.35])
-	by p1lg14878.it.hpe.com (Postfix) with ESMTP id 57BBFD27E;
-	Thu,  7 Nov 2024 03:53:07 +0000 (UTC)
-From: Matt Muggeridge <Matt.Muggeridge@hpe.com>
-To: idosch@idosch.org
-Cc: Matt.Muggeridge@hpe.com, davem@davemloft.net, dsahern@kernel.org,
-        edumazet@google.com, horms@kernel.org, kuba@kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org
-Subject: Re: [PATCH net 1/1] net/ipv6: Netlink flag for new IPv6 Default Routes
-Date: Wed,  6 Nov 2024 22:53:03 -0500
-Message-Id: <20241107035303.24057-1-Matt.Muggeridge@hpe.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <ZytjEINNRmtpadr_@shredder>
-References: <ZytjEINNRmtpadr_@shredder>
+	s=arc-20240116; t=1730952174; c=relaxed/simple;
+	bh=h5ek5PKdveSRFX4ZHn99sMFLj8YUMdvJK6Ax9AsJHEM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ltqjqL9g5ym/0xTjMHqr1NnEnkMmtkOFw+TS6e1itaU/bSaQauYgyTmHMniAm532IVkBTE68uT3ElOERfm2gj5jJcI6e/Q3oWjRk/CIARCW/KEN1a6PpkZ3LPPRGBp6Ufo6ybeRrp738Gl7uaTQi2X4iyzYXZLZnwS4nB6zt9sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r6Szh8dG; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7eaa7b24162so579396a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 20:02:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730952172; x=1731556972; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=toXPrqzKY2fAoY/4jTHdOTO9egDn324JXuTJHfPR1ro=;
+        b=r6Szh8dG8zQz6HokGTr6zdoBkBG5IuHmJB/ZrcPXoYp5QiDQolJtwwqZPCpFucs//Z
+         Os+UpFxBEGgEmz4q6USOhz1zq7hbv/z2cKY6VPZn3kSe6dsXWsSpM92urgrQ0gn4OZWN
+         39Vt8lenc7sKptIMX4xHKMkT4yWs2iMTz8CCi4cWRo9JO3y66aUjhXd97aYzREqnSm3y
+         Ln8bxmCYw6et+GuTAw3LUmQ99HOytEgBE10nWarpd3FfMQIiy+7z4+6vz8FM2K1Px609
+         CTAV7spds1GsH1uxnHcWAWhoAhlZ6KRz5JRUhn1SFNyPmFdhFAogauKv7ojUFF/c3M6Q
+         ZSAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730952172; x=1731556972;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=toXPrqzKY2fAoY/4jTHdOTO9egDn324JXuTJHfPR1ro=;
+        b=PfkZipnOSSZVDH6dNlNEVkQUdDIeHmSRBLtmr/aWn2DejHW7w1MNvvimxjSPt5NxUP
+         k+K0hWuiLTmtfFn9cv+dPoWrpbncUfbdIykjayyjpoA3G81Kchhb4EjD++IkTJhlCfja
+         bQHFs16R176xcuCXlWM7cQ0VWGUHkCQ7IyLvmlICPg2ckzpzWojb4Sy6bTesT2IK/LeA
+         poBKjkcYmiUDkgrovePdkdR+rrZS5+i+1x01V07Rit2OKiCGu5x+fs2bVwh3lID4g0pI
+         tkNNc62D6Mc9U+AgKBRh0uQ5eH5LkgnNk8neHaUVHkScoJaX8jkjI1jo41qd/7Wr1NwJ
+         gUDw==
+X-Gm-Message-State: AOJu0Yyk4Kx1ACE9yd4CbbwyFcFOZil6zw4T0eSvNKGJ0XnEJGoTKjKb
+	es7PUkMb4knNfFZ5ec+zlZbpp/Dc7n35DRKayfDuwmBam1LRAvLGtXVF8hoW6ql/Dei0+pqNyfj
+	c/mmorO1IKg==
+X-Google-Smtp-Source: AGHT+IGSiDZLaR3A3Qff//eLxuZuHr2DpQ4Ou+0UlK9Q+2Wu0exJOwO0695j0RmFWRmRIsOLY43HPld68bmPLw==
+X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
+ (user=cmllamas job=sendgmr) by 2002:a05:6a02:4488:b0:694:4311:6eb4 with SMTP
+ id 41be03b00d2f7-7f4210e67b6mr7111a12.8.1730952171867; Wed, 06 Nov 2024
+ 20:02:51 -0800 (PST)
+Date: Thu,  7 Nov 2024 04:02:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: h7OfoSKdb63qSwJqsyYUmVJOHxsJJbif
-X-Proofpoint-ORIG-GUID: h7OfoSKdb63qSwJqsyYUmVJOHxsJJbif
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- spamscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0 phishscore=0
- mlxlogscore=999 impostorscore=0 adultscore=0 malwarescore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411070028
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241107040239.2847143-1-cmllamas@google.com>
+Subject: [PATCH v2 0/8] binder: faster page installations
+From: Carlos Llamas <cmllamas@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Carlos Llamas <cmllamas@google.com>, Alice Ryhl <aliceryhl@google.com>, 
+	David Hildenbrand <david@redhat.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Minchan Kim <minchan@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Suren Baghdasaryan <surenb@google.com>, Todd Kjos <tkjos@google.com>, 
+	Viktor Martensson <vmartensson@google.com>, Hillf Danton <hdanton@sina.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ido,
+The main focus of these patches is to improve the performance of binder
+page installations, primarily by reducing contention on the mmap_lock.
+The idea is to allow concurrent page insertion by leveraging per-vma
+locking and get_user_pages_remote().
 
-> >>> Is the problem that fib6_table_lookup() chooses a reachable
-> >>> nexthop and then fib6_select_path() overrides it with an unreachable
-> >>> one?
-> 
-> >> I'm afraid I don't know.
-> >>
-> > We need to understand the current behavior before adding a new interface
-> > that we will never be able to remove. It is possible we can improve /
-> > fix the current code. I won't have time to look into it myself until
-> > next week.
+Unfortunately, this required reverting the alloc->lock spinlock back
+into a mutex in order to serialize with the shrinker. At least until
+finding a better solution e.g. support page zapping with a spinlock.
+The trade off is still quite worth it though.
 
-I am grateful that you want to look into it. Thank you! And I look forward to
-learning what you discover.
+Other patches are also included that remove unsafe and redundant things
+such as the alloc->vma pointer or the struct binder_lru_page concept.
 
-You probably already know how to reproduce it, but in case it helps, I still
-have the packet captures and can share them with you. Let me know if you'd
-like me to share them (and how to share them).
+Note: I'll work on setting up a page fault handler for binder next.
+I believe an idea from Alice Ryhl to deferred the page insertions will
+make this finally feasible. I only need to figure out a few performance
+bits but if/when done most of the manual page insertion code in binder
+could be dropped. :)
 
-> > 
-> > The objective is to allow IPv6 Netlink clients to be able to create default
-> > routes from RAs in the same way the kernel creates default routes from RAs.
-> > Essentially, I'm trying to have Netlink and Kernel behaviors match.
-> 
-> I understand, but it's essentially an extension for the legacy IPv6
-> multipath API which we are trying to move away from towards the nexthop
-> API (see more below).
+Changelog:
 
-Very interesting, I wasn't aware of this movement.
+v2:
+ * fix locking order when upgrading from vma lock to mmap lock
+ * switch folio_walk_start() for get_user_pages_remote()
+ * release vma/mmap locks and mmput() right after vm_insert_page()
+ * add binder_page_alloc() helper for binder_install_single_page()
 
-While this change is an extension of the legacy IPv6 multipath API, won't it
-still need to support Netlink clients that have been designed around it? I
-imagine that transitioning Netlink clients to the NH API will take many years?
+v1:
+https://lore.kernel.org/all/20241105200258.2380168-1-cmllamas@google.com/
 
-As such, it still seems appropriate (to me) that this be implemented in the
-legacy API as well as ensuring it works with the NH API.
+Cc: Alice Ryhl <aliceryhl@google.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Viktor Martensson <vmartensson@google.com>
+Cc: Hillf Danton <hdanton@sina.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Another consideration...
+Carlos Llamas (8):
+  Revert "binder: switch alloc->mutex to spinlock_t"
+  binder: concurrent page installation
+  binder: select correct nid for pages in LRU
+  binder: remove struct binder_lru_page
+  binder: use alloc->mapped to save the vma state
+  binder: remove cached alloc->vma pointer
+  binder: rename alloc->buffer to vm_start
+  binder: use per-vma lock in page installation
 
-Will the kernel RA processing go through the same nh pathway? The reason I
-ask is because I faced several challenges with IPv6 Logo certification due to
-Netlink clients being unable to achieve the same as the kernel's behavior.
+ drivers/android/binder.c                |   2 +-
+ drivers/android/binder_alloc.c          | 322 ++++++++++++++----------
+ drivers/android/binder_alloc.h          |  35 +--
+ drivers/android/binder_alloc_selftest.c |  18 +-
+ drivers/android/binder_trace.h          |   2 +-
+ 5 files changed, 212 insertions(+), 167 deletions(-)
 
-As long as the kernel is creating RA routes in a way that meets RFC4861, then
-I'd hope that  Netlink clients would be able to leverage that for 'free'.
+-- 
+2.47.0.199.ga7371fff76-goog
 
-> > 
-> > My analysis led me to the need for Netlink clients to set the kernel's
-> > fib6_config flags RTF_RA_ROUTER, where:
-> > 
-> >     #define RTF_RA_ROUTER		(RTF_ADDRCONF | RTF_DEFAULT)
-> > 
-> >>> +	if (rtm->rtm_flags & RTM_F_RA_ROUTER)
-> >>> +		cfg->fc_flags |= RTF_RA_ROUTER;
-> >>> +
-> >> 
-> >> It is possible there are user space programs out there that set this bit
-> >> (knowingly or not) when sending requests to the kernel and this change
-> >> will result in a behavior change for them. So, if we were to continue in
-> >> this path, this would need to be converted to a new netlink attribute to
-> >> avoid such potential problems.
-> >> 
-> > 
-> > Is this a mandated approach to implementing unspecified bits in a flag?
-> > 
-> > I'm a little surprised by this consideration. If we account for poorly
-> > written buggy user-programs, doesn't this open any API to an explosion
-> > of new attributes or other odd extensions? I'd imagine the same argument
-> > would be applicable to ioctl flags, socket flags, and so on. Why would we
-> > treat implementing unspecified Netlink bits differently to implementing
-> > unspecified ioctl bits, etc.
-> > 
-> > Naturally, if this is the mandated approach, then I'll reimplement it with
-> > a new Netlink attribute. I'm just trying to understand what is the
-> > Linux-lore, here?
-> 
-> Using this bit could have been valid if previously the kernel rejected
-> requests with this bit set, but as evident by your patch the kernel does
-> not do it. It is therefore possible that there are user space programs
-> out there that are working perfectly fine right now and they will break
-> / misbehave after this change.
-> 
-
-Understood and I agree.
-
-> > 
-> >> BTW, you can avoid the coalescing problem by using the nexthop API (man
-> >> ip-nexthop).
-> > 
-> > I'm not sure how that would help in this case. We need the nexthop to be
-> > determined according to its REACHABILITY and other considerations described
-> > in RFC4861.
-> 
-> Using your example:
-> 
-> # ip nexthop add id 1 via fe80::200:10ff:fe10:1060 dev enp0s9
-> # ip -6 route add default nhid 1 expires 600 proto ra
-> # ip nexthop add id 2 via fe80::200:10ff:fe10:1061 dev enp0s9
-> # ip -6 route append default nhid 2 expires 600 proto ra
-> # ip -6 route
-> fe80::/64 dev enp0s9 proto kernel metric 256 pref medium
-> default nhid 1 via fe80::200:10ff:fe10:1060 dev enp0s9 proto ra metric 1024 expires 563sec pref medium
-> default nhid 2 via fe80::200:10ff:fe10:1061 dev enp0s9 proto ra metric 1024 expires 594sec pref medium
-
-Thanks! That looks like it should work. I'll raise this with the the developers
-of systemd-networkd.
-
-Just to confirm; are these two nhid routes equivalent to having two separate
-default routes that are created when the kernel processes IPv6 RAs?
-
-Specifically, if one of these nhid routes becomes UNREACHABLE, will that be
-taken into consideration during the routing decision? (I'm guessing so?)
-
-Thank you for your interest in this.
-
-Regards,
-Matt.
 
