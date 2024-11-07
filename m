@@ -1,162 +1,190 @@
-Return-Path: <linux-kernel+bounces-399644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829749C023A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:23:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA2A9C024D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F882839B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:23:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA941C214A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D791EE033;
-	Thu,  7 Nov 2024 10:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9911EC017;
+	Thu,  7 Nov 2024 10:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWLJMkF4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fnb9DGjp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABD91EE00E;
-	Thu,  7 Nov 2024 10:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0864A18A95A;
+	Thu,  7 Nov 2024 10:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975008; cv=none; b=JNpZBO9tS6cAGFOUgYj8N2HwFhdtoGVTeP8qH7kGx7k8N/AGUcddax9jNfKyfpy3leedZBnGzr7FIbtSY7mAj8i9ztqzE2rFthrQbufThAWSwQtSVzsEgPW0T6cV4Zt0guEg4ylTpwcJfGAJd2hgmLcDv3Qg85UZsgb7/NKrAPc=
+	t=1730975215; cv=none; b=Mva/FWgdME5Gf13/V75w1s4sJt9Xt8izGXztwdxJlHGeEqDQQ07PJOxEyedLhEdfyDHmV8yecEUBpMGLspJOiflDx28iIPB6wFUfHlO7cXQFlLPyddC7JOeAR8O95rPKTxl+cz9LxWrejG4cCPRLth+CUL0pm2cpJoiDlziQBZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975008; c=relaxed/simple;
-	bh=TFDLa8HlOYFM/PmgkFHcp+YBi3i4we1XyQl6R3cgqjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AKxPZ2IqRqkQLy345AhyCZkfVDNcW5kiH9wGGpsDAmCkVE6zEM8zMOMUAoD6EG+j/mfB+txZgS/aQvU5H2U9YTncd7/hKULQze5DupNi8AVR0Xfr+AotUjxRl6gh6gewQxjQpQRZO1Qqhai0dVe2FnaJQiqopYieUrlvVnJscC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWLJMkF4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F833C4CED6;
-	Thu,  7 Nov 2024 10:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730975006;
-	bh=TFDLa8HlOYFM/PmgkFHcp+YBi3i4we1XyQl6R3cgqjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PWLJMkF4VkREaKXG9X3OTXLiN1Im82ZokTh/4JheuKTSRX8WPJa5eVP33lBWui0US
-	 4GZsGE5uTsnY9tion4Qky9G2UouKhsCaFcNPdzy0jsxxaLCtGymQfAPz3VEHX43oKh
-	 cdNeVWhh0h8+44tQvU6XVqcQ85Rc7m0+x6FCVj+aWIWI09cqoPs3U3YKLzC8sytF15
-	 mRIZqINIJjSpw7Gz6VmpH2z7faIUPfyiDUqHojjx4zoSDDjYFMY4MqyaDJ24EZQYcx
-	 klMJUBhWoi/LVKhuFU8vCYV+OJzdRjr+F+/sSvpPJPvMNq3CGY4DZYDVbUWEZGwOfk
-	 RcSqNeGPS4ulg==
-Date: Thu, 7 Nov 2024 11:23:24 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: stable@vger.kernel.org, bsegall@google.com,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: FAILED: Patch "posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER
- on clone" failed to apply to v4.19-stable tree
-Message-ID: <ZyyVHAwmFIyTc3rR@pavilion.home>
-References: <20241106021416.184155-1-sashal@kernel.org>
+	s=arc-20240116; t=1730975215; c=relaxed/simple;
+	bh=Nmr7/wo4+pDuXfEGjh2V9jGELY2fQQwbEl6oZRb5YO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c/NDMXBAzo2zCOQdrPa8M2BxUcGTOFu5Z7oEgBEEMbIU/v/CEAdO4xIA2f7MDabXEl7PJLBX+TEFlqrp8ZjBPNnEP4JVcqlrH3FHu85+Dn/EMQr+nSaUTj8RVvRqn7g2aDrpnVt33ANiwMlBA8R620gDi4Gs1cDsM1JvManSK2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fnb9DGjp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730975206;
+	bh=5QgSf7hVK1dumtikivz4wSJLUDbjZjZ3l79lbSa7CDc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fnb9DGjp2DDJMjWCcsPrP4PrIE/3Y8lDWP6Cgdrit4o+mMyW1etk/4aSArbTTEMtg
+	 FD9p9iLyDs5isFenPQmRpu1k5PwFefmWePqnyfhaZ3lJF1eU+2qSaXOVsezC4/2mbX
+	 4Br+oKENqhdyFcqvjn2J/f6oAd1r4wsw/Mu//qo+dg1lgX0X358gSluhDDmqSXPWP0
+	 V8Lv5S7WQBgkbgcOMeDDhC/HWRZGavgQQuBOuNl4odnjfviNi0HWiqBrN93uamrcDs
+	 3gOUKUsW0vyAi0jt/9rCikyTfkicoY/8lfNNTPyW9xCMwcwePXM4DFDjtZbjO9U6jk
+	 ubBZlxkklCk8g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkdXh4D1bz4wxx;
+	Thu,  7 Nov 2024 21:26:44 +1100 (AEDT)
+Date: Thu, 7 Nov 2024 21:26:45 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Hans de Goede <hdegoede@redhat.com>, Mark
+ Gross <markgross@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ilpo =?UTF-8?B?SsOk?=
+ =?UTF-8?B?cnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Suma Hegde <suma.hegde@amd.com>, Thomas
+ =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ drivers-x86 tree
+Message-ID: <20241107212645.41252436@canb.auug.org.au>
+In-Reply-To: <20241107194007.1d247bde@canb.auug.org.au>
+References: <20241107194007.1d247bde@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106021416.184155-1-sashal@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/2jasR_IukKyZVKSeoCS0q=_";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Le Tue, Nov 05, 2024 at 09:14:15PM -0500, Sasha Levin a écrit :
-> The patch below does not apply to the v4.19-stable tree.
-> If someone wants it applied there, or to any other stable or longterm
-> tree, then please email the backport, including the original git commit
-> id to <stable@vger.kernel.org>.
-> 
-> Thanks,
-> Sasha
+--Sig_/2jasR_IukKyZVKSeoCS0q=_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please try this:
+Hi all,
 
+On Thu, 7 Nov 2024 19:40:07 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the driver-core tree got a conflict in:
+>=20
+>   drivers/platform/x86/amd/hsmp.c
+>=20
+> between commit:
+>=20
+>   9df193087b9e ("platform/x86/amd/hsmp: Create hsmp/ directory")
+>=20
+> from the drivers-x86 tree and commit:
+>=20
+>   b626816fdd7f ("sysfs: treewide: constify attribute callback of bin_is_v=
+isible()")
+>=20
+> from the driver-core tree.
+>=20
+> I fixed it up (I deleted the file and applied the following patch) and
+> can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 7 Nov 2024 19:36:12 +1100
+> Subject: [PATCH] fix up for "sysfs: treewide: constify attribute callback=
+ of
+>  bin_is_visible()"
+>=20
+> interacting with "platform/x86/amd/hsmp: Create hsmp/ directory" from
+> the drivers-x86 tree.
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/platform/x86/amd/hsmp/plat.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/x86/amd/hsmp/plat.c b/drivers/platform/x86/=
+amd/hsmp/plat.c
+> index f8e74c0392ba..748bbc356484 100644
+> --- a/drivers/platform/x86/amd/hsmp/plat.c
+> +++ b/drivers/platform/x86/amd/hsmp/plat.c
+> @@ -75,7 +75,7 @@ static ssize_t hsmp_metric_tbl_plat_read(struct file *f=
+ilp, struct kobject *kobj
+>  }
+> =20
+>  static umode_t hsmp_is_sock_attr_visible(struct kobject *kobj,
+> -					 struct bin_attribute *battr, int id)
+> +					 const struct bin_attribute *battr, int id)
+>  {
+>  	u16 sock_ind;
+> =20
+> --=20
+> 2.45.2
+
+It also required this:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 7 Nov 2024 19:57:41 +1100
+Subject: [PATCH] another fix for "sysfs: treewide: constify attribute callb=
+ack
+ of bin_is_visible()"
+
+interacting with "platform/x86/amd/hsmp: Create hsmp/ directory" from
+the drivers-x86 tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
-From ee0d95090203b7ee4cb1f29c586cd7d0dbf79fff Mon Sep 17 00:00:00 2001
-From: Benjamin Segall <bsegall@google.com>
-Date: Fri, 25 Oct 2024 18:35:35 -0700
-Subject: [PATCH] posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER on clone
+ drivers/platform/x86/amd/hsmp/acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-When cloning a new thread, its posix_cputimers are not inherited, and
-are cleared by posix_cputimers_init(). However, this does not clear the
-tick dependency it creates in tsk->tick_dep_mask, and the handler does
-not reach the code to clear the dependency if there were no timers to
-begin with.
-
-Thus if a thread has a cputimer running before clone/fork, all
-descendants will prevent nohz_full unless they create a cputimer of
-their own.
-
-Fix this by entirely clearing the tick_dep_mask in copy_process().
-(There is currently no inherited state that needs a tick dependency)
-
-Process-wide timers do not have this problem because fork does not copy
-signal_struct as a baseline, it creates one from scratch.
-
-Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
-Signed-off-by: Ben Segall <bsegall@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/xm26o737bq8o.fsf@google.com
----
- include/linux/tick.h | 8 ++++++++
- kernel/fork.c        | 2 ++
- 2 files changed, 10 insertions(+)
-
-diff --git a/include/linux/tick.h b/include/linux/tick.h
-index 443726085f6c..832381b812c2 100644
---- a/include/linux/tick.h
-+++ b/include/linux/tick.h
-@@ -233,12 +233,19 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
- 	if (tick_nohz_full_enabled())
- 		tick_nohz_dep_set_task(tsk, bit);
+diff --git a/drivers/platform/x86/amd/hsmp/acpi.c b/drivers/platform/x86/am=
+d/hsmp/acpi.c
+index 4aa4d66f491a..dd5b5773328a 100644
+--- a/drivers/platform/x86/amd/hsmp/acpi.c
++++ b/drivers/platform/x86/amd/hsmp/acpi.c
+@@ -236,7 +236,7 @@ static ssize_t hsmp_metric_tbl_acpi_read(struct file *f=
+ilp, struct kobject *kobj
  }
-+
- static inline void tick_dep_clear_task(struct task_struct *tsk,
- 				       enum tick_dep_bits bit)
+=20
+ static umode_t hsmp_is_sock_attr_visible(struct kobject *kobj,
+-					 struct bin_attribute *battr, int id)
++					 const struct bin_attribute *battr, int id)
  {
- 	if (tick_nohz_full_enabled())
- 		tick_nohz_dep_clear_task(tsk, bit);
- }
-+
-+static inline void tick_dep_init_task(struct task_struct *tsk)
-+{
-+	atomic_set(&tsk->tick_dep_mask, 0);
-+}
-+
- static inline void tick_dep_set_signal(struct signal_struct *signal,
- 				       enum tick_dep_bits bit)
- {
-@@ -272,6 +279,7 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
- 				     enum tick_dep_bits bit) { }
- static inline void tick_dep_clear_task(struct task_struct *tsk,
- 				       enum tick_dep_bits bit) { }
-+static inline void tick_dep_init_task(struct task_struct *tsk) { }
- static inline void tick_dep_set_signal(struct signal_struct *signal,
- 				       enum tick_dep_bits bit) { }
- static inline void tick_dep_clear_signal(struct signal_struct *signal,
-diff --git a/kernel/fork.c b/kernel/fork.c
-index b65871600507..1fb06d8952bc 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -91,6 +91,7 @@
- #include <linux/kcov.h>
- #include <linux/livepatch.h>
- #include <linux/thread_info.h>
-+#include <linux/tick.h>
- 
- #include <asm/pgtable.h>
- #include <asm/pgalloc.h>
-@@ -1829,6 +1830,7 @@ static __latent_entropy struct task_struct *copy_process(
- 	acct_clear_integrals(p);
- 
- 	posix_cpu_timers_init(p);
-+	tick_dep_init_task(p);
- 
- 	p->io_context = NULL;
- 	audit_set_context(p, NULL);
--- 
-2.46.0
+ 	if (hsmp_pdev->proto_ver =3D=3D HSMP_PROTO_VER6)
+ 		return battr->attr.mode;
+--=20
+2.45.2
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2jasR_IukKyZVKSeoCS0q=_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcsleUACgkQAVBC80lX
+0GwjUgf9Fm9HZW854/9N+ubcQx/0ShJoQiIR8e1PkwUJjLGGG26RJON1gy5w59Ct
+zT/qHbXQdlJwEgQ0X1GXh+8ASTpAtfkjYL+HF4lE6w0RIxuKvPwPvqfhT+/mGlYR
+n7vnGkQIhzPx+2zIVEvfkUjb1VFDpQfAc56fCwyDxco1gfVCmoNUKPWQ7fxmuvUs
+/9RKHdPDGQ0rTeZSF9X8gLi4nEr1LSVp8TThfzjR2dOQDbQXUO26yO/sA4ytAf+F
++QwA0m70mPU1BcSOFg8N9s9Oj1GRfRx8AsyozibHd4gZtBIaD4CRjFncdAJwhlAY
+QwUHTPw4GHLJlYWFIgIKuEAX0Mu0PA==
+=O6My
+-----END PGP SIGNATURE-----
+
+--Sig_/2jasR_IukKyZVKSeoCS0q=_--
 
