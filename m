@@ -1,206 +1,118 @@
-Return-Path: <linux-kernel+bounces-399349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2759D9BFDC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:45:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D869BFDCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B5AC1C21A7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:45:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB8BB22B32
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17A0192B8C;
-	Thu,  7 Nov 2024 05:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C5E194123;
+	Thu,  7 Nov 2024 05:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QXyBm+nI"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766FC192B62;
-	Thu,  7 Nov 2024 05:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kV4ogm92"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FC3192B8C
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 05:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730958299; cv=none; b=eI4CnraK2M4i287bDvPJ4nIWnZL4VLpcsPHvBFJaVnD6VsVEtwVVY42yw3Ffpm8nlgx+bH8ybqCcmwwIABGKKsLE/AP/Hm/FzuBb+3kgH88yGuWW4zJe3ciX+HzAQksE4T9B8KkW7di0CD+Pgja17W292BcFF8FQXlyxcOGBMk8=
+	t=1730958420; cv=none; b=PPeWurJvCN5wgEKJZykEdOmq+Ev2jI+QMqj0qnqEOoOHmza0coPQMaWagLoD+mn3ZtgBLrFmA8/HlFBqOB2TSYyu4HZenSPOgTVy5BEBWzJ3mjP8+VSdtZGW6REtJfy6oB0lVrgm9+riB1ZSq+53FjrkvJZbO6qvfTXstPHjfek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730958299; c=relaxed/simple;
-	bh=gpzlwexvA3SG+QryXNYzAqzSPZc1bImZ6oe+eHxe7Xc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jAJSECgLjQFviLCZ1ciIz0i1jbnMl9iRA1JTB4gWEGm96GAx1EHUT5prduEDaqFiXBOvsueveJb/1BMDWSyYqYXcQ7TCsTlD+HPOkLsy22k5y0/ZxyVV4YuWRC/kZYgwn885J097oztnRFBjksDChMk5ngUOZ30GgY2Syqp5tn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QXyBm+nI; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.72.143] (unknown [167.220.238.79])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 8178F212D4F2;
-	Wed,  6 Nov 2024 21:44:54 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8178F212D4F2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1730958297;
-	bh=NVp8ST0dxy4k335XQEtz2NsSMtwWkFQBqxef4adR+Ww=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QXyBm+nIx0hp1J/cE5rb5k/c2SdE0Ahae9hXwCHPMjRaD/jznN+1hHBL57vdJUhj1
-	 U3opdbL66drBoQYK6nx2e9FaPMuYcv8ONxbuPR955n4IDeA6CJK3y304VQp3zZiYDP
-	 6W1dRTzz6wrQm8dg35uMWhnV1oPyn+Pv7tlDaYPM=
-Message-ID: <4c9e670b-eb37-4bdb-adcf-a4ebbebcefab@linux.microsoft.com>
-Date: Thu, 7 Nov 2024 11:14:52 +0530
+	s=arc-20240116; t=1730958420; c=relaxed/simple;
+	bh=JPxeCjdGq8a0zMzUJVf7kWzJDmpJp0Jzp57/Ycn+1Tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qTZQJGGZojfB+0+PFoqALw1ALW3aiVpeRWdMYD+i23IuqnzKKEp8w57eZ6ABKYm+HUbhtjbzVwlOKGonWHIuc4s5WuGe9/FPFBbsgunLhD11h1DHCstuWSQSTVHBzLshAEXbTLQnzeDBQoyNwZ85x0g6W5cXX3k4sg8KM5tBgRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kV4ogm92; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730958419; x=1762494419;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=JPxeCjdGq8a0zMzUJVf7kWzJDmpJp0Jzp57/Ycn+1Tk=;
+  b=kV4ogm92GN3CGRjj2LxsQfDh5uYR4MaZ5KutyA5dh37qWLZe2E6hUis/
+   TLsnFux1usKqJneGhtMAl8cYJrfaEdDIupIlwLJLXZ9Zx/FFy4h19YpGO
+   hR+Zd+9oVXRYjr32CC3WucB1nhcm0CiiJl0mnicNCSZqhIRoqbPWs4wSc
+   GZKhZVWOLCdjorh2Dv4eJ9tCi5Q5eJlar+ev4Mdieqzxhh1uY62dCrfd7
+   BPmNqRsuQqkp0lF7ZdbJZygrleUVX+ALu9zy4ezYOgrLu5JX1OwjHp4Bt
+   IfQhu2m0Ao1e/zVkDY8qLm6Ml0Bvf2t+Z6QUjmXUxyHRyfcAuB3cCvldw
+   w==;
+X-CSE-ConnectionGUID: 9ZOtamcuTdyLfkhXkR7ZZA==
+X-CSE-MsgGUID: vnOPJEk8RmG03AmpZpMkug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30905434"
+X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
+   d="scan'208";a="30905434"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 21:46:58 -0800
+X-CSE-ConnectionGUID: 5AbG2F7vRTuRMDRo0r1I4Q==
+X-CSE-MsgGUID: TDwDifHmRU6KGHLE2pl7PQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,265,1725346800"; 
+   d="scan'208";a="88893668"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 06 Nov 2024 21:46:56 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8vM6-000prY-2I;
+	Thu, 07 Nov 2024 05:46:54 +0000
+Date: Thu, 7 Nov 2024 13:45:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: include/linux/device.h:381:23: sparse: sparse: incorrect type in
+ return expression (different address spaces)
+Message-ID: <202411071306.NRIW9j4f-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Drivers: hv: vmbus: Log on missing offers
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- John Starks <jostarks@microsoft.com>,
- "jacob.pan@linux.microsoft.com" <jacob.pan@linux.microsoft.com>,
- Easwar Hariharan <eahariha@linux.microsoft.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-References: <20241029080147.52749-1-namjain@linux.microsoft.com>
- <20241029080147.52749-3-namjain@linux.microsoft.com>
- <SN6PR02MB4157D7212FE3F0F50FAB0592D4552@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157D7212FE3F0F50FAB0592D4552@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ff7afaeca1a15fbeaa2c4795ee806c0667bd77b2
+commit: f6bb3e9d98c2e8d70587d5ddaf9426ef30d7865c net: pcs: xpcs: Add Synopsys DW xPCS platform device driver
+date:   4 months ago
+config: s390-randconfig-r121-20241106 (https://download.01.org/0day-ci/archive/20241107/202411071306.NRIW9j4f-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce: (https://download.01.org/0day-ci/archive/20241107/202411071306.NRIW9j4f-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411071306.NRIW9j4f-lkp@intel.com/
 
-On 11/1/2024 12:44 AM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Tuesday, October 29, 2024 1:02 AM
->>
->> When resuming from hibernation, log any channels that were present
->> before hibernation but now are gone.
->> In general, the essential virtual devices configured for a VM, remain
->> same, before and after the hibernation and its not very common that
->> some offers are missing.
-> 
-> The wording here is a bit jumbled. And let's use consistent terminology.
-> I'd suggest:
-> 
-> In general, the boot-time devices configured for a resuming VM should be
-> the same as the devices in the VM at the time of hibernation. It's uncommon
-> for the configuration to have been changed such that offers are missing.
-> Changing the configuration violates the rules for hibernation anyway.
+sparse warnings: (new ones prefixed by >>)
+   drivers/net/pcs/pcs-xpcs-plat.c: note: in included file:
+>> include/linux/device.h:381:23: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
+   include/linux/device.h:381:23: sparse:     expected void [noderef] __iomem *
+   include/linux/device.h:381:23: sparse:     got void *
 
-Sure, I'll make the required changes.
+vim +381 include/linux/device.h
 
-> 
->> The cleanup of missing channels is not
->> straight-forward and dependent on individual device driver
->> functionality and implementation, so it can be added in future as
->> separate changes.
->>
->> Signed-off-by: John Starks <jostarks@microsoft.com>
->> Co-developed-by: Naman Jain <namjain@linux.microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
->> ---
->> Changes since v1:
->> https://lore.kernel.org/all/20241018115811.5530-1-namjain@linux.microsoft.com/
->> * Added Easwar's Reviewed-By tag
->> * Addressed Saurabh's comments:
->>    * Added a note for missing channel cleanup in comments and commit msg
->> ---
->>   drivers/hv/vmbus_drv.c | 17 +++++++++++++++++
->>   1 file changed, 17 insertions(+)
->>
->> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
->> index bd3fc41dc06b..08214f28694a 100644
->> --- a/drivers/hv/vmbus_drv.c
->> +++ b/drivers/hv/vmbus_drv.c
->> @@ -2462,6 +2462,7 @@ static int vmbus_bus_suspend(struct device *dev)
->>
->>   static int vmbus_bus_resume(struct device *dev)
->>   {
->> +	struct vmbus_channel *channel;
->>   	struct vmbus_channel_msginfo *msginfo;
->>   	size_t msgsize;
->>   	int ret;
->> @@ -2494,6 +2495,22 @@ static int vmbus_bus_resume(struct device *dev)
->>
->>   	vmbus_request_offers();
->>
->> +	mutex_lock(&vmbus_connection.channel_mutex);
->> +	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
->> +		if (channel->offermsg.child_relid != INVALID_RELID)
->> +			continue;
->> +
->> +		/* hvsock channels are not expected to be present. */
->> +		if (is_hvsock_channel(channel))
->> +			continue;
->> +
->> +		pr_err("channel %pUl/%pUl not present after resume.\n",
->> +			&channel->offermsg.offer.if_type,
->> +			&channel->offermsg.offer.if_instance);
->> +		/* ToDo: Cleanup these channels here */
->> +	}
->> +	mutex_unlock(&vmbus_connection.channel_mutex);
->> +
-> 
-> Dexuan and John have explained how in Azure VMs, there should not be
-> any VFs assigned to the VM at the time of hibernation. So the above
-> check for missing offers does not trigger an error message due to
-> VF offers coming after the all-offers-received message.
-> 
-> But what about the case of a VM running on a local Hyper-V? I'm not
-> completely clear, but in that case I don't think any VFs are removed
-> before the hibernation, especially for VM-initiated hibernation. It's
+da7c07b1083809 Mark Brown 2023-07-18  376  
+da7c07b1083809 Mark Brown 2023-07-18  377  static inline
+da7c07b1083809 Mark Brown 2023-07-18  378  void __iomem *devm_ioremap_resource(struct device *dev,
+da7c07b1083809 Mark Brown 2023-07-18  379  				    const struct resource *res)
+da7c07b1083809 Mark Brown 2023-07-18  380  {
+da7c07b1083809 Mark Brown 2023-07-18 @381  	return ERR_PTR(-EINVAL);
+da7c07b1083809 Mark Brown 2023-07-18  382  }
+da7c07b1083809 Mark Brown 2023-07-18  383  
 
-I am not sure about this behavior. I have requested Dexuan offline
-for a comment.
+:::::: The code at line 381 was first introduced by commit
+:::::: da7c07b1083809888c82522e74370f962fb7685e driver core: Provide stubs for !IOMEM builds
 
-> a reasonable scenario to later resume that same VM, with the same
-> VF assigned to the VM. Because of the way current code counts
-> the offers, vmbus_bus_resume() waits for the VF to be offered again,
-> and all the channels get correct post-resume relids. But the changes
-> in this patch set break that scenario. Since vmbus_bus_resume() now
-> proceeds before the VF offer arrives, hv_pci_resume() calling
-> vmbus_open() could use the pre-hibernation relid for the VF and break
-> things. Certainly the "not present after resume" error message would
-> be spurious.
-> 
-> Maybe the focus here is Azure, and it's tolerable for the local Hyper-V
-> case with a VF to not work pending later fixes. But I thought I'd call
-> out the potential issue (assuming my thinking is correct).
-> 
-> Michael
+:::::: TO: Mark Brown <broonie@kernel.org>
+:::::: CC: Mark Brown <broonie@kernel.org>
 
-IIUC, below scenarios can happen based on your comment-
-
-Case 1:
-VF channel offer is received in time before hv_pci_resume() and there
-are no problems.
-
-Case 2:
-Resume proceeds just after getting ALLOFFERS_DELIVERED msg and a warning
-is printed that this VF channel is not present after resume.
-Then two scenarios can happen:
-   Case 2.1:
-   VF channel offer is received before hv_pci_resume() and things work
-   fine. Warning printed is spurious.
-   Case 2.2:
-   VM channel offer is not received before hv_pci_resume() and relid is
-   not yet restored by onoffer. This is a problem. Warning is printed in
-   this case for missing offer.
-
-I think it all depends on whether or not VFs are removed in local
-HyperV VMs. I'll try to get this information. Thanks for pointing this
-out.
-
-Regards,
-Naman
-
-
-> 
->>   	/* Reset the event for the next suspend. */
->>   	reinit_completion(&vmbus_connection.ready_for_suspend_event);
->>
->> --
->> 2.34.1
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
