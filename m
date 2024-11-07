@@ -1,260 +1,121 @@
-Return-Path: <linux-kernel+bounces-399462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3EE9BFF45
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:41:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC6E9BFF4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:46:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5101C21477
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82DC3283330
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 07:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB661991CD;
-	Thu,  7 Nov 2024 07:41:53 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC531C2420;
+	Thu,  7 Nov 2024 07:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="BUp1Dtqw"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28195195F22
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 07:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF791991D2;
+	Thu,  7 Nov 2024 07:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730965312; cv=none; b=ktKqALs3owZwjhHvtgvVsqtAGi1j+oRsOxs/Pg/agLIpeFp0gQF8x2XWUsbwY/bMt3owon2LDsb8LCjfUQud38Rdz9PZPMHZmstOQCppmoC2D5c2T47hPhQx06yRppxKhbaL9tNIio+Q/pm112h12CyI3G+Q2468EdlNt3+nWXw=
+	t=1730965579; cv=none; b=otJSA3zm4Xd7OfpuO2dwoXi+ipUi0oJRgvCCUfWVTsII7c+4I4Cxw3hw1iIFUkdDYONbmc3d5cK6CsBSJg0RZZLXrvC1WwlBRiDCvcV5R2da9QU6caSsrSxxZ5rviNWZupiaifE/kRgISgYX+CwJHIylBL2UxgacXKmhtEk/BA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730965312; c=relaxed/simple;
-	bh=xUTnX9sfzz0j20d3cUBEqs2vf4IT/0oHwg4KIm1ccrY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TtvHGQAAyD06vfe2nxHQ79X8ULFjMmrUMKLWXF9EyOW/BQnjZeFhcNaLDYo9QDjolC4ora7Yje4CjysijBsEjD1n1/lcoBnSIWqNkOG98Z61rs/IqXlsnQBzepBVmXWyVRvKE/GJ0/A0uVuMJ1I73gvXsIJZN7a9ETqBnehpdfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abb2b6d42so70285239f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 23:41:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730965310; x=1731570110;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y02zO3AKIAA0IiJ4Ma1zvBoT9cjGOBk2uMbTGUb10mI=;
-        b=qTKJwCoVfjHnJP4ItOPg4OAxC/3b8HbkvVSgz+Du/CRMZCCsREg41F7tfrxVdhT0E0
-         99eHE0bt7ObXBQU224EuFhGy9wH5XmVnx4OZ1v8tu5MASRKOMDIx9dPaAUPmSn8a79rs
-         8oFKqPxXG5E8MmpNiTnlb+fbwIFmqMHkwq5ai8qaLChjW7LUWJOzkeAqokTfm/YFc3Ed
-         soa5B74c74xcaWdI7KstDeyddR6lYooVxo84rA4KxrNUg908NLsr2nD6LUeNRnYpotHp
-         Y9d3y/1R85qOwaBmLSoAOXbFRxzh6sEyavLaWExbnFOaOE0OWdXeVMVUDAK1VNHyEdPv
-         AKSg==
-X-Gm-Message-State: AOJu0Yw8tnXrSI9jsAaeCFLNXv0JuqL7WbQZNSp8PMoRTN7tqrFv8qTj
-	upWgUd4GmGjthubz51Z4Gr70JoIQhjpuVruoPr7+1SntqvNK7O08UmhvxpwpgHrKXWNQO/1jzNm
-	HT21R90Q2lHM/9E/CRbeKIBhU3xB4wg4xR/zOChcJUFzfxDiEPrcCX3c=
-X-Google-Smtp-Source: AGHT+IE3i12dDf64T66XjSVPwapfihTTaVXBoIGVejHPa693UgFUM+d16AIfcas1GN//+De/a9aKsbew7cw0GTB6UhegZiqeTcD+
+	s=arc-20240116; t=1730965579; c=relaxed/simple;
+	bh=r50PAbrNC7wiocLxfAaxrCGdGN3/UU1zQE/uBx5VX6k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PWqSlXtp5PCMwwcTIM9ImsbbElFWcET5aKrVfDDzkzle0ygmP8xlsMYTJRUa5MaCBvbObHELAk+eHvqBlaAx3ACfaFw473x/IdvThl9CPlbe5TWeSRuHbTqY3jesInjdg4xzA0xzdje6AJbIVQKzuCjY3miUrjiPt514lR0uHJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=BUp1Dtqw; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 583813e29cdc11efb88477ffae1fc7a5-20241107
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=SLobudUPRJu3yO+WgY5nbSK+JQEjFbZ/4gXbodXRIpU=;
+	b=BUp1DtqwDQpT8ca2Q0oG+7n/29tpLZQ+53q/PkwqX1f1H8v/9GjC0vvnmFZblCsyIQQIIZXKRndIp8TqczwKONl8pW1PBJEtbkbSMYeJi9g+tXazsvTrkCgvYGNUhf8K5LN1AXY3kZxZ/R0d1QO9h8rp0Z19WC6ebY4vhPZzXmQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:bf9cdc94-4533-40b7-8c0c-90c7e6e94248,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:c78bb206-6ce0-4172-9755-bd2287e50583,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-UUID: 583813e29cdc11efb88477ffae1fc7a5-20241107
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <yunfei.dong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1628322629; Thu, 07 Nov 2024 15:46:05 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 7 Nov 2024 15:46:04 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 7 Nov 2024 15:46:03 +0800
+From: Yunfei Dong <yunfei.dong@mediatek.com>
+To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
+	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>
+CC: Hsin-Yi Wang <hsinyi@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>,
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, Steve
+ Cho <stevecho@chromium.org>, Yunfei Dong <yunfei.dong@mediatek.com>,
+	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v3 0/6] media: mediatek: vcodec: support h264 extend vsi
+Date: Thu, 7 Nov 2024 15:45:54 +0800
+Message-ID: <20241107074603.31998-1-yunfei.dong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3707:b0:3a6:ab82:db5e with SMTP id
- e9e14a558f8ab-3a6ed1227dbmr3816805ab.22.1730965310095; Wed, 06 Nov 2024
- 23:41:50 -0800 (PST)
-Date: Wed, 06 Nov 2024 23:41:50 -0800
-In-Reply-To: <672a3997.050a0220.2a847.11f7.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672c6f3e.050a0220.31356.0000.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [acpi?] [nvdimm?] KASAN:
- vmalloc-out-of-bounds Read in acpi_nfit_ctl (2)
-From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+The working buffer address start and end are calculated in kernel
+side currently, the address end can't be calculated if the driver
+only getting the address file handle, not the real physical address.
+Need to send the extended vsi to firmware to calculate the address
+end.
 
-***
+Re-construct some interface and add configuration to support extend
+and non extend driver at the same time. Needn't to parse nal info for
+extended architecture.
+---
+This patch series depends on:
+[1] https://patchwork.kernel.org/project/linux-mediatek/cover/20241012064333.27269-1-yunfei.dong@mediatek.com
 
-Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read i=
-n acpi_nfit_ctl (2)
-Author: surajsonawane0215@gmail.com
+---
+compared with v2:
+- squash patch 2/3/4 together
+- re-write commit message for patch 1
 
-#syz test
+compared with v1:
+- combine some pathes together for patch 2
+- re-write patch 4
+---
+Yunfei Dong (3):
+  media: mediatek: vcodec: remove vsi operation in common interface
+  media: mediatek: vcodec: support extended h264 decode
+  media: mediatek: vcodec: add description for vsi struct
 
-On Tue, Nov 5, 2024 at 8:58=E2=80=AFPM syzbot <
-syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com> wrote:
+ .../vcodec/decoder/mtk_vcodec_dec_drv.h       |   2 +
+ .../decoder/vdec/vdec_h264_req_multi_if.c     | 505 +++++++++++++++++-
+ 2 files changed, 482 insertions(+), 25 deletions(-)
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of
-> git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12418e3058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D11254d3590b16=
-717
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3D7534f060ebda6b8b51b3
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
-> Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12170f40580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16418e3058000=
-0
->
-> Downloadable assets:
-> disk image (non-bootable):
-> https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_di=
-sk-2e1b3cc9.raw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/2f2588b04ae9/vmlinux-2e1b3cc=
-9.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/2c9324cf16df/bzImage-2e1b3cc=
-9.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func
-> drivers/acpi/nfit/core.c:416 [inline]
-> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
-> drivers/acpi/nfit/core.c:459
-> Read of size 4 at addr ffffc90000e0e038 by task syz-executor229/5316
->
-> CPU: 0 UID: 0 PID: 5316 Comm: syz-executor229 Not tainted
-> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x169/0x550 mm/kasan/report.c:488
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  cmd_to_func drivers/acpi/nfit/core.c:416 [inline]
->  acpi_nfit_ctl+0x20e8/0x24a0 drivers/acpi/nfit/core.c:459
->  __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
->  nd_ioctl+0x1844/0x1fd0 drivers/nvdimm/bus.c:1264
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fb399ccda79
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f=
-7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffcf6cb8d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb399ccda79
-> RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003
-> RBP: 00007fb399d405f0 R08: 0000000000000006 R09: 0000000000000006
-> R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000001
-> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
->  </TASK>
->
-> The buggy address belongs to the virtual mapping at
->  [ffffc90000e0e000, ffffc90000e10000) created by:
->  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
->  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000
-> index:0xffff8880401b9a80 pfn:0x401b9
-> flags: 0x4fff00000000000(node=3D1|zone=3D1|lastcpupid=3D0x7ff)
-> raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
-> raw: ffff8880401b9a80 0000000000000000 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask
-> 0x2cc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN), pid 5316, tgid 5316
-> (syz-executor229), ts 69039468240, free_ts 68666765389
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
->  prep_new_page mm/page_alloc.c:1545 [inline]
->  get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
->  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
->  alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
->  alloc_pages_bulk_array_mempolicy_noprof+0x8ea/0x1600 mm/mempolicy.c:2556
->  vm_area_alloc_pages mm/vmalloc.c:3542 [inline]
->  __vmalloc_area_node mm/vmalloc.c:3646 [inline]
->  __vmalloc_node_range_noprof+0x752/0x13f0 mm/vmalloc.c:3828
->  __vmalloc_node_noprof mm/vmalloc.c:3893 [inline]
->  vmalloc_noprof+0x79/0x90 mm/vmalloc.c:3926
->  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
->  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> page last free pid 5312 tgid 5312 stack trace:
->  reset_page_owner include/linux/page_owner.h:25 [inline]
->  free_pages_prepare mm/page_alloc.c:1108 [inline]
->  free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
->  __folio_put+0x2c7/0x440 mm/swap.c:126
->  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
->  pipe_update_tail fs/pipe.c:224 [inline]
->  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
->  new_sync_read fs/read_write.c:488 [inline]
->  vfs_read+0x991/0xb70 fs/read_write.c:569
->  ksys_read+0x183/0x2b0 fs/read_write.c:712
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Memory state around the buggy address:
->  ffffc90000e0df00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->  ffffc90000e0df80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-> >ffffc90000e0e000: 00 00 00 00 00 00 00 03 f8 f8 f8 f8 f8 f8 f8 f8
->                                         ^
->  ffffc90000e0e080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->  ffffc90000e0e100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/672a3997.050a0220.2a847.=
-11f7.GAE%40google.com
-> .
->
+-- 
+2.46.0
+
 
