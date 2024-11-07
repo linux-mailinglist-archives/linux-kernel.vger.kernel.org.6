@@ -1,152 +1,102 @@
-Return-Path: <linux-kernel+bounces-400225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E277F9C0A9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:59:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026BD9C0A99
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF8228419E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:59:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB778283864
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A0E215F72;
-	Thu,  7 Nov 2024 15:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20D9215F7B;
+	Thu,  7 Nov 2024 15:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uBr4HiER"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5R1QBds"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F30D215002
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74BF2144C6;
+	Thu,  7 Nov 2024 15:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730995098; cv=none; b=R5okFHpBYyTDeupuiIclUzFe+GltzLH6A8+iqzpG0lVLItLFJ1QgObjXooJmmuiipgwMxs1zCXnt7WPv30OUD0G/CJ4pBxDhDRbsDbZHQnqLFtl0aimwuUqDNFV+sc2fnWBr3LGngGWN1XfGDKPoaPAsRos5tlMi+pFp6ibMZT4=
+	t=1730995090; cv=none; b=ocHlcs4IyWxWzCgtj/eQ0hpzS23QNqfRmeRAxVs0Ip0Jy5VEUjzEtj9ehfa1Og0cZTmu2cZ6TNb83T2hBSmmNZZvNYtnrkz98DuMKUf3eIuN5wbdFLBGNqb/Dm/ooch26ayVw6opOZkjSd49iIyuoVK/Qp75fNEr5buASltRjTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730995098; c=relaxed/simple;
-	bh=jIjVkJg044mQRgN/mjP562pDQUc1UFF0ugcn7Rz7fwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pi+BRWYEupCBhDDyYQ8YDlqoZMzruRs3iSmNOEYNjxItt14buPU+zlRG/NEJU+8P/ADS4KdtE2cxpH8UknECIuhPrn+3kbpnu3Ztyta15nNx8L3tiHMWGuYp09l1rFtstuGgDUBA7hX5y10GPc1fJ1RbsjM1W/OmZEtLSNYftRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uBr4HiER; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso931414a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 07:58:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730995096; x=1731599896; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jyTQmFg5RkUDePP5hgukMfc9dpeVcrhVZzNqZ7P2B9g=;
-        b=uBr4HiER34sRVOWIFeESH6DSVanp/bP+1i/Jdk44nf0MLTDPhaTVKeOUNPgjFfUN4K
-         QcpXj6EyubgYM6tDgIwIuJMOvsyd0z0ulwR2j+/5Xomod20Or9zcFd1RKc8Kq+XhVHSs
-         0Z0o/yAV5eK0N2sntjdTMR2YC3PTJkS5MQYLz+Kp/LJzZECOGWcbJ8Bdr2IYeX5gUtdh
-         Irq9eoCo8hSIwAbr8kdVjQTarw1SxztAQGIMoMJjk4W/6fF3RBZHezzkDCPQU+oOMkW4
-         v+pQTSNk+oKPHbtn2z1nXy6WBJLZ9Ok4noFv4juuacaBcsOEeNHS5SiANU/AlNwaoL5M
-         fwCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730995096; x=1731599896;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jyTQmFg5RkUDePP5hgukMfc9dpeVcrhVZzNqZ7P2B9g=;
-        b=MsApepyyx4EoaoHqKaV5oj8xE1aDaD2q/F6wjA+uHqryApgvhpKdRwrkwZK6kO+1kE
-         OxPXa4w6N6xAgm6tMXG7bAQfUDYRBv+WX6FTar/CpvmBf9GYc3BiGmdhB8Q/dsljsw5d
-         bDmpaEInnlZ7zZ7r3DmM7OVEWRGZVdcbnnqdkWF9oSRaUzIftKYIkp4W4pHRyOVMEOyP
-         iI6zvnqwEevp5vXbLxZ5o86zXibLbgtcuCOIv5HC+JytZNZzzpW67D5rlkLXiztlViHG
-         SMQgIUIrQ6C4T2MrcFuVt0KW0WcEDbLg1KEXi0J5WFLzF3VT3zMN+Z1DKIyPLhPa9nfz
-         jkKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkz2A9Kxy/zz76hC32rF2MluoZ3fH36oQSd7mcxe59bjMaMU20XFp+tpweHW5w/xckKe6rKAD23em2Vbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqBV49F/1iBzVOMHHSHc9B/FP2Sa3s2dM7vnOUQpsENu9QHKdG
-	5t+luqlwCaW59mUy9l5wgU9clmdEMqv0SkKSXBgDhcbl044BHZnZZqjUj1Fzz+oS4zVePI4UZY1
-	3oj7JpBmo5gnLgeNVrQr/0bL98vm0XenxWNX5
-X-Google-Smtp-Source: AGHT+IHqN3uYACDxM2VYg5XCMRDWpAJbWua707JHMABCl9IpwieImgrDtLWrInxY4nExvBH8dL/YaAXFhSy1Mz9c9+c=
-X-Received: by 2002:a17:90b:4c86:b0:2e2:c40c:6e8e with SMTP id
- 98e67ed59e1d1-2e8f11b961fmr46812604a91.34.1730995096225; Thu, 07 Nov 2024
- 07:58:16 -0800 (PST)
+	s=arc-20240116; t=1730995090; c=relaxed/simple;
+	bh=plneM+1V2CG3gd7U8Ad6Sjsx9i7GasALEPDMYwfBw2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aZX2n9sA+q2sSHnkSghewge1XrLfkshVSSbIYDmbpGV7qcqFSAwQ4JBl1Jqfkv7lQZO9+VDiUS9DVhW64u/OY7voJ7wqAFk4xUEsfXDFAxtWhn+exxeCRHVfOx748yYzfUA5exBBr63ZSJEJ4ibqRTb++97FOxYnX3iYWb5cJjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5R1QBds; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57078C4CECC;
+	Thu,  7 Nov 2024 15:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730995088;
+	bh=plneM+1V2CG3gd7U8Ad6Sjsx9i7GasALEPDMYwfBw2U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F5R1QBdsymTWTWsOmTxNzAz3SHFGp+ZoOIcA+gQNUHQXTT46U6KOhwYkmJX/nyGdA
+	 RsDJzh6ge3p/9ha6GZ6FnNIMbhLqo/81pKaZ/9lfJ/UVQn2tu6YAE4c79azgUDkWnE
+	 awBVFCYLIuYNHW6ccZkVS+xPl6v4dhxMdJT40Hcw0UZKdmU0lu8BHfi3eiB0t1DWlk
+	 8ItD4zHQWL8dK7TAXMF6vI+Ft8h1/DUoylQglUZsJJH4fLdhygiLVFgzSA0X4J1Gek
+	 q/BXdj/tXrHU06j4e6Pi3vLvcjgjPjD8qxK6arlpBBW63SSJVa1b/IFTDVtTFsnlls
+	 79RiiTYuW83BA==
+Date: Thu, 7 Nov 2024 09:58:06 -0600
+From: Rob Herring <robh@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Stanislav Jakubek <stano.jakubek@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] dt-bindings: mfd: sprd,sc2731: reference
+ sprd,sc2731-efuse bindings
+Message-ID: <20241107155806.GA2774753-robh@kernel.org>
+References: <efd200c3b5b75405e4e450d064b026f10ae2f8e0.1730709384.git.stano.jakubek@gmail.com>
+ <cd8cc95b59c31418b174bba521dd2599a7929fda.1730709384.git.stano.jakubek@gmail.com>
+ <20241106090509.GL1807686@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107122648.2504368-1-elver@google.com> <5b7defe4-09db-491e-b2fb-3fb6379dc452@efficios.com>
- <CANpmjNPWLOfXBMYV0_Eon6NgKPyDorTxwS4b67ZKz7hyz5i13A@mail.gmail.com> <3326c8a1-36c7-476b-8afa-2957f5bd5426@efficios.com>
-In-Reply-To: <3326c8a1-36c7-476b-8afa-2957f5bd5426@efficios.com>
-From: Marco Elver <elver@google.com>
-Date: Thu, 7 Nov 2024 16:57:39 +0100
-Message-ID: <CANpmjNMjd6p5-SMjNh6k1gqubvNew2fA5GDs1YmcSdiSFCA5pQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] tracing: Add task_prctl_unknown tracepoint
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Kees Cook <keescook@chromium.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>, 
-	kasan-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106090509.GL1807686@google.com>
 
-On Thu, 7 Nov 2024 at 16:54, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2024-11-07 10:46, Marco Elver wrote:
-> > On Thu, 7 Nov 2024 at 16:45, Mathieu Desnoyers
-> > <mathieu.desnoyers@efficios.com> wrote:
-> >>
-> >> On 2024-11-07 07:25, Marco Elver wrote:
-> >>> prctl() is a complex syscall which multiplexes its functionality based
-> >>> on a large set of PR_* options. Currently we count 64 such options. The
-> >>> return value of unknown options is -EINVAL, and doesn't distinguish from
-> >>> known options that were passed invalid args that also return -EINVAL.
-> >>>
-> >>> To understand if programs are attempting to use prctl() options not yet
-> >>> available on the running kernel, provide the task_prctl_unknown
-> >>> tracepoint.
-> >>>
-> >>> Note, this tracepoint is in an unlikely cold path, and would therefore
-> >>> be suitable for continuous monitoring (e.g. via perf_event_open).
-> >>>
-> >>> While the above is likely the simplest usecase, additionally this
-> >>> tracepoint can help unlock some testing scenarios (where probing
-> >>> sys_enter or sys_exit causes undesirable performance overheads):
-> >>>
-> >>>     a. unprivileged triggering of a test module: test modules may register a
-> >>>        probe to be called back on task_prctl_unknown, and pick a very large
-> >>>        unknown prctl() option upon which they perform a test function for an
-> >>>        unprivileged user;
-> >>>
-> >>>     b. unprivileged triggering of an eBPF program function: similar
-> >>>        as idea (a).
-> >>>
-> >>> Example trace_pipe output:
-> >>>
-> >>>     test-484     [000] .....   631.748104: task_prctl_unknown: comm=test option=1234 arg2=101 arg3=102 arg4=103 arg5=104
-> >>>
-> >>
-> >> My concern is that we start adding tons of special-case
-> >> tracepoints to the implementation of system calls which
-> >> are redundant with the sys_enter/exit tracepoints.
-> >>
-> >> Why favor this approach rather than hooking on sys_enter/exit ?
-> >
-> > It's __extremely__ expensive when deployed at scale. See note in
-> > commit description above.
->
-> I suspect you base the overhead analysis on the x86-64 implementation
-> of sys_enter/exit tracepoint and especially the overhead caused by
-> the SYSCALL_WORK_SYSCALL_TRACEPOINT thread flag, am I correct ?
->
-> If that is causing a too large overhead, we should investigate if
-> those can be improved instead of adding tracepoints in the
-> implementation of system calls.
+On Wed, Nov 06, 2024 at 09:05:09AM +0000, Lee Jones wrote:
+> On Mon, 04 Nov 2024, Stanislav Jakubek wrote:
+> 
+> > Directly reference the sc2731-efuse bindings to simplify the schema.
+> > Remove the duplicate example from the efuse bindings.
+> > 
+> > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> > ---
+> > Changes in V3:
+> > - new patch due to a missing dependency in the MFD tree 
+> > 
+> > Link to V2: https://lore.kernel.org/lkml/ZyExK01iprBHhGm6@standask-GA-A55M-S2HP/
+> > Link to V1: https://lore.kernel.org/lkml/Zr3X1RoQs7ElTnlJ@standask-GA-A55M-S2HP/
+> > 
+> >  .../devicetree/bindings/mfd/sprd,sc2731.yaml  | 10 +------
+> >  .../bindings/nvmem/sprd,sc2731-efuse.yaml     | 29 -------------------
+> 
+> Srini, you happy for this to go in via MFD?
 
-Doing that may be generally useful, but even if you improve it
-somehow, there's always some additional bit of work needed on
-sys_enter/exit as soon as a tracepoint is attached. Even if that's
-just a few cycles, it's too much (for me at least).
+Can you? AIUI, you don't have nvmem/sprd,sc2731-efuse.yaml in your tree.
 
-Also: if you just hook sys_enter/exit, you don't know if the prctl was
-handled or not by inspecting the return code (-EINVAL). I want the
-kernel to tell me if it handled the prctl() or not, and I also think
-it's very bad design to copy-paste the prctl() option checking of the
-running kernel in a sys_enter/exit hook. This doesn't scale in terms
-of performance nor maintainability.
+So take patch 1 now and this one will have to go next cycle.
+
+Rob
 
