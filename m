@@ -1,152 +1,99 @@
-Return-Path: <linux-kernel+bounces-399129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB60D9BFB71
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:27:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFE69BFB72
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:28:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90BAB28308C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:27:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AD631C20F50
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703F5C2ED;
-	Thu,  7 Nov 2024 01:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="E5mgeaAQ"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3549BA50;
+	Thu,  7 Nov 2024 01:27:54 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE6BBE4A;
-	Thu,  7 Nov 2024 01:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0517485
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 01:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730942829; cv=none; b=GaP4R5Uoxa+GsUpIsOfTTEM6/zEK+IeuCY/mherAEXvttnTO3qsOyIa2Od5cKbyP6RKVfPuh0CrDlxd1GgR49y9iw7umLyGHR5lKan2KWQA3/4wqYiCXSrUh4PtTkYRF7V4VBaMWkntECtu2fIV0VecbngCK/MSs8s+UZOOMzIM=
+	t=1730942874; cv=none; b=WXdNFgpDrbqWsoWotkQcqRFM2KvEBwHL4RJdyIeIx1xjZJFCPqLbCYqAZgW8kvPMOpl7XPFoeU8DLTFGG/CyJ1tyEio8GbmiI2Q6bny9YzcApF56TWwVYq88UyAYFl72xthd/9FQvxzeBWVSP4R75yzjb5T3dKHKyd97JSX4eKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730942829; c=relaxed/simple;
-	bh=Lp5OTyWSzwrB7KaLwAMLtFxSqxfxPnlOsTHpKaatHEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DjJovtWLxcb3Wx++fOa0WPlAGd+Rs++Rk0pL+DsCiWDZMHCbopN7geXqM06pyBnh1UyIywEgrYlt4LK3UPAXjGOrWqrecIETxdfDoayeaSvjUYQJxjNSKwKvIaYWM/jM1MAkQ3QB4uHjnXShJolcPxVbd3CdXe31Wt86Wa32rRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=E5mgeaAQ; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730942824; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=7QNN7aZqhxMw37PStTVFSWANIXY78tjXFWsam9auhZE=;
-	b=E5mgeaAQ1rBHQ7Ydndwz0qmtuqvR919vzdPyh5OwYpYHIGyFK51YEHhSh6XZ7qPDpvJWfag+Exlv2iOgvt4/5/gcUJ3nurOCb6RnV+Z2s0PFKTPG7oSBr3KqNZwbjDHXwjlzPKhsGmDCL5fQvfsTUaWtjQbx7c5AvbkBJacbG2k=
-Received: from 30.246.162.170(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WIthnFt_1730942823 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 07 Nov 2024 09:27:04 +0800
-Message-ID: <736d94be-fad9-445e-acce-81cae1a05d46@linux.alibaba.com>
-Date: Thu, 7 Nov 2024 09:27:02 +0800
+	s=arc-20240116; t=1730942874; c=relaxed/simple;
+	bh=c97e6RumXveRoswKoNyMbHWw5+eRQGvyl4LHYEZ9yJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cr9I87SGG8JGXFpr686q9xmDd1O2WjJI8WiKXzJJOQItDo91w87sXp0cWnFiel/AX64V+wexXVtU8llYKBDXRjfv0PeERbOoKPAJGjqyVkeemzUQDa2fIGOt+RKi0XhF/9zCZYCtLHUz1QxXa4eJA5cLahSHLvkwS4fTUqqTNa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XkPXv3c7fz1SCCT;
+	Thu,  7 Nov 2024 09:26:07 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id E4F07180042;
+	Thu,  7 Nov 2024 09:27:49 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 7 Nov 2024 09:27:49 +0800
+Message-ID: <ee6521c6-9038-ab16-0773-c9425aae54fd@huawei.com>
+Date: Thu, 7 Nov 2024 09:27:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 2/2] PCI/AER: report fatal errors of RCiEP and EP
- if link recoverd
-To: Keith Busch <kbusch@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, mahesh@linux.ibm.com,
- oohall@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com
-References: <20241106090339.24920-1-xueshuai@linux.alibaba.com>
- <20241106090339.24920-3-xueshuai@linux.alibaba.com>
- <ZyubxGBL7TvchZI_@kbusch-mbp>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <ZyubxGBL7TvchZI_@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] phy: ocelot-serdes: Fix IS_ERR() vs NULL bug in
+ serdes_probe()
+Content-Language: en-US
+To: <vkoul@kernel.org>, <kishon@kernel.org>, <krzysztof.kozlowski@linaro.org>,
+	<florian.fainelli@broadcom.com>, <colin.foster@in-advantage.com>,
+	<davem@davemloft.net>, <linux-phy@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241101061145.2282501-1-ruanjinjie@huawei.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20241101061145.2282501-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
+Gentle ping.
 
-
-在 2024/11/7 00:39, Keith Busch 写道:
-> On Wed, Nov 06, 2024 at 05:03:39PM +0800, Shuai Xue wrote:
->> +int aer_get_device_fatal_error_info(struct pci_dev *dev, struct aer_err_info *info)
->> +{
->> +	int type = pci_pcie_type(dev);
->> +	int aer = dev->aer_cap;
->> +	u32 aercc;
->> +
->> +	pci_info(dev, "type :%d\n", type);
->> +
->> +	/* Must reset in this function */
->> +	info->status = 0;
->> +	info->tlp_header_valid = 0;
->> +	info->severity = AER_FATAL;
->> +
->> +	/* The device might not support AER */
->> +	if (!aer)
->> +		return 0;
->> +
->> +
->> +	if (type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_RC_END) {
->> +		/* Link is healthy for IO reads now */
->> +		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
->> +			&info->status);
->> +		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK,
->> +			&info->mask);
->> +		if (!(info->status & ~info->mask))
->> +			return 0;
->> +
->> +		/* Get First Error Pointer */
->> +		pci_read_config_dword(dev, aer + PCI_ERR_CAP, &aercc);
->> +		info->first_error = PCI_ERR_CAP_FEP(aercc);
->> +
->> +		if (info->status & AER_LOG_TLP_MASKS) {
->> +			info->tlp_header_valid = 1;
->> +			pcie_read_tlp_log(dev, aer + PCI_ERR_HEADER_LOG, &info->tlp);
->> +		}
+On 2024/11/1 14:11, Jinjie Ruan wrote:
+> dev_get_regmap() call can return a null pointer. It will not return
+> error pointers. Thus apply a null pointer check instead.
 > 
-> This matches the uncorrectable handling in aer_get_device_error_info, so
-> perhaps a helper to reduce duplication.
-
-Yes, will do.
-
+> Cc: stable@vger.kernel.org
+> Fixes: 672faa7bbf60 ("phy: phy-ocelot-serdes: add ability to be used in a non-syscon configuration")
+> Acked-by: Colin Foster <colin.foster@in-advantage.com>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+> v2:
+> - Add Acked-by.
+> - Update the commit message as Markus suggested.
+> ---
+>  drivers/phy/mscc/phy-ocelot-serdes.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
->> +	}
->> +
->> +	return 1;
->> +}
-> 
-> Returning '1' even if type is root or downstream port?
-> 
->>   static inline void aer_process_err_devices(struct aer_err_info *e_info)
->>   {
->>   	int i;
->> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
->> index 31090770fffc..a74ae6a55064 100644
->> --- a/drivers/pci/pcie/err.c
->> +++ b/drivers/pci/pcie/err.c
->> @@ -196,6 +196,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->>   	struct pci_dev *bridge;
->>   	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
->>   	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
->> +	struct aer_err_info info;
->>   
->>   	/*
->>   	 * If the error was detected by a Root Port, Downstream Port, RCEC,
->> @@ -223,6 +224,10 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->>   			pci_warn(bridge, "subordinate device reset failed\n");
->>   			goto failed;
->>   		}
->> +
->> +		/* Link recovered, report fatal errors on RCiEP or EP */
->> +		if (aer_get_device_fatal_error_info(dev, &info))
->> +			aer_print_error(dev, &info);
-> 
-> This will always print the error info even for root and downstream
-> ports, but you initialize "info" status and mask only if it's an EP or
-> RCiEP.
-
-Got it. Will fix it.
-
-Thank you for valuable comments.
-
-Best Regards,
-Shuai
-
+> diff --git a/drivers/phy/mscc/phy-ocelot-serdes.c b/drivers/phy/mscc/phy-ocelot-serdes.c
+> index 1cd1b5db2ad7..77ca67ce6e91 100644
+> --- a/drivers/phy/mscc/phy-ocelot-serdes.c
+> +++ b/drivers/phy/mscc/phy-ocelot-serdes.c
+> @@ -512,8 +512,8 @@ static int serdes_probe(struct platform_device *pdev)
+>  						    res->name);
+>  	}
+>  
+> -	if (IS_ERR(ctrl->regs))
+> -		return PTR_ERR(ctrl->regs);
+> +	if (!ctrl->regs)
+> +		return -EINVAL;
+>  
+>  	for (i = 0; i < SERDES_MAX; i++) {
+>  		ret = serdes_phy_create(ctrl, i, &ctrl->phys[i]);
 
