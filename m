@@ -1,172 +1,159 @@
-Return-Path: <linux-kernel+bounces-400001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8219C079F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:35:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A13ED9C07A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DC61283CA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:35:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478D21F2147F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146C520B1E2;
-	Thu,  7 Nov 2024 13:34:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77189210188;
+	Thu,  7 Nov 2024 13:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+xi+rgd"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o7sDvttj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E221EE019
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4472F1DDA3B;
+	Thu,  7 Nov 2024 13:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730986490; cv=none; b=lum3XSafnxf+NaHOen09DHHbpSCUb+4OvWQIbE/in+GYclNQknIacCYjwYiRiRAwprNcnHZdBz4XZyex4EPPG+W/DPFhItznOcerRvWJj5B4ElbqO/n1uvZ1op/rgqOaXToESo9z6h6Pn3NfIDkZ4Iv2wwp4v+W7N7N42fofhmg=
+	t=1730986527; cv=none; b=e3aY1uNbqYyZeTvnTuGxa32CUSLH7StPKsvDABX31g8TKD6Ge/YptpcyVT3kAkfTFXuSRlDkb7GC9vHLGtIy3ewDH4PBBQMeUJQy1tcBC9rYp4b2i0vO20BrwdlxLWTs8kM93eHWlH0CFBmOaCXKMtTnK9viPh0wd78uUnb8Gxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730986490; c=relaxed/simple;
-	bh=CBZ7aqFf6W6HwFKDmCRhz51raexfBR0Ll3SqqO7VngU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OQ+HiyFljua+wEMs9h9MtLCEtTZci2/diCevwqVbP9wnBi/JZhyLC464SbHHhc3YRdWYTsczXvonLq6SthSieYtBqm0yVfZTLSADAVRxqztghNNnagpS0bpJziJIZ4OtLO+mPiNZDzMRchJrsj16eRkzmBOe8dKMfDdNh43m/90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+xi+rgd; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e7e73740so789175e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:34:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730986486; x=1731591286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WhsFgA/EIJBwpraIAT9oEKriXviptqi7CjRLDOmpXc0=;
-        b=A+xi+rgdng/NIn4tVi6KgMICjk+Efvd8lC9K/B9PbjNmZ7hucxHw4tZK5eVu2eVDT1
-         ZM7xAzjIZ+kl+UsREC8W+IjjkuzdLZuUvJNVqvBPe+wjsSD3g4odT/VizamgcSRZILKH
-         DfEvqytuRkORrbSHmr2wmRJ7a5AhPAGcMkXjSRJTHCemjoEekqPrOZWkFEoUvSNUS9p4
-         B5CfHByjDY20LfGa1kChESVl8BdjCH+NBHiZ6lXorS9ifO83y1JdBvkrqUAv1NC1fv9Z
-         N3WtqQ8zEHyW+5YOTAO1JTXSv5duc8YJ9SciDxfG4/cTDT0Zp6svAP0X/4TO3Aw85mxd
-         PexQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730986486; x=1731591286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WhsFgA/EIJBwpraIAT9oEKriXviptqi7CjRLDOmpXc0=;
-        b=vrBd1BsWEglYU7Eqv7WHyIxqz7b2RZ5EUS5sAflS3bMMEYGWLj4T/TZGmdqcx7y67W
-         CMg9ETaUk8LFlQjAHgICyW4LpSAQbYrrgOVmiwI7aUngzg2TJYBzLBsNtGxUC699thnR
-         1AefXnRQdlkYfK+1CFY60ynEqVxJAQJ5IGi/+UOqFNJ53OQHz0K5bD0ZYx0R1dTE+Ylt
-         hvcksE8A0KcwLElUR/vhBMJH+mnGoSQEBD0802v4s/qiXkSusVxUr/IOmQmfgHWriIDi
-         MUA/HDvCrYsO4553B6knLPHyyaK3oKImzzLIwYkqIfaXTg6c/0LD0CfXguA/qVl49CH3
-         7+XA==
-X-Gm-Message-State: AOJu0YwzAm2okEapbTzP7Kf4rMrWPAx87NaPgJnIO8MY3d0sOC2spWRG
-	GlFIfZBoq9SLiCoX0G+5UDgzq6unTFdE6OZpanXHvNZ6YaA9VNkUJK+RUwiHKo8v6Xy7DQW9a8S
-	kjpepJG+A7NKPXeudf4PYCbb93NE=
-X-Google-Smtp-Source: AGHT+IFlLxgdVSNcIsplxlKO8vUhJQmPTOA2QwHraaW+6lHcRI+uaJyxCfpPV0iln35+z/HIiQZnlUKMiOwZXxv84wM=
-X-Received: by 2002:a05:651c:b06:b0:2fb:5f9d:c296 with SMTP id
- 38308e7fff4ca-2ff1a8c4c67mr9195581fa.4.1730986486193; Thu, 07 Nov 2024
- 05:34:46 -0800 (PST)
+	s=arc-20240116; t=1730986527; c=relaxed/simple;
+	bh=t/8insjH7bY+cYWvmL+WQJVYVpnLLyzddSxl6LIwJJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jO3FcsTnqb6SqBBZ2ASNgiwk9lbgf2Tt9VKLW3tL9jjSZeC8JJKl+hVOGywMcngKN5NZm1Rfrx4a+X5g7FTuS7HzPi3QKbj/mTsxYNLprvCdBOPJlpKs+9OzBVkTo+MrseXBQawbKqjmVxMMWEDk75MVWD+4Gq0gf2Mf9r11c34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o7sDvttj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A794YCn003803;
+	Thu, 7 Nov 2024 13:35:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LZIOvvGsRXn0/wnKpU8mvrnl8iQ5RNd08gSeOGXnT9w=; b=o7sDvttjUN7UssHT
+	i48jDHvj4uysSK9ZEvPsnMtKyoUckcVoLlZzS8yWksVVV7alnscV2Uoq1afpGq6/
+	C02DR5pzPJBsbeEdqi11NJmM/4eIvp+V6NZqvU8UcOYLbjKptMNXpWZI5Yu09/Zr
+	j53aADYYPdkqGxjMQLPed0QTPWjmQ08OUIwHSEoujRdqlovUEv7ClOjPnhFg2pj0
+	a52qKmAnX0G8eNhis/9et3Nf2qhc/F8dCWHbr/u7nc1LJ02gwaSNF3cDK0J0UqcN
+	n3/anhlguEARNUpR2M88CTb/1iubdv4qH+lkWeO0KPdV0FrNtm+nRU4EPIi7Z9a1
+	qx5CCQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qfdx7p0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 13:35:21 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7DZLgt008228
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 13:35:21 GMT
+Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
+ 05:35:18 -0800
+Message-ID: <781ea2fd-637f-b896-aad4-d70f43ad245c@quicinc.com>
+Date: Thu, 7 Nov 2024 19:05:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-10-brgerst@gmail.com>
- <CAFULd4YA0g0Mx0AKBfM-nK_OuTf0pY_fAnR5CCiJeh0cKPLMnQ@mail.gmail.com> <CAMzpN2g0iSXsm9jbgL3YJP9YGwtyG732g3aNnBjJWHgFkm_oJA@mail.gmail.com>
-In-Reply-To: <CAMzpN2g0iSXsm9jbgL3YJP9YGwtyG732g3aNnBjJWHgFkm_oJA@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 7 Nov 2024 14:34:34 +0100
-Message-ID: <CAFULd4ZgJt3ZifEQFPFuT-YRN0-p6w-=rFRKuwoEhBS84JSmiw@mail.gmail.com>
-Subject: Re: [PATCH v5 09/16] x86/percpu/64: Use relative percpu offsets
-To: Brian Gerst <brgerst@gmail.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
+ bound access
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
+ <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
+ <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
+ <81d6a054-e02a-7c98-0479-0e17076fabd7@quicinc.com>
+ <ndlf4bsijb723cctkvd7hkwmo7plbzr3q2dhqc3tpyujbfcr3z@g4rvg5p7vhfs>
+ <975f4ecd-2029-469a-8ecf-fbd6397547d4@linaro.org>
+ <57544d01-a7c6-1ea6-d408-ffe1678e0b5e@quicinc.com>
+ <ql6hftuo7udkqachofws6lcpwx7sbjakonoehm7zsh43kqndsf@rwmiwqngldn2>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <ql6hftuo7udkqachofws6lcpwx7sbjakonoehm7zsh43kqndsf@rwmiwqngldn2>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ccWNCJ483Y6ywBFH9EoYBJhldZv5z73l
+X-Proofpoint-ORIG-GUID: ccWNCJ483Y6ywBFH9EoYBJhldZv5z73l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=810
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070105
 
-On Thu, Nov 7, 2024 at 1:05=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wrot=
-e:
->
-> On Thu, Nov 7, 2024 at 6:28=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wr=
-ote:
-> >
-> > On Tue, Nov 5, 2024 at 4:58=E2=80=AFPM Brian Gerst <brgerst@gmail.com> =
-wrote:
-> > >
-> > > The percpu section is currently linked at absolute address 0, because
-> > > older compilers hardcoded the stack protector canary value at a fixed
-> > > offset from the start of the GS segment.  Now that the canary is a
-> > > normal percpu variable, the percpu section does not need to be linked
-> > > at a specific address.
-> > >
-> > > x86-64 will now calculate the percpu offsets as the delta between the
-> > > initial percpu address and the dynamically allocated memory, like oth=
-er
-> > > architectures.  Note that GSBASE is limited to the canonical address
-> > > width (48 or 57 bits, sign-extended).  As long as the kernel text,
-> > > modules, and the dynamically allocated percpu memmory are all in the
-> > > negative address space, the delta will not overflow this limit.
-> > >
-> > > Signed-off-by: Brian Gerst <brgerst@gmail.com>
-> > > ---
-> > >  arch/x86/include/asm/processor.h |  6 +++++-
-> > >  arch/x86/kernel/head_64.S        | 19 +++++++++----------
-> > >  arch/x86/kernel/setup_percpu.c   | 12 ++----------
-> > >  arch/x86/kernel/vmlinux.lds.S    | 29 +----------------------------
-> > >  arch/x86/platform/pvh/head.S     |  5 ++---
-> > >  arch/x86/tools/relocs.c          | 10 +++-------
-> > >  arch/x86/xen/xen-head.S          |  9 ++++-----
-> > >  init/Kconfig                     |  2 +-
-> > >  8 files changed, 27 insertions(+), 65 deletions(-)
-> > >
-> > > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/=
-processor.h
-> > > index a113c3f4f558..ae50d5d4fa26 100644
-> > > --- a/arch/x86/include/asm/processor.h
-> > > +++ b/arch/x86/include/asm/processor.h
-> > > @@ -428,7 +428,11 @@ DECLARE_INIT_PER_CPU(fixed_percpu_data);
-> > >
-> > >  static inline unsigned long cpu_kernelmode_gs_base(int cpu)
-> > >  {
-> > > -       return (unsigned long)per_cpu(fixed_percpu_data.gs_base, cpu)=
-;
-> > > +#ifdef CONFIG_SMP
-> > > +       return per_cpu_offset(cpu);
-> > > +#else
-> > > +       return 0;
-> > > +#endif
-> > >  }
-> > >
-> > >  extern asmlinkage void entry_SYSCALL32_ignore(void);
-> > > diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-> > > index c3028b4df85f..ffbcb0aea450 100644
-> > > --- a/arch/x86/kernel/head_64.S
-> > > +++ b/arch/x86/kernel/head_64.S
-> > > @@ -61,11 +61,14 @@ SYM_CODE_START_NOALIGN(startup_64)
-> > >         /* Set up the stack for verify_cpu() */
-> > >         leaq    __top_init_kernel_stack(%rip), %rsp
-> > >
-> > > -       /* Setup GSBASE to allow stack canary access for C code */
-> > > +       /*
-> > > +        * Set up GSBASE.
-> > > +        * Note that, on SMP, the boot cpu uses init data section unt=
-il
-> > > +        * the per cpu areas are set up.
-> > > +        */
-> > >         movl    $MSR_GS_BASE, %ecx
-> > > -       leaq    INIT_PER_CPU_VAR(fixed_percpu_data)(%rip), %rdx
-> > > -       movl    %edx, %eax
-> > > -       shrq    $32,  %rdx
-> > > +       xorl    %eax, %eax
-> > > +       xorl    %edx, %edx
-> >
-> > You can use cltd after "xor %eax, %eax", it is one byte shorter with
-> > the same effect ...
->
-> I suppose that would work, but I'm not sure it's worth it to
-> hyper-optimize boot code like this.  It's also confusing since the SDM
-> calls this instruction CDQ instead of CLTD.
 
-No big deal, indeed.
+On 11/7/2024 6:52 PM, Dmitry Baryshkov wrote:
+> On Thu, Nov 07, 2024 at 06:32:33PM +0530, Vikash Garodia wrote:
+>>
+>> On 11/7/2024 5:37 PM, Bryan O'Donoghue wrote:
+>>> On 07/11/2024 10:41, Dmitry Baryshkov wrote:
+>>>>> init_codecs() parses the payload received from firmware and . I don't think we
+>>>>> can control this part when we have something like this from a malicious firmware
+>>>>> payload
+>>>>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+>>>>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+>>>>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+>>>>> ...
+>>>>> Limiting it to second iteration would restrict the functionality when property
+>>>>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED is sent for supported number of codecs.
+>>>> If you can have a malicious firmware (which is owned and signed by
+>>>> Qualcomm / OEM), then you have to be careful and skip duplicates. So
+>>>> instead of just adding new cap to core->caps, you have to go through
+>>>> that array, check that you are not adding a duplicate (and report a
+>>>> [Firmware Bug] for duplicates), check that there is an empty slot, etc.
+>>>>
+>>>> Just ignoring the "extra" entries is not enough.
+>> Thinking of something like this
+>>
+>> for_each_set_bit(bit, &core->dec_codecs, MAX_CODEC_NUM) {
+>>     if (core->codecs_count >= MAX_CODEC_NUM)
+>>         return;
+>>     cap = &caps[core->codecs_count++];
+>>     if (cap->codec == BIT(bit)) --> each code would have unique bitfield
+>>         return;
+> 
+> This won't work and it's pretty obvious why.
+Could you please elaborate what would break in above logic ?
 
-Reviewed-by: Uros Bizjak <ubizjak@gmail.com>
+> 
+>>> +1
+>>>
+>>> This is a more rational argument. If you get a second message, you should surely
+>>> reinit the whole array i.e. update the array with the new list, as opposed to
+>>> throwing away the second message because it over-indexes your local storage..
+>> That would be incorrect to overwrite the array with new list, whenever new
+>> payload is received.
+> 
+> I'd say, don't overwrite the array. Instead the driver should extend it
+> with the new information.
+That is exactly the existing patch is currently doing.
+
+Regards,
+Vikash
+> 
+>>
+>> Regards,
+>> Vikash
+> 
 
