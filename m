@@ -1,121 +1,81 @@
-Return-Path: <linux-kernel+bounces-400802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A389C1287
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:38:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881F19C12A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71DE51F235B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:38:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9AF91C226B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39271F4269;
-	Thu,  7 Nov 2024 23:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F66C21732F;
+	Thu,  7 Nov 2024 23:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="TUPLNbxo"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="bqOTL1V0"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34770198E99
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 23:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564721EF923;
+	Thu,  7 Nov 2024 23:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731022724; cv=none; b=jnLPlZzMBvqXhXStOvQssqebt1QRygixmkvmkJahkRgS13soDox2avXroUPUC+lfoS7+S4ruMpm+A/TUpYo/X2W32ixzI/w1DoMOnQsGG1VhQPYeydEizlt3b1H1kSVSj3bTrddrBHa3yAcEf4dNGUwrwWvsKfauua7NAa8rOfo=
+	t=1731022773; cv=none; b=dcWWY1MJsRTSRiSoPQWp6BDB3JkS2A8nKnE5lutIlpm3j9KNZARD3npvhH6rHWu8Afvm+Lq9r/L9Pu0Weqzhr1gLhMXVNFH89FFpmpUEXrhUyVVIkF5kParVQGvmKnlnAtUDPVVGvJj1dPKZ1nF1rlCv+EyaDUjuNRIWxhaxrGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731022724; c=relaxed/simple;
-	bh=3V/CokK+h1n9R7Yo6jlevBapt790SuZpi3OUZYbbXek=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tyDM9q4i6ZGKHp+SUfnWWajfqeF1Ua+eYiP+Kw+2OntMzJFPzXaokoBCZIcgG0qNT3AVX213yv6D8P8UYCYSXq/XmLakO2HIb6PN0w3uikzUwwp1nrWK00hZqp5fFYjv3sMDvk7SWBDosliyHj7CpL9reAPQ6tlnL6JQBcH9hII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=TUPLNbxo; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731022716;
-	bh=ZzWkR0GOngNSUwjx4cfHDpPa+S6pHkHSoGBdXkewqpY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TUPLNbxonwdujxVvjGiB9u3JX5yMx2bSI7r2PEI3wl/8STSxyFRJiaJSul3H3+OE6
-	 D/ETUYjuL9vVMb8LqpIL0LoYs5VWEo4oQ2BHEoahj5KKLxrEjOWM1dOJvjXEh3grXR
-	 o5Gk7Dh1/LczHZ2usP5wjNpFYgahMsd+0vkBMkW2lYc1EupHChirwWYnYDv4vLH55v
-	 FWXirblpQpd8nS3UAqaZo10sKqHusY56PQ1LoiJJavzCNu8Eqb8EGMedkdCzP+hZ7U
-	 qkigV4cA5xgodFFf6+jSY5R4+5eCCKkYlpVdKuV4NqZb3yTlY4846cd44BLwIx3g+S
-	 BIs8M7u9+SJOg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xkz6N35JYz4wcy;
-	Fri,  8 Nov 2024 10:38:36 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Gautam Menghani <gautam@linux.ibm.com>
-Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
- maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/powerpc/pseries: Fix KVM guest detection for
- disabling hardlockup detector
-In-Reply-To: <2kkln3emctf7ewsh3eysujid2e7jel7yjtscfxmqeymeo5bjxf@7yzi5eye2n5j>
-References: <20241105132734.499506-1-gautam@linux.ibm.com>
- <87ed3ncl8q.fsf@mpe.ellerman.id.au>
- <2kkln3emctf7ewsh3eysujid2e7jel7yjtscfxmqeymeo5bjxf@7yzi5eye2n5j>
-Date: Fri, 08 Nov 2024 10:38:36 +1100
-Message-ID: <87bjyqd37n.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1731022773; c=relaxed/simple;
+	bh=A5bjyyAWYr+VR/DxJGgp7mRweAiKTLFWuDoMtqHPdt4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ljuDcgMJvNuyG/QQxrHK/Igaf41mo7XhCf0UYUSUlXZ0+aDF3nW6odzSFz+vZkT00ixEXBM5ojMFE/lcZsJoxaImgrKoONk/tTEh7fLPXYnTAflHmyHgV+zopDaP0yrNF6tgQ6UWu7VE9CsturNMBsMaNLnkJRv4SyqtaaqLnCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=bqOTL1V0; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1731022768;
+	bh=A5bjyyAWYr+VR/DxJGgp7mRweAiKTLFWuDoMtqHPdt4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=bqOTL1V0niQ4ld27SUYcHlDmAaoq5xSdE6TM4Cu7mkF2RsEJpecqiqyVPuUWIGNTQ
+	 ICeHH8E6VMmRL/ULBPyjNck8NZar70M3f+zzThxoac1+zdqPdiiMrkzs4C7+bcp99z
+	 axJyWMyc4x/hr9s/0Q0Aj5PMHlc/YeR54n+Bjj1Hgn59bxgRW2Siyhf44zq/Q4IDfq
+	 C+qwyMxmczr1dL5D3Rq6H39SlHeiDYjRWeMIaTVN2F9ete38v8BRjqJLMcET5rIJqG
+	 XogJixa7Ie4sXmj0XViwanp/VzRMD6l4uwBb2YTQRRKiKpnp1fhz/n49FnwzomV4UP
+	 TvY7qz6AgVqIw==
+Received: from [192.168.68.112] (ppp118-210-167-185.adl-adc-lon-bras34.tpg.internode.on.net [118.210.167.185])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id AB35C6B922;
+	Fri,  8 Nov 2024 07:39:27 +0800 (AWST)
+Message-ID: <696cbaeefd0f731a1883771da3caa308ffcd03d5.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 1/2] ARM: dts: aspeed: catalina: update pdb board
+ cpld ioexp linename
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Potin Lai <potin.lai.pt@gmail.com>, Patrick Williams <patrick@stwcx.xyz>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org, Potin Lai
+ <potin.lai@quantatw.com>, Cosmo Chou <cosmo.chou@quantatw.com>
+Date: Fri, 08 Nov 2024 10:09:27 +1030
+In-Reply-To: <20241107-catalina-cpld-ioexp-update-v2-1-d7742eabc0e6@gmail.com>
+References: 
+	<20241107-catalina-cpld-ioexp-update-v2-0-d7742eabc0e6@gmail.com>
+	 <20241107-catalina-cpld-ioexp-update-v2-1-d7742eabc0e6@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-Gautam Menghani <gautam@linux.ibm.com> writes:
-> On Thu, Nov 07, 2024 at 10:54:29PM +1100, Michael Ellerman wrote:
->> Gautam Menghani <gautam@linux.ibm.com> writes:
->> > As per the kernel documentation[1], hardlockup detector should be
->> > disabled in KVM guests as it may give false positives. On PPC, hardlockup
->> > detector is broken inside KVM guests because disable_hardlockup_detector()
->>  
->> Isn't it the opposite? Inside KVM guests, the hardlockup detector should
->> be *disabled*, but it's not it's *enabled*, due to this bug.
->> 
->> ie. it's not broken, it's working, but that's the bug.
->
-> Yes right, will change the description in v2.
+On Thu, 2024-11-07 at 20:39 +0800, Potin Lai wrote:
+> Due to there are huge changes of PDB CPLD IOEXP pin definitions since
+> DVT version,
 
-Thanks.
+If this is a different (revision of the) board, maybe it should have a
+different dts file?
 
->> > is marked as early_initcall and it uses is_kvm_guest(), which is
->> > initialized by check_kvm_guest() later during boot as it is a
->> > core_initcall. check_kvm_guest() is also called in pSeries_smp_probe(),
->> > which is called before initcalls, but it is skipped if KVM guest does
->> > not have doorbell support or if the guest is launched with SMT=1.
->> 
->> I'm wondering how no one has noticed. Most KVM guests have SMT=1.
->
-> Looking at the commit history, code around hardlockups and
-> pSeries_smp_probe() was changed around 2021/2022 timeframe, and I
-> believe KVM wasn't being actively tested at the time. 
-> Even I noticed this only after coming across the documentation that said
-> hardlockups should be disabled. So probably this feature decision isn't
-> widely known.
+See the on-going conversation on v1.
 
-I do test KVM but probably not under enough load to notice something
-like that.
-
->> > Move the check_kvm_guest() call in pSeries_smp_probe() to the initial
->> > part of function before doorbell/SMT checks so that "kvm_guest" static
->> > key is initialized by the time disable_hardlockup_detector() runs.
->> 
->> check_kvm_guest() is safe to be called multiple times so
->> disable_hardlockup_detector() should just call it before it calls
->> is_kvm_guest(). That should avoid future breakage when the order of
->> calls changes, or someone refactors pSeries_smp_probe().
->
-> Yeah I did that initially but in the worst case, that results in 3 calls
-> to check_kvm_guest() - the core_initcall, pseries_smp_probe() call and 
-> then disable_hardlockup_detector(). Will that be fine?
-
-Yeah it's fine. It's not pretty, maybe we can come up with something
-cleaner in future, but it's fine for a bug fix.
-
-cheers
+Andrew
 
