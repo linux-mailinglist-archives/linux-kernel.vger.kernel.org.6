@@ -1,94 +1,127 @@
-Return-Path: <linux-kernel+bounces-399168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD779BFBC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:40:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C039BFBC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:42:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CBDF1C2192F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:40:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659301F2272B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E0B17BD6;
-	Thu,  7 Nov 2024 01:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="K9C7ho5a"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373AA1426C;
+	Thu,  7 Nov 2024 01:42:02 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EFD1854;
-	Thu,  7 Nov 2024 01:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6C62F2D;
+	Thu,  7 Nov 2024 01:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730943582; cv=none; b=ShCfsHQsOW9Bs+vD9F2ip1CQmAQeflYlyBZu6hd5VyJiKjSFKX62RyVLe/lg38/TbPdic7FdTG/ae/0extDIfOJ5PVC3WT2JoQ3HkrmKFSxoRg9ASBX5rWp1Kf4qzj1KNg/8DToIivak0yevP92lwC/BDKH5NAPFeBvjG67kZbQ=
+	t=1730943721; cv=none; b=hgScLN7Um3lhV3eqSVMo8MzpK9g7T8FN+T899Z0jVMjQ21hkPOscybTAenEZDy96DAHldwcqGo4jUb+SD2edLT6VaRz3nA5nt+cSwt5H9Lw1nCG3keFF9httg06J1oGGNUKU6m8nqos4Vic5UQuxNlIFO0BnGMub9e0mN6iUcK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730943582; c=relaxed/simple;
-	bh=v+wSnkxB7K8ZEE4ZN48hk/OOcNbesDZwgQE7ZDFhLoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JuVrFhRA24zf7XSSV0/kPZ9itRQnym4nduhq1C79RvrylLIt8rl0eNZOkDprTl92Ky0H5xY8W4Ggu7VmBF+cjR6VZxbeKKZtItxP1CVEccuViJRMqx8M2oUdqb98LQKubrSMnr5FDf9PIprigGtMTsSV0Dzke1mAxebVce//rPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=K9C7ho5a; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730943576; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=H7nMDuaCmHzuDu+vzqYAf2Ao4YDpMJQ1LC3DQ9Aqn/w=;
-	b=K9C7ho5ay4idmQnra9UP+1CAbHC4BZhFkImts3t/RQ3AfCwKstTgzy55/fByz334PotzNPUUzrEYi46U0w3WjIP3GPzkBZ6V8zsPgKOdzU1P0BeXCqKR2SF1X6n7e4o+J8x4zcUXERiuNnO3ezG7Yxf8ogogggYyc2+++pKCKd4=
-Received: from 30.74.144.126(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIthrqX_1730943574 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 07 Nov 2024 09:39:36 +0800
-Message-ID: <ef09f0d0-c8c1-408f-85d9-31fa8de13a92@linux.alibaba.com>
-Date: Thu, 7 Nov 2024 09:39:34 +0800
+	s=arc-20240116; t=1730943721; c=relaxed/simple;
+	bh=PrjAHSYNUFy7LOmdNZV+ZZB4eC9hXrGwwKFdK8n08Xg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ng+M922iO3FR/BaW/mBBBrHVtxH1FDb3z3rpx5rBicclwdCD58tT1J79a867ZLWe1gqcFI4jTGTRWwFab/oylYPPFo7UHaoOx3FVDUliJkCW1vJODUXdlxppOVTD81FD7DZz1vT1PA/3X6UqoXTDz/ph4T+CPYZL6R7BcbDvEzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XkPsr40cRz20rX9;
+	Thu,  7 Nov 2024 09:40:48 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2A7571A0188;
+	Thu,  7 Nov 2024 09:41:56 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 7 Nov 2024 09:41:55 +0800
+Message-ID: <c9aaf37b-c6d8-0609-0113-449a635ddfc2@hisilicon.com>
+Date: Thu, 7 Nov 2024 09:41:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] arm64: dts: sprd: sc9863a: fix in-ports property
-To: Stanislav Jakubek <stano.jakubek@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1730918663.git.stano.jakubek@gmail.com>
- <5318a47282b8c15a3135fd12dacedb8aa70592e2.1730918663.git.stano.jakubek@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <5318a47282b8c15a3135fd12dacedb8aa70592e2.1730918663.git.stano.jakubek@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.0
+Subject: Re: [PATCH for-next 0/2] Small optimization for ib_map_mr_sg() and
+ ib_map_mr_sg_pi()
+Content-Language: en-US
+To: Leon Romanovsky <leon@kernel.org>
+CC: <dennis.dalessandro@cornelisnetworks.com>, <jgg@ziepe.ca>,
+	<linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>
+References: <20241105120841.860068-1-huangjunxian6@hisilicon.com>
+ <20241106120819.GA5006@unreal>
+ <b7dd1cc5-849d-781e-ad08-c5b554900150@hisilicon.com>
+ <20241106133646.GE5006@unreal>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20241106133646.GE5006@unreal>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
 
 
-On 2024/11/7 03:05, Stanislav Jakubek wrote:
-> This property is called "in-ports", not "in-port", fix it.
+On 2024/11/6 21:36, Leon Romanovsky wrote:
+> On Wed, Nov 06, 2024 at 09:12:47PM +0800, Junxian Huang wrote:
+>>
+>>
+>> On 2024/11/6 20:08, Leon Romanovsky wrote:
+>>> On Tue, Nov 05, 2024 at 08:08:39PM +0800, Junxian Huang wrote:
+>>>> ib_map_mr_sg() and ib_map_mr_sg_pi() allow ULPs to specify NULL as
+>>>> the sg_offset/data_sg_offset/meta_sg_offset arguments. Drivers who
+>>>> need to derefernce these arguments have to add NULL pointer checks
+>>>> to avoid crashing the kernel.
+>>>>
+>>>> This can be optimized by adding dummy sg_offset pointer to these
+>>>> two APIs. When the sg_offset arguments are NULL, pass the pointer
+>>>> of dummy to drivers. Drivers can always get a valid pointer, so no
+>>>> need to add NULL pointer checks.
+>>>>
+>>>> Junxian Huang (2):
+>>>>   RDMA/core: Add dummy sg_offset pointer for ib_map_mr_sg() and
+>>>>     ib_map_mr_sg_pi()
+>>>>   RDMA: Delete NULL pointer checks for sg_offset in .map_mr_sg ops
+>>>>
+>>>>  drivers/infiniband/core/verbs.c         | 12 +++++++++---
+>>>>  drivers/infiniband/hw/mlx5/mr.c         | 18 ++++++------------
+>>>>  drivers/infiniband/sw/rdmavt/trace_mr.h |  2 +-
+>>>>  3 files changed, 16 insertions(+), 16 deletions(-)
+>>>
+>>> So what does this change give us?
+>>> We have same functionality, same number of lines, same everything ...
+>>>
+>>
+>> Actually this is inspired by an hns bug. When ib_map_mr_sg() passes a NULL
+>> sg_offset pointer to hns_roce_map_mr_sg(), we dereference this pointer
+>> without a NULL check.
+>>
+>> Of course we can fix it by adding NULL check in hns, but I think this
+>> patch may be a better solution since the sg_offset is guaranteed to be
+>> a valid pointer. This could benefit future drivers who also want to
+>> dereference sg_offset, they won't need to care about NULL checks.
 > 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> ---
-> Changes in V2:
-> - new patch
+> Let's fix hns please. We are moving away from SG in RDMA.
 > 
->   arch/arm64/boot/dts/sprd/sc9863a.dtsi | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/sprd/sc9863a.dtsi b/arch/arm64/boot/dts/sprd/sc9863a.dtsi
-> index e5a2857721e2..31172ac44adc 100644
-> --- a/arch/arm64/boot/dts/sprd/sc9863a.dtsi
-> +++ b/arch/arm64/boot/dts/sprd/sc9863a.dtsi
-> @@ -288,7 +288,7 @@ etf_little_out: endpoint {
->   				};
->   			};
->   
-> -			in-port {
-> +			in-ports {
->   				port {
->   					etf_little_in: endpoint {
->   						remote-endpoint =
+
+Sure, thanks
+
+Junxian
+
+>>
+>> Junxian
+>>
+>>> Thanks
+>>>
+>>>>
+>>>> --
+>>>> 2.33.0
+>>>>
+>>>>
 
