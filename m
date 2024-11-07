@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-400754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83E7A9C11E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:35:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324289C11E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B5AEB235A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 644B11C22B66
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4907921A4A9;
-	Thu,  7 Nov 2024 22:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA61218D74;
+	Thu,  7 Nov 2024 22:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="hQSbh+rl"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UxrT6Ut+"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A17215C43;
-	Thu,  7 Nov 2024 22:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C38EC0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 22:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731018873; cv=none; b=I9B3CMqUQdYmzD5PD7k8dmccT1bC7FIHT7flZrN2vKL0YNpp1oToq7QUCNZd3hlaCO3OrZPprUe/Re50hQ1V1xA8xQTYLd31JQN05F/qQIeClJIMNokkDGFIdX27YTThDPG0ZtHyyjOlWWzYVCT6rJ6UWGkxSpHzPxtm5gpiXTg=
+	t=1731018969; cv=none; b=COPQwY600eRxtvdRa8lu0jEyloX3/POEXIMjK7Fi5CE6AAEDK2q+N5nAJVRWcPLmz3xIjoCo6h+KUrqzg/E5YFb9HY81z4xmvKs8Qx8mbRfZDRJ03FQudcdwK0+N5soF3MPvf94QqKvPaUfBbbz3rYVQfTGWo/4T8ZNHiaPD+04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731018873; c=relaxed/simple;
-	bh=ZxtAFmqRyaL65o3iODo/mU+qk8X/7FdzrLxnMlUsyEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pESJqX44aNJLoxMdwZfiWE5xvjxK0/P80hQqhKmbdR203JsJ1c9hOCpz/v7xCLpZ4bAEbF5nIHmxAEb1bjHJTEM20fOtSHTKs9M3a7h+At1ZRdsyi8oYzYH1Dk9z5rQPu14ejdiFN6VN/FxVqjevTkqIcuCVi8Quy1TD6/Wuguo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=hQSbh+rl; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: lina@asahilina.net)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id EB6BF41A48;
-	Thu,  7 Nov 2024 22:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
-	s=default; t=1731018867;
-	bh=ZxtAFmqRyaL65o3iODo/mU+qk8X/7FdzrLxnMlUsyEI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=hQSbh+rlc3sFazzd5eQwlhQPvaqWDd5n+eAUfrmgOFjidXW9nDdCqlnmysXzFtEL9
-	 VVrmW/+zJ8zJ9O1aMHJXkhROaPFaOXtl3qBKON+UjwFXB2EfIBvyLluOwDOuA3s3Lr
-	 OOPFeBSYf+3sNR5Bpp9yv8HUBDeSNgUjXzGIuj8+msQNxNEWqvMkaI+gGKtKnOEbTy
-	 qZ5ENd7Jx1bcoGvg2VTDCoxKq8lf0adGjSbQSdLgRUwj3HnbEfGTO2NFAIYznB3xzI
-	 0HniB+frkhhhJSOIxQVkVEulUikvCVYjejvtz7eNeHz1PWkSf1yUiwfaKZUas5A9NY
-	 aOglUrMfgVByQ==
-Message-ID: <6c8024f4-bfea-4934-9120-b17ab0770a1f@asahilina.net>
-Date: Fri, 8 Nov 2024 07:34:26 +0900
+	s=arc-20240116; t=1731018969; c=relaxed/simple;
+	bh=bCL4mPl+uKiO5OLaD6a26tnCZQrNfn7ckvad7so5gY4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rmTuqBoiLljhTYmQrbO7XKmmkpfk8UYf/FloS+jGsqg67QtGGPfQPa5MS9+Nm67BYRDO8osB4jBhpaqcByH6Db5wiQeCDYDrbk7oDPFViBYrBnZ6CA719VbHejH3eK23nmD36HonU/jTCecaYElmfcknBbIgR/eeDA4V+OmP7ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UxrT6Ut+; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e5fee32e76so916892b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 14:36:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731018967; x=1731623767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PTqplkmd1oO+cDQ02FzVSJQIEeacVX2zBVF1DfowAhY=;
+        b=UxrT6Ut+rmFmb0zhoQRNv6AVbLA8UUo/iVnr2ZleVa2yPZFKhhSheLIp0I0QfaDP/d
+         bTdzrMec2xuLbSfwFS6OyNIozd6HlmC8FtB8HyK1CU13AuvqDN1Ug7ArwesFm4qbcEa5
+         gPLkW/Qm5qeHPSCsWoguWdiSN1N2NFs/JztzYYjCRbneN5MjzXh0rUSi/KFxs1Y0xZx1
+         WBOz5/fotQFJgT4V2Ti2lpOlBXRAAxAZMfT5LN51lhv0aF2J5GnrWjjl9gPvwrQkEhGr
+         DeHVXw0NMtutXKmLKOyXADt75RqSXBfFgenqUB2OltFdGCl6ZoYP+KZ2JaZF2+/vf0Jm
+         OcYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731018967; x=1731623767;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PTqplkmd1oO+cDQ02FzVSJQIEeacVX2zBVF1DfowAhY=;
+        b=GbefN6YMa3/Zz+vA8HiJBEGDPX9jm0tpVROKY0Ci/0uBWXNNZfuQB/ZR61ZfarsQs0
+         qj+vVMslIonFX5f/yOkTV2ZzxTjryvqpMtdVTTCE7wbSqdcXBbU9v63zzG0dUibj78vy
+         48/5ud0+pjjYRj+3fB/IOabzIbXjsg/HjlRU58iLOQm0PGPsb0jnbDY6LzCpzWaG1LBU
+         USAJmatuefXsPcUwKt+bKccPNLC+phtlpus/x1WoNWiKrVcxbuWHI4/mgz7VA2v5UWof
+         w6Fk3mOYo1ZzjR1qz4UCiUHOzCJKR/gJ1YKU9U+1ZUnokQtcIEneGBehKudxbNsRB1Vb
+         QQew==
+X-Forwarded-Encrypted: i=1; AJvYcCXykoM4BoTCO36HwUaRQBA4jeSICcM5m19FCFOw2H0eYG6hdMJocETjkqUEyHEPBnlNQtleWyuQDl2KW2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIUH3kmS1B4qNkH36QJORCLEEo/Qe5k94GZlcJBrUpbWhYCrWg
+	pY0IlKpFzq3Dqjrk3IPRCR/XhrzMw6B8MoxDz2hEsfgZ4p7wzAU9m/VpbVyulERbvMFZD1cR73U
+	AIws=
+X-Google-Smtp-Source: AGHT+IGk7/iCDuk7k11o8jqdaJjFfjiiCG/HkKL3ykX33IYYarQ6sNKSrJTzYjDQNIvyDfW43TEcTg==
+X-Received: by 2002:a05:6808:15a0:b0:3e6:1ea5:6b30 with SMTP id 5614622812f47-3e7946aec3fmr1081232b6e.24.1731018966766;
+        Thu, 07 Nov 2024 14:36:06 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cca4fbfsm457821b6e.24.2024.11.07.14.36.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 14:36:06 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-block@vger.kernel.org, zhangguopeng <zhangguopeng@kylinos.cn>
+Cc: hch@lst.de, ming.lei@redhat.com, yukuai3@huawei.com, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241107104258.29742-1-zhangguopeng@kylinos.cn>
+References: <20241107104258.29742-1-zhangguopeng@kylinos.cn>
+Subject: Re: [PATCH v2] block: Replace sprintf() with sysfs_emit()
+Message-Id: <173101896555.1015163.9216450575734590168.b4-ty@kernel.dk>
+Date: Thu, 07 Nov 2024 15:36:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
-To: Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Sergio Lopez Pascual
- <slp@redhat.com>, linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
- <20241104105711.mqk4of6frmsllarn@quack3>
- <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
- <ZylHyD7Z+ApaiS5g@dread.disaster.area>
- <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
- <20241106121255.yfvlzcomf7yvrvm7@quack3>
- <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
- <20241107100105.tktkxs5qhkjwkckg@quack3>
- <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
- <672d300566c69_10bb7294d7@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: Asahi Lina <lina@asahilina.net>
-In-Reply-To: <672d300566c69_10bb7294d7@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-
-On 11/8/24 6:24 AM, Dan Williams wrote:
-> Asahi Lina wrote:
-> [..]
->> I don't think that's how it actually works, at least on arm64.
->> arch_wb_cache_pmem() calls dcache_clean_pop() which is either dc cvap or
->> dc cvac. Those are trapped by HCR_EL2<TPC>, and that is never set by KVM.
->>
->> There was some discussion of this here:
->> https://lore.kernel.org/all/20190702055937.3ffpwph7anvohmxu@US-160370MP2.local/
->>
->> But I'm not sure that all really made sense then.
->>
->> msync() and fsync() should already provide persistence. Those end up
->> calling vfs_fsync_range(), which becomes a FUSE fsync(), which fsyncs
->> (or fdatasyncs) the whole file. What I'm not so sure is whether there
->> are any other codepaths that also need to provide those guarantees which
->> *don't* end up calling fsync on the VFS. For example, the manpages kind
->> of imply munmap() syncs, though as far as I can tell that's not actually
->> the case. If there are missing sync paths, then I think those might just
->> be broken right now...
+On Thu, 07 Nov 2024 18:42:58 +0800, zhangguopeng wrote:
+> Per Documentation/filesystems/sysfs.rst, show() should only use
+> sysfs_emit() or sysfs_emit_at() when formatting the value to be
+> returned to user space.
 > 
-> IIRC, from the pmem persistence dicussions, if userspace fails to call
-> *sync then there is no obligation to flush on munmap() or close(). Some
-> filesystems layer on those guarantees, but the behavior is
-> implementation specific.
+> No functional change intended.
+> 
+> 
+> [...]
 
-Then I think your patch should be fine then, since there's nothing to do
-for writepages(). The syncing is handled via fsync() for FUSE/virtiofs
-and I don't think the dax_writeback_mapping_range() is actually doing
-anything in KVM anyway.
+Applied, thanks!
 
-~~ Lina
+[1/1] block: Replace sprintf() with sysfs_emit()
+      commit: 8e71afb94d6ed59055b67dadbc423c70104f21a9
+
+Best regards,
+-- 
+Jens Axboe
+
+
 
 
