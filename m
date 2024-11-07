@@ -1,326 +1,240 @@
-Return-Path: <linux-kernel+bounces-400140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23B89C0978
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:58:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC299C096B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B82284EB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BBA3284E74
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E80A213148;
-	Thu,  7 Nov 2024 14:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94427212EFB;
+	Thu,  7 Nov 2024 14:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvMP+NNH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="fxTJo6Mq"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91098DDBE;
-	Thu,  7 Nov 2024 14:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1D8212EE3
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730991479; cv=none; b=reECl4+P6mg+sOY86GwmwvgMFCdCaRdV7Z7g3FWsrHfN7RfhJgGbnbsPXQL0tT4+Zih/s2BD/TcgzTFg6Kj/ogsI3+mez2zA7+QkCh4WsaIPFo8XEfO1+DzTrhBXOORwVLHGJHu0ev4Cm2y93ZGdAPpr4DasFHUF/HuCCMQWVQ0=
+	t=1730991454; cv=none; b=sw1ngz9mHcvEElwLP3rvCg7mUJgK0er5t2ikllbOTgq1RY62i6u3Tht8thwamWaiYnk1AcQmmrmfVgGhw/KfM5Yglo32f47KJwTO15JaTK/nLzYKDI6V6n/xFJT0nY3NYtMKZ8+xGBP7PwsnLErl14fL5SCzhU1VhAeBkS57zek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730991479; c=relaxed/simple;
-	bh=M4S98JDjsFROzC5PxUC6VGIl3bST1BESEp9JZA+bpvw=;
+	s=arc-20240116; t=1730991454; c=relaxed/simple;
+	bh=qZ8izUSaHahLbAO7uWeGh/Gz8E/GX1hkiRPzbJN9tMY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DlMGavCvIAHpm3CrDtUbQb+wy0EALbyhB6FTzT30NcPwX/Qx5RO7REYEKJcTiN/Dm9i6Wt1l3zpJz4aI5T18+l2QDwnXt5jegFqyH+Am6sdfet92qM19U36RpjAB6s1ydZ71yZH2+/eXcFA/6MMZOMG+Z1FZsUjmVHoNa9l4Yj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvMP+NNH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12DAEC4CEDF;
-	Thu,  7 Nov 2024 14:57:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730991479;
-	bh=M4S98JDjsFROzC5PxUC6VGIl3bST1BESEp9JZA+bpvw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LvMP+NNHkqr1qpYAoXqBNXM/Lofit7EsnKl2oDdqAZC7DRL+4LW3jvGbUSCh1SAVS
-	 xBEdmSGze2t6WwKjz2VKJWFgq1mRpOQwhku9hz/mcWHNOdWim/ON4rVZnf7ThBRPWU
-	 4iVum+b89UhlJsUyZErxHONiF13v3WPHBh9gYdf8d3l5TYkJxakGXhZmSAZB14UCq+
-	 ruCOUz5FaqqIzUYSDYZsuFlE/U2G9xSAI6UxFlx0jTTzBMFVRlix1QoCWR6L88wuOO
-	 EYOWK56R0j/8u0KJaH50PErWf5wiYSvhaTylEz3BdM47NPPoTnLy6mTvm4x9xWYSuU
-	 RqjG1N0npclxg==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so12164811fa.3;
-        Thu, 07 Nov 2024 06:57:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU08G87vO/FTjovw7wyWseq6QKri2vkP7XnvYeXBPIpwaXrHyMplUtd4qei0YP/IZ7PCezwqiMGxlfwtatX@vger.kernel.org, AJvYcCVIbMRV8HSs9PTKxOMbgqt1Im9o6VkN39aLsa4JtrjxJHPc1nY1nrh9hkstVPU1IF2cacrRUyEOvoJJ@vger.kernel.org, AJvYcCVjLrU6f0fbPUuzpAys0ywuIgBjX/Cr9BkH2ztaU8a2+Ej+ILnbcV2x4hoUtVoXuXQEkMt6E9tuvWyH@vger.kernel.org, AJvYcCW1Q7/1Ra3rPkPJscC4JNJTTYMGIb2RMKIywfBlB4mDSmy2url0Pbj4LJ2u4zWejM4HMeiCY5p07s+cD66C@vger.kernel.org, AJvYcCX/6nOELzkaR5NgixkYzv0bNNMPuuZS2Lpsy+njPakq27qynmUjA3vKqmd92UMDABXK1iNyx+UF1ct3gQ==@vger.kernel.org, AJvYcCXVxm1MfIPDqfpULQEuFsgQQ0Q1MmGiPwqAy49ZigAq17WZNjYVDDOCRwnxtkrXZVjs8HnTIyuS13Iv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7yoLKFLSO7jgcRK9KKasFosF/ko7qVwE712NV0R+BHvzL8pQR
-	Q4PzB6NPwg9h6rU1LO7CMMpJAhaGH5E8eYXy9y5Zg4M0A1d7tB5eH5Rw0hn/NvgFvdnEXfb6ET9
-	CFpKgnoQkY+FeMAjavB+QpldOaF4=
-X-Google-Smtp-Source: AGHT+IFmA951ptQc8QsAZHvAxoThsua6J9myv4Rqxp385MmoQlKPZK+102ZqWTI42l02aJur+dP9PjfQJFka7w66Msc=
-X-Received: by 2002:a05:651c:2210:b0:2fb:5035:7e4 with SMTP id
- 38308e7fff4ca-2fedb75775fmr136721401fa.5.1730991477370; Thu, 07 Nov 2024
- 06:57:57 -0800 (PST)
+	 To:Cc:Content-Type; b=dMBiO3ycjow/YJKIjuWNqSKt7oHlrg6tq8yEjAJqs0PHZu76Kl/qa9XmnCJkdljgMqDeaKZTexpXw+FuSiyPaP2DAWrj/jd4z62F2QeKdyDpNHRigfYmI3eYKfmTEIo4gAxZHd8Ar0iOfayCpDi+Y9DT9gpu9GU9uedaU0JLRIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=fxTJo6Mq; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e9f8dec3daso8645257b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 06:57:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1730991452; x=1731596252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiuuQGCaJR6L9rbp4LJqZfhMxwW+RQ/d7RNS/+rBXDw=;
+        b=fxTJo6MqgGoAfhP31zROnAQv2iNF3dLcyRvO3hNcsz1HIeKD6T/E1eZAwAejVhK6iL
+         iN1uYUkLFrW84u2SD4lJ5fco7UUu7XbWZTBiFwuLTn3WH+MDNDaEQ5RLoZR1HcMJnqOz
+         IATQBn0zm+Iw/VQmLu9ee7VHOwGjfdDJD1Zu4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730991452; x=1731596252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aiuuQGCaJR6L9rbp4LJqZfhMxwW+RQ/d7RNS/+rBXDw=;
+        b=GJXmBWdYAKSFArBHfm6CC2Jm1hxyOfRTbuOVJlC9rQxCxEFifR/FZhrYdL2Ss+oyRd
+         0JQz6OnO6jVWqsQ7whXj1qT5XqoJzuZgE73/Q26cK3tmg1NhVIxpRP4Rnjm3TB+5Di0m
+         Tr7YZat/POmP/I3dmrazKE+DXe0u1SOvxM2wGXdwiPtHV60JE8KDjOZcr4o3WcY4+lQk
+         yT6C9TKVygWvxnlG03qExWlffvkoIpwbC2+gRs5fnOTBny+UKwYR7J2hmcfOp6lVhoCm
+         Engw57LLke56mU+NejjbZUXitSeJq8bELeGOqOKLZDRHiN05P2D8EwQfFqoGZk7d/I2d
+         II6w==
+X-Gm-Message-State: AOJu0YziWV/NdeX/bKXoMZQh5rNR0r3XWxA6XTdb1xr3QEO9vpPAjEl3
+	5JDt1S/TOUfEidpDH8tRAl3ujSPQJc00XdB64Rccvw/cdk2mMDNPb+vXdQAukoY7bXmPoDYlorl
+	+MoWeTiFV1nSJkRvv30x5q3kmCME78AH3tpbx3A==
+X-Google-Smtp-Source: AGHT+IF8agBg7laXxANgHAvwKG8a08ww2rsq+nqLU8LlqFlymOUM9EIrlz0DftKlezAxcI5XDK1DcyZtsOZ0bmNH4oE=
+X-Received: by 2002:a05:690c:4b09:b0:6e3:b6c:d114 with SMTP id
+ 00721157ae682-6e9d8ad309bmr466023927b3.38.1730991452024; Thu, 07 Nov 2024
+ 06:57:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102175115.1769468-1-xur@google.com> <CAK7LNASdBPtq4vaK0XZQvxicOY15qJFsnqkO2_us4AU4ppHw6A@mail.gmail.com>
- <CAF1bQ=R-7z9+57fji4Mn=ZVUgwSniGQ-8H4=42tFunxyp69Wzw@mail.gmail.com>
-In-Reply-To: <CAF1bQ=R-7z9+57fji4Mn=ZVUgwSniGQ-8H4=42tFunxyp69Wzw@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 7 Nov 2024 23:57:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARpXOm1R_BVsH-fSC4ZzQqstHj0amzX8fu6=USwTD91Tw@mail.gmail.com>
-Message-ID: <CAK7LNARpXOm1R_BVsH-fSC4ZzQqstHj0amzX8fu6=USwTD91Tw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] Add AutoFDO and Propeller support for Clang build
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
-	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, 
-	Krzysztof Pszeniczny <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>, 
-	Stephane Eranian <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
+References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
+ <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
+ <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u> <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
+In-Reply-To: <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Thu, 7 Nov 2024 15:57:21 +0100
+Message-ID: <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
+ spectrum clocking
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 7, 2024 at 4:00=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+Hello Krzysztof,
+
+On Wed, Nov 6, 2024 at 3:13=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
 >
-> On Wed, Nov 6, 2024 at 8:09=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
+> On 06/11/2024 15:10, Krzysztof Kozlowski wrote:
+> > On Wed, Nov 06, 2024 at 09:57:57AM +0100, Dario Binacchi wrote:
+> >> The patch adds the DT bindings for enabling and tuning spread spectrum
+> >> clocking generation.
 > >
-> > On Sun, Nov 3, 2024 at 2:51=E2=80=AFAM Rong Xu <xur@google.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > This patch series is to integrate AutoFDO and Propeller support into
-> > > the Linux kernel. AutoFDO is a profile-guided optimization technique
-> > > that leverages hardware sampling to enhance binary performance.
-> > > Unlike Instrumentation-based FDO (iFDO), AutoFDO offers a user-friend=
-ly
-> > > and straightforward application process. While iFDO generally yields
-> > > superior profile quality and performance, our findings reveal that
-> > > AutoFDO achieves remarkable effectiveness, bringing performance close
-> > > to iFDO for benchmark applications.
-> > >
-> > > Propeller is a profile-guided, post-link optimizer that improves
-> > > the performance of large-scale applications compiled with LLVM. It
-> > > operates by relinking the binary based on an additional round of runt=
-ime
-> > > profiles, enabling precise optimizations that are not possible at
-> > > compile time.  Similar to AutoFDO, Propeller too utilizes hardware
-> > > sampling to collect profiles and apply post-link optimizations to imp=
-rove
-> > > the benchmark=E2=80=99s performance over and above AutoFDO.
-> > >
-> > > Our empirical data demonstrates significant performance improvements
-> > > with AutoFDO and Propeller, up to 10% on microbenchmarks and up to 5%
-> > > on large warehouse-scale benchmarks. This makes a strong case for the=
-ir
-> > > inclusion as supported features in the upstream kernel.
-> > >
-> > > Background
-> > >
-> > > A significant fraction of fleet processing cycles (excluding idle tim=
-e)
-> > > from data center workloads are attributable to the kernel. Ware-house
-> > > scale workloads maximize performance by optimizing the production ker=
-nel
-> > > using iFDO (a.k.a instrumented PGO, Profile Guided Optimization).
-> > >
-> > > iFDO can significantly enhance application performance but its use
-> > > within the kernel has raised concerns. AutoFDO is a variant of FDO th=
-at
-> > > uses the hardware=E2=80=99s Performance Monitoring Unit (PMU) to coll=
-ect
-> > > profiling data. While AutoFDO typically yields smaller performance
-> > > gains than iFDO, it presents unique benefits for optimizing kernels.
-> > >
-> > > AutoFDO eliminates the need for instrumented kernels, allowing a sing=
-le
-> > > optimized kernel to serve both execution and profile collection. It a=
-lso
-> > > minimizes slowdown during profile collection, potentially yielding
-> > > higher-fidelity profiling, especially for time-sensitive code, compar=
-ed
-> > > to iFDO. Additionally, AutoFDO profiles can be obtained from producti=
-on
-> > > environments via the hardware=E2=80=99s PMU whereas iFDO profiles req=
-uire
-> > > carefully curated load tests that are representative of real-world
-> > > traffic.
-> > >
-> > > AutoFDO facilitates profile collection across diverse targets.
-> > > Preliminary studies indicate significant variation in kernel hot spot=
-s
-> > > within Google=E2=80=99s infrastructure, suggesting potential performa=
-nce gains
-> > > through target-specific kernel customization.
-> > >
-> > > Furthermore, other advanced compiler optimization techniques, includi=
-ng
-> > > ThinLTO and Propeller can be stacked on top of AutoFDO, similar to iF=
-DO.
-> > > ThinLTO achieves better runtime performance through whole-program
-> > > analysis and cross module optimizations. The main difference between
-> > > traditional LTO and ThinLTO is that the latter is scalable in time an=
-d
-> > > memory.
-> > >
-> > > This patch series adds AutoFDO and Propeller support to the kernel. T=
-he
-> > > actual solution comes in six parts:
-> > >
-> > > [P 1] Add the build support for using AutoFDO in Clang
-> > >
-> > >       Add the basic support for AutoFDO build and provide the
-> > >       instructions for using AutoFDO.
-> > >
-> > > [P 2] Fix objtool for bogus warnings when -ffunction-sections is enab=
-led
-> > >
-> > > [P 3] Adjust symbol ordering in text output sections
-> > >
-> > > [P 4] Add markers for text_unlikely and text_hot sections
-> > >
-> > > [P 5] Enable =E2=80=93ffunction-sections for the AutoFDO build
-> > >
-> > > [P 6] Enable Machine Function Split (MFS) optimization for AutoFDO
-> > >
-> > > [P 7] Add Propeller configuration to the kernel build
-> > >
-> > > Patch 1 provides basic AutoFDO build support. Patches 2 to 6 further
-> > > enhance the performance of AutoFDO builds and are functionally depend=
-ent
-> > > on Patch 1. Patch 7 enables support for Propeller and is dependent on
-> > > patch 2 to patch 4.
-> > >
-> > > Caveats
-> > >
-> > > AutoFDO is compatible with both GCC and Clang, but the patches in thi=
-s
-> > > series are exclusively applicable to LLVM 17 or newer for AutoFDO and
-> > > LLVM 19 or newer for Propeller. For profile conversion, two different
-> > > tools could be used, llvm_profgen or create_llvm_prof. llvm_profgen
-> > > needs to be the LLVM 19 or newer, or just the LLVM trunk. Alternative=
-ly,
-> > > create_llvm_prof v0.30.1 or newer can be used instead of llvm-profgen=
-.
-> > >
-> > > Additionally, the build is only supported on x86 platforms equipped
-> > > with PMU capabilities, such as LBR on Intel machines. More
-> > > specifically:
-> > >  * Intel platforms: works on every platform that supports LBR;
-> > >    we have tested on Skylake.
-> > >  * AMD platforms: tested on AMD Zen3 with the BRS feature. The kernel
-> > >    needs to be configured with =E2=80=9CCONFIG_PERF_EVENTS_AMD_BRS=3D=
-y", To
-> > >    check, use
-> > >    $ cat /proc/cpuinfo | grep =E2=80=9C brs=E2=80=9D
-> > >    For the AMD Zen4, AMD LBRV2 is supported, but we suspect a bug wit=
+> > We had long talks about this but nothing of it got reflected in commit
+> > msg. Sorry, I don't remember what I was talking in some particular patc=
 h
-> > >    AMD LBRv2 implementation in Genoa which blocks the usage.
-> > >
-> > > For ARM, we plan to send patches for SPE-based Propeller when
-> > > AutoFDO for Arm is ready.
-> > >
-> > > Experiments and Results
-> > >
-> > > Experiments were conducted to compare the performance of AutoFDO-opti=
-mized
-> > > kernel images (version 6.9.x) against default builds.. The evaluation
-> > > encompassed both open source microbenchmarks and real-world productio=
-n
-> > > services from Google and Meta. The selected microbenchmarks included =
-Neper,
-> > > a network subsystem benchmark, and UnixBench which is a comprehensive=
- suite
-> > > for assessing various kernel operations.
-> > >
-> > > For Neper, AutoFDO optimization resulted in a 6.1% increase in throug=
-hput
-> > > and a 10.6% reduction in latency. UnixBench saw a 2.2% improvement in=
- its
-> > > index score under low system load and a 2.6% improvement under high s=
-ystem
-> > > load.
-> > >
-> > > For further details on the improvements observed in Google and Meta's
-> > > production services, please refer to the LLVM discourse post:
-> > > https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo=
--including-thinlto-and-propeller/79108
-> > >
-> > > Thanks,
-> > >
-> > > Rong Xu and Han Shen
+> > month ago, so you will get the same questions over and over...
 > >
+> >>
+> >> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> >>
+> >> ---
+> >>
+> >> Changes in v3:
+> >> - Added in v3
+> >> - The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
+> >>   imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
+> >>   indeed more or less a syscon, so it represents a memory area
+> >>   accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
+> >>
+> >>  .../bindings/clock/imx8m-clock.yaml           | 46 ++++++++++++++++++=
++
+> >>  1 file changed, 46 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml =
+b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> >> index c643d4a81478..7920393e518e 100644
+> >> --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> >> +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> >> @@ -43,6 +43,40 @@ properties:
+> >>        ID in its "clocks" phandle cell. See include/dt-bindings/clock/=
+imx8m-clock.h
+> >>        for the full list of i.MX8M clock IDs.
+> >>
+> >> +  fsl,ssc-clocks:
+> >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> >> +    description:
+> >> +      Phandles of the PLL with spread spectrum generation hardware ca=
+pability.
+> >> +    minItems: 1
+> >> +    maxItems: 4
 > >
-> > I applied this series to linux-kbuild.
+> > 1. How is it possible that you change spread spectrum of some clocks fr=
+om
+> > main Clock Controller, while this device is not a consumer of them?
+> > Basically this means that this device does not have these clocks but ye=
+t
+> > you claim that it needs to configure spread for them! It's contradictor=
+y
+> > to me and nohing got explained in commit msg about it. I am pretty sure
+> > I asked about this alrady.
+>
+> I digged my previous answer and it was pretty clear here:
+>
+> 18:44 <krzk> You can, but I still have the same concerns. How this
+> device - which does not take any clock input, has no clocks at all - can
+> depend on spread spectrum of some PLLs? Thsi device does not have clocks.
+> 18:50 <krzk> device has no clocks, I checked now third time
+> 18:50 <krzk> If device has clocks, it must have clocks property
+>
+
+The device where the spread spectrum properties are to be set already
+contains "clocks" properties:
+
+clk: clock-controller@30380000 {
+    compatible =3D "fsl,imx8mn-ccm";
+    reg =3D <0x30380000 0x10000>;
+    interrupts =3D <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
+                       <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+    #clock-cells =3D <1>;
+    clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
+                  <&clk_ext3>, <&clk_ext4>;
+    clock-names =3D "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+                             "clk_ext3", "clk_ext4";
+    assigned-clocks =3D <&clk IMX8MN_CLK_A53_SRC>,
+                                  <&clk IMX8MN_CLK_A53_CORE>,
+                                  <&clk IMX8MN_CLK_NOC>,
+                                  <&clk IMX8MN_CLK_AUDIO_AHB>,
+                                  <&clk IMX8MN_CLK_IPG_AUDIO_ROOT>,
+                                  <&clk IMX8MN_SYS_PLL3>,
+                                  <&clk IMX8MN_AUDIO_PLL1>,
+                                  <&clk IMX8MN_AUDIO_PLL2>;
+    assigned-clock-parents =3D <&clk IMX8MN_SYS_PLL1_800M>,
+                                             <&clk IMX8MN_ARM_PLL_OUT>,
+                                             <&clk IMX8MN_SYS_PLL3_OUT>,
+                                             <&clk IMX8MN_SYS_PLL1_800M>;
+    assigned-clock-rates =3D <0>, <0>, <0>,
+                                         <400000000>,
+                                         <400000000>,
+                                         <600000000>,
+                                         <393216000>,
+                                         <361267200>;
+};
+
+The spread spectrum is not configurable on these clocks or, more
+generally, may not be
+configurable (only 4 PLLs have this capability). Therefore, I need the
+"fsl,ssc-clocks"
+property to list the PLLs on which I want to enable and configure
+spread spectrum.
+
+Furthermore, spread spectrum cannot be considered a new device but
+rather a property
+available only for some of the clocks managed by the clock controller
+manager (CCM).
+
+Thanks and regards,
+Dario
+
+> So again, you do not need this property at all. I repeated it multiple
+> times - you are supposed to use clocks property.
+>
+> >
+> > 2. Why is this array flexible in size?
+> >
+> > Best regards,
+> > Krzysztof
 > >
 >
-> Thanks for taking the patch!
+> Best regards,
+> Krzysztof
 >
-> > As I mentioned before, I do not like #ifdef because
-> > it hides (not fixes) issues only for default cases.
->
-> We followed the suggestion and removed most of the #if (or #ifdef) in
-> the linker script.
-> I just checked: there are two #ifdef remaining:
-> (1) in the propeller patch for .llvm_bb_addr_map
-> (2) in linker script patch for arch/sparc/kernel/vmlinux.lds.S.
->
-> I think it's likely safe to remove the checks for head_64.o in
-> non-SPARC64 builds and .llvm_bb_addr_map symbols in non-propeller builds.
->
-> SPARC64 builds should always produce head_64.o, and non-SPARC64
-> builds shouldn't.
->
-> Propeller builds always generate .llvm_bb_addr_map symbols, and the
-> linker will omit the section if it's empty in non-propeller builds.
->
-> Keeping the checks is harmless and might slightly reduce linker
-> workload for matching.
-> But If you'd prefer to remove them, I'm happy to provide a patch.
 
 
-I am talking about the #ifdef in include/asm-generic/vmlinux.lds.h
+--
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
 
 
-Yeah, it is me who (reluctantly) accepted cb87481ee89d.
+Amarula Solutions SRL
 
-Now, the #ifdef has become a little more complicated.
-The default case is safe, but there are hidden issues.
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
 
-Some issues are easy to fix, so I sent some patches.
-https://lore.kernel.org/linux-kbuild/20241106161445.189399-1-masahiroy@kern=
-el.org/T/#t
-https://lore.kernel.org/linux-kbuild/20241106161445.189399-1-masahiroy@kern=
-el.org/T/#m4e4fa70386696e903b68d3fe1d7277e9a63fbefe
-https://lore.kernel.org/linux-kbuild/20241107111519.GA15424@willie-the-truc=
-k/T/#mccf6d49ddd11c90dcc583d7a68934bb3311da880
+T. +39 042 243 5310
+info@amarulasolutions.com
 
-For example, see e41f501d3912.
-
-When CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=3Dy or
-CONFIG_LTO_CLANG=3Dy or CONFIG_AUTOFDO_CLANG=3Dy or
-CONFIG_PROPELLER_CLANG=3Dy, the .text.startup sections
-will go to TEXT_MAIN instead of INIT_TEXT.
-This is not a fatal issue, but we cannot reuse memory for .text.startup
-sections.
-
-Removing the #ifdef (i.e. reverting cb87481ee89d) is more difficult
-because we need to take a closer look at potential impacts for all
-architectures.
-
-I understood you did not want to take a risk to break random architectures,
-so I decided to postpone the #ifdef issue and accept your patch set.
-
---=20
-Best Regards
-Masahiro Yamada
+www.amarulasolutions.com
 
