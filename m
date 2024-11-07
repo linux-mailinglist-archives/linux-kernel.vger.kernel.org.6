@@ -1,133 +1,369 @@
-Return-Path: <linux-kernel+bounces-400137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239A09C0969
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:57:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85A39C0973
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 345E01C234AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:57:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF661C226D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABA2212EFA;
-	Thu,  7 Nov 2024 14:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C53212EE3;
+	Thu,  7 Nov 2024 14:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUKjHHmn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="md29J8U7"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F029F1DFDB8;
-	Thu,  7 Nov 2024 14:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26323210186
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730991439; cv=none; b=PJyAWfL4d0TvaSt0ctNuQNPMiafNGlxJTTZPtRd759cuSaUxGlXclwEs6zdPVtUqjEQdU1uBX8jfQfp254MT6AkmFsQyUUHsXHgm2ylAi09F29nSQql3fSvKRezfUFOCq/RCdH1aiJysb4kEv01eKCRzJ2aHXog4hrZ+DkrU+tA=
+	t=1730991462; cv=none; b=q9USpqFJHIQSRtIG3cpi99cC8QLYjvJZQYF8bdQ2RxcQkUIHv/efxv8GOevc5OA6cARFJSb5ixsCH3cTCFjVyo/aUEiubJIsKbls6q4i7Jtj2Y0vQqautM8GCxc5lUVrWSvAvl+9nEDzOf6hDUR5H86ow4bqNc9OkU/Y/Ijfqdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730991439; c=relaxed/simple;
-	bh=C9KmSDR5KFc0giels4Al9MLQh0c4mvvugPsBEyIlPMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SpXhsujsiO+k5KWM5nnmIvyba4h16mNKnmS5S0L5PhjL8tl8M1VI3EzOu6geX5H8ZhMgjX3zNvQ97dLnd25W32hgmr5PJBmmaI1Cf7g+E4lOl305+stxRBlxA/+XKe1Y3VINn1SSIc5JwB6WHCcb2F31wVcKfVFmhek1jCcHvyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUKjHHmn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446C9C4CECC;
-	Thu,  7 Nov 2024 14:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730991438;
-	bh=C9KmSDR5KFc0giels4Al9MLQh0c4mvvugPsBEyIlPMc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nUKjHHmnRqq4bsnJZ+OZuFrB9YXvC6X4M5misHrpPT1KzbLdS5E4/MVzrNxOkCJV6
-	 I2rbgYr86mPtqiO0a1lrHhXuM2ewfE48sz2vOaMGawmaIK1eTa7uBoXQzs2J69gPdS
-	 wCXAA/t6HurHqQpmnUvMjzytKtu4ZZn/d2/eU4nJ3nyc4aWJwPsl+0tuoshvxECg77
-	 Ptqrj0ON5PC8Cc14u0bbyJeuvq3JBG8EdqeAu1I038TXCm+DGkTUtTaOVXNNsDyGXK
-	 0Ua807riaRFvirBS6h+ZWu6YQvkuDwwbncZLaoAxl9nykMT3L1j8ebFBrLbWNbipgG
-	 rvnAqAZbPUiHA==
-Date: Thu, 7 Nov 2024 08:57:15 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-pci@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v6 0/2] PCI: microchip: support using either instance 1
- or 2
-Message-ID: <20241107145715.GA1613568@bhelgaas>
+	s=arc-20240116; t=1730991462; c=relaxed/simple;
+	bh=BLY94gMzJV8bl1rs8ITlqHgcrX3WJaZb1Ugt48De6Y8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HKZ9+b38WM04vrKW3OYKMlfdjVskAR5PtJ7Y/xVUrtYoLI8o26Mivyl8ZdHLnWfmH6RJmFncaL/LjpiOG2AYZseN5f5AOwridVb416xwvSPBmy8a8DdtjbSQVTY61zMIWTNrzs+0DbcE3GpgCHv9w8TpJTMBC4TFIyZA+ktHLaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=md29J8U7; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43163667f0eso9411295e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 06:57:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730991458; x=1731596258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lqk0qjxtF+D8UlnS4c7pFGqetkwdoGFt8LgY3js1r6w=;
+        b=md29J8U7/VHYYyn33wxR9udL2DoXIsYHTWs+uzv6i93xcwWP6pwa8L3qDFYa/chAyK
+         0BlcLGpcFDjYqz+OyX9iv7dVeajesA9oePaPntYSRh1FXM01yWkgeNLG/A72YNJyu1HN
+         ehMAgVj6Vmhgwv74vVmo/E8lNlsk5SPbSHHiIGyLDLcfYsP4gvEUGjkZ1+qD88ZRHe+8
+         2fWXwtl5hI8PX8AS3Us3tvx+scbgVhYENouumy3gRya4m3zOiC9t52AkcseDguGd5FSY
+         swUOon8XtuU4+SiN45YcuiCX+pN8xqRGIrtPMzMl4kJMsuSD4B6PdKkq1GkStSfo5hvb
+         SPkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730991458; x=1731596258;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lqk0qjxtF+D8UlnS4c7pFGqetkwdoGFt8LgY3js1r6w=;
+        b=EsAuvpFIZEDjAzMjfgwDM3PWHwqn+NmcAVdDPqJxrcQ69690Ko/DoiZ7wnUz/T6Cqi
+         yRwpAfQJfOPWZ6IR2s0KNCuyliN2kjIwohynBs/PnkjHODWMz0elMTEKY4Q8nl30wmlr
+         x7a0ZX9yiW8PvOjQYAI/0PxPmHhLPcfuytK17n88OM1FL+nkWXgO1FwJUnOQgw6is4gu
+         tyUtmLvdRgAGdGFs10hosoQQrgXHsNGzGkD52hjgFfLmBAYEoO2hRjFOV8i+QQn52BHu
+         dz9ZeJdHMYhvruuQ4+0cUX6MM7zpJCYAB+1hWKpk3ZJq305tOlrdINpJU50kAALEX6fv
+         jzkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfH7oi/rvdh7+qjarZ2erOEXtkG6SEYgu2XckUTejkUEOyX7Y/F75uv2nOd3qPyNYKp2aAsqJJE+wQhh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVvyndfmsnqP7xIx0fq7b6m88jPmmVIpOv5IdhLJZECFdHk/uk
+	p7V7IddjIfZJ2IDYFIDYSoUibrfrBLXq47WCuSAXYiWz0l3ixq8+qF9h+pdwRX8=
+X-Google-Smtp-Source: AGHT+IFutcR0bwD8WGqeYpA0PxXHK8DXeXLoWqc0ukDAw+4BGJ+GPCxRmhBmc2u0+oKs2PA+/pN2iw==
+X-Received: by 2002:a05:600c:3c9d:b0:42f:823d:dddd with SMTP id 5b1f17b1804b1-4328327e6ddmr198325885e9.27.1730991458265;
+        Thu, 07 Nov 2024 06:57:38 -0800 (PST)
+Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e56sm66186115e9.2.2024.11.07.06.57.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 06:57:37 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Georgi Djakov <djakov@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-omap@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] memory: Switch back to struct platform_driver::remove()
+Date: Thu,  7 Nov 2024 15:57:16 +0100
+Message-ID:  <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9746; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=BLY94gMzJV8bl1rs8ITlqHgcrX3WJaZb1Ugt48De6Y8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnLNVM5QHSsQ7HgmkC6FzXKigeL1KUUWrXvsJ6O VJasoc4Mn+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZyzVTAAKCRCPgPtYfRL+ TigRB/0bxEq95zaC2k3YuORkpdyWmyAoPbkwl6e0yDuizDWC8tUPgkPxjP6tjGCeLnO0fqtTk3M y5yD+Jo9qpEaO8Q4tCyiWZ/2EMw2eXve2+L6l/hFHq1HwUcDe3uru2yXBaXpbrOgNAuMKRlpApR 4KoXUXbQETaAPe5MhVphrGW+dxWzf5I0XHMXefWcg2fHXsoz2EI5hKEk0c25S3dI4tM4RZFqnfK 08Pp2+RlDKgDMTRbstCJeYXCYZxKahvwrIhg6AK9FP6yPsTpc8rlMvQsdBx6zilVYUex/dBgxeO pXTfPBqNmRn6mTjrN6Qu5lwEUnReoNrvyOCiooTUjAvWL240
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241107-aqueduct-petroleum-c002480ba291@spud>
 
-On Thu, Nov 07, 2024 at 10:59:33AM +0000, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
-> 
-> The current driver and binding for PolarFire SoC's PCI controller assume
-> that the root port instance in use is instance 1. The second reg
-> property constitutes the region encompassing both "control" and "bridge"
-> registers for both instances. In the driver, a fixed offset is applied to
-> find the base addresses for instance 1's "control" and "bridge"
-> registers. The BeagleV Fire uses root port instance 2, so something must
-> be done so that software can differentiate. This series splits the
-> second reg property in two, with dedicated "control" and "bridge"
-> entries so that either instance can be used.
-> 
-> Cheers,
-> Conor.
-> 
-> v6:
-> - rework commit messages to use Bjorn's preferred "root port" and "root
->   complex" wording
-> 
-> v5:
-> - rebase on top of 6.11-rc1, which brought about a lot of driver change
->   due to the plda common driver creation - although little actually
->   changed in terms of the lines edited in this patch.
-> 
-> v4:
-> - fix a cocci warning reported off list about an inconsistent variable
->   used between IS_ERR() and PTR_ERR() calls.
-> 
-> v3:
-> - rename a variable in probe s/axi/apb/
-> 
-> v2:
-> - try the new reg format before the old one to avoid warnings in the
->   good case
-> - reword $subject for 2/2
-> 
-> CC: Daire McNamara <daire.mcnamara@microchip.com>
-> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> CC: Krzysztof Wilczyński <kw@linux.com>
-> CC: Rob Herring <robh@kernel.org>
-> CC: Bjorn Helgaas <bhelgaas@google.com>
-> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> CC: Conor Dooley <conor+dt@kernel.org>
-> CC: linux-pci@vger.kernel.org
-> CC: devicetree@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-riscv@lists.infradead.org
-> 
-> Conor Dooley (2):
->   dt-bindings: PCI: microchip,pcie-host: fix reg properties
->   PCI: microchip: rework reg region handing to support using either root
->     port 1 or 2
-> 
->  .../bindings/pci/microchip,pcie-host.yaml     |  11 +-
->  .../pci/plda,xpressrich3-axi-common.yaml      |  14 ++-
->  .../bindings/pci/starfive,jh7110-pcie.yaml    |   7 ++
->  .../pci/controller/plda/pcie-microchip-host.c | 116 +++++++++---------
->  4 files changed, 87 insertions(+), 61 deletions(-)
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
 
-Thanks!  The patches themselves are unchanged between v5 and v6.  I
-replaced the v5 patches on pci/controller/microchip with these.
+Convert all platform drivers below drivers/memory to use .remove(), with
+the eventual goal to drop struct platform_driver::remove_new(). As
+.remove() and .remove_new() have the same prototypes, conversion is done
+by just changing the structure member name in the driver initializer.
 
-I also capitalized "Root Port" and "Root Complex" to give a hint that
-they are proper nouns defined by the PCIe spec.
+A few white space changes are included to make indention consistent.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
+
+I did a single patch for all of drivers/memory. While I usually prefer
+to do one logical change per patch, this seems to be overengineering
+here as the individual changes are really trivial and shouldn't be much
+in the way for stable backports. But I'll happily split the patch if you
+prefer it split. Also if you object the indentation stuff, I can rework
+that.
+
+This is based on yesterday's next, if conflicts arise when you apply it
+at some later time and don't want to resolve them, feel free to just
+drop the changes to the conflicting files. I'll notice and followup at a
+later time then. Or ask me for a fixed resend. (Having said that, I
+recommend b4 am -3 + git am -3 which should resolve most conflicts just
+fine.)
+
+Best regards
+Uwe
+
+ drivers/memory/brcmstb_dpfe.c            | 2 +-
+ drivers/memory/brcmstb_memc.c            | 2 +-
+ drivers/memory/emif.c                    | 2 +-
+ drivers/memory/fsl-corenet-cf.c          | 2 +-
+ drivers/memory/fsl_ifc.c                 | 2 +-
+ drivers/memory/jz4780-nemc.c             | 2 +-
+ drivers/memory/mtk-smi.c                 | 4 ++--
+ drivers/memory/omap-gpmc.c               | 2 +-
+ drivers/memory/renesas-rpc-if.c          | 6 +++---
+ drivers/memory/samsung/exynos5422-dmc.c  | 6 +++---
+ drivers/memory/stm32-fmc2-ebi.c          | 6 +++---
+ drivers/memory/tegra/tegra186-emc.c      | 2 +-
+ drivers/memory/tegra/tegra210-emc-core.c | 2 +-
+ drivers/memory/ti-emif-pm.c              | 2 +-
+ 14 files changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
+index 5028467b2dc9..08d9e05b1b33 100644
+--- a/drivers/memory/brcmstb_dpfe.c
++++ b/drivers/memory/brcmstb_dpfe.c
+@@ -934,7 +934,7 @@ static struct platform_driver brcmstb_dpfe_driver = {
+ 		.of_match_table = brcmstb_dpfe_of_match,
+ 	},
+ 	.probe = brcmstb_dpfe_probe,
+-	.remove_new = brcmstb_dpfe_remove,
++	.remove = brcmstb_dpfe_remove,
+ 	.resume = brcmstb_dpfe_resume,
+ };
+ 
+diff --git a/drivers/memory/brcmstb_memc.c b/drivers/memory/brcmstb_memc.c
+index 4f17a93aa028..c87b37e2c1f0 100644
+--- a/drivers/memory/brcmstb_memc.c
++++ b/drivers/memory/brcmstb_memc.c
+@@ -283,7 +283,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(brcmstb_memc_pm_ops, brcmstb_memc_suspend,
+ 
+ static struct platform_driver brcmstb_memc_driver = {
+ 	.probe = brcmstb_memc_probe,
+-	.remove_new = brcmstb_memc_remove,
++	.remove = brcmstb_memc_remove,
+ 	.driver = {
+ 		.name		= "brcmstb_memc",
+ 		.of_match_table	= brcmstb_memc_of_match,
+diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
+index 99eb7d1baa5f..2e1ecae9e959 100644
+--- a/drivers/memory/emif.c
++++ b/drivers/memory/emif.c
+@@ -1159,7 +1159,7 @@ MODULE_DEVICE_TABLE(of, emif_of_match);
+ 
+ static struct platform_driver emif_driver = {
+ 	.probe		= emif_probe,
+-	.remove_new	= emif_remove,
++	.remove		= emif_remove,
+ 	.shutdown	= emif_shutdown,
+ 	.driver = {
+ 		.name = "emif",
+diff --git a/drivers/memory/fsl-corenet-cf.c b/drivers/memory/fsl-corenet-cf.c
+index f47d05f7c5c5..ecd6c1955153 100644
+--- a/drivers/memory/fsl-corenet-cf.c
++++ b/drivers/memory/fsl-corenet-cf.c
+@@ -249,7 +249,7 @@ static struct platform_driver ccf_driver = {
+ 		.of_match_table = ccf_matches,
+ 	},
+ 	.probe = ccf_probe,
+-	.remove_new = ccf_remove,
++	.remove = ccf_remove,
+ };
+ 
+ module_platform_driver(ccf_driver);
+diff --git a/drivers/memory/fsl_ifc.c b/drivers/memory/fsl_ifc.c
+index 15e919c24f81..27e041178c09 100644
+--- a/drivers/memory/fsl_ifc.c
++++ b/drivers/memory/fsl_ifc.c
+@@ -316,7 +316,7 @@ static struct platform_driver fsl_ifc_ctrl_driver = {
+ 		.of_match_table = fsl_ifc_match,
+ 	},
+ 	.probe       = fsl_ifc_ctrl_probe,
+-	.remove_new  = fsl_ifc_ctrl_remove,
++	.remove      = fsl_ifc_ctrl_remove,
+ };
+ 
+ static int __init fsl_ifc_init(void)
+diff --git a/drivers/memory/jz4780-nemc.c b/drivers/memory/jz4780-nemc.c
+index fb6db2ffe71b..1a8161514d03 100644
+--- a/drivers/memory/jz4780-nemc.c
++++ b/drivers/memory/jz4780-nemc.c
+@@ -407,7 +407,7 @@ static const struct of_device_id jz4780_nemc_dt_match[] = {
+ 
+ static struct platform_driver jz4780_nemc_driver = {
+ 	.probe		= jz4780_nemc_probe,
+-	.remove_new	= jz4780_nemc_remove,
++	.remove		= jz4780_nemc_remove,
+ 	.driver	= {
+ 		.name	= "jz4780-nemc",
+ 		.of_match_table = of_match_ptr(jz4780_nemc_dt_match),
+diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+index 2bc034dff691..5710348f72f6 100644
+--- a/drivers/memory/mtk-smi.c
++++ b/drivers/memory/mtk-smi.c
+@@ -616,7 +616,7 @@ static const struct dev_pm_ops smi_larb_pm_ops = {
+ 
+ static struct platform_driver mtk_smi_larb_driver = {
+ 	.probe	= mtk_smi_larb_probe,
+-	.remove_new = mtk_smi_larb_remove,
++	.remove = mtk_smi_larb_remove,
+ 	.driver	= {
+ 		.name = "mtk-smi-larb",
+ 		.of_match_table = mtk_smi_larb_of_ids,
+@@ -838,7 +838,7 @@ static const struct dev_pm_ops smi_common_pm_ops = {
+ 
+ static struct platform_driver mtk_smi_common_driver = {
+ 	.probe	= mtk_smi_common_probe,
+-	.remove_new = mtk_smi_common_remove,
++	.remove = mtk_smi_common_remove,
+ 	.driver	= {
+ 		.name = "mtk-smi-common",
+ 		.of_match_table = mtk_smi_common_of_ids,
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index c8a0d82f9c27..50eb9f49512b 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -2743,7 +2743,7 @@ MODULE_DEVICE_TABLE(of, gpmc_dt_ids);
+ 
+ static struct platform_driver gpmc_driver = {
+ 	.probe		= gpmc_probe,
+-	.remove_new	= gpmc_remove,
++	.remove		= gpmc_remove,
+ 	.driver		= {
+ 		.name	= DEVICE_NAME,
+ 		.of_match_table = of_match_ptr(gpmc_dt_ids),
+diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
+index 7fbd36fa1a1b..55209ca43a96 100644
+--- a/drivers/memory/renesas-rpc-if.c
++++ b/drivers/memory/renesas-rpc-if.c
+@@ -794,10 +794,10 @@ static const struct of_device_id rpcif_of_match[] = {
+ MODULE_DEVICE_TABLE(of, rpcif_of_match);
+ 
+ static struct platform_driver rpcif_driver = {
+-	.probe	= rpcif_probe,
+-	.remove_new = rpcif_remove,
++	.probe = rpcif_probe,
++	.remove = rpcif_remove,
+ 	.driver = {
+-		.name =	"rpc-if",
++		.name = "rpc-if",
+ 		.of_match_table = rpcif_of_match,
+ 	},
+ };
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 7d80322754fa..dfc5ee54a9b7 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -1570,10 +1570,10 @@ static const struct of_device_id exynos5_dmc_of_match[] = {
+ MODULE_DEVICE_TABLE(of, exynos5_dmc_of_match);
+ 
+ static struct platform_driver exynos5_dmc_platdrv = {
+-	.probe	= exynos5_dmc_probe,
+-	.remove_new = exynos5_dmc_remove,
++	.probe = exynos5_dmc_probe,
++	.remove = exynos5_dmc_remove,
+ 	.driver = {
+-		.name	= "exynos5-dmc",
++		.name = "exynos5-dmc",
+ 		.of_match_table = exynos5_dmc_of_match,
+ 	},
+ };
+diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
+index 566c225f71c0..2f1e2d7d54b5 100644
+--- a/drivers/memory/stm32-fmc2-ebi.c
++++ b/drivers/memory/stm32-fmc2-ebi.c
+@@ -1814,9 +1814,9 @@ static const struct of_device_id stm32_fmc2_ebi_match[] = {
+ MODULE_DEVICE_TABLE(of, stm32_fmc2_ebi_match);
+ 
+ static struct platform_driver stm32_fmc2_ebi_driver = {
+-	.probe	= stm32_fmc2_ebi_probe,
+-	.remove_new = stm32_fmc2_ebi_remove,
+-	.driver	= {
++	.probe = stm32_fmc2_ebi_probe,
++	.remove = stm32_fmc2_ebi_remove,
++	.driver = {
+ 		.name = "stm32_fmc2_ebi",
+ 		.of_match_table = stm32_fmc2_ebi_match,
+ 		.pm = &stm32_fmc2_ebi_pm_ops,
+diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+index 33d67d251719..bc807d7fcd4e 100644
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@ -406,7 +406,7 @@ static struct platform_driver tegra186_emc_driver = {
+ 		.sync_state = icc_sync_state,
+ 	},
+ 	.probe = tegra186_emc_probe,
+-	.remove_new = tegra186_emc_remove,
++	.remove = tegra186_emc_remove,
+ };
+ module_platform_driver(tegra186_emc_driver);
+ 
+diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
+index 78ca1d6c0977..2d5d8245a1d3 100644
+--- a/drivers/memory/tegra/tegra210-emc-core.c
++++ b/drivers/memory/tegra/tegra210-emc-core.c
+@@ -2051,7 +2051,7 @@ static struct platform_driver tegra210_emc_driver = {
+ 		.pm = &tegra210_emc_pm_ops,
+ 	},
+ 	.probe = tegra210_emc_probe,
+-	.remove_new = tegra210_emc_remove,
++	.remove = tegra210_emc_remove,
+ };
+ 
+ module_platform_driver(tegra210_emc_driver);
+diff --git a/drivers/memory/ti-emif-pm.c b/drivers/memory/ti-emif-pm.c
+index 592f70e9c8e5..df362ecc59e9 100644
+--- a/drivers/memory/ti-emif-pm.c
++++ b/drivers/memory/ti-emif-pm.c
+@@ -330,7 +330,7 @@ static const struct dev_pm_ops ti_emif_pm_ops = {
+ 
+ static struct platform_driver ti_emif_driver = {
+ 	.probe = ti_emif_probe,
+-	.remove_new = ti_emif_remove,
++	.remove = ti_emif_remove,
+ 	.driver = {
+ 		.name = KBUILD_MODNAME,
+ 		.of_match_table = ti_emif_of_match,
+
+base-commit: 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
+-- 
+2.45.2
+
 
