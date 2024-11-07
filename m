@@ -1,151 +1,159 @@
-Return-Path: <linux-kernel+bounces-399629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D15F9C01EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:09:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3AD9C01F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:10:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87F41F22150
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:09:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4599BB212F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D711E7C21;
-	Thu,  7 Nov 2024 10:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5DD1EB9EC;
+	Thu,  7 Nov 2024 10:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="LHevrShu"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hQqbUVZv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09051E5718
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 10:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FDF1E7C21;
+	Thu,  7 Nov 2024 10:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730974158; cv=none; b=C1DCQ9Ezc/UD5adq7jFUFaihjKEt53gQTLNnUZKKPZWF8la7iire5TeJdB2SOloZaubeMLzjvmnRZ/MYnJOD8iOP+za7/f08l6ARgPtlPPv6mjbrv8qWtPvapqRJO2caf+K/5CuMeP6Se29LeK/0DBzxOzECZX6Uvrop19lZngA=
+	t=1730974226; cv=none; b=pp2z9DVzhQBY7YL93edlT/TXcqkpTJiCzh2V5T6nCt/kPW5RQf0m/Y6f0haIG7tOTxzfCFcPaVCh8b08BXirQKK0Ew0AGyPbp1g5LJv0T/jqmFSHju0kuDNastnVCwRY2BQQuxwBPfPG8yv1VA2uY+vcmlAOLFcAmslwA/QXmxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730974158; c=relaxed/simple;
-	bh=TP+F9gIeVCvmoR+H+MTVsZugSnked7G2p8S7gJTNe+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CPWAXRR9dRp58FdBsv3x2WXspV5MR70g5/SDfFo/v/zimHy7ON4jeoiLPFtSny0d/fnxZsYn1NZIrLigMGxr+wuqtUbN3n84TDWkqM91leL07KCBh+N8I5yxFkpfJGfJduBLxGqOM3xN/8AVq+rp7V6K0y1LCrOO6Q2uo1ss0kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=LHevrShu; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cb15b84544so950221a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 02:09:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730974154; x=1731578954; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OpDrSskUv1o1NTarlsHfGOMJt+ymu1r/HgLDqyVtDWA=;
-        b=LHevrShuQwkpsacwC6pm6IQGGzxoee6JXcp2Yp+s64g1IkofKeMde28sAdA3sI18zc
-         TVQHepuiVknRlu7LIZcRq/tdSNuZtvEghRIsx2HF3bcYCZtmZ8xRN891QqWZzPhWvA6i
-         bNaZ4TBxsd12iSXb/5L4Qyigvta/peb40FFQpyKcKcZ6J+p6q/k8+wUIUz6dTfNXfI+P
-         3pNrSfUIcnh1DiVBUAsk81AN/AKCSMo9EFIskgmLZ7VnVK6saH2T6Z486tYrH24VpC6u
-         L5BOfAjKka9C9vd275E1JtKI7ghshelDDlEHrCeGVZAiXK0wy992LMB0AcZA9VrSKS5S
-         vYKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730974154; x=1731578954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OpDrSskUv1o1NTarlsHfGOMJt+ymu1r/HgLDqyVtDWA=;
-        b=RAynWWyKQWuT0HaZfcRs+oQ5vhdnt0VYgme0JB0bi+5oYznxXLM+ydZElMfAluAOQG
-         kjG18PbeiGfr0iqNZnqJlcpZ8TC4uWD0DPo3eyhv1zfdVl1c2RIZy7GJ8D2otTgo2pN0
-         /izWRBam1YF6q/SGJ1h+fUVK7CgkHT53+RoD85kw3pzL9AYtEuZRNzyNMSymOO6V9jvK
-         xU5Y+mDdQkUGUDwGOoPUNgu2kYk6AKzPwZRy5qG4F8Ng4Lbb/c9hxuKWWfyrgmo/PHkd
-         tLgAHGAvaybxaL/KaeQIwDbMzh5a3Bhp94smsgnoD9CJfIwfXnK3Uw7sTzjgzu+cdd7X
-         WBfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUojcfWpduID7NdapqX8W6sqwnq3+IB7l/q612RnrS1p46lemnwUzKuPuqvSs1GsQ4iTamqlg9tHWtJ29k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl4/rug9kBb4VP/GmFPlwUsPnVyyfr1Rmfu2n5v6C6t5Mtewnr
-	kn/BdNJmJFFcwCGUSWSHuiKfG8uEpOdD0TDz5TGXWIotq/Qz6YVZ9AHaZUKleGu39TmS1zdb2aA
-	fVmK8V7laikN9RdPMX83NWCTU7tgAwiOUFeCwfWqe2tuf1fOQ
-X-Google-Smtp-Source: AGHT+IERZV6Psk5Yyx4TfQfVXmINj5F1hDhQ/XqQ1JTLYObIeW3O+9WxU1vcOqYi3njcPAbsIOTANJXFovMSGP962Q4=
-X-Received: by 2002:a05:6402:50cf:b0:5cf:529:1e73 with SMTP id
- 4fb4d7f45d1cf-5cf05291f47mr741826a12.13.1730974154217; Thu, 07 Nov 2024
- 02:09:14 -0800 (PST)
+	s=arc-20240116; t=1730974226; c=relaxed/simple;
+	bh=msc86oRzL9FywZHqS0FL90gtHxzg49aOeCnhOGI+pXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KYhLR8ISUbeH/QHW+QgRM1BaTABCvn+Y8C0bR9IIox5fKl72tfQ7mrRkpTNYCkOJsD3GyoPNeV0RsjqgiBC4mtmKzKxSPvTyMUMSQtH+CtFyJaGQuxpRMU2crqePZBMz97iJus8gF+Gry9VKSyPtdAd743H0sX2keLlOapHjljY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hQqbUVZv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7A1hcf003908;
+	Thu, 7 Nov 2024 10:09:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yKRbTpsOlrQFMGwumFxHCmnCrDbJmLnmHs587Xaf1rs=; b=hQqbUVZvt4gnRIo9
+	hSf34TNlBb5VLPuKN2QUfO51sVgJA6QQ0oa5YSwBbfo7OJ/41H8NVemCEAnywAWf
+	w4EUDh7JDvEaJdzawNgx/UJBLaVoR4N8wrVZr1E5D/QXg0RPVpaGCPqxi8mkbpgd
+	NIv6G+W8sPn/vDSv0K4RxVe9Y6+ZKmPkD9rWyVc6WrqdgJqv0geDMmyIzNXmW2Yb
+	3jCsDY7vzMhEnJghf3iCvJo+0TCZR7LInILkJJPcPhDIe5MxFtGRLfe1QB8VE6zk
+	hEUqsw8rF8L2YVRb9inh/aISn5UHYlUJzXIeHbYswKnEmjAm/7BeVc8MK50Geu2b
+	qpiagw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qfdx74m3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 10:09:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7A9epm031791
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 10:09:40 GMT
+Received: from [10.216.52.65] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
+ 02:09:36 -0800
+Message-ID: <94ed3622-a46e-a593-43f1-4ed7b0eba10a@quicinc.com>
+Date: Thu, 7 Nov 2024 15:39:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106193208.290067-1-bjorn@kernel.org> <20241107091307.GA2016393@myrica>
-In-Reply-To: <20241107091307.GA2016393@myrica>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Thu, 7 Nov 2024 11:09:03 +0100
-Message-ID: <CAHVXubh4A9JY2hVzYW0ES1QxfLL2iYczXBCcr5OXsrYoZcWJKw@mail.gmail.com>
-Subject: Re: [PATCH] tools: Override makefile ARCH variable if defined, but empty
-To: Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, bpf@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	Quentin Monnet <qmo@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, David Abdurachmanov <davidlt@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
+ dw_pcie_suspend_noirq()
+To: Richard Zhu <hongxing.zhu@nxp.com>, <jingoohan1@gmail.com>,
+        <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <frank.li@nxp.com>
+CC: <imx@lists.linux.dev>, <kernel@pengutronix.de>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241107084455.3623576-1-hongxing.zhu@nxp.com>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20241107084455.3623576-1-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3sjGHSqe2sd3aWp7NgWGYs3-YIPy0BkB
+X-Proofpoint-ORIG-GUID: 3sjGHSqe2sd3aWp7NgWGYs3-YIPy0BkB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070078
 
-Hi Bj=C3=B6rn,
 
-On Thu, Nov 7, 2024 at 10:12=E2=80=AFAM Jean-Philippe Brucker
-<jean-philippe@linaro.org> wrote:
+
+On 11/7/2024 2:14 PM, Richard Zhu wrote:
+> Before sending PME_TURN_OFF, don't test the LTSSM stat. Since it's safe
+> to send PME_TURN_OFF message regardless of whether the link is up or
+> down. So, there would be no need to test the LTSSM stat before sending
+> PME_TURN_OFF message.
+> 
+> Remove the L2 poll too, after the PME_TURN_OFF message is sent out.
+> Because the re-initialization would be done in dw_pcie_resume_noirq().
 >
-> On Wed, Nov 06, 2024 at 08:32:06PM +0100, Bj=C3=B6rn T=C3=B6pel wrote:
-> > From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> >
-> > There are a number of tools (bpftool, selftests), that require a
-> > "bootstrap" build. Here, a bootstrap build is a build host variant of
-> > a target. E.g., assume that you're performing a bpftool cross-build on
-> > x86 to riscv, a bootstrap build would then be an x86 variant of
-> > bpftool. The typical way to perform the host build variant, is to pass
-> > "ARCH=3D" in a sub-make. However, if a variable has been set with a
-> > command argument, then ordinary assignments in the makefile are
-> > ignored.
-> >
-> > This side-effect results in that ARCH, and variables depending on ARCH
-> > are not set.
-> >
-> > Workaround by overriding ARCH to the host arch, if ARCH is empty.
-> >
-> > Fixes: 8859b0da5aac ("tools/bpftool: Fix cross-build")
-> > Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->
-> Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
->
-> > ---
-> >  tools/scripts/Makefile.arch | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/scripts/Makefile.arch b/tools/scripts/Makefile.arch
-> > index f6a50f06dfc4..eabfe9f411d9 100644
-> > --- a/tools/scripts/Makefile.arch
-> > +++ b/tools/scripts/Makefile.arch
-> > @@ -7,8 +7,8 @@ HOSTARCH :=3D $(shell uname -m | sed -e s/i.86/x86/ -e =
-s/x86_64/x86/ \
-> >                                    -e s/sh[234].*/sh/ -e s/aarch64.*/ar=
-m64/ \
-> >                                    -e s/riscv.*/riscv/ -e s/loongarch.*=
-/loongarch/)
-> >
-> > -ifndef ARCH
-> > -ARCH :=3D $(HOSTARCH)
-> > +ifeq ($(strip $(ARCH)),)
-> > +override ARCH :=3D $(HOSTARCH)
-> >  endif
-> >
-> >  SRCARCH :=3D $(ARCH)
-> >
-> > base-commit: 7758b206117dab9894f0bcb8333f8e4731c5065a
-> > --
-> > 2.45.2
-> >
+we should not remove the poll here, it is required for the endpoint
+to go gracefully in to L2. Some endpoints can have some cleanups needs
+to be done before entering into L2 or L3. For the PME turnoff message,
+the endpoints needs to send L23 ack which indicates endpoint is
+ready to L2 without that it will not be gracefull D3cold sequence.
 
-You can add:
+-Krishna Chaitanya.
 
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>   .../pci/controller/dwc/pcie-designware-host.c | 20 ++++---------------
+>   1 file changed, 4 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index f86347452026..64c49adf81d2 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -917,7 +917,6 @@ static int dw_pcie_pme_turn_off(struct dw_pcie *pci)
+>   int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>   {
+>   	u8 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+> -	u32 val;
+>   	int ret = 0;
+>   
+>   	/*
+> @@ -927,23 +926,12 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>   	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
+>   		return 0;
+>   
+> -	/* Only send out PME_TURN_OFF when PCIE link is up */
+> -	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
+> -		if (pci->pp.ops->pme_turn_off)
+> -			pci->pp.ops->pme_turn_off(&pci->pp);
+> -		else
+> -			ret = dw_pcie_pme_turn_off(pci);
+> -
+> +	if (pci->pp.ops->pme_turn_off) {
+> +		pci->pp.ops->pme_turn_off(&pci->pp);
+> +	} else {
+> +		ret = dw_pcie_pme_turn_off(pci);
+>   		if (ret)
+>   			return ret;
+> -
+> -		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
+> -					PCIE_PME_TO_L2_TIMEOUT_US/10,
+> -					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> -		if (ret) {
+> -			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+> -			return ret; > -		}>   	}
+>   
+>   	dw_pcie_stop_link(pci);
 
