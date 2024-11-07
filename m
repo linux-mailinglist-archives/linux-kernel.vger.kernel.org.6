@@ -1,176 +1,202 @@
-Return-Path: <linux-kernel+bounces-399597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5079C0161
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:48:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E9879C0175
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17A2F1F2352E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:48:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096011F239D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A3B1E1A2D;
-	Thu,  7 Nov 2024 09:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FCC1EABD9;
+	Thu,  7 Nov 2024 09:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JDISLK73"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a7I5uQGf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCED1DFE2C
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477241D90D9;
+	Thu,  7 Nov 2024 09:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730972926; cv=none; b=FmWkvvKqATW2c/shhIf3CvZEhBxT//VQddaABFWY1/KHj0u1CgRic/ckpJtqMX4qS1DZxul3n9G6fIANqccphudR/PUT35k8RERNQJ3ck0+iocDaxnV8ykIAm+3ss4s25y0S+GE/QppWtWheywyhmXZ08LdlLsAu4yMPXGqDPRg=
+	t=1730973066; cv=none; b=MI1h1Rh7MrmZ4mzWBrPHE/cHGsnBlR5mISjXMBFbNI6IijGgrmXg3SBot6H3Aa3jsQqi71O4h7m0Frr4cKjWeWW/NZTDUxLW50guZQ/zSUgXNvMi0Uw6Xhj0VCA0ck790wlqJJOcKLcuhaqBvCgZHtYbVAThJ1eOctfdHHXmdlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730972926; c=relaxed/simple;
-	bh=KLeNQrgv+o3rYnlDMLvncS+HRdvUzAW11TSK42Ey3J4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gjJ8/woAhSbKgBFTWe3YYN78ZfbaFQd4RiGX1z7TEKWhNlV+SFdOMdKxRDQazftT61kTGmDFhmtY6bckyBtb57WYYD5QFLSdDkFmKE1yhg5R+Bv684QI2iM126hI+KBkTKJR+JHr0I0IwRL7F1NbCmMCJ6wqDWYPGRv5N6r4bko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JDISLK73; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4314c452180so10659065e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:48:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730972922; x=1731577722; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qH39OpB04YQMGjmwysxcgD5clAdHREKSJmPbc07NDTM=;
-        b=JDISLK73PegeEA/n6e3uWJIq25kdLvtlK9Z8i8Bb6AWJDV9rqdNdu8tkkP8PPzEN7k
-         3i/0Gl7XshF22gySw3AAubfXG+RTUfQpHkOGDIP0ECb++npSOYeXr2QZeNSvDRcd6K//
-         YFnWXLba231Dn3R/ys+0uSWCc16demxTf48xchIGwiDnNICjHqYv+knUPUKDbHd694en
-         7VJVK09xiRantks1+a8WD1gpv4jB3b3KNRNMTIJDUFYI/kbFYVyix14yucCliz71avVv
-         msfECKcah9nN1VCrTmhVwItyIB44SqEyvtPzWpNnM3Zn4jsGZ4m85cdLe37ybA5ys733
-         fVEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730972922; x=1731577722;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qH39OpB04YQMGjmwysxcgD5clAdHREKSJmPbc07NDTM=;
-        b=v7lL7w0+sUM5XyT70H2oBFXXDqN7AY41e3bHzkIHkWXbFd4WF6AkislcRa2FE8UPcZ
-         UJKoofbXpaVFlZYaTCCulUUe6wjybXOfck0HJxVxUe+Tw205VAt2fBQyqhe2rvZ0t36G
-         LNNPFhfRKZuD2qws8gEFiKA8siqkS0dctZ/Is+HMqdxU+kVsv0eChhzrrlv0iS5hSc/l
-         8gmQGnQfbkUDgcYsPclz6V5+1t3a41YHrBlcTcdNV/wBe9WSnl4wlrIWGJ+7DUz08j+x
-         HnoJxsTscuUthTzhOi0TmBpKevpwN/oJ3gR88maE2DJ2LG6+h3LhhV/gI6wSnTsymsf6
-         urdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBnOpCYrzPA/LvFxg7kZjzIOpP4bgSQjC4iXDp7yJaGBKIbGxPGZZAmWF7kGw0StjdNbcfhYsU3ESr1AU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzTZv3/Zf999ZdvKvTbmmA06Yq2NTFL+WCz29m7D81kPeo7xl0
-	FTvbrwS/bbLpdvCswxrQTkkqpFGmnYXj1Ie52fmurb2QAhvnGbfgkvBvPHWCS+4=
-X-Google-Smtp-Source: AGHT+IERSo6gE9pNqp7UNc9W4ckkQ4wbQlQ1ZigpZoNbDIFN3eckLzhsXBXEez6JI7/4XGGjYnVgDw==
-X-Received: by 2002:a05:600c:500f:b0:431:559d:4103 with SMTP id 5b1f17b1804b1-432b382ab55mr5868365e9.7.1730972922523;
-        Thu, 07 Nov 2024 01:48:42 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa709f3fsm55878425e9.32.2024.11.07.01.48.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 01:48:42 -0800 (PST)
-Date: Thu, 7 Nov 2024 10:48:39 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Tony Lindgren <tony@atomide.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Peter Collingbourne <pcc@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH tty-next v3 5/6] serial: 8250: Switch to nbcon console
-Message-ID: <ZyyM99jtCao_VmBU@pathway.suse.cz>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-6-john.ogness@linutronix.de>
- <ZxupiKSSpZlyKhz-@smile.fi.intel.com>
- <848qu8nyzo.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1730973066; c=relaxed/simple;
+	bh=5kbzNcbAZj8QpGrrA3FC5qDCk10gOd175RlJc6GjLqg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=PU7EJXSJRMIqqSoqPJwJlUdj6/k3s9Jl9S/gaZAG63nabvkfzzx+iqmTXMP7Jqalb5Ea6uCcV5Ug7FTUMoeP3EGiQJazBVAN59in8g7k2D/+7ST57/EDRY8Eaz0LZLgAGL0k9Amucqr0PXCLCk/VN/KiQFdeyxpvQwe10xBwYZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a7I5uQGf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A71m6mw009985;
+	Thu, 7 Nov 2024 09:50:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ykczVAQCVn8icr6q7ZxvKn
+	SQiBxYxtgjmMGkJhg/1Vs=; b=a7I5uQGf7aQVOiz74aCI10vHYDZvEOUDtgWhhH
+	aXmRAQpmVPxBoXXCv4xud0QrMchu0MRwUhBpTRUaIjIsqNCEg21R0CjotvO505AL
+	taetKe5R2YdqHNlqITIJ7B+ej9aOXXOqjw9gDbajVJLsWn1+yCqIZHyrfSQYJlQ/
+	N5J8xz11kgF/cX5PwFA892g+bHSFVnQPtVQ8G9SZssTlVBlTbjNgNSIp1gfcanbu
+	Qbge2PLQa4+9x5I0S7TChQyOrGD68GrEGrMG6N9HRdn0GWRYbkcjvwudijl8l74A
+	aXZQpEf/rongAot7QwPwWO7vTdRspiHnz9bfOvJb+Zg/AXcQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42rm6vs31j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 09:50:35 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A79oY3R016527
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 09:50:34 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 7 Nov 2024 01:50:28 -0800
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH v6 0/5] Add CMN PLL clock controller driver for IPQ9574
+Date: Thu, 7 Nov 2024 17:50:21 +0800
+Message-ID: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <848qu8nyzo.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF6NLGcC/2XOyw6CQAwF0F8hs3ZM5wWDK//DGCJDkSYwvJRoC
+ P/uwMJoWN6m97QzG3EgHNkpmtmAE43U+hDiQ8RcdfN35FSEzCRILUBo3ru2yajrM9f4rq55XiD
+ EypZaiJiFVjdgSa9NvFxDrmh8tMN7OzCpdbpZYGWysybFgVsESB06tLk8909y5N0xLLJVm/RXC
+ N+YvaCDIBMrkjJHZcDsBfMjSLsXTBCUStNU56CsLf6FZVk+56daOTQBAAA=
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        Luo Jie
+	<quic_luoj@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730973028; l=3999;
+ i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
+ bh=5kbzNcbAZj8QpGrrA3FC5qDCk10gOd175RlJc6GjLqg=;
+ b=3urSDtRT7g4SdrvgORhCM4ArdGJgVzCxwebKPreZTJpr51L1kuMtS8tFnup9pAMevNMICd9zZ
+ RWYM2Z2X7pUBeyFHkuoiSrUs+Jfxp/Jk1UG9lnRuqjQbASkFGvd3qsX
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rXOIJdV284SSKKHlU89NGD4oRGNw1dHR
+X-Proofpoint-GUID: rXOIJdV284SSKKHlU89NGD4oRGNw1dHR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 mlxlogscore=999 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070075
 
-On Mon 2024-10-28 14:28:35, John Ogness wrote:
-> On 2024-10-25, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> >> +/*
-> >> + * Only to be used directly by the console write callbacks, which may not
-> >> + * require the port lock. Use serial8250_clear_IER() instead for all other
-> >> + * cases.
-> >> + */
-> >> +static void __serial8250_clear_IER(struct uart_8250_port *up)
-> >>  {
-> >>  	if (up->capabilities & UART_CAP_UUE)
-> >>  		serial_out(up, UART_IER, UART_IER_UUE);
-> >
-> >>  		serial_out(up, UART_IER, 0);
-> >>  }
-> >>  
-> >> +static inline void serial8250_clear_IER(struct uart_8250_port *up)
-> >> +{
-> >> +	__serial8250_clear_IER(up);
-> >
-> > Shouldn't this have a lockdep annotation to differentiate with the
-> > above?
-> 
-> Yes, but the follow-up patch adds the annotation as a clean "revert
-> patch". I can add a line about that in the commit message.
-> 
-> >> +static void serial8250_console_byte_write(struct uart_8250_port *up,
-> >> +					  struct nbcon_write_context *wctxt)
-> >> +{
-> >> +	const char *s = READ_ONCE(wctxt->outbuf);
-> >> +	const char *end = s + READ_ONCE(wctxt->len);
-> >
-> > Is there any possibility that outbuf value be changed before we get
-> > the len and at the end we get the wrong pointer?
-> 
-> No. I was concerned about compiler optimization, since @outbuf can
-> become NULL. However, it can only become NULL if ownership was
-> transferred, and that is properly checked anyway. I will remove the
-> READ_ONCE() usage for v4.
+The CMN PLL clock controller in Qualcomm IPQ chipsets provides
+the clocks to the networking hardware blocks that are internal
+or external to the SoC, and to the GCC. This driver configures
+the CMN PLL clock controller to enable the output clocks. The
+networking blocks include the internal blocks such as PPE
+(Packet Process Engine) and PCS blocks, and external hardware
+such as Ethernet PHY or switch. The CMN PLL block also outputs
+fixed rate clocks to GCC, such as 24 MHZ as XO clock and 32 KHZ
+as sleep clock supplied to GCC.
 
-I agree that we do not need READ_ONCE() here.
+The controller expects the input reference clock from the internal
+Wi-Fi block acting as the clock source. The output clocks supplied
+by the controller are fixed rate clocks.
 
-Just to be sure that I understand it correctly.
+The CMN PLL hardware block does not include any other function
+other than enabling the clocks to the networking hardware blocks
+and GCC.
 
-The struct nbcon_write_context passed by *wctxt should be created on
-stack of the caller. Only this process/interrupt context could change
-it.
+The driver is being enabled to support IPQ9574 SoC initially, and
+will be extended for other SoCs.
 
-Namely, it might happen when nbcon_enter_unsafe() fails. It is done
-later in this function by the code:
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+Changes in v6:
+- Rename the reference clock of CMN PLL to ref_48mhz_clk.
+- Add the patch to update xo_board_clk to use fixed factor clock.
+- Link to v5: https://lore.kernel.org/r/20241028-qcom_ipq_cmnpll-v5-0-339994b0388d@quicinc.com
 
-	while (!nbcon_enter_unsafe(wctxt))
-		nbcon_reacquire_nobuf(wctxt);
+Changes in v5:
+- Move the hardware configurations into set_rate() from determine_rate().
+- Remove the dependency on IPQ_GCC_9574.
+- Correct the header files included.
+- Update reference clock of CMN PLL to use fixed factor clock.
+- Link to v4: https://lore.kernel.org/r/20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com
 
-and this function does not access *s or *end after this code.
+Changes in v4:
+- Rename driver file to ipq-cmn-pll.c
+- Register CMN PLL as a 12 GHZ clock.
+- Configure CMN PLL input ref clock using clk_ops::determine_rate().
+  Add the additional output clocks to GCC and PCS.
+- Update the same information in dtbindings.
+- Use PM clock APIs for input clock enablement.
+- Link to v3: https://lore.kernel.org/r/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com
 
-Other CPUs could not change the structure in parallel
+Changes in v3:
+- Update description of dt-binding to explain scope of 'CMN' in CMN PLL.
+- Collect Reviewed-by tags for dtbindings and defconfig patches.
+- Enable PLL_LOCKED check for the stability of output clocks.
+- Link to v2: https://lore.kernel.org/r/20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com
 
-   => READ_ONCE() is not needed.
+Changes in v2:
+- Rename the dt-binding file with the compatible.
+- Remove property 'clock-output-names' from dt-bindings and define
+  names in the driver. Add qcom,ipq-cmn-pll.h to export the output
+  clock specifier.
+- Alphanumeric ordering of 'cmn_pll_ref_clk' node in DTS.
+- Fix allmodconfig error reported by test robot.
+- Replace usage of "common" to "CMN" to match the name with the
+  hardware specification.
+- Clarify in commit message on scope of CMN PLL function.
+- Link to v1: https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com
 
+---
+Luo Jie (5):
+      dt-bindings: clock: qcom: Add CMN PLL clock controller for IPQ SoC
+      clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+      arm64: defconfig: Enable Qualcomm IPQ CMN PLL clock controller
+      arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+      arm64: dts: qcom: Update IPQ9574 xo_board_clk to use fixed factor clock
 
-Just for completeness. The buffer could not disappear.
-wctxt->outbuf always points to a static buffer.
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  85 ++++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi   |  23 +-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  27 +-
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 436 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       |  22 ++
+ 8 files changed, 601 insertions(+), 3 deletions(-)
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241014-qcom_ipq_cmnpll-bde0638f4116
 
-Also the content of the buffer could not change if we read it only
-after successful nbcon_enter_unsafe(). Only the panic CPU is allowed
-to takeover the ownership in this case and it would use another static
-buffer.
+Best regards,
+-- 
+Luo Jie <quic_luoj@quicinc.com>
 
-Best Regards,
-Petr
-
-PS: I do not have anything more to add for this patch. It seems to
-    work work as expected.
 
