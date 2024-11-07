@@ -1,127 +1,137 @@
-Return-Path: <linux-kernel+bounces-399679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF999C02B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:44:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E04F9C02BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9A091C21944
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:44:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88A56B231C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E9F1F1318;
-	Thu,  7 Nov 2024 10:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911981F4FB9;
+	Thu,  7 Nov 2024 10:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LdbFPRWY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DdNPkhkr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD4A1EE03A;
-	Thu,  7 Nov 2024 10:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD49A1F4FA7;
+	Thu,  7 Nov 2024 10:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730976229; cv=none; b=n4Lv52qhW8y8lIe9eyH3tFMhtP4ZebQDQTipOeheimS8ADZDXF+wpsBQfmI68ItH22ahtM2TBtIY/32SLI98EtD8KA68O1atqc9Xc50rNUmU43M52U0KeDoZIZlUqvUJa/hoMnhUIbh4EFH/9vHR16hEfzUMCP6lOWn6NHt9eU8=
+	t=1730976238; cv=none; b=AWqvHt4rFBxfEixGP8s29AuvKLdEXA7vxD+1WKTdkgbkFU2pfLHHK73KzoFfLmqz/rjNVUlaieK0iEhnh/0ggJK3reo1NH1WqsHwP+jBfTxiMs/8eOWW62F/NdpIeFFY+WVMlvBnRSqQUvdGfCfqg09Y+j6GQmC7lfurj/q5+ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730976229; c=relaxed/simple;
-	bh=+ENrghpetK1SpcKWX/ojfF4auNfGMFTk24uLdm0Mxyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RlxHUt07bxwIvpDrzE65WnEPKM86vfGSeU9pfM/H/uvVNwHlswNJ6LA/qpQFuZPofi93hz2WoGcbFsLnu7t33+Wuo5I7GiFwrlEYDB3zVmZ659T070r3FGGiXQK2LXO0HfbTzD7tvY1ZuTaXV4OKIOm2piOR1tNxOXC66TUb9Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LdbFPRWY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA0DC4CECC;
-	Thu,  7 Nov 2024 10:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730976229;
-	bh=+ENrghpetK1SpcKWX/ojfF4auNfGMFTk24uLdm0Mxyg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LdbFPRWYp60G/v4djSFZKpi0N2UkVfQXtm/OV+5OA8Sgqk/JpH7+61GTlOjjYH7xA
-	 jq1lG0Kb5qplnyVVSj+lHsD1ztVT4k4mM8bnCoM7i1u7GkPuu7RNTC3C4eJ90pJ/Kn
-	 ZUgKK73lKfJfo/WFTSSTUQHbLnkEnfM0f6c5sr+ezytJ4nmnUBDzticUEyVG4T5lgB
-	 OtOeY3enPd52u2KZSjHqMjIAoRk2oqKUPZghqZqi805thJAWblMfa1vcnIMBWDBtY3
-	 0u8UlHsXehtHJrLDV6EimzgvC8fg3fKPWNTuu2sWqrQhyEKBrsE8GIcw6iZQUgxexB
-	 rDFNeTqNZB6Jw==
-Message-ID: <8df76ea4-fe0a-4660-9026-f45cdf8079cf@kernel.org>
-Date: Thu, 7 Nov 2024 11:43:42 +0100
+	s=arc-20240116; t=1730976238; c=relaxed/simple;
+	bh=X3ED5tXhkHujGgzUR1+C91PbNKBMFbhQSO35RVYbhm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=e8BOYlWenQi/c4pnnvRXbSooQYiJmSJk5YxcnjcTXxGw7H89zRe/O9TLaTuRDAW2UXdhQYE6L1cNOofN7V3ShQdSGVnklOHAH0yf9Adqw2cwO6HOiTv0dzxDZaQGutTMSFIohbxQ09J7hBsMpNzuEpYkrwhhte2jPOHaU/Na3Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DdNPkhkr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730976230;
+	bh=NNGiz6SGhA/04CL4AMK1MojVzOnINp1eU/OCPu9ZPFE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DdNPkhkrKpWAmoXjy1YcWVDURMC/0xkF+dBD4n5w4mByHooK6+ARkJHXKFGShmrQr
+	 PikEqC3J1qzQYzNC5hDPq2s/BMlvoynWkuz0DI63ZIW0Nh6t4nb6oGF7xg+HHMaQ+9
+	 /sHsOcFi0g0pDnsZ1BfeFCwHf+FDNWY0RA2fNFG/r84SWt1vBRWzaT2NSjo1Izmftt
+	 9asBTW9E/r/J0G/xkXmB2kQHZkeLJzY5ad2Umoi1HYchS30DmUiKEswcQPaIrK0iOV
+	 s33Y2Wzh5f5ZtEMOlKayAtYkQn4NMWQnX6HnqxQSpwjjxL18f4yPDMQN0QvQpPjZXR
+	 //Yl3VnkqVB3Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkdwP2Flqz4x8f;
+	Thu,  7 Nov 2024 21:43:49 +1100 (AEDT)
+Date: Thu, 7 Nov 2024 21:43:51 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Walleij <linus.walleij@linaro.org>, David Miller
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Drew Fustini
+ <dfustini@tenstorrent.com>, Emil Renner Berthing
+ <emil.renner.berthing@canonical.com>, Jisheng Zhang <jszhang@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the pinctrl tree with the net-next tree
+Message-ID: <20241107214351.59b251f1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/10] dt-bindings: clock: eyeq: add more Mobileye
- EyeQ5/EyeQ6H clocks
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
- <20241106-mbly-clk-v2-2-84cfefb3f485@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241106-mbly-clk-v2-2-84cfefb3f485@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/KkCXynQNu6zKlQJ_vJthWwP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 06/11/2024 17:03, Théo Lebrun wrote:
-> Add #defines for Mobileye clock controller:
-> 
->  - EyeQ5 core 0 thru 3 clocks. Internally:
-> 
+--Sig_/KkCXynQNu6zKlQJ_vJthWwP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi all,
 
-Best regards,
-Krzysztof
+Today's linux-next merge of the pinctrl tree got a conflict in:
 
+  MAINTAINERS
+
+between commits:
+
+  f920ce04c399 ("dt-bindings: net: Add T-HEAD dwmac support")
+  33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
+
+from the net-next tree and commits:
+
+  137ca342ae2d ("dt-bindings: pinctrl: Add thead,th1520-pinctrl bindings")
+  bed5cd6f8a98 ("pinctrl: Add driver for the T-Head TH1520 SoC")
+
+from the pinctrl tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 730c67f26c96,ff99fb6ad20c..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -20095,10 -19817,10 +20102,12 @@@ L:	linux-riscv@lists.infradead.or
+  S:	Maintained
+  T:	git https://github.com/pdp7/linux.git
+  F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+ +F:	Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
++ F:	Documentation/devicetree/bindings/pinctrl/thead,th1520-pinctrl.yaml
+  F:	arch/riscv/boot/dts/thead/
+  F:	drivers/clk/thead/clk-th1520-ap.c
+ +F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
++ F:	drivers/pinctrl/pinctrl-th1520.c
+  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+ =20
+  RNBD BLOCK DRIVERS
+
+--Sig_/KkCXynQNu6zKlQJ_vJthWwP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcsmecACgkQAVBC80lX
+0GwyrAf+Lxo8NRkdo2A6KUiTxn2DBZhe19Klo4VkRb7DE8camCjuRAG6+k9ZBWHc
+GbqD3SA+CEbUrOtD2ZMGUK6LSlx/YyQk5DS7HhxdMCTPF8DkFB96pGna1ntpGo+A
+eqckLBdxFik/dgT+A+iQZb2I9LlIT9VdMGWzvUFop8sf5o2itSPui6fuujD8m7cz
+KtaRY0Ql2eTgpCup0V5dl0Vd1FJgTCLiSgTsuKcsFhjbkk7e5/cVjedmxOhialfW
+p8Npl1FgC52px5wv41N2DPl1fvqCxiBemRTArFTC7anIDqEJEjd/SFzW6jqtUaCU
+WUd3qYa1dROzmRf/QYj6vhkaGGjSTA==
+=vGgB
+-----END PGP SIGNATURE-----
+
+--Sig_/KkCXynQNu6zKlQJ_vJthWwP--
 
