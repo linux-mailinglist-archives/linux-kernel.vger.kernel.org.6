@@ -1,151 +1,221 @@
-Return-Path: <linux-kernel+bounces-399840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6129C0517
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:59:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708069C0519
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:59:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBF75B23F09
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:59:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C31E4B210BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D0420EA3A;
-	Thu,  7 Nov 2024 11:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD3020C48C;
+	Thu,  7 Nov 2024 11:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C9xY9pxT"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EOgOEvrr"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E40F20E32F;
-	Thu,  7 Nov 2024 11:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08AB20C474;
+	Thu,  7 Nov 2024 11:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730980713; cv=none; b=gMXSK1TY52FGRtC2kUV1yLH0Bt4Ulc0DlgSgW2xVm35Z92MrjcuLrdk3ZvoVcvVY255HeyP3/8+SEoTegSLb69tm7dCKF4v3jw8n5YAE0LZ+l5B9A5Ke/LBp2V08WfUeUt2BuTZ6ZS7/3bePdSlGpZfTxvgoZEVxEOeelQWsnGM=
+	t=1730980742; cv=none; b=YXJIHJ7IrB5ZvTIGeyo2Jqhg2tAm06+XtHDOtfDCDN2XsbupHk0z2D+JIB0VK5CEP2qjkx4X7lEkcl5A7tC5BCRuB4PSSjzMFUv/3fZcUPhGUHUoJkch1FcjdUchLBs3qSJfkPQcqzWe9fODmoOmBYlLcukZxpObP+L7J3Vv140=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730980713; c=relaxed/simple;
-	bh=nw1lnGh2RJPeIABl3agOJj4u7ZuKcu4/NGAN2/31ULw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+tx8mv2zVAogQ9RYpyuBIW5uvR4aMiaIVTy5GUoobcCQC2N8q2QwNM0TTlnCXHfCzGEkX2PbtnM8eChabu3+ZGxpjXsiXAlipbNS7GPDXJ40mWT+8qSTeu0RT8uM6feOanSwxk42AA4Ro4DtDGitF1Sq8FQFOAVaFgJpvV//6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C9xY9pxT; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=QeeeJ+pTNi3ecp0eZcHHlz3Esi2ELCMxUu1oqF99Rqk=; b=C9xY9pxTKJgMCVVwf7E9CW+MK3
-	8H71J0TmHgrjcQTh3Eyf4HNUIwb1Bi8uBQnxLwB/hkSw6VeqvEdCTe2cnQn3QaL9obN7W0YQVZOYs
-	XyW2HB2Fp2yz0wfdAP+JnYpU+RFgRLLH8fbj12L1uOhAUtaMcpIpXX3tzkaISiuJ1SMGZKHYYBtN7
-	TJ9O8qlslbDbR1v0CrZN6Mai7PNpojbEdaFtPBtfbMYmaxsQP7MXnWHDmG8jBT8/mcxl6zWjVOKC/
-	rVhFoMik8zKSuwU/x4ac8EKmzaiJ3DGzRRquRL4i4ra3m+ai57b9V61Oqq04f+a4+BMgWECn1x5jt
-	4c4mTeTA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t919Y-0000000C803-0Tpx;
-	Thu, 07 Nov 2024 11:58:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 364CB3006AB; Thu,  7 Nov 2024 12:58:19 +0100 (CET)
-Date: Thu, 7 Nov 2024 12:58:19 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, nathan@kernel.org,
-	nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	hch@infradead.org, gregkh@linuxfoundation.org
-Subject: Re: [RFC] module: Strict per-modname namespaces
-Message-ID: <20241107115819.GA38786@noisy.programming.kicks-ass.net>
-References: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
- <CAK7LNAQ-wMTOaCuBab-JOfz4ggefNiEBmiKCUpuFncTqS0P3xQ@mail.gmail.com>
+	s=arc-20240116; t=1730980742; c=relaxed/simple;
+	bh=q3B/2EizewVdg7Ticwc90igwIBS+BkhqBehFPEL2Ytg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=rCbmqld28o/y/cOoQwF9/WJ3YMibT4rVRwQMHqfDrqdWH0SLfJvo25uVYF0B+etORk6CjHhp/z2dGoFMJSg8yl1KzL6Mv6jhgBNTQDvE82QDLnywAwgRZXxaRU4g24rTrCsnczEzeR0PE0hq712lJQwjIWRmObEoe5pPX1yFBlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EOgOEvrr; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A7BwhGH029340;
+	Thu, 7 Nov 2024 05:58:43 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730980723;
+	bh=pBZllDFIOmH/RzJOjKr84Vsut0PkmIArsmUEJHGaFVQ=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=EOgOEvrrrpSlNSXlcbrmmNDYIymvXHmWHJnujzhBGWoLLK88N+Tu1k/69iwGNKcyQ
+	 iTx9O3k5h4o24lNf5gX2sxIKc/w6FMb/fljqONtjreT6kCpCgZZ+M1ap/UpS0VVnqU
+	 gFXlHht+Zqh1wF/lP/ukkYooIStQUqg4B4Zkwlp0=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A7BwhvC072030;
+	Thu, 7 Nov 2024 05:58:43 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 7
+ Nov 2024 05:58:43 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 7 Nov 2024 05:58:43 -0600
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A7BwcNP112985;
+	Thu, 7 Nov 2024 05:58:39 -0600
+Message-ID: <2e7a1eb6-df8f-44d4-9342-1bc6d8b5ad11@ti.com>
+Date: Thu, 7 Nov 2024 17:28:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQ-wMTOaCuBab-JOfz4ggefNiEBmiKCUpuFncTqS0P3xQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: soc: ti: pruss: Add clocks for ICSSG
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <ssantosh@kernel.org>,
+        <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <s-anna@ti.com>, <kristo@kernel.org>,
+        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>
+References: <20241107104557.1442800-1-danishanwar@ti.com>
+ <20241107104557.1442800-2-danishanwar@ti.com>
+ <7f0a73c3-9977-4d07-b996-683ed18e4724@kernel.org>
+ <8156fd61-c476-4b58-b3b2-e8bc4f93035e@ti.com>
+ <2c368f5a-4b58-45de-8140-21b2f7af4d12@kernel.org>
+ <4ba0381b-d30a-4469-a7c4-327f6ac20c9c@ti.com>
+Content-Language: en-US
+In-Reply-To: <4ba0381b-d30a-4469-a7c4-327f6ac20c9c@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Nov 07, 2024 at 04:55:46PM +0900, Masahiro Yamada wrote:
-> > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> > index 107393a8c48a..d1de3044ee03 100644
-> > --- a/scripts/mod/modpost.c
-> > +++ b/scripts/mod/modpost.c
-> > @@ -1553,8 +1553,19 @@ static void mod_set_crcs(struct module *mod)
-> >         free(buf);
-> >  }
-> >
-> > +static const char *mod_basename(const char *modname)
-> > +{
-> > +       const char *basename = strrchr(modname, '/');
-> > +       if (basename)
-> > +               basename++;
-> > +       else
-> > +               basename = modname;
-> > +       return basename;
-> > +}
-> > +
-> >  static void read_symbols(const char *modname)
-> >  {
-> > +       char module_namespace[MODULE_NAME_LEN + 8];
-> >         const char *symname;
-> >         char *version;
-> >         char *license;
-> > @@ -1586,12 +1597,16 @@ static void read_symbols(const char *modname)
-> >                         license = get_next_modinfo(&info, "license", license);
-> >                 }
-> >
-> > -               namespace = get_modinfo(&info, "import_ns");
-> > -               while (namespace) {
-> > +               for (namespace = get_modinfo(&info, "import_ns"); namespace;
-> > +                    namespace = get_next_modinfo(&info, "import_ns", namespace)) {
+
+
+On 07/11/24 5:16 pm, MD Danish Anwar wrote:
 > 
-> The conversion from while() to for() is an unrelated change.
-> Split it to a separate patch if you want to change it.
-
-Yeah, at some point I had a break or continue in there I think, it
-didn't live. If you like I can keep it a split it out.
-
-> > +                       if (strstarts(namespace, "MODULE_"))
-> > +                               error("importing implicit module namespace: %s\n", namespace);
-> > +
-> >                         add_namespace(&mod->imported_namespaces, namespace);
-> > -                       namespace = get_next_modinfo(&info, "import_ns",
-> > -                                                    namespace);
-> >                 }
-> > +               snprintf(module_namespace, sizeof(module_namespace), "MODULE_%s",
-> > +                        mod_basename(mod->name));
-
-.. here ..
-
-> > +               add_namespace(&mod->imported_namespaces, module_namespace);
-> >
-> >                 if (extra_warn && !get_modinfo(&info, "description"))
-> >                         warn("missing MODULE_DESCRIPTION() in %s\n", modname);
-> > @@ -1700,11 +1715,7 @@ static void check_exports(struct module *mod)
-> >                 s->crc_valid = exp->crc_valid;
-> >                 s->crc = exp->crc;
-> >
-> > -               basename = strrchr(mod->name, '/');
-> > -               if (basename)
-> > -                       basename++;
-> > -               else
-> > -                       basename = mod->name;
-> > +               basename = mod_basename(mod->name);
 > 
-> This is an unrelated change.
+> On 07/11/24 5:14 pm, Krzysztof Kozlowski wrote:
+>> On 07/11/2024 12:36, MD Danish Anwar wrote:
+>>>
+>>>
+>>> On 07/11/24 5:01 pm, Krzysztof Kozlowski wrote:
+>>>> On 07/11/2024 11:45, MD Danish Anwar wrote:
+>>>>> Add clocks, assigned-clocks and assigned-clock-parents for ICSSG
+>>>>
+>>>> Why? We see what you are doing from the diff, no point to repeat it. I
+>>>> don't understand why you are doing it.
+>>>>
+>>>>>
+>>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>>>> ---
+>>>>>  .../devicetree/bindings/soc/ti/ti,pruss.yaml          | 11 +++++++++++
+>>>>>  1 file changed, 11 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+>>>>> index 3cb1471cc6b6..cf4c5884d8be 100644
+>>>>> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+>>>>> @@ -92,6 +92,17 @@ properties:
+>>>>>      description: |
+>>>>>        This property is as per sci-pm-domain.txt.
+>>>>>  
+>>>>> +  clocks:
+>>>>> +    items:
+>>>>> +      - description: ICSSG_CORE Clock
+>>>>> +      - description: ICSSG_ICLK Clock
+>>>>> +
+>>>>> +  assigned-clocks:
+>>>>> +    maxItems: 1
+>>>>> +
+>>>>> +  assigned-clock-parents:
+>>>>> +    maxItems: 1
+>>>>
+>>>> Why? This is really not needed, so you need to explain why you are doing
+>>>> things differently than entire Linux kernel / DT bindings.
+>>>>
+>>>
+>>> I need to add this to the device tree node
+>>>
+>>> +		clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
+>>> +			 <&k3_clks 81 20>; /* icssg0_iclk */
+>>> +		assigned-clocks = <&k3_clks 81 0>;
+>>> +		assigned-clock-parents = <&k3_clks 81 2>;
+>>>
+>>> But without the above change in the binding I am getting below errors
+>>> while running dtbs check.
+>>>
+>>> /workdir/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtb: icssg@30000000:
+>>> 'assigned-clock-parents', 'assigned-clocks' do not match any of the
+>>> regexes: '^(pru|rtu|txpru)@[0-9a-f]+$', '^pa-stats@[a-f0-9]+$',
+>>> 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$', 'interrupt-controller@[a-f0-9]+$',
+>>> 'mdio@[a-f0-9]+$', 'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$',
+>>> 'mii-rt@[a-f0-9]+$', 'pinctrl-[0-9]+'
+>>> +/workdir/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtb: icssg@30080000:
+>>> 'anyOf' conditional failed, one must be fixed:
+>>>
+>>> To fix this warning I added these in the binding and the warnings were
+>>> fixed.
+>>
+>> nah, cannot reproduce. Just be sure you work on recent kernel (last time
+>> you were sending it on some ancient stuff) and your packages are
+>> updated, including dt schema and other kernel dependencies.
+>>
+> 
+> I have posted this series on the latest kernel. Base commit
+> 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
+> 
+> Let me check if the schema is up to date or not. I will re test and
+> reply. Thanks for pointing it out.
+> 
 
-Hardly unrelated, I added a second usage above. So you're saying I
-should've just copy pasted the whole thing and then it would've been
-fine?
+Krzysztof, I re-checked.
+I am on the latest kernel (commit
+5b913f5d7d7fe0f567dea8605f21da6eaa1735fb (tag: next-20241106,
+origin/master, origin/HEAD)) and I am using the lastest dtschema v2024.9
 
-> So, it should be split into a separate prerequisite patch,
-> something like, "modpost: introduce mod_basename() helper"
+❯ python3 -m pip list|grep 'dtschema'
+dtschema                      2024.9
 
-Well, I can...
+Still I am getting the below dtbs check errors while running `make
+CHECK_DTBS=y ti/k3-am642-evm.dtb` without the binding change.
 
-Anyway, let me see about doing that whole ',' parsing thing people seem
-to want.
+Let me know if I am missing something else.
+
+/home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+icssg@30000000: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do
+not match any of the regexes: '^(pru|rtu|txpru)@[0-9a-f]+$',
+'^pa-stats@[a-f0-9]+$', 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$',
+'interrupt-controller@[a-f0-9]+$', 'mdio@[a-f0-9]+$',
+'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$', 'mii-rt@[a-f0-9]+$',
+'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/ti/ti,pruss.yaml#
+/home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+icssg@30000000: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do
+not match any of the regexes: '^(pru|rtu|txpru)@[0-9a-f]+$',
+'^pa-stats@[a-f0-9]+$', 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$',
+'interrupt-controller@[a-f0-9]+$', 'mdio@[a-f0-9]+$',
+'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$', 'mii-rt@[a-f0-9]+$',
+'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/ti/ti,pruss.yaml#
+/home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+icssg@30080000: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do
+not match any of the regexes: '^(pru|rtu|txpru)@[0-9a-f]+$',
+'^pa-stats@[a-f0-9]+$', 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$',
+'interrupt-controller@[a-f0-9]+$', 'mdio@[a-f0-9]+$',
+'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$', 'mii-rt@[a-f0-9]+$',
+'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/ti/ti,pruss.yaml#
+/home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+icssg@30080000: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do
+not match any of the regexes: '^(pru|rtu|txpru)@[0-9a-f]+$',
+'^pa-stats@[a-f0-9]+$', 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$',
+'interrupt-controller@[a-f0-9]+$', 'mdio@[a-f0-9]+$',
+'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$', 'mii-rt@[a-f0-9]+$',
+'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/ti/ti,pruss.yaml#
+
+> 
+> 
+>> Best regards,
+>> Krzysztof
+>>
+> 
+
+-- 
+Thanks and Regards,
+Danish
 
