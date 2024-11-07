@@ -1,292 +1,279 @@
-Return-Path: <linux-kernel+bounces-399088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2409BFAE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:47:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5ECF9BFAE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:50:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98551F225E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F542815B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D543A4C83;
-	Thu,  7 Nov 2024 00:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA404A31;
+	Thu,  7 Nov 2024 00:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVEQbYHt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eu30ehFA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C71F7E1;
-	Thu,  7 Nov 2024 00:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17092114
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 00:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730940435; cv=none; b=qhc8VKILOfLnlB6EsujBRwQnD9FwahR4hOXTGBpqLcjI1RxixG+Bq7/MfWoXFj+ROU6qfGXbFXvQfonm6JVvK7gie2bPHncBVv0y7u7OBOJ7RfEqpsr2Cwk0a0ytSlidukjpyIYuDKIsz6v0Nmh4PVd4zL9GZHrI1ihjJI+KZb0=
+	t=1730940598; cv=none; b=DR4dTUwVI9AXkFLRYundrR4bPJQfBibpU8ncIplDdF9x51bJVMS7m+5FZ2NAOjlrZkQD5DWLCFTMDzGQLm2lJKnCSj83wxzyckfQsVENmwLFNt680udkTnu8u0HasssUTX1gSWtsoCEAXQjgo1BFnHUV2LazmVjtPb+7nV2iUD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730940435; c=relaxed/simple;
-	bh=1k9bq21o3kYniMJw32NjowIHjtIg86EP5FgduFgkNBE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JmOzQTHSvKkTWSgo/iYVYPVdz0pnmPE2jFDrdxyz/vu0HHVbctfkRTgL0D38C/btaIgYw5LMJ2KzvAkr7ldv1mqhlUNhh1Zr+xI3JvlZY7Rd9Hd90I8T0luNhA4nbvJlX+gIkDp3vugG/ZUd4163ZidsCWeizbB8qZIQwoCwuiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVEQbYHt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC96C4CEC6;
-	Thu,  7 Nov 2024 00:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730940434;
-	bh=1k9bq21o3kYniMJw32NjowIHjtIg86EP5FgduFgkNBE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lVEQbYHtR+Dorbt7lcTI1fazhwhNffENyuUuoiPlRXj49Sj8y7vrvJ9Y3102bteIa
-	 EKAxbtgx6xhmHwJ+ztAdx/StfNGi+9UX75vHgvYL1hC7hMLkxPWF93Nr8KALdLjjNZ
-	 2TLwpzL4SXTHNfhsLXJ8RnaJoy130VB+IrQd+MPlNz7OsK/TzeW5f+vLvMTjydGj9a
-	 qeg17rBe7/sUY7iT7pelDs1toJXp0u4kYP+Y3ax6hrvelv8HIHg4oUzkWE/ViwtIRF
-	 Me6oYYuoCEzVq4TqRu+PnV4JQjbxap0N4yKlT+gtHSMV/lpqcI0KbAqFryBKPViDoV
-	 i4EirL/tqrWFA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: Opt-in in disable PCR encryption on TPM2 chips
-Date: Thu,  7 Nov 2024 02:47:07 +0200
-Message-ID: <20241107004708.108667-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730940598; c=relaxed/simple;
+	bh=/62kD1h01T3lW+mSE6OaP0fpsbWgoGesvfLUoThxXkw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=V9GOnBGT3H+dA8Z/K3yc4SWqCUMEa5x9W7J6qGQSDU8ESrHpy5Dug/NjWjx8QwOcq3aOde6s+tDJv6OLaGRLcWhXMSnU2356bAGoKlxu6nnUF5q6U2aW7D6NDq/bbtk/qNleACIsLghdCN5Eo/wusI4PTTbZ0KJ/JWu4jFc7Rhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eu30ehFA; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730940596; x=1762476596;
+  h=date:from:to:cc:subject:message-id;
+  bh=/62kD1h01T3lW+mSE6OaP0fpsbWgoGesvfLUoThxXkw=;
+  b=Eu30ehFAjwGp0dtDOF3xQTX2KcVC/aH4+5nD7ybj4+/HNHy0439QMx5M
+   ejGQrKYmH6DUHHslKw2/k71ygONugGgJqtkaWo2jaVKKKXKc4sG2ZSpL9
+   0jEg7sxwKKlF0SqSHKxSUw4psuOEiWWtVva7+WXWU+2lzWfrHogwCvZYF
+   Y5IaQf1sT9I50YY1FnAU2k42D1tE7D8m2tEOPSnPHHdtUy6cRRJ79Q0Ht
+   sCQ5UuTnvpneN4Fr06qDODvK8v7ye3IPTGcw7XhqoOgiLjTo0NX4WartG
+   aBDOFdxInJfXA6bqb9mRfcIxg9bJJxzohpfdwsdP+LIUT9edwpi9dWjmj
+   w==;
+X-CSE-ConnectionGUID: aNDUykTpRoelFYOBYhYo7g==
+X-CSE-MsgGUID: eSfrEBYsSACFSvDHB2eEpw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30188368"
+X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
+   d="scan'208";a="30188368"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 16:49:56 -0800
+X-CSE-ConnectionGUID: nj68JQx8TtyGyY3BqZfNHg==
+X-CSE-MsgGUID: Ihzmc5K9RriQoLewr1cReQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
+   d="scan'208";a="84763052"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 06 Nov 2024 16:49:44 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8qiT-000paE-2w;
+	Thu, 07 Nov 2024 00:49:41 +0000
+Date: Thu, 07 Nov 2024 08:48:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:locking/core] BUILD SUCCESS
+ 183ec5f26b2fc97a4a9871865bfe9b33c41fddb2
+Message-ID: <202411070838.IlQFxoml-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Mimi Zohar <zohar@linux.ibm.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+branch HEAD: 183ec5f26b2fc97a4a9871865bfe9b33c41fddb2  kcsan, seqlock: Fix incorrect assumption in read_seqbegin()
 
-The initial encrypted HMAC session feature added TPM bus encryption to
-various in-kernel TPM operations. This can cause performance bottlenecks
-with IMA, as it heavily utilizes PCR extend operations.
+elapsed time: 847m
 
-In order to address this performance issue, introduce disable_encrypt_pcrs
-kernel command-line parameter to the TPM driver.
+configs tested: 187
+configs skipped: 5
 
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-Link: https://lore.kernel.org/linux-integrity/20241015193916.59964-1-zohar@linux.ibm.com/
-Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
-Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v1:
-- Derived from the earlier RFC patch with a different parameter scope,
-  cleaner commit message and some other tweaks. I decided to create
-  something because I did not noticed any progress. Note only compile
-  tested as I wanted to get something quickly out.
----
- .../admin-guide/kernel-parameters.txt         | 10 ++++
- drivers/char/tpm/tpm2-cmd.c                   | 33 ++++++++---
- drivers/char/tpm/tpm2-sessions.c              | 59 +++++++++++--------
- include/linux/tpm.h                           |  4 ++
- 4 files changed, 74 insertions(+), 32 deletions(-)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1518343bbe22..e27517e1a26f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6727,6 +6727,16 @@
- 	torture.verbose_sleep_duration= [KNL]
- 			Duration of each verbose-printk() sleep in jiffies.
- 
-+	tpm.disable_encrypt_pcrs= [HW,TPM]
-+			Do not protect PCR registers from unintended physical
-+			access, or interposers in the bus by the means of
-+			having an encrypted and integrity protected session
-+			wrapped around TPM2_PCR_Extend command. Consider this
-+			in a situation where TPM is heavily utilized by
-+			IMA, thus protection causing a major performance hit,
-+			and the space where machines are deployed is by other
-+			means guarded.
-+
- 	tpm_suspend_pcr=[HW,TPM]
- 			Format: integer pcr id
- 			Specify that at suspend time, the tpm driver
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 1e856259219e..6ec307b1cb99 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -14,6 +14,10 @@
- #include "tpm.h"
- #include <crypto/hash_info.h>
- 
-+static bool disable_encrypt_pcrs;
-+module_param(disable_encrypt_pcrs, bool, 0444);
-+MODULE_PARM_DESC(disable_encrypt_pcrs, "Disable TPM2_PCR_Extend encryption");
-+
- static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
- 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
-@@ -232,18 +236,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 	int rc;
- 	int i;
- 
--	rc = tpm2_start_auth_session(chip);
--	if (rc)
--		return rc;
-+	if (!disable_encrypt_pcrs) {
-+		rc = tpm2_start_auth_session(chip);
-+		if (rc)
-+			return rc;
-+	}
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
- 	if (rc) {
--		tpm2_end_auth_session(chip);
-+		if (!disable_encrypt_pcrs)
-+			tpm2_end_auth_session(chip);
- 		return rc;
- 	}
- 
--	tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
--	tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-+	if (!disable_encrypt_pcrs) {
-+		tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
-+		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-+	} else {
-+		tpm_buf_append_handle(chip, &buf, pcr_idx, NULL);
-+		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
-+	}
- 
- 	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
- 
-@@ -253,9 +265,12 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 			       chip->allocated_banks[i].digest_size);
- 	}
- 
--	tpm_buf_fill_hmac_session(chip, &buf);
--	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting extend a PCR value");
--	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
-+	if (!disable_encrypt_pcrs)
-+		tpm_buf_fill_hmac_session(chip, &buf);
-+	rc = tpm_transmit_cmd(chip, &buf, 0,
-+			      "attempting extend a PCR value");
-+	if (!disable_encrypt_pcrs)
-+		rc = tpm_buf_check_hmac_response(chip, &buf, rc);
- 
- 	tpm_buf_destroy(&buf);
- 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index 42df980168b6..02897debc3fa 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -205,6 +205,14 @@ static int tpm2_read_public(struct tpm_chip *chip, u32 handle, char *name)
- }
- #endif /* CONFIG_TCG_TPM2_HMAC */
- 
-+void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf,
-+			   u32 handle, u8 *name)
-+{
-+	tpm_buf_append_u32(buf, handle);
-+	/* count the number of handles in the upper bits of flags */
-+	buf->handles++;
-+}
-+
- /**
-  * tpm_buf_append_name() - add a handle area to the buffer
-  * @chip: the TPM chip structure
-@@ -237,9 +245,7 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- #endif
- 
- 	if (!tpm2_chip_auth(chip)) {
--		tpm_buf_append_u32(buf, handle);
--		/* count the number of handles in the upper bits of flags */
--		buf->handles++;
-+		tpm_buf_append_handle(chip, buf, handle, name);
- 		return;
- 	}
- 
-@@ -272,6 +278,31 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- }
- EXPORT_SYMBOL_GPL(tpm_buf_append_name);
- 
-+void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
-+			 u8 attributes, u8 *passphrase, int passphrase_len)
-+{
-+	/* offset tells us where the sessions area begins */
-+	int offset = buf->handles * 4 + TPM_HEADER_SIZE;
-+	u32 len = 9 + passphrase_len;
-+
-+	if (tpm_buf_length(buf) != offset) {
-+		/* not the first session so update the existing length */
-+		len += get_unaligned_be32(&buf->data[offset]);
-+		put_unaligned_be32(len, &buf->data[offset]);
-+	} else {
-+		tpm_buf_append_u32(buf, len);
-+	}
-+	/* auth handle */
-+	tpm_buf_append_u32(buf, TPM2_RS_PW);
-+	/* nonce */
-+	tpm_buf_append_u16(buf, 0);
-+	/* attributes */
-+	tpm_buf_append_u8(buf, 0);
-+	/* passphrase */
-+	tpm_buf_append_u16(buf, passphrase_len);
-+	tpm_buf_append(buf, passphrase, passphrase_len);
-+}
-+
- /**
-  * tpm_buf_append_hmac_session() - Append a TPM session element
-  * @chip: the TPM chip structure
-@@ -309,26 +340,8 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- #endif
- 
- 	if (!tpm2_chip_auth(chip)) {
--		/* offset tells us where the sessions area begins */
--		int offset = buf->handles * 4 + TPM_HEADER_SIZE;
--		u32 len = 9 + passphrase_len;
--
--		if (tpm_buf_length(buf) != offset) {
--			/* not the first session so update the existing length */
--			len += get_unaligned_be32(&buf->data[offset]);
--			put_unaligned_be32(len, &buf->data[offset]);
--		} else {
--			tpm_buf_append_u32(buf, len);
--		}
--		/* auth handle */
--		tpm_buf_append_u32(buf, TPM2_RS_PW);
--		/* nonce */
--		tpm_buf_append_u16(buf, 0);
--		/* attributes */
--		tpm_buf_append_u8(buf, 0);
--		/* passphrase */
--		tpm_buf_append_u16(buf, passphrase_len);
--		tpm_buf_append(buf, passphrase, passphrase_len);
-+		tpm_buf_append_auth(chip, buf, attributes, passphrase,
-+				    passphrase_len);
- 		return;
- 	}
- 
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 587b96b4418e..4892cd004530 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -502,9 +502,13 @@ static inline struct tpm2_auth *tpm2_chip_auth(struct tpm_chip *chip)
- 
- void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- 			 u32 handle, u8 *name);
-+void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf,
-+			   u32 handle, u8 *name);
- void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 				 u8 attributes, u8 *passphrase,
- 				 int passphraselen);
-+void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
-+			 u8 attributes, u8 *passphrase, int passphraselen);
- static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
- 						   struct tpm_buf *buf,
- 						   u8 attributes,
--- 
-2.47.0
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-20
+arc                          axs101_defconfig    gcc-14.2.0
+arc                          axs103_defconfig    gcc-14.2.0
+arc                   randconfig-001-20241106    gcc-14.2.0
+arc                   randconfig-002-20241106    gcc-14.2.0
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-20
+arm                         axm55xx_defconfig    gcc-14.2.0
+arm                          gemini_defconfig    gcc-14.2.0
+arm                           h3600_defconfig    gcc-14.2.0
+arm                           imxrt_defconfig    gcc-14.2.0
+arm                   randconfig-001-20241106    gcc-14.2.0
+arm                   randconfig-002-20241106    gcc-14.2.0
+arm                   randconfig-003-20241106    gcc-14.2.0
+arm                   randconfig-004-20241106    gcc-14.2.0
+arm                             rpc_defconfig    gcc-14.2.0
+arm                           sunxi_defconfig    gcc-14.2.0
+arm                       versatile_defconfig    gcc-14.2.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20241106    gcc-14.2.0
+arm64                 randconfig-002-20241106    gcc-14.2.0
+arm64                 randconfig-003-20241106    gcc-14.2.0
+arm64                 randconfig-004-20241106    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20241106    gcc-14.2.0
+csky                  randconfig-002-20241106    gcc-14.2.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+hexagon               randconfig-001-20241106    gcc-14.2.0
+hexagon               randconfig-002-20241106    gcc-14.2.0
+i386                             allmodconfig    clang-19
+i386                              allnoconfig    clang-19
+i386                             allyesconfig    clang-19
+i386        buildonly-randconfig-001-20241106    gcc-12
+i386        buildonly-randconfig-002-20241106    gcc-12
+i386        buildonly-randconfig-003-20241106    gcc-12
+i386        buildonly-randconfig-004-20241106    gcc-12
+i386        buildonly-randconfig-005-20241106    gcc-12
+i386        buildonly-randconfig-006-20241106    gcc-12
+i386                                defconfig    clang-19
+i386                  randconfig-001-20241106    gcc-12
+i386                  randconfig-002-20241106    gcc-12
+i386                  randconfig-003-20241106    gcc-12
+i386                  randconfig-004-20241106    gcc-12
+i386                  randconfig-005-20241106    gcc-12
+i386                  randconfig-006-20241106    gcc-12
+i386                  randconfig-011-20241106    gcc-12
+i386                  randconfig-012-20241106    gcc-12
+i386                  randconfig-013-20241106    gcc-12
+i386                  randconfig-014-20241106    gcc-12
+i386                  randconfig-015-20241106    gcc-12
+i386                  randconfig-016-20241106    gcc-12
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20241106    gcc-14.2.0
+loongarch             randconfig-002-20241106    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                          atari_defconfig    gcc-14.2.0
+m68k                       m5208evb_defconfig    gcc-14.2.0
+m68k                          multi_defconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                            gpr_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20241106    gcc-14.2.0
+nios2                 randconfig-002-20241106    gcc-14.2.0
+openrisc                          allnoconfig    clang-20
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20241106    gcc-14.2.0
+parisc                randconfig-002-20241106    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                      bamboo_defconfig    gcc-14.2.0
+powerpc                        cell_defconfig    gcc-14.2.0
+powerpc                 mpc832x_rdb_defconfig    gcc-14.2.0
+powerpc                      pcm030_defconfig    gcc-14.2.0
+powerpc                         ps3_defconfig    gcc-14.2.0
+powerpc               randconfig-001-20241106    gcc-14.2.0
+powerpc               randconfig-002-20241106    gcc-14.2.0
+powerpc               randconfig-003-20241106    gcc-14.2.0
+powerpc                     sequoia_defconfig    gcc-14.2.0
+powerpc                     tqm8541_defconfig    gcc-14.2.0
+powerpc                      tqm8xx_defconfig    gcc-14.2.0
+powerpc64             randconfig-001-20241106    gcc-14.2.0
+powerpc64             randconfig-002-20241106    gcc-14.2.0
+powerpc64             randconfig-003-20241106    gcc-14.2.0
+riscv                            allmodconfig    clang-20
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+riscv                               defconfig    gcc-12
+riscv                    nommu_virt_defconfig    gcc-14.2.0
+riscv                 randconfig-001-20241106    gcc-14.2.0
+riscv                 randconfig-002-20241106    gcc-14.2.0
+s390                             allmodconfig    clang-20
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20241106    gcc-14.2.0
+s390                  randconfig-002-20241106    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-12
+sh                          lboxre2_defconfig    gcc-14.2.0
+sh                            migor_defconfig    gcc-14.2.0
+sh                    randconfig-001-20241106    gcc-14.2.0
+sh                    randconfig-002-20241106    gcc-14.2.0
+sh                   secureedge5410_defconfig    gcc-14.2.0
+sh                        sh7757lcr_defconfig    gcc-14.2.0
+sh                        sh7785lcr_defconfig    gcc-14.2.0
+sh                          urquell_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                       sparc32_defconfig    gcc-14.2.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20241106    gcc-14.2.0
+sparc64               randconfig-002-20241106    gcc-14.2.0
+um                               alldefconfig    gcc-14.2.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-17
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20241106    gcc-14.2.0
+um                    randconfig-002-20241106    gcc-14.2.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20241106    gcc-11
+x86_64      buildonly-randconfig-002-20241106    gcc-11
+x86_64      buildonly-randconfig-003-20241106    gcc-11
+x86_64      buildonly-randconfig-004-20241106    gcc-11
+x86_64      buildonly-randconfig-005-20241106    gcc-11
+x86_64      buildonly-randconfig-006-20241106    gcc-11
+x86_64                              defconfig    clang-19
+x86_64                                  kexec    clang-19
+x86_64                                  kexec    gcc-12
+x86_64                randconfig-001-20241106    gcc-11
+x86_64                randconfig-002-20241106    gcc-11
+x86_64                randconfig-003-20241106    gcc-11
+x86_64                randconfig-004-20241106    gcc-11
+x86_64                randconfig-005-20241106    gcc-11
+x86_64                randconfig-006-20241106    gcc-11
+x86_64                randconfig-011-20241106    gcc-11
+x86_64                randconfig-012-20241106    gcc-11
+x86_64                randconfig-013-20241106    gcc-11
+x86_64                randconfig-014-20241106    gcc-11
+x86_64                randconfig-015-20241106    gcc-11
+x86_64                randconfig-016-20241106    gcc-11
+x86_64                randconfig-071-20241106    gcc-11
+x86_64                randconfig-072-20241106    gcc-11
+x86_64                randconfig-073-20241106    gcc-11
+x86_64                randconfig-074-20241106    gcc-11
+x86_64                randconfig-075-20241106    gcc-11
+x86_64                randconfig-076-20241106    gcc-11
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                  audio_kc705_defconfig    gcc-14.2.0
+xtensa                randconfig-001-20241106    gcc-14.2.0
+xtensa                randconfig-002-20241106    gcc-14.2.0
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
