@@ -1,147 +1,183 @@
-Return-Path: <linux-kernel+bounces-399777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF4D9C040C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:32:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1372E9C040F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAE9EB2120B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:31:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A997B23367
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316742071FC;
-	Thu,  7 Nov 2024 11:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AE0209F48;
+	Thu,  7 Nov 2024 11:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3r9yirU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Is85sQl8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0222071E5;
-	Thu,  7 Nov 2024 11:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31F8207201
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730979107; cv=none; b=AUcpV/4tROMV6QpI28ldAq/60nXsVs1e+uD7T+Bdxw+cvvxjW8A/TvmNDgGH6eTYQgB06jVlTU2NLThWGoXEXTyvaroIlskB/YPcGXS0xvIwR24vM1NW4eHQaQNITHv3ku2bCE1KcRI2lLteYCkfkQl3jtqQuR8Ukardd8cxV1Q=
+	t=1730979127; cv=none; b=Tj//FZThDdGOJv6Yow3oiQ8DkvxSerMcIg30ZJGk+EhgwCVd+UdUielFB5IYOPw21vdyLUAvLYGIDVt206ttpea7GacyorNQ7iS5urR1CI54fkuZUqaBfYTb8HMa6rno2NHZ+70e17oN8hsszK9/8/IMANkoCayLvscOmIfQQgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730979107; c=relaxed/simple;
-	bh=bHykFuOuUibQfJ46Ui9WpEEdlslbdOyw2nLT37cCDM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F/VUdMGyueriQ8nb9fy3I55jpVnDWZkFnGFuHh1ufDtDPP4q3YCnW2cI8CmtHlDKWAUigmF6ojiXQ0qkotJLYWbdxCYdHyylgbJQM8v1eFKogKUiFsTNUC49KkgvNeVsZYKmPsZqyysseZ/1fdTBlaTU/y2UYCxMjCxBZeqG8FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3r9yirU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2BC1C4CECC;
-	Thu,  7 Nov 2024 11:31:42 +0000 (UTC)
+	s=arc-20240116; t=1730979127; c=relaxed/simple;
+	bh=++vQ0lzeG3Jrqx6fHr8hPgQgL6xBFVlHG0RR8npbujE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=NrO5jchgEy/8rUX0sjcPyfTko9hGlDIAWRvwtCKJAVWVKkDWOCY5KT0jNSoFgM723XTgRwUSwrXXrjrI109nd2eCxRPHAM/HD1WfaYeXAA7sNpF9NX2vKDOm1SWghtaEn9BEsmepVd+1I2eHNpcb0B/SBZnvda5kjX0Iu2IXXbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Is85sQl8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E23C4CECC;
+	Thu,  7 Nov 2024 11:32:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730979107;
-	bh=bHykFuOuUibQfJ46Ui9WpEEdlslbdOyw2nLT37cCDM4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V3r9yirUTMvjA5pnn9iyHDEs8hTY9HfnzO1pKYrCgCM74PaxySKyGc2uv2Eb2xMej
-	 TASH7sbN+nBYNL09jIpRSL+dT37QWaHYGSEhlckkSPDjC4x3f1GmYyPZORMkyeeDzE
-	 2AZ0T5XdmUKi3i/dTFFqtoZJbZbYBluse8tSDOlJYMYYbIujNcki48oLRe+bXg5qso
-	 X2V535jT8/0tEtG0lP+QZQeGSaPa+3Wa+LFtRLc0lS0NV2KI0VbXeGJGns0n6UxUoz
-	 ihOCaJzJBtqL/silOuTT5B+j9LS96VDc16Xu+1FnC/ivZDp4uJk2Kgaj1hNF/ZS1ZQ
-	 zl0HWd9Cya5zw==
-Message-ID: <7f0a73c3-9977-4d07-b996-683ed18e4724@kernel.org>
-Date: Thu, 7 Nov 2024 12:31:40 +0100
+	s=k20201202; t=1730979126;
+	bh=++vQ0lzeG3Jrqx6fHr8hPgQgL6xBFVlHG0RR8npbujE=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=Is85sQl8V1y4p9Ke3aIamTV0pXATg8O7UhHBzwsv89xiqctJLHGiSupmRs8KGFf8C
+	 pI381yE5fqBFDu1da/97yQCOhTZ1ZbUPOXzbTbemCceEzdCaESotCcbyuAOBV3sMb7
+	 6kfbEocu0N/R6j1RDPhT7nSGHXFG9iKMb4Zt8qmEMRyQ8yfbUyxn9fA/qwixiEZy2T
+	 sMCUISxOXP9FbjIRci6CnTIDoCqiOC7lAaOCQ7qj086Xdgib422AD73sDPK+J0L1C+
+	 Jg1qGaO+3A5TIWs29vpyx3Qvb5Un51KlX0wweYVvZFzuM/yeihAXX+HwZRbjKEsaRV
+	 CP5IbA/cxt09Q==
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 2804C120006C;
+	Thu,  7 Nov 2024 06:32:05 -0500 (EST)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-03.internal (MEProxy); Thu, 07 Nov 2024 06:32:05 -0500
+X-ME-Sender: <xms:NaUsZ5jXCfx1YLBRih7P_dQok3HqV6uj3nBJ563PnIsvB2A-f6RC5g>
+    <xme:NaUsZ-B3-f-I-v-ZYKLZIQ2Rtqa7tgYlJKE6pxZIwo7rI5g2nFGJ7S7xeA1IEofoo
+    LcJeYuyojvdDaz9KNU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeggddvlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdfnvghonhcutfhomhgrnhhovhhskhihfdcuoehlvghonheskhgvrhhnvg
+    hlrdhorhhgqeenucggtffrrghtthgvrhhnpeekgfduveffueffveduleefgfejhfevfedu
+    ueeiueetleeugeeivdfhfedvgeeuhfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhgvohhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdeftdehfeelkeegqddvje
+    ejleejjedvkedqlhgvohhnpeepkhgvrhhnvghlrdhorhhgsehlvghonhdrnhhupdhnsggp
+    rhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhonhhnhi
+    gtsegrmhgriihonhdrtghomhdprhgtphhtthhopehmtggrrhhlshhonhessghrohgruggt
+    ohhmrdgtohhmpdhrtghpthhtohepkhgrihdrhhgvnhhgrdhfvghnghestggrnhhonhhitg
+    grlhdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdp
+    rhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohephh
+    gvlhhgrggrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhifsehlihhnuhigrdgt
+    ohhmpdhrtghpthhtoheprggvrghsihesmhgrrhhvvghllhdrtghomhdprhgtphhtthhope
+    grphhrrggshhhunhgvsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:NaUsZ5Giy9j3ajjZsZkQXlmPsPUX80BWvmsueyxnnsMZFqvsFbDwrA>
+    <xmx:NaUsZ-TpUSNntRKiLL8Gt5t8jMk641Y7Jy92DgQUo0sD_ufYIy16Hw>
+    <xmx:NaUsZ2wydzRwe6i8PFdfLp003BxLGKg7R_xBpBru2_3vFgzwtVj0Tg>
+    <xmx:NaUsZ04chBJT_iS7UfWqrHerXpO1K0p4awauJMsQ2rN0anHpFgh-yQ>
+    <xmx:NaUsZ7yyM8K09kwVSKQ2FifmB1-tJhC4-SDYvnG5VdECGo_z0UKH0Z-b>
+Feedback-ID: i927946fb:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id EC77B1C20066; Thu,  7 Nov 2024 06:32:04 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: soc: ti: pruss: Add clocks for ICSSG
-To: MD Danish Anwar <danishanwar@ti.com>, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, ssantosh@kernel.org, nm@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, s-anna@ti.com, kristo@kernel.org, srk@ti.com,
- Roger Quadros <rogerq@kernel.org>
-References: <20241107104557.1442800-1-danishanwar@ti.com>
- <20241107104557.1442800-2-danishanwar@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241107104557.1442800-2-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Nov 2024 13:31:44 +0200
+From: "Leon Romanovsky" <leon@kernel.org>
+To: "Bjorn Helgaas" <helgaas@kernel.org>
+Cc: "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ linux-pci@vger.kernel.org, "Ariel Almog" <ariela@nvidia.com>,
+ "Aditya Prabhune" <aprabhune@nvidia.com>, "Hannes Reinecke" <hare@suse.de>,
+ "Heiner Kallweit" <hkallweit1@gmail.com>, "Arun Easi" <aeasi@marvell.com>,
+ "Jonathan Chocron" <jonnyc@amazon.com>,
+ "Bert Kenward" <bkenward@solarflare.com>,
+ "Matt Carlson" <mcarlson@broadcom.com>,
+ "Kai-Heng Feng" <kai.heng.feng@canonical.com>,
+ "Jean Delvare" <jdelvare@suse.de>,
+ "Alex Williamson" <alex.williamson@redhat.com>, linux-kernel@vger.kernel.org
+Message-Id: <1d4df22e-3783-4081-b57b-ac03cd894cb5@app.fastmail.com>
+In-Reply-To: <20241105162655.GG311159@unreal>
+References: <20241105075130.GD311159@unreal>
+ <20241105152455.GA1472398@bhelgaas> <20241105162655.GG311159@unreal>
+Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2024 11:45, MD Danish Anwar wrote:
-> Add clocks, assigned-clocks and assigned-clock-parents for ICSSG
+On Tue, Nov 5, 2024, at 18:26, Leon Romanovsky wrote:
+> On Tue, Nov 05, 2024 at 09:24:55AM -0600, Bjorn Helgaas wrote:
+>> On Tue, Nov 05, 2024 at 09:51:30AM +0200, Leon Romanovsky wrote:
+>> > On Mon, Nov 04, 2024 at 06:10:27PM -0600, Bjorn Helgaas wrote:
+>> > > On Sun, Nov 03, 2024 at 02:33:44PM +0200, Leon Romanovsky wrote:
+>> > > > On Fri, Nov 01, 2024 at 11:47:37AM -0500, Bjorn Helgaas wrote:
+>> > > > > On Fri, Nov 01, 2024 at 04:33:00PM +0200, Leon Romanovsky wrote:
+>> > > > > > On Thu, Oct 31, 2024 at 06:22:52PM -0500, Bjorn Helgaas wrote:
+>> > > > > > > On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
+>> > > > > > > > On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
+>> > > > > > > > > From: Leon Romanovsky <leonro@nvidia.com>
+>> > > > > > > > > 
+>> > > > > > > > > The Virtual Product Data (VPD) attribute is not
+>> > > > > > > > > readable by regular user without root permissions.
+>> > > > > > > > > Such restriction is not really needed, as data
+>> > > > > > > > > presented in that VPD is not sensitive at all.
+>> > > > > > > > > 
+>> > > > > > > > > This change aligns the permissions of the VPD
+>> > > > > > > > > attribute to be accessible for read by all users,
+>> > > > > > > > > while write being restricted to root only.
+>> > ...
+>> 
+>> > > What's the use case?  How does an unprivileged user use the VPD
+>> > > information?
+>> > 
+>> > We have to add new field keyword=value in VA section of VPD, which
+>> > will indicate very specific sub-model for devices used as a bridge.
+>> > 
+>> > > I can certainly imagine using VPD for bug reporting, but that
+>> > > would typically involve dmesg, dmidecode, lspci -vv, etc, all of
+>> > > which already require privilege, so it's not clear to me how
+>> > > public VPD info would help in that scenario.
+>> > 
+>> > I'm targeting other scenario - monitoring tool, which doesn't need
+>> > root permissions for reading data. It needs to distinguish between
+>> > NIC sub-models.
+>> 
+>> Maybe the driver could expose something in sysfs?  Maybe the driver
+>> needs to know the sub-model as well, and reading VPD once in the
+>> driver would make subsequent userspace sysfs reads trivial and fast.
+>
+> Our PCI driver lays in netdev subsystem and they have long-standing
+> position do not allow any custom sysfs files. To be fair, we (RDMA)
+> don't allow custom sysfs files too.
+>
+> Driver doesn't need to know this information as it is extra key=value in
+> existing [VA] field, while driver relies on multiple FW capabilities
+> to enable/disable functionality.
+>
+> Current [VA] line:
+> "[VA] Vendor specific: 
+> MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=CX713106A"
+> Future [VA] line:
+> "[VA] Vendor specific: 
+> MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=CX713106A,SMDL=SOMETHING"
+>
+> Also the idea that we will duplicate existing functionality doesn't
+> sound like a good approach to me, and there is no way that it is
+> possible to expose as subsystem specific file.
+>
+> What about to allow existing VPD sysfs file to be readable for everyone 
+> for our devices?
+> And if this allow list grows to much, we will open it for all devices 
+> in the world?
 
-Why? We see what you are doing from the diff, no point to repeat it. I
-don't understand why you are doing it.
+Bjorn,
 
-> 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
->  .../devicetree/bindings/soc/ti/ti,pruss.yaml          | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> index 3cb1471cc6b6..cf4c5884d8be 100644
-> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> @@ -92,6 +92,17 @@ properties:
->      description: |
->        This property is as per sci-pm-domain.txt.
->  
-> +  clocks:
-> +    items:
-> +      - description: ICSSG_CORE Clock
-> +      - description: ICSSG_ICLK Clock
-> +
-> +  assigned-clocks:
-> +    maxItems: 1
-> +
-> +  assigned-clock-parents:
-> +    maxItems: 1
+I don't see this patch in https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=next
+So what did you decide? How can we enable existing VPD access to regular users?
 
-Why? This is really not needed, so you need to explain why you are doing
-things differently than entire Linux kernel / DT bindings.
+Thanks
 
-Best regards,
-Krzysztof
-
+>
+> Thanks
+>
+>> 
+>> Bjorn
 
