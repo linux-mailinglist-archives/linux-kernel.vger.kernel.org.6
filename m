@@ -1,158 +1,92 @@
-Return-Path: <linux-kernel+bounces-399494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0D79BFFCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:17:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE99F9C0007
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:35:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58791F2247C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:17:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74428B22276
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C8D19AA63;
-	Thu,  7 Nov 2024 08:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036241DB95D;
+	Thu,  7 Nov 2024 08:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lA3jTYDu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="n6o8yfVV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEE619882F;
-	Thu,  7 Nov 2024 08:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FE9192B69;
+	Thu,  7 Nov 2024 08:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730967452; cv=none; b=Q6Uq1/tZRdc9MtKgbox+ZVHHfDhfvNNzc3mqUULSqu2PVWsvyUoFupY5oUfJbQtxOoQtyaCak66AJ6ToFvdtWzTIaeXLPbcza1pAJhYvwSKJfKIFLxxWZxoN3oz3UaAOfi94kZ8kU/FlC5v9IUZEelSpyFQv4LkbSZ/DcASc37s=
+	t=1730968483; cv=none; b=IVvndwG8eBPJMAQXyAvY5pI2gtrayAC99reBHXqDa7Xxb5eQu03zJPJ9NYVxcHxXbQiBvz1CPUyonzNtdM8zw9MQnPAGt2BhcGoaZdC6kqOl4IwcvP33uNPlAbiOEDABdOs38RsA3kSZ3aZwh9VK5f3goDO7awG2uBqYn293gIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730967452; c=relaxed/simple;
-	bh=X7f13c01wcIqZN9xK58W05Kg4OvhN1Ix2HGVrWucGZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ReoWQq0xb9rQ74eJ4KpzXv/c6aqj5MVs4yGRbW0iG0oxGfdfzlh9oULXmBFNQpGWwkqrS5MlCU+el7iNyMlhy7epleqGnNplPoc9B9DoShOfZUseqzyNGetrlbxNklMiTGRTFUdFBn/ZS+SU6BE5Q2Pg/8ShVtaHWIBj+aI3HaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lA3jTYDu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A75hrCs002118;
-	Thu, 7 Nov 2024 08:17:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0bzIDI1oq6c7V1yAm5VpFt7nqfwKuGFUHYtt7LlyWvE=; b=lA3jTYDurv1gKG/b
-	mBpi7ZFmP2wbFfftO1eHeWQ3X6qVPDad92YkpI+LAuVOM3/s4+wRLGajl6cpTjsS
-	u4h54jIoooZlCjI2CLkes5+ylZ0mdJFSa/hFqm7HJ5svtsY8378njFQQdqGcIIg8
-	zX0X58JrsmPERpusJ4haZQFLmzdHemnhHR2awnrYB2mz94g32GXLZxCvowGweF+F
-	HMDZrU8Pv5KHHZKjlALIfUu+Xx7Ow9Q4JGQtfJ9S8xYefBVptlZ63UIWIqp5wVF5
-	/dm/GNvKqmTxj342ZlgRlMWrf5jMigFeNuxTRYeIY2blP+DsuN7etMeDlv6T1j53
-	CzlcwA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r072m207-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 08:17:26 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A78HQgq021882
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Nov 2024 08:17:26 GMT
-Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
- 00:17:23 -0800
-Message-ID: <81d6a054-e02a-7c98-0479-0e17076fabd7@quicinc.com>
-Date: Thu, 7 Nov 2024 13:47:20 +0530
+	s=arc-20240116; t=1730968483; c=relaxed/simple;
+	bh=e1p9ZMW7teYCEnbCKcr1SaIZsmbiLbiyA0aRfo9a4ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PS6GY/cQS0uaKnegFAL7hsh4yqqT9bnay08SJtw6oRXTnkfGVPcQSFbD8dh6o8JDDjI/LGpyeSG+B87bb+tsPww+4SwhdGiyVzOp2fG9ARK44LsNyoY0DNWQAQj0HCBUyqMgeJWJmjYf2GMWgStD4kBqWLu/IttBt8gygPYrTZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=n6o8yfVV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16723C4CECC;
+	Thu,  7 Nov 2024 08:34:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730968482;
+	bh=e1p9ZMW7teYCEnbCKcr1SaIZsmbiLbiyA0aRfo9a4ng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n6o8yfVVzmP20CgAlHC9dO6b6jCFk6MgXPjL9Xt708u/Lxa5ohHyLuEUPDXjOnrm6
+	 jAWaEtiFQRTbehBE99yF3/kBiLR0OFHNbb7ol1rWyHcsXA70CmdFGd/pdldVwKOgGv
+	 AJPcjsF08vfT35481CPZl7hydXp8/QQhlEyuvJII=
+Date: Thu, 7 Nov 2024 09:17:44 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Anders Roxell <anders.roxell@linaro.org>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	Xingang Wang <wangxingang5@huawei.com>
+Subject: Re: [PATCH RESEND] iommu/of: Fix pci_request_acs() before
+ enumerating PCI devices
+Message-ID: <2024110759-refusal-mayflower-2522@gregkh>
+References: <20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
- bound access
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
- <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tx54v66Ncn0rJPLLi36zAWVStXwpQu4v
-X-Proofpoint-GUID: tx54v66Ncn0rJPLLi36zAWVStXwpQu4v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 mlxscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- adultscore=0 malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070062
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107-pci_acs_fix-v1-1-185a2462a571@quicinc.com>
 
-
-On 11/5/2024 7:25 PM, Dmitry Baryshkov wrote:
-> On Tue, Nov 05, 2024 at 02:24:54PM +0530, Vikash Garodia wrote:
->> There is a possibility that init_codecs is invoked multiple times during
->> manipulated payload from video firmware. In such case, if codecs_count
->> can get incremented to value more than MAX_CODEC_NUM, there can be OOB
->> access. Keep a check for max accessible memory before accessing it.
+On Thu, Nov 07, 2024 at 01:29:15PM +0530, Pavankumar Kondeti wrote:
+> From: Xingang Wang <wangxingang5@huawei.com>
 > 
-> No. Please make sure that init_codecs() does a correct thing, so that
-> core->codecs_count isn't incremented that much (or even better that
-> init_codecs() doesn't do anything if it is executed second time).
-init_codecs() parses the payload received from firmware and . I don't think we
-can control this part when we have something like this from a malicious firmware
-payload
-HFI_PROPERTY_PARAM_CODEC_SUPPORTED
-HFI_PROPERTY_PARAM_CODEC_SUPPORTED
-HFI_PROPERTY_PARAM_CODEC_SUPPORTED
-...
-Limiting it to second iteration would restrict the functionality when property
-HFI_PROPERTY_PARAM_CODEC_SUPPORTED is sent for supported number of codecs.
-
-Regards,
-Vikash
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 1a73374a04e5 ("media: venus: hfi_parser: add common capability parser")
->> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->> ---
->>  drivers/media/platform/qcom/venus/hfi_parser.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
->> index 3df241dc3a118bcdeb2c28a6ffdb907b644d5653..27d0172294d5154f4839e8cef172f9a619dfa305 100644
->> --- a/drivers/media/platform/qcom/venus/hfi_parser.c
->> +++ b/drivers/media/platform/qcom/venus/hfi_parser.c
->> @@ -23,6 +23,8 @@ static void init_codecs(struct venus_core *core)
->>  		return;
->>  
->>  	for_each_set_bit(bit, &core->dec_codecs, MAX_CODEC_NUM) {
->> +		if (core->codecs_count >= MAX_CODEC_NUM)
->> +			return;
->>  		cap = &caps[core->codecs_count++];
->>  		cap->codec = BIT(bit);
->>  		cap->domain = VIDC_SESSION_TYPE_DEC;
->> @@ -30,6 +32,8 @@ static void init_codecs(struct venus_core *core)
->>  	}
->>  
->>  	for_each_set_bit(bit, &core->enc_codecs, MAX_CODEC_NUM) {
->> +		if (core->codecs_count >= MAX_CODEC_NUM)
->> +			return;
->>  		cap = &caps[core->codecs_count++];
->>  		cap->codec = BIT(bit);
->>  		cap->domain = VIDC_SESSION_TYPE_ENC;
->>
->> -- 
->> 2.34.1
->>
+> When booting with devicetree, the pci_request_acs() is called after the
+> enumeration and initialization of PCI devices, thus the ACS is not
+> enabled. And ACS should be enabled when IOMMU is detected for the
+> PCI host bridge, so add check for IOMMU before probe of PCI host and call
+> pci_request_acs() to make sure ACS will be enabled when enumerating PCI
+> devices.
 > 
+> Fixes: 6bf6c24720d33 ("iommu/of: Request ACS from the PCI core when configuring IOMMU linkage")
+> Signed-off-by: Xingang Wang <wangxingang5@huawei.com>
+> Signed-off-by: Pavankumar Kondeti <quic_pkondeti@quicinc.com>
+> ---
+> Earlier this patch made it to linux-next but got dropped later as it
+> broke PCI on ARM Juno R1 board. AFAICT, this issue is never root caused,
+> so resending this patch to get attention again.
+> 
+> https://lore.kernel.org/all/1621566204-37456-1-git-send-email-wangxingang5@huawei.com/
+
+Please don't resend known-broken patches.  Please fix them up before
+resending, otherwise we will just ignore this one as well as obviously
+we can not take such a thing (nor should you want us to.)
+
+thanks,
+
+greg k-h
 
