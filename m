@@ -1,239 +1,152 @@
-Return-Path: <linux-kernel+bounces-400124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9059C0948
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:51:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6DC9C094D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDA51C23639
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE9C282153
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477D8212F0F;
-	Thu,  7 Nov 2024 14:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A2F2139B0;
+	Thu,  7 Nov 2024 14:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrTTNVLG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jzaGTWfp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6075A212D0A;
-	Thu,  7 Nov 2024 14:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E65212D0A
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730991041; cv=none; b=KF1Pi/XPDLudh8YngSWkiZQfPfA67vcde1o+dVB+msGB+TC37M7B+cQcpsCi76LIWCTnP+2MThiJtBS2OtFzEQrbtQgQ/22JT7mxsvCvyF+GDNWJ4Qna7UZbVZY3sNkS09h1k6wrpVeM9OzLonE7Zn9dIQT+6XIdUY0eU16SK94=
+	t=1730991048; cv=none; b=aUcBhkGrsL9OQVl0MFVqPMdGgA4UJ/Lwkdhl40ZOSWYy8C/nJshASJDIj14wI2nv7ndNWmKsD5u5p4W7HznaIkqUvjYcdNCR2Qx3u9mpqHzBGSZ0V0gd/AatG/5aRXW2PWzKPCpY2LLv4twFZmtS18ZOIK3D8AF0dx0oTkvGdGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730991041; c=relaxed/simple;
-	bh=jRpyuqPS/RfPxFE82RRibgYz8lq1+WOk8OnAFcqr9HY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TseYEo9Sc1rogDpsbz6SqeZrzllntPZvdl3T5EDO0NCyrZvyJvbm/SuKHvd6oTBQEsPO6BCgeafQXB2hZhBcAIPEHYI6S+e2uh8JcWkoZvKypBSbbXu819N199ik9jwWJFqJxUcovGwklrpp5+8ociNIZWuWem51q4EcIayKLCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrTTNVLG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3FA6C4CECC;
-	Thu,  7 Nov 2024 14:50:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730991041;
-	bh=jRpyuqPS/RfPxFE82RRibgYz8lq1+WOk8OnAFcqr9HY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HrTTNVLGr0k6BbKW0dEb6ZIQo/RQQdIVrWJQhWAQa6JALjw5Uelh67HLaTrZXT/Je
-	 mIj8OIN2KIw7OAdV8IRlUiwd1QctmZrFFKGXfzc0aWRWBVRkbHZd3v4Ma0JjAH5r4o
-	 RllAPWRCzhb8AxRbCdK9JWFR5uvuvXaq57Bcp6JVx0/+/n0Vcd0FTwQpD0C13UseaK
-	 zsbYe92XLKd6seRM8ug+RJKv9lk+J/tjBGwOyqeU8B+pQc9OZ32dNHSW1nTVwFmSDB
-	 FF5TUjLYtNLjZJdK1mLn10lmaVO1g0mDZm3TMUsuhwXHoQmZjhgnckwVIp3naxiGmO
-	 N7zfMcFtrOHMw==
-Date: Thu, 7 Nov 2024 16:50:34 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 07/17] dma-mapping: Implement link/unlink ranges API
-Message-ID: <20241107145034.GO5006@unreal>
-References: <cover.1730298502.git.leon@kernel.org>
- <f8c7f160c9ae97fef4ccd355f9979727552c7374.1730298502.git.leon@kernel.org>
- <51c5a5d5-6f90-4c42-b0ef-b87791e00f20@arm.com>
- <20241104091048.GA25041@lst.de>
- <20241104121924.GC35848@ziepe.ca>
- <20241104125302.GA11168@lst.de>
+	s=arc-20240116; t=1730991048; c=relaxed/simple;
+	bh=c/xTRIrJ5nBsiRyw55IV13bqiTCl2MenC3obfPMlG1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C69JZpjrimi/v5KxiyVl/mGvNySM7/mrqmQlHm6Gdg4zYSEw9caYcjKRzco2b+x+u7Us1979QAuz9eg23N/hcLPdtD0jAo2ukBcxZDa9lI5ZtX5CKqYorRdY1lOIi8wWgTnWpcF9QtST9rWOoILxss6axcB1y2sa7iWzieCs7mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jzaGTWfp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7CAx6x004953
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Nov 2024 14:50:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	orOKMQLBCv2h1c195dYm+Nmc2xLy3QnFjG1e5d7Rl/o=; b=jzaGTWfp/NtUodwA
+	RsSZofrgtVYoE9CVJy8F23qqbIjw9F7tczczFR+lApvRxRH45Cmo0Ou4ufqTME8H
+	8OKHwd5+vAGiZMizIVSXxKIP7ZLHyrlWzH3qPfqGqzdc6W+/54AV9hqcwjW41EiC
+	/jYhvl47YZKoMPRUvx4bQ+8ij39K5Pd0Qx7ny/4cu3fOhbdrY0zRZ5IkfyyRxQyq
+	tE6GeIwMTg4YkRkguQZWR780z6kfZpY1QrQ3T55wivy68XEXnOD0wR3I6AwwTxwf
+	OqgvtaFhHBS0fVPivTMdWWMAMFoL01Gcnq0kMyAi2+BV2Vu287zJg6kaRwmaypOs
+	SYzzCQ==
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com [209.85.222.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qvg3wghx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 14:50:45 +0000 (GMT)
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-8563f671149so57774241.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 06:50:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730991044; x=1731595844;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=orOKMQLBCv2h1c195dYm+Nmc2xLy3QnFjG1e5d7Rl/o=;
+        b=lQYCINfUOXTMmXHsLMXmiM47Xml6phPSFztTxowW39caTUSVgbtMEUBAicA3onRXeb
+         +/Og1iiiFAbEBQ9YPkfmOplKtNCb+0dHf0YlG6nef86w24W0BogV9cPy4iJzokPDufT6
+         GrOZIQDaaRWRyWwA5uSdWQ8gzZNDMsCOFdxRRCJs3MbBBZH1KmKVwYKwXuzRaD0MzoAx
+         gsuqY7uMC7xVYOB0l9bhgReVQMhQNWijbHWhwQgduJ9/4jybpO8/hAtiGpIOzWUBZYW0
+         nxqY53bz7YVGHAMVEtm9J9Cq7DbtIanSKfZ6Iuxu5zOpz6nvA+g8ctVdcee9vxl1IbLw
+         aqag==
+X-Forwarded-Encrypted: i=1; AJvYcCWEbUsCDieBLFwT4g25hpSyWTTOiqm6mWRnEF+dFPLAkzWdqpvquwXuGf46PECkEFDzxLIqoAYr8ZkxRdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC2QhMq2KwagrFNZ/BXU10h0EoSw8BZsj+kEApQC3tdsNd9LBi
+	7Yo0Bev2yBeC0V8/dBkam7dnr7rkfBB7zvdeYQNaVCJm4hySXBjj41kulwLiAG/kRZ1LegSNqPu
+	xLE2nV5DSSIpVivx78gqRO+TctMjcZkvgkL64LbaodQA6yBb/K77I2s5Ukr9v7ag=
+X-Received: by 2002:a1f:d1c4:0:b0:50d:6f0:5879 with SMTP id 71dfb90a1353d-513fe8bbd35mr120055e0c.1.1730991043628;
+        Thu, 07 Nov 2024 06:50:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHus393ipmlzutzTG3KT0B8ynjWizWAAq7Gzr52l40pNnylVkHVxH+LD0GcjNXGrfSrQrhO9A==
+X-Received: by 2002:a1f:d1c4:0:b0:50d:6f0:5879 with SMTP id 71dfb90a1353d-513fe8bbd35mr120026e0c.1.1730991042981;
+        Thu, 07 Nov 2024 06:50:42 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a18872sm103586466b.11.2024.11.07.06.50.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 06:50:42 -0800 (PST)
+Message-ID: <69000e68-c1ef-4cdd-8fc0-2a04a6d38e02@oss.qualcomm.com>
+Date: Thu, 7 Nov 2024 15:50:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104125302.GA11168@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/7] arm64: dts: qcom: ipq5332: Add tsens node
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        srinivas.kandagatla@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, amitk@kernel.org, thara.gopinath@gmail.com,
+        rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
+        lukasz.luba@arm.com, andersson@kernel.org, konradybcio@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
+References: <20241104124413.2012794-1-quic_mmanikan@quicinc.com>
+ <20241104124413.2012794-5-quic_mmanikan@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241104124413.2012794-5-quic_mmanikan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: y51jrytK2mxyfzJ5CryKbCMbFHLvsbLs
+X-Proofpoint-GUID: y51jrytK2mxyfzJ5CryKbCMbFHLvsbLs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=972
+ lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 adultscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070115
 
-On Mon, Nov 04, 2024 at 01:53:02PM +0100, Christoph Hellwig wrote:
-> On Mon, Nov 04, 2024 at 08:19:24AM -0400, Jason Gunthorpe wrote:
-> > > That's a good point.  Only mapped through host bridge P2P can even
-> > > end up here, so the address is a perfectly valid physical address
-> > > in the host.  But I'm not sure if all arch_sync_dma_for_device
-> > > implementations handle IOMMU memory fine.
-> > 
-> > I was told on x86 if you do a cache flush operation on MMIO there is a
-> > chance it will MCE. Recently had some similar discussions about ARM
-> > where it was asserted some platforms may have similar.
+On 4.11.2024 1:44 PM, Manikanta Mylavarapu wrote:
+> From: Praveenkumar I <quic_ipkumar@quicinc.com>
 > 
-> On x86 we never flush caches for DMA operations anyway, so x86 isn't
-> really the concern here, but architectures that do cache incoherent DMA
-> to PCIe devices.  Which isn't a whole lot as most SOCs try to avoid that
-> for PCIe even if they lack DMA coherent for lesser peripherals, but I bet
-> there are some on arm/arm64 and maybe riscv or mips.
+> IPQ5332 has tsens v2.3.3 peripheral. This patch adds the tsense
+> node with nvmem cells for calibration data.
 > 
-> > It would be safest to only call arch flushing calls on memory that is
-> > mapped cachable. We can assume that a P2P target is never CPU
-> > mapped cachable, regardless of how the DMA is routed.
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+> Changes in V6:
+> 	- No change
 > 
-> Yes.  I.e. force DMA_ATTR_SKIP_CPU_SYNC for P2P.
+>  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 66 +++++++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> index d3c3e215a15c..94dca05fdc2a 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+> @@ -177,6 +177,46 @@ cpu_speed_bin: cpu-speed-bin@1d {
+>  				reg = <0x1d 0x2>;
+>  				bits = <7 2>;
+>  			};
+> +
+> +			s11: s11@3a5 {
 
-What do you think?
+You're adding 's11' etc. to the global label namespace. Please make
+the names more specific, like tsens_sens11_off
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 38bcb3ecceeb..065bdace3344 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -559,14 +559,19 @@ static bool blk_rq_dma_map_iova(struct request *req, struct device *dma_dev,
- {
- 	enum dma_data_direction dir = rq_dma_dir(req);
- 	unsigned int mapped = 0;
-+	unsigned long attrs = 0;
- 	int error = 0;
- 
- 	iter->addr = state->addr;
- 	iter->len = dma_iova_size(state);
-+	if (req->cmd_flags & REQ_P2PDMA) {
-+		attrs |= DMA_ATTR_SKIP_CPU_SYNC;
-+		req->cmd_flags &= ~REQ_P2PDMA;
-+	}
- 
- 	do {
- 		error = dma_iova_link(dma_dev, state, vec->paddr, mapped,
--				vec->len, dir, 0);
-+				vec->len, dir, attrs);
- 		if (error)
- 			goto error_unmap;
- 		mapped += vec->len;
-@@ -578,7 +583,7 @@ static bool blk_rq_dma_map_iova(struct request *req, struct device *dma_dev,
- 
- 	return true;
- error_unmap:
--	dma_iova_destroy(dma_dev, state, mapped, rq_dma_dir(req), 0);
-+	dma_iova_destroy(dma_dev, state, mapped, rq_dma_dir(req), attrs);
- 	iter->status = errno_to_blk_status(error);
- 	return false;
- }
-@@ -633,7 +638,6 @@ bool blk_rq_dma_map_iter_start(struct request *req, struct device *dma_dev,
- 			 * P2P transfers through the host bridge are treated the
- 			 * same as non-P2P transfers below and during unmap.
- 			 */
--			req->cmd_flags &= ~REQ_P2PDMA;
- 			break;
- 		default:
- 			iter->status = BLK_STS_INVAL;
-@@ -644,6 +648,8 @@ bool blk_rq_dma_map_iter_start(struct request *req, struct device *dma_dev,
- 	if (blk_can_dma_map_iova(req, dma_dev) &&
- 	    dma_iova_try_alloc(dma_dev, state, vec.paddr, total_len))
- 		return blk_rq_dma_map_iova(req, dma_dev, state, iter, &vec);
-+
-+	req->cmd_flags &= ~REQ_P2PDMA;
- 	return blk_dma_map_direct(req, dma_dev, iter, &vec);
- }
- EXPORT_SYMBOL_GPL(blk_rq_dma_map_iter_start);
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 62980ca8f3c5..5fe30fbc42b0 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -23,6 +23,7 @@ struct mmu_interval_notifier;
-  * HMM_PFN_WRITE - if the page memory can be written to (requires HMM_PFN_VALID)
-  * HMM_PFN_ERROR - accessing the pfn is impossible and the device should
-  *                 fail. ie poisoned memory, special pages, no vma, etc
-+ * HMM_PFN_P2PDMA - P@P page, not bus mapped
-  * HMM_PFN_P2PDMA_BUS - Bus mapped P2P transfer
-  * HMM_PFN_DMA_MAPPED - Flag preserved on input-to-output transformation
-  *                      to mark that page is already DMA mapped
-@@ -41,6 +42,7 @@ enum hmm_pfn_flags {
- 	HMM_PFN_ERROR = 1UL << (BITS_PER_LONG - 3),
- 
- 	/* Sticky flag, carried from Input to Output */
-+	HMM_PFN_P2PDMA     = 1UL << (BITS_PER_LONG - 5),
- 	HMM_PFN_P2PDMA_BUS = 1UL << (BITS_PER_LONG - 6),
- 	HMM_PFN_DMA_MAPPED = 1UL << (BITS_PER_LONG - 7),
- 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 4ef2b3815212..b2ec199c2ea8 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -710,6 +710,7 @@ dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
- 	struct page *page = hmm_pfn_to_page(pfns[idx]);
- 	phys_addr_t paddr = hmm_pfn_to_phys(pfns[idx]);
- 	size_t offset = idx * map->dma_entry_size;
-+	unsigned long attrs = 0;
- 	dma_addr_t dma_addr;
- 	int ret;
- 
-@@ -740,6 +741,9 @@ dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
- 
- 	switch (pci_p2pdma_state(p2pdma_state, dev, page)) {
- 	case PCI_P2PDMA_MAP_THRU_HOST_BRIDGE:
-+		attrs |= DMA_ATTR_SKIP_CPU_SYNC;
-+		pfns[idx] |= HMM_PFN_P2PDMA;
-+		fallthrough;
- 	case PCI_P2PDMA_MAP_NONE:
- 		break;
- 	case PCI_P2PDMA_MAP_BUS_ADDR:
-@@ -752,7 +756,8 @@ dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
- 
- 	if (dma_use_iova(state)) {
- 		ret = dma_iova_link(dev, state, paddr, offset,
--				    map->dma_entry_size, DMA_BIDIRECTIONAL, 0);
-+				    map->dma_entry_size, DMA_BIDIRECTIONAL,
-+				    attrs);
- 		if (ret)
- 			return DMA_MAPPING_ERROR;
- 
-@@ -793,6 +798,7 @@ bool hmm_dma_unmap_pfn(struct device *dev, struct hmm_dma_map *map, size_t idx)
- 	struct dma_iova_state *state = &map->state;
- 	dma_addr_t *dma_addrs = map->dma_list;
- 	unsigned long *pfns = map->pfn_list;
-+	unsigned long attrs = 0;
- 
- #define HMM_PFN_VALID_DMA (HMM_PFN_VALID | HMM_PFN_DMA_MAPPED)
- 	if ((pfns[idx] & HMM_PFN_VALID_DMA) != HMM_PFN_VALID_DMA)
-@@ -801,14 +807,16 @@ bool hmm_dma_unmap_pfn(struct device *dev, struct hmm_dma_map *map, size_t idx)
- 
- 	if (pfns[idx] & HMM_PFN_P2PDMA_BUS)
- 		; /* no need to unmap bus address P2P mappings */
--	else if (dma_use_iova(state))
-+	else if (dma_use_iova(state)) {
-+		if (pfns[idx] & HMM_PFN_P2PDMA)
-+			attrs |= DMA_ATTR_SKIP_CPU_SYNC;
- 		dma_iova_unlink(dev, state, idx * map->dma_entry_size,
--				map->dma_entry_size, DMA_BIDIRECTIONAL, 0);
--	else if (dma_need_unmap(dev))
-+				map->dma_entry_size, DMA_BIDIRECTIONAL, attrs);
-+	} else if (dma_need_unmap(dev))
- 		dma_unmap_page(dev, dma_addrs[idx], map->dma_entry_size,
- 			       DMA_BIDIRECTIONAL);
- 
--	pfns[idx] &= ~(HMM_PFN_DMA_MAPPED | HMM_PFN_P2PDMA_BUS);
-+	pfns[idx] &= ~(HMM_PFN_DMA_MAPPED | HMM_PFN_P2PDMA | HMM_PFN_P2PDMA_BUS);
- 	return true;
- }
- EXPORT_SYMBOL_GPL(hmm_dma_unmap_pfn);
+[...]
+
+> +		tsens: thermal-sensor@4a9000 {
+> +			compatible = "qcom,ipq5332-tsens";
+> +			reg = <0x4a9000 0x1000>,
+> +			      <0x4a8000 0x1000>;
+
+Please pad the address part to 8 hex digits with leading zeroes.
+
+Konrad
 
