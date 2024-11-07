@@ -1,100 +1,185 @@
-Return-Path: <linux-kernel+bounces-400118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3924B9C0930
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:47:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0610E9C092D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:46:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F148F284770
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:47:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66729B23C93
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B569921263E;
-	Thu,  7 Nov 2024 14:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B7820FABC;
+	Thu,  7 Nov 2024 14:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="r8KVhDGI"
-Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v+IPHwEv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t9KPoXuB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C55ED26D;
-	Thu,  7 Nov 2024 14:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67360D26D;
+	Thu,  7 Nov 2024 14:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730990863; cv=none; b=XUWn6gIeRzyVixk3oxtq5C3muhRQqsqxiJ0ERg09NnJAtqS/m0vnC6geKUFDnbOPpWzsA5AawXVufI9e6qAtfxxeTiSzb1pvsgyqigFKsc1KpxVZGND5cKoETK2SG1ippBNl52vavaORtusH1bIquaJI1IYeSeRvNMxbFG8Ytxg=
+	t=1730990781; cv=none; b=sXnC61e6CHdu4w9POW4UG7+66+OAtyDuITZDnlcJ/znfiuJo4pnwUUoZgHgrkzBq0xQ3EEnFp79S4XqLQBDZDrtozVM/0wSc518OYFTvR/BTNkNfBUIEo+oUd5OYqJ3QGRt5J7Gvk7iiPwJq2un2iHDttVuecMl032Sdsj7XKug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730990863; c=relaxed/simple;
-	bh=LsWGaxUhQIDl8XF7MhRdqRUSVd1iaNtFGpmijx6gn2g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gCd4J2CiQuZuv08napb6MxG+HA/5NE5SybsiOZPyhyLJZ0ZCR//BjY0Hq8sUKXCV34RXyHRYIlMYIWX/sx2nQqesMR+ivdBReC1VCPrtSwSElxlP8BJ6gcIWzPAiA7ZRQMKzXOqSbF/TrOw+MueBKCpdW6P3Dfkx11MCIgew/hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=r8KVhDGI; arc=none smtp.client-ip=198.252.153.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4XklKl0p6Sz9wwr;
-	Thu,  7 Nov 2024 14:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1730990859; bh=LsWGaxUhQIDl8XF7MhRdqRUSVd1iaNtFGpmijx6gn2g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=r8KVhDGIqnLtHrwIHfMTM1WAVSKrIC1BAa42xehxbkT9lLLLeIith9rx2xfYuYVVj
-	 atIrcPaedYW0a6k3ZkAgC7vLYALCcmUR6VY4Ep8I9CgBNH/MsxlD+F3acgG2f467pX
-	 tJgdUYOPIH4I2zptJolQtc4zFck910ov2JAss4cg=
-X-Riseup-User-ID: 642A552ADF2905C00A95B8FBB615697E0CC28B5B49DAFA3D7DA4554E16FA9B70
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4XklKj36SbzJn2G;
-	Thu,  7 Nov 2024 14:47:37 +0000 (UTC)
-From: =?UTF-8?q?Daniel=20Mart=C3=ADn=20G=C3=B3mez?= <dalme@riseup.net>
-To: 
-Cc: dalme@riseup.net,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Jan Kara <jack@suse.com>,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] jbd2: Fix comment describing journal_init_common()
-Date: Thu,  7 Nov 2024 15:45:38 +0100
-Message-Id: <20241107144538.3544-1-dalme@riseup.net>
+	s=arc-20240116; t=1730990781; c=relaxed/simple;
+	bh=xnrJGvrF0iJtEcPBf+JqnEvTtjZFpCqmwFqaKDKfi7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXVigewfDk2rOshOWZvdSwo3H8qVFty3t7mZbbDnyH4os4K4ronaGH8RLWpYE+byaIYWlw8I7KJBeAcyUvAF0SplUKJU5dwO2DnVtU51nHLv5U5OJULaT2cCRRwp7ObBdyjR54utXFRiOWiOO7N2wyA0sXhjOEdEUDWPL08qR18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v+IPHwEv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t9KPoXuB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 7 Nov 2024 15:46:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730990778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lf8IFW1Zxm4tPan11xYmLhqPW8h4IUX94lDCVbtrDPs=;
+	b=v+IPHwEvnCie7SbcViLFuNRQ4M2kuJaGTF9XRybuxDvob5QjTdkbvnqqwOrBT+HwsSYrph
+	CxZOp596XvjPvYmn7x6AWSJu8nd0G5EFqwaMXHeukwN8CPduge3VRkb7nvIufdKP5rQksg
+	FmqIG87RK0pawjvjpLUiZfbR8XnKf0qJUpZ8PqT5C9JFmEAFzyHBLY6BxTKRM6/ZsNqCcz
+	kUyIguaQDzae5AAGv+uiQJJeLNLvRio5VOdF+Au6rN3BaNYXMIafyvFGZNkvzrmbi2Dfve
+	eTqe7sbnd1HXk57CR8cff5U8qhsEImbZaO/U960S8b/n0ujyHaU8qekFm1n3Og==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730990778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lf8IFW1Zxm4tPan11xYmLhqPW8h4IUX94lDCVbtrDPs=;
+	b=t9KPoXuBGnSfUeP/SDa6MKN+xfXZb3TJo8BZ9K40MhNTeaDYlWvkn78bxA0iP/LxdG7/Oy
+	npOd2K9sD0s1iwAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: "Lai, Yi" <yi1.lai@linux.intel.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
+Message-ID: <20241107144617.MjCWysud@linutronix.de>
+References: <20240624152732.1231678-1-bigeasy@linutronix.de>
+ <20240624152732.1231678-3-bigeasy@linutronix.de>
+ <Zx9Losv4YcJowaP/@ly-workstation>
+ <Zx-B0wK3xqRQsCOS@localhost.localdomain>
+ <20241029172126.5XY8vLBH@linutronix.de>
+ <20241030140721.pZzb9D-u@linutronix.de>
+ <ZyJUzhzHGDu5CLdi@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZyJUzhzHGDu5CLdi@localhost.localdomain>
 
-The code indicates that journal_init_common() fills the journal_t object
-it returns while the comment incorrectly states that only a few fields are
-initialised. Also, the comment claims that journal structures could be
-created from scratch which isn't possible as journal_init_common() calls
-journal_load_superblock() which loads and checks journal superblock from
-disk.
+On 2024-10-30 16:46:22 [+0100], Frederic Weisbecker wrote:
+> This needs more thoughts. We must make sure that the parent is put _after_
+> the child because it's dereferenced on release, for example:
+=E2=80=A6
+> put_event()
+>    free_event()
+>       irq_work_sync(&event->pending_irq);
+>       =3D=3D=3D=3D> IRQ or irq_workd
+>       perf_event_wakeup()
+>          ring_buffer_wakeup()
+> 	    event =3D event->parent;
+> 	    rcu_dereference(event->rb);
+>=20
+> And now after this patch it's possible that this happens after
+> the parent has been released.
+>=20
+> We could put the parent from the child's free_event() but some
+> places (inherit_event()) may call free_event() on a child without
+> having held a reference to the parent.
+>=20
+> Also note that with this patch the task may receive late irrelevant
+> signals after the event is removed. It's probably not that bad but
+> still... This could be a concern for exec(), is there a missing
+> task_work_run() there before flush_signal_handlers()?
 
-Signed-off-by: Daniel Martín Gómez <dalme@riseup.net>
----
- fs/jbd2/journal.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+So if this causes so much pain, what about taking only one item at a
+item? The following passes the test, too:
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 97f487c3d8fc..3c1d42133687 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1518,9 +1518,10 @@ static int journal_load_superblock(journal_t *journal)
-  * destroy journal_t structures, and to initialise and read existing
-  * journal blocks from disk.  */
- 
--/* First: create and setup a journal_t object in memory.  We initialise
-- * very few fields yet: that has to wait until we have created the
-- * journal structures from from scratch, or loaded them from disk. */
-+/* The journal_init_common() function creates and fills a journal_t object
-+ * in memory. It calls journal_load_superblock() to load the on-disk journal
-+ * superblock and initialize the journal_t object.
-+ */
- 
- static journal_t *journal_init_common(struct block_device *bdev,
- 			struct block_device *fs_dev,
--- 
-2.39.5
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index c969f1f26be58..fc796ffddfc74 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -206,7 +206,7 @@ bool task_work_cancel(struct task_struct *task, struct =
+callback_head *cb)
+ void task_work_run(void)
+ {
+ 	struct task_struct *task =3D current;
+-	struct callback_head *work, *head, *next;
++	struct callback_head *work, *head;
+=20
+ 	for (;;) {
+ 		/*
+@@ -214,17 +214,7 @@ void task_work_run(void)
+ 		 * work_exited unless the list is empty.
+ 		 */
+ 		work =3D READ_ONCE(task->task_works);
+-		do {
+-			head =3D NULL;
+-			if (!work) {
+-				if (task->flags & PF_EXITING)
+-					head =3D &work_exited;
+-				else
+-					break;
+-			}
+-		} while (!try_cmpxchg(&task->task_works, &work, head));
+-
+-		if (!work)
++		if (!work && !(task->flags & PF_EXITING))
+ 			break;
+ 		/*
+ 		 * Synchronize with task_work_cancel_match(). It can not remove
+@@ -232,13 +222,24 @@ void task_work_run(void)
+ 		 * But it can remove another entry from the ->next list.
+ 		 */
+ 		raw_spin_lock_irq(&task->pi_lock);
++		do {
++			head =3D NULL;
++			if (work) {
++				head =3D READ_ONCE(work->next);
++			} else {
++				if (task->flags & PF_EXITING)
++					head =3D &work_exited;
++				else
++					break;
++			}
++		} while (!try_cmpxchg(&task->task_works, &work, head));
+ 		raw_spin_unlock_irq(&task->pi_lock);
+=20
+-		do {
+-			next =3D work->next;
+-			work->func(work);
+-			work =3D next;
++		if (!work)
++			break;
++		work->func(work);
++
++		if (head)
+ 			cond_resched();
+-		} while (work);
+ 	}
+ }
 
+Sebastian
 
