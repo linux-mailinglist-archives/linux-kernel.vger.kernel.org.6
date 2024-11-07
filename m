@@ -1,130 +1,94 @@
-Return-Path: <linux-kernel+bounces-399199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAFD9BFC0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:59:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBEF9BFC1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81CA42841AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:59:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF3D0B2285F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86ED728684;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A56191F7A;
+	Thu,  7 Nov 2024 01:59:45 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A45247F4A;
 	Thu,  7 Nov 2024 01:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bDWpDmxY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5qSjIDaL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840A012B63;
-	Thu,  7 Nov 2024 01:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730944779; cv=none; b=fnT8xcKId+RJCthz6s4YuDb7oI/F6ivlIXL34P5oJtg8KEjOP72Iltx5Zyihns+icLkHpYKfaeLNghPLXOZeKaQTnjOLB+uGlGg17AZsig03P181OBPX43jPhhwBX++Ox5IhIt3fQODnN5+woLK9/QADzY540uV7LGVUlJ+AWKg=
+	t=1730944785; cv=none; b=WglWeYWVrYICi9VA6bzSV57MEau5Kxn9wko6bGhIxwtK+ldA/Ty6i47QkID4QCaaPawPikCwEzf68xTeiTY6wipS1VuRbOUw7LnYzxcvlsrQ0ESAwYWIRUjsuFibJc0LxQhEL47rC3ZqJn/6IOGIr92NkKjeweROtqzx4Fozauc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730944779; c=relaxed/simple;
-	bh=1erqBs3JogQ1JYfpMx2Tzi+x0lblr062IT24cV6H+4w=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Wh0mfgoSj0gpGCDjAA/lhgR3grueRHLDK7yC5n4sv4sxnNpafC5ueCwsF0oKcia2Ij5RpVIWpuiOObbPvPjOgdaOjc3bihBv5UYevaexzuTfEWsjaLXHfvvA5yAFr6VaYmfeqhpcK4WvL4Wy8ICiSkoS1oZ+19rP6TfXdk8bd2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bDWpDmxY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5qSjIDaL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 07 Nov 2024 01:59:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730944776;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JMvc4kwK/QRhqm7DovPfIUf/wntoqVQAWB+q1YiLoeE=;
-	b=bDWpDmxYzHW4WLrImCZbAEi1jPV+r/C9t1CZaY/Xfb01+PJ7XD3MD/GB/Ig6UbboxowuBs
-	WeaP1EljeJEdnCNqvtWOG7euFL2OqX6Pi25GVygOnxj1cohP8ORFsCjhJHXP8q8WVSJYeQ
-	w+jVKi1RY/wcGmFM1kFHlLtp0lfDm21pSgEejT3x7xx0GiWT1HzQtKayJOTUwcw05fWZiu
-	av32RrgQ+UANV+0mBQM919p8XxpeCvEQLuiBDeANWieQNV+CfNWMcEh+iq3cgrOQ/0kR1i
-	8tw/t46o/4Cw2pSI+9Ncr98seqRqa8oHo3PpQmHG7NZZIShn5kp21d3+ADoE+w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730944777;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JMvc4kwK/QRhqm7DovPfIUf/wntoqVQAWB+q1YiLoeE=;
-	b=5qSjIDaLDih3cRR1XCZh6jVLQE9GDMmhrpYkju5VVUxnihKxZBjDy9JH56pg2MxTGOg5Py
-	E5A4UT2YCuviVsCQ==
-From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] io_uring: Switch to use hrtimer_setup_on_stack()
-Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Cf0d4ac32ec4050710a656cee8385fa4427be33aa=2E17303?=
- =?utf-8?q?86209=2Egit=2Enamcao=40linutronix=2Ede=3E?=
-References: =?utf-8?q?=3Cf0d4ac32ec4050710a656cee8385fa4427be33aa=2E173038?=
- =?utf-8?q?6209=2Egit=2Enamcao=40linutronix=2Ede=3E?=
+	s=arc-20240116; t=1730944785; c=relaxed/simple;
+	bh=gF75NwQXvuqzlc8xFqKU9d+eCn3AU++kBtiobeRTiWo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jfUvtWXKuhODfJU60XpRyCCEss6InnsYNa70nbwhdlxu+QHEFvsHQcWQ+dDYaXWvj1lcLNkj7jZz2Budl6gsL8KdIQwSq/pX+6JgmnPe6l/MThn8l3Uyluetjs63XqD8csnRB9nbWcL/9hSF9VIWft+uvCijBNJZTzHwwhIl1qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5672c1f0b79f-e27b1;
+	Thu, 07 Nov 2024 09:59:39 +0800 (CST)
+X-RM-TRANSID:2ee5672c1f0b79f-e27b1
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee3672c1f0aa48-4d18e;
+	Thu, 07 Nov 2024 09:59:39 +0800 (CST)
+X-RM-TRANSID:2ee3672c1f0aa48-4d18e
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: olivier.moysan@foss.st.com
+Cc: arnaud.pouliquen@foss.st.com,
+	broonie@kernel.org,
+	lgirdwood@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	luoyifan@cmss.chinamobile.com,
+	perex@perex.cz,
+	tiwai@suse.com
+Subject: [PATCH] ASoC: stm: Prevent potential division by zero in stm32_sai_get_clk_div()
+Date: Thu,  7 Nov 2024 09:59:36 +0800
+Message-Id: <20241107015936.211902-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <f2d3778d-5fd6-49db-b418-b5411e617a0a@foss.st.com>
+References: <f2d3778d-5fd6-49db-b418-b5411e617a0a@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173094477612.32228.15482096656457929024.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the timers/core branch of tip:
+This patch checks if div is less than or equal to zero (div <= 0). If
+div is zero or negative, the function returns -EINVAL, ensuring the
+division operation is safe to perform.
 
-Commit-ID:     fc9f59de26afb3b4a33d37f1ba51a441b050afbb
-Gitweb:        https://git.kernel.org/tip/fc9f59de26afb3b4a33d37f1ba51a441b050afbb
-Author:        Nam Cao <namcao@linutronix.de>
-AuthorDate:    Thu, 31 Oct 2024 16:14:31 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 07 Nov 2024 02:47:06 +01:00
-
-io_uring: Switch to use hrtimer_setup_on_stack()
-
-hrtimer_setup_on_stack() takes the callback function pointer as argument
-and initializes the timer completely.
-
-Replace hrtimer_init_on_stack() and the open coded initialization of
-hrtimer::function with the new setup mechanism.
-
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/f0d4ac32ec4050710a656cee8385fa4427be33aa.1730386209.git.namcao@linutronix.de
-
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
 ---
- io_uring/io_uring.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ sound/soc/stm/stm32_sai_sub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index feb61d6..0842aa3 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -2435,13 +2435,14 @@ static int io_cqring_schedule_timeout(struct io_wait_queue *iowq,
- {
- 	ktime_t timeout;
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index 7bc4a96b7..43fb1dcb9 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -317,7 +317,7 @@ static int stm32_sai_get_clk_div(struct stm32_sai_sub_data *sai,
+ 	int div;
  
--	hrtimer_init_on_stack(&iowq->t, clock_id, HRTIMER_MODE_ABS);
- 	if (iowq->min_timeout) {
- 		timeout = ktime_add_ns(iowq->min_timeout, start_time);
--		iowq->t.function = io_cqring_min_timer_wakeup;
-+		hrtimer_setup_on_stack(&iowq->t, io_cqring_min_timer_wakeup, clock_id,
-+				       HRTIMER_MODE_ABS);
- 	} else {
- 		timeout = iowq->timeout;
--		iowq->t.function = io_cqring_timer_wakeup;
-+		hrtimer_setup_on_stack(&iowq->t, io_cqring_timer_wakeup, clock_id,
-+				       HRTIMER_MODE_ABS);
+ 	div = DIV_ROUND_CLOSEST(input_rate, output_rate);
+-	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
++	if (div > SAI_XCR1_MCKDIV_MAX(version) || div <= 0) {
+ 		dev_err(&sai->pdev->dev, "Divider %d out of range\n", div);
+ 		return -EINVAL;
  	}
- 
- 	hrtimer_set_expires_range_ns(&iowq->t, timeout, 0);
+-- 
+2.27.0
+
+
+
 
