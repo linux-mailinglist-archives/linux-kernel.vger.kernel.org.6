@@ -1,89 +1,62 @@
-Return-Path: <linux-kernel+bounces-400077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE79B9C08A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:14:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 586B39C08A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:15:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3769AB22B98
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A66283145
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33DE213141;
-	Thu,  7 Nov 2024 14:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC75212179;
+	Thu,  7 Nov 2024 14:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eCUIcqkO"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nweu9iXo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B854D212F06
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C09E1E502;
+	Thu,  7 Nov 2024 14:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730988820; cv=none; b=S9ZaZO1lWnfF1sdxjYqG2J/2ch1mb5sfe4nHxmJFn8PCPG1fVj9JDih26wEWxDTrj59teKbzAGxZchYVC7XTj7VfcGTYo/ubIJe1qWnaNZjInqvZKPW/xvlSuG4cJvYxjwCl69OBmLN+XiIe+Jg8BY6mlpy+LaAOmiIMLqoL098=
+	t=1730988932; cv=none; b=prMrYdZ1gc1zMELxB85Ufsr7v3XnuO0PSAkQnJEsC931iKZO3cNZ+o/VwG3ZTYUOee4leFBiJcqjc5Xd1qRFYI+x7aPUSYOpKLSJWxUoQAfN+6kRGhlJg1EPvc7/mTDmaTSkfyuIOAA/0XmBTCtbcZcJXLkZqSr/WkFks6N/xvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730988820; c=relaxed/simple;
-	bh=37ObabFHx3U9TJg7HWgEMySRuRc8p07l9tVjXD0hGPw=;
+	s=arc-20240116; t=1730988932; c=relaxed/simple;
+	bh=e/UXU//6GQyRzQ5vrZtrL/i40sla9aShEMJ3K9+xBGg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CkVGnFWrOqBIU2UVX4iTZLwY8XDXaWiV6ee4yGGqZD2ueqk6PodKmb9w5ac+pcnJNDqyIRjTfsyE/nZblFO2zZ8QRF/jUwM3VfgjVP8enPIJZgn3CwW1r/SEy7Q8ClrhKP9ZJEWgxNv9CdXKkkXd8cnuzRGMEZUb1n6goMF8CSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eCUIcqkO; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7E9u3E031182;
-	Thu, 7 Nov 2024 14:12:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=AwU6f9g4/UeatPa2CtGBIPn3FGkR1+
-	NhcMAHd7GfVmw=; b=eCUIcqkOK7dYvjvVdiIjPHmAUA57a067NEYFAaGdemuBWI
-	sk0IM22A6ACkaVbQEg3nbSdg782xm+Loa2JHh8aCG9SEy1m5wYJRZ+/P+JM3h2Yz
-	90UqrcVfohmnpJs6RcyT4HYWcF9NJWyH/DouoAjHYU+aRm74vfpHItzvUtrk0GiD
-	/i8nr9k0mhP1hNaiV00szCkrED1KPCRZs2QlApICiariuJJOnNRM8w9jxj5Wrk/m
-	c1uHIuB0WZGgtNneB1O3YLbXL5sy2gyeUKaIiOHhNjblfvYssvPPzXXT5YfP+L5O
-	yIeghTXtnNPhkemUXFJHLJlY/fs4zPAjzpCy/nqA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rxmrr503-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 14:12:45 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A7ECjh8005385;
-	Thu, 7 Nov 2024 14:12:45 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rxmrr4yy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 14:12:45 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7BbM5K031854;
-	Thu, 7 Nov 2024 14:12:44 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nydmrb9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 14:12:44 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A7ECgjk34079400
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Nov 2024 14:12:42 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 66BB120043;
-	Thu,  7 Nov 2024 14:12:42 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 792EF20040;
-	Thu,  7 Nov 2024 14:12:40 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.124.213.199])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  7 Nov 2024 14:12:40 +0000 (GMT)
-Date: Thu, 7 Nov 2024 19:42:37 +0530
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
-        maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arch/powerpc/pseries: Fix KVM guest detection for
- disabling hardlockup detector
-Message-ID: <2kkln3emctf7ewsh3eysujid2e7jel7yjtscfxmqeymeo5bjxf@7yzi5eye2n5j>
-References: <20241105132734.499506-1-gautam@linux.ibm.com>
- <87ed3ncl8q.fsf@mpe.ellerman.id.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gcLuO/BiZ3Xyaf5FedULJJufbCA/NpEhy4hlbG6keGrPpuBdHvod9ayDM8S8JFo3i2QadVjbeumIGuE3ViHqayBjaQ/BoWEoaOqhRSKaDCbNeddIhLmeFv23lJZqZ4XQP6b4MvzZg7TTorIgxRxF9ShFO94bJlg2AMg8/j9yhnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nweu9iXo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F52C4CECC;
+	Thu,  7 Nov 2024 14:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730988932;
+	bh=e/UXU//6GQyRzQ5vrZtrL/i40sla9aShEMJ3K9+xBGg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=nweu9iXoRkvx2nexRF5uZl9PSRjdS/G4WesndRAhsBlpvJpoisBP1t3FFbQ3XVDc3
+	 psKhdPfinaPCSmNWMXfxPTrORKyFQTqy3mvKGn7S73wZGs2Ekj9ZyuqHnRqjoatOwN
+	 jpfa4pE/AbXX/c/Ctk6qKoz9Lj0a5uJ8RenQjp3AZYwYTsgJ8fCqYrXIN3JTCZQK0Y
+	 HOzh7FzZu/QC/Huy0OCHmOnLOt4iDyo8uUxMeti0T1efASfUWnzaYH0vWSN5T1ExqL
+	 r2qES6/wBniCS6ycjljSRWQ/6AAcfpt4Y1pBzhOk2g3oeWdM+eOqDCNMts9RGU3hUt
+	 WoWe+5R4PQwhg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 77F2ACE09F6; Thu,  7 Nov 2024 06:15:31 -0800 (PST)
+Date: Thu, 7 Nov 2024 06:15:31 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Zilin Guan <zilinguan811@gmail.com>
+Cc: boqun.feng@gmail.com, frederic@kernel.org, jiangshanlai@gmail.com,
+	joel@joelfernandes.org, josh@joshtriplett.org,
+	linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
+	neeraj.upadhyay@kernel.org, qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org, rostedt@goodmis.org, urezki@gmail.com,
+	xujianhao01@gmail.com
+Subject: Re: [PATCH] rcu: Use READ_ONCE() for rdp->gpwrap access in
+ __note_gp_changes()
+Message-ID: <a653ce24-8dba-4a17-a3ce-68b49c99dc8d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <65bfe6b1-3bfa-469d-aada-8e79d1101d5d@paulmck-laptop>
+ <20241107140117.3790954-1-zilinguan811@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,68 +65,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ed3ncl8q.fsf@mpe.ellerman.id.au>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: k25Z8U5bE-r4wwIghCv9v7MsnU_Vs5Jf
-X-Proofpoint-GUID: z54yCQYWmv27il52UZDaWwWxbk7EIW0d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
- phishscore=0 impostorscore=0 bulkscore=0 suspectscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411070110
+In-Reply-To: <20241107140117.3790954-1-zilinguan811@gmail.com>
 
-On Thu, Nov 07, 2024 at 10:54:29PM +1100, Michael Ellerman wrote:
-> Gautam Menghani <gautam@linux.ibm.com> writes:
-> > As per the kernel documentation[1], hardlockup detector should be
-> > disabled in KVM guests as it may give false positives. On PPC, hardlockup
-> > detector is broken inside KVM guests because disable_hardlockup_detector()
->  
-> Isn't it the opposite? Inside KVM guests, the hardlockup detector should
-> be *disabled*, but it's not it's *enabled*, due to this bug.
+On Thu, Nov 07, 2024 at 02:01:17PM +0000, Zilin Guan wrote:
+> On Wed, Nov 06, 2024 at 12:18:25PM -0800, Paul E. McKenney wrote:
+> > Good eyes!!!
+> > 
+> > But did you find this with KCSAN, or by visual inspection?
+> > 
+> > The reason that I ask is that the __note_gp_changes() should be
+> > invoked with the leaf rnp->lock held, which should exclude writes to
+> > the rdp->gpwrap fields for all CPUs corresponding to that leaf rcu_node
+> > structure.
+> > 
+> > Note the raw_lockdep_assert_held_rcu_node(rnp) call at the beginning of
+> > this function.
+> > 
+> > So I believe that the proper fix is to *remove* READ_ONCE() from accesses
+> > to rdp->gpwrap in this function.
+> > 
+> > Or am I missing something here?
+> > 
+> >                                                         Thanx, Paul
 > 
-> ie. it's not broken, it's working, but that's the bug.
+> I found this by visual inspection.
 
-Yes right, will change the description in v2.
+Good eyes!  ;-)
 
+> When reviewing the function __note_gp_changes(), I noticed that other 
+> accesses to rdp->gpwrap are protected with either READ_ONCE() or 
+> WRITE_ONCE(), which led me to suspect a potential data race at line 1305.
 > 
-> > is marked as early_initcall and it uses is_kvm_guest(), which is
-> > initialized by check_kvm_guest() later during boot as it is a
-> > core_initcall. check_kvm_guest() is also called in pSeries_smp_probe(),
-> > which is called before initcalls, but it is skipped if KVM guest does
-> > not have doorbell support or if the guest is launched with SMT=1.
-> 
-> I'm wondering how no one has noticed. Most KVM guests have SMT=1.
+> However, I am not certain whether holding rnp->lock protects access to 
+> rdp->gpwrap in this case. If it indeed ensures that no concurrent writes
+> can occur, then I agree that the correct approach would be to remove 
+> READ_ONCE() from those accesses.
 
-Looking at the commit history, code around hardlockups and
-pSeries_smp_probe() was changed around 2021/2022 timeframe, and I
-believe KVM wasn't being actively tested at the time. 
-Even I noticed this only after coming across the documentation that said
-hardlockups should be disabled. So probably this feature decision isn't
-widely known.
+One way to check this is via inspection of all the updates to the
+->gpwrap field.
 
-> 
-> > Move the check_kvm_guest() call in pSeries_smp_probe() to the initial
-> > part of function before doorbell/SMT checks so that "kvm_guest" static
-> > key is initialized by the time disable_hardlockup_detector() runs.
-> 
-> check_kvm_guest() is safe to be called multiple times so
-> disable_hardlockup_detector() should just call it before it calls
-> is_kvm_guest(). That should avoid future breakage when the order of
-> calls changes, or someone refactors pSeries_smp_probe().
+Another approach is to run KCSAN, for example, from the top-level
+directory of the Linux-kernel source tree on a system with qemu/KVM
+enabled:
 
-Yeah I did that initially but in the worst case, that results in 3 calls
-to check_kvm_guest() - the core_initcall, pseries_smp_probe() call and 
-then disable_hardlockup_detector(). Will that be fine?
+	tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 30m --configs "4*TREE03" --kconfigs "CONFIG_NR_CPUS=4" --kcsan --trust-make
 
-> 
-> Can you identify the commit that broke this and include a Fixes: tag
-> please.
+This particular command is set up for my 16-CPU laptop.  You can of
+course adjust the "4*" and the "=4" to match your hardware.  For example,
+on a 64-CPU system you might instead do this:
 
-Yes will do
+	tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 30m --configs "8*TREE03" --kconfigs "CONFIG_NR_CPUS=8" --kcsan --trust-make
 
-Thanks,
-Gautam
+Please see Documentation/dev-tools/kcsan.rst for information on how
+to interpret KCSAN reports.
+
+This will find false positives in the non-RCU portions of the kernel,
+so you should look for reports involving __note_gp_changes() and/or
+its callers (inlining and all that).
+
+So why not try it?  ;-)
+
+							Thanx, Paul
 
