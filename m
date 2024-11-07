@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-399954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F809C06F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:10:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885DE9C06F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7EA5284C12
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9DE1F218CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919B021315B;
-	Thu,  7 Nov 2024 13:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B5A213EC7;
+	Thu,  7 Nov 2024 13:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2klslHa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MniWMyBj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30862101A1;
-	Thu,  7 Nov 2024 13:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D6B20FAB9;
+	Thu,  7 Nov 2024 13:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730984822; cv=none; b=ZlcC28BXIaCA6BTwGE6IpVBnSfdP297TMcarMoZjv3HwcoEbB5cpGCUCx2JQcPlTg/1sanOgKqawz0j+buIW3DziLGX4jmsm4SjjLo+rxFmKxx4sz58M1r9bnaE7+09QTD7fXiXUub0TX3sQYQNk10g6H2vnynnVNEcPYNqtNHo=
+	t=1730984827; cv=none; b=bF1zvGUccrx5dCFcAkAZz1ReDEFW+9EDfnDwDO8kSmZtuwtoyegvhbUOFY2B0pJeF338VZ+nXfD4Ow05rUGV5h7I35ZY35PI1WzcXQGUfcaJ/+EXJNRJm4usGdHNIzThbyqrVqi6flhcuiqf8l35Ca4Po/NBDlO0h7+KYAvUS8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730984822; c=relaxed/simple;
-	bh=WpXkdW58NwJpi1pGQBZHFsJuQ2oNn8UxUGi30Sv955k=;
+	s=arc-20240116; t=1730984827; c=relaxed/simple;
+	bh=lEUFZriDhDkjVwUILii4JZwb1zW3y17U2hvnZ0QMi6w=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=P1N7xi/fe3Z8iFFqN0A8KF84NVbUrrbbVqTYaPmfTMda1wMPhAmerSfDDgOwbZdosArcyI2eKOPAgWWed7fLCy9FwvyFuaF9Mh/2uc1MdfxV/ySKYQAg+4Ge+oyDSlzDweUz2DAWuKdpnj0bWDccqMwU2/hHqKG8xNW9A2nAzGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2klslHa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA61C4CECC;
-	Thu,  7 Nov 2024 13:06:55 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Svk64W81rrkqGAr+MTcaHWVmMWp7oIkYsZjwjQEzapDGBsosebIfHcxoyN625NpzXy3XBF2eewAU5vAyR8q7uw0DI/qcNkcAE+ncLRdENNeSiJyJlsQ5yclYqsHBGARdI1tsvlHMhXo0SkqRK1kscwuZrdyorucoVeCnCPcBerE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MniWMyBj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A63CC4CED2;
+	Thu,  7 Nov 2024 13:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730984821;
-	bh=WpXkdW58NwJpi1pGQBZHFsJuQ2oNn8UxUGi30Sv955k=;
+	s=k20201202; t=1730984826;
+	bh=lEUFZriDhDkjVwUILii4JZwb1zW3y17U2hvnZ0QMi6w=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=W2klslHatOvfEzop97ZNdi5LkY8g3XSNRpV8nQURb9wLjqSNTxFb75WKIappO9f/D
-	 bqvgHZ18Z995UzpcpvzQV8+ajMME7/1tRgPO9+BSZOnTk/Ws+ws0ZhEjR9L/5SKqn6
-	 MchKVHlmHnK08ZqI1v27lxBVPvh0cKOZZOm/Tri8gaFbZsrQTbqGu7K316NuYg9mEU
-	 L2Z5rLdWj8tUxyqPzBWumXQgAGblQG3+UZFw3Kz3Ct100XgN2y2HkbwSExbo3I0sBh
-	 R8XUgIFFpsN5QJkKLn5hMTWDLMh52N1q1wI9RUSdb3co+1PmhWtdlGlk2cQd92kk2A
-	 5QJ/xu9/UKasQ==
+	b=MniWMyBjz3113myrrNYUNfEtyzo49n0WO2n2fb+b2ivnphHxvhZnmEI/Wcx6jbUqN
+	 WQ1+CW8foD0JpjPqsr6Mk1hYaWcH7sl0+Q3xCAOTqGREKVTT9GNKC3/VdDmWGB9T0O
+	 PhzNJj59spsFB3RZl5X5UbBkrxJ1MFdHnN7xElDUn+oqVfSVo2ByFXart7R0ClGRY/
+	 pYK254+klX9qGE5XI5PvsZ6Ir7ajZvc0iMME/Iun9U2rUSuI3hWrIdYZfs9a6H2h93
+	 NCBe7/GIvHILhRMa3lOo5XpKKAUqAwonKE+LyM51sLZp5rnX2u+LMDsu7Ye87RWKRr
+	 PVk5hcqKi9RPg==
 From: Mark Brown <broonie@kernel.org>
 To: alsa-devel@alsa-project.org, 
  Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
@@ -58,12 +58,12 @@ Cc: Vijendar.Mukunda@amd.com, Basavaraj.Hiregoudar@amd.com,
  "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, 
  open list <linux-kernel@vger.kernel.org>, 
  Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-In-Reply-To: <20241106101455.1229113-1-venkataprasad.potturu@amd.com>
-References: <20241106101455.1229113-1-venkataprasad.potturu@amd.com>
-Subject: Re: [PATCH] ASoC: SOF: amd: Fix for incorrect DMA ch status
+In-Reply-To: <20241106142658.1240929-1-venkataprasad.potturu@amd.com>
+References: <20241106142658.1240929-1-venkataprasad.potturu@amd.com>
+Subject: Re: [PATCH v2] ASoC: SOF: amd: Fix for incorrect DMA ch status
  register offset
-Message-Id: <173098481508.15423.6358343520867651072.b4-ty@kernel.org>
-Date: Thu, 07 Nov 2024 13:06:55 +0000
+Message-Id: <173098482166.15423.8670682010126055534.b4-ty@kernel.org>
+Date: Thu, 07 Nov 2024 13:07:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Wed, 06 Nov 2024 15:44:53 +0530, Venkata Prasad Potturu wrote:
+On Wed, 06 Nov 2024 19:56:57 +0530, Venkata Prasad Potturu wrote:
 > DMA ch status register offset change in acp7.0 platform
 > 
 > Incorrect DMA channel status register offset check lead to
