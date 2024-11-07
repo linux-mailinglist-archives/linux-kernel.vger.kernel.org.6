@@ -1,168 +1,288 @@
-Return-Path: <linux-kernel+bounces-399086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8469B9BFADC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:42:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A7E9BFAD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D2D1C21A38
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FCE81F224BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F96ABA2D;
-	Thu,  7 Nov 2024 00:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B4B4A33;
+	Thu,  7 Nov 2024 00:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3O/Nc0C"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Wn5QLex6"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2080.outbound.protection.outlook.com [40.107.104.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2A9610C;
-	Thu,  7 Nov 2024 00:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730940121; cv=none; b=GfA3hM9Gixw2b1ygPrQCtwi/aNk/POUDfbN73gL4vXPi6NOHNHhvJawJElUKagbSZWbMYPCaTkhS2IgeXfjVEnokTWLVEpDi46rg64FTHoBNnHTgpCXgv+ZMlesjGGw0jWaUFQ/7TkiVtLAr6uCC7BTfDN8j/EeUQu4o0m9X19g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730940121; c=relaxed/simple;
-	bh=hAjtIWJwG97lfyLvJOP2RLBgMJSNdcuxF70ZTNCC4Sk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kyhC2H+l8sEhK3Z1KQbDGDdfR0gQcI9jRljFX/O3IV80fC+eaa01i3QWlPJo1TLsJ/aZGSChH31eS6/MZBFsxSK8Hh3SBkwUEQzoyZGnWnlXzSzbqEBdAKQ2Gn1pg52WxCyuOCxj1T0oN9kkz8rqXo1g2CGAznfw5pIHO+8lB3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3O/Nc0C; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a850270e2so59888466b.0;
-        Wed, 06 Nov 2024 16:41:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730940118; x=1731544918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=66oG7Evm9+fKx2Sv7uu5FGZ2ExWy4GsOBS3MW/kR5U0=;
-        b=E3O/Nc0C2qt/H4671GFMkuG8ybkmQCagXx5/vaHfSonBieTqepxmZKNv2TzE2iVkX2
-         A6E+1mK34ZGb/oMkkkMu2D789TsiF1ZcnHW3dCjWxG3Dbbn+FWfreiMHmFmEzjwBe1Qz
-         4o5OMKZkPuXLK0aUqwjIVgfIm2fztSULXyO8Th69FV7uuxnJvzKFjHdLCgtQf6duWmxR
-         P2pw3Muv3bSkUm1PhabCcNP3XnAeNqKAeYFPVO97031z4b4XzjbACWDmGmMQTFqBmR/5
-         YaHVJVJFOUXSlSKFA0msAWGFVsqDFOX3U4oPnbNhwdUebNRRVo/nFlPJorrffDYBbpq3
-         rrRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730940118; x=1731544918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=66oG7Evm9+fKx2Sv7uu5FGZ2ExWy4GsOBS3MW/kR5U0=;
-        b=SUtmpz+Kpftm6Tj8LKHKWpCKg9lNccpwQZrazxQipZjG5Je9T3FfYijuhPiCzIhhC1
-         CQ7GIqjBx0gnMCqPd2fCeFQkrvLEidjiNE3UWKOupMGxagwt66crdaIjumiq7twmCJIR
-         AaPjZv0esQQkp1/sOE5tekxH8wf5Otzm1MczPbKXtMJ0vWIXddyu1D4CS9YNPBn4kfvj
-         5m0y80ggctZeoczLJwic3um4AcgYLLw06yRxLuBqVkE8b9Esq9WaPO/qpUIxvR1tPyi0
-         n4Bi6ozok4kwSVZUVpuFfRNXyqUYrJViHo8Lta7ty65QdlFDt4NcKtZ6JMPTxkwDFmWr
-         /IbA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5+AwawOZrXMLlTmyxN8IGyjiEVvX/O5BjAe+UbSxpcmIu17mzqKCUsH1bP/iC29LdiIxSJwIL28W3zhUY@vger.kernel.org, AJvYcCUOio0VNnOarw+V7kdE4kplAXNb74Y0ok50cL+UuzB5CexBnYFcX/C8XnNzAGAMjGDNUX1GGypjM0VN@vger.kernel.org, AJvYcCWJoHu1UVZnDCBKJBboCUyPVKbpggjTNKuiK5RfK3ViB1E+/ULKFMcsUbGneL3aXdqgOMJ4BTXyDo3L@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWKFMTe41ardi6DmgrA0PXBMj3mktPmPosuG/1gcbD6vIb/+ZJ
-	apYlKxMIMm8dsATq+ZaoMBb5Vx86qDpWpBNw/aCry1Tt0F63GeDZFDdYTLUgro2LBHeoTtdWniA
-	67cm5wCqbVgwQix6FAuVgsVM7dhQ=
-X-Google-Smtp-Source: AGHT+IFcrzeVPHrPu3r5o/8SX2WmAgtljAMZ1fBMXVtmRh7kPMQ7Eay15HFqYWHFnPv0n8wziB8+N0K2wbH0aWKy27s=
-X-Received: by 2002:a17:907:7ea9:b0:a9e:1fa0:d2f0 with SMTP id
- a640c23a62f3a-a9e6556fe06mr2153334266b.19.1730940118106; Wed, 06 Nov 2024
- 16:41:58 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8664A21;
+	Thu,  7 Nov 2024 00:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730940117; cv=fail; b=cBnRbRU0mOLHr+loC7YKl+2h/A30m+2ceRdTyl7IdlYrmdRxlqeJV6r1oECM8w94DnzvIT1IfD+s5N7ByUEtdEMYAOk7VCuv2xGSH0cdQtmaZUGej5k4vtNFbhEl324iIEbYWxH5yJ9QyozubsPGTEYPzcRokfaCL43fw8/143E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730940117; c=relaxed/simple;
+	bh=w+mIYqZzyaZdHt3GiPQykGFzr/kkcl33Js0cBTKLdAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RARAJisW5SlTAf/K/LSxUfrdK2yK/8BXwhOnoDIB3w7h0H29EiKECX1beD4KAu9jV0cDad9zKlek7qS8r/OHtRYf1jgDyl8YSLM4mA+8vARv91FNJm3abNCZSWl9zFJOCxv2KLDlUmnmCvuo/c9iMql6Y2ipxnnpHmKGnw4RzIs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Wn5QLex6; arc=fail smtp.client-ip=40.107.104.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I/DWKzbpTNpwlue3p5Xn3GI8QFGxI2HCM5GLHJRsMyg0y3+QRHu2diHKfA5GTDxjteezuOiGcfcRCelPRkPRW1PfVQXstDNxMukgTlyorkWVlpIqm8zvLHPptu32MlfruluQAUMfO/zr8u5fk4kKiGEkSAoqtTRELPr4OTpsa8TRGbjv8BzeQf9MUXWidehEiMUfU+jzkc+un0eVFxlai5KgFoEp9calE/ajf5pWLP/Xn68CIx7w/TeNU7txjyHb/bNAiDllZ6tfTbK/5ZWXQdbzfMVDZ6zhH2zq36Wyzu4rkFvZlv0bs1pKAU8v8sRsZbn2o7u5SPBowzMxsx587w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6LM7OeQAzFxfhPwXKg8NLOGA+6A2OumhtQy9XTt6mfw=;
+ b=uwkkWJ2bXJX6wEygwBXJij40e7lOkJgCaSSImFJ55qKeuw6yuXIBLnTpSz614JwPUpyZo7l2X4D8YFM/1tal4jVdJ0SpfYi4/2WNMj3/gFWrM9Xg2hUTO3/QIQLd51pIGgD6Zgy3+gEAljfdk4LWyJJQcd+scxiYWOI7WJOAJ0vzrmYx0ea8XZtB2eHzd5vsuiJjBP+I4EH1ujPM0YRlktx12ZY9fSXGRH6JaaFMsm3xQmaRdk7hbFi+cngqGlKA02Mbgk9iBVoZ6w9ghJ9s3oWna8rSfBZymhSWrRtVa8zLbnBQzHLOD2i/VnXj5ta2iNG+7WG30ErRYDdhzpQiGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6LM7OeQAzFxfhPwXKg8NLOGA+6A2OumhtQy9XTt6mfw=;
+ b=Wn5QLex6lXNo9YUZMzBnvQNni5wXfXBMH8ANvyBfbc6dVWUvo43jJoYJrIufuSmBfo9B1ZwruddR6uGyPU5A5lbwMzHQGU06UosqhXK6OhyNVVbqrEyx/po+NAw1Ez4dWxeUzx/bed3nA49ICHfwl9dtUZvCu2+UrBuYMC221VidBnpYKiJBuUlgsaEh3Iu9/wx+GLNJScUz+kyJXW96RTySTAD+HITpo9paSgxDId5zNeOT6uUw01172TulcQqhFGeQY1MUHiVNWUD3g1EMJq1kz+P65QAfq3eDg21CVqNyGYX4bv8j3zz12V1Jo8pY6bbSxaVaT76D0ReaoYKMGg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB7717.eurprd04.prod.outlook.com (2603:10a6:20b:292::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
+ 2024 00:41:51 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
+ 00:41:51 +0000
+Date: Wed, 6 Nov 2024 19:41:42 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, jdmason@kudzu.us
+Subject: Re: [PATCH v4 0/5] PCI: EP: Add RC-to-EP doorbell with platform MSI
+ controller
+Message-ID: <ZywMxnij3wZ9PGmj@lizhi-Precision-Tower-5810>
+References: <20241031-ep-msi-v4-0-717da2d99b28@nxp.com>
+ <Zyszr3Cqg8UXlbqw@ryzen>
+ <Zys4qs-uHvISaaPB@ryzen>
+ <ZyujpT+4bd7TwbcM@lizhi-Precision-Tower-5810>
+ <ZywCXOjuTTiayIxd@ryzen>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZywCXOjuTTiayIxd@ryzen>
+X-ClientProxiedBy: BYAPR08CA0050.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106023916.440767-1-j2anfernee@gmail.com> <20241106023916.440767-3-j2anfernee@gmail.com>
- <fd4db31d-4e55-4f0e-a96d-d193c28fd784@kernel.org>
-In-Reply-To: <fd4db31d-4e55-4f0e-a96d-d193c28fd784@kernel.org>
-From: Yu-Hsian Yang <j2anfernee@gmail.com>
-Date: Thu, 7 Nov 2024 08:41:21 +0800
-Message-ID: <CA+4VgcJSt-LUNtH6TMpk7om+PbO1aQvmt1WHi-cYMxa8p+Um5A@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] iio: adc: add Nuvoton NCT720x ADC driver
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com, 
-	javier.carrasco.cruz@gmail.com, andy@kernel.org, marcelo.schmitt@analog.com, 
-	olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, 
-	matteomartelli3@gmail.com, alisadariana@gmail.com, joao.goncalves@toradex.com, 
-	marius.cristea@microchip.com, mike.looijmans@topic.nl, 
-	chanh@os.amperecomputing.com, KWLIU@nuvoton.com, yhyang2@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB7717:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7667da35-1464-4f6a-7fbd-08dcfec4f80a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|1800799024|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nAnobd7E7tqHeJRukE4ILTdQ7I/CI3aUhJrSjlSUy/qn8qoCZJTS78basyFn?=
+ =?us-ascii?Q?6TE35O+7THcanKP76DAuxV92F3u0nQX60Obkz51Wl9iqKmPzPnHN8NedbWgg?=
+ =?us-ascii?Q?+aTPOGeHucnBZ7TT9QhjpWqYP+FETZ7EAUN1UzFjbtHIPhS3XQCBF3TWObGm?=
+ =?us-ascii?Q?iUUgwVjuFND1KpXRaKQI4rwlOragb/cyyZtHo6fRIHPaOf6c3/AuPLshSath?=
+ =?us-ascii?Q?oU9OFqZaDxgzU+tbA400BF3vR1HJ3sG1n/oePulIGiK/Bo/2p/GnqQxPQz3N?=
+ =?us-ascii?Q?ZGZXNP+5dSl6eTRHBdulm6gttJs7SCZC5Jtxf2AUTG3m0D3Cc0WVzC/xevHs?=
+ =?us-ascii?Q?A44aoS4iTg5Izy+G8UorfmlapTeTpyHHUBqILdLgZjjB3XbnbynxSdgjuxYu?=
+ =?us-ascii?Q?rhskxd9wG4edG5DVC1ZMG2iOJ174PvalcX/Rv1sz07haKZ6XQHCc1NraBjYM?=
+ =?us-ascii?Q?HpxZzQqMpRl20HIl3cDaEcStY03zDQWrP/0hjUuSSobqzowdzF0ExWYySlqT?=
+ =?us-ascii?Q?6pwERaMYjBQL9CXPmlYJGeOoIJ2X38pkjz/ivIaEqcSpQebF5F/hMri/sy35?=
+ =?us-ascii?Q?FL6igpwwegBNqYqG5AF5so+e9U8nCXfyvYpnFOHK1/GT+pXEtKIiJq6w9wPZ?=
+ =?us-ascii?Q?Y0LdVuYZEz1PmXdVHrW+TbkaeexsJJsQWhkeAOQNoGXac7d1iZIPHEwUHdfQ?=
+ =?us-ascii?Q?VPp0PmQLHNVGBAmQmuFb9TUYDQTuM5Jbpac0GoOPar+NhKfV74IWoqH+oLjt?=
+ =?us-ascii?Q?G5O2D9UHWQQYo3iRDLmFVBIDGwb9eC7mWQGWCtlwy/zyxr0pRMqiVLmIV0Up?=
+ =?us-ascii?Q?SHxq7h18xXihDLa/5y+KUToKacDMG/vmsml5BdTlLndbpjnIQYRh7YxXCxIJ?=
+ =?us-ascii?Q?3txVTODwrfIabaRjHAEWxS/Yy5MXfjBVGhIMtI+yZDVjY+EofPGebzANxGwx?=
+ =?us-ascii?Q?+4/fGszDoXMIhdFIRl+QYhCJtdOSkzS6gZVXe+pNWsOei9mWGLPcqgqNqaS/?=
+ =?us-ascii?Q?aUwYFqVGZ0PBraI0LGup9AVwMTG8pdseOmF770QobYarDinfMxneqQxvCaPi?=
+ =?us-ascii?Q?e5rMDTzvaQxW3KsU0FjRm+UlFvWYWLyeO6yP1miMDMSR3ZLjxrXuA4HiHwFt?=
+ =?us-ascii?Q?9funLLjXIJ8p8rEwMRaaZd8S3jYuGr3c3BlYmSTm1XDDzUkVxcXbJIh8l32y?=
+ =?us-ascii?Q?nrCt7j7rRgwPIm6+fdTubNzPnWpdYZFhXO48fIt7GxiIAmK65NIt13XkUHOO?=
+ =?us-ascii?Q?FEYCGe7mpDbQAo2dfGT16Gn+NKgRz/nJo1NmYfqVS+Ki2lrCGAi8ZUFUnoDD?=
+ =?us-ascii?Q?NKDtHjZv+Ateq/rqZJJo439e?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?mGhRHSdH5NnsY2F3OEY90RMpQvlGU6Hp1wkS5awXxeJdfj2nxXQaH/ZZW/Tx?=
+ =?us-ascii?Q?LJMsi4r3KEN9xjc/9o3EmLJYPHkKnVNJovHEX6YJ1qgUYmqXqHzYFKadc/xe?=
+ =?us-ascii?Q?AAdrpyKK/ixkf9nRUVdgnWmIhbKaF9cgEmI8jiFd/OCL9qHIme7g7pCmMi+t?=
+ =?us-ascii?Q?xr2PZSIP6I2yz7TJP2+X8Wv9+O7hfS86owyIP2BY9/36R7sWYLp45jVRgpa2?=
+ =?us-ascii?Q?djPq846NpZOWWvt2bdhqN+m16hpD5KnBq5+uBX+zHAUyKpCD+etfzt5xqR3o?=
+ =?us-ascii?Q?jqsBV1tqPW+BXj6l7vgNsqSxAAsM8L8bPDR7/FVOkTC0Ia/3nHCe5xax0qeH?=
+ =?us-ascii?Q?MElBD0UL0kEbwcm7VvxbYhag8DLqaxZYkoUw6KhMNifjZiPcFEpg3wG7peAx?=
+ =?us-ascii?Q?hJeYd+n9YEOdY4PheuMMxNiekWHraycbIbvjhMoVZNWeJfzktPHnH7ppfda1?=
+ =?us-ascii?Q?eD9Lv+j1tOax+TeVx9349rOgsfFN/CJNTI0JCDTwtZMa0uZ5GrHTbArzIl4W?=
+ =?us-ascii?Q?QPUZ2MJTVBcZN1kEunTvF7SnPPiCLBjhiIvIyJCzd2Ow8lXRzsKuBmolzzGA?=
+ =?us-ascii?Q?Qh4jZBVtXurouG7gUbHKMFzI8fZt+XlFgP86JNcjPdaZIHRke4Vx3hzHrsg5?=
+ =?us-ascii?Q?PjZ5hoyoofR0Ky+dLktlAKCPbvaz+E9ST6X4FzEr/zy91YBGQefgx1is8CTf?=
+ =?us-ascii?Q?vknRehK9pd0yJN0DJp1xkF9Ytj1VZatnMFj+Ssq+bwhEcc5VXKVKoPBntomW?=
+ =?us-ascii?Q?ox3IRK0OS06xAEnzOB6pFYb+Ym1EWaLeyHhjfU+fKSs9aFJgT9v4Sb/s/gIP?=
+ =?us-ascii?Q?ow+LHJnNu4DK9lrAsrPrLsZymRlXlXE2myaKeqrdRFIov4CI/fi3JGSrlw6o?=
+ =?us-ascii?Q?H5TYB0TxvCk9kPw6eL5C/owpz0qsdcmSNNutrcH8TJbIojje0bVYGxoeGIXe?=
+ =?us-ascii?Q?pN5x7OcO7B5wyfCDiTTmh0U4dk8fE2y3poZ/9S+5gw6lIagF8myZKUy2PCNB?=
+ =?us-ascii?Q?K/dK+HLt8lYJNikiBp3yRjf2gP3HkTcR2mIs5BWS8pZi7LrquBkGtsBldERt?=
+ =?us-ascii?Q?LaAbXH3Qu379pKTwNVOHa2b3asFscQ2lWy9bBY0ttxDh0YLu6v5kwxBDo5dT?=
+ =?us-ascii?Q?wvhKqsbPOvnXvd9sGpQRZgBVS1PhCjo5Kg4XsExExDxtsZTEbOgqlS28lW9E?=
+ =?us-ascii?Q?kxt5Fl5r0gzbrlIV8/M0P20a6Sh6vF7a6QvzzRkf/11LxF8Pn124FAybQLZj?=
+ =?us-ascii?Q?zOIJrYuVhWwp2yv7YaGSESCYu6KeskX4AMVQaA68Dlym1ZIgq1vvQRhziw+2?=
+ =?us-ascii?Q?NXW2I6ZKSBLjeL7FobWX8O9IHnbfvDU/8cEtmgUeiRFRXJlp5BFzs7CDPgXq?=
+ =?us-ascii?Q?x7wa2PNFeZXke+1ZOTB6OCYqAlmy6wYYgutxxQqzZcHWklN6nXeTfAX1UlUz?=
+ =?us-ascii?Q?NagDQf/yeWocnV1ggcyHOMLqHhhMkMPnKR8UXKDvIj0l3dNIdxLDNAFWp/jl?=
+ =?us-ascii?Q?zEsjHqzji6gNztNU01GiaLqii8xPAj6WPL77yajeJw3vBgXrkHWCCIc9+C8H?=
+ =?us-ascii?Q?bCJTw8KQo77W0/OpoUGvUWqWl5ylHnSObPcTTgQ8?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7667da35-1464-4f6a-7fbd-08dcfec4f80a
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 00:41:50.9442
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kR6vVYZN8RJqoRyjEwA2J2qJDOqNU6x/si3r0l1nsPtQdyu2Yz+ALFK2uaEiBI0FBWMaEXperpHsRjy90YOdfA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7717
 
-Dear Krzysztof Kozlowski,
-
-Thank you for your response.
-
-Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2024=E5=B9=B411=E6=9C=886=
-=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=889:41=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> On 06/11/2024 03:39, Eason Yang wrote:
-> > Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
+On Thu, Nov 07, 2024 at 12:57:16AM +0100, Niklas Cassel wrote:
+> On Wed, Nov 06, 2024 at 12:13:09PM -0500, Frank Li wrote:
+> > On Wed, Nov 06, 2024 at 10:36:42AM +0100, Niklas Cassel wrote:
+> > > On Wed, Nov 06, 2024 at 10:15:27AM +0100, Niklas Cassel wrote:
+> > > >
+> > > > I do get a domain, but I do not get any IRQ on the EP side when the RC side is
+> > > > writing the doorbell (as part of pcitest -B),
+> > > >
+> > > > [    7.978984] pci_epc_alloc_doorbell: num_db: 1
+> > > > [    7.979545] pci_epf_test_bind: doorbell_addr: 0x40
+> > > > [    7.979978] pci_epf_test_bind: doorbell_data: 0x0
+> > > > [    7.980397] pci_epf_test_bind: doorbell_bar: 0x1
+> > > > [   21.114613] pci_epf_enable_doorbell db_bar: 1
+> > > > [   21.115001] pci_epf_enable_doorbell: doorbell_addr: 0xfe650040
+> > > > [   21.115512] pci_epf_enable_doorbell: phys_addr: 0xfe650000
+> > > > [   21.115994] pci_epf_enable_doorbell: success
+> > > >
+> > > > # cat /proc/interrupts | grep epc
+> > > > 117:          0          0          0          0          0          0          0          0  ITS-pMSI-a40000000.pcie-ep   0 Edge      pci-epc-doorbell0
+> > > >
+> > > > Even if I try to write the doorbell manually from EP side using devmem:
+> > > >
+> > > > # devmem 0xfe670040 32 1
+> > >
+> > > Sorry, this should of course have been:
+> > > # devmem 0xfe650040 32 1
 > >
-> > NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up =
-to
-> > 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins fo=
-r
-> > independent alarm signals, and the all threshold values could be set fo=
-r
-> > system protection without any timing delay. It also supports reset inpu=
-t
-> > RSTIN# to recover system from a fault condition.
+> > Thank you test it. You can't write it at EP side. ITS identify the bus
+> > master. master ID (streamid) of CPU is the diffference with PCI master's
+> > ID (streamid). You set msi-parent = <&its0 0x0000>, not sure if 0x0000 is
+> > validate stream.
+>
+> I see, this makes sense since the ITS converts BDF to an MSI specifier.
+>
+>
 > >
-> > Currently, only single-edge mode conversion and threshold events suppor=
-t.
+> > You have to run at RC side, "devmem (Bar1+0x40) 32 0".  So PCIe EP
+> > controller can use EP streamid.
 > >
-> > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+> > some system need special register to config stream id, you can refer host
+> > side's settings.
 >
-> ...
+> > <&its0 0x0000>,  second argument is your PCIe controller's stream ID. You
+> > can ref RC side.
 >
-> > +
-> > +static int nct720x_probe(struct i2c_client *client)
-> > +{
-> > +     const struct i2c_device_id *id =3D i2c_client_get_device_id(clien=
-t);
-> > +     struct nct720x_chip_info *chip;
-> > +     struct iio_dev *indio_dev;
-> > +     int ret;
-> > +     u32 tmp;
-> > +
-> > +     indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*chip));
-> > +     if (!indio_dev)
-> > +             return -ENOMEM;
-> > +     chip =3D iio_priv(indio_dev);
-> > +
-> > +     if (client->dev.of_node)
-> > +             chip->type =3D (enum nct720x_chips)device_get_match_data(=
-&client->dev);
-> > +     else
-> > +             chip->type =3D i2c_match_id(nct720x_id, client)->driver_d=
-ata;
+> The RC node looks like this:
+> msi-map = <0x0000 &its1 0x0000 0x1000>;
+> So it does indeed use 0x0 as the MSI specifier.
 >
-> I believe there is a I2C wrapper for above.
 >
+> >
+> > >
+> > > Considering that the RC node is using &its1, that is probably
+> > > also what should be used in the EP node when running the controller
+> > > in EP mode instead of RC mode.
+> >
+> > Generally,  RC node should use smmu-map, instead &its1. Or your PCI
+> > controller direct use 16bit RID as streamid.
+>
+> smmu-map? Do you mean iommu-map?
 
-Got it.
-
-> > +
-> > +     chip->vin_max =3D (chip->type =3D=3D nct7201) ? NCT7201_VIN_MAX :=
- NCT7202_VIN_MAX;
-> > +
-> > +     ret =3D of_property_read_u32(client->dev.of_node, "read-vin-data-=
-size", &tmp);
-> > +     if (ret < 0) {
-> > +             pr_err("read-vin-data-size property not found\n");
->
-> Please use dev_xxx in your driver code.
-
-Got it.
+Sorry, typo, my means msi-map.
 
 >
+> I don't see why we would need to have the SMMU enabled to use ITS.
+> The iommu is currently disabled on my platform.
 >
-> Best regards,
-> Krzysztof
+> I did enable the iommu, and all BAR tests, read tests, write tests,
+> and copy tests pass. However I get an iommu error when the RC is
+> writing the doorbell. Perhaps you need to do dma_map_single() on
+> the address that you are setting the inbound address translation to?
 >
+>
+>
+> Without the IOMMU, if I modify pci_endpoint_test.c to not send the
+> DISABLE_DOORBELL command on error (so that EP side still has DB enabled),
+> I can read all BARs except BAR1 (which was used for the doorbell):
+> [   21.077417] pci 0000:01:00.0: BAR 0 [mem 0xf0300000-0xf03fffff]: assigned
+> [   21.078029] pci 0000:01:00.0: BAR 1 [mem 0xf0400000-0xf04fffff]: assigned
+> [   21.078640] pci 0000:01:00.0: BAR 2 [mem 0xf0500000-0xf05fffff]: assigned
+> [   21.079250] pci 0000:01:00.0: BAR 3 [mem 0xf0600000-0xf06fffff]: assigned
+> [   21.079860] pci 0000:01:00.0: BAR 5 [mem 0xf0700000-0xf07fffff]: assigned
+> # pcitest -B
+> [   25.156623] COMMAND_ENABLE_DOORBELL complete - status: 0x440
+> [   25.157131] db_bar: 1 addr: 0x40 data: 0x0
+> [   25.157501] setting irq_type to: 1
+> [   25.157802] writing: 0x0 to offset: 0x40 in BAR: 1
+> [   35.300676] we wrote to the BAR, status is now: 0x0
+>
+> status is not updated after writing to DB,
+> and /proc/interrupts on EP side is not incrementing.
+>
+> # devmem 0xf0300000
+> 0x00000000
+> # devmem 0xf0400040
+> 0xFFFFFFFF
+> # devmem 0xf0500000
+> 0x00000000
+> # devmem 0xf0600000
+> 0x00000000
+> # devmem 0xf0700000
+> 0x00000000
+>
+> So there does seem to be something wrong with the inbound translation,
+> at least when testing on rk3588 which only uses 1MB fixed size BARs:
+> https://github.com/torvalds/linux/blob/v6.12-rc6/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L276-L281
+>
+
+It should be fine.  Some hardware many append some stream id bits before
+send to ITS.
+
+>
+>
+> You also didn't answer which imx platform that you are using to test this,
+> I don't see a single imx platform that specifies "msi-parent".
+
+Only imx95 support its now. LUT part code is still under review. EP support
+part should after lut merged. Preivous use layerscape, which uboot set it.
+
+Frank
+
+>
+>
+> Kind regards,
+> Niklas
 
