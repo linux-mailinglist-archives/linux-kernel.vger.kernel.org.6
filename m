@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-399589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BC79C012E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:33:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CD979C0133
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD8328323C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:33:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1234F1F22410
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ACC1E04A6;
-	Thu,  7 Nov 2024 09:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2201DFDB4;
+	Thu,  7 Nov 2024 09:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ah3yTj9K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDmU/BG+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E950BA2D;
-	Thu,  7 Nov 2024 09:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C90BC2ED;
+	Thu,  7 Nov 2024 09:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730971976; cv=none; b=q4M2WPl/GG0hN51grBaKk9Ry/gee6VkpZw93v0Yw9oQGPRIgY1rkIhXDHXn7HDM48nZ2ykAVrgrmwCbU84dCoisRpp4lfXcjiEWkQbXge55hNXokdLxoACt14wM8zTw9oKUOtGmy29Yf5Yk7zZaKjSEQC1V/ZPh3jAZQz3sA/rQ=
+	t=1730972052; cv=none; b=c9KY7BA/cAI4AMpiMz9Uaf+O7jYN02uJVZvXLURwn3Zj1bj9mSzdtwgP5dOfzHi+wv03w6D3e9e6DR7UhVdu6o/PGyhnI2Xmsz3j4obZ6Jhn0geY+7/kkPvUBLFkyU33BqnbD8YP163I+hXHWNiVNjY8CJLDJu3B52PCgiAjs2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730971976; c=relaxed/simple;
-	bh=hRGJJEiH2gPekF0iqZ0/h+ayhMMcIyNJ65HQsDcSF6A=;
+	s=arc-20240116; t=1730972052; c=relaxed/simple;
+	bh=inESUDudB5HfcmBBNbqKRZ9XUBmBgBiXWRXYsjc867w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZpSd4k2BFVsSvmGZUBlb+4DhCsWqQQXBVPaj7jncsvMb27DQG+Ys/RsIUtP8vNO56AYLgTVxzN+OaGcPjXhZeRqwNa39pvasRoXvmqdYnOXEJgp+4TfJtWVsENp0Md4UB4SeN1i3/D0QvgzVoloJg3mxqGA8W6JlqiTFz7Y8oM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ah3yTj9K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB3C0C4CECC;
-	Thu,  7 Nov 2024 09:32:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=blVVKIsRQANl1vtswnLy2VKot323XRtEYsNUAHaxiZJxYvpDcmA66t2IqTDZH2HnTNyd5tpbe2Ha/PRjKTYqgc4WKgYbCZJgzOaf/qleSKc6Qw/KhE1D/9VqbhyCxtLVqeQwjx31061RYE2vAM4K6rfPzpPu3HzyO4s1SGmCyyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDmU/BG+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA0CC4CECC;
+	Thu,  7 Nov 2024 09:34:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730971975;
-	bh=hRGJJEiH2gPekF0iqZ0/h+ayhMMcIyNJ65HQsDcSF6A=;
+	s=k20201202; t=1730972052;
+	bh=inESUDudB5HfcmBBNbqKRZ9XUBmBgBiXWRXYsjc867w=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ah3yTj9Kd4H5/Da7x8iNF+Dr/PmQpA/a4U6xQHaOAo4gvUKVWrZv+7EtLPpVk1hk6
-	 JCfqjYfxAi7HDpARtDnXEvzEYluNfBoh0r+vjpUxDmwqS0UXGeO6uBg5cTSWazPegq
-	 RjG/PbI78i5YdmkPspjvNC2QG58UFoMdpMBvJ7uL3Z80GErwwCrN4AAenj8THdknsd
-	 pYw8b7V6+Jry+zssOtVYcLXmi986/cYmM1+YbnIGDFFm60TdVzQ4kQZCpkGDEvkfqW
-	 eO6y2B+jc0eCgD6o6k1wAqJAzCRwN0olDz0mcr/ETa29hZ44yp12BEYOc38XLfT4m1
-	 q2FUfzf1bIbAw==
-Message-ID: <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
-Date: Thu, 7 Nov 2024 10:32:48 +0100
+	b=TDmU/BG+hRQ9l6HbOxYsJpcI7R6NBTvpKAIO4HPYxDJGII5+3TfrHvN97Lw+aVVc+
+	 CwRkbTfdyzRCzhiKC8fFwwUgv8YRsACnwa4aetSX7sS0kwDgYID+LGBVuJLmQU32PG
+	 v2oNSrhsewmgkNMel2A91E5fuxBwJpUBLGcow+koUVxCE28Se6DKBJ1d6Dm6FimWlX
+	 rbRaei7/WoHrz8V+EF1zRv26wEK1wn1Zl8q52T7+VFQdDCoku4khl0yxrgy5JZjj8N
+	 UZ15HV1X6c29/Q0YWDiho0yaNrXLOvajBXR1i3qWtfjfeah76pgm8j9kPMq+dTDdyg
+	 vTnqXqjLqYBgw==
+Message-ID: <a0e3d45f-d982-4961-9945-3c81c0380806@kernel.org>
+Date: Thu, 7 Nov 2024 10:34:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
-To: Taewan Kim <trunixs.kim@samsung.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>
-References: <20241021063903.793166-1-trunixs.kim@samsung.com>
- <CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
- <20241021063903.793166-4-trunixs.kim@samsung.com>
+Subject: Re: linux-next: manual merge of the watchdog tree with the
+ samsung-krzk tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>
+Cc: Byoungtae Cho <bt.cho@samsung.com>, Guenter Roeck <linux@roeck-us.net>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Sunyeal Hong <sunyeal.hong@samsung.com>, Taewan Kim
+ <trunixs.kim@samsung.com>, Wim Van Sebroeck <wim@linux-watchdog.org>
+References: <20241107165933.3e8b5af5@canb.auug.org.au>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,25 +104,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241021063903.793166-4-trunixs.kim@samsung.com>
+In-Reply-To: <20241107165933.3e8b5af5@canb.auug.org.au>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/10/2024 08:39, Taewan Kim wrote:
-> From: Byoungtae Cho <bt.cho@samsung.com>
+On 07/11/2024 06:59, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Adds two watchdog devices for ExynosAutoV920 SoC.
+> Today's linux-next merge of the watchdog tree got a conflict in:
 > 
-> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
-> ---
->  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>   arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> 
+> between commit:
+> 
+>   ef1c2a54cbc7 ("arm64: dts: exynosautov920: add peric1, misc and hsi0/1 clock DT nodes")
+> 
+> from the samsung-krzk tree and commit:
+> 
+>   3595a523d043 ("arm64: dts: exynosautov920: add watchdog DT node")
 
-How did this happen that this patch was taken to watchdog? There is no
-Ack here from me.
+The main problem is above patch should have never been taken to watchdog
+tree. I never agreed on that. I never acked it. It is against SoC
+policies which are always requesting entire DTS to go through SoC tree.
 
-Drop this patch from watchdog, I do no agree to take it via that tree.
+Please drop the patch from watchdog. Or revert it.
 
 Best regards,
 Krzysztof
