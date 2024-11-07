@@ -1,330 +1,727 @@
-Return-Path: <linux-kernel+bounces-400171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88879C09EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:19:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226D99C09F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:21:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52804B21F35
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E4428111F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5011120EA5E;
-	Thu,  7 Nov 2024 15:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA1C212F10;
+	Thu,  7 Nov 2024 15:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LuZofvFS"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2055.outbound.protection.outlook.com [40.107.247.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmLwXIIC"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7223DCA6F;
-	Thu,  7 Nov 2024 15:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730992755; cv=fail; b=OETM6GDcnq85sb4wRbfsGO+hxAIkjW8I3aiQt3oFyjMKQ/fw6kL93W9U1X0c+DNBmdWBreCdKoqUbUSDIKh2s9ICKs2eIspgJnbJAYGdexDU9rALypaUpRBIKth2ZaZSsrGPdb2o3MxQK0lgsQozl4L6dXjR9BkhQitWc3x2mgE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730992755; c=relaxed/simple;
-	bh=EtCJ2JaZK+mnKrpOtuopQfwaQJ0H9q7GlHkBOHzLiKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DOkWiyrBUJwSSlhydonkEA7mRJC/o0QHeVuA+QRio6k1ViW4emzvsmmElYnVPpvJwsHCWk6SqmvsmV9C/grHAoVt6E5xxXe0/Odc9MK0NYWP9auUCPacc5EX70G/s6Dr3x/Bn675eZ0xJXyh8ealTUi37aNRIMs90pVIZiDGooY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LuZofvFS; arc=fail smtp.client-ip=40.107.247.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c8Xk8cg6aV/f9NsZt9vdcJET+BmMJJC3qctXGLYN6DJJk1q6CrgSz7+d7p4LWylBHcsC/11Frc5dEbtT/7pl36uvZFYq6/0WuYVfmJIw2OqXERr8h37LguIydcwq1qJlS3GACVL7qjypNxtIEYiWuvSa2dWQKIRlYosPOtw/jIalpp72SwFFxRN1hIRcgxx8ejbev9/pD3hWEDgYN7AqU13ZzfKtpkxFXGz7Ozqo48oJEwbrHp78MuACWN5UOBPNTQGO5GuEAtRKyPcfBtdwgwW/bMcPqDlonO5HJRiSCK2ub+WXJpnqMF3OFX6aPe/uO/tZML9Xg6mIoqExmwK1gA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+oJ9FAYJSujo0FJMLa2Z47f8P86GT57qPGR7PZnchj8=;
- b=YEHKdF+XgumbLCqGIpjSfVFDjllPuuGpNQBy49vo/cz96/3bvPcK/aQR7sNdF9bi1Jb8B1M0lvJc3tWSAgK7VDVN7Mh/8JqzZDaplY92CDvddtsBzkrUsYUP7N4zAOa8kRSuvrEZaTn+haqLSnbDkx3LJg9BR/2QaQxL9a03VQLBKjJtIAlzLG5MeU3ldEDD617jPFgO/87KiO/nI/Zy/XXOMujOCi/J6hJr+apaFElsedPmcTBVTEG5iog215xHtlDID4JhmUDn9YccQiE5ppN7ubjty2NBN5exVwK2DUXwJukgSC9DoiTGHS64ssywEfBy8W8Z+dXcU/swZHS24Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+oJ9FAYJSujo0FJMLa2Z47f8P86GT57qPGR7PZnchj8=;
- b=LuZofvFScWmK0jFCZDWqUbqBMogaX/Vk4YuFoNOPsnSHU0sMx+m+XWsC9+Ry7NyU36DzWFPzXi1SBZd0MfT2ch/rJB5hJfa74tvyfIL0Ph+gZBJWtTsEkq3yVtuvYJrZieEyIrj0qF49XWaYqHtffjYPqUl1Tg8qjslPG585YlI5mYfm8Wl3MnkCHZQPQUf/0OKIV3tNFmOCWllQUbNGqjDUs06hqmoNY+odLpD6Z9SpLuTqb54PRyRcdMQ0cO3llSHWJx4tuYhRqe6z8/IpNcvr8pwuTyEqk/bxQ5tMH9oKn04CMZf2c9O25xdTgGATyHc3p96I1F9Q0IMsl7Gtlg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB7490.eurprd04.prod.outlook.com (2603:10a6:20b:2d9::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Thu, 7 Nov
- 2024 15:19:10 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
- 15:19:10 +0000
-Date: Thu, 7 Nov 2024 10:19:02 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>, imx@lists.linux.dev,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH v3 2/2] serial: fsl_linflexuart: add clock support
-Message-ID: <ZyzaZtBTW4Gd6k2X@lizhi-Precision-Tower-5810>
-References: <20241107114611.758433-1-ciprianmarian.costea@oss.nxp.com>
- <20241107114611.758433-3-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107114611.758433-3-ciprianmarian.costea@oss.nxp.com>
-X-ClientProxiedBy: BYAPR21CA0017.namprd21.prod.outlook.com
- (2603:10b6:a03:114::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE48DCA6F;
+	Thu,  7 Nov 2024 15:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730992849; cv=none; b=QDtbRJ+faKoAV+lzDsbX1zt7hbJ6oF2HTB6E8Lwa7oKEx3m1eu419vsAx7RzsjHYqR3D84sCd8nhMJPFuCejIA0HYT7ApfCaP5cELj9teXo2GyZ6AtK89SPV3QMthWtDcsUwCfYSzeqHzqzBDkaeQIv8erNbloOBc59pu17VAb8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730992849; c=relaxed/simple;
+	bh=PGya8xVpn5kQ4JN+D1HxS573/7BJyadBjqci37UbNcw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PYmhRdXwwPg3Q3QayExDOZuvvJ53n8EgJ1RZweehIJAKBF2+dbTVxfeZguvrSsTOCB4oay3WCXh3zof0vza/igfauGMoAZhBrOG3aZoSHI8/kONTjqud/EPgEsxSI3BCj7kX896r1ofvuepPgMxjPCRN5dDApJvdBc0TCMRVjOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmLwXIIC; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso807234b3a.3;
+        Thu, 07 Nov 2024 07:20:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730992847; x=1731597647; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xg9dz524hmF4NJqkDdqounO3gG084QkqmRm7q85Bbdk=;
+        b=mmLwXIICjFbaeXACs9T5QrAV3MCCiBqQnRGqFm86x+HjYIQaSzOnJDwKl2NvegbvbS
+         lyQjsb7Irfeaj4y2RaRa1ZpbpTEsDGg46Y42iBdpElhDtIgqCA/0DOWLaL38wrgdPBvJ
+         58AMLevtuFnkuzLm2rB8ABx2AAKmpfPRZjdmNWQ2p2lpdMPpGAYNQrIe1ir9A/y5R2iA
+         3enQp2BwSb+ON15k8O1ZbV7aDgV+MjIaWYpdSQzDvi/11iXMDsfN3AsTI45+BdTmXcVK
+         WhEaia0VhIZf9jntNsaHwXVTzLvdE9e3upXlH9/ZUOTUO2cYRsRdwRd3rbq40jIJA2lz
+         LE6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730992847; x=1731597647;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xg9dz524hmF4NJqkDdqounO3gG084QkqmRm7q85Bbdk=;
+        b=tqK3KSzUB8R3S4RML63rczAhpwHFRzXDitLo3tgVplBw+smpoebbGvaynXJ0A7GQKG
+         e0WC/lk66ipYlAe1IN9tG8mx6/nqS9BroUBSdvrnrNaaA3MvPFWx1xe9yXLY38TgNk7u
+         8WX+i4c702Bzb39TBnJ/fMv7r5iBKfWh3RIKr2i5sI/GxMY3zwLmYjxa7bUHHgbpINDE
+         Q/0W5IA55/5/wqnsIkH8oY/UxSOUcUylhWGme7Kg3huB7YSrvmAI5+vGryKeEOsPuabc
+         qxyaSxijHZwRs3S5sEnrVjfyHvZUEulzvHdgQ/l25CK1n9UfppK2ULAXX4W7Q4JlZOL3
+         vCrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWprkh3knYn9qQCq9/pL83h/0icrTERuOcAoyRh/2VEQhxVjU6NIZShWer7KWVvb37MWE2F4YYyWEDVVp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7p5R1RvwKw3fZmiN3UpbYUKbJwT6bTjN88fJRcE5CMnK0w2uS
+	+No9BLr8B4pDip5+7P2Pcc/rldbxD5raM7fsatsK/j1WOCePX+sq
+X-Google-Smtp-Source: AGHT+IHm7Q5XKC9VEFkn2ix3dTpS7YodpO91f7RQCiOWQjszJm47KFlEIu9CE9CsgJ0wMOgRycBYGw==
+X-Received: by 2002:a05:6a00:2da4:b0:71e:76ac:4fc4 with SMTP id d2e1a72fcca58-7206306f175mr60453654b3a.21.1730992846751;
+        Thu, 07 Nov 2024 07:20:46 -0800 (PST)
+Received: from mythos-cloud.. ([121.185.170.145])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a17ed3sm1706839b3a.142.2024.11.07.07.20.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 07:20:46 -0800 (PST)
+From: Moon Yeounsu <yyyynoom@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	andrew@lunn.ch,
+	Moon Yeounsu <yyyynoom@gmail.com>
+Subject: [PATCH net-next v2] net: dlink: add support for reporting stats via `ethtool -S`
+Date: Fri,  8 Nov 2024 00:19:33 +0900
+Message-ID: <20241107151929.37147-5-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB7490:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1969471-6d3b-41b4-4657-08dcff3f878d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YAc2nrYONUDO1FcNAgNV2or7lKDZwHEvS0GsKzdeiDT5ynVy2l+2BOugyeQB?=
- =?us-ascii?Q?vElHT4stC7GN2/TaLuMLhVktABHskSQC056S2I+J9SFdwH8VWjRQ3mGlO0wL?=
- =?us-ascii?Q?/HAgHF7Bl7xhFlKX43PwUc2zUsRyrJgHsMGhlZ+00WPk5wrbrQY2ayKLDfE2?=
- =?us-ascii?Q?pD6slk3pCj5fKgjg1uEhKMGwiTUOIoFj9dr1CgVflrJp4JGZ7OtgjXa1IWac?=
- =?us-ascii?Q?hcuSQMubXJmiAzs1WY8lddfvxOW2bFdaCzeh5TZbsHJwPaPQhngmghdc4qAj?=
- =?us-ascii?Q?/wH3WVmq2a7y0hGts7PNw9OQobfxBVUahw+TNzFNTiN1iISMc73qCedJna44?=
- =?us-ascii?Q?k3CLOYOoySsMrJLNUc6Q6334cgycNesXM7h3uPVBD30/fi7EYGOvflqzbhXD?=
- =?us-ascii?Q?iWiLTh61I3MOxAZCc5KF/xhJ4fEbXWozVLP3R5qDLcogO2g45Q37r7zfnWTB?=
- =?us-ascii?Q?eCr9jZ0lKiXDVn23aws+gz0UoNKvnyvQNOqw5Wt2Jpl8z43xcJLbKtCFDO+j?=
- =?us-ascii?Q?dg2CBPx6eBCA9ZyHPGw7qspfuxE68MkvkSHxjWFAk5qweN/D8sFFy6L/HV71?=
- =?us-ascii?Q?R5ppcOUsYk+NOyBcao3KdopcerVjbAokFcRAzhMWxetsxDVpXuBzURk/eT6o?=
- =?us-ascii?Q?2uKJu6MEgD4YJPEfTn3Rd4ynHZbcb54OdhJFy59jbWhGCpGnx/VcDeIPsjtP?=
- =?us-ascii?Q?W+r7nZLPGM7/QMLG9m7xxNx2XQiL0rYy4taKau3J/AoTFiPTBVMBoUF0AGQD?=
- =?us-ascii?Q?ZQSbMKDdYF58rQ8XV/DheKnw+jakjoX9yem0rF2htzO/+u4hmytHMsoOZg6K?=
- =?us-ascii?Q?aL6wGjvD1iSDTbRMHHLPmN0mtpaY+KybFm4FOAx3MEuRep1gkndExtQ7qM+5?=
- =?us-ascii?Q?cHvxzmNnZDWuB1O6lTuvb243UdG1DWx8PhmbYvqVktQflle3d1/vMZnA2fsv?=
- =?us-ascii?Q?GM4yl2KqLnxx30oC36zS+Qn68J6eY1zydRSOD9FMCAx7sx52R92gr+rgyf+j?=
- =?us-ascii?Q?aJ+HF82z881n6hKrXtSRP69xzcpDlnupOraD+0G10Ppd8cBTBw/nKHG/+AuI?=
- =?us-ascii?Q?CXonVuyTsrTpeGzBmxvRFY8cFktN5UMKMkzq9ORc5nP9B0WhX17LH/K6ac3y?=
- =?us-ascii?Q?p/ZcuWizZ3Bn85rnE3ceoOczwQABsg6WMaFUyBKwHruKIYJlOvODUNJ1WIwe?=
- =?us-ascii?Q?YoIrEXecUkT7D5TgMy5iiMtSds0uEKf7EqI/Rn9aDG3zxV3FWfXt3Z5wrig0?=
- =?us-ascii?Q?6RaN01eug6Hxl0ZhQRkYXS8hdJHVIoNJFiibYNhBrc3A1NWuAPTTTZJOCYbz?=
- =?us-ascii?Q?kM50MNVL2M9oC2fuwgxrEIE3009rXZiNZ1eonNwzq/ICWwUyEvreGvf/M9k5?=
- =?us-ascii?Q?60IWgMPpu9XgMbrjP6TQ+tQge8xF?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?M9bYwizartdrn1RqXtG/ZgWwTSWWKyx2/EVcm2FqJjyD6k1cJZZfEOtIyD46?=
- =?us-ascii?Q?Sh/M+B6g7tRrAzQoOJ7cbn9XKqqlWrLgRBFYm7iLC+5UTGwxvh3BnYBSigrn?=
- =?us-ascii?Q?hP+yA243Hgox79YCmz0EyX1rfJv3tAvTbkVePd5xmnBhZ/r9ZCBCaB7oUQg9?=
- =?us-ascii?Q?sg0hEBx25NeW8j9NPlkeqXeJPSMbnPgfqz8SRXF+R6BRNaKuL8ADxcwTv6ta?=
- =?us-ascii?Q?VhtLCGP9rk8ueH9OZnUiFTk3zSzuve4jezf794avDM8TPRcsudzlWAVBNQvO?=
- =?us-ascii?Q?0HCKibArgpPVTErT1SJeXZEZ5og5Wss11cOO+AZvMxXQmerwsFK+3MuArZMQ?=
- =?us-ascii?Q?GbkEW9+KmmTuGAElRxIyqRzTSVHlYges5wklyJKJOP+xtLTOipjTb9JhxQIN?=
- =?us-ascii?Q?oDCiJZ6BizBGG+dfI7I2hZzrFKuHRwRM6ByxGSBvtnYgKMX5XN2WO0HvWDvw?=
- =?us-ascii?Q?AR75smrW+9jyKeFV71phhHUwzBzCVjniuhWqV61fO79omwhyKDqbOHnYKMbl?=
- =?us-ascii?Q?DtQlq0HcMJq3QPTQRlrZy1Iyj+Kz1N0alOp60ReEdrqOc8PtNKyI9z9UB8sT?=
- =?us-ascii?Q?OLIAb+X8eBGG6BrVVphDA3AreI+2F+jyDBQP43wuhtL22cdtXKJ7hRfTHmWr?=
- =?us-ascii?Q?rzPVbPUo7myn2zDw/cTS1EKrdL4It5IhPwIc07sDxJHAMrwNPq5OTA+fQFid?=
- =?us-ascii?Q?/Clgp7/N/QtjjU5Arb7Z7IgJEeKuAKIY31fgL+AHz5T/rBrFTpnz6ViXmpKq?=
- =?us-ascii?Q?Tkm1yJVaGtH95h9bQa0tcF/rZBRoQvN+gdcqTdKuGrOxi588BKaO/B0Oz7CD?=
- =?us-ascii?Q?3sh2puPHZWuqW2FbLqjNbV0enJgMXuJj6OuxWam/tXDzWNnYb9iy+7C1SwJc?=
- =?us-ascii?Q?wfqbCVlkM85ugoThnp42zlVP/680HITO49T59dfz3mPzy/3wS+fY/VDF9iwx?=
- =?us-ascii?Q?bw/zCkmLqMtQk+/H3bokhCFFBWvN3aAEjFNU+kz/u9bVgyG/6bIHCBl1g9Wd?=
- =?us-ascii?Q?EBCDQSrlyDAb2/k0BAyYacS/mmus6v5Bvmxnh91clkvobBe2Wky26IJK0om8?=
- =?us-ascii?Q?V3EBL0a+JaowJJs+bQjStF8sq07bNU/DhZKp5pI90UWXYFveJjaVstuULTol?=
- =?us-ascii?Q?qGRXm9LTCOri1zfuIo/pqJaIriNTqHTQi18wXeAq6dfqa9dcj7FGl66AUu+H?=
- =?us-ascii?Q?KCKQmS/Ey4E1pwi+5LkKG97BD8SAew8W1an5DZ+yhpBFSSkBWS9ueyNutAEw?=
- =?us-ascii?Q?C1rzAFce3sgwBZPMcbpOQUa+S8NVJKq31CmdujU6R5swSjDH57Hw6MS1sEYz?=
- =?us-ascii?Q?mrchaa4YzjA4HJSWu2O10enjYezh1rDl011XIEiBqb4t4JGBKIBpBd+tTzQg?=
- =?us-ascii?Q?J3MiSLGfy2pGucQiEdNmMh97IqnqtBx9HcTVL9myi9KAByxMt3D+qOU7MEXs?=
- =?us-ascii?Q?AXYQK3Bh89h//0MJvgZ8jMXZaE9vCBvoH+w+0PCwQpQL0yp1gOQJCv7b38kL?=
- =?us-ascii?Q?OFnW1gfu2Y0NO0ni94DBK6rpI+po3gPh0aBf9vyyAreH8nRbMmlQ6Sa0I4wZ?=
- =?us-ascii?Q?EkqqfmMMlLBzCPziGQY=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1969471-6d3b-41b4-4657-08dcff3f878d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 15:19:10.3261
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X0ausO2L3ehULZo7YpRLAQlXq1Y3P20eyrGHb5UmoPF9Ghf5apKUkYTKc5MlKLDSrNnN7Ka+vn2xdGxrerh2Gw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7490
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 07, 2024 at 01:46:11PM +0200, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->
-> Add clocking support to the NXP LINFlexD UART driver.
-> It is used by S32G2 and S32G3 SoCs.
-> Clocking support is added as optional in order to not break
-> existing support for S32V234 SoC.
+This patch consolidates previously unused statistics and
+adds support reporting them through `ethtool -S`.
 
-wrap at 75 char.
+Before applying the patch:
+$ ethtool -S enp36s0
+> no stats available
 
-Add optional clock 'lin' and 'ipg' support to NXP LINFlexD UART driver,
-which used by S22G2 and S32G3.
+After applying the patch:
+$ ethtool -S enp36s0
+> NIC statistics:
+     tx_jumbo_frames: 0
+     rx_jumbo_frames: 0
+     tcp_checksum_errors: 0
+     udp_checksum_errors: 0
+     ip_checksum_errors: 0
+     tx_multicast_bytes: 0
+     rx_multicast_bytes: 0
+     rmon_collisions: 0
+     rmon_crc_align_errors: 0
+     rmon_tx_bytes: 0
+     rmon_rx_bytes: 0
+     rmon_tx_packets: 0
+     rmon_rx_packets: 0
 
->
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  drivers/tty/serial/fsl_linflexuart.c | 67 +++++++++++++++++++++-------
->  1 file changed, 51 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/tty/serial/fsl_linflexuart.c b/drivers/tty/serial/fsl_linflexuart.c
-> index e972df4b188d..23aed3bbff6c 100644
-> --- a/drivers/tty/serial/fsl_linflexuart.c
-> +++ b/drivers/tty/serial/fsl_linflexuart.c
-> @@ -3,9 +3,10 @@
->   * Freescale LINFlexD UART serial port driver
->   *
->   * Copyright 2012-2016 Freescale Semiconductor, Inc.
-> - * Copyright 2017-2019 NXP
-> + * Copyright 2017-2019, 2024 NXP
->   */
->
-> +#include <linux/clk.h>
->  #include <linux/console.h>
->  #include <linux/io.h>
->  #include <linux/irq.h>
-> @@ -120,6 +121,12 @@
->
->  #define PREINIT_DELAY			2000 /* us */
->
-> +struct linflex_port {
-> +	struct uart_port port;
-> +	struct clk *clk_lin;
-> +	struct clk *clk_ipg;
+$ ethtool -S enp36s0 --all-groups
+> Standard stats for enp36s0:
+eth-mac-FramesTransmittedOK: 0
+eth-mac-SingleCollisionFrames: 0
+eth-mac-MultipleCollisionFrames: 0
+eth-mac-FramesReceivedOK: 0
+eth-mac-FrameCheckSequenceErrors: 0
+eth-mac-OctetsTransmittedOK: 0
+eth-mac-FramesWithDeferredXmissions: 0
+eth-mac-LateCollisions: 0
+eth-mac-FramesAbortedDueToXSColls: 0
+eth-mac-CarrierSenseErrors: 0
+eth-mac-OctetsReceivedOK: 0
+eth-mac-FramesLostDueToIntMACRcvError: 0
+eth-mac-MulticastFramesXmittedOK: 0
+eth-mac-BroadcastFramesXmittedOK: 0
+eth-mac-FramesWithExcessiveDeferral: 0
+eth-mac-MulticastFramesReceivedOK: 0
+eth-mac-BroadcastFramesReceivedOK: 0
+eth-mac-InRangeLengthErrors: 0
+eth-mac-FrameTooLongErrors: 0
+eth-ctrl-MACControlFramesTransmitted: 0
+eth-ctrl-MACControlFramesReceived: 0
+rmon-etherStatsUndersizePkts: 0
+rmon-etherStatsFragments: 0
+rmon-etherStatsJabbers: 0
+rx-rmon-etherStatsPkts64Octets: 0
+rx-rmon-etherStatsPkts65to127Octets: 0
+rx-rmon-etherStatsPkts128to255Octets: 0
+rx-rmon-etherStatsPkts256to511Octets: 0
+rx-rmon-etherStatsPkts512to1023Octets: 0
+rx-rmon-etherStatsPkts1024to1518Octets: 0
+tx-rmon-etherStatsPkts64Octets: 0
+tx-rmon-etherStatsPkts65to127Octets: 0
+tx-rmon-etherStatsPkts128to255Octets: 0
+tx-rmon-etherStatsPkts256to511Octets: 0
+tx-rmon-etherStatsPkts512to1023Octets: 0
+tx-rmon-etherStatsPkts1024to1518Octets: 0
 
-Please clk bulk
+Additionally, the previous code did not manage statistics
+in a structured manner, so this patch:
 
-> +};
-> +
->  static const struct of_device_id linflex_dt_ids[] = {
->  	{
->  		.compatible = "fsl,s32v234-linflexuart",
-> @@ -807,12 +814,13 @@ static struct uart_driver linflex_reg = {
->  static int linflex_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np = pdev->dev.of_node;
-> +	struct linflex_port *lfport;
->  	struct uart_port *sport;
->  	struct resource *res;
->  	int ret;
->
-> -	sport = devm_kzalloc(&pdev->dev, sizeof(*sport), GFP_KERNEL);
-> -	if (!sport)
-> +	lfport = devm_kzalloc(&pdev->dev, sizeof(*lfport), GFP_KERNEL);
-> +	if (!lfport)
->  		return -ENOMEM;
->
->  	ret = of_alias_get_id(np, "serial");
-> @@ -826,6 +834,7 @@ static int linflex_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	}
->
-> +	sport = &lfport->port;
->  	sport->line = ret;
->
->  	sport->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-> @@ -844,39 +853,65 @@ static int linflex_probe(struct platform_device *pdev)
->  	sport->flags = UPF_BOOT_AUTOCONF;
->  	sport->has_sysrq = IS_ENABLED(CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE);
->
-> -	linflex_ports[sport->line] = sport;
-> +	lfport->clk_lin = devm_clk_get_optional_enabled(&pdev->dev, "lin");
-> +	if (IS_ERR(lfport->clk_lin))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(lfport->clk_lin),
-> +				"Failed to get linflexuart clk\n");
->
-> -	platform_set_drvdata(pdev, sport);
-> +	lfport->clk_ipg = devm_clk_get_optional_enabled(&pdev->dev, "ipg");
-> +	if (IS_ERR(lfport->clk_ipg))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(lfport->clk_ipg),
-> +				"Failed to get linflexuart ipg clk\n");
-> +
+1. Added `u64` type stat counters to the `netdev_private` struct.
+2. Defined a `dlink_stats` struct for managing statistics.
+3. Registered standard statistics and driver-specific statistics
+separately.
+4. Compressing repetitive tasks through loops.
 
-use clk bulk API to simple code.
+The code previously blocked by the `#ifdef MEM_MAPPING` preprocessor
+directive has been enabled. This section relates to RMON statistics and
+does not cause issues when activated. Removing unnecessary preprocessor
+directives simplifies the code path and makes it more intuitive.
 
-> +	linflex_ports[sport->line] = sport;
-> +	platform_set_drvdata(pdev, lfport);
->
->  	return uart_add_one_port(&linflex_reg, sport);
->  }
->
->  static void linflex_remove(struct platform_device *pdev)
->  {
-> -	struct uart_port *sport = platform_get_drvdata(pdev);
-> +	struct linflex_port *lfport = platform_get_drvdata(pdev);
->
-> -	uart_remove_one_port(&linflex_reg, sport);
-> +	uart_remove_one_port(&linflex_reg, &lfport->port);
->  }
->
-> -#ifdef CONFIG_PM_SLEEP
+Tested-on: D-Link DGE-550T Rev-A3
+Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+---
+Changelog:
+v1: https://lore.kernel.org/netdev/20241026192651.22169-3-yyyynoom@gmail.com/
+v2: Report standard statistics by specific `ethtool_ops`
+A more detailed commit message about the changes.
+---
+ drivers/net/ethernet/dlink/dl2k.c | 356 +++++++++++++++++++++---------
+ drivers/net/ethernet/dlink/dl2k.h |  85 +++++++
+ 2 files changed, 341 insertions(+), 100 deletions(-)
 
-Not related change. If change CONFIG_PM, please use sperate patch.
-Please ref
-https://lore.kernel.org/imx/1713848917-13380-1-git-send-email-shengjiu.wang@nxp.com/
+diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
+index d0ea92607870..e9d5ac602141 100644
+--- a/drivers/net/ethernet/dlink/dl2k.c
++++ b/drivers/net/ethernet/dlink/dl2k.c
+@@ -99,6 +99,143 @@ static const struct net_device_ops netdev_ops = {
+ 	.ndo_tx_timeout		= rio_tx_timeout,
+ };
+ 
++static const struct ethtool_rmon_hist_range dlink_rmon_ranges[] = {
++	{    0,    64 },
++	{   65,   127 },
++	{  128,   255 },
++	{  256,   511 },
++	{  512,  1023 },
++	{ 1024,  1518 },
++	{ }
++};
++
++#define DEFINE_STATS(FIELD, REGS, SIZE) {				\
++	.string = #FIELD,						\
++	.stat_offset = offsetof(struct netdev_private, FIELD),		\
++	.size = sizeof(SIZE),						\
++	.regs = (REGS)							\
++}
++
++#define DEFINE_RMON_STATS(FIELD, REGS, OFFSET) {			\
++	.data_offset = offsetof(struct ethtool_rmon_stats, OFFSET),	\
++	.stat_offset = offsetof(struct netdev_private, FIELD),		\
++	.size = sizeof(u32),						\
++	.regs = (REGS)							\
++}
++
++#define DEFINE_CTRL_STATS(FIELD, REGS, OFFSET) {			\
++	.data_offset = offsetof(struct ethtool_eth_ctrl_stats, OFFSET),	\
++	.stat_offset = offsetof(struct netdev_private, FIELD),		\
++	.size = sizeof(u16),						\
++	.regs = (REGS)							\
++}
++
++#define DEFINE_MAC_STATS(FIELD, REGS, SIZE, OFFSET) {			\
++	.data_offset = offsetof(struct ethtool_eth_mac_stats, OFFSET),	\
++	.stat_offset = offsetof(struct netdev_private, FIELD),		\
++	.size = sizeof(SIZE),						\
++	.regs = (REGS),							\
++}
++
++#define STATS_SIZE		ARRAY_SIZE(stats)
++#define RMON_STATS_SIZE		ARRAY_SIZE(rmon_stats)
++#define CTRL_STATS_SIZE		ARRAY_SIZE(ctrl_stats)
++#define MAC_STATS_SIZE		ARRAY_SIZE(mac_stats)
++
++static const struct dlink_stats stats[] = {
++	DEFINE_STATS(tx_jumbo_frames, TxJumboFrames, u16),
++	DEFINE_STATS(rx_jumbo_frames, RxJumboFrames, u16),
++
++	DEFINE_STATS(tcp_checksum_errors, TCPCheckSumErrors, u16),
++	DEFINE_STATS(udp_checksum_errors, UDPCheckSumErrors, u16),
++	DEFINE_STATS(ip_checksum_errors, IPCheckSumErrors, u16),
++
++	DEFINE_STATS(tx_multicast_bytes, McstOctetXmtOk, u32),
++	DEFINE_STATS(rx_multicast_bytes, McstOctetRcvOk, u32),
++
++	DEFINE_STATS(rmon_collisions, EtherStatsCollisions, u32),
++	DEFINE_STATS(rmon_crc_align_errors, EtherStatsCRCAlignErrors, u32),
++	DEFINE_STATS(rmon_tx_bytes, EtherStatsOctetsTransmit, u32),
++	DEFINE_STATS(rmon_rx_bytes, EtherStatsOctets, u32),
++	DEFINE_STATS(rmon_tx_packets, EtherStatsPktsTransmit, u32),
++	DEFINE_STATS(rmon_rx_packets, EtherStatsPkts, u32),
++}, ctrl_stats[] = {
++	DEFINE_CTRL_STATS(tx_mac_control_frames, MacControlFramesXmtd,
++			  MACControlFramesTransmitted),
++	DEFINE_CTRL_STATS(rx_mac_control_frames, MacControlFramesRcvd,
++			  MACControlFramesReceived),
++}, mac_stats[] = {
++	DEFINE_MAC_STATS(tx_packets, FramesXmtOk,
++			 u32, FramesTransmittedOK),
++	DEFINE_MAC_STATS(rx_packets, FramesRcvOk,
++			 u32, FramesReceivedOK),
++	DEFINE_MAC_STATS(tx_bytes, OctetXmtOk,
++			 u32, OctetsTransmittedOK),
++	DEFINE_MAC_STATS(rx_bytes, OctetRcvOk,
++			 u32, OctetsReceivedOK),
++	DEFINE_MAC_STATS(single_collisions, SingleColFrames,
++			 u32, SingleCollisionFrames),
++	DEFINE_MAC_STATS(multi_collisions, MultiColFrames,
++			 u32, MultipleCollisionFrames),
++	DEFINE_MAC_STATS(late_collisions, LateCollisions,
++			 u32, LateCollisions),
++	DEFINE_MAC_STATS(rx_frames_too_long_errors, FrameTooLongErrors,
++			 u16, FrameTooLongErrors),
++	DEFINE_MAC_STATS(rx_in_range_length_errors, InRangeLengthErrors,
++			 u16, InRangeLengthErrors),
++	DEFINE_MAC_STATS(rx_frames_check_seq_errors, FramesCheckSeqErrors,
++			 u16, FrameCheckSequenceErrors),
++	DEFINE_MAC_STATS(rx_frames_lost_errors, FramesLostRxErrors,
++			 u16, FramesLostDueToIntMACRcvError),
++	DEFINE_MAC_STATS(tx_frames_abort, FramesAbortXSColls,
++			 u16, FramesAbortedDueToXSColls),
++	DEFINE_MAC_STATS(tx_carrier_sense_errors, CarrierSenseErrors,
++			 u16, CarrierSenseErrors),
++	DEFINE_MAC_STATS(tx_multicast_frames, McstFramesXmtdOk,
++			 u32, MulticastFramesXmittedOK),
++	DEFINE_MAC_STATS(rx_multicast_frames, McstFramesRcvdOk,
++			 u32, MulticastFramesReceivedOK),
++	DEFINE_MAC_STATS(tx_broadcast_frames, BcstFramesXmtdOk,
++			 u16, BroadcastFramesXmittedOK),
++	DEFINE_MAC_STATS(rx_broadcast_frames, BcstFramesRcvdOk,
++			 u16, BroadcastFramesReceivedOK),
++	DEFINE_MAC_STATS(tx_frames_deferred, FramesWDeferredXmt,
++			 u32, FramesWithDeferredXmissions),
++	DEFINE_MAC_STATS(tx_frames_excessive_deferral, FramesWEXDeferal,
++			 u16, FramesWithExcessiveDeferral),
++}, rmon_stats[] = {
++	DEFINE_RMON_STATS(rmon_under_size_packets,
++			  EtherStatsUndersizePkts, undersize_pkts),
++	DEFINE_RMON_STATS(rmon_fragments,
++			  EtherStatsFragments, fragments),
++	DEFINE_RMON_STATS(rmon_jabbers,
++			  EtherStatsJabbers, jabbers),
++	DEFINE_RMON_STATS(rmon_tx_byte_64,
++			  EtherStatsPkts64OctetTransmit, hist_tx[0]),
++	DEFINE_RMON_STATS(rmon_rx_byte_64,
++			  EtherStats64Octets, hist[0]),
++	DEFINE_RMON_STATS(rmon_tx_byte_65to127,
++			  EtherStats65to127OctetsTransmit, hist_tx[1]),
++	DEFINE_RMON_STATS(rmon_rx_byte_64to127,
++			  EtherStatsPkts65to127Octets, hist[1]),
++	DEFINE_RMON_STATS(rmon_tx_byte_128to255,
++			  EtherStatsPkts128to255OctetsTransmit, hist_tx[2]),
++	DEFINE_RMON_STATS(rmon_rx_byte_128to255,
++			  EtherStatsPkts128to255Octets, hist[2]),
++	DEFINE_RMON_STATS(rmon_tx_byte_256to511,
++			  EtherStatsPkts256to511OctetsTransmit, hist_tx[3]),
++	DEFINE_RMON_STATS(rmon_rx_byte_256to511,
++			  EtherStatsPkts256to511Octets, hist[3]),
++	DEFINE_RMON_STATS(rmon_tx_byte_512to1023,
++			  EtherStatsPkts512to1023OctetsTransmit, hist_tx[4]),
++	DEFINE_RMON_STATS(rmon_rx_byte_512to1203,
++			  EtherStatsPkts512to1023Octets, hist[4]),
++	DEFINE_RMON_STATS(rmon_tx_byte_1204to1518,
++			  EtherStatsPkts1024to1518OctetsTransmit, hist_tx[5]),
++	DEFINE_RMON_STATS(rmon_rx_byte_1204to1518,
++			  EtherStatsPkts1024to1518Octets, hist[5])
++};
++
+ static int
+ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+@@ -137,17 +274,17 @@ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto err_out_dev;
+ 	np->eeprom_addr = ioaddr;
+ 
+-#ifdef MEM_MAPPING
+ 	/* MM registers range. */
+ 	ioaddr = pci_iomap(pdev, 1, 0);
+ 	if (!ioaddr)
+ 		goto err_out_iounmap;
+-#endif
++
+ 	np->ioaddr = ioaddr;
+ 	np->chip_id = chip_idx;
+ 	np->pdev = pdev;
+ 	spin_lock_init (&np->tx_lock);
+ 	spin_lock_init (&np->rx_lock);
++	spin_lock_init(&np->stats_lock);
+ 
+ 	/* Parse manual configuration */
+ 	np->an_enable = 1;
+@@ -287,9 +424,7 @@ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	dma_free_coherent(&pdev->dev, TX_TOTAL_SIZE, np->tx_ring,
+ 			  np->tx_ring_dma);
+ err_out_iounmap:
+-#ifdef MEM_MAPPING
+ 	pci_iounmap(pdev, np->ioaddr);
+-#endif
+ 	pci_iounmap(pdev, np->eeprom_addr);
+ err_out_dev:
+ 	free_netdev (dev);
+@@ -1064,65 +1199,44 @@ rio_error (struct net_device *dev, int int_status)
+ 	}
+ }
+ 
++#define READ_STAT(S, B, I) (*((u64 *) (((void *) B) + S[I].stat_offset)))
++#define READ_DATA(S, B, I) (*((u64 *) (((void *) B) + S[I].data_offset)))
++
++#define GET_STATS(STATS, SIZE)					\
++	for (int i = 0; i < SIZE; i++) {				\
++		if (STATS[i].size == sizeof(u32))			\
++			READ_STAT(STATS, np, i) = dr32(STATS[i].regs);	\
++		else							\
++			READ_STAT(STATS, np, i) = dr16(STATS[i].regs);	\
++	}
++
++#define CLEAR_STATS(STATS, SIZE)					\
++	for (int i = 0; i < SIZE; i++) {				\
++		if (STATS[i].size == sizeof(u32))			\
++			dr32(STATS[i].regs);				\
++		else							\
++			dr16(STATS[i].regs);				\
++	}
++
+ static struct net_device_stats *
+ get_stats (struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+ 	void __iomem *ioaddr = np->ioaddr;
+-#ifdef MEM_MAPPING
+-	int i;
+-#endif
+-	unsigned int stat_reg;
++	unsigned long flags;
++
++	spin_lock_irqsave(&np->stats_lock, flags);
+ 
+ 	/* All statistics registers need to be acknowledged,
+ 	   else statistic overflow could cause problems */
+ 
+-	dev->stats.rx_packets += dr32(FramesRcvOk);
+-	dev->stats.tx_packets += dr32(FramesXmtOk);
+-	dev->stats.rx_bytes += dr32(OctetRcvOk);
+-	dev->stats.tx_bytes += dr32(OctetXmtOk);
+-
+-	dev->stats.multicast = dr32(McstFramesRcvdOk);
+-	dev->stats.collisions += dr32(SingleColFrames)
+-			     +  dr32(MultiColFrames);
+-
+-	/* detailed tx errors */
+-	stat_reg = dr16(FramesAbortXSColls);
+-	dev->stats.tx_aborted_errors += stat_reg;
+-	dev->stats.tx_errors += stat_reg;
+-
+-	stat_reg = dr16(CarrierSenseErrors);
+-	dev->stats.tx_carrier_errors += stat_reg;
+-	dev->stats.tx_errors += stat_reg;
+-
+-	/* Clear all other statistic register. */
+-	dr32(McstOctetXmtOk);
+-	dr16(BcstFramesXmtdOk);
+-	dr32(McstFramesXmtdOk);
+-	dr16(BcstFramesRcvdOk);
+-	dr16(MacControlFramesRcvd);
+-	dr16(FrameTooLongErrors);
+-	dr16(InRangeLengthErrors);
+-	dr16(FramesCheckSeqErrors);
+-	dr16(FramesLostRxErrors);
+-	dr32(McstOctetXmtOk);
+-	dr32(BcstOctetXmtOk);
+-	dr32(McstFramesXmtdOk);
+-	dr32(FramesWDeferredXmt);
+-	dr32(LateCollisions);
+-	dr16(BcstFramesXmtdOk);
+-	dr16(MacControlFramesXmtd);
+-	dr16(FramesWEXDeferal);
+-
+-#ifdef MEM_MAPPING
+-	for (i = 0x100; i <= 0x150; i += 4)
+-		dr32(i);
+-#endif
+-	dr16(TxJumboFrames);
+-	dr16(RxJumboFrames);
+-	dr16(TCPCheckSumErrors);
+-	dr16(UDPCheckSumErrors);
+-	dr16(IPCheckSumErrors);
++	GET_STATS(stats, STATS_SIZE);
++	GET_STATS(rmon_stats, RMON_STATS_SIZE);
++	GET_STATS(ctrl_stats, CTRL_STATS_SIZE);
++	GET_STATS(mac_stats, MAC_STATS_SIZE);
++
++	spin_unlock_irqrestore(&np->stats_lock, flags);
++
+ 	return &dev->stats;
+ }
+ 
+@@ -1131,53 +1245,15 @@ clear_stats (struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+ 	void __iomem *ioaddr = np->ioaddr;
+-#ifdef MEM_MAPPING
+-	int i;
+-#endif
+ 
+ 	/* All statistics registers need to be acknowledged,
+ 	   else statistic overflow could cause problems */
+-	dr32(FramesRcvOk);
+-	dr32(FramesXmtOk);
+-	dr32(OctetRcvOk);
+-	dr32(OctetXmtOk);
+-
+-	dr32(McstFramesRcvdOk);
+-	dr32(SingleColFrames);
+-	dr32(MultiColFrames);
+-	dr32(LateCollisions);
+-	/* detailed rx errors */
+-	dr16(FrameTooLongErrors);
+-	dr16(InRangeLengthErrors);
+-	dr16(FramesCheckSeqErrors);
+-	dr16(FramesLostRxErrors);
+-
+-	/* detailed tx errors */
+-	dr16(FramesAbortXSColls);
+-	dr16(CarrierSenseErrors);
+-
+-	/* Clear all other statistic register. */
+-	dr32(McstOctetXmtOk);
+-	dr16(BcstFramesXmtdOk);
+-	dr32(McstFramesXmtdOk);
+-	dr16(BcstFramesRcvdOk);
+-	dr16(MacControlFramesRcvd);
+-	dr32(McstOctetXmtOk);
+-	dr32(BcstOctetXmtOk);
+-	dr32(McstFramesXmtdOk);
+-	dr32(FramesWDeferredXmt);
+-	dr16(BcstFramesXmtdOk);
+-	dr16(MacControlFramesXmtd);
+-	dr16(FramesWEXDeferal);
+-#ifdef MEM_MAPPING
+-	for (i = 0x100; i <= 0x150; i += 4)
+-		dr32(i);
+-#endif
+-	dr16(TxJumboFrames);
+-	dr16(RxJumboFrames);
+-	dr16(TCPCheckSumErrors);
+-	dr16(UDPCheckSumErrors);
+-	dr16(IPCheckSumErrors);
++
++	CLEAR_STATS(stats, STATS_SIZE);
++	CLEAR_STATS(rmon_stats, RMON_STATS_SIZE);
++	CLEAR_STATS(ctrl_stats, CTRL_STATS_SIZE);
++	CLEAR_STATS(mac_stats, MAC_STATS_SIZE);
++
+ 	return 0;
+ }
+ 
+@@ -1328,11 +1404,93 @@ static u32 rio_get_link(struct net_device *dev)
+ 	return np->link_status;
+ }
+ 
++static void get_ethtool_stats(struct net_device *dev,
++			      struct ethtool_stats __always_unused *__,
++			      u64 *data)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	get_stats(dev);
++
++	for (int i = 0, j = 0; i < STATS_SIZE; i++)
++		data[j++] = READ_STAT(stats, np, i);
++}
++
++static void get_ethtool_rmon_stats(
++		struct net_device *dev,
++		struct ethtool_rmon_stats *rmon_base,
++		const struct ethtool_rmon_hist_range **ranges)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	for (int i = 0; i < RMON_STATS_SIZE; i++)
++		READ_DATA(rmon_stats, rmon_base, i) = READ_STAT(rmon_stats, np, i);
++
++	*ranges = dlink_rmon_ranges;
++}
++
++static void get_ethtool_ctrl_stats(struct net_device *dev,
++				   struct ethtool_eth_ctrl_stats *ctrl_base)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	get_stats(dev);
++
++	if (ctrl_base->src != ETHTOOL_MAC_STATS_SRC_AGGREGATE)
++		return;
++
++	for (int i = 0; i < CTRL_STATS_SIZE; i++)
++		READ_DATA(ctrl_stats, ctrl_base, i) = READ_STAT(ctrl_stats, np, i);
++}
++
++static void get_ethtool_mac_stats(struct net_device *dev,
++				  struct ethtool_eth_mac_stats *mac_base)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	get_stats(dev);
++
++	if (mac_base->src != ETHTOOL_MAC_STATS_SRC_AGGREGATE)
++		return;
++
++	for (int i = 0; i < MAC_STATS_SIZE; i++)
++		READ_DATA(mac_stats, mac_base, i) = READ_STAT(mac_stats, np, i);
++}
++
++
++static void get_strings(struct net_device *dev, u32 stringset, u8 *data)
++{
++	switch (stringset) {
++	case ETH_SS_STATS:
++		for (int i = 0; i < STATS_SIZE; i++) {
++			memcpy(data, stats[i].string, ETH_GSTRING_LEN);
++			data += ETH_GSTRING_LEN;
++		}
++		break;
++	}
++}
++
++static int get_sset_count(struct net_device *dev, int sset)
++{
++	switch (sset) {
++	case ETH_SS_STATS:
++		return STATS_SIZE;
++	}
++
++	return 0;
++}
++
+ static const struct ethtool_ops ethtool_ops = {
+ 	.get_drvinfo = rio_get_drvinfo,
+ 	.get_link = rio_get_link,
+ 	.get_link_ksettings = rio_get_link_ksettings,
+ 	.set_link_ksettings = rio_set_link_ksettings,
++	.get_ethtool_stats = get_ethtool_stats,
++	.get_rmon_stats = get_ethtool_rmon_stats,
++	.get_eth_ctrl_stats = get_ethtool_ctrl_stats,
++	.get_eth_mac_stats = get_ethtool_mac_stats,
++	.get_strings = get_strings,
++	.get_sset_count = get_sset_count
+ };
+ 
+ static int
+@@ -1798,9 +1956,7 @@ rio_remove1 (struct pci_dev *pdev)
+ 				  np->rx_ring_dma);
+ 		dma_free_coherent(&pdev->dev, TX_TOTAL_SIZE, np->tx_ring,
+ 				  np->tx_ring_dma);
+-#ifdef MEM_MAPPING
+ 		pci_iounmap(pdev, np->ioaddr);
+-#endif
+ 		pci_iounmap(pdev, np->eeprom_addr);
+ 		free_netdev (dev);
+ 		pci_release_regions (pdev);
+diff --git a/drivers/net/ethernet/dlink/dl2k.h b/drivers/net/ethernet/dlink/dl2k.h
+index 195dc6cfd895..346c912df411 100644
+--- a/drivers/net/ethernet/dlink/dl2k.h
++++ b/drivers/net/ethernet/dlink/dl2k.h
+@@ -46,6 +46,7 @@
+    In general, only the important configuration values or bits changed
+    multiple times should be defined symbolically.
+ */
++
+ enum dl2x_offsets {
+ 	/* I/O register offsets */
+ 	DMACtrl = 0x00,
+@@ -146,6 +147,14 @@ enum dl2x_offsets {
+ 	EtherStatsPkts1024to1518Octets = 0x150,
+ };
+ 
++struct dlink_stats {
++	char string[ETH_GSTRING_LEN];
++	size_t data_offset;
++	size_t stat_offset;
++	size_t size;
++	enum dl2x_offsets regs;
++};
++
+ /* Bits in the interrupt status/mask registers. */
+ enum IntStatus_bits {
+ 	InterruptStatus = 0x0001,
+@@ -374,6 +383,82 @@ struct netdev_private {
+ 	void __iomem *eeprom_addr;
+ 	spinlock_t tx_lock;
+ 	spinlock_t rx_lock;
++
++	spinlock_t stats_lock;
++	struct {
++		u64 tx_jumbo_frames;
++		u64 rx_jumbo_frames;
++
++		u64 tcp_checksum_errors;
++		u64 udp_checksum_errors;
++		u64 ip_checksum_errors;
++		u64 tx_packets;
++		u64 rx_packets;
++
++		u64 tx_bytes;
++		u64 rx_bytes;
++
++		u64 single_collisions;
++		u64 multi_collisions;
++		u64 late_collisions;
++
++		u64 rx_frames_too_long_errors;
++		u64 rx_in_range_length_errors;
++		u64 rx_frames_check_seq_errors;
++		u64 rx_frames_lost_errors;
++
++		u64 tx_frames_abort;
++		u64 tx_carrier_sense_errors;
++
++		u64 tx_multicast_bytes;
++		u64 rx_multicast_bytes;
++
++		u64 tx_multicast_frames;
++		u64 rx_multicast_frames;
++
++		u64 tx_broadcast_frames;
++		u64 rx_broadcast_frames;
++
++		u64 tx_broadcast_bytes;
++		u64 rx_broadcast_bytes;
++
++		u64 tx_mac_control_frames;
++		u64 rx_mac_control_frames;
++
++		u64 tx_frames_deferred;
++		u64 tx_frames_excessive_deferral;
++
++		u64 rmon_collisions;
++		u64 rmon_crc_align_errors;
++		u64 rmon_under_size_packets;
++		u64 rmon_fragments;
++		u64 rmon_jabbers;
++
++		u64 rmon_tx_bytes;
++		u64 rmon_rx_bytes;
++
++		u64 rmon_tx_packets;
++		u64 rmon_rx_packets;
++
++		u64 rmon_tx_byte_64;
++		u64 rmon_rx_byte_64;
++
++		u64 rmon_tx_byte_65to127;
++		u64 rmon_rx_byte_64to127;
++
++		u64 rmon_tx_byte_128to255;
++		u64 rmon_rx_byte_128to255;
++
++		u64 rmon_tx_byte_256to511;
++		u64 rmon_rx_byte_256to511;
++
++		u64 rmon_tx_byte_512to1023;
++		u64 rmon_rx_byte_512to1203;
++
++		u64 rmon_tx_byte_1204to1518;
++		u64 rmon_rx_byte_1204to1518;
++	};
++
+ 	unsigned int rx_buf_sz;		/* Based on MTU+slack. */
+ 	unsigned int speed;		/* Operating speed */
+ 	unsigned int vlan;		/* VLAN Id */
+-- 
+2.47.0
 
-> -static int linflex_suspend(struct device *dev)
-> +static int __maybe_unused linflex_suspend(struct device *dev)
->  {
-> -	struct uart_port *sport = dev_get_drvdata(dev);
-> +	struct linflex_port *lfport = dev_get_drvdata(dev);
-> +
-> +	uart_suspend_port(&linflex_reg, &lfport->port);
->
-> -	uart_suspend_port(&linflex_reg, sport);
-> +	clk_disable_unprepare(lfport->clk_lin);
-> +	clk_disable_unprepare(lfport->clk_ipg);
->
->  	return 0;
->  }
->
-> -static int linflex_resume(struct device *dev)
-> +static int __maybe_unused linflex_resume(struct device *dev)
->  {
-> -	struct uart_port *sport = dev_get_drvdata(dev);
-> +	struct linflex_port *lfport = dev_get_drvdata(dev);
-> +	int ret;
->
-> -	uart_resume_port(&linflex_reg, sport);
-> +	if (lfport->clk_lin) {
-> +		ret = clk_prepare_enable(lfport->clk_lin);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to enable linflexuart clk: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
->
-> -	return 0;
-> +	if (lfport->clk_ipg) {
-> +		ret = clk_prepare_enable(lfport->clk_ipg);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to enable linflexuart ipg clk: %d\n", ret);
-> +			clk_disable_unprepare(lfport->clk_lin);
-> +			return ret;
-> +		}
-> +	}
-
-use clk bulk api.
-
-> +
-> +	return uart_resume_port(&linflex_reg, &lfport->port);
->  }
-> -#endif
->
->  static SIMPLE_DEV_PM_OPS(linflex_pm_ops, linflex_suspend, linflex_resume);
->
-> --
-> 2.45.2
->
 
