@@ -1,377 +1,93 @@
-Return-Path: <linux-kernel+bounces-399112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DCB9BFB2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:10:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8455A9BFB4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EA5A1F226D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375A9283C92
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7F81119A;
-	Thu,  7 Nov 2024 01:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xkz9o0s2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385FCC2C6;
+	Thu,  7 Nov 2024 01:21:24 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B674431
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 01:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0C228F1;
+	Thu,  7 Nov 2024 01:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730941790; cv=none; b=M+EZPZXym8KwKxH2NSr0YjQcfHGrU5HQnbRdc4Gn8aUIsCnEBYJMhoHvxI/ogL23iwwwY5S1govHhO9Rtu6+kJmvujzhw/EVJtUnZjz2US3MziztTkiixLj30pFsOCyp1yaQF2cC2/+o19h2dIHUe6sgTmVkOCIcgT5Jb9m5sTQ=
+	t=1730942483; cv=none; b=DCLV9WC7N+caUGb6Ym1pIS9co0HVBnuA0sYfqTw+orAkIpjKyeTjpfQJ+jqHzjU9Gi5TsY3/l8sIKHw7Jt8vhviBeWzzSEtRfh8U2hyVz/K76kqYgJgfq2jRprbYwq0Eots1+XatmSoVW3xP9eJQd6KCQDNurNAW5DsPkHEMGV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730941790; c=relaxed/simple;
-	bh=3BiTJuu5uUXKbtDVL1vxzzvbkPI5XZg7PLJEdwv+tC8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=aUS4zNc9LVQ/GhEjgoqy8ib8+HE45VTbiI3SD0t5g8/hBX7YIARHXZ40IauauZFlp7I1zr1fPpTys3ATpZJh0O+q9fhgPtSmacyRrYYKoigVO85C3eaLw3AViMF/h+47iwua5nbIj+RZcyJldeSKId+NZnZbiE9b7wajL8o52tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xkz9o0s2; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730941789; x=1762477789;
-  h=date:from:to:cc:subject:message-id;
-  bh=3BiTJuu5uUXKbtDVL1vxzzvbkPI5XZg7PLJEdwv+tC8=;
-  b=Xkz9o0s2UNWTsFeFsi/lmoQyqvfpqTbzMTUuJYyfBsboxwbuyI+t9qLo
-   DwY8WULGXL7Q1+uxyizY8eb+T15/mXWX1hzam9iV9hevrlS1CgY/DmmyP
-   hZFAdqFURmzM0JJPyfzFJjLDYfT3bazrZEHZhfjeg7C8D3MDH1EVUY5na
-   iX6x2R8Xl0ujjWyJsJZ1Mih2DtDM824B26C/NedVZRtURoRI/ZEEFhlpf
-   TI7KuvaxnpFjmLgato1D2TUUhHEAWj9dmBajZMpC8182N8PD4iydVYgds
-   lWAzrh8M7cKZFYetuNxI3Gz/X+S/Z7+sQWg+BY2zYKOF/Xrkm06XAZaNw
-   g==;
-X-CSE-ConnectionGUID: TkhhTnXpRG66QSPpLFPN1A==
-X-CSE-MsgGUID: F2SfbHQNRJmjrS4CrOs7cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48229491"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="48229491"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 17:09:47 -0800
-X-CSE-ConnectionGUID: pLz6IEVcTX+ac+M7+Lm5/Q==
-X-CSE-MsgGUID: cxmftFwcTdajs+CgMLIFXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
-   d="scan'208";a="89702033"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 06 Nov 2024 17:09:46 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8r1q-000pbm-2Z;
-	Thu, 07 Nov 2024 01:09:42 +0000
-Date: Thu, 07 Nov 2024 09:08:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:core/merge] BUILD SUCCESS
- 8446247e3ddaf3b173ef96131793bab3f567bd96
-Message-ID: <202411070953.JlbQ82s2-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1730942483; c=relaxed/simple;
+	bh=QvZky2T40wp6AqKdgMoAhK1oEDqU/ujLzvX+/avy5KM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OVFDLHNejx/tIhJKW1H3oXYezotoU3mc1X56UIX2AmX/OjVMGpGcA+bKrxW+y7FerMToxLGOZWCdgRIa9z/RyF6KT8dMZN7RBCzTUt2I1+hpD/hR7+J6MzFQRgV741mcAGJ3BlXSE43UMcDHYI/c76axqEQhAVMdfeDVGmUkLuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XkPNf0mspz1T9rq;
+	Thu,  7 Nov 2024 09:18:58 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id D67941800CF;
+	Thu,  7 Nov 2024 09:21:18 +0800 (CST)
+Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
+ (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 7 Nov
+ 2024 09:21:18 +0800
+From: Zicheng Qu <quzicheng@huawei.com>
+To: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
+	<gregkh@linuxfoundation.org>, <daniel.baluta@intel.com>,
+	<shubhrajyoti@ti.com>, <linux-iio@vger.kernel.org>,
+	<linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
+	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
+Subject: [PATCH v2 0/2] Fix phase range check in AD9832 and AD9834 drivers
+Date: Thu, 7 Nov 2024 01:10:13 +0000
+Message-ID: <20241107011015.2472600-1-quzicheng@huawei.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241105140359.2465656-1-quzicheng@huawei.com>
+References: <20241105140359.2465656-1-quzicheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200012.china.huawei.com (7.221.188.145)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core/merge
-branch HEAD: 8446247e3ddaf3b173ef96131793bab3f567bd96  Merge branch 'locking/core' into core/merge, to resolve conflict
+Hi,
 
-elapsed time: 722m
+The previous link is: https://lore.kernel.org/linux-iio/20241105140359.2465656-1-quzicheng@huawei.com/T/#u
 
-configs tested: 285
-configs skipped: 9
+This patch (v2) addresses an issue in both the AD9832 and AD9834 drivers
+where the phase range check allows an invalid value of 4096. The
+condition has been corrected to ensure only valid 12-bit values (0-4095)
+are accepted.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+These changes ensure compliance with datasheet specifications and
+prevent potential issues with incorrect phase settings.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                          axs101_defconfig    gcc-14.2.0
-arc                          axs103_defconfig    gcc-14.2.0
-arc                     haps_hs_smp_defconfig    clang-20
-arc                        nsimosci_defconfig    clang-20
-arc                   randconfig-001-20241106    gcc-14.2.0
-arc                   randconfig-001-20241107    gcc-14.2.0
-arc                   randconfig-002-20241106    gcc-14.2.0
-arc                   randconfig-002-20241107    gcc-14.2.0
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                         axm55xx_defconfig    gcc-14.2.0
-arm                          gemini_defconfig    gcc-14.2.0
-arm                           h3600_defconfig    gcc-14.2.0
-arm                            hisi_defconfig    clang-20
-arm                           imxrt_defconfig    gcc-14.2.0
-arm                         nhk8815_defconfig    clang-20
-arm                            qcom_defconfig    clang-20
-arm                   randconfig-001-20241106    gcc-14.2.0
-arm                   randconfig-001-20241107    gcc-14.2.0
-arm                   randconfig-002-20241106    gcc-14.2.0
-arm                   randconfig-002-20241107    gcc-14.2.0
-arm                   randconfig-003-20241106    gcc-14.2.0
-arm                   randconfig-003-20241107    gcc-14.2.0
-arm                   randconfig-004-20241106    gcc-14.2.0
-arm                   randconfig-004-20241107    gcc-14.2.0
-arm                             rpc_defconfig    clang-20
-arm                             rpc_defconfig    gcc-14.2.0
-arm                       spear13xx_defconfig    clang-20
-arm                           sunxi_defconfig    gcc-14.2.0
-arm                       versatile_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-arm64                               defconfig    clang-20
-arm64                 randconfig-001-20241106    gcc-14.2.0
-arm64                 randconfig-001-20241107    gcc-14.2.0
-arm64                 randconfig-002-20241106    gcc-14.2.0
-arm64                 randconfig-002-20241107    gcc-14.2.0
-arm64                 randconfig-003-20241106    gcc-14.2.0
-arm64                 randconfig-003-20241107    gcc-14.2.0
-arm64                 randconfig-004-20241106    gcc-14.2.0
-arm64                 randconfig-004-20241107    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20241106    gcc-14.2.0
-csky                  randconfig-001-20241107    gcc-14.2.0
-csky                  randconfig-002-20241106    gcc-14.2.0
-csky                  randconfig-002-20241107    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-20
-hexagon               randconfig-001-20241106    gcc-14.2.0
-hexagon               randconfig-001-20241107    gcc-14.2.0
-hexagon               randconfig-002-20241106    gcc-14.2.0
-hexagon               randconfig-002-20241107    gcc-14.2.0
-i386                             allmodconfig    clang-19
-i386                              allnoconfig    clang-19
-i386                             allyesconfig    clang-19
-i386        buildonly-randconfig-001-20241106    gcc-12
-i386        buildonly-randconfig-001-20241107    clang-19
-i386        buildonly-randconfig-002-20241106    gcc-12
-i386        buildonly-randconfig-002-20241107    clang-19
-i386        buildonly-randconfig-003-20241106    gcc-12
-i386        buildonly-randconfig-003-20241107    clang-19
-i386        buildonly-randconfig-004-20241106    gcc-12
-i386        buildonly-randconfig-004-20241107    clang-19
-i386        buildonly-randconfig-005-20241106    gcc-12
-i386        buildonly-randconfig-005-20241107    clang-19
-i386        buildonly-randconfig-006-20241106    gcc-12
-i386        buildonly-randconfig-006-20241107    clang-19
-i386                                defconfig    clang-19
-i386                  randconfig-001-20241106    gcc-12
-i386                  randconfig-001-20241107    clang-19
-i386                  randconfig-002-20241106    gcc-12
-i386                  randconfig-002-20241107    clang-19
-i386                  randconfig-003-20241106    gcc-12
-i386                  randconfig-003-20241107    clang-19
-i386                  randconfig-004-20241106    gcc-12
-i386                  randconfig-004-20241107    clang-19
-i386                  randconfig-005-20241106    gcc-12
-i386                  randconfig-005-20241107    clang-19
-i386                  randconfig-006-20241106    gcc-12
-i386                  randconfig-006-20241107    clang-19
-i386                  randconfig-011-20241106    gcc-12
-i386                  randconfig-011-20241107    clang-19
-i386                  randconfig-012-20241106    gcc-12
-i386                  randconfig-012-20241107    clang-19
-i386                  randconfig-013-20241106    gcc-12
-i386                  randconfig-013-20241107    clang-19
-i386                  randconfig-014-20241106    gcc-12
-i386                  randconfig-014-20241107    clang-19
-i386                  randconfig-015-20241106    gcc-12
-i386                  randconfig-015-20241107    clang-19
-i386                  randconfig-016-20241106    gcc-12
-i386                  randconfig-016-20241107    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20241106    gcc-14.2.0
-loongarch             randconfig-001-20241107    gcc-14.2.0
-loongarch             randconfig-002-20241106    gcc-14.2.0
-loongarch             randconfig-002-20241107    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                         amcore_defconfig    clang-20
-m68k                          amiga_defconfig    clang-20
-m68k                          atari_defconfig    gcc-14.2.0
-m68k                       m5208evb_defconfig    gcc-14.2.0
-m68k                          multi_defconfig    gcc-14.2.0
-m68k                           sun3_defconfig    clang-20
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                         bigsur_defconfig    clang-20
-mips                            gpr_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20241106    gcc-14.2.0
-nios2                 randconfig-001-20241107    gcc-14.2.0
-nios2                 randconfig-002-20241106    gcc-14.2.0
-nios2                 randconfig-002-20241107    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-12
-openrisc                  or1klitex_defconfig    clang-20
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-20
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-12
-parisc                generic-32bit_defconfig    clang-20
-parisc                randconfig-001-20241106    gcc-14.2.0
-parisc                randconfig-001-20241107    gcc-14.2.0
-parisc                randconfig-002-20241106    gcc-14.2.0
-parisc                randconfig-002-20241107    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                      bamboo_defconfig    gcc-14.2.0
-powerpc                        cell_defconfig    clang-20
-powerpc                        cell_defconfig    gcc-14.2.0
-powerpc                   currituck_defconfig    clang-20
-powerpc                   motionpro_defconfig    clang-20
-powerpc                     mpc5200_defconfig    clang-20
-powerpc                 mpc832x_rdb_defconfig    gcc-14.2.0
-powerpc                 mpc834x_itx_defconfig    clang-20
-powerpc                      pasemi_defconfig    clang-20
-powerpc                      pcm030_defconfig    clang-20
-powerpc                      pcm030_defconfig    gcc-14.2.0
-powerpc                      ppc64e_defconfig    clang-20
-powerpc                         ps3_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20241106    gcc-14.2.0
-powerpc               randconfig-001-20241107    gcc-14.2.0
-powerpc               randconfig-002-20241106    gcc-14.2.0
-powerpc               randconfig-002-20241107    gcc-14.2.0
-powerpc               randconfig-003-20241106    gcc-14.2.0
-powerpc               randconfig-003-20241107    gcc-14.2.0
-powerpc                     sequoia_defconfig    gcc-14.2.0
-powerpc                     tqm8541_defconfig    gcc-14.2.0
-powerpc                     tqm8555_defconfig    clang-20
-powerpc                      tqm8xx_defconfig    gcc-14.2.0
-powerpc64             randconfig-001-20241106    gcc-14.2.0
-powerpc64             randconfig-002-20241106    gcc-14.2.0
-powerpc64             randconfig-003-20241106    gcc-14.2.0
-powerpc64             randconfig-003-20241107    gcc-14.2.0
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                            allyesconfig    gcc-14.2.0
-riscv                               defconfig    clang-20
-riscv                               defconfig    gcc-12
-riscv                    nommu_virt_defconfig    gcc-14.2.0
-riscv                 randconfig-001-20241106    gcc-14.2.0
-riscv                 randconfig-001-20241107    gcc-14.2.0
-riscv                 randconfig-002-20241106    gcc-14.2.0
-riscv                 randconfig-002-20241107    gcc-14.2.0
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20241106    gcc-14.2.0
-s390                  randconfig-001-20241107    gcc-14.2.0
-s390                  randconfig-002-20241106    gcc-14.2.0
-s390                  randconfig-002-20241107    gcc-14.2.0
-s390                       zfcpdump_defconfig    clang-20
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-12
-sh                         ecovec24_defconfig    clang-20
-sh                        edosk7760_defconfig    clang-20
-sh                          lboxre2_defconfig    gcc-14.2.0
-sh                     magicpanelr2_defconfig    clang-20
-sh                            migor_defconfig    gcc-14.2.0
-sh                    randconfig-001-20241106    gcc-14.2.0
-sh                    randconfig-001-20241107    gcc-14.2.0
-sh                    randconfig-002-20241106    gcc-14.2.0
-sh                    randconfig-002-20241107    gcc-14.2.0
-sh                           se7712_defconfig    clang-20
-sh                           se7721_defconfig    clang-20
-sh                   secureedge5410_defconfig    gcc-14.2.0
-sh                           sh2007_defconfig    clang-20
-sh                        sh7757lcr_defconfig    gcc-14.2.0
-sh                        sh7785lcr_defconfig    gcc-14.2.0
-sh                          urquell_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                       sparc32_defconfig    gcc-14.2.0
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20241106    gcc-14.2.0
-sparc64               randconfig-001-20241107    gcc-14.2.0
-sparc64               randconfig-002-20241106    gcc-14.2.0
-sparc64               randconfig-002-20241107    gcc-14.2.0
-um                               alldefconfig    gcc-14.2.0
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20241106    gcc-14.2.0
-um                    randconfig-001-20241107    gcc-14.2.0
-um                    randconfig-002-20241106    gcc-14.2.0
-um                    randconfig-002-20241107    gcc-14.2.0
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20241106    gcc-11
-x86_64      buildonly-randconfig-001-20241107    clang-19
-x86_64      buildonly-randconfig-002-20241106    gcc-11
-x86_64      buildonly-randconfig-002-20241107    clang-19
-x86_64      buildonly-randconfig-003-20241106    gcc-11
-x86_64      buildonly-randconfig-003-20241107    clang-19
-x86_64      buildonly-randconfig-004-20241106    gcc-11
-x86_64      buildonly-randconfig-004-20241107    clang-19
-x86_64      buildonly-randconfig-005-20241106    gcc-11
-x86_64      buildonly-randconfig-005-20241107    clang-19
-x86_64      buildonly-randconfig-006-20241106    gcc-11
-x86_64      buildonly-randconfig-006-20241107    clang-19
-x86_64                              defconfig    clang-19
-x86_64                                  kexec    clang-19
-x86_64                                  kexec    gcc-12
-x86_64                randconfig-001-20241106    gcc-11
-x86_64                randconfig-001-20241107    clang-19
-x86_64                randconfig-002-20241106    gcc-11
-x86_64                randconfig-002-20241107    clang-19
-x86_64                randconfig-003-20241106    gcc-11
-x86_64                randconfig-003-20241107    clang-19
-x86_64                randconfig-004-20241106    gcc-11
-x86_64                randconfig-004-20241107    clang-19
-x86_64                randconfig-005-20241106    gcc-11
-x86_64                randconfig-005-20241107    clang-19
-x86_64                randconfig-006-20241106    gcc-11
-x86_64                randconfig-006-20241107    clang-19
-x86_64                randconfig-011-20241106    gcc-11
-x86_64                randconfig-011-20241107    clang-19
-x86_64                randconfig-012-20241106    gcc-11
-x86_64                randconfig-012-20241107    clang-19
-x86_64                randconfig-013-20241106    gcc-11
-x86_64                randconfig-013-20241107    clang-19
-x86_64                randconfig-014-20241106    gcc-11
-x86_64                randconfig-014-20241107    clang-19
-x86_64                randconfig-015-20241106    gcc-11
-x86_64                randconfig-015-20241107    clang-19
-x86_64                randconfig-016-20241106    gcc-11
-x86_64                randconfig-016-20241107    clang-19
-x86_64                randconfig-071-20241106    gcc-11
-x86_64                randconfig-071-20241107    clang-19
-x86_64                randconfig-072-20241106    gcc-11
-x86_64                randconfig-072-20241107    clang-19
-x86_64                randconfig-073-20241106    gcc-11
-x86_64                randconfig-073-20241107    clang-19
-x86_64                randconfig-074-20241106    gcc-11
-x86_64                randconfig-074-20241107    clang-19
-x86_64                randconfig-075-20241106    gcc-11
-x86_64                randconfig-075-20241107    clang-19
-x86_64                randconfig-076-20241106    gcc-11
-x86_64                randconfig-076-20241107    clang-19
-x86_64                               rhel-8.3    gcc-12
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                  audio_kc705_defconfig    gcc-14.2.0
-xtensa                randconfig-001-20241106    gcc-14.2.0
-xtensa                randconfig-001-20241107    gcc-14.2.0
-xtensa                randconfig-002-20241106    gcc-14.2.0
-xtensa                randconfig-002-20241107    gcc-14.2.0
+Zicheng Qu (2):
+  staging: iio: ad9834: Correct phase range check
+  staging: iio: ad9832: Correct phase range check
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ drivers/staging/iio/frequency/ad9832.c | 2 +-
+ drivers/staging/iio/frequency/ad9834.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+Thank you for reviewing this patch.
+
+Best regards,
+
+Zicheng
+-- 
+2.34.1
+
 
