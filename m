@@ -1,159 +1,191 @@
-Return-Path: <linux-kernel+bounces-399572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E089C00EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:15:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E249C00F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D4D28330E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33FCB2839DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8767D1D7E50;
-	Thu,  7 Nov 2024 09:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YXgXWvVz"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2C1DFE29;
+	Thu,  7 Nov 2024 09:17:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C1D1957FF
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C63192B73;
+	Thu,  7 Nov 2024 09:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730970947; cv=none; b=IgrK/uBmZvjz+Rr+n0CLAfTxhJ33B8e6utdog4t2QLLVpi+a3qA9vneTDTdQ3XM993Ow9tbgoDchxNQLoin+HM8FWGOTNWDKgwjE38OhJ7qkRXyx81QcLOu8OkyXj6O/ZDfOiLrTq62Iq3ueHizk/rWM3enxSN2mmwlrUiCBUtM=
+	t=1730971041; cv=none; b=FC4IKH4sREazhcStCxiOFxZ7RU+eWQWeiFzPbXgtxx5SGYcCFnCX9CBbzwOFXypIXuGXj4JylRC/95sJct7IzusdW+1sD7n0DhgqrBVYOX6FrwkySAL17hCv8z4MT76MIFS2nyYlVbdrbGJ5s5cw2O1copqgkLdH/J0RnFqTxKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730970947; c=relaxed/simple;
-	bh=Aq53KfufQB+tyZ8Xlp+tAR2Er4hWBskVLo880iJ/1i0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H9hJDiFfoQH6lKIHqFj0o0UktmpfjEf8fc9HqhES2L3H0UWSbVVtockLp9STJHfdh/gXgy32qbs07j8KTvUvOzNKvxzG6oqr7iHd1819w0JwoeFy0QLeC2KZqAe5+xwRwNWecfZJTwH73k5bc8Z88IU9wR0aS8/XpI5tuXhCFA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YXgXWvVz; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-381ee2e10dfso213265f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:15:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730970943; x=1731575743; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7OJ7rtyUAdiCrwcHx4MSWHh1xdNMHwH1AjsX2snl8cI=;
-        b=YXgXWvVzo3T8WpvFOzPtlPs4vVXwDlj2M/NVUZOx+GWUtdz2iFLNNFUJkbdDgekHiY
-         gre/MvN8n14DIaY2hogR2p80fCAoeDzrN/BnzGcw6kIiU6T/vNQFjutc1w1OhZNhaLA/
-         PCzCRkvpA3BioaXQwoqDdNPu0C4AGTaADngmnx6649pnYqKu+lKYDwIs4+83BWPgvkLe
-         Ndc36M/kJZj89inSvHJnOiLpNmHM/WSI6dHdHjGKICy4HYpL4s1gLKrtCjHzFNXNn4hM
-         XmEzCt2IQl6eq2SMaa84Ma8WQ/eTJyz0UPR6g7lqO9lXMAcu5iYd2ioGSdK9FNh/QpzX
-         dmBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730970943; x=1731575743;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OJ7rtyUAdiCrwcHx4MSWHh1xdNMHwH1AjsX2snl8cI=;
-        b=OANWp9eJB0He8zlC8UB9pG2n/6L64d/mQCbXeXzLdd7IN+ioSKfsAXGBPs3WnUiFaH
-         Tg5UEW9w1aPN95NECa7vapIP7zZct+iLsgezcSWp6t6f22tRIY7B7QRCjqVQL8/F3Qp3
-         vAtzNUijMWDU4zccmEAIS6UEir7Wb79Mc4dwoFlE8gZrAFL52B+6cC+PNlqI+g8/0zxB
-         xoKwhBBIBPiPNl+VOmDJ2Yw3hNCfVVWA3q4ZRDQgmAWHH+m77VwlqCL9gXwoqRElCYjd
-         JAzsZkiERtEq+iOKCy/rsBXZTQAKPIaISkb1snI08gPem+zwmEihizT6GUFSW2RHpMOd
-         Ajow==
-X-Forwarded-Encrypted: i=1; AJvYcCXatryR06UVu0BQExU+edBV9SRA1cDQpz6f7nXlpiOBB+TLhlNqFI5NtOA/nM/1exfylq0whK9Ue7MmiUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFWQfR//OQhXgYprb5EM4jibR2VcJUCGFT1aN4oNA7ToB0sLT2
-	bH7UaCrKLB2yeAqTv1bvFAkolisCBJP2Gp9mzRVyVzbz5YdQuLM1S4tbtVnMcxs=
-X-Google-Smtp-Source: AGHT+IGdcuKzROptTzoQj4ZxP326YFgJRISOCDEl3wG/eViXJrvy8/H7yfnGqnnSgpNWXWXlN+42RQ==
-X-Received: by 2002:a05:6000:18ac:b0:37d:51a2:accd with SMTP id ffacd0b85a97d-381c7973bf8mr19197690f8f.0.1730970942680;
-        Thu, 07 Nov 2024 01:15:42 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ea5e4sm1174100f8f.77.2024.11.07.01.15.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 01:15:42 -0800 (PST)
-Date: Thu, 7 Nov 2024 10:15:40 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Trevor Gamblin <tgamblin@baylibre.com>, Erik Schumacher <erik.schumacher@iris-sensing.com>
-Subject: [GIT PULL] pwm: Fix period setting in imx-tpm driver and a
- maintainer update
-Message-ID: <2m53n4ksfvepuke6uifkxwggepcyqs3vghrkgul5tlputpgva5@ch3o5sy6ekfb>
+	s=arc-20240116; t=1730971041; c=relaxed/simple;
+	bh=SkfFvecVs2l+s2XYosQTMeR4oTOSQgmyAuYa8UD0azU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pp9zutdRka1BGMtmWUYpxOpqUbpNU02Oz851T0HsQU7pFzww7QoJMzurxUAJkUorekLCfMAPWw0vZTypoEYCENjF9/Wx0slDUuD/ZLo2ZHznTBOVdUMUZkgmZm+AH3+ZJDsrHJrCP4+Wa46LLebS8OTJYGBkzNeGJYh8XU/6BG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B28FBC4CECC;
+	Thu,  7 Nov 2024 09:17:18 +0000 (UTC)
+Message-ID: <94f7c775-10bd-46d5-bc89-a18533dcab68@xs4all.nl>
+Date: Thu, 7 Nov 2024 10:17:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="injfv32txdhjxuo5"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: videobuf2-core: copy vb planes unconditionally
+To: Tomasz Figa <tfiga@chromium.org>, Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: m.szyprowski@samsung.com, mchehab@kernel.org, yunkec@chromium.org,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, andre.draszik@linaro.org,
+ kernel-team@android.com, willmcvicker@google.com, stable@vger.kernel.org
+References: <20241106121802.2939237-1-tudor.ambarus@linaro.org>
+ <CAAFQd5B51wa1dD3FzHKxsg4VaA_bHzUrFGmA19q8jUybsMuS0Q@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <CAAFQd5B51wa1dD3FzHKxsg4VaA_bHzUrFGmA19q8jUybsMuS0Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 07/11/2024 00:41, Tomasz Figa wrote:
+> On Wed, Nov 6, 2024 at 9:18 PM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>>
+>> Copy the relevant data from userspace to the vb->planes unconditionally
+>> as it's possible some of the fields may have changed after the buffer
+>> has been validated.
+>>
+>> Keep the dma_buf_put(planes[plane].dbuf) calls in the first
+>> `if (!reacquired)` case, in order to be close to the plane validation code
+>> where the buffers were got in the first place.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 95af7c00f35b ("media: videobuf2-core: release all planes first in __prepare_dmabuf()")
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
+>>  .../media/common/videobuf2/videobuf2-core.c   | 28 ++++++++++---------
+>>  1 file changed, 15 insertions(+), 13 deletions(-)
+>>
+> 
+> Thanks for the fix.
+> 
+> Acked-by: Tomasz Figa <tfiga@chromium.org>
+> 
+> (We probably need some tests to verify this behavior... It seems like
+> the way v4l2-compliance is implemented [1] would only trigger the
+> !reacquired case on most drivers.)
+> 
+> [1] https://git.linuxtv.org/v4l-utils.git/tree/utils/v4l2-compliance/v4l2-test-buffers.cpp#n2071
+> (just queuing all imported buffers in order and re-queuing them
+> exactly as they are dequeued [2])
+> [2] https://git.linuxtv.org/v4l-utils.git/tree/utils/v4l2-compliance/v4l2-test-buffers.cpp#n1299
 
---injfv32txdhjxuo5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: [GIT PULL] pwm: Fix period setting in imx-tpm driver and a
- maintainer update
-MIME-Version: 1.0
+I'll see if I can improve that test.
 
-Hello Linus,
+Regards,
 
-the following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+	Hans
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+> 
+> Best regards,
+> Tomasz
+> 
+>> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+>> index f07dc53a9d06..c0cc441b5164 100644
+>> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+>> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+>> @@ -1482,18 +1482,23 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
+>>                         }
+>>                         vb->planes[plane].dbuf_mapped = 1;
+>>                 }
+>> +       } else {
+>> +               for (plane = 0; plane < vb->num_planes; ++plane)
+>> +                       dma_buf_put(planes[plane].dbuf);
+>> +       }
+>>
+>> -               /*
+>> -                * Now that everything is in order, copy relevant information
+>> -                * provided by userspace.
+>> -                */
+>> -               for (plane = 0; plane < vb->num_planes; ++plane) {
+>> -                       vb->planes[plane].bytesused = planes[plane].bytesused;
+>> -                       vb->planes[plane].length = planes[plane].length;
+>> -                       vb->planes[plane].m.fd = planes[plane].m.fd;
+>> -                       vb->planes[plane].data_offset = planes[plane].data_offset;
+>> -               }
+>> +       /*
+>> +        * Now that everything is in order, copy relevant information
+>> +        * provided by userspace.
+>> +        */
+>> +       for (plane = 0; plane < vb->num_planes; ++plane) {
+>> +               vb->planes[plane].bytesused = planes[plane].bytesused;
+>> +               vb->planes[plane].length = planes[plane].length;
+>> +               vb->planes[plane].m.fd = planes[plane].m.fd;
+>> +               vb->planes[plane].data_offset = planes[plane].data_offset;
+>> +       }
+>>
+>> +       if (reacquired) {
+>>                 /*
+>>                  * Call driver-specific initialization on the newly acquired buffer,
+>>                  * if provided.
+>> @@ -1503,9 +1508,6 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
+>>                         dprintk(q, 1, "buffer initialization failed\n");
+>>                         goto err_put_vb2_buf;
+>>                 }
+>> -       } else {
+>> -               for (plane = 0; plane < vb->num_planes; ++plane)
+>> -                       dma_buf_put(planes[plane].dbuf);
+>>         }
+>>
+>>         ret = call_vb_qop(vb, buf_prepare, vb);
+>> --
+>> 2.47.0.199.ga7371fff76-goog
+>>
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/pwm/for-6.12-rc7-fixes
-
-for you to fetch changes up to 517fb4d77c44c7519ae6937329c496894461f416:
-
-  MAINTAINERS: add self as reviewer for AXI PWM GENERATOR (2024-10-25 11:31:17 +0200)
-
-I hesitated a bit if I should send this pull request. The pwm-imx-tpm
-issue is old (introduced in v5.2-rc1). On the other hand it's a real
-bugfix that I'd like to see backported to stable. So I think its honest
-to ask for getting it into v6.12, too.
-
-The maintainer update is just a commit I wouldn't have sent alone today,
-but as there is a PR now, it thought to value Trevor's effort by sending
-the update along with this fix.
-
-The commits are in next since Oct 28, thanks for pulling this for
-6.12-rc7.
-
-Best regards
-Uwe
-
-----------------------------------------------------------------
-pwm: Fix period setting in imx-tpm driver and a maintainer update
-
-Erik Schumacher found and fixed a problem in the calculation of the PWM
-period setting yielding too long periods. Trevor Gamblin---who already
-cared about mainlining the pwm-axi-pwmgen driver---stepped forward as an
-additional reviewer.
-
-Thanks to Erik and Trevor.
-----------------------------------------------------------------
-
-Erik Schumacher (1):
-      pwm: imx-tpm: Use correct MODULO value for EPWM mode
-
-Trevor Gamblin (1):
-      MAINTAINERS: add self as reviewer for AXI PWM GENERATOR
-
- MAINTAINERS               | 1 +
- drivers/pwm/pwm-imx-tpm.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
---injfv32txdhjxuo5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcshTkACgkQj4D7WH0S
-/k5+bwf/WknJrVBgzxMzB/pafxdZqqVxO5lKDhC/dkcAGaoKlrwDdLBGgrv6aQvu
-RJ2KN8JiCtrBzywTBbq+LUnxujeqpGmGsUwt65d5yT9DkL9ScuxFhY+lTAadv+qA
-tgDEVP+6wHSXZcgccYZmUN4Ov1q1tz3MfZMNT9qfa3xCDdDwfgbvNLMxvdfAt6C/
-G2pcvZtU/G8dtuvMEgJ6xWMAu97ZLZ1y8bC19zh+xSBqtDibPitgMCe5FWecbPW8
-qGK3eLpBj4Ahb5fXbsAJzLcCC1macjDJnC9ca8av0jfJydcid9u623tGQjeDJq9e
-j8g4UTP6odpL1mwgbOJvMhDTgk6lRg==
-=YSb8
------END PGP SIGNATURE-----
-
---injfv32txdhjxuo5--
 
