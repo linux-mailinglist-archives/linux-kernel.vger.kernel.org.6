@@ -1,108 +1,88 @@
-Return-Path: <linux-kernel+bounces-399341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBAF9BFDB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:38:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 984BC9BFDB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07921283993
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D12631C217F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4068F192B66;
-	Thu,  7 Nov 2024 05:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF06A192B73;
+	Thu,  7 Nov 2024 05:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzrkOILr"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jaHiKwCc"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590EC10F9;
-	Thu,  7 Nov 2024 05:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81D610F9;
+	Thu,  7 Nov 2024 05:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730957898; cv=none; b=rAAYdDKbCzyJHmxnNB90PDASesqX5eU/AunxODNW+p0OVBysqIElSgkA+n5yr+dvjvUAbmFsgSldQRXRhFpOJNUdSY7E8S1ZP21nL+cdPdBNQTzaM+Wi07pg0AJkhZDctW+UQF9b0VZPi6RwqX3UqBLlBuzFaZd6rxYkmnPxIPk=
+	t=1730957949; cv=none; b=BfVF3lOuZWx4NQIDzseT4dQVUzG5Y91/MFgfxNxp5g6DuFhh7UkeTEu1pUCrQlKfIfPrnP+MjHZz7bKAwaqL7x4A45wWfpwzV2w94NEr4DXicH9SctlxpzAPKjQinYgIxGghXpzCJBcbsWdBN7pH6eOu80CJO5uRKfMVWS0/LL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730957898; c=relaxed/simple;
-	bh=mEcullaj8Sv3WoRHXtlwHwXZOfjaigSxz4Ct/EJQ8DQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ue+u6W/xzgfa25jR2Y5MfsI3YDhtyOaC/GDISX9OpphMpDrIma6BRsXul0SFu0B8qeKMCga4LkPDlW/ccLlOwmFbqtHG1NlRxL7ZzgTGcjHaPMN4ol1G+v9eAhuCouOhffruXv1n6QX4/+csLhX/d5wldDvHoRTu9Bw8Zyt74zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NzrkOILr; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7203c431f93so413760b3a.1;
-        Wed, 06 Nov 2024 21:38:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730957896; x=1731562696; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mEcullaj8Sv3WoRHXtlwHwXZOfjaigSxz4Ct/EJQ8DQ=;
-        b=NzrkOILrQeMsQG7RfcCrJHKNz6gBHzgxyGRQx1qyL5N1nxLY8smUlAzYenP+U45QaF
-         HPeKPursQraUGo0YjFcNkBBJGK/YsNDF/m5wJR5q1RYX8Q/mNEY2kiWjpbTezSjegrxT
-         KZPuypG57WXXvhsbpkNy4PCJHI7mcvoDTNEUb3tcvOJR4hJAodudX1rpQJe9rHmOKZdQ
-         pPfJYo0A1tj1I/QfbdNcDhsnJIuQaZf8rR0haDZwgtaLBiDTx+CWp/nEBukf5eVpjew2
-         rUO4G1FZ+/gOX51i6oS2c1qP3Vr87jyo/VE91GbVau2i2iEsu5OfynWstulExyySzjdG
-         kOeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730957896; x=1731562696;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mEcullaj8Sv3WoRHXtlwHwXZOfjaigSxz4Ct/EJQ8DQ=;
-        b=af/y5Ohyb6w3BWe8SOS4egUq2ODTDkaYamnxXkkGR2iYvRDLNFHUR3USoagy4iDMqP
-         KZxyAuilmyyBW5c/6nFIjrmvtHWFL4/kdxIOANDozPKouN4jku/kAjbyQXLfruTPmPuo
-         nDTOpNRxQC7n9/AoHvuzMW35e97aeIXeHDkp2sM7tnc4oYdhVAyJKqJeDW7jtRZRRGyE
-         ljaF9hN1I43XV4r/csNMhbe8zTFqSpFXHeDU1TEJ7HVXFzemBnpS5X6xICRMHoqe4rZh
-         OzPYXiaFm4dgIbdvB7gARSJXGI6hmu204EZMes2a7MYi+9n7yVJTrFG8PmRSnnMXgrEb
-         fzqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqGYiPFGkMwneuApL4b4W28e2SocD5nLO5FlQtQ8X+gl9W4pcuuu5rCdFAmUQ5OkYU88DHhLT7+fX9BQ==@vger.kernel.org, AJvYcCXjrWvaJrs1aq5F+FJj/Oc7uCjURM3a7HNw7RDEucUn0XMKSpEIErYQjMqLS28XnXG/45zAw+YvxIFLs55p@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydasz/df+wjGPgnQoGoFk0ZkY7Omz5D7lEdOQUA2KpbJQW4128
-	3ked5O2p5+F/jvmFA6I+qaMmbb6rMSZB9LtoYF9R0gbAvdFbz7UzQE0/jnL/
-X-Google-Smtp-Source: AGHT+IEABnugwBNoBdk9jAlJNldwPr7yZAmPFyutYwyQxwaFRHy4LTNZWTkGm6DcoOgrHnDFKToyFA==
-X-Received: by 2002:a05:6a20:734b:b0:1db:ff9a:c9bf with SMTP id adf61e73a8af0-1dc12969e90mr1218389637.39.1730957896450;
-        Wed, 06 Nov 2024 21:38:16 -0800 (PST)
-Received: from ?IPV6:240d:1a:13a:f00:e44d:d023:ae27:27fb? ([240d:1a:13a:f00:e44d:d023:ae27:27fb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e41644sm4043045ad.139.2024.11.06.21.38.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 21:38:16 -0800 (PST)
-Message-ID: <7386515e-ee11-4a3f-9bb4-3f2c453c68cb@gmail.com>
-Date: Thu, 7 Nov 2024 14:38:13 +0900
+	s=arc-20240116; t=1730957949; c=relaxed/simple;
+	bh=TCCpGBshBu+THqy+5WrdgDzMl1x45RUuHcpz16sYwU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CrU/3+NjMubsFonjEONu2tPLt1e4nkbojEKwb6LLzQw28CKD/h8Ef3gc4vSWlLHoeOpBgflr5V26z8hpR4LVqVSBZouT06lX8T2sFJr9D6pR++vYCKz3rvS9LO+JD48lwYVpXN1AvWZ7RSfV1T0sk0LFXdNB2bG1SoLqOsXod+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jaHiKwCc; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ty6m/yYMpkl25OURhK1ou6hUG+x4YfrCyt8WHhmSpBk=; b=jaHiKwCcngJlHsLZuiPuUSP11x
+	oehUQ/1Sevm5QohHCbGCni/Ks2Li3cj4a6Nli2gR/ADN3kw7HU7Xter/Wz1juTZ0fzaoiuw2ww4DE
+	dnufpjlPsYfTh5qv0IMMUna7dpnJr77sRJBmWjxg1VqaWG4upttdSSRS4eBGtIVQv5LaX+27cuIj/
+	s3pjYp3KNbLKNFW9t1A2SWNMwHLoULy4+IKnfqGtI7HvDQxpmvyy+uZ8IeWr+nvoxIMtc1ajxykkI
+	auPpPicJXre0r4yhrQp1SH4+FTluFV3pN3DrgDtm6MAqnSo/qLntVCz9Afq7leeBdtPZWSX1C+9Uh
+	JnEVj8Vg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8vET-00000005jAK-27pp;
+	Thu, 07 Nov 2024 05:39:01 +0000
+Date: Wed, 6 Nov 2024 21:39:01 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
+	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
+	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	hch@infradead.org, gregkh@linuxfoundation.org
+Subject: Re: [RFC] module: Strict per-modname namespaces
+Message-ID: <ZyxSdayBstBGhAeO@infradead.org>
+References: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] HID: Add reserved item tag for main items
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240926072541.109493-1-tatsuya.s2862@gmail.com>
- <nycvar.YFH.7.76.2411061450380.20286@cbobk.fhfr.pm>
-Content-Language: en-US
-From: t s <tatsuya.s2862@gmail.com>
-In-Reply-To: <nycvar.YFH.7.76.2411061450380.20286@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Wed, Nov 06, 2024 at 08:02:40PM +0100, Peter Zijlstra wrote:
+> It reserves and disallows imports on any "MODULE_${name}" namespace,
+> while it implicitly adds the same namespace to every module.
 
-On 2024/11/06 22:51, Jiri Kosina wrote:
-> On Thu, 26 Sep 2024, Tatsuya S wrote:
->
->> For main items, separate warning of reserved item tag from
->> warning of unknown item tag.
-> Sorry for the delay, this patch fell in between cracks.
+Ah nice.  This is pretty similar to what I want and had badly prototyped
+a while ago.
 
-No problem, thank you for your review.
+> This allows exports targeted at specific modules and no others -- one
+> random example included. I've hated the various kvm exports we've had
+> for a while, and strictly limiting them to the kvm module helps
+> alleviate some abuse potential.
 
->
-> I think the change is fine, could you please just extend the changelog
-> with the reference to the relevant part of the specification, so that it's
-> properly documented?
-OK.
->
-> Thanks,
->
+And this was one of the targets on my list.  Specific kunits tests
+would be another category.
+
+> +EXPORT_SYMBOL_NS_GPL(fpu_swap_kvm_fpstate, MODULE_kvm);
+
+I would have preferred a syntax that has the MODULE in the export macro
+instead of the namespace, but I do care more about actually having the
+functionality, and this seems way simpler than what I had.
 
