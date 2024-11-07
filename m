@@ -1,153 +1,160 @@
-Return-Path: <linux-kernel+bounces-400432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEFD59C0D75
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:06:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F8A9C0D7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:12:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C92E1C2202C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:06:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6B41B21569
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D72161E6;
-	Thu,  7 Nov 2024 18:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WrylWrsn"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D07F2170D5;
+	Thu,  7 Nov 2024 18:12:17 +0000 (UTC)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F024212194
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160642161E6;
+	Thu,  7 Nov 2024 18:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731002752; cv=none; b=F2mL7u2FRd/FQRe2KMB+HmBR3ncOwXAfnSW5AkeGVCj9Be9ub2zRFZ/ydBJi3lt6bNWbojVghNrVss4DYFiPnoXgl89hwAwQ0FC9kXtYX4/kYYKZg5qVhkGLju8dXMT0JZfjp9HE7ayBw6C1IylJgFhOzD8hyXyu1LygGi/NN78=
+	t=1731003137; cv=none; b=mg5ofUrpdxDBa0aYQ5NTFxUSbxzhh4DKXrA1K2km1zN0176siV4N3dTbRfIE9QJ0iPk4uJNhHXg+P6Y+vDhMnh65xgj+iEQOw7/kOf5SDTUReFXTEoUkEQhO/w7dr5Uy8kIROtxSwPz2pcbVeYzkJviF1lSTjDe8l7xq0bH9TxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731002752; c=relaxed/simple;
-	bh=KUxyXwz3ijMwI9yruBeARGSaKdWcNDBaCOKWP0VGGm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TOvaQsVfZjBhau9/OsiOlAcGhbyy+4y6/mM4KPteMdgCQJEw6Ik0l9Vp7NF0YYf7EPst9WMgyiBsL1ojXJSyhP1RB3a8ytQZfS4kLBf5vUucozGdxy9XWtn5eBGdF56RCbq1XaDPoMjuX+sEbBd6KJAqbnPk2VS8e/ev/AklvDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WrylWrsn; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a68480164so184560966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:05:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731002748; x=1731607548; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zSbrYYBrI/p/5x0d2n3UNYuWW/+v5ncY+edUOAUibFk=;
-        b=WrylWrsn+dmnKPImq81fa+6sZpwIF5WozWtdbebYEyjW8lBhqZSrovghVy0jKE44IY
-         OZPyFwz6+wfGa6tPmfRdRyiujvOUh5lU+JSHGxf3FBAkIb3UKbw4w4co8KxldlngJtuP
-         JsJuMOxFDQKSshcxzTzERdisOcrUUkmhhSwQw/f/YM9nj6Hh/c7aKUFAFFkixz6Im6YE
-         3x/pwwoypVA22RzxQgx7tXgtqSLuVBnruWVnUB7ahY5EkCpfuLPQJDhSnEE2iyMFd8Xl
-         MVT5iwepusXCviU9k0Ggr8GCVEu+xyUOBn0zjxU+kgEWFy7++YrO0VNV0i3om5QPNTTz
-         EDrQ==
+	s=arc-20240116; t=1731003137; c=relaxed/simple;
+	bh=QYtEtlkBOrC1Ya90xDLzKFhDn87Z90gjyyAIkP1QK70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aUA2qMxVHUFzezDOoeRv2SWTUpd1BQ0ugzrQsQLBvrCUHDwwPuiKgUFOQ42JPAqgVZAAyWymto9M5o3II9nVsN0HQW2q7q58TcqKwAyBlDNk8tW6MwhSXE//WJsFr8hkGIpcfk7CqskoFvJgaMl8JPK48Aj8ysHDqNtZxphrVoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-720b2d8bb8dso909959b3a.1;
+        Thu, 07 Nov 2024 10:12:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731002748; x=1731607548;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zSbrYYBrI/p/5x0d2n3UNYuWW/+v5ncY+edUOAUibFk=;
-        b=IegdtvJNr56563EUENeVpcObJkI+8sAMD+CDvpfaL/UOfF8PewIRYPy51HxahY/lx5
-         eltH6E+vJPqnq0XZqBao/1IDG2aj6+ldr9JRTV2jQtrUsZNav/5+hZjq+FyEp0JaClmg
-         vd+Y/+fCCTJH8S80Yf4+3s3OzqqFyciYieTlo7N6WDQ5ECIaeeNpksT7vBaceJTWbPuZ
-         3w6XfOXW2Fgcu+hj0Xtu1kyRiaAO8UtShxGGgSvTnmEqwM9t6rtBro4sTiiNHknqc3J4
-         MNkvxWe6RLvmna0kMy4MuUAmEQZvlQjYAbhpVToQcqueuR3Yx75dwAEOr/bzA9YYQEOU
-         i5xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTx8X063scokVE4ioM+mBd5Pvsl10mhN9OXgIQLfxpylt/Rtz767VfLALxiKoLeipCowriA8RyYcsr4lA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyeollYFOHS5G41Y6i2MAwBt04AsxyO718zUolPzMzTQJZ52Ey
-	t29qh6eyDvRvGbCDMOCYQTDH3PGNrADxQrMh64t/34OWMEeeYvUi8Aqbt27D/B4=
-X-Google-Smtp-Source: AGHT+IH/KWT01CAzD8ky5ouYbcYfN5C3FED8l6ogIpQP/5B/enmGcQM4WkUVsaO/f92hCV5EgwfPEA==
-X-Received: by 2002:a17:907:3f02:b0:a9a:e0b8:5b7c with SMTP id a640c23a62f3a-a9de5c91d25mr4463270266b.7.1731002748381;
-        Thu, 07 Nov 2024 10:05:48 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0abf305sm126140866b.86.2024.11.07.10.05.47
+        d=1e100.net; s=20230601; t=1731003133; x=1731607933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K5/MXPQVWSfX56FbuibfqKs75bB8Xe6p/3/YF+lSl7s=;
+        b=QRZ9YjHtL2cBjbxSbCuG2SLMc8t9FlDuRS+ZZk0HX2B5MuQgqEUgs2f9l8xwXnQ3pZ
+         /kkSFEfdKyVgEKAVIfH53SgWRmTbd1A4MKW5ObbHRhioaxfukYE3aAYDAdBL+uwrR5XE
+         rhJp8kEHLyY93A7Z02ItlbhMQ+umemv7FQ+pKavEHvow5gLUtlnG/cnyGUc7jyz8WtWg
+         tg/XD7MJJgLmjTy33AF0NK7jAVxfDXSNnsKX96fItY4tRrEGhFiOo5tBGpK33zLQCZ5s
+         2n3uxZZyC9iOvpLY7BYyHx5YW/hgDHgd6loCyUdLmt1PaTdofxuqzxrqi5SWxesIPss9
+         c7YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB5wMKlWiota9bG6DEjfOddunvhxwyYwlYyssS1ntl0BgzFZL6Euj6+NmO2PAXKDn+7myN8Ah3jyjGHqDl7yaz@vger.kernel.org, AJvYcCWhSF5fxaeB2PniucXgOekDBHplErbi1zU9ENEZn0eWMF+oXnsgIoE0QOyDxlRd+7tuNbb0FSt7GW3DsGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY3TN1kWg8074ghOEJGVLe2jjsVaqxHiZ+jJf66tpbuAu4+dZt
+	4hrs/I9PuNZMmckpotvy3caMPQ6BDHIpIS2moZJglsTJ1pUd6CW7qBpH
+X-Google-Smtp-Source: AGHT+IGdG/ADT//oanKKwvCNg9rKaGItUG2Tvl7gPeqKOty622zfsDSGIPKVY6X4mOOqSnUGaxK00w==
+X-Received: by 2002:a05:6a00:21cc:b0:71e:7a19:7d64 with SMTP id d2e1a72fcca58-72413279ea6mr6087b3a.5.1731003132906;
+        Thu, 07 Nov 2024 10:12:12 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a18f51sm1874832b3a.155.2024.11.07.10.12.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 10:05:47 -0800 (PST)
-Date: Thu, 7 Nov 2024 19:05:46 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Luca Boccassi <bluca@debian.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, kvm@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: cgroup2 freezer and kvm_vm_worker_thread()
-Message-ID: <nlcen6mwyduof423wzfyf3gmvt77uqywzikby2gionpu4mz6za@635i633henks>
-References: <ZyAnSAw34jwWicJl@slm.duckdns.org>
+        Thu, 07 Nov 2024 10:12:12 -0800 (PST)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	shuah@kernel.org,
+	horms@kernel.org,
+	almasrymina@google.com,
+	sdf@fomichev.me,
+	willemb@google.com,
+	petrm@nvidia.com,
+	jdamato@fastly.com
+Subject: [PATCH net-next v8 00/12] selftests: ncdevmem: Add ncdevmem to ksft
+Date: Thu,  7 Nov 2024 10:11:59 -0800
+Message-ID: <20241107181211.3934153-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2flxw46ilch26h54"
-Content-Disposition: inline
-In-Reply-To: <ZyAnSAw34jwWicJl@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
 
+The goal of the series is to simplify and make it possible to use
+ncdevmem in an automated way from the ksft python wrapper.
 
---2flxw46ilch26h54
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ncdevmem is slowly mutated into a state where it uses stdout
+to print the payload and the python wrapper is added to
+make sure the arrived payload matches the expected one.
 
-On Mon, Oct 28, 2024 at 02:07:36PM GMT, Tejun Heo <tj@kernel.org> wrote:
-> There are two paths that we can take:
->=20
-> 1. Make kvm_vm_worker_thread() call into signal delivery path.
->    io_wq_worker() is in a similar boat and handles signal delivery and can
->    be frozen and trapped like regular threads.
->=20
-> 2. Keep the count of threads which can't be frozen per cgroup so that cgr=
-oup
->    freezer can ignore these threads.
->=20
-> #1 is better in that the cgroup will actually be frozen when reported
-> frozen. However, the rather ambiguous criterion we've been using for cgro=
-up
-> freezer is whether the cgroup can be safely snapshotted whil frozen and as
-> long as the workers not being frozen doesn't break that, we can go for #2
-> too.
->=20
-> What do you guys think?
+v8:
+- move error() calls into enable_reuseaddr() (Joe)
+- bail out when number of queues is 1 (Joe)
+- use socat instead of nc (Joe)
+- fix warning about string truncation buf[256]->buf[40] (Jakub)
 
-I'd first ask why the kvm_vm_worker_thread needs to be in the KVM task's
-cgroup (and copy its priority at creation time but no later adjustments)?
+v7:
+- fix validation (Mina)
+- add support for working with non ::ffff-prefixed addresses (Mina)
 
-If it can remain inside root cgroup (like any other good kthread) its
-job may be even chunked into periodic/deferred workqueue pieces with no
-kthread per KVM at all.
+v6:
+- fix compilation issue in 'Unify error handling' patch (Jakub)
 
-If there are resource control/charging concerns, I was thinking about
-the approach of cloning from the KVM task and never returning to
-userspace, which I see you already discussed with PF_USER_WORKER (based
-on #1). All context would be regularly inherited and no migration would
-be needed.
+v5:
+- properly handle errors from inet_pton() and socket() (Paolo)
+- remove unneeded import from python selftest (Paolo)
 
-(I remember issues with the kvm_vm_worker_thread surviving lifespan of
-KVM task and preventing removal of the cgroup. Not sure if that was only
-a race or there's real need for doing some cleanups on an exited task.)
+v4:
+- keep usage example with validation (Mina)
+- fix compilation issue in one patch (s/start_queues/start_queue/)
 
-As for #2, I'm not sure there's a good criterion for what to ignore.
-Here it could possibly be PF_KTHREAD or PF_NOFREEZE (I get the latter
-has purpose for system-wide (or v1) freezer). Generally, we can't tell
-what's the effect of thread's liveliness so it seems better to
-conservatively treat the cgroup as unfrozen.
+v3:
+- keep and refine the comment about ncdevmem invocation (Mina)
+- add the comment about not enforcing exit status for ntuple reset (Mina)
+- make configure_headersplit more robust (Mina)
+- use num_queues/2 in selftest and let the users override it (Mina)
+- remove memory_provider.memcpy_to_device (Mina)
+- keep ksft as is (don't use -v validate flags): we are gonna
+  need a --debug-disable flag to make it less chatty; otherwise
+  it times out when sending too much data; so leaving it as
+  a separate follow up
 
+v2:
+- don't remove validation (Mina)
+- keep 5-tuple flow steering but use it only when -c is provided (Mina)
+- remove separate flag for probing (Mina)
+- move ncdevmem under drivers/net/hw, not drivers/net (Jakub)
 
-HTH,
-Michal
+Cc: Mina Almasry <almasrymina@google.com>
 
---2flxw46ilch26h54
-Content-Type: application/pgp-signature; name="signature.asc"
+Stanislav Fomichev (12):
+  selftests: ncdevmem: Redirect all non-payload output to stderr
+  selftests: ncdevmem: Separate out dmabuf provider
+  selftests: ncdevmem: Unify error handling
+  selftests: ncdevmem: Make client_ip optional
+  selftests: ncdevmem: Remove default arguments
+  selftests: ncdevmem: Switch to AF_INET6
+  selftests: ncdevmem: Properly reset flow steering
+  selftests: ncdevmem: Use YNL to enable TCP header split
+  selftests: ncdevmem: Remove hard-coded queue numbers
+  selftests: ncdevmem: Run selftest when none of the -s or -c has been
+    provided
+  selftests: ncdevmem: Move ncdevmem under drivers/net/hw
+  selftests: ncdevmem: Add automated test
 
------BEGIN PGP SIGNATURE-----
+ .../selftests/drivers/net/hw/.gitignore       |   1 +
+ .../testing/selftests/drivers/net/hw/Makefile |   9 +
+ .../selftests/drivers/net/hw/devmem.py        |  45 +
+ .../selftests/drivers/net/hw/ncdevmem.c       | 789 ++++++++++++++++++
+ tools/testing/selftests/net/.gitignore        |   1 -
+ tools/testing/selftests/net/Makefile          |   8 -
+ tools/testing/selftests/net/ncdevmem.c        | 570 -------------
+ 7 files changed, 844 insertions(+), 579 deletions(-)
+ create mode 100644 tools/testing/selftests/drivers/net/hw/.gitignore
+ create mode 100755 tools/testing/selftests/drivers/net/hw/devmem.py
+ create mode 100644 tools/testing/selftests/drivers/net/hw/ncdevmem.c
+ delete mode 100644 tools/testing/selftests/net/ncdevmem.c
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZy0BdwAKCRAt3Wney77B
-SYLIAQCuNDE3wTgZN3p9SAWDtSNXhwYcoK26f77RKTJcTmBEUwD8Cs/j4rnKyut3
-wTfnUQ9EoseHo9YzGHkO2Hhuq3vjTgY=
-=An9+
------END PGP SIGNATURE-----
+-- 
+2.47.0
 
---2flxw46ilch26h54--
 
