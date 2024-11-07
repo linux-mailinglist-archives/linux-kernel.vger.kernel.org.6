@@ -1,166 +1,298 @@
-Return-Path: <linux-kernel+bounces-399548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798F29C0072
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:52:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2945E9C007B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:55:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C47283B06
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:52:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DAFB1C2198B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 08:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0611D8E0F;
-	Thu,  7 Nov 2024 08:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F78C1DED74;
+	Thu,  7 Nov 2024 08:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="MndZh2uV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AZtEeqp5"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="de3waknc"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8137C38FB0;
-	Thu,  7 Nov 2024 08:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C421DE8BF;
+	Thu,  7 Nov 2024 08:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730969513; cv=none; b=giDiXlO3ayyAstjhc4jLTBlwhg+tX9cLfwa1BzyMHkZS8YYHe1HH0uHeznvwwR4xlmKB1xssLRvqSdnpa2RWnr7YSQ4kXg18F2YjvtTed3jvOHsy7XnPggDk3o9nY/xr9JmJXj5yStJTbrsJGxIRJevOIv2HXsOCG/fnr2C7OJU=
+	t=1730969686; cv=none; b=q3FOuZ14p9+9cfIRwyyaeX09h4iZCJ+LJLHkrkkOPQ7iLR6L5k3tovmKrQyalbbUWwd8u3Zl7Lz6+rB/N4mXU69J5PjM+iI1UILG2f5DWDYp/lo55m6FZ/QabAXleVz5p6ATXHA0QM2gi5NukrXOiPHs1Q3E+/UK/GkWDHCtXQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730969513; c=relaxed/simple;
-	bh=+yCI5Y08iCTDBIHlMEsCVdskeck8YG+AF5B+AuVrptM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUllG/R6Ku6oeCY0QM6QNw7pCoJkXDXa5uR2YNkzc1tREbCpSIO9yXlYX/sK41WbmFIUBncoOH2WbDjTUM+dnxavxSTYBXdevWpXnS0c5XFQqSSGhvnd+hQGQN/WzY+sTG9K0A1CvzidSznypHqLdeUzpBkyt0mke98L+KQnMtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=MndZh2uV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AZtEeqp5; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 1AFEA11400CF;
-	Thu,  7 Nov 2024 03:51:49 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Thu, 07 Nov 2024 03:51:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1730969508; x=1731055908; bh=mLYrGgR7xi
-	150q2EmTJsQhEuZ8EEIYlqYshpmAVqwAA=; b=MndZh2uVrHvHfeaJ5TG5IL/gxz
-	YJN0BwRnjK9GWvfSKwzl3SucW5Bg1y58/rjXrg0wu4/Q6MhsJn2hvQIE+Nw0iFHd
-	IN1Gdr7U1MJ6l3aXYgzAFU8sziUAuct9olW6B2rD15gJNEd5cSQhN37JS1+CtSDD
-	bfjHcvQqCC6XsUexce/owwnb75kkcHkxnraJJEWsdaUPxRyraOQrDWcWN4GpeJlx
-	adL+2ME1OZLOnip770VBjYlOYhHXUw7IX8hce7vRiXDrO6FFMOFkUVjEe2oDJROF
-	Cgap/5N3rwYY6XZB0YrQpR2BQlB1V/Ei6OvNWaddfcUqar4hFGzoK9TIh28A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730969508; x=1731055908; bh=mLYrGgR7xi150q2EmTJsQhEuZ8EEIYlqYsh
-	pmAVqwAA=; b=AZtEeqp5+LeTdKCqHuRfHd8r+GNAtVtupKvrMZw+4HyhLXLYYkj
-	7RDJ6LJDn74vZCcv59CnM8woXwzIpRtJVwbGutDUn9bPCnZueLHCNqEtDVvgZFXi
-	aGOdFt8ABh5EEJb5wyLAkERwV8wp1Vuqyn+AHdyjPKjcIltw/izob2ngMbkJovAg
-	+tT/WEulzzBv8ysIfJHZ+dvA6tUxkv1zb8uPqYVYExwI7MtRhiYUi14bmxGkyQ4v
-	PSn74vI5mO8Lqmcx+O54QyqfxOzNAWSZhJIAHsq0SKqZDwDlRwQ0W2TMmcpThD1l
-	xGwX8TwS7WOGmGgcvlAAEqLczTxt2z05pFA==
-X-ME-Sender: <xms:o38sZ0lOQRl2ofk2myBjw8ppoWf03HTAMkpnMJh0ut9HGtkkPCeqeQ>
-    <xme:o38sZz0HZi6sh3K9wDoRWquxTBvX8Bh7jB69Bu9P6DcYcQx0lY-iPF3Fg_LKYJOmd
-    dMOPpQR7gLuJA>
-X-ME-Received: <xmr:o38sZyo7jvX2p-RBCfSqFZphhy9TP2591rph7qEWWZF9O8DmcSSggFyqKVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdefgdduvdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
-    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
-    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduiedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
-    hrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehm
-    rghrkhhgrhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehilhhpohdrjhgrrh
-    hvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhumhgrrdhh
-    vghguggvsegrmhgurdgtohhmpdhrtghpthhtoheplhhinhhugiesfigvihhsshhstghhuh
-    hhrdhnvght
-X-ME-Proxy: <xmx:o38sZwlZUpL4qbrMrjZprh8Ilz4XU7ZJYRGRpxdI9E3ezu_EKTJQsg>
-    <xmx:o38sZy3DnWeKTKmPQVValhjSlUJOJwi4yiLsKHgtAfHWmQX0_kWmwQ>
-    <xmx:o38sZ3sk6U9onJ_Cyf2F050PgoYVPmFddMh9Z_hDCRCN2rEQFMSA0A>
-    <xmx:o38sZ-WbDDvpcN4W2h7nxco1Urjv28hnh782NUFeBGRiYEnfo9_Xfw>
-    <xmx:pH8sZ7EAkOVurLCH7gTOErYUwS9H08xbNKQHIXj8b_IgklXALEEp8KiG>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 7 Nov 2024 03:51:46 -0500 (EST)
-Date: Thu, 7 Nov 2024 09:51:28 +0100
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Suma Hegde <suma.hegde@amd.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- drivers-x86 tree
-Message-ID: <2024110719-detective-directly-fbcf@gregkh>
-References: <20241107194007.1d247bde@canb.auug.org.au>
+	s=arc-20240116; t=1730969686; c=relaxed/simple;
+	bh=pTrhZGMux4w9HEGZVkA06OEz8j6sM7RTcepx+960yOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DDWU86pIMyUYFTxqIm9zxVZ2HEOPJhXuXNB5QE8JWcWI0zDWyGxzpBMo71Hc+gkyVNzF8SIreE/Y1GceBvLDy/wmAFMGVMDvp9O0dOZNBveYm3ubjdmhK0KLcTtW/n/fHg91k+5qZjY8+Tp5UAFniiGW7dgdjqvhETHANkZY5YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=de3waknc; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730969611; x=1731574411; i=w_armin@gmx.de;
+	bh=qaw7uMu2t3EIqtccwJknlcS0bifyYBg0bVt7fGnR0ys=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=de3wakncUUngdBJQ7jXy+NWXAclXKZotZf5RGrE1zArbtuMBEFtBOoV0PHwomJjs
+	 4LOo8q5DiDB2j0mLfk46JPjaHgEbQ+GWnZFfD3DV+tKUZGFhnHug8ohG+1aw8u1vc
+	 O3AmVIQa0KBhs+O420tgy/rAipkAMR5KicbjcUddvoO10CozlFH2ynpgliZy8XJYy
+	 Xwee5IpMXVD3b2pXaqSSb7O5e9ibG91Zyx/ZJveg1xhi2NVZV7WiIcRWJv1rST4UF
+	 XX/HyjHvPzGPq6HmQUq1hwL3o+VTnQ5fkdQC9gXpjwHlO6Rm/AR28cWj9wPC+ELLa
+	 O0V4XJsCuXOYzPqG5A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MEFzx-1szO1v3xsz-00C8zN; Thu, 07
+ Nov 2024 09:53:31 +0100
+Message-ID: <8a8a4c32-3c96-4c55-ac78-daffa00f87e3@gmx.de>
+Date: Thu, 7 Nov 2024 09:53:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107194007.1d247bde@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 16/20] ACPI: platform_profile: Make sure all profile
+ handlers agree on profile
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241107060254.17615-1-mario.limonciello@amd.com>
+ <20241107060254.17615-17-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241107060254.17615-17-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:G8J596hrcutVzCbvzNy11SEyrqvV3B7gg6KtP8RzAJ+KG3n23uk
+ VQCefGZUF/rkE+kDfHKweJQkKCSBVX1U/rmE+jgzHblafjGUFw2tgGd7yGiuHqOS5wCaMy5
+ fVCCKAE33qnBs/XBZmsyFPM/HX7ffdCTsjwwHsM9QNGVsdI4PNCjVWQwc1LeWvZyXHKzD8S
+ ByV2jGCXBDfxkEzdp0alQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8d2RQsrA56A=;hBY2AYwN1A+sP37Kpr/ZjG2XnnL
+ wtiLCBnDM4obfKHG6AKonNAMPo8asuqP4Fd4Cg9A91KIsPBFTm510T5U3FW/2nLynFAvOETXo
+ G3iTwUqjZV/BUehlFhqyOiUvnp0qxUms9zsmcQIYLi35wGmq1b5MlTm9TNyRGxApX+Cr0T3n5
+ xBnlFNuZmFFEkHEnLpH1Q8BgQj7UAc+LJESCmKQKpGU5d8vZRyRoxo9yM48nnLWCqqTz6vi/M
+ 9UPbmwiOvLZKeonOqrsogkqa62FoZ2ogwTi3weIRcj15Nkk/9KGh9JmqM2tDhUkwHenH63ONh
+ He1tbDgazgu4dIc5B/WisbJryAfj0P5Tj7tKtVLs9viyOWzJGKeKVCPv1DUZ/47JXQP1Djege
+ fz5YRTI8iHY+UD6QxrS89Plx9zkYnVGLN3gR4P2eHOYiYyZ7SJXrMoX77qj0WbCOmUSWCuCZg
+ NU99o97N+jKxBm02c8NRfAja1ylDZDoiNyfVXHadJ3q3Hv6sr0ZK1G4I6mTo0GycJTxSnS4RY
+ JKoBa9Y8vtKsYylq7uzGXz482DZE39SOIFSFkIqLoDRQ1whsrmcw7D8vN1iGFolAOJF/69Gao
+ fbKh5q3+RD70hlA6aJohwh1X4lXY6m/Sa+v4uNOz8Vlm7cQbEN6t2kIZEGsO2BNKKr3gJLo5+
+ 4bfcsqTtjO9LyGbkh4T1JosUKJR+6kyvJIOiyzLHlWzjFJIyJkwB3xZ7t3/lLb5gr3SWSznSu
+ v3HY4YjvfGifu9VBbhWkp0iIAf2aQB9yAPseg7K1cGt2J/oT3z3L5ikedSZUNpIBFrSEUqDGI
+ cUtsFXRYZWMjtC1HbTKK2z1IjczxMterEYOchJ39gwDsA4VuB5Ck/3foYAAU+Ux4FGGdowIBR
+ X0AOIOzWhPRL6n4QM4nqVGBIQuGAMmQZ1xZLBO5MuAy81O+z1o2ScOl4o
 
-On Thu, Nov 07, 2024 at 07:40:07PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in:
-> 
->   drivers/platform/x86/amd/hsmp.c
-> 
-> between commit:
-> 
->   9df193087b9e ("platform/x86/amd/hsmp: Create hsmp/ directory")
-> 
-> from the drivers-x86 tree and commit:
-> 
->   b626816fdd7f ("sysfs: treewide: constify attribute callback of bin_is_visible()")
-> 
-> from the driver-core tree.
-> 
-> I fixed it up (I deleted the file and applied the following patch) and
-> can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 7 Nov 2024 19:36:12 +1100
-> Subject: [PATCH] fix up for "sysfs: treewide: constify attribute callback of
->  bin_is_visible()"
-> 
-> interacting with "platform/x86/amd/hsmp: Create hsmp/ directory" from
-> the drivers-x86 tree.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Am 07.11.24 um 07:02 schrieb Mario Limonciello:
+
+> If for any reason multiple profile handlers don't agree on the profile
+> return the custom profile.
+>
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->  drivers/platform/x86/amd/hsmp/plat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/amd/hsmp/plat.c b/drivers/platform/x86/amd/hsmp/plat.c
-> index f8e74c0392ba..748bbc356484 100644
-> --- a/drivers/platform/x86/amd/hsmp/plat.c
-> +++ b/drivers/platform/x86/amd/hsmp/plat.c
-> @@ -75,7 +75,7 @@ static ssize_t hsmp_metric_tbl_plat_read(struct file *filp, struct kobject *kobj
->  }
->  
->  static umode_t hsmp_is_sock_attr_visible(struct kobject *kobj,
-> -					 struct bin_attribute *battr, int id)
-> +					 const struct bin_attribute *battr, int id)
->  {
->  	u16 sock_ind;
->  
+> v5:
+>   * Notify class profile of change to legacy interface
+>   * Don't show warning when writing custom string, document in last patc=
+h
+>     instead.
+>   * Adjust mutex use
+> ---
+>   drivers/acpi/platform_profile.c | 101 ++++++++++++++++++++++++--------
+>   1 file changed, 76 insertions(+), 25 deletions(-)
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
+file.c
+> index b6f3388b4eef9..7f302ac4d3779 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -94,6 +94,22 @@ static int _store_class_profile(struct device *dev, v=
+oid *data)
+>   	return err ? err : 0;
+>   }
+>
+> +/**
+> + * _notify_class_profile - Notify the class device of a profile change
+> + * @dev: The class device
+> + * @data: Unused
+> + */
+> +static int _notify_class_profile(struct device *dev, void *data)
+> +{
+> +	struct platform_profile_handler *handler =3D dev_get_drvdata(dev);
+> +
+> +	lockdep_assert_held(&profile_lock);
+> +	sysfs_notify(&handler->class_dev->kobj, NULL, "platform_profile");
+> +	kobject_uevent(&handler->class_dev->kobj, KOBJ_CHANGE);
+> +
+> +	return 0;
+> +}
+> +
+>   /**
+>    * get_class_profile - Show the current profile for a class device
+>    * @dev: The class device
+> @@ -284,54 +300,89 @@ static ssize_t platform_profile_choices_show(struc=
+t device *dev,
+>   	return _commmon_choices_show(aggregate, buf);
+>   }
+>
+> +/**
+> + * _aggregate_profiles - Aggregate the profiles for legacy sysfs interf=
+ace
+> + * @dev: The device
+> + * @data: The profile to return
+> + * Return: 0 on success, -errno on failure
+> + */
+> +static int _aggregate_profiles(struct device *dev, void *data)
+> +{
+> +	enum platform_profile_option *profile =3D data;
+> +	enum platform_profile_option val;
+> +	int err;
+> +
+> +	err =3D get_class_profile(dev, &val);
+> +	if (err)
+> +		return err;
+> +
+> +	if (*profile !=3D PLATFORM_PROFILE_LAST && *profile !=3D val)
+> +		*profile =3D PLATFORM_PROFILE_CUSTOM;
+> +	else
+> +		*profile =3D val;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * platform_profile_show - Show the current profile for legacy sysfs in=
+terface
+> + * @dev: The device
+> + * @attr: The attribute
+> + * @buf: The buffer to write to
+> + * Return: The number of bytes written
+> + */
+>   static ssize_t platform_profile_show(struct device *dev,
+> -					struct device_attribute *attr,
+> -					char *buf)
+> +				     struct device_attribute *attr,
+> +				     char *buf)
+>   {
+> -	enum platform_profile_option profile =3D PLATFORM_PROFILE_BALANCED;
+> +	enum platform_profile_option profile =3D PLATFORM_PROFILE_LAST;
+>   	int err;
+>
+>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> -		if (!cur_profile)
+> -			return -ENODEV;
+> -
+> -		err =3D cur_profile->profile_get(cur_profile, &profile);
+> +		err =3D class_for_each_device(&platform_profile_class, NULL,
+> +					    &profile, _aggregate_profiles);
+>   		if (err)
+>   			return err;
+>   	}
+>
+> -	/* Check that profile is valid index */
+> -	if (WARN_ON((profile < 0) || (profile >=3D ARRAY_SIZE(profile_names)))=
+)
+> -		return -EIO;
+> +	/* no profile handler registered any more */
+> +	if (profile =3D=3D PLATFORM_PROFILE_LAST)
+> +		return -EINVAL;
+>
+>   	return sysfs_emit(buf, "%s\n", profile_names[profile]);
+>   }
+>
+> +/**
+> + * platform_profile_store - Set the profile for legacy sysfs interface
+> + * @dev: The device
+> + * @attr: The attribute
+> + * @buf: The buffer to read from
+> + * @count: The number of bytes to read
+> + * Return: The number of bytes read
+> + */
+>   static ssize_t platform_profile_store(struct device *dev,
+> -			    struct device_attribute *attr,
+> -			    const char *buf, size_t count)
+> +				      struct device_attribute *attr,
+> +				      const char *buf, size_t count)
+>   {
+> -	int err, i;
+> +	int ret;
+> +	int i;
+>
+>   	/* Scan for a matching profile */
+>   	i =3D sysfs_match_string(profile_names, buf);
+> -	if (i < 0)
+> +	if (i < 0 || PLATFORM_PROFILE_CUSTOM)
 
-Change looks good, thanks!
+This condition looks a bit weird.
 
-greg k-h
+>   		return -EINVAL;
+>
+>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> -		if (!cur_profile)
+> -			return -ENODEV;
+> -
+> -		/* Check that platform supports this profile choice */
+> -		if (!test_bit(i, cur_profile->choices))
+> -			return -EOPNOTSUPP;
+> -
+> -		err =3D cur_profile->profile_set(cur_profile, i);
+> -		if (err)
+> -			return err;
+> +		ret =3D class_for_each_device(&platform_profile_class, NULL, &i,
+> +					    _store_class_profile);
+> +		if (ret)
+> +			return ret;
+> +		ret =3D class_for_each_device(&platform_profile_class, NULL, NULL,
+> +					    _notify_class_profile);
+
+Please rework _store_class_profile()  and _notify_class_profile() into:
+
+- platform_profile_store(struct platform_profile_handler,enumplatform_prof=
+ile_option option),
+   which is called by profile_store() while holding profile_lock.
+
+- platform_profile_class_store(struct device *dev, void *data), which is u=
+sed with class_for_each_device()
+   and internally calls platform_profile_store() and issues an notificatio=
+n on the "profile" (not "platform_profile"!)
+   class attribute and an uevent.
+
+This allows you to avoid having to iterate through all platform profile ha=
+ndlers twice.
+
+Thanks,
+Armin Wolf
+
+> +		if (ret)
+> +			return ret;
+>   	}
+>
+> -	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>   	return count;
+>   }
+>
 
