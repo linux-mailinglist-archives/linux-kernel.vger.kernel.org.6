@@ -1,200 +1,290 @@
-Return-Path: <linux-kernel+bounces-399266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFEE9BFCD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:03:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB3A9BFCD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 04:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1D51C21706
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:03:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDC2B22255
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23433158218;
-	Thu,  7 Nov 2024 03:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB4514900E;
+	Thu,  7 Nov 2024 03:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="duO2U1H9"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="fktRzNUH"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E716FBF;
-	Thu,  7 Nov 2024 03:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730948572; cv=fail; b=R0svKr+0LLBGj6wPeho05uJTamf2phZb3oI0l6Mo4NJcvxLTWeVUeEuZbor0wT4WSy1s3oINTLEAkDOt3Ky1sU0J0H7Ujtj3opCjXIdAUP53CgWnWCPO14kwi6TQ7IkQ/wdkQ37pl9Krm9BsQZ2HUZHM9+cYpvCi9xOEgzEs6So=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730948572; c=relaxed/simple;
-	bh=OG3gvd9OQzoKJ2r9ea+ikiRRc3S0BS4XAsHWDWAGY0c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PSld60146wNNxUQJiYChdTbcxwSTiKmykBExyKI6uF6sGKPfDkw6j51SXBT1RuRRvTyx6KNyetgWMP2PSF+lhQCnM75oWTnxTkh9CH9b6nUHlt8R6bhSzx8UYeDd4etq9GzMhHLmQ+WxnMS246jh/OnQyc0yW3EbnD7ckQ6GLK4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=duO2U1H9; arc=fail smtp.client-ip=40.107.92.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iq041KSSOYQVdkmvb5JVGq10PI1g+EBlIZbIdRGSa9q/Sa7XU6jOhwBXoDHm5NXEjNJv3KpEIZrgM1yxc8RAhOO/uqUhO7rLqSyv47wk2sIwwTeazYjqo+UzKh7184hZlq7jQZa5SLs6sqrxoeOtn8HMaDAvSa2t6XxtMP9a53TXkfw558F4FcjeaC81KQ8kxOBLidh29U/INP9hdcMcl71+cEiY5Kmi+FemXJtMOwxKTkwrf6vmRDHGkxAWG5aoieT2xJdfsb5g5RwLLUv4FDCM1ox1lfaeuXKFBKLy9z6fL+9ecDjWZ52ZqsFcE89iOR5bYxSv1bpGNjleJ5QrtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OG3gvd9OQzoKJ2r9ea+ikiRRc3S0BS4XAsHWDWAGY0c=;
- b=yGJw84+3wfl/vwGd8d1sE+wQYZDaY/2t3RSl3+UUwuJakxIoZil5YDRO1kd8FbzR+lApdGATQRuJ99kURDv9BejYCzlE7B5RXI9zjK3mnil9iAsmBxeubzG78uVMSNFCVe7sTd+dH3J52nRLq1dce5wlOq1TEOt5FXS5Q/FH6Nah/mpyOZYGZh4VpMJwrk00A0bUlllKF9I49oiMpFwzt7j08ODNmwqSBn/lzw34Y5y2zW1xZmy0DcRu1tRH7NruGSfaqTvut7H7/Ke6WKDJNDSVvnKeizcVaIeceZnqKZD8VaZ9ZsG5Wpb2ux479vYov/xnMxgy/J+zPsoW5Z+YYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OG3gvd9OQzoKJ2r9ea+ikiRRc3S0BS4XAsHWDWAGY0c=;
- b=duO2U1H9ZmctaQbDDvBJ1Z2JJzyGuiK05VtNIr37nZQceBtvMMhiSRm8mAurNJmJWhZFNB6l9OwpvnYUVbp5GLtaN9lVnI5jEebjk7CjNiVR2uS3JCCQTfru4fYBFEhE+aMnYtxFsY1T5Y92S80F/gQOMaQi94Eu7nRfdSmlO6Y=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by MW4PR12MB6705.namprd12.prod.outlook.com (2603:10b6:303:1e3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Thu, 7 Nov
- 2024 03:02:45 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%4]) with mapi id 15.20.8114.028; Thu, 7 Nov 2024
- 03:02:45 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: Anastasia Belova <abelova@astralinux.ru>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Limonciello, Mario" <Mario.Limonciello@amd.com>, "Shenoy, Gautham Ranjal"
-	<gautham.shenoy@amd.com>
-CC: "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>, "Huang,
- Ray" <Ray.Huang@amd.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Viresh
- Kumar <viresh.kumar@linaro.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 6.1 1/1] cpufreq: amd-pstate: add check for
- cpufreq_cpu_get's return value
-Thread-Topic: [PATCH 6.1 1/1] cpufreq: amd-pstate: add check for
- cpufreq_cpu_get's return value
-Thread-Index: AQHbME9I27Xhvm+HT0mpRgUGmPOs1LKqig+AgACYGiA=
-Date: Thu, 7 Nov 2024 03:02:45 +0000
-Message-ID:
- <CYYPR12MB8655B12BE3CF07BFDD98FD0E9C5C2@CYYPR12MB8655.namprd12.prod.outlook.com>
-References: <20241106132437.38024-1-abelova@astralinux.ru>
- <20241106132437.38024-2-abelova@astralinux.ru>
- <CB41EF06-3DEF-4682-84AE-7E74D6FB448F@astralinux.ru>
-In-Reply-To: <CB41EF06-3DEF-4682-84AE-7E74D6FB448F@astralinux.ru>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=abd25e6c-dfa7-4ea2-901e-b1f8325c0225;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-11-07T03:01:49Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|MW4PR12MB6705:EE_
-x-ms-office365-filtering-correlation-id: 61312d28-da3d-4e6c-86ee-08dcfed8a754
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?vT108xk7eCtAFLV7FOw0C8DR8bEKlvtfJwsn4E9IsNEW4vCYI4DtuokdRLi6?=
- =?us-ascii?Q?nRq973I5/uoAJqMX8T/veuBKAwYLoClrZwvVJ6NVwEiDFy7QhwZZUU2fsePE?=
- =?us-ascii?Q?9dGEC5DhJjpqiI/uP8zWkYyCtScH+XYKREBguU3ohxyWprXkd+FGLUG4wNHS?=
- =?us-ascii?Q?Wp6DoyVCwZQaf9dn5mZUuU0LzTsZG09MVzxPOZT6GUEHRrkBAgxEPvRQI7Si?=
- =?us-ascii?Q?XljdDzKuM8n6110pRT7P3tK/ruwoJCWuvqFfTWdZU0ypxtj6drZ//EJrEI9W?=
- =?us-ascii?Q?aUZZJMJwzHtI2IPYF6QZO/2LpZaHPxxhyc9USZYtEiPDMdXwwAt4UjCPMH9t?=
- =?us-ascii?Q?4d1mDO/Ng+rXCmTfBkvC1Y6Sg/gpJsVgzrWf/72CggLUA3kGZOYs8XsDVr7C?=
- =?us-ascii?Q?vkAqGSttC6CD75CfwSrrJ5mz7puJoIUMRMQqrBQDuX6FQFFyq6lrX0vHPjc1?=
- =?us-ascii?Q?4kDa/cPUK0rNY7LdXX9Q4xT/beNf7QDbp/5r980BkM1/UiWMHPRtygakZyFr?=
- =?us-ascii?Q?7moLZYcrpv4dCS7P7NVi3bWjAX86LdlfR3UBxGuWZK7kp6iBSKB1VYznfQgG?=
- =?us-ascii?Q?pGhXGYrWtSDnmOI+1eL51WX+AfAeE7Hb+R69lyJrHtDQGU+Hmi6lsJZYautE?=
- =?us-ascii?Q?RiQvy5fyPQWie1wV4X/45841vOH1AKbuQ4k6aRtyip5W5HQg2VLhAAb1ple+?=
- =?us-ascii?Q?eLBhP1rOjotIATzKk/De6gr+CEut8dHs6c/DjMJ6qk5TqXy+R2vogkKg/WJj?=
- =?us-ascii?Q?JgvOADBjb/OTkSt4AOUH8eMw5T4KYWvKHU6MBGAeA2Lvdq40stManGHAC02p?=
- =?us-ascii?Q?zAbzGqUkp4e2XpQjvJfibeEH1RxeWlLehAWzGKOV2hLtTKDmfYn3m5WbNebw?=
- =?us-ascii?Q?sS4fEi4Ope1de78ho0AmSFhdyZFV2g7FotTG0mRZupk+HClMtST7JBXeR+sV?=
- =?us-ascii?Q?aM2y08M0ADg3yc0IU5mL6B+f5JPqSge1gnRGOBYyPexKdnqj8VXN3t94/YS9?=
- =?us-ascii?Q?3dh8/z5lqGjgaeGNnNxVYJVgke2wn0uRpfAe8Wi9kn2vPtEc553WvMVZXyzF?=
- =?us-ascii?Q?WqqVP/awO/n3gPAbgrE7VL3lJ1T/QMAmR8mM0Cs1BcYGqbHpX9nMEhlcEi+H?=
- =?us-ascii?Q?jUVB9+e9XgkJ8zruel46AVyYj6kJ1SScK53khvg66c/wqnzzX8nA6AM62OHl?=
- =?us-ascii?Q?8tza5tJwftj0hI33//BK76A8xyU+xTcOL7Z0DeCtaqKUNceh1kmFTLxf7BUg?=
- =?us-ascii?Q?6EwrnCw3U1nHwPEpIE6R2ERCHQ7DWlNzeT8tKxTc8jc6AIJGC4LOQoBXnHLO?=
- =?us-ascii?Q?KhBK5qah05so9ERBfGKUffXJMbx5f1cEUAmINVdQQID3mtXK5M34u+lgV75p?=
- =?us-ascii?Q?NEujgzM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?YJNWKE4Abg/jHbTmfXje2dR5KIlKMAx947P4TgH4gJR/eZ+KWHgR0PjeuAMI?=
- =?us-ascii?Q?T0rTbppwQpnxz9Ql4A8x2txIB2IaSt3hnh/E5aG+z+UmC2XyDTY2nDkqKHlg?=
- =?us-ascii?Q?rADZ176v7DuuLRPO57pfv6GZCPNA/a7myeztbSNbS5idfPPJgzMSKaj02c5P?=
- =?us-ascii?Q?Z8//UJznvCjyVU6k+lv0l5ngPYiTSJyQtjiaqK5xoeSeo7XKi1rFNaZTjHLi?=
- =?us-ascii?Q?Vw9gCpBa3vIoDQo8AqwwA33LTLOah891Z+TtIug7nALV1prFf9KTRaDwHIq5?=
- =?us-ascii?Q?wAz1aPvfxZh4bFwMBtBjpBC633Kopm/jLPMkgBvSp4FcXFtu1eO/A+UAHu2A?=
- =?us-ascii?Q?tmTdh38nvfTQ4yNgSsNaVXmkvrI07J5k0wk2Hm+7/aLNEwbpKjCChoqKZbER?=
- =?us-ascii?Q?qIXPcVEHwT+E+j36ByOnReGKMCbqO+cFIRoiREYOonFryHBeY4sMxnG1Ghok?=
- =?us-ascii?Q?cO7q7loyG5dR+GNILLZX4Ea0Zt7OkfWG8VrUmkQ1pW07VgEK9yV39tqQMQwV?=
- =?us-ascii?Q?nsat6ooMU6CahkxzaBGsnZF427k0FYZ7xaKkK0ZLE6Q4NEbBofSfTZREkzCU?=
- =?us-ascii?Q?0PIuW54KypvLAFK0r6QWiHJ+OqOCoVfXlBHPcTRxP/KFWSHc37UdpmPSjii6?=
- =?us-ascii?Q?pUFx1GG1D4TDtSTCVGZuwlCWRPlk5dgLW6r54fjmWR7AEiFz1X9WvoqY2saF?=
- =?us-ascii?Q?k8KmCouNswX12b3/e8jrT7fIVlP1XSFNk6J4U4XFf75JH2ihHQxi15FL7T0b?=
- =?us-ascii?Q?njWpMlmWTA62OqkeYD5r7frstcu52SLr1a1Y0oRny30pn5hTkYBxAhiV72Fn?=
- =?us-ascii?Q?pMZcmUN4hF2bGvIozQ1sJHoy+2+UuQvcLf+atMMk04uvc8ECowc50O3M5pZx?=
- =?us-ascii?Q?CctHNhnnLEaw/UvjdNMqtZXcF70Gu3NvS1/1pxF5HkkUOrGQZIt1jNX9hizY?=
- =?us-ascii?Q?FABIpDb67KptQ0bb98tf80bDUJuK0wiRSP9qIF9krQblrRBjMMxDRLQoQyhY?=
- =?us-ascii?Q?wX5vn56hPayz0cgT6CM+FC+oMIIspFx85Px2z94/+NHMsEfrS/kOR7qV3Tsn?=
- =?us-ascii?Q?mD+5drRo6/YXscUMdCgkpYavKryY903bRBJXBmrCw67MrGS8/X20i0xszNBB?=
- =?us-ascii?Q?iQbVA0isY9dZYuFfot6IQ9dxbQoGv5foCHTQwKn+8JFIhgHH/bmrY2UCYkKC?=
- =?us-ascii?Q?gSNSYo2mfeK1tOCAoydo9Ta+0HJrJe0M3SVBn5wVzsTMw1fi4NiwMlruVZr2?=
- =?us-ascii?Q?G5SME/wt9yNWEgTkucldi/2SAIrPga/NVRQkMaNqlvpfceKyPakRtTFPh8p4?=
- =?us-ascii?Q?ePCA50la0Zb2hvI80NigXbmhTeq8vOXBMKcNf5QS8top1m0m/nqI9SjTJTCd?=
- =?us-ascii?Q?40AUMpDFMn+PEkJSqCQER4fGBS4K0R1HYsAFM8kfzFiUzL2Wj6CnDN1WoApr?=
- =?us-ascii?Q?KwOqNKktrsItnHaCN6nfFEUOC3cTewkVnvyQhaHQHLMfWA8HiYAZx9CXXgDh?=
- =?us-ascii?Q?hoHZuEKJWNm10Cxe4Fcu4COwtwzwGrG6enIbB4OB76IiOdFQVZVYzS0Si4Tk?=
- =?us-ascii?Q?rknLQkleRmz5ItMqvs4=3D?=
-Content-Type: text/plain; charset="us-ascii"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BD96FBF;
+	Thu,  7 Nov 2024 03:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730948722; cv=none; b=HWPYfs0s/hTXYWLz08yT4lfT99Q41VjN8lqovzGtUc8DHI1qaMPbLqij4Zk6ngLa92+Op87/dYYcenMqzMLeqeecB9cul7cQr2ejMBlLMoeVOEKx0aq9gMgudTbWoK4hutg2XYYq5gMsaSEc2SPS+H23k1jLW2frGnAPos0NDg0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730948722; c=relaxed/simple;
+	bh=IXAD+jCZLyYZRQRfmCNo0LCsdh7gD/znV7S26k0a1UU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LvC5U4jhze0h/TJvXYVgBnEp866AJug+NEjkHAQWj4BLQjHB/IgfZn+kxoMhsSMqLAfSQ7ljoJ2tPnrbdiuyIvE3cVwXxg62+JqMYUIgs8HjJP26H5of+c0pfeG8W1vNWV5CshvmJd67OGsekQr8Ia2iymLqWerkCvEKuaKMSh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=fktRzNUH; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1730948711;
+	bh=erZFG6Q0iFzHtXVVJZKWsaL8nS/sZz25HN4vZXCTXxw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=fktRzNUHs4idIS1oslvsPvtGaZOaLFSukofrNnKtqjqeVdMPWMshQkEAVGD51IzSb
+	 ECZycc8Ck+ROhQyppNi97DpnsHsREsvFji5zNXjB0O0Ecq51z8nGTRZCR4i+TsIzo6
+	 3hWTpZ7uNZLssI3qfc/RcO9DbiArBtm4u1avvnhiBkzGlVC+gJ08A2D6MzY5pt+tM8
+	 bjGU5Ywm702tGgwSWUyvJjvY3/eUSxWav4QdI1zMZp4IDswPOh13wlGSarvU1SDX8E
+	 XiuM4AwfrmpzwoZG3bcXe7csWmi3nLM9rm5mOhdfJYxkcvrAkXHMA5lCMntpEWIx2J
+	 O4kUjRVQWsJMQ==
+Received: from [192.168.12.102] (unknown [159.196.94.230])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id CDE776B83E;
+	Thu,  7 Nov 2024 11:05:08 +0800 (AWST)
+Message-ID: <a5349550f7b66ff53c0875b6bcefd20dcd165711.camel@codeconstruct.com.au>
+Subject: Re: [PATCH net-next] net: mctp: Expose transport binding identifier
+ via IFLA attribute
+From: Matt Johnston <matt@codeconstruct.com.au>
+To: Khang Nguyen <khangng@os.amperecomputing.com>, Jeremy Kerr
+ <jk@codeconstruct.com.au>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
+Cc: ampere-linux-kernel@lists.amperecomputing.com, Phong Vo
+ <phong@os.amperecomputing.com>, Thang Nguyen
+ <thang@os.amperecomputing.com>,  Khanh Pham <khpham@amperecomputing.com>,
+ Phong Vo <pvo@amperecomputing.com>, Quan Nguyen
+ <quan@os.amperecomputing.com>, Chanh Nguyen <chanh@os.amperecomputing.com>,
+  Thu Nguyen <thu@os.amperecomputing.com>, Hieu Le
+ <hieul@amperecomputing.com>, openbmc@lists.ozlabs.org, 
+ patches@amperecomputing.com
+Date: Thu, 07 Nov 2024 11:05:08 +0800
+In-Reply-To: <20241105071915.821871-1-khangng@os.amperecomputing.com>
+References: <20241105071915.821871-1-khangng@os.amperecomputing.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61312d28-da3d-4e6c-86ee-08dcfed8a754
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2024 03:02:45.3169
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: frSIGmIZlvi3azkHhsVUwMiDinH5G+FzmLAzRB4UJnFrUygpOKxdx2hDH3fvTGg0RoPapFdfCDXvbCfOv2Eiog==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6705
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+Thanks Khang, this looks good.
 
-> -----Original Message-----
-> From: Anastasia Belova <abelova@astralinux.ru>
-> Sent: Thursday, November 7, 2024 1:57 AM
-> To: stable@vger.kernel.org; Greg Kroah-Hartman <gregkh@linuxfoundation.or=
-g>
-> Cc: lvc-project@linuxtesting.org; Huang, Ray <Ray.Huang@amd.com>; Rafael =
-J.
-> Wysocki <rafael@kernel.org>; Viresh Kumar <viresh.kumar@linaro.org>; linu=
-x-
-> pm@vger.kernel.org; linux-kernel@vger.kernel.org; Yuan, Perry
-> <Perry.Yuan@amd.com>
-> Subject: Re: [PATCH 6.1 1/1] cpufreq: amd-pstate: add check for cpufreq_c=
-pu_get's
-> return value
->
-> Hi!
->
-> I found out this commit should be backported to 6.6 first.
-> Should I resend this letter after it is done or I may ping it later?
->
-> Anastasia Belova
+On Tue, 2024-11-05 at 14:19 +0700, Khang Nguyen wrote:
+> MCTP control protocol implementations are transport binding dependent.
+> Endpoint discovery is mandatory based on transport binding.
+> Message timing requirements are specified in each respective transport
+> binding specification.
+>=20
+> However, we currently have no means to get this information from MCTP
+> links.
+>=20
+> Add a IFLA_MCTP_PHYS_BINDING netlink link attribute, which represents
+> the transport type using the DMTF DSP0239-defined type numbers, returned
+> as part of RTM_GETLINK data.
+>=20
+> We get an IFLA_MCTP_PHYS_BINDING attribute for each MCTP link, for
+> example:
+>=20
+> - 0x00 (unspec) for loopback interface;
+> - 0x01 (SMBus/I2C) for mctpi2c%d interfaces; and
+> - 0x05 (serial) for mctpserial%d interfaces.
+>=20
+> Signed-off-by: Khang Nguyen <khangng@os.amperecomputing.com>
+> ---
+>  drivers/net/mctp/mctp-i2c.c    |  3 ++-
+>  drivers/net/mctp/mctp-i3c.c    |  2 +-
+>  drivers/net/mctp/mctp-serial.c |  5 +++--
+>  include/net/mctp.h             | 18 ++++++++++++++++++
+>  include/net/mctpdevice.h       |  4 +++-
+>  include/uapi/linux/if_link.h   |  1 +
+>  net/mctp/device.c              | 12 +++++++++---
+>  7 files changed, 37 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/net/mctp/mctp-i2c.c b/drivers/net/mctp/mctp-i2c.c
+> index 4dc057c121f5..86151a03570e 100644
+> --- a/drivers/net/mctp/mctp-i2c.c
+> +++ b/drivers/net/mctp/mctp-i2c.c
+> @@ -877,7 +877,8 @@ static int mctp_i2c_add_netdev(struct mctp_i2c_client=
+ *mcli,
+>  		goto err;
+>  	}
+> =20
+> -	rc =3D mctp_register_netdev(ndev, &mctp_i2c_mctp_ops);
+> +	rc =3D mctp_register_netdev(ndev, &mctp_i2c_mctp_ops,
+> +				  MCTP_PHYS_BINDING_SMBUS);
+>  	if (rc < 0) {
+>  		dev_err(&mcli->client->dev,
+>  			"register netdev \"%s\" failed %d\n",
+> diff --git a/drivers/net/mctp/mctp-i3c.c b/drivers/net/mctp/mctp-i3c.c
+> index 1bc87a062686..9adad59b8676 100644
+> --- a/drivers/net/mctp/mctp-i3c.c
+> +++ b/drivers/net/mctp/mctp-i3c.c
+> @@ -607,7 +607,7 @@ __must_hold(&busdevs_lock)
+>  		goto err_free_uninit;
+>  	}
+> =20
+> -	rc =3D mctp_register_netdev(ndev, NULL);
+> +	rc =3D mctp_register_netdev(ndev, NULL, MCTP_PHYS_BINDING_I3C);
+>  	if (rc < 0) {
+>  		dev_warn(&ndev->dev, "netdev register failed: %d\n", rc);
+>  		goto err_free_netdev;
+> diff --git a/drivers/net/mctp/mctp-serial.c b/drivers/net/mctp/mctp-seria=
+l.c
+> index e63720ec3238..26c9a33fd636 100644
+> --- a/drivers/net/mctp/mctp-serial.c
+> +++ b/drivers/net/mctp/mctp-serial.c
+> @@ -23,6 +23,7 @@
+> =20
+>  #include <linux/mctp.h>
+>  #include <net/mctp.h>
+> +#include <net/mctpdevice.h>
+>  #include <net/pkt_sched.h>
+> =20
+>  #define MCTP_SERIAL_MTU		68 /* base mtu (64) + mctp header */
+> @@ -470,7 +471,7 @@ static int mctp_serial_open(struct tty_struct *tty)
+>  	spin_lock_init(&dev->lock);
+>  	INIT_WORK(&dev->tx_work, mctp_serial_tx_work);
+> =20
+> -	rc =3D register_netdev(ndev);
+> +	rc =3D mctp_register_netdev(ndev, NULL, MCTP_PHYS_BINDING_SERIAL);
+>  	if (rc)
+>  		goto free_netdev;
+> =20
+> @@ -492,7 +493,7 @@ static void mctp_serial_close(struct tty_struct *tty)
+>  	struct mctp_serial *dev =3D tty->disc_data;
+>  	int idx =3D dev->idx;
+> =20
+> -	unregister_netdev(dev->netdev);
+> +	mctp_unregister_netdev(dev->netdev);
+>  	ida_free(&mctp_serial_ida, idx);
+>  }
+> =20
+> diff --git a/include/net/mctp.h b/include/net/mctp.h
+> index 28d59ae94ca3..1ecbff7116f6 100644
+> --- a/include/net/mctp.h
+> +++ b/include/net/mctp.h
+> @@ -298,4 +298,22 @@ void mctp_routes_exit(void);
+>  int mctp_device_init(void);
+>  void mctp_device_exit(void);
+> =20
+> +/* MCTP IDs and Codes from DMTF specification
+> + * "DSP0239 Management Component Transport Protocol (MCTP) IDs and Codes=
+"
+> + * https://www.dmtf.org/sites/default/files/standards/documents/DSP0239_=
+1.11.1.pdf
+> + */
+> +enum mctp_phys_binding {
+> +	MCTP_PHYS_BINDING_UNSPEC	=3D 0x00,
+> +	MCTP_PHYS_BINDING_SMBUS		=3D 0x01,
+> +	MCTP_PHYS_BINDING_PCIE_VDM	=3D 0x02,
+> +	MCTP_PHYS_BINDING_USB		=3D 0x03,
+> +	MCTP_PHYS_BINDING_KCS		=3D 0x04,
+> +	MCTP_PHYS_BINDING_SERIAL	=3D 0x05,
+> +	MCTP_PHYS_BINDING_I3C		=3D 0x06,
+> +	MCTP_PHYS_BINDING_MMBI		=3D 0x07,
+> +	MCTP_PHYS_BINDING_PCC		=3D 0x08,
+> +	MCTP_PHYS_BINDING_UCIE		=3D 0x09,
+> +	MCTP_PHYS_BINDING_VENDOR	=3D 0xFF,
+> +};
+> +
+>  #endif /* __NET_MCTP_H */
+> diff --git a/include/net/mctpdevice.h b/include/net/mctpdevice.h
+> index 5c0d04b5c12c..957d9ef924c5 100644
+> --- a/include/net/mctpdevice.h
+> +++ b/include/net/mctpdevice.h
+> @@ -22,6 +22,7 @@ struct mctp_dev {
+>  	refcount_t		refs;
+> =20
+>  	unsigned int		net;
+> +	enum mctp_phys_binding	binding;
+> =20
+>  	const struct mctp_netdev_ops *ops;
+> =20
+> @@ -44,7 +45,8 @@ struct mctp_dev *mctp_dev_get_rtnl(const struct net_dev=
+ice *dev);
+>  struct mctp_dev *__mctp_dev_get(const struct net_device *dev);
+> =20
+>  int mctp_register_netdev(struct net_device *dev,
+> -			 const struct mctp_netdev_ops *ops);
+> +			 const struct mctp_netdev_ops *ops,
+> +			 enum mctp_phys_binding binding);
+>  void mctp_unregister_netdev(struct net_device *dev);
+> =20
+>  void mctp_dev_hold(struct mctp_dev *mdev);
+> diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
+> index 8516c1ccd57a..2575e0cd9b48 100644
+> --- a/include/uapi/linux/if_link.h
+> +++ b/include/uapi/linux/if_link.h
+> @@ -1958,6 +1958,7 @@ struct ifla_rmnet_flags {
+>  enum {
+>  	IFLA_MCTP_UNSPEC,
+>  	IFLA_MCTP_NET,
+> +	IFLA_MCTP_PHYS_BINDING,
+>  	__IFLA_MCTP_MAX,
+>  };
+> =20
+> diff --git a/net/mctp/device.c b/net/mctp/device.c
+> index 3d75b919995d..26ce34b7e88e 100644
+> --- a/net/mctp/device.c
+> +++ b/net/mctp/device.c
+> @@ -371,6 +371,8 @@ static int mctp_fill_link_af(struct sk_buff *skb,
+>  		return -ENODATA;
+>  	if (nla_put_u32(skb, IFLA_MCTP_NET, mdev->net))
+>  		return -EMSGSIZE;
+> +	if (nla_put_u8(skb, IFLA_MCTP_PHYS_BINDING, mdev->binding))
+> +		return -EMSGSIZE;
+>  	return 0;
+>  }
+> =20
+> @@ -385,6 +387,7 @@ static size_t mctp_get_link_af_size(const struct net_=
+device *dev,
+>  	if (!mdev)
+>  		return 0;
+>  	ret =3D nla_total_size(4); /* IFLA_MCTP_NET */
+> +	ret +=3D nla_total_size(1); /* IFLA_MCTP_PHYS_BINDING */
+>  	mctp_dev_put(mdev);
+>  	return ret;
+>  }
+> @@ -480,7 +483,8 @@ static int mctp_dev_notify(struct notifier_block *thi=
+s, unsigned long event,
+>  }
+> =20
+>  static int mctp_register_netdevice(struct net_device *dev,
+> -				   const struct mctp_netdev_ops *ops)
+> +				   const struct mctp_netdev_ops *ops,
+> +				   enum mctp_phys_binding binding)
+>  {
+>  	struct mctp_dev *mdev;
+> =20
+> @@ -489,17 +493,19 @@ static int mctp_register_netdevice(struct net_devic=
+e *dev,
+>  		return PTR_ERR(mdev);
+> =20
+>  	mdev->ops =3D ops;
+> +	mdev->binding =3D binding;
+> =20
+>  	return register_netdevice(dev);
+>  }
+> =20
+>  int mctp_register_netdev(struct net_device *dev,
+> -			 const struct mctp_netdev_ops *ops)
+> +			 const struct mctp_netdev_ops *ops,
+> +			 enum mctp_phys_binding binding)
+>  {
+>  	int rc;
+> =20
+>  	rtnl_lock();
+> -	rc =3D mctp_register_netdevice(dev, ops);
+> +	rc =3D mctp_register_netdevice(dev, ops, binding);
+>  	rtnl_unlock();
+> =20
+>  	return rc;
 
-
-+ Mario and Gautham for help.
-
-Best Regards.
-
-Perry.
+Reviewed-by: Matt Johnston <matt@codeconstruct.com.au>
 
