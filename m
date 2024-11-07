@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-399877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657AF9C05BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:27:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A85E9C05C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C89A9B214D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:27:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E27C1C21F21
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8A920FA84;
-	Thu,  7 Nov 2024 12:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3A20F5D0;
+	Thu,  7 Nov 2024 12:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B0z7mIqD"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qd7q8zc6"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8E320371D
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E5120EA26
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730982417; cv=none; b=ZZc8cgn6IpD/5fksk6beuFDsxdarrLPYZfaR6zqSecIrLX08lS8QZ2Egtq+FHztSWj0UKlf7pqhZTev17ylnL+Y4c32P718zhjF1KrAU9mMLXzn+M3YfO1Z1aNzMu3AG+VWaDqbJJ7AKhlX8+5AUKOFefjZXZ6KCgI0RR/TRHxo=
+	t=1730982455; cv=none; b=DSq2Udhz03GrbrObCGCWhGprZPHAW2bs11x4Yp6n2rGVH55MX8psFaV7tqm9upBheHXNQYwd4mbmXgQtWy9ob20Zh7/iVdkX+v3xWYUPSXI9kNJZQkBgHPk7HqE2djGy4kcHBuRLvmdIWf39WsLodOFn0EChYpOAMV633TPKfoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730982417; c=relaxed/simple;
-	bh=WVMN927o4qkeYTXILdzvcIvO1X/LpqgECegr3MVyyb8=;
+	s=arc-20240116; t=1730982455; c=relaxed/simple;
+	bh=7fW7Or4bv3LMfGfA2w7Yy7Fn1KUAaH8JSTS4G9X+14g=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MCqwe6SRaaSOxW6nfM3Nr6YKBjRypoJSiZdhHTdbhyVfvaBM92gXkTtQJYJUYlcfLuyS73VVyXLBxIk9PY5rd6v7bzSax5rvscignfZlxk2q1/X/qYlSo+3tO9ScmJLbYhL82t0/wsmXgMInQ7l4t+48XIQUPJoylavO9ruEeeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B0z7mIqD; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:Content-Type; b=uGmgsD2r4ulwtVOR0p+wX15IevAh3458hBPnUDz92z9oBLZHIZRTndoqTEg2V/DFy6cg+vqNqEh3P0odRkM11VPV+Zj4kNbn8U4i0IzUon4mwwuzKUGIKrRSka5pmW9c6aoXGNdIYCBELe2wMj0eF+Qr/fYoOri5uwmXSplmCuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qd7q8zc6; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so8033575e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:26:54 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431ac30d379so7487435e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:27:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730982413; x=1731587213; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730982452; x=1731587252; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7vkRS/H+ZdcXDiRwjEKgfNuTb5DcFuR2X48KVwuB62o=;
-        b=B0z7mIqDmVX4/Gz7SvAHjihbaVC8eihQyE6WN7DBAObfMSM5LKwwBp480YdrgE4tM5
-         sbcEMumaB9CQXu9sGBVf0+f11oNImuHxKZ3XkU8kqgbuUMpeh5HcbYuS0+DQhGV0CYuM
-         2wxZFn3MV7R2HeTuleImMi10tBWM8Tf8H8byBHjtdjzR8eWmcMoheUknCQQPxQKiJnCl
-         61ES3yKUZpu5FSe1utIsxtdCJb9wL5GKQLtdPR/GQMP+2du7AXq2xGJ7gXEF0zw9bGnI
-         CEYIJPco+oD2fXB2dzUv+pvA2FgPlvCZ2eKQLkr/NoOXbEE7fjw3p1CWhxqGVUvY4Cj+
-         CIww==
+        bh=Yn4k/AKEEWXzHMELIUTj4UPwDIVmAaYKV7woWIMbon4=;
+        b=Qd7q8zc6dcKrmbRpiJ884Zyp0HqueDdhBZoA1CtjVSY1fvW5gaSirxyCguGq+ObETV
+         tqQzLSu2tZ3aruV7vz+5uHQW7xpkmtYs5V0VElDYtYq/XLLePBtVnDM4TkhZjly5EIq6
+         7ZIT/2/A2l7+BsBX/V3e7vx1yo2Cmt0wOsi/iVympCTzYvtgdC4+NokVDcilZAfUN2OP
+         p2m1r8tS2kFPKd5tdg2N+laj6fKeVkdPkeXdS4g/XFAoQbb3CP0lEAITQrhfDUeYEkRR
+         s9VlOAPfQpINvr4tbLwz6ZIbVrtlEVPy5B+riQh3YNluNO1I8Gmpgj18ocXWcb7O4RTL
+         ynEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730982413; x=1731587213;
+        d=1e100.net; s=20230601; t=1730982452; x=1731587252;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=7vkRS/H+ZdcXDiRwjEKgfNuTb5DcFuR2X48KVwuB62o=;
-        b=dG2OxZXvgx7a1e3ttHZO2cOunCbpguCyUNM8BnnoDaLtjUFQs4QA6+5SeW/mFP8394
-         3m4S+Pkj4wGfllyGaZ2K/7Y6UgnejO4PHA09xhryxINEGqoBmLJNo2oSBbOrjZchAxel
-         zZHZ+Rfhtrlza9N00+HkWtQxEn7GzG6DBaV0kA1fH/VYBdPB4yDA5N1M5FEUzmh8UL1F
-         dMNEfgI1WugD74rQe3C/erW4VGqx5uedPx26TZKsxJWP3ptDQmgoF4uNxjAItWF0aYMM
-         fU3eGTWJY+TuasgPDhIU3LReRILxMYVlZ8VoAScuaeqz7yC2xzbPODGCFYPHG0BS+as2
-         ydXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4vBN/nj/l36ILa4sFEJUv8A9YylFQ3iMmKZtebLyZsb2jMGGp1ca86tk6MS7PQ38kpw6DKXs3rqIpd78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy/Jp1m5vsH1Vm+02m2/n+Ef/q/auTYqzpwOUEZnk+RrvyUDrI
-	f7yWJweCSN2b1jN5Zr29aHAg/gpUhGsAdpyh58fmUZekvYClTNi/XpPknicnBDI=
-X-Google-Smtp-Source: AGHT+IFGWO5UdFCxajEysApkqvgppvf4I2d7N66E3WZTxWr029LJD2QTc2dczG2SHK/UBdlZ/06AjQ==
-X-Received: by 2002:a05:600c:1f0f:b0:431:5043:87c3 with SMTP id 5b1f17b1804b1-432b307b3efmr10799445e9.22.1730982413518;
-        Thu, 07 Nov 2024 04:26:53 -0800 (PST)
-Received: from [172.16.23.252] ([154.14.63.34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed99a34bsm1580393f8f.54.2024.11.07.04.26.52
+        bh=Yn4k/AKEEWXzHMELIUTj4UPwDIVmAaYKV7woWIMbon4=;
+        b=q69WNman9PgYh5r9F3fKw7iOuX46r87JZR6OWcECx9LOL/ZE86M8FUsEChosjjWtCp
+         nLXFdA0rOJPKFGHNPrhPsCgGKqOwUrRzro18yr4a6hFCGwuSwiTFz+WdBg16FS/1EaSt
+         wm1nWbfTpCwTBc9XuRA/KdYVf4pcv31evCYKea0JVkX9/F+yzDXpG72lRrO8QP6JFL7W
+         r9QQQO9gZyUThijp0kJPpk5t0e2HgymqZ1+ukJm6Y/GQmwr975SgL/TungRf7PD7E0WA
+         qj3E08GCItnHgfzbJYVDlBg4Ue30M5GC2jlWRpZr14L8kISmOJsPQAJPAglvv25zA68N
+         0Yag==
+X-Forwarded-Encrypted: i=1; AJvYcCVrVk7mlA2Lz//fuJeyOYl2ASr/ziR8BQhsYcnsxKkVpWeYau6cGeG6ABvsiDXxizdXMKrL8S9PqcWB5sI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfdvXQYg1Qr9j6M6wlKXMHwJ7Cm1BdrUj5pBYGo5uNG5sOtRME
+	hicuiQ221AjbIyqxkg/OyUb8HrCnUP2mgXmF//mcGx6Xky7EqugAprdGJf9WTJw=
+X-Google-Smtp-Source: AGHT+IEKl+yBhKl9P9rAWF3Zv0iPAWAueK1s6Y0V7M3SqQDjTXl7EEXZlWLjrPZCLIWLZ6AL8CGk/w==
+X-Received: by 2002:a5d:49c2:0:b0:37d:39c1:4d3 with SMTP id ffacd0b85a97d-380610f2ea6mr32205866f8f.6.1730982452121;
+        Thu, 07 Nov 2024 04:27:32 -0800 (PST)
+Received: from [172.16.23.252] ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6b3611sm58072005e9.13.2024.11.07.04.27.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 04:26:53 -0800 (PST)
-Message-ID: <b9ac677b-e237-45ea-a121-de5e1ca177cb@linaro.org>
-Date: Thu, 7 Nov 2024 13:26:51 +0100
+        Thu, 07 Nov 2024 04:27:31 -0800 (PST)
+Message-ID: <3c0b7fb7-5e51-4b7b-bc48-3034470dcb0f@linaro.org>
+Date: Thu, 7 Nov 2024 13:27:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +79,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-sm8550: Keep UFS PHY GDSCs ALWAYS_ON
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-sm8650: Keep UFS PHY GDSCs ALWAYS_ON
 To: manivannan.sadhasivam@linaro.org, Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
@@ -87,7 +87,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
  Nitin Rawat <quic_nitirawa@quicinc.com>, stable@vger.kernel.org
 References: <20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org>
- <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
+ <20241107-ufs-clk-fix-v1-2-6032ff22a052@linaro.org>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -114,18 +114,17 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20241107-ufs-clk-fix-v1-1-6032ff22a052@linaro.org>
+In-Reply-To: <20241107-ufs-clk-fix-v1-2-6032ff22a052@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 07/11/2024 12:58, Manivannan Sadhasivam via B4 Relay wrote:
 > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> Starting from SM8550, UFS PHY GDSCs doesn't support hardware retention. So
-> using RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs
-> will get powered down during suspend, causing the UFS PHY to loose its
-> state. And this will lead to below UFS error during resume as observed on
-> SM8550-QRD:
+> In SM8650, UFS PHY GDSCs doesn't support hardware retention. So using
+> RETAIN_FF_ENABLE is wrong. Moreover, without ALWAYS_ON flag, GDSCs will get
+> powered down during suspend, causing the UFS PHY to loose its state. And
+> this will lead to UFS error similar to below during resume:
 > 
 > ufshcd-qcom 1d84000.ufs: ufshcd_uic_hibern8_exit: hibern8 exit failed. ret = 5
 > ufshcd-qcom 1d84000.ufs: __ufshcd_wl_resume: hibern8 exit failed 5
@@ -134,19 +133,18 @@ On 07/11/2024 12:58, Manivannan Sadhasivam via B4 Relay wrote:
 > ufs_device_wlun 0:0:0:49488: PM: failed to resume async: error 5
 > 
 > Cc: stable@vger.kernel.org # 6.8
-> Fixes: 1fe8273c8d40 ("clk: qcom: gcc-sm8550: Add the missing RETAIN_FF_ENABLE GDSC flag")
-> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Fixes: c58225b7e3d7 ("clk: qcom: add the SM8650 Global Clock Controller driver, part 1")
 > Suggested-by: Nitin Rawat <quic_nitirawa@quicinc.com>
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->   drivers/clk/qcom/gcc-sm8550.c | 4 ++--
+>   drivers/clk/qcom/gcc-sm8650.c | 4 ++--
 >   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
-> index 5abaeddd6afc..7dd08e175820 100644
-> --- a/drivers/clk/qcom/gcc-sm8550.c
-> +++ b/drivers/clk/qcom/gcc-sm8550.c
-> @@ -3046,7 +3046,7 @@ static struct gdsc ufs_phy_gdsc = {
+> diff --git a/drivers/clk/qcom/gcc-sm8650.c b/drivers/clk/qcom/gcc-sm8650.c
+> index fd9d6544bdd5..ddc38caf7160 100644
+> --- a/drivers/clk/qcom/gcc-sm8650.c
+> +++ b/drivers/clk/qcom/gcc-sm8650.c
+> @@ -3480,7 +3480,7 @@ static struct gdsc ufs_phy_gdsc = {
 >   		.name = "ufs_phy_gdsc",
 >   	},
 >   	.pwrsts = PWRSTS_OFF_ON,
@@ -155,7 +153,7 @@ On 07/11/2024 12:58, Manivannan Sadhasivam via B4 Relay wrote:
 >   };
 >   
 >   static struct gdsc ufs_mem_phy_gdsc = {
-> @@ -3055,7 +3055,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
+> @@ -3489,7 +3489,7 @@ static struct gdsc ufs_mem_phy_gdsc = {
 >   		.name = "ufs_mem_phy_gdsc",
 >   	},
 >   	.pwrsts = PWRSTS_OFF_ON,
@@ -166,9 +164,9 @@ On 07/11/2024 12:58, Manivannan Sadhasivam via B4 Relay wrote:
 >   static struct gdsc usb30_prim_gdsc = {
 > 
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-HDK
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
 
-Thanks,
+Thanks!
 Neil
 
