@@ -1,191 +1,331 @@
-Return-Path: <linux-kernel+bounces-400474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5472D9C0E18
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:52:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0080C9C0E1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75964B2304E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:52:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CC628494F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6862170D6;
-	Thu,  7 Nov 2024 18:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E1C217330;
+	Thu,  7 Nov 2024 18:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s8ucNsaw"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="I5W1Jtvq"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8089E2101B0
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0D02101B0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731005564; cv=none; b=gtn3VaACCBgwC1frOGVjr95/Ecf6VKRjnpjEfzp6fOeQrTRYGZh+kI7HZnU/SPkhQH4K8mkoqnQRoYteCPpR40GQjgkYi7SMeExyBPXMpfO9Y+FQ7ny/kas12pE153J/w1ueqa9RvRxDIO/PaDl8XQax7EAdMTy49RQBG5TrUFE=
+	t=1731005629; cv=none; b=EdV6g2BZgxFDZSRCaTG7smzOJJbuG3+VriwQQ7hsX51ZoZvhbG0kwrkhCxON8SsRsop1Efv1fmtAFjPJvIcDknUz3sjb5hR0Kpa+uz9qHFd0gMcuPBuF87cYsvYKXaSEj9dJTI0f+4e9Be1prjdGGf1jAfMfv5MZToSOE4yH1cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731005564; c=relaxed/simple;
-	bh=z8ThK9cupI19VYwlYoPetHO7sa1yXqdBUhTL1+gjxQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jvar6wuj1Md1nViDpalIiYw6xulm4I60irFZzlMXwfrm3a5Caf0q3A8ljkBj7vItkyMTHOa0MFqQklvSgtE3+9qqz52a4fyVBqApTj62WSKf8MROdSxGHu9tk+mSJdk1t9Ker6XAnYtfv7zUBHUiDN+6/R29bb1sHi2qJHZpOAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s8ucNsaw; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460b295b9eeso24751cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:52:42 -0800 (PST)
+	s=arc-20240116; t=1731005629; c=relaxed/simple;
+	bh=Ozj9RiksTd04ePC/pn/8Uh282iT8Mr215DPOANye0Vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WTeOWCQ+E2n31Hdn1ae8btE9e8uJ+h2/TidAw3epPERwUeeqgHh880pWfxlTgteIq43xYn14/U5LCTTp3+LUEwWkRUuREqQ0VbtyALD4XingTwI4RlbPh5YlJvBTE2RYYEv7N36ObvJM/1VDYyRo736RcIuaDDxp/bFzgRPRnp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=I5W1Jtvq; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b31b66d2e3so64599685a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:53:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731005561; x=1731610361; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rSPZp/vkkxm4PmcRnhLRUlap3/JSxQYD2+2CrIS/7/A=;
-        b=s8ucNsawbUta4d4HyT8JMVNSU3t/niQREY0VTk6urhh+dSvIOIB53qusQcP6PmeDJ3
-         9NT4h2sueQk0feR3nFLPU2CK0yb1UCrbg8Y4jRaJldGN4miJGtfXUSsLqjoLSI7hDiU/
-         /LDP6AHeRunk7JXSmRA9Z01Vgjk0nClRsW6Fyn+nQRx48f3d6w2gBF/sXIfqCIHeItIM
-         mVvoGc9E7pynIbbmXRPlHc3a6ZPP9sXXDalW+JVtHcRyClcqavi6a+oolXDIwwh7y+VR
-         c9UgP/1cnWWyOAW2IqTcua0f2LDsFJR7EPchryGe3EWSta6wK4EPZ3eTB2kXQxM/+NIF
-         MMtg==
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1731005626; x=1731610426; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l1CuDjKsYRjEGFe+TKoRAgWlmPg/3uy1Ak3gO25I4Jg=;
+        b=I5W1JtvqYMl6DNeyU0mmZchuKOHARnhwVJbSMBI+XoBRBwPXC+Q1k71MMw+McsBVHq
+         jyWk67oy64C3GqIuLBWZ8CaaLc7/15BMc/MKiI2iPGnIOAHH8RqTHG+Ewllt7e2h6mA6
+         J3QmxysUowagKrmFQHRKtLxhymRCjO1VcXEerc+wVbCKwi/PE5KjzkcRQFRp/poJJky+
+         BBjFdvnrktc6taEFfJmB3CRv0UJBwu5kONS+wgEBip8h9pkRHHmXepSyjfsXJH2XQiOJ
+         5NO9IlLDnopgBhlTJoThI0Jfqnqa7XMgAQooZ173ziJ0wUEH9tL2br+btAxTQK3FxV++
+         lVpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731005561; x=1731610361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rSPZp/vkkxm4PmcRnhLRUlap3/JSxQYD2+2CrIS/7/A=;
-        b=MHSZ2KNfFthS7/wTWUtrCRm2sgHoLhCxHpym/JMl9zgUqmUTic77hbNwpIVPcO9VCT
-         OmsuntqNV3QZrjZLmLs1MYa54zyHq+x67uEZkd6JB40cm9eMCMtyW6HtoqzEB9MaZvSV
-         H+kaqq0Wxs+QNuDgNMW9HJj92jcCucLGVLy8ocpSg/2oi0Id6uMv5stuYUB/AVzw5Qub
-         mVg2SzKx9rzlDDCeocmpK45zBfHbajC1LIXVy68iSE4KIbDMg+f/j2TbCTa9MfHN4xQg
-         doT/Cnfkyz2AYp2SbaEpQ4rWx4gFRIt+nD6HS5sGE+nZnJqeMs/gwabD6pyHPEt35eTj
-         JH4A==
-X-Forwarded-Encrypted: i=1; AJvYcCX2jbG8p8Ccoe9avQPDtn5y7YCxbBmnAZWm1WYaLh0bjg9x4Ph+TrhSn4DBV/x87KzF20R2JKmH7LgoD0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFL3TjPuMo0NZ4Hh5b5sueDT4zx7aG6gPUSiRvx9oFk9rHvlEG
-	2eL2Km3T2yrSArk+V3QyTTtSfJHKQszj2bkU+xbP4GI97rknhxQhc9al3V1uNMhzcPLQKIojDxG
-	4S0KiEW6CPowroBaWY+n/cmvKf34MGsW1NVxV
-X-Gm-Gg: ASbGncu+KsKbwsS/svoWy3UUW1ESJb0QT7UwpGB+5BwsajqgMCGQaQGVoHqL4PXKzsR
-	ivhQiiDaQJ2cRoR/Ig3dGeZDmEEzBqYezsc0erXXKb6iwWcZvj0/720zSh/5skw==
-X-Google-Smtp-Source: AGHT+IF6Lz40AZM4gEZbd60uLeRf+A4xggcfUbVS+7mikK/NnN35Bv/xCssdb3WwArmt3jlGxIU4f7Mp0FwQ1aJHskk=
-X-Received: by 2002:a05:622a:14d4:b0:462:9e4:de13 with SMTP id
- d75a77b69052e-462fa58dddcmr5947181cf.9.1731005561078; Thu, 07 Nov 2024
- 10:52:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731005626; x=1731610426;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l1CuDjKsYRjEGFe+TKoRAgWlmPg/3uy1Ak3gO25I4Jg=;
+        b=Ai9haaI8Y3H+sXxBDL9+V2F6RBgA+q0ktxkJDy910vjSJiqTGyoX5x1UEAIu2pCNE5
+         COwxgW0JnZXrYCE7Nm5tmMQ4TS/3a1kXl76fntH1n1//nW8hmAmLIzsNOTZoYcmyVJb+
+         tOIO+C5YJqGhM15SObnzU+Qi8HGV+N2ZdAQlJbYYWyDSi0Pc9PTByvPLXfEn5M5qB1FF
+         8ARpfFD5q6i93vWyD/+Jj2BfOjb7CCoCFIkXtxpgtisC+JlwbL/+5nZmq3ev/4Xngau7
+         isQW2Oyg3gnsRNyQ+kt069Y+1Kih4Aw8scs+8q40MbviaLfTacUGOLRStUy1W/KC+SOI
+         rkSQ==
+X-Gm-Message-State: AOJu0YxWeSpgdc0PYGs5CLvu1B7J0UWWNJ98w+bGrkW4EJ7A5qar+BIs
+	mPuWsklw8WYK4XA26/pnzkRKY9YKE1J0rD6YoOCwVr9B4Gm+Ch7Xwqj4PQrVRGU=
+X-Google-Smtp-Source: AGHT+IFQA72Bggxxtu7CiC4RsRBOrNujGGLDPSKH3I4JgK7r308sntvvm3Fz4x0toz4RRZuo0ReGdA==
+X-Received: by 2002:a05:620a:1908:b0:7b1:3b5e:4b50 with SMTP id af79cd13be357-7b331eb107dmr31913285a.19.1731005625679;
+        Thu, 07 Nov 2024 10:53:45 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac427cfsm89472585a.30.2024.11.07.10.53.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 10:53:44 -0800 (PST)
+Date: Thu, 7 Nov 2024 13:53:40 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, yosryahmed@google.com,
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v3 13/13] mm: zswap: Compress batching with Intel IAA in
+ zswap_store() of large folios.
+Message-ID: <20241107185340.GG1172372@cmpxchg.org>
+References: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
+ <20241106192105.6731-14-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107040239.2847143-1-cmllamas@google.com> <20241107040239.2847143-9-cmllamas@google.com>
- <CAJuCfpHM8J0S4dXhxmVuFSTUV0czg1CTFpf_C=k7M57T9qh-VQ@mail.gmail.com>
- <Zyz--bjvkVXngc5U@google.com> <CAJuCfpHAsgDgqjWmxqwGPxs_i184mrzMSAUZ9fj9PN8eJcGdvQ@mail.gmail.com>
- <Zy0EyMVq0xEdyKNt@google.com> <CAJuCfpF2ZyEPfV_rTsftnc=XKCiwGG2-mL67Bt6o3tEBWn+KwQ@mail.gmail.com>
-In-Reply-To: <CAJuCfpF2ZyEPfV_rTsftnc=XKCiwGG2-mL67Bt6o3tEBWn+KwQ@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 7 Nov 2024 10:52:30 -0800
-Message-ID: <CAJuCfpF7Q-uD+Tdyoar_djw+LwckgAbH1uZOABqoRe2=gpGN-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] binder: use per-vma lock in page installation
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Barry Song <v-songbaohua@oppo.com>, Hillf Danton <hdanton@sina.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106192105.6731-14-kanchana.p.sridhar@intel.com>
 
-On Thu, Nov 7, 2024 at 10:27=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Thu, Nov 7, 2024 at 10:19=E2=80=AFAM Carlos Llamas <cmllamas@google.co=
-m> wrote:
-> >
-> > On Thu, Nov 07, 2024 at 10:04:23AM -0800, Suren Baghdasaryan wrote:
-> > > On Thu, Nov 7, 2024 at 9:55=E2=80=AFAM Carlos Llamas <cmllamas@google=
-.com> wrote:
-> > > > On Thu, Nov 07, 2024 at 08:16:39AM -0800, Suren Baghdasaryan wrote:
-> > > > > On Wed, Nov 6, 2024 at 8:03=E2=80=AFPM Carlos Llamas <cmllamas@go=
-ogle.com> wrote:
-> > > > > > +static int binder_page_insert(struct binder_alloc *alloc,
-> > > > > > +                             unsigned long addr,
-> > > > > > +                             struct page *page)
-> > > > > > +{
-> > > > > > +       struct mm_struct *mm =3D alloc->mm;
-> > > > > > +       struct vm_area_struct *vma;
-> > > > > > +       int ret =3D -ESRCH;
-> > > > > > +
-> > > > > > +       if (!mmget_not_zero(mm))
-> > > > > > +               return -ESRCH;
-> > > > > > +
-> > > > > > +       /* attempt per-vma lock first */
-> > > > > > +       vma =3D lock_vma_under_rcu(mm, addr);
-> > > > > > +       if (!vma)
-> > > > > > +               goto lock_mmap;
-> > > > > > +
-> > > > > > +       if (binder_alloc_is_mapped(alloc))
-> > > > >
-> > > > > I don't think you need this check here. lock_vma_under_rcu() ensu=
-res
-> > > > > that the VMA was not detached from the tree after locking the VMA=
-, so
-> > > > > if you got a VMA it's in the tree and it can't be removed (becaus=
-e
-> > > > > it's locked). remove_vma()->vma_close()->vma->vm_ops->close() is
-> > > > > called after VMA gets detached from the tree and that won't happe=
-n
-> > > > > while VMA is locked. So, if lock_vma_under_rcu() returns a VMA,
-> > > > > binder_alloc_is_mapped() has to always return true. A WARN_ON() c=
-heck
-> > > > > here to ensure that might be a better option.
-> > > >
-> > > > Yes we are guaranteed to have _a_ non-isolated vma. However, the ch=
-eck
-> > > > validates that it's the _expected_ vma. IIUC, our vma could have be=
-en
-> > > > unmapped (clearing alloc->mapped) and a _new_ unrelated vma could h=
-ave
-> > > > gotten the same address space assigned?
-> > >
-> > > No, this should never happen. lock_vma_under_rcu() specifically check=
-s
-> > > the address range *after* it locks the VMA:
-> > > https://elixir.bootlin.com/linux/v6.11.6/source/mm/memory.c#L6026
-> >
-> > The scenario I'm describing is the following:
-> >
-> > Proc A                          Proc B
-> >                                 mmap(addr, binder_fd)
-> > binder_page_insert()
-> > mmget_not_zero()
-> >                                 munmap(addr)
-> >                                 alloc->mapped =3D false;
-> >                                 [...]
-> >                                 // mmap other vma but same addr
-> >                                 mmap(addr, other_fd)
-> >
-> > vma =3D lock_vma_under_rcu()
-> >
-> > Isn't there a chance for the vma that Proc A receives is an unrelated
-> > vma that was placed in the same address range?
->
-> Ah, I see now. The VMA is a valid one and at the address we specified
-> but it does not belong to the binder. Yes, then you do need this
-> check.
+On Wed, Nov 06, 2024 at 11:21:05AM -0800, Kanchana P Sridhar wrote:
+> +static void zswap_zpool_store_sub_batch(
+> +	struct zswap_store_pipeline_state *zst)
 
-Is this scenario possible?:
+There is a zswap_store_sub_batch() below, which does something
+completely different. Naming is hard, but please invest a bit more
+time into this to make this readable.
 
- Proc A                          Proc B
-                                 mmap(addr, binder_fd)
- binder_page_insert()
- mmget_not_zero()
-                                 munmap(addr)
-                                 alloc->mapped =3D false;
-                                 [...]
-                                 // mmap other vma but same addr
-                                 mmap(addr, other_fd)
-                                 mmap(other_addr, binder_fd)
- vma =3D lock_vma_under_rcu(addr)
+> +{
+> +	u8 i;
+> +
+> +	for (i = 0; i < zst->nr_comp_pages; ++i) {
+> +		struct zswap_store_sub_batch_page *sbp = &zst->sub_batch[i];
+> +		struct zpool *zpool;
+> +		unsigned long handle;
+> +		char *buf;
+> +		gfp_t gfp;
+> +		int err;
+> +
+> +		/* Skip pages that had compress errors. */
+> +		if (sbp->error)
+> +			continue;
+> +
+> +		zpool = zst->pool->zpool;
+> +		gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
+> +		if (zpool_malloc_support_movable(zpool))
+> +			gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
+> +		err = zpool_malloc(zpool, zst->comp_dlens[i], gfp, &handle);
+> +
+> +		if (err) {
+> +			if (err == -ENOSPC)
+> +				zswap_reject_compress_poor++;
+> +			else
+> +				zswap_reject_alloc_fail++;
+> +
+> +			/*
+> +			 * An error should be propagated to other pages of the
+> +			 * same folio in the sub-batch, and zpool resources for
+> +			 * those pages (in sub-batch order prior to this zpool
+> +			 * error) should be de-allocated.
+> +			 */
+> +			zswap_store_propagate_errors(zst, sbp->batch_idx);
+> +			continue;
+> +		}
+> +
+> +		buf = zpool_map_handle(zpool, handle, ZPOOL_MM_WO);
+> +		memcpy(buf, zst->comp_dsts[i], zst->comp_dlens[i]);
+> +		zpool_unmap_handle(zpool, handle);
+> +
+> +		sbp->entry->handle = handle;
+> +		sbp->entry->length = zst->comp_dlens[i];
+> +	}
+> +}
+> +
+> +/*
+> + * Returns true if the entry was successfully
+> + * stored in the xarray, and false otherwise.
+> + */
+> +static bool zswap_store_entry(swp_entry_t page_swpentry,
+> +			      struct zswap_entry *entry)
+> +{
+> +	struct zswap_entry *old = xa_store(swap_zswap_tree(page_swpentry),
+> +					   swp_offset(page_swpentry),
+> +					   entry, GFP_KERNEL);
+> +	if (xa_is_err(old)) {
+> +		int err = xa_err(old);
+> +
+> +		WARN_ONCE(err != -ENOMEM, "unexpected xarray error: %d\n", err);
+> +		zswap_reject_alloc_fail++;
+> +		return false;
+> +	}
+> +
+> +	/*
+> +	 * We may have had an existing entry that became stale when
+> +	 * the folio was redirtied and now the new version is being
+> +	 * swapped out. Get rid of the old.
+> +	 */
+> +	if (old)
+> +		zswap_entry_free(old);
+> +
+> +	return true;
+> +}
+> +
+> +static void zswap_batch_compress_post_proc(
+> +	struct zswap_store_pipeline_state *zst)
+> +{
+> +	int nr_objcg_pages = 0, nr_pages = 0;
+> +	struct obj_cgroup *objcg = NULL;
+> +	size_t compressed_bytes = 0;
+> +	u8 i;
+> +
+> +	zswap_zpool_store_sub_batch(zst);
+> +
+> +	for (i = 0; i < zst->nr_comp_pages; ++i) {
+> +		struct zswap_store_sub_batch_page *sbp = &zst->sub_batch[i];
+> +
+> +		if (sbp->error)
+> +			continue;
+> +
+> +		if (!zswap_store_entry(sbp->swpentry, sbp->entry)) {
+> +			zswap_store_propagate_errors(zst, sbp->batch_idx);
+> +			continue;
+> +		}
+> +
+> +		/*
+> +		 * The entry is successfully compressed and stored in the tree,
+> +		 * there is no further possibility of failure. Grab refs to the
+> +		 * pool and objcg. These refs will be dropped by
+> +		 * zswap_entry_free() when the entry is removed from the tree.
+> +		 */
+> +		zswap_pool_get(zst->pool);
+> +		if (sbp->objcg)
+> +			obj_cgroup_get(sbp->objcg);
+> +
+> +		/*
+> +		 * We finish initializing the entry while it's already in xarray.
+> +		 * This is safe because:
+> +		 *
+> +		 * 1. Concurrent stores and invalidations are excluded by folio
+> +		 *    lock.
+> +		 *
+> +		 * 2. Writeback is excluded by the entry not being on the LRU yet.
+> +		 *    The publishing order matters to prevent writeback from seeing
+> +		 *    an incoherent entry.
+> +		 */
+> +		sbp->entry->pool = zst->pool;
+> +		sbp->entry->swpentry = sbp->swpentry;
+> +		sbp->entry->objcg = sbp->objcg;
+> +		sbp->entry->referenced = true;
+> +		if (sbp->entry->length) {
+> +			INIT_LIST_HEAD(&sbp->entry->lru);
+> +			zswap_lru_add(&zswap_list_lru, sbp->entry);
+> +		}
+> +
+> +		if (!objcg && sbp->objcg) {
+> +			objcg = sbp->objcg;
+> +		} else if (objcg && sbp->objcg && (objcg != sbp->objcg)) {
+> +			obj_cgroup_charge_zswap(objcg, compressed_bytes);
+> +			count_objcg_events(objcg, ZSWPOUT, nr_objcg_pages);
+> +			compressed_bytes = 0;
+> +			nr_objcg_pages = 0;
+> +			objcg = sbp->objcg;
+> +		}
+> +
+> +		if (sbp->objcg) {
+> +			compressed_bytes += sbp->entry->length;
+> +			++nr_objcg_pages;
+> +		}
+> +
+> +		++nr_pages;
+> +	} /* for sub-batch pages. */
+> +
+> +	if (objcg) {
+> +		obj_cgroup_charge_zswap(objcg, compressed_bytes);
+> +		count_objcg_events(objcg, ZSWPOUT, nr_objcg_pages);
+> +	}
+> +
+> +	atomic_long_add(nr_pages, &zswap_stored_pages);
+> +	count_vm_events(ZSWPOUT, nr_pages);
+> +}
+> +
+> +static void zswap_store_sub_batch(struct zswap_store_pipeline_state *zst)
+> +{
+> +	u8 i;
+> +
+> +	for (i = 0; i < zst->nr_comp_pages; ++i) {
+> +		zst->comp_dsts[i] = zst->acomp_ctx->buffers[i];
+> +		zst->comp_dlens[i] = PAGE_SIZE;
+> +	} /* for sub-batch pages. */
+> +
+> +	/*
+> +	 * Batch compress sub-batch "N". If IAA is the compressor, the
+> +	 * hardware will compress multiple pages in parallel.
+> +	 */
+> +	zswap_compress_batch(zst);
+> +
+> +	zswap_batch_compress_post_proc(zst);
 
-If so, I think your binder_alloc_is_mapped() check will return true
-but the binder area is mapped at a different other_addr. To avoid that
-I think you can check that "addr" still belongs to [alloc->vm_start,
-alloc->buffer_size] after you obtained and locked the VMA.
+The control flow here is a mess. Keep loops over the same batch at the
+same function level. IOW, pull the nr_comp_pages loop out of
+zswap_batch_compress_post_proc() and call the function from the loop.
+
+Also give it a more descriptive name. If that's hard to do, then
+you're probably doing too many different things in it. Create
+functions for a specific purpose, don't carve up sequences at
+arbitrary points.
+
+My impression after trying to read this is that the existing
+zswap_store() sequence could be a subset of the batched store, where
+you can reuse most code to get the pool, charge the cgroup, allocate
+entries, store entries, bump the stats etc. for both cases. Alas, your
+naming choices make it a bit difficult to be sure.
+
+Please explore this direction. Don't worry about the CONFIG symbol for
+now, we can still look at this later.
+
+Right now, it's basically
+
+	if (special case)
+		lots of duplicative code in slightly different order
+	regular store sequence
+
+and that isn't going to be maintainable.
+
+Look for a high-level sequence that makes sense for both cases. E.g.:
+
+	if (!zswap_enabled)
+		goto check_old;
+
+	get objcg
+
+	check limits
+
+	allocate memcg list lru
+
+	for each batch {
+		for each entry {
+			allocate entry
+			acquire objcg ref
+			acquire pool ref
+		}
+		compress
+		for each entry {
+			store in tree
+			add to lru
+			bump stats and counters
+		}
+	}
+
+	put objcg
+
+	return true;
+
+check_error:
+	...
+
+and then set up the two loops such that they also makes sense when the
+folio is just a single page.
 
