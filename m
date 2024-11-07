@@ -1,107 +1,90 @@
-Return-Path: <linux-kernel+bounces-399687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023379C02D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:47:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9634D9C02DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:48:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C725B216E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470A31F22490
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B213E1EF08D;
-	Thu,  7 Nov 2024 10:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEE31EF097;
+	Thu,  7 Nov 2024 10:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oZX0T0Qe"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i9RoF566"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93CB1D932F;
-	Thu,  7 Nov 2024 10:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321111EABA1
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 10:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730976463; cv=none; b=B0l6ylNqlF43SKJ5faykbDw+UtMJN8y02grelya6jRRQf+Ki5rg99hDKsNII6/7OHlmX86AoFneQCD8QOESnQaiv4S1TOuV8W0DTU8RyXUNeMNtkv5TR6rQ+YXhB8BP/KB7Ez9SvAMd1IvNC+81G/7XJ3O8m/VjWlhFOujgkMjU=
+	t=1730976521; cv=none; b=pIzLOUm8ofl0sIGufEMFuTmfXdzPjvSMbkmaMgohILSuQpos5mF+OIuM1MwNCuf6q8msTsyoLXAcVKhVId5f/bVpfqZNdtEGJZrWFHPOcVvio+yOLADYYUFybvINq6AodJJBDGa7vMAZo7yczrZ4MlOpEXpm9MawJ9VXBEVJnDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730976463; c=relaxed/simple;
-	bh=Cnxa1tCsanHSGqjuAhH8pqnLSS+wZUMsDLPxNRnuZuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Uu9RW2VdxD3OMrioR9+oDPcdX7ih0ucW8xhM/BxdT8jAg3MYG0AOm74NWFESCQNUSF2SkQmpVQMUQH+OE2qv4EG3VzJ2D/pY5IaWlWQ8uOlVQ5eRIbBNzAvPugN+6+eQmsh4ZrnihAXRuxTGC2s1lk3+wQg5h4dSxhLAk40q3B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oZX0T0Qe; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E23E26000F;
-	Thu,  7 Nov 2024 10:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730976452;
+	s=arc-20240116; t=1730976521; c=relaxed/simple;
+	bh=Sdy3ffOIi7k8Sjn9zIVT7VcbkCSMRxGWs0fyYz9MKkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JYYlpsOHYzOmc759ZXuWFnvn+/2gimvowhKPH8G72K2oVYFKZG+6T6aLS86QT3K8F8NMxkJITnsBxUdDJ6VdkjpWq4wZd4lYF3Jjmg1AkuykFMGEyTXHqGSCi/vAaa91qIK046VKkCf3tzkBAZzUXSjVuFCli0yRfGALIxetpEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i9RoF566; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730976518;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mKJpWykVcJd+0xdKpQJ/zkwyZG5GBmfR2RA2zeLo5LY=;
-	b=oZX0T0QerH27DR9/wz5lIe41T96lKQ/K6vZ4NGgqEuMsPcTAzifsUH7oHJhr/dvxjLc50A
-	FklC5ob7oYdp8+royJTRYh2t85g242pruCaT7XhP+tC+oZZTm0tT8eFr7qGNk4f47xAJ2V
-	87NFSgTVMdoHFdAqH32qrMFQIr5G676SEFVyGn8hfUiajSnFh9yW2xLsVP9wCovIh/DwCX
-	7zgmJDMHILGSU0K0r9IfvWEqp4KpYdplWni/JEEFhROrSzgWTAgRs7q4+1yrfF58f23bwZ
-	4/R/JaQmac23d3wKANqZEMwOp7RgYw3fEKMl/+mBYyiHi2DD4GQaX0CjBZsc5Q==
-Date: Thu, 7 Nov 2024 11:47:28 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
- <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
- <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v2 03/18] net: pse-pd: tps23881: Use
- helpers to calculate bit offset for a channel
-Message-ID: <20241107114728.109051bc@kmaincent-XPS-13-7390>
-In-Reply-To: <0e9ecb5a-3a6a-4b99-8177-1532134e3e25@lunn.ch>
-References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
-	<20241030-feature_poe_port_prio-v2-3-9559622ee47a@bootlin.com>
-	<0e9ecb5a-3a6a-4b99-8177-1532134e3e25@lunn.ch>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KFE8a5vA6V3Hg5gG1lNgnbGvgCy1xfGED61Xl0i9E8U=;
+	b=i9RoF566EevHPQ7Z5ZbY3TBkMmoYawiVDMxzkPXpz/+dPFy+pn7nU1hs3G8N+Xp8jCFcat
+	gfexKSDIw5p8L65qEeppbmR1DXtdHmF5OQslaWg8ePjEtqsQUDhszGLhF84j0Zor2bBZo+
+	CYliTOZ2wGAqW3cv8chvmFo5TVckdfE=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [RESEND PATCH] nfs: Annotate struct pnfs_commit_array with __counted_by()
+Date: Thu,  7 Nov 2024 11:48:20 +0100
+Message-ID: <20241107104820.1620-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 31 Oct 2024 22:11:18 +0100
-Andrew Lunn <andrew@lunn.ch> wrote:
+Add the __counted_by compiler attribute to the flexible array member
+buckets to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-> > +	val =3D tps23881_set_val(ret, chan, 0, BIT(chan % 4), BIT(chan % 4));
-> > +		val =3D tps23881_set_val(val, chan, 0, BIT(chan % 4),
-> > +				       BIT(chan % 4));
-> > +	val =3D tps23881_set_val(ret, chan, 4, BIT(chan % 4), BIT(chan % 4));
-> > +		val =3D tps23881_set_val(val, chan, 4, BIT(chan % 4),
-> > +				       BIT(chan % 4));
-> > +	val =3D tps23881_calc_val(ret, chan, 0, BIT(chan % 4));
-> > +		val =3D tps23881_calc_val(ret, chan, 0, BIT(chan % 4));
-> > +	val =3D tps23881_calc_val(ret, chan, 0, BIT(chan % 4));
-> > +	val =3D tps23881_calc_val(ret, chan, 4, BIT(chan % 4));
-> > +		val =3D tps23881_calc_val(ret, chan, 0, BIT(chan % 4));
-> > +		val =3D tps23881_calc_val(ret, chan, 4, BIT(chan % 4)); =20
->=20
-> It looks like all the callers of this helper pass BIT(chan % 4) as the
-> last parameter. Maybe move that into the helper as well?
+Compile-tested only.
 
-There is different cases in the patch 4 of the series.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ include/linux/nfs_xdr.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
+index 12d8e47bc5a3..559273a0f16d 100644
+--- a/include/linux/nfs_xdr.h
++++ b/include/linux/nfs_xdr.h
+@@ -1336,7 +1336,7 @@ struct pnfs_commit_array {
+ 	struct rcu_head rcu;
+ 	refcount_t refcount;
+ 	unsigned int nbuckets;
+-	struct pnfs_commit_bucket buckets[];
++	struct pnfs_commit_bucket buckets[] __counted_by(nbuckets);
+ };
+ 
+ struct pnfs_ds_commit_info {
+-- 
+2.47.0
+
 
