@@ -1,94 +1,144 @@
-Return-Path: <linux-kernel+bounces-399207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBEF9BFC1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:01:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E549BFC14
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF3D0B2285F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:01:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDCB0282B6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A56191F7A;
-	Thu,  7 Nov 2024 01:59:45 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A45247F4A;
-	Thu,  7 Nov 2024 01:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F339F839E4;
+	Thu,  7 Nov 2024 01:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jLfHMBdy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+UsNS0N0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D659117BA1;
+	Thu,  7 Nov 2024 01:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730944785; cv=none; b=WglWeYWVrYICi9VA6bzSV57MEau5Kxn9wko6bGhIxwtK+ldA/Ty6i47QkID4QCaaPawPikCwEzf68xTeiTY6wipS1VuRbOUw7LnYzxcvlsrQ0ESAwYWIRUjsuFibJc0LxQhEL47rC3ZqJn/6IOGIr92NkKjeweROtqzx4Fozauc=
+	t=1730944781; cv=none; b=AtyFO6aOaHqmNbV7n9eTNBcbIw5ouiuZ7cBtlkX1xoDhX1SYbxoTaKm6W7eUTsgL55+XNqy4jyJ1tZd6s6xzJUFZi4/qbuWYSB0Z+hNFVhmWQ7/0j3XWvhPUQFzV0pc+4VYBZRqOuqTj3iEfrDgfOyWKOMuKe0hkTSdqGCdDmJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730944785; c=relaxed/simple;
-	bh=gF75NwQXvuqzlc8xFqKU9d+eCn3AU++kBtiobeRTiWo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jfUvtWXKuhODfJU60XpRyCCEss6InnsYNa70nbwhdlxu+QHEFvsHQcWQ+dDYaXWvj1lcLNkj7jZz2Budl6gsL8KdIQwSq/pX+6JgmnPe6l/MThn8l3Uyluetjs63XqD8csnRB9nbWcL/9hSF9VIWft+uvCijBNJZTzHwwhIl1qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5672c1f0b79f-e27b1;
-	Thu, 07 Nov 2024 09:59:39 +0800 (CST)
-X-RM-TRANSID:2ee5672c1f0b79f-e27b1
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee3672c1f0aa48-4d18e;
-	Thu, 07 Nov 2024 09:59:39 +0800 (CST)
-X-RM-TRANSID:2ee3672c1f0aa48-4d18e
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
-To: olivier.moysan@foss.st.com
-Cc: arnaud.pouliquen@foss.st.com,
-	broonie@kernel.org,
-	lgirdwood@gmail.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	luoyifan@cmss.chinamobile.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Subject: [PATCH] ASoC: stm: Prevent potential division by zero in stm32_sai_get_clk_div()
-Date: Thu,  7 Nov 2024 09:59:36 +0800
-Message-Id: <20241107015936.211902-1-luoyifan@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <f2d3778d-5fd6-49db-b418-b5411e617a0a@foss.st.com>
-References: <f2d3778d-5fd6-49db-b418-b5411e617a0a@foss.st.com>
+	s=arc-20240116; t=1730944781; c=relaxed/simple;
+	bh=0j84PvABPC39fTsfKN49gEbEFVcqkx82ZGGzs4idMv0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=KJqDbwXyC7CB13itW00zNRAxGHs/gyKBwT5H03wgDIf5lTYHeiGpWdf169SmpDV/4VGrS2P2ipNJzqn/fJkPnIunaIjW8qcBSF4fwM2b9mVh96b9uuRlLNxFsyTzdMPSvPOblJtWnWD9swmubA8vVwBwOcLQQUJf88BMiHrZx1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jLfHMBdy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+UsNS0N0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 07 Nov 2024 01:59:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730944778;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PUE6fYMVMHPWwy+PMrBS2Y58UL6L++bNNCEOHTxh7MI=;
+	b=jLfHMBdy6XaGdDfWRfGgzIr9ObJiaW4dbZfDAzDuns3t/aa39vFtUmTk5GVhglzSl4R9xL
+	8zKZ2J1JVU5FZU8wZS1MBnZrqk9Bppc2FEVPpNkdBPeFD6ch/MFWcQHbNfVYOJRA+Cf4oj
+	M9dCg+QxDIOWGIEifPv9lCqr8YtAqhG3jS9ji5stOSsuEAA49dYIRKZLzD47wNnuOpNUol
+	3Ua9UHKAJniOoHUyEXxFdwvsot7vGsmkginY2yRny4S7aaHNRj06ErsbIImjlBtFfLAsmG
+	0o3/1JBOyY1guouUabnW6evQhhBXZRMojkRF4Gb5da+RctGgI6fuTJ5Zwkk9Jg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730944778;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PUE6fYMVMHPWwy+PMrBS2Y58UL6L++bNNCEOHTxh7MI=;
+	b=+UsNS0N0hXmPcD5AdYwl6XstiAlRdk9IfBfogmLDMK0T0H1/wz23VcEd/bXShKY9cHGqic
+	9AxvvwoeCYUkwPBg==
+From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] hrtimers: Delete hrtimer_init_sleeper_on_stack()
+Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C52549846635c0b3a2abf82101f539efdabcd9778=2E17303?=
+ =?utf-8?q?86209=2Egit=2Enamcao=40linutronix=2Ede=3E?=
+References: =?utf-8?q?=3C52549846635c0b3a2abf82101f539efdabcd9778=2E173038?=
+ =?utf-8?q?6209=2Egit=2Enamcao=40linutronix=2Ede=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <173094477743.32228.4323373373685500669.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-This patch checks if div is less than or equal to zero (div <= 0). If
-div is zero or negative, the function returns -EINVAL, ensuring the
-division operation is safe to perform.
+The following commit has been merged into the timers/core branch of tip:
 
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+Commit-ID:     f3bef7aaa6c807b78e8fc6929c3226d3038fe505
+Gitweb:        https://git.kernel.org/tip/f3bef7aaa6c807b78e8fc6929c3226d3038fe505
+Author:        Nam Cao <namcao@linutronix.de>
+AuthorDate:    Thu, 31 Oct 2024 16:14:29 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 07 Nov 2024 02:47:06 +01:00
+
+hrtimers: Delete hrtimer_init_sleeper_on_stack()
+
+hrtimer_init_sleeper_on_stack() is now unused. Delete it.
+
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/52549846635c0b3a2abf82101f539efdabcd9778.1730386209.git.namcao@linutronix.de
+
 ---
- sound/soc/stm/stm32_sai_sub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/hrtimer.h |  3 ---
+ kernel/time/hrtimer.c   | 14 --------------
+ 2 files changed, 17 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 7bc4a96b7..43fb1dcb9 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -317,7 +317,7 @@ static int stm32_sai_get_clk_div(struct stm32_sai_sub_data *sai,
- 	int div;
+diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
+index 6e02673..4e4f04b 100644
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -235,9 +235,6 @@ extern void hrtimer_init_on_stack(struct hrtimer *timer, clockid_t which_clock,
+ extern void hrtimer_setup_on_stack(struct hrtimer *timer,
+ 				   enum hrtimer_restart (*function)(struct hrtimer *),
+ 				   clockid_t clock_id, enum hrtimer_mode mode);
+-extern void hrtimer_init_sleeper_on_stack(struct hrtimer_sleeper *sl,
+-					  clockid_t clock_id,
+-					  enum hrtimer_mode mode);
+ extern void hrtimer_setup_sleeper_on_stack(struct hrtimer_sleeper *sl, clockid_t clock_id,
+ 					   enum hrtimer_mode mode);
  
- 	div = DIV_ROUND_CLOSEST(input_rate, output_rate);
--	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
-+	if (div > SAI_XCR1_MCKDIV_MAX(version) || div <= 0) {
- 		dev_err(&sai->pdev->dev, "Divider %d out of range\n", div);
- 		return -EINVAL;
- 	}
--- 
-2.27.0
-
-
-
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 6943046..376b818 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -2052,20 +2052,6 @@ static void __hrtimer_init_sleeper(struct hrtimer_sleeper *sl,
+ }
+ 
+ /**
+- * hrtimer_init_sleeper_on_stack - initialize a sleeper in stack memory
+- * @sl:		sleeper to be initialized
+- * @clock_id:	the clock to be used
+- * @mode:	timer mode abs/rel
+- */
+-void hrtimer_init_sleeper_on_stack(struct hrtimer_sleeper *sl,
+-				   clockid_t clock_id, enum hrtimer_mode mode)
+-{
+-	debug_init_on_stack(&sl->timer, clock_id, mode);
+-	__hrtimer_init_sleeper(sl, clock_id, mode);
+-}
+-EXPORT_SYMBOL_GPL(hrtimer_init_sleeper_on_stack);
+-
+-/**
+  * hrtimer_setup_sleeper_on_stack - initialize a sleeper in stack memory
+  * @sl:		sleeper to be initialized
+  * @clock_id:	the clock to be used
 
