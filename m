@@ -1,324 +1,213 @@
-Return-Path: <linux-kernel+bounces-399640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11679C0210
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:16:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06E99C0216
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80766283616
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63F6A283B08
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E0D1EBFE4;
-	Thu,  7 Nov 2024 10:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5891E909C;
+	Thu,  7 Nov 2024 10:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZwJVaoj"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxSjIUBd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6502019ABCB;
-	Thu,  7 Nov 2024 10:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640B81CC8A3;
+	Thu,  7 Nov 2024 10:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730974559; cv=none; b=A3PsaJjRWUCgmjUjm6Az83n9L/P4nvLOk1R9XPsXG2N5bTfLxRypOw/bey1zFxNKZAgFTbXXK9whyqNmHVrmNeFNbo1R4AA4kty1mKNTsP5B051GbC+QMB6952q8bFqtlmVNd91qmsq+Hr+iHO9oTg5v3IosB4IEkOvPIqEdRc8=
+	t=1730974640; cv=none; b=jHTnvS/WJfGr6Oi6N/vBUYxZuJyJ6uu+cogUzkmCBOiKM/DvbMJsFLGQe7Gu9OjkfqI6aE5MgJMfqUirGIyipRz5zre04wadiFem3IG/QVTaDOcH+eX0s/Ds+ooZ/d5xp8x+zmtVdcf5EmZ2liVLEK/5IhQGZSJv5ABLD4+O2s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730974559; c=relaxed/simple;
-	bh=CLnyjHafwPfEPk6khrd+w+ls6AiJpgKD9HVj4fkhFVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tu9o33cGY+4ZpkTTnzK1xzub02ZCCqeGz1gZJWrl24SVPHAgP4xkAcHVevwoC8YdfG2bJc8AtosAtU+kcSoQVoalbf+IMtCv/xR9WxVEX+ExlDfXEC459ZfvVfBfRYLKXwmTsqW2oZQm/MWpRXM/shRMIDWn/APbRg8UoKfzG0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZwJVaoj; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cbca51687so7630735ad.1;
-        Thu, 07 Nov 2024 02:15:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730974558; x=1731579358; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6uC1tGDKghOkea1zNnMHJyn2LWZSucub90BQiLOEDDk=;
-        b=AZwJVaojM/oUAjaJ5jh+axr6JtCSO0Lg8TYoPuKqhyVALTofnnol31zFXtOVn7r0m1
-         Anj2TPfzleEnUjsRoyJ9Sv2aKpiJ8Oh3cT83YVTwa0HPH1NVtYHXQXQCuTjJJFzVFluY
-         mer811Gw5Uc+Ozuem4iwZHdOxuVYoDjJRu3IQCRDs1TBzURVxPGP/lFkf1QQj73tJs6p
-         EIB+iCXATOVXcTOvf7TH8KX5wheN/fuWnNzoLLB2/0JL1eBWpnLLDe6RtFVdy8suJ2eh
-         949SYhSR/rDIcNoPABnQNz7+ftyXXjx0GcvYVs42iNv+hrJRZsm5vJnht4OryoQNMF4E
-         qtgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730974558; x=1731579358;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6uC1tGDKghOkea1zNnMHJyn2LWZSucub90BQiLOEDDk=;
-        b=KErtGzURw28X84PadAF5ItKG/R577NZsbBzI++5FAjMbPsNyGXx2VLZe5sIWzi9F0t
-         cfGavGcGP3QrPo+d/UWRHpDQtNhuMNIrwhVSXAb7N9ZVqMuweyDJkiUP3wk9ZsiEPImn
-         EGi7bcUrSnPd8VFUu7N/67cv5wzLmdOnX9hL6z6RgcekLnzfaPNLsvBop9t+EzY4MA6c
-         lWxT819dHtzhwxsuuKtAvrEW7BlU+aRzlSJ+Rfqrgerab8cp42NaVech2NOoRVCrok/R
-         wUXw5enL1fyzM8qTu7oSO7iCeHFrzPnKSvSCrQwHz9GHrUgvUBGiahsHeL1f6I+w+yG8
-         HWNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIMip4CHsfdQGNBQTXKVAJWILCGyx4hRfur8ujeEiRs9tRgM5Tr0A/4R7fEvtzf2UXYfDYYfsR64bFA8Ix@vger.kernel.org, AJvYcCUkUzqKpdEbaOGYh1Ejt40dA0c0bFIBoRmc643pqn1pCpzdLXHBun6Wjb7ygSGoWYP+O4WG8Rnd+sY4@vger.kernel.org, AJvYcCWgf5IudBFtMDDNPz6TInAeNrp+dVuZPzC3g563gkzoCmQ1Asb5OVoDiMUrh/v5dLe+gGuPke4v@vger.kernel.org
-X-Gm-Message-State: AOJu0YycvBIGaevWukvx9XOrhFsauGdzwLJPxvWw2+c2DbaxMlo+Y0bd
-	ez4g8FkTRJSDTtvKoqNWFRnYgsjGbH5LAFPI6DCSA0+D2d3eqrlm
-X-Google-Smtp-Source: AGHT+IG072GIpekpia0RPF6UHV7Q1vjZLLM17qv655ofL8si24CR7LuYWccsfVgbbHuGdYv/1tSAPA==
-X-Received: by 2002:a17:902:9009:b0:20c:968e:4dcd with SMTP id d9443c01a7336-2111aec8494mr240923005ad.7.1730974557542;
-        Thu, 07 Nov 2024 02:15:57 -0800 (PST)
-Received: from [192.168.0.104] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddc940sm8817035ad.58.2024.11.07.02.15.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 02:15:57 -0800 (PST)
-Message-ID: <7c2f6af3-5686-452a-8d8a-191899b3d225@gmail.com>
-Date: Thu, 7 Nov 2024 18:15:51 +0800
+	s=arc-20240116; t=1730974640; c=relaxed/simple;
+	bh=ftccsi9pXS5GYpa1yQsXJVtN5jjl2k8iuGKq2B9q32U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ay1LtKAzmPMUOKPuVl+qIaCgHpJrPk8oieq0b1xU4ow6BwTr/2BeNlD6zKkRpnrjEoPRs4E9Lm4QXz0Q/vdgPom+MXfpsfHqe90MNu1UFgjIHFcSmH39Y91UtmjnzHyLxHOaMJlaLRQPKmjWWqPksn9xN3icwzKM4UO1vWzQU4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxSjIUBd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A13DC4CED2;
+	Thu,  7 Nov 2024 10:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730974639;
+	bh=ftccsi9pXS5GYpa1yQsXJVtN5jjl2k8iuGKq2B9q32U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QxSjIUBdjmWTtcRcpmXznk3+uzGx6OZ5MaP2TX2QpIktW0c55qCsSgWRsaDfYQweM
+	 341FnzzKv+aeXrcsVWZ98VZhEQBUum4/BB0KyDkHouTN179BqBuo33OrOULgnNRAjh
+	 ChLGyerJKxLGrvYmxRToZhkqEd/FtFbwqLtaRz+we03h3FOPh7YlyPwzBOVMz8+70M
+	 hMojf8oF8caz1SC7Za8td11CknAeoMMoTnMbx4UmH9PxUJuO2XqKoMFuxaf2EEjp9c
+	 bX57oyk8qKYLDjvd1EnG3FJqg7PZB4G5OK6pOYwPJvfKNYS3WfL61CnI9iHZEL4qLu
+	 3iv1tBJGKBsyw==
+Date: Thu, 7 Nov 2024 11:17:14 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] dt-bindings: mtd: davinci: convert to yaml
+Message-ID: <5r6j26qwcxyppxicdqih6tskb2qxkb5phzjtwqv47iqb4qupkp@zxujctq7ot6k>
+References: <20241107-ondie-v6-0-f70905dc12bf@gmail.com>
+ <20241107-ondie-v6-2-f70905dc12bf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
- MA35 family GMAC
-To: Conor Dooley <conor@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
- schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20241106111930.218825-1-a0987203069@gmail.com>
- <20241106111930.218825-2-a0987203069@gmail.com>
- <20241106-bloated-ranch-be94506d360c@spud>
-Content-Language: en-US
-From: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <20241106-bloated-ranch-be94506d360c@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241107-ondie-v6-2-f70905dc12bf@gmail.com>
 
-Dear Conor,
+On Thu, Nov 07, 2024 at 10:19:54AM +0100, Marcus Folkesson wrote:
+> Convert the bindings to yaml format.
+> 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> ---
+>  .../devicetree/bindings/mtd/davinci-nand.txt       |  94 ---------------
+>  .../devicetree/bindings/mtd/ti,davinci-nand.yaml   | 134 +++++++++++++++++++++
+>  2 files changed, 134 insertions(+), 94 deletions(-)
 
-Thank you for your reply.
+...
 
-Conor Dooley 於 11/6/2024 11:44 PM 寫道:
-> On Wed, Nov 06, 2024 at 07:19:28PM +0800, Joey Lu wrote:
->> Create initial schema for Nuvoton MA35 family Gigabit MAC.
->>
->> Signed-off-by: Joey Lu <a0987203069@gmail.com>
->> ---
->>   .../bindings/net/nuvoton,ma35xx-dwmac.yaml    | 163 ++++++++++++++++++
->>   1 file changed, 163 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/net/nuvoton,ma35xx-dwmac.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/net/nuvoton,ma35xx-dwmac.yaml b/Documentation/devicetree/bindings/net/nuvoton,ma35xx-dwmac.yaml
->> new file mode 100644
->> index 000000000000..f4d24ca872b2
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/net/nuvoton,ma35xx-dwmac.yaml
->> @@ -0,0 +1,163 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/net/nuvoton,ma35xx-dwmac.yaml#
-> The filename needs to match the compatible.
-I will fix it.
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Nuvoton DWMAC glue layer controller
->> +
->> +maintainers:
->> +  - Joey Lu <yclu4@nuvoton.com>
->> +
->> +description:
->> +  Nuvoton 10/100/1000Mbps Gigabit Ethernet MAC Controller is based on
->> +  Synopsys DesignWare MAC (version 3.73a).
->> +
->> +# We need a select here so we don't match all nodes with 'snps,dwmac'
->> +select:
->> +  properties:
->> +    compatible:
->> +      contains:
->> +        enum:
->> +          - nuvoton,ma35d1-dwmac
->> +  required:
->> +    - compatible
->> +
->> +allOf:
->> +  - $ref: snps,dwmac.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    - items:
->> +        - enum:
->> +            - nuvoton,ma35d1-dwmac
->> +        - const: snps,dwmac-3.70a
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    minItems: 2
->> +    items:
->> +      - description: MAC clock
->> +      - description: PTP clock
->> +
->> +  clock-names:
->> +    minItems: 2
->> +    contains:
->> +      - enum:
->> +          - stmmaceth
->> +          - ptp_ref
-> This can just be an items list like interrupt-names, since the clocks
-> property has a fixed order.
-I will fix it.
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: macirq
-> This name carries no information, this is an interrupt for a mac after
-> all. You don't need a name since you only have one interrupt.
-This interrupt name is an argument required by the stmmac driver to 
-obtain interrupt information.
->> +  nuvoton,sys:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description: phandle to access GCR (Global Control Register) registers.
-> Why do you need a phandle to this? You appear to have multiple dwmacs on
-> your device if the example is anything to go by, how come you don't need
-> to access different portions of this depending on which dwmac instance
-> you are?
-On our platform, a system register is required to specify the TX/RX 
-clock path delay control, switch modes between RMII and RGMII, and 
-configure other related settings.
->> +  resets:
->> +    maxItems: 1
->> +
->> +  reset-names:
->> +    items:
->> +      - const: stmmaceth
->> +
->> +  mac-id:
->> +    maxItems: 1
->> +    description:
->> +      The interface of MAC.
-> A vendor prefix is required for custom properties, but I don't think you
-> need this and actually it is a bandaid for some other information you're
-> missing. Probably related to your nuvoton,sys property only being a
-> phandle with no arguments.
-This property will be removed.
->> +
->> +  phy-mode:
->> +    enum:
->> +      - rmii
->> +      - rgmii-id
->> +
->> +  tx_delay:
-> Needs constraints, a type, a vendor prefix and a unit suffix. No
-> underscores in property names either. See the amlogic dwmac binding for
-> an example.
-I will fix it.
->> +    maxItems: 1
->> +    description:
->> +      Control transmit clock path delay in nanoseconds.
->> +
->> +  rx_delay:
-> Ditto here.
-I will fix it.
->
->> +    maxItems: 1
->> +    description:
->> +      Control receive clock path delay in nanoseconds.
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - interrupt-names
->> +  - clocks
->> +  - clock-names
->> +  - nuvoton,sys
->> +  - resets
->> +  - reset-names
->> +  - mac-id
->> +  - phy-mode
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
->> +    #include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
->> +    //Example 1
->> +    eth0: ethernet@40120000 {
-> The eth0 label is not used, drop it.
-The label is used in dtsi and dts.
->> +        compatible = "nuvoton,ma35d1-dwmac";
->> +        reg = <0x0 0x40120000 0x0 0x10000>;
->> +        interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
->> +        interrupt-names = "macirq";
->> +        clocks = <&clk EMAC0_GATE>, <&clk EPLL_DIV8>;
->> +        clock-names = "stmmaceth", "ptp_ref";
->> +
->> +        nuvoton,sys = <&sys>;
->> +        resets = <&sys MA35D1_RESET_GMAC0>;
->> +        reset-names = "stmmaceth";
->> +        mac-id = <0>;
->> +
->> +        clk_csr = <4>;
-> This property is not documented.
-This unused property will be removed.
->
-> Cheers,
-> Conor.
->
->> +        phy-mode = "rgmii-id";
->> +        phy-handle = <&eth_phy0>;
->> +        mdio0 {
->> +            compatible = "snps,dwmac-mdio";
->> +            #address-cells = <1>;
->> +            #size-cells = <0>;
->> +
->> +            eth_phy0: ethernet-phy@0 {
->> +                reg = <0>;
->> +            };
->> +        };
->> +    };
->> +
->> +  - |
->> +    //Example 2
->> +    eth1: ethernet@40130000 {
->> +        compatible = "nuvoton,ma35d1-dwmac";
->> +        reg = <0x0 0x40130000 0x0 0x10000>;
->> +        interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
->> +        interrupt-names = "macirq";
->> +        clocks = <&clk EMAC1_GATE>, <&clk EPLL_DIV8>;
->> +        clock-names = "stmmaceth", "ptp_ref";
->> +
->> +        nuvoton,sys = <&sys>;
->> +        resets = <&sys MA35D1_RESET_GMAC1>;
->> +        reset-names = "stmmaceth";
->> +        mac-id = <1>;
->> +
->> +        clk_csr = <4>;
->> +        phy-mode = "rmii";
->> +        phy-handle = <&eth_phy1>;
->> +        mdio1 {
->> +            compatible = "snps,dwmac-mdio";
->> +            #address-cells = <1>;
->> +            #size-cells = <0>;
->> +
->> +            eth_phy1: ethernet-phy@1 {
->> +                reg = <1>;
->> +            };
->> +        };
->> +    };
->> -- 
->> 2.34.1
+> +allOf:
+> +  - $ref: nand-controller.yaml
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,davinci-nand
+> +      - ti,keystone-nand
+> +
+> +  reg:
+> +    items:
+> +      - description:
+> +          Access window.
 
-Thanks!
+Merge two lines. See other files how they do it.
 
-BR,
+> +      - description:
+> +          AEMIF control registers
 
-Joey
+Merge two lines
+
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+
+These two properties are not needed, drop. I don't understand why did
+they appear here. Changelog also does no explain it.
+
+> +
+> +  partitions:
+> +    $ref: /schemas/mtd/partitions/partitions.yaml
+> +
+> +  ti,davinci-chipselect:
+> +    description:
+> +      Number of chipselect. Indicate on the davinci_nand driver which
+> +      chipselect is used for accessing the nand.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +
+> +  ti,davinci-mask-ale:
+> +    description:
+> +      Mask for ALE. Needed for executing address phase. These offset will be
+> +      added to the base address for the chip select space the NAND Flash
+> +      device is connected to.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 0x08
+> +
+> +  ti,davinci-mask-cle:
+> +    description:
+> +      Mask for CLE. Needed for executing command phase. These offset will be
+> +      added to the base address for the chip select space the NAND Flash device
+> +      is connected to.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 0x10
+> +
+> +  ti,davinci-mask-chipsel:
+> +    description:
+> +      Mask for chipselect address. Needed to mask addresses for given
+> +      chipselect.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 0
+> +
+> +  ti,davinci-ecc-bits:
+> +    description: Used ECC bits.
+> +    enum: [1, 4]
+> +
+> +  ti,davinci-ecc-mode:
+> +    description: Operation mode of the NAND ECC mode.
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [none, soft, hw, on-die]
+> +    deprecated: true
+> +
+> +  ti,davinci-nand-buswidth:
+> +    description: Bus width to the NAND chip
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [8, 16]
+> +    default: 8
+> +    deprecated: true
+> +
+> +  ti,davinci-nand-use-bbt:
+> +    type: boolean
+> +    description:
+> +      Use flash based bad block table support. OOB identifier is saved in OOB
+> +      area.
+> +    deprecated: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+
+Drop these two.
+
+> +  - ti,davinci-chipselect
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    bus {
+> +      #address-cells = <2>;
+> +      #size-cells = <1>;
+> +
+> +      nand-controller@2000000,0 {
+> +        compatible = "ti,davinci-nand";
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        reg = <0 0x02000000 0x02000000
+> +        1 0x00000000 0x00008000>;
+
+Two items must be encoded as two items, so two <> <>
+Also messed alignment. See DTS coding style.
+
+> +
+> +        ti,davinci-chipselect = <1>;
+> +        ti,davinci-mask-ale = <0>;
+> +        ti,davinci-mask-cle = <0>;
+> +        ti,davinci-mask-chipsel = <0>;
+> +
+> +        ti,davinci-nand-buswidth = <16>;
+> +        ti,davinci-ecc-mode = "hw";
+> +        ti,davinci-ecc-bits = <4>;
+> +        ti,davinci-nand-use-bbt;
+> +
+> +        partitions {
+
+Where are the partitions documented? In which binding? Don't you miss
+mtd.yaml? I think this binding misses some references, but I am not sure
+which ones.
+
+Best regards,
+Krzysztof
 
 
