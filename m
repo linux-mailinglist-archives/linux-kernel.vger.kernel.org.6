@@ -1,115 +1,162 @@
-Return-Path: <linux-kernel+bounces-400617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C1C9C100E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:48:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E832F9C1013
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AE4CB228EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1EC1F23DC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38BC218339;
-	Thu,  7 Nov 2024 20:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05876218337;
+	Thu,  7 Nov 2024 20:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BJzsrIto"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVvisrl6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85C221767A
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 20:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D58A21767A;
+	Thu,  7 Nov 2024 20:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731012498; cv=none; b=hTl8V0Fd+2TgKtsT96hImkmAcd6bEyOlZAnoYXYYwmj/tXeRciErOJ8/w6RqLzrjRybXumVB3zVcjT2fU4kjk+uyCLZftusHzYYRk9RO/Tu/npJ1dAr/SzD2Z1sDiAEOzMgDp/7Af4S7IBB5XIXminmDlHaedB6udsXeK6HVVqk=
+	t=1731012510; cv=none; b=BT+UnJ9FVMlfJGmGUW412JZaZlEqBPM1PZ1zfcpm0dvrXbB69ZpWuQ7g+9pE1DZMHaQb9kSDd4Bh1IiCK0qlrAamFbGDx3Ls+7DPWqNNZo4SdiNwDQeH9kKiggFZfJdX+OYzIi6KYKIfJ8409lBF//rfc6i1Z9kXuvviSEnyEoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731012498; c=relaxed/simple;
-	bh=L2JnZy+FpJjZq2hoDPKEQjvM+JNDSZhn7qTteDh5tWc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sJ13yhO0oLm5x/lpTqTTN8mu6+tlxTfvIGn/Ydz73bFDvaMhK4kQhyZx2ebEor86RutemHJUYiShKATeTdYsXRehCL647aKsKZCxW0r6wKjcnG8V6yILnpxLpMFsnauwhCFXgac8S+iR4hUCcBeo3IlQ3rDf9tG2vr0XiOM/A2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BJzsrIto; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30df208cadso3141309276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 12:48:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731012496; x=1731617296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9tgFF/vf8m24mqzX/IMYi9zJNPzKWJ3qSX08ShIAreE=;
-        b=BJzsrIto3s5ikwCRMHSF8x3wyY327ru3E/5+3rP7pPPY3Qu69rNhp0bAvaIUr0/aBf
-         pMZN490nMoRb6qq73qtxtTczc4XHYSzx0cIyMpJtGW25ekytIO7EmpT24V8ewbg9i0kU
-         QpmBCNnsyspc0IuuPqOVPtFzZJTWlLnaGaAeLU2vQ2wF2R/Sg3wVkhb4A0+FezLnP6C+
-         95OmlPULcl5O1CcwId2+KHThlxmrBVwNSwwA6wGFjxDUlJSwTC//WUfCk/cZjyWJP0j6
-         JeENibGLeGcNcVvCpQw6WFrzF4yqTx1U0jfLqULw3fK4JgI9KAz8uquW3IufVw44aWdD
-         QmNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731012496; x=1731617296;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9tgFF/vf8m24mqzX/IMYi9zJNPzKWJ3qSX08ShIAreE=;
-        b=bSIOafRiASlmmTEoymcLdYbnpZciTnXwWSS0DULHp0u8MB8uAI0YhVAp+IA8IseDK6
-         VJTLmzTkel8t6HemUedHs+6YlC6QNxO6YSojU2pcAqJjUkDaXxcJScZUeTZ26vSNFj/D
-         cqbtLfsS3wT9KfVxz8riwS8N7vkc0HroSH7AHZz0ykV8bT/04d/pjYehmcaLMiPBvK6l
-         4W55fHmN/79yXu4pIkVfA1KM53yc5V1B6jeU+0vUNTpzJqPLEUbZggfzILF1GIilB9iD
-         sjv/Oyeu7+BYmlXFw40a6o8LzQ7a1OEQCZANSS1qhij51kmcSEF9bbKKGN9XEw/mVJB/
-         tqTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkwceqkt0cBl404DTsud2Ec2MQbS7xL3KAhwGlki6nUHgE+2p8aUMEyEJy0ZpDtNHN4XTCQqyouDji5BU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNEp+/v0TIBDoBQcpNutW5w6VNKcXZXKK/TWBmsFEW4AuWDBW8
-	OssNpicegJV+EC6vu1Xpe5PN+xtEatJBLDDwh/IaLsa5EtJ8bFZFaM+3wdpoaI8CwI3412YAK97
-	4gw==
-X-Google-Smtp-Source: AGHT+IGS34K7Djy3aJITzLWueG1h/SQAZjPBoQvYGi8UH9Cq6cPlMxmMBI4tn55IpfbmvQ570TOXglQxxzg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:c584:0:b0:e0b:f6aa:8088 with SMTP id
- 3f1490d57ef6-e337fd8c39bmr619276.1.1731012495813; Thu, 07 Nov 2024 12:48:15
- -0800 (PST)
-Date: Thu, 7 Nov 2024 12:48:14 -0800
-In-Reply-To: <Zy0M9yv7xIiKB_Xi@slm.duckdns.org>
+	s=arc-20240116; t=1731012510; c=relaxed/simple;
+	bh=y9ltngknyXq1fz4Y7W2Ca75b+QbCA+GGQXGYjflLdMs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dfNM7ozufwJSGdBphlfhLMqjwLqW1akywoanmvflMhL7IxSgp8RPDwkzzLgfWM9dZbM11Fk7WAHRv89odXn/fF4rlO7ph4jFZNBcS4kU+iNWLylMKYz/xCbyJFSpxzRU28gBLT1ZHuHtEd8/i1/ync3nB1yF5BlFrrNU2EnlU7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVvisrl6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F056C4CED5;
+	Thu,  7 Nov 2024 20:48:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731012510;
+	bh=y9ltngknyXq1fz4Y7W2Ca75b+QbCA+GGQXGYjflLdMs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lVvisrl6OQW4rjtbDuwJrRGYSGzueLcHl0o5fLJlG4becB776moohV1bSePD1nPHW
+	 1IbKY6UG3mXwlnpjdYS6vHGmuhkbMue5hQQGt0bSzAK0FqcNcAXXMysqXxiwliqsiH
+	 wYitf6lWrg/wZN5vZLzbIlQLlHySU5POGyPrqvszoXPBtJ+EN3/nF6Huwt4usSw99k
+	 ElfUPcOYH8CeWp/3AO0YZgNhe8v/fQ+jHkELcSNv6MNUsULIaJJVZ2oH1qMrIiPjjI
+	 x2nK2gVo6GZQU4jv5CPMpUZMjs7TB+padEwdHoZLQjx+qUaQMP8Vhc9ESq2dwH2FGZ
+	 1UG1eYbnMM3zA==
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a4e5401636so5200805ab.3;
+        Thu, 07 Nov 2024 12:48:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUd33DOz7GOW3yQehrk5BlEkd6IcVU4GMGhUJI8LJ3a/nzlcZxqPH1XnwmLdGterr0J8OQLBKuErrtWwh4yTg==@vger.kernel.org, AJvYcCVOpHAwEblzUSNUkHgESdSYOSu4BsrivDkgQKEkoKM7e+CksNoEIsilgQIFHoN6CtdbsIVOvR2IH7Qu+Kxq@vger.kernel.org, AJvYcCVlzW1WwVlMCAumUci5QFBArfNA+eQKWRO+ZkAn5xMDzFX8w6EovH7Ornr/bmN+v0tdFFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa9zzvXwY9otgqv37FZZ95pBn13i4k+VKoe1FzUzBFZ0Yc25ra
+	OcxYJ2VrIb6G356CGD2TMcyCHD4ZeWYnbbl3araOnYaqVSduu5hgAO5r9evqy/hjgarSbYe1c0I
+	C60q5CNn6SZjcNchE8Gz4a5AX6RI=
+X-Google-Smtp-Source: AGHT+IHLFH4HkA2BX3jpkzky5zkNJnDwztWt7CrvKGXG2OltdSi2Wx3JazSli34TEm/RKHrljQ3LzBD8tb6hMEt81R4=
+X-Received: by 2002:a05:6e02:178d:b0:3a0:92b1:ec4c with SMTP id
+ e9e14a558f8ab-3a6f1a75af6mr6399555ab.23.1731012509550; Thu, 07 Nov 2024
+ 12:48:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ZyAnSAw34jwWicJl@slm.duckdns.org> <nlcen6mwyduof423wzfyf3gmvt77uqywzikby2gionpu4mz6za@635i633henks>
- <Zy0M9yv7xIiKB_Xi@slm.duckdns.org>
-Message-ID: <Zy0njoaJGS9310eR@google.com>
-Subject: Re: cgroup2 freezer and kvm_vm_worker_thread()
-From: Sean Christopherson <seanjc@google.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: "Michal =?utf-8?Q?Koutn=C3=BD?=" <mkoutny@suse.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Luca Boccassi <bluca@debian.org>, Roman Gushchin <roman.gushchin@linux.dev>, kvm@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20241029231244.2834368-1-song@kernel.org> <20241029231244.2834368-6-song@kernel.org>
+ <CAOQ4uxjDudLwKuxXaFihdYJUv2yvwkETouP9zJtJ6bRSpmV-Kw@mail.gmail.com>
+ <DAAF8ED0-42E2-4CC6-842D-589DF6162B90@fb.com> <CAOQ4uxgJiUfO4RL-xYmfRTz7f5m-niLG10xeCGazuk7nuiBhqw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgJiUfO4RL-xYmfRTz7f5m-niLG10xeCGazuk7nuiBhqw@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Thu, 7 Nov 2024 12:48:16 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW71hKC1G9jayVqmAMFu+kPOibWC9xqdMj9tLmCcteQuEQ@mail.gmail.com>
+Message-ID: <CAPhsuW71hKC1G9jayVqmAMFu+kPOibWC9xqdMj9tLmCcteQuEQ@mail.gmail.com>
+Subject: Re: [RFC bpf-next fanotify 5/5] selftests/bpf: Add test for BPF based
+ fanotify fastpath handler
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Song Liu <songliubraving@meta.com>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, "repnop@google.com" <repnop@google.com>, 
+	"jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 07, 2024, Tejun Heo wrote:
-> Hello,
->=20
-> On Thu, Nov 07, 2024 at 07:05:46PM +0100, Michal Koutn=C3=BD wrote:
-> ...
-> > I'd first ask why the kvm_vm_worker_thread needs to be in the KVM task'=
+On Thu, Nov 7, 2024 at 12:34=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Thu, Nov 7, 2024 at 8:53=E2=80=AFPM Song Liu <songliubraving@meta.com>=
+ wrote:
+> >
+> >
+> >
+> > > On Nov 7, 2024, at 3:10=E2=80=AFAM, Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> > >
+> > > On Wed, Oct 30, 2024 at 12:13=E2=80=AFAM Song Liu <song@kernel.org> w=
+rote:
+> > >>
+> > >> This test shows a simplified logic that monitors a subtree. This is
+> > >> simplified as it doesn't handle all the scenarios, such as:
+> > >>
+> > >>  1) moving a subsubtree into/outof the being monitoring subtree;
+> > >
+> > > There is a solution for that (see below)
+> > >
+> > >>  2) mount point inside the being monitored subtree
+> > >
+> > > For that we will need to add the MOUNT/UNMOUNT/MOVE_MOUNT events,
+> > > but those have been requested by userspace anyway.
+> > >
+> > >>
+> > >> Therefore, this is not to show a way to reliably monitor a subtree.
+> > >> Instead, this is to test the functionalities of bpf based fastpath.
+> > >> To really monitor a subtree reliably, we will need more complex logi=
+c.
+> > >
+> > > Actually, this example is the foundation of my vision for efficient a=
+nd race
+> > > free subtree filtering:
+> > >
+> > > 1. The inode map is to be treated as a cache for the is_subdir() quer=
+y
+> >
+> > Using is_subdir() as the truth and managing the cache in inode map seem=
 s
-> > cgroup (and copy its priority at creation time but no later adjustments=
-)?
-> >=20
-> > If it can remain inside root cgroup (like any other good kthread) its
-> > job may be even chunked into periodic/deferred workqueue pieces with no
-> > kthread per KVM at all.
->=20
-> That'd be better but I suppose kvm wants them in the same cgroup for a
-> reason.
+> > promising to me.
+> >
+> > > 2. Cache entries can also have a "distance from root" (i.e. depth) va=
+lue
+> > > 3. Each unknown queried path can call is_subdir() and populate the ca=
+che
+> > >    entries for all ancestors
+> > > 4. The cache/map size should be limited and when limit is reached,
+> > >    evicting entries by depth priority makes sense
+> > > 5. A rename event for a directory whose inode is in the map and whose
+> > >   new parent is not in the map or has a different value than old pare=
+nt
+> > >   needs to invalidate the entire map
+> > > 6. fast_path also needs a hook from inode evict to clear cache entrie=
+s
+> >
+> > The inode map is physically attached to the inode itself. So the evict
+> > event is automatically handled. IOW, an inode's entry in the inode map
+> > is automatically removed when the inode is freed. For the same reason,
+> > we don't need to set a limit in map size and add evicting logic. Of
+> > course, this works based on the assumption that we don't use too much
+> > memory for each inode. I think this assumption is true.
+>
+> Oh no, it is definitely wrong each inode is around 1K and this was the
+> main incentive to implement FAN_MARK_EVICTABLE and
+> FAN_MARK_FILESYSTEK in the first place, because recursive
+> pinning of all inodes in a large tree is not scalable to large trees.
 
-Yes.  The one and only user of kvm_vm_create_worker_thread() does non-trivi=
-al
-work on behalf of the VM, and so we want all of the CPU time consumed by th=
-at
-work to be charged to the VM's container, e.g. so that a VM that is generat=
-ing
-a lot of work doesn't negatively impact other VMs on the same host (the amo=
-unt
-of work done is directly affected by how the guest is accessing its memory)=
-.
+The inode map does not pin the inode in memory. The inode will
+still be evicted as normal. The entry associated with the being
+evicted inode in the map will be freed together as the inoide is freed.
+The overhead I mentioned was the extra few bytes (for the flag, etc.)
+per inode. When an evicted inode is loaded again, we will use
+is_subdir() to recreate the entry in the inode map.
+
+Does this make sense and address the concern?
+
+Thanks,
+Song
 
