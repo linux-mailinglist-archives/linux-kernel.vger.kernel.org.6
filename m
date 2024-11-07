@@ -1,93 +1,157 @@
-Return-Path: <linux-kernel+bounces-399660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 346E49C0271
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:34:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D4B9C0273
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E21C5283104
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:34:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FEF11C215A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2571EF957;
-	Thu,  7 Nov 2024 10:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EABA1EBFF4;
+	Thu,  7 Nov 2024 10:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="st8QtLEi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="j3/FQfCR"
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281F91EBFE4;
-	Thu,  7 Nov 2024 10:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967151DF72F;
+	Thu,  7 Nov 2024 10:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975634; cv=none; b=du6ueEo6R+X9cwQnmEwiuyiCie4I9ZpKPUX/tUUyyQDPBjhAsSNQ/NK4vdAGMpoW/AljV4JbUMLS3I/eG7Wzrv1qP2J2p99s6VlLEN2wE8uVdBVbRYrALhAgrrm1g8U66HmjNPjMaoLUOr36f8VIz0KuyJx8ASksGri8natoYIQ=
+	t=1730975654; cv=none; b=HJ0jVQVDdINYqveDy/bYW/oKFQoSpf7wUhpFD1GsJdnCjdFj7cXdulqFaYsj4m2NhqNcwY96pk4/wvzjsVKJeVY8puLgF7O9tNmi1gs1qCU1xMQEwwLnvy6AV2RkP9liE9OdML9yTy3IoZQFOfAHqVLcl+p7zidgH3R/uzn4eTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975634; c=relaxed/simple;
-	bh=/SHNdVb3iqreTq7YqcqYvk2I7A/Btpfa1SVV5nSIMko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fmSMqSe9EFYhJdgP0AKfCF3cetkXBc/6PlYn4ZxV2ozckvfewirTF439TnBYTcwLhqUVFJ+DXrSWN5kyvl1sRORL8dvLeZ7zKaWI0XigpcBxO6kxFyPo1X81Nr/fszPCIi2V17EEFR8eTyiWQ/M+t4etbX0AVjWStGdGOdLZLQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=st8QtLEi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54E0AC4CED0;
-	Thu,  7 Nov 2024 10:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730975633;
-	bh=/SHNdVb3iqreTq7YqcqYvk2I7A/Btpfa1SVV5nSIMko=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=st8QtLEiQKDugQRLzQHwtUdZKWuWHndfhJm6A5isLt4uaKQxzr75kLg6JdHJa6pP+
-	 fMH7Tt0hYXamdQiZoP0PgLSSQSWb/5pTQdEmxglTJH1dnSLf4YUq+SCEjRkkBb4N68
-	 mVZEI254SXh23emOJDln87mIS4NOJKYvcg7Tl3SC0XeC9cuCUtz+3193XhOzzPmYDp
-	 N82jkkRfHutbJfVSqEH0dyqe5KRLM3+7R7DxBpfvkQDdUzzBO3iMX6QmXuUizht/LZ
-	 9ssS8egAfsb768HqagFUh9tRsoZhKCbGYH28pL1mQIDaYgRIl7fwGLsnXM/g3Pf5+A
-	 1b5ou6uKBECBA==
-From: Conor Dooley <conor@kernel.org>
-To: linux-gpio@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] MAINTAINERS: add gpio driver to PolarFire entry
-Date: Thu,  7 Nov 2024 10:33:41 +0000
-Message-ID: <20241107-chewable-spoiler-3e7dd58d3e8d@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241107-avatar-clapper-93eb34ad0e0c@spud>
-References: <20241107-avatar-clapper-93eb34ad0e0c@spud>
+	s=arc-20240116; t=1730975654; c=relaxed/simple;
+	bh=Opi7PAEFaG+9SFGD2InUqdDcvGdzNbi6zSEJ/4Yro1c=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=qcvJO3QOaShBK1rBtbL2VRPovEPelirmCM69nI9U9QRpNRBMLhj2R+MHqIhfAWXtv81s7yfRilUIgj2VSa48jPv5OplMAJD0jPOW6AH9GWC3nd9OpynCm+a9I7WIwZ4/RXoB6yJtmnHZnkjEdd/sPWdlYMpQqp1zalsSHqiAmBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=j3/FQfCR; arc=none smtp.client-ip=159.100.248.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [144.217.248.100])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id C8F5B26761;
+	Thu,  7 Nov 2024 10:34:04 +0000 (UTC)
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay1.mymailcheap.com (Postfix) with ESMTPS id 3882E3E9D6;
+	Thu,  7 Nov 2024 10:33:57 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 3F88240078;
+	Thu,  7 Nov 2024 10:33:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1730975636; bh=Opi7PAEFaG+9SFGD2InUqdDcvGdzNbi6zSEJ/4Yro1c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j3/FQfCRb3jGhtZs+Jg/4sYOxXp/LBNLYVl7Q/o63HFNAKBR8Fx/Aq2nF/x4Y19BT
+	 FNnWOZRivnmkhCkISxGQVHLGD/ZaIGxKIgRhDAJBKYbGuOtrcH4g5kmOSoUrkr9wUo
+	 LOT7uPUu3KeacqZ4J8/XPhGYj+v6VeKgGpYQuY9g=
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 9B5CA40490;
+	Thu,  7 Nov 2024 10:33:55 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=786; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=tjx+KUo79J6Ay39V+4yggVrpVN6p0ZJUyoyr1f8RSzA=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOk605s3sz6vjTddGzLV3n658nkHn/nmJ+M1NC7xn7aef KP9YfL0jlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAEzEKZ/hn8XCqlfPfp1atXNC vOpyucmNHquYr3VtzJ8ZImqVq6OwopvhD3eR2pG61j9Pwi7yTlzD++vwZOZJ1QJZFeavLhqn/T7 uzA0A
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Date: Thu, 07 Nov 2024 18:33:55 +0800
+From: Mingcong Bai <jeffbai@aosc.io>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>, Linux regressions mailing
+ list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, rcu <rcu@vger.kernel.org>,
+ sakiiily@aosc.io
+Subject: Re: [Regression] wifi problems since tg3 started throwing rcu stall
+ warnings
+In-Reply-To: <ZyyQuTfMMSLwStf_@pavilion.home>
+References: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
+ <ZxjLQzHKuR-w16hF@pavilion.home>
+ <2b25a988-6965-48e4-a788-58dd8a776e06@leemhuis.info>
+ <e2ffd3d06fad236ea900d4fb439b2240@aosc.io>
+ <937c258b-f34c-4f63-949d-a5e7c8db714d@leemhuis.info>
+ <ZyyQuTfMMSLwStf_@pavilion.home>
+Message-ID: <eee3b235c14a84289b2fe1a40c542363@aosc.io>
+X-Sender: jeffbai@aosc.io
+Organization: Anthon Open Source Community
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-0.10 / 10.00];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ONE(0.00)[1];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[]
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 3F88240078
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Hi all,
 
-Lewis' original GPIO driver patchset didn't add MAINTAINERS coverage of
-the driver and I forgot to add it to the existing entry. Make up for the
-minimal amount of lost time.
+在 2024-11-07 18:04，Frederic Weisbecker 写道：
+> Le Thu, Nov 07, 2024 at 10:10:37AM +0100, Thorsten Leemhuis a écrit :
+>> On 05.11.24 08:17, Mingcong Bai wrote:
+>> > (CC-ing the laptop's owner so that she might help with further testing...)
+>> > 在 2024-10-23 18:22，Linux regression tracking (Thorsten Leemhuis) 写道：
+>> >> On 23.10.24 12:09, Frederic Weisbecker wrote:
+>> >>> Le Wed, Oct 23, 2024 at 10:27:18AM +0200, Linux regression tracking
+>> >>> (Thorsten Leemhuis) a écrit :
+>> >>>>
+>> >>>> Frederic, I noticed a report about a regression in bugzilla.kernel.org
+>> >>>> that appears to be caused by the following change of yours:
+>> >>>> 55d4669ef1b768 ("rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU
+>> >>>> invocation")
+>> >>> Are you sure about the commit? Below it says:
+>> >> Not totally, but...
+>> >>
+>> >>>> As many (most?) kernel developers don't keep an eye on the bug tracker,
+>> >>>> I decided to write this mail. To quote from
+>> >>>> https://bugzilla.kernel.org/show_bug.cgi?id=219390:
+>> >>>>
+>> >>>>>  Mingcong Bai 2024-10-15 13:32:35 UTC
+>> >>>>> Since aa162aa4aa383a0a714b1c36e8fcc77612ddd1a2 between v6.10.4 and
+>> >>> Now that's aa162aa4aa383a0a714b1c36e8fcc77612ddd1a2 which I can't
+>> >>> find in vanilla
+>> >>> tree.
+>> >> ...quite, as that is the commit-id of the backport to v6.10.5; and the
+>> >> reporter reverted it there. Ideally of course that would have happened
+>> >> on recent mainline. If you doubt, ask Mingcong Bai to check if a revert
+>> >> there helps, too.
+>> > Do we need any further information/testing on this issue? Please let me
+>> > know if there's anything we can do as the issue still persists in 6.12.
+>> 
+>> Hmm, no reply from Frederic. Not sure why, maybe he is just away from
+>> the keyboard for a few days. But if the reporter has a minute, it 
+>> might
+>> be wise to check if reverting that commit on top of 6.12-rc6 or newer
+>> also fixes the problem, to rule out any interference from changes
+>> specific to the stable series.
+>> 
+>> Ciao, Thorsten
+> 
+> Sorry for the lag, I still don't understand how this specific commit
+> can produce this issue. Can you please retry with and without this 
+> commit
+> reverted?
+> 
+> Thanks.
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Yes, we are on it. Should report back in six hours or so.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1d6aca7ffc0a..e73a0b848bf2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19837,6 +19837,7 @@ F:	arch/riscv/boot/dts/microchip/
- F:	drivers/char/hw_random/mpfs-rng.c
- F:	drivers/clk/microchip/clk-mpfs*.c
- F:	drivers/firmware/microchip/mpfs-auto-update.c
-+F:	drivers/gpio/gpio-mpfs.c
- F:	drivers/i2c/busses/i2c-microchip-corei2c.c
- F:	drivers/mailbox/mailbox-mpfs.c
- F:	drivers/pci/controller/plda/pcie-microchip-host.c
--- 
-2.45.2
-
+Best Regards,
+Mingcong Bai
 
