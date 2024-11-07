@@ -1,212 +1,159 @@
-Return-Path: <linux-kernel+bounces-400076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4CA9C0893
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:12:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE79B9C08A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BEFE1F21351
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:12:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3769AB22B98
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D325212658;
-	Thu,  7 Nov 2024 14:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33DE213141;
+	Thu,  7 Nov 2024 14:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oHUiLIx3"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eCUIcqkO"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E076D28F1;
-	Thu,  7 Nov 2024 14:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B854D212F06
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 14:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730988738; cv=none; b=O4N3D92QALfwIIG6mYojg5Sbbd16YM1mCw2bSC1qOBJRfu5e96n2FdULsAnk9opICY7Z4G9hkL6d1TR+rZ6RlRsv2zd2DYQfUiPGwV+WJDSiXdPe4mM2uv6OsiziXV7ak/4Pynj+4HHXyiOCNyxqKhVWTlP4sa6IvRLRUSmqVAs=
+	t=1730988820; cv=none; b=S9ZaZO1lWnfF1sdxjYqG2J/2ch1mb5sfe4nHxmJFn8PCPG1fVj9JDih26wEWxDTrj59teKbzAGxZchYVC7XTj7VfcGTYo/ubIJe1qWnaNZjInqvZKPW/xvlSuG4cJvYxjwCl69OBmLN+XiIe+Jg8BY6mlpy+LaAOmiIMLqoL098=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730988738; c=relaxed/simple;
-	bh=2wcCc6Xti/KhTWb0bMmK3g+FxFRCPbDyP6uPDksPAu4=;
+	s=arc-20240116; t=1730988820; c=relaxed/simple;
+	bh=37ObabFHx3U9TJg7HWgEMySRuRc8p07l9tVjXD0hGPw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6IymxTo4pX6Z7S8B9D1n0bBg87DL1eaJ51XcdB1SU7eOYtiyi+23iL54aZSFsGTRCG/6FtSMFiFPES5g8IMIwrZkECta/6QN7NTrvGq3VUbyXHNBcsnXRkNTo8zXIcw3dzJRhG1thlV2Zjb/hz5LuZ90fQN21rTw9p+n/NsSTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oHUiLIx3; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=a0L5TP8VHkT/SCXs9iavhK3s9CtL7Vkw+p8sqahkp+g=; b=oHUiLIx3GRRDlstVP3pPAT9eG8
-	oZehaL6Ug6frPIIsZZ+YSlEnS6tEdMcFXWwJLO9fQjj3qpTCXGayHRGxmJkdHpGolv696o4T32Yr7
-	inqdJTRV0JSlHJ0wtjxmwWBmnSxZ9T8AbKnt7iL0i89mbsjuKU0Zrwa1XLBJ8NN/vRFR0xwmOZWvA
-	hy9m5RUe5WrpJ1yUebpaRapDdUPmfw5NXhiJhMzlR2sg8TWNvSffWI2miBMWLi2N+C/x/2Uee8M8N
-	sy8P168OQaVHr1ik3jiolFqs82M8uZSyseSWt+caig7ipSEv0EYnYmuNpsSjOcJ5gKZFNiGFuSyUs
-	IivfyEPg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t93F6-0000000C8kH-1xFb;
-	Thu, 07 Nov 2024 14:12:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1B71A30078C; Thu,  7 Nov 2024 15:12:12 +0100 (CET)
-Date: Thu, 7 Nov 2024 15:12:12 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	bigeasy@linutronix.de, boqun.feng@gmail.com
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20241107141212.GB34695@noisy.programming.kicks-ass.net>
-References: <20241107182411.57e2b418@canb.auug.org.au>
- <20241107103414.GT10375@noisy.programming.kicks-ass.net>
- <20241108000432.335ec09a@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkVGnFWrOqBIU2UVX4iTZLwY8XDXaWiV6ee4yGGqZD2ueqk6PodKmb9w5ac+pcnJNDqyIRjTfsyE/nZblFO2zZ8QRF/jUwM3VfgjVP8enPIJZgn3CwW1r/SEy7Q8ClrhKP9ZJEWgxNv9CdXKkkXd8cnuzRGMEZUb1n6goMF8CSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eCUIcqkO; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7E9u3E031182;
+	Thu, 7 Nov 2024 14:12:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=AwU6f9g4/UeatPa2CtGBIPn3FGkR1+
+	NhcMAHd7GfVmw=; b=eCUIcqkOK7dYvjvVdiIjPHmAUA57a067NEYFAaGdemuBWI
+	sk0IM22A6ACkaVbQEg3nbSdg782xm+Loa2JHh8aCG9SEy1m5wYJRZ+/P+JM3h2Yz
+	90UqrcVfohmnpJs6RcyT4HYWcF9NJWyH/DouoAjHYU+aRm74vfpHItzvUtrk0GiD
+	/i8nr9k0mhP1hNaiV00szCkrED1KPCRZs2QlApICiariuJJOnNRM8w9jxj5Wrk/m
+	c1uHIuB0WZGgtNneB1O3YLbXL5sy2gyeUKaIiOHhNjblfvYssvPPzXXT5YfP+L5O
+	yIeghTXtnNPhkemUXFJHLJlY/fs4zPAjzpCy/nqA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rxmrr503-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 14:12:45 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A7ECjh8005385;
+	Thu, 7 Nov 2024 14:12:45 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rxmrr4yy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 14:12:45 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7BbM5K031854;
+	Thu, 7 Nov 2024 14:12:44 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nydmrb9n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 14:12:44 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A7ECgjk34079400
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Nov 2024 14:12:42 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 66BB120043;
+	Thu,  7 Nov 2024 14:12:42 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 792EF20040;
+	Thu,  7 Nov 2024 14:12:40 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com (unknown [9.124.213.199])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  7 Nov 2024 14:12:40 +0000 (GMT)
+Date: Thu, 7 Nov 2024 19:42:37 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+        maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch/powerpc/pseries: Fix KVM guest detection for
+ disabling hardlockup detector
+Message-ID: <2kkln3emctf7ewsh3eysujid2e7jel7yjtscfxmqeymeo5bjxf@7yzi5eye2n5j>
+References: <20241105132734.499506-1-gautam@linux.ibm.com>
+ <87ed3ncl8q.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="068i1ftiWJ33qMIW"
-Content-Disposition: inline
-In-Reply-To: <20241108000432.335ec09a@canb.auug.org.au>
-
-
---068i1ftiWJ33qMIW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87ed3ncl8q.fsf@mpe.ellerman.id.au>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: k25Z8U5bE-r4wwIghCv9v7MsnU_Vs5Jf
+X-Proofpoint-GUID: z54yCQYWmv27il52UZDaWwWxbk7EIW0d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
+ phishscore=0 impostorscore=0 bulkscore=0 suspectscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070110
 
-On Fri, Nov 08, 2024 at 12:04:32AM +1100, Stephen Rothwell wrote:
-> Hi Peter,
->=20
-> On Thu, 7 Nov 2024 11:34:14 +0100 Peter Zijlstra <peterz@infradead.org> w=
-rote:
-> >
-> > On Thu, Nov 07, 2024 at 06:24:11PM +1100, Stephen Rothwell wrote:
-> > So I can't get RUST=3Dy, even though make rustavailable is happy.
-> >=20
-> > make LLVM=3D-19 allmodconfig does not get me RUST=3Dy
-> >=20
-> > I started out with tip/master, tried adding rust-next, then kbuild-next
-> > gave up and tried next/master. Nada.
->=20
-> Just on Linus' tree allmodconfig gives me:
->=20
-> $ grep RUST .config
-> CONFIG_RUSTC_VERSION=3D108100
-> CONFIG_RUST_IS_AVAILABLE=3Dy
-> CONFIG_RUSTC_LLVM_VERSION=3D180108
-> CONFIG_RUST=3Dy
-> CONFIG_RUSTC_VERSION_TEXT=3D"rustc 1.81.0"
-> CONFIG_HAVE_RUST=3Dy
-> CONFIG_RUST_FW_LOADER_ABSTRACTIONS=3Dy
-> CONFIG_BLK_DEV_RUST_NULL=3Dm
-> CONFIG_RADIO_TRUST=3Dm
-> CONFIG_HID_THRUSTMASTER=3Dm
-> CONFIG_THRUSTMASTER_FF=3Dy
-> CONFIG_TRUSTED_KEYS=3Dm
-> CONFIG_HAVE_TRUSTED_KEYS=3Dy
-> CONFIG_TRUSTED_KEYS_TPM=3Dy
-> CONFIG_TRUSTED_KEYS_TEE=3Dy
-> CONFIG_TRUSTED_KEYS_CAAM=3Dy
-> CONFIG_INTEGRITY_TRUSTED_KEYRING=3Dy
-> CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=3Dy
-> CONFIG_SYSTEM_TRUSTED_KEYRING=3Dy
-> CONFIG_SYSTEM_TRUSTED_KEYS=3D""
-> CONFIG_SECONDARY_TRUSTED_KEYRING=3Dy
-> CONFIG_SECONDARY_TRUSTED_KEYRING_SIGNED_BY_BUILTIN=3Dy
-> CONFIG_SAMPLES_RUST=3Dy
-> CONFIG_SAMPLE_RUST_MINIMAL=3Dm
-> CONFIG_SAMPLE_RUST_PRINT=3Dm
-> CONFIG_SAMPLE_RUST_HOSTPROGS=3Dy
-> CONFIG_RUST_DEBUG_ASSERTIONS=3Dy
-> CONFIG_RUST_OVERFLOW_CHECKS=3Dy
-> CONFIG_RUST_BUILD_ASSERT_ALLOW=3Dy
->=20
-> $ rustc --version
-> rustc 1.81.0
+On Thu, Nov 07, 2024 at 10:54:29PM +1100, Michael Ellerman wrote:
+> Gautam Menghani <gautam@linux.ibm.com> writes:
+> > As per the kernel documentation[1], hardlockup detector should be
+> > disabled in KVM guests as it may give false positives. On PPC, hardlockup
+> > detector is broken inside KVM guests because disable_hardlockup_detector()
+>  
+> Isn't it the opposite? Inside KVM guests, the hardlockup detector should
+> be *disabled*, but it's not it's *enabled*, due to this bug.
+> 
+> ie. it's not broken, it's working, but that's the bug.
 
-Yeah, I'm not sure what's going on. I occasionally get rust stuff, but
-mostly when I try allyesconfig. Weirdness.
+Yes right, will change the description in v2.
 
-> > Anyway, I think the above needs something like this:
-> >=20
-> > ---
-> > diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
-> > index b7b0945e8b3c..5804a6062eb1 100644
-> > --- a/rust/helpers/spinlock.c
-> > +++ b/rust/helpers/spinlock.c
-> > @@ -5,11 +5,16 @@
-> >  void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
-> >  				  struct lock_class_key *key)
-> >  {
-> > +#ifndef CONFIG_PREEMPT_RT
-> >  #ifdef CONFIG_DEBUG_SPINLOCK
-> >  	__raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-> >  #else
-> >  	spin_lock_init(lock);
-> >  #endif
-> > +#else
-> > +	rt_mutex_base_init(&lock->lock);
-> > +	__rt_spin_lock_init(lock, name, key, false);
-> > +#endif
-> >  }
-> > =20
-> >  void rust_helper_spin_lock(spinlock_t *lock)
->=20
-> I will try to remember to add that to the tip tree merge tomorrow.
+> 
+> > is marked as early_initcall and it uses is_kvm_guest(), which is
+> > initialized by check_kvm_guest() later during boot as it is a
+> > core_initcall. check_kvm_guest() is also called in pSeries_smp_probe(),
+> > which is called before initcalls, but it is skipped if KVM guest does
+> > not have doorbell support or if the guest is launched with SMT=1.
+> 
+> I'm wondering how no one has noticed. Most KVM guests have SMT=1.
 
-Boqun, could you test the above and make it happen?
+Looking at the commit history, code around hardlockups and
+pSeries_smp_probe() was changed around 2021/2022 timeframe, and I
+believe KVM wasn't being actively tested at the time. 
+Even I noticed this only after coming across the documentation that said
+hardlockups should be disabled. So probably this feature decision isn't
+widely known.
 
-> > > Without the revert CONFIG_PREEMPT_RT=3Dy, after the revert it is not =
-set
-> > > and spinlock_check is only defined for !defined(CONFIG_PREEMPT_RT). =
-=20
-> >=20
-> > Right, that moved PREEMPT_RT out of the preemption choice. Now I'm not
-> > sure we want it =3Dy for all{yes,mod}config. Is the below the right
-> > incantation to avoid this?
-> >=20
-> > ---
-> > diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
-> > index 7c1b29a3a491..54ea59ff8fbe 100644
-> > --- a/kernel/Kconfig.preempt
-> > +++ b/kernel/Kconfig.preempt
-> > @@ -88,7 +88,7 @@ endchoice
-> > =20
-> >  config PREEMPT_RT
-> >  	bool "Fully Preemptible Kernel (Real-Time)"
-> > -	depends on EXPERT && ARCH_SUPPORTS_RT
-> > +	depends on EXPERT && ARCH_SUPPORTS_RT && !COMPILE_TEST
-> >  	select PREEMPTION
-> >  	help
-> >  	  This option turns the kernel into a real-time kernel by replacing
->=20
-> Yeah, that will do it.
+> 
+> > Move the check_kvm_guest() call in pSeries_smp_probe() to the initial
+> > part of function before doorbell/SMT checks so that "kvm_guest" static
+> > key is initialized by the time disable_hardlockup_detector() runs.
+> 
+> check_kvm_guest() is safe to be called multiple times so
+> disable_hardlockup_detector() should just call it before it calls
+> is_kvm_guest(). That should avoid future breakage when the order of
+> calls changes, or someone refactors pSeries_smp_probe().
 
-OK, I'll write it up and stick that in tip/sched/core along with them
-patches that's causing the grief :-)
+Yeah I did that initially but in the worst case, that results in 3 calls
+to check_kvm_guest() - the core_initcall, pseries_smp_probe() call and 
+then disable_hardlockup_detector(). Will that be fine?
 
---068i1ftiWJ33qMIW
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Can you identify the commit that broke this and include a Fixes: tag
+> please.
 
------BEGIN PGP SIGNATURE-----
+Yes will do
 
-iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmcsyrMACgkQdkfhpEvA
-5LrXzQ//eWsdIudUYWZW709q2oyhYDiCfOis2ioIwmf0N8RPKwXXPPx97SHm6Yio
-VqBptjOCuYmZeP6+A1j9cm+rh3DS54aP+uccxjiucbZ2VJJX39Unt6ZRCLW1Nw09
-r8tt4SOnr23eeX+AaSJSl7dCJa77aG5gIHkICnVoZgvFItdSeObQKir59dyiqwJg
-lt+Dzz5eBczMuSKepkRhFGA/lPb6yXEW0EE8BtPQMuXoHZzjlktraamq6Mc62XGa
-wcb5C8ocIKoQzi/19d5Kou3UfNAg9knwpwsaDqYbL/PwwETDoLkuKB0eShz04IUB
-g6IjyUlmcz3OtUVHBV7EdQ3rFgsadNty2C5c9/v7RzYiCEhX+xK8z/TiH5IcOObi
-/+yDdhPbqs1TZkXUIRyC4tNig85K0+X77ONhpDaRn/zUvMAnPgns7bzqPuRMhVDn
-jtge/25a/Sv2On4QtcdLlTTFp2NRwNsq5VVfNxH7n48FVEVVEk/N4xbjaoONW5qr
-6fTKKAjXE57tUy4ZQnqtMJm72V8ED6y3izYRXAr4T2fVncs339gUn1rgVbLF6ShV
-dv+B/uojhAirOhpda+WafoE8y9/JPSrlWGvvc7soxzCMohmntIJy+NmSYaqY38+A
-0Lol8vhtGx6cdQckHuqWM16j1Mqyl1ijTHH0Ni1xfb4nnyQts+4=
-=uWKk
------END PGP SIGNATURE-----
-
---068i1ftiWJ33qMIW--
+Thanks,
+Gautam
 
