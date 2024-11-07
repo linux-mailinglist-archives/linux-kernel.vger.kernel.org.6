@@ -1,211 +1,139 @@
-Return-Path: <linux-kernel+bounces-399654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110349C0261
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:30:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689EA9C0267
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:31:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54FF281988
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:30:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2731B21FE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904CF1EC00D;
-	Thu,  7 Nov 2024 10:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4947F1EE011;
+	Thu,  7 Nov 2024 10:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQHJumAO"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JsQmeBLw"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A60126C01;
-	Thu,  7 Nov 2024 10:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CEB126C01;
+	Thu,  7 Nov 2024 10:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975438; cv=none; b=eT6zhX31Nla5RbjzO9y484YGCsO71t02NfUDqxQsaweeaDGDx5b+UxtbCixXJPADunkMDoO29kmIdt7ycxl49AvaCjvLWpartmRTK3daBtE/VU0LyLYZngADcXfNwuLAj+zupU7pRHlWkbibcJW23bIjQJ9wpOgXRFF+sDOq/Co=
+	t=1730975492; cv=none; b=lnPPAlVWHQ5mF3hNxT9T8p6Ppj1f82YuTLPgSQMTvn8CFpvcz9arXGcYimoV7hUzc23t3C/BG5p9gWmJK81QTe7BhkQY+ORZFBS0an+3CSQWjiPjaLKLAK6N4XUoq7OoenCyMddl0abbKvsm4ZUswWV8GdTF5PtKQ39Gc7M6LCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975438; c=relaxed/simple;
-	bh=ybAPtiskKz4DcrhGmZixymNGGFMFiO8a1KfZLtABtY4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E8ugmPYzMcu7NxjOBXomYXzBVppfYHSZ4GsiiDIJw9GEJmdlcNSRxi4x2NZmNPtjtm8XEvqwzf0/LkVO3+nF9gnpkJtEg0YdQJp4iVdFsAOHnsoxbMw/dPreV9oUwhA9ybVHWasHmNiti/qXSEgdz64QrFigSgkstaXOvuUl8JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQHJumAO; arc=none smtp.client-ip=209.85.208.176
+	s=arc-20240116; t=1730975492; c=relaxed/simple;
+	bh=s01lhGxF6c+BY6hecobKUX5p0GXhI8o0kpCOdT8gEm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OEQFqipLuvOz6bmvfvVKgMFHB7iH/nk+FtYX7b5xsEWU0rcj/bozoWFlZiKWcXlbNTVtdU+HrHia6L448jufGtPoZx/Cl1vpR+3BulrqXdYyc9gmSOMgJpx+35EDmeymY+bM/FV3c/mktptG3Zab5NuLgTM6vpRAycySiXz4mME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JsQmeBLw; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb5be4381dso7803151fa.2;
-        Thu, 07 Nov 2024 02:30:34 -0800 (PST)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-720be27db74so631429b3a.1;
+        Thu, 07 Nov 2024 02:31:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730975433; x=1731580233; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7adgg6V1UpnypInZqfzwGSsryFp6mWpcT19KyQhxWsQ=;
-        b=jQHJumAOdIFS+6wDpLOrnIGWtWSBgU+cF8UwNBKo973S09t24frHHBzSaciw3VQTlu
-         vN2VwNqZ4F+8YL1wUDbZ9jPJURD3qtdfdLTnaGqZfGVzsznGym7ShyXBRADr1tW5wCDi
-         JfpBbt4+fnDCDD2ym5UptiSSSjt646e7o3Gj3TqmNlu3CqcXyoYEAGbovaGrRWjwIXId
-         JRAuA8L17ZgGj5Hc+ED/dsegPcA3RF/TWCpycO0i+YPJj7jurKn83Vf5cDsXrjX25lPf
-         9/BUBpnILU9s8KwK81iL4ZUusxigt+fU98Qh0lDlsWNVsJmHAMZ3GvUpRy9HJFq7QfP7
-         wi5g==
+        d=gmail.com; s=20230601; t=1730975491; x=1731580291; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YkraiRUrks+s5pcHcVdDbNI0v0htZdI4Vc5A2KCgS+Q=;
+        b=JsQmeBLwHEBVZ66qeR1s+AlGm4poFvCNduM00c+xKnwxiUd5drEMViG0//8Mo1jtAB
+         XXM2ToIwa1XTJtJnDLr/XUV6LzGbS9bmBcZxhPGEVbYyFl8d5IitDCLGA4VHMZF4h5Ru
+         Oyt2dRShhuJxhLzXKAEPNP6gzp5+sXieFbe8HbRHHWfYQOztHdx6AdJExq043dLLDpO/
+         jelbxwDKXyh1ZX1U+fD4CF0ZM7/VnHZCu1OChUwE+8jwJzaV9NnRjeEp4Wj4/Qz6jgPF
+         GuocvQiOqHFRFSoP+pb8GtbTloCa1CU6hvpxZiM8etdtlV0TqI9A6aO6gNnZRSbT/wyq
+         kRlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730975433; x=1731580233;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7adgg6V1UpnypInZqfzwGSsryFp6mWpcT19KyQhxWsQ=;
-        b=C39deOCIvpx3/ao2k58cZSeaJl32T6qxIQR8dvS5ZN3ywaLU4oKZDDtta+kfWPK9Ge
-         4KUvCe0bVTLqRGiDkQ8BbsThqGkY636CHu90KiCd2KWJB8divkDkl1CIZ8DonZMlwIUc
-         8xMgV3G84AM7hVQdgk/wwO0spQJ4XsDxnuOW7LSh7NoCALrkZbIxV+J2Zg3obmeFmT8V
-         lnLzsh8dcehWCTYoKvexCPRG124hO/h9ezRHxzMULjVi+8d9U9GfbcE3tai6lSvxVywc
-         HdyksN7Qa3Yl99t/t3XtQ0AuXwqUm+QuTmlrHVNOuBsCGf4G66X6UWYrAmzYTCVfhXyG
-         FDMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUU2nxh4TtWoPiJfVL+cOpybsqCLAxtCl/RPBnHRCx+sm9CoIoCbZfs1qZ0gi3vZq8hzoEHU+kk4R9V@vger.kernel.org, AJvYcCVwn7TeGq/YOD+KpnnS1fqpAUCGm18MPMiR9RBiZ0KylEwstss0Pbr/FMllYwPGTXuj6qbVbMk2eJJRC9oL@vger.kernel.org
-X-Gm-Message-State: AOJu0YylZGN7PapyLDyewFmKoJKeoMHgCNj+VBKGM4t9U5ECFUhfPaDr
-	GAg0beMtYdT8sSUIrGa7iDQTq8tralmLJk0zvzwoZK2m8V1K3pzuy5a1aWb1hkxUXLRpGmHh+J5
-	0ZEVm/V2LXjMhdOX6aysfFoZWteLmQ4Rf
-X-Google-Smtp-Source: AGHT+IFc7eRXv1Z2roQsB71dAwxnkCOD6ZA3RMBoo3SlhllR1cKDJMbCeG4Z6pG6xJjbW8fu1nUZP13mCuSgJPwx0qU=
-X-Received: by 2002:a2e:bc15:0:b0:2fb:6181:8ca1 with SMTP id
- 38308e7fff4ca-2fcbdf5f91emr241525281fa.6.1730975432784; Thu, 07 Nov 2024
- 02:30:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730975491; x=1731580291;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YkraiRUrks+s5pcHcVdDbNI0v0htZdI4Vc5A2KCgS+Q=;
+        b=UIzIMoLFz2lUC6g+k+C4GC2Ev4FuaKOhTuuvg+yUgJED1kYvU/dPfme57ydc67e7cL
+         LB5gKWQKTIO0H7rxI4rBWJIYKCMQ3jb4Zm3ib+H9+9/DnDciDC4X8J8j2NoY3GGHb8bj
+         vjT+pjvceI+jVpRRNy1KZJ686uJ0SlOlu6BC1JSm845k1zN5xI0eTi5WnRcoWzwA6U48
+         8FUOdxAbLtV49xRkWf4wejcnxuNAgnabi5kof2maIIAFhPUEj61ZO/zhgxw6JTiRZuex
+         EpTIm1b2SEOTy+4aXYZvXlMymgTD3bp/caz2v0+tJiybK+LFaDXPZ8ETMtMBuRK+bMs1
+         KgOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5QRRVRl5yVlxH+yeQ77VSZWOjSTozR7TSspYnH5N9eEZbWz6ok2o2SR6/iLu88x8DICz4F8c/@vger.kernel.org, AJvYcCV3zQXZE8Hr5fdXBnIehYjVoTFlZv2lsEvJmkaXG4bJHO4UoLpa5LeUN67DQOjmv3x3bS6CPP2CxEm9I/q9@vger.kernel.org, AJvYcCW8axgcyZap6UWKGt17fcjSotaiccm0xOp+BmhXmO6ee5KeNMwfZ3+jZ6w2nbUp/wCJJTPGOnqNi9S9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+RyQkuTK3fOLBmPlrDlNXNblFPeaBxa8RqUNZSuWNBfnas0OO
+	+hhqDkeqJw62k6d7hqhmSJLybiBr/5FPCCk++SLzEM62rfL2R7xr
+X-Google-Smtp-Source: AGHT+IGNwXAlJHaBXrnsGeXwGA4utGjnJr02l8IicuB7Vk/ooEjnqYAWwWmqFY6U2v0+nQynuABSkQ==
+X-Received: by 2002:a05:6a00:3ccf:b0:71e:60d9:910d with SMTP id d2e1a72fcca58-7240c8b7bbemr916513b3a.6.1730975490635;
+        Thu, 07 Nov 2024 02:31:30 -0800 (PST)
+Received: from [192.168.0.104] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078609ddsm1196578b3a.22.2024.11.07.02.31.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 02:31:30 -0800 (PST)
+Message-ID: <21a00f02-7f2f-46da-a67f-be3e64019303@gmail.com>
+Date: Thu, 7 Nov 2024 18:31:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101162304.4688-1-suravee.suthikulpanit@amd.com>
- <20241101162304.4688-4-suravee.suthikulpanit@amd.com> <ZyoP0IKVmxfesRU8@8bytes.org>
- <323dcff2-6135-4b8a-85db-bccc315ddfdf@app.fastmail.com> <CAFULd4Za4BQL+h9Xmra1TjB2oGGzPwru_y1xOrrAFSg==bfvgg@mail.gmail.com>
- <20241106134034.GN458827@nvidia.com> <4c9fd886-3305-4797-9091-3f9b0b9ee0b6@app.fastmail.com>
-In-Reply-To: <4c9fd886-3305-4797-9091-3f9b0b9ee0b6@app.fastmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 7 Nov 2024 11:30:20 +0100
-Message-ID: <CAFULd4Z86uiH+w+1N36kOuhYZ5_ZkQkaEN6nyPh8VNJth3WNhg@mail.gmail.com>
-Subject: Re: [PATCH v9 03/10] asm/rwonce: Introduce [READ|WRITE]_ONCE()
- support for __int128
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>, 
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, Robin Murphy <robin.murphy@arm.com>, vasant.hegde@amd.com, 
-	Kevin Tian <kevin.tian@intel.com>, jon.grimm@amd.com, santosh.shukla@amd.com, 
-	pandoh@google.com, kumaranand@google.com, 
-	Linux-Arch <linux-arch@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000c95d6a0626501f02"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
+ MA35 family GMAC
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
+ schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20241106111930.218825-1-a0987203069@gmail.com>
+ <20241106111930.218825-2-a0987203069@gmail.com>
+ <f3c6b67f-5c15-43e2-832e-28392fbe52ec@lunn.ch>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <f3c6b67f-5c15-43e2-832e-28392fbe52ec@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---000000000000c95d6a0626501f02
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Dear Andrew,
 
-On Thu, Nov 7, 2024 at 11:02=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
->
->
-> On Wed, Nov 6, 2024, at 14:40, Jason Gunthorpe wrote:
-> > On Wed, Nov 06, 2024 at 11:01:20AM +0100, Uros Bizjak wrote:
-> >> On Wed, Nov 6, 2024 at 9:55=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> w=
-rote:
-> >> >
-> >> > On Tue, Nov 5, 2024, at 13:30, Joerg Roedel wrote:
-> >> > > On Fri, Nov 01, 2024 at 04:22:57PM +0000, Suravee Suthikulpanit wr=
-ote:
-> >> > >>  include/asm-generic/rwonce.h   | 2 +-
-> >> > >>  include/linux/compiler_types.h | 8 +++++++-
-> >> > >>  2 files changed, 8 insertions(+), 2 deletions(-)
-> >> > >
-> >> > > This patch needs Cc:
-> >> > >
-> >> > >       Arnd Bergmann <arnd@arndb.de>
-> >> > >       linux-arch@vger.kernel.org
-> >> > >
-> >> >
-> >> > It also needs an update to the comment about why this is safe:
-> >> >
-> >> > >> +++ b/include/asm-generic/rwonce.h
-> >> > >> @@ -33,7 +33,7 @@
-> >> > >>   * (e.g. a virtual address) and a strong prevailing wind.
-> >> > >>   */
-> >> > >>  #define compiletime_assert_rwonce_type(t)                       =
-            \
-> >> > >> -    compiletime_assert(__native_word(t) || sizeof(t) =3D=3D size=
-of(long long),  \
-> >> > >> +    compiletime_assert(__native_word(t) || sizeof(t) =3D=3D size=
-of(__dword_type), \
-> >> > >>              "Unsupported access size for {READ,WRITE}_ONCE().")
-> >> >
-> >> > As far as I can tell, 128-but words don't get stored atomically on
-> >> > any architecture, so this seems wrong, because it would remove
-> >> > the assertion on someone incorrectly using WRITE_ONCE() on a
-> >> > 128-bit variable.
-> >>
-> >> READ_ONCE() and WRITE_ONCE() do not guarantee atomicity for double
-> >> word types. They only guarantee (c.f. include/asm/generic/rwonce.h):
-> >>
-> >>  * Prevent the compiler from merging or refetching reads or writes. Th=
-e
-> >>  * compiler is also forbidden from reordering successive instances of
-> >>  * READ_ONCE and WRITE_ONCE, but only when the compiler is aware of so=
-me
-> >>  * particular ordering. ...
-> >>
-> >> and later:
-> >>
-> >>  * Yes, this permits 64-bit accesses on 32-bit architectures. These wi=
-ll
-> >>  * actually be atomic in some cases (namely Armv7 + LPAE), but for oth=
-ers we
-> >>  * rely on the access being split into 2x32-bit accesses for a 32-bit =
-quantity
-> >>  * (e.g. a virtual address) and a strong prevailing wind.
-> >>
-> >> This is the "strong prevailing wind", mentioned in the patch review at=
- [1].
-> >>
-> >> [1] https://lore.kernel.org/lkml/20241016130819.GJ3559746@nvidia.com/
->
-> I understand the special case for ARMv7VE. I think the more important
-> comment in that file is
->
->   * Use __READ_ONCE() instead of READ_ONCE() if you do not require any
->   * atomicity. Note that this may result in tears!
->
-> The entire point of compiletime_assert_rwonce_type() is to ensure
-> that these are accesses fit the stricter definition, and I would
-> prefer to not extend that to 64-bit architecture. If there are users
-> that need the "once" behavior but not require atomicity of the
-> access, can't that just use __READ_ONCE() instead?
+Thank you for your reply.
 
-If this is the case, then the patch could be simply something like the
-attached (untested) patch.
+Andrew Lunn 於 11/7/2024 2:13 AM 寫道:
+>> +  phy-mode:
+>> +    enum:
+>> +      - rmii
+>> +      - rgmii-id
+> The phy-mode deepened on the board design. All four rgmii values are
+> valid.
+I will add them.
+>> +
+>> +  tx_delay:
+>> +    maxItems: 1
+>> +    description:
+>> +      Control transmit clock path delay in nanoseconds.
+>> +
+>> +  rx_delay:
+>> +    maxItems: 1
+>> +    description:
+>> +      Control receive clock path delay in nanoseconds.
+> If you absolutely really need these, keep them, but i suggest you drop
+> them. They just cause confusion, when ideally we want the PHY to be
+> adding RGMII delays, not the MAC.
+>
+> If you do need them, then they should be in pS.
 
-Thanks,
-Uros.
+I will fix it.
 
---000000000000c95d6a0626501f02
-Content-Type: text/plain; charset="US-ASCII"; name="p.diff.txt"
-Content-Disposition: attachment; filename="p.diff.txt"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3761jhw0>
-X-Attachment-Id: f_m3761jhw0
+We have customers who use a fixed link instead of a PHY, so these 
+properties may be necessary.
 
-ZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvY29tcGlsZXJfdHlwZXMuaCBiL2luY2x1ZGUvbGlu
-dXgvY29tcGlsZXJfdHlwZXMuaAppbmRleCAxYTk1N2VhMmY0ZmUuLjk0YTE4ZThjY2Y3ZSAxMDA2
-NDQKLS0tIGEvaW5jbHVkZS9saW51eC9jb21waWxlcl90eXBlcy5oCisrKyBiL2luY2x1ZGUvbGlu
-dXgvY29tcGlsZXJfdHlwZXMuaApAQCAtNDY5LDcgKzQ2OSw4IEBAIHN0cnVjdCBmdHJhY2VfbGlr
-ZWx5X2RhdGEgewogCQl1bnNpZ25lZCB0eXBlOgkodW5zaWduZWQgdHlwZSkwLAkJCVwKIAkJc2ln
-bmVkIHR5cGU6CShzaWduZWQgdHlwZSkwCiAKLSNkZWZpbmUgX191bnF1YWxfc2NhbGFyX3R5cGVv
-Zih4KSB0eXBlb2YoCQkJCVwKKyNpZiBkZWZpbmVkKENPTkZJR19BUkNIX1NVUFBPUlRTX0lOVDEy
-OCkgJiYgZGVmaW5lZChfX1NJWkVPRl9JTlQxMjhfXykKKyAjZGVmaW5lIF9fdW5xdWFsX3NjYWxh
-cl90eXBlb2YoeCkgdHlwZW9mKAkJCQlcCiAJCV9HZW5lcmljKCh4KSwJCQkJCQlcCiAJCQkgY2hh
-cjoJKGNoYXIpMCwJCQkJXAogCQkJIF9fc2NhbGFyX3R5cGVfdG9fZXhwcl9jYXNlcyhjaGFyKSwJ
-CVwKQEAgLTQ3Nyw3ICs0NzgsMTkgQEAgc3RydWN0IGZ0cmFjZV9saWtlbHlfZGF0YSB7CiAJCQkg
-X19zY2FsYXJfdHlwZV90b19leHByX2Nhc2VzKGludCksCQlcCiAJCQkgX19zY2FsYXJfdHlwZV90
-b19leHByX2Nhc2VzKGxvbmcpLAkJXAogCQkJIF9fc2NhbGFyX3R5cGVfdG9fZXhwcl9jYXNlcyhs
-b25nIGxvbmcpLAlcCisJCQkgX19zY2FsYXJfdHlwZV90b19leHByX2Nhc2VzKF9faW50MTI4KSwJ
-CVwKIAkJCSBkZWZhdWx0OiAoeCkpKQorI2Vsc2UKKyAjZGVmaW5lIF9fdW5xdWFsX3NjYWxhcl90
-eXBlb2YoeCkgdHlwZW9mKAkJCQlcCisJCV9HZW5lcmljKCh4KSwJCQkJCQlcCisJCQkgY2hhcjoJ
-KGNoYXIpMCwJCQkJXAorCQkJIF9fc2NhbGFyX3R5cGVfdG9fZXhwcl9jYXNlcyhjaGFyKSwJCVwK
-KwkJCSBfX3NjYWxhcl90eXBlX3RvX2V4cHJfY2FzZXMoc2hvcnQpLAkJXAorCQkJIF9fc2NhbGFy
-X3R5cGVfdG9fZXhwcl9jYXNlcyhpbnQpLAkJXAorCQkJIF9fc2NhbGFyX3R5cGVfdG9fZXhwcl9j
-YXNlcyhsb25nKSwJCVwKKwkJCSBfX3NjYWxhcl90eXBlX3RvX2V4cHJfY2FzZXMobG9uZyBsb25n
-KSwJXAorCQkJIGRlZmF1bHQ6ICh4KSkpCisjZW5kaWYKIAogLyogSXMgdGhpcyB0eXBlIGEgbmF0
-aXZlIHdvcmQgc2l6ZSAtLSB1c2VmdWwgZm9yIGF0b21pYyBvcGVyYXRpb25zICovCiAjZGVmaW5l
-IF9fbmF0aXZlX3dvcmQodCkgXAo=
---000000000000c95d6a0626501f02--
+> 	Andrew
+
+Thanks!
+
+BR,
+
+Joey
+
 
