@@ -1,143 +1,167 @@
-Return-Path: <linux-kernel+bounces-399593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854E19C013F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:36:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0419C013B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:36:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A6D1C210A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BE6F1C213CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980861E0DF4;
-	Thu,  7 Nov 2024 09:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="hdFeNR1X"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88501E1043;
+	Thu,  7 Nov 2024 09:36:00 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49E91E0DE8;
-	Thu,  7 Nov 2024 09:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A548B1E0DED
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730972169; cv=none; b=kX1qJSMrJDvQLuZR3muIGNSihBX7hiqJpraS9aApWrgG561teWVrRL4OwMNL/bgfVFeS3WLArb8UXWwlszOaNDCITT3K1eXu4nsEfu5DUJ3lQJCTcOqiCd1jRpuOJ3C+mhPzRuowF+1ccQxjgL0KK8QIqvC1mIkIVd3t0Y/7d04=
+	t=1730972160; cv=none; b=aZd/XMDtuCn9gEV1kXm/7QqlDvLcs4uTOZNUzUhcohhGKCUq0j8/R6UYVPF2ZQV5/2yQyh45HUUevtfQ0WE7ID3H7i0a8THigepp8L/qITpxr3bqRB3vU9361IiQuT4IcSOi+WakiRT0P5Tp1RNdaQoFBf6yXkcyNjnuJ1+XbtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730972169; c=relaxed/simple;
-	bh=VZvqD/3rqm30CRWbcS650csR314AAmf8WEqce0jmsKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qtb8gkLh9/SRibMw5vMLsXWzBv1xEmdHUvLoacyDSyqbc4U16JgxV6R3a7GDQiEJ9ZI5MOV8bsYW7AkBKzk2D5iuen3QQAo67PM2lK4MBFSK6tDMP7KP2Wx4WCVCgAhXY8Y3aq9kEvhMwaxFzjrbWA6KIAbRkEiD455sM7XIbsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=hdFeNR1X; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=ccsASbRCwb8II3GzvWH2KtdPgRwKffYmzn9YbOSRDZI=; b=hdFeNR1XZP5ifd9Ddr/QyILLaf
-	Kg2ptPi4q7C/QiC6JW8YyZBUTezoLBcbC234684GE9AU0/XTl2UmlWmhAbo16TSgBeTjocDI5rCqI
-	oI6jWO5wHLDvB/ZnfPvEUCBxccy+y8svncMgVLiiUmv/4vRjCMOn1/f9Bg2wW5tr4rUXsZf/JnQOR
-	reX32IHRVdUsmabSMIu1ky56r5hp9S7keLSt4u5vjJvu1/BwI+tydfexEMwF5JpwuPb/B+R8nZZ4s
-	tVXSS36fKlHmUhAI6lGDRwCfXXXl7yHycd9IsGWAOkcjviwh0pAnQMhc0Scj6einyzg1BWDgLYQgj
-	a8D1wSZA==;
-Date: Thu, 7 Nov 2024 10:35:52 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Adam Ford <aford173@gmail.com>, bcousson@baylibre.com,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH] ARM: dts: gta04: fix excess dma channel usage
-Message-ID: <20241107103552.22583403@akair>
-In-Reply-To: <20230122100852.32ae082c@aktux>
-References: <20230113211151.2314874-1-andreas@kemnade.info>
-	<CAHCN7xJH+c41Yas+xnWA57KNi9arOOJDxJ=joEDEJr2k6jrRrw@mail.gmail.com>
-	<Y8VkjQ2yZQssx/wJ@atomide.com>
-	<20230116173922.585904bf@aktux>
-	<Y8WBuKt6mw6TN1Cp@atomide.com>
-	<CAHCN7x+b2_dnpRs8RarhhgTfBrTVfGfmcQNbfHLoWBwkZ_3Puw@mail.gmail.com>
-	<Y8WEoxiOXgZNB1Oc@atomide.com>
-	<Y8jxjBZrPV0n363P@atomide.com>
-	<20230122100852.32ae082c@aktux>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730972160; c=relaxed/simple;
+	bh=VQi/YAj6fn3bpq7JZNWqkMSXEsRQrA/ULc92Lb/zmEU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RQD9n8uEA8dfzPs7QoNgIF9op9m0Ztl3LNwiB9Hj6t8SZ9p8r49YyVwZHLHjuuzq19Qvwh64eycTY6Rl3d6WDaoHMws5a0Je3cM1gCRNBu8rjjYPuWCDgeET8wKH5T8jqvuuDA6zCYjKyv9kwU5Pm7QSqlI6cWtzlcy2rpu3Fu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so8830255ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:35:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730972158; x=1731576958;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MOl0qqtOmTWHIbRQiST5WY9uhJbGKOWmM6OMiHRavwI=;
+        b=XIE/KNnvoTj68+dKg2PWinaQf7y2EWiNfppaiGkwOOS6tQbw0HHss6CAD9ZkKtZYNP
+         wLxwXv9nQ/5BkZakSSnP+jdq8dA2FQFk7UxI/yD8DVtwtYzrYy7M7lMPwhB9n+amEfVV
+         vJw9cm4IQKxxWqymuqt+qiDiEmBjYAPRPIp5izdJr52BGChwfU4wh5+XcygXoDGY6YQ7
+         rm1jvzKSRhjR6q6ISHxghlLmU/nRbfgziV7hUxB8aA8EzIsF2BW9zO65/evOK/EOCqeG
+         0xDJ+u3H9jcEiQDYwaKSj5oCHXLvLqITJTY+Bv6UyL1Mu5ggr4zJm3H+9zkFzS80qmTv
+         i4lw==
+X-Gm-Message-State: AOJu0YzBTlE4N7PQYOYt1EguqmCY0UdcEDQtFg3fegjsVpAB7WnqEZ/0
+	kAPCWTY2+DAt8EjSHhGtyLKZkpy2qjikKWCOkZU/awr1hcltO3hJqonA+TI2qFCjJPtywA88z1X
+	hLUAVORE/uufFhX1Iofb8WK9kEY4x1wHhPqJ6tQ9ovxGVvQYeWGGKI5E=
+X-Google-Smtp-Source: AGHT+IEWGX/E8xyQQ4aaNaX8OZPw42dlMRgUrwjRyJ9drUnixxUnsAFYnMYIr27y91RMaOyQrazH4WHyWios6w5Jjl8QUUvri8E7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1d11:b0:3a5:e7a5:afc with SMTP id
+ e9e14a558f8ab-3a6b028898dmr258882275ab.2.1730972157945; Thu, 07 Nov 2024
+ 01:35:57 -0800 (PST)
+Date: Thu, 07 Nov 2024 01:35:57 -0800
+In-Reply-To: <672b7858.050a0220.350062.0256.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672c89fd.050a0220.49393.0175.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
+From: syzbot <syzbot+1fc6f64c40a9d143cfb6@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Revisiting it again...
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Am Sun, 22 Jan 2023 10:08:52 +0100
-schrieb Andreas Kemnade <andreas@kemnade.info>:
+***
 
-> On Thu, 19 Jan 2023 09:30:20 +0200
-> Tony Lindgren <tony@atomide.com> wrote:
-> 
-> > * Tony Lindgren <tony@atomide.com> [230116 17:33]:  
-> > > * Adam Ford <aford173@gmail.com> [230116 17:00]:    
-> > > > Doesn't this imply the target-module stuff needs to be implemented for
-> > > > the drivers?  It looks like a lot of the omap3 drivers are still using
-> > > > hwmods although some have target-modules. In this case, the mcspi
-> > > > drivers that Andreas is disabling don't appear to have target-module
-> > > > stuff configured.    
-> > > 
-> > > Sorry I don't remember if omap_device.c ignores status disabled or not.
-> > > But in any case, it should be trivial to update omap3.dtsi to configure
-> > > some of the devices like mcspi to probe with device tree data and ti-sysc
-> > > as needed.    
-> > 
-> > So as long as gta04 power management still behaves with this patch it
-> > should good to go.
-> >   
-> # sleep 10 ; /usr/local/bin/idledump
->      CM_IDLEST1_CORE 00000042
+Subject: Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
+Author: lizhi.xu@windriver.com
 
-RAM + SCM on, no issue, cross-checked, force-enabling mcspi brings more
-activity, so this an indication thet mcspi is off.
+add limit to avoid retry too frequently when rreq need to retry
 
->      CM_IDLEST3_CORE 00000000
->      CM_FCLKEN1_CORE 00000000
+#syz test
 
-same here with force-enabling mcspi, brings in some bits set.
-
->      CM_FCLKEN3_CORE 00000002
-
-see comments below.
-
->      CM_CLKSTST_CORE 00000003
->      CM_IDLEST_CKGEN 00000209
-
-this becomes 1 without this patch.
-
->     CM_IDLEST2_CKGEN 00000000
->        CM_FCLKEN_DSS 00000000
->        CM_IDLEST_DSS 00000000
->        CM_FCLKEN_CAM 00000000
->        CM_IDLEST_CAM 00000000
->        CM_FCLKEN_PER 00000000
->        CM_IDLEST_PER 00000000
-> 
-> 
-> FCLKEN3_CORE becomes 0 after unbinding the bandgap sensor.
-> 
-> but...
-> # cat /sys/kernel/debug/pm_debug/time 
-> usbhost_pwrdm (ON),OFF:830267486567,RET:0,INA:0,ON:12202880865
-> sgx_pwrdm (INA),OFF:0,RET:0,INA:841224365234,ON:1245971680
-> core_pwrdm (ON),OFF:0,RET:0,INA:0,ON:842470336914
-> per_pwrdm (ON),OFF:520406799328,RET:30043365464,INA:0,ON:292020111087
-> 
-> hmmm.... 
-> 
-> but does not look like anything related to mcspi*.
-> 
-it does not look like, but it is, but how... There is something below
-my radar.
-
-Regards,
-Andreas
+diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
+index b1a66a6e6bc2..1863258cd9db 100644
+--- a/fs/netfs/direct_read.c
++++ b/fs/netfs/direct_read.c
+@@ -87,6 +87,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
+ 
+ 		netfs_prepare_dio_read_iterator(subreq);
+ 		slice = subreq->len;
++		printk("subrq: %p, %s\n", subreq, __func__);
+ 		rreq->netfs_ops->issue_read(subreq);
+ 
+ 		size -= slice;
+diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
+index 72a435e5fc6d..ac9ca11b091f 100644
+--- a/fs/netfs/iterator.c
++++ b/fs/netfs/iterator.c
+@@ -63,6 +63,7 @@ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
+ 	pg_size = array_size(max_pages, sizeof(*pages));
+ 	pages = (void *)bv + bv_size - pg_size;
+ 
++	printk("bvsize: %lu, pg_size: %lu, cnt: %lu, np: %u, max_p: %u, %s\n", bv_size, pg_size, count, npages, max_pages, __func__);
+ 	while (count && npages < max_pages) {
+ 		ret = iov_iter_extract_pages(orig, &pages, count,
+ 					     max_pages - npages, extraction_flags,
+@@ -98,6 +99,7 @@ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
+ 	}
+ 
+ 	iov_iter_bvec(new, orig->data_source, bv, npages, orig_len - count);
++	printk("ret: %d, npages: %u, orig len: %lu, count: %lu, %s\n", ret, npages, orig_len, count, __func__);
+ 	return npages;
+ }
+ EXPORT_SYMBOL_GPL(netfs_extract_user_iter);
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index b18c65ba5580..4e244dfb23bf 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -465,6 +465,7 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq,
+ 				  int error, bool was_async)
+ {
+ 	struct netfs_io_request *rreq = subreq->rreq;
++	static int rtt = 0;
+ 
+ 	switch (subreq->source) {
+ 	case NETFS_READ_FROM_CACHE:
+@@ -506,12 +507,18 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq,
+ 	if (!error && subreq->transferred < subreq->len) {
+ 		if (test_bit(NETFS_SREQ_HIT_EOF, &subreq->flags)) {
+ 			trace_netfs_sreq(subreq, netfs_sreq_trace_hit_eof);
++			rtt = 0;
+ 		} else {
+ 			trace_netfs_sreq(subreq, netfs_sreq_trace_short);
+ 			if (subreq->transferred > subreq->consumed) {
++				rtt++;
++				if (rtt < 50) {
+ 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+ 				__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
+ 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
++				}
++				printk("subreq: %p, 1async: %d, r: %p, transed: %lu, sub req length: %lu, retry times: %d, subreq consume: %d, subreq list empty: %d, %s\n",
++					subreq, was_async, rreq, subreq->transferred, subreq->len, rtt, subreq->consumed, list_empty(&rreq->subrequests), __func__);
+ 			} else if (!__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags)) {
+ 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+ 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index 819c75233235..b7d22f04593c 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -83,6 +83,7 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
+ 	if (!err)
+ 		subreq->transferred += total;
+ 
++	printk("subreq: %p, err: %d, total: %d, transfed: %d, %s\n", subreq, err, total, subreq->transferred, __func__);
+ 	netfs_read_subreq_terminated(subreq, err, false);
+ }
+ 
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 0b8086f58ad5..d80af1aa74e4 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -714,7 +714,7 @@ p9_virtio_create(struct p9_client *client, const char *devname, char *args)
+ 	mutex_unlock(&virtio_9p_lock);
+ 
+ 	if (!found) {
+-		pr_err("no channels available for device %s\n", devname);
++		pr_err_ratelimited("no channels available for device %s\n", devname);
+ 		return ret;
+ 	}
+ 
 
