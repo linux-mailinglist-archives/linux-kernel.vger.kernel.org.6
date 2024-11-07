@@ -1,114 +1,151 @@
-Return-Path: <linux-kernel+bounces-399731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D9EA9C03C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:21:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6099C0393
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:13:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2806E1F22A00
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:21:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F801F24105
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18E31F4FB8;
-	Thu,  7 Nov 2024 11:11:00 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCCF1F4298;
+	Thu,  7 Nov 2024 11:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQz74mmN"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D93D1F4708;
-	Thu,  7 Nov 2024 11:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910261F4FD2;
+	Thu,  7 Nov 2024 11:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977860; cv=none; b=tHepZX5HFJUkTIVYUY3WudWaZCH2JHKJmJ0F8/eVSdxjEIqaiOUl085mTBF1gE2Bx2v3rfeF1c831V+hXtJdwdVaAEatAO1bdBB2anTlhG6/he9tVvm6rIREtTpxel2MWCPcYaT33AawzNWViShu+sXaVuLjvMmUwJlTAo1hG8Y=
+	t=1730977986; cv=none; b=ugfRsm9n29RxIsgQMxnDVO6ny8gDwN2OA5m5a/e4uKqb/ZKh6GVSvxwrp8O2+uuPuTYDPWlsdZmNIS54U0bNipx4jGGtLvj6C4pPaU9oGs+RdDLmkvrW0+nlPuypHgl0p2DCYGFMoSLdiN51GEKt4xlfiTrz09/WMvp6ek+niLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977860; c=relaxed/simple;
-	bh=9I9JBtOY3ZqePZ+S4OHEhGiCfFKTPsxFopvm26hwpz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HddNoUfFGwUqsnFap6rH/6uWsQcq8B068LNcZNxbYinyb6pXvOU09QBXOG1jFXGYrujoFetK9YQoNs4+O0z9dW88tsa5oIMNps4R7BgT9VLN8mrHokURwAh9oqKQfhJoCgUePB99OmHH4ELg0Ojj/85UWDBS9XG7cbBBvvAIt3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XkfSy6VQXz1P9Y4;
-	Thu,  7 Nov 2024 19:08:34 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 38EB518005F;
-	Thu,  7 Nov 2024 19:10:56 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Nov 2024 19:10:55 +0800
-Message-ID: <addfdff2-d62c-49b3-b528-77071d34b872@huawei.com>
-Date: Thu, 7 Nov 2024 19:10:55 +0800
+	s=arc-20240116; t=1730977986; c=relaxed/simple;
+	bh=iFoNarvDdiadnoI1lhGb2zv86EDtHM4tPbOJmB8VV3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BkAr4poqHq0N0Bm+gWztZo8CQlWmoTx1aA2U1Ohwjm/oRyBHMcbBecgK70KMfC55dtyqBOBQxRb8h4fkLDPLkKnItetHFAMGeE73+ITvW0Hr+TeLDGNN5BgGmRVSkzKX4YyMDx/1HBrkjITEz0EkDwMw5aJT42vjp82fMte4Lr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQz74mmN; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-851d2a36e6dso1554689241.0;
+        Thu, 07 Nov 2024 03:13:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730977983; x=1731582783; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vdZPXQt9PZfbMd2ngGnM2stRUWSjzk7Qs9v0lITHsIs=;
+        b=YQz74mmN62DjNIcQu6iZ44bIB6baPjsMUMqJJZs1uNRZNy3IS6A+wJGsqjEi/vkk13
+         /9OkW4XQ7epCAyz/SZTSyb95kQ94blMltvu/QKVFVZ13FCHwpGi1GGcYrz2IrLQUq3LK
+         gflrE/GnvXWDPboB4CzJs0+U7Qv162HVONStPn9olQit4gS+VngEeq5lDbdp4tu5Skws
+         3VOguCnvFGdb79g5r088w5APec2uUk9v3MAdp0zOlgrAOS6Ciu214Jcr//j+lv+By5QC
+         MdcM974Y9B/CcJjglga5cloOd8KTVfJAhgd+n6x49AdgFRQoIrwkt8LYcmbT374UA2S9
+         srvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730977983; x=1731582783;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vdZPXQt9PZfbMd2ngGnM2stRUWSjzk7Qs9v0lITHsIs=;
+        b=GCnLEJHMh+rjxS/JXG1nYQXAmpdYoe+kGK7ocIFDocY8i7XNUA1iL/alylctBIe4ND
+         CmH4e2Uj7TuraYnXZoQboHcUlc2E05LRVcCBSh97GWYtAkcDU5LLFTaK0K1Df6/5xnok
+         QaGNar7qmYtxCU4uS5SIAqfBwXgNLcIW3xDIgNp7iI1PDYDIg/60AbAmXVgijpSFyZCO
+         zQi30phb9ilhCpYY3OgXsVtZm77i1dFC4rumQP/RmJtnHN8rIEr0ffB9TMijxENtO4cn
+         wY8RZCBYueM6TEGJirGI4UVp5AuAM3BUP64y7pLPjq5+wRtGwcx9kO8x2QBnFkY6E27y
+         0Avw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfeIR0TKxERWlOv67HcJAYeMsStOnuxvXeHwc/VzBEVqdgj7P5XxUDoowq+ukyZMVGxQSQu4nHGUHWRw==@vger.kernel.org, AJvYcCWrhn4zqbCoRqfyZvjKVhhDFqA/U4GZKHrG0JpNN3pT6aUx4yxWVEfAKKMW2nTeC1tquof9kMvcA2HyAQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqaBUxO2JBQiD/KmYYobiwt/rDqSE5r5hQldiLLMxU5Gye3L99
+	N0QZDgqR9MdpBBkWF3xTryfZ7/3QXfknu+R7ZgoLwgYsnlvfPBIQfoSs2hHq4Xi22Fqfzzr6fuA
+	R5W1FQDNM+tef4Zxt0Bf+2aklLQ4=
+X-Google-Smtp-Source: AGHT+IH4z3/L8LVoVMcgStVVf/WSLnGXsZQTbap3G912K0Ejo0Bvh1drw569JpW5PEPMIdXxzv17s9E2ldFUxRsJZNA=
+X-Received: by 2002:a05:6102:3f0c:b0:4a9:15c:f02 with SMTP id
+ ada2fe7eead31-4aada826feemr260552137.11.1730977983353; Thu, 07 Nov 2024
+ 03:13:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-To: Alexander Duyck <alexander.duyck@gmail.com>, Jesper Dangaard Brouer
-	<hawk@kernel.org>
-CC: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<zhangkun09@huawei.com>, <fanghaiqing@huawei.com>, <liuyonglong@huawei.com>,
-	Robin Murphy <robin.murphy@arm.com>, IOMMU <iommu@lists.linux.dev>, Andrew
- Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, kernel-team
-	<kernel-team@cloudflare.com>, Viktor Malik <vmalik@redhat.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
- <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
- <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
- <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
- <18ba4489-ad30-423e-9c54-d4025f74c193@kernel.org>
- <b8b7818a-e44b-45f5-91c2-d5eceaa5dd5b@kernel.org>
- <CAKgT0UfkyLsfZGm0+T0Jyv=jO=tvS11vtD8MSR7s-EdZ4nGM+g@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <CAKgT0UfkyLsfZGm0+T0Jyv=jO=tvS11vtD8MSR7s-EdZ4nGM+g@mail.gmail.com>
+References: <20241106223324.479341-1-karprzy7@gmail.com> <20241107001507.5a304718@akair>
+In-Reply-To: <20241107001507.5a304718@akair>
+From: Karol P <karprzy7@gmail.com>
+Date: Thu, 7 Nov 2024 12:12:52 +0100
+Message-ID: <CAKwoAfp6iPN0F_kfNbF8xbpX7+Qh+BS55KgmZ5nis0u00vOFhw@mail.gmail.com>
+Subject: Re: [PATCH] mfd: omap-usb-tll: handle clk_prepare return code in usbtll_omap_probe
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org, 
+	tony@atomide.com, lee@kernel.org, linux-omap@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 2024/11/7 3:55, Alexander Duyck wrote:
-                         |
-...
+On Thu, 7 Nov 2024 at 00:15, Andreas Kemnade <andreas@kemnade.info> wrote:
+>
+> Am Wed,  6 Nov 2024 23:33:24 +0100
+> schrieb Karol Przybylski <karprzy7@gmail.com>:
+>
+> > clk_prepare() is called in usbtll_omap_probe to fill clk array.
+> > Return code is not checked, leaving possible error condition unhandled.
+> >
+> > Added variable to hold return value from clk_prepare() and return statement
+> > when it's not successful.
+> >
+> > Found in coverity scan, CID 1594680
+> >
+> > Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> > ---
+> >  drivers/mfd/omap-usb-tll.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+> > index 0f7fdb99c809..28446b082c85 100644
+> > --- a/drivers/mfd/omap-usb-tll.c
+> > +++ b/drivers/mfd/omap-usb-tll.c
+> > @@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> >       struct device                           *dev =  &pdev->dev;
+> >       struct usbtll_omap                      *tll;
+> >       void __iomem                            *base;
+> > -     int                                     i, nch, ver;
+> > +     int                                     i, nch, ver, err;
+> >
+> >       dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+> >
+> > @@ -251,7 +251,11 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> >               if (IS_ERR(tll->ch_clk[i]))
+> >                       dev_dbg(dev, "can't get clock : %s\n", clkname);
+>
+> if you add more intensive error checking, then why is this error
+> ignored and not returned?
 
-> 
-> Is there any specific reason for why we need to store the pages
-> instead of just scanning the page tables to look for them? We should
-> already know how many we need to look for and free. If we were to just
-> scan the page structs and identify the page pool pages that are
-> pointing to our pool we should be able to go through and clean them
-> up. It won't be the fastest approach, but this should be an
-> exceptional case to handle things like a hot plug removal of a device
-> where we can essentially run this in the background before we free the
-> device.
+Thank you for the feedback. It does seem that elevated error checking
+is not the way
+to go in this case. Do you think it would be good to add a similar
+statement instead of
+my initial changes? It would look something like this:
 
-Does 'scanning the page tables' mean scaning the array of 'struct page *',
-like vmemmap/memmap?
++               else {
+                        err = clk_prepare(tll->ch_clk[i]);
++                       if (err)
++                               dev_dbg(dev, "clock prepare error for:
+%s\n", clkname);
++               }
 
-I am not sure if there is any existing pattern or API to scan that array?
-Does it fall under the catalog of poking into the internals of mm subsystem?
-For exmaple, there seems to be different implemenation for that array depending
-on CONFIG_SPARSEMEM* config.
-
-Also, I am not sure how much time it may take if we have to scan the array
-of 'struct page *' for all the memory in the system.
-
-> 
-> Then it would just be a matter of modifying the pool so that it will
-> drop support for doing DMA unmapping and essentially just become a
-> place for the freed pages to go to die.
-> 
-If I understand it correctly, the above seems to be what this patch is
-trying to do by clearing pool->dma_map after doing the dma unmapping for
-the inflight pages.
+>
+> >               else
+> > -                     clk_prepare(tll->ch_clk[i]);
+> > +                     err = clk_prepare(tll->ch_clk[i]);
+> > +                     if (err) {
+> unnatural braces, if (err) is not in the else branch ?!
+> > +                             dev_err(dev, "Unable to prepare clock\n");
+> > +                             return err;
+> > +     }
+> >       }
+> >
+> >       pm_runtime_put_sync(dev);
+> and this one is not called if you return early.
+>
+> Regards,
+> Andreas
 
