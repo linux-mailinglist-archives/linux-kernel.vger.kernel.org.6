@@ -1,217 +1,240 @@
-Return-Path: <linux-kernel+bounces-400524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05A69C0EC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:19:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3E89C0EC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:19:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906B7282FF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C9341F2809A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C38921764D;
-	Thu,  7 Nov 2024 19:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66197194AD6;
+	Thu,  7 Nov 2024 19:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AtVWRKv5"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011019.outbound.protection.outlook.com [52.101.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIABmJhO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3CD194C92;
-	Thu,  7 Nov 2024 19:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731007149; cv=fail; b=IR56F7FaEsaUUqCC2wJZ8oY3yOMWXlLBMAgPkC4MxhnTlBHStaTsuN47Qa6yaOXbyoBzugTX/VwsLvm95X8t+XoIskg6k9gNPfa9XPmoje7F+q93pHG1vngAYbWv9qDEyhFlOIAZPmj1Oz41i6l4wX1jIVQExoRCVeilfAYTiUA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731007149; c=relaxed/simple;
-	bh=dTYBp5yNo90AIFbbUBF2OWCu4o1mYpD7xLPWFMAw8kk=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Nq2pQ9Xw/Fm4jMooJh8T89j7qpxrQ2xB7ddU+UOIJELvsFhLvu+GxoQcPQQp1Z/g2xW3IVUiwRknIHSUQW4awAMFGxDSm6/sc9fDpVFjAZ8wXUzqTY+P2BVePkc8hHyMdeQ84iYeZsSEjesX+ezpAb/YSgNy4ixagokYe1yP0iE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AtVWRKv5; arc=fail smtp.client-ip=52.101.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D4v+QpbhSstc+ZV3Np2/mPSWVx5GZc9BbCUSSvqN5+p5YmMSYBDNFiF7UpvBpZgXx+/hSAsd5LCSwPT0SQaf4lc/vSkhMqbFljFTquiL+BIK0NT2L4XQKRvr8ChBmdMmoI/OCh/GLhUuNvtQSO8NJ82XkHYt4yLOkE2pEBzbPjYGy9IBEDqFOdW8FH16nGann0QQQvUJ/zK2NwGvuKq/TZAhXQL0NHTp+JEyxJLgf/4JES1F2t7kOqP+o9ARiENOujO6kmwvNxu69JupjYghRuJ1OWeL/BEHGvlm+WCGvdPnpB2zo0fWddiHGy9ePy3Cvsfy0RdEUvsF74yCT4zGRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=81gwbHlwd9a4GbiegJJ2Fg++MYkxPOY4fp/jDl9T7lY=;
- b=Dfe3ImJ5HmwYfgX0AYt/u2Iw/syoGDkvhh7M5JHlctpciGGTAjRlhjLXcMlStPz7qalNMk9qLe7jktNciGICkmGUASWP187fuuoluP1qwfIPgkiu2xkwPLcDh3/hoLlCFLqvmRtx2PK07TscqlVYF72dy9KtnumrHGdMhS7lH8RUUf5xwMz7Lox7y/Edzl0cSRYYh3ZczN/oY54dQveHCUf/aDB8vVD8si6l0lAQKJ/j62DqAuCWrlS+7hdK89a85yb3bz5RxkRpRy6O2tXz+qTonVHcd+ags2GvjfENfKQeipiuSbA3TzoeKRudbxOS4IV00OSB7fbuzEBC0kne4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=81gwbHlwd9a4GbiegJJ2Fg++MYkxPOY4fp/jDl9T7lY=;
- b=AtVWRKv5ZSz1Dzi1zHtb1sw2Bo+2BG+HQBwVD+BmJIroN8jy1yUK55oU053tSEUei5QJYrdINfPx3jeJkIK22+SrDCONIoUPBKL0wIjN80CePf7FXhbYzMdTeoaI4UVt96v9JJ4mrXPcTIkUsVB5nFVs8blmDhaFsB+o1E6zP8hmlm78NCE8l2AOqfUasdkc8m5W56et0APxOgiuBdBEMpLU6F1aA1jMAqjUsHJC7OADYFHxr1DpiFzCOQVChneS9EkEDGgMqrg1dNCvj+WsbaWIcZStKRheqTHwg+2OJljCIg587GCl3oPaKKXa4rfALty0bzJ4Tmt49PVB5KvYrg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS8PR04MB8344.eurprd04.prod.outlook.com (2603:10a6:20b:3b3::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Thu, 7 Nov
- 2024 19:19:01 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8137.018; Thu, 7 Nov 2024
- 19:18:59 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Haibo Chen <haibo.chen@nxp.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org (open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER),
-	imx@lists.linux.dev (open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/2] iio: adc: vf610_adc: limit i.MX6SX's channel number to 4
-Date: Thu,  7 Nov 2024 14:18:41 -0500
-Message-Id: <20241107191842.3002319-2-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241107191842.3002319-1-Frank.Li@nxp.com>
-References: <20241107191842.3002319-1-Frank.Li@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0019.namprd13.prod.outlook.com
- (2603:10b6:a03:2c0::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DD9125D6;
+	Thu,  7 Nov 2024 19:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731007134; cv=none; b=lN0knDI80SRBN9XVdik5FKmBvKMSghX62byi06TToa+MrYINfNQkf8knD5q0cAtdDN3WoJCVVHc1ibB5hgqYWBTvKYJTmJoP6BB7AsWMotY4kmQ+Dc6DbSWnLhOQNXbuLkxDlfa1nK77lzQH+1jauarGXjpnPj6wx3PbsNxDVig=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731007134; c=relaxed/simple;
+	bh=tUz0GhcRj0ZxROqC6ULAO/ba2Gcn5tZO8oBwGXYih7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sN2bJatnUxPpYMe6vlHlvrhi+eJleUgH0AgvyTtpBCPkqTniN21XYlXARpdLEAb0bkEII9FnKx0ciDe88tk61Tkg41Fkq1FglEGz3y7dP9Jd+w01mYfOgPpG6gN8mpZZ6WDH/ij61EymxrwDGOSYk/Rs743DPf5UNa60uxuM1Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIABmJhO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E73C4CECC;
+	Thu,  7 Nov 2024 19:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731007134;
+	bh=tUz0GhcRj0ZxROqC6ULAO/ba2Gcn5tZO8oBwGXYih7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FIABmJhOPM5gQ7aJobDAz51TgVD4v06smmwBLjo+3W+IRu0fwDcA2/6HEgiUoSa3E
+	 ZiichYPLU5m8WkFGTlGAL1/bVqe//nbrD55Jtn8P0bXqcQ58cwdjGbTUMQAGT3V67R
+	 oV6PsAeZvk05AEdHaHBCXlWhJ83NO5OvgKwvDA2ldVCWKtZWhKhzhjx555gHxYc6Kn
+	 tRV7gfxi1Z3azWFgw66neiEJVh48t5RBrAVSdtKWOt3UurvhGCX9d2x5+CCNrbuWVa
+	 8y3YX/LpV3B7HxG56PTNNkzccFmtoVuEHNhNMMph5xwjU95xoe0KlJzWfejQj60Bpj
+	 Ujmu/DK6ORCnw==
+Date: Thu, 7 Nov 2024 11:18:50 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Guo Ren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	Guilherme Amadio <amadio@gentoo.org>,
+	Changbin Du <changbin.du@huawei.com>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Daniel Wagner <dwagner@suse.de>,
+	Aditya Gupta <adityag@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@rivosinc.com>,
+	Shenlin Liang <liangshenlin@eswincomputing.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Chen Pei <cp0613@linux.alibaba.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	Yury Norov <yury.norov@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 16/31] perf dwarf-regs: Pass accurate disassembly
+ machine to get_dwarf_regnum
+Message-ID: <Zy0SmlDrmksra_OD@google.com>
+References: <20241005195541.380070-1-irogers@google.com>
+ <20241005195541.380070-17-irogers@google.com>
+ <20241007170755.03697b9178ed3dcac24dfa21@kernel.org>
+ <CAP-5=fU4hTL1hfB7-FpMnFopJJriZAOXY_8iakW5yHC_gfhTWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8344:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe8bb39e-f5cb-41a3-7380-08dcff6107dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Pyg+wAKz8MXsWuPPGQh4Rv/rGnthYEdY/mknLFVI21MpS6R74IhcSZHkYnnW?=
- =?us-ascii?Q?a/50bredYvS+sbL+DZwWUM2+rL1IBp6TsDFPMwn2pI3ShvqSNrcXv4/lJcBW?=
- =?us-ascii?Q?64MyUVYGFYXbaptmZ5ZIi8AEGUbC/jmORQ9CBiauM0D39lrXD+K5IFQP1MB+?=
- =?us-ascii?Q?rDDZG7qfMdICzHNlF2PHSxU2xJKhkN8kStTLhkUX8xBR8Gm5NDCe4Q/QANb5?=
- =?us-ascii?Q?n+H0x2rvv2uf8My+qpQ3Fiv5Iz1X/UoHv5SuxsDsmNYQZ/aYJI5baE1Oo3C+?=
- =?us-ascii?Q?Fy39Am4fzKfwlwDtEq2EHGg/W+SspDWupUEP9s+C1cJW7Bid+U0qdzRBEeji?=
- =?us-ascii?Q?VaTXDhqa0KzknXKGcaPdoHeU4XUXMyegz2aVpSCL7rP7DnEL9vN+t5RITeCD?=
- =?us-ascii?Q?qA70kdjbnBxREQWhh9xM2EBG9DyUK7nqskNoAciHsMkTgTA1h5YCAe5vksdO?=
- =?us-ascii?Q?NA64EvjtgT8UaOPhvT/fnKyA533z+v1S/FmQIxo3yNjkl/cvyWex8S1P2Q5k?=
- =?us-ascii?Q?6YUGVpqLlrjwqFuFzA3caifJp7jx5dR5eMHR+rCZ0EMJVy/ObM7/qdn1iueo?=
- =?us-ascii?Q?MRROIJtFIING5yaWnv9+1He+vkqV/vsXizAr1S5ITSo1dXoTolovmtG3KYC2?=
- =?us-ascii?Q?BkJvah2sG7ITkQjTAlN5RzaE8wKQnRJqfo7fZoRChSFb8BHQ+XmjW8/5VU0C?=
- =?us-ascii?Q?kfkRdkJSp//ClxxZGaiAgjw1jfUICJgj9fYO5+DuDmA7bhbSLKyxzFUZBbJ3?=
- =?us-ascii?Q?w0DLJGdXOeE6nl3mdPH8NC/JVzlkU+oy5suHD3r8Mw0o9A0NdeNRJLRLWVMU?=
- =?us-ascii?Q?6Z/A1ibsmLB01id1P0XrpfpqQZ+RaoWlhBnc+osmV0zkXXJUHSmQBnQXXzL4?=
- =?us-ascii?Q?U0tCL7tBAdwq4mMJMCDZZjgyN05RDFr6UoX1JZ2aJvaSd4dRDPLLiO+ZHm8c?=
- =?us-ascii?Q?kJNgv103lNcwrk4jhbkBwmPTe6phobyVuU92LR2/x9tyosSo0zjpJucwCuG9?=
- =?us-ascii?Q?cTpv43wSWHaAiSu6puAzrNFgxGgx/CBastcx2xK+8dWoMwzR+N8a4N8nBeuK?=
- =?us-ascii?Q?3Mr9UFEqIN3o+OxDVCKY9btW9CHi0NsG0f9ecQMeZDYAogDA35i7h09SvC5F?=
- =?us-ascii?Q?o+1OUh/7EegMh6V44ZO+D8zd3mIJQ9gKRxrCtxZfJTxLDPwaZGXemDio2Jh5?=
- =?us-ascii?Q?whaIWbY2Vi++DPqmp68qiYbjqi8BkaKRTd5wT0koNwgyS3KWpuIq3v0kF6No?=
- =?us-ascii?Q?j0O5+uZizVzng5KO69cS2dZ/SIkhmC4UD9BJi/qQzh/c5wpxULO/ALtdIElq?=
- =?us-ascii?Q?mn9AWdfUp17Gy1WaU8LaEf5ZIqkn1lHvJnef+5GhGpkCMOT9eFz32S/zd4Gr?=
- =?us-ascii?Q?rURJu3DJeAj9fVaOV62fHFj6ReOR?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6Qe8Ej6gvf5v6hWJJRmA2pxvf0wu3Vt5FAg/n7fjZwzBnPa/UjNdmll0XJMM?=
- =?us-ascii?Q?KqWAeKQY5M0CwAJwct7r3EevrvH3PthFwvEAqj85YK33NS5ye0XcyL8+oMnr?=
- =?us-ascii?Q?gXNIhu5EwhS4jASoPDVON2fkVJMY0b5L84NLWqnpLAuNLEMolIx68cZX0eEW?=
- =?us-ascii?Q?wdIiV8LRtbt32nXSCXDSA5ZRLGs5/+0pnNtwdrWZ/5O8F23hN1B+5dQyJ8YZ?=
- =?us-ascii?Q?7M1acA/91VPf4aSx0zfPM4Zv7Co9lq4pdxlC8BwE4grfbZR1vsCiD3AcFSZ/?=
- =?us-ascii?Q?BHs7+AoWHuXvmWI2qQWk+WyX9upSb3xHZj6qCmNPd3lJv0tvgol7KIAwHdXs?=
- =?us-ascii?Q?Gpo3A8nZLVNPPL8mfiY7oTb7OHEvgLIOYwUC4PRCT1NedFswDv9wQcYNCJcW?=
- =?us-ascii?Q?Nd05JrqAQRznXd9x8NU+JLsBloDWCwaAByORsFuPVh44xEqM6vMfHUMADzCu?=
- =?us-ascii?Q?mBVMUL+lW+dvf2ZNbJ2vK04SADErDGcNIZNCbHvZnoX9GZIM4jYTZeokeMGr?=
- =?us-ascii?Q?UKI6wm5Vma6XUzVKE6/9UOYhFOD1j83tBVIXdHqC+zMPQcmMZxGNkJukmW6L?=
- =?us-ascii?Q?eXZKUKFtOW2hkuSD6K3jbsjqbHX92atXRYfSAIIXtPUMz5Ra+0mHs4ESZpCt?=
- =?us-ascii?Q?qA9T/yW0Dibbi32GFuvM0BNZ48ILPd4ZtaBMOcMPbNEBPMez3k3LE3RE7WcN?=
- =?us-ascii?Q?yWQiLqZ7xl6ai7ms8rcdlK3Tw9wZRhEYrDkVjSNHkXqJuuq4AsQet9KRMGLu?=
- =?us-ascii?Q?Fw4FJHchnmyQ9pHpOhka86j0T2zj4iyHxq+xomQS/dFlSi9jMJy5fNB3MEFS?=
- =?us-ascii?Q?Ax49TZYeh/91ikNtoilYpXgChLrj8aiS+/5IBYdz7AtnqfwARFKI1mDnB2zK?=
- =?us-ascii?Q?3FVQa7VO1x8NorSDiy9krYyP4YqsLAhIOswuxXMO4QAKXtK0ium95ous4oer?=
- =?us-ascii?Q?JFNEYAS7xdyVa8rcxo6LbBxNcpjmlGZFBBHaH4ne/ir/H1mpi78nkfyfkOci?=
- =?us-ascii?Q?0L3JseVlHC0dX3uzIWIqDnLFJ50sbeENUTzbwiPrSXDP/p8p729u4yHvIEnX?=
- =?us-ascii?Q?SGrkixfYUDfzwTVhEpWJ2Pwru5lvvYXuTEHiLfp3J30GxhASCjbeWDa/c5+x?=
- =?us-ascii?Q?3cWFXooptahpcl275spbat2wI0GH8HgFqdIsHbFcL9B5ByB6jS15yRtcgT6h?=
- =?us-ascii?Q?8WkzzLMsmsMk6jBiqxCRTmOSOHDZsuEQ979qjw/puntIY5XH19ZC5BThbypX?=
- =?us-ascii?Q?mXs28cccDoC81mTXIxLlIeE/FGWf2l+r3IGhIDkyJCBq8cY9wQxSYbQRdF2V?=
- =?us-ascii?Q?XIYOjHr/h9JJ4Fv9jDpIGVseqD3AaQUwYQGUFPFV/185ucaTWCu5BvjA/mLV?=
- =?us-ascii?Q?27SQ8tfz/isKMMpel//nK5UNZxezDezaUQ0p53dCULzKdFZ9clRNruM5GRNA?=
- =?us-ascii?Q?vPqzn6DzScI8E5qtGBlZGMHKxI9cqwamtbyDq/7ZiUy0zlv0MWiPKw7hiD+t?=
- =?us-ascii?Q?u9F0BcS+vmUOGp+VGsPOIMfRzx9W9QBcoyIh9a9lHLQhr63ucjjrLOcRHOIy?=
- =?us-ascii?Q?JDFWv/AIJuWvYeeRDUdT/hNuha8rFo+LaxsSOTVC?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe8bb39e-f5cb-41a3-7380-08dcff6107dc
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 19:18:59.0456
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aPVfPlZI31Fkrg2fpkNoJ9Amge5Y1rjcP9TW1B45tUPCn+eFgEd3UI7sg/LKUGgso9ioWHzuzrjuHvnTTuVSaQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8344
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fU4hTL1hfB7-FpMnFopJJriZAOXY_8iakW5yHC_gfhTWg@mail.gmail.com>
 
-i.MX6SX only has 4 ADC channels, so limit channel numbers to 4 for
-compatible string 'fsl,imx6sx-adc'.
+Hello,
 
-Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-compatible string 'fsl,imx6sx-adc' already document in
-Documentation/devicetree/bindings/iio/adc/fsl,vf610-adc.yaml
+Sorry for the late reply.
 
-Change from v2 to v3
-- none
+On Mon, Oct 07, 2024 at 08:46:59AM -0700, Ian Rogers wrote:
+> On Mon, Oct 7, 2024 at 1:08 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >
+> > On Sat,  5 Oct 2024 12:55:26 -0700
+> > Ian Rogers <irogers@google.com> wrote:
+> >
+> > > Rather than pass 0/EM_NONE, use the value computed in the disasm
+> > > struct arch. Switch the EM_NONE case to EM_HOST, rewriting EM_NONE if
+> > > it were passed to get_dwarf_regnum. Pass a flags value as
+> > > architectures like csky need the flags to determine the ABI variant.
+> > >
+> >
+> > Does this change the command output when we use it for cross-build
+> > environment? E.g. remote arch is different from host arch? If so,
+> > please add output examples with/without this change.
+> 
+> The cases where this would apply are small as get_arch_regnum is only
+> implemented for x86. get_dwarf_regnum likewise only works for x86 and
+> it is only called by annotate.
 
-Change from v1 to v2
-- Add Haibo Chen <haibo.chen@nxp.com>
-- change cast to uintptr_t to fix below warning
+Yep, it's used only in the data type profiling.  I don't expect it to
+work in the cross environment yet.  This change moves it closer to the
+working state though. :)
 
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411052345.gyJaM3h4-lkp@intel.com/
-All warnings (new ones prefixed by >>):
 
-   In file included from drivers/iio/adc/vf610_adc.c:20:   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~>> drivers/iio/adc/vf610_adc.c:874:28: warning: cast to smaller integer type 'u32' (aka 'unsigned int') from 'const void *' [-Wvoid-pointer-to-int-cast]
-     874 |         indio_dev->num_channels = (u32)device_get_match_data(dev);
-         |
----
- drivers/iio/adc/vf610_adc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> In this code without this patch the behavior is to return -ENOTSUP, ie
+> the code is set up to fail and this code just makes it not fail for
+> the x86 case (when not on x86) with code that is well tested on x86.
+> The code exists as x86 registers may be the same dwarf number but have
+> different names: e.g. rax, eax, ax, al. I'm not sure this reaches a
+> high complexity level for extensive testing. I'll see if I can grab an
+> x86 perf.data file to analyze on ARM, but I don't think doing this
+> should gate the series.
 
-diff --git a/drivers/iio/adc/vf610_adc.c b/drivers/iio/adc/vf610_adc.c
-index a6a0ada8a102f..36f6132bf5ba4 100644
---- a/drivers/iio/adc/vf610_adc.c
-+++ b/drivers/iio/adc/vf610_adc.c
-@@ -809,7 +809,8 @@ static const struct iio_info vf610_adc_iio_info = {
- };
- 
- static const struct of_device_id vf610_adc_match[] = {
--	{ .compatible = "fsl,vf610-adc", },
-+	{ .compatible = "fsl,imx6sx-adc", .data = (void *)4},
-+	{ .compatible = "fsl,vf610-adc", .data = (void *)ARRAY_SIZE(vf610_adc_iio_channels)},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, vf610_adc_match);
-@@ -870,7 +871,7 @@ static int vf610_adc_probe(struct platform_device *pdev)
- 	indio_dev->info = &vf610_adc_iio_info;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 	indio_dev->channels = vf610_adc_iio_channels;
--	indio_dev->num_channels = ARRAY_SIZE(vf610_adc_iio_channels);
-+	indio_dev->num_channels = (uintptr_t)device_get_match_data(dev);
- 
- 	vf610_adc_cfg_init(info);
- 	vf610_adc_hw_init(info);
--- 
-2.34.1
+Yep, as I said it's not supported yet and I don't think that's the goal
+of this patch series.  So probably it's ok to merge it without the
+extensive testing.
 
+Thanks,
+Namhyung
+
+> 
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  tools/perf/util/annotate.c           | 6 +++---
+> > >  tools/perf/util/dwarf-regs.c         | 8 ++++++--
+> > >  tools/perf/util/include/dwarf-regs.h | 5 +++--
+> > >  3 files changed, 12 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> > > index 37ce43c4eb8f..b1d98da79be8 100644
+> > > --- a/tools/perf/util/annotate.c
+> > > +++ b/tools/perf/util/annotate.c
+> > > @@ -2292,7 +2292,7 @@ static int extract_reg_offset(struct arch *arch, const char *str,
+> > >       if (regname == NULL)
+> > >               return -1;
+> > >
+> > > -     op_loc->reg1 = get_dwarf_regnum(regname, 0);
+> > > +     op_loc->reg1 = get_dwarf_regnum(regname, arch->e_machine, arch->e_flags);
+> > >       free(regname);
+> > >
+> > >       /* Get the second register */
+> > > @@ -2305,7 +2305,7 @@ static int extract_reg_offset(struct arch *arch, const char *str,
+> > >               if (regname == NULL)
+> > >                       return -1;
+> > >
+> > > -             op_loc->reg2 = get_dwarf_regnum(regname, 0);
+> > > +             op_loc->reg2 = get_dwarf_regnum(regname, arch->e_machine, arch->e_flags);
+> > >               free(regname);
+> > >       }
+> > >       return 0;
+> > > @@ -2405,7 +2405,7 @@ int annotate_get_insn_location(struct arch *arch, struct disasm_line *dl,
+> > >                               return -1;
+> > >
+> > >                       if (*s == arch->objdump.register_char)
+> > > -                             op_loc->reg1 = get_dwarf_regnum(s, 0);
+> > > +                             op_loc->reg1 = get_dwarf_regnum(s, arch->e_machine, arch->e_flags);
+> > >                       else if (*s == arch->objdump.imm_char) {
+> > >                               op_loc->offset = strtol(s + 1, &p, 0);
+> > >                               if (p && p != s + 1)
+> > > diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.c
+> > > index 7c01bc4d7e5b..1321387f6948 100644
+> > > --- a/tools/perf/util/dwarf-regs.c
+> > > +++ b/tools/perf/util/dwarf-regs.c
+> > > @@ -70,7 +70,7 @@ __weak int get_arch_regnum(const char *name __maybe_unused)
+> > >  }
+> > >
+> > >  /* Return DWARF register number from architecture register name */
+> > > -int get_dwarf_regnum(const char *name, unsigned int machine)
+> > > +int get_dwarf_regnum(const char *name, unsigned int machine, unsigned int flags __maybe_unused)
+> > >  {
+> > >       char *regname = strdup(name);
+> > >       int reg = -1;
+> > > @@ -84,8 +84,12 @@ int get_dwarf_regnum(const char *name, unsigned int machine)
+> > >       if (p)
+> > >               *p = '\0';
+> > >
+> > > +     if (machine == EM_NONE) {
+> > > +             /* Generic arch - use host arch */
+> > > +             machine = EM_HOST;
+> > > +     }
+> > >       switch (machine) {
+> > > -     case EM_NONE:   /* Generic arch - use host arch */
+> > > +     case EM_HOST:
+> > >               reg = get_arch_regnum(regname);
+> > >               break;
+> > >       default:
+> > > diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/include/dwarf-regs.h
+> > > index f4f87ded5e3d..ee0a734564c7 100644
+> > > --- a/tools/perf/util/include/dwarf-regs.h
+> > > +++ b/tools/perf/util/include/dwarf-regs.h
+> > > @@ -93,12 +93,13 @@ int get_arch_regnum(const char *name);
+> > >   * name: architecture register name
+> > >   * machine: ELF machine signature (EM_*)
+> > >   */
+> > > -int get_dwarf_regnum(const char *name, unsigned int machine);
+> > > +int get_dwarf_regnum(const char *name, unsigned int machine, unsigned int flags);
+> > >
+> > >  #else /* HAVE_LIBDW_SUPPORT */
+> > >
+> > >  static inline int get_dwarf_regnum(const char *name __maybe_unused,
+> > > -                                unsigned int machine __maybe_unused)
+> > > +                                unsigned int machine __maybe_unused,
+> > > +                                unsigned int flags __maybe_unused)
+> > >  {
+> > >       return -1;
+> > >  }
+> > > --
+> > > 2.47.0.rc0.187.ge670bccf7e-goog
+> > >
+> >
+> >
+> > --
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
