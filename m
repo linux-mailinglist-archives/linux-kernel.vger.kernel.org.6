@@ -1,101 +1,124 @@
-Return-Path: <linux-kernel+bounces-399070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034EE9BFA85
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:58:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549A49BFA8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F566B21FB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:58:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851DD1C21070
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6176920E034;
-	Wed,  6 Nov 2024 23:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8527E1;
+	Thu,  7 Nov 2024 00:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G5wNrCx8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K61K9P6y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6074B20D4FE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43EB366;
+	Thu,  7 Nov 2024 00:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730937526; cv=none; b=XyXCKZlY2kdV6HbhDRnhjLjHe7fSLVFQwBdeD6ENuwn95ah7+lOryPOJhki9X+G75xFctu7fh1bLqmCrF1n59Ia1G0QZnUG7HTewabj9X7DW5ojeamUkNuycxkUbpfufhy9ybb1VEoM1yeylsWqGddM/PuGFv6lX4kddiStwirs=
+	t=1730937840; cv=none; b=WsbHrpa8YEY1jJg6lvpjXN2DsyLTKE1TPM8z9dQM0jNm7CcIaMVcakEoPUDt9F05qbyMU8cS7AcD9T7IHbCrQjEitAfM3orloEK8R4+osnoUe/eNeXVu5TqIQ9q5Kio9YFLKvPRPBfbznZeuLrDg8wvyHmFr0DjM8nuSewBHa3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730937526; c=relaxed/simple;
-	bh=hNLUmVI0XIE1sSHTXGqPa6jNx4G+gM0tdom7cXKrWMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bJ2ww067kEtSCnetRo/EjcJY/eLCDCnG5cB5fU1SkUo6Q625EnSZiNxIbwArpB53S0QgDolLRgi29TqisqmUi3aRuI6n/x8YtK0OWa1YaIDZx+rsWtICqvytJsIe715QkFycOMBHnidwxydTkkR1bqamoC4Kf/j/44Qm0FVgqRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G5wNrCx8; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730937524; x=1762473524;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=hNLUmVI0XIE1sSHTXGqPa6jNx4G+gM0tdom7cXKrWMM=;
-  b=G5wNrCx85ZbbfHF1pNT3HSqPnRDOmaizRsxceuOQtqTk+22ykm9DWa3i
-   ttcoi1nByUdKg2x2DCqydyvBA32QyJJhN5KvB8GXSRqSQP0pw78RKwqWo
-   rNs/OorSR32Lc8zpXW8guIwADfEFbWh5NaA+uyEbnwUbjqiBhuHp6W2sY
-   yZnvy5SN4ef2c3M5u1Hy0JUcWSkHWh+bjeKZ4hQfhiG1iHX5u1gYQI/lA
-   ZZIaTHU9awUBS9jx/JQFpfh56FrUuh9F54A5sVZihTRQ7eBtuVNJuDVW/
-   adSjcsEpQgcAhaYr/370udDkL3AgrCVyFg0tfWp8LKon0vwOPo5MrJO9D
-   g==;
-X-CSE-ConnectionGUID: rPQgbTNbSq27YX3LRKPr3A==
-X-CSE-MsgGUID: 5W+Rp5FYRcWFRG/rwFZnHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30169098"
-X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
-   d="scan'208";a="30169098"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 15:58:44 -0800
-X-CSE-ConnectionGUID: Q4uQwBs0T5aEWDxGDYKj/Q==
-X-CSE-MsgGUID: 287zlRXWTqGwuJB/D2zrDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
-   d="scan'208";a="89429028"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 06 Nov 2024 15:58:42 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8pv6-000pY0-1J;
-	Wed, 06 Nov 2024 23:58:40 +0000
-Date: Thu, 7 Nov 2024 07:57:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: vmlinux.o: warning: objtool: gntdev_copy+0x381: stack state
- mismatch: cfa1=4+96 cfa2=-1+0
-Message-ID: <202411070755.aWgLgIN8-lkp@intel.com>
+	s=arc-20240116; t=1730937840; c=relaxed/simple;
+	bh=eVEmG1rSKK40HDhb0BAxP+hhaDqvTIM19ehnylrrkp8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QKUqgI+fAwkEeqqLbcu35pmeIFL1SDYP6qYjbumpw3KcnoJlsnPZfphhy/38xRvFfQW1+4EId2nXlWsY8FkDmAyv32VpUorKq9IeQFSSThnzoLq29gXAPMLG5duwUVX++A1iscnatWrWjAxDL7TWF2QcsE0p0ufYoeKvy4YOy8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K61K9P6y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038F1C4CEC6;
+	Thu,  7 Nov 2024 00:03:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730937840;
+	bh=eVEmG1rSKK40HDhb0BAxP+hhaDqvTIM19ehnylrrkp8=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=K61K9P6ydcGQi5cqBLWNFs3jtlfhJR650f1adgcqvScwkUNizYypzhYM9//ew/UTn
+	 qIuj2sNTdofzn4jGFrzt7hmUxZsK9HlYY8LqXd4afnaWNZdF6d52RXPj7kXmxI9suy
+	 pX4zuB3ZB/5KzMu1csPNa3z78AlL1CNvAJ3wDLzz9HmOSMYAcskkj9Vaxom15kuUrc
+	 rYaLPjmAZfaY/R6cUtR4tOHdtLzzBTfwOvFdRF+AJDMzUB9FZWu/rRTxEFpL0LA/Dq
+	 rKtJ8jAp1CjxCiN5r0dwq+eIez35ji1ghbpxJt+PCbbAgFUkd0qVMNNzXW756xiUTx
+	 VEP4tgdc7ZyiA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Nov 2024 02:03:56 +0200
+Message-Id: <D5FI94F98BS0.2JMJGMV9W5GBC@kernel.org>
+Cc: <roberto.sassu@huawei.com>, <mapengyu@gmail.com>, "Paul Moore"
+ <paul@paul-moore.com>, <linux-kernel@vger.kernel.org>,
+ <christian@heusel.eu>
+Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
+ be disabled on boot
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Mimi Zohar" <zohar@linux.ibm.com>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241015193916.59964-1-zohar@linux.ibm.com>
+ <D5FG6TOVUY5W.3SUG1J3CDB3J5@kernel.org>
+ <321b247dcfaba5d9691919eec8476b3c6fc7875d.camel@HansenPartnership.com>
+ <D5FHDIMJBWQM.2GWFOR0198360@kernel.org>
+ <84fcb3e29f3aa1ea7a5b638307e500608bc8b11a.camel@linux.ibm.com>
+In-Reply-To: <84fcb3e29f3aa1ea7a5b638307e500608bc8b11a.camel@linux.ibm.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   f43b15692129904ccc064180fa2dd796ba3843a5
-commit: 9bf4e919ccad613b3596eebf1ff37b05b6405307 Bluetooth: Fix type of len in {l2cap,sco}_sock_getsockopt_old()
-date:   7 months ago
-config: x86_64-randconfig-104-20241106 (https://download.01.org/0day-ci/archive/20241107/202411070755.aWgLgIN8-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070755.aWgLgIN8-lkp@intel.com/reproduce)
+On Thu Nov 7, 2024 at 1:52 AM EET, Mimi Zohar wrote:
+> On Thu, 2024-11-07 at 01:22 +0200, Jarkko Sakkinen wrote:
+> > On Thu Nov 7, 2024 at 12:52 AM EET, James Bottomley wrote:
+> > >=20
+> > > I'm a bit confused here.  It's TPM2_PCR_Extend we have the trouble wi=
+th
+> > > (as Mimi says in her email that you quoted) not TPM2_GetRandom.
+> > >=20
+> > > The random number generator reseed occurs in a kernel thread that fir=
+es
+> > > about once a minute, so it doesn't show up in really any of the boot
+> > > timings.  Plus even with sessions added, what there now isn't a
+> > > significant overhead even to the running kernel given it's asynchrono=
+us
+> > > and called infrequently.
+> >=20
+> > Ah, right then we need the boot flag, and my earlier comments to the
+> > parameter apply. I've never used IMA so I don't actually even know in
+> > detail how it is using TPM.
+>
+> Huh?  A simple explanation is that IMA-measurement maintains a measuremen=
+t list,
+> similar to the pre-boot event log.  Each IMA-measurement record extends t=
+he TPM
+> PCR (default PCR 10).
+>
+> Assuming IMA is enabled in the kernel, then just add "ima_policy=3Dtcb" o=
+r
+> "ima_policy=3Dcritical_data" on the boot command line.  To view the measu=
+rement
+> records, cat <securityfs>/integrity/ima/ascii_runtime_measurements.  Norm=
+ally
+> the IMA policy specified on the boot command line is replaced with a fine=
+r
+> grained custom policy.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411070755.aWgLgIN8-lkp@intel.com/
+I'll try to figure out how to test it regularly. And yeah we need the
+flag obviously.
 
-All warnings (new ones prefixed by >>):
+I have my (CI compatible) framework that I run regularly with upstream
+that I've mentioned a few times earlier.
 
->> vmlinux.o: warning: objtool: gntdev_copy+0x381: stack state mismatch: cfa1=4+96 cfa2=-1+0
+https://codeberg.org/jarkko/linux-tpmdd-test
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+How would I would make all files in /etc get to get the checksums, and
+how can I generate legit and illegit change to some file in that tree?
+
+No need to address how to implement that to my framework, I can figure
+that out. I just would love throw something so that any performance
+regressions will be catched right at the get go, i.e. before they
+end up to the mainline.
+
+> Mimi
+
+BR, Jarkko
 
