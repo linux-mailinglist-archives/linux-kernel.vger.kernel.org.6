@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-400753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884529C11DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:35:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E7A9C11E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:35:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48561283248
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B5AEB235A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B012185B1;
-	Thu,  7 Nov 2024 22:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4907921A4A9;
+	Thu,  7 Nov 2024 22:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLLQjJsu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="hQSbh+rl"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54825218D99;
-	Thu,  7 Nov 2024 22:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A17215C43;
+	Thu,  7 Nov 2024 22:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731018802; cv=none; b=aHruMmd+MH/rZLqN3xAwYBqGQx5Lni9l2XUFPc922Mi0bgscmiGTFFfLL8fh1MKyexJEu/4bahVCiU7oGjz7xw0c6XzAbIyaJSFzA3bojXmN7otFn0IGaQpLEgRozkeuR91sl6q5hC2luBpDQ3hOFGvZZRgPGoUV9r6xetzsBMY=
+	t=1731018873; cv=none; b=I9B3CMqUQdYmzD5PD7k8dmccT1bC7FIHT7flZrN2vKL0YNpp1oToq7QUCNZd3hlaCO3OrZPprUe/Re50hQ1V1xA8xQTYLd31JQN05F/qQIeClJIMNokkDGFIdX27YTThDPG0ZtHyyjOlWWzYVCT6rJ6UWGkxSpHzPxtm5gpiXTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731018802; c=relaxed/simple;
-	bh=u+y+ZgnzSc1JBFX0IBWulkzQvEr1r5XByDl3smbKDig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TH2mBDl5BTKXdwrd1LMPLHbdOQIPXnUwMIqWoWdeYqFyqZm2ARSrtC5b8UadztfmtGgO3EdYwKSqqqS2lxzdDrgrXpWxhh9E9ntYceQRn9YN+0b+FF6kCplwFdSHBpKAkBELyMzoVBxgh22JPeZAFIJuO03A/QpcuNPlfCIMd04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLLQjJsu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8044CC4CECC;
-	Thu,  7 Nov 2024 22:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731018801;
-	bh=u+y+ZgnzSc1JBFX0IBWulkzQvEr1r5XByDl3smbKDig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kLLQjJsu9fyqP8yzMFHBWd5h5WM1jNHoZXNwdDGFgsG3Vd7u1wj2XANhEwRes0GWU
-	 YoqCc5J+/7r2hYKc7JR/ZtEn3JeqA2orhLEFcZAVUcBGyMmMMLnGgE5XM70EFeu3Gw
-	 iktSCrppCV7agn9jxuD6YN2xxrMiHZFiJbxWqp9/jkbGQPRuh9ukrdBuSZXnFxBLVy
-	 sG/cngVuAEsKTbwAG0+n4rb7Q1DS7r/+IHP0nmK2dxQd19hyIhDqf1HlooLqcCOPb1
-	 L0WUD0s2uP7NirQbhLF3So9usIuX3ReuVM9bJ25Owkey9CxcdazXidspl1yWJTv2ss
-	 0lKimBvWDHZBQ==
-Date: Thu, 7 Nov 2024 14:33:20 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
-	petr.pavlu@suse.com, da.gomez@samsung.com, masahiroy@kernel.org,
-	deller@gmx.de, linux-arch@vger.kernel.org,
-	live-patching@vger.kernel.org, kris.van.hees@oracle.com
-Subject: Re: [PATCH] tests/module/gen_test_kallsyms.sh: use 0 value for
- variables
-Message-ID: <Zy1AMPMYfE5tKJYz@bombadil.infradead.org>
-References: <20241106002401.283517-1-mcgrof@kernel.org>
- <CABCJKueDJuAz30=Wat5D1-V9eYzAbP7wAY61Fgzw_KZJcHWiSw@mail.gmail.com>
+	s=arc-20240116; t=1731018873; c=relaxed/simple;
+	bh=ZxtAFmqRyaL65o3iODo/mU+qk8X/7FdzrLxnMlUsyEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pESJqX44aNJLoxMdwZfiWE5xvjxK0/P80hQqhKmbdR203JsJ1c9hOCpz/v7xCLpZ4bAEbF5nIHmxAEb1bjHJTEM20fOtSHTKs9M3a7h+At1ZRdsyi8oYzYH1Dk9z5rQPu14ejdiFN6VN/FxVqjevTkqIcuCVi8Quy1TD6/Wuguo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=hQSbh+rl; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: lina@asahilina.net)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id EB6BF41A48;
+	Thu,  7 Nov 2024 22:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1731018867;
+	bh=ZxtAFmqRyaL65o3iODo/mU+qk8X/7FdzrLxnMlUsyEI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=hQSbh+rlc3sFazzd5eQwlhQPvaqWDd5n+eAUfrmgOFjidXW9nDdCqlnmysXzFtEL9
+	 VVrmW/+zJ8zJ9O1aMHJXkhROaPFaOXtl3qBKON+UjwFXB2EfIBvyLluOwDOuA3s3Lr
+	 OOPFeBSYf+3sNR5Bpp9yv8HUBDeSNgUjXzGIuj8+msQNxNEWqvMkaI+gGKtKnOEbTy
+	 qZ5ENd7Jx1bcoGvg2VTDCoxKq8lf0adGjSbQSdLgRUwj3HnbEfGTO2NFAIYznB3xzI
+	 0HniB+frkhhhJSOIxQVkVEulUikvCVYjejvtz7eNeHz1PWkSf1yUiwfaKZUas5A9NY
+	 aOglUrMfgVByQ==
+Message-ID: <6c8024f4-bfea-4934-9120-b17ab0770a1f@asahilina.net>
+Date: Fri, 8 Nov 2024 07:34:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCJKueDJuAz30=Wat5D1-V9eYzAbP7wAY61Fgzw_KZJcHWiSw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
+To: Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>
+Cc: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Sergio Lopez Pascual
+ <slp@redhat.com>, linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
+ <20241104105711.mqk4of6frmsllarn@quack3>
+ <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
+ <ZylHyD7Z+ApaiS5g@dread.disaster.area>
+ <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
+ <20241106121255.yfvlzcomf7yvrvm7@quack3>
+ <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
+ <20241107100105.tktkxs5qhkjwkckg@quack3>
+ <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
+ <672d300566c69_10bb7294d7@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Language: en-US
+From: Asahi Lina <lina@asahilina.net>
+In-Reply-To: <672d300566c69_10bb7294d7@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 06:46:48PM +0000, Sami Tolvanen wrote:
-> Hi Luis,
-> 
-> On Wed, Nov 6, 2024 at 12:24 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > Use 0 for the values as we use them for the return value on init
-> > to keep the test modules simple. This fixes a splat reported
-> >
-> > do_init_module: 'test_kallsyms_b'->init suspiciously returned 255, it should follow 0/-E convention
-> > do_init_module: loading module anyway...
-> > CPU: 5 UID: 0 PID: 1873 Comm: modprobe Not tainted 6.12.0-rc3+ #4
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 2024.08-1 09/18/2024
-> > Call Trace:
-> >  <TASK>
-> >  dump_stack_lvl+0x56/0x80
-> >  do_init_module.cold+0x21/0x26
-> >  init_module_from_file+0x88/0xf0
-> >  idempotent_init_module+0x108/0x300
-> >  __x64_sys_finit_module+0x5a/0xb0
-> >  do_syscall_64+0x4b/0x110
-> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > RIP: 0033:0x7f4f3a718839
-> > Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff>
-> > RSP: 002b:00007fff97d1a9e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> > RAX: ffffffffffffffda RBX: 000055b94001ab90 RCX: 00007f4f3a718839
-> > RDX: 0000000000000000 RSI: 000055b910e68a10 RDI: 0000000000000004
-> > RBP: 0000000000000000 R08: 00007f4f3a7f1b20 R09: 000055b94001c5b0
-> > R10: 0000000000000040 R11: 0000000000000246 R12: 000055b910e68a10
-> > R13: 0000000000040000 R14: 000055b94001ad60 R15: 0000000000000000
-> >  </TASK>
-> > do_init_module: 'test_kallsyms_b'->init suspiciously returned 255, it should follow 0/-E convention
-> > do_init_module: loading module anyway...
-> > CPU: 1 UID: 0 PID: 1884 Comm: modprobe Not tainted 6.12.0-rc3+ #4
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 2024.08-1 09/18/2024
-> > Call Trace:
-> >  <TASK>
-> >  dump_stack_lvl+0x56/0x80
-> >  do_init_module.cold+0x21/0x26
-> >  init_module_from_file+0x88/0xf0
-> >  idempotent_init_module+0x108/0x300
-> >  __x64_sys_finit_module+0x5a/0xb0
-> >  do_syscall_64+0x4b/0x110
-> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > RIP: 0033:0x7ffaa5d18839
-> >
-> > Reported-by: Sami Tolvanen <samitolvanen@google.com>
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > ---
-> >  lib/tests/module/gen_test_kallsyms.sh | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen_test_kallsyms.sh
-> > index ae5966f1f904..3f2c626350ad 100755
-> > --- a/lib/tests/module/gen_test_kallsyms.sh
-> > +++ b/lib/tests/module/gen_test_kallsyms.sh
-> > @@ -32,7 +32,7 @@ gen_num_syms()
-> >         PREFIX=$1
-> >         NUM=$2
-> >         for i in $(seq 1 $NUM); do
-> > -               printf "int auto_test_%s_%010d = 0xff;\n" $PREFIX $i
-> > +               printf "int auto_test_%s_%010d = 0;\n" $PREFIX $i
-> >                 printf "EXPORT_SYMBOL_GPL(auto_test_%s_%010d);\n" $PREFIX $i
-> >         done
-> >         echo
-> 
-> Looks good to me. Thanks!
-> 
-> Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
 
-Merged, thanks.
 
-  Luis
+On 11/8/24 6:24 AM, Dan Williams wrote:
+> Asahi Lina wrote:
+> [..]
+>> I don't think that's how it actually works, at least on arm64.
+>> arch_wb_cache_pmem() calls dcache_clean_pop() which is either dc cvap or
+>> dc cvac. Those are trapped by HCR_EL2<TPC>, and that is never set by KVM.
+>>
+>> There was some discussion of this here:
+>> https://lore.kernel.org/all/20190702055937.3ffpwph7anvohmxu@US-160370MP2.local/
+>>
+>> But I'm not sure that all really made sense then.
+>>
+>> msync() and fsync() should already provide persistence. Those end up
+>> calling vfs_fsync_range(), which becomes a FUSE fsync(), which fsyncs
+>> (or fdatasyncs) the whole file. What I'm not so sure is whether there
+>> are any other codepaths that also need to provide those guarantees which
+>> *don't* end up calling fsync on the VFS. For example, the manpages kind
+>> of imply munmap() syncs, though as far as I can tell that's not actually
+>> the case. If there are missing sync paths, then I think those might just
+>> be broken right now...
+> 
+> IIRC, from the pmem persistence dicussions, if userspace fails to call
+> *sync then there is no obligation to flush on munmap() or close(). Some
+> filesystems layer on those guarantees, but the behavior is
+> implementation specific.
+
+Then I think your patch should be fine then, since there's nothing to do
+for writepages(). The syncing is handled via fsync() for FUSE/virtiofs
+and I don't think the dax_writeback_mapping_range() is actually doing
+anything in KVM anyway.
+
+~~ Lina
+
 
