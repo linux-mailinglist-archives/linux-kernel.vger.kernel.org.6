@@ -1,97 +1,390 @@
-Return-Path: <linux-kernel+bounces-400465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B737B9C0DFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:42:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4BB9C0E04
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0C1282C1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6586E1F22D92
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4912A217322;
-	Thu,  7 Nov 2024 18:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857FC21733C;
+	Thu,  7 Nov 2024 18:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWEPLDKW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i0yziqJR"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32B118F2C3;
-	Thu,  7 Nov 2024 18:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9099D125D6
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731004961; cv=none; b=AUfDp7mMsvD33Arh6OCQplWRMIQdAaxC+/jDEdZn1a/eOgPt0vPcgLHFjbPdNr9fO5YaCHuPTF4NkEY6Je9hfgJ7e1kZrNAUUXpS3VKTHWPotPOEJKYI4wudmygrmiOoTmCUZjS6jsy3RawTxjEYEtS4Tt3MwSkzuHnQi80kUGM=
+	t=1731005076; cv=none; b=VHzOLPAYhqbcnyWzgVUE7S1CJlVChN2U4u9EdAsu4UUKM7S08c3ps5Bf6mvc5DWhQDgM2rcRypyqZkb9EC+uhSF0064/vbGJ5qghOE6HiqeVDD3pt3w7H/VBN4cbhb6QaFAJl/En9Nnftl1v95zBG+33nEivRQG7yRIJOgnp+Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731004961; c=relaxed/simple;
-	bh=AU6KM+4jQgRXOaINh8QzR6G9PXRof4Va4Nn84vc645g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RZ8vvnfyE1Dj7BaFpPUaOJpFvmmQPRHm+7neXTeo8kgFiAdo7ixS1x/e8WtP/jpGjGY9zf0IzPy2L2Y30kNBnTzI0lHU0HdNKTTyYpgvJjMHm8UhFiTtOxxPgKW64LoRMwmq/v/hW4X/V36bGNb2jQC4pYKVgA2Ap4a/r0/AtzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWEPLDKW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760BFC4CECC;
-	Thu,  7 Nov 2024 18:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731004961;
-	bh=AU6KM+4jQgRXOaINh8QzR6G9PXRof4Va4Nn84vc645g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=OWEPLDKWB+KY3UdA/QlhUixH60oBwcg9PlYo7wH223Te3ORqw2H7BlnqUzRKP2Sr1
-	 FGK+agrT1xFGh0MhOOkL+fo6EW97jCWYk5cDc3MjTGN1W4kzVmCZXtI5yQGJPAhIDA
-	 ldbqfXJHVZTtPUbCoOE4OaBZXSnZTnJiZpRB7NC9WGFzyfTs2M5L9Q8CHD4sxDZ9ys
-	 q5Q2ykJ7ADddmJFQIRdhi8dI0RL7oWdSKfnXPc4/3TY0ak4vkssVG1/jOHU1RbM2Ke
-	 DkXbMeyDYR2eZ58qqg7SF9X2YPd6ghMuAXs4Pz7EWOZuo1ocsZWCKhmMEBPAdWSKJJ
-	 fDkj8ks434EXw==
-From: Mark Brown <broonie@kernel.org>
-To: Jonas Rebmann <jre@pengutronix.de>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de
-In-Reply-To: <20241107-spidev-test-word-delay-v1-1-d4bba5569e39@pengutronix.de>
-References: <20241107-spidev-test-word-delay-v1-1-d4bba5569e39@pengutronix.de>
-Subject: Re: [PATCH] spi: spidev_test: add support for word delay
-Message-Id: <173100496020.241412.394021907254195608.b4-ty@kernel.org>
-Date: Thu, 07 Nov 2024 18:42:40 +0000
+	s=arc-20240116; t=1731005076; c=relaxed/simple;
+	bh=Tam3C3FSWBIBa879uPr6lOw08wkgu4jeV8XEi7er5NA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u8tejYDj4Y1bepTFNftsv5e/Jo2P85h7vIPKf/4JwaiSyV+7LyV0D7dkhWnQF4QlTk8ykaR9UA24r93K9Es1naYXwHFv/2aWisLfFDdEaqZN0TMiPGBV/o07Nzqf3Nh3/rxhQlitZOaflR8GMzC4uuJyyQHmgOL7IGABlsyeXpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i0yziqJR; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460969c49f2so26681cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:44:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731005073; x=1731609873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J4nPpYXP0vVd6qbOkqNtUFVqt4H36QKYv9JFjcka9R4=;
+        b=i0yziqJRI0ILnBAjYvAjt4vLzPR+UFA6Ww7FdJYeIE3gPS0Vtn+dT3CmfvFdlnaAC+
+         2fNSDAkA9MwKUYhyh6CTqP1zDvl2DQq44OdVRpm+pmayYzTrJTztaO5fZ30Jgfw0qg1B
+         fSLEkaeZuLLCLyUUCgpdFzSj196jVKWEzMvFfEfviYnc2RnxBMaD6JenbvwqMAzGE7Y6
+         1tGMldevX4HH0VAspk48woA+B7QI59I7OeewGTsJcEqrM1sGv61VEkTIgYZWcOCLv2gN
+         v4VSh53JVXdPiKb/W9BOfBZgBO/ZF2cGg0DtvEo1TaYTe6EoRFsSwJlxLEeKPsV7VOEf
+         Ec9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731005073; x=1731609873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J4nPpYXP0vVd6qbOkqNtUFVqt4H36QKYv9JFjcka9R4=;
+        b=ItED9ZKhnTcjeatxFtbJJXOQCOGbLD74tkXAGAkUn0MFz+ZmsjWHaCSorHuq8nJ2B6
+         pkfELp8oC9MUiCVI3zghrKyqRIkZ2pAN98RhxTYE+KilT2+nBYeFPSctK610NJL48CfD
+         BKZb7HYcSBRrdZNGgUDBdPvClSEKVs7bD6+obQ+lQ7DGfTXxC4zzpDgs0fjm3PeGlWuo
+         gwQMHS2Muu0/GRYT9wrxv+TtmHG8LOTKpqqH6YYO/z9wcmlnbJlRp+QLxFdiIBeaXY7J
+         7pSd1uQb8TSh/5DVMwqjM/fkVByopGh84UihXxbg1ODXahHxwzlIyGgyMd7NW0wqRu41
+         1Vzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsQjJ/c5LFdd/bDz/oRLS2l+XuUDhXPyiG6igiJoXGRYiSljc0vUWiQTh9cQWEgCxcWm69QXnV+i0QMYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz443VnXquueimAfrP9ePyyJryRlLjJVWZScIKIqEiYQPmaisZZ
+	docdsxYGh+7BtEHbiQdXrbLorzuf71ahmYsiASekjn7qOKLxN3mB4psZKnf4xZ6azdtJP3WiXD5
+	3c0VFM2Df/zoP2tI1yxNgT0dnNGTNwZ1LiSAM
+X-Gm-Gg: ASbGncsC3bJ3OJmX8uRm8z31TL2PNidEjr44U33uQc1wE7CZTRT6v68gYLknMLkrFH5
+	w384ofa4rPO8yIswxwKdcOhy4dd7+r4wtqiOJzDTxshXkje2J37isJ7vnVcyw
+X-Google-Smtp-Source: AGHT+IHrq73eKO0bY8+FfuWfYvfEG6yvw63fkpfi5hna41D9nyt3oGP9CfN+ewePinNTBwT8SH0tAPXgnDQz/bQ4nhs=
+X-Received: by 2002:a05:622a:4b0a:b0:462:c158:9f5b with SMTP id
+ d75a77b69052e-462fa610ffbmr4822701cf.19.1731005073310; Thu, 07 Nov 2024
+ 10:44:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+References: <20241102175115.1769468-1-xur@google.com> <CAK7LNASdBPtq4vaK0XZQvxicOY15qJFsnqkO2_us4AU4ppHw6A@mail.gmail.com>
+ <CAF1bQ=R-7z9+57fji4Mn=ZVUgwSniGQ-8H4=42tFunxyp69Wzw@mail.gmail.com> <CAK7LNARpXOm1R_BVsH-fSC4ZzQqstHj0amzX8fu6=USwTD91Tw@mail.gmail.com>
+In-Reply-To: <CAK7LNARpXOm1R_BVsH-fSC4ZzQqstHj0amzX8fu6=USwTD91Tw@mail.gmail.com>
+From: Rong Xu <xur@google.com>
+Date: Thu, 7 Nov 2024 10:44:21 -0800
+Message-ID: <CAF1bQ=SRnSP9mgnyRw+Hg=0-CX-uOwKmsiwHf6b2bFXKnWxPHw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] Add AutoFDO and Propeller support for Clang build
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	Stephane Eranian <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 07 Nov 2024 16:07:31 +0100, Jonas Rebmann wrote:
-> Support setting the word delay using the -w/--word-delay command line
-> parameter. Note that spidev exposes word delay only as an u8, allowing
-> for a maximum of 255us of delay to be inserted.
-> 
-> 
+Thanks for the explanation.
 
-Applied to
+On Thu, Nov 7, 2024 at 6:58=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> On Thu, Nov 7, 2024 at 4:00=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+> >
+> > On Wed, Nov 6, 2024 at 8:09=E2=80=AFAM Masahiro Yamada <masahiroy@kerne=
+l.org> wrote:
+> > >
+> > > On Sun, Nov 3, 2024 at 2:51=E2=80=AFAM Rong Xu <xur@google.com> wrote=
+:
+> > > >
+> > > > Hi,
+> > > >
+> > > > This patch series is to integrate AutoFDO and Propeller support int=
+o
+> > > > the Linux kernel. AutoFDO is a profile-guided optimization techniqu=
+e
+> > > > that leverages hardware sampling to enhance binary performance.
+> > > > Unlike Instrumentation-based FDO (iFDO), AutoFDO offers a user-frie=
+ndly
+> > > > and straightforward application process. While iFDO generally yield=
+s
+> > > > superior profile quality and performance, our findings reveal that
+> > > > AutoFDO achieves remarkable effectiveness, bringing performance clo=
+se
+> > > > to iFDO for benchmark applications.
+> > > >
+> > > > Propeller is a profile-guided, post-link optimizer that improves
+> > > > the performance of large-scale applications compiled with LLVM. It
+> > > > operates by relinking the binary based on an additional round of ru=
+ntime
+> > > > profiles, enabling precise optimizations that are not possible at
+> > > > compile time.  Similar to AutoFDO, Propeller too utilizes hardware
+> > > > sampling to collect profiles and apply post-link optimizations to i=
+mprove
+> > > > the benchmark=E2=80=99s performance over and above AutoFDO.
+> > > >
+> > > > Our empirical data demonstrates significant performance improvement=
+s
+> > > > with AutoFDO and Propeller, up to 10% on microbenchmarks and up to =
+5%
+> > > > on large warehouse-scale benchmarks. This makes a strong case for t=
+heir
+> > > > inclusion as supported features in the upstream kernel.
+> > > >
+> > > > Background
+> > > >
+> > > > A significant fraction of fleet processing cycles (excluding idle t=
+ime)
+> > > > from data center workloads are attributable to the kernel. Ware-hou=
+se
+> > > > scale workloads maximize performance by optimizing the production k=
+ernel
+> > > > using iFDO (a.k.a instrumented PGO, Profile Guided Optimization).
+> > > >
+> > > > iFDO can significantly enhance application performance but its use
+> > > > within the kernel has raised concerns. AutoFDO is a variant of FDO =
+that
+> > > > uses the hardware=E2=80=99s Performance Monitoring Unit (PMU) to co=
+llect
+> > > > profiling data. While AutoFDO typically yields smaller performance
+> > > > gains than iFDO, it presents unique benefits for optimizing kernels=
+.
+> > > >
+> > > > AutoFDO eliminates the need for instrumented kernels, allowing a si=
+ngle
+> > > > optimized kernel to serve both execution and profile collection. It=
+ also
+> > > > minimizes slowdown during profile collection, potentially yielding
+> > > > higher-fidelity profiling, especially for time-sensitive code, comp=
+ared
+> > > > to iFDO. Additionally, AutoFDO profiles can be obtained from produc=
+tion
+> > > > environments via the hardware=E2=80=99s PMU whereas iFDO profiles r=
+equire
+> > > > carefully curated load tests that are representative of real-world
+> > > > traffic.
+> > > >
+> > > > AutoFDO facilitates profile collection across diverse targets.
+> > > > Preliminary studies indicate significant variation in kernel hot sp=
+ots
+> > > > within Google=E2=80=99s infrastructure, suggesting potential perfor=
+mance gains
+> > > > through target-specific kernel customization.
+> > > >
+> > > > Furthermore, other advanced compiler optimization techniques, inclu=
+ding
+> > > > ThinLTO and Propeller can be stacked on top of AutoFDO, similar to =
+iFDO.
+> > > > ThinLTO achieves better runtime performance through whole-program
+> > > > analysis and cross module optimizations. The main difference betwee=
+n
+> > > > traditional LTO and ThinLTO is that the latter is scalable in time =
+and
+> > > > memory.
+> > > >
+> > > > This patch series adds AutoFDO and Propeller support to the kernel.=
+ The
+> > > > actual solution comes in six parts:
+> > > >
+> > > > [P 1] Add the build support for using AutoFDO in Clang
+> > > >
+> > > >       Add the basic support for AutoFDO build and provide the
+> > > >       instructions for using AutoFDO.
+> > > >
+> > > > [P 2] Fix objtool for bogus warnings when -ffunction-sections is en=
+abled
+> > > >
+> > > > [P 3] Adjust symbol ordering in text output sections
+> > > >
+> > > > [P 4] Add markers for text_unlikely and text_hot sections
+> > > >
+> > > > [P 5] Enable =E2=80=93ffunction-sections for the AutoFDO build
+> > > >
+> > > > [P 6] Enable Machine Function Split (MFS) optimization for AutoFDO
+> > > >
+> > > > [P 7] Add Propeller configuration to the kernel build
+> > > >
+> > > > Patch 1 provides basic AutoFDO build support. Patches 2 to 6 furthe=
+r
+> > > > enhance the performance of AutoFDO builds and are functionally depe=
+ndent
+> > > > on Patch 1. Patch 7 enables support for Propeller and is dependent =
+on
+> > > > patch 2 to patch 4.
+> > > >
+> > > > Caveats
+> > > >
+> > > > AutoFDO is compatible with both GCC and Clang, but the patches in t=
+his
+> > > > series are exclusively applicable to LLVM 17 or newer for AutoFDO a=
+nd
+> > > > LLVM 19 or newer for Propeller. For profile conversion, two differe=
+nt
+> > > > tools could be used, llvm_profgen or create_llvm_prof. llvm_profgen
+> > > > needs to be the LLVM 19 or newer, or just the LLVM trunk. Alternati=
+vely,
+> > > > create_llvm_prof v0.30.1 or newer can be used instead of llvm-profg=
+en.
+> > > >
+> > > > Additionally, the build is only supported on x86 platforms equipped
+> > > > with PMU capabilities, such as LBR on Intel machines. More
+> > > > specifically:
+> > > >  * Intel platforms: works on every platform that supports LBR;
+> > > >    we have tested on Skylake.
+> > > >  * AMD platforms: tested on AMD Zen3 with the BRS feature. The kern=
+el
+> > > >    needs to be configured with =E2=80=9CCONFIG_PERF_EVENTS_AMD_BRS=
+=3Dy", To
+> > > >    check, use
+> > > >    $ cat /proc/cpuinfo | grep =E2=80=9C brs=E2=80=9D
+> > > >    For the AMD Zen4, AMD LBRV2 is supported, but we suspect a bug w=
+ith
+> > > >    AMD LBRv2 implementation in Genoa which blocks the usage.
+> > > >
+> > > > For ARM, we plan to send patches for SPE-based Propeller when
+> > > > AutoFDO for Arm is ready.
+> > > >
+> > > > Experiments and Results
+> > > >
+> > > > Experiments were conducted to compare the performance of AutoFDO-op=
+timized
+> > > > kernel images (version 6.9.x) against default builds.. The evaluati=
+on
+> > > > encompassed both open source microbenchmarks and real-world product=
+ion
+> > > > services from Google and Meta. The selected microbenchmarks include=
+d Neper,
+> > > > a network subsystem benchmark, and UnixBench which is a comprehensi=
+ve suite
+> > > > for assessing various kernel operations.
+> > > >
+> > > > For Neper, AutoFDO optimization resulted in a 6.1% increase in thro=
+ughput
+> > > > and a 10.6% reduction in latency. UnixBench saw a 2.2% improvement =
+in its
+> > > > index score under low system load and a 2.6% improvement under high=
+ system
+> > > > load.
+> > > >
+> > > > For further details on the improvements observed in Google and Meta=
+'s
+> > > > production services, please refer to the LLVM discourse post:
+> > > > https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autof=
+do-including-thinlto-and-propeller/79108
+> > > >
+> > > > Thanks,
+> > > >
+> > > > Rong Xu and Han Shen
+> > >
+> > >
+> > > I applied this series to linux-kbuild.
+> > >
+> >
+> > Thanks for taking the patch!
+> >
+> > > As I mentioned before, I do not like #ifdef because
+> > > it hides (not fixes) issues only for default cases.
+> >
+> > We followed the suggestion and removed most of the #if (or #ifdef) in
+> > the linker script.
+> > I just checked: there are two #ifdef remaining:
+> > (1) in the propeller patch for .llvm_bb_addr_map
+> > (2) in linker script patch for arch/sparc/kernel/vmlinux.lds.S.
+> >
+> > I think it's likely safe to remove the checks for head_64.o in
+> > non-SPARC64 builds and .llvm_bb_addr_map symbols in non-propeller build=
+s.
+> >
+> > SPARC64 builds should always produce head_64.o, and non-SPARC64
+> > builds shouldn't.
+> >
+> > Propeller builds always generate .llvm_bb_addr_map symbols, and the
+> > linker will omit the section if it's empty in non-propeller builds.
+> >
+> > Keeping the checks is harmless and might slightly reduce linker
+> > workload for matching.
+> > But If you'd prefer to remove them, I'm happy to provide a patch.
+>
+>
+> I am talking about the #ifdef in include/asm-generic/vmlinux.lds.h
+>
+>
+> Yeah, it is me who (reluctantly) accepted cb87481ee89d.
+>
+> Now, the #ifdef has become a little more complicated.
+> The default case is safe, but there are hidden issues.
+>
+> Some issues are easy to fix, so I sent some patches.
+> https://lore.kernel.org/linux-kbuild/20241106161445.189399-1-masahiroy@ke=
+rnel.org/T/#t
+> https://lore.kernel.org/linux-kbuild/20241106161445.189399-1-masahiroy@ke=
+rnel.org/T/#m4e4fa70386696e903b68d3fe1d7277e9a63fbefe
+> https://lore.kernel.org/linux-kbuild/20241107111519.GA15424@willie-the-tr=
+uck/T/#mccf6d49ddd11c90dcc583d7a68934bb3311da880
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+I did notice the issues for .data.* -- that is one of the reasons we
+separated text from data in our patch.
 
-Thanks!
+>
+> For example, see e41f501d3912.
+>
+> When CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=3Dy or
+> CONFIG_LTO_CLANG=3Dy or CONFIG_AUTOFDO_CLANG=3Dy or
+> CONFIG_PROPELLER_CLANG=3Dy, the .text.startup sections
+> will go to TEXT_MAIN instead of INIT_TEXT.
+> This is not a fatal issue, but we cannot reuse memory for .text.startup
+> sections.
+>
+> Removing the #ifdef (i.e. reverting cb87481ee89d) is more difficult
+> because we need to take a closer look at potential impacts for all
+> architectures.
 
-[1/1] spi: spidev_test: add support for word delay
-      commit: 3ec83a377a995559c18880ff780a6873df9cc5d3
+I'm not sure if there is a naming convention for section names in the kerne=
+l.
+For special sections, we should avoid using .text.* or .data.*,
+instead, using "..', or use
+other prefixes.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+The compiler can generate sections names like .text.hot.*", ".text.unknown.=
+*",
+  ".text.unlikely.*", ".text.split.*", ".text.startup." or
+".text.exit. It seems we've
+addressed most of them except .text.startup and .text.exit.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+For text.startup and .text.exit, have you considered renaming the
+sections within
+the linker script -- they are fixed strings and should be able to be rename=
+d.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+>
+> I understood you did not want to take a risk to break random architecture=
+s,
+> so I decided to postpone the #ifdef issue and accept your patch set.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Thanks for the understanding!
 
-Thanks,
-Mark
-
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
