@@ -1,235 +1,229 @@
-Return-Path: <linux-kernel+bounces-399606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7619C0185
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:53:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B130D9C0189
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BC63B22D64
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40A1E1F23BAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6371E8834;
-	Thu,  7 Nov 2024 09:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B471F429E;
+	Thu,  7 Nov 2024 09:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ba+vNHZ/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="clJYYhss"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405D41E9068
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AB81EC014
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730973108; cv=none; b=gJCDySUjK5Aok4Isbuhnol9FrvzEUg6cFZT/QdQwASxAwHUXoJMgHM0uNU6DeH9+GdMPngzlO2QvBbLU3C9lI/B6+cFijQhuiCeF8rluEzdXDgFKCvfBUKoSeTjXmZppu/oYb65TFbYgbb+IPNcuiHQxeUb+UU6sbp+XV4V9HVM=
+	t=1730973117; cv=none; b=asmhNFBG0iq1U47IkPLTwwHlVHFWi5pIserboF417ImFsGsZt5sIiVBz95WJyZMX1wjm9yXOsP9tk/sYgj/ijqFwu26ieZSlTh8l0uOmgG95baqGjpi9rUUzN8ETEy9ncf+tQ5voAdbejeHgXTjC7VGJq3/t0jxAY7wNua+RKGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730973108; c=relaxed/simple;
-	bh=uINfh8++aKD5Z5gH0g1YPuI5jEgTaPGo9o0bTh0k924=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MaaicFnLHKvAv/5lT8Eu9BvdgtXyq2mA2S2YqIaeBVl1aulfvM6MO2qOaBxL+gAS6KU4GvRr0iUHIzFYIX/DULv9KottSd/HzcBgWJOXmwnfQue4z61KyQhhyTOCny2xzDJKltbGkQHaj6/3Pf7Y3SrXvAkiHOD391wABU4+JQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ba+vNHZ/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730973105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rma9vBSb1ll+jBX/h15QWhJLF+FcIH84Xs+DeZo3nOw=;
-	b=ba+vNHZ/HAW5TR8h2F0pg/pvjHsA/vN/GPatNaWgBNCaS17I2UOd9uTwCAlOC28GPBwgbg
-	LulOeJICqsCNgNXIeLEvou49KqlvJFjzxt/1JduGPhyKlhjRkFpkNpfhtf/DSc16o+s9jW
-	lWCTznTSGoiILp+qDyJTAoVLR4gO+3E=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-151-Knl4kPaxMGyIUMqEOpwOuA-1; Thu, 07 Nov 2024 04:51:43 -0500
-X-MC-Unique: Knl4kPaxMGyIUMqEOpwOuA-1
-X-Mimecast-MFC-AGG-ID: Knl4kPaxMGyIUMqEOpwOuA
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a99f084683fso62175366b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:51:43 -0800 (PST)
+	s=arc-20240116; t=1730973117; c=relaxed/simple;
+	bh=jPV78dINbSzeUtKgCIE0S+PYALb5LTriV8X07iC3y8E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I0Gb9vM9BdHcD24PHNRFodhsojgdIAbOmGRdWJWBJjRxSpnvCP42k51e4Ov76TAe4rLiNQSGOeQMQ4e9itILR8WDP4j9ygyt+wuiWCv44YlvgrXlcid47BYHe1mzGa1so68E8Uhc07lQ3RwFELHBKbT39xRojHY1rldtiULeTGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=clJYYhss; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so1119834e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:51:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730973113; x=1731577913; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MNGDZFn6BFfHOXHdbqmi5GIr1NOgRIL8yzEY3j9R85k=;
+        b=clJYYhssctvQPCrGxUa8H+CpQ7MywEceNAZBmStt0H+5K6+4IkEi3mQ64ujtkwPtNE
+         Vl65kt2KicZdto8ii6C5xBOHHeKD2IxkqT4gg0UsQiHjoqt5ZvScgdR0VYU6ztjQXAyi
+         SI9xdEg4USciXc3/L/hPOTxU2xtnmD3AFxYX8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730973102; x=1731577902;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rma9vBSb1ll+jBX/h15QWhJLF+FcIH84Xs+DeZo3nOw=;
-        b=Fo1MtcnB1PpQcpGPMVV2K0Z0SSSbk+Vn1LLQtT0OFYxvvgMJRFY1UtjMAjZXzISagT
-         0BvjHeY/EoggmXVfsXQtw0IEHw4D2fZynr8u9FMCVUZwqoU3muFXV78zNkeT5FzpiGOi
-         M8c2IBaOa42eeN3sPp/UqKkXph5KtowMdSVC+IwWT/+LWXpb5k8Kcq/LVPx7mgEymD9q
-         GhIBDo5BVYW3rNhIDDgBkxVa+IsQxFBJ9TK96z/3okITbdB0ZaGu22l+GoaSSikNOwsw
-         UwCnrjzh0/j7np1Z1gI8EW2gAOI5qd/TiBEGFis9BUwALeik7uR5Rt38+oNKmU4jVxUj
-         5tPw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/2fdog+NFHee7IPTOMTpTYZ0mCBGFIWnn5Ve5YEaDK0R4W2nmrmXi9OK/VkHHLk33rqNjjf1sYmMDgz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg3mtjDjkik/znFfEfmJG4ac7WxkZlT9o7Ijm/zPwmDq2Ze0hF
-	nkuXjooHn8K6K31cC9LbPoIT2/i/SGXb/tN32iZ5+IF3oUHyyy+zIRL9aj5ksQxHYObZTDeUG2w
-	7Um1EXwI0YJSGj7nSMfqhhpU7EsbfJ9ZC9Ttu9YKbs2zSRovLsilw6r5UIJZMAw==
-X-Received: by 2002:a17:907:970a:b0:a9a:4a:284a with SMTP id a640c23a62f3a-a9de5d8690amr4315298666b.26.1730973102510;
-        Thu, 07 Nov 2024 01:51:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHO6gxHlF3A+5l3TcMj/vhwbz9Uy0C6KWrgNLbP/Zy1E8A/m8386Wb6kbTAQKI819XkxJOF9g==
-X-Received: by 2002:a17:907:970a:b0:a9a:4a:284a with SMTP id a640c23a62f3a-a9de5d8690amr4315295666b.26.1730973102068;
-        Thu, 07 Nov 2024 01:51:42 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dee5e6sm69162766b.137.2024.11.07.01.51.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 01:51:41 -0800 (PST)
-Message-ID: <f1d86afe-42fb-4883-be24-d6032de26f6e@redhat.com>
-Date: Thu, 7 Nov 2024 10:51:40 +0100
+        d=1e100.net; s=20230601; t=1730973113; x=1731577913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MNGDZFn6BFfHOXHdbqmi5GIr1NOgRIL8yzEY3j9R85k=;
+        b=WpbVAaIWyVlDGIY/4p9sDcsLS2IVsl8jlUW5clPJ2wSNMOVV2dHB7P3BPTEuT5n4vO
+         fK/9XwEoL6pzfn2Be8hOVHTQngBW4l+F8nZssde9gXMA/YDlFZPw+TMK5QlBWIW7rvET
+         KXVWRFuNp/jxTsTWPWRbIUqHuO9p4QtMNqiHSbuzGmxhgQgjd067vBXxrj6MPCUb7Z+Z
+         J1x1oj5k1giIMIYGAExqAue+RR4JajZ4ySNQMjsSa5CnsLBQhMX4tQBtL/jP+mGoSdrB
+         fr1yIKZ8WdsSkwO1JR7Qwxn1Lqa+QVCkqFuYYMweIdxFx/KRxSI/+/aSi5QpiCI+ou+v
+         yrsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ2WC0CSVE0yUcUkVbUfdJIJRCBtpd7h+Mky2fqT2RbCsOg7MmBzbqlkFcZvaFdK1Yw+4muUis7OLY6jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlQOzgLzFVRXmRak3hkuW+ZhRr4ChGqY1yynLtoFDHax7gc2ZV
+	kPsSI39qlxWgUZM9QaWL7Dwpak1TnGcpvXOuU91D4wpYqNLvp6fly3hCO80baKI936CbPi+zaI/
+	8KcOWeKZFhwH/waJtbWopim/V5ZlYi9AUAjiOUrH4r2beZidzzA==
+X-Google-Smtp-Source: AGHT+IEnXPQWMP+Dvcvi+dUp8x3Ks93IzGCACftaRF0ayAabRXNIc0K3QoU6l6e3upA/E3kiCMYfJSgDzYjB+oi7sEs=
+X-Received: by 2002:a05:6512:3ca9:b0:535:6aa9:9868 with SMTP id
+ 2adb3069b0e04-53d8408370amr240812e87.19.1730973113190; Thu, 07 Nov 2024
+ 01:51:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] platform/x86: asus-wmi: Fix inconsistent use of
- thermal policies
-To: Armin Wolf <W_Armin@gmx.de>, corentin.chary@gmail.com, luke@ljones.dev,
- mohamed.ghanmi@supcom.tn
-Cc: srinivas.pandruvada@linux.intel.com, ilpo.jarvinen@linux.intel.com,
- Michael@phoronix.com, casey.g.bowman@intel.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241107003811.615574-1-W_Armin@gmx.de>
- <20241107003811.615574-2-W_Armin@gmx.de>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241107003811.615574-2-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241012064333.27269-1-yunfei.dong@mediatek.com> <20241012064333.27269-4-yunfei.dong@mediatek.com>
+In-Reply-To: <20241012064333.27269-4-yunfei.dong@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 7 Nov 2024 17:51:42 +0800
+Message-ID: <CAGXv+5Fc98b_VTYopo38t1O3M1G+pyAzAQzUeu917UFKSRLZaQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] media: mediatek: vcodec: Get SRC buffer from
+ bitstream instead of M2M
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
+	Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On 7-Nov-24 1:38 AM, Armin Wolf wrote:
-> When changing the thermal policy using the platform profile API,
-> a Vivobook thermal policy is stored in throttle_thermal_policy_mode.
-> 
-> However everywhere else a normal thermal policy is stored inside this
-> variable, potentially confusing the platform profile.
-> 
-> Fix this by always storing normal thermal policy values inside
-> throttle_thermal_policy_mode and only do the conversion when writing
-> the thermal policy to hardware. This also fixes the order in which
-> throttle_thermal_policy_switch_next() steps through the thermal modes
-> on Vivobook machines.
-> 
-> Tested-by: Casey G Bowman <casey.g.bowman@intel.com>
-> Fixes: bcbfcebda2cb ("platform/x86: asus-wmi: add support for vivobook fan profiles")
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
+On Sat, Oct 12, 2024 at 2:44=E2=80=AFPM Yunfei Dong <yunfei.dong@mediatek.c=
+om> wrote:
+>
+> Getting the SRC buffer from M2M will pick a different than the one
+> used for current decode operation when the SRC buffer is removed
+> from ready list.
+>
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
 > ---
->  drivers/platform/x86/asus-wmi.c | 64 +++++++++++----------------------
->  1 file changed, 21 insertions(+), 43 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index ab9342a01a48..ce60835d0303 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -3696,10 +3696,28 @@ static int asus_wmi_custom_fan_curve_init(struct asus_wmi *asus)
->  /* Throttle thermal policy ****************************************************/
->  static int throttle_thermal_policy_write(struct asus_wmi *asus)
+>  .../vcodec/decoder/vdec/vdec_av1_req_lat_if.c     | 13 +++++++------
+>  .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c     | 15 +++++++--------
+>  2 files changed, 14 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1=
+_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av=
+1_req_lat_if.c
+> index 90217cc8e242..a744740ba5f1 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1_req_la=
+t_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1_req_la=
+t_if.c
+> @@ -1062,19 +1062,20 @@ static inline void vdec_av1_slice_vsi_to_remote(s=
+truct vdec_av1_slice_vsi *vsi,
+>
+>  static int vdec_av1_slice_setup_lat_from_src_buf(struct vdec_av1_slice_i=
+nstance *instance,
+>                                                  struct vdec_av1_slice_vs=
+i *vsi,
+> +                                                struct mtk_vcodec_mem *b=
+s,
+>                                                  struct vdec_lat_buf *lat=
+_buf)
 >  {
-> -	u8 value = asus->throttle_thermal_policy_mode;
->  	u32 retval;
-> +	u8 value;
->  	int err;
-> 
-> +	if (asus->throttle_thermal_policy_dev == ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO) {
-> +		switch (asus->throttle_thermal_policy_mode) {
-> +		case ASUS_THROTTLE_THERMAL_POLICY_DEFAULT:
-> +			value = ASUS_THROTTLE_THERMAL_POLICY_DEFAULT_VIVO;
-> +			break;
-> +		case ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST:
-> +			value = ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST_VIVO;
-> +			break;
-> +		case ASUS_THROTTLE_THERMAL_POLICY_SILENT:
-> +			value = ASUS_THROTTLE_THERMAL_POLICY_SILENT_VIVO;
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	} else {
-> +		value = asus->throttle_thermal_policy_mode;
-> +	}
-> +
->  	err = asus_wmi_set_devstate(asus->throttle_thermal_policy_dev,
->  				    value, &retval);
-> 
-> @@ -3804,46 +3822,6 @@ static ssize_t throttle_thermal_policy_store(struct device *dev,
->  static DEVICE_ATTR_RW(throttle_thermal_policy);
-> 
->  /* Platform profile ***********************************************************/
-> -static int asus_wmi_platform_profile_to_vivo(struct asus_wmi *asus, int mode)
-> -{
-> -	bool vivo;
-> -
-> -	vivo = asus->throttle_thermal_policy_dev == ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO;
-> -
-> -	if (vivo) {
-> -		switch (mode) {
-> -		case ASUS_THROTTLE_THERMAL_POLICY_DEFAULT:
-> -			return ASUS_THROTTLE_THERMAL_POLICY_DEFAULT_VIVO;
-> -		case ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST:
-> -			return ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST_VIVO;
-> -		case ASUS_THROTTLE_THERMAL_POLICY_SILENT:
-> -			return ASUS_THROTTLE_THERMAL_POLICY_SILENT_VIVO;
-> -		}
-> -	}
-> -
-> -	return mode;
-> -}
-> -
-> -static int asus_wmi_platform_profile_mode_from_vivo(struct asus_wmi *asus, int mode)
-> -{
-> -	bool vivo;
-> -
-> -	vivo = asus->throttle_thermal_policy_dev == ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO;
-> -
-> -	if (vivo) {
-> -		switch (mode) {
-> -		case ASUS_THROTTLE_THERMAL_POLICY_DEFAULT_VIVO:
-> -			return ASUS_THROTTLE_THERMAL_POLICY_DEFAULT;
-> -		case ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST_VIVO:
-> -			return ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST;
-> -		case ASUS_THROTTLE_THERMAL_POLICY_SILENT_VIVO:
-> -			return ASUS_THROTTLE_THERMAL_POLICY_SILENT;
-> -		}
-> -	}
-> -
-> -	return mode;
-> -}
-> -
->  static int asus_wmi_platform_profile_get(struct platform_profile_handler *pprof,
->  					enum platform_profile_option *profile)
->  {
-> @@ -3853,7 +3831,7 @@ static int asus_wmi_platform_profile_get(struct platform_profile_handler *pprof,
->  	asus = container_of(pprof, struct asus_wmi, platform_profile_handler);
->  	tp = asus->throttle_thermal_policy_mode;
-> 
-> -	switch (asus_wmi_platform_profile_mode_from_vivo(asus, tp)) {
-> +	switch (tp) {
->  	case ASUS_THROTTLE_THERMAL_POLICY_DEFAULT:
->  		*profile = PLATFORM_PROFILE_BALANCED;
->  		break;
-> @@ -3892,7 +3870,7 @@ static int asus_wmi_platform_profile_set(struct platform_profile_handler *pprof,
->  		return -EOPNOTSUPP;
->  	}
-> 
-> -	asus->throttle_thermal_policy_mode = asus_wmi_platform_profile_to_vivo(asus, tp);
-> +	asus->throttle_thermal_policy_mode = tp;
->  	return throttle_thermal_policy_write(asus);
->  }
-> 
-> --
-> 2.39.5
-> 
+> -       struct vb2_v4l2_buffer *src;
+> +       struct mtk_video_dec_buf *src_buf_info;
+>         struct vb2_v4l2_buffer *dst;
+>
+> -       src =3D v4l2_m2m_next_src_buf(instance->ctx->m2m_ctx);
+> -       if (!src)
+> +       src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
+ffer);
+> +       if (!src_buf_info)
+>                 return -EINVAL;
 
+This doesn't make sense.
+
+First of all, you are getting the container of bs, and
+mtk_video_dec_buf.bs_buffer is at a non-zero offset, so even if bs is NULL,
+container_of(bs, struct mtk_video_dec_buf, bs_buffer) is not going to be
+NULL.
+
+Second, vdec_av1_slice_setup_lat_from_src_buf() is called from
+vdec_av1_slice_setup_lat(), which itself is called from
+vdec_av1_slice_lat_decode(). Earlier in that function, bs is already
+checked. If bs is NULL, it's considered a request to flush the decoder.
+
+The other changes look OK. It's just the check that seems meaningless.
+
+>
+> -       lat_buf->vb2_v4l2_src =3D src;
+> +       lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
+>
+>         dst =3D &lat_buf->ts_info;
+> -       v4l2_m2m_buf_copy_metadata(src, dst, true);
+> +       v4l2_m2m_buf_copy_metadata(lat_buf->vb2_v4l2_src, dst, true);
+>         vsi->frame.cur_ts =3D dst->vb2_buf.timestamp;
+>
+>         return 0;
+> @@ -1724,7 +1725,7 @@ static int vdec_av1_slice_setup_lat(struct vdec_av1=
+_slice_instance *instance,
+>         struct vdec_av1_slice_vsi *vsi =3D &pfc->vsi;
+>         int ret;
+>
+> -       ret =3D vdec_av1_slice_setup_lat_from_src_buf(instance, vsi, lat_=
+buf);
+> +       ret =3D vdec_av1_slice_setup_lat_from_src_buf(instance, vsi, bs, =
+lat_buf);
+>         if (ret)
+>                 return ret;
+>
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9=
+_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp=
+9_req_lat_if.c
+> index 3dceb668ba1c..c50a454ab4f7 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
+t_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
+t_if.c
+> @@ -712,19 +712,18 @@ int vdec_vp9_slice_setup_single_from_src_to_dst(str=
+uct vdec_vp9_slice_instance *
+>  }
+>
+>  static int vdec_vp9_slice_setup_lat_from_src_buf(struct vdec_vp9_slice_i=
+nstance *instance,
+> +                                                struct mtk_vcodec_mem *b=
+s,
+>                                                  struct vdec_lat_buf *lat=
+_buf)
+>  {
+> -       struct vb2_v4l2_buffer *src;
+> -       struct vb2_v4l2_buffer *dst;
+> +       struct mtk_video_dec_buf *src_buf_info;
+>
+> -       src =3D v4l2_m2m_next_src_buf(instance->ctx->m2m_ctx);
+> -       if (!src)
+> +       src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
+ffer);
+> +       if (!src_buf_info)
+>                 return -EINVAL;
+
+Same thing here.
+
+> -       lat_buf->vb2_v4l2_src =3D src;
+> +       lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
+>
+> -       dst =3D &lat_buf->ts_info;
+> -       v4l2_m2m_buf_copy_metadata(src, dst, true);
+> +       v4l2_m2m_buf_copy_metadata(lat_buf->vb2_v4l2_src, &lat_buf->ts_in=
+fo, true);
+>         return 0;
+>  }
+>
+> @@ -1154,7 +1153,7 @@ static int vdec_vp9_slice_setup_lat(struct vdec_vp9=
+_slice_instance *instance,
+>         struct vdec_vp9_slice_vsi *vsi =3D &pfc->vsi;
+>         int ret;
+>
+> -       ret =3D vdec_vp9_slice_setup_lat_from_src_buf(instance, lat_buf);
+> +       ret =3D vdec_vp9_slice_setup_lat_from_src_buf(instance, bs, lat_b=
+uf);
+>         if (ret)
+>                 goto err;
+>
+> --
+> 2.46.0
+>
+>
 
