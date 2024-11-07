@@ -1,252 +1,153 @@
-Return-Path: <linux-kernel+bounces-400431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086BC9C0D72
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:04:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFD59C0D75
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC540283925
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C92E1C2202C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845E2216E08;
-	Thu,  7 Nov 2024 18:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D72161E6;
+	Thu,  7 Nov 2024 18:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kMnk57vs"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WrylWrsn"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27833216420
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F024212194
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731002677; cv=none; b=VS69xHY5uqUtcwYjvIcH+oDQNswCSOyEXPGGVoO+3M4V59nwIdHQDBgFNip7XGz/B/sbAHmfNyRh22cGbyBiT/WLiu154TyPzLu3MvGJH4CKcnrKEOVNvmRZql8+2nExLcjk40MMT0cKkBFlC/fnagRprvn+vBnyGohFU13sKJc=
+	t=1731002752; cv=none; b=F2mL7u2FRd/FQRe2KMB+HmBR3ncOwXAfnSW5AkeGVCj9Be9ub2zRFZ/ydBJi3lt6bNWbojVghNrVss4DYFiPnoXgl89hwAwQ0FC9kXtYX4/kYYKZg5qVhkGLju8dXMT0JZfjp9HE7ayBw6C1IylJgFhOzD8hyXyu1LygGi/NN78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731002677; c=relaxed/simple;
-	bh=AoGdPGCHB1CEqclFtXuGMQlG7acgjTvG08UwNfyX80M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NLZaGmYwJnDn2drGyeOkhhRccAQ/MNIvR7ZfbWkCemLVbctbZLnrwshS27Slg7Vt868SL8iI0kGf6B8+FnD+6U1WCnNXCvzwfxAbvEogpb656/5Nfzp0U1T5GPse4s9k5oen/JIdg3zMTYrtopO1jn1lD/vS3bTqnESSsA0OFJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kMnk57vs; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4608dddaa35so13561cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:04:35 -0800 (PST)
+	s=arc-20240116; t=1731002752; c=relaxed/simple;
+	bh=KUxyXwz3ijMwI9yruBeARGSaKdWcNDBaCOKWP0VGGm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TOvaQsVfZjBhau9/OsiOlAcGhbyy+4y6/mM4KPteMdgCQJEw6Ik0l9Vp7NF0YYf7EPst9WMgyiBsL1ojXJSyhP1RB3a8ytQZfS4kLBf5vUucozGdxy9XWtn5eBGdF56RCbq1XaDPoMjuX+sEbBd6KJAqbnPk2VS8e/ev/AklvDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WrylWrsn; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a68480164so184560966b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:05:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731002675; x=1731607475; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yp7o7HnZvkg1atMAdU2HGbX95NuzWO3BKP5CnSuHnys=;
-        b=kMnk57vsnsrKTMKUCJWOEicfAaU6zQdDNQjiIX6dZMjqB60AnuUnCWXZOPde1hZELo
-         f02FKaTOb4KDgpmQ77VSIj15OUjUWsV9IGFBochlQENoVUaR459y+zUT3uTj6MF3C9AQ
-         fpAF2UIZ7crhk7JkjBO4emHFeMS9Cf62I4oyBmqKODqoMdULcUBI6A/jm9o6j/xg+Zdk
-         A7JfWGHGP1kn/lrO6bltMgKi04LpmVpqPiGQ8GgJJt26TuzwogQfSh3YHQWUVdiUtESO
-         tSNAhRQFI2wcHT0/2d0dKUYozHK74Kft7ttpfm68vNylnwe6Hdya94eQ7KwgAUwk+Tfu
-         nzmQ==
+        d=suse.com; s=google; t=1731002748; x=1731607548; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zSbrYYBrI/p/5x0d2n3UNYuWW/+v5ncY+edUOAUibFk=;
+        b=WrylWrsn+dmnKPImq81fa+6sZpwIF5WozWtdbebYEyjW8lBhqZSrovghVy0jKE44IY
+         OZPyFwz6+wfGa6tPmfRdRyiujvOUh5lU+JSHGxf3FBAkIb3UKbw4w4co8KxldlngJtuP
+         JsJuMOxFDQKSshcxzTzERdisOcrUUkmhhSwQw/f/YM9nj6Hh/c7aKUFAFFkixz6Im6YE
+         3x/pwwoypVA22RzxQgx7tXgtqSLuVBnruWVnUB7ahY5EkCpfuLPQJDhSnEE2iyMFd8Xl
+         MVT5iwepusXCviU9k0Ggr8GCVEu+xyUOBn0zjxU+kgEWFy7++YrO0VNV0i3om5QPNTTz
+         EDrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731002675; x=1731607475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yp7o7HnZvkg1atMAdU2HGbX95NuzWO3BKP5CnSuHnys=;
-        b=hZsCDxoSes42UAmTQDTfe5iruR0lpascNOH70hLaaV32Ra5RSXepk/+ffoSgdPeAq/
-         hhZiEWpfTeahqeaJlK/vTmx2L7qgLQE9IvIgsIq99exTapffEWPOIbpUNH845hvGfh0V
-         IgQerbfYZ53/1x9NGu1efJKpBFZYT7wKFT+vEMFuY8TlpXYV5hvdF8lh9GAdkNZanHsE
-         cheaMKwQhTpLTnUGIh0r2dQ9PNY7kP19wFy6Z3txa27Tr3XX5ul453o4pv3lSgJEsTgn
-         Z+5apPvgcACUm/zbLo7ZZ2ELEBxaAEjV30/JK3VHLcA8HPbpEtPxWuL4LvrI1rAT5My5
-         nGQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgqyUI18wa61whmYMkMKzakWJgYKexBYdZNJ8KnSnkNu7O+UcHxTzEaiygfzCEtpJwoX55tPFb/otwOGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM1fXH5IMEFhNZcij32sBth++JLw+tQxm/E+pqaTwCcbxG4iLJ
-	hA7/OxwaSHUmTm4j/7XaQrkoTL3kUnfhOMRT3uHW7PiJ2YK0T+MbxLhoWVZipyIindd95Km3pgQ
-	YDUApbxsyRQ2PRFyBMiHpR1mRuAh6f3vVdGPz
-X-Gm-Gg: ASbGncvvTfeCuSAkCzq389TSNEEZKSC7Y8a26rnXY4m6TZPvOvYGD03Spr+niQ5tgGa
-	i4iC+3QSfqYFTrPTmLkbrp8Su/wJ+yKyL/9b2rEaGBXQyCUK1K2E6q1bARMf5TA==
-X-Google-Smtp-Source: AGHT+IG4zvVeAPzzuQSjqEAlYh+GhlTYkbHeruQH2ZyqZ12SI5Wsg7uiawewaoNFffeIDWCHKxOitFzYPnN/1nrTvPc=
-X-Received: by 2002:a05:622a:1391:b0:461:4467:14c7 with SMTP id
- d75a77b69052e-462fa47d2b8mr5543301cf.0.1731002674735; Thu, 07 Nov 2024
- 10:04:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731002748; x=1731607548;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zSbrYYBrI/p/5x0d2n3UNYuWW/+v5ncY+edUOAUibFk=;
+        b=IegdtvJNr56563EUENeVpcObJkI+8sAMD+CDvpfaL/UOfF8PewIRYPy51HxahY/lx5
+         eltH6E+vJPqnq0XZqBao/1IDG2aj6+ldr9JRTV2jQtrUsZNav/5+hZjq+FyEp0JaClmg
+         vd+Y/+fCCTJH8S80Yf4+3s3OzqqFyciYieTlo7N6WDQ5ECIaeeNpksT7vBaceJTWbPuZ
+         3w6XfOXW2Fgcu+hj0Xtu1kyRiaAO8UtShxGGgSvTnmEqwM9t6rtBro4sTiiNHknqc3J4
+         MNkvxWe6RLvmna0kMy4MuUAmEQZvlQjYAbhpVToQcqueuR3Yx75dwAEOr/bzA9YYQEOU
+         i5xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTx8X063scokVE4ioM+mBd5Pvsl10mhN9OXgIQLfxpylt/Rtz767VfLALxiKoLeipCowriA8RyYcsr4lA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyeollYFOHS5G41Y6i2MAwBt04AsxyO718zUolPzMzTQJZ52Ey
+	t29qh6eyDvRvGbCDMOCYQTDH3PGNrADxQrMh64t/34OWMEeeYvUi8Aqbt27D/B4=
+X-Google-Smtp-Source: AGHT+IH/KWT01CAzD8ky5ouYbcYfN5C3FED8l6ogIpQP/5B/enmGcQM4WkUVsaO/f92hCV5EgwfPEA==
+X-Received: by 2002:a17:907:3f02:b0:a9a:e0b8:5b7c with SMTP id a640c23a62f3a-a9de5c91d25mr4463270266b.7.1731002748381;
+        Thu, 07 Nov 2024 10:05:48 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0abf305sm126140866b.86.2024.11.07.10.05.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 10:05:47 -0800 (PST)
+Date: Thu, 7 Nov 2024 19:05:46 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Luca Boccassi <bluca@debian.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, kvm@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: cgroup2 freezer and kvm_vm_worker_thread()
+Message-ID: <nlcen6mwyduof423wzfyf3gmvt77uqywzikby2gionpu4mz6za@635i633henks>
+References: <ZyAnSAw34jwWicJl@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107040239.2847143-1-cmllamas@google.com> <20241107040239.2847143-9-cmllamas@google.com>
- <CAJuCfpHM8J0S4dXhxmVuFSTUV0czg1CTFpf_C=k7M57T9qh-VQ@mail.gmail.com> <Zyz--bjvkVXngc5U@google.com>
-In-Reply-To: <Zyz--bjvkVXngc5U@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 7 Nov 2024 10:04:23 -0800
-Message-ID: <CAJuCfpHAsgDgqjWmxqwGPxs_i184mrzMSAUZ9fj9PN8eJcGdvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] binder: use per-vma lock in page installation
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Barry Song <v-songbaohua@oppo.com>, Hillf Danton <hdanton@sina.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2flxw46ilch26h54"
+Content-Disposition: inline
+In-Reply-To: <ZyAnSAw34jwWicJl@slm.duckdns.org>
+
+
+--2flxw46ilch26h54
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 7, 2024 at 9:55=E2=80=AFAM Carlos Llamas <cmllamas@google.com> =
-wrote:
->
-> On Thu, Nov 07, 2024 at 08:16:39AM -0800, Suren Baghdasaryan wrote:
-> > On Wed, Nov 6, 2024 at 8:03=E2=80=AFPM Carlos Llamas <cmllamas@google.c=
-om> wrote:
-> > >
-> > > Use per-vma locking for concurrent page installations, this minimizes
-> > > contention with unrelated vmas improving performance. The mmap_lock i=
-s
-> > > still acquired when needed though, e.g. before get_user_pages_remote(=
-).
-> > >
-> > > Many thanks to Barry Song who posted a similar approach [1].
-> > >
-> > > Link: https://lore.kernel.org/all/20240902225009.34576-1-21cnbao@gmai=
-l.com/ [1]
-> > > Cc: Nhat Pham <nphamcs@gmail.com>
-> > > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > > Cc: Barry Song <v-songbaohua@oppo.com>
-> > > Cc: Suren Baghdasaryan <surenb@google.com>
-> > > Cc: Hillf Danton <hdanton@sina.com>
-> > > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > Signed-off-by: Carlos Llamas <cmllamas@google.com>
-> > > ---
-> > >  drivers/android/binder_alloc.c | 85 +++++++++++++++++++++++---------=
---
-> > >  1 file changed, 57 insertions(+), 28 deletions(-)
-> > >
-> > > diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_=
-alloc.c
-> > > index 814435a2601a..debfa541e01b 100644
-> > > --- a/drivers/android/binder_alloc.c
-> > > +++ b/drivers/android/binder_alloc.c
-> > > @@ -233,6 +233,56 @@ static inline bool binder_alloc_is_mapped(struct=
- binder_alloc *alloc)
-> > >         return smp_load_acquire(&alloc->mapped);
-> > >  }
-> > >
-> > > +static struct page *binder_page_lookup(struct mm_struct *mm,
-> >
-> > Maybe pass "struct binder_alloc" in both binder_page_lookup() and
-> > binder_page_insert()?
->
-> I'm not sure this is worth it though. Yeah, it would match with
-> binder_page_insert() nicely, but also there is no usage for alloc in
-> binder_page_lookup(). It's only purpose would be to access the mm:
->
->   static struct page *binder_page_lookup(struct binder_alloc *alloc,
->                                          unsigned long addr)
->   {
->         struct mm_struct *mm =3D alloc->mm;
->
-> If you think this is cleaner I really don't mind adding it for v3.
->
-> > I like how previous code stabilized mm with mmget_not_zero() once vs
-> > now binder_page_lookup() and binder_page_insert() have to mmget/mmput
-> > individually. Not a big deal but looked cleaner.
->
-> Sure, I can factor this out (the way it was in v1).
->
-> >
-> > > +                                      unsigned long addr)
-> > > +{
-> > > +       struct page *page;
-> > > +       long ret;
-> > > +
-> > > +       if (!mmget_not_zero(mm))
-> > > +               return NULL;
-> > > +
-> > > +       mmap_read_lock(mm);
-> > > +       ret =3D get_user_pages_remote(mm, addr, 1, 0, &page, NULL);
-> > > +       mmap_read_unlock(mm);
-> > > +       mmput_async(mm);
-> > > +
-> > > +       return ret > 0 ? page : NULL;
-> > > +}
-> > > +
-> > > +static int binder_page_insert(struct binder_alloc *alloc,
-> > > +                             unsigned long addr,
-> > > +                             struct page *page)
-> > > +{
-> > > +       struct mm_struct *mm =3D alloc->mm;
-> > > +       struct vm_area_struct *vma;
-> > > +       int ret =3D -ESRCH;
-> > > +
-> > > +       if (!mmget_not_zero(mm))
-> > > +               return -ESRCH;
-> > > +
-> > > +       /* attempt per-vma lock first */
-> > > +       vma =3D lock_vma_under_rcu(mm, addr);
-> > > +       if (!vma)
-> > > +               goto lock_mmap;
-> > > +
-> > > +       if (binder_alloc_is_mapped(alloc))
-> >
-> > I don't think you need this check here. lock_vma_under_rcu() ensures
-> > that the VMA was not detached from the tree after locking the VMA, so
-> > if you got a VMA it's in the tree and it can't be removed (because
-> > it's locked). remove_vma()->vma_close()->vma->vm_ops->close() is
-> > called after VMA gets detached from the tree and that won't happen
-> > while VMA is locked. So, if lock_vma_under_rcu() returns a VMA,
-> > binder_alloc_is_mapped() has to always return true. A WARN_ON() check
-> > here to ensure that might be a better option.
->
-> Yes we are guaranteed to have _a_ non-isolated vma. However, the check
-> validates that it's the _expected_ vma. IIUC, our vma could have been
-> unmapped (clearing alloc->mapped) and a _new_ unrelated vma could have
-> gotten the same address space assigned?
+On Mon, Oct 28, 2024 at 02:07:36PM GMT, Tejun Heo <tj@kernel.org> wrote:
+> There are two paths that we can take:
+>=20
+> 1. Make kvm_vm_worker_thread() call into signal delivery path.
+>    io_wq_worker() is in a similar boat and handles signal delivery and can
+>    be frozen and trapped like regular threads.
+>=20
+> 2. Keep the count of threads which can't be frozen per cgroup so that cgr=
+oup
+>    freezer can ignore these threads.
+>=20
+> #1 is better in that the cgroup will actually be frozen when reported
+> frozen. However, the rather ambiguous criterion we've been using for cgro=
+up
+> freezer is whether the cgroup can be safely snapshotted whil frozen and as
+> long as the workers not being frozen doesn't break that, we can go for #2
+> too.
+>=20
+> What do you guys think?
 
-No, this should never happen. lock_vma_under_rcu() specifically checks
-the address range *after* it locks the VMA:
-https://elixir.bootlin.com/linux/v6.11.6/source/mm/memory.c#L6026
+I'd first ask why the kvm_vm_worker_thread needs to be in the KVM task's
+cgroup (and copy its priority at creation time but no later adjustments)?
 
->
-> The binder_alloc_is_mapped() checks if the vma belongs to binder. This
-> reminds me, I should also check this for get_user_pages_remote().
->
-> >
-> > > +               ret =3D vm_insert_page(vma, addr, page);
-> > > +       vma_end_read(vma);
-> > > +       goto done;
-> >
-> > I think the code would be more readable without these jumps:
-> >
-> >         vma =3D lock_vma_under_rcu(mm, addr);
-> >         if (vma) {
-> >                if (!WARN_ON(!binder_alloc_is_mapped(alloc)))
-> >                        ret =3D vm_insert_page(vma, addr, page);
-> >                vma_end_read(vma);
-> >         } else {
-> >                /* fall back to mmap_lock */
-> >                mmap_read_lock(mm);
-> >                vma =3D vma_lookup(mm, addr);
-> >                if (vma && binder_alloc_is_mapped(alloc))
-> >                        ret =3D vm_insert_page(vma, addr, page);
-> >                mmap_read_unlock(mm);
-> >         }
-> >         mmput_async(mm);
-> >         return ret;
->
-> Ok. I'm thinking with mmput_async() being factored out, I'll add an
-> early return. e.g.:
->
->         vma =3D lock_vma_under_rcu(mm, addr);
->         if (vma) {
->                 if (binder_alloc_is_mapped(alloc))
->                         ret =3D vm_insert_page(vma, addr, page);
->                 vma_end_read(vma);
->                 return ret;
->         }
->
->         /* fall back to mmap_lock */
->          mmap_read_lock(mm);
->          [...]
->
->
-> Thanks,
-> Carlos Llamas
+If it can remain inside root cgroup (like any other good kthread) its
+job may be even chunked into periodic/deferred workqueue pieces with no
+kthread per KVM at all.
+
+If there are resource control/charging concerns, I was thinking about
+the approach of cloning from the KVM task and never returning to
+userspace, which I see you already discussed with PF_USER_WORKER (based
+on #1). All context would be regularly inherited and no migration would
+be needed.
+
+(I remember issues with the kvm_vm_worker_thread surviving lifespan of
+KVM task and preventing removal of the cgroup. Not sure if that was only
+a race or there's real need for doing some cleanups on an exited task.)
+
+As for #2, I'm not sure there's a good criterion for what to ignore.
+Here it could possibly be PF_KTHREAD or PF_NOFREEZE (I get the latter
+has purpose for system-wide (or v1) freezer). Generally, we can't tell
+what's the effect of thread's liveliness so it seems better to
+conservatively treat the cgroup as unfrozen.
+
+
+HTH,
+Michal
+
+--2flxw46ilch26h54
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZy0BdwAKCRAt3Wney77B
+SYLIAQCuNDE3wTgZN3p9SAWDtSNXhwYcoK26f77RKTJcTmBEUwD8Cs/j4rnKyut3
+wTfnUQ9EoseHo9YzGHkO2Hhuq3vjTgY=
+=An9+
+-----END PGP SIGNATURE-----
+
+--2flxw46ilch26h54--
 
