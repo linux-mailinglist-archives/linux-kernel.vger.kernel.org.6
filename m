@@ -1,102 +1,131 @@
-Return-Path: <linux-kernel+bounces-400208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0D79C0A57
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:47:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54B09C0A63
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77F21F2330D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67781C221EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017ED213ED1;
-	Thu,  7 Nov 2024 15:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tcervsqd"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D802144B1;
+	Thu,  7 Nov 2024 15:50:49 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207FA212D07
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 15:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C126029CF4;
+	Thu,  7 Nov 2024 15:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730994455; cv=none; b=RtBnRN3Rm5TTxwHep20dHaF4d+okyg+zfrxTIsPiJjR7kEAAAT6v7CMfNWjT7Qqf1QEw4nHz0zNnJ/pGS6A+MBsXVgwJGRzuEfO3fPjk7WuqS6G4JOvySjUTALR8oO2v9SuxeNqdOp2zRndBymeMFY6X25moa/7tM0y93vU10ck=
+	t=1730994649; cv=none; b=Epy+ZvsWI79y3rBmaWsJu6OwssRqOzfLsz18WFruSPUfGg5JnP68PK51MCzh5mz7RHuq9bAA0TUwWCcaiFQLsqc08DGn3vt3lwH5O3x1G8IFPljvKwKba6Bx5MK1CgyhZ4ttU/5wcJ4JiEEVvr81wJ3xajW6A+6nzilYkhUjerQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730994455; c=relaxed/simple;
-	bh=q7aUlAO5/MOpZSfzW9v1JQwkZZ72douVaDPqh7khpB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mFZNCt+2T4kbA49VyJXLgIFvir80RIkGuLokkYyo94SpFbEMxDsSUds0k1ezkLsmtTo49pmV+0+T6w9GYn5oSZoHDthNUvTeMSWhGOGUjn7GaEhTts3n58CBLPGycfeoBl+4gBUCb3b/2OICFlC9jtsyEImIRQxSbqISOzGbdl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tcervsqd; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so910246a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 07:47:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730994453; x=1731599253; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bj3vIwGn1S4kVdNYQ6mNujveZuFRmeI++CpgKvIkmVg=;
-        b=TcervsqdleEspdvmxOaxBRqJoan6xcaDI0vhHb5FRcuSZy1430Zyi6uIUbCCif/6Lf
-         aS0zTzYwA7WFORLEFHplVLjA5u0+2NNgf5+bfQ7bcDDA0GrgjoEFoHGh4zSQgifU7KsS
-         eN6ZfaJlMzWEQUGhpJ4bResGBObaOax/U810CUnQgXn8qP1ts+KJvjLeq7yAyBIt1yqI
-         iCDoLVRQfptB5em2uIqf46hd5wJS8XMbNKlH6uuQU/aNn1R5ofoNViFDN8iWXLGxVI9t
-         KDrdeicEPJ3ndGeFwzOfRcuWuZpvKar1R3eSd9yWYWXoZTy5FnSWdwyP9KnGNGtWN35D
-         cuFg==
+	s=arc-20240116; t=1730994649; c=relaxed/simple;
+	bh=o9oRCatZXqdJ9UeL2Tpm/oUaI9r2qvvElx6SkP3OLIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jo5xILaE70s3Oh2ApR4Lc7kYsbDppBrR809ToO8KgXAitJJEs4sZpbI5anzBWRlQqHyuMqcLxYcL87PfkgngjI6ibcEQKREDBHQR7EpfuV5vT8OV+fE630NsXejDMiyssySeMqp4olEJGUSLjwKmNlmy4TuiJEycQjIjvwuHHCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c803787abso10192205ad.0;
+        Thu, 07 Nov 2024 07:50:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730994453; x=1731599253;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bj3vIwGn1S4kVdNYQ6mNujveZuFRmeI++CpgKvIkmVg=;
-        b=j4apUlyizKPPHL+K2Fyb2xExFzmbI8tflGpmAtLfNYyEIAO+laG3uEZjCOlbze6c1I
-         +WthFbtoQNI3viVQQsX+kqRGi6EBWWUYymG89UVT4b/7f3QAlT3Tk6o48ECPTn1Q4ZB0
-         edNV4qY5WaPrTkbgX1Hbua3wd4QZepd8sL1jlqT+DmW++7WNJN9ixG2Gya3EkIO0+RBO
-         YRE5BDQszPQx+I57bsVgQIVY7XWGgRM42lxb9xoayE2DXCg5tO8fW8kGlPW7m+tH4rxX
-         LAS6jxX1cNPI387NGTvFdmeFBEcoL9cEAweW+1i/bF4bX7jb1QJzJ3lNusGmzj65T/oH
-         BhQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWF+R5dO4aQb70Ej2KEAKbTk2dkHSxpl3ufLckXh/EtuoDEbRQQoDPNzmjOnyhCn1M4trF/VR7bU9YeCYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0IGcWJoSsyzy3yjL/mQh9dE5wpOB6KukJR43O3HhBR2W+cU3S
-	7y37PcNUix4sYZR+pAj3+yzFJNOKOxZg0xFcAT2xkPIi72OdZAo4UMIXxAUwHfZzyRkdxcaN2ob
-	Yp3HCqIx/2I4/WqM7PEyvb88asL+MGhvB8bjZ
-X-Google-Smtp-Source: AGHT+IEV29w84+mA5Ghb6DvHqpfh07MhHtO765NcSIgHHok0eidtFkdF8cvUmAonUflKYsr5KtQ6Wv9RdfNBqnD42JI=
-X-Received: by 2002:a17:90b:2249:b0:2e2:e743:7501 with SMTP id
- 98e67ed59e1d1-2e9afbd3778mr526668a91.8.1730994453173; Thu, 07 Nov 2024
- 07:47:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730994647; x=1731599447;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y4g9pTMBWn8NYG8DJqu2aF9WChjDh3es1iM4dJmMreI=;
+        b=vKlWUQWv+b5vEqIfiQ8OpTfq5x3oThAEGeEL1qukxslGtyYq3fCzcb6CWDdYFLYM0S
+         OhhDKZxogOhtPj2TkY/RBa5VZW6QQR3OA4kPq0jfi1wWQ3WAGJq77QTLE2JLC61STzGB
+         Go2T2YNUE+mthY9fMygn+t+WPTpwTWa8/1kv4FxvAW53Ow5GroAg8bzx9DhuonPge/LY
+         PhvRFDBDVnRwAmNq5HvZQYYyhB9B7d14EGmqMouHYd3SdRdKuBHRBrTyvmOcLmGNe6Uz
+         wi0OZxuAgt59x5bX7ZoiI+TRjjUoGN01m8JDi9eBODAcEc0Q2jOuZoDG6pEG5M3yt3qK
+         HReQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3QdtR1NkurVFSF2BRDd9KOHD27CCjrOPW42ixRhW2NcYsd4ZlykC6aT7CzyauA4GJoaGk1ydVTROF@vger.kernel.org, AJvYcCUZnLWZ3NCvgIY2zpg9pJyCbDHV7PXloeKgzPOukJIMTcZNlTt7l9+ftmbei1BOe1rABhzy5dgFM48J1SHa@vger.kernel.org, AJvYcCVNmD1x/+REE/wH4XKfV82FXys/ctC1wx7xesSbBaoI9CVTpxTx+tHFHSiC4YpMLqa4LBS1MPqfsCogGQ==@vger.kernel.org, AJvYcCVU/tAZDBZvmiShZuS/3oKZILjfPT0gyLggIKEmnclDoq9ALWXemwe/RMF5+DNsYS1aZBJT6LVg2VLChJ8r@vger.kernel.org, AJvYcCW/SFWlhvhxaHpvkeKDOch6IviefR/lnxz+ziMQnpvhC2Kzs2zE4GFSgdg5MHfx6cbFULullwXa1tEOJg==@vger.kernel.org, AJvYcCWxK4UXb0KL2zPMzrmmN9yRehERL664nvb+ytwIOOJxTau3Oz5un+Y8+r5smxm4ayIWnJ8uBaurs65t@vger.kernel.org, AJvYcCX33al0KNbbpoPWXzMcPfco5QsDU3nbsAf3EusbqiD92/PB4yah472R14qvM1V/qSHVl0DClPR1U+WMaw==@vger.kernel.org, AJvYcCXNSDoa7iERoi5xNkCp3wZ+EcPaD433RMHsGnB/uAQvbK77iWfcJsCk8PlmwUQIqkYGVjztH7kGrl0CC1ioUENpbtnmXg==@vger.kernel.org, AJvYcCXsR6YGjvb8fYUonymj3DN85JimVuO7AevrxdUl87HWCAzCdEQTDRGCQ4PwZqFlgWFgIMGTa+25tLuc@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGpecljfOZn2VUX+afxn+Pd6nn0r2JKofJHORbXpkbpKDB7YKg
+	OVYzhBL38gEut0etLZm07llZTPGhixGcznTJS/HCfetPsW7kPF9U
+X-Google-Smtp-Source: AGHT+IEfW8mc6K7WMilatY4cRGrx/jJrVZ2Go8Ums63B2x6oVuXb+zNT4RZMBtIqDecZElfJ9fn+6w==
+X-Received: by 2002:a17:903:183:b0:210:e760:77e with SMTP id d9443c01a7336-21181184b51mr5235045ad.7.1730994647037;
+        Thu, 07 Nov 2024 07:50:47 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6c2ecsm13637145ad.252.2024.11.07.07.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 07:50:46 -0800 (PST)
+Date: Fri, 8 Nov 2024 00:50:44 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-cxl@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+	linux-mtd@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH v2 02/10] sysfs: introduce callback
+ attribute_group::bin_size
+Message-ID: <20241107155044.GA1297107@rocinante>
+References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
+ <20241103-sysfs-const-bin_attr-v2-2-71110628844c@weissschuh.net>
+ <20241106200513.GB174958@rocinante>
+ <2024110726-hasty-obsolete-3780@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107122648.2504368-1-elver@google.com> <20241107103410.44721a3d@gandalf.local.home>
-In-Reply-To: <20241107103410.44721a3d@gandalf.local.home>
-From: Marco Elver <elver@google.com>
-Date: Thu, 7 Nov 2024 16:46:57 +0100
-Message-ID: <CANpmjNPiFxkZ6HPXYR0Xz0i=0p-ksEH4tC19fsj1fAwP1XkAjw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] tracing: Add task_prctl_unknown tracepoint
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kees Cook <keescook@chromium.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>, 
-	kasan-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024110726-hasty-obsolete-3780@gregkh>
 
-On Thu, 7 Nov 2024 at 16:34, Steven Rostedt <rostedt@goodmis.org> wrote:
-...
-> > +     TP_PROTO(struct task_struct *task, int option, unsigned long arg2, unsigned long arg3,
-> > +              unsigned long arg4, unsigned long arg5),
-> > +
-> > +     TP_ARGS(task, option, arg2, arg3, arg4, arg5),
-> > +
-> > +     TP_STRUCT__entry(
-> > +             __string(       comm,           task->comm      )
->
-> The question is, do we really need comm? From your example, it's redundant:
->
->   test-484     [000] .....   631.748104: task_prctl_unknown: comm=test option=1234 arg2=101 arg3=102 arg4=103 arg5=104
->   ^^^^                                                            ^^^^
+Hello,
 
-Ack, let's remove it. I will also remove the "task" argument.
+[...]
+> > There exist the sysfs_update_groups(), but the BAR resource sysfs objects
+> > are currently, at least not yet, added to any attribute group.
+> 
+> then maybe they should be added to one :)
+
+Yeah. There is work in progress that will take care of some of this.
+
+	Krzysztof
 
