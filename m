@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-399130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFE69BFB72
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:28:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F999BFB77
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AD631C20F50
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:28:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA1C7B2218F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3549BA50;
-	Thu,  7 Nov 2024 01:27:54 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0BB101E6;
+	Thu,  7 Nov 2024 01:30:19 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0517485
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 01:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AFFD515;
+	Thu,  7 Nov 2024 01:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730942874; cv=none; b=WXdNFgpDrbqWsoWotkQcqRFM2KvEBwHL4RJdyIeIx1xjZJFCPqLbCYqAZgW8kvPMOpl7XPFoeU8DLTFGG/CyJ1tyEio8GbmiI2Q6bny9YzcApF56TWwVYq88UyAYFl72xthd/9FQvxzeBWVSP4R75yzjb5T3dKHKyd97JSX4eKI=
+	t=1730943018; cv=none; b=o+R4Mt4cx0kxAkAT7AeXgtxCaFWIx8uTT6qS10uCqfpcSWdHLSZDy1H96a4cHkassERWWyBCp0iTep8V7REhfqdqDGjYWifLrHImhME/AfK8T7Rl8iSu9aTeMwsy6ofdWKJ3gr2/i0xmyw/dB9TbRlrsAFLhvvS0AJM8Pqci4Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730942874; c=relaxed/simple;
-	bh=c97e6RumXveRoswKoNyMbHWw5+eRQGvyl4LHYEZ9yJc=;
+	s=arc-20240116; t=1730943018; c=relaxed/simple;
+	bh=bX59sfmm+6NRT9Uask54M+OybjX7jicZBwIVTsf1PrI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cr9I87SGG8JGXFpr686q9xmDd1O2WjJI8WiKXzJJOQItDo91w87sXp0cWnFiel/AX64V+wexXVtU8llYKBDXRjfv0PeERbOoKPAJGjqyVkeemzUQDa2fIGOt+RKi0XhF/9zCZYCtLHUz1QxXa4eJA5cLahSHLvkwS4fTUqqTNa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+	 In-Reply-To:Content-Type; b=VKzZxeDlk3Qj2pHquK81V3qfsw1vrA1S82f8iP0jVZyXaWxj29/HHSQXU+HMlfPlGdLdjLy/FEb340omm+CZ9K2uku8Dbdii+FDLtIcOzj8KYDWK+yYAajeIUCbrB1ubf3YawJGg2pLfjmEWJUJOs5YBSNhyRwI+DU5jOT+UitA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XkPXv3c7fz1SCCT;
-	Thu,  7 Nov 2024 09:26:07 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XkPZw6HwWz1T90v;
+	Thu,  7 Nov 2024 09:27:52 +0800 (CST)
 Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id E4F07180042;
-	Thu,  7 Nov 2024 09:27:49 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id A2619140337;
+	Thu,  7 Nov 2024 09:30:13 +0800 (CST)
 Received: from [10.67.109.254] (10.67.109.254) by
  kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Nov 2024 09:27:49 +0800
-Message-ID: <ee6521c6-9038-ab16-0773-c9425aae54fd@huawei.com>
-Date: Thu, 7 Nov 2024 09:27:48 +0800
+ 15.2.1544.11; Thu, 7 Nov 2024 09:30:13 +0800
+Message-ID: <2d04feea-c568-5ff8-019b-119b824e8a0f@huawei.com>
+Date: Thu, 7 Nov 2024 09:30:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,52 +48,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.0
-Subject: Re: [PATCH v2] phy: ocelot-serdes: Fix IS_ERR() vs NULL bug in
- serdes_probe()
+Subject: Re: [PATCH] powercap: dtpm_devfreq: Fix possible memory leak in
+ __dtpm_devfreq_setup()
 Content-Language: en-US
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-	<florian.fainelli@broadcom.com>, <colin.foster@in-advantage.com>,
-	<davem@davemloft.net>, <linux-phy@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241101061145.2282501-1-ruanjinjie@huawei.com>
+To: <daniel.lezcano@kernel.org>, <rafael@kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241026082525.474914-1-ruanjinjie@huawei.com>
 From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20241101061145.2282501-1-ruanjinjie@huawei.com>
+In-Reply-To: <20241026082525.474914-1-ruanjinjie@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  kwepemg200008.china.huawei.com (7.202.181.35)
 
 Gentle ping.
 
-On 2024/11/1 14:11, Jinjie Ruan wrote:
-> dev_get_regmap() call can return a null pointer. It will not return
-> error pointers. Thus apply a null pointer check instead.
+On 2024/10/26 16:25, Jinjie Ruan wrote:
+> If dev_pm_qos_add_request() fails, dtpm_devfreq will fail
+> to free, which cause the memory leak, add a new goto label
+> to free it.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 672faa7bbf60 ("phy: phy-ocelot-serdes: add ability to be used in a non-syscon configuration")
-> Acked-by: Colin Foster <colin.foster@in-advantage.com>
+> Fixes: e44655617317 ("powercap/drivers/dtpm: Add dtpm devfreq with energy model support")
 > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
-> v2:
-> - Add Acked-by.
-> - Update the commit message as Markus suggested.
-> ---
->  drivers/phy/mscc/phy-ocelot-serdes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/powercap/dtpm_devfreq.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/phy/mscc/phy-ocelot-serdes.c b/drivers/phy/mscc/phy-ocelot-serdes.c
-> index 1cd1b5db2ad7..77ca67ce6e91 100644
-> --- a/drivers/phy/mscc/phy-ocelot-serdes.c
-> +++ b/drivers/phy/mscc/phy-ocelot-serdes.c
-> @@ -512,8 +512,8 @@ static int serdes_probe(struct platform_device *pdev)
->  						    res->name);
+> diff --git a/drivers/powercap/dtpm_devfreq.c b/drivers/powercap/dtpm_devfreq.c
+> index d1dff6ccab12..85b6982901d1 100644
+> --- a/drivers/powercap/dtpm_devfreq.c
+> +++ b/drivers/powercap/dtpm_devfreq.c
+> @@ -171,8 +171,7 @@ static int __dtpm_devfreq_setup(struct devfreq *devfreq, struct dtpm *parent)
+>  	ret = dtpm_register(dev_name(dev), &dtpm_devfreq->dtpm, parent);
+>  	if (ret) {
+>  		pr_err("Failed to register '%s': %d\n", dev_name(dev), ret);
+> -		kfree(dtpm_devfreq);
+> -		return ret;
+> +		goto out_dtpm_free;
 >  	}
 >  
-> -	if (IS_ERR(ctrl->regs))
-> -		return PTR_ERR(ctrl->regs);
-> +	if (!ctrl->regs)
-> +		return -EINVAL;
+>  	ret = dev_pm_qos_add_request(dev, &dtpm_devfreq->qos_req,
+> @@ -190,6 +189,8 @@ static int __dtpm_devfreq_setup(struct devfreq *devfreq, struct dtpm *parent)
+>  out_dtpm_unregister:
+>  	dtpm_unregister(&dtpm_devfreq->dtpm);
 >  
->  	for (i = 0; i < SERDES_MAX; i++) {
->  		ret = serdes_phy_create(ctrl, i, &ctrl->phys[i]);
+> +out_dtpm_free:
+> +	kfree(dtpm_devfreq);
+>  	return ret;
+>  }
+>  
 
