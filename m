@@ -1,123 +1,196 @@
-Return-Path: <linux-kernel+bounces-399721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0954B9C036B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:08:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CED9C029D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCCFF28863E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:08:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E211C21616
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7D51F4293;
-	Thu,  7 Nov 2024 11:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8182D1EF921;
+	Thu,  7 Nov 2024 10:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="YPRG8d3H"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718CD1EF923;
-	Thu,  7 Nov 2024 11:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gw5BR0QY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EN8wG4xV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gw5BR0QY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EN8wG4xV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBB61EE013;
+	Thu,  7 Nov 2024 10:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977684; cv=none; b=nwsnk1IBMyR/aXU9cPgkuOxiHGBQNMVLv4tM9r7fLAIGnWjaZjT6jwIz5D8UX+ro+z9C+j7aNcNXHWtDc6oQqhe3VoNdZRp9L7uMHzXZVsSFDFsyUqRe9ug06PrX0Yf8NUmiyt5KSqkcB68/gpmReAd2UupOOZLgmX3V9D3h/+M=
+	t=1730976084; cv=none; b=gKysDL+KI7nY4rbc0hIO16m0cbV2yqZCFZBIF+dD7vcx92RKLI7+FwRhPYyaSzjSuwiTueTP0WVqmMHTyVl9AfnEvgEHs+at1yw5qlltataBGZs29hncnsqkful9+e+aHxyR8QSJgkmiHEMZ+d/rwoAw8zai5EWkx14DqeOU9ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977684; c=relaxed/simple;
-	bh=qm0sRgjyJYZCmmY/AhZSz8Z8fn4UGSfVYOCj0xQLmMc=;
+	s=arc-20240116; t=1730976084; c=relaxed/simple;
+	bh=AsVkfe5Chsmh6onjrcoBInU9o9BRtSV25rfkSVW7YTM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/9Kzh8tRYMmz/MPDAEkNyM9mMXvRGAj0JItN2WzG1Xn5kTx7inH/KbihfBiXbAAyT/chljxg1/ROsPWGSOAhSdQgqiLjuJdjXp07w2FWOjMPoN0u6TT/hv7m3A0Sxz8ijM2ul+9AuBOJ1nvprxtQYwnPKv/9cWUPOxARj66GjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=YPRG8d3H; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id 7C90F40A9F; Thu,  7 Nov 2024 11:40:40 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 7C90F40A9F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20180602; t=1730976040;
-	bh=qm0sRgjyJYZCmmY/AhZSz8Z8fn4UGSfVYOCj0xQLmMc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YPRG8d3HYFQ0Avd4hWzXFR0pswWAUumDi+RYJTWINOPrlJpEj9MjYiA9uIdRtS4D2
-	 5j2GbKZYMjLmQyWLx+Ryp5OMzp79ZJJeg/LNFXYrQ2s4Mmo19MfKx20mU/V5R6d8Ln
-	 4nGMYvUB8vxv5Sp3HsQMT0JD8869hTIzuvFX+a/g=
-Date: Thu, 7 Nov 2024 11:40:40 +0100
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] watchdog: mediatek: Fix mtk_wdt_restart
-Message-ID: <20241107104040.GA5233@www.linux-watchdog.org>
-References: <20241106104738.195968-1-y.oudjana@protonmail.com>
- <20241106104738.195968-2-y.oudjana@protonmail.com>
- <2bd7a02d-c5bc-4926-8aee-0eed6eb490a2@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZbX3rBUGeNQa4Q1Nxe+36CJyTdLCUw2vCs12B9/2Kex5JZgATzzXjy1wTEYTHqNXJVSfKJPWaQSfmHuI6BNWc7yM153NFWI0mXGOsRw4FxMJRvloTMlpMQ6P50OkaDm8ryOP4PnSB7juq+fH08yPIB3106XBmP5Y9keWEXh8OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gw5BR0QY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EN8wG4xV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Gw5BR0QY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EN8wG4xV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3663B1FF83;
+	Thu,  7 Nov 2024 10:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730976081; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KN1HJ3pdDGlNL2Ga+abDI/XhyPCloSZdGhb/Xe0Xrv0=;
+	b=Gw5BR0QYe9EW5/pn1SRTd3balD1AVZR41NCgpRhXmzOgQf6yl3JgnZ+ufR9WlisypZQRAS
+	3CRpgXHBnkU7bS/n4qIckSXsGlV7snTYSWy4jP49em7YF+OV9tNtQx2vBfo+ZAzoD2YEbp
+	+oNPOYgmvx+CzMrXjq0kiXDPIv+PqYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730976081;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KN1HJ3pdDGlNL2Ga+abDI/XhyPCloSZdGhb/Xe0Xrv0=;
+	b=EN8wG4xVJh7TRuBekLlTqYNP97AjFZUBq8FxghPFV9bhlDRsmDUXYblkyxM1okorTysf63
+	KA5ZNadTllGkk7Dw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730976081; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KN1HJ3pdDGlNL2Ga+abDI/XhyPCloSZdGhb/Xe0Xrv0=;
+	b=Gw5BR0QYe9EW5/pn1SRTd3balD1AVZR41NCgpRhXmzOgQf6yl3JgnZ+ufR9WlisypZQRAS
+	3CRpgXHBnkU7bS/n4qIckSXsGlV7snTYSWy4jP49em7YF+OV9tNtQx2vBfo+ZAzoD2YEbp
+	+oNPOYgmvx+CzMrXjq0kiXDPIv+PqYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730976081;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KN1HJ3pdDGlNL2Ga+abDI/XhyPCloSZdGhb/Xe0Xrv0=;
+	b=EN8wG4xVJh7TRuBekLlTqYNP97AjFZUBq8FxghPFV9bhlDRsmDUXYblkyxM1okorTysf63
+	KA5ZNadTllGkk7Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2969F1394A;
+	Thu,  7 Nov 2024 10:41:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HucWClGZLGdqDgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 10:41:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D2527A0AF4; Thu,  7 Nov 2024 11:41:20 +0100 (CET)
+Date: Thu, 7 Nov 2024 11:41:20 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Song Liu <songliubraving@meta.com>, Jeff Layton <jlayton@kernel.org>,
+	Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	"repnop@google.com" <repnop@google.com>,
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
+ fanotify fastpath handler
+Message-ID: <20241107104120.64er6wj3n7gcibld@quack3>
+References: <20241029231244.2834368-1-song@kernel.org>
+ <20241029231244.2834368-3-song@kernel.org>
+ <5b8318018dd316f618eea059f610579a205c05db.camel@kernel.org>
+ <D21DC5F6-A63A-4D94-A73D-408F640FD075@fb.com>
+ <22c12708ceadcdc3f1a5c9cc9f6a540797463311.camel@kernel.org>
+ <2602F1B5-6B73-4F8F-ADF5-E6DE9EAD4744@fb.com>
+ <CAOQ4uxjyN-Sr4mV8EjhAJ9rvx4k4sSRSEFLF08RnT1ijvm2Y-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2bd7a02d-c5bc-4926-8aee-0eed6eb490a2@collabora.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjyN-Sr4mV8EjhAJ9rvx4k4sSRSEFLF08RnT1ijvm2Y-g@mail.gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[meta.com,kernel.org,vger.kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com,toxicpanda.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Angelo, Yassine,
-
-> Il 06/11/24 11:47, Yassine Oudjana ha scritto:
-> >Clear the IRQ enable bit of WDT_MODE before asserting software reset
-> >in order to make TOPRGU issue a system reset signal instead of an IRQ.
+On Wed 06-11-24 20:40:50, Amir Goldstein wrote:
+> On Thu, Oct 31, 2024 at 2:52 AM Song Liu <songliubraving@meta.com> wrote:
+> > > Alternately, maybe there is some way to designate that an entire
+> > > vfsmount is a child of a watched (or ignored) directory?
+> > >
+> > >> @Christian, I would like to know your thoughts on this (walking up the
+> > >> directory tree in fanotify fastpath handler). It can be expensive for
+> > >> very very deep subtree.
+> > >>
+> > >
+> > > I'm not Christian, but I'll make the case for it. It's basically a
+> > > bunch of pointer chasing. That's probably not "cheap", but if you can
+> > > do it under RCU it might not be too awful. It might still suck with
+> > > really deep paths, but this is a sample module. It's not expected that
+> > > everyone will want to use it anyway.
 > >
-> >Fixes: a44a45536f7b ("watchdog: Add driver for Mediatek watchdog")
-> >Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> 
-> I'd be more comfortable with a title like:
-> 
-> watchdog: mediatek: Make sure system reset gets asserted in mtk_wdt_restart()
-> 
-> or along those lines, saying what's this commit about, because a generic
-> "fix" doesn't really mean anything...
-> 
-> About the commit description - that's good.
-> Btw, I wonder if maintainers can fix the title without you sending a v3...
-
-I added it into linux-watchdog-next and changed the commit description whiledoing that.
-
-Kind regards,
-Wim.
-
-> 
-> Anyway - you can get my:
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> Cheers!
-> Angelo
-> 
-> >---
-> >  drivers/watchdog/mtk_wdt.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
+> > Thanks for the suggestion! I will try to do it under RCU.
 > >
-> >diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
-> >index c35f85ce8d69c..e2d7a57d6ea2e 100644
-> >--- a/drivers/watchdog/mtk_wdt.c
-> >+++ b/drivers/watchdog/mtk_wdt.c
-> >@@ -225,9 +225,15 @@ static int mtk_wdt_restart(struct watchdog_device *wdt_dev,
-> >  {
-> >  	struct mtk_wdt_dev *mtk_wdt = watchdog_get_drvdata(wdt_dev);
-> >  	void __iomem *wdt_base;
-> >+	u32 reg;
-> >  	wdt_base = mtk_wdt->wdt_base;
-> >+	/* Enable reset in order to issue a system reset instead of an IRQ */
-> >+	reg = readl(wdt_base + WDT_MODE);
-> >+	reg &= ~WDT_MODE_IRQ_EN;
-> >+	writel(reg | WDT_MODE_KEY, wdt_base + WDT_MODE);
-> >+
-> >  	while (1) {
-> >  		writel(WDT_SWRST_KEY, wdt_base + WDT_SWRST);
-> >  		mdelay(5);
 > 
-> 
+> That's the cost of doing a subtree filter.
+> Not sure how it could be avoided?
+
+Yes. For a real solution (not this example), we'd probably have to limit
+the parent walk to say 16 steps and if we can reach neither root nor our
+dir in that number of steps, we'll just chicken out and pass the event to
+userspace to deal with it. This way the kernel filter will deal with most
+cases anyway and we won't risk livelocking or too big performance overhead
+of the filter.
+
+For this example, I think using fs/dcache.c:is_subdir() will be OK for
+demonstration purposes.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
