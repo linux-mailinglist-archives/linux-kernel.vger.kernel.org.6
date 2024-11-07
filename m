@@ -1,110 +1,79 @@
-Return-Path: <linux-kernel+bounces-400514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCEC9C0EA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:15:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E529C0EA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 20:15:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A75A1F2797B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:15:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AB00B21441
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42908217F41;
-	Thu,  7 Nov 2024 19:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D96223A52;
+	Thu,  7 Nov 2024 19:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=svenjoac@gmx.de header.b="FVC2r/XV"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWCDOtrX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CD3217F42;
-	Thu,  7 Nov 2024 19:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED68223A40;
+	Thu,  7 Nov 2024 19:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731006607; cv=none; b=CgLz9DV5RNKHfvLXHM/cHnIEuOTlKF1Z9J3FKQsfmY3xDc5c4eL5B4rlSEyztXKKTcmZBG/l+FjkwuHS8AkCfykId59IsH1e4Y/LcN4WHB0fPPPStx/XLbXwfjo9Pad6ZQmFMQdoH7lIR7Yi9yaLpFZpIVQcYsXB7tP5LOfDlSU=
+	t=1731006592; cv=none; b=fDGgq97PLtr8YhplyuwOiQQsk9JhR4SyuAxmGPiLPWPZYa2/QEVaJEN9co6lvNoxatbSxXo7A3nVghjWXYsleI1VF6FExu2Kup8+aKBZZ1NoNLRPmiyVjVXvZgDVGbtfkJdEDDiS3okrfMSanOyxKcp7WLFWJVtOSDZAAd1LNJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731006607; c=relaxed/simple;
-	bh=iRSK/2RrHeyLRWeWqe8y3ZN3XJ5KbezUUEVfCcRSMOg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jMVjX5sRTppd1wnhBMAMD1fKszoxNOp4pSFnh7vMJ3RircqnJSxibzguabUChF4IhmQpS8iVtZm9dTjm2kQMXF/HWmPqiy2hF4Szwd6KQRkTOTQ7E3OpCOLr4AqfABDQ+6OO3n/GVnt06yB3sl5/7qjL8OHasfwzGdA+feK+Eps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=svenjoac@gmx.de header.b=FVC2r/XV; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731006566; x=1731611366; i=svenjoac@gmx.de;
-	bh=PUe5dMBnM2h1ROFoHnXuf3mS3s1UtGbSIaFLr+Ktzek=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 Message-ID:MIME-Version:Content-Type:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FVC2r/XVBZ44z6DuR2SdAP7MCwThDvlBaDpc18psWNZr01yM3yw9kyu3UUbcXgAu
-	 oOPySNjeTAa+tFnedxORvhFAZx/tPe+ZPgUsVK+YPmD/4dtZuGOf4U3SJtL3Fw72P
-	 y0bUMECKkSkKojGF2z/vhQCkKo40vN/8+5qrCqs4IiY5P8uYoq/oNfldp2tSQmbg6
-	 l3TzpNlXGUmigD2ME9sN0qrpcb/9JKZVgPwFGXctWs47yrOLlgMskcsnsIUtE9wT9
-	 4KTyzoaMyTe0Fz7XIRx8tRq/ikIFezJRADlJesWUTCL5KGNGcCxs1umdR0LCIWPkt
-	 JX7D+8S8NdtIz1A5Ew==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost.localdomain ([87.168.51.82]) by mail.gmx.net
- (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1MbRfl-1tfzrT1i7l-00ooij; Thu, 07 Nov 2024 20:09:26 +0100
-Received: by localhost.localdomain (Postfix, from userid 1000)
-	id A13DE8009F; Thu, 07 Nov 2024 20:09:24 +0100 (CET)
-From: Sven Joachim <svenjoac@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org,  patches@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  torvalds@linux-foundation.org,
-  akpm@linux-foundation.org,  linux@roeck-us.net,  shuah@kernel.org,
-  patches@kernelci.org,  lkft-triage@lists.linaro.org,  pavel@denx.de,
-  jonathanh@nvidia.com,  f.fainelli@gmail.com,  sudipm.mukherjee@gmail.com,
-  srw@sladewatkins.net,  rwarsow@gmx.de,  conor@kernel.org,
-  hagar@microsoft.com,  broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/126] 6.1.116-rc1 review
-In-Reply-To: <20241106120306.038154857@linuxfoundation.org> (Greg
-	Kroah-Hartman's message of "Wed, 6 Nov 2024 13:03:21 +0100")
-References: <20241106120306.038154857@linuxfoundation.org>
-Date: Thu, 07 Nov 2024 20:09:24 +0100
-Message-ID: <87pln63lp7.fsf@turtle.gmx.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1731006592; c=relaxed/simple;
+	bh=rCxKhzIWnMatzzOprxB++//6KGsASl76HzpyqFpJU3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cFJFP55loc4o/Hmi8M4lM0wSKT+U668R4uC6pg3xeDENIRRRll5kocTwAdbh9vUt/LKxF6s4Q3weFRFIs9yaZvnWAdzYRM6SQgpXeiFOEM29tAcV/IZuIMwgQrhRL+CZrig6jx0Or87sHD6cJ7pFHcearyjNAql6IYKPOQjSWac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWCDOtrX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1E5FC4CECC;
+	Thu,  7 Nov 2024 19:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731006591;
+	bh=rCxKhzIWnMatzzOprxB++//6KGsASl76HzpyqFpJU3w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GWCDOtrX/q8AzJ4i1Ez6dwUur3rBYfNe9daFcKvWG6Tyf6lfHEXiOPPssQ5o4iO5u
+	 36TPtGynrhpweqa9lc87mJGx8Khjrato/OrEakMevVTGaYB1TXs8w22R3cu5R649Mi
+	 z1B+HJuv8TvAwwwxvQpfOHfjUjHVlK5hc+ndEFsLFLqUce8HlKddcamgcc2kuV/Fyv
+	 KZfqO2tYTQbXVSZewEt5hRksoDRFri3lwFuPllcHIDsXSHfp3VPq8esExFKaPfRAZ9
+	 fYKzcAyeDcp1/XevEPnL79nWXFvoQ+WErCOlogWqpQbYEtpSQCK8gLm4kJwY5M6sOO
+	 QVG6AUFPrlOLA==
+Date: Thu, 7 Nov 2024 11:09:49 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Leon Romanovsky <leonro@nvidia.com>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
+ linux-pci@vger.kernel.org, "Ariel Almog" <ariela@nvidia.com>, "Aditya
+ Prabhune" <aprabhune@nvidia.com>, "Hannes Reinecke" <hare@suse.de>, "Heiner
+ Kallweit" <hkallweit1@gmail.com>, "Arun Easi" <aeasi@marvell.com>,
+ "Jonathan Chocron" <jonnyc@amazon.com>, "Bert Kenward"
+ <bkenward@solarflare.com>, "Matt Carlson" <mcarlson@broadcom.com>,
+ "Kai-Heng Feng" <kai.heng.feng@canonical.com>, "Jean Delvare"
+ <jdelvare@suse.de>, "Alex Williamson" <alex.williamson@redhat.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] net/mlx5: Enable unprivileged read of PCI VPD
+ file
+Message-ID: <20241107110949.717e3960@kernel.org>
+In-Reply-To: <f551f20b0649b4be3f4c9536e756986665366e46.1731005223.git.leonro@nvidia.com>
+References: <cover.1731005223.git.leonro@nvidia.com>
+	<f551f20b0649b4be3f4c9536e756986665366e46.1731005223.git.leonro@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Provags-ID: V03:K1:Me4Q2xdlDEwsRvGblEi3CSToLpXpY2h1CIU8dvUTKdkcwM/vaWg
- K/zKzvhxJs+2r8nHzLx/KXIiJpLWv1Jrdu0uKusf+ORLYUR4/rmZ0C+wXilU2c8P1WkkdEk
- ZoGQ805H0Kh3S5my2H7BEtrnW29BRvkOoI40NzIo6lhRV4CiNMtJgozb/DKg70+6g7pI8PF
- v/zxxbuN4z619xg76uDOw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RMwRqL2qi8w=;D1UJYuOuu7pZl2NFKXAZRFNIF3C
- iskN9NCphv2RpVtKCC9Cb+WSVNXwjU4Wg42nIOXJIeY0jBrsA3NRAMdGl21xCq5zDi0A7RE5z
- uKx9CM3RrwFUXjJl2EznCQAETyMXV1iLlPC37Wi28CDZd64RJSDkqAkcg/y6xSGRp6TXWX5SO
- OkoBnd0syMNncDqLRdwOoWvtG/ojii5Ge0yt63Gwsy3s+fIMpTRIztk/EwmudgvfWWTXUOQSK
- +tRJYPA6bLFGwk5Ux8z/9xYHn3+qs6cx99Scz7151lry0BgzZ86aFdgZOhFVcQpwyqrbuFRUX
- XIqC5r0mlWj6pw7QmgnvJHdbDqZGKW1NOBmpHVtTyYDdsBJV7HzgJ108Q8knLcmcEnkAY6tXj
- ce1+sQ+ZJOeAxFNKfEZ6VJWzO4Absc+2/xlVBRUrdv+ht49ekafchP1dQjU+XIDKWA2+0AdZY
- zlicQAsJfwcZOc7x8nKgjHRFq/PaVKu++w4ek11d010ojBZ6ZvZQp1bwNHYkXCvZ3EohKEh8z
- 75oYebLINRyIxkOj88FTYotUaFJngitfffpUgy+1/Oylr2qxhcTr8WHAq7j4HVDDIIjw1bSL0
- /6osuBE1QROYo6hV9QOqNx+O0PXzw9PysZTvrxBNFURtIOwvMX7hz5dZayiLfOYYR3pMkHMh6
- K1PJ5yqTRCRCIRlGU6mMYrA6S0Kd7szQEVZoZ3xWyATqIrDfhwXNSgZw6Jjc7YAdAye+xUqIZ
- L04xmHkm77VEKMuc2eIr+SRwp4hisJMfI3/opZhJPRv52mWPz793QZ3HmMZjmKwziAVC5mqh0
- aGky6fyqq+MlI4tqSp5s35cw==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2024-11-06 13:03 +0100, Greg Kroah-Hartman wrote:
+On Thu,  7 Nov 2024 20:56:57 +0200 Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> mlx5 devices are PCIe spec compliant, doesn't expose any sensitive
+> information Vital Product Data (VPD) section. In addition, these devices
+> are capable to provide an unprivileged read access file exposed by PCI core.
 
-> This is the start of the stable review cycle for the 6.1.116 release.
-> There are 126 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
-> Anything received after that time might be too late.
-
-Works fine for me on x86_64.
-
-Tested-by: Sven Joachim <svenjoac@gmx.de>
-
-Cheers,
-       Sven
+Acked-by: Jakub Kicinski <kuba@kernel.org>
 
