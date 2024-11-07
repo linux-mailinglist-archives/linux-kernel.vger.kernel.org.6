@@ -1,196 +1,278 @@
-Return-Path: <linux-kernel+bounces-400021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34229C07DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:44:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41ABD9C07E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:44:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5821B284BCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD661F21551
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8173A2101BE;
-	Thu,  7 Nov 2024 13:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFBE212160;
+	Thu,  7 Nov 2024 13:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rmvDk99G"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2052.outbound.protection.outlook.com [40.107.101.52])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ODdCOgzP"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EA02101BC;
-	Thu,  7 Nov 2024 13:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987046; cv=fail; b=k02UJFVzDzVCUYVF29ZRVbhj4Kwbv2cFlQnholrUxOYBIxbjQYdJ+fGBtw/2pKa/OALRUVEjS/t4TcGVdqcxStHeDvj2mNS8CaVDm3ipfUTIG4cxMrAAMDi1oBr0jG1M6DwJbesEk0Hazy/AtsHP7dlk/+zfuQ7X12p2lozDcLA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987046; c=relaxed/simple;
-	bh=3Hpyqx6Ra+nie0mPUDM3Cw28x79usYgKDEKEdi0P/Cg=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=LPcb9f8OdS1wqYTPMar3JPLnHYq/24Yt5l5hB+ZQeqs2GSLItXSc0B/WB6B4NAb3ZH1VIrefPzJMlu6Owr5Es7lH4x7YTeMWx/M6Q9Oclhm2egIWPF/Vdr5yfIZAM3MVBUiSWwHsdcDT37hAahrLm/9BWchQ+xQruPiMPG/zWCw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rmvDk99G; arc=fail smtp.client-ip=40.107.101.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hk13u8FEDsbrJmrzahtevMfIGybE8QFgehmlyvftBqhi3na+Vdg/BG0E0CAR301PJ5AuLJBJiNxFWiFw3bNqqk2ZQRtQnS/OMryj4Ja/+unpOmTVkeo6EfywZW3gW8OCEGDJ+mpmRLKK+XxMdo8YMxCepoYSf+1ww7QgCRmR0ceaqCmx/32DKXlbvxEMgJqZ+8k3f59TDxR9olcgdWmwnCKUk7zKG+CbDQnH4fYLUmVRGh7lR+2BTdN7ibTfGKeeSJubNh6Wnd1i9SIL2Taqf+weq9yvGi3REt2QAzHt1zgEmSqDFZyisDMspCxr8LEAfk/9jalGBkW1hntyVsqoQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9FDi3P9/rL6wU0tPPx2P1WUYAS4j5jHhUOaTW+84U20=;
- b=Jb/7L9RloDW81ZcBQwzBxKzNZzvjR43CSwpgewEdwFYgBY2GDvQG23S7R6JoQQ2n6VqIEeYrJilabZ1o6B4HxXP3Cy6B4kb5Wo/HXOb8zQXlFC3OQkhrHbT3M+JI1VUtRamDMcbMHn3syuKJCve5WtyUr4tDlmGJKeZdxI/aFf47+IyxOlC1NQa+TT+CvmSBjLjSnidaiV+zRqlWHJgLmd4yv8riefAoHUMDaa6reBIz80Ak8ZfSzWF/rwpbw8yAh1XPEbTwrP6RHLfhIjhZUNGdx/hWDNAF+QMDprPwkF9pZ385DXm4/Vzr5IJtjLcerUiOP37sPOPt07s1LSsPDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9FDi3P9/rL6wU0tPPx2P1WUYAS4j5jHhUOaTW+84U20=;
- b=rmvDk99GEwzeczg1lkLEMR7gLBp5n+RT9FPBKK2UM66YOZMdcpOGcEAK+Hmy4BRQ98bA36gi5W6hc6Ll65WUDqC08wldELnuLlB98LsNJ/xIITO0u1G8h/YI9qDCAzAD/HxQo+8y5vGT5zBSHUnhwrr6eScIjenJd4ix91WC+mPCOZ6PM7ZGAbHTyTYtDGIwCKHB6I0tAaYAhEOHi8xj5KpPIeMP27MIa7YZ1y8auuVDeoJkBOb2ji8wwSDb04lIil8m8lHcKHyyFuFJRPeNSwi/EaP4zox39+vUuOvUy8qiyfdMKKp9mnWD7SzO6pe007nbkigMEMFsyMqx8pLInA==
-Received: from MN0P222CA0014.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:531::21)
- by DM4PR12MB7743.namprd12.prod.outlook.com (2603:10b6:8:101::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.20; Thu, 7 Nov
- 2024 13:43:58 +0000
-Received: from BN1PEPF0000468C.namprd05.prod.outlook.com
- (2603:10b6:208:531:cafe::99) by MN0P222CA0014.outlook.office365.com
- (2603:10b6:208:531::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19 via Frontend
- Transport; Thu, 7 Nov 2024 13:43:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN1PEPF0000468C.mail.protection.outlook.com (10.167.243.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.17 via Frontend Transport; Thu, 7 Nov 2024 13:43:58 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 7 Nov 2024
- 05:43:48 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 7 Nov 2024 05:43:48 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 7 Nov 2024 05:43:48 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hagar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
-In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
-References: <20241107064547.006019150@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E18A20B1E2;
+	Thu,  7 Nov 2024 13:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730987091; cv=none; b=NtUTOT+gtfXVYjM4JP3gkiMaTimr/9LcyS9UZvtvR4uS53O5AFqidrJpchagOCN02oI13qOVEoCwT0M5JrFXP13vRy427N8mpnP91PzpRvdLEK7mxqdYMGBAswwoJ3v6m0rPCAjiLJRryt0fEbcFpMszzF2viBOSV+wnVlvnTCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730987091; c=relaxed/simple;
+	bh=uLkLtRCV5c29uevsVuMBynD0TYcsr2hGxuZC9NOU0oU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IvVE6W8x7JVAgk0HDdmLDXAnnPxUEwzs0YvwShT9AFU9dSJYDeucly8+j/iTtAhNENdTiUGDZNF1IFidJvmn8764SyXV9w1F8yK1XtkMPkQzm/StmKoNMZeYCd1wrDpAbziyQfYTGHvXxw77/JqVp4aeP+v3cuVEAI5MVGbHIMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ODdCOgzP; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7Cefdj018118;
+	Thu, 7 Nov 2024 13:44:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=LCtgK+
+	BEQtuucrLZPW6Rn1D6ZQwcBVbseGx+J9rEPxg=; b=ODdCOgzPEsedi3HAS/cY1L
+	mvPZGTS9Tk80FajPbvuIprYyIrjDHOflYa3D/uJOhB7jlxed2N1ijMyQAHVpGCa5
+	zXtuPgRbEH2AlUpDKVLRigKh2UXDqGQx19rQx/BptAzBXdRIke+sxy0/6AyAWO8O
+	WUbYGRBXRHjEGFqlTjqosqUTHCCZa9MAMI4gZdD5D2WRLJPzfLpIraRE7YcrDR/Y
+	uHQADOj8emav+GRirx1kbZ+Vb+9yHMeeL0Z/PNuOMX+njniEe+XyB/CwJlQekmYA
+	pY6uP5KBiK5QOiHLjFf9HbuYT7qwgCG2luXPxtBqaPc76IUr0SUFxfzYEoiK2VHQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rwrk88wg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 13:44:34 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A7DiXfX004442;
+	Thu, 7 Nov 2024 13:44:34 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rwrk88wc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 13:44:33 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7C2YTA024230;
+	Thu, 7 Nov 2024 13:44:33 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42nxds8b25-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 13:44:33 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A7DiWc253608866
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Nov 2024 13:44:32 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7BC355805A;
+	Thu,  7 Nov 2024 13:44:32 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8B3C05805F;
+	Thu,  7 Nov 2024 13:44:31 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.35.241])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  7 Nov 2024 13:44:31 +0000 (GMT)
+Message-ID: <e015a939893d35efe75e598152725adcc2befdd8.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason
+ Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley
+ <James.Bottomley@HansenPartnership.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 07 Nov 2024 08:44:31 -0500
+In-Reply-To: <20241107095138.78209-1-jarkko@kernel.org>
+References: <20241107095138.78209-1-jarkko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 6X0q05HhCvSq2LDT7t_GA02--cIbwB2A
+X-Proofpoint-GUID: j3_S6X9udwxRaKerGOJX5u1X2VYCVGS2
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <db5a1c31-bd26-46f4-ae25-12646627eb54@drhqmail203.nvidia.com>
-Date: Thu, 7 Nov 2024 05:43:48 -0800
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF0000468C:EE_|DM4PR12MB7743:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1e55d2b-9ff7-4ccd-936d-08dcff323b25
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q3JpRlluQ1BwdmpnRFFsaE15WDAzK1EwbW1NYURQUXZTY3dIS0VBSXVBTUxB?=
- =?utf-8?B?SnhUdGV0TFVIZzB1ZDJ2RGZlN3JRWkVVRytRSEY3NXpra09TekpZdHBNT3Rp?=
- =?utf-8?B?bmRJQnFjVnlhaSthdlFSdG1Gb0kxWXRLMiszdFNwUDNYOEI5dGhBQjkzVzRn?=
- =?utf-8?B?OHdycWFHcGREUkc5aVQ3bFI3czRnNXRlVkNSeWNkWTcya0V1WlFtbzB0MW03?=
- =?utf-8?B?Z2tDVHBvZTBJMEtGSmNRNzU3Y1NWWmlSRENZMmpUdDlvQXJRTFlvZER6NCs2?=
- =?utf-8?B?ZTVYa2QxZWxJSEUzQjlXRnJJSE9lWWVhODRkTVBmWkJvT3Z4aWpMb2NzeEk3?=
- =?utf-8?B?N2JGbHJ1L1pEYUN6ZTFLRWxJSVdZZEtIYXQvMGxBRVBObmozNkFBc3JqQkND?=
- =?utf-8?B?cithZ0dPdlRFQmNaUk5VV0FyYm5hK1NrR2ZaUHZnNlNJYUVVOHcxOGZ0enlE?=
- =?utf-8?B?ZmJveTIxeU1mcDZYZ01Xb3M2b0ZMOE9XM3NkMnJkSmNoekE3cnNLTzZoU3dy?=
- =?utf-8?B?MnJXWWsvL091RCtIZmhVQUlHdmdYSldOR3ptTGErL3FvMkozOWI4ci9JVnNq?=
- =?utf-8?B?aEVLdjdyRDdFSnVKb3lMVnNmcFBCNXpncEZ5N2hsWmtsOXVpcU1uNUFXaUow?=
- =?utf-8?B?d1l4UEJ2TWQwa2hiY0JBV3hZUVYvbkFES1dqMEk5azNvMWM5eTA3eCtQZitF?=
- =?utf-8?B?TmlCcEs3KzJTK3cyMFc2citVUjJET0xpSWJMa0xadXJXQ1lMQ2ptOERJRG55?=
- =?utf-8?B?MWFiMWNYTlhnSzV6V1l6eUYrOC9pL3BnOXF4NDM1R3JRQUQxbStTNUMxRnlU?=
- =?utf-8?B?ZHpQcUJxLzFDV0RVSjJDcXFwZUFtMVpXMXFXUkk4WVdnYSs2Q2I5bzJsaTJN?=
- =?utf-8?B?cVpmSUpiRWNKcWNBMC9STWxGaUZCVXpXNXU1NHMvVzErWFVrbnI1dHpxLzdu?=
- =?utf-8?B?bzFZTzlUY0VhM0dGWG5mYTdLNWNmbW83TXUxZWdFQ3NyVzhUTGtjRTVJcW5y?=
- =?utf-8?B?UVJvMVMzQkwrWE93bkNRWjRoUGJ0Uy8reDQzM00zMmpzaUxjVlNqSGo2ZER3?=
- =?utf-8?B?Mks1bWdxQTFjTkJRQzFwUXJmaTdLTDdvakkwSHdzWWZZYzgrRGx4RjZ4TWhD?=
- =?utf-8?B?NjVLV1dHNW5oZnE5V2hFN1M5L2d5Rml1UVRmVUsyTFNOdkpscVVYT2c1V1Zh?=
- =?utf-8?B?MXFRUzNHWXdVYStwKzlwTUdpYkpzNmc3UXo1WWtBVytERDdWY3JoOUZGaFJl?=
- =?utf-8?B?eVdjbFBFb0lHSFNkdXZEYzBZRG94TjFwQmFVdmNlZjZiVlhUNUJTZjhxUnNI?=
- =?utf-8?B?cWVnQVR6dGZmT2I5V2JWdWZvZitMWGhTTU5WcVdPeXJDN3g5eTZwZ29Cdzly?=
- =?utf-8?B?aW5jTGlmK0lwMGNhT214LzNjUXdVb2J3dXFSdlBrVEJGM0J5OFZKRFprT0d2?=
- =?utf-8?B?NmlBNkl2NGdVbHJMMklkK3BycldEaUcwVU5HTzhWNGJJeDVEYTRkZTk0cVQv?=
- =?utf-8?B?eDJJTmtFME1Xa0xIamRqOHdOS25zY0NROE5RYytRZnpuL29INUZmejc1dE10?=
- =?utf-8?B?aWZ3ZTcxTmc1V3gvaWFVWm5PTld1ZWVuTm1vc3VJL2dYZStiZVlQc3N5dnVT?=
- =?utf-8?B?bWtvWVg2Z3NOTkNIWFJJOU9KaHp1MG94bUlLZTdQeDdzT3ZOZ0Q3NFZjNVdU?=
- =?utf-8?B?SVNVYmJpZW5kRjN4QlZUanJaYk9hRHl6dmpmNlRFT01VWXNrcXlGWHNUWlc2?=
- =?utf-8?B?b00xcUxFMmVKZk9KWk5hd1NVTSs1SXV0VHRZeXJtODd2Mnl1OXdqdzZ5anl0?=
- =?utf-8?B?ZkxjZWdqU2MwMTZTOU9sYUpOZHhFTnJ2YXFvVUFjbWJxQ1ZMQm9kN2tLNU4z?=
- =?utf-8?B?RFowaURLUVJmQ0FnSldPZUtKYjhMcGFHSzRGcW84K1lWZGc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 13:43:58.3502
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1e55d2b-9ff7-4ccd-936d-08dcff323b25
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF0000468C.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7743
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 impostorscore=0 adultscore=0 phishscore=0 suspectscore=0
+ spamscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070106
 
-On Thu, 07 Nov 2024 07:47:28 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.7 release.
-> There are 249 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 09 Nov 2024 06:45:18 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.7-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Thu, 2024-11-07 at 11:51 +0200, Jarkko Sakkinen wrote:
+> The initial HMAC session feature added TPM bus encryption and/or integrity
+> protection to various in-kernel TPM operations. This can cause performance
+> bottlenecks with IMA, as it heavily utilizes PCR extend operations.
+>=20
+> In order to mitigate this performance issue, introduce a kernel
+> command-line parameter to the TPM driver for disabling the integrity
+> protection for PCR extension.
+>=20
+> Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Link: https://lore.kernel.org/linux-integrity/20241015193916.59964-1-zoha=
+r@linux.ibm.com/
+> Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
+> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Co-developed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+> v2:
+> - Move tpm_buf_append_handle() to the correct file, remove spurious
+>   parameter (name), include error on TPM2B and add documentation.
+>   Keep the declaration in linux/tpm.h despite not exported as it
+>   is easiest to maintain tpm_buf_* in a single header.
+> - Rename kernel command-line option as "disable_pcr_integrity_protection",
+>   as Mimi pointed out it does not carry SA_ENCRYPT flag.
+> v1:
+> - Derived from the earlier RFC patch with a different parameter scope,
+>   cleaner commit message and some other tweaks. I decided to create
+>   something because I did not noticed any progress. Note only compile
+>   tested as I wanted to get something quickly out.
+> ---
+>  .../admin-guide/kernel-parameters.txt         | 10 ++++
+>  drivers/char/tpm/tpm-buf.c                    | 20 ++++++++
+>  drivers/char/tpm/tpm2-cmd.c                   | 30 ++++++++---
+>  drivers/char/tpm/tpm2-sessions.c              | 51 ++++++++++---------
+>  include/linux/tpm.h                           |  3 ++
+>  5 files changed, 83 insertions(+), 31 deletions(-)
+>=20
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index 1518343bbe22..9fc406b20a74 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6727,6 +6727,16 @@
+>  	torture.verbose_sleep_duration=3D [KNL]
+>  			Duration of each verbose-printk() sleep in jiffies.
+> =20
+> +	tpm.disable_pcr_integrity_protection=3D [HW,TPM]
+> +			Do not protect PCR registers from unintended physical
+> +			access, or interposers in the bus by the means of
+> +			having an encrypted and integrity protected session
 
-All tests passing for Tegra ...
+"encrypted" isn't needed here.
 
-Test results for stable-v6.11:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+> +			wrapped around TPM2_PCR_Extend command. Consider this
+> +			in a situation where TPM is heavily utilized by
+> +			IMA, thus protection causing a major performance hit,
+> +			and the space where machines are deployed is by other
+> +			means guarded.
+> +
+>  	tpm_suspend_pcr=3D[HW,TPM]
+>  			Format: integer pcr id
+>  			Specify that at suspend time, the tpm driver
+> diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+> index cad0048bcc3c..e49a19fea3bd 100644
+> --- a/drivers/char/tpm/tpm-buf.c
+> +++ b/drivers/char/tpm/tpm-buf.c
+> @@ -146,6 +146,26 @@ void tpm_buf_append_u32(struct tpm_buf *buf, const u=
+32 value)
+>  }
+>  EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
+> =20
+> +/**
+> + * tpm_buf_append_handle() - Add a handle
+> + * @chip:	&tpm_chip instance
+> + * @buf:	&tpm_buf instance
+> + * @handle:	a TPM object handle
+> + *
+> + * Add a handle to the buffer, and increase the count tracking the numbe=
+r of
+> + * handles in the command buffer. Works only for command buffers.
+> + */
+> +void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf, u=
+32 handle)
+> +{
+> +	if (buf->flags & TPM_BUF_TPM2B) {
+> +		dev_err(&chip->dev, "Invalid buffer type (TPM2B)\n");
+> +		return;
+> +	}
+> +
+> +	tpm_buf_append_u32(buf, handle);
+> +	buf->handles++;
+> +}
+> +
+>  /**
+>   * tpm_buf_read() - Read from a TPM buffer
+>   * @buf:	&tpm_buf instance
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 1e856259219e..cc443bcf15e8 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -14,6 +14,10 @@
+>  #include "tpm.h"
+>  #include <crypto/hash_info.h>
+> =20
+> +static bool disable_pcr_integrity_protection;
+> +module_param(disable_pcr_integrity_protection, bool, 0444);
+> +MODULE_PARM_DESC(disable_pcr_integrity_protection, "Disable TPM2_PCR_Ext=
+end encryption");
 
-Linux version:	6.11.7-rc2-g504b1103618a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+I like the name 'disable_pcr_integrity_protection.  However, the name and
+description doesn't match.  Replace 'encryption' with 'integrity protection=
+'.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> +
+>  static struct tpm2_hash tpm2_hash_map[] =3D {
+>  	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+>  	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+> @@ -232,18 +236,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_=
+idx,
+>  	int rc;
+>  	int i;
+> =20
+> -	rc =3D tpm2_start_auth_session(chip);
+> -	if (rc)
+> -		return rc;
+> +	if (!disable_pcr_integrity_protection) {
+> +		rc =3D tpm2_start_auth_session(chip);
+> +		if (rc)
+> +			return rc;
+> +	}
+> =20
+>  	rc =3D tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+>  	if (rc) {
+> -		tpm2_end_auth_session(chip);
+> +		if (!disable_pcr_integrity_protection)
+> +			tpm2_end_auth_session(chip);
+>  		return rc;
+>  	}
+> =20
+> -	tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
+> -	tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> +	if (!disable_pcr_integrity_protection) {
+> +		tpm_buf_append_name(chip, &buf, pcr_idx);
 
-Jon
+tpm_buf_append_name() parameters didn't change.  Don't remove the 'name' fi=
+eld
+here.
+
+
+> +		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> +	} else {
+> +		tpm_buf_append_handle(chip, &buf, pcr_idx);
+
+Or here.
+
+> +		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
+> +	}
+> =20
+>  	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
+> =20
+>=20
+
+Mimi
 
