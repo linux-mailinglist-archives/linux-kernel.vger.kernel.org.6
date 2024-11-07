@@ -1,105 +1,138 @@
-Return-Path: <linux-kernel+bounces-399766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD0A9C03EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:27:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7AB9C03F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF661C21C7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:27:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21104283512
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B6A1F582A;
-	Thu,  7 Nov 2024 11:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAau52Nw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9E11F582D;
+	Thu,  7 Nov 2024 11:27:41 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D691F4723;
-	Thu,  7 Nov 2024 11:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982B91F4FAC;
+	Thu,  7 Nov 2024 11:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730978841; cv=none; b=KYRdm9cihMIRk5PmsBm3RK85Jj3ncSLEfSamZbbiUAgDB2dq8j/IWFSOk/uuoBUarMImE6BAkAk6VD9fKkxYcbaHjN71yuIekzNdPtEAML3HDP5/4ZsuYiiaAXC3ZxjPtrkA8ls6b2L+jF1RGfuolsl/XqG7arxLnPxtlLbDpFA=
+	t=1730978860; cv=none; b=koikzLzG/O9Ms5E0a7WLHfep6Ou26pHpPQHGE63Y06CONOV54bL2uq9FP1AhFDtrdUBq74g/LYEsFB7y1VkXkApARS6u21tm202dCGHeNoBc5v5zPphoigUbj2FItpUzw46HRXFg/ybV+c9sBDtrJ0mRK8cjgUCjlZwZ/mRF/Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730978841; c=relaxed/simple;
-	bh=7gqbQk8bplGmcvfUPSUYFL1na1ktG3G6Z6rLbPzXwNs=;
+	s=arc-20240116; t=1730978860; c=relaxed/simple;
+	bh=CiRRGlsT3dDhWyONtG/CZiwwSxcdju77JCm6fWfpbFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kUjCN+cVN9bURLt698HN/x/BSDGJOghGJUpUduW+P8LZKVn39TyHCWtMrJKoivuWvwSodtOdaazWE5BLjprGa8SGciWyBHcQq0K+QqNrOMbHqL0YwjhwGVBvv3RdpafnoC7U761NQfgXPmS2eicm9i1hKuL/epnboPLKz3uls8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAau52Nw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2D3BC4CED0;
-	Thu,  7 Nov 2024 11:27:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730978840;
-	bh=7gqbQk8bplGmcvfUPSUYFL1na1ktG3G6Z6rLbPzXwNs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UAau52Nwe+uRAGcTn3tag5sZ2IjE2Y+7UqVk5YyUwm2HNDwzSKSk/xybWw6oJs1xH
-	 aw6tom+24uo5mAYQR5DzWVwT2yW34ukMfw+9AHsd7P2SLJTQAZSYi9tAAit/WRZGxa
-	 QmzVc4YoqXwop7JFKLxOht5phOc/6HTbt1uqpCR90f+huMY/5DXKA9mgk6zHUcuK6S
-	 VEVz9HkKvEsADS/IQb1wRyV1rcj/Zm9/g6PlsD3SyjwlbH8DY8Xwhe8rksxoG65u9E
-	 CHsWN3QDdzsjCbbirD9NkeAngtYhhQuh+bBBSwr2WLO75iChdkRMddYYodWx5tzFED
-	 BR8m340iXt1qA==
-Date: Thu, 7 Nov 2024 11:27:11 +0000
-From: Will Deacon <will@kernel.org>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v6 1/5] arm: perf: Drop unused functions
-Message-ID: <20241107112710.GC15424@willie-the-truck>
-References: <20241105195603.2317483-1-coltonlewis@google.com>
- <20241105195603.2317483-2-coltonlewis@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRe/oLd+5ynKTxWX8lKKDbPIBUGOLFnvap8TGuCQMekbovGMKQi6w15DZGFzG/nguDnVKpfetBMTthZwbov+kUL5I7OQ3ywKxIPZdCRiGNWE/2xzeUmeQUC4Q+e0kdbS2oNtWdAIQMsPGM/m6RldmzcBaBIsmGxakJZvV+KQ5hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB575C4CECC;
+	Thu,  7 Nov 2024 11:27:36 +0000 (UTC)
+Date: Thu, 7 Nov 2024 11:27:34 +0000
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Hemant Kumar <quic_hemantk@quicinc.com>,
+	Loic Poulain <loic.poulain@linaro.org>,
+	Maxim Kochetkov <fido_max@inbox.ru>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Bhaumik Bhatt <bbhatt@codeaurora.org>,
+	Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] net: qrtr: mhi: synchronize qrtr and mhi preparation
+Message-ID: <20241107112734.v2ik6ipnebetjene@thinkpad>
+References: <20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241105195603.2317483-2-coltonlewis@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com>
 
-On Tue, Nov 05, 2024 at 07:55:58PM +0000, Colton Lewis wrote:
-> For arm's implementation, perf_instruction_pointer() and
-> perf_misc_flags() are equivalent to the generic versions in
-> include/linux/perf_event.h so arch/arm doesn't need to provide its
-> own versions. Drop them here.
+On Mon, Nov 04, 2024 at 05:29:37PM -0800, Chris Lew wrote:
+> From: Bhaumik Bhatt <bbhatt@codeaurora.org>
 > 
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
-> Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+> The call to qrtr_endpoint_register() was moved before
+> mhi_prepare_for_transfer_autoqueue() to prevent a case where a dl
+> callback can occur before the qrtr endpoint is registered.
+> 
+> Now the reverse can happen where qrtr will try to send a packet
+> before the channels are prepared. Add a wait in the sending path to
+> ensure the channels are prepared before trying to do a ul transfer.
+> 
+> Fixes: 68a838b84eff ("net: qrtr: start MHI channel after endpoit creation")
+> Reported-by: Johan Hovold <johan@kernel.org>
+> Closes: https://lore.kernel.org/linux-arm-msm/ZyTtVdkCCES0lkl4@hovoldconsulting.com/
+> Signed-off-by: Bhaumik Bhatt <bbhatt@codeaurora.org>
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+
+I think we need to have the check in 'mhi_queue()' instead of waiting for the
+channels in client drivers. Would it be a problem if qrtr returns -EAGAIN from
+qcom_mhi_qrtr_send() instead of waiting for the channel?
+
+- Mani
+
 > ---
->  arch/arm/include/asm/perf_event.h |  7 -------
->  arch/arm/kernel/perf_callchain.c  | 17 -----------------
->  2 files changed, 24 deletions(-)
+>  net/qrtr/mhi.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/net/qrtr/mhi.c b/net/qrtr/mhi.c
+> index 69f53625a049..5b7268868bbd 100644
+> --- a/net/qrtr/mhi.c
+> +++ b/net/qrtr/mhi.c
+> @@ -15,6 +15,7 @@ struct qrtr_mhi_dev {
+>  	struct qrtr_endpoint ep;
+>  	struct mhi_device *mhi_dev;
+>  	struct device *dev;
+> +	struct completion prepared;
+>  };
+>  
+>  /* From MHI to QRTR */
+> @@ -53,6 +54,10 @@ static int qcom_mhi_qrtr_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
+>  	if (skb->sk)
+>  		sock_hold(skb->sk);
+>  
+> +	rc = wait_for_completion_interruptible(&qdev->prepared);
+> +	if (rc)
+> +		goto free_skb;
+> +
+>  	rc = skb_linearize(skb);
+>  	if (rc)
+>  		goto free_skb;
+> @@ -85,6 +90,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
+>  	qdev->mhi_dev = mhi_dev;
+>  	qdev->dev = &mhi_dev->dev;
+>  	qdev->ep.xmit = qcom_mhi_qrtr_send;
+> +	init_completion(&qdev->prepared);
+>  
+>  	dev_set_drvdata(&mhi_dev->dev, qdev);
+>  	rc = qrtr_endpoint_register(&qdev->ep, QRTR_EP_NID_AUTO);
+> @@ -97,6 +103,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
+>  		qrtr_endpoint_unregister(&qdev->ep);
+>  		return rc;
+>  	}
+> +	complete_all(&qdev->prepared);
+>  
+>  	dev_dbg(qdev->dev, "Qualcomm MHI QRTR driver probed\n");
+>  
+> 
+> ---
+> base-commit: 1ffec08567f426a1c593e038cadc61bdc38cb467
+> change-id: 20241104-qrtr_mhi-dfec353030af
+> 
+> Best regards,
+> -- 
+> Chris Lew <quic_clew@quicinc.com>
+> 
 
-Acked-by: Will Deacon <will@kernel.org>
-
-Will
+-- 
+மணிவண்ணன் சதாசிவம்
 
