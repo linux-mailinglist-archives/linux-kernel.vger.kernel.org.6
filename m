@@ -1,118 +1,189 @@
-Return-Path: <linux-kernel+bounces-400663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE909C10AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:11:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E27C9C10B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 22:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AE61B2510C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:11:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B346B23AEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 21:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA6A322E;
-	Thu,  7 Nov 2024 21:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DD7218D6B;
+	Thu,  7 Nov 2024 21:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OTFAjJ3m"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="H6YGGAU3"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5340321A711
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 21:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83636218335;
+	Thu,  7 Nov 2024 21:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731013424; cv=none; b=cTvGjtYxMKKVneyqzMm+NlRpUfOMI7s0JQkkX43lKSErbBG0sRY4pZC9CuvpbWg0H8qhzVHmT678UlBP4iwR+U0pw+gJCrIZpFRQ7MO24o5hjYtv7fQ+h6HbrF6h7gJCGaulGtEyxvGRMA+kF+cnYmOx4AHq40bdRqR4Nx1TcG0=
+	t=1731013514; cv=none; b=Gv3GL4omTOFCSi3yhvyhEToumJBD1BK3B68qfOyuAOfOAZua1RiRnD1vbAasc6Gsxsm+8dlg60VSfX785S6d1rglVqSfUe8S0rWOXkFLiWeYNHvAmBdzqjmPazPo1Lvz6Psu9xJszImj7DX0Wh1vXEAVb3gXCqzfeW2NE27B4mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731013424; c=relaxed/simple;
-	bh=Ipz5bALsN/MIsblwdy7t5XX40kUUu8f2PO2Qy5od7Ls=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=E49L+maZNhxGWSso/L19gcNH0j6K7iSrTulJto1ieWpUegiglaDtmVf9HEWuRcwj8b+ppcUUuvTB0OYfPBUNLcTf9kFmpPuQ7Kk779x0oDx6blehEvAvs7J06TU/ST2/f90TYNymcUGRdWX6o2pDigcZT86CSuXFam4t2adT1pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OTFAjJ3m; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea8a5e83a3so27113957b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 13:03:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731013422; x=1731618222; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bV4qNgv2ysT4G5mWwtsIUu7x27Hvq/nn+qp34bHS8cc=;
-        b=OTFAjJ3mc8zZqNMq0icMmKl+VFQwL7prk0wQXn84TmVqiB1nS8OEpIBeY559JKIuBj
-         5nR6zJqvRfgYxPyPrAyUTNJSWGLziVNdipwultzeR2r2vf99w3mW5Rwe8kqC/SRQ5YSB
-         EB3NbYoojBi8S69fbS+wAXN5iOjUeex5wemFjcaiu9OnaGOaxvcSTtDkNOu/Suo1M1i3
-         eKWnYHM0DGt89i8+E8+n7g6rnsAdTl3HuwWdawuoe+hH4BECj9/GQqHKLYSsvAYdZjfP
-         NWw85XIysgp4c0e8CN5MLXu7grDrDqxNGYmFJmuTUqZWmhfrSiRqq8NTi3SnNnFKVR/j
-         pEgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731013422; x=1731618222;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bV4qNgv2ysT4G5mWwtsIUu7x27Hvq/nn+qp34bHS8cc=;
-        b=qQhZvCO5eYr/71NnzSzN/hHxI5Zh3eXd14SIvIaOT664yZHwHPEoS1CzHPWmTSdtVJ
-         ik8LpNuGelxf0guioTiufYjbs9CEBxbvoqiyqpMVQIFh0AEjZK7JeF+APqg825KYMfOI
-         7C4RKtjYFvjLHfd9JglWWREN4qrMmk/LLpo5ooTLSoyDY3ES1nQafO0+jYBeG2cU1q0U
-         8Ddw8zUvcaRaC5mlnf8TWr1UUpp0l294pf6Wt6PO6hWCS560sqWRDEkWVMdMi1NLvRrA
-         xJzVd7RhbFfmxM7UCFtpebuhLMGXg5w3rNJdG6urAiuRl29XTP2kpL1zJdX135C0dN5r
-         gGtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDMI3z2Jnj95R+JO/bHNkE5Euytqvb0jG9pjciTlJLWquN6gRETZE3CpzV7bczto9FWfxujuVoe6TVXUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPi4uduC6hVG1UFwcYgA9q2dzpefxvI70IMEDULyL6tOIXU0xQ
-	RBSQMIYdpojyTWKauh8NxHO6TiezkdavZzOZ9j09gN9TbFP5VGP81FRN4GcXcFiRS6XLbw4P+9H
-	GN9tBzzC/HBxOw0ToBwcFeg==
-X-Google-Smtp-Source: AGHT+IETrU+0A00hHxfHIfVFgSG2d0BZXXwBrEStRbQNBitfarxBIyneJZkPxpSo9OfqjUnUZYEjH0Jc/5cpQqJbFg==
-X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
- (user=almasrymina job=sendgmr) by 2002:a05:690c:610d:b0:6a9:3d52:79e9 with
- SMTP id 00721157ae682-6eaddf8de42mr8117b3.4.1731013422380; Thu, 07 Nov 2024
- 13:03:42 -0800 (PST)
-Date: Thu,  7 Nov 2024 21:03:31 +0000
-In-Reply-To: <20241107210331.3044434-1-almasrymina@google.com>
+	s=arc-20240116; t=1731013514; c=relaxed/simple;
+	bh=kj0DUPMYW2MkLAXHZIxssHCEzzzJuey3RIycZwaUHbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0QqfNnaBvhAwuU09pZg47hMHXzoU6NTNx7mUJzBhZGZp14f+0/3ZFFyEdaUObSsTBt2ki0roUjc2tuSV9FjeOX3eQpVNgsBUa2CUbLDz8LEj3dDqPT5kRWMzaMof7xAufKtuGZALDxTilkroU+TGaUVF66uK23TN10jreFrr+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=H6YGGAU3; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=H5HDAbBQ5g60S5FukD3N5qJpZ+YuoumqSFdStqHeqUQ=; b=H6YGGAU3to2XVeuC
+	4RRnpZKKgsG5Evaikol5RGv5YXG4KFxTEQ+ATNGeeLlLQEM7+b6O0y2RNlrdoRfDkzIZDrdT8oWj0
+	ffsWx+GtfrxrAjb4oUcm+no5T+q4xTAR+yCfUPGL7AOplTVW3DaxfupAC3QfVRMDL+N1tge3a0D6+
+	YrkqVaRqL+DEQt9kR4rA5LOPe5xONk2GLccnQFn9tnwdar3o8kwSBUMvQJNIrLhVGfmLZgVnHoqH3
+	5a2GOKkMvTbGNVOBZcIjv2zjPOsjHWoPPchspe/vw7r5k9YM8ew7rmTeO12n5YPo2+870YI4qy7qn
+	hpaf0VuDhnR98OmtgQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1t99gW-00G7tn-0C;
+	Thu, 07 Nov 2024 21:04:56 +0000
+Date: Thu, 7 Nov 2024 21:04:56 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com,
+	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Remove pre-historic unused CIFSSMBCopy
+Message-ID: <Zy0reBfykkwXA47d@gallifrey>
+References: <20241007210214.102568-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241107210331.3044434-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241107210331.3044434-2-almasrymina@google.com>
-Subject: [PATCH net v2 2/2] net: clarify SO_DEVMEM_DONTNEED behavior in documentation
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Mina Almasry <almasrymina@google.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Yi Lai <yi1.lai@linux.intel.com>, 
-	Stanislav Fomichev <sdf@fomichev.me>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241007210214.102568-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 21:04:39 up 183 days,  8:18,  1 user,  load average: 0.14, 0.07,
+ 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Document new behavior when the number of frags passed is too big.
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> CIFSSMBCopy() is unused, remove it.
+> 
+> It seems to have been that way pre-git; looking in a historic
+> archive, I think it landed around May 2004 in Linus'
+> BKrev: 40ab7591J_OgkpHW-qhzZukvAUAw9g
+> and was unused back then.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
----
- Documentation/networking/devmem.rst | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Ping?
 
-diff --git a/Documentation/networking/devmem.rst b/Documentation/networking/devmem.rst
-index a55bf21f671c..d95363645331 100644
---- a/Documentation/networking/devmem.rst
-+++ b/Documentation/networking/devmem.rst
-@@ -225,6 +225,15 @@ The user must ensure the tokens are returned to the kernel in a timely manner.
- Failure to do so will exhaust the limited dmabuf that is bound to the RX queue
- and will lead to packet drops.
- 
-+The user must pass no more than 128 tokens, with no more than 1024 total frags
-+among the token->token_count across all the tokens. If the user provides more
-+than 1024 frags, the kernel will free up to 1024 frags and return early.
-+
-+The kernel returns the number of actual frags freed. The number of frags freed
-+can be less than the tokens provided by the user in case of:
-+
-+(a) an internal kernel leak bug.
-+(b) the user passed more than 1024 frags.
- 
- Implementation & Caveats
- ========================
+Dave
+
+> ---
+>  fs/smb/client/cifsproto.h |  7 -----
+>  fs/smb/client/cifssmb.c   | 63 ---------------------------------------
+>  2 files changed, 70 deletions(-)
+> 
+> diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+> index 1d3470bca45e..8235b5a0aa2b 100644
+> --- a/fs/smb/client/cifsproto.h
+> +++ b/fs/smb/client/cifsproto.h
+> @@ -549,13 +549,6 @@ extern int generate_smb311signingkey(struct cifs_ses *ses,
+>  				     struct TCP_Server_Info *server);
+>  
+>  #ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
+> -extern int CIFSSMBCopy(unsigned int xid,
+> -			struct cifs_tcon *source_tcon,
+> -			const char *fromName,
+> -			const __u16 target_tid,
+> -			const char *toName, const int flags,
+> -			const struct nls_table *nls_codepage,
+> -			int remap_special_chars);
+>  extern ssize_t CIFSSMBQAllEAs(const unsigned int xid, struct cifs_tcon *tcon,
+>  			const unsigned char *searchName,
+>  			const unsigned char *ea_name, char *EAData,
+> diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+> index c6f15dbe860a..ca50ac652e02 100644
+> --- a/fs/smb/client/cifssmb.c
+> +++ b/fs/smb/client/cifssmb.c
+> @@ -2339,69 +2339,6 @@ int CIFSSMBRenameOpenFile(const unsigned int xid, struct cifs_tcon *pTcon,
+>  	return rc;
+>  }
+>  
+> -int
+> -CIFSSMBCopy(const unsigned int xid, struct cifs_tcon *tcon,
+> -	    const char *fromName, const __u16 target_tid, const char *toName,
+> -	    const int flags, const struct nls_table *nls_codepage, int remap)
+> -{
+> -	int rc = 0;
+> -	COPY_REQ *pSMB = NULL;
+> -	COPY_RSP *pSMBr = NULL;
+> -	int bytes_returned;
+> -	int name_len, name_len2;
+> -	__u16 count;
+> -
+> -	cifs_dbg(FYI, "In CIFSSMBCopy\n");
+> -copyRetry:
+> -	rc = smb_init(SMB_COM_COPY, 1, tcon, (void **) &pSMB,
+> -			(void **) &pSMBr);
+> -	if (rc)
+> -		return rc;
+> -
+> -	pSMB->BufferFormat = 0x04;
+> -	pSMB->Tid2 = target_tid;
+> -
+> -	pSMB->Flags = cpu_to_le16(flags & COPY_TREE);
+> -
+> -	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
+> -		name_len = cifsConvertToUTF16((__le16 *) pSMB->OldFileName,
+> -					      fromName, PATH_MAX, nls_codepage,
+> -					      remap);
+> -		name_len++;     /* trailing null */
+> -		name_len *= 2;
+> -		pSMB->OldFileName[name_len] = 0x04;     /* pad */
+> -		/* protocol requires ASCII signature byte on Unicode string */
+> -		pSMB->OldFileName[name_len + 1] = 0x00;
+> -		name_len2 =
+> -		    cifsConvertToUTF16((__le16 *)&pSMB->OldFileName[name_len+2],
+> -				       toName, PATH_MAX, nls_codepage, remap);
+> -		name_len2 += 1 /* trailing null */  + 1 /* Signature word */ ;
+> -		name_len2 *= 2; /* convert to bytes */
+> -	} else {
+> -		name_len = copy_path_name(pSMB->OldFileName, fromName);
+> -		pSMB->OldFileName[name_len] = 0x04;  /* 2nd buffer format */
+> -		name_len2 = copy_path_name(pSMB->OldFileName+name_len+1, toName);
+> -		name_len2++;    /* signature byte */
+> -	}
+> -
+> -	count = 1 /* 1st signature byte */  + name_len + name_len2;
+> -	inc_rfc1001_len(pSMB, count);
+> -	pSMB->ByteCount = cpu_to_le16(count);
+> -
+> -	rc = SendReceive(xid, tcon->ses, (struct smb_hdr *) pSMB,
+> -		(struct smb_hdr *) pSMBr, &bytes_returned, 0);
+> -	if (rc) {
+> -		cifs_dbg(FYI, "Send error in copy = %d with %d files copied\n",
+> -			 rc, le16_to_cpu(pSMBr->CopyCount));
+> -	}
+> -	cifs_buf_release(pSMB);
+> -
+> -	if (rc == -EAGAIN)
+> -		goto copyRetry;
+> -
+> -	return rc;
+> -}
+> -
+>  int
+>  CIFSUnixCreateSymLink(const unsigned int xid, struct cifs_tcon *tcon,
+>  		      const char *fromName, const char *toName,
+> -- 
+> 2.46.2
+> 
 -- 
-2.47.0.277.g8800431eea-goog
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
