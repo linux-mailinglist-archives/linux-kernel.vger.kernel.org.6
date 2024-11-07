@@ -1,228 +1,110 @@
-Return-Path: <linux-kernel+bounces-399944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4619C06BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:06:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B04D9C06C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:06:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E56283034
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:06:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1594EB23203
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC2C2101AE;
-	Thu,  7 Nov 2024 12:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68A62170B1;
+	Thu,  7 Nov 2024 12:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1lWcwnz"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD63z4HW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826042161E6;
-	Thu,  7 Nov 2024 12:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E672101A1;
+	Thu,  7 Nov 2024 12:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730984273; cv=none; b=OMv8jtGyKJmoe83ouEy5/AILVuzKtySSBYen36mSRaAD8pcfCjiPyY3AebrL2P2zXw49QGK+D/ebTLR1GX1Pg9BZ8XAaMLDDtpyW/02wmuJPZS1Lcy9C1jpTysdBsGbMMUSjta7q+Z3txqC3gaATf8tYQUejOdAqE0LIWS8EHcM=
+	t=1730984348; cv=none; b=trDtV2cqoFq9dbBfRg/HB0XdP++V3ziJMBSi6Y7k59DcBxozZNI+R59WAKKTQsNmHd338RRdJgVwLf6AxBZh1CidB1uuAjcrdTGKuWLCV82V6jnndepM65ZhQ/gGlso7DHJYW1crnyq0P4NpU8HCc2icnc2PqqpmHzNHfjQet9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730984273; c=relaxed/simple;
-	bh=IYn5S1cwhtaOTvDqjZaJaEnCKsh15AhHI5yVgkDK9C0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hVrmDsujs5RVSY9vnZeL7GA9nq9oi0o8M89xZ0k+4o8ecmW3XCIo+xIcQ1H2JKTKoGvKANnruN/vKif8A0DXWClL0KueH1cEGjdGKE+BRnqw0M3mJ4jbHgaWLg7seGYCtslEguX2apxWuqnn7olqK//I0V1CuLKpRyx6HPgpYaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1lWcwnz; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-723f37dd76cso822512b3a.0;
-        Thu, 07 Nov 2024 04:57:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730984271; x=1731589071; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fHVagOVhSGH6WueHgFMGm5lkR8eH7OQCXVH1PePUNsk=;
-        b=B1lWcwnzcTWtxmIf7lEoNvDci1+pjEHE6M3cflYgFp5BdHXT78xi/11/L1334k5dhu
-         jMo+EJr7UWZgVNRX+jrQNtBHSdNNQ9CnZqCOTiHIiv10Qu1ZjF0e8nfGymQ1wiIhVHWo
-         Vo32jbXAS91PBI8JyZ3MZicyRzRpyPxwGWU6B9w0opH/rquqSFBI5/CH1BpWgxC0Ik0V
-         p0FoRNyor1a5RKLD6iE9xfj6WfoMwyH7dswaEKKBxHwBdYp/cogAGr/6yWddW1ReMk1h
-         mNcO2b5ossqeHYG2clqG6QDn7anlbPqgffF7BB8bsSEF8lRTpFA9GYq3K+yxz9SnLtMV
-         dc+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730984271; x=1731589071;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fHVagOVhSGH6WueHgFMGm5lkR8eH7OQCXVH1PePUNsk=;
-        b=niy73DlIMfEQDQxxXAxn0gEpD4Y/4MobV+5ijO+ctTYrzOlKR9R0DUoREyZkwjLjOq
-         irfMa8udRt4PGCAM/nZEHuAQXY/6AZ0TA3xU9Lx5JufYE170kiEcJ78xl4OcictNcxoq
-         x+86cYDvtfIJFg8Fl1TTUzsaFLlv4o0XKY5iDQx7EAssehRLxF9BDSJhmNJCgueCt8/W
-         Jbk+0S2O3fzZ4Ji7gYu/Ov9zTOf4zeWWxIN6QpAlRn6Nysam9G3xVL5Rnvz4qLOIr6Yv
-         PQgR7hQ3AEFc7kvhUa0VLWB7zICZ81f87Q0W6vBQjFLjAx1gDazYIV6Vh3SpgKKlCrXd
-         +rjA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7olNwgGb1cShHYVGxkwZmxzb4j4nw1y60BSVVRzHZQKK+jY/pHiDBsmbQmRqAdyNLTfgL+gQA3oh2CCBTioCa@vger.kernel.org, AJvYcCW21VZbGnRkHA4H6qH3RHeu6YOO9BFpCjFVpoTqHxx0ZB0qmrQMwaqmJt6j+Gc3jO256AYoFOHx@vger.kernel.org, AJvYcCW4bs/xATchbZtuT/wPfXjpMST5vkhqSI82afRp7mvnLJvJocj3jkjIsBfMrz7CDRFvb2I=@vger.kernel.org, AJvYcCWcyU0YsurY1k3oGw3KxAso/dvGZYmYbapOEom1B1gSVj4Px6MKcAdkFCL/1ooN5sVDOTGhqA0C3pJhQQZl@vger.kernel.org
-X-Gm-Message-State: AOJu0YybtQ1E5G+XGirSUd6ygy+k0vkmwM59wqetYhu5LlFOc3aBHIHo
-	/Q//ZaJbujJOE5qbqC7Vgutaha2R4+4W5TIXqmwwVkmcA9+6Bcjx
-X-Google-Smtp-Source: AGHT+IF6AoyPkVC2cAAzV84e4L7QNNOe4LnFK0pviynupGO5O8bo/1kcyphCsBxr8Xqaoavaqu60DA==
-X-Received: by 2002:a05:6a20:7488:b0:1d2:e888:3a8e with SMTP id adf61e73a8af0-1dc17a2a834mr1201478637.18.1730984270964;
-        Thu, 07 Nov 2024 04:57:50 -0800 (PST)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240785ffeesm1441651b3a.3.2024.11.07.04.57.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 04:57:50 -0800 (PST)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: pabeni@redhat.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	horms@kernel.org,
-	dsahern@kernel.org,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	roopa@nvidia.com,
-	razor@blackwall.org,
-	gnault@redhat.com,
-	bigeasy@linutronix.de,
-	hawk@kernel.org,
-	idosch@nvidia.com,
-	dongml2@chinatelecom.cn,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	bridge@lists.linux.dev,
-	bpf@vger.kernel.org
-Subject: [PATCH net-next v5 9/9] net: ip: make ip_route_use_hint() return drop reasons
-Date: Thu,  7 Nov 2024 20:56:01 +0800
-Message-Id: <20241107125601.1076814-10-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241107125601.1076814-1-dongml2@chinatelecom.cn>
-References: <20241107125601.1076814-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1730984348; c=relaxed/simple;
+	bh=O2jEPTTUJi8YuBrD4uo+6+5CJE7GCRdzMd3WNJyIb5Y=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=t4cwznAuAehwUFU9S+2q5s7305TCIeWFYv9F+imj+nnqj9Rby9Sam3YFF892ArXz/3Jyd2Kc1durds2lWasL1jfHU2E1jrn+v0by+Rm/9/C73cY+iovs68ll9cSmhgPR1Ru3WuerWlhWkRkZFZDRv3eFFavZsF1kqJTBOtfjLPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD63z4HW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BC64C4CED0;
+	Thu,  7 Nov 2024 12:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730984347;
+	bh=O2jEPTTUJi8YuBrD4uo+6+5CJE7GCRdzMd3WNJyIb5Y=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=iD63z4HWcMWir7bHC1m9R+CT/cgDL1VVsJnEYKSEV2jU7HGI+2dVFuZypj0yOnSMM
+	 mn3gjCdYb+BdncyjpsM7aAENfKfDqDXnjHN+2pZzXcAtNKO7WmYhwE7RzeUBCUKw2h
+	 Nup1Iz0s1HgQ3Gb4OUa/iOOIVQiZ4CeVgWd2UBMnORr7GbcAdAEXM1MgcLuoSUbXms
+	 X6tG5gVUTPfyBUebk8mkJuHitQAqBK1utoJ6fBjCahU4wIHzJtNHElOGwm7LDcPfaW
+	 MRn8cczXOJQV1BRqGDf6dCM2YXKLjO2zUv3syEb+P+BmVoRQB7n7BShvU1hPmmuX3Q
+	 BivsrE6XS583g==
+Date: Thu, 7 Nov 2024 13:59:04 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+cc: lee@kernel.org, jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+    conor+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net, 
+    srinivas.pandruvada@linux.intel.com, bentiss@kernel.org, 
+    dmitry.torokhov@gmail.com, pavel@ucw.cz, ukleinek@debian.org, 
+    devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org, 
+    linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, 
+    stable@vger.kernel.org
+Subject: Re: [PATCH v9 1/9] HID: hid-sensor-hub: don't use stale platform-data
+ on remove
+In-Reply-To: <20241107114712.538976-2-heiko@sntech.de>
+Message-ID: <nycvar.YFH.7.76.2411071358210.20286@cbobk.fhfr.pm>
+References: <20241107114712.538976-1-heiko@sntech.de> <20241107114712.538976-2-heiko@sntech.de>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-In this commit, we make ip_route_use_hint() return drop reasons. The
-drop reasons that we return are similar to what we do in
-ip_route_input_slow(), and no drop reasons are added in this commit.
+On Thu, 7 Nov 2024, Heiko Stuebner wrote:
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v5:
-- replace "return 0" with "return SKB_NOT_DROPPED_YET" in
-  ip_route_use_hint()
----
- include/net/route.h |  7 ++++---
- net/ipv4/ip_input.c |  9 ++++-----
- net/ipv4/route.c    | 28 +++++++++++++++++-----------
- 3 files changed, 25 insertions(+), 19 deletions(-)
+> The hid-sensor-hub creates the individual device structs and transfers them
+> to the created mfd platform-devices via the platform_data in the mfd_cell.
+> 
+> Before e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous reads")
+> the sensor-hub was managing access centrally, with one "completion" in the
+> hub's data structure, which needed to be finished on removal at the latest.
+> 
+> The mentioned commit then moved this central management to each hid sensor
+> device, resulting on a completion in each struct hid_sensor_hub_device.
+> The remove procedure was adapted to go through all sensor devices and
+> finish any pending "completion".
+> 
+> What this didn't take into account was, platform_device_add_data() that is
+> used by mfd_add{_hotplug}_devices() does a kmemdup on the submitted
+> platform-data. So the data the platform-device gets is a copy of the
+> original data, meaning that the device worked on a different completion
+> than what sensor_hub_remove() currently wants to access.
+> 
+> To fix that, use device_for_each_child() to go through each child-device
+> similar to how mfd_remove_devices() unregisters the devices later and
+> with that get the live platform_data to finalize the correct completion.
+> 
+> Fixes: e651a1da442a ("HID: hid-sensor-hub: Allow parallel synchronous reads")
+> Cc: stable@vger.kernel.org
+> Acked-by: Benjamin Tissoires <bentiss@kernel.org>
+> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-diff --git a/include/net/route.h b/include/net/route.h
-index f4ab5412c9c9..4debc335d276 100644
---- a/include/net/route.h
-+++ b/include/net/route.h
-@@ -206,9 +206,10 @@ ip_mc_validate_source(struct sk_buff *skb, __be32 daddr, __be32 saddr,
- enum skb_drop_reason
- ip_route_input_noref(struct sk_buff *skb, __be32 daddr, __be32 saddr,
- 		     dscp_t dscp, struct net_device *dev);
--int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
--		      dscp_t dscp, struct net_device *dev,
--		      const struct sk_buff *hint);
-+enum skb_drop_reason
-+ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
-+		  dscp_t dscp, struct net_device *dev,
-+		  const struct sk_buff *hint);
- 
- static inline enum skb_drop_reason
- ip_route_input(struct sk_buff *skb, __be32 dst, __be32 src, dscp_t dscp,
-diff --git a/net/ipv4/ip_input.c b/net/ipv4/ip_input.c
-index 513eb0c6435a..f0a4dda246ab 100644
---- a/net/ipv4/ip_input.c
-+++ b/net/ipv4/ip_input.c
-@@ -322,15 +322,14 @@ static int ip_rcv_finish_core(struct net *net, struct sock *sk,
- 	int err, drop_reason;
- 	struct rtable *rt;
- 
--	drop_reason = SKB_DROP_REASON_NOT_SPECIFIED;
--
- 	if (ip_can_use_hint(skb, iph, hint)) {
--		err = ip_route_use_hint(skb, iph->daddr, iph->saddr,
--					ip4h_dscp(iph), dev, hint);
--		if (unlikely(err))
-+		drop_reason = ip_route_use_hint(skb, iph->daddr, iph->saddr,
-+						ip4h_dscp(iph), dev, hint);
-+		if (unlikely(drop_reason))
- 			goto drop_error;
- 	}
- 
-+	drop_reason = SKB_DROP_REASON_NOT_SPECIFIED;
- 	if (READ_ONCE(net->ipv4.sysctl_ip_early_demux) &&
- 	    !skb_dst(skb) &&
- 	    !skb->sk &&
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 5061a935ce62..d1c4367d3c20 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -2141,28 +2141,34 @@ ip_mkroute_input(struct sk_buff *skb, struct fib_result *res,
-  * assuming daddr is valid and the destination is not a local broadcast one.
-  * Uses the provided hint instead of performing a route lookup.
-  */
--int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
--		      dscp_t dscp, struct net_device *dev,
--		      const struct sk_buff *hint)
-+enum skb_drop_reason
-+ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
-+		  dscp_t dscp, struct net_device *dev,
-+		  const struct sk_buff *hint)
- {
-+	enum skb_drop_reason reason = SKB_DROP_REASON_NOT_SPECIFIED;
- 	struct in_device *in_dev = __in_dev_get_rcu(dev);
- 	struct rtable *rt = skb_rtable(hint);
- 	struct net *net = dev_net(dev);
--	enum skb_drop_reason reason;
--	int err = -EINVAL;
- 	u32 tag = 0;
- 
- 	if (!in_dev)
--		return -EINVAL;
-+		return reason;
- 
--	if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr))
-+	if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr)) {
-+		reason = SKB_DROP_REASON_IP_INVALID_SOURCE;
- 		goto martian_source;
-+	}
- 
--	if (ipv4_is_zeronet(saddr))
-+	if (ipv4_is_zeronet(saddr)) {
-+		reason = SKB_DROP_REASON_IP_INVALID_SOURCE;
- 		goto martian_source;
-+	}
- 
--	if (ipv4_is_loopback(saddr) && !IN_DEV_NET_ROUTE_LOCALNET(in_dev, net))
-+	if (ipv4_is_loopback(saddr) && !IN_DEV_NET_ROUTE_LOCALNET(in_dev, net)) {
-+		reason = SKB_DROP_REASON_IP_LOCALNET;
- 		goto martian_source;
-+	}
- 
- 	if (rt->rt_type != RTN_LOCAL)
- 		goto skip_validate_source;
-@@ -2174,11 +2180,11 @@ int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
- 
- skip_validate_source:
- 	skb_dst_copy(skb, hint);
--	return 0;
-+	return SKB_NOT_DROPPED_YET;
- 
- martian_source:
- 	ip_handle_martian_source(dev, in_dev, skb, daddr, saddr);
--	return err;
-+	return reason;
- }
- 
- /* get device for dst_alloc with local routes */
+Acked-by: Jiri Kosina <jkosina@suse.com>
+
+Are you planning to merge this together with the rest of the set, or do 
+you want me to expedite it? I'll be happy to apply it separately as a 
+proper fix.
+
+Thanks,
+
 -- 
-2.39.5
+Jiri Kosina
+SUSE Labs
 
 
