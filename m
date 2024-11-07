@@ -1,99 +1,181 @@
-Return-Path: <linux-kernel+bounces-400039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CE79C081A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:51:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3001D9C0827
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F2D7B222A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:51:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B390D1F2304D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6649621262F;
-	Thu,  7 Nov 2024 13:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dWYuPazp"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354BD21263C;
+	Thu,  7 Nov 2024 13:51:47 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF70212D0E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 13:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D733920FA81;
+	Thu,  7 Nov 2024 13:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987478; cv=none; b=GDtby06zDp9mEYT9kufzvrNlT5Yp55plfqhTDf95wV8Qyf31UvVQftTY2kpyrXW4tj5eVA50qeZf2RvOUXo5Rig3cxGvBYyd7MExUyDIl1nZeaeCzgad36q99f1QLVMrSybj4u+T66bVBuyTqd1d00t+wonx4wlkQMnbaBJB1Vs=
+	t=1730987506; cv=none; b=Lnr/wmKBQluIk//xiVgJECzrqhw6LRR+WKwb/kkAHzW6QFfSeVvrwO2QiV4RI2Zf7PRl6r1evLCjFZw9ID65J1uaWTjA2CxLszAbXOGqxo4+eou2KcyoD3sMWZUNrcVkpH6tb2oy7zE7NY3y6PHOWGnfM8k5NAHWaDhjJ7KOQXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987478; c=relaxed/simple;
-	bh=NcVjILp/caZepFFB60+3XLNmk+XNW05BoJNj51Dg95o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6BXCPnnVrH2eM7r2LWSu11zKOM01qtDglPuBeqKqihnSgzFRG1vYUgoPeWIcr+Z3Bso8SYraO48iu5CgTJ7kg7lIql4zWXbTCChtfBmz3cUnfAUFC6+Hdt5BmndU5MMPlFS7NP5WnoZ/c++YHeiZX5gZ0lpivMWsKPUQZHZCIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dWYuPazp; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so8995381fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 05:51:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730987474; x=1731592274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NcVjILp/caZepFFB60+3XLNmk+XNW05BoJNj51Dg95o=;
-        b=dWYuPazp9WM/9vSSOM4D3EsSjWlJhI0SMs7FoOP5jm9yR4CWngxyCWOwYzy7RcP+X0
-         QUipNMMuUFOq73NTu7IrUOa9gXvShW91Y99VNupmDZ6GX0DCRGUA6F6H4iIClU+soubf
-         B+tJYfjToPeIvtqaoETJuO2xOQl6vaVxFtbwnrpwJo5lSTcmimu6F1zJRmDn+521mJUY
-         A1KxpZ3A860jwm5j0ZzE3OlDlftdswJfEUTU6cpwOolZbhujR0GBMiStNEYXNCPPX7Ok
-         K4IMqkSCOUTGwoWvayYcX0c1CUsKNYjO/ekW55yY9HLT1jb9XkSo0gRGjzr5LfzEogAF
-         2fvA==
+	s=arc-20240116; t=1730987506; c=relaxed/simple;
+	bh=LgDglSd2Tl30/NhTA8ahbONVX/UT2nPSjobAt9t/8TM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jyoxnld3JtN0kbLEW1oXFZQwxMkctyZsHpeeFgtZ0GlEnS58pGw/2u1OlnABzpb9cE5lxTuuAAv0y39V/7XKXmxlAkwc3HgPgRk1HsMr7iE8DwtofiRouC+7oEn/XHCbXKCufWgtQeJYwtjk9MiVBfUW9MRzadstkLzOFyLgbUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso152513366b.1;
+        Thu, 07 Nov 2024 05:51:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730987474; x=1731592274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NcVjILp/caZepFFB60+3XLNmk+XNW05BoJNj51Dg95o=;
-        b=PuOQB9b67FgNCMSp5PodRqD28OZN90j0Y6Of0xRulrKfQUwryDg72Fk1yBuAPfZ/KT
-         7m+TA4A8UMQiqBSZ2cKMxZsMyh+Mqy7xMTfRV3VaCxl+5YKyHMf//ehctnbyxlYq29H2
-         P0PlcutLYoOj44xT4HK4yci9YewasP5zpV+R2LSjqSY3OccQ+taHE/fnR2qj5+B0iA/K
-         aN/N7SGLs76SF2Zv0DpNkBM6A/cQ6lsYnLY6ENLtC9CH7t7VgVQt+fvMo2E7ocrLZc7c
-         CBo1QbqNTeiYHV8M6pQIAQicOpanaQq1urLVZdf8EDW70i3Kk3dSzvdlOWNlCRkIg+tF
-         wr+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXLvH3dYrumHnBvw9knMAWlZffL5Vtphj0MjUVR+Vf3Kc5rvFxG+CSfhgwvwQFjAwrjrJgU6lwCvSlGNno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaWXa7iEloDHLCM2um5NMYbvqPzxblpiH9FWHQCG3JJ+ebmiXm
-	Tc+jf1ufr2lbDSPhP+oY3to1UXea+N80mzXB1I86VXS1tHfSCcwmCI4QOvESPvIZ/3dHDl7FpJ3
-	7TiiUUEAR1RIdTngiVZN2jp9jPh1g0Ije5dBYAw==
-X-Google-Smtp-Source: AGHT+IGiWq7PtiVgzCFFWXw5DpnT7owotNtkDOgrZOKmEF+j8eLRrqW6X8/sDWUO8xLANvzfCAOHbn0yaa5j804ukJc=
-X-Received: by 2002:a05:651c:1596:b0:2fc:ba7a:c97a with SMTP id
- 38308e7fff4ca-2fedb83155emr127846251fa.39.1730987473829; Thu, 07 Nov 2024
- 05:51:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730987503; x=1731592303;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7rQJA6TLiur9Q4EwskLjUkkQv1x5PCBZE3Fan5TuCjs=;
+        b=keECATEFSvteiowvuSiPiKaDX3hYBfIQ4Ax0hzfsghQttoXFFyleIgPgQD5OndXE7W
+         tXKSYOTHWelGGT3y2Ob5KaYHARbr80I/seYQRbzK7awN7ffqv7FdEvkurA79tra4pQad
+         J5Ze3u0HZXDisADKKuGZjrRmkkdn6/wnKxzXb8pGJI5nvGbaeyXkdp1cUM5Kt08z5pQd
+         SEJANMHn3MEvP+zE6fOTewJ1Z0qBTRsfxrUn6Do8x5JYbRJW9P60bnnAjarXD5Pel8SO
+         ubrPHC84CafnGus18MGoOcZfty3xCNqxQIXbymrW9LMCHG+R9of4PhtEJ+udB9em3Aqm
+         ynmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUT6u13lJksB6NApNghpXgQOo+o30miCTpjKiWnIb5cxbEsAQ/0N7hHIW4FwNXB3tvCqKz3MIyI@vger.kernel.org, AJvYcCWTdpo1j0YoLPL0O1qQMNwF/FZkH+/C2apKmOHMyS2jJncNT0p4/tEkDeG4juAvy0ri5pksXoZwk/kwB5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU1pAH75O+k92OstGD2gjDFppuNitZTugidFYZahNq0a6eAKDh
+	dz5yjc25yL1sHKpfUM/RZzJyVm1KnT1cPnJlXJP5YLNI/7syMVIH
+X-Google-Smtp-Source: AGHT+IGoo8F9F3Fjhf8nh9EXZc/ifYsGipeFQIjD1SpfFQkyRYvZ/6GIfr8uzn9KVXziCfUUTrLe6w==
+X-Received: by 2002:a17:907:31cb:b0:a9a:296:b501 with SMTP id a640c23a62f3a-a9de5f660a2mr4356554466b.26.1730987502953;
+        Thu, 07 Nov 2024 05:51:42 -0800 (PST)
+Received: from gmail.com (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0e2e92esm96786266b.182.2024.11.07.05.51.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 05:51:42 -0800 (PST)
+Date: Thu, 7 Nov 2024 05:51:40 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net] ipmr: Fix access to mfc_cache_list without lock held
+Message-ID: <20241107-invisible-skylark-of-attack-e44be1@leitao>
+References: <20241107-ipmr_rcu-v1-1-ad0cba8dffed@debian.org>
+ <CANn89iL-L8iBwp=rq-YwAeeoUY2MTjr5akWm=S=k7ckpkaEy+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014-armv7-cacheinfo-v2-0-38ab76d2b7fa@linaro.org> <20241014-armv7-cacheinfo-v2-1-38ab76d2b7fa@linaro.org>
-In-Reply-To: <20241014-armv7-cacheinfo-v2-1-38ab76d2b7fa@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 7 Nov 2024 14:51:02 +0100
-Message-ID: <CACRpkdZ8--4fKxT6+AbYSvTbA7-7EM_HutNVPT7yS90NN1r5nw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ARM: add CLIDR accessor functions
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iL-L8iBwp=rq-YwAeeoUY2MTjr5akWm=S=k7ckpkaEy+Q@mail.gmail.com>
 
-On Mon, Oct 14, 2024 at 3:55=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+Hello Eric,
 
-> Add functions to read the CLIDR, Cache Level ID Register.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Thu, Nov 07, 2024 at 02:13:14PM +0100, Eric Dumazet wrote:
+> On Thu, Nov 7, 2024 at 12:03 PM Breno Leitao <leitao@debian.org> wrote:
+> >
+> > Accessing `mr_table->mfc_cache_list` is protected by an RCU lock. In the
+> > following code flow, the lock is not held, causing the following error
+> > when `RCU_PROVE` is not held.
+> >
+> >         6.12.0-rc5-kbuilder-01145-gbac17284bdcb #33 Tainted: G            E    N
+> >         -----------------------------
+> >         net/ipv4/ipmr_base.c:313 RCU-list traversed in non-reader section!!
+> >
+> >         rcu_scheduler_active = 2, debug_locks = 1
+> >                    2 locks held by RetransmitAggre/3519:
+> >                     #0: ffff88816188c6c0 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x8a/0x290
+> >                     #1: ffffffff83fcf7a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x6b/0x90
+> >
+> >         stack backtrace:
+> >                     lockdep_rcu_suspicious
+> >                     mr_table_dump
+> >                     ipmr_rtm_dumproute
+> >                     rtnl_dump_all
+> >                     rtnl_dumpit
+> >                     netlink_dump
+> >                     __netlink_dump_start
+> >                     rtnetlink_rcv_msg
+> >                     netlink_rcv_skb
+> >                     netlink_unicast
+> >                     netlink_sendmsg
+> >
+> > Fix accessing `mfc_cache_list` without holding the RCU read lock. Adds
+> > `rcu_read_lock()` and `rcu_read_unlock()` around `mr_table_dump()` to
+> > prevent RCU-list traversal in non-reader section.
+> >
+> > Since `mr_table_dump()` is the only function that touches the list, that
+> > might be the only critical section in `ipmr_rtm_dumproute()` that needs
+> > to be protected in ipmr_rtm_dumproute().
+> >
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > Fixes: cb167893f41e ("net: Plumb support for filtering ipv4 and ipv6 multicast route dumps")
+> > ---
+> >  net/ipv4/ipmr.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
+> > index 089864c6a35eec146a1ba90c22d79245f8e48158..bb855f32f328024f384a2fa58f42fc227705206e 100644
+> > --- a/net/ipv4/ipmr.c
+> > +++ b/net/ipv4/ipmr.c
+> > @@ -2612,8 +2612,10 @@ static int ipmr_rtm_dumproute(struct sk_buff *skb, struct netlink_callback *cb)
+> >                         NL_SET_ERR_MSG(cb->extack, "ipv4: MR table does not exist");
+> >                         return -ENOENT;
+> >                 }
+> > +               rcu_read_lock();
+> >                 err = mr_table_dump(mrt, skb, cb, _ipmr_fill_mroute,
+> >                                     &mfc_unres_lock, &filter);
+> > +               rcu_read_unlock();
+> >                 return skb->len ? : err;
+> >         }
+> >
+> >
+> 
+> What about net/ipv6/ip6mr.c ip6mr_rtm_dumproute() ?
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+That one might require as well.
 
-Yours,
-Linus Walleij
+> In my opinion, since we still hold RTNL in these paths, we should
+> change the lockdep annotation.
+
+I don't have much experience mixing locks like this. Is it safe to mix
+and match rtnl and RCUs like this?
+
+I have the impression that, when iterating a RCU protected list *without* being in the read-side
+critical sections, the RCU doesn't know that someone might be traversing
+the list, and remove the element mid air (mroute_clean_tables()?). Is
+this model incorrect?
+
+> Then later we can remove RTNL from these dump operations.
+
+Do you mean that, execute the dump operation without holding the RTNL,
+thus, relying solely on RCU?
+
+> diff --git a/net/ipv4/ipmr_base.c b/net/ipv4/ipmr_base.c
+> index 271dc03fc6dbd9b35db4d5782716679134f225e4..f0af12a2f70bcdf5ba54321bf7ebebe798318abb
+> 100644
+> --- a/net/ipv4/ipmr_base.c
+> +++ b/net/ipv4/ipmr_base.c
+> @@ -310,7 +310,8 @@ int mr_table_dump(struct mr_table *mrt, struct sk_buff *skb,
+>         if (filter->filter_set)
+>                 flags |= NLM_F_DUMP_FILTERED;
+> 
+> -       list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list) {
+> +       list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list,
+> +                               lockdep_rtnl_is_held()) {
+>                 if (e < s_e)
+>                         goto next_entry;
+>                 if (filter->dev &&
+
+Clarifying next steps: Would you like me to review/test and submit, or
+are you planning to send it officially?
+
+Thanks for your feedback,
+--breno
 
