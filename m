@@ -1,97 +1,133 @@
-Return-Path: <linux-kernel+bounces-400136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87D29C0960
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:55:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239A09C0969
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 15:57:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9C42835A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 345E01C234AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F122212EE1;
-	Thu,  7 Nov 2024 14:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABA2212EFA;
+	Thu,  7 Nov 2024 14:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwabX0Bt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUKjHHmn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F761DFDB8;
-	Thu,  7 Nov 2024 14:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F029F1DFDB8;
+	Thu,  7 Nov 2024 14:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730991319; cv=none; b=ZMRnql0ifdCHCObUXbOqJ2rhFVoDE7x4WNcHoLEOge/PeLdJ6AVRpviDB6XqxjVBGn6CGAgedkzVPn0zWhOA9eXzab7iVFGH7oULR3AiV5h5k/XlKpu1BxDiy/jnxKxiKo3iNuj6guZNc306YHXH1IQQ9NLJX7XGyErv0479c8Y=
+	t=1730991439; cv=none; b=PJyAWfL4d0TvaSt0ctNuQNPMiafNGlxJTTZPtRd759cuSaUxGlXclwEs6zdPVtUqjEQdU1uBX8jfQfp254MT6AkmFsQyUUHsXHgm2ylAi09F29nSQql3fSvKRezfUFOCq/RCdH1aiJysb4kEv01eKCRzJ2aHXog4hrZ+DkrU+tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730991319; c=relaxed/simple;
-	bh=K5+gjFHFUygX0x3HkOo96uYxYFByfgO4woehcB3CLcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LToLFlk6+AC+nJxjKXOVCaCmoDlSm86MBlEPtmX6/eRGRkt7Qscipq6sr/jogMmWdFPABqEmNtvAJ2D5ZeF9HA336hLw1yNkwCVwPgduszwKXay+SvaiyhG1EPe3dsZ+unLsTvIBP4Ls+/xyywvjm339M7w1pXaFK/RXhfZv5JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwabX0Bt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DFD0C4CECC;
-	Thu,  7 Nov 2024 14:55:14 +0000 (UTC)
+	s=arc-20240116; t=1730991439; c=relaxed/simple;
+	bh=C9KmSDR5KFc0giels4Al9MLQh0c4mvvugPsBEyIlPMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=SpXhsujsiO+k5KWM5nnmIvyba4h16mNKnmS5S0L5PhjL8tl8M1VI3EzOu6geX5H8ZhMgjX3zNvQ97dLnd25W32hgmr5PJBmmaI1Cf7g+E4lOl305+stxRBlxA/+XKe1Y3VINn1SSIc5JwB6WHCcb2F31wVcKfVFmhek1jCcHvyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUKjHHmn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446C9C4CECC;
+	Thu,  7 Nov 2024 14:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730991318;
-	bh=K5+gjFHFUygX0x3HkOo96uYxYFByfgO4woehcB3CLcE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gwabX0Bt3r9b/wEYR2LijvJ9TbY6clKCOV+tUc8Uz7aIdmmksaSERHaKFMq0DnKS8
-	 ZDKuHgspcp1t3w6V5jVEKCyes+oN7Xr4KX9HosFYNuU6QNFlEV8Rdbz/k1TRnlncsQ
-	 Z/rg2AK3hT03kdyageX10zr3112y+mvFur5OJs+ZtmSKIjB2N82SZr6Vt87phG+uRz
-	 oxBKWy/qgv2WJYnmKuA8oSkN2LGHHB0QHih9Y6hH8UHdU6VZPdxTis2MUTmf1kBGP1
-	 JhgOMgxnvZV18xlI47L4zP8dEdNpPvdbyBmWNr/piOiX+pMGdmBiaPMHsQEiJ+AHQx
-	 n6TFcgbCt/4aA==
-Date: Thu, 7 Nov 2024 14:55:12 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hagar@microsoft.com
-Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
-Message-ID: <df4c9a3b-7fb2-42fd-ab10-94cfa7e70979@sirena.org.uk>
-References: <20241107064547.006019150@linuxfoundation.org>
+	s=k20201202; t=1730991438;
+	bh=C9KmSDR5KFc0giels4Al9MLQh0c4mvvugPsBEyIlPMc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=nUKjHHmnRqq4bsnJZ+OZuFrB9YXvC6X4M5misHrpPT1KzbLdS5E4/MVzrNxOkCJV6
+	 I2rbgYr86mPtqiO0a1lrHhXuM2ewfE48sz2vOaMGawmaIK1eTa7uBoXQzs2J69gPdS
+	 wCXAA/t6HurHqQpmnUvMjzytKtu4ZZn/d2/eU4nJ3nyc4aWJwPsl+0tuoshvxECg77
+	 Ptqrj0ON5PC8Cc14u0bbyJeuvq3JBG8EdqeAu1I038TXCm+DGkTUtTaOVXNNsDyGXK
+	 0Ua807riaRFvirBS6h+ZWu6YQvkuDwwbncZLaoAxl9nykMT3L1j8ebFBrLbWNbipgG
+	 rvnAqAZbPUiHA==
+Date: Thu, 7 Nov 2024 08:57:15 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-pci@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v6 0/2] PCI: microchip: support using either instance 1
+ or 2
+Message-ID: <20241107145715.GA1613568@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IUTVW+fggAyrcTk5"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
-X-Cookie: Professional driver on closed track.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241107-aqueduct-petroleum-c002480ba291@spud>
 
+On Thu, Nov 07, 2024 at 10:59:33AM +0000, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> The current driver and binding for PolarFire SoC's PCI controller assume
+> that the root port instance in use is instance 1. The second reg
+> property constitutes the region encompassing both "control" and "bridge"
+> registers for both instances. In the driver, a fixed offset is applied to
+> find the base addresses for instance 1's "control" and "bridge"
+> registers. The BeagleV Fire uses root port instance 2, so something must
+> be done so that software can differentiate. This series splits the
+> second reg property in two, with dedicated "control" and "bridge"
+> entries so that either instance can be used.
+> 
+> Cheers,
+> Conor.
+> 
+> v6:
+> - rework commit messages to use Bjorn's preferred "root port" and "root
+>   complex" wording
+> 
+> v5:
+> - rebase on top of 6.11-rc1, which brought about a lot of driver change
+>   due to the plda common driver creation - although little actually
+>   changed in terms of the lines edited in this patch.
+> 
+> v4:
+> - fix a cocci warning reported off list about an inconsistent variable
+>   used between IS_ERR() and PTR_ERR() calls.
+> 
+> v3:
+> - rename a variable in probe s/axi/apb/
+> 
+> v2:
+> - try the new reg format before the old one to avoid warnings in the
+>   good case
+> - reword $subject for 2/2
+> 
+> CC: Daire McNamara <daire.mcnamara@microchip.com>
+> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> CC: Krzysztof Wilczyński <kw@linux.com>
+> CC: Rob Herring <robh@kernel.org>
+> CC: Bjorn Helgaas <bhelgaas@google.com>
+> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> CC: Conor Dooley <conor+dt@kernel.org>
+> CC: linux-pci@vger.kernel.org
+> CC: devicetree@vger.kernel.org
+> CC: linux-kernel@vger.kernel.org
+> CC: linux-riscv@lists.infradead.org
+> 
+> Conor Dooley (2):
+>   dt-bindings: PCI: microchip,pcie-host: fix reg properties
+>   PCI: microchip: rework reg region handing to support using either root
+>     port 1 or 2
+> 
+>  .../bindings/pci/microchip,pcie-host.yaml     |  11 +-
+>  .../pci/plda,xpressrich3-axi-common.yaml      |  14 ++-
+>  .../bindings/pci/starfive,jh7110-pcie.yaml    |   7 ++
+>  .../pci/controller/plda/pcie-microchip-host.c | 116 +++++++++---------
+>  4 files changed, 87 insertions(+), 61 deletions(-)
 
---IUTVW+fggAyrcTk5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks!  The patches themselves are unchanged between v5 and v6.  I
+replaced the v5 patches on pci/controller/microchip with these.
 
-On Thu, Nov 07, 2024 at 07:47:28AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.7 release.
-> There are 249 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
---IUTVW+fggAyrcTk5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcs1M8ACgkQJNaLcl1U
-h9Ct0Qf/WZL5vpyyXrZS9JZqKeUYwjJtFkwo1GFXPKOSBifK9MG8hmHHQVLbLmj6
-VUuutYsYJgry35r4NPCw3mGTqg+P3zyY3MIDPZYhXlv7figi9a0NabbHe4QEC/Ti
-0ExFu5oIuJq2XfWyzG+1WCpURuPNVh6+wuv+POg6ufnN37ODQu7NjMOyYDqc/F0H
-E71YdviNzQ+ljILNxZeV0GstCmjQ8ak4L8vuJoC1kBN8SkQqvdR3QEz0DLy/hBxz
-WrBhu5Uk3jIZsycj0NkSHHt59HmY9v8TLXh/MOcF3w+JTjQUgrPXxIQGtNvHukvJ
-MjCqfOVk6PZ8pggPFl3u0O6OAWoR3A==
-=PX4Z
------END PGP SIGNATURE-----
-
---IUTVW+fggAyrcTk5--
+I also capitalized "Root Port" and "Root Complex" to give a hint that
+they are proper nouns defined by the PCIe spec.
 
