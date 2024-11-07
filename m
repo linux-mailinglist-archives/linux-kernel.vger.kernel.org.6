@@ -1,89 +1,85 @@
-Return-Path: <linux-kernel+bounces-399719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C339C0363
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:07:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D699C036A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:08:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE91128862B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A962885FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E9D1F12F5;
-	Thu,  7 Nov 2024 11:07:46 +0000 (UTC)
-Received: from mail78-58.sinamail.sina.com.cn (mail78-58.sinamail.sina.com.cn [219.142.78.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5950B1F472B;
+	Thu,  7 Nov 2024 11:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEkUUHT2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520191373
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAEF1EE00C;
+	Thu,  7 Nov 2024 11:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730977666; cv=none; b=BAcbgR8XPh1+CqmWVPwv1nsNr9ZXcvz/Q5gb+Xoms4ix6A8gcF4/VVmRNPx4Kr6BLcBRYN0bUjJ7FJYsrIaflOSwuOGSRARGyKNUTyUyCzSZY0t9WyWnLy01UrdP/QkX/CiZKVtAPyA/xqanrEi7mfopIRJHsINIwA6SIJUPz0s=
+	t=1730977672; cv=none; b=nU3cR8jegmqwk+yfCpCN2JPW71t+sbikhucBDooV13GCQ/dmSvTe5bmiOnzJm6ApCCMJ1eRTUdjugvd/V2oEUjldzbj6aQIzMCTeldXfvLRZNEBl7tIacHwtwuaB9y+Sl4/VfuSTZ7YbYaZBd3s3M+xgF8b1lgEqBc7eP2FT2DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730977666; c=relaxed/simple;
-	bh=JHt1Cd8CpOyb/zmK13q/K55ly11u/rSJOmQ4ZUMljrw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QQjIBxSlq33UQZ2YAPLI/iVc7P2sa7nU+3T8dwJOMC3qYDs4guzZlcL5UzkALQBFDNhVDorsEmiMQaQXdYVBwgtSB58VeUfnH9jbQLQn73pjqnKRmExc9bgO3D6qRDpAXVWgj29l/zmSbpdOhokwX2tl5CwS+jhSKjGZH9GkVt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.50.160])
-	by sina.com (10.185.250.24) with ESMTP
-	id 672C9F6E0000104F; Thu, 7 Nov 2024 19:07:30 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 71537510748368
-X-SMAIL-UIID: DDC5A6679C8944CF9449AFCEBDEE1A87-20241107-190730-1
-From: Hillf Danton <hdanton@sina.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Jann Horn <jannh@google.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] docs/mm: add VMA locks documentation
-Date: Thu,  7 Nov 2024 19:07:17 +0800
-Message-Id: <20241107110717.3441-1-hdanton@sina.com>
-In-Reply-To: <20241101185033.131880-1-lorenzo.stoakes@oracle.com>
-References: 
+	s=arc-20240116; t=1730977672; c=relaxed/simple;
+	bh=3RDsctzj+jKcHyPmCDmgDEvkYRZVjj3F2h2JnfN6XYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHIHZxw15k0ZPhyGLU0PXLj4l6IffXXj9KuUDOJ4AZkzHldpX1iYzNJDfVFCwe1QCTYB68ygq2BgOLVcpSJGOhFm7+XJ3tjiQYMcgUwmDVIbtKq5ldVJywkmldxp2aXlAAz/khSE2n+K5tXUi7jR5jQjUYZ9iqDPRZUWuEIh8Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEkUUHT2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 504A7C4CECC;
+	Thu,  7 Nov 2024 11:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730977672;
+	bh=3RDsctzj+jKcHyPmCDmgDEvkYRZVjj3F2h2JnfN6XYg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CEkUUHT2AyhLlnl5b5Kr1aHQP+HLUSQogHUG19q1+lqDySaWJ0NwDuaoCr01ID9vp
+	 ErMXgC7nML7+V9kF1Mp0H2Dz1RPL/xYpcwwUr1eyHZWAw+R8FB8t7L2730xLblaMnp
+	 W4H5RJYM2bn2TSm1bIAOHaonkfGI/TxTIj6+fxZZ69fnVmt5EFUWD0jBE1DVkzottY
+	 LW91NKPMxk3T3e2WcVXGU0x7L64WnT80R2SpOoNMeAgUln7KQEKgcDTpKOOBRkHtxa
+	 xaOyhJt+VrQA7oR8749NarQRcwH42e7ilCnd6UWg8cdc2/eWVMHqtvQvuMsaqadkam
+	 dECzA0PDtrbSg==
+Date: Thu, 7 Nov 2024 12:07:46 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Abhinav Saxena <xandfury@gmail.com>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH 2/2] Documentation: dt-bindings: Remove trailing
+ whitespace
+Message-ID: <gjxevyovxhymwm2ps37hfq3vmpmmr4pqmohq67llxrb2plb5zz@pvsmkqmhemx7>
+References: <20241107061124.105930-1-xandfury@gmail.com>
+ <20241107061124.105930-3-xandfury@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241107061124.105930-3-xandfury@gmail.com>
 
-On Fri,  1 Nov 2024 18:50:33 +0000 Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Wed, Nov 06, 2024 at 11:11:24PM -0700, Abhinav Saxena wrote:
+> Remove trailing whitespace from devicetree binding documentation files:
+> - regulator/regulator-max77620.txt
+> - interrupt-controller/nvidia,tegra20-ictlr.txt
+> - interrupt-controller/msi.txt
 > 
-> Locking around VMAs is complicated and confusing. While we have a number of
-> disparate comments scattered around the place, we seem to be reaching a
-> level of complexity that justifies a serious effort at clearly documenting
-> how locks are expected to be interacted with when it comes to interacting
-> with mm_struct and vm_area_struct objects.
-> 
-> This is especially pertinent as regards efforts to find sensible
-> abstractions for these fundamental objects within the kernel rust
-> abstraction whose compiler strictly requires some means of expressing these
-> rules (and through this expression can help self-document these
-> requirements as well as enforce them which is an exciting concept).
-> 
-> The document limits scope to mmap and VMA locks and those that are
-> immediately adjacent and relevant to them - so additionally covers page
-> table locking as this is so very closely tied to VMA operations (and relies
-> upon us handling these correctly).
-> 
-> The document tries to cover some of the nastier and more confusing edge
-> cases and concerns especially around lock ordering and page table teardown.
->
-What is missed is the clear guide to the correct locking order.
-Is the order below correct for instance?
+> No functional changes. Issues detected using checkpatch.pl script.
 
-	lock  vma
-	lock  vma->vm_mm
+Instead I would prefer these files to be converted to DT schema which
+would result in their full removal.
+
+Best regards,
+Krzysztof
+
 
