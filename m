@@ -1,222 +1,141 @@
-Return-Path: <linux-kernel+bounces-400340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1FF9C0C15
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922799C0C16
 	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED981F23071
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AB9B284703
 	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D27216A32;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49011216A38;
 	Thu,  7 Nov 2024 17:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JCU8k+Mm"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qh23v4IK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E943120EA31;
-	Thu,  7 Nov 2024 17:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F7521315B;
+	Thu,  7 Nov 2024 17:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730998810; cv=none; b=SML7pAU3vCDD/JnYPuvk8m8b1cb30R3krAF7gAiRP8m/+twuAW1LIWp0PJwH6ItGDVBzVykkO34iseN3+HuPVtJ0VE8w6ZT8R9Ar0kMFrQJFzQdCYGIZ96MAcXzLOhyDOiSlX7h4NARplRrF7pKNYl+4niFP/WvDwHPXoV85BZg=
+	t=1730998810; cv=none; b=qQRaozqSpHyuZ0Nlg9qq6zv0+YyJ8zPoTnSgcVxlECRr8k+9kV7XR615P0FCw1f/GQCJ+f6nSELPCcim6AOqjzVYyovPfGJpf4lyrDKTYtGbOV3Ej/NUPNhzuSDhUBQRsBZpqwB674DLyfQjrgnOu6S6NbhK4tmR6dI3qQ9Vwgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730998810; c=relaxed/simple;
-	bh=3y7x3t5gVFxOW6z3Jq8Cosco9ze83OAiKthqUh4vERE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uGl6vFVyR+ea3F2I8XziV7a68aHlHOmcVyQMknk8b3wVRjO3Ralbc1ygvVPJYtJU7LyQvFWFfWdmTH8M7OY3wVB4KKE4bSkJ8//OiXATtZoA6wXqFze47jRsvJbjKVk5koI+vB80nCF5yezslIERJdaHF2khkZU/ZdWBbrnKHd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JCU8k+Mm; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7GAD2Q015652;
-	Thu, 7 Nov 2024 16:59:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=WXFoL5
-	zwptAunsfgZklfDDu9wxucMsjwItFltAGzzEE=; b=JCU8k+MmS2s37V0BfkwHRm
-	sMk1q/mKung6ovNW5wFht6yAwPNgEntPFm0dgEQoURCe80BesHE+gS+ecQamPUD+
-	tzQ1zRGjKBATBnnLR+vDt+wtQutbWD3kx3yDMHTPQGlWQY3jurOxXAvVho5mIEJt
-	hPSaf/+NgQEjL4LJpN4PCYYLwFQsCfOkIFLc9RY678hDuztAjVnqF0mI94kXDK6s
-	HNkP97IGnjdbs+J58+YzArrvAJal4NyMHMQNxeR9N3WZQiCGtGEA7imgJXCmanHS
-	oxXXCKXO4Hwm36SBuXPOuXMZCDc319DGXIh7UPP0N/BMd6PrjDvO9ojhjk+/8V5A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42s0u106vu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 16:59:14 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A7GxEYk020254;
-	Thu, 7 Nov 2024 16:59:14 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42s0u106vm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 16:59:14 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7DPaq1012237;
-	Thu, 7 Nov 2024 16:59:13 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p1410g0b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 16:59:12 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A7Gx9Za34800160
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Nov 2024 16:59:09 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5F1A220043;
-	Thu,  7 Nov 2024 16:59:09 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F328220040;
-	Thu,  7 Nov 2024 16:59:08 +0000 (GMT)
-Received: from [9.152.222.93] (unknown [9.152.222.93])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Nov 2024 16:59:08 +0000 (GMT)
-Message-ID: <1f83be89-b816-48a3-a7ee-9b72f07b558e@linux.ibm.com>
-Date: Thu, 7 Nov 2024 17:59:08 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-Content-Language: en-US
-To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-        Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: D6BC3dfdxaCvSOwDYqIlspUzLTj5G94D
-X-Proofpoint-ORIG-GUID: s0m_uslS-RNTtw7xnE1ZGot58aLVATYM
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	bh=LxlQsyn16YGpTarQqk1LdGdxRMkwoMFrL36XAWtSuzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lae47DXx37WARMr74zO6e9iohKH1fWs+cQO4bvuB+G/VE1odee/XADVTFjIxrpMkM1zh2KmE7E9XDlhpfjTYm6LwVtJQ17dVpdK7Zrq+O3/zL5s1ANapr/UqNoycFdERgvn+PN/ZQUdizvizfHInULgKw//pwaLiMTyTlVArKYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qh23v4IK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2273DC4CECC;
+	Thu,  7 Nov 2024 17:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730998810;
+	bh=LxlQsyn16YGpTarQqk1LdGdxRMkwoMFrL36XAWtSuzQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qh23v4IK6diLbyoPZVVoeajvDEI3N5TNXcreMxWkyj7+VOSBaLFTZeGnIlWmGpLrD
+	 IwG/iN4uj3Bq2/KFE0j+1GWYLuQoivwBqbSIKsoGzSytFsmJm4fWklCMZiBrKjCMe+
+	 sh9IL5btYLTqPIenPELF/NeoboymXm2Hnwfu7udISwEwDaOWkEupCufJr8WHUm8m+z
+	 z4uBMGLe4/o6RCwXIgTEilQpgsFiBVriAP6kE3Q6stX+QcOHeXUS2UZg3gono0TFIQ
+	 9f8ZJ3H4VxD4UTUlCSSJsZNEXncOSpCIivbDK+Qxowq/FUa/uuJqPfIfgnUxdFj+GL
+	 8aw9tDwz5QxHw==
+Received: by pali.im (Postfix)
+	id 4757AB94; Thu,  7 Nov 2024 18:00:02 +0100 (CET)
+Date: Thu, 7 Nov 2024 18:00:02 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: mvebu: Use for_each_of_range() iterator for parsing
+ "ranges"
+Message-ID: <20241107170002.wz7wkqmtyqiiaswl@pali>
+References: <20241107153255.2740610-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 malwarescore=0 adultscore=0 spamscore=0 impostorscore=0
- clxscore=1015 suspectscore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411070129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107153255.2740610-1-robh@kernel.org>
+User-Agent: NeoMutt/20180716
 
-On 28.10.2024 22:47, Josh Poimboeuf wrote:
-...
-> diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-...
-> +static int find_fde(struct sframe_section *sec, unsigned long ip,
-> +		    struct sframe_fde *fde)
-> +{
-> +	struct sframe_fde __user *first, *last, *found = NULL;
-> +	u32 ip_off, func_off_low = 0, func_off_high = -1;
-> +
-> +	ip_off = ip - sec->sframe_addr;
-> +
-> +	first = (void __user *)sec->fdes_addr;
-> +	last = first + sec->fdes_nr;
+On Thursday 07 November 2024 09:32:55 Rob Herring (Arm) wrote:
+> The mvebu "ranges" is a bit unusual with its own encoding of addresses,
+> but it's still just normal "ranges" as far as parsing is concerned.
+> Convert mvebu_get_tgt_attr() to use the for_each_of_range() iterator
+> instead of open coding the parsing.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> Compile tested only.
 
-Could it be that this needs to be:
+I see no reason for such change, which was even non tested at all and
+does not fix any issue. There are more important issues in the driver,
+it was decided that bug fixes are not going to be included (yet).
 
-	last = first + sec->fdes_nr - 1;
-
-> +	while (first <= last) {
-> +		struct sframe_fde __user *mid;
-> +		u32 func_off;
-> +
-> +		mid = first + ((last - first) / 2);
-> +
-> +		if (get_user(func_off, (s32 __user *)mid))
-> +			return -EFAULT;
-> +
-> +		if (ip_off >= func_off) {
-> +			/* validate sort order */
-> +			if (func_off < func_off_low)
-> +				return -EINVAL;
-
-Otherwise I run into this when the IP is within the function whose FDE 
-is the last one in the .sframe section:
-
-find_fde: IP=0x000000000110fbcc: ERROR: func_off < func_off_low 
-(func_off=196608, func_off_low=4294224904)
-
-110fbcc dump_sframe+0x2ec (/opt/binutils-sframe2/bin/objdump)
-
-func idx [2275]: pc = 0x110f8e0, size = 3310 bytes <dump_sframe>
-STARTPC         CFA       FP        RA           INFO
-000000000110f8e0  sp+160    u         u            (1*1B)
-000000000110f8e6  sp+160    c-72      c-48         (3*1B)
-000000000110f8f6  sp+632    c-72      c-48         (3*1B)
-000000000110fa82  sp+160    u         u            (1*1B)
-000000000110fa88  sp+632    c-72      c-48         (3*1B)
-0000000001110486  sp+160    u         u            (1*1B)
-000000000111048c  sp+632    c-72      c-48         (3*1B)
-0000000001110574  sp+160    u         u            (1*1B)
-000000000111057a  sp+632    c-72      c-48         (3*1B)
-
-> +
-> +			func_off_low = func_off;
-> +
-> +			found = mid;
-> +			first = mid + 1;
-> +		} else {
-> +			/* validate sort order */
-> +			if (func_off > func_off_high)
-> +				return -EINVAL;
-> +
-> +			func_off_high = func_off;
-> +
-> +			last = mid - 1;
-> +		}
-> +	}
-> +
-> +	if (!found)
-> +		return -EINVAL;
-> +
-> +	if (copy_from_user(fde, found, sizeof(*fde)))
-> +		return -EFAULT;
-> +
-> +	/* check for gaps */
-> +	if (ip_off < fde->start_addr || ip_off >= fde->start_addr + fde->size)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-
-Thanks and regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303) and z/VSE Support
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des 
-Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der 
-Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
-
+> ---
+>  drivers/pci/controller/pci-mvebu.c | 26 +++++++++-----------------
+>  1 file changed, 9 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
+> index 29fe09c99e7d..d4e3f1e76f84 100644
+> --- a/drivers/pci/controller/pci-mvebu.c
+> +++ b/drivers/pci/controller/pci-mvebu.c
+> @@ -1179,37 +1179,29 @@ static int mvebu_get_tgt_attr(struct device_node *np, int devfn,
+>  			      unsigned int *tgt,
+>  			      unsigned int *attr)
+>  {
+> -	const int na = 3, ns = 2;
+> -	const __be32 *range;
+> -	int rlen, nranges, rangesz, pna, i;
+> +	struct of_range range;
+> +	struct of_range_parser parser;
+>  
+>  	*tgt = -1;
+>  	*attr = -1;
+>  
+> -	range = of_get_property(np, "ranges", &rlen);
+> -	if (!range)
+> +	if (of_pci_range_parser_init(&parser, np))
+>  		return -EINVAL;
+>  
+> -	pna = of_n_addr_cells(np);
+> -	rangesz = pna + na + ns;
+> -	nranges = rlen / sizeof(__be32) / rangesz;
+> -
+> -	for (i = 0; i < nranges; i++, range += rangesz) {
+> -		u32 flags = of_read_number(range, 1);
+> -		u32 slot = of_read_number(range + 1, 1);
+> -		u64 cpuaddr = of_read_number(range + na, pna);
+> +	for_each_of_range(&parser, &range) {
+>  		unsigned long rtype;
+> +		u32 slot = upper_32_bits(range.bus_addr);
+>  
+> -		if (DT_FLAGS_TO_TYPE(flags) == DT_TYPE_IO)
+> +		if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_IO)
+>  			rtype = IORESOURCE_IO;
+> -		else if (DT_FLAGS_TO_TYPE(flags) == DT_TYPE_MEM32)
+> +		else if (DT_FLAGS_TO_TYPE(range.flags) == DT_TYPE_MEM32)
+>  			rtype = IORESOURCE_MEM;
+>  		else
+>  			continue;
+>  
+>  		if (slot == PCI_SLOT(devfn) && type == rtype) {
+> -			*tgt = DT_CPUADDR_TO_TARGET(cpuaddr);
+> -			*attr = DT_CPUADDR_TO_ATTR(cpuaddr);
+> +			*tgt = DT_CPUADDR_TO_TARGET(range.cpu_addr);
+> +			*attr = DT_CPUADDR_TO_ATTR(range.cpu_addr);
+>  			return 0;
+>  		}
+>  	}
+> -- 
+> 2.45.2
+> 
 
