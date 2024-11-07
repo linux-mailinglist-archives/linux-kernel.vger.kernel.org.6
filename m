@@ -1,91 +1,187 @@
-Return-Path: <linux-kernel+bounces-400305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ED79C0BA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5094C9C0BAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D981C21F88
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81F5A1C232DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FAD21501C;
-	Thu,  7 Nov 2024 16:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A72217325;
+	Thu,  7 Nov 2024 16:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbvSHeD1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgq9DuN9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7BF212D3A;
-	Thu,  7 Nov 2024 16:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C832170BD;
+	Thu,  7 Nov 2024 16:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730996766; cv=none; b=t2apCdtZ6sig36MWgLikZKh0KFr+8ShqVFqMxNRiBlaJfX9GdKdFf7oA2XBm3PRm5XJO05mUUzzSGNPxj/RSQ/SE/jjxAjvLxYrZiYaSsAX+SNhxlYcWHALq2UkJZBo3bDeJzLr+BVrJ8f/VaTmIZM3zcaSy+R4nQGuwqc4KDLQ=
+	t=1730996830; cv=none; b=f+9Kxs+ilEXX4QvtaynQsB1mecl0VxRFh7WguluD6TbAkH2Nto3b9YLyQ9eQWTOzRzGY7XoGTugqQtrqwKUhKwU3VSu1l4BTNcnIAJGn2KsZEjeyW5xvr0+RfSSVg1UB9sMRAJSDewdVYyxLDYSD34Lcqm6j8PMxkNtKIhPq+gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730996766; c=relaxed/simple;
-	bh=ZGNeGv59giDSq2n3Qf1rhDUEiKsr68Gb0LrKfWT12ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BrgMAK075tUOtIee/PaAbTzSCTtbczgJKXze4lzR3bUapOcaKPEmrVUtQHNoSWB3junans+LUxqSRK+ZZ40RJKX+8/TN7u8dmQGEtUH5CUCY7pDLdZZKmCcvh9njp3dk6/GkHY8JQI40e6bGTqStcBxlZNSswFJvsZrjFGksY3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dbvSHeD1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB564C4CECC;
-	Thu,  7 Nov 2024 16:26:05 +0000 (UTC)
+	s=arc-20240116; t=1730996830; c=relaxed/simple;
+	bh=RaF/yzDkwC/xI3JHS3wDYezLNgto4gJR15z4QCLcIec=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=SZxyKhBoI2WFa147IqtftwwHumxbvE8NGplrGaDPb4AsLbR8DH1dlLY8HZlcP94cAzUVWwTKLYIBd1c1CnBkRPmkKV8Xp/Ukt2E/PDCe0Y2mGXizcUc9dU/njwkDu/hu34a55bvUlxkpCyBQWpTZIrFcDCwpRgiEH2s4051cAGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgq9DuN9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B3AFC4CECC;
+	Thu,  7 Nov 2024 16:27:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730996766;
-	bh=ZGNeGv59giDSq2n3Qf1rhDUEiKsr68Gb0LrKfWT12ro=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dbvSHeD1gD7wOtH851djZvFSDmArgs+/zApmZXN5YfF53TGAntdkEY91+Lbk7N2F3
-	 ye6y5WRBykqRpBg3m8IJ6vWNf5LowZ4lyQjksZ3r6jZ7R5YdNtD6ywxok9P4pMXph4
-	 qCE5J/M8ZpxIABSU2vwtr2CZ1OBMptAfOaKWRU56KsPyx6MRMJQvCfhcwbtDzTJJDN
-	 IvMniAtNec9+TuCbb8NznZb08zto6EK3BKO+2hQdZaPtGs83mnhm6VlZuy3rtHd1ho
-	 YzUd2AEBuHgTaZQlel2NE2jrSZg9xtByyt64fu9dGPjnDxo18LAdy28bjaIYS4d9if
-	 24Kxrsp7XWKqQ==
-Date: Thu, 7 Nov 2024 08:26:04 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>
-Cc: Romain Gantois <romain.gantois@bootlin.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Dan Murphy <dmurphy@ti.com>, Florian Fainelli
- <f.fainelli@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net v2] net: phy: dp83869: fix status reporting for
- 1000base-x autonegotiation
-Message-ID: <20241107082604.3cf95e9d@kernel.org>
-In-Reply-To: <20241104-dp83869-1000base-x-v2-1-f97e39a778bf@bootlin.com>
-References: <20241104-dp83869-1000base-x-v2-1-f97e39a778bf@bootlin.com>
+	s=k20201202; t=1730996829;
+	bh=RaF/yzDkwC/xI3JHS3wDYezLNgto4gJR15z4QCLcIec=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=sgq9DuN999fo+gF31O1Sog3B6QwMV6OvcPe7VPqi8sJ1TCzU/W1Ez/tliuLSn6HZv
+	 H6WJr617Z9ho3vOtVhPzMb0TyqS+gb2SI7mq/C0wytQj+BYrK8SHegywRApVWEjefm
+	 VrP+Uq41/kYqyiwmALEKXPYG2sF+9dXoP558MEULT3X9CJ2qlfOgYo5XQQ/akQ/Li+
+	 8PC//m2NPppcQqPE5AwaE9VZUm8GEStHJrNdsbBXQj3zX2/Uw70Eqzdl18ZXk0ykpu
+	 Nv3hNeVLx2kThS8Iy5jvLz2TwdYaK/p8look0JzKdaIO94mqldL4oshBd2UJ53q8QV
+	 LBGXXQk7Ujmww==
+Date: Thu, 7 Nov 2024 10:27:07 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-cxl@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+	linux-mtd@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] PCI/sysfs: Calculate bin_attribute size through
+ bin_size()
+Message-ID: <20241107162707.GA1618544@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241103-sysfs-const-bin_attr-v2-3-71110628844c@weissschuh.net>
 
-On Mon, 04 Nov 2024 09:52:32 +0100 Romain Gantois wrote:
-> The DP83869 PHY transceiver supports converting from RGMII to 1000base-x.
-> In this operation mode, autonegotiation can be performed, as described in
-> IEEE802.3.
+On Sun, Nov 03, 2024 at 05:03:32PM +0000, Thomas Weißschuh wrote:
+> Stop abusing the is_bin_visible() callback to calculate the attribute
+> size. Instead use the new, dedicated bin_size() one.
 > 
-> The DP83869 has a set of fiber-specific registers located at offset 0xc00.
-> When the transceiver is configured in RGMII-to-1000base-x mode, these
-> registers are mapped onto offset 0, which should, in theory, make reading
-> the autonegotiation status transparent.
-> 
-> However, the fiber registers at offset 0xc04 and 0xc05 do not follow the
-> bit layout of their standard counterparts. Thus, genphy_read_status()
-> doesn't properly read the capabilities advertised by the link partner,
-> resulting in incorrect link parameters.
-> 
-> Similarly, genphy_config_aneg() doesn't properly write advertised
-> capabilities.
-> 
-> Fix the 1000base-x autonegotiation procedure by replacing
-> genphy_read_status() and genphy_config_aneg() with driver-specific
-> functions which take into account the nonstandard bit layout of the DP83869
-> registers in 1000base-x mode.
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 
-Could we get an ack from PHY maintainers?
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Thanks for doing this!
+
+> ---
+>  drivers/pci/pci-sysfs.c | 28 ++++++++++++++++------------
+>  1 file changed, 16 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index 5d0f4db1cab78674c5e5906f321bf7a57b742983..040f01b2b999175e8d98b05851edc078bbabbe0d 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -818,21 +818,20 @@ static struct bin_attribute *pci_dev_config_attrs[] = {
+>  	NULL,
+>  };
+>  
+> -static umode_t pci_dev_config_attr_is_visible(struct kobject *kobj,
+> -					      struct bin_attribute *a, int n)
+> +static size_t pci_dev_config_attr_bin_size(struct kobject *kobj,
+> +					   const struct bin_attribute *a,
+> +					   int n)
+>  {
+>  	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
+>  
+> -	a->size = PCI_CFG_SPACE_SIZE;
+>  	if (pdev->cfg_size > PCI_CFG_SPACE_SIZE)
+> -		a->size = PCI_CFG_SPACE_EXP_SIZE;
+> -
+> -	return a->attr.mode;
+> +		return PCI_CFG_SPACE_EXP_SIZE;
+> +	return PCI_CFG_SPACE_SIZE;
+>  }
+>  
+>  static const struct attribute_group pci_dev_config_attr_group = {
+>  	.bin_attrs = pci_dev_config_attrs,
+> -	.is_bin_visible = pci_dev_config_attr_is_visible,
+> +	.bin_size = pci_dev_config_attr_bin_size,
+>  };
+>  
+>  /*
+> @@ -1330,21 +1329,26 @@ static umode_t pci_dev_rom_attr_is_visible(struct kobject *kobj,
+>  					   struct bin_attribute *a, int n)
+>  {
+>  	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
+> -	size_t rom_size;
+>  
+>  	/* If the device has a ROM, try to expose it in sysfs. */
+> -	rom_size = pci_resource_len(pdev, PCI_ROM_RESOURCE);
+> -	if (!rom_size)
+> +	if (!pci_resource_end(pdev, PCI_ROM_RESOURCE))
+>  		return 0;
+>  
+> -	a->size = rom_size;
+> -
+>  	return a->attr.mode;
+>  }
+>  
+> +static size_t pci_dev_rom_attr_bin_size(struct kobject *kobj,
+> +					const struct bin_attribute *a, int n)
+> +{
+> +	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
+> +
+> +	return pci_resource_len(pdev, PCI_ROM_RESOURCE);
+> +}
+> +
+>  static const struct attribute_group pci_dev_rom_attr_group = {
+>  	.bin_attrs = pci_dev_rom_attrs,
+>  	.is_bin_visible = pci_dev_rom_attr_is_visible,
+> +	.bin_size = pci_dev_rom_attr_bin_size,
+>  };
+>  
+>  static ssize_t reset_store(struct device *dev, struct device_attribute *attr,
+> 
+> -- 
+> 2.47.0
+> 
 
