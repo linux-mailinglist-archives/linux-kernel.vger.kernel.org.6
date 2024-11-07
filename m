@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-400407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6326C9C0D0B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:37:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894029C0D08
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C245E2856CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:37:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BACD61C23B8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AFE217330;
-	Thu,  7 Nov 2024 17:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25072170A0;
+	Thu,  7 Nov 2024 17:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KhmX1nKt"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hn7N4yit"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F4918FDAF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD8E21620A;
 	Thu,  7 Nov 2024 17:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731001014; cv=none; b=QAqQZre1lgs51y0l4PN9Gm8f2nU+2E7JhH8rGZSiyrfCuulzA35GaTsOmu1I8XcYfGCtHL/6hTD+7kdjJZhEQX1eRaw67gcpkKewnfXaiYsDc7q38OE1JHRpECQg3AOhm3qDaBv3hg4/lRwouXjZhQqe7u+cFSyKzyzPle8xOfg=
+	t=1731001013; cv=none; b=h0rvCWq/S459xTJM95VfuouF23TyVxMGIVQZqJLAoR4a30VJFgULWtVVJ+oKRT0NZK1IT0z4rKUvi6bIns5siKsjLt2zgMrJqBNWHGYdY98Qey+AyPtsp4VAGro/lRu6kFe4ovXPqqQo7nweObRi7e+uC0xSHnAF7BEEprHeLzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731001014; c=relaxed/simple;
-	bh=cVWXsWREldHGvAnkQzjYTNrGacOlXfarZYKSjY8dOdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKd3Mfn6XhF74BX5kW6/ZSPYQc5p486v9I1dC48aM6hVPbhG1mzUDlyP5LQ1GzKZigGV7CBMcL5CDTc9qzHzI8GlFYBq3GgQdgA+X9beRM6dVlDAdFNLfpl7/WRhsChwX3tYN/upigHZgSp5xRXJ5YNb2c4qGhrQqTf35LL3zPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KhmX1nKt; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=fMOEMQkzH0c9rkq40/WN60OYh9eTdzYKpSbLvnHZRCo=; b=KhmX1nKtkrOGhCb068/ZQakPU/
-	Hrbnlm43lRLeEDtLuwnkIrjjQuTJkMMLCPM2ffsaw25s2js+zdlNrfo/qpiW83NlV6clpIbLwjdC3
-	rIb0yGXi4d44ev7+tvuYeIIODL778bDwVr3/mLBp96PuYKE+qzAhsdrhSYSIEvCxqhy4BuekkUe1w
-	7AOY/Y9s3nD9rpsSGKHrNngO45w6DGchmnkZMcE9YsgMO180fydxOCZoQviLBJLmMhetHxgHQQiL3
-	vJU7ahw4/5vC8MBQYww+O7hIToG2P+NlcknIWDHFK5i6LV5Pca4CXJ3J2evYck3gY3DaGfVjMH2Lz
-	/FmyjvNQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48932)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1t96Qr-0003YX-0w;
-	Thu, 07 Nov 2024 17:36:33 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1t96Qo-0001SH-14;
-	Thu, 07 Nov 2024 17:36:30 +0000
-Date: Thu, 7 Nov 2024 17:36:30 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Dan Murphy <dmurphy@ti.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH net v2] net: phy: dp83869: fix status reporting for
- 1000base-x autonegotiation
-Message-ID: <Zyz6nolj9-9bjyx8@shell.armlinux.org.uk>
-References: <20241104-dp83869-1000base-x-v2-1-f97e39a778bf@bootlin.com>
+	s=arc-20240116; t=1731001013; c=relaxed/simple;
+	bh=Ni91XCvSWqgPC8yJ83O+0MgR6E7Tj+zdm+wyD2OMSEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f5qfcbwzpYISTKWCHv0Yv4LEyznr+NzuO2JNo3jTD8L+g2FqXfS36fT6DHqIpvmQKN3tBs1PpBAPki8MHJqjlhPA7coTmYJB0QhySQcUzJRUBqqCV2Lgoom8lvZ5KnMt7cYcufSlquao4J7S4GjWhfiaufSwl55BMh8P/o7a7x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hn7N4yit; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7HLZCj020647;
+	Thu, 7 Nov 2024 17:36:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	s0rdTfLxHXh4Azbw6tlMVAkBP0BJZluXJ5wiWe+4++Y=; b=hn7N4yitYZQ51PbR
+	N0x+y+WALX/gKwJNKopGFc9IyrugOQQRj82//r3WfC1jk/GGo47Ui28vV7GvHgSz
+	GwwmBsLqVP0tvLacXgxQFfFsz+sVDG89XOfL+a6HDHtKLPFGln/YVv1cURZgR56P
+	GpHjiJ4O4o2lf5n/sO4cBxM8j5u36+JbzUQ96BW8fn0lLXyWiqOdtnwPRAA4m2vw
+	GqDZSLKtM5ZsbfHAFcM3wMXMElTEPyF74jd2Zh/pKfYCGTl7Jtcw7/on7xqnW3FA
+	Lf/fT3yFqvz459nBO+MTw+ecp4bFycGGr60zVRzKyFnmXUhd+wuUe16GbMFkXkiU
+	p9eB1g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ry700mvy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 17:36:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A7HaWud008817
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Nov 2024 17:36:32 GMT
+Received: from [10.48.242.241] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
+ 09:36:31 -0800
+Message-ID: <fa1c6387-e6cf-4508-850b-fc5f8ef126ce@quicinc.com>
+Date: Thu, 7 Nov 2024 09:36:30 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104-dp83869-1000base-x-v2-1-f97e39a778bf@bootlin.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 1/5] dt-bindings: net: wireless: Describe ath12k
+ PCI module with WSI
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241105180444.770951-1-quic_rajkbhag@quicinc.com>
+ <20241105180444.770951-2-quic_rajkbhag@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20241105180444.770951-2-quic_rajkbhag@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: C9Utvv_E6VIwf5hGWeuU7Q3HFnbfRwOb
+X-Proofpoint-ORIG-GUID: C9Utvv_E6VIwf5hGWeuU7Q3HFnbfRwOb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=850
+ impostorscore=0 clxscore=1015 suspectscore=0 malwarescore=0 mlxscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411070138
 
-On Mon, Nov 04, 2024 at 09:52:32AM +0100, Romain Gantois wrote:
-> The DP83869 PHY transceiver supports converting from RGMII to 1000base-x.
-> In this operation mode, autonegotiation can be performed, as described in
-> IEEE802.3.
-> 
-> The DP83869 has a set of fiber-specific registers located at offset 0xc00.
-> When the transceiver is configured in RGMII-to-1000base-x mode, these
-> registers are mapped onto offset 0, which should, in theory, make reading
-> the autonegotiation status transparent.
-> 
-> However, the fiber registers at offset 0xc04 and 0xc05 do not follow the
-> bit layout of their standard counterparts. Thus, genphy_read_status()
-> doesn't properly read the capabilities advertised by the link partner,
-> resulting in incorrect link parameters.
+On 11/5/2024 10:04 AM, Raj Kumar Bhagat wrote:
+...
+> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k-wsi.yaml
+> @@ -0,0 +1,205 @@
+...
+> +maintainers:
+> +  - Jeff Johnson <quic_jjohnson@quicinc.com>
 
-This description is wrong. The format of registers 4 and 5 depends on
-the media.
+please replace with jjohnson@kernel.org when you post v4
 
-In twisted-pair ethernet, then:
-
-ADVERTISE_PAUSE_ASYM / LPA_PAUSE_ASYM
-ADVERTISE_PAUSE_CAP / LPA_PAUSE_CAP
-ADVERTISE_100FULL / LPA_100FULL
-ADVERTISE_100HALF / LPA_100HALF
-ADVERTISE_10FULL / LPA_10FULL
-ADVERTISE_10HALF / LPA_10HALF
-ADVERTISE_CSMA
-
-apply. In 1000base-X:
-
-ADVERTISE_1000XPSE_ASYM / LPA_1000XPAUSE_ASYM
-ADVERTISE_1000XPAUSE / LPA_1000XPAUSE
-ADVERTISE_1000XHALF / LPA_1000XHALF
-ADVERTISE_1000XFULL / LPA_1000XFULL
-
-apply - these being bits 8, 7, 6, 5:
-
-> +#define DP83869_LPA_1000FULL   BIT(5)
-> +#define DP83869_LPA_PAUSE_CAP  BIT(7)
-> +#define DP83869_LPA_PAUSE_ASYM BIT(8)
-> +#define DP83869_LPA_LPACK      BIT(14)
-
-so these are just reimplementing definitions we already have. Please
-use the existing definitions. Even better, use mii_lpa_mod_linkmode_x()
-and linkmode_adv_to_mii_adv_x() which we already have in your code.
-
-Same likely goes for DP83869_BP_*
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
