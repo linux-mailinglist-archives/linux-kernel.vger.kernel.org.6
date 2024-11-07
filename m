@@ -1,78 +1,127 @@
-Return-Path: <linux-kernel+bounces-400784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1D79C1263
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:28:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D1C9C127D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:32:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6DD285C8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:28:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCD0FB22408
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470E5219C8C;
-	Thu,  7 Nov 2024 23:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DF9215F58;
+	Thu,  7 Nov 2024 23:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="MOSEdpym"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QKm8NYfV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F82B218923;
-	Thu,  7 Nov 2024 23:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6808E1E25F5
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 23:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731022091; cv=none; b=qt0Sud9LQ9f1Niwcq7LPbJfH1lre5vjN5qeo2l29xRV/xAoruidienXqIdSAykV0K06PMbospIHpax+cEG4Jg9TCVOlXBuxX9o75/kKzchXWAkJ1NSiAlGWK5zW4TWihRisPXS/J8dktJKCnOiWeld6X6xGYiQSv/BM7l2hzknk=
+	t=1731022311; cv=none; b=luGNsZHx3hckD3CjiBTHrNXjiVczzng3XwIHOUWJDVhQ1eS/W3uL92ufpDw0igyE/eEPQdRlw5IFQf6OwkVdO9CT38dBHoH+gG+bkG/i7HzmMlhnnOt1wRrlb4sK8wa0kSRG5fvA1eWKD4htzqSYhT35hF/Obd/qZtjxvBeOqZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731022091; c=relaxed/simple;
-	bh=a5ikBA8m6NC2D33iJzAqhIz0i20CmVHm+nEPdvTry1Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UgeDye/zHthMlztQYQkPsycbJyGW15BLf9K7LNqkj4g5u9mSrinJ4Ej4JDAvCFTsjeO5aZDBdQ+GlZwUtbdqpMhcIlC/OvDBS9aqYNTdZogBdBY8/DSn1PwHx++QlwdNWZItdl1YrVZq6uks4A1BIR4jpgHuf9NUw2+bfXgK+Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=MOSEdpym; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1731022087;
-	bh=ZJ40w8yoexDu5E/YyKd7BvJVrxVO/pnmp4Ow30xeJfs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=MOSEdpym3cSejj1E/WLUhFEjkDRfBaivraKLu6SIkw2ly59Jk9vd2lcwz5WfiesyI
-	 kgXCVOJWS3wuABPftJ5IP6dzHu++1hOo0jozIOHjCOXRyEhOH9nCg+Z+020e3Oz6iI
-	 rvxAQiwdowwjbzpc2mQZBIFBtDRoQHl+YQcW7pOwfoPLPickUcc/Jjh1fSo6a5PAKq
-	 SwZ25Si9mle0xl2cXhOFgPEyvEvzGA0e0WR9nUXrCsIKcP6B9G2ueS+8oJB4F7IPGU
-	 1Vi/csvgnVJ9olAruS/HdZPSNK39RBxQ8+l1Oq+HU6Xt36Roi1JJh1H7d6Bix45MEj
-	 MXYhWH/Q9OXHA==
-Received: from [127.0.1.1] (ppp118-210-167-185.adl-adc-lon-bras34.tpg.internode.on.net [118.210.167.185])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7CAD16B9FA;
-	Fri,  8 Nov 2024 07:28:05 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: linux-aspeed@lists.ozlabs.org, Eddie James <eajames@linux.ibm.com>
-Cc: joel@jms.id.au, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241107151431.1045102-1-eajames@linux.ibm.com>
-References: <20241107151431.1045102-1-eajames@linux.ibm.com>
-Subject: Re: [PATCH] arm: dts: aspeed: Blueridge and Fuji: Fix LED node
- names
-Message-Id: <173102208534.28952.3883977704243650358.b4-ty@codeconstruct.com.au>
-Date: Fri, 08 Nov 2024 09:58:05 +1030
+	s=arc-20240116; t=1731022311; c=relaxed/simple;
+	bh=YucaGSAuRAKtRsTzpZqjt2RuENf7r3Tx5PTUKMDWF4Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Px/ezm7kELInd4fIy6p5Ay+z/R3Fb6tmE9ioeASKQp53Q4s4Ivdp4kkuWJx45poEYTpdaewi84QAn0gg5t7HBui+Q027rVTOeuDKEosbe27GMEUlfeyb/FdDPOoiRAbtDgRRKXXAfyCSMa00fjc6GF2ZNZzkh17coYs4m8Z1GaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QKm8NYfV; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731022309; x=1762558309;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YucaGSAuRAKtRsTzpZqjt2RuENf7r3Tx5PTUKMDWF4Y=;
+  b=QKm8NYfVqVm6axXKoDOqB/3vWW8UWSzmRwbRJKL41hlAfQEOyWa1THYa
+   4lVAuyeUtV5GkYFPv+h5cvlujMvfiuAlSGrPSfo8dPR/iKtHfETW33pkR
+   TifUg3OU5e/rxJHbcqCkob2ACcRLMgWGvSw/LDz4+M+q28JmK+AreQkvk
+   5MEnWiZPDs/ugLs0zYOIi1oaqqli2VRfIMiqF/PYmaRFtnL1Ussllmls9
+   nXncB8bzOnscSeZprrhiWs0n/46rdakdy/JvzygMJPxGuyokpg51gUwlN
+   fPOZTwGMPIE88CJlq+UU+zeMsqBUhjVjR+LY9tz5yxOJ+ZcCzPqZx17Db
+   Q==;
+X-CSE-ConnectionGUID: Z3FDr7b8STyr76Cdhnl/rA==
+X-CSE-MsgGUID: aYxW5gxdRIqfXKngBI9AbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="56292176"
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="56292176"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 15:31:46 -0800
+X-CSE-ConnectionGUID: Z/Pq55q/SYes4uFhvTKNUA==
+X-CSE-MsgGUID: 8Bn/tjQ5TXmYKwvFKsruOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="84805893"
+Received: from sohilmeh.sc.intel.com ([172.25.103.65])
+  by fmviesa006.fm.intel.com with ESMTP; 07 Nov 2024 15:31:46 -0800
+From: Sohil Mehta <sohil.mehta@intel.com>
+To: x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/cpufeatures: Free up unused feature bits
+Date: Thu,  7 Nov 2024 23:30:00 +0000
+Message-Id: <20241107233000.2742619-1-sohil.mehta@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
 
-On Thu, 07 Nov 2024 09:14:31 -0600, Eddie James wrote:
-> The addressing on PCA LED nodes should be in hexadecimal, not
-> decimal.
-> 
-> 
+Linux defined feature bits X86_FEATURE_P3 and X86_FEATURE_P4 are not
+used anywhere, neither are they visible to userspace.
+commit f31d731e4467 ("x86: use X86_FEATURE_NOPL in alternatives") got
+rid of the last usage. Remove the related mappings and code.
 
-Thanks, I've applied this to be picked up through the BMC tree.
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+---
+ arch/x86/include/asm/cpufeatures.h | 4 ++--
+ arch/x86/kernel/cpu/intel.c        | 5 -----
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
---
-Andrew Jeffery <andrew@codeconstruct.com.au>
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 913fd3a7bac6..f5c4ea3fd364 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -83,8 +83,8 @@
+ #define X86_FEATURE_CENTAUR_MCR		( 3*32+ 3) /* "centaur_mcr" Centaur MCRs (= MTRRs) */
+ #define X86_FEATURE_K8			( 3*32+ 4) /* Opteron, Athlon64 */
+ #define X86_FEATURE_ZEN5		( 3*32+ 5) /* CPU based on Zen5 microarchitecture */
+-#define X86_FEATURE_P3			( 3*32+ 6) /* P3 */
+-#define X86_FEATURE_P4			( 3*32+ 7) /* P4 */
++/* Free                                 ( 3*32+ 6) */
++/* Free                                 ( 3*32+ 7) */
+ #define X86_FEATURE_CONSTANT_TSC	( 3*32+ 8) /* "constant_tsc" TSC ticks at a constant rate */
+ #define X86_FEATURE_UP			( 3*32+ 9) /* "up" SMP kernel running on UP */
+ #define X86_FEATURE_ART			( 3*32+10) /* "art" Always running timer (ART) */
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index e7656cbef68d..1c892ebaa68c 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -628,11 +628,6 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		if (p)
+ 			strcpy(c->x86_model_id, p);
+ 	}
+-
+-	if (c->x86 == 15)
+-		set_cpu_cap(c, X86_FEATURE_P4);
+-	if (c->x86 == 6)
+-		set_cpu_cap(c, X86_FEATURE_P3);
+ #endif
+ 
+ 	/* Work around errata */
+-- 
+2.34.1
 
 
