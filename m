@@ -1,135 +1,195 @@
-Return-Path: <linux-kernel+bounces-400013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6DF9C07BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:40:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDE09C07C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 14:42:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCE961C237BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629351F2223E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFDB212D1B;
-	Thu,  7 Nov 2024 13:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C742101AB;
+	Thu,  7 Nov 2024 13:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juXJ4pPt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qoE6BrM3"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2077.outbound.protection.outlook.com [40.107.94.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D3E2076A5;
-	Thu,  7 Nov 2024 13:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730986738; cv=none; b=TzGeSMnq/3oXfJDWl5LCkrS0QD+0lUanVPfRn82mdqiu+5dJ0N/iQ1/xqdqXV+hDMPRalWICHQOgDQeGr+ZPJvLy32y9se3a8tUnyAIzTXUEPQws5QbfUpFmOTocbfhH8fa2SSRSiJwyHf6YDPDW7l1bctywdEPNz8yCCBZCV5c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730986738; c=relaxed/simple;
-	bh=vHDvps/nhQ8488k0taybkc8hL6eOd+QGxgTaKd9As+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3w5Bc0M6u7WG4NSdD153G7pTwfok4qc2Wy0sLDngWyelMR/NxiCiGrdsCNaFj2gFvN9OlEAg93fxtT2f5LV8ZnTYN7eQbqtNPfXukhIk0mTVKZuQxY5S8YzYHcSOH+zhv9a/t83TlntW1y2mkQvL+ngIlOVFEwhwdozuwo3kTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juXJ4pPt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47EFDC4CECC;
-	Thu,  7 Nov 2024 13:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730986738;
-	bh=vHDvps/nhQ8488k0taybkc8hL6eOd+QGxgTaKd9As+M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=juXJ4pPt2PnZFm5le1ouU2RhyRQP7aToB7moKQNrxCqsSNdgzB5pCSh85zyQijc+u
-	 m3dbDJY5g5D6JLp+TOXf2yfMKCl964FFlAXl4u2cUVaE7m7EhcYnxn81GWvditUtvn
-	 2GLSgAH2Shc5AM/fX6n4CSUUpethrUeQesF3ve3Y3hn3a0OnqCtmfNMRj3PNyM19nt
-	 a0f6M69PV7grt0l7hmVxqh6NPzs9Y3Sm/O1Ln75+Rw3A70uSTtTOx4wtLIuKD47kq0
-	 rprl1oT0Fd7cXbE9BnxazG04YwTwuMAxOqZnznfXiPpwy8d1bi+DdAWhAJtfKUXjnb
-	 /xzOuTFcKP1hA==
-Date: Thu, 7 Nov 2024 14:38:49 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Theodore Ts'o <tytso@mit.edu>, "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
-	John Garry <john.g.garry@oracle.com>, Catherine Hoang <catherine.hoang@oracle.com>, 
-	linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org, Dave Chinner <david@fromorbit.com>, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
-Message-ID: <g6jwjmlvs7oqnotb4esj52hff7bt5vos4csdhounkgxtw7x5hz@dikdatdyzfcv>
-References: <20241105004341.GO21836@frogsfrogsfrogs>
- <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
- <72515c41-4313-4287-97cc-040ec143b3c5@kernel.dk>
- <20241105150812.GA227621@mit.edu>
- <5557bb8e-0ab8-4346-907e-a6cfea1dabf8@kernel.dk>
- <20241105154044.GD2578692@frogsfrogsfrogs>
- <00618fda-985d-4d6b-ada1-2d93a5380492@kernel.dk>
- <20241106-hupen-phosphor-f4e126535131@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA961A0700;
+	Thu,  7 Nov 2024 13:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730986934; cv=fail; b=YSLPiOmUFhgPE3a4HsBx7BXkjBegNs485q+6WQsH1nDjTo2SZnVUIDiMlPzigTNdkQDEIMOHSTROf0uoTnMy03KljI26kykTQw8Et78uO8OblRsvBBWmfvP5lmMruuyd7zsCnzTgl1zdnghKWejJBv5gc4uZ1SITemXTY7LBnzY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730986934; c=relaxed/simple;
+	bh=tp9WVShPB11dpIuRkhZfdZ01J71CqP2Tmd7i+Iep9tA=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=u8eGPqy65d+YgXjUFdaa45+jHkq5Am/GttQudbMPezTZed9WoP6ZJX/lSz/j8HyzE0MUyCNc/X9569qDuGxv0yLe1iWPHQGIy7bFq4BIcc4q8z5MNvENS85ZjvgYaQflNCXgZSNYw5v+935ioLzLCLspGKEJBJQgG7ZPs6+1jOg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qoE6BrM3; arc=fail smtp.client-ip=40.107.94.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tv8X9jsptWx9KEtDIrOGzwRWaRO1XyjgIyw2vES1GGso/JeKk+wTsk4nijvsHvtyvnlkG4UCWy+jvw+4FkpPv3CAjmpZpMeH/01EWBCt185e5CtYsSECYhtJ70iZJuPsq+8yrKGGTct53czphnLVq5jHtrgFYUg/0OSchTCXXCKG1Mi6Yjy0kNJS5qMZugi6eWrUO0l7LVsVNHlGkMA09HkBlpla/wz40WiY/+S7kTccRBgqy6HKfemfI1jHGJsNgLJdK3b8wawv/PRCJk4V+W2V5mRF8xEkMTM5+0X2XEujwEMMgBkclSo40Kn4sTiUYp3rUs3mOuYW8xkZhjG9Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B3zuJJXlBxHV9Q3Kxkdkhy/oLJOE0TpXw81Zx1hcA+E=;
+ b=yiT6xbOKSAGFaKyufSPUGkCEDcC9jpXHGNtDZu9sTDeqHVWAXwJYn7jdvYAYkiuuoJackLd0CMp8gzCtWCkZ+3g7VEIfw4NVV5+2Jz6uVn00umjvo2XehR57FV+VArNW27CtXByFUNjb9D7wE6GJRL2VJWNz5iKPrBlJWeocjbFCzv821j43jq1oiSCN9hSrCaV2NgraaJkUE0mkno1Z6G1I721eC/tjU56WiH4HG7vpkwTkaJayUXGY1KEB/15q1T9pX9unbHRDhh7sVOyyZHHYFJtiXuCxBGfDPyr8xeFGJO27yaRVyvthN9LEFlgDSItwMJPfhE2ZyCd09McTmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B3zuJJXlBxHV9Q3Kxkdkhy/oLJOE0TpXw81Zx1hcA+E=;
+ b=qoE6BrM3VObxMkRGmAGNLN771PKb2UKrLaVkiZ/Sn64ilvD+6v9JqqXghS0f0tIb/qTeqtVK/h7s/iUAz174MenMotrwEbkr1BLZCNZvmED0klOeWBF/SYMx7+PahnUZDsDGqpszjyMcRA5RGK8molm6gBtvUb03HZ37xsWOu25NXDWiNd6fXja3tYE47i2ZaoaRTOpBjcP2+cE+1jD8RQRjJV2LxTklvMN0IXL/yT+uSkLBrSuKO7ffEXSYQbJuF+5y5jykiTdQCqu1Ez3BAe99YrHZB1qe4lEu1Ya9XnAggc/fykPy+TbnP+HVs7p7NJSn45VdG/mgTpMCLCn5ZA==
+Received: from SJ0PR03CA0384.namprd03.prod.outlook.com (2603:10b6:a03:3a1::29)
+ by CH2PR12MB4070.namprd12.prod.outlook.com (2603:10b6:610:ae::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Thu, 7 Nov
+ 2024 13:42:09 +0000
+Received: from SJ5PEPF000001CC.namprd05.prod.outlook.com
+ (2603:10b6:a03:3a1:cafe::78) by SJ0PR03CA0384.outlook.office365.com
+ (2603:10b6:a03:3a1::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19 via Frontend
+ Transport; Thu, 7 Nov 2024 13:42:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001CC.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8137.17 via Frontend Transport; Thu, 7 Nov 2024 13:42:09 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 7 Nov 2024
+ 05:41:57 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 7 Nov 2024
+ 05:41:57 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 7 Nov 2024 05:41:56 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hagar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 000/349] 4.19.323-rc2 review
+In-Reply-To: <20241107063342.964868073@linuxfoundation.org>
+References: <20241107063342.964868073@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106-hupen-phosphor-f4e126535131@brauner>
+Message-ID: <4f582cfd-b2c9-4947-97ed-e725d48cf630@rnnvmail201.nvidia.com>
+Date: Thu, 7 Nov 2024 05:41:56 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CC:EE_|CH2PR12MB4070:EE_
+X-MS-Office365-Filtering-Correlation-Id: a9ecf29c-aab9-48ad-3ed9-08dcff31fa12
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VTFYR1R1RHhhRFVmYnkxYk44Nzl0aERIdUNCSXE4bm5UdVF4OHVQbjNIY3hN?=
+ =?utf-8?B?end2TnlBaEJVbDN0TTFQcVNMMmpOc21wcGpQc0dwU3UwY3JKSEFvUllIdWJt?=
+ =?utf-8?B?b2tqMWlCSTVGK0xSY3M3dzRpZ3Rlanh5MVpCUDM1NGoveXNGOXAvMjlwQ3JW?=
+ =?utf-8?B?a21BVWE5RDlvckNVc0tqVEl5ZDBKTTl5SWNTZHRRbXY2YytVVGVpaUJ3VGZq?=
+ =?utf-8?B?clVKQzhyNkVIZmJzZFVvRmVFNTBmZDlYSzk0NmVGSmRUYW1PSEFTVWpHbERK?=
+ =?utf-8?B?WTgyTitnZHozTHZJenJNUVkvd0o2MHdwSmtQWGcxZUV5ajdTODUzbi9uKzJq?=
+ =?utf-8?B?T3FsZWFqdlh4U1VyQ0h5YVIxak5KZlB6NDhINjNFNjZBcEFYOXNOejRuTzlR?=
+ =?utf-8?B?UjdkbDR0VFE5WW1HcjVrVlhwRDdTZFh4RU04RE4ycW1TMEJxOXEwd21DTmxv?=
+ =?utf-8?B?d3EzdHBzNEhORElnQm50MnluOGt2UStXYXpuRWtVQUowWmx0MTBUeVhmWkEx?=
+ =?utf-8?B?WWFoUGxDbzdKL29KOE5HN2xYNEEzL2NoclV6bGNwekdqMVgvam1QUFFCbThC?=
+ =?utf-8?B?aDV6cnRWSVJxZTIydlppM2RWd2VKQ1hhaHBoZVFiNitHRzZVZGR5TVUwZmtT?=
+ =?utf-8?B?Y0JaZlVoL1h4VHYxYzJMVzlsSVN6Qys1ZXdkT0llV3A3RnRZSmlEem9BQ3Bv?=
+ =?utf-8?B?M2k0L1hyOHZ5a25xdXlDRkJURVBuNmdzaFpBK0lxTForTTY3aUk5S21xYUNz?=
+ =?utf-8?B?Yi93NFZFaGF1WmowbVA4bHNiWlErbFAveFhQSitpd1B3SWVJV1Bobk5XSDdr?=
+ =?utf-8?B?MWpMK0w1dGFBaStwVEdtRmEvWldkQ3lWOXJUYmRpNGh4SVZiT3NPK2FJcTEy?=
+ =?utf-8?B?MFArTDhjQnJ4V2RJaTkyOW5YbFJla0FxTDlxRFozVXIyd2pJcXRpNFZFWXZX?=
+ =?utf-8?B?MmJCTHVld2wxejRIanEraHVBV2EwOWRpbHNnWG9KZkZCbm9qV0xvelpFWVhn?=
+ =?utf-8?B?SkxZaGZsaWJmU3psK21PeExvRHdFZDJjVXhDWFkzSXk4Zms0SGJhU25GM2F2?=
+ =?utf-8?B?NVpJc0lEdXRPcW1uR3JmYk9ydTVaNG1MWXNQaVJ4amw1MWxCaHptdjZNajVE?=
+ =?utf-8?B?ekM4cmZ3RnJJM0UxYy9ETDRrcTZPTDh3eE8ybDg3MzBNTGZHSlpDNWl1NEZa?=
+ =?utf-8?B?d1JkYzllc1huZFFxVy9Pb2pxcFFjd3V4T1YrRFRvNDFtalN1WS8wdmRHOTM0?=
+ =?utf-8?B?TGdCYk5sMDYrUTIwYk96SXFOa29ObnpER1R2c0ovdVA1WklwWkxGUllIdVc4?=
+ =?utf-8?B?TXZNSy8zYWMwakcvTEJoOGdUdDN0ekpxZllWaGY4eFVTUmcxM3hDYXRmNS9N?=
+ =?utf-8?B?cmVJZmRrWVR6aWVWcHh2dGpYempEYTVNVVdLSi9sKytTWklYVDdHN0pzbEdN?=
+ =?utf-8?B?RnpRTEhXTTZWK2Q4bXlzMlZpWVZjOFFkU3pXZkphdkFFVmREaGE0TkJ0N3R1?=
+ =?utf-8?B?NVBKS0I5KzdkNkxEejVsZkJYeXU0MUZibThndlhMblBYUzhaVHBENGQvRWt5?=
+ =?utf-8?B?WEcrcnFNZmI5WktockRnMUpxYmR4aXY1eHRnMnhyVlZtMktpeDd2cTBXc21u?=
+ =?utf-8?B?UWpjRGJDVUVuVzhIUzVoSXZlT29WN1NqemIxL2tIdkh4UzRreVh6ZXVhWWNI?=
+ =?utf-8?B?V080OGV6ZlY2UzlGSjJlZS9EQ3ZQTjlFOTVUbUdhMk1rUHlyRENkVUZMU1VG?=
+ =?utf-8?B?NGJBL2tCbHc1elJScXE2N2M4ZDFUelZZNnVxamU4cCt2bEJRaDhOTkRQWldm?=
+ =?utf-8?B?bXF3V1JOTzNDUjNNcDArNnZGenBDOHhTM1JDU2pIOURkaFcraDJtaUhwd1JH?=
+ =?utf-8?B?TDVqLzY5NVNST1Z2VW0rc0N3eUFGUmMyZTNKbmEvWTM0aHc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 13:42:09.3435
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9ecf29c-aab9-48ad-3ed9-08dcff31fa12
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4070
 
-On Wed, Nov 06, 2024 at 11:40:00AM +0100, Christian Brauner wrote:
-> On Tue, Nov 05, 2024 at 08:54:40AM -0700, Jens Axboe wrote:
-> > On 11/5/24 8:40 AM, Darrick J. Wong wrote:
-> > > On Tue, Nov 05, 2024 at 08:11:52AM -0700, Jens Axboe wrote:
-> > >> On 11/5/24 8:08 AM, Theodore Ts'o wrote:
-> > >>> On Tue, Nov 05, 2024 at 05:52:05AM -0700, Jens Axboe wrote:
-> > >>>>
-> > >>>> Why is this so difficult to grasp? It's a pretty common method for
-> > >>>> cross subsystem work - it avoids introducing conflicts when later
-> > >>>> work goes into each subsystem, and freedom of either side to send a
-> > >>>> PR before the other.
-> > >>>>
-> > >>>> So please don't start committing the patches again, it'll just cause
-> > >>>> duplicate (and empty) commits in Linus's tree.
-> > >>>
-> > >>> Jens, what's going on is that in order to test untorn (aka "atomic"
-> > >>> although that's a bit of a misnomer) writes, changes are needed in the
-> > >>> block, vfs, and ext4 or xfs git trees.  So we are aware that you had
-> > >>> taken the block-related patches into the block tree.  What Darrick has
-> > >>> done is to apply the the vfs patches on top of the block commits, and
-> > >>> then applied the ext4 and xfs patches on top of that.
-> > >>
-> > >> And what I'm saying is that is _wrong_. Darrick should be pulling the
-> > >> branch that you cut from my email:
-> > >>
-> > >> for-6.13/block-atomic
-> > >>
-> > >> rather than re-applying patches. At least if the intent is to send that
-> > >> branch to Linus. But even if it's just for testing, pretty silly to have
-> > >> branches with duplicate commits out there when the originally applied
-> > >> patches can just be pulled in.
-> > > 
-> > > I *did* start my branch at the end of your block-atomic branch.
-> > > 
-> > > Notice how the commits I added yesterday have a parent commitid of
-> > > 1eadb157947163ca72ba8963b915fdc099ce6cca, which is the head of your
-> > > for-6.13/block-atomic branch?
-> > 
-> > Ah that's my bad, I didn't see a merge commit, so assumed it was just
-> > applied on top. Checking now, yeah it does look like it's done right!
-> > Would've been nicer on top of current -rc and with a proper merge
-> > commit, but that's really more of a style preference. Though -rc1 is
-> > pretty early...
-> > 
-> > > But, it's my fault for not explicitly stating that I did that.  One of
-> > > the lessons I apparently keep needing to learn is that senior developers
-> > > here don't actually pull and examine the branches I link to in my emails
-> > > before hitting Reply All to scold.  You obviously didn't.
-> > 
-> > I did click the link, in my defense it was on the phone this morning.
-> > And this wasn't meant as a scolding, nor do I think my wording really
-> > implies any scolding. My frustration was that I had explained this
-> > previously, and this seemed like another time to do the exact same. So
-> > my apologies if it came off like that, was not the intent.
+On Thu, 07 Nov 2024 07:46:55 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.323 release.
+> There are 349 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Fwiw, I pulled the branch that Darrick provided into vfs.untorn.writes
-> and it all looks sane to me.
+> Responses should be made by Sat, 09 Nov 2024 06:33:12 +0000.
+> Anything received after that time might be too late.
 > 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.323-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Sounds good, will you submit a pull-request from it or shall I still submit the
-remaining ones to Linus?
+All tests passing for Tegra ...
 
-Carlos
+Test results for stable-v4.19:
+    10 builds:	10 pass, 0 fail
+    20 boots:	20 pass, 0 fail
+    37 tests:	37 pass, 0 fail
+
+Linux version:	4.19.323-rc2-g9e8e2cfe2de9
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
