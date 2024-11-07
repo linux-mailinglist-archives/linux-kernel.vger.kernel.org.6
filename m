@@ -1,195 +1,176 @@
-Return-Path: <linux-kernel+bounces-399835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0AAD9C0500
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:57:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768BD9C0506
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 319F3B22F6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:57:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AA3C1C21348
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCC120E33F;
-	Thu,  7 Nov 2024 11:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5647020EA2C;
+	Thu,  7 Nov 2024 11:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IIgOqPzm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0a1Ggw0y";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IIgOqPzm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0a1Ggw0y"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ed3yIMs4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEAD1D95B0;
-	Thu,  7 Nov 2024 11:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911801D95B0;
+	Thu,  7 Nov 2024 11:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730980630; cv=none; b=oL0bxyS1tzm1eC4Nh/nNxBMMMz63cel9enSDyEWnauLbhZ3/DWKwKmrM56kLjs1uuTwBBKb61q93bw+enDkpU4UtWkfvk67s6XYJvg1JPB97AiwZBoZKbRJGN9EJ5t8aUcv2tmgbU9NMXkJbfBT8mtO68ys5I/1bktmysUQbEHg=
+	t=1730980662; cv=none; b=CSN/5mZVNV+pBHB/38iYw1WiJUPJAYStUFloansXRsQsQ3Rd0kzYKX2YIAgM6GLe5fgaXQUmPeT7nv8w4s4LMk2u0Aggl/AjLorwpxT6qc/+ELn8doUEOiISEc3r8pgrGva9fK6ESpRoZMNmIPZquaj2ngqJEjfy52zaByUhqBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730980630; c=relaxed/simple;
-	bh=udQ/sPdlIykPtOFu2sX60RjE9XvF3n2v5wDLKwVyes8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SLKEdhmcJODMcMpKslslcEhZ1gfs5S+269VNdXYWNPHSp4+alOR+ZDsEkPZY5VAemn10VzvqKpd/XFFGBYy00bibrWnQzkfD2uVc/MtZ0KrXR7+C6FeV/fDHWDzeFlz/YN07T5bsZ/uKv/JnHPCZwWP2h2S6nzOr0eR97LjyVXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IIgOqPzm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0a1Ggw0y; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IIgOqPzm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0a1Ggw0y; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 70C271F8C1;
-	Thu,  7 Nov 2024 11:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730980626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iuj1f2a8c2cwLObYBuFKJ2C8VpfSRgaqfsW1+IrAf04=;
-	b=IIgOqPzmqCRwlh/kODBkotVmsdq0twVnthrTx291TIq7M3bC1LrJ0MQPXtrFJmZ4FCbIFT
-	eORDTAWap5kW70xq9Bdg1kd9MxFuXhOidsZEgHQJdUgix4ZNR4kv9sB1OFQT4b6M+w7nsy
-	G83/1rZ4EM+zMnBr3+42a7lrGuEgVdQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730980626;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iuj1f2a8c2cwLObYBuFKJ2C8VpfSRgaqfsW1+IrAf04=;
-	b=0a1Ggw0ypjioKBAWxMGaTpp8fNYa8iaUwvON2ls3jiAzR38iumHn1dGg4oTxq73O9QzjwI
-	6XUNN2sDW7qcwtCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=IIgOqPzm;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0a1Ggw0y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730980626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iuj1f2a8c2cwLObYBuFKJ2C8VpfSRgaqfsW1+IrAf04=;
-	b=IIgOqPzmqCRwlh/kODBkotVmsdq0twVnthrTx291TIq7M3bC1LrJ0MQPXtrFJmZ4FCbIFT
-	eORDTAWap5kW70xq9Bdg1kd9MxFuXhOidsZEgHQJdUgix4ZNR4kv9sB1OFQT4b6M+w7nsy
-	G83/1rZ4EM+zMnBr3+42a7lrGuEgVdQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730980626;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iuj1f2a8c2cwLObYBuFKJ2C8VpfSRgaqfsW1+IrAf04=;
-	b=0a1Ggw0ypjioKBAWxMGaTpp8fNYa8iaUwvON2ls3jiAzR38iumHn1dGg4oTxq73O9QzjwI
-	6XUNN2sDW7qcwtCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 616B9139B3;
-	Thu,  7 Nov 2024 11:57:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /R18FxKrLGdqJwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 07 Nov 2024 11:57:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0B267A0AF4; Thu,  7 Nov 2024 12:57:02 +0100 (CET)
-Date: Thu, 7 Nov 2024 12:57:01 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] fs: add the ability for statmount() to report the
- mount devicename
-Message-ID: <20241107115701.ueeykzbel22sdr2f@quack3>
-References: <20241106-statmount-v2-0-93ba2aad38d1@kernel.org>
- <20241106-statmount-v2-2-93ba2aad38d1@kernel.org>
- <20241107094040.2gcshh466b7zslva@quack3>
- <7554bd2b13330f8b44b23b775dd4d611ad6cdcae.camel@kernel.org>
+	s=arc-20240116; t=1730980662; c=relaxed/simple;
+	bh=eZfarOsXhTWz3FdloJPyAIlYQTAmmc6IqpUxyEXV9sA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dWbs0noui7ntqo1nJUI2lUJbTGJ3zqW23WRKTyzITM4yGDvcZaFRZkNS4Hw5JJZCuS/CY/tNNo/K1YcmK6i/KNEnQlp1WNmCR6CfNJ8boz+G2vXv/NUAQxO0fewTY6L3EXslo4s7OHqD+pcWTFq8OZAnIs3/XKpQbutCtd3xGMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ed3yIMs4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E491C4CECC;
+	Thu,  7 Nov 2024 11:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730980662;
+	bh=eZfarOsXhTWz3FdloJPyAIlYQTAmmc6IqpUxyEXV9sA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ed3yIMs4ETe/Y+vEEefSsXttU7eM4T6VADKWGiEcxLmh+fYIWkwGCGiJ51Y91Ej0Q
+	 wlPj82G3wn8+CeVvoFTuNV1HPyGCHb0ungAs5Ch1zkpzyOlfIQw0TfUjshHH9AOx2H
+	 on+s+479ZnSgXpVyWm8OUYhNYcQ6JfmeDuAlorKPqmBTEPLResk9htJH9Me300tR6+
+	 Hi9tvgf8HymIJAJ7edmnjqFrLjX/g+jrVYiYDh6qppCgE0bOATi+hO7G9FnrVcOrWA
+	 S7rQ6ljulBobFC8kLCHNi53JFTnQxt02UsZZPEdMjyjw7mnvS7zE8Ih2hxs8gUWV1C
+	 2aZBE+ROlb7LQ==
+Message-ID: <6866a4d4-3ef1-4e87-a69e-bb9efce1a071@kernel.org>
+Date: Thu, 7 Nov 2024 12:57:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7554bd2b13330f8b44b23b775dd4d611ad6cdcae.camel@kernel.org>
-X-Rspamd-Queue-Id: 70C271F8C1
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/12] dt-bindings: pinctrl: Add RaspberryPi RP1
+ gpio/pinctrl/pinmux bindings
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof Wilczynski <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Masahiro Yamada <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <9a02498e0fbc135dcbe94adc7fc2d743cf190fac.1730123575.git.andrea.porta@suse.com>
+ <mjhopgkrjahaxydn3ckianqnvjn55kxrldulvjkpqivlz72uyi@57l5vhydpzc2>
+ <ZyOPHm7fl_vW7mAJ@apocalypse>
+ <cc2e1a17-c5b1-4608-8e32-a6dea23a7efb@kernel.org>
+ <Zyir7pu8T-fjUIA4@apocalypse>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Zyir7pu8T-fjUIA4@apocalypse>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 07-11-24 06:15:40, Jeff Layton wrote:
-> On Thu, 2024-11-07 at 10:40 +0100, Jan Kara wrote:
-> > On Wed 06-11-24 14:53:06, Jeff Layton wrote:
-> > > /proc/self/mountinfo displays the devicename for the mount, but
-> > > statmount() doesn't yet have a way to return it. Add a new
-> > > STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
-> > > offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
-> > > the return mask if there is a device string.
-> > > 
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > 
-> > Just one question below:
-> > 
-> > > @@ -5078,6 +5091,12 @@ static int statmount_string(struct kstatmount *s, u64 flag)
-> > >  		if (seq->count == sm->fs_subtype)
-> > >  			return 0;
-> > >  		break;
-> > > +	case STATMOUNT_MNT_DEVNAME:
-> > > +		sm->mnt_devname = seq->count;
-> > > +		ret = statmount_mnt_devname(s, seq);
-> > > +		if (seq->count == sm->mnt_devname)
-> > 
-> > Why this odd check? Why don't you rather do:
-> > 		if (ret)
-> > ?
-> >
+On 04/11/2024 12:11, Andrea della Porta wrote:
+
+>>>>
+>>>> Your example does not use any subnodes, so this looks not needed.
+>>>
+>>> The example has subnodes, as in the following excerpt from the example:
+>>
+>> I meant, you do not need properties in subnodes (1st level). You only
+>> want properties in subnodes of subnodes, so 2nd level. What is the point
+>> of allowing them in 1st level?
 > 
-> statmount_mnt_devname() can return without emitting anything to the seq
-> if ->show_devname and r->mnt_devname are both NULL. In that case, we
-> don't want statmount_string() to return an error, but we also don't
-> want to do any further manipulation of the seq. So, the above handles
-> either the case where show_devname returned an error and the case where
-> there was nothing to emit.
+> I will add those two sub-nodes to the example:
 > 
-> I did consider having statmount_mnt_devname() return -ENOBUFS if there
-> was nothing to emit, and then handle that in the caller, but checking
-> to see whether the seq has advanced seemed like a cleaner solution.
+>             rp1-i2s0-default-state {
+>                 function = "i2s0";
+>                 pins = "gpio18", "gpio19", "gpio20", "gpio21";
+>                 bias-disable;
+>             };
+> 
+>             rp1-uart0-default-state {
+>                 txd-pins {
+>                     function = "uart0";
+>                     pins = "gpio14";
+>                     bias-disable;
+>                 };
+> 
+>                 rxd-pins {
+>                     function = "uart0";
+>                     pins = "gpio15";
+>                     bias-pull-up;
+>                 };
+>             };
+> 
+> The first is just a group of pins with the same settings, the second is 
+> a pin group with different settings per pin. This is basically the same
+> usage as in qcom,sm4250-lpass-lpi-pinctrl.yaml.
+> 
 
-OK, but don't we want to emit an empty string - i.e., just \0 character in
-case r->mnt_devname is NULL and there's no ->show_devname? Because now we
-literaly emit nothing and it's going to be very confusing for userspace to
-parse this when this happens in the middle of other strings in the seq.
-And emitting \0 is exactly what will happen if we don't do anything special
-in STATMOUNT_MNT_DEVNAME case...
+Ack, that's ok then.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best regards,
+Krzysztof
+
 
