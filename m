@@ -1,183 +1,126 @@
-Return-Path: <linux-kernel+bounces-399778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1372E9C040F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:32:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F989C0413
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:32:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A997B23367
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA24E2821A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AE0209F48;
-	Thu,  7 Nov 2024 11:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Is85sQl8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FE620ADCE;
+	Thu,  7 Nov 2024 11:32:13 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31F8207201
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17D720A5DF;
+	Thu,  7 Nov 2024 11:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730979127; cv=none; b=Tj//FZThDdGOJv6Yow3oiQ8DkvxSerMcIg30ZJGk+EhgwCVd+UdUielFB5IYOPw21vdyLUAvLYGIDVt206ttpea7GacyorNQ7iS5urR1CI54fkuZUqaBfYTb8HMa6rno2NHZ+70e17oN8hsszK9/8/IMANkoCayLvscOmIfQQgU=
+	t=1730979133; cv=none; b=pyiyTSXRzCkGpXlPoY5Mj2anCxfpV0SfprPQZTbkM8i9uQuBT+hRaMj1SdzvxmRPKIfOG8nXshZB3BY0AjiAw/cRtLtfVoz2yl32wadIKrm9Mf8DyIH6eTtRS2EB4RzVs4b6xoUP/j21fTugZ6Cym9tqyfWA2FMC9Ev+tkXAfu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730979127; c=relaxed/simple;
-	bh=++vQ0lzeG3Jrqx6fHr8hPgQgL6xBFVlHG0RR8npbujE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=NrO5jchgEy/8rUX0sjcPyfTko9hGlDIAWRvwtCKJAVWVKkDWOCY5KT0jNSoFgM723XTgRwUSwrXXrjrI109nd2eCxRPHAM/HD1WfaYeXAA7sNpF9NX2vKDOm1SWghtaEn9BEsmepVd+1I2eHNpcb0B/SBZnvda5kjX0Iu2IXXbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Is85sQl8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E23C4CECC;
-	Thu,  7 Nov 2024 11:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730979126;
-	bh=++vQ0lzeG3Jrqx6fHr8hPgQgL6xBFVlHG0RR8npbujE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=Is85sQl8V1y4p9Ke3aIamTV0pXATg8O7UhHBzwsv89xiqctJLHGiSupmRs8KGFf8C
-	 pI381yE5fqBFDu1da/97yQCOhTZ1ZbUPOXzbTbemCceEzdCaESotCcbyuAOBV3sMb7
-	 6kfbEocu0N/R6j1RDPhT7nSGHXFG9iKMb4Zt8qmEMRyQ8yfbUyxn9fA/qwixiEZy2T
-	 sMCUISxOXP9FbjIRci6CnTIDoCqiOC7lAaOCQ7qj086Xdgib422AD73sDPK+J0L1C+
-	 Jg1qGaO+3A5TIWs29vpyx3Qvb5Un51KlX0wweYVvZFzuM/yeihAXX+HwZRbjKEsaRV
-	 CP5IbA/cxt09Q==
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 2804C120006C;
-	Thu,  7 Nov 2024 06:32:05 -0500 (EST)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-03.internal (MEProxy); Thu, 07 Nov 2024 06:32:05 -0500
-X-ME-Sender: <xms:NaUsZ5jXCfx1YLBRih7P_dQok3HqV6uj3nBJ563PnIsvB2A-f6RC5g>
-    <xme:NaUsZ-B3-f-I-v-ZYKLZIQ2Rtqa7tgYlJKE6pxZIwo7rI5g2nFGJ7S7xeA1IEofoo
-    LcJeYuyojvdDaz9KNU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeggddvlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdfnvghonhcutfhomhgrnhhovhhskhihfdcuoehlvghonheskhgvrhhnvg
-    hlrdhorhhgqeenucggtffrrghtthgvrhhnpeekgfduveffueffveduleefgfejhfevfedu
-    ueeiueetleeugeeivdfhfedvgeeuhfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhgvohhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdeftdehfeelkeegqddvje
-    ejleejjedvkedqlhgvohhnpeepkhgvrhhnvghlrdhorhhgsehlvghonhdrnhhupdhnsggp
-    rhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhonhhnhi
-    gtsegrmhgriihonhdrtghomhdprhgtphhtthhopehmtggrrhhlshhonhessghrohgruggt
-    ohhmrdgtohhmpdhrtghpthhtohepkhgrihdrhhgvnhhgrdhfvghnghestggrnhhonhhitg
-    grlhdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdp
-    rhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohephh
-    gvlhhgrggrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhifsehlihhnuhigrdgt
-    ohhmpdhrtghpthhtoheprggvrghsihesmhgrrhhvvghllhdrtghomhdprhgtphhtthhope
-    grphhrrggshhhunhgvsehnvhhiughirgdrtghomh
-X-ME-Proxy: <xmx:NaUsZ5Giy9j3ajjZsZkQXlmPsPUX80BWvmsueyxnnsMZFqvsFbDwrA>
-    <xmx:NaUsZ-TpUSNntRKiLL8Gt5t8jMk641Y7Jy92DgQUo0sD_ufYIy16Hw>
-    <xmx:NaUsZ2wydzRwe6i8PFdfLp003BxLGKg7R_xBpBru2_3vFgzwtVj0Tg>
-    <xmx:NaUsZ04chBJT_iS7UfWqrHerXpO1K0p4awauJMsQ2rN0anHpFgh-yQ>
-    <xmx:NaUsZ7yyM8K09kwVSKQ2FifmB1-tJhC4-SDYvnG5VdECGo_z0UKH0Z-b>
-Feedback-ID: i927946fb:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EC77B1C20066; Thu,  7 Nov 2024 06:32:04 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730979133; c=relaxed/simple;
+	bh=oWZpsdzL8+Oft8QnzpI3UMaHxsB9xIpuOeSvk8blJiE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rRDxUO5coTbYkQQXvMU3S74qVe+hvwMMk7zt438gMnaM6mSSdPGxyJYkZMzXhmJ87pNBaI1OGyXsKlPOD2eSJtogUI5PrzMVPdNCrqAQmycMVo/X7NbAxh3Ey7PU9xQI3n1qz6aUalEs7uWy9ehiBmwlWxGlECKuX1NW2huKFzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xkg0401xQz6LD8H;
+	Thu,  7 Nov 2024 19:32:04 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D48DC1400DD;
+	Thu,  7 Nov 2024 19:32:07 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 7 Nov
+ 2024 12:32:07 +0100
+Date: Thu, 7 Nov 2024 11:32:05 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 23/27] dax/region: Create resources on sparse DAX
+ regions
+Message-ID: <20241107113205.00007f53@Huawei.com>
+In-Reply-To: <20241105-dcd-type2-upstream-v6-23-85c7fa2140fe@intel.com>
+References: <20241105-dcd-type2-upstream-v6-0-85c7fa2140fe@intel.com>
+	<20241105-dcd-type2-upstream-v6-23-85c7fa2140fe@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 07 Nov 2024 13:31:44 +0200
-From: "Leon Romanovsky" <leon@kernel.org>
-To: "Bjorn Helgaas" <helgaas@kernel.org>
-Cc: "Bjorn Helgaas" <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- linux-pci@vger.kernel.org, "Ariel Almog" <ariela@nvidia.com>,
- "Aditya Prabhune" <aprabhune@nvidia.com>, "Hannes Reinecke" <hare@suse.de>,
- "Heiner Kallweit" <hkallweit1@gmail.com>, "Arun Easi" <aeasi@marvell.com>,
- "Jonathan Chocron" <jonnyc@amazon.com>,
- "Bert Kenward" <bkenward@solarflare.com>,
- "Matt Carlson" <mcarlson@broadcom.com>,
- "Kai-Heng Feng" <kai.heng.feng@canonical.com>,
- "Jean Delvare" <jdelvare@suse.de>,
- "Alex Williamson" <alex.williamson@redhat.com>, linux-kernel@vger.kernel.org
-Message-Id: <1d4df22e-3783-4081-b57b-ac03cd894cb5@app.fastmail.com>
-In-Reply-To: <20241105162655.GG311159@unreal>
-References: <20241105075130.GD311159@unreal>
- <20241105152455.GA1472398@bhelgaas> <20241105162655.GG311159@unreal>
-Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Nov 5, 2024, at 18:26, Leon Romanovsky wrote:
-> On Tue, Nov 05, 2024 at 09:24:55AM -0600, Bjorn Helgaas wrote:
->> On Tue, Nov 05, 2024 at 09:51:30AM +0200, Leon Romanovsky wrote:
->> > On Mon, Nov 04, 2024 at 06:10:27PM -0600, Bjorn Helgaas wrote:
->> > > On Sun, Nov 03, 2024 at 02:33:44PM +0200, Leon Romanovsky wrote:
->> > > > On Fri, Nov 01, 2024 at 11:47:37AM -0500, Bjorn Helgaas wrote:
->> > > > > On Fri, Nov 01, 2024 at 04:33:00PM +0200, Leon Romanovsky wrote:
->> > > > > > On Thu, Oct 31, 2024 at 06:22:52PM -0500, Bjorn Helgaas wrote:
->> > > > > > > On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
->> > > > > > > > On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
->> > > > > > > > > From: Leon Romanovsky <leonro@nvidia.com>
->> > > > > > > > > 
->> > > > > > > > > The Virtual Product Data (VPD) attribute is not
->> > > > > > > > > readable by regular user without root permissions.
->> > > > > > > > > Such restriction is not really needed, as data
->> > > > > > > > > presented in that VPD is not sensitive at all.
->> > > > > > > > > 
->> > > > > > > > > This change aligns the permissions of the VPD
->> > > > > > > > > attribute to be accessible for read by all users,
->> > > > > > > > > while write being restricted to root only.
->> > ...
->> 
->> > > What's the use case?  How does an unprivileged user use the VPD
->> > > information?
->> > 
->> > We have to add new field keyword=value in VA section of VPD, which
->> > will indicate very specific sub-model for devices used as a bridge.
->> > 
->> > > I can certainly imagine using VPD for bug reporting, but that
->> > > would typically involve dmesg, dmidecode, lspci -vv, etc, all of
->> > > which already require privilege, so it's not clear to me how
->> > > public VPD info would help in that scenario.
->> > 
->> > I'm targeting other scenario - monitoring tool, which doesn't need
->> > root permissions for reading data. It needs to distinguish between
->> > NIC sub-models.
->> 
->> Maybe the driver could expose something in sysfs?  Maybe the driver
->> needs to know the sub-model as well, and reading VPD once in the
->> driver would make subsequent userspace sysfs reads trivial and fast.
->
-> Our PCI driver lays in netdev subsystem and they have long-standing
-> position do not allow any custom sysfs files. To be fair, we (RDMA)
-> don't allow custom sysfs files too.
->
-> Driver doesn't need to know this information as it is extra key=value in
-> existing [VA] field, while driver relies on multiple FW capabilities
-> to enable/disable functionality.
->
-> Current [VA] line:
-> "[VA] Vendor specific: 
-> MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=CX713106A"
-> Future [VA] line:
-> "[VA] Vendor specific: 
-> MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=CX713106A,SMDL=SOMETHING"
->
-> Also the idea that we will duplicate existing functionality doesn't
-> sound like a good approach to me, and there is no way that it is
-> possible to expose as subsystem specific file.
->
-> What about to allow existing VPD sysfs file to be readable for everyone 
-> for our devices?
-> And if this allow list grows to much, we will open it for all devices 
-> in the world?
+On Tue, 05 Nov 2024 12:38:45 -0600
+ira.weiny@intel.com wrote:
 
-Bjorn,
-
-I don't see this patch in https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=next
-So what did you decide? How can we enable existing VPD access to regular users?
-
-Thanks
-
->
-> Thanks
->
->> 
->> Bjorn
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> DAX regions which map dynamic capacity partitions require that memory be
+> allowed to come and go.  Recall sparse regions were created for this
+> purpose.  Now that extents can be realized within DAX regions the DAX
+> region driver can start tracking sub-resource information.
+> 
+> The tight relationship between DAX region operations and extent
+> operations require memory changes to be controlled synchronously with
+> the user of the region.  Synchronize through the dax_region_rwsem and by
+> having the region driver drive both the region device as well as the
+> extent sub-devices.
+> 
+> Recall requests to remove extents can happen at any time and that a host
+> is not obligated to release the memory until it is not being used.  If
+> an extent is not used allow a release response.
+> 
+> When extents are eligible for release.  No mappings exist but data may
+> reside in caches not yet written to the device.  Call
+> cxl_region_invalidate_memregion() to write back data to the device prior
+> to signaling the release complete.
+> 
+> Speculative writes after a release may dirty the cache such that a read
+> from a newly surfaced extent may not come from the device.  Call
+> cxl_region_invalidate_memregion() prior to bringing a new extent online
+> to ensure the cache is marked invalid.
+> 
+> While these invalidate calls are inefficient they are the best we can do
+> to ensure cache consistency without back invalidate.  Furthermore this
+> should occur infrequently with sufficiently large extents and work loads
+> to not be too bad of an impact.
+> 
+> The DAX layer has no need for the details of the CXL memory extent
+> devices.  Expose extents to the DAX layer as device children of the DAX
+> region device.  A single callback from the driver aids the DAX layer to
+> determine if the child device is an extent.  The DAX layer also
+> registers a devres function to automatically clean up when the device is
+> removed from the region.
+> 
+> There is a race between extents being surfaced and the dax_cxl driver
+> being loaded.  The driver must therefore scan for any existing extents
+> while still under the device lock.
+> 
+> Respond to extent notifications.  Manage the DAX region resource tree
+> based on the extents lifetime.  Return the status of remove
+> notifications to lower layers such that it can manage the hardware
+> appropriately.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Same again.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
