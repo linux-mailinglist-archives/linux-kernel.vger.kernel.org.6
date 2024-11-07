@@ -1,175 +1,394 @@
-Return-Path: <linux-kernel+bounces-399258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F729BFCBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:47:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BD09BFCBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 03:49:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 594AD28362E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:47:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BF601C21242
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500D813CFAD;
-	Thu,  7 Nov 2024 02:47:35 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910945FB95;
+	Thu,  7 Nov 2024 02:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XGFxYET0"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCCA36D
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 02:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C675642A97;
+	Thu,  7 Nov 2024 02:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730947654; cv=none; b=NaEozsCFa+Rg3Z5WvSuasoT0qbwUy1pwGe8Y/eRNchrvCjedopUpTMSejy5zbN+1QMz0wVI/W7atkCu8x+DnkTklrFyTLXgwe95KWtSN/CoagFPd0KA3apzKRgNLWQy+/zFzh4+oa5Zi+l759OpvMX4SRQu1x1xn6gX6TC8evaM=
+	t=1730947750; cv=none; b=swAMv0r/t43GHnD53js0TCwxU7VkmTwa9z6ZR/6SZFjWQlNpkVHI6YEaqSOCG9GYEbgXSt0lOESVwcgm17ZD8KevOyHF3oFOf4kOycuHhdntNAVUSEjPSugtlrGSwZ9ijjKRRt/LvNedPIHbN/RHDmTYcmnN3JtIOnPKAC5u/Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730947654; c=relaxed/simple;
-	bh=bm90jDI8Ej0DYvaaEtbwzUiDu0QOV5wcZv450KxnmRw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GV7lpZrG9VVtCoBKCII+EQe4No7M/E94GKE2rrB7dJtqg6XkJHajpcaoSuFBmMrn7bYM/XZA+IA9Owc3K8Of9PPEikxXtGfhjTqvB5W02GZoN8y2yoA3PrsaazlfSbP7ZETPHsmyzoO6qUmbgQqYoeJsvxugJrmUHQ5GIDdmQaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso7476365ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 18:47:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730947652; x=1731552452;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LD+Utao4/CGuzFO+zQjWs0boxzV6TvrdAHiSkX8IMQM=;
-        b=C9nVuKDL4vLN1DTdcWBt/CsulJ7Y4xoOWOeXt+rnIOkHRRjGBZr1jEDDFoQ5XEwS2v
-         OU2Amu1RLngbP7VFRAEBtmcg31NyYRbJueFO3ruPKPwNkuEjPKdxigLDWQne4xyNHa4y
-         p0yiSQ1FptmCPGmJv/8UhEaKs3hImAptuqHaRdpuQwnuiamolsNa41ZlulPxqRGmt8b6
-         0uAWC+5KEjisuSl+Z/+Y4ROkK9bdhegMfSKazK/24tMDcmgu1wO9FCRWDlx5aEPKxFRe
-         KyxAN/R7acMVtxE9m32Jhq5QEQ5Jdo9aDYZWIZ/DqJlEZ0zLAwKL0PHKrEPe/BPXrzNv
-         +4QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpfgkmAkJdTPDeMUKOaoQCuZbeNoIgWQw+G0HPbwFX003vJJzDTftPnVNrwxF+F6gghXBkEKannaOFoi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDwqWaWYN5ybuPKcOdUNV+n70Zr+0+XfR2lGkGTE1xRH7RvoeE
-	1HNI9Z1u9xzoD3SyQ2ZZeudrcnmy77+M1WKz0ISwaxeqYc/U8PZOQDte+4QBFiDY+laZqMFVVI+
-	vQIOPfQD+TYpEJars0+n8SllS8JPG8pbpHXuU6dtpmCjF1wJyn11DT0s=
-X-Google-Smtp-Source: AGHT+IEYIX1kLJ9D0g+wSHWcXimE/udYx4Qw5b7gi/Ng8dTdM07EtGPI9m8+XxvR7ApAgMCCnopQwTo5YAZdoBIKcd9XBbAyakRJ
+	s=arc-20240116; t=1730947750; c=relaxed/simple;
+	bh=sbwl0lLtcSccEPzBBpKMcwnEZXTc8jkuwNu3FI/w9QI=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=q9qR7nt1VRzd0hx9wojKPjEKzS1SoXc+yPDbgltxFvZVgkAKo4zGsXJRU2ZeH8UKv24SM0CabEq2LkE+NjhwYR2fJC1eAnd7SI7sHw9YL58qdR+iOHlY3ZmB00FRH2OtknniDUPgqONaPzawh2tHPBN4xJNV8U+DnVi3aX6Liek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XGFxYET0; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A72ds7W007619;
+	Thu, 7 Nov 2024 02:48:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2FH6G1
+	ysYhQjSlm4AIrapWmx3F5oUGsz2vLZKFcRMrU=; b=XGFxYET0ekoJls5fqR1paD
+	d52GT81nUAaBgSqLVwvNVtSAOeEe4P8lq72IOc/Ve/O8kVcFF1HAEzCW8ibX9yT6
+	1AMqn9F0TZiMB32sr0WVV+Rt0w3Y3ck80/OcN0qx1TA0bK2Y8bYyOFE0Qp7Ft2i1
+	BYsrSR3IO6FrhsKHWxKgkkTeGZ9YR2fIYAFV0ISUxXszQDnUyFvdiJ8VeLxy/jcJ
+	qHnYmgkg9mourKD690+k0Tp8/GwNLh8LFRKwHV2XOBNWR3n18dvA95dhnF/Le//9
+	e3mNlxs8gVOfgBboTtA845uwlA7Ov86dwgV+BD/02z5c94WyOnikfCSpT5WPiFHQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rmyag15u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 02:48:54 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A72msMT025969;
+	Thu, 7 Nov 2024 02:48:54 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rmyag15r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 02:48:54 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A70d55T031474;
+	Thu, 7 Nov 2024 02:48:53 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nydmqdvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Nov 2024 02:48:53 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A72mqqq28443222
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Nov 2024 02:48:53 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B17A158043;
+	Thu,  7 Nov 2024 02:48:52 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2800F5805D;
+	Thu,  7 Nov 2024 02:48:52 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.85.129])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  7 Nov 2024 02:48:52 +0000 (GMT)
+Message-ID: <b510e556621e3826dd6df043fde817192b9f12ea.camel@linux.ibm.com>
+Subject: Re: [PATCH] tpm: Opt-in in disable PCR encryption on TPM2 chips
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason
+ Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley
+ <James.Bottomley@HansenPartnership.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <D5FJ9VCD1JBL.22MQYQHUYJLJ8@kernel.org>
+References: <20241107004708.108667-1-jarkko@kernel.org>
+	 <D5FJ9VCD1JBL.22MQYQHUYJLJ8@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 06 Nov 2024 21:48:16 -0500
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: aKauM6ys6MFqsdtxdEYKT_0yTua11nDk
+X-Proofpoint-GUID: 6xCTqTk_mXznWa_nYYm6VF769KPYH6GU
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1746:b0:3a6:c716:ab1f with SMTP id
- e9e14a558f8ab-3a6c716ae23mr167873565ab.9.1730947652453; Wed, 06 Nov 2024
- 18:47:32 -0800 (PST)
-Date: Wed, 06 Nov 2024 18:47:32 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672c2a44.050a0220.350062.0283.GAE@google.com>
-Subject: [syzbot] [block?] [usb?] WARNING: bad unlock balance in elevator_init_mq
-From: syzbot <syzbot+a95fab8e491d4ac8cbe9@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ suspectscore=0 bulkscore=0 adultscore=0 priorityscore=1501 impostorscore=0
+ mlxscore=0 clxscore=1011 spamscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411070018
 
-Hello,
+On Thu, 2024-11-07 at 02:51 +0200, Jarkko Sakkinen wrote:
+> On Thu Nov 7, 2024 at 2:47 AM EET, Jarkko Sakkinen wrote:
+> > From: Mimi Zohar <zohar@linux.ibm.com>
+> >=20
+> > The initial encrypted HMAC session feature added TPM bus encryption to
+> > various in-kernel TPM operations. This can cause performance bottlenecks
+> > with IMA, as it heavily utilizes PCR extend operations.
 
-syzbot found the following issue on:
+The patch Subject line and problem description aren't quite right.  In the =
+case
+of TPM pcr_extend, the session isn't being encrypted, only HMAC'ed.  Accord=
+ing
+to James, it's the HMAC itself that is causing the performance degradation.=
+ I
+would remove the word "encrypted" throughout.
 
-HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e21aa7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
-dashboard link: https://syzkaller.appspot.com/bug?extid=a95fab8e491d4ac8cbe9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1722ab40580000
+> >=20
+> > In order to address this performance issue, introduce disable_encrypt_p=
+crs
+> > kernel command-line parameter to the TPM driver.
+> >=20
+> > Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+> > Link: https://lore.kernel.org/linux-integrity/20241015193916.59964-1-zo=
+har@linux.ibm.com/
+> > Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
+> > Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v1:
+> > - Derived from the earlier RFC patch with a different parameter scope,
+> >   cleaner commit message and some other tweaks. I decided to create
+> >   something because I did not noticed any progress. Note only compile
+> >   tested as I wanted to get something quickly out.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/disk-c88416ba.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinux-c88416ba.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/bzImage-c88416ba.xz
+Thanks, Jarkko.  Does "parameter scope" refer to using module_param instead=
+ of
+__setup?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a95fab8e491d4ac8cbe9@syzkaller.appspotmail.com
+> > ---
+>=20
+> Noticed a couple of things I missed after sending this (see below).
+>=20
+> >  .../admin-guide/kernel-parameters.txt         | 10 ++++
+> >  drivers/char/tpm/tpm2-cmd.c                   | 33 ++++++++---
+> >  drivers/char/tpm/tpm2-sessions.c              | 59 +++++++++++--------
+> >  include/linux/tpm.h                           |  4 ++
+> >  4 files changed, 74 insertions(+), 32 deletions(-)
+> >=20
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
+ation/admin-guide/kernel-parameters.txt
+> > index 1518343bbe22..e27517e1a26f 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -6727,6 +6727,16 @@
+> >  	torture.verbose_sleep_duration=3D [KNL]
+> >  			Duration of each verbose-printk() sleep in jiffies.
+> > =20
+> > +	tpm.disable_encrypt_pcrs=3D [HW,TPM]
+> > +			Do not protect PCR registers from unintended physical
+> > +			access, or interposers in the bus by the means of
+> > +			having an encrypted and integrity protected session
+> > +			wrapped around TPM2_PCR_Extend command. Consider this
+> > +			in a situation where TPM is heavily utilized by
+> > +			IMA, thus protection causing a major performance hit,
+> > +			and the space where machines are deployed is by other
+> > +			means guarded.
 
-sd 4:0:0:1: [sdb] 0-byte physical blocks
-sd 4:0:0:1: [sdb] Test WP failed, assume Write Enabled
-sd 4:0:0:1: [sdb] Asking for cache data failed
-sd 4:0:0:1: [sdb] Assuming drive cache: write through
-=====================================
-WARNING: bad unlock balance detected!
-6.12.0-rc5-next-20241101-syzkaller #0 Not tainted
--------------------------------------
-kworker/u8:4/67 is trying to release lock (&q->q_usage_counter(queue)) at:
-[<ffffffff849207a2>] elevator_init_mq+0x1e2/0x2d0 block/elevator.c:607
-but there are no more locks to release!
+Remove the word "encrypted".
 
-other info that might help us debug this:
-3 locks held by kworker/u8:4/67:
- #0: ffff88801d681148 ((wq_completion)async){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801d681148 ((wq_completion)async){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900020bfd00 ((work_completion)(&entry->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900020bfd00 ((work_completion)(&entry->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffff8880327ca378 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff8880327ca378 (&dev->mutex){....}-{4:4}, at: __device_attach_async_helper+0xfc/0x300 drivers/base/dd.c:973
+> > +
+> >  	tpm_suspend_pcr=3D[HW,TPM]
+> >  			Format: integer pcr id
+> >  			Specify that at suspend time, the tpm driver
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > index 1e856259219e..6ec307b1cb99 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -14,6 +14,10 @@
+> >  #include "tpm.h"
+> >  #include <crypto/hash_info.h>
+> > =20
+> > +static bool disable_encrypt_pcrs;
+> > +module_param(disable_encrypt_pcrs, bool, 0444);
 
-stack backtrace:
-CPU: 1 UID: 0 PID: 67 Comm: kworker/u8:4 Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: async async_run_entry_fn
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_unlock_imbalance_bug+0x25b/0x2d0 kernel/locking/lockdep.c:5287
- __lock_release kernel/locking/lockdep.c:5526 [inline]
- lock_release+0x5cb/0xa30 kernel/locking/lockdep.c:5870
- blk_unfreeze_release_lock block/blk.h:745 [inline]
- blk_mq_unfreeze_queue+0xd2/0x140 block/blk-mq.c:213
- elevator_init_mq+0x1e2/0x2d0 block/elevator.c:607
- add_disk_fwnode+0x10d/0xf80 block/genhd.c:413
- sd_probe+0xba6/0x1100 drivers/scsi/sd.c:4024
- really_probe+0x2b8/0xad0 drivers/base/dd.c:658
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
- driver_probe_device+0x50/0x430 drivers/base/dd.c:830
- __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
- __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
- async_run_entry_fn+0xa8/0x420 kernel/async.c:129
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-sd 4:0:0:1: [sdb] Attached SCSI removable disk
-sd 5:0:0:0: [sdc] Media removed, stopped polling
-sd 5:0:0:0: [sdc] Attached SCSI removable disk
-sd 2:0:0:0: [sdb] Media removed, stopped polling
-sd 2:0:0:0: [sdb] Attached SCSI removable disk
-sd 1:0:0:0: [sdb] Media removed, stopped polling
-sd 1:0:0:0: [sdb] Attached SCSI removable disk
-sd 4:0:0:0: [sdb] Media removed, stopped polling
-sd 4:0:0:0: [sdb] Attached SCSI removable disk
-sd 1:0:0:1: [sdf] Media removed, stopped polling
-sd 1:0:0:1: [sdf] Attached SCSI removable disk
+The variable should probably be named something like disable_pcr_hmac_sessi=
+on.
 
+> > +MODULE_PARM_DESC(disable_encrypt_pcrs, "Disable TPM2_PCR_Extend encryp=
+tion");
+> > +
+> >  static struct tpm2_hash tpm2_hash_map[] =3D {
+> >  	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
+> >  	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+> > @@ -232,18 +236,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pc=
+r_idx,
+> >  	int rc;
+> >  	int i;
+> > =20
+> > -	rc =3D tpm2_start_auth_session(chip);
+> > -	if (rc)
+> > -		return rc;
+> > +	if (!disable_encrypt_pcrs) {
+> > +		rc =3D tpm2_start_auth_session(chip);
+> > +		if (rc)
+> > +			return rc;
+> > +	}
+> > =20
+> >  	rc =3D tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+> >  	if (rc) {
+> > -		tpm2_end_auth_session(chip);
+> > +		if (!disable_encrypt_pcrs)
+> > +			tpm2_end_auth_session(chip);
+> >  		return rc;
+> >  	}
+> > =20
+> > -	tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
+> > -	tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> > +	if (!disable_encrypt_pcrs) {
+> > +		tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
+> > +		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> > +	} else {
+> > +		tpm_buf_append_handle(chip, &buf, pcr_idx, NULL);
+> > +		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
+> > +	}
+> > =20
+> >  	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
+> > =20
+> > @@ -253,9 +265,12 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr=
+_idx,
+> >  			       chip->allocated_banks[i].digest_size);
+> >  	}
+> > =20
+> > -	tpm_buf_fill_hmac_session(chip, &buf);
+> > -	rc =3D tpm_transmit_cmd(chip, &buf, 0, "attempting extend a PCR value=
+");
+> > -	rc =3D tpm_buf_check_hmac_response(chip, &buf, rc);
+> > +	if (!disable_encrypt_pcrs)
+> > +		tpm_buf_fill_hmac_session(chip, &buf);
+> > +	rc =3D tpm_transmit_cmd(chip, &buf, 0,
+> > +			      "attempting extend a PCR value");
+>=20
+> Should be in a single line in order to minimize the diff.
+>=20
+> > +	if (!disable_encrypt_pcrs)
+> > +		rc =3D tpm_buf_check_hmac_response(chip, &buf, rc);
+> > =20
+> >  	tpm_buf_destroy(&buf);
+> > =20
+> > diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-s=
+essions.c
+> > index 42df980168b6..02897debc3fa 100644
+> > --- a/drivers/char/tpm/tpm2-sessions.c
+> > +++ b/drivers/char/tpm/tpm2-sessions.c
+> > @@ -205,6 +205,14 @@ static int tpm2_read_public(struct tpm_chip *chip,=
+ u32 handle, char *name)
+> >  }
+> >  #endif /* CONFIG_TCG_TPM2_HMAC */
+> > =20
+> > +void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf,
+> > +			   u32 handle, u8 *name)
+> > +{
+> > +	tpm_buf_append_u32(buf, handle);
+> > +	/* count the number of handles in the upper bits of flags */
+> > +	buf->handles++;
+> > +}
+> > +
+> >  /**
+> >   * tpm_buf_append_name() - add a handle area to the buffer
+> >   * @chip: the TPM chip structure
+> > @@ -237,9 +245,7 @@ void tpm_buf_append_name(struct tpm_chip *chip, str=
+uct tpm_buf *buf,
+> >  #endif
+> > =20
+> >  	if (!tpm2_chip_auth(chip)) {
+> > -		tpm_buf_append_u32(buf, handle);
+> > -		/* count the number of handles in the upper bits of flags */
+> > -		buf->handles++;
+> > +		tpm_buf_append_handle(chip, buf, handle, name);
+> >  		return;
+> >  	}
+> > =20
+> > @@ -272,6 +278,31 @@ void tpm_buf_append_name(struct tpm_chip *chip, st=
+ruct tpm_buf *buf,
+> >  }
+> >  EXPORT_SYMBOL_GPL(tpm_buf_append_name);
+> > =20
+> > +void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
+> > +			 u8 attributes, u8 *passphrase, int passphrase_len)
+> > +{
+> > +	/* offset tells us where the sessions area begins */
+> > +	int offset =3D buf->handles * 4 + TPM_HEADER_SIZE;
+> > +	u32 len =3D 9 + passphrase_len;
+> > +
+> > +	if (tpm_buf_length(buf) !=3D offset) {
+> > +		/* not the first session so update the existing length */
+> > +		len +=3D get_unaligned_be32(&buf->data[offset]);
+> > +		put_unaligned_be32(len, &buf->data[offset]);
+> > +	} else {
+> > +		tpm_buf_append_u32(buf, len);
+> > +	}
+> > +	/* auth handle */
+> > +	tpm_buf_append_u32(buf, TPM2_RS_PW);
+> > +	/* nonce */
+> > +	tpm_buf_append_u16(buf, 0);
+> > +	/* attributes */
+> > +	tpm_buf_append_u8(buf, 0);
+> > +	/* passphrase */
+> > +	tpm_buf_append_u16(buf, passphrase_len);
+> > +	tpm_buf_append(buf, passphrase, passphrase_len);
+> > +}
+> > +
+> >  /**
+> >   * tpm_buf_append_hmac_session() - Append a TPM session element
+> >   * @chip: the TPM chip structure
+> > @@ -309,26 +340,8 @@ void tpm_buf_append_hmac_session(struct tpm_chip *=
+chip, struct tpm_buf *buf,
+> >  #endif
+> > =20
+> >  	if (!tpm2_chip_auth(chip)) {
+> > -		/* offset tells us where the sessions area begins */
+> > -		int offset =3D buf->handles * 4 + TPM_HEADER_SIZE;
+> > -		u32 len =3D 9 + passphrase_len;
+> > -
+> > -		if (tpm_buf_length(buf) !=3D offset) {
+> > -			/* not the first session so update the existing length */
+> > -			len +=3D get_unaligned_be32(&buf->data[offset]);
+> > -			put_unaligned_be32(len, &buf->data[offset]);
+> > -		} else {
+> > -			tpm_buf_append_u32(buf, len);
+> > -		}
+> > -		/* auth handle */
+> > -		tpm_buf_append_u32(buf, TPM2_RS_PW);
+> > -		/* nonce */
+> > -		tpm_buf_append_u16(buf, 0);
+> > -		/* attributes */
+> > -		tpm_buf_append_u8(buf, 0);
+> > -		/* passphrase */
+> > -		tpm_buf_append_u16(buf, passphrase_len);
+> > -		tpm_buf_append(buf, passphrase, passphrase_len);
+> > +		tpm_buf_append_auth(chip, buf, attributes, passphrase,
+> > +				    passphrase_len);
+> >  		return;
+> >  	}
+> > =20
+> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> > index 587b96b4418e..4892cd004530 100644
+> > --- a/include/linux/tpm.h
+> > +++ b/include/linux/tpm.h
+> > @@ -502,9 +502,13 @@ static inline struct tpm2_auth *tpm2_chip_auth(str=
+uct tpm_chip *chip)
+> > =20
+> >  void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
+> >  			 u32 handle, u8 *name);
+> > +void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf,
+> > +			   u32 handle, u8 *name);
+> >  void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf=
+ *buf,
+> >  				 u8 attributes, u8 *passphrase,
+> >  				 int passphraselen);
+> > +void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
+> > +			 u8 attributes, u8 *passphrase, int passphraselen);
+>=20
+> This is declared in wrong place as it has no outside callers. So I will
+> move it to drivers/char/tpm/tpm.h instead. Please correct if I'm
+> overlooking something.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Sure
+>=20
+> >  static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *ch=
+ip,
+> >  						   struct tpm_buf *buf,
+> >  						   u8 attributes,
+>=20
+>=20
+> BR, Jarkko
+>=20
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
