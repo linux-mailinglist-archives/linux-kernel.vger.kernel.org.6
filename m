@@ -1,104 +1,147 @@
-Return-Path: <linux-kernel+bounces-399190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2882D9BFBFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:50:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E659BFC01
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 02:52:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22E028257C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF5D11C21FCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8AF11712;
-	Thu,  7 Nov 2024 01:50:34 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AB6D529;
+	Thu,  7 Nov 2024 01:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AeZxRkE/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5953115E97;
-	Thu,  7 Nov 2024 01:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CA614A8B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 01:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730944234; cv=none; b=P+yTbuAFCft+9TRF5sH8CF7M61aRSISxIAzAK3YwkxDfUeVmXHb6WMt1JcUTaXi/DC3MBQNR2itzf3xRhbitTelctfphZlbPxGvT+pQ2yluin/f/I1qNTIGn86/3gQ1fK64BLPsYlJSKo57vcUQR0/ZX/yAUuBu1EjsEGTbqFVk=
+	t=1730944326; cv=none; b=ZTeCHam1/8hkdm7t07WWam/rMNzeonyf5V0LnlrpvwypK5I7Sg3c/6GT8AOqp/uY8yWZT8uX9VVzSBXogVMnSvamC4fiOGxwpFseByQbEyUr4ASENYCpHIsYTwLtyBfWF04T8k3OM0VBDX93wbGM3z4HjURNPlNVX4ZYmA+i2QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730944234; c=relaxed/simple;
-	bh=YJI1E8tmbz+Y93xMGa3xNqvVNAbjA65uJlkt7UQ4rsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ROKUXojoZTIwQpsxi0yuX/2YoUHHH6kEcS7CejOYH0VF2sSVD0tLRnHqteBhsmi7AxS6XIFq2sOfdbNDcI4sZ4ZdE3XzFYkX760dXGOkcBszWYmOT7RYJQnk/i+sl5tMbybBVxud4/dw7C6vB8nO0VAnKL/zmGXTuOcErtX5+28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XkQ2G62Lkz10PTp;
-	Thu,  7 Nov 2024 09:48:06 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id E39FD180115;
-	Thu,  7 Nov 2024 09:50:27 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Nov 2024 09:50:27 +0800
-Message-ID: <786c90d1-29e7-72a7-acc6-394b3bbaeb75@huawei.com>
-Date: Thu, 7 Nov 2024 09:50:26 +0800
+	s=arc-20240116; t=1730944326; c=relaxed/simple;
+	bh=2rt1igW90MFX0FAlXVs9SIGZENjQFoIdTTvr8cyOK8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KX/6ZiR2pdCWmzL/MIIvFZ96UxyLe4SNbysUXrg1dMRPmnFDYzzUYzEbl3TmqALbHCHHTxwV84z28rrly4O7nmcmuyKQR9hDXhqDmtIwKwIuYW6nSdTDQQQq7Zt0p2t7YeV3ybM2k982GPs6odoUmoGNvMmhEBPFgqUAUaeLDqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AeZxRkE/; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730944324; x=1762480324;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2rt1igW90MFX0FAlXVs9SIGZENjQFoIdTTvr8cyOK8E=;
+  b=AeZxRkE/9UJgrt40oKVLNGPAF+ScQ20i82uA4Mpqqc3L0Xy+x7CUJkHk
+   pgw3il+lWGA4h9wJVtgAEvxXDynk2yw1Z1oIR1OrMAIQDFSdTjWFXIvcX
+   2FtqOdXmeyS24CVvOXMoT8oAShpxo7d938236IuuRap8rGk99T6ZJ5eyP
+   8vSQW4noYkDBSdD9krCoGa0Kb5yI9qtf9Dm28TBkVhCXhcPKI1M0a6mRQ
+   ZJY/510bNDJFVt57LrQlZrqbA54IqTk8lv3+albzM7/MbytR9scWovT2b
+   Pv4MIaqcsvfv5d713c4rqmO/Q3hA/FGnkTfDZBfAAj5qBDskNzam5asJs
+   A==;
+X-CSE-ConnectionGUID: WY01OCJlTzyPKKhmx0RAVg==
+X-CSE-MsgGUID: OHiPloSMRRai/qY7R/sLrw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="41392110"
+X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
+   d="scan'208";a="41392110"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 17:52:03 -0800
+X-CSE-ConnectionGUID: GP/keyjYRWqTdUYPbig04w==
+X-CSE-MsgGUID: IvZBSGf/QWWiRl5zYINQTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
+   d="scan'208";a="84822581"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 17:52:02 -0800
+Message-ID: <fcef9cb1-797a-496a-9ef5-1e2f530dc8f6@linux.intel.com>
+Date: Thu, 7 Nov 2024 09:51:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2] PM: EM: Fix wrong return value in
- mtk_cpufreq_get_cpu_power()
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommufd: modify iommufd_fault_iopf_enable limitation
+To: Jason Gunthorpe <jgg@nvidia.com>, Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ jean-philippe <jean-philippe@linaro.org>, shamiali2008@gmail.com,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241028113209.123-1-zhangfei.gao@linaro.org>
+ <CABQgh9H9HWaKRP=rFvXf90PjfVP1M6YpwfLcYTZH1hWET6GPsw@mail.gmail.com>
+ <20241106135944.GP458827@nvidia.com>
 Content-Language: en-US
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <hector.yuan@mediatek.com>,
-	<lukasz.luba@arm.com>, <qperret@google.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-References: <20241104113615.1397410-1-ruanjinjie@huawei.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20241104113615.1397410-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241106135944.GP458827@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg200008.china.huawei.com (7.202.181.35)
 
+On 11/6/24 21:59, Jason Gunthorpe wrote:
+> On Wed, Nov 06, 2024 at 05:47:09AM +0000, Zhangfei Gao wrote:
+>> On Mon, 28 Oct 2024 at 11:32, Zhangfei Gao<zhangfei.gao@linaro.org> wrote:
+>>> iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
+>>> because the PRI might be a shared resource and current iommu
+>>> subsystem is not ready to support enabling/disabling PRI on a VF
+>>> without any impact on others.
+>>>
+>>> However, we have devices that appear as PCI but are actually on the
+>>> AMBA bus. These fake PCI devices have PASID capability, support
+>>> stall as well as SRIOV, so remove the limitation for these devices.
+>>>
+>>> Signed-off-by: Zhangfei Gao<zhangfei.gao@linaro.org>
+>>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+>>> ---
+>>>   drivers/iommu/iommufd/fault.c | 9 +++++++--
+>>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
+>>> index bca956d496bd..8b3e34250dae 100644
+>>> --- a/drivers/iommu/iommufd/fault.c
+>>> +++ b/drivers/iommu/iommufd/fault.c
+>>> @@ -10,6 +10,7 @@
+>>>   #include <linux/module.h>
+>>>   #include <linux/mutex.h>
+>>>   #include <linux/pci.h>
+>>> +#include <linux/pci-ats.h>
+>>>   #include <linux/poll.h>
+>>>   #include <uapi/linux/iommufd.h>
+>>>
+>>> @@ -27,8 +28,12 @@ static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
+>>>           * resource between PF and VFs. There is no coordination for this
+>>>           * shared capability. This waits for a vPRI reset to recover.
+>>>           */
+>>> -       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
+>>> -               return -EINVAL;
+>>> +       if (dev_is_pci(dev)) {
+>>> +               struct pci_dev *pdev = to_pci_dev(dev);
+>>> +
+>>> +               if (pdev->is_virtfn && pci_pri_supported(pdev))
+>>> +                       return -EINVAL;
+>>> +       }
+>>>
+>>>          mutex_lock(&idev->iopf_lock);
+>>>          /* Device iopf has already been on. */
+>>>
+>> Hi, Jason
+>>
+>> Would you mind also taking a look at this.
+> Lu? Are you OK with this?
 
+This change looks good to me. But the s-o-b chain would make more sense
+if we can make it like this,
 
-On 2024/11/4 19:36, Jinjie Ruan wrote:
-> mtk_cpufreq_get_cpu_power() return 0 if the policy is NULL. Then in
-> em_create_perf_table(), the later zero check for power is not invalid
-> as power is uninitialized. As Lukasz suggested, it must return -EINVAL when
-> the 'policy' is not found. So return -EINVAL to fix it.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 4855e26bcf4d ("cpufreq: mediatek-hw: Add support for CPUFREQ HW")
-> Suggested-by: Lukasz Luba <lukasz.luba@arm.com>
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Co-developed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Zhangfei Gao<zhangfei.gao@linaro.org>
 
-Hi, could this be merged.
+With this addressed,
 
-> ---
-> v2:
-> - Fix the driver instead of em_create_perf_table() as suggested.
-> - Update the commit message.
-> - Add Suggested-by.
-> ---
->  drivers/cpufreq/mediatek-cpufreq-hw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/mediatek-cpufreq-hw.c b/drivers/cpufreq/mediatek-cpufreq-hw.c
-> index 8925e096d5b9..aeb5e6304542 100644
-> --- a/drivers/cpufreq/mediatek-cpufreq-hw.c
-> +++ b/drivers/cpufreq/mediatek-cpufreq-hw.c
-> @@ -62,7 +62,7 @@ mtk_cpufreq_get_cpu_power(struct device *cpu_dev, unsigned long *uW,
->  
->  	policy = cpufreq_cpu_get_raw(cpu_dev->id);
->  	if (!policy)
-> -		return 0;
-> +		return -EINVAL;
->  
->  	data = policy->driver_data;
->  
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+--
+baolu
 
