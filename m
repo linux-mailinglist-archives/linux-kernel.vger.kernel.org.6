@@ -1,252 +1,111 @@
-Return-Path: <linux-kernel+bounces-399080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AFF9BFACC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:37:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7EC29BFACF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 01:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D4A1C217CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA8E283E99
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1494C6E;
-	Thu,  7 Nov 2024 00:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3044A2D;
+	Thu,  7 Nov 2024 00:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Li37jDdn"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="brvrDi9P"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AA06FBF;
-	Thu,  7 Nov 2024 00:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D90563C;
+	Thu,  7 Nov 2024 00:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730939817; cv=none; b=C1kXuo2Q7UuWBhB9V5a1q7ieHnfUgh8Bcn47CJUwo7M14R/nEZcheC34AXhPZFRHxg0uuAFgkVCuJa3DKpEAC9x4CJJOvS82VCL0YXOKGGazwB/4bNh980cmjPIMkM6TkL4AtgSTi0tjGNd1MFiLyFU4Z29nBSUFYCMKJThhxsU=
+	t=1730939959; cv=none; b=QfZThOAWU35iV0fnbfQ0mn3rvNSVEj736UmUhHnhzE6joPBr26d29J3VILzJfB7TA45bPhMdaLqyq0wht0nND+t/cyOsZW/n6T1qWC2Wm6FfYzF0pZyWUOIrZAUEJZq3KN11/tTPXZ5ncNG6JoV1SqoRUWr/IeMPB0fUcpSwrPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730939817; c=relaxed/simple;
-	bh=mMqrFTabFjPuJ5L1SvFAqtifseKaAG/U8UbokBKH5dM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WQ7rqnvb3iEgRHMbPWPnsAxrQtVfgzRzgjZz0wtsd44cOAnCT1OBnQSlxWfAdZTNiUCdt4OyMU9Cp5oZhkZa8FYtV6dGACgOEuNrXY0HNgweI2P96Z3FHVFFEa9stZemoQ+X9XUs7n0bjEIt8hYe3f39c08xZkzLLLe2cj/DuVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Li37jDdn; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a850270e2so59370066b.0;
-        Wed, 06 Nov 2024 16:36:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730939814; x=1731544614; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VZ2KJqDDlr0BpJVm1jVxEVWBDpJgOHV/yUofgteoeys=;
-        b=Li37jDdnNuHAttHwwT61+MT7hLIcufOiAxdQ6cAR7yM2lunrhK5aGR4CMXWIqlzC1K
-         +Ngq459Rl8GSX9RWNEucA4kLHA5a4E5kRv4aNTijv1b8xooXSRuA+GxhcT6kkptRIX1J
-         oxI5//1qF0HDWefK2G+DiAzpsfGdqYekQAGok3gwwdp92a2bMcL7d4v/zwUEUv3Jd5Jd
-         xqufnttrRaZh+OapKGM+USUCVPhGScYktJjbIxDgv8wMCxnStA9vT57y+z9NV7cY1NFx
-         aIRGHJAMHeZBgJacxVzj8dXwfr/VKW23DcBGLiL5tHmKYBh+oFjwb4x/b6tk04H6f+jw
-         B3+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730939814; x=1731544614;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VZ2KJqDDlr0BpJVm1jVxEVWBDpJgOHV/yUofgteoeys=;
-        b=Kpecj5KOebA3toC8wvplaA9otnUbBdbVxIumXkG8D+5/EO8iJfw/f729ofgbwWbo5f
-         CR1NN+trSZYL6iltScT2mZ4iD3SFfyGHYYeMs2wuqLb86+A9OEmt2gAmGu9NNYnVQ24p
-         v4Buwg4qDcF5qnZfKU7yyx6inRveoN+X6nr9nWAHV/5/o+QwsK4Q92V4mrg16NwEDA+/
-         lHzQqB1TjShGh8z6+h3gb7jKxiVR4wn8wa2QmO2mR2EGyfiMyXVBnABVGjk5uJfIPBue
-         2VedGN4v1s4JG5N4akr85ZwfruxMf7O4r0MKCHfvRG+ZOmJRmTGmkIKSA4imYWipiy5b
-         Z7WA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo4Pjec20LB+7oilL+ohJ7fdxoQerv8MEXj2xb+1jYRcdrH1XgQPOpBtT6T7eZL9NSQxyrhx8hiast@vger.kernel.org, AJvYcCVsyHXdbBoOvg+QgyX21qoJHb7YnXWpv8kARJGtC1FoXJdKIqSSMWyRqCVyV1jZkxL0xeNnA2RVu0tJigkX@vger.kernel.org, AJvYcCWL5T38/7jP/oiA0TcWERj55jGxXvjQ8NwPwqAZAhT58eF6OuhHWV1qA7k/gbNFywQPpAu8Yu44/HSy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkP6fegaChhWkWKrDJKm1nA56jvvyamDxmOx0BUgCQxQLKcT8i
-	qTCsDsjJ0kIfuym6EhP2VsGNtBFwT6AOfBgmBQ4P3nIbefyTKnQMHtAaYrX3PbwTa5gCkYbtVyx
-	7WJfXrFI1c+FCKSva0KWQWt/w8O2yUU826cE=
-X-Google-Smtp-Source: AGHT+IETkScOSUxZd3ErqQbo+kcXH+PXR3sYrQW1guLOYuIVBc/zfUsa7sINCKMLWwhvbWzDzuqURQ9iowF7aNpXvoo=
-X-Received: by 2002:a17:907:2d91:b0:a9a:80cc:c972 with SMTP id
- a640c23a62f3a-a9e655a8980mr2108644366b.27.1730939813501; Wed, 06 Nov 2024
- 16:36:53 -0800 (PST)
+	s=arc-20240116; t=1730939959; c=relaxed/simple;
+	bh=qV+QyR5vEVW16n8DtUQhTh+8NJPxqi6wOA+hItfXCcQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Kbzx+K4bgJONMlC8TPcGLcqTN2hRhEZiSohnxTK4yGg6NOEG1dlUGNr9Fi0VnV3dVPXD+CJCaqc3LyuIWUpWfDuVIkQJCQ2sHOeTcCiPTKhYysF/K9z55DynnTLpjiv/4My2ExwxYZI+jh+lVUwKfQsVOQa1oZ9tZM0ZGUe74LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=brvrDi9P; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730939897; x=1731544697; i=w_armin@gmx.de;
+	bh=WWUSIjDCmE2YfWUklmvTiC/sg6x+DYaZ0NMPbGz2i/8=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=brvrDi9Pc5ao0qU/k/r/87KwzfghqQ/zIQ/J3e96RaNNylrucE0q36809h3IOn7y
+	 9/oC4gR/FQ1bs+bosfp3Rd7wxOeyu2N3YBjtq9F91aUPfRnaFMI/ki3ndpO/y8TCC
+	 tV0pQ/GkIU87/oV0OCKDQnIF+G4nG2ELo6Ils9UpaDuD8Iblt6B3EdEf4l1o4CkhJ
+	 eBXeXm/7oSgaCSmz8BIKRS9Sym06ayMj51eWO2Go7EUj4YsQgxVACJx4h/rGMgToV
+	 ALANsJhCHX765Afeb0CqQZphnk78MgfO+281vdraqrIsHLrW7v8tWJ05OdPalNFzo
+	 G3qd0i6ycva1APihog==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1Mi2O1-1tms7E1o3N-00fx2S; Thu, 07 Nov 2024 01:38:17 +0100
+From: Armin Wolf <W_Armin@gmx.de>
+To: corentin.chary@gmail.com,
+	luke@ljones.dev,
+	mohamed.ghanmi@supcom.tn
+Cc: srinivas.pandruvada@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	Michael@phoronix.com,
+	casey.g.bowman@intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Fix thermal profile handling
+Date: Thu,  7 Nov 2024 01:38:09 +0100
+Message-Id: <20241107003811.615574-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106023916.440767-3-j2anfernee@gmail.com> <202411062051.TLRkJSSL-lkp@intel.com>
-In-Reply-To: <202411062051.TLRkJSSL-lkp@intel.com>
-From: Yu-Hsian Yang <j2anfernee@gmail.com>
-Date: Thu, 7 Nov 2024 08:36:16 +0800
-Message-ID: <CA+4VgcKXQ4padSHBpnmw_vN5WWL+GfcJqOCtthN88C1hwicb6A@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] iio: adc: add Nuvoton NCT720x ADC driver
-To: kernel test robot <lkp@intel.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com, 
-	javier.carrasco.cruz@gmail.com, andy@kernel.org, marcelo.schmitt@analog.com, 
-	olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, 
-	matteomartelli3@gmail.com, alisadariana@gmail.com, joao.goncalves@toradex.com, 
-	marius.cristea@microchip.com, mike.looijmans@topic.nl, 
-	chanh@os.amperecomputing.com, KWLIU@nuvoton.com, yhyang2@nuvoton.com, 
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, openbmc@lists.ozlabs.org, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ds+V2lQhoRjZtN/zQi3ArLN2J8uxR52gA3cLdwyCXF9C5esSLpi
+ M7Ix5g1Jzc0sKcaInwr6kHTVmVuffp2B0exCEhLU8fCyFsbg7bT20HRDairi51YJwU3SnGb
+ 9Gmqf3K+cL8mODdSskV8VCru3s/JqRPp/KEiwMuIlpTBBBREC+5xIW6gQxjQVZKtq5FQrn/
+ J1+trtXxg7iElhGr4UHuw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:GscQi/vt+Nk=;wusmpBL2pc3a7fzlytCXxY/P4xx
+ xU1eoHawrXNiWvuoQvQukn9zqGrATD6c2OkAt9DbbYhgxJF2YLN1v98Vpohd6+KG0FJeIjyYg
+ 9Ybnu9rbbPYn11AFteUx5QuhdZPokVSPrTMw10zs1leOQ88zBsDzatn+WcNiuwnZLzIFOcEyU
+ EOhd3at6QdGb4iqh2HtY0byv7qqMMWa7FCP2gPWAQJ/357urSbUDqi9EjqjSD7GRfrYzazsoU
+ 4SAZTFtiMFlws/K1jkC2/cWn0uv6ulcBD3UEjTfOKk4EZ1G9w4S7tjkwbkQsad4LOZHXpy/2m
+ SkWKzJgTfAY6HydI7i0+NLenprmcVhrwxTTFcbos3sefLZAYoAXmNDseCnK7rDGiBxUz1jy9D
+ LQLvLTznzzXP3+Y4TGmoKSAxVFJEGqEHp0zt9Ydd2yYC/fCfyF61reit6b5Q/3NH+ZAKtQLXw
+ nfzuMMDKkT42m6LEEFKmPyQxlbXB2kM5LzW+Pusxq3M9FVWs1ZLPngOE2XfSvPXarsgB7/IdW
+ fd/hQBqGYxMF7sdkN3Or2l3e4tI9xM8/62e3e2MqgLah8O+NvfOI2rycKMAP4WPnPOeV74Gpt
+ UlJUeEnPZzSaMZJMXwLBUUE3qff2IGJ1ePO0NHVRdRp2cHBi3YEb+B78SczcPfS2icsS3kU4y
+ fGj0BaIYOhZPZap4RQJlSprLcAIHLR4I8QH9uOGm3dy/wLpxQfLUC/CdGAWq95rFi/YQ6wAzL
+ B9IXAdSylT7O9tiEIqyy/Z1MRYvG9YsF/O9pXQNR5R6X7hPFImafOIXM4h8UfDGrqmmYhBPCT
+ P0RS8wwi2oxulYQU/tix2nKlRE6eupe/jHippz8r6d+Jpd+sQ0KGFbl9mWhUR9PCJqd3rZmss
+ hi0zuzfAJjqRk3uNjtgXYB7MpVs82ptONaEYOIe8zbMmIp5meBveb8Y73
 
-Dear kernel test robot,
+When support for Vivobook fan profiles was added, the new thermal
+profiles where used inconsistently.
 
-Thank you for your response.
-I would check these warnings.
+This patch series aims to fix this issue. Compile-tested only.
 
-kernel test robot <lkp@intel.com> =E6=96=BC 2024=E5=B9=B411=E6=9C=886=E6=97=
-=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=888:32=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Hi Eason,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on jic23-iio/togreg]
-> [also build test WARNING on linus/master v6.12-rc6 next-20241106]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Eason-Yang/dt-bind=
-ings-iio-adc-Add-binding-for-Nuvoton-NCT720x-ADCs/20241106-104046
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git tog=
-reg
-> patch link:    https://lore.kernel.org/r/20241106023916.440767-3-j2anfern=
-ee%40gmail.com
-> patch subject: [PATCH v1 2/2] iio: adc: add Nuvoton NCT720x ADC driver
-> config: s390-allmodconfig (https://download.01.org/0day-ci/archive/202411=
-06/202411062051.TLRkJSSL-lkp@intel.com/config)
-> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5=
-92c0fe55f6d9a811028b5f3507be91458ab2713)
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20241106/202411062051.TLRkJSSL-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411062051.TLRkJSSL-lkp=
-@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->    In file included from drivers/iio/adc/nct720x.c:9:
->    In file included from include/linux/device.h:32:
->    In file included from include/linux/device/driver.h:21:
->    In file included from include/linux/module.h:19:
->    In file included from include/linux/elf.h:6:
->    In file included from arch/s390/include/asm/elf.h:181:
->    In file included from arch/s390/include/asm/mmu_context.h:11:
->    In file included from arch/s390/include/asm/pgalloc.h:18:
->    In file included from include/linux/mm.h:2213:
->    include/linux/vmstat.h:504:43: warning: arithmetic between different e=
-numeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-=
-enum-conversion]
->      504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->      505 |                            item];
->          |                            ~~~~
->    include/linux/vmstat.h:511:43: warning: arithmetic between different e=
-numeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-=
-enum-conversion]
->      511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->      512 |                            NR_VM_NUMA_EVENT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~~
->    include/linux/vmstat.h:518:36: warning: arithmetic between different e=
-numeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-c=
-onversion]
->      518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip =
-"nr_"
->          |                               ~~~~~~~~~~~ ^ ~~~
->    include/linux/vmstat.h:524:43: warning: arithmetic between different e=
-numeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-=
-enum-conversion]
->      524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->      525 |                            NR_VM_NUMA_EVENT_ITEMS +
->          |                            ~~~~~~~~~~~~~~~~~~~~~~
-> >> drivers/iio/adc/nct720x.c:526:16: warning: cast to smaller integer typ=
-e 'enum nct720x_chips' from 'const void *' [-Wvoid-pointer-to-enum-cast]
->      526 |                 chip->type =3D (enum nct720x_chips)device_get_=
-match_data(&client->dev);
->          |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~~~~~~~~~~~~
->    5 warnings generated.
->
->
-> vim +526 drivers/iio/adc/nct720x.c
->
->    511
->    512  static int nct720x_probe(struct i2c_client *client)
->    513  {
->    514          const struct i2c_device_id *id =3D i2c_client_get_device_=
-id(client);
->    515          struct nct720x_chip_info *chip;
->    516          struct iio_dev *indio_dev;
->    517          int ret;
->    518          u32 tmp;
->    519
->    520          indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(=
-*chip));
->    521          if (!indio_dev)
->    522                  return -ENOMEM;
->    523          chip =3D iio_priv(indio_dev);
->    524
->    525          if (client->dev.of_node)
->  > 526                  chip->type =3D (enum nct720x_chips)device_get_mat=
-ch_data(&client->dev);
->    527          else
->    528                  chip->type =3D i2c_match_id(nct720x_id, client)->=
-driver_data;
->    529
->    530          chip->vin_max =3D (chip->type =3D=3D nct7201) ? NCT7201_V=
-IN_MAX : NCT7202_VIN_MAX;
->    531
->    532          ret =3D of_property_read_u32(client->dev.of_node, "read-v=
-in-data-size", &tmp);
->    533          if (ret < 0) {
->    534                  pr_err("read-vin-data-size property not found\n")=
-;
->    535                  return ret;
->    536          }
->    537
->    538          if (tmp =3D=3D 8) {
->    539                  chip->use_read_byte_vin =3D true;
->    540          } else if (tmp =3D=3D 16) {
->    541                  chip->use_read_byte_vin =3D false;
->    542          } else {
->    543                  pr_err("invalid read-vin-data-size (%d)\n", tmp);
->    544                  return -EINVAL;
->    545          }
->    546
->    547          mutex_init(&chip->access_lock);
->    548
->    549          /* this is only used for device removal purposes */
->    550          i2c_set_clientdata(client, indio_dev);
->    551
->    552          chip->client =3D client;
->    553
->    554          ret =3D nct720x_init_chip(chip);
->    555          if (ret < 0)
->    556                  return ret;
->    557
->    558          indio_dev->name =3D id->name;
->    559          indio_dev->channels =3D nct720x_channels;
->    560          indio_dev->num_channels =3D ARRAY_SIZE(nct720x_channels);
->    561          indio_dev->info =3D &nct720x_info;
->    562          indio_dev->modes =3D INDIO_DIRECT_MODE;
->    563
->    564          iio_device_register(indio_dev);
->    565
->    566          return 0;
->    567  }
->    568
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Changes since v1:
+- drop already applied patch
+- change commit description of first patch
+- add second patch based on a suggestion of Hans
+
+Armin Wolf (2):
+  platform/x86: asus-wmi: Fix inconsistent use of thermal policies
+  platform/x86: asus-wmi: Use platform_profile_cycle()
+
+ drivers/platform/x86/asus-wmi.c | 88 +++++++++------------------------
+ 1 file changed, 22 insertions(+), 66 deletions(-)
+
+=2D-
+2.39.5
+
 
