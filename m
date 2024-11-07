@@ -1,157 +1,109 @@
-Return-Path: <linux-kernel+bounces-400814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B909C12B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C06CA9C12B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:49:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60A7B1F23456
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:49:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760171F23B0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DA31E5718;
-	Thu,  7 Nov 2024 23:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758ED1E261C;
+	Thu,  7 Nov 2024 23:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="EBtdjaAH"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="IC7u/7nf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BDE1D86ED;
-	Thu,  7 Nov 2024 23:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAF41D86ED
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 23:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731023381; cv=none; b=NzbVXgKP7IMiP/7qApJFwA4nWOD2/hcfNFDJMfXhiubavSvXBQw+v2epYLXe5IDrmwflcXUtKZB7rVqGHcbriU+0/VNscz0T18ovHfQTUBF60i2M3VPmoxoHKEEgGYIqi/zmQJSDf6h/WgVVPLjs93Oyr81XsWcMz6l+ZvJbmwU=
+	t=1731023389; cv=none; b=eRkYU/RuF2JMkVSOnGSvioHWYL947Waw02gbLyWJCV8fmjBEHszpduSZLWT16kJ4xNdAPgWCRYW+Q6ifF+69lwv8E6qN43Q+Dnz0i0inPQ+0axGUHamStBzwbr708BitQyO48ZEFpW4ut+cmteUq7VaE0ejSpPLu+ahcHEKUahs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731023381; c=relaxed/simple;
-	bh=p2kk6Hi41/Ro/71xlCn7nSIBe3j3Ua27rEHjt50nD+I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KnNR2dKeQJTtxnVtOxwojegV8A+yBy5z6t2iATZy1foGh6tAPt5RjfkHHALcTxbwP1L39TauXCnY5hTIF18i5h4DocOIWFhjr6ir6iwQqe8gWotCVlfnDSBYuIivlmb9uy/ca9/WR1ncOyB6qQQI6S3DXlrehQFB749praTGowA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=EBtdjaAH; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1731023377;
-	bh=p2kk6Hi41/Ro/71xlCn7nSIBe3j3Ua27rEHjt50nD+I=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=EBtdjaAHWRxXhfz8E3EXbIwgrYhv9xSEM8jRmHASRjDiZmfjWDvgig5I9KA9TGwAn
-	 bwdtQtrW1Bi0FszAYf2ySq2ONGvFI2J3CVBilPvpDpXMKBc6lrJtCgKXbMRKyW3jco
-	 VF4nI772R2yLDrWDipnNyKv8g13a51byGXbFfS9JWNsdyXOcQboImaKqivg1Cev/sp
-	 M+CND0O1jc0barD0lqTXMXWYagjLffmHPhNpocbUjPlJaHU9vzCFkaKqO9Rn+006o+
-	 V2pQvSP8NUUXX96YEnIE3K++DWYjy0bIJJSPOT4Rooygp1UWLep5HZmlQJdxUKxBLt
-	 jj8Zwer5xhkdw==
-Received: from [192.168.68.112] (ppp118-210-167-185.adl-adc-lon-bras34.tpg.internode.on.net [118.210.167.185])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id EB6136B922;
-	Fri,  8 Nov 2024 07:49:33 +0800 (AWST)
-Message-ID: <ed77d57facaaef0be796b4c6a742dc7bf3bff479.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus handling
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, Patrick Williams
-	 <patrick@stwcx.xyz>, "wim@linux-watchdog.org" <wim@linux-watchdog.org>, 
-	"linux@roeck-us.net"
-	 <linux@roeck-us.net>
-Cc: "joel@jms.id.au" <joel@jms.id.au>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
- <linux-watchdog@vger.kernel.org>, "Peter.Yin@quantatw.com"
- <Peter.Yin@quantatw.com>, "Patrick_NC_Lin@wiwynn.com"
- <Patrick_NC_Lin@wiwynn.com>, "Bonnie_Lo@wiwynn.com" <Bonnie_Lo@wiwynn.com>,
-  "DELPHINE_CHIU@wiwynn.com" <DELPHINE_CHIU@wiwynn.com>, BMC-SW
- <BMC-SW@aspeedtech.com>,  "chnguyen@amperecomputing.com"
- <chnguyen@amperecomputing.com>
-Date: Fri, 08 Nov 2024 10:19:32 +1030
-In-Reply-To: <TYZPR06MB5203053A004676F51322DECFB25C2@TYZPR06MB5203.apcprd06.prod.outlook.com>
-References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
-	 <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
-	 <ZyUcIIb1dtoNhX00@heinlein.vulture-banana.ts.net>
-	 <a0faca9a6ec7f4acdfa2f29b4ffb94b5392aea6b.camel@codeconstruct.com.au>
-	 <TYZPR06MB5203053A004676F51322DECFB25C2@TYZPR06MB5203.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1731023389; c=relaxed/simple;
+	bh=+0QGC7AO2xC55eYvmU6ATMdGROQHT7rW3f1yPRmxEeY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sZ6iEXLoMdXEbT9qbVHwyZ0UgbhEzWE/3A4WZR/dLfh/BlF3/YHBaf0ZD6jLdbwK+vm5hQJfQrOTH7QgIqu8EzWmKqfz8NyWZ8VLWhFZehilRdLmf0XIAQ5rdLy1Ag3Obk9mGxLlFNsMqpiRpZhhdpX3Ov2vHvw1zHcdQwEZmrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=IC7u/7nf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1731023382;
+	bh=1UjGmzJI5YomK2L9/tQso2d7SjKdXqaBlKYPlkpu4U8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=IC7u/7nfsujlFq9JdHYwNOAsjCDXS0JEsT3nczJyq/0VVUy6teXkspmcTP1OmwKjp
+	 Z13MzhjyMX4WT9pPqKP6WvFIHZnC1sybMGcq1wso3Z700NL8/0CsaI25aKVMJQH3Zr
+	 n4Q5+qlMOxXpmCI/f4/AbDLDzDktWiyRA6SKKtpr/7lWGgWkUOuZmQAftBK/wshZG/
+	 SPFE1zxNGwRS+K+0ugYB5zu1KVrvDEXB2s1ZWV7hnv1y38S+GW4cvmWCnqXgdD0cCo
+	 tXHGqAQXScCLaY5i6c5jDKDsH4TztJbCcPDGu8fmaeOmBao1E20jCqfaWw8bH7PI5m
+	 U6mmSa55RCtTw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkzMB1xXbz4x6n;
+	Fri,  8 Nov 2024 10:49:42 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Yang Li
+ <yang.lee@linux.alibaba.com>, npiggin@gmail.com, naveen@kernel.org,
+ maddy@linux.ibm.com
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Abaci Robot
+ <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] powerpc/machdep: Remove duplicated include in svm.c
+In-Reply-To: <ed3a5d53-af06-498f-a8fe-0fe1e3a293bc@csgroup.eu>
+References: <20241107010259.46308-1-yang.lee@linux.alibaba.com>
+ <87msibcmeb.fsf@mpe.ellerman.id.au>
+ <ed3a5d53-af06-498f-a8fe-0fe1e3a293bc@csgroup.eu>
+Date: Fri, 08 Nov 2024 10:49:44 +1100
+Message-ID: <878qtud2p3.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chin-Ting,
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
+> Le 07/11/2024 =C3=A0 12:29, Michael Ellerman a =C3=A9crit=C2=A0:
+>> Yang Li <yang.lee@linux.alibaba.com> writes:
+>>> The header files linux/mem_encrypt.h is included twice in svm.c,
+>>> so one inclusion of each can be removed.
+>>>
+>>> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+>>> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D11750
+>>> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+>>> ---
+>>>   arch/powerpc/platforms/pseries/svm.c | 1 -
+>>>   1 file changed, 1 deletion(-)
+>>=20
+>> The two includes only appear in linux-next, and they both come from
+>> different trees. They are required in each tree to avoid breaking the
+>> build.
+>>=20
+>> So no one can merge this patch until the two trees are merged into mainl=
+ine.
+>
+> But can't those two trees coordinate the patches so that the include=20
+> goes at the same place avoiding duplication at merge ?
 
-On Thu, 2024-11-07 at 05:35 +0000, Chin-Ting Kuo wrote:
-> Hi Andrew,
->=20
-> Thanks for the check.
->=20
-> > -----Original Message-----
-> > From: Andrew Jeffery <andrew@codeconstruct.com.au>
-> > Sent: Monday, November 4, 2024 8:02 AM
-> > Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus
-> > handling
-> >=20
-> > On Fri, 2024-11-01 at 14:21 -0400, Patrick Williams wrote:
-> > > On Fri, Nov 01, 2024 at 08:11:59PM +0800, Chin-Ting Kuo wrote:
-> > > > The boot status mapping rule follows the latest design guide
-> > > > from
-> > > > the OpenBMC shown as below.
-> > > > https://github.com/openbmc/docs/blob/master/designs/bmc-reboot-caus=
-e
-> > > > -update.md#proposed-design
-> > > > - WDIOF_EXTERN1=C2=A0=C2=A0 =3D> system is reset by Software
-> > > > - WDIOF_CARDRESET =3D> system is reset by WDT SoC reset
-> > > > - Others=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D>=
- other reset events, e.g., power on reset.
-> > >=20
-> > > I'm quite surprised that the above is relevant for a kernel
-> > > driver at
-> > > all.=C2=A0 Isn't "EXTERN1" a name of a real watchdog signal from your
-> > > hardware (my recollection is that there are 2 external
-> > > watchdogs).
-> >=20
-> > I think you may be referring to WDTRST1 (and WDTRST2) here.
-> >=20
->=20
-> WDTRST1, wdt_ext, is a pulse signal generated when WDT timeout
-> occurs. However, depending on the HW board design, wdt_ext doesn=E2=80=99=
-t
-> always affect the system reset. Thus, EXTERN1 boot status can be
-> ignored in ASPEED WDT driver and just implement "CARDRESET" and
-> "others" types since EXTERN1 is not always affected/controlled by WDT
-> controller directly. Or, an additional property in dts can be added
-> to
-> distinguish whether the current EXTRST# reset event is triggered by
-> wdt_ext signal.
+Yes that would work.
 
-Yep, I understand how it works. I was responding to Patrick's query to
-clear up some confusion around the watchdog signal names.
+Except that in this case it's too late because the commits have already
+been applied to both trees for over a week - neither maintainer is going
+to want to rebase for something trivial like a duplicated header.
 
-> >=20
-> > >=20
-> > > Having said that, it was known that there would need to be
-> > > changes to
-> > > the driver because some of these conditions were not adequately
-> > > exposed at all.=C2=A0 I'm just still surprised that we're needing to
-> > > reference that document as part of these changes.
-> >=20
-> > I think the main question is whether an internal, graceful
-> > (userspace-
-> > requested) reset is a reasonable use of WDIOF_EXTERN[12]. My
-> > feeling no. I
-> > wonder whether defining a new flag (WDIOF_REBOOT?
-> > WDIOF_GRACEFUL?) in the UAPI would be acceptable?
-> >=20
->=20
-> Agree, but this is out of the scope of this patch series and can be
-> discussed and
-> implemented in the other future patches.
+I could apply a patch to my tree to move the include to the same line as
+the commit in the DMA tree, but even that seems like overkill for a
+duplicated header.
 
-I disagree, because then you're changing the userspace-visible
-behaviour of the driver yet again. I don't prefer the proposed patch as
-the way forward because I think it is abusing the meaning of
-WDIOF_EXTERN1. I think the concept needs input from the watchdog
-maintainers.
+I'll try and remember to apply this once the trees are merged in
+mainline. But if not the bot that detected it in the first place can
+just detect it again and repost.
 
-Andrew
+cheers
 
