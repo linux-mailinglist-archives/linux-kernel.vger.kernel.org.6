@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-399833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC0B9C04F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:54:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F759C04F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD0C1C239B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:54:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C01D1C23A30
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885B020B203;
-	Thu,  7 Nov 2024 11:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45E720C474;
+	Thu,  7 Nov 2024 11:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqYDesjf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="XeOwG6qy"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82052076BA;
-	Thu,  7 Nov 2024 11:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFE71DFE2C
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 11:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730980448; cv=none; b=ZxWUPZ2kBijunCBKj6rgti0tHclF0llc/Duqr5LIEQg1qdSXpl8/au4L0nSMrQ3t96MjO7hIRhiaSmndvEcphZr4uVOY4CgOlMYHhwa5AXyBlYMRFG/ym1dgtHg9Qn7ylKc/Vyj3MAuSnl1Gh/qyzgFPfqnWAgk8e/ueid2nF10=
+	t=1730980474; cv=none; b=KASYiZGP7Uodb+FOTX3c0T1nQiNdJPWkVVFYT28FBl39zRn2lP6kSli3lCcrgZBwfqH/6rFzSALQY4eRSp/2SliCIyZA16DvN8QH7x88Z16uyS5fOoDm2plSgkdrQUiNqKOwjHitSe1E8lZFW+dCWyPaC71jCBdkZeEO0LZUrw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730980448; c=relaxed/simple;
-	bh=We2aQazlW3YNlsaSjCI8JHhaM1dMyFndLwfZISOrbXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JbUryR//ihPgNmrcdET+BTGUqrnHrmtOMP/psLv8o4gtKNrkX7sFRHl1ihh0P1Hj4fAC9/FjgAnjF3bWHb2LbRnlRAd84t/Qdeo79kXQdezVkkdxjUCV7LcVY5k0siaaOr/vNBt7vdAo6PBBKDm1P0DIJBbcOW5l1Z7SysyKQqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqYDesjf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3FEAC4CECC;
-	Thu,  7 Nov 2024 11:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730980447;
-	bh=We2aQazlW3YNlsaSjCI8JHhaM1dMyFndLwfZISOrbXk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SqYDesjfEt+1h7/C5A+DjIUUIhLaUEw3j4SwrS/ghyte+n/vfoUUmjUQ561qKCNuU
-	 jMvFQ/XbbGW9txO7TvtPOtZATLZs7dKb1W60uf14IMeqXg8UBDdfNB76NjIhWxN79/
-	 p+8PjX6xVoRp4qQXLLxMDRv+fIC39r3Rt39e2NU7Zn0Pb+QLqbnY/9MzU8grAcfan+
-	 REV7ZFxzJU13vQiXVRWQzhAv4AnTaDfGmGERxUE7wAaSJRdwrdY6bB5vEvGEX7Gatr
-	 /TE2Fg0WZR0ktokrOSdT2+gLDudeQIB0DueF2IiqlnDSkQmRqcCEEdK7ThFsBYV6Wq
-	 a6lTf7kspsXwg==
-Message-ID: <7437a82f-be1d-45d0-9151-886564fabb4b@kernel.org>
-Date: Thu, 7 Nov 2024 12:53:59 +0100
+	s=arc-20240116; t=1730980474; c=relaxed/simple;
+	bh=yGU7iTAWaJabTpK9R+DM9rgnozn2ikReDIAPJ/RK+JU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GCDA/qUGL824yMmnhlaSmb5TgAN6G8tkyOlVRuLr7mu0UPLgE9MOeMKizK379GXMkmV+6o2lRNlVZ/YK4nZrPN1FSyX6alGnxhC5c0m6q2JojeKRuAYSbaoZ2dVWjNUi4/XJj95Y384fWFL7EifBGKJq98s36zptPq8VnQkhkKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=XeOwG6qy; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1730980467;
+	bh=isnKO7lKL0QWK7slYWLO5kTqSbzMU+FYZ7MF91y2dP0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=XeOwG6qydOK8MXn0X2TY88FZnwKiqzb6yxFxekrL4L/7H+6NJjsn2FoQjqvMk7XXs
+	 KKABadXuNh8Bc3tJqw+DTv9y1Y1jOITOz+YICbJ36kge/p0pY6Yds/7Mklk+M4yPrJ
+	 bSDp7FcVQtmmsyVMnb/HAUXUNYqfwegM0m6q153Tn7uCfaU8wnghLajrIFxhv1895d
+	 1zvTCymTBBaAkwdhOv6xjDld7Z/W+jtR44HYZOIv2QtT66b9LhR2f7lfpXjl5OY15Z
+	 oUnrCmIWty9tD/98UPdFpXuq9kQ2JcXtTu4Cm24xMjjGcy1ThNCc1yjbDR/CJefIog
+	 g+gOjDh/hsvQw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkgTv32Xkz4wc4;
+	Thu,  7 Nov 2024 22:54:27 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Gautam Menghani <gautam@linux.ibm.com>, npiggin@gmail.com,
+ christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch/powerpc/pseries: Fix KVM guest detection for
+ disabling hardlockup detector
+In-Reply-To: <20241105132734.499506-1-gautam@linux.ibm.com>
+References: <20241105132734.499506-1-gautam@linux.ibm.com>
+Date: Thu, 07 Nov 2024 22:54:29 +1100
+Message-ID: <87ed3ncl8q.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: linflexuart: add clock definitions
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- devicetree@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>,
- imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>,
- Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>
-References: <20241107114611.758433-1-ciprianmarian.costea@oss.nxp.com>
- <20241107114611.758433-2-ciprianmarian.costea@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241107114611.758433-2-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 07/11/2024 12:46, Ciprian Costea wrote:
+Gautam Menghani <gautam@linux.ibm.com> writes:
+> As per the kernel documentation[1], hardlockup detector should be
+> disabled in KVM guests as it may give false positives. On PPC, hardlockup
+> detector is broken inside KVM guests because disable_hardlockup_detector()
+ 
+Isn't it the opposite? Inside KVM guests, the hardlockup detector should
+be *disabled*, but it's not it's *enabled*, due to this bug.
+
+ie. it's not broken, it's working, but that's the bug.
+
+> is marked as early_initcall and it uses is_kvm_guest(), which is
+> initialized by check_kvm_guest() later during boot as it is a
+> core_initcall. check_kvm_guest() is also called in pSeries_smp_probe(),
+> which is called before initcalls, but it is skipped if KVM guest does
+> not have doorbell support or if the guest is launched with SMT=1.
+
+I'm wondering how no one has noticed. Most KVM guests have SMT=1.
+
+> Move the check_kvm_guest() call in pSeries_smp_probe() to the initial
+> part of function before doorbell/SMT checks so that "kvm_guest" static
+> key is initialized by the time disable_hardlockup_detector() runs.
+
+check_kvm_guest() is safe to be called multiple times so
+disable_hardlockup_detector() should just call it before it calls
+is_kvm_guest(). That should avoid future breakage when the order of
+calls changes, or someone refactors pSeries_smp_probe().
+
+Can you identify the commit that broke this and include a Fixes: tag
+please.
+
+cheers
+
+> [1]: Documentation/admin-guide/sysctl/kernel.rst
+>
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+>  arch/powerpc/platforms/pseries/smp.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/pseries/smp.c b/arch/powerpc/platforms/pseries/smp.c
+> index c597711ef20a..516c7bfec933 100644
+> --- a/arch/powerpc/platforms/pseries/smp.c
+> +++ b/arch/powerpc/platforms/pseries/smp.c
+> @@ -199,6 +199,13 @@ static __init void pSeries_smp_probe(void)
+>  	else
+>  		xics_smp_probe();
 >  
-> +  clocks:
-> +    items:
-> +      - description:
-> +          ipg clock drives the access to the LINFlexD
-> +          iomapped registers
-> +      - description: lin is the frequency of the baud clock
+> +	/*
+> +	 * Make sure this is called regardless of doorbell/SMT status, as
+> +	 * we disable hardlockup detector in an early_initcall where we need to
+> +	 * know KVM status for disabling hardlockup detector in KVM guests.
+> +	 */
+> +	check_kvm_guest();
 > +
-> +  clock-names:
-> +    items:
-> +      - const: ipg
-> +      - const: lin
-> +
->  required:
->    - compatible
->    - reg
->    - interrupts
-> +  - clocks
-> +  - clock-names
-
-Ah, and that's an ABI break. That's a NAK unless explained in commit msg
-(including impact on users).
-
-Best regards,
-Krzysztof
-
+>  	/* No doorbell facility, must use the interrupt controller for IPIs */
+>  	if (!cpu_has_feature(CPU_FTR_DBELL))
+>  		return;
+> @@ -207,8 +214,6 @@ static __init void pSeries_smp_probe(void)
+>  	if (!cpu_has_feature(CPU_FTR_SMT))
+>  		return;
+>  
+> -	check_kvm_guest();
+> -
+>  	if (is_kvm_guest()) {
+>  		/*
+>  		 * KVM emulates doorbells by disabling FSCR[MSGP] so msgsndp
+> -- 
+> 2.47.0
 
