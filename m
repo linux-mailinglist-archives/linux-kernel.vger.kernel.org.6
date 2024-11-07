@@ -1,128 +1,134 @@
-Return-Path: <linux-kernel+bounces-399664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F386F9C027C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:36:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85509C027D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 11:37:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA05228431A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:36:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E021C21A09
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3965E1EE017;
-	Thu,  7 Nov 2024 10:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2992028F5;
+	Thu,  7 Nov 2024 10:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vk2Rsa3+"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xhocu4RF"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500D9126C01;
-	Thu,  7 Nov 2024 10:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DDB194C7A;
+	Thu,  7 Nov 2024 10:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730975792; cv=none; b=jo5Vrv+tTsXB6aolOf+XgNoXPmIPbFaGypm2ZJONqHkoF1XJ0qd/GUfmhJNsTdB46pvPJ4uoHbuR9YQAjcNZfUcGuABteVnHjQI8EPSXtzc15eQ82EDQKvYYErU7FA6GqxHDkQhLYnIMxUPjXsmQqm4zIL1DeSgZdUZLvu7niIA=
+	t=1730975816; cv=none; b=kaliJypCOa9M+4ivzs0tabDW50Q31kbJYSrnwf0ZuqNlXm9VUV5tE9CWH4uEHXQnXJRgIIc5JdGgJYwvMfQi9T0EzIFlgyVhfz6rew4v29ZCC4zF9kJCQcAwkp8rqrHT2nEbyyqgyiXdkAcsRxlykrRYYzURthnen4b9auCUq+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730975792; c=relaxed/simple;
-	bh=MTMa471WktGrLCwXBDxYin5QOxc44DOzITzpMHuzOIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YVaVWkjD6vIuYEkyw3UQdrXNQpD4IVF+PD225SKEvUjQYezIWqGvLvkSAsceieldepYyLTTuND3LzMl54QhjQPcwug81Dwt/9hzLjW1gy10n/4Hsulzuk8cb7Pppw+qAqPb7reZ/x7G2QfIinlpvFEA63Uo0h+LNKuu5qljGV8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vk2Rsa3+; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1730975816; c=relaxed/simple;
+	bh=RrLnnEzts4OYKPhtFwS8cDUHlQU9M//D5j+x88JxFpI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=upkeV3S1IgR0Ng6AdhT0YdswDwRozkjHnVSVHtni2FHsdRFAxvruRj8BDeNhdq4/RH31vlqOVJ0FzJbN6UtPQAIKGt9u7dQlQxfSw5bBJUyAJEFP5+iJbfVlVFKWbMAygJcyZoKpY56Ak+8de54JHFgJ4mYHmJnSvdT8ImSbOOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xhocu4RF; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e52582cf8so551987b3a.2;
-        Thu, 07 Nov 2024 02:36:31 -0800 (PST)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460c0f9c13eso7443241cf.0;
+        Thu, 07 Nov 2024 02:36:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730975790; x=1731580590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xC4jScz5PMTA20yKpGgSaZvcBSA6x4Yz2EVtRJnnFPg=;
-        b=Vk2Rsa3+840/Z2bSP9KlWemH42ZX96nZ1iSZC0MZ5yiKFHwdTJT07z3Bo2aqjXfxMY
-         dx2V34783XbS0NcyJzJC8XZyBum7MFu1hXXPy68DSu4QZPiswkIHzIz1JqHV3hG1RiEw
-         o7tYPzHIAI1slDiJ9qZPRdF+HJ/hQj2s+oUbteGlsNiOmHX+bcXkUx0HWuSRicB3w0rM
-         38e1ZFV24WHLlqGGvrzBXzChhVmUSyZw76IrzZ1rr68v3nUp0qZnNlKyFshCuVnQaqDd
-         x8eV4R432XKpXETrYIqW5xQTBpoAVBpWruCVT6uz6Lk3KYfhQFrMAn1NrBEK+3LI49Cb
-         /3ww==
+        d=gmail.com; s=20230601; t=1730975813; x=1731580613; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qJJ/2q9m7IN1WFoWz8zbCoBZWDdzsyKokuxTCKWRdM8=;
+        b=Xhocu4RF5W//kbFa28bAn7e1wmqA3etXjYabZKZhaH7NlAvB+WJ7YMzh/jR3C76Wyi
+         FlqxPm8qpaNqyeBlUdnM8JRBHdWaGfHnSwi4UxFxEBp2DsfUhIX2Jj4oDSPBfDIC0zVX
+         yRsathZvRbb6d8nzYi2bVFt8TqVuzhfvhIKTxUZVz0w9L196H9J32dfWr21W8oLolQcs
+         u6kakiEgEccUl2RwkBOpKrSDsKYQjfOhxANJD3NvwPGKaCks8dyyjDLTwjijI/3Vlc8t
+         7fAhvvcZPPtKiLyTMsFPv2DkRKFf0xvItP/lqEnjHhBWYYaFUbvfHRqftvI9ruqIM9Uj
+         Duaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730975790; x=1731580590;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xC4jScz5PMTA20yKpGgSaZvcBSA6x4Yz2EVtRJnnFPg=;
-        b=EBxapeN4tFLh8ZQ+OleaDBCXZnAyF1pr/JyJ27nlgCxv7ckr1Y48xKIE8KeiYaBV1Z
-         jAkyfE2acPLB80Ao6Wp7FYWaRMKCaHEGSI0a4Gx9mSFWbOh9zap450VfFzGuxMRQofpA
-         6Qp8jkay1XM0szNXF9+7fZyk4XsHDIm7Few3EMS5n7escDsG6Sth/EBymEZ6dROm0pj5
-         rMceuSSK/F7dr8NgORZiWmcoGD8zC/Fj0jmmkHw6X45HmmsmqhM1v6Th7RyaQ99mu+CZ
-         3CDfESi2DIquzmfF3ogdyhjrVcarZY1EwuEhOZtGQn6sf5t/yE39KLULbl+Q9mZIBy8/
-         1RdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ03e59bkob1Xy95YbqDtHLrk6TNGK69m6fjtNr9QdlAEgn9tAa3XJVRqszslyyPDVYaDWgthcxMQwfP+2@vger.kernel.org, AJvYcCVsJbzqtVioy7Jb2FUtjHDlHAQqwGE5RepcSXvB/rUvLWYrodRqJ/tpWBfTZnuV0GC1e09nor1k@vger.kernel.org, AJvYcCXG1/jhkNErABDcCvKxlvn4D6UFuj2/nVs4ljfJhx7sZCYqqV7CUvyFIMHpGGt8UfOqh/xmmbkEVG7c@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzeuz+k/zxgW9m5wXt5ypsiMsdkYoeEO+pt7yCyKN1yecYHWTWJ
-	HjbRkB4aia6IHJ6Z0o3B2+0lD0/IWOKmx1ER7orZIlKJjy+LTovY
-X-Google-Smtp-Source: AGHT+IFEcmPOqn+X7HeywXdO6/sEgP5tjET/8PEbokkUZb1iOlKZDIKxcXvkvkXx3PWm7y2eChH7tQ==
-X-Received: by 2002:a05:6a00:2284:b0:71e:4786:98ee with SMTP id d2e1a72fcca58-720c99b7befmr31801669b3a.21.1730975790564;
-        Thu, 07 Nov 2024 02:36:30 -0800 (PST)
-Received: from [192.168.0.104] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7d9esm1209196b3a.66.2024.11.07.02.36.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 02:36:30 -0800 (PST)
-Message-ID: <99fa8255-12b5-4a54-acfe-cc0fbbba9c0e@gmail.com>
-Date: Thu, 7 Nov 2024 18:36:26 +0800
+        d=1e100.net; s=20230601; t=1730975813; x=1731580613;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qJJ/2q9m7IN1WFoWz8zbCoBZWDdzsyKokuxTCKWRdM8=;
+        b=URzGAA1rUPlMb4GJVUwmfCg92Yvz5+pleJDAq+kK5T768ZCoGdCCWwI/ydDWuGY5MP
+         no422iTA/4pYLAlXSLUHPxxMNH7XZqxOUR9jcDhZNGGx7On9jIRmZnYabXsASM0AnoA/
+         nXRtZNA2AVOS+m40XFsln4AnX7i2CYQxxNOfhrDSFPAENstoHbCcIyPAdCunAxC0QPyB
+         30awecuPQmHOOhqcoElCYcMvbKQG/1RHn5BK5qxz9G0kqzCIpggXNr94+pvYa/UpaWIr
+         0SeCEtnrUAfu62/H0JF/qtZ1X/3vF+rGN6b3EoZtt4kolsBcmR6Vjr2VDPZRZiSE2Y4f
+         9M6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUQaJiATv9h/MVr5/72n22sypmGyhcEGFwBZhPqR7uJb8fHVjQc0/HCZOfJmegodLAoDD5z/aasLoKvgEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkPsfjlArT0ntSwV1Zhyy298DBPqdaZVoUm7lR9nBmAcJvZFLc
+	49O5mzj73q5JN13RWmqjIjwe1TefZIDQvon+Th4JKbJsAtww+rW9
+X-Google-Smtp-Source: AGHT+IGkoPWAC1CKA63p5xdA73+R/tQ2SGnKgNg5dasna/m3dj2T33IUP2ywx2BbIe7ev71MmXieww==
+X-Received: by 2002:a05:622a:134a:b0:462:b896:798 with SMTP id d75a77b69052e-462fb7772f3mr42597381cf.19.1730975813359;
+        Thu, 07 Nov 2024 02:36:53 -0800 (PST)
+Received: from 156.1.168.192.in-addr.arpa ([2600:4041:5be7:7c00:b804:d77a:4d8a:e731])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff5c97fcsm6170511cf.80.2024.11.07.02.36.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 02:36:52 -0800 (PST)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 07 Nov 2024 05:36:46 -0500
+Subject: [PATCH v2] rust: sync: document `PhantomData` in `Arc`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] net: stmmac: dwmac-nuvoton: Add dwmac glue for
- Nuvoton MA35 family
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
- schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20241106111930.218825-1-a0987203069@gmail.com>
- <20241106111930.218825-4-a0987203069@gmail.com>
- <4c018927-b6ac-4414-9dde-487453350cca@lunn.ch>
-Content-Language: en-US
-From: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <4c018927-b6ac-4414-9dde-487453350cca@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241107-simplify-arc-v2-1-7256e638aac1@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAD2YLGcC/3XMQQ6DIBCF4auYWZcGKMTYVe9hXNApo5OIGmhIj
+ eHupe67/F/yvgOSj+wT3JsDos+ceF1q6EsDOLll9IJftUFLbZSSRiQO28y0CxdRtBJvtjVPSw6
+ hXrboiT8n1w+1J07vNe6nntVv/QNlJZRwhgh1J6mT9jEGx/MV1wBDKeULlYYY9qgAAAA=
+X-Change-ID: 20241104-simplify-arc-70c3574b5fac
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-Dear Andrew,
+Add a comment explaining the relevant semantics of `PhantomData`. This
+should help future readers who may, as I did, assume that this field is
+redundant at first glance.
 
-Thank you for your reply.
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v2:
+- Reworked as a new comment (Boqun Feng, Miguel Ojeda).
+- Link to v1: https://lore.kernel.org/r/20241104-simplify-arc-v1-1-a4ffc290f905@gmail.com
+---
+ rust/kernel/sync/arc.rs | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Andrew Lunn 於 11/7/2024 2:23 AM 寫道:
->> +struct nvt_priv_data {
->> +	struct platform_device *pdev;
->> +	int id;
->> +	struct regmap *regmap;
->> +	phy_interface_t phy_mode;
-> phy_mode does not seem to be used outside of nuvoton_gmac_setup(). In
-> fact nothing in nvt_priv_data is used outside of
-> nuvoton_gmac_setup. So it looks like you can remove it.
-I will remove it.
->> +	if (of_property_read_u32(dev->of_node, "tx_delay", &tx_delay)) {
->> +		dev_info(dev, "Set TX delay(0x0).\n");
->> +		tx_delay = 0x0;
->> +	} else {
->> +		dev_info(dev, "Set TX delay(0x%x).\n", tx_delay);
-> Please don't spam the logs. dev_dbg(), or no message at all.
->
-> 	Andrew
-I will fix it.
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index db9da352d588f65348aa7a5204abbb165b70197f..547d56766f507afe4bc733f7f1b465a55b64312a 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -127,6 +127,14 @@
+ /// ```
+ pub struct Arc<T: ?Sized> {
+     ptr: NonNull<ArcInner<T>>,
++    // NB: this informs dropck that objects of type `ArcInner<T>` may be used in `<Arc<T> as
++    // Drop>::drop`. Note that dropck already assumes that objects of type `T` may be used in
++    // `<Arc<T> as Drop>::drop` and the distinction between `T` and `ArcInner<T>` is not presently
++    // meaningful with respect to dropck - but this may change in the future so this is left here
++    // out of an abundance of caution.
++    //
++    // See https://doc.rust-lang.org/nomicon/phantom-data.html#generic-parameters-and-drop-checking
++    // for more detail on the semantics of dropck in the presence of `PhantomData`.
+     _p: PhantomData<ArcInner<T>>,
+ }
+ 
 
-Thanks!
+---
+base-commit: ae7851c29747fa3765ecb722fe722117a346f988
+change-id: 20241104-simplify-arc-70c3574b5fac
 
-BR,
-
-Joey
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
 
 
