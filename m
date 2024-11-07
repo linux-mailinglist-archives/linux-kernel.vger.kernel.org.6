@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-400464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538029C0DFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:41:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B737B9C0DFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 19:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4F91C2240C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:41:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0C1282C1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 18:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DD921732A;
-	Thu,  7 Nov 2024 18:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4912A217322;
+	Thu,  7 Nov 2024 18:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="xBD5jLLs"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWEPLDKW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6862170D0
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 18:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32B118F2C3;
+	Thu,  7 Nov 2024 18:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731004893; cv=none; b=Jninjq5EJncuf+C9rwYznusgKRdzTwENXZ/8elCte5vZsXARnMWflI+eTW2PaTbbRdANiAev+Ozyoh1cvDkfFCqaCr62uSJbAsmmNRPgbZN5ZNc2N1pexTPqnUXAoy53GcZeqm7qlOEH0FyaRH7VleiOkgjH6HFpQeJvFJlqDLs=
+	t=1731004961; cv=none; b=AUfDp7mMsvD33Arh6OCQplWRMIQdAaxC+/jDEdZn1a/eOgPt0vPcgLHFjbPdNr9fO5YaCHuPTF4NkEY6Je9hfgJ7e1kZrNAUUXpS3VKTHWPotPOEJKYI4wudmygrmiOoTmCUZjS6jsy3RawTxjEYEtS4Tt3MwSkzuHnQi80kUGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731004893; c=relaxed/simple;
-	bh=UERtUTdDHMqwEOd3lG+etdQyUOwMOZk9I0ZLa49Xxrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGlI6LOswvLHjJjeT+ggUPVdu/pLlw/+qH7Y1w4SBhS5oBuA9rMrBIa9Hz1ViuaYCpGlTaP8G+cfITOjZmVpEcUWyBH62PE0dm9UNEp0WqAC1vOppjw2Af1s6ytEd7/Ys9kCW76IhMPO8KYhcZZmhpq4tAnMsSlkvkKwOs0I8wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=xBD5jLLs; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e3fce4a60so1027172b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 10:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1731004891; x=1731609691; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZLvZijJPBYZBPFNrRc9CKq5D8gjQkE0eC4VsMFrsad0=;
-        b=xBD5jLLsrenqp2ygQOf6la5WzwytdC81+dQo850RgHo/Rui/XAAY/u+CvzD6QewZ1s
-         15eMMSjauleCGA98TZCC7snqoZDRWFjrMAol2E+fP02XzaR3F5YxsBmqsqpVT5kKDAEF
-         rU+h1S13TT63i+kthmbj4CFp3noysZWPvwSlM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731004891; x=1731609691;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZLvZijJPBYZBPFNrRc9CKq5D8gjQkE0eC4VsMFrsad0=;
-        b=uwlBeO+r8lgfpnZmmvJhBhgJKRAeJ3yNBWsyhik8gNusXppK/895h7+/AAV/yltjXO
-         eHRCxC6kG28EiOiIYSpf8as3Dm9EBZHu8s9bnti3OK1Y2CfIswQ6/g36HT7rSqAcLHPt
-         v5noH204q8EVaW9UKL5rvHkuI2FWz/auMxz3bWh7YoldiZH/jfU8beg0lxiQdKqlNIAN
-         j55Zhc8j/w9sJ6Jtx2/kwU420RgRQ7MCApLjBNPfek+1MvhbphmKqaW8K45+a9kcJ7VE
-         7Mwz3X+/uuhXUdgHPWPChpIRs+XdwKDpVIYfaWPQW2Ze1WYV8KtbGA8DMX1ntrgp8qyD
-         XXYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpNF1g5aEHemboqN40MxKdNcQP/lv6l2rkiMR3scHvPwykHmhfZd0IN/iR7s7E7oiqr0oS811hjn5Q/0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFMT3Rw9QMzwr+2bAtheoed+IsJQ8+Lmk2oGYV+vxP8Go76Fe3
-	n8cSMRPAitp1wVBtsqPBEqEiunMDyNjYSOR5JuIzdorixyDkeeGoiSkz47i1w2w=
-X-Google-Smtp-Source: AGHT+IFHzVL/PBrtDcFLSiyYckk+RtSh41/tBpAJWxrPImNnuc4c3QdM7DvQkg+YWLtnu7Psk/nk+A==
-X-Received: by 2002:a05:6a00:124c:b0:71e:722b:ae1d with SMTP id d2e1a72fcca58-724133b687emr79747b3a.25.1731004890933;
-        Thu, 07 Nov 2024 10:41:30 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079aa994sm1979872b3a.129.2024.11.07.10.41.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 10:41:30 -0800 (PST)
-Date: Thu, 7 Nov 2024 10:41:27 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-Subject: Re: [PATCH net-next v8 00/12] selftests: ncdevmem: Add ncdevmem to
- ksft
-Message-ID: <Zy0J1_3P76EACrBG@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-References: <20241107181211.3934153-1-sdf@fomichev.me>
+	s=arc-20240116; t=1731004961; c=relaxed/simple;
+	bh=AU6KM+4jQgRXOaINh8QzR6G9PXRof4Va4Nn84vc645g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RZ8vvnfyE1Dj7BaFpPUaOJpFvmmQPRHm+7neXTeo8kgFiAdo7ixS1x/e8WtP/jpGjGY9zf0IzPy2L2Y30kNBnTzI0lHU0HdNKTTyYpgvJjMHm8UhFiTtOxxPgKW64LoRMwmq/v/hW4X/V36bGNb2jQC4pYKVgA2Ap4a/r0/AtzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWEPLDKW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760BFC4CECC;
+	Thu,  7 Nov 2024 18:42:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731004961;
+	bh=AU6KM+4jQgRXOaINh8QzR6G9PXRof4Va4Nn84vc645g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=OWEPLDKWB+KY3UdA/QlhUixH60oBwcg9PlYo7wH223Te3ORqw2H7BlnqUzRKP2Sr1
+	 FGK+agrT1xFGh0MhOOkL+fo6EW97jCWYk5cDc3MjTGN1W4kzVmCZXtI5yQGJPAhIDA
+	 ldbqfXJHVZTtPUbCoOE4OaBZXSnZTnJiZpRB7NC9WGFzyfTs2M5L9Q8CHD4sxDZ9ys
+	 q5Q2ykJ7ADddmJFQIRdhi8dI0RL7oWdSKfnXPc4/3TY0ak4vkssVG1/jOHU1RbM2Ke
+	 DkXbMeyDYR2eZ58qqg7SF9X2YPd6ghMuAXs4Pz7EWOZuo1ocsZWCKhmMEBPAdWSKJJ
+	 fDkj8ks434EXw==
+From: Mark Brown <broonie@kernel.org>
+To: Jonas Rebmann <jre@pengutronix.de>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de
+In-Reply-To: <20241107-spidev-test-word-delay-v1-1-d4bba5569e39@pengutronix.de>
+References: <20241107-spidev-test-word-delay-v1-1-d4bba5569e39@pengutronix.de>
+Subject: Re: [PATCH] spi: spidev_test: add support for word delay
+Message-Id: <173100496020.241412.394021907254195608.b4-ty@kernel.org>
+Date: Thu, 07 Nov 2024 18:42:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107181211.3934153-1-sdf@fomichev.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On Thu, Nov 07, 2024 at 10:11:59AM -0800, Stanislav Fomichev wrote:
-> The goal of the series is to simplify and make it possible to use
-> ncdevmem in an automated way from the ksft python wrapper.
+On Thu, 07 Nov 2024 16:07:31 +0100, Jonas Rebmann wrote:
+> Support setting the word delay using the -w/--word-delay command line
+> parameter. Note that spidev exposes word delay only as an u8, allowing
+> for a maximum of 255us of delay to be inserted.
 > 
-> ncdevmem is slowly mutated into a state where it uses stdout
-> to print the payload and the python wrapper is added to
-> make sure the arrived payload matches the expected one.
 > 
-> v8:
-> - move error() calls into enable_reuseaddr() (Joe)
-> - bail out when number of queues is 1 (Joe)
 
-Thanks for all the work on the refactor; sorry for the nit-picking
-on the queue counts. I just thought of it because in my test for
-busy poll stuff, netdevsim uses 1 queue.
+Applied to
 
-Having tests like this factored nicely really helps when people
-(like me) go to try to write a test for the first time and have a
-good example like this to follow :)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: spidev_test: add support for word delay
+      commit: 3ec83a377a995559c18880ff780a6873df9cc5d3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
