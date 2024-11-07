@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-399336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CE19BFD9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:23:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768C29BFDA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 06:25:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC901F2269A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DCD51F22AB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 05:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEF0191F6C;
-	Thu,  7 Nov 2024 05:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700B8191F98;
+	Thu,  7 Nov 2024 05:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W1zVA0mW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jUy7e92f"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3724EE56C;
-	Thu,  7 Nov 2024 05:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B941917FE;
+	Thu,  7 Nov 2024 05:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730957003; cv=none; b=Ue11mdfAQ/B++BwnwHOJXieB3ImxUfJZstWh/vDCp599sekX/MHmeEENTxNDFysFdH2rEXT7SpSYIngMjRxD0/xOZUX+OSYnlMhN8SkcFDHlpem31r3bSk+rMGIoU76QkzaVoNOjaAhfJBZoDNJ12p9Prg6dkfBQgqgf0pKooDU=
+	t=1730957115; cv=none; b=aCJXKdLhwIoxkO2LtSMzRvbh7eue+Zc7elJdVZd5gHL2j3AnA3lKOw1nX4P2HVQfTiYvccpngcsCGfiMxUv9InY0VLc1ZB8WJVBpDcJnpUGntBGjXuSz2H9zzf9/ddX2idIyHRt7GXlRd6kkFfwDcCehLMYZHAJmbmIJavmsOuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730957003; c=relaxed/simple;
-	bh=4RrHTojRs96v4rakqDiU+Dt3TqgLeOLrnzVs/JuzDQ4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SsSH6oIwBUzGjjPcQLjSYy9Xg0FOfEBodt9qmbDtsbtOxjUQE12Z9gj9m55G48L472Aa34lWQWB3+MXF7k7l02JjUR8M0kFc4Kj+n8sf8zNcC/anCrfziOx0PYd5wYAvswx8Nh+mkRR3tLNmFQp4xvTVhniDpUof4yxzAPZanSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W1zVA0mW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A71uOLd002699;
-	Thu, 7 Nov 2024 05:23:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=g/BSYm/Kr/63wMA/e31H7PVS
-	+HLYrJz5jFt8xLfuhbg=; b=W1zVA0mWL0IRTyiVn+gjT0BM3tgI+R+A+Pva92NL
-	28aWlZktKzoh/13gp0MsV/4I2LlYHBxxAH6xUz9Vk+FZhv5v0Hyz6EZOcYQOM2cS
-	MezF7ol0IT2tm+lsKlC980g9SpOmXBqU5QO5F/FaZA7x1FxlZMAnq/jUmbDB7dnM
-	MfMvp7kyeMvav8HYIBRfMG488VXItebnqpmBduOAPiB3mZO3onD4sKn/27lwGVbQ
-	hGiIgWU+8Jyu4sPZ8XHfApJVXvGX34G91S7grSbrHiOS20Vnyxj62s1Jd0mumuyJ
-	+lILVKnHf2Ud/LTeWtZ7AHHK66jCFyfH0zaxijhP1M3jOg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qvhd44pb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 05:23:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A75NIvh005081
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Nov 2024 05:23:18 GMT
-Received: from hu-pkondeti-hyd (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 6 Nov 2024
- 21:23:14 -0800
-Date: Thu, 7 Nov 2024 10:53:11 +0530
-From: Pavan Kondeti <quic_pkondeti@quicinc.com>
-To: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: Re: [PATCH v3 2/2] firmware: qcom_scm: Support multiple waitq
- contexts
-Message-ID: <e466a2bd-c1a0-4a55-9d20-eb9e58427554@quicinc.com>
-References: <cover.1730735881.git.quic_uchalich@quicinc.com>
- <3fe8739458227081d43f00746fe527bc4f8fd8b5.1730735881.git.quic_uchalich@quicinc.com>
+	s=arc-20240116; t=1730957115; c=relaxed/simple;
+	bh=Vt9Cs5cB/C38gUKqclQ+v1jvHHP/Z44iPOcSGq8Pq+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qJ/j0IBqF8fuEpC8K9U37T2YCumsLg7ff031P4qV80J+VhUR23biNjNTjAygyYoe8yC1ux43bkwGBFpYwx+u3raRrFRMgh0PpeTb9HKN3esOFYwRo7NdyGvEsw+9xUeKv0WH+lTufxhIeV3LkJvFz9cZLvQAY40EouQDRejK+/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jUy7e92f; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730957099;
+	bh=T51IWPPUCUcNaH1BmKtk/WlM0E4bvo6/dDk0WtGda0c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jUy7e92fmdRE6SjPeFXzDqh7HhAKRlCOlrFWxGQ9mucvjmgJIe6Ac6RqwP+QxxqK8
+	 a7gDd62WTO9HMxGDtA3kDwf4NLRpw+4XJ9O49gYmdgCVPhwdLkiX3GExgO1TIthriL
+	 t7OGrPi826Sj1rrNYudhGoHxMp3KeD95zq/wt51Wda3OIzZcqxik2vT+JMqDQt2+x3
+	 JUhs9DMwuPTlQ9K/CqnVdd6MYsBCPG3H+1g0BypOkqeMfSgeEqHSduNSn2jlebHHED
+	 fp4lJQE46GESq5zHBlE7jDF23O2x2o05nI5BvvgJfDvS0apdiSj9u6UWY/Y0j4KPrp
+	 JR9U+wFuGR+ng==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XkVrW26Jyz4wbr;
+	Thu,  7 Nov 2024 16:24:58 +1100 (AEDT)
+Date: Thu, 7 Nov 2024 16:24:59 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Philipp Stanner
+ <pstanner@redhat.com>
+Subject: linux-next: manual merge of the block tree with the pci tree
+Message-ID: <20241107162459.71e0288a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3fe8739458227081d43f00746fe527bc4f8fd8b5.1730735881.git.quic_uchalich@quicinc.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fWiH6oS86d-Zf45TaQw92TbB53oAV_Se
-X-Proofpoint-GUID: fWiH6oS86d-Zf45TaQw92TbB53oAV_Se
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=928
- suspectscore=0 adultscore=0 clxscore=1015 mlxscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 malwarescore=0
- impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411070039
+Content-Type: multipart/signed; boundary="Sig_/KVRguCQE5VXDW+h2LsySCAn";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Nov 04, 2024 at 08:20:56AM -0800, Unnathi Chalicheemala wrote:
->  
-> +static int qcom_scm_query_waitq_count(void)
-> +{
-> +	int ret;
-> +	struct qcom_scm_desc desc = {
-> +		.svc = QCOM_SCM_SVC_WAITQ,
-> +		.cmd = QCOM_SCM_WAITQ_GET_INFO,
-> +		.owner = ARM_SMCCC_OWNER_SIP
-> +	};
-> +	struct qcom_scm_res res;
-> +
-> +	if (!__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_WAITQ, QCOM_SCM_WAITQ_GET_INFO))
-> +		return 1;
-> +
-> +	ret = qcom_scm_call_atomic(__scm->dev, &desc, &res);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return res.result[0] & GENMASK(7, 0);
-> +}
+--Sig_/KVRguCQE5VXDW+h2LsySCAn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I see that this SCM call is same as what we called to get the IRQ, not
-possible to populate all the waitq info at once and process/cache them
-accordingly?
+Hi all,
 
-Thanks,
-Pavan
+Today's linux-next merge of the block tree got a conflict in:
+
+  drivers/block/mtip32xx/mtip32xx.c
+
+between commit:
+
+  5080394a8fcb ("block: mtip32xx: Replace deprecated PCI functions")
+
+from the pci tree and commit:
+
+  91ff97a72259 ("mtip32xx: Replace deprecated PCI functions")
+
+from the block tree.
+
+I fixed it up (I arbitraryly used the former version) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KVRguCQE5VXDW+h2LsySCAn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcsTysACgkQAVBC80lX
+0GxMIggAoZ7P5eMVm6b5apztxVjYlz/5yV2/v9rXMChU6uZ1WoC7c6J03XpoB4or
+1R7em+i1mBy+pLIojHygcqm8e6mdxCPYurTT1wLQ5hTdHwITW654HY97uF2opoHs
+uRN8u3WbVBs/We262nttL6bELcQ6DEez4Ny3u0N09tY0Hobw++Erl6mrDqTwUzaR
+wspF1oFqsqxqUO7JgzWM5fZxkKKvcBECJzY4nEMAphD5oKEHqp7LUsCMBb15w2yf
+vNq0NqhDnI/weR/x5M8Ibqvm39RThBt9JXUltM8o4S5ja7WJyBnGfuD699Yswo4p
+nvpOIn7YAQqIECTUeu7gkIAb9b7foA==
+=DRd7
+-----END PGP SIGNATURE-----
+
+--Sig_/KVRguCQE5VXDW+h2LsySCAn--
 
