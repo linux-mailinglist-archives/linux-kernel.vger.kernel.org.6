@@ -1,124 +1,143 @@
-Return-Path: <linux-kernel+bounces-399568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5A69C00E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:12:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8879C00E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 10:13:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFDCF1C21164
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE041F22B15
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 09:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9A71DFD98;
-	Thu,  7 Nov 2024 09:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10511E0096;
+	Thu,  7 Nov 2024 09:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="LIHD+jdH"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AttxUdHk"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FC219CC36;
-	Thu,  7 Nov 2024 09:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AE41DFE36
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 09:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730970767; cv=none; b=BkSG3NOcdW9tU8w++uJqoJ+GtKGaQIZXzUkMg3zAHbdSKFuDrtKAG4eZv6FwdVH5bxoRWe+tJLa6U2UguWmTHSc3OgYq7ilVX2REQJHFlVN20/1iwNOaIaKPyTZAAlhleDwi5GFazBn+yRSMW9Dpe3JVWt2b8Yny/eKZM6satug=
+	t=1730970771; cv=none; b=dPEg/JHtCZ4yWK/yO5ymhNaElWeh9Eo/n6/DXniU5HiYRdv5KOmzssZI56GGfoFV5NERZ+hwa9DoNwsGty4rKd5iDeNBWWuMNuVXLTFLkpzZUb0LVCQiCZlwKqZy7tUC63PaSwmg9TdGy6Hp1wAMLYiOhVS4YTOHLsnA7KlqVcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730970767; c=relaxed/simple;
-	bh=/dyb7qFLx2EvxC0lQ1P/4TvXTZIOenT38YkyOrdCuJ0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r37w9o3UIFapxCcyf7vkMk9OI2Gs4iS0InM6p2DrbjgPXqOhuP6SZY4E0ckBmPAtFqIJScEluMxnobhxuGKmsf3IP2jJkAbcu49BhPLuAPy2gBRsaWtQxSVqgI/tvdO+NJsNKmZgtWqHS9AVJ5nlN36KwbwmKyuTXJjKziYySFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=LIHD+jdH; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A76tkQ7007341;
-	Thu, 7 Nov 2024 01:12:25 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=Kl7S0JXpKvyVm+9beracpWgeu
-	VI9VzfXcK/4zszh2+4=; b=LIHD+jdHJ7WzDv+zPxy+LjVK7szCiLTgBK8OFS9Ud
-	dd8ehs4Q3w3iZAvR7jAfhNR2PqWwD+Do6EHoJpAvFguZq6cNhqZYQdT46459++Tb
-	11/GOUy9doj4ers98QXhHge9nJ+aRcZ1fFJUcxX43FyOF83AVolmjC9Q4Fi0plgO
-	GelFTkPB6o/vvwhaBYt0RKlT3izTx2vM/5Ua7Cn9TfNlAwy3VrDxj9/ySoL0JUva
-	OqtXofG1m51qq8sPgYqd6Ai7h/cY0Ggy4syrqhWwhy7giGJJ0oGnEyVyyx98+lAz
-	zDgZu8i7AvT6SzmjInETBjonUwV83vfaRBoJUAT95FfzQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42rrqa87jp-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 01:12:24 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 7 Nov 2024 01:12:22 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 7 Nov 2024 01:12:21 -0800
-Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with SMTP id 3339E3F7050;
-	Thu,  7 Nov 2024 01:12:17 -0800 (PST)
-Date: Thu, 7 Nov 2024 14:42:12 +0530
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Wei Fang <wei.fang@nxp.com>
-CC: <claudiu.manoil@nxp.com>, <vladimir.oltean@nxp.com>,
-        <xiaoning.wang@nxp.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>
-Subject: Re: [PATCH net-next 0/5] Add more feautues for ENETC v4 - round 1
-Message-ID: <ZyyEbCKxjkVFXUMB@test-OptiPlex-Tower-Plus-7010>
-References: <20241107033817.1654163-1-wei.fang@nxp.com>
+	s=arc-20240116; t=1730970771; c=relaxed/simple;
+	bh=oEq6Bpq9jtRyKMwhrFiYBsMaw4wa9Blc95c7/NVmjfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KodEMumZTlfsZESUh1dFTivYOcdW2NPdSvJ28zC3YiirCSKXd5UfUeTIm0CfYzw1jvSjnkxrCYUMoJJ7bfyF7WdgSPwKWFoB6xRq26JsDFD9GsXh3zVigGmegqI+mYhXBHZGsh2rNjX7jc278gOgeIuvyE+zZ7MsBsJ7qWc2ndw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AttxUdHk; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so453203f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 01:12:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730970768; x=1731575568; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CSGQrTX6RPEJ5ltwOkhPplbF6XskuwzGte6a11RVMyU=;
+        b=AttxUdHkoPUdZek2amJl27dnAgtyDCG0M7sXMDT4ZMw3vxquTKLkOOQ6pQJgkd+eca
+         fjRdNwBzdh4drejsCyeNzBELsFxOETgQomxrZGNUQPYrWkook1syt3r3XDLJX3tbLgXi
+         2AzICpSM2QqKPaAa3q3hjFfwSXpYv8cabK4FK/0x+v0hmBcF/+dsVpSCZLobyfs6pksl
+         QjwhnZj1se33bs81/BbZXpGBqWo2yw4jCqH9oOIWGRYJ1FjdMdUu+BUgRT+5vzeyox6Z
+         2fM2cqMjoju35+XwaIs1HQ2+rAq/4uWlufa6B+kmbRXNhoRXSrmL6KZxujZkkNYWbBSU
+         t94Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730970768; x=1731575568;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CSGQrTX6RPEJ5ltwOkhPplbF6XskuwzGte6a11RVMyU=;
+        b=eR77K3hjGOksQ6NEADUCqyCBpL6vdtdfDzPJnkXt3ishkk8zW4WS36FYKVeElmJpBc
+         EsERwGhtejtFvYaHJk584bn8eyxB9P1hWxwTry+iP3uSzCIUvLpahTyLC37vm6ISltTx
+         qlkGjtKbC3XoUvZoYLmyTDW3zmLTLode1rwjouULZInxGBxySPBRjVag9UdidrdOz+ji
+         G5RbbD6rxwjB7WdhtKZ15nOr3cED+537sxtHfsLufTmw/e7wPJoOLbYArYoF01iYRJeJ
+         th1eCR2lmbxc+lv4Qe1Hdb7SzEsrSwcvJf408JBJmPIWA36A3sJ0UDFFYJQOnTRNIXPt
+         jPgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOKyYF2Bg/cDPzqPkxQsXFYbZzvD2vgvymQ06cnly4ifR/040/rE2xr6KXDT4K1USq2xs4cweeP39j5Xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyeie9PmDhasyftHvvqLxMg1qkIV+8TbxjtztYQIUuQf4khI3QT
+	rJ1EhvOL3E9r9LgmGmAl0GbRgYY1r0+ukV95ATTa3MYyAZhnf6HVEqATn5/I2Pg=
+X-Google-Smtp-Source: AGHT+IEMgszAeoujvnm+EHb15Ezxw32/wzRi/AgvpY4lG2K21v203JKIrGkQz4rMrdtjTjqkqPH+Bw==
+X-Received: by 2002:a5d:64c7:0:b0:37d:4937:c9eb with SMTP id ffacd0b85a97d-381c7a5e2bfmr19441264f8f.21.1730970767795;
+        Thu, 07 Nov 2024 01:12:47 -0800 (PST)
+Received: from myrica ([2.221.137.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04ad0sm1145847f8f.100.2024.11.07.01.12.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 01:12:47 -0800 (PST)
+Date: Thu, 7 Nov 2024 09:13:07 +0000
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+To: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Cc: bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Quentin Monnet <qmo@kernel.org>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	David Abdurachmanov <davidlt@rivosinc.com>
+Subject: Re: [PATCH] tools: Override makefile ARCH variable if defined, but
+ empty
+Message-ID: <20241107091307.GA2016393@myrica>
+References: <20241106193208.290067-1-bjorn@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241107033817.1654163-1-wei.fang@nxp.com>
-X-Proofpoint-ORIG-GUID: LhRfencOvJt1EKve0myO96XLecv8uDpu
-X-Proofpoint-GUID: LhRfencOvJt1EKve0myO96XLecv8uDpu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106193208.290067-1-bjorn@kernel.org>
 
-On 2024-11-07 at 09:08:12, Wei Fang (wei.fang@nxp.com) wrote:
-> Compared to ENETC v1 (LS1028A), ENETC v4 (i.MX95) adds more features, and
-> some features are configured completely differently from v1. In order to
-> more fully support ENETC v4, these features will be added through several
-> rounds of patch sets. This round adds these features, such as Tx and Rx
-> checksum offload, increase maximum chained Tx BD number and Large send
-> offload (LSO).
+On Wed, Nov 06, 2024 at 08:32:06PM +0100, Björn Töpel wrote:
+> From: Björn Töpel <bjorn@rivosinc.com>
 > 
-> Wei Fang (5):
->   net: enetc: add Rx checksum offload for i.MX95 ENETC
->   net: enetc: add Tx checksum offload for i.MX95 ENETC
->   net: enetc: update max chained Tx BD number for i.MX95 ENETC
->   net: enetc: add LSO support for i.MX95 ENETC PF
->   net: enetc: add UDP segmentation offload support
->
-
-Can you refactor the patches in a way that "ndev->hw_features" set 
-in corresponding patch.
-
-
-Setting NETIF_F_HW_CSUM in "net: enetc: add UDP segmentation offload
-support" does not look good to me.
-
-Thanks,
-Hariprasad k
-
-
->  drivers/net/ethernet/freescale/enetc/enetc.c  | 345 ++++++++++++++++--
->  drivers/net/ethernet/freescale/enetc/enetc.h  |  32 +-
->  .../net/ethernet/freescale/enetc/enetc4_hw.h  |  22 ++
->  .../net/ethernet/freescale/enetc/enetc_hw.h   |  31 +-
->  .../freescale/enetc/enetc_pf_common.c         |  16 +-
->  .../net/ethernet/freescale/enetc/enetc_vf.c   |   7 +-
->  6 files changed, 419 insertions(+), 34 deletions(-)
+> There are a number of tools (bpftool, selftests), that require a
+> "bootstrap" build. Here, a bootstrap build is a build host variant of
+> a target. E.g., assume that you're performing a bpftool cross-build on
+> x86 to riscv, a bootstrap build would then be an x86 variant of
+> bpftool. The typical way to perform the host build variant, is to pass
+> "ARCH=" in a sub-make. However, if a variable has been set with a
+> command argument, then ordinary assignments in the makefile are
+> ignored.
 > 
+> This side-effect results in that ARCH, and variables depending on ARCH
+> are not set.
+> 
+> Workaround by overriding ARCH to the host arch, if ARCH is empty.
+> 
+> Fixes: 8859b0da5aac ("tools/bpftool: Fix cross-build")
+> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+
+Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+
+> ---
+>  tools/scripts/Makefile.arch | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/scripts/Makefile.arch b/tools/scripts/Makefile.arch
+> index f6a50f06dfc4..eabfe9f411d9 100644
+> --- a/tools/scripts/Makefile.arch
+> +++ b/tools/scripts/Makefile.arch
+> @@ -7,8 +7,8 @@ HOSTARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
+>                                    -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
+>                                    -e s/riscv.*/riscv/ -e s/loongarch.*/loongarch/)
+>  
+> -ifndef ARCH
+> -ARCH := $(HOSTARCH)
+> +ifeq ($(strip $(ARCH)),)
+> +override ARCH := $(HOSTARCH)
+>  endif
+>  
+>  SRCARCH := $(ARCH)
+> 
+> base-commit: 7758b206117dab9894f0bcb8333f8e4731c5065a
 > -- 
-> 2.34.1
-> 
+> 2.45.2
 > 
 
