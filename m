@@ -1,150 +1,116 @@
-Return-Path: <linux-kernel+bounces-399892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4794C9C05EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:37:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 103F49C05E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 13:35:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8BF3B22001
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41D621C20A7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 12:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0B820EA28;
-	Thu,  7 Nov 2024 12:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43AB1F472C;
+	Thu,  7 Nov 2024 12:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KOPfZKvy"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T/i8KB/e"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1221DBB37;
-	Thu,  7 Nov 2024 12:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A211DE4F0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 12:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730983014; cv=none; b=WpPT1BtKi4C85hyFiNUKATdKSGHwusbJzzyzIq9akuc1LJrER1OmWHeT+tJDhOi6ypb/Fl/301OayMVaikWSTcF5vjZttSgVX0ZlvNq2qsL0lekX6ox2DVM3IhZLzJHaFbSG1GQAjmHLgNBClrYSW3/q7QsnmvRla7HYUNjoVCQ=
+	t=1730982906; cv=none; b=m1TgWkDIrlIldZRGXso3HFV9Y3OPRZLt5AwBcIkoMUJjo0Ep5Ich3rOlpuCuqGdUXV8CXrFSsyAyjGZ+D4wWv4HkGzu9pg0RYe0VpHg4ZJg+cWR1GblGsjlyrL8XwpjlWCkPJ97Aqgg5Yn9JVlYOkacMtok48Mhue95h6Ur9w94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730983014; c=relaxed/simple;
-	bh=6dvnoTqO3q8KZpVUlVWdI9dFz4kSpmWF2YL9zkud6Yk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cqkbM41+598ivgDoIethg7IwJp6aJyPcz8SHIK7K2a7Y6GVq2lbr38Hr7CsTbRmITFdXtPcQT3rtVzVv1A1m1MGarUyCkJ2jATlVRvfiPyuKbI4DinAOrpSGzxCTrAFFB/KX1qUKqWI36QqCktu7X4RXR4iQ3cKo7M9+eySr2kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KOPfZKvy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7CA5h7018741;
-	Thu, 7 Nov 2024 12:36:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=TJ8iE+voOCuc4XW4iWjH/BitMLRqqXjczgxUb0bSz
-	pE=; b=KOPfZKvy2mttYKqbbzcJlgaCKaDpCxWBccwA3wXEVAuxBGCGfDSNmGYGy
-	3S7w9e0RiRqhkVNtakyFfyH8EVqAK7T05nM93w2/drnjUIanP+IXerIC3xfC7zuj
-	orPWcNq9IaXjiVv6dE3IlLblfYxbknsmjXoocMsTKDQ5EKjgBMVGwbyDKI11AT8x
-	x1q88NudXcWmCm9qZQb+UJLL6mK7VcR0pwGv625tktwqRxUyBYnKL46WjU5EMvdU
-	4nIgZCVJdKJx9ozFSq+P1vOo1kuGSjIP2WuZluK1l3OqcljSknfyQqC0vjnEJpIx
-	7LhIvU+LCLUxCMj8KvvPaDCUEDlwg==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rwag82sh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 12:36:48 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A76q82f024314;
-	Thu, 7 Nov 2024 12:34:02 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p0mj83bu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 12:34:02 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A7CXxV756099190
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Nov 2024 12:33:59 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4DFA92004B;
-	Thu,  7 Nov 2024 12:33:59 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0943B20043;
-	Thu,  7 Nov 2024 12:33:59 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Nov 2024 12:33:58 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, sumanthk@linux.ibm.com, namhyung@kernel.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-Subject: [PATCH] perf/test: fix perf ftrace test on s390
-Date: Thu,  7 Nov 2024 13:33:43 +0100
-Message-ID: <20241107123343.1580616-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1730982906; c=relaxed/simple;
+	bh=Esda7sxbhP4fmYNvQU/wAslDDgX06gVPKFPIdwfsU+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOizMv5PLWw7q9XcYaeaANRYB4Puv9GZ73SIEiD6/ZmsgGinrPPIKdqWqTANqFyH9uVXsGfy1GGBtWm4iseLrabFlahNxT/gpnWg11UoCcP/GnuGLNvMfjFxK5+r6HMALBoxDdiCGjZuCOTTERMSUp59qLNnlFOKD8UwKDux71g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T/i8KB/e; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431ac30d379so7542655e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 04:35:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730982903; x=1731587703; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t1E1HnzW14p3ky9k8ykLp0FSr/w1f40YmC6K/07hNjw=;
+        b=T/i8KB/eFyxCVOLSP5PKRigER5gise95lorYfWRq3a7ivXoa/8je4UVKYQ+GDhGUJZ
+         o5FjBVw72GkKE82oknX9mHyl/hVCPQJOEh7Ao0M7fa/L4+e1FVaJjyyDOBJbr7KsoCZg
+         EzKvM7yAgPG3ORpajHmifSdWODITFudOfntxFy/WeOJxV/hlBJu2Uc49f46l69uLvefK
+         G+ha8qw2HKGsrMQ/VmNa9Axg0IppqFPvCSDmHrRSpBK8xS6tKo2p8Y4RYKDvHlTNGClb
+         k6VnulrYWsmAXkAk6gej0TVQksuhYniHePVvPKNR3qma+TRlxveI5vmbiaHTaiEDn77Q
+         NWVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730982903; x=1731587703;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t1E1HnzW14p3ky9k8ykLp0FSr/w1f40YmC6K/07hNjw=;
+        b=gHRZpTy7DK09vqqpSoL2XJkn7VFcYMjvrJMOXD2xutuaNBYGpJf7lflnH+yEQAV8Lm
+         XyygEBH4vuWGrKLtfBsidTXxrjmZ2jJRD8di4VhkJdASwKm2Ap5ydlqm/gFhrxyiCyk0
+         B9ARnaiNVdKXPoT7T4Qq/DgDpSnI3i5t/jlLA2NQoOHnlCuP7j6/vBdJZO/Nl6O/PBKO
+         sPC/ulcLVJFhwar44frquuLhSEEJXJnnXy2KoLArfFxExgbODWR4i1c8mu80Aup0YARH
+         YkpEwsSVNStI+HpviJ30EgJO6RT7ZQGX9Lp5cb9vGPsb+3KWYkj6h76d8gKmAHmr25j5
+         NA6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ1yGV7hXJInJd+z+X7tjdMRkFo0pPL0PAogGj/UDsjQLzsJzhmUHNIrQPcYeCE+7BcurjKikm4LuCtSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS+WCZljeNYnvTy6f4QxHOSTlDKIIwAYOZuBlYy7yGneDAmDsk
+	NAE0YK2w5sVFf0/GxwoSRl9mLixZgRP7+6OKsXgcYBQdtGRmOlTDVW+6N0UsHBY=
+X-Google-Smtp-Source: AGHT+IHN/1L/dUoeYcgUToN3r4u5BpldBQGtGvcGjc/Hw9fcK0iHSssfgI0Mi5Z6DtlW3jdu9v85TQ==
+X-Received: by 2002:a05:600c:5618:b0:42c:cd88:d0f4 with SMTP id 5b1f17b1804b1-431a01782c6mr381936165e9.22.1730982902712;
+        Thu, 07 Nov 2024 04:35:02 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed970d10sm1603880f8f.20.2024.11.07.04.35.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 04:35:02 -0800 (PST)
+Date: Thu, 7 Nov 2024 13:34:59 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Fan Ni <fan.ni@samsung.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-cxl@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] Documentation/printf: struct resource add start
+ == end special case
+Message-ID: <Zyyz85FfUuLv_oo7@pathway.suse.cz>
+References: <20241025-cxl-pra-v2-0-123a825daba2@intel.com>
+ <20241025-cxl-pra-v2-2-123a825daba2@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: H5GZzuWxWkKvY3NeFndPVtpif9MpOGhU
-X-Proofpoint-ORIG-GUID: H5GZzuWxWkKvY3NeFndPVtpif9MpOGhU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 spamscore=0 mlxlogscore=636
- priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411070098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025-cxl-pra-v2-2-123a825daba2@intel.com>
 
-On s390 the perf test case ftrace sometimes fails as follows:
+On Fri 2024-10-25 19:46:54, Ira Weiny wrote:
+> The code when printing a struct resource will check for start == end and
+> only print the start value.
+> 
+> Document this special case.
+> 
+> Suggested-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-  # ./perf test ftrace
-  79: perf ftrace tests    : FAILED!
-  #
+Looks good.
 
-The failure depends on the kernel .config file. Some configurarions
-always work fine, some do not.
-To achieve success for all our tested kernel configurations, enlarge
-the buffer to store the traces complete without wrapping.
-The default buffer size is too small  for all kernel configurations.
-Set the buffer size of /sys/kernel/tracing/buffer_size_kb to 16 MB
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Output after:
-  # ./perf test ftrace
-  79: perf ftrace tests     : Ok
-  #
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Sven Schnelle <svens@linux.ibm.com>
----
- tools/perf/tests/shell/ftrace.sh | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
-index a6ee740f0d7e..742d6b8f34d3 100755
---- a/tools/perf/tests/shell/ftrace.sh
-+++ b/tools/perf/tests/shell/ftrace.sh
-@@ -80,10 +80,21 @@ test_ftrace_profile() {
-     echo "perf ftrace profile test  [Success]"
- }
- 
-+if [ "$(uname -m)" = "s390x" ]
-+then
-+	ftrace_size=$(cat /sys/kernel/tracing/buffer_size_kb)
-+	echo 16384 > /sys/kernel/tracing/buffer_size_kb
-+fi
-+
- test_ftrace_list
- test_ftrace_trace
- test_ftrace_latency
- test_ftrace_profile
- 
-+if [ "$(uname -m)" = "s390x" ]
-+then
-+	echo $ftrace_size > /sys/kernel/tracing/buffer_size_kb
-+fi
-+
- cleanup
- exit 0
--- 
-2.47.0
-
+Best Regards,
+Petr
 
