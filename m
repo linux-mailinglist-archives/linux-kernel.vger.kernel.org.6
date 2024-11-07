@@ -1,310 +1,227 @@
-Return-Path: <linux-kernel+bounces-400259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C56A9C0B1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:15:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268309C0B1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 17:15:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263E11C23635
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:15:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24F97B24834
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 16:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E91D216A2B;
-	Thu,  7 Nov 2024 16:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7459B216A32;
+	Thu,  7 Nov 2024 16:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eeItI3X2"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIorGii7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAC521620A
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Nov 2024 16:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9911C216E11;
+	Thu,  7 Nov 2024 16:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730996020; cv=none; b=CG1ZlMv3SzC+kgs+oqJbK82eTrAyquUSTLXWCfrQfgJ09JCmzYBdwZLayXY3I42blBaR7iqI1ey/4IXpcIdQqGH9AaKNGyugMfADggvio6ekN/X8nbb2j9btKfGA40Hpy7k8hG9rgCnxmx/IF0BNFwrTI90Jf/ZhbWX8PZ4tsD0=
+	t=1730996024; cv=none; b=mT4lGw0EMpxeLfoBnfCqb30lDqEH8ts8QkwEmTz4fA9uJw2AnLuhxbUrYVXLYtr7BmqyWNjdt/0ROE2LaJXPFdJ29+zHUl8Jw8jEDVUM0FE7eKIfx+4GM9ev9bKvsN6UjV6QRIm9UZGs0ZGU+d97EyRm/CWvNaxUn/k/yirZOtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730996020; c=relaxed/simple;
-	bh=fZtlm0N810hvKG9POajy9/CaNR0d3dDfZY8f70Q54QY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HgrWToSPPNEk3jE8sGFOoGa1sC6LElTU5mADFEXqeCMwTuKdM5rhVDbkFRRxKVj48mvU2c2gboBaJH37JWYtaNa+qY8dbx/1Lm27gLT/5varbe0rb/5liAIFkR1hhvYsF0ACzy7jIPrfJEKsu0YQM9MCOjUzDXv5h1hkSkXvafY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eeItI3X2; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2951f3af3ceso743804fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 08:13:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730996017; x=1731600817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=evTfMuO8wFTUeT/j8A+HLrTii7N17uHiCOM6i73+FmY=;
-        b=eeItI3X2PGxsruNFJRa8QrVp6v6LCRq30xmCmzf9fmhSyhIckECq5YptbNiwGY5z6J
-         PES/PRDzjDOned8qSFklc4GMkv15K2QWqKcGOR4Ysc8lowNqsb/1lLKTN72zAVCp1fsU
-         cGZvlm6UdDntdrKLhWQ1RIKHTV1U+XoLXDfZ0doGm4uHi5Eb/Xlp7Fl3yv7o1EOeKJQK
-         a6C2DdTQEqLZtprNNBvZJoMhFs/MlBf5jsb6wdjWao0L3VoIhqNovXOfnr/fmq1DWjEl
-         2S0fd1SgsCAX8g4TwPgGQCgWjvXbwPByiWHPMQT5hIJnicQWqYu7SrxCypUH3FXIcSVi
-         c7EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730996017; x=1731600817;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=evTfMuO8wFTUeT/j8A+HLrTii7N17uHiCOM6i73+FmY=;
-        b=RCIr3M++9dLU4H7nSGHc7e6PYrrzdN/vXHrAxgmWXzDA9kNVEIt35eDr2AjtHwv6if
-         jw/CfrxGnS+3B7+/G8QwrXS20ta5ZlwPjjv0ITsYFhD5XQnqkJORFt60mFJwBh7PuO6k
-         Q7oW5rxpkgrOUxg7VEUp/qQ88J6fkpdr9Eli9oSRujh6YR7JqW22FwuDZ5bwNT0pOGqB
-         GzCK0mN7l10KH7YVsdXAp16EmIv7Q5fxJAUskleeQ7Uy6U1b445cb6yOvQYXAkfMgV5+
-         0r8MbsdHHjdXNrfVp5KV8QFmnSMhS1CKmgph9btK6iGG152dqK5VX3x26tHts8wo3XzC
-         JGNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXwbkT+sTKRPaazQoW5tb+EoWDgeN0qlaEdmHaiFHbpmD+CtQQtTmmM1a0TpWvYZmcXwypcbtykzvfsBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi5FRLpewElfSF2smQwhxZ80fR83JELB0AaQ90lGuYX12mm0FT
-	/FTnjr3L0AV9OfbnLkWnho37oC3W4V+z6RnI3UrlpYc5yKd+ImzQiPE5H++Yfn0=
-X-Google-Smtp-Source: AGHT+IEST/nlAEK8PXt9lv0scc/mxN6rLDixAgAczzs8cEbzgjkkRhrZiroyqyVBE0xMREgTqRxK4g==
-X-Received: by 2002:a05:6870:a905:b0:277:e039:7aef with SMTP id 586e51a60fabf-2949ed306cdmr23875108fac.8.1730996016905;
-        Thu, 07 Nov 2024 08:13:36 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a108374casm315010a34.40.2024.11.07.08.13.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 08:13:35 -0800 (PST)
-Message-ID: <1f2b8d91-19be-46b7-9202-824aa177dff6@baylibre.com>
-Date: Thu, 7 Nov 2024 10:13:34 -0600
+	s=arc-20240116; t=1730996024; c=relaxed/simple;
+	bh=FHR30uhF6DB2gIDAdsPiv6Yh2i+bB/ZarNlpamdV/8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7LdgnaPYmYrzIyKMHKg4MGSB2J2kFuPFcOySsUeJgdrlb8S7M4V/pZWvgKkg+AwFtOV6jup6A5eqXFN4+UotgxqYTpUbqtVc6ZEDMWKrRn/SAKgwr7a9fBqqGbW9Ec+JqF+4+H/A0pgWA4Db1CrXQY3caj3SWEu8XuYo+0m18o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIorGii7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BCF1C4CECD;
+	Thu,  7 Nov 2024 16:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730996024;
+	bh=FHR30uhF6DB2gIDAdsPiv6Yh2i+bB/ZarNlpamdV/8U=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=iIorGii7VPFbRUVtUE5c5O3wF/9CYPC2R7Zhv6L1KDgv4fIqUVa1A5w0d26/HbeIE
+	 Jf2O7i1mnX/JVQMR/wCvmYNwyOBatttLt+0/SGL9jC3kGD8Lbt1SMdTKGp6eLnlJ1m
+	 AlLCJmTn4dPOwWfrSEYiT/dW1g6ANs/hpD6mpFsZaZvA2j2J3dZVnSjGE9WPCXP/w1
+	 +iVUs74Zo0hFGkFW3hm0yF+t3y3Kct7iNpYh9EldCWFI17sXeVFxDLxQ+kAlWBNQUw
+	 tMZ33tmI101nEF3e0lgTP9FIyUZL14kwM6hXujkI7qvO3yXSbxedwPp+/Vk+dhNMjw
+	 DghCR1xtvWLbw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C32DCCE04CE; Thu,  7 Nov 2024 08:13:43 -0800 (PST)
+Date: Thu, 7 Nov 2024 08:13:43 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Breno Leitao <leitao@debian.org>, Andrii Nakryiko <andrii@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v5 4/8] uprobes: travers uprobe's consumer list
+ locklessly under SRCU protection
+Message-ID: <4d034c81-34cd-480b-bab9-6645204fc713@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240903174603.3554182-1-andrii@kernel.org>
+ <20240903174603.3554182-5-andrii@kernel.org>
+ <20241106-transparent-athletic-ammonite-586af8@leitao>
+ <CAEf4Bza3+WYN8dstn1v99yeh+G0cjAeRQy8d5GAbvvecLmbO0A@mail.gmail.com>
+ <20241107-uncovered-swinging-bull-1e812e@leitao>
+ <CAEf4BzanXs4yAexVXdAp-Q-0anmOVCYx+GObvaHPVDnXobkdSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/6] iio: adc: ad4851: add ad485x driver
-To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>,
- "jic23@kernel.org" <jic23@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-References: <20241101112358.22996-1-antoniu.miclaus@analog.com>
- <20241101112358.22996-7-antoniu.miclaus@analog.com>
- <de120709-b60b-4e85-912e-b60ca18a8001@baylibre.com>
- <CY4PR03MB339993CDE9BA8DD3976CF2F29B5C2@CY4PR03MB3399.namprd03.prod.outlook.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CY4PR03MB339993CDE9BA8DD3976CF2F29B5C2@CY4PR03MB3399.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzanXs4yAexVXdAp-Q-0anmOVCYx+GObvaHPVDnXobkdSA@mail.gmail.com>
 
-On 11/7/24 4:51 AM, Miclaus, Antoniu wrote:
->>> +	if (osr == 1) {
->>> +		ret = regmap_update_bits(st->regmap, AD4851_REG_PACKET,
->>> +					 AD4851_PACKET_FORMAT_MASK,
->> 0);
->>
->> regmap_clear_bits()
->>
->>> +		if (ret)
->>> +			return ret;
->>> +
->>> +		st->resolution_boost_enabled = false;
->>> +	} else {
->>> +		ret = regmap_update_bits(st->regmap, AD4851_REG_PACKET,
->>> +					 AD4851_PACKET_FORMAT_MASK,
->> 1);
->>
->> regmap_set_bits()
-> Packet format is 2 bits wide. Not sure how can I write 1 if I use regmap set_bits
-> Should I do 2 separate masks?
-
-Sorry, I missed that detail. In that case, using FIELD_PREP() here would
-make that clear (even if it isn't technically required).
-
-
->>> +static int ad4851_set_calibscale(struct ad4851_state *st, int ch, int val,
->>> +				 int val2)
->>> +{
->>> +	u64 gain;
->>> +	u8 buf[0];
->>> +	int ret;
->>> +
->>> +	if (val < 0 || val2 < 0)
->>> +		return -EINVAL;
->>> +
->>> +	gain = val * MICRO + val2;
->>> +	gain = DIV_U64_ROUND_CLOSEST(gain * 32768, MICRO);
->>> +
->>> +	put_unaligned_be16(gain, buf);
->>> +
->>> +	guard(mutex)(&st->lock);
->>> +
->>> +	ret = regmap_write(st->regmap, AD4851_REG_CHX_GAIN_MSB(ch),
->>> +			   buf[0]);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	return regmap_write(st->regmap, AD4851_REG_CHX_GAIN_LSB(ch),
->>> +			    buf[1]);
->>> +}
->>> +
->>
->> I'm pretty sure that calibscale and calibbias also need to take into
->> account if resolution boost is enabled or not.
+oN tHU, nov 07, 2024 at 08:01:05AM -0800, Andrii Nakryiko wrote:
+> On Thu, Nov 7, 2024 at 3:35 AM Breno Leitao <leitao@debian.org> wrote:
+> >
+> > Hello Andrii,
+> >
+> > On Wed, Nov 06, 2024 at 08:25:25AM -0800, Andrii Nakryiko wrote:
+> > > On Wed, Nov 6, 2024 at 4:03 AM Breno Leitao <leitao@debian.org> wrote:
+> > > > On Tue, Sep 03, 2024 at 10:45:59AM -0700, Andrii Nakryiko wrote:
+> > > > > uprobe->register_rwsem is one of a few big bottlenecks to scalability of
+> > > > > uprobes, so we need to get rid of it to improve uprobe performance and
+> > > > > multi-CPU scalability.
+> > > > >
+> > > > > First, we turn uprobe's consumer list to a typical doubly-linked list
+> > > > > and utilize existing RCU-aware helpers for traversing such lists, as
+> > > > > well as adding and removing elements from it.
+> > > > >
+> > > > > For entry uprobes we already have SRCU protection active since before
+> > > > > uprobe lookup. For uretprobe we keep refcount, guaranteeing that uprobe
+> > > > > won't go away from under us, but we add SRCU protection around consumer
+> > > > > list traversal.
+> > > >
+> > > > I am seeing the following message in a kernel with RCU_PROVE_LOCKING:
+> > > >
+> > > >         kernel/events/uprobes.c:937 RCU-list traversed without holding the required lock!!
+> > > >
+> > > > It seems the SRCU is not held, when coming from mmap_region ->
+> > > > uprobe_mmap. Here is the message I got in my debug kernel. (sorry for
+> > > > not decoding it, but, the stack trace is clear enough).
+> > > >
+> > > >          WARNING: suspicious RCU usage
+> > > >            6.12.0-rc5-kbuilder-01152-gc688a96c432e #26 Tainted: G        W   E    N
+> > > >            -----------------------------
+> > > >            kernel/events/uprobes.c:938 RCU-list traversed without holding the required lock!!
+> > > >
+> > > > other info that might help us debug this:
+> > > >
+> > > > rcu_scheduler_active = 2, debug_locks = 1
+> > > >            3 locks held by env/441330:
+> > > >             #0: ffff00021c1bc508 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff+0x84/0x1d0
+> > > >             #1: ffff800089f3ab48 (&uprobes_mmap_mutex[i]){+.+.}-{3:3}, at: uprobe_mmap+0x20c/0x548
+> > > >             #2: ffff0004e564c528 (&uprobe->consumer_rwsem){++++}-{3:3}, at: filter_chain+0x30/0xe8
+> > > >
+> > > > stack backtrace:
+> > > >            CPU: 4 UID: 34133 PID: 441330 Comm: env Kdump: loaded Tainted: G        W   E    N 6.12.0-rc5-kbuilder-01152-gc688a96c432e #26
+> > > >            Tainted: [W]=WARN, [E]=UNSIGNED_MODULE, [N]=TEST
+> > > >            Hardware name: Quanta S7GM 20S7GCU0010/S7G MB (CG1), BIOS 3D22 07/03/2024
+> > > >            Call trace:
+> > > >             dump_backtrace+0x10c/0x198
+> > > >             show_stack+0x24/0x38
+> > > >             __dump_stack+0x28/0x38
+> > > >             dump_stack_lvl+0x74/0xa8
+> > > >             dump_stack+0x18/0x28
+> > > >             lockdep_rcu_suspicious+0x178/0x2c8
+> > > >             filter_chain+0xdc/0xe8
+> > > >             uprobe_mmap+0x2e0/0x548
+> > > >             mmap_region+0x510/0x988
+> > > >             do_mmap+0x444/0x528
+> > > >             vm_mmap_pgoff+0xf8/0x1d0
+> > > >             ksys_mmap_pgoff+0x184/0x2d8
+> > > >
+> > > >
+> > > > That said, it seems we want to hold the SRCU, before reaching the
+> > > > filter_chain(). I hacked a bit, and adding the lock in uprobe_mmap()
+> > > > solves the problem, but, I might be missing something, since I am not familiar
+> > > > with this code.
+> > > >
+> > > > How does the following patch look like?
+> > > >
+> > > > commit 1bd7bcf03031ceca86fdddd8be2e5500497db29f
+> > > > Author: Breno Leitao <leitao@debian.org>
+> > > > Date:   Mon Nov 4 06:53:31 2024 -0800
+> > > >
+> > > >     uprobes: Get SRCU lock before traverseing the list
+> > > >
+> > > >     list_for_each_entry_srcu() is being called without holding the lock,
+> > > >     which causes LOCKDEP (when enabled with RCU_PROVING) to complain such
+> > > >     as:
+> > > >
+> > > >             kernel/events/uprobes.c:937 RCU-list traversed without holding the required lock!!
+> > > >
+> > > >     Get the SRCU uprobes_srcu lock before calling filter_chain(), which
+> > > >     needs to have the SRCU lock hold, since it is going to call
+> > > >     list_for_each_entry_srcu().
+> > > >
+> > > >     Signed-off-by: Breno Leitao <leitao@debian.org>
+> > > >     Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list locklessly under SRCU protection")
+> > > >
+> > > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > > index 4b52cb2ae6d62..cc9d4ddeea9a6 100644
+> > > > --- a/kernel/events/uprobes.c
+> > > > +++ b/kernel/events/uprobes.c
+> > > > @@ -1391,6 +1391,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+> > > >         struct list_head tmp_list;
+> > > >         struct uprobe *uprobe, *u;
+> > > >         struct inode *inode;
+> > > > +       int srcu_idx;
+> > > >
+> > > >         if (no_uprobe_events())
+> > > >                 return 0;
+> > > > @@ -1409,6 +1410,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+> > > >
+> > > >         mutex_lock(uprobes_mmap_hash(inode));
+> > > >         build_probe_list(inode, vma, vma->vm_start, vma->vm_end, &tmp_list);
+> > > > +       srcu_idx = srcu_read_lock(&uprobes_srcu);
+> > >
+> > > Thanks for catching that (production testing FTW, right?!).
+> >
+> > Correct. I am running some hosts with RCU_PROVING and I am finding some
+> > cases where RCU protected areas are touched without holding the RCU read
+> > lock.
+> >
+> > > But I think you a) adding wrong RCU protection flavor (it has to be
+> > > rcu_read_lock_trace()/rcu_read_unlock_trace(), see uprobe_apply() for
+> > > an example) and b) I think this is the wrong place to add it. We
+> > > should add it inside filter_chain(). filter_chain() is called from
+> > > three places, only one of which is already RCU protected (that's the
+> > > handler_chain() case). But there is also register_for_each_vma(),
+> > > which needs RCU protection as well.
+> >
+> > Thanks for the guidance!
+> >
+> > My initial plan was to protect filter_chain(), but, handler_chain()
+> > already has the lock. Is it OK to get into a critical section in a
+> > nested form?
+> >
+> > The code will be something like:
+> >
+> > handle_swbp() {
+> >         rcu_read_lock_trace();
+> >         handler_chain() {
+> >                 filter_chain() {
+> >                         rcu_read_lock_trace();
+> >                         list_for_each_entry_rcu()
+> >                         rcu_read_lock_trace();
+> >                 }
+> >         }
+> >         rcu_read_lock_trace();
+> > }
+> >
+> > Is this nested locking fine?
 > 
-> Can you please detail a bit on this topic? I am not sure what I should do.
-> 
+> Yes, it's totally fine to nest RCU lock regions.
 
-We haven't implemented oversampling yet in ad4695 yet, so I don't know
-exactly what we need to do either. ;-)
+As long as you don't nest them more than 255 deep in CONFIG_PREEMPT=n
+kernels that also have CONFIG_PREEMPT_COUNT=y, or more than 2G deep in
+CONFIG_PREEMPT=y kernels.  For a limited time only, in CONFIG_PREEMPT=n
+kernels that also have CONFIG_PREEMPT_COUNT=n, you can nest as deeply
+as you want.  ;-)
 
-But this is how I would test it to see if it is working correctly or
-not. We will need to test this with a 20-bit chip since that is the
-only one that will change the _scale attribute when oversampling is
-enabled.
+Sorry, couldn't resist...
 
-First, with oversampling disabled (_oversampling_ratio = 1), generate
-a constant voltage of 1V for the input. Read the _raw attribute. Let's
-call this value raw0. Read the _scale attribute, call it scale0 and
-the _offset attribute, call it offset0.
-
-Then we should have (raw0 + offset0) * scale0 = 1000 mV (+/- some
-noise).
-
-Then change the offset calibrate to 100 mV. To do this, we reverse
-the calculation 100 mV / scale0 = calibbias (raw units). Write the
-raw value to the _calibbias attribute. Then read the _raw
-attribute again, call it raw0_with_calibbias.
-
-This time, we should have (raw0_with_calibbias + offset0) * scale0
-= 1100 mV (+/- some noise).
-
-Then set _calibbias back to 0 and repeat the above by setting the
-_calibscale attribute to 0.90909 (this is 1 / 1.1, which should
-add 10% to the measured raw value). Read, the _raw attribute again,
-call it raw0_with_caliscale.
-
-This time, we should have (raw0_with_caliscale + offset0) * scale0
-= 1100 mV (+/- some noise).
-
-Set _calibscale back to 0. Then set _oversampling_ratio to 2. Read
-_scale and _offset again, call these scale1 and offset1.
-
-Then repeat the steps above using scale1 and offset1 in the
-calculations. The raw values will be different but the resulting
-processed values (mV) should all be the same if the attributes
-are implemented correctly.
-
->>> +static const unsigned int ad4851_scale_table[][2] = {
->>> +	{ 2500, 0x0 },
->>> +	{ 5000, 0x1 },
->>> +	{ 5000, 0x2 },
->>> +	{ 10000, 0x3 },
->>> +	{ 6250, 0x04 },
->>> +	{ 12500, 0x5 },
->>> +	{ 10000, 0x6 },
->>> +	{ 20000, 0x7 },
->>> +	{ 12500, 0x8 },
->>> +	{ 25000, 0x9 },
->>> +	{ 20000, 0xA },
->>> +	{ 40000, 0xB },
->>> +	{ 25000, 0xC },
->>> +	{ 50000, 0xD },
->>> +	{ 40000, 0xE },
->>> +	{ 80000, 0xF },
->>> +};
->>
->> I'm not sure how this table is supposed to work since there are
->> multiple entries with the same voltage value. Probably better
->> would be to just have the entries for the unipolar/unsigned ranges.
->> Then if applying this to a differential/signed channel, just add
->> 1 to resulting register value before writing it to the register.
->> Or make two different tables, one for unsigned and one for signed
->> channels.
-> 
-> It is stated in the set_scale function comment how this table works.
-> This table contains range-register value pair.
-> Always the second value corresponds to the single ended mode.
->>
-
-Yes, I understand that part. The problem is that values like 10000
-are listed twice in the table, so if we have a softspan of 0..+10V
-or -10V..+10V, how do we know which 10000 to use to get the right
-register value? This is why I think it needs to be 2 different
-tables.
-
->>> +
->>> +static const struct iio_chan_spec ad4858_channels[] = {
->>> +	AD4851_IIO_CHANNEL(0, 0, 20),
->>> +	AD4851_IIO_CHANNEL(1, 0, 20),
->>> +	AD4851_IIO_CHANNEL(2, 0, 20),
->>> +	AD4851_IIO_CHANNEL(3, 0, 20),
->>> +	AD4851_IIO_CHANNEL(4, 0, 20),
->>> +	AD4851_IIO_CHANNEL(5, 0, 20),
->>> +	AD4851_IIO_CHANNEL(6, 0, 20),
->>> +	AD4851_IIO_CHANNEL(7, 0, 20),
->>> +	AD4851_IIO_CHANNEL(0, 1, 20),
->>> +	AD4851_IIO_CHANNEL(1, 1, 20),
->>> +	AD4851_IIO_CHANNEL(2, 1, 20),
->>> +	AD4851_IIO_CHANNEL(3, 1, 20),
->>> +	AD4851_IIO_CHANNEL(4, 1, 20),
->>> +	AD4851_IIO_CHANNEL(5, 1, 20),
->>> +	AD4851_IIO_CHANNEL(6, 1, 20),
->>> +	AD4851_IIO_CHANNEL(7, 1, 20),
->>> +};
->>> +
->>> +static const struct iio_chan_spec ad4857_channels[] = {
->>> +	AD4851_IIO_CHANNEL(0, 0, 16),
->>> +	AD4851_IIO_CHANNEL(1, 0, 16),
->>> +	AD4851_IIO_CHANNEL(2, 0, 16),
->>> +	AD4851_IIO_CHANNEL(3, 0, 16),
->>> +	AD4851_IIO_CHANNEL(4, 0, 16),
->>> +	AD4851_IIO_CHANNEL(5, 0, 16),
->>> +	AD4851_IIO_CHANNEL(6, 0, 16),
->>> +	AD4851_IIO_CHANNEL(7, 0, 16),
->>> +	AD4851_IIO_CHANNEL(0, 1, 16),
->>> +	AD4851_IIO_CHANNEL(1, 1, 16),
->>> +	AD4851_IIO_CHANNEL(2, 1, 16),
->>> +	AD4851_IIO_CHANNEL(3, 1, 16),
->>> +	AD4851_IIO_CHANNEL(4, 1, 16),
->>> +	AD4851_IIO_CHANNEL(5, 1, 16),
->>> +	AD4851_IIO_CHANNEL(6, 1, 16),
->>> +	AD4851_IIO_CHANNEL(7, 1, 16),
->>> +};
->>
->> I don't think it is valid for two channels to have the same scan_index.
->> And since this is simultaneous sampling and we don't have control over
->> the order in which the data is received from the backend, to get the
->> ordering correct, we will likely have to make this:
->>
-> I am not sure which of these channels have the same index.
-> scan_index is index + diff * 8 in the channel definition.
-> 
-
-scan_index indicates the order in which a data value for a channel
-will appear in the buffer when doing a buffered read. So all scan_index
-for any channel 0 need to be less than all scan_index for all
-channel 1, and so on.
-
-So in the suggestion quoted below, the scan_index parameter
-just gets assigned directly to .scan_index without any
-additional calculations.
-
->> #define AD4851_IIO_CHANNEL(scan_index, channel, diff, bits) \
->> ...
->>
->> 	AD4851_IIO_CHANNEL(0, 0, 0, 16),
->> 	AD4851_IIO_CHANNEL(1, 0, 1, 16),
->> 	AD4851_IIO_CHANNEL(2, 1, 0, 16),
->> 	AD4851_IIO_CHANNEL(3, 1, 1, 16),
->> 	AD4851_IIO_CHANNEL(4, 2, 0, 16),
->> 	AD4851_IIO_CHANNEL(5, 2, 1, 16),
->> 	AD4851_IIO_CHANNEL(6, 3, 0, 16),
->> 	AD4851_IIO_CHANNEL(7, 3, 1, 16),
->> 	AD4851_IIO_CHANNEL(8, 4, 0, 16),
->> 	AD4851_IIO_CHANNEL(9, 4, 1, 16),
->> 	AD4851_IIO_CHANNEL(10, 5, 0, 16),
->> 	AD4851_IIO_CHANNEL(11, 5, 1, 16),
->> 	AD4851_IIO_CHANNEL(12, 6, 0, 16),
->> 	AD4851_IIO_CHANNEL(13, 6, 1, 16),
->> 	AD4851_IIO_CHANNEL(14, 7, 0, 16),
->> 	AD4851_IIO_CHANNEL(15, 7, 1, 16),
->>
->>
+							Thanx, Paul
 
