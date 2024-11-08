@@ -1,236 +1,123 @@
-Return-Path: <linux-kernel+bounces-401719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCD79C1E5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:48:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6F79C1E72
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3667D1F23147
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9F2283CE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1765D1EE022;
-	Fri,  8 Nov 2024 13:47:22 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716971EF923;
+	Fri,  8 Nov 2024 13:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ZaEXaQsL";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="O2So4ga0"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045DF1F4700;
-	Fri,  8 Nov 2024 13:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39471EBA19;
+	Fri,  8 Nov 2024 13:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731073641; cv=none; b=bLDXc8jzXlcRy3OSNQUZ/OYmnLLvd7JAWfMvq5P4UUvv3QxMzsHsoKxiMAajk6gLf2pZWKrnyC5LOcrdxZUMnxTrL+RrGVTx1OS7CBXjClCq6vN3Q2Hwze1PrdIYetyA3psC01aHkFUQuB3Nuv549YJLrKJ/Cm2Y4ueEqMBamtw=
+	t=1731073788; cv=none; b=ZxAj4M+cnk9e42MWvciW2QW+Qy2Ex/jYxPBWXKqZrzwacG3VAPQUWiKrCxt1jWv/ty81CUCXz3KiGwzErzdZTXe60J3/nUtZgNSROivez5CJCl5cAVVjamaBQc4ZdNYhESG/N5AdC1yuWr0FBWPy2MUMY01hwDv6tbBtV8cG1GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731073641; c=relaxed/simple;
-	bh=8knQ7wE4fQq4x8sY3mGFsnXaStycaIQDHgUGvkXqYZk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NZpOeuoVsRIC7ZVA9h6gw4fvimFE6lNxdFfW9ZnCZPuG2rDj2XBTh9CmuoGHeHnZr/5S9uiHl367s3SxPjoMceU9oN5vhfZ1dwXlx0I4x/BLqPlKCipNxhCnOI5x+sdOoZWiNLeAVGePCEYeEpdT5oDLg1OjimZSrfrqQTmSasw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XlKvd3Mp6z6K95G;
-	Fri,  8 Nov 2024 21:45:33 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 96EED140133;
-	Fri,  8 Nov 2024 21:47:16 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 8 Nov 2024 14:47:16 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Fri, 8 Nov 2024 14:47:16 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Fan Ni <nifan.cxl@gmail.com>
-CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	"Jonathan Cameron" <jonathan.cameron@huawei.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "jassisinghbrar@gmail.com"
-	<jassisinghbrar@gmail.com>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
-	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "leo.duran@amd.com"
-	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
-	<jiaqiyan@google.com>, "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>, "james.morse@arm.com"
-	<james.morse@arm.com>, "jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>, "erdemaktas@google.com"
-	<erdemaktas@google.com>, "pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>, "gthelen@google.com"
-	<gthelen@google.com>, "wschwartz@amperecomputing.com"
-	<wschwartz@amperecomputing.com>, "dferguson@amperecomputing.com"
-	<dferguson@amperecomputing.com>, "wbs@os.amperecomputing.com"
-	<wbs@os.amperecomputing.com>, tanxiaofei <tanxiaofei@huawei.com>, "Zengtao
- (B)" <prime.zeng@hisilicon.com>, "Roberto Sassu" <roberto.sassu@huawei.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>, wanghuiqiang
-	<wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH v15 02/15] EDAC: Add scrub control feature
-Thread-Topic: [PATCH v15 02/15] EDAC: Add scrub control feature
-Thread-Index: AQHbLD7vCzL+HgVM6Umrx0HY63Gx9LKsgzCAgADs7ZA=
-Date: Fri, 8 Nov 2024 13:47:16 +0000
-Message-ID: <f6b1be9f02b94bc6a05ba4494e5b973b@huawei.com>
-References: <20241101091735.1465-1-shiju.jose@huawei.com>
-	<20241101091735.1465-3-shiju.jose@huawei.com> <Zy1dAazN9OPR0POI@fan>
-In-Reply-To: <Zy1dAazN9OPR0POI@fan>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1731073788; c=relaxed/simple;
+	bh=KiAP/W2+dqBSXLeFVL76gndUjxKa+rWMrzH7qvx+rlw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gnxwxWJO7gkqQ8JgOB1KU7X10LOZrOdvLMV7NXubj9Bx4HQEtBFzDD72Y3f+LynsHRXIC4giH8mlpg3sBPuNdy7JiUoO1o/q/j5qBJuesFzsQupsWBMmXvo1HiZyy2AyZhhSgCJNrBG8rx/wYSxeAu+IBhQgkaAIlv72Zz8Y3EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ZaEXaQsL; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=O2So4ga0 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1731073785; x=1762609785;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gkWYTfXRRhzmK8RFIzAG6O4Dq5zKISXppIUGrWAYD10=;
+  b=ZaEXaQsLxgtMxFNbhzCl4LG6bhjZSh+qeSz5LzRTGFJBIq0ksIIuZeYR
+   mm8hm6aUblXPxdE5FSOIL5Lolru5SmgtA7yIfwHLvbvakCtcVv6jFST4D
+   Z0bZNloM+PWRFKnK0cIHWr9XRwKsfw09MA8pOVAfBOQYim+abQIeaVKfg
+   jOB9N2x4QWnaCoYtf7Sg+E/uC8TJ+u04AQg/aC6gd3QLHBwW5FNum06nj
+   9VIOTpLY3QNiPRNUdWjIGNbBXDlxhJE7vYsiGkDHJBByeZ3qHi+E784Bx
+   X2upJ86RUvgULsoIrsVUruxsFRO8BY3II3r5lFQ2++gGFeVQ4QkUq9Ygr
+   g==;
+X-CSE-ConnectionGUID: kPpOHN7XRV2mGjpacNXANw==
+X-CSE-MsgGUID: b5F5u3CQQmyGDjidvJU17A==
+X-IronPort-AV: E=Sophos;i="6.12,138,1728943200"; 
+   d="scan'208";a="39936918"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 08 Nov 2024 14:49:37 +0100
+X-CheckPoint: {672E16F1-4-1E10F2A5-CC0651E5}
+X-MAIL-CPID: 1A141D1EC8B3A62498EA708BCD2F09ED_4
+X-Control-Analysis: str=0001.0A682F26.672E16F1.0059,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0FFF816353B;
+	Fri,  8 Nov 2024 14:49:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1731073772; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=gkWYTfXRRhzmK8RFIzAG6O4Dq5zKISXppIUGrWAYD10=;
+	b=O2So4ga0Fu4lZ8N0e1q945ooBxI3SbaJ+fcSzUgkkvOFl+8YcFFSxjjpzzLvKCLZCkOzDu
+	X9d+WK/L4CTM09e8iBpU4Gd+3ykVjE0VPS+QYzBzZxoYR2oBeP/JYLJs3EoIwStjNmN55B
+	uyFkcdwDmwOuk383T7ZLAPkj9e2K9AUNspHIM9Hfy1O59rQKEpUzleXbFYKN9MXxpbw8cW
+	6mbGWwWEYbNWBUuFq2kqO2yZrodnZ1eebmcitTc1FiS+8a+v0BiPzQ7cU7RvfZ2ZLfoVPk
+	WGMqhbeL0b8QRSLm4siNzrb3NIzzFB6laT5d52QvF1Ib1mT57q8tB/z32l+Oew==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	=?UTF-8?q?Jo=C3=A3o=20Rodrigues?= <jrodrigues@ubimet.com>,
+	Bruno Thomsen <bruno.thomsen@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] TQMa7x DT cleanup
+Date: Fri,  8 Nov 2024 14:49:18 +0100
+Message-Id: <20241108134926.1324626-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi all,
 
->-----Original Message-----
->From: Fan Ni <nifan.cxl@gmail.com>
->Sent: 08 November 2024 00:36
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
->acpi@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
->bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
->mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
->Cameron <jonathan.cameron@huawei.com>; gregkh@linuxfoundation.org;
->sudeep.holla@arm.com; jassisinghbrar@gmail.com; dave.jiang@intel.com;
->alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
->david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
->Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
->Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
->naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
->somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
->duenwen@google.com; gthelen@google.com;
->wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
->wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
-><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; Roberto
->Sassu <roberto.sassu@huawei.com>; kangkang.shen@futurewei.com;
->wanghuiqiang <wanghuiqiang@huawei.com>; Linuxarm
-><linuxarm@huawei.com>
->Subject: Re: [PATCH v15 02/15] EDAC: Add scrub control feature
->
->On Fri, Nov 01, 2024 at 09:17:20AM +0000, shiju.jose@huawei.com wrote:
->> From: Shiju Jose <shiju.jose@huawei.com>
->>
->> Add a generic EDAC scrub control to manage memory scrubbers in the syste=
-m.
->> Devices with a scrub feature register with the EDAC device driver,
->> which retrieves the scrub descriptor from the EDAC scrub driver and
->> exposes the sysfs scrub control attributes for a scrub instance to
->> userspace at /sys/bus/edac/devices/<dev-name>/scrubX/.
->>
->> The common sysfs scrub control interface abstracts the control of
->> arbitrary scrubbing functionality into a common set of functions. The
->> sysfs scrub attribute nodes are only present if the client driver has
->> implemented the corresponding attribute callback function and passed
->> the
->> operations(ops) to the EDAC device driver during registration.
->>
->> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
->> ---
->
->Minor comments inline.
->
->>  Documentation/ABI/testing/sysfs-edac-scrub |  74 ++++++++
->>  drivers/edac/Makefile                      |   1 +
->>  drivers/edac/edac_device.c                 |  40 +++-
->>  drivers/edac/scrub.c                       | 209 +++++++++++++++++++++
->>  include/linux/edac.h                       |  34 ++++
->>  5 files changed, 354 insertions(+), 4 deletions(-)  create mode
->> 100644 Documentation/ABI/testing/sysfs-edac-scrub
->>  create mode 100755 drivers/edac/scrub.c
->>
->> diff --git a/Documentation/ABI/testing/sysfs-edac-scrub
->> b/Documentation/ABI/testing/sysfs-edac-scrub
->> new file mode 100644
->> index 000000000000..d8d11165ff2a
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-edac-scrub
->
->...
->
->> diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
->> index e9229b5f8afe..cd700a64406e 100644
->> --- a/drivers/edac/edac_device.c
->> +++ b/drivers/edac/edac_device.c
->> @@ -576,6 +576,7 @@ static void edac_dev_release(struct device *dev)
->> {
->>  	struct edac_dev_feat_ctx *ctx =3D container_of(dev, struct
->> edac_dev_feat_ctx, dev);
->>
->> +	kfree(ctx->scrub);
->>  	kfree(ctx->dev.groups);
->>  	kfree(ctx);
->>  }
->> @@ -609,6 +610,8 @@ int edac_dev_register(struct device *parent, char
->*name,
->>  		      const struct edac_dev_feature *ras_features)  {
->>  	const struct attribute_group **ras_attr_groups;
->> +	int scrub_cnt =3D 0, scrub_inst =3D 0;
->> +	struct edac_dev_data *dev_data;
->>  	struct edac_dev_feat_ctx *ctx;
->>  	int attr_gcnt =3D 0;
->>  	int ret, feat;
->> @@ -619,7 +622,10 @@ int edac_dev_register(struct device *parent, char
->*name,
->>  	/* Double parse to make space for attributes */
->>  	for (feat =3D 0; feat < num_features; feat++) {
->>  		switch (ras_features[feat].ft_type) {
->> -		/* Add feature specific code */
->> +		case RAS_FEAT_SCRUB:
->> +			attr_gcnt++;
->> +			scrub_cnt++;
->> +			break;
->>  		default:
->>  			return -EINVAL;
->>  		}
->> @@ -635,13 +641,37 @@ int edac_dev_register(struct device *parent, char
->*name,
->>  		goto ctx_free;
->>  	}
->>
->> +	if (scrub_cnt) {
->> +		ctx->scrub =3D kcalloc(scrub_cnt, sizeof(*ctx->scrub),
->GFP_KERNEL);
->> +		if (!ctx->scrub) {
->> +			ret =3D -ENOMEM;
->> +			goto groups_free;
->> +		}
->> +	}
->> +
->>  	attr_gcnt =3D 0;
->
->If we use scrub_cnt the same way as we use attr_gcnt, we do not need
->scrub_inst.
+this series fixes some DT binding check warnings as well as removing
+duplicated nodes. Eventually IRQ support for thernet PHYs was added.
+Additionally add CONFIG_JC42 to imx_v6_v7_defconfig.
 
-Hi Fan,
-Thanks for suggestion. Modified and done the same for EDAC memory repair fe=
-ature as well.=20
->
->Fan
->>  	for (feat =3D 0; feat < num_features; feat++, ras_features++) {
->>  		switch (ras_features->ft_type) {
->> -		/* Add feature specific code */
-[...]
->--
->Fan Ni
->
-Thanks,
-Shiju
+Best regards,
+Alexander
+
+Alexander Stein (8):
+  ARM: dts: imx7-mba7: remove LVDS transmitter regulator
+  ARM: dts: imx7-tqma7: Remove superfluous status="okay" property
+  ARM: dts: imx7-tqma7: add missing vs-supply for LM75A (rev. 01xxx)
+  ARM: dts: imx7-mba7: Add 3.3V and 5.0V regulators
+  ARM: dts: imx7-mba7: Fix SD card vmmc-supply
+  ARM: dts: imx7-mba7: Remove duplicated power supply
+  ARM: dts: imx7[d]-mba7: add Ethernet PHY IRQ support
+  ARM: imx_v6_v7_defconfig: enable JC42 for TQMa7x
+
+ arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi  | 61 +++++++----------------
+ arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi |  3 +-
+ arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts  |  3 +-
+ arch/arm/configs/imx_v6_v7_defconfig      |  1 +
+ 4 files changed, 21 insertions(+), 47 deletions(-)
+
+-- 
+2.34.1
+
 
