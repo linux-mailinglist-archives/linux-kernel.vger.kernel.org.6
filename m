@@ -1,82 +1,64 @@
-Return-Path: <linux-kernel+bounces-402199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C58E9C24F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:42:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E85DA9C24FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290801F23773
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C090284785
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EE41A9B3F;
-	Fri,  8 Nov 2024 18:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8851A9B42;
+	Fri,  8 Nov 2024 18:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YtYQsHcV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iwb6NAbN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DF4233D80
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D150194082
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731091319; cv=none; b=mYJa+oqZH6Xv//zpEwJaRVrJ84KrZjrC/rh+A3xS688duTNLwVfcw3vdYIkPJk5RwFRWJ4O8n9JBi5OFRcNpnaGkzcEfD17m8Iu7TK4gpcB6eaC7D2mwYmonVyvyuH5wvhJJIDTOV4XT3VK4gs+c8Zoo2xXptQQKaGxtHVesHZ0=
+	t=1731091347; cv=none; b=ueNrK1cczQabfHz/UIbvFef0uvdUrBLF4bbrlv4ZrpVOkjWv1sPyPJHr2UQ9/rC2x1wO4HjVs16YjnKe9nnlLgXTsbRCK6JhKcq8x4fjl5qdhxAJQ6ynv9aY7jllvHL6A9vVQ+mDHyIVX39JLZLzs3oHzk8x+ZuYIh59JrcEQAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731091319; c=relaxed/simple;
-	bh=yiKNa1YzJHyP9N6NdrPYpDcZO3xnlIP0Sab7+rA3o2Q=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WiLyQLEEswJq2koSrrC7G1nGLxxzzj5rYlv0no2KY3sTHPXdOvgAdnTLL26iuk2j9BJXOlY3zpIDx6W3nwbXBZGfxOBa2pOExEIU1nPP805kPXzarushfU71HJ6geaDXydCbtnQgS05TRHSvQ0bJLiT1E+h2C/+sHrFkUbpKNNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YtYQsHcV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731091316;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q0FfSEVRQAO88lPffDrAoJKoPZUU0PR3SZ3mo7sUVTQ=;
-	b=YtYQsHcVwfwe7Kmd335rh8HcM33uPc0ipB3QvIPNUy+MGcb+p1AqBczMGL2nTpOKzh1BsA
-	G01K4Lzjy2iDz3N8kU8a6SPwHNwcUafm5MLcUcp2gSDw3v41EJs83nsrOeAtNvFYzM9s7/
-	xIbd/3hSskFou8wwmAdrfK5XDACmPuI=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-330-smw3K7kGP9-q6HOG7ljvKw-1; Fri, 08 Nov 2024 13:41:55 -0500
-X-MC-Unique: smw3K7kGP9-q6HOG7ljvKw-1
-X-Mimecast-MFC-AGG-ID: smw3K7kGP9-q6HOG7ljvKw
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbd2cb2f78so48787986d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:41:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731091314; x=1731696114;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0FfSEVRQAO88lPffDrAoJKoPZUU0PR3SZ3mo7sUVTQ=;
-        b=kEtO3Cigp4N96UU4NGYODArylnS5JoyQLUGeOM8gQBEhcW/XSV+6l0Ivuiz+Xyh8qz
-         bZY6CsTyP7zmUOvJKx+ok+YxBlYUebbvutdgv9ssyCfcdXNCaudtSUNdsML+vyBEKgCk
-         DEE6h3UXAZgTgLMdow9sbiHh+6ICi4JtwakoWvhIxgi3IcdHG3idpyVrS2MgqxdiFkSo
-         09iO3LvSGC2AbFpI9FnbkWKZgbY+cU7ZZNEia38UrCg5QcAsmQq889pqlKKSBnnSjbuE
-         7ogO2F9TyrxrxfYHzxkNIv1ExGTXvipUJwuRckudBmOvttHxVdhvaCjX8k8O6o0bHjkA
-         v6eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3YH9X5k36wd3nHY5hH7WEdNU6OILocKGS46j8lOIeh/8RmzL82WeeGCeapCcfICWrzz1SZoGNXVU5NKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvfR0Hn3vdaM2ci8LmaaC2e4V7pmOFgiVrMSbsb6hFiy9+4uhN
-	jnG6k6quKChgfhvpzf59/hDzzUEQpYQD3CpOBG08qIP138yXxD2simvqpf3WP+pQOAA+Afpbp8P
-	WC+NVqL0tR939azCnYunsbA16sASPIfRRzrYhiqET1bSbBCv40jTjcIvhB9iNww==
-X-Received: by 2002:a05:6214:238a:b0:6cb:55e4:54d5 with SMTP id 6a1803df08f44-6d39d57cfe0mr68186356d6.10.1731091314628;
-        Fri, 08 Nov 2024 10:41:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEulkMBjLQa5N5BKzR6Ili4m1lWrIDuuPghe2E7BICMEkEDxY1C13mo8CapNL0jCDlWwTqnyQ==
-X-Received: by 2002:a05:6214:238a:b0:6cb:55e4:54d5 with SMTP id 6a1803df08f44-6d39d57cfe0mr68185966d6.10.1731091314302;
-        Fri, 08 Nov 2024 10:41:54 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3961ed63fsm22203876d6.32.2024.11.08.10.41.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 10:41:53 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <c4eebfa9-bfea-4ebe-b5d1-de88f1f5cc54@redhat.com>
-Date: Fri, 8 Nov 2024 13:41:52 -0500
+	s=arc-20240116; t=1731091347; c=relaxed/simple;
+	bh=u2YGny6+IBZ3DloL7hyD6T4NLSl4ECJAfBNDdeOMha0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GQurl1UqT8j4rxXNvS4ke4Mpy4cigJEtz0UXdhQNylPMzq0doKEhOjpMSHO8uKJ6HeP5jJkxPKx/POjTjYkKbr60oVzoZiFFNduxYn86L64Xm4FwJ2nbTNClDZmeDZxzIenZ2g3WsJcrbN7gG7L/grFsa13HiGVhOY/xSXu1qmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iwb6NAbN; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731091346; x=1762627346;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=u2YGny6+IBZ3DloL7hyD6T4NLSl4ECJAfBNDdeOMha0=;
+  b=iwb6NAbNCe7zwjX5UUxGOHdrQTz1JwVc46S0JYx/f504N8RmMthi9W65
+   NQ/EuYpHeTiiGgd7dE5ioPaxVg6cPUFFf/tqFrqVa6gbh5f1JQrKhj/oq
+   oNbPl22Gmp81LR948k/TTsLmhCb2indyPPUurAmYsb1Yy9DWKLIFUdeBO
+   G7gPQjsCep9lA0+8KmeIAJCebW+G9r5o2PM1WAycPYY6Z4SwNFlXPF80h
+   dvzeqezZNf640ETniTMdhaabeVfnDflYFwvy6ANy0M1ueWxAz7rDRrFSQ
+   zvBfir3nXDI70Iheh6B1fUdlXwL1TzoL2ucLSMgCPAUq3j+XdErr1K52W
+   w==;
+X-CSE-ConnectionGUID: 9IfIkPwYR6msfhrhjDelrQ==
+X-CSE-MsgGUID: 1sHg8HOnTfyj8nkGdFvH7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="31089654"
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="31089654"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 10:42:26 -0800
+X-CSE-ConnectionGUID: aukTtv1gQ4yXx3VpQaSpfQ==
+X-CSE-MsgGUID: jYB4DQspTFqvRJETImTPlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="89652010"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.223.66]) ([10.124.223.66])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 10:42:25 -0800
+Message-ID: <551e8238-84a1-4d5d-91c1-8d2adfde62e0@intel.com>
+Date: Fri, 8 Nov 2024 10:42:24 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,134 +66,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/deadline: Skip overflow check if 0 capacity
-To: Juri Lelli <juri.lelli@redhat.com>, Waiman Long <llong@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org, Phil Auld <pauld@redhat.com>,
- Joel Fernandes <joel@joelfernandes.org>
-References: <20241108042924.520458-1-longman@redhat.com>
- <Zy4RWJPH9jxew_7G@jlelli-thinkpadt14gen4.remote.csb>
- <735344cd-1c32-451f-904e-235578e1a360@redhat.com>
- <Zy48-zbUnjTzxXXB@jlelli-thinkpadt14gen4.remote.csb>
+Subject: Re: [PATCH] x86/cpufeatures: Free up unused feature bits
+To: "H. Peter Anvin" <hpa@zytor.com>, Sohil Mehta <sohil.mehta@intel.com>,
+ x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Tony Luck <tony.luck@intel.com>,
+ linux-kernel@vger.kernel.org
+References: <20241107233000.2742619-1-sohil.mehta@intel.com>
+ <7ff32a10-1950-434b-8820-bb7c3b408544@intel.com>
+ <3492e85d-4aaa-4dd7-9e6a-c8fdc2aa2178@intel.com>
+ <74338393-4F39-4A04-83B1-BA64CE2D2FDA@zytor.com>
+ <4c01a30a-67d9-4918-8781-240b78944c42@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-In-Reply-To: <Zy48-zbUnjTzxXXB@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <4c01a30a-67d9-4918-8781-240b78944c42@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/8/24 11:31 AM, Juri Lelli wrote:
-> On 08/11/24 08:39, Waiman Long wrote:
->> On 11/8/24 8:25 AM, Juri Lelli wrote:
->>> On 07/11/24 23:29, Waiman Long wrote:
->>>> By properly setting up a 1-cpu sched domain (partition) with no
->>>> task, it was found that offlining that particular CPU failed because
->>>> dl_bw_check_overflow() in cpuset_cpu_inactive() returned -EBUSY. This
->>>> is due to the fact that dl_bw_capacity() return 0 as the sched domain
->>>> has no active CPU causing a false positive in the overflow check.
->>>>
->>>> Fix this corner case by skipping the __dl_overflow() check in
->>>> dl_bw_manage() when the returned capacity is 0.
->>>>
->>>> Signed-off-by: Waiman Long <longman@redhat.com>
->>>> ---
->>>>    kernel/sched/deadline.c | 8 +++++++-
->>>>    1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
->>>> index be1b917dc8ce..0195f350d6d3 100644
->>>> --- a/kernel/sched/deadline.c
->>>> +++ b/kernel/sched/deadline.c
->>>> @@ -3479,7 +3479,13 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->>>>    	} else {
->>>>    		unsigned long cap = dl_bw_capacity(cpu);
->>>> -		overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
->>>> +		/*
->>>> +		 * In the unlikely case of 0 capacity (e.g. a sched domain
->>>> +		 * with no active CPUs), skip the overflow check as it will
->>>> +		 * always return a false positive.
->>>> +		 */
->>>> +		if (likely(cap))
->>>> +			overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
->>> The remaining total_bw that make this check fail should be the one
->>> relative to the dl_server on the cpu that is going offline. Wonder if we
->>> shouldn't rather clean that up (remove dl_server contribution) before we
->>> get to this point during an hotplug operation. Need to think about it a
->>> little more.
->> static inline bool
->> __dl_overflow(struct dl_bw *dl_b, unsigned long cap, u64 old_bw, u64 new_bw)
->> {
->>          return dl_b->bw != -1 &&
->>                 cap_scale(dl_b->bw, cap) < dl_b->total_bw - old_bw + new_bw;
->> }
->>
->> With a 0 cap, cap_scale(dl_b->bw, cap) will always be 0. As long as total_bw
->> isn't 0 and bw isn't -1, the condition will be true.
-> Right, but I fear that by hiding the special corner case we would also
-> miss the cases where we have DEADLINE tasks with bandwidth on that
-> single CPU and then ignore it.
->
-> So, maybe something like the below?
->
-> ---
->   kernel/sched/deadline.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
->
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index be1b917dc8ce..7884e566557c 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -130,11 +130,24 @@ static inline int dl_bw_cpus(int i)
->   	if (cpumask_subset(rd->span, cpu_active_mask))
->   		return cpumask_weight(rd->span);
->   
-> +	/*
-> +	 * Hotplug extreme case in which the last remaining online CPU in a
-> +	 * root domain is going offline. We get here after that cpus has been
-> +	 * cleared from cpu_active_mask, so the loop below would return 0
-> +	 * CPUs, which of course doesn't make much sense. Return at least 1
-> +	 * CPU.
-> +	 */
-> +
-> +	if (cpumask_weight(rd->span) == 1)
-> +		return 1;
-> +
->   	cpus = 0;
->   
->   	for_each_cpu_and(i, rd->span, cpu_active_mask)
->   		cpus++;
->   
-> +	WARN_ON(!cpus);
-> +
->   	return cpus;
->   }
-> ---
+On 11/7/24 17:12, Dave Hansen wrote:
+> and then we recycled number 67:
+> 
+> -#define X86_FEATURE_P3                  ( 3*32+ 6) /* P3 */
+> +#define X86_FEATURE_WHIZZY_NEW_FEATURE  ( 3*32+ 6) /* P3 */
+> 
+> udev might try to load the old module on a new CPU with
+> X86_FEATURE_WHIZZY_NEW_FEATURE that's not a P3.
 
-This patch looks good to me.
+Thinking about this a bit more...
 
-With this patch and my cpuset patches applied, the test_cpuset_prs.sh 
-test passed without any error. You can add the following tags if you 
-send this patch out.
+The kernel generates _both_ the
+"cpu:type:x86,ven*fam*mod*:feature:*0067*" string and the sysfs modalias
+string.  So the issue isn't practically a mismatch between those.
 
-Reported-by: Waiman Long <longman@redhat.com>
-Tested-by: Waiman Long <longman@redhat.com
+It's if some consumer of those fields (like /lib/udev/hwdb.d/) was
+looking for feature 67.
 
-> That said though, I believe I just found an additional issue. With the
-> above the system doesn't crash (it did w/o it), but happily moves
-> DEADLINE tasks out of a domain with a single CPU going offline. Last
-> time I looked at this we were properly checking and failing the hotplug
-> operation, but it was indeed a while ago, so not sure yet what changed.
-> More staring.
->
-> Oh, so broken, yay. :)
-
-The cpuset code will move tasks in a partition with no effective CPUs to 
-its parent.
-
-Cheers,
-Longman
-
-
+The good news is that I don't see any of those today.  But it's totally
+possible that folks have some crazy rules out there.  So we should
+probably be _careful_ about changing those values and not just change
+them *ALL*.  But I think it's pretty unlikely we'll break anybody by
+reusing a bit or two.
 
