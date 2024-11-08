@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-402212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093DC9C250E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:48:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C169C250F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:48:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D37D1C22DA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:48:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F391F23969
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CCC1AA1DC;
-	Fri,  8 Nov 2024 18:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFE81A9B30;
+	Fri,  8 Nov 2024 18:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i3rzw5I9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dGfPNsS6"
 Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB70192D7F
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B8B1AA1DE
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731091678; cv=none; b=VBjgalab/LiEmJFnSiVdrrjuK6jAUDmeARUzFGXMURfdh3SnbK9lT2orcSU75uVVAtIs6lkRx+ILcT6Zfsd//CXieTDKn03pIczdpbwhr58SPLeeOOWFjaX0aKhMtc2EmWPKzTP41E81eMdvw+X8YN725i6v2Oi3+6bODG1cIUI=
+	t=1731091681; cv=none; b=uKGxJUiQUoTafPzjbBZzAnFqB/srevnxVnvCSaG1T5W2ryXkoq1JNEAqLntiYhCPYmYniAwqWXtW1KMgWx74KvQTg/jwAervGl8TjyL/x7dPOIqTewpMahDfQqpJQVq5Onxgf2P4O/ur9lPvAlLYqr/9Kl8v0AtZYbl+8whH3nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731091678; c=relaxed/simple;
-	bh=dniWuxuylHQooe/+O9kS+u+5yRkbVYD7nCVtuNvJa6Q=;
+	s=arc-20240116; t=1731091681; c=relaxed/simple;
+	bh=zJbDeXbNdPoRBGyGBBECIqArwWiKJU3G1l8a5LilCS4=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=NSL6VsixMaXd6eRPPKFkWNm+d34Qkc1LZljvTvJEYzIMnVbVkmKFRKafOoN5c5DGSL1DXVGXn1mdgtvugao0GM26egqrVSj+7wlu40S2eMVLWp9tJdtBzJD6rd5j2UMMOnNmsF4QxnbOyJ7PSg9fgSiazPhhsuTFA3xlxCRV2Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i3rzw5I9; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=beDuwySgVuZFRffZhkdTzlEpkM02xHCM+G7/eZ5AsUGsd8c59Gukrx5SfLl96/twYJgcXDZOkU125NkmniTrtZhD51o0VaPoTrfec2/9RB9NLLe9S+OGSwY4spLKZI/Kfh7T7+U8F36iGSsSGvmCHSs+RbVZ0iiRp9vTzpb1xqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dGfPNsS6; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e33152c8225so5189928276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:47:57 -0800 (PST)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30d7b4205eso3875905276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:47:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731091676; x=1731696476; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731091679; x=1731696479; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=rfQP4ZowKoUcMreOGn+KjRxwFgZW88CzOPZZCNSZnMI=;
-        b=i3rzw5I9cOgZzJf6jVId1Gi8pFfonDCIq1su10GHG0s8xAKzocyZfJMNgGUvAbBJLs
-         8ONnvl8yPjVLcQ2t8/BzbJ/fWQan+vb3mdmozzqLpqzQEnDVtY8Et9mALAlp0wjvo7V9
-         1cjtSuHUZD+USaqI9Fv4A30OS4kXdgbyTbGowTWINi9goEhNXI5fwLCB8S6l6oYP11x5
-         phzty9neXDeZSQano7HWZTjGTzMSsRDZ2UXKNjcgTkSrbqxQakmXmj2X5NQ2arya99m+
-         WPQqX+YRm7OsQlyDYvAHowT3Q036ytjXY1yF0GHdsKWK2D4cdNdJXv8uaNaEMnWcREX2
-         yGLw==
+        bh=2kVFB+40RZnsaL/T0qEJlgCASFyLZGTMmhekp/4F3Qw=;
+        b=dGfPNsS6iGlkrTia9mmgyyMLsAsy4/FRG2TNA9O5bHdbtgtxNaM+nDG6iaa0mkpjM+
+         40VlcQZurNI+nryHVj0s0ZRoq3SXJPt/6OGExkp681CZJ/YuhUesD+1Y982s1PVS1p/N
+         IHnl7lKe8hWNHqFOuG8P7u4R2+2KEYBwYAUfu264xK30CAIAqSBA8qvMzLjVpQRi5Koy
+         bq38/po9MRP4ntMvRfJ6EVWicIbo9EHC/ax6T1oWLuFh1rLJKqFN8SXc1GNpJlA00mkc
+         UEEOgJWfVxLETWJ7SZ8aqVHI1JEifMarOUz8FxkgvbsnBBpqAMQOA/D8n1zSpq/NB3kq
+         wiWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731091676; x=1731696476;
+        d=1e100.net; s=20230601; t=1731091679; x=1731696479;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rfQP4ZowKoUcMreOGn+KjRxwFgZW88CzOPZZCNSZnMI=;
-        b=YRNzQvl7xf+6KCFB8f0qvzLjI2MLN6hdDOY7ivtJ6cNZYiP3dRwnieAFrg6PafUmzX
-         lqdlkeFG1U2/bLy8JNoUx461L5feLaFvQ4s2PEL/edQoqDtwNlW3S7igRr6pZtmBfiYS
-         0On5PDgna718XKqgUY00IW8A+ZdEZKjrd/208xymt6zz/Dd3xwu6UQq3utcLvqcorbQV
-         3+aJ+VUF3o3uQzmxp92sK5bfoFn0onIlszYQ7YQPtZsseC6pT3M2UL6Fiws5AwRk8Ghp
-         5G5uuDwb/yS72sw5odr0Tqmol6OVXk6zzCMG49QRQTtW8bYhTXz5Bjy6/qaRKUzaC4Hc
-         V7Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Kj+0aqNH49XPDhCVS1jh6dLpRs8wgX8HX7Nqf5p96hcErzyQpsRcIcEmOsEwhy5mPqyFodDrfXkVMZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbb5I0OFe2D3njamNTNuZQDH6DzsaYUQZ+pqfdkczYYY1kMY/p
-	ZIVLux0NnVd5EFvp/mBA011SfYo3lvpTPcQtnrXNKl9pUXZPSYMuD5GUuuTNR1AAXo7URYX840N
-	//9sSrA==
-X-Google-Smtp-Source: AGHT+IHSUecJfqyP6yo6pYHHwXlmFb3TtyJAgM28FJPeh82MRvOLqxptoEEBE92c8/yyBMaC2YcowXN+ItIJ
+        bh=2kVFB+40RZnsaL/T0qEJlgCASFyLZGTMmhekp/4F3Qw=;
+        b=hVEY74KfMiZG5CVI4ChtnjxwuD7dYgpytp4XZytyUaIs3YtSJNb+JwwjItFXb5I+r0
+         wVU0Dsy9RXEvQo1x1AVRtZIZTpDse4t2aVJlBQFIwAiK3aN4N0O3XhOE8HDv21UB0Zxa
+         DVfhagSNiDP7711i4nZ7MTzttynUJsnCn75GqIcH2hk5UUisPzjShRHCfgPmWtwAQCdc
+         vW/0UAIGGumH8q94TtiWUue5vm8PNk/vdCEfO9fzgB06oUBfv4gPylI3WFdG99bs3hFo
+         NgUWfDeR5ff/yApI95jUqVhNOPJkEY6ki1A9mMGGKUO62u/SveNzHiLyxNAdbd8bbUc0
+         yMlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmUYgyAoLLMgm95NWwbQfG3W3nDWymXPIE8SevWbBRMfbPBglDwIB0Y8Yv26LZaeZXXKCfMQKr8zldn9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4E/W92aV6dNBWM7qduKHHpL6mKcMhsQMLmAxzuhMmrBsZid+c
+	9yKAIUjSQGVXnH8r3sDHv3xMWwJh7zPFNaY1HmgaKTxTRUdwXEp2eXPSpqYYa7hR5Y/JLfqQMob
+	coZrZ7g==
+X-Google-Smtp-Source: AGHT+IFqdBwud7OOCiL30I7xSw+TFazRJGlyNedcf34zMGfEnAXXKZnLcvMzt3bK0UHlmTlKre0Sq7d7VUv7
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:6fd2:1e36:6d8c:7c49])
- (user=irogers job=sendgmr) by 2002:a25:dc4a:0:b0:e25:5cb1:77d8 with SMTP id
- 3f1490d57ef6-e337f8ed8bbmr2368276.6.1731091676429; Fri, 08 Nov 2024 10:47:56
+ (user=irogers job=sendgmr) by 2002:a25:3357:0:b0:e2e:330b:faab with SMTP id
+ 3f1490d57ef6-e337f77f022mr3761276.0.1731091678809; Fri, 08 Nov 2024 10:47:58
  -0800 (PST)
-Date: Fri,  8 Nov 2024 10:47:46 -0800
+Date: Fri,  8 Nov 2024 10:47:47 -0800
 In-Reply-To: <20241108184751.359237-1-irogers@google.com>
-Message-Id: <20241108184751.359237-2-irogers@google.com>
+Message-Id: <20241108184751.359237-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,8 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241108184751.359237-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Subject: [PATCH v4 1/6] tool api fs: Correctly encode errno for read/write
- open failures
+Subject: [PATCH v4 2/6] perf trace-event: Constify print arguments
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -95,45 +94,40 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	"Steven Rostedt (Google)" <rostedt@goodmis.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Switch from returning -1 to -errno so that callers can determine types
-of failure.
+Capture that these functions don't mutate their input.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/lib/api/fs/fs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/trace-event-parse.c | 2 +-
+ tools/perf/util/trace-event.h       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
-index 337fde770e45..edec23406dbc 100644
---- a/tools/lib/api/fs/fs.c
-+++ b/tools/lib/api/fs/fs.c
-@@ -296,7 +296,7 @@ int filename__read_int(const char *filename, int *value)
- 	int fd = open(filename, O_RDONLY), err = -1;
+diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
+index d97830cdbd7e..9f218ba787d8 100644
+--- a/tools/perf/util/trace-event-parse.c
++++ b/tools/perf/util/trace-event-parse.c
+@@ -99,7 +99,7 @@ unsigned long long read_size(struct tep_event *event, void *ptr, int size)
+ 	return tep_read_number(event->tep, ptr, size);
+ }
  
- 	if (fd < 0)
--		return -1;
-+		return -errno;
+-void event_format__fprintf(struct tep_event *event,
++void event_format__fprintf(const struct tep_event *event,
+ 			   int cpu, void *data, int size, FILE *fp)
+ {
+ 	struct tep_record record;
+diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
+index 0e5133f1b910..4292977e1cbf 100644
+--- a/tools/perf/util/trace-event.h
++++ b/tools/perf/util/trace-event.h
+@@ -39,7 +39,7 @@ trace_event__tp_format(const char *sys, const char *name);
  
- 	if (read(fd, line, sizeof(line)) > 0) {
- 		*value = atoi(line);
-@@ -314,7 +314,7 @@ static int filename__read_ull_base(const char *filename,
- 	int fd = open(filename, O_RDONLY), err = -1;
+ struct tep_event *trace_event__tp_format_id(int id);
  
- 	if (fd < 0)
--		return -1;
-+		return -errno;
+-void event_format__fprintf(struct tep_event *event,
++void event_format__fprintf(const struct tep_event *event,
+ 			   int cpu, void *data, int size, FILE *fp);
  
- 	if (read(fd, line, sizeof(line)) > 0) {
- 		*value = strtoull(line, NULL, base);
-@@ -372,7 +372,7 @@ int filename__write_int(const char *filename, int value)
- 	char buf[64];
- 
- 	if (fd < 0)
--		return err;
-+		return -errno;
- 
- 	sprintf(buf, "%d", value);
- 	if (write(fd, buf, sizeof(buf)) == sizeof(buf))
+ int parse_ftrace_file(struct tep_handle *pevent, char *buf, unsigned long size);
 -- 
 2.47.0.277.g8800431eea-goog
 
