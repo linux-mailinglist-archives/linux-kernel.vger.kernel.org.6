@@ -1,164 +1,114 @@
-Return-Path: <linux-kernel+bounces-401935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 290BD9C214D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:58:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 297439C214F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:58:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87A31B222A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB342829CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4919121B458;
-	Fri,  8 Nov 2024 15:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD0A21B450;
+	Fri,  8 Nov 2024 15:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eeKkpdqy"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/tJclOB"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBFF45023;
-	Fri,  8 Nov 2024 15:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8866445023;
+	Fri,  8 Nov 2024 15:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731081495; cv=none; b=DblHOWFWQSbZTomwXWIV66vPGZubdNq5zri2B12Ykd34EpcSE7zpQ2FPFfcSbNqE/l0/kyaFLaIV9VmF02gbCJYlnKDeomrqOlVP9grF2utkC0fXntZSIJGD4GHFyflGWAPVVtxyYXSis2Xu4Yo+nyhcuyRRCnzThsfrj8e0hlg=
+	t=1731081505; cv=none; b=XEDIbZ5jgA4i3VylOTJ881XNVBN5VhttNeyJJKOR4MeqXSVLStTfQmbbh7ZXqSAnhL5AxEzRaa3iY+i5oio5Wf+PAUbU9uPM729BOrfLcjhc+PfTeppiMh+OT2dDnuC6Q6iq+YTgiGFmdME7Zrh5/7GV5qQWEy6xVU8g1120JhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731081495; c=relaxed/simple;
-	bh=DnSthTbu7M7mwlarqGz7sH5e43UB54ZbBR8qTG1CjLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PsMIooivPsoJrloEm2I/2Kzns1PqAynWEyEAEDqfYIbRojoT/yBOOjmeG7mJZ50pBUCippQMTFh6lFsJLCmX4O+tCw/RF0N4CCrTN8O3bHJAmLJ/0dRfZEhO/ime3s4htI7cOwkUniRNsQEu6FWl+PoI/u2LJgCUHoVbDgEVJhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eeKkpdqy; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1731081505; c=relaxed/simple;
+	bh=afozFiRkE7iEPjrWijZ2708D4/HZmkMXYMnhbTLwWMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVcznnuF7t4Di3Uz9ewyJ7L3/K7fOYOIncx39pUCoE+LqnooDt9wP9yWPGWIYM8WVEwhGwvSQ74ISNj0Nzn8sMA1yY5pR2gEjjc3XPDwUoKm4xphCOxL27dnwD/uSocY3sIoNgfbf5KtRmclLFfoc7fJ91cQtoWysWxL2gMJ20E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/tJclOB; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53a007743e7so2857515e87.1;
-        Fri, 08 Nov 2024 07:58:13 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20ce65c8e13so25838215ad.1;
+        Fri, 08 Nov 2024 07:58:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731081492; x=1731686292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bMuVQ8Erg4hrrl+JVXSYoq6sab0sBpa1d8BTm5zUoVI=;
-        b=eeKkpdqyQ4/RUbB/DMXgNPAnT2qRENeKmNw/uOEFpXivKbf7a+exh7ZWJvxciF4t5R
-         un3Nkyx0wiXOYT7npEl3J1cm3ImY8PyM7gY60iD3heUBZhvLvEGKpPtZmHT3arT6/b0b
-         am5axUGVDuJ+FgVZzJAwdcS7ohnOsvzmmiR4Scb+bEJVJJ8SoNcUcc4oj9FBsCybef6V
-         Lt58HWqbruxIh6P+IO5ZnpsqPBMnyffk22QH1BUb2O7tsDF7aRPk/W9ypmnSfLuBw319
-         UIIaupYv+kN/i9mvULGHWrkd5SKWWAe914A/i8E5HmBtLAYG9p/BPbdGCDSajiQc26dP
-         AFMg==
+        d=gmail.com; s=20230601; t=1731081504; x=1731686304; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=itUxA9/J4nvQf93kLWnaD5cp88YiYORj9PPmK3mprgY=;
+        b=m/tJclOBSiSSqdZ9Ie84LdZLqEd36HavOvKChPmQFRH0DHq9nI2JKLVXVeUwgE7RjG
+         B6ZbBJiQfnfz83XI90MeY9H6K1e597IEKzfrVeffTGG38ewqNyNpbVaNo8X+SMKS7eTk
+         JO95hm7g9gQ44wWPJfpjkIl0nJEQzZUBaP528RyTVEHaNizLznnO7bVkNvceWs3CgQn0
+         b4aqp3oDEM9XcP7h7DCSZxgcTXKc1ji0QAUFMe6/cstvlEEc+cErilgy8u3ToSNRzvIx
+         tJLIu1BXSlvorW/o1kBwALuz4tfMWbvD1A/Y8APIqndhvpJfdk1nsb+HPUq9RT948H/x
+         oZOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731081492; x=1731686292;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bMuVQ8Erg4hrrl+JVXSYoq6sab0sBpa1d8BTm5zUoVI=;
-        b=FgBICUrrh6BoZPkEPPyoXRxhUGtw0o67XUPrsHv1eyd/rJTm6VKv2ROs7ippxFTxQF
-         J4zS/cScH1OF0Uo81JZ/rtdfnT0dUmktyZK/T4Dn1CLHHWjUnc8xqSm45Lz+L0hP3oDy
-         +qJd6xHQSDpU1u2+k2FretHdTc0Ruv5AEsW1wOT5V5gJs3WAs4f31Aoa0dpVFiK11LKN
-         z82jhdw/NepwYIpPUWh8rgDLVRHBPmqi0wqM5uoxawmsQlnyFZHOYq00tTNZZ3RTsFl3
-         r3lLe+ZCU+Sj7JpmdXoFWsL/6Vxudq69vibrNuhBj3pOWnKIXR6ci8aGohdUGdbAj8bY
-         5fCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBGhYYVHJdeheN4vS0QxQOf5LabBZ0/jFS2PGkeIp/Busx+kqgMcolUj3KA/8adlOYHP0tfNq9rdtc@vger.kernel.org, AJvYcCVIOVplChgQVBPz4PnJ8KBaYdVbYDcEm6hzJKTo3ULTPNMKBDQzC79hPmKK58xDvELJMgulpdDaufhb@vger.kernel.org, AJvYcCWAalcxi60hHRC2gbTY4oZ4kah2MIxhPy2XLmp2yYTJdl8HpsMOSLYkY8ETUaIWnf6XlAA7VUA3K22MVGza@vger.kernel.org, AJvYcCXAJmiBvxeAmiffKl5JxKAbaUbg6b1no+ODwaRRmdRtQbR6UcmATErKqcAELnX/0xZme+wJs9y1y4yN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ3BZU6R0UUwJCCSAR5Gu2sMxdbvsfyv3hqaFOJqZ0fwsAHNg6
-	kmfch6FKxg74Su0PtrbWxUlvSh17khNcDgaVzMIp87TQw2zXrY1l
-X-Google-Smtp-Source: AGHT+IE+YJRPuE45zAJuly7sRzZ9edVWYuRFA055vs6Y4HK/g7Ba5F53rGd+uT+sYiCfKR7OvGEqog==
-X-Received: by 2002:a05:651c:b10:b0:2fb:6169:c42a with SMTP id 38308e7fff4ca-2ff20225b59mr18443731fa.30.1731081491747;
-        Fri, 08 Nov 2024 07:58:11 -0800 (PST)
-Received: from ?IPV6:2001:470:dcf4:ac:f506:8665:9278:2fb6? ([2001:470:dcf4:ac:f506:8665:9278:2fb6])
-        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2ff178df92asm6986411fa.9.2024.11.08.07.58.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 07:58:10 -0800 (PST)
-Message-ID: <cf32d676-831c-4c3f-8965-c9be3abd5300@gmail.com>
-Date: Fri, 8 Nov 2024 18:58:07 +0300
+        d=1e100.net; s=20230601; t=1731081504; x=1731686304;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=itUxA9/J4nvQf93kLWnaD5cp88YiYORj9PPmK3mprgY=;
+        b=kFsoEXN3a9ghTgGNOA8uw3x35/1drT82k+Oo/Bi/124gT5MPno/N1U2Ilk5DKJ6uFc
+         WLAIzsWbla7nU7/a4Yw9bD+0P0LUUuiol+7AphTyQmGlcZhWbeTHGPgsVu5eS1B+AKkk
+         dsu1b70isWhu+jJtQ1liZYoe7gVbXJ89zmu+Ls+xS5lCOh8Sfbxobu4bczh7Slu73zS2
+         T69Ti4cIqdEyGhh6aoPGI8WVzxn+3up8RpuAxeDshO3WiHfPaNT+BaJbviSCGblV3fcT
+         h/J3oPhF7QKINa0moz3Dd1X5P9M0gYh7qSVMb03Xj794e5bJoNVK2FjwB/kRId2g9WOr
+         YA5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVlNoyMCNMUGq0SXoBMA8RTAloA9Jruy88VSX0d+pbpMHsfuEhUYm0+dEt1vogu2SLRmeULXj+h55mCors=@vger.kernel.org, AJvYcCXfzy3RGg5YalO+TboOoiWiQIWT2/CT82qSizcnGyDPGNzaitWJsOL6CSLbuakkvPZLff+4My7q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLZxUS/4mL9UT2PUrYE3aPmL4mqzVrGyf9rbABCCtZRVedyyFL
+	2VLXveJpazjvQHksuZFzXiRXmQQb60fZNFMzZHLj48zSN81m1sw=
+X-Google-Smtp-Source: AGHT+IEyfC0g95d/JDeImgVis8VX1x1WtznA74VvzXF1brv3tF+QYl505poAyz4PgLcJIz6zx59chA==
+X-Received: by 2002:a17:902:f651:b0:20c:aed1:813a with SMTP id d9443c01a7336-211834fcd5bmr48680325ad.14.1731081503915;
+        Fri, 08 Nov 2024 07:58:23 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e45e8fsm31138925ad.128.2024.11.08.07.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 07:58:23 -0800 (PST)
+Date: Fri, 8 Nov 2024 07:58:22 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Kaiyuan Zhang <kaiyuanz@google.com>,
+	Samiullah Khawaja <skhawaja@google.com>,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Subject: Re: [PATCH net-next v2 4/5] page_pool: disable sync for cpu for
+ dmabuf memory provider
+Message-ID: <Zy41HkR5dDmjVJwl@mini-arch>
+References: <20241107212309.3097362-1-almasrymina@google.com>
+ <20241107212309.3097362-5-almasrymina@google.com>
+ <20241108141812.GL35848@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4] add driver for the WCH CH341 in I2C/GPIO mode
-To: frank zago <frank@zago.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Bartosz Golaszewski
- <bgolaszewski@baylibre.com>, Wolfram Sang <wsa@kernel.org>,
- Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
- Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>,
- linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20220616013747.126051-1-frank@zago.net>
-Content-Language: en-US
-From: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-In-Reply-To: <20220616013747.126051-1-frank@zago.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241108141812.GL35848@ziepe.ca>
 
+On 11/08, Jason Gunthorpe wrote:
+> On Thu, Nov 07, 2024 at 09:23:08PM +0000, Mina Almasry wrote:
+> > dmabuf dma-addresses should not be dma_sync'd for CPU/device. Typically
+> > its the driver responsibility to dma_sync for CPU, but the driver should
+> > not dma_sync for CPU if the netmem is actually coming from a dmabuf
+> > memory provider.
+> 
+> This is not completely true, it is not *all* dmabuf, just the parts of
+> the dmabuf that are actually MMIO.
+> 
+> If you do this you may want to block accepting dmabufs that have CPU
+> pages inside them.
 
-Hi Frank,
-
-
-Are you going to further proceed with this patch set? As far as I can 
-see, there were no updates since 2022.
-
-
-16.06.2022 04:37, frank zago пишет:
-> The CH341 is a multifunction chip, presenting 3 different USB PID. One
-> of these functions is for I2C/SPI/GPIO. This new set of drivers will
-> manage I2C and GPIO.
-> 
-> Changes from v5:
-> Addressed reviewers' comments.
-> Better handling of 0-bytes i2c commands
-> Use of better USB API.
-> 
-> Changes from v4:
-> I should have addressed all the comments: rework of the GPIO interrupt
-> handling code to be more modern, changes in Kconfig wording, some code
-> cleanup.
-> Driver was tested again with up to 4 of these devices. No
-> error seen.
-> 
-> Changes from v3:
->    - really converted to an MFD driver. Driver is now split into 3
->      modules (MFD+I2C+GPIO).
->    - minor code cleanups
-> 
-> Changes from v2:
->    - bug fixes
->    - more robust USB enumeration
->    - Changed to an MFD driver as suggested
-> 
-> During testing I found that i2c handles hot removal, but not gpio. The
-> gpio subsystem will complain with 'REMOVING GPIOCHIP WITH GPIOS STILL
-> REQUESTED', but it's a gpiolib issue.
-> 
-> Changes from v1:
->    - Removed double Signed-off-by
->    - Move Kconfig into the same directory as the driver
-> 
-> frank zago (4):
->    mfd: ch341: add core driver for the WCH CH341 in I2C/SPI/GPIO mode
->    gpio: ch341: add GPIO MFD cell driver for the CH341
->    i2c: ch341: add I2C MFD cell driver for the CH341
->    docs: misc: add documentation for ch341 driver
-> 
->   Documentation/misc-devices/ch341.rst | 109 ++++++++
->   Documentation/misc-devices/index.rst |   1 +
->   MAINTAINERS                          |   9 +
->   drivers/gpio/Kconfig                 |  10 +
->   drivers/gpio/Makefile                |   1 +
->   drivers/gpio/gpio-ch341.c            | 385 +++++++++++++++++++++++++++
->   drivers/i2c/busses/Kconfig           |  10 +
->   drivers/i2c/busses/Makefile          |   1 +
->   drivers/i2c/busses/i2c-ch341.c       | 377 ++++++++++++++++++++++++++
->   drivers/mfd/Kconfig                  |  10 +
->   drivers/mfd/Makefile                 |   1 +
->   drivers/mfd/ch341-core.c             |  90 +++++++
->   include/linux/mfd/ch341.h            |  26 ++
->   13 files changed, 1030 insertions(+)
->   create mode 100644 Documentation/misc-devices/ch341.rst
->   create mode 100644 drivers/gpio/gpio-ch341.c
->   create mode 100644 drivers/i2c/busses/i2c-ch341.c
->   create mode 100644 drivers/mfd/ch341-core.c
->   create mode 100644 include/linux/mfd/ch341.h
-> ---
-> 2.32.0
-
+We still want udmabufs to work, so probably need some new helper to test
+whether a particular netmem is backed by the cpu memory?
 
