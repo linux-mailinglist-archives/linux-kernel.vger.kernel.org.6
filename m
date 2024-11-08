@@ -1,123 +1,79 @@
-Return-Path: <linux-kernel+bounces-400891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2AB9C13B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:37:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3B79C13B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2DF0B21740
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:37:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B061F21E1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F4E629;
-	Fri,  8 Nov 2024 01:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="t9G4OocL"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1744F14012;
+	Fri,  8 Nov 2024 01:38:59 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71080DDC3
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 01:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E6DDDC3
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 01:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731029854; cv=none; b=jPlVFGUD5ONoMdUnE7+IbdWNJ8mp/QpX+qh/dPoT7dTOvsQLrXkQTKc8nKOWSUNL2sf1ABzcCPBhWhpF9Bx5HI4CnSQn/6vM5WaCpb0puTCrIjG3t3Vnyz3aMVyfqhOgPWSSD8BXACYIgT5F8pnhjTeUf8aJ9RzennPc9HufSgc=
+	t=1731029938; cv=none; b=DKoh2tMtwUqRGtdaxSok7RlR/ieJCyFhKPxmPghsnGzcn33MxnjFWLZ69m9Ic5n2gXC+45qNbIGYB7rdEY7aG0pUaVREPb4Zk0rQRB34PbuB0Zwu+vYU5OjOU6a9p0BardkEJW9SOHDSDzkvAFFl16JlbTgkNdG970pshST1rj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731029854; c=relaxed/simple;
-	bh=601PxONqDN+puHXMRm8j5f3xUm3oomfzrXf4jxdXAMk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y6oEFl7Zb0K7dxB7vt6/NxthLzya5Ffyool8clGzoMue8MPIiGRgfcWfGzeCdWginbQc5nMa7RuqVd2oXJ9dI+W58Ll1AXFBRR63wrvLQM7HNpl6hRMb+e8EUmoLxikQu0svhoV8szJVus8UD9vw0kBoPaQlT7qt5is567kWIMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=t9G4OocL; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1731029847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BrH3xbEOBIjpGvNeoZvkYNZBvZ3DHxApnAuafUg9pgY=;
-	b=t9G4OocLHYrHbK8R8pVmvUnB0lIY17l9b40eHh7Aoe9EBjQwDxHzAxGk3rQ5AImW7HNmci
-	WRk0GgmgAEwAeZa1pWu1ZSxSEkcoDa4zI39GLcsDM4U26orUmHkNRqx0ZrHeV+FqFKlgQe
-	izd2ZpJjQiB+BhjUcAba3JIOBAtubBAhtFLavM4cCVg5/wZsn36ToJdRe/hLGGHI/djTo3
-	0NWLFSS2pF6Tjz2tzVjtpbPmPJRGU/VgEWKAeUZ+2fb1YUEhccaIEjSGlxPIgCFzK1Jzy4
-	7DC3a5/bT3UQD5qsXb2HKkzA/2qmCG1VpOFCtUMToxdv6Bt7qRvMLCXs0ZiPCw==
-From: John Watts <contact@jookia.org>
-Date: Fri, 08 Nov 2024 12:37:15 +1100
-Subject: [PATCH] ASoC: audio-graph-card2: Purge absent supplies for device
- tree nodes
+	s=arc-20240116; t=1731029938; c=relaxed/simple;
+	bh=GztnvjYBw5PwTJR9ZRQ1G4umLnC8+WcqZjHtuS6LVL8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eqdRHqj1p6Q+dVhfIhdhPSjzMSaWz0fr8Ex9ge+tq9CdJBNDhEAccXT+MO5smlBniDU+eVrghaGI0bDXGks3/1FGuIhcWCgpvemt6PX9OLiRFb+4bKRhF8CIbCBbONjMa6mfjv2CcA6yPp1qyryFoYHicNo6rJX3Hvkrvmglhrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Xl1l92x6nz2Fb3V;
+	Fri,  8 Nov 2024 09:37:09 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 87DFB14010D;
+	Fri,  8 Nov 2024 09:38:52 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 8 Nov 2024 09:38:50 +0800
+Subject: Re: [PATCH RFC] ubifs: Fix use-after-free in ubifs_tnc_end_commit
+To: Waqar Hameed <waqar.hameed@axis.com>
+CC: Richard Weinberger <richard@nod.at>, Sascha Hauer
+	<s.hauer@pengutronix.de>, <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Ryder Wang <rydercoding@hotmail.com>
+References: <1225b9b5bbf5278e5ae512177712915f1bc0aebf.1728570925.git.waqar.hameed@axis.com>
+ <0f040e0a-c27f-2f29-6d9e-9c7152a18513@huawei.com> <pndttci1xgd.fsf@axis.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <198ba9bd-9ef1-0cff-696e-6532dcdbe0dd@huawei.com>
+Date: Fri, 8 Nov 2024 09:38:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241108-graph_dt_fix-v1-1-173e2f9603d6@jookia.org>
-X-B4-Tracking: v=1; b=H4sIAEprLWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQwML3fSixIKM+JSS+LTMCt0UwzSDlCQLi0QzSzMloJaColSgMNi46Nj
- aWgCiQu0RXgAAAA==
-X-Change-ID: 20241108-graph_dt_fix-d1f0db88a696
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- John Watts <contact@jookia.org>
-X-Developer-Signature: v=1; a=openssh-sha256; t=1731029837; l=1594;
- i=contact@jookia.org; h=from:subject:message-id;
- bh=601PxONqDN+puHXMRm8j5f3xUm3oomfzrXf4jxdXAMk=;
- b=U1NIU0lHAAAAAQAAAEoAAAAac2stc3NoLWVkMjU1MTlAb3BlbnNzaC5jb20AAAAgPs7MDd2XR
- g2uRE9caV1lPPPeu0VzIG9fPrrVmYyAhLcAAAAEc3NoOgAAAAZwYXRhdHQAAAAAAAAABnNoYTUx
- MgAAAGcAAAAac2stc3NoLWVkMjU1MTlAb3BlbnNzaC5jb20AAABAqalNx/4z2OYiBMfG1sJCLOy
- hWeUIn/WDoReMwOQR1tt2OYkQe4xwwLDaMY+hELHy8F3jHrNcuPKIvT9XE3/IDwUAARjY
-X-Developer-Key: i=contact@jookia.org; a=openssh;
- fpr=SHA256:/gEvgms/9HpbgpcH+K7O4GYXmqkP7siJx9zHeEWRZTg
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <pndttci1xgd.fsf@axis.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-The audio graph card doesn't mark its subnodes such as multi {}, dpcm {}
-and c2c {} as not requiring any suppliers. This causes a hang as Linux
-waits for these phantom suppliers to show up on boot.
-Make it clear these nodes have no suppliers.
+在 2024/11/8 6:38, Waqar Hameed 写道:
+> On Thu, Nov 07, 2024 at 16:39 +0800 Zhihao Cheng <chengzhihao1@huawei.com> wrote:
+> 
+[...]
+> 
+> P.S
+> I wonder how many systems that might have experienced this
+> use-after-free and got random memory corruptions (or other security
+> issues). This bug has been there since v4.20.
+> D.S
+> .
+> 
 
-Example error message:
-[   15.208558] platform 2034000.i2s: deferred probe pending: platform: wait for supplier /sound/multi
-[   15.208584] platform sound: deferred probe pending: asoc-audio-graph-card2: parse error
-
-Signed-off-by: John Watts <contact@jookia.org>
----
- sound/soc/generic/audio-graph-card2.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/sound/soc/generic/audio-graph-card2.c b/sound/soc/generic/audio-graph-card2.c
-index 56f7f946882e831cc4474c86b31f69e15de1549a..68f1da6931af2161dc8815b8c04d10cd614cc182 100644
---- a/sound/soc/generic/audio-graph-card2.c
-+++ b/sound/soc/generic/audio-graph-card2.c
-@@ -270,16 +270,19 @@ static enum graph_type __graph_get_type(struct device_node *lnk)
- 
- 	if (of_node_name_eq(np, GRAPH_NODENAME_MULTI)) {
- 		ret = GRAPH_MULTI;
-+		fw_devlink_purge_absent_suppliers(&np->fwnode);
- 		goto out_put;
- 	}
- 
- 	if (of_node_name_eq(np, GRAPH_NODENAME_DPCM)) {
- 		ret = GRAPH_DPCM;
-+		fw_devlink_purge_absent_suppliers(&np->fwnode);
- 		goto out_put;
- 	}
- 
- 	if (of_node_name_eq(np, GRAPH_NODENAME_C2C)) {
- 		ret = GRAPH_C2C;
-+		fw_devlink_purge_absent_suppliers(&np->fwnode);
- 		goto out_put;
- 	}
- 
-
----
-base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-change-id: 20241108-graph_dt_fix-d1f0db88a696
-
-Best regards,
--- 
-John Watts <contact@jookia.org>
-
+Maybe the authentication feature is not widely used.
 
