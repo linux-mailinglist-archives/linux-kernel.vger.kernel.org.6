@@ -1,317 +1,171 @@
-Return-Path: <linux-kernel+bounces-402465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729479C27FF
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:15:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF919C27FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:15:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3351D282826
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68531F2213E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CFE1E32B0;
-	Fri,  8 Nov 2024 23:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023241F26DB;
+	Fri,  8 Nov 2024 23:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="UE0VzJsJ"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJ3ZbYko"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE2B206E98;
-	Fri,  8 Nov 2024 23:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49FA1DFDE;
+	Fri,  8 Nov 2024 23:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731107705; cv=none; b=Y9V/+Z5thG3YNe4herZotg4VSxlxR4JGhAyAf+M4cf17TV+2LvuMAflbSWhijYtvcT5p+Y/d1NdexET3sqCHETXd2puxIqbnVmpyhdcxLp/Z5+ULK12dzb/ejYAwOD6EeWTkcEK8+5bMVmnfyXsZoLN6HKWp7rjngOv2ptBbl+E=
+	t=1731107699; cv=none; b=HBEEz89VluUSv1VieiVYa+KSQc1mT6bsTUPAIFh4k9K3GrG6eWr8v4q5kpJnly0z+t1i4hQ4MnPUl1Bw0kn0gihdeNUaAJ5DYcq6mEQ+RZIPOGvatAtEgtwZPTybdX7kccK9JDq8Y5cRK1kijoNnoS/0P0zb9h7pwk2TDCBosUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731107705; c=relaxed/simple;
-	bh=wlyTTPORybbicCpr69x5bfrmf1XYOj7Mmn5DvMXtk4E=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=UFIXliTterezR+wnmsUe89xLUA34aKxmEoZPeY050ja510VOSoFffrYCVx/gNxnpzDDHzq3fk/BGZrSwRziuxzibcBMKDNFSI/QyHGkGIqYg4yRCGo8cImBtE0k3Ufr8kQ2CTIuqXrYffknW8B7d6S49Pfyl6D964bLSqNftVUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=UE0VzJsJ; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=wplBxjlGm3yRsOh0Lh/JZT69hLOASFhoN7GX1UmOd/U=; b=UE0VzJsJ7vT74mlg9gBDhIdTju
-	MbC0GzJbBKnu84tIg3PxPFoWm+EI7t18RQHSUOFRDmuqOb5s/GXBXZrzHwsBKTNqMPmjRrAdCPUh+
-	adR6z1ZfKPmsrnUT27oo2PhnknnjNSZErEYDn9Tmu3iBDkVdw7uV+0+Ire2yVjtBR6WnJ2gZhr+Or
-	wlTalKIyfEX67bYpz5yeV+zkIzZh5Xsmf5jQCy5MDi0J/eEFVF22SeleJLd4ymKF/kNicZJx1WswH
-	RvhTO99w6xMJVGog+TaUSKe7vMmb5nPfNKN9B/ZcQnLLs5PphSJH03yqoouCWQSyIKEE5sHET1TKH
-	klcoTavg==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	devicetree@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-omap@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v2] dt-bindings: clock: ti: Convert mux.txt to json-schema
-Date: Sat,  9 Nov 2024 00:14:53 +0100
-Message-Id: <20241108231453.247660-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731107699; c=relaxed/simple;
+	bh=jtQ4gWG5W6gUv0wlYP+NfwQPWp2o+RPaPgjDPHfmF50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TaNliE2pqM5rkyoOrokcG2A+REcbopuQgjgQTpxpS9Ix7B3BvV57KbH6wQxJ0zCSAIXejK67aWCc1LSlcexCaKLTTxStMwqHFp+Uc9XuaoV8n4sDlo2ow25EmbBVKPQ+LDI6vp69/PCMLaA0IVkhGK5b1vTtCpNoGaDvMaIliKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJ3ZbYko; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d4c482844so1686204f8f.0;
+        Fri, 08 Nov 2024 15:14:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731107696; x=1731712496; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LtXcEOPCg2ocd09XknNFCZnpRJHrxr/6pg0EmGnAWYE=;
+        b=aJ3ZbYkoIqWb0OuByeuQsDFQan8TSNUJY1CcyBazruA6KI6n9SXoo5FzZqbPxl3Vxk
+         tfwV+C/E1oNTfvrGs1DhM1/SjuwKEs0u3eRiD4w/ghaBvalLAoNQZuM+34e2yUmXBRH5
+         vCAIC/6Raf2P8FCxt/ipVvbBbFHouv8QnS0X9lCyUrWjOlfS1GNrMFjoVf+I9F6QrJn5
+         BDSJWmWBN1CZ60bgPV9DrAGjQlfJPAoH/HbY0Pd29RsQ34ckL8rUzULJPphiKcEA5to8
+         D5S9BoOobMiG0a+kdJjNBlbiI8U/LJG875gkz3LWTwxCeJEIABWuqZgSDlU/HWcLjYJx
+         0Ghg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731107696; x=1731712496;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LtXcEOPCg2ocd09XknNFCZnpRJHrxr/6pg0EmGnAWYE=;
+        b=cL9SRx3AvC2DDU4JrsOxtKFKlaewZkhb3FGm9OLD+zRCcWZ6HHJPDf1qN+vldtHp2M
+         sQqMVovEmxIwgqFW2hxLDY9OdLjJ/qOsbkEtFubAaBKrMugsffl4ah0TGncwUc835IWi
+         GhbalXDdqPKkOuItFwUtcrbh/xCSENsM8uzC6ga/z1oVj5x8qPHv9pWdVu5gBEF9LfEl
+         ub72rTdfmd0HXNaL3nRdVXcXixU+tTLdsov5+UsTjABj0haaCmz0GblZ+R++A8cJnnpN
+         6nfLwogBNDbV6jvOJFXRA9Hda0z7jOtSglN7DYLxqq6MCt2lfFv4PXNRP5JtpEKjJ6nt
+         tsFA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+oB69FtKskmIxw63V7cI8ADqmxl/vv2/nZtgqxCxlWqwFIZTRJKsDhBhpFHvFcdQ7aXRJdiCJ3UpHRCI=@vger.kernel.org, AJvYcCVie9Tc79tUgwdoxXh96dAnjtKV+ZBCNt8erP3K69CrYIFeJJJ9yaIX4p5Y8DIFVz/biwTcUMcE@vger.kernel.org, AJvYcCX/2tn2yADBFuWpOx+47QhhupgF7MjpjsOTtXmdsGyMh/wEkf1qHyMfq2zJVD7KHUe93HAOCzW5AfmOb/7qsbJC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDiv8HzpXuFnQduiaoECQRwDAwKbdsgNSp1vGvNu5slPm6aIRw
+	tRh48fd3RAXh1rK80OlWR6TwBGJ3OAwtxM1VysdAa8ZsZvP1PL3P
+X-Google-Smtp-Source: AGHT+IHOQuLBkuZsjEvmIHmHhCEAUx5L8g/Fv+AQv+jyeqZbdnDIhsVZWXcIKesQd6WF3Y5aLEPVaQ==
+X-Received: by 2002:a5d:64e5:0:b0:37d:511b:aecc with SMTP id ffacd0b85a97d-381f188c829mr3911211f8f.54.1731107695811;
+        Fri, 08 Nov 2024 15:14:55 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05e5871sm86002445e9.37.2024.11.08.15.14.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 15:14:55 -0800 (PST)
+Message-ID: <52a2f654-29e5-4567-b5f8-8362fa55c1e1@gmail.com>
+Date: Sat, 9 Nov 2024 01:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 03/23] ovpn: add basic netlink support
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-3-de4698c73a25@openvpn.net>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <20241029-b4-ovpn-v11-3-de4698c73a25@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Convert the OMAP mux clock device tree binding to json-schema.
-Specify the creator of the original binding as a maintainer.
-Choose GPL-only license because original binding was also GPL.
+On 29.10.2024 12:47, Antonio Quartulli wrote:
+> This commit introduces basic netlink support with family
+> registration/unregistration functionalities and stub pre/post-doit.
+> 
+> More importantly it introduces the YAML uAPI description along
+> with its auto-generated files:
+> - include/uapi/linux/ovpn.h
+> - drivers/net/ovpn/netlink-gen.c
+> - drivers/net/ovpn/netlink-gen.h
+> 
+> Cc: donald.hunter@gmail.com
+> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-Changes in V2:
-- some orthography fixes
-- fix addresses in example
-- no prose for defaults
-- constraints for latch-bit
+[skipped]
 
- .../bindings/clock/ti/composite.txt           |   2 +-
- .../devicetree/bindings/clock/ti/mux.txt      |  78 -----------
- .../bindings/clock/ti/ti,mux-clock.yaml       | 125 ++++++++++++++++++
- 3 files changed, 126 insertions(+), 79 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/ti/mux.txt
- create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> diff --git a/Documentation/netlink/specs/ovpn.yaml b/Documentation/netlink/specs/ovpn.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/composite.txt b/Documentation/devicetree/bindings/clock/ti/composite.txt
-index b02f22490dcb..238e6f7d74f8 100644
---- a/Documentation/devicetree/bindings/clock/ti/composite.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/composite.txt
-@@ -16,7 +16,7 @@ merged to this clock. The component clocks shall be of one of the
- "ti,*composite*-clock" types.
- 
- [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--[2] Documentation/devicetree/bindings/clock/ti/mux.txt
-+[2] Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
- [3] Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
- [4] Documentation/devicetree/bindings/clock/ti/gate.txt
- 
-diff --git a/Documentation/devicetree/bindings/clock/ti/mux.txt b/Documentation/devicetree/bindings/clock/ti/mux.txt
-deleted file mode 100644
-index cd56d3c1c09f..000000000000
---- a/Documentation/devicetree/bindings/clock/ti/mux.txt
-+++ /dev/null
-@@ -1,78 +0,0 @@
--Binding for TI mux clock.
--
--This binding uses the common clock binding[1].  It assumes a
--register-mapped multiplexer with multiple input clock signals or
--parents, one of which can be selected as output.  This clock does not
--gate or adjust the parent rate via a divider or multiplier.
--
--By default the "clocks" property lists the parents in the same order
--as they are programmed into the register.  E.g:
--
--	clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
--
--results in programming the register as follows:
--
--register value		selected parent clock
--0			foo_clock
--1			bar_clock
--2			baz_clock
--
--Some clock controller IPs do not allow a value of zero to be programmed
--into the register, instead indexing begins at 1.  The optional property
--"index-starts-at-one" modified the scheme as follows:
--
--register value		selected clock parent
--1			foo_clock
--2			bar_clock
--3			baz_clock
--
--The binding must provide the register to control the mux. Optionally
--the number of bits to shift the control field in the register can be
--supplied. If the shift value is missing it is the same as supplying
--a zero shift.
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible : shall be "ti,mux-clock" or "ti,composite-mux-clock".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : link phandles of parent clocks
--- reg : register offset for register controlling adjustable mux
--
--Optional properties:
--- clock-output-names : from common clock binding.
--- ti,bit-shift : number of bits to shift the bit-mask, defaults to
--  0 if not present
--- ti,index-starts-at-one : valid input select programming starts at 1, not
--  zero
--- ti,set-rate-parent : clk_set_rate is propagated to parent clock,
--  not supported by the composite-mux-clock subtype
--- ti,latch-bit : latch the mux value to HW, only needed if the register
--  access requires this. As an example, dra7x DPLL_GMAC H14 muxing
--  implements such behavior.
--
--Examples:
--
--sys_clkin_ck: sys_clkin_ck@4a306110 {
--	#clock-cells = <0>;
--	compatible = "ti,mux-clock";
--	clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>, <&virt_19200000_ck>, <&virt_26000000_ck>, <&virt_27000000_ck>, <&virt_38400000_ck>;
--	reg = <0x0110>;
--	ti,index-starts-at-one;
--};
--
--abe_dpll_bypass_clk_mux_ck: abe_dpll_bypass_clk_mux_ck@4a306108 {
--	#clock-cells = <0>;
--	compatible = "ti,mux-clock";
--	clocks = <&sys_clkin_ck>, <&sys_32k_ck>;
--	ti,bit-shift = <24>;
--	reg = <0x0108>;
--};
--
--mcbsp5_mux_fck: mcbsp5_mux_fck {
--	#clock-cells = <0>;
--	compatible = "ti,composite-mux-clock";
--	clocks = <&core_96m_fck>, <&mcbsp_clks>;
--	ti,bit-shift = <4>;
--	reg = <0x02d8>;
--};
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-new file mode 100644
-index 000000000000..4a6f349ba2b0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-@@ -0,0 +1,125 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti/ti,mux-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments mux clock
-+
-+maintainers:
-+  - Tero Kristo <kristo@kernel.org>
-+
-+description: |
-+  This clock assumes a register-mapped multiplexer with multiple inpt clock
-+  signals or parents, one of which can be selected as output. This clock does
-+  not gate or adjust the parent rate via a divider or multiplier.
-+
-+  By default the "clocks" property lists the parents in the same order
-+  as they are programmed into the register.  E.g:
-+
-+    clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
-+
-+  Results in programming the register as follows:
-+
-+  register value   selected parent clock
-+  0                foo_clock
-+  1                bar_clock
-+  2                baz_clock
-+
-+  Some clock controller IPs do not allow a value of zero to be programmed
-+  into the register, instead indexing begins at 1.  The optional property
-+  "index-starts-at-one" modified the scheme as follows:
-+
-+  register value   selected clock parent
-+  1                foo_clock
-+  2                bar_clock
-+  3                baz_clock
-+
-+  The binding must provide the register to control the mux. Optionally
-+  the number of bits to shift the control field in the register can be
-+  supplied. If the shift value is missing it is the same as supplying
-+  a zero shift.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,mux-clock
-+      - ti,composite-mux-clock
-+
-+  "#clock-cells":
-+    const: 0
-+
-+  clocks: true
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  ti,bit-shift:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Number of bits to shift the bit-mask
-+    maximum: 31
-+    default: 0
-+
-+  ti,index-starts-at-one:
-+    type: boolean
-+    description:
-+      Valid input select programming starts at 1, not zero
-+
-+  ti,set-rate-parent:
-+    type: boolean
-+    description:
-+      clk_set_rate is propagated to parent clock,
-+      not supported by the composite-mux-clock subtype.
-+
-+  ti,latch-bit:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Latch the mux value to HW, only needed if the register
-+      access requires this. As an example, dra7x DPLL_GMAC H14 muxing
-+      implements such behavior.
-+    maximum: 31
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: ti,composite-mux-clock
-+then:
-+  properties:
-+    ti,set-rate-parent: false
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - clocks
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    bus {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      clock-controller@110 {
-+        #clock-cells = <0>;
-+        compatible = "ti,mux-clock";
-+        clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>;
-+        reg = <0x0110>;
-+        ti,index-starts-at-one;
-+        ti,set-rate-parent;
-+      };
-+
-+      clock-controller@120 {
-+        #clock-cells = <0>;
-+        compatible = "ti,composite-mux-clock";
-+        clocks = <&core_96m_fck>, <&mcbsp_clks>;
-+        ti,bit-shift = <4>;
-+        reg = <0x0120>;
-+      };
-+    };
--- 
-2.39.5
+[skipped]
 
+> +attribute-sets:
+> +  -
+> +    name: peer
+> +    attributes:
+> +      -
+> +        name: id
+> +        type: u32
+> +        doc: |
+> +          The unique ID of the peer. To be used to identify peers during
+> +          operations
+
+nit: could you specify the scope of uniqueness? I believe it is not 
+globally uniq, it is just interface uniq, right?
+
+> +        checks:
+> +          max: 0xFFFFFF
+
+[skipped]
+
+> diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
+> index 369a5a2b2fc1a497c8444e59f9b058eb40e49524..d5bdb0055f4dd3a6e32dc6e792bed1e7fd59e101 100644
+> --- a/drivers/net/ovpn/main.c
+> +++ b/drivers/net/ovpn/main.c
+> @@ -7,11 +7,15 @@
+>    *		James Yonan <james@openvpn.net>
+>    */
+>   
+> +#include <linux/genetlink.h>
+>   #include <linux/module.h>
+>   #include <linux/netdevice.h>
+>   #include <net/rtnetlink.h>
+> +#include <uapi/linux/ovpn.h>
+>   
+> +#include "ovpnstruct.h"
+>   #include "main.h"
+> +#include "netlink.h"
+>   #include "io.h"
+>   
+>   /* Driver info */
+> @@ -37,7 +41,7 @@ static int ovpn_newlink(struct net *src_net, struct net_device *dev,
+>   }
+>   
+>   static struct rtnl_link_ops ovpn_link_ops = {
+> -	.kind = "ovpn",
+> +	.kind = OVPN_FAMILY_NAME,
+
+nit: are you sure that the link kind is the same as the GENL family? I 
+mean, they are both deriviated from the protocol name that is common for 
+both entities, but is it making RTNL kind a derivative of GENL family?
+
+>   	.netns_refund = false,
+>   	.newlink = ovpn_newlink,
+>   	.dellink = unregister_netdevice_queue,
+> @@ -93,8 +97,16 @@ static int __init ovpn_init(void)
+>   		goto unreg_netdev;
+>   	}
+
+--
+Sergey
 
