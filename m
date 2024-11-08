@@ -1,192 +1,136 @@
-Return-Path: <linux-kernel+bounces-400920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9659C13F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:19:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250319C13FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:21:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCEE0B23150
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF501C22816
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA4B8F58;
-	Fri,  8 Nov 2024 02:18:56 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF1B1E4AB;
+	Fri,  8 Nov 2024 02:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="EdMY6z8d"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885361BD9D1
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 02:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB75FA41;
+	Fri,  8 Nov 2024 02:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731032336; cv=none; b=RRLKugRob8cTCoaJM13EH7Abvrwbug/CpYoW2L4nLYIvl1f/rJAaj+xhQwC3ksw7kkjR3z6QdjW1r/GbzBmz11MUIIFcj/ZkD8BQgBjb2Cr7C3PlegwHqWImjSwxkf34eG35eWR4bsFkDOgxx+tnAVStZplWpw2Lmlzy+XqO+h4=
+	t=1731032458; cv=none; b=BUGkOeCBrwU8H2iTyQP3AZdQI8Ze3SbDEK+hMOF7Pa6KpXuqHeS3eQ4kUZy2AKXjyAyZyAfDvdg1amT3HsOf99nac+4PPqT/gVUN76sJ20DMU3ezQHNIxdR1K+SuyteYA0xhb1nLMHjgH0BeEAzCYvLJ8XxuR7SjGpQty0WUdus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731032336; c=relaxed/simple;
-	bh=H061cTXQ8x2+zzrNTU0mwprc+HU3BKoAVEgeJu/an64=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UhB2CPr0BIme3rGamPOBTgTGqg6/D8Wmsx6KEtnIXHh4KumS0Si+a5lqDbJaPqnthwFveZ+GKSRGUf/BZRSpQxS0cx/UOMAk8v2rLgjIk9ePQfh2DNGSLfRfTifTwpDXFJduZAhil08c8oSb3ETjtvwwRDT/ysusX+hgy9MAdp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6bce8a678so18013045ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 18:18:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731032333; x=1731637133;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ztnol1DRPjKnFZYFY1ml4Usa2RJsVuF4qAT/1xaybSQ=;
-        b=IUbvjQTer6HQs/f7A27JbpFwAM+htc4SXPUQEDAuNH5za1YeBsPIK0CLle1Kx65d+X
-         391AN3FmnHQZZpyPABso+T3sArX+E6aCA+SalSPF9g3rWQ5twpjTW+kPXm5Mc+VBdgR2
-         pC4KoWZOl+WoXw48gHQC80flPPBaceKNBmPxE+GlnzBaXELUCq3L0JXmSll2t0F9gBqi
-         uAAumX7zIvun1RttImb4D851HvN1ZMp0jcAaXRaatMAEN/T37KRrqVlWoPPpu5RmqR5k
-         /tqew6QB/KNtuYsMxYviTOmtm08DLAxHtpPXcxvXO+x76wKXflTB/M+uEzY3cveI1kO4
-         A39w==
-X-Gm-Message-State: AOJu0YwwYGB+QIzMHdFkNtg7hnuIuvA+Hov2sbyqYTqIU9Qq+IQn2krw
-	OSPnZLuISj8EnK7Fvc+rvpNEeNBMzXZDDw8WxcXGt3FkKLMWWSPDkEZ36xQv5dVEA3dCKBpeOEf
-	YKr+ekCMaym0vzSOcq+xWnhkKmh2sga+UFzF/eXs272vRKrXitZzqwm4=
-X-Google-Smtp-Source: AGHT+IH8LdcLE151XJvz0Z0ocnciLSp22+YeY4aOquwfRC4vKYYMy9K6++IMEmdVO4g5NDiWUvdKTDPGfjk6YaXxmJJsuJ+qAqby
+	s=arc-20240116; t=1731032458; c=relaxed/simple;
+	bh=CwnYD3eGDcHqYbgF65Xbn0OHrKz2s4QD6/hWNWb3Ch0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jiNShNOVb/BuOxEG/TDWGxnuhBNwl5QcoIikNWRxIne4Q+rV5Q6mhANFv132koWmeUARFdy9G3higdbPJZFHlUon0yjVbBUuyuCk0lDfnVqmU9BmS2p0cMNtwhXqnAzX3JWuRVA6LK6QWegM2lCzQIYeGE+NkYbxdiSof+/NCKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=EdMY6z8d; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7MdPY8025702;
+	Fri, 8 Nov 2024 02:20:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pps0720; bh=Al+1eFcwD1Jl3
+	Gag56B47fYEjUBMMgK+F9iQqJ74Q5w=; b=EdMY6z8dVXWgQtkZjhk0eRRX/jLCq
+	Y+baaYel0c0ILdnDFuKUDK2dmGDNleSP5EUh7AImOKSSZon48chSXxLwHzz4De/8
+	hkx6faYmYsiJwrPebqrIchc+ah+HjR3fYYuvd8BrosVnGeFP5WgL88ZpwLMB8kdR
+	aOgj9g7juCan82A2UlG5Uja+fC3C8Vzen5Mcqw2zMEEHEKjs/7jr0uHkphPwIB+t
+	pctPo5zn8cV1nkkQyt2rdLMP+LHW9BA56ZQoFZo+z1+ktFc8uQD1b18MSEXs5TGN
+	LhL/maUZntlYJ+fgVfhtAATboKVX4ktcCMlLJGjGvAFLObP66HKmjqVOw==
+Received: from p1lg14878.it.hpe.com ([16.230.97.204])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 42s6h9sd36-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 02:20:38 +0000 (GMT)
+Received: from localhost (unknown [192.58.206.38])
+	by p1lg14878.it.hpe.com (Postfix) with ESMTP id 3B4D2295E7;
+	Fri,  8 Nov 2024 02:20:36 +0000 (UTC)
+From: Matt Muggeridge <Matt.Muggeridge@hpe.com>
+To: idosch@idosch.org
+Cc: Matt.Muggeridge@hpe.com, davem@davemloft.net, dsahern@kernel.org,
+        edumazet@google.com, horms@kernel.org, kuba@kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org
+Subject: Re: [PATCH net 1/1] net/ipv6: Netlink flag for new IPv6 Default Routes
+Date: Thu,  7 Nov 2024 21:20:26 -0500
+Message-Id: <20241108022026.58907-1-Matt.Muggeridge@hpe.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <ZyyN2bSgrpbhbkpp@shredder>
+References: <ZyyN2bSgrpbhbkpp@shredder>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2193:b0:3a4:e2f1:936b with SMTP id
- e9e14a558f8ab-3a6f199edcdmr18863605ab.5.1731032333560; Thu, 07 Nov 2024
- 18:18:53 -0800 (PST)
-Date: Thu, 07 Nov 2024 18:18:53 -0800
-In-Reply-To: <672b7858.050a0220.350062.0256.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672d750d.050a0220.15a23d.01a9.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
-From: syzbot <syzbot+1fc6f64c40a9d143cfb6@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: wL657nGIBtMxv2dhOrIYI__izIcFG8c7
+X-Proofpoint-ORIG-GUID: wL657nGIBtMxv2dhOrIYI__izIcFG8c7
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411080018
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+> > You probably already know how to reproduce it, but in case it helps, I still
+> > have the packet captures and can share them with you. Let me know if you'd
+> > like me to share them (and how to share them).
+> 
+> It would be best if you could provide a reproducer using iproute2:
+> Configure a dummy device using ip-link, install the multipath route
+> using ip-route, configure the neighbour table using ip-neigh and then
+> perform route queries using "ip route get ..." showing the problem. We
+> can then use it as the basis for a new test case in
+> tools/testing/selftests/net/fib_tests.sh 
 
-***
+I'll try to do that next week.
 
-Subject: Re: [syzbot] [mm?] BUG: stack guard page was hit in v9fs_file_read_iter
-Author: lizhi.xu@windriver.com
+> BTW, do you have CONFIG_IPV6_ROUTER_PREF=y in your config?
 
-if we didn't read new data then abandon retry
+Yes.
 
-#syz test
+$ gunzip -c /proc/config.gz | grep ROUTER_PREF
+CONFIG_IPV6_ROUTER_PREF=y
 
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index c40e226053cc..a233412ba08f 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -233,6 +233,7 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
- 
- 		subreq->start	= start;
- 		subreq->len	= size;
-+		subreq->rretry_times = 0;
- 
- 		atomic_inc(&rreq->nr_outstanding);
- 		spin_lock_bh(&rreq->lock);
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index b1a66a6e6bc2..beb81e06d13b 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -66,6 +66,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
- 		subreq->source	= NETFS_DOWNLOAD_FROM_SERVER;
- 		subreq->start	= start;
- 		subreq->len	= size;
-+		subreq->rretry_times = 0;
- 
- 		atomic_inc(&rreq->nr_outstanding);
- 		spin_lock_bh(&rreq->lock);
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index b18c65ba5580..b2c8d5df73f9 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -509,9 +509,15 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq,
- 		} else {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_short);
- 			if (subreq->transferred > subreq->consumed) {
--				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
--				__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
--				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-+				/* if we didn't read new data, abandon retry*/
-+				if (subreq->rretry_times && subreq->fresh_len) {
-+					__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
-+					__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
-+					set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-+				}
-+				printk("subreq: %p, 1async: %d, rreq: %p, rreq transferred: %lu, sub req transed: %lu, "
-+					"sub req length: %lu, retry times: %d, subreq consume: %d, subreq list empty: %d, %s\n",
-+					subreq, was_async, rreq, rreq->transferred, subreq->transferred, subreq->len, subreq->rretry_times, subreq->consumed, list_empty(&rreq->subrequests), __func__);
- 			} else if (!__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags)) {
- 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
-index 0350592ea804..d549b54de6ec 100644
---- a/fs/netfs/read_retry.c
-+++ b/fs/netfs/read_retry.c
-@@ -23,6 +23,8 @@ static void netfs_reissue_read(struct netfs_io_request *rreq,
- 	atomic_inc(&rreq->nr_outstanding);
- 	__set_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
- 	netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
-+	printk("rq: %p, subrq: %p, len: %lu, consumed: %d, transfed: %lu, %s\n",
-+		rreq, subreq, subreq->len, subreq->consumed, subreq->transferred, __func__);
- 	subreq->rreq->netfs_ops->issue_read(subreq);
- }
- 
-@@ -52,10 +54,12 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
- 	    !test_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags)) {
- 		struct netfs_io_subrequest *subreq;
- 
-+		printk("rrq: %p, %s\n", rreq, __func__);
- 		list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
- 			if (test_bit(NETFS_SREQ_FAILED, &subreq->flags))
- 				break;
- 			if (__test_and_clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags)) {
-+				subreq->rretry_times++;
- 				netfs_reset_iter(subreq);
- 				netfs_reissue_read(rreq, subreq);
- 			}
-@@ -183,6 +187,7 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
- 					goto abandon;
- 				subreq->source = NETFS_DOWNLOAD_FROM_SERVER;
- 				subreq->start = start;
-+				subreq->rretry_times = 0;
- 
- 				/* We get two refs, but need just one. */
- 				netfs_put_subrequest(subreq, false, netfs_sreq_trace_new);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 5eaceef41e6c..c0b1f058f09a 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -191,6 +191,8 @@ struct netfs_io_subrequest {
- 	unsigned char		curr_folio_order; /* Order of folio */
- 	struct folio_queue	*curr_folioq;	/* Queue segment in which current folio resides */
- 	unsigned long		flags;
-+	size_t			fresh_len;	/* The length of the data just read */
-+	u8			rretry_times;   /* The times of retry read */
- #define NETFS_SREQ_COPY_TO_CACHE	0	/* Set if should copy the data to the cache */
- #define NETFS_SREQ_CLEAR_TAIL		1	/* Set if the rest of the read should be cleared */
- #define NETFS_SREQ_SEEK_DATA_READ	3	/* Set if ->read() should SEEK_DATA first */
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index 819c75233235..6e33a3dfec40 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -80,8 +80,13 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
- 	if (pos + total >= i_size_read(rreq->inode))
- 		__set_bit(NETFS_SREQ_HIT_EOF, &subreq->flags);
- 
--	if (!err)
-+	if (!err) {
- 		subreq->transferred += total;
-+		subreq->fresh_len = total;
-+	} else 
-+		subreq->fresh_len = 0;
-+
-+	printk("subreq: %p, sub rq len: %lu, err: %d, total: %d, transfed: %d, %s\n", subreq, subreq->len, err, total, subreq->transferred, __func__);
- 
- 	netfs_read_subreq_terminated(subreq, err, false);
- }
+> > 
+> > As such, it still seems appropriate (to me) that this be implemented in the
+> > legacy API as well as ensuring it works with the NH API.
+> 
+> As I understand it you currently get different results because the
+> kernel installs two default routes whereas user space can only create
+> one default multipath route.
+
+Yes, that's the end result of an underlying problem.
+
+Perhaps more to the point, the fact that a coalesced, INCOMPLETE, multipath
+route is selected when a REACHABLE alternative exists, is what prevents us
+from using coalesced multipath routes. This seems like a bug, since it violates
+RFC4861 6.3.6, bullet 1.
+
+Imagine adding a 2nd router to an IPv6 network for added resiliency, but when
+one becomes unreachable, some network flows keep choosing the unreachable
+router. This is what is happening with ECMP routes. It doesn't happen with
+multiple default routes.
+
+I'll just reiterate earlier comments, this doesn't happen all of the time.
+It seems I have a 50/50 chance of the INCOMPLETE route being selected.
+
+> Before adding a new uAPI I want to
+> understand the source of the difference and see if we can improve / fix
+> the current multipath code so that the two behave the same. If we can
+> get them to behave the same then I don't think user space will care
+> about two default routes versus one default multipath route.
+
+Exactly, I totally support that approach.
+
+Regards,
+Matt.
 
