@@ -1,129 +1,142 @@
-Return-Path: <linux-kernel+bounces-402227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D789C2536
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:57:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAE89C2539
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7B4283B5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E531F23990
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A596519924D;
-	Fri,  8 Nov 2024 18:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1652E1AA1C1;
+	Fri,  8 Nov 2024 18:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="neTlQ0cI"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xq5j5PJA"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD1B1A9B46
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC3C19924D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731092241; cv=none; b=MqEcDbyMtsbf3isqvzB733/uAYKrlg+84NYIPxGR6aThPWxEFbH7Z6SgjIjwKF9iNEK/kUaAVopdJppM9OYv5XDPCo+loPSSqJQGQi5tR/ZjNy+OgwY+sLG0jine0Pzcjj8vvhWpKnOiHN4z5DyVntZJDlu/A7ZQoe+kOVblrNc=
+	t=1731092302; cv=none; b=M4johQzbEvrlz8vjJ38wjeV/53/TokrJSXkd8sZEhUAJG1/C4nqy6QKvImpt/dod1VkmqvgG2FeHcrtIZEbwtu2yoC34hPNwJKo3DP20XjYk/zu0C/jzEpuZCm7em2xpGbMbzX2LKB7WiUIxzGkX00J1oFc3zJ/8cCXSCal3qVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731092241; c=relaxed/simple;
-	bh=DSG+8An8EiWvy6/TXjRBl0J05k0pgUbGk4Fqi49SjmE=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LT6nbhtBBCIo/Zf3tX3jMk3a61Q7nAMoqWyznYilKlsNQj5D4xujLBEPvhkO9QQzu8QNzhWgzwfar7DE8drHYUkp/RmCnkWskhqEWkT6k/1NBMmSP/aHsIN89fyGxVK8jM7Vx3OQgPQ1d7D3RqykXZIQ8bw2Dj0UJv7dUKfmPYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=neTlQ0cI; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e2e444e355fso2867166276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:57:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731092238; x=1731697038; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GFhrTTpiQ0I2IodQiHI+ZaiAC6+TEUbpNWIml06w79Y=;
-        b=neTlQ0cI6JqIGSOgGJEoMXPH0SM1upsN/u+2CluCnv1tWTn7QcQ0KEt+4H8t05RglT
-         /8RWA0xRbI0bOzdDgVJGrlTYHCws1lbi3AwK+ijvPcww5ea9rh8fXmWsYPKwJikkQnFt
-         AGa4QgHSHobpXY7XoNgHREQEYAmLptGMnGh8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731092238; x=1731697038;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GFhrTTpiQ0I2IodQiHI+ZaiAC6+TEUbpNWIml06w79Y=;
-        b=rozrTakgJQyBWG0sXBd5k8DNrb+LUsFViG4oeKsfzCPFR5Nhycu7ANtZKGhYZG8bvJ
-         SkrWvEudECcaJEV9YI3VhiotS4jp81rATvTUvJzkkAIwhRuaofLwkDG5Uvucw8PR7tUw
-         nGiGkokpSHzO6myIdjSITcZEyYWAKbMHXNBeFTq+0kQWE1BXcYQJpRtIVi+1XSgCZvSm
-         S5TUs5zizhKNWYw7VxK10dYHzaon0xbmweGzZno9TYcv8eo8po/5QIsAziN5G+EkQyxQ
-         AU4DpuzXIavqEMdLSUZ5k3buVhyGtDEQq0T7vs5B89QV4/pbtnBxorWO7yiNJjQ42Mr7
-         jrXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXzZM8c7Z4b3UTH7Yd6Hd8d9afO3r4qEEqkvYdRGoZEcaIDTIXLss43gfAL0pnh4lFaYivn16JwW0fmR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFQG7+WN38Ou+H3viXpeyZILvnKC0UDsMH4JElrkp6oSXp6l+A
-	grXdfVztJQcmPwO5PdEm1rRH9wySKwIWhUO4ubnAyNTX6FmyBZmNDbiuuI7STv6+B6SkQWQf4/n
-	8VC2QHKUIoVy2/AKTxpNT6SgjGgnTFrPggLT8
-X-Google-Smtp-Source: AGHT+IHfC5tJ6whbDS7S3SlhCnoJBwUgDNoRBmtsYN3YKtsv214Yxvv3stXcgF9ZacsGjD0iMrYs07O4YZn2INdER/w=
-X-Received: by 2002:a05:690c:d8f:b0:6e3:ceb:9e5c with SMTP id
- 00721157ae682-6eade52f876mr34629017b3.17.1731092238352; Fri, 08 Nov 2024
- 10:57:18 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 8 Nov 2024 10:57:17 -0800
+	s=arc-20240116; t=1731092302; c=relaxed/simple;
+	bh=y5z+A9NupvZs4nnBpZrmvKCzP+8ZODrJ/XnKXmyBZO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nn6Tg/1wxAOhlGVPdUI1hR+qpopLGYihYhPUmsC7XKKCzwD8MBp8gPvqn3wfIuVc/3H+6PS5+CVeKB3j/jZs+9bscD6nU5a/AbgxQdsef6r0dtY2cR1BRe4/wmIhNb7TaMhplVvKb37rvd6X6Z4mAy3J2x1XnYSUiW3YoJNkKEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xq5j5PJA; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e4833d40-31d9-4de6-94b2-964870671006@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731092297;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uKOz2Ke3deWKx3LB9Ol2VggCwIo/TvK8NNumftjVwTM=;
+	b=Xq5j5PJA9CgtkmeafRikaDn8aGf9Tv9Nhpqunc9lWXEq7vCl1W4FWeC/HaS7GkGFr8Xf7k
+	eq7io/Hys8sHq5dO135k6r/GkvSNv0pAri6W735l6BrK387GeAuR7OuE/u8/1bh6HVTALi
+	KDwjsa00h6dPh+bKaEbi8c3yVT6f0Gk=
+Date: Fri, 8 Nov 2024 10:58:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241107-arm-psci-system_reset2-vendor-reboots-v8-3-e8715fa65cb5@quicinc.com>
-References: <20241107-arm-psci-system_reset2-vendor-reboots-v8-0-e8715fa65cb5@quicinc.com>
- <20241107-arm-psci-system_reset2-vendor-reboots-v8-3-e8715fa65cb5@quicinc.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Fri, 8 Nov 2024 10:57:17 -0800
-Message-ID: <CAE-0n50-h_h=oWt7BZ5ncX8JYfXmEpN7-HrZeC8wHrHZnGsJMA@mail.gmail.com>
-Subject: Re: [PATCH v8 3/6] firmware: psci: Read and use vendor reset types
-To: Andy Yan <andy.yan@rock-chips.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Elliot Berman <quic_eberman@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>, Rob Herring <robh@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>, Will Deacon <will@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org
-Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, Melody Olvera <quic_molvera@quicinc.com>, 
-	Shivendra Pratap <quic_spratap@quicinc.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, linux-pm@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [BUG] WARNING: at lib/vsprintf.c:2659 format_decode+0x121a/0x1c00
+To: Yeqi Fu <fufuyqqqqqq@gmail.com>,
+ "jakub@cloudflare.com" <jakub@cloudflare.com>,
+ "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
+ bonan.ruan@u.nus.edu
+References: <D47BDD2E-217F-4F16-A74C-ADE4DA025FED@gmail.com>
+Content-Language: en-GB
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <D47BDD2E-217F-4F16-A74C-ADE4DA025FED@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Quoting Elliot Berman (2024-11-07 15:38:27)
-> SoC vendors have different types of resets and are controlled through
-> various registers. For instance, Qualcomm chipsets can reboot to a
-> "download mode" that allows a RAM dump to be collected. Another example
-> is they also support writing a cookie that can be read by bootloader
-> during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
-> vendor reset types to be implemented without requiring drivers for every
-> register/cookie.
->
-> Add support in PSCI to statically map reboot mode commands from
-> userspace to a vendor reset and cookie value using the device tree.
->
-> A separate initcall is needed to parse the devicetree, instead of using
-> psci_dt_init because mm isn't sufficiently set up to allocate memory.
->
-> Reboot mode framework is close but doesn't quite fit with the
-> design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
-> be solved but doesn't seem reasonable in sum:
->  1. reboot mode registers against the reboot_notifier_list, which is too
->     early to call SYSTEM_RESET2. PSCI would need to remember the reset
->     type from the reboot-mode framework callback and use it
->     psci_sys_reset.
->  2. reboot mode assumes only one cookie/parameter is described in the
->     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
->     cookie.
->  3. psci cpuidle driver already registers a driver against the
->     arm,psci-1.0 compatible. Refactoring would be needed to have both a
->     cpuidle and reboot-mode driver.
->
-> Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+
+
+On 11/8/24 6:28 AM, Yeqi Fu wrote:
+> Hi there,
+> A warning is triggered in lib/vsprintf.c due to an unsupported '%' in a format string. This issue occurs in the function format_decode at line 2659 of kernel version 6.12.0-rc3-gb22db8b8befe. A proof-of-concept is available, and I have manually reproduced this bug.
+
+I think the below patch set (not merged yet)
+   https://lore.kernel.org/bpf/20241028195343.2104-1-rabbelkin@mail.ru/
+should fix this issue.
+
+>
+> Report:
+> ```
+> Please remove unsupported % in format string
+> WARNING: CPU: 1 PID: 29307 at lib/vsprintf.c:2659 format_decode+0x121a/0x1c00 lib/vsprintf.c:2659
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 29307 Comm: syz.5.9298 Not tainted 6.12.0-rc3-gb22db8b8befe #2
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> RIP: 0010:format_decode+0x121a/0x1c00 lib/vsprintf.c:2659
+> Code: 8b 9c 24 80 00 00 00 48 89 d8 48 c1 e8 03 42 8a 04 30 84 c0 0f 85 d5 09 00 00 0f b6 33 48 c7 c7 00 bd eb 92 e8 b7 59 67 fc 90 <0f> 0b 90 90 4d 89 f7 48 8b 5c 24 18 e9 d7 fc ff ff 89 d1 80 e1 07
+> RSP: 0018:ffff888041197600 EFLAGS: 00010246
+> RAX: ea46d93351edcc00 RBX: ffff88804119792c RCX: ffff888009a78000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffff8880411976f0 R08: ffffffff8ebc8e3b R09: 1ffff1100d9e515a
+> R10: dffffc0000000000 R11: ffffed100d9e515b R12: ffff0000ffffff00
+> R13: ffff888041197700 R14: dffffc0000000000 R15: dffffc0000000000
+> FS: 00007fbe06321640(0000) GS:ffff88806cf00000(0000) knlGS:0000000000000000
+> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020a8c000 CR3: 00000000404b6005 CR4: 0000000000370ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> <TASK>
+> bstr_printf+0x136/0x1260 lib/vsprintf.c:3232
+> ____bpf_trace_printk kernel/trace/bpf_trace.c:389 [inline]
+> bpf_trace_printk+0x1a1/0x220 kernel/trace/bpf_trace.c:374
+> bpf_prog_7ee8fe4dad0c4460+0x4e/0x50
+> bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
+> __bpf_prog_run include/linux/filter.h:692 [inline]
+> bpf_prog_run include/linux/filter.h:708 [inline]
+> bpf_test_run+0x7a9/0x910 net/bpf/test_run.c:433
+> bpf_prog_test_run_skb+0xc47/0x1750 net/bpf/test_run.c:1094
+> bpf_prog_test_run+0x2df/0x350 kernel/bpf/syscall.c:4247
+> __sys_bpf+0x484/0x850 kernel/bpf/syscall.c:5652
+> __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
+> __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
+> __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
+> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> do_syscall_64+0xd8/0x1c0 arch/x86/entry/common.c:83
+> entry_SYSCALL_64_after_hwframe+0x67/0x6f
+> RIP: 0033:0x7fbe07ccd72d
+> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fbe06320f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+> RAX: ffffffffffffffda RBX: 00007fbe07ea5f80 RCX: 00007fbe07ccd72d
+> RDX: 0000000000000050 RSI: 0000000020000700 RDI: 000000000000000a
+> RBP: 00007fbe07d57584 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007fbe07ea5f80 R15: 00007fbe06301000
+> </TASK>
+> irq event stamp: 39314
+> hardirqs last enabled at (39324): [<ffffffff8ed766cb>] __up_console_sem kernel/printk/printk.c:344 [inline]
+> hardirqs last enabled at (39324): [<ffffffff8ed766cb>] __console_unlock+0xfb/0x130 kernel/printk/printk.c:2844
+> hardirqs last disabled at (39335): [<ffffffff8ed766b0>] __up_console_sem kernel/printk/printk.c:342 [inline]
+> hardirqs last disabled at (39335): [<ffffffff8ed766b0>] __console_unlock+0xe0/0x130 kernel/printk/printk.c:2844
+> softirqs last enabled at (38482): [<ffffffff9195aaea>] bpf_test_run+0x31a/0x910
+> softirqs last disabled at (38484): [<ffffffff9195aaea>] bpf_test_run+0x31a/0x910
+> ---[ end trace 0000000000000000 ]---
+> ```
+[...]
 
