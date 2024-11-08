@@ -1,121 +1,76 @@
-Return-Path: <linux-kernel+bounces-401087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C689C15D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:59:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2A29C15D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:02:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF531F2408E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:59:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015F6282DFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87411CF5E9;
-	Fri,  8 Nov 2024 04:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="BBDB+clK"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE15480C0C;
+	Fri,  8 Nov 2024 05:02:15 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EF91CEEA3;
-	Fri,  8 Nov 2024 04:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BBD1BD9D8
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 05:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731041887; cv=none; b=mV2G/xPaptbfiqSezIyffnZxJXjaY+p632uZi+2Ic8eSUXTYZmm7ADP26OCflgQ6uGT4tkk+XENRrTY1/4wXrmLGbKT36D80WdG8QQZLKm2c3BeKX3gMWddftgYGleRMSnVCAuQP6i+kbzlED0N+q132+aoWpuC5kCwSb4PESTQ=
+	t=1731042135; cv=none; b=YgFetJpFx5e6IIDkbxzOuK7bG0GSV4U8I2Co+yPVReQ2AWUtiRzeC5u/nw6a2qIhfmd1zBzUlg0j710E78Ged1+cLJ0Xq6RvnHBYV+8V3Gu+FcqZwjIuI7q/CubKZI5FPXyYCOnran+1cSjIwHJD6Npx1OOBmzXOLYlteUZMjrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731041887; c=relaxed/simple;
-	bh=8dHcggLHXa7B6jDqR6cQQwfiO56OiCZKA3hzoHn2zbY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P4up2n0KM7xuoxm6DMRVJSbiCKUbbD/9YOSAZjYP5warsQ6Qq7fM2bAAxE21ck9dra2aG4Rnxo2srFk+RqqSfZrFdCVWA48n4SvdZMuMB7WGl7S8JqdwZyyQ073+SBtOZPCpqpwABKEY1UvLA2t4mLBQ5suSUgHYYcEG87/y/9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=BBDB+clK; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A84EBWI027930;
-	Thu, 7 Nov 2024 20:57:57 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=/
-	AHeS7meDGJlBu+tvlv7z8wbQH8DO7tGcf8cVeosOWA=; b=BBDB+clKpUSM94LuX
-	kyVflY55qNJjdJZ5dUJg3HY47/iI6eiAHJlgf9/Xyi0+3V/Ed2DnG1KQjGOselG+
-	h6BCM6bfs1/03ZLvARRLPslYNuPo/jzVvKbiT2FkjcWDEZwnhSfYQAREiRlQbVHS
-	FXG77GbpbdQmja8Pb+2q4rM1skcna/kGqiPYxWGPqQnxtJm1cwkULZYMQF1q67Nc
-	D2RT6163KF2iQCJ1YlW3yjRQusSsfD5AIkdlafeK9TnvWvBhyueP7G8CRXbrcBaY
-	Rtu4uw+RdK06dA7CCxyxFxo/7a66s6DDyRgckRrl5FghaBPdplLOeRYD7I75+Ujg
-	8XixA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42sbdq0226-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Nov 2024 20:57:57 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 7 Nov 2024 20:57:53 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 7 Nov 2024 20:57:53 -0800
-Received: from bharat-OptiPlex-Tower-Plus-7020.. (unknown [10.28.34.254])
-	by maili.marvell.com (Postfix) with ESMTP id 078A63F7044;
-	Thu,  7 Nov 2024 20:57:48 -0800 (PST)
-From: Bharat Bhushan <bbhushan2@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
-        <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <jerinj@marvell.com>,
-        <lcherian@marvell.com>, <ndabilpuram@marvell.com>,
-        <sd@queasysnail.net>, <bbhushan2@marvell.com>
-Subject: [net-next PATCH v9 8/8] cn10k-ipsec: Enable outbound ipsec crypto offload
-Date: Fri, 8 Nov 2024 10:27:08 +0530
-Message-ID: <20241108045708.1205994-9-bbhushan2@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241108045708.1205994-1-bbhushan2@marvell.com>
-References: <20241108045708.1205994-1-bbhushan2@marvell.com>
+	s=arc-20240116; t=1731042135; c=relaxed/simple;
+	bh=vA7q3ey9IQDXsNVyxtJna/mpocsRlqsi6kDe717NzEo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RI/FMVAixUTDLrMVgrnsnMlM6ds21xrwZb/8Ach8JLBXOIfcVNVLt4PpoG78zD6OGzutZ5A7S4Mp1ZSxPtiu6wMcKcmbD6twb7XmHj/SUnkBqhDcpGp25OPEhQhdy2NPGfEveL87Lo8iW9ZdkjJwpmblI2yP8jgcUnrGt6RZssE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so19855465ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 21:02:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731042133; x=1731646933;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fHED95VNotAf9X/S/Kyf5Ay24kyu2cHoFcBFo1owXBs=;
+        b=R2jRedOZmWuBRhG/t3CVo7po32esKKYC3PBLNdCkG/ofTg0OAbJdK4yNP70oipFSzH
+         EZ58n8htUUSUamv1JNDZVifwqlYC+CI6mF2W3MK9noV8PgPsVaQAcc2gyhwu6W0m/wmh
+         pRA19r8E4aEmS2HxVKVx56aOe0fJ+xDXsaLCPT7MSkGT2UzephdpqMPrfkqOPM9jo8aL
+         wyWw6rOu4xNr+7asBMzmWqH6s83DTpC1WI9wtpitfyxJbCtB2QOl+yHRepKy7CfRZKzX
+         2wSpN2KLxBctEDJyV/3h401qrELIKvKbAC+8pRWn5Ou5ihLQ/ujnrsaRHy3FHpLyM+FH
+         alPw==
+X-Gm-Message-State: AOJu0YwU5zihH5QlSuwZHHbLMioyOngX9sNhnZnMRPQLSgsFRkfxZr2h
+	n/AAkuhfAX4O8Gdsb57zqdrWV6tdTQ1GtPPAdhQryv9k3pe9mX2B1so0+Hw1RM+/fCYIs8Jpm+a
+	gFz7JP/5nin+70aPw0+ai8li6X7pO9aA+gSNcmO/GAZA+WDDpH0PWiM0=
+X-Google-Smtp-Source: AGHT+IFkHmSCKpdADyBh2fXvli8pYLAm9nqSkk5+fbMU/fL8vvlHeQpHkKPxwDOX/Xy/3LSS6CiHQ3A7qx8rf1rWLDsf4hUiHi3N
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: VlqAUQ2ahtj69j2_tumdx7UfewzUnj28
-X-Proofpoint-GUID: VlqAUQ2ahtj69j2_tumdx7UfewzUnj28
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Received: by 2002:a05:6e02:12ec:b0:3a4:e9b3:2293 with SMTP id
+ e9e14a558f8ab-3a6f19090aamr22334185ab.0.1731042133303; Thu, 07 Nov 2024
+ 21:02:13 -0800 (PST)
+Date: Thu, 07 Nov 2024 21:02:13 -0800
+In-Reply-To: <67226139.050a0220.35b515.0070.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672d9b55.050a0220.0db4.01bd.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+4d722d3c539d77c7bc82@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hardware is initialized and netdev transmit flow is
-hooked up for outbound ipsec crypto offload, so finally
-enable ipsec offload.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
----
-v2->v3:
- - Moved "netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;" to previous patch
-   This fix build error with W=1
+***
 
- drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Subject: 
+Author: kent.overstreet@linux.dev
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-index a6da7e3ee160..9385d9bd58e9 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-@@ -820,10 +820,10 @@ int cn10k_ipsec_init(struct net_device *netdev)
- 		return -ENOMEM;
- 	}
- 
--	/* Set xfrm device ops
--	 * NETIF_F_HW_ESP is not set as ipsec setup is not yet complete.
--	 */
-+	/* Set xfrm device ops */
- 	netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;
-+	netdev->hw_features |= NETIF_F_HW_ESP;
-+	netdev->hw_enc_features |= NETIF_F_HW_ESP;
- 
- 	cn10k_cpt_device_set_unavailable(pf);
- 	return 0;
--- 
-2.34.1
-
+#syz fix: bcachefs: Fix validate_bset() repair path
 
