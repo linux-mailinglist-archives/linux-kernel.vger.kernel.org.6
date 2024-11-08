@@ -1,228 +1,236 @@
-Return-Path: <linux-kernel+bounces-401695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FCE9C1E1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:32:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DD19C1E21
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:33:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB59F1C20FB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:32:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E5B289759
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187511E9069;
-	Fri,  8 Nov 2024 13:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFE41E907A;
+	Fri,  8 Nov 2024 13:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbdNLYVH"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aBkYF4/p";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YlG+A/p4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aBkYF4/p";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YlG+A/p4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FBD192B95
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D2E192B95
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731072743; cv=none; b=LCdXwdfB84qjwaLpMVSv1MDjS5ybRd54trdZO7fbICAJebJO4zfrgBzKfqtSGPIhAadE68MNLZPwgp/xOYNPSZK1+nfYHMKEhUX3kTaazYoX+ydROJrP+5V/AzOYu+H+eYq/tdSFm+MOZV9/3nhWIxsbFUHBDK5JroJcI9UXjGw=
+	t=1731072791; cv=none; b=XZnqsjMG6+6YQQF2i2reJ3TLA2KwHI2hvhmEsIElP85r6dnxcm2qoCoCnpS46ePQohlw0vbRrez/w+Zs49NO1Fz+G5qdXWcuGr5Y86xiOv9L6GnOVyeKZxZuxJcVR/QvYXOHI6gwsWJGbJ2HC3gEXzGsQleX5l+jj9WyQhU4TIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731072743; c=relaxed/simple;
-	bh=5+aObWcNzSS6tJ2DwquMz1FwzKX7xDSTuh49U06QbUg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fumkSuehB/w7jtBjjev4O/BgNEhd9KE5cscPusibNPz2ovMMjtu5YO7ufNrYl8bKILysxDtbofWP5+11+Rg9yFEzuUjqD9S3cH5+n+qIIlXsZ1tFE+/jZ/vgnfdHfi+aqKC5myZzRbla3KJMVWBrQmYH3aoEUnrE6TE2lGupL/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbdNLYVH; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cf6eea3c0so22903235ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 05:32:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731072741; x=1731677541; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0mizrfvSVkUCNED9Y2NSIWyK0vQ9oYQmDnBbjRhGsL4=;
-        b=QbdNLYVHtIPkhW6LJX4aInFsSVbyzGUR0hcJ4ZFw/Ka6ibPMB3MGCRPUVWYY8d4XcH
-         i3181MpxR6WX8ElJh/iCUJW7DoquQOiK1+HJoMi6OKmwkpdnKPXSm2tEtk5ATSthvxwI
-         dXKaXmfOSpfQD2JOVM6TQLfobD3VSFWrMiqg4rcTOfuhVWwKD70HPvgHlcAxG+eKNXYJ
-         9X/FYnpeLTCPibtjotYdNI2xs2NiHvWu0Ikq9j9WlZz8Sey/aYUEGd+GdsfJmuyF3isH
-         Inube4jghHaJNldC4I1uy33wCncCkPckrWjAdv7VvHdIrPiWMk5oSRA1teP4pIynDBhR
-         8l/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731072741; x=1731677541;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0mizrfvSVkUCNED9Y2NSIWyK0vQ9oYQmDnBbjRhGsL4=;
-        b=bEMDPZmLmoDcugok+A1/+CsMtwaSMYxLzzgLDOMzYybEV7o8ChUXmXWmz3QuJQ/VRG
-         C8VCzN28r2a6FvIJ95rLu9wt7iwFcy5sD6nEyUPSV142D14amOz7rDXQkQlvhSWxDgFb
-         EBpm1dXTHanpv5/6OrloBdtT//eN+gBkzIZBDjCoasH2DzO2rSw0Nl19UpbUQfiuAQB8
-         qohA1bFrwp5Wkna4dGoBKdYNeRS+5HTj/l060tYjkqxjux3fk/i7Jv5tyRgzCi2SJeDS
-         LAEqr75xhNaoJaMW9U8nxZQYawre0whGK14AHaI9Izzxt98RQyPfZI9VY41gpAPckfoJ
-         ++Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAyY6b2lSEdhjiK5dbvwmfsU2C+PqIp9hMJi2JcpQapxld0glrGdUBangbWa7r+D0Q/ujHMHrO7iSnPqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeURmQeDepfTbTaaT/TYkWSkgke+yeUIxjUGQVreDsIAe76fIT
-	3ugyfihn3Y7BZb2sVxLiqZjjL8Ox5F8EdWQiylhy9UZWbQhN6uTL1iDSgrm15XE=
-X-Google-Smtp-Source: AGHT+IEhGsvp6Hssde9pRaFnvxwwTJ/5AVBuoiR0yoMCI7WlfZC9INb/F+oL2qxkFMC8blbsiii9fw==
-X-Received: by 2002:a17:902:ce91:b0:20c:e1f5:48c7 with SMTP id d9443c01a7336-211835ea892mr27707775ad.55.1731072740942;
-        Fri, 08 Nov 2024 05:32:20 -0800 (PST)
-Received: from AHUANG12-3ZHH9X.lenovo.com (220-143-198-84.dynamic-ip.hinet.net. [220.143.198.84])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e59486sm29288975ad.204.2024.11.08.05.32.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 05:32:20 -0800 (PST)
-From: Adrian Huang <adrianhuang0701@gmail.com>
-X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Raghavendra K T <raghavendra.kt@amd.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Adrian Huang <ahuang12@lenovo.com>,
-	Jiwei Sun <sunjw10@lenovo.com>
-Subject: [PATCH 1/1] sched/numa: Fix memory leak due to the overwritten vma->numab_state
-Date: Fri,  8 Nov 2024 21:31:39 +0800
-Message-Id: <20241108133139.25326-1-ahuang12@lenovo.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1731072791; c=relaxed/simple;
+	bh=zNr0dprauh1zxK+QJRJVWVYyAAJm59+k7hYGIO4+otc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SAj2bh7gZQCBx2ytHy3ayr1yPiG81CCHIiYrOhFYQCcQ2z2WzhEZ/HRlp+uEsX+HvFuyirwwH1DJcqxztQb+sgu2WKWc9Cg9qdeGNcaEgCet4yzdOkhdIMIa1fz1EfnoepI46LfFVQIJyGQObeA+5ozCHVf1TYaMjH+45pfrCF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aBkYF4/p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YlG+A/p4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aBkYF4/p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YlG+A/p4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E29A21B7B;
+	Fri,  8 Nov 2024 13:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731072787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oJCSGf9W5QDQLEgF20NrP1ryxSrkWQmVfq993xA7CGU=;
+	b=aBkYF4/ppr3ZtbHPov1GPrxQInhpY60ANzjiLTvleOuYYv1/QXUHrXRo00KIxUEMOzyRxy
+	7mlJkQB8eOUxCet+hJq0i56oWEg1FJHLZG6PLwqfOp+gb9APExw/S5qDeMivJoThSX/Q1Y
+	xfnOYWBTlfbDubyUtPRDdtRsowgWdi8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731072787;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oJCSGf9W5QDQLEgF20NrP1ryxSrkWQmVfq993xA7CGU=;
+	b=YlG+A/p4OU4jfNUvhO/uScxfqUoDzmva9PrXpGeLtd1lwXJqKbzsLqofoqd9KdBc0X3oDd
+	DTSoEo2V7BH0/yCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="aBkYF4/p";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="YlG+A/p4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731072787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oJCSGf9W5QDQLEgF20NrP1ryxSrkWQmVfq993xA7CGU=;
+	b=aBkYF4/ppr3ZtbHPov1GPrxQInhpY60ANzjiLTvleOuYYv1/QXUHrXRo00KIxUEMOzyRxy
+	7mlJkQB8eOUxCet+hJq0i56oWEg1FJHLZG6PLwqfOp+gb9APExw/S5qDeMivJoThSX/Q1Y
+	xfnOYWBTlfbDubyUtPRDdtRsowgWdi8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731072787;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oJCSGf9W5QDQLEgF20NrP1ryxSrkWQmVfq993xA7CGU=;
+	b=YlG+A/p4OU4jfNUvhO/uScxfqUoDzmva9PrXpGeLtd1lwXJqKbzsLqofoqd9KdBc0X3oDd
+	DTSoEo2V7BH0/yCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D856E1394A;
+	Fri,  8 Nov 2024 13:33:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3HMYMxITLmeXcgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 08 Nov 2024 13:33:06 +0000
+Message-ID: <5e19d9d4-7533-4a59-a665-cfc4a8195293@suse.de>
+Date: Fri, 8 Nov 2024 14:33:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/7] drm/log: Do not draw if drm_master is taken
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, John Ogness <john.ogness@linutronix.de>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
+ Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241108082025.1004653-1-jfalempe@redhat.com>
+ <20241108082025.1004653-5-jfalempe@redhat.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20241108082025.1004653-5-jfalempe@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 3E29A21B7B
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,linutronix.de,igalia.com,verizon.net,linaro.org,suse.com,lists.freedesktop.org,vger.kernel.org];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,verizon.net];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-From: Adrian Huang <ahuang12@lenovo.com>
+Hi
 
-[Problem Description]
-When running the hackbench program of LTP, the following memory leak is
-reported by kmemleak.
+Am 08.11.24 um 09:10 schrieb Jocelyn Falempe:
+> When userspace takes drm_master, the drm_client buffer is no more
+> visible, so drm_log shouldn't waste CPU cycle to draw on it.
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
+>   drivers/gpu/drm/drm_log.c | 10 ++++++++--
+>   1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_log.c b/drivers/gpu/drm/drm_log.c
+> index 376ee173d99d9..226e206e8b6a3 100644
+> --- a/drivers/gpu/drm/drm_log.c
+> +++ b/drivers/gpu/drm/drm_log.c
+> @@ -18,6 +18,7 @@
+>   #include <drm/drm_print.h>
+>   
+>   #include "drm_draw.h"
+> +#include "drm_internal.h"
+>   #include "drm_log.h"
+>   
+>   MODULE_AUTHOR("Jocelyn Falempe");
+> @@ -308,8 +309,13 @@ static void drm_log_write_thread(struct console *con, struct nbcon_write_context
+>   	if (!dlog->probed)
+>   		drm_log_init_client(dlog);
+>   
+> -	for (i = 0; i < dlog->n_scanout; i++)
+> -		drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt->outbuf, wctxt->len);
+> +	/* Check that we are still the master before drawing */
+> +	if (drm_master_internal_acquire(dlog->client.dev)) {
 
-  # /opt/ltp/testcases/bin/hackbench 20 thread 1000
-  Running with 20*40 (== 800) tasks.
+Just a note: it would be better to track this state in the client code 
+and handle these locks automatically. But it's ok for now. It would 
+require an overhaul of the fbdev helpers as well.
 
-  # dmesg | grep kmemleak
-  ...
-  kmemleak: 480 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
-  kmemleak: 665 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
+> +		drm_master_internal_release(dlog->client.dev);
 
-  # cat /sys/kernel/debug/kmemleak
-  unreferenced object 0xffff888cd8ca2c40 (size 64):
-    comm "hackbench", pid 17142, jiffies 4299780315
-    hex dump (first 32 bytes):
-      ac 74 49 00 01 00 00 00 4c 84 49 00 01 00 00 00  .tI.....L.I.....
-      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    backtrace (crc bff18fd4):
-      [<ffffffff81419a89>] __kmalloc_cache_noprof+0x2f9/0x3f0
-      [<ffffffff8113f715>] task_numa_work+0x725/0xa00
-      [<ffffffff8110f878>] task_work_run+0x58/0x90
-      [<ffffffff81ddd9f8>] syscall_exit_to_user_mode+0x1c8/0x1e0
-      [<ffffffff81dd78d5>] do_syscall_64+0x85/0x150
-      [<ffffffff81e0012b>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  ...
+Don't you have to release after drawing?
 
-  This issue can be consistently reproduced on three different servers:
-    * a 448-core server
-    * a 256-core server
-    * a 192-core server
+Best regards
+Thomas
 
-[Root Cause]
-Since multiple threads are created by the hackbench program (along with
-the command argument 'thread'), a shared vma might be accessed by two or
-more cores simultaneously. When two or more cores observe that
-vma->numab_state is NULL at the same time, vma->numab_state will be
-overwritten.
 
-Note that the command `/opt/ltp/testcases/bin/hackbench 50 process 1000`
-cannot the reproduce the issue because of the fork() and COW. It is
-verified with 200+ test runs.
+> +
+> +		for (i = 0; i < dlog->n_scanout; i++)
+> +			drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt->outbuf, wctxt->len);
+> +	}
+>   }
+>   
+>   static void drm_log_lock(struct console *con, unsigned long *flags)
 
-[Solution]
-Introduce a lock to make sure the atomic operation of the vma->numab_state
-access.
-
-Fixes: ef6a22b70f6d ("sched/numa: apply the scan delay to every new vma")
-Reported-by: Jiwei Sun <sunjw10@lenovo.com>
-Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
----
- include/linux/mm.h       |  1 +
- include/linux/mm_types.h |  1 +
- kernel/sched/fair.c      | 17 ++++++++++++++++-
- 3 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 61fff5d34ed5..a08e31ac53de 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -673,6 +673,7 @@ struct vm_operations_struct {
- static inline void vma_numab_state_init(struct vm_area_struct *vma)
- {
- 	vma->numab_state = NULL;
-+	mutex_init(&vma->numab_state_lock);
- }
- static inline void vma_numab_state_free(struct vm_area_struct *vma)
- {
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 6e3bdf8e38bc..77eee89a89f5 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -768,6 +768,7 @@ struct vm_area_struct {
- #endif
- #ifdef CONFIG_NUMA_BALANCING
- 	struct vma_numab_state *numab_state;	/* NUMA Balancing state */
-+	struct mutex numab_state_lock;		/* NUMA Balancing state lock */
- #endif
- 	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
- } __randomize_layout;
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c157d4860a3b..53e6383cd94e 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3397,12 +3397,24 @@ static void task_numa_work(struct callback_head *work)
- 			continue;
- 		}
- 
-+		/*
-+		 * In case of the shared vma, the vma->numab_state will be
-+		 * overwritten if two or more cores observe vma->numab_state
-+		 * is NULL at the same time. Make sure that only one core
-+		 * allocates memory for vma->numab_state. This can prevent
-+		 * the memory leak.
-+		 */
-+		if (!mutex_trylock(&vma->numab_state_lock))
-+			continue;
-+
- 		/* Initialise new per-VMA NUMAB state. */
- 		if (!vma->numab_state) {
- 			vma->numab_state = kzalloc(sizeof(struct vma_numab_state),
- 				GFP_KERNEL);
--			if (!vma->numab_state)
-+			if (!vma->numab_state) {
-+				mutex_unlock(&vma->numab_state_lock);
- 				continue;
-+			}
- 
- 			vma->numab_state->start_scan_seq = mm->numa_scan_seq;
- 
-@@ -3428,6 +3440,7 @@ static void task_numa_work(struct callback_head *work)
- 		if (mm->numa_scan_seq && time_before(jiffies,
- 						vma->numab_state->next_scan)) {
- 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SCAN_DELAY);
-+			mutex_unlock(&vma->numab_state_lock);
- 			continue;
- 		}
- 
-@@ -3440,6 +3453,8 @@ static void task_numa_work(struct callback_head *work)
- 			vma->numab_state->pids_active[1] = 0;
- 		}
- 
-+		mutex_unlock(&vma->numab_state_lock);
-+
- 		/* Do not rescan VMAs twice within the same sequence. */
- 		if (vma->numab_state->prev_scan_seq == mm->numa_scan_seq) {
- 			mm->numa_scan_offset = vma->vm_end;
 -- 
-2.34.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
