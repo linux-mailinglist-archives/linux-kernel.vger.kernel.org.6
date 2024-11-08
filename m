@@ -1,122 +1,141 @@
-Return-Path: <linux-kernel+bounces-402336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D26D9C2686
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:27:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4663F9C2685
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8BE1C21E00
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F21C81F23ED0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6848202641;
-	Fri,  8 Nov 2024 20:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C8B1CF5F6;
+	Fri,  8 Nov 2024 20:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TNun1c5f"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqgg0yN0"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D9E1F4702
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 20:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BF31F26D9;
+	Fri,  8 Nov 2024 20:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731097558; cv=none; b=DtVmeh30OkDWGLnm52E5YE5/6wxBuGZZ5Gr7lkVxM/LVboedoBx9e8AJBKqL+3HOvcZoxjAjJcEL+h9esfFJ2pbKDMg34EhARxqtp0m6BX2uPwdm+9t4FX1VGibGXsSHIc0UWHFR8EtQC3ffY2gBS5HWod0HJ8Y+37EwED2LH0k=
+	t=1731097557; cv=none; b=DclHSQOvn9AKWch8lbxH78y+LD1vAGUG6lBiYVMsoctMZ6uo1E7lwuQJXq+cddvm2F2jS+bU+d0FLWLEhatROMXK5e7hxndN3GcheUiUKF1JxRTTKCLdz6fdSEYNFWoep1ikLhpLMrcwM8twV5NmfNSHugtn8ExIYJCZO48suYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731097558; c=relaxed/simple;
-	bh=CEQbOGQ7MRdKXGHNLVjrKRQ53Dwr649n7vnBnnj8ctA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CNma9EoOKjP0RcKoN8PJdtYtAGMfg4bfYyVJH01HpYxlmd1rtnuClhCxT7IGIj/V/3cOeISr1ZlPsntmziurS0d6vHf4sHF2OKY1ancgfMpfp3C80UTS6N2bhK/wMqSWviVk5+xuADM3dSmTqoKeLmVMvGhCzOkZCCjt0FXORNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TNun1c5f; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-460b04e4b1cso16122971cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 12:25:56 -0800 (PST)
+	s=arc-20240116; t=1731097557; c=relaxed/simple;
+	bh=EwuR0aEZqAZbI/6IsUs5eyGt9WzC2ruGQlQLKWSC90Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=P3TanqqtkiLGwvWccU8MFxlZLL9T/RsmWcRPVHLnDgArAx2egh0vKaJgjsaxMeTJW8J2UBf2Dr9AoCxYtts6EtVYyx29hZMr7of5fBDw9WdBHgAYy9kaf8fvzy5a6IKlzhVt+D3EBnj4RkxsJ+pVO11f4uPXhPiKXyrnzpypQSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqgg0yN0; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-723f37dd76cso2738740b3a.0;
+        Fri, 08 Nov 2024 12:25:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731097555; x=1731702355; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tkMMFzioKVFAa0nRKkB9RNN+8H7kOdLFjqp29pnighM=;
-        b=TNun1c5fO/PpGMveSRkPiD1OPH0tF7NWeSRseoxVvPj5tIP++05Jq0DRTz2kklodwB
-         idodLlAuT+2TCNRZy4niV7okbpJAR5C1lGaox5wPpBgHPb+YS0n1zhhdpEmP2Y1bw3jP
-         vEA840b191t1MzsXs00r7aKE+FFzKrxMkXZC0=
+        d=gmail.com; s=20230601; t=1731097555; x=1731702355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ziC/Yq61LN2QkFiWm1kDqgTQsLk/e+GZCQ9Xzo2PVrg=;
+        b=eqgg0yN00miMkTGeuWVh+6utVnlHGb1ofEagTZzxcSdbJUh0ycvWUadbl9sEtQNfZU
+         xeVLiRNMYM0vlLAMk4WyDnlwY67h/wJVMSan1r3uPPiLWJ/3B9zLundQZOXyVjONCYY0
+         yjc7D+XPe5Y1BJBBThqq8UdfSxAxLH25vaU3ONyQAv50vifKaR1ycZ7os5dwOZqll9uu
+         3rlwLWG/aOMHDROJWyXGmoM5do8AySK6erAJhXe94MjouIRWgFEClhwHckcnbfIPJ+9h
+         OxVzIAJp+bp1MPan8foQ7WnqIwGmQOkRMjVp8wXmQFNwnaCng+wArNIEXI5XKIAIkqQW
+         YULQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1731097555; x=1731702355;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tkMMFzioKVFAa0nRKkB9RNN+8H7kOdLFjqp29pnighM=;
-        b=kEEbTLWaGr+ipuI7bmnwRGpd7uqihZ8Y8LoHxoUWBiWZpVH6R5uKUPAkzqBA+JQigM
-         xX4RcHSD10fQQKe4XtgAnJbOIPvui29jTLKrHOwggWWlU6N78N81nDyRakm0H9WCzxOP
-         neCRr7zXT/0qMuJ5zA5XneTM0t3nEB18ae4s6ACyFQfp6FNoQ5CeLiLz1EEgWO1Qg/qY
-         293EoUgl/WYUmfsucSRzKS57li+/5DwYwq1gjulkJQGe9/kzmIN83WGrIRCrFdSyF1HU
-         YXWfLuYKA6KtyOfCe3lLLBII0zuyg+u13ysYNu/F7ps+V0wgH9WGU3E8jW1DaLfFMZAF
-         TwWg==
-X-Gm-Message-State: AOJu0YyJ8mxWb1CZ6tfmRuEqBKAj8SbekKkurFrIcT5/xUaz1nVEdgoM
-	AKd7ynj0ARHGzTGG/g6KWlKjKpmgGHGmWRSmnGwevOJ0zknQxtc3VIxOPfuByQOe+OfECMERnWE
-	=
-X-Google-Smtp-Source: AGHT+IHWOvV1IPVUo7h7yQ/dscufz+urxttXJhEzrF799ygWuSvfQI1Q+sg+Un/wfzS9P6xNNA9BQw==
-X-Received: by 2002:a05:622a:18a8:b0:461:48f9:44e2 with SMTP id d75a77b69052e-4630921aeddmr58442371cf.0.1731097555504;
-        Fri, 08 Nov 2024 12:25:55 -0800 (PST)
-Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff46d440sm24207341cf.52.2024.11.08.12.25.53
+        bh=ziC/Yq61LN2QkFiWm1kDqgTQsLk/e+GZCQ9Xzo2PVrg=;
+        b=onvGGl8RybmP+miQ6NRa4LJw4AAwk7OEp6SCnESSwEYqk0xP4MqJ72cqZCPIqz9yMZ
+         C1O9yR9qdTtKIp2kcu+3kSRVpW+Wvszvwj2RB4VLAPCp7FhCD7RYgSDbKYkU0jZ3v1TN
+         qK3+ClGmZeQHZ2b7gm2M0S1/P/3tymyixPP1/BxP6C+SrQEHRmhH8eD2JSCFzxk7NMmP
+         WnIF7Gij6gl7AmGNveOA8h3qTOppr4UrPNZYfLrsldPW6bds+NalnHZGVO/5U0bgLSW8
+         O2K/AXcfPSPS3yL6jTD8ozhy01TvDT+EakwqOV+OpSoGd1HFNX20PuT61QQMbJSIAWYA
+         LH3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrsUF7SvsoIlZQgkWH5NUcmDYpK4oVH3mjMKX+FAQeGV6cHJ9wY5HSqy5/Kl5pPybib+/Rg5/Vgf0=@vger.kernel.org, AJvYcCWFZ3m9gG5E+LlUILtOlZ+w9KNsYoAsGYF55PlKOmgusIs6ZDe8+uim+DMUdWZvfFStQUOeYn0r@vger.kernel.org, AJvYcCWhCGQoOu0Ai14IRdmbquqVBv0Jj3vk/IySiqM5wuDjMS7Y0DmvLliKR2OoHCWTY8OIhZCG3ENuUUC4DFDF@vger.kernel.org, AJvYcCXDtJEDk/UHeuc0Y9c/2ZHihDIPgF/lW6kCD1PsrkqvC0UpjJgu0rOagap9IHcXEK2AxuSQSyofnq1WfQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ5HBi7g91VSmejDvaJS6yqxCVrjVIxjdMkpcn6eitLfqdAd1E
+	ik1b1CqjOrES6Rj65UheM8Vm1XmZ6IOUfUwv4SkUQYhkg+/jaTKK
+X-Google-Smtp-Source: AGHT+IFzz8Lbq/N+oEHpfPZUIZbcUUGi+YneJibJoBrUZTYSicjrrJP7xbTOlSK+DN7/o1E/TruelQ==
+X-Received: by 2002:a05:6a00:3399:b0:71e:7d52:fa8c with SMTP id d2e1a72fcca58-7241338b59fmr5742858b3a.22.1731097554716;
+        Fri, 08 Nov 2024 12:25:54 -0800 (PST)
+Received: from 1337.tail8aa098.ts.net (ms-studentunix-nat0.cs.ucalgary.ca. [136.159.16.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7ef5sm4342095b3a.63.2024.11.08.12.25.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 08 Nov 2024 12:25:54 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 08 Nov 2024 20:25:48 +0000
-Subject: [PATCH v2 4/6] media: uvcvideo: Create ancillary link for GPIO
- subdevice
+From: Abhinav Saxena <xandfury@gmail.com>
+To: linux-kernel-mentees@lists.linuxfoundation.org,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Dragos Tatulea <dtatulea@nvidia.com>,
+	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+	Abhinav Saxena <xandfury@gmail.com>
+Subject: [PATCH 2/2] docs: net: Fix sfp-phylink whitespace
+Date: Fri,  8 Nov 2024 13:25:48 -0700
+Message-Id: <20241108202548.140511-2-xandfury@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241108202548.140511-1-xandfury@gmail.com>
+References: <20241108202548.140511-1-xandfury@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241108-uvc-subdev-v2-4-85d8a051a3d3@chromium.org>
-References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
-In-Reply-To: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
- Hans de Goede <hdegoede@redhat.com>, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-Make an ancillary device between the streaming subdevice and the GPIO
-subdevice.
+Remove trailing whitespace from sfp-phylink.rst documentation. Trailing
+whitespace can cause diff formatting issues and violate kernel coding style
+guidelines. This is a trivial cleanup with no content changes.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
 ---
- drivers/media/usb/uvc/uvc_entity.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/networking/sfp-phylink.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-index c1b69f9eaa56..dad77b96fe16 100644
---- a/drivers/media/usb/uvc/uvc_entity.c
-+++ b/drivers/media/usb/uvc/uvc_entity.c
-@@ -53,6 +53,16 @@ static int uvc_mc_create_links(struct uvc_video_chain *chain,
- 			return ret;
+diff --git a/Documentation/networking/sfp-phylink.rst b/Documentation/networking/sfp-phylink.rst
+index 5bf285d73e8a..4ce46aef6568 100644
+--- a/Documentation/networking/sfp-phylink.rst
++++ b/Documentation/networking/sfp-phylink.rst
+@@ -142,7 +142,7 @@ this documentation.
+ 						  const struct ethtool_link_ksettings *cmd)
+ 	{
+ 		struct foo_priv *priv = netdev_priv(dev);
+-	
++
+ 		return phylink_ethtool_ksettings_set(priv->phylink, cmd);
  	}
  
-+	/* Create ancillary link for the GPIO. */
-+	if (chain->dev->gpio_unit && UVC_ENTITY_TYPE(entity) == UVC_ITT_CAMERA) {
-+		struct media_link *link;
+@@ -150,7 +150,7 @@ this documentation.
+ 						  struct ethtool_link_ksettings *cmd)
+ 	{
+ 		struct foo_priv *priv = netdev_priv(dev);
+-	
 +
-+		link = media_create_ancillary_link(sink,
-+					&chain->dev->gpio_unit->subdev.entity);
-+		if (IS_ERR(link))
-+			return PTR_ERR(link);
-+	}
-+
- 	return 0;
- }
+ 		return phylink_ethtool_ksettings_get(priv->phylink, cmd);
+ 	}
  
-
 -- 
-2.47.0.277.g8800431eea-goog
+2.34.1
 
 
