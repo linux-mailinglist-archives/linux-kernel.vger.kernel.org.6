@@ -1,143 +1,149 @@
-Return-Path: <linux-kernel+bounces-401780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34719C1F14
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:20:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC139C1F16
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:23:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F00B1F234A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:20:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC76E1C23016
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B631EF93A;
-	Fri,  8 Nov 2024 14:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9A81EF0A8;
+	Fri,  8 Nov 2024 14:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+fguDqU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="lOrhdASv"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EB51401C;
-	Fri,  8 Nov 2024 14:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AC51401C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731075652; cv=none; b=Sd29iAF6gyFzEdS1NHf6NuErt4Wn+LVXkX069ssgtva8uxW8PrwF5hUI9et+krFE8bV/ynl/38U+hmUqzeMr93t9JzqDW32gXOJJH/0J8m3b097jfq+oIFfTd2AGxTGMkS+sgxakS8BT60NDHCZHalml9fC7p9gSys99+mFF+Iw=
+	t=1731075784; cv=none; b=iun7xP86J7tNx6UHTikPSizm6e0Jh+W6DnzbCeSSMD5TmZOq6hi2ew7ok7jmzSwlr/71iVaStoX57Pu9E4AbEkJMln/3oYCr5JLlsk0Mx0af7Ddvs/a9N0gOGRjJZ5yAex7NBlLOZtZ9EOoFx1Ibmzn2xgOX43IzocYku3/0Ni0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731075652; c=relaxed/simple;
-	bh=+q0qEsBDCiPhMWR7oV4gj4QZkmFaEibfjsdafrLmT4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gB14x9KM9//EtprXei9B9tbO5x6COQ+EYV+V4AUmMcBdKkJCFZg5FVqVYBQLnJQ+ycvEBCbIg7l5KrWleAL1VHjbH2Eb384Tmiu5vaMYFJYYwwhm1I9cHai0KIZvSqnfP5dXIrqxmBuBds+oTytFA7M5HuQoNfIXc2+OL+S1G40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+fguDqU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B64C4CECD;
-	Fri,  8 Nov 2024 14:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731075651;
-	bh=+q0qEsBDCiPhMWR7oV4gj4QZkmFaEibfjsdafrLmT4M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E+fguDqUZzds/s62J2FRJKXpIHF9SiBdeqDRHOFj1puHeT9Rfs8Gz0pBAJJMm6Ntm
-	 PwoNHPqpD1ZelyBArc3eWms30jlbXdkxuY/FzHiaAF2ZN2EmIJG1HOnCGsGXXGqm8B
-	 0c+PEPB5d/pXomyA1Qk8cWldofbfPuJ3tBZwduZq5+TJGPakKgM6U1ZjGRd70hVnVk
-	 0ef1ogB5MN9+QNPkpamIs8/v/Zf4yoU7aZOSVrtuuTijau6rpkwSem2axYahfoqrtJ
-	 UFzhbBGJnnVJDd8Hkmwv+mqgFu8LdsqduJ6tFRrZjA2uGiya/XeYokhh8tanp+f45p
-	 cM9NzRpuYPclw==
-Date: Fri, 8 Nov 2024 15:20:48 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 2/6] drm/sun4i: use drm_hdmi_connector_mode_valid()
-Message-ID: <20241108-gainful-lionfish-of-progress-758dcb@houat>
-References: <20241101-hdmi-mode-valid-v2-0-a6478fd20fa6@linaro.org>
- <20241101-hdmi-mode-valid-v2-2-a6478fd20fa6@linaro.org>
+	s=arc-20240116; t=1731075784; c=relaxed/simple;
+	bh=a4me9NEi48xs/Gv9LqD6QXla8QM2Yfu0bCPFDTc7gjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U7xCXtL11MDu11iDzsCx2expF/VnTZbS4fCrjGxR6JORVePl0A8iJShrychOP+0vUYIS8pevHmv94nqZjsGQqgK+z/Br+zWVie8yw/WW2CXTCm03D75v0wjW7q9ILPdgaTi4agLIgw8uIu4kTMbo9rUStpCxE+tpCTx4RWwsdAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=lOrhdASv; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=03Fc1fmCF/avRthU6lr7E9Jhe4IxFOTMxCL1KW92V/s=; b=lOrhdASv7gsImU9H6JBn4Q7VGa
+	XTYrdXLQU1uFqre8mwmKTU7BL2IA7FOr7KlJ76A1TbEIegqSCvTSXNKT/l9kZMWoTxTpYx27f7Lll
+	qy0ozFX8Xg7whfsMOBbBdnbdTbZTFzikQIkEahETI5qUNDkcju+wqjl7d3+kiLr39B02sOsphjH3z
+	ostzHmMz/d9kSIVBTyJPXTeKs6UZAj4GEreNDzVcy+ZgNs1IjUZQ6sKLYeMkFdvcAa0QKVMrT1Ivn
+	fHaWaUXlB5+aXZwemkFDJsQGjoS9Uwhb+LB2BNe/7o+20laNwsWIGnD/bkKQexJCELnxmRN1tG7Ju
+	xbmAkMGw==;
+Received: from i53875b28.versanet.de ([83.135.91.40] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t9Pso-0006fc-4s; Fri, 08 Nov 2024 15:22:42 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/rockchip: dsi: Perform trivial code cleanups
+Date: Fri, 08 Nov 2024 15:22:41 +0100
+Message-ID: <22484879.EfDdHjke4D@diego>
+In-Reply-To: <047164cc6e88dcbc7701cb0e28d564db@manjaro.org>
+References:
+ <cover.1731073565.git.dsimic@manjaro.org> <10558711.nUPlyArG6x@diego>
+ <047164cc6e88dcbc7701cb0e28d564db@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="gvl6jdeilsq4eowj"
-Content-Disposition: inline
-In-Reply-To: <20241101-hdmi-mode-valid-v2-2-a6478fd20fa6@linaro.org>
-
-
---gvl6jdeilsq4eowj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/6] drm/sun4i: use drm_hdmi_connector_mode_valid()
-MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Fri, Nov 01, 2024 at 02:25:05AM +0200, Dmitry Baryshkov wrote:
-> Use new drm_hdmi_connector_mode_valid() helper instead of a
-> module-specific copy.
+Am Freitag, 8. November 2024, 15:13:33 CET schrieb Dragan Simic:
+> On 2024-11-08 15:09, Heiko St=FCbner wrote:
+> > Am Freitag, 8. November 2024, 15:05:02 CET schrieb Dragan Simic:
+> >> On 2024-11-08 14:56, Heiko St=FCbner wrote:
+> >> > Am Freitag, 8. November 2024, 14:53:57 CET schrieb Dragan Simic:
+> >> >> Perform a few trivial code cleanups, to make one logged message a b=
+it
+> >> >> more
+> >> >> consistent with the other logged messages by capitalizing its first
+> >> >> word, and
+> >> >> to avoid line wrapping by using the 100-column width better.
+> >> >>
+> >> >> No intended functional changes are introduced by these code cleanup=
+s.
+> >> >>
+> >> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> >> >> ---
+> >> >>  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c | 12 ++++--------
+> >> >>  1 file changed, 4 insertions(+), 8 deletions(-)
+> >> >>
+> >> >> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> >> >> b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> >> >> index 58a44af0e9ad..f451e70efbdd 100644
+> >> >> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> >> >> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> >> >> @@ -1379,7 +1379,7 @@ static int dw_mipi_dsi_rockchip_probe(struct
+> >> >> platform_device *pdev)
+> >> >>  	}
+> >> >>
+> >> >>  	if (!dsi->cdata) {
+> >> >> -		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
+> >> >> +		DRM_DEV_ERROR(dev, "No dsi-config for %s node\n", np->name);
+> >> >
+> >> > this is all probe-related, why not convert to dev_err_probe?
+> >> >
+> >> > As the doc states [0], DRM_DEV_ERROR is deprecated in favor of dev_e=
+rr.
+> >> > So dev_err_probe would be the correct way to go?
+> >>=20
+> >> Thanks for your quick response!  Seeing that DRM_DEV_ERROR() is now
+> >> deprecated (which I originally missed, in all honesty) makes me very
+> >> happy. :)  I've never been a huge fan of the format of the messages
+> >> that DRM_DEV_ERROR() produces.
+> >>=20
+> >> However, perhaps it would be better to keep these patches as-is, as
+> >> some kind of an intermediate, limited-scope cleanup + bugfix combo,
+> >> and leave the complete DRM_DEV_ERROR() --> dev_err()/dev_err_probe()
+> >> conversion to separate patches.  I think it would be better to avoid
+> >> a partial conversion, and I'll be more than happy to put the complete
+> >> conversion on my TODO list. :)
+> >=20
+> > But your patch-2 really just open-codes, what dev_err_probe is meant
+> > to fix. So with going this way, you're sort of making things worse=20
+> > first,
+> > until that second step happens.
+> >=20
+> > Similarly, reflowing lines for things that get removed in a week do not
+> > serve a purpose - those line-breaks have been that way for years
+> > already.
 >=20
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun=
-4i/sun4i_hdmi_enc.c
-> index b3649449de3026784ae2f3466906403a0b6e3b47..54b72fe220afacc208b3fd48d=
-5160031127ea14a 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-> @@ -205,16 +205,6 @@ static int sun4i_hdmi_connector_atomic_check(struct =
-drm_connector *connector,
->  	return 0;
->  }
-> =20
-> -static enum drm_mode_status
-> -sun4i_hdmi_connector_mode_valid(struct drm_connector *connector,
-> -				struct drm_display_mode *mode)
-> -{
-> -	unsigned long long rate =3D drm_hdmi_compute_mode_clock(mode, 8,
-> -							      HDMI_COLORSPACE_RGB);
-> -
-> -	return sun4i_hdmi_connector_clock_valid(connector, mode, rate);
-> -}
-> -
->  static int sun4i_hdmi_get_modes(struct drm_connector *connector)
->  {
->  	struct sun4i_hdmi *hdmi =3D drm_connector_to_sun4i_hdmi(connector);
-> @@ -269,7 +259,7 @@ static const struct drm_connector_hdmi_funcs sun4i_hd=
-mi_hdmi_connector_funcs =3D {
-> =20
->  static const struct drm_connector_helper_funcs sun4i_hdmi_connector_help=
-er_funcs =3D {
->  	.atomic_check	=3D sun4i_hdmi_connector_atomic_check,
-> -	.mode_valid	=3D sun4i_hdmi_connector_mode_valid,
-> +	.mode_valid	=3D drm_hdmi_connector_mode_valid,
->  	.get_modes	=3D sun4i_hdmi_get_modes,
->  };
+> Hmm, it makes sense when described that way.  I'll see to perform the
+> complete conversion in the next few days.
 
-It's only slightly related, but the atomic_check implementation that
-will be the last (direct) user of sun4i_hdmi_clock_valid is wrong and
-doesn't call drm_atomic_helper_connector_hdmi_check
+just a note, as written on IRC earlier, I am sitting on a dev_err_probe
+conversion for dw-dsi-rockchip.
 
-Maxime
+I was waiting to see if more cleanups turned up, so didn't sent that yet.
 
---gvl6jdeilsq4eowj
-Content-Type: application/pgp-signature; name="signature.asc"
+Don't want to steal your spotlight though, so not sure if I should send
+that or wait for your conversion ;-)
 
------BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZy4eQAAKCRAnX84Zoj2+
-dtxCAXwL8U3Kdj+wVwDFf28N7fDsoRIKg9nowztcUuKe2dbb1TyT4t581CFQhhgH
-4fyRrqQBfRWeXpD5+rE7haWwmaaAYN/WyuoOSkc7MRtD8MkiWahxYbD77ClE2BO2
-hfikHA1jXg==
-=SsWk
------END PGP SIGNATURE-----
+Heiko
 
---gvl6jdeilsq4eowj--
+
+
 
