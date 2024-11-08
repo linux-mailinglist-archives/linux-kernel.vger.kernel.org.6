@@ -1,216 +1,122 @@
-Return-Path: <linux-kernel+bounces-401091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB9F9C15D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:03:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E0C9C15DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 308761F21CAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759F01F23C78
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD3A1C9EB4;
-	Fri,  8 Nov 2024 05:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF911C3F01;
+	Fri,  8 Nov 2024 05:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ejAqgG+S"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Rn2hkYvF"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6CA26289
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 05:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF159CA6F;
+	Fri,  8 Nov 2024 05:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731042229; cv=none; b=AxHk9deSeUrzkkuI2SNL+6iDpgCUxI5ORorgbz6vRaz/mE27W5MxI2UrO/U4g4eMoSpt8+9g9TqE+KtDrp1mv87o3qmdNYngCa6oCzSKc5o4mhzKzU3mm5id6Z9lFEnLAdBMWexSP1iebAxZXueCXa7UXWqLTRYkledn/uvizSU=
+	t=1731042383; cv=none; b=BI+JiNMspGOSNs/N+LQhswP0M6IgpZPGJ1yGMfM4E+uA8ZtNB9n+ELHebFcNbRB1R7HANW2XZ+5UWzGu1Eh9g6iO/ODrji3NZDxa7FPY31Voz+r0quGbwjxIMEAvc7YmKhv+VXoYRuXOPjXYUG2/gpSga7HigB3fGzZDvLezQZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731042229; c=relaxed/simple;
-	bh=uf+L32/DgNO20OcfZBNfGBo/WqndrTtsLpsVzys+KCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zv8/5tpn55QYLuUVG9EPttZ73p9QLA+b7Ervky4BffLi7Bod9w1Pa1tQ3xebBH6GmTLEqQLg+4fS0mWrwtVh9dOobKss2WZ7GCIGjtxHPQut/AEI5YkLCyleHrN8R7VJdktqItVUqq+KAuykM5ePl/FLc7wSfSf7K+WeUrIpPiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ejAqgG+S; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e28fea0f5b8so1677575276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 21:03:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1731042226; x=1731647026; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WNGdr8+SBlIbzBqb5yEvyPo04wuD7xhCU+afHPhO0gw=;
-        b=ejAqgG+SXERsk7UNaA++paZ25Y2xK3zQaqxsoV2Q6Zj/8Dp90EdlJifDnr8qZHaL7b
-         b4Y2hPHvSkXAHeKmCX2ZsYSHR/QQA/Xttt1Z4ANGTWBOCRB/Y5MP48Xmg/ju3Yg3JiIy
-         uG6WvqyTlEJzxCDpycnNJPL5I6/F+e8HqC0L0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731042226; x=1731647026;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WNGdr8+SBlIbzBqb5yEvyPo04wuD7xhCU+afHPhO0gw=;
-        b=AxbgT9dmudM3gyBCeFEy/ANstR79n1+g/D9LI7W8s2aXSe8bJPAKkCMWBTiCZ6ABeX
-         jL1CfxtGfYXtS4omR0B2IyxMpTypFohsBESLpGjlncJKM+tR0n9W7dp4ZeOlNAp/GWmZ
-         bxXKAGTSmAEtwgWPNK70apqpaN/I+mgQ7nR1ByZrCOtu8U38oEBiG4qwIwBGwAC7ne/8
-         7gQIvwP7rjIkce/L9uenWz3ood2U7PHIrZbNH5zUYO0EsR+fv5uoGxNBeBxmXjqbYN0i
-         fLdeZuH3Uiq8wQ9lozoPmsTOkeK9Q0LDxWwHdGAvabYCt3+yUEsCJ+XgRkKm6mabiKs3
-         iIvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUM20N0t5kMOkdsL5cHegqxA8TT2y1DrxaKGPPsiDnSsvYicmEqxDM3UdBSyr7JrNHZHcAm5D6OpKgYMJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFJHvnjSkiAD1ep5rcg622dpurpIbNF2w+X/H36OOao3FtRxcI
-	/Gu4oZUqSnv1Cu9LMdYBHxq5faEgjUdNw0HL5P5xMqaDn7VxolafP7N5oC/IjYeEfkozS7bXWAw
-	k5E9EjSWjgofdlhLy1W3YSgLV/mBJxZwTosEi
-X-Google-Smtp-Source: AGHT+IGoDwbKayxL5xzE6wZajGslwRdrnVXJFWNNltqAroKkGgy5sDfUc56OmQSlt11eQdDI1FCAj0JxG5Xs8SCXiV8=
-X-Received: by 2002:a05:6902:2891:b0:e26:1422:400b with SMTP id
- 3f1490d57ef6-e337f8dbf9fmr1496961276.53.1731042225686; Thu, 07 Nov 2024
- 21:03:45 -0800 (PST)
+	s=arc-20240116; t=1731042383; c=relaxed/simple;
+	bh=OJArgu0xE2/lQeE0J0xckqURWJohssppDrv7PNXDZNY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLU8eQ+MD5IcZKvHPmXl2UrOLUQAeuEmi3gVM4YV4IgptODmZVZ9RL2pLpi2MkCvB4VwLX3bYJkzVcUQYwh8sGTI01H6UNIKZvCilcK0612DlhYC8Aaw60IT52vyUsKiaD1HszgvlH+6qWmd5eJMI8q5C4EzkGj0C+0z5gI1sLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Rn2hkYvF; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A855S67060913;
+	Thu, 7 Nov 2024 23:05:28 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731042328;
+	bh=exMs8dRJNb40qSDWYqjC7kbZHKIwFJKbmdXtVqWShjw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Rn2hkYvF7K7KgeuKuGTVmUpRIHCIamFuw5xKvt4LWWRSeXQPxN1Oz2aGwd7C1PYUB
+	 j5+CR7S2ATyiTGqzjtR/hrgHTTxIftKTpaAkKbxSvue9y3tqtJ1PNDmDLaiLnShGHi
+	 jEYIMzpC8sjKXM2vVmqYab3T2kk4imjwmucXCsGs=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A855SUd030448
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 7 Nov 2024 23:05:28 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 7
+ Nov 2024 23:05:28 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 7 Nov 2024 23:05:28 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A855R5C011753;
+	Thu, 7 Nov 2024 23:05:27 -0600
+Date: Fri, 8 Nov 2024 10:35:26 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Bjorn Helgaas
+	<helgaas@kernel.org>, <lpieralisi@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>,
+        <manivannan.sadhasivam@linaro.org>, <kishon@kernel.org>,
+        <u.kleine-koenig@pengutronix.de>, <cassel@kernel.org>,
+        <dlemoal@kernel.org>, <yoshihiro.shimoda.uh@renesas.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
+ "ti,keystone-pcie" compatible
+Message-ID: <97561a54-8d80-4786-9171-5208128c3a2f@ti.com>
+References: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
+ <20241106154945.GA1526156@bhelgaas>
+ <20241106160520.GD2745640@rocinante>
+ <4fc87e39-ae2f-4ac9-ace3-26b2b79e2297@ti.com>
+ <20241107155144.GB1297107@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030033514.1728937-1-zack.rusin@broadcom.com>
- <20241030033514.1728937-3-zack.rusin@broadcom.com> <CABgObfaRP6zKNhrO8_atGDLcHs=uvE0aT8cPKnt_vNHHM+8Nxg@mail.gmail.com>
- <CABQX2QMR=Nsn23zojFdhemR7tvGUz6_UM8Rgf6WLsxwDqoFtxg@mail.gmail.com> <Zy0__5YB9F5d0eZn@google.com>
-In-Reply-To: <Zy0__5YB9F5d0eZn@google.com>
-From: Zack Rusin <zack.rusin@broadcom.com>
-Date: Fri, 8 Nov 2024 00:03:34 -0500
-Message-ID: <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] KVM: x86: Add support for VMware guest specific hypercalls
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	Doug Covelli <doug.covelli@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Joel Stanley <joel@jms.id.au>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241107155144.GB1297107@rocinante>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Nov 7, 2024 at 5:32=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> On Mon, Nov 04, 2024, Zack Rusin wrote:
-> > On Mon, Nov 4, 2024 at 5:13=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.c=
-om> wrote:
-> > >
-> > > On Wed, Oct 30, 2024 at 4:35=E2=80=AFAM Zack Rusin <zack.rusin@broadc=
-om.com> wrote:
-> > > >
-> > > > VMware products handle hypercalls in userspace. Give KVM the abilit=
-y
-> > > > to run VMware guests unmodified by fowarding all hypercalls to the
-> > > > userspace.
-> > > >
-> > > > Enabling of the KVM_CAP_X86_VMWARE_HYPERCALL_ENABLE capability turn=
-s
-> > > > the feature on - it's off by default. This allows vmx's built on to=
-p
-> > > > of KVM to support VMware specific hypercalls.
-> > >
-> > > Hi Zack,
-> >
-> > Hi, Paolo.
-> >
-> > Thank you for looking at this.
-> >
-> > > is there a spec of the hypercalls that are supported by userspace? I
-> > > would like to understand if there's anything that's best handled in
-> > > the kernel.
-> >
-> > There's no spec but we have open headers listing the hypercalls.
-> > There's about a 100 of them (a few were deprecated), the full
-> > list starts here:
-> > https://github.com/vmware/open-vm-tools/blob/739c5a2f4bfd4cdda491e6a6f6=
-869d88c0bd6972/open-vm-tools/lib/include/backdoor_def.h#L97
-> > They're not well documented, but the names are pretty self-explenatory.
->
-> At a quick glance, this one needs to be handled in KVM:
->
->   BDOOR_CMD_VCPU_MMIO_HONORS_PAT
->
-> and these probably should be in KVM:
->
->   BDOOR_CMD_GETTIME
->   BDOOR_CMD_SIDT
->   BDOOR_CMD_SGDT
->   BDOOR_CMD_SLDT_STR
->   BDOOR_CMD_GETTIMEFULL
->   BDOOR_CMD_VCPU_LEGACY_X2APIC_OK
->   BDOOR_CMD_STEALCLOCK
->
-> and these maybe? (it's not clear what they do, from the name alone)
->
->   BDOOR_CMD_GET_VCPU_INFO
->   BDOOR_CMD_VCPU_RESERVED
+On Fri, Nov 08, 2024 at 12:51:44AM +0900, Krzysztof Wilczyński wrote:
+> Hello,
+> 
+> > > Added Cc for stable releases.  Siddharth, let me know how to update the
+> > > commit log per Bjorn feedback, so I can do it directly on the branch.
+> > 
+> > The existing commit message could be replaced by the following:
+> > 
+> > ------------------------------------------------------------------------
+> > commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
+> > Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
+> > device data ("struct ks_pcie_of_data"). However it failed to set the mode
+> > for "ti,keystone-pcie" compatible.
+> > 
+> > Since the mode defaults to "DW_PCIE_UNKNOWN_TYPE", the following error
+> > message is displayed:
+> > 	"INVALID device type 0"
+> > for the v3.65a controller. Despite the driver probing successfully, the
+> > controller may not be functional in the Root Complex mode of operation.
+> > 
+> > So, set the mode as Root Complex for "ti,keystone-pcie" compatible to fix
+> > this.
+> > ------------------------------------------------------------------------
+> 
+> Done.  See the following:
+> 
+>   - https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/keystone&id=5a938ed9481b0c06cb97aec45e722a80568256fd
 
-I'm not sure if there's any value in implementing a few of them. iirc
-there's 101 of them (as I mentioned a lot have been deprecated but
-that's for userspace, on the host we still have to do something for
-old guests using them) and, if out of those 101 we implement 100 in
-the kernel then, as far as this patch is concerned, it's no different
-than if we had 0 out of 101 because we're still going to have to exit
-to userspace to handle that 1 remaining.
+LGTM. Thank you for updating the commit message :)
 
-Unless you're saying that those would be useful to you. In which case
-I'd be glad to implement them for you, but I'd put them behind some
-kind of a cap or a kernel config because we wouldn't be using them -
-besides what Doug mentioned - we already maintain the shared code for
-them that's used on Windows, MacOS, ESX and Linux so even if we had
-them in the Linux kernel it would still make more sense to use the
-code that's shared with the other OSes to lessen the maintenance
-burden (so that changing anything within that code consistently
-changes across all the OSes).
-
-> > > If we allow forwarding _all_ hypercalls to userspace, then people wil=
-l
-> > > use it for things other than VMware and there goes all hope of
-> > > accelerating stuff in the kernel in the future.
->
-> To some extent, that ship has sailed, no?  E.g. do KVM_XEN_HVM_CONFIG wit=
-h
-> KVM_XEN_HVM_CONFIG_INTERCEPT_HCALL set, and userspace can intercept prett=
-y much
-> all hypercalls with very few side effects.
->
-> > > So even having _some_ checks in the kernel before going out to
-> > > userspace would keep that door open, or at least try.
-> >
-> > Doug just looked at this and I think I might have an idea on how to
-> > limit the scope at least a bit: if you think it would help we could
-> > limit forwarding of hypercalls to userspace only to those that that
-> > come with a BDOOR_MAGIC (which is 0x564D5868) in eax. Would that help?
->
-> I don't think it addresses Paolo's concern (if I understood Paolo's conce=
-rn
-> correctly), but it would help from the perspective of allowing KVM to sup=
-port
-> VMware hypercalls and Xen/Hyper-V/KVM hypercalls in the same VM.
-
-Yea, I just don't think there's any realistic way we could handle all
-of those hypercalls in the kernel so I'm trying to offer some ideas on
-how to lessen the scope to make it as painless as possible. Unless you
-think we could somehow parlay my piercing blue eyes into getting those
-patches in as is, in which case let's do that ;)
-
-> I also think we should add CONFIG_KVM_VMWARE from the get-go, and if we'r=
-e feeling
-> lucky, maybe even retroactively bury KVM_CAP_X86_VMWARE_BACKDOOR behind t=
-hat
-> Kconfig.  That would allow limiting the exposure to VMware specific code,=
- e.g. if
-> KVM does end up handling hypercalls in-kernel.  And it might deter abuse =
-to some
-> extent.
-
-I thought about that too. I was worried that even if we make it on by
-default it will require quite a bit of handholding to make sure all
-the distros include it, or otherwise on desktops Workstation still
-wouldn't work with KVM by default, I also felt a little silly trying
-to add a kernel config for those few lines that would be on pretty
-much everywhere and since we didn't implement the vmware backdoor
-functionality I didn't want to presume and try to shield a feature
-that might be in production by others with a new kernel config.
-
-z
+Regards,
+Siddharth.
 
