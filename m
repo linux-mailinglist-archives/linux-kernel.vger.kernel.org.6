@@ -1,279 +1,120 @@
-Return-Path: <linux-kernel+bounces-401949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5849C216D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:01:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574679C2183
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1ADB1C23BEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:01:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888F71C23C76
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B298E1946CC;
-	Fri,  8 Nov 2024 16:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1742519309B;
+	Fri,  8 Nov 2024 16:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Cw7Kfq2p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lwkyX4zU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Cw7Kfq2p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lwkyX4zU"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bLSZ3bGR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF86192593
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D717E194C79
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731081618; cv=none; b=fBqOnUfkkTR9UsXqvi4qtb7LV+c8JW6ngxDMe7xI9cQ6Z7MG3OsbgZP16rElXJCMuBRb7X28wDw5PPtpiBjRbcvwwZY0Agk89bu6Z/eMIu24LAstbXkmPSNqVc+ybYGyf1cvyIYukXDGkpDOnTshDwP1fPfWbtWtVZqvzors2as=
+	t=1731081783; cv=none; b=jezWPHGj0H41FC8Xv1qW378s6qJIj4NgwMgIAyLfwU3PZW0xQ3tl7MV7+rZCoTANSIguYJELgrDKZT26N8P/m8HxSFWYCVQw6vSbwDdY/K+yGJTWGI3IQeKB9VL7WKh0+a7sYZsdY3M564kEZ7Z4DVutF9fNThxTprsnbBw/f2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731081618; c=relaxed/simple;
-	bh=wVgJMYLPzIFiSbqF1BpF3NeKF3domlqgvkLQJqgye9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jKcSSRILGZR3r3UBcT8q3U2E7DfG2vSApt9eK8RtQ93QmkktTK9sYiwbY+pTorKxvSZ1PZo7guvdf6Emjt3uuuECgEN4ZwBG2siHuxtW3e+uHbqIl47w5eOTbJz/mvIUxHoEMMhcCIyPHz3qDlnnx2eb06agDKHHS7YuLp2l6BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Cw7Kfq2p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lwkyX4zU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Cw7Kfq2p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lwkyX4zU; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9169021CCC;
-	Fri,  8 Nov 2024 16:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731081611; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1731081783; c=relaxed/simple;
+	bh=Dkl1ieEc1BAg1ZDaYT7VtIs7itFlvZ0wDVhM9n7ovBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MR0oI9XjVdx1TDi9tTvHZ4uQXRI+aZSnhBUii6d9LTFgY3sbVC1a/IknzuGtfbmWYEPWnU7+H3j9ejH6WkhfjY+ksl5bTMM54pDdjjehHJ3W/SizOkh/dRVNED/mP4o80/LYiX54g3j17o7XWRXMdkS13N96Wvsz6kpJkAp9SQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bLSZ3bGR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731081780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=v3jnqR1uH7//51ZGQAIg7SNFQ0QCOmeA+yva2hZHnZI=;
-	b=Cw7Kfq2p43wQAKXjjUJM8EUkYWi9cxU5cdRiYD3SlCh7hAiUklMoGuUUO8+wpl2wasmfYr
-	3dQVs1Ef0Jbrzg8zc98fcuBABS5uSkkiueysgiImQZR5bqx7GVIq2kxkJgXG2HVXAPTvvN
-	fWWpwqR+bRHwzMm6tw+NpSxQMcwG6Ks=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731081611;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v3jnqR1uH7//51ZGQAIg7SNFQ0QCOmeA+yva2hZHnZI=;
-	b=lwkyX4zU1bVupNGBGUsJuh4XUsfS0RVvTjgOIdaQvL3CTR7bnC9TQc77SbkNdMtEcVcvHw
-	LV6M+HWQJsUHtnBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731081611; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v3jnqR1uH7//51ZGQAIg7SNFQ0QCOmeA+yva2hZHnZI=;
-	b=Cw7Kfq2p43wQAKXjjUJM8EUkYWi9cxU5cdRiYD3SlCh7hAiUklMoGuUUO8+wpl2wasmfYr
-	3dQVs1Ef0Jbrzg8zc98fcuBABS5uSkkiueysgiImQZR5bqx7GVIq2kxkJgXG2HVXAPTvvN
-	fWWpwqR+bRHwzMm6tw+NpSxQMcwG6Ks=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731081611;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v3jnqR1uH7//51ZGQAIg7SNFQ0QCOmeA+yva2hZHnZI=;
-	b=lwkyX4zU1bVupNGBGUsJuh4XUsfS0RVvTjgOIdaQvL3CTR7bnC9TQc77SbkNdMtEcVcvHw
-	LV6M+HWQJsUHtnBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6171113967;
-	Fri,  8 Nov 2024 16:00:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id D/sUF4s1LmemIwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 08 Nov 2024 16:00:11 +0000
-Message-ID: <d09fb32e-ca76-4453-9f27-670ba1557da6@suse.cz>
-Date: Fri, 8 Nov 2024 17:00:10 +0100
+	bh=KodwbNUeuehD+z2uf2ly+jd4Lxh5FbYEBZu9aS+ypso=;
+	b=bLSZ3bGRt4cxNvVICOghx4IilkwPXaLOlFGpTxrz4bO3xRmB3NE+c06rJThdnwG4yg+9D1
+	o1e041V8cl1hiVd6fyvReMcYxwfiLxjnNRyl3JYYvahjwHMaIisB5j6YTU3rsWrsFZ4lmT
+	3S+rtsN1nGII2dl7YQuKFeOJLtcDhvU=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-oj9ImJnDPoa0eWWuJK2oJg-1; Fri, 08 Nov 2024 11:02:59 -0500
+X-MC-Unique: oj9ImJnDPoa0eWWuJK2oJg-1
+X-Mimecast-MFC-AGG-ID: oj9ImJnDPoa0eWWuJK2oJg
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-539fbf73a2fso1871461e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 08:02:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731081777; x=1731686577;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KodwbNUeuehD+z2uf2ly+jd4Lxh5FbYEBZu9aS+ypso=;
+        b=TaD0C+LrIp5iyNAoQfSp+oz0avA8wUVHvMP2dB3fwCBn5LzeEUQa/yK41rub4wOLs2
+         YrZ6TPN1oT1806BVUtofYrmjJ0qxL8pKDuj4/OmN5MGvfQVlMbQVNxT9ceXHOvSYXOkz
+         V2PTkzpB8xlzYzH+4Yza4lnExT3q2FkyBOZr4EzhFNKQZKs4T0mlVF8Z186TP9jSLjZN
+         6/6i2z1CDNfj7O7goqj3FD4HccP6lBuIzPObegJ0r4K6pjHPNIw5BCV9SAHDMS0LK0om
+         uxB5X4INWqxqE2nGGl0gVKHaLTZLKf9HNH3s73bxWBUvx4NumPT2P/Jo391FT71KRU4y
+         6FFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoj8oC4bgFOCzxCQZdS4dxjMtam7Jo1jUuc4XRLLJwSN1fKfMD1lOfPT65rgQsfoxTEEmHoCUA0U3zUJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytWHG3julgMLx3F6+K0TUH5Tn4aO1VuomGxPmtn4hOozlZuhTj
+	KfsThqCoiG3hCxRgVTtqbFpcSDTB8GjdpwOtzbAar0fYclpT0yq0QEShzIch3K4EmpaVpYLkGl5
+	iVJVxPwK6ja7Jpin6mbpNOGT6yZYhWU2C3OSF93W04xvNZFSf+Pu6guA1c3OIvJJf0MGbKw==
+X-Received: by 2002:a05:6512:3d0f:b0:53d:8274:a300 with SMTP id 2adb3069b0e04-53d862c5bbfmr1437104e87.34.1731081777240;
+        Fri, 08 Nov 2024 08:02:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHXUwhruY1WxPZM2lD15BwhIP8JhX3dp+oHUK/E9prDaGfWq7Kte9cKFc1RP7RvGorjuU5tSQ==
+X-Received: by 2002:a05:6512:3d0f:b0:53d:8274:a300 with SMTP id 2adb3069b0e04-53d862c5bbfmr1437063e87.34.1731081776647;
+        Fri, 08 Nov 2024 08:02:56 -0800 (PST)
+Received: from debian (2a01cb058d23d60039a5c1e29a817dbe.ipv6.abo.wanadoo.fr. [2a01:cb05:8d23:d600:39a5:c1e2:9a81:7dbe])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b054b3fesm72642485e9.17.2024.11.08.08.02.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 08:02:56 -0800 (PST)
+Date: Fri, 8 Nov 2024 17:02:53 +0100
+From: Guillaume Nault <gnault@redhat.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Akinobu Mita <akinobu.mita@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v6] net: Implement fault injection forcing skb
+ reallocation
+Message-ID: <Zy42LfWaiWHJ12Nw@debian>
+References: <20241107-fault_v6-v6-1-1b82cb6ecacd@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] sched/numa: Fix memory leak due to the overwritten
- vma->numab_state
-Content-Language: en-US
-To: Adrian Huang <adrianhuang0701@gmail.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Raghavendra K T <raghavendra.kt@amd.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Adrian Huang <ahuang12@lenovo.com>,
- Jiwei Sun <sunjw10@lenovo.com>
-References: <20241108133139.25326-1-ahuang12@lenovo.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20241108133139.25326-1-ahuang12@lenovo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.26 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.16)[-0.811];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com,redhat.com,infradead.org,linaro.org,linux-foundation.org];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.26
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107-fault_v6-v6-1-1b82cb6ecacd@debian.org>
 
-On 11/8/24 14:31, Adrian Huang wrote:
-> From: Adrian Huang <ahuang12@lenovo.com>
-> 
-> [Problem Description]
-> When running the hackbench program of LTP, the following memory leak is
-> reported by kmemleak.
-> 
->   # /opt/ltp/testcases/bin/hackbench 20 thread 1000
->   Running with 20*40 (== 800) tasks.
-> 
->   # dmesg | grep kmemleak
->   ...
->   kmemleak: 480 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
->   kmemleak: 665 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
-> 
->   # cat /sys/kernel/debug/kmemleak
->   unreferenced object 0xffff888cd8ca2c40 (size 64):
->     comm "hackbench", pid 17142, jiffies 4299780315
->     hex dump (first 32 bytes):
->       ac 74 49 00 01 00 00 00 4c 84 49 00 01 00 00 00  .tI.....L.I.....
->       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     backtrace (crc bff18fd4):
->       [<ffffffff81419a89>] __kmalloc_cache_noprof+0x2f9/0x3f0
->       [<ffffffff8113f715>] task_numa_work+0x725/0xa00
->       [<ffffffff8110f878>] task_work_run+0x58/0x90
->       [<ffffffff81ddd9f8>] syscall_exit_to_user_mode+0x1c8/0x1e0
->       [<ffffffff81dd78d5>] do_syscall_64+0x85/0x150
->       [<ffffffff81e0012b>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   ...
-> 
->   This issue can be consistently reproduced on three different servers:
->     * a 448-core server
->     * a 256-core server
->     * a 192-core server
-> 
-> [Root Cause]
-> Since multiple threads are created by the hackbench program (along with
-> the command argument 'thread'), a shared vma might be accessed by two or
-> more cores simultaneously. When two or more cores observe that
-> vma->numab_state is NULL at the same time, vma->numab_state will be
-> overwritten.
-> 
-> Note that the command `/opt/ltp/testcases/bin/hackbench 50 process 1000`
-> cannot the reproduce the issue because of the fork() and COW. It is
-> verified with 200+ test runs.
-> 
-> [Solution]
-> Introduce a lock to make sure the atomic operation of the vma->numab_state
-> access.
-> 
-> Fixes: ef6a22b70f6d ("sched/numa: apply the scan delay to every new vma")
-> Reported-by: Jiwei Sun <sunjw10@lenovo.com>
-> Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+On Thu, Nov 07, 2024 at 08:11:44AM -0800, Breno Leitao wrote:
+> Introduce a fault injection mechanism to force skb reallocation. The
+> primary goal is to catch bugs related to pointer invalidation after
+> potential skb reallocation.
 
-Could this be achieved without the new lock, by a cmpxchg attempt to install
- vma->numab_state that will free the allocated vma_numab_state if it fails?
+Nice to see this kind of debug option being worked on!
 
-Thanks,
-Vlastimil
+> +static bool should_fail_net_realloc_skb(struct sk_buff *skb)
+> +{
+> +	struct net_device *net = skb->dev;
 
-> ---
->  include/linux/mm.h       |  1 +
->  include/linux/mm_types.h |  1 +
->  kernel/sched/fair.c      | 17 ++++++++++++++++-
->  3 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 61fff5d34ed5..a08e31ac53de 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -673,6 +673,7 @@ struct vm_operations_struct {
->  static inline void vma_numab_state_init(struct vm_area_struct *vma)
->  {
->  	vma->numab_state = NULL;
-> +	mutex_init(&vma->numab_state_lock);
->  }
->  static inline void vma_numab_state_free(struct vm_area_struct *vma)
->  {
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 6e3bdf8e38bc..77eee89a89f5 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -768,6 +768,7 @@ struct vm_area_struct {
->  #endif
->  #ifdef CONFIG_NUMA_BALANCING
->  	struct vma_numab_state *numab_state;	/* NUMA Balancing state */
-> +	struct mutex numab_state_lock;		/* NUMA Balancing state lock */
->  #endif
->  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
->  } __randomize_layout;
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index c157d4860a3b..53e6383cd94e 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -3397,12 +3397,24 @@ static void task_numa_work(struct callback_head *work)
->  			continue;
->  		}
->  
-> +		/*
-> +		 * In case of the shared vma, the vma->numab_state will be
-> +		 * overwritten if two or more cores observe vma->numab_state
-> +		 * is NULL at the same time. Make sure that only one core
-> +		 * allocates memory for vma->numab_state. This can prevent
-> +		 * the memory leak.
-> +		 */
-> +		if (!mutex_trylock(&vma->numab_state_lock))
-> +			continue;
-> +
->  		/* Initialise new per-VMA NUMAB state. */
->  		if (!vma->numab_state) {
->  			vma->numab_state = kzalloc(sizeof(struct vma_numab_state),
->  				GFP_KERNEL);
-> -			if (!vma->numab_state)
-> +			if (!vma->numab_state) {
-> +				mutex_unlock(&vma->numab_state_lock);
->  				continue;
-> +			}
->  
->  			vma->numab_state->start_scan_seq = mm->numa_scan_seq;
->  
-> @@ -3428,6 +3440,7 @@ static void task_numa_work(struct callback_head *work)
->  		if (mm->numa_scan_seq && time_before(jiffies,
->  						vma->numab_state->next_scan)) {
->  			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SCAN_DELAY);
-> +			mutex_unlock(&vma->numab_state_lock);
->  			continue;
->  		}
->  
-> @@ -3440,6 +3453,8 @@ static void task_numa_work(struct callback_head *work)
->  			vma->numab_state->pids_active[1] = 0;
->  		}
->  
-> +		mutex_unlock(&vma->numab_state_lock);
-> +
->  		/* Do not rescan VMAs twice within the same sequence. */
->  		if (vma->numab_state->prev_scan_seq == mm->numa_scan_seq) {
->  			mm->numa_scan_offset = vma->vm_end;
+It's confusing to see a variable called "net" pointing to a struct
+net_device. "net" generally refers to struct net.
+
+In case v7 is needed, it'd be nice to call this variable "dev".
+
+Looks good to me otherwise.
+
+Acked-by: Guillaume Nault <gnault@redhat.com>
 
 
