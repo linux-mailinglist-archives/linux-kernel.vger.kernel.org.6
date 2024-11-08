@@ -1,388 +1,141 @@
-Return-Path: <linux-kernel+bounces-402362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226B09C26BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:44:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBB79C26C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:45:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7413283F8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:44:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB2EA1C23D65
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2F0219E3B;
-	Fri,  8 Nov 2024 20:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484FB206E98;
+	Fri,  8 Nov 2024 20:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/p3BSXo"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="msVIlfGJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBEE2123D8;
-	Fri,  8 Nov 2024 20:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2501F26CD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 20:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731098519; cv=none; b=RqgXICRELnONPDh5h7X3Q2VsJCo9j7yMj7cVhrSyBxt9aUvdQ8mbre1ceudc9/EEDShOxuda5OvsHjZ90e4maL9uQe5BVuXdr/CUuCNTjSzbXQe3v3WI47+1cd+iInlHKZH6MESwha7RcCBJMx8yelKRTMg7Q3MnrKZD8dZ22Kg=
+	t=1731098561; cv=none; b=Hqw1bHMro3eB2dexGx4HnS5smBYvlP/9keKQsJ6eLLeNquJS8mGBzDfGG9dL8vZnyKV1uYODQ6wTv4rM+uC0Bn58GXiHRt4BX1C9pl6PyoKz07KcE0UK9OewG3/wRUJ3oqU0sVzSRNIkq/w8ZG89P4tzUCuaXIGtrASQtS6PWQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731098519; c=relaxed/simple;
-	bh=6Xi8SnymfUK1MWx7BqI8kyX68lcBO9ziF5nJTzT20LI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IY94rS/Uj4OFcmCs/vdG/RMBByC8KEeDfg0pOeqtQO4jRjt8iAJnsWFDBC6vXsH0xlP/ghXgbsmunAPJq5fyYoOZUKRMafi7vtBZRSHq2uXZcaIKCzn2ncUD722QAIxXjzQT3W+IgMHddbqnURnDLJX/zURaqg3jrxXBn99MHFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/p3BSXo; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e52582cf8so2164047b3a.2;
-        Fri, 08 Nov 2024 12:41:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731098517; x=1731703317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LLUbqVUKNMQW8QHgPLbTdXartn9a/TySG3n47H01Lgc=;
-        b=i/p3BSXovN7e4nhnVnY5K4uZ31YPiCEbn8wdu/WgVWmA4adiFXGjA7MWo2j72+mXVK
-         3gLnBOOh8iW7+z9Im4xXoAhE0l8qK8YRnVj2rswYmJ8sOriwTlX5bTzTzgqDUlq6wlkt
-         WpM1KtOsxqFvDPj+K5GcGPeerAoPdXhA/k1oTzsAdb1f9FsYE2Ovw3PE4H1Q/B5o3x7p
-         KIOpyhtBOLDnXGvESG3ifVu4NtZH2GWmLfQiMTJPCOhq3hMHJ/v4ST/wD7uRnULVGoOu
-         l7Jbf5FDVotj0Gr1ELN4pmD2SOV5Qy8gfxMIfXcHJimrAiXymEXDjeU+QifM/n99SJh9
-         52/g==
+	s=arc-20240116; t=1731098561; c=relaxed/simple;
+	bh=1pGppec8DWHYLSw8JbIxLQYVhHnp1a3bUK1q0iqJ0Ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LDE066NEd4m603aKFF+FBhDDEEGNrrpQFqtMHyfFlU0uH3JyHydfOID45qXbqb/1yFS6/NFPThaR83E7IiEVOZMqvLR0fgpJ9/43n2Y6ez49fYLqqmiUOhTxTJO83SrqGwd3ubp8acd5vxNchzx8V1mElQxNbGDHVeLdih0lZho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=msVIlfGJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A8G0u0M030538
+	for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2024 20:42:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Cs4riM3bHa8k5Bz+RTTdkcSvQ4WfTHc0avDjKefuDVE=; b=msVIlfGJmYYq4RsO
+	Bts3cVJc41YLj/q+wQ4jlIlKXERWkayuE7XW7C2biT6xHcTD49tB5Qm0VvgNppsN
+	6kAcfPGUPNydfjEiUVNOi98Zg6LNLNE3K0CN8hLinDzZ2d56mQLAzcgo2FqfZafO
+	S7GU6Fo0sOUT1+QMt2gSZL3VvkrM1BrVen0dUHceH/UXTYbAjuIT85DWn+4a6+35
+	0Yk6bxhuSU7wBD5GZ/mCmiF6cACO3TjAsPTH9tnxyAV9wdtytEymrwm+otESx4aj
+	tM5uWjSLnGLdRZmlVLD58i0Z/GLnUi/Tx3MOAk7AQ5WMj9gunM/H1Xzfbfp7zzqx
+	J5y1HA==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42s6gdthbf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 20:42:37 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbf4770c18so6592346d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 12:42:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731098517; x=1731703317;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LLUbqVUKNMQW8QHgPLbTdXartn9a/TySG3n47H01Lgc=;
-        b=KTkxgys24ycqbo8wDM96fyFtuxKCA6KI2IUe46EVaB0CS6OmaQu696aLeiZndc1l/w
-         c03liNdQ4k0B7KAnrNbGKkf/lNnZkmVzHB1cSHCUihtvCYmCi28u/TvQqys0dnMrLP/u
-         wV6Qe4WJBvdTkgm6g7WjJQyRBqZNLIVAn3CL6DdpGQ2DFqXnuTDP9mvRE26g4jN2gdf4
-         LyqtTncG75B5TBkTeAmku1pfq5ErNQlcWg0C+dDyf4AHSbSQsEuLmKhqF7U9xYeISO2v
-         IXeodcmdfEabHVXSpKuX9JWLeBf15yRIdEElBfLtTviuV4D8afvSj2x8U47A+Gk7JgNm
-         P8NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXc1u6/svUloW0aehqJdqzL6Q+eFT7K381tMgP5J+tLWhYMBNsAzc8uG341XdOGgmLMhS7GcUzxbcU9eCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPIMYkBwuPxe1krRzYxYvb1CyxCyTHI56gIK0Vi0zBp8qzJVte
-	qoRK+p9O2shDcD2p5w2kvBEr2/Loo6i/+o6pGgOKNkRkN64vFQhFkz/9uA==
-X-Google-Smtp-Source: AGHT+IGACG82dpVJpadT/3v7VY/TjramC/FO30igl9LwCB+QBnSGZUZwSyiI9vS1Y/BpeKcrZPWL8A==
-X-Received: by 2002:a05:6a20:1594:b0:1db:e1b0:b673 with SMTP id adf61e73a8af0-1dc22826528mr5752392637.9.1731098516542;
-        Fri, 08 Nov 2024 12:41:56 -0800 (PST)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5ea0d5sm3957987a12.47.2024.11.08.12.41.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 12:41:56 -0800 (PST)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Louis Peens <louis.peens@corigine.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	oss-drivers@corigine.com (open list:NETRONOME ETHERNET DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] net: netronome: use double ptr for gstrings
-Date: Fri,  8 Nov 2024 12:41:54 -0800
-Message-ID: <20241108204154.305560-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1731098557; x=1731703357;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cs4riM3bHa8k5Bz+RTTdkcSvQ4WfTHc0avDjKefuDVE=;
+        b=jnI+VP+VVSKg5LR9+PH0HRS66GSLcwxD8Wo39vuDI677JGdjYUnEqrdVbWXskt+DoF
+         vcvO+X14WvatbNlaEiXr8bNQAkfDgyHNZnxJPlUAaK9jbGQdqZSD2dYPU7m6+HPtRVKz
+         KR2skI7KHHb6JeARC/cR0pTyvQ6jqWEbxPa8kS7iydKNqGCjUADUIHWmR7OLsejfxRsN
+         2fjwCTqBRIss2Cyvx0Ai2/K7oRBEvI0l6zYB1psXBupjVIK2PM24E+o5dX4F0STHDUjw
+         46+9up4CxST4T7e1Hh8lWCLYmCf6avtaIOtFruARs6/cPIjQeSWBOC8jkZGPJ3W6rlgI
+         vUVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWq4Ao4VBsWuC0KGgljdrYJXmCw7fV8xR9Kc1BD3b1lkizjMe3BmymC3BEpTOM0tidyE0lK4L6ptboSGWM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKjFqjM1RJxkYB5fqRGH07h8DZI6O2Ow1FzY2uTlIzWQPC+nrV
+	p5cMufctLg4OPJtdpSYk57hQbptBYX+jkMd/dgvxZH1+Z7+Hr2erJDBY1BAw5QdHreqpM2iLtkY
+	3rj0ocjTuXyNfiBnNG2lOgpSaOvZTrE0S2gLo3SJyieks7x5YS4GNFniJ8C/OSuE=
+X-Received: by 2002:a05:620a:2995:b0:7b1:aeb3:8cc8 with SMTP id af79cd13be357-7b331d473f2mr259704185a.0.1731098556957;
+        Fri, 08 Nov 2024 12:42:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHmGYROupge46jG1nBI6/BcoZ4PyhzcR055xXlljdy1aNTPHHNIcEdgg6Cg0UU3ilkctF1xDw==
+X-Received: by 2002:a05:620a:2995:b0:7b1:aeb3:8cc8 with SMTP id af79cd13be357-7b331d473f2mr259703185a.0.1731098556608;
+        Fri, 08 Nov 2024 12:42:36 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc56f1sm275188566b.92.2024.11.08.12.42.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 12:42:36 -0800 (PST)
+Message-ID: <1c5b3bc1-0e35-45a7-9895-27e3b4982426@oss.qualcomm.com>
+Date: Fri, 8 Nov 2024 21:42:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/6] arm64: dts: qcom: qcs6490-rb3gen2: Add PSCI
+ SYSTEM_RESET2 types
+To: Elliot Berman <quic_eberman@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+        Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Shivendra Pratap <quic_spratap@quicinc.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20241107-arm-psci-system_reset2-vendor-reboots-v8-0-e8715fa65cb5@quicinc.com>
+ <20241107-arm-psci-system_reset2-vendor-reboots-v8-5-e8715fa65cb5@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241107-arm-psci-system_reset2-vendor-reboots-v8-5-e8715fa65cb5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 9o-nIDKjwM9eC7PHQew0TQjrOXDJH9wI
+X-Proofpoint-ORIG-GUID: 9o-nIDKjwM9eC7PHQew0TQjrOXDJH9wI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxscore=0 mlxlogscore=832 lowpriorityscore=0 bulkscore=0 phishscore=0
+ adultscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411080170
 
-Currently the code copies a pointer and propagates increments that way.
+On 8.11.2024 12:38 AM, Elliot Berman wrote:
+> qcs6490-rb3gen2 firmware supports vendor-defined SYSTEM_RESET2 types.
+> Describe the reset types: "bootloader" will cause device to reboot and
+> stop in the bootloader's fastboot mode. "edl" will cause device to
+> reboot into "emergency download mode", which permits loading images via
+> the Firehose protocol.
+> 
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
 
-Instead of doing that, increment with a double pointer, which the
-ethtool string helpers expect.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Also converted some memcpy calls to ethtool_puts, as they should be.
-
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/netronome/nfp/abm/main.c |  12 +-
- drivers/net/ethernet/netronome/nfp/nfp_app.c  |   6 +-
- drivers/net/ethernet/netronome/nfp/nfp_app.h  |   6 +-
- .../ethernet/netronome/nfp/nfp_net_ethtool.c  | 119 ++++++++----------
- 4 files changed, 65 insertions(+), 78 deletions(-)
-
-diff --git a/drivers/net/ethernet/netronome/nfp/abm/main.c b/drivers/net/ethernet/netronome/nfp/abm/main.c
-index 5d3df28c648f..ee6dbe4f8c42 100644
---- a/drivers/net/ethernet/netronome/nfp/abm/main.c
-+++ b/drivers/net/ethernet/netronome/nfp/abm/main.c
-@@ -407,22 +407,20 @@ nfp_abm_port_get_stats_count(struct nfp_app *app, struct nfp_port *port)
- 	return alink->vnic->dp.num_r_vecs * 2;
- }
- 
--static u8 *
--nfp_abm_port_get_stats_strings(struct nfp_app *app, struct nfp_port *port,
--			       u8 *data)
-+static void nfp_abm_port_get_stats_strings(struct nfp_app *app,
-+					   struct nfp_port *port, u8 **data)
- {
- 	struct nfp_repr *repr = netdev_priv(port->netdev);
- 	struct nfp_abm_link *alink;
- 	unsigned int i;
- 
- 	if (port->type != NFP_PORT_PF_PORT)
--		return data;
-+		return;
- 	alink = repr->app_priv;
- 	for (i = 0; i < alink->vnic->dp.num_r_vecs; i++) {
--		ethtool_sprintf(&data, "q%u_no_wait", i);
--		ethtool_sprintf(&data, "q%u_delayed", i);
-+		ethtool_sprintf(data, "q%u_no_wait", i);
-+		ethtool_sprintf(data, "q%u_delayed", i);
- 	}
--	return data;
- }
- 
- static int nfp_abm_fw_init_reset(struct nfp_abm *abm)
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_app.c b/drivers/net/ethernet/netronome/nfp/nfp_app.c
-index bb3f46c74f77..294181c7ebad 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_app.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_app.c
-@@ -92,11 +92,11 @@ int nfp_app_port_get_stats_count(struct nfp_port *port)
- 	return port->app->type->port_get_stats_count(port->app, port);
- }
- 
--u8 *nfp_app_port_get_stats_strings(struct nfp_port *port, u8 *data)
-+void nfp_app_port_get_stats_strings(struct nfp_port *port, u8 **data)
- {
- 	if (!port || !port->app || !port->app->type->port_get_stats_strings)
--		return data;
--	return port->app->type->port_get_stats_strings(port->app, port, data);
-+		return;
-+	port->app->type->port_get_stats_strings(port->app, port, data);
- }
- 
- struct sk_buff *
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_app.h b/drivers/net/ethernet/netronome/nfp/nfp_app.h
-index 90707346a4ef..fc4dbcc8c7e1 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_app.h
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_app.h
-@@ -116,8 +116,8 @@ struct nfp_app_type {
- 	u64 *(*port_get_stats)(struct nfp_app *app,
- 			       struct nfp_port *port, u64 *data);
- 	int (*port_get_stats_count)(struct nfp_app *app, struct nfp_port *port);
--	u8 *(*port_get_stats_strings)(struct nfp_app *app,
--				      struct nfp_port *port, u8 *data);
-+	void (*port_get_stats_strings)(struct nfp_app *app,
-+				       struct nfp_port *port, u8 **data);
- 
- 	int (*start)(struct nfp_app *app);
- 	void (*stop)(struct nfp_app *app);
-@@ -421,7 +421,7 @@ struct nfp_app *nfp_app_from_netdev(struct net_device *netdev);
- 
- u64 *nfp_app_port_get_stats(struct nfp_port *port, u64 *data);
- int nfp_app_port_get_stats_count(struct nfp_port *port);
--u8 *nfp_app_port_get_stats_strings(struct nfp_port *port, u8 *data);
-+void nfp_app_port_get_stats_strings(struct nfp_port *port, u8 **data);
- 
- struct nfp_reprs *
- nfp_reprs_get_locked(struct nfp_app *app, enum nfp_repr_type type);
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_ethtool.c b/drivers/net/ethernet/netronome/nfp/nfp_net_ethtool.c
-index fbca8d0efd85..6dfaaca737e2 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_ethtool.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_ethtool.c
-@@ -848,37 +848,35 @@ static unsigned int nfp_vnic_get_sw_stats_count(struct net_device *netdev)
- 		NN_CTRL_PATH_STATS;
- }
- 
--static u8 *nfp_vnic_get_sw_stats_strings(struct net_device *netdev, u8 *data)
-+static void nfp_vnic_get_sw_stats_strings(struct net_device *netdev, u8 **data)
- {
- 	struct nfp_net *nn = netdev_priv(netdev);
- 	int i;
- 
- 	for (i = 0; i < nn->max_r_vecs; i++) {
--		ethtool_sprintf(&data, "rvec_%u_rx_pkts", i);
--		ethtool_sprintf(&data, "rvec_%u_tx_pkts", i);
--		ethtool_sprintf(&data, "rvec_%u_tx_busy", i);
--	}
--
--	ethtool_puts(&data, "hw_rx_csum_ok");
--	ethtool_puts(&data, "hw_rx_csum_inner_ok");
--	ethtool_puts(&data, "hw_rx_csum_complete");
--	ethtool_puts(&data, "hw_rx_csum_err");
--	ethtool_puts(&data, "rx_replace_buf_alloc_fail");
--	ethtool_puts(&data, "rx_tls_decrypted_packets");
--	ethtool_puts(&data, "hw_tx_csum");
--	ethtool_puts(&data, "hw_tx_inner_csum");
--	ethtool_puts(&data, "tx_gather");
--	ethtool_puts(&data, "tx_lso");
--	ethtool_puts(&data, "tx_tls_encrypted_packets");
--	ethtool_puts(&data, "tx_tls_ooo");
--	ethtool_puts(&data, "tx_tls_drop_no_sync_data");
--
--	ethtool_puts(&data, "hw_tls_no_space");
--	ethtool_puts(&data, "rx_tls_resync_req_ok");
--	ethtool_puts(&data, "rx_tls_resync_req_ign");
--	ethtool_puts(&data, "rx_tls_resync_sent");
--
--	return data;
-+		ethtool_sprintf(data, "rvec_%u_rx_pkts", i);
-+		ethtool_sprintf(data, "rvec_%u_tx_pkts", i);
-+		ethtool_sprintf(data, "rvec_%u_tx_busy", i);
-+	}
-+
-+	ethtool_puts(data, "hw_rx_csum_ok");
-+	ethtool_puts(data, "hw_rx_csum_inner_ok");
-+	ethtool_puts(data, "hw_rx_csum_complete");
-+	ethtool_puts(data, "hw_rx_csum_err");
-+	ethtool_puts(data, "rx_replace_buf_alloc_fail");
-+	ethtool_puts(data, "rx_tls_decrypted_packets");
-+	ethtool_puts(data, "hw_tx_csum");
-+	ethtool_puts(data, "hw_tx_inner_csum");
-+	ethtool_puts(data, "tx_gather");
-+	ethtool_puts(data, "tx_lso");
-+	ethtool_puts(data, "tx_tls_encrypted_packets");
-+	ethtool_puts(data, "tx_tls_ooo");
-+	ethtool_puts(data, "tx_tls_drop_no_sync_data");
-+
-+	ethtool_puts(data, "hw_tls_no_space");
-+	ethtool_puts(data, "rx_tls_resync_req_ok");
-+	ethtool_puts(data, "rx_tls_resync_req_ign");
-+	ethtool_puts(data, "rx_tls_resync_sent");
- }
- 
- static u64 *nfp_vnic_get_sw_stats(struct net_device *netdev, u64 *data)
-@@ -937,8 +935,8 @@ static unsigned int nfp_vnic_get_hw_stats_count(unsigned int num_vecs)
- 	return NN_ET_GLOBAL_STATS_LEN + num_vecs * 4;
- }
- 
--static u8 *
--nfp_vnic_get_hw_stats_strings(u8 *data, unsigned int num_vecs, bool repr)
-+static void nfp_vnic_get_hw_stats_strings(u8 **data, unsigned int num_vecs,
-+					  bool repr)
- {
- 	int swap_off, i;
- 
-@@ -950,22 +948,20 @@ nfp_vnic_get_hw_stats_strings(u8 *data, unsigned int num_vecs, bool repr)
- 	swap_off = repr * NN_ET_SWITCH_STATS_LEN;
- 
- 	for (i = 0; i < NN_ET_SWITCH_STATS_LEN; i++)
--		ethtool_puts(&data, nfp_net_et_stats[i + swap_off].name);
-+		ethtool_puts(data, nfp_net_et_stats[i + swap_off].name);
- 
- 	for (i = NN_ET_SWITCH_STATS_LEN; i < NN_ET_SWITCH_STATS_LEN * 2; i++)
--		ethtool_puts(&data, nfp_net_et_stats[i - swap_off].name);
-+		ethtool_puts(data, nfp_net_et_stats[i - swap_off].name);
- 
- 	for (i = NN_ET_SWITCH_STATS_LEN * 2; i < NN_ET_GLOBAL_STATS_LEN; i++)
--		ethtool_puts(&data, nfp_net_et_stats[i].name);
-+		ethtool_puts(data, nfp_net_et_stats[i].name);
- 
- 	for (i = 0; i < num_vecs; i++) {
--		ethtool_sprintf(&data, "rxq_%u_pkts", i);
--		ethtool_sprintf(&data, "rxq_%u_bytes", i);
--		ethtool_sprintf(&data, "txq_%u_pkts", i);
--		ethtool_sprintf(&data, "txq_%u_bytes", i);
-+		ethtool_sprintf(data, "rxq_%u_pkts", i);
-+		ethtool_sprintf(data, "rxq_%u_bytes", i);
-+		ethtool_sprintf(data, "txq_%u_pkts", i);
-+		ethtool_sprintf(data, "txq_%u_bytes", i);
- 	}
--
--	return data;
- }
- 
- static u64 *
-@@ -991,7 +987,7 @@ static unsigned int nfp_vnic_get_tlv_stats_count(struct nfp_net *nn)
- 	return nn->tlv_caps.vnic_stats_cnt + nn->max_r_vecs * 4;
- }
- 
--static u8 *nfp_vnic_get_tlv_stats_strings(struct nfp_net *nn, u8 *data)
-+static void nfp_vnic_get_tlv_stats_strings(struct nfp_net *nn, u8 **data)
- {
- 	unsigned int i, id;
- 	u8 __iomem *mem;
-@@ -1006,22 +1002,18 @@ static u8 *nfp_vnic_get_tlv_stats_strings(struct nfp_net *nn, u8 *data)
- 		id_word >>= 16;
- 
- 		if (id < ARRAY_SIZE(nfp_tlv_stat_names) &&
--		    nfp_tlv_stat_names[id][0]) {
--			memcpy(data, nfp_tlv_stat_names[id], ETH_GSTRING_LEN);
--			data += ETH_GSTRING_LEN;
--		} else {
--			ethtool_sprintf(&data, "dev_unknown_stat%u", id);
--		}
-+		    nfp_tlv_stat_names[id][0])
-+			ethtool_puts(data, nfp_tlv_stat_names[id]);
-+		else
-+			ethtool_sprintf(data, "dev_unknown_stat%u", id);
- 	}
- 
- 	for (i = 0; i < nn->max_r_vecs; i++) {
--		ethtool_sprintf(&data, "rxq_%u_pkts", i);
--		ethtool_sprintf(&data, "rxq_%u_bytes", i);
--		ethtool_sprintf(&data, "txq_%u_pkts", i);
--		ethtool_sprintf(&data, "txq_%u_bytes", i);
-+		ethtool_sprintf(data, "rxq_%u_pkts", i);
-+		ethtool_sprintf(data, "rxq_%u_bytes", i);
-+		ethtool_sprintf(data, "txq_%u_pkts", i);
-+		ethtool_sprintf(data, "txq_%u_bytes", i);
- 	}
--
--	return data;
- }
- 
- static u64 *nfp_vnic_get_tlv_stats(struct nfp_net *nn, u64 *data)
-@@ -1056,19 +1048,17 @@ static unsigned int nfp_mac_get_stats_count(struct net_device *netdev)
- 	return ARRAY_SIZE(nfp_mac_et_stats);
- }
- 
--static u8 *nfp_mac_get_stats_strings(struct net_device *netdev, u8 *data)
-+static void nfp_mac_get_stats_strings(struct net_device *netdev, u8 **data)
- {
- 	struct nfp_port *port;
- 	unsigned int i;
- 
- 	port = nfp_port_from_netdev(netdev);
- 	if (!__nfp_port_get_eth_port(port) || !port->eth_stats)
--		return data;
-+		return;
- 
- 	for (i = 0; i < ARRAY_SIZE(nfp_mac_et_stats); i++)
--		ethtool_sprintf(&data, "mac.%s", nfp_mac_et_stats[i].name);
--
--	return data;
-+		ethtool_sprintf(data, "mac.%s", nfp_mac_et_stats[i].name);
- }
- 
- static u64 *nfp_mac_get_stats(struct net_device *netdev, u64 *data)
-@@ -1093,15 +1083,14 @@ static void nfp_net_get_strings(struct net_device *netdev,
- 
- 	switch (stringset) {
- 	case ETH_SS_STATS:
--		data = nfp_vnic_get_sw_stats_strings(netdev, data);
-+		nfp_vnic_get_sw_stats_strings(netdev, &data);
- 		if (!nn->tlv_caps.vnic_stats_off)
--			data = nfp_vnic_get_hw_stats_strings(data,
--							     nn->max_r_vecs,
--							     false);
-+			nfp_vnic_get_hw_stats_strings(&data, nn->max_r_vecs,
-+						      false);
- 		else
--			data = nfp_vnic_get_tlv_stats_strings(nn, data);
--		data = nfp_mac_get_stats_strings(netdev, data);
--		data = nfp_app_port_get_stats_strings(nn->port, data);
-+			nfp_vnic_get_tlv_stats_strings(nn, &data);
-+		nfp_mac_get_stats_strings(netdev, &data);
-+		nfp_app_port_get_stats_strings(nn->port, &data);
- 		break;
- 	case ETH_SS_TEST:
- 		nfp_get_self_test_strings(netdev, data);
-@@ -1155,10 +1144,10 @@ static void nfp_port_get_strings(struct net_device *netdev,
- 	switch (stringset) {
- 	case ETH_SS_STATS:
- 		if (nfp_port_is_vnic(port))
--			data = nfp_vnic_get_hw_stats_strings(data, 0, true);
-+			nfp_vnic_get_hw_stats_strings(&data, 0, true);
- 		else
--			data = nfp_mac_get_stats_strings(netdev, data);
--		data = nfp_app_port_get_stats_strings(port, data);
-+			nfp_mac_get_stats_strings(netdev, &data);
-+		nfp_app_port_get_stats_strings(port, &data);
- 		break;
- 	case ETH_SS_TEST:
- 		nfp_get_self_test_strings(netdev, data);
--- 
-2.47.0
-
+Konrad
 
