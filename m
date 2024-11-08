@@ -1,183 +1,107 @@
-Return-Path: <linux-kernel+bounces-401674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8299C1DC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:18:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49DC9C1DC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E8DF1F22ACA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:18:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 278DD1C22DBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877C11E6DE1;
-	Fri,  8 Nov 2024 13:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89361EABDD;
+	Fri,  8 Nov 2024 13:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PFJM+yFb"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PdWFV46V"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B711E9062
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A502C8CE;
+	Fri,  8 Nov 2024 13:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731071891; cv=none; b=irOQXm5N/9Nr9Dpk9pjtklcATM17pQOaMcPVuqChtIYTiZR9WnNS0uKhnEKXUZPM+vP2Ciby71YEm0AdpsbCO77C8P3qhZ0baYm8+nLWURKPNiJT0wU4hy6k72nmaHSJliEFWmoA/2lkgnKyz/HoVzQCOpBUlJMaZUkl4UOXMNs=
+	t=1731072055; cv=none; b=uZ8SFOJfm7OEpeaCO+pyqxokQ3BpMuNiT2H3xb3yl/d7DIPpLDEsmbUij3DtNSPzuOV80WjrNdvJr8V8NWeG9IqJ1ENd9gJ/P7BShf26wrHadXkdV4ewpQl5mNzqTA23/jTppAMExv/Fi8/qkFyNDM7iaK8DNQUclOsOixBG9xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731071891; c=relaxed/simple;
-	bh=LGuzZxQKUKcqZG4ZefmEC/L5wigl1aMz9xbDtWw1iKE=;
+	s=arc-20240116; t=1731072055; c=relaxed/simple;
+	bh=+Vu0NdkjYZzrJiDBh+RurPJ7p7WrDGT5U9nRXTfliC4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lUpf5X2nG0tkmcuhVGFS7f/JDvWdwjhQNNV7CCyZPOyKkcxJxUmViWSAPVpCfVtIqGPP1zBzc0IDnjCav7FeOJNHo/kWJgy6PQJSqCrY1tnpWZfwvfe8u7vrAgdYWTMOOnLwzDF/JPf+cXELl1eKNN50DbKI6h4v3xIQ3Vwaae8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PFJM+yFb; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DA8033F2B5
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:18:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1731071880;
-	bh=kzua+I1iA4PK0mSF9uxhSSNEWd9AJXyTU/nZD4/bXMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=PFJM+yFbET/eT4R5hrgCKJSiicpx9nkEJ2JHpQpQmAzwwoeJoY/c54YBeIyj16Ipb
-	 5Hv47UZtwJGtZ0/EmxBr6xnvPWm51upMAhodGQHl6r1oKtfS1cN9uuwL4Ad+h9+bhO
-	 wItuYaMKX5Qa9nxMokPkJ4dGy0bQh9mj7BZzA0WUNDficK/jP4HHVFSJb0uKMw7wug
-	 qrx7aORGuiBBLsv9m1i/dc7K8Sjv8fjzRELBLgn8IFHAEme1qW0ME+2HY4VSXNmMDq
-	 WGBjAqEHWkycl1NYN+Ds6cmzKE5yEpXdeWVRAFArnJ3USFzI5RwQuKq4NjZckbiZbH
-	 vPv01uzQS/90g==
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5eb7db06bf5so1653315eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 05:18:00 -0800 (PST)
+	 To:Cc:Content-Type; b=opjph07vrHlyvLDLd66ikdCqrQ1bLI48x7HKkGXBZkPV3Y0lQfbGL+MhKZFdVUHC/kmWROzBHmehlQT1l9QkCoQZzvAvdAvLrj5hzFcSrJToTriInRXjOZ4XbUtauZkHUshFJKSKkCHkzL62HNctPdCHepePED2qIk4d92OpxPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PdWFV46V; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e4b7409fso2327902e87.0;
+        Fri, 08 Nov 2024 05:20:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731072052; x=1731676852; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Vu0NdkjYZzrJiDBh+RurPJ7p7WrDGT5U9nRXTfliC4=;
+        b=PdWFV46VzQ8D6tvyxVWC1WwIsjEHB4xi8O7u7bP4gh1uSJ7vd42qxNpCzuAeowU3Up
+         /ydThU4phEueyUSy9aQcQ28pdQQhUOdQJTuohOanPfpa/Iy+4pHtK3XY3aKCNRu8W4q4
+         cQfYK4rF1Ua8NAaA/tR8kCuiAesQ37GQ3m4bSCDoidJ+MGITjcVQbB2B4yVu2HcBD/Vv
+         iMaag356m1fNlHBlt/V1+dGxgDNEHHxMDpmxDt9QNAgsu6i/AuFjRmo+znNKsp1itIsF
+         a2t5kVq+j2BQCiQZQfZAByVhGwHKyD9Pm9CjuZ9k5XrZ0UAZjk6BcN4x31xwH4EhKDty
+         h1gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731071879; x=1731676679;
+        d=1e100.net; s=20230601; t=1731072052; x=1731676852;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kzua+I1iA4PK0mSF9uxhSSNEWd9AJXyTU/nZD4/bXMo=;
-        b=ZRb1IJXImm6unxgfhpeKeFOrE/Wc65SAPyyhMv1qA248E4uGAuqGpFLxXOSBmjmx0k
-         5ZtneFA6zL5T0+yqk9MxJxAF78OJMNZS7Wz7rhx3UNz61w/tsPjdv1Y8zzX40iRwgR0V
-         09u/0SVYroWWB0zmpCWAdrgPm9520FtPEJxyctJQSPDb/95q2XBJONjSEZ+vC/wTxT+2
-         MfSosU/0aLa3MBfPDyojHpCGenqLmo0fqJmrEYBALPe2/yaUY4clRv7aWvoQK4oIt7Pe
-         gC8Sd2NNNDtNoTTTGws4XWv+3+eqF1QXYE5sHNDV+YEYAiOOTrmgkGsuAtUrieFLj302
-         X0zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfRfyTyY+d0det3ps/E4leoSCz7Gwgtl+FM6GASOyxadTIluHhJaXPylSKJXff9w5tfzFiJgfI8q0r2tY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeGdKGB/d5L8Na33jG7biigD0OZDPRiZx89C85jxrXe/XAJiAj
-	Vq+lgqloiAefSdOIer7L4mkipcrk++QwBOLvmhALXOmyIaktnnqrBVVEEAxcYWtMfiZC+T3+sa5
-	NfGdwoP0mMa6g9EDHNlEIa5nZ2saT4xoVarV4ouEMwEM2syTiflSwwUFwIOLbz4pDmhf9VXROQv
-	PgIEGRPgvZ3v7pZY1oDFeJIVqhdjk3CyIe/LSgoTpOPTFUN8MhWpf5
-X-Received: by 2002:a05:6359:428f:b0:1b8:3283:ec6e with SMTP id e5c5f4694b2df-1c641f67de2mr192355155d.24.1731071879464;
-        Fri, 08 Nov 2024 05:17:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHJzSyroiv02HIUsmUBWhMbxG/AIS7tRK5DxzKIHYsZ/BndyAUa+D18FoRdn2XmKVAly2vqHOiQDvsYvAhE38w=
-X-Received: by 2002:a05:6359:428f:b0:1b8:3283:ec6e with SMTP id
- e5c5f4694b2df-1c641f67de2mr192352955d.24.1731071879196; Fri, 08 Nov 2024
- 05:17:59 -0800 (PST)
+        bh=+Vu0NdkjYZzrJiDBh+RurPJ7p7WrDGT5U9nRXTfliC4=;
+        b=nLttx5FtmktBZfNZtPVtOesbp47IsQWb+dpAm7MhXDw+w4hIaUNhoqKTw+SxmuJ3aa
+         KVT8IBlaQVrUDPdQuoNkkpK80DqqGtQ4r7VfgcxGBPxXJAC81emKIOJkrztOMzAQeDml
+         DKPf9OqIeBYDzvJ1nyAyJ0ygwkjvn2ZXDmkF6fJFcIqsH4hXSInobmsQDAhzUOGGI2MI
+         +58OgcV6dCGT50yOjsPRTBCAgGmhn6BUo8T1dqqNahFmx2B2cWxsGMQWG4nMJxki0LBE
+         Ucl7LSxUXbw/8LDK/w5ij1+sFMx+kNOlttmavDann2Wg9m0VjxoC4/b/1WTUQt6KQf+K
+         tElA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2ewhxQqYV4N/5BuE/i0xY85WUmAY0xfVz9rwlkW2zD+Na+8bcDObSHW6ZaWVYytF8JQbybXNkWv8LPNIzTso=@vger.kernel.org, AJvYcCUln3ZAcrDeJ2hUooFD+HX6QwcwO/FT579bl1iA6zX8fLhiU43MV6V9LiCujPmnXG5/nTuaCQFObsHRRBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC3FxMpK6/c3XdnJjZj+IULXuA+4X9s6RmEUNzMZc//bhESsvc
+	Z1rqvEIIqZVBhnO3Yl1WpUHRrDm5Vbl08xb26YS6toLf1FhQElXUbxVanln4z2ssP9Vc9n1LHFE
+	K0BVoOaCq8aIKHYCMkfuP9W2oZlA=
+X-Google-Smtp-Source: AGHT+IG3QbkFZolknU0JmlKG7huI3T6ZhDa/csqvlotobdora/gpzCu6Nhmyu4C6vyGmRPh5ZIXMBaCY50E6Watwrjo=
+X-Received: by 2002:a05:6512:158b:b0:539:f84d:bee1 with SMTP id
+ 2adb3069b0e04-53d85f13a7dmr1061911e87.17.1731072051531; Fri, 08 Nov 2024
+ 05:20:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017102138.92504-1-aleksandr.mikhalitsyn@canonical.com> <20241028132306.GP14555@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241028132306.GP14555@noisy.programming.kicks-ass.net>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Fri, 8 Nov 2024 14:17:48 +0100
-Message-ID: <CAEivzxdMG-Hfq9muv7LrCJmp-qD-kqt06CqyMZ0ENFRkKmu5XQ@mail.gmail.com>
-Subject: Re: [PATCH] sched/cpuacct: show only present CPUs to userspace
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, James Morse <james.morse@arm.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Gavin Shan <gshan@redhat.com>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, 
-	Simon Deziel <simon.deziel@canonical.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
+References: <20241104-borrow-mut-v2-0-de650678648d@gmail.com>
+ <20241104-borrow-mut-v2-2-de650678648d@gmail.com> <CAH5fLghWusxAnU7avBueJmsdbvpoabb3=ckA7JvaZX6iha960A@mail.gmail.com>
+ <CAJ-ks9=KuD5gLGh2q1q_=L0fR18HXQo7esq_XK5aEUoUQHSFQA@mail.gmail.com> <CANiq72nYQoXGBUG6yFnvNVgrJ8ZQBUsZ3ybYrZ=NHfPQpwEDYQ@mail.gmail.com>
+In-Reply-To: <CANiq72nYQoXGBUG6yFnvNVgrJ8ZQBUsZ3ybYrZ=NHfPQpwEDYQ@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 8 Nov 2024 08:20:15 -0500
+Message-ID: <CAJ-ks9=mazJyTVLHfvgkw5=KxhXZHFs=mV8qq3du5gQHXQWFZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] rust: types: avoid `as` casts
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 28, 2024 at 2:23=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
+On Fri, Nov 8, 2024 at 8:15=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> On Thu, Oct 17, 2024 at 12:21:38PM +0200, Alexander Mikhalitsyn wrote:
-> > After commit b0c69e1214bc ("drivers: base: Use present CPUs in GENERIC_=
-CPU_DEVICES")
-> > changed which CPUs are shown in /sys/devices/system/cpu/ (only "present=
-" ones)
-> > it also makes sense to change cpuacct cgroupv1 code not to report CPUs
-> > which are not present in the system as it confuses userspace.
-> > Let's make it consistent.
+> On Fri, Nov 8, 2024 at 1:22=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
 > >
-> > A configuration when #(present CPUs) < #(possible CPUs) is easy to get =
-with:
-> > qemu-system-x86_64
-> >       -smp 3,maxcpus=3D12 \
-> >       ...
-> >
-> > Cc: James Morse <james.morse@arm.com>
-> > Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Cc: Gavin Shan <gshan@redhat.com>
-> > Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Reported-by: Simon Deziel <simon.deziel@canonical.com>
-> > Closes: https://github.com/canonical/lxd/issues/13324
-> > Co-developed-by: Simon Deziel <simon.deziel@canonical.com>
-> > Signed-off-by: Simon Deziel <simon.deziel@canonical.com>
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
-om>
-> > ---
-> >  kernel/sched/cpuacct.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/kernel/sched/cpuacct.c b/kernel/sched/cpuacct.c
-> > index 0de9dda09949..0f07fbfdb20e 100644
-> > --- a/kernel/sched/cpuacct.c
-> > +++ b/kernel/sched/cpuacct.c
-> > @@ -213,7 +213,7 @@ static int __cpuacct_percpu_seq_show(struct seq_fil=
-e *m,
-> >       u64 percpu;
-> >       int i;
-> >
-> > -     for_each_possible_cpu(i) {
-> > +     for_each_present_cpu(i) {
-> >               percpu =3D cpuacct_cpuusage_read(ca, i, index);
-> >               seq_printf(m, "%llu ", (unsigned long long) percpu);
-> >       }
-> > @@ -247,7 +247,7 @@ static int cpuacct_all_seq_show(struct seq_file *m,=
- void *V)
-> >               seq_printf(m, " %s", cpuacct_stat_desc[index]);
-> >       seq_puts(m, "\n");
-> >
-> > -     for_each_possible_cpu(cpu) {
-> > +     for_each_present_cpu(cpu) {
-> >               seq_printf(m, "%d", cpu);
-> >               for (index =3D 0; index < CPUACCT_STAT_NSTATS; index++)
-> >                       seq_printf(m, " %llu",
+> > guess the compiler derefs *mut T to *const T before the cast() to
 >
+> I guess you mean "coerces"? i.e. there shouldn't be a deref, no?
 
-Dear Peter,
+I was using "deref" in "deref coercion" sense:
 
->
-> Doesn't this create problems for machines that support actual physical
-> hotplug?
->
-> Then all of a sudden, when a CPU with non-zero stats goes from present
-> to !present, the stats also go away, and any userspace looking at the
-> sum of stats over CPUs sees an unexplained dis-continuity.
+https://doc.rust-lang.org/std/ops/trait.Deref.html#deref-coercion
 
-Yep, that's what I thought about too. At the same time, if userspace
-sum of stat over CPUs,
-we already have /sys/fs/cgroup/cpuacct/cpuacct.usage (which uses
-for_each_possible_cpu() and I did not
-change that on purpose in this patch).
-
-I agree that it's a bit tricky and not obvious which is correct. But
-you might agree that it's a bit weird that
-cpuacct.usage_all file shows more CPUs than you can see in sysfs
-/sys/devices/system/cpu/.
-
-I just wanted to point that problem out so we can discuss and decide.
-But of course we should follow a Do-No-Harm principle here.
-
-Kind regards,
-Alex
+But it seems that what's really going on is indeed automatic coercion
+before the cast() call.
 
