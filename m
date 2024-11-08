@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-402037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923629C2281
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:55:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA879C2288
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:57:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5704C2862C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:55:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19AF4B22B0C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5CA199FAD;
-	Fri,  8 Nov 2024 16:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E380199EB2;
+	Fri,  8 Nov 2024 16:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4BTTqei"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSDYkbbK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960D1991BD;
-	Fri,  8 Nov 2024 16:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6635D1922EE;
+	Fri,  8 Nov 2024 16:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731084935; cv=none; b=speIbh9LSFKEpij16jOmStJI3OrI2kfiFluGE0X7M9SOuHQpLlFlTRC/BNYXjGVZyQrJjgRF/ee2RMwGE/3lYqnhMi4u6lGviKPhXVD638gvky6WIeIg1EjEJahuOw7AW5qlDWRjiIdYm2UkYs3ru9T5KcrZWFxMWpacBH/cOO4=
+	t=1731085016; cv=none; b=imLxfQ1+HOYxUtu9IfraIcYKbVVG74gvBLlWj1HpZcQ4zenTaYWBYzM+EZrNa7x28gmzPVETqOtGSID9jWxPB/9NetoiyVvH+Mi8B4X1Ro+GdqNMh9HBqa6GiV7pz6o6h2PxGRg+02rb/bw7VCCj2ksbKPqCU5EmqutQBfZD97Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731084935; c=relaxed/simple;
-	bh=kICkJghl4CqQ5MV25sHO+sQ4MhXX6W6lZJNTy62c1I0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=knYF4Gcx21K2BGPu8VyCXqnzK0WgGMHJIS2Hmj4gp1ZIoNOlxmmhil4EKdZOSORAOgBCT839fyspsUoXT/GdocbzOrjwjvhLP2m5h5nWAguH2a74ueSCOov8F4geUZiHxf9fZw3xAq8RGWizWj+eyZfLeouNYJ0LeAD4CMHFAhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4BTTqei; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A787FC4CECD;
-	Fri,  8 Nov 2024 16:55:33 +0000 (UTC)
+	s=arc-20240116; t=1731085016; c=relaxed/simple;
+	bh=hjfkk2bPDC/830gBiHBjzD5EFmbHgFIcXBwd1zE5kGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=PSuFQGsReuJU487kkeEwXUn5d7AVdNROzTo0CVJmeakp1vbo5euRmiXG7hpq4jpkBGImnHaCv8GXf6ldocOvI21bu/lzXpyx2wBh6BdXVwiEskQDH01Lkkk/5kWNH2DUiCZjPZxbff4kn8MXbo2vlpCB7Lq1qrJISrE5uZbGZ0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSDYkbbK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03DBC4CECD;
+	Fri,  8 Nov 2024 16:56:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731084933;
-	bh=kICkJghl4CqQ5MV25sHO+sQ4MhXX6W6lZJNTy62c1I0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d4BTTqeiIYW6gVnnPCHN6OSIdoa7+aiamxw/x0XPnSje0elpy6fxPKnDrKmIOEgBv
-	 /NLEtZONtpvjdPn2nf+iUKAqenZ1uoyq2bX6kdawp3xzhIpgrvE7YNhxDR09iEJICL
-	 jvdt2zYGgBFyCE3bdGNlQiW2CFKPsmhAg4nujn+9lcX5iw5PVwsnvWlqsHaeuOyVqn
-	 M09qy6R7blBnQ99IlwnoS98dre6aCHiqiSmjHSd2f29cymxPkOfM1MAQHe/EXvaeRg
-	 qixMDqJrGAU92L3MVfs5Lpr75b/eoNHlKPE2b1GfuCAbq7Vthtkc7Lvxo84JpFrHhy
-	 58MmyoXipJL/g==
-Date: Fri, 8 Nov 2024 10:55:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, devicetree@vger.kernel.org,
-	kunit-dev@googlegroups.com
-Subject: Re: [PATCH] of: Allow overlay kunit tests to run CONFIG_OF_OVERLAY=n
-Message-ID: <20241108165532.GA2411452-robh@kernel.org>
-References: <20241016212016.887552-1-sboyd@kernel.org>
- <20241017203810.GA814469-robh@kernel.org>
- <38153cbf2616a4a6706412952778eec1.sboyd@kernel.org>
- <CAMuHMdWp84u66Y-ELtbbRmySYwQch_=2qQiXzWJzrSkGeLZYBA@mail.gmail.com>
+	s=k20201202; t=1731085015;
+	bh=hjfkk2bPDC/830gBiHBjzD5EFmbHgFIcXBwd1zE5kGE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=OSDYkbbKRO+AYZUWz7Sdh/5jZPwcxOt6K+qQ3Bi8Tdh8RvaGqMn+BBlP8VKDZbEKj
+	 EZCdJJWpK4DpLf1qJFLIayaGJB3IVYHCc6E1uS/Qk0fNt67ztPzeNQhorC/DU6eSXq
+	 woOQYbuy2hStYkSYEoNT8CAvNYWBnDAGfzOgSRWvUtNkUo+ZHI4SOOCY7hRw26qJEb
+	 2eljXEp+AX/ADkBhMPlBSmj6Gywab+LA1oJMnbnvx/vBwIyruKOJ6iZLPZxbA+Kd2x
+	 TVFKsr3mXTty3CPtV3FBdLmJcgfGatPWDOgYQXJvSnHY8UqMMOLyxkbxH2berrJLve
+	 bgNfVoMNKS3ew==
+Date: Fri, 8 Nov 2024 10:56:54 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <20241108165654.GA1665761@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWp84u66Y-ELtbbRmySYwQch_=2qQiXzWJzrSkGeLZYBA@mail.gmail.com>
+In-Reply-To: <ae3363eb212b356d526e9cfa7775c6dfea33e372.1731060031.git.andrea.porta@suse.com>
 
-On Fri, Nov 08, 2024 at 09:56:15AM +0100, Geert Uytterhoeven wrote:
-> Hi Stephen,
-> 
-> On Sat, Oct 19, 2024 at 12:21 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > Quoting Rob Herring (2024-10-17 13:38:10)
-> > > On Wed, Oct 16, 2024 at 02:20:15PM -0700, Stephen Boyd wrote:
-> > > > Some configurations want to enable CONFIG_KUNIT without enabling
-> > > > CONFIG_OF_OVERLAY. The kunit overlay code already skips if
-> > > > CONFIG_OF_OVERLAY isn't enabled, so this select here isn't really doing
-> > > > anything besides making it easier to run the tests without them
-> > > > skipping. Remove the select and move the config setting to the
-> > > > drivers/of/.kunitconfig file so that the overlay tests can be run with
-> > > > or without CONFIG_OF_OVERLAY set to test either behavior.
-> 
-> Thanks for your patch, which is now commit 027af8c26fdc0642 ("of: Allow
-> overlay kunit tests to run CONFIG_OF_OVERLAY=n") in dt-rh/for-next.
-> 
-> > > > Fixes: 5c9dd72d8385 ("of: Add a KUnit test for overlays and test managed APIs")
-> > >
-> > > Doesn't really seem like a fix.
-> >
-> > Ok. Feel free to drop the tag.
-> >
-> > > Does this need to go into 6.12?
-> >
-> > It's only important for 6.12 if kernel configurators want to build the
-> > kernel with OF_OVERLAY_KUNIT_TEST enabled and not be forced to enable
-> > CONFIG_OF_OVERLAY. I don't mind if it waits a while.
-> 
-> I'd say it's a fix, so please keep at last the Fixes tag. Merely
-> enabling kunit tests (which can be modular) should not increase the
-> possible attack vector on a product by enabling extra unneeded code.
+On Fri, Nov 08, 2024 at 11:39:21AM +0100, Andrea della Porta wrote:
+> A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
+> translations. In this specific case, the current behaviour is to zero out
+> the entire specifier so that the translation could be carried on as an
+> offset from zero.  This includes address specifier that has flags (e.g.
+> PCI ranges).
+> Once the flags portion has been zeroed, the translation chain is broken
+> since the mapping functions will check the upcoming address specifier
+> against mismatching flags, always failing the 1:1 mapping and its entire
+> purpose of always succeeding.
+> Set to zero only the address portion while passing the flags through.
 
-Not sure I buy that that is an actual problem. However, not worth 
-arguing over. I only really care because if there's a Fixes, then this 
-really should go to Linus for 6.12 rather than eventually get 
-auto-selected from 6.13 to go to stable. So I moved it to send to Linus, 
-but I found that CONFIG_OF_OVERLAY is still selected with this patch. 
-That's because the clock kunit tests also select CONFIG_OF_OVERLAY. 
-That's fixed in next, but it's not queued up for 6.12.
+Add blank lines between paragraphs.
 
-Rob
+> Fixes: dbbdee94734b ("of/address: Merge all of the bus translation code")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> Tested-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  drivers/of/address.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index 286f0c161e33..72b6accff21c 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -455,7 +455,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
+>  	}
+>  	if (ranges == NULL || rlen == 0) {
+>  		offset = of_read_number(addr, na);
+> -		memset(addr, 0, pna * 4);
+> +		/* copy the address while preserving the flags */
+
+Not knowing the surrounding code, it seems strange to say "copy the
+address" when the memset() fills with zero and does no copying.
+
+The commit log says "set address to zero, pass flags through," and I
+could believe *that* matches the memset().
+
+> +		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
+>  		pr_debug("empty ranges; 1:1 translation\n");
+>  		goto finish;
+>  	}
+> -- 
+> 2.35.3
+> 
 
