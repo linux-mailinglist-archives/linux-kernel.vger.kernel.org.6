@@ -1,61 +1,72 @@
-Return-Path: <linux-kernel+bounces-402400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4938C9C2723
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:43:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEFA9C2725
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B481C21290
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D861F23090
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E13B1E049E;
-	Fri,  8 Nov 2024 21:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD0A1DF977;
+	Fri,  8 Nov 2024 21:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="f0clrftO"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DXkGgN3b"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C9D29CF4;
-	Fri,  8 Nov 2024 21:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1071F29CF4;
+	Fri,  8 Nov 2024 21:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731102195; cv=none; b=tL59/H324cUK0Fg8OCy6rqEwGMykOqE0UFak3g/HtA9uYPJ52wSjVpkPzZUgjGKq1CxU8luVF8wCTwQGAOrkfDJdUkL8LogsSyuLcifAd2Dwrik/WymUsVTRhIsiUHvN7x6zkSJ82jLwlxzkShWlxAcOJLFJiROEUmvXZyC5Nj8=
+	t=1731102256; cv=none; b=RySMF7S6mgAblHw+RVtdWu2h/kPdxVZ/lXtPu2DvNTt4fHg/D71bomKjssIP6EYbZVq/x/NziWNnGXcP2kuZdQC5kKBLpfs87H4DLDIbItfKwC6HgIxELEOTV14krmqTb+OEkJzrpJhKjfdt9MnfGT8xvh2XLA2cSln//L395Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731102195; c=relaxed/simple;
-	bh=7ai3EhDD8kivSiHjwakaxR65JIFCmPtHFjyNVoxcZRY=;
+	s=arc-20240116; t=1731102256; c=relaxed/simple;
+	bh=VB+gY+PFxC4e1ZtPRzr2NzXsymkWcC8sVnNla/bXKII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQ1hOcxyUE5nGS14QmYooeIafVDP41c8zmAdZpyUXwDj3VILa1EYH351YGAqbgNnSbF+1LGLrbMF3mlF0RLVN8tiI3y3HQB0vXHkyf+xcweHZ0ACfVSEWVWVTed8d/w3WqN7/+eKhpcQZtXePt6q9VPRWEigjTTqLIbfN5yAfuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=f0clrftO; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=a3sPOVQXRa4B3JPzvGMyA57zRKiA5BOrPR46D7NL24U=; b=f0clrftORSp8KdyrJxGYM6ROVz
-	c1kNeDAlvnMt5V6JFgaOaHYe0zVOIfJv8Guw3MPRPH6lMcsE2vxhjhR5ued0GEhBrY5By1j2p0h0+
-	NkSSZGjlNmPMb2OaHK9CnjxVA3cQINikQ+C8Atk0PonLIJCPtfBD+6j7zGYJKHe0FcIc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t9Wky-00CeZe-23; Fri, 08 Nov 2024 22:43:04 +0100
-Date: Fri, 8 Nov 2024 22:43:04 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [net-next PATCH] net: dsa: add devm_dsa_register_switch()
-Message-ID: <9cf08624-cd84-41bf-beef-ca3b3573303e@lunn.ch>
-References: <20241108200217.2761-1-ansuelsmth@gmail.com>
- <af968377-d4c4-4561-8dc6-6f92ff1ebbf4@lunn.ch>
- <672e7a61.050a0220.1d1399.6d31@mx.google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gs0d/Jx/7MU84bPqXLdYI14FlrlK9AQR+y2J3YJNX9UXo/b/piJW2NCtyifj7qL0w0HlBqkd/8kuSm2I8ukjoa3qsglOtmerKZMj+qgaXHRSgMe5vivXLJSTZSe3QK8Pktm2gH6g0CbYznYtNdYUZI5DtY4qxw9S1M3XZN/swU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DXkGgN3b; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731102255; x=1762638255;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VB+gY+PFxC4e1ZtPRzr2NzXsymkWcC8sVnNla/bXKII=;
+  b=DXkGgN3b/B7ylrAzE/2Tr/liwQDH+E0V0IFb2cnG1qmDcRe8tWvGKLdI
+   TKUkw+V3C1dqX5wNayIg0SyH3DdI7tORpRZW2qBQK4/xhBbIx425Z5DqP
+   vq8EKzo9ezLSKNFp9GhUpPo/VQ7f+TBFpIfQNAk/rqLQQezSCsdz9e+CC
+   vBvUbmeE2/MDqioex3N6A3mUH9HlWV2dr6Skq3MTcBPM59RvGmMyeMD8I
+   fcUXmW8Mvx1wzWcUoHJYfYAvdX+LO4lxjmENMzjQIlNNe1VaoGLx1w6bQ
+   0unYtfRyIvs+4h9W3Su2tP5dv70sDk+n26FsN1jSab26pJCm/pZOeS4Yv
+   g==;
+X-CSE-ConnectionGUID: MBuAJYKoT1mFyIKoVyfVkA==
+X-CSE-MsgGUID: Nf7Fu2OVQtCe/AtP6k8NiQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="41623529"
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="41623529"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 13:44:13 -0800
+X-CSE-ConnectionGUID: X6qWQIdfRkWvXHg6LE3qyQ==
+X-CSE-MsgGUID: l4c12TMDTuuLKNMdHduHbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="90367888"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 13:44:13 -0800
+Date: Fri, 8 Nov 2024 13:44:12 -0800
+From: Tony Luck <tony.luck@intel.com>
+To: Orange Kao <orange@aiven.io>
+Cc: qiuxu.zhuo@intel.com, bp@alien8.de, james.morse@arm.com,
+	orange@kaosy.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mchehab@kernel.org, rric@kernel.org
+Subject: Re: [PATCH 0/3] EDAC/igen6: Add polling support and allow setting
+ edac_op_state
+Message-ID: <Zy6GLJwyZCuGwdni@agluck-desk3>
+References: <20241106114024.941659-1-orange@aiven.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,33 +75,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <672e7a61.050a0220.1d1399.6d31@mx.google.com>
+In-Reply-To: <20241106114024.941659-1-orange@aiven.io>
 
-On Fri, Nov 08, 2024 at 09:53:48PM +0100, Christian Marangi wrote:
-> On Fri, Nov 08, 2024 at 09:35:32PM +0100, Andrew Lunn wrote:
-> > > +int devm_dsa_register_switch(struct device *dev, struct dsa_switch *ds)
-> > > +{
-> > > +	int err;
-> > > +
-> > > +	err = dsa_register_switch(ds);
-> > > +	if (err)
-> > > +		return err;
-> > > +
-> > > +	return devm_add_action_or_reset(dev, devm_dsa_unregister_switch, ds);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(dsa_register_switch);
-> > 
-> > This looks to be the wrong function name.
-> >
+On Wed, Nov 06, 2024 at 11:35:44AM +0000, Orange Kao wrote:
+> Thank you Qiuxu and Boris.
 > 
-> Ah... Anyway aside from this, is the feature OK? Questioning why it
-> wasn't proposed early...
+> Here is the updated patch. I would like to propose that we keep the 
+> edac_op_state as a module parameter. Because it would allow users (regardless of
+> CPU SKU) to test different options on their machine without compiling their own
+> kernel. I hope this could lower the entry barrier and make it easier for them to
+> test IBECC.
+> 
+> Patch 1: Initialize edac_op_state according to the configuration data
+> Patch 2: Add polling support
 
-Some people blindly make use of devm_ without thinking about
-ordering. These helpers can introduce bugs. So they are not always
-liked.
+Applied patches 1 & 2 to RAS tree. Thanks
 
-It would be best if you added the helper at the same time as its user.
+> Patch 3: Allow setting edac_op_state
 
-	Andrew
+As discussed on mailing list, not taking this one as there
+is no real use case.
+
+-Tony
 
