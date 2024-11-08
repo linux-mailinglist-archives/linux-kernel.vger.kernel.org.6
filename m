@@ -1,114 +1,114 @@
-Return-Path: <linux-kernel+bounces-402379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E969C26E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:05:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E927F9C26E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1275E1C22A46
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D6D28306F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A471E22F3;
-	Fri,  8 Nov 2024 21:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E784F1DF977;
+	Fri,  8 Nov 2024 21:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRKL2K6h"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="SWeh4s3F"
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679FC233D92;
-	Fri,  8 Nov 2024 21:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED4C1AA1F9;
+	Fri,  8 Nov 2024 21:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731099945; cv=none; b=lI6NoG7u+iXiSn150z8DkV2JoDz5teuvvPmNgaiWpbLe2PE0+BxtB+b3QNPuFsVFNh9T92Tq8Uq8qJ4fMSduzNyWMFU7F5PP/bskP1i3nVf7XnqFKPG8KvC7GWJkFRBnOqOQa0oeQN7pnTa74d0TiCUTmxCG45KLvspnD5DX0/0=
+	t=1731099983; cv=none; b=Yi3zqHxyHQcXpnwiXObgrF3b22Vy8m6uErSnHbKB2DKGEUTbmzKf+heKbZEY2eX/jWgWJWucU8r0CVbBcV24R0Lx5LLURewi8ufJeUkCbTGc316jb46u18nhp6RydFTC92KtCNe40blQiOieP2rKOpboAfxhon+svAkri4EvnkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731099945; c=relaxed/simple;
-	bh=/KHRFjkuE/A9C0WJxDMVSW1WywPTRFQXWtQZ2q5dcwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IWYtAZM2S22/xc5CIuAO8fbRyGbrKjKjSja4anrw+aZh3YBs7EDBfHQ1O0+GnuSBUq/aZ81UJtWSazyfK7hlU8jepwzsCtsrT1Uf3oESuQzpPrvhvl395KmhiTr6htGIvDbSshQeeeKSjNtyAe9Wgq7c3vemSrMcAqn7bZPQiM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRKL2K6h; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ede26dc527so383447a12.3;
-        Fri, 08 Nov 2024 13:05:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731099943; x=1731704743; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DwfI1+gidb4OWd62usyzOyDsH2cgtSWFP9TdDL/qVTc=;
-        b=iRKL2K6hiul9V/SP4omiL34F/v+FM1tSeT5i9hN9u9rx1HfnbSfJ9YzOpRxAMVisCS
-         5wqdXIztWPxIF+4k7hTmD55SiguJ7a329NNKFmiNcY+yqnF0fLxq2XafdhWNjnFjHuDL
-         JBUXHeuTxVuyIpqUgFKva7si/Ngz2l6k7O5XYSIa5cp0fsW/Ayi0qGZ4GRKxMFIp49eg
-         n0huoI/P9gqMY1aDleW6JuRodVgMrev1BjYvhstLnFgryiaHUAlz6Gm6amd0u99Pu3Ez
-         vhvtlg5SZ2n+7tjrZ41jwvSD2MLUJQmQWc80KTANyE5tvBUegnoLomeJKcZp9nP2NQIN
-         HbIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731099943; x=1731704743;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DwfI1+gidb4OWd62usyzOyDsH2cgtSWFP9TdDL/qVTc=;
-        b=P3jjFZQM+v/TGYC4/hSCohQHKL8ngDP0JlUShLzXm0t9hrStQ4zfUD29hltJ4jIYbl
-         gBKUsPTFTLi/YzTtMTudem7uV2ccCADrRkBMf4ij0DILguY9YA3kXd0E0JiQ9SAUkOF9
-         raDZOlk1eEnM8zFVFkEmfobpPWBsVclQtwgCzAUJDCw5hGRMFLuWXznpe7hdj8NeGKyp
-         4VKKEOWiDdIXtuG55fu26dAbNhbACo2no24jkYV4OAOAWzo5TuD2HMLmT1hDzLVPz7xY
-         fLs6ZQCIbnHyMl6SzbPYWUF7yDs7R1Tq7lcApNfMRqMr0DKZzWaFo/eF1CpUV0tnASrp
-         7wYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUE4ZBKNUSZ4Iu9VJN1ojwh0VjiHGixLqAedOjaOc4gZXfhfSamjJrjY2yaGghCSb39qC8nkXSFfXpFQBRWGqE=@vger.kernel.org, AJvYcCUcpseySPrWG2UyOZXLgP8zZHxAtvkGmSC2b5cMLWpY+i0VbJ8s537BfekQNcOzHxBcHN3709aWdmT13g==@vger.kernel.org, AJvYcCVF1nohX2Zx7HRj0HZAnquOsh62CDlXf0kmsM6DC6MhJPFUeUVkaDuILTlcqyA2r32BHRwnuD9nd5rpaLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvmPuqmWeR0hbnmx1CVkBP2K+2UPM+LNlpnUjfIMwUvi6A9Q6z
-	ZmZN0vhVvZLU3ozgeEC3TdRKhIccLYIQY2aSsSYrqxEF3jukVB1AiXYxSWLT7yjLi5qWVmlxsk8
-	nbo3RjsFdu9JIdJ8bAlCQOhFUKJU=
-X-Google-Smtp-Source: AGHT+IHcK4oGgKoSMwwVhFYzHLBNuSvAjv06YVdNylUSXyd7Uk5t9tf8n3kxozjG5BXCxuVtL0/4/c3dmeHM7ZxYVzU=
-X-Received: by 2002:a17:90b:4b41:b0:2e7:8a36:a9ad with SMTP id
- 98e67ed59e1d1-2e9b1773084mr2542113a91.9.1731099942706; Fri, 08 Nov 2024
- 13:05:42 -0800 (PST)
+	s=arc-20240116; t=1731099983; c=relaxed/simple;
+	bh=MmNXDzNOgdLQPQuJ1FC3zOjrgDKnuURlbUXYI19ITxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pmO/0zr6ap0XoAXOz6mmuQZk546O/WQNdsDvEctJRNe0i52slSUnOi0KYD3vo4tfH2PGPMfxZC8A5jQWw3/tijZTzx1lHjlkH2PPu+lUEPYc/XON540P3P8RxuiA49ig9jdm1P46KYQwsa7Qp+yA0pJ/wP5l68PiHeRKcqmum+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=SWeh4s3F; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:2e15:0:640:bcf8:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id E8B0061652;
+	Sat,  9 Nov 2024 00:06:11 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 96rBAhWjCCg0-EbZkorcQ;
+	Sat, 09 Nov 2024 00:06:11 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1731099971; bh=klbADpkktAIauI9C2OIs9IU8Pb/Md3IDrF1LX9lzWmk=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=SWeh4s3FhuQvGQtqPbOsRTloRzXkD+ltjj5Gx0dC7d9FjoRBEwKDlKS7BhvLzZQZK
+	 Dh+hyWT3P+vk+IN1MiLrM8Se1VAzvrccyw09Abnm2UJXbYS5pBTJtH7wyVQYOaY0Fp
+	 W9S30zxGVozi1WaRdFRQ9w/67ZTI6p1YF9y2WArs=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <8288a08e-448b-43c2-82dc-59f87d0d9072@yandex.ru>
+Date: Sat, 9 Nov 2024 00:06:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108152149.28459a72@canb.auug.org.au> <20241108095933.72400ee1@gandalf.local.home>
- <CAH5fLgj6zSDH6Oe3oqfE7F+NQSgSLxh8x7X3ewrrDAdOHOh0YA@mail.gmail.com> <20241108153503.1db26d04@gandalf.local.home>
-In-Reply-To: <20241108153503.1db26d04@gandalf.local.home>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 8 Nov 2024 22:05:30 +0100
-Message-ID: <CANiq72mP15rjfR3cMZH-z9hkTDQfqgEaM4M+71B1KWLmw=3cPA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] procfs: avoid some usages of seq_file private data
+Content-Language: en-US
+To: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Eric Biederman <ebiederm@xmission.com>, Andy Lutomirski
+ <luto@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
+ John Johansen <john.johansen@canonical.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Adrian Ratiu <adrian.ratiu@collabora.com>,
+ Felix Moessbauer <felix.moessbauer@siemens.com>, Jens Axboe
+ <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
+ "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>
+References: <20241108101339.1560116-1-stsp2@yandex.ru>
+ <20241108101339.1560116-2-stsp2@yandex.ru>
+ <618F0D80-F2E1-49C1-AA25-B2C0CC46F519@kernel.org>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <618F0D80-F2E1-49C1-AA25-B2C0CC46F519@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 8, 2024 at 9:35=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org>=
- wrote:
->
-> I can reproduce it with the attached config.
+08.11.2024 18:32, Kees Cook пишет:
+> On November 8, 2024 2:13:38 AM PST, Stas Sergeev <stsp2@yandex.ru> wrote:
+>> seq_file private data carries the inode pointer here.
+>> Replace
+>> `struct inode *inode = m->private;`
+>> with:
+>> `struct inode *inode = file_inode(m->file);`
+>> to avoid the reliance on private data.
+> Conceptually this seems good, though I'd expect to see the removal of _setting_ m->private too in this patch.
 
-Something like this should work I think:
+Done and sent v3.
 
-diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-index f29280ec4820..37c15f05cb81 100644
---- a/samples/rust/Makefile
-+++ b/samples/rust/Makefile
-@@ -2,6 +2,8 @@
- ccflags-y +=3D -I$(src)                          # needed for trace events
+>> This is needed so that `proc_single_show()` can be used by
+>> custom fops that utilize seq_file private data for other things.
+>> This is used in the next patch.
+> Now that next patch is pretty wild. I think using proc is totally wrong for managing uid/gid. If that's going to happen at all,
 
- obj-$(CONFIG_SAMPLE_RUST_MINIMAL)              +=3D rust_minimal.o
--obj-$(CONFIG_SAMPLE_RUST_PRINT)                        +=3D
-rust_print.o rust_print_events.o
-+
-+obj-$(CONFIG_SAMPLE_RUST_PRINT) +=3D rust_print_combined.o
-+rust_print_combined-y :=3D rust_print.o rust_print_events.o
+And if not - it would be good if someone
+tells how to fix the actual problem then.
+I think the closest thing was credfd discussed
+here:
+https://lkml2.uits.iu.edu/hypermail/linux/kernel/1403.3/01528.html
+But /proc/self/status already carries creds,
+so what else is it if not credfd? :)
+I can't even think of what else the read()
+syscall should return on an actual hypothetical
+credfd - other than what it returns now when
+reading /proc/self/status.
 
- subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)         +=3D hostprogs
 
-Cheers,
-Miguel
+>   I think it should be tied to pidfd which will already do the correct process lifetime management, etc.
+Please let me know the exact scheme
+you have in mind so that I can try it out.
+I don't see any obvious mapping of my
+current proposal to pidfd, so I can't guess.
 
