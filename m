@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-401189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15CF9C170C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:34:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCE69C170B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E257C1C2229C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF6A28352A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEBB1DDC2D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806231D221A;
 	Fri,  8 Nov 2024 07:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PEpYro58"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2081.outbound.protection.outlook.com [40.107.223.81])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FH/3jy16"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EF51DD534;
-	Fri,  8 Nov 2024 07:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394AD1DC1A2
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 07:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731051255; cv=fail; b=U6Gka/XY2JiSGD3ekw3Vfcwu75wuB/xgfDL2yKZ0na5z3n7U0qX9TgLTvTNumthZv0a0/BBYyTeoCxscs9JDa1y6rqeAvVQOsv2QPzNWudSLD99syc/oHGf7imSOdAAqoyV0DKZAxaLuX+9vn1HmIQJ41ZPd5P6hRKKMwZgRZvE=
+	t=1731051254; cv=fail; b=A/vIDB7nUxHd2/yr5T1WE27JdsRnNXDYVvnmUDLy06pruovVwvG++YUzW8nYNn3kYzeF4h5AmXmRL6wYLGSuwsdxTPitUfWHLfmag7hGbmtyKR1bXc5U5ZgRQL1B8H3HKZLjP5JKfG4/hgSlaxS1omdhuEkWFUknjfTMOM1QBuo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731051255; c=relaxed/simple;
-	bh=CMpLd/ppwkOdLGaTKuDB6VBK+x/6q9wNyw2ObLUK32Y=;
+	s=arc-20240116; t=1731051254; c=relaxed/simple;
+	bh=UuDe+pJvJXFAe+PEQEZMR1GwjUY2pKA0/hehw4yZ8uI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hbaj+0BjQXLWNxk6+a/NwZEA2MrfLtVd/brqi4juompqPeADSp5RzzeNjvAPvrkDIY+yAWuYlbNtZovHmur69Ig+wiB1ZRUDD+9BCTkKJtIttRGrnDmfDrykiHFOlerANC71zT1JAKCiDbdUywr/YJ2K9PUU+oaMtGUwmG5jM6o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PEpYro58; arc=fail smtp.client-ip=40.107.223.81
+	 MIME-Version:Content-Type; b=bkcwTRiUnIWqHuumKlW6BWUPRZMUf//3ILfxsddSuq8iCoKlxbXWHYZWmnUx6M1WvB18vrxJsI29XNBMbNx2mSzduY6PCy0X1Xmq9a1MhIX0VQ/q5oB4Fx1x9iB371fJst0HSfWB57+E52Zl3GTJbpaYmv0w/QjRRcyGNukLZRQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FH/3jy16; arc=fail smtp.client-ip=40.107.93.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PGM1vIZKiYj2DCz3mQUVMhGofI6waQ9HbtVQ1tvrIDfODxb9rSVNjvMhzGUWXyfLIu4Qa1T2sNlhv7RX5B0DKp1oqkmk3j3dzT7LTWB2Im7k2iAZMcuROtaPBWYkIS6/QNnkmwYDXMJd4y+9VRerO595h8zGkLAoL4Wo9FVCymsBxEuggxcMXkgjhyaw/AetH3LR7lHHBQy9yXtHCqKHDWw78phhcj4mny2+P07XSxWZ8TV6K0Sx0AWe+vCHzCYuUnJq3muNxFqX9WN6xS1WY0NoiAefajQx3WoZUjXmLYvYS318Lb/wKp00/PUXTPivg0rLD5kGMjSd4YFVa2Dpng==
+ b=p92RYw6Pz9cmtGilcOSeg0PUrBCrnBavtWGsmatRDHWscUVN1UKvfG97fTHWzEG6oH+cV4Z8OF4i8+Pogx3sLsX85W0KlsDtrX3OwBWxVkT5w2hK0FVgWIFgZS1UdSbzisKfR/GAQeGRGjUl2TeyRyooDOiSKnJik12GtyTS12xee+RrTtDfsPiBOoUNZcZRUsYUqu0rnp3KJaiGod27WEOHoyMminJ7Y6yTTGypHSE9rr19pww/eDNErW8O2voYdHocrouM7rMIkC/097/LJQ7rrAmqgCCju/e9thdfT6bJG00ugiFuMoEMT7WGY34+FwIGgiyQNRJe2FdgbTRa7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sRXYIMj9DXO5K83mxgz8Uk7g7yYrTUHeXmkGzndIkcE=;
- b=v1ziww842Owd45hDIi6W7OA1DUwS4HE6WysP3jsoqcxn59UpsI5VQDAiSrpSDQ1TosaBTgZC5artcQR/im4X2BF2EhRbyWeXEjHAWddV5F57w7U9y8O9GvPe78lV4uONIkidKKjqCmc24+CG70uemlvv5h4yd7GtvE80n7cvakS9IOLm8vv8D/75OziS/ENgzqzc4zwp7g+vEPRuXAgmVMDu2BwUo3fZINnkI3fGGypEFl563OkaEYliqLe+qg2Ec6CD9/pbF8+bOiNItdr5zW8g/vxxHZ0HPYznlMUyRhcg2vYw1XcpTf8dkwBPf9PMMTuKO5fBwnv4FwizRgCqxA==
+ bh=1nWDynJuNFanjoN+/KI69qEqB2g6Mqrm/HnaGLHlblA=;
+ b=NmEh/j6hWau/JZU1UmmcojICf6UcwyMk5UnH/Mbcrt4jY+qE/sBleYWKQDUOWRacla/DUOzuKQVcBQ5bl0FK70AdFE/GuBGb3hespxi0wAMSTY5LMMgM6yhG42pufU1M6Cz9o5z9ksEd5LIOeAdF0PNiPC23xyqwBW4K79URBaXun3ABpP+Voxcd01N5+9f7A1crueWfZeQc1sS5TYHNcIlOSzgiPbPjdAoAm/0WNnid2atU1FYy8TyDunBPW36rsf4FDZRkO7Uj5nalbTGtERWcR5p1tHbg4GAkEW9tnTkmoIK4ytLq96AWbRj3U78SZk9aLc+i000QXE5XUoQGAA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=bootlin.com smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sRXYIMj9DXO5K83mxgz8Uk7g7yYrTUHeXmkGzndIkcE=;
- b=PEpYro58GuWF7KyU/5SdMjwCuNoVUHQJ7ncrGBnUueZl8bAxC1PrGS+xDpWgdTInetZm6lyAQZ4QeVwDpKA6evKPrkK/F0ZixLBkwkU/1OmKEG0UbQ06lUjtuO7vh3HLvW+z6no2MwF1fLAmKMoqKM193d61WHDxqJMl4gbgDME=
-Received: from MN2PR01CA0060.prod.exchangelabs.com (2603:10b6:208:23f::29) by
- SN7PR12MB7228.namprd12.prod.outlook.com (2603:10b6:806:2ab::6) with Microsoft
+ bh=1nWDynJuNFanjoN+/KI69qEqB2g6Mqrm/HnaGLHlblA=;
+ b=FH/3jy16MxU26WigNUuMUeU/0GKAJ9llozDiw9c17OxYtDOTX3n25VmqABEbRTOaSb99FQlBHQQDmzFeJfw33M6L18uO8X4XYGdl4SlsGMoBoyDQ9VwmQbkDjphySV8PVB22ARpsIx28hUe+TCqMerOLZQfP0tTUAc4SAMoZcEI=
+Received: from MN2PR01CA0056.prod.exchangelabs.com (2603:10b6:208:23f::25) by
+ SA0PR12MB4463.namprd12.prod.outlook.com (2603:10b6:806:92::14) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.30; Fri, 8 Nov 2024 07:34:10 +0000
+ 15.20.8137.19; Fri, 8 Nov 2024 07:34:11 +0000
 Received: from BN3PEPF0000B06B.namprd21.prod.outlook.com
- (2603:10b6:208:23f:cafe::4d) by MN2PR01CA0060.outlook.office365.com
- (2603:10b6:208:23f::29) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:10b6:208:23f:cafe::2b) by MN2PR01CA0056.outlook.office365.com
+ (2603:10b6:208:23f::25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.20 via Frontend
- Transport; Fri, 8 Nov 2024 07:34:08 +0000
+ Transport; Fri, 8 Nov 2024 07:34:10 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -63,20 +63,19 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
  BN3PEPF0000B06B.mail.protection.outlook.com (10.167.243.70) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.0 via Frontend Transport; Fri, 8 Nov 2024 07:34:08 +0000
+ 15.20.8158.0 via Frontend Transport; Fri, 8 Nov 2024 07:34:10 +0000
 Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 8 Nov
- 2024 01:34:04 -0600
+ 2024 01:34:07 -0600
 From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jarkko Nikula
 	<jarkko.nikula@linux.intel.com>
 CC: <Sanket.Goswami@amd.com>, <linux-i3c@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	<linux-acpi@vger.kernel.org>
-Subject: [PATCH v3 2/5] i3c: master: Add ACPI support to i3c subsystem
-Date: Fri, 8 Nov 2024 13:03:20 +0530
-Message-ID: <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+	<linux-kernel@vger.kernel.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: [PATCH v3 3/5] i3c: master: Add a routine to include the I3C SPD device
+Date: Fri, 8 Nov 2024 13:03:21 +0530
+Message-ID: <20241108073323.523805-4-Shyam-sundar.S-k@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
 References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
@@ -92,220 +91,130 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06B:EE_|SN7PR12MB7228:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51b1944a-ecea-46e2-688e-08dcffc7bb3a
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06B:EE_|SA0PR12MB4463:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8083113-a6f4-4581-44a6-08dcffc7bc9b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Bxd6FqmmyKLm8wosaBInKbzEtiiYsFRy49D+ls8cVP6/elb1kDqcjudgHDPc?=
- =?us-ascii?Q?eSZPRFity9gvPRFYKtos7bhDa9gHUX6r/6BMk7gM2K7MznH5I+zeKiCW01IW?=
- =?us-ascii?Q?8T0zUrg/z9pkbtH37p9xMWgqUddhT91fnu1hGiucRNVTJ1kMwU9+lwmGofRC?=
- =?us-ascii?Q?Zz8swlCdAMqUIl5HY80RBGyKuf/c/+7Z2YY2SfbrgNitGKaMj2omPZjx/Ixq?=
- =?us-ascii?Q?Dy5c2wO8wukebfYL6SIy81bbLzgaxg6RpdjZpAu7jGO3YsR5LnDSESWrdU/G?=
- =?us-ascii?Q?vNJdyo36akZUsdlnfa56r1Z4Sq28fz21EAy8X99Amo5N2I3R8D5Oj966gW19?=
- =?us-ascii?Q?PGXnCNHkzua2i6wrawvhDQCEoWvUrPEkiXXGG0GOeOTEocO0wE1wZuP/ODnw?=
- =?us-ascii?Q?kgeVIZjzgba9Hh4RGr6Tcblt1oz18/jzPUWUuglByR4vbQrZffaCUQpLfsa9?=
- =?us-ascii?Q?gWUkX8FNHyXOLs7S09MEMaTXw6YOBPQcgECh1nH4ErTO+u1L7TTqkB1nuWbs?=
- =?us-ascii?Q?ahhidPpkGBY5HfwVgYA6K8tHEuVADxFo6/qbjqvSlJxia9xv+zq5JQgUzIu6?=
- =?us-ascii?Q?eCc2Dp2ez2SQ4Mxyv46+zwwaByjzl/p4DBx4xUCqVzYA3YcnHnaldgzVpMog?=
- =?us-ascii?Q?VcVFWPJg+7INDBtpSoo0ae5aV/veU7i2lFjUg7poOYN9R9zvvARC9Mdev6Aa?=
- =?us-ascii?Q?AQtixYBfEYJg/GHmcc9h4qAOHF5URtI0Q2m/R85Ib1g4+10Tp1cFTlAZOl7q?=
- =?us-ascii?Q?emH/kmhNZEYaOY/1tDkzCqz5zHKjklH4ncxe5zeNIKfJDsbZJOklrAEmjpon?=
- =?us-ascii?Q?f0DnQm7nJparaItObv5IcnwBpzjHmE+xqYTNeg00VxkBfw0zDvWoTsOI6gUM?=
- =?us-ascii?Q?VWvjLe3DfGxKyza5GVOEGgWdSW5jlvf++wQ+IBRYOLLxPZFPMmkweB/u8e7W?=
- =?us-ascii?Q?/9IAwpqX1AqQsOpmPqKOd5iKmcxxk5K8NB1mhCUILoptbJMPWSpAJoq3P0ME?=
- =?us-ascii?Q?Tnk6v+vzWM3KiCdB4WLg+WV9ZcBqTMP/9rhXBrzwlCWoj761zMnwk38Wt1hf?=
- =?us-ascii?Q?rMDICSWYDM+bDc3hTPZJBVfc7djqyv5wUt0+cT1+dE69l0+rvI6YT0D4Ku7W?=
- =?us-ascii?Q?fXnVMiHUWYiu+IU4CFvU/KskYcMl7yRVGe5NXsWtF+MY/MYH2HtGK7HAaFps?=
- =?us-ascii?Q?N8FyuFqgoBUfxn9ercJH9uX8AjLGPgm91dD2u3rfP4LsVZE7xPJgH98BZqO5?=
- =?us-ascii?Q?303LYNmigKpDeqA2xdX1q+OQ3+kte+CMYnbqiFRbTAeXAOriDPGLWBGLYduv?=
- =?us-ascii?Q?NTQl6iPECb2expq053AJXjPPf+/zHdDPs1hThIyRsiPT43Cfvh/mmcuvUntk?=
- =?us-ascii?Q?z0TvTOEX1iXk2R5YoJTtSMwqfw9p7qmf6TXZa+SfvUJN/sBAmg=3D=3D?=
+	=?us-ascii?Q?bJd2mUFEmBBB3n2uptU4jqKJ9Pb7TLOBTP0kQSLuqOqzsoUtniXD12ExCJ/i?=
+ =?us-ascii?Q?iuDZYA5vaiaLV+8TcytPIG5V6CDn2o2/Bd9j9qvicnnYBgAMyXW+V3+WxoEB?=
+ =?us-ascii?Q?ZXEWPRNUU5cXg+t9eskPsFM+bdDfeL6NLENvePqbjtTa0ZWxuAwYlfXeIqOu?=
+ =?us-ascii?Q?oEA4UP73PXSxRFKQwbIomeQvwHcdjfkLZKgeuxgMprH8ZA/QroPTlmrSjYjm?=
+ =?us-ascii?Q?MxaGrqufA6BjDNgwr+fqMotFrthQzb0ZCm0TOZ++bkMwzFAkvq89kCh9iJn3?=
+ =?us-ascii?Q?8sWJVXqhwaM+y+6jenWVfkAw+WX3JmoJZDXDfz4xzaldFO9/cSyKKDyYz7Fv?=
+ =?us-ascii?Q?6ZIRtZXyuefiemwSheG5CQn5FpE0UVfjxTfSe6TFeOPCeLtWR1sPhRKYKWaT?=
+ =?us-ascii?Q?XL+P/xNTgHvNjSn5qIGwQ6RmhV0GLce8+TCkN5O2a43CRdvFyGoCgJHCXjv1?=
+ =?us-ascii?Q?olQBnVkVSrOh/eN/1GxJwJUbIM32o7CnjrKh4f6prfXroukmeKMCa5A3+M3W?=
+ =?us-ascii?Q?lZcT8Vn/4O1+XYTM2VbMF2NVUCLgtFchUhhD53rESyIaTeYY0PZ38eclXnJm?=
+ =?us-ascii?Q?Ff/HcTnKwLK9iX7E4rqQt/76FA4rCjzahfAw4WsvhTYr/Fm1XoVy9bcWaywJ?=
+ =?us-ascii?Q?OETUFvVRlEl6fcHJgVfVVfuW5x3tu19btRFknjS8W3KxnaFrrFfaN2MwYZ+t?=
+ =?us-ascii?Q?Y9sSkqEFPIoDBiAz+3nCH6RY/lGYYDzHZjVFGTyyFSMI5WNYd4f+Cn5yR6Ji?=
+ =?us-ascii?Q?pHpJVBQ0krjmSqI9kjgbf0xbFr2+1T6iLwamcrT4jAEXH/m+q7a2whyAeGuM?=
+ =?us-ascii?Q?ZWa6KFLCbeTKHkk9WaSu5HtMA6413hUNhtyD5Bp6YI8Lc3S1LMN2RSIW/nYI?=
+ =?us-ascii?Q?JZtJsZA1lA7sLcJKaXlMojuQ3ZKJDfmm00zWojhYNwD+NSlmLJm20ar2iCMo?=
+ =?us-ascii?Q?6SAvkUHGEW5EG4ovXtqLEvRJOPnPce+q26ABD5KsX/LW28JE3BUZY7RNpJNK?=
+ =?us-ascii?Q?8KJqi+qkxMVm9gNsc1cCNofyXcsbitl1uRcf5cV00/X64rboU832vCum/9Rj?=
+ =?us-ascii?Q?+jYXlkThOL6NcUutpre2K55SNcwSgf4PQkmU4OMAL2gDoudPKkX+v7QnMp1r?=
+ =?us-ascii?Q?mvXuy7nROxClgXlP+3L/zaLVpeZvpq+im/kSxeFkMG/Ad4MgMcrX4gyzAxl9?=
+ =?us-ascii?Q?UZoeelfqeZSpWWj8LOTRKc+i3ILXEFdY1d+fTo34bRVcGyEn/s0IsK2NiypJ?=
+ =?us-ascii?Q?CO8M43fved3+IufMv1PbgyXJVgE8np7+p3gljFH9jHp/VGAyHbreb9NPH1cR?=
+ =?us-ascii?Q?doj6GMJ9UWiV1uH4mbTDeKjseqHnZYOHrtS6hfw8iqNPoen3RgZypBlLSPlQ?=
+ =?us-ascii?Q?I18NkEYT7tsnWrAGZxoIA91wkh9he73wC+IQPrlDZw5j5qIKww=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 07:34:08.3884
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 07:34:10.7009
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51b1944a-ecea-46e2-688e-08dcffc7bb3a
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8083113-a6f4-4581-44a6-08dcffc7bc9b
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	BN3PEPF0000B06B.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7228
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4463
 
-As of now, the I3C subsystem only has ARM-specific initialization, and
-there is no corresponding ACPI plumbing present. To address this, ACPI
-support needs to be added to both the I3C core and DW driver.
-
-Add support to get the ACPI handle from the _HID probed and parse the apci
-object to retrieve the slave information from BIOS.
-
-Based on the acpi object information propogated via BIOS, build the i3c
-board information so that the same information can be used across the
-driver to handle the slave requests.
+Implement the i3c_master_add_spd_dev() function in the I3C master to
+handle SPD (Serial Presence Detect) device creation and map the board
+information into the I3C device structure.
 
 Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
 Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
 Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 ---
-Cc: linux-acpi@vger.kernel.org
+ drivers/i3c/master.c | 43 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
- drivers/i3c/internals.h            |  3 ++
- drivers/i3c/master.c               | 84 ++++++++++++++++++++++++++++++
- drivers/i3c/master/dw-i3c-master.c |  7 +++
- include/linux/i3c/master.h         |  1 +
- 4 files changed, 95 insertions(+)
-
-diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
-index 433f6088b7ce..178bc0ebe6b6 100644
---- a/drivers/i3c/internals.h
-+++ b/drivers/i3c/internals.h
-@@ -10,6 +10,9 @@
- 
- #include <linux/i3c/master.h>
- 
-+#define I3C_GET_PID		0x08
-+#define I3C_GET_ADDR		0x7F
-+
- void i3c_bus_normaluse_lock(struct i3c_bus *bus);
- void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
- 
 diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 6f3eb710a75d..0ceef2aa9161 100644
+index 0ceef2aa9161..8f37dcaa1efe 100644
 --- a/drivers/i3c/master.c
 +++ b/drivers/i3c/master.c
-@@ -2251,6 +2251,84 @@ static int of_i3c_master_add_dev(struct i3c_master_controller *master,
- 	return ret;
+@@ -1657,6 +1657,45 @@ i3c_master_register_new_i3c_devs(struct i3c_master_controller *master)
+ 	}
  }
  
-+#if IS_ENABLED(CONFIG_ACPI)
-+static int i3c_acpi_configure_master(struct i3c_master_controller *master)
++static int i3c_master_add_spd_dev(struct i3c_master_controller *master,
++				  struct i3c_dev_boardinfo *boardinfo)
 +{
-+	struct acpi_buffer buf = {ACPI_ALLOCATE_BUFFER, NULL};
-+	enum i3c_addr_slot_status addrstatus;
-+	struct i3c_dev_boardinfo *boardinfo;
-+	struct device *dev = &master->dev;
-+	struct fwnode_handle *fwnode;
-+	struct acpi_device *adev;
-+	u32 slv_addr, num_dev;
-+	acpi_status status;
-+	u64 val;
++	struct i3c_dev_desc *i3cdev;
++	int ret;
 +
-+	status = acpi_evaluate_object_typed(master->ahandle, "_DSD", NULL, &buf, ACPI_TYPE_PACKAGE);
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(&master->dev, "Error reading _DSD:%s\n", acpi_format_exception(status));
-+		return -ENODEV;
-+	}
++	list_for_each_entry(boardinfo, &master->boardinfo.i3c, node) {
++		struct i3c_device_info info = {
++			.static_addr = boardinfo->static_addr,
++		};
 +
-+	num_dev = device_get_child_node_count(dev);
-+	if (!num_dev) {
-+		dev_err(&master->dev, "Error: no child node present\n");
-+		return -EINVAL;
-+	}
++		ret = i3c_bus_get_addr_slot_status(&master->bus, boardinfo->static_addr);
++		if (ret != I3C_ADDR_SLOT_FREE)
++			return -EBUSY;
 +
-+	device_for_each_child_node(dev, fwnode) {
-+		adev = to_acpi_device_node(fwnode);
-+		if (!adev)
-+			return -ENODEV;
-+
-+		status = acpi_evaluate_integer(adev->handle, "_ADR", NULL, &val);
-+		if (ACPI_FAILURE(status)) {
-+			dev_err(&master->dev, "Error: eval _ADR failed\n");
-+			return -EINVAL;
-+		}
-+		slv_addr = val & I3C_GET_ADDR;
-+
-+		boardinfo = devm_kzalloc(dev, sizeof(*boardinfo), GFP_KERNEL);
-+		if (!boardinfo)
++		i3cdev = i3c_master_alloc_i3c_dev(master, &info);
++		if (IS_ERR(i3cdev))
 +			return -ENOMEM;
 +
-+		if (slv_addr) {
-+			if (slv_addr > I3C_MAX_ADDR)
-+				return -EINVAL;
++		i3cdev->boardinfo = boardinfo;
++		ret = i3c_master_attach_i3c_dev(master, i3cdev);
++		if (ret)
++			goto err_free_dev;
 +
-+			addrstatus = i3c_bus_get_addr_slot_status(&master->bus, slv_addr);
-+			if (addrstatus != I3C_ADDR_SLOT_FREE)
-+				return -EINVAL;
-+		}
++		i3cdev->info.pid = i3cdev->boardinfo->pid;
++		i3cdev->info.dyn_addr = i3cdev->boardinfo->init_dyn_addr;
 +
-+		boardinfo->static_addr = slv_addr;
-+		if (boardinfo->static_addr > I3C_MAX_ADDR)
-+			return -EINVAL;
-+
-+		addrstatus = i3c_bus_get_addr_slot_status(&master->bus,	boardinfo->static_addr);
-+		if (addrstatus != I3C_ADDR_SLOT_FREE)
-+			return -EINVAL;
-+
-+		boardinfo->pid = val >> I3C_GET_PID;
-+		if ((boardinfo->pid & GENMASK_ULL(63, 48)) ||
-+		    I3C_PID_RND_LOWER_32BITS(boardinfo->pid))
-+			return -EINVAL;
-+
-+		/*
-+		 * According to the specification, SETDASA is not supported for DIMM slaves
-+		 * during device discovery. Therefore, BIOS will populate same initial
-+		 * dynamic address as the static address.
-+		 */
-+		boardinfo->init_dyn_addr = boardinfo->static_addr;
-+		list_add_tail(&boardinfo->node, &master->boardinfo.i3c);
++		i3c_bus_normaluse_lock(&master->bus);
++		i3c_master_register_new_i3c_devs(master);
++		i3c_bus_normaluse_unlock(&master->bus);
 +	}
 +
 +	return 0;
++
++err_free_dev:
++	i3c_master_free_i3c_dev(i3cdev);
++	return ret;
 +}
-+#else
-+static int i3c_acpi_configure_master(struct i3c_master_controller *master) { return 0; }
-+#endif
 +
- static int of_populate_i3c_bus(struct i3c_master_controller *master)
- {
- 	struct device *dev = &master->dev;
-@@ -2771,6 +2849,12 @@ int i3c_master_register(struct i3c_master_controller *master,
- 	master->dev.coherent_dma_mask = parent->coherent_dma_mask;
- 	master->dev.dma_parms = parent->dma_parms;
- 
-+	if (has_acpi_companion(master->dev.parent)) {
-+		ret = i3c_acpi_configure_master(master);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	ret = of_populate_i3c_bus(master);
- 	if (ret)
- 		goto err_put_dev;
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 1a7c300b6d45..d44b771d03e1 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -1602,6 +1602,13 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
- 	master->maxdevs = ret >> 16;
- 	master->free_pos = GENMASK(master->maxdevs - 1, 0);
- 
-+#if IS_ENABLED(CONFIG_ACPI)
-+	ACPI_COMPANION_SET(&master->base.dev, ACPI_COMPANION(&pdev->dev));
-+	master->base.ahandle = acpi_device_handle(ACPI_COMPANION(&pdev->dev));
-+	if (!master->base.ahandle)
-+		dev_err(&pdev->dev, "Failed to get acpi device handle\n");
-+#endif
-+
- 	INIT_WORK(&master->hj_work, dw_i3c_hj_work);
- 	ret = i3c_master_register(&master->base, &pdev->dev,
- 				  &dw_mipi_i3c_ops, false);
-diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
-index 2a1ed05d5782..367faf7c4bf3 100644
---- a/include/linux/i3c/master.h
-+++ b/include/linux/i3c/master.h
-@@ -523,6 +523,7 @@ struct i3c_master_controller {
- 	} boardinfo;
- 	struct i3c_bus bus;
- 	struct workqueue_struct *wq;
-+	acpi_handle ahandle;
- };
- 
  /**
+  * i3c_master_do_daa() - do a DAA (Dynamic Address Assignment)
+  * @master: master doing the DAA
+@@ -1814,7 +1853,7 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
+ {
+ 	enum i3c_addr_slot_status status;
+ 	struct i2c_dev_boardinfo *i2cboardinfo;
+-	struct i3c_dev_boardinfo *i3cboardinfo;
++	struct i3c_dev_boardinfo *i3cboardinfo = NULL;
+ 	struct i2c_dev_desc *i2cdev;
+ 	int ret;
+ 
+@@ -1868,6 +1907,8 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
+ 		goto err_bus_cleanup;
+ 	}
+ 
++	i3c_master_add_spd_dev(master, i3cboardinfo);
++
+ 	if (master->ops->set_speed) {
+ 		ret = master->ops->set_speed(master, I3C_OPEN_DRAIN_SLOW_SPEED);
+ 		if (ret)
 -- 
 2.34.1
 
