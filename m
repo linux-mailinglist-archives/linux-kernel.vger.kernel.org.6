@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-401738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F1B9C1E8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:52:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9778C9C1E99
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D99428226D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3431F21ABF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC461EF95D;
-	Fri,  8 Nov 2024 13:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96861EF937;
+	Fri,  8 Nov 2024 13:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E2o0MRoC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="K3PtOpHP"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43BA1E0B66
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2662A1EBFE1;
+	Fri,  8 Nov 2024 13:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731073878; cv=none; b=TVsDKtGVVmQ9YLDAPhRdfCqHiManVmgAjFApirfJTiBz6kifeZSo+bafSQHrpUNB494DTFEuXxceKg7G2kNGOy2xSADv9ACbsANe3Twq4fRunSawWHMJE/ktPPibr+N8fgib9JX7mz+t9thlPYAWu/Pnal0O5eXGuSxkJDUTcN8=
+	t=1731073987; cv=none; b=HQKWy3PzM3knSJCGbcW27SAifdKDxGUfS0O2aoiXhUvJfbnwfN2KwCbJJyxDgfEYhQ/qPQElgQnoX08qmNl9eWC56Oqa9biWIWnndndrqdAUffLeafqQBbecVLQqqvSDxbxWk8kyFjUVjCYYBTmQh/ndtlxnElYYXweCwUuXlBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731073878; c=relaxed/simple;
-	bh=0+No9TeaVqWZdDEeyLikwXsEFWUICXtnYllaU8JMtuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PM9ZtqDbReHaX/60FPduQB+KYH8Xmp7HCbd4/+GL/M4XjLg7++EyTqoBWNe5xOS9yYVcsJlBpBaAuCeHLURbOeHXlSIqaf503wTMZqUrU8k48+AmPG9VBfrAZUL0uMKhp1FA8HRLlUkMKnEW/fqiTttQDtcgUTW5OupbZbbqPhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E2o0MRoC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731073875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yp8SJubjIWH+oVfx1SD15EsWPj+A+X3WXtE5LpvL0uw=;
-	b=E2o0MRoCefi8+QsoN01A2wP5HC+X6BLtFHbB/xclIC4xh8jo+l28man/LfURrqIK5pmb8r
-	teLtBLqk7rp3MiyFOHSFZ0Bwpg1mmpT66dhQluaU3pteT8Xx93N0jzZ+4i9HJZA5EEEiDq
-	/u1mjHiTijH+Sy76TaEdMIKaqiaOCek=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-660-Ih7499kHOoS_BbWf2su4hQ-1; Fri, 08 Nov 2024 08:51:14 -0500
-X-MC-Unique: Ih7499kHOoS_BbWf2su4hQ-1
-X-Mimecast-MFC-AGG-ID: Ih7499kHOoS_BbWf2su4hQ
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d5606250aso996800f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 05:51:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731073873; x=1731678673;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yp8SJubjIWH+oVfx1SD15EsWPj+A+X3WXtE5LpvL0uw=;
-        b=q1ycielCXDoe0EEtZ+BhlXLKIcZQaH15XOpa91aKpedmpfmWSVWwCNloBWTtJiKFAi
-         UWnuBlNXiS29w6ZWJ6YQyLpWBF55H0Y+CRiEgDYgDILY6ixjLR4G8QXjwGNi+OhuK8xh
-         +XWCfZYuxw/2Tt3tX6XCn6/9TR6tkwuOXPAeywKkE1IUHNdu0ntZ4sOr0XmimYnGGoHS
-         puGM8cSgyO6f4fm8lj04Z5CO9Twk/aR/jdMw7g4k44SKk9JoW4lh+/uVKGwZ+uV+umf/
-         b1fed/nZkbsifd6Apsi/1LITf/U7V6Sx1sGQv4S74uJGlfQ+s/8EevdjpOMvaV+koBvV
-         cRHA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3+vuLTMUN5zU5RUhLV+xn8b9Z4TTQh5BYNBumQZiM8cftBgRN3/Z3+x4abOOVKYmbVCA5wrhXbjpNGqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAZlj6i8zHXIA74iiIsbGCeWBlNXdC9onUK5IQoA8Nis9IGNei
-	SqZ6E3r6n07Wov2ih7w6U+RUClW6fP10cF2bD6XES06myQwzHdWE7mXqYoZwxRGvhiryibrS5B+
-	VKUNukKIh/Oq5qSSinAYEts0cYecu8ONPAasM9HQvXWgUgxr4oI+6ieA0bA4VHQ==
-X-Received: by 2002:a05:6000:2c1:b0:37d:238:983 with SMTP id ffacd0b85a97d-381f186b4b2mr2561694f8f.22.1731073872694;
-        Fri, 08 Nov 2024 05:51:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IENvW2FgJtPvIKuRbi0KyPUG9rv/vqab1/mYic3C0qWXI0kyF7AfWRiOO2/18ksKytc9TWKvA==
-X-Received: by 2002:a05:6000:2c1:b0:37d:238:983 with SMTP id ffacd0b85a97d-381f186b4b2mr2561662f8f.22.1731073872298;
-        Fri, 08 Nov 2024 05:51:12 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04111sm4903154f8f.92.2024.11.08.05.51.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 05:51:11 -0800 (PST)
-Message-ID: <bb6f5ff1-71c1-4b1b-a618-7f72310598f2@redhat.com>
-Date: Fri, 8 Nov 2024 14:51:10 +0100
+	s=arc-20240116; t=1731073987; c=relaxed/simple;
+	bh=IAq5ttC3vbAsycsYo3nu25UcjBasXzDzBPtVRRcBV2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lFK1Bb8j4Q4cg1Dvk+1Dq7bG+EJ3mV6sGntFK1tQU9SkpOSsR8yHr4z3jOOt4qaRNUpQQD+oFS3HYzkHERYRmMjt8DUiZWzvispp8Gw0hVfpvZi5M36kz3+iF1u64e4GT1UiapMlZNV20yTNQxhg+PczJe5GlzTHDoNkhyTF4+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=K3PtOpHP; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731073986; x=1762609986;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=IAq5ttC3vbAsycsYo3nu25UcjBasXzDzBPtVRRcBV2E=;
+  b=K3PtOpHPMBVyTdQCcsABxwmPLBgsUJP2r/NNkBWnzYjTjqiCB5YOtV0e
+   /tzSl7WshZsI6iQ849YZLXRVboh11OSVGOwJ4bh+Vjc/cjuOLXashJXmz
+   yw3ls+0J0F9K2mQvGIz6wUukxlVSesTTjHfoFKrLiD15n5Bq2IKg4MFbC
+   4xO2nNLSgXYz+yChiLuAOsIFjPgfI/aEubm6IuOa3WZZIu905+UWrsyXM
+   5BJ783n/+w3duyGFpOCZHr+V4XjdFGQPXST87nYosXbOM8sSf+HYl09SQ
+   gnbMLKpgHK/z+sQ5PCB7xgiyu/K7wec/Ym0m/PPToEuNoAzJt/VB8h0x3
+   g==;
+X-CSE-ConnectionGUID: n9Mhh33+SoCqjpbzpzIr+Q==
+X-CSE-MsgGUID: oHmViC4PRB2IqZex68sauQ==
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="265192530"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Nov 2024 06:53:05 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 8 Nov 2024 06:52:33 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 8 Nov 2024 06:52:31 -0700
+Message-ID: <2bf3bf7d-0360-4673-a7c7-4b74a9300f63@microchip.com>
+Date: Fri, 8 Nov 2024 14:52:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,85 +66,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/7] drm/log: Do not draw if drm_master is taken
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, John Ogness <john.ogness@linutronix.de>,
- Javier Martinez Canillas <javierm@redhat.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
- Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241108082025.1004653-1-jfalempe@redhat.com>
- <20241108082025.1004653-5-jfalempe@redhat.com>
- <5e19d9d4-7533-4a59-a665-cfc4a8195293@suse.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <5e19d9d4-7533-4a59-a665-cfc4a8195293@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 3/3] tty: serial: atmel: make it selectable for
+ ARCH_LAN969X
+Content-Language: en-US, fr-FR
+To: Robert Marko <robert.marko@sartura.hr>
+CC: <mturquette@baylibre.com>, <sboyd@kernel.org>, <lee@kernel.org>,
+	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<luka.perkov@sartura.hr>
+References: <20241108112355.20251-1-robert.marko@sartura.hr>
+ <20241108112355.20251-3-robert.marko@sartura.hr>
+ <609ef9c4-18cd-4a80-9821-5df27727772e@microchip.com>
+ <CA+HBbNFomosu+5_C0+6cqKcc3B9DFiXXPxexFYjY4ud2LmWqmg@mail.gmail.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <CA+HBbNFomosu+5_C0+6cqKcc3B9DFiXXPxexFYjY4ud2LmWqmg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 08/11/2024 14:33, Thomas Zimmermann wrote:
-> Hi
+On 08/11/2024 at 14:40, Robert Marko wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > 
-> Am 08.11.24 um 09:10 schrieb Jocelyn Falempe:
->> When userspace takes drm_master, the drm_client buffer is no more
->> visible, so drm_log shouldn't waste CPU cycle to draw on it.
+> On Fri, Nov 8, 2024 at 2:25 PM Nicolas Ferre
+> <nicolas.ferre@microchip.com> wrote:
 >>
->> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
->> ---
->>   drivers/gpu/drm/drm_log.c | 10 ++++++++--
->>   1 file changed, 8 insertions(+), 2 deletions(-)
+>> On 08/11/2024 at 12:22, Robert Marko wrote:
 >>
->> diff --git a/drivers/gpu/drm/drm_log.c b/drivers/gpu/drm/drm_log.c
->> index 376ee173d99d9..226e206e8b6a3 100644
->> --- a/drivers/gpu/drm/drm_log.c
->> +++ b/drivers/gpu/drm/drm_log.c
->> @@ -18,6 +18,7 @@
->>   #include <drm/drm_print.h>
->>   #include "drm_draw.h"
->> +#include "drm_internal.h"
->>   #include "drm_log.h"
->>   MODULE_AUTHOR("Jocelyn Falempe");
->> @@ -308,8 +309,13 @@ static void drm_log_write_thread(struct console 
->> *con, struct nbcon_write_context
->>       if (!dlog->probed)
->>           drm_log_init_client(dlog);
->> -    for (i = 0; i < dlog->n_scanout; i++)
->> -        drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt->outbuf, 
->> wctxt->len);
->> +    /* Check that we are still the master before drawing */
->> +    if (drm_master_internal_acquire(dlog->client.dev)) {
+>> A little commit message would be better.
 > 
-> Just a note: it would be better to track this state in the client code 
-> and handle these locks automatically. But it's ok for now. It would 
-> require an overhaul of the fbdev helpers as well.
-> 
->> +        drm_master_internal_release(dlog->client.dev);
-> 
-> Don't you have to release after drawing?
+> Hi Nicolas, I basically reused the same commit description as for MFD
+> and else as all of the changes are
+> basically the same.
 
-I'm not sure, the drawing code will only call 
-drm_client_buffer_vmap_local() / unmap
-and drm_client_framebuffer_flush(), and they don't require the master 
-lock to be taken. I think master lock is needed only for modesetting.
+Ok, I have certainly deleted it while replying. That's fine then.
 
-Also the dlog->lock is taken by the console thread, so there are no race 
-conditions with the drm_client callbacks (hotplug/suspend/resume).
+>>> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+>>> ---
+>>>    drivers/tty/serial/Kconfig | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+>>> index 45f0f779fbf9..e6cf20b845f1 100644
+>>> --- a/drivers/tty/serial/Kconfig
+>>> +++ b/drivers/tty/serial/Kconfig
+>>> @@ -128,7 +128,7 @@ config SERIAL_SB1250_DUART_CONSOLE
+>>>    config SERIAL_ATMEL
+>>>           bool "AT91 on-chip serial port support"
+>>>           depends on COMMON_CLK
+>>> -       depends on ARCH_AT91 || COMPILE_TEST
+>>> +       depends on ARCH_AT91 || ARCH_LAN969X ||COMPILE_TEST
+>>
+>> Checkpatch.pl reports some "DOS line endings", you might need to fix this.
+> 
+> Hm, I ran checkpatch before sending in verbose mode and I dont see
+> such a warning,
+> my Sublime text is also set to Unix endings, I also just checked with
+> cat -e and I dont see
+> any DOS endings.
 
+Ok, indeed. Probably my email client then. Sorry for the noise.
+
+Regards,
+   Nicolas
+
+>>
+>>>           select SERIAL_CORE
+>>>           select SERIAL_MCTRL_GPIO if GPIOLIB
+>>>           select MFD_AT91_USART
+>>> --
+>>> 2.47.0
+>>
+>>
+>> Once fixed, you can add my:
+>> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>
+>> Thanks, best regards,
+>>     Nicolas
 > 
-> Best regards
-> Thomas
 > 
 > 
->> +
->> +        for (i = 0; i < dlog->n_scanout; i++)
->> +            drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt- 
->> >outbuf, wctxt->len);
->> +    }
->>   }
->>   static void drm_log_lock(struct console *con, unsigned long *flags)
-> 
+> --
+> Robert Marko
+> Staff Embedded Linux Engineer
+> Sartura d.d.
+> Lendavska ulica 16a
+> 10000 Zagreb, Croatia
+> Email: robert.marko@sartura.hr
+> Web: www.sartura.hr
 
 
