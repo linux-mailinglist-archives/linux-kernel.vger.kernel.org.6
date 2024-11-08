@@ -1,130 +1,105 @@
-Return-Path: <linux-kernel+bounces-401297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538C89C186D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:51:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630A19C185F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776871C22E97
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:51:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A591F2436D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9E11DE4D9;
-	Fri,  8 Nov 2024 08:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E1B1E049C;
+	Fri,  8 Nov 2024 08:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fGma0MaG"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h6zJ/Xvu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8518F1494D4;
-	Fri,  8 Nov 2024 08:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9BB1DEFEA;
+	Fri,  8 Nov 2024 08:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731055889; cv=none; b=McshR7OgRrHTc6EWntonJi+VbnH6Hxs2GLayQj90XKoI1lQiGfsoKDh++alLvqunMpf10M3bjPKHYv8mHEyd4WmZEwbQqSy8M5lAsJi4oO+nkVl7BmwgeYbV7lXABkxgX6zx/eFbmh9mWI3kVCg0hRoiXptMPivPZ4lQKYSfD8s=
+	t=1731055764; cv=none; b=PMDQkA/SGjERvNyvLbTPfz7DMrAgOGtnOQ2CV0vW5Q5/0BCS1Li6P9q7upP4It3clcmU8oEleDA/ntr6h0LibFOYJZXDvrKJMCEgsCH7nXxSuTIhvcuaFYQQX7KVC6nRCKstRPdL+68Lt5XoBMVsshG1lSy7pKhfQGyzScwnCis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731055889; c=relaxed/simple;
-	bh=4axLk3F3w0ykKUkmu2YQGXDfaHagaySoaKyMLvysj2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tps8lfBvi7ZCcaZMGshdz1snjiSp84IYmlOTr9LONTChYNsNHfFSJ9NMuaH0SAitjK+9Cjbbp06Kh49NUPxOJKBwJmWW8QAwlXDnVPgxx06Ml9UGVm/9Czjl3hJXEHVb+vp1zNxnk5BTWMToySU2fqqD8kQLYeQNxFjzwOmM5aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fGma0MaG; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1731055772;
-	bh=rGntS9xOFiEeM/CMGDTBCcX5N9b7TzQhEkYEMSmKp44=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fGma0MaGXJqvSiRMFhmXZuzSAbOrQ+E+T2PjWQN4kISfXB7+v2P5lhcZiDccqkN4B
-	 P1rIzIv3DujMeJ2qxJoeQ1N9MmLhZqnkyQdQ7Sl7DUM6oOffvJqemITdzVXIm3Q8yB
-	 R5gngfRDt/O00amCBzAnz6b2xHHpiGfwiuPhZssk=
-X-QQ-mid: bizesmtpsz7t1731055731tg3r48f
-X-QQ-Originating-IP: HMuPYdKxHaX+3uAFUvJr/WnEj9U/cZBw6s5Od/w6wdk=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 08 Nov 2024 16:48:49 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 9163737178640773369
-From: WangYuli <wangyuli@uniontech.com>
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	raoxu@uniontech.com,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	cug_yangyuancong@hotmail.com,
-	lorenzo.bianconi@redhat.com,
-	kvalo@codeaurora.org,
-	sidhayn@gmail.com,
-	lorenzo.bianconi83@gmail.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [RESEND. PATCH] mt76: mt76u_vendor_request: Do not print error messages when -EPROTO
-Date: Fri,  8 Nov 2024 16:48:44 +0800
-Message-ID: <76949420D67A0377+20241108084844.216593-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731055764; c=relaxed/simple;
+	bh=l9sY1OHDO8wFIDCdzrR2/15Yw7PfigB1KCl3QZf41FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ackmctKreuB32kSBwKiUUXKnYVxIgSxNbubWlD/cXz6RIK6F9m4CmlofBpn+ZiTHjzkepfFEjOk2LzfPOz/2HoR3lF+Xy087ExnNuRfYtcAHey4NYvPaL95BDdGc9UXtQrjKhCwZ2b3G9nq2IULSJhnxcLpNHsrFRYz6ynRbLAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h6zJ/Xvu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B732C4CECD;
+	Fri,  8 Nov 2024 08:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731055763;
+	bh=l9sY1OHDO8wFIDCdzrR2/15Yw7PfigB1KCl3QZf41FE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h6zJ/XvuS7XXzK1Ct5OUSBE+f1pvTtZzKmi7E9ki5m3c0wZAT7xt5nOmJzLFRMGNY
+	 Ld60VNZ7EaU6PNpU114MBwrJ7l5r3qTSh/g9uSENTzgWcRQMo2pXbdyqaP1hbYcSxV
+	 lhRQqCJ8QApvyOAZUtineIyvF2vB32SnxBsUb//A=
+Date: Fri, 8 Nov 2024 09:49:20 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Fangzhi Zuo <Jerry.Zuo@amd.com>, Wayne Lin <wayne.lin@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Jonathan Gray <jsg@jsg.id.au>
+Subject: Re: [PATCH 0/1] On DRM -> stable process
+Message-ID: <2024110803-undermine-viewable-2605@gregkh>
+References: <20241029133141.45335-1-pchelkin@ispras.ru>
+ <ZyDvOdEuxYh7jK5l@sashalap>
+ <20241029-3ca95c1f41e96c39faf2e49a-pchelkin@ispras.ru>
+ <20241104-61da90a19c561bb5ed63141b-pchelkin@ispras.ru>
+ <2024110521-mummify-unloved-4f5d@gregkh>
+ <20241108-267fb65587d32642092cea40-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MR/iVh5QLeie+eRnscg9XS0zFUrlUzPpdNyEUKgvat6AFV1JFtHsyuqO
-	Y/BEbAtUHcx8vNoaTFdTsw2GUjVqX9vvWxS7lI8S4+rLbCEPomdxr7DPr+xaPWyS5eyU0vk
-	n0skLV4BuMa6SAQ2Nk9WEv3oeEQbYbLwKcrnQMXKSSm2aELnsDbVluQuislP/jwHYh0c2fh
-	cJZvn5p8ws2zRl30cGKTuVmxCumpdG976iy6eqKWfziKdSaIxP3rtNd4U1ZDArYwkGQkaZe
-	gu7xBCDxoub7x9eV/RZdaQgMAuPy9qndcPEod/EgIoEle9XQGGqWRgdpwoIKzz431A84Z9B
-	JJSllxQswbwLqvth+ViZYFShZDyJ3wmLsfomneMTmd9yNiMUh/qFIVvlsoYACJUHy8T3EzU
-	0iuzXVAARxtt1nvGiTIrzYnlOb8ITK4voSrTM1TIaVh2bTKm5pN3u7IPJ9fZYAbdIIIdumD
-	fIPWNPlysmYlljYtO68b+M5icxvewTOZLu5rwRvHJJ2Dyvrd6uVzqMfhmCnTHx74SHxjjeF
-	6ef5jOZUI4ApnO5YDFgS/b8NdLKe662zRcSepEL1dYmzLvdVVpTgxjPmuZHufTv+TGI01cl
-	zc6fI2A5RQ3Mz1VaIfh2T2oaXnzLbXUaTcZE0Cf3zQisoLJwlpKhhghNXRDkKBOsd+dD1Cy
-	DJqpNZtVz9xuK53M/LBp9vUEpsQU07r9HY391V7NpqGg0aT50S81LoXptJmELYlXovJ26fT
-	LE/K6sOF0h1sGXP2kLZ3CHKoRCh9141MNBn2ycQjT5GjwDDR+OLZUcyzF7MUE6R690Yzkuz
-	bInwNzeh7P1uQ5L2eO1tk0ddo5lLY3ruMW4jQJhOnidSCp1fi4ZB6Uy2KcFQG7w3ZoaVhNj
-	D2olJ0Q3oyjRh0cWh609rs6jNrsHPON3SVeuzAX3YLhsouNWL4fx2XeHqs2eOh7/6zlqukO
-	enle2q/araNXGtqPO9eqqSIxOvX1KFGWjrtgMc1h7BvUi0RNUt7HqtTBvxvA39dKSC6ThRL
-	dLi0Z5gOhJbiF6zlTcoMmC0Su7fE8=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108-267fb65587d32642092cea40-pchelkin@ispras.ru>
 
-When initializing the network card, unplugging the device will
-trigger an -EPROTO error, resulting in a flood of error messages
-being printed frantically.
+On Fri, Nov 08, 2024 at 11:41:18AM +0300, Fedor Pchelkin wrote:
+> On Tue, 05. Nov 07:57, Greg Kroah-Hartman wrote:
+> > On Mon, Nov 04, 2024 at 05:55:28PM +0300, Fedor Pchelkin wrote:
+> > > It is just strange that the (exact same) change made by the commits is
+> > > duplicated by backporting tools. As it is not the first case where DRM
+> > > patches are involved per Greg's statement [1], I wonder if something can be
+> > > done on stable-team's side to avoid such odd behavior in future.
+> > 
+> > No, all of this mess needs to be fixed up on the drm developer's side,
+> > they are the ones doing this type of crazy "let's commit the same patch
+> > to multiple branches and then reference a commit that will show up at an
+> > unknown time in the future and hope for the best!" workflow.
+> > 
+> > I'm amazed it works at all, they get to keep fixing up this mess as this
+> > is entirely self-inflicted.
+> 
+> Thanks for reply, I get your remark. DRM people are mostly CC'ed here,
+> hopefully it won't be that difficult to tune their established workflow to
+> make the stable process easier and more straightforward.
+> 
+> As of now, would you mind to take the revert for 6.1? It's [PATCH 1/1] in
+> this thread. No point to keep it there, and the duplicated commits were
+> already reverted from the fresher stable kernels.
+> 
 
-Signed-off-by: Xu Rao <raoxu@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/net/wireless/mediatek/mt76/usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I don't see it in my review queue anymore, can you please resend it?
 
-diff --git a/drivers/net/wireless/mediatek/mt76/usb.c b/drivers/net/wireless/mediatek/mt76/usb.c
-index 58ff06823389..f9e67b8c3b3c 100644
---- a/drivers/net/wireless/mediatek/mt76/usb.c
-+++ b/drivers/net/wireless/mediatek/mt76/usb.c
-@@ -33,9 +33,9 @@ int __mt76u_vendor_request(struct mt76_dev *dev, u8 req, u8 req_type,
- 
- 		ret = usb_control_msg(udev, pipe, req, req_type, val,
- 				      offset, buf, len, MT_VEND_REQ_TOUT_MS);
--		if (ret == -ENODEV)
-+		if (ret == -ENODEV || ret == -EPROTO)
- 			set_bit(MT76_REMOVED, &dev->phy.state);
--		if (ret >= 0 || ret == -ENODEV)
-+		if (ret >= 0 || ret == -ENODEV || ret == -EPROTO)
- 			return ret;
- 		usleep_range(5000, 10000);
- 	}
--- 
-2.45.2
+thanks,
 
+greg k-h
 
