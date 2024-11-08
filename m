@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-401124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2953D9C162E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:51:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91489C163A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C4028217D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:51:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9018E1F24317
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA311D0147;
-	Fri,  8 Nov 2024 05:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8E71D07BD;
+	Fri,  8 Nov 2024 05:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AUBfkMSJ"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shxcgGRT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEC71CF7AC
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 05:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3721CB333;
+	Fri,  8 Nov 2024 05:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731045095; cv=none; b=HmoIGXL23PM3bq12104bN0gFVrmgJoiTlcLZTIdV2mx4OH7vH4riYT3/rR1MqwHiSnkm9y8IzegCb7LywKAQRYA9CRbEyrvADkxHRjIfhLuEsJOuOttbbEtTwGyQv8AGjJzugdeQqOQzGbUyWpDZtAWHVO3IWGMaEQhQQ5vBcpQ=
+	t=1731045290; cv=none; b=ajafFAerV1y/UBz71qvQiwxyVjXGRcwy+O9Fo+kQPAREhq0r6O6OXxf6Q/nH8m+++OfUZ5iGdpEhL2B54k/lI7FlYwfWfJIAjNayhJ3ywlibct9sTvb92cqKZArURtMgA7xkCrz9i9/jGpzOyK/DobFyq2O0Eu3yWpKNLS92rso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731045095; c=relaxed/simple;
-	bh=3vbUbHP3RjVNF/eStAv3W8UE8Y6oF0o0dTPSOT9ZVVw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mjdmlX7r5seodvivs/4AiIhctG3kjiiwkOFi5gmoG5kExYH+Wz3ZTxqEWpIMrTn16Z8Z0uDiQ8jeKbacZHDK5/YWa/IF7pZO05xEe8QattRqCYg5hfM74ftFQAHNg2R6fYrabJewOtlMbw4OYsl0mCYtSPZ71CGMKe88IUzALkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AUBfkMSJ; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-43155afca99so16152335e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 21:51:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731045092; x=1731649892; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7+onabwK/GEA7qFD3DQ/amWTwTwQjZzmNsqbuusTpvE=;
-        b=AUBfkMSJanzJnskVjiCqxbnudE0ZKDidFEKtllRdXp8MBASe2b0rRpRPa0Ybr46Xm2
-         RsriwMnmIX7dnpDSduPDV6sX2EAj6gtuV8mtekthWEbZ4Q2McFzZy6fvEyeraTfwKV0d
-         /PndzE/kLZPOTcYbgwetWfl699Hnunwv4mAD0Vq3KUWHi8sl5b2UvCTD/Q7l4l3ENZaC
-         DeAG5Pb7HfRdDwcJZbFTigeCC++3HWRk2yE5phkxjQ9Q8Ke80Y7/BNkpmVEsxHdXNPlt
-         10WJlXBUmNcrhhHy7MY++jksKa4Las7w0YdV2tNcPtYKBSaW6u+33LGOQEKyZUmve7kL
-         5UtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731045092; x=1731649892;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7+onabwK/GEA7qFD3DQ/amWTwTwQjZzmNsqbuusTpvE=;
-        b=Ug9svK4H5m9zMI5bb9ul01JoO7kVqI89LtWjOUwFOYaC0jN/e5F4OCFuW5UL7qHmbj
-         Z/U4eDVwWSDjOQQ4BNC6ndU2xHCNZzmgr8vsVT5betCWNb4ZFkWeq0Og9rlkWKqzPBzD
-         TjwJ+uFR2uU69uTTufUJqEOPuWHdEbUl2GxwnKDVGToweI9DKTg0j4MyA9w05+qNXyJq
-         4ufrirK+6MyquVDTrVjcE0eWuuj6UPq6uQnXb0Ofl/PcYE7PqU0MNocK2t+/j8+PfnvU
-         AvQq5mK4WuNXUqT6CIsIb1zhxPvwLoSZMFjvtSszkx3WmRUdhWP9Au7M9bf6Fd1iUhWg
-         BmFg==
-X-Gm-Message-State: AOJu0YyM+drWyCnec2jMc5jNc2VbEDa2kFPgaus7DOMA57ONxCDzCLYX
-	DZHvTJQ/O8aBHZlcLhdOKQnhAIteK+1IB9jsnGOFVqrfT0WYRmgEtQnaqY0ePks=
-X-Google-Smtp-Source: AGHT+IH4wJ5eg9/Q+yF9Q7pbDXzsp4HwUqCQuYd7fFj7rw2BJ5+U5A1uGyMbFqqDRo3grAZ/Zd9m6g==
-X-Received: by 2002:a05:6000:1a85:b0:374:cee6:c298 with SMTP id ffacd0b85a97d-381f0f7f27bmr1639543f8f.21.1731045091828;
-        Thu, 07 Nov 2024 21:51:31 -0800 (PST)
-Received: from localhost ([2401:e180:8800:eb21:7695:a769:ff9c:3830])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240785ffc2sm2853278b3a.25.2024.11.07.21.51.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 21:51:31 -0800 (PST)
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: cve@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Subject: [PATCH vulns 2/2] add a .vulnerable id for CVE-2024-50063
-Date: Fri,  8 Nov 2024 13:51:14 +0800
-Message-ID: <20241108055118.28631-2-shung-hsi.yu@suse.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241108055118.28631-1-shung-hsi.yu@suse.com>
-References: <20241108055118.28631-1-shung-hsi.yu@suse.com>
+	s=arc-20240116; t=1731045290; c=relaxed/simple;
+	bh=Y4CwMwPQuIcU9wjKisRuEikA8yK46OIFjAflX16ws80=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OCcGbBRhsn/7fqg86oMMKnPNY0JG+hU1rumS204I+CRr3Griik7B97SNk0zXkA/xVi78xx29eMU3kCxBl5Zpj8QAmYNzEvku/o3j5q2Qe/LuO5G4E1ubiihfNc0MRoALRSP+e7yK5IT0sGps8RVuWMpv7ib/z1W9c//RggDrz8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shxcgGRT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 08C2EC4CECE;
+	Fri,  8 Nov 2024 05:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731045290;
+	bh=Y4CwMwPQuIcU9wjKisRuEikA8yK46OIFjAflX16ws80=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=shxcgGRTmacMyTpjGSaJWRS6iK/Bx9lHAHgM1quxNTYHRpypU/9SsvTiIfPZbfm83
+	 OnqfPKhua8smLOI4ZV6TNR7fxVNS8jrTfSkGE9Czc1zZe8rWQfyOnoxWEEMQlvHMY8
+	 v5HV+guG7c99gzwdiz6c4GRHEHWu7gF6GXiU6XBtRqmMsQJ6kFYio1ks3naVh9A6nu
+	 Tg0MLNgTCodgUuTuWXoNX2FEHXsogC0gXUqzn5sJphpEULZ1Rw5ilvztQ89Wq8vPBr
+	 ktMbUx+sivy1QUZ9UmbE6+MudN0O/t46Eh/bQmsSfOI5BqkpGJ6ILleQ+Z9rxQR3U/
+	 wGh4SyPHAzzCg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A5CD5E136;
+	Fri,  8 Nov 2024 05:54:49 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH v5 0/3] support for amlogic rtc
+Date: Fri, 08 Nov 2024 13:54:40 +0800
+Message-Id: <20241108-rtc-v5-0-0194727c778b@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKCnLWcC/2XMQQrCMBCF4atI1kZmJk2TuPIe4mKapBpQK6kUp
+ fTuRi2ouHzDfP8o+phT7MV6MYoch9Sn7lyGXi6EP/B5H2UKZQsCqsCSkvnqJZLxwaIjRiXK5yX
+ HNt1ele2u7EPqr12+v6IDPq+/fkAJsm4NKIuByaoNn47dPvmV707iWRjooxzMiooCHVgbrRsb3
+ L9SXwrhrVRR2DIYw7Vjgn9VfSmaVVWUQ466baqogv5V0zQ9AHxC7B46AQAA
+To: Yiting Deng <yiting.deng@amlogic.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731045288; l=1783;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=Y4CwMwPQuIcU9wjKisRuEikA8yK46OIFjAflX16ws80=;
+ b=jNGWNeJoco9mLfZbzE2NrkqAIYDH1CSdtYucDI0JEHejYpvcKvY4w66zcRCS9Mb/K3YCtBcUj
+ hkfwvRfI3bkB02bbKqR3yXYI6kKWxsGkcNT9ClwgDaq+OXPLCFZvPrc
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-Link: https://lore.kernel.org/all/tcb3xez6spzcrbv3umgbrjzfrskekjsylwswchrvvzsekfjyfx@okljgt65srjr/
-Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Add rtc driver and bindigns for the amlogic A4(A113L2) and A5(A113X2) SoCs.
+
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
- cve/published/2024/CVE-2024-50063.vulnerable | 1 +
- 1 file changed, 1 insertion(+)
- create mode 100644 cve/published/2024/CVE-2024-50063.vulnerable
+Changes in v5:
+- Some formatting adjustments and minor fixes were made based on Christophe's suggestions.
+- Link to v4: https://lore.kernel.org/r/20240920-rtc-v4-0-91ae5fb4e3d5@amlogic.com
 
-diff --git a/cve/published/2024/CVE-2024-50063.vulnerable b/cve/published/2024/CVE-2024-50063.vulnerable
-new file mode 100644
-index 00000000..bbc04154
---- /dev/null
-+++ b/cve/published/2024/CVE-2024-50063.vulnerable
-@@ -0,0 +1 @@
-+f1b9509c2fb0
+Changes in v4:
+- Keep the same order as as in properties.
+- Link to v3: https://lore.kernel.org/r/20240910-rtc-v3-0-1fa077a69a20@amlogic.com
+
+Changes in v3:
+- Perfect the binding description and rename binding.
+- Using dev_err_probe function correctly, and modify commit message.
+- Change placement about MAINTAINERS.
+- Link to v2: https://lore.kernel.org/r/20240903-rtc-v2-0-05da5755b8d9@amlogic.com
+
+Changes in v2:
+- Modify bindings clock name and perfect the example.
+- Fix some bug in driver, and use dev_err_probe instead of dev_err in probe process.
+- Use RTC API to handle calibration.
+- Remove unused func and rename driver file name.
+- Link to v1: https://lore.kernel.org/r/20240823-rtc-v1-0-6f70381da283@amlogic.com
+
+---
+Yiting Deng (3):
+      dt-bindings: rtc: Add Amlogic A4 and A5 RTC
+      rtc: support for the Amlogic on-chip RTC
+      MAINTAINERS: Add an entry for Amlogic RTC driver
+
+ .../devicetree/bindings/rtc/amlogic,a4-rtc.yaml    |  63 +++
+ MAINTAINERS                                        |   8 +
+ drivers/rtc/Kconfig                                |  12 +
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-amlogic-a4.c                       | 476 +++++++++++++++++++++
+ 5 files changed, 560 insertions(+)
+---
+base-commit: 8a2c49e0fd92e6760636bcfbf11e11d9ddd61cf9
+change-id: 20240823-rtc-127cd8192a13
+
+Best regards,
 -- 
-2.47.0
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
 
 
