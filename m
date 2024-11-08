@@ -1,158 +1,120 @@
-Return-Path: <linux-kernel+bounces-402064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9979C22EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:28:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82FB99C22F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFDA5282A87
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4672E282905
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE471F4268;
-	Fri,  8 Nov 2024 17:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34241EE02B;
+	Fri,  8 Nov 2024 17:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3JvSxQc"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="U8W+VK2B"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F946199E88;
-	Fri,  8 Nov 2024 17:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F631E3772
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731086911; cv=none; b=spR6caXRJlhiR8mMfg+DoYBGFVs60LeXttUUm+qvTSEwpO05d3rD/cjpVCi3SBduNZi2N3Vtqn96WiUaCVbhymWICEWbjc0UdVGgwHH9FOI1jtFbrWGwXl6nIw7nwrWKW9c3nC/RS8jFW1pvZajhseryCMVR3ys0C1etLoaIkKU=
+	t=1731086981; cv=none; b=jtv4RtVIa99lqL0sw99g2qppFIUUKynHBms6ZDU1XRBsrpTxcYlM7Hkz++pxiUbX2vHLCNH4oUF8Er6FRQOyYyMsiujNTwJDGS5PnZHYj1PHRKidhpjZ9PjP5WKv5FaRX/Z744UTt0CL1bisdGTsHsaplctnKVYgNX+CshRSbwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731086911; c=relaxed/simple;
-	bh=8ea8ddTNBag42apcWveTNKLD6A1GuEKcQTOPIWuuwWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HCSsQS3vcHLcBarxOMlAR9Vo2PzS/drZrFIMy4K0oXizO3nZQcaEeMiM27RkouNsbioRz1D1enFvnsKcjUFsHnbPfCebI6xPk9II2UfOxi0UmMBUosLoz3NdAnFeDJN0Q1qGhroGpkie3P0jjpwLi/XnAs43xyMjvxr6jTWfg4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3JvSxQc; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso1993102a91.0;
-        Fri, 08 Nov 2024 09:28:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731086909; x=1731691709; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qNHa/iC/trYWdqJBk7pL0FJKOpGxQZoeAEHdfBDty8I=;
-        b=O3JvSxQcAhAHsU1lZknlJFOi83qpFKqzt9V24GhtKjha3jFKR2VsvJBINjmY2qe7UL
-         zA2gsj674+uoNCeE98aJIq3GkG+/lBpqBFW/5yLPh74H1PacMFvgFlmqcomMQfjyfXqh
-         HUPVokGI9/n7QL7XWekp7xgGmQs8M0mMZSINNFZFWIg9kcakT/bCHHgiWEnuljsshf8n
-         HhyV2QQkSSnYjMKieYNWIDEU8Lh7pasyzhHBeDIe9ibQ2AalNdGKv3BvfqosyUWzbsRK
-         1dwZGBi5jCb3zLcXulFbsb3T1dgsosyIqIP1yrEyZ0XZxQ1tI5gkn+FtwH4TW0gv7Wy2
-         HoXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731086909; x=1731691709;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qNHa/iC/trYWdqJBk7pL0FJKOpGxQZoeAEHdfBDty8I=;
-        b=fABIPvNFvki0kiaooCjn6hr0uuHVyUZnqdqF83OEDu6CdawDwk0hhH3uzeyiAMm3bW
-         eBDqt1oBMkE9abmfl1JpqTDX3jR6x5kiMrSzpyeeQAzDK3t8Qs8ykyCY7UlQNvC3pl8C
-         21zkPxSMebHyAlCBMu8Q4rNoYsuTSlzkDjq2Q2n+gjGNSo4SeOGi6oHhk9k8OIXtVyLl
-         DcSbXAqlBR4vpU8BkUU6v4O5i4vkLy964SvNeUOjIFeqdCI+XuANRBiWL0+U4joaZ60h
-         feZftbap0djEeMBOWpWXigeEUowrrn7tDBYLJc0QbP15q4v1qi8PJ03sKJ+6GkYth0SV
-         etnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ6lIeZF4LMUPLyUqtr67qZYWneHTIu1PSRU7qoBFERQDTMmlUkxVgwWZa9tLdgb2e2SMjuS2Tl2hKYPU=@vger.kernel.org, AJvYcCWPo5qVyWBO3CRakXwC03uzsC9sllDTQgEXrcVmG1c1kWW/O5WQR+oFsE4OCbcpT2+1AhoJGA4KKS/BhtdSgUCfuKw0@vger.kernel.org, AJvYcCX41Qxz2Qkrx24g50LbHRUEpbXjnlOllOnKsynMhGX45rXBGWiZxG4Gap8MjHQqRW1j341TrSJXwOvvXeReXVHbJw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxodzWgF5kXv1USeHwutPWrz6+ciTX8TasypaN3R204R2HSvdmL
-	MVZQQJoN+YCZMxL54LGjTQlF8nRgcs2ppts9SBHzRzh2SsSnJeh7lClUSagBtMiAhWOgHjYG8Vg
-	OQTj0LI0kkrKx3yInAqu5lAlyiwA=
-X-Google-Smtp-Source: AGHT+IFBM4Xs5aZ6NWdYVIFvrU0Z7K1T3OlTGPD9+u/fGgL8VCEvk9RSLkFHN3NkOcTz+Kkpl0KVNdQlfRPOAaOFivY=
-X-Received: by 2002:a17:90b:4c0f:b0:2e2:c9c1:aacf with SMTP id
- 98e67ed59e1d1-2e9b177bc3emr4589093a91.29.1731086908772; Fri, 08 Nov 2024
- 09:28:28 -0800 (PST)
+	s=arc-20240116; t=1731086981; c=relaxed/simple;
+	bh=5j6bbISWUu04oQ5uvPb4GsIqHBzgISkT+6K0PVrEChM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=cdpICngVK8MfbawFGc6sPDEih4+x2niNRSf7giUQb55AfFb83KfILgoN/nlrXbysp27CA102suCn+FP7vjQh1aJVudoRTq97BNxu94RzEhZZjnSD+cHuoeAVvEmbSjrsSPeRn2IhCxqrF+GNDu99JRPMBCP3d2UPECAj7sZr89A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=U8W+VK2B; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([92.33.209.142])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4A8HT2JS1689254
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 8 Nov 2024 09:29:05 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4A8HT2JS1689254
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1731086946;
+	bh=5j6bbISWUu04oQ5uvPb4GsIqHBzgISkT+6K0PVrEChM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=U8W+VK2BHMw0cnYc/UWtQTHxH802SvAmozWkDPIq580CceuV5GoQkwjcq5QovEF2B
+	 7hfV6V+NSyJF3XlhR/MeQfLWrLDgfTj+YJ5raieg390jWnNUlqpAO4bhJUMYl1tvS/
+	 UFCVEk+uNA0gt/NTrbmDGao2EaKaaurdaCeIfq2J8fmMABExs9TWMuWh1FXtBm8dYh
+	 LJLXFaRF6kUxEJGGE6X8F5E5ARFD6if1paqZ/qwd2KC4KYN2W4jjDQIA6K9PJzXHTh
+	 WEEyOczBkdjztI6d5w/McahC79+ghGVB/+M3tbsAgNodpl9yC3WNXK8ZWubuIudbqb
+	 iwkaA3i393ZIg==
+Date: Fri, 08 Nov 2024 18:28:54 +0100
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_1/1=5D_x86/cpu=3A_Make_sure_fl?=
+ =?US-ASCII?Q?ag=5Fis=5Fchangeable=5Fp=28=29_is_always_being_used?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Zy48gBu81i9bY0Qp@smile.fi.intel.com>
+References: <20241108153105.1578186-1-andriy.shevchenko@linux.intel.com> <732CB428-EE83-455F-A5AF-C008B7541401@zytor.com> <Zy4xHC3MCtAqlSxy@smile.fi.intel.com> <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com> <Zy48gBu81i9bY0Qp@smile.fi.intel.com>
+Message-ID: <0EF5D1F5-6D70-4BEA-B5E9-458836B80221@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org> <20241108090023.GE38786@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241108090023.GE38786@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 8 Nov 2024 09:28:17 -0800
-Message-ID: <CAEf4BzabO7NuSTZ5fKSb2UBZAxA9EnrXVtO2=J38B1UN5ExBrg@mail.gmail.com>
-Subject: Re: [PATCH] uprobes: get RCU trace lock before list iteration
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Breno Leitao <leitao@debian.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 8, 2024 at 1:00=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
+On November 8, 2024 5:29:52 PM GMT+01:00, Andy Shevchenko <andriy=2Eshevche=
+nko@linux=2Eintel=2Ecom> wrote:
+>On Fri, Nov 08, 2024 at 04:48:16PM +0100, H=2E Peter Anvin wrote:
+>> On November 8, 2024 4:41:16 PM GMT+01:00, Andy Shevchenko <andriy=2Eshe=
+vchenko@linux=2Eintel=2Ecom> wrote:
+>> >On Fri, Nov 08, 2024 at 04:35:17PM +0100, H=2E Peter Anvin wrote:
+>> >> On November 8, 2024 4:30:10 PM GMT+01:00, Andy Shevchenko <andriy=2E=
+shevchenko@linux=2Eintel=2Ecom> wrote:
 >
-> On Thu, Nov 07, 2024 at 09:14:45AM -0800, Breno Leitao wrote:
-> > Acquire RCU trace lock in filter_chain() to protect
-> > list_for_each_entry_rcu() iteration, protecting the list iteration in a
-> > RCU read section.
-> >
-> > Prior to this fix, list_for_each_entry_srcu() was called without holdin=
-g
-> > the required lock, triggering warnings when RCU_PROVING is enabled:
-> >
-> >       kernel/events/uprobes.c:937 RCU-list traversed without holding th=
-e required lock!!
-> >
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list locklessl=
-y under SRCU protection")
-> > ---
-> >  kernel/events/uprobes.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > index fa04b14a7d72353adc440742016b813da6c812d2..afdaa45a43ac3948f798317=
-5eda808c989e8738a 100644
-> > --- a/kernel/events/uprobes.c
-> > +++ b/kernel/events/uprobes.c
-> > @@ -1103,11 +1103,13 @@ static bool filter_chain(struct uprobe *uprobe,=
- struct mm_struct *mm)
-> >       bool ret =3D false;
-> >
-> >       down_read(&uprobe->consumer_rwsem);
-> > +     rcu_read_lock_trace();
-> >       list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_re=
-ad_lock_trace_held()) {
+>=2E=2E=2E
 >
-> Maybe I'm confused, but isn't uprobe->consumer list protected by
-> uprobe->consumer_rwsem, which we hold for reading?
+>> >> >See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused s=
+tatic
+>> >> >inline functions for W=3D1 build")=2E
 >
-> That is, AFAICT this is a false positive and we should be doing this
-> instead, no?
+>^^^ (1)
+>
+>=2E=2E=2E
+>
+>> >> But another question: why the hell does clang complain about an unus=
+ed static inline function?!
+>> >
+>> >Does (1) shed a bit of light to this?
+>>=20
+>> How on earth is that supposed to work?! We have static inline functions=
+ in
+>> headers all over the place that are only used in certain circumstances=
+=2E
+>>=20
+>> Is this a good thing, really? Or is it noise?
+>
+>This is a good question and IIRC somebody else already asked something si=
+milar=2E
+>
+>Clang people are Cc'ed here, I leave this to them to comment on,
+>I am not an expert here=2E
+>
 
-Yep, you are absolutely right. RCU-protected traversal is important
-only for handler_chain() and handle_uretprobe_chain(). Here it's all
-under lock, so no need for RCU protection.
+So there are two questions:
 
->
->
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index a76ddc5fc982..a5405e9ef9f5 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1104,7 +1104,7 @@ static bool filter_chain(struct uprobe *uprobe, str=
-uct mm_struct *mm)
->         bool ret =3D false;
->
->         down_read(&uprobe->consumer_rwsem);
-> -       list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_re=
-ad_lock_trace_held()) {
-> +       list_for_each_entry(uc, &uprobe->consumers, cons_node) {
-
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
->                 ret =3D consumer_filter(uc, mm);
->                 if (ret)
->                         break;
+1=2E How? How does this work, technically?=20
+2=2E Why? Is this really the right thing to do, or will it result in a bun=
+ch of unnecessary #ifdeffery instead?
 
