@@ -1,165 +1,93 @@
-Return-Path: <linux-kernel+bounces-402202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448C79C24FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:44:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4E69C2500
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D59F2848AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:44:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50735B222EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A381A9B51;
-	Fri,  8 Nov 2024 18:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74761A9B54;
+	Fri,  8 Nov 2024 18:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBXnKKbb"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xRleWoVd"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1130194082;
-	Fri,  8 Nov 2024 18:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E40E1A9B36
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731091449; cv=none; b=OZEpjNItVWaP0EDklj1VMLP1rLrjtIFQwt8MqsaaVIZsF+av1PBnQD5rGyx3k8rGdpNb0WODLqVrYsfw36XeipsfSKX81sMDNUHH9Qs8nu7ugVTt1hj8z4yjvdvDPtNhxW60h9f6MOpF/VMb7Yt04hbmyw1NXb+8fWn1wxZMz38=
+	t=1731091470; cv=none; b=mIqmGRapdgUU9qRW4h9imG+ti+qwBzgvLz7yjouEbQIn2x9TeRHFdA5EPOsxhJcf55gk7G2wvv84xCtCM5JA8wN6X5nUNXofiwFHVnvp5Qtb3XI1nDipMT8twqWUdAceLSHTOqAvYPJygezQktT26lNm1Xg9ZOd+T3TSZqoh0LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731091449; c=relaxed/simple;
-	bh=C+hxhapf+iZyc0pcpQdnvxpMDyqwHITK/5KpnubEpVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GEAF/dqkQB8wNpOF2VzU17FAQzAG/nJMElETYNhNXBpAr6WfdiShfcockgYka+GP91o7mxlNKJgoVnbU/JEXYCDdGOrATRymIAJVgCNYTk0/I1j/smLxnVrqgeMiuuTYyoXBlUgWvTpqq//RDF1xO57Zf11yHj+E6X+HzttYvGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBXnKKbb; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7eda47b7343so1761472a12.0;
-        Fri, 08 Nov 2024 10:44:07 -0800 (PST)
+	s=arc-20240116; t=1731091470; c=relaxed/simple;
+	bh=xJjap7sNY/81/oXWIYKmLfhopGKwOX3mvVuYtwhXGds=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Y1OWEGgVxE1WAV1cagqGgKK0JZ3ygfqseSIMdy6YdiI7L39qgFgEMgZZYLRmocmaoSYTGXFILhw/HWmYbsppKnZxKo/Fm14KZCOnWVFm3AKYi+rZPFCJLIS9YL2zRzZmbuP7IwOnf5/LgefQtFIgvxLMtaUgzwNx0J36wTj4lCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xRleWoVd; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e2ed2230fcso2541454a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:44:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731091447; x=1731696247; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eoRzY+OGqSnXflEIRU3jjsFUxNnysaUNIoTmFkKC6/I=;
-        b=ZBXnKKbbcMom3ACIPeUYUBOXIb+MbiuXwwxxPthvlDOOBPiWhVZtieXaSmPsely+dJ
-         eZqpCj9nM2vI6MxxLZT9b0ay8bGFAlogGqsCT2IvDCGOAMOj249R1YSO6za6GqACeQvp
-         +T+KGnVzDV/qwy8pDITi0hKKJrj2YoDZWTGVUwPnSCQek5yWudZQUBnnqBkCPfG0G7nB
-         OIIu+IgK+OySUNZKRGXUpU4OSwVU67CzQjgMwH0CwVXUhXyxM7R2vjWEKEWfPuH6NUXn
-         CIhK2uHDT7by/bVE+nQXADyEXgee9EfdZ7MZBqOy741MLBpnh5jdyxLaIq2Q6BG9ZqFE
-         ZV6g==
+        d=google.com; s=20230601; t=1731091468; x=1731696268; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WoOm9ACkx5SWCzD3BiI5DqC4avsoAgUOaWIdVW9u+Rc=;
+        b=xRleWoVdjCMDnSrolcmD1snIBmFyhwXW0ZzKyCP+LxdBWtPP/GvpzbLAEI3rasHT26
+         586y6KTl9+lMcnShpqx+PCBMMfDHid9kV64iFrZpQO+P08gZnTiUq8Nx7hL2XVLWxMfg
+         5WI8ZRU19c3d7BUhs+XReK89KcfEKOFYc/UuGm4JgH8gbfq0yhGmOTBUSeBJQjVwr9Wf
+         c575pjgKjzG/4PsvrWCrxf9ukpgokgMZLeTPNbOrDKPbkEJy810nK6NwPWqooztamwCX
+         jpui46XVYFUJJYtOQeFhtCWV8CCDbAAX/DoqbbSJUgA4PYlJ3GZYpA6jm+WpRZ7QrEDC
+         p6aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731091447; x=1731696247;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eoRzY+OGqSnXflEIRU3jjsFUxNnysaUNIoTmFkKC6/I=;
-        b=YlkKE1pQ6D3vFwCVdDp2xCjF0kxW/xC9YH0OOobxaPcvzT1u9O9lwV8HvbYjl1ox40
-         ZZWuyn/bsf1Fb0XDj+OWNAteU6HUaTiBcyrVP7Jg78FpEq72ZXPDt3cq8rBWthkmbi1m
-         5WubSsCsrlxbTJUDAoVdfk1AAmKWAf98ZEFdkdFIqdGBtuOMHnkRtrGHXJ0O0rm0Q9SR
-         QKrmS4fCMxgLer+5iYNS7OUKaOJYIVSjwPRVVE89lW9VMntn8AY96a/4PEm5MeT9KaG1
-         pS7dg4MHedbi0eE6J0kOdufrkiGaK00sh/li6bB+vlJ4HcG/nV2bTH+oyXC7O6jufgLL
-         5W+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Tk7w014RfSifyIITuJEiGYtSr9MMeWsoL8b7Me8y+2fUo3oBxabAqZwGftQiVuVb+BgmtyH4NxM8EJo=@vger.kernel.org, AJvYcCVvJORK+UkCKh8j2cz/BwxXsu1kE1ynLAqyWRK3RgLSwtzGwtrxXMzBcgDiK2+swf5y+iKvdagmOT2ukN2Xrc+1@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcnf6AibK2KGUIPJHqW7/MHVgbm/PpcEzZnC3pZhiotPC4tGKk
-	XH+pYuTpFCH/H457/Wpx36E/YnyyD/VS84+3HpTpm5oUFdoc+P/ylILYmJF4gSN6KYQZxwG7FgV
-	6KXTkZqFyUZAs7kqnUSJ/j61tVd4=
-X-Google-Smtp-Source: AGHT+IGzDtW/S/3ZNx2BdBWgq6UlNpXAogQZJHwXY8381fWN4WHd4BNZtX7ea2q9D3b6aKYQkz+LVuyHgAwqMy2v1R4=
-X-Received: by 2002:a17:90b:1344:b0:2c9:5a85:f8dd with SMTP id
- 98e67ed59e1d1-2e9b174124cmr5790628a91.18.1731091447156; Fri, 08 Nov 2024
- 10:44:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731091468; x=1731696268;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WoOm9ACkx5SWCzD3BiI5DqC4avsoAgUOaWIdVW9u+Rc=;
+        b=EPkuMk6Clikj7/sh9N90FaDutr3/DCxRxnz4kcmRsMxqmLovU9GlWtCQbdykOHyGyp
+         97KZLGXAd6kyqjBk3W3VN9QvydJR6OxJzGUqyZyqQETwWrGSqftEzhNfhFdHnAA6Sl8W
+         1qOBZluDdjsldTno4lO3mJJYnYS9wHsT1OHQhWL7YOg7RUccg9PPV1HEnW7bZjlKSrXt
+         QOzIVv2AfMmacSGHDdj3oLfX8xMRXMklX7gWftPKpKu/E5Wf85fEt5AVRSLtWP75ogoP
+         jyrCOtNpzg+8NkZZADHAZZE0HjSiZ5wKIEgfSJj1VwV7oIGtkrYTngMEkb8Ee41/r6es
+         Nzog==
+X-Forwarded-Encrypted: i=1; AJvYcCW9h9jCUVyyGqyWmTytJs2nU1Kpjl8yqp0p7UubU1Jqx+D7wM9dPG4SPhPnviBMT9XW6meZiLFI8eW69tQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu5POsR3na/YxPHMKUQ5zS2C1t8zdEC9Q/YHGLY/In209Ph4tW
+	ZWtScZ+koKtOKt8uHCNRISUOqg+uOwgSfk7M7G6SLn5elH93Iwiy89ZCqxotlfBqc4nMUvHrKvj
+	yiQ==
+X-Google-Smtp-Source: AGHT+IFVEg3hBrHUvpQAXsewTrpUVfh6ZcizLr1BwBeaZYtb+taySoJXMd2e7OomEttUBjSKQhB3qW+zBz8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:c41:b0:2e2:c183:8b1c with SMTP id
+ 98e67ed59e1d1-2e9b168bfcbmr21938a91.7.1731091467897; Fri, 08 Nov 2024
+ 10:44:27 -0800 (PST)
+Date: Fri, 8 Nov 2024 10:44:26 -0800
+In-Reply-To: <20241108171304.377047-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241104050007.13812-1-skb99@linux.ibm.com> <20241104050007.13812-3-skb99@linux.ibm.com>
-In-Reply-To: <20241104050007.13812-3-skb99@linux.ibm.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 8 Nov 2024 10:43:54 -0800
-Message-ID: <CAEf4BzZ9Bz8a_hY-jDkqaYg6Phi9bjvoxbBeVZqcgjYXg4a-mA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] libbpf: Remove powerpc prefix from syscall function names
-To: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ast@kernel.org, hbathini@linux.ibm.com, 
-	andrii@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, mykolal@fb.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241108161312.28365-1-jgross@suse.com> <20241108171304.377047-1-pbonzini@redhat.com>
+Message-ID: <Zy5b06JNYZFi871K@google.com>
+Subject: Re: [PATCH] KVM/x86: don't use a literal 1 instead of RET_PF_RETRY
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun, Nov 3, 2024 at 9:00=E2=80=AFPM Saket Kumar Bhaskar <skb99@linux.ibm=
-.com> wrote:
->
-> Since commit 94746890202cf ("powerpc: Don't add __powerpc_ prefix to
-> syscall entry points") drops _powerpc prefix to syscall entry points,
-> even though powerpc now supports syscall wrapper, so /proc/kallsyms
-> have symbols for syscall entry without powerpc prefix(sys_*).
->
-> For this reason, arch specific prefix for syscall functions in powerpc
-> is dropped.
->
-> Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-> ---
->  tools/lib/bpf/libbpf.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 219facd0e66e..3a370fa37d8a 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -11110,9 +11110,7 @@ static const char *arch_specific_syscall_pfx(void=
-)
->  #elif defined(__riscv)
->         return "riscv";
->  #elif defined(__powerpc__)
-> -       return "powerpc";
-> -#elif defined(__powerpc64__)
-> -       return "powerpc64";
-> +       return "";
->  #else
->         return NULL;
->  #endif
-> @@ -11127,7 +11125,11 @@ int probe_kern_syscall_wrapper(int token_fd)
->         if (!ksys_pfx)
->                 return 0;
->
-> +#if defined(__powerpc__)
-> +       snprintf(syscall_name, sizeof(syscall_name), "sys_bpf");
-> +#else
->         snprintf(syscall_name, sizeof(syscall_name), "__%s_sys_bpf", ksys=
-_pfx);
-> +#endif
+On Fri, Nov 08, 2024, Paolo Bonzini wrote:
+> Queued, thanks.
 
-The problem is that on older versions of kernel it will have this
-prefix, while on newer ones it won't. So to not break anything on old
-kernels, we'd need to do feature detection and pick whether to use
-prefix or not, right?
+Noooo!  Can you un-queue?
 
-So it seems like this change needs a bit more work.
-
-pw-bot: cr
-
->
->         if (determine_kprobe_perf_type() >=3D 0) {
->                 int pfd;
-> @@ -11272,8 +11274,12 @@ struct bpf_link *bpf_program__attach_ksyscall(co=
-nst struct bpf_program *prog,
->                  * compiler does not know that we have an explicit condit=
-ional
->                  * as well.
->                  */
-> +#if defined(__powerpc__)
-> +               snprintf(func_name, sizeof(func_name), "sys_%s", syscall_=
-name);
-> +#else
->                 snprintf(func_name, sizeof(func_name), "__%s_sys_%s",
->                          arch_specific_syscall_pfx() ? : "", syscall_name=
-);
-> +#endif
->         } else {
->                 snprintf(func_name, sizeof(func_name), "__se_sys_%s", sys=
-call_name);
->         }
-> --
-> 2.43.5
->
+The return from kvm_mmu_page_fault() is NOT RET_PF_xxx, it's KVM outer 0/1/-errno.
+I.e. '1' is saying "resume the guest", it has *nothing* to do with RET_PF_RETRY.
+E.g. that path also handles RET_PF_FIXED, RET_PF_SPURIOUS, etc.
 
