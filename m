@@ -1,260 +1,150 @@
-Return-Path: <linux-kernel+bounces-401831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55599C1FDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:59:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEFE89C1FE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40BF51F245B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2161F23720
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03DA1F4FAD;
-	Fri,  8 Nov 2024 14:59:10 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B7A1F585B;
+	Fri,  8 Nov 2024 15:00:10 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6272D1F4FA2
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F401F582D;
+	Fri,  8 Nov 2024 15:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731077950; cv=none; b=cHMiUO6jwNJWmPNl5UmE33Ehoagb5BbvhV2xc4MPxtDPDLyinTRULoKKlqeK60stI5rmsvzW5RiH/UY22Da5XljTYJNpZxNCxnSk5MKBrZyArEIuDzrqG4y9GHuSZM+hkF6CwF2TrJjBDeXMeJMGGviiDtHSgyCe7xsHpH9CiJg=
+	t=1731078010; cv=none; b=NnbJJ48+aEq+vgHSrq4imA/kirAtXFzLW4E8a+UB5NiPqWi5OYlwJjohfLRavfILkb2PYKbcz8tzdNrzwORdCnsNetyp/XHzTZJVGVOILFxB5MNIOj2bjHM27IzFhA4SGw2LsAPqJRfaq7o07eUH7xzZ+4gzeTCnlEtXEoMrjWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731077950; c=relaxed/simple;
-	bh=xUTnX9sfzz0j20d3cUBEqs2vf4IT/0oHwg4KIm1ccrY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=u1ogbGw1iQVpW/1iDSDcTjFHoetvB6OozSkBlra7+UTzNbZSYP9kkkC3ST7/IFX9aW9S1A6GBNfwRB5u4MbhfeG2aqqUr0qZotj48dZrEojPfaux83b5qenSfNtqU3aBVxEmzY6k3P0hylV+BAyT9sJUCjyqaGeWd/5nvuyueWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abb164a4fso228303339f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 06:59:08 -0800 (PST)
+	s=arc-20240116; t=1731078010; c=relaxed/simple;
+	bh=YVyjPtBUCXQML+mx+jc7/cYnCoF5ihFnuGgGv89CzPg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XES9g0XqX9H0axvUhbAxmtIn+Z4MMh1Z4ZFlJUhsmXyUTtrQz1KP7lrH9eIUr6SGRFEI8a1KfP/QUIKa8xvSUITroMS2AjMxc479512WiHurSn8K9xZllK/GPX2sr+0HBLqhSk0lp3zTQ2d7cwHfmgkAwPVAacRdxll8c258PRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9eb68e0bd1so308720566b.3;
+        Fri, 08 Nov 2024 07:00:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731077947; x=1731682747;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y02zO3AKIAA0IiJ4Ma1zvBoT9cjGOBk2uMbTGUb10mI=;
-        b=l3lwqHZA//ZLoLRXlpsw2OCYGolWg4hlS9gEw262llfrBV0J8/BulVSblOFvKg/bpY
-         CeLfPWoOWg2dlM5ETtOMbEB1ok3IsB+duxMT41iqcAsEVbe9b7GOabtWlMnCIK3QFUdA
-         cCKonU/rj6jOVMBJAgNJ94v8DC3q/j1dmxXXYXzZvMYv2UWcU9nRraSGUIGYroJcH67C
-         BhSmiwcA6km9gLRyJ18OCq6wIFNmzU4vWdP7mFQRCPiPOe3RGX2Ft3U06BbekDFGWoi0
-         3iuxpHvqIlI3PzFboHTC9JCi4N4KCaIe3ORLnw87yj+ug1iihUmwqjdWIFOFqIu1m7EX
-         pLkw==
-X-Gm-Message-State: AOJu0YyGJPIe1Y6CCF+R0v2IGNzfyyIQ26I85q8mUTKrMHvecKkhI5QF
-	asWaDeOr07kIGaI49hpZ0zxvvsPTVZGtO5t/zrlTNqfCRlAS1Vx61ZWZGmltPumKImohgvfaIgg
-	8ZGBCGuHzgDZFCKGYGWrfRf2rcSWPPf3DcRxFbuCtscUBmm8V69pzVc4=
-X-Google-Smtp-Source: AGHT+IFHhCZXpL06uSgo/6N2k0buQh8gpfGSe/yVyrnN4bDe/aGT/iIILMuIENfDzXoK8MgoaW9blNU3fombAiwYL43aZ8qsxKCW
+        d=1e100.net; s=20230601; t=1731078006; x=1731682806;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zo3vkaxuRrTU5x90V/3/Esan3LgS4AhbEUfNLjlfsag=;
+        b=Mbg6/Jx0CygdqAyhkmdTDyow4o95lpKLKfwT4kDiIrrf+3VWOikPssGYdh/kw6e5K5
+         /lMg3TjQbkD6pBnKND4N0yHFPuKqHw7iLFqkcnIY9zw+jDDIg1KdJD3figS1RjITkKLw
+         tVypbMvTfOp8LwaIJFK6nK7BNYKc34r5EeC6xq/kjP1bC787NlE3nLU1lejhYcA3FWgv
+         RMFYKq7rMPZkTtcBBFfwYpcGDvu+gckH++QXH9YJsaxblLQatJbakalKLTzuYeG2XUGd
+         eqI/Vx+0YOPuc/7OlmV4J4bwd5MMG4+FHMsFXZXYve+wJYFq6EwsPs/xsV+c8R0UHReh
+         oaQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUr+PhI5xjt6dBZHsr96VG6no2qtj+1jIghxOhNvljluGsJVS3Fbtxp/NXtFeCzhZRG/aLJwSzph+zHHhRsqV9W@vger.kernel.org, AJvYcCUwhDZKqgO/3bQWliXGeSH6iJD6OvNwNi5qv94DO2iCOvW1cZZ61ZUYWeWLRzjyqJivdPJVWsCNAkxRFlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw54CdAX9KtmiGtOjXLEnwuR4ijnbjZY3mkwG/U4sJ0iHXfrBrb
+	q5LekWPH5mDPnGbYhhLzuRA/et72zw8K5J95yKhLN10ekTXO035p
+X-Google-Smtp-Source: AGHT+IGnMtUwEH2vwVLfN9QzL5kBneHKTNEQLBFh/PAg5G7H2dPhaje7iFo/5QgurB+GhveGRsrAZg==
+X-Received: by 2002:a17:907:9411:b0:a99:35eb:1301 with SMTP id a640c23a62f3a-a9eefeecb8bmr294193166b.18.1731078006299;
+        Fri, 08 Nov 2024 07:00:06 -0800 (PST)
+Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dedc3dsm241291166b.133.2024.11.08.07.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 07:00:05 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Fri, 08 Nov 2024 06:59:25 -0800
+Subject: [PATCH net-next] net: netconsole: selftests: Check if netdevsim is
+ available
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19c8:b0:3a6:bb77:a37b with SMTP id
- e9e14a558f8ab-3a6f19e7b34mr34662145ab.13.1731077946643; Fri, 08 Nov 2024
- 06:59:06 -0800 (PST)
-Date: Fri, 08 Nov 2024 06:59:06 -0800
-In-Reply-To: <672a3997.050a0220.2a847.11f7.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672e273a.050a0220.69fce.0017.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [acpi?] [nvdimm?] KASAN:
- vmalloc-out-of-bounds Read in acpi_nfit_ctl (2)
-From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241108-netcon_selftest_deps-v1-1-1789cbf3adcd@debian.org>
+X-B4-Tracking: v=1; b=H4sIAEwnLmcC/x3MUQqDMBAFwKuE920gSVVsrlKKiL60gbJKNogg3
+ l3oHGBOKEumIpoThXvWvAqi8Y3B/J3kQ5sXRIPgQuu9G6ywzquMyl+q1Dou3NQOjxT6tuuTe3Z
+ oDLbClI9/+4KwWuFR8b6uG9Ef66VwAAAA
+X-Change-ID: 20241108-netcon_selftest_deps-83f26456f095
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2138; i=leitao@debian.org;
+ h=from:subject:message-id; bh=YVyjPtBUCXQML+mx+jc7/cYnCoF5ihFnuGgGv89CzPg=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnLid0vzygrmxBK+fLcNgwH4l/wfXUeKAQftRQH
+ Lp0etORCH2JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZy4ndAAKCRA1o5Of/Hh3
+ bcWHD/4+fb0Xkj4iGsWHHdl+yPdrOofDpqiduyu32zNY1Z7Q50EG9vXwNlLU/o/+LNO5haNyhWP
+ /CBjsFO7+21seIg25Xhnfx41JQV3Pu4V8F2zIaCW99H/j2v/juUZndBTzIba3zzJl+lsu/o6056
+ PLHueA1YVnspRFramskgNyDyH3IFVig9Wbt7o3qHeybDAdRRlgzJ8FGxt7cQ9+zYzJjW+Z/79vv
+ fhrWx4WSgP8l/dEe2l40otii2p9Gd+HCe2zGavUFZO1RSSaPfZAWo3DYRtwkw4bngVPYu9/J9DI
+ tUNPHdHQk1AxShGHH4He8Oh43FY1ul8sKtjFXo4iEShDGAETCh1VwIvPWZ69gLXrH2eas4M445V
+ QsoVV1SVANyReqXPPNuaF72vwVBx6quc1rc/31nOx/u2hWl2+CyxDx+NhT0vuDOHaDHsHM+jAMQ
+ p6OTKoB5e07mI8r6G3aE71Xk5DDZuKR02ptdRwLgINHahfzmFOMbwhsB+uiur8/1YIpJuSLvPMZ
+ l3aDDEE8cCYsdg/mztfj0MUmF2au/wJavFOZgD+H+IkFqCbZvuYIblcYToe86S1B03M9JZgVjvo
+ HmtcRR0Z4YVeb4CY9Kp1fb15bF1WTS4Ie5s9WH5Wd2b19wDnV4GwxLuruHl/G2dpEe6t3hpQE63
+ HAetmMLUdpA2VSw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+The netconsole selftest relies on the availability of the netdevsim module.
+To ensure the test can run correctly, we need to check if the netdevsim
+module is either loaded or built-in before proceeding.
 
-***
+Update the netconsole selftest to check for the existence of
+the /sys/bus/netdevsim/new_device file before running the test. If the
+file is not found, the test is skipped with an explanation that the
+CONFIG_NETDEVSIM kernel config option may not be enabled.
 
-Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read i=
-n acpi_nfit_ctl (2)
-Author: surajsonawane0215@gmail.com
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ tools/testing/selftests/drivers/net/netcons_basic.sh | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-#syz test
+diff --git a/tools/testing/selftests/drivers/net/netcons_basic.sh b/tools/testing/selftests/drivers/net/netcons_basic.sh
+index 182eb1a97e59f3b4c9eea0e5b9e64a7fff656e2b..b175f4d966e5056ddb62e335f212c03e55f50fb0 100755
+--- a/tools/testing/selftests/drivers/net/netcons_basic.sh
++++ b/tools/testing/selftests/drivers/net/netcons_basic.sh
+@@ -39,6 +39,7 @@ NAMESPACE=""
+ # IDs for netdevsim
+ NSIM_DEV_1_ID=$((256 + RANDOM % 256))
+ NSIM_DEV_2_ID=$((512 + RANDOM % 256))
++NSIM_DEV_SYS_NEW="/sys/bus/netdevsim/new_device"
+ 
+ # Used to create and delete namespaces
+ source "${SCRIPTDIR}"/../../net/lib.sh
+@@ -46,7 +47,6 @@ source "${SCRIPTDIR}"/../../net/net_helper.sh
+ 
+ # Create netdevsim interfaces
+ create_ifaces() {
+-	local NSIM_DEV_SYS_NEW=/sys/bus/netdevsim/new_device
+ 
+ 	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_NEW"
+ 	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_NEW"
+@@ -212,6 +212,11 @@ function check_for_dependencies() {
+ 		exit "${ksft_skip}"
+ 	fi
+ 
++	if [ ! -f "${NSIM_DEV_SYS_NEW}" ]; then
++		echo "SKIP: file ${NSIM_DEV_SYS_NEW} does not exist. Check if CONFIG_NETDEVSIM is enabled" >&2
++		exit "${ksft_skip}"
++	fi
++
+ 	if [ ! -d "${NETCONS_CONFIGFS}" ]; then
+ 		echo "SKIP: directory ${NETCONS_CONFIGFS} does not exist. Check if NETCONSOLE_DYNAMIC is enabled" >&2
+ 		exit "${ksft_skip}"
 
-On Tue, Nov 5, 2024 at 8:58=E2=80=AFPM syzbot <
-syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com> wrote:
+---
+base-commit: 4861333b42178fa3d8fd1bb4e2cfb2fedc968dba
+change-id: 20241108-netcon_selftest_deps-83f26456f095
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of
-> git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12418e3058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D11254d3590b16=
-717
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3D7534f060ebda6b8b51b3
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
-> Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12170f40580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16418e3058000=
-0
->
-> Downloadable assets:
-> disk image (non-bootable):
-> https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_di=
-sk-2e1b3cc9.raw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/2f2588b04ae9/vmlinux-2e1b3cc=
-9.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/2c9324cf16df/bzImage-2e1b3cc=
-9.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func
-> drivers/acpi/nfit/core.c:416 [inline]
-> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
-> drivers/acpi/nfit/core.c:459
-> Read of size 4 at addr ffffc90000e0e038 by task syz-executor229/5316
->
-> CPU: 0 UID: 0 PID: 5316 Comm: syz-executor229 Not tainted
-> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x169/0x550 mm/kasan/report.c:488
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  cmd_to_func drivers/acpi/nfit/core.c:416 [inline]
->  acpi_nfit_ctl+0x20e8/0x24a0 drivers/acpi/nfit/core.c:459
->  __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
->  nd_ioctl+0x1844/0x1fd0 drivers/nvdimm/bus.c:1264
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fb399ccda79
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f=
-7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffcf6cb8d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb399ccda79
-> RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003
-> RBP: 00007fb399d405f0 R08: 0000000000000006 R09: 0000000000000006
-> R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000001
-> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
->  </TASK>
->
-> The buggy address belongs to the virtual mapping at
->  [ffffc90000e0e000, ffffc90000e10000) created by:
->  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
->  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000
-> index:0xffff8880401b9a80 pfn:0x401b9
-> flags: 0x4fff00000000000(node=3D1|zone=3D1|lastcpupid=3D0x7ff)
-> raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
-> raw: ffff8880401b9a80 0000000000000000 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask
-> 0x2cc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN), pid 5316, tgid 5316
-> (syz-executor229), ts 69039468240, free_ts 68666765389
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
->  prep_new_page mm/page_alloc.c:1545 [inline]
->  get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
->  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
->  alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
->  alloc_pages_bulk_array_mempolicy_noprof+0x8ea/0x1600 mm/mempolicy.c:2556
->  vm_area_alloc_pages mm/vmalloc.c:3542 [inline]
->  __vmalloc_area_node mm/vmalloc.c:3646 [inline]
->  __vmalloc_node_range_noprof+0x752/0x13f0 mm/vmalloc.c:3828
->  __vmalloc_node_noprof mm/vmalloc.c:3893 [inline]
->  vmalloc_noprof+0x79/0x90 mm/vmalloc.c:3926
->  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
->  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> page last free pid 5312 tgid 5312 stack trace:
->  reset_page_owner include/linux/page_owner.h:25 [inline]
->  free_pages_prepare mm/page_alloc.c:1108 [inline]
->  free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
->  __folio_put+0x2c7/0x440 mm/swap.c:126
->  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
->  pipe_update_tail fs/pipe.c:224 [inline]
->  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
->  new_sync_read fs/read_write.c:488 [inline]
->  vfs_read+0x991/0xb70 fs/read_write.c:569
->  ksys_read+0x183/0x2b0 fs/read_write.c:712
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Memory state around the buggy address:
->  ffffc90000e0df00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->  ffffc90000e0df80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-> >ffffc90000e0e000: 00 00 00 00 00 00 00 03 f8 f8 f8 f8 f8 f8 f8 f8
->                                         ^
->  ffffc90000e0e080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->  ffffc90000e0e100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/672a3997.050a0220.2a847.=
-11f7.GAE%40google.com
-> .
->
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
+
 
