@@ -1,172 +1,126 @@
-Return-Path: <linux-kernel+bounces-401576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66599C1C72
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:52:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4053F9C1C75
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492F91F240AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:52:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD9D1F24399
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759A1E47A8;
-	Fri,  8 Nov 2024 11:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450571E32B3;
+	Fri,  8 Nov 2024 11:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eyBR234B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b="xr9hb/dN"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7814838DC8
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0D77462
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066717; cv=none; b=DqHfVyb8TB9BHFGkOJr4FT0r2j1GV8mvIfNGNJQ/8b3D/IIGlLTtfeE3A/e2gHc0U7qQ57cg/2vsd012w3NQHZgyJBgxc060rV/FmxT7oiBRvAVUHX0aSekoNZOF6+qesgj4De/VEnyn2c9jSX7q7xW/o7tpRSidzQuDDPrBOyU=
+	t=1731066839; cv=none; b=psI/PZYf7WHMYlBhlAXjRsbgyhRBbYCrtnYbKdbIMl55QRTBu02CQgTr/3LyzHPIGG9ptAJ5iLXAzZXZ8u7mk3EaXK1YbHMegzO6eDWq8Si11NWWe8d1ZY5+74438nzKiurUi9Xa+lRMVAODTxsmlKbv5SHPalnP/BwQNyczg5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066717; c=relaxed/simple;
-	bh=IdemLiGe2lleN2NhPFCYNBCFN+rRsyiDuFSx/WM/0Lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UvyPFFGIwC4JJPf3x+IXsWah6R3aHew8BOA0NId7kE/SHyjth+mU9+zLfz+3s+ry8b+2y6EhbRSb3E6dPCroFzEN4ene/Gkz/KJqS5yRo0Zh4tbxNqCu2M4bseIVOcc/gugBM71zkZgIibX1BtLdW48PDTLyq1zDV/kimSL7bx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eyBR234B; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731066714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RVMdf0uo3gDNaUoTkIjmu00DNjqcMxBxoCSu1o0JEIg=;
-	b=eyBR234BPctUOQJZnOmcyW3krh5ATkMGkUgvLb4WB2TjIWWLQBpVkvcdgXZl0AHPurDCp9
-	zRv2IMEbY1XhlRB5rHDemQ5gy/P7PABap429mwqQRZWZ83YhbwTwpNebTIzes38NUvrXN5
-	k8wSsNkV2AWiHCFbaj99rRiBPIHOTvY=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-118-Zrya7DcGOwWKPUxyPxKzUw-1; Fri, 08 Nov 2024 06:51:53 -0500
-X-MC-Unique: Zrya7DcGOwWKPUxyPxKzUw-1
-X-Mimecast-MFC-AGG-ID: Zrya7DcGOwWKPUxyPxKzUw
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a9a04210851so138869566b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:51:53 -0800 (PST)
+	s=arc-20240116; t=1731066839; c=relaxed/simple;
+	bh=w/3bVEVmCsLyY1RQ4E3iWrdcd+dDKQMWvLuCOmFv/VA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aUKq4GuWFdA3uHV69PiuIONRVgnmfbuzWF2smY+unAwPRN5HlOI3takBBBkELRgcFOZOInwJ3l/v7OtNABjZYzLJqOOry1zR3wCDAnhRVevuUb87u9PAOZ7d5oj5cu4VmObgDUAiJBw5Pe1QeRgeiKrD277lnujoyeZTYJbNAuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b=xr9hb/dN; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9ed0ec0e92so262749566b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:53:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20230601.gappssmtp.com; s=20230601; t=1731066834; x=1731671634; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WJ/QBNPXC+RW7xmA6I4st8O2hbtwshnY8Wrg/nnB/7A=;
+        b=xr9hb/dNi3cX9oI5SZSIazuDpTvselhC/vFX7VudA3AYo1okMG/gsltAU7J+J9R23m
+         O/pjV22iRe1SgNVVhhGAojTmqJrj+KFSXXn/Gze3+7RS8yVomJVo78QPAY0mfxtGz4VO
+         YLfzkvMVi9rLnG1Di6wLTHxEz/0FzzZrEiNBlYF9loG5nrUqqTS0iARvalEFJRGqGX43
+         kd4fKsY7oE+I5Mr+dwYlh7RM12Yh+4VI3CNPJbZmooV3+D8EypVTvptLTTvYBALgHw+U
+         jSJaGt7KKmHoT8o7L2qll5c+ATYl1ED/+qSmsefkJtDRkAoBT3nYbgVP/Xs71KJ8Ca1q
+         oO8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731066712; x=1731671512;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RVMdf0uo3gDNaUoTkIjmu00DNjqcMxBxoCSu1o0JEIg=;
-        b=bwTP9nkHuDSgsCHBdieZAqWNwGykUmvbYKelgdKmV+FsJpeD+bw34WNAxGkzdXr8A6
-         OTxR+t0XR6OV5KhLFtBJ1L93KSAmFClWZVDXWagIE5p5RG01OKwiA3wCczcl6PM7K2FB
-         V8gyoZuFfIcipwkVjRtomzQypdw1p73WbIiXVdvejlSVT5Tw4N6QwK6nSEy+161Du0/P
-         c13R5RS4z6OfoOxZVDh1ULbqA6VJAz+kTwUqzm7LwrT9vodZaFzX+Q3SKcV/Uf0kvDKp
-         LIwcVSbO478ovEiz+J5Zh1jMpTlDFFYLGAZj6TMxrsiZXXDOhr1ex+ClbnoPNCilGQU1
-         5N6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmCKRppyohCBBq66ekjmLGWYYMQtbl2S5g0KDL1SHXgp9qfm2RR4LSsRikewrNCUKxcaqk6clmMXretaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxiol8sZZQvAoEIL54W1+xKNCIuetfvPGf8TmuQDpad68oIuZfQ
-	7/GbsE2kU/CXv/xXs5fRvJ/tc6Rf5YPIV4qX//cKbv5LrRla+OlaT1LdGKHx/nxM1+Z+JOX0Xwk
-	F/27LdRHgsJtSlTT6z9pErr+HVsjRVLHz2/buu8VhSko0l/6gL92o74y+pvt5Dm/QB7CP8A==
-X-Received: by 2002:a17:907:8693:b0:a9a:26a1:1963 with SMTP id a640c23a62f3a-a9eefebd0dcmr232324466b.7.1731066711852;
-        Fri, 08 Nov 2024 03:51:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFD0qTCLuzzpiQx4UleeDpBK4lEUwR0v0HeuCVIE9uNsxnMpSj0z1K6MCEU5lE8j24eebBDzQ==
-X-Received: by 2002:a17:907:8693:b0:a9a:26a1:1963 with SMTP id a640c23a62f3a-a9eefebd0dcmr232321966b.7.1731066711377;
-        Fri, 08 Nov 2024 03:51:51 -0800 (PST)
-Received: from redhat.com ([2a02:14f:179:39a6:9751:f8aa:307a:2952])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4a995sm225542166b.61.2024.11.08.03.51.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 03:51:50 -0800 (PST)
-Date: Fri, 8 Nov 2024 06:51:43 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, jasowang@redhat.com,
-	shannon.nelson@amd.com, sashal@kernel.org,
-	alvaro.karsz@solid-run.com, christophe.jaillet@wanadoo.fr,
-	steven.sistare@oracle.com, bilbao@vt.edu,
-	xuanzhuo@linux.alibaba.com, johnah.palmer@oracle.com,
-	eperezma@redhat.com, cratiu@nvidia.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Carlos Bilbao <cbilbao@digitalocean.com>
-Subject: Re: [PATCH v3 1/2] vdpa/mlx5: Set speed and duplex of vDPA devices
- to UNKNOWN
-Message-ID: <20241108065046-mutt-send-email-mst@kernel.org>
-References: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
- <20240904151115.205622-2-carlos.bilbao.osdev@gmail.com>
- <20241107164932-mutt-send-email-mst@kernel.org>
- <f1d671ff-0429-4cb5-a6e8-309a8567924c@nvidia.com>
+        d=1e100.net; s=20230601; t=1731066834; x=1731671634;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WJ/QBNPXC+RW7xmA6I4st8O2hbtwshnY8Wrg/nnB/7A=;
+        b=eifTShiYCkhf/lo0U1slRJLlOQOGpo6vUM7hsEqzuGS2G6v+RBr+RkAMO4AwCf7Jc1
+         oxIGtlmpvZIlTu/iq500OCkiOroLDR5x9CmCVACE9vgzldOdFhXPkZ2Jz0DXaPevLLnF
+         ioLbbi6Qa4qroxKhBllZKJis6sv8tKRlgXNQWZXFovC2Y873lErnCk01Cygz7Rs7hpZW
+         lxdSQt9nhSM7O2uxi2Ohbo2VvtAbXt+Fadnc6rCAdB3SOmjK5NHguuVsD9ayS1ECINqL
+         GgzBKeyCJpSxJ3tci+wGq/2V+fbI41k8hb5OTv5iUGwTWBBDUjNoVHETjpWW4BYxCYA5
+         kvpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC6vszFX/EjA3njGkzky5DsVZ4GEIq/3oljeNLZA6+TjphDlT4wz9cHpjwZJB/5GkiVxYUfXxSxzASybs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXhEohUq1z32jIaDtSPDyz28IwMG4fToEPY3IeuRph6WbiWFqe
+	3LC9MM75uu9CKT7tkLVSzMieVgzq3qs0kX3g8kliHTAbwjdPL/rgYelMLtlk9Rdexk3ZzBm4/7l
+	71w==
+X-Google-Smtp-Source: AGHT+IF0zBViiYdY08YuBRp5GYZS2wntjfJWWdzCqQ7+TzGaLWpU0dOr9IpZa5vesULSn8sMXYRjsQ==
+X-Received: by 2002:a17:906:d54c:b0:a9a:835b:fc77 with SMTP id a640c23a62f3a-a9eefeb2b95mr227960166b.8.1731066834395;
+        Fri, 08 Nov 2024 03:53:54 -0800 (PST)
+Received: from [192.168.0.105] (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0defafasm223618666b.142.2024.11.08.03.53.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 03:53:53 -0800 (PST)
+Message-ID: <0c4dc285-f218-4c88-87f3-b7c7c786cdba@monstr.eu>
+Date: Fri, 8 Nov 2024 12:53:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1d671ff-0429-4cb5-a6e8-309a8567924c@nvidia.com>
-
-On Fri, Nov 08, 2024 at 10:31:58AM +0100, Dragos Tatulea wrote:
-> 
-> 
-> On 07.11.24 22:50, Michael S. Tsirkin wrote:
-> > On Wed, Sep 04, 2024 at 10:11:14AM -0500, Carlos Bilbao wrote:
-> >> From: Carlos Bilbao <cbilbao@digitalocean.com>
-> >>
-> >> Initialize the speed and duplex fields in virtio_net_config to UNKNOWN.
-> >> This is needed because mlx5_vdpa vDPA devices currently do not support the
-> >> VIRTIO_NET_F_SPEED_DUPLEX feature which reports speed and duplex.
-> > 
-> > I see no logic here. Without this feature bit, guests will not read
-> > this field, why do we suddenly need to initialize it?
-> > 
-> IIRC, Carlos was reading data via ioctl VHOST_VDPA_GET_CONFIG which calls
-> .get_config() directly, always exposing the speed and duplex config fields [0].
-> Carlos, was this the case?
-> 
-> [0] https://lore.kernel.org/lkml/afcbf041-7613-48e6-8088-9d52edd907ff@nvidia.com/T/
-> 
-> Thanks,
-> Dragos
-
-Basically, driver should ignore these if feature is not set.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] microblaze: use the common infrastructure to support
+ built-in DTB
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kernel@vger.kernel.org
+References: <20240918045431.607826-1-masahiroy@kernel.org>
+Content-Language: en-US
+From: Michal Simek <monstr@monstr.eu>
+In-Reply-To: <20240918045431.607826-1-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-> >> Add
-> >> needed helper cpu_to_mlx5vdpa32() to convert endianness of speed.
-> >>
-> >> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
-> >> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
-> >> ---
-> >>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 12 ++++++++++++
-> >>  1 file changed, 12 insertions(+)
-> >>
-> >> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> >> index b56aae3f7be3..41ca268d43ff 100644
-> >> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> >> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> >> @@ -173,6 +173,11 @@ static __virtio16 cpu_to_mlx5vdpa16(struct mlx5_vdpa_dev *mvdev, u16 val)
-> >>  	return __cpu_to_virtio16(mlx5_vdpa_is_little_endian(mvdev), val);
-> >>  }
-> >>  
-> >> +static __virtio32 cpu_to_mlx5vdpa32(struct mlx5_vdpa_dev *mvdev, u32 val)
-> >> +{
-> >> +	return __cpu_to_virtio32(mlx5_vdpa_is_little_endian(mvdev), val);
-> >> +}
-> >> +
-> >>  static u16 ctrl_vq_idx(struct mlx5_vdpa_dev *mvdev)
-> >>  {
-> >>  	if (!(mvdev->actual_features & BIT_ULL(VIRTIO_NET_F_MQ)))
-> >> @@ -3433,6 +3438,13 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
-> >>  	init_rwsem(&ndev->reslock);
-> >>  	config = &ndev->config;
-> >>  
-> >> +	/*
-> >> +	 * mlx5_vdpa vDPA devices currently don't support reporting or
-> >> +	 * setting the speed or duplex.
-> >> +	 */
-> >> +	config->speed  = cpu_to_mlx5vdpa32(mvdev, SPEED_UNKNOWN);
-> >> +	config->duplex = DUPLEX_UNKNOWN;
-> >> +
-> >>  	if (add_config->mask & BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)) {
-> >>  		err = config_func_mtu(mdev, add_config->net.mtu);
-> >>  		if (err)
-> >> -- 
-> >> 2.34.1
-> > 
+
+On 9/18/24 06:52, Masahiro Yamada wrote:
+> MicroBlaze is the only architecture that supports a built-in DTB in
+> its own way.
+> 
+> Other architectures (e.g., ARC, NIOS2, RISC-V, etc.) use the common
+> infrastructure introduced by commit aab94339cd85 ("of: Add support for
+> linking device tree blobs into vmlinux").
+> 
+> This commit migrates MicroBlaze to this common infrastructure.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+> I do not know why MicroBlaze still adopts its own way.
+> Perhaps, because MicroBlaze supports the built-in DTB
+> before aab94339cd85 and nobody attempted migration.
+> Anyway, I only compile-tested this patch.
+> I hope the maintainer can do boot-testing.
+
+
+I took a look at it and it is changing current behavior.
+If you look at linux.bin and there is no DT inside. But when you patch is 
+applied linux.bin contains system.dtb inside which is regression.
+Or is it intention of this patch?
+
+I think there was any documentation about it's usage in past but never really 
+described in upstream kernel.
+But idea was that linux.bin requires DT to be passed from bootloader via R7 reg 
+but simpleImage.X is linux.bin+DTB inside and can be used without bootloader.
+
+Thanks,
+Michal
+
+
 
 
