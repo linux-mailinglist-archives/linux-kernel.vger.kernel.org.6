@@ -1,134 +1,135 @@
-Return-Path: <linux-kernel+bounces-401145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7189C1676
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:26:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EF89C1677
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C04F1F217DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63E29282119
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BCC1C3F00;
-	Fri,  8 Nov 2024 06:26:16 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDDA1CDFA6;
+	Fri,  8 Nov 2024 06:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HnSyj1YW"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DDD1D52B;
-	Fri,  8 Nov 2024 06:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53391D52B;
+	Fri,  8 Nov 2024 06:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731047176; cv=none; b=Ein9uC07LLMffYn3Y3eSGhzaojRRlm7itNavosfqNBo+7ekE0bPOhNIEEqsVsV51sg58C92qLlGYLRC5yC0bDu2sOMOhJdwM9u5QahRUSJR3rZllWofUqARMaTXyGhFhuYPB9D+LtjWbvZ1Bq5yHu4GHkvzEMeUU3KL0lPMFmUs=
+	t=1731047311; cv=none; b=HlbL04FJ9n9dIcgMmVsBHcl7W5QoBPwr5F2N+tp6tKUkOQkjNN1XbUxFg6wiR9RMaQeDec5h17EIbTZfF/rS7Afc0wyeeTwsA7kTn4qT0DWrS2Oz23ysrjqsR3iFVDFuBZQbcuwlj86/geKpthy2MFZyYSmNkdf5LATy679lGQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731047176; c=relaxed/simple;
-	bh=fQK8xTVejBDpIgskcOjO/rL9vdDxvIKWkhvWe05pTwA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ocBdz+UCNQ/DoXgthNZKXyVfBp/4JHme7FO+1+SB7VBwiXva5sw+Vy9tfGUzT4lQoq+xp+F21l/rjhTn5ppm7DPDeNZOkJPDGw5fNNnrwOvumV38He+YBO43zOElPXksWA6mcKlXKEkswRG0HZlWQsu4TNVfJD9y8GPYQS4/fxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 930B9C4CECE;
-	Fri,  8 Nov 2024 06:26:13 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	loongson-kernel@lists.loongnix.cn,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH V2] LoongArch: Disable KASAN if PGDIR_SIZE is too large for cpu_vabits
-Date: Fri,  8 Nov 2024 14:25:56 +0800
-Message-ID: <20241108062556.4138380-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1731047311; c=relaxed/simple;
+	bh=vGpm9c8Go+hIdvjd+ws4rirXLAyvQkMLKioK1vvCGDs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qk25ZM0g90vBOCMMaXedYiNDvIaXwkMuGXtV03vHWuAuhb3Uj4vpAFEb2JCCx54sq1LNZy3QdPdVx0U82M7xFHTCt2EcvCEOvU/d5hLOdFx6DN4qfDvNIYRFrTKUqFA7yf1yqtpWJJnQqLSWVgPldezVVYVS5BmurFvyi6ZQhdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HnSyj1YW; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A869ml9017648;
+	Fri, 8 Nov 2024 06:28:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=5tXKZIc9DzhALNJU+G9X2Cwncncnk8
+	seDhujvMJvhi0=; b=HnSyj1YWGgSlYCHZnnp4jSQBEzp4moliJbfg0QfWpSCFKm
+	KBcE7MTZSvhoLKA+oT9x8w5cD8hZ0PMTuiYjWScFSahV6Hznw2bNcgK0WVdAJZ3F
+	GNLuB9tCn3AbJvWWplhAsIAhc0CuGaqXxsuRUObF7Oz8OUXLHiIf1q3nNEA+WLY+
+	2FYWONCXWgKWSAij7dJAm5PD+oaPR6Y4x25WNQDBEoBV54MTlRqo1OF32s5y+oO6
+	cWUTdpoBjJ2BpWoPAq2NZM7VNUFJ0capqHTYBsxL2VGBZWTGwXsBR2PuIYcIisut
+	pK0EKF5h7varXIlob+WwcL0XAb5oM2IqKaOwAl/g==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sd4q023m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 06:28:27 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A86Eera008450;
+	Fri, 8 Nov 2024 06:28:26 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nywmek8e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 06:28:25 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A86SMFZ51577128
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Nov 2024 06:28:22 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3608020043;
+	Fri,  8 Nov 2024 06:28:22 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 152F020040;
+	Fri,  8 Nov 2024 06:28:22 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  8 Nov 2024 06:28:22 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org,
+        sumanthk@linux.ibm.com, agordeev@linux.ibm.com, gor@linux.ibm.com,
+        hca@linux.ibm.com
+Subject: Re: [PATCH] perf/test: fix perf ftrace test on s390
+In-Reply-To: <Zy0X9kz_tmjNue5D@google.com> (Namhyung Kim's message of "Thu, 7
+	Nov 2024 11:41:42 -0800")
+References: <20241107123343.1580616-1-tmricht@linux.ibm.com>
+	<Zy0X9kz_tmjNue5D@google.com>
+Date: Fri, 08 Nov 2024 07:28:21 +0100
+Message-ID: <yt9diksyqlx6.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: S1e0I9GiKZ-_mHN-UeEXEbmae30PounX
+X-Proofpoint-GUID: S1e0I9GiKZ-_mHN-UeEXEbmae30PounX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1011 mlxlogscore=629 phishscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411080051
 
-If PGDIR_SIZE is too large for cpu_vabits, KASAN_SHADOW_END will
-overflow UINTPTR_MAX because KASAN_SHADOW_START/KASAN_SHADOW_END are
-aligned up by PGDIR_SIZE. And then the overflowed KASAN_SHADOW_END looks
-like a user space address.
+Namhyung Kim <namhyung@kernel.org> writes:
 
-For example, PGDIR_SIZE of CONFIG_4KB_4LEVEL is 2^39, which is too large
-for Loongson-2K series whose cpu_vabits = 39.
+> On Thu, Nov 07, 2024 at 01:33:43PM +0100, Thomas Richter wrote:
+>> On s390 the perf test case ftrace sometimes fails as follows:
+>> 
+>>   # ./perf test ftrace
+>>   79: perf ftrace tests    : FAILED!
+>>   #
+>> 
+>> The failure depends on the kernel .config file. Some configurarions
+>> always work fine, some do not.
+>
+> Which test do you fail?  ftrace trace or profile?  I don't think it's
+> gonna be a problem for ftrace latency.
 
-Since CONFIG_4KB_4LEVEL is completely legal for CPUs with cpu_vabits <=
-39, we just disable KASAN via early return in kasan_init(). Otherwise we
-get a boot failure.
 
-Moreover, we change KASAN_SHADOW_END from the first address after KASAN
-shadow area to the last address in KASAN shadow area, in order to avoid
-the end address exactly overflow to 0 (which is a legal case). We don't
-need to worry about alignment because pgd_addr_end() can handle it.
+The ftrace profile test failed, because the ring buffer was not large
+enough, and some lines (especially the interesting ones with nanosleep
+in it) where dropped.
 
-Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
-V2: Change KASAN_SHADOW_END definition.
+>
+>> To achieve success for all our tested kernel configurations, enlarge
+>> the buffer to store the traces complete without wrapping.
+>> The default buffer size is too small  for all kernel configurations.
+>> Set the buffer size of /sys/kernel/tracing/buffer_size_kb to 16 MB
+>
+> Actually you can use -m 16M option for perf ftrace trace and perf ftrace
+> profile.  Then you don't need to care about restoring the original size.
 
- arch/loongarch/include/asm/kasan.h |  2 +-
- arch/loongarch/mm/kasan_init.c     | 15 +++++++++++++--
- 2 files changed, 14 insertions(+), 3 deletions(-)
+Ok, thanks. I leave it to Thomas to decide whether he wants to add this
+option to the CI run.
 
-diff --git a/arch/loongarch/include/asm/kasan.h b/arch/loongarch/include/asm/kasan.h
-index c6bce5fbff57..cb74a47f620e 100644
---- a/arch/loongarch/include/asm/kasan.h
-+++ b/arch/loongarch/include/asm/kasan.h
-@@ -51,7 +51,7 @@
- /* KAsan shadow memory start right after vmalloc. */
- #define KASAN_SHADOW_START		round_up(KFENCE_AREA_END, PGDIR_SIZE)
- #define KASAN_SHADOW_SIZE		(XKVRANGE_VC_SHADOW_END - XKPRANGE_CC_KASAN_OFFSET)
--#define KASAN_SHADOW_END		round_up(KASAN_SHADOW_START + KASAN_SHADOW_SIZE, PGDIR_SIZE)
-+#define KASAN_SHADOW_END		(round_up(KASAN_SHADOW_START + KASAN_SHADOW_SIZE, PGDIR_SIZE) - 1)
- 
- #define XKPRANGE_CC_SHADOW_OFFSET	(KASAN_SHADOW_START + XKPRANGE_CC_KASAN_OFFSET)
- #define XKPRANGE_UC_SHADOW_OFFSET	(KASAN_SHADOW_START + XKPRANGE_UC_KASAN_OFFSET)
-diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_init.c
-index 4a0d1880dd71..7277b7583e1b 100644
---- a/arch/loongarch/mm/kasan_init.c
-+++ b/arch/loongarch/mm/kasan_init.c
-@@ -238,7 +238,7 @@ static void __init kasan_map_populate(unsigned long start, unsigned long end,
- asmlinkage void __init kasan_early_init(void)
- {
- 	BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_START, PGDIR_SIZE));
--	BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_END, PGDIR_SIZE));
-+	BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_END + 1, PGDIR_SIZE));
- }
- 
- static inline void kasan_set_pgd(pgd_t *pgdp, pgd_t pgdval)
-@@ -253,7 +253,7 @@ static void __init clear_pgds(unsigned long start, unsigned long end)
- 	 * swapper_pg_dir. pgd_clear() can't be used
- 	 * here because it's nop on 2,3-level pagetable setups
- 	 */
--	for (; start < end; start += PGDIR_SIZE)
-+	for (; start < end; start = pgd_addr_end(start, end))
- 		kasan_set_pgd((pgd_t *)pgd_offset_k(start), __pgd(0));
- }
- 
-@@ -262,6 +262,17 @@ void __init kasan_init(void)
- 	u64 i;
- 	phys_addr_t pa_start, pa_end;
- 
-+	/*
-+	 * If PGDIR_SIZE is too large for cpu_vabits, KASAN_SHADOW_END will
-+	 * overflow UINTPTR_MAX and then looks like a user space address.
-+	 * For example, PGDIR_SIZE of CONFIG_4KB_4LEVEL is 2^39, which is too
-+	 * large for Loongson-2K series whose cpu_vabits = 39.
-+	 */
-+	if (KASAN_SHADOW_END < vm_map_base) {
-+		pr_warn("PGDIR_SIZE too large for cpu_vabits, KernelAddressSanitizer disabled.\n");
-+		return;
-+	}
-+
- 	/*
- 	 * PGD was populated as invalid_pmd_table or invalid_pud_table
- 	 * in pagetable_init() which depends on how many levels of page
--- 
-2.43.5
-
+Thanks!
 
