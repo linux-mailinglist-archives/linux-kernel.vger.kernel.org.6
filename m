@@ -1,150 +1,229 @@
-Return-Path: <linux-kernel+bounces-402060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08729C22E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:25:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED279C22E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF231C23AD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1D3E2813A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873151F585E;
-	Fri,  8 Nov 2024 17:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29AA1E907A;
+	Fri,  8 Nov 2024 17:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvNERBPH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cI1seGLH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eprBAiul"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B8D199953;
-	Fri,  8 Nov 2024 17:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D165198A17;
+	Fri,  8 Nov 2024 17:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731086689; cv=none; b=aL8P5tspLOBQXADLzXIeKnuHWVpIp0WkIZwN5kw6+69ZL9c9DDZ8XrTo4oJdDnEDf7cpXoDwCmWHtyPZwqIO0f+C1efVxiCkl1SxtfuyrI07KTPiPXNk2hi8587I3O4fap+A8dLJ8lMGxF0A8i8sFddXUgp2+JFXQThIkbNLAkA=
+	t=1731086723; cv=none; b=cKBrihvXVZatfxezTgA0tD7kcxFbTDn9zR4kr6CJLkMN5AJS8W7TXleXWqD5WmLeI89Y1k5VrfGFJRlFYdzcu9Wns9XE8aka/awJ6Er+5RkFUyefY0QRXfeRRIRJPeCdlaCcPTu39HdWawcea0ermQTMVM9W4zXTU292upduc6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731086689; c=relaxed/simple;
-	bh=KCAI+t0FDLnCxPwS3wOLx2If4t6X/SaOrnESfIJLqbY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U4k0l0cHDVoYvZY1qeDD/TQETffXqbQ5CEa023NrfGi0WIagMN5c3Mjt6qk3XeLilvfzZ6ByyVN5oJFx3kLTQsnp+hbVnAQ8bfRTvsTg+/Zts7o+GvP08RpKx+53NPEPaXRXt7yxts4gGNL+ahZiOUQwCgnx03JCrTITAKVlZp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvNERBPH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 583C3C4CED4;
-	Fri,  8 Nov 2024 17:24:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731086688;
-	bh=KCAI+t0FDLnCxPwS3wOLx2If4t6X/SaOrnESfIJLqbY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NvNERBPH4lBhuvKatnosoN9Ho3crexy1Z9MpDvcV3EE5H1gBQtCWjweHq+6YYPGuh
-	 FmdD6UdJYD9cbaYI6bRjU8p3vW29dyNKzz8GmqpZcrQqnOjp2Ig/0T5UVupg27B8C/
-	 3x/+Ut+D9lHW5UMR9mCoQ48/fOBnqOsQgbRlT0qk8VLDKCt7cIk7UErBZYvcNJ5qNt
-	 iM1wnMGICNVE7CKJ/zNDxFRiLUigY8fK3OkK9DBSARkHObszY8hxv1r5O0n5Mlf7tt
-	 uz3lPV1VvFInfWfpYpqpm2+7gITzov7pj7Gv9JUKtVGKekNyuxYvvjW4V2SAzPIxnu
-	 8Sobx2Tvz43TQ==
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e33c65d104so20599647b3.3;
-        Fri, 08 Nov 2024 09:24:48 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVESmIW9qre/oiTnZ44uAVawEipjMWB7qy8eb+7Uu7nDq2igJvY5fvc7oGnHuTrFbZBZACmUzkb3QoJ@vger.kernel.org, AJvYcCXG9KP/btpgtnCpQydPSYJfImJSIDIWqI0ZCZ+h1XmqDClJe8ZrHFxDJpaYkDNV1KnoSgM8kU9zp6M3@vger.kernel.org, AJvYcCXwE+cGR/uMnjUoAYv3Ptuf1XPMSOe+QPombHv8CbHMBXTcaw+kFJ3f/GIaYcP10lmsvgvOhKs/JMYg/KEL@vger.kernel.org
-X-Gm-Message-State: AOJu0YycRdTuqzKaO4uhz2EAXPp3gdZwNtt/G6XuldEuKyYxad9CWnjr
-	a8Z6EVZ3Db1EIEnvGpPI2XNPcmb7ZdViK827rxipjuZiOtNdM0FeHRui2jT4KF9mXVq9JkHLEKG
-	bybuAW/0/03ON3NkygdjILo53Ng==
-X-Google-Smtp-Source: AGHT+IGAZBfJGxfw4NOqc6ySUStY1o7/948qZdZBOgA2D5SiBeoZvIJWd4DLZ2BoZw8kmgLuwhGCHUjvFAmP2DLNAsI=
-X-Received: by 2002:a05:690c:46c4:b0:69d:e911:88c3 with SMTP id
- 00721157ae682-6eadde3ce09mr47040557b3.29.1731086687506; Fri, 08 Nov 2024
- 09:24:47 -0800 (PST)
+	s=arc-20240116; t=1731086723; c=relaxed/simple;
+	bh=yjkhTloaj5xBbPU720ourmFkp+SdQwSIuS5jc1v/IOM=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Gr33dM3vWMwy1KTzYvtcPZ1M1pmiGjqBzHzoBhOjhjj/zd/WWIwGOK9bzJ0RyJ4mzF3SDsN8pjdrw75obwbJsjGaATGMdX0ndizm8dpmVkRkW5LgPDrhDk7NB4vpzhqfMUWnmXUY6eR8XsaNMxiNtJgkQme72adaiyI+r+AyPt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cI1seGLH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eprBAiul; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 08 Nov 2024 17:25:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731086719;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=mm//0lU9z4+PEHZ0bqZdYFhwhkp101ccMzBRZO6feJk=;
+	b=cI1seGLHflxUcR7zH4DnIK4X4FNTjSqHa4z4DO8lMYndwsFX86tRs9+6e5EvZJmeQJQ1Ys
+	UsS6pt4wJ2E9JA0W5VLocAsYAJCJODN9IdBiHhevWqWupFukkMKgltWU0K07nuWaJzikKF
+	xG/l6XYaac8dZz7a05iYtJ5BfvAEUp8RpTBDv6n/BQ65L3S2Wa4eWY6jXsYYStsDCDiGH9
+	lpRIjIUG2mtQ79EISukoUK0Z9dh4Y8m2yg55+NZmAV7HKiNh+n1vmJSmjfMRN+Ezr/yibN
+	IY9oqmjTGckUyorVoRXqYuOKRlUZkzkdGOjrVhcDQYDDAe7k2fjEYnrhiKV8Pw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731086719;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=mm//0lU9z4+PEHZ0bqZdYFhwhkp101ccMzBRZO6feJk=;
+	b=eprBAiulOoRvN292K2H23bPD7jGyL4fRBaFEUq8a1tso+vT08GPJT88mCLxzRcbzr/BznR
+	j5qZYFVUSe7YZBAw==
+From: "tip-bot2 for Andy Shevchenko" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/misc] x86/cpu: Make sure flag_is_changeable_p() is always
+ being used
+Cc: Dave Hansen <dave.hansen@intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin (Intel)" <hpa@zytor.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108143600.756224-1-herve.codina@bootlin.com>
- <20241108143600.756224-6-herve.codina@bootlin.com> <CAL_JsqJ-05tB7QSjmGvFLbKFGmzezJhukDGS3fP9GFtp2=BWOA@mail.gmail.com>
- <20241108172946.7233825e@bootlin.com>
-In-Reply-To: <20241108172946.7233825e@bootlin.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 8 Nov 2024 11:24:36 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLWUSCJMU5LMz8X_0gU74YNy6-vRXGvY24ZpVj+EZW-sA@mail.gmail.com>
-Message-ID: <CAL_JsqLWUSCJMU5LMz8X_0gU74YNy6-vRXGvY24ZpVj+EZW-sA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] of: Add #address-cells/#size-cells in the
- device-tree root empty node
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lizhi Hou <lizhi.hou@amd.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <173108671848.32228.1588073946582041076.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 8, 2024 at 10:29=E2=80=AFAM Herve Codina <herve.codina@bootlin.=
-com> wrote:
->
-> Hi Rob,
->
-> On Fri, 8 Nov 2024 10:03:31 -0600
-> Rob Herring <robh@kernel.org> wrote:
->
-> > On Fri, Nov 8, 2024 at 8:36=E2=80=AFAM Herve Codina <herve.codina@bootl=
-in.com> wrote:
-> > >
-> > > On systems where ACPI is enabled or when a device-tree is not passed =
-to
-> > > the kernel by the bootloader, a device-tree root empty node is create=
-d.
-> > > This device-tree root empty node doesn't have the #address-cells and =
-the
+The following commit has been merged into the x86/misc branch of tip:
 
-> > > +       /*
-> > > +        * #address-cells/#size-cells are required properties at root=
- node
-> > > +        * according to the devicetree specification. Use same values=
- as default
-> > > +        * values mentioned for #address-cells/#size-cells properties=
-.
-> >
-> > Which default? We have multiple...
->
-> I will reword:
->   Use values mentioned in the devicetree specification as default values
->   for #address-cells and #size-cells properties
+Commit-ID:     62e724494db7954c47b4417769f1225cf98f4d77
+Gitweb:        https://git.kernel.org/tip/62e724494db7954c47b4417769f1225cf98f4d77
+Author:        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AuthorDate:    Fri, 08 Nov 2024 17:30:10 +02:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Fri, 08 Nov 2024 09:08:48 -08:00
 
-My point was that "default" is meaningless because there are multiple
-sources of what's default.
+x86/cpu: Make sure flag_is_changeable_p() is always being used
 
-> >
-> > There's also dtc's idea of default which IIRC is 2 and 1 like OpenFirmw=
-are.
->
-> I can re-add this part in the commit log:
->   The device tree compiler already uses 2 as default value for address ce=
-lls
->   and 1 for size cells. The powerpc PROM code also use 2 as default value
->   for #address-cells and 1 for #size-cells. Modern implementation should
->   have the #address-cells and the #size-cells properties set and should
->   not rely on default values.
->
-> In your opinion, does it make sense?
->
-> >
-> > > +        */
-> > > +       #address-cells =3D <0x02>;
-> > > +       #size-cells =3D <0x01>;
-> >
-> > I think we should just do 2 cells for size.
->
-> Why using 2 for #size-cells?
->
-> I understand that allows to have size defined on 64bits but is that neede=
-d?
-> How to justify this value here?
+When flag_is_changeable_p() is unused, it prevents kernel builds
+with clang, `make W=1` and CONFIG_WERROR=y:
 
-Most systems are 64-bit today. And *all* ACPI based systems are. Not
-that the DT has to match 32 vs 64 bit CPU, most of the time it does.
+arch/x86/kernel/cpu/common.c:351:19: error: unused function 'flag_is_changeable_p' [-Werror,-Wunused-function]
+  351 | static inline int flag_is_changeable_p(u32 flag)
+      |                   ^~~~~~~~~~~~~~~~~~~~
 
-It also doesn't actually change anything for you because you're going
-to have "pci" nodes and the "ranges" there takes #size-cells from the
-pci node, not the parent.
+Fix this by moving core around to make sure flag_is_changeable_p() is
+always being used.
 
-Rob
+See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+inline functions for W=1 build").
+
+While at it, fix the argument type to be unsigned long along with
+the local variables, although it currently only runs in 32-bit cases.
+Besides that, makes it return boolean instead of int. This induces
+the change of the returning type of have_cpuid_p() to be boolean
+as well.
+
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Link: https://lore.kernel.org/all/20241108153105.1578186-1-andriy.shevchenko%40linux.intel.com
+---
+ arch/x86/include/asm/cpuid.h |  8 ++++---
+ arch/x86/kernel/cpu/common.c | 39 ++++++++++++++++-------------------
+ 2 files changed, 23 insertions(+), 24 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpuid.h b/arch/x86/include/asm/cpuid.h
+index ca42433..239b9ba 100644
+--- a/arch/x86/include/asm/cpuid.h
++++ b/arch/x86/include/asm/cpuid.h
+@@ -6,6 +6,8 @@
+ #ifndef _ASM_X86_CPUID_H
+ #define _ASM_X86_CPUID_H
+ 
++#include <linux/types.h>
++
+ #include <asm/string.h>
+ 
+ struct cpuid_regs {
+@@ -20,11 +22,11 @@ enum cpuid_regs_idx {
+ };
+ 
+ #ifdef CONFIG_X86_32
+-extern int have_cpuid_p(void);
++bool have_cpuid_p(void);
+ #else
+-static inline int have_cpuid_p(void)
++static inline bool have_cpuid_p(void)
+ {
+-	return 1;
++	return true;
+ }
+ #endif
+ static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 07a34d7..e09ffde 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -275,21 +275,13 @@ static int __init x86_noinvpcid_setup(char *s)
+ }
+ early_param("noinvpcid", x86_noinvpcid_setup);
+ 
+-#ifdef CONFIG_X86_32
+-static int cachesize_override = -1;
+-static int disable_x86_serial_nr = 1;
+-
+-static int __init cachesize_setup(char *str)
+-{
+-	get_option(&str, &cachesize_override);
+-	return 1;
+-}
+-__setup("cachesize=", cachesize_setup);
+-
+ /* Standard macro to see if a specific flag is changeable */
+-static inline int flag_is_changeable_p(u32 flag)
++static inline bool flag_is_changeable_p(unsigned long flag)
+ {
+-	u32 f1, f2;
++	unsigned long f1, f2;
++
++	if (!IS_ENABLED(CONFIG_X86_32))
++		return true;
+ 
+ 	/*
+ 	 * Cyrix and IDT cpus allow disabling of CPUID
+@@ -312,11 +304,22 @@ static inline int flag_is_changeable_p(u32 flag)
+ 		      : "=&r" (f1), "=&r" (f2)
+ 		      : "ir" (flag));
+ 
+-	return ((f1^f2) & flag) != 0;
++	return (f1 ^ f2) & flag;
+ }
+ 
++#ifdef CONFIG_X86_32
++static int cachesize_override = -1;
++static int disable_x86_serial_nr = 1;
++
++static int __init cachesize_setup(char *str)
++{
++	get_option(&str, &cachesize_override);
++	return 1;
++}
++__setup("cachesize=", cachesize_setup);
++
+ /* Probe for the CPUID instruction */
+-int have_cpuid_p(void)
++bool have_cpuid_p(void)
+ {
+ 	return flag_is_changeable_p(X86_EFLAGS_ID);
+ }
+@@ -348,10 +351,6 @@ static int __init x86_serial_nr_setup(char *s)
+ }
+ __setup("serialnumber", x86_serial_nr_setup);
+ #else
+-static inline int flag_is_changeable_p(u32 flag)
+-{
+-	return 1;
+-}
+ static inline void squash_the_stupid_serial_number(struct cpuinfo_x86 *c)
+ {
+ }
+@@ -1087,7 +1086,6 @@ void get_cpu_address_sizes(struct cpuinfo_x86 *c)
+ 
+ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
+ {
+-#ifdef CONFIG_X86_32
+ 	int i;
+ 
+ 	/*
+@@ -1108,7 +1106,6 @@ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
+ 				break;
+ 			}
+ 		}
+-#endif
+ }
+ 
+ #define NO_SPECULATION		BIT(0)
 
