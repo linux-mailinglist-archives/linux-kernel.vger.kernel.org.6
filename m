@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-401694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2645B9C1E1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:31:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9969C1E1D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:31:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D571F214A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1941E1C228A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4011EF0AE;
-	Fri,  8 Nov 2024 13:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8200B1EBA0C;
+	Fri,  8 Nov 2024 13:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="Tb5YOYZt"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbdEmcmP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FF01EF090
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD91F192B95;
+	Fri,  8 Nov 2024 13:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731072659; cv=none; b=ka8bhmTiYjPCVIXQCZqymFNg7stIlaZ+0GIddY9C/7jO4PCXLTc/9QmOX9tqT8fVaeMd6Ir4f2raFzT14gFy4DhhQQF+v3LcMOzNfggGd7zZzyDFPaP2Dme4DcVb4Rfq9BvXVvACaX5NkiVSUxHzx48I/RGbTOTdEBxTkFIWAco=
+	t=1731072651; cv=none; b=alcJK2YgsvhdjKpF2kEL1mbBJQiItJhwG96iRAazjmU54z/aKt40pTEkeEOSl3kAyX2WrzE4n20xbhEywE5ROzYbT5bOVUj84Top0O+3pJ1LU2hmgBjj4gwqB4oIaN9BG0+QBMf49Vg4Itc4aybXrRtN2LC4D9TMNawatqr/Odc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731072659; c=relaxed/simple;
-	bh=wPZJlLnI08tmm1U0YRB/ISYI69snjo4u+8znWWEyD9g=;
+	s=arc-20240116; t=1731072651; c=relaxed/simple;
+	bh=TV7tQY4wboLhy0g0stdHI8twRDkbQn0BDxeQXTe8Ifo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z31atPfd2C/O4PTnUnevZ2jOVvSvoyqjEy68JSDpbXUqcSVhWg/Dyf9OpBft4IEgrgdDdIDfPWuWzEt8q/wreHXgmsQsTKF2Z8hcu8dY+Dv4mulif9ZrSxr6QWsauVcw5AkYmWvVIWnd+qkZ7nyFp7cVGxmt+3D0HZpxt8mbCWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=Tb5YOYZt; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-Date: Sat, 9 Nov 2024 00:29:12 +1100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1731072651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UIXKP+RHW4XCjdsq76k5coFeMmA2KINbHEm689Ip5fU=;
-	b=Tb5YOYZtj1JEeci4IP+D3ftq3ruIwUPUHeJ8qPzlbNcF7xnPlBBSs6hOMFNjZGrcenze6h
-	zHvPkaEqTsl8VjT2uU85t69ZM79EKJH5FkgoFUXwkmMDAp56dgOs8SUlc+Y/bG6NggMUXj
-	FyAU+M+ZmtWY1eXU/07Zu7dyQneaZ/qEfLBhuCuobk3bP14vC80Pdu2sBD8p8rszkjN7WK
-	vZ+pBO81+zvuphinfTKzhtSq4RJy5zD83Pj/c1rnMd91P3C4v7t2jzysDJm+K8zEswXgJk
-	xpdCkiL65jh+aWAcW/02ihU+aIsALl68B0xGSbQryn2QzBjFeamzOa/6MMRO2w==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: John Watts <contact@jookia.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Samuel Holland <samuel@sholland.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
- DE1
-Message-ID: <Zy4SKCBwce3q0yj5@titan>
-References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
- <20241108115357.691b77b0@donnerap.manchester.arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEQ0DebfswLpdd/lAMpUfH64s4KbrwW8VJvXd8Ka4R0ESQVZG+HGSGFZr7ZDC+Qx95XpTUz8G3BRuQVaAU/X+0JegnMC5Wq67xmOQNupkq2jtK4yZvANkPZnt/ElSFuIEv5l7QWZsoMGOa81nuvKxOzc+ndV6m1QvkYGuE/eTVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbdEmcmP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1832EC4CECD;
+	Fri,  8 Nov 2024 13:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731072650;
+	bh=TV7tQY4wboLhy0g0stdHI8twRDkbQn0BDxeQXTe8Ifo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gbdEmcmPdFwfI9Ika8/S38CQc7m8+KAdEPhU+mJyP4bhAEYncCpBsmGi4NO4EH/UG
+	 6TrYJAPWRmsbivDUM2STEyd6hUveECepSwzHHTAsQcEkhCyCIJIO7Ienj5J0n9Wvco
+	 R8wB2QpgBE3C8OCNKAd9Aa1v0UdH+kKmWoxYkItcLCx+k1vszXz40yPkLGVc2FTEmb
+	 hVp3exzKgUcHDnRgXDFNz/jZc3Ss2a48SIfxoGA1i21jX+HGTj86BsApu31jywUYgR
+	 NX3toa4QQGIHjTkeeWLFcKsI1aTWvnbaBIA69W9Je/mx9wIN0T2j2JA5m1UfjBH6QV
+	 gkV6SuE+rstKg==
+Date: Fri, 8 Nov 2024 13:30:44 +0000
+From: Simon Horman <horms@kernel.org>
+To: Meghana Malladi <m-malladi@ti.com>
+Cc: vigneshr@ti.com, m-karicheri2@ti.com, jan.kiszka@siemens.com,
+	javier.carrasco.cruz@gmail.com, jacob.e.keller@intel.com,
+	diogo.ivo@siemens.com, pabeni@redhat.com, kuba@kernel.org,
+	edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com
+Subject: Re: [PATCH net 1/2] net: ti: icssg-prueth: Fix firmware load
+ sequence.
+Message-ID: <20241108133044.GB4507@kernel.org>
+References: <20241106074040.3361730-1-m-malladi@ti.com>
+ <20241106074040.3361730-2-m-malladi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,63 +63,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241108115357.691b77b0@donnerap.manchester.arm.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241106074040.3361730-2-m-malladi@ti.com>
 
-On Fri, Nov 08, 2024 at 11:53:57AM +0000, Andre Przywara wrote:
-> Hi John,
-
-Hi Andre!
-
-> Can you say *why* this patch is needed? Is there something broken that
-> needs fixing? Where does this show and why wasn't this a problem before?
-
-Oops, that's a good point. There is currently a bug where the LCD output will
-be tinted. I have full context here which I should have probably linked in the
-patch description:
-
-https://lore.kernel.org/linux-sunxi/Zn8GVkpwXwhaUFno@titan/T/#u
-
-> To be honest, given the isolation on this patch, I'd rather wait for this
-> full fledged solution, especially if there is no pressing need (see above).
-
-I'd be interested to hear if that's still the wanted solution given the link
-above. This currently blocks many people from having working LCD output.
-
-Doing it the proper way might be overkill for now unless someone deliberately
-tries to run two DEs to the same output. I haven't seen this use case.
-
-Allwinner kernel fork initially sets them up to values like these then makes
-sure both DEs can't be set to the same TCON.
-
-> > -	writel(0, regs + TCON_TOP_PORT_SEL_REG);
-> > +	writel(0x20, regs + TCON_TOP_PORT_SEL_REG);
+On Wed, Nov 06, 2024 at 01:10:39PM +0530, Meghana Malladi wrote:
+> From: MD Danish Anwar <danishanwar@ti.com>
 > 
-> Sorry, but that looks weird:
-> First, please explain the 0x20. Is it bit 5? If yes, what does that bit
-> mean? The commit message suggests you know that?
+> Timesync related operations are ran in PRU0 cores for both ICSSG SLICE0
+> and SLICE1. Currently whenever any ICSSG interface comes up we load the
+> respective firmwares to PRU cores and whenever interface goes down, we
+> stop the respective cores. Due to this, when SLICE0 goes down while
+> SLICE1 is still active, PRU0 firmwares are unloaded and PRU0 core is
+> stopped. This results in clock jump for SLICE1 interface as the timesync
+> related operations are no longer running.
 > 
-> And second: the comment above clearly states that those two writes just
-> *clear* some registers, to have some sane base line. So please adjust this
-> comment, and copy in some of the rationale from the commit message.
-> Explaining things in the commit message is good (so thanks for that!), but
-> having at least some terse technical explanations near the code, in a
-> comment, is better.
-
-Bit 5 is value 3 of TCON_TOP_PORT_DE1_MSK. The R40 datasheet explains the
-values of both masks as follows:
-
-00: TCON_LCD0
-01: TCON_LCD1
-10: TCON_TV0
-11: TCON_TV1
-
-So this sets DE1's input to DE0.
-
+> Fix this by running both PRU0 and PRU1 firmwares as long as at least 1
+> ICSSG interface is up.
 > 
-> Cheers,
-> Andre
+> rx_flow_id is updated before firmware is loaded. Once firmware is loaded,
+> it reads the flow_id and uses it for rx. emac_fdb_flow_id_updated() is
+> used to let firmware know that the flow_id has been updated and to use the
+> latest rx_flow_id.
+> 
+> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
 
-Thanks,
-John Watts
+...
+
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
+
+...
+
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> index 0556910938fa..9df67539285b 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> @@ -534,6 +534,7 @@ static int emac_ndo_open(struct net_device *ndev)
+>  {
+>  	struct prueth_emac *emac = netdev_priv(ndev);
+>  	int ret, i, num_data_chn = emac->tx_ch_num;
+> +	struct icssg_flow_cfg __iomem *flow_cfg;
+>  	struct prueth *prueth = emac->prueth;
+>  	int slice = prueth_emac_slice(emac);
+>  	struct device *dev = prueth->dev;
+> @@ -549,8 +550,12 @@ static int emac_ndo_open(struct net_device *ndev)
+>  	/* set h/w MAC as user might have re-configured */
+>  	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
+>  
+> +	if (!prueth->emacs_initialized) {
+> +		icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
+> +		icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
+> +	}
+> +
+>  	icssg_class_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
+> -	icssg_class_default(prueth->miig_rt, slice, 0, false);
+>  	icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
+>  
+>  	/* Notify the stack of the actual queue counts. */
+> @@ -588,10 +593,31 @@ static int emac_ndo_open(struct net_device *ndev)
+>  		goto cleanup_napi;
+>  	}
+>  
+> -	/* reset and start PRU firmware */
+> -	ret = prueth_emac_start(prueth, emac);
+> -	if (ret)
+> -		goto free_rx_irq;
+> +	if (!prueth->emacs_initialized) {
+> +		if (prueth->emac[ICSS_SLICE0]) {
+> +			ret = prueth_emac_start(prueth, prueth->emac[ICSS_SLICE0]);
+
+I wonder if it is worth simplifying this by having prueth_emac_start()
+check if it's 2nd parameter is NULL. Likewise for prueth_emac_stop().
+
+> +			if (ret) {
+> +				netdev_err(ndev, "unable to start fw for slice %d", ICSS_SLICE0);
+> +				goto free_rx_irq;
+> +			}
+> +		}
+> +		if (prueth->emac[ICSS_SLICE1]) {
+> +			ret = prueth_emac_start(prueth, prueth->emac[ICSS_SLICE1]);
+> +			if (ret) {
+> +				netdev_err(ndev, "unable to start fw for slice %d", ICSS_SLICE1);
+> +				goto halt_slice0_prus;
+> +			}
+> +		}
+> +	}
+> +
+> +	flow_cfg = emac->dram.va + ICSSG_CONFIG_OFFSET + PSI_L_REGULAR_FLOW_ID_BASE_OFFSET;
+> +	writew(emac->rx_flow_id_base, &flow_cfg->rx_base_flow);
+> +	ret = emac_fdb_flow_id_updated(emac);
+> +
+> +	if (ret) {
+> +		netdev_err(ndev, "Failed to update Rx Flow ID %d", ret);
+> +		goto stop;
+
+Branching to stop may result in calls to prueth_emac_stop() which does not
+seem symmetrical with the condition on prueth->emacs_initialized for calls
+to prueth_emac_start() above.
+
+If so, is this intended?
+
+> +	}
+>  
+>  	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
+>  
+
+...
 
