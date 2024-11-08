@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-401307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034F39C18A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A955C9C18A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:00:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE48A1F223C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:00:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5859F1F226C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE4F1E0DDC;
-	Fri,  8 Nov 2024 09:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971901CF291;
+	Fri,  8 Nov 2024 09:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UNnxvySE"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d8lDBsz+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7141E0B82;
-	Fri,  8 Nov 2024 09:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4791F1D0164;
+	Fri,  8 Nov 2024 09:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731056418; cv=none; b=NcznuYTNo4X7hC68SEpYCWECHvZkSpqhpJflq5CpMLbmjDoGfT5XunSN75q4x7UVRei2G7jtxEVlZJndTRLiRm5gboVyjqIl5gtTK05xEXLsXmkfnoVf50dyKQkt8x4sRW8cfkt/tXQ715ofoeqFn6NGMgx4gfJPqZVZk5ayrBg=
+	t=1731056434; cv=none; b=PbJmdvvDglfk5DljqzxBgTzSD8lxYQmGasENN+YOSVDDUcurm0N4MU4Oryrqga+OCsVm4zJ382iNi3J+49eKRCZcp0n2jYqB/7D1VqNU4ueXfkncSkvcfoUkSanhXE/CdKk1kNp+GlD7bRcBRXenNkR49l4apNbEPd+YF01F2To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731056418; c=relaxed/simple;
-	bh=0RV4BRrDPu9fzqimtYkCGhm8dxWaki2Xe2w2Vb0cDQM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkvxAxdtMWV05xBcJaegTbk6XrUZ+txkMCjoe5hd+GpwskqHrhlJVoEIByidTizlGRu5TZRwgFtX/1SKIc2k1qPnNfq4NcUpRfJukeWD9Fd0yv90vgO/hky81acQl5pik9ldJiBLm66cDPcWcRrzv2flrLkio1Aipi5nNqL9cj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UNnxvySE; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731056416; x=1762592416;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0RV4BRrDPu9fzqimtYkCGhm8dxWaki2Xe2w2Vb0cDQM=;
-  b=UNnxvySE+dSEzp8niNbW5zasK//WIdY/LnxTERRzVakH/T8hX8mn/C1h
-   8WEOcthRml8ykI2tfdjiUlfbGKxGkXS3gAk+RPK145MOhW8MxezyGUa66
-   OHIOhGuJZ4GR7hOM+x2LNyiU6mVYN3Ol07YeoRj11VNng5yZZ8gJxpawd
-   1UY5zZU8piRXUJORAFBHNNtMUHRVu0pRbibEGmg2hcjdBZBozou4C/shG
-   nFTaJgNxhv67ZkkMMuaamyB5YwlfwmaomuD2dgD1Myw4CyShVxyh33Tfz
-   gS+X3apw53IT/59ew12rsVSoHV10c7tXVdBdCrfEABd5bDqvNWBxakNXt
-   A==;
-X-CSE-ConnectionGUID: HVTPMN6wSQqpa45vmMRqjw==
-X-CSE-MsgGUID: +GH327iKRSSLSExU7iDt1w==
-X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
-   d="scan'208";a="34564944"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Nov 2024 02:00:15 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 8 Nov 2024 01:59:59 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 8 Nov 2024 01:59:56 -0700
-Date: Fri, 8 Nov 2024 08:59:56 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Lars
- Povlsen" <lars.povlsen@microchip.com>, Steen Hegelund
-	<Steen.Hegelund@microchip.com>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>, Russell King <linux@armlinux.org.uk>,
-	<jacob.e.keller@intel.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH net-next 3/7] net: sparx5: use is_port_rgmii() throughout
-Message-ID: <20241108085956.pr23rcnkhleoesnl@DEN-DL-M70577>
-References: <20241106-sparx5-lan969x-switch-driver-4-v1-0-f7f7316436bd@microchip.com>
- <20241106-sparx5-lan969x-switch-driver-4-v1-3-f7f7316436bd@microchip.com>
- <4748d3a9-55e8-48f9-b281-60ec619bf304@lunn.ch>
+	s=arc-20240116; t=1731056434; c=relaxed/simple;
+	bh=CrWKUfftFBZ+wGLTC10F8LpLBdIyBX00HenmHhZlwc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFEqJb7qXgzOmykKvHMwIwX07NNPlYGIR/lZmPtb/LDGMk8dYHbl7KZG4rvj1EEAvGESkFW83aIrRLMC27e3ITGkHQOi9a9uoeaJWzhC11BYIxSEDu1ri1PdpMn55NdknFO3KJ39pvWromNULrGBdSotmTvv+D9ibPaqqSWiG0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d8lDBsz+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=q0aUDxAYn5YeExddRWD2diDvkGNWUz6lbURBYyNRMws=; b=d8lDBsz+T3r5iY9iWi9iHdiJS/
+	vzyM6gIJSbD8yWA0s2Pq+V1KM7rOb1uTvN05cMFQ6SmM6EpuBqroelhIRqt9B5X/h39XvfgvKaTjN
+	GU0KRleG1AEcgJL+YWeQus5WurpdDX0YqXVlIjvgSxxwmYya11pojSo9M01GTtFQraYsVq/FYrCC0
+	sLB4EnSDYVQI57F2KIvCtYFGP4OJofwY93GXlLW83yPcaiCEHsjdhWXigs7915XeMTtIABOaRT0ds
+	JDQUWB1e+OiRV/JOlHFo4Xu6jYneDSnB3jRiDcvxlpborQ4DBj6s++WzG0uDLKWU0WdfPINOChc4V
+	bMQtGiEw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t9Kqt-00000008awS-2qSz;
+	Fri, 08 Nov 2024 09:00:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E2E6230049D; Fri,  8 Nov 2024 10:00:23 +0100 (CET)
+Date: Fri, 8 Nov 2024 10:00:23 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] uprobes: get RCU trace lock before list iteration
+Message-ID: <20241108090023.GE38786@noisy.programming.kicks-ass.net>
+References: <20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4748d3a9-55e8-48f9-b281-60ec619bf304@lunn.ch>
+In-Reply-To: <20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org>
 
-Hi Andrew,
-
-> > +++ b/drivers/net/ethernet/microchip/sparx5/sparx5_port.c
-> > @@ -1087,6 +1087,9 @@ int sparx5_port_init(struct sparx5 *sparx5,
-> >                ANA_CL_FILTER_CTRL_FILTER_SMAC_MC_DIS,
-> >                sparx5, ANA_CL_FILTER_CTRL(port->portno));
-> >
-> > +     if (ops->is_port_rgmii(port->portno))
-> > +             return 0;
-> > +
-> >       /* Configure MAC vlan awareness */
-> >       err = sparx5_port_max_tags_set(sparx5, port);
-> >       if (err)
+On Thu, Nov 07, 2024 at 09:14:45AM -0800, Breno Leitao wrote:
+> Acquire RCU trace lock in filter_chain() to protect
+> list_for_each_entry_rcu() iteration, protecting the list iteration in a
+> RCU read section.
 > 
-> That looks odd. What has RGMII to do with MAC VLAN awareness?
-> Maybe it just needs a comment?
-
-The sparx5_port_init() function initializes the RGMII port device (and
-the other types of devices too). After the common configuration is done,
-we bail out, as we do not want to configure any 2g5, 5g, 10g or 25g
-stuff.
-
-I can add a comment, sure.
-
+> Prior to this fix, list_for_each_entry_srcu() was called without holding
+> the required lock, triggering warnings when RCU_PROVING is enabled:
 > 
->         Andrew
+> 	kernel/events/uprobes.c:937 RCU-list traversed without holding the required lock!!
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list locklessly under SRCU protection")
+> ---
+>  kernel/events/uprobes.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index fa04b14a7d72353adc440742016b813da6c812d2..afdaa45a43ac3948f7983175eda808c989e8738a 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1103,11 +1103,13 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
+>  	bool ret = false;
+>  
+>  	down_read(&uprobe->consumer_rwsem);
+> +	rcu_read_lock_trace();
+>  	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
 
-/Daniel
+Maybe I'm confused, but isn't uprobe->consumer list protected by
+uprobe->consumer_rwsem, which we hold for reading?
+
+That is, AFAICT this is a false positive and we should be doing this
+instead, no?
+
+
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index a76ddc5fc982..a5405e9ef9f5 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1104,7 +1104,7 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
+ 	bool ret = false;
+ 
+ 	down_read(&uprobe->consumer_rwsem);
+-	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
++	list_for_each_entry(uc, &uprobe->consumers, cons_node) {
+ 		ret = consumer_filter(uc, mm);
+ 		if (ret)
+ 			break;
 
