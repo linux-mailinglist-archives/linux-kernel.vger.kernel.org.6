@@ -1,208 +1,182 @@
-Return-Path: <linux-kernel+bounces-401116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029429C161F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:48:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E709C162C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6255284FA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:48:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E566C1C22826
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7AE1CFEC0;
-	Fri,  8 Nov 2024 05:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="yC+ZuF/I"
-Received: from BL0PR05CU006.outbound.protection.outlook.com (mail-eastusazon11021101.outbound.protection.outlook.com [52.101.52.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D2B1CF7C2;
+	Fri,  8 Nov 2024 05:50:01 +0000 (UTC)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A8B7464;
-	Fri,  8 Nov 2024 05:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731044874; cv=fail; b=lW5LA7UhcQMaNVsrpn6bM82E5ut9ZK29bB8UKxhoPnNd5zY84vt5SN9mt4R6YZgSI4ttZQECSGL9yJpQIFGoRQf4B+QkpLko39iXDQ6gaKdD9fbijhDtDBycfGR3OKnqvML0/7WCIDai8QgHZPhpZJXDnYhFxmZOrGWWYhb+pDc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731044874; c=relaxed/simple;
-	bh=VV/JiLnVMBU9MNqPjWqDB7vw6GwvETofXaLuGTIaZcc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VyMRu2269vykYd8x0LSPnj0ermDkOKfHk/N6DyKVRCOWSq5P2FY9cCXTINPe/PbSQG+86DA6DQVhDYwDlA1WB5B7iXssTLFXJLeUfF+6tu+XhdzaNYhGvedREr2DYJGXRwacewok7If3EOJ4liCeJrvzlAHCIm4sQ4xdF7SOpMA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=yC+ZuF/I reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.52.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=onXlgV0ZLpyrylkfCJOWHJ1IsN3RzZXjaBQi1csnw7IO2JM1WNJ1CYN3aTl4OgTVzU5ZBfEeEXfYpFuFOXHkQSZ+XGdYEabd9feoV2yq6C/Yz0TSVKNvtO0623zTsLJ6XHI8jfwzCZNHSHt1XFna5Us/R3ZogookrbmVl8nzDMhRkg7T2ODg4ydETE5oiVHdExN2ogFV7q0LPDZVcuZJG9s0jQeCsIXKaXRE0Se0cpv5qD/BnXkA8zzzlsVqkiJDkXVJ0j0p7IMgurySKtlppMh0Z4FG6TvqUXJXQzaOtHwXigYgvms/io4mP5bBHmIryOEvm6kxA1OZFeAP06rbtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0g1risCGKK5h67zjiZTGrXuP7L9A3FHTwE5lntsLpUg=;
- b=cjQf7Low0lUYFqhzwgq5ld9p8qjCLfnr5CRLzADwMjcl6uDr5g8xDE0NN419Smasm0mlQtkTQN3lCHLRC52IRW6IwSjL9pq+2+mcwH9nCEF6tVrhbZhDNJyIz68vOLKxxMDQm5Ew+WqGHmSBvJ8vSTghwyLLHHCqOR2d8OGxPdwyOT/eWOO8spFcgcx3xkJ/bgFygR3ClRnBJfmdz/vVSXZKTfsmAP7MbeR1fNmaGp79l8fAwpdC/xenBqRzy5B6kBlhBU8Clk9Mfs03cQEygHMcJ99XL9+LbqgfIPwuX6xtutVDfUGqNYhXZ8TNl8MWbdqu2uzC/mJ6pGQ9Fjtg4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0g1risCGKK5h67zjiZTGrXuP7L9A3FHTwE5lntsLpUg=;
- b=yC+ZuF/IJj39QITx1MFfietLkesKpVHwZTW75yLwHskbw5fRqVEM9nY2FRkfY7ObbsUm2rNUIUG4PX6ksyLai+CRuCsXj5VrCtoA38uI8e8FaWh/vVAeIRjIzwvzPsJrhjutokxhAXcxyfKTR3YxXGsG/YjxlSyBEg3qnGq7P10=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from SN4PR01MB7520.prod.exchangelabs.com (2603:10b6:806:207::19) by
- BY1PR01MB8801.prod.exchangelabs.com (2603:10b6:a03:5b1::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.18; Fri, 8 Nov 2024 05:47:48 +0000
-Received: from SN4PR01MB7520.prod.exchangelabs.com
- ([fe80::3ad8:b11:de24:6087]) by SN4PR01MB7520.prod.exchangelabs.com
- ([fe80::3ad8:b11:de24:6087%4]) with mapi id 15.20.8137.018; Fri, 8 Nov 2024
- 05:47:48 +0000
-Message-ID: <4c5b08d2-e81e-4492-a1a7-7e1e6445ddc4@amperemail.onmicrosoft.com>
-Date: Fri, 8 Nov 2024 12:47:36 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: mctp: Expose transport binding identifier
- via IFLA attribute
-To: Jakub Kicinski <kuba@kernel.org>,
- Khang Nguyen <khangng@os.amperecomputing.com>
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
- Matt Johnston <matt@codeconstruct.com.au>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- ampere-linux-kernel@lists.amperecomputing.com,
- Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Khanh Pham <khpham@amperecomputing.com>, Phong Vo <pvo@amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>,
- Chanh Nguyen <chanh@os.amperecomputing.com>,
- Thu Nguyen <thu@os.amperecomputing.com>, Hieu Le
- <hieul@amperecomputing.com>, openbmc@lists.ozlabs.org,
- patches@amperecomputing.com
-References: <20241105071915.821871-1-khangng@os.amperecomputing.com>
- <20241107204157.683bca11@kernel.org>
-Content-Language: en-US
-From: Khang D Nguyen <khangng@amperemail.onmicrosoft.com>
-In-Reply-To: <20241107204157.683bca11@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR06CA0003.namprd06.prod.outlook.com
- (2603:10b6:a03:d4::16) To SN4PR01MB7520.prod.exchangelabs.com
- (2603:10b6:806:207::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7B81CB333;
+	Fri,  8 Nov 2024 05:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731045001; cv=none; b=qgP478Myi7CBjFvx9l1UBLH/GEivaVK7rivnYfCAY25rn8BYO2Er0+0BP2snFuBObIuWX9u4CBMnrV6ekF2Hfjn1V9409zVycJLoQ0gE0O096AFFQnnR3W0zP4TR2XHQ1uDiteci4qp8HfX1suEAp6SeJ6BBWni1y1uQRAU6rpM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731045001; c=relaxed/simple;
+	bh=4xR53PDd98NzuHtm+coyCSCBhYZ8NGUQWuYXvFMdskQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eD8SP7VdmJhJS/IgRdpNv9PTvzHSnSXH301X1GRuCi29+P+m25uXIWXH4/e9/L6BhKGMOhhjiOOBVxKVdwsUwq4mFs8Ecbqcub2GUxkWUwBY36EjpaI/kvWR+1iUx/DtDM5EXjuzqHoOfJ89q49HhwdTdeE7FqmBBXFQwrZMhJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315abed18aso15432005e9.2;
+        Thu, 07 Nov 2024 21:49:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731044997; x=1731649797;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yjrFbWx5GMxfzojIwOC1+rm9ruecZ0O8uYiOirOduV4=;
+        b=lk5++fyipn5yUAby0jDAHMsntnxlf1XKhjOVNmAzai+LkW/Wrlk8HWPq+UlEMMcx//
+         J3gBHK+IeilUvik6VQ6KJ9URcFgQWbJPSUgFCB9dsapSMukAe+P6Y1RKtHJt06XBGQ4I
+         2uCfnvEUJJOuhXyiGt7weXvU89Sw1O2JAiLPNoSNP617DCKrgFfAMDNFrPK8gI500L16
+         uCn+RdyxECGYz5VvCBGajq4vaLMs4fr1Jz7qa0iyyOAO9WtnJVjZCdu2NuM5z8hc1TUP
+         DSLw70WEmt9PKChJKidDrwse2lynH7wHhN5LEL5drWm2wsg4bE76XcjSdmkqqpXxoj0Q
+         CWEw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5LDzcjSwQ83GMtGIMkJ3Kg0Puhx7Kn3vTwsjTHI38+3Rf2jWmH4N20dUHxV9z6rstQex2s285@vger.kernel.org, AJvYcCWMEsV2+rbOUnA+8mamXUIcAdVarfgWBKiaJn+/vza86om9pDyuFgYyBrFc1zu4YnZU6paYJNmLoyc/3tH9@vger.kernel.org, AJvYcCX4EcyoryQvFD8Q64u0MTCE5aWTcBz7Ri1o5jDbxM9poUsZngYadubn4OjkMEa5Y1caydAOSh8488uFzZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk8Hw9+47n7PQ1f6zbecPT91UDEpBoR0KKJ9tO+VGQGSvlufVS
+	eRcUqZVWFMTt3n1MGYoRs3jex/GJYM5lwOMOt4bANhoEau8olIc0yGwvbVXeYJk=
+X-Google-Smtp-Source: AGHT+IFzviccxJHzJWJN3Rz0zs35SXPPkUsqbCz5gPgCEJvg2M+bZQVPkHvz/bBLz2AFkrOMflrFOA==
+X-Received: by 2002:a05:6000:470f:b0:37d:5113:cdff with SMTP id ffacd0b85a97d-381f18805c8mr1209692f8f.37.1731044997106;
+        Thu, 07 Nov 2024 21:49:57 -0800 (PST)
+Received: from costa-tp.redhat.com ([2a00:a041:e280:5300:9068:704e:a31a:c135])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c26e3sm50505655e9.33.2024.11.07.21.49.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 21:49:55 -0800 (PST)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: ming.lei@redhat.com,
+	Jens Axboe <axboe@kernel.dk>,
+	Waiman Long <longman@redhat.com>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
+Cc: Costa Shulyupin <costa.shul@redhat.com>
+Subject: [RFC PATCH v1] blk-mq: isolate CPUs from hctx
+Date: Fri,  8 Nov 2024 07:48:30 +0200
+Message-ID: <20241108054831.2094883-3-costa.shul@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN4PR01MB7520:EE_|BY1PR01MB8801:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2de706d8-7044-4a05-d6d1-08dcffb8e014
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YTZvV0I5Yk9zQWlXYWN5bmVwSjFrNTZLSmg0cEsvdm9SRWQzQ2FqejFkVFR1?=
- =?utf-8?B?WFdRTVNHcVpMdkYydzQzZ3BGWnc2Z2szMzZJakNsVzdLS0xOVlVPb1JuLzVh?=
- =?utf-8?B?djRiRlFXOU1WeUxudXg3THk4bVVJQ3R6enZqK0J3NkZHVFlYWmRjRElaSmth?=
- =?utf-8?B?eFFHWGlwWXozZ09Zdk1HSUxOb210NjVVaVY4cUMrNlo4Q0FwZ3RJY0d0M00r?=
- =?utf-8?B?cGk1cTFXUlYxMS83QklXc2NOanVsWm5kVFllY1JpMVYrK2JhdTlwbEx0dmoz?=
- =?utf-8?B?YkJ0cTZLMHozVzFSV0tXbDZmN3IwQU5TYW0vUmE4MjRIYzJqbTVzNWt3SXI2?=
- =?utf-8?B?b2s5dFFiVk9lVExOa1VMbzgrc0xpdXRNSjNZdW5ld3dkeVlzMm5kVmZHYTB0?=
- =?utf-8?B?d0sxcmVVMFF2dnRJVEVheElmQisrdm9vZW5HUFNxN2kyem9ZSE5wdm53MGl5?=
- =?utf-8?B?WUd3Z05va1FheHYzdGFCN3Ura3FEN0loc2lPTnFDZmxDSmVaMkpvb1JkVDFh?=
- =?utf-8?B?dU82bUM2Rll3MUZRWFZtWjBlblNFckx3ZEdoelVwTUFadEJJUnNMeWtkMUV6?=
- =?utf-8?B?elVKVC94bkFBT2xIaTNORU9rMWp4L0srQm83NEQ4N1NGZzdsS0hoWlE5ajUv?=
- =?utf-8?B?a3BzejFyU04wdXltaVFldGxzUlgreHhlMzBuWkU2elduZGd3UDlXZHFmRW5u?=
- =?utf-8?B?T0E1ZWtyeE53aytOZTU3SmNVVGF3cnpkbVVpb2gvWnZPMFpOZTVhOHN6K0xh?=
- =?utf-8?B?ek5TRUgvM1ZXeXFsLzljT1MwY2NUV1pXWVplOWFIeExveEtEbkNxSTBUY1Bu?=
- =?utf-8?B?NG9rekZRQlhsYWNDWG1oNXNrVlRhUXZLQzNDVFhDZENpTVAxRlVXZXh2V0Jo?=
- =?utf-8?B?Qi9aMDRJa1hreHlSTWJwc0FybE9JbFJ1SjNjRm9CamhOS2hobk14OWdUdjd5?=
- =?utf-8?B?aitaOE92Z0RwNHgvTFVOMER5THpjeFV1bmlPRWVuWGx1dE1nSlhNbWdIT2ND?=
- =?utf-8?B?RVZJOFh2dlRmMVBtQ3hkaStGVzAyUEUzSmxkemJJNmwzMld0U2dqWnNBcEh1?=
- =?utf-8?B?WURnK0xJZUJoQ3BsQzBacC82dTI2YjFTaTZPbUlKWVZqRklhUlBqUURNRkIz?=
- =?utf-8?B?RG5uU3lTWlB5MWlTaDFDS3U2dk5KY0JTUkk1eFFTZ2JkTU1OaTJlazFDbDJQ?=
- =?utf-8?B?L0FyWitoZW9aWXBIVklhY1ozbjdkMkw4enpMZ3VMRVBSRHl6YWNROFJWbFJM?=
- =?utf-8?B?czZwMUxxWElobDA2ZFFxVkhmZTk1TWJQVXhrbXVtZjJVUzl3UTFLTG9Dbms4?=
- =?utf-8?B?NHMvSkwvT3plWXlXaTlrMlpPV1pIUE9wWm9mdm52YytPWjBBc2cwcTJXckpH?=
- =?utf-8?B?L1JJZ3hseXFnZ2xXN0ZNdXVONlRBTk1xbUZJdmxZNzNIeWZXbnd5TkU1end3?=
- =?utf-8?B?bUNuY1o5ejM0RlNYczN5ak85aDJuSFptekpCUVlWMkRIOVY5bHBLNGdzenlV?=
- =?utf-8?B?QVl2MkM4TlcxMUU0ekxocU5sMURFOU9lVGlMVUp5c1N2akt4bEhmQnVJNFFK?=
- =?utf-8?B?QmpMUXBpa3FqODllQksvdzVVa3B3L1JiU2dqTU1ZRk5rbUJ2aHVIK24xdGZS?=
- =?utf-8?B?c0k1YjdqWHV5S2F0WDkzQjIzOE1sVUNrenpmMlk1NlN4NmxCZXVNN28yOTI2?=
- =?utf-8?B?bFJRSUlId1VWTndJeTRwVU9nUjUxVGVzR21panJQNTR5WHJKamZoUktCdEFl?=
- =?utf-8?Q?OiGpZfJgsq+Z91q5Oy+4M1RliIf5k3gNS2VbMfv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR01MB7520.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eDZobzBPUkZkbEZGazY2NkwyVGZWby9sbVBWNUlId0V4RnJKTzh5dWhmNWRK?=
- =?utf-8?B?b1VIUVIrR0lMMXBCM2NxaytVenI4TUpVaHl6SnZoWWVJVDNPTHhmb25oeEc5?=
- =?utf-8?B?d1p1WHZjRHBqNUhFQmwwTm1uc1dtbWVDR3I5T3NiSXU3N0RUWkFsZkN3VWpX?=
- =?utf-8?B?UytuS20wT2daOUFFQWFsbnB3MnFxaVhCdkV5Y1B0WUROZ0RUOEVrU3FnQlJs?=
- =?utf-8?B?cFhiMjlqalNtYVFMZjg1ZERUTk9TUytlc2FhZkZiV3pYRFlRT0JVRDBob2tt?=
- =?utf-8?B?VWlzREE1S0JRWDZ1K2RXMTVFaWplZkJpQlppNzk4YmNScENSSVV1RTZ3cDZw?=
- =?utf-8?B?cEpHamFBcitKb3FoUlBxM01qZnB2WTd2YkNTbkUraURoN29vejJFZDROOHpP?=
- =?utf-8?B?UFhPaE5XOTdzeFI0bEdwY2VHVjRFNGtGQ1c2WmdYcU1kZTV2bnV1K3BrUjFR?=
- =?utf-8?B?b2pLRE1xOC9GRWdvbnNNMUNiRGZkZHRPOFA0S1I4ZnFaU3RBZnh0RTN4Tmp0?=
- =?utf-8?B?VkVaWVFLVk5ITkhURU9RMDBMbldSZ0xvNHNObmVVdktXL2hocWg3VUxqcU9P?=
- =?utf-8?B?MXcvQ3NmRG5mZmpiQ1VrL1RtenRaSnArNmIvenVrRjNJQXN6Q3RBZ25INTc3?=
- =?utf-8?B?ZVJ3eW5IZGVXai9saVh4YzdTZ2srcitqUXkxZG5DcjJpSm1VVjdoT0ZsS25z?=
- =?utf-8?B?RUludHAzUmc1SndidVNJK0MrRkFsNzhiUXpNZHljZlpVYXBxdUpvWEZFd3Bo?=
- =?utf-8?B?cDE0SUMvWXZYamRWbm40OEJKU3k4SE5iaXpidmhybjRIeWQyRU9PZzg0eXZk?=
- =?utf-8?B?SGJVV2pPaGdra0lSZHBrcHMyQW1sSVZ2RTh4WWIxKzVxWDVjSEFIeTh1NnNL?=
- =?utf-8?B?UTF1R2kyVmY3eUtNbWJxdENRWkcyYzcwR3ZZQ25TY29ybGJxU2pBQUF0dkg0?=
- =?utf-8?B?TzdFaXB1cDMySDBmbzdLVlEwaFhlbzV0TjBKbjFZTzhPWGo3ZXNRdkhCazd1?=
- =?utf-8?B?aks3bFFsbC9vMkZjeTRZRG5odWNNTlE4RDAvUXdvUFBpeEdjeFBTTDFaSW5v?=
- =?utf-8?B?aXJ4UFZ1UlIvY1pmVS9SZWx2Y0gveDJnVmtLd0ROK2RLRWZicTZTTDdFQVhw?=
- =?utf-8?B?V05FZFI2UGRjTUU5Tk55Mmx3MGl1dEQrejl3NFk1b0t2S0RVK3lEdDZDVGFQ?=
- =?utf-8?B?a2VjeDVUN09uZGswV3RuY2JHUm1uOXNVTUwzQTFoVEZUN05RcGpJdmlocCs1?=
- =?utf-8?B?cUcvQjlhc3BnYXZpbm9IQnp4TnZyYmVpeTY1U2xSY0VTZkRVTVFDblhHVW4v?=
- =?utf-8?B?OHlVdXlNd3pzSGk1UFBsUmFrMDNlc0Fnc2JPN0JEWW9vTi9qVmI5V0FBWkFt?=
- =?utf-8?B?eW5zK29nYWUyNDlNUnZqbWU2SVcveDB3czhvQmg5NEtqd0RrZkg0UzJYaFBD?=
- =?utf-8?B?eDlHeksycnJ0bnZiQVoxN2pGc2d3aDFlZit2V0tiQWtGL2VUU2xqTXEwV0g0?=
- =?utf-8?B?UkVmL1o3MlZoMlZOcFNYc3o3REZSN3BodDVSK0dVSFIydUJibWFrUEx0UlZq?=
- =?utf-8?B?c2xNWks3MnVMR1FONjRBMzNlQ0ZmWGdZVWxUNk9aVVBBbHJKZ3JzUEVyRFd6?=
- =?utf-8?B?a3pmU082S2hiTVQ3SVB1L0FZQTJtU1VaOE9icXA5VU43V01Ndkd1d0J5MDRP?=
- =?utf-8?B?Z2RJOWFGK3ZBc2pMY0NQRm9xS2N1WnhqTVdZendXZVB1dGRiVXBGdTRMN25N?=
- =?utf-8?B?QUxaYlZ5Y0NLcnBpOUptKzFPZ1d4VGp4a1dQSDVUQ2VvK2tyYVJ2eDJpaHI5?=
- =?utf-8?B?OG03dFZCSi9oU1ozQ0NWd25YMkpPQlNLazFFNmh5bmtycmkyLzZhR0FienQ1?=
- =?utf-8?B?Q3I3SERDRnBPL0NmU3E2ZUprdWROV3RmSU1nbkJsTmp0NU10MVlTY1lmRENX?=
- =?utf-8?B?TXgyMDBHWWxaczkwVHQ3Ty85Z0R2V1RFZEYwckZER1RlRk5lUklyL29PZVE3?=
- =?utf-8?B?MGY2aGFRdE1rVGJzbTRoVHlNRFhvMzNpNzVCYWpXUEpVb2U3THNmQTNvNDIw?=
- =?utf-8?B?MXd3Wi9KWERCRlU0dWphK2JQVFR5a2FEL3dVNmd3K3BFN2JUczE1cUx6YUsw?=
- =?utf-8?B?UDNHZlFjTUwwc0U3UHdOenNvb2loM2ZicTNYRlJrV1RqTkZBR1JOZzh5NUFG?=
- =?utf-8?Q?NF5yIyASPHYFQ9T6SPKSGXM=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2de706d8-7044-4a05-d6d1-08dcffb8e014
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR01MB7520.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 05:47:48.1173
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D4SfCG/m5zx4Jy2EFrcZ9bFE9nn/TM6Nd68RP3i8CSYEiEWB/EGWdgww4T+IBqTPZj4StWR+lyB8QfnqknufnIIiu+G9M9ECahpAQHwoZgL7eSNC7bPunR+uMA8MZ1qf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR01MB8801
+Content-Transfer-Encoding: 8bit
 
-On 08/11/2024 11:41, Jakub Kicinski wrote:
-> On Tue,  5 Nov 2024 14:19:15 +0700 Khang Nguyen wrote:
->> However, we currently have no means to get this information from MCTP
->> links.
-> 
-> I'm not opposed to the netlink attribute, but to be clear this info
-> is indirectly available in sysfs, right? We link the netdev to
-> the parent device so the type of /sys/class/net/$your_ifc/device
-> should reveal what the transport is?
+The housekeeping CPU masks, set up by the "isolcpus" and "nohz_full"
+boot command line options, are used at boot time to exclude selected
+CPUs from running some kernel housekeeping subsystems to minimize
+disturbance to latency sensitive userspace applications such as DPDK.
+This options can only be changed with a reboot. This is a problem for
+containerized workloads running on OpenShift/Kubernetes where a
+mix of low latency and "normal" workloads can be created/destroyed
+dynamically and the number of CPUs allocated to each workload is often
+not known at boot time.
 
-Good point, I did not think about using the parent device, that would be 
-a good workaround for the currently supported interfaces.
+Cgroups allow configuring isolated_cpus at runtime.
+However, blk-mq may still use managed interrupts on the
+newly isolated CPUs.
 
-For the long term, we should still need the attribute. For example, 
-vendor-defined transports need their 0xFF code, which cannot be derived 
-anywhere. Or binding implementations that have parent SoC platform 
-devices from the device tree, which do not always have a clear type 
-shown in the sysfs...
+Rebuild hctx->cpumask considering isolated CPUs to avoid
+managed interrupts on those CPUs and reclaim non-isolated ones.
 
-(The MCTP-over-serial binding also does not have a parent device 
-currently, but I believe we can fix that if necessary)
+The patch is based on
+isolation: Exclude dynamically isolated CPUs from housekeeping masks:
+https://lore.kernel.org/lkml/20240821142312.236970-1-longman@redhat.com/
+
+Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+---
+ block/blk-mq.c         | 30 ++++++++++++++++++++++++++++++
+ include/linux/blk-mq.h |  1 +
+ kernel/cgroup/cpuset.c |  2 ++
+ 3 files changed, 33 insertions(+)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 12ee37986331..d5786b953d17 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -4145,6 +4145,36 @@ static void blk_mq_map_swqueue(struct request_queue *q)
+ 	}
+ }
+ 
++/**
++ * blk_mq_isolate_cpus() - rebuild hctx->cpumask considering isolated CPUs
++ * to avoid managed interrupts on those CPUs.
++ */
++
++void blk_mq_isolate_cpus(const struct cpumask *isolcpus)
++{
++	struct class_dev_iter iter;
++	struct device *dev;
++
++	class_dev_iter_init(&iter, &block_class, NULL, &disk_type);
++	while ((dev = class_dev_iter_next(&iter))) {
++		struct request_queue *q = bdev_get_queue(dev_to_bdev(dev));
++		struct blk_mq_hw_ctx *hctx;
++		unsigned long i;
++
++		if (!queue_is_mq(q))
++			continue;
++
++		blk_mq_map_swqueue(q);
++		/*
++		 * Postcondition:
++		 * cpumask must not intersect with isolated CPUs.
++		 */
++		queue_for_each_hw_ctx(q, hctx, i)
++			WARN_ON_ONCE(cpumask_intersects(hctx->cpumask, isolcpus));
++	}
++	class_dev_iter_exit(&iter);
++}
++
+ /*
+  * Caller needs to ensure that we're either frozen/quiesced, or that
+  * the queue isn't live yet.
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 2035fad3131f..a1f57b5ad46d 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -924,6 +924,7 @@ void blk_freeze_queue_start_non_owner(struct request_queue *q);
+ 
+ void blk_mq_map_queues(struct blk_mq_queue_map *qmap);
+ void blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set, int nr_hw_queues);
++void blk_mq_isolate_cpus(const struct cpumask *isolcpus);
+ 
+ void blk_mq_quiesce_queue_nowait(struct request_queue *q);
+ 
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 5066397899c9..cad17f3f3315 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -41,6 +41,7 @@
+ #include <linux/sched/isolation.h>
+ #include <linux/wait.h>
+ #include <linux/workqueue.h>
++#include <linux/blk-mq.h>
+ 
+ #undef pr_fmt
+ #define pr_fmt(fmt)    "%s:%d: %s " fmt, __FILE__, __LINE__, __func__
+@@ -1317,6 +1318,7 @@ static void update_isolation_cpumasks(bool isolcpus_updated)
+ 		return;
+ 	ret = housekeeping_exlude_isolcpus(isolated_cpus, HOUSEKEEPING_FLAGS);
+ 	WARN_ON_ONCE((ret < 0) && (ret != -EOPNOTSUPP));
++	blk_mq_isolate_cpus(isolated_cpus);
+ }
+ 
+ /**
+-- 
+2.47.0
+
 
