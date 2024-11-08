@@ -1,167 +1,260 @@
-Return-Path: <linux-kernel+bounces-401829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59E19C1FD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:59:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55599C1FDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:59:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2981FB23584
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:59:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40BF51F245B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E5B1F582D;
-	Fri,  8 Nov 2024 14:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WK+BhFva"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03DA1F4FAD;
+	Fri,  8 Nov 2024 14:59:10 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFC21F5839;
-	Fri,  8 Nov 2024 14:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6272D1F4FA2
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731077920; cv=none; b=No+3W0KRN17YzhcP32HNDYRDbdHHDMZXC/4W6l6Gh9Mv3iY4yfLRpkIHkXKEWqbUhytGtpMDFEYeDq+LrOWHu/+TGm9NFPaRZJWeyUTp5jUEgAK47cW9IzijXeHhOx3UouKiy+03CK8TSHPG+b/5GuTR57qtg6xPCEfxyoG54oQ=
+	t=1731077950; cv=none; b=cHMiUO6jwNJWmPNl5UmE33Ehoagb5BbvhV2xc4MPxtDPDLyinTRULoKKlqeK60stI5rmsvzW5RiH/UY22Da5XljTYJNpZxNCxnSk5MKBrZyArEIuDzrqG4y9GHuSZM+hkF6CwF2TrJjBDeXMeJMGGviiDtHSgyCe7xsHpH9CiJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731077920; c=relaxed/simple;
-	bh=LpG39qqU1URrHICuGs7ygOJgOeEZduFX4Mef0Sou4KU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j18gj3X4AGC3vf+gW74FwbRdQoFvYBiCsP5qJwGFnKfGKxXixO8chDLMN3VEEb+r5NllSt3aixyqG3AGtSwP8gdqhWlNzDPfkIsQOg6N1cmV/Bit0PSQB0SE9Hq9R1ECkfxnOewPYPPHOH3gKFX2BCosi9SvWLE2BLQq37ITl0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WK+BhFva; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DD86C4CECD;
-	Fri,  8 Nov 2024 14:58:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731077919;
-	bh=LpG39qqU1URrHICuGs7ygOJgOeEZduFX4Mef0Sou4KU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WK+BhFvasjIaKvlDTSittKA3PF+kBXMecJ6pH/MtfGiQPZnZzAoVqnBYRS4GRXZRl
-	 WVNoqt8GnDV0x2+mmZrxxptn6WKtZPTs36jQguBLaQjOnWQPJ4zFUkzAGDjZuAubGX
-	 TddvV1DpwPRBC4rcNmAkHYAcaTKp27UdjAPW1HcoQNwaM0rGAYJg0LLphBHPEBt5rw
-	 B+bx4sqqYBftInWDe0w1UQNp5TRt45ElNm5NG3Qntu/NqNdMlLJHgvoBen6eiZCyEi
-	 glA2IYD7aaHLo6XW4ZUxgRmu2Yul8XnRLPMYt8WaV/ut+FRpLgwK2y5uUCILpDNyv0
-	 L4DoEKO8VpgEA==
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e290222fdd0so2319845276.2;
-        Fri, 08 Nov 2024 06:58:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU3zJHm2S1eKvjye1vJ/N4HjXlvI1DuhneC27ohj80Krxdgv+dDllk5Ugwzt8Vb3R7IM4i0583PDorJ8P5B@vger.kernel.org, AJvYcCUAzlbkwP4YQ9CXZNd50xsa2fXRfanL6pr10NZHu5BWePuJLbGasRRDkmOm5JW4PboC+EIoQmeRtMAl@vger.kernel.org, AJvYcCXgAkqZnpQy+5QnwZda+cFthsOPHWlu+wtqXxrOf7xUucyVJoFvb+ca3w72prRbdW7nRV15XtJOCNDS6HBJFF9dH60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAQ719+E6VEPSU+Gxjhm/Iox2rnILIoPHl4fcZivC4stcWyM50
-	RMGKsEBpoto0UZ+sgSxB7rgriFxYl+hb2mZUVSPOnapn1C9lhjJS2Keod2sispLdvOBU/FUFl+v
-	sK5Faulv3nUxzDkwh+QQ6bjl1jA==
-X-Google-Smtp-Source: AGHT+IFTijkWBoFuDrAuQlURtR/GqlKnV1aE+tc3/ggelsz1fdahHEgBLcMYQ94HPKN48fC3aaYfm0kx1I18FcNf4Xs=
-X-Received: by 2002:a05:6902:68b:b0:e29:566d:c30 with SMTP id
- 3f1490d57ef6-e337f860db3mr2498969276.16.1731077918830; Fri, 08 Nov 2024
- 06:58:38 -0800 (PST)
+	s=arc-20240116; t=1731077950; c=relaxed/simple;
+	bh=xUTnX9sfzz0j20d3cUBEqs2vf4IT/0oHwg4KIm1ccrY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=u1ogbGw1iQVpW/1iDSDcTjFHoetvB6OozSkBlra7+UTzNbZSYP9kkkC3ST7/IFX9aW9S1A6GBNfwRB5u4MbhfeG2aqqUr0qZotj48dZrEojPfaux83b5qenSfNtqU3aBVxEmzY6k3P0hylV+BAyT9sJUCjyqaGeWd/5nvuyueWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abb164a4fso228303339f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 06:59:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731077947; x=1731682747;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y02zO3AKIAA0IiJ4Ma1zvBoT9cjGOBk2uMbTGUb10mI=;
+        b=l3lwqHZA//ZLoLRXlpsw2OCYGolWg4hlS9gEw262llfrBV0J8/BulVSblOFvKg/bpY
+         CeLfPWoOWg2dlM5ETtOMbEB1ok3IsB+duxMT41iqcAsEVbe9b7GOabtWlMnCIK3QFUdA
+         cCKonU/rj6jOVMBJAgNJ94v8DC3q/j1dmxXXYXzZvMYv2UWcU9nRraSGUIGYroJcH67C
+         BhSmiwcA6km9gLRyJ18OCq6wIFNmzU4vWdP7mFQRCPiPOe3RGX2Ft3U06BbekDFGWoi0
+         3iuxpHvqIlI3PzFboHTC9JCi4N4KCaIe3ORLnw87yj+ug1iihUmwqjdWIFOFqIu1m7EX
+         pLkw==
+X-Gm-Message-State: AOJu0YyGJPIe1Y6CCF+R0v2IGNzfyyIQ26I85q8mUTKrMHvecKkhI5QF
+	asWaDeOr07kIGaI49hpZ0zxvvsPTVZGtO5t/zrlTNqfCRlAS1Vx61ZWZGmltPumKImohgvfaIgg
+	8ZGBCGuHzgDZFCKGYGWrfRf2rcSWPPf3DcRxFbuCtscUBmm8V69pzVc4=
+X-Google-Smtp-Source: AGHT+IFHhCZXpL06uSgo/6N2k0buQh8gpfGSe/yVyrnN4bDe/aGT/iIILMuIENfDzXoK8MgoaW9blNU3fombAiwYL43aZ8qsxKCW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106171028.3830266-1-robh@kernel.org> <CGME20241108110444eucas1p20cbed7533af31573dac30dbb435c3d9d@eucas1p2.samsung.com>
- <3706d174-fadd-485f-be7b-f7ef4b11cf84@samsung.com> <73eacca6-b6cd-4689-8ccd-f7e2e8b716f3@arm.com>
- <CAL_JsqLyFV85w1kf397AcvZ7+Oewpe3vYeZdz_uvQrYwb1B8ag@mail.gmail.com> <e23ecbab-66ba-478c-b720-fb045a08bc9c@arm.com>
-In-Reply-To: <e23ecbab-66ba-478c-b720-fb045a08bc9c@arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 8 Nov 2024 08:58:27 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLyuQaKpoq7wQeQs38HBu+_=SfgbMOGyGYtns6Dm-Y2Vw@mail.gmail.com>
-Message-ID: <CAL_JsqLyuQaKpoq7wQeQs38HBu+_=SfgbMOGyGYtns6Dm-Y2Vw@mail.gmail.com>
-Subject: Re: [PATCH v2] of: WARN on deprecated #address-cells/#size-cells handling
-To: Steven Price <steven.price@arm.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Saravana Kannan <saravanak@google.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-	Conor Dooley <conor@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+X-Received: by 2002:a05:6e02:19c8:b0:3a6:bb77:a37b with SMTP id
+ e9e14a558f8ab-3a6f19e7b34mr34662145ab.13.1731077946643; Fri, 08 Nov 2024
+ 06:59:06 -0800 (PST)
+Date: Fri, 08 Nov 2024 06:59:06 -0800
+In-Reply-To: <672a3997.050a0220.2a847.11f7.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672e273a.050a0220.69fce.0017.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [acpi?] [nvdimm?] KASAN:
+ vmalloc-out-of-bounds Read in acpi_nfit_ctl (2)
+From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 8, 2024 at 8:33=E2=80=AFAM Steven Price <steven.price@arm.com> =
-wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read i=
+n acpi_nfit_ctl (2)
+Author: surajsonawane0215@gmail.com
+
+#syz test
+
+On Tue, Nov 5, 2024 at 8:58=E2=80=AFPM syzbot <
+syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com> wrote:
+
+> Hello,
 >
-> On 08/11/2024 14:04, Rob Herring wrote:
-> > On Fri, Nov 8, 2024 at 7:26=E2=80=AFAM Steven Price <steven.price@arm.c=
-om> wrote:
-> >>
-> >> On 08/11/2024 11:04, Marek Szyprowski wrote:
-> >>> Hi Rob,
-> >>>
-> >>> On 06.11.2024 18:10, Rob Herring (Arm) wrote:
-> >>>> While OpenFirmware originally allowed walking parent nodes and defau=
-lt
-> >>>> root values for #address-cells and #size-cells, FDT has long require=
-d
-> >>>> explicit values. It's been a warning in dtc for the root node since =
-the
-> >>>> beginning (2005) and for any parent node since 2007. Of course, not =
-all
-> >>>> FDT uses dtc, but that should be the majority by far. The various
-> >>>> extracted OF devicetrees I have dating back to the 1990s (various
-> >>>> PowerMac, OLPC, PASemi Nemo) all have explicit root node properties.=
- The
-> >>>> warning is disabled for Sparc as there are known systems relying on
-> >>>> default root node values.
-> >>>>
-> >>>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >>>> ---
-> >>>> v2:
-> >>>>   - Add a define for excluded platforms to help clarify the intent
-> >>>>     is to have an exclude list and make adding platforms easier.
-> >>>>   - Also warn when walking parent nodes.
-> >>>> ---
-> >>>>   drivers/of/base.c | 28 ++++++++++++++++++++++------
-> >>>>   drivers/of/fdt.c  |  4 ++--
-> >>>>   2 files changed, 24 insertions(+), 8 deletions(-)
-> >>>
-> >>> This patch landed in today's linux-next as commit 4b28a0dec185 ("of:
-> >>> WARN on deprecated #address-cells/#size-cells handling"). In my tests=
- I
-> >>> found that it introduces warnings on almost all of my test systems. I
-> >>> took a look at the first one I got in my logs (Samsung Exynos Rinato
-> >>> board: arch/arm/boot/dts/samsung/exynos3250-rinato.dts):
-> >>
-> >> Just a "me too" for rk3288-firefly.dtb:
-> >>
-> >> [    0.138735] WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus_=
-n_addr_cells+0x9c/0xd8
-> >> [    0.138776] Missing '#address-cells' in /power-management@ff730000
-> >>
-> >> I'm sure it's easy to fix up the DTB, but we shouldn't be breaking lon=
-g existing DTBs.
-> >
-> > What broke?
+> syzbot found the following issue on:
 >
-> Nothing 'broke' as such (the board continued booting) but the WARN
-> shouldn't be happening. My CI treats the WARN as a failure as these
-> shouldn't occur unless there's a programming error.
+> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of
+> git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12418e3058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D11254d3590b16=
+717
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D7534f060ebda6b8b51b3
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
+> Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12170f40580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16418e3058000=
+0
 >
-> > The intent here is to exclude any platforms/arch which actually need
-> > the deprecated behavior, not change DTBs. That's spelled out at the
-> > WARN which I assume people would read before fixing "Missing
-> > '#address-cells' in /power-management@ff730000". I tried to make the
-> > warn message indicate that on v1 with:
-> >
-> > WARN_ONCE(!IS_ENABLED(CONFIG_SPARC), "Only listed platforms should
-> > rely on default '#address-cells'\n");
+> Downloadable assets:
+> disk image (non-bootable):
+> https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_di=
+sk-2e1b3cc9.raw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/2f2588b04ae9/vmlinux-2e1b3cc=
+9.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/2c9324cf16df/bzImage-2e1b3cc=
+9.xz
 >
-> So one possibility is to include this platform in the exclusion list -
-> but I'm not sure how to do that, I assume including CONFIG_ARM in the
-> list would rather defeat the point of the patch. But my feeling is that
-> it would involve a lot of playing whack-a-mole to identify individual
-> platforms.
-
-Please see my posted fix in this thread. Things "broke" quite a bit
-more widely than anticipated.
-
-> One obvious idea would be to look at the DTBs in the kernel tree and see
-> which are affected by this currently, that might be a good place to
-> start with an exclusion list.
-
-It's been a dtc warning since 2007, so I can say all of the in tree
-dts's are fine. The problem for these reported platforms is the
-kernel, not the DT.
-
-> You could also downgrade the warning to a pr_warn() or similar.
-
-I find that pr_warn() may or may not get noticed, but WARN for sure
-will which is what I want here.
-
-Rob
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func
+> drivers/acpi/nfit/core.c:416 [inline]
+> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
+> drivers/acpi/nfit/core.c:459
+> Read of size 4 at addr ffffc90000e0e038 by task syz-executor229/5316
+>
+> CPU: 0 UID: 0 PID: 5316 Comm: syz-executor229 Not tainted
+> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
+> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0x169/0x550 mm/kasan/report.c:488
+>  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>  cmd_to_func drivers/acpi/nfit/core.c:416 [inline]
+>  acpi_nfit_ctl+0x20e8/0x24a0 drivers/acpi/nfit/core.c:459
+>  __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
+>  nd_ioctl+0x1844/0x1fd0 drivers/nvdimm/bus.c:1264
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fb399ccda79
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f=
+7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffcf6cb8d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb399ccda79
+> RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003
+> RBP: 00007fb399d405f0 R08: 0000000000000006 R09: 0000000000000006
+> R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000001
+> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+>
+> The buggy address belongs to the virtual mapping at
+>  [ffffc90000e0e000, ffffc90000e10000) created by:
+>  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
+>  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
+>
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000
+> index:0xffff8880401b9a80 pfn:0x401b9
+> flags: 0x4fff00000000000(node=3D1|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
+> raw: ffff8880401b9a80 0000000000000000 00000001ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask
+> 0x2cc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN), pid 5316, tgid 5316
+> (syz-executor229), ts 69039468240, free_ts 68666765389
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+>  prep_new_page mm/page_alloc.c:1545 [inline]
+>  get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
+>  alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
+>  alloc_pages_bulk_array_mempolicy_noprof+0x8ea/0x1600 mm/mempolicy.c:2556
+>  vm_area_alloc_pages mm/vmalloc.c:3542 [inline]
+>  __vmalloc_area_node mm/vmalloc.c:3646 [inline]
+>  __vmalloc_node_range_noprof+0x752/0x13f0 mm/vmalloc.c:3828
+>  __vmalloc_node_noprof mm/vmalloc.c:3893 [inline]
+>  vmalloc_noprof+0x79/0x90 mm/vmalloc.c:3926
+>  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
+>  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> page last free pid 5312 tgid 5312 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1108 [inline]
+>  free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+>  __folio_put+0x2c7/0x440 mm/swap.c:126
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:488 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:569
+>  ksys_read+0x183/0x2b0 fs/read_write.c:712
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Memory state around the buggy address:
+>  ffffc90000e0df00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+>  ffffc90000e0df80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+> >ffffc90000e0e000: 00 00 00 00 00 00 00 03 f8 f8 f8 f8 f8 f8 f8 f8
+>                                         ^
+>  ffffc90000e0e080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+>  ffffc90000e0e100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/672a3997.050a0220.2a847.=
+11f7.GAE%40google.com
+> .
+>
 
