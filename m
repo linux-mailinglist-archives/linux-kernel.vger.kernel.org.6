@@ -1,174 +1,118 @@
-Return-Path: <linux-kernel+bounces-401558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0669C1C40
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:37:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E679C1C44
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B04282DCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A58E21C20D9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A253C1E47A2;
-	Fri,  8 Nov 2024 11:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D59F1E47CB;
+	Fri,  8 Nov 2024 11:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="MuVSr4D+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ixf6vJSL"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="QUgJbql/"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D948F1DE8A8;
-	Fri,  8 Nov 2024 11:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4191E22FA;
+	Fri,  8 Nov 2024 11:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731065819; cv=none; b=YtbKTKRvvG5DYbSacZ4Bp3PNxCLlwM4Qig5tQJam2JThfLcpYwrLyR+gghF4cCFeSQVLYryz0qELgfeX3SMURW6FJF69HDs9kQy1cFw5eGZKt0v3yoyuLVSx50+jIFH9zVIQmuGqMwCdrRj7QLEHSCvkhLq9dbcNh0dVJICfXFE=
+	t=1731065838; cv=none; b=NnudPMUky9XQZ5hwnBfJPN8wCi/SwvLlvr5jH6r+usu1UbZB2rRn5bdv24M/wxG0Z5kTVvoz2jZBc3mdpUYV30aH8rtXwYIW7Ur3OshdQbscA4/O1Zvr9qdcHeuNz+qv4dx6/gTLfotiHJtWispZ5fziXJytt0r5+J8Urkq2ZGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731065819; c=relaxed/simple;
-	bh=P9Y2KKJd1Gvbd/DFSCbNqOTaC2pGZHzV7UHgZB4KQEA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eebE07s50Kk6+ET0RPqmAhBG/MzWo088Mo9XvD4vmqug4mkSCl5bHfT91LIRLkBDw/kvHF8hNQw/p//MJRpk8SMco6qtVJgbD4YL+ZTYJnSugBdtV4RhdRKqKLyC8SxzKA5ExBuknVO3qCM7zQfYyNV21+KFBOUWeewac0F0F5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=MuVSr4D+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ixf6vJSL; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id CF0CA1380105;
-	Fri,  8 Nov 2024 06:36:55 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 08 Nov 2024 06:36:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731065815;
-	 x=1731152215; bh=/UFtKcqpLPOta++bN4mFB7tkrh4R7OEgdALO6YFmI0E=; b=
-	MuVSr4D+T6p4whmx3kZLDxSrzJOGMq2Vmcjh7b3D8frFZDnJ0IT8CbwQgxM+qkmr
-	pxqE6wQc3kAZW5poHHCzaIwGwxYTlPCey3NcHltcxiq126slsqWEySLpQsLaG8ZW
-	R8kRVWp1nvRF+XhhMpCtBAmfqfe6SKe0asX8uTuqA3O1jqudLjAyxQKy5BplaTmx
-	PkW/RjfCZoVyXHigJCnhg8hJSlrtL7ACBXZ4vW5JvL4k/cQt/PfLg1SVGIXGg5R6
-	KO6IfQt6UjkwgvoBsIUGIRKEF4Mb26Mo6KBD9kD4ofqYbrk6hZAxMw8jfFnofiSt
-	MkZsvG1x37waeGtvmqM1XA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731065815; x=
-	1731152215; bh=/UFtKcqpLPOta++bN4mFB7tkrh4R7OEgdALO6YFmI0E=; b=i
-	xf6vJSLL4f0cC5iEMeeWu8by72bZDrQX/WlIklb7WXuOcYaEGQkZZAIVLPN+2pZA
-	SXlhxp0xn4VI9A+GyBKrYuF/iUOWa9gNmAyreuaM6xySvy+3fe4IXwSCGMsQWbZP
-	ZXZx2yCjvOZlO2XvwSqPProe2heY0EjHiZ/SFj4yRTi15LNoG9YgzQGHPVhkAmmC
-	e5lvXucZGYjT8kOm/tnA0V7h3kvhX5ZU95zA8wkvl6NcNFdgkw2o/GOsGzgHejWX
-	yfN6DutSX3WbZJPMXKoVe48IDK8dgx/tnbnrBHcIhtUjq4HjPKOaXDkS63PQmFqj
-	3Gf7k0/yP5tCfAlZvaEfw==
-X-ME-Sender: <xms:1vctZ6YRV91KUNf6re0_EjKNZNh2trTT95xfv1EWLUZJ53tSJnRTqg>
-    <xme:1vctZ9bD6_jESSR3yvppnTOkfx0_3CNsPQYOv1RvSOg1Ui4bzyg3mYiLZ-KHCK4HF
-    0KEe1dV4nqxw9NhXAg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigddvjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvhedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnughrvgdrphhriiihfigrrhgrse
-    grrhhmrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdr
-    tghomhdprhgtphhtthhopehjrghmvghsrdgtohifghhilhhlsegslhgrihiivgdrtghomh
-    dprhgtphhtthhopehmrghtthhhvgifrdhrvggufhgvrghrnhessghlrghiiigvrdgtohhm
-    pdhrtghpthhtohepnhgvihhlrdhjohhnvghssegslhgrihiivgdrtghomhdprhgtphhtth
-    hopehnihhkohhlrghoshdrphgrshgrlhhouhhkohhssegslhgrihiivgdrtghomhdprhgt
-    phhtthhopegrnhhgvghlohhgihhorggttghhihhnohdruggvlhhrvghgnhhosegtohhllh
-    grsghorhgrrdgtohhmpdhrtghpthhtohepnhhfrhgrphhrrgguohestgholhhlrggsohhr
-    rgdrtghomhdprhgtphhtthhopehhvhhilhhlvghnvghuvhgvseguihhmohhnohhffhdrtg
-    homh
-X-ME-Proxy: <xmx:1vctZ0_-_OLnQj42eH0bq4y-7qkELYAQQz1goBf_3Z_SUGoNmfDKMA>
-    <xmx:1vctZ8qt6imn11CprVNHZSBJfdVBAcuUP9Ywx53PQVjMKGyeQDNw0w>
-    <xmx:1vctZ1o_i0844q2Nq7GfX0dYr63Rk7UOAMJ-BOntyTyINUC3_0iKDw>
-    <xmx:1vctZ6RxE-3pT-swk7VQfEF-2mGfMN_LEmmRUpsercEQrs1Cn6xU7A>
-    <xmx:1_ctZ_YzZDKLxYZqWPD7R1iVGO-lTwKwF7NNwPbdelt7EE9hqms9h70M>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C46942220071; Fri,  8 Nov 2024 06:36:54 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1731065838; c=relaxed/simple;
+	bh=9q9uVvLqHBGdEXJFJ+lqyHUhiXg3rvlAytAtHyinnIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Orr3VQrmOwMN7N6P1ciYTyQHmu3xK6QkMYNnSGx4ENOZv9YPZ2bGefPO+0aqSx4jWn8wqo3Q5lIiibaXkIJh0sVo+FGmciJoHpBIAWRoB0jymwZtyjSuAbFTBl1gwqB/8VxcsuST3hTGVs5ydATZbQDUzT5lipzR9CC+9EpOjmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=QUgJbql/; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EejnXOL6AJ8kMqdm0i2xcZanHtQNUcxhRjUP4k55h+k=; b=QUgJbql/k5OgkEBg8SmAJYS29T
+	B6mTbk9y3xIYzklSnufSDRl0yZiHr+R5OIEdtAJm8KNe5foj8vcDyTX/h557sS+7qO1mAU9OU1yR+
+	AYjwEZlkYqTwgPrAbko+oLzaPb4AOSGh0wMGjZhgqLOIG0QWqJ/Piq1Y/i0PtHWiUNLSaBYP1MqJG
+	GOdYK0cPvk0/jOxShOwMoUIknQuS+sS5W52CY5BrkCWjIM6GQMiAnD+gd6keaTdCx+jwgsvn3+4d3
+	DW2ZtnZAW16GnVH+uEOAAg+b5j0P4MGT8A5rIo+VMZrAYYXQoKUO0LyC/atIlemBcbxM5R852Mr4e
+	TTDRlM9A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56186)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1t9NIW-000533-2q;
+	Fri, 08 Nov 2024 11:37:05 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1t9NIU-0002Ez-2Z;
+	Fri, 08 Nov 2024 11:37:02 +0000
+Date: Fri, 8 Nov 2024 11:37:02 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Lei Wei <quic_leiwei@quicinc.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
+	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
+	john@phrozen.org
+Subject: Re: [PATCH net-next 3/5] net: pcs: qcom-ipq: Add PCS create and
+ phylink operations for IPQ9574
+Message-ID: <Zy333s8o77qE5F_-@shell.armlinux.org.uk>
+References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
+ <20241101-ipq_pcs_rc1-v1-3-fdef575620cf@quicinc.com>
+ <d7782a5e-2f67-4f62-a594-0f52144a368f@lunn.ch>
+ <9b3a4f00-59f2-48d1-8916-c7d7d65df063@quicinc.com>
+ <a0826aa8-703c-448d-8849-47808f847774@lunn.ch>
+ <9b7def00-e900-4c5e-ba95-671bd1ef9240@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 08 Nov 2024 12:36:28 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Niko Pasaloukos" <nikolaos.pasaloukos@blaize.com>,
- "James Cowgill" <james.cowgill@blaize.com>,
- "Matt Redfearn" <matthew.redfearn@blaize.com>,
- "Neil Jones" <neil.jones@blaize.com>, "Rob Herring" <robh@kernel.org>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, "Olof Johansson" <olof@lixom.net>,
- "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
- "Shawn Guo" <shawnguo@kernel.org>,
- "Hugo Villeneuve" <hvilleneuve@dimonoff.com>,
- "Andre Przywara" <andre.przywara@arm.com>,
- =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
- "Bjorn Andersson" <andersson@kernel.org>,
- "Konrad Dybcio" <konrad.dybcio@linaro.org>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Nishanth Menon" <nm@ti.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>,
- =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
- "Johan Hovold" <johan+linaro@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Message-Id: <f38f87bf-f413-4dc3-a76e-e653dd4ad6d1@app.fastmail.com>
-In-Reply-To: <20241108103120.9955-5-nikolaos.pasaloukos@blaize.com>
-References: <20241108103120.9955-1-nikolaos.pasaloukos@blaize.com>
- <20241108103120.9955-5-nikolaos.pasaloukos@blaize.com>
-Subject: Re: [PATCH v4 4/6] arm64: Add initial support for Blaize BLZP1600 CB2
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b7def00-e900-4c5e-ba95-671bd1ef9240@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Nov 8, 2024, at 11:31, Niko Pasaloukos wrote:
-> Adds support for the Blaize CB2 development board based on
-> BLZP1600 SoC. This consists of a Carrier-Board-2 and a SoM.
->
-> The blaize-blzp1600.dtsi is the common part for the SoC,
-> blaize-blzp1600-som.dtsi is the common part for the SoM and
-> blaize-blzp1600-cb2.dts is the board specific file.
+On Fri, Nov 08, 2024 at 07:31:31PM +0800, Lei Wei wrote:
+> On 11/6/2024 11:43 AM, Andrew Lunn wrote:
+> > On Wed, Nov 06, 2024 at 11:16:37AM +0800, Lei Wei wrote:
+> > > On 11/1/2024 9:21 PM, Andrew Lunn wrote:
+> > > > How does Qualcomm SGMII AN mode differ from Cisco SGMII AN mode?
+> > > 
+> > > Qualcomm SGMII AN mode extends Cisco SGMII spec Revision 1.8 by adding pause
+> > > bit support in the SGMII word format. It re-uses two of the reserved bits
+> > > 1..9 for this purpose. The PCS supports both Qualcomm SGMII AN and Cisco
+> > > SGMII AN modes.
+> > 
+> > Is Qualcomm SGMII AN actually needed? I assume it only works against a
+> > Qualcomm PHY? What interoperability testing have you do against
+> > non-Qualcomm PHYs?
+> 
+> I agree that using Cisco SGMII AN mode as default is more appropriate,
+> since is more commonly used with PHYs. I will make this change.
+> 
+> Qualcomm SGMII AN is an extension of top of Cisco SGMII AN (only
+> pause bits difference). So it is expected to be compatible with
+> non-Qualcomm PHYs which use Cisco SGMII AN.
 
-The split of files seems fine, but a little more information
-about what this chip is used for would help, so that developers
-looking at the git history later can have an idea.
+I believe Marvell have similar extensions.
 
-> Checkpatch: ignore
-> Resolves: PESW-2604
-
-I don't understand these, can you turn these into full
-english sentences? What checkpatch errors do you see and
-why should I ignore them? What is PESW-2604 and how does
-it relate to PLZP1600? 
-
-> +#include "blaize-blzp1600-som.dtsi"
-> +#include <dt-bindings/net/ti-dp83867.h>
-
-I don't see any references to ti-dp83867.h here, maybe leave
-the #include to a later patch that actually starts using it?
-
-> +#include "blaize-blzp1600.dtsi"
-> +
-> +/ {
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x00000000 0xffffffff>;
-> +	};
-> +};
-
-Is this an off-by-one error or do you intentionally
-leave out the last bit of the 4GB address space?
-
-If the last byte is actually addressable, please just
-use #size-cells=<2> and make it the full 0x100000000.
-
-       Arnd
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
