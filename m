@@ -1,76 +1,95 @@
-Return-Path: <linux-kernel+bounces-401096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924429C15EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:11:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E90629C15EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A501F241C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:11:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 636BBB23E4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00601C3F01;
-	Fri,  8 Nov 2024 05:11:11 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EB41C9B77;
+	Fri,  8 Nov 2024 05:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pkm-inc.com header.i=@pkm-inc.com header.b="XyVtPf6O"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE68C158DD9
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 05:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146C0610D;
+	Fri,  8 Nov 2024 05:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731042671; cv=none; b=iYCNjAA5JjbmqSKvcyPBimOJfYxm5XHEUqU2V10EYczno6ASOFN1m+Y185HdGXjkz5DqK8pculEHPp45SZxI08VxrshAtpIAzmszexIAqSu0x4MVSqGDyqOmvfXandLpzH9rbuPZXcCIpeOwlpcEfaPpiDE6Oh0wz8yrGZzuAAs=
+	t=1731042970; cv=none; b=mltpx+f4n8aLn3ajlYWXsHuG9UsFju84da6RSUTXRgueAxKnWMqlFn2KGRzVBwUvGat7aZI8SARg4VlhfidExMLsV5c2m5NkE00uFEcIhWuZX7MwE6JOvnyt8s+xt2/v1ElzmiinRgqEG/DfN8aAdfI+yTTCyMsk/KfXNSEmXCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731042671; c=relaxed/simple;
-	bh=vA7q3ey9IQDXsNVyxtJna/mpocsRlqsi6kDe717NzEo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZIZu/iY3wajb+/8G9oS2tLPLalCaIhB8TQ7fqi6Q0qLhI3bA+R/RHTttsf4RwyriKPlNhJhQXSptlhFq7wGZmezdHj45j4+ZLyb3lwG60P75TC+rThkq3ARaHX48AtjJikPwmKQlhIT1KaLUkNkREF47kCRQipSmmpejBxOTPYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83ab4cadf05so200231239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 21:11:09 -0800 (PST)
+	s=arc-20240116; t=1731042970; c=relaxed/simple;
+	bh=XOsWpnDVYsswiJraNwaHauPEsAakbuKfqfOwgd7InNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RSkNPv5HHVQ+K1DxES4yeVdTEh3U9x/GlKZsMkzByAt+NIx+5561N2RuzMH/bNolxDzA+U24OB6zL9hvg5RvMADgr7UArdH5o1MWZwBBAQ3PdO2b308R9paqSvAWTfe1Z5QNkTu20Abkx4Hen7WG1EPYvjut+56e8rBMcfL9yFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pkm-inc.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=pkm-inc.com header.i=@pkm-inc.com header.b=XyVtPf6O; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pkm-inc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2c2a17aa4so171981a91.0;
+        Thu, 07 Nov 2024 21:16:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pkm-inc.com; s=google; t=1731042967; x=1731647767; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XOsWpnDVYsswiJraNwaHauPEsAakbuKfqfOwgd7InNw=;
+        b=XyVtPf6OKdKO5E9uDvrbMT4EXrDHWkegAUML76kYzcyeXvaY5usKWUG8OPIguQ6hvj
+         Z109AS1b73b7W9PEITl/+uuzpVCVwY9JbLYNtcwCsikUl1YxEbgpGtbU3j4d08u2s131
+         M0N+CCeXnuzRhaVhot0Uqo8msEN27zPunqJEd6xtXgHiym4oHfxk8hyqT3Eibb3ludzz
+         zjylGe/QrZp4J7zwpfFr6Ka4C7EnrzyhQENRXY5dNxfdr90jHecJ/xRsHPyxJgqG6qZ/
+         49QJzHt3Y9yR3jORVgL704wECqL6tHPITliqwBOQNBaTAXr2FE99BgxGs/EUp4yiY2uu
+         AUsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731042669; x=1731647469;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fHED95VNotAf9X/S/Kyf5Ay24kyu2cHoFcBFo1owXBs=;
-        b=lMbuJFb80mUQugFx/HDqW/PvHtwOVbIBJAOJx940wW55jYY/HTqEupl8PzgDJN14/J
-         JTYjJLMtbMXpyxlEc1WbSFEtQi0yMtSR+Kk3NkX9Hw8UGuPE1ye2QR3S3gqiUwChUv6p
-         1+dV0nH9vRP1U78c/MmYvxAkVeWLKkyJ/9rjS1G/UbJXakrSWIgiqDSyOBLmD90Z49/G
-         gVFNkeroPfpT2MVyLg6Gz2yNtTqM6deTN2eQdmJR4In+qRYHKqBufidmcH8P/Y3Jfx1C
-         IVK8C9GdmUMM+qJdTAM9TEt1YNNzUU9peEPpeWQaATgX2TVxnYGAPrBQ95XG8hYabJKZ
-         Oavg==
-X-Gm-Message-State: AOJu0Yw2wW9m48B84Kx1+Nv61GNSb9vKhJwk0JN/fjGhkD/4lZoQWVvb
-	UFLNFlsTrrbiz25sAiw3ZuKr3b9ADRYY4Jz/rSVoW/MNOPSEfnfFBb7+ks+ttY5aWq+Q6mgjFMD
-	QBJ70Z6s4gE+zONmIOFjQ7fj22yiLwQL2ysm/zu2b4y4KfRDhS66ho9g=
-X-Google-Smtp-Source: AGHT+IEhLVEQfpHgMiLgQe62ds6Egmnwelikqf0lZ3qYEIQLAswAyFAMzqqSMC8AqdLyPNJVh3BfAYW1Atp5OMp4cRX6CTeslkkm
+        d=1e100.net; s=20230601; t=1731042967; x=1731647767;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XOsWpnDVYsswiJraNwaHauPEsAakbuKfqfOwgd7InNw=;
+        b=p0C9RyG7o8FIdPo1RwSlwKViyBTlBsCi63qWjoJL1Pd76w183d5Jf6M08MmzxxHUUD
+         wadqLUoDCYfVD/z/FQ+bcprwoPCa3D+HSR5941aCjp2zXQujMKhhH9z/JTx7EVFIaG8w
+         GEP6By4SOSiepka0JGuyTXZeXudlJjKkZi1nre17LA6JoFFJQqa2XI7MM4qQvZzQIvhn
+         pSZoTBtpFYF4OxqT89Y9eF9aWHt5MWmfMsuPJDeclvHRncVwOMs3z7RAH+BBf1BsKGrr
+         nX3c097ejKCrlh1GgwptLDmCct+QllNQ5im2aBVi142VeXwc/iqdtoO3UiDXRtMKgaPj
+         +OKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGET2kgQj9o0MoIbLaGpUCJ2Tgb81oUMqu8tfKIlRz766PNhc+UYntxq5aEl/XHfspYZ7gHX0C143tMQ==@vger.kernel.org, AJvYcCXzH3ZcpOWQrGOyEHf2nRZ66yCRSyQgPAlgo6YQxj1xEPiDo6GGtqiJIBRFEOrStc1MaJmCuEy4tCh9JaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2Yq6X4K6i+cCoRHSShPgAev6vB2H6tXHQ+GBbFKlkrPvfxitB
+	dSlCjMvEJBFIqiUz/wVzXG84JaCVIe10RRMBayGDrcDHoAbOJdNwC4UHMtrJpVRQDS+oNim416z
+	b90bZSynWrthAMdhdOukMpmA1MS4eJj8z
+X-Google-Smtp-Source: AGHT+IEvN2U2yefI/SXiPGMA1ll8rZBHbtctIrmleR/avb39CcCzvVTYOzmQztOnn8mSrTLM235umxHe9IeHpBgzvOs=
+X-Received: by 2002:a17:90b:3505:b0:2e2:d881:5936 with SMTP id
+ 98e67ed59e1d1-2e9b16825edmr1093547a91.7.1731042967351; Thu, 07 Nov 2024
+ 21:16:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148c:b0:3a4:da7a:15a2 with SMTP id
- e9e14a558f8ab-3a6f19ca711mr22366065ab.5.1731042669031; Thu, 07 Nov 2024
- 21:11:09 -0800 (PST)
-Date: Thu, 07 Nov 2024 21:11:09 -0800
-In-Reply-To: <671d9308.050a0220.2fdf0c.0232.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672d9d6d.050a0220.0db4.01be.GAE@google.com>
-Subject: Re: [syzbot] 
-From: syzbot <syzbot+e8bd437eb38c35c5f35a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
+ <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com>
+ <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com> <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
+In-Reply-To: <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
+From: =?UTF-8?Q?Dragan_Milivojevi=C4=87?= <galileo@pkm-inc.com>
+Date: Fri, 8 Nov 2024 06:15:55 +0100
+Message-ID: <CALtW_agCsNM66DppGO-0Trq2Nzyn3ytg1t8OKACnRT5Yar7vUQ@mail.gmail.com>
+Subject: Re: [PATCH md-6.13] md: remove bitmap file support
+To: Song Liu <song@kernel.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+	"yukuai (C)" <yukuai3@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, 8 Nov 2024 at 02:29, Song Liu <song@kernel.org> wrote:
 
-***
+> I think we should ship this with 6.14 (not 6.13), so that we have
+> more time testing different combinations of old/new mdadm
+> and kernel. WDYT?
 
-Subject: 
-Author: kent.overstreet@linux.dev
-
-#syz fix: bcachefs: Fix validate_bset() repair path
+I'm not sure if bitmap performance fixes are already included
+but if not please include those too. Internal bitmap kills performance
+and external bitmap was a workaround for that issue.
 
