@@ -1,234 +1,152 @@
-Return-Path: <linux-kernel+bounces-400990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6C69C14BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:34:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0825B9C14A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:31:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50AD71C22953
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B477B1F22766
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EE4175D5E;
-	Fri,  8 Nov 2024 03:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1891126C0A;
+	Fri,  8 Nov 2024 03:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azByI88q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MYkJiQ3H"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5838126C0A;
-	Fri,  8 Nov 2024 03:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6AC15C0;
+	Fri,  8 Nov 2024 03:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731036804; cv=none; b=baGCSSlLyWJdXijeQ++1omFXEVuTZWL+2hFEa9s17lNJiSH/D/9Ch4yV8CGBj63X8qwHSG4JtAxYgfR26M9jgV+CKVkIzun3PPc9kF7Wr6NcsNrwKhh0nkyuhHGythA2XYy0Auh7te2YQ0Es6IJBTMlV5Hq+v1UNZltfOSYqq9g=
+	t=1731036670; cv=none; b=Tooa+uLksS/muQCTr5Vp3V1gtt8akPNrz7zVklHiMz1Ysfbja4DHgau854F8Hd+FT/fmleMajKPA3RhHwKgFxbo2yeKqKcGuLwPqJxZ/UKcLlXJaMlzr1g9rmpbEZMsFL3kIGs79bXf9kqxk38r+KBWB/xknG0ZwdjO6im2Op4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731036804; c=relaxed/simple;
-	bh=1oelaTEkSV+bSCefqXbPHDw+t94mMNUMg7MsV6tgbeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kzcsOBcTy0w/1x8QHMVFCSc/hcA+gJki+iS7kKTBewaIosEqMDZJP9cqhJMBalBRWMDFbn019IMI/fzh22l4KZllXMyBZI97newq8Vs5eP+ndrfnMC+v1IooBWyc6oHBGPDsArTth9j/C0cAASZMbR0tt1uGkmQ1Bu3diRKI4c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azByI88q; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731036803; x=1762572803;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1oelaTEkSV+bSCefqXbPHDw+t94mMNUMg7MsV6tgbeM=;
-  b=azByI88qVoqPxlLNB5A0Sccey1AacW91WfTFr5yg8F6U4NxmFBSfXg1T
-   TprmvpZLvGtepTED8I+pdrkwBPyPG7UnLbZi8R6mJlcR8NumpY/XWEpEs
-   Wm1hMGWoH5DmNZfkLFpdeoleaVBrNCzDg/v61kOdic3B2/tIH2XDTgotT
-   G2FyeyUUcjrXXDtG1JCU+4frKOUHLUN7RS70PjfypiI+PtL5cGAkrX7Vi
-   ohtK82A2ie5T5wEgEHkZK4UOgfU9+ZY7esKtQnvnqXeCfaCEz5V9t9Tip
-   gNj2pu5/6iI1pjJjU7WtbTJ3F5tKv5Zo5tzmXWqLotLvWPWn7PpS7Ui91
-   A==;
-X-CSE-ConnectionGUID: 6f/CUk7pQ7ON35jTP3+mEg==
-X-CSE-MsgGUID: Lk2nl6ZiS86rAgEAIRqFXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="33765719"
-X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
-   d="scan'208";a="33765719"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 19:33:22 -0800
-X-CSE-ConnectionGUID: 7M2WknmYTU6N9FOKmXmD5A==
-X-CSE-MsgGUID: mxBUZzZUQNODDs5vTfCchQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
-   d="scan'208";a="84873096"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 07 Nov 2024 19:29:47 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9Fgv-000qyk-0m;
-	Fri, 08 Nov 2024 03:29:45 +0000
-Date: Fri, 8 Nov 2024 11:29:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Kaiyuan Zhang <kaiyuanz@google.com>,
-	Samiullah Khawaja <skhawaja@google.com>,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Subject: Re: [PATCH net-next v2 5/5] netmem: add netmem_prefetch
-Message-ID: <202411081105.Z1kEMaBE-lkp@intel.com>
-References: <20241107212309.3097362-6-almasrymina@google.com>
+	s=arc-20240116; t=1731036670; c=relaxed/simple;
+	bh=JkQh8XYwnlilA6SEE/9kW0praINZcYq+IeG3F/0i+d0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=M4DlAOqDJwAN2FoMk3mSdHvxwjSekzptUQKMoXJfQqocbCthIVeGj9gB775AdvAMD4VzKZFWyMW1OcSHMqteiD30whc4Tg8ZfBGEpQQXR5Wux9PLeUSj4aXztfZdWxUMVW75a3QdDWiKgoDMIzk2fOIx9jO9VihYQ3GRuIusDa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MYkJiQ3H; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7MapVN028440;
+	Fri, 8 Nov 2024 03:31:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ORIrw/wQ3+MD9XwhIuNt1gF+0lFMQSagBq0smIgoJiA=; b=MYkJiQ3HB21kQX8k
+	CFp5yLDPseUsnE7PVWC02c7z6OpGCr7pW5IqJ3gwTqXsP2JqVJ5o4REvYnlSzJsQ
+	y4wgHW+GqNMYXvKrckrOfeRWQVTg1F54ZtjsXKnT3efSXKZS6TYGBNbiw+7wFoDB
+	CF2BoidlhUY0CPdfL1O25J8Ikds0sDqJ+etMaNlYelpZ87S9Us+pmVroxxnK2uuD
+	Tf0sQThftr5LYC0os2A6Zdfl4DTY2VPEnesNrl0aC9K0rytE9emV3IVaJaxmwjVL
+	MKLmwiXiDk0HvbsiU2n4Qoscph1YEDkVmVi9Pwtx0GK/AIO1ybNrsqgi6x4tnudx
+	vBwnwQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42s6gd8hpw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 03:31:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A83UxvC032243
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 8 Nov 2024 03:30:59 GMT
+Received: from [10.216.46.51] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 7 Nov 2024
+ 19:30:55 -0800
+Message-ID: <f26bd7ac-5a01-4c9b-b2a0-aa9e65dff6e5@quicinc.com>
+Date: Fri, 8 Nov 2024 09:00:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107212309.3097362-6-almasrymina@google.com>
-
-Hi Mina,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mina-Almasry/net-page_pool-rename-page_pool_alloc_netmem-to-_netmems/20241108-052530
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241107212309.3097362-6-almasrymina%40google.com
-patch subject: [PATCH net-next v2 5/5] netmem: add netmem_prefetch
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241108/202411081105.Z1kEMaBE-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411081105.Z1kEMaBE-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411081105.Z1kEMaBE-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/s390/kernel/asm-offsets.c:11:
-   In file included from include/linux/kvm_host.h:16:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from arch/s390/kernel/asm-offsets.c:11:
-   In file included from include/linux/kvm_host.h:19:
-   In file included from include/linux/msi.h:24:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:95:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from arch/s390/kernel/asm-offsets.c:11:
-   In file included from include/linux/kvm_host.h:19:
-   In file included from include/linux/msi.h:24:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:95:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from arch/s390/kernel/asm-offsets.c:11:
-   In file included from include/linux/kvm_host.h:19:
-   In file included from include/linux/msi.h:24:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:95:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from arch/s390/kernel/asm-offsets.c:11:
-   In file included from include/linux/kvm_host.h:41:
-   In file included from include/linux/kvm_para.h:5:
-   In file included from include/uapi/linux/kvm_para.h:37:
-   In file included from arch/s390/include/asm/kvm_para.h:25:
-   In file included from arch/s390/include/asm/diag.h:12:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:40:
->> include/net/netmem.h:179:2: error: call to undeclared function 'prefetch'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     179 |         prefetch(netmem_to_page(netmem));
-         |         ^
-   16 warnings and 1 error generated.
-   make[3]: *** [scripts/Makefile.build:102: arch/s390/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1203: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:224: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:224: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] RFC: arm64: dts: qcom: Disable USB U1/U2 entry for QC
+ targets
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
+References: <20241107073650.13473-1-quic_kriskura@quicinc.com>
+ <trrbjd574futtatooisumtqp4idqerb5ji2g3nvdesiedlitdd@c6u7wuqhh4r3>
+Content-Language: en-US
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+In-Reply-To: <trrbjd574futtatooisumtqp4idqerb5ji2g3nvdesiedlitdd@c6u7wuqhh4r3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _4vL-IUvzjBrenR3pNazxHrQ-uzI2Ld5
+X-Proofpoint-ORIG-GUID: _4vL-IUvzjBrenR3pNazxHrQ-uzI2Ld5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ mlxlogscore=415 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411080029
 
 
-vim +/prefetch +179 include/net/netmem.h
 
-   173	
-   174	static inline void netmem_prefetch(netmem_ref netmem)
-   175	{
-   176		if (netmem_is_net_iov(netmem))
-   177			return;
-   178	
- > 179		prefetch(netmem_to_page(netmem));
+On 11/7/2024 4:33 PM, Dmitry Baryshkov wrote:
+> On Thu, Nov 07, 2024 at 01:06:50PM +0530, Krishna Kurapati wrote:
+>> Enabling U1 and U2 power-saving states can lead to stability and
+>> performance issues, particularly for latency-sensitive or high-
+>> throughput applications. These low-power link states are intended
+>> to reduce power consumption by allowing the device to enter partial
+>> low-power modes during idle periods. However, they can sometimes
+>> result in unexpected behavior. Over the years, some of the issues
+>> seen are as follows:
+>>
+>> 1. In device mode of operation, when UVC is active, enabling U1/U2
+>> is sometimes causing packets drops due to delay in entry/exit of
+>> intermittent low power states. These packet drops are often reflected
+>> as Missed Isochronous transfers as the controller was not able to
+>> send the packet in that microframe interval and hence glitches are
+>> seen on the final transmitted video output.
+>>
+>> 2. On QCS6490-Rb3Gen2 Vision kit, ADB connection is heavily unstable
+>> when U1/U2 is enabled. Often when link enters U2, there is a re-
+>> enumeration seen and device is unusable for many use cases.
+>>
+>> 3. On QCS8300/QCS9100, it is observed that when Link enters U2, when
+>> the cable is disconnected and reconnected to host PC in HS, there
+>> is no link status change interrupt seen and the plug-in in HS doesn't
+>> show up a bus reset and enumeration failure happens.
+>>
+>> 4. On older targets like SM8150/SM8250/SM8350, there have been
+>> throughput issues seen during tethering use cases.
+>>
+>> To avoid such issues, the USB team at Qualcomm added these quirks
+>> to all targets in the past 4-5 years and extensive testing was done.
+>> Although these are intermittent power states, disabling them didn't
+>> cause any major increase in power numbers.
+>>
+>> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+>> ---
+>> If this is fine, the patch would be made into a series, disabling
+>> U1/U2 for all mobile and QCS targets.
+>>
+>>   arch/arm64/boot/dts/qcom/sm8150.dtsi | 4 ++++
+>>   arch/arm64/boot/dts/qcom/sm8250.dtsi | 4 ++++
+>>   arch/arm64/boot/dts/qcom/sm8350.dtsi | 4 ++++
+>>   arch/arm64/boot/dts/qcom/sm8450.dtsi | 2 ++
+> 
+> Should the same set of quirks be applied to SAR2130P too?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yes, these two quirks have been added to and tested on SAR2130 
+downstream. I see that you have added them in your upstream DTSI file 
+too. Thanks for that.
+
+Regards,
+Krishna,
 
