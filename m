@@ -1,192 +1,115 @@
-Return-Path: <linux-kernel+bounces-401425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A358B9C1A4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:18:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B60F9C1BDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6E9B1C22C83
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE781C2176B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D3F1E22F3;
-	Fri,  8 Nov 2024 10:18:23 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293821E284D;
+	Fri,  8 Nov 2024 11:08:13 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3531BD9D8;
-	Fri,  8 Nov 2024 10:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E881D1E22FD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731061103; cv=none; b=Hv71MC0GBCp0CEMSobW4vQfMYP+5OQnWbC8Gkd3sOsiUhbeSbBYfSgJVdUh0kjeIUv2Xqt7MFIfCu0mjii1rQOOrpKPNGslfrqVLtvwEsr/jr20IPv7jdBLl6hBBKQRxBsjRUjikZWlFlQDpr3krlLkvHYWv7Na7lgalVXW/N4E=
+	t=1731064092; cv=none; b=aNyvK1N/vC6oaLdULMY3/lnaVjg6fu8OyOlOLQ5lCi0Faf+bEdSsirmOnADb3hs6ujx6lqGXG+fj1MAqXKYvgInbL9NBytzrmP+Q8YWfNrpH97hCvYaR5nTY235OcXuL6uxxUEo9hDB4Y+IjK4/duXbtjV4RG7xTr+68xpb7Odo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731061103; c=relaxed/simple;
-	bh=zDle9w2TZYT7v7dFRYfk4WEUd1oC/L1660lvsQ5FWs8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KmbxtaiZb44zt+UlZ26xa04anZmIuS0kbxEtBCDF36z6fN22EsSmmTEST7msg+RKDBTTr6OY4tKIKI7lMSt+26yI1yRM7aZKQzs2kobmXuN+dAJuAHe3TynJqWQ6lWxpiM9ey4eGkJ9bufBWjtyOpkh81m0wB46hftAZehh/5sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XlFGG68f3z10V94;
-	Fri,  8 Nov 2024 18:16:22 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id ACBE01800D9;
-	Fri,  8 Nov 2024 18:18:11 +0800 (CST)
-Received: from lihuafei.huawei.com (10.90.53.74) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 8 Nov 2024 18:18:10 +0800
-From: Li Huafei <lihuafei1@huawei.com>
-To: <mhiramat@kernel.org>, <acme@kernel.org>
-CC: <peterz@infradead.org>, <mingo@redhat.com>, <namhyung@kernel.org>,
-	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
-	<kan.liang@linux.intel.com>, <dima@secretsauce.net>,
-	<aleksander.lobakin@intel.com>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lihuafei1@huawei.com>
-Subject: [PATCH 2/2] perf probe: Fix the incorrect line number display in 'perf probe -l'
-Date: Sat, 9 Nov 2024 02:19:09 +0800
-Message-ID: <20241108181909.3515716-2-lihuafei1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241108181909.3515716-1-lihuafei1@huawei.com>
-References: <20241108181909.3515716-1-lihuafei1@huawei.com>
+	s=arc-20240116; t=1731064092; c=relaxed/simple;
+	bh=jjHzcXyyEV3sVpH8hxtDxnza8vtyLTeIgsAQncZisQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CGTQAZ7SaorQQb8q49L18q2k/8F4+arGlR7XzE+uBp0GnQ0Lg3VNO556tasHcLJv7GkWsi1r+3gkQZvPvIYeZbQeeFotAlx0h6vBSOujJiGM0f4MRsOyUgY9oMczTenhIsdln8S6k+mg46umpJha5nxd92W9fmcK454WyPSY2XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XlFy730gMz9v7JC
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:47:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 63A89140868
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:08:00 +0800 (CST)
+Received: from [10.45.149.79] (unknown [10.45.149.79])
+	by APP2 (Coremail) with SMTP id GxC2BwD3XHwE8S1nl3hAAQ--.27275S2;
+	Fri, 08 Nov 2024 12:07:59 +0100 (CET)
+Message-ID: <f1d7a295-ad24-41c8-a431-7d6492d51097@huaweicloud.com>
+Date: Fri, 8 Nov 2024 12:07:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf500004.china.huawei.com (7.202.181.242)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] tools/memory-model: Distinguish between syntactic
+ and semantic tags
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: boqun.feng@gmail.com, dhowells@redhat.com, dlustig@nvidia.com,
+ frederic@kernel.org, hernan.poncedeleon@huaweicloud.com,
+ j.alglave@ucl.ac.uk, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+ lkmm@lists.linux.dev, luc.maranget@inria.fr, npiggin@gmail.com,
+ parri.andrea@gmail.com, paulmck@kernel.org, peterz@infradead.org,
+ quic_neeraju@quicinc.com, stern@rowland.harvard.edu, urezki@gmail.com,
+ will@kernel.org
+References: <3d72b92a-4935-425c-abd5-ec4631baef2c@huaweicloud.com>
+ <46d291da-ddb9-43b9-bd93-b81aacd5e29c@gmail.com>
+ <7542399d-87c5-4f1c-9d09-6a6f96d148da@huaweicloud.com>
+ <a278c4a9-eae2-491e-8f13-5a87a25dad26@gmail.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <a278c4a9-eae2-491e-8f13-5a87a25dad26@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwD3XHwE8S1nl3hAAQ--.27275S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw4rJr47KFy7KF1UCw4xXrb_yoWkWrbE9r
+	4jya4vkF4vqF1kXF4fAFsa9rZ5GFnFg3W5uryrJwn3Gr98JFyDWFWkt392v345K3ykuFsr
+	GFnrJrWUAF13WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
+	04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7sRidbbtUUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-I found an issue with the line number display in perf probe -l:
 
-  # perf probe -l
-    probe:schedule       (on schedule:-6751@kernel/sched/core.c)
 
-I founded that in debuginfo__find_probe_point(), the fname obtained by
-cu_find_lineinfo() is different from the result returned by
-die_get_decl_file(). The 'baseline' and 'lineno' do not correspond to
-the same file, resulting in an incorrect calculation of the line number
-(lineno - baseline).
+Am 11/8/2024 um 11:12 AM schrieb Akira Yokosawa:
+> On Fri, 8 Nov 2024 10:10:48 +0100, Jonas Oberhauser wrote:
+>> I hadn't done that before (because I thought I should not add other people's tags
+>> especially if they hadn't reviewed that specific revision), so we may be missing
+>> *a lot* of reviewed-by...
+>>
+> 
+> Section "Using Reported-by:, Tested-by:, Reviewed-by:, Suggested-by: and Fixes:"
+> of Documentation/process/submitting-patches.rst has this paragraph:
+> 
+>    Both Tested-by and Reviewed-by tags, once received on mailing list from tester
+>    or reviewer, should be added by author to the applicable patches when sending
+>    next versions.  However if the patch has changed substantially in following
+>    version, these tags might not be applicable anymore and thus should be removed.
+>    Usually removal of someone's Tested-by or Reviewed-by tags should be mentioned
+>    in the patch changelog (after the '---' separator).
+> 
+> Does this help you?
 
-The DWARF dump information shows that the probed address
-0xffff800080e55bc4 (i.e., schedule+20) has two source file information:
+Thanks so much, it does. My apologies to everyone whose reviewed-by tag 
+I failed to add :(
 
-  # readelf --debug-dump=decodedline vmlinux | grep ffff800080e55bc4 -C 2
-  ./arch/arm64/include/asm/current.h:
-  current.h                                     19  0xffff800080e55bc0
-  current.h                                     21  0xffff800080e55bc4               x
-  current.h                                     21  0xffff800080e55bc4       1
+I should have read that more document more carefully.
 
-  kernel/sched/core.c:
-  core.c                                      6777  0xffff800080e55bc4       2       x
-  core.c                                      6777  0xffff800080e55bc4       3       x
-  core.c                                      6777  0xffff800080e55bc4       4       x
-  core.c                                      6780  0xffff800080e55bc4       5       x
-
-The first location corresponds to the inline function get_current(), and
-cu_find_lineinfo() should have found this entry. However, the probed
-instruction is actually in the schedule() function, which is
-disassembled as follows:
-
-  crash> disassemble/s schedule
-  Dump of assembler code for function schedule:
-  ./arch/arm64/include/asm/current.h:
-  15      static __always_inline struct task_struct *get_current(void)
-  16      {
-  17              unsigned long sp_el0;
-  18
-  19              asm ("mrs %0, sp_el0" : "=r" (sp_el0));
-     0xffff800080e55bb0 <+0>:     paciasp
-  Dump of assembler code for function schedule:
-  ./arch/arm64/include/asm/current.h:
-  15      static __always_inline struct task_struct *get_current(void)
-  16      {
-  17              unsigned long sp_el0;
-  18
-  19              asm ("mrs %0, sp_el0" : "=r" (sp_el0));
-     0xffff800080e55bb0 <+0>:     paciasp
-     0xffff800080e55bb4 <+4>:     stp     x29, x30, [sp, #-32]!
-     0xffff800080e55bb8 <+8>:     mov     x29, sp
-     0xffff800080e55bbc <+12>:    stp     x19, x20, [sp, #16]
-     0xffff800080e55bc0 <+16>:    mrs     x19, sp_el0
-
-  kernel/sched/core.c:
-  6780            if (!task_is_running(tsk))
-     0xffff800080e55bc4 <+20>:    ldr     w0, [x19, #24]
-     0xffff800080e55bc8 <+24>:    cbnz    w0, 0xffff800080e55bf8 <schedule+72>
-
-And the DWARF function dump information:
-
-  <1><11eae66>: Abbrev Number: 88 (DW_TAG_subprogram)
-     <11eae67>   DW_AT_external    : 1
-     <11eae67>   DW_AT_name        : (indirect string, offset: 0x233efb): schedule
-     <11eae6b>   DW_AT_decl_file   : 18
-     <11eae6c>   DW_AT_decl_line   : 6772
-     <11eae6e>   DW_AT_decl_column : 35
-     <11eae6f>   DW_AT_prototyped  : 1
-     <11eae6f>   DW_AT_low_pc      : 0xffff800080e55bb0
-     <11eae77>   DW_AT_high_pc     : 0xb8
-     <11eae7f>   DW_AT_frame_base  : 1 byte block: 9c    (DW_OP_call_frame_cfa)
-     <11eae81>   DW_AT_GNU_all_call_sites: 1
-     <11eae81>   DW_AT_sibling     : <0x11eb12d>
-  <2><11eae85>: Abbrev Number: 50 (DW_TAG_variable)
-     <11eae86>   DW_AT_name        : tsk
-     <11eae8a>   DW_AT_decl_file   : 18
-     <11eae8b>   DW_AT_decl_line   : 6774
-     <11eae8d>   DW_AT_decl_column : 22
-     <11eae8e>   DW_AT_type        : <0x11b2b34>
-     <11eae92>   DW_AT_location    : 0x5be6f0 (location list)
-     <11eae96>   DW_AT_GNU_locviews: 0x5be6ec
-  <2><11eae9a>: Abbrev Number: 78 (DW_TAG_lexical_block)
-     <11eae9b>   DW_AT_low_pc      : 0xffff800080e55bc4
-     <11eaea3>   DW_AT_high_pc     : 0x0
-     <11eaeab>   DW_AT_sibling     : <0x11eaeb9>
-
-Therefore, here we should use the result of die_find_realfunc() +
-die_get_decl_file(). However, regardless, we should verify if the fname
-obtained from both is the same. If they are different, we should use the
-latter to avoid inconsistencies between lineno, fname, and basefunc.
-
-After the modification, the output is as follows:
-
-  # perf probe -l
-    probe:schedule       (on schedule+20@kernel/sched/core.c)
-
-Fixes: 57f95bf5f882 ("perf probe: Show correct statement line number by perf probe -l")
-Signed-off-by: Li Huafei <lihuafei1@huawei.com>
----
- tools/perf/util/probe-finder.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 630e16c54ed5..106c9d6bd728 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -1592,7 +1592,16 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
- 			goto post;
- 		}
- 
--		fname = die_get_decl_file(&spdie);
-+		tmp = die_get_decl_file(&spdie);
-+		/*
-+		 * cu_find_lineinfo() uses cu_getsrc_die() to get fname, which
-+		 * may differ from the result of die_get_decl_file(). Add a check
-+		 * to ensure that lineno and baseline are in the same file.
-+		 */
-+		if (!tmp || (fname && strcmp(tmp, fname) != 0))
-+			lineno = 0;
-+		fname = tmp;
-+
- 		if (addr == baseaddr) {
- 			/* Function entry - Relative line number is 0 */
- 			lineno = baseline;
--- 
-2.25.1
+Best wishes,
+    jonas
 
 
