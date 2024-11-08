@@ -1,136 +1,107 @@
-Return-Path: <linux-kernel+bounces-401158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B2E9C1690
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:47:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B20B09C1692
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7197A1F228B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:47:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A56D1F22B22
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA52F1CFEB0;
-	Fri,  8 Nov 2024 06:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FC01D0E0A;
+	Fri,  8 Nov 2024 06:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="farAJhMU"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BZgrPTJ9"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A019E1BD9D8
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 06:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714011CF5F4;
+	Fri,  8 Nov 2024 06:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731048420; cv=none; b=lP/bo5aWg5APqYsPeDoQy0+L4JtzfMxHhDf8XujxmtswBVZm64j58PdbcYD8vNFrgVkJLuq0JYoKDv5OF+V3TgOLzqsTe8F9O4HqGfGm0HKJ/EpPA+UThsrZDH47Zor3t5H4m6nNRqmMhKGIOtCXBsPkqQ5Ch566aY8IOXEB/vY=
+	t=1731048438; cv=none; b=dVt5Vz9CdGhWNC29YvZzzlQwk590SwwnQ38ZP078rkelnwrMdiE/5cE2Wfi6klStNh6xYHObYw7wnnuD+gDW53oZhEP6nx/+E7kyJc2oj1zfx3TtNJDnHA4WUWfjBVR0v/7F7CJmP9ejRCjHQ2bJN/3fvm2tCC9VpFRQsrDN/XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731048420; c=relaxed/simple;
-	bh=dSgsEjsmNO/exUK9WWjC1NUxgYpA74/464brJVj2on8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=elDXq58hmimcjmNdW7FGFcSmOpG0fkwXvFWgRimiYala6s1aDITbXZDA+5bgK7MU+9aJ5R2THWfkSyylvrYU8jgXoR//9x7FOyvBxxWyXZIOwqZMWjPiGI7kIDai2mbmiZ2QqrijO4QEQF5L595U/rtXEPHwdL9YDSkApAtopX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=farAJhMU; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2890f273296so902328fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 22:46:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731048418; x=1731653218; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cn/Nc5RaHVF/e/nAEApB7fYMyWr4MBPCDZJyTNa0js8=;
-        b=farAJhMUylHVY1fvJ897FjhO1hfQqBiDUzkDKFd81jw6vqY1hBSlxOY9+PQwNtzQbJ
-         yqmbBMdtSfo642NYeH2wkxTfU0N13ucPc1Auw5ZxYUFuy24yVQ3A41EnQOINZoRMbc60
-         r19dPSDekVSfVb6yOvdC99GBnlS7eWoRP13U4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731048418; x=1731653218;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cn/Nc5RaHVF/e/nAEApB7fYMyWr4MBPCDZJyTNa0js8=;
-        b=aOlhpWAhQWqWzEXrxRzq+okqgAw4SmgQhqqViqbelhzIV7wJeIpI5C3MkpWtHALbyy
-         I6L8BYgzVmz/NBYT9ilL/p+Ro2Ks7fr5YPicJCjsQSi1/gnZUiZt2msZCAoEWdx+G7qn
-         ttPJ90Z2Jxqpw4WP0j9ZzfOaVkyhlViiVNC6pgU3q1Vm5+hHpAZ20X0kUkVL8fN50Sbu
-         PGRoftlBVXfBSIqfMMaP3ceJ02s2AZRc4H9CxKEkKN1gjIgCT2ma2eyq48rKMpDQ8NRd
-         ofsO9MHlXZ7hgsqskzzrDngs/XKiw7WU4BJG5cxPWV8NcnLt7225aKaXc3CimsSmn+3s
-         vtUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWw4T1i4W4sEKkkFfyx0xk/VQqhZ7CxwjdbBkS5YUH5ix1N82zdL8TfhybnZG1YqgYAB6UPDKtL7Ie+BWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydbljCePNLqkXeaCJj5/626GhlSSz8igbAjVAVV2BGtEAqf1qO
-	D1KtFRKUQuC9C6ougmntexo9Y5KgjCFEjjGbcuuXU3/4jSb7x0mBUlhb/JPHyw==
-X-Google-Smtp-Source: AGHT+IGIj8ppTDiKoQ1Ac0ZjCZ1batJcTJQ8Mib+/ozEVFfkH5rl/YxpGzi3ZzRXz5pAIQ9//uSnvQ==
-X-Received: by 2002:a05:6870:344c:b0:261:211:9d0d with SMTP id 586e51a60fabf-295603b7595mr1814461fac.40.1731048417707;
-        Thu, 07 Nov 2024 22:46:57 -0800 (PST)
-Received: from yuanhsinte.c.googlers.com (176.220.194.35.bc.googleusercontent.com. [35.194.220.176])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079aa8fasm2863065b3a.97.2024.11.07.22.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 22:46:57 -0800 (PST)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Fri, 08 Nov 2024 06:46:53 +0000
-Subject: [PATCH] thermal/drivers/mediatek/lvts_thermal: Switch to
- IMMEDIATE_MODE
+	s=arc-20240116; t=1731048438; c=relaxed/simple;
+	bh=5ZS+JsiII+2DlvXp828/B1DEFuNBmONBNG45jnM7gMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bnTwRieTyDQJW0jaBVm+m6nYIhPl/AtKsSwtXaeskqNRBaXBX8og0lDD2rThsJzhZCPeOao7Pak2cULAx37JjsTBHT0nt5xmQn4TK9yOlJE/GQqzvXlrwHwCrAsCVtbLc0NZIo0+9mpbmH3g/CmOt1urrx4KsTtalUTeMmNdPn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BZgrPTJ9; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731048426;
+	bh=yNeOaUh/VXhLEhx1euOqJoZDr4xeJ4uKpsMh2qP/g0I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BZgrPTJ9ApEpsCwnTEDIGO+dHaCwG9SAuYBc+GZD7lKcZS5bX1AKsguy0K47o5/J1
+	 c+La3GkqU4xt5vGFoebZmGkk+ghSb0NoX5ru8JyN6GZD15xS1CWTMC+AayNj+Z+9sa
+	 bAKVGDHrBwQVmRqti6ECH4BNTteIaPXVEc9Z1imRkbeXbVr2W796MfoneFS9KR2uIr
+	 hbzF/DXO3wn0h42nu9fpRpj2/3SkIsvYMlM3b9bLRztOpvw5mxzxzU1Qu6HblmS13D
+	 tmhyxdhKQrz+NPSBBrduwqPCT3uJ7Xu29o5BbY7hwvgtDgHX6ReIBlmvfnUQMJJmzQ
+	 q8Nao0cLgTNbQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xl8cn2PPrz4wy9;
+	Fri,  8 Nov 2024 17:47:05 +1100 (AEDT)
+Date: Fri, 8 Nov 2024 17:47:06 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Bard Liao <yung-chuan.liao@linux.intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Message-ID: <20241108174706.595bc36c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241108-lvts-v1-1-eee339c6ca20@chromium.org>
-X-B4-Tracking: v=1; b=H4sIANyzLWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQwML3ZyykmLdNPOk1CRjs9S0ZFNLJaDSgqLUtMwKsDHRsbW1AICiAJZ
- WAAAA
-X-Change-ID: 20241108-lvts-f7beb36efc59
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-7be4f
+Content-Type: multipart/signed; boundary="Sig_/s3k2Iql7I9OJG+c/8OvVH/f";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Currently, MT8192 cannot suspend with FILTERED_MODE. Switch to
-IMMEDIATE_MODE will fix this.
+--Sig_/s3k2Iql7I9OJG+c/8OvVH/f
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
- drivers/thermal/mediatek/lvts_thermal.c | 3 ---
- 1 file changed, 3 deletions(-)
+Hi all,
 
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index 1997e91bb3be94a3059db619238aa5787edc7675..daad52f14fc03d0c4131f2ffdf3eb6b49a4a43d0 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -1541,7 +1541,6 @@ static const struct lvts_ctrl_data mt8192_lvts_mcu_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(1, 1, 0, 0),
- 		.offset = 0x0,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	},
- 	{
- 		.lvts_sensor = {
-@@ -1552,7 +1551,6 @@ static const struct lvts_ctrl_data mt8192_lvts_mcu_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(1, 1, 0, 0),
- 		.offset = 0x100,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	},
- 	{
- 		.lvts_sensor = {
-@@ -1567,7 +1565,6 @@ static const struct lvts_ctrl_data mt8192_lvts_mcu_data_ctrl[] = {
- 		},
- 		VALID_SENSOR_MAP(1, 1, 1, 1),
- 		.offset = 0x200,
--		.mode = LVTS_MSR_FILTERED_MODE,
- 	}
- };
- 
+After merging the sound-asoc tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
----
-base-commit: 906bd684e4b1e517dd424a354744c5b0aebef8af
-change-id: 20241108-lvts-f7beb36efc59
+WARNING: unmet direct dependencies detected for SND_SOC_ACPI_INTEL_MATCH
+  Depends on [n]: SOUND [=3Dy] && SND [=3Dy] && SND_SOC [=3Dy] && (SND_SOC_=
+INTEL_SST_TOPLEVEL [=3Dy] || SND_SOC_SOF_INTEL_TOPLEVEL [=3Dy]) && ACPI
+  Selected by [y]:
+  - SND_SOC_SOF_INTEL_COMMON [=3Dy] && SOUND [=3Dy] && SND [=3Dy] && SND_SO=
+C [=3Dy] && SND_SOC_SOF_TOPLEVEL [=3Dy] && SND_SOC_SOF_INTEL_TOPLEVEL [=3Dy]
 
-Best regards,
--- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
+Possibly introduced by commit
 
+  b6bd3f3b6357 ("ASoC: Intel: Kconfig: make SND_SOC_ACPI_INTEL_MATCH depend=
+ on ACPI")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/s3k2Iql7I9OJG+c/8OvVH/f
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcts+oACgkQAVBC80lX
+0Gx3EAf8D+jFam25jZnPmVzqFt54BChfGeIASTBrY7Cai1eWbvR08sdknV8Wq/IB
+lo7FETehOwF4BuqCdTzc63Ae2i1+6GtThhpNbfPCn/umeCvj6tt8pAyvNA2weE4r
+LUeju/ISQnJwcg6T7bL1n8CKFGb4CoV7GFJlMxzHiQfy5QR3xKaA/UXN2MfQCMTk
+xOza0Uesv5kwuhip+KWOSZi0PI1qv06grFp2GkMuV5r5u39TB/2ipoEsq8JC+e1T
+dTPGqgaPYB6AzNT/DoIf8wt96JnaxwcwDJorSeGtm1XJVUNQFmflpw27qZbhpWvi
+7Vx+HItu/hHONNeCYXUZXz2P4A3Icg==
+=OobU
+-----END PGP SIGNATURE-----
+
+--Sig_/s3k2Iql7I9OJG+c/8OvVH/f--
 
