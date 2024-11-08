@@ -1,79 +1,123 @@
-Return-Path: <linux-kernel+bounces-401838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6779C2000
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:05:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8A19C2003
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8C5A283589
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF3A1F233C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4071F585D;
-	Fri,  8 Nov 2024 15:05:12 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210601F4FCA;
+	Fri,  8 Nov 2024 15:05:38 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D01C8CE;
-	Fri,  8 Nov 2024 15:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47001EABA2;
+	Fri,  8 Nov 2024 15:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731078312; cv=none; b=dYFN2sxvmDI2/9NqsVP1FrsAwrhUNiXSPD1lb/26xtt+Rh05LfMgDyrFFsRxE57YZr8KjuWU2SJTg4mnOgkL4dXo7yh7uOFe9rwZEACZD5ROILgocm7Wt0MzjMRSMc2CPIWtkMvCINnfm6zWnki5n9rqXIY5YxCoRv1230tEznY=
+	t=1731078337; cv=none; b=AvS7jO3oodsl/Lfo8MwOWq92YYTBYSBRAVVvSvgLEqC43NttjmXNPERiU9QdobstbOJGTZtVNxij9XvcTHMvYSLCGo0NyQivAJ7QtjqItifyV42lq1fgB8UXhOtfGFRgMa+7pRh+luPOBV5IWQQCkmlgrpV1loOpWSmXI9OY2Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731078312; c=relaxed/simple;
-	bh=OIsdftTaHk1yZNuKlnX6gWl7hjUIgMKtYk0UjJl66XU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IjAQWX4IB43OZRUOeRQfaAvr8LOc1H1dxKjP4oV4YZDR1SAWv+QF43vMk4p361q+fiPmXAjMm7jrnnBzkWRveR6ZLBD+8/BZJwXKbbO/ycoeXbMmPnOA22R5Whv10mHfSxhbU09iKClbn7V2RjJaY/34Gn6Em0s6kJmH9u+UdfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 0848268AA6; Fri,  8 Nov 2024 16:05:01 +0100 (CET)
-Date: Fri, 8 Nov 2024 16:05:00 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
-	Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com,
-	Thomas.Hellstrom@linux.intel.com, brian.welty@intel.com,
-	himal.prasad.ghimiray@intel.com, krishnaiah.bommu@intel.com,
-	niranjana.vishwanathapura@intel.com
-Subject: Re: [PATCH v1 00/17] Provide a new two step DMA mapping API
-Message-ID: <20241108150500.GA10102@lst.de>
-References: <cover.1730298502.git.leon@kernel.org> <3567312e-5942-4037-93dc-587f25f0778c@arm.com> <20241104095831.GA28751@lst.de> <20241105195357.GI35848@ziepe.ca> <20241107083256.GA9071@lst.de> <20241107132808.GK35848@ziepe.ca> <20241107135025.GA14996@lst.de> <20241108150226.GM35848@ziepe.ca>
+	s=arc-20240116; t=1731078337; c=relaxed/simple;
+	bh=8KOpEqNXl7zuH4n2xZ+E3yhWKZMJsBdILBPRd/5Saik=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VE/bwhcajhplDHaWGBWF2vWw72lZFjRJ5gw8UWG+t1zlSmULt1E/nBanZQdm6GFTkdB5hw5Snndmm0qaYBzfglbKLOEwJzfKhOFdQsOopuU9Uy0Wvt8NM7Cpv5UvkOmxGV/zCdneYEOPtv6xzKWGG70vmNnghq8bN3RS2rzzODw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00A0C4CECD;
+	Fri,  8 Nov 2024 15:05:35 +0000 (UTC)
+Date: Fri, 8 Nov 2024 10:05:43 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
+ loongarch@lists.linux.dev, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>,
+ linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>, Jiaxun Yang
+ <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
+Message-ID: <20241108100543.61769b59@gandalf.local.home>
+In-Reply-To: <20241108091545.4182229-4-chenhuacai@loongson.cn>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+	<20241108091545.4182229-4-chenhuacai@loongson.cn>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108150226.GM35848@ziepe.ca>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 11:02:26AM -0400, Jason Gunthorpe wrote:
-> It is fully OK? Can't dma_map_page() trigger swiotlb? It must not do
-> that for P2P. How does it know the difference if it just gets a phys?
+On Fri,  8 Nov 2024 17:15:45 +0800
+Huacai Chen <chenhuacai@loongson.cn> wrote:
 
-dma_direct_map_page checks for p2p pages in the swiotlb bounce
-path already in the current kernel, and dma_map_sg relies on exactly
-that check to prevent bouncing for p2p.
+> It is really time.
+> 
+> LoongArch has all the required architecture related changes, that have
+> been identified over time, in order to enable PREEMPT_RT. With the recent
+> printk changes, the last known road block has been addressed.
+> 
+> Allow to enable PREEMPT_RT on LoongArch.
+> 
+> Below are the latency data from cyclictest on a 4-core Loongson-3A5000
+> machine, with a "make -j8" kernel building workload in the background.
+> 
+> 1. PREEMPT kernel with default configuration:
+> 
+> ./cyclictest -a -t -m -i200 -d0 -p99
+> policy: fifo: loadavg: 8.78 8.96 8.64 10/296 64800
+> T: 0 ( 4592) P:99 I:200 C:14838617 Min:   3 Act:    6 Avg:    8 Max:    844
+> T: 1 ( 4593) P:99 I:200 C:14838765 Min:   3 Act:    9 Avg:    8 Max:    909
+> T: 2 ( 4594) P:99 I:200 C:14838510 Min:   3 Act:    7 Avg:    8 Max:    832
+> T: 3 ( 4595) P:99 I:200 C:14838631 Min:   3 Act:    8 Avg:    8 Max:    931
+> 
+> 2. PREEMPT_RT kernel with default configuration:
+> 
+> ./cyclictest -a -t -m -i200 -d0 -p99
+> policy: fifo: loadavg: 10.38 10.47 10.35 9/336 77788
+> T: 0 ( 3941) P:99 I:200 C:19439626 Min:   3 Act:   12 Avg:    8 Max:    227
+> T: 1 ( 3942) P:99 I:200 C:19439624 Min:   2 Act:   11 Avg:    8 Max:    184
+> T: 2 ( 3943) P:99 I:200 C:19439623 Min:   3 Act:    4 Avg:    7 Max:    223
+> T: 3 ( 3944) P:99 I:200 C:19439623 Min:   2 Act:   10 Avg:    7 Max:    226
+> 
+> 3. PREEMPT_RT kernel with tuned configuration:
+> 
+> ./cyclictest -a -t -m -i200 -d0 -p99
+> policy: fifo: loadavg: 10.52 10.66 10.62 12/334 109397
+> T: 0 ( 4765) P:99 I:200 C:29335186 Min:   3 Act:    6 Avg:    8 Max:     62
+> T: 1 ( 4766) P:99 I:200 C:29335185 Min:   3 Act:   10 Avg:    8 Max:     52
+> T: 2 ( 4767) P:99 I:200 C:29335184 Min:   3 Act:    8 Avg:    8 Max:     64
+> T: 3 ( 4768) P:99 I:200 C:29335183 Min:   3 Act:   12 Avg:    8 Max:     53
+> 
+> Main instruments of tuned configuration include: Disable the boot rom
+> space in BIOS for kernel, in order to avoid speculative access to low-
+> speed memory; Disable CPUFreq scaling; Disable RTC synchronization in
+> the ntpd/chronyd service.
+
+Nice! Looks good.
+
+-- Steve
+
+> 
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>  arch/loongarch/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 3734f5dd9a57..26ed9d925e7f 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -66,6 +66,7 @@ config LOONGARCH
+>  	select ARCH_SUPPORTS_LTO_CLANG
+>  	select ARCH_SUPPORTS_LTO_CLANG_THIN
+>  	select ARCH_SUPPORTS_NUMA_BALANCING
+> +	select ARCH_SUPPORTS_RT
+>  	select ARCH_USE_BUILTIN_BSWAP
+>  	select ARCH_USE_CMPXCHG_LOCKREF
+>  	select ARCH_USE_QUEUED_RWLOCKS
 
 
