@@ -1,131 +1,264 @@
-Return-Path: <linux-kernel+bounces-401069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70399C1596
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:43:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01FF59C1599
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025F11C2178D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B510A28440F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E11194151;
-	Fri,  8 Nov 2024 04:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NjN/VemA"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944C619E99F;
+	Fri,  8 Nov 2024 04:47:26 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12858322E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A74EBE
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731040992; cv=none; b=Z026o49twOT2Pv8iuN47iJ46N8S8VR+mfWERi0bA9kCi297J+FDlQhfU2cl+SC+IgBuLJIhdGPr82D3gKfee1mLJLapL9kZdac2V44cHXBtMWBFchVVs9616KZKl0AFO9U0yNUXqb13CIed357Sl+beZF6ICrJyW2QE+qRO2+XQ=
+	t=1731041246; cv=none; b=GrERYIX75b5Fkfjvpnnv56Mvc6j7wtUsD6rEFqp+/SiemhII7FmumqQ2CpYBaVlzdNcTnoXi3gwOPCFzHgSw+YRhkZTgEasM0NWeM5qm58WPXygqpewPbvMb+qAXC+nfYFlfIQ3/sLKeH6IB4ilNt5XwAyiiPqlAAuTR6E03MKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731040992; c=relaxed/simple;
-	bh=9yDxC5K9B9ZtqJkKp8CAgAQ0k1aHDoiETdUm0hvKysM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BU0n71FkDoSdSb528Gl8HISe4Wl6zzAthgiwSHQuAeic39YHhn/3HINQ2FtfsiyUsCIahmdN8CJ48IUk7wplPSOu5rrhwAbCJJRq97yUhdZryDLeGBLudrf9hfsiyMMPpAU0vdoSfyFQfSlK1UJFzC11ObCzQP7KN6mYuquRhy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NjN/VemA; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso1144135f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 20:43:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731040988; x=1731645788; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D8mEDJcXR1a4gzsYHP5bUec4NcrTO1tb8meG2AFh7Pc=;
-        b=NjN/VemAFbOuUESc2nGDr1p5xXgacOVUWBZ3fNXCYrwbvLPMDbhzhqT4WjLI0cvk2t
-         rKPwSNm9pzGyJI4NepPrpubOndiBVgMNlSh+iJS4Qr09128miriXXkJ1w/BIHQ7B1rgv
-         tP2+/Q/6VCLCe6fP9X7sv4JmxlfoPSchEcjdqBLUQ0aAm/laNK9k0e3knay7imZIpqlg
-         v+RaZ/LwPMW9GUFrpUDBDoB/aZR93ySd1NV93P+Nw+t3P6nSfKmyoBghlMQJITdg1+wv
-         rH+iYDA97SPEJEFxF6QBt1ts4wFQS1CaVtwHJA5+OyUxFo1wFg+K6tjGCktwimkZp9fY
-         37Hg==
+	s=arc-20240116; t=1731041246; c=relaxed/simple;
+	bh=FxOERmQoaZm1/dKPeopIgLX7XhlQVT48y1z2KaMXJcU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ueCadl/93WOiQ7A2fpnUEj0P7y7A3vhd9gLLJCmyf4ckE0/bl7B/zaVQ7uP0fkwr27vn0OQZ+0KdPVrsxFr/Zncat+Rzy/0bwmsYbOeTX+HSPGnidP+rZwatsebiStpdjwHhlQKIvu/zqYQeyLeF8qIEuLjIVIWzQ123e2wsGd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aa904b231so202027539f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 20:47:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731040988; x=1731645788;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D8mEDJcXR1a4gzsYHP5bUec4NcrTO1tb8meG2AFh7Pc=;
-        b=IkZJCCjfKAIdKupnvc8Au3gjo93QvXZ8vFKF9CJnMEwdA72Mn+AczdwC5pUrLNYcHa
-         QNVB+Zs4ULlOk/JiZ5y7VPZA4YysHHdlFIR5wcd90JUEfqxPIIG4+1w+4ukMyQ8+T9KC
-         DsJPXBULuUrpeGFo19z3RUUKIxmWn7PhtMzp7VTpNrlSbp6xNLqBLaDQU0j6LFlcytu5
-         KipjTLm1jJkBKudMgkD4uvbnRM0pWQ6/AWdrUhrE9uid5mK5NX5Ck5XgbKZ8uKinjiKw
-         P/fqRajSwi/UzkxvAyTzq2QsSz9YY+e4mkkHZ6phCZRtBBglFuNWpIMLiqAhAKxZmVRB
-         Xixg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGOkgzHAnpZOSkS/PNJA5ESsSdX6OzQHXD9B0wsvnJZj6nm8RJo1ATNSGilzqzv5T1NkxtbY8wFiNELdY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe0Y/jk8Sk10yZwGch32dNDhCFZTkq8ipRWSoVWZW+1gqgv+P9
-	m62WPsVqiAm7ndnL2rO6TeFqSlycTFv25lVQ7RcLtA1PcdxLelm6FtVeM6ioII0=
-X-Google-Smtp-Source: AGHT+IEms5Ma1E4aDkMxPG6FC7UojnSZo16D1atkX83FNicW0lp1mBMQ8J1crbcTyumAFhvhXAoW0Q==
-X-Received: by 2002:a05:6000:1ac5:b0:37c:cdb6:6a9e with SMTP id ffacd0b85a97d-381f1866f1bmr942274f8f.9.1731040988171;
-        Thu, 07 Nov 2024 20:43:08 -0800 (PST)
-Received: from u94a (39-15-25-255.adsl.fetnet.net. [39.15.25.255])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6eacc8a30sm6848165ab.47.2024.11.07.20.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 20:43:06 -0800 (PST)
-Date: Fri, 8 Nov 2024 12:42:54 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, cve@kernel.org
-Cc: Tao Lyu <tao.lyu@epfl.ch>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: CVE-2023-52920: bpf: support non-r10 register spill/fill to/from
- stack in precision tracking
-Message-ID: <emjjveewgoegvinmjmba4ys34vbmb3sp6r6qefv77i5mtettmj@hsvm5vm3qivd>
-References: <2024110518-CVE-2023-52920-17f6@gregkh>
+        d=1e100.net; s=20230601; t=1731041243; x=1731646043;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qrP/XI7t3oNPB4GVpNZrHEl8KPsWvfRvYQSdcSEumP4=;
+        b=xCb+t0xuSeYaU3xkLgRjU+dpVBes6P8amj8swSZ/tKThqmZ8lKs2CzPukuY09jYdnb
+         gAvJ4Se2F1C/qAnOmWUgGlGMG+a3TlnRBXyymKEBPvBdvyPzuKdegi0Ak/3HyBPKbPl5
+         vVa3yk3ZSu6VrFv72o/hGn2UGXamaDjiApz0rNeFrd8TxhVkcYbL6eJOLgkgSXlw5g5i
+         vnZbkpN9AcmSxLG8LrrbZlsFogVqxZsnLqipS/aRYwMxiEqDT500Mty427Di38Sgz9ep
+         4S1LBHJGnb7vg+GNPJIgSm3us1N82Lrlj1fs2wegQIEqdxKEB3HHr3JCgbv0lq+/yr2p
+         567A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQrudXKSs2BY8NN/xY+hCluPdFam1JKbT5FP3r0MciKGYTAnD5sewpBOMTfy6qB79ANYRU22WmuPyVNdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSmzLGcwI1zAXtQJ1mjcOwB6vAk3lawAr9o62XiXseXpEGkGzh
+	T+rr93OgP8XJrpAd0++Ts8LxGq5ZNIcKwPdSAkhyPC9WpV9i1c57UNDGqRDB6qd8Klga3pT5bXt
+	dnzJXIZ1KP9fpu8jQSnkQjmHEZrJruqrGs8+Cq3aloPshY+6W8Fkr+VU=
+X-Google-Smtp-Source: AGHT+IG5rXH6vO/KfjlfhelxGe1lEVQ8Zq/HJVSDFkTHAX9UPVDwSTPhzaslXYewE4M90hrK4XxkmWD1Hm6Lsrjdy9cWCXq08v2q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024110518-CVE-2023-52920-17f6@gregkh>
+X-Received: by 2002:a05:6e02:1949:b0:3a3:778e:45cd with SMTP id
+ e9e14a558f8ab-3a6f1a4c181mr18977855ab.21.1731041243339; Thu, 07 Nov 2024
+ 20:47:23 -0800 (PST)
+Date: Thu, 07 Nov 2024 20:47:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672d97db.050a0220.15a23d.01ac.GAE@google.com>
+Subject: [syzbot] [overlayfs?] possible deadlock in pipe_lock (6)
+From: syzbot <syzbot+603e6f91a1f6c5af8c02@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andrii and Eduard,
+Hello,
 
-I'm trying to determine the security implication of CVE-2023-52920, or
-more specifically, what does commit 41f6f64e6999 ("bpf: support non-r10
-register spill/fill to/from stack in precision tracking") fix.
-Superficially this looks more like an improvement to the verifier.
+syzbot found the following issue on:
 
-On Tue, Nov 05, 2024 at 11:09:19AM GMT, Greg Kroah-Hartman wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> bpf: support non-r10 register spill/fill to/from stack in precision tracking
-...
+HEAD commit:    a33ab3f94f51 Merge tag 'kbuild-fixes-v6.12-2' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11ab06a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=728f7ffd25400452
+dashboard link: https://syzkaller.appspot.com/bug?extid=603e6f91a1f6c5af8c02
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Before this commit, precise tracking of stack spills/fills was only
-supported if the frame pointer register r10 was directly used (and any
-offset to the frame pointer had to be presented through insn->off).
+Unfortunately, I don't have any reproducer for this issue yet.
 
-In the case where r10 is indirectly used (e.g. using r6 where r6 = r10 -
-16), backtrack_insn() would simply return 0, implying that precision
-backtracking has completed; which technically isn't correct. However,
-since any register that is stored to the stack is already marked as
-precise in check_stack_write_fixed_off(), the verifier would not miss
-marking registers as precise - it would just be much more conservative
-than needed by marking more registers as precise than necessary.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-a33ab3f9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1ddf4248da4a/vmlinux-a33ab3f9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/79ee0fff762e/bzImage-a33ab3f9.xz
 
-In other words, even without commit 41f6f64e6999, it shouldn't be
-possible to craft a BPF program that tricks the verifier into
-incorrectly omitting precision marks, as the verifier would err on the
-side of being more strict.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+603e6f91a1f6c5af8c02@syzkaller.appspotmail.com
 
-Without this commit, the most significant impact would appear to be that
-a BPF program could trigger warnings as reported by Tao Lyu[1].
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc5-syzkaller-00330-ga33ab3f94f51 #0 Not tainted
+------------------------------------------------------
+syz.6.2203/14529 is trying to acquire lock:
+ffff888032ab3468 (&pipe->mutex){+.+.}-{3:3}, at: pipe_lock fs/pipe.c:92 [inline]
+ffff888032ab3468 (&pipe->mutex){+.+.}-{3:3}, at: pipe_lock+0x64/0x80 fs/pipe.c:89
 
-Does that assessment sound correct?
+but task is already holding lock:
+ffff88802c2dc420 (sb_writers#6){.+.+}-{0:0}, at: __do_splice+0x327/0x360 fs/splice.c:1436
+
+which lock already depends on the new lock.
 
 
-Thanks,
-Shung-Hsi Yu
+the existing dependency chain (in reverse order) is:
 
-1: https://lore.kernel.org/all/20231020220216.263948-1-tao.lyu@epfl.ch/
+-> #3 (
+sb_writers#6
+){.+.+}-{0:0}:
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1716 [inline]
+       sb_start_write include/linux/fs.h:1852 [inline]
+       mnt_want_write+0x6f/0x450 fs/namespace.c:515
+       ovl_create_object+0x12e/0x300 fs/overlayfs/dir.c:642
+       lookup_open.isra.0+0x1174/0x14c0 fs/namei.c:3595
+       open_last_lookups fs/namei.c:3694 [inline]
+       path_openat+0x904/0x2d60 fs/namei.c:3930
+       do_filp_open+0x1dc/0x430 fs/namei.c:3960
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
+       do_sys_open fs/open.c:1430 [inline]
+       __do_sys_openat fs/open.c:1446 [inline]
+       __se_sys_openat fs/open.c:1441 [inline]
+       __x64_sys_openat+0x175/0x210 fs/open.c:1441
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (
+&ovl_i_mutex_dir_key[depth]
+#3){++++}-{3:3}
+:
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
+       inode_lock_shared include/linux/fs.h:825 [inline]
+       lookup_slow fs/namei.c:1748 [inline]
+       walk_component+0x342/0x5b0 fs/namei.c:2053
+       lookup_last fs/namei.c:2556 [inline]
+       path_lookupat+0x17f/0x770 fs/namei.c:2580
+       filename_lookup+0x1e5/0x5b0 fs/namei.c:2609
+       kern_path+0x35/0x50 fs/namei.c:2717
+       lookup_bdev+0xd9/0x280 block/bdev.c:1164
+       resume_store+0x1d8/0x460 kernel/power/hibernate.c:1239
+       kobj_attr_store+0x55/0x80 lib/kobject.c:840
+       sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:136
+       kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
+       new_sync_write fs/read_write.c:590 [inline]
+       vfs_write+0x5ae/0x1150 fs/read_write.c:683
+       ksys_write+0x12f/0x260 fs/read_write.c:736
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&of->mutex){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       kernfs_fop_write_iter+0x27b/0x500 fs/kernfs/file.c:325
+       iter_file_splice_write+0x90f/0x10b0 fs/splice.c:743
+       do_splice_from fs/splice.c:941 [inline]
+       do_splice+0x145c/0x1f60 fs/splice.c:1354
+       __do_splice+0x327/0x360 fs/splice.c:1436
+       __do_sys_splice fs/splice.c:1652 [inline]
+       __se_sys_splice fs/splice.c:1634 [inline]
+       __x64_sys_splice+0x1cd/0x270 fs/splice.c:1634
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&pipe->mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       pipe_lock fs/pipe.c:92 [inline]
+       pipe_lock+0x64/0x80 fs/pipe.c:89
+       iter_file_splice_write+0x1eb/0x10b0 fs/splice.c:687
+       do_splice_from fs/splice.c:941 [inline]
+       do_splice+0x145c/0x1f60 fs/splice.c:1354
+       __do_splice+0x327/0x360 fs/splice.c:1436
+       __do_sys_splice fs/splice.c:1652 [inline]
+       __se_sys_splice fs/splice.c:1634 [inline]
+       __x64_sys_splice+0x1cd/0x270 fs/splice.c:1634
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &pipe->mutex --> &ovl_i_mutex_dir_key[depth]#3 --> sb_writers#6
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(sb_writers#6);
+                               lock(&ovl_i_mutex_dir_key[depth]#3);
+                               lock(sb_writers#6);
+  lock(&pipe->mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.6.2203/14529:
+ #0: ffff88802c2dc420 (sb_writers#6){.+.+}-{0:0}, at: __do_splice+0x327/0x360 fs/splice.c:1436
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 14529 Comm: syz.6.2203 Not tainted 6.12.0-rc5-syzkaller-00330-ga33ab3f94f51 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x41c/0x610 kernel/locking/lockdep.c:2074
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ pipe_lock fs/pipe.c:92 [inline]
+ pipe_lock+0x64/0x80 fs/pipe.c:89
+ iter_file_splice_write+0x1eb/0x10b0 fs/splice.c:687
+ do_splice_from fs/splice.c:941 [inline]
+ do_splice+0x145c/0x1f60 fs/splice.c:1354
+ __do_splice+0x327/0x360 fs/splice.c:1436
+ __do_sys_splice fs/splice.c:1652 [inline]
+ __se_sys_splice fs/splice.c:1634 [inline]
+ __x64_sys_splice+0x1cd/0x270 fs/splice.c:1634
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7fd357e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7fd434e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
+RAX: ffffffffffffffda RBX: 00007f7fd3735f80 RCX: 00007f7fd357e719
+RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f7fd35f132e R08: 0000000000001003 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f7fd3735f80 R15: 00007fff4fba4458
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
