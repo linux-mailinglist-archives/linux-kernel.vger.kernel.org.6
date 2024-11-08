@@ -1,256 +1,294 @@
-Return-Path: <linux-kernel+bounces-401601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC7CA9C1CCE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:19:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D625C9C1CD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60BCB284379
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:19:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9684D283A2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8241E7C01;
-	Fri,  8 Nov 2024 12:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4902C1E764A;
+	Fri,  8 Nov 2024 12:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1vbpz20R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rqXaYKXq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1vbpz20R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rqXaYKXq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XvbQOidz"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103DA1E47CC;
-	Fri,  8 Nov 2024 12:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241E51E47CC;
+	Fri,  8 Nov 2024 12:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731068377; cv=none; b=bkaK4ZrGJf1iuWFrfdhe/Y3O5bTZTCzOfBzV3VYcUbTTkkw2i5eTgNfhY9aEo5sXjDwPLYSXhZcu+OMYCN/gm7gpzCH1uAOUWYakHtM8nIglRBtsOx2DJJwxBYVNBidlathi7FS69xmp6Dw0oX/Rx4IWrRFK8SC1lrWjr4moWNs=
+	t=1731068414; cv=none; b=I1UfRGazqejAHUa7wSYZrpCCZXGMOT5H+DeYffvRTahmV1Nfc/yz3u7YGkuphE6+lWvW2fKN9Ulf/23yGn/1xlmHBlGe0uvVsPKfUVPHo1OnJYEn0dR04YHFAooy31YqfjGusEABk399roIjek8uYwG6l3Tyr1YhnjZVqPc6pmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731068377; c=relaxed/simple;
-	bh=gHx4tR0MwDHCyzkkwKN9uNUatqqrwQXZXAQfjOsWzrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYki7wQuRaVEmsdwejdGBkNQDIbNGTkdBTJm0qK33m24jbq/inZTEPsVDYMabpGO5BcJwKDmrgJMm2eQEPfyv+OarKHcspPmKKMz4apwPPfGI1uDf6vtiuPTw2z8aSoAIQLYWwt0+a2Uk+hl1SFCy9uaKmV33DklJAIDC6me9fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1vbpz20R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rqXaYKXq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1vbpz20R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rqXaYKXq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 171171F7C0;
-	Fri,  8 Nov 2024 12:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731068373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=amlv9P1NqNSBXdYqjoETOD88IPj0Jmi+jmRTQKmjb94=;
-	b=1vbpz20RiTMnkrUttWhIaa0BFR11gEFrrUWUvd7H4Tyw8OBmtuEiyjUbBtYEaAYLp6OuBq
-	JAQ8udWgLtWp2DwyANZ/rgwAgzlya/JLvHlpFYd+SjYVQHdO20CTDZuGPmfUIHe5QiGA1O
-	NbNNpU/H0+C/HkxGQFItbmsjW1rX1jc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731068373;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=amlv9P1NqNSBXdYqjoETOD88IPj0Jmi+jmRTQKmjb94=;
-	b=rqXaYKXqN4PseocRsK8OSuQyCuFe7dFvff93rCfo2YQBpDhrOWzZCT1obdGtnoGuCTgO2T
-	OWJ/RL/OzBs4xVAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1vbpz20R;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rqXaYKXq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731068373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=amlv9P1NqNSBXdYqjoETOD88IPj0Jmi+jmRTQKmjb94=;
-	b=1vbpz20RiTMnkrUttWhIaa0BFR11gEFrrUWUvd7H4Tyw8OBmtuEiyjUbBtYEaAYLp6OuBq
-	JAQ8udWgLtWp2DwyANZ/rgwAgzlya/JLvHlpFYd+SjYVQHdO20CTDZuGPmfUIHe5QiGA1O
-	NbNNpU/H0+C/HkxGQFItbmsjW1rX1jc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731068373;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=amlv9P1NqNSBXdYqjoETOD88IPj0Jmi+jmRTQKmjb94=;
-	b=rqXaYKXqN4PseocRsK8OSuQyCuFe7dFvff93rCfo2YQBpDhrOWzZCT1obdGtnoGuCTgO2T
-	OWJ/RL/OzBs4xVAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0143613967;
-	Fri,  8 Nov 2024 12:19:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rHpIANUBLmccWgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 08 Nov 2024 12:19:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B201FA0AF4; Fri,  8 Nov 2024 13:19:32 +0100 (CET)
-Date: Fri, 8 Nov 2024 13:19:32 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] fs: add the ability for statmount() to report the
- mnt_devname
-Message-ID: <20241108121932.mbtyofqtkbxao7vc@quack3>
-References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
- <20241107-statmount-v3-2-da5b9744c121@kernel.org>
+	s=arc-20240116; t=1731068414; c=relaxed/simple;
+	bh=MoTi/dYS7hHyJMOXtzhCKDV+lOAYDaThzUaFOBTiDa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IXQnvuHirDYPuvdwS7z1Ik5LHzkd1BBZKZUMBlz1tubjgh8rOqQQBVifkIwMwlPKGa810MOJN1YG8MQx67etoBzJk1KYqdwYBFX+MhMYlUZaQVKV06hL13NysQd5ifurokq/ciDAPv2dY60keMDnjS7O/zdqd8/MXNvF6sPrfho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XvbQOidz; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A8CK2Ie104732;
+	Fri, 8 Nov 2024 06:20:02 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731068402;
+	bh=mWj+Y3X9SnOAh3+a4cFNqzSCflZ6mMnuYM7SYahU/ww=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=XvbQOidz8W05245Nc/1tJp1BTZSSWiTlBEb8xL0wCDoFztBpO/7WaLxwuGGW7P6Ip
+	 QkYrl38vXR+Pmi5Evt7lFNSmgKJAYtbFN0cmuLBcYbjO1V6yRWNAiBukaR6Dkqv8m4
+	 XBnTa9h9qvrbL2IJK/cay5O92uAlfTSckv5nWEhw=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A8CK29n104549
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 8 Nov 2024 06:20:02 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 8
+ Nov 2024 06:20:01 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 8 Nov 2024 06:20:01 -0600
+Received: from [10.249.129.69] ([10.249.129.69])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A8CJtUB123140;
+	Fri, 8 Nov 2024 06:19:56 -0600
+Message-ID: <2a3c54e8-46fc-48f9-8c01-f3bb0c4907af@ti.com>
+Date: Fri, 8 Nov 2024 17:49:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107-statmount-v3-2-da5b9744c121@kernel.org>
-X-Rspamd-Queue-Id: 171171F7C0
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: soc: ti: pruss: Add clocks for ICSSG
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        MD Danish Anwar
+	<danishanwar@ti.com>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <ssantosh@kernel.org>,
+        <nm@ti.com>, Vignesh Raghavendra
+	<vigneshr@ti.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <s-anna@ti.com>, <kristo@kernel.org>,
+        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>
+References: <20241107104557.1442800-1-danishanwar@ti.com>
+ <20241107104557.1442800-2-danishanwar@ti.com>
+ <7f0a73c3-9977-4d07-b996-683ed18e4724@kernel.org>
+ <8156fd61-c476-4b58-b3b2-e8bc4f93035e@ti.com>
+ <2c368f5a-4b58-45de-8140-21b2f7af4d12@kernel.org>
+ <4ba0381b-d30a-4469-a7c4-327f6ac20c9c@ti.com>
+ <2e7a1eb6-df8f-44d4-9342-1bc6d8b5ad11@ti.com>
+ <1fa4323b-4cee-4dfe-9c68-55f4465999cf@kernel.org>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <1fa4323b-4cee-4dfe-9c68-55f4465999cf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu 07-11-24 16:00:07, Jeff Layton wrote:
-> /proc/self/mountinfo displays the devicename for the mount, but
-> statmount() doesn't yet have a way to return it. Add a new
-> STATMOUNT_MNT_DEVNAME flag, claim the 32-bit __spare1 field to hold the
-> offset into the str[] array. STATMOUNT_MNT_DEVNAME will only be set in
-> the return mask if there is a device string.
+Hi Krzysztof,
+
+On 11/7/2024 5:51 PM, Krzysztof Kozlowski wrote:
+> On 07/11/2024 12:58, MD Danish Anwar wrote:
+>>
+>>
+>> On 07/11/24 5:16 pm, MD Danish Anwar wrote:
+>>>
+>>>
+>>> On 07/11/24 5:14 pm, Krzysztof Kozlowski wrote:
+>>>> On 07/11/2024 12:36, MD Danish Anwar wrote:
+>>>>>
+>>>>>
+>>>>> On 07/11/24 5:01 pm, Krzysztof Kozlowski wrote:
+>>>>>> On 07/11/2024 11:45, MD Danish Anwar wrote:
+>>>>>>> Add clocks, assigned-clocks and assigned-clock-parents for ICSSG
+>>>>>>
+>>>>>> Why? We see what you are doing from the diff, no point to repeat it. I
+>>>>>> don't understand why you are doing it.
+>>>>>>
+>>>>>>>
+>>>>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>>>>>> ---
+>>>>>>>  .../devicetree/bindings/soc/ti/ti,pruss.yaml          | 11 +++++++++++
+>>>>>>>  1 file changed, 11 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+>>>>>>> index 3cb1471cc6b6..cf4c5884d8be 100644
+>>>>>>> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+>>>>>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+>>>>>>> @@ -92,6 +92,17 @@ properties:
+>>>>>>>      description: |
+>>>>>>>        This property is as per sci-pm-domain.txt.
+>>>>>>>  
+>>>>>>> +  clocks:
+>>>>>>> +    items:
+>>>>>>> +      - description: ICSSG_CORE Clock
+>>>>>>> +      - description: ICSSG_ICLK Clock
+>>>>>>> +
+>>>>>>> +  assigned-clocks:
+>>>>>>> +    maxItems: 1
+>>>>>>> +
+>>>>>>> +  assigned-clock-parents:
+>>>>>>> +    maxItems: 1
+>>>>>>
+>>>>>> Why? This is really not needed, so you need to explain why you are doing
+>>>>>> things differently than entire Linux kernel / DT bindings.
+>>>>>>
+>>>>>
+>>>>> I need to add this to the device tree node
+>>>>>
+>>>>> +		clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
+>>>>> +			 <&k3_clks 81 20>; /* icssg0_iclk */
+>>>>> +		assigned-clocks = <&k3_clks 81 0>;
+>>>>> +		assigned-clock-parents = <&k3_clks 81 2>;
+>>>>>
+>>>>> But without the above change in the binding I am getting below errors
+>>>>> while running dtbs check.
+>>>>>
+>>>>> /workdir/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtb: icssg@30000000:
+>>>>> 'assigned-clock-parents', 'assigned-clocks' do not match any of the
+>>>>> regexes: '^(pru|rtu|txpru)@[0-9a-f]+$', '^pa-stats@[a-f0-9]+$',
+>>>>> 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$', 'interrupt-controller@[a-f0-9]+$',
+>>>>> 'mdio@[a-f0-9]+$', 'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$',
+>>>>> 'mii-rt@[a-f0-9]+$', 'pinctrl-[0-9]+'
+>>>>> +/workdir/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtb: icssg@30080000:
+>>>>> 'anyOf' conditional failed, one must be fixed:
+>>>>>
+>>>>> To fix this warning I added these in the binding and the warnings were
+>>>>> fixed.
+>>>>
+>>>> nah, cannot reproduce. Just be sure you work on recent kernel (last time
+>>>> you were sending it on some ancient stuff) and your packages are
+>>>> updated, including dt schema and other kernel dependencies.
+>>>>
+
+The purpose of this series is to add 'assigned-clock-parents',
+'assigned-clocks' to the DT node. Initially I was only trying to add
+these two nodes to DT and at that time I got the above error. I also got
+ the below error as well
+
+/home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+icssg@30000000: 'anyOf' conditional failed, one must be fixed:
+        'clocks' is a required property
+        '#clock-cells' is a required property
+        from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
+
+
+To fix this I added 'assigned-clock-parents', 'assigned-clocks' to the
+binding and at this time I got only the below error,
+
+/home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+icssg@30000000: 'anyOf' conditional failed, one must be fixed:
+        'clocks' is a required property
+        '#clock-cells' is a required property
+        from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
+
+So to fix this, I added clocks to the binding as well as DT and after
+that all the errors got resolved and I posted the series.
+
+>>>
+>>> I have posted this series on the latest kernel. Base commit
+>>> 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
+>>>
+>>> Let me check if the schema is up to date or not. I will re test and
+>>> reply. Thanks for pointing it out.
+>>>
+>>
+>> Krzysztof, I re-checked.
+>> I am on the latest kernel (commit
+>> 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb (tag: next-20241106,
+>> origin/master, origin/HEAD)) and I am using the lastest dtschema v2024.9
+>>
+>> ❯ python3 -m pip list|grep 'dtschema'
+>> dtschema                      2024.9
+>>
+>> Still I am getting the below dtbs check errors while running `make
+>> CHECK_DTBS=y ti/k3-am642-evm.dtb` without the binding change.
+>>
+>> Let me know if I am missing something else.
+>>
+>> /home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+>> icssg@30000000: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-
-Looks good to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/namespace.c             | 36 +++++++++++++++++++++++++++++++++++-
->  include/uapi/linux/mount.h |  3 ++-
->  2 files changed, 37 insertions(+), 2 deletions(-)
+> Wait, what? That's different error. You have clocks documented. To
+> remind: we talk about previous error so only, *only* assigned-clocks.
 > 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index fc4f81891d544305caf863904c0a6e16562fab49..56750fcc890271e22b3b722dc0b4af445686bb86 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5014,6 +5014,32 @@ static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
->  		seq_puts(seq, sb->s_subtype);
->  }
->  
-> +static int statmount_mnt_devname(struct kstatmount *s, struct seq_file *seq)
-> +{
-> +	struct super_block *sb = s->mnt->mnt_sb;
-> +	struct mount *r = real_mount(s->mnt);
-> +
-> +	if (sb->s_op->show_devname) {
-> +		size_t start = seq->count;
-> +		int ret;
-> +
-> +		ret = sb->s_op->show_devname(seq, s->mnt->mnt_root);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (unlikely(seq_has_overflowed(seq)))
-> +			return -EAGAIN;
-> +
-> +		/* Unescape the result */
-> +		seq->buf[seq->count] = '\0';
-> +		seq->count = start;
-> +		seq_commit(seq, string_unescape_inplace(seq->buf + start, UNESCAPE_OCTAL));
-> +	} else if (r->mnt_devname) {
-> +		seq_puts(seq, r->mnt_devname);
-> +	}
-> +	return 0;
-> +}
-> +
->  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
->  {
->  	s->sm.mask |= STATMOUNT_MNT_NS_ID;
-> @@ -5077,6 +5103,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
->  		sm->fs_subtype = start;
->  		statmount_fs_subtype(s, seq);
->  		break;
-> +	case STATMOUNT_MNT_DEVNAME:
-> +		sm->mnt_devname = seq->count;
-> +		ret = statmount_mnt_devname(s, seq);
-> +		break;
->  	default:
->  		WARN_ON_ONCE(true);
->  		return -EINVAL;
-> @@ -5225,6 +5255,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
->  	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
->  		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
->  
-> +	if (!err && s->mask & STATMOUNT_MNT_DEVNAME)
-> +		err = statmount_string(s, STATMOUNT_MNT_DEVNAME);
-> +
->  	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
->  		statmount_mnt_ns_id(s, ns);
->  
-> @@ -5246,7 +5279,8 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
->  }
->  
->  #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
-> -			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
-> +			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
-> +			      STATMOUNT_FS_SUBTYPE | STATMOUNT_MNT_DEVNAME)
->  
->  static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
->  			      struct statmount __user *buf, size_t bufsize,
-> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> index 2e939dddf9cbabe574dafdb6cff9ad4cf9298a74..3de1b0231b639fb8ed739d65b5b5406021f74196 100644
-> --- a/include/uapi/linux/mount.h
-> +++ b/include/uapi/linux/mount.h
-> @@ -174,7 +174,7 @@ struct statmount {
->  	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
->  	__u64 mnt_ns_id;	/* ID of the mount namespace */
->  	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
-> -	__u32 __spare1[1];
-> +	__u32 mnt_devname;	/* [str] Device string for the mount */
->  	__u64 __spare2[48];
->  	char str[];		/* Variable size part containing strings */
->  };
-> @@ -210,6 +210,7 @@ struct mnt_id_req {
->  #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
->  #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
->  #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
-> +#define STATMOUNT_MNT_DEVNAME		0x00000200U	/* Want/got mnt_devname */
->  
->  /*
->   * Special @mnt_id values that can be passed to listmount
+
+I agree. This is a different error. I encountered this error when I
+dropped the binding patch of this series and tested only the DT patch.
+
+When you commented on Binding patch mentioning it's not needed, I
+thought you were referring to the entire diff. So I dropped the patch
+and tested the DT patch only. And at this time I got this error.
+
+>> not match any of the regexes: '^(pru|rtu|txpru)@[0-9a-f]+$',
+>> '^pa-stats@[a-f0-9]+$', 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$',
+>> 'interrupt-controller@[a-f0-9]+$', 'mdio@[a-f0-9]+$',
+>> 'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$', 'mii-rt@[a-f0-9]+$',
+>> 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/soc/ti/ti,pruss.yaml#
+>> /home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+>> icssg@30000000: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do
+>> not match any of the regexes: '^(pru|rtu|txpru)@[0-9a-f]+$',
+>> '^pa-stats@[a-f0-9]+$', 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$',
+>> 'interrupt-controller@[a-f0-9]+$', 'mdio@[a-f0-9]+$',
+>> 'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$', 'mii-rt@[a-f0-9]+$',
+>> 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/soc/ti/ti,pruss.yaml#
+>> /home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+>> icssg@30080000: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do
+>> not match any of the regexes: '^(pru|rtu|txpru)@[0-9a-f]+$',
+>> '^pa-stats@[a-f0-9]+$', 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$',
+>> 'interrupt-controller@[a-f0-9]+$', 'mdio@[a-f0-9]+$',
+>> 'memories@[a-f0-9]+$', 'mii-g-rt@[a-f0-9]+$', 'mii-rt@[a-f0-9]+$',
+>> 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/soc/ti/ti,pruss.yaml#
+>> /home/danish/workspace/linux-next/arch/arm64/boot/dts/ti/k3-am642-evm.dtb:
+>> icssg@30080000: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do
+>> not match any of the regexes: '^(pru|rtu|txpru)@[0-9a-f]+$',
+>> '^pa-stats@[a-f0-9]+$', 'cfg@[a-f0-9]+$', 'iep@[a-f0-9]+$',
 > 
-> -- 
-> 2.47.0
+> I don't understand these, either.  All of them have clocks. What are you
+> testing? You add clocks to DTS but not to the binding? What would be the
+> point of that test?
 > 
+
+I did some more testing. Turns out just adding clocks to dt binding is
+enough. Clocks will need to be added to binding however
+'assigned-clock-parents', 'assigned-clocks' are not needed in the binding.
+
+I will drop the 'assigned-clock-parents', 'assigned-clocks' from
+dt-binding and only keep below diff. Where as for DT patch (2/2) - I
+will keep it as it is.
+
+diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+index 3cb1471cc6b6..12350409d154 100644
+--- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
++++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+@@ -92,6 +92,11 @@ properties:
+     description: |
+       This property is as per sci-pm-domain.txt.
+
++  clocks:
++    items:
++      - description: ICSSG_CORE Clock
++      - description: ICSSG_ICLK Clock
++
+ patternProperties:
+
+   memories@[a-f0-9]+$:
+
+Let me know if this looks ok to you. Thanks for your feedback.
+
+> Best regards,
+> Krzysztof
+> 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks and Regards,
+Md Danish Anwar
 
