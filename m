@@ -1,128 +1,221 @@
-Return-Path: <linux-kernel+bounces-400849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01DE9C1330
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:26:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6859C1331
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:26:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FD81F23395
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D341282AEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A257464;
-	Fri,  8 Nov 2024 00:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425F01BD9E2;
+	Fri,  8 Nov 2024 00:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EI3gSewB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="bogicNuA"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C2F610D;
-	Fri,  8 Nov 2024 00:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627C4B661
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731025468; cv=none; b=afyD2Zq4X8SksbGf0KjDr9hQ3t8XLxFdKsVyJvY0zjB6+fnYhSTnDIc7iBS162veppaQVqiAwWW8kNjQepTyOPSciLk7Qlvw+rkWOSIXrLLSNactOvki83FX0zAh628xtF3F6soX/OTQvNsh5Xxp2DOkvtm/ZIBhn2lTVMrJeYk=
+	t=1731025522; cv=none; b=JffnrDUW0vhqvhjpTCjwBUu3tn/lPZeeDteM7L40Keu1zc+gABw/tAWFu6VtdGCLzufhofJEBND/GcXSoXlhifL3lQ6PIutR9Kxxcle5SjZX8kAH/1ogUjWdXkOXF0qgojAwAicFkfo9PXng1D3sOvDz/eVHlIQKYJTqcatkpRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731025468; c=relaxed/simple;
-	bh=5ySH9Y9XuFgDzil3SM458QkbU//Avf5c5Hm79IqMzVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=oMqH8iVhm50qp5HNhb9fQywliLdmkJLyXnJ6dzLHha3KK2j9o9Crhv6W8Mf2VNrKpFTrMEun4ccMfpWm82pg845BP7szDJT5jEpMxCnj3dSV320j0dXm1suwXCdQflwYrgR0Q60O7EJE2SgCW5P7qvg9Ls9pcXfvdZ/2GuXez+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EI3gSewB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAD8DC4CECC;
-	Fri,  8 Nov 2024 00:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731025468;
-	bh=5ySH9Y9XuFgDzil3SM458QkbU//Avf5c5Hm79IqMzVs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=EI3gSewBcUUd55EPL2LuyfcoHPA1mH0ninGzguvWAhZsY4Doi5kLvxCTVoUZcFUFt
-	 FFBBsyH1ZyEv+fqODb5/OmR0pG8ShyuCSJr8dfrJjJWJDDe22EyFIjNmd7i9kcx5JU
-	 gI4F7q8m5Kqq8m9W3H+LeMEouB0OJ/m2Bx72sGvHp15e8ab27TIfUiLP2pNQcFeT2a
-	 rYIPCkAQpKAuP2KTmic05RR+c4cVc0U0Wj+iuw2astUBvvky2fILP/b71Riuau4wnf
-	 bqVABmsAZAoldlDT4pAatpnA1CyfOQslYyURCdZgLmGuVARPb34DbKAIz7VL2Bac4C
-	 A3K46rVZZCBSA==
-Date: Thu, 7 Nov 2024 18:24:25 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>, jingoohan1@gmail.com,
-	bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, frank.li@nxp.com, imx@lists.linux.dev,
-	kernel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
- dw_pcie_suspend_noirq()
-Message-ID: <20241108002425.GA1631063@bhelgaas>
+	s=arc-20240116; t=1731025522; c=relaxed/simple;
+	bh=Yu0ZVqa4VL8nwWUskUGCY1WzArYZ0sKKfWDIKTwLbIQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YKVaqvsYYHRL4rG+Nk6aqLIunr8skvnwsrksUILbdQ8ztKPW3uQramuM8kqqP2JsMrSVuhoB1ebIGsXay85TGuzEe+sGj3QTuUbGdi6N3kimqoB9A4XxdJC6VvpoPJbw6Bl+Sp2Jn/HASEDYSHAyqPG/v6eeiUsVPugM/bC7CSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=bogicNuA; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731025477; x=1731630277; i=efault@gmx.de;
+	bh=y868n/rZTW1q1WLAeN0V1ocmz++K3iIcT5QYB1Z9XJs=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bogicNuAi2W8X8gQdFbskekwAcZvIAogwn2x7udwluD/wu5B4pWAzzL5T5ZyBHnk
+	 9rzsOSjVNPiTT4TzBi7gwCk8ZiGKKk61Y9jB3XUSqk3k/zKtrM6BwPl4W38bWePV2
+	 z0iUXnoRVgjSRNCwlYPe66VN4ai1/jyrru734xvAKp3Gt703+0IuK2MUrfBhiuWFZ
+	 DMCG3wxWIosDs2RdEdqFyrxq23nNPGF8XdjonYmWzjJksgHMlbQwxuPQ1Gm/vKOFz
+	 KLZ0lGxcRNNuxl1UYc9M7bZ0dgBe+cmkdnEm89gnjHLI9tnzKH2FmR+Q40T7xmc8+
+	 daReexbaZ/34aiRmsg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.61]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MzhnH-1u4BD228BN-013yp9; Fri, 08
+ Nov 2024 01:24:37 +0100
+Message-ID: <750542452c4f852831e601e1b8de40df4b108d9a.camel@gmx.de>
+Subject: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
+ busy CPU
+From: Mike Galbraith <efault@gmx.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Phil Auld <pauld@redhat.com>, mingo@redhat.com, juri.lelli@redhat.com, 
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+ linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+ wuyun.abel@bytedance.com,  youssefesmat@chromium.org, tglx@linutronix.de
+Date: Fri, 08 Nov 2024 01:24:35 +0100
+In-Reply-To: <20241107140945.GA34695@noisy.programming.kicks-ass.net>
+References: <20241101200704.GE689589@pauld.westford.csb>
+	 <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
+	 <20241104130515.GB749675@pauld.westford.csb>
+	 <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
+	 <20241106135346.GL24862@noisy.programming.kicks-ass.net>
+	 <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
+	 <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
+	 <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
+	 <982456f0abca321b874b7974bdf17d1a605c3d38.camel@gmx.de>
+	 <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
+	 <20241107140945.GA34695@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107111334.n23ebkbs3uhxivvm@thinkpad>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KnGLQMykz0NEmOSiiZvdKOSY8KwUbc99pQkS7ywEGhEnOtIyftp
+ 9TE9OzZKwcbLuBKm09OK1Yo+wOhXKp7QZF91Aszs5y4cY0eTdftNsbweKUDOCMgavPGIttR
+ IHx5ZU7LV/XBAIALIQrElY7xBfT0ZABid4k+XXNStokr5P/0y6/jVj4Kuw8kE0Ztg8i6Obs
+ 9h8wRirxiGPqykUWidSdg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9j08qpmsKxw=;+6riMbB8fkcN2IJybKOtZtG70j1
+ /EiW7Pl9FlqyC9mqGZrqZai78X3vjJNzBshHoIIXGQ/gWMnumqHNuvj3nFtdyAgRmiCBwTwp9
+ /oOrTUdSWFZNbp3r5GuYpeXQzUB1UZAqRBTnp+x0fbQPMJ9nNwei+85CWbmVoqupOywwEYwvV
+ +PmSUnbEzGDL9iYpe/EA+EAzh3t7w4lm9ccsluUF2eNIq64oa0wzNrY3BB1GY1dogK9w+qBOM
+ jNKoKkvRAmCKbeL33tIrCnSFKYn4cmA3w52Lfa3pDIolzzhsEmOG+C/MagNjhKcarOGu3B4ei
+ V3mbPlpDOtNE8KloZv6Lzs3snz0aCw2/NlWmLBc94jOixfPWjU4VO3krjADjmJ/NAl03/Ci2s
+ yHZLd34vXLawPd6ePxVoRSxOpR/V0hvR9C3zXOWyIwN1LlCBBGd89AC5IEas2YRc5SYnPwsJ8
+ zf+BCEI12ElEJAOUAg3ny3xA5eEMUe1i8OLDiZhBiQicROFPD+hgEG+YWI5/sa3aBi+PKVyZl
+ xgY3n6qPz+hD0oWeFB5SfqSXcsNnpw+tS9heRWOQ5crcAsBeqyvO4JmgkiZYwIatbMQRP8Rl+
+ uXZOSz3Ar6DCkEjdcqW3zz67qfe9pt2F9IXfUpLUIopd31J3YQgSP/HA6mnbUfUgmcqed+vHN
+ xHlwY3oGRWNno5FWVJ/pyIcFW4MSErTZ392XAFB+rbORY70o3ZDEzg0IhnHWesE22c2jT8QQf
+ YXbOTxAJAOEzRH9YsE9FFayR/yBAJLCr78pCq9WAcSIu+LqDmx62Z3glceXSD73WJrDt0kUxk
+ I3rlbfThXKaCW5mngDy//3DAhPcPHnjo/0771ppCIU6i5fVgFESDACOTQL+yXZP5VQ5r/EW7D
+ r87W4YbH4XGwbwn5XPGlT6/fLDt/78ZMlKkdYHNec2kFy4Mg2ugyJSEFB
 
-On Thu, Nov 07, 2024 at 11:13:34AM +0000, Manivannan Sadhasivam wrote:
-> On Thu, Nov 07, 2024 at 04:44:55PM +0800, Richard Zhu wrote:
-> > Before sending PME_TURN_OFF, don't test the LTSSM stat. Since it's
-> > safe to send PME_TURN_OFF message regardless of whether the link
-> > is up or down. So, there would be no need to test the LTSSM stat
-> > before sending PME_TURN_OFF message.
-> 
-> What is the incentive to send PME_Turn_Off when link is not up?
+On Thu, 2024-11-07 at 15:09 +0100, Peter Zijlstra wrote:
+> On Thu, Nov 07, 2024 at 03:02:36PM +0100, Mike Galbraith wrote:
+> > On Thu, 2024-11-07 at 10:46 +0100, Mike Galbraith wrote:
+> > > On Thu, 2024-11-07 at 05:03 +0100, Mike Galbraith wrote:
+> > > >
+> > > > I built that patch out of curiosity, and yeah, set_next_task_fair(=
+)
+> > > > finding a cfs_rq->curr ends play time pretty quickly.
+> > >
+> > > The below improved uptime, and trace_printk() says it's doing the
+> > > intended, so I suppose I'll add a feature and see what falls out.
+> >
+> > From netperf, I got.. number tabulation practice.=C2=A0 Three runs of =
+each
+> > test with and without produced nothing but variance/noise.
+>
+> Make it go away then.
+>
+> If you could write a Changelog for you inspired bit and stick my cleaned
+> up version under it, I'd be much obliged.
 
-There's no need to send PME_Turn_Off when link is not up.
+Salut, much obliged for eyeball relief.
 
-But a link-up check is inherently racy because the link may go down
-between the check and the PME_Turn_Off.  Since it's impossible for
-software to guarantee the link is up, the Root Port should be able to
-tolerate attempts to send PME_Turn_Off when the link is down.
+=2D--snip---
 
-So IMO there's no need to check whether the link is up, and checking
-gives the misleading impression that "we know the link is up and
-therefore sending PME_Turn_Off is safe."
+Phil Auld (Redhat) reported an fio benchmark regression having been found
+to have been caused by addition of the DELAY_DEQUEUE feature, suggested it
+may be related to wakees losing the ability to migrate, and confirmed that
+restoration of same indeed did restore previous performance.
 
-> > Remove the L2 poll too, after the PME_TURN_OFF message is sent
-> > out.  Because the re-initialization would be done in
-> > dw_pcie_resume_noirq().
-> 
-> As Krishna explained, host needs to wait until the endpoint acks the
-> message (just to give it some time to do cleanups). Then only the
-> host can initiate D3Cold. It matters when the device supports L2.
+(de-uglified-a-lot-by)
 
-The important thing here is to be clear about the *reason* to poll for
-L2 and the *event* that must wait for L2.
+Reported-by: Phil Auld <pauld@redhat.com>
+Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+Link: https://lore.kernel.org/lkml/20241101124715.GA689589@pauld.westford.=
+csb/
+Signed-off-by: Mike Galbraith <efault@gmx.de>
+=2D--
+ kernel/sched/core.c  |   48 +++++++++++++++++++++++++++++----------------=
+---
+ kernel/sched/sched.h |    5 +++++
+ 2 files changed, 34 insertions(+), 19 deletions(-)
 
-I don't have any DesignWare specs, but when dw_pcie_suspend_noirq()
-waits for DW_PCIE_LTSSM_L2_IDLE, I think what we're doing is waiting
-for the link to be in the L2/L3 Ready pseudo-state (PCIe r6.0, sec
-5.2, fig 5-1).
+=2D-- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3783,28 +3783,38 @@ ttwu_do_activate(struct rq *rq, struct t
+  */
+ static int ttwu_runnable(struct task_struct *p, int wake_flags)
+ {
+-	struct rq_flags rf;
+-	struct rq *rq;
+-	int ret =3D 0;
+-
+-	rq =3D __task_rq_lock(p, &rf);
+-	if (task_on_rq_queued(p)) {
+-		update_rq_clock(rq);
+-		if (p->se.sched_delayed)
+-			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
+-		if (!task_on_cpu(rq, p)) {
+-			/*
+-			 * When on_rq && !on_cpu the task is preempted, see if
+-			 * it should preempt the task that is current now.
+-			 */
+-			wakeup_preempt(rq, p, wake_flags);
++	CLASS(__task_rq_lock, rq_guard)(p);
++	struct rq *rq =3D rq_guard.rq;
++
++	if (!task_on_rq_queued(p))
++		return 0;
++
++	update_rq_clock(rq);
++	if (p->se.sched_delayed) {
++		int queue_flags =3D ENQUEUE_DELAYED | ENQUEUE_NOCLOCK;
++
++		/*
++		 * Since sched_delayed means we cannot be current anywhere,
++		 * dequeue it here and have it fall through to the
++		 * select_task_rq() case further along the ttwu() path.
++		 */
++		if (rq->nr_running > 1 && p->nr_cpus_allowed > 1) {
++			dequeue_task(rq, p, DEQUEUE_SLEEP | queue_flags);
++			return 0;
+ 		}
+-		ttwu_do_wakeup(p);
+-		ret =3D 1;
++
++		enqueue_task(rq, p, queue_flags);
++	}
++	if (!task_on_cpu(rq, p)) {
++		/*
++		 * When on_rq && !on_cpu the task is preempted, see if
++		 * it should preempt the task that is current now.
++		 */
++		wakeup_preempt(rq, p, wake_flags);
+ 	}
+-	__task_rq_unlock(rq, &rf);
++	ttwu_do_wakeup(p);
 
-L2 and L3 are states where main power to the downstream component is
-off, i.e., the component is in D3cold (r6.0, sec 5.3.2), so there is
-no link in those states.
+-	return ret;
++	return 1;
+ }
 
-The PME_Turn_Off handshake is part of the process to put the
-downstream component in D3cold.  I think the reason for this handshake
-is to allow an orderly shutdown of that component before main power is
-removed.
+ #ifdef CONFIG_SMP
+=2D-- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1779,6 +1779,11 @@ task_rq_unlock(struct rq *rq, struct tas
+ 	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
+ }
 
-When the downstream component receives PME_Turn_Off, it will stop
-scheduling new TLPs, but it may already have TLPs scheduled but not
-yet sent.  If power were removed immediately, they would be lost.  My
-understanding is that the link will not enter L2/L3 Ready until the
-components on both ends have completed whatever needs to be done with
-those TLPs.  (This is based on the L2/L3 discussion in the Mindshare
-PCIe book; I haven't found clear spec citations for all of it.)
++DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
++		    _T->rq =3D __task_rq_lock(_T->lock, &_T->rf),
++		    __task_rq_unlock(_T->rq, &_T->rf),
++		    struct rq *rq; struct rq_flags rf)
++
+ DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
+ 		    _T->rq =3D task_rq_lock(_T->lock, &_T->rf),
+ 		    task_rq_unlock(_T->rq, _T->lock, &_T->rf),
 
-I think waiting for L2/L3 Ready is to keep us from turning off main
-power when the components are still trying to dispose of those TLPs.
 
-So I think every controller that turns off main power needs to wait
-for L2/L3 Ready.
-
-There's also a requirement that software wait at least 100 ns after
-L2/L3 Ready before turning off refclock and main power (sec
-5.3.3.2.1).
-
-Bjorn
 
