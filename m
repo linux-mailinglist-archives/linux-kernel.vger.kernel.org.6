@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-402425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D6A9C275D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:13:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB4C9C2759
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:13:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020671C22222
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:13:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43838B22624
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354DB1F5821;
-	Fri,  8 Nov 2024 22:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A811F26F7;
+	Fri,  8 Nov 2024 22:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ywgbcuzp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="psOU2zdM"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D81C1AA1FD;
-	Fri,  8 Nov 2024 22:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699451AA1FD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 22:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731104005; cv=none; b=I7cMkP1wM8HVtCkTF0L00XJAwYSbYim7atK1FCfQMTwzE5wUtUr8x6z4lNPV5/36fu6YoNTIJ1xIJSzPQXPvWNQNrLkSlQWSMwAHbUryYwVDv6mqFS2FCK7NYPFbHrimCPaLNm7/bYVh8abuGgHgL54JJJFEJ/h2jQQ/Bo7VfRk=
+	t=1731103979; cv=none; b=fn0EdfOrXq7oza+cnCe1R9ZbCL777MXhUSiateKuxMVNk+TT7UaK7fvptC9RuFc07ZlLbp2N/J3Nn/vdzpTLA62o+JLPKAnyxClnOnowuRvF5Lx7SzLkhSuXdUY5raHjm6aXhbdFDJLKkzFTaZ7u2/OX0xqTrvD2ytx4XPwt1cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731104005; c=relaxed/simple;
-	bh=g7alIN34O1EB60J+Qde0BhS8SjttSFElP0RMIcUQMfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D/9pkKrHnntPsupQHqJ7KQm5OpTYEsEt9gUx9sp45H+bveR78VNw0jR88t8KmywEsdPbnp7XYFFr9vsA66/vtu61OGLGi++BqlxEtiCkwnbemMFc4fEbVJFhx8Ekbz3OrZ0cSnCwc9Vcicl0A/M+8tRXFvtEQnDA9WbpX4fsJ1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ywgbcuzp; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731104004; x=1762640004;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g7alIN34O1EB60J+Qde0BhS8SjttSFElP0RMIcUQMfo=;
-  b=YwgbcuzphhR4GPJmz63htgWhoOVl1Mz9HLPSkRdwmJSdzeSo7nhcnErG
-   2ZUUIbxqycCwPaoFP3BJYFyICpciNfMQ9Qng5srZdAWhDbUJKoCDJ+WYa
-   GeUFP2LRsCiBxIaIUyJPDK35jrUua8AppyUKUO9EXQLSwU8NbZ6TLV0qi
-   yTXurNQxKsC/2P5xAFHEsMDM5k1i59JH1lrn5zwjiqlWm/OlPPUIcqln6
-   UEP11oUjbYDtkU5qAMQ4m7Hbsx4foTR+mY8H9U0dD+LcfogKG7yg5enlG
-   dCG0F5nDLb9IlwSEUO+8LSB9zkBbF/GJ1qOpfkXO5JKuck1gufhkYGYaQ
-   g==;
-X-CSE-ConnectionGUID: rYkuAmp1Thu1114VsQ2clg==
-X-CSE-MsgGUID: UVoQlzxFRr2JtDUBdaJ7Vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30858892"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30858892"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 14:13:23 -0800
-X-CSE-ConnectionGUID: tVXXtb8TSp6pvCm7Uhdchg==
-X-CSE-MsgGUID: lej9TPAxS22XbyNCUzUJVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
-   d="scan'208";a="85376965"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 08 Nov 2024 14:13:20 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9XEE-000rpu-2J;
-	Fri, 08 Nov 2024 22:13:18 +0000
-Date: Sat, 9 Nov 2024 06:12:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com,
-	len.brown@intel.com, artem.bityutskiy@linux.intel.com,
-	dave.hansen@linux.intel.com, patryk.wlazlyn@linux.intel.com
-Subject: Re: [PATCH v3 3/3] intel_idle: Provide enter_dead() handler for SRF
-Message-ID: <202411090651.FNnbtLe2-lkp@intel.com>
-References: <20241108122909.763663-4-patryk.wlazlyn@linux.intel.com>
+	s=arc-20240116; t=1731103979; c=relaxed/simple;
+	bh=wX9PFZrFri2mQBSbP5XRWK2geD1Yy8QbqAS/pekxSzg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=c4Rj2bCK+s6IOhIqdWNSCzCm27e3NUvnqpBFKm+hE1PAekPWw8irG/Cj4AkVz49YDJHCdtCjdEMpmKYQpdLdBLw0y6qe+5+/mjXDdFu33K0vD0yNkkNfmWQUZEQKgMc3YLCAn8xAURGzZxfyk4LNj63aO7mGLJkSS9+UNU11new=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=psOU2zdM; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7ea69eeb659so2346740a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 14:12:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731103978; x=1731708778; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gq+e5c9WNI7tAMaDD0Dp/NV1TeMtTqKU6RqkXPTKVNw=;
+        b=psOU2zdMnijXr5ns1GyebgILQSKWH9kqDDo4TaMfxyZlHDwLFZCtxN3fCL3PIvvqXH
+         wx0v355uDy4+WKAlBpt4Xk0HQlaycEyo4FanMASpCdop94ffzRJqRX3Mr4UceJgoiple
+         o8eKqPAn2Rao66n3+rpc/D0Js763vKL7bcj8Ngh7g3/mW7uRunpe53gn9j9lC0A4cqHp
+         c3LGohfjrFV7eYMeYEWMmDjz0TBb0XbNodXlcXSBaytJn0l9ZPAaMFg4pVlvP3tRkyuX
+         rTnNRhUeFUaqbZGRlEikROK3MWokKcrVg50zbPcYWiAMiAq/grJadZ4f44yFpwjYWn6c
+         bG/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731103978; x=1731708778;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Gq+e5c9WNI7tAMaDD0Dp/NV1TeMtTqKU6RqkXPTKVNw=;
+        b=RE5PwfqDF20gED9SVkxSE4KeAI58pNvPYzfjWb8AYOwt6VhuzuPo9FLwTmPmstCsDy
+         fFd9q68WT39412ru0VGsj8N5eSCuxqa8MV/j4y2xD5od25f60eTybdGGzJOuuDkrcuo6
+         ZDp9uLOVRzvEMfqYRGogG69pEUCv2sewGK8VIixBC1EKe00OoNb4lzgEm4y56zQt58gr
+         PlfFrhNmXXc6nPlP31Nx7bRTzbUvvw4O6ikifO6pU+DR2bKhq56r9sETCxmxIMGCbmUV
+         NEw28V41SibsTwqb+/KqS0p+cfzfsHDa5ezeWP8H6RrDS+UCfVI+6uwkRazPJBzIIcY1
+         ZaVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvRa6/Omc5Tl8oSBDHA5uY1Ab6DWPaxSGPEYQhkIiL/3g5rRvYS+OHxo5DCdUe64B5LSBukVwo7HCBCLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2UA94kzx/kvWpx3pBTLYU8H6/AfCjA9veAFcNHBvTmBNHeEhv
+	8HCgnex59EgHzryfh4N2MgvARAlSUCOXR0LVdsgUnVtkAJKBH14GiCWkb+sKIaMl7DA68wXQ7Wd
+	SvQ==
+X-Google-Smtp-Source: AGHT+IHgtaLUvI7/N2zY0q1dhGgTozHWw0DU026qVKNgKDV/PmJgTWrj8MNZ87/W0fuoZ5IkqV3PnW0gmg4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:90b:230c:b0:2e9:b23d:16ff with SMTP id
+ 98e67ed59e1d1-2e9b23d1735mr24127a91.5.1731103976811; Fri, 08 Nov 2024
+ 14:12:56 -0800 (PST)
+Date: Fri, 8 Nov 2024 14:12:55 -0800
+In-Reply-To: <854e43f7-0eed-4a1b-8ede-37c538791396@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108122909.763663-4-patryk.wlazlyn@linux.intel.com>
+Mime-Version: 1.0
+References: <20241108161312.28365-1-jgross@suse.com> <20241108171304.377047-1-pbonzini@redhat.com>
+ <Zy5b06JNYZFi871K@google.com> <854e43f7-0eed-4a1b-8ede-37c538791396@suse.com>
+Message-ID: <Zy6M57VglxCSaZky@google.com>
+Subject: Re: [PATCH] KVM/x86: don't use a literal 1 instead of RET_PF_RETRY
+From: Sean Christopherson <seanjc@google.com>
+To: "=?utf-8?B?SsO8cmdlbiBHcm/Dnw==?=" <jgross@suse.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Patryk,
+On Fri, Nov 08, 2024, J=C3=BCrgen Gro=C3=9F wrote:
+> On 08.11.24 19:44, Sean Christopherson wrote:
+> > On Fri, Nov 08, 2024, Paolo Bonzini wrote:
+> > > Queued, thanks.
+> >=20
+> > Noooo!  Can you un-queue?
+> >=20
+> > The return from kvm_mmu_page_fault() is NOT RET_PF_xxx, it's KVM outer =
+0/1/-errno.
+> > I.e. '1' is saying "resume the guest", it has *nothing* to do with RET_=
+PF_RETRY.
+> > E.g. that path also handles RET_PF_FIXED, RET_PF_SPURIOUS, etc.
+>=20
+> And what about the existing "return RET_PF_RETRY" further up?
 
-kernel test robot noticed the following build warnings:
+Oof.  Works by coincidence.  The intent in that case is to retry the fault,=
+ but
+the fact that RET_PF_RETRY happens to be '1' is mostly luck.  Returning a p=
+ostive
+value other than '1' should work, but as called out by the comments for the=
+ enum,
+using '0' for CONTINUE isn't a hard requirement.  E.g. if for some reason w=
+e used
+'0' for RET_PF_RETRY, this code would break.
 
-[auto build test WARNING on acpi/next]
-[also build test WARNING on tip/master tip/x86/core linus/master v6.12-rc6 next-20241108]
-[cannot apply to tip/auto-latest]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+ * Note, all values must be greater than or equal to zero so as not to encr=
+oach
+ * on -errno return values.  Somewhat arbitrarily use '0' for CONTINUE, whi=
+ch
+ * will allow for efficient machine code when checking for CONTINUE, e.g.
+ * "TEST %rax, %rax, JNZ", as all "stop!" values are non-zero.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Patryk-Wlazlyn/x86-smp-Allow-calling-mwait_play_dead-with-arbitrary-hint/20241108-203137
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git next
-patch link:    https://lore.kernel.org/r/20241108122909.763663-4-patryk.wlazlyn%40linux.intel.com
-patch subject: [PATCH v3 3/3] intel_idle: Provide enter_dead() handler for SRF
-config: x86_64-randconfig-161-20241109 (https://download.01.org/0day-ci/archive/20241109/202411090651.FNnbtLe2-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241109/202411090651.FNnbtLe2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411090651.FNnbtLe2-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> vmlinux.o: warning: objtool: intel_idle_enter_dead+0x9: call to cpuidle_get_cpu_driver() leaves .noinstr.text section
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+FWIW, you are far from the first person to complain about KVM's mostly-undo=
+cumented
+0/1/-errno return encoding scheme.  The problems is that it's so pervasive
+throughout KVM, that in some cases it's not easy to understand if a functio=
+n is
+actually using that scheme, or just happens to return similar values.  I.e.
+converting to enums (or #defines) would require a lot of work and churn.
 
