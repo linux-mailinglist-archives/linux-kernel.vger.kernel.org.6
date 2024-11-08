@@ -1,194 +1,131 @@
-Return-Path: <linux-kernel+bounces-401770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E389C1EEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:12:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD559C1EEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1117F1F23FF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5AA1F24005
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FFD1EF0B9;
-	Fri,  8 Nov 2024 14:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4351F1317;
+	Fri,  8 Nov 2024 14:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R73XqURr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="O6f5Gh3+"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FF71EF083
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731075166; cv=none; b=kFEKkQ268/JG2eMOKdLMvSe3rcsF6T7ZWUHpYQMHY64wkMynas+OqseBITU0qPULc+EjAYwnj236zHwVHKaasPrypVhWLUdII8/11ohqzAo24ELONRntoxr4GYG+td4lfhayVGKw7o9SS72IPZy4NZHDzAxV5hUhFXXkk1xmOW8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731075166; c=relaxed/simple;
-	bh=JoSbIGFCX3QXJ8QeoQz4xxBhhwyTvR5PjoWPacA2Mvc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KMWTMHfKwnC65nRJyWV+asDIGn0lVFkqVLMnUGFvlNU7SNcVQ1IzlUXL74/WJBR1gEMjGCtkwioYnIWc+6ZKYHpMP25slOmHqdm/sECcN2iD6R00SOHJKsUMXmFwx7BnEns6OIDYFGsWk2mFbT+RBRH11hl/UDOcShGCySjvjnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R73XqURr; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731075165; x=1762611165;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=JoSbIGFCX3QXJ8QeoQz4xxBhhwyTvR5PjoWPacA2Mvc=;
-  b=R73XqURr0Njnd+Yc9i8ZIEM6KVKFvSYZnriDMVL78eA7gCP9mgwRZU6G
-   l0KL5F+got+Cb8A9Y79WedOQx+EGvkL1ZcuUwZmt43dHUA/3o6rcTT4pw
-   1BEx5Ihr1Vy7WMydQae1bwfl2IrXNtLt8HM/iJsDycNC5lJIk4s3eoSQR
-   NMsG4DrN15cugDzsVDLaSrYf5gKz4RZpGLdgigdRVeRX2MlPvVrMbrd2b
-   lJiqicnXwPR5lVJ1yxgOlpTxpUJMu6cvpr+3j0wwLx2ghttmI+5fsIkkO
-   HjYYOf9tghTepacAYlhcVfx/Z2AN067tpI0R1vVZxB1dK0vroIsr3dkNN
-   A==;
-X-CSE-ConnectionGUID: N3Aj278JQUKa9pw0zX+RRA==
-X-CSE-MsgGUID: SgYECl9xTweJTLte6oWAMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="31060472"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="31060472"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 06:12:42 -0800
-X-CSE-ConnectionGUID: Hqeb6jPXR+OHAwnKafQltg==
-X-CSE-MsgGUID: jCo0yHasT2KCAK7G7tz/hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="90393947"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 08 Nov 2024 06:12:39 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3385143A; Fri, 08 Nov 2024 16:12:37 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH v4 1/1] x86/cpu: Make sure flag_is_changeable_p() is always being used
-Date: Fri,  8 Nov 2024 16:11:46 +0200
-Message-ID: <20241108141235.1456557-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF521E1C18;
+	Fri,  8 Nov 2024 14:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731075211; cv=pass; b=QUpy2szw1MpuAkKT6kPT97lRhXGAWK2nAlkWRca0kW/kF4OkeWLvzZippjOWzw0UqnJWlSx1J04iwVFXeugy/p0RB06mSmOPkRfnhwLx5usTCJSBv+lfGFl3x0Vccc6yoOiqbnMdHG4S7eGN8MPJwvIh776llkyARi9ZnCQFF70=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731075211; c=relaxed/simple;
+	bh=IL6KIe28Rsk9XabwVUFnAnU2YLfm4d9kA3+3NWhGzR8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XdvxRoWpsIp/4NQd/r4IEI/X8FZwrS9viuyKXbMDNqWKE3uJMEnIYocHzIkne9/vaqD1Q83ZI5lnYYQMzD0DOpojGbp9Z69HAcFnK3hwuTDih5NFt9RAkO120DhPnwZea8QKw26BqB7gRded1RnztZ55dSYOAfrqp5VTaiyI40s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=O6f5Gh3+; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731075193; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NwmT7/Pdl21xBFxBOyhq4+cLzeyqeFWIofzBjMhMGWF9ZqSdsINnOSpEQLnsXDeLyeQDmfAl3FuwamS7/OKdB/G1d/xJM97v9OQMgOuCM2t+yYsCti/2WoQ01g6cnUJg5wIBvR9PtRXAWS3PF9igpTll2ANHnq7CYQmLSgtQ9Xo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731075193; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wLsbq45VP+QQQn7ywL3Aaz1egL8UHgg6/j8C4aCGAxc=; 
+	b=ZO4LXMirHUpbJBSmZ+gkJY4vtQyJf7WDNRsslI4WDGgln9/9LUK1gmOUv9ABfLEqmmnp9d4/14W/ZI2vdW7zv7Zs3othbJPzald+cNRezWnvHxPXnWEAKdoQhC9lx2XQBy/BW0V2742EUM1UUSFCrY9ZP6biTGs844VQTbFXdcY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731075193;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=wLsbq45VP+QQQn7ywL3Aaz1egL8UHgg6/j8C4aCGAxc=;
+	b=O6f5Gh3+9c+jVXqcKij73CEmPAyiYI4qjNuuhLdi1srnVxOquVpE2AHekhKa11o3
+	f4Vn55H0yeBO6LLUCloatvJQUMLtT2ciEX37NDQpyJvLOoDkOVDQc3V52kcNJRapcGL
+	EH3+AvSdZKAKVzVH9w3QVe3JU7H8VCAdnQtxnfu8=
+Received: by mx.zohomail.com with SMTPS id 1731075192437247.0495706688124;
+	Fri, 8 Nov 2024 06:13:12 -0800 (PST)
+Message-ID: <ddabd00d-7bd8-40f1-9a1b-22a31b07fd8c@collabora.com>
+Date: Fri, 8 Nov 2024 19:13:04 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, kernel@collabora.com, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: hugetlb_dio: Check for initial conditions to
+ skip in the start
+To: Donet Tom <donettom@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
+References: <20241101141557.3159432-1-usama.anjum@collabora.com>
+ <5883b1c0-13c6-4593-9dd5-17f34c1319fe@linux.ibm.com>
+ <13a96176-1bfa-4567-8ce5-a2b75b110afc@linux.ibm.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <13a96176-1bfa-4567-8ce5-a2b75b110afc@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-When flag_is_changeable_p() is unused, it prevents kernel builds
-with clang, `make W=1` and CONFIG_WERROR=y:
+On 11/8/24 3:49 PM, Donet Tom wrote:
 
-arch/x86/kernel/cpu/common.c:351:19: error: unused function 'flag_is_changeable_p' [-Werror,-Wunused-function]
-  351 | static inline int flag_is_changeable_p(u32 flag)
-      |                   ^~~~~~~~~~~~~~~~~~~~
+> I think below changes are required.
+> 
+> iff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
+> index 60001c142ce9..4b52106b8124 100644
+> --- a/tools/testing/selftests/mm/hugetlb_dio.c
+> +++ b/tools/testing/selftests/mm/hugetlb_dio.c
+> @@ -44,6 +44,9 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+>         if (fd < 0)
+>                 ksft_exit_fail_perror("Error opening file\n");
+>  
+> +       /* Get the free huge pages before allocation */
+> +       free_hpage_b = get_free_hugepages();
+> +
+>         /* Allocate a hugetlb page */
+> 
+>         orig_buffer = mmap(NULL, h_pagesize, mmap_prot, mmap_flags, -1, 0);
+> 
+>         if (orig_buffer == MAP_FAILED) {
+Please can you send a fixup patch as you have working test setup?
+Otherwise I'll take it up and try to test on working setup before
+posting the fixup patch. Please let me know.
 
-Fix this by moving core around to make sure flag_is_changeable_p() is
-always being used.
+> 
+>  With this change the tests are passing.
+> 
+> ./tools/testing/selftests/mm/hugetlb_dio
+> 
+> TAP version 131..4
+> # No. Free pages before allocation : 100
+> # No. Free pages after munmap : 100
+> ok 1 : Huge pages freed successfully !
+> # No. Free pages before allocation : 100
+> # No. Free pages after munmap : 100
+> ok 2 : Huge pages freed successfully !
+> # No. Free pages before allocation : 100
+> # No. Free pages after munmap : 100
+> ok 3 : Huge pages freed successfully !
+> # No. Free pages before allocation : 100
+> # No. Free pages after munmap : 100
+> ok 4 : Huge pages freed successfully !
+> # Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
+> 
+> Thanks
+> Donet
+> 
+> 
 
-See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-inline functions for W=1 build").
-
-While at it, fix the argument type to be unsigned long, although it currently
-only runs in 32-bit cases.
-
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-
-v4: fixed the type of parameter (hpa)
-v3: rewritten as suggested (Dave)
-v2: marked both 32- and 64-bit cases
-
- arch/x86/kernel/cpu/common.c | 33 +++++++++++++++------------------
- 1 file changed, 15 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index a5f221ea5688..49682e35f9bd 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -276,22 +276,14 @@ static int __init x86_noinvpcid_setup(char *s)
- }
- early_param("noinvpcid", x86_noinvpcid_setup);
- 
--#ifdef CONFIG_X86_32
--static int cachesize_override = -1;
--static int disable_x86_serial_nr = 1;
--
--static int __init cachesize_setup(char *str)
--{
--	get_option(&str, &cachesize_override);
--	return 1;
--}
--__setup("cachesize=", cachesize_setup);
--
- /* Standard macro to see if a specific flag is changeable */
--static inline int flag_is_changeable_p(u32 flag)
-+static inline int flag_is_changeable_p(unsigned long flag)
- {
- 	u32 f1, f2;
- 
-+	if (!IS_ENABLED(CONFIG_X86_32))
-+		return 1;
-+
- 	/*
- 	 * Cyrix and IDT cpus allow disabling of CPUID
- 	 * so the code below may return different results
-@@ -316,6 +308,17 @@ static inline int flag_is_changeable_p(u32 flag)
- 	return ((f1^f2) & flag) != 0;
- }
- 
-+#ifdef CONFIG_X86_32
-+static int cachesize_override = -1;
-+static int disable_x86_serial_nr = 1;
-+
-+static int __init cachesize_setup(char *str)
-+{
-+	get_option(&str, &cachesize_override);
-+	return 1;
-+}
-+__setup("cachesize=", cachesize_setup);
-+
- /* Probe for the CPUID instruction */
- int have_cpuid_p(void)
- {
-@@ -349,10 +352,6 @@ static int __init x86_serial_nr_setup(char *s)
- }
- __setup("serialnumber", x86_serial_nr_setup);
- #else
--static inline int flag_is_changeable_p(u32 flag)
--{
--	return 1;
--}
- static inline void squash_the_stupid_serial_number(struct cpuinfo_x86 *c)
- {
- }
-@@ -1088,7 +1087,6 @@ void get_cpu_address_sizes(struct cpuinfo_x86 *c)
- 
- static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
- {
--#ifdef CONFIG_X86_32
- 	int i;
- 
- 	/*
-@@ -1109,7 +1107,6 @@ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
- 				break;
- 			}
- 		}
--#endif
- }
- 
- #define NO_SPECULATION		BIT(0)
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+BR,
+Muhammad Usama Anjum
 
 
