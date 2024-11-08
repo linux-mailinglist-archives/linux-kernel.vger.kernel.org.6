@@ -1,93 +1,122 @@
-Return-Path: <linux-kernel+bounces-401616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275D99C1CF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:28:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7609C1CF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D6B1F22576
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:28:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DF81B21B18
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17BF1E884E;
-	Fri,  8 Nov 2024 12:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69101E7C36;
+	Fri,  8 Nov 2024 12:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vvqwxkye";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wXLeRF8E"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VvvJLRt0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CF61E7C2E;
-	Fri,  8 Nov 2024 12:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1567C1E631B;
+	Fri,  8 Nov 2024 12:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731068914; cv=none; b=Mwyy/Oe5cl44ezYtNpgsA1hyOLPiwMIwVcNqyqB1ClSSm1ieSrbx8Zqf1Hl4qB2LsllaHxvzcNpj56aqj4plZabSPoWfLz/uFegVz/5DicKTSQs10jDb5cKm0+3BJ0efvmBBC6qn/mbxZ8g0FMdS0OKiMUptpe/14Tnp9s/gXBY=
+	t=1731068968; cv=none; b=e/Y4IGKMmoYqyPu9jEt4/+mxNZJhpHSAzVuZE8TlhsZw1MgBfy/DR+gLDbbjGM5RG+t0cl/6guAh74gYpV331k8SPA/nKtZM/T/JhFKcr8bNJ75qc9XDvF4hT2wUk9hdGpkXRY+I0dKp+1O9vfp4LnuyGk8g9POE/QQML7JncBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731068914; c=relaxed/simple;
-	bh=LMKq9rkoIyFUohSyOhYK7G5byytQGxxY6fPL4Wtg9fc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLE08k6ltRe7zyGxdIOLzcB3PmK/AZvcI+yCOHl0Y8rrOsZ41SK915mabBLWqYNXODm3CcBeQwJHOs18YGTluQvs9qP3DpQICnbypJdSR3D2g4Q+IyZoZvIhU038vI4HaNthpWfUPu+djpqnqLSlFiuA1ipAH4ONBORzgvySx9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vvqwxkye; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wXLeRF8E; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 8 Nov 2024 13:28:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731068911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LMKq9rkoIyFUohSyOhYK7G5byytQGxxY6fPL4Wtg9fc=;
-	b=vvqwxkyeETXOKX8tiQbGG+Jamzv6OxZx29ZXDDfKOspUYXrrNPmz1V9akEQbkDxvjjhete
-	y7YoONWe6qSITvVLQT2YHpJnIDq0B3BP/HM3WuOsKXbGt5Q3HWSauLBV1oodOtxyIdmRKv
-	SshSCD1xzV4Da9sml0NyxmQLZZtVAWcgbZbPnRgCwStaajHraqrujW4e2IkmEi2O8PvxuK
-	S63aG3v5+IbqF5P8/cR4MN93eMLH+Gi5RdWGAqKi41NLTumvvg6S4xJQ0RUCyO8I0R92Lw
-	MZACFP8NXJkDkBRrcq/cOmXxfqyCoM3LApbWfful2bBDHFaJNLiREPs9DB/t0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731068911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LMKq9rkoIyFUohSyOhYK7G5byytQGxxY6fPL4Wtg9fc=;
-	b=wXLeRF8EToVc+MUy+lWHA4Hotrwr2ftAsmy/WbW1Am/ZdzwTBJ+ggNsAQJErKk8ZAtWugu
-	H4ItCQVzXu+XBFCw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Wander Lairson Costa <wander@redhat.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>, tglx@linutronix.de,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT" <linux-rt-devel@lists.linux.dev>
-Subject: Re: [PATCH v2 1/4] Revert "igb: Disable threaded IRQ for
- igb_msix_other"
-Message-ID: <20241108122829.Dsax0PwL@linutronix.de>
-References: <20241106111427.7272-1-wander@redhat.com>
- <1b0ecd28-8a59-4f06-b03e-45821143454d@intel.com>
+	s=arc-20240116; t=1731068968; c=relaxed/simple;
+	bh=Ptq1/Or31/2/hXiMkSLK127y6Z9IZ9cpgbVlnI5kYd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eI4YTpEfI10ub7KmzFSVLFc5XIFPrl04dLsFsgwnDEVCtueK1aXBdhoWxYif/viXpwFT/n3btYMuUeWnK7xMhEVzIDU4b5f14sYBqlCddXdQ2gVuB6VYsKze1fvinyPqXGsVxtgXNkb4vYbq569pfh+RJ0gg6xK2LaEYm8ENXOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VvvJLRt0; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731068967; x=1762604967;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ptq1/Or31/2/hXiMkSLK127y6Z9IZ9cpgbVlnI5kYd8=;
+  b=VvvJLRt0njKIpRRYU3rvdsHiLdPojc32LR9XlOMQ9gYCK3i9s64NFg94
+   km7VEalSfAR2LWpUfLcYftuNvrY6mmp5Y+v2DrWEpdpePStD/FrSw+iMV
+   eo057TE2ZjA3t3xerr/wIaN0nMGjhb1C/zrrf9ON+gJ4UFxLSVEB4bZHl
+   VI6uO+JiB86Tf33CDdWQdF8hR0QEuv6enFaTMMTxUUPGLKFMf/y4eZ0JS
+   ovd/aqXACPjUcHR2Nb84gd44ZSlM4GMn6mYQ3ZLbBYVVJKRCirvDW94HI
+   dkNjbS6/Ao+HmtpKZ228N/Rx4Eldmma5br4Vx9/JW4Kt4R2ATDM7KDX3g
+   Q==;
+X-CSE-ConnectionGUID: DcC/AIQuQKmbg+rA9EIG6A==
+X-CSE-MsgGUID: 80nDfHnpThehmkrSlK226A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53510342"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="53510342"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 04:29:26 -0800
+X-CSE-ConnectionGUID: HQ7xgfSIQLeq7++bfzcrmQ==
+X-CSE-MsgGUID: VMXkSuMUQtq4xCaUxLnEGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
+   d="scan'208";a="85920976"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.245.89])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 04:29:24 -0800
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	rafael.j.wysocki@intel.com,
+	len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com,
+	dave.hansen@linux.intel.com,
+	patryk.wlazlyn@linux.intel.com
+Subject: [PATCH v3 0/3] SRF: Fix offline CPU preventing pc6 entry
+Date: Fri,  8 Nov 2024 13:29:06 +0100
+Message-ID: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1b0ecd28-8a59-4f06-b03e-45821143454d@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On 2024-11-08 13:20:28 [+0100], Przemek Kitszel wrote:
-> I don't like to slow things down, but it would be great to have a Link:
-> to the report, and the (minified) splat attached.
+Applied suggestions from Dave and Rafael.
 
-I don't have a splat, I just reviewed the original patch. Please do
-delay this.
+Because we now call a smp function, we have to have ifdefs for
+CONFIG_SMP or rely on mwait_play_dead_with_hint to return immediatelly
+with an error on non-smp builds. I decided to do the later, but maybe we
+should return -ENODEV (or other error constant) instead of 1. I am open
+for suggestions.
 
-Sebastian
+Removing the existing "kexec hack" by bringing all offlined CPUs back
+online before proceeding with the kexec would make it even simpler, but
+I am not sure we can do that. It looks kind of obvious to me, but for
+some reason the hack exist.
+
+Changes since v2:
+  The whole approach changed, but there main things are below.
+
+  * Split mwait_play_dead (old code) into two parts:
+    1. Computing mwait hint based on cpuid leaf 0x5
+    2. Entering while(1) mwait loop with "kexec hack" handling
+
+  * Prefer cpuidle_play_dead over mwait_play_dead by reordering calls in
+    native_play_dead.
+
+  * Add implementation for enter_dead() handler in intel_idle that calls
+    executes old mwait_play_dead code, but with the mwait hint from the
+    cpuidle state table.
+
+
+Patryk Wlazlyn (3):
+  x86/smp: Allow calling mwait_play_dead with arbitrary hint
+  x86/smp native_play_dead: Prefer cpuidle_play_dead() over
+    mwait_play_dead()
+  intel_idle: Provide enter_dead() handler for SRF
+
+ arch/x86/include/asm/smp.h |  6 ++++++
+ arch/x86/kernel/smpboot.c  | 29 ++++++++++++++++++++---------
+ drivers/idle/intel_idle.c  | 16 ++++++++++++++++
+ 3 files changed, 42 insertions(+), 9 deletions(-)
+
+-- 
+2.47.0
+
 
