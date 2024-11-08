@@ -1,151 +1,74 @@
-Return-Path: <linux-kernel+bounces-402181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B524B9C24C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:19:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90619C24C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:18:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 467F31F22378
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:19:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F263B244D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5D81AA1DD;
-	Fri,  8 Nov 2024 18:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CF21A9B3B;
+	Fri,  8 Nov 2024 18:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Kc4Pa0qT"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LhtkU6/e"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4036D198850
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D78193418;
+	Fri,  8 Nov 2024 18:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731089916; cv=none; b=eW6VViCzxrXFudK6o8DnTM82Y5DJ1Eo7q2o9kHhkw3U/BoDSicB+GqpC45/WvR/eVuAz2yplEHe+rwZu4uNPFNYO0ioQFW+jrYE041uP4go1mNE3EzEXSqo5sPVkui6PoUX3UOQvVTlJDTqG4+jZdtadfqE5GeuPnHcDcBNkNzo=
+	t=1731089914; cv=none; b=KBqRwYUVOQulePwztqK/hKVcpiSl6/MstZ8dJFmd8fCdxEk+FSrEWAu8gqrRRWJYvmhyMcqC78CcUenYG/esi+PG7MhiUW41j96VoixezQyLS4Hn297qE9LBXk07cTIubWQQplODG9ng44ge1OM+h5NfzWYS0y6FOA+Gp6jDdpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731089916; c=relaxed/simple;
-	bh=pJreQhjM31yTDdfw3j02Er/E1QYTkBhpsxxxhs4aEZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=urEyA7UNyJUmGQ8HwQrzL//ncgKKa6j87U4K/QgsaCZ7yjN11tc+uQSMlXo5uNXnJ+W3Dpud4g5U08bCdXSs8Dy/x89ylaDwoowlyFa3t+5oEwMEg5+Q7vYPoSk/3sF4O2cmDmm/PrcIe1Gjiq25MWgELKo9/OHnId5CxHdQius=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Kc4Pa0qT; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43152b79d25so20379045e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:18:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731089912; x=1731694712; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Aqf/i7NkwQQgUe1Y7/o4ldH6H8HVukNPCHUaw9BQ7ow=;
-        b=Kc4Pa0qTxwxkXZRkjsq4GHFym3+gLfjxnx5Ft2cyMrOzTujYoOKNATVPrOdiAu8SNX
-         GQNVWEPyaTEVo+qevwPFA1XFgKfVYlD1Sf8t/cA+mx36OHCBAwBqVzX+iSWGSyHgTffa
-         iZpjV3NbL5LEyZCUofPzSrJiyeQvnS5djCiKqqIDDLiVrMUHH1zZKhZrTeFRZjwPlQ57
-         U3xG3wLxux/NEZKcqG8Qwn0jSRcMwhUtzGRU8LWdB9HMyAERTzPJIGD+7Zgcla5WdcDM
-         +RFma1w5JJ0jEOaHpof/Ey15xgcwfgbGJiImfX88swDqVm+sqM2RX4b84R0C2s6nfaZr
-         BKRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731089912; x=1731694712;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Aqf/i7NkwQQgUe1Y7/o4ldH6H8HVukNPCHUaw9BQ7ow=;
-        b=EP3caI04I3juwz3ktNhLa+Ue61oaOADFJSNEtSg2AYb/+0GsjfS5BUD7yF8jVkbddS
-         XXHu8XIZfVhFVmaR4DYAN7x3qOrCIaVB2Qe5dF8AJRf/8Lx15UpT4i3TACECb4VQRyfO
-         JySrhJMSHxpg6STMARjLb7kBsnez0PS6B3aSmLNLPz/KOzzHsq4EXBM2St9Ka6uBEVYV
-         2+6zZvrRpd43+WDqM1jYWsyZ3BnGiWxtJkiNl+mAwMHI3JDNdnz/LkZ/n03yQHfNMMTE
-         0wshMV8ytbaRLivJtcjOkGnFiaJgDAU866Etsbslad9BGa85tiEmaHVENl2pRuodkhFb
-         og5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Mx9asTJ68rTbavW7JxMMuZJeqqaplUMaCkIfd0GFc5SsEzD9QkRQZMPagpe2TwUrPWnjU7IYQjwy6iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8A1LhPD20Kh5aw06QjhRwssqK+pA2Yi9SX1wWlSF1VIg0SMZD
-	Q1mvhYqG3jieII0W0cF+qlbsSx0fmR6vciKPr60iWAsOEC0yQCjho44Qd4CZpxM=
-X-Google-Smtp-Source: AGHT+IH8xPdn7AUpzWkBfFFmIbfbCMmbMdP6oSIKbGuHab87sobedzdvs3GGm0r9dyCOFD8gVAKHWA==
-X-Received: by 2002:a05:600c:524d:b0:431:5d89:646e with SMTP id 5b1f17b1804b1-432b751d00dmr28200755e9.32.1731089912508;
-        Fri, 08 Nov 2024 10:18:32 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97e46bsm5490421f8f.30.2024.11.08.10.18.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 10:18:32 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: Mircea Caprioru <mircea.caprioru@analog.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibe.com>
-Subject: [PATCH 2/2] iio: adc: ad7124: Refuse invalid input specifiers
-Date: Fri,  8 Nov 2024 19:18:04 +0100
-Message-ID: <20241108181813.272593-6-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241108181813.272593-4-u.kleine-koenig@baylibre.com>
-References: <20241108181813.272593-4-u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1731089914; c=relaxed/simple;
+	bh=LP4RAM0qR/ytuVuwTD7htBAHrnyPxX123oRj1JPz/OQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kvcpDALY1snb0K2+cCfCqXFzevN4OJbQXKbwOhrs5CvWGyFT+baqu4yJ7scQo/J7ewQGwShDgMEZljv4ppCeKjax1TMYm5wA7F9WMOo8Na0KQ0DVp5mElzlAzaUb9XvsRu5L6me/6TCIo8Fkp+AYgBYrHji3jCyX8rXHWUO7mMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LhtkU6/e; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LP4RAM0qR/ytuVuwTD7htBAHrnyPxX123oRj1JPz/OQ=; b=LhtkU6/ekHvmRvAnCjsFNmAeLw
+	tpI/kQn+9L/nuY21XAz2GguZcDU0OOeqFqYKS+jUJG3xnEK9nuK+7zvl3qvadqG5xwuMRMtdlxPrL
+	1iJ5WFPtupZs77x2nRrZN3yfujegpl1MVEzUmuLT00+ZiJU6Y4TckgnJjrexEqp3Ag6MVc0c+6a92
+	myGNfqEkVJfM5ilwS7LrVgFvreH5nU6R0k2IVSmfTnZW2wxPdoJa7XRa7Hp/DyB/81HyJn4AKbPBm
+	BWt3dAWooJfCckcXYKRLy7op8xLmvcGsGE0b6BvQfqNUEFmFWEuqAJw19/9SQYwhVwwYzobj904pn
+	BUytuv1A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t9TYz-00000009AMP-2qiG;
+	Fri, 08 Nov 2024 18:18:29 +0000
+Date: Fri, 8 Nov 2024 18:18:29 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/13] mm/filemap: change filemap_create_folio() to take
+ a struct kiocb
+Message-ID: <Zy5V9QmrUzWV7jv6@casper.infradead.org>
+References: <20241108174505.1214230-1-axboe@kernel.dk>
+ <20241108174505.1214230-2-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2139; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=pJreQhjM31yTDdfw3j02Er/E1QYTkBhpsxxxhs4aEZE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnLlXsC16VCmzjVuWD5yB6MZDfmJ9dRM5PpOjyR /E6c4qdiPqJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZy5V7AAKCRCPgPtYfRL+ TmGDB/9XloFsptjASnI26f3gM4plPUV74dzpp8NetDE1zbUDapw7DnUafUruMKwl/3k1OQ4cZ1W Cs0qSxiFKzJefml0q4djruQB90qTyfe/F6CcdsKc/VQYdiBrweLL82RI3mWGnMzcX7HgD1519SS 9zDX3i6/UbYgpqS8Txp8tn9qegnvPwAbBuKGxg7KLIBs8j+rlsGav/Ap0xgpXruIL/pAeDrWEMZ +0Vk25LTh2crEudB12KZud69Qa7BxM97zimQ85fyBH5QADHNErNPh7Olin2eKURtd7gOeib7qQm dyitjBmkcV1TMxirfmBjAxaUISBmCnK9o+9SZnQ6kNPL3pQN
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108174505.1214230-2-axboe@kernel.dk>
 
-The ad7124-4 has 8 analog inputs; the input select values 8 to 15 are
-reserved and not to be used. These are fine for ad7124-8. For both
-ad7124-4 and ad7124-8 values bigger than 15 are internal channels that
-might appear as inputs in the channels specified in the device
-description according to the description of commit f1794fd7bdf7 ("iio:
-adc: ad7124: Remove input number limitation"), values bigger than 31
-don't fit into the respective register bit field and the driver masked
-them to smaller values.
+On Fri, Nov 08, 2024 at 10:43:24AM -0700, Jens Axboe wrote:
+> Rather than pass in both the file and position directly from the kiocb,
+> just take a struct kiocb instead. In preparation for actually needing
+> the kiocb in the function.
 
-Check for these invalid input specifiers and fail to probe if one is
-found.
-
-Fixes: f1794fd7bdf7 ("iio: adc: ad7124: Remove input number limitation")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibe.com>
----
- drivers/iio/adc/ad7124.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 7473bcef7bc6..bd5c0dbc0239 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -808,6 +808,19 @@ static int ad7124_check_chip_id(struct ad7124_state *st)
- 	return 0;
- }
- 
-+/*
-+ * Input specifiers 8 - 15 are explicitly reserved for ad7124-4
-+ * while they are fine for ad7124-8. Values above 31 don't fit
-+ * into the register field and so are invalid for sure.
-+ */
-+static bool ad7124_valid_input_select(unsigned int ain, const struct ad7124_chip_info *info)
-+{
-+	if (ain >= info->num_inputs && ain < 16)
-+		return false;
-+
-+	return ain <= FIELD_MAX(AD7124_CHANNEL_AINM_MSK);
-+}
-+
- static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
- 				       struct device *dev)
- {
-@@ -855,6 +868,11 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
- 		if (ret)
- 			return ret;
- 
-+		if (!ad7124_valid_input_select(ain[0], st->chip_info) ||
-+		    !ad7124_valid_input_select(ain[1], st->chip_info))
-+			return dev_err_probe(dev, ret,
-+					     "diff-channels property of %pfwP contains invalid data\n", child);
-+
- 		st->channels[channel].nr = channel;
- 		st->channels[channel].ain = AD7124_CHANNEL_AINP(ain[0]) |
- 						  AD7124_CHANNEL_AINM(ain[1]);
--- 
-2.45.2
+If you're undoing this part of f253e1854ce8, it's probably worth moving
+the IOCB flag checks back to where they were too.
 
 
