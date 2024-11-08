@@ -1,155 +1,145 @@
-Return-Path: <linux-kernel+bounces-401792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7959C1F40
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:30:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF169C1F43
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F100B24105
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:30:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E4A2282FAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC0E1F4FD7;
-	Fri,  8 Nov 2024 14:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C791F585D;
+	Fri,  8 Nov 2024 14:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rkMpewpr"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="RzWyT0Om"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9E81F4702;
-	Fri,  8 Nov 2024 14:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24BD1F131C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731076202; cv=none; b=kix2HZO8E6CphFgqBOIsXubP9k+1yMM3cLVrZFQEag8sH7HB1EVWCCR2rwtPpYxtj3BS+EVIpnH115kJ7kV2o85xEaThGUAW1BzWP55lT/wUrVNghckrSTaQurfUeRT442eJYHnkkuOFw+lfckpTpC6p0iIrM5nTp66WMbLRS60=
+	t=1731076208; cv=none; b=VVeQ22oXiJa+Kp1dm1hld7AwqA5hyDclyeFWZN9vJrpCq8O00tN+uFs3TEQXdi4mio0KPE/Y+IGQzi7uBKq7u5cW2+cCCi+gaQeg39pnlJjlIzp5T9ISDd5IM3J/VFxPrpSN5L0+f5SGvaymMC6VyYhA/HlSDa/vU9i7gz8kVnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731076202; c=relaxed/simple;
-	bh=I2gTX0Gvm9evKoETYHSHaukCUZCRCVANfPTHryR94kE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MM4QgyndeIVQaZw4JhRs1xnn8g4kdjqrTe6hEKMLhJnwm4FKFolSx8Gr65Uy2T7KQEBYAZ94VkU5/UobGFJbhb2BToGx84dDpmMpcSnPLp9OrQ5SOwOHGiT45XVA5pIZIrmU6xA/5rtoCIS1lHCyv6RUAjbbVauZKAd29PPW+48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rkMpewpr; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4A8ETrtn2085974
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 8 Nov 2024 08:29:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731076193;
-	bh=kKjKdh8uIYu5IDKofoXchUb2lw7bLvsxB0RuFLbP7sQ=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=rkMpewprgc9kC4J9M/BvNFcAlPvrISO7sbKgSr04Bqq1vaGdtIQs+D/kwXczxMyPM
-	 3ylS8MhK2+EEYRJSuVQq8gEMxF2gknzNYBOnZtoQrlX7ss3e82WkK0yb+ZlS3INkFW
-	 wxpswgKbF8Q6Mi5XPMubSaVr5ePOtoFSsZ3+b6i8=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A8ETr7Z072923;
-	Fri, 8 Nov 2024 08:29:53 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 8
- Nov 2024 08:29:53 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 8 Nov 2024 08:29:53 -0600
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A8ETrxo023832;
-	Fri, 8 Nov 2024 08:29:53 -0600
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4A8ETqta032072;
-	Fri, 8 Nov 2024 08:29:52 -0600
-From: MD Danish Anwar <danishanwar@ti.com>
-To: <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
-        <ssantosh@kernel.org>, <nm@ti.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <s-anna@ti.com>, <kristo@kernel.org>,
-        <vigneshr@ti.com>, <srk@ti.com>, Roger Quadros <rogerq@kernel.org>,
-        <danishanwar@ti.com>
-Subject: [PATCH v2 2/2] arm64: dts: ti: k3-am64-main: Switch ICSSG clock to core clock
-Date: Fri, 8 Nov 2024 19:59:46 +0530
-Message-ID: <20241108142946.2286098-3-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241108142946.2286098-1-danishanwar@ti.com>
-References: <20241108142946.2286098-1-danishanwar@ti.com>
+	s=arc-20240116; t=1731076208; c=relaxed/simple;
+	bh=EHxMIwCa8qmiBoghL6iGAleT+fQz3+bqy3/1DcOd/pg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=bJCjvr75kIMdaVR/BaH4JzDUiN07UH7UNH6Iyy8X3VEXUXHFQ6kzzhuV0d1Frrz5gt4DXQC2pIyqTwIaI9BS2hpgtFocIBDiUiNDhv81gRlhJ7Mvn0IEchGzosLng0Kxy4vAUtUTlHjf7QloRQXFNFsuqKuArP9YQ/qSDqZhpaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=RzWyT0Om; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731076204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mXU0zqzH64T+oZBcduwWmn4Upe7MVevQ2K4G2VK2A+s=;
+	b=RzWyT0OmX20cYiDWD/utFaU9an5SMKNlc3LneUtjhWoQxRHjmNaPJpQJ5FqC6wpPgihgBk
+	/XLPL8amsRINXZGDWOn8rhiiIivVkkG2z2bYteFr00U+8lTpoMrhwNyVitsk+Ix0l/jKRM
+	NeBe9BsGknLAoDw6+bJy+ctIHXksGy2vhe3e+b53uZupo5ZIpmnns/hvcj61pkr7HUibtz
+	kM+t3uAWNvRCBI8qKK0+4gPtWsT1K32UYpUv3BmszszMf4jfTGtlEaPIxcHwryV+yWOMxR
+	Z7oXE2gbuIVh8X/QVy/blRlOT5/WL/qps4joY/eI4+AsRZ1lw0URJHpci0teKQ==
+Date: Fri, 08 Nov 2024 15:30:03 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/rockchip: dsi: Perform trivial code cleanups
+In-Reply-To: <22484879.EfDdHjke4D@diego>
+References: <cover.1731073565.git.dsimic@manjaro.org>
+ <10558711.nUPlyArG6x@diego> <047164cc6e88dcbc7701cb0e28d564db@manjaro.org>
+ <22484879.EfDdHjke4D@diego>
+Message-ID: <c27ab238825451f1c3a4722f39a19531@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-ICSSG currently uses ICSSG_ICLK (clk id 20) which operates at 250MHz.
-Switch ICSSG clock to ICSSG_CORE clock (clk id 0) which operates at
-333MHz.
+On 2024-11-08 15:22, Heiko Stübner wrote:
+> Am Freitag, 8. November 2024, 15:13:33 CET schrieb Dragan Simic:
+>> On 2024-11-08 15:09, Heiko Stübner wrote:
+>> > Am Freitag, 8. November 2024, 15:05:02 CET schrieb Dragan Simic:
+>> >> On 2024-11-08 14:56, Heiko Stübner wrote:
+>> >> > Am Freitag, 8. November 2024, 14:53:57 CET schrieb Dragan Simic:
+>> >> >> Perform a few trivial code cleanups, to make one logged message a bit
+>> >> >> more
+>> >> >> consistent with the other logged messages by capitalizing its first
+>> >> >> word, and
+>> >> >> to avoid line wrapping by using the 100-column width better.
+>> >> >>
+>> >> >> No intended functional changes are introduced by these code cleanups.
+>> >> >>
+>> >> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> >> >> ---
+>> >> >>  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c | 12 ++++--------
+>> >> >>  1 file changed, 4 insertions(+), 8 deletions(-)
+>> >> >>
+>> >> >> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> >> >> b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> >> >> index 58a44af0e9ad..f451e70efbdd 100644
+>> >> >> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> >> >> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> >> >> @@ -1379,7 +1379,7 @@ static int dw_mipi_dsi_rockchip_probe(struct
+>> >> >> platform_device *pdev)
+>> >> >>  	}
+>> >> >>
+>> >> >>  	if (!dsi->cdata) {
+>> >> >> -		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
+>> >> >> +		DRM_DEV_ERROR(dev, "No dsi-config for %s node\n", np->name);
+>> >> >
+>> >> > this is all probe-related, why not convert to dev_err_probe?
+>> >> >
+>> >> > As the doc states [0], DRM_DEV_ERROR is deprecated in favor of dev_err.
+>> >> > So dev_err_probe would be the correct way to go?
+>> >>
+>> >> Thanks for your quick response!  Seeing that DRM_DEV_ERROR() is now
+>> >> deprecated (which I originally missed, in all honesty) makes me very
+>> >> happy. :)  I've never been a huge fan of the format of the messages
+>> >> that DRM_DEV_ERROR() produces.
+>> >>
+>> >> However, perhaps it would be better to keep these patches as-is, as
+>> >> some kind of an intermediate, limited-scope cleanup + bugfix combo,
+>> >> and leave the complete DRM_DEV_ERROR() --> dev_err()/dev_err_probe()
+>> >> conversion to separate patches.  I think it would be better to avoid
+>> >> a partial conversion, and I'll be more than happy to put the complete
+>> >> conversion on my TODO list. :)
+>> >
+>> > But your patch-2 really just open-codes, what dev_err_probe is meant
+>> > to fix. So with going this way, you're sort of making things worse
+>> > first,
+>> > until that second step happens.
+>> >
+>> > Similarly, reflowing lines for things that get removed in a week do not
+>> > serve a purpose - those line-breaks have been that way for years
+>> > already.
+>> 
+>> Hmm, it makes sense when described that way.  I'll see to perform the
+>> complete conversion in the next few days.
+> 
+> just a note, as written on IRC earlier, I am sitting on a dev_err_probe
+> conversion for dw-dsi-rockchip.
+> 
+> I was waiting to see if more cleanups turned up, so didn't sent that 
+> yet.
+> 
+> Don't want to steal your spotlight though, so not sure if I should send
+> that or wait for your conversion ;-)
 
-ICSSG_CORE clock will help get the most out of ICSSG as more cycles are
-needed to fully support all ICSSG features.
-
-This commit also changes assigned-clock-parents of coreclk-mux to
-ICSSG_CORE clock from ICSSG_ICLK.
-
-Performance update in dual mac mode
-  With ICSSG_CORE Clk @ 333MHz
-    Tx throughput - 934 Mbps
-    Rx throuhput - 914 Mbps,
-
-  With ICSSG_ICLK clk @ 250MHz,
-    Tx throughput - 920 Mbps
-    Rx throughput - 706 Mbps
-
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am64-main.dtsi | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-index c66289a4362b..ceceee2affd9 100644
---- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-@@ -1227,6 +1227,10 @@ icssg0: icssg@30000000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0x0 0x00 0x30000000 0x80000>;
-+		clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
-+			 <&k3_clks 81 20>; /* icssg0_iclk */
-+		assigned-clocks = <&k3_clks 81 0>;
-+		assigned-clock-parents = <&k3_clks 81 2>;
- 
- 		icssg0_mem: memories@0 {
- 			reg = <0x0 0x2000>,
-@@ -1252,7 +1256,7 @@ icssg0_coreclk_mux: coreclk-mux@3c {
- 					clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
- 						 <&k3_clks 81 20>; /* icssg0_iclk */
- 					assigned-clocks = <&icssg0_coreclk_mux>;
--					assigned-clock-parents = <&k3_clks 81 20>;
-+					assigned-clock-parents = <&k3_clks 81 0>;
- 				};
- 
- 				icssg0_iepclk_mux: iepclk-mux@30 {
-@@ -1397,6 +1401,10 @@ icssg1: icssg@30080000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0x0 0x00 0x30080000 0x80000>;
-+		clocks = <&k3_clks 82 0>,   /* icssg1_core_clk */
-+			 <&k3_clks 82 20>;  /* icssg1_iclk */
-+		assigned-clocks = <&k3_clks 82 0>;
-+		assigned-clock-parents = <&k3_clks 82 2>;
- 
- 		icssg1_mem: memories@0 {
- 			reg = <0x0 0x2000>,
-@@ -1422,7 +1430,7 @@ icssg1_coreclk_mux: coreclk-mux@3c {
- 					clocks = <&k3_clks 82 0>,   /* icssg1_core_clk */
- 						 <&k3_clks 82 20>;  /* icssg1_iclk */
- 					assigned-clocks = <&icssg1_coreclk_mux>;
--					assigned-clock-parents = <&k3_clks 82 20>;
-+					assigned-clock-parents = <&k3_clks 82 0>;
- 				};
- 
- 				icssg1_iepclk_mux: iepclk-mux@30 {
--- 
-2.34.1
-
+I see no reasons why should we duplicate some effort. :)  If you're
+already nearing the file-level conversion to its completion, please
+feel free to send it, and we can drop this series. :)
 
