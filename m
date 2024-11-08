@@ -1,266 +1,122 @@
-Return-Path: <linux-kernel+bounces-402267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC4E9C25A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:34:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC889C25A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:37:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E04B233D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85051C22A78
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4394F1AA1F4;
-	Fri,  8 Nov 2024 19:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED871AA1E9;
+	Fri,  8 Nov 2024 19:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7iUWSLw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtbpW1AJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85606233D79;
-	Fri,  8 Nov 2024 19:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE6A15C0;
+	Fri,  8 Nov 2024 19:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731094472; cv=none; b=jcKqo0LRd0UTrD4GgQ88Ksg0Jz770OhwVAxgok7zdq2ayF1uAReoEiu1G5iF58aKM/vyAbvoLIWsodKKMHcgE17eCLBp5GWw/C/B9O21YfsLE7OxngFAQw/hG0JUJjZ0KqIw3zCKGK8TcaUamRYDuw+JZmI2Dt7J26lFdYF52yU=
+	t=1731094668; cv=none; b=elwwwhl1NaC8VI63oSt+87T9nOY7tn9ZuBomav6UpbD+NevjhzGNQDUjk68uujuAzWA5oZ5a5NlJtT3FwJMhi0geMt+E50Od6aIhk/2qSExrqZ7ZA11gBumJrhG5X8R0PUnBABvzG0i65vVIGb9TSI65/OajRVmy0sQUogdjKPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731094472; c=relaxed/simple;
-	bh=0e23Ceuspj28Gae/pnrt+3bj4sITFQ55jk93TWdRH/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdVBm7C0XrKbnG9bs3K90+VLH9FnIWGP0s1LtK4xGiP5rE01+3cLtAq8fO8kB1A8CMxcdgx0B2m44N6gBVytdShL1m3y6EFBVoUibJawbuhhD4To0sB/0+pOiy8Az+nVTeQys6Gw1fasbihTRIlSadR5PzfaU6lYPSRUIaUFlqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7iUWSLw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F018C4CECD;
-	Fri,  8 Nov 2024 19:34:31 +0000 (UTC)
+	s=arc-20240116; t=1731094668; c=relaxed/simple;
+	bh=beJdDC1LOLBDQ38ZZ8eQVeZ1R6yOokwQEBTUvMo8XDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T/KvuAEKF7g4k4/rvCmx/DQHA/UH4EK7k13rYWTI5vAk3lJdmpIiE58ZaWYO8PJ4CvJpXyheZXKaP21denC2/drHFoHtqPjqXgzgVjk+BTZfBjEQl1dMQ68w4gjTMGCX331EvDT+B/oP2+VdxM7rLiLlKYz8WIMRC6Yc5Dz+WyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtbpW1AJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90B6FC4CECD;
+	Fri,  8 Nov 2024 19:37:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731094472;
-	bh=0e23Ceuspj28Gae/pnrt+3bj4sITFQ55jk93TWdRH/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a7iUWSLweMPN22JM1RfFEIO39gtlsikA1nmKI5Htn+pyynYFC+WfzIqM4wDseexXB
-	 CjNFjCNLGBwsqUsqXnUk/Wgo2bJmpVSQWWRnejJFvz3wAN/st1ArrZZS+J6NnfKa4V
-	 /GVxjV/S7sbcy8X+aGetXr6cJbO9/2h/pxZRmwmhMi1MTeoVNcNcFJmN/qbquy+V3/
-	 iZck2Bu8hfjvcAmLWzyT1rF2DjDkKOwWDc+0+piCRZ1I9Tum+warnIyosz/bE5YWC4
-	 +sUpe/uNBlGAp4psfzYDhifb2QFiw/0uKz8dwzzdOGJel37mdH6BIsVB2ArpIrriF3
-	 PPIMjdulOCo+A==
-Date: Fri, 8 Nov 2024 11:34:30 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
-	James Clark <james.clark@linaro.org>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
-	Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v7 3/7] perf test: Add hwmon filename parser test
-Message-ID: <Zy5nxlGZ5cZ69F5G@google.com>
-References: <20241108174936.262704-1-irogers@google.com>
- <20241108174936.262704-4-irogers@google.com>
+	s=k20201202; t=1731094667;
+	bh=beJdDC1LOLBDQ38ZZ8eQVeZ1R6yOokwQEBTUvMo8XDU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rtbpW1AJ8rh9mt673tzNxfOB+NumOLS21SUxGtfMWyDM4rO1KPoNSlHNCfN7g43bM
+	 mYubRKTKzUMnzsjUqGMnRFhC55wH5gI6MNinFWt3ucL7guPB6x3CoAVgpGLrQ88AL1
+	 oDYrUScHn+PvOa8Uyw07V8hyzwKzISiT6YE3zNBUtwb4H2WWIw1ATCV5LBsGFi2KIN
+	 n0DXcXLyRNfV2ZwwTSyWWMX5YxotgftBBIOSABLYWmK8OHAGpS74KFHxiweAiPZaLH
+	 FbhrNAsLm093octeqf1VtWknBkvziL/O9nNMJeSUQlK2ZgrOnqaWBiSkfqaKXs9bAB
+	 sEAvdPwY489nA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Steven Price <steven.price@arm.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] of/address: Rework bus matching to avoid warnings
+Date: Fri,  8 Nov 2024 13:35:48 -0600
+Message-ID: <20241108193547.2647986-2-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241108174936.262704-4-irogers@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 08, 2024 at 09:49:32AM -0800, Ian Rogers wrote:
-> Filename parsing maps a hwmon filename to constituent parts enum/int
-> parts for the hwmon config value. Add a test case for the parsing.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/tests/Build          |   1 +
->  tools/perf/tests/builtin-test.c |   1 +
->  tools/perf/tests/hwmon_pmu.c    | 110 ++++++++++++++++++++++++++++++++
->  tools/perf/tests/tests.h        |   1 +
->  tools/perf/util/hwmon_pmu.c     |   2 +-
->  5 files changed, 114 insertions(+), 1 deletion(-)
->  create mode 100644 tools/perf/tests/hwmon_pmu.c
-> 
-> diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-> index 01ed9335db4d..ec4e1f034742 100644
-> --- a/tools/perf/tests/Build
-> +++ b/tools/perf/tests/Build
-> @@ -66,6 +66,7 @@ perf-test-y += sigtrap.o
->  perf-test-y += event_groups.o
->  perf-test-y += symbols.o
->  perf-test-y += util.o
-> +perf-test-y += hwmon_pmu.o
->  perf-test-y += tool_pmu.o
->  
->  ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc))
-> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-> index d2cabaa8ad92..8dcf74d3c0a3 100644
-> --- a/tools/perf/tests/builtin-test.c
-> +++ b/tools/perf/tests/builtin-test.c
-> @@ -71,6 +71,7 @@ static struct test_suite *generic_tests[] = {
->  	&suite__PERF_RECORD,
->  	&suite__pmu,
->  	&suite__pmu_events,
-> +	&suite__hwmon_pmu,
->  	&suite__tool_pmu,
->  	&suite__dso_data,
->  	&suite__perf_evsel__roundtrip_name_test,
-> diff --git a/tools/perf/tests/hwmon_pmu.c b/tools/perf/tests/hwmon_pmu.c
-> new file mode 100644
-> index 000000000000..f5b58486d8d3
-> --- /dev/null
-> +++ b/tools/perf/tests/hwmon_pmu.c
-> @@ -0,0 +1,110 @@
-> +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> +#include "debug.h"
-> +#include "hwmon_pmu.h"
-> +#include "tests.h"
-> +#include <linux/compiler.h>
-> +#include <linux/kernel.h>
-> +
-> +static int test__parse_hwmon_filename(struct test_suite *test __maybe_unused,
-> +				      int subtest __maybe_unused)
-> +{
-> +	const struct hwmon_parse_test {
-> +		const char *filename;
-> +		enum hwmon_type type;
-> +		int number;
-> +		enum hwmon_item item;
-> +		bool alarm;
-> +		bool parse_ok;
-> +	} tests[] = {
-> +		{
-> +			.filename = "cpu0_accuracy",
-> +			.type = HWMON_TYPE_CPU,
-> +			.number = 0,
-> +			.item = HWMON_ITEM_ACCURACY,
-> +			.alarm = false,
-> +			.parse_ok = true,
-> +		},
-> +		{
-> +			.filename = "temp1_input",
-> +			.type = HWMON_TYPE_TEMP,
-> +			.number = 1,
-> +			.item = HWMON_ITEM_INPUT,
-> +			.alarm = false,
-> +			.parse_ok = true,
-> +		},
-> +		{
-> +			.filename = "fan2_vid",
-> +			.type = HWMON_TYPE_FAN,
-> +			.number = 2,
-> +			.item = HWMON_ITEM_VID,
-> +			.alarm = false,
-> +			.parse_ok = true,
-> +		},
-> +		{
-> +			.filename = "power3_crit_alarm",
-> +			.type = HWMON_TYPE_POWER,
-> +			.number = 3,
-> +			.item = HWMON_ITEM_CRIT,
-> +			.alarm = true,
-> +			.parse_ok = true,
-> +		},
-> +		{
-> +			.filename = "intrusion4_average_interval_min_alarm",
-> +			.type = HWMON_TYPE_INTRUSION,
-> +			.number = 4,
-> +			.item = HWMON_ITEM_AVERAGE_INTERVAL_MIN,
-> +			.alarm = true,
-> +			.parse_ok = true,
-> +		},
-> +		{
-> +			.filename = "badtype5_baditem",
-> +			.type = HWMON_TYPE_NONE,
-> +			.number = 5,
-> +			.item = HWMON_ITEM_NONE,
-> +			.alarm = false,
-> +			.parse_ok = false,
-> +		},
-> +		{
-> +			.filename = "humidity6_baditem",
-> +			.type = HWMON_TYPE_NONE,
-> +			.number = 6,
-> +			.item = HWMON_ITEM_NONE,
-> +			.alarm = false,
-> +			.parse_ok = false,
-> +		},
-> +	};
-> +
-> +	for (size_t i = 0; i < ARRAY_SIZE(tests); i++) {
-> +		enum hwmon_type type;
-> +		int number;
-> +		enum hwmon_item item;
-> +		bool alarm;
-> +
-> +		TEST_ASSERT_EQUAL("parse_hwmon_filename",
-> +				parse_hwmon_filename(
-> +					tests[i].filename,
-> +					&type,
-> +					&number,
-> +					&item,
-> +					&alarm),
-> +				tests[i].parse_ok
-> +			);
-> +		if (tests[i].parse_ok) {
-> +			TEST_ASSERT_EQUAL("parse_hwmon_filename type", type, tests[i].type);
-> +			TEST_ASSERT_EQUAL("parse_hwmon_filename number", number, tests[i].number);
-> +			TEST_ASSERT_EQUAL("parse_hwmon_filename item", item, tests[i].item);
-> +			TEST_ASSERT_EQUAL("parse_hwmon_filename alarm", alarm, tests[i].alarm);
-> +		}
-> +	}
-> +	return TEST_OK;
-> +}
-> +
-> +static struct test_case tests__hwmon_pmu[] = {
-> +	TEST_CASE("Basic parsing test", parse_hwmon_filename),
-> +	{	.name = NULL, }
-> +};
-> +
-> +struct test_suite suite__hwmon_pmu = {
-> +	.desc = "Hwmon PMU",
-> +	.test_cases = tests__hwmon_pmu,
-> +};
-> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-> index af284dd47e5c..cb58b43aa063 100644
-> --- a/tools/perf/tests/tests.h
-> +++ b/tools/perf/tests/tests.h
-> @@ -92,6 +92,7 @@ DECLARE_SUITE(perf_evsel__tp_sched_test);
->  DECLARE_SUITE(syscall_openat_tp_fields);
->  DECLARE_SUITE(pmu);
->  DECLARE_SUITE(pmu_events);
-> +DECLARE_SUITE(hwmon_pmu);
->  DECLARE_SUITE(tool_pmu);
->  DECLARE_SUITE(attr);
->  DECLARE_SUITE(dso_data);
-> diff --git a/tools/perf/util/hwmon_pmu.c b/tools/perf/util/hwmon_pmu.c
-> index ee5fb1c41da3..f4b7b3b6a052 100644
-> --- a/tools/perf/util/hwmon_pmu.c
-> +++ b/tools/perf/util/hwmon_pmu.c
-> @@ -126,7 +126,7 @@ bool parse_hwmon_filename(const char *filename,
->  	fn_item_len = strlen(fn_item);
->  	if (fn_item_len > 6 && !strcmp(&fn_item[fn_item_len - 6], "_alarm")) {
->  		assert(strlen(LONGEST_HWMON_ITEM_STR) < sizeof(fn_type));
-> -		strlcpy(fn_type, fn_item, fn_item_len - 6);
-> +		strlcpy(fn_type, fn_item, fn_item_len - 5);
+With warnings added for deprecated #address-cells/#size-cells handling,
+the DT address handling code causes warnings when used on nodes with no
+address. This happens frequently with calls to of_platform_populate() as
+it is perfectly acceptable to have devices without a 'reg' property. The
+desired behavior is to just silently return an error when retrieving an
+address.
 
-Why is it changed?
+The warnings can be avoided by checking for "#address-cells" presence
+first and checking for an address property before fetching
+"#address-cells" and "#size-cells".
 
-Thanks,
-Namhyung
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reported-by: Steven Price <steven.price@arm.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Here's a proper patch for the record. Going into my next branch now.
 
+ drivers/of/address.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
->  		fn_item = fn_type;
->  		*alarm = true;
->  	}
-> -- 
-> 2.47.0.277.g8800431eea-goog
-> 
+diff --git a/drivers/of/address.c b/drivers/of/address.c
+index 824bb449e007..c5b925ac469f 100644
+--- a/drivers/of/address.c
++++ b/drivers/of/address.c
+@@ -333,7 +333,11 @@ static unsigned int of_bus_isa_get_flags(const __be32 *addr)
+ 
+ static int of_bus_default_flags_match(struct device_node *np)
+ {
+-	return of_bus_n_addr_cells(np) == 3;
++	/*
++	 * Check for presence first since of_bus_n_addr_cells() will warn when
++	 * walking parent nodes.
++	 */
++	return of_property_present(np, "#address-cells") && (of_bus_n_addr_cells(np) == 3);
+ }
+ 
+ /*
+@@ -701,16 +705,16 @@ const __be32 *__of_get_address(struct device_node *dev, int index, int bar_no,
+ 	if (strcmp(bus->name, "pci") && (bar_no >= 0))
+ 		return NULL;
+ 
+-	bus->count_cells(dev, &na, &ns);
+-	if (!OF_CHECK_ADDR_COUNT(na))
+-		return NULL;
+-
+ 	/* Get "reg" or "assigned-addresses" property */
+ 	prop = of_get_property(dev, bus->addresses, &psize);
+ 	if (prop == NULL)
+ 		return NULL;
+ 	psize /= 4;
+ 
++	bus->count_cells(dev, &na, &ns);
++	if (!OF_CHECK_ADDR_COUNT(na))
++		return NULL;
++
+ 	onesize = na + ns;
+ 	for (i = 0; psize >= onesize; psize -= onesize, prop += onesize, i++) {
+ 		u32 val = be32_to_cpu(prop[0]);
+-- 
+2.45.2
+
 
