@@ -1,750 +1,421 @@
-Return-Path: <linux-kernel+bounces-401063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794229C158A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:37:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333D19C158E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:38:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0899F1F21867
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:37:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 575F31C21865
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766481D12ED;
-	Fri,  8 Nov 2024 04:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE01194A68;
+	Fri,  8 Nov 2024 04:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CqKjuvLi"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1hJcQ8f"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459901D0DE2
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731040542; cv=fail; b=E1n2r/BwIGqxN3A44T3ZcK6EMuiiLQAZc7AxAFKKB/aRod1FR/hOnDdlwam2nfyLlsptZMzje22CBXSTb89ciNgWQ6n7QXaGcLmKfDMUgBV0z1jTEoACEVDuahy+QVvSGWXcnKevRfghCI1bWCSbRLw03Ao9LyI4rCxQMlE43TA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731040542; c=relaxed/simple;
-	bh=n5c/qdPvLyu42gIsMSWfVCeuWo8p7Z/FpFQxZ2sWhCQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VNLPQ4vgdWTxuhuOXEDKeLE3UCHyPFkdBkSFQcXxRdHKP71fa5S9JctNtHAK0YwkLzVUJO+CAMuWEycU+dRut6bYqV92FjtvwV2eXzeVDZVyty1GbMUZ3OgAi6XvuH2L9Bq0ahvcZnOycyJYvtQw/JkGYgRYTzvdq3zvEGNdBE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CqKjuvLi; arc=fail smtp.client-ip=40.107.93.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pVQflNkXrfgRACph/0tIWdO9/J+oYBXDbVUJDEJPeQ2wv3Stm4KngBIOFfbfjmjn2SqorKI3p1FkCHy2aAoFmfugDuemudIdJaf32ReYUdAqnHX80Gb8jl/WEL8K8e0mgG2PcWI5tlWyTo3yCwsFRPym7nLeShqu06EyRdvbzAGN34E7V/E4Bk8TPSxtMCUwcBi3nya56fb6JsaIuqiNiX589zGzHV3RmGHoy4Os6ZXykgCjo4UhACbebtshMrmPSg0KjdQxLHwI+5fQyPijF/xKETERzr0d0A96ddfoUvbyE8T3KUz+5ZgI/pXnORncU40pu2HgXw82NbzDAyD6RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/+y7qqQNLVimmFcy3bSNQb20ufSAv+Nk467UFONcveQ=;
- b=hjXsX2reeqo/z7+1KSqNRFgx5ImOIXskDsIw/GczA5wOpVIk1HA90DSsducGt3D8I//6xQCUQS5Pg97BaZFOOGve5BpPo1vicihI7Z0kEBTLDCCkN+Rkv8ZrGk0VsyNsChV5/sYCmsk1C8p/2MPrmSTxyc9I/SlIP6bdeDaCw+JutNDzKYzuh5C95p0oP2uxj61szCjzOIfIhGV5dMLPY3rEFAa2IjQGn+F++QYpmUMT96AHh01Ed6ckEa53QsEpG1w5O/HTdY0VIjxN5x3MlBU4VRbk46iqkJac6brH1mRuEvXnsu8/VRue2idFP7ybQ/xTGvoFqxKYkK5DrxfKPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/+y7qqQNLVimmFcy3bSNQb20ufSAv+Nk467UFONcveQ=;
- b=CqKjuvLiKYImGTvw6XoTam0kYexWMH79j6IvoXzoLd9EvqudFMhsXB9Pa7O2S6SpR8E5q+CcgGpzHEiQSQJyti64h5WwCYBJPBiwwhdjHqqqfFsVhz4x2B23MW0BR2dkCFVDZNTjy/eO+8+BUMBzlToJ8RtHv45+9sH/ipbh44s=
-Received: from DM6PR18CA0033.namprd18.prod.outlook.com (2603:10b6:5:15b::46)
- by LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Fri, 8 Nov
- 2024 04:35:37 +0000
-Received: from DS2PEPF00003440.namprd02.prod.outlook.com
- (2603:10b6:5:15b:cafe::f6) by DM6PR18CA0033.outlook.office365.com
- (2603:10b6:5:15b::46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18 via Frontend
- Transport; Fri, 8 Nov 2024 04:35:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS2PEPF00003440.mail.protection.outlook.com (10.167.18.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8137.17 via Frontend Transport; Fri, 8 Nov 2024 04:35:36 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 7 Nov
- 2024 22:35:29 -0600
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 7 Nov
- 2024 22:35:29 -0600
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 7 Nov 2024 22:35:29 -0600
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
-	<king.tam@amd.com>
-Subject: [PATCH V7 10/10] accel/amdxdna: Add query functions
-Date: Thu, 7 Nov 2024 20:34:48 -0800
-Message-ID: <20241108043448.449314-11-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241108043448.449314-1-lizhi.hou@amd.com>
-References: <20241108043448.449314-1-lizhi.hou@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE20322E;
+	Fri,  8 Nov 2024 04:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731040653; cv=none; b=MDnO2ryZ5cHB2DHY4PNR2NlvcR5vO8RpqZUCaVboMk8SOX65HKj6jnT0TxFvjQlNOEVEc/1CTiu6S/42fmc1SSn1/PtpVdu1dVbd++DQ2ZgwnnCQpBLy+R7+j+uqR56aflCAAeUbHG5Sq5l2CMH0po0Zv9ZHx/ndNu+/D2WUFHo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731040653; c=relaxed/simple;
+	bh=po1qy1utAu+0nnVoWzfXbPIoHNcTde/hq4s8y1Zm1dY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nuTcI2lXiYSLwvKen158VI1Yjs7rNAtjzBw+teTWV1bmXMOe0xpBIlhvGC7RU2/PBxsALSy5aZCuPx4z8or9FNU9s2yYk/2MKBnhOqreKNX0ZTE1g0cDK8scjqNsNZu6AKm/NbtAGAg1LrYYTXrF/3vVi+CdAytP7OI4f/1fPRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1hJcQ8f; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb5743074bso14642181fa.1;
+        Thu, 07 Nov 2024 20:37:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731040649; x=1731645449; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qcKSOGfYZJL+StkfOdUbsXUXePDfExi+8RQpvO/dDiY=;
+        b=m1hJcQ8fOQKe2XbMR25u7+P7SHntL4fwS9nuQznVX0b5VpgBUx+stwvL3+B/dUUksj
+         da4BJfBC7LoboB5UhvQV2+yzCs9KorLQXKfHIVzuD58MsfqPI1B4gBqULQ0VfCHTIx6O
+         OixaZXIExoG5/tAu6oSFDNUUR9otO8fZc9wB3ySCap7FrdgOn4jf00xByluU+907awH8
+         +c4GwysKU56h6cDJKXt6G6V0VkSNsyXkEZSdRWF1mD4jzARpxXk7C1+EqwHBGABSMKT8
+         IbeMFnYTFs6l878I4Ypqboa0NXmleLNOhigqcMcSJ0hIENwWOjx/9vvs3VSgZZvDOLJy
+         qR6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731040649; x=1731645449;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qcKSOGfYZJL+StkfOdUbsXUXePDfExi+8RQpvO/dDiY=;
+        b=Ud51No9z5MdWref3+KeT5HLZErp27n/A7WMVYq7pwI/r0DScadPLN5sYsqHIfO+eYW
+         lPyHtbr5nr/FlWf1bma27N7kKtht2aDGOsx+LLso/4WEyefqreKtTh4LacRkc6oOAlJA
+         fSVgFkHI92ezT/IlDoldZz1OAUOsdjsMeznZ/aKbpxXtmHu64y8UDSIMQBefPPKNYmOT
+         loSBS7U8uP1KERsXt7B+YEJqUfJns4WsHPJ8ZCsl8QmeTyfWOWP+GpaaaWtlF2mbMpxf
+         /udtg5HYL09QhvwkjnUc9GIlzb8JWluEgjuRQQ+WfAaFtiWyaSjDOYgJs6ZLJYmNRg9u
+         EKeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4n+/PiPvLsJMQJvRPDdFhfQR7oT0aEiLXCF+XKfgX6OFxqAQKKvP/MonwVLC1HvjFHMe4yd8whwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbReEsokjgpTruSP08CRzuUSlpAO2DB/OHE9JgCHmgZXYD1Tjg
+	JtG3VsfjqMgNmoAf6wxrw8MzdhBNOwLq3AjGE7eBkqopqKjRsxmTNU0Zt+CABv8rR/mCKEJ3bjF
+	8Xu1+oy49F/74Clam7cF0Ejn8jaA=
+X-Google-Smtp-Source: AGHT+IHdWtZXE7g8JFOmVWyYlE+tt2UXzb1/L0Go8cued0BEV1AAC//p6AvA+JpBtVIcL2VzATgcrMaVUu6tEruscmQ=
+X-Received: by 2002:a2e:bc8b:0:b0:2fa:faed:e86b with SMTP id
+ 38308e7fff4ca-2ff20981669mr3605541fa.13.1731040649112; Thu, 07 Nov 2024
+ 20:37:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003440:EE_|LV2PR12MB5968:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2678b654-0a15-4bf8-9a79-08dcffaeca81
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?32HVPkCoEaPpN8ox979aFA/MEynk2GyOs150KdVa+cDBb4E/ZUdBH7eRBcUI?=
- =?us-ascii?Q?D7VFJiuspQZyvpV21DtDov73UCBPLyymsGCYS0efChz/OWPrwQmMELWNtK1l?=
- =?us-ascii?Q?jST9fHi5lfFQK80qjukssmznmOL9tEUJa+eUXGmziW9kuho5AiybI3TeTLP6?=
- =?us-ascii?Q?QVG5QTSNjOZ/aWbDoDokqZSpi8bzhtNHTp4qPz8bvM9qlkTTZBuT3UOmOj8r?=
- =?us-ascii?Q?YyU8hvdnBRayuYpfWof7NjuStf7AeRmYGJ/bDA/eChkLceGXTfpDpFP5ZVTL?=
- =?us-ascii?Q?bZdqWYOgffLKV9RsRTgOLSlToXiCq2l6txfB2dnVhH95D3iZJFCgqFNM2hnD?=
- =?us-ascii?Q?nZ35jXckZPDFDOllaKyFrike+QjfVQzpIV2iPejK205w3aQWwwnAcoIv65z5?=
- =?us-ascii?Q?j9Y1lInEcgz+Xp7cYdJ+FoUeHB23WV1whtbQueoRWSxQihQP8yePAKINR84r?=
- =?us-ascii?Q?ruZP899jMNvVwVOqTXONf/aI825ybuDbFLtJMSMddhFsIehSpYFD7JxCquAv?=
- =?us-ascii?Q?F2QSt/H3iPbdblip6SDRMgo7x3XotX6RKv1EsOXQ4ZnqR9RKJgze67x78mkr?=
- =?us-ascii?Q?rG4ppQEYYT2u8jl2fE1lCrCPEmr/Z1tUI/Ff46Q8avPbuQv4V85cZvTtxgt9?=
- =?us-ascii?Q?Da1CeIjbFWabc5h3cJlouf6QoysUn8VPrde4b61Up7jFA2cKG8awBeOofyxK?=
- =?us-ascii?Q?e1iqRw6KYBl/bdig0bZQnAfHcDxMOiU1mxA8d3isP/Xz98SSiMxth6UbPlaI?=
- =?us-ascii?Q?rOvqscub3HLqWBUgRJB5K/2I0eJFy6eo8i2+WgCMZa4CI1t0xeW0snugkAdO?=
- =?us-ascii?Q?ZI2Q8t8G8lxkOZjN1XwgL9Wj3nyRD57oTR5BPi864dLb29d/pbCNikZdOo1p?=
- =?us-ascii?Q?V2PD05PhiV7p1Bz8q9vUE2An7h0EkQlj1Aqx3vwk+ML0GZSIqH7SS2Xzub9y?=
- =?us-ascii?Q?FK+XxQyi0k/I2YA8Faa3xDF7SixxO50SE5/O44BU3SQySHbH9PmMqgzyxwDA?=
- =?us-ascii?Q?mQVlwK28UOoc8Oq9mNn1e6fLzz8XlrSncsmx7ks2yg1WMqW0YO6h0r6YEYZE?=
- =?us-ascii?Q?kIykmTDMCYRI+bI6V4oULjeoZKXqiKsvXOCAuUz/A+tktJEoiPug6Td/TpoC?=
- =?us-ascii?Q?5uOI7MgRkU0aIYDTSyQymL6882GVXgSaARcJmK+OSb/RyDN5LStwEdm4WodP?=
- =?us-ascii?Q?uw7sq9hY3XmOwfgKDlIvQT1IjuQIEPehgJBGP33tIjHsXk0UcFqXxh2GKvMt?=
- =?us-ascii?Q?ov42rjurVMrootXKQRb5oByC+AbW4rjfQ4BzEBSeUB4AYO8jz/c8s/PRNNg/?=
- =?us-ascii?Q?Y7P403Sd9nNBRNzrEFjPZoKT2raWdlpTMdnhWAqiuvKoC9EPyLI6SLEKr/8V?=
- =?us-ascii?Q?xNA2ghXTPTJU9qva4FXvUGI4cIK8KMdj+vefaHtVYB+4RkMClA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 04:35:36.5401
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2678b654-0a15-4bf8-9a79-08dcffaeca81
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003440.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5968
+References: <20241103025436.69196-1-yesanishhere@gmail.com>
+In-Reply-To: <20241103025436.69196-1-yesanishhere@gmail.com>
+From: anish kumar <yesanishhere@gmail.com>
+Date: Thu, 7 Nov 2024 20:37:17 -0800
+Message-ID: <CABCoZhANKY5wjc=NqAd64Fhmdjx1k-x=zVkU+ySRDRvK0Gj2iw@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: extcon: add documentation for Extcon subsystem
+To: myungjoo.ham@samsung.com, cw00.choi@samsung.com, corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add GET_INFO ioctl to retrieve hardware information, including
-AIE, clock, hardware context etc.
+Hello Myungjoo/Chanwoo,
 
-Co-developed-by: Min Ma <min.ma@amd.com>
-Signed-off-by: Min Ma <min.ma@amd.com>
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/aie2_message.c    |  65 +++++++
- drivers/accel/amdxdna/aie2_pci.c        | 222 ++++++++++++++++++++++++
- drivers/accel/amdxdna/aie2_pci.h        |   1 +
- drivers/accel/amdxdna/amdxdna_pci_drv.c |  19 ++
- drivers/accel/amdxdna/amdxdna_pci_drv.h |   3 +
- include/uapi/drm/amdxdna_accel.h        | 166 ++++++++++++++++++
- 6 files changed, 476 insertions(+)
+Wondering if you have any comments?
 
-diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-index eb7e27045213..c01a1d957b56 100644
---- a/drivers/accel/amdxdna/aie2_message.c
-+++ b/drivers/accel/amdxdna/aie2_message.c
-@@ -308,6 +308,71 @@ int aie2_map_host_buf(struct amdxdna_dev_hdl *ndev, u32 context_id, u64 addr, u6
- 	return 0;
- }
- 
-+int aie2_query_status(struct amdxdna_dev_hdl *ndev, char __user *buf,
-+		      u32 size, u32 *cols_filled)
-+{
-+	DECLARE_AIE2_MSG(aie_column_info, MSG_OP_QUERY_COL_STATUS);
-+	struct amdxdna_dev *xdna = ndev->xdna;
-+	struct amdxdna_client *client;
-+	struct amdxdna_hwctx *hwctx;
-+	dma_addr_t dma_addr;
-+	u32 aie_bitmap = 0;
-+	u8 *buff_addr;
-+	int next = 0;
-+	int ret, idx;
-+
-+	buff_addr = dma_alloc_noncoherent(xdna->ddev.dev, size, &dma_addr,
-+					  DMA_FROM_DEVICE, GFP_KERNEL);
-+	if (!buff_addr)
-+		return -ENOMEM;
-+
-+	/* Go through each hardware context and mark the AIE columns that are active */
-+	list_for_each_entry(client, &xdna->client_list, node) {
-+		idx = srcu_read_lock(&client->hwctx_srcu);
-+		idr_for_each_entry_continue(&client->hwctx_idr, hwctx, next)
-+			aie_bitmap |= amdxdna_hwctx_col_map(hwctx);
-+		srcu_read_unlock(&client->hwctx_srcu, idx);
-+	}
-+
-+	*cols_filled = 0;
-+	req.dump_buff_addr = dma_addr;
-+	req.dump_buff_size = size;
-+	req.num_cols = hweight32(aie_bitmap);
-+	req.aie_bitmap = aie_bitmap;
-+
-+	drm_clflush_virt_range(buff_addr, size); /* device can access */
-+	ret = aie2_send_mgmt_msg_wait(ndev, &msg);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Error during NPU query, status %d", ret);
-+		goto fail;
-+	}
-+
-+	if (resp.status != AIE2_STATUS_SUCCESS) {
-+		XDNA_ERR(xdna, "Query NPU status failed, status 0x%x", resp.status);
-+		ret = -EINVAL;
-+		goto fail;
-+	}
-+	XDNA_DBG(xdna, "Query NPU status completed");
-+
-+	if (size < resp.size) {
-+		ret = -EINVAL;
-+		XDNA_ERR(xdna, "Bad buffer size. Available: %u. Needs: %u", size, resp.size);
-+		goto fail;
-+	}
-+
-+	if (copy_to_user(buf, buff_addr, resp.size)) {
-+		ret = -EFAULT;
-+		XDNA_ERR(xdna, "Failed to copy NPU status to user space");
-+		goto fail;
-+	}
-+
-+	*cols_filled = aie_bitmap;
-+
-+fail:
-+	dma_free_noncoherent(xdna->ddev.dev, size, buff_addr, dma_addr, DMA_FROM_DEVICE);
-+	return ret;
-+}
-+
- int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, dma_addr_t addr, u32 size,
- 				 void *handle, int (*cb)(void*, const u32 *, size_t))
- {
-diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-index af1ad8093811..4e51b2108b23 100644
---- a/drivers/accel/amdxdna/aie2_pci.c
-+++ b/drivers/accel/amdxdna/aie2_pci.c
-@@ -5,6 +5,7 @@
- 
- #include <drm/amdxdna_accel.h>
- #include <drm/drm_device.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_managed.h>
- #include <drm/drm_print.h>
-@@ -524,11 +525,232 @@ static void aie2_fini(struct amdxdna_dev *xdna)
- 	pci_free_irq_vectors(pdev);
- }
- 
-+static int aie2_get_aie_status(struct amdxdna_client *client,
-+			       struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_status status;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret;
-+
-+	ndev = xdna->dev_handle;
-+	if (copy_from_user(&status, u64_to_user_ptr(args->buffer), sizeof(status))) {
-+		XDNA_ERR(xdna, "Failed to copy AIE request into kernel");
-+		return -EFAULT;
-+	}
-+
-+	if (ndev->metadata.cols * ndev->metadata.size < status.buffer_size) {
-+		XDNA_ERR(xdna, "Invalid buffer size. Given Size: %u. Need Size: %u.",
-+			 status.buffer_size, ndev->metadata.cols * ndev->metadata.size);
-+		return -EINVAL;
-+	}
-+
-+	ret = aie2_query_status(ndev, u64_to_user_ptr(status.buffer),
-+				status.buffer_size, &status.cols_filled);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Failed to get AIE status info. Ret: %d", ret);
-+		return ret;
-+	}
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), &status, sizeof(status))) {
-+		XDNA_ERR(xdna, "Failed to copy AIE request info to user space");
-+		return -EFAULT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int aie2_get_aie_metadata(struct amdxdna_client *client,
-+				 struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_metadata *meta;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret = 0;
-+
-+	ndev = xdna->dev_handle;
-+	meta = kzalloc(sizeof(*meta), GFP_KERNEL);
-+	if (!meta)
-+		return -ENOMEM;
-+
-+	meta->col_size = ndev->metadata.size;
-+	meta->cols = ndev->metadata.cols;
-+	meta->rows = ndev->metadata.rows;
-+
-+	meta->version.major = ndev->metadata.version.major;
-+	meta->version.minor = ndev->metadata.version.minor;
-+
-+	meta->core.row_count = ndev->metadata.core.row_count;
-+	meta->core.row_start = ndev->metadata.core.row_start;
-+	meta->core.dma_channel_count = ndev->metadata.core.dma_channel_count;
-+	meta->core.lock_count = ndev->metadata.core.lock_count;
-+	meta->core.event_reg_count = ndev->metadata.core.event_reg_count;
-+
-+	meta->mem.row_count = ndev->metadata.mem.row_count;
-+	meta->mem.row_start = ndev->metadata.mem.row_start;
-+	meta->mem.dma_channel_count = ndev->metadata.mem.dma_channel_count;
-+	meta->mem.lock_count = ndev->metadata.mem.lock_count;
-+	meta->mem.event_reg_count = ndev->metadata.mem.event_reg_count;
-+
-+	meta->shim.row_count = ndev->metadata.shim.row_count;
-+	meta->shim.row_start = ndev->metadata.shim.row_start;
-+	meta->shim.dma_channel_count = ndev->metadata.shim.dma_channel_count;
-+	meta->shim.lock_count = ndev->metadata.shim.lock_count;
-+	meta->shim.event_reg_count = ndev->metadata.shim.event_reg_count;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), meta, sizeof(*meta)))
-+		ret = -EFAULT;
-+
-+	kfree(meta);
-+	return ret;
-+}
-+
-+static int aie2_get_aie_version(struct amdxdna_client *client,
-+				struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_version version;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+
-+	ndev = xdna->dev_handle;
-+	version.major = ndev->version.major;
-+	version.minor = ndev->version.minor;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), &version, sizeof(version)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int aie2_get_clock_metadata(struct amdxdna_client *client,
-+				   struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_clock_metadata *clock;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret = 0;
-+
-+	ndev = xdna->dev_handle;
-+	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
-+	if (!clock)
-+		return -ENOMEM;
-+
-+	memcpy(clock->mp_npu_clock.name, ndev->mp_npu_clock.name,
-+	       sizeof(clock->mp_npu_clock.name));
-+	clock->mp_npu_clock.freq_mhz = ndev->mp_npu_clock.freq_mhz;
-+	memcpy(clock->h_clock.name, ndev->h_clock.name, sizeof(clock->h_clock.name));
-+	clock->h_clock.freq_mhz = ndev->h_clock.freq_mhz;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), clock, sizeof(*clock)))
-+		ret = -EFAULT;
-+
-+	kfree(clock);
-+	return ret;
-+}
-+
-+static int aie2_get_hwctx_status(struct amdxdna_client *client,
-+				 struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_hwctx __user *buf;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_drm_query_hwctx *tmp;
-+	struct amdxdna_client *tmp_client;
-+	struct amdxdna_hwctx *hwctx;
-+	bool overflow = false;
-+	u32 req_bytes = 0;
-+	u32 hw_i = 0;
-+	int ret = 0;
-+	int next;
-+	int idx;
-+
-+	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-+
-+	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	buf = u64_to_user_ptr(args->buffer);
-+	list_for_each_entry(tmp_client, &xdna->client_list, node) {
-+		idx = srcu_read_lock(&tmp_client->hwctx_srcu);
-+		next = 0;
-+		idr_for_each_entry_continue(&tmp_client->hwctx_idr, hwctx, next) {
-+			req_bytes += sizeof(*tmp);
-+			if (args->buffer_size < req_bytes) {
-+				/* Continue iterating to get the required size */
-+				overflow = true;
-+				continue;
-+			}
-+
-+			memset(tmp, 0, sizeof(*tmp));
-+			tmp->pid = tmp_client->pid;
-+			tmp->context_id = hwctx->id;
-+			tmp->start_col = hwctx->start_col;
-+			tmp->num_col = hwctx->num_col;
-+			tmp->command_submissions = hwctx->priv->seq;
-+			tmp->command_completions = hwctx->priv->completed;
-+
-+			if (copy_to_user(&buf[hw_i], tmp, sizeof(*tmp))) {
-+				ret = -EFAULT;
-+				srcu_read_unlock(&tmp_client->hwctx_srcu, idx);
-+				goto out;
-+			}
-+			hw_i++;
-+		}
-+		srcu_read_unlock(&tmp_client->hwctx_srcu, idx);
-+	}
-+
-+	if (overflow) {
-+		XDNA_ERR(xdna, "Invalid buffer size. Given: %u Need: %u.",
-+			 args->buffer_size, req_bytes);
-+		ret = -EINVAL;
-+	}
-+
-+out:
-+	kfree(tmp);
-+	args->buffer_size = req_bytes;
-+	return ret;
-+}
-+
-+static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_dev *xdna = client->xdna;
-+	int ret, idx;
-+
-+	if (!drm_dev_enter(&xdna->ddev, &idx))
-+		return -ENODEV;
-+
-+	switch (args->param) {
-+	case DRM_AMDXDNA_QUERY_AIE_STATUS:
-+		ret = aie2_get_aie_status(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_AIE_METADATA:
-+		ret = aie2_get_aie_metadata(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_AIE_VERSION:
-+		ret = aie2_get_aie_version(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_CLOCK_METADATA:
-+		ret = aie2_get_clock_metadata(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_HW_CONTEXTS:
-+		ret = aie2_get_hwctx_status(client, args);
-+		break;
-+	default:
-+		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
-+		ret = -EOPNOTSUPP;
-+	}
-+	XDNA_DBG(xdna, "Got param %d", args->param);
-+
-+	drm_dev_exit(idx);
-+	return ret;
-+}
-+
- const struct amdxdna_dev_ops aie2_ops = {
- 	.init           = aie2_init,
- 	.fini           = aie2_fini,
- 	.resume         = aie2_hw_start,
- 	.suspend        = aie2_hw_stop,
-+	.get_aie_info   = aie2_get_info,
- 	.hwctx_init     = aie2_hwctx_init,
- 	.hwctx_fini     = aie2_hwctx_fini,
- 	.hwctx_config   = aie2_hwctx_config,
-diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-index 144e93e05d8b..8e2d1c3ff91a 100644
---- a/drivers/accel/amdxdna/aie2_pci.h
-+++ b/drivers/accel/amdxdna/aie2_pci.h
-@@ -231,6 +231,7 @@ int aie2_query_firmware_version(struct amdxdna_dev_hdl *ndev,
- int aie2_create_context(struct amdxdna_dev_hdl *ndev, struct amdxdna_hwctx *hwctx);
- int aie2_destroy_context(struct amdxdna_dev_hdl *ndev, struct amdxdna_hwctx *hwctx);
- int aie2_map_host_buf(struct amdxdna_dev_hdl *ndev, u32 context_id, u64 addr, u64 size);
-+int aie2_query_status(struct amdxdna_dev_hdl *ndev, char *buf, u32 size, u32 *cols_filled);
- int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, dma_addr_t addr, u32 size,
- 				 void *handle, int (*cb)(void*, const u32 *, size_t));
- int aie2_config_cu(struct amdxdna_hwctx *hwctx);
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-index c611024f060d..4f8ec5f16325 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-@@ -143,6 +143,23 @@ static int amdxdna_flush(struct file *f, fl_owner_t id)
- 	return 0;
- }
- 
-+static int amdxdna_drm_get_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
-+{
-+	struct amdxdna_client *client = filp->driver_priv;
-+	struct amdxdna_dev *xdna = to_xdna_dev(dev);
-+	struct amdxdna_drm_get_info *args = data;
-+	int ret;
-+
-+	if (!xdna->dev_info->ops->get_aie_info)
-+		return -EOPNOTSUPP;
-+
-+	XDNA_DBG(xdna, "Request parameter %u", args->param);
-+	mutex_lock(&xdna->dev_lock);
-+	ret = xdna->dev_info->ops->get_aie_info(client, args);
-+	mutex_unlock(&xdna->dev_lock);
-+	return ret;
-+}
-+
- static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
- 	/* Context */
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_CREATE_HWCTX, amdxdna_drm_create_hwctx_ioctl, 0),
-@@ -154,6 +171,8 @@ static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_SYNC_BO, amdxdna_drm_sync_bo_ioctl, 0),
- 	/* Execution */
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, amdxdna_drm_submit_cmd_ioctl, 0),
-+	/* AIE hardware */
-+	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 0),
- };
- 
- static const struct file_operations amdxdna_fops = {
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-index 3be058af3545..4e18513ad019 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-@@ -17,7 +17,9 @@
- 
- extern const struct drm_driver amdxdna_drm_drv;
- 
-+struct amdxdna_client;
- struct amdxdna_dev;
-+struct amdxdna_drm_get_info;
- struct amdxdna_gem_obj;
- struct amdxdna_hwctx;
- struct amdxdna_sched_job;
-@@ -37,6 +39,7 @@ struct amdxdna_dev_ops {
- 	void (*hwctx_suspend)(struct amdxdna_hwctx *hwctx);
- 	void (*hwctx_resume)(struct amdxdna_hwctx *hwctx);
- 	int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
-+	int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
- };
- 
- /*
-diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-index 3e88ed386fac..af12af8bd699 100644
---- a/include/uapi/drm/amdxdna_accel.h
-+++ b/include/uapi/drm/amdxdna_accel.h
-@@ -32,6 +32,7 @@ enum amdxdna_drm_ioctl_id {
- 	DRM_AMDXDNA_GET_BO_INFO,
- 	DRM_AMDXDNA_SYNC_BO,
- 	DRM_AMDXDNA_EXEC_CMD,
-+	DRM_AMDXDNA_GET_INFO,
- };
- 
- /**
-@@ -235,6 +236,167 @@ struct amdxdna_drm_exec_cmd {
- 	__u64 seq;
- };
- 
-+/**
-+ * struct amdxdna_drm_query_aie_status - Query the status of the AIE hardware
-+ * @buffer: The user space buffer that will return the AIE status.
-+ * @buffer_size: The size of the user space buffer.
-+ * @cols_filled: A bitmap of AIE columns whose data has been returned in the buffer.
-+ */
-+struct amdxdna_drm_query_aie_status {
-+	__u64 buffer; /* out */
-+	__u32 buffer_size; /* in */
-+	__u32 cols_filled; /* out */
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_version - Query the version of the AIE hardware
-+ * @major: The major version number.
-+ * @minor: The minor version number.
-+ */
-+struct amdxdna_drm_query_aie_version {
-+	__u32 major; /* out */
-+	__u32 minor; /* out */
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_tile_metadata - Query the metadata of AIE tile (core, mem, shim)
-+ * @row_count: The number of rows.
-+ * @row_start: The starting row number.
-+ * @dma_channel_count: The number of dma channels.
-+ * @lock_count: The number of locks.
-+ * @event_reg_count: The number of events.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_aie_tile_metadata {
-+	__u16 row_count;
-+	__u16 row_start;
-+	__u16 dma_channel_count;
-+	__u16 lock_count;
-+	__u16 event_reg_count;
-+	__u16 pad[3];
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_metadata - Query the metadata of the AIE hardware
-+ * @col_size: The size of a column in bytes.
-+ * @cols: The total number of columns.
-+ * @rows: The total number of rows.
-+ * @version: The version of the AIE hardware.
-+ * @core: The metadata for all core tiles.
-+ * @mem: The metadata for all mem tiles.
-+ * @shim: The metadata for all shim tiles.
-+ */
-+struct amdxdna_drm_query_aie_metadata {
-+	__u32 col_size;
-+	__u16 cols;
-+	__u16 rows;
-+	struct amdxdna_drm_query_aie_version version;
-+	struct amdxdna_drm_query_aie_tile_metadata core;
-+	struct amdxdna_drm_query_aie_tile_metadata mem;
-+	struct amdxdna_drm_query_aie_tile_metadata shim;
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_clock - Metadata for a clock
-+ * @name: The clock name.
-+ * @freq_mhz: The clock frequency.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_clock {
-+	__u8 name[16];
-+	__u32 freq_mhz;
-+	__u32 pad;
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_clock_metadata - Query metadata for clocks
-+ * @mp_npu_clock: The metadata for MP-NPU clock.
-+ * @h_clock: The metadata for H clock.
-+ */
-+struct amdxdna_drm_query_clock_metadata {
-+	struct amdxdna_drm_query_clock mp_npu_clock;
-+	struct amdxdna_drm_query_clock h_clock;
-+};
-+
-+enum amdxdna_sensor_type {
-+	AMDXDNA_SENSOR_TYPE_POWER
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_sensor - The data for single sensor.
-+ * @label: The name for a sensor.
-+ * @input: The current value of the sensor.
-+ * @max: The maximum value possible for the sensor.
-+ * @average: The average value of the sensor.
-+ * @highest: The highest recorded sensor value for this driver load for the sensor.
-+ * @status: The sensor status.
-+ * @units: The sensor units.
-+ * @unitm: Translates value member variables into the correct unit via (pow(10, unitm) * value).
-+ * @type: The sensor type from enum amdxdna_sensor_type.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_sensor {
-+	__u8  label[64];
-+	__u32 input;
-+	__u32 max;
-+	__u32 average;
-+	__u32 highest;
-+	__u8  status[64];
-+	__u8  units[16];
-+	__s8  unitm;
-+	__u8  type;
-+	__u8  pad[6];
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_hwctx - The data for single context.
-+ * @context_id: The ID for this context.
-+ * @start_col: The starting column for the partition assigned to this context.
-+ * @num_col: The number of columns in the partition assigned to this context.
-+ * @pad: Structure padding.
-+ * @pid: The Process ID of the process that created this context.
-+ * @command_submissions: The number of commands submitted to this context.
-+ * @command_completions: The number of commands completed by this context.
-+ * @migrations: The number of times this context has been moved to a different partition.
-+ * @preemptions: The number of times this context has been preempted by another context in the
-+ *               same partition.
-+ * @errors: The errors for this context.
-+ */
-+struct amdxdna_drm_query_hwctx {
-+	__u32 context_id;
-+	__u32 start_col;
-+	__u32 num_col;
-+	__u32 pad;
-+	__s64 pid;
-+	__u64 command_submissions;
-+	__u64 command_completions;
-+	__u64 migrations;
-+	__u64 preemptions;
-+	__u64 errors;
-+};
-+
-+enum amdxdna_drm_get_param {
-+	DRM_AMDXDNA_QUERY_AIE_STATUS,
-+	DRM_AMDXDNA_QUERY_AIE_METADATA,
-+	DRM_AMDXDNA_QUERY_AIE_VERSION,
-+	DRM_AMDXDNA_QUERY_CLOCK_METADATA,
-+	DRM_AMDXDNA_QUERY_SENSORS,
-+	DRM_AMDXDNA_QUERY_HW_CONTEXTS,
-+	DRM_AMDXDNA_NUM_GET_PARAM,
-+};
-+
-+/**
-+ * struct amdxdna_drm_get_info - Get some information from the AIE hardware.
-+ * @param: Value in enum amdxdna_drm_get_param. Specifies the structure passed in the buffer.
-+ * @buffer_size: Size of the input buffer. Size needed/written by the kernel.
-+ * @buffer: A structure specified by the param struct member.
-+ */
-+struct amdxdna_drm_get_info {
-+	__u32 param; /* in */
-+	__u32 buffer_size; /* in/out */
-+	__u64 buffer; /* in/out */
-+};
-+
- #define DRM_IOCTL_AMDXDNA_CREATE_HWCTX \
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_CREATE_HWCTX, \
- 		 struct amdxdna_drm_create_hwctx)
-@@ -263,6 +425,10 @@ struct amdxdna_drm_exec_cmd {
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_EXEC_CMD, \
- 		 struct amdxdna_drm_exec_cmd)
- 
-+#define DRM_IOCTL_AMDXDNA_GET_INFO \
-+	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_INFO, \
-+		 struct amdxdna_drm_get_info)
-+
- #if defined(__cplusplus)
- } /* extern c end */
- #endif
--- 
-2.34.1
-
+On Sat, Nov 2, 2024 at 7:54=E2=80=AFPM anish kumar <yesanishhere@gmail.com>=
+ wrote:
+>
+> The Extcon (External Connector) subsystem driver lacked proper
+> documentation. This commit adds comprehensive documentation
+> explaining the purpose, key components, and usage of the Extcon
+> framework.
+>
+> The new documentation includes:
+> - An overview of the Extcon subsystem
+> - Descriptions of key structures
+> - Explanations of core functions
+> - Information on the sysfs interface
+> - A usage example for driver developers
+>
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+>  Documentation/driver-api/extcon.rst | 255 ++++++++++++++++++++++++++++
+>  Documentation/driver-api/index.rst  |   1 +
+>  MAINTAINERS                         |   1 +
+>  3 files changed, 257 insertions(+)
+>  create mode 100644 Documentation/driver-api/extcon.rst
+>
+> diff --git a/Documentation/driver-api/extcon.rst b/Documentation/driver-a=
+pi/extcon.rst
+> new file mode 100644
+> index 000000000000..d3217b9cdcd5
+> --- /dev/null
+> +++ b/Documentation/driver-api/extcon.rst
+> @@ -0,0 +1,255 @@
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Extcon Device Subsystem
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Overview
+> +=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The Extcon (External Connector) subsystem provides a unified framework f=
+or
+> +managing external connectors in Linux systems. It allows drivers to repo=
+rt
+> +the state of external connectors and provides a standardized interface f=
+or
+> +userspace to query and monitor these states.
+> +
+> +Extcon is particularly useful in modern devices with multiple connectivi=
+ty
+> +options, such as smartphones, tablets, and laptops. It helps manage vari=
+ous
+> +types of connectors, including:
+> +
+> +1. USB connectors (e.g., USB-C, micro-USB)
+> +2. Charging ports (e.g., fast charging, wireless charging)
+> +3. Audio jacks (e.g., 3.5mm headphone jack)
+> +4. Video outputs (e.g., HDMI, DisplayPort)
+> +5. Docking stations
+> +
+> +Real-world examples:
+> +
+> +1. Smartphone USB-C port:
+> +   A single USB-C port on a smartphone can serve multiple functions. Ext=
+con
+> +   can manage the different states of this port, such as:
+> +   - USB data connection
+> +   - Charging (various types like fast charging, USB Power Delivery)
+> +   - Audio output (USB-C headphones)
+> +   - Video output (USB-C to HDMI adapter)
+> +
+> +2. Laptop docking station:
+> +   When a laptop is connected to a docking station, multiple connections=
+ are
+> +   made simultaneously. Extcon can handle the state changes for:
+> +   - Power delivery
+> +   - External displays
+> +   - USB hub connections
+> +   - Ethernet connectivity
+> +
+> +3. Wireless charging pad:
+> +   Extcon can manage the state of a wireless charging connection, allowi=
+ng
+> +   the system to respond appropriately when a device is placed on or rem=
+oved
+> +   from the charging pad.
+> +
+> +4. Smart TV HDMI ports:
+> +   In a smart TV, Extcon can manage multiple HDMI ports, detecting when
+> +   devices are connected or disconnected, and potentially identifying th=
+e
+> +   type of device (e.g., gaming console, set-top box, Blu-ray player).
+> +
+> +The Extcon framework simplifies the development of drivers for these com=
+plex
+> +scenarios by providing a standardized way to report and query connector
+> +states, handle mutually exclusive connections, and manage connector
+> +properties. This allows for more robust and flexible handling of externa=
+l
+> +connections in modern devices.
+> +
+> +Key Components
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +extcon_dev
+> +----------
+> +
+> +The core structure representing an Extcon device::
+> +
+> +    struct extcon_dev {
+> +        const char *name;
+> +        const unsigned int *supported_cable;
+> +        const u32 *mutually_exclusive;
+> +
+> +        /* Internal data */
+> +        struct device dev;
+> +        unsigned int id;
+> +        struct raw_notifier_head nh_all;
+> +        struct raw_notifier_head *nh;
+> +        struct list_head entry;
+> +        int max_supported;
+> +        spinlock_t lock;
+> +        u32 state;
+> +
+> +        /* Sysfs related */
+> +        struct device_type extcon_dev_type;
+> +        struct extcon_cable *cables;
+> +        struct attribute_group attr_g_muex;
+> +        struct attribute **attrs_muex;
+> +        struct device_attribute *d_attrs_muex;
+> +    };
+> +
+> +Key fields:
+> +
+> +- ``name``: Name of the Extcon device
+> +- ``supported_cable``: Array of supported cable types
+> +- ``mutually_exclusive``: Array defining mutually exclusive cable types
+> +  This field is crucial for enforcing hardware constraints. It's an arra=
+y of
+> +  32-bit unsigned integers, where each element represents a set of mutua=
+lly
+> +  exclusive cable types. The array should be terminated with a 0.
+> +
+> +  For example:
+> +
+> +  ::
+> +
+> +      static const u32 mutually_exclusive[] =3D {
+> +          BIT(0) | BIT(1),  /* Cable 0 and 1 are mutually exclusive */
+> +          BIT(2) | BIT(3) | BIT(4),  /* Cables 2, 3, and 4 are mutually =
+exclusive */
+> +          0  /* Terminator */
+> +      };
+> +
+> +  In this example, cables 0 and 1 cannot be connected simultaneously, an=
+d
+> +  cables 2, 3, and 4 are also mutually exclusive. This is useful for
+> +  scenarios like a single port that can either be USB or HDMI, but not b=
+oth
+> +  at the same time.
+> +
+> +  The Extcon core uses this information to prevent invalid combinations =
+of
+> +  cable states, ensuring that the reported states are always consistent
+> +  with the hardware capabilities.
+> +
+> +- ``state``: Current state of the device (bitmap of connected cables)
+> +
+> +
+> +extcon_cable
+> +------------
+> +
+> +Represents an individual cable managed by an Extcon device::
+> +
+> +    struct extcon_cable {
+> +        struct extcon_dev *edev;
+> +        int cable_index;
+> +        struct attribute_group attr_g;
+> +        struct device_attribute attr_name;
+> +        struct device_attribute attr_state;
+> +        struct attribute *attrs[3];
+> +        union extcon_property_value usb_propval[EXTCON_PROP_USB_CNT];
+> +        union extcon_property_value chg_propval[EXTCON_PROP_CHG_CNT];
+> +        union extcon_property_value jack_propval[EXTCON_PROP_JACK_CNT];
+> +        union extcon_property_value disp_propval[EXTCON_PROP_DISP_CNT];
+> +        DECLARE_BITMAP(usb_bits, EXTCON_PROP_USB_CNT);
+> +        DECLARE_BITMAP(chg_bits, EXTCON_PROP_CHG_CNT);
+> +        DECLARE_BITMAP(jack_bits, EXTCON_PROP_JACK_CNT);
+> +        DECLARE_BITMAP(disp_bits, EXTCON_PROP_DISP_CNT);
+> +    };
+> +
+> +Core Functions
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +.. kernel-doc:: drivers/extcon/extcon.c
+> +   :identifiers: extcon_get_state
+> +
+> +.. kernel-doc:: drivers/extcon/extcon.c
+> +   :identifiers: extcon_set_state
+> +
+> +.. kernel-doc:: drivers/extcon/extcon.c
+> +   :identifiers: extcon_set_state_sync
+> +
+> +.. kernel-doc:: drivers/extcon/extcon.c
+> +   :identifiers: extcon_get_property
+> +
+> +
+> +Sysfs Interface
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Extcon devices expose the following sysfs attributes:
+> +
+> +- ``name``: Name of the Extcon device
+> +- ``state``: Current state of all supported cables
+> +- ``cable.N/name``: Name of the Nth supported cable
+> +- ``cable.N/state``: State of the Nth supported cable
+> +
+> +Usage Example
+> +-------------
+> +
+> +.. code-block:: c
+> +
+> +    #include <linux/module.h>
+> +    #include <linux/platform_device.h>
+> +    #include <linux/extcon.h>
+> +
+> +    struct my_extcon_data {
+> +        struct extcon_dev *edev;
+> +        struct device *dev;
+> +    };
+> +
+> +    static const unsigned int my_extcon_cable[] =3D {
+> +        EXTCON_USB,
+> +        EXTCON_USB_HOST,
+> +        EXTCON_NONE,
+> +    };
+> +
+> +    static int my_extcon_probe(struct platform_device *pdev)
+> +    {
+> +        struct my_extcon_data *data;
+> +        int ret;
+> +
+> +        data =3D devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +        if (!data)
+> +            return -ENOMEM;
+> +
+> +        data->dev =3D &pdev->dev;
+> +
+> +        /* Initialize extcon device */
+> +        data->edev =3D devm_extcon_dev_allocate(data->dev, my_extcon_cab=
+le);
+> +        if (IS_ERR(data->edev)) {
+> +            dev_err(data->dev, "Failed to allocate extcon device\n");
+> +            return PTR_ERR(data->edev);
+> +        }
+> +
+> +        /* Register extcon device */
+> +        ret =3D devm_extcon_dev_register(data->dev, data->edev);
+> +        if (ret < 0) {
+> +            dev_err(data->dev, "Failed to register extcon device\n");
+> +            return ret;
+> +        }
+> +
+> +        platform_set_drvdata(pdev, data);
+> +
+> +        /* Example: Set initial state */
+> +        extcon_set_state_sync(data->edev, EXTCON_USB, true);
+> +
+> +        dev_info(data->dev, "My extcon driver probed successfully\n");
+> +        return 0;
+> +    }
+> +
+> +    static int my_extcon_remove(struct platform_device *pdev)
+> +    {
+> +        struct my_extcon_data *data =3D platform_get_drvdata(pdev);
+> +
+> +        /* Example: Clear state before removal */
+> +        extcon_set_state_sync(data->edev, EXTCON_USB, false);
+> +
+> +        dev_info(data->dev, "My extcon driver removed\n");
+> +        return 0;
+> +    }
+> +
+> +    static const struct of_device_id my_extcon_of_match[] =3D {
+> +        { .compatible =3D "my,extcon-device", },
+> +        { },
+> +    };
+> +    MODULE_DEVICE_TABLE(of, my_extcon_of_match);
+> +
+> +    static struct platform_driver my_extcon_driver =3D {
+> +        .driver =3D {
+> +            .name =3D "my-extcon-driver",
+> +            .of_match_table =3D my_extcon_of_match,
+> +        },
+> +        .probe =3D my_extcon_probe,
+> +        .remove =3D my_extcon_remove,
+> +    };
+> +
+> +    module_platform_driver(my_extcon_driver);
+> +
+> +This example demonstrates:
+> +---------------------------
+> +
+> +- Defining supported cable types (USB and USB Host in this case).
+> +- Allocating and registering an extcon device.
+> +- Setting an initial state for a cable (USB connected in this example).
+> +- Clearing the state when the driver is removed.
+> diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-ap=
+i/index.rst
+> index 7f83e05769b4..16e2c4ec3c01 100644
+> --- a/Documentation/driver-api/index.rst
+> +++ b/Documentation/driver-api/index.rst
+> @@ -86,6 +86,7 @@ Subsystem-specific APIs
+>     dmaengine/index
+>     dpll
+>     edac
+> +   extcon
+>     firmware/index
+>     fpga/index
+>     frame-buffer
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c27f3190737f..7a8739ed9d46 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8572,6 +8572,7 @@ L:        linux-kernel@vger.kernel.org
+>  S:     Maintained
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.=
+git
+>  F:     Documentation/devicetree/bindings/extcon/
+> +F:     Documentation/driver-api/extcon.rst
+>  F:     Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
+>  F:     drivers/extcon/
+>  F:     include/linux/extcon.h
+> --
+> 2.39.3 (Apple Git-146)
+>
 
