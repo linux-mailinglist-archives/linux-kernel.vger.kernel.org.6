@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-401103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34BC09C15FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:25:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E079C15FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8FC1F23B9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:25:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A33AA1C22BD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7581CC152;
-	Fri,  8 Nov 2024 05:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43F91CC161;
+	Fri,  8 Nov 2024 05:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pKapTdRx"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="K5fNKBQa"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BD61CABF
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 05:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E347F1CABF
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 05:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731043513; cv=none; b=Cr7j93ybluaIFS+BJlXMo0T0waRbPwsCN5iSdEC4Q5B10qWE/wL+atN8r13CY/9ZCyFcE5lXxypiBZSUNne5kkJl7GKtWSwrsD3Sw7jnnmBBi2BW4wAhdT1l1KjzOuS/UdiuhHV5m+AZS5qi259NLhu8rU8ed3+tDhUPhSmWsxg=
+	t=1731043792; cv=none; b=qX69K9hF1Ns5fTy8rsgAd0S0Ofs9cAvcyUaCbgwsGb5nVlUMtOd+u3sziofqjEQdQcx1hQnw+Gpm7yBXFkbgy9xcUgDHKBG1bmRoNHltJwIu5dpRCIrKKqtw2f4PM8AK9Aj/b/1RdpAsFpkMITVBbWOXKbGk4JRFQkssVx2xuBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731043513; c=relaxed/simple;
-	bh=CYGRGIQAZ8i8TDeSIdbNiAT+L+Y/g0FEIG+tTbKXx8s=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=hm9y7HEscxWGVZFpP1p3x75vuC3/eohr4Ld3TiWUuYRFJYbUTAOcARo5IY1xaxrECdKTV0DIYF6GIP2Ep6Ca2m56A8PMWagQFjUpqZY3UnQ/Vr8Wjmu4djznVmkFlvQ6hkggvZYwAAMTWZrmc0zu5pt2dPXMCug+e1tllbDYIDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pKapTdRx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A84eaw7015756;
-	Fri, 8 Nov 2024 05:24:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=dNlS3DxGPIin2DkLAI20LbpHoTOW
-	+PMREunhdASWcp0=; b=pKapTdRxRUsn7PnTl357H+g6W4juKR79D/ZAXlUjjINO
-	RxaQnYzywVe4Y2Dr9Mib7DBPvOvzaT8hf6Q8tbzmbWebMaS0VuG/sxNNaKllsjTN
-	mjl5Vz0Bi4pfPXTifjzFTvQaQdjo5Mfu8drg5r9WqQlLebe5+2iqa+BeZrE7bRqr
-	/8kphH7q3XVq+/kjPyvvFzEFfx5Tu7P0RY6mbQdwAIFb0h45J/fKBIqWTIsdv7hn
-	Ily3egXR4sr7YkV4kBb7qPtzDviX8EwRWPEjGALyuQIIY15eJlDVec2D0u+C+84i
-	O6XYZ+X7z5zkxPXFFv+JdAmYE4NC4PIpJlT91BcHgw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sbtn852v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 05:24:50 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A85Onal006569;
-	Fri, 8 Nov 2024 05:24:49 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sbtn852s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 05:24:49 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A84CN0A008436;
-	Fri, 8 Nov 2024 05:24:49 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nywme494-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 05:24:49 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A85Ombm14615130
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 8 Nov 2024 05:24:48 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AB83B58055;
-	Fri,  8 Nov 2024 05:24:48 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4618758059;
-	Fri,  8 Nov 2024 05:24:44 +0000 (GMT)
-Received: from [9.43.44.118] (unknown [9.43.44.118])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  8 Nov 2024 05:24:43 +0000 (GMT)
-Message-ID: <375850de-155a-40cb-819b-fe21733e3cb0@linux.ibm.com>
-Date: Fri, 8 Nov 2024 10:54:41 +0530
+	s=arc-20240116; t=1731043792; c=relaxed/simple;
+	bh=CCCwNsttvHqLj9XZitFK8pDD8bjXnilxTftUf9wTADI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2uEkSsY2XTV2Vs0nI7zykGhnhuw5w/daxYkKrE8PYwR88GK4ucAJEW3Om/znbNGb/5lEelZUuUYkxBdBpZEwMEnxqWOuijK6fPBPga4RNULEdRmxgEeYkn6RMt+hG41/6meFFc9IMuIkBsay/MJgVjilaJ9Jj+trZGc4WtNA4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=K5fNKBQa; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43163667f0eso15526805e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 21:29:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731043788; x=1731648588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s90UXkcKs3A/LDrUfownwKO128SBPpDtY4ua8QU03HQ=;
+        b=K5fNKBQaxiRdZgs+RHmtmyncPtojPWfF2qfA09bnGOyD5ZsJYDG8o74vnRKEOGSoEt
+         vHDbE3PaKjVoLuTs7RBPTGirpr1O1YCkw5eCLtj3df+FmehEqRX1h9mUVoingRnOI6aF
+         wHM3Bxs/JA9HfX9bmNOYcDbMTbtT16F1bPqo25B/K7TX6KYg0YQfeZZzid+kmyek+Me6
+         YHMbjqvjmUBnJtFAl/pTktH33npkJnYsWz0GdbYxKvQi+I6s9tf9cAy9Fyf6aw/91MeM
+         u6Zs/KKEFm+2/94z6d/DLrSeVXjd+nxkfMxUrulRgIb9uQrya7sbF1yaZCBEuu1M0o40
+         FB0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731043788; x=1731648588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s90UXkcKs3A/LDrUfownwKO128SBPpDtY4ua8QU03HQ=;
+        b=uRYFaBTijVPt7qhyPH1GYvWaTPJyOGYkH6JH3yTIZKGgJg7Vb+J866DTq6cN1hazrT
+         6jMokln3uWeU4ToY854xEMWi2vKiU6kQFnH1fjts3HM5Lfx/TIacG3X19g2YVcxdwk8K
+         wMpoaDntlm4mRYHbl4UxHHA+Da6U+JENIiTieFP8tkSaAcDuW9a+RbhYYPUflm4TIlUd
+         GRtoiYsKhfdvUyQ8Ub9GzpTdre/w4i5DQEBmJJ+p/PrGzdcoj3gW3b83SVbY2CT6TnPe
+         UwpIa2ZU/WE38ViK6Es2lJ9JJfITJFI0F7AnK5IIyDXv0ZYiGqahqSLtnTdgfssF5M15
+         4r5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUcijURxSm7/g+kaYg4i3L+oC5v8xOQ/kKSJyfwTqqeGfRseSuECVHCk6AbYhCvPNEZyikARgJ8QZOqCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydXEMciCQpGmn18yhXQsk1SWZ+QZjTr7KbYIxLXB6XwVZHHpDo
+	jDccjMnXBPBgxavOmVdnTuliONTjfmCrCjokEfZyRFm/HHyQ+1T1deKCuzU28K2GU/Kf0XFTvLk
+	ZmnixNw==
+X-Google-Smtp-Source: AGHT+IH986jum1srZqxKElgt7ODodxcU+4p38IQyvOniyWcQ1Ycd4xDgJh4KIm/LAczW9rVQ264ZeA==
+X-Received: by 2002:a05:6000:1acf:b0:381:cffb:f35e with SMTP id ffacd0b85a97d-381f18851cbmr1081416f8f.54.1731043788238;
+        Thu, 07 Nov 2024 21:29:48 -0800 (PST)
+Received: from u94a ([2401:e180:8800:eb21:7695:a769:ff9c:3830])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd154asm2556924a91.40.2024.11.07.21.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 21:29:47 -0800 (PST)
+Date: Fri, 8 Nov 2024 13:29:43 +0800
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: cve@kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: CVE-2024-49888: bpf: Fix a sdiv overflow issue
+Message-ID: <klr4llu43s4osw4o7234no33k6eujo2wvpeyhft2z5zgib6zac@hvg72k5q7w3f>
+References: <2024102117-CVE-2024-49888-027c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
-        Gautam Menghani <gautam@linux.ibm.com>
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.12-6 tag
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qlmytOBgm93fXFUNNRjmMKdjexAbhhi6
-X-Proofpoint-GUID: dKW-ba3m0cRkCPm3jfC0UtTJOKVhOxA3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 adultscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- mlxlogscore=674 priorityscore=1501 suspectscore=0 bulkscore=0
- impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411080038
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024102117-CVE-2024-49888-027c@gregkh>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+On Mon, Oct 21, 2024 at 08:01:36PM GMT, Greg Kroah-Hartman wrote:
+> Description
+> ===========
+> 
+> In the Linux kernel, the following vulnerability has been resolved:
+> 
+> bpf: Fix a sdiv overflow issue
+> 
+...
+> 
+> The Linux kernel CVE team has assigned CVE-2024-49888 to this issue.
+> 
+> Affected and fixed versions
+> ===========================
+> 
+> 	Fixed in 6.10.14 with commit 4902a6a0dc59
+> 	Fixed in 6.11.3 with commit d22e45a369af
+> 	Fixed in 6.12-rc1 with commit 7dd34d7b7dcf
 
-Hi Linus,
+The issue is introduced with the addition of signed division
+instruction, part of the BPF v4 instruction-set, in commit ec0e2da95f72
+("bpf: Support new signed div/mod instructions.").
 
-Please pull a powerpc fix for 6.12:
+I'll send a patch adding the ".vulnerable" file to the vulns.git repo
+for this CVE.
 
-The following changes since commit cf8989d20d64ad702a6210c11a0347ebf3852aa7:
-
-  powerpc/powernv: Free name on error in opal_event_init() (2024-10-16 09:26:50 +1100)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.12-6
-
-for you to fetch changes up to a373830f96db288a3eb43a8692b6bcd0bd88dfe1:
-
-  KVM: PPC: Book3S HV: Mask off LPCR_MER for a vCPU before running it to avoid spurious interrupts (2024-11-06 11:36:09 +0530)
-
-- ------------------------------------------------------------------
-powerpc fixes for 6.12 #6
-
- - Fix spurious interrupts in Book3S HV Nested KVM.
-
-Thanks to: Gautam Menghani.
-
-- ------------------------------------------------------------------
-Gautam Menghani (1):
-      KVM: PPC: Book3S HV: Mask off LPCR_MER for a vCPU before running it to avoid spurious interrupts
-
-
- arch/powerpc/kvm/book3s_hv.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEqX2DNAOgU8sBX3pRpnEsdPSHZJQFAmctnxQACgkQpnEsdPSH
-ZJQw/xAAn7YAlShylnKkc9vhAr0vEPT+4KqtH3J5ijmoJRPtkpPUQDQRhW3N6ZOx
-IDDHMDuRZ6AiPChbLoc+6Q/VQqtzydwnxj2hN9IMhJ71Zjvr7HrSjfeE760jEKrR
-1Bqpgs6b1Bdv1DrHATCfVxpLJ/NJ4TG00Q1UzvnzkdkNTF2K63apIKjEuv6N7Aap
-Jf8UwonbdnPkzl3zY6ccJxIkxIH6k11Z4ILyez8h3La9IgYnJbXwjn1mym/RAZa0
-vugUfh+ASDGq6FVn35FnDgY5ISUG1odiYnnEpSHvLdL2IFkLeHsSLdx2nbeo1eMa
-DtudjfFlU36ZKlpnKUQ7IqzFGbTI+s9yMHY5Rbfx6u1af0rUuYwHtyy26xwSgLj+
-gsxJpyVdNDvP8X+BHLqVcjJAgPjlmc8orE9ytFYC0dghahfpoFeHIhKeqAPV0X15
-uMS9Zvyv+ZGmrfafO74kA3CVaAvxUVT66hMnIQ2Sp38ixLfnlaO6HQ4kXKvDdcuH
-1M3pAnj4gOUhdIhwgAkHQErrMBV2Cot4exvJvuOlnEGCgLHDsb5sMIRB++56iuh8
-P1DnQSpPpADL0Mje4+H947S2rrDml1zZIvN/gkUjk1tOrBg1x1x/tgLI4c3bOSz8
-6RdJrw3Q3WbRYc2hUAlkxoegZS5Vz0SJi59cmTNf6BZLgSLQY5U=
-=fRGx
------END PGP SIGNATURE-----
+Best,
+Shung-Hsi Yu
 
