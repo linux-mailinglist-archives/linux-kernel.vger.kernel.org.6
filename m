@@ -1,130 +1,104 @@
-Return-Path: <linux-kernel+bounces-402286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1DB9C25DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:50:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B319C25E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:53:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43DA21C2248D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C583282486
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA1B1BD9E2;
-	Fri,  8 Nov 2024 19:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A431C1F00;
+	Fri,  8 Nov 2024 19:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKF9gxnW"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="O0fPdLDr"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2E71AA1F8;
-	Fri,  8 Nov 2024 19:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8EA366;
+	Fri,  8 Nov 2024 19:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731095416; cv=none; b=TO3zsfh6g9EelO88uh8Qhz3nUnKrWzj6FxhT5wXLeKszlE8+qM+0STWY2CCk6tlAeBM/ol04yN5/7MCMOF84CU7M3b9Bz59390qreZvZKj1Ou1PQWsm2vbESce1qjq2iV6Xu0m/WlXNtvlvKyGs+gXuDFl3kCU7MziIeAGeMi/c=
+	t=1731095630; cv=none; b=X3cvV/yn15hEsxX9qZ5CyJPhpJtchr0M6YpMDb6cTDwcJXzdQzfxG30j+xyNv8t/LcWT0tHoMAUyrEYdaWqqL9UuXUZvXysUcskg+VatJ/yxQevGt9YmGMhlCT4/5UyGQ4zjZ6uLTsEGVxnjWCQ9VVy/Xhiq3pcFplXZtAjChVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731095416; c=relaxed/simple;
-	bh=1kzMPNeE77BH7RWW2IHZPnZ3N0ckYJHNItG8iAj147g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VOqzs1n73u9/y75bSNnXCB9v6IXBdnrZPK9Rpfzk+LL3hNJ55tH2ZVFAf4d2jfE5EtpiSZixQ4wWkxV5jwkqtbomXHCYswD8eUAEpFzZq/zC+Nb/G5wkE7qfjBJ0YVujyl3HMtz0tCMW9SBa9UVZ5U2HIelZkGWT4/Ccxwd9arI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKF9gxnW; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e2915f00c12so2644814276.0;
-        Fri, 08 Nov 2024 11:50:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731095414; x=1731700214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ePJ2Xji5F67wn/w1Ov+7ulu134bYlwHiGteXObNWNbo=;
-        b=HKF9gxnWKpNxSyHeDX2oZBvNmUkXjaI6PxoqUV4kLmt1AY6HW1nuY4ASNqpHDhLF5C
-         PBUn2BpKXMyfPBLfDFTRzycGGkeNfkQjIhX7J93vUXmt9k50iFVEBYGWsKqWCbZ8Rq3u
-         mz9c543c7GUJWpr5BnzSDaUr8hO77xBWNjTkZMTLL/+C5YhvMxlGTmrruKNPq3EVT1Ue
-         dp3ACUL5QBaBL/cV3poB2OsRjFiEoXwOdhglYbyYoWr+n/cMTcFgA22HRLCEdF1lzi4R
-         vc1fv4DSGNga9/dQ5/CJr4JMUstt7zshEP5V4Vs9kHJ8TxTzVOM7WMHgDBU8vwIcm8ZA
-         kMAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731095414; x=1731700214;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ePJ2Xji5F67wn/w1Ov+7ulu134bYlwHiGteXObNWNbo=;
-        b=wbozRtZ2BCzHuRcg12GjdAHTbjzsev1e2sc2kKdzQMJ+PJyMSkTJY5g14qiru8NUTO
-         LJ+LBwBnsfSdr+Qk9PNt+4NlA34xE0PG2nsiNG93jYrOlDpBtGXehYZk7nCMEPbx5+Ra
-         kNQ4s8SS4CD23o/aOTklpAii6AO7o2zfR+bpFlA4IPVyg1oheBcgVWJWz/A/TkuHu4P3
-         6G6+yIkI8Ok5HBSi4QsopktMqT4c5GtAa6NUx7DCnNfH12AIFcBLAshShxpe8QgfLYHa
-         qcGEyzFUiEcQcqWtsq8ktb4y+08MZvHfDj125mJp+l3maYDzLFIX4o1I4f9z0GkOMXqG
-         EPCw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7h7w5oXGgKjKoKy6wSMKxi/iy6RDw3oiYarfwc2AjVTbBhOYJY4AO7GPcsj424uIcBIeaXdo7pRxcwpo=@vger.kernel.org, AJvYcCVSEMVhI94mnzmb8R27I9z0gdYb/bHnLwVnjTx+HBRus1HKI44r0YFyvQExk63ZxyDOqzsEFJFOXXOhnKi86/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaphjNUbvbwH+yoCjg4joURJ0oyq0E5aleWz7IwcHUhscfDmOs
-	cqlD3pgeiI5p3c/59PnAOZXbyn2XpE3RvH7xqC0vpAWi+iMiriwbLfoS3pEG
-X-Google-Smtp-Source: AGHT+IG5XIlFjABLXthiU/qHtrNVJWPOoFW3sTErkM+iA5TCvLfaew/GIAYaU1ptcfMu5QFABul+Cw==
-X-Received: by 2002:a0d:d203:0:b0:6ea:e967:81da with SMTP id 00721157ae682-6eae9678286mr17518117b3.11.1731095413786;
-        Fri, 08 Nov 2024 11:50:13 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8d84dbsm8571987b3.3.2024.11.08.11.50.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 11:50:13 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: johannes@sipsolutions.net
-Cc: linville@tuxdriver.com,
-	rklein@nvidia.com,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH V3] net: rfkill: gpio: Add check for clk_enable()
-Date: Fri,  8 Nov 2024 14:53:41 -0500
-Message-Id: <20241108195341.1853080-1-zmw12306@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731095630; c=relaxed/simple;
+	bh=/oidlqrNQ3l/EFyWYvYeFCVPhQshkZt+TNAXopXR2wY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OOio4FISvcR5t22CunNfVF9PMybSJd6wqNvdvgEkO+Si9/65m8r+Q5HhRxtDQ33Rl36sA0MBgjZsJAou9fKJ79BwPPD4shrpKX02XonNMest6X1jBPFN0x4CidSSNBzfM/G2pGQ/KHodrWOr1i5ghHBYPnToZABCFvuasxF3e6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=O0fPdLDr; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5F50542C17
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1731095628; bh=9XYDoCikxKxiTtZaLvgudI4lTOoyfuMFGD8Ozfp2uzY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=O0fPdLDr7Sr5d3Vt751Gl4Z+gyOPfl/3/onxyN5hF6oyzE8pwyb5JwDeyFQY4a4FG
+	 0g+bAicQEr09BOgZp+sAtHBViOytAiLdoEtUvQwuwNoZJjQIwIDPF+1zNHsaFrwAz5
+	 KB4bnLFCNiQJDYAcvu6yZUPEjBsXDIyXzYrxEYEpEgcw1XZIXWG0aCv12o+aDf8Lhr
+	 7kWZrzYtNJhsTaHm9BL+gw6zDccCbk4PwhootnZ6rME/bEy0R2I6iWh+bX5woHmkCZ
+	 0pf5K2Tfe9ACV4M3xnCKeUJz+Owzqy6yTT4MHGnLIrvlemw3Zx0ZBHsUb9mO9expsR
+	 lcYgh2YNCbjpQ==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 5F50542C17;
+	Fri,  8 Nov 2024 19:53:48 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: anish kumar <yesanishhere@gmail.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-sound@vger.kernel.org
+Subject: Re: [PATCH V2] ALSA: machine: update documentation
+In-Reply-To: <CABCoZhCpMVwA5qzUL4NcSkhuW3+FnD9pH5Grhic3AWrrqX3g2w@mail.gmail.com>
+References: <20241108192413.10751-1-yesanishhere@gmail.com>
+ <87y11twmlx.fsf@trenco.lwn.net>
+ <CABCoZhCpMVwA5qzUL4NcSkhuW3+FnD9pH5Grhic3AWrrqX3g2w@mail.gmail.com>
+Date: Fri, 08 Nov 2024 12:53:47 -0700
+Message-ID: <87ldxtwlh0.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add check for the return value of clk_enable() to catch the potential
-error.
+[I suspect that your HTML email will keep your response off the list -
+don't do that.]
 
-Fixes: 7176ba23f8b5 ("net: rfkill: add generic gpio rfkill driver")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
+anish kumar <yesanishhere@gmail.com> writes:
 
-v2 -> v3
+> On Fri, Nov 8, 2024 at 11:29 AM Jonathan Corbet <corbet@lwn.net> wrote:
+>
+>  anish kumar <yesanishhere@gmail.com> writes:
+>  > +In the above struct, dai=E2=80=99s are registered using names but you=
+ can pass
+>  > +either dai name or device tree node but not both. Also, names used he=
+re
+>  > +for cpu/codec/platform dais should be globally unique.
+>  > +
+>  > +Additionaly below example macro can be used to register cpu, codec and
+>  > +platform dai::
+>  > +
+>  > +SND_SOC_DAILINK_DEFS(wm2200_cpu_dsp,
+>  > +     DAILINK_COMP_ARRAY(COMP_CPU("samsung-i2s.0")),
+>  > +     DAILINK_COMP_ARRAY(COMP_CODEC("spi0.0", "wm0010-sdi1")),
+>  > +     DAILINK_COMP_ARRAY(COMP_PLATFORM("samsung-i2s.0")));
+>  > +
+>
+>  This will not give you the literal block you were hoping for.  Please
+>  actually build the docs after making changes and look at the results.
+>
+> I was not hoping for literally code block but rather just a tab. I just p=
+asted Bagas comment as I
+> thought it is better way to say that about the change.=20
 
-1. Move int ret declaration into if.
-2. Replace if (!ret) with if (ret).
+The "::" you added above introduces a literal block.  Yes, that is what
+you were hoping for.
 
-v1 -> v2
-
-1. Replace expection with error in commit msg.
----
- net/rfkill/rfkill-gpio.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
-index c268c2b011f4..a8e21060112f 100644
---- a/net/rfkill/rfkill-gpio.c
-+++ b/net/rfkill/rfkill-gpio.c
-@@ -32,8 +32,12 @@ static int rfkill_gpio_set_power(void *data, bool blocked)
- {
- 	struct rfkill_gpio_data *rfkill = data;
- 
--	if (!blocked && !IS_ERR(rfkill->clk) && !rfkill->clk_enabled)
--		clk_enable(rfkill->clk);
-+	if (!blocked && !IS_ERR(rfkill->clk) && !rfkill->clk_enabled) {
-+		int ret = clk_enable(rfkill->clk);
-+
-+		if (ret)
-+			return ret;
-+	}
- 
- 	gpiod_set_value_cansleep(rfkill->shutdown_gpio, !blocked);
- 	gpiod_set_value_cansleep(rfkill->reset_gpio, !blocked);
--- 
-2.34.1
-
+jon
 
