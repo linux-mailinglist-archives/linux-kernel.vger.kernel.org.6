@@ -1,123 +1,99 @@
-Return-Path: <linux-kernel+bounces-402285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61509C25DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:50:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB39D9C25DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12140282D90
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:50:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80BCB1F22072
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F10E1C1F21;
-	Fri,  8 Nov 2024 19:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C121AA1F8;
+	Fri,  8 Nov 2024 19:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="EHT8H23V"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HT7Kd7+x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CCA233D72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E932A1AA1D3
 	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731095402; cv=none; b=gPlj7URV3gFndn9hknTpNyXvVwGwkW+O5rh5Re0wWfBs59Jg3VWMIFdeTBah/gT6DMB+FxdutZ4b2PC+R45B0or+uvimexora2OSTG9A2YIKur0IReNj0GIWBJxLLOp2Dwa+1NboU5F7o0/QKbMOupc67j/3pEd+QMWOYPO4BXg=
+	t=1731095401; cv=none; b=YHKNIFbCWFs+tpl4xPms7IH7kjmOK1fSuK+VhfsN8G1e6g9xwPF+KlWEGb/L3LEc+95vOXVaWdTPVFoj49DVzaCixLygeP0vRprOTHfuOIXdA1WYwoPT45hS+oAmapyvR8sHMPFbMN2SJhLvfY7ZWGxx11lmZl4Ga5Eb/gKr+CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731095402; c=relaxed/simple;
-	bh=r1OWKhI+875hOXCySuxwA5TLJR9P4JO4X+mzkpOcjDg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=medoxGPo0mN1scN0vXo+IKIF2TLYjO8G4AKbeOI0NFAJlnpH/MnKunq3bKe7bosW2YCn7OXMN31t6V1xyRWKV3FtiVhhFDonwCm1LL4uo8pbNnEFoXgg1kLlvl1yOHvlbgVf8OWtleNM4anDpmdaTe5Q2jlNLDax5sA93rzu4Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=EHT8H23V; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-720e94d36c8so3320474b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 11:50:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731095400; x=1731700200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JzN6QznSC5tjEMn3nyfoxiO1pM3DGtlvzOusZhTDEN4=;
-        b=EHT8H23VME0lfFgxPhD5EwIjvCAZpiSQx3vlfCpGwb9qEH2jn176fCV5SCdZKrkXGN
-         Jrdd4lECiB9MO6uSOUAGMPNP9dNS5OZug/hswmTXTxvFJti1dE9Ayr9xloESNleaY/4M
-         yNo6Lp5tT6Ijh09iKTZMy5Jo848/D7bHqIDisONMLpSwS42zYxgUIYKiqtwZh6+qZ2C1
-         hmq6+ekpdpLC91tobJUHyFSwvLEd3UVfN97BHuul1627dDRImnPk0njzeUDgAOawQMZH
-         48AQ4B3Ko4nozg1pLNRX8TYHOCl2L1PBuCkpUHIjVmnXvmU82IP2bde3Vq09kBd/N0Zi
-         WSUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731095400; x=1731700200;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JzN6QznSC5tjEMn3nyfoxiO1pM3DGtlvzOusZhTDEN4=;
-        b=nGWMVmta77J7jI5oEbFOSnrA2Xje+MHoruth4DLcFH6vGHQxFATcI2gGv4fzJEI1BA
-         v6ijpgniSaojjZD1p19+RADtuKgF4j5aY+UEgN+Mft8Th+TJ2EFYIdx5A//Wg3sB8vK6
-         rGnJlFxrQBY96U1uaUwjJiWfPV+rrOszSt/sNImUgVwMqOZ6zpizVrEOTKCCuUsHiBWk
-         kwQgIKMhRekgOBodYoR3bDQ58mEypy+a29CPX5h+xWFOufcgnp/rFLSEZsGHa6HHdznl
-         /VuqHxyk6cYrMQCZR1KireG0N2rJifqVaaGV3qguNU8m83a3Z8rDbHhm6zBY9Qzcy9ez
-         yb1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWkeu+gtw3dEddfwAyISfIIz/DejaRkMLe+1ZtyoFkLPmhKqdCWzXSQ8bDgF7fZiS5xw4he/Z5cfRXsIcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWP3EgnHSV7QlgyTgjGHRr4AvP22W4QyJytJegPaiA9aNwplvG
-	4gQGdlyPipZYocZIvIJRJJ3T9TpsQfIS6TVmx3yBM226ts/VgXUHI6EKSS3aVdnyDpX3WRsNbKb
-	+6MQ=
-X-Google-Smtp-Source: AGHT+IFv4bj6W+XkBI824Sbw/3QyvrD3xc41IYnjTjX09nvgLIZA50qCFpVFQcp91Viwtq+ys917Sg==
-X-Received: by 2002:a05:6a20:3944:b0:1d9:19bc:9085 with SMTP id adf61e73a8af0-1dc234afb33mr6480715637.14.1731095399786;
-        Fri, 08 Nov 2024 11:49:59 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a1af26sm4156958b3a.162.2024.11.08.11.49.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 11:49:59 -0800 (PST)
-Message-ID: <30f5066a-0d3a-425f-a336-16a2af330473@kernel.dk>
-Date: Fri, 8 Nov 2024 12:49:58 -0700
+	s=arc-20240116; t=1731095401; c=relaxed/simple;
+	bh=8tSaY0r7/LT+zRXrTDKjHR+lJR7bgaR8lmPhV06Or8U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AZRZWSJNvvKLPUPGQvl8Es8xS1Ox00KWRU0VeFeiPlatHpmQmx55hZDyaUSypZL2fzhJ2Vz76azeTQWVoptI+1jMt93h7rgNUpng21PQPSf1QtfU/VB2+UUCcAX7FRtv9JF3GRiczXrDupW1btykfe1lAeAvz8pMKNmsCVQtdDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HT7Kd7+x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F6C4C4CECD;
+	Fri,  8 Nov 2024 19:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731095400;
+	bh=8tSaY0r7/LT+zRXrTDKjHR+lJR7bgaR8lmPhV06Or8U=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=HT7Kd7+xAWoLkTAqPhn/1nzG3jdWWLx9k9bYAmhDgy+bi4tPlH6ScvfrIyiWGnsBq
+	 d/gbCs5wuOdBQarRyvNLlGzXefnGCdlyMxqV+c81oDaJdnLlt1hXUOR9GModmg1XhS
+	 5NUMRGzyurcRyFfreMdSChAj6fNPJOeheUaMI6b5iVWWtkJijvsR4GnzsxZBG5FVLa
+	 TtQu5hdWIWRFXgBBEMnlY9fmSicHFp6p1NxWzDury/hDX7e8O6xIX76jGiF21rd2Vt
+	 BI3iHGGrT+aTlZbbgomNFdjGrgtmm/bewnXXp3/7ZIOt365pGIRXPLvofTkou1PGaL
+	 P/BLhd0p9T2vA==
+From: Mark Brown <broonie@kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Andy Shevchenko <andy.shevchenko@gmail.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <20241108-assign-bits-v1-1-382790562d99@ideasonboard.com>
+References: <20241108-assign-bits-v1-1-382790562d99@ideasonboard.com>
+Subject: Re: [PATCH] regmap: provide regmap_assign_bits()
+Message-Id: <173109539905.106281.951145382367462586.b4-ty@kernel.org>
+Date: Fri, 08 Nov 2024 19:49:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/13] iomap: make buffered writes work with RWF_UNCACHED
-From: Jens Axboe <axboe@kernel.dk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-12-axboe@kernel.dk>
- <Zy5cmQyCE8AgjPbQ@casper.infradead.org>
- <45ac1a3c-7198-4f5b-b6e3-c980c425f944@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <45ac1a3c-7198-4f5b-b6e3-c980c425f944@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On 11/8/24 12:26 PM, Jens Axboe wrote:
-> On 11/8/24 11:46 AM, Matthew Wilcox wrote:
->> On Fri, Nov 08, 2024 at 10:43:34AM -0700, Jens Axboe wrote:
->>> +++ b/fs/iomap/buffered-io.c
->>> @@ -959,6 +959,8 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
->>>  		}
->>>  		if (iter->iomap.flags & IOMAP_F_STALE)
->>>  			break;
->>> +		if (iter->flags & IOMAP_UNCACHED)
->>> +			folio_set_uncached(folio);
->>
->> This seems like it'd convert an existing page cache folio into being
->> uncached?  Is this just leftover from a previous version or is that a
->> design decision you made?
+On Fri, 08 Nov 2024 16:07:37 +0200, Tomi Valkeinen wrote:
+> Add another bits helper to regmap API: this one sets given bits if value
+> is true and clears them if it's false.
 > 
-> I'll see if we can improve that. Currently both the read and write side
-> do drop whatever it touches. We could feasibly just have it drop
-> newly instantiated pages - iow, uncached just won't create new persistent
-> folios, but it'll happily use the ones that are there already.
+> 
 
-Well that was nonsense on the read side, it deliberately only prunes
-entries that has uncached set. For the write side, this is a bit
-trickier. We'd essentially need to know if the folio populated by
-write_begin was found in the page cache, or create from new. Any way we
-can do that? One way is to change ->write_begin() so it takes a kiocb
-rather than a file, but that's an amount of churn I'd rather avoid!
-Maybe there's a way I'm just not seeing?
+Applied to
 
--- 
-Jens Axboe
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+
+Thanks!
+
+[1/1] regmap: provide regmap_assign_bits()
+      commit: d1f4390dd28ba110f232615dc4610ac1bb2f39f2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
