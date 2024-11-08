@@ -1,282 +1,365 @@
-Return-Path: <linux-kernel+bounces-400837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95379C1318
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:22:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19159C1328
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8AC61C210FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:22:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E2A1F23175
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BE61E87B;
-	Fri,  8 Nov 2024 00:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB26513BAE3;
+	Fri,  8 Nov 2024 00:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WP9naC14"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CE9XZVos"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139B617996
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731025311; cv=fail; b=MMTWRgmB7Yu66L7LV8mfxmaCZCF9XX2lT2Sypc/A+0ZlmZlVV1/a6shEpV6RF+45LxSeOLalnR4EVgEGTw9V/BmkH3gsoXLJA/digh4Q6XdJxkhqK8r8x3QaT3bfZX4zx5fQns/dgupoVsFIgPghZ/AKrI0nLddTtLAqkQSYRRw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731025311; c=relaxed/simple;
-	bh=/yG/pRofsMWmw68bedxWgc1+z3djkp4BOMcLpWc7bw4=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=irSAEXv4qEtqPiYCs/mkpBOnTQjc7SFlGisJ2g9rKy/902LTNu6yI5o3A0sHg7rZWk1hvn+/7//ZXEmbYuC3JAkqrwucWhQMiQsAhwXmgLoQdq10DjifAEsR6Ll8WMuXZY8HZ452cdccX2GX//3mj3E2+nr9lLm8350SnHEDLiw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WP9naC14; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731025310; x=1762561310;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=/yG/pRofsMWmw68bedxWgc1+z3djkp4BOMcLpWc7bw4=;
-  b=WP9naC14NILQ1EA46BfirhP5LG0rRZRrwLM+37k1Wbgopit6fdBdR/q9
-   AAHxZqpcjpjBUVoLfF22hNFHvU/p0tFcm0ZfInfWBev/PwtXAPion07Ds
-   GVQdJZHG+6fPjCjOfUKsHuRLQSzu6nw4GxHvSoRXRwGDapleqiOFTeHFC
-   NFNLz7x1UXGjfk5KsW7wg42JdPMMgE/yg/eKjc2ptpXPORUg3DnyRa3BG
-   pbGyIZf5eHdQal93MJZWYIJ7Kxux644jnNU8NEzvNu4fsNEusLlmIYJXU
-   /jAPfIXLwB7kkbqfwO5JSuX2Znttdx/BUS7BQwLI4syCwJbMxmm8p/mXQ
-   w==;
-X-CSE-ConnectionGUID: UH1b7ug0ThWV4n0+GmYITA==
-X-CSE-MsgGUID: 07TkbSerS8OjT/msyqAZTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="30781209"
-X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
-   d="scan'208";a="30781209"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 16:21:49 -0800
-X-CSE-ConnectionGUID: KWV7T3GuRI2sz1sSRgDoVA==
-X-CSE-MsgGUID: eiJnTSyYSruALPqndJ1i+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
-   d="scan'208";a="85626443"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Nov 2024 16:21:49 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 7 Nov 2024 16:21:48 -0800
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 7 Nov 2024 16:21:48 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 7 Nov 2024 16:21:48 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LmDMKRD5rI4p/9kYVXQ4P6BB5IH5f+EZ8FRrFqq/uzXzRTlNJFsuQPs/1gkE1BMO819DH8AzKQAzaHi1PPhs0Wf4ZMK4mov1RY1meAWIE5bi2yYeLVjLOWVy2xFPbQTjzK1k/PKjZcWErka68Rf9ENhT7SMG9BUFlrA9rC8B2yJoG+EKKWumy259LYX7z1vrM5ZImFk0aE4hQqWuqWDuiTsOBlRk9p9pq5oTlXt8P9xqIdMkT3yysxjgcz0iAhDJH729KX6UcsllPnBwXSyZeeaYz4scFoWypS1Z89pKyqt7ewtSyFS9pBWyJvEzzVjl6UVwtm+lSjZJa0fa2o8dug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nDDQc6m/ZaOukgXo3XnlOnL37uac9+jGRAy2O9BRWZ0=;
- b=XtNhnSCp2EhS+kSLp73c9PVfU4sl8obvvgCKPEEwnGO5Q1v8AW3WeODf3qB2dmu8YgZqx0Lhmkfn0Roq2cCpGrXUJ1PFvIFzgPA/vaXGTD9bPGvlTcg7yViSPCOcXm6K9e4w+9XAtbwe24wKR/+n+KAk94r0a4Cb82gGHlUlsh+/O26Yz1WK/mnbtfmLpE4eqYHU0HF4M5C/ebicznpBmMV6u1Z+txZS36Hkiz+Lq4MnimY86qMe7TRKuVSckcxFQPX92H3jyshXnG9/cZ6gAffMH76NsWW+dBtysEtxQdWGdYUHAp9m8wlAOz0QRbW3zxSnXZIR2rPVkICPFOEoXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SN7PR11MB7114.namprd11.prod.outlook.com (2603:10b6:806:299::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Fri, 8 Nov
- 2024 00:21:44 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8114.028; Fri, 8 Nov 2024
- 00:21:44 +0000
-Message-ID: <28080949-d8c2-4cbf-b971-705deb71ac4c@intel.com>
-Date: Thu, 7 Nov 2024 16:21:42 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] x86/resctrl: Don't workqueue local event counter
- reads
-To: "Luck, Tony" <tony.luck@intel.com>, Peter Newman <peternewman@google.com>
-CC: "Yu, Fenghua" <fenghua.yu@intel.com>, "babu.moger@amd.com"
-	<babu.moger@amd.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "Eranian,
- Stephane" <eranian@google.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"james.morse@arm.com" <james.morse@arm.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"nert.pinx@gmail.com" <nert.pinx@gmail.com>, "tan.shaopeng@fujitsu.com"
-	<tan.shaopeng@fujitsu.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"x86@kernel.org" <x86@kernel.org>
-References: <20241106154306.2721688-1-peternewman@google.com>
- <20241106154306.2721688-2-peternewman@google.com>
- <f6b7dd9c-5ace-4816-842f-ac1265c0f9ee@intel.com>
- <CALPaoCioRrjwZPYDdkAApHAecqZVA_Z4rLctjmcpEaV04eq9Ag@mail.gmail.com>
- <CALPaoCgwCwUJHF7fCQrf98kFVdCjPyUTUiCOfYOi3XHJzvqiMw@mail.gmail.com>
- <ZyzxbhHQptbktfGH@agluck-desk3>
- <034d8377-6276-417a-983b-1af4617d60ca@intel.com>
- <IA1PR11MB6076F9F222A98125974C5CBCFC5C2@IA1PR11MB6076.namprd11.prod.outlook.com>
- <c4ced27a-b3e9-4727-9c39-7d1fd0cb0dd2@intel.com>
- <SJ1PR11MB6083BA9392D4B176FA2DA170FC5C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <a593dd7b-f502-449f-a866-5e6494de506f@intel.com>
- <SJ1PR11MB6083D9983DFD226A1FE826ABFC5C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <SJ1PR11MB6083D9983DFD226A1FE826ABFC5C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0281.namprd04.prod.outlook.com
- (2603:10b6:303:89::16) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8D61917C2
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731025331; cv=none; b=mAQana2Q5AvoPaG7jleYwzIXLELAdPUF75YvpgVJlzHiaMEwVwhzRyWTKuGeaEnDx94k36klPfwZzD7uQl8w2oea44ulBln1WH0bnHFUFvPEYgdU8CuQWzdB9Hnf0NEh+7PD6/DPLLMSD8xp2JOvxWgxBJDLn5iwxBw5DO7Q9p4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731025331; c=relaxed/simple;
+	bh=CJNeGuR1/hi3WdAk96FubFXJd9V4K8sajDyAH3cIEjU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Kg9NkNVL6PCPCOCFFj44AeAdHsJS1mZD27xY7n85hYAD27jeCqN03Q0kM5Tc2WIxJTUjxXgs0thiZQ1G6YxwmAI9VoLO7kYyBxWdMsYEBtTFQcKEy8m+/8GWeLuKq3Q8O5t1PR9GClFXDVjFFokNWLsRH3QM+t0SlEkPIpmc7dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CE9XZVos; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e8607c2aso1586049e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 16:22:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731025328; x=1731630128; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z5kQ4AmnSGpR1tsagb+JUR8SjjRR8sZ+27U7rHc8thc=;
+        b=CE9XZVosmWwACZpR29jw761vnc6rxt5x4Th1LShiAsB3qe9+6y5OrHIcDzuRZJeVXP
+         SxbbhFt1tjAXRlk/wMTCyoxYCdcjMQ62vN8sOhI2TJ4/txxxwOJIuCfy9DCuc+MS96Bg
+         bSUQRuhyMCZBt/5UGvJGiRKEBJRQLvirjY7Q4tAYJtErZz725kYCVVLTDlEGy9oGjWKc
+         lWp/9E4aOakGFmaoDw6ASbJ5mnkkGe3hoWuLtma00hZReRqev9edGGEcoQvxeT0mCyY3
+         tz7rTyTgn/NUfgv7XtPVWVD3lIN4OTqSp2LRVYq81ZhEgZX5P+n7uzzFZCrdWzmojwCJ
+         h+1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731025328; x=1731630128;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z5kQ4AmnSGpR1tsagb+JUR8SjjRR8sZ+27U7rHc8thc=;
+        b=WFAggTxv7fjD9OCAHaYvU+x0+/G74RrNthDWzADwmHhE77uLWdXxbZarxinlvOketa
+         qATYnQE7ftZNsS0103c9Tf0PXHiQbi8Ue21wWMjaX502x2EKTHlI3P6bxoI0KOZ/Wf+Q
+         xHCwk8hxzspCpTkmQIUSk0VvWAOSzzZrWuIZYe66g6NJoH2fHJ7bAE54jMQll6eS7CCv
+         VL6NG3Yh89n5xWlH/P0qg4N20TTz716wIHhFmh4BQ3ZYb5ZkHTt8V2RQroF3QQNOs1sn
+         Bh4gn9OHeBUBkuAaUiUxePuYMLM86ZDzujjvxEUMZ8dZ5lyGAxVqolQO4XBcxDWB15Nc
+         ef7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVd2wPx9oFYLBI2oLANj/6+vfPru+G3ng8PDOlLQBiArNemHSrSxp9CTskjOsJZQezX6AT+Gfj91CWuKyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3EpGoyRB6BxTxDye8BEDXjznLnmi4XVnH01AOvaBB9f2Fw/x2
+	CXtZJNmXWHO8ZRwUj9xhM+doTm1wU8HcGgLuR7u9X6rYUkjBOi6XQxSAsuJPMlo=
+X-Google-Smtp-Source: AGHT+IFtPSNKeO7vF9wCM86fTjU3dsWl3RKTsfudcRZdzKmu76nAD+5RkIhDSRgF9xUxHt70BZ39RA==
+X-Received: by 2002:a05:651c:150c:b0:2fb:5d8a:4cd3 with SMTP id 38308e7fff4ca-2ff2006084fmr4840981fa.0.1731025327552;
+        Thu, 07 Nov 2024 16:22:07 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff17900a63sm4195191fa.47.2024.11.07.16.22.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 16:22:06 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 08 Nov 2024 02:21:42 +0200
+Subject: [PATCH 11/14] drm/msm/dp: move/inline audio related functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SN7PR11MB7114:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87ac9172-41c0-4dfe-0d22-08dcff8b5373
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VHk3M3lycUhvVkwxRTI4K2ZBeWFSM085MDVwK1Z1b2VRUVNra1ZZMHRJcVdU?=
- =?utf-8?B?a1hVdVAxdm82MkxGaGdqR2pPRkptdUtrdkMzcjE0eGY0N0hQb00wUDNXczFW?=
- =?utf-8?B?REZ6Qm9QSFc2ZVEwb0o5UkRlZHRGNkNDblBvd0RSMGJJVHlxc1hEWTNKajdy?=
- =?utf-8?B?VGE2ZndRRmVWdDF4YVJHckl5ck1OdFUzbjRlYUxsMEkvL2pJV3FLOFVoeTFP?=
- =?utf-8?B?dXFnc3N5TFpmdkd0WkFzcnZGdGFhUEgyRHVUMmlGa1FPNUcwVml2R1ZKaXRD?=
- =?utf-8?B?Y01aYnl0Si84WnJzNVZkQkdvOUtITUViSStTNGxlUzFjL3FzNG1jMGtYYVlQ?=
- =?utf-8?B?cEkxZHRWTlNxaGs5QXc2Ly91NVJFWjhKaGNodWtQSnkyaGtVUTVxV2lhck4x?=
- =?utf-8?B?dkcwY2tFTG0zV2JPeGVycVBUUWpkUGw3QTc5TEdZYWNTb0UxZUs4Q1dOd1ZQ?=
- =?utf-8?B?Smh0QVNQbmp6U3VPMHpqYWVZeVpheEh2d1Y5NXI2c3crRFg5VUdWeFAyeUlU?=
- =?utf-8?B?UTNIYVFIcC9NUlM4MUtUUnpjaThjS2R3VGtxeGlwY2NtMTZQL3cwb1RwS05C?=
- =?utf-8?B?TS9laDk4dWlIMEt2QUQ0YjloTkpBQzZtVHVqbUdSNVg5M3Q4Z3VCYnJCaldW?=
- =?utf-8?B?aXdpRFIvbXNvdUxXY3JISjNrL3RKcnJaYlVvNUM5b3E2UUdMRWRCNEhMemo0?=
- =?utf-8?B?WFVPTTNxY05paFFxeG5kcGo1RXpVVDV3NVQ2ejlqVllBdkJjN0RlaEl5MnpX?=
- =?utf-8?B?cFl3bjdXeDI2M0NISVcyLzI4ZXE3VnpkaWVpZkM4V2RVZEtzUTBqK24wb2hL?=
- =?utf-8?B?MlQ2M1ZjNjI0MEJXZGNha1h6cHJZN0pKak5RM2crdlhpMlZDQ3hFOEJTaEd5?=
- =?utf-8?B?RjNLRExPNjlSZ0tVeHlkMTFnSkhvRk9KV2JPTkVhbEw2NFZ2bVpTc3BwRG9j?=
- =?utf-8?B?bitlQVlUNk9MUno4WU9lS1MwNmdTYkF2dmZuTTk0VEFaRDR0cFFuemJTSUdT?=
- =?utf-8?B?NkdJYUNuUEZKWGNmNENWUnBaVmJGZmFTK3l1NHV5bFA5a1FrSlZrRFZiSG5q?=
- =?utf-8?B?KzlZMUx5WU1jRzRqWXIzcngyMEZjcy9SVnUvdmJ0Q2xzWDhDZUQvTzJWaHdI?=
- =?utf-8?B?cnJzWkFsaUtEaVFqUWozTVBqeWJjMVp4ekdXQkJudEF5SEF4VThDeHN0cGNK?=
- =?utf-8?B?REdndkVLYlJidzJLTU5mZDRyU21HQlpCZTVFNG8vSUIwdDZ0TnVzRVNVdWl5?=
- =?utf-8?B?TStlbS9GT3Q2R0hRbVhSekIwMFJ2YzRGb3lmcDlaajdmVmJXZUZJZ3kxbTZx?=
- =?utf-8?B?SGN5MjlnNFh3QzYyRXlJbUxtaGJJU0ZqZ2FyR2tCQVpHM1FCOS9JVDJGSjNV?=
- =?utf-8?B?M3A1RDQ3QkpKdWl0QjZpVWFGeUhDQnQ3TkorMTZNcU1QdURKaDJyaVB1bEhF?=
- =?utf-8?B?YXQ3cG9mOTVlV21qL2xzRWtRVjVJSzZ3ZDN3b0NoVHUrR0lzL2hlWGNkL2Fy?=
- =?utf-8?B?SFE3UUFRSCt0SHdBcktXVXZ3QUhYd0hVMVBWWG9NN0lxVXFTTU9MYTJvTjk3?=
- =?utf-8?B?dHZSSWZtSXJwb1VVcER6Ukd2VXdwamEvbEhlSlZRWFhwcHdLK3Zzcmtwd2p5?=
- =?utf-8?B?NVBOd08yQlJOaUtEMFQraFZ2NWFXMFo3VFNVVWpPSmYzVGtnRTd2bTV3UGxX?=
- =?utf-8?B?WjVJbC9nMHE5djFEY2srRWVZWFRXUVJ1OEVHNzRRcEFJUDgyb1VGS1FqV1lt?=
- =?utf-8?Q?YFSKvo5n2taPQgkM/nj3oWlVHeSqkZ6SB3Ijaq4?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V0RkWGZELzJGSVpKajUxRmVjY09FRTgvWnFQei9EQmM3Ykg5TnpkTnZCUWFl?=
- =?utf-8?B?TW1JcTdSazZnZUlVVTEybzlQY1AvQUZyVzQ4clp5SU9lVnF5MExqOG9Ed0Rj?=
- =?utf-8?B?MTFNL0pHdCtPUng3Z1NjMU1nSGptdlJxL3NKVmxGQW1pYzRYQ0dqcHVaSDJj?=
- =?utf-8?B?clJqLzUrUm5CTnZjcW5WUmRWUHN4dGxDTjZpbGVWcExiTjVDU2FXSmNKRk9a?=
- =?utf-8?B?cTFHbWJmTXYwZHhucm9JTDJidk1QdEZOQ2hKWlB0K2oyTnIwempYVDBUajNh?=
- =?utf-8?B?UGlUbzk0S1p4aUJJY1QvSG1UME5kRXVkL25yZ1gvalljL2l4bStWU1ArVkRK?=
- =?utf-8?B?MXl5bW5MWU9YRENEYWFlR1lZTWpocklXZWJnQnk1N3RBSC9SZXAvYnZyRXZp?=
- =?utf-8?B?VGF3aWUyeXAxTDhyS2dYRmYzeGdFd3poQ3V0OEpZNGg5UkR6Uzhram1ybXUr?=
- =?utf-8?B?REdrd0VCYTBGaWJzTTZwWGtpNnNJQlJ1Y200N1F3M0oralR5SjI0U1dGZWZK?=
- =?utf-8?B?WXBocmxSYU10TFBUdVRnSHA3V05XT0JjcTJjODh6eGs2eTR2NlhzeTBJOGNa?=
- =?utf-8?B?Y2xUU2VxaWtYM0ljOFRFc0lVQ0VrUVdVQ2NFaXg0cHV3YW82MmhBTHJneGM3?=
- =?utf-8?B?cHVWcFFQQ3RJbTc3YmE3azhxaG9ianlWUXZjMlgvT0Q0NGFMWHRlRzlFNWxr?=
- =?utf-8?B?QWlobi9NZTVQV2pOUHRXQTVSK1dOZ0lhcVRoQ0JtajVubHY0UmZXUFRNeUsv?=
- =?utf-8?B?ck9wYTBDQVZCQ05HMW41S0pyN00vMW1QVGFpdFIwZTRrRnNQZml6L0ZRZjVH?=
- =?utf-8?B?ZWIwUzZmWUsxU2lmcEt0UXdwU1VCSDZ3VUJpVFB6RVZOb0kwT0FubkpEWFJi?=
- =?utf-8?B?eUM5OHZScDRwSTZ6bjMydHU5QU5ZU3R3VHRLNDdhWG1td1pPUXYrMGdVQTVM?=
- =?utf-8?B?NDRqYUdXQVZIYUMrbGhvS1J3cDdhWjJRZWVNSUNnazFMQzU0WmgrbFYzaHRL?=
- =?utf-8?B?YjZmV1owYWR0dFhNdXZPSGdybnpWbFdEWWJZWUNkd0hqNUd1c3pGaHk1UHpT?=
- =?utf-8?B?aThJMUJObUV4bkFzZ1pBWGRha09VS1lMOHh4ODZzSjNCNkN1WVlGc0tCbDVV?=
- =?utf-8?B?U1YxVXJJVHl3cmNJMmJUTnZlNUVGQ0tUY0pBKy9OQzF3RCtlYjNYNXdkRmwv?=
- =?utf-8?B?azVxK3MvVGZqWHBhUndjUGZQdWROeHhFN0Q1RGpnQ1RmSG5VUWVwWWVMQlRz?=
- =?utf-8?B?eHBsam82TTkyN3NsT0RuVzMwZk1makRlenVOckVwWDUrVlZ6Z2VDV280VkVQ?=
- =?utf-8?B?ckp3R2c0K3FNOUlSeVBNbkV5UllFaGZCOWtEdmRoZkRuY29ISlBLTVovZTAy?=
- =?utf-8?B?V0ZKZS83endwRkc4YnV4elFSUGhEZXNyemNrRktYTWhCUlBEd1JNdWVSaXBK?=
- =?utf-8?B?N3YwejZSUG95Q1cyKzY5UTZxSThiRlhqNkdRS3c4bjZoSEYzUmh4Z2gvekw4?=
- =?utf-8?B?S2FVOTRlWmk5Sm4xVUtCSXc0TEdqVkdEYWVLZ0h4Y3pUWm9ORW5SelhCUitG?=
- =?utf-8?B?Z09ydnpYc2tFdlNkY2xMY1QzdVFESDVLb2xxWVhtc0N4U3FqQ0F5R21MdGlo?=
- =?utf-8?B?UmlJS1dCMnQ5MXFyQ1FXdTh5czBOQ0ZUaUs4THlZazBWdXAyOUdxZHJYZmpR?=
- =?utf-8?B?ZE5rOWMyU2c4cUdvTk1LbzVST1VmWHBiMjZxSmVlVjg0RkZ0QUw3TU5WaGNE?=
- =?utf-8?B?ZHRWZGZhS2lSbzlJRVlqbkMyajduSnU4OGIvajdYU2F1VmZidE9TOE55RnRZ?=
- =?utf-8?B?bkZNYVRvRDBnY21Wd093UnAzUUkwcVE3Nm4zbWExMnJsNksxVGJTRy9PUklP?=
- =?utf-8?B?bUpIN1pycjFxZFV5VVIwVk9PQXB3U1pzakJKNnpBVUNpSmJ2T0FuK0ZTejZM?=
- =?utf-8?B?YnNxdmNnSmgvT1VUa1NycFQ3dUExc1BzejFBOWlMVG8xbU5lNXljdW16WE5L?=
- =?utf-8?B?YlVSOTZXczdvY3pCemVnM3hBdzd2VDZHNzk1cTJYTzZLSE1FN0xocURialJ6?=
- =?utf-8?B?cjRRQStmY3pzempLNE9tK0dnZE13QzlwS01XaTlOSXNUZXllYjZpV1dHbTR3?=
- =?utf-8?B?M2thMXZJVXFta01WYWlONUpNV1g3U3JlRnRkUGpaL29uQTErdFJZTW9ISE1B?=
- =?utf-8?B?aEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87ac9172-41c0-4dfe-0d22-08dcff8b5373
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 00:21:44.6433
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zXM1PcjEEsfdYf3mmvKwg98J1P8P8HuknpcvMyXLcqSGc2HvJW8LGpPMK9Wsue872FXWVc+0Z9Qka6gdfMlfxtC/SZckbUyWdh2U+y7bBUQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7114
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241108-fd-dp-audio-fixup-v1-11-40c8eeb60cf5@linaro.org>
+References: <20241108-fd-dp-audio-fixup-v1-0-40c8eeb60cf5@linaro.org>
+In-Reply-To: <20241108-fd-dp-audio-fixup-v1-0-40c8eeb60cf5@linaro.org>
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Paloma Arellano <quic_parellan@quicinc.com>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+ Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8606;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=CJNeGuR1/hi3WdAk96FubFXJd9V4K8sajDyAH3cIEjU=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnLVmQeBbtYi7rdedJFb/81mfZJGHDrLlk9stC7
+ 4/2bOapZWKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZy1ZkAAKCRCLPIo+Aiko
+ 1QYkB/9rDbCubMBn3heGWbrNxPet0AQvpG5JDcMUCKY+A2fLmhT50dnyI5FG7aaiKlly/VMv2ng
+ tTYFVEtg4t/ESTsAcIuc6LOrxxyU4MffokBo7j8shuZd+uwTzNdU1KKAlb3UJDDMDHgFDi4BPln
+ L3t86jimpIlb7CAxHDQOOzoI4cFdxd1ecJwyCtV11y/6xEzSpRV/cQm9KBPDs+8HmsTe8KXxLwz
+ fera0F7J53nL3vEA5D0KbtMWA2sTH98BK64VSXHiXhyf/ScF8VeYzDypgipj1UnUogvgVf6PXu0
+ SDw51FWsiiTgeKL1ljjUC0aXWdu29osm5Esgd1ZooR1GWr70
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hi Tony,
+Move audio-related functions to dp_audio.c, following up the cleanup
+done by the rest of the submodules. Inline functions with simple
+register access patterns.
 
-On 11/7/24 3:30 PM, Luck, Tony wrote:
->>> E.g. read a counter:
->>>
->>> $ cat mbm_local_bytes
->>> 123456789
->>>
->>> H/w counter for this event/group assigned elsewhere.
->>>
->>> H/w counter assigned back to this event/group
->>>
->>> $ cat mbm_local_bytes
->>> 23456
->>>
->>> Bandwidth calculation sees traffic amount:
->>>      (23456 - 123456789) = -123433333
->>> Oops. Negative!
->>
->> As I understand this is already an issue today on AMD systems without assignable counters
->> that may run out of counters. On these systems, any RMID that is no longer being tracked will
->> be reset to zero. [1]
-> 
-> My understanding too.
-> 
->> The support for assignable counters give user space control over this unexpected reset of
->> counters.
->>
->> The scenario you present seem to demonstrate how two independent user space systems
->> can trample on each other when interacting with the same resources. Is this something you expect
->> resctrl should protect against? I would expect that there would be a single user space system
->> doing something like above and it would reset history after unassigning a counter.
-> 
-> As we are discussing adding a new interface, I thought it worth considering adding
-> a way for user space to be aware of the re-assignment of counters. IMHO it would be
-> a nice to have feature. Not required if all users of resctrl are aware of each other's
-> actions.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/gpu/drm/msm/dp/dp_audio.c   |  72 +++++++++++++++++++++----
+ drivers/gpu/drm/msm/dp/dp_catalog.c | 105 ------------------------------------
+ drivers/gpu/drm/msm/dp/dp_catalog.h |   6 ---
+ 3 files changed, 63 insertions(+), 120 deletions(-)
 
-If this is indeed a requirement it may be best to consider it as part of the current
-work to enable assignable counters. For example, by adding the "generation" value to
-"mbm_assign_control" file that independent user space apps can query to get current counter
-state before parsing event data.
-I am not familiar with a use case relying on independent user space applications interacting
-with resctrl so I would like to understand this requirement better before making the interface
-more complicated.
+diff --git a/drivers/gpu/drm/msm/dp/dp_audio.c b/drivers/gpu/drm/msm/dp/dp_audio.c
+index 63bdd57948401451426364796e608643c1ebfebe..63c4cd88edef07c54b2eb54d5b6ee494ee94723d 100644
+--- a/drivers/gpu/drm/msm/dp/dp_audio.c
++++ b/drivers/gpu/drm/msm/dp/dp_audio.c
+@@ -119,9 +119,41 @@ static void msm_dp_audio_isrc_sdp(struct msm_dp_audio_private *audio)
+ 	msm_dp_write_link(catalog, MMSS_DP_AUDIO_ISRC_1, header[1]);
+ }
+ 
++static void msm_dp_audio_config_sdp(struct msm_dp_audio_private *audio)
++{
++	struct msm_dp_catalog *msm_dp_catalog = audio->catalog;
++	u32 sdp_cfg, sdp_cfg2;
++
++	sdp_cfg = msm_dp_read_link(msm_dp_catalog, MMSS_DP_SDP_CFG);
++	/* AUDIO_TIMESTAMP_SDP_EN */
++	sdp_cfg |= BIT(1);
++	/* AUDIO_STREAM_SDP_EN */
++	sdp_cfg |= BIT(2);
++	/* AUDIO_COPY_MANAGEMENT_SDP_EN */
++	sdp_cfg |= BIT(5);
++	/* AUDIO_ISRC_SDP_EN  */
++	sdp_cfg |= BIT(6);
++	/* AUDIO_INFOFRAME_SDP_EN  */
++	sdp_cfg |= BIT(20);
++
++	drm_dbg_dp(audio->drm_dev, "sdp_cfg = 0x%x\n", sdp_cfg);
++
++	msm_dp_write_link(msm_dp_catalog, MMSS_DP_SDP_CFG, sdp_cfg);
++
++	sdp_cfg2 = msm_dp_read_link(msm_dp_catalog, MMSS_DP_SDP_CFG2);
++	/* IFRM_REGSRC -> Do not use reg values */
++	sdp_cfg2 &= ~BIT(0);
++	/* AUDIO_STREAM_HB3_REGSRC-> Do not use reg values */
++	sdp_cfg2 &= ~BIT(1);
++
++	drm_dbg_dp(audio->drm_dev, "sdp_cfg2 = 0x%x\n", sdp_cfg2);
++
++	msm_dp_write_link(msm_dp_catalog, MMSS_DP_SDP_CFG2, sdp_cfg2);
++}
++
+ static void msm_dp_audio_setup_sdp(struct msm_dp_audio_private *audio)
+ {
+-	msm_dp_catalog_audio_config_sdp(audio->catalog);
++	msm_dp_audio_config_sdp(audio);
+ 
+ 	msm_dp_audio_stream_sdp(audio);
+ 	msm_dp_audio_timestamp_sdp(audio);
+@@ -132,8 +164,7 @@ static void msm_dp_audio_setup_sdp(struct msm_dp_audio_private *audio)
+ 
+ static void msm_dp_audio_setup_acr(struct msm_dp_audio_private *audio)
+ {
+-	u32 select = 0;
+-	struct msm_dp_catalog *catalog = audio->catalog;
++	u32 select, acr_ctrl;
+ 
+ 	switch (audio->msm_dp_audio.bw_code) {
+ 	case DP_LINK_BW_1_62:
+@@ -154,13 +185,17 @@ static void msm_dp_audio_setup_acr(struct msm_dp_audio_private *audio)
+ 		break;
+ 	}
+ 
+-	msm_dp_catalog_audio_config_acr(catalog, select);
++	acr_ctrl = select << 4 | BIT(31) | BIT(8) | BIT(14);
++
++	drm_dbg_dp(audio->drm_dev, "select: %#x, acr_ctrl: %#x\n",
++		   select, acr_ctrl);
++
++	msm_dp_write_link(audio->catalog, MMSS_DP_AUDIO_ACR_CTRL, acr_ctrl);
+ }
+ 
+ static void msm_dp_audio_safe_to_exit_level(struct msm_dp_audio_private *audio)
+ {
+-	struct msm_dp_catalog *catalog = audio->catalog;
+-	u32 safe_to_exit_level = 0;
++	u32 safe_to_exit_level, mainlink_levels;
+ 
+ 	switch (audio->msm_dp_audio.lane_count) {
+ 	case 1:
+@@ -180,14 +215,33 @@ static void msm_dp_audio_safe_to_exit_level(struct msm_dp_audio_private *audio)
+ 		break;
+ 	}
+ 
+-	msm_dp_catalog_audio_sfe_level(catalog, safe_to_exit_level);
++	mainlink_levels = msm_dp_read_link(audio->catalog, REG_DP_MAINLINK_LEVELS);
++	mainlink_levels &= 0xFE0;
++	mainlink_levels |= safe_to_exit_level;
++
++	drm_dbg_dp(audio->drm_dev,
++		   "mainlink_level = 0x%x, safe_to_exit_level = 0x%x\n",
++		   mainlink_levels, safe_to_exit_level);
++
++	msm_dp_write_link(audio->catalog, REG_DP_MAINLINK_LEVELS, mainlink_levels);
+ }
+ 
+ static void msm_dp_audio_enable(struct msm_dp_audio_private *audio, bool enable)
+ {
+-	struct msm_dp_catalog *catalog = audio->catalog;
++	u32 audio_ctrl;
++
++	audio_ctrl = msm_dp_read_link(audio->catalog, MMSS_DP_AUDIO_CFG);
++
++	if (enable)
++		audio_ctrl |= BIT(0);
++	else
++		audio_ctrl &= ~BIT(0);
++
++	drm_dbg_dp(audio->drm_dev, "dp_audio_cfg = 0x%x\n", audio_ctrl);
+ 
+-	msm_dp_catalog_audio_enable(catalog, enable);
++	msm_dp_write_link(audio->catalog, MMSS_DP_AUDIO_CFG, audio_ctrl);
++	/* make sure audio engine is disabled */
++	wmb();
+ }
+ 
+ static struct msm_dp_audio_private *msm_dp_audio_get_data(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
+index 5071c86fd219cb1c933b32104a396982c5cc8ace..60ba6e0a204f536fd050591e891add17d286fb2d 100644
+--- a/drivers/gpu/drm/msm/dp/dp_catalog.c
++++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
+@@ -298,108 +298,3 @@ struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev)
+ 
+ 	return &catalog->msm_dp_catalog;
+ }
+-
+-void msm_dp_catalog_audio_config_acr(struct msm_dp_catalog *msm_dp_catalog, u32 select)
+-{
+-	struct msm_dp_catalog_private *catalog;
+-	u32 acr_ctrl;
+-
+-	if (!msm_dp_catalog)
+-		return;
+-
+-	catalog = container_of(msm_dp_catalog,
+-		struct msm_dp_catalog_private, msm_dp_catalog);
+-
+-	acr_ctrl = select << 4 | BIT(31) | BIT(8) | BIT(14);
+-
+-	drm_dbg_dp(catalog->drm_dev, "select: %#x, acr_ctrl: %#x\n",
+-					select, acr_ctrl);
+-
+-	msm_dp_write_link(msm_dp_catalog, MMSS_DP_AUDIO_ACR_CTRL, acr_ctrl);
+-}
+-
+-void msm_dp_catalog_audio_enable(struct msm_dp_catalog *msm_dp_catalog, bool enable)
+-{
+-	struct msm_dp_catalog_private *catalog;
+-	u32 audio_ctrl;
+-
+-	if (!msm_dp_catalog)
+-		return;
+-
+-	catalog = container_of(msm_dp_catalog,
+-		struct msm_dp_catalog_private, msm_dp_catalog);
+-
+-	audio_ctrl = msm_dp_read_link(msm_dp_catalog, MMSS_DP_AUDIO_CFG);
+-
+-	if (enable)
+-		audio_ctrl |= BIT(0);
+-	else
+-		audio_ctrl &= ~BIT(0);
+-
+-	drm_dbg_dp(catalog->drm_dev, "dp_audio_cfg = 0x%x\n", audio_ctrl);
+-
+-	msm_dp_write_link(msm_dp_catalog, MMSS_DP_AUDIO_CFG, audio_ctrl);
+-	/* make sure audio engine is disabled */
+-	wmb();
+-}
+-
+-void msm_dp_catalog_audio_config_sdp(struct msm_dp_catalog *msm_dp_catalog)
+-{
+-	struct msm_dp_catalog_private *catalog;
+-	u32 sdp_cfg = 0;
+-	u32 sdp_cfg2 = 0;
+-
+-	if (!msm_dp_catalog)
+-		return;
+-
+-	catalog = container_of(msm_dp_catalog,
+-		struct msm_dp_catalog_private, msm_dp_catalog);
+-
+-	sdp_cfg = msm_dp_read_link(msm_dp_catalog, MMSS_DP_SDP_CFG);
+-	/* AUDIO_TIMESTAMP_SDP_EN */
+-	sdp_cfg |= BIT(1);
+-	/* AUDIO_STREAM_SDP_EN */
+-	sdp_cfg |= BIT(2);
+-	/* AUDIO_COPY_MANAGEMENT_SDP_EN */
+-	sdp_cfg |= BIT(5);
+-	/* AUDIO_ISRC_SDP_EN  */
+-	sdp_cfg |= BIT(6);
+-	/* AUDIO_INFOFRAME_SDP_EN  */
+-	sdp_cfg |= BIT(20);
+-
+-	drm_dbg_dp(catalog->drm_dev, "sdp_cfg = 0x%x\n", sdp_cfg);
+-
+-	msm_dp_write_link(msm_dp_catalog, MMSS_DP_SDP_CFG, sdp_cfg);
+-
+-	sdp_cfg2 = msm_dp_read_link(msm_dp_catalog, MMSS_DP_SDP_CFG2);
+-	/* IFRM_REGSRC -> Do not use reg values */
+-	sdp_cfg2 &= ~BIT(0);
+-	/* AUDIO_STREAM_HB3_REGSRC-> Do not use reg values */
+-	sdp_cfg2 &= ~BIT(1);
+-
+-	drm_dbg_dp(catalog->drm_dev, "sdp_cfg2 = 0x%x\n", sdp_cfg2);
+-
+-	msm_dp_write_link(msm_dp_catalog, MMSS_DP_SDP_CFG2, sdp_cfg2);
+-}
+-
+-void msm_dp_catalog_audio_sfe_level(struct msm_dp_catalog *msm_dp_catalog, u32 safe_to_exit_level)
+-{
+-	struct msm_dp_catalog_private *catalog;
+-	u32 mainlink_levels;
+-
+-	if (!msm_dp_catalog)
+-		return;
+-
+-	catalog = container_of(msm_dp_catalog,
+-		struct msm_dp_catalog_private, msm_dp_catalog);
+-
+-	mainlink_levels = msm_dp_read_link(msm_dp_catalog, REG_DP_MAINLINK_LEVELS);
+-	mainlink_levels &= 0xFE0;
+-	mainlink_levels |= safe_to_exit_level;
+-
+-	drm_dbg_dp(catalog->drm_dev,
+-			"mainlink_level = 0x%x, safe_to_exit_level = 0x%x\n",
+-			 mainlink_levels, safe_to_exit_level);
+-
+-	msm_dp_write_link(msm_dp_catalog, REG_DP_MAINLINK_LEVELS, mainlink_levels);
+-}
+diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
+index 24f1cf4ed5150c4e0e80880588641a01bb6a1596..e2fdccc332f874458709593c68a1d1a46b6cc406 100644
+--- a/drivers/gpu/drm/msm/dp/dp_catalog.h
++++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
+@@ -134,10 +134,4 @@ u32 msm_dp_catalog_ctrl_read_psr_interrupt_status(struct msm_dp_catalog *msm_dp_
+ 
+ struct msm_dp_catalog *msm_dp_catalog_get(struct device *dev);
+ 
+-/* DP Audio APIs */
+-void msm_dp_catalog_audio_config_acr(struct msm_dp_catalog *catalog, u32 select);
+-void msm_dp_catalog_audio_enable(struct msm_dp_catalog *catalog, bool enable);
+-void msm_dp_catalog_audio_config_sdp(struct msm_dp_catalog *catalog);
+-void msm_dp_catalog_audio_sfe_level(struct msm_dp_catalog *catalog, u32 safe_to_exit_level);
+-
+ #endif /* _DP_CATALOG_H_ */
 
-> 
->> This does indeed highlight that if resctrl does start to dynamically assign counters (which
->> has only been speculated in this thread and is not part of current [1] design) then it may cause
->> problems on user space side.
-> 
-> Agreed. Dynamic assignment would break "the user knows what is happening" assumption.
-> Seems like a bad idea.
-
-I believe that is why Peter described it as a new "mode" that user space can select and thus
-be aware of. This does not address how user space is expected to deal with event data reads that
-may not increment when this "mode" is active though.
-
-Reinette
+-- 
+2.39.5
 
 
