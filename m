@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-401168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285C59C16AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:58:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026819C16A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD8A1C2312C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:58:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 835E2B23DCC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E2D1D12ED;
-	Fri,  8 Nov 2024 06:58:23 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469271D0E1C;
+	Fri,  8 Nov 2024 06:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="psRnedlV"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0FD1CF5F4;
-	Fri,  8 Nov 2024 06:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1360A1CF5F4;
+	Fri,  8 Nov 2024 06:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731049103; cv=none; b=LDsBnOx1CGBnfqO3brs6iYBIn9hpwM8wd7LLY+Tm1D7wmZJDKNuGFyG0T7DjFVAUD/cm2MIDcmp1n6QP8F7onBsbc3Ra0kN/nngEhtX2h6EVlolgJ6ZDFC6KsZzAUS7eZNwdVzxUYsaFFqHu96R6LW+q7WNrAnZO2KqaHzT9UxU=
+	t=1731049020; cv=none; b=U1ury2muGZzg1rExoIqF9B52asGusXDZfsFsTcSc+NWU0l2uJW2NB/XMt1Ia8yfMpVhfdlhTyaTz5oEjIPorqBxfrpTOMQIrblLlo5oyCfD22AQIbVxmzkDGzKOGP/UxRVQ91XEa4zGaTVniLkx8qRv623hH0U6RIZjI5gtN0To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731049103; c=relaxed/simple;
-	bh=/p+aqP93T3K4PYoazZPh+X0mdSLojNh6PgukGvcdpIs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O9y4bD8EXjcqkFfJtxJRoxLY8EWRJDbCV3HxbvOBYZor3Xo4n6L2QyEJCg3z7jqX8/tkyddw06vhWkTCL3YsOS69fmfdI5PclHVZ+WvnxMcNYZwB0ProhzGwsF/ovV8kWGImmBq+sf+SVwvCEb7kalPaHbf7RsrJ0KZrDwujAjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xl8qc1Wjjz10V8g;
-	Fri,  8 Nov 2024 14:56:28 +0800 (CST)
-Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
-	by mail.maildlp.com (Postfix) with ESMTPS id DB9C91402C8;
-	Fri,  8 Nov 2024 14:58:16 +0800 (CST)
-Received: from kwepemn100017.china.huawei.com (7.202.194.122) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 8 Nov 2024 14:58:16 +0800
-Received: from huawei.com (10.50.165.33) by kwepemn100017.china.huawei.com
- (7.202.194.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 8 Nov
- 2024 14:58:16 +0800
-From: Longfang Liu <liulongfang@huawei.com>
-To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
-Subject: [PATCH v14 4/4] Documentation: add debugfs description for hisi migration
-Date: Fri, 8 Nov 2024 14:55:38 +0800
-Message-ID: <20241108065538.45710-5-liulongfang@huawei.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20241108065538.45710-1-liulongfang@huawei.com>
-References: <20241108065538.45710-1-liulongfang@huawei.com>
+	s=arc-20240116; t=1731049020; c=relaxed/simple;
+	bh=krPF8bE1Pw+JIEbBWkHjdlETlrvcr/RPLZzkQc7cRgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tDv/THfFOdeyDNnRfgKVTN1zmE8v85HXncnk3nmQ4WNiATsYsulx1XJmQJMMy/osw4w5Lrm3VbDT/3kWJcGYVnwf5Qf3u5dr7kxWyppU2y5L7DG5nasLlY5dbxrUAPDHVDUj/q1IxJHlRN6gvuIE/6s8HdSLFxHQfYH7KmQuzxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=psRnedlV; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731049014;
+	bh=LQGyr1XSjGE9ZDiGrm/yDf2dGEiFCy3MIqS0AIM0Wg0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=psRnedlVLhvL1xwwjLulAcUugSj1Kvf8XVgJlpu1dhMnivJgePQmWp4iS1yKVVbv4
+	 gkQhu55nqT01nTh00RKXPA09ONRK4Aqh/WcapbLALY2QHU7iq2shqhvlDxF1bmIQFJ
+	 sLszjTNhSiBz8iS+b56/Yr9yczqwOJRme8k4/0VHKp6/CWa15IQ6rRPMlv3CB1JC1S
+	 ZN+N1xrs3bYdb0Bvs+TYu89x347z8aV0vPjfLdHE0pnA7qkNEoYj74rsXxt5/d9QRp
+	 fTKRJTMT8L1kLp975pVzo/NVl5e2C6lYvFqNdYAe/kp0/mOG965SOq9F/jvoJzNWhS
+	 NoHzdL9kVppuQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xl8r52c5zz4wbx;
+	Fri,  8 Nov 2024 17:56:53 +1100 (AEDT)
+Date: Fri, 8 Nov 2024 17:56:55 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Philipp Stanner <pstanner@redhat.com>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the drm-misc tree
+Message-ID: <20241108175655.6d3fcfb7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemn100017.china.huawei.com (7.202.194.122)
+Content-Type: multipart/signed; boundary="Sig_/9cS_GSxxYOx_.WHv0fv0wLh";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Add a debugfs document description file to help users understand
-how to use the hisilicon accelerator live migration driver's
-debugfs.
+--Sig_/9cS_GSxxYOx_.WHv0fv0wLh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Update the file paths that need to be maintained in MAINTAINERS
+Hi all,
 
-Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
----
- .../ABI/testing/debugfs-hisi-migration        | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/ABI/testing/debugfs-hisi-migration
+After merging the drm-misc tree, today's linux-next build (htmldocs)
+produced this warning:
 
-diff --git a/Documentation/ABI/testing/debugfs-hisi-migration b/Documentation/ABI/testing/debugfs-hisi-migration
-new file mode 100644
-index 000000000000..2c01b2d387dd
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-hisi-migration
-@@ -0,0 +1,25 @@
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/dev_data
-+Date:		Jan 2025
-+KernelVersion:  6.13
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Read the configuration data and some status data
-+		required for device live migration. These data include device
-+		status data, queue configuration data, some task configuration
-+		data and device attribute data. The output format of the data
-+		is defined by the live migration driver.
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/migf_data
-+Date:		Jan 2025
-+KernelVersion:  6.13
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Read the data from the last completed live migration.
-+		This data includes the same device status data as in "dev_data".
-+		The migf_data is the dev_data that is migrated.
-+
-+What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/cmd_state
-+Date:		Jan 2025
-+KernelVersion:  6.13
-+Contact:	Longfang Liu <liulongfang@huawei.com>
-+Description:	Used to obtain the device command sending and receiving
-+		channel status. Returns failure or success logs based on the
-+		results.
--- 
-2.24.0
+Documentation/gpu/drm-mm:571: /home/sfr/next/next/drivers/gpu/drm/scheduler=
+/sched_main.c:1359: ERROR: Unexpected indentation.
 
+Introduced by commit
+
+  baf4afc58314 ("drm/sched: Improve teardown documentation")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9cS_GSxxYOx_.WHv0fv0wLh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcttjcACgkQAVBC80lX
+0GyaaAf/eOLS6c0HIrzh5Q3g4RELU5f9WzYrcmAembUOfNR9nM8XcJi0AkTAC/xD
+a2h9KC05+oN2rVMbRQ06ewyPAyMuifQelDoG6CShmie4pZp5QxDUxbkb0ZwvH/KS
+r0H/VhPmcWFwtE/gyY1dNhk0cEMLQEjZR9cPfkbXvCEBUvlH/e2aerHn0jEYJCIJ
+mQgO7USdzwhGp0q9vGgZPLo8jMO7QIVuAusc21ILmY6F2iFS46Ds0Zb0tEAz04d1
+hHXpv724oO+MnFpw5YUf6AVhx6LdmirUallkO9cyJZuqvsHJGRn81x33wRaJr7W3
+qL7D0Y2Mxt72KFIEGx6ahnhOh4EIDw==
+=KhiW
+-----END PGP SIGNATURE-----
+
+--Sig_/9cS_GSxxYOx_.WHv0fv0wLh--
 
