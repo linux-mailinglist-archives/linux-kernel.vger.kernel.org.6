@@ -1,97 +1,245 @@
-Return-Path: <linux-kernel+bounces-401959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA3B9C2194
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:08:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E829C2198
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302E52826CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:07:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C1DB224FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266E3126C0A;
-	Fri,  8 Nov 2024 16:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2624139D0B;
+	Fri,  8 Nov 2024 16:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lExX0xwh"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CE5A41
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jscTzGCh"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE885A41
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731082074; cv=none; b=FAZsD/BrSTtlh1vmL0B4/nJJKZ7diucXRm03STwsexPntkMYY7ruSt36my0g1071JqMwX/zp/R2r4Yb0NtivLxMIk6+t9tfwQDqKZB3OvsHS6uykdLGC5UAzb+TPqU5QGWN5cNKxqL69PaNFNkIRFk7ZL7cXa9STSdwakcXc/+M=
+	t=1731082164; cv=none; b=Wgrq1A2MKUqJTGIksZJASYU0CoKROZjnsbdCbwI3pHbLPjnvAeS/gcNR/ez68jagfpnyfyYgzx2UyteLb+mz0mdV+6rMg9ZSsVM1M2pWQAUGR+yWkNCWhmxzgDfk0k1C24/4Dh9EAaiMUQgFMx++ZCX1dbCqvWXgFc2MLD3fbrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731082074; c=relaxed/simple;
-	bh=eZ0ufCR7x7V8u8i228PrKdkRdcKvQm8IHFgkZKgybnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s6iQaREEdoqMT+6rTh/5oqKKEsZmA9CjXREEm/Lxo5jegzZi8S6urH25FFZsDrlMI8kRd1XPIN8UD8aJwA908pWrU81D7ntqjBt1rslkDGmh79Azuflh1TiCV3eOs9HjPHmPbKKPpwCqu9AO0AlLqdCLRukT5AYAy/eL86+ExvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lExX0xwh; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=hEhGJ
-	1xX3uCm4kvCLfzAWwIoCelgH6XJ5bt8Ue0YouY=; b=lExX0xwhuxAk3JpM2hXup
-	1LIkkujSZydfQmd/L+8G+gXkkBZL5fENycwh4g2bczveJhU2JdiBthNVY0xfMqez
-	Br48ZKL/tDOgRm8MNlh3DfX+4Io3iUn6k6rZhT3Q+q/AAh4PQ5V831r9pJejtgkj
-	ibH+vVG+it7ROVlQhsTqAw=
-Received: from localhost.localdomain (unknown [111.35.191.191])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3v3c3Ny5ngwX8GA--.64895S4;
-	Sat, 09 Nov 2024 00:07:35 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width() for decimal values
-Date: Sat,  9 Nov 2024 00:07:17 +0800
-Message-Id: <20241108160717.9547-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1731082164; c=relaxed/simple;
+	bh=bwyyBb6cQcABG3qHpZhTMb2+uaFDkXajaX2M/iZ1IlI=;
+	h=MIME-Version:Content-Type:Date:Message-ID:CC:To:From:Subject:
+	 In-Reply-To:References; b=d+GJ8t/p/M7fIX4s8Pz8JTzMbyy/hvF0chYN1t94WVSN67Jg1DByJ9rEkiXOLD8GdKD45/aWYw2f01uCK0DQF+PqE0sptOKPZuSkga6TFVyY7OxC2XMmzU7kvA1uGalO1YVbgLdLZ8gvKnMTyO7OBiiKov6RkY/5APXqcCWFkrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jscTzGCh; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241108160919euoutp02480b07d2a61b21b386cc2b391e835b6a~GCg19A6sK0908209082euoutp02H
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:09:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241108160919euoutp02480b07d2a61b21b386cc2b391e835b6a~GCg19A6sK0908209082euoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731082159;
+	bh=ANmnHXMtaKXCSo2oUGmVN0pbhWQCf5qqCNlDHcoI9aQ=;
+	h=Date:CC:To:From:Subject:In-Reply-To:References:From;
+	b=jscTzGCh1jLc6ue2QklsyffkfGnvlhVww+km7j4qO45z3qcQY0Y9JUi1h7TIm3xzs
+	 yWWRcGzA3ImRegV6K9YbIMmqyvn2drI8xA3GRZRx+MWKdvxBH8ZZj3sygHS1V/5e9Q
+	 RIuTs7+jnJIzqMLwCzB1sDFpkOIMx+aJLqnSUM+4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241108160919eucas1p107f78be746e710fca63e9966da50e0bf~GCg1r9ty52878228782eucas1p1W;
+	Fri,  8 Nov 2024 16:09:19 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id D4.8C.20409.FA73E276; Fri,  8
+	Nov 2024 16:09:19 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241108160919eucas1p2f4ab6c7c87334172235d870b90ce46ce~GCg1Wrhgu1728217282eucas1p25;
+	Fri,  8 Nov 2024 16:09:19 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241108160919eusmtrp2c442b825bcf2d3d20e038526f7ccd5ff~GCg1WCtHY1941219412eusmtrp2V;
+	Fri,  8 Nov 2024 16:09:19 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-95-672e37af1c88
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id B1.D7.19920.FA73E276; Fri,  8
+	Nov 2024 16:09:19 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241108160918eusmtip1b97e47265b320d1414339b242ae87e42~GCg1LTcyQ0257302573eusmtip1L;
+	Fri,  8 Nov 2024 16:09:18 +0000 (GMT)
+Received: from mail.scsc.local (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Fri, 8 Nov 2024 16:09:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3v3c3Ny5ngwX8GA--.64895S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AFyxXw4xKFykGF4xtr47Arb_yoW8GF17pa
-	yakFW3Aw48uw1Yq3W7Jan7Zwn8W3WYqF4Fk3Zakw4fA3Wjgr1vgr1avF13tr4akr9rZw45
-	ZF90gw18tw4UWr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUyE_tUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQ6RqmcuNe8YfQAAsq
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 8 Nov 2024 17:09:17 +0100
+Message-ID: <D5GXESPXRVH3.1M4T003I1F7BU@samsung.com>
+CC: Mike Rapoport <rppt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, <linux-kernel@vger.kernel.org>, "Peter
+ Zijlstra (Intel)" <peterz@infradead.org>, Josh Poimboeuf
+	<jpoimboe@kernel.org>, "Liu Shixin" <liushixin2@huawei.com>
+To: Luis Chamberlain <mcgrof@kernel.org>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Petr Pavlu <petr.pavlu@suse.com>, "Sami
+ Tolvanen" <samitolvanen@google.com>, <linux-modules@vger.kernel.org>
+From: Daniel Gomez <da.gomez@samsung.com>
+Subject: Re: [PATCH] static_call: Handle module init failure correctly in
+ static_call_del_module()
+X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
+In-Reply-To: <Zy4zGy9aoQ1-Qokg@bombadil.infradead.org>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djPc7rrzfXSDa6slrW4M+k5u8Wx1UDi
+	8q45bBYNs7+zWsxcWWhxY8JTRovjvQeYLJZ+ecdscWT9diaLa7OAxNIVb1ktNm+ayuzA4/H1
+	5jkmjwWbSj1ajrxl9di8Qstj06pONo93586xe6zfcpXF4/MmuQCOKC6blNSczLLUIn27BK6M
+	E/2GBY9kKv5u/cvWwDhdrIuRk0NCwETiUsN9xi5GLg4hgRWMEofar7BDOF8YJV5sPc4CUiUk
+	8JlR4u5Me5iOOyfOsEEULWeUaNjRAdUOVLSmYTsLhLODUeL0+/esIC28AoISJ2c+ARvFLKAt
+	sWzha2YIW1OidftvoH0cHCwCKhJvJ0uBmLxAG36/EgIZwywwkUniyr3/rCCOiMApRokPm1ew
+	g/SyAfXuO7kJzBYWSJE4vucEI8R5ahL/+yeC7eIUMJN4d66DBSKuKDFj4koou1bi1JZbTCBD
+	JQQWc0oc+baeBWSzhICLxKXmWIgaYYlXx7ewQ9gyEv93zmeCsNMllqybBTWnQGLP7VmsEK3W
+	En1nciDCjhIbew5DhfkkbrwVhPiWT2LStunMEGFeiY42oQmMKrOQwmcWUvjMQgqfBYzMqxjF
+	U0uLc9NTi43yUsv1ihNzi0vz0vWS83M3MQJT1ul/x7/sYFz+6qPeIUYmDsZDjBIczEoivP5R
+	2ulCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT5FOFBNITS1KzU1MLUotgskwcnFINTMZN2nYe
+	q2Y+7llS0cr1QCfn0dcvvL5fONdKrz3iubZiWXyUk+bhieJ6x21+qYXeO8A4S3fmGfutkrlr
+	r08V2RdlGZT9pkhcOvyKl33mRuV1S5tTZlXudt1dI3JVplmqWW7GlTmf39ZKOFrFqz0yubnn
+	fI5WsvtvvQy2uXszrcSX6TJr1L3VCrcL5ilkUHSPFeL+PemsWci22cxiO06ZfC2+MpvdT+hk
+	9vGTf/5EfM5/dcBoUpP0ZJZFAmx5O9880F+/sLg1zfXZoUL2bM/+D375qzzWOqyZIbwpt8Uj
+	saXB5SKfXsUh5TPfq5bLHGxumcWuJxMtaPhFP+DD+4A3vOmbBX5HHb0556/69i4NJZbijERD
+	Leai4kQAYGB91sgDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrEIsWRmVeSWpSXmKPExsVy+t/xu7rrzfXSDVasYLO4M+k5u8Wx1UDi
+	8q45bBYNs7+zWsxcWWhxY8JTRovjvQeYLJZ+ecdscWT9diaLa7OAxNIVb1ktNm+ayuzA4/H1
+	5jkmjwWbSj1ajrxl9di8Qstj06pONo93586xe6zfcpXF4/MmuQCOKD2bovzSklSFjPziElul
+	aEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2ME/2GBY9kKv5u/cvWwDhdrIuR
+	k0NCwETizokzbF2MXBxCAksZJT7s+sEMkZCR2PjlKiuELSzx51oXVNFHRokNK9eyQDg7GCUO
+	HrnNCFLFKyAocXLmExYQm1lAW2LZwtfMELamROv23+xdjBwcLAIqEm8nS4GYvECbf78SAhnD
+	LDCRSeLKvf+sII6IwCmgKzavYAfpZQPq3XdyE5gtLJAicXzPCUaIi9Qk/vdPhDriLrPEjTsv
+	wU7lFDCTeHeugwWiSFFixsSVUHatxOe/zxgnMIrMQnLrLCS3zkJy6wJG5lWMIqmlxbnpucWG
+	esWJucWleel6yfm5mxiBkb3t2M/NOxjnvfqod4iRiYPxEKMEB7OSCK9/lHa6EG9KYmVValF+
+	fFFpTmrxIUZToKcnMkuJJucDU0teSbyhmYGpoYmZpYGppZmxkjiv2+XzaUIC6YklqdmpqQWp
+	RTB9TBycUg1MoYcmLVVjnrzyxO3tytJr02/WiRv90G3NMzgoyPD+m/WaNzsdusuFX3//kep5
+	R/58zYm3m2Q6mkxaN6/cxDj5QMGLTezPV4Rx7i6IWrc/y8iuYfp/FXef1QufuzjXhJw6tj37
+	pkTadN1wyavv79e6flMyK5opIl/wufLIobCZDHuSBfff1puluoFb4Ymey8EjzjUXGopMwqL3
+	vFw4tbDCPSxtKYuQmunEmtV3dyxfptTELBfKOzWxf7nKb49tB4tLFyxWr511n2/GhvcCJUcS
+	XjButyi9MencWzkr7U6l75X2Vvv2dMjenf6duZEnfp/2Bvv5R9xT3C6t+8HJ6fdiaXt6wsRf
+	2qe7i7MvHOP/psRSnJFoqMVcVJwIAKQyc6B1AwAA
+X-CMS-MailID: 20241108160919eucas1p2f4ab6c7c87334172235d870b90ce46ce
+X-Msg-Generator: CA
+X-RootMTR: 20241108154954eucas1p1225526ff7f7d97ae7078f112300f080f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241108154954eucas1p1225526ff7f7d97ae7078f112300f080f
+References: <87cylj7v6x.ffs@tglx>
+	<3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com> <877cbr7qed.ffs@tglx>
+	<50551f21-6e90-3556-7a3d-8b81a042f99c@huawei.com> <87a5gm5tb3.ffs@tglx>
+	<ZtuPSIFsV8C3UZW8@bombadil.infradead.org>
+	<Zuv0nmFblHUwuT8v@bombadil.infradead.org> <ZvJomuNWjtHYDcsW@kernel.org>
+	<8bd5e396-7583-435e-bafc-7d092a31f4ff@csgroup.eu>
+	<CGME20241108154954eucas1p1225526ff7f7d97ae7078f112300f080f@eucas1p1.samsung.com>
+	<Zy4zGy9aoQ1-Qokg@bombadil.infradead.org>
 
-seq_printf() is costy, on a system with m interrupts and n CPUs, there
-would be m*n decimal values yield via seq_printf() when reading
-/proc/interrupts, the cost parsing format strings grows with number of
-CPU. Profiling on a x86 8-core system indicates seq_printf() takes ~47%
-samples of show_interrupts(), and replace seq_printf() with
-seq_put_decimal_ull_width() could have near 30% performance gain.
+On Fri Nov 8, 2024 at 4:49 PM CET, Luis Chamberlain wrote:
+> + Other new module maintainers
+>
+> On Fri, Nov 08, 2024 at 09:12:03AM +0100, Christophe Leroy wrote:
+>> Hi Luis,
+>>=20
+>> Le 24/09/2024 =C3=A0 09:22, Mike Rapoport a =C3=A9crit=C2=A0:
+>> > On Thu, Sep 19, 2024 at 02:53:34AM -0700, Luis Chamberlain wrote:
+>> > > On Fri, Sep 06, 2024 at 04:24:56PM -0700, Luis Chamberlain wrote:
+>> > > > On Thu, Sep 05, 2024 at 11:44:00AM +0200, Thomas Gleixner wrote:
+>> > > > > Now you at least provided the information that the missing clean=
+up in
+>> > > > > the init() function is not the problem. So the obvious place to =
+look is
+>> > > > > in the module core code whether there is a failure path _after_
+>> > > > > module->init() returned success.
+>> > > > >=20
+>> > > > > do_init_module()
+>> > > > >          ret =3D do_one_initcall(mod->init);
+>> > > > >          ...
+>> > > > > 	ret =3D module_enable_rodata_ro(mod, true);
+>> > > > > 	if (ret)
+>> > > > > 		goto fail_mutex_unlock;
+>> > > > >=20
+>> > > > > and that error path does _not_ invoke module->exit(), which is o=
+bviously
+>> > > > > not correct. Luis?
+>> > > >=20
+>> > > > You're spot on this needs fixing.
+>> > >=20
+>> > > Christophe, this is a regression caused by the second hunk of your c=
+ommit
+>> > > d1909c0221739 ("module: Don't ignore errors from set_memory_XX()") o=
+n v6.9.
+>> > > Sadly there are a few issues with trying to get to call mod->exit():
+>> > >=20
+>> > > - We should try try_stop_module()  and that can fail
+>> > > - source_list may not be empty and that would block removal
+>> > > - mod->exit may not exist
+>> > >=20
+>> > > I'm wondering if instead we should try to do the module_enable_rodat=
+a_ro()
+>> > > before the init, but that requires a bit more careful evaluation...
+>> >=20
+>> > There is ro_after_init section, we can't really make it RO before ->in=
+it()
+>>=20
+>> Surprisingly I never received Luis's email
+>
+> So odd..
+>
+>> allthough I got this answer from Mike that I overlooked.
+>>=20
+>> So coming back here from
+>> https://lore.kernel.org/all/ZyQhbHxDTRXTJgIx@bombadil.infradead.org/
+>>=20
+>> As far as I understand, indeed once init is called it is too late to fai=
+l,
+>
+> Partly yes, party no. Party yes in that its a can of worms we have not
+> had to deal with before, and also I worry about deadlocks, and the code
+> to address this seems complex. right ?
 
-The improvement has pratical significance, considering many monitoring
-tools would read /proc/interrupts periodically.
+I have a RFC ready with this, I'll send this now so we can discuss on
+with a proposal.
 
-Signed-off-by: David Wang <00107082@163.com>
----
- kernel/irq/proc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+>
+>
+>> Especially when the module has no exit() path or when
+>> CONFIG_MODULE_UNLOAD is not built in.
+>
+> That's exactly the other extreme case I fear for.
+>
+>> So the only thing we can do then is a big fat warning telling
+>> set_memory_ro() on ro_after_init memory has failed ?
+>
+> I suspect this is more sensible to do.
 
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 9081ada81c3d..988ce781e813 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -494,9 +494,11 @@ int show_interrupts(struct seq_file *p, void *v)
- 	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
- 		goto outsparse;
- 
--	seq_printf(p, "%*d: ", prec, i);
-+	seq_printf(p, "%*d:", prec, i);
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", desc->kstat_irqs ? per_cpu(desc->kstat_irqs->cnt, j) : 0);
-+		seq_put_decimal_ull_width(p, " ",
-+					  desc->kstat_irqs ? per_cpu(desc->kstat_irqs->cnt, j) : 0,
-+					  10);
- 
- 	raw_spin_lock_irqsave(&desc->lock, flags);
- 	if (desc->irq_data.chip) {
--- 
-2.39.2
+I came to the same conclusion while trying to fix this path. + I added
+an alternative for discussion.
+
+>
+>> Maybe we should try and change it to RO then back to RW before calling i=
+nit,
+>> to be on a safer side hopping that if change to RO works once it will wo=
+rk
+>> twice ?
+>
+> That's another approach wich could work, if we proove that this does
+> work, it's a nice best effort and I think less or a mess to the codebase
+> then special-casing the error handling of trying to deal with the
+> driver's exit.
+>
+> Daniel Gomez has been looking at this, so his feedback here would be
+> valuable.
+
+What if we detect ro_after_init first, and block any module
+initialization depending on this ro_after_init to actually start loading
+it? That way we can stop and unload the module successfully.
+
+>
+>   Luis
 
 
