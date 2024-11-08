@@ -1,153 +1,107 @@
-Return-Path: <linux-kernel+bounces-402320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33949C2646
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B03E9C2654
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A38F1C2360E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36A91C21E2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E331C1F3F;
-	Fri,  8 Nov 2024 20:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE891EF0BD;
+	Fri,  8 Nov 2024 20:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dxlw6g35"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="SGj7NgT5"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AAE1A9B42
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 20:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565641C1F0E;
+	Fri,  8 Nov 2024 20:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731096650; cv=none; b=S8XkRjrNNN21AtUbmXL8/MbUKp0vXeZC+AMvae/RC92PjJYz94F6GJLyafeUlibzHo5+IwYBdLcC1Perd2EoFloWpfQLa0OYshb7YmD6rBC4GWmr/yklaEr2rNjx+052reG/kfpwpLjGMaflU8Vhb/+ZaaFH+sM2DlG8dnS0YbU=
+	t=1731096810; cv=none; b=MVcWI0cZIV0J1Lce4ToC2TrWtIJjcFARp/SBVM8ME1gz0cB8/7Sh92gxQ1Kb55Ye3rNPtrxWzWOk3c3X0kgWwBAJZ4KiQW7uBDW/PrDA1EIqjpgAKxLKx285ee1yfk0sCcqumekyfuqb2gjuvbEiyKSWVuJn8nNopRqhB8t5Q/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731096650; c=relaxed/simple;
-	bh=5hYDI5IWO/rE5qWRHOccENByrFFri7GRuDCRVnNkRUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AoItQQm6vWxPQgr5C/m1PkrY0Gw/GS/VIXb/QH4lr0K5q7SFYMmQW3PuRED0lczx+LT8mAToQrPKrefLNn3ySTvK2VZ+EuIwNqpvjC5zAgIOPQPRxMy0OCq5r3oXarplcEcqZtyMTTna49JvMBQk5bB7gdvYgj4hxtyk/r5To2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dxlw6g35; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731096649; x=1762632649;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5hYDI5IWO/rE5qWRHOccENByrFFri7GRuDCRVnNkRUo=;
-  b=Dxlw6g35pP8AfTPSoVbCz+q3gYyYnRh1lqoKkX4dpjHUi7KGfQP0ht+g
-   UIhA1/TcPkJBFLn0ejR8LuKHjscB9ITXXu4WGuijmHlcpXKeQCR37qsEV
-   NQSQANLtp33d6yW3PmWIrqh0yOjtWG4/qoCDl59Ga+xwwfTRufMD/Ywg/
-   KFLB0KxEG1obt/KRraKWLwu9m1BGc3mQ6ANNnq/T0EHMwWAJzT/tjIPky
-   28vfCSNledgBSB/LHUyHJe24FLnvfEZonLLC0QEwLQ17tXjCevq93GzoL
-   wI24FVbnZaeRo+TWzZx2MmE1sipa4kjCAF7ZHb+Xu70G434jDr0ludI9h
-   Q==;
-X-CSE-ConnectionGUID: m4BeaOHSTmebSCRcSnFX0w==
-X-CSE-MsgGUID: XP8qX6BSRJ+nUUuiud6ScA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30408799"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="30408799"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 12:10:48 -0800
-X-CSE-ConnectionGUID: 5W3ImTo9T5ye61ZswxiW8Q==
-X-CSE-MsgGUID: 8+TjYOUwRDamca1Z0DuWPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="116570771"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.223.66]) ([10.124.223.66])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 12:10:48 -0800
-Message-ID: <90f8aaf2-ef9c-4777-b8db-17fc7c6cf41b@intel.com>
-Date: Fri, 8 Nov 2024 12:10:47 -0800
+	s=arc-20240116; t=1731096810; c=relaxed/simple;
+	bh=Mjx2T+tJQq8AXBQuf6hhh98vDiAkZyRq4BVYSn8ScZU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fXWffeO2xhytDaaOLFURsGNGxLe9ca4tma0AAUYfX4fmplnzwylmAIykS0tyaYZvZwWQzH18jSaw4S8XUxLGx19628GgipJptSPPMxGfx1P5BWZh+qLMoO36rgZ3cvCUj6fA6BBBbT2VG/0BVXcuGSUE4K01+agESzEAEnk+st0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=SGj7NgT5; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5DC3F42C17
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1731096808; bh=SdL8Q8EQQQJJ8xM8160z/ZDZmIkZmULZbC6xpHvhB2g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=SGj7NgT5pCq9qMZMXNJKG2UgQ/lP9zZE4YbKvUXqgPrUznXNr6/HcfYciET1a180c
+	 4CQEBIeK0nih1ZtSbGeYgYPx/hYb6yPDREd8OyH5nekdazyQhbd0FntwwvCDHijkAQ
+	 AiRe9/OS3QLp/eLystk6jgqxf76GfzScZi/3peY4z6raTJ/W27faMyuX0o0Qblo8bn
+	 kulpZfzb4/cWAHAGIm0JQYi2CeCfIdC74UulY5RY8yhiiQV9VTsz3uVWHk/HuMjiz7
+	 crwtMtMpBsv4BAZjxgb2arxdBkDSSgw/l0R41+5urv/u4+CiW8A60jFzuPQy7tWs5l
+	 BT3AAiFW7pn8Q==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 5DC3F42C17;
+	Fri,  8 Nov 2024 20:13:28 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>, Robin
+ Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
+ <will@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
+ <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas
+ <yishaih@nvidia.com>, Shameer Kolothum
+ <shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, =?utf-8?B?SsOpcsO0bWU=?= Glisse
+ <jglisse@redhat.com>, Andrew
+ Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+ kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 09/17] docs: core-api: document the IOVA-based API
+In-Reply-To: <20241108200355.GC189042@unreal>
+References: <cover.1730298502.git.leon@kernel.org>
+ <881ef0bcf9aa971e995fbdd00776c5140a7b5b3d.1730298502.git.leon@kernel.org>
+ <87ttchwmde.fsf@trenco.lwn.net> <20241108200355.GC189042@unreal>
+Date: Fri, 08 Nov 2024 13:13:27 -0700
+Message-ID: <87h68hwkk8.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86,tlb: update mm_cpumask lazily
-To: Rik van Riel <riel@surriel.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
- kernel-team@meta.com
-References: <20241108143144.2f15fe35@imladris.surriel.com>
- <4f7d5752-41eb-4828-8bd8-9bd07e89f4f0@intel.com>
- <55ada30f76d544a3f700e57a01cb6f6f255581d5.camel@surriel.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <55ada30f76d544a3f700e57a01cb6f6f255581d5.camel@surriel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 11/8/24 12:07, Rik van Riel wrote:
-> On Fri, 2024-11-08 at 12:03 -0800, Dave Hansen wrote:
->> On 11/8/24 11:31, Rik van Riel wrote:
->>>  		/* Start receiving IPIs and then read tlb_gen (and
->>> LAM below) */
->>> -		if (next != &init_mm)
->>> +		if (next != &init_mm && !cpumask_test_cpu(cpu,
->>> mm_cpumask(next)))
->>>  			cpumask_set_cpu(cpu, mm_cpumask(next));
->>>  		next_tlb_gen = atomic64_read(&next-
->>>> context.tlb_gen);
->> If we're worried about contention on mm_cpumask(), then this hunk
->> makes
->> sense independently of the lazy updating. We might want to take this
->> hunk forward before we do the rest because this seems like a no-
->> brainer.
->>
-> If we always clear the CPU in the mm_cpumask when prev != next,
-> wouldn't that result in that CPU's bit being clear (and needing
-> to be set) for next when prev != next?
-> 
-> What am I missing?
+Leon Romanovsky <leon@kernel.org> writes:
 
-Oh, good point.  This is all in the (prev != next) block so yeah, the
-bit _has_ to be clear.  Silly me.
+>> So, I see that you have nice kernel-doc comments for these; why not just
+>> pull them in here with a kernel-doc directive rather than duplicating
+>> the information?
+>
+> Can I you please point me to commit/lore link/documentation with example
+> of such directive and I will do it?
+
+Documentation/doc-guide/kernel-doc.rst has all the information you need.
+It could be as simple as replacing your inline descriptions with:
+
+  .. kernel-doc:: drivers/iommu/dma-iommu.c
+     :export:
+
+That will pull in documentation for other, unrelated functions, though;
+assuming you don't want those, something like:
+
+  .. kernel-doc:: drivers/iommu/dma-iommu.c
+     :identifiers: dma_iova_try_alloc dma_iova_free ...
+
+Then do a docs build and see the nice results you get :)
+
+Thanks,
+
+jon
 
