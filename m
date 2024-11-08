@@ -1,185 +1,254 @@
-Return-Path: <linux-kernel+bounces-402478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DA99C283C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:44:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CA09C283E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:46:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1221C21E9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 941B4280DBA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A212C1F426F;
-	Fri,  8 Nov 2024 23:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFC61F666F;
+	Fri,  8 Nov 2024 23:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="UQlvs9zx"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cnpg/lLr"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89852610D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861761E200A
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731109490; cv=none; b=t/WZT1cHdhk1ZBxbi/Z7kHZ1NViNZhiD+vD0l+mjOhKb1RKOMVYdjzmC6ukDtL/yFLul7uP/OqCelhzY4tpFoik5mobqCr5x45M8O/xpiWVGwy6ImQVnNOptElzH5jcP5sUi2j1vDsx5PsSBS3u+/Qq0lEfDI4PFBaT9rSOuq6w=
+	t=1731109573; cv=none; b=HVtuK2QiMWG4OiQ5JV9ZYTkBh9LYRLNMm2eMVk33K7bpKl00qdA2/UwGnDMdbv6lwkCeQt/AKC2IEmfjcf7xCPL6rjQofAtc4Q5DO4i1L9UeIxawr2Rj1yY0+OVUmuW8GBrEuuIPble7QOp6sEvV09sgq8dSK8/IFVfTkRGi9B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731109490; c=relaxed/simple;
-	bh=ExUMXG6FhgrKWAiklD9tM+a73nAXl3Qf+VUQQugGkzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k2EZSsGpvPTLw/PdazvKcC40MbggT4BtzcW9YzCmi74ajy0Ay5jvdWqnPZ46qGMX0FVTsH5AtqRbziy9EqBzaSSKgu7J1bCfDzLg9XgY1s0GP+kgoZAEQGdUq/6dwPGKOgn9pl7oYasRv0ezX5V/uUskwoq/mNd+5nBc7J4pN2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=UQlvs9zx; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e5f9712991so1518353b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:44:47 -0800 (PST)
+	s=arc-20240116; t=1731109573; c=relaxed/simple;
+	bh=slTDJpkuXaI2FSflzZPrxxPFD5Jf9rX1KtNIM7MAfoU=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=QEA4WAja7gQ2sA0XkTzyFaSbG3paHEoOd2p0ru5BJl+PDK3/skz7+9601IfjDfve4a7Ip74s58ihRPWJh0UX1u/FnBmIWuOGT2e+DjYqkluR6F9xyM+K1cn0HrXMuit0+j+qWRHPLElpqvShj8/xYYuIqgc8C5kztMEAVF+Hcvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cnpg/lLr; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e32ff6f578eso4908624276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:46:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google; t=1731109486; x=1731714286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZXbMh2FWVPnoribRVM7nCxASoiz/7gphLz9Rpu66roc=;
-        b=UQlvs9zxkSgEEfPV5uME/ewEM0pS1gS8LRIPbWgUbvaHsxhjui4CKrtK1B0QvqMCnR
-         +dWTofUVkWa0IuUS9Na5Enl3ZWHun9O2Iiz8yOwV1vSrycIbGl5IxGKOwH7TybD2qm+V
-         zYJjllOcPqjykION7wAIYLy+e3Jm5bL0yW6sw=
+        d=google.com; s=20230601; t=1731109570; x=1731714370; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Bo+XoNcfTiWt9dXZSAxdrxoaHvpnygZk759HUW2Tdtc=;
+        b=cnpg/lLrrHzrGjA6Xnsfa6VxTMuT2o3uTHL1sWo5/cPFNSF28T+05JpuIFjMCCz6v9
+         xte1vqJ43SHIIyEiYzissF3qG1h+FQApnvXBWKARh0iT3cL+C598hy5rV0sbnBbCW/ko
+         3SyOUaZ9cnLMGOMHP63meI8n09upT7ZgWihwb+zvDPe0t3P+embVW1qaV/klQjteG5BA
+         xrXLgRC+8Bb7/nVozy1V+LcvpyHKvk7FkkGlFVOnpFR9Xb+5scysop3MQc9sshLjnFBu
+         nFFctVDR4B91YQNiTtbCKKNRe1hWIGNdZIGzgDNu6dRCNlXcVGCIsmPNjIrYRcOq0W8h
+         IXFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731109486; x=1731714286;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZXbMh2FWVPnoribRVM7nCxASoiz/7gphLz9Rpu66roc=;
-        b=FbDQCoSaDVaeJcg6EwmGOHunGmvJPMZHm+iPVs3YgnI1gK29bWLQfxv9a6akEtTVU9
-         1T3vQpuyKR5dKR//QRXpBToftJ/0agoUbd+T/tcMNsbT74dv85Rr8l7+AGu5JaaJYVxJ
-         kYYkcPc5+XsYYcKKrf8l8lOuxKCxm7NfdNlCHqZAuqipl5HsEVqcJERJjnISX3Juu/7d
-         +jxHaWuc9W7itvanQJd3OGmHwaC7MtevTt4qyHSrwTTifb3A6R0MRrnOhZYmsqU7Yoi7
-         waN0wLLr+q/nc2X2adfQySwyyorDc4c5Yl8eypIWFhkv7KCCUfS4oo1Bd2k/o9wXyX5x
-         Je6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU0yzZwAMiThs0c0QcCshdlP2YfrguJGU+9aak96FwLAYXW8AeU0e8t+p7stHzr0KZ0/q9nWymZQMVHjBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPnF0aLnUgRT+w2eYxgPgeQYgc+NB8XHPvb/i8AVsRbONQIgLo
-	f0Z7zCyUNCmbY6eUqtSTF/9/NJT+k5ZLY2sqg5uqN54k6yfi4P5L2oOvhO0yxME=
-X-Google-Smtp-Source: AGHT+IG+H1FYbgbfbVNVGwbagbKbs0uGKWVICE1ilxxQpWr7EmkKOvo2KKLljNXMkuaHIGL4cbLpWg==
-X-Received: by 2002:a05:6808:13c8:b0:3e6:5580:6667 with SMTP id 5614622812f47-3e79475cf8cmr5606582b6e.40.1731109486620;
-        Fri, 08 Nov 2024 15:44:46 -0800 (PST)
-Received: from ?IPV6:2603:8080:7400:36da:c10e:e419:c908:c818? ([2603:8080:7400:36da:c10e:e419:c908:c818])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cc6748fsm943945b6e.2.2024.11.08.15.44.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 15:44:45 -0800 (PST)
-Message-ID: <bb010d16-a083-44da-8a72-3ada4c6f8056@digitalocean.com>
-Date: Fri, 8 Nov 2024 17:44:44 -0600
+        d=1e100.net; s=20230601; t=1731109570; x=1731714370;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bo+XoNcfTiWt9dXZSAxdrxoaHvpnygZk759HUW2Tdtc=;
+        b=HDKklIMMaTWF3JZUKI0UOQRLVcTLx8uuH58cC0UCh+URospuztfpEw5Eh5sxfKd8g7
+         zo+f9rzbeSQjTWZcQH3lzLJP7w7QRg6K2UEl05lMnPJpdOaU7pQmAAjUxZU5veqC1k62
+         D91TZQ+dQfEW9k60EL7+naz4NkBBBRqYQ9RfJIGwkVM5vchLR5++MpBYIoMTzikE9WfL
+         fQF5VW8IkXW1e0rnaJNKn+CYd+FtEyyEJ5JY3mgAFZuwNYOXjTHfizXl8XatQJNWzU/P
+         Iv0evynvHaL50+qg8rIMw3f1AteddJVz+AQKQLHu2sM48jJ+yUHB42zA+tJjpWePZCQ4
+         KPyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaPxL+1oK2h3L2o5QnAMxCPdpwagRpBYPKyOdtisQ77+B3poD1+ngrEbT5BFvD8vXNwoAkG2/lde77UxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6+pGLaSfI011VdtIqkXUJDAOYOd2t06cPiGEcU8zOHjAh4QlL
+	sviRWc6hKmXekLK6efbDfsdVt1NXecLTTnvCWhylkU3KqW45yoq0di02bnjIMsvef0sG/7wVwvY
+	tujJCyg==
+X-Google-Smtp-Source: AGHT+IG7nNHrZbf62YTEIFaabL+CBo69CYr9RS79+TUQD474jGBOE4r4BpO1ymNXWY8gOslRzk6deJr/eKGp
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:6fd2:1e36:6d8c:7c49])
+ (user=irogers job=sendgmr) by 2002:a25:d843:0:b0:e29:7454:e773 with SMTP id
+ 3f1490d57ef6-e337e1d738cmr20475276.5.1731109569972; Fri, 08 Nov 2024 15:46:09
+ -0800 (PST)
+Date: Fri,  8 Nov 2024 15:45:45 -0800
+Message-Id: <20241108234606.429459-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] vdpa/mlx5: Set speed and duplex of vDPA devices to
- UNKNOWN
-To: "Michael S. Tsirkin" <mst@redhat.com>,
- Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, jasowang@redhat.com,
- shannon.nelson@amd.com, sashal@kernel.org, alvaro.karsz@solid-run.com,
- christophe.jaillet@wanadoo.fr, steven.sistare@oracle.com, bilbao@vt.edu,
- xuanzhuo@linux.alibaba.com, johnah.palmer@oracle.com, eperezma@redhat.com,
- cratiu@nvidia.com, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
-References: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
- <20240904151115.205622-2-carlos.bilbao.osdev@gmail.com>
- <20241107164932-mutt-send-email-mst@kernel.org>
- <f1d671ff-0429-4cb5-a6e8-309a8567924c@nvidia.com>
- <20241108065046-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: Carlos Bilbao <cbilbao@digitalocean.com>
-In-Reply-To: <20241108065046-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Subject: [PATCH v4 00/20] Remove PERF_HAVE_DWARF_REGS
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
+	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Kajol Jain <kjain@linux.ibm.com>, 
+	Atish Patra <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
+	Anup Patel <anup@brainfault.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Steinar H. Gunderson" <sesse@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+These changes were originally on top of:
+https://lore.kernel.org/lkml/20241017001354.56973-1-irogers@google.com/
 
-On 11/8/24 5:51 AM, Michael S. Tsirkin wrote:
-> On Fri, Nov 08, 2024 at 10:31:58AM +0100, Dragos Tatulea wrote:
->>
->> On 07.11.24 22:50, Michael S. Tsirkin wrote:
->>> On Wed, Sep 04, 2024 at 10:11:14AM -0500, Carlos Bilbao wrote:
->>>> From: Carlos Bilbao <cbilbao@digitalocean.com>
->>>>
->>>> Initialize the speed and duplex fields in virtio_net_config to UNKNOWN.
->>>> This is needed because mlx5_vdpa vDPA devices currently do not support the
->>>> VIRTIO_NET_F_SPEED_DUPLEX feature which reports speed and duplex.
->>> I see no logic here. Without this feature bit, guests will not read
->>> this field, why do we suddenly need to initialize it?
->>>
->> IIRC, Carlos was reading data via ioctl VHOST_VDPA_GET_CONFIG which calls
->> .get_config() directly, always exposing the speed and duplex config fields [0].
->> Carlos, was this the case?
->>
->> [0] https://lore.kernel.org/lkml/afcbf041-7613-48e6-8088-9d52edd907ff@nvidia.com/T/
->>
->> Thanks,
->> Dragos
-> Basically, driver should ignore these if feature is not set.
+Prior to these patches PERF_HAVE_DWARF_REGS indicated the presence of
+dwarf-regs.c in the arch directory. dwarf-regs.c provided upto 4
+functions:
 
+1) regs_query_register_offset would translate a register name into a
+pt_regs offset and was used by BPF prologues. BPF prologues existed
+for BPF events and support for these was removed many releases ago.
+This code was dead and could be removed.
 
-There _is_ a chance the guest could read this field; As Dragos mentioned, I
-was using the VHOST_VDPA_GET_CONFIG ioctl from userspace, and the incorrect
-field initialization led me to believe I was in half-duplex mode --
-something people told me they hadn't seen since the 80s. But as Andrew
-(CCed) mentioned, "If the speed is 0, does duplex even matter?".
+2) get_arch_regstr duplicated get_dwarf_regstr and so it could be
+removed.  The case for csky was a little more complicated as the ABI
+controlled the string. The callers of get_dwarf_regstr were updated to
+also pass the ELF flags so that on csky the ABI appropriate table
+could be used. As the argument is only used on csky this a no-op for
+everything else.
 
-I also tried to remove the pointless ioctl call altogether to avoid further
-confusion [0] but that wasn't viable due to spec compliance.
+3) get_arch_regnum translated a register name back to a dwarf number
+and only existed on x86 where "al", "ax", "eax" and "rax" could all
+mean register 0. This code was moved to util with similar
+machine/flags logic to get_arch_regstr and for consistency with it.
 
-Initializing the fields seems the simple solution here (and, IMHO, more
-generally, it's as a good programming practice)
+4) get_powerpc_regs a PowerPC specific function used by annotate that
+should really be in util.
 
-Thanks for looking into this!
+2 and 3 required the wiring through of the ELF machine and flags in
+callers to get_dwarf_regstr and get_dwarf_regnum. When these values
+weren't dependent on an ELF file a new EM_HOST and EF_HOST were added
+to give the host ELF machine and flags. These 2 #defines got rid of
+the existing separate arch files and #ifdefs.
 
-Best,
-Carlos
+v4: Add CSky defines to dwarf-regs.h Add reviewed-by tags from Masami.
+v3: These files were separated from the rest of the v2 libdw clean up
+    in:
+https://lore.kernel.org/lkml/CAP-5=fVZH3L-6y_sxLwSmT8WyMXDMFnuqUksNULdQYJCPNBFYw@mail.gmail.com/
 
-[0] https://lore.kernel.org/lkml/CACGkMEvfdUYLjx-Z+oB11XW-54ErJsQMKcnu2p=dsj5N_BiEKw@mail.gmail.com/
+Ian Rogers (20):
+  perf bpf-prologue: Remove unused file
+  perf dwarf-regs: Remove PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET
+  perf dwarf-regs: Add EM_HOST and EF_HOST defines
+  perf disasm: Add e_machine/e_flags to struct arch
+  perf dwarf-regs: Pass accurate disassembly machine to get_dwarf_regnum
+  perf dwarf-regs: Pass ELF flags to get_dwarf_regstr
+  perf dwarf-regs: Move x86 dwarf-regs out of arch
+  perf arm64: Remove dwarf-regs.c
+  perf arm: Remove dwarf-regs.c
+  perf dwarf-regs: Move csky dwarf-regs out of arch
+  perf loongarch: Remove dwarf-regs.c
+  perf mips: Remove dwarf-regs.c
+  perf dwarf-regs: Move powerpc dwarf-regs out of arch
+  perf riscv: Remove dwarf-regs.c and add dwarf-regs-table.h
+  perf s390: Remove dwarf-regs.c
+  perf sh: Remove dwarf-regs.c
+  perf sparc: Remove dwarf-regs.c
+  perf xtensa: Remove dwarf-regs.c
+  perf dwarf-regs: Remove get_arch_regstr code
+  perf build: Remove PERF_HAVE_DWARF_REGS
 
+ tools/perf/Makefile.config                    |  17 +-
+ tools/perf/arch/arc/annotate/instructions.c   |   2 +
+ tools/perf/arch/arm/Makefile                  |   3 -
+ tools/perf/arch/arm/annotate/instructions.c   |   2 +
+ tools/perf/arch/arm/util/Build                |   2 -
+ tools/perf/arch/arm/util/dwarf-regs.c         |  61 -------
+ tools/perf/arch/arm64/Makefile                |   4 -
+ tools/perf/arch/arm64/annotate/instructions.c |   2 +
+ tools/perf/arch/arm64/util/Build              |   1 -
+ tools/perf/arch/arm64/util/dwarf-regs.c       |  92 -----------
+ tools/perf/arch/csky/Makefile                 |   4 -
+ tools/perf/arch/csky/annotate/instructions.c  |   7 +-
+ tools/perf/arch/csky/util/Build               |   1 -
+ tools/perf/arch/loongarch/Makefile            |   4 -
+ .../arch/loongarch/annotate/instructions.c    |   2 +
+ tools/perf/arch/loongarch/util/Build          |   1 -
+ tools/perf/arch/loongarch/util/dwarf-regs.c   |  44 -----
+ tools/perf/arch/mips/Makefile                 |   4 -
+ tools/perf/arch/mips/annotate/instructions.c  |   2 +
+ tools/perf/arch/mips/util/Build               |   1 -
+ tools/perf/arch/mips/util/dwarf-regs.c        |  38 -----
+ tools/perf/arch/powerpc/Makefile              |   5 -
+ .../perf/arch/powerpc/annotate/instructions.c |   2 +
+ tools/perf/arch/powerpc/util/Build            |   1 -
+ tools/perf/arch/powerpc/util/dwarf-regs.c     | 153 ------------------
+ tools/perf/arch/riscv/Makefile                |   5 +-
+ .../arch/riscv/include/dwarf-regs-table.h     |  42 +++++
+ tools/perf/arch/riscv/util/Build              |   1 -
+ tools/perf/arch/riscv/util/dwarf-regs.c       |  72 ---------
+ .../perf/arch/riscv64/annotate/instructions.c |   2 +
+ tools/perf/arch/s390/Makefile                 |   4 -
+ tools/perf/arch/s390/annotate/instructions.c  |   2 +
+ tools/perf/arch/s390/util/Build               |   1 -
+ tools/perf/arch/s390/util/dwarf-regs.c        |  43 -----
+ tools/perf/arch/sh/Build                      |   1 -
+ tools/perf/arch/sh/Makefile                   |   4 -
+ tools/perf/arch/sh/util/Build                 |   1 -
+ tools/perf/arch/sh/util/dwarf-regs.c          |  41 -----
+ tools/perf/arch/sparc/Build                   |   1 -
+ tools/perf/arch/sparc/Makefile                |   4 -
+ tools/perf/arch/sparc/annotate/instructions.c |   2 +
+ tools/perf/arch/sparc/util/Build              |   1 -
+ tools/perf/arch/sparc/util/dwarf-regs.c       |  39 -----
+ tools/perf/arch/x86/Makefile                  |   4 -
+ tools/perf/arch/x86/annotate/instructions.c   |   3 +-
+ tools/perf/arch/x86/util/Build                |   3 -
+ tools/perf/arch/x86/util/dwarf-regs.c         | 153 ------------------
+ tools/perf/arch/xtensa/Build                  |   1 -
+ tools/perf/arch/xtensa/Makefile               |   4 -
+ tools/perf/arch/xtensa/util/Build             |   1 -
+ tools/perf/arch/xtensa/util/dwarf-regs.c      |  21 ---
+ tools/perf/util/Build                         |   3 +
+ tools/perf/util/annotate.c                    |   6 +-
+ tools/perf/util/bpf-prologue.h                |  37 -----
+ tools/perf/util/disasm.c                      |   1 +
+ tools/perf/util/disasm.h                      |   4 +
+ .../dwarf-regs.c => util/dwarf-regs-csky.c}   |  19 +--
+ tools/perf/util/dwarf-regs-powerpc.c          |  61 +++++++
+ tools/perf/util/dwarf-regs-x86.c              |  50 ++++++
+ tools/perf/util/dwarf-regs.c                  |  38 +++--
+ tools/perf/util/include/dwarf-regs.h          | 120 +++++++++++---
+ tools/perf/util/probe-finder.c                |  13 +-
+ tools/perf/util/probe-finder.h                |   3 +-
+ 63 files changed, 339 insertions(+), 927 deletions(-)
+ delete mode 100644 tools/perf/arch/arm/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/arm64/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/csky/Makefile
+ delete mode 100644 tools/perf/arch/loongarch/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/mips/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/powerpc/util/dwarf-regs.c
+ create mode 100644 tools/perf/arch/riscv/include/dwarf-regs-table.h
+ delete mode 100644 tools/perf/arch/riscv/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/s390/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/sh/Build
+ delete mode 100644 tools/perf/arch/sh/Makefile
+ delete mode 100644 tools/perf/arch/sh/util/Build
+ delete mode 100644 tools/perf/arch/sh/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/sparc/Build
+ delete mode 100644 tools/perf/arch/sparc/util/Build
+ delete mode 100644 tools/perf/arch/sparc/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/x86/util/dwarf-regs.c
+ delete mode 100644 tools/perf/arch/xtensa/Build
+ delete mode 100644 tools/perf/arch/xtensa/Makefile
+ delete mode 100644 tools/perf/arch/xtensa/util/Build
+ delete mode 100644 tools/perf/arch/xtensa/util/dwarf-regs.c
+ delete mode 100644 tools/perf/util/bpf-prologue.h
+ rename tools/perf/{arch/csky/util/dwarf-regs.c => util/dwarf-regs-csky.c} (74%)
+ create mode 100644 tools/perf/util/dwarf-regs-powerpc.c
+ create mode 100644 tools/perf/util/dwarf-regs-x86.c
 
->
->
->>>> Add
->>>> needed helper cpu_to_mlx5vdpa32() to convert endianness of speed.
->>>>
->>>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
->>>> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
->>>> ---
->>>>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 12 ++++++++++++
->>>>  1 file changed, 12 insertions(+)
->>>>
->>>> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
->>>> index b56aae3f7be3..41ca268d43ff 100644
->>>> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
->>>> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
->>>> @@ -173,6 +173,11 @@ static __virtio16 cpu_to_mlx5vdpa16(struct mlx5_vdpa_dev *mvdev, u16 val)
->>>>  	return __cpu_to_virtio16(mlx5_vdpa_is_little_endian(mvdev), val);
->>>>  }
->>>>  
->>>> +static __virtio32 cpu_to_mlx5vdpa32(struct mlx5_vdpa_dev *mvdev, u32 val)
->>>> +{
->>>> +	return __cpu_to_virtio32(mlx5_vdpa_is_little_endian(mvdev), val);
->>>> +}
->>>> +
->>>>  static u16 ctrl_vq_idx(struct mlx5_vdpa_dev *mvdev)
->>>>  {
->>>>  	if (!(mvdev->actual_features & BIT_ULL(VIRTIO_NET_F_MQ)))
->>>> @@ -3433,6 +3438,13 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
->>>>  	init_rwsem(&ndev->reslock);
->>>>  	config = &ndev->config;
->>>>  
->>>> +	/*
->>>> +	 * mlx5_vdpa vDPA devices currently don't support reporting or
->>>> +	 * setting the speed or duplex.
->>>> +	 */
->>>> +	config->speed  = cpu_to_mlx5vdpa32(mvdev, SPEED_UNKNOWN);
->>>> +	config->duplex = DUPLEX_UNKNOWN;
->>>> +
->>>>  	if (add_config->mask & BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)) {
->>>>  		err = config_func_mtu(mdev, add_config->net.mtu);
->>>>  		if (err)
->>>> -- 
->>>> 2.34.1
+-- 
+2.47.0.277.g8800431eea-goog
+
 
