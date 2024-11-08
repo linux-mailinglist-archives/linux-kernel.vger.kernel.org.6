@@ -1,311 +1,144 @@
-Return-Path: <linux-kernel+bounces-402164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F75F9C2493
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:03:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE80F9C248D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:03:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5AFC1F23A4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1D9289A79
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAB6233D84;
-	Fri,  8 Nov 2024 18:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D501F26CA;
+	Fri,  8 Nov 2024 18:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Qhg2afYl"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="HBtjhEQD"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F87B233D6A;
-	Fri,  8 Nov 2024 18:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A6D1F26C0
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731088948; cv=none; b=uSIE804ZGdpaP94OU6Tme5FeL1FcH4ClIcBTbFsqF1RooXra72J4IFlOtOyG/Pbu/wTUGZG4jLaNNbBLeuPCMdaKQS+yNJ6CRhCJ3FeuuEGUcdjNOxNBcHGUxZlHIpd57YJXHnXNSlJxqLs2X7IvtIw+8jsAhgprAVnTXNYWMCk=
+	t=1731088876; cv=none; b=iqIPA3/0PIT7f1PdhAp0f6uN6rAv2rVctCPUSztc3xQDdJg59Y4+Z2Z/siLwQC4LgH6smLLxiMFnNyDBPKcTR3eJL77n4X5tIY97WHu9G6s172WgYdHUQheyoXRCSVg0y+TEv2gGaO+9WhQYaepKf/mkgPCzvcgjlsoTswfGoP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731088948; c=relaxed/simple;
-	bh=SVqZ1X8HVCMzQQKZjQtXJX2fjS2vCniOVfAXvWwjdCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pllrqqn2S00BhFy/esX0VUpeTq/gtVMxNn2r8ZfiyJSVqlZbwlkz453vpHgMO0LS5Y1gi9VcCgCHZsbOX2rVF9ZqNTGsg0Zzbwpnpnapqx4qQZIxi7yDbVvk+xbcmTn3g/HfZLQTWC1QpShuWglSnSKB9sKi3+iM2D79wYFnKfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Qhg2afYl; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731088825; x=1731693625; i=w_armin@gmx.de;
-	bh=SVqZ1X8HVCMzQQKZjQtXJX2fjS2vCniOVfAXvWwjdCM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Qhg2afYlJNFS2COGc1xYYsj1S7cc8BNnoARqs7pEY6ynvEvNhirbrP7MD8uCuvel
-	 UZ7EWlMUiqCBvdV2XxEgvV1G0+cK9goijMTDUknzZxFmuI3PVI9ToO/qY9K8haIDP
-	 VnFMtasRKJcvLA8C/PfCWrxUX3ucybAOY7Z0dtd/1Ccp4zQsaaXyXTEgn3Cb/vfNJ
-	 OTJ9Vc67D9L97gA7/vN8X7RXh/yOQL9QAuisd0EGP+/pDTQMhcMg9/p0tL1xVri2e
-	 IlIZKnkxUxFHmRbAgc6kWtADjZpPpKX2Oz7054+myEp4ru6D3uDJHXSxlBOFsLQot
-	 VIXXkIqy/ptzUGO4Mg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N95eJ-1tuaHH41bT-00scQ0; Fri, 08
- Nov 2024 19:00:25 +0100
-Message-ID: <7a08bb90-84b3-4536-81f1-8542a11dbff3@gmx.de>
-Date: Fri, 8 Nov 2024 19:00:21 +0100
+	s=arc-20240116; t=1731088876; c=relaxed/simple;
+	bh=oezwSahqeVo98aIQ1EJ74ByiQozxrqkdnj7+JbWeTYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYyQlLZram8Fh5VOkD60/mshU7oPw4nC0msqLKRN7NDmHVywBe4qm1BCN4l/N9AxL4szJYDPzNWORL6SjL3awIDW/ezQlyBlCZ95Q9xsA3iHgYTn9QwL0df3uEoo6aFdaCsB8XUuuNXKGVzoKS9UqWT+ZK+lJHXWaowqwTSpGFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=HBtjhEQD; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cbceb321b3so15512696d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:01:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1731088873; x=1731693673; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zs23C+5/amwqfDvV9LtWZn4mgzjfoDFSDR2Scoi1E+Y=;
+        b=HBtjhEQDfhaJtFN3+hQoXOfiuM3DRM0MNsyXQzEa9KFnZn/khLbVWeli2hjYa6TgxL
+         P9NUMp044O72bA5hyHLv/T2dGgcTaABImul1CMTpMYosduHHhgDqC6lHm3/e6lCgmURz
+         pT9cmdT5KZnsFdNnI0FagTgmyt06rUFNr9YrdLu4A6Swrjd+UNDQj80WSFoRms4dHsbE
+         iEBLVbSPBI4Z5CwsdqE0GAACM3Y7JIKOWsABaDSHqFyWxAeo226ONeHSETVFbSdTwu+Q
+         gwbHEMJ0fxRjzr6C2AjIQKyQFIwJYZrSkpBcxuG6KEk45YbMEKaoCFSvh2SL1AuJqozj
+         C5dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731088873; x=1731693673;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zs23C+5/amwqfDvV9LtWZn4mgzjfoDFSDR2Scoi1E+Y=;
+        b=gp6foYEAJ5Kz8WPaKng25GLIUkp503FLEcaJL5vpQ8kun4Jfg0mIjDf4NLWsJu7PvX
+         Q9FKyP9eqRiMlhkZCnUAhCAXFdCUoprYPvDZ2sS46AVGiCNJalCEpARsMFNDW1fuXTwO
+         LICuVxcdFuxXKd6Vl2vJPMD2RdmImP3byxPE+I+HPMUQWQJDdkJW5j7D8cYVkwYypeeG
+         5+P0/K61/bxv3kTfQWRqAJgZFWYssoBSeicqCIt48WrBGsCuQLCJoEfG7+8wbW9XKiUW
+         pXLDiKeURc42yMzSq4xPSavAHPlnx406yWkWK9qJ0a3yTJ39wh5jfH5XddD+Q+yZkeBx
+         9Tvw==
+X-Forwarded-Encrypted: i=1; AJvYcCW64qQXplcUe6A2J/Xyokva2rbItK/cwcxIaJDU24pfaXc+NXVdTJ06V60z6rnsdXROYLluPfHo1o4Mz5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxThuYXT7JyL5PdwZDRhLxGyupcYEq3whePXPaS/8nMYLu13imj
+	ciwnQ6nWPhR5HJNdx1uA5ObuJN5fgqnwsdjNAqpcjbcCEBO8GC45yEygjcFc6RM=
+X-Google-Smtp-Source: AGHT+IEPJrXsNFfGXnjpLXjxgjcfwfpF1PgAEkcM7oPTJS9Mf06xfBmic5tTTDSyk700PE5cHO04lg==
+X-Received: by 2002:a05:6214:46a1:b0:6cb:f79a:cb38 with SMTP id 6a1803df08f44-6d39e107cfcmr48997816d6.5.1731088872653;
+        Fri, 08 Nov 2024 10:01:12 -0800 (PST)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3966317f3sm21688726d6.118.2024.11.08.10.01.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 10:01:11 -0800 (PST)
+Date: Fri, 8 Nov 2024 13:00:56 -0500
+From: Gregory Price <gourry@gourry.net>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, david@redhat.com, nphamcs@gmail.com,
+	nehagholkar@meta.com, abhishekd@meta.com,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Feng Tang <feng.tang@intel.com>
+Subject: Re: [PATCH 0/3] mm,TPP: Enable promotion of unmapped pagecache
+Message-ID: <Zy5R2JvXvhFoJzeY@PC2K9PVX.TheFacebook.com>
+References: <20240803094715.23900-1-gourry@gourry.net>
+ <875xrxhs5j.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZsNhgU-TiTz2WKg5@PC2K9PVX.TheFacebook.com>
+ <87ikvefswp.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZykOqYJpgL4lw7mw@PC2K9PVX.TheFacebook.com>
+ <87jzdi782s.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 12/20] ACPI: platform_profile: Add profile attribute
- for class interface
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241107060254.17615-1-mario.limonciello@amd.com>
- <20241107060254.17615-13-mario.limonciello@amd.com>
- <f5967c2f-1a33-4f5d-bae7-1864d931301c@gmx.de>
- <3618b0df-460e-4647-ac12-8063542f40e5@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <3618b0df-460e-4647-ac12-8063542f40e5@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:T9h5p1rcMH+bda/iPdtZAZBe97AF/VGoybaei0D6LquWC5zP1b+
- yUxFqCQXVkJg/E59SCCVhOQIVkSXnoa6YtUUHaHSn+YSY/OePvbm6ANEFn49TEWcQsjn0PK
- LeqvmHr6+IDLZl5MBJXQiBj2H42iRi1qL9OcKUL7immgFJSou0D9A37kVPCYr9TACPzXPAZ
- a/x5Opm4Nprk7SpXsSaKg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ROV88I4esuw=;CYzyHR8rCgiqH5w7YkmdOrC0bSj
- drrclBv+gY0I1IO3PYnYFDDm2pDPkoXzjgHTUyKqahkopsa/+dTAV9fDqA8FNqrj3mGW03WC5
- ZwtkhZLjyxmGzFt97rC97j3ctNG9RZE/NZhMnE4sZQT152/Irk5niR5jTCsS1q/fHBCY/q7pp
- 2MsQS8fDp/aNaNEM9DB9CuoovIXogzsMFuaLqC4UQG1oRoSIX388ATDhWcVkMs4sBcQRnUzUX
- j9hbFYijcbrScStPjoexPXuRS48EgpRe2Dn8AeSl8uUVdw3KRxlMQV+dObZrGRzKxpWVUGDTY
- uxLsRkZJTAS985vc39KK0mgkBDycNi41+EeIFr4/5JxpnHvnoWuVMdXa+g/Ky5uLRlXCdBkUg
- kdU/ohJKw/Wg5RmQA8GdF40dF/mYn4ITr7HRdd3MvCeC+RUvlhTz/XJJegernuF9SccN/a8E5
- lk+BY4raM7AHPOD+V7NkDCRASmp1AkM9WDHQcz0NDWRGbpk6KQSLWg4a2e6x1iVuQp+9iKP6C
- L5R3Bkcm3CaAflcommUigfV/Y+dbxFke+aI95qjVt+VTBng+wYqqdLuLaw/vIUBNzeMNF98zh
- O2bZlDQVw9zuHs0EA+pssWCbHSmWmORhAicgroDdBJQ01Oi6sP0xy9NNwKdvLpacgs7862HVY
- +pPb04nBJO7XTmhlyMT0T8zsvqN5vnHz/vyRZ0tsMooyTTWMkQ55whpD8Dio8fF+bYbZ4c6Pg
- WJkM9nmpe9Wl/h4eG03H9SriKoONcHRY3EExvwVDwkgqsmfgdrhwa4UAGuJDp+ZTRy+tSZHC7
- BTqmhcTDsuSS2/NhktweKzKGc7GCN8EWuPCXh5F62gDj8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jzdi782s.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
-Am 07.11.24 um 22:41 schrieb Mario Limonciello:
+On Tue, Nov 05, 2024 at 10:00:59AM +0800, Huang, Ying wrote:
+> Hi, Gregory,
+> >> 
+> >> Several years ago, we have tried to use the access time tracking
+> >> mechanism of NUMA balancing to track the access time latency of unmapped
+> >> file cache folios.  The original implementation is as follows,
+> >> 
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=5f2e64ce75c0322602c2ec8c70b64bb69b1f1329
+> >> 
+> >> What do you think about this?
+> >> 
+> >
+> > Coming back around to explore this topic a bit more, dug into this old
+> > patch and the LRU patch by Keith - I'm struggling find a good option
+> > that doesn't over-complicate or propose something contentious.
+> >
+> >
+> > I did a browse through lore and did not see any discussion on this patch
+> > or on Keith's LRU patch, so i presume discussion on this happened largely
+> > off-list.  So if you have any context as to why this wasn't RFC'd officially
+> > I would like more information.
+> 
+> Thanks for doing this.  There's no much discussion offline.  We just
+> don't have enough time to work on the solution.
+> 
 
-> On 11/7/2024 02:34, Armin Wolf wrote:
->> Am 07.11.24 um 07:02 schrieb Mario Limonciello:
->>
->>> Reading and writing the `profile` sysfs file will use the callbacks fo=
-r
->>> the platform profile handler to read or set the given profile.
->>>
->>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>> ---
->>> v5:
->>> =C2=A0 * Drop recovery flow
->>> =C2=A0 * Don't get profile before setting (not needed)
->>> =C2=A0 * Simplify casting for call to _store_class_profile()
->>> =C2=A0 * Only notify legacy interface of changes
->>> =C2=A0 * Adjust mutex use
->>> ---
->>> =C2=A0 drivers/acpi/platform_profile.c | 110
->>> ++++++++++++++++++++++++++++++++
->>> =C2=A0 1 file changed, 110 insertions(+)
->>>
->>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
->>> platform_profile.c
->>> index 5e0bb91c5f451..35e0e8f666072 100644
->>> --- a/drivers/acpi/platform_profile.c
->>> +++ b/drivers/acpi/platform_profile.c
->>> @@ -65,6 +65,62 @@ static int _get_class_choices(struct device *dev,
->>> unsigned long *choices)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>> =C2=A0 }
->>>
->>> +/**
->>> + * _store_class_profile - Set the profile for a class device
->>> + * @dev: The class device
->>> + * @data: The profile to set
->>> + */
->>> +static int _store_class_profile(struct device *dev, void *data)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler;
->>> +=C2=A0=C2=A0=C2=A0 unsigned long choices;
->>> +=C2=A0=C2=A0=C2=A0 int *i =3D (int *)data;
->>> +=C2=A0=C2=A0=C2=A0 int err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 err =3D _get_class_choices(dev, &choices);
->>> +=C2=A0=C2=A0=C2=A0 if (err)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 lockdep_assert_held(&profile_lock);
->>> +=C2=A0=C2=A0=C2=A0 if (!test_bit(*i, &choices))
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EOPNOTSUPP;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdata(dev);
->>> +=C2=A0=C2=A0=C2=A0 err =3D handler->profile_set(handler, *i);
->>> +=C2=A0=C2=A0=C2=A0 if (err)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return err ? err : 0;
->>
->> Please just return 0 here.
->>
->>> +}
->>> +
->>> +/**
->>> + * get_class_profile - Show the current profile for a class device
->>> + * @dev: The class device
->>> + * @profile: The profile to return
->>> + * Return: 0 on success, -errno on failure
->>> + */
->>> +static int get_class_profile(struct device *dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum platform_profile_option *profile)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler;
->>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option val;
->>> +=C2=A0=C2=A0=C2=A0 int err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 lockdep_assert_held(&profile_lock);
->>> +=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdata(dev);
->>> +=C2=A0=C2=A0=C2=A0 err =3D handler->profile_get(handler, &val);
->>> +=C2=A0=C2=A0=C2=A0 if (err) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("Failed to get prof=
-ile for handler %s\n",
->>> handler->name);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
->>> +=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (WARN_ON(val >=3D PLATFORM_PROFILE_LAST))
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
->>> +=C2=A0=C2=A0=C2=A0 *profile =3D val;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return 0;
->>> +}
->>> +
->>> =C2=A0 /**
->>> =C2=A0=C2=A0 * name_show - Show the name of the profile handler
->>> =C2=A0=C2=A0 * @dev: The device
->>> @@ -106,12 +162,66 @@ static ssize_t choices_show(struct device *dev,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return _commmon_choices_show(choices, b=
-uf);
->>> =C2=A0 }
->>>
->>> +/**
->>> + * profile_show - Show the current profile for a class device
->>> + * @dev: The device
->>> + * @attr: The attribute
->>> + * @buf: The buffer to write to
->>> + * Return: The number of bytes written
->>> + */
->>> +static ssize_t profile_show(struct device *dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 char *buf)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option profile =3D PLATFORM_=
-PROFILE_LAST;
->>> +=C2=A0=C2=A0=C2=A0 int err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
->>> &profile_lock) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D get_class_profile(=
-dev, &profile);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-turn err;
->>> +=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return sysfs_emit(buf, "%s\n", profile_names[profi=
-le]);
->>
->> AFAIK we do not need to take the mutex here, since querying the
->> current platform profile
->> should not change any state.
->
-> I think it's still needed, in case someone attempts to unload the driver
-> at the same time as it's being read.=C2=A0 It's not static information
-> because it needs to use the function pointer into the driver to get it.
->
-> This will protect from that occurring.
->
-> That's the same reason I was thinking name needed protection too.
->
-I see, good point.
+Exploring and testing this a little further, I brought this up to current
+folio work in 6.9 and found this solution to be unstable as-is.
 
-Thanks,
-Armin Wolf
+After some work to fix lock/reference issues, Johannes pointed out that
+__filemap_get_folio can be called from an atomic context - which means it
+may not be safe to do migrations in this context.
 
->>
->> Thanks,
->> Armin Wolf
->>
->>> +}
->>> +
->>> +/**
->>> + * profile_store - Set the profile for a class device
->>> + * @dev: The device
->>> + * @attr: The attribute
->>> + * @buf: The buffer to read from
->>> + * @count: The number of bytes to read
->>> + * Return: The number of bytes read
->>> + */
->>> +static ssize_t profile_store(struct device *dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *buf, size_t count)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 int i, ret;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 i =3D sysfs_match_string(profile_names, buf);
->>> +=C2=A0=C2=A0=C2=A0 if (i < 0)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
->>> &profile_lock) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D _store_class_profi=
-le(dev, &i);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-turn ret;
->>> +=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_profile");
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return count;
->>> +}
->>> +
->>> =C2=A0 static DEVICE_ATTR_RO(name);
->>> =C2=A0 static DEVICE_ATTR_RO(choices);
->>> +static DEVICE_ATTR_RW(profile);
->>>
->>> =C2=A0 static struct attribute *profile_attrs[] =3D {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &dev_attr_name.attr,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &dev_attr_choices.attr,
->>> +=C2=A0=C2=A0=C2=A0 &dev_attr_profile.attr,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL
->>> =C2=A0 };
->>> =C2=A0 ATTRIBUTE_GROUPS(profile);
->
+We're back to looking at something like an LRU-esque system, but now we're
+thinking about isolating the folios in folio_mark_accessed into a task-local
+list, and then process the list on resume.
+
+Basically we're thinking
+
+1) hook folio_mark_accessed and use PG_ACTIVE/PG_ACCESSED to determine whether
+   the page is a promotion candidate.
+2) if it is, isolate it from the LRU - which is safe because folio_mark_accessed
+   already does this elsewhere, and place it onto current->promo_queue
+3) set_notify_resume
+4) add logic to resume_user_mode_work() to run through current->promo_queue and
+   either promote the pages accordingly, or do folio_putback_lru on failure.
+
+Going to RFC this up
+
+~Gregory
 
