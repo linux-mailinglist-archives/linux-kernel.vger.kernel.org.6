@@ -1,216 +1,101 @@
-Return-Path: <linux-kernel+bounces-401969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013359C21B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:12:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CC79C21B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845C61F22C6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736041C23E3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C82E1925AA;
-	Fri,  8 Nov 2024 16:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE45176ADE;
+	Fri,  8 Nov 2024 16:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohv+2qZO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B3013B29F;
-	Fri,  8 Nov 2024 16:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j592EXb7"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B9BA41
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731082348; cv=none; b=hj6/09DFbbEI2zkHf9q0eg6VMn7YhKpNV8nC/5NURdhY4bp8TEHl/EfAUNKF44jfQo6IblOi0dVDmInrBnSErSenQMNLUNM30PjVV09F90JZTE34FNgs5PeXqZTPbphVifLNrv7lBe3G8SnuS79R6xPCqQYEavCJjDOiKUaY8gw=
+	t=1731082395; cv=none; b=ecRAl3sJyhvqnYOIJ/DbvsM7PujpRjsAzQij078CgLsWptAF/3X/Q7/AwHw8eVy/nxdkHQGNhG2MwH5t1J2ajYb1dXA0Q1WZqWnKrM7IrDNP0j4UoB9g1cziaEB4ODUzKy2WY4YY5qBhokcuQRJ+OAGd42RFed+S/2G5EfXrST4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731082348; c=relaxed/simple;
-	bh=adVffkUOC5N+2b1eGWF++UUJ8/yyvaIQLPhK1rvjyuE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d5uuJPB3sZCPBLLqmU6g/TzFc9fblD7PIrNOnbH521WrlaI7+acFa4ehbxogMUnu7CIJTfj/WELqIcXCIiDo5mmPO0vmfHmeFcvhCe2N4JPvDG5EgKha73m7KUX+xoB8uC3hB8/Dc5hvZFm0gOwx+i9Afkp7tPpsA0+QDEecnqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohv+2qZO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0D357C4CED7;
-	Fri,  8 Nov 2024 16:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731082348;
-	bh=adVffkUOC5N+2b1eGWF++UUJ8/yyvaIQLPhK1rvjyuE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ohv+2qZOwWEexIAz5Hl/RRBav3gEoKhgKtV15OutBKpZ7v2ytF/X6R9hXFX+s8svs
-	 dmUOapFC7/My7miMhWdlGN6waNT0u3sLy2R8ZpMgginmSvreW7N50GWPSBYHCfQc5f
-	 0lBqpjn7by7lhI65AnyKjLrq7M7X1pX1RcKgJDBpCCI/lQA9hY/ydgjqfrFiwgO6Bk
-	 L+nZbAuDbVInbTsrCAUKm6ULpjCzWDe4j+j661ppKjytkUdKDSJOEqnbG+FT3HfWzF
-	 83A9uFK+X9D8abp8NvFGKORVTcnBXsRbLJ6OwM+d74Uy/QlEImDQf2Bn5xHWlbYgon
-	 BjuYDrKLaKRBA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05335D5C0FD;
-	Fri,  8 Nov 2024 16:12:28 +0000 (UTC)
-From: Daniel Gomez via B4 Relay <devnull+da.gomez.samsung.com@kernel.org>
-Date: Fri, 08 Nov 2024 17:12:16 +0100
-Subject: [PATCH RFC v3 4/4] module: refactor ro_after_init failure path
+	s=arc-20240116; t=1731082395; c=relaxed/simple;
+	bh=yd/mFAcLulfVZFMa4Mi11xdP//PVSO6Kyxl+evLrC4s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iqVLcc3NRjyuMs/ki9cplTvsBhiYX6KWanH/C8sHhUGCIfWgW4fgyW2Q1mQiNV+pQr7E/iY8R/tLGZYkMOEyTgi2/Y/IfMWIt04kMHlwzIa3sOdJempW6rKH6F5SDVjRZaH9oFUbzFjfp/7g+TWIKMz5sX+QoaSor4CUWyje81g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j592EXb7; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=20C9p
+	NvflvZEvF9aIERSmQUwapvzKf2M7ZwWhLnK2L8=; b=j592EXb7llhnwDZXQBiKy
+	hHPUmD9138YM6szgFSpM85JwzD8dKZmy9tlYs5iNtDALvAi5rOtRCLoYDtqjbgAW
+	T52vPxvb5W4SBKCK+v2qbopuuNFrQzS7REyh3gwC70n0YQTFtZjvUurD/RK/CLeX
+	zFIUbetJCzkXuWFkFdTHBg=
+Received: from localhost.localdomain (unknown [111.35.191.191])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD33zeJOC5nVQN_GA--.37779S4;
+	Sat, 09 Nov 2024 00:13:04 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: chris@zankel.net,
+	jcmvbkbc@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH 04/13] xtensa/irq: use seq_put_decimal_ull_width() for decimal values
+Date: Sat,  9 Nov 2024 00:12:55 +0800
+Message-Id: <20241108161255.9671-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241108-modules-ro_after_init-v3-4-6dd041b588a5@samsung.com>
-References: <20241108-modules-ro_after_init-v3-0-6dd041b588a5@samsung.com>
-In-Reply-To: <20241108-modules-ro_after_init-v3-0-6dd041b588a5@samsung.com>
-To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
- Sami Tolvanen <samitolvanen@google.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Thomas Gleixner <tglx@linutronix.de>, Jinjie Ruan <ruanjinjie@huawei.com>, 
- Jens Axboe <axboe@kernel.dk>
-Cc: "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, 
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Daniel Gomez <da.gomez@samsung.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731082346; l=5513;
- i=da.gomez@samsung.com; s=20240621; h=from:subject:message-id;
- bh=Db9jcYz5hKdZ02hfGSOe9kn0EwUQXw4KgNDzf0EpOLc=;
- b=UsGWnNs2g45kP6nzz3FumHxWrFnuZNaJCJ2vmZtKAwxmeuLHc0aM7x7X7TfCR1iMpEUZwBAYQ
- g3cmR6/8hEGA50tMDd15IEOfRf4U94fFrNLUlHnALnKAlQCD2gjGq4f
-X-Developer-Key: i=da.gomez@samsung.com; a=ed25519;
- pk=BqYk31UHkmv0WZShES6pIZcdmPPGay5LbzifAdZ2Ia4=
-X-Endpoint-Received: by B4 Relay for da.gomez@samsung.com/20240621 with
- auth_id=175
-X-Original-From: Daniel Gomez <da.gomez@samsung.com>
-Reply-To: da.gomez@samsung.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD33zeJOC5nVQN_GA--.37779S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr4xuw47CF17uFy3GFWfXwb_yoW8GF4Upr
+	4Skas8Wr4fWw1vq3W7taykurW5tF98tryag3Z0g3yfG3WUJ3s7XFnIva1xX34vg392gF1S
+	9F13Wr10qwn0kw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUe6wXUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gWRqmcuN-cJFQAAs5
 
-From: Daniel Gomez <da.gomez@samsung.com>
+Performance improvement for reading /proc/interrupts on arch xtensa
 
-When ro_after_init fails, we need to unload the module.
-
-Rename the goto tag to fail_ro_after_init to make it more clear and try
-to check for dependencies, stop the module and call the exit function.
-This allows to unload the module if ro_after_init fails.
-
-This fixes the following error in block loop device driver when forcing
-ro_after_init error path:
-
-Nov 06 11:36:25 debian kernel: loop: module loaded
-Nov 06 11:36:25 debian kernel: BUG: unable to handle page fault for
-address: ffffffffa0006320
-Nov 06 11:36:25 debian kernel: #PF: supervisor read access in kernel mode
-Nov 06 11:36:25 debian kernel: #PF: error_code(0x0000) - not-present page
-Nov 06 11:36:25 debian kernel: PGD 1e3f067 P4D 1e3f067 PUD 1e40063 PMD
-10e7d4067 PTE 0
-Nov 06 11:36:25 debian kernel: Oops: Oops: 0000 [#1]
-Nov 06 11:36:25 debian kernel: CPU: 0 UID: 0 PID: 428 Comm:
-(udev-worker) Not tainted 6.12.0-rc6-g4ade030a2d1b #155
-Nov 06 11:36:25 debian kernel: Hardware name: QEMU Standard PC (Q35 +
-ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Nov 06 11:36:25 debian kernel: RIP: 0010:bdev_open+0x83/0x290
-Nov 06 11:36:25 debian kernel: Code: bb 48 01 00 00 48 89 3c 24 e8 79 24
-38 00 48 8b 43 40 41 bd fa ff ff ff 48 83 b8 40 03 00 00 00 0f 84 b3 01
-00 00 48 8b 43 48 <48> 8b 78 78 e8 d4 c9 c8 ff 84 c0 0f 84 9e 01 00 00
-80 3d 45 ad ad
-Nov 06 11:36:25 debian kernel: RSP: 0018:ffff8881054dbc58 EFLAGS:
-00010286
-Nov 06 11:36:25 debian kernel: RAX: ffffffffa00062a8 RBX:
-ffff8881054a6800 RCX: ffff8881075becc0
-Nov 06 11:36:25 debian kernel: RDX: 0000000000000000 RSI:
-0000000000000009 RDI: ffff8881054a6948
-Nov 06 11:36:25 debian kernel: RBP: 0000000000000009 R08:
-ffff88810e7aa9c0 R09: 0000000000000000
-Nov 06 11:36:25 debian kernel: R10: ffff88810e5ab0c0 R11:
-ffff88810e796190 R12: ffff88810094e980
-Nov 06 11:36:25 debian kernel: R13: 00000000fffffffa R14:
-0000000000000000 R15: 0000000000000000
-Nov 06 11:36:25 debian kernel: FS:  00007fd2ff110900(0000)
-GS:ffffffff81e47000(0000) knlGS:0000000000000000
-Nov 06 11:36:25 debian kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
-0000000080050033
-Nov 06 11:36:25 debian kernel: CR2: ffffffffa0006320 CR3:
-000000010e7ed004 CR4: 00000000003706b0
-Nov 06 11:36:25 debian kernel: Call Trace:
-Nov 06 11:36:25 debian kernel:  <TASK>
-Nov 06 11:36:25 debian kernel:  ? __die_body+0x16/0x60
-Nov 06 11:36:25 debian kernel:  ? page_fault_oops+0x22a/0x310
-Nov 06 11:36:25 debian kernel:  ? exc_page_fault+0x99/0xa0
-Nov 06 11:36:25 debian kernel:  ? asm_exc_page_fault+0x22/0x30
-Nov 06 11:36:25 debian kernel:  ? bdev_open+0x83/0x290
-Nov 06 11:36:25 debian kernel:  ? bdev_open+0x67/0x290
-Nov 06 11:36:25 debian kernel:  ? iput+0x37/0x150
-Nov 06 11:36:25 debian kernel:  ? blkdev_open+0xab/0xd0
-Nov 06 11:36:25 debian kernel:  ? blkdev_mmap+0x60/0x60
-Nov 06 11:36:25 debian kernel:  ? do_dentry_open+0x25d/0x3b0
-Nov 06 11:36:25 debian kernel:  ? vfs_open+0x1e/0xc0
-Nov 06 11:36:25 debian kernel:  ? path_openat+0x9cf/0xbb0
-Nov 06 11:36:25 debian kernel:  ? do_filp_open+0x7f/0xd0
-Nov 06 11:36:25 debian kernel:  ? do_sys_openat2+0x67/0xb0
-Nov 06 11:36:25 debian kernel:  ? do_sys_open+0x4b/0x50
-Nov 06 11:36:25 debian kernel:  ? do_syscall_64+0x3d/0xb0
-Nov 06 11:36:25 debian kernel:  ? entry_SYSCALL_64_after_hwframe+0x4b/0x53
-Nov 06 11:36:25 debian kernel:  </TASK>
-Nov 06 11:36:25 debian kernel: Modules linked in:
-Nov 06 11:36:25 debian kernel: CR2: ffffffffa0006320
-Nov 06 11:36:25 debian kernel: ---[ end trace 0000000000000000 ]---
-
-./scripts/faddr2line --list vmlinux bdev_open+0x83/0x290
-bdev_open+0x83/0x290:
-
-bdev_open at block/bdev.c:908
- 903
- 904            mutex_lock(&disk->open_mutex);
- 905            ret = -ENXIO;
- 906            if (!disk_live(disk))
- 907                    goto abort_claiming;
->908<           if (!try_module_get(disk->fops->owner))
- 909                    goto abort_claiming;
- 910            ret = -EBUSY;
- 911            if (!bdev_may_open(bdev, mode))
- 912                    goto put_module;
- 913            if (bdev_is_partition(bdev))
-
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Closes: https://lore.kernel.org/all/20230915082126.4187913-1-ruanjinjie@huawei.com/
-Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()").
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+Signed-off-by: David Wang <00107082@163.com>
 ---
- kernel/module/main.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/xtensa/kernel/irq.c | 2 +-
+ arch/xtensa/kernel/smp.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 2b45a6efa0a9..c23521ae8bda 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2880,7 +2880,7 @@ module_param(async_probe, bool, 0644);
-  */
- static noinline int do_init_module(struct module *mod)
- {
--	int ret = 0;
-+	int ret = 0, forced = 0;
- 	struct mod_initfree *freeinit;
- #if defined(CONFIG_MODULE_STATS)
- 	unsigned int text_size = 0, total_size = 0;
-@@ -2948,7 +2948,7 @@ static noinline int do_init_module(struct module *mod)
+diff --git a/arch/xtensa/kernel/irq.c b/arch/xtensa/kernel/irq.c
+index b1e410f6b5ab..c4f46989f9b7 100644
+--- a/arch/xtensa/kernel/irq.c
++++ b/arch/xtensa/kernel/irq.c
+@@ -58,7 +58,7 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ #if XTENSA_FAKE_NMI
+ 	seq_printf(p, "%*s:", prec, "NMI");
+ 	for_each_online_cpu(cpu)
+-		seq_printf(p, " %10lu", per_cpu(nmi_count, cpu));
++		seq_put_decimal_ull_width(p, " ", per_cpu(nmi_count, cpu), 10);
+ 	seq_puts(p, "   Non-maskable interrupts\n");
  #endif
- 	ret = module_enable_rodata_ro(mod, true);
- 	if (ret)
--		goto fail_mutex_unlock;
-+		goto fail_ro_after_init;
- 	/* Drop initial reference. */
- 	module_put(mod);
- 	mod_tree_remove_init(mod);
-@@ -2989,8 +2989,12 @@ static noinline int do_init_module(struct module *mod)
- 
  	return 0;
- 
--fail_mutex_unlock:
-+fail_ro_after_init:
-+	list_empty(&mod->source_list);
-+	try_stop_module(mod, 0, &forced);
- 	mutex_unlock(&module_mutex);
-+	if (mod->exit != NULL)
-+		mod->exit();
- fail_free_freeinit:
- 	kfree(freeinit);
- fail:
-
+diff --git a/arch/xtensa/kernel/smp.c b/arch/xtensa/kernel/smp.c
+index 94a23f100726..71ec9eced8b9 100644
+--- a/arch/xtensa/kernel/smp.c
++++ b/arch/xtensa/kernel/smp.c
+@@ -453,8 +453,8 @@ void show_ipi_list(struct seq_file *p, int prec)
+ 	for (i = 0; i < IPI_MAX; ++i) {
+ 		seq_printf(p, "%*s:", prec, ipi_text[i].short_text);
+ 		for_each_online_cpu(cpu)
+-			seq_printf(p, " %10lu",
+-					per_cpu(ipi_data, cpu).ipi_count[i]);
++			seq_put_decimal_ull_width(p, " ",
++						  per_cpu(ipi_data, cpu).ipi_count[i], 10);
+ 		seq_printf(p, "   %s\n", ipi_text[i].long_text);
+ 	}
+ }
 -- 
 2.39.2
-
 
 
