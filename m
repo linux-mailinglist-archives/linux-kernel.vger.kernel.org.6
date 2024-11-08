@@ -1,49 +1,51 @@
-Return-Path: <linux-kernel+bounces-401990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB8D9C2202
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:24:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06079C2203
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:25:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 235151F2234E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:24:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A75282E8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452511885A4;
-	Fri,  8 Nov 2024 16:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042C71885A4;
+	Fri,  8 Nov 2024 16:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oJd+CIvE"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oOmFTAhf"
 Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322BE18B09
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A5218B09
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731083064; cv=none; b=bo2OeTY6K+wZdlPZQSpmM4YXhOySlmpxu9Voi2FJlj1GT7TdfzVriHNYy3NWjvHyDf7baPZf0j+tX4tyDaNuUe7MZEyr+BHrdKqpcEFEXs5TaMh3rGO+FZ9qc17AqoTzxs00bzqK6+tQwGwaymns3gPw3QYDfKyraShOOmX4iTc=
+	t=1731083131; cv=none; b=iJREUjN9oweTWxinyDlM6o+jnM3ES2SVPSNBlCRAbfzEVnguBfecwx7C7NGzJlug39CyJEbpL4TCQIdi/HrMk+6YJbFvZR8qXKNZXN9MU9B8MhBj1gIvW7BOcv/u+kMuFk2yO7Sd+7pfhIZxI41gHFWzPCB3nVwZWNG4W1QguUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731083064; c=relaxed/simple;
-	bh=Sbt8x+/j2UkXXk/kZLNcfaatbVWNHmjDlz2G3HdnJtg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F28m8aM6+awiWDwP8z4l5jJ4Zyrf+MOQffWAHJUEtx1su5lzu6bJpmP3qhdUorK7NVy1a3GItassP9vfOQAdd76eYLRspEIK9Z6X+3Zmd8PeJAYLCmYN1CszSgNLHu728RKaEVZpRjDKXR5ZdDLAamZmgT0xk7tQZV5GK7vJRlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oJd+CIvE; arc=none smtp.client-ip=117.135.210.2
+	s=arc-20240116; t=1731083131; c=relaxed/simple;
+	bh=LoBnILTjP+c7I772XhFxSQLCNE328jcEj4sx6hyzSMk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HJKLDrMfe6FvG/ckSj5IV1Q7QRlONlomZnXF+mmsOo/DBIt17jgatAQ+UJqs/JnO5d+WVBgz8Nh3/vxvMgavgeUL+9muvzrfpBh5Id0AoDL0WNyIN/w0EYC+wyWWoCd95hLa94MqGRxD+Wmw3uaxscP+iUi7Ilk/26lPpO/ZYb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oOmFTAhf; arc=none smtp.client-ip=117.135.210.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=zMKR9
-	m10pMGgPA2owiS0OIe8hUhnak/8WG7bNyYEFK4=; b=oJd+CIvEa/55hazHPJ3DY
-	bcNQIR+/A1KqOjtfxtKFv0tLatgzA7+qNCVH/4TIsNGuyYZIBp4rZufhzmBJjETc
-	Nq7S/ItEWl0KXjpwO8WwalkGKo5JIAJ/UGsjkKp63P6MfsmDxbbjRz6asRvxq0l1
-	xrq+KSjV+RyPCOk42rzaH8=
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=dUGTF
+	+Sr/jmIL6b2aWpcEFyrM7xIuftjowU0OHO/q/s=; b=oOmFTAhf576eIsDEKrKm+
+	GpG4sA0QHJY2e5qL05U4im1P7F+f4pY/0xzsSu5CnC/qy2Und2byEl6IbPD6l98x
+	56Yg7/u3V43LyPu95+qSo0i9gTumDIB4r8aVly3NzKG/lc9L5ARbM1XVS/biWql2
+	2kDoX29fRHJHSn8irvCwHI=
 Received: from localhost.localdomain (unknown [111.35.191.191])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgCHpzEAOy5nKkoCBg--.1049S4;
-	Sat, 09 Nov 2024 00:23:34 +0800 (CST)
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wAX7U9hOy5nFlO5BQ--.37910S4;
+	Sat, 09 Nov 2024 00:25:11 +0800 (CST)
 From: David Wang <00107082@163.com>
-To: mpe@ellerman.id.au
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu
 Cc: linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
 	David Wang <00107082@163.com>
-Subject: [PATCH 11/13] powerpc/irq: use seq_put_decimal_ull_width() for decimal values
-Date: Sat,  9 Nov 2024 00:23:27 +0800
-Message-Id: <20241108162327.9887-1-00107082@163.com>
+Subject: [PATCH 12/13] riscv/irq: use seq_put_decimal_ull_width() for decimal values
+Date: Sat,  9 Nov 2024 00:25:03 +0800
+Message-Id: <20241108162503.9914-1-00107082@163.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,116 +54,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgCHpzEAOy5nKkoCBg--.1049S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxur47Xw18WFykAF1ktFWrKrg_yoWrCF4rp3
-	ySkF17Xw4fZr1Yq3W3AanFvwn8KFn0ya4Ygwn3Gr4rAa1DurWkWFnIvF47XFW7Gry2qrsa
-	9r9agr18Kr98Gw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUjD7cUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hmRqmcuN-cU9QAGse
+X-CM-TRANSID:_____wAX7U9hOy5nFlO5BQ--.37910S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr1DKr15tryUKF1UAr4rAFb_yoW3WFg_Kr
+	Z2ya45Way3tFW2vFyDuw1SqryDA34FqF93G3Z29rW2yr1YgrsIyas0yF45J395XrnIqrZ7
+	Jryftrs2vr1xKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_ZqXDUUUUU==
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMw+RqmcuOswJMQAAsA
 
-Performance improvement for reading /proc/interrupts on arch powerpc
+Performance improvement for reading /proc/interrupts on arch riscv
 
 Signed-off-by: David Wang <00107082@163.com>
 ---
- arch/powerpc/kernel/irq.c | 44 +++++++++++++++++++--------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ arch/riscv/kernel/smp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-index 2e1600a8bbbb..a0e8b998c9b5 100644
---- a/arch/powerpc/kernel/irq.c
-+++ b/arch/powerpc/kernel/irq.c
-@@ -89,69 +89,69 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- 
- #if defined(CONFIG_PPC32) && defined(CONFIG_TAU_INT)
- 	if (tau_initialized) {
--		seq_printf(p, "%*s: ", prec, "TAU");
-+		seq_printf(p, "%*s:", prec, "TAU");
- 		for_each_online_cpu(j)
--			seq_printf(p, "%10u ", tau_interrupts(j));
-+			seq_put_decimal_ull_width(p, " ", tau_interrupts(j), 10);
- 		seq_puts(p, "  PowerPC             Thermal Assist (cpu temp)\n");
+diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+index c180a647a30e..f1e9c3db094c 100644
+--- a/arch/riscv/kernel/smp.c
++++ b/arch/riscv/kernel/smp.c
+@@ -226,7 +226,8 @@ void show_ipi_stats(struct seq_file *p, int prec)
+ 		seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
+ 			   prec >= 4 ? " " : "");
+ 		for_each_online_cpu(cpu)
+-			seq_printf(p, "%10u ", irq_desc_kstat_cpu(ipi_desc[i], cpu));
++			seq_put_decimal_ull_width(p, " ",
++						  irq_desc_kstat_cpu(ipi_desc[i], cpu), 10);
+ 		seq_printf(p, " %s\n", ipi_names[i]);
  	}
- #endif /* CONFIG_PPC32 && CONFIG_TAU_INT */
- 
--	seq_printf(p, "%*s: ", prec, "LOC");
-+	seq_printf(p, "%*s:", prec, "LOC");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(irq_stat, j).timer_irqs_event);
-+		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).timer_irqs_event, 10);
-         seq_printf(p, "  Local timer interrupts for timer event device\n");
- 
--	seq_printf(p, "%*s: ", prec, "BCT");
-+	seq_printf(p, "%*s:", prec, "BCT");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(irq_stat, j).broadcast_irqs_event);
-+		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).broadcast_irqs_event, 10);
- 	seq_printf(p, "  Broadcast timer interrupts for timer event device\n");
- 
--	seq_printf(p, "%*s: ", prec, "LOC");
-+	seq_printf(p, "%*s:", prec, "LOC");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(irq_stat, j).timer_irqs_others);
-+		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).timer_irqs_others, 10);
-         seq_printf(p, "  Local timer interrupts for others\n");
- 
--	seq_printf(p, "%*s: ", prec, "SPU");
-+	seq_printf(p, "%*s:", prec, "SPU");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(irq_stat, j).spurious_irqs);
-+		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).spurious_irqs, 10);
- 	seq_printf(p, "  Spurious interrupts\n");
- 
--	seq_printf(p, "%*s: ", prec, "PMI");
-+	seq_printf(p, "%*s:", prec, "PMI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(irq_stat, j).pmu_irqs);
-+		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).pmu_irqs, 10);
- 	seq_printf(p, "  Performance monitoring interrupts\n");
- 
--	seq_printf(p, "%*s: ", prec, "MCE");
-+	seq_printf(p, "%*s:", prec, "MCE");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(irq_stat, j).mce_exceptions);
-+		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).mce_exceptions, 10);
- 	seq_printf(p, "  Machine check exceptions\n");
- 
- #ifdef CONFIG_PPC_BOOK3S_64
- 	if (cpu_has_feature(CPU_FTR_HVMODE)) {
--		seq_printf(p, "%*s: ", prec, "HMI");
-+		seq_printf(p, "%*s:", prec, "HMI");
- 		for_each_online_cpu(j)
--			seq_printf(p, "%10u ", paca_ptrs[j]->hmi_irqs);
-+			seq_put_decimal_ull_width(p, " ", paca_ptrs[j]->hmi_irqs, 10);
- 		seq_printf(p, "  Hypervisor Maintenance Interrupts\n");
- 	}
- #endif
- 
--	seq_printf(p, "%*s: ", prec, "NMI");
-+	seq_printf(p, "%*s:", prec, "NMI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(irq_stat, j).sreset_irqs);
-+		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).sreset_irqs, 10);
- 	seq_printf(p, "  System Reset interrupts\n");
- 
- #ifdef CONFIG_PPC_WATCHDOG
--	seq_printf(p, "%*s: ", prec, "WDG");
-+	seq_printf(p, "%*s:", prec, "WDG");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", per_cpu(irq_stat, j).soft_nmi_irqs);
-+		seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).soft_nmi_irqs, 10);
- 	seq_printf(p, "  Watchdog soft-NMI interrupts\n");
- #endif
- 
- #ifdef CONFIG_PPC_DOORBELL
- 	if (cpu_has_feature(CPU_FTR_DBELL)) {
--		seq_printf(p, "%*s: ", prec, "DBL");
-+		seq_printf(p, "%*s:", prec, "DBL");
- 		for_each_online_cpu(j)
--			seq_printf(p, "%10u ", per_cpu(irq_stat, j).doorbell_irqs);
-+			seq_put_decimal_ull_width(p, " ", per_cpu(irq_stat, j).doorbell_irqs, 10);
- 		seq_printf(p, "  Doorbell interrupts\n");
- 	}
- #endif
+ }
 -- 
 2.39.2
 
