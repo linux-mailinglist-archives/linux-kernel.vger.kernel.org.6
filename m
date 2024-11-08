@@ -1,130 +1,207 @@
-Return-Path: <linux-kernel+bounces-401864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860A89C2044
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:22:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959679C2040
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49544286BB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:22:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217FC1F241F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B7B2038CC;
-	Fri,  8 Nov 2024 15:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C19202628;
+	Fri,  8 Nov 2024 15:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="triUdN6v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="t+x/QbDS"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7502038BD;
-	Fri,  8 Nov 2024 15:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F4C2003D5
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731079347; cv=none; b=YNiUSaJ1r0aYT52CLxjsE44X7fUBcZeR2IfeSfAPWV/uSqdX+rPZCz5SEOVuF8lkMtFww3Z4dS6yy6lEp384bevoAWZdcVQ+FZQswdcOT1glrIERVmstDb192vg582IJudS86XhLI7xja5IH62J0bkyiwWuYLzt4Z0Y7ynyu5Oc=
+	t=1731079299; cv=none; b=adV9tm9lrX6Ct0rK23TyiNdgZoyVtwjhKJMCMAX7TNg7oob0sbE/2NISD4it0DVqT5B+Di1rt8DuQh7COdHGWaxCw3rL7gZFiDDgwPZSrXp66JKUx+9BHswkOJ6NM5oAVmoesGNlYkp4gZEWly0eaHT+G6flyphcTWwe06BdNl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731079347; c=relaxed/simple;
-	bh=9MmFQC6J2fkpekXm5iWYwsyMilxxoBeL/WcxpybUov4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p79N8MH+9hjrb3O765yQlJFK39R+kPk7BZEsP1LWdd9N7c0tJGiEgNcUpytQAeHJJnhjlZQIEatK2mZjp0NjSOgZnJ4y7otM8oiVYk07b8p/IHKQ68AaCSB+jx2EoI826GD3lRiHPMEGIoBoC6Xjyb3ApRjZBfU31UjJ8gLsngA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=triUdN6v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B975C4CECF;
-	Fri,  8 Nov 2024 15:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731079346;
-	bh=9MmFQC6J2fkpekXm5iWYwsyMilxxoBeL/WcxpybUov4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=triUdN6vkvHdywvVxNXLrYvEeFlYEHBRIZ/tKEH47DJNYeBPeeOjixkBD4d36qyzH
-	 kEKvTDVmwdijOoMY13OV3xpSEABzm5vOfuHE42JrriSKBHBz1EOCcvyGas0p+68ZK7
-	 XvJx6hdUCLqr8hgRW2d+YGJ+nuX1XaGhwAniedxqxXtIxcnSgHGTgUkwjVGoJnjzJe
-	 dchB3JhCXprzY/bSRUXYa+gQtD6tiMXG57rkezV+DbDcHvfFox9Cu4XtPdWc2ESaIq
-	 6RIbMGASdT5gvbThPufafY85hOC1KF5RonfUF/z0ZgnArT9VcphBn/iQA5kMFoRqxW
-	 lkokMX5H42PCw==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 08 Nov 2024 15:20:46 +0000
-Subject: [PATCH] kselftest/arm64: Fix build with stricter assemblers
+	s=arc-20240116; t=1731079299; c=relaxed/simple;
+	bh=e+Pa8YWopsKAa8QiJ2eunYriZ42+6huIs58dZW7ia7Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=LRWWEwwSSovgLRcMy6dLcnKsyaxaTN1n089BQ2EOwy4jfTJtyh6zqDbuIzJ/uKhmb0HKB0yGwoXbUowY5YcHdRxsP74CC9h6p456be3S38lLrsSYNaeMSL0kAQycBl2Hc4e5W1dHODsEcFemP0yohMF+bcEzL84HaMemoh69BI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=t+x/QbDS; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241108-arm64-selftest-asm-error-v1-1-7ce27b42a677@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAE0sLmcC/x3MywqDMBBG4VeRWTuQqKniq4iLWP+0A/XCjJSC+
- O6GLr/FOScZVGDUFycpvmKyrRm+LOj5jusLLHM2Va5qvHcdR10eDRs+6YAdHG1hqG7Kc9uF1iG
- 4qZ4o57siye+/HsbrugE4X0FnagAAAA==
-X-Change-ID: 20241108-arm64-selftest-asm-error-d78570e50b3b
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2020; i=broonie@kernel.org;
- h=from:subject:message-id; bh=9MmFQC6J2fkpekXm5iWYwsyMilxxoBeL/WcxpybUov4=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhnQ9nQ1lLpar7slFR1WUXHNSeZ+0XW3V+quWdxckBHjKJpQ2
- pxh2MhqzMDByMciKKbKsfZaxKj1cYuv8R/NfwQxiZQKZwsDFKQAT0f7J/lc4dOHBddzHebKc7P8cFf
- KUn6KyoL7GlL1L5f0tkSpx3Rf/rFTXcjn8T3T4MKnih4Bs12c3hSWnpPoLnGxcuiIXt+4KsfbRVp3y
- 4Wy9bdrlCOV/azqkpjxnXpn+18/lP1+rvPusa3HqQd+f371aqROiHpOv3Gq10eh6rvqr7GMnFFxzSn
- fKua5X7j7AxRGZaHhqw2vtmcwX/nVo7UqsX6Gy6lmA+IFXd6UW2rz/u+Xfj1ML1237nBXB8YwjSGq7
- d+62sy+Mrvil9y64X5eW5JMUt4qrmo0lnFF2ystTX6d27Z5r+4AjY5vunnkexskmOxRnW/SrWs8qz4
- 0rXMt9Na2vaO7X+Ei3LoMPPkxHAQ==
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1731079294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pbapVfiISm/C5v4STghpJz/FC3c1tBmcfEax3HYjIC8=;
+	b=t+x/QbDSVdb7on8vS3OSrapcTgojup2aIR6Cy24hufGcWfv9y+GVzYVVrnV8q9YQg/jGwz
+	RoYJft2EYWVmF+VMIF15NSgGLI6J1TjJC5XxKgDHpk3htlWU8AHGpa3IeZLIYPOH+QYcR6
+	xFRuQyuJdc0B82KgSFh5b1OrNSkRivnqEiq8gs2QzZdRBkl6H1HCfCtwQELZ1FJBjVKUCn
+	lQEQWVmgWTz7eQKGvFJvqoI3VxghiGAPONykjBDc1nIOTPSH4PzuR54+x3h86l48yc0+xY
+	FW/f+Yg1BJp2nCVkNUdD2aYqMcw2K2Wxn+6p58iB1KZTBTSjsPzX+7eruVlDyg==
+Content-Type: multipart/signed;
+ boundary=4dd0f36deef0a2c52894bfee2e5787b1a3b4ab4cc0e383fc236d6d0b6477;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Fri, 08 Nov 2024 16:21:24 +0100
+Message-Id: <D5GWE4WJZMM8.1MPHPPQR2QW46@cknow.org>
+Cc: <dsimic@manjaro.org>, <andy.yan@rock-chips.com>,
+ <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <linux-kernel@vger.kernel.org>, "Heiko Stuebner"
+ <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH] drm/rockchip: dsi: convert to dev_err_probe in probe
+ function
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Heiko Stuebner" <heiko@sntech.de>,
+ <linux-rockchip@lists.infradead.org>, <dri-devel@lists.freedesktop.org>
+References: <20241108144425.1009916-1-heiko@sntech.de>
+In-Reply-To: <20241108144425.1009916-1-heiko@sntech.de>
+X-Migadu-Flow: FLOW_OUT
 
-While some assemblers (including the LLVM assembler I mostly use) will
-happily accept SMSTART as an instruction by default others, specifically
-gas, require that any architecture extensions be explicitly enabled.
-The assembler SME test programs use manually encoded helpers for the new
-instructions but no SMSTART helper is defined, only SM and ZA specific
-variants.  Unfortunately the irritators that were just added use plain
-SMSTART so on stricter assemblers these fail to build:
+--4dd0f36deef0a2c52894bfee2e5787b1a3b4ab4cc0e383fc236d6d0b6477
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-za-test.S:160: Error: selected processor does not support `smstart'
+On Fri Nov 8, 2024 at 3:44 PM CET, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+>
+> DRM_DEV_ERROR is deprecated and using dev_err_probe saves quite a number
+> of lines too, so convert the error prints for the dsi-driver.
+>
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Switch to using SMSTART ZA via the manually encoded smstart_za macro we
-already have defined.
+Should this have a Fixes tag?
+Because in the PineTab2 case it reported an error, which was actually
+just a deferred probe.
 
-Fixes: d65f27d240bb ("kselftest/arm64: Implement irritators for ZA and ZT")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/fp/za-test.S | 2 +-
- tools/testing/selftests/arm64/fp/zt-test.S | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> ---
+>  .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 80 ++++++-------------
+>  1 file changed, 26 insertions(+), 54 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gp=
+u/drm/rockchip/dw-mipi-dsi-rockchip.c
+> index 58a44af0e9ad..3224ab749352 100644
+> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> ...
+> @@ -1378,67 +1376,47 @@ static int dw_mipi_dsi_rockchip_probe(struct plat=
+form_device *pdev)
+>  		i++;
+>  	}
+> =20
+> -	if (!dsi->cdata) {
+> -		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
+> -		return -EINVAL;
+> -	}
+> +	if (!dsi->cdata)
+> +		return dev_err_probe(dev, -EINVAL, "No dsi-config for %s node\n", np->=
+name);
+> =20
+>  	/* try to get a possible external dphy */
+>  	dsi->phy =3D devm_phy_optional_get(dev, "dphy");
+> -	if (IS_ERR(dsi->phy)) {
+> -		ret =3D PTR_ERR(dsi->phy);
+> -		DRM_DEV_ERROR(dev, "failed to get mipi dphy: %d\n", ret);
+> -		return ret;
+> -	}
+> +	if (IS_ERR(dsi->phy))
+> +		return dev_err_probe(dev, PTR_ERR(dsi->phy), "Failed to get mipi dphy\=
+n");
 
-diff --git a/tools/testing/selftests/arm64/fp/za-test.S b/tools/testing/selftests/arm64/fp/za-test.S
-index 95fdc1c1f228221bc812087a528e4b7c99767bba..9c33e13e9dc4a6f084649fe7d0fb838d9171e3aa 100644
---- a/tools/testing/selftests/arm64/fp/za-test.S
-+++ b/tools/testing/selftests/arm64/fp/za-test.S
-@@ -157,7 +157,7 @@ function irritator_handler
- 
- 	// This will reset ZA to all bits 0
- 	smstop
--	smstart
-+	smstart_za
- 
- 	ret
- endfunction
-diff --git a/tools/testing/selftests/arm64/fp/zt-test.S b/tools/testing/selftests/arm64/fp/zt-test.S
-index a90712802801efb97dc6bf8027fb9ceac8f0a895..38080f3c328042af6b3e2d7c3300162ea6efa4ea 100644
---- a/tools/testing/selftests/arm64/fp/zt-test.S
-+++ b/tools/testing/selftests/arm64/fp/zt-test.S
-@@ -126,7 +126,7 @@ function irritator_handler
- 
- 	// This will reset ZT to all bits 0
- 	smstop
--	smstart
-+	smstart_za
- 
- 	ret
- endfunction
+I think from this line.
 
----
-base-commit: 95ad089d464da2a4cd4511fb077f25994104c8f1
-change-id: 20241108-arm64-selftest-asm-error-d78570e50b3b
+Cheers,
+  Diederik
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+> =20
+>  	dsi->pclk =3D devm_clk_get(dev, "pclk");
+> -	if (IS_ERR(dsi->pclk)) {
+> -		ret =3D PTR_ERR(dsi->pclk);
+> -		DRM_DEV_ERROR(dev, "Unable to get pclk: %d\n", ret);
+> -		return ret;
+> -	}
+> +	if (IS_ERR(dsi->pclk))
+> +		return dev_err_probe(dev, PTR_ERR(dsi->pclk), "Unable to get pclk\n");
+> =20
+>  	dsi->pllref_clk =3D devm_clk_get(dev, "ref");
+>  	if (IS_ERR(dsi->pllref_clk)) {
+> -		if (dsi->phy) {
+> +		if (dsi->phy)
+>  			/*
+>  			 * if external phy is present, pll will be
+>  			 * generated there.
+>  			 */
+>  			dsi->pllref_clk =3D NULL;
+> -		} else {
+> -			ret =3D PTR_ERR(dsi->pllref_clk);
+> -			DRM_DEV_ERROR(dev,
+> -				      "Unable to get pll reference clock: %d\n",
+> -				      ret);
+> -			return ret;
+> -		}
+> +		else
+> +			return dev_err_probe(dev, PTR_ERR(dsi->pllref_clk),
+> +					     "Unable to get pll reference clock\n");
+>  	}
+> =20
+>  	if (dsi->cdata->flags & DW_MIPI_NEEDS_PHY_CFG_CLK) {
+>  		dsi->phy_cfg_clk =3D devm_clk_get(dev, "phy_cfg");
+> -		if (IS_ERR(dsi->phy_cfg_clk)) {
+> -			ret =3D PTR_ERR(dsi->phy_cfg_clk);
+> -			DRM_DEV_ERROR(dev,
+> -				      "Unable to get phy_cfg_clk: %d\n", ret);
+> -			return ret;
+> -		}
+> +		if (IS_ERR(dsi->phy_cfg_clk))
+> +			return dev_err_probe(dev, PTR_ERR(dsi->phy_cfg_clk),
+> +					     "Unable to get phy_cfg_clk\n");
+>  	}
+> =20
+>  	if (dsi->cdata->flags & DW_MIPI_NEEDS_GRF_CLK) {
+>  		dsi->grf_clk =3D devm_clk_get(dev, "grf");
+> -		if (IS_ERR(dsi->grf_clk)) {
+> -			ret =3D PTR_ERR(dsi->grf_clk);
+> -			DRM_DEV_ERROR(dev, "Unable to get grf_clk: %d\n", ret);
+> -			return ret;
+> -		}
+> +		if (IS_ERR(dsi->grf_clk))
+> +			return dev_err_probe(dev, PTR_ERR(dsi->grf_clk), "Unable to get grf_c=
+lk\n");
+>  	}
+> =20
+>  	dsi->grf_regmap =3D syscon_regmap_lookup_by_phandle(np, "rockchip,grf")=
+;
+> -	if (IS_ERR(dsi->grf_regmap)) {
+> -		DRM_DEV_ERROR(dev, "Unable to get rockchip,grf\n");
+> -		return PTR_ERR(dsi->grf_regmap);
+> -	}
+> +	if (IS_ERR(dsi->grf_regmap))
+> +		return dev_err_probe(dev, PTR_ERR(dsi->grf_regmap), "Unable to get roc=
+kchip,grf\n");
+> =20
+>  	dsi->dev =3D dev;
+>  	dsi->pdata.base =3D dsi->base;
+> ...
 
+
+--4dd0f36deef0a2c52894bfee2e5787b1a3b4ab4cc0e383fc236d6d0b6477
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZy4sdgAKCRDXblvOeH7b
+bs6QAP9s5Ew76jJkNqCXwe5IlvoY4Fy0rg7N0YgsTnhrcB1TIAEAzoK75L8/hZIu
+nxxBEI37Ah9YK1707qq4PYkorbQbFgo=
+=fOhD
+-----END PGP SIGNATURE-----
+
+--4dd0f36deef0a2c52894bfee2e5787b1a3b4ab4cc0e383fc236d6d0b6477--
 
