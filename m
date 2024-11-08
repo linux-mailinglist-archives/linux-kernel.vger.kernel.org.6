@@ -1,106 +1,120 @@
-Return-Path: <linux-kernel+bounces-401236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834DF9C1781
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:08:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0352A9C1783
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E96283D59
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA0811F23D6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7CD1DA314;
-	Fri,  8 Nov 2024 08:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Unj7k1IP"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6797D1D515C;
+	Fri,  8 Nov 2024 08:08:48 +0000 (UTC)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F4A1DA617
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 08:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314061D3578;
+	Fri,  8 Nov 2024 08:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731053315; cv=none; b=Cq7IaBK39WIIhdVp0Vw/ZiE+xpup0oUmU3nBtuhVM1qi6/11jDi17e0eqMgLfJBsmVFfEdwDaMFN6gQNC0HpQVvEn2/Jx8PX7D5J4BKC6aXu4tvaD65KDOdo72Vap6AUrYXc/d9TiuuI2ZIv0k37SGEPSoy1M/zl5LvaZJ4HYuI=
+	t=1731053328; cv=none; b=Wd3SYQPiOLfF34c0c0PwgXQAAWioJpwhNpEr4+YqaJlpdN0ptnfSUW1QUrolxXLrVW/asjOE5pOFVDg/icy1HF4uYG27dJjpGlh7m4mFtJyV5l+L3wyTBOUAT2VuO+mDeyQ1/qbqDTDHkcWJSDw3gaAXarxWPWQ5cn5yoJ8KgAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731053315; c=relaxed/simple;
-	bh=X564kijAujdsjjH0ORI4+g4gIz95ERPYBq8cJzyP8DY=;
+	s=arc-20240116; t=1731053328; c=relaxed/simple;
+	bh=LD2eDfz4SMAlB7umwDHTDu0TvSKpT8mglT8E9NBfcjU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UeW+mdifw/HbTPwIxDO0tDHk4FsxVuF8nHMxbC3lxodh+JVjfTLdj6qY/LnrE6XuhjubFk3aaWPOwFJWApjhLCzQ5ud7y2MG+0Yttu2mIavsbA1YgAJgZ9wVJG0YAO0Am28pOB5UB0/RzfzgX7Uk+F7uHQ1uHKGJcP8RpTaZ0do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Unj7k1IP; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb5743074bso15851281fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 00:08:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731053311; x=1731658111; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X564kijAujdsjjH0ORI4+g4gIz95ERPYBq8cJzyP8DY=;
-        b=Unj7k1IPA8USxudDC3cRW4Xobxipgr54vxfkjmjCO/kd7Z+TP2IW/K9qVD7kvMtchG
-         OKkloX6r1lS3mir5QonKdt2j0VwHqIikULg/3MzQph6VVeKBf0+Bvfb+VbEJ1SgZXluL
-         oE0mX2G+3fneKYH9aV9wLXSvdJ6JyPWDl2dj/JRudMOdszWXa1ol0m0+88LC/CsytsYg
-         A+a+kzWWGdIvKPtnMxi0P9SD8cUfbEavaPzYrERlLaKduEKicJz0nOtpQNM7EfYKH8Sd
-         3RAj0chKavOpve/jj8//3Hl89UYgmI4yyzs4HIGuCKHZDyH3QyFqMQzfoB4+DFGyiBUb
-         jeeg==
+	 To:Cc:Content-Type; b=niY0H8IHUElTqA/Fa+Q5DcibYDk/2d5OYhUmWIeu/H+3bZxPrgB9J3ffWqKJQGqbJSNaqTMZC3nhmcdVGREi5FtEou+DXhEqDTVk7Sb4XVKXYPsCn8sJp4RuA9nrXrSXZTkUqlOajBobG0SNDasxzIuqLMG6hrYFjlzbxyPvM5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e29047bec8fso2383095276.0;
+        Fri, 08 Nov 2024 00:08:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731053311; x=1731658111;
+        d=1e100.net; s=20230601; t=1731053324; x=1731658124;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X564kijAujdsjjH0ORI4+g4gIz95ERPYBq8cJzyP8DY=;
-        b=GE1IDOe4yZP1RdZPpG8jlXc/Q6TNUsXtDi4T/p1wc17rypUJEAwMu//HnxntW7N16v
-         7A33bYeRdAZBul/Cy0FCgqPTpAW+KdiapR5w8OBxfbhINlwWj/kMuB8+VFjl5EFXAW6Y
-         szplm//uayHJ03jLztwqvSeOe2W9SxrlBUAB3fMq2caOfaixeoBReeSZt5btCLd2pLNE
-         wjh5FEqcFDZY5i6BaI/gaMMRz+PDPkR7u9MCkv230+gTjEHHfSQST30eUFTMD+65RF+6
-         HRtnAcyZbhGlPhedfZTGi/xiAEzBvc+UmDLhPJXDMuO3HP0l1bGnTYblWk3b76UNCo65
-         uRDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgOUQvynlX6MdWvVgO13nplu4AlHTJSVYFiwhLcpPeyww5cAIzFmPeP1yxbgGrEDXuX4WVq/eZI2jLN7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwJj2WnmG6/rX3LeYxkvLrIlQiXCKR6OgIiUE9U6P8XXCNcAct
-	BSZRtjZt1cdEeEHHF3i0L6612sRr+MhivkrBNkjjl9wVE+xVoctNjIVtHBjRoSs3noo8GqQnDFA
-	xLvB5dF55HQFs9RtRLm9V/PQ7a+JAJCntR7RPdQ==
-X-Google-Smtp-Source: AGHT+IHDMtC5ejvi+6P/FwbMQP1yLzs4dvzuAfHzOLWut4QZAFsV0vqXGWBvtrbNy55PKvK+RsMl0V/8jbQgCQMUUQM=
-X-Received: by 2002:a2e:be22:0:b0:2f7:6062:a0a9 with SMTP id
- 38308e7fff4ca-2ff20963c8dmr4983211fa.7.1731053310923; Fri, 08 Nov 2024
- 00:08:30 -0800 (PST)
+        bh=0AcfQIh4eL6wqtezh6vPlrQwPcncc/rwq6AytHbkvyU=;
+        b=dAEhA+l+qguEDzp+cmRK/jIIOs9e0bbyUqhYm7wGCgbbXRNBLAIVedmU+4zr05buuS
+         JDbAFPJhKvW4Lt81zFJI7Ia4zHfDmxmAbX2llDWgCkLCyYnrHWxPbukrAguTCin8hUnb
+         0aOauTdIv8i5Zi6XYkyQqpbN3cn40sQznSrE/i+Q3qVjLSZdpaVDoqllCLjw4fGTTDZT
+         JpUuXLNl6W+fGykH8XgGc4gYrYbKKVlDR81rfEUo0fq9t0JAb+LSZoohe4jWpt3jkjXs
+         7RUJwLze8DtHEq27pXrHfl8Hov8YYSofbdG6LPVSh7dZRr8MFrQxgR6u9J0/sZNzQMnY
+         Ww4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsYb2SiK+qZQ0hU6TNM6c0bFo0mEQZGvnmQ69izMgG4Gx6Pd9VZzZmEYwowMiE6wETh/bZk1zgLxpHKm8=@vger.kernel.org, AJvYcCVGPjXlLSVlMFcD8EfIROWGw4E53qHDGsC/xY5imbzE12AuHxFjfN6p5ijfkcuJPX3P4o2nucwcJptlDr4DDg==@vger.kernel.org, AJvYcCXUcGLUjWGbSY48MfiLNKqnOrhGwsU0a0U3Q4w4vnun0vPQ/YsVVKCAc8QjJf5wrLDOTXX4j5IQ5tfKV0IB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/BvNF9YyiMd04svx6zkLUFB1zjBUUine8z9cDliHJw2Q9aJ3x
+	1DRGmw+JIcY+daKXDM0SDe8HcbyNGBLwS5sFuiu1b8mcYHvm1ZUrPq0KcwwO
+X-Google-Smtp-Source: AGHT+IEMiGBY1n86Ty1i9Vt5vHiCM2UQhC579mG35SG/6bcIepIg9x3jPY0EGjCNR1X+O0F0sYPpGA==
+X-Received: by 2002:a05:690c:39f:b0:6e3:ceb:9e49 with SMTP id 00721157ae682-6eadc18ed23mr21295537b3.16.1731053324422;
+        Fri, 08 Nov 2024 00:08:44 -0800 (PST)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb7a6f0sm6301847b3.104.2024.11.08.00.08.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 00:08:43 -0800 (PST)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e29047bec8fso2383072276.0;
+        Fri, 08 Nov 2024 00:08:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVfb8tX8Un0JRRm+UrKTWogxKAzu4vDb8+TXPbvkNQlyACdX+N2SG3iVwch/WLZOY4x/q9jT7Ke/KokKzA=@vger.kernel.org, AJvYcCXQH+hOZEyCF+4Yem/AXIyvFXWzET3+b1xk3Je7S9XTs1TLgH+/dE0QP7fN3bCZe6rWjk8GNva7u0csH519@vger.kernel.org, AJvYcCXruCFqMNQxMX1sLWI+o8vRqY+bsH9cvKnWNys1Tp1HMGDIezzw0Z+ol9FA6JG7YBlvDJs7cuTy8DyPvLNJpQ==@vger.kernel.org
+X-Received: by 2002:a05:690c:9686:b0:664:74cd:5548 with SMTP id
+ 00721157ae682-6eadc0a205fmr22121087b3.1.1731053322861; Fri, 08 Nov 2024
+ 00:08:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org> <20241031-msm8917-v2-3-8a075faa89b1@mainlining.org>
-In-Reply-To: <20241031-msm8917-v2-3-8a075faa89b1@mainlining.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 8 Nov 2024 09:08:20 +0100
-Message-ID: <CACRpkdaWEc8=5CdBMuGdfcSzneR+ODrVvyw8pOFv-6++_JUzqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/15] dt-bindings: pinctrl: qcom,pmic-mpp: Document
- PM8937 compatible
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev
+References: <20241106190240.GR10375@noisy.programming.kicks-ass.net> <ZyxSdayBstBGhAeO@infradead.org>
+In-Reply-To: <ZyxSdayBstBGhAeO@infradead.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 8 Nov 2024 09:08:30 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUgO83KksK59XEmF+EqXWHWBd1FLML0Ee1dQ7nOiGV2Eg@mail.gmail.com>
+Message-ID: <CAMuHMdUgO83KksK59XEmF+EqXWHWBd1FLML0Ee1dQ7nOiGV2Eg@mail.gmail.com>
+Subject: Re: [RFC] module: Strict per-modname namespaces
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, 
+	petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com, 
+	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, gregkh@linuxfoundation.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 31, 2024 at 2:19=E2=80=AFAM Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> wrote:
-
-> Document the Device Tree binding for PM8937 MPPs.
+On Thu, Nov 7, 2024 at 6:39=E2=80=AFAM Christoph Hellwig <hch@infradead.org=
+> wrote:
+> On Wed, Nov 06, 2024 at 08:02:40PM +0100, Peter Zijlstra wrote:
+> > It reserves and disallows imports on any "MODULE_${name}" namespace,
+> > while it implicitly adds the same namespace to every module.
 >
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-.org>
+> Ah nice.  This is pretty similar to what I want and had badly prototyped
+> a while ago.
+>
+> > This allows exports targeted at specific modules and no others -- one
+> > random example included. I've hated the various kvm exports we've had
+> > for a while, and strictly limiting them to the kvm module helps
+> > alleviate some abuse potential.
+>
+> And this was one of the targets on my list.  Specific kunits tests
+> would be another category.
 
-Patch applied for v6.13.
+Indeed. E.g. making the scsi_lib KUnit tests modular would require
+exporting an internal symbol[1], which the SCSI maintainers don't like.
 
-Yours,
-Linus Walleij
+[1] "[PATCH] scsi: core: Make scsi_lib KUnit tests modular for real"
+    https://lore.kernel.org/all/48ca5e827ca420bbdbabb1643e2179dc95c9e0b7.17=
+10849638.git.geert@linux-m68k.org/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
