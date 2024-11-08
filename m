@@ -1,97 +1,77 @@
-Return-Path: <linux-kernel+bounces-402273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0143E9C25B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:41:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 054879C25B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:42:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A76A1C23372
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:41:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C274D282178
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335291C1F11;
-	Fri,  8 Nov 2024 19:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49161AA1F9;
+	Fri,  8 Nov 2024 19:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="eFof62/o"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSb9x0GU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DD517A5BE;
-	Fri,  8 Nov 2024 19:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B3D1AA1DD;
+	Fri,  8 Nov 2024 19:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731094871; cv=none; b=i9wPpjIVB550ua6+92nuTXF7+dRKN1kpM/RJFysMz5tbR6FewF+KvgfQOzTVnx5MelSiaUNuTMGGsiKS23gli+OsYivLYQWJ2geZ2lxz8DsqdIyD2ehUKjonSUd2RWOTzdNF3IS91QInzAypY2RdJTT0aBw6rwQ+lnLN5e1YAsM=
+	t=1731094966; cv=none; b=uOXnR04U1mcYNwKaHNf02tr9kzx7jccn0io4FGdj+3hk6dNmEkACarP5twLPQuH8FlBLEG5K4o0Mzak5ID+U+5aTXB03fyw3Tbb3gRIRxvehYkeCSzRX/cG5uI5NtUQeC/i1ccYm7DfthQzrpCMoJlMuH+wuCAmgbFHnXCtIvCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731094871; c=relaxed/simple;
-	bh=KhWTv6Xz+p6/uRt5a0JjkR7Y5OsaggoRDeYnfKiG8p8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UqNav30XEILnAyhWhhefAWxsGw+Pn8aHwJziVyCnY7XIL3pe4vMNVA0T0EClNM/XV/BF6TE6bTQKWaJB0o9jebMPUkZs/nPVLTVJVhl5KXThiStLq1kKQ40pOUivlCvxQDGha6/Zgpe873G472Y2WXiwbNm3u4MPLYyr4cuEd6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=eFof62/o; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1731094868;
-	bh=KhWTv6Xz+p6/uRt5a0JjkR7Y5OsaggoRDeYnfKiG8p8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=eFof62/o+3Ah7YL4swFSXp9NNbyWhpE/jpxAp1V0hqddWcsJbT70qSYUBEJ9Cc6Nq
-	 i1Ht5pUIVwOv7ozD3OuoIfG8ndi7iDXyHZeqyBUFw9vDsX5T9JYdLuGNuomxOnNfZp
-	 lPZXw/EGjMFvq/nlF4MyDGcxz4ho4GZfDRp3RCKo=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id C978D40681; Fri,  8 Nov 2024 11:41:08 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id C7119401C7;
-	Fri,  8 Nov 2024 11:41:08 -0800 (PST)
-Date: Fri, 8 Nov 2024 11:41:08 -0800 (PST)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-cc: linux-pm@vger.kernel.org, kvm@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-    linux-arch@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org, 
-    tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-    dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-    pbonzini@redhat.com, vkuznets@redhat.com, rafael@kernel.org, 
-    daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de, 
-    lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com, 
-    mtosatti@redhat.com, sudeep.holla@arm.com, maz@kernel.org, 
-    misono.tomohiro@fujitsu.com, maobibo@loongson.cn, zhenglifeng1@huawei.com, 
-    joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, 
-    konrad.wilk@oracle.com
-Subject: Re: [PATCH v9 01/15] asm-generic: add barrier
- smp_cond_load_relaxed_timeout()
-In-Reply-To: <87v7wy2mbi.fsf@oracle.com>
-Message-ID: <88b3b176-97c7-201e-0f89-c77f1802ffd9@gentwo.org>
-References: <20241107190818.522639-1-ankur.a.arora@oracle.com> <20241107190818.522639-2-ankur.a.arora@oracle.com> <9cecd8a5-82e5-69ef-502b-45219a45006b@gentwo.org> <87v7wy2mbi.fsf@oracle.com>
+	s=arc-20240116; t=1731094966; c=relaxed/simple;
+	bh=wc/0U0agYo2e1dSD9uCnBCKEtXgVgG6L+AYjpQaiHwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SUBZD6Gz7dZbylcf9yKT5ZbRLtyeOEGWCKHcuUerXF50BUZjojJrcgHx0x/oNc7ETYE1fAf8oLdFhr9JUW0fWdapheWfQJh16azsmCX7hbWGNdiDO8ywjtLnagC/4KKiV8fDf5ZbKl45HrAhtGSoC64hEq34F9bmWKW2tYcImAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSb9x0GU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A625C4CECD;
+	Fri,  8 Nov 2024 19:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731094965;
+	bh=wc/0U0agYo2e1dSD9uCnBCKEtXgVgG6L+AYjpQaiHwQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HSb9x0GUG8/XdJI4Vpm8/cM5rwOMxhAtW6OstK4S1N0eRN5CTV2QFn0q09sYy+mey
+	 cKnhl2uiYsrhi+XLanNdf17pkJoTpUs67zulx+YDrVWGmo7mkbbRVSMxmsXGO5EA7F
+	 bBFqr1ow5LThs8e0cobF9DOipWXdFw8nQWkPTckdW7fRhadjFk8PZoGcQM0atHUkm8
+	 1EeEM6aw9+65O4rj4vRyTxM87WCGRSAB3HAg1VK191v5z/VPEVq2KA/pXBRsE71Y7h
+	 knAcfbQqihIloFFML5Eq5gv2iYhXvUpu6NEXt51M0bZKHsm5iEZlN2P7SKqi7fvaAi
+	 IRcbqtUTQArqQ==
+Date: Fri, 8 Nov 2024 09:42:44 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 sched_ext/for-6.13] sched_ext: Do not enable LLC/NUMA
+ optimizations when domains overlap
+Message-ID: <Zy5ptHdJaU1aHzaK@slm.duckdns.org>
+References: <20241108000136.184909-1-arighi@nvidia.com>
+ <20241108181753.GA2681424@thelio-3990X>
+ <Zy5eadwAuQSzqp-1@slm.duckdns.org>
+ <Zy5o44PLucx52Fp1@gpd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zy5o44PLucx52Fp1@gpd3>
 
-On Thu, 7 Nov 2024, Ankur Arora wrote:
+On Fri, Nov 08, 2024 at 08:39:15PM +0100, Andrea Righi wrote:
+> Sorry, this is a mistake, it definitely needs to be &&.
+> 
+> Do you want me to send a fix on top of this one or a v4?
 
-> > Calling the clock retrieval function repeatedly should be fine and is
-> > typically done in user space as well as in kernel space for functions that
-> > need to wait short time periods.
->
-> The problem is that you might have multiple CPUs polling in idle
-> for prolonged periods of time. And, so you want to minimize
-> your power/thermal envelope.
+An incremental fix patch would be great.
 
-On ARM that maps to YIELD which does not do anything for the power
-envelope AFAICT. It switches to the other hyperthread.
+Thanks.
 
-> For instance see commit 4dc2375c1a4e "cpuidle: poll_state: Avoid
-> invoking local_clock() too often" which originally added a similar
-> rate limit to poll_idle() where they saw exactly that issue.
-
-Looping w/o calling local_clock may increase the wait period etc.
-
-For power saving most arches have special instructions like ARMS
-WFE/WFET. These are then causing more accurate wait times than the looping
-thing?
-
-
+-- 
+tejun
 
