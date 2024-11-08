@@ -1,383 +1,136 @@
-Return-Path: <linux-kernel+bounces-402062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCA49C22EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:27:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA299C22EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2501F22C87
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:27:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC4481C22F3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2895F1F4FC0;
-	Fri,  8 Nov 2024 17:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFE61E9091;
+	Fri,  8 Nov 2024 17:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IIPCquhp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJsQRKW/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D316415B0F7;
-	Fri,  8 Nov 2024 17:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C098198A17
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731086854; cv=none; b=FeGd0cZ+LNzBqMlQjq2SEiINvxrg7yRbwgT4WmdMxoNNx1P+bUESSDBnk04u3i+UJj/Rlli19preQaKSMokl3Wd7FiORJYf9wT3Awq7oiCJQrMpY8einJfg+CRn/aI7M0geiN61dJLMIpPSI4RwWKe6XhWqHuo172G6Y8aDRpnk=
+	t=1731086899; cv=none; b=XUuRQCo3GFDsqkAc+TL8s1Vlm2UgR4nJeusBjLLMM23jldQ6EfEqAn/DcuvlKwe/jK5yRzxWQO+zmjwqg9rQPWDPrm7ZaC2Ki9g72FCva3G7KtiRpWNWj/ZC89HOf4U1wVq7/pxnOYl2L97qNn7Unx+MHpi+XpPbbOK4V1u6yXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731086854; c=relaxed/simple;
-	bh=f4PJaVljdIJ/oBBjOmHGAG8o+kWjkBTU3psAdpIWRAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BorDpuAy3aTKZoOKGId8C1YiYieI+tjVOEOdSr8Nm8bx1otEpuX+tHcY34Y8YGMOamGAT7e+W6KRy+E4yTklAo6fXCU42ap+UiKOGWqEG+qd+G7JaIziqSZr2/MQr84vcjn0j0tSUVBBVw4aiVvpqD2bzpKJelbtTZi84dNEfMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IIPCquhp; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731086852; x=1762622852;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=f4PJaVljdIJ/oBBjOmHGAG8o+kWjkBTU3psAdpIWRAE=;
-  b=IIPCquhps4SSIIQDJoGhZPU2ksv2JyNOP+HAody799j5xSDG5foLE6LT
-   YjKlTUYwEXJOuvWmcP8dqKKWOkonuB995EAeQ1wC56xechYhY263+bw6+
-   997VHVcGSVKzWt2Bpcsy1zGaZcLIkykjPkqeKt7P6MKiUKMBC0FXFX1G4
-   OEelosQPEVXeoWYbHE7z5NGbxY7mvsv0gAjL3TqTB687HD+6LkotjuQAE
-   BsScM2DnPA3gRuv+lKideSbM2JZMds8U61YUlphw5Pp5lbUygQ6+2s3UT
-   20Kl1iJ+G+Le8x/6uM1tAZe7c+0CdqOygUbtdFsYabiqpJi38f9CKm/MB
-   g==;
-X-CSE-ConnectionGUID: BMxLxN3JTmW2sypEp+MSjw==
-X-CSE-MsgGUID: ZV4WMbujStaqywsOSW6g5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30937563"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30937563"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 09:27:30 -0800
-X-CSE-ConnectionGUID: haoDRfOqRGaNcx230Kdacg==
-X-CSE-MsgGUID: 19cBg4iPRZqh0P8i3L1N0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="123176009"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.110.245]) ([10.125.110.245])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 09:27:29 -0800
-Message-ID: <d02f217d-ae4f-476c-a20b-2b449cff73c0@intel.com>
-Date: Fri, 8 Nov 2024 10:27:28 -0700
+	s=arc-20240116; t=1731086899; c=relaxed/simple;
+	bh=rBNw1GNzfA6z75fhIAP/gwSk1f0U2vf886V9DeeMwJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qr4p7RHEpOFj0j42BAUPnFwH6CS6JAecD1pYVQu7jLHFeo3LJwqSdHsSqCWxt56E5cHz545sp80PS8bVIltAveRCWTpibKLX4hAcaOZnKIUkeeDKiO+0nElGWUr/3izBja9xKt4YNtKofWblcqA42kmO3iHjqYGJ8T0keeSJ0/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJsQRKW/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F62C4CECD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:28:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731086898;
+	bh=rBNw1GNzfA6z75fhIAP/gwSk1f0U2vf886V9DeeMwJo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sJsQRKW/1nYuKf/mfYrpMQnyXkZjeis9ktdRF9ApCTOr69bZMKyR/YV5AamISeWH5
+	 tv7b/sgU/5uhQkNHnoanaxLdSIS/U3kaznD2is6SEXerw/iu9/dY/0FV/LvVBNXvuP
+	 NcbB4xtpEseP47Y/1YMNl58oLyWwdj8WLX63IZgwexSmDayVKbk4EfIcWSxQOdDjgQ
+	 J9UWQDTEq8jxHbKv6a8EeqJscfdTkFH/FfPDYtYFonxACq33h2plOvv01ln0UqW6/B
+	 yOVtnztUdSPEAG26jvtLXDe9WRp6VAyQ6wyAv6yZ3uOwFvE0k7lyp/XYsPL63WmXqw
+	 B9LFUMfBkOxbQ==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c913aso4352459e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:28:17 -0800 (PST)
+X-Gm-Message-State: AOJu0YyeQuEfDv11kyeG99yDaqofsYlH8j/17gxrToRIC9ccm4T+TG0A
+	YTXDOCx4YBet5Aq8k0GgDJd3W6ikdAOh2pFhHqSVyLkd/3DzWovxRdrsuGmHMqKIBFhTebQjGCc
+	RcXpPdvfjuTCOXC7cGHEwRs/pj1Q=
+X-Google-Smtp-Source: AGHT+IGu97hLQdM+TDMBUSa2y0Ly3o6vGpFnIgz3xz3MvJxhNbicxhfcfws1SsK7h2XKfbCLLN57P2l6Urc8xSQ2CaE=
+X-Received: by 2002:a05:651c:881:b0:2f4:3de7:ac4c with SMTP id
+ 38308e7fff4ca-2ff201e84bbmr20645501fa.8.1731086896634; Fri, 08 Nov 2024
+ 09:28:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/27] DCD: Add support for Dynamic Capacity Devices
- (DCD)
-To: Ira Weiny <ira.weiny@intel.com>, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- linux-btrfs@vger.kernel.org, Johannes Thumshirn
- <johannes.thumshirn@wdc.com>, Robert Moore <robert.moore@intel.com>,
- Len Brown <lenb@kernel.org>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>, linux-acpi@vger.kernel.org,
- acpica-devel@lists.linux.dev, Li Ming <ming4.li@intel.com>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-hardening@vger.kernel.org
-References: <20241107-dcd-type2-upstream-v7-0-56a84e66bc36@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20241107-dcd-type2-upstream-v7-0-56a84e66bc36@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240918045431.607826-1-masahiroy@kernel.org> <0c4dc285-f218-4c88-87f3-b7c7c786cdba@monstr.eu>
+In-Reply-To: <0c4dc285-f218-4c88-87f3-b7c7c786cdba@monstr.eu>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 9 Nov 2024 02:27:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASKooM0_LuPhB0c6AfUsEB0b1Q_mo0TQvuCO2BZqYJBsQ@mail.gmail.com>
+Message-ID: <CAK7LNASKooM0_LuPhB0c6AfUsEB0b1Q_mo0TQvuCO2BZqYJBsQ@mail.gmail.com>
+Subject: Re: [PATCH] microblaze: use the common infrastructure to support
+ built-in DTB
+To: Michal Simek <monstr@monstr.eu>
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 8, 2024 at 8:54=E2=80=AFPM Michal Simek <monstr@monstr.eu> wrot=
+e:
+>
+>
+>
+> On 9/18/24 06:52, Masahiro Yamada wrote:
+> > MicroBlaze is the only architecture that supports a built-in DTB in
+> > its own way.
+> >
+> > Other architectures (e.g., ARC, NIOS2, RISC-V, etc.) use the common
+> > infrastructure introduced by commit aab94339cd85 ("of: Add support for
+> > linking device tree blobs into vmlinux").
+> >
+> > This commit migrates MicroBlaze to this common infrastructure.
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >
+> > I do not know why MicroBlaze still adopts its own way.
+> > Perhaps, because MicroBlaze supports the built-in DTB
+> > before aab94339cd85 and nobody attempted migration.
+> > Anyway, I only compile-tested this patch.
+> > I hope the maintainer can do boot-testing.
+>
+> I took a look at it and it is changing current behavior.
+> If you look at linux.bin and there is no DT inside. But when you patch is
+> applied linux.bin contains system.dtb inside which is regression.
+> Or is it intention of this patch?
+
+
+I do not understand your comment.
+
+If you look at the code in arch/microblaze/Makefile,
+DTB is empty unless you build simpleImage.%
+
+
+My patch still keeps obj-y within the
+ifneq ($(DTB),) ... endif  block.
+
+
+ifneq ($(DTB),)
+obj-y +=3D system.dtb.o
+  [ snip ]
+endif
+
+
+So, when you build linux.bin, system.dtb is not embedded in vmlinux,
+is it?
 
 
 
-On 11/7/24 1:58 PM, Ira Weiny wrote:
-> A git tree of this series can be found here:
-> 
-> 	https://github.com/weiny2/linux-kernel/tree/dcd-v4-2024-11-07
-> 
-> This is a quick spin with minor clean ups Dave was going to apply as
-> well as a couple of clean ups I had slated for after V4 landed.
+> I think there was any documentation about it's usage in past but never re=
+ally
+> described in upstream kernel.
+> But idea was that linux.bin requires DT to be passed from bootloader via =
+R7 reg
+> but simpleImage.X is linux.bin+DTB inside and can be used without bootloa=
+der.
 
-Top 6 patches (for DCD preparation) applied to cxl/next for 6.13 merge window. 
+With my patch applied, it should still work like this.
 
-> 
-> Series info
-> ===========
-> 
-> This series has 4 parts:
-> 
-> Patch 1: Add core range_overlaps() function
-> Patch 2-6: CXL clean up/prelim patches
-> Patch 7-25: Core DCD support
-> Patch 26-27: cxl_test support
-> 
-> Patches 1-6 have received a lot of review and can be applied to cxl-next
-> straight away.  While 7-27 may need to wait for Dan review.
-> 
-> Background
-> ==========
-> 
-> A Dynamic Capacity Device (DCD) (CXL 3.1 sec 9.13.3) is a CXL memory
-> device that allows memory capacity within a region to change
-> dynamically without the need for resetting the device, reconfiguring
-> HDM decoders, or reconfiguring software DAX regions.
-> 
-> One of the biggest use cases for Dynamic Capacity is to allow hosts to
-> share memory dynamically within a data center without increasing the
-> per-host attached memory.
-> 
-> The general flow for the addition or removal of memory is to have an
-> orchestrator coordinate the use of the memory.  Generally there are 5
-> actors in such a system, the Orchestrator, Fabric Manager, the Logical
-> device, the Host Kernel, and a Host User.
-> 
-> Typical work flows are shown below.
-> 
-> Orchestrator      FM         Device       Host Kernel    Host User
-> 
->     |             |           |            |              |
->     |-------------- Create region ----------------------->|
->     |             |           |            |              |
->     |             |           |            |<-- Create ---|
->     |             |           |            |    Region    |
->     |<------------- Signal done --------------------------|
->     |             |           |            |              |
->     |-- Add ----->|-- Add --->|--- Add --->|              |
->     |  Capacity   |  Extent   |   Extent   |              |
->     |             |           |            |              |
->     |             |<- Accept -|<- Accept  -|              |
->     |             |   Extent  |   Extent   |              |
->     |             |           |            |<- Create --->|
->     |             |           |            |   DAX dev    |-- Use memory
->     |             |           |            |              |   |
->     |             |           |            |              |   |
->     |             |           |            |<- Release ---| <-+
->     |             |           |            |   DAX dev    |
->     |             |           |            |              |
->     |<------------- Signal done --------------------------|
->     |             |           |            |              |
->     |-- Remove -->|- Release->|- Release ->|              |
->     |  Capacity   |  Extent   |   Extent   |              |
->     |             |           |            |              |
->     |             |<- Release-|<- Release -|              |
->     |             |   Extent  |   Extent   |              |
->     |             |           |            |              |
->     |-- Add ----->|-- Add --->|--- Add --->|              |
->     |  Capacity   |  Extent   |   Extent   |              |
->     |             |           |            |              |
->     |             |<- Accept -|<- Accept  -|              |
->     |             |   Extent  |   Extent   |              |
->     |             |           |            |<- Create ----|
->     |             |           |            |   DAX dev    |-- Use memory
->     |             |           |            |              |   |
->     |             |           |            |<- Release ---| <-+
->     |             |           |            |   DAX dev    |
->     |<------------- Signal done --------------------------|
->     |             |           |            |              |
->     |-- Remove -->|- Release->|- Release ->|              |
->     |  Capacity   |  Extent   |   Extent   |              |
->     |             |           |            |              |
->     |             |<- Release-|<- Release -|              |
->     |             |   Extent  |   Extent   |              |
->     |             |           |            |              |
->     |-- Add ----->|-- Add --->|--- Add --->|              |
->     |  Capacity   |  Extent   |   Extent   |              |
->     |             |           |            |<- Create ----|
->     |             |           |            |   DAX dev    |-- Use memory
->     |             |           |            |              |   |
->     |-- Remove -->|- Release->|- Release ->|              |   |
->     |  Capacity   |  Extent   |   Extent   |              |   |
->     |             |           |            |              |   |
->     |             |           |     (Release Ignored)     |   |
->     |             |           |            |              |   |
->     |             |           |            |<- Release ---| <-+
->     |             |           |            |   DAX dev    |
->     |<------------- Signal done --------------------------|
->     |             |           |            |              |
->     |             |- Release->|- Release ->|              |
->     |             |  Extent   |   Extent   |              |
->     |             |           |            |              |
->     |             |<- Release-|<- Release -|              |
->     |             |   Extent  |   Extent   |              |
->     |             |           |            |<- Destroy ---|
->     |             |           |            |   Region     |
->     |             |           |            |              |
-> 
-> Implementation
-> ==============
-> 
-> The series still requires the creation of regions and DAX devices to be
-> closely synchronized with the Orchestrator and Fabric Manager.  The host
-> kernel will reject extents if a region is not yet created.  It also
-> ignores extent release if memory is in use (DAX device created).  These
-> synchronizations are not anticipated to be an issue with real
-> applications.
-> 
-> In order to allow for capacity to be added and removed a new concept of
-> a sparse DAX region is introduced.  A sparse DAX region may have 0 or
-> more bytes of available space.  The total space depends on the number
-> and size of the extents which have been added.
-> 
-> Initially it is anticipated that users of the memory will carefully
-> coordinate the surfacing of additional capacity with the creation of DAX
-> devices which use that capacity.  Therefore, the allocation of the
-> memory to DAX devices does not allow for specific associations between
-> DAX device and extent.  This keeps allocations very similar to existing
-> DAX region behavior.
-> 
-> To keep the DAX memory allocation aligned with the existing DAX devices
-> which do not have tags extents are not allowed to have tags.  Future
-> support for tags is planned.
-> 
-> Great care was taken to keep the extent tracking simple.  Some xarray's
-> needed to be added but extra software objects were kept to a minimum.
-> 
-> Region extents continue to be tracked as sub-devices of the DAX region.
-> This ensures that region destruction cleans up all extent allocations
-> properly.
-> 
-> Some review tags were kept if a patch did not change.
-> 
-> The major functionality of this series includes:
-> 
-> - Getting the dynamic capacity (DC) configuration information from cxl
->   devices
-> 
-> - Configuring the DC partitions reported by hardware
-> 
-> - Enhancing the CXL and DAX regions for dynamic capacity support
-> 	a. Maintain a logical separation between hardware extents and
-> 	   software managed region extents.  This provides an
-> 	   abstraction between the layers and should allow for
-> 	   interleaving in the future
-> 
-> - Get hardware extent lists for endpoint decoders upon
->   region creation.
-> 
-> - Adjust extent/region memory available on the following events.
->         a. Add capacity Events
-> 	b. Release capacity events
-> 
-> - Host response for add capacity
-> 	a. do not accept the extent if:
-> 		If the region does not exist
-> 		or an error occurs realizing the extent
-> 	b. If the region does exist
-> 		realize a DAX region extent with 1:1 mapping (no
-> 		interleave yet)
-> 	c. Support the event more bit by processing a list of extents
-> 	   marked with the more bit together before setting up a
-> 	   response.
-> 
-> - Host response for remove capacity
-> 	a. If no DAX device references the extent; release the extent
-> 	b. If a reference does exist, ignore the request.
-> 	   (Require FM to issue release again.)
-> 
-> - Modify DAX device creation/resize to account for extents within a
->   sparse DAX region
-> 
-> - Trace Dynamic Capacity events for debugging
-> 
-> - Add cxl-test infrastructure to allow for faster unit testing
->   (See new ndctl branch for cxl-dcd.sh test[1])
-> 
-> - Only support 0 value extent tags
-> 
-> Fan Ni's upstream of Qemu DCD was used for testing.
-> 
-> Remaining work:
-> 
-> 	1) Allow mapping to specific extents (perhaps based on
-> 	   label/tag)
-> 	   1a) devise region size reporting based on tags
-> 	2) Interleave support
-> 
-> Possible additional work depending on requirements:
-> 
-> 	1) Accept a new extent which extends (but overlaps) an existing
-> 	   extent(s)
-> 	2) Release extents when DAX devices are released if a release
-> 	   was previously seen from the device
-> 	3) Rework DAX device interfaces, memfd has been explored a bit
-> 
-> [1] https://github.com/weiny2/ndctl/tree/dcd-region2-2024-10-01
-> 
-> ---
-> Changes in v7:
-> - Pick up review tags
-> - Ming: Fix setting the more flag
-> - Link to v6: https://patch.msgid.link/20241105-dcd-type2-upstream-v6-0-85c7fa2140fe@intel.com
-> 
-> ---
-> Ira Weiny (13):
->       range: Add range_overlaps()
->       ACPI/CDAT: Add CDAT/DSMAS shared and read only flag values
->       dax: Document struct dev_dax_range
->       cxl/pci: Delay event buffer allocation
->       cxl/hdm: Use guard() in cxl_dpa_set_mode()
->       cxl/region: Refactor common create region code
->       cxl/cdat: Gather DSMAS data for DCD regions
->       cxl/events: Split event msgnum configuration from irq setup
->       cxl/pci: Factor out interrupt policy check
->       cxl/core: Return endpoint decoder information from region search
->       dax/bus: Factor out dev dax resize logic
->       tools/testing/cxl: Make event logs dynamic
->       tools/testing/cxl: Add DC Regions to mock mem data
-> 
-> Navneet Singh (14):
->       cxl/mbox: Flag support for Dynamic Capacity Devices (DCD)
->       cxl/mem: Read dynamic capacity configuration from the device
->       cxl/core: Separate region mode from decoder mode
->       cxl/region: Add dynamic capacity decoder and region modes
->       cxl/hdm: Add dynamic capacity size support to endpoint decoders
->       cxl/mem: Expose DCD partition capabilities in sysfs
->       cxl/port: Add endpoint decoder DC mode support to sysfs
->       cxl/region: Add sparse DAX region support
->       cxl/mem: Configure dynamic capacity interrupts
->       cxl/extent: Process DCD events and realize region extents
->       cxl/region/extent: Expose region extent information in sysfs
->       dax/region: Create resources on sparse DAX regions
->       cxl/region: Read existing extents on region creation
->       cxl/mem: Trace Dynamic capacity Event Record
-> 
->  Documentation/ABI/testing/sysfs-bus-cxl |  125 +++-
->  drivers/cxl/core/Makefile               |    2 +-
->  drivers/cxl/core/cdat.c                 |   45 +-
->  drivers/cxl/core/core.h                 |   34 +-
->  drivers/cxl/core/extent.c               |  502 +++++++++++++++
->  drivers/cxl/core/hdm.c                  |  231 ++++++-
->  drivers/cxl/core/mbox.c                 |  610 +++++++++++++++++-
->  drivers/cxl/core/memdev.c               |  128 +++-
->  drivers/cxl/core/port.c                 |   19 +-
->  drivers/cxl/core/region.c               |  185 ++++--
->  drivers/cxl/core/trace.h                |   65 ++
->  drivers/cxl/cxl.h                       |  122 +++-
->  drivers/cxl/cxlmem.h                    |  132 +++-
->  drivers/cxl/pci.c                       |  122 +++-
->  drivers/dax/bus.c                       |  356 +++++++++--
->  drivers/dax/bus.h                       |    4 +-
->  drivers/dax/cxl.c                       |   71 ++-
->  drivers/dax/dax-private.h               |   66 +-
->  drivers/dax/hmem/hmem.c                 |    2 +-
->  drivers/dax/pmem.c                      |    2 +-
->  fs/btrfs/ordered-data.c                 |   10 +-
->  include/acpi/actbl1.h                   |    2 +
->  include/cxl/event.h                     |   32 +
->  include/linux/ioport.h                  |    3 +
->  include/linux/range.h                   |    8 +
->  tools/testing/cxl/Kbuild                |    3 +-
->  tools/testing/cxl/test/mem.c            | 1019 +++++++++++++++++++++++++++----
->  27 files changed, 3568 insertions(+), 332 deletions(-)
-> ---
-> base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
-> change-id: 20230604-dcd-type2-upstream-0cd15f6216fd
-> 
-> Best regards,
 
+--=20
+Best Regards
+Masahiro Yamada
 
