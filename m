@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-400965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ECFB9C1478
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:12:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8FF9C1479
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:13:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD8A1F230A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:12:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E12A1C20D66
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63C81991D3;
-	Fri,  8 Nov 2024 03:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E93B199385;
+	Fri,  8 Nov 2024 03:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aa3ZGQpT"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQTZCL1F"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70A113A24A;
-	Fri,  8 Nov 2024 03:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290C31991DA;
+	Fri,  8 Nov 2024 03:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731035480; cv=none; b=SgxTtkLhfC2J4TzlXPVJ+aLdgD35+IdhdVvxoAgM2eJaHICeiLwZLgkbgyXz1RRGph+9smol1hCFQKUlU2R4tKqlsTCs26nPwNBuVyfEwwIuPhkt6/UFoHLnekhyBmzJC6wdPjseO0eN/cen5A6fgQd3fvORHILf0iYFmKggrNA=
+	t=1731035485; cv=none; b=cxO9165wPIt1n6QVNgs9J6yHOG42oUrt9nfXWYe3hScsc13k5gvtUbWkfyJje3/osXHJKXCs0THlXaS/KiPSL6VJyhjUwsnP3FvNiN7FcVc9Mq7vghmFMQ8k7zUBm6XbfzHmMg/WBEk6kh/sS896RdrVHtptyZovk6nNSgpT3bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731035480; c=relaxed/simple;
-	bh=SO0ihzkyb/8u5w8iQc3Yi8QNQKkH80XypPcmX383Vsg=;
+	s=arc-20240116; t=1731035485; c=relaxed/simple;
+	bh=g19ESF38XnPNOgAGwCMocaUk/c09aizfAjeVo3XURuk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=muoFhX8WUd9bRkworaxu46knpdJqr63m2Tn8mdZczq19YBVaSKsRNMZCohXq2trL/L3JSfCUOpLDW/2I6cQoZT4xmt+zN578krwgqrP0nn202GRWpaLY2nn2t/QX9VQFAPr5SS0mru2LZWbMmYqZF1a/ut0w9OmZGMB/VcBg2Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aa3ZGQpT; arc=none smtp.client-ip=209.85.215.169
+	 MIME-Version; b=oCXfCJ0P7/VV/4XJQevHONMet27UPvvPr3jVkrMMZv6eC1+w8A1mDR5TCGI909FPjDzx7ZjDdDl1tJXbkTRH7lhI00emiJP4SvzrwukkxjvzcpgGG4y1Rf3hFdbXA3j8tnZraU5JpAsnGBJff2RakpZQ0oD+APFl1K04f4MXDGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQTZCL1F; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so1228755a12.2;
-        Thu, 07 Nov 2024 19:11:18 -0800 (PST)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7240fa50694so754502b3a.1;
+        Thu, 07 Nov 2024 19:11:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731035478; x=1731640278; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731035483; x=1731640283; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FuJaxUrBc7TRYuZFnJWfuScCYx5fEJD+n5myQuS5ElU=;
-        b=Aa3ZGQpTWc+ytSA8FU0Ms2f1++twf4jI7+FE6FLGOX/9H8z+eEEcyS5LbgHfTzAbNJ
-         b2uyRQ/w0MNDlUqDxsIIQfJooNelu/EbhDOwPKo0/JS/6Bk1s8kaof8+v+z3717DzjQZ
-         iGbP5W9vVWCLUIi9OKUjwMOXoSHB7Mtu46e2qZ8BdkuBjz/TWBOxnCDlXLWiwP2mobGA
-         7SlpSzxywf0rtU0J6zlDGvuZsBIYmVzeiz/g+Kp2wPi7wYVBwdtY17xiTeEj85m498sY
-         iRfDQlNIJduH1xQM4A64XLiLLaj3gxbaZ1WkUHGcawjmZtRwgU/VNU2otjKS5fY/G2Ih
-         be6A==
+        bh=5p13tT/thphBZ+1rHR3C3p72SA4taa7/M0quBz0qbaQ=;
+        b=OQTZCL1FPM+VeIMRi7h0BglM9XA/WyQvO+p+xH+DozZW7dzrTR9rLdPLf7eLjFZ5Vw
+         4g82cYl/VN+ixm1QNxsQydo1KhEVKNbq1kf4vmoOGrrRJ7MGhWMC7qYiqCsi6Dwoonzd
+         i/b/GhuguZYFQsZqiXPHLJGNdmJQnr5nNgb8oXA/p56NQQRcno38WBgOruDmN0J3MRNL
+         3EY82pnCqJXCdDMWgoC4eVFBny8ujK3M1Jt/n3Iu0yJWkDmH9EPPUSiKeOEjR0AypLxg
+         uUrXvEHsxa3FSo8O1blf2Yvd/22aW3vJVMSiucc5SaMoL6C6Rkc/KfD61oCTTv8omJ8J
+         EJCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731035478; x=1731640278;
+        d=1e100.net; s=20230601; t=1731035483; x=1731640283;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FuJaxUrBc7TRYuZFnJWfuScCYx5fEJD+n5myQuS5ElU=;
-        b=U8ihCGR3x+zysFuUuYL6QkxxU63yFA3nMw3DasCAiNmVsXmdoEt+/O7TB1+W1YcyGx
-         bnCzFL1h3fF6Qn5RZlxw7ZexSVLDW8jUbhr/bb1W1ZCxduuRaY+Vva1rAq5Cvkm0rTJU
-         vLwPbxvhc1p79uqu7BdxVYPlD5n3FVotYxgGH7q2v0VbYZeMrHTC0rwJwUrDsyl5ezKk
-         VbUyKEUdRcIhPrE3yBzGEDso8IEkUCx5tKRUtIG9YbV6TKDXvOcQ6KfwQPOcOehLcxwK
-         SEa7JDJzF8kLcJ9uUQIQHo3woQvDHvBelnAH1sDYhmZC3zu4fZ2ATC7r89hiqxCb2Atv
-         CI6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXDBDtxiRYO13Wbo+eIxp7scFhAu8uPMfrLILXQ+L8cqMfSg5wTDSXh8zw8X2gXxHeRxxyl3dbGNdmbVAE=@vger.kernel.org, AJvYcCXR7mIUhKZu6GPSDzDJCpFmREXz1H72Ha/gHKqY2FL9pCR8nWw620dU+kkaMaO5Zzx516u8kPq8Adl9BIaI34w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiyRXFKBoi2jzzjTd7UX/2xgUbW5TLRrtiYfAOfap553TgOVjJ
-	fZrou7SqcazIFSO9toqXHtqTRX0+Xtfx18jIGfH96YKQT1ehXAT0
-X-Google-Smtp-Source: AGHT+IGgC+6I7Emn1GjiFWxF10vSSuDCH8uOSU2KcXANEDn34Q3cV0UJql0OiWOnDN/V3SkB+T7hpQ==
-X-Received: by 2002:a05:6a21:3418:b0:1d9:261c:5943 with SMTP id adf61e73a8af0-1dc2296b919mr1723644637.10.1731035478006;
-        Thu, 07 Nov 2024 19:11:18 -0800 (PST)
+        bh=5p13tT/thphBZ+1rHR3C3p72SA4taa7/M0quBz0qbaQ=;
+        b=HRXi0utd3fkTAPtj/2U8VmyyjeQpK895iHYlcYbEPUpFiRdRu5rOiWVIoffmtMODUX
+         b84zKd+CGpEktX89un7xfXhuJ+jHyR5mHpVD1IHJNtajEI8AZLZ4MgEbkcyWteYxFPYc
+         931Evbxh8ntak7xQq8NoTLPakTJ28lxKxo52DTGprSZi39Xf9b3ODyOFttc8Vte/Hy6j
+         mEWEKgVG5W9b4qHxOSOVntM/1jMA1anmz/SiYGUasHgXpymxgBMj9wNCUMQU3Hl4WBjr
+         TSK8ESiq3nReR4OFzGhGnBryn1d0S77yoO4msiDYRrSWclWlsxoeXMtSC7owiH2N7RXi
+         eu8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWxhNYqpnCUGGbiQnnbHmPexZMUPvAXeLXMGgMh6KAWQEZEo4Ybi/NyFdvxW9Q1mLtvh5NeGauJesxDTLg=@vger.kernel.org, AJvYcCXxFtspPqONWf5fgmn8Jr7UEBvsNqNgFoQoy/HTf1gDjAwTKVtTELc5NYmKMqVIs33pttuQgqHe3n8P396IxWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz/abG9nmCXIqJREOrlf0E9/tTI5l4aJ56p0yCK/gPqq+4/GGo
+	sZhkTeyVH86o9Cc0ftIckuH2IG6wq8qjzoOF51HLU/yljuP/sYvr
+X-Google-Smtp-Source: AGHT+IF9Nt8wFTnf1z18NanbCXUbHNaI7X9rfNZcbQStZX/zykuP7aqknZr8bwt6fX9Sr//WwdVgXw==
+X-Received: by 2002:a05:6a20:6a23:b0:1db:92a9:4cd8 with SMTP id adf61e73a8af0-1dc228df523mr2026274637.6.1731035483359;
+        Thu, 07 Nov 2024 19:11:23 -0800 (PST)
 Received: from toolbox.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079aa86dsm2589816b3a.127.2024.11.07.19.11.12
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079aa86dsm2589816b3a.127.2024.11.07.19.11.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 19:11:17 -0800 (PST)
+        Thu, 07 Nov 2024 19:11:22 -0800 (PST)
 From: Alistair Francis <alistair23@gmail.com>
 X-Google-Original-From: Alistair Francis <alistair.francis@wdc.com>
 To: a.hindborg@kernel.org,
@@ -82,9 +82,9 @@ To: a.hindborg@kernel.org,
 	ojeda@kernel.org,
 	gary@garyguo.net
 Cc: alistair23@gmail.com
-Subject: [PATCH v2 10/11] rust: helpers: Remove some task helpers
-Date: Fri,  8 Nov 2024 13:10:11 +1000
-Message-ID: <20241108031012.335203-11-alistair.francis@wdc.com>
+Subject: [PATCH v2 11/11] rust: helpers: Remove uaccess helpers
+Date: Fri,  8 Nov 2024 13:10:12 +1000
+Message-ID: <20241108031012.335203-12-alistair.francis@wdc.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241108031012.335203-1-alistair.francis@wdc.com>
 References: <20241108031012.335203-1-alistair.francis@wdc.com>
@@ -96,55 +96,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that we support wrap-static-fns we no longer need the custom helpers.
+Now that we support wrap-static-fns we no longer need the custom helper.
 
 Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
 ---
  rust/bindgen_static_functions   |  3 +++
  rust/bindings/bindings_helper.h |  1 +
- rust/helpers/task.c             | 10 ----------
- 3 files changed, 4 insertions(+), 10 deletions(-)
+ rust/helpers/helpers.c          |  6 ++----
+ rust/helpers/uaccess.c          | 15 ---------------
+ 4 files changed, 6 insertions(+), 19 deletions(-)
+ delete mode 100644 rust/helpers/uaccess.c
 
 diff --git a/rust/bindgen_static_functions b/rust/bindgen_static_functions
-index 9d6c44e277b5..8bc291a7a799 100644
+index 8bc291a7a799..ec48ad2e8c78 100644
 --- a/rust/bindgen_static_functions
 +++ b/rust/bindgen_static_functions
-@@ -24,3 +24,6 @@
- --allowlist-function spin_lock
- --allowlist-function spin_unlock
- --allowlist-function spin_trylock
+@@ -27,3 +27,6 @@
+ 
+ --allowlist-function get_task_struct
+ --allowlist-function put_task_struct
 +
-+--allowlist-function get_task_struct
-+--allowlist-function put_task_struct
++--allowlist-function copy_from_user
++--allowlist-function copy_to_user
 diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index ec26d18c5d88..eec195a21fb8 100644
+index eec195a21fb8..a850c21c432c 100644
 --- a/rust/bindings/bindings_helper.h
 +++ b/rust/bindings/bindings_helper.h
-@@ -21,6 +21,7 @@
- #include <linux/refcount.h>
- #include <linux/sched.h>
+@@ -23,6 +23,7 @@
  #include <linux/sched/signal.h>
-+#include <linux/sched/task.h>
+ #include <linux/sched/task.h>
  #include <linux/slab.h>
++#include <linux/uaccess.h>
  #include <linux/wait.h>
  #include <linux/workqueue.h>
-diff --git a/rust/helpers/task.c b/rust/helpers/task.c
-index 190fdb2c8e2f..788865464134 100644
---- a/rust/helpers/task.c
-+++ b/rust/helpers/task.c
-@@ -6,13 +6,3 @@ struct task_struct *rust_helper_get_current(void)
- {
- 	return current;
- }
+ 
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index ebe3a85c7210..42c28222f6c2 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -1,8 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Non-trivial C macros cannot be used in Rust. Similarly, inlined C functions
+- * cannot be called either. This file explicitly creates functions ("helpers")
+- * that wrap those so that they can be called from Rust.
++ * Non-trivial C macros cannot be used in Rust. This file explicitly creates
++ * functions ("helpers") that wrap those so that they can be called from Rust.
+  *
+  * Sorted alphabetically.
+  */
+@@ -16,7 +15,6 @@
+ #include "slab.c"
+ #include "spinlock.c"
+ #include "task.c"
+-#include "uaccess.c"
+ #include "vmalloc.c"
+ #include "wait.c"
+ #include "workqueue.c"
+diff --git a/rust/helpers/uaccess.c b/rust/helpers/uaccess.c
+deleted file mode 100644
+index f49076f813cd..000000000000
+--- a/rust/helpers/uaccess.c
++++ /dev/null
+@@ -1,15 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
 -
--void rust_helper_get_task_struct(struct task_struct *t)
+-#include <linux/uaccess.h>
+-
+-unsigned long rust_helper_copy_from_user(void *to, const void __user *from,
+-					 unsigned long n)
 -{
--	get_task_struct(t);
+-	return copy_from_user(to, from, n);
 -}
 -
--void rust_helper_put_task_struct(struct task_struct *t)
+-unsigned long rust_helper_copy_to_user(void __user *to, const void *from,
+-				       unsigned long n)
 -{
--	put_task_struct(t);
+-	return copy_to_user(to, from, n);
 -}
 -- 
 2.47.0
