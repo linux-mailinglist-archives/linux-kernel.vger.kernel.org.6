@@ -1,100 +1,148 @@
-Return-Path: <linux-kernel+bounces-401878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC809C207A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:32:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4E49C207E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F7A1C2327F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:32:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C3A3B22204
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC1320C00B;
-	Fri,  8 Nov 2024 15:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179F921A70D;
+	Fri,  8 Nov 2024 15:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEeqontT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elpK4eCk"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035F420B20A;
-	Fri,  8 Nov 2024 15:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5AC1E5708;
+	Fri,  8 Nov 2024 15:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731079930; cv=none; b=LK9dILs39dGjfh7fqjTVJY0Ppmn/jEIEsD6ltlhqV5YtQZvUH6zDWtHx+Dk4Mnq99RXnmuOgFbjATXVh+opnpLn0hx5F+5zI5tl7L4tDwvQYEiARvS5RpFNTXmQGUZi4vD/4Cmy7+PKhGMkt3IP+N3TcB5mC0F3D0LnqGC+mB10=
+	t=1731080024; cv=none; b=AP0fTUNwJ5oJgoOzCQ2OacYM3iOeAjhgfkkLIcFbtaL1TvczlAuKoGd/yKeoV1C7Vt5qNVG9A+f9ayapm3TMfGWgHp2+4/Wi6+r1NudqRAGKIWHFuk2nATRafWLzJ5XQr7LOeNbv5IA5qe/7LspPQR4Ie2D+VImJyoOl+CmOCQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731079930; c=relaxed/simple;
-	bh=+o6SMNW5ltrwkaUFGnTAvx5ruimZe+vSc0bhjjOji04=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=nEUS0edC7nbHwyXbRExwb6ExJ7901KnGqXPkQlHPfQedKY6ppXdAey0InQpGt0JtcbiFg6Cs/G5P3+P7ElqlthHcy5oWETHpWntb6JDFdrV6kaH9nYZs/o5y9TUj+/j8KlWXvqRMd4zOy3LDtq1HviOkt9RfQ2qgGY5npjxGxKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEeqontT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DFEC4CECD;
-	Fri,  8 Nov 2024 15:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731079929;
-	bh=+o6SMNW5ltrwkaUFGnTAvx5ruimZe+vSc0bhjjOji04=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=UEeqontTqm1DIKZo67sydAeXTG8uE8k+xExg3SQ8HcuIVj8Pkxet37LDE61TX4Y55
-	 ml7mh8upGx70b2e0DnlZnKcknOif47RdpsZjF0BWQ7Dmc6Qnx0LF+CBHff8NsJnk/q
-	 vuqQW4yIAnkmzL1xEHxpq7cKDMXS8EOZQxTG9UrujnNtsTvWKXlwk1TEHogaa7F/+t
-	 iFCky72XMaQoGgj9f0kMcrNTOERWEK4TPdvwlQBINJCseNE0mIk1uBFZZKyTzPPK/T
-	 UY/NJy1oxASqjaoQ6mEpwGvyhCSA2VsfpBp9YbeZ0zFHoQamhPw00Wpp0NCVaoDv/H
-	 47R67IEWXzuDQ==
-Date: Fri, 08 Nov 2024 07:32:04 -0800
-From: Kees Cook <kees@kernel.org>
-To: Stas Sergeev <stsp2@yandex.ru>, linux-kernel@vger.kernel.org
-CC: Eric Biederman <ebiederm@xmission.com>, Andy Lutomirski <luto@kernel.org>,
- Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
- John Johansen <john.johansen@canonical.com>,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>,
- Felix Moessbauer <felix.moessbauer@siemens.com>,
- Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
- "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [PATCH v2 1/2] procfs: avoid some usages of seq_file private data
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241108101339.1560116-2-stsp2@yandex.ru>
-References: <20241108101339.1560116-1-stsp2@yandex.ru> <20241108101339.1560116-2-stsp2@yandex.ru>
-Message-ID: <618F0D80-F2E1-49C1-AA25-B2C0CC46F519@kernel.org>
+	s=arc-20240116; t=1731080024; c=relaxed/simple;
+	bh=jFmMnUeuC+ny2eEdkRs99LX3eAoH4643Yv0UWsCgWwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFD7meYBpUZSYFmMo2CGMdhPStwFbGEGlcOPCoerfHs6sgLlX6UtvxQlXxzpzps5xb4xgJhCESwCJ2uzckNzNPJ4cnYH1LTcdlSU+Hn86tG2xVd9HJ6aXl69XZh3RYYGhZX8XaAdwLD+wkQo9BNCLj140t3R4sfzPsdJFMzDju4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=elpK4eCk; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so3958691e87.2;
+        Fri, 08 Nov 2024 07:33:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731080021; x=1731684821; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3tUwRMCHHdqZVRtxZCk5aPJdbR5inXLEUzSQYIspWM0=;
+        b=elpK4eCkch8SmK4PW4/rRuK+wzmTeDU8OXEBkbd30Ka6w5WxkkOyynSKYiu9fTPJMg
+         Vmt5ftm2sZheMF+efU5SNBnFfUcJC+vDONDlWjoqcXi29a+8NUrSscsyBaFjMPSpk5Ut
+         31mm1BzW1CW8/jl4goC3jiUIXVBK97yenSj2mxxTYagQKTiF5NhfAYEL93ugPwxCA6fX
+         k65VPKWaMwHJzsOXkVc2VAJdPNnpi82NBhPDZPEhoJawmPAzMRaxHpsU3YdYct72HiJj
+         Jzk3CxkatMrCEodX9MBN+fyjPtcrI+t1Sexqu/cIrbpC43FczNwgQFLmgHvLqjQcpZjz
+         Lj7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731080021; x=1731684821;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3tUwRMCHHdqZVRtxZCk5aPJdbR5inXLEUzSQYIspWM0=;
+        b=cqi+CXZBvfDQx6ZxAfRFM9QVbKEPmvvnzkB1prsQpxfNOtZLuVfsnNCEouiBeXWChw
+         zIEMMPjhXJZmRv/xZQSKmUhfVd0w22z0VnhC+Ye3xgPrPPyz/XaF1f7nOZsLM/MqQMLB
+         0Xh5YGZp2jkkLKUQHJ9Z1z21NZn7mO6lSMu+riHkKTQIct0OmdBUWVqfUykOH+hKjcfo
+         T/l2Z5jVPzJkMNxldIW2mao55s5SXcZ24zzDyo3mHSwzPMjcMP8atumpDFEDEEK+Ive/
+         R6wAdjjj4ZCB87fHmpV/enBDDuT7ig4tGHiJAhhcqc0a1t3nGLUjJYqGZc6pTAVRi8ve
+         hHmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7FYhqqm4P3W6rYDD5d1g219+HLaAVTRQ518j9LZKxQfoY8NFTBH3zk7M9GVwrQtBAIQ5eaqGBcT+I@vger.kernel.org, AJvYcCWrMsOFORQAylWSmG2EZdFnJgdojjHfOrW9+B9fzdJfqpWXj4/FoNWLLVpX96/TtIETpVZF43LvYSOP@vger.kernel.org, AJvYcCWt6AaXwZCNNRBCh0L5wUGON6FlS1+R53qpCBZ1Csba251gNodVsTCJKLzle8BYaSKJdA2GRf4D7sJ/9U8K@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX6HyY2lJEJpjvxODdi5qHbGUNVtvjzTfHpZfpM6gSN5fonerd
+	1MZHlULzTBXGHOqQBY+yzWvFvesYRrM67Rt5Xh3vi/47DovpTZaau4vevHvP
+X-Google-Smtp-Source: AGHT+IH6QlPf0c6ztccp5zye1I+rJwIhnxrhIVUrE/U2zUAMlS2cVf9rlvp4D1Xd2iX5jOQ4HGOkBw==
+X-Received: by 2002:a05:6512:3084:b0:539:8a50:6ee8 with SMTP id 2adb3069b0e04-53d862f84cdmr2869650e87.57.1731080020655;
+        Fri, 08 Nov 2024 07:33:40 -0800 (PST)
+Received: from localhost ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d82678474sm662970e87.42.2024.11.08.07.33.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 07:33:40 -0800 (PST)
+Date: Fri, 8 Nov 2024 18:33:37 +0300
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v11 5/7] i2c: of-prober: Add GPIO support to simple
+ helpers
+Message-ID: <Zy4vUQj26-rkXrgk@skv.local>
+Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org
+References: <20241106093335.1582205-1-wenst@chromium.org>
+ <20241106093335.1582205-6-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241106093335.1582205-6-wenst@chromium.org>
 
+On 24-11-06 17:33, Chen-Yu Tsai wrote:
+> Add GPIO support to the simple helpers for the I2C OF component prober.
+> Components that the prober intends to probe likely require their
+> regulator supplies be enabled, and GPIOs be toggled to enable them or
+> bring them out of reset before they will respond to probe attempts.
+> Regulator supplies were handled in the previous patch.
+> 
+> The assumption is that the same class of components to be probed are
+> always connected in the same fashion with the same regulator supply
+> and GPIO. The names may vary due to binding differences, but the
+> physical layout does not change.
+> 
+> This supports at most one GPIO pin. The user must specify the GPIO name,
+> the polarity, and the amount of time to wait after the GPIO is toggled.
+> Devices with more than one GPIO pin likely require specific power
+> sequencing beyond what generic code can easily support.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+> ---
+> Changes since v10:
+> - Added include of linux/types.h for |bool|
 
-On November 8, 2024 2:13:38 AM PST, Stas Sergeev <stsp2@yandex=2Eru> wrote=
-:
->seq_file private data carries the inode pointer here=2E
->Replace
->`struct inode *inode =3D m->private;`
->with:
->`struct inode *inode =3D file_inode(m->file);`
->to avoid the reliance on private data=2E
+Tested-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
 
-Conceptually this seems good, though I'd expect to see the removal of _set=
-ting_ m->private too in this patch=2E
+Patches 1-5 from this patchset were successfully tested with hardware
+prober for i2c magnetometer on PinePhone on next-20241107. [1]
 
->This is needed so that `proc_single_show()` can be used by
->custom fops that utilize seq_file private data for other things=2E
->This is used in the next patch=2E
+1. https://github.com/AndreySV/linux-stable/commits/in-kernel-i2c-hwprober-magnetometer/
 
-Now that next patch is pretty wild=2E I think using proc is totally wrong =
-for managing uid/gid=2E If that's going to happen at all, I think it should=
- be tied to pidfd which will already do the correct process lifetime manage=
-ment, etc=2E
-
--Kees
-
---=20
-Kees Cook
+-- 
+Best regards,
+Andrey Skvortsov
 
