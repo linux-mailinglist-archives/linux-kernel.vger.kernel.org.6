@@ -1,249 +1,136 @@
-Return-Path: <linux-kernel+bounces-402296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD049C2608
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:03:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9892C9C2609
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:03:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D70A41C21A31
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:03:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501971F234D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6AC1C1F25;
-	Fri,  8 Nov 2024 20:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342E41C1F23;
+	Fri,  8 Nov 2024 20:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epU1fQiN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UH29Oe4d"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1451A9B3C;
-	Fri,  8 Nov 2024 20:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EA017A5BE
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 20:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731096186; cv=none; b=tXWmcFb4L+/UT5Rrp0fXQMYSn7O8+L/K5WnF0hEaqN1U9566Bt18UFzgpyR91UbiWhH2D6S3ucBPxVu+89KCgoRTc3A+4vxiZsQl+VWGALR/2E0x7FDI2erUpq6X9sU1dZSr/fcF4EUHq6jnx77fSuFvV3oEfr1D862KkP1wrFI=
+	t=1731096195; cv=none; b=jcSAS0hT4lr3P9p9pPPA1B8Ao70szeI6W/n8a1nA8Nhu7arxUMHmRqTAUMAasXjNfqUqtpa5rrBNAn/uQApWZhMawE6YlVO6vq9VNJPicfT+5BuLC+X+up4REGsh0in3oBx7Y2F2RYGPw7ApHm0ftVvAaXUH0oSCkiIKLpK3kFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731096186; c=relaxed/simple;
-	bh=xX7Im2UhKNKgBE416PaOdSNPECSfPWPArQu7YbQODCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IvX6FG3neJ6KmFBDfTH3yWRvPKS+ZaG4G/zfOk8iuKKpSF2hdfHINhCaxYSiluc4a3Y+bLGZIoVmlgCfymv+MRvlCJrTjNyyJmuutUx2x0BpMqfYrj7T1YDoh/lIAO5AqpAeb2p868bhYEEry2bTJzLZ08KXjYOwgSVq/T75+d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epU1fQiN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430B3C4CECD;
-	Fri,  8 Nov 2024 20:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731096185;
-	bh=xX7Im2UhKNKgBE416PaOdSNPECSfPWPArQu7YbQODCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=epU1fQiNqfeFZdEM00F7vtSpMYwYfot9P71+GYdehpaxaLPDaCOqbKUsUO44+7y7Q
-	 o3eR0G3nwWjdXG/LjOV4dfBN0fpiBTfQjkBTXyhZBNO+yusM5c1u7BaRCniZhMJtUc
-	 q0LQVTzSXkt/xN//agdroW9fr4YtNwoqFZiNjQEOxO7G8ZsMBpZAqrwC/td1X3yVI6
-	 ZSmmdmmc6CZDt6uatgD6LkqCfjjGv9p4sNMU/5ZgXRHd74jD11SoWcSVHFWVmpVipt
-	 dxHX0hnw/IAilCJN1DmkNfFpwQXnl86vrupoNsuxdPy9xI7tSKuBpkU6HsTpd7/E8B
-	 18HgSp7ZPgyRw==
-Date: Fri, 8 Nov 2024 12:03:02 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Kajol Jain <kjain@linux.ibm.com>, Atish Patra <atishp@rivosinc.com>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Anup Patel <anup@brainfault.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 10/20] perf dwarf-regs: Move csky dwarf-regs out of
- arch
-Message-ID: <Zy5udmX6gZAg0wkS@google.com>
-References: <20241017002520.59124-1-irogers@google.com>
- <20241017002520.59124-11-irogers@google.com>
+	s=arc-20240116; t=1731096195; c=relaxed/simple;
+	bh=jy5rVT+sDofCo41q1XB1KzUcuXEM7Arrn/BYAk/o0sU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hqBl5pT2Xs6yeKbxb1O+6xzZn96uHxbpNfgGJ0L0sWlvh4ZubY4M9T2kmx22x9lzDdZYqEsQAvYKZABrXfb0CDvLOvIFxTLfGKdmvjdpSiDmn5F7hLmyJbrgHQYsgWk0xff+SeYm0soQFZkyV4cAcbRHN6LUhzYMTyH5/eHVfDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UH29Oe4d; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731096194; x=1762632194;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jy5rVT+sDofCo41q1XB1KzUcuXEM7Arrn/BYAk/o0sU=;
+  b=UH29Oe4db9SDLdbKDAQ07cJgbwf3xH/yT4u5cEAef6XUIsKNtjLitmjV
+   cervlWj3k3ewGPTfRNAOm690G/ZkMOKuky/wY6TeoFNP8Qv3KFUZpYBve
+   fBtHhiSYHDSa1RN1VnpRaBw+4/5aVEG4B9KUwRKCa7xaVjK73CIJAxjt3
+   REAmMcmZZomdrSEV1z/RI8V+Fu0ZHfzBvDbHnd34aq4Hnl6M1I4Fbf1Wq
+   UI2zASzwH8G+HtoxWLPrT1KylDsWp5BV4tyDup3+/deOiD7hHBwDUIHAN
+   MkHMxKUlv58lzfV1B8oJFmttE1cYyVPxMS4F5BZMqjdBT4aIRMZW4uhQA
+   g==;
+X-CSE-ConnectionGUID: ccQaPQOsQmOrdOsX/dQpjw==
+X-CSE-MsgGUID: lJO6nOylTmCV672y45eQCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30761446"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30761446"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 12:03:12 -0800
+X-CSE-ConnectionGUID: b38RR/92TXuw8BKoi8kVsA==
+X-CSE-MsgGUID: 041noLRfT/O5GqLSxaKbNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="116532668"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.223.66]) ([10.124.223.66])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 12:03:12 -0800
+Message-ID: <4f7d5752-41eb-4828-8bd8-9bd07e89f4f0@intel.com>
+Date: Fri, 8 Nov 2024 12:03:10 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241017002520.59124-11-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86,tlb: update mm_cpumask lazily
+To: Rik van Riel <riel@surriel.com>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com
+References: <20241108143144.2f15fe35@imladris.surriel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241108143144.2f15fe35@imladris.surriel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 05:25:10PM -0700, Ian Rogers wrote:
-> Move arch/csky/util/dwarf-regs.c to util/dwarf-regs-csky.c and compile
-> in unconditionally. To avoid get_arch_regstr being duplicated, rename
-> to get_csky_regstr and add to get_dwarf_regstr switch.
-> 
-> Update #ifdefs to allow ABI V1 and V2 tables at the same
-> time. Determine the table from the ELF flags.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/arch/csky/util/Build               |  1 -
->  tools/perf/util/Build                         |  1 +
->  .../dwarf-regs.c => util/dwarf-regs-csky.c}   | 19 ++++++++++---------
->  tools/perf/util/dwarf-regs.c                  | 11 +++++++----
->  tools/perf/util/include/dwarf-regs.h          |  2 ++
->  5 files changed, 20 insertions(+), 14 deletions(-)
->  rename tools/perf/{arch/csky/util/dwarf-regs.c => util/dwarf-regs-csky.c} (74%)
-> 
-> diff --git a/tools/perf/arch/csky/util/Build b/tools/perf/arch/csky/util/Build
-> index 1325310cab6a..5e6ea82c4202 100644
-> --- a/tools/perf/arch/csky/util/Build
-> +++ b/tools/perf/arch/csky/util/Build
-> @@ -1,4 +1,3 @@
->  perf-util-y += perf_regs.o
->  
-> -perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
->  perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> index 4c615611b9d7..99ae4e2802b8 100644
-> --- a/tools/perf/util/Build
-> +++ b/tools/perf/util/Build
-> @@ -203,6 +203,7 @@ endif
->  perf-util-$(CONFIG_LIBDW) += probe-finder.o
->  perf-util-$(CONFIG_LIBDW) += dwarf-aux.o
->  perf-util-$(CONFIG_LIBDW) += dwarf-regs.o
-> +perf-util-$(CONFIG_LIBDW) += dwarf-regs-csky.o
->  perf-util-$(CONFIG_LIBDW) += dwarf-regs-x86.o
->  perf-util-$(CONFIG_LIBDW) += debuginfo.o
->  perf-util-$(CONFIG_LIBDW) += annotate-data.o
-> diff --git a/tools/perf/arch/csky/util/dwarf-regs.c b/tools/perf/util/dwarf-regs-csky.c
-> similarity index 74%
-> rename from tools/perf/arch/csky/util/dwarf-regs.c
-> rename to tools/perf/util/dwarf-regs-csky.c
-> index ca86ecaeacbb..d38ef1f07f3e 100644
-> --- a/tools/perf/arch/csky/util/dwarf-regs.c
-> +++ b/tools/perf/util/dwarf-regs-csky.c
-> @@ -5,9 +5,8 @@
->  #include <stddef.h>
->  #include <dwarf-regs.h>
->  
-> -#if defined(__CSKYABIV2__)
-> -#define CSKY_MAX_REGS 73
-> -const char *csky_dwarf_regs_table[CSKY_MAX_REGS] = {
-> +#define CSKY_ABIV2_MAX_REGS 73
-> +const char *csky_dwarf_regs_table_abiv2[CSKY_ABIV2_MAX_REGS] = {
->  	/* r0 ~ r8 */
->  	"%a0", "%a1", "%a2", "%a3", "%regs0", "%regs1", "%regs2", "%regs3",
->  	/* r9 ~ r15 */
-> @@ -26,9 +25,9 @@ const char *csky_dwarf_regs_table[CSKY_MAX_REGS] = {
->  	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
->  	"%epc",
->  };
-> -#else
-> -#define CSKY_MAX_REGS 57
-> -const char *csky_dwarf_regs_table[CSKY_MAX_REGS] = {
-> +
-> +#define CSKY_ABIV1_MAX_REGS 57
-> +const char *csky_dwarf_regs_table_abiv1[CSKY_ABIV1_MAX_REGS] = {
->  	/* r0 ~ r8 */
->  	"%sp", "%regs9", "%a0", "%a1", "%a2", "%a3", "%regs0", "%regs1",
->  	/* r9 ~ r15 */
-> @@ -41,9 +40,11 @@ const char *csky_dwarf_regs_table[CSKY_MAX_REGS] = {
->  	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
->  	"%epc",
->  };
-> -#endif
->  
-> -const char *get_arch_regstr(unsigned int n)
-> +const char *get_csky_regstr(unsigned int n, unsigned int flags)
->  {
-> -	return (n < CSKY_MAX_REGS) ? csky_dwarf_regs_table[n] : NULL;
-> +	if (flags & EF_CSKY_ABIV2)
+On 11/8/24 11:31, Rik van Riel wrote:
+>  		/* Start receiving IPIs and then read tlb_gen (and LAM below) */
+> -		if (next != &init_mm)
+> +		if (next != &init_mm && !cpumask_test_cpu(cpu, mm_cpumask(next)))
+>  			cpumask_set_cpu(cpu, mm_cpumask(next));
+>  		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
 
-Hmm.. you need it here as well.
-
-
-> +		return (n < CSKY_ABIV2_MAX_REGS) ? csky_dwarf_regs_table_abiv2[n] : NULL;
-> +
-> +	return (n < CSKY_ABIV1_MAX_REGS) ? csky_dwarf_regs_table_abiv1[n] : NULL;
->  }
-> diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.c
-> index fd21f9e90e40..9a76f83af62c 100644
-> --- a/tools/perf/util/dwarf-regs.c
-> +++ b/tools/perf/util/dwarf-regs.c
-> @@ -29,17 +29,18 @@
->  #define __get_dwarf_regstr(tbl, n) (((n) < ARRAY_SIZE(tbl)) ? (tbl)[(n)] : NULL)
->  
->  /* Return architecture dependent register string (for kprobe-tracer) */
-> -const char *get_dwarf_regstr(unsigned int n, unsigned int machine,
-> -			     unsigned int flags __maybe_unused)
-> +const char *get_dwarf_regstr(unsigned int n, unsigned int machine, unsigned int flags)
->  {
-> -#if EM_HOST == EM_X86_64 || EM_HOST == EM_386 || EM_HOST == EM_AARCH64 || EM_HOST == EM_ARM
-> +#if EM_HOST == EM_X86_64 || EM_HOST == EM_386 || EM_HOST == EM_AARCH64 || EM_HOST == EM_ARM \
-> +    || EM_HOST == EM_CSKY
-
-And here too.  It seems you also need a rebase.
-
-At this point, I'm giving up.  Can you please refresh the series with
-a fix?
-
-Thanks,
-Namhyung
-
-
->  	if (machine == EM_NONE) {
->  		/* Generic arch - use host arch */
->  		machine = EM_HOST;
->  	}
->  #endif
->  	switch (machine) {
-> -#if EM_HOST != EM_X86_64 && EM_HOST != EM_386 && EM_HOST != EM_AARCH64 && EM_HOST != EM_ARM
-> +#if EM_HOST != EM_X86_64 && EM_HOST != EM_386 && EM_HOST != EM_AARCH64 && EM_HOST != EM_ARM \
-> +    && EM_HOST != EM_CSKY
->  	case EM_NONE:	/* Generic arch - use host arch */
->  		return get_arch_regstr(n);
->  #endif
-> @@ -51,6 +52,8 @@ const char *get_dwarf_regstr(unsigned int n, unsigned int machine,
->  		return __get_dwarf_regstr(arm_regstr_tbl, n);
->  	case EM_AARCH64:
->  		return __get_dwarf_regstr(aarch64_regstr_tbl, n);
-> +	case EM_CSKY:
-> +		return get_csky_regstr(n, flags);
->  	case EM_SH:
->  		return __get_dwarf_regstr(sh_regstr_tbl, n);
->  	case EM_S390:
-> diff --git a/tools/perf/util/include/dwarf-regs.h b/tools/perf/util/include/dwarf-regs.h
-> index 0b533409d82a..b72d9d308ce4 100644
-> --- a/tools/perf/util/include/dwarf-regs.h
-> +++ b/tools/perf/util/include/dwarf-regs.h
-> @@ -83,6 +83,8 @@
->  const char *get_arch_regstr(unsigned int n);
->  #endif
->  
-> +const char *get_csky_regstr(unsigned int n, unsigned int flags);
-> +
->  /**
->   * get_dwarf_regstr() - Returns ftrace register string from DWARF regnum.
->   * @n: DWARF register number.
-> -- 
-> 2.47.0.105.g07ac214952-goog
-> 
+If we're worried about contention on mm_cpumask(), then this hunk makes
+sense independently of the lazy updating. We might want to take this
+hunk forward before we do the rest because this seems like a no-brainer.
 
