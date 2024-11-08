@@ -1,79 +1,83 @@
-Return-Path: <linux-kernel+bounces-401170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB439C16C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:06:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFE39C1701
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F3A1F24E74
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:06:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53DB81C2215A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09381D0E27;
-	Fri,  8 Nov 2024 07:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ve2i9wQw"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E56E567;
-	Fri,  8 Nov 2024 07:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AD91D1506;
+	Fri,  8 Nov 2024 07:27:13 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6A61F5FA
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 07:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731049593; cv=none; b=lXHvcoVqEa6/OM1zG42Gw6Wp+2G4sR7dZDwJz67bnFrdVZQoVNPcJTzhxa6JYz/1CgRZLPgLJmKHEAXWny5eww7FNEH3zum4r2B6JtFmD5mpxHNjEks/vI/wFzb59/nHqYAHdEPOvqDYX8EMHyHuPPI4eh3gRIRPAdLlGmtYxUM=
+	t=1731050833; cv=none; b=fPDWvBh+LtwtLTIZQEjrCZkEYJ2xyGxXwIXhvsVrx9rPWgY2Hz3O83AI8JJo2uuPPDSckqJ+MUwDQ3WV2x13MBQ5oqvKfcOJBskjnmgOK+XSSDTFbt2QgxsMRkLty8q/t9SuaKD1RVloYuPJTCbdhmScUhrwpI/pczpGLUtxGgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731049593; c=relaxed/simple;
-	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=n+/J6EuHJS5VGPQIRGVLgxkKFrXzXHJhkVF42X3Q8QlWINdzadDOXqM9OFsa1eQ2d5P/K4KXqVdOaXIPoEQURehrRd3HecC5uBteIqZHcc5Qm/bAqUMe9ijyBGRzkHEhq9c+1n1ad0C3sJNWWnnZL6VYHq7fRfONyXqbHyVmPzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ve2i9wQw; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id 6E5D9212D51F; Thu,  7 Nov 2024 23:06:30 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6E5D9212D51F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731049590;
-	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ve2i9wQwhVOHPx9O3GvWd4NZb55wkZw3Piuv4JAOrEI4lGj+lm3dCW1c/xTCdt4TY
-	 MNGRd7EUaMLY2qITntNNa4SUfpZgCbQ+JKrOVDJb1jdQ+9/UOVN+dJd5Or2lvcneuE
-	 yTdMWb6CQl7LdRNYzENiT4o90e9osJjY5pIyAYIE=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hagar@microsoft.com,
-	jonathanh@nvidia.com,
+	s=arc-20240116; t=1731050833; c=relaxed/simple;
+	bh=ckBZSmx994GtJ6h4NVak1m2GJNFoiBbCY0PNPByXa/0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FW1JsoMNCkYYuHwQ0biR4DjHKZLRo1leoljy6EREnca+FrfSl4p1CL2klPX32ICAgFyWMCPHvRO3vSviUlP60GPJG80mjcLoGR48YuBsAKIbKUD8tn7aCqHRp4rf24aBcAGHCnQskuLnbC0aHtO7q3U+ALXDq11VPtFs3NuHrm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee6672dbd435bf-bee8b;
+	Fri, 08 Nov 2024 15:27:01 +0800 (CST)
+X-RM-TRANSID:2ee6672dbd435bf-bee8b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9672dbd1fbf3-8d45f;
+	Fri, 08 Nov 2024 15:27:01 +0800 (CST)
+X-RM-TRANSID:2ee9672dbd1fbf3-8d45f
+From: guanjing <guanjing@cmss.chinamobile.com>
+To: mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com
+Cc: linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 5.15] 5.15.171-rc1 review
-Date: Thu,  7 Nov 2024 23:06:30 -0800
-Message-Id: <1731049590-18706-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20241106120259.955073160@linuxfoundation.org>
-References: <20241106120259.955073160@linuxfoundation.org>
+	guanjing <guanjing@cmss.chinamobile.com>
+Subject: [PATCH] fixup for "firewall: introduce stm32_firewall framework"
+Date: Fri,  8 Nov 2024 13:37:08 +0800
+Message-Id: <20241108053708.171916-1-guanjing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+Fixes: 5c9668cfc6d7 ("firewall: introduce stm32_firewall framework")
+Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+---
+ include/linux/bus/stm32_firewall_device.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/bus/stm32_firewall_device.h b/include/linux/bus/stm32_firewall_device.h
+index 18e0a2fc3816..5178b72bc920 100644
+--- a/include/linux/bus/stm32_firewall_device.h
++++ b/include/linux/bus/stm32_firewall_device.h
+@@ -115,7 +115,7 @@ void stm32_firewall_release_access_by_id(struct stm32_firewall *firewall, u32 su
+ #else /* CONFIG_STM32_FIREWALL */
+ 
+ int stm32_firewall_get_firewall(struct device_node *np, struct stm32_firewall *firewall,
+-				unsigned int nb_firewall);
++				unsigned int nb_firewall)
+ {
+ 	return -ENODEV;
+ }
+-- 
+2.33.0
 
 
 
-
-Thanks,
-Hardik
 
