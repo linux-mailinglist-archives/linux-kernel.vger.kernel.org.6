@@ -1,161 +1,119 @@
-Return-Path: <linux-kernel+bounces-402163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB979C2490
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:03:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1699C2497
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14494289E65
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A362228A59C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648371F26E3;
-	Fri,  8 Nov 2024 18:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="do1PYAx5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4F1940B2;
+	Fri,  8 Nov 2024 18:02:50 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58061F26C5;
-	Fri,  8 Nov 2024 18:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE213233D61;
+	Fri,  8 Nov 2024 18:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731088890; cv=none; b=nI+D62Ewcs1lY7TJWpEk3dsLpspzW2KnW8d3R8MPbpGeUQkedL/Qg1FdKS2c7Ha7FaWLtKEU+KLadpCnJnRUVGywyY8ZOBQMEAgziMnnJqQ7xqGsyNUJGFrqlMMRtjE3Jyh+tXgg9Ibn7mWx/DsgZHbwczjxi2h59Y0qeiAB10I=
+	t=1731088970; cv=none; b=EaxtYnmq5g/rK87QAD+3lylHZ+PttqMRkoITp8fPchXQsLbjLWn1ZOyBSDFRIMahxFv95tJR4OvSspZEgetzP1oNKERVaf048eRwvkejaV//No0ttpv1F6RMXTm1dy9AkdSQ7mVrIbNnfacFw9Dr1BnQsGo5EyVF9zJQOKxrshU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731088890; c=relaxed/simple;
-	bh=35sYeiJo5xS7xz/cHvI/Q6kimidHt4m9ErVWVWVgItw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lePefQtJEQeFif3Mp3us6vFFtj1pGmSQeiG/WtllON8Df4LFJf8y4/GlrIp9a3mpCoaGQX1vfZR11zMpoq9sUWZ14mTwGFeRxYRZllGhs7u2IrqxbkoMfCWSwbaI0AneNePcigsMpw7KEGxo/sELqkxG/OoRjdZkPkfGsc7xOmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=do1PYAx5; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731088889; x=1762624889;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=35sYeiJo5xS7xz/cHvI/Q6kimidHt4m9ErVWVWVgItw=;
-  b=do1PYAx58sxGS0FB84eTzPmLoRpiVM4joJvyvFQVNhfOs2uDfHcLeaaH
-   2LXEUxESp8AcTCs5+Ra7VIvh1+KRuOM1umYpQnJyFrcud6+SvZUgIb5nQ
-   aFZu6yQ1bYVBFmanGwij7vKw+VdMisbyEr5rSAAIurkit4WeAzvKmamVi
-   tNqtkYnrCCoxefxfXyQktFQ3n6VIH5UCFfS8xZzXdu/88eEfpIgm5c90o
-   ggH0J+E9y5E8gEzbxvqD3SgnalSunz+vxtQEfRVx+msQ6mjm2ZCvYWR3x
-   30Gbm0OwE6xuIbB1CB8Xjw2g2QtUitbkdMBIYJ8CnS9AMEnBuxPmhW2Iu
-   A==;
-X-CSE-ConnectionGUID: MiC5EiEITZiXFPTT2PXEFg==
-X-CSE-MsgGUID: /v1vHDJAQ/upZ5VxtiZDNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31138212"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31138212"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 10:01:28 -0800
-X-CSE-ConnectionGUID: 1G07uf8uR2O8hVE6/3A//A==
-X-CSE-MsgGUID: ekonjwKtQkWBKVyjdu4htw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="85812778"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 10:01:11 -0800
-Message-ID: <b97a8aa8-37b1-4d8f-9de0-f294fcd07adb@intel.com>
-Date: Fri, 8 Nov 2024 20:01:02 +0200
+	s=arc-20240116; t=1731088970; c=relaxed/simple;
+	bh=9/hFmSn3anL6QFSvv6Vt7Qx8CSCybfea/bPR0zRVthc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W09TKke/JWF3+EOYu4gOEKfO/rIH17acxG3C1MWXXY0Tsw82Dou1jgL2V7qJcFGTNJh9fYBx4pUovY6b9S2VvdIzbv9ohmkQSYmoioDboR+gC14egpgnpN2R4GKXfHaksQwB0n3geadjR8rJ/ZgUjzHNLd6xh0o7bCW+VFtQ4CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XlRY32V00z6K7HF;
+	Sat,  9 Nov 2024 01:59:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA1A91400CA;
+	Sat,  9 Nov 2024 02:02:45 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 8 Nov
+ 2024 19:02:45 +0100
+Date: Fri, 8 Nov 2024 18:02:43 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+CC: <megi@xff.cz>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+	<lars@metafoo.de>, <linux-iio@vger.kernel.org>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, <hpa@zytor.com>, "Peter
+ Zijlstra" <peterz@infradead.org>, <linux-kernel@vger.kernel.org>, "Stephen
+ Rothwell" <sfr@canb.auug.org.au>, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] iio: magnetometer: fix if () scoped_guard() formatting
+Message-ID: <20241108180243.00000c27@huawei.com>
+In-Reply-To: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
+References: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V14 08/11] perf tools: Add missing_features for
- aux_start_paused, aux_pause, aux_resume
-To: Namhyung Kim <namhyung@kernel.org>, Leo Yan <leo.yan@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Hendrik Brueckner <brueckner@linux.ibm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
- <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Andi Kleen <ak@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, H Peter Anvin <hpa@zytor.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20241022155920.17511-1-adrian.hunter@intel.com>
- <20241022155920.17511-9-adrian.hunter@intel.com>
- <20241108154152.GA197781@e132581.arm.com> <Zy5M1WJ97GprNniq@google.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <Zy5M1WJ97GprNniq@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 8/11/24 19:39, Namhyung Kim wrote:
-> Hello,
+On Fri,  8 Nov 2024 16:41:27 +0100
+Przemek Kitszel <przemyslaw.kitszel@intel.com> wrote:
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
 > 
-> On Fri, Nov 08, 2024 at 03:41:52PM +0000, Leo Yan wrote:
->> Hi Adrian,
->>
->> On Tue, Oct 22, 2024 at 06:59:14PM +0300, Adrian Hunter wrote:
->>>
->>> Display "feature is not supported" error message if aux_start_paused,
->>> aux_pause or aux_resume result in a perf_event_open() error.
->>>
->>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->>> Acked-by: Ian Rogers <irogers@google.com>
->>> Reviewed-by: Andi Kleen <ak@linux.intel.com>
->>> ---
->>>
->>>
->>> Changes in V13:
->>>         Add error message also in EOPNOTSUPP case (Leo)
->>>
->>>
->>>  tools/perf/util/evsel.c | 12 ++++++++++++
->>>  tools/perf/util/evsel.h |  1 +
->>>  2 files changed, 13 insertions(+)
->>>
->>> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->>> index 95593b55d9a7..88b31a005ac6 100644
->>> --- a/tools/perf/util/evsel.c
->>> +++ b/tools/perf/util/evsel.c
->>> @@ -2102,6 +2102,12 @@ bool evsel__detect_missing_features(struct evsel *evsel)
->>>                 perf_missing_features.inherit_sample_read = true;
->>>                 pr_debug2("Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.\n");
->>>                 return true;
->>> +       } else if (!perf_missing_features.aux_pause_resume &&
->>> +           (evsel->core.attr.aux_pause || evsel->core.attr.aux_resume ||
->>> +            evsel->core.attr.aux_start_paused)) {
->>> +               perf_missing_features.aux_pause_resume = true;
->>> +               pr_debug2_peo("Kernel has no aux_pause/aux_resume support, bailing out\n");
->>> +               return false;
->>
->> This patch fails to apply on the latest perf-tools-next branch due to
->> conflict:
->>
->>   https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
->>   branch: perf-tools-next
->>
->> You might need to rebase it on the latest code base.
+> Add mising braces after an if condition that contains scoped_guard().
 > 
-> Yep, please do for the tooling patches.
+> This style is both preferred and necessary here, to fix warning after
+> scoped_guard() change in commit fcc22ac5baf0 ("cleanup: Adjust
+> scoped_guard() macros to avoid potential warning") to have if-else inside
+> of the macro. Current (no braces) use in af8133j_set_scale() yields
+> the following warnings:
+> af8133j.c:315:12: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]
+> af8133j.c:316:3: warning: add explicit braces to avoid dangling else [-Wdangling-else]
+> 
+> Fixes: fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409270848.tTpyEAR7-lkp@intel.com/
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+> ---
+> I have forgot to add this patch prior to the cited Fixes: commit,
+> so Stephen Rothwell had to reinvent it, in order to fix linux-next.
+> original posting by Stephen Rothwell:
+> https://lore.kernel.org/lkml/20241028165336.7b46ce25@canb.auug.org.au/
+> ---
+>  drivers/iio/magnetometer/af8133j.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/af8133j.c
+> index d81d89af6283..acd291f3e792 100644
+> --- a/drivers/iio/magnetometer/af8133j.c
+> +++ b/drivers/iio/magnetometer/af8133j.c
+> @@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *data,
+>  	 * When suspended, just store the new range to data->range to be
+>  	 * applied later during power up.
+>  	 */
+> -	if (!pm_runtime_status_suspended(dev))
+> +	if (!pm_runtime_status_suspended(dev)) {
 
-I'd noticed that, but there is more work to sort it out.
-The probing simply won't work when there are dependencies
-on other events, or other attr members.  But there is no
-point in trying to "fallback" in that case either.  It is
-just a failure, but what *is* still needed is a sensible
-error message.
+I thought I replied to say don't do it this way. Ah well probably went astray
+as I was having some email issues yesterday.
 
-The other patches, including the ones that come after,
-still apply by the way, or they did the other day, so
-they could be applied anyway.
+		guard(mutex)(&data->mutex);
+		ret = regmap_write...
+
+>  		scoped_guard(mutex, &data->mutex)
+>  			ret = regmap_write(data->regmap,
+>  					   AF8133J_REG_RANGE, range);
+> +	}
+>  
+>  	pm_runtime_enable(dev);
+>  
 
 
