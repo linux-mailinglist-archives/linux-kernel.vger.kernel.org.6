@@ -1,236 +1,121 @@
-Return-Path: <linux-kernel+bounces-401696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DD19C1E21
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:33:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E74F9C1E2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E5B289759
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:33:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E522CB22417
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFE41E907A;
-	Fri,  8 Nov 2024 13:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1371EC015;
+	Fri,  8 Nov 2024 13:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aBkYF4/p";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YlG+A/p4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aBkYF4/p";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YlG+A/p4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6W+T92d"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D2E192B95
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8531EBA00;
+	Fri,  8 Nov 2024 13:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731072791; cv=none; b=XZnqsjMG6+6YQQF2i2reJ3TLA2KwHI2hvhmEsIElP85r6dnxcm2qoCoCnpS46ePQohlw0vbRrez/w+Zs49NO1Fz+G5qdXWcuGr5Y86xiOv9L6GnOVyeKZxZuxJcVR/QvYXOHI6gwsWJGbJ2HC3gEXzGsQleX5l+jj9WyQhU4TIg=
+	t=1731072834; cv=none; b=Wcz4qZbcY8JiGbSenuz6YvHT4LplEXDga9GL+3th+s0oI0D0sEjhrZHqrHN0EV7E8Eujd+G+GWNohxCFZDFh5c3qi3VNpSxusweGKUxEL/ZdfswCYwnFUIZgZBcNtxHtvcMRxntW/h1BaO2FOIq7ZzPYTQwNRUzxTguwP9n0Ql0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731072791; c=relaxed/simple;
-	bh=zNr0dprauh1zxK+QJRJVWVYyAAJm59+k7hYGIO4+otc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SAj2bh7gZQCBx2ytHy3ayr1yPiG81CCHIiYrOhFYQCcQ2z2WzhEZ/HRlp+uEsX+HvFuyirwwH1DJcqxztQb+sgu2WKWc9Cg9qdeGNcaEgCet4yzdOkhdIMIa1fz1EfnoepI46LfFVQIJyGQObeA+5ozCHVf1TYaMjH+45pfrCF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aBkYF4/p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YlG+A/p4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aBkYF4/p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YlG+A/p4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3E29A21B7B;
-	Fri,  8 Nov 2024 13:33:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731072787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oJCSGf9W5QDQLEgF20NrP1ryxSrkWQmVfq993xA7CGU=;
-	b=aBkYF4/ppr3ZtbHPov1GPrxQInhpY60ANzjiLTvleOuYYv1/QXUHrXRo00KIxUEMOzyRxy
-	7mlJkQB8eOUxCet+hJq0i56oWEg1FJHLZG6PLwqfOp+gb9APExw/S5qDeMivJoThSX/Q1Y
-	xfnOYWBTlfbDubyUtPRDdtRsowgWdi8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731072787;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oJCSGf9W5QDQLEgF20NrP1ryxSrkWQmVfq993xA7CGU=;
-	b=YlG+A/p4OU4jfNUvhO/uScxfqUoDzmva9PrXpGeLtd1lwXJqKbzsLqofoqd9KdBc0X3oDd
-	DTSoEo2V7BH0/yCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="aBkYF4/p";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="YlG+A/p4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731072787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oJCSGf9W5QDQLEgF20NrP1ryxSrkWQmVfq993xA7CGU=;
-	b=aBkYF4/ppr3ZtbHPov1GPrxQInhpY60ANzjiLTvleOuYYv1/QXUHrXRo00KIxUEMOzyRxy
-	7mlJkQB8eOUxCet+hJq0i56oWEg1FJHLZG6PLwqfOp+gb9APExw/S5qDeMivJoThSX/Q1Y
-	xfnOYWBTlfbDubyUtPRDdtRsowgWdi8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731072787;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oJCSGf9W5QDQLEgF20NrP1ryxSrkWQmVfq993xA7CGU=;
-	b=YlG+A/p4OU4jfNUvhO/uScxfqUoDzmva9PrXpGeLtd1lwXJqKbzsLqofoqd9KdBc0X3oDd
-	DTSoEo2V7BH0/yCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D856E1394A;
-	Fri,  8 Nov 2024 13:33:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3HMYMxITLmeXcgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 08 Nov 2024 13:33:06 +0000
-Message-ID: <5e19d9d4-7533-4a59-a665-cfc4a8195293@suse.de>
-Date: Fri, 8 Nov 2024 14:33:06 +0100
+	s=arc-20240116; t=1731072834; c=relaxed/simple;
+	bh=JAEOKGBin/BjpP+sOkUXewDZtBs7MLiDqJdiwY11fIA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PWEs6LQEl425tzXM5/hb6cgYrji3eErE2l1go/bF+Bg3DlpuPQqlHs1LOSxBKblLD506nG12DEzcwlLEnBYiv022hj9kNmcs+uO+k81g5oIfMqIfqkQqKxk0VMZqjWcHT55GMb3N/ZO10yMjTB1i8ua4995OSkSFtdzzTQO74Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6W+T92d; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9ed0ec0e92so276036366b.0;
+        Fri, 08 Nov 2024 05:33:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731072831; x=1731677631; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MAwIxYg8+dnr1jOWQr9wFbOWatGyVStyXLICiB+s1To=;
+        b=d6W+T92d1xqdDwuTYQugsVZSk5POPM+IO0LvAV7yNP1j6ZeJ2+e36hHG2Lce7G1jBh
+         3JXfzZf0f/CssQeUz2vypPatkQNz9EcvEI2keuECbxGAw+QWk6hH0oRDdIDIgylgxk2U
+         3YtEAe+41STsMh0qDIwJQPeZ9j+Of96rJW1/r15Qq5hVV7FcwadhE07XMvfXwbft1GS6
+         tGxj/FIL08an5Xj+1PDmSxjhEprQA/YqZTtuCF6IDDV5oGHOwj3xwvEvUIrURQhP5be/
+         Qg752cciGmZ2ilFIULKSu8lywDRvsEBOrs9R1DyYV3O7EgbDCunh4Ec8RIl6aBcnfdZZ
+         zqYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731072831; x=1731677631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MAwIxYg8+dnr1jOWQr9wFbOWatGyVStyXLICiB+s1To=;
+        b=txFG8w0RcqBOquuY9r673I7zpUdPhbilqxdvXNR3G1U54Dq1LAWXM4K9VUUDI0dWlx
+         GLPimbjk9dVkGmAeDIxKKWRjc4gTD15rPQYqJPgfMXzq3LWrhmqZvFUIacblUU+k6LAl
+         xFOIQ4/UsGs+eNt8lheuQkLOh3gUXc4KRLJLVvSrM1mmJmHPsyV2g0zvxdFfHZJosCT7
+         7LObTM2ZKAlGRHmfYywZgSgILspzrDy6hRZt3YaGazJbV4susEhsp3jKtCCdYhb6Tln9
+         T3y6nW9dAejrV4k3HcVtSmgqp+SDNbtyxoDNZDz6o5clEFXx6vVM6+gPvZFTMj36pXsc
+         yXcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVB2MINckkP+S8/e8W1OsbajCU+m3OTaVdtcIyD9sCeStriK4yywMSzW7nZVI6C5eiersYG+5QYU8M=@vger.kernel.org, AJvYcCXPDm9r/ltnddXzS6uzP+nIKZt4RJUo7eoVnu2GqdPVd0xkKS3kiPila1Hx2MuUWyrkC0iTlt1eAkzu6TiW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzopEerHDdUsstq5rM8B0wr5BE5JzOnBYvdgSvcoE7CbW4tjzYN
+	eGFeqdTjbDcf7UtYsBxuefifcid8WejWxttJls2UP2dDomVlUC9b1wORgL5qlXOq4J6spso5D5H
+	AhBAYvu/kyHcbRIsxwVfXOH4IvSQ=
+X-Google-Smtp-Source: AGHT+IEDXgYdDocfjpsZf3BKLs4tZnmRmbMDo7n1mBPdQQRoUfZ+ox6amxEQwJWJd6cxqtVp5JqVPWwVK3nVw9mjuRA=
+X-Received: by 2002:a17:907:9344:b0:a9e:c263:29a7 with SMTP id
+ a640c23a62f3a-a9eefeecd74mr234054566b.23.1731072830695; Fri, 08 Nov 2024
+ 05:33:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/7] drm/log: Do not draw if drm_master is taken
-To: Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, John Ogness <john.ogness@linutronix.de>,
- Javier Martinez Canillas <javierm@redhat.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
- Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241108082025.1004653-1-jfalempe@redhat.com>
- <20241108082025.1004653-5-jfalempe@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20241108082025.1004653-5-jfalempe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 3E29A21B7B
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_TO(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,linutronix.de,igalia.com,verizon.net,linaro.org,suse.com,lists.freedesktop.org,vger.kernel.org];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,verizon.net];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+References: <20241108085012.13147-1-victor.duicu@microchip.com>
+ <CAHp75Vd924pNBKkoWNse5Bjazrp9+HuqBJ5nj2tdk6vngaOiJg@mail.gmail.com> <6069300280c17c4568bf4e3bcc826797@gmail.com>
+In-Reply-To: <6069300280c17c4568bf4e3bcc826797@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 8 Nov 2024 15:33:14 +0200
+Message-ID: <CAHp75VdobsXLQXsopyi1Ms3AHxL=wWZMjfLQjRRNWyhr6Q7q7Q@mail.gmail.com>
+Subject: Re: [PATCH v8] iio: adc: pac1921: Add ACPI support to Microchip pac1921
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: victor.duicu@microchip.com, jic23@kernel.org, lars@metafoo.de, 
+	marius.cristea@microchip.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+On Fri, Nov 8, 2024 at 11:56=E2=80=AFAM Matteo Martelli
+<matteomartelli3@gmail.com> wrote:
+> On Fri, 8 Nov 2024 11:23:18 +0200, Andy Shevchenko <andy.shevchenko@gmail=
+.com> wrote:
+> > On Fri, Nov 8, 2024 at 10:52=E2=80=AFAM <victor.duicu@microchip.com> wr=
+ote:
 
-Am 08.11.24 um 09:10 schrieb Jocelyn Falempe:
-> When userspace takes drm_master, the drm_client buffer is no more
-> visible, so drm_log shouldn't waste CPU cycle to draw on it.
+...
+
+> > > +static inline bool pac1921_shunt_is_valid(u32 shunt_val)
+> > > +{
+> > > +       return shunt_val > 0 && shunt_val <=3D INT_MAX;
+> > > +}
+> >
+> > This basically is the (shunt_val - 1) & BIT(31) which can be used
+> > inline in the caller. Hence, drop this function and use the check
+> > inline. See also below.
 >
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
->   drivers/gpu/drm/drm_log.c | 10 ++++++++--
->   1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_log.c b/drivers/gpu/drm/drm_log.c
-> index 376ee173d99d9..226e206e8b6a3 100644
-> --- a/drivers/gpu/drm/drm_log.c
-> +++ b/drivers/gpu/drm/drm_log.c
-> @@ -18,6 +18,7 @@
->   #include <drm/drm_print.h>
->   
->   #include "drm_draw.h"
-> +#include "drm_internal.h"
->   #include "drm_log.h"
->   
->   MODULE_AUTHOR("Jocelyn Falempe");
-> @@ -308,8 +309,13 @@ static void drm_log_write_thread(struct console *con, struct nbcon_write_context
->   	if (!dlog->probed)
->   		drm_log_init_client(dlog);
->   
-> -	for (i = 0; i < dlog->n_scanout; i++)
-> -		drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt->outbuf, wctxt->len);
-> +	/* Check that we are still the master before drawing */
-> +	if (drm_master_internal_acquire(dlog->client.dev)) {
+> I think the current comparison check is more clear. Also my suggestion
+> to move the check in a seperate function was to keep it consistent in
+> different places since such check can change in future and one might
+> change it only in one place, as it was happening during the first
+> iterations of this series. However I am fine to remove the function and
+> move the check back inline in the caller as the check is now only in two
+> places and it shouldn't be a big deal.
 
-Just a note: it would be better to track this state in the client code 
-and handle these locks automatically. But it's ok for now. It would 
-require an overhaul of the fbdev helpers as well.
+Up to you. But then drop the comment (which kinda useless) in the
+caller and add in the callee, i.e. in this helper to explain the range
+of valid values more clearly, ideally with reference to datasheet text
+or so.
 
-> +		drm_master_internal_release(dlog->client.dev);
-
-Don't you have to release after drawing?
-
-Best regards
-Thomas
-
-
-> +
-> +		for (i = 0; i < dlog->n_scanout; i++)
-> +			drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt->outbuf, wctxt->len);
-> +	}
->   }
->   
->   static void drm_log_lock(struct console *con, unsigned long *flags)
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
