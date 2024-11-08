@@ -1,129 +1,184 @@
-Return-Path: <linux-kernel+bounces-401632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DCD9C1D19
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:37:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303BA9C1D61
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:53:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1251C21E1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361D228708F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A201E7C1B;
-	Fri,  8 Nov 2024 12:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25A21E8848;
+	Fri,  8 Nov 2024 12:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="et7gIF/j"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NbiyaICU"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C67322E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E361D0F5C;
+	Fri,  8 Nov 2024 12:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731069468; cv=none; b=Chbr3KKRgpZG2itEmqXem6+7KyOiEkWzC16UWIqf7jEXy3dRgwML9yJnTaS4lHMF3ZrDXs5w7MANb6OH6hvCDQB+jf9GM4mXXQYzBJnBvBReJ9zR7G1eoorj5F+eOHnJaGAKH8dgfhqNw/VfrIpby1LJV+h7/KS0zM8KtkFvpaI=
+	t=1731070420; cv=none; b=aHdDDI0ia4KuWNbXhb874xqKh1uEO0rjJG3H2rYmB8TIbknKSyMjVrv/62Wlb2k0JhDYTPUPCwPaO4MuXq/w1C9PSguWAY87+2yqmMgQ0R6NfSq4lAsLTiNYdRbBC9nnh7KNiwM4Z9mif8mG/L//vWwdfFySY3kGyTqgo2ndqWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731069468; c=relaxed/simple;
-	bh=3hRiYMNKL2rlk9OfrmSXuFoemrmVhvI087tdQ0bmX1s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PtXdC25pC2MSLSEIrI5176A01zZ4ZgMnyt9hzvzo2C5XoMkSM+qiPcUL5eJNADAo/5PHlNpSYG10nTH4oZWcJfr+k3zVrFvOjsz6otGyOgA3EM2bddmvOT0hkKIInT1Vhp1xD2ojj/ZzpFbfHEqj4aB7+0y16IOK1SqC39V/qeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=et7gIF/j; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so1740221f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 04:37:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731069465; x=1731674265; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eEEI2hdw6EeKS40KZ7XpWp2TtHfkib4JXKZPiDzGo7Q=;
-        b=et7gIF/jJ3p3BnHsHCOzrl1NcKJXB+29gisIwGjBdzV0uBpG12veDPoa1q7QasNgHj
-         8/PpcziikhB92zyqcYfe9jfBOabs+0SlaCltf7LMhfNEZgEaL5+dtC8tfsV9IrIABr/b
-         k4tcC5B2uvv9JvEG1PpQvL03BZ3r9TxOeALVhKSL/RJTBMvjMf+epj9l+D3esDoK3M5/
-         wC4Br7d8UqxWG+3ITRB8Cj/d1ImqcXDKy0L3P++yQc/wFHX4cb7RcGXvtzDZTjTdeuYt
-         k6SrfdKvgFxGi9sshNIXZYYQQJKl1xLUm1r/Q/8LeAALL3LTGExH/l3qimkr8/uCnorG
-         smjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731069465; x=1731674265;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eEEI2hdw6EeKS40KZ7XpWp2TtHfkib4JXKZPiDzGo7Q=;
-        b=UfpFDJPzp1LKh+5MvM6IyatYXw4WQmDF2gbjJ5qKmy6S0P+gDbk2T0mU9ThaImkDVa
-         S3tuTdyX/KgwwKDpxJtKB2bMQZAuafLpVf1gS/OHxsRwUzFyqxFbM380yazYckrT57Ls
-         1+Ub8u8d1S3Pup+vFRZuFf4o+m+ZHiSfmDtNeIpe3Tl8A9SQN+zpbxysMqTZJp/G/0Zv
-         YgDgfEEzzb5hHa5tSLYR46Zwk4EA/+M9TSGb+DbtEWUIZtZ6bpJXhqeriJ3C4mYdJouB
-         ytnJgAhHikgHbdXye8de9vbTz4fkGYPcWGlQSPP6a8wPDPss9wv7OO3g/YYBRsNKUKnB
-         vn6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXU/Ccx9uWOiI+v3m47MBtPBvViXJdUp36G7+rMI4WTdejo8O+IIM8YcjYUT/A02Afneidb9QQ09RYB2bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1+BACHJdpwkPDtbnnaN3vFuoGIo4kKAgNBmqLhzW1/hfaxiqX
-	P+VlJTm0jUfhrHRALNBryebwBg3SKuBVQQz81tkQDDyU+WyepVhwoKQr+64iDorWYN27gkv+JF7
-	WwhSzRWbit9x7aRNueOKzujfZeDA825GiZo4D
-X-Google-Smtp-Source: AGHT+IEQq3fvjVc0Pfh+o4nbT9M7AYxhKf9RFYQJk4AHn9mRdQ+iwK0Ztw5o55NOr3GW/QktNrTuxR0ggZycWjziGRk=
-X-Received: by 2002:a05:6000:1868:b0:37c:d1ea:f1ce with SMTP id
- ffacd0b85a97d-381f1871ae1mr2592768f8f.25.1731069465450; Fri, 08 Nov 2024
- 04:37:45 -0800 (PST)
+	s=arc-20240116; t=1731070420; c=relaxed/simple;
+	bh=rr/x3ww89sV9jqWghsW5iDpF0nmqWuGzXO+2uSnHi0g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRqQERkzD1ZhFwXyWftNi14HHZ0CVPD1hYopEL8m+buITyw7dlCrAGOK7PshKMZA21pUggCaqxrms2mShUhf6fpVPOz66g3tMlK4UOGIQOfhXNTfqTk/2BbQruOudVTPSYZaEx/J10CbQjXMBMgHMUfwzJHbbT3maScyMVotixk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NbiyaICU; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4A8CbrOY2072987
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Nov 2024 06:37:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731069473;
+	bh=+LZTSCJ82I2AofMnItCbVv3OHQLGWQAtNHwmmy7zLRs=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=NbiyaICU0pKnJSpnYAw+VgK/VAEfbDB6EmiwA+pZ4eDgtuV8MTi0sCS0MWy+HKsq/
+	 ISyc4vvHot5lJrGu3s7HsMYM/RyLPkZPvj1h8q1HcQpKWcHpkwr4FihL5o3p76dw3z
+	 UZB0YXjelxnYtUWJA5b4/z9kagjqt9+gAwrBuOyQ=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A8CbrpK039671
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 8 Nov 2024 06:37:53 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 8
+ Nov 2024 06:37:52 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 8 Nov 2024 06:37:52 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A8Cbpes012878;
+	Fri, 8 Nov 2024 06:37:52 -0600
+Date: Fri, 8 Nov 2024 18:07:51 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Roger Quadros <rogerq@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Pekka Varis <p-varis@ti.com>
+Subject: Re: [PATCH net-next v2 2/2] net: ethernet: ti: am65-cpsw: enable
+ DSCP to priority map for RX
+Message-ID: <908cc747-18a1-49c0-9b06-1c2f64e4c84e@ti.com>
+References: <20241107-am65-cpsw-multi-rx-dscp-v2-0-9e9cd1920035@kernel.org>
+ <20241107-am65-cpsw-multi-rx-dscp-v2-2-9e9cd1920035@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-borrow-mut-v2-0-de650678648d@gmail.com>
- <20241104-borrow-mut-v2-3-de650678648d@gmail.com> <CAH5fLgiMHE5GXQv8pSR_KYWsa44zr1o_FNrg1mj8QuTvNQmXhQ@mail.gmail.com>
- <CAJ-ks9=Ej0St7XnmvTysdnjPHh6O+4XdYFC6LouwEJR9GpUPNQ@mail.gmail.com>
-In-Reply-To: <CAJ-ks9=Ej0St7XnmvTysdnjPHh6O+4XdYFC6LouwEJR9GpUPNQ@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 8 Nov 2024 13:37:33 +0100
-Message-ID: <CAH5fLgi=n-v5C4hH-+uozbiwwWCU_QGzhxfdTXfTyyy2ejJR+w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] rust: arc: split unsafe block, add missing comment
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241107-am65-cpsw-multi-rx-dscp-v2-2-9e9cd1920035@kernel.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Nov 8, 2024 at 1:30=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> On Fri, Nov 8, 2024 at 6:38=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> > > diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-> > > index af383bcd003e1122ebe1b62a49fe40279458e379..9adea755a5ad1a7b03f7f=
-c30a7abc76c1f966c6c 100644
-> > > --- a/rust/kernel/sync/arc.rs
-> > > +++ b/rust/kernel/sync/arc.rs
-> > > @@ -377,10 +377,14 @@ fn as_ref(&self) -> &T {
-> > >
-> > >  impl<T: ?Sized> Clone for Arc<T> {
-> > >      fn clone(&self) -> Self {
-> > > +        // SAFETY: By the type invariant, there is necessarily a ref=
-erence to the object, so it is
-> > > +        // safe to dereference it.
-> > > +        let refcount =3D unsafe { self.ptr.as_ref() }.refcount.get()=
-;
-> >
-> > I would normally prefer to avoid creating a reference to the entire
-> > ArcInner, but in this particular case it is okay due to the specifics
-> > of how Arc works.
->
-> Note that this particular line appears also in the Drop impl just
-> below. That said, can you help me understand the concern with creating
-> a reference to the entire ArcInner?
+On Thu, Nov 07, 2024 at 02:29:30PM +0200, Roger Quadros wrote:
 
-Creating a shared reference to the entire ArcInner is an assertion
-that no &mut exists to any part of the ArcInner, even though you only
-access the refcount field. In this particular case, asserting shared
-access to the `data` field is not a problem due to how Arc works, so
-it's okay, but the pattern is problematic in other cases.
+Hello Roger,
 
-You could write `unsafe { (*self.ptr.as_ptr()).refcount.get() }` to
-avoid the as_ref call.
+I accidentally reviewed and replied to the patch from the v1 series, but
+the comments still hold for this patch. For the sake of convenience, I
+am providing the same feedback as the v1 patch below.
 
-Alice
+> AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
+> appropriate priority queue via DSCP to Priority mapping registers
+> (CPSW_PN_RX_PRI_MAP_REG).
+> 
+> We use the upper 3 bits of the DSCP field that indicate IP Precedence
+> to map traffic to 8 priority queues.
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> ---
+>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 50 ++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> index 0520e9f4bea7..65fbf6727e02 100644
+> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> @@ -71,6 +71,8 @@
+>  #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
+>  #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
+>  
+> +#define AM65_CPSW_PORTN_REG_CTL			0x004
+
+nitpick: indentation needs to be fixed here to align with the macros
+below.
+
+> +#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
+>  #define AM65_CPSW_PORTN_REG_SA_L		0x308
+>  #define AM65_CPSW_PORTN_REG_SA_H		0x30c
+>  #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
+> @@ -94,6 +96,10 @@
+>  /* AM65_CPSW_PORT_REG_PRI_CTL */
+>  #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
+>  
+> +/* AM65_CPSW_PN_REG_CTL */
+> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
+> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
+> +
+>  /* AM65_CPSW_PN_TS_CTL register fields */
+>  #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
+>  #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
+> @@ -176,6 +182,49 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
+>  	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
+>  }
+>  
+> +#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
+> +#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
+> +static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
+> +{
+> +	int reg_ofs;
+> +	int bit_ofs;
+> +	u32 val;
+> +
+> +	if (dscp > AM65_CPSW_DSCP_MAX)
+> +		return -EINVAL;
+
+am65_cpsw_port_set_dscp_map() seems to be invoked by
+am65_cpsw_port_enable_dscp_map() below, where the above check is guaranteed
+to be satisfied. Is the check added for future-proofing this function?
+
+> +
+> +	if (pri > AM65_CPSW_PRI_MAX)
+> +		return -EINVAL;
+> +
+> +	reg_ofs = (dscp / 8) * 4;	/* reg offset to this dscp */
+> +	bit_ofs = 4 * (dscp % 8);	/* bit offset to this dscp */
+
+Maybe a macro can be used for the "4" since it is not clear what it
+corresponds to. Or maybe two macros can be used for "reg_ofs" and
+"bit_ofs".
+
+> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> +	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
+> +	val |= pri << bit_ofs;			/* set */
+> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+
+The above readback seems to be just to flush the writel(). A comment of
+the form:
+/* flush */
+might help, considering that other drivers do the same. Also, assigning
+the returned value to "val" might not be required unless it is intended to
+be checked.
+
+[...]
+
+Regards,
+Siddharth.
 
