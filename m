@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-400833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D399C12F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:21:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FB99C1305
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A54B1F23211
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69EB128429F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463173FE4;
-	Fri,  8 Nov 2024 00:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4271BD9EE;
+	Fri,  8 Nov 2024 00:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lzwmQQS1"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JJ9G7SV9"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B7C1BD9CF
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D821FDD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731025303; cv=none; b=nuEvHcCQTEQUTYwl1Ss3+Q6L0YaTI8/mgCqLxyHvZaFcL2Dlb6VpYzSlKabmOlnPSp4cyyM/VFcjSic5tkMHciBH75e51chZ1VD1MyqNJhBu1g0+zDoKx/+3dVkC7s6Sgt71p+Q1Pevx/bNCdwk+qzGqfl8JdYufcmfifmN7Ppw=
+	t=1731025305; cv=none; b=uLJsnYFJjmA+2hnuG+I6E3tGuKkTzQRZPGD5PK03ESZ7vPnzFFSa7Amw17Uuun5gjLmUevJmEsWXCePqoVtDPEcetvzO9pzsHOA5EGcFR4H2e8z8oSu68BVgI6DYLt/4y94OgLHui4L9j+fD2WuuB5NJGmEKV/c8Sh5hR2CGxyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731025303; c=relaxed/simple;
-	bh=r9WESZjKdOkeXGTwKva4YI7nk9aqwglx/YUyTfzdpvw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iM5VnFrScbu0R6nyFTsFUolvfLKMqOh3HNZ+wTX8Ts4vKniEuVAxnXez/1zCw55HIAQX6RKfPyZQOmQtK5yB7nQ452OewtlrWxxXWngbWd7qiI24ToS0kXkjDEH+cxT3Y/cKjyDOk2aPMgQeoG1d3GnPgRBS+kzJ4yFsm/9iwLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lzwmQQS1; arc=none smtp.client-ip=209.85.208.178
+	s=arc-20240116; t=1731025305; c=relaxed/simple;
+	bh=abn+V/VW2R04+ivG5L+16aCpi+lS1tSzUvuSfrCga00=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=l6z96WShU9Xm6jRsw2ku9Sw3Q+xIdAifytYcIGKneTj6eQj5kq3zndHFZkoblPLK5GNQFj7BVE3h9gfDi7RVDusEAQD/PZqOLCerRImelMxk3pQ3vWCUuYsXeU7tcvA9JA+YyVxLnt6J06VcJj1fQu5nbUl79YN7dZi1GMZcD1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JJ9G7SV9; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb5743074bso13389371fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 16:21:41 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2feeb1e8edfso23387311fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 16:21:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731025300; x=1731630100; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XkmztPsPBVyoZtfInzYanDDrqrjRXuvhvkAniG80EPw=;
-        b=lzwmQQS1yJpbBbk7GuG/vDwZiyd5lp3SkEYyF0ow+JaBIX/UPwcPkeGR7FmsI3te/B
-         fC3WpLmC4Yrcb0kjAGMh2GuAB/iXtSYocHet0mJDdYjMy8blk/tilz9yvSFCo5I0m9L/
-         UodIe10jYcTEmX6O832lFhmd+Zhu/zTos/TgRvgS+rLF8oUaivSBJv93mhnVEbOXv7wC
-         jYEfVW6ZHMl8EFnKMQr0o6wrRZIDUI40cDrU+NAYSC56n5FapBaW5klLwRcc+80IF27q
-         2Dxpsw4G938PX738DjxakVEp6pl61Z9fX2c1hKBlcFTm3OFklXmSKZ1D+XeoY/QgAe/B
-         Zl3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731025300; x=1731630100;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1731025302; x=1731630102; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XkmztPsPBVyoZtfInzYanDDrqrjRXuvhvkAniG80EPw=;
-        b=IGbjn/lwRW13yQcfPtTu5YKQq2w+clF5glXRvBkDvU9WoXLLgDRYx2Nx+g818IvREE
-         klJdEZ0uHrtgaUKQIo5N/BCeVCIlQrikuo/e4+upbM8Fq/dS8efByH0aEgvAW0nmNaoO
-         5J3NwnDSriVxSHytwVlNbA/Cabsyp3XCMV+16jhJgIQJCgZ3nX2ZknGmiu1ULW2MGIKv
-         At25EFPfkxN7wFPuWeHiv1rjax9wBsYHkuvsBfDFDJPFi5tnPg6uBni2KOHsIXaPQqA4
-         A2o+UYKfIaS1i33u1y53nBBuNc81hY6MuQOUACZcxl+6ofIaaBX2kM0J0PFQIPpFD1k6
-         ghAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhVn3rWrUnNod1P7qZmxsExR4+7AoBcUBhC59WS30oiOh4HcnhShiRc4GBHFEpMmrIzKjWSvWXFbZyqmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU7K22PNzbNhvbpWMhQvq30qwp09s566b3iXBysciQwbmdRs91
-	cn6kR1ho8/vQLJPDp5dYEEb07NE/lqqNZD5Ba+S6oZW6eSHB3J0x9HvA/T83ZA8=
-X-Google-Smtp-Source: AGHT+IFbNMtUPns1qTynN8HZcSiuZu16DPiMYzRyHXArsYkIgDJIRH1ePYCu1PPeNPpy2EObDqkAyw==
-X-Received: by 2002:a2e:a995:0:b0:2fb:5be4:3645 with SMTP id 38308e7fff4ca-2ff2072d207mr1892951fa.0.1731025299517;
-        Thu, 07 Nov 2024 16:21:39 -0800 (PST)
+        bh=xY822JqISKSBvZvj0s20BCeD1NcNyIjNyABXPzWHxOc=;
+        b=JJ9G7SV990NJxjx0lxK6m2Lacoau/XDcAeTDN/WvO2o8ysJwv22aGkUOcsJ4a0tjl5
+         uzV3Mc+9qcS22a3iFMxYQSZRynPs9XuEqP3gpx1ElHjygVpVsijKA3d3g1/3RCEwvnpk
+         XYYWCah7H4NEspXG+2XDy0yIZ5lS7WSwa0FydPnbVyS5RxPJTb9ma/Yfprdizc2bGm7y
+         0TfDYnTFQ7KF6KdxIKM+tP7BStRbOa+6VOFOQEUgAmAh0AJTbPySUizz/CnNsdBwNhwT
+         LyYcscVKT+0V7xENC21r5oYnmSgyQquaCWTM2ct7CNQZnDx/PXP5lFHE7oeWn7QknP6K
+         ONfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731025302; x=1731630102;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xY822JqISKSBvZvj0s20BCeD1NcNyIjNyABXPzWHxOc=;
+        b=CWPOhEfJ9R7IoxnuUFz3Hr7sh93jONir74CVhxrMP6BlUf2zBQe2q0Efh68Ginq32s
+         dpo6vlzO/SwxThnVGGLUwpdZsEXe5tDH0E7hy7wxdHlCOweQVnmrEcjmKf7jBS0ZYzoO
+         8PWjTSkA1t2K/SDnaBjFzr1BQTc6+FtdAFc6wqKxJyBoiwNEwuQkAAopzguA8AXtezZX
+         fpbUQv75s4m21fL0mqz2Zg55YaztJ3nmb90p77SVJreAuFWsg9FfX/Ue+JDHFrxv/tAN
+         yvbLhT15GwhWCc5vytROtlMADMw9ousRBw3vuyvUC6oPTZGhMT/P+Zm4wYflPD2k7BTh
+         tUOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoatgb3LzV+rw5hxNSGbbaIJcLHXrAgWrgZirQKO+LEbc7zWzfx/uKHWzVEEsVsOMy5EQM+BO2IyumTIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg23eMPpDySQkxMo8krTVm4k4U5wIHZYV+qImFvil0ieWlL8op
+	p9qzyf6SPu60iFwMNFiCm7BhHiXaU6Xl6+nT30x8qAPXDzsob2KvuyBwx7i8QYM=
+X-Google-Smtp-Source: AGHT+IEq6ivfN+wJwzSVr2+2EsfSbjnKIpmoB5DdUoek2Tpc2v2YqRfcEYVZeYyjXtOgbLpQYY7sVQ==
+X-Received: by 2002:a2e:a803:0:b0:2f7:6653:8053 with SMTP id 38308e7fff4ca-2ff201c7cc0mr7133511fa.18.1731025302111;
+        Thu, 07 Nov 2024 16:21:42 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff17900a63sm4195191fa.47.2024.11.07.16.21.36
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff17900a63sm4195191fa.47.2024.11.07.16.21.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 16:21:38 -0800 (PST)
+        Thu, 07 Nov 2024 16:21:40 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH 00/14] drm/msm/dp: perform misc cleanups
-Date: Fri, 08 Nov 2024 02:21:31 +0200
-Message-Id: <20241108-fd-dp-audio-fixup-v1-0-40c8eeb60cf5@linaro.org>
+Date: Fri, 08 Nov 2024 02:21:32 +0200
+Subject: [PATCH 01/14] drm/msm/dp: fix msm_dp_utils_pack_sdp_header
+ interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,10 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAItZLWcC/x2MywqAIBBFf0Vm3YDaA+1XooXkVLOxUIwg+veGd
- udwuPeBQpmpwKgeyHRx4SOJmEbBsoe0EXIUB6ttpwfT4xoxnhhq5ANXvquwt861FDx1GmR3ZpL
- wf07z+35uosEiYwAAAA==
-X-Change-ID: 20240615-fd-dp-audio-fixup-a92883ea9e40
+Message-Id: <20241108-fd-dp-audio-fixup-v1-1-40c8eeb60cf5@linaro.org>
+References: <20241108-fd-dp-audio-fixup-v1-0-40c8eeb60cf5@linaro.org>
+In-Reply-To: <20241108-fd-dp-audio-fixup-v1-0-40c8eeb60cf5@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
  Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
  Marijn Suijten <marijn.suijten@somainline.org>, 
@@ -91,62 +92,76 @@ Cc: Douglas Anderson <dianders@chromium.org>,
  linux-kernel@vger.kernel.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2063;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2535;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=r9WESZjKdOkeXGTwKva4YI7nk9aqwglx/YUyTfzdpvw=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnLVmOZd/6kdB/fROCTsWps6ilXvB+F0J8Juy0+
- dJdNf38eK+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZy1ZjgAKCRCLPIo+Aiko
- 1S+lB/90k8vJL9oASKM6AlkVuibdH1L8eVx6hkMy9KAPhsWwxPe6eKiMs09KHBR1oJhRWZKaqHz
- zNBc7Lc+2AV9+7GPFheJcQgb6PGwLkOoin9i90T4GVxvsu/Js1JNqNxM2dll1ZD9clbWqG2ukt5
- 7b+2T5enDV/767x2uQuISdNUUB1egRIXudLvmtpYTPNI7qoIHZwu9h2fXV6Z3y/IlG9nRevba+5
- Wy1OjYPDwXkfwmGSWv6q2NYPqwcAawqsV6SxNFEszxvMfJQNqnAbzihfDDFGbRFPe33kdKUAuo4
- d2doKZ9KBdHY5Tb6AdwXvvPtRhJjotzBai1ptLLtMIw63u8A
+ bh=abn+V/VW2R04+ivG5L+16aCpi+lS1tSzUvuSfrCga00=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnLVmOlTL82Q+yU+jTYQJ2nDrxLnq8YKm4nBQrW
+ XWQ3vKXdO6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZy1ZjgAKCRCLPIo+Aiko
+ 1aVAB/wMp1GUIzKR0e0Z7EmL6OhYO8pzNKgXmJzLpBJHGsb3lAkcVB8stTyd7yx4NyeObcSp0dN
+ FEXTHPvI4cEqqpzxMjTMzvERHuhHalCM/N4bmNMEg9aBigDEDFFeyVoIOgrOVrYPe1PsFL6ibG7
+ BxcCRw1Xe4T0Dzdcj5708UB0Ejd54RFOjX7lfeC+JAryOMN05sG3b+S2NJsOHi4fq/Dhk6HGu5T
+ wLyg+ob9chEYbWjZvDgaixAMyFsah9l5WnBj4IFCcWOlbJ1H9d3cTnpnv+W7PG7VxzJFk3b+kNn
+ tUJRuMx5kL6Wa/PvEsa2clV8XVeqacZ/osSRe8CjnyW1wkLD
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-- Fix register programming in the dp_audio module
-- Rework most of the register programming functions to be local to the
-  calling module rather than accessing everything through huge
-  dp_catalog monster.
+The msm_dp_utils_pack_sdp_header() accepts an unlimited-size u32 pointer
+for the header output, while it expects a two-element array. It performs
+a sizeof check which is always true on 64-bit platforms (since
+sizeof(u32*) is 8) and is always falce on 32-bit platforms. It returns
+an error code which nobody actually checks.
 
+Fix the function interface to accept u32[2] and return void, skipping
+all the checks.
+
+Fixes: 55fb8ffc1802 ("drm/msm/dp: add VSC SDP support for YUV420 over DP")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Dmitry Baryshkov (14):
-      drm/msm/dp: fix msm_dp_utils_pack_sdp_header interface
-      drm/msm/dp: drop msm_dp_panel_dump_regs() and msm_dp_catalog_dump_regs()
-      drm/msm/dp: drop msm_dp_panel_tpg_config()
-      drm/msm/dp: pull I/O data out of msm_dp_catalog_private()
-      drm/msm/dp: move I/O functions to global header
-      drm/msm/dp: move/inline AUX register functions
-      drm/msm/dp: move/inline ctrl register functions
-      drm/msm/dp: move/inline panel related functions
-      drm/msm/dp: use msm_dp_utils_pack_sdp_header() for audio packets
-      drm/msm/dp: drop obsolete audio headers access through catalog
-      drm/msm/dp: move/inline audio related functions
-      drm/msm/dp: move more AUX functions to dp_aux.c
-      drm/msm/dp: drop struct msm_dp_panel_in
-      drm/msm/dp: move interrupt handling to dp_ctrl
+ drivers/gpu/drm/msm/dp/dp_utils.c | 10 +---------
+ drivers/gpu/drm/msm/dp/dp_utils.h |  2 +-
+ 2 files changed, 2 insertions(+), 10 deletions(-)
 
- drivers/gpu/drm/msm/dp/dp_audio.c   |  360 ++++------
- drivers/gpu/drm/msm/dp/dp_aux.c     |  195 +++++-
- drivers/gpu/drm/msm/dp/dp_aux.h     |    9 +-
- drivers/gpu/drm/msm/dp/dp_catalog.c | 1267 +----------------------------------
- drivers/gpu/drm/msm/dp/dp_catalog.h |  177 +++--
- drivers/gpu/drm/msm/dp/dp_ctrl.c    |  575 ++++++++++++++--
- drivers/gpu/drm/msm/dp/dp_ctrl.h    |    5 +-
- drivers/gpu/drm/msm/dp/dp_display.c |   36 +-
- drivers/gpu/drm/msm/dp/dp_panel.c   |  150 +++--
- drivers/gpu/drm/msm/dp/dp_panel.h   |   15 +-
- drivers/gpu/drm/msm/dp/dp_reg.h     |   17 +
- drivers/gpu/drm/msm/dp/dp_utils.c   |   10 +-
- drivers/gpu/drm/msm/dp/dp_utils.h   |    2 +-
- 13 files changed, 1078 insertions(+), 1740 deletions(-)
----
-base-commit: 74741a050b79d31d8d2eeee12c77736596d0a6b2
-change-id: 20240615-fd-dp-audio-fixup-a92883ea9e40
+diff --git a/drivers/gpu/drm/msm/dp/dp_utils.c b/drivers/gpu/drm/msm/dp/dp_utils.c
+index 2a40f07fe2d5e20114a7692d1269bb8fd5bddbbd..4a5ebb0c33b85e3d55eb974d74c1f54591301b35 100644
+--- a/drivers/gpu/drm/msm/dp/dp_utils.c
++++ b/drivers/gpu/drm/msm/dp/dp_utils.c
+@@ -74,14 +74,8 @@ u8 msm_dp_utils_calculate_parity(u32 data)
+ 	return parity_byte;
+ }
+ 
+-ssize_t msm_dp_utils_pack_sdp_header(struct dp_sdp_header *sdp_header, u32 *header_buff)
++void msm_dp_utils_pack_sdp_header(struct dp_sdp_header *sdp_header, u32 header_buff[2])
+ {
+-	size_t length;
+-
+-	length = sizeof(header_buff);
+-	if (length < DP_SDP_HEADER_SIZE)
+-		return -ENOSPC;
+-
+ 	header_buff[0] = FIELD_PREP(HEADER_0_MASK, sdp_header->HB0) |
+ 		FIELD_PREP(PARITY_0_MASK, msm_dp_utils_calculate_parity(sdp_header->HB0)) |
+ 		FIELD_PREP(HEADER_1_MASK, sdp_header->HB1) |
+@@ -91,6 +85,4 @@ ssize_t msm_dp_utils_pack_sdp_header(struct dp_sdp_header *sdp_header, u32 *head
+ 		FIELD_PREP(PARITY_2_MASK, msm_dp_utils_calculate_parity(sdp_header->HB2)) |
+ 		FIELD_PREP(HEADER_3_MASK, sdp_header->HB3) |
+ 		FIELD_PREP(PARITY_3_MASK, msm_dp_utils_calculate_parity(sdp_header->HB3));
+-
+-	return length;
+ }
+diff --git a/drivers/gpu/drm/msm/dp/dp_utils.h b/drivers/gpu/drm/msm/dp/dp_utils.h
+index 88d53157f5b59e352a29075e4e8deb044a6de3bd..2e4f98a863c4cb971e621ac24b8b58f035236e73 100644
+--- a/drivers/gpu/drm/msm/dp/dp_utils.h
++++ b/drivers/gpu/drm/msm/dp/dp_utils.h
+@@ -31,6 +31,6 @@
+ u8 msm_dp_utils_get_g0_value(u8 data);
+ u8 msm_dp_utils_get_g1_value(u8 data);
+ u8 msm_dp_utils_calculate_parity(u32 data);
+-ssize_t msm_dp_utils_pack_sdp_header(struct dp_sdp_header *sdp_header, u32 *header_buff);
++void msm_dp_utils_pack_sdp_header(struct dp_sdp_header *sdp_header, u32 header_buff[2]);
+ 
+ #endif /* _DP_UTILS_H_ */
 
-Best regards,
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.39.5
 
 
