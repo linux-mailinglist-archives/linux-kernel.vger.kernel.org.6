@@ -1,122 +1,167 @@
-Return-Path: <linux-kernel+bounces-401847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA94F9C201B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:11:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAE59C201D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:12:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CCAC1C2183B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:11:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDED42846C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8490F1F5854;
-	Fri,  8 Nov 2024 15:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245EE1F6679;
+	Fri,  8 Nov 2024 15:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bKnoG/0+"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K+p8lLLQ"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F89F1F4FB9
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D421F666F
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731078709; cv=none; b=OEltMEe3frtH+D7XAhsCLB+a6JtqNp5mxse/ZpBSRHGwZOIQUK03nkRyQFwysCmVnwvgAmVlBYkRhDBCWLIEutD7XFVfdnAHazyE1ODea3ZHtLeLMbGBx3Z/FEbsFJ/iH+S3RRrddO64kQDZ2Y4mkNx54dJlFh8Y92iCHbAsIvQ=
+	t=1731078715; cv=none; b=gUqZBectIqf8g7DNeeG+uUReQ5/wbx50k1s63Rh5CNr5sGVZk5ykKqDP7C8vXQxC2UZcG/0VTrhDnYwCVDhFrmE6umy++um+R1mCGHNAdHMZN0exJ89i9gFGJ5mX1QCyWFRfk1glSr9mCr/kUJ7NorvCeYRMuEPrfIxtUJGrgqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731078709; c=relaxed/simple;
-	bh=7AbutvFdmgvjtotNL0xr9HRKPZ3PcvOcSlbj0hwvXMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJMcBHV5ioSfrERVeG7lyvKwvSNzW/zCEyX+0nWYn1e2RsTO2tWTddIsGNxnyGtY+J9AOEDAxzE52ZtF73hE5Xdzg6B5DhD8R2KpHQoo8nZLOrdJJVYl1NVtp2BPFLG28N448qPXEW498yyjUXF4HwDkTKOP8oa5CJ9H7yiUFxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bKnoG/0+; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so2886516e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:11:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731078705; x=1731683505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7AbutvFdmgvjtotNL0xr9HRKPZ3PcvOcSlbj0hwvXMI=;
-        b=bKnoG/0+aarS9H4jOxRQDzKVK0A2JtgdqfOPhGlYK6VlSjdRv+DalLZi/BFFW7urW0
-         kxZkrYCy8oVhnvllbTmG2xZ2d3VfFAkc5x+oO0nrGgTtITOX7jaXixeyoSitutCHLOm9
-         yiHLQ5rICroz4O2IECtSFVvTsYdXhlgwLY5OE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731078705; x=1731683505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7AbutvFdmgvjtotNL0xr9HRKPZ3PcvOcSlbj0hwvXMI=;
-        b=fKNkWCI+c1DZlxL0BaHYQ1H5kb+lvPkS9xVhG2KGMtY/yjCRhfSbx2whH4Btpw6HV9
-         0k+l4M35ZV5wpb5tbzqLv7dM4aT4T04KiQHcEAN2qJZg/HiL4aXwkouhO+8X2wrmE3bB
-         ZzGqhc4/P8wSitpsuHncM3aZjMCC5tfbZlZLH8VhQLyqeMVbfCFd1FTJaV1Dnjf3oMUy
-         qaQcAvWWtI0HbRRM40QTk8LZz08cvgYJCVJxUDWCdcaZdYFNyLrZ5Xu8pDiVvjwj6O3h
-         VA38Eu3RQ3WMF1n2jyVxr6CIviM6Put1UqzEkPOFZ2UY2CPe6/fMvgLnWJ9uBtPdhrEJ
-         Wi5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUy+SLqSzOgLcHZAWGZaZWNnvaA8IY5fvGOftEw896wPMLq+9Bvfz/ozvrpKWTkGFjXVw2uDr+fSgV4iNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuruCEBlhBT2e+UxPN8FqWFV6cbEVgjiptca7A7CkKvaUn4JJF
-	AUpqMEhpD+jVX6Tvt2U1N+FJinQXAPewPlTUXHeUMXHJjIQtilu5zY5ISXDKqhLqT/ZakRbROAu
-	a9Q==
-X-Google-Smtp-Source: AGHT+IG0eJIn7OLLTvMYCUMZwSpCSsPKBP604iw5Ca8IA+PJAmQkBrU6IkudZlP/jsC5H5C/Ljh+mQ==
-X-Received: by 2002:a05:651c:2111:b0:2f7:4d86:5dcf with SMTP id 38308e7fff4ca-2ff2025fc24mr18747611fa.35.1731078704775;
-        Fri, 08 Nov 2024 07:11:44 -0800 (PST)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff17991a25sm6839431fa.79.2024.11.08.07.11.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 07:11:44 -0800 (PST)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e13375d3so2713251e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:11:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWTXk7R7/c/NH73bd0dJbA439+tetSqYNnxr1dBZg/jsaFBay/1XePQ1kMjMcvFH5aJYISsqu8p3cCQwSM=@vger.kernel.org
-X-Received: by 2002:a2e:9a16:0:b0:2fb:3881:35d8 with SMTP id
- 38308e7fff4ca-2ff201513dbmr19941421fa.14.1731078703279; Fri, 08 Nov 2024
- 07:11:43 -0800 (PST)
+	s=arc-20240116; t=1731078715; c=relaxed/simple;
+	bh=GNVFDNqJ8WeDYhHLwQfA/gWF2r05SDu9NQakYeuZUxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CfjOq0DWCOp6xrQe+GaJsk0Pu6QA8ZQQrLWTrwffQ7bBLukS59bjuRVDdWYoJTek2/RN4uGqdzTxic7+GPRjOMTT+tyFJJxyrF4LvHTTD30WBkBXdSWUin5zUG1XRfifOh79YilO5ArBrmiOj03/Ww13ovGG6Wrv9aMuFaPVlvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K+p8lLLQ; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c3682951-e172-421f-945e-ffe08d67ab66@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731078710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IStD4SWIrv5W1vpLpxVKURat2SUcclzzait9dqwsJJk=;
+	b=K+p8lLLQwLgLjXZ5migX6X6/Hw+nO3Hk7CchIkUPLkWi4/MBXRvxszOBlJMHoZrY/EoWge
+	awXz+Lzjac1rrJYwmdYRmStScGUtdzKDfPO8fOg9x+HdKHemWZ3AA9rTFoCDuic7FF48js
+	5kh/+qAms629g4BDwxbrl2+g8ndwsz8=
+Date: Fri, 8 Nov 2024 15:11:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108120311.87795-1-charles.goodix@gmail.com>
-In-Reply-To: <20241108120311.87795-1-charles.goodix@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 8 Nov 2024 07:11:27 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WNcdbdn4tzNyVWaZugma3RdqmvTPa2NsTyuhH4yA3Raw@mail.gmail.com>
-Message-ID: <CAD=FV=WNcdbdn4tzNyVWaZugma3RdqmvTPa2NsTyuhH4yA3Raw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] dt-bindings: input: Goodix GT7986U SPI HID Touchscreen
-To: Charles Wang <charles.goodix@gmail.com>
-Cc: krzk@kernel.org, hbarnor@chromium.org, conor.dooley@microchip.com, 
-	dmitry.torokhov@gmail.com, jikos@kernel.org, bentiss@kernel.org, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net v2 1/7] octeon_ep: Add checks to fix double free
+ crashes.
+To: Shinas Rasheed <srasheed@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: hgani@marvell.com, sedara@marvell.com, vimleshk@marvell.com,
+ thaller@redhat.com, wizhao@redhat.com, kheib@redhat.com, egallen@redhat.com,
+ konguyen@redhat.com, horms@kernel.org, frank.feng@synaxg.com,
+ Veerasenareddy Burru <vburru@marvell.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+References: <20241107132846.1118835-1-srasheed@marvell.com>
+ <20241107132846.1118835-2-srasheed@marvell.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241107132846.1118835-2-srasheed@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
-
-On Fri, Nov 8, 2024 at 4:03=E2=80=AFAM Charles Wang <charles.goodix@gmail.c=
-om> wrote:
->
-> The Goodix GT7986U touch controller report touch data according to the
-> HID protocol through the SPI bus. However, it is incompatible with
-> Microsoft's HID-over-SPI protocol.
->
-> The patchset introduces the following two changes:
-> 1) Add goodix,gt7986u-spifw.yaml.
-> 2) Drop the 'goodix,hid-report-addr' property.
->
-> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+On 07/11/2024 13:28, Shinas Rasheed wrote:
+> From: Vimlesh Kumar <vimleshk@marvell.com>
+> 
+> Add required checks to avoid double free. Crashes were
+> observed due to the same on reset scenarios
+> 
+> Signed-off-by: Vimlesh Kumar <vimleshk@marvell.com>
+> Signed-off-by: Shinas Rasheed <srasheed@marvell.com>
 > ---
-> Changes in v3:
-> - Split the commit into two patches.
+> V2:
+>    - No changes
+> 
+> V1: https://lore.kernel.org/all/20241101103416.1064930-2-srasheed@marvell.com/
+> 
+>   .../ethernet/marvell/octeon_ep/octep_main.c   | 39 +++++++++++--------
+>   .../net/ethernet/marvell/octeon_ep/octep_tx.c |  2 +
+>   2 files changed, 25 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+> index 549436efc204..ff72b796bd25 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+> @@ -154,9 +154,11 @@ static int octep_enable_msix_range(struct octep_device *oct)
+>    */
+>   static void octep_disable_msix(struct octep_device *oct)
+>   {
+> -	pci_disable_msix(oct->pdev);
+> -	kfree(oct->msix_entries);
+> -	oct->msix_entries = NULL;
+> +	if (oct->msix_entries) {
+> +		pci_disable_msix(oct->pdev);
+> +		kfree(oct->msix_entries);
+> +		oct->msix_entries = NULL;
+> +	}
+>   	dev_info(&oct->pdev->dev, "Disabled MSI-X\n");
 
-LOL, this isn't what I meant. You should have one patch adding the
-proper bindings, but you need a second patch to _the "driver_. Right
-now the driver (AKA the file "drivers/hid/hid-goodix-spi.c" in Linux)
-is still looking for "goodix,hid-report-addr". The driver needs to be
-updated and that was what I was saying should be patch #2. You'll also
-need to fix the driver to update the compatible string it's looking
-for.
+How can this function crash? pci_disable_msix() will have checks for
+already disabled msix, kfree can properly deal with NULL pointer.
+Do you have stack trace of the crash here?
 
--Doug
+>   }
+>   
+> @@ -496,16 +498,18 @@ static void octep_free_irqs(struct octep_device *oct)
+>   {
+>   	int i;
+>   
+> -	/* First few MSI-X interrupts are non queue interrupts; free them */
+> -	for (i = 0; i < CFG_GET_NON_IOQ_MSIX(oct->conf); i++)
+> -		free_irq(oct->msix_entries[i].vector, oct);
+> -	kfree(oct->non_ioq_irq_names);
+> -
+> -	/* Free IRQs for Input/Output (Tx/Rx) queues */
+> -	for (i = CFG_GET_NON_IOQ_MSIX(oct->conf); i < oct->num_irqs; i++) {
+> -		irq_set_affinity_hint(oct->msix_entries[i].vector, NULL);
+> -		free_irq(oct->msix_entries[i].vector,
+> -			 oct->ioq_vector[i - CFG_GET_NON_IOQ_MSIX(oct->conf)]);
+> +	if (oct->msix_entries) {
+> +		/* First few MSI-X interrupts are non queue interrupts; free them */
+> +		for (i = 0; i < CFG_GET_NON_IOQ_MSIX(oct->conf); i++)
+> +			free_irq(oct->msix_entries[i].vector, oct);
+> +		kfree(oct->non_ioq_irq_names);
+> +
+> +		/* Free IRQs for Input/Output (Tx/Rx) queues */
+> +		for (i = CFG_GET_NON_IOQ_MSIX(oct->conf); i < oct->num_irqs; i++) {
+> +			irq_set_affinity_hint(oct->msix_entries[i].vector, NULL);
+> +			free_irq(oct->msix_entries[i].vector,
+> +				 oct->ioq_vector[i - CFG_GET_NON_IOQ_MSIX(oct->conf)]);
+> +		}
+>   	}
+>   	netdev_info(oct->netdev, "IRQs freed\n");
+>   }
+
+Have you considered fast return option? like
+
+if (!octep_disable_msix)
+	return;
+
+It will make less intendation and less changes in LoC but will presume
+the same behavior.
+
+> @@ -635,8 +639,10 @@ static void octep_napi_delete(struct octep_device *oct)
+>   
+>   	for (i = 0; i < oct->num_oqs; i++) {
+>   		netdev_dbg(oct->netdev, "Deleting NAPI on Q-%d\n", i);
+> -		netif_napi_del(&oct->ioq_vector[i]->napi);
+> -		oct->oq[i]->napi = NULL;
+> +		if (oct->oq[i]->napi) {
+> +			netif_napi_del(&oct->ioq_vector[i]->napi);
+> +			oct->oq[i]->napi = NULL;
+> +		}
+>   	}
+>   }
+>   
+
+[ .. snip ..]
 
