@@ -1,170 +1,175 @@
-Return-Path: <linux-kernel+bounces-401764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B169C1EDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:08:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D046A9C1EE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 754C01C2276A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592711F24316
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3861EF0B9;
-	Fri,  8 Nov 2024 14:08:48 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67E1EF937;
+	Fri,  8 Nov 2024 14:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="OD2GaGNu"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F8E1EF095;
-	Fri,  8 Nov 2024 14:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731074928; cv=none; b=eJR/HQQVKQP24q0yZuvX9BPYJsltOY669JzUCQZ7Xw0/ddj5w4XG4D8nN5zidOB0EiP+EGh2Iv3PGlajLYKwNp+z674pDcxixk6uCNkPmT2WGLSzR9p8TF69R9k+CPxsAptyyIbPbvoALCEX8G7z4oqpA4vkxcu6knFr/Q8Rczc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731074928; c=relaxed/simple;
-	bh=7Km3i1M5xWKDLBrUTRXumcxArKatpfaTbs4odA5WNBY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ohxfC5CrNNAQgmDqjQXD+xtTrMin5Pq/mq2D2cDHhJohEIApOGQMYdKRMDqzhfMU4ZAgbyOnfhktq+q6sxni4MuMx4nrJ3ePz+QuWxQKNj4WclWMW56AQGeB/ukpCRMR8iL8Q2pQKngWlAkoCw08mP3mwhQY3APuW23LUdg/iG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99ebb390a5so605277866b.1;
-        Fri, 08 Nov 2024 06:08:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731074925; x=1731679725;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Vs+8MmoutBmVIGaxrBB+Gc26ziMMInjO3wPn6W3jwo=;
-        b=cH9AWSgpdnV1XhITXk6LlAr/JmJu9aG8F26cBsJ+V05FtxYcGIXueeJ946SkbZCW42
-         KZLgJWN9xFlwzlkut07KaB0/5TSXkZmzWbT+DUCKqU8XBSVEORx1lY87aDsHwMbEC0u9
-         tFm4rmmZE1gFhRsozN2U9AtOkWiDlhn6c5ujalpaDnWfvfzYYQN1BWBJJZnoznESqjOR
-         zsZqXxXGUE2U4N2vV5bqcPGr4OIXCkJZNiI3gzp5ua9ga2o876fJ0zEU9eO5qqNOZ1fx
-         3ISfMQqVF8GRrJlxP1bfFyVBehns1Rnw6n7QnshhED8eNCRxAir9Hek0+yOGVodTx8EK
-         Lt/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJVf00Q4DCQxu0weA6jKa7Rt6dw/5HmQIv7cifEw6Nm1yYxYdhGl73KYZzHT5J0ReYDGIKSmk8@vger.kernel.org, AJvYcCX+PhpIP2l2LnHElNRSHiUaWey0bYQLpm8Xq6YEbtLeG6IJMEZmwhsyEvD6XF3KozX5dSdugpBpZzZs9Qo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCtxNj5tQnqMc1j8CeAGLIyjZ+YSVP5PbNCvMDHK7WU0+3W9SG
-	bBVTmSVD+L9Tz7KbP7MP1J/d8IeNTn41KSKhfGe4IsCzLPTcvbD2zybbdw==
-X-Google-Smtp-Source: AGHT+IG9MyyRiE8clL0are8WjgoIfAj4jhGW0zaUz3k+d78u3MMeQYOxWTAgO2qoNGOv58CynKY4FQ==
-X-Received: by 2002:a17:906:dc8c:b0:a9a:616c:459e with SMTP id a640c23a62f3a-a9eeffe65c0mr257588366b.27.1731074924529;
-        Fri, 08 Nov 2024 06:08:44 -0800 (PST)
-Received: from localhost (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ef31fe476sm84123066b.21.2024.11.08.06.08.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 06:08:43 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 08 Nov 2024 06:08:36 -0800
-Subject: [PATCH net v2] ipmr: Fix access to mfc_cache_list without lock
- held
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861241E1C18
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731074966; cv=pass; b=PnzVHhdL0qA3FNf5WVzLuh6GmglppavSB9Cht4gnlSgcKwDVIltHGB+5H+zUQ8s8RXxVldwCspPhZk5MC6qV26C2mJtn0K8VzXndI3c0MKoUULCFz2MdxHb13zhWS0h3Dd2Fu36LRqk/sfMaPH//7f66N1hy1LU1bumx2Cn8m8A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731074966; c=relaxed/simple;
+	bh=CpH3HvInCHD476Dei8qjmD9ukDWZwXtXZcel7JHks0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNWQLQFsgo4PZD3hiVWRKsaGl3lB1N9JHArmt8qG3yYplbbg9R5Pu5cE6GShVaHpSND9NigB3+6JPNZaM6Lfo3tDKQmfYGhjKwPe0uIRXxpvQJG0b/9givw3dNUeEz9Abu5sBNzFR3Hnim2MYhxkegUVhirj106dM/AOCrrKo08=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=OD2GaGNu; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731074924; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=oAj2c0TIVxFk0uIdvNN/ewWCb1AAIHEF6PfPIjiVnuGuVkhx9f+R8q3GnmoRvdGtSD2LqMpYpelZtVGBLTJ6YNSwMB11PBscTGZydUVqN3WHjnvTwOu5dtdlkWU1xomdUHAK4RFCbPCzZzGjpQNcdbyCb3yO5MrumNmBnaXOm+s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731074924; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=mVElLljDMkH2gCb36Qpaybb+YgOSLlNL2FEVOV/jwkM=; 
+	b=aigQwFQ6TRguUM1lvEptcT6Src9fdY7ej4FQL4Ajh0HqLqZ2dHlVTIcl6KYeahXDSqUqMUqhfjYlkGG41SX+sSnbCLl+zxQuGro9W+B/O2mVYDX02LS3Gngckz607RJ6M9PJvmWfjONbuGRuZrOtxGBF9UHe2CopmXr99S1/PB0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731074924;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=mVElLljDMkH2gCb36Qpaybb+YgOSLlNL2FEVOV/jwkM=;
+	b=OD2GaGNuQNvKEhovoKeMnrC3ZRv7U6t6vN0dJema56qXSF1LJ5Ncla59l2mrCmgM
+	KK1hZj3snaUHE+BLnRwH4/iKLIBXStFfqztjzSIlhPH3KsWUa+wIHvI7eW8rJ0bB8Cp
+	2Z6cfOh76W+5sJHso4PNW4XKloULP6f055xv9xTU=
+Received: by mx.zohomail.com with SMTPS id 1731074923259860.7417195009734;
+	Fri, 8 Nov 2024 06:08:43 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id 84B401060446; Fri, 08 Nov 2024 15:08:38 +0100 (CET)
+Date: Fri, 8 Nov 2024 15:08:38 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Diederik de Haas <didi.debian@cknow.org>
+Subject: Re: [PATCH 2/2] drm/rockchip: dsi: Don't log errors on deferred dphy
+Message-ID: <yrm6r4urzf5hvnui53cvepw2loqvuhydalq6haw7qmpktor5y5@zjc34wlcoeg2>
+References: <cover.1731073565.git.dsimic@manjaro.org>
+ <559094275c3e41cae7c89e904341f89a1240a51a.1731073565.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241108-ipmr_rcu-v2-1-c718998e209b@debian.org>
-X-B4-Tracking: v=1; b=H4sIAGMbLmcC/2XMQQ6CMBAF0Ks0f01Np0FFVt7DEFPoALOwkCkSD
- eHuJmxdv+RtyKzCGbXZoLxKlimhNr4w6MaQBrYSURt450sid7Uyv/Sp3dv6G8XqXDrX0gWFwaz
- cy+eoHki8oCkMRsnLpN+jX+mg/2klSzZE17Whin3P8R65lZBOkw5o9n3/AWBkXrWmAAAA
-X-Change-ID: 20241107-ipmr_rcu-291d85400b16
-To: "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2627; i=leitao@debian.org;
- h=from:subject:message-id; bh=7Km3i1M5xWKDLBrUTRXumcxArKatpfaTbs4odA5WNBY=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnLhtqgmnm+ETxe80MIUaf83bV/rIllOdcVf6W8
- FELLsJz9KqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZy4bagAKCRA1o5Of/Hh3
- bVxpD/sG2B4c/+/VHr//44r6QyqEnMVYecaMa9xmfeSt4HkP5hZgvjJN9dG0GZbh0pj8ghBK10D
- K8WcEJpghsUaY9uwD0ZQiekrIqwdtgsVz2iZddGju4TJ1IwVwlQCCKFIWxnvXmdvvnSezVBnq29
- khJWj3rPHToJVC+XmRNOJuvB53x2b7qeV/ksm40yayF0ZO9nwji8OnE6s1e0WzLOZZAKa4y+skm
- i9RPwg1/KAaiSmj8Usc0zrx6FHyHfTQLOlMhNkeLyqxT5lb8IbAkI2+T0KHTwTbNOBkiOZewPMe
- FTrgbZZa2kie82+veWKH4xqYL7CocMNN3jDqQUYcOE2zMgyIQfLz3BxAENEZXnOQSPkWRHRnKmX
- ec6Hwf7gcVVkBKV1/9WwpRl89cl/B7QNGtXIFJSgokjljMPyzS7NvYVmiEnGSqaIjwK+uiObJOO
- XFXGbIiRAQwP+522nsIS/ezSmO371i7FvJyYkOmRk6Q7yTcXcqTg83ExcCfpZyQU/m3ibxLWAw6
- KvhigMHJF0XEUYMkdshM3YAwgyVCmXE0VTi6KNKxrG463CAG8JGCITzMBqPmxyD6L8aqXnU5zZ1
- McNlgFuBdUWmOOBY8mluPiJ6fFLhg6YI8pjP61w3EVcNAfo61oiIJVpATLH9ZUL5mzXAuc5YCTz
- bDZEqJw0fUgAanw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jbebcpfdxkuwxpqm"
+Content-Disposition: inline
+In-Reply-To: <559094275c3e41cae7c89e904341f89a1240a51a.1731073565.git.dsimic@manjaro.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/231.63.7
+X-ZohoMailClient: External
 
-Accessing `mr_table->mfc_cache_list` is protected by an RCU lock. In the
-following code flow, the RCU read lock is not held, causing the
-following error when `RCU_PROVE` is not held. The same problem might
-show up in the IPv6 code path.
 
-	6.12.0-rc5-kbuilder-01145-gbac17284bdcb #33 Tainted: G            E    N
-	-----------------------------
-	net/ipv4/ipmr_base.c:313 RCU-list traversed in non-reader section!!
+--jbebcpfdxkuwxpqm
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] drm/rockchip: dsi: Don't log errors on deferred dphy
+MIME-Version: 1.0
 
-	rcu_scheduler_active = 2, debug_locks = 1
-		   2 locks held by RetransmitAggre/3519:
-		    #0: ffff88816188c6c0 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x8a/0x290
-		    #1: ffffffff83fcf7a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x6b/0x90
+Hi,
 
-	stack backtrace:
-		    lockdep_rcu_suspicious
-		    mr_table_dump
-		    ipmr_rtm_dumproute
-		    rtnl_dump_all
-		    rtnl_dumpit
-		    netlink_dump
-		    __netlink_dump_start
-		    rtnetlink_rcv_msg
-		    netlink_rcv_skb
-		    netlink_unicast
-		    netlink_sendmsg
+On Fri, Nov 08, 2024 at 02:53:58PM +0100, Dragan Simic wrote:
+> Deferred driver probing shouldn't result in errors or warnings being logg=
+ed,
+> because their presence in the kernel log provides no value and may actual=
+ly
+> cause false impression that some issues exist.  Thus, let's no longer pro=
+duce
+> error messages when getting the dphy results in deferred probing.
+>=20
+> This prevents misleading error messages like the following one, which was
+> observed on a Pine64 PineTab2, from appearing in the kernel log.  To make
+> matters worse, the following error message was observed appearing multiple
+> times in the kernel log of a single PineTab2 boot:
+>=20
+>   dw-mipi-dsi-rockchip fe060000.dsi: [drm:dw_mipi_dsi_rockchip_probe \
+>   [rockchipdrm]] *ERROR* failed to get mipi dphy: -517
+>=20
+> At the same time, make the adjusted logged message a bit more consistent =
+with
+> the other logged messages by capitalizing its first word.
+>=20
+> Reported-by: Diederik de Haas <didi.debian@cknow.org>
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
 
-This is not a problem per see, since the RTNL lock is held here, so, it
-is safe to iterate in the list without the RCU read lock, as suggested
-by Eric.
+=46rom include/drm/drm_print.h:
 
-To alleviate the concern, modify the code to use
-list_for_each_entry_rcu() with the RTNL-held argument.
+ * DRM_DEV_ERROR() - Error output.
+ *
+ * NOTE: this is deprecated in favor of drm_err() or dev_err().
 
-The annotation will raise an error only if RTNL or RCU read lock are
-missing during iteration, signaling a legitimate problem, otherwise it
-will avoid this false positive.
+The recommended way to do this nowadays looks like this:
 
-This will solve the IPv6 case as well, since ip6mr_rtm_dumproute() calls
-this function as well.
+return dev_err_probe(dev, PTR_ERR(dsi->phy), "Failed to get mipi dphy");
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changes in v2:
-- Instead of getting an RCU read lock, rely on rtnl mutex (Eric)
-- Link to v1: https://lore.kernel.org/r/20241107-ipmr_rcu-v1-1-ad0cba8dffed@debian.org
-- Still sending it against `net`, so, since this warning is annoying
----
- net/ipv4/ipmr_base.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+That will not print anything for -EPROBE_DEFER, but capture
+the reason and make it available through
+/sys/kernel/debug/devices_deferred if the device never probes.
 
-diff --git a/net/ipv4/ipmr_base.c b/net/ipv4/ipmr_base.c
-index 271dc03fc6dbd9b35db4d5782716679134f225e4..f0af12a2f70bcdf5ba54321bf7ebebe798318abb 100644
---- a/net/ipv4/ipmr_base.c
-+++ b/net/ipv4/ipmr_base.c
-@@ -310,7 +310,8 @@ int mr_table_dump(struct mr_table *mrt, struct sk_buff *skb,
- 	if (filter->filter_set)
- 		flags |= NLM_F_DUMP_FILTERED;
- 
--	list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list) {
-+	list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list,
-+				lockdep_rtnl_is_held()) {
- 		if (e < s_e)
- 			goto next_entry;
- 		if (filter->dev &&
+Greetings,
 
----
-base-commit: 25d70702142ac2115e75e01a0a985c6ea1d78033
-change-id: 20241107-ipmr_rcu-291d85400b16
+-- Sebastian
 
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
+>  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gp=
+u/drm/rockchip/dw-mipi-dsi-rockchip.c
+> index f451e70efbdd..ffa7f2bc640d 100644
+> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> @@ -1387,7 +1387,8 @@ static int dw_mipi_dsi_rockchip_probe(struct platfo=
+rm_device *pdev)
+>  	dsi->phy =3D devm_phy_optional_get(dev, "dphy");
+>  	if (IS_ERR(dsi->phy)) {
+>  		ret =3D PTR_ERR(dsi->phy);
+> -		DRM_DEV_ERROR(dev, "failed to get mipi dphy: %d\n", ret);
+> +		if (ret !=3D -EPROBE_DEFER)
+> +			DRM_DEV_ERROR(dev, "Failed to get mipi dphy: %d\n", ret);
+>  		return ret;
+>  	}
+> =20
 
+--jbebcpfdxkuwxpqm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcuG1cACgkQ2O7X88g7
++poqOw//XpffXl7k7aTrQfYUgac6w5Ax61S2qx+q08M4H7qDdJt/VVg8PnS6EP0P
+WGPmQ/mtjFO+aPPxwS3DQgi+oy2EClVgjKw/rTNPABVonLA48AZXzxRWpEDOMJ3b
+Snb6GzOt3M/ZLDbvVm2qnxMndHgDPfeGtjHZyb97YEMHY565zRxjgBNh2weug+X0
+qfv+Uo4maCdY7LeGBfykLK4uLedJpkZejb//HtAN1bmU70kb6csiBcB4Iee4FC4H
+CTWCP5G8t/VBweYf2curGn4252BlTyLa5SN8XrYm9hgsDYc8K75wCa70tZuk3rHR
+ac6wMwRZDUEVNiTk6tCYQJsAjXyZPOfQXG8rAV9W+NurLaVGtJnbSdmD3KTwIxSw
+11uIjqaOFNrrKOtzQYlGHh0t7LLtOo66OSGzllOh8fJbYOmpt/NaLG585+ddw3Ot
+hbfzziAmN6R3j/bB9QNdGWDQok9Mk3WoQYPryrbWbErhAweiA7sIGeM3n9Zcysmy
+dgUKzJtOZ7gUcAWdA1UPatRHxDQ3dh4Hgjw/9izYqkbr6zpGGrp91HIhP9p2APZ9
+NriNU8nxUVULiYdKR7hCgNEPI0MrxqXEzg6Lhs2i5y1UJlECiwmMnBpGizj+250g
+jgJQskZJ0vQ1bHk1ELk3zoX7h5IFOFxkl6RPWGtUHuk/Q1M5028=
+=9OkR
+-----END PGP SIGNATURE-----
+
+--jbebcpfdxkuwxpqm--
 
