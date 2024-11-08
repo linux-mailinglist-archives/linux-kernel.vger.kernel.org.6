@@ -1,135 +1,90 @@
-Return-Path: <linux-kernel+bounces-401837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F9C9C1FFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:04:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB469C1FF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD001F24947
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:04:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD303284198
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42A91F4FC8;
-	Fri,  8 Nov 2024 15:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC421F5831;
+	Fri,  8 Nov 2024 15:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="gWByTu8U"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMuNQ79/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4EB1F4709;
-	Fri,  8 Nov 2024 15:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731078254; cv=pass; b=Rao9OgQ1znTXP/T3UvcAVEx7u5mqg35BC8BBGM/Qr2UUxjdFtEChl6l/dpxqHLnLB0JvnHACaoPWMpdHZDtUaf6y1OVbpz/u/PW1fakKjtcnPpdgmGCjdSPcfZv6oHaWQw5ZFP7NG14r8bOwoYY/Qjt+fUg/QTkna3R3bSnOf/w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731078254; c=relaxed/simple;
-	bh=1g6N36uT5P+qB4xj3TYD3S8zBCLFOkmq3yRj6IjCo90=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SpBiKAu5TQilJRjBKKoLyF0J0ImgicN6mzuObVL40ELD+bV1pWVBD7VIER+/eE8ZHOzyqdKIaPUBEav1wd46+fQXutQZR4KIp0eNgX+mjQmM1izOiLWI1Vd4hP4M2RyypjGTtK/HbmuECBf9z1w987CIPUHYo+BO4btqcDLsc4Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=gWByTu8U; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731078193; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aXvakjtZoCQtph0VZvtc7/+HCfM32kXOtJ9ic5+X4InUDB1pDPZOHck8uvD64/5RD11+PaKMdIZCLmaSavuh6ksDYqqev/hKFMo7TKYN0IfmtYoKqK70FCEshonLTVR5np3D2jCrV3QUeYoaN2yRpxifFZWRDaguU/7Lm+/HcEA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731078193; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=TocoG7kQBUv5QZO65D3IUtijhaNrryOZXHrTcPe3Nfo=; 
-	b=VUJvvSHPNue2XY+ConKCDlR5nD1JoMcs9+8ISejaVddVGWoF2tM0x29T/xpI0RX1RM6rVtOlKpmsQ6oU9B716xsJt2d5Jnf3KrJr5+sxx8PBANL9msA3yx5BQlBtoAh3jw2jMwzi2Pzr1nC23pSn65Ra5j66Ip3lj/rSt4d7rkw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731078193;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=TocoG7kQBUv5QZO65D3IUtijhaNrryOZXHrTcPe3Nfo=;
-	b=gWByTu8UgmxeYjvTuevgm8PAq7VO2xahB9qXIlidsiqt1IAtr6/HDb9mlZqmVcPk
-	6d3Q1oMShqbtY0iGHAsCC2ByI5gjH2r0lQtv2XZSMTD6d6/DhWrEEsc/FVNOm4Pn9Gi
-	FE2QdNIPHdr3mEoojsGMp8xCdpROjpQmqy/bwAek=
-Received: by mx.zohomail.com with SMTPS id 1731078192287354.59145001827324;
-	Fri, 8 Nov 2024 07:03:12 -0800 (PST)
-Message-ID: <e6545f17-8c16-4ae5-a284-3cfada68bb6a@collabora.com>
-Date: Fri, 8 Nov 2024 20:02:59 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1421E3772;
+	Fri,  8 Nov 2024 15:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731078195; cv=none; b=JbgJBwpPJgY9EknIo4kMglfP9Fnby2xTviNRCOWIrQWeDCJYJR8aSj/xE5bQuRN2XL3i8gAlw4cIr9VYMqp3a+pEzShqpokjctZIcDbQytzsb8Uq/9DoiVu39LkmukFqhbKyZ71/tY1XVz14Q7Y7duGWDdeNH78HQmRm2HJYueI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731078195; c=relaxed/simple;
+	bh=eO/169y/RDrJ9YFf2P0i4jCDwhotL6vp5e4BQUh08Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aktn2EKYLLKqcjxwdg0HNOSfZwOTe4P5tBaIJWsnsQp4/86Eh0jK937s/60eDujswFb5/IvybMy34+cJbUsiTTNKKqCV11R/nAa5jGNC+2XLXoQLJWIgUw3e0FIIANIs9RXa5ShPBP5O0Mcom+C2K74b1HV9ApaanxJAa3mY10I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMuNQ79/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A969C4CECD;
+	Fri,  8 Nov 2024 15:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731078194;
+	bh=eO/169y/RDrJ9YFf2P0i4jCDwhotL6vp5e4BQUh08Iw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QMuNQ79/27UY+78SPsaXOTUTgmChvQM1sblExDs2MyIo6gzVtaOi2/9tPROLhgGDp
+	 VfooZ1SU52Oywiofrvj8hqvaQBuzX/Dcpxbcj9crqQInridQQ52kWefAH8j0TKw0oi
+	 R4B03kzPPX1Up+LhfpReqgOC+ev6RaVpW7DyhhyRehZp8W/y+QLfrhFFgPGyiCagww
+	 eHXDnXSKW0MRrA20zjE2X7rWz2T/s8A2E/Bw8cIh8xaR3k9W1nSGfm8m9ieEm3t9+R
+	 IEDKCjgMTXGkmc8F4OFfTk70gA1NYEXcpvkRe7EgZuILCmDk5syHZY004KBNh4/S2o
+	 BjEUbKAThKgIQ==
+Date: Fri, 8 Nov 2024 15:03:10 +0000
+From: Simon Horman <horms@kernel.org>
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>, Jakub Kicinski <kuba@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next v2] mISDN: Fix typos
+Message-ID: <20241108150310.GE4507@kernel.org>
+References: <20241102134856.11322-1-algonell@gmail.com>
+ <20241106112513.9559-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com,
- broonie@kernel.org
-Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241107064547.006019150@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106112513.9559-1-algonell@gmail.com>
 
-On 11/7/24 11:47 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.7 release.
-> There are 249 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Nov 06, 2024 at 01:24:20PM +0200, Andrew Kreimer wrote:
+> Fix typos:
+>   - syncronized -> synchronized
+>   - interfacs -> interface
+>   - otherwhise -> otherwise
+>   - ony -> only
+>   - busses -> buses
+>   - maxinum -> maximum
 > 
-> Responses should be made by Sat, 09 Nov 2024 06:45:18 +0000.
-> Anything received after that time might be too late.
+> Via codespell.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.7-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
+> Reported-by: Simon Horman <horms@kernel.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> ---
+> v1:
+>   - Fix typos in printk messages.
+>   - https://lore.kernel.org/netdev/20241102134856.11322-1-algonell@gmail.com/
 > 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-Hi,
+> v2:
+>   - Address all non-false-positive suggestions, including comments.
+>   - The syncronized ==> synchronized suggestions for struct hfc_multi were skipped.
 
-Please find the KernelCI report below :-
+Thanks Andrew.
 
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-OVERVIEW
-
-    Builds: 25 passed, 0 failed
-
-    Boot tests: 54 passed, 0 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 
-        hash:   504b1103618a4532bbbf6558d80cdf3545a2c591
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
-    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=504b1103618a4532bbbf6558d80cdf3545a2c591&var-patchset_hash=&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-test_path=boot&from=now-100y&to=now&timezone=browser
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
 
