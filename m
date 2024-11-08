@@ -1,158 +1,160 @@
-Return-Path: <linux-kernel+bounces-401351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7580F9C1927
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:32:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919EB9C192F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:34:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993BF1C22DA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:32:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23ECF1F2403B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A64B1DF751;
-	Fri,  8 Nov 2024 09:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4301E130F;
+	Fri,  8 Nov 2024 09:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0STvhU/"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vkDjaWCq"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F061E0E10;
-	Fri,  8 Nov 2024 09:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20F11C3F01;
+	Fri,  8 Nov 2024 09:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731058354; cv=none; b=A1i8RaWrhvQXQw6so/cm/iojvknM6KrO40MdSI3IN1A+8MOE3eAcBCxPeXhi8wJAMiodcz2XaiKTRmT2XNmmmeSIB4ae+41PEPEGLZFBGYH26iQFcraH/ZKuY2/YurVExFbVfaBkICaxud5xC0xTw+0SA7wvQaEDBoNz22ZUb/I=
+	t=1731058458; cv=none; b=ZxPDo3TaNyMF4PIfm29Kn9cgv4hfeEX9aP3Tiqf5cs38qSpz98FzXmfw4lNasFTAYNMLJ5fJaT4iFvUv5jbdzE4pr2de3BK76duU5vRrHXmgy1uChINDDeeLRzD2afPSTUA7g/2Se8DzTHHa2SmMHXLW0+pKpmhPNKjgXKRfqXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731058354; c=relaxed/simple;
-	bh=5JT9q3gpAwQF2par5+uW69x86vRizd5yo+7cvjN3Xtg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qjWKwzxM79Fz+0zOT9Xm5TaVb0UUnK2vD54Gw3/okRFujwav+EqBdvcbqxigb0v+gI6ExJ/hRtaMQKEBWuncDRUT8EiQZ2zhmWU23ep+oWJ65YmCBx4KvqK+A/sPlWdMqcsijwrnU6tgk8DG8Nj6HHg4d+cRwVgnZAMNADo8BOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0STvhU/; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20e576dbc42so21181275ad.0;
-        Fri, 08 Nov 2024 01:32:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731058352; x=1731663152; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w9Hr5K97dzEp00J83GyyZnUGXFd6uzRJ3erdQ6iKcfc=;
-        b=T0STvhU/15ksFfbpMgMWnYdk4fNMtA4lfeEytg3o8tdI3c7R554Nq6fGlP/lQEv4HK
-         c8fF0pf6ffPFNSK8Dh9pBaD8anRR6JtJZzAxzr92/WRCFge12WUSNxKnnmwdSne9HYhh
-         G9x9PsIlIKsO79IBteTb6zEsZPJLMQ5CJzscbTegoPQN8IEyWAVesNLnDQBzILvORjt0
-         Fo5oqL9zQzoaO5C3YTkndLNKZwOMe7JwF9YDr8mjCtr5fk5Nb89NOTDXj/sQr6f9Ravp
-         Gqgyun71TemPeuNOvTRoPCpuL8f0BbDzwfcaeBNRk2oEisZJrKi8V+CzwzZ7dUKtNN8d
-         jnPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731058352; x=1731663152;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w9Hr5K97dzEp00J83GyyZnUGXFd6uzRJ3erdQ6iKcfc=;
-        b=j2VM1gWv1aSyvqZ3hhCZhLDw0iy9ftKSbm1map85uZH5Rq12X8HeEU073Snen0coot
-         HJniqcb3v9ehd3BCwpHgxirorkbhxX7ewtQJC703koz/wQO4u42ei0TEXHfycXe9dzn7
-         8jqDKmY8rKvIuif2MnmtZgFVZskilGd20AswLm4Tf7Ofql4GVC31EA/vHajxbmnoH+RS
-         GJ7XbX5xJTLxALrt+9xkjhr3I+YgqZkThHBF/PHmnw9+AOnmU5ERYOiar0VKUhoVm3hj
-         n75vySmf/Yh0vnA04YNHCnG47VitwQvSU81Yz31a0kOijodmFJcn8pB3wyepI7dmi0a6
-         fnlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWY4nqTsBqerAQfPA5AkkDJYMq33Q0aTfe9VQEatarskv9PXZ5aa1ZKpXs4ur4PNpDsta4sjaueGNKd@vger.kernel.org, AJvYcCXWP4OKg9b4p+GM8waVbJd/jwkac/hYWK2Q7/AW5YrlAyPHmZxeBsO/m/Ss8Eif5LvYOQ0mQ/HpnUxpMVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNwa8Sd1AULH0tldCD3ndmpc5g9nLVjLCZ/bq40F717+CC7Hok
-	wmnRYFwFcileId8Sjj0jIN9WdM4ajEfnKn2FzsCWr588zEatqAl8
-X-Google-Smtp-Source: AGHT+IFbEmvJJt+qwRNTmhZayKDQTUZX9faEC2skPvQ3lg8UrVWHPGKH7yXifF+492qlWgEO04A+cA==
-X-Received: by 2002:a17:903:2ace:b0:211:31ac:89e0 with SMTP id d9443c01a7336-211834dfd86mr28300405ad.4.1731058351879;
-        Fri, 08 Nov 2024 01:32:31 -0800 (PST)
-Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e58117sm26230485ad.172.2024.11.08.01.32.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 01:32:31 -0800 (PST)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: djwong@kernel.org
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	cem@kernel.org,
-	chandanbabu@kernel.org,
-	dchinner@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2] xfs: check the remaining length of extent after roundup
-Date: Fri,  8 Nov 2024 17:32:28 +0800
-Message-ID: <20241108093228.1151891-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
-In-Reply-To: <20241107200539.GR2386201@frogsfrogsfrogs>
-References: <20241107200539.GR2386201@frogsfrogsfrogs>
+	s=arc-20240116; t=1731058458; c=relaxed/simple;
+	bh=TGZBuGMeEe+Ne8ep3KhskAFoF9Bm5tPr2Hq0yCiZatM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u0MsTEcAKQkRXmWQiAsJeogio2zQb1rMfK5vM1PnEyZZ+zniko+Sfd5Vx1PYxBmoThQ1aXg0FHfKbYd7JU/VV+ouPKczmYbGBp4oRVZtyexPgBFDr3EeVeYq0CwCYbfzM75geddRMYXtcRc/biCvwBz9gkzdsUQ2TDNx2HAJh6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vkDjaWCq; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E654D353;
+	Fri,  8 Nov 2024 10:34:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731058445;
+	bh=TGZBuGMeEe+Ne8ep3KhskAFoF9Bm5tPr2Hq0yCiZatM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vkDjaWCqJfGAeZWU3TJfW9iJ+VfHt+geAUSVKMPYqcQnELdlkel39nI4EL2btbMQo
+	 kB+d5eeQR4reKzxn2Rn00TMfpDVqQF4X36DsFli53JTFF0kIu/jjYLFnDntBhmdQse
+	 4NH7K5Xm/24gw1PicUIOrKfQMkOyKRW2ljEICqAw=
+Message-ID: <f1cc3479-6c2e-40dd-8b78-671138f31d9d@ideasonboard.com>
+Date: Fri, 8 Nov 2024 11:34:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/13] media: i2c: ds90ub913: Add error handling to
+ ub913_hw_init()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jai Luthra <jai.luthra@ideasonboard.com>
+References: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
+ <20241004-ub9xx-fixes-v1-12-e30a4633c786@ideasonboard.com>
+ <Zwfe7V_rV3Xyxp31@smile.fi.intel.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <Zwfe7V_rV3Xyxp31@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 7 Nov 2024 12:05:39 -0800, Darrick J. Wong wrote:
-> On Thu, Nov 07, 2024 at 04:40:44PM +0800, Jinliang Zheng wrote:
-> > In xfs_alloc_compute_diff(), ensure that the remaining length of extent
-> > still meets the wantlen requirements after newbno1 is rounded.
+Hi Andy,
+
+On 10/10/2024 17:04, Andy Shevchenko wrote:
+> On Fri, Oct 04, 2024 at 05:46:43PM +0300, Tomi Valkeinen wrote:
+>> Add error handling to ub913_hw_init() using a new helper function,
+>> ub913_update_bits().
 > 
-> What problem are you observing?
+> ...
 > 
-> --D
-
-Thank you for your reply. :)
-
-In fact, I haven't encountered any issues with this in production.
-
-My starting point is I was wondering what will happen if
-xfs_alloc_compute_diff()'s changes to bnew cause the extent's remaining
-length to be less than args->len?
-
-I wonder if this will happen? Am I missing some code to ensure this doesn't
-happen?
-
-If it will happen, I think we'd better check it out here; if it doesn't,
-please ignore this patch.
-
-Thank you again.
-Jinliang Zheng :)
-
+>> +	ret = ub913_update_bits(priv, UB913_REG_GENERAL_CFG,
+>> +				UB913_REG_GENERAL_CFG_PCLK_RISING,
+>> +				priv->pclk_polarity_rising ?
+>> +					UB913_REG_GENERAL_CFG_PCLK_RISING :
+>> +					0);
 > 
-> > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> > ---
-> > Changelog:
-> > 
-> > V2: Fix the error logic
-> > 
-> > V1: https://lore.kernel.org/linux-xfs/20241107070300.13535-1-alexjlzheng@tencent.com/#R
-> > ---
-> >  fs/xfs/libxfs/xfs_alloc.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-> > index 22bdbb3e9980..1d4cc75b7318 100644
-> > --- a/fs/xfs/libxfs/xfs_alloc.c
-> > +++ b/fs/xfs/libxfs/xfs_alloc.c
-> > @@ -393,7 +393,8 @@ xfs_alloc_compute_diff(
-> >  	 * grows in the short term.
-> >  	 */
-> >  	if (freebno >= wantbno || (userdata && freeend < wantend)) {
-> > -		if ((newbno1 = roundup(freebno, alignment)) >= freeend)
-> > +		newbno1 = roundup(freebno, alignment);
-> > +		if (newbno1 >= freeend || newbno1 > freeend - wantlen)
-> >  			newbno1 = NULLAGBLOCK;
-> >  	} else if (freeend >= wantend && alignment > 1) {
-> >  		newbno1 = roundup(wantbno, alignment);
-> > @@ -414,6 +415,8 @@ xfs_alloc_compute_diff(
-> >  				newbno1 = newbno2;
-> >  		} else if (newbno2 != NULLAGBLOCK)
-> >  			newbno1 = newbno2;
-> > +		if (newbno1 > freeend - wantlen)
-> > +			newbno1 = NULLAGBLOCK;
-> >  	} else if (freeend >= wantend) {
-> >  		newbno1 = wantbno;
-> >  	} else if (alignment > 1) {
-> > -- 
-> > 2.41.1
-> > 
-> > 
+> So, you can use regmap_set_bits() / regmap_clear_bits() instead of this
+> ternary. It also gives one parameter less to the regmap calls.
+
+True... But is it better?
+
+if (priv->pclk_polarity_rising)
+	ret = regmap_set_bits(priv->regmap, UB913_REG_GENERAL_CFG,
+			      UB913_REG_GENERAL_CFG_PCLK_RISING);
+else
+	ret = regmap_clear_bits(priv->regmap, UB913_REG_GENERAL_CFG,
+				UB913_REG_GENERAL_CFG_PCLK_RISING);
+
+The call itself is more readable there, but then again, as we're setting 
+the value of a bit, I dislike having if/else with two calls for a single 
+assignment.
+
+Using FIELD_PREP is perhaps a bit better than the ternary:
+
+ret = ub913_update_bits(priv, UB913_REG_GENERAL_CFG,
+			UB913_REG_GENERAL_CFG_PCLK_RISING,
+			FIELD_PREP(UB913_REG_GENERAL_CFG_PCLK_RISING,
+				   priv->pclk_polarity_rising));
+
+I think I'd like best a function to set/clear a bitmask with a boolean:
+
+ret = regmap_toggle_bits(priv->regmap, UB913_REG_GENERAL_CFG,
+			 UB913_REG_GENERAL_CFG_PCLK_RISING,
+			 priv->pclk_polarity_rising);
+
+For now, I think I'll go with the FIELD_PREP() version. It's perhaps a 
+bit better than the ternary.
+
+  Tomi
+
 
