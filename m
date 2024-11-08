@@ -1,408 +1,168 @@
-Return-Path: <linux-kernel+bounces-401660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05F39C1D9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:08:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B0B9C1DA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC845B232A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80481C22F6F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48D11E9079;
-	Fri,  8 Nov 2024 13:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9351B1EABA9;
+	Fri,  8 Nov 2024 13:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KfyU0/+b"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jWpSmnWn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EB81E0E1A
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A3E1E6DE1
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731071272; cv=none; b=Zr/Zd62PAwgTJNlUltaerY5zK4amfYfVE9Sh3Q8MYU9ikbXn0ptcOsJMaqrhhXs/UAYHbpP3CGibA3gQfOSgU/z3AeRu0O4oI5M2Th08644lC/1WQvP6vX8dZFTMajIhJSN9EirQAyRTVEV2HsQ5v8IIW3LyGeJtfaYd8Tz/pks=
+	t=1731071350; cv=none; b=fiMI7XLROa2QL8bhDQ3pEFuTPZqboQNY3YVUAuGj2kFlQERPElfvCI3C8XtQOICtSaX29v5k8Xd7kMgg4PtvQ3NyQMl16y+48EUwShWmQmESYZshuYjEH7AlgZ2ff9GGg3CWMy0ktD0oaZSTXWlecXU9RU1VAuLVsMBQIH8qJv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731071272; c=relaxed/simple;
-	bh=CYH0PXwxfG8TxAVh3+79MgWgHVWV3jjOl4trZuJEiNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DP66WlI91GL+0FAZb0/6idr7Sigp4yI8YI2sTH/Q/MKLunKfZnsXiAATrqoEezn+qGWxDaer1cSRhMS1fKZOmwtCqn3p/ioHCt1hlsYjjhBc75B9qTz87sfJCHold3JzYtUKcnsS96FWrKWRg168WN42o+jMOGL5VR4ixBgBj0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KfyU0/+b; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731071269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UBKmK8tEl4j/lViVvAFgYObQhSYvDrj2ltyuK7C2hYo=;
-	b=KfyU0/+bAGYRBxmPn6nqg/s/6RApBUEwxitJUp1zrVhlxaeOPyCTtNtICQCjkG7ihK/l3I
-	jkhq53FBdv2tPUTYagGIQcJjo3viNI82uvMlS4O88b0kKQu+0PQYmF0tUCsl6HHSAbY+tC
-	XY7tcKUsz7RcBiW+hh9ojOgHKQWnVT4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-XCmSUF_aOQuC86HEG8PGIA-1; Fri,
- 08 Nov 2024 08:07:45 -0500
-X-MC-Unique: XCmSUF_aOQuC86HEG8PGIA-1
-X-Mimecast-MFC-AGG-ID: XCmSUF_aOQuC86HEG8PGIA
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D15919540EF;
-	Fri,  8 Nov 2024 13:07:44 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A5757300019E;
-	Fri,  8 Nov 2024 13:07:43 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: michael.christie@oracle.com,
-	Tejun Heo <tj@kernel.org>,
-	Luca Boccassi <bluca@debian.org>
-Subject: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
-Date: Fri,  8 Nov 2024 08:07:37 -0500
-Message-ID: <20241108130737.126567-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1731071350; c=relaxed/simple;
+	bh=61vvWGL0UpYowW9YO69YIiDWIsi7Qdruyw3F3U/nxTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PuZAAwPawtbUDep+hWocrfxGN8aiVuLukbRHdN40nTL39aXSHY+R1c4FA2i0ww1mHIFAtziuOqlYSN026Ia7+y8Xd+92sL5TimJjNE9MtdY0B+vMQTwFoB92bLbApMZwGHJpczEbiEq/NQ6UsN6uIhI+EQIGG2e7K5lW/EksS/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jWpSmnWn; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731071350; x=1762607350;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=61vvWGL0UpYowW9YO69YIiDWIsi7Qdruyw3F3U/nxTo=;
+  b=jWpSmnWnVBvq5ROK2cuv3IyUMMCXR97VwLTkTOgWroJNBrQJfwFMwW5W
+   sqro+tZ9+YwerCsV/GQikJ+CsX0H/LP2hmqqsdF5rx/erzKx3YEEokXmp
+   mwIytDLCsXX01T6RYZ1d6obKCNPqcJzuw6WFMNxufNcu5X/Ncq+USjJRu
+   GqvSujnuWWsKxtvqMqi3sadw/juKkyXzlBB1KqA6i+6iK2o426OVEihew
+   VJjA6j6dXwPjsSUHBNBIV3+JeVWP8dRKHoEE7vV5nmV8Gs2Js8m6g9ahk
+   g2uuBtzxhTKi8Q+ceer1FrsFiC3F8wfTY/KD7Kpa0U/WvLi92VWiQogQ6
+   g==;
+X-CSE-ConnectionGUID: 5WT3fEvjQHGUj/P6eRJBzg==
+X-CSE-MsgGUID: P2fnW0HVTlevBJCwcPkvng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53514379"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="53514379"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 05:09:09 -0800
+X-CSE-ConnectionGUID: hcTWoXcFRGmvNlip2Riz+Q==
+X-CSE-MsgGUID: K4ZycnqFTMKtahPn8K5cyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="85652998"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 08 Nov 2024 05:09:05 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9OjW-000rRa-2c;
+	Fri, 08 Nov 2024 13:09:02 +0000
+Date: Fri, 8 Nov 2024 21:08:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	John Ogness <john.ogness@linutronix.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+	bluescreen_avenger@verizon.net,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [PATCH v7 3/7] drm/log: Introduce a new boot logger to draw the
+ kmsg on the screen
+Message-ID: <202411082034.Lnxy55Wm-lkp@intel.com>
+References: <20241108082025.1004653-4-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108082025.1004653-4-jfalempe@redhat.com>
 
-kvm_vm_create_worker_thread() is meant to be used for kthreads that
-can consume significant amounts of CPU time on behalf of a VM or in
-response to how the VM behaves (for example how it accesses its memory).
-Therefore it wants to charge the CPU time consumed by that work to
-the VM's container.
+Hi Jocelyn,
 
-However, because of these threads, cgroups which have kvm instances inside
-never complete freezing.  This can be trivially reproduced:
+kernel test robot noticed the following build errors:
 
-  root@test ~# mkdir /sys/fs/cgroup/test
-  root@test ~# echo $fish_pid > /sys/fs/cgroup/test/cgroup.procs
-  root@test ~# qemu-system-x86_64 --nographic -enable-kvm
+[auto build test ERROR on baf4afc5831438b35de4b0e951b9cd58435a6d99]
 
-and in another terminal:
+url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-panic-Move-drawing-functions-to-drm_draw/20241108-162222
+base:   baf4afc5831438b35de4b0e951b9cd58435a6d99
+patch link:    https://lore.kernel.org/r/20241108082025.1004653-4-jfalempe%40redhat.com
+patch subject: [PATCH v7 3/7] drm/log: Introduce a new boot logger to draw the kmsg on the screen
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20241108/202411082034.Lnxy55Wm-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411082034.Lnxy55Wm-lkp@intel.com/reproduce)
 
-  root@test ~# echo 1 > /sys/fs/cgroup/test/cgroup.freeze
-  root@test ~# cat /sys/fs/cgroup/test/cgroup.events
-  populated 1
-  frozen 0
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411082034.Lnxy55Wm-lkp@intel.com/
 
-The cgroup freezing happens in the signal delivery path but
-kvm_vm_worker_thread() thread never call into the signal delivery path while
-joining non-root cgroups, so they never get frozen. Because the cgroup
-freezer determines whether a given cgroup is frozen by comparing the number
-of frozen threads to the total number of threads in the cgroup, the cgroup
-never becomes frozen and users waiting for the state transition may hang
-indefinitely.
+All errors (new ones prefixed by >>):
 
-Since the worker kthread is tied to a user process, it's better if
-it behaves similarly to user tasks as much as possible, including
-being able to send SIGSTOP and SIGCONT.  In fact, vhost_task is all
-that kvm_vm_create_worker_thread() wanted to be and more: not only it
-inherits the userspace process's cgroups, it has other niceties like
-being parented properly in the process tree.  Use it instead of the
-homegrown alternative.
+>> drivers/gpu/drm/drm_client_setup.c:11:38: error: 'CONFIG_DRM_CLIENT_DEFAULT' undeclared here (not in a function); did you mean 'CONFIG_DRM_CLIENT_LIB'?
+      11 | static char drm_client_default[16] = CONFIG_DRM_CLIENT_DEFAULT;
+         |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+         |                                      CONFIG_DRM_CLIENT_LIB
+   In file included from include/linux/module.h:22,
+                    from include/linux/device/driver.h:21,
+                    from include/linux/device.h:32,
+                    from include/drm/drm_print.h:31,
+                    from drivers/gpu/drm/drm_client_setup.c:7:
+>> drivers/gpu/drm/drm_client_setup.c:15:18: error: expected ',' or ';' before 'CONFIG_DRM_CLIENT_DEFAULT'
+      15 |                  CONFIG_DRM_CLIENT_DEFAULT "]");
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/moduleparam.h:26:61: note: in definition of macro '__MODULE_INFO'
+      26 |                 = __MODULE_INFO_PREFIX __stringify(tag) "=" info
+         |                                                             ^~~~
+   drivers/gpu/drm/drm_client_setup.c:13:1: note: in expansion of macro 'MODULE_PARM_DESC'
+      13 | MODULE_PARM_DESC(client,
+         | ^~~~~~~~~~~~~~~~
+   drivers/gpu/drm/drm_client_setup.c:33:6: error: redefinition of 'drm_client_setup'
+      33 | void drm_client_setup(struct drm_device *dev, const struct drm_format_info *format)
+         |      ^~~~~~~~~~~~~~~~
+   In file included from drivers/gpu/drm/drm_client_setup.c:3:
+   include/drm/drm_client_setup.h:16:20: note: previous definition of 'drm_client_setup' with type 'void(struct drm_device *, const struct drm_format_info *)'
+      16 | static inline void drm_client_setup(struct drm_device *dev,
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/gpu/drm/drm_client_setup.c:55:6: error: redefinition of 'drm_client_setup_with_fourcc'
+      55 | void drm_client_setup_with_fourcc(struct drm_device *dev, u32 fourcc)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/gpu/drm/drm_client_setup.c:3:
+   include/drm/drm_client_setup.h:19:20: note: previous definition of 'drm_client_setup_with_fourcc' with type 'void(struct drm_device *, u32)' {aka 'void(struct drm_device *, unsigned int)'}
+      19 | static inline void drm_client_setup_with_fourcc(struct drm_device *dev, u32 fourcc)
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpu/drm/drm_client_setup.c:72:6: error: redefinition of 'drm_client_setup_with_color_mode'
+      72 | void drm_client_setup_with_color_mode(struct drm_device *dev, unsigned int color_mode)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/gpu/drm/drm_client_setup.c:3:
+   include/drm/drm_client_setup.h:21:20: note: previous definition of 'drm_client_setup_with_color_mode' with type 'void(struct drm_device *, unsigned int)'
+      21 | static inline void drm_client_setup_with_color_mode(struct drm_device *dev,
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(Commit message based on emails from Tejun).
 
-Reported-by: Tejun Heo <tj@kernel.org>
-Reported-by: Luca Boccassi <bluca@debian.org>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/asm/kvm_host.h |   4 +-
- arch/x86/kvm/Kconfig            |   1 +
- arch/x86/kvm/mmu/mmu.c          |  67 +++++++++++----------
- include/linux/kvm_host.h        |   6 --
- virt/kvm/kvm_main.c             | 103 --------------------------------
- 5 files changed, 39 insertions(+), 142 deletions(-)
+vim +11 drivers/gpu/drm/drm_client_setup.c
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 6d9f763a7bb9..d6657cc0fe6b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -26,6 +26,7 @@
- #include <linux/irqbypass.h>
- #include <linux/hyperv.h>
- #include <linux/kfifo.h>
-+#include <linux/sched/vhost_task.h>
- 
- #include <asm/apic.h>
- #include <asm/pvclock-abi.h>
-@@ -1443,7 +1444,8 @@ struct kvm_arch {
- 	bool sgx_provisioning_allowed;
- 
- 	struct kvm_x86_pmu_event_filter __rcu *pmu_event_filter;
--	struct task_struct *nx_huge_page_recovery_thread;
-+	struct vhost_task *nx_huge_page_recovery_thread;
-+	u64 nx_huge_page_next;
- 
- #ifdef CONFIG_X86_64
- 	/* The number of TDP MMU pages across all roots. */
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index f09f13c01c6b..b387d61af44f 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -29,6 +29,7 @@ config KVM_X86
- 	select HAVE_KVM_IRQ_BYPASS
- 	select HAVE_KVM_IRQ_ROUTING
- 	select HAVE_KVM_READONLY_MEM
-+	select VHOST_TASK
- 	select KVM_ASYNC_PF
- 	select USER_RETURN_NOTIFIER
- 	select KVM_MMIO
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 8e853a5fc867..d5af4f8c5a6a 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7281,7 +7281,7 @@ static int set_nx_huge_pages(const char *val, const struct kernel_param *kp)
- 			kvm_mmu_zap_all_fast(kvm);
- 			mutex_unlock(&kvm->slots_lock);
- 
--			wake_up_process(kvm->arch.nx_huge_page_recovery_thread);
-+			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
- 		}
- 		mutex_unlock(&kvm_lock);
- 	}
-@@ -7427,7 +7427,7 @@ static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel
- 		mutex_lock(&kvm_lock);
- 
- 		list_for_each_entry(kvm, &vm_list, vm_list)
--			wake_up_process(kvm->arch.nx_huge_page_recovery_thread);
-+			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
- 
- 		mutex_unlock(&kvm_lock);
- 	}
-@@ -7530,62 +7530,65 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm)
- 	srcu_read_unlock(&kvm->srcu, rcu_idx);
- }
- 
--static long get_nx_huge_page_recovery_timeout(u64 start_time)
-+#define NX_HUGE_PAGE_DISABLED (-1)
-+
-+static u64 get_nx_huge_page_recovery_next(void)
- {
- 	bool enabled;
- 	uint period;
- 
- 	enabled = calc_nx_huge_pages_recovery_period(&period);
- 
--	return enabled ? start_time + msecs_to_jiffies(period) - get_jiffies_64()
--		       : MAX_SCHEDULE_TIMEOUT;
-+	return enabled ? get_jiffies_64() + msecs_to_jiffies(period)
-+		: NX_HUGE_PAGE_DISABLED;
- }
- 
--static int kvm_nx_huge_page_recovery_worker(struct kvm *kvm, uintptr_t data)
-+static void kvm_nx_huge_page_recovery_worker_kill(void *data)
- {
--	u64 start_time;
-+}
-+
-+static bool kvm_nx_huge_page_recovery_worker(void *data)
-+{
-+	struct kvm *kvm = data;
- 	long remaining_time;
- 
--	while (true) {
--		start_time = get_jiffies_64();
--		remaining_time = get_nx_huge_page_recovery_timeout(start_time);
-+	if (kvm->arch.nx_huge_page_next == NX_HUGE_PAGE_DISABLED)
-+		return false;
- 
--		set_current_state(TASK_INTERRUPTIBLE);
--		while (!kthread_should_stop() && remaining_time > 0) {
--			schedule_timeout(remaining_time);
--			remaining_time = get_nx_huge_page_recovery_timeout(start_time);
--			set_current_state(TASK_INTERRUPTIBLE);
--		}
--
--		set_current_state(TASK_RUNNING);
--
--		if (kthread_should_stop())
--			return 0;
--
--		kvm_recover_nx_huge_pages(kvm);
-+	remaining_time = kvm->arch.nx_huge_page_next - get_jiffies_64();
-+	if (remaining_time > 0) {
-+		schedule_timeout(remaining_time);
-+		/* check for signals and come back */
-+		return true;
- 	}
-+
-+	__set_current_state(TASK_RUNNING);
-+	kvm_recover_nx_huge_pages(kvm);
-+	kvm->arch.nx_huge_page_next = get_nx_huge_page_recovery_next();
-+	return true;
- }
- 
- int kvm_mmu_post_init_vm(struct kvm *kvm)
- {
--	int err;
--
- 	if (nx_hugepage_mitigation_hard_disabled)
- 		return 0;
- 
--	err = kvm_vm_create_worker_thread(kvm, kvm_nx_huge_page_recovery_worker, 0,
--					  "kvm-nx-lpage-recovery",
--					  &kvm->arch.nx_huge_page_recovery_thread);
--	if (!err)
--		kthread_unpark(kvm->arch.nx_huge_page_recovery_thread);
-+	kvm->arch.nx_huge_page_next = get_nx_huge_page_recovery_next();
-+	kvm->arch.nx_huge_page_recovery_thread = vhost_task_create(
-+		kvm_nx_huge_page_recovery_worker, kvm_nx_huge_page_recovery_worker_kill,
-+		kvm, "kvm-nx-lpage-recovery");
-+	
-+	if (!kvm->arch.nx_huge_page_recovery_thread)
-+		return -ENOMEM;
- 
--	return err;
-+	vhost_task_start(kvm->arch.nx_huge_page_recovery_thread);
-+	return 0;
- }
- 
- void kvm_mmu_pre_destroy_vm(struct kvm *kvm)
- {
- 	if (kvm->arch.nx_huge_page_recovery_thread)
--		kthread_stop(kvm->arch.nx_huge_page_recovery_thread);
-+		vhost_task_stop(kvm->arch.nx_huge_page_recovery_thread);
- }
- 
- #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 45be36e5285f..85fe9d0ebb91 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -2382,12 +2382,6 @@ static inline int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
- }
- #endif /* CONFIG_HAVE_KVM_VCPU_RUN_PID_CHANGE */
- 
--typedef int (*kvm_vm_thread_fn_t)(struct kvm *kvm, uintptr_t data);
--
--int kvm_vm_create_worker_thread(struct kvm *kvm, kvm_vm_thread_fn_t thread_fn,
--				uintptr_t data, const char *name,
--				struct task_struct **thread_ptr);
--
- #ifdef CONFIG_KVM_XFER_TO_GUEST_WORK
- static inline void kvm_handle_signal_exit(struct kvm_vcpu *vcpu)
- {
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 6ca7a1045bbb..279e03029ce1 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -6561,106 +6561,3 @@ void kvm_exit(void)
- 	kvm_irqfd_exit();
- }
- EXPORT_SYMBOL_GPL(kvm_exit);
--
--struct kvm_vm_worker_thread_context {
--	struct kvm *kvm;
--	struct task_struct *parent;
--	struct completion init_done;
--	kvm_vm_thread_fn_t thread_fn;
--	uintptr_t data;
--	int err;
--};
--
--static int kvm_vm_worker_thread(void *context)
--{
--	/*
--	 * The init_context is allocated on the stack of the parent thread, so
--	 * we have to locally copy anything that is needed beyond initialization
--	 */
--	struct kvm_vm_worker_thread_context *init_context = context;
--	struct task_struct *parent;
--	struct kvm *kvm = init_context->kvm;
--	kvm_vm_thread_fn_t thread_fn = init_context->thread_fn;
--	uintptr_t data = init_context->data;
--	int err;
--
--	err = kthread_park(current);
--	/* kthread_park(current) is never supposed to return an error */
--	WARN_ON(err != 0);
--	if (err)
--		goto init_complete;
--
--	err = cgroup_attach_task_all(init_context->parent, current);
--	if (err) {
--		kvm_err("%s: cgroup_attach_task_all failed with err %d\n",
--			__func__, err);
--		goto init_complete;
--	}
--
--	set_user_nice(current, task_nice(init_context->parent));
--
--init_complete:
--	init_context->err = err;
--	complete(&init_context->init_done);
--	init_context = NULL;
--
--	if (err)
--		goto out;
--
--	/* Wait to be woken up by the spawner before proceeding. */
--	kthread_parkme();
--
--	if (!kthread_should_stop())
--		err = thread_fn(kvm, data);
--
--out:
--	/*
--	 * Move kthread back to its original cgroup to prevent it lingering in
--	 * the cgroup of the VM process, after the latter finishes its
--	 * execution.
--	 *
--	 * kthread_stop() waits on the 'exited' completion condition which is
--	 * set in exit_mm(), via mm_release(), in do_exit(). However, the
--	 * kthread is removed from the cgroup in the cgroup_exit() which is
--	 * called after the exit_mm(). This causes the kthread_stop() to return
--	 * before the kthread actually quits the cgroup.
--	 */
--	rcu_read_lock();
--	parent = rcu_dereference(current->real_parent);
--	get_task_struct(parent);
--	rcu_read_unlock();
--	cgroup_attach_task_all(parent, current);
--	put_task_struct(parent);
--
--	return err;
--}
--
--int kvm_vm_create_worker_thread(struct kvm *kvm, kvm_vm_thread_fn_t thread_fn,
--				uintptr_t data, const char *name,
--				struct task_struct **thread_ptr)
--{
--	struct kvm_vm_worker_thread_context init_context = {};
--	struct task_struct *thread;
--
--	*thread_ptr = NULL;
--	init_context.kvm = kvm;
--	init_context.parent = current;
--	init_context.thread_fn = thread_fn;
--	init_context.data = data;
--	init_completion(&init_context.init_done);
--
--	thread = kthread_run(kvm_vm_worker_thread, &init_context,
--			     "%s-%d", name, task_pid_nr(current));
--	if (IS_ERR(thread))
--		return PTR_ERR(thread);
--
--	/* kthread_run is never supposed to return NULL */
--	WARN_ON(thread == NULL);
--
--	wait_for_completion(&init_context.init_done);
--
--	if (!init_context.err)
--		*thread_ptr = thread;
--
--	return init_context.err;
--}
+    10	
+  > 11	static char drm_client_default[16] = CONFIG_DRM_CLIENT_DEFAULT;
+    12	module_param_string(client, drm_client_default, sizeof(drm_client_default), 0444);
+    13	MODULE_PARM_DESC(client,
+    14			 "Choose which drm client to start, default is"
+  > 15			 CONFIG_DRM_CLIENT_DEFAULT "]");
+    16	
+
 -- 
-2.43.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
