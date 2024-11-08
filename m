@@ -1,116 +1,119 @@
-Return-Path: <linux-kernel+bounces-402444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E67A9C2793
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:29:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9139C2797
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:30:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14983284090
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:29:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC631C22CFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF72D1F5832;
-	Fri,  8 Nov 2024 22:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859071E00B6;
+	Fri,  8 Nov 2024 22:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D0l9cm3A"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bStwo8Y5"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538E51F26C9;
-	Fri,  8 Nov 2024 22:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A941AA1F1;
+	Fri,  8 Nov 2024 22:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731104976; cv=none; b=YTUu9xqXniz6at/iwAgVJMcH65Imm1ECkkVcvA6FJW+mp8VTLb1QW7Np9E1O5/d3QyrBknl4FVYzo4PmZ30rBiElrm1MRpxRKkCrr3Yt23xdwGyYh+PE6i4BPWaaSgbmxM3TAC6945+32HQZx8OODKgcs3yiC32Lr5kdAHi/Ktc=
+	t=1731105014; cv=none; b=E56PoqYVgR1qp7sdQ7ExBBtYxSMMBlCygvZywvXOUk8PDPA+L2KcFK7Qn93FxFi/pIeMRmNkvpgAMNjIxB1feiDTFBMKLl9TISYXSWw1Ye1c037Hr2uaf8RvZ+/H+P89aMrbUGgUJiLV4/T1Gh4A1y6rnDf83oS+xUxpmtieZio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731104976; c=relaxed/simple;
-	bh=qJjCe1x/+zqlWuKc7d+aXQgxzYOBvB4ApAoxF5HeEwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RraB3DZzqHja91gRxkzcM7WavzFXss7IZKHEkej4rdP5a79eV2F3IIe6OmuI4YvzUQwx4lAn6ISjQIftvcXMWxqV9F/xrIryEfLPoXjtGVoJSkyPBQ5+JyM3N/xRgo9q4sWryU0lfbFnfOuR5Li/DsvS+3Q+tSk5O0uMH6n/bok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D0l9cm3A; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=vyXWLdY22mbau7qfmkpZcxZ0TUXHpJ4OrztVMYMMO3w=; b=D0l9cm3Ar1Lv9+3q4mlHfKdV6X
-	runW4UHkA0IjIyBpEzIN1Yvw3dy4aGac2aq11Gtkg8PvUXnRsIRtA7kwNBumbPms/CO2QoRe/G6oF
-	TGNACtbN6UuuYPydxGmq6O+2xbVV3Of6qKfNGMe/JwSvDzauKd+Sd+F7cFYckZMdc+9+mzpw+FxSO
-	sv76iw9U+U7IFO2VPe3pCqFidKD+wEK6FhB20SC4UDzhm30/LqvQBSSggR6Bps+Xz7+xjNvyNX8bf
-	bz1kiX7OBbuBsqK+WoM8HKss/fGae7kkB3MtZ52NeuCUSUEhzmZDa139fzEw/z0pr//mKz+69Rsy0
-	ZwxcQ60w==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9XTt-00000009Nig-05OW;
-	Fri, 08 Nov 2024 22:29:30 +0000
-Message-ID: <4ec3e311-fc25-4732-9b93-5b8f0332cb82@infradead.org>
-Date: Fri, 8 Nov 2024 14:29:23 -0800
+	s=arc-20240116; t=1731105014; c=relaxed/simple;
+	bh=9ZtlgWcb8duhNVqPDAn5hIYaU83Rr15xcO+2oQoFQmg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=sRh6Ikhb2x7KhVGC4fKhq+xbmoupIncn+GYU/frtlXmYf/8Dy3tBF3R5IFSOZzlaaHMAMJ8a5ETVoJC0Xi31xwBAsx809GAJhYwfv+3UzvJKMtGyN8ve9lszyLrxEnbtPXMu56E45jeedACHT7YAicu3kXHEu6Ki5ojlymSFcvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bStwo8Y5; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f6e1f756so3190057e87.0;
+        Fri, 08 Nov 2024 14:30:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731105010; x=1731709810; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ntDc+E2Dx+rmuw80lGROxVvsemnHwiBssXUslPLnRYQ=;
+        b=bStwo8Y521BMUXe6O0AIDEH2bijEN1vRjc20O5hWbzfhSwa6WEkjJ8wQKhe2gVGO4/
+         XKJa2oxAuSjLY3e+kmSdWfYUy8XS3HA0/SYJQhVeXZtNu2GyViwpubaf9YoadFQoKn1h
+         OF2JsBRzfAuOQeVOj6RfNb7v+6Uj2S7Puuft1syj91u2fC72H3w7s96YQZjKxc9G5HcD
+         dfuC5BFnrFNitWN6hZxm7SG7s4WClEzF5CR1SuZXYt6dRwsQaLPhprU+POP+RkaFYs/l
+         0GRWDCh+JEk2+Mgo60NNgwxtgRXsLO/+ga7s/STWduaJMlw1Vc/AAjOCs/E+Hfmy+tLm
+         Z9+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731105010; x=1731709810;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ntDc+E2Dx+rmuw80lGROxVvsemnHwiBssXUslPLnRYQ=;
+        b=TIzs8S0rlUm/A3RdSYBFgKda2W6KqSaUZh1FY3+qAm001cDiON4tK4ub7+N8o8ngD3
+         rTIlK+IiLJPZZjNYRg3Dxbo5qQjRqurBNocTK3Q8vJ+t/ZHEMFINshWtUtJ/tzMS4Eo7
+         B1VMwk6ErH6eRWF8j45Yq95qiH8pSd56XBgJ4OAc/M674ISl27B/m03yv2BKeNNxnieD
+         YEreLnEWvvLTWslE7rWury/dtE18CGmp9g3o3Q4FASFS3gBPsgUUoAq8M+LlA+X3ZQaf
+         fCMZHzrqrJGfpVPIh/YxOds5z9OMJXX5cdEToH6q2slLzVGLAn+L7E4AW5HL/Zw9o7h9
+         PqRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCxE+8zhwDNUwMtSG1uUty6KqL6uZ6KtMhxJ3TlWlBmu2Vt9z5v6WLH46rX1+y2s+XGOMesgBTSKew3rcO@vger.kernel.org, AJvYcCVr9ll2UdtH8b36SAxhgwuW9cko8kRRuhdl8daZJNrK8UvqFSBQ+YAJe1n06mjje1YYF5Qe8KQR/gf5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeDH6j+q1oAwT5i1uSNa99Z3zlEljzsp+0r25zqjEz8nSftgUy
+	8aAGV09wOaanlt66LglKhL52T/Cg2vRdmkjda+h5eKyrNooaDU3Jz4d7pkW/oOmF3jrdzCg4vGk
+	3EIoFRPgWQGczlukNpY0CtsXu4i8=
+X-Google-Smtp-Source: AGHT+IHIxtFntdiAEdNB/zI5le+OJOQGaLItdQu1V7tD6VQauamRkwfCYrsvhzoidJUK+BCHm7KG3uJNe0DkqtWlwzo=
+X-Received: by 2002:a05:6512:33c6:b0:539:e88f:2398 with SMTP id
+ 2adb3069b0e04-53d862ee21emr2239992e87.39.1731105010176; Fri, 08 Nov 2024
+ 14:30:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: hwmon: Fix typos in sch5627 and max31827
-To: Abhinav Saxena <xandfury@gmail.com>,
- linux-kernel-mentees@lists.linuxfoundation.org, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Jonathan Corbet <corbet@lwn.net>
-References: <20241108212201.144482-1-xandfury@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241108212201.144482-1-xandfury@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 8 Nov 2024 16:29:59 -0600
+Message-ID: <CAH2r5mu+pJMkChJBwgZ9mHjf6s8JxDAtfTU5fFcqir1rdqNXtw@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Please pull the following changes since commit
+81983758430957d9a5cb3333fe324fd70cf63e7e:
 
+  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
 
-On 11/8/24 1:22 PM, Abhinav Saxena wrote:
-> Fix some typos in hwmon/sch5627 and hwmon/max31827 reported by
-> checkpatch.pl. These changes are purely documentation cleanup with no
-> functional modifications.
-> 
-> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+are available in the Git repository at:
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+  git://git.samba.org/ksmbd.git tags/v6.12-rc6-ksmbd-fixes
 
-Thanks.
+for you to fetch changes up to 0a77d947f599b1f39065015bec99390d0c0022ee:
 
-> ---
->  Documentation/hwmon/max31827.rst | 2 +-
->  Documentation/hwmon/sch5627.rst  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
-> index 9c11a9518c67..6cc5088b26b7 100644
-> --- a/Documentation/hwmon/max31827.rst
-> +++ b/Documentation/hwmon/max31827.rst
-> @@ -136,7 +136,7 @@ PEC Support
->  
->  When reading a register value, the PEC byte is computed and sent by the chip.
->  
-> -PEC on word data transaction respresents a signifcant increase in bandwitdh
-> +PEC on word data transaction represents a significant increase in bandwidth
->  usage (+33% for both write and reads) in normal conditions.
->  
->  Since this operation implies there will be an extra delay to each
-> diff --git a/Documentation/hwmon/sch5627.rst b/Documentation/hwmon/sch5627.rst
-> index 8639dff234fc..5f521c6e90ab 100644
-> --- a/Documentation/hwmon/sch5627.rst
-> +++ b/Documentation/hwmon/sch5627.rst
-> @@ -39,7 +39,7 @@ Controlling fan speed
->  ---------------------
->  
->  The SCH5627 allows for partially controlling the fan speed. If a temperature
-> -channel excedes tempX_max, all fans are forced to maximum speed. The same is not
-> +channel exceeds tempX_max, all fans are forced to maximum speed. The same is not
->  true for tempX_crit, presumably some other measures to cool down the system are
->  take in this case.
->  In which way the value of fanX_min affects the fan speed is currently unknown.
+  ksmbd: check outstanding simultaneous SMB operations (2024-11-05
+09:26:38 +0900)
+
+----------------------------------------------------------------
+four fixes, also for stable
+- fix two potential use after free issues
+- fix OOM issue with many simultaneous requests
+- fix missing error check in RPC pipe handling
+----------------------------------------------------------------
+Jinjie Ruan (1):
+      ksmbd: Fix the missing xa_store error check
+
+Namjae Jeon (3):
+      ksmbd: fix slab-use-after-free in ksmbd_smb2_session_create
+      ksmbd: fix slab-use-after-free in smb3_preauth_hash_rsp
+      ksmbd: check outstanding simultaneous SMB operations
+
+ fs/smb/server/connection.c        |  1 +
+ fs/smb/server/connection.h        |  1 +
+ fs/smb/server/mgmt/user_session.c | 15 ++++++++++-----
+ fs/smb/server/server.c            | 20 ++++++++++++--------
+ fs/smb/server/smb_common.c        | 10 +++++++---
+ fs/smb/server/smb_common.h        |  2 +-
+ 6 files changed, 32 insertions(+), 17 deletions(-)
 
 -- 
-~Randy
+Thanks,
+
+Steve
 
