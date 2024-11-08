@@ -1,126 +1,121 @@
-Return-Path: <linux-kernel+bounces-401577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4053F9C1C75
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:54:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D169C1C78
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD9D1F24399
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C358284D2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450571E32B3;
-	Fri,  8 Nov 2024 11:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b="xr9hb/dN"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0D77462
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F551E47B1;
+	Fri,  8 Nov 2024 11:54:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCFD7462
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066839; cv=none; b=psI/PZYf7WHMYlBhlAXjRsbgyhRBbYCrtnYbKdbIMl55QRTBu02CQgTr/3LyzHPIGG9ptAJ5iLXAzZXZ8u7mk3EaXK1YbHMegzO6eDWq8Si11NWWe8d1ZY5+74438nzKiurUi9Xa+lRMVAODTxsmlKbv5SHPalnP/BwQNyczg5A=
+	t=1731066851; cv=none; b=p4V7jm70Q6Yl7CC1oKGi0ZCp7jV8Y2laqOV0LWGbnKlbkOWv2uJTe4vpEhcbpftoTn54hTw0blkiCVAG32MuVRJyydfMgXX/sA9ILTArYM50ffHL7AvPCADqzARekH+XES2QwkZiafGOZqyv9q33afZXEOdBqmNUo3Ixy1wNs0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066839; c=relaxed/simple;
-	bh=w/3bVEVmCsLyY1RQ4E3iWrdcd+dDKQMWvLuCOmFv/VA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aUKq4GuWFdA3uHV69PiuIONRVgnmfbuzWF2smY+unAwPRN5HlOI3takBBBkELRgcFOZOInwJ3l/v7OtNABjZYzLJqOOry1zR3wCDAnhRVevuUb87u9PAOZ7d5oj5cu4VmObgDUAiJBw5Pe1QeRgeiKrD277lnujoyeZTYJbNAuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b=xr9hb/dN; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9ed0ec0e92so262749566b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:53:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20230601.gappssmtp.com; s=20230601; t=1731066834; x=1731671634; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WJ/QBNPXC+RW7xmA6I4st8O2hbtwshnY8Wrg/nnB/7A=;
-        b=xr9hb/dNi3cX9oI5SZSIazuDpTvselhC/vFX7VudA3AYo1okMG/gsltAU7J+J9R23m
-         O/pjV22iRe1SgNVVhhGAojTmqJrj+KFSXXn/Gze3+7RS8yVomJVo78QPAY0mfxtGz4VO
-         YLfzkvMVi9rLnG1Di6wLTHxEz/0FzzZrEiNBlYF9loG5nrUqqTS0iARvalEFJRGqGX43
-         kd4fKsY7oE+I5Mr+dwYlh7RM12Yh+4VI3CNPJbZmooV3+D8EypVTvptLTTvYBALgHw+U
-         jSJaGt7KKmHoT8o7L2qll5c+ATYl1ED/+qSmsefkJtDRkAoBT3nYbgVP/Xs71KJ8Ca1q
-         oO8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731066834; x=1731671634;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WJ/QBNPXC+RW7xmA6I4st8O2hbtwshnY8Wrg/nnB/7A=;
-        b=eifTShiYCkhf/lo0U1slRJLlOQOGpo6vUM7hsEqzuGS2G6v+RBr+RkAMO4AwCf7Jc1
-         oxIGtlmpvZIlTu/iq500OCkiOroLDR5x9CmCVACE9vgzldOdFhXPkZ2Jz0DXaPevLLnF
-         ioLbbi6Qa4qroxKhBllZKJis6sv8tKRlgXNQWZXFovC2Y873lErnCk01Cygz7Rs7hpZW
-         lxdSQt9nhSM7O2uxi2Ohbo2VvtAbXt+Fadnc6rCAdB3SOmjK5NHguuVsD9ayS1ECINqL
-         GgzBKeyCJpSxJ3tci+wGq/2V+fbI41k8hb5OTv5iUGwTWBBDUjNoVHETjpWW4BYxCYA5
-         kvpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWC6vszFX/EjA3njGkzky5DsVZ4GEIq/3oljeNLZA6+TjphDlT4wz9cHpjwZJB/5GkiVxYUfXxSxzASybs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXhEohUq1z32jIaDtSPDyz28IwMG4fToEPY3IeuRph6WbiWFqe
-	3LC9MM75uu9CKT7tkLVSzMieVgzq3qs0kX3g8kliHTAbwjdPL/rgYelMLtlk9Rdexk3ZzBm4/7l
-	71w==
-X-Google-Smtp-Source: AGHT+IF0zBViiYdY08YuBRp5GYZS2wntjfJWWdzCqQ7+TzGaLWpU0dOr9IpZa5vesULSn8sMXYRjsQ==
-X-Received: by 2002:a17:906:d54c:b0:a9a:835b:fc77 with SMTP id a640c23a62f3a-a9eefeb2b95mr227960166b.8.1731066834395;
-        Fri, 08 Nov 2024 03:53:54 -0800 (PST)
-Received: from [192.168.0.105] (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0defafasm223618666b.142.2024.11.08.03.53.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 03:53:53 -0800 (PST)
-Message-ID: <0c4dc285-f218-4c88-87f3-b7c7c786cdba@monstr.eu>
-Date: Fri, 8 Nov 2024 12:53:53 +0100
+	s=arc-20240116; t=1731066851; c=relaxed/simple;
+	bh=dXsnSzpSmH7jFj3r6IUkN9EYqxfdRkJtNVjFdOUOiZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P4dVNgH79/eSy4Q9TRnNWLSpWZultdFvcPhdsAHUsmwlDNpGFzFMa/iTrtLnqxARxMW1weQgtkEU0RSEBuHyJDcFjiDhvIUgZl6KEp5cVANVBRRxvWIGPz7a8adHxNoOL6c70sVlQfDoYChRCYBVgS4bM71V/CKtcGDYI/i982U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94034339;
+	Fri,  8 Nov 2024 03:54:32 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 678283F528;
+	Fri,  8 Nov 2024 03:54:00 -0800 (PST)
+Date: Fri, 8 Nov 2024 11:53:57 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: John Watts <contact@jookia.org>
+Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
+ <daniel@ffwll.ch>, Samuel Holland <samuel@sholland.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
+ DE1
+Message-ID: <20241108115357.691b77b0@donnerap.manchester.arm.com>
+In-Reply-To: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
+References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] microblaze: use the common infrastructure to support
- built-in DTB
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kernel@vger.kernel.org
-References: <20240918045431.607826-1-masahiroy@kernel.org>
-Content-Language: en-US
-From: Michal Simek <monstr@monstr.eu>
-In-Reply-To: <20240918045431.607826-1-masahiroy@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Fri, 08 Nov 2024 12:40:16 +1100
+John Watts <contact@jookia.org> wrote:
 
+Hi John,
 
-On 9/18/24 06:52, Masahiro Yamada wrote:
-> MicroBlaze is the only architecture that supports a built-in DTB in
-> its own way.
-> 
-> Other architectures (e.g., ARC, NIOS2, RISC-V, etc.) use the common
-> infrastructure introduced by commit aab94339cd85 ("of: Add support for
-> linking device tree blobs into vmlinux").
-> 
-> This commit migrates MicroBlaze to this common infrastructure.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+thanks for taking care and sending a patch!
+
+> On the D1 and T113 the TCON TOP cannot handle setting both DEs to a
+> single output, even if the outputs are disabled. As a workaround assign
+> DE1 to TVE0 by default.
+
+Can you say *why* this patch is needed? Is there something broken that
+needs fixing? Where does this show and why wasn't this a problem before?
+
+> A full fix for this would include logic that makes sure both DEs never
+> share the same output.
+
+To be honest, given the isolation on this patch, I'd rather wait for this
+full fledged solution, especially if there is no pressing need (see above).
+
+> Signed-off-by: John Watts <contact@jookia.org>
 > ---
+>  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I do not know why MicroBlaze still adopts its own way.
-> Perhaps, because MicroBlaze supports the built-in DTB
-> before aab94339cd85 and nobody attempted migration.
-> Anyway, I only compile-tested this patch.
-> I hope the maintainer can do boot-testing.
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> index a1ca3916f42bcc63b9ac7643e788d962ef360ca8..543311ffb1509face3fbfd069ded10933f254b9d 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> @@ -179,7 +179,7 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+>  	 * At least on H6, some registers have some bits set by default
+>  	 * which may cause issues. Clear them here.
+>  	 */
+> -	writel(0, regs + TCON_TOP_PORT_SEL_REG);
+> +	writel(0x20, regs + TCON_TOP_PORT_SEL_REG);
 
+Sorry, but that looks weird:
+First, please explain the 0x20. Is it bit 5? If yes, what does that bit
+mean? The commit message suggests you know that?
 
-I took a look at it and it is changing current behavior.
-If you look at linux.bin and there is no DT inside. But when you patch is 
-applied linux.bin contains system.dtb inside which is regression.
-Or is it intention of this patch?
+And second: the comment above clearly states that those two writes just
+*clear* some registers, to have some sane base line. So please adjust this
+comment, and copy in some of the rationale from the commit message.
+Explaining things in the commit message is good (so thanks for that!), but
+having at least some terse technical explanations near the code, in a
+comment, is better.
 
-I think there was any documentation about it's usage in past but never really 
-described in upstream kernel.
-But idea was that linux.bin requires DT to be passed from bootloader via R7 reg 
-but simpleImage.X is linux.bin+DTB inside and can be used without bootloader.
+Cheers,
+Andre
 
-Thanks,
-Michal
-
-
+>  	writel(0, regs + TCON_TOP_GATE_SRC_REG);
+>  
+>  	/*
+> 
+> ---
+> base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+> change-id: 20241108-tcon_fix-f0585ac9bae0
+> 
+> Best regards,
 
 
