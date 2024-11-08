@@ -1,90 +1,103 @@
-Return-Path: <linux-kernel+bounces-402316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C619B9C263F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:08:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C279C263E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:08:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50DECB224AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:08:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41457B23717
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9C41E883E;
-	Fri,  8 Nov 2024 20:08:01 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1DE1D0B81;
+	Fri,  8 Nov 2024 20:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="stc3xRhy"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEE01F26C0
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 20:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE3C1C1F3A;
+	Fri,  8 Nov 2024 20:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731096481; cv=none; b=MUpzGlwA620JowOXxdbPXOkSqy6hIVuMS8DwHxqkxOvPMqkC4jvY8QLkDdJOcbyil7QOjObgqzldg7XI6K5UlSPtnnb8CLcgyjWDSkxQjoyzk9sRG32qe1exSmB6HbghXd2TBif10FySynveSz2eghBuhsBBRC6A6Q58LBotvWI=
+	t=1731096464; cv=none; b=iciRJfpaLuR1ycedJCjGJSqKH95hpWRooRFwlPLNtG+01Qhl/WRL6MPqyTj/4G8qD+BclUQj2SogvlBNdh5rY5fWQ6UoL+asScbUMFhemPicOqQ1f7ywxdKcKVWkWvGwR6uHxhX9jJuLczq3W/HMFTq/Px4XC+sTVNjv4eg+q9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731096481; c=relaxed/simple;
-	bh=1K1pLssV5ZrYFU3AqLaKLNrDoQpz99T6UPphEacdFUo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SrJXw5vBzIMj/uuShFfKvKqLrAyO0k5RatinjOhbBUrwvXlNbXtpwDM49o1fUAmZi5zSWUxrpAWFC0ZQZCQsmBthEUB+docSFRfFe+bJi+DnMAtR3Ex3WVfi9Owy4r6y/rx0F0SucCEPr4dMk9TRGM3pFe/tTcNmzpT3X7JNXbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1t9VGO-000000002Kg-0K1C;
-	Fri, 08 Nov 2024 15:07:24 -0500
-Message-ID: <55ada30f76d544a3f700e57a01cb6f6f255581d5.camel@surriel.com>
-Subject: Re: [PATCH] x86,tlb: update mm_cpumask lazily
-From: Rik van Riel <riel@surriel.com>
-To: Dave Hansen <dave.hansen@intel.com>, Dave Hansen
-	 <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>,  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,  x86@kernel.org, "H.
- Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com
-Date: Fri, 08 Nov 2024 15:07:23 -0500
-In-Reply-To: <4f7d5752-41eb-4828-8bd8-9bd07e89f4f0@intel.com>
-References: <20241108143144.2f15fe35@imladris.surriel.com>
-	 <4f7d5752-41eb-4828-8bd8-9bd07e89f4f0@intel.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33Aeo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdYdIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gUmllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986ogEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHVWjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE+BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTeg4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/j
-	ddPxKRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/NefO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0MmG1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tPokBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznnekoTE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44NcQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhIomYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0IpQrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkEc4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1731096464; c=relaxed/simple;
+	bh=1g76rPSHhw49jhg8w9vWpOWVtMb+UwWrzottr4RHgMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t4mWtvPrk5b2LUQgLPIgV0+z6CbdYutOdwpjZtlkAVN7To+g7TkVP1C8HOoJ7rJa/RfFKUyb54Gm/AMloWHrQW/Eu+iIaz5qTJ6dzPGaU30O49OunFZkLq8VybHTrhQKhjiyVFN7JAqImIN8PeLoLKYFp3OaanCHR1KiuVECTpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=stc3xRhy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8EOlj3DHLk9ACbQvSOs+ZQpxrIbjKWEhntEJ6z86Fj0=; b=stc3xRhyQhi1TpmnLA+jqBh38V
+	pDyrpuFXoPhaJdggDuwE+XqldhFLq9Tic2JHw2PcaJUcPTieRLPCEPS0i4Is2Pib6OrmA3JIze3Nr
+	s/ONYx+Z2NgZA9upkXhJf7fElxf8+QGR/PILe9oiK+s9nxU49UHlDfchxvV0iC8d4dUT5MSZwHKr8
+	iI3mGYrAypWHvzIoGcgTs2q2oD/CXXEEkD9+Wcjj1KYXRCI+sJEbHPczCHJqZ2bI1doU0J61F28jq
+	Is4gzfb1Roh52LnxsTEnVFz5ncmwcyalRXZP+Yo9R4P7O8/zwFuymynhSs+DqanvqbuYsvTkJJcWu
+	FKxp232g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t9VGe-00000009GQk-02b6;
+	Fri, 08 Nov 2024 20:07:40 +0000
+Date: Fri, 8 Nov 2024 20:07:39 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/13] iomap: make buffered writes work with RWF_UNCACHED
+Message-ID: <Zy5vi-L6Vsn-seRZ@casper.infradead.org>
+References: <20241108174505.1214230-1-axboe@kernel.dk>
+ <20241108174505.1214230-12-axboe@kernel.dk>
+ <Zy5cmQyCE8AgjPbQ@casper.infradead.org>
+ <45ac1a3c-7198-4f5b-b6e3-c980c425f944@kernel.dk>
+ <30f5066a-0d3a-425f-a336-16a2af330473@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30f5066a-0d3a-425f-a336-16a2af330473@kernel.dk>
 
-On Fri, 2024-11-08 at 12:03 -0800, Dave Hansen wrote:
-> On 11/8/24 11:31, Rik van Riel wrote:
-> > =C2=A0		/* Start receiving IPIs and then read tlb_gen (and
-> > LAM below) */
-> > -		if (next !=3D &init_mm)
-> > +		if (next !=3D &init_mm && !cpumask_test_cpu(cpu,
-> > mm_cpumask(next)))
-> > =C2=A0			cpumask_set_cpu(cpu, mm_cpumask(next));
-> > =C2=A0		next_tlb_gen =3D atomic64_read(&next-
-> > >context.tlb_gen);
->=20
-> If we're worried about contention on mm_cpumask(), then this hunk
-> makes
-> sense independently of the lazy updating. We might want to take this
-> hunk forward before we do the rest because this seems like a no-
-> brainer.
->=20
-If we always clear the CPU in the mm_cpumask when prev !=3D next,
-wouldn't that result in that CPU's bit being clear (and needing
-to be set) for next when prev !=3D next?
+On Fri, Nov 08, 2024 at 12:49:58PM -0700, Jens Axboe wrote:
+> On 11/8/24 12:26 PM, Jens Axboe wrote:
+> > On 11/8/24 11:46 AM, Matthew Wilcox wrote:
+> >> On Fri, Nov 08, 2024 at 10:43:34AM -0700, Jens Axboe wrote:
+> >>> +++ b/fs/iomap/buffered-io.c
+> >>> @@ -959,6 +959,8 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+> >>>  		}
+> >>>  		if (iter->iomap.flags & IOMAP_F_STALE)
+> >>>  			break;
+> >>> +		if (iter->flags & IOMAP_UNCACHED)
+> >>> +			folio_set_uncached(folio);
+> >>
+> >> This seems like it'd convert an existing page cache folio into being
+> >> uncached?  Is this just leftover from a previous version or is that a
+> >> design decision you made?
+> > 
+> > I'll see if we can improve that. Currently both the read and write side
+> > do drop whatever it touches. We could feasibly just have it drop
+> > newly instantiated pages - iow, uncached just won't create new persistent
+> > folios, but it'll happily use the ones that are there already.
+> 
+> Well that was nonsense on the read side, it deliberately only prunes
+> entries that has uncached set. For the write side, this is a bit
+> trickier. We'd essentially need to know if the folio populated by
+> write_begin was found in the page cache, or create from new. Any way we
+> can do that? One way is to change ->write_begin() so it takes a kiocb
+> rather than a file, but that's an amount of churn I'd rather avoid!
+> Maybe there's a way I'm just not seeing?
 
-What am I missing?
-
---=20
-All Rights Reversed.
+Umm.  We can solve it for iomap with a new FGP_UNCACHED flag and
+checking IOMAP_UNCACHED in iomap_get_folio().  Not sure how we solve it
+for other filesystems though.  Any filesystem which uses FGP_NOWAIT has
+_a_ solution, but eg btrfs will need to plumb through a third boolean
+flag (or, more efficiently, just start passing FGP flags to
+prepare_one_folio()).
 
