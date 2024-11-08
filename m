@@ -1,103 +1,129 @@
-Return-Path: <linux-kernel+bounces-401876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CCF9C2078
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:31:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF1E9C2079
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C262C1F2178D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:31:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DBD81C22C73
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929A1208964;
-	Fri,  8 Nov 2024 15:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084DF20ADF6;
+	Fri,  8 Nov 2024 15:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SuX/yON2"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O95d5/h3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C3420820B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E692920ADDB
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731079910; cv=none; b=ngXFUTQLfx9qCBkV3i2lbHegT5DUPMuSiUhW3hM2mhiwK5xUzIFyLCH0aU6avU63/m6WzqoSJ6hxZOPUazRAgxSpqITcv8vN/4rWJ+DRW/mwZgp7xrRM3NkP9HL4K/zJDOnLJsCYlI4ft2shgagN1t26oSjmWYYw9raOSpQInnc=
+	t=1731079924; cv=none; b=M+SOGJgL1LYkcpXH/DiflbJIK3aDAWQBCDnJRpY+4UTrBXg5gspRoen+9B7rujaNWKZ4/Qyplvkc9XHBKYiw3t1eCrB+Zf2qOhyf+QPApxTBS2XfoeWZH+FUnlyMLOIeP38SC5fausEDw1kv2Xz2Iy5jcrmARU+CXJoLIeIyhjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731079910; c=relaxed/simple;
-	bh=/HfZ774YdbmA8oA9touOU49tVLFqmqng5zTwT4XwXbM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Ahm488XmUHrRTb2hBX9x81oAHdbDJvDcxlze28S/hQFJDQREybdF4Ntb81r5uMROsTVFc5Ot3ehrMMjm3Y92PNYSr0RFABrFE/vANFdso3wqk+FS78kHhtFeVk5z/zgy9HISfhNxJo1S9l8KZmub+kFIIxSjldrqCMfLsPoq+6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SuX/yON2; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([90.224.241.145])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4A8FVJMw1650349
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 8 Nov 2024 07:31:21 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4A8FVJMw1650349
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731079882;
-	bh=GubQTU25zZjYbO7xL8u0rWFRxgg33v6ftcsqsnmXFt0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=SuX/yON22r8K97IOobl5wjLd2XFGQ6jsGM3teiuNLHaEKtwWDxat4sNiAd7L6D6Ow
-	 QBtrzWxIW9A5V3RfQmYKzmFfxEe+KeXny0XzWw8lLgqwWXtjAFcnUV+6IWEwLBkXL1
-	 coeE0eetyNi/1MktwGyuTnqO9ZgjIEaRvnBvZvQkMnjjSCgeo0o+GIpQhTZzJ2QF5J
-	 coqr8P/XhJ2hB8/eEm3VmB4OMg4EQ8Q59hFE9A58ADYhwrgqFmoEfq/rNhoQEro7b6
-	 spgNfoYf58Va9NlvRFFiC4HlbzCsL99tAz4+DH2UO+Qwpz+A5iF37y8cBHDeIhgmbQ
-	 /oewF/3g5JeBw==
-Date: Fri, 08 Nov 2024 16:31:11 +0100
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Sohil Mehta <sohil.mehta@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/cpufeatures: Free up unused feature bits
-User-Agent: K-9 Mail for Android
-In-Reply-To: <c6da4742-4c08-4375-a9ce-f7dc6308cb71@intel.com>
-References: <20241107233000.2742619-1-sohil.mehta@intel.com> <7ff32a10-1950-434b-8820-bb7c3b408544@intel.com> <3492e85d-4aaa-4dd7-9e6a-c8fdc2aa2178@intel.com> <74338393-4F39-4A04-83B1-BA64CE2D2FDA@zytor.com> <4c01a30a-67d9-4918-8781-240b78944c42@intel.com> <c6da4742-4c08-4375-a9ce-f7dc6308cb71@intel.com>
-Message-ID: <69E94BB8-256A-49BB-AEDF-E2B034496A40@zytor.com>
+	s=arc-20240116; t=1731079924; c=relaxed/simple;
+	bh=VzP/LDCirUJQ3l+YlFKHGVOCDG843Dq6kqqElg0cEHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftA20VprKfBAjzhoGu15gFJecqBWIZHLC3xNr7zfpHPDtl+lhSj4sjiVAASwzg0yc1scrCDfVVgRgO2K0pVicZj8hBfmjBGzqat7MP4UqhW+fZGhYZsja3Ma0xf4TyiPk0nQy8UPg/r9bmR35NmsRStl49hKhA1P02YTGopTwsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O95d5/h3; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731079923; x=1762615923;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VzP/LDCirUJQ3l+YlFKHGVOCDG843Dq6kqqElg0cEHU=;
+  b=O95d5/h3c875c5H5xPcjKH9rB4NWNikNFASzudUuxOBkskyzq0dj2vwL
+   CQV36wOPgy8095S+0jyBqvpku6fhYZwRvNh2GoNw4weOdyDlDr6/7pa6f
+   QvsVW8/HAHoqJuI6D2xLVC5xBDEZfLMMFqhFk1ErbAmXDev6pJmCW+1AL
+   K2vrPdQGDUIUbQ6RqGCQv3I5JuwI3qpjfla5CUL2U/5KmscMt1fh6tdti
+   /VMTENgN0b0jtRYVHl7dYHxxsmMKYTWjVNrey6vIGmDqZTWK/NwnmFvNv
+   IZj0e9ecHuT9842oY9LrSulpei3mLYd2JyLIBmHwcHp8sfjPtrRqR3gnJ
+   w==;
+X-CSE-ConnectionGUID: 11DmqcwZQMqiKVKP+kZNTA==
+X-CSE-MsgGUID: 5wD6WW+rS12lzxPsP8cr1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41528858"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41528858"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 07:32:03 -0800
+X-CSE-ConnectionGUID: ouOLeQSeQ2aZVDdpdPf2+g==
+X-CSE-MsgGUID: luzJEKbTTMuRAJTeJZMh3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="108903402"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 07:31:59 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t9Qxo-0000000Cewz-1VNX;
+	Fri, 08 Nov 2024 17:31:56 +0200
+Date: Fri, 8 Nov 2024 17:31:56 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v4 1/1] x86/cpu: Make sure flag_is_changeable_p() is
+ always being used
+Message-ID: <Zy4u7ByPh7WOnpdv@smile.fi.intel.com>
+References: <20241108141235.1456557-1-andriy.shevchenko@linux.intel.com>
+ <B7F5B222-2982-43D5-87A5-7510EDCCB4DF@zytor.com>
+ <Zy4rw-yx0JL7_-lk@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zy4rw-yx0JL7_-lk@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On November 8, 2024 3:17:24 AM GMT+01:00, Sohil Mehta <sohil=2Emehta@intel=
-=2Ecom> wrote:
->On 11/7/2024 5:12 PM, Dave Hansen wrote:
->> Sohil, go look at:
->>=20
->> # cat /sys/devices/system/cpu/modalias
->> cpu:type:x86,ven0000fam0006mod008C:feature:,0000,0001,0002,0003,0004,00=
-05,0006,=2E=2E=2E
->>=20
->
->Thanks for the explanation=2E Peter's comment makes sense to me now=2E
->
->>=20
->> I sure hope we haven't been using too many of these synthetic features
->> in MODULE_DEVICE_TABLE()s, because we tend to move them around, but I
->> guess it's possible=2E
->
->I found at least one recent usage that matches this pattern=2E
->Look at commit cbcddaa33d7e ("perf/x86/rapl: Use CPUID bit on AMD and
->Hygon parts")=2E It defines a synthetic feature bit X86_FEATURE_RAPL and
->adds it to the rapl_model_match[] table=2E
->
->	MODULE_DEVICE_TABLE(x86cpu, rapl_model_match);
->
->It almost seems like some of these bits are now ABI=2E We probably need t=
-o
->mark them and keep these mappings pinned to avoid future issues=2E
->Recycling these bits seems to be very common=2E
+On Fri, Nov 08, 2024 at 05:18:27PM +0200, Andy Shevchenko wrote:
+> On Fri, Nov 08, 2024 at 04:13:05PM +0100, H. Peter Anvin wrote:
+> > On November 8, 2024 3:11:46 PM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > >When flag_is_changeable_p() is unused, it prevents kernel builds
+> > >with clang, `make W=1` and CONFIG_WERROR=y:
+> > >
+> > >arch/x86/kernel/cpu/common.c:351:19: error: unused function 'flag_is_changeable_p' [-Werror,-Wunused-function]
+> > >  351 | static inline int flag_is_changeable_p(u32 flag)
+> > >      |                   ^~~~~~~~~~~~~~~~~~~~
+> > >
+> > >Fix this by moving core around to make sure flag_is_changeable_p() is
+> > >always being used.
+> > >
+> > >See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+> > >inline functions for W=1 build").
+> > >
+> > >While at it, fix the argument type to be unsigned long, although it currently
+> > >only runs in 32-bit cases.
 
-It was a really unfortunate choice of ABI design, especially since there a=
-lready were name strings available=2E=2E=2E
+...
+
+> > It's good that you are changing the return type, but we need to be consistent
+> > and change f1, f2 to match. At the same time, I suggest changing the return
+> > type to bool.
+> 
+> Ah, that makes sense!
+
+All addressed in v5:
+20241108153105.1578186-1-andriy.shevchenko@linux.intel.com
+You are in Cc there.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
