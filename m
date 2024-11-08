@@ -1,221 +1,144 @@
-Return-Path: <linux-kernel+bounces-400850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6859C1331
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:26:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385A59C1332
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D341282AEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0DF8B22918
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425F01BD9E2;
-	Fri,  8 Nov 2024 00:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3855A1C36;
+	Fri,  8 Nov 2024 00:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="bogicNuA"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZV1w1Ag+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627C4B661
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ACA1FB4
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731025522; cv=none; b=JffnrDUW0vhqvhjpTCjwBUu3tn/lPZeeDteM7L40Keu1zc+gABw/tAWFu6VtdGCLzufhofJEBND/GcXSoXlhifL3lQ6PIutR9Kxxcle5SjZX8kAH/1ogUjWdXkOXF0qgojAwAicFkfo9PXng1D3sOvDz/eVHlIQKYJTqcatkpRg=
+	t=1731025580; cv=none; b=cyg80D88TG/+DzjvVkMMYJNc6tmcuf3xevcJ/nIhYjie4Ug6q41Io5McjnOjfzcbrib8njEeFOLmU8um9/wibMYZm1yTGAcnK7gEYWnBGU+llNrnvTFbTCKJybBzBa2BrNiMBLSL6vu3iKZ+bilIxL21XwSjaaJqMR6IyG0Unck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731025522; c=relaxed/simple;
-	bh=Yu0ZVqa4VL8nwWUskUGCY1WzArYZ0sKKfWDIKTwLbIQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YKVaqvsYYHRL4rG+Nk6aqLIunr8skvnwsrksUILbdQ8ztKPW3uQramuM8kqqP2JsMrSVuhoB1ebIGsXay85TGuzEe+sGj3QTuUbGdi6N3kimqoB9A4XxdJC6VvpoPJbw6Bl+Sp2Jn/HASEDYSHAyqPG/v6eeiUsVPugM/bC7CSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=bogicNuA; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731025477; x=1731630277; i=efault@gmx.de;
-	bh=y868n/rZTW1q1WLAeN0V1ocmz++K3iIcT5QYB1Z9XJs=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=bogicNuAi2W8X8gQdFbskekwAcZvIAogwn2x7udwluD/wu5B4pWAzzL5T5ZyBHnk
-	 9rzsOSjVNPiTT4TzBi7gwCk8ZiGKKk61Y9jB3XUSqk3k/zKtrM6BwPl4W38bWePV2
-	 z0iUXnoRVgjSRNCwlYPe66VN4ai1/jyrru734xvAKp3Gt703+0IuK2MUrfBhiuWFZ
-	 DMCG3wxWIosDs2RdEdqFyrxq23nNPGF8XdjonYmWzjJksgHMlbQwxuPQ1Gm/vKOFz
-	 KLZ0lGxcRNNuxl1UYc9M7bZ0dgBe+cmkdnEm89gnjHLI9tnzKH2FmR+Q40T7xmc8+
-	 daReexbaZ/34aiRmsg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.61]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MzhnH-1u4BD228BN-013yp9; Fri, 08
- Nov 2024 01:24:37 +0100
-Message-ID: <750542452c4f852831e601e1b8de40df4b108d9a.camel@gmx.de>
-Subject: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
- busy CPU
-From: Mike Galbraith <efault@gmx.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Phil Auld <pauld@redhat.com>, mingo@redhat.com, juri.lelli@redhat.com, 
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
- linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com,  youssefesmat@chromium.org, tglx@linutronix.de
-Date: Fri, 08 Nov 2024 01:24:35 +0100
-In-Reply-To: <20241107140945.GA34695@noisy.programming.kicks-ass.net>
-References: <20241101200704.GE689589@pauld.westford.csb>
-	 <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
-	 <20241104130515.GB749675@pauld.westford.csb>
-	 <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
-	 <20241106135346.GL24862@noisy.programming.kicks-ass.net>
-	 <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
-	 <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
-	 <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
-	 <982456f0abca321b874b7974bdf17d1a605c3d38.camel@gmx.de>
-	 <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
-	 <20241107140945.GA34695@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1731025580; c=relaxed/simple;
+	bh=cb4qZcAbwUvg3x53LBR08GrXSJupYfyAqI6oGbSJbrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NtkRcW1Ok69TgzSlC/SoONXbxlHqYN18yUZO8IY04SEDJnsdr9ByWU5SIfWNNdbY03sRGZeVivLs7DswMp89O93zM1cTML65SGtvCqdk5wZvd06ZIA8Gb4c0uR8dJC+NuYwVaxJ7SKhS675dT1ShOn5EnfjPNmlwC+y0cxqt6pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZV1w1Ag+; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731025578; x=1762561578;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=cb4qZcAbwUvg3x53LBR08GrXSJupYfyAqI6oGbSJbrE=;
+  b=ZV1w1Ag+rQebCQU1aoCaMtmh2s0j7/gru2QJk/MEbKuQ6ZSHe7R6z2t3
+   3yo03RDui9tGPRfi92OdvDxdRxADfWXD1gb75AjmJ64qYbyeYEZ/DVjqG
+   5SAIjJCKX2++zoymVTmEG42qmzQnwv9Tk4N9sHKzNXNmTYV5mXjmxWq+W
+   +iMnimtH/Fq9/9MN2BAqQfquCV1DmXhQbwLK4BqLkAZZZ8xBgqwqt2jzf
+   cSZgQkbaU9dL2k9jBevRWhi6JMG+07ml2iChmJt0jLWbnwDADfff6DrQc
+   qoqnJjil2L3VzVQYXhKPC7TwBWwQnOUok6lQfc58Fs/x3M24j2pW7WxD4
+   w==;
+X-CSE-ConnectionGUID: FlTR1LhMRuOF2M7Knt+BCQ==
+X-CSE-MsgGUID: PfiZQfPyRXWggeg+25umLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="41497385"
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="41497385"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 16:26:18 -0800
+X-CSE-ConnectionGUID: blgxRzbXRwmGkE87jHq0lQ==
+X-CSE-MsgGUID: ctM6Ih36Q5yh4idfgUXIYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="122805587"
+Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.222.202]) ([10.124.222.202])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 16:26:17 -0800
+Message-ID: <59464733-17d1-4b43-83f4-e85a8389638d@intel.com>
+Date: Thu, 7 Nov 2024 16:26:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KnGLQMykz0NEmOSiiZvdKOSY8KwUbc99pQkS7ywEGhEnOtIyftp
- 9TE9OzZKwcbLuBKm09OK1Yo+wOhXKp7QZF91Aszs5y4cY0eTdftNsbweKUDOCMgavPGIttR
- IHx5ZU7LV/XBAIALIQrElY7xBfT0ZABid4k+XXNStokr5P/0y6/jVj4Kuw8kE0Ztg8i6Obs
- 9h8wRirxiGPqykUWidSdg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9j08qpmsKxw=;+6riMbB8fkcN2IJybKOtZtG70j1
- /EiW7Pl9FlqyC9mqGZrqZai78X3vjJNzBshHoIIXGQ/gWMnumqHNuvj3nFtdyAgRmiCBwTwp9
- /oOrTUdSWFZNbp3r5GuYpeXQzUB1UZAqRBTnp+x0fbQPMJ9nNwei+85CWbmVoqupOywwEYwvV
- +PmSUnbEzGDL9iYpe/EA+EAzh3t7w4lm9ccsluUF2eNIq64oa0wzNrY3BB1GY1dogK9w+qBOM
- jNKoKkvRAmCKbeL33tIrCnSFKYn4cmA3w52Lfa3pDIolzzhsEmOG+C/MagNjhKcarOGu3B4ei
- V3mbPlpDOtNE8KloZv6Lzs3snz0aCw2/NlWmLBc94jOixfPWjU4VO3krjADjmJ/NAl03/Ci2s
- yHZLd34vXLawPd6ePxVoRSxOpR/V0hvR9C3zXOWyIwN1LlCBBGd89AC5IEas2YRc5SYnPwsJ8
- zf+BCEI12ElEJAOUAg3ny3xA5eEMUe1i8OLDiZhBiQicROFPD+hgEG+YWI5/sa3aBi+PKVyZl
- xgY3n6qPz+hD0oWeFB5SfqSXcsNnpw+tS9heRWOQ5crcAsBeqyvO4JmgkiZYwIatbMQRP8Rl+
- uXZOSz3Ar6DCkEjdcqW3zz67qfe9pt2F9IXfUpLUIopd31J3YQgSP/HA6mnbUfUgmcqed+vHN
- xHlwY3oGRWNno5FWVJ/pyIcFW4MSErTZ392XAFB+rbORY70o3ZDEzg0IhnHWesE22c2jT8QQf
- YXbOTxAJAOEzRH9YsE9FFayR/yBAJLCr78pCq9WAcSIu+LqDmx62Z3glceXSD73WJrDt0kUxk
- I3rlbfThXKaCW5mngDy//3DAhPcPHnjo/0771ppCIU6i5fVgFESDACOTQL+yXZP5VQ5r/EW7D
- r87W4YbH4XGwbwn5XPGlT6/fLDt/78ZMlKkdYHNec2kFy4Mg2ugyJSEFB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Restore PKRU to user-defined value after signal handling
+To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+Cc: Rudi Horn <rudi.horn@oracle.com>, Thomas Gleixner <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Joe Jin <joe.jin@oracle.com>, Jeff Xu <jeffxu@chromium.org>
+References: <4225E088-6D34-421A-91AA-E3C4A6517EB7@oracle.com>
+ <4d484280-3bed-453f-b2f6-0619df4e9914@intel.com>
+ <SJ0PR10MB47208C97D877C27053E546DC9C5C2@SJ0PR10MB4720.namprd10.prod.outlook.com>
+ <7819c425-5792-4cc5-96aa-9c8b012f1a06@intel.com>
+ <4111AC83-7A7C-4268-B294-3AB75C0EC451@oracle.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <4111AC83-7A7C-4268-B294-3AB75C0EC451@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-11-07 at 15:09 +0100, Peter Zijlstra wrote:
-> On Thu, Nov 07, 2024 at 03:02:36PM +0100, Mike Galbraith wrote:
-> > On Thu, 2024-11-07 at 10:46 +0100, Mike Galbraith wrote:
-> > > On Thu, 2024-11-07 at 05:03 +0100, Mike Galbraith wrote:
-> > > >
-> > > > I built that patch out of curiosity, and yeah, set_next_task_fair(=
-)
-> > > > finding a cfs_rq->curr ends play time pretty quickly.
-> > >
-> > > The below improved uptime, and trace_printk() says it's doing the
-> > > intended, so I suppose I'll add a feature and see what falls out.
-> >
-> > From netperf, I got.. number tabulation practice.=C2=A0 Three runs of =
-each
-> > test with and without produced nothing but variance/noise.
->
-> Make it go away then.
->
-> If you could write a Changelog for you inspired bit and stick my cleaned
-> up version under it, I'd be much obliged.
+On 11/7/24 15:56, Aruna Ramakrishna wrote:
+> If it is calcuated by the kernel, is there a chance that we could inadvertently
+> set XINUSE[i] to 1 for more components other than just PKRU? Since it is 
+> possible that some other component was set to its init state by XSAVE, 
 
-Salut, much obliged for eyeball relief.
+XINUSE is exposed in the ISA via XGETBV(1). If it were _totally_ racy
+and the CPU could change it willy nilly at any time, it couldn't be
+sanely exposed.
 
-=2D--snip---
+I think it's safe to assume that if you use XGETBV(1) that the state is
+sticky at least until there's an explicit change to a state component.
 
-Phil Auld (Redhat) reported an fio benchmark regression having been found
-to have been caused by addition of the DELAY_DEQUEUE feature, suggested it
-may be related to wakees losing the ability to migrate, and confirmed that
-restoration of same indeed did restore previous performance.
-
-(de-uglified-a-lot-by)
-
-Reported-by: Phil Auld <pauld@redhat.com>
-Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
-Link: https://lore.kernel.org/lkml/20241101124715.GA689589@pauld.westford.=
-csb/
-Signed-off-by: Mike Galbraith <efault@gmx.de>
-=2D--
- kernel/sched/core.c  |   48 +++++++++++++++++++++++++++++----------------=
----
- kernel/sched/sched.h |    5 +++++
- 2 files changed, 34 insertions(+), 19 deletions(-)
-
-=2D-- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3783,28 +3783,38 @@ ttwu_do_activate(struct rq *rq, struct t
-  */
- static int ttwu_runnable(struct task_struct *p, int wake_flags)
- {
--	struct rq_flags rf;
--	struct rq *rq;
--	int ret =3D 0;
--
--	rq =3D __task_rq_lock(p, &rf);
--	if (task_on_rq_queued(p)) {
--		update_rq_clock(rq);
--		if (p->se.sched_delayed)
--			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
--		if (!task_on_cpu(rq, p)) {
--			/*
--			 * When on_rq && !on_cpu the task is preempted, see if
--			 * it should preempt the task that is current now.
--			 */
--			wakeup_preempt(rq, p, wake_flags);
-+	CLASS(__task_rq_lock, rq_guard)(p);
-+	struct rq *rq =3D rq_guard.rq;
-+
-+	if (!task_on_rq_queued(p))
-+		return 0;
-+
-+	update_rq_clock(rq);
-+	if (p->se.sched_delayed) {
-+		int queue_flags =3D ENQUEUE_DELAYED | ENQUEUE_NOCLOCK;
-+
-+		/*
-+		 * Since sched_delayed means we cannot be current anywhere,
-+		 * dequeue it here and have it fall through to the
-+		 * select_task_rq() case further along the ttwu() path.
-+		 */
-+		if (rq->nr_running > 1 && p->nr_cpus_allowed > 1) {
-+			dequeue_task(rq, p, DEQUEUE_SLEEP | queue_flags);
-+			return 0;
- 		}
--		ttwu_do_wakeup(p);
--		ret =3D 1;
-+
-+		enqueue_task(rq, p, queue_flags);
-+	}
-+	if (!task_on_cpu(rq, p)) {
-+		/*
-+		 * When on_rq && !on_cpu the task is preempted, see if
-+		 * it should preempt the task that is current now.
-+		 */
-+		wakeup_preempt(rq, p, wake_flags);
- 	}
--	__task_rq_unlock(rq, &rf);
-+	ttwu_do_wakeup(p);
-
--	return ret;
-+	return 1;
- }
-
- #ifdef CONFIG_SMP
-=2D-- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1779,6 +1779,11 @@ task_rq_unlock(struct rq *rq, struct tas
- 	raw_spin_unlock_irqrestore(&p->pi_lock, rf->flags);
- }
-
-+DEFINE_LOCK_GUARD_1(__task_rq_lock, struct task_struct,
-+		    _T->rq =3D __task_rq_lock(_T->lock, &_T->rf),
-+		    __task_rq_unlock(_T->rq, &_T->rf),
-+		    struct rq *rq; struct rq_flags rf)
-+
- DEFINE_LOCK_GUARD_1(task_rq_lock, struct task_struct,
- 		    _T->rq =3D task_rq_lock(_T->lock, &_T->rf),
- 		    task_rq_unlock(_T->rq, _T->lock, &_T->rf),
-
-
+If you're really worried about this, we could go ask the hardware folks.
 
