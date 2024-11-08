@@ -1,106 +1,84 @@
-Return-Path: <linux-kernel+bounces-400861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C73F9C135F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:56:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 382429C1360
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404F12847C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125A71C21D95
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329148F54;
-	Fri,  8 Nov 2024 00:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FD27464;
+	Fri,  8 Nov 2024 00:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="YtT1ZH+r";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="WA1rXCkO"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evBSVb7T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CE61C36;
-	Fri,  8 Nov 2024 00:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEB21C36
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731027390; cv=none; b=hiGBFDA69jltqcoSY8Cx/YzVLrtbjtpfCaYDYwfPgCgYohn3XWubAExlkp94tyG0SKrEWtwWSql4eMRnGdN8dmPX1sJIXVY1B+mItxfEtsnt+SXlb9tWLdmKw0HmCEcBPSF+bHkxAYlH14Or051I1e0e9pD9K/Yktyz2SrAH9ns=
+	t=1731027539; cv=none; b=X1qhgqoTftEqr7IlwvjdR5o/Qv5sCJsfBDsqO3AY6a8xo6WEL0tFbMtnXYsazmRpiBMcn2NKXnclxxP+V3Wj2E4iGevEZy11trgkV4apxsPiVKl/BdU3Y3ucc2iaOj1KpDbXYEw+xrj5Q65EEAVYfo3n3REDahTG7ES66iK6PIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731027390; c=relaxed/simple;
-	bh=ypJveB/zzCk8lIMnicpPadK/Z2mjgdeaAKWk8bvBgZQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CwEpl9aMF+5kaRRebsntxgnB+dNlo0vdqz7G8zkmTRSjSGaRZbRdmN/XPJsI9V5LDJId8dNl3uNuRHerXZooRxnVr6nRk3ILyjFHKf09N2j1xMljitGKbBzUUW8WwGn0W5q/xx5QFrf83cepajvNBRxlxTMwgLd1rKaMWsDGrOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=YtT1ZH+r; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=WA1rXCkO; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1731027388;
-	bh=ypJveB/zzCk8lIMnicpPadK/Z2mjgdeaAKWk8bvBgZQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=YtT1ZH+rSt9x8dWKw3nrehmaxPhvTBKQS4uF5kSSD5/Z3HjhFzqs2USnNVG3W+/IF
-	 VbNRsYmhvbixWc8YzcT6e3+i76SjQHXc1orlvZfQBFA8Nf6vR69kwdSmWG/neREArX
-	 8nsk/FB3Pg67YvEa1CfQbFtmwN5/xygQ7DKhL7RI=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2BDFE1286888;
-	Thu, 07 Nov 2024 19:56:28 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id iuge9mXjQ0Ss; Thu,  7 Nov 2024 19:56:28 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1731027387;
-	bh=ypJveB/zzCk8lIMnicpPadK/Z2mjgdeaAKWk8bvBgZQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=WA1rXCkOl62sJj5yI7azLYoN3ZTYm6qthef5L+DbpK3Z1kq4z1s6XIRI5Sz15rXwm
-	 0Ty+VM9cYo24K36zVR79rLSdFvBv+udpPx9wB6FPE+T39JXcIpJl/EXkMAYYi+TF23
-	 3qcbxO4Zal8+w9adELYU5ttGuMTLpg/kaiOwlTEM=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 90669128182B;
-	Thu, 07 Nov 2024 19:56:27 -0500 (EST)
-Message-ID: <c59b1a708980de24e94cd5f8d43799338d3235ec.camel@HansenPartnership.com>
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
-	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	 <linux-next@vger.kernel.org>
-Date: Thu, 07 Nov 2024 19:56:25 -0500
-In-Reply-To: <yq1fro2ycyp.fsf@ca-mkp.ca.oracle.com>
-References: <20241107212954.4da462cf@canb.auug.org.au>
-	 <yq1r07mye85.fsf@ca-mkp.ca.oracle.com>
-	 <75eb024e36162cc3a1007ff6b4ca4a3d8d0caa02.camel@HansenPartnership.com>
-	 <yq1fro2ycyp.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1731027539; c=relaxed/simple;
+	bh=sAOPRgtSvUtPf0Vd9bBaKPLSEYUCIvcRu9bVqU1rQsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2Rw7duycDnHThBu1CyTacURcJaxlhAObUWMg3znC2jGCZuKsC+1nrHtj2sKciF2x+e8mThRGXOUQXoBxzSJN9GymDB2MvUY3iZ0yu5bbEBUs1VWJOtOUj2l2VMum5ay+VGYmkEYV9KNtu/lLkp4kBTTT+WhD/GgopTvzQCQN1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evBSVb7T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD5AC4CECC;
+	Fri,  8 Nov 2024 00:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731027538;
+	bh=sAOPRgtSvUtPf0Vd9bBaKPLSEYUCIvcRu9bVqU1rQsg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=evBSVb7T+hSXvZRjaFb8yIY8viNU2ngTAILeUVY4zSLm1nZ0FcFUTFkap9yeue2Qz
+	 agEgVIVmk5tVev2vkUXm0cVGfz5mk4senGJrumF4S2nj3Iow+8v3l0h+wl6ZTydbqR
+	 t2cX/9bD/amopMg461kmiRStJa7LwYl9MydKMa3jHfyCO3oRfWFlDJAmI+VxrL2XnQ
+	 LzfB9vl4S9uwPkfee2f+nAj7k4O3ll5l08spiyT92UWgT5HaveSu3ZNFpbcHEvHTsV
+	 Qc0o7CWtCwcbkXd9iKQlIpzV2fgFfL9SOdPMtP6pZ1e7mP9kYcSM9QaFtHEwiL/KH3
+	 LnpM0DUGXZtgA==
+Date: Thu, 7 Nov 2024 14:58:57 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 sched_ext/for-6.13] sched_ext: Do not enable LLC/NUMA
+ optimizations when domains overlap
+Message-ID: <Zy1iUXxJE1qQLIsz@slm.duckdns.org>
+References: <20241108000136.184909-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108000136.184909-1-arighi@nvidia.com>
 
-On Thu, 2024-11-07 at 16:31 -0500, Martin K. Petersen wrote:
+On Fri, Nov 08, 2024 at 01:01:36AM +0100, Andrea Righi wrote:
+> When the LLC and NUMA domains fully overlap, enabling both optimizations
+> in the built-in idle CPU selection policy is redundant, as it leads to
+> searching for an idle CPU within the same domain twice.
 > 
-> James,
+> Likewise, if all online CPUs are within a single LLC domain, LLC
+> optimization is unnecessary.
 > 
-> > No, my tree builds ... or at least the ufs-mcq.c part of it (I
-> > checked
-> > after I got the merge conflict ... although only with the default
-> > configuration).
+> Therefore, detect overlapping domains and enable topology optimizations
+> only when necessary.
 > 
-> I am not questioning that your tree builds. But your for-next branch
-> contains UFS code not present in the SCSI tree, effectively reverting
-> my conflict resolution.
+> Moreover, rely on the online CPUs for this detection logic, instead of
+> using the possible CPUs.
+> 
+> Fixes: 860a45219bce ("sched_ext: Introduce NUMA awareness to the default idle selection policy")
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-OK, I figured it out.  We both did the conflict resolution for "scsi:
-ufs: core: Fix another deadlock during RTC update" slightly
-differently.  I kept the rtc variable introduced in that commit and you
-removed it leading to the conflict.  Since it's only in a print, I
-don't think it matters, so I followed your resolution.
+Applied to sched_ext/for-6.13.
 
-James
+Thanks.
 
-
-
+-- 
+tejun
 
