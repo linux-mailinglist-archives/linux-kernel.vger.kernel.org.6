@@ -1,201 +1,134 @@
-Return-Path: <linux-kernel+bounces-401852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098769C2021
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:13:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0667E9C2027
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:14:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D0728423C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:13:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32DA91C23AD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A297F1F585D;
-	Fri,  8 Nov 2024 15:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B55B1F4FC8;
+	Fri,  8 Nov 2024 15:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pJsaR6uO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fOcN++J+"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A5D1F4FC8;
-	Fri,  8 Nov 2024 15:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B256D1F584B
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731078822; cv=none; b=nMFVOJShtjcMAZSSe2AgDhZrlSY+8EKV8GqG8ODKXlvC506riCfZkbDnxt6ps1pcUEA3dWQrphN56BeBEy3BafVVXHlltrX+TqfO1m9WuBmPqxLJnkzNIAZAqShz9cVumrVXvoP6K3JikDZFWqnWvsQB05JO1wayJF6yAbePjJY=
+	t=1731078856; cv=none; b=u1YJpb6k8PBg8LZfFg8wFAMMU792Z5Rp9ScC5EK9eyTzh8S4ECMHRdPMKKBNt988XiN3hWDp0W7QbR0sP0Z+hHBC+IShqbZqd6aTql6RowpE7+V2xzz1iDHnHavHY6/Bo60l7Etfj8SqKki7i3E4h2ArQsHsglNboVbYghs+TX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731078822; c=relaxed/simple;
-	bh=3r7xZK+cnyxCIUhmCO7JDwOTXvuhlBk3z62KWQXwkzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gW0MJWrIKl7BdvZA7f2+/LbHHYJ4Vrg5XOFyBVECLUvUhcXFZ2v+ZSsCB8BCQwXHzFqb2zK42nsWDLRCzuMEbDLt6s/sDM6eS/3a/3/SdE2fy6S0rf4oArpSsNfmLG47dvuoZAb7g887VNhE570LMRtijwp03LA8MtVv3l7sgpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pJsaR6uO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+Sg40T9b35S825tpW2ULb0mqYo7ceLM00Jqrjyl1LD4=; b=pJsaR6uOgvqCmd0VngJ7YVkhLj
-	U6RmYDfnSQK9wrW1MuGCS1RdXLh5P6V51nGqPICAmT6iJZXvAJSjuo2o3bK2F8jxJ6QNAi40zuOAu
-	MguC2u9aeT5SWaxCzh0XF0QjnFO7CPS/Qi5csuvMFKt3iXXihGb/04oV1VVAGtOKbYfLEr7L3kgiu
-	PI5qj1c4+xlDMl5SUP5kHwgh577aWFKuyRpsrtwT3KkcQP/eSdqo+d6HH++aT6nQm5iCJdkD37uWt
-	zSlIMn1aT5vdl0m0lBo83RyQZ4mDg3CXGzxWo1zBroEY8aDIP4x3tkTevBPkGNKV1+WEAsx4kz7/T
-	ffTrjB6w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9Qfz-00000008zAO-2uVh;
-	Fri, 08 Nov 2024 15:13:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8E36830049D; Fri,  8 Nov 2024 16:13:31 +0100 (CET)
-Date: Fri, 8 Nov 2024 16:13:31 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Fangrui Song <i@maskray.me>, Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, kvm@vger.kernel.org, ndesaulniers@google.com,
-	morbo@google.com, justinstitt@google.com, llvm@lists.linux.dev
-Subject: Re: [PATCH 01/11] objtool: Generic annotation infrastructure
-Message-ID: <20241108151331.GC6497@noisy.programming.kicks-ass.net>
-References: <20231204093702.989848513@infradead.org>
- <20231204093731.356358182@infradead.org>
- <20241108141600.GB6497@noisy.programming.kicks-ass.net>
- <20241108145716.GA2564051@thelio-3990X>
+	s=arc-20240116; t=1731078856; c=relaxed/simple;
+	bh=smY4h117cYR692sX/32C1fiEi9e/UhXm2F3tRfVz2OE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PYeLaEOCLglNR7YrS4QUdBQ03N7xnUVStwHKAcaW22p96QMZjR5RjvTx/t9oiApw7bogvgWsGqSI6JDG4rkzvb0Q4olhAyQiW7UdcWGe5j1Znva8/aJG2/iwm+smuxiX0XTmu1RmkcGh2UVezlq6J9eXSQ/8vlLRnrb4K3xFi8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fOcN++J+; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so3384604e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:14:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731078852; x=1731683652; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EbptqwjZLNdVS9qjZW7J9pwzy8My758ZGi0V06mo61U=;
+        b=fOcN++J+O7rjb3qWqdUYU1GVX1fvlvvH/RwQoiwYjTctSUUmMh2B9E6vvYXaSyemZv
+         3TrE1UYjWuLziIkJT7VUKhulnGTV1BoONOKh4PNtqbMb40nq/fXSbBK6xQ9olxwdG/no
+         c4v13hYm0MTzbajmZYaL+20Tk7z0/YXKve4EQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731078852; x=1731683652;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EbptqwjZLNdVS9qjZW7J9pwzy8My758ZGi0V06mo61U=;
+        b=VyRS8R7C0xJmin8QWfx8g55IL327v0apkxRbycRYGgQY+pQfVgV6JC5+D10dFnoKMf
+         PVMEb23VI+2vSUzmUeUU/HuEWJz8gZ7aLbJ4B6mx+pb/yZQm1OllzvDx6p0NVcQUEaob
+         yBhuDk+cQdEJo6kmA7/NWDLa/ktiXksCBuZvK0Yk0VUNnRN2HJGkX0wtbOhwaSrNkOte
+         XZ8PhO15n2yCfZTbg6V663++6ROcJHjPzZL8Tlfyl4wQHXVJjKrZkfbCvb3zupaf/7LB
+         2vCBkSDFbLal7JpXIsITCO0mmlPLf1f+ddJXD8dmM4E+HEQqkQKTFz4/jBs1QBkFU1IA
+         kt/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUsKG/CGVn9DCQVXZsHBKAoK8KGIqbBVxB0oMg1rkmUSTPDjs9KBdb2gurY7ltgMUrmgBVoVvpHDklUxYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6pdGeIN1HL4DxRkSBbOTWPl7TcoxinuXZVGq0nmZVlvve71RL
+	Y//vvAwveBtSOeP2mtm+tPaKPIOeUuSH+ibWt4o4CWDRoB7Zav2CyTqZwua4S7yKupLXyQv+XWj
+	weA==
+X-Google-Smtp-Source: AGHT+IFC42wMfsem9KHUFygrRMvQg3nSz4RAy6DuuucLsuScUkGNlhvxqWxCcWk+9glxmKZBPLhK2w==
+X-Received: by 2002:a05:6512:318c:b0:539:e23a:9eaa with SMTP id 2adb3069b0e04-53d862f34d5mr1796053e87.50.1731078851956;
+        Fri, 08 Nov 2024 07:14:11 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826aefb1sm646777e87.237.2024.11.08.07.14.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 07:14:11 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f84907caso2403214e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:14:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXdyNAz5Gs0CvICimSEAkGgpXjTdn2F795WVywdvPDHRug1djuD16Lj0/cHoOpkqugmBxnaHX1dLdReP+I=@vger.kernel.org
+X-Received: by 2002:ac2:4c4a:0:b0:539:e97c:cb10 with SMTP id
+ 2adb3069b0e04-53d862ebfc3mr1963420e87.40.1731078850184; Fri, 08 Nov 2024
+ 07:14:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108145716.GA2564051@thelio-3990X>
+References: <20241108120311.87795-1-charles.goodix@gmail.com>
+ <20241108120311.87795-2-charles.goodix@gmail.com> <173107281349.1752060.15353696141928017835.robh@kernel.org>
+In-Reply-To: <173107281349.1752060.15353696141928017835.robh@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 8 Nov 2024 07:13:53 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Uc0PZZp-rupazy9tGfZMssGET=904cdUJXbhS=fMCUvg@mail.gmail.com>
+Message-ID: <CAD=FV=Uc0PZZp-rupazy9tGfZMssGET=904cdUJXbhS=fMCUvg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: input: Goodix GT7986U SPI HID Touchscreen
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Charles Wang <charles.goodix@gmail.com>, conor.dooley@microchip.com, 
+	linux-input@vger.kernel.org, bentiss@kernel.org, linux-kernel@vger.kernel.org, 
+	dmitry.torokhov@gmail.com, hbarnor@chromium.org, devicetree@vger.kernel.org, 
+	jikos@kernel.org, krzk@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 08, 2024 at 07:57:16AM -0700, Nathan Chancellor wrote:
-> On Fri, Nov 08, 2024 at 03:16:00PM +0100, Peter Zijlstra wrote:
-> > On Mon, Dec 04, 2023 at 10:37:03AM +0100, Peter Zijlstra wrote:
-> > > Avoid endless .discard.foo sections for each annotation, create a
-> > > single .discard.annotate section that takes an annotation type along
-> > > with the instruction.
-> > > 
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > > --- a/include/linux/objtool.h
-> > > +++ b/include/linux/objtool.h
-> > > @@ -57,6 +57,13 @@
-> > >  	".long 998b\n\t"						\
-> > >  	".popsection\n\t"
-> > >  
-> > > +#define ASM_ANNOTATE(x)						\
-> > > +	"911:\n\t"						\
-> > > +	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
-> > > +	".long 911b - .\n\t"					\
-> > > +	".long " __stringify(x) "\n\t"				\
-> > > +	".popsection\n\t"
-> > > +
-> > >  #else /* __ASSEMBLY__ */
-> > >  
-> > >  /*
-> > > @@ -146,6 +153,14 @@
-> > >  	.popsection
-> > >  .endm
-> > >  
-> > > +.macro ANNOTATE type:req
-> > > +.Lhere_\@:
-> > > +	.pushsection .discard.annotate,"M",@progbits,8
-> > > +	.long	.Lhere_\@ - .
-> > > +	.long	\type
-> > > +	.popsection
-> > > +.endm
-> > > +
-> > >  #endif /* __ASSEMBLY__ */
-> > >  
-> > >  #else /* !CONFIG_OBJTOOL */
-> > > @@ -167,6 +182,8 @@
-> > >  .endm
-> > >  .macro REACHABLE
-> > >  .endm
-> > > +.macro ANNOTATE
-> > > +.endm
-> > >  #endif
-> > >  
-> > >  #endif /* CONFIG_OBJTOOL */
-> > > --- a/tools/objtool/check.c
-> > > +++ b/tools/objtool/check.c
-> > > @@ -2308,6 +2308,41 @@ static int read_unwind_hints(struct objt
-> > >  	return 0;
-> > >  }
-> > >  
-> > > +static int read_annotate(struct objtool_file *file, void (*func)(int type, struct instruction *insn))
-> > > +{
-> > > +	struct section *rsec, *sec;
-> > > +	struct instruction *insn;
-> > > +	struct reloc *reloc;
-> > > +	int type;
-> > > +
-> > > +	rsec = find_section_by_name(file->elf, ".rela.discard.annotate");
-> > > +	if (!rsec)
-> > > +		return 0;
-> > > +
-> > > +	sec = find_section_by_name(file->elf, ".discard.annotate");
-> > > +	if (!sec)
-> > > +		return 0;
-> > > +
-> > > +	for_each_reloc(rsec, reloc) {
-> > > +		insn = find_insn(file, reloc->sym->sec,
-> > > +				 reloc->sym->offset + reloc_addend(reloc));
-> > > +		if (!insn) {
-> > > +			WARN("bad .discard.annotate entry: %d", reloc_idx(reloc));
-> > > +			return -1;
-> > > +		}
-> > > +
-> > > +		type = *(u32 *)(sec->data->d_buf + (reloc_idx(reloc) * sec->sh.sh_entsize) + 4);
-> > > +
-> > > +		func(type, insn);
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > 
-> > So... ld.lld hates this :-(
-> > 
-> > From an LLVM=-19 build we can see that:
-> > 
-> > $ readelf -WS tmp-build/arch/x86/kvm/vmx/vmenter.o | grep annotate
-> >   [13] .discard.annotate PROGBITS        0000000000000000 00028c 000018 08   M  0   0  1
-> > 
-> > $ readelf -WS tmp-build/arch/x86/kvm/kvm-intel.o | grep annotate
-> >   [ 3] .discard.annotate PROGBITS        0000000000000000 069fe0 0089d0 00   M  0   0  1
-> > 
-> > Which tells us that the translation unit itself has a sh_entsize of 8,
-> > while the linked object has sh_entsize of 0.
-> > 
-> > This then completely messes up the indexing objtool does, which relies
-> > on it being a sane number.
-> > 
-> > GCC/binutils very much does not do this, it retains the 8.
-> > 
-> > Dear clang folks, help?
-> 
-> Perhaps Fangrui has immediate thoughts, since this appears to be an
-> ld.lld thing? Otherwise, I will see if I can dig into this in the next
-> couple of weeks (I have an LF webinar on Wednesday that I am still
-> prepping for). Is this reproducible with just defconfig or something
-> else?
+Hi,
 
-I took the .config from the report you pointed me at yesterday.
+On Fri, Nov 8, 2024 at 5:33=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org> =
+wrote:
+>
+>
+> On Fri, 08 Nov 2024 20:03:10 +0800, Charles Wang wrote:
+> > The Goodix GT7986U touch controller report touch data according to the
+> > HID protocol through the SPI bus. However, it is incompatible with
+> > Microsoft's HID-over-SPI protocol.
+> >
+> > NOTE: these bindings are distinct from the bindings used with the
+> > GT7986U when the chip is running I2C firmware. For some background,
+> > see discussion on the mailing lists in the thread:
+> >
+> > https://lore.kernel.org/r/20241018020815.3098263-2-charles.goodix@gmail=
+.com
+> >
+> > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> > ---
+> >  .../bindings/input/goodix,gt7986u-spifw.yaml  | 75 +++++++++++++++++++
+> >  1 file changed, 75 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt79=
+86u-spifw.yaml
+> >
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> yamllint warnings/errors:
+> ./Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml:16:7:=
+ [error] syntax error: mapping values are not allowed here (syntax)
 
-  https://lore.kernel.org/202411071743.HZsCuurm-lkp@intel.com/
+FWIW, I think it's objecting to the "NOTE: " in the description
+looking like yaml. Maybe just change it to "Note that". It's also a
+good idea to get yourself setup to validate your bindings _before_
+posting them to the list.
 
-And specifically the kvm build targets from:
-
-$ make O=tmp-build/ LLVM=-19 arch/x86/kvm/
-
-show this problem.
-
-I just ran a defconfig, and that seems to behave properly. Notably,
-vmlinux.o (definitely a link target) has entsize=8 for the relevant
-section.
-
-I'm not sure how the kvm targets might be 'special'.
+-Doug
 
