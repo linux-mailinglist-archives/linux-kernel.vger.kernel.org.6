@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-402032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D42C9C2271
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:50:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54869C2272
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C711F252F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A1CC1C23596
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3939D1990CD;
-	Fri,  8 Nov 2024 16:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ED4199230;
+	Fri,  8 Nov 2024 16:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MC/Kt6FK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACA4208C4;
-	Fri,  8 Nov 2024 16:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15FB1990A1;
+	Fri,  8 Nov 2024 16:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731084597; cv=none; b=hc30gcrUItijM/LfuKYby1muQhiTGpE8jGToXt4f8JbaPz+QAMBHND9xYwgtsuonG0pp2ABl8EfmGek1eoh8PmtV0Y+7ejPi+vK+5REhPkrj5VhMO4G1M2HqFk4LCg1GIUh5LaamK4S3RXZJ4ajJSw/1o/y/xEHNXK0QkglBVek=
+	t=1731084828; cv=none; b=C17SlX0AwVkA8ng5J6v/n/+XmAW/djgj6nBMFcSMFYEVtTFFB+4hedY6dH2WVcLpUNldBk0Y6/P8JHADrTQB1Dm6qufZYX/1Zg1RqHlb7401BVBXqPqoAA5ffaoaC0/nueaLhdlTOYlJGWoBq14zPiSyDnu6IsOHyarMefBb5ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731084597; c=relaxed/simple;
-	bh=cXPrjrpjuZPxx0TaEQDXRVhDYd6V5RMoLe0vUwhyI3w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y6o7gWxC9ygyDz484infinvU/WhXr2CI6bCc03U/xQIbR5+yR1mCGG6E1HaAucSHufqFxJHeQYs9/zI58N+dufE070v2cGe2jVsHUFeGiSS8RmQn2JWoNBjzXfphEF0EakEJ106jHRYVJpjyQYYK8WowkNnvCs6vudxd04VGda0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB7E4C4CECF;
-	Fri,  8 Nov 2024 16:49:55 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: mhiramat@kernel.org,
-	oleg@redhat.com,
-	peterz@infradead.org,
-	will@kernel.org,
-	mark.rutland@arm.com,
-	Liao Chang <liaochang1@huawei.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
-Date: Fri,  8 Nov 2024 16:49:53 +0000
-Message-Id: <173108456812.1559945.17269799494713828811.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240919121719.2148361-1-liaochang1@huawei.com>
-References: <20240919121719.2148361-1-liaochang1@huawei.com>
+	s=arc-20240116; t=1731084828; c=relaxed/simple;
+	bh=DU386yzf8MX7kl3Llow5qywjVc/LWGlEHoL6txh+x5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nOqgrsYPmrTrElGCatHENM6vaZ83i/2fHjq3xROPncbMwAlljtfZY+5tJ8ebmJ+VxmWNq0i56DizRXKp/yWbtgeO1Q4SdoZhNaXjExDl1EJG4Sih1FO9wk80eMyyMlz+ZjsoQCwRnY4RmbXD864KO5x5lzQGhbc486wICsA0X2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MC/Kt6FK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 653D2C4CECD;
+	Fri,  8 Nov 2024 16:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731084827;
+	bh=DU386yzf8MX7kl3Llow5qywjVc/LWGlEHoL6txh+x5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MC/Kt6FKD4hHXzUnf5UYQHpZSqyq608ofsJJbKyFpOwWqx0NCIbgi/qn/iZi39nqM
+	 ZG32t8ucnOyQDAw9+l5rQXEL1Lr851uTsewjzww1q0kql2j27OAjrduXisz0AVEfRE
+	 qpdbhoymWx8WwycM7ilaneBWFKHLOfZXQt3xWPEWqIb5+njVWkgUQjeyerMeD3FPop
+	 n3YgE16mGed8nhrm4psYWcEBAxrfYZPWO4Hpv0Zs4PccVqsvoUQgeOEhYno6Y027GY
+	 kt+DWV3ZkP9PZsd3OIkYwmhdQvTT4FJuQgGq1/5Nm9IwJCUXavY3lrjqpOypSsUMKL
+	 PS97m2yqPuG3g==
+Date: Fri, 8 Nov 2024 06:53:46 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	michael.christie@oracle.com, Luca Boccassi <bluca@debian.org>
+Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
+Message-ID: <Zy5CGpgRu8q7nrsx@slm.duckdns.org>
+References: <20241108130737.126567-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108130737.126567-1-pbonzini@redhat.com>
 
-On Thu, 19 Sep 2024 12:17:19 +0000, Liao Chang wrote:
-> The profiling of single-thread selftests bench reveals a bottlenect in
-> caches_clean_inval_pou() on ARM64. On my local testing machine, this
-> function takes approximately 34% of CPU cycles for trig-uprobe-nop and
-> trig-uprobe-push.
-> 
-> This patch add a check to avoid unnecessary cache flush when writing
-> instruction to the xol slot. If the instruction is same with the
-> existing instruction in slot, there is no need to synchronize D/I cache.
-> Since xol slot allocation and updates occur on the hot path of uprobe
-> handling, The upstream kernel running on Kunpeng916 (Hi1616), 4 NUMA
-> nodes, 64 cores@ 2.4GHz reveals this optimization has obvious gain for
-> nop and push testcases.
-> 
-> [...]
+On Fri, Nov 08, 2024 at 08:07:37AM -0500, Paolo Bonzini wrote:
+...
+> Since the worker kthread is tied to a user process, it's better if
+> it behaves similarly to user tasks as much as possible, including
+> being able to send SIGSTOP and SIGCONT.  In fact, vhost_task is all
+> that kvm_vm_create_worker_thread() wanted to be and more: not only it
+> inherits the userspace process's cgroups, it has other niceties like
+> being parented properly in the process tree.  Use it instead of the
+> homegrown alternative.
 
-Applied to arm64 (for-next/misc), thanks!
+Didn't about vhost_task. That looks perfect. From cgroup POV:
 
-[1/1] arm64: uprobes: Optimize cache flushes for xol slot
-      https://git.kernel.org/arm64/c/bdf94836c22a
+  Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
 
 -- 
-Catalin
-
+tejun
 
