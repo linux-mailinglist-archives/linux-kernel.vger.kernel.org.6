@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-401257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AA29C17D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:24:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA61C9C17DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949182842E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:24:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08CEC1C2111A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB571DDC38;
-	Fri,  8 Nov 2024 08:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021BA1DE8A8;
+	Fri,  8 Nov 2024 08:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lDEQ/1OP"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="TtT3Cwxa"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882FB1DB55C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 08:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731054246; cv=none; b=pKPESf5lIrOqc9Rb+GPgrFe/vIH2RCAzUx1UE+iVqirjMy+7Y156XomqtrJbQy8/arYZHgFckUPKPOHECZU3PW9E0SfG8S531x3lDuB3Z6r2vs1srdvBxBKmsE3Og3Tmgs93NTF1C0tSnIvqTPfNOMPdJzqW0yagnYR+/EA3xWA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731054246; c=relaxed/simple;
-	bh=Jl0lx7Gsy6iH5afi7dJma9NiuABi3ClmekHLbyLNYbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SsxKCl23rpx6U0f0sRGcfF+1K0jAnNqGPvZG2ogb56nHpvWx+jAxDTm6CgW+2s6jNF5LPtS/UvEOD2fPa/GTzImKLGziuPH70IBU4BNpNI8zmrklmDCpyitc2RrN6GEHHusmwVkMSVqkBWV78HX4E80FnxnjN9ids3xm00s+apI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lDEQ/1OP; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb587d0436so19931261fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 00:24:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731054242; x=1731659042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jl0lx7Gsy6iH5afi7dJma9NiuABi3ClmekHLbyLNYbM=;
-        b=lDEQ/1OPDXeZQgdRP9qaJxnG87KhKPu3e3jvJhAhGrG8A/rQdL/1hvXz0Uwt1ZVWYG
-         GSGWgkKYsqWzu0W50Fyw/KGZ7t5kogR1BGiz4qPZUmZzLvV48CYwiGlQPpFTfbFNl0Hv
-         lIlb5sILAcF2HQSdIxO4BmRDSTTK6h5VUbWedO2mlF6rhEbO9FFta2AYweH8rCORVaI3
-         QfcGNA/dNk6DuQAYT9r2FyoD362qidhO8IUb4DF4VmyZlvInq5bRSKnlmlbN0Nn/ad9b
-         TkBBVrXuM2F+EfNDTB7ZQyk5DlgyuzkL/E9oehXP1R5oNNAYFeBdJwkTA8md9g1ZSUZk
-         JS0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731054242; x=1731659042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jl0lx7Gsy6iH5afi7dJma9NiuABi3ClmekHLbyLNYbM=;
-        b=Z0aQ6ODXThyM1aLQRwhXKtq7NeCj913ZDX7f3ymRSpGNmGJTcqbTy6S0CQ0upBf79c
-         uYYo6VU1/2ykI0MYBjD2rNtY7JkmmtMX0Lx2PdLFeKOb6xDhvDW42VFsl7I6bvOdZO5C
-         +A432ve/GhGTT7/ArQ064ZEeo4TfKLbSbxsKw7ElWDoNbANREutW65vqxK+/V8T0CtQc
-         ZtQhMSGCq4g80ryr3zu4/e4A6NogF44btVZtFyERueV8RF8f7+QuQlGOXySJ8eROle/B
-         TO2/6dsQOFTcDnn+L+YST595SS6ks3O9wnG2Xk5M2IxNipONgX/IsY9YTm6iBc1i8tWs
-         p9vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP5UlPArfMXARJUEvKqupeZpzOtxdsmNhF3Lv8LW8eSseX2eOBWG849WagdiUbYDLdK9gXjFm0dx4+KQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqONpL3gTfxGsahbQglUApL2AFczxrdVxb8X5GqZbpLy9jmo/M
-	H0dx1h3i9+TIeZ2sUyUMDpc1rLkdIPIvOcn+9aNWIxSjlkGyL8mEUQZywa9xQ1XPHYSTrB6mLqb
-	yT5PpcdwZPYekve8VLJHc0q7bDDUguUMAVVhmUw==
-X-Google-Smtp-Source: AGHT+IEoi4h9cOF0NrDnDfN2mcJ8OQ9IS7ZeEM0xCssVYgc2FE/qjtdzrUC7fSlflKMcaF1UCWmg7W2XU/WUPP4wOug=
-X-Received: by 2002:a2e:9a16:0:b0:2fa:d67a:ada7 with SMTP id
- 38308e7fff4ca-2ff201b1d51mr9123811fa.23.1731054241726; Fri, 08 Nov 2024
- 00:24:01 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09BD1F5FA;
+	Fri,  8 Nov 2024 08:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731054278; cv=pass; b=mM2CBfZBBZEk2rW60iNbjY1zUUXdTx2IdRTH3269mjyqOKF9nptA0XJ30VAn+vGBUoQ0mmqC/Ordc6A87yzS29tcPet3aW0XRoVTCj7fbEL/i7rS3z4e18b1XN1vt6ylcaL/NxZtIMcUTgozLP6DUDNlwNJvskO6miBfAMcx1DE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731054278; c=relaxed/simple;
+	bh=KvidRfAANg8XA3VnFXSr2Ww/cgt0MlyBxmzBVjBZF2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obwHKar9jLWf3ix8NIJZpMg2FbMVIrmcPoeRsDqcW2cNUEnphHddRxWzzgn0j211jDLkVWyastYm9OUbIMW+hKiO466rlkSsK0l+xh2xAskSqdOVjDtQdqUX8tXasYE3kJg5VH1bKeMEFZme2MRVXlfGRHd2hd/sMkpyy9IyVq0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=TtT3Cwxa; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731054263; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=n5gYkGTkWbD8ZuiphiqOkZYPJc5OsPtVrkVaAXf/lPlrNAtZJRusYnPgatCPoNVUbiV7Qy/ppBWTXTchKjddPLBOhDhRG0C9xQmzLFaNFu7Oin2vtFrmeDgWMcXlDIuFC7bBJVGWyW/CHEIyeqFuJ0v9pf/NOGkUIJ53mL3an20=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731054263; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Gtp6A3hGxlQfV2x0Wy5hZhakNlkzGjb+GlkiFRLOsWE=; 
+	b=SkUJEy248pWeGhhPcJytVgQgJkclB4euXuM5eysXw/p/RZYh2xfAN3K+10PxCjL3bHuP4+t74iG1LO7hHbFcog8qXtf89siExIIg/oQjyhUTYUi6UInKn/yY+mwGBLoi0HVgLhhZqOsVoxLOuA2G89LVh4zzxVq2uo+ev1u6Fpo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
+	dmarc=pass header.from=<sebastian.fricke@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731054263;
+	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Gtp6A3hGxlQfV2x0Wy5hZhakNlkzGjb+GlkiFRLOsWE=;
+	b=TtT3CwxaU8hyiYI4MZKzeQWoqSCurbkf7uJffSs9F0UdSP03h1209F5RddLQyEmr
+	+A9JKlWbU0Ld3WuvtnRcZdWzgRHuKGpnNpPpT7j3ZGU7NJ270CKyP15m84BJ1/GiJ5V
+	ZW78HRZq3yH2aQONzWBKOZSsc2nZRR5sTV5DVVeE=
+Received: by mx.zohomail.com with SMTPS id 1731054260823258.94058542690425;
+	Fri, 8 Nov 2024 00:24:20 -0800 (PST)
+Date: Fri, 8 Nov 2024 09:24:16 +0100
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
+	mauro.chehab@linux.intel.com, kernel@collabora.com,
+	bob.beckett@collabora.com, nicolas.dufresne@collabora.com
+Subject: Re: [PATCH 0/2] Documentation: Debugging guide
+Message-ID: <20241108082416.u6vvdmmhadfqtiau@basti-XPS-13-9310>
+References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
+ <87ttcj0z8x.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029012312.3448287-1-unicornxw@gmail.com>
-In-Reply-To: <20241029012312.3448287-1-unicornxw@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 8 Nov 2024 09:23:50 +0100
-Message-ID: <CACRpkdZB1RT=ATC1RKosjVyj2G1v4F8NYEPOTpfW16vmTG5y4w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: correct typo of description for cv1800
-To: Chen Wang <unicornxw@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	inochiama@outlook.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Chen Wang <unicorn_wang@outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <87ttcj0z8x.fsf@trenco.lwn.net>
+X-ZohoMailClient: External
 
-On Tue, Oct 29, 2024 at 2:23=E2=80=AFAM Chen Wang <unicornxw@gmail.com> wro=
-te:
+Hey Jon,
 
-> From: Chen Wang <unicorn_wang@outlook.com>
+On 07.11.2024 09:45, Jonathan Corbet wrote:
+>Sebastian Fricke <sebastian.fricke@collabora.com> writes:
 >
-> It should be PINMUX/PINMUX2, not GPIOMUX/GPIOMUX2, see
-> <dt-bindings/pinctrl/pinctrl-cv1800b.h>.
+>> The series contains:
+>> - a general debugging guide split into debugging for driver developers and
+>> debugging from userspace
+>> - a new summary page for all media related documentation. This is inspired by
+>> other subsystems, which first of all allows a user to find the subsystem
+>> under the subsystems page and secondly eases general navigation through the
+>> documentation that is sprinkled onto multiple places.
+>> - a guide on how to debug code in the media subsystem, which points to the
+>> parts of the general documentation and adds own routines.
 >
-> Fixes: 64aa494de6fa ("dt-bindings: pinctrl: Add pinctrl for Sophgo CV1800=
- series SoC.")
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>So I am just getting into looking at this; the fact that I had a hard
+>time applying the series has not helped...
+>
+>> base-commit: 8c64f4cdf4e6cc5682c52523713af8c39c94e6d5
+>
+>That is ... 6.9?  Why are you basing your patches on such an ancient
+>kernel?  If you want me to apply them for 6.12 (not guaranteed in any
+>case, it's getting late) you'll need to bring them forward to current
+>docs-next.
 
-Patch applied!
+Hmmm my Google-Fu is not strong enough, I can't find a docs-next
+anywhere neither in https://git.kernel.org/ nor in the Linux Kernel
+documentation, can you point me to the tree?
 
-Yours,
-Linus Walleij
+>
+>Thanks,
+>
+>jon
+>
+
+Regards,
+Sebastian Fricke
 
