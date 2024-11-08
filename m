@@ -1,246 +1,182 @@
-Return-Path: <linux-kernel+bounces-402383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA08C9C26ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:11:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878BF9C26F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DCDDB21C0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:11:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466F8285168
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A2A1DF977;
-	Fri,  8 Nov 2024 21:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049B11EF09F;
+	Fri,  8 Nov 2024 21:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KPmI5tvy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bj3sJ7RO"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA91C1F14
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 21:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58B61AA1F9;
+	Fri,  8 Nov 2024 21:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731100275; cv=none; b=blscpX/aKvqmcgsfrB677aY7nbdXTSsOYe/PxgVemVKyuI9YgCniJheecAQjheUDGJ54kYZgD3Zy38kEAkQ0PSxTuC4udx4UEJhvRUkkWJypDbMzyR98K/UXpH1AmG4bGWVbeGdMjiCBvPvOFwkGfUt4spoTLctTr1ddTw8kgeY=
+	t=1731100350; cv=none; b=cz2de4ZjelhLPxVU8B/GMyeZmybhtp+0RbCDuskKGoo/U2Men6OtCZl3bpSNJSZaOu2470h/T0DLCWhz/WahlA6PvU1WwD0QLGo/X4G9YYTvccwfmE28fA2f8TLOL0XK9BXJGEGwjhJ8fJrEANabcAUZLLXWhX/X+0MxhI/mhoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731100275; c=relaxed/simple;
-	bh=es+bqbmiX3A1GhHLreQT+U9nXd4UOMo2O2/RY9a0oSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NMregeocK5h/qs3nqnogjQdFKmYnEEmbEyDXwM06jf18nP551/TfeRWszAibcrzxoMtJkecu9HYiOF34/S7utG8EdSa67k5RBpv8qvJzRICWiuSnBeRrqsKqU5gvwOpw7nUifXNCXMP7wvacLB6Rk00w5RJsYdjz/Eo4FWCEMH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KPmI5tvy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731100272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nRqlXjowIXjJU/wOruO4EV/OIEg8cJDYqC1tZv9nmzc=;
-	b=KPmI5tvyxvQMLvm5ynjfUPB8n/6Pdx5nP4UMQLgTAoo2dIsqP7opVdYsK4Yzgh4axWC416
-	lLmtVTYKKArj+lqlu8X0yk8QadDPd3H0PgiFAnh1CJvYJHf6CLqs5iAwZ2SuTInWjZ/EEb
-	tz3UEWQiQYGu7SOiU1Uy4/Jc80Y9GgE=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-532-fnkOYiu_M_a_eSs1kDG9_A-1; Fri, 08 Nov 2024 16:11:10 -0500
-X-MC-Unique: fnkOYiu_M_a_eSs1kDG9_A-1
-X-Mimecast-MFC-AGG-ID: fnkOYiu_M_a_eSs1kDG9_A
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5eb75d21d3eso318986eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 13:11:10 -0800 (PST)
+	s=arc-20240116; t=1731100350; c=relaxed/simple;
+	bh=T/stVXICg98DOnc3JpDNC41ApEmpylgwGf9hoMWxUMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L8OAZTapJn9FOdLDIX6ZubCFQ3xEpZy7pmunpIvofDPf7gXmelq/CvF1T/tUuz606bd4lM4i7AmUhHfaf7kkCQpy/xTOhfb/fIvtC5Bv4NT4r5g3mbStmA11+2Nt8ZYB3nqOHuXe6cG6lVzakwEWwObH2QBiBqpGbEeUbHCy6jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bj3sJ7RO; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a86e9db75b9so416516266b.1;
+        Fri, 08 Nov 2024 13:12:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731100347; x=1731705147; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GRdQwIjYTXd+4NEuzioQ9bORHEAmWVZm97bkocK9N00=;
+        b=Bj3sJ7ROuVxbNOs5xKcX3IBawxgbwiFgHevZbVH9/O3kooL5GcfLI1fQGig/J49MOj
+         uiSYHP/AumK1eNMg1thziFDkJa2f36R8qpih/gyt0JQsW2f9Yq9OguxRmGiE3P0pL3do
+         f5Ntg4AOo1WPfGvVllvJpnwaDxB8g2RHAO6ctWJ7DuHc0nBa6bTTe5SEQPmjwy5k4cZ3
+         0sVxQ27RRqfoVSt9Z/HDf/R/na9B76KwUzL2+LVeEpTLAhqMiVHXPQ9/0cEb2O0i8vZJ
+         4U2dJJykAo9pl+2xZO1Uj7C9giYk6q7d8ZY9rSfOdmImp2S7RQtCtLbdtRcSw4vVkteZ
+         QFvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731100269; x=1731705069;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nRqlXjowIXjJU/wOruO4EV/OIEg8cJDYqC1tZv9nmzc=;
-        b=sfdKJKM41bie7ZU9VpTfjw23gxtQ2Qwi93HrI9vn5r3gkPw7jJNOXmtucW19LYDRzf
-         rfRF9Obmf9e9nMnlneO2eT+W5b/li1cRrvhOvIjvVSmoADELEVnbbDeMdUkAT5n34wLg
-         Mya2rpBEU6KXmzo60svwcm5jaoBUusWvURTg/pfQIHGmJJEVS9OCORHJDqvmOhLshZK+
-         XCkLmqROjNQRlavT6mG7+7GAC5P41WG5zII3P18GbPAZStwuYy5/0nxln82NGMl0MOtg
-         4WuJdmDQab6MqNWJHiRe7c2UuW8LrFI/OGMQf9Ivh/DshXlKARsPcjV/p6cQ8cZAynZ3
-         ayTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrqlwlGt9H6AAd4kG9fA5b9/mfym2qnz1+/l+OKO3FoOGXYDSovFfIXWMGwS/Q3Phlee++YSSLalhLfHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykK74raGEifgUuPwCA8OLoWRFQY0WnuValuoABMK6n+Nd/aQLL
-	FLgXU97b+qqB6nU8+s6VuUF9t6fqP2GxmeDDFuYRQOwR2xMbSMuOZXuAIJOEWvOsWICDctR7GeZ
-	FlGxLq2YRZJHa9QT6ZNNSMyqr+Ozf2RVCO5USXase3zUKISKJkfOfycjsFxfFyXS8KkOtR3QIS7
-	7oWmD/civmHjRD6maXCXMeDgOiL56/FrHzVOX6
-X-Received: by 2002:a4a:c70f:0:b0:5ec:1ed0:3849 with SMTP id 006d021491bc7-5ee57c40c98mr435411eaf.1.1731100269585;
-        Fri, 08 Nov 2024 13:11:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEqh380fjLkQ2+6qUYw/LIIxhyTMmTEiMJpEsuaSUMLQmk08/Vgv54D+6rC2jQTKpUOPaljEGzbAInyxOPQtcs=
-X-Received: by 2002:a4a:c70f:0:b0:5ec:1ed0:3849 with SMTP id
- 006d021491bc7-5ee57c40c98mr435405eaf.1.1731100269214; Fri, 08 Nov 2024
- 13:11:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731100347; x=1731705147;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GRdQwIjYTXd+4NEuzioQ9bORHEAmWVZm97bkocK9N00=;
+        b=hfgDLLkOQuLwB4irh75LU6kJbPlj0dy77OVxQkTX10dFtdGFcCfMm02PYjU1oP6N/O
+         9H0yXkXkR0xHvRfnwN2nHf8FzayqwZJRmHX84X4MQMHMVteeeQnFTE2ovqMJMRRZmqbY
+         jjlNENx+/zIPhC7ZVrmlmk+cyBdBl/KULfZMo42foJP8OySduCeHH5NxDnqlJNIevbOR
+         RZLbT7yDq/U4lvsuWm453FE86jQMQmyitYFcBEm1HI1dmjwYmjkClPD0FtyuQxRMI+J1
+         5T/nFXc+zPZVa2evJ+PaRuwZkzCviknCje8rjxmQkf8wsWblVMDxUKHqt9cJ4M9WiEiZ
+         z/aA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWykZFLUjs/MdPvhxcWlrO9IxpS8UdQAcHodyJF8177bGvHu0pg5e/rDWS38MQ728pLCybXkpO0g+d@vger.kernel.org, AJvYcCXrtWXLP0p9QumGz8vGvAaDND1g8/gXx9KseLqW2vAxpF+pnB8ey5U6CdTM9AHSMr1sSifB59TfXVsPcukh@vger.kernel.org, AJvYcCXxbCr9F7dFytdq2nbdCErkZTl6ev/fqFgjmyAim5ICHBIEYSpHww/ze4pUNSWshhxL/sD29E3J9pEX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu6NSQwNzld3RKnRaSNKFAxFNkj+xguzQEQrVVhYJ1EqiAhVrg
+	x2QBC/sm2r5hLhny/Aqt+umjadaizNIJcJ6gFr7tmMhITUq+062Z
+X-Google-Smtp-Source: AGHT+IHfY3W1P44D/+5X9Mv0Lkn3gsjpDpWQ1OX+M+X9kDBgfznn45mROOfa6ZjrBV4O4N507XYBgA==
+X-Received: by 2002:a17:907:1c20:b0:a9a:558:3929 with SMTP id a640c23a62f3a-a9eefff12d2mr426112266b.48.1731100346738;
+        Fri, 08 Nov 2024 13:12:26 -0800 (PST)
+Received: from [172.20.10.2] ([37.63.10.207])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc4ca5sm279171866b.95.2024.11.08.13.12.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 13:12:26 -0800 (PST)
+Message-ID: <ce5d812c-9d92-4ad5-8111-106968dbdd70@gmail.com>
+Date: Fri, 8 Nov 2024 23:12:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
- <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com>
-In-Reply-To: <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com>
-From: Enric Balletbo i Serra <eballetb@redhat.com>
-Date: Fri, 8 Nov 2024 22:10:58 +0100
-Message-ID: <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
-Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, 
-	Masahisa Kojima <masahisa.kojima@linaro.org>, linux-efi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
-	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: clock: actions,owl-cmu: convert to YAML
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
+ <afaerber@suse.de>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241107143431.728669-1-ivo.ivanov.ivanov1@gmail.com>
+ <a4begcrmbtotl2imd3eaxpdveagvwridy6ev5zmwzvjqt3ovfq@wyj2dj73xe3e>
+ <d5d3f934-4f1c-43d9-aaf9-8de194d1f3b7@gmail.com>
+ <CAL_JsqLkdXKGve5tB_cdO9bG9ge923Hbmkz+1BghLc+KkkDo+Q@mail.gmail.com>
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <CAL_JsqLkdXKGve5tB_cdO9bG9ge923Hbmkz+1BghLc+KkkDo+Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Ilias,
 
-Thanks for your quick answer.
 
-On Fri, Nov 8, 2024 at 4:48=E2=80=AFPM Ilias Apalodimas
-<ilias.apalodimas@linaro.org> wrote:
+
+On 11/8/24 22:56, Rob Herring wrote:
+> On Fri, Nov 8, 2024 at 2:31 PM Ivaylo Ivanov
+> <ivo.ivanov.ivanov1@gmail.com> wrote:
+>>
+>>
+>>
+>> On 11/8/24 14:16, Krzysztof Kozlowski wrote:
+>>> On Thu, Nov 07, 2024 at 04:34:31PM +0200, Ivaylo Ivanov wrote:
+>>>> Convert the Actions Semi Owl CMU bindings to DT schema.
+>>>>
+>>>> Changes during conversion:
+>>>>  - Since all Actions Semi Owl SoCs utilize the internal low frequency
+>>>>    oscillator as a parent for some clocks, require it.
+>>>>
+>>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>> <form letter>
+>>> This is a friendly reminder during the review process.
+>>>
+>>> It looks like you received a tag and forgot to add it.
+>>>
+>>> If you do not know the process, here is a short explanation: Please add
+>>> Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
+>>> or above your Signed-off-by tag. Tag is "received", when provided
+>>> in a message replied to you on the mailing list. Tools like b4 can help
+>>> here. However, there's no need to repost patches *only* to add the tags.
+>>> The upstream maintainer will do that for tags received on the version
+>>> they apply.
+>>>
+>>> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+>>>
+>>> If a tag was not added on purpose, please state why and what changed.
+>>> </form letter>
+>>>
+>>> I cannot add other people's tags - toolsets ignore it.
+>>>
+>>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>>>
+>>> ...
+>>>
+>>>> +maintainers:
+>>>> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>>> +
+>>>> +description: |
+>>>> +  The Actions Semi Owl Clock Management Unit generates and supplies clock
+>>>> +  to various controllers within the SoC.
+>>>> +
+>>>> +  See also::
+>>> Single ':'.
+>> $ rg --files-with-matches "See also:" | wc -l
+>> 110
+>>
+>> $ rg --files-with-matches "See also::" | wc -l
+>> 94
+>>
+>> Having 94 matches of that out of all 110 definitely leads me to
+>> think that this has been done on purpose, and is still being done.
+> 91 are QCom and 82 are QCom clock bindings... They tend to be
+> annoyingly consistent sometimes with whatever was their downstream
+> coding standards.
 >
-> Hi Enric,
+> The double colon is needed in rSt documents to escape a colon. We
+> don't need that in YAML though. There were some thoughts on embedding
+> rSt into the bindings for generating documentation from the bindings,
+> but that's never been more than some experiments. This just looks like
+> the first QCom clock binding did this and all the others just
+> copy-n-pasted it.
+
+I see, thanks for the explanation!
+
+>> Could you elaborate a bit more? If it's wrong, then shouldn't we
+>> clean all the other bindings from that mistake?
+> Patches welcome...
+
+Will look further into it the following weeks. For now I'll send a v4
+of this patch with the issue fixed.
+
+Best regards, Ivo.
+
 >
-> On Fri, 8 Nov 2024 at 12:26, Enric Balletbo i Serra <eballetb@redhat.com>=
- wrote:
-> >
-> > Hi all,
-> >
-> > I'm looking for any advice/clue to help me to progress on enabling
-> > TEE-base EFI Runtime Variable Service on TI a j784s4 platforms.
-> >
-> > I basically followed the steps described in u-boot documentation [1],
-> > I enabled some debugging messages but I think I'm at the point that
-> > the problem might be in the StandaloneMM application, and I'm not sure
-> > how to debug it.
-> >
-> > What I see is that when I run the tee-supplicant daemon, it looks like
-> > the tee_client_open_session() call loops forever and the tee_stmm_efi
-> > driver never ends to probe.
-> >
-> > With debug enabled I got the following messages.
->
-> I assume reading and storing variables already works in U-Boot right?
->
-
-Reading and storing variables to the RPMB partition in U-Boot works,
-that's using the mmc rpmb command from u-boot, But setting
-CONFIG_EFI_MM_COMM_TEE=3Dy in u-boot I end with a similar behaviour
-(although I'm not able to debug at u-boot level) What I see is that
-u-boot gets stuck
-when bootefi bootmgr is invoqued. I can also reproduce the issue with
-bootefi hello.
-
-=3D> run bootcmd
-  Scanning for bootflows in all bootdevs
-  Seq  Method       State   Uclass    Part  Name                      Filen=
-ame
-  ---  -----------  ------  --------  ----  ------------------------
-----------------
-  Scanning global bootmeth 'efi_mgr':
-( gets stuck here)
-
-or
-
-=3D> bootefi hello
-(gets stuck)
-
-To debug I disabled CONFIG_EFI_MM_COMM_TEE to not get stuck and bypass
-the error and go to Linux. My understanding is that
-CONFIG_EFI_MM_COMM_TEE is only required to read/write efi variables at
-u-boot level but OPTEE is running the StandaloneMM service. Am I
-right?
-
-> >
-> > # tee-supplicant
-> > D/TC:? 0 tee_ta_init_session_with_context:557 Re-open trusted service
-> > 7011a688-ddde-4053-a5a9-7b3c4ddf13b8
-> > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
-> > D/TC:? 0 spm_handle_scall:859 Received FFA version
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> >
-> > And tracing the function calls gives me that:
-> >
-> >       tee_stmm_efi_probe() {
-> >              tee_client_open_context() {
-> >                optee_get_version() {
-> >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                } (ret=3D0xd)
-> >                tee_ctx_match(); (ret=3D0x1)
-> >                optee_smc_open() {
-> >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                  optee_open() {
-> >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                  } (ret=3D0x0)
-> >                } (ret=3D0x0)
-> >              } (ret=3D0xffff000004e71c80)
-> >              tee_client_open_session() {
-> >                optee_open_session() {
-> >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                  optee_get_msg_arg() {
-> >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> >                  } (ret=3D0xffff000002909000)
-> >                  tee_session_calc_client_uuid(); (ret=3D0x0)
-> >                  optee_to_msg_param(); (ret=3D0x0)
-> >                  optee_smc_do_call_with_arg() {
-> >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> >                    tee_shm_get_va(); (ret=3D0xffff000002909060)
-> >                    optee_cq_wait_init(); (ret=3D0xffff000002e55910)
-> >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> >      ... continues sending this forever ...
-> >      ... Hit ^C to stop recording ...
-> >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> >                    optee_smccc_smc() {
-> >
-> > [1] https://docs.u-boot.org/en/latest/develop/uefi/uefi.html#using-op-t=
-ee-for-efi-variables
-> >
-> > Thanks in advance,
->
-> The most common problem with this is miscompiling the tee_supplicant
-> application.
-> Since we don't know if the system has an RPMB, we emulate it in the
-> tee_supplicant. How did you get the supplicant and can you check if it
-> was compiled with RPMB_EMU=3D0 or 1?
->
-
-I'm using the tee-supplicant provided by the fedora package which is
-built with ` -DRPMB_EMU=3D0`, I think that's correct, right?
-
-Thanks,
-   Enric
-
-> Thanks
-> /Ilias
->
-> >    Enric
-> >
->
+> Rob
 
 
