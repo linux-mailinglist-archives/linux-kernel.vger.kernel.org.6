@@ -1,90 +1,137 @@
-Return-Path: <linux-kernel+bounces-401884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4559C208D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:36:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9CA9C209B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:37:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A631C235ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F7961C233B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662F321B420;
-	Fri,  8 Nov 2024 15:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76C021B427;
+	Fri,  8 Nov 2024 15:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fkp3jlgi"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MMHtNSf/"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468811E7C26;
-	Fri,  8 Nov 2024 15:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2021E7C26;
+	Fri,  8 Nov 2024 15:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731080162; cv=none; b=UbOgtXL32c0EO3lT6uLkROCQ2IAu/2Fl14HUeEj5euh2KEKIDlL+oNNkW6r+iBw59suI1RU5Dy4aQixLYwQNWHdZGFNmuFDbqZTzmbP1ZrI6FQEX0PqZcrzrFIswmn4CkO33JwzxGQT9KtXdjUzqP7/IDzi1wuXl0mfKrl2bQCI=
+	t=1731080233; cv=none; b=C+SUKKgt9tUxSAS2kJV2YiYO4toWe1hN8astp8bfZC9bP3mRCcgIEreCvcJ1E/e5yUGgnwzAmZLK+98vxWSYyooSaZZJx5aXmPNip6cXIhCAP6F8lsX5VAMUCWoK7VwJvzfr7MHgBpMolEU12/S2eokxSTXNBPIMabAEE2yQ3tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731080162; c=relaxed/simple;
-	bh=QExG4NDsxjbsTLEl19jIfnnUFsqMFMBIfd5uio9ziSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvkp6xQ3EmtzQZZpRFbezsAqCKziBL8t6HQtL4uH5oDZe1DE7cNeVNHGbDXxWsUxF/Hz4eymSBpH6G5IsrCtIFKYS7O7/k4C00OQXnWw2hcMaw2dhPI/u9RRoJM7FU9kXOQctmtCDNje+2zUht0MmpcMohrJONIUysm6tU/YPjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fkp3jlgi; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UUyC20fNhhkhzInM/OGGWK6MVOeNblQhVx2KgLllH5Q=; b=fkp3jlgi8a6K58qPHPaGO1mahB
-	PVW+rxV1+YGM8mPpIIZ0M6LmjQ15TwiU6dSMMVTVXKGufyujL5RVH1pk+U78XqUwwIi30ufaJbS3X
-	iJG6Woj8Kgwjk1btLYUwYFQF6NB9nyE7kp7Q0keH3X/oRQcZTYi6FU322t8kXgw4h5/hTv+DAMTpG
-	Kc1hazttu8vN4umnYAUBSODU2PlaFLNeb+Qgzi9TBJgEWM72cf7kbA1eMnX/BKi0AvObSYsYOenX8
-	Mnhg9zsR2Ei6DWuTgjBauFX0dhixPdgWetjTInRJ+tzFdJRLCxwzdVgO6UAEo0jZF/KgQnMRIuvoi
-	QuVZ8enw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9R1d-0000000CKR3-22yc;
-	Fri, 08 Nov 2024 15:35:54 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9ED713006AB; Fri,  8 Nov 2024 16:35:52 +0100 (CET)
-Date: Fri, 8 Nov 2024 16:35:52 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: mcgrof@kernel.org, x86@kernel.org, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	hch@infradead.org, gregkh@linuxfoundation.org
-Subject: Re: [RFC] module: Strict per-modname namespaces
-Message-ID: <20241108153552.GD6497@noisy.programming.kicks-ass.net>
-References: <20241106190240.GR10375@noisy.programming.kicks-ass.net>
- <04F6A88E-FC15-4184-A1F7-A5EE443997DD@zytor.com>
+	s=arc-20240116; t=1731080233; c=relaxed/simple;
+	bh=F1eXssD2dIQnSsLKLIi5x+YmXINBEuHTi1uKhKkZR/E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y3nTssZy12szrXbqjq34KxeFYpXFPiHR/vrSc7qF+9OZPf9w+AcnoBMU/KFzR/PdMTjI5DZe3XAp0ebrwMbZbCwbtaMkOCy5uhybq6JaX2bq8ldtrDv+v2g6P9l8yGbSchXbS7T93YHdXzbAGtiKOBlJIGB2EdDe2ihQ7uJrJm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MMHtNSf/; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D852D20009;
+	Fri,  8 Nov 2024 15:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731080228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ib0B4YFNC/k41QT2/TAoYQ8U0l38IOl7tUhDAZTKbb4=;
+	b=MMHtNSf/zL3KWZghQhO9S5iedDMi1b5y1WvR7nZT/7FFBHFH7pVtYKKHgf0WSJlG1X3m1/
+	EdyTdBEnN1RzfXUGuqbuS4WQNGL+BvH29aVmOycrtFo0D3DuA7DnkjgAJNT2anvV4rJlw+
+	7X5d/0UNG/0uurLeEjWOND1TLA7KzSTs5oD8s/7SygcPe7LOOn9iY3bzF8tyrtm6VUVeti
+	j5Ofu8qLwy7VXIAkogIyNbmp5QSY3Vg1hU/7EkNqaVz8BvOIT4QU3bpFqfE9uoNgSDbIok
+	eothO2RJGU03tw7Ww/VO9eV3nE7J/r2JYMmvApnDSqK+AjfS71evZm08EF91mQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH 0/9] misc: Support TI FPC202 dual-port controller
+Date: Fri, 08 Nov 2024 16:36:52 +0100
+Message-Id: <20241108-fpc202-v1-0-fe42c698bc92@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04F6A88E-FC15-4184-A1F7-A5EE443997DD@zytor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABUwLmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0Nz3bSCZCBb1yzNIMnc2BLINrdQAiouKEpNy6wAGxQdW1sLAALX0Ux
+ YAAAA
+X-Change-ID: 20241017-fpc202-6f0b739c2078
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-media@vger.kernel.org, Romain Gantois <romain.gantois@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Fri, Nov 08, 2024 at 04:28:58PM +0100, H. Peter Anvin wrote:
-> >@@ -1700,11 +1715,7 @@ static void check_exports(struct module *mod)
-> > 		s->crc_valid = exp->crc_valid;
-> > 		s->crc = exp->crc;
-> > 
-> >-		basename = strrchr(mod->name, '/');
-> >-		if (basename)
-> >-			basename++;
-> >-		else
-> >-			basename = mod->name;
-> >+		basename = mod_basename(mod->name);
-> > 
-> > 		if (!contains_namespace(&mod->imported_namespaces, exp->namespace)) {
-> > 			modpost_log(!allow_missing_ns_imports,
-> 
-> I presume this only applies to code compiled as dynamic modules, not compiled into the kernel?
+Hello everyone,
 
-Yes, the built-in modules get the regular linker to resolve relocations.
-Nothing much we can do about that.
+This series adds support for the TI FPC202 dual-port controller. This is an
+unusual kind of device which is used as a low-speed signal aggregator for
+various types of SFP-like hardware ports.
+
+The FPC202 exposes an I2C, or SPI (not supported in this series) control
+interface, which can be used to access two downstream I2C busses, along
+with a set of low-speed GPIO signals for each port. It also has I2C address
+translation (ATR) features, which allow multiple I2C devices with the same
+address (e.g. SFP EEPROMs at address 0x50) to be accessed from the upstream
+control interface on different addresses.
+
+I've chosen to add this driver to the misc subsystem, as it doesn't
+strictly belong in either the i2c or gpio sybsystem, and as far as I know
+it is the first device of its kind to be added to the kernel.
+
+Along with the FPC202 driver itself, this series also adds support for
+dynamic address translation to the i2c-atr module. This allows I2C address
+translators to update their translation table on-the-fly when they receive
+transactions to unmapped clients. This feature is needed by the FPC202
+driver to access up to three logical I2C devices per-port, given that the
+FPC202 address translation table only has two address slots.
+
+Best Regards,
+
+Romain
+
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+---
+Romain Gantois (9):
+      dt-bindings: misc: Describe TI FPC202 dual port controller
+      media: i2c: ds90ub960: Replace aliased clients list with bitmap
+      media: i2c: ds90ub960: Protect alias_use_mask with a mutex
+      i2c: use client addresses directly in ATR interface
+      i2c: move ATR alias pool to a separate struct
+      i2c: rename field 'alias_list' of struct i2c_atr_chan to 'alias_pairs'
+      i2c: support per-channel ATR alias pools
+      i2c: Support dynamic address translation
+      misc: add FPC202 dual port controller driver
+
+ .../devicetree/bindings/misc/ti,fpc202.yaml        |  75 ++++
+ MAINTAINERS                                        |   7 +
+ drivers/i2c/i2c-atr.c                              | 480 ++++++++++++++-------
+ drivers/media/i2c/ds90ub913.c                      |   9 +-
+ drivers/media/i2c/ds90ub953.c                      |   9 +-
+ drivers/media/i2c/ds90ub960.c                      |  65 +--
+ drivers/misc/Kconfig                               |  11 +
+ drivers/misc/Makefile                              |   1 +
+ drivers/misc/ti_fpc202.c                           | 421 ++++++++++++++++++
+ include/linux/i2c-atr.h                            |  67 ++-
+ 10 files changed, 949 insertions(+), 196 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241017-fpc202-6f0b739c2078
+
+Best regards,
+-- 
+Romain Gantois <romain.gantois@bootlin.com>
+
 
