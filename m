@@ -1,108 +1,90 @@
-Return-Path: <linux-kernel+bounces-401049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4A39C1563
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:22:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CFB9C1569
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F7E283DAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9169D1C2234F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65111CC88D;
-	Fri,  8 Nov 2024 04:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E371CB518;
+	Fri,  8 Nov 2024 04:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tYFPsCb0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF17194A60;
-	Fri,  8 Nov 2024 04:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Q5wLvscP"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F6158DD9;
+	Fri,  8 Nov 2024 04:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731039717; cv=none; b=Czd3TAW2ecrV2TVKrmDqTvpetjcywtgxNo6oi/jmePtmXk/EF1RRgLFUFrgh4MeKuDDc2LllqclvtnnjSEc3ToEp5V04qmlYbq4qFsz+lyBPmEPyJTJACkYFBZ1ew9EsVVc0W/fCHFH1v1nBgb25AmUa4zRa3SzzV+sAghH+2o8=
+	t=1731039834; cv=none; b=PIus5hrSAXWugpv2fGNUumiyWhdOSvM9eaasDh408LjWyWihn8fDiWTNG1lqg9v6TbppZHAQQzYd86g+/KByMiYL3QQVAsovLnhOTBOxU50PXNpeqbVPF1h1WHxPxoRrLacX9Gy1L1w5aHH1sfbz7xTCnvR58EwF+duIE5lGEI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731039717; c=relaxed/simple;
-	bh=WLAYAQuM6g3eUxoZL7++yop/ovFVrHcp3kxdSG+HlFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ny24Qt0WPT5gphpGwPWtJVt93CiD7fJQdMwAG5V0/sZA6i+rVA0rPVL7P863cS5MtGqigA8bQmPONY/cezpHLuzOXpkil0+nVKs8r2QTLx12PSNhRXjpo97uVkQuSdMbM87XnmA7GMwie2oaiXQh22ATyD6mR+eqVMswx3Hv99c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tYFPsCb0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731039708;
-	bh=BV7yEOVmPoEKWjC4VxAa/JB2VNxwxkUnuKXMNJfGEFM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tYFPsCb0N1/7JGisoJBPTPucxHyDl0z9JBVdLg2Iaj5fSodMjq1G0/toFIQoUxaiW
-	 ZAfq8f3ESuwCEcJ+yvrRWsgGvTMnN3h2QcJCm4YSzEv/ZdGsTkwrqtdfXjQZ0G+Xvj
-	 4qaAnkS9Crh9UoBt86OQZKvWNkz+PdBcZgdnlmzvxQmZTiloxmZmF836Vjw+P8RTJq
-	 6FMH1354r311+NE80yK+W6BvURFECrIufEGANPMaoNd1OJTnnOO3lMRWXYnzyFYWQs
-	 /fV2ZFMMEQuhtdFF2mxOdUDOHQWUkgpUzNYjIr7qsDpSc7bOU1I7IWgL0HbektsxMa
-	 pkZkPyapHYolA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xl5P84CYqz4wj2;
-	Fri,  8 Nov 2024 15:21:48 +1100 (AEDT)
-Date: Fri, 8 Nov 2024 15:21:49 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ftrace tree
-Message-ID: <20241108152149.28459a72@canb.auug.org.au>
+	s=arc-20240116; t=1731039834; c=relaxed/simple;
+	bh=IL+Z1A+RYJKXWgVRSM/zbnEhSrswwv/z7vE6GX/X4C4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PcbqG/vXYkO/XhKgV2QFy44Fb02XU5FrPuOZBfKMlCrLCNP9imtBJ+s75EtbIwHVrDCDDUBfse/zL5CmxlRsBgJeNFgFbQo8m5tjkZ+byjQidG/j7S79xa5rCI118s6lUY29FwoeFjdxYPb9K6zCX4mRfGziIvO9bkNKRjTluMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Q5wLvscP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3146E212D516;
+	Thu,  7 Nov 2024 20:23:51 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3146E212D516
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1731039832;
+	bh=A0vEUFyfwb+AHUDrN438og+hVkohgSw0iUoCdoRA1Ko=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Q5wLvscPYwSE2Gv2RNViaS+MQCJVhbLsRYc+QH7A59zAaVXAzXr/CNHosZHtn9oIq
+	 ItpyTxzuVdw1CtCC0hgVWJRvWivgrK8UAAjT83gKTtJwz4K7phvj69liK8jbr9hC/M
+	 tba1rtqTZHWTlxyISa5uv33pRbr+1jMCNc2u1wGk=
+Message-ID: <ff6ac9b5-0903-498c-be2a-2949e9bee8d5@linux.microsoft.com>
+Date: Thu, 7 Nov 2024 20:23:51 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/FlwKDpLYPmJWWG31Wgqa=w.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, mhklinux@outlook.com, decui@microsoft.com,
+ catalin.marinas@arm.com, will@kernel.org, luto@kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
+ daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+ bhelgaas@google.com, arnd@arndb.de, sgarzare@redhat.com,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com,
+ vkuznets@redhat.com, ssengar@linux.microsoft.com, apais@linux.microsoft.com
+Subject: Re: [PATCH v2 1/4] hyperv: Move hv_connection_id to hyperv-tlfs.h
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, iommu@lists.linux.dev,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org, virtualization@lists.linux.dev
+References: <1731018746-25914-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1731018746-25914-2-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Language: en-US
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <1731018746-25914-2-git-send-email-nunodasneves@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/FlwKDpLYPmJWWG31Wgqa=w.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11/7/2024 2:32 PM, Nuno Das Neves wrote:
+> This definition is in the wrong file; it is part of the TLFS doc.
+> 
+> Acked-by: Wei Liu <wei.liu@kernel.org>
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>  include/asm-generic/hyperv-tlfs.h | 9 +++++++++
+>  include/linux/hyperv.h            | 9 ---------
+>  2 files changed, 9 insertions(+), 9 deletions(-)
+> 
 
-Hi all,
-
-After merging the ftrace tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-ERROR: modpost: missing MODULE_LICENSE() in samples/rust/rust_print_events.o
-ERROR: modpost: "__tracepoint_rust_sample_loaded" [samples/rust/rust_print.=
-ko] undefined!
-ERROR: modpost: "rust_do_trace_rust_sample_loaded" [samples/rust/rust_print=
-.ko] undefined!
-
-Caused by commit
-
-  91d39024e1b0 ("rust: samples: add tracepoint to Rust sample")
-
-I have used the ftrace tree from next-20241107 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FlwKDpLYPmJWWG31Wgqa=w.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmctkd0ACgkQAVBC80lX
-0GzBEwf+PLcqWwRRvVaVUk5Zp5k5SPurtRvc8KGCYGE9BnyekIJS4a7g1y8Ehvms
-8VQjEKtfUfVr2vIuLt9JuqgvudFPCgb5NdNRfKVa8yZpJPjqWzinFk6mtEZ0mGly
-HNMnqu58OrMTztr7GdNpnWkU+oP4WgsV2RD0RtorHwxGILCz2ZC2af4b/LRnQRDD
-LhZVzhDKNRLA3PpTJtKxV3hpTDsonZoe290eKvqBqEKoOpboaLPAkWTelku1gJ+Z
-aoZ4sWct0IRXYV5K/m67AJmdizbLpHxcV3njUhqqo3D21PHJFq7bexBupCo3povB
-ijHcrwUsWgxiWqK8qLyg4DzHTvqbPQ==
-=gWzj
------END PGP SIGNATURE-----
-
---Sig_/FlwKDpLYPmJWWG31Wgqa=w.--
+Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
