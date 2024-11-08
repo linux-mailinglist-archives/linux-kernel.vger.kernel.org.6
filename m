@@ -1,154 +1,121 @@
-Return-Path: <linux-kernel+bounces-402255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6E19C2582
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:24:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3437C9C2585
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:26:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B3A2840BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9DF1C22EF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394FC1AA1DD;
-	Fri,  8 Nov 2024 19:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982FF1C1F18;
+	Fri,  8 Nov 2024 19:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+uZvfkg"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Lnh7ig1x";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DlkbYAIq"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38165233D6B;
-	Fri,  8 Nov 2024 19:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E271A9B54;
+	Fri,  8 Nov 2024 19:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731093861; cv=none; b=KkzXx8YzMLQk2PDLIjgRezQjSPKp9JbzQeWI5QdAj/5W8waI84tV/HXUM4JTt0xLODjGImYr0ee+QOV9eDwmX/QQZHWtA8uGkhyXELsNM5hYXRW52++TXhVy9yxP8DYLxZhnFDHbo6i3l5VqrMhNvSOfCAsmvLaKlbAUzupfSpc=
+	t=1731093940; cv=none; b=O3WcInA5hswDFu8ncEaENzBxQ3dvlTqd8B+nDRb12U109F5O/Lc3N6ZCafHXp5haNq5WWcgrF2Y4xeqQLONKQW0LCPAvAOB/OeNiWJxL3Lmkq/k4bdKIYvYbv5FdQgdDNt2dijPZlR4vCPDJccSoFvytzSsKlpu3SfBjg/GQeDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731093861; c=relaxed/simple;
-	bh=q7ZGc479MBZttina+0alFRyr7wMWF7vN9ddJwSh5FQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Tbyxk/OwqqjtLITJDc74WXFpHsZ93HbQ1Z0JhQwMUDokAb/x2nuHDDhExzPDI9qmVhRUjiiAcT2fSTY5ulG/LSPbZ5SMVqTP2sABuP1Zcz7I7AzlGNm4xugMQYCWuiFDO47JLM/3ZBBW0GCjCGgF0r8PnMzO01zbmWdH6uIf+a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+uZvfkg; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cdbe608b3so27357455ad.1;
-        Fri, 08 Nov 2024 11:24:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731093859; x=1731698659; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PKffIyY/7SmCgWnQq0g1achquWKvPHPvVC9LDZIXaco=;
-        b=c+uZvfkgQvxWg8Q5pNavLZUQ4UFfBuaXqJdmFarE0zLgLs1rmBRxvoU7BS2Xb9qayM
-         XpOecL6pjpAHJuERJV0VDv2JP5xulz1twiQtqf50pMABZ9vq/ArOp8J2bkM1vi65yn0J
-         Atugx3q1ib+5eWsaygbGtDGutBfVPUuTeV5kTuQkVtpOecoVVU3qoGQOc7/WPv7uhjbq
-         DxGmqMmd3j+HfSbD+G44it6n6hI13WTz0+PxIN7fKJhhFYd6zAolRXe0CnliX37lXq41
-         TJ8Mm4X70scdSeLj7LcrE2zs8QXP6ADN29D3y/pnPhQiyT0YvGsMzOuSpxu63UnYUB6z
-         C6Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731093859; x=1731698659;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PKffIyY/7SmCgWnQq0g1achquWKvPHPvVC9LDZIXaco=;
-        b=M3usNm0j+KIr8x+blI0pOEyWqSftrhmcc1RxNVm5xVAvb4jWVYAq5tnpDqp6NrQGfe
-         pXptk5wZ+SU44ag9JsJIm4EWV6RtHN7r6Wix3YK4T30CjVyNvMgdCLst+bZexne3acQd
-         HRm/EKASWavLawj677QP/iKU0+/6PhFsPGJvoqp+OdNKfsbUxmpfVtgx+LYGe5l7cN8R
-         GDry+C1PhF0eVcFL9faSOU0imiP/1gd7bt9JXULvuRbugnNerCA5Oz3WrKcLQiS9htgN
-         f8XLyEQpb/sCoAUkSwxfipOdUBzFW7xSr/4maG4W1nd+JlGj3ISihTeTgmyVDT+rCvlV
-         yAOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjfGWJQ9d70Sra+hLrianpj5HFWoglgvbJWyDhXA+rJie9oMkgTK0H7BsGUATJoW+wtBXWGr5WQDqRLQI=@vger.kernel.org, AJvYcCXZaMNh+PUaWPkYEyUkDPQYhWYUOUlC+OdN8+0bmHtMCNu7lQ59nfhFFPOLH695BxVoYRMLgDqZM1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOXXYC5umiXEnztdugiyLqWCsQiiqCuRd01rgvz4CZ3i9a6+E1
-	czStrGhDRN0DiMPiJex8Zd8sQl3nSUTgM9/ewyndTuzqHJfsCz2r
-X-Google-Smtp-Source: AGHT+IE0z1FmBOzuFCLw52ovVQ929MNg2h9xmryrk7fwh1O7hQFkHO1QBimB1K/uw3LdP75j8JlZJw==
-X-Received: by 2002:a17:902:d4cc:b0:211:6b21:5a87 with SMTP id d9443c01a7336-2118360bcccmr40431895ad.56.1731093859417;
-        Fri, 08 Nov 2024 11:24:19 -0800 (PST)
-Received: from localhost.localdomain ([12.17.209.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177de0453sm34594105ad.107.2024.11.08.11.24.18
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 08 Nov 2024 11:24:18 -0800 (PST)
-From: anish kumar <yesanishhere@gmail.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH V2] ALSA: machine: update documentation
-Date: Fri,  8 Nov 2024 11:24:13 -0800
-Message-Id: <20241108192413.10751-1-yesanishhere@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1731093940; c=relaxed/simple;
+	bh=mvQKueWlpefaVNvoNbW94RqK5Dxblon3eu/LzPGEKDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mHQ1fpn7apOQYq6dnnk67NzgiXs/HNRC9il/FJUsJHGIGW1ANDsmwNvH3lDDRG7GfCRvvDgYh1yNcFweLUU0S1wroLu5LRUbD+4jmyeuYJl3oplD/S2w6DMH0ZuCsPeWQzkfJcwdWUPyAEjDHiSJBjTsiSYW4tFaAd3aqEbAU38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Lnh7ig1x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DlkbYAIq; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id DDD3B25400F2;
+	Fri,  8 Nov 2024 14:25:36 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Fri, 08 Nov 2024 14:25:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1731093936; x=
+	1731180336; bh=Gwc623npqkQAxgOfn1Mt+u27tSynXETPHJcw58J6KR4=; b=L
+	nh7ig1xMTM8fuGFJz8frj2HNK5I1TiuSJXGgBJM/wYuVso8gjWxr12u3+Ozr4X53
+	2V3/OsHjazOARvd2asN3nXSa/jpfICYZkvGOWbzllO7AEbPSKFSJLjZo9na3PAFy
+	PcHZ+SuYCoAvqqfCQ0Tmw4z/vjW6VpSUOy5izSb4/ZgnKAmqCgtuXmrz1TLBf94V
+	dNQl9+tm2QKM17Tr8zMOKpHvfeKVx2MOoXofWPt/rPC5Jm8T/U+EhRFRdH2CyaIy
+	Gcz0ar3mas8JkLOyntR6Ir3kpmGd2hZnWPJHEkfGj+GjddorE5qwU8qGbyrOZNyq
+	WUVR4bC1/PUTx9rd8m+ug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731093936; x=1731180336; bh=Gwc623npqkQAxgOfn1Mt+u27tSynXETPHJc
+	w58J6KR4=; b=DlkbYAIq5k74q9kBOV5K+u2t1nPA0g9Do3IWxW0iDSeIy7assjx
+	toxqgDMIjSr5A2C+PuqIjVGk+m8qm9+Ymhm2n+2IEireVDVyn1qOFLM+6t0+CPL/
+	3ns+8UCU0fTTTSxSEfAt8RVTmFRtg93wU9gaTHiuPGRuIfX/E64DamQyrHHy62m7
+	OfH7BBq+QzWXPy3L/38BZOzqH9YdYeMs+Bzd9pzpXE8BvwSLGfDmg2ejJYmA9Jvn
+	30yyCw64LuWIylTtUWbsFVopDRcmSwdwsWuRexVnhuD0Gbt68dPhECDFIf7Odbul
+	5kc5GvgstKDlnUjGIF/Ei5yfv0JB7N/DVIw==
+X-ME-Sender: <xms:sGUuZ8qzzfHXLSeBFovIADzmO0tY0Co5R_Vbd55l9_LEFT5schAdpA>
+    <xme:sGUuZyolS_YQ3UnZNndGcy1L9Qncp3cjmiZ5POjZDJaW6Aaf2h-fKlsi2tMZXEuSy
+    dezA-efxHxPrpqF_1M>
+X-ME-Received: <xmr:sGUuZxPnegcmUb7H4UOl8H46z8rtA_Ku7RjfSWGFuYVOe3tvWaDdwbvmiGHPREmeAYvdmw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigdduvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehlihhnuhigqdhmmhes
+    khhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrh
+    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrnhhnvghssegtmhhpgigthhhgrdho
+    rhhgpdhrtghpthhtoheptghlmhesmhgvthgrrdgtohhmpdhrtghpthhtoheplhhinhhugi
+    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:sGUuZz7hVl8oZlvI8bIstoIrF-Ust1PkX2PuzvuUtmahtDFmPs6iAA>
+    <xmx:sGUuZ75fx0twImD9cymo25eqQpnXfvc5HQOKqbGFEbwzZN-cMticCw>
+    <xmx:sGUuZzgU9-uaUeluO32UB2qXl852ctSTqdZA8Lf4hjTXbP9ZnElHYA>
+    <xmx:sGUuZ159mxp954rg7WpHXeq0-p6sxkHrHLC7lz4NONdZUPBMF-gXxg>
+    <xmx:sGUuZ4ufl-M96MvxInHIFn6neZE7yAdiA1gquiiC0FwKodU49OYl9p0X>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 8 Nov 2024 14:25:33 -0500 (EST)
+Date: Fri, 8 Nov 2024 21:25:30 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+	clm@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/13] mm: add PG_uncached page flag
+Message-ID: <u5ug67m23arro2zlpr4c6sy3xivqpuvxosflfsdhed4ssjui3x@4br4puj5ckjs>
+References: <20241108174505.1214230-1-axboe@kernel.dk>
+ <20241108174505.1214230-4-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108174505.1214230-4-axboe@kernel.dk>
 
-1. Added clocking details.
-2. Updated ways to register the dai's
-3. Bit more detail about card registration details.
+On Fri, Nov 08, 2024 at 10:43:26AM -0700, Jens Axboe wrote:
+> Add a page flag that file IO can use to indicate that the IO being done
+> is uncached, as in it should not persist in the page cache after the IO
+> has been completed.
 
-Signed-off-by: anish kumar <yesanishhere@gmail.com>
----
-V2:
-  took care of comments from bagas related to underline
-  and making macro as literal code block
+Flag bits are precious resource. It would be nice to re-use an existing
+bit if possible.
 
- Documentation/sound/soc/machine.rst | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+PG_reclaim description looks suspiciously close to what you want.
+I wounder if it would be valid to re-define PG_reclaim behaviour to drop
+the page after writeback instead of moving to the tail of inactive list.
 
-diff --git a/Documentation/sound/soc/machine.rst b/Documentation/sound/soc/machine.rst
-index 515c9444deaf..9c8e006b1e50 100644
---- a/Documentation/sound/soc/machine.rst
-+++ b/Documentation/sound/soc/machine.rst
-@@ -71,6 +71,18 @@ struct snd_soc_dai_link is used to set up each DAI in your machine. e.g.
- 	.ops = &corgi_ops,
-   };
- 
-+In the above struct, dai’s are registered using names but you can pass
-+either dai name or device tree node but not both. Also, names used here
-+for cpu/codec/platform dais should be globally unique.
-+
-+Additionaly below example macro can be used to register cpu, codec and
-+platform dai::
-+
-+SND_SOC_DAILINK_DEFS(wm2200_cpu_dsp,
-+	DAILINK_COMP_ARRAY(COMP_CPU("samsung-i2s.0")),
-+	DAILINK_COMP_ARRAY(COMP_CODEC("spi0.0", "wm0010-sdi1")),
-+	DAILINK_COMP_ARRAY(COMP_PLATFORM("samsung-i2s.0")));
-+
- struct snd_soc_card then sets up the machine with its DAIs. e.g.
- ::
- 
-@@ -81,6 +93,10 @@ struct snd_soc_card then sets up the machine with its DAIs. e.g.
- 	.num_links = 1,
-   };
- 
-+Following this, ``devm_snd_soc_register_card`` can be used to register
-+the sound card. During the registration, the individual components
-+such as the codec, CPU, and platform are probed. If all these components
-+are successfully probed, the sound card gets registered.
- 
- Machine Power Map
- -----------------
-@@ -95,3 +111,13 @@ Machine Controls
- ----------------
- 
- Machine specific audio mixer controls can be added in the DAI init function.
-+
-+
-+Clocking Controls
-+—----------------
-+
-+As previously noted, clock configuration is handled within the machine driver.
-+For details on the clock APIs that the machine driver can utilize for
-+setup, please refer to Documentation/sound/soc/clocking.rst. However, the
-+callback needs to be registered by the CPU/Codec/Platform drivers to configure
-+the clocks that is needed for the corresponding device operation.
 -- 
-2.39.3 (Apple Git-146)
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
