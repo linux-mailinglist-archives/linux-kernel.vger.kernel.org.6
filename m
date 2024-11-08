@@ -1,177 +1,106 @@
-Return-Path: <linux-kernel+bounces-402194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32F29C24ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:33:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338589C24EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30C82B23552
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:33:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2811C246C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8386B1A9B44;
-	Fri,  8 Nov 2024 18:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC161A9B2A;
+	Fri,  8 Nov 2024 18:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKWdw4dt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJBDm+xn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA441233D6E;
-	Fri,  8 Nov 2024 18:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E8D233D6E;
+	Fri,  8 Nov 2024 18:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731090824; cv=none; b=pIJKppp1N2px/DSUbxUTvwPfqmWsjj6UGRcTP5T5IpLHNwwWPnxiv6/sKVGQvj1PDQzUDWwlu9H/qKQYQ2Iiu/a9bpfoAf45EXEs/T6jqtP2iDJoNWxc80OQifZ4JDAO1QAyufO9gAGnTZzQEYSKHvyO1+Wmu/KHsFyWeNehieM=
+	t=1731090925; cv=none; b=niWAEdc2Qqh7+i2dloXFTesISCji+/djuXlGFUQeHHM04bTgSInLXm2pIkLBb7iNe9fJlJilOyEhhte7VZganY3Be+jp6Rb1jaYWuu1OWUto6YECfpARRVnM+PwdXF0u4UkjRtWn6gFEgd/9ojwR2ewAs/+aFTvh2R53Ei8ZQyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731090824; c=relaxed/simple;
-	bh=VzEbzDDDCKoTnPd8x/oSFG034TYCChkZgRP7+dq472E=;
+	s=arc-20240116; t=1731090925; c=relaxed/simple;
+	bh=Rcgi0WSaiAvw0zLkHN3rVnCELx/EW6YPS2PAGkjKTEQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J/EXUXr3kZzmIm8zn1L36eRwQn6oLMbS/L6BJ8385R9Oeu2+zHzBY0CqKs+4mJBRThnEI8qcJbvkDc7JjU3GtzfF4uSIBp0F4QzNy7kOz5MpTz6uM0HDq1MapqgxgJK14/elBdEL4/kwzcFlQg/GE68AhTajQN6+xs2eO0It3bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKWdw4dt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDAA2C4CECD;
-	Fri,  8 Nov 2024 18:33:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BZsJ4Jii77ao41NH4U1jBawLc4eKD9yYst9cv8GLa8oFEqDpB8mq4SlXx2EsvvbcLEeB9iYBjiNvD/fHuJg6T9oQVozDKGrAEfZq9ZWiFgjXahHlvVovAUARs7QGAzbM5PmEbk/jmNUvKwD7Cejqrgb+TiLYtS5Gl3rysPi4l6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJBDm+xn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6437C4CECD;
+	Fri,  8 Nov 2024 18:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731090824;
-	bh=VzEbzDDDCKoTnPd8x/oSFG034TYCChkZgRP7+dq472E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mKWdw4dtOsyG2l9hbiWydQ1TnG8L029tR9tk+z7q4b3lIIF4lXesQFKkddDShPeD5
-	 t/Uz+EOE8qGMIyapBmMtyDp8x+24QLsBXddT5coFXx+LKgFKZxlhYcoE8hDvmmIXRf
-	 nHCDyVWctUwu24IB9tLWGSsdQ/93cpgRcOdULI611PVu2fdRobxluKhimvwjy9OYkP
-	 zGoSu4Lw/CuU6foFRozyU245RiqebWSDjqUoCZZQU35630F3ovFt8YRQDs2dNO06yK
-	 V7V1aBXWTE3++VwykuGm7TjQ9cMfZERo5ax7IM5r229srFwfNOeYRRHtlYiQtytK6V
-	 3eknASrwCH0kQ==
-Date: Fri, 8 Nov 2024 10:33:41 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Kajol Jain <kjain@linux.ibm.com>, Atish Patra <atishp@rivosinc.com>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Anup Patel <anup@brainfault.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 00/20] Remove PERF_HAVE_DWARF_REGS
-Message-ID: <Zy5ZhX-ZWRCQRHVs@google.com>
-References: <20241017002520.59124-1-irogers@google.com>
- <Zy0VHro3wE-ZTKsq@google.com>
- <20241108090040.463cb3f0820e7ac22d1bb6c2@kernel.org>
+	s=k20201202; t=1731090924;
+	bh=Rcgi0WSaiAvw0zLkHN3rVnCELx/EW6YPS2PAGkjKTEQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=KJBDm+xnwQ5zNTcsPk1XqrWdxE5gqcYc2SRl/sko1PFjoArtdgZPms8qNUnKUuYlw
+	 XXoLP47HhqoiHH6fABDs2Kh8+47JCc9NJ1InxZKINCvEpHJ20gk5suC/NGmOcBOGGu
+	 wsJ1LiIY+F2Zu0vo4ewIExPkZbrq+V+T1dS6Dos8LKMjOEZIVBfwShg7TbsmuTnKVJ
+	 d7ZDw/+BVOGaWjvA2vj1u7FJ+RHInkc/EYjGP5/CSbMtCWid5JAvUYDSZl3O7c362j
+	 Uqa/QecCQzUKaQ87c2AHME8Z2whdp7JrTZ2LpJOYmo7J/kiFLC2s1wRoRekmZwOCjo
+	 lVw/tCfko9JIw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 52AC2CE09E4; Fri,  8 Nov 2024 10:35:24 -0800 (PST)
+Date: Fri, 8 Nov 2024 10:35:24 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: Akira Yokosawa <akiyks@gmail.com>, boqun.feng@gmail.com,
+	dhowells@redhat.com, dlustig@nvidia.com, frederic@kernel.org,
+	hernan.poncedeleon@huaweicloud.com, j.alglave@ucl.ac.uk,
+	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+	lkmm@lists.linux.dev, luc.maranget@inria.fr, npiggin@gmail.com,
+	parri.andrea@gmail.com, peterz@infradead.org,
+	quic_neeraju@quicinc.com, stern@rowland.harvard.edu,
+	urezki@gmail.com, will@kernel.org
+Subject: Re: [PATCH v4 5/5] tools/memory-model: Distinguish between syntactic
+ and semantic tags
+Message-ID: <245e4781-80b2-4e21-b4de-51ffeac9cc39@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <3d72b92a-4935-425c-abd5-ec4631baef2c@huaweicloud.com>
+ <46d291da-ddb9-43b9-bd93-b81aacd5e29c@gmail.com>
+ <7542399d-87c5-4f1c-9d09-6a6f96d148da@huaweicloud.com>
+ <a278c4a9-eae2-491e-8f13-5a87a25dad26@gmail.com>
+ <f1d7a295-ad24-41c8-a431-7d6492d51097@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241108090040.463cb3f0820e7ac22d1bb6c2@kernel.org>
+In-Reply-To: <f1d7a295-ad24-41c8-a431-7d6492d51097@huaweicloud.com>
 
-On Fri, Nov 08, 2024 at 09:00:40AM +0900, Masami Hiramatsu wrote:
-> Hi,
+On Fri, Nov 08, 2024 at 12:07:43PM +0100, Jonas Oberhauser wrote:
 > 
-> On Thu, 7 Nov 2024 11:29:34 -0800
-> Namhyung Kim <namhyung@kernel.org> wrote:
 > 
-> > Hi all,
+> Am 11/8/2024 um 11:12 AM schrieb Akira Yokosawa:
+> > On Fri, 8 Nov 2024 10:10:48 +0100, Jonas Oberhauser wrote:
+> > > I hadn't done that before (because I thought I should not add other people's tags
+> > > especially if they hadn't reviewed that specific revision), so we may be missing
+> > > *a lot* of reviewed-by...
+> > > 
 > > 
-> > On Wed, Oct 16, 2024 at 05:25:00PM -0700, Ian Rogers wrote:
-> > > These changes are on top of:
-> > > https://lore.kernel.org/lkml/20241017001354.56973-1-irogers@google.com/
-> > > 
-> > > Prior to these patches PERF_HAVE_DWARF_REGS indicated the presence of
-> > > dwarf-regs.c in the arch directory. dwarf-regs.c provided upto 4
-> > > functions:
-> > > 
-> > > 1) regs_query_register_offset would translate a register name into a
-> > > pt_regs offset and was used by BPF prologues. BPF prologues existed
-> > > for BPF events and support for these was removed many releases ago.
-> > > This code was dead and could be removed.
-> > > 
-> > > 2) get_arch_regstr duplicated get_dwarf_regstr and so it could be
-> > > removed.  The case for csky was a little more complicated as the ABI
-> > > controlled the string. The callers of get_dwarf_regstr were updated to
-> > > also pass the ELF flags so that on csky the ABI appropriate table
-> > > could be used. As the argument is only used on csky this a no-op for
-> > > everything else.
-> > > 
-> > > 3) get_arch_regnum translated a register name back to a dwarf number
-> > > and only existed on x86 where "al", "ax", "eax" and "rax" could all
-> > > mean register 0. This code was moved to util with similar
-> > > machine/flags logic to get_arch_regstr and for consistency with it.
-> > > 
-> > > 4) get_powerpc_regs a PowerPC specific function used by annotate that
-> > > should really be in util.
-> > > 
-> > > 2 and 3 required the wiring through of the ELF machine and flags in
-> > > callers to get_dwarf_regstr and get_dwarf_regnum. When these values
-> > > weren't dependent on an ELF file a new EM_HOST and EF_HOST were added
-> > > to give the host ELF machine and flags. These 2 #defines got rid of
-> > > the existing separate arch files and #ifdefs.
-> > > 
-> > > v3: These files were separated from the rest of the v2 libdw clean up
-> > >     in:
-> > > https://lore.kernel.org/lkml/CAP-5=fVZH3L-6y_sxLwSmT8WyMXDMFnuqUksNULdQYJCPNBFYw@mail.gmail.com/
-> > > 
-> > > Ian Rogers (20):
-> > >   perf bpf-prologue: Remove unused file
-> > >   perf dwarf-regs: Remove PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET
-> > >   perf dwarf-regs: Add EM_HOST and EF_HOST defines
-> > >   perf disasm: Add e_machine/e_flags to struct arch
-> > >   perf dwarf-regs: Pass accurate disassembly machine to get_dwarf_regnum
-> > >   perf dwarf-regs: Pass ELF flags to get_dwarf_regstr
-> > >   perf dwarf-regs: Move x86 dwarf-regs out of arch
-> > >   perf arm64: Remove dwarf-regs.c
-> > >   perf arm: Remove dwarf-regs.c
-> > >   perf dwarf-regs: Move csky dwarf-regs out of arch
-> > >   perf loongarch: Remove dwarf-regs.c
-> > >   perf mips: Remove dwarf-regs.c
-> > >   perf dwarf-regs: Move powerpc dwarf-regs out of arch
-> > >   perf riscv: Remove dwarf-regs.c and add dwarf-regs-table.h
-> > >   perf s390: Remove dwarf-regs.c
-> > >   perf sh: Remove dwarf-regs.c
-> > >   perf sparc: Remove dwarf-regs.c
-> > >   perf xtensa: Remove dwarf-regs.c
-> > >   perf dwarf-regs: Remove get_arch_regstr code
-> > >   perf build: Remove PERF_HAVE_DWARF_REGS
+> > Section "Using Reported-by:, Tested-by:, Reviewed-by:, Suggested-by: and Fixes:"
+> > of Documentation/process/submitting-patches.rst has this paragraph:
 > > 
-> > These look all good and I'm about to apply the series.
+> >    Both Tested-by and Reviewed-by tags, once received on mailing list from tester
+> >    or reviewer, should be added by author to the applicable patches when sending
+> >    next versions.  However if the patch has changed substantially in following
+> >    version, these tags might not be applicable anymore and thus should be removed.
+> >    Usually removal of someone's Tested-by or Reviewed-by tags should be mentioned
+> >    in the patch changelog (after the '---' separator).
 > > 
-> > Masami, do you have any remaining concerns?  It'd be nice if you can
-> > give your Reviewed-by.
+> > Does this help you?
 > 
-> I think it looks good to me.
+> Thanks so much, it does. My apologies to everyone whose reviewed-by tag I
+> failed to add :(
 > 
-> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> I should have read that more document more carefully.
 
-Thanks for your review!
-Namhyung
+No worries!  The important part is your changes.  The tags are easy
+to add.  And now you know.  ;-)
 
+							Thanx, Paul
 
