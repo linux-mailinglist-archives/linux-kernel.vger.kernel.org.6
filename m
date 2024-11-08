@@ -1,137 +1,259 @@
-Return-Path: <linux-kernel+bounces-401754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0709C1EBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:03:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CF29C1EC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:04:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA57F1C21544
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B762836AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5D61EF095;
-	Fri,  8 Nov 2024 14:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9902B1EF0AF;
+	Fri,  8 Nov 2024 14:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="oSJDw8x6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ERAhNC2S"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="eCMBUV4/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="sWU5Qszw"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24E51E32BC;
-	Fri,  8 Nov 2024 14:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803901E47BE;
+	Fri,  8 Nov 2024 14:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731074598; cv=none; b=KyVXCtegegVysj15tcdlzCXW6CbczcVgcti5ETQjd+ADxMAic4ZpKE/kzfoP/zkT3chEupT0S/KQnzrkWLcc4zBpvJ97Co4jdaT0shkxdCoeRD8KxvbbnqC6vkQJEHUCbRbQF+WHqzYg93vKmqvL9kn9vIZjtFprTuRtA6uD00Y=
+	t=1731074681; cv=none; b=Kc0FkyU/d3ySsVONh+Sjmwkv8dscFF7Mht0kXL7u+7SoPVzn0UrzDi0lB2gebNnEz+034VPkPiF0fVjW7wmLGyGe596/jZzZQCMh7EGjhGj5isrpUBCCl+KzVtY32D7xoM9rGqGhKDyx3y8/tNM+fbDCoosRWB2kdyfZc7Ozs2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731074598; c=relaxed/simple;
-	bh=XfNLrjUNmr+gt22QHvtHDNIY0mNA9EcdGXQ4XNJLGp4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZdseJSE2OIV5+xFueclaJALscSNyQtjfJUeLh4weReYrQpogfTfg1b3Bm0IUDpiz9pT9SH5Q1Fy11v38vnRldzl5V7qnwmhwi0RilL4VExFmyXwNfIRUvieau1Puk9Jkl9Z0wwZ/qjuCoU2pbWgF+MwLVrDjvbVw31nuwyLGGmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=oSJDw8x6; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ERAhNC2S reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	s=arc-20240116; t=1731074681; c=relaxed/simple;
+	bh=zSXO4oai+fP6s2/qch5CjMT48ma+8G2NVlL5zBus7Fg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=blCs11YOxSjaNrUI6gW3qL3DbT78+dZ1VCB/jv4PK7LwOVVqC/DYV7WqTYB55ZjKuQB2YqXlKh19roXB8Oxp/cq4Jd68QVKZYb77cSYfqojWBIo6TrqbsUdiLGwfIymnYt5P6zKPNe9q24jzcGPKpTawApTS71dFZM9P+xWYqIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=eCMBUV4/; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=sWU5Qszw reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1731074595; x=1762610595;
-  h=message-id:subject:from:reply-to:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=8s7i6hTY4ZPYkVZsEa+kaw6R5w8zz4VVGAZwBGp4xjs=;
-  b=oSJDw8x6G2BsEehRSWgFHUx+gh2zyyFarAdNFhHL+kcBzS8XKTl8eXSB
-   0YjikKIcrQSZQNYFHhafWvMd28/ugsna4+MG0ij4oX5/hhpMXu1MGwUub
-   ruPHtv2iDy4/4RyGfA9O3xAo5HbWaINi07v5usoFkfZwW0WFDBn7+cJR6
-   1AiE5B/ueXvBcio3I+xv3sOHpoLghi8vRUQlACZSZjhtbiKyAWSK3XS/g
-   noIhRFE8SHa4P231qOvRid+niTpw5yO/Ys6ugbvFYFOBeZTeIfZa7wDBO
-   MZEs0paqAujU/fOvlw402rPhvc5ysWyOFQ7aunCcqNbjUbUuaPaWuUcTE
-   g==;
-X-CSE-ConnectionGUID: k3gsdjO5TCWoFDaYJiNERw==
-X-CSE-MsgGUID: m8ER5V4aSjmP+6cWLiGuTg==
+  t=1731074679; x=1762610679;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ERNHBkanBqKFL3ox9eUbC/F74vANoxKE7ufPEj4aVYk=;
+  b=eCMBUV4/tFLfFJiUfFUnk6fvdM0ZqidzgAukZCYNd1+opxPHba5aInMD
+   aOixqa7x0J18JLC5pSfdRFnr7/ossQqLGVNEUL74Hu7D7hzayjEbiQL1P
+   G/NNMRZh6NDk52hDV+ncMzjm7tDZel2KopYZSOCE2wqgatzzKKv7Dzb8j
+   FHdCvOA1OIVBYVbwgc6CCXtetMhxT2aB/s59OFnAbRFY9fiWW8TuVLgb2
+   EbjmjiKwivbxfUZrqU9CtoB0QrX2Q8Cd1AdQ3kXhok7LfgeH/BiXo1llO
+   g91gX9TGvBZzYR9TbkiVlG9dJv/0NkVyWqyDur2JaTR3aEQ/t9hsS2tVm
+   A==;
+X-CSE-ConnectionGUID: buIqScCRRSqM1NGVvIff2Q==
+X-CSE-MsgGUID: Cuwk4pU8SquUSdlrlunCag==
 X-IronPort-AV: E=Sophos;i="6.12,138,1728943200"; 
-   d="scan'208";a="39937221"
+   d="scan'208";a="39937249"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 08 Nov 2024 15:03:12 +0100
-X-CheckPoint: {672E1A20-13-86C05612-CA75E1CA}
-X-MAIL-CPID: 502FFC223A986D9CD1878CBB94DDB6D4_1
-X-Control-Analysis: str=0001.0A682F18.672E1A21.0001,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0267C163598;
-	Fri,  8 Nov 2024 15:02:54 +0100 (CET)
+  by mx1.tq-group.com with ESMTP; 08 Nov 2024 15:04:36 +0100
+X-CheckPoint: {672E1A74-A-5736D786-D50827BE}
+X-MAIL-CPID: EF367DDD2A39F4625B8CF4B973AAEAE0_2
+X-Control-Analysis: str=0001.0A682F26.672E1A74.0090,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D9F3E160D5C;
+	Fri,  8 Nov 2024 15:04:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1731074588;
-	h=from:reply-to:subject:date:message-id:to:cc:mime-version:content-type:
+	s=dkim; t=1731074671;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=8s7i6hTY4ZPYkVZsEa+kaw6R5w8zz4VVGAZwBGp4xjs=;
-	b=ERAhNC2S1xpiZuyO1UqvOQCIZ37b2yPkbjIPTYXEGUAtVGHkgfhR8CpRUMjR23mKPIHpax
-	lc2Vv3hVStSEAZNpRLJAb/CTKfCY5tDOWV/r4EjOs7LYAm/t9Z0oHAEWf21CPR1KW936/7
-	B9EL0oPQCnM5ZYwqaywYvcviu5ZVHJiMY+C0QfSdtkXB18MycR9FVgQ33IULYjryjPO8hZ
-	Asco2jBOnFWbryeKjqDl/FN63ICHE2HgMZf95gJHabr6wAili93UhxA5HcMz1TbbTkki/o
-	5sr64w8UXPqUjP2MOEOQlDAxY0yHBIoYbR1JGYguxTrWDqsLIdDzC3kcdOaJcw==
-Message-ID: <499869db340b2d4c257e12d20e15c200d0f815b1.camel@ew.tq-group.com>
-Subject: Re: [PATCH 0/8] TQMa7x DT cleanup
-From: "Niebel, Markus" <Markus.Niebel@ew.tq-group.com>
-Reply-To: Markus.Niebel@ew.tq-group.com
-To: Alexander Stein <alexander.stein@ew.tq-group.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Russell King <linux@armlinux.org.uk>,
- =?ISO-8859-1?Q?Jo=E3o?= Rodrigues <jrodrigues@ubimet.com>, Bruno Thomsen
- <bruno.thomsen@gmail.com>
-Cc: linux@ew.tq-group.com, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Fri, 08 Nov 2024 15:02:54 +0100
-In-Reply-To: <20241108134926.1324626-1-alexander.stein@ew.tq-group.com>
-References: <20241108134926.1324626-1-alexander.stein@ew.tq-group.com>
+	bh=ERNHBkanBqKFL3ox9eUbC/F74vANoxKE7ufPEj4aVYk=;
+	b=sWU5QszwvFP/gLmWvlo/us2SLOtRCvPL4eiaeekEVUxGrKVu0IpTdQlv2Kyq9EFUXM2swr
+	f5b8iqekGnKlwQ7vN7vpKvFxkrsQ0X9XRzWOiT9rYaAVHVyQTDDf9M+3oXin+KmXKmyoZF
+	X7oRD/tpP9ULHbqRMva0p3Ez9I3MApjpkzBWWH5kJQAOGk74mwIi3hc7IJzcvj235U0ha+
+	YO1Gk3e6ol5J8HmH2PDCotoJ38RNSZJWxJTILEuKp4h80aEc4pSeDZYnt6+JiimzE3z2su
+	rz2GF8waLrYJpQY1p2xS9NdqiN1NHDFqyJGEdZ7C2rf1BkmAWdmJMWBtap5OQg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Pengfei Li <pengfei.li_1@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, joao.goncalves@toradex.com, frieder.schrempf@kontron.de, marex@denx.de, hvilleneuve@dimonoff.com, peng.fan@nxp.com, m.othacehe@gmail.com, mwalle@kernel.org, Max.Merchel@ew.tq-group.com, hiago.franco@toradex.com, tharvey@gateworks.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, ping.bai@nxp.com, ye.li@nxp.com, aisheng.dong@nxp.com, frank.li@nxp.com
+Subject: Re: [PATCH 2/3] arm64: dts: freescale: Add i.MX91 dtsi support
+Date: Fri, 08 Nov 2024 15:04:29 +0100
+Message-ID: <10563047.nUPlyArG6x@steina-w>
 Organization: TQ-Systems GmbH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+In-Reply-To: <Zy3gXvuWb76beZKo@pengfei-OptiPlex-Tower-Plus-7010>
+References: <20241108022703.1877171-1-pengfei.li_1@nxp.com> <2350046.ElGaqSPkdT@steina-w> <Zy3gXvuWb76beZKo@pengfei-OptiPlex-Tower-Plus-7010>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 2024-11-08 at 14:49 +0100, Alexander Stein wrote:
-> Hi all,
->=20
-> this series fixes some DT binding check warnings as well as removing
-> duplicated nodes. Eventually IRQ support for thernet PHYs was added.
-> Additionally add CONFIG_JC42 to imx_v6_v7_defconfig.
->=20
-> Best regards,
-> Alexander
->=20
-> Alexander Stein (8):
->   ARM: dts: imx7-mba7: remove LVDS transmitter regulator
->   ARM: dts: imx7-tqma7: Remove superfluous status=3D"okay" property
->   ARM: dts: imx7-tqma7: add missing vs-supply for LM75A (rev. 01xxx)
->   ARM: dts: imx7-mba7: Add 3.3V and 5.0V regulators
->   ARM: dts: imx7-mba7: Fix SD card vmmc-supply
->   ARM: dts: imx7-mba7: Remove duplicated power supply
->   ARM: dts: imx7[d]-mba7: add Ethernet PHY IRQ support
->   ARM: imx_v6_v7_defconfig: enable JC42 for TQMa7x
->=20
->  arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi  | 61 +++++++----------------
->  arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi |  3 +-
->  arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts  |  3 +-
->  arch/arm/configs/imx_v6_v7_defconfig      |  1 +
->  4 files changed, 21 insertions(+), 47 deletions(-)
->=20
+Hi,
 
-For the whole series:
+Am Freitag, 8. November 2024, 10:56:46 CET schrieb Pengfei Li:
+> On Thu, Nov 07, 2024 at 01:49:50PM +0100, Alexander Stein wrote:
+> > Hi,
+> >=20
+> > thanks for putting me on CC.
+> >=20
+> > Am Freitag, 8. November 2024, 03:27:02 CET schrieb Pengfei Li:
+> > > The i.MX 91 family features an Arm Cortex-A55 running at up to
+> > > 1.4GHz, support for modern LPDDR4 memory to enable platform longevity,
+> > > along with a rich set of peripherals targeting medical, industrial
+> > > and consumer IoT market segments.
+> > >=20
+> > > The design of the i.MX91 platform is very similar to i.MX93.
+> > > The mainly difference between i.MX91 and i.MX93 is as follows:
+> > > - i.MX91 removed some clocks and modified the names of some clocks.
+> > > - i.MX91 only has one A core
+> > >=20
+> > > Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  arch/arm64/boot/dts/freescale/imx91-pinfunc.h | 770 ++++++++++++++++=
+++
+> > >  arch/arm64/boot/dts/freescale/imx91.dtsi      |  66 ++
+> > >  2 files changed, 836 insertions(+)
+> > >  create mode 100644 arch/arm64/boot/dts/freescale/imx91-pinfunc.h
+> > >  create mode 100644 arch/arm64/boot/dts/freescale/imx91.dtsi
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/freescale/imx91-pinfunc.h b/arch/arm=
+64/boot/dts/freescale/imx91-pinfunc.h
+> > > new file mode 100644
+> > > index 000000000000..bc58ce2102b2
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/freescale/imx91-pinfunc.h
+> >=20
+> > FWIW this is a 1:1 copy from downstream kernel
+>=20
+> Hi, thanks for the comments.
+>=20
+> Yes, it is same as downstream kernel.
+>=20
+> >=20
+> > > diff --git a/arch/arm64/boot/dts/freescale/imx91.dtsi b/arch/arm64/bo=
+ot/dts/freescale/imx91.dtsi
+> > > new file mode 100644
+> > > index 000000000000..a9f4c1fe61cc
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/freescale/imx91.dtsi
+> > > @@ -0,0 +1,66 @@
+> > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > > +/*
+> > > + * Copyright 2024 NXP
+> > > + */
+> > > +
+> > > +#include "imx91-pinfunc.h"
+> > > +#include "imx93.dtsi"
+> > > +
+> > > +&{/thermal-zones/cpu-thermal/cooling-maps/map0} {
+> > > +	cooling-device =3D
+> > > +		<&A55_0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > > +};
+> > > +
+> > > +&clk {
+> > > +	compatible =3D "fsl,imx91-ccm";
+> > > +};
+> > > +
+> > > +&eqos {
+> > > +	clocks =3D <&clk IMX91_CLK_ENET1_QOS_TSN_GATE>,
+> > > +			<&clk IMX91_CLK_ENET1_QOS_TSN_GATE>,
+> > > +			<&clk IMX91_CLK_ENET_TIMER>,
+> > > +			<&clk IMX91_CLK_ENET1_QOS_TSN>,
+> > > +			<&clk IMX91_CLK_ENET1_QOS_TSN_GATE>;
+> > > +	assigned-clocks =3D <&clk IMX91_CLK_ENET_TIMER>,
+> > > +				<&clk IMX91_CLK_ENET1_QOS_TSN>;
+> > > +	assigned-clock-parents =3D <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
+> > > +					<&clk IMX93_CLK_SYS_PLL_PFD0_DIV2>;
+> >=20
+> > Is it just me or is the alignment of new lines not matching?
+>=20
+> Not sure about others, the alignment on my side is correct.
+>=20
+> >=20
+> >=20
+> > > +};
+> > > +
+> > > +&fec {
+> > > +	clocks =3D <&clk IMX91_CLK_ENET2_REGULAR_GATE>,
+> > > +			<&clk IMX91_CLK_ENET2_REGULAR_GATE>,
+> > > +			<&clk IMX91_CLK_ENET_TIMER>,
+> > > +			<&clk IMX91_CLK_ENET2_REGULAR>,
+> > > +			<&clk IMX93_CLK_DUMMY>;
+> > > +	assigned-clocks =3D <&clk IMX91_CLK_ENET_TIMER>,
+> > > +				<&clk IMX91_CLK_ENET2_REGULAR>;
+> > > +	assigned-clock-parents =3D <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
+> > > +					<&clk IMX93_CLK_SYS_PLL_PFD0_DIV2>;
+> >=20
+> > Here as well: Is it just me or is the alignment of new lines not matchi=
+ng?
+>=20
+> Same as above.
+>=20
+> >=20
+> > > +	assigned-clock-rates =3D <100000000>, <250000000>;
+> > > +};
+> > > +
+> > > +&i3c1 {
+> > > +	clocks =3D <&clk IMX93_CLK_BUS_AON>,
+> > > +			<&clk IMX93_CLK_I3C1_GATE>,
+> > > +			<&clk IMX93_CLK_DUMMY>;
+> > > +};
+> > > +
+> > > +&i3c2 {
+> > > +	clocks =3D <&clk IMX93_CLK_BUS_WAKEUP>,
+> > > +			<&clk IMX93_CLK_I3C2_GATE>,
+> > > +			<&clk IMX93_CLK_DUMMY>;
+> > > +};
+> > > +
+> > > +&tmu {
+> > > +	status =3D "disabled";
+> >=20
+> > Why does the TMU needs to be disabled instead of deleted?
+>=20
+> Actually, the i.MX91 also has a TMU, but the i.MX91 uses a different IP t=
+han the i.MX93, so a new driver is required.
+> However, this new driver is not applied yet on upstream kernel, so it is =
+disabled here for now.
 
-Reviewed-by: Markus Niebel <markus.niebel@ew.tq-group.com>
+Then, the compatible should be changed as well.
 
-Thank you
-Markus
+> >=20
+> > > +};
+> > > +
+> > > +/* i.MX91 only has one A core */
+> > > +/delete-node/ &A55_1;
+> > > +
+> > > +/* i.MX91 not has cm33 */
+> > > +/delete-node/ &cm33;
+> > > +
+> > > +/* i.MX91 not has power-domain@44461800 */
+> > > +/delete-node/ &mlmix;
+> > >=20
+> >=20
+> > Shouldn't the following node also be removed?
+> > * mipi_csi
+> > * dsi
+> > * lvds_bridge
+> > * lcdif_to_dsi
+> > * lcdif_to_ldb
+> >=20
+> > Also in downstream kernel IMX91_CLK_MEDIA_AXI, which is IMX93_CLK_MEDIA=
+_AXI
+> > upstream, is set to 200 MHz. Is this applicable here as well?
+> >=20
+>=20
+> For these nodes, it is only in the downstream kernel and not yet applied =
+to the upstream kernel for i.MX93.
+> So they cannot be removed in the upstream kernel yet.
 
---=C2=A0
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
+Ah, sorry. They originated form my local changes. They need to be removed
+later on when they get added to imx93 though.
+
+Best regards,
+Alexander
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
 http://www.tq-group.com/
+
+
 
