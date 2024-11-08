@@ -1,114 +1,95 @@
-Return-Path: <linux-kernel+bounces-400894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECBF9C13BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:40:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3499C13C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43950281547
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:40:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63DDF1F23466
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F6616415;
-	Fri,  8 Nov 2024 01:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="WF2/syJt"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CC417579;
+	Fri,  8 Nov 2024 01:41:51 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9EC12E7E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 01:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D54DDC3;
+	Fri,  8 Nov 2024 01:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731030034; cv=none; b=QWSKXwB8X8DLX5PtWZW3n7z0z7Kui+6f2kuO0o3lpYD2Ms5ADVq5uiaim57GPZAtX4RiFw2XED3Z0qLNLEnG8qkTYHpZp6sU//1jyNz3oQBXwjsLh9d3qnrTDK9QWqrxO05pSd5feN4QhQvXIjeSTQAd1FiflKVTr6zJ0HZ6pMk=
+	t=1731030111; cv=none; b=qoWQ0jA21Ub1AQ37i+aHW7Oi3JrSY1vpwRgYgOh35a0mxi698+9G40c7mtVxYbXLDwKTNJ7KLjqo9XVftb0w7wDmv1IzmhfE7EGxafNrdYBgZwQZ2gKVXbnea3Qw5vhwO8snmuaGmcak7jtjg+FuqxOWzDdvDt1p8bVYbUzQ8io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731030034; c=relaxed/simple;
-	bh=/vB0A4Fo73KYupux7oAj+r9VcPiEW2iYRAxwvj/9zQg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gTgwar9Km7fTdvTIZ3Je1FWknenorYUdz37X+lqEQZRN2SKrt7L/Eb4pOINP+IT5cwuH1Uy+JwCKJ5XwgpIC3kSmVirlYNZAxGWKqnjyLb6WljVqGctr7U7L5n1tb5tZBN+UC6j1AJ71a8K5AeIFfmrAZStX1BQ0ONxduDa7oLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=WF2/syJt; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1731030030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6SlCiON3cqc4vz5XEx0DbdrM/vWAePnU2JUI4leZ6jI=;
-	b=WF2/syJtOv9gwYRzQQK1Tz+p1n4sJrrJLYf6JPhr4NQx2c6Iw6zAHtykD4VMfVDb87vyzB
-	jXzcA56PrPqGfGZ87I59f3am4g3k10zRtmQqXN3hUgd4Q52hIIMFbGz1L12DtKfmwY78e7
-	7ukelI1ZN691Mg04CRZI98dcskVRYjhvC9xfP/SWZjLDkIaKrA6eUJ71B5zunAgIH7P396
-	fWnvUh3BTtz4c80J92JDReVBSxL996qjPLUEgpZ6LdvPIQ5MXGMLkfFRIb+izCLtXnaKNx
-	s++5GHIB5NvWO/kVfJlTf8Mfr5DQj9qDRg42hBNZJ3CP2nSLfg92T8xntc2MvQ==
-From: John Watts <contact@jookia.org>
-Date: Fri, 08 Nov 2024 12:40:16 +1100
-Subject: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
- DE1
+	s=arc-20240116; t=1731030111; c=relaxed/simple;
+	bh=3n4VRaBqdU5n0cVEdtc+ZK5ooA4vvZg0q9qsSHRics8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=oxyykn+QZ0y1rQLrKcLxTHAl780EbLiZgIIsxkSyJCIacU7J4Q7hyBTLQ8ynySBZFCpU7qD3PI0SwfAfL8Fe5srRqmkkek5A1LqtLxdo25ss1tRbdd+UIjToW2J4g5EpltdgqRmC05j8LO1XQ+nqibdx7NqvZaFSngUY31/9gwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Xl1q85XqvzQs71;
+	Fri,  8 Nov 2024 09:40:36 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA35818012B;
+	Fri,  8 Nov 2024 09:41:45 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 8 Nov 2024 09:41:44 +0800
+Subject: Re: [PATCH] mtd: ubi: remove redundant check on bytes_left at end of
+ function
+To: Colin Ian King <colin.i.king@gmail.com>, Richard Weinberger
+	<richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>, <linux-mtd@lists.infradead.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241107152357.63387-1-colin.i.king@gmail.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <56b13d09-91ce-6a4b-c6cb-449b478e3335@huawei.com>
+Date: Fri, 8 Nov 2024 09:41:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
-X-B4-Tracking: v=1; b=H4sIAP9rLWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQwML3ZLk/Lz4tMwK3TQDUwvTxGTLpMRUAyWg8oKiVKAw2Kjo2NpaAJr
- NfK5aAAAA
-X-Change-ID: 20241108-tcon_fix-f0585ac9bae0
-To: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Samuel Holland <samuel@sholland.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- John Watts <contact@jookia.org>
-X-Developer-Signature: v=1; a=openssh-sha256; t=1731030018; l=1221;
- i=contact@jookia.org; h=from:subject:message-id;
- bh=/vB0A4Fo73KYupux7oAj+r9VcPiEW2iYRAxwvj/9zQg=;
- b=U1NIU0lHAAAAAQAAAEoAAAAac2stc3NoLWVkMjU1MTlAb3BlbnNzaC5jb20AAAAgPs7MDd2XR
- g2uRE9caV1lPPPeu0VzIG9fPrrVmYyAhLcAAAAEc3NoOgAAAAZwYXRhdHQAAAAAAAAABnNoYTUx
- MgAAAGcAAAAac2stc3NoLWVkMjU1MTlAb3BlbnNzaC5jb20AAABAsAsDWjawAwJm303ak1F4jDs
- LCMxEG6FoKq9hlQS6kcxUgFAAZdOULuhjgKrLrSACLm5/JiQDk2aK42XP22RlBQUAARju
-X-Developer-Key: i=contact@jookia.org; a=openssh;
- fpr=SHA256:/gEvgms/9HpbgpcH+K7O4GYXmqkP7siJx9zHeEWRZTg
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241107152357.63387-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-On the D1 and T113 the TCON TOP cannot handle setting both DEs to a
-single output, even if the outputs are disabled. As a workaround assign
-DE1 to TVE0 by default.
-
-A full fix for this would include logic that makes sure both DEs never
-share the same output.
-
-Signed-off-by: John Watts <contact@jookia.org>
----
- drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-index a1ca3916f42bcc63b9ac7643e788d962ef360ca8..543311ffb1509face3fbfd069ded10933f254b9d 100644
---- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-@@ -179,7 +179,7 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
- 	 * At least on H6, some registers have some bits set by default
- 	 * which may cause issues. Clear them here.
- 	 */
--	writel(0, regs + TCON_TOP_PORT_SEL_REG);
-+	writel(0x20, regs + TCON_TOP_PORT_SEL_REG);
- 	writel(0, regs + TCON_TOP_GATE_SRC_REG);
- 
- 	/*
-
----
-base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-change-id: 20241108-tcon_fix-f0585ac9bae0
-
-Best regards,
--- 
-John Watts <contact@jookia.org>
+在 2024/11/7 23:23, Colin Ian King 写道:
+> In function ubi_nvmem_reg_read the while-loop can only be exiting
+> of bytes_left is zero or an error has occurred. There is an exit
+> return path if an error occurs, so the bytes_left can only be
+> zero after that point. Hence the check for a non-zero bytes_left
+> at the end of the function is redundant and can be removed. Remove
+> the check and just return 0.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/mtd/ubi/nvmem.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+Make sense.
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> diff --git a/drivers/mtd/ubi/nvmem.c b/drivers/mtd/ubi/nvmem.c
+> index a94a1a9aaec1..34f8c1d3cdee 100644
+> --- a/drivers/mtd/ubi/nvmem.c
+> +++ b/drivers/mtd/ubi/nvmem.c
+> @@ -55,7 +55,7 @@ static int ubi_nvmem_reg_read(void *priv, unsigned int from,
+>   	if (err)
+>   		return err;
+>   
+> -	return bytes_left == 0 ? 0 : -EIO;
+> +	return 0;
+>   }
+>   
+>   static int ubi_nvmem_add(struct ubi_volume_info *vi)
+> 
 
 
