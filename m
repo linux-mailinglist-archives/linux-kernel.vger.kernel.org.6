@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-401133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471FB9C1654
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:07:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF0A9C165A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:10:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD8DCB23022
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90281F23CD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10E41CEEA3;
-	Fri,  8 Nov 2024 06:07:28 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F701D0170;
+	Fri,  8 Nov 2024 06:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKHLiO6q"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E3C8F54;
-	Fri,  8 Nov 2024 06:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CEA1CEEB6;
+	Fri,  8 Nov 2024 06:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731046048; cv=none; b=iBCc1SIMF7u4sWKmvJCb1l7Qq2n8AuZ5CtI+T2i03JdzAOWT1UuZ52ZIbXNRL3FWpgh7lJjdc0z/bl/8QLeWNRt8OVe44r/jO604JcHnQ0nJetxUUppLAOrTObIYVOUyz9fzAylhWNijx3hzgIhD7u7RggREnlItDcwADbEYeR8=
+	t=1731046210; cv=none; b=qOX+RWdPpKqS8CKidUkKG3X+mVg5SCIq3C4rtmyn4qg+YDSV8aR17hT6TZLnCUm34mdiMgDH8/bNl2isv/nS9VUPUxQRE8BQSIWjBQ+Qwiu6xfY3LkWXn974Ihf1AZjUgsQ9noX7inDdJ2Uc/6kAUnpOEBogdc6pWQClP6M2TTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731046048; c=relaxed/simple;
-	bh=nbhbqXWbS5drLYz+th6wmfd3iaPgrJv2NgPZK6FH9m8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pNAzGItPK8vfgRb55gAGWQBE+IR9x8fsa7Tneac6wM2EkRVJwu9VAAcw3h5D/9RSZc/xCwZ56AvxFvIvSkcFosRgUSg/ftAUIvURVKlMONJdBYBCugLbs59gDoaiL/x4MZ5DEiTACkw84IHv85i1+iwoFv2Z2XiEuw6VYsg4kzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xl7kb0LWYz4f3jsX;
-	Fri,  8 Nov 2024 14:07:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1A4491A018D;
-	Fri,  8 Nov 2024 14:07:21 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgB3U4eXqi1nbFy3BA--.31515S3;
-	Fri, 08 Nov 2024 14:07:20 +0800 (CST)
-Subject: Re: [PATCH md-6.13] md: remove bitmap file support
-To: =?UTF-8?Q?Dragan_Milivojevi=c4=87?= <galileo@pkm-inc.com>,
- Song Liu <song@kernel.org>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
- <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com>
- <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com>
- <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
- <CALtW_agCsNM66DppGO-0Trq2Nzyn3ytg1t8OKACnRT5Yar7vUQ@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <8ae77126-3e26-2c6a-edb6-83d2f1090ebe@huaweicloud.com>
-Date: Fri, 8 Nov 2024 14:07:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1731046210; c=relaxed/simple;
+	bh=QNRHmkQNttL4XBC1OFrUpsQWNzgq+Jf7VcqAcf7oIns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FeKgXsRrGWha8+WY03/XTrHT/nFhp+SxI/DJT/lSxLDiR3Ife9Bb7uSezAoTyWkFw38/w8yg283kF5X9LMAUqf4eULl5vELK8gJ404hlQTewZnl6qYltGvwbbhk2SGD0GY5mzyxFIx4901n2ZmuP7cQZPXvkPr0eRLfAafeVZvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKHLiO6q; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e9ed5e57a7so14853877b3.1;
+        Thu, 07 Nov 2024 22:10:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731046208; x=1731651008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QNRHmkQNttL4XBC1OFrUpsQWNzgq+Jf7VcqAcf7oIns=;
+        b=hKHLiO6qIvV4X7pDmYH7jbZvupO+ApIEz/VKn8wmaUxK3oQzmBO2fgjFPMf0d9sVeM
+         s7xuRlL//KRtVR850/ZciHWrbKg+DJo8m47RvkUYpJV+DhS6vulGSp5E/C/myb9EKLxN
+         +B245Xi8vnx7Ivm2uuvMc0NvI09to1l7kHl29kmn5ssdzXr3dZznTWh4pHUWvUIbem45
+         DgU+CGd49zFw4UDxM+NN2hzBJ5ThUWYwWMX2eFdVAmVACIcQvoCIn+kZkH2IG/n4MnP+
+         ouY65Kn9esBW5je0JKtoSHrItQy+NoKKs8r8W5pMnuJUEFFFlD21zAMqbO2IheDT2O26
+         zQew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731046208; x=1731651008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QNRHmkQNttL4XBC1OFrUpsQWNzgq+Jf7VcqAcf7oIns=;
+        b=swyN9Z6S5jaeNcBeIGUIsQnkOwydjAeIky2ybAkbBgkiph5YBK1V5X+tuT+Hva3Fu6
+         A6WJZHuHQNwcCXvqvzjlhlE1Q7SQZvhsd9dxW4U9qFcbQJGEHUNuu1gQbgyQP+L5sQjS
+         4N1oo84UbtHt0l71rCWevFD/53zRwo9DF4kK0ueJR3AAk9zHoN0dDPYPZmvMtZZRktpm
+         bm6JNY71PGAEnm7gaNygsmkGEpPdFilflSyIe1uvlHru6qqztTMTtDUSaD2V2NYngqO0
+         nVx675MOKmWvoOzoluCK4a8gcaTu8ISJDJEtG09rxXOxUeGwf/neMmPIhOKYwvpdxQAL
+         SMOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi6Jsh2vsldJsDp1Nq05FZxAK1Fe5axlA4Yui7R5PWvCWdxmwjMeIhqwfOhERWfnBinj2ppUIp/Om7S5M=@vger.kernel.org, AJvYcCUijrNVhA13IEZsxPaksq+lxII/CgOk7V3/SO9rdmeNsHdqjz5MyqWxgJcYLmbesN03PZmCE2y0oZlW@vger.kernel.org, AJvYcCX7RSAFyALU5Sc0lPzWGQ6Ts9oTYb3HBgayyB/MlPa348M9IP92u72fZNt2K/xxmgJ8CkW4URwR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVTNaY/+KTYth3AmgPJ6CXEMa2nQf9YfUqnmM9e6TN/04M2oQe
+	ES6GgbMrNfSDjxJy0xebnHS9JpQ8v04whERG8o1qSvJm1/BqxUjs0M9WW+k93Q3LG3Ezut4gTi4
+	SQZ/nAO2l2mVh3reLjLAoRnX2r+U=
+X-Google-Smtp-Source: AGHT+IHHn/w8b4Tg7Hd4Sr58w27FsTmfn+08/QY7kx6hk8l4BQYd7+PswpjPKal/gGm8RzZk8IrMXvQgoIbSuzppJkw=
+X-Received: by 2002:a05:690c:6302:b0:6e5:bf26:578 with SMTP id
+ 00721157ae682-6eaddd96d06mr19916317b3.17.1731046208488; Thu, 07 Nov 2024
+ 22:10:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CALtW_agCsNM66DppGO-0Trq2Nzyn3ytg1t8OKACnRT5Yar7vUQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3U4eXqi1nbFy3BA--.31515S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruFWUArWDGr48Gw4UXF43ZFb_yoWfXrc_W3
-	WxA3y8J34UGrs5tr1agr15Ars3t3y7Xa4rJ3yrJayIqa45Xas8Jr48C34F9393Ww1ktrnr
-	Kryavr9rXw43WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxv
-	r21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20241104092434.2677-1-dqfext@gmail.com> <7e0df321-e297-4d32-aac5-a885de906ad5@redhat.com>
+In-Reply-To: <7e0df321-e297-4d32-aac5-a885de906ad5@redhat.com>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Fri, 8 Nov 2024 14:09:37 +0800
+Message-ID: <CALW65jaKn7HQth6oYYHWYvg7CTZJj2QH66nHyo41BNjAA15Y7g@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ppp: remove ppp->closing check
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, linux-ppp@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Paolo,
 
-在 2024/11/08 13:15, Dragan Milivojević 写道:
-> On Fri, 8 Nov 2024 at 02:29, Song Liu <song@kernel.org> wrote:
-> 
->> I think we should ship this with 6.14 (not 6.13), so that we have
->> more time testing different combinations of old/new mdadm
->> and kernel. WDYT?
-> 
-> I'm not sure if bitmap performance fixes are already included
-> but if not please include those too. Internal bitmap kills performance
-> and external bitmap was a workaround for that issue.
+On Thu, Nov 7, 2024 at 8:08=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wrot=
+e:
+>
+>
+>
+> On 11/4/24 10:24, Qingfang Deng wrote:
+> > ppp->closing was used to test if an interface is closing down. But upon
+> > .ndo_uninit() where ppp->closing is set to 1, dev_close() is already
+> > called to bring down an interface and a synchronize_net() guarantees
+> > that no pending TX/RX can take place, so the check is unnecessary.
+> > Remove the check.
+>
+> I'm unsure we can remote such check. The TX callback can be triggered
+> even from a write on the controlling file, and it looks like such file
+> will be untouched by uninit.
 
-I don't think external bitmap can workaround the performance degradation
-problem, because the global lock for the bitmap are the one to blame for
-this, it's the same for external or internal bitmap.
+ppp_release (when the file is closed) calls unregister_netdevice, and
+no more writes can happen after that.
 
-Do you know that is there anyone using external bitmap in the real
-world? And is there numbers for performance? We'll have to consider
-to keep it untill the new lockless bitmap is ready if so.
-
-Thanks,
-Kuai
-
-> .
-> 
-
+>
+> Cheers,
+>
+> Paolo
+>
 
