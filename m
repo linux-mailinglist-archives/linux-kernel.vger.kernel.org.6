@@ -1,128 +1,136 @@
-Return-Path: <linux-kernel+bounces-401569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA969C1C64
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:44:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A949C1C5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 092DAB22F4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:44:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3469E2869FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F99C1E491C;
-	Fri,  8 Nov 2024 11:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816B11E47A1;
+	Fri,  8 Nov 2024 11:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Y4scvopp"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3lAuRG6"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DC51E2833;
-	Fri,  8 Nov 2024 11:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D2C1E492D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066274; cv=none; b=Imihh85Kw36sdrdOM5E7lfFKSykbDb3GQQ2ObCRMr4iBhveWbCIzvd/ALBrRXw8AmnUSgz/ujHtRd/Sy8F2FhB2dQTD+SteQiciVgG5vVCAgLU/E1z3Hmidshenx7P4C8achb/YYhzg1SH+NWOCdttiU26tE2s/yPZ2zt4sCAdw=
+	t=1731066235; cv=none; b=g2QKxPm3+yCBdPnnZU1GKTM3UFsTW73n25IktLfATYfDg5xwqFxfyZCuTNOCLlBy/4V5DoWctPPjC+q0ZrHmrbe0Fv4NIIs2PzYGYG7hNXUTBn4eVH+OU4yxkdUJs89DbjaJZ9eZfS2VAM1eqCpuCkDYQvScWVFJQbXVnYxHdsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066274; c=relaxed/simple;
-	bh=oQVviN+5i+x05HgtVOFrDfC3HzwLDkP+iQb92BTx4og=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MIBkao0xdb6zuUTj9z1UjnhR+EdmZQQw1oO+t9VrwAeo+5I0GN3r0awypHsFltV0sPRgIdlc5vW5OzrtjUyOJCRnZckkaUzLpHDL9jgn8hHAzglV5LfZpbPFoTwKNBpFB6jzW/JanKk058WNKQ0GfcrfrF6LeVmQvFqBaavkn1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Y4scvopp; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1731066258; x=1731671058; i=wahrenst@gmx.net;
-	bh=GxbX2oxaYRc6GmeF5zAbTlIW/0poPK+EYOQlprsP+sQ=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Y4scvopp/F1hpDmqbVxGiCZ3tiQeiamk/dXKp9V9NdYfM7Ye6g87cNme3bQErJaa
-	 SZBzWFFWHDQTcApeMgQI+tDxY991CbvEE3eoqgKaXjMwHMRkNsGZzVjiA4vi1jzs0
-	 wYv7kWfJFGYxWPeLjIa20/yQ2QpIS947C9ZTR+7I/RX3fQE8P9TF1BKtDaAYjk1Oj
-	 V+ikv5UDjV0t7JRd6kHwbHFWMSpC9ifbid0pxs2efviUMYN1NdbgiGN4Pj/4FBXya
-	 zSWhFbst3xIdgeot4g5VNJtLWqogy69g6alSRJKZYEgAZbcWTzCbhemYhLRthQJxy
-	 xEJPDlnWfrUv+WUrwQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MDywo-1szRnK1yDM-00FbvH; Fri, 08
- Nov 2024 12:44:18 +0100
-From: Stefan Wahren <wahrenst@gmx.net>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 2/2 net V3] net: vertexcom: mse102x: Fix tx_bytes calculation
-Date: Fri,  8 Nov 2024 12:43:43 +0100
-Message-Id: <20241108114343.6174-3-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241108114343.6174-1-wahrenst@gmx.net>
-References: <20241108114343.6174-1-wahrenst@gmx.net>
+	s=arc-20240116; t=1731066235; c=relaxed/simple;
+	bh=qjv8Nskk+avwjBuYyWopHdeHY0bXMOaLNpB/xYD+XcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nqZvG+04Kp5oKQyzmBqh4B6roiQI3MiTOfmhG577Mj7vrn1UAlgVhxJs/mA8Ge8T3FJhLEBqEJ5qSvupY8MzqrlSa+EZjaaGeFM6SYd/lHJByjJJhxyiqHKy7HzLd+O09y5iRwJ5I4wexK4GYQT04sIeSppY25scr9yue4uUjwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d3lAuRG6; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d495d217bso1677101f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:43:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731066232; x=1731671032; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0ouVSbkAT3+S3WMSHYg6HVwCj00MU4w8dzA4pzxSauU=;
+        b=d3lAuRG6hA9xd+PYJBznZkyI1cz/xYM1tqJkqaJdCHlr8K39DYX0opc9h+xQQ373nH
+         qLotlvCaW2g2YuAUHs5sB8eeP2kk0Xqy9hAA91vII5yTn+/wHM52tr0Gm2xd+Hb51YhL
+         b8Yo1U+ChMlJh3aHOW3zV3LPsWbWdb55F/vpVlyGtAJn16evmRd63aKDw1JWFoUJsRoG
+         tQVK/p7qJyrUzcaDIcT/6teccvBFW6tUTxBEQpxzKn6S2veyjmaagP+/SuDQ0QsQ/zai
+         QIWdV8znnMWQF6wKtV/NXtOSUGg0wLhBA3hq7RA4k+glwkKvEJrEAuTHaHeQoPXOE6SL
+         0lgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731066232; x=1731671032;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ouVSbkAT3+S3WMSHYg6HVwCj00MU4w8dzA4pzxSauU=;
+        b=TpYGABRzga03w1jEAUHGPNv1bfmptQb39nkdZhoWGQSrHFfx2K8uCNFzrV7QpdA4Ue
+         0PvVklVl+Ihv6xu9Fx5nt/dCVVSL09PAN52uFn3LGezz1VMe8UGqB0mKvJDWH3xT0QDD
+         3kn+1uiKFjMnqUGZadDFgHp91mJmhKhI/B7cwkJ9sksjW2wegzWt5mLG1VHMKYBjXxUO
+         BRYgRvd53lH+SOPSGelgdJcy8+CC/G9x1bPrRxKPwbSg3+7f/zmX9+sD94O/dLdGH5LZ
+         N50GtpaXBc6pmGgWG3WRDWp6YmklJFLBlvODBIq1eJ+mSRnk9fK0WJYtfL24MBImA626
+         qSbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaGzmF0v2Xsp28ssCk7xt7sVZoqd1p2U8Mnm/NY9N1zSJbo7uCCJu1tIrzT+dIZN0fEcBUXzndnmmx2u4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZO3n3S1Km6B0+RAxrTT0Ri5I2Ds/a9zFmtXu7NgEEcl31HuQ1
+	9wuSUN784Wzg0BRxYBMmIp0TIdEHLcUvQHOP1n249DPAHHYSj/SkGkCmVV8OcuI=
+X-Google-Smtp-Source: AGHT+IHenYE2IrQEIw1RwXn2xALrnPWJbFU0VRWzYGh03YSwh3hgPhVUGtDNitZVrXDo/IEmoPy9YA==
+X-Received: by 2002:a05:6000:1541:b0:37d:2ea4:bfcc with SMTP id ffacd0b85a97d-381f186bc9bmr2308261f8f.13.1731066232510;
+        Fri, 08 Nov 2024 03:43:52 -0800 (PST)
+Received: from [172.16.24.72] ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05e5871sm60742135e9.37.2024.11.08.03.43.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 03:43:52 -0800 (PST)
+Message-ID: <37982a05-2057-45f4-923e-7562c683706d@linaro.org>
+Date: Fri, 8 Nov 2024 11:43:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JiTjpa5mpNh/IquJkgXFVbPDF+YOAjJLzyr4w/Ndl2il9OlCurg
- rb3muOMLHRPX+YCcpAQ59hYci2EIrumojV2f1U3+dWdnOQq6gnjSjEcIfRVWI0Ssf09S7x+
- XaCzqzXZdsddQ7LpKqxtMARM+aI8SH29prZqwYYkpOaSk6/LP6BPQi1miheQOo6G55HoHXN
- tTI50Lz3+zYz7dfxIty6g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:I/2NxXNH0Gs=;einkfVas8NSOs4mg0cIlDuoqhue
- mrPKEBZN8Ylv4ng0SwBulYAB/l9V/B0FdqFX7RoZFmCJ1Fmm7fDdQifzGDzLVVIOnPeB31u8t
- wEZRTgaE5GRJk8amtPr/5CE7j32CjDQuiyy97w98gk8x+WQV1HlPJlcRnovsO4pypZp2mlBSn
- QhvJAtuz/7yBO0O3EWVKgoEpDnRjVCCYvHxHG/6I83Dyfgpt5GVwWNGoVZRK2X2x1CECDfKaB
- S8wAHPeNG2ayAxvRwikAbY6kIOqy4zzIsqyeZbLDLW/JifjgSeGCkbo25FzOCEiwGPOnE3TgZ
- Tq73MVNjyB3xAMtPtKURM8eTpIm5QrO/+WgKsVIkvLCBCEUHPGj/0vCaPVWdnW+xmt/sqlcke
- xn9CyUv9UcdfZuMbgMg6n8Kkj7moXt8xbKCofj6Y90fT7zBgacOFW2CugSTdYbfS+j3awy9rO
- y9mqGyEFVyfy2WMeWNvS09n03VpA16M93ghxJVxZymtb57HxtXxT5ngbU8hTYN+Ydbf6iQ3CP
- paQ1aqmShFRO2PmwMn094lD6vlPkuPn5OTIqTECADT2Rf69D330Szu4RjAjs8zm7YTXUdgWtO
- rcZre03iLct7q5p2i4dLa+aVzPaFxKH2OiIYM/af0hnTPeeoIlNSEaeaNRHdyAKW4GiYmB5/w
- atrhC1Ppky7GOKMUvFSZTGvDSVlRkuaHMBZ4Ww979GtRhqZul9MHLeM+mQ48xJLUYqfJ35ukL
- 2P5Il56KnsEkzlkRIF9j5WSDN5Y2CX0R8o4a1HtMncKFFUG1wt1paSRuZpO/8DmYAV3nQ08Jj
- hPwDZdus8KAbcHGsEN+hjPHg==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
+ bound access
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
+ <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
+ <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
+ <81d6a054-e02a-7c98-0479-0e17076fabd7@quicinc.com>
+ <ndlf4bsijb723cctkvd7hkwmo7plbzr3q2dhqc3tpyujbfcr3z@g4rvg5p7vhfs>
+ <975f4ecd-2029-469a-8ecf-fbd6397547d4@linaro.org>
+ <57544d01-a7c6-1ea6-d408-ffe1678e0b5e@quicinc.com>
+ <ql6hftuo7udkqachofws6lcpwx7sbjakonoehm7zsh43kqndsf@rwmiwqngldn2>
+ <781ea2fd-637f-b896-aad4-d70f43ad245c@quicinc.com>
+ <oxbpd3tfemwci6aiv5gs6rleg6lmsuabvvccqibbqddczjklpi@aln6hfloqizo>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <oxbpd3tfemwci6aiv5gs6rleg6lmsuabvvccqibbqddczjklpi@aln6hfloqizo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The tx_bytes should consider the actual size of the Ethernet frames
-without the SPI encapsulation. But we still need to take care of
-Ethernet padding.
+On 07/11/2024 13:54, Dmitry Baryshkov wrote:
+>>> I'd say, don't overwrite the array. Instead the driver should extend it
+>>> with the new information.
+>> That is exactly the existing patch is currently doing.
+> _new_ information, not a copy of the existing information.
 
-Fixes: 2f207cbf0dd4 ("net: vertexcom: Add MSE102x SPI support")
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/net/ethernet/vertexcom/mse102x.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+But is this _really_ new information or is it guarding from "malicious" 
+additional messages ?
 
-diff --git a/drivers/net/ethernet/vertexcom/mse102x.c b/drivers/net/ethern=
-et/vertexcom/mse102x.c
-index 2c37957478fb..89dc4c401a8d 100644
-=2D-- a/drivers/net/ethernet/vertexcom/mse102x.c
-+++ b/drivers/net/ethernet/vertexcom/mse102x.c
-@@ -437,13 +437,15 @@ static void mse102x_tx_work(struct work_struct *work=
-)
- 	mse =3D &mses->mse102x;
+@Vikash is it even a valid use-case for firmware to send one set of 
+capabilities and then send a new set ?
 
- 	while ((txb =3D skb_dequeue(&mse->txq))) {
-+		unsigned int len =3D max_t(unsigned int, txb->len, ETH_ZLEN);
-+
- 		mutex_lock(&mses->lock);
- 		ret =3D mse102x_tx_pkt_spi(mse, txb, work_timeout);
- 		mutex_unlock(&mses->lock);
- 		if (ret) {
- 			mse->ndev->stats.tx_dropped++;
- 		} else {
--			mse->ndev->stats.tx_bytes +=3D txb->len;
-+			mse->ndev->stats.tx_bytes +=3D len;
- 			mse->ndev->stats.tx_packets++;
- 		}
+It seems to me this should only happen once when the firmware starts up 
+- the firmware won't acquire any new abilities once it has enumerated 
+its set to APSS.
 
-=2D-
-2.34.1
+So why is it valid to process an additional message at all ?
 
+Shouldn't we instead be throwing away redundant updates either silently 
+or with some kind of complaint ?
+
+If there's no new data - then this is data we shouldn't bother processing.
+
+If it is new data then surely it should be the _current_ and _only_ 
+valid set of data.
+
+And if the update is considered "invalid" then why _would_ we accept the 
+update ?
+
+I get we're fixing the OOB but I think we should be clear on the 
+validity of the content of the packet.
+
+---
+bod
 
