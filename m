@@ -1,123 +1,131 @@
-Return-Path: <linux-kernel+bounces-402432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E089C276F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:20:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8AA9C2772
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA1D1C21FB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1AA1F22401
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B491E203F;
-	Fri,  8 Nov 2024 22:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFCD1E203F;
+	Fri,  8 Nov 2024 22:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pkm-inc.com header.i=@pkm-inc.com header.b="SIuZiP6D"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iWtoo3Vg"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3836233D8C;
-	Fri,  8 Nov 2024 22:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E25233D8C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 22:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731104394; cv=none; b=OYKgFPI/G/oB/s/pin4v4nIdpDEZHGz0XNNCVpoz2Rqe5aVe6xZwXi94gyR6xmjNWW44wtGdqGykRcVxX5T+DfabT5jO4pBZ8KPvX5ZFi8PIujB0pVoKHyTaSjadpP80vX0N9UffQZELO5We0+eYZUbyBAxCch+46miI9lcqw34=
+	t=1731104478; cv=none; b=OCunb9zOi34r5okPh3CSQDd4dHevwkGBC2tHukeEmGHZUeMn9teNH6FHw/Ex4RvYKa006edOFzYMuzTjyxjSp/NV8n7W/I9lf5TVOgtsAOwn8U4KpBWBs8WojllCiikce/afDS3fEhlEEW3hMZBjBd6vdLluG9sDqf0bMFHw23U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731104394; c=relaxed/simple;
-	bh=23UjeEUivmVwsb+kirIXaCrXN0BlGADYbG5nSjE52ZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PSF415K3xKtWw5JG0XBDaVb3CMu0EN9CTME6t2EhY8gQKp6Owyu9M15faaLBr8XXw4mhnpcWSqubjZ6ECtIag3C2iBcjZN/25INfjtCIYpsvaMY9IpqRDmRQSaIqG63cl0uQIPRR1prv9vwX6K5VgMKd50n7TjbJuVzSn7VMt9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pkm-inc.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=pkm-inc.com header.i=@pkm-inc.com header.b=SIuZiP6D; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pkm-inc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e2ee0a47fdso299204a91.2;
-        Fri, 08 Nov 2024 14:19:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pkm-inc.com; s=google; t=1731104392; x=1731709192; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=akIVwvFuI+JeZE7yxR1K4TB9zAa3pvQZ1RXICx3q1/w=;
-        b=SIuZiP6D756UYTLWSDsf6LNsPvHF+TbmGBuPki2QrdiRnbV273W7nagW43idN1y8z1
-         aNoaiphUZvKu05dS2aLogBN31PH+LFcLPwim3OZdMLg17qQaFbS52wS4CujF7F7ub3GB
-         YRbeK1TfD8mwfroRIMS7UGal/KYD2hTQAQRYjttS23G0KL7/BEnHh5endckBImH3cu5K
-         uX3dUvqzZqmV9TmMOGXL3MQM1S1nrZTGGWYuyTeulcrVSVk42GRo89mKVJtPmnS8vFNE
-         gdUytBkdZFFROCdltsVG/H8+ltBbEuZkNnLuO3z1xUvssFBrPGVo6MJ7UBcrPPTRKQTe
-         zwtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731104392; x=1731709192;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=akIVwvFuI+JeZE7yxR1K4TB9zAa3pvQZ1RXICx3q1/w=;
-        b=nCQD16J1WUYqXTic8tijCDHCUh8MZ5GnDhavU0tpCAEihn7THS8CTjE0AV/1a2B5gv
-         WTHA3B+TmVpPKYKLqKAcfv3/NpFxdPrN2c+EOQymKlA7wELzqNlnldnBoZG4JEMp82A3
-         ksb0AIygtegiq7ojyaq4EHsuB+sXIV8lvGrUjzYWM0kEA/5pUUsBEWciR/Rpnq7fov6C
-         NCuAdjSYwEzFc46aKSRU5ar6W0xu/NsLAHQkLZjBj3mc6xea4TBVL9UQlaq+WOj84qAU
-         noIPjYgZgrXFmUEmKy2D6+sVo4I249oit0mRMFcqw5K1bhh3ACOUEqSnwC59So/OCnsf
-         Bd1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUs3Tp6utc7Hc5lVEnprgJrm12fG8seWHqA7HChEjDhnT8hrXWI1efoRgepinHDe98YLF7G7vwSSu3cSW4=@vger.kernel.org, AJvYcCV8UiS0BXr7tinYRFwtho54mMn1ExO9xcDYqwzOZjNWbHhPO++TxctgkyUESwOjCR5N8ODt8vVNs+qfwA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNyVoiYBtPUpFkN6P54Xor7kI/G7lsNvvYZf3s+QpCaaY4Q3Z6
-	/SCPkqteEtqF+EtRV8jU8z98l6Qow4rrIDTuWnePGtc6UH10TDV57AqiSMFeHCzJUAExGjBKvhs
-	orrLR5l/7H4cjd3+Kao45upJYedUOZANAY6jg4g==
-X-Google-Smtp-Source: AGHT+IExFAqaZOcsqb50s/jec5FHnVt6PQYF3hf8ganxBcdN7P6KgPg1W8t9Iu5aCCK3R4313i6iaFH3koqzsLBvO5U=
-X-Received: by 2002:a17:90b:1812:b0:2e2:ebce:c412 with SMTP id
- 98e67ed59e1d1-2e9b14c7409mr2675592a91.2.1731104392127; Fri, 08 Nov 2024
- 14:19:52 -0800 (PST)
+	s=arc-20240116; t=1731104478; c=relaxed/simple;
+	bh=W1ZiWT8LoXEaj2sAEB9yYQV+WMQK0SyaJfoj5NdD4mM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Voxig79V1eRVyBDmPazhmRWxWhiL/c7fLCMIfUEkSOce33T12TzUq7U3FPBpDItCJg6qSNiBCTroVETnbEqJEb7pS8/uHvS8hs2sRLW1WbnbAq9mPtX+Y9FAxpMNkzqZCLFjlE1cRATeKx/E005Q76Ay1gR6GbnhjEKiOSkbmjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iWtoo3Vg; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 8 Nov 2024 14:21:05 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731104472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z1Ptippr8U80MLfwMylqbY3GBCBNohqHFsVTsoCWnoA=;
+	b=iWtoo3VgzB8fTxFnKYWHljRWnkmFJTCz26g6g+9xm75hYdSW/g+rEIWhqH/g25N/2+5CIl
+	Jua0e1RhWJuPVGRKSkERqCMiwaZj+ooMJGAXd42T6o7SEy7Z56EnN1kliV7WNHvDzB4YYo
+	8G19e/uBy8zTA1ZmcmMOgYpCWnmjIN0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	muchun.song@linux.dev, akpm@linux-foundation.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 1/3] memcg/hugetlb: Introduce memcg_accounts_hugetlb
+Message-ID: <elww7lzpj4htuhgdeu2e3j5mhogi54x6w75fk5sodaptletk3x@r2fnnh7gz72h>
+References: <20241108212946.2642085-1-joshua.hahnjy@gmail.com>
+ <20241108212946.2642085-2-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
- <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com>
- <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com> <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
- <CALtW_agCsNM66DppGO-0Trq2Nzyn3ytg1t8OKACnRT5Yar7vUQ@mail.gmail.com> <8ae77126-3e26-2c6a-edb6-83d2f1090ebe@huaweicloud.com>
-In-Reply-To: <8ae77126-3e26-2c6a-edb6-83d2f1090ebe@huaweicloud.com>
-From: =?UTF-8?Q?Dragan_Milivojevi=C4=87?= <galileo@pkm-inc.com>
-Date: Fri, 8 Nov 2024 23:19:40 +0100
-Message-ID: <CALtW_ajYN4byY_hWLyKadAyLa9Rmi==j6yCYjLLUuR_nttKMrQ@mail.gmail.com>
-Subject: Re: [PATCH md-6.13] md: remove bitmap file support
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Song Liu <song@kernel.org>, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
-	"yukuai (C)" <yukuai3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108212946.2642085-2-joshua.hahnjy@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 8 Nov 2024 at 07:07, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+On Fri, Nov 08, 2024 at 01:29:44PM -0800, Joshua Hahn wrote:
+> This patch isolates the check for whether memcg accounts hugetlb.
+> This condition can only be true if the memcg mount option
+> memory_hugetlb_accounting is on, which includes hugetlb usage
+> in memory.current.
+> 
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> 
+> ---
+>  mm/memcontrol.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index f3a9653cef0e..97f63ec9c9fb 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1425,6 +1425,9 @@ unsigned long memcg_page_state_local_output(struct mem_cgroup *memcg, int item)
+>  		memcg_page_state_output_unit(item);
+>  }
+>  
+> +/* Forward declaration */
+> +bool memcg_accounts_hugetlb(void);
 
+No need for forward declaration. Just define it here and make it static.
 
-> I don't think external bitmap can workaround the performance degradation
-> problem, because the global lock for the bitmap are the one to blame for
-> this, it's the same for external or internal bitmap.
-
-Not according to my tests:
-
-5 disk RAID5, 64K chunk
-
-
-
-Test                   BW         IOPS
-bitmap internal 64M    700KiB/s   174
-bitmap internal 128M   702KiB/s   175
-bitmap internal 512M   1142KiB/s  285
-bitmap internal 1024M  40.4MiB/s  10.3k
-bitmap internal 2G     66.5MiB/s  17.0k
-bitmap external 64M    67.8MiB/s  17.3k
-bitmap external 1024M  76.5MiB/s  19.6k
-bitmap none            80.6MiB/s  20.6k
-Single disk 1K         54.1MiB/s  55.4k
-Single disk 4K         269MiB/s   68.8k
-
-
-
-Full test logs with system details at: pastebin. com/raw/TK4vWjQu
-
-
->
-> Do you know that is there anyone using external bitmap in the real
-> world? And is there numbers for performance? We'll have to consider
-> to keep it untill the new lockless bitmap is ready if so.
-
-Well I am and it's a royal pain but there isn't much of an alternative.
+> +
+>  static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+>  {
+>  	int i;
+> @@ -1446,7 +1449,7 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+>  
+>  #ifdef CONFIG_HUGETLB_PAGE
+>  		if (unlikely(memory_stats[i].idx == NR_HUGETLB) &&
+> -		    !(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
+> +			!memcg_accounts_hugetlb())
+>  			continue;
+>  #endif
+>  		size = memcg_page_state_output(memcg, memory_stats[i].idx);
+> @@ -4483,6 +4486,15 @@ int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp)
+>  	return ret;
+>  }
+>  
+> +bool memcg_accounts_hugetlb(void)
+> +{
+> +#ifdef CONFIG_HUGETLB_PAGE
+> +	return cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING;
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
+>  /**
+>   * mem_cgroup_hugetlb_try_charge - try to charge the memcg for a hugetlb folio
+>   * @memcg: memcg to charge.
+> @@ -4508,8 +4520,7 @@ int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
+>  	 * but do not attempt to commit charge later (or cancel on error) either.
+>  	 */
+>  	if (mem_cgroup_disabled() || !memcg ||
+> -		!cgroup_subsys_on_dfl(memory_cgrp_subsys) ||
+> -		!(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
+> +		!cgroup_subsys_on_dfl(memory_cgrp_subsys) || !memcg_accounts_hugetlb())
+>  		return -EOPNOTSUPP;
+>  
+>  	if (try_charge(memcg, gfp, nr_pages))
+> -- 
+> 2.43.5
+> 
 
