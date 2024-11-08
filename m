@@ -1,239 +1,252 @@
-Return-Path: <linux-kernel+bounces-402044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBA19C229F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:03:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E459C22A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD602870A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410CA1F25524
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA8D1946CC;
-	Fri,  8 Nov 2024 17:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B611F4712;
+	Fri,  8 Nov 2024 17:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BYxgXR6n"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KzrJP5pO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EABD198A0D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C311EB9F5
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731085407; cv=none; b=h3252uZvTX9NphyvJkGTRB/am3JSy/bl7hj4EvDFQGA5ESF4AJXFiar7pj6y9Z+gwfDzsr+a5ex2EtqIfQ9UAJyjz3MWENPxwF+REbkjJvMQZFRyjh8K2yvwZpDn8LcdhmHCRaEmH2wuR663G2LwltNQ1/N7DDvs2ElChZmvq3E=
+	t=1731085423; cv=none; b=exNEMH9WxESZsS9VtgHili8tfxnR+7I9Or8mO/380jPQux6CwTBbiSPkntTsSHeQEw04I6NAUNQ6fGqKpWEZ1UaGNDzFC4aTY0fB4bytGdEq7J9/J7QyJBdH6JMt38FN/dpd/gTkC64K3Z5mFAw4yKtrNA1NDiyOWSeNqq1yH+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731085407; c=relaxed/simple;
-	bh=TVCxVOewQGfcTI2xFGmS6nhXBt2NWRKz5F/6lc6IRH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qBBqgHeeg/eX3frQURzh7If5VIacGdbf19lrTaPgZZW4VxnTdJ9zNH+JNSxF3kH6ug1wDWU5VC3okeosxSfpFIFK8NdweVc8F2IyvrwsxBgWq2tw7Ib25nM1KA5NHfq23Isl7XMvbCJ4N213x0bmKEXM/YsUL7iKQIE2eh4QHOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BYxgXR6n; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A8FA9XP013759
-	for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2024 17:03:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bb81KFW5ByO/n6LEctO/uyB6P605Q4mKU+pEM8orH8s=; b=BYxgXR6np/FUaLYW
-	IB1ixBNc1mxabwHS1V5Hh/xHS5uj0nt4SQRTV1+F5Qc5+y2nbPDnY7SuF8apItSF
-	QgAOLYHbud0HcUTFceCNE7BZrCKrzM6LpInzU3RD4R8lCLJzMQyWlPfC5q9vftUG
-	SjHZsudecBSUlZOM5upUfcOHKh8dMz/LBai0YcEzoxqj3YwBGnt4NRmlU+eU2h/n
-	XkZHUP9zY8h3lwISljIXrDd3MpDnBv18aALFOwa0QPhvqdu8lhQsYwQH4E4V5qKM
-	EFyQE7YgeKvLBdWBAE5foTMpxIl5/zTfrQtsLa3/PyN7YcjMxx19QlRNOX0BOmJW
-	pCnYvg==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42s6gjj70e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 17:03:25 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7b148bebf96so1136685a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:03:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731085404; x=1731690204;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bb81KFW5ByO/n6LEctO/uyB6P605Q4mKU+pEM8orH8s=;
-        b=nXigtEa3tvWGOCunSUPCPH0pQC+ULXFdyVrA9StkfLmWoZuK1Tet63YQIL8u9g0zJ6
-         fSpiwumZdL3MOxjEH7W/f5tXJSQ8F+plKovE+lUl+C2KyMdvlbQJF1MdAhPu0t9ptsVD
-         Tb7inOdcWdsKaa6NIEF/Na4ETiqA6AdkaYZzUMCUsauIa4ygRbrjz8aKMH724Vz2d4mA
-         HDBjt5Dud3hMGTbpdA4QHOCmJHUBGuEkUAQnDS6OJsuO+/AQI1HgJGzsxjKjtx69jSiU
-         miF/6i6Z4/UL/DWdpw6iNY2Wssvwzkjh7iMNatnFOCTMcybMH8WgQxD6C1Ja0X5VLn8W
-         jg8A==
-X-Forwarded-Encrypted: i=1; AJvYcCV2GnnN3DTiKeKRsbL1PD+RTjp8jdJvkEDy/Z8jTdckygeYbG1gAoCePLgBVe9tVqRsfMxGiBoMOkcrBv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx64GSiSsLLXcQXuaV4IWeQ4bAynowq32Y6OFqynphDwbV2xGP+
-	VQyPMYpE4oH5JceArF2FvbfVSQeW4HRCQaYG+FxJS1G280FV/2lGxRclboVW606id+DshST7IA8
-	VeMxFbt/r5SpcsI2ar9IzBUyQJx/CiHUZ1niybzrxq5WZjcr3Ctt1T/HmDzGsbrM=
-X-Received: by 2002:a05:620a:4494:b0:7a9:ba9d:d24b with SMTP id af79cd13be357-7b331dbb71amr206865185a.1.1731085403883;
-        Fri, 08 Nov 2024 09:03:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG0BxkJl+NAQG7XpcFGSrrFoGs4BQBBNk64wljjo4cqxd+i2RMZOS7DlKrjFnQrg6d8jPbEuQ==
-X-Received: by 2002:a05:620a:4494:b0:7a9:ba9d:d24b with SMTP id af79cd13be357-7b331dbb71amr206862085a.1.1731085403453;
-        Fri, 08 Nov 2024 09:03:23 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dee9besm255728966b.149.2024.11.08.09.03.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 09:03:23 -0800 (PST)
-Message-ID: <0293b1c5-d405-4021-b9c1-205271107350@oss.qualcomm.com>
-Date: Fri, 8 Nov 2024 18:03:19 +0100
+	s=arc-20240116; t=1731085423; c=relaxed/simple;
+	bh=DkLkcpSACAPOkdSqpA50/En10RaBzQkMrlzGe67Uqfk=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=WmltL1EMZAq6eG2A5Fq4P2TtAJxB40Gah4yPMhDMWmAvHYIEYbsH11vchd4gxC91M6BNR67ijRlj8wHHRgXAgloaQx2EhJE9jsacICS10ONx6b4MjjQkIOoQ/EO9xZfKQyAhLvk8q678xjKG/NvOcL7CJs7CawpkaIWdHnniFa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KzrJP5pO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731085421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kTE7HN+soO/Za76tq6046j/ukmrXopkun1LVu89YTbU=;
+	b=KzrJP5pOQTwLPUqr24oDWY6kAzFq1gtyDPjIRakFawuaNbRQFoc7E8T2e00sE38JGXI5NU
+	8I/qbOXPpAcGje6T1jQ40BnSdetqfiNRLMFAKm7rQ/ELjpFyCB7sXzhgxw6DK32KJIb1ur
+	8N/LGjEuwwPV+xQzv/uaERGRld7oiAE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-d2vfCBO4PnGWgeJI8QflhA-1; Fri,
+ 08 Nov 2024 12:03:36 -0500
+X-MC-Unique: d2vfCBO4PnGWgeJI8QflhA-1
+X-Mimecast-MFC-AGG-ID: d2vfCBO4PnGWgeJI8QflhA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE2041955EA1;
+	Fri,  8 Nov 2024 17:03:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 03B2C1953880;
+	Fri,  8 Nov 2024 17:03:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20241106123559.724888-29-dhowells@redhat.com>
+References: <20241106123559.724888-29-dhowells@redhat.com> <20241106123559.724888-1-dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>
+Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 28/33] netfs: Change the read result collector to only use one work item
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/14] arm64: dts: qcom: Add initial support for
- MSM8917
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, iommu@lists.linux.dev,
-        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-References: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
- <20241107-msm8917-v3-12-6ddc5acd978b@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241107-msm8917-v3-12-6ddc5acd978b@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: _Rlv_5WCmshQAjuF1Y980ZbcqRibbU5d
-X-Proofpoint-ORIG-GUID: _Rlv_5WCmshQAjuF1Y980ZbcqRibbU5d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 suspectscore=0 adultscore=0 mlxscore=0 malwarescore=0
- impostorscore=0 spamscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411080141
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1321311.1731085403.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 08 Nov 2024 17:03:23 +0000
+Message-ID: <1321312.1731085403@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 7.11.2024 6:02 PM, Barnabás Czémán wrote:
-> From: Otto Pflüger <otto.pflueger@abscue.de>
-> 
-> Add initial support for MSM8917 SoC.
-> 
-> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
-> [reword commit, rebase, fix schema errors]
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
+This patch needs the attached adjustment folding in.
 
-[...]
+David
+---
+commit 2c0cccc7b29a051fadb6816d31f526e4dd45ddf5
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Nov 7 22:22:49 2024 +0000
 
-> +		domain-idle-states {
-> +			cluster_pwrdn: cluster-gdhs {
+    netfs: Fix folio abandonment
+    =
 
-Please rename these to cluster-sleep-<n> and sort from shallowest to
-deepest sleep state, in this case: ret, pwrdn, pc
+    The mechanism to handle the abandonment of a folio being read due to a=
+n
+    error occurring in a subrequest (such as if a signal occurs) will corr=
+ectly
+    abandon folios if they're entirely processed in one go; but if the
+    constituent subrequests aren't processed in the same scheduled work it=
+em,
+    the note that the first one failed will get lost if no folios are proc=
+essed
+    (the ABANDON_SREQ note isn't transferred to the NETFS_RREQ_FOLIO_ABAND=
+ON
+    flag unless we process a folio).
+    =
 
-[...]
+    Fix this by simplifying the way the mechanism works.  Replace the flag=
+ with
+    a variable that records the file position to which we should abandon
+    folios.  Any folio that overlaps this region at the time of unlocking =
+must
+    be abandoned (and reread).
+    =
 
-> +
-> +		l2_0: l2-cache {
-> +			compatible = "cache";
-> +			cache-level = <2>;
-> +			cache-unified;
-> +		};
+    This works because subrequests are processed in order of file position=
+ and
+    each folio is processed as soon as enough subrequest transference is
+    available to cover it - so when the abandonment point is moved, it cov=
+ers
+    only folios that draw data from the dodgy region.
+    =
 
-Please put this under the cpu0 node
+    Also make sure that NETFS_SREQ_FAILED is set on failure and that
+    stream->failed is set when we cut the stream short.
+    =
 
-[...]
+    Signed-off: David Howells <dhowells@redhat.com>
+    cc: Jeff Layton <jlayton@kernel.org>
+    cc: netfs@lists.linux.dev
+    cc: linux-fsdevel@vger.kernel.org
 
-> +		restart@4ab000 {
-> +			compatible = "qcom,pshold";
-> +			reg = <0x4ab000 0x4>;
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index 73f51039c2fe..7f3a3c056c6e 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -46,7 +46,7 @@ static void netfs_unlock_read_folio(struct netfs_io_requ=
+est *rreq,
+ 	struct netfs_folio *finfo;
+ 	struct folio *folio =3D folioq_folio(folioq, slot);
+ =
 
-Please also pad all address parts to 8 hex digits with leading zeroes
+-	if (unlikely(test_bit(NETFS_RREQ_FOLIO_ABANDON, &rreq->flags))) {
++	if (unlikely(folio_pos(folio) < rreq->abandon_to)) {
+ 		trace_netfs_folio(folio, netfs_folio_trace_abandon);
+ 		goto just_unlock;
+ 	}
+@@ -126,8 +126,6 @@ static void netfs_read_unlock_folios(struct netfs_io_r=
+equest *rreq,
+ =
 
-[...]
+ 		if (*notes & COPY_TO_CACHE)
+ 			set_bit(NETFS_RREQ_FOLIO_COPY_TO_CACHE, &rreq->flags);
+-		if (*notes & ABANDON_SREQ)
+-			set_bit(NETFS_RREQ_FOLIO_ABANDON, &rreq->flags);
+ =
 
-> +			gpu_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-598000000 {
-> +					opp-hz = /bits/ 64 <598000000>;
-> +				};
-> +
-> +				opp-523200000 {
-> +					opp-hz = /bits/ 64 <523200000>;
-> +				};
-> +
-> +				opp-484800000 {
-> +					opp-hz = /bits/ 64 <484800000>;
-> +				};
-> +
-> +				opp-400000000 {
-> +					opp-hz = /bits/ 64 <400000000>;
-> +				};
-> +
-> +				opp-270000000 {
-> +					opp-hz = /bits/ 64 <270000000>;
-> +				};
-> +
-> +				opp-19200000 {
-> +					opp-hz = /bits/ 64 <19200000>;
-> +				};
+ 		folio =3D folioq_folio(folioq, slot);
+ 		if (WARN_ONCE(!folio_test_locked(folio),
+@@ -152,7 +150,6 @@ static void netfs_read_unlock_folios(struct netfs_io_r=
+equest *rreq,
+ 		*notes |=3D MADE_PROGRESS;
+ =
 
-Does the GPU actually function at 19.2 MHz? You can check this by removing
-all other entries and starting some gpu workload
+ 		clear_bit(NETFS_RREQ_FOLIO_COPY_TO_CACHE, &rreq->flags);
+-		clear_bit(NETFS_RREQ_FOLIO_ABANDON, &rreq->flags);
+ =
 
-[...]
+ 		/* Clean up the head folioq.  If we clear an entire folioq, then
+ 		 * we can get rid of it provided it's not also the tail folioq
+@@ -251,6 +248,12 @@ static void netfs_collect_read_results(struct netfs_i=
+o_request *rreq)
+ 			if (test_bit(NETFS_SREQ_COPY_TO_CACHE, &front->flags))
+ 				notes |=3D COPY_TO_CACHE;
+ =
 
-> +		cpuss1-thermal {
-> +			polling-delay-passive = <250>;
-> +			polling-delay = <1000>;
++			if (test_bit(NETFS_SREQ_FAILED, &front->flags)) {
++				rreq->abandon_to =3D front->start + front->len;
++				front->transferred =3D front->len;
++				transferred =3D front->len;
++				trace_netfs_rreq(rreq, netfs_rreq_trace_set_abandon);
++			}
+ 			if (front->start + transferred >=3D rreq->cleaned_to + fsize ||
+ 			    test_bit(NETFS_SREQ_HIT_EOF, &front->flags))
+ 				netfs_read_unlock_folios(rreq, &notes);
+@@ -268,6 +271,7 @@ static void netfs_collect_read_results(struct netfs_io=
+_request *rreq)
+ 				stream->error =3D front->error;
+ 				rreq->error =3D front->error;
+ 				set_bit(NETFS_RREQ_FAILED, &rreq->flags);
++				stream->failed =3D true;
+ 			}
+ 			notes |=3D MADE_PROGRESS | ABANDON_SREQ;
+ 		} else if (test_bit(NETFS_SREQ_NEED_RETRY, &front->flags)) {
+@@ -566,6 +570,7 @@ void netfs_read_subreq_terminated(struct netfs_io_subr=
+equest *subreq)
+ 			__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
+ 		} else {
+ 			netfs_stat(&netfs_n_rh_download_failed);
++			__set_bit(NETFS_SREQ_FAILED, &subreq->flags);
+ 		}
+ 		trace_netfs_rreq(rreq, netfs_rreq_trace_set_pause);
+ 		set_bit(NETFS_RREQ_PAUSE, &rreq->flags);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index c00cffa1da13..4af7208e1360 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -260,6 +260,7 @@ struct netfs_io_request {
+ 	atomic64_t		issued_to;	/* Write issuer folio cursor */
+ 	unsigned long long	collected_to;	/* Point we've collected to */
+ 	unsigned long long	cleaned_to;	/* Position we've cleaned folios to */
++	unsigned long long	abandon_to;	/* Position to abandon folios to */
+ 	pgoff_t			no_unlock_folio; /* Don't unlock this folio after read */
+ 	unsigned char		front_folio_order; /* Order (size) of front folio */
+ 	refcount_t		ref;
+@@ -271,7 +272,6 @@ struct netfs_io_request {
+ #define NETFS_RREQ_FAILED		4	/* The request failed */
+ #define NETFS_RREQ_IN_PROGRESS		5	/* Unlocked when the request completes =
+*/
+ #define NETFS_RREQ_FOLIO_COPY_TO_CACHE	6	/* Copy current folio to cache f=
+rom read */
+-#define NETFS_RREQ_FOLIO_ABANDON	7	/* Abandon failed folio from read */
+ #define NETFS_RREQ_UPLOAD_TO_SERVER	8	/* Need to write to the server */
+ #define NETFS_RREQ_NONBLOCK		9	/* Don't block if possible (O_NONBLOCK) */
+ #define NETFS_RREQ_BLOCKED		10	/* We blocked */
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index cf14545ca2bd..22eb77b1f5e6 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -56,6 +56,7 @@
+ 	EM(netfs_rreq_trace_free,		"FREE   ")	\
+ 	EM(netfs_rreq_trace_redirty,		"REDIRTY")	\
+ 	EM(netfs_rreq_trace_resubmit,		"RESUBMT")	\
++	EM(netfs_rreq_trace_set_abandon,	"S-ABNDN")	\
+ 	EM(netfs_rreq_trace_set_pause,		"PAUSE  ")	\
+ 	EM(netfs_rreq_trace_unlock,		"UNLOCK ")	\
+ 	EM(netfs_rreq_trace_unlock_pgpriv2,	"UNLCK-2")	\
 
-You can remove polling-delay (not -passive), as we have an interrupt
-that fires on threshold crossing
-
-> +
-> +			thermal-sensors = <&tsens 4>;
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpuss1_alert0>;
-> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
-> +
-> +			trips {
-> +				cpuss1_crit: cpuss1-crit {
-> +					temperature = <100000>;
-> +					hysteresis = <2000>;
-> +					type = "critical";
-> +				};
-> +
-> +				cpuss1_alert0: trip-point0 {
-> +					temperature = <75000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpuss1_alert1: trip-point1 {
-> +					temperature = <85000>;
-> +					hysteresis = <2000>;
-> +					type = "hot";
-> +				};
-
-Sorting these by temperature, rising would be nice
-
-Konrad
 
