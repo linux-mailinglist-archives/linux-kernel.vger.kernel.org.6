@@ -1,135 +1,173 @@
-Return-Path: <linux-kernel+bounces-402025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19DF9C225F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:47:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2539C219D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8280F1F24542
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:47:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B8EB1C24D9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D111EABC3;
-	Fri,  8 Nov 2024 16:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D7913BAD7;
+	Fri,  8 Nov 2024 16:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="fEX164BH"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4Ft/+80"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17C0197A92;
-	Fri,  8 Nov 2024 16:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B989FA41;
+	Fri,  8 Nov 2024 16:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731084395; cv=none; b=DidkJCA9m6Z6Vf1qn1b1bypCjP/7TfQgVCRsHOn1+TmixKnzrnN8KXdIuticg+pWCL1HLKuAatyKINd8FCwAxuMhnF+KKzjE2YYfKN2aB9oqYS2GvOOGe3O6sr54XWJaZuqnFrGxK8CRK4r/UtoYo9MF8N/4v1HFH3up/6UY6p8=
+	t=1731082202; cv=none; b=ND8BZvugZ/Z3F5grcG6fKMzRA4oep0ZUpjBybyYe71Fxa7caw39gkdSKj3IZp4UmDsnYcUNRHQKAg+8YoUvk2ytGb5fhwvFXe+kRTWa6Uqz7v4sl4xbrx3ywISUIZoDf1aMbiKBOXkuX1G8a00kpfPaeC12PaN9ECht0fap3lv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731084395; c=relaxed/simple;
-	bh=2pHcTBoi9lcMbT1C263b1xLFZScI7/Ijdf7EqoIYlXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DI+kSzUUf4rsblil2nnvyLBeY9GrMvpoUje3EF7YEEX2KoFVOynjWMcNXs2ZJ4Uu5QMF5jfR9ZoQN9jtiBs18B+TtXtbtbz2PWFyCOJfoe48kxNJ6fXpcGOY5JU+M8nciHh98Sczs8giZtd3H74lh6fP6KczPKtn4GGvn6F73+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=fEX164BH reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id b28332d376a30c7a; Fri, 8 Nov 2024 17:46:26 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 62F218384AE;
-	Fri,  8 Nov 2024 17:46:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1731084386;
-	bh=2pHcTBoi9lcMbT1C263b1xLFZScI7/Ijdf7EqoIYlXc=;
-	h=From:Subject:Date;
-	b=fEX164BHm/h8hCkjkCee3IeihTX0SCu6nzQK83NVhWxnCP6iKYiiI4aVYTfbbk2X9
-	 klzjM1ujtOxy398Pow8k742tz4vbbLbvUSa8TAaaYhkVVZ0IsgdR/eihJHHUB9y1zP
-	 JQdIGqRYBp43155vp//dCaH5r5xbP5gKSPt5XtuyaU8JIpc12d3g/8pGZgnVwaNp3k
-	 qNCVxpBq4IFoaSxCTES1w9SgEl2ppbJNQyOFtt14sEBg106vfCOvXJtTbrY9l06Y6n
-	 gEg1XS6w3LRywy56Uys4HzSCEH7fKuDiuYvHFf2HHCQfpU6ls6jgb9vfMcXFe5YNgY
-	 D0Iy+j7CXtjYA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Len Brown <len.brown@intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Subject:
- [RFC][PATCH v0.1 0/6] cpufreq: intel_pstate: Enable EAS on hybrid platforms
- without SMT
-Date: Fri, 08 Nov 2024 17:09:47 +0100
-Message-ID: <3607404.iIbC2pHGDl@rjwysocki.net>
+	s=arc-20240116; t=1731082202; c=relaxed/simple;
+	bh=DUCS5EkYjsqN1XXXFBeVXFHAS90/e4DckNM6O+xIYQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFxagdVj+X1oyI67WNv1L53vq8oZjBmuO0eNbO3CoYTooFP1+vahcs3tx12X6JwaFAzUP4XiLdkq1+2GAUqZps5MEs/n4Qz7qA8nAE5yGYWnvHC/pAGfkG3UuQUqqE1ENUEKRDqzf2QfuouppEn9P6JS10405pMyFQooOITr9+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4Ft/+80; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C711C4CECD;
+	Fri,  8 Nov 2024 16:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731082202;
+	bh=DUCS5EkYjsqN1XXXFBeVXFHAS90/e4DckNM6O+xIYQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p4Ft/+80/GYQLEo67l5Grr+bXHYcj4pTs7C7yz9zfGdjnj3DuWoBelOi41BtV4Dae
+	 npqLO7K1psSzduPzX3HP3upvFSReZejjKaQFzh4gHmyvOPktLf/AGhkKzVmRm78Aa0
+	 GyP7Pe1+oDW4TuPW6TQiiwFgHqY+MdOaMSNqUgOjHoM0ay+bE6UbsKZdaVZf/uNP0I
+	 R5m2FUb7JDQ9H9ueKiPPhFgENvcnj1gnmCP9DZ388rXN+0Is/6GiZXqgAdeyhwAHYT
+	 DkCGkcNG70u3Wtv+wdLNg7tdeugQpLwXmDIohCnKilvbbxZMAQf80bLD1fnPB6CFfN
+	 SUcmGh9iVnG5Q==
+Date: Fri, 8 Nov 2024 10:10:00 -0600
+From: Rob Herring <robh@kernel.org>
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: krzk@kernel.org, hbarnor@chromium.org, dianders@chromium.org,
+	conor.dooley@microchip.com, dmitry.torokhov@gmail.com,
+	jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: input: Goodix GT7986U SPI HID
+ Touchscreen
+Message-ID: <20241108161000.GA2270872-robh@kernel.org>
+References: <20241108120311.87795-1-charles.goodix@gmail.com>
+ <20241108120311.87795-2-charles.goodix@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigdeklecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhg
-X-DCC--Metrics: v370.home.net.pl 0; Body=10 Fuz1=10 Fuz2=10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108120311.87795-2-charles.goodix@gmail.com>
 
-Hi Everyone,
+On Fri, Nov 08, 2024 at 08:03:10PM +0800, Charles Wang wrote:
+> The Goodix GT7986U touch controller report touch data according to the
+> HID protocol through the SPI bus. However, it is incompatible with
+> Microsoft's HID-over-SPI protocol.
+> 
+> NOTE: these bindings are distinct from the bindings used with the
+> GT7986U when the chip is running I2C firmware. For some background,
+> see discussion on the mailing lists in the thread:
+> 
+> https://lore.kernel.org/r/20241018020815.3098263-2-charles.goodix@gmail.com
+> 
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+>  .../bindings/input/goodix,gt7986u-spifw.yaml  | 75 +++++++++++++++++++
+>  1 file changed, 75 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
+> new file mode 100644
+> index 000000000..8105b9ce2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
+> @@ -0,0 +1,75 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/goodix,gt7986u-spifw.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Goodix GT7986U SPI HID Touchscreen
+> +
+> +maintainers:
+> +  - Charles Wang <charles.goodix@gmail.com>
+> +
+> +description: Supports the Goodix GT7986U touchscreen.
 
-This series, on top of
+Move to next line.
 
-https://lore.kernel.org/linux-pm/12554508.O9o76ZdvQC@rjwysocki.net/
+> +  This touch controller reports data packaged according to the HID protocol
+> +  over the SPI bus, but it is incompatible with Microsoft's HID-over-SPI protocol.
+> +
 
-modifies the energy model code, the EAS setup code and the intel_pstate
-driver to enable simplified EAS support in the latter.
+If you want to maintain paragraphs you need '>' or '|' after 
+'description:'. IIRC, it has to be '|' due to the "NOTE: " here:
 
-The underlying observation is that on the platforms targeted by these changes,
-Lunar Lake at the time of this writing, the "small" CPUs (E-cores), when run at
-the same performance level, are always more energy-efficient than the "big" or
-"performance" CPUs (P-cores).  This means that, regardless of the scale-
-invariant utilization of a task, as long as there is enough spare capacity on
-E-cores, the relative cost of running it there is always lower.
-
-Thus the idea is to register a perf domain per CPU type, which currently are
-P-cores and E-cores, to represent the relative costs of running tasks on CPUs
-of each type.  The states table in each of these perf domains is one-element
-and that element only contains the cost value, which causes EAS to compare the
-"E-core cost" with the "P-core cost" every time it has to make a decision, and
-because the "E-core cost" is lower, it will always prefer E-cores as long as
-there is enough spare capacity to run the given task on one of them.
-
-The intel_pstate driver knows the type of each CPU, so it can create cpumasks
-requisite for registering the perf domains as per the above, but the energy
-model registration code needs to be adjusted to handle perf domains with
-one-element states tables (further referred to as stub perf domains).  It
-also needs to allow adding a new CPU to an existing perf domain to handle the
-case in which some CPUs are offline to start with and are brought online later
-via sysfs.  The first 4 patches in the series make the requisite energy model
-change.
-
-Patch [5/6] updates the EAS setup code to allow it to work without the
-schedutil cpufreq govenor which need not be used when intel_pstate is in
-use (in the "active" mode, intel_pstate uses a built-in governor that can
-work with EAS just fine because it also adjusts the CPU performance level to
-utilization).
-
-The last patch modifies intel_pstate to register the perf domains described
-above and update them when new CPUs become available for the first time.
-
-Please refer to the individual patch changelogs for details.
-
-It has been verified that the behavior after the changes here is as intended,
-that is the perf domains are registered and EAS is enabled.
-
-For easier access, the series is available on the intel_pstate-experimental-v2
-branch in linux-pm.git:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=intel_pstate-experimental-v2
-
-Thanks!
-
-
-
+> +  NOTE: these bindings are distinct from the bindings used with the
+> +  GT7986U when the chip is running I2C firmware. This is because there's
+> +  not a single device that talks over both I2C and SPI but rather
+> +  distinct touchscreens that happen to be built with the same ASIC but
+> +  that are distinct products running distinct firmware.
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - goodix,gt7986u-spifw
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  goodix,hid-report-addr:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      The register address for retrieving HID report data.
+> +
+> +  spi-max-frequency: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - reset-gpios
+> +  - goodix,hid-report-addr
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    spi {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      touchscreen@0 {
+> +        compatible = "goodix,gt7986u-spifw";
+> +        reg = <0>;
+> +        interrupt-parent = <&gpio>;
+> +        interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
+> +        reset-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
+> +        spi-max-frequency = <10000000>;
+> +        goodix,hid-report-addr = <0x22c8c>;
+> +      };
+> +    };
+> +
+> +...
+> -- 
+> 2.43.0
+> 
 
