@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-401479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77849C1AEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:43:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F979C1AF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A751C24FF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:43:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F62C283762
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE19E1E32CE;
-	Fri,  8 Nov 2024 10:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3BA1E1C10;
+	Fri,  8 Nov 2024 10:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDlqH75k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sguci4RA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F1F1E284D;
-	Fri,  8 Nov 2024 10:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687DB1E32A9;
+	Fri,  8 Nov 2024 10:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731062600; cv=none; b=k5AuR4gS5zHmPyrHu0Mer8+7nR8jKtwZS2qIKFLf7Sff3KNWvohpHyx7+ZD6I+z3otGG2GM6U8b8c8hDiS2NaZYhzhX4RDt/lwO2ZbUJvifP/XM69k6mKE/hDQj3a6hkDIyf24G9D5CoiT8V9+hxtJjIg3R/+8RnRv+VUvMgkgc=
+	t=1731062703; cv=none; b=jLIcpYsGDq862HMhLT7siWrwjOcT9g6EM+lSPVRtgVtsBIv6/vUfWEhmzU7/nrDgpzRfoV3aKB8R3xlxqZzJwEQ5WaBCfSSmlFoKs2QUCCzEbBkZLp5ygLXqIAzgzBtYHYQCiQfGQpnOqAnXGSfB6DNscgFAirwAMwFJQhjlx7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731062600; c=relaxed/simple;
-	bh=X9bvTkvZaRpOZ+CjXCy5vrFFW3EUaXdbLno5dbmYmOA=;
+	s=arc-20240116; t=1731062703; c=relaxed/simple;
+	bh=d23y1L/SEe7eDNmnOqbgDqBnRzygc50uv2MDsByI+e4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EoBaz/p/YevjoC2oI4HlfpZdquzDEnW5fi2WaueTYzB5z3AOPvyMKZ7GVIWrq6CMNyM0lYElt7HHBpEVwo3cF+BVbGUIAEbFeH0dNcVTYfLTM/bDxInc6PWRctGpsRaf21M70Q0k9u+3oah8TeCkte45qG9k9iETZ7T5gyc0yvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDlqH75k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A5BBC4CECD;
-	Fri,  8 Nov 2024 10:43:16 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ETd4N9pZcKuxo3Egi/hk43fEUxdXsS6VLDU1ph4ZceOUoPpB04dIsudYLT4n+PRd293jtSR4AjYEyvF9hJqus67vpMU0WaAgUbOv8jan3B7qOgduL7Hi8NMbn0K8REDbb9TMMjXrddyeozus/GdSzoIL2KpW2TRyPtESZIkVuns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sguci4RA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F25C4CECD;
+	Fri,  8 Nov 2024 10:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731062598;
-	bh=X9bvTkvZaRpOZ+CjXCy5vrFFW3EUaXdbLno5dbmYmOA=;
+	s=k20201202; t=1731062702;
+	bh=d23y1L/SEe7eDNmnOqbgDqBnRzygc50uv2MDsByI+e4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cDlqH75kGXSacBpSMraZNw4rZ4ndf3+n8yb3whHlArEv5CWWtzmhnsaWM4h+ZYbn5
-	 J46RChmv21hNthvQ32kpsXoAdiwafXwhOExCpwjbwzr3WIP2+Aalk3xpLa8rI4NDdQ
-	 7/M3eU25R9TGol1Y3z/73Nn1blLmYS86jXEJ/6ixMXNY1LjapdUSBHkHr2Z5kRwnx/
-	 gA46kh4luVwto15FHeaQ5R3SGuf5rf4tOSekBcUYgIr+W+X2laDppFfcHOLeOfuefJ
-	 xQV6sQAJbNFwTHz/7lXy7yIyOT2kRKBn9OisNNpKUTssajMskh4sf9XWc4+NCD+6bR
-	 y7iJTEQRx2zbA==
-Message-ID: <f19d96a8-8f67-4aa6-a3c6-f850cbbfb109@kernel.org>
-Date: Fri, 8 Nov 2024 11:43:14 +0100
+	b=Sguci4RAmsCM7M1qA9BpQAWlytkWx9wNbe/wS2r3v9T3c5j9OQKbUG2PsyRIcti7N
+	 /KPfdXKiRZ7P+DmhKMHlIR0GwQNNO7moD831S/U7iGwkK19Tu1S0k5cNTw53BnRC9i
+	 C/cIrpryouigGIAtQ9uVc/h5OLV56z6hby/uGpT0rRdBTXIK8x9X28O6iUr6qWvRCb
+	 o0k7IqAjOkawAMv9EQbaph9+0aFq/9c7jTbVRUncc/xOjoUfeq9idDzIKnBon/Hk6+
+	 XB58JpUMNzi84kyUh/KmpNgrS8X5V0H5aZciuoFsB9vKRGZwLAUe9RWZLyigaVHNRD
+	 Zx5oqlWGIMiWQ==
+Message-ID: <eb5dd2b2-b292-47de-bba8-081079b33650@kernel.org>
+Date: Fri, 8 Nov 2024 11:44:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] dt-bindings: iio: adis16480: add devices to
- adis16480
-To: Darius Berghe <darius.berghe@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org
-References: <20241107134517.3089112-1-darius.berghe@analog.com>
- <20241107134517.3089112-4-darius.berghe@analog.com>
+Subject: Re: [PATCH RESEND v4 1/2] ASoC: dt-bindings: irondevice,sma1307: Add
+ initial DT
+To: Ki-Seok Jo <kiseok.jo@irondevice.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241106233144.9283-1-kiseok.jo@irondevice.com>
+ <20241106233144.9283-2-kiseok.jo@irondevice.com>
+ <butx33avx7zainw6im72kwdxj6jfvfbdlzugxadu6rfn3uszdx@oxgvrnfl5t5h>
+ <SL2P216MB233740828B79AF06B24FC4F98C5C2@SL2P216MB2337.KORP216.PROD.OUTLOOK.COM>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,42 +108,52 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241107134517.3089112-4-darius.berghe@analog.com>
+In-Reply-To: <SL2P216MB233740828B79AF06B24FC4F98C5C2@SL2P216MB2337.KORP216.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/11/2024 14:45, Darius Berghe wrote:
-> Add the adis16486, adis16487 and adis16489 Six Degrees
-> of Freedom Inertial Sensors to the list of compatible devices
-> of the adis16480 iio subsystem driver.
+On 08/11/2024 00:57, Ki-Seok Jo wrote:
+>>
+>> On Thu, Nov 07, 2024 at 08:31:44AM +0900, Kiseok Jo wrote:
+>>> This adds the schema binding for the Iron Device SMA1307 Amp
+>>>
+>>> Signed-off-by: Kiseok Jo <kiseok.jo@irondevice.com>
+>>> ---
+>>> v3 -> v4
+>>>  - Modify to fit the character-per-line format
+>>
+>> <form letter>
+>> This is a friendly reminder during the review process.
+>>
+>> It looks like you received a tag and forgot to add it.
+>>
+>> If you do not know the process, here is a short explanation: Please add Acked-
+>> by/Reviewed-by/Tested-by tags when posting new versions, under or above your
+>> Signed-off-by tag. Tag is "received", when provided in a message replied to
+>> you on the mailing list. Tools like b4 can help here. However, there's no need
+>> to repost patches *only* to add the tags.
+>> The upstream maintainer will do that for tags received on the version they
+>> apply.
+>>
+>> https://elixir.bootlin.com/linux/v6.5-
+>> rc3/source/Documentation/process/submitting-patches.rst#L577
+>>
+>> If a tag was not added on purpose, please state why and what changed.
+>> </form letter>
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> adis16486 is similar to adis16485, has the exact same channels
-> but acceleration and delta velocity scales are different.
+> Thank you for the kind explanation.
+> I'll make sure to add the tag next time.
 > 
-> adis16487 is fallback compatible with adis16485.
+> I tried using b4, but I encountered issues with email delivery.
+> So I haven't been able to use it properly yet.
+> I'll make sure to use it in my next patch.
+> 
 
-This was never tested - visible easily from the diff. No need to ask
-reviewers to do the tools job. Tools are for that.
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+You don't have to use b4 to send patches. You can collect tags with b4
+trailers even if you send patches standard way (git send-email).
 
 Best regards,
 Krzysztof
