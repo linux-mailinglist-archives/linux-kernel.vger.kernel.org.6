@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-401043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9D99C1552
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:14:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F8B9C1550
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:13:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4C11C212FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:14:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA991F23D91
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A75E1CF7D6;
-	Fri,  8 Nov 2024 04:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1814C1C3F06;
+	Fri,  8 Nov 2024 04:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MtYIpng6"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BLT+bTHW"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D7E1CEACB
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B10E13CF82
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731039214; cv=none; b=fu8Xp7DOp4rkCZaEa0hSkvolwyzXLwLopeqlpsVPdrPzZg4XdQ0mdfbIpY7p6bwIPEO1T04F1J/bgJALBCuhzx/iuYRAS3TtUjvf0Y9RpjhVNMr5oBcG6TmYG5fhrDsCMhUgJAvLSOtR0MsHudoGk4jfE9zWz9ffmWVEJkgqd58=
+	t=1731039210; cv=none; b=UaaacHrmOtIsQA935FTIzzR2Iekh/D6RoMpa/fLPXHAIMo1vdivaIfjD75krZ+PIzVZ9Y0ZpO5t94wxvojG5QaZ3fYN+n+9AGGy1bYP15yYZ7hB2E+Gqu0eupb3+4GHKom6lxateTTuBcN/qMgvyad/DtB8nGrqSK3W61aZZAaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731039214; c=relaxed/simple;
-	bh=zVYAMOpbziW/W6wKNZDHuzrEWJWaINAHxirRiw/PToE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MS2ExwEAHwU5Z7+gBWHW+g609lcZnoDAuzk7Bpbx2Q16Cz4WQsmee9qSBDCMInjH4NqBq6i90HX5iHEvP0qhc+Hodqxdfl24/o/3GnnH/i7DQwIaA0uNl9HRTaQlP8A3oFfoHYLytSISJcl3MA5MnqF01IyCESWwmYmQCFS7Y3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MtYIpng6; arc=none smtp.client-ip=115.124.30.100
+	s=arc-20240116; t=1731039210; c=relaxed/simple;
+	bh=aW+mk2ePZEaHmiZzVO05BzffwyUJkOfhEC+jcUFwaoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fzmeLenLbgd5rt0glus3IZs+3Pm+7XfLRPyyD2GsH/M3HPEHyvS86KLkFMPcQlkGB5z0kpD4R080RNZN0luJPUk8oDPBLzQDZIt4k08MYn1M5JoiFL5lukAg7nBj/0k3NMzg7yYDWAHsoscZjdSni0agYmHbo+g3yT5BevvpHkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BLT+bTHW; arc=none smtp.client-ip=115.124.30.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1731039204; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=EkuPdbEJs10NbPrHB3oDX2u1XBW62xxYxS7y55GIsZw=;
-	b=MtYIpng6iPQjJGg7/FFCN657t0SdNbf9ud/uGev07abrMzuhKcdG0svH88LJDK8a9QqQi15jP8rYwxL2KMdBCohQT7Q3OvbodVzK4bv02eM74Lb2wR/7ic3r8fBjze0jSGvZJYB9FYOi5VvP5UJkIE0stF8XOcQKbEy1MkUvHg0=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIxXGhC_1731039201 cluster:ay36)
+	t=1731039205; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=GjeDj7oC1iiZ/gkwEo4XJZE2Kubqr3JwCuLq6Y0HOAU=;
+	b=BLT+bTHW3cS/tkPHBwAItgUH4HiKzcYqMyXkO2UGmTrI4NkzHvCenBhi0FMSRFY3kuT8WS4tORB+M+EGw6NKS3mI7t15HlziENqLRZvzzMZc23hYMpTHtrakOLXrEYRFzdOhl2GGY1lWExPYb2U5QQHsfTFW1HJ97nGYvf8bGVw=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIxXGhc_1731039203 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Fri, 08 Nov 2024 12:13:22 +0800
+          Fri, 08 Nov 2024 12:13:23 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com
@@ -50,10 +51,12 @@ Cc: willy@infradead.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] Support large folios for tmpfs
-Date: Fri,  8 Nov 2024 12:12:54 +0800
-Message-Id: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH 1/4] mm: factor out the order calculation into a new helper
+Date: Fri,  8 Nov 2024 12:12:55 +0800
+Message-Id: <d3272b090b4f6fe92457d487c7b9f825ba72c1b5.1731038280.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.3
+In-Reply-To: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
+References: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,67 +65,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Traditionally, tmpfs only supported PMD-sized huge folios. However nowadays
-with other file systems supporting any sized large folios, and extending
-anonymous to support mTHP, we should not restrict tmpfs to allocating only
-PMD-sized huge folios, making it more special. Instead, we should allow
-tmpfs can allocate any sized large folios.
+Factor out the order calculation into a new helper, which can be reused
+by shmem in the following patch.
 
-Considering that tmpfs already has the 'huge=' option to control the huge
-folios allocation, we can extend the 'huge=' option to allow any sized huge
-folios. The semantics of the 'huge=' mount option are:
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+ include/linux/pagemap.h | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-huge=never: no any sized huge folios
-huge=always: any sized huge folios
-huge=within_size: like 'always' but respect the i_size
-huge=advise: like 'always' if requested with fadvise()/madvise()
-
-Note: for tmpfs mmap() faults, due to the lack of a write size hint, still
-allocate the PMD-sized huge folios if huge=always/within_size/advise is set.
-
-Moreover, the 'deny' and 'force' testing options controlled by
-'/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the same
-semantics. The 'deny' can disable any sized large folios for tmpfs, while
-the 'force' can enable PMD sized large folios for tmpfs.
-
-Any comments and suggestions are appreciated. Thanks.
-
-Hi David,
-I did not add a new Kconfig option to control the default behavior of 'huge='
-in the current version. I have not changed the default behavior at this
-time, and let's see if there is a need for this.
-
-Changes from RFC v3:
- - Drop the huge=write_size option.
- - Allow any sized huge folios for 'hgue' option.
- - Update the documentation, per David.
-
-Changes from RFC v2:
- - Drop mTHP interfaces to control huge page allocation, per Matthew.
- - Add a new helper to calculate the order, suggested by Matthew.
- - Add a new huge=write_size option to allocate large folios based on
-   the write size.
- - Add a new patch to update the documentation.
-
-Changes from RFC v1:
- - Drop patch 1.
- - Use 'write_end' to calculate the length in shmem_allowable_huge_orders().
- - Update shmem_mapping_size_order() per Daniel.
-
-Baolin Wang (3):
-  mm: factor out the order calculation into a new helper
-  mm: shmem: change shmem_huge_global_enabled() to return huge order
-    bitmap
-  mm: shmem: add large folio support for tmpfs
-
-David Hildenbrand (1):
-  docs: tmpfs: update the huge folios policy for tmpfs and shmem
-
- Documentation/admin-guide/mm/transhuge.rst |  52 ++++++---
- include/linux/pagemap.h                    |  16 ++-
- mm/shmem.c                                 | 128 ++++++++++++++++-----
- 3 files changed, 146 insertions(+), 50 deletions(-)
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index bcf0865a38ae..d796c8a33647 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -727,6 +727,16 @@ typedef unsigned int __bitwise fgf_t;
+ 
+ #define FGP_WRITEBEGIN		(FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE)
+ 
++static inline unsigned int filemap_get_order(size_t size)
++{
++	unsigned int shift = ilog2(size);
++
++	if (shift <= PAGE_SHIFT)
++		return 0;
++
++	return shift - PAGE_SHIFT;
++}
++
+ /**
+  * fgf_set_order - Encode a length in the fgf_t flags.
+  * @size: The suggested size of the folio to create.
+@@ -740,11 +750,11 @@ typedef unsigned int __bitwise fgf_t;
+  */
+ static inline fgf_t fgf_set_order(size_t size)
+ {
+-	unsigned int shift = ilog2(size);
++	unsigned int order = filemap_get_order(size);
+ 
+-	if (shift <= PAGE_SHIFT)
++	if (!order)
+ 		return 0;
+-	return (__force fgf_t)((shift - PAGE_SHIFT) << 26);
++	return (__force fgf_t)(order << 26);
+ }
+ 
+ void *filemap_get_entry(struct address_space *mapping, pgoff_t index);
 -- 
 2.39.3
 
