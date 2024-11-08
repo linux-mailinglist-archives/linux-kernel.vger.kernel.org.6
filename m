@@ -1,200 +1,264 @@
-Return-Path: <linux-kernel+bounces-400823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943749C12D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:57:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB8B9C12D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B2A6B226BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 23:57:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 404FA1C227DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7E51F582D;
-	Thu,  7 Nov 2024 23:57:37 +0000 (UTC)
-Received: from PUWP216CU001.outbound.protection.outlook.com (mail-koreasouthazon11020136.outbound.protection.outlook.com [52.101.156.136])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA72BA33;
+	Fri,  8 Nov 2024 00:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgK1c0Gx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616591F428C;
-	Thu,  7 Nov 2024 23:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.156.136
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731023856; cv=fail; b=locpHx7pRS2nqQKoep/TeRKBrPEMDOWig1PbGMeWGWOMwjmkOEImljt0iU95mxefmZ4AlWUG8ZQgx91/ppbJafERW0WdMidRW8IdnNu9Sca+8L154dxzQYXtUKtU3rv94Td4Vjlr7V44qP+G6C+YMTgsX4fBSk5r4wt4IkDquqM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731023856; c=relaxed/simple;
-	bh=V4NlsYD4PWlh2JN98L72QeSnM6IxiHnrhXJt9oHbJNI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jdUcLOatV94+WCAvSt4fA65T4a0syAkK2BwY5opQ0XB1hxHwJGk2WJ8ArHHb6VZooE7goDQykjZAY2PPqKSCtf+YqkiMZckbth8ePjW5Js5jgvFhvEO4NsCiR5nT0f53dZrqL6zXyLdUvlL5J/BkjAlhYoMVKmkeyaEo0s0AiUY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=irondevice.com; spf=pass smtp.mailfrom=irondevice.com; arc=fail smtp.client-ip=52.101.156.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=irondevice.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irondevice.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JLt8tT+fqOpmCSK3CN2HeXcH3wM67OCopaa0pEUOEB+7dBJqU8nGq93wPvATFMij3C8wicNXY7ehlRY+KfbJ1jhSQoEHbdEaggLE4Ku2PxX5c+09CZkvIgqLhqrth69OtsIvM+RORavraC32LI5wbTUrsuGeMec1kJjSG7MAVirSzDmXShteknJQBuXuazo4KF7XW5AIk5hbs/pziiNdbLchuORq36fn3K5guehduwM40Lnjrf0x4a/d2wPdqUbTFzF3s/k1NTt4oqELUgaR4hEnkRKV63W89gMKMs0nMXczQXrahwEGihDkNwe/i54hLyoOzsxf6lUCbwNq3HC1Ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V4NlsYD4PWlh2JN98L72QeSnM6IxiHnrhXJt9oHbJNI=;
- b=wZf8Csg3qaf2923T31BQOfPMux3g/XztkdN6z7LNA53xEchZ9ijF+Cvd5eTvCfWZHzg9AzkCibJ0XEALYZaU1axfIjHbUXyvOJGpWoLsIb0V31QslMz9A3ZS5DaKaCX5FJtkuxyNEUefgrrSDMyTFRl8DRXhvq2C8SyvNvwc1wPSsMt6P/2v+O4NaFmxoledsnLhuagZO9yfMLnvgNBbXxVMI/c159Io/4i32id0YRLUpubKQl/bcpaWeiJxooFeW/H9fWJRBrUU9hHmWnWhJg9MTNC/YHFI3vLpu0trK528Kz1DTmXM7lMgNkOQRMq3h0CGAon/UmgGeGHW8lq32g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=irondevice.com; dmarc=pass action=none
- header.from=irondevice.com; dkim=pass header.d=irondevice.com; arc=none
-Received: from SL2P216MB2337.KORP216.PROD.OUTLOOK.COM (2603:1096:101:14c::11)
- by SEWP216MB3096.KORP216.PROD.OUTLOOK.COM (2603:1096:101:29b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.21; Thu, 7 Nov
- 2024 23:57:30 +0000
-Received: from SL2P216MB2337.KORP216.PROD.OUTLOOK.COM
- ([fe80::7e8d:9550:c46b:2756]) by SL2P216MB2337.KORP216.PROD.OUTLOOK.COM
- ([fe80::7e8d:9550:c46b:2756%4]) with mapi id 15.20.8137.019; Thu, 7 Nov 2024
- 23:57:30 +0000
-From: Ki-Seok Jo <kiseok.jo@irondevice.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH RESEND v4 1/2] ASoC: dt-bindings: irondevice,sma1307: Add
- initial DT
-Thread-Topic: [PATCH RESEND v4 1/2] ASoC: dt-bindings: irondevice,sma1307: Add
- initial DT
-Thread-Index: AQHbMKQW8owaOy10sUGvAvZU2LVo6rKrlvOAgADpMTA=
-Date: Thu, 7 Nov 2024 23:57:30 +0000
-Message-ID:
- <SL2P216MB233740828B79AF06B24FC4F98C5C2@SL2P216MB2337.KORP216.PROD.OUTLOOK.COM>
-References: <20241106233144.9283-1-kiseok.jo@irondevice.com>
- <20241106233144.9283-2-kiseok.jo@irondevice.com>
- <butx33avx7zainw6im72kwdxj6jfvfbdlzugxadu6rfn3uszdx@oxgvrnfl5t5h>
-In-Reply-To: <butx33avx7zainw6im72kwdxj6jfvfbdlzugxadu6rfn3uszdx@oxgvrnfl5t5h>
-Accept-Language: ko-KR, en-US
-Content-Language: ko-KR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=irondevice.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SL2P216MB2337:EE_|SEWP216MB3096:EE_
-x-ms-office365-filtering-correlation-id: d24ae3da-2e83-45ec-4466-08dcff87f0e7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Y2tiUHZqU3hUQm1NSVVHaUlFS0N3TSt4N3pvNkVVdTRUTXRLbGh1dEFSYi9S?=
- =?utf-8?B?S3V4SHVaUkJnMjZXYzZjZ2xmSm96WTNEKzVUMlBDNEZURTRjbEErUmQ0UjUy?=
- =?utf-8?B?ZU9ZSnpxajVWVXRGRWVWNUhIcUV2aU9pdkFaTk1ZUmVVYmJ4cEl2L1NGdW5M?=
- =?utf-8?B?YVBpWnVuSEM4dDlueUhtVEVNb0JST2g3bEdxTWxhQmtINmVrSEtqc1ArN0g5?=
- =?utf-8?B?QmdaMUxya3dYdFdXMzUzeUtERHpOaXc1Qm42eUh5OWh0TTJqUnFrZnVkbkNw?=
- =?utf-8?B?Sy9BYU9xSHZZZzZoSHZZVmU2ZlV2bE0wMmwyZEI2ZWFOM2VrNzFlRU5JekpX?=
- =?utf-8?B?SUd0U2ZyZTBmVGZpdjI4dTRNeHRXcjhiZlRJQTlGdnhXczZJOHZUTzRmNHhl?=
- =?utf-8?B?UTE3QkdEUHB0TTc2VWUxQ0c0TlhCWlp1M05ZMDRramFhSTh6SWZmbS9hVklt?=
- =?utf-8?B?NmJaaGZYcnNjZFlVOVpwWjRkZGFhZXV3enlJdHNaNGZaTkxNdWM0NFltZGd4?=
- =?utf-8?B?T0VsYWZYWGVaRFhTYldlS3FRc3B0ZFEwYzhzb1pTQnl6enZBNU9BQ3Z1Qysy?=
- =?utf-8?B?M2tGRXR3ZXVvU2lzMW1Xc3RzVmtCZE1sNk1hSm9HZElFN3VwdGpRbEl2eWc2?=
- =?utf-8?B?ZjlKM0pLVGhveWhIajArUlA2dVdVMzJGSy96OTFMWUZvM2Y2TGxqMXF4TzFO?=
- =?utf-8?B?alg0QmFLMmtFY0d3NnUxeG1aZHZvWFVHd2RNa1lLd0VzZHREaW4zVWVuQ29V?=
- =?utf-8?B?VXBqdU8weSttM3k5Z1FIVVcwMjZJeEYvdW1COU1RTXp6akZBL0gzbG1QWFR3?=
- =?utf-8?B?cUJHd295czBEVUxHaXUwWUt4MHhySC84d1U3eWJjdlBYWmY5OUNxaUY3Ymtu?=
- =?utf-8?B?cGs3ZzFTWHBBczlsQ1Z4YUV2UDMwNzdvOVlJZEh0L0w3eDNkZStLOEJIQWM0?=
- =?utf-8?B?Q2VMT1p2eHJWUlZ5R1FqaFRnbE9KR2VmbE9ZVFFsa1R6Sm5FK00yNTNYVWlX?=
- =?utf-8?B?cWppL0ZGK1FxbTJQRUdoaWZjR3ZEVmxYRlNoWnF5eDdpNUVkQ3d2ZVVwdFRL?=
- =?utf-8?B?M3NjWWFJb2Q1YTBoa0FrK2FoMzhXNmwxQzgwbGYwOFdhanNqbHc1elZuZXNK?=
- =?utf-8?B?ZVExUGN1MmYzamQyd3U5WTdPM2ZabERjanRGanhFRTh2K3AxcThPVW0xYjY1?=
- =?utf-8?B?UUs5dmc0U0FjNzZWeElPdUlTS2Q2Tk9BLzY2Y2IxRkZFSDNZWmhvV2x3NzdO?=
- =?utf-8?B?d2NFQUZjcDJQRFp4WGIxMzFmWk9hMU1Nck85RzZEMlhXL1dad2ExRWNFMUUy?=
- =?utf-8?B?QVRqdERqZDhuRytwbmIyRWZKbkJrWlZ3Y3BMUnNJU3hlUHhwREVseUozUGN0?=
- =?utf-8?B?Q0twMDNHNWV0ZU1ObE9QVFo0YU0wdTFjYTFVZDM2TGJGM2tkc1hTWktzSWJj?=
- =?utf-8?B?c1pZVUVhY1E3OXJSbnhOSUhwZUw5NXRTZzJlZkNMUjBUS0g2NDlmZ0EzTy9m?=
- =?utf-8?B?SzN3UEpvazNKb3h5M3RwQlV1c1ZJSk9aQmtaRDZpNTVCM2NjT1pZZllLUG0v?=
- =?utf-8?B?ZUxkVitXVDVqdm1YRS9IZVRXN3c4ekhjYUw0LzMwbFBFSGwwb2NmeGtkNk9D?=
- =?utf-8?B?c0pWclI2Q2Nkd1Y0K1RKLzBmazY1V0pVcUlNT1ZrNTB0R2czdFNIbWQwcHNH?=
- =?utf-8?B?KzBhcjd0L01qRS9PL2ZSTGZ6MHNIR3lGc1JkdmdmZE5QT2FPaUZpSjB3bC9r?=
- =?utf-8?Q?6VhUcDyBc3aNaZrpdTFwC+oBt6cPiDAnD6i9hXM?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ko;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB2337.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bDh2alJhY3dvVlBEeEJ3N201bWtqQ2VJR3FNMUVWcGZtYTl6Y0p3RGI4dHYy?=
- =?utf-8?B?RWlNQ1VDTUU3ZG4wTjI3RUVGZUd1RlNCSUtYSmI3OGJueU1vTjk1VnVNVjdh?=
- =?utf-8?B?bU1LaFhkeUZPVDZBbGN3V1hwNi9EYzhoWkRjeDRRK0hGNmcvaGVMSS8yQUox?=
- =?utf-8?B?bWhEd2dMZzYzaWdFRmIreFFXWFNXdnVyekdHTG1rcXpETXhrTTZUVVNHRDJs?=
- =?utf-8?B?MWFJSzI0YStyb01ldXZWTXcxTnUrTVc1cmRyeCtJelBDSlB2TnllWnJJQ1pP?=
- =?utf-8?B?R284TXFnVDZjU0FPcWxqWFpHQXdzS3Njak9PMU1DWWtFeW4xUHl4Q1dhOVF0?=
- =?utf-8?B?Z0dDNnFIUERGcDB6YlZhTWdXcWx2U0ZrV2dsKzZkd3pTRW5GUEplbXg5MnFO?=
- =?utf-8?B?UlF3Tzg4enFLdkhwWFo5ejhiTW5ZczVnYmEzckQ4WWtNdFlMd1RhY3FvTStJ?=
- =?utf-8?B?b2FDc1o1OU5KeCtFOWlmSjdlUkgrM2ZZTTBLaElpUVJSYk1uTzhXT1BMc0kw?=
- =?utf-8?B?K1ppemFsdXpKcU5WcWVlWUd2LzFpOGV5N1dtSXNpZHZYaGpTdHk3MmJXY0Ri?=
- =?utf-8?B?VEk5VFRvanFLN3VtQ0hlSURiR0FTYi9BSWxzdnJpb1B0MllzTy9lSDhHZDg3?=
- =?utf-8?B?VGM4S1cxeGxWYjdmZ1U3Rmc1R0JnMVQ3dVVWeGE4ZW03RS8vSHF2akNReHFl?=
- =?utf-8?B?NnJyUUJzakdaaWpwWGY0b3F2Y2c2K3hrcWxrTFVTTk1JcWpCU3BLaXdRLzFL?=
- =?utf-8?B?Tk1iN21MTFA5TDhHejEvaFJ0R0dBVGxSYTRwTmtnUFdvd3l4QTZDZWMwMmV1?=
- =?utf-8?B?aWVyZzNRYkJDWHBWTklCTXM4UVdwd0tZeXlJSEJxUFdaUURWR055NGlFUFlZ?=
- =?utf-8?B?dGpjb3Y1NzFiZFhKeFpobkNiSE54c2tsZWViNkJRVEtpdkVRMUl0YlE2Mm84?=
- =?utf-8?B?eDBYRE92SmNyMjlZSUpCb2F6Nk80YUhWdVM4RnRTTDA1aTBHSnY1UzVoYW9o?=
- =?utf-8?B?SE9FbkZOMEVucU1wSlY2SGxQcEhxQUFib1pPcVNqSy9lRjNjY0lCM2tKUm1I?=
- =?utf-8?B?Z0VLUzRhRXdLQVk5NW5FWlNRcUtmYks5dEttTnNhekd4MU80ME95bHFaR2lM?=
- =?utf-8?B?N25DWmhKd1lrY1YyNzBOQXBid2Q2MXEyb2tuTHYzN09nTEYzWTEvT09zOHZF?=
- =?utf-8?B?ZkNrZ3V3c1lTT2duK1BWS01WZGZoNUdKeTRpNWJhajlYU2o1eFFBc1IzTnBt?=
- =?utf-8?B?M3B0ajYyTE02Y2owUk13UFcvbkYwQ0x3SG1OKzVaMjJGZHEva3JsVFEzZ3hJ?=
- =?utf-8?B?NVN4SFBkZVE4QWNuMkJSK1p4b2ZKOXZBTTNHaTBleC90dEQyUUdBNUppRkMz?=
- =?utf-8?B?alpNRHFzcHdUaTI4dFBnYjNSWXhjTVY5N1JsTmV5OUJENjF4cnYzbW81N0dD?=
- =?utf-8?B?MmJBNmc5dXlZYTVIcmVKdE05WWp1QUdjemtrdHVXcHBxOE55WHhmeWFKVzFF?=
- =?utf-8?B?RHM5REtBSjlkMzlGb05xL3NnTW9EV0d2bUM3Sm1wOGJwOHVwOVR1N3BEaUph?=
- =?utf-8?B?c3VWUmY0bStKRkQwRy9oU2VKYnh5Q3gvWnk5Ym1YbldOMHlmMXBaYTZKUk9i?=
- =?utf-8?B?dlJrWjQwdTZZMlU4cUdOekRNNzJHcnRDZm03cldpNFMram91YzVoTFBLQzBn?=
- =?utf-8?B?Tmk1VXA0elFKSW9ZcVVvUFBuT25QL0ZVc2FIVUdBSlBWazlybW50bkNrZFBp?=
- =?utf-8?B?RW5zL3pKSGZZVDJRWUdiVUlNYUczSGRpYVNjbGhPQm1naE1saDN2YUR2MnVH?=
- =?utf-8?B?NDhES2lESjBRNDRXbExiNlBwSjFOV1YzVC81SW9PeXl4VzE4Z0k5dEJ3SHNH?=
- =?utf-8?B?WWFaV2pNOURDOFF4MU5vdHZ3MTRPODllYVVYZWMzQVZoNjVZUGNGeVRDV0lo?=
- =?utf-8?B?V0NLMGNnWFdhcEdLOEUzUlk4QzNlTEdnem1HR3BEZFhhQ0pkOEU0ZGExb1dn?=
- =?utf-8?B?Ti9DYlFzMW5mWkZBWFpCODQ1cTRtSDlySXQyYi9FWHpjaVBkVW5mdjFhOGRu?=
- =?utf-8?B?SVdCQWlKSG5ub0pxMkgyK0pQaXRjV01aMDdaMEN5MnNjSkxEU1dRM1ZmNnhR?=
- =?utf-8?Q?2CU3Y8VLXxbE873zv5G7oeH2t?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0954FD2FF;
+	Fri,  8 Nov 2024 00:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731024049; cv=none; b=FL23MWuJJDlF+LbjAjJlJXIz9c/4UfbQTyGrg07vysFBOnZrGHuPBkiIJm2NJ3/CFQVMFIdFf2chDU+5uFEyBmXpS0WILAR5e04jo2RkeEWcTRLolpee5jdRBPknOPuRiSCNM6emISKjdhEl0V7J0w3/ic64pCYGP+qU4XPsBD0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731024049; c=relaxed/simple;
+	bh=A1nYBKBjEzWsfHtk4DuraLYhFByKzZ3xxQIgXdcE7YI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=dAAqxubsWrey2eEC9ZsbhioAmF5M5jiS+2TUBLqQD1H4jG5e//b1DlDhikiK6asWlPtvbipmXSgTX6rjGP0L312qQM36bQZfktux08T6PVGk/1nYhMMU3nYuho36X5dmRa2WFcewI396OKt7bkMC5n39ECWdKu7ZgP1PrN+erX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgK1c0Gx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75D47C4CECC;
+	Fri,  8 Nov 2024 00:00:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731024048;
+	bh=A1nYBKBjEzWsfHtk4DuraLYhFByKzZ3xxQIgXdcE7YI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dgK1c0Gx3JpYWiutgr99uTMw0ppxTTMR2JvkRft+iLbbm+nBkVyoMxX9/SUayeOOq
+	 /B5ASGXVaOfZG4Xk2pNHYZVz57FCko1MojjWS6hHDsD/XEuBhwP3M7DVOFdZ2zEFjn
+	 T6kt6y7ivMNeo2Mhg2/dxlYoL3T62gFBnCzabCVEqoB5+hmPraY6InKaGcyPcDGP6q
+	 OcX34Y06SCEtysIq+D20N/6GvPF3s+095pzROJcYQqd7jtn8M5bPERxS/tODNTcGE0
+	 zkbLpazUOSouCV24V6po8NmwVq0CpQitrRu/1IvBUWiRg89D1jk1Tcu+8wO10sR5HN
+	 Kxl9ki5avSVtw==
+Date: Fri, 8 Nov 2024 09:00:40 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Adrian
+ Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>,
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, James
+ Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, Leo Yan
+ <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, Changbin Du
+ <changbin.du@huawei.com>, Guilherme Amadio <amadio@gentoo.org>, Yang Jihong
+ <yangjihong@bytedance.com>, Aditya Gupta <adityag@linux.ibm.com>, Athira
+ Rajeev <atrajeev@linux.vnet.ibm.com>, Masahiro Yamada
+ <masahiroy@kernel.org>, Bibo Mao <maobibo@loongson.cn>, Huacai Chen
+ <chenhuacai@kernel.org>, Kajol Jain <kjain@linux.ibm.com>, Atish Patra
+ <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>,
+ Anup Patel <anup@brainfault.org>, Oliver Upton <oliver.upton@linux.dev>,
+ "Steinar H. Gunderson" <sesse@google.com>, "Dr. David Alan Gilbert"
+ <linux@treblig.org>, Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan
+ <dima@secretsauce.net>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 00/20] Remove PERF_HAVE_DWARF_REGS
+Message-Id: <20241108090040.463cb3f0820e7ac22d1bb6c2@kernel.org>
+In-Reply-To: <Zy0VHro3wE-ZTKsq@google.com>
+References: <20241017002520.59124-1-irogers@google.com>
+	<Zy0VHro3wE-ZTKsq@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: irondevice.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB2337.KORP216.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: d24ae3da-2e83-45ec-4466-08dcff87f0e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2024 23:57:30.6579
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b4849faa-3337-494e-a76a-cb25a3b3d7d1
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VR69JXOumRzBFMRPcQva98WqXEyVDeBimPwi4mqGEIOO7/gjl2zQ3EfBMDStBIyIi4PdzulV9HWgIykxLVaP71D9V/MxYSwumKisGYGKtFA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEWP216MB3096
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-PiANCj4gT24gVGh1LCBOb3YgMDcsIDIwMjQgYXQgMDg6MzE6NDRBTSArMDkwMCwgS2lzZW9rIEpv
-IHdyb3RlOg0KPiA+IFRoaXMgYWRkcyB0aGUgc2NoZW1hIGJpbmRpbmcgZm9yIHRoZSBJcm9uIERl
-dmljZSBTTUExMzA3IEFtcA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogS2lzZW9rIEpvIDxraXNl
-b2suam9AaXJvbmRldmljZS5jb20+DQo+ID4gLS0tDQo+ID4gdjMgLT4gdjQNCj4gPiAgLSBNb2Rp
-ZnkgdG8gZml0IHRoZSBjaGFyYWN0ZXItcGVyLWxpbmUgZm9ybWF0DQo+IA0KPiA8Zm9ybSBsZXR0
-ZXI+DQo+IFRoaXMgaXMgYSBmcmllbmRseSByZW1pbmRlciBkdXJpbmcgdGhlIHJldmlldyBwcm9j
-ZXNzLg0KPiANCj4gSXQgbG9va3MgbGlrZSB5b3UgcmVjZWl2ZWQgYSB0YWcgYW5kIGZvcmdvdCB0
-byBhZGQgaXQuDQo+IA0KPiBJZiB5b3UgZG8gbm90IGtub3cgdGhlIHByb2Nlc3MsIGhlcmUgaXMg
-YSBzaG9ydCBleHBsYW5hdGlvbjogUGxlYXNlIGFkZCBBY2tlZC0NCj4gYnkvUmV2aWV3ZWQtYnkv
-VGVzdGVkLWJ5IHRhZ3Mgd2hlbiBwb3N0aW5nIG5ldyB2ZXJzaW9ucywgdW5kZXIgb3IgYWJvdmUg
-eW91cg0KPiBTaWduZWQtb2ZmLWJ5IHRhZy4gVGFnIGlzICJyZWNlaXZlZCIsIHdoZW4gcHJvdmlk
-ZWQgaW4gYSBtZXNzYWdlIHJlcGxpZWQgdG8NCj4geW91IG9uIHRoZSBtYWlsaW5nIGxpc3QuIFRv
-b2xzIGxpa2UgYjQgY2FuIGhlbHAgaGVyZS4gSG93ZXZlciwgdGhlcmUncyBubyBuZWVkDQo+IHRv
-IHJlcG9zdCBwYXRjaGVzICpvbmx5KiB0byBhZGQgdGhlIHRhZ3MuDQo+IFRoZSB1cHN0cmVhbSBt
-YWludGFpbmVyIHdpbGwgZG8gdGhhdCBmb3IgdGFncyByZWNlaXZlZCBvbiB0aGUgdmVyc2lvbiB0
-aGV5DQo+IGFwcGx5Lg0KPiANCj4gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjYu
-NS0NCj4gcmMzL3NvdXJjZS9Eb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVz
-LnJzdCNMNTc3DQo+IA0KPiBJZiBhIHRhZyB3YXMgbm90IGFkZGVkIG9uIHB1cnBvc2UsIHBsZWFz
-ZSBzdGF0ZSB3aHkgYW5kIHdoYXQgY2hhbmdlZC4NCj4gPC9mb3JtIGxldHRlcj4NCj4gDQo+IEJl
-c3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQoNClRoYW5rIHlvdSBmb3IgdGhlIGtpbmQgZXhwbGFu
-YXRpb24uDQpJJ2xsIG1ha2Ugc3VyZSB0byBhZGQgdGhlIHRhZyBuZXh0IHRpbWUuDQoNCkkgdHJp
-ZWQgdXNpbmcgYjQsIGJ1dCBJIGVuY291bnRlcmVkIGlzc3VlcyB3aXRoIGVtYWlsIGRlbGl2ZXJ5
-Lg0KU28gSSBoYXZlbid0IGJlZW4gYWJsZSB0byB1c2UgaXQgcHJvcGVybHkgeWV0Lg0KSSdsbCBt
-YWtlIHN1cmUgdG8gdXNlIGl0IGluIG15IG5leHQgcGF0Y2guDQoNClRoYW5rIHlvdSENCg0KQmVz
-dCByZWdhcmRzLA0KS2lzZW9rIEpvDQo=
+Hi,
+
+On Thu, 7 Nov 2024 11:29:34 -0800
+Namhyung Kim <namhyung@kernel.org> wrote:
+
+> Hi all,
+> 
+> On Wed, Oct 16, 2024 at 05:25:00PM -0700, Ian Rogers wrote:
+> > These changes are on top of:
+> > https://lore.kernel.org/lkml/20241017001354.56973-1-irogers@google.com/
+> > 
+> > Prior to these patches PERF_HAVE_DWARF_REGS indicated the presence of
+> > dwarf-regs.c in the arch directory. dwarf-regs.c provided upto 4
+> > functions:
+> > 
+> > 1) regs_query_register_offset would translate a register name into a
+> > pt_regs offset and was used by BPF prologues. BPF prologues existed
+> > for BPF events and support for these was removed many releases ago.
+> > This code was dead and could be removed.
+> > 
+> > 2) get_arch_regstr duplicated get_dwarf_regstr and so it could be
+> > removed.  The case for csky was a little more complicated as the ABI
+> > controlled the string. The callers of get_dwarf_regstr were updated to
+> > also pass the ELF flags so that on csky the ABI appropriate table
+> > could be used. As the argument is only used on csky this a no-op for
+> > everything else.
+> > 
+> > 3) get_arch_regnum translated a register name back to a dwarf number
+> > and only existed on x86 where "al", "ax", "eax" and "rax" could all
+> > mean register 0. This code was moved to util with similar
+> > machine/flags logic to get_arch_regstr and for consistency with it.
+> > 
+> > 4) get_powerpc_regs a PowerPC specific function used by annotate that
+> > should really be in util.
+> > 
+> > 2 and 3 required the wiring through of the ELF machine and flags in
+> > callers to get_dwarf_regstr and get_dwarf_regnum. When these values
+> > weren't dependent on an ELF file a new EM_HOST and EF_HOST were added
+> > to give the host ELF machine and flags. These 2 #defines got rid of
+> > the existing separate arch files and #ifdefs.
+> > 
+> > v3: These files were separated from the rest of the v2 libdw clean up
+> >     in:
+> > https://lore.kernel.org/lkml/CAP-5=fVZH3L-6y_sxLwSmT8WyMXDMFnuqUksNULdQYJCPNBFYw@mail.gmail.com/
+> > 
+> > Ian Rogers (20):
+> >   perf bpf-prologue: Remove unused file
+> >   perf dwarf-regs: Remove PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET
+> >   perf dwarf-regs: Add EM_HOST and EF_HOST defines
+> >   perf disasm: Add e_machine/e_flags to struct arch
+> >   perf dwarf-regs: Pass accurate disassembly machine to get_dwarf_regnum
+> >   perf dwarf-regs: Pass ELF flags to get_dwarf_regstr
+> >   perf dwarf-regs: Move x86 dwarf-regs out of arch
+> >   perf arm64: Remove dwarf-regs.c
+> >   perf arm: Remove dwarf-regs.c
+> >   perf dwarf-regs: Move csky dwarf-regs out of arch
+> >   perf loongarch: Remove dwarf-regs.c
+> >   perf mips: Remove dwarf-regs.c
+> >   perf dwarf-regs: Move powerpc dwarf-regs out of arch
+> >   perf riscv: Remove dwarf-regs.c and add dwarf-regs-table.h
+> >   perf s390: Remove dwarf-regs.c
+> >   perf sh: Remove dwarf-regs.c
+> >   perf sparc: Remove dwarf-regs.c
+> >   perf xtensa: Remove dwarf-regs.c
+> >   perf dwarf-regs: Remove get_arch_regstr code
+> >   perf build: Remove PERF_HAVE_DWARF_REGS
+> 
+> These look all good and I'm about to apply the series.
+> 
+> Masami, do you have any remaining concerns?  It'd be nice if you can
+> give your Reviewed-by.
+
+I think it looks good to me.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you,
+
+> 
+> Thanks,
+> Namhyug
+> 
+> > 
+> >  tools/perf/Makefile.config                    |  17 +-
+> >  tools/perf/arch/arc/annotate/instructions.c   |   2 +
+> >  tools/perf/arch/arm/Makefile                  |   3 -
+> >  tools/perf/arch/arm/annotate/instructions.c   |   2 +
+> >  tools/perf/arch/arm/util/Build                |   2 -
+> >  tools/perf/arch/arm/util/dwarf-regs.c         |  61 -------
+> >  tools/perf/arch/arm64/Makefile                |   4 -
+> >  tools/perf/arch/arm64/annotate/instructions.c |   2 +
+> >  tools/perf/arch/arm64/util/Build              |   1 -
+> >  tools/perf/arch/arm64/util/dwarf-regs.c       |  92 -----------
+> >  tools/perf/arch/csky/Makefile                 |   4 -
+> >  tools/perf/arch/csky/annotate/instructions.c  |   7 +-
+> >  tools/perf/arch/csky/util/Build               |   1 -
+> >  tools/perf/arch/loongarch/Makefile            |   4 -
+> >  .../arch/loongarch/annotate/instructions.c    |   2 +
+> >  tools/perf/arch/loongarch/util/Build          |   1 -
+> >  tools/perf/arch/loongarch/util/dwarf-regs.c   |  44 -----
+> >  tools/perf/arch/mips/Makefile                 |   4 -
+> >  tools/perf/arch/mips/annotate/instructions.c  |   2 +
+> >  tools/perf/arch/mips/util/Build               |   1 -
+> >  tools/perf/arch/mips/util/dwarf-regs.c        |  38 -----
+> >  tools/perf/arch/powerpc/Makefile              |   5 -
+> >  .../perf/arch/powerpc/annotate/instructions.c |   2 +
+> >  tools/perf/arch/powerpc/util/Build            |   1 -
+> >  tools/perf/arch/powerpc/util/dwarf-regs.c     | 153 ------------------
+> >  tools/perf/arch/riscv/Makefile                |   5 +-
+> >  .../arch/riscv/include/dwarf-regs-table.h     |  42 +++++
+> >  tools/perf/arch/riscv/util/Build              |   1 -
+> >  tools/perf/arch/riscv/util/dwarf-regs.c       |  72 ---------
+> >  .../perf/arch/riscv64/annotate/instructions.c |   2 +
+> >  tools/perf/arch/s390/Makefile                 |   4 -
+> >  tools/perf/arch/s390/annotate/instructions.c  |   2 +
+> >  tools/perf/arch/s390/util/Build               |   1 -
+> >  tools/perf/arch/s390/util/dwarf-regs.c        |  43 -----
+> >  tools/perf/arch/sh/Build                      |   1 -
+> >  tools/perf/arch/sh/Makefile                   |   4 -
+> >  tools/perf/arch/sh/util/Build                 |   1 -
+> >  tools/perf/arch/sh/util/dwarf-regs.c          |  41 -----
+> >  tools/perf/arch/sparc/Build                   |   1 -
+> >  tools/perf/arch/sparc/Makefile                |   4 -
+> >  tools/perf/arch/sparc/annotate/instructions.c |   2 +
+> >  tools/perf/arch/sparc/util/Build              |   1 -
+> >  tools/perf/arch/sparc/util/dwarf-regs.c       |  39 -----
+> >  tools/perf/arch/x86/Makefile                  |   4 -
+> >  tools/perf/arch/x86/annotate/instructions.c   |   3 +-
+> >  tools/perf/arch/x86/util/Build                |   3 -
+> >  tools/perf/arch/x86/util/dwarf-regs.c         | 153 ------------------
+> >  tools/perf/arch/xtensa/Build                  |   1 -
+> >  tools/perf/arch/xtensa/Makefile               |   4 -
+> >  tools/perf/arch/xtensa/util/Build             |   1 -
+> >  tools/perf/arch/xtensa/util/dwarf-regs.c      |  21 ---
+> >  tools/perf/util/Build                         |   3 +
+> >  tools/perf/util/annotate.c                    |   6 +-
+> >  tools/perf/util/bpf-prologue.h                |  37 -----
+> >  tools/perf/util/disasm.h                      |   4 +
+> >  .../dwarf-regs.c => util/dwarf-regs-csky.c}   |  19 +--
+> >  tools/perf/util/dwarf-regs-powerpc.c          |  61 +++++++
+> >  tools/perf/util/dwarf-regs-x86.c              |  50 ++++++
+> >  tools/perf/util/dwarf-regs.c                  |  38 +++--
+> >  tools/perf/util/include/dwarf-regs.h          | 110 ++++++++++---
+> >  tools/perf/util/probe-finder.c                |  13 +-
+> >  tools/perf/util/probe-finder.h                |   3 +-
+> >  62 files changed, 328 insertions(+), 927 deletions(-)
+> >  delete mode 100644 tools/perf/arch/arm/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/arm64/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/csky/Makefile
+> >  delete mode 100644 tools/perf/arch/loongarch/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/mips/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/powerpc/util/dwarf-regs.c
+> >  create mode 100644 tools/perf/arch/riscv/include/dwarf-regs-table.h
+> >  delete mode 100644 tools/perf/arch/riscv/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/s390/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/sh/Build
+> >  delete mode 100644 tools/perf/arch/sh/Makefile
+> >  delete mode 100644 tools/perf/arch/sh/util/Build
+> >  delete mode 100644 tools/perf/arch/sh/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/sparc/Build
+> >  delete mode 100644 tools/perf/arch/sparc/util/Build
+> >  delete mode 100644 tools/perf/arch/sparc/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/x86/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/arch/xtensa/Build
+> >  delete mode 100644 tools/perf/arch/xtensa/Makefile
+> >  delete mode 100644 tools/perf/arch/xtensa/util/Build
+> >  delete mode 100644 tools/perf/arch/xtensa/util/dwarf-regs.c
+> >  delete mode 100644 tools/perf/util/bpf-prologue.h
+> >  rename tools/perf/{arch/csky/util/dwarf-regs.c => util/dwarf-regs-csky.c} (74%)
+> >  create mode 100644 tools/perf/util/dwarf-regs-powerpc.c
+> >  create mode 100644 tools/perf/util/dwarf-regs-x86.c
+> > 
+> > -- 
+> > 2.47.0.105.g07ac214952-goog
+> > 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
