@@ -1,88 +1,123 @@
-Return-Path: <linux-kernel+bounces-400856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4313E9C1341
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:38:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4F69C1343
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:41:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F2FB21CE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:38:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8490C1F23620
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303C4440C;
-	Fri,  8 Nov 2024 00:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA7A4414;
+	Fri,  8 Nov 2024 00:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="FQnlI17G"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQqXjnQ/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A3E1FDD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C030F1C36;
+	Fri,  8 Nov 2024 00:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731026307; cv=none; b=D/675/Tmj9zqtIaTQQPuL0eg8oNXOsfsIMD8MT/rq27Xg0YJxMfoSHa0unycPrllzHWgpjiCpja5bapAvJVYVAMGdtNwJRE8fr4VRDgGI0vdzpz1j3wHw6aHwPj1HHSqeHrTJZKXq2nt0+QNmy2nSXAQe7DMgw3sEhO7brutDTQ=
+	t=1731026510; cv=none; b=blpImbhX/AboNXwev5lrhWrGS7WtGWu7h7Ogc1VjAGX9jR+jN1tFf2HekDUixyaHyEYMDXyw5ziYLeO1zpfumUcwjRK8BsRNDqhWOuti659Sv1ygKeWrnZfPUgAzIO1dvKHUjkC6FK3lyCULt3wxQQU5FgLPRSxEw1bnQnkDFHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731026307; c=relaxed/simple;
-	bh=4n7khrBuMUtQBYvCABf9ZpMqgcGzS/P9GFvR2WXFNcU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=CM7MekdpQ1SR+DB2rSiA6yiosEz8iozB4jvDnvYgTWpq5ck5HKfba7R3jnOvDW4jqJ6xd8Tb1Zyl1g9ox/TkGLbvFiICwgdNlgnlaDevAsDI7TM6xqCWS4snKE9294m8LLgT2Q30J6VvpXbij6DnPJqPvaDjqko3ObK2CdrQZCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=FQnlI17G; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([92.33.209.142])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4A80bux11371923
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 7 Nov 2024 16:37:57 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4A80bux11371923
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731026279;
-	bh=AIgENd9MH02dSondeIPZ91aDzNiaV51cCAN68ptAAPU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=FQnlI17GxNduYpAt7tZ4xcCW3aRGzlga6LmSeNwjqa+qU+yp2FR8Eea1MXqbziCCj
-	 lLRzUPdbOIRnVrAyZ/rI5FbkQ/TiuWwcgOpMogbzpnKEpB8ZYVF+wH1kYTdmkSO4NR
-	 Dq9RxF/L7PLyoBuY/JWhpgrWKgy2/B8kkePINb4NPIwDuJnblmJJkuYqo/8U7AZ7EA
-	 ibDGEiPBUx10jUO8zOgAdGgByKSOxosp+QS35Ta4JF01NN2yYQjo5ASCixNJ1E3DSQ
-	 gP0+WZUQaOeTH7ejeae7Wbax7lMz6Khga6W5xdwJjyv/tdHWZF5fQupjKBusD/4oSv
-	 ACO/Jz7w1ambA==
-Date: Fri, 08 Nov 2024 01:37:50 +0100
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Sohil Mehta <sohil.mehta@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/cpufeatures: Free up unused feature bits
-User-Agent: K-9 Mail for Android
-In-Reply-To: <5a42aca9-ff38-4fb5-8eb2-a43262c8c630@intel.com>
-References: <20241107233000.2742619-1-sohil.mehta@intel.com> <7ff32a10-1950-434b-8820-bb7c3b408544@intel.com> <3492e85d-4aaa-4dd7-9e6a-c8fdc2aa2178@intel.com> <74338393-4F39-4A04-83B1-BA64CE2D2FDA@zytor.com> <5a42aca9-ff38-4fb5-8eb2-a43262c8c630@intel.com>
-Message-ID: <3732DC33-8959-494F-9A47-2ADD74C7E2DC@zytor.com>
+	s=arc-20240116; t=1731026510; c=relaxed/simple;
+	bh=CmUZRygZ4UPlGvskAJ81DD3Jq3d1Dpg5a2sXaVTWYtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLh0hE7DSgE+sKcVByVlyNT86g/2iTZ4JnyWtjkSLnLRdmE49bNtlKwCIo8VtxKimigy4RNHt9YxuO792HACe+UFNNxxiLTIMK4u+43YUNNYomQ8Fdf/TsKhrVE2tSyYKt1rsoytKVbMEv46lg6JpE8efbAqPZsZxy/lG7z8IM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQqXjnQ/; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731026509; x=1762562509;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CmUZRygZ4UPlGvskAJ81DD3Jq3d1Dpg5a2sXaVTWYtw=;
+  b=GQqXjnQ/ozPO1Tw/py/fPwYY5edUNhld4zHpKV4LFhSxtCu9Kohr8E76
+   KhHUExmL1yJvgbmzvw8d+X9k5yrpKlhau99Wl2dQIy1sk4JeXRA5JJxvs
+   2QBPYkbpJFlitcIkqi0P9KsHmZc8yHqKeeG2hsPQfKotAsukc1zBFIRuK
+   cSPeXlrakL1KmugJXYDtDkFWlhAlVQkgoEoJOi3+kz6JsbLiAOVoOuwMv
+   9+U9RNkdVx6T5nxXxhcsry02lK1m/j9hLtPv+SxaBvE+vuNifrQ0q/JLA
+   YDv28q92UAzvG3Yt0+JX/04zDsKM9XYqP2a9WRFMdtBN/Stk7sPoLQWAk
+   w==;
+X-CSE-ConnectionGUID: lGkX7tuUQhqX/jKZeldH0w==
+X-CSE-MsgGUID: CFOV/hD2R+W1LBjnlJaqdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30856144"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30856144"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 16:41:48 -0800
+X-CSE-ConnectionGUID: VyAfSg8xRomwEzapJ8OcTQ==
+X-CSE-MsgGUID: kE2IlYXWRomBOPH8xMoSuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="89943431"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 07 Nov 2024 16:41:39 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9D4C-000qpW-2d;
+	Fri, 08 Nov 2024 00:41:36 +0000
+Date: Fri, 8 Nov 2024 08:41:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vabhav Sharma <vabhav.sharma@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, frank.li@nxp.com,
+	pankaj.gupta@nxp.com, daniel.baluta@nxp.com,
+	silvano.dininno@nxp.com, V.Sethi@nxp.com,
+	meenakshi.aggarwal@nxp.com, Vabhav Sharma <vabhav.sharma@nxp.com>,
+	Franck LENORMAND <franck.lenormand@nxp.com>
+Subject: Re: [PATCH v3 4/4] firmware: imx: secvio: Add support for SNVS
+ secvio and tamper via SCFW
+Message-ID: <202411080826.ovlSnU8b-lkp@intel.com>
+References: <20241107-secvio-v3-4-ea27f1e9ced4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107-secvio-v3-4-ea27f1e9ced4@nxp.com>
 
-On November 8, 2024 1:35:59 AM GMT+01:00, Sohil Mehta <sohil=2Emehta@intel=
-=2Ecom> wrote:
->On 11/7/2024 3:49 PM, H=2E Peter Anvin wrote:
->>>> -	if (c->x86 =3D=3D 6)
->>>> -		set_cpu_cap(c, X86_FEATURE_P3);
->>>
->>=20
->> Be careful - these bits are used in module strings and so modutils need=
- to understand them=2E
->
->Sorry, I didn't understand this properly=2E How do I figure out whether
->these bits are used elsewhere? Can you please provide a pointer?
->
->Sohil
+Hi Vabhav,
 
-Look at the modutils sources=2E
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 9852d85ec9d492ebef56dc5f229416c925758edc]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Vabhav-Sharma/dt-bindings-firmware-imx-add-nvmem-phandle/20241107-134504
+base:   9852d85ec9d492ebef56dc5f229416c925758edc
+patch link:    https://lore.kernel.org/r/20241107-secvio-v3-4-ea27f1e9ced4%40nxp.com
+patch subject: [PATCH v3 4/4] firmware: imx: secvio: Add support for SNVS secvio and tamper via SCFW
+config: csky-randconfig-001-20241108 (https://download.01.org/0day-ci/archive/20241108/202411080826.ovlSnU8b-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411080826.ovlSnU8b-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411080826.ovlSnU8b-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   csky-linux-ld: drivers/firmware/imx/imx-scu.o: in function `imx_scu_probe':
+>> imx-scu.c:(.text+0x3dc): undefined reference to `imx_scu_secvio_init'
+>> csky-linux-ld: imx-scu.c:(.text+0x460): undefined reference to `imx_scu_secvio_init'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
