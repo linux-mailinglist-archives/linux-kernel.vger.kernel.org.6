@@ -1,144 +1,184 @@
-Return-Path: <linux-kernel+bounces-401650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2075D9C1D64
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:54:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 554769C1D67
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997271C22D9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D075E1C22F33
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35C21E883E;
-	Fri,  8 Nov 2024 12:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2551E8859;
+	Fri,  8 Nov 2024 12:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEbBwRkC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rF6VMquF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACB71D0F5C;
-	Fri,  8 Nov 2024 12:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7ED1D0F5C;
+	Fri,  8 Nov 2024 12:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731070479; cv=none; b=BKnFuL9CpI2Z+emTDfJ8NIySDHJCbPMDkLiDs/IbCK/PFt/a9wRPPxvpD6i5atpJDhn9y8ZAx/VxNxMMY0+3i3jkCVaURFc3ShQ830U45Hy8AeoXOvQqmvDrYjszvQcrcQmqzIDLaqZ4Zaa8nz7PTMPAHWl6CZLlrugfYcTIXyA=
+	t=1731070524; cv=none; b=ZdsFftuxupAkyPKYMljKnRql1/f3Ne9FiuLGzoWDBoZTFE367+hM6k9ZmsopmyVUFDAjTXhoEldOZz3QE1/8e8XbIgSOSYYAFuknaC4a7EdzQKXKZLczCwSsAL09lYU9WS+6L0n8KtsPakH1PEzf5KgbilYpuC4GKF+BCJ0uP4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731070479; c=relaxed/simple;
-	bh=vI/L7T2kf8SEZ0IGSHoKyhsVaqgwmft6WDe/gg4edVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A1ebgEINP6UeOrDQuNCs7jFIa+Y7CgplnN4wfSC4D92MWnduaK4giXuvInOfx5z0DEvPWosdxqy3PbkN5hfYCWTHgt52v/1t/e46mUJVgU+6C5Ig0waDTQDPbwt94EtfzfkZkr3IrainLqJlxAb9Y3/k5jU2Hb3VOyQmCSAKoqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEbBwRkC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 776D4C4CECD;
-	Fri,  8 Nov 2024 12:54:37 +0000 (UTC)
+	s=arc-20240116; t=1731070524; c=relaxed/simple;
+	bh=14AWA1ouLWWPk08pR67j22pd1ODjq1MsrGbMdmhSYdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IBHljhNFxS9ls54ZpMbvgYHvW4tgsX3ZtV7ZiSMYrI3IC8QQMaseyZKRIZR5GremHo6rFAMX3nJQGYIGCn0yZEhliPy8JxiNm/kWWjCGaC+xLn9x+9AVOY76C3wEMUSjqc2IVpiEgZa3UWBoBTPSfJJy9o38tKIq6MD2uhABqAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rF6VMquF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A18C4CECD;
+	Fri,  8 Nov 2024 12:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731070478;
-	bh=vI/L7T2kf8SEZ0IGSHoKyhsVaqgwmft6WDe/gg4edVg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qEbBwRkCy6woXRpnc55uN0JeSLd88T76zxySWhiVCo2cJ+kG/yG1bCjytKQWE42Xz
-	 XctuRb08ZAYa2SZaJ/d0JoF9awykWGUYBhpbkzWDJTAy8PWSkgefSezuksueXLXmSi
-	 ikDMGERPb9RZISztG6KjXOmz5vF8kcIe+E71sR2pL0MflnrCIIimsQX6Vlb3wu/oT2
-	 ilSM+6+2HgiaNGI6mVNK5USnMDxunG64t/fTObWPtxmjbpNyUPP/Nx4H5XbHyx5Pg/
-	 LR6+qrMMdhzxKtkQB5yGWF8maxmNWEWix3RD5LOdEVXSD+/EI3DwmNr5e5MmE/r7XV
-	 xvzfEe2i7e2Xw==
-Date: Fri, 8 Nov 2024 13:54:33 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Linux Media Mailing List
- <linux-media@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v6.12-rc7] media fixes
-Message-ID: <20241108135433.40c7a4fa@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1731070524;
+	bh=14AWA1ouLWWPk08pR67j22pd1ODjq1MsrGbMdmhSYdU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rF6VMquFdTNDm9EFUmTB4EZAs5g+pA/6ISTlcZR775XK/K8yyB9CF6iUWip8vnvcn
+	 vYh8DVrqnAPxsiQCfXBudSRN9DsZ1daE8vsPLBDRFtXEgvKQJLFPYThBjOCy4b8e+A
+	 UCr9FMUUF21YgklBpaShTuPOQeog562S1TwqcqWB2EQ/ZtLcAT1nSpFAtmtqEHrg5e
+	 WXaZQXNWBCoFm535DvpAr8zIqt84TACeWNgidYC1OxSfkQbhcjAHMYvnGgawMW0pvv
+	 QqKiAJFIULqoz21VzhqmusXKcNruzxqUx8MMTuxuY+epxY9mwjcNmZArVvYl9Raqen
+	 7Oc/wss0+HwYQ==
+Message-ID: <7ae1ccf9-67c0-45ba-9cb9-886701adb488@kernel.org>
+Date: Fri, 8 Nov 2024 14:55:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/2] net: ethernet: ti: am65-cpsw: enable DSCP to
+ priority map for RX
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, linux-omap@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+ Pekka Varis <p-varis@ti.com>
+References: <20241105-am65-cpsw-multi-rx-dscp-v1-0-38db85333c88@kernel.org>
+ <20241105-am65-cpsw-multi-rx-dscp-v1-2-38db85333c88@kernel.org>
+ <8e6053ca-77fc-4f03-ae54-3f6af0addb88@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <8e6053ca-77fc-4f03-ae54-3f6af0addb88@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+Hi Siddharth,
 
-Please pull from:
+On 08/11/2024 14:30, Siddharth Vadapalli wrote:
+> On Tue, Nov 05, 2024 at 04:18:11PM +0200, Roger Quadros wrote:
+> 
+> Hello Roger,
+> 
+>> AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
+>> appropriate priority queue via DSCP to Priority mapping registers
+>> (CPSW_PN_RX_PRI_MAP_REG).
+>>
+>> We use the upper 3 bits of the DSCP field that indicate IP Precedence
+>> to map traffic to 8 priority queues.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>> ---
+>>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 50 ++++++++++++++++++++++++++++++++
+>>  1 file changed, 50 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>> index 0520e9f4bea7..65fbf6727e02 100644
+>> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>> @@ -71,6 +71,8 @@
+>>  #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
+>>  #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
+>>  
+>> +#define AM65_CPSW_PORTN_REG_CTL			0x004
+> 
+> nitpick: indentation needs to be fixed here to align with the macros
+> below.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.12-2
+It is fine in the code and in my editor in this reply email.
 
-For:
-  - dvb-core fixes at vb2 check and at device registration;
-  - v4l2-core: fix an issue with error handling for VIDIOC_G_CTRL;
-  - vb2 core: fix an issue at vb plane copy logic;
-  - videobuf2-core: copy vb planes unconditionally;
-  - vivid: fix buffer overwrite when using > 32 buffers;
-  - vivid: fix a potential division by zero due to an issue at v4l2-tpg;
-  - some spectre vulnerability fixes;
-  - several OOM access fixes;
-  - some buffer overflow fixes.
+> 
+>> +#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
+>>  #define AM65_CPSW_PORTN_REG_SA_L		0x308
+>>  #define AM65_CPSW_PORTN_REG_SA_H		0x30c
+>>  #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
+>> @@ -94,6 +96,10 @@
+>>  /* AM65_CPSW_PORT_REG_PRI_CTL */
+>>  #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
+>>  
+>> +/* AM65_CPSW_PN_REG_CTL */
+>> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
+>> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
+>> +
+>>  /* AM65_CPSW_PN_TS_CTL register fields */
+>>  #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
+>>  #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
+>> @@ -176,6 +182,49 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
+>>  	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
+>>  }
+>>  
+>> +#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
+>> +#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
+>> +static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
+>> +{
+>> +	int reg_ofs;
+>> +	int bit_ofs;
+>> +	u32 val;
+>> +
+>> +	if (dscp > AM65_CPSW_DSCP_MAX)
+>> +		return -EINVAL;
+> 
+> am65_cpsw_port_set_dscp_map() seems to be invoked by
+> am65_cpsw_port_enable_dscp_map() below, where the above check is guaranteed
+> to be satisfied. Is the check added for future-proofing this function?
+> 
 
-Regards,
-Mauro
+Right, future callers can't be guaranteed to do the check so I'd prefer
+to have the check here.
 
----
+>> +
+>> +	if (pri > AM65_CPSW_PRI_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	reg_ofs = (dscp / 8) * 4;	/* reg offset to this dscp */
+>> +	bit_ofs = 4 * (dscp % 8);	/* bit offset to this dscp */
+> 
+> Maybe a macro can be used for the "4" since it is not clear what it
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+First 4 was for 4 bytes per register. Not sure if we need a macro for this.
+The comment already mentions register offset and we know each register is
+32-bits wide.
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+We could add a macro for the 8 though
+#define AM65_CPSW_DSCP_PRI_PER_REG	8
 
-are available in the Git repository at:
+The second 4 is actually 4 bits per DSCP field. I could add a macro for this.
+#define AM65_CPSW_DSCP_PRI_FIELD_WIDTH	4
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.12-2
 
-for you to fetch changes up to 702a47ce6dde72f6e247b3c3c00a0fc521f9b1c6:
+> corresponds to. Or maybe two macros can be used for "reg_ofs" and
+> "bit_ofs".
+> 
+>> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+>> +	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
+>> +	val |= pri << bit_ofs;			/* set */
+>> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+>> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> 
+> The above readback seems to be just to flush the writel(). A comment of
+> the form:
+> /* flush */
+> might help, considering that other drivers do the same. Also, assigning
+> the returned value to "val" might not be required unless it is intended to
+> be checked.
 
-  media: videobuf2-core: copy vb planes unconditionally (2024-11-07 12:55:46 +0100)
+This was actually left over debug code. I'll drop the readl.
 
-----------------------------------------------------------------
-media fixes for v6.12-rc7
-
-----------------------------------------------------------------
-Hans Verkuil (2):
-      media: dvb-core: add missing buffer index check
-      media: vivid: fix buffer overwrite when using > 32 buffers
-
-Mauro Carvalho Chehab (14):
-      media: v4l2-ctrls-api: fix error handling for v4l2_g_ctrl()
-      media: v4l2-tpg: prevent the risk of a division by zero
-      media: dvbdev: prevent the risk of out of memory access
-      media: dvb_frontend: don't play tricks with underflow values
-      media: mgb4: protect driver against spectre
-      media: av7110: fix a spectre vulnerability
-      media: s5p-jpeg: prevent buffer overflows
-      media: ar0521: don't overflow when checking PLL values
-      media: cx24116: prevent overflows on SNR calculus
-      media: adv7604: prevent underflow condition when reporting colorspace
-      media: stb0899_algo: initialize cfr before using it
-      media: cec: extron-da-hd-4k-plus: don't use -1 as an error code
-      media: pulse8-cec: fix data timestamp at pulse8_setup()
-      media: dvbdev: fix the logic when DVB_DYNAMIC_MINORS is not set
-
-Tudor Ambarus (1):
-      media: videobuf2-core: copy vb planes unconditionally
-
- .../extron-da-hd-4k-plus/extron-da-hd-4k-plus.c    |  6 ++---
- drivers/media/cec/usb/pulse8/pulse8-cec.c          |  2 +-
- drivers/media/common/v4l2-tpg/v4l2-tpg-core.c      |  3 +++
- drivers/media/common/videobuf2/videobuf2-core.c    | 28 ++++++++++++----------
- drivers/media/dvb-core/dvb_frontend.c              |  4 ++--
- drivers/media/dvb-core/dvb_vb2.c                   |  8 ++++++-
- drivers/media/dvb-core/dvbdev.c                    | 16 +++++++++----
- drivers/media/dvb-frontends/cx24116.c              |  7 +++++-
- drivers/media/dvb-frontends/stb0899_algo.c         |  2 +-
- drivers/media/i2c/adv7604.c                        | 26 +++++++++++++-------
- drivers/media/i2c/ar0521.c                         |  4 ++--
- drivers/media/pci/mgb4/mgb4_cmt.c                  |  2 ++
- .../media/platform/samsung/s5p-jpeg/jpeg-core.c    | 17 ++++++++-----
- drivers/media/test-drivers/vivid/vivid-core.c      |  2 +-
- drivers/media/test-drivers/vivid/vivid-core.h      |  4 +++-
- drivers/media/test-drivers/vivid/vivid-ctrls.c     |  2 +-
- drivers/media/test-drivers/vivid/vivid-vid-cap.c   |  2 +-
- drivers/media/v4l2-core/v4l2-ctrls-api.c           | 17 ++++++++-----
- drivers/staging/media/av7110/av7110.h              |  4 +++-
- drivers/staging/media/av7110/av7110_ca.c           | 25 ++++++++++++-------
- 20 files changed, 118 insertions(+), 63 deletions(-)
-
+-- 
+cheers,
+-roger
 
