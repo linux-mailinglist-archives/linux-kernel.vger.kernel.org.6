@@ -1,117 +1,183 @@
-Return-Path: <linux-kernel+bounces-401995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A9D9C2210
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:28:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620E39C2212
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD96282FA8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273B92847C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEBC192D80;
-	Fri,  8 Nov 2024 16:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TY9Ce4x4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F042192B79;
+	Fri,  8 Nov 2024 16:29:17 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F062187FE4;
-	Fri,  8 Nov 2024 16:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975C4187FE4
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731083291; cv=none; b=IsV1Yz8RZ2FpdDWUKrfBbjqf2yqpLQwJOj0qV88VrjVv8SE4gCptdu8TAj9Dsfm8mjABTs4xHciKcGM7UhqefQEI3NzwedFurHMVR7c00GIQOGcO1HyWG7XML0GkKbr137SsoXw2f6U4BicRT8EiGQi6UFMfw6VR49kWX1HKX3c=
+	t=1731083357; cv=none; b=jvhor9jLzGo9UQ8DaDkt6G/MmZruTtGaebthIiSIakrRvdNIhfBRH3jJKTdr4fmcugpGoxNhJkkDDdRDtlyYnz+DL1ZOZfgs0F/H79KUgPTmGvWxcOH37EayBIW+yPCrdhfu1PVv5Yu5LK7coOWHXZiQ+B90At9PVevw1ZefCbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731083291; c=relaxed/simple;
-	bh=n8tm2gJmeKyAAvctEfOsHH00KUPraNzZrZa5aQ6jqPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEmdY6wbmgbZ0gQL4Tvce8OBGub65EW02tHftQiwoQfqFuYNhM89FHdmDt4WHgS+rn1El5mZf/nqu2t2ajYLKFDm47dSc/nmGrja7NSbJ/twx8TBw2xt7OYZ4UxY5yv7Tx+c0rWaEQmdGEjU+lIbl9YB91aQbPIt2wuScX9v9N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TY9Ce4x4; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731083290; x=1762619290;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n8tm2gJmeKyAAvctEfOsHH00KUPraNzZrZa5aQ6jqPg=;
-  b=TY9Ce4x4TgFtAcxwgZC/N2zB7cVK9/XkWbk+9+TkpMhc324v0w+L61bu
-   7z6iRtKB/UtxfIFCPNz0Nf4J9Y/O+q8Zkht03lx+iJEVgJSYysBH4Z5Vu
-   PHJskqpjh1ehlhrFDsvZ/oORpGULMykokwt4hPtEsXmzWQhQLZ/lFoc8g
-   kHdQ0EOxAzZ7nfJfdA+tqMH1guum7lUDpHia4L1F5N5vqf8HlpyOex4S2
-   m6kgZC/eBf6hFyhGNjfbXOsnOtCZwEP6omTT4YxlYOR7KGS+HO50YQAQ5
-   6h4VKipFzef0nd3ejkTaGK1mxgzbj0shW2EIB3VsokM8TgnzP1G6cYzS3
-   Q==;
-X-CSE-ConnectionGUID: F1X7ZZwMSaCnUzhTpYiFRA==
-X-CSE-MsgGUID: NckcjHjPScqwcbQZ8U2vtQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53534112"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="53534112"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:28:09 -0800
-X-CSE-ConnectionGUID: ILdFvIHaSXO+qW6BlO/aiw==
-X-CSE-MsgGUID: tbjD+vfRTt28jWu9Wa1cvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="85619533"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:28:08 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t9Rq9-0000000CfuL-2RPn;
-	Fri, 08 Nov 2024 18:28:05 +0200
-Date: Fri, 8 Nov 2024 18:28:05 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v1 1/1] media: ov7251: Remap "reset" to "enable" for
- OV7251
-Message-ID: <Zy48Fc_nUceCs3PK@smile.fi.intel.com>
-References: <20241108145024.1490536-1-andriy.shevchenko@linux.intel.com>
- <Zy43D7wAZLrBDtiX@kekkonen.localdomain>
+	s=arc-20240116; t=1731083357; c=relaxed/simple;
+	bh=RQdH1YP9LKrMMxYdWUboGc8L5z6+QiLydp5qwK4dYXk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bCDSda0N96EkgvcsL0kr99n96jPlI8cI/47TPN6qyaTKfzJMzqXb2r1ZH2ZBHgiBSTf5rMtjvilNL1xLobME2RsfNbGjzqigCmdSMTH/a60Y/Hl8pp3FAtH1dQltGxI9ACFWfEJdRbofa0C9VUORksPR41ofBU1/ps+cJXljgZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83abb2b6d42so231662639f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 08:29:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731083354; x=1731688154;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pCC7WlKCorDD/dItGKgeNxckskLXAK+4LGeEaSO50Ec=;
+        b=bnJA8cXD2xIOcEEwgXaJoXyyavNw7FAhqS+G8QVWDTCYbgAIeMLACrr3yz714G8lFm
+         oHZ/uciMipdWBqqhRF2OD3BOzyA8+ya0B3fFbyEbQ8zq1AEjLHGxAqOGItWDVcu3EUhY
+         3UJ509Ebww8N4UHr7BAilliFJJsrW4CdYH8mivXJk6D2SGkqsheklb6PVLxpsWLXLkB1
+         738aNb0hE29ujzqxz9wOX55uw+Jf+KdHt9ZfosXrQFjXzmzK0Lp0huGlul9LmWLts/y0
+         e8mc3dRPHLJ8V2jjd1id3TcUM4ix0hDQEGyPkZxSOYlTew/A+AtpVXVzina6o/cT6yrz
+         Ln0w==
+X-Gm-Message-State: AOJu0YzPUHFN8Lj6uPijff8vtfiYSpTfB9Obx3Snh6YbZp9a/UmF1LsG
+	dAkoE7Sdtru83dZ2xv1BPUVoKhI115i5/j6VQheot0GQ2744t1ZOjqDBjyDnrdur2SsgYfiVkpv
+	BQOkAGY8CkH/l59UXwJrcUvVc/9Luwz+VibYw98QZGWJCYFjOdMcj3hA=
+X-Google-Smtp-Source: AGHT+IHA+bIOKy+cpRVCIwF6qygoW/noaahCQPYjqqIQVo22U2OPNC6vBa3mTJnh9ub7ZNFKcdzHY6i6o4Q5fUxCyFVZL+2USbeo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zy43D7wAZLrBDtiX@kekkonen.localdomain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:190b:b0:3a6:b445:dc9c with SMTP id
+ e9e14a558f8ab-3a6f1993119mr41868255ab.3.1731083354698; Fri, 08 Nov 2024
+ 08:29:14 -0800 (PST)
+Date: Fri, 08 Nov 2024 08:29:14 -0800
+In-Reply-To: <672b9f03.050a0220.350062.0276.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672e3c5a.050a0220.320e73.030a.GAE@google.com>
+Subject: Re: [syzbot] Re: BUG: corrupted list in ieee802154_if_remove
+From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 08, 2024 at 04:06:39PM +0000, Sakari Ailus wrote:
-> On Fri, Nov 08, 2024 at 04:50:24PM +0200, Andy Shevchenko wrote:
-> > The driver of OmniVision OV7251 expects "enable" pin instead of "reset".
-> > Remap "reset" to "enable" and update polarity.
-> > 
-> > In particular, the Linux kernel can't load the camera sensor
-> > driver on Microsoft Surface Book without this change:
-> > 
-> >  ov7251 i2c-INT347E:00: supply vdddo not found, using dummy regulator
-> >  ov7251 i2c-INT347E:00: supply vddd not found, using dummy regulator
-> >  ov7251 i2c-INT347E:00: supply vdda not found, using dummy regulator
-> >  ov7251 i2c-INT347E:00: cannot get enable gpio
-> >  ov7251 i2c-INT347E:00: probe with driver ov7251 failed with error -2
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-...
+***
 
-> Should this be cc'd to stable? I guess it's not exactly a fix in the driver
-> but a BIOS bug, but it can be worked around in the driver. :-)
+Subject: Re: BUG: corrupted list in ieee802154_if_remove
+Author: dmantipov@yandex.ru
 
-It's everything, but a BIOS bug, it's DT bug and whoever first introduced that
-GPIO in the driver. Even in the DT present in kernel the pin was referred as
-CAM_RST_N, which is exactly how this patch names it.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 906bd684e4b1e517dd424a354744c5b0aebef8af
 
-OTOH it's a fix to the driver that never worked for ACPI case, so there never
-was a regression to fix.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+diff --git a/net/mac802154/ieee802154_i.h b/net/mac802154/ieee802154_i.h
+index 08dd521a51a5..52c8ea7f1da0 100644
+--- a/net/mac802154/ieee802154_i.h
++++ b/net/mac802154/ieee802154_i.h
+@@ -41,13 +41,11 @@ struct ieee802154_local {
+ 
+ 	/* As in mac80211 slaves list is modified:
+ 	 * 1) under the RTNL
+-	 * 2) protected by slaves_mtx;
+ 	 * 3) in an RCU manner
+ 	 *
+ 	 * So atomic readers can use any of this protection methods.
+ 	 */
+ 	struct list_head	interfaces;
+-	struct mutex		iflist_mtx;
+ 
+ 	/* Data related workqueue */
+ 	struct workqueue_struct	*workqueue;
+@@ -101,6 +99,7 @@ enum {
+ 
+ enum ieee802154_sdata_state_bits {
+ 	SDATA_STATE_RUNNING,
++	SDATA_STATE_REMOVING,
+ };
+ 
+ /* Slave interface definition.
+diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
+index c0e2da5072be..f108c46122e3 100644
+--- a/net/mac802154/iface.c
++++ b/net/mac802154/iface.c
+@@ -668,9 +668,7 @@ ieee802154_if_add(struct ieee802154_local *local, const char *name,
+ 	if (ret < 0)
+ 		goto err;
+ 
+-	mutex_lock(&local->iflist_mtx);
+ 	list_add_tail_rcu(&sdata->list, &local->interfaces);
+-	mutex_unlock(&local->iflist_mtx);
+ 
+ 	return ndev;
+ 
+@@ -683,25 +681,32 @@ void ieee802154_if_remove(struct ieee802154_sub_if_data *sdata)
+ {
+ 	ASSERT_RTNL();
+ 
+-	mutex_lock(&sdata->local->iflist_mtx);
+-	list_del_rcu(&sdata->list);
+-	mutex_unlock(&sdata->local->iflist_mtx);
+-
+-	synchronize_rcu();
+-	unregister_netdevice(sdata->dev);
++	if (!test_and_set_bit(SDATA_STATE_REMOVING, &sdata->state)) {
++		list_del_rcu(&sdata->list);
++		synchronize_rcu();
++		unregister_netdevice(sdata->dev);
++	}
+ }
+ 
++#define list_for_each_rcu_safe(pos, n, head) \
++	for (pos = rcu_dereference((head)->next), n = pos->next; \
++	     !list_is_head(pos, (head)); \
++	     pos = n, n = rcu_dereference(pos->next))
++
+ void ieee802154_remove_interfaces(struct ieee802154_local *local)
+ {
+-	struct ieee802154_sub_if_data *sdata, *tmp;
++	struct list_head *entry, *tmp;
+ 
+-	mutex_lock(&local->iflist_mtx);
+-	list_for_each_entry_safe(sdata, tmp, &local->interfaces, list) {
+-		list_del(&sdata->list);
++	list_for_each_rcu_safe(entry, tmp, &local->interfaces) {
++		struct ieee802154_sub_if_data *sdata =
++			container_of(entry, struct ieee802154_sub_if_data, list);
+ 
+-		unregister_netdevice(sdata->dev);
++		if (!test_and_set_bit(SDATA_STATE_REMOVING, &sdata->state)) {
++			list_del_rcu(&sdata->list);
++			synchronize_rcu();
++			unregister_netdevice(sdata->dev);
++		}
+ 	}
+-	mutex_unlock(&local->iflist_mtx);
+ }
+ 
+ static int netdev_notify(struct notifier_block *nb,
+diff --git a/net/mac802154/main.c b/net/mac802154/main.c
+index 21b7c3b280b4..61b6c5e06177 100644
+--- a/net/mac802154/main.c
++++ b/net/mac802154/main.c
+@@ -91,7 +91,6 @@ ieee802154_alloc_hw(size_t priv_data_len, const struct ieee802154_ops *ops)
+ 	INIT_LIST_HEAD(&local->interfaces);
+ 	INIT_LIST_HEAD(&local->rx_beacon_list);
+ 	INIT_LIST_HEAD(&local->rx_mac_cmd_list);
+-	mutex_init(&local->iflist_mtx);
+ 
+ 	tasklet_setup(&local->tasklet, ieee802154_tasklet_handler);
+ 
+@@ -174,8 +173,6 @@ void ieee802154_free_hw(struct ieee802154_hw *hw)
+ 
+ 	BUG_ON(!list_empty(&local->interfaces));
+ 
+-	mutex_destroy(&local->iflist_mtx);
+-
+ 	wpan_phy_free(local->phy);
+ }
+ EXPORT_SYMBOL(ieee802154_free_hw);
 
