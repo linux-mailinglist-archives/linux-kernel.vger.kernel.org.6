@@ -1,127 +1,163 @@
-Return-Path: <linux-kernel+bounces-401998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5352F9C2219
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:30:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1509C221E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:31:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F8B1C21608
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04F41F218C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61044192D6A;
-	Fri,  8 Nov 2024 16:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DCB192D98;
+	Fri,  8 Nov 2024 16:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JiLx2LkU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IoF9xQX1"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1DE187FE4
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0757B1BD9DB
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731083400; cv=none; b=gOWv7fz2e4uMJP6tW/ZaOl7RyVB3ZK2moEvls7pjlulPOqtLy7pFm13Rl16vI9KF8+A3rZF146R3wnjhFqqzesz3ZypDVPQx+3eFo16cATRk61YmzMwC62Z6L/Auh5Geipl/lB98gswXR/K2jwCm67MEtldRzK5jMarJyumrizs=
+	t=1731083453; cv=none; b=BsuNlnuJT1qdVkRmgBa6YeyC/skzh7RKBHzYMMuB2+N3zwiATk11hp8ApJRmb9Al0sthAGRjtPoFswWwBQjkdIBLllwI2kCexV+THQYdAIGZrYjaj41rBmbyWieahfFhAa0CFXXmyAsB2+WIcLpuPaZhiooEED69Yi7+VVZe8+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731083400; c=relaxed/simple;
-	bh=SaOr4hp+maWcyvllSAtTmYFhvLifPTPx6E7yvEC4rVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNUPfauRcYCRMIFtN40QI6fqKo2f8fM9FK193GR+HbPFQIlOpni62a1Tw8XfMjiijyvIF8ZrdHMhtdlCeIYKbwzFT+NJlOhiZ2MLSK5uOP6M7WPRu7hNwo6TWSZcBQaW8PpJGdNvYaSMyWhGW0JoAg1qaQlKotsKpeO+vfofS7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JiLx2LkU; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731083399; x=1762619399;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SaOr4hp+maWcyvllSAtTmYFhvLifPTPx6E7yvEC4rVM=;
-  b=JiLx2LkUyLNn41o7NdWjlH0xj2mqjF01ygMFF03YAwK2L9LWb7r1s6rN
-   CnqYTHENHdAde/yA0j1m5AmXYlV8WmeGAiYX4a0s/YhxAlP8Ugu2rI1rs
-   cIpelAvqa3NmqVzFyQYSxp5hjRTaxnwBMGmQTkHCspo5NxQAPuBuWiUJ3
-   JDiEmZPB1e1NQldbFz3WOokYQ4HYjZV40mtMES1/1hPUSDnCTMrtuaxO4
-   r46RA7LgusvZVUn/WIagP32DJ7o8mwVipN19t0AL3br4w3DTzx0xGCavE
-   7B37iHXi6M50M7haanmrKvTldyrupVd87THkNtMajU/NCQmcitjS2X32N
-   g==;
-X-CSE-ConnectionGUID: utmU6VzHSbO866xAZa91Aw==
-X-CSE-MsgGUID: 49FNtmtCRAq/VTgSAcPy3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="41588253"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="41588253"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:29:59 -0800
-X-CSE-ConnectionGUID: VfJai/4+TcSPohGf+9zlDw==
-X-CSE-MsgGUID: 1PYI/YoJSAyUh01C3dEPsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="89590072"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:29:55 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t9Rrs-0000000Cfw2-3JZZ;
-	Fri, 08 Nov 2024 18:29:52 +0200
-Date: Fri, 8 Nov 2024 18:29:52 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v5 1/1] x86/cpu: Make sure flag_is_changeable_p() is
- always being used
-Message-ID: <Zy48gBu81i9bY0Qp@smile.fi.intel.com>
-References: <20241108153105.1578186-1-andriy.shevchenko@linux.intel.com>
- <732CB428-EE83-455F-A5AF-C008B7541401@zytor.com>
- <Zy4xHC3MCtAqlSxy@smile.fi.intel.com>
- <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com>
+	s=arc-20240116; t=1731083453; c=relaxed/simple;
+	bh=uWID+45xH0j3gSLyRb3WLQy5ZqamfWQLeD4vIDwrNXQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l3qazRayZv7dcm4XGrinvITbpm7yfpmalf+zJYfC+E7hUpBTWzhQwLgFYi2buFlac7t8hAuCqLhZPI5UX2rWuStU3MmgACgIHM+BG4S62eaPuVuo1+ATWnftmtiQvZab77zBMAaTyEA8CKzg50tZPXgQChJLWhSGYioAkaUxB9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IoF9xQX1; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4608dddaa35so309171cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 08:30:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731083451; x=1731688251; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=apfan5NQTxJyT2HEbuhCbL5fWKPBXY9r2Roz8GqQn9Q=;
+        b=IoF9xQX1wHR8otQUSEZxKK6O5MrlE9e+JgteeAk+3eg5MBTv5dfmajJNlVPSer7qF+
+         fBUirI4om6TiQDmztpRZ734Yrb4TxivJAjt713kmIGZp9xDPm/8BPWej7zvfosHTc9nl
+         C8oMP4rY/bwDMss6RR53yugkIbV+k4cgKY7Z9RIICVkavgyptAUeHtdMt4S21SDZfO9i
+         2sqgfn0ePSos1KSoyFpyzCTuix3PbsdoT8FYutTvrPMOMdfgQQ3/qRzO1ez7PIPbo88l
+         ev4iFXxL8oOW0W7wtiY0aummuuBs8vNmuo+g2YRdBd370I9JpPen0OemWsazEfp4T0oZ
+         u5+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731083451; x=1731688251;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=apfan5NQTxJyT2HEbuhCbL5fWKPBXY9r2Roz8GqQn9Q=;
+        b=q6OIFMavCkZKqfAbzV0WvaI1XDD1d9I3bVY9cN4bWTD0k2UOyA4KZBQi/hYZAs25qc
+         TmV/ZwNhZjsYTI6NBij8HYUKgTgWNzMKmIUCOmw43G7D/A6PZPUmS9lM2oHyJE0nj0wV
+         d+/6hp6nYMRQ3a9JB8fEMweo/rcfCzGnXKmbFAfiE/i1Jio3SIu+HoCMFrdAxYmTJlPA
+         rsxZI4VzastRj2rwS6gw4k7nBEWrCB0Kfhw6qPFO7gYCbnRkCosiJKrGtr6BHB69/PgO
+         3yHfJ45u+9DOrTlZFLLlHMgOv2rWXk7+ycoRIX3Y+RlVfszCZG9paL94tksVovYLCtS5
+         LAgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzEYUhycmCCDNYZdLH5roqXewq7aqko8sFiWcar3zYRevkZEquGYQHeR+HHg/+o5JiNKvMdi+70lSITFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMlDbzauYO1/yNiTpkN4pS8wPRMF5ZGwP+zMGDIdiqMBP2Pp72
+	QEfmCpPENN/tp+TTc5uIwjYcklY0vBbFeG1Y12kaZ+A4e1wLzg42iqfWWJGHyXfLQP/rMr4t2Vp
+	rp6JEYwcRijOAQxI4QGudhp3fEkBMWaL3rLIN
+X-Gm-Gg: ASbGncvCUnK/VoBPiRT00MIh/Emiujd0y0S1O16HSRj1L2m9nB8S6RYjyxwd0jvA9Zx
+	zlujYrZBuDZprOVasxUxj3HMRXkzHZEA=
+X-Google-Smtp-Source: AGHT+IHQe3obsowMXi5ubFteLQTT0V2g4gNYn47erjDWIwR0iVkHYGeKW044SVgLD/kZ3JMsWc1ePeD3hoKtZbE4YBU=
+X-Received: by 2002:ac8:7e87:0:b0:460:491e:d2a2 with SMTP id
+ d75a77b69052e-462fa5a9599mr8635201cf.17.1731083450710; Fri, 08 Nov 2024
+ 08:30:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241107210331.3044434-1-almasrymina@google.com>
+ <20241107210331.3044434-2-almasrymina@google.com> <Zy1priZk_LjbJwVV@mini-arch>
+ <CAHS8izOJSd2-hkOBkL0Cy40xt-=1k8YdvkKS98rp2yeys_eGzg@mail.gmail.com> <Zy1_IG9v1KK8u2X4@mini-arch>
+In-Reply-To: <Zy1_IG9v1KK8u2X4@mini-arch>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 8 Nov 2024 08:30:38 -0800
+Message-ID: <CAHS8izP8UoGZXoFCEshYrL=o2+T6o4g-PDdgDG=Cfc0X=EXyVQ@mail.gmail.com>
+Subject: Re: [PATCH net v2 2/2] net: clarify SO_DEVMEM_DONTNEED behavior in documentation
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Yi Lai <yi1.lai@linux.intel.com>, 
+	Stanislav Fomichev <sdf@fomichev.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 08, 2024 at 04:48:16PM +0100, H. Peter Anvin wrote:
-> On November 8, 2024 4:41:16 PM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> >On Fri, Nov 08, 2024 at 04:35:17PM +0100, H. Peter Anvin wrote:
-> >> On November 8, 2024 4:30:10 PM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-...
-
-> >> >See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> >> >inline functions for W=1 build").
-
-^^^ (1)
-
-...
-
-> >> But another question: why the hell does clang complain about an unused static inline function?!
+On Thu, Nov 7, 2024 at 7:01=E2=80=AFPM Stanislav Fomichev <stfomichev@gmail=
+.com> wrote:
+>
+> On 11/07, Mina Almasry wrote:
+> > On Thu, Nov 7, 2024 at 5:30=E2=80=AFPM Stanislav Fomichev <stfomichev@g=
+mail.com> wrote:
+> > >
+> > > On 11/07, Mina Almasry wrote:
+> > > > Document new behavior when the number of frags passed is too big.
+> > > >
+> > > > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> > > > ---
+> > > >  Documentation/networking/devmem.rst | 9 +++++++++
+> > > >  1 file changed, 9 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/networking/devmem.rst b/Documentation/ne=
+tworking/devmem.rst
+> > > > index a55bf21f671c..d95363645331 100644
+> > > > --- a/Documentation/networking/devmem.rst
+> > > > +++ b/Documentation/networking/devmem.rst
+> > > > @@ -225,6 +225,15 @@ The user must ensure the tokens are returned t=
+o the kernel in a timely manner.
+> > > >  Failure to do so will exhaust the limited dmabuf that is bound to =
+the RX queue
+> > > >  and will lead to packet drops.
+> > > >
+> > > > +The user must pass no more than 128 tokens, with no more than 1024=
+ total frags
+> > > > +among the token->token_count across all the tokens. If the user pr=
+ovides more
+> > > > +than 1024 frags, the kernel will free up to 1024 frags and return =
+early.
+> > > > +
+> > > > +The kernel returns the number of actual frags freed. The number of=
+ frags freed
+> > > > +can be less than the tokens provided by the user in case of:
+> > > > +
+> > >
+> > > [..]
+> > >
+> > > > +(a) an internal kernel leak bug.
+> > >
+> > > If you're gonna respin, might be worth mentioning that the dmesg
+> > > will contain a warning in case of a leak?
 > >
-> >Does (1) shed a bit of light to this?
-> 
-> How on earth is that supposed to work?! We have static inline functions in
-> headers all over the place that are only used in certain circumstances.
-> 
-> Is this a good thing, really? Or is it noise?
+> > We will not actually warn in the likely cases of leak.
+> >
+> > We warn when we find an entry in the xarray that is not a net_iov, or
+> > if napi_pp_put_page fails on that net_iov. Both are very unlikely to
+> > happen honestly.
+> >
+> > The likely 'leaks' are when we don't find the frag_id in the xarray.
+> > We do not warn on that because the user can intentionally trigger the
+> > warning with invalid input. If the user is actually giving valid input
+> > and the warn still happens, likely a kernel bug like I mentioned in
+> > another thread, but we still don't warn.
+>
+> In this case, maybe don't mention the leaks at all? If it's not
+> actionable, not sure how it helps?
 
-This is a good question and IIRC somebody else already asked something similar.
+It's good to explain what the return code of the setsockopt means, and
+when it would be less than the number of passed in tokens.
 
-Clang people are Cc'ed here, I leave this to them to comment on,
-I am not an expert here.
+Also it's not really 'not actionable'. I expect serious users of
+devmem tcp to log such leaks in metrics and try to root cause the
+userspace or kernel bug causing them if they happen.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+Thanks,
+Mina
 
