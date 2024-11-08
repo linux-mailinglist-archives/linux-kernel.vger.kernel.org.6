@@ -1,228 +1,213 @@
-Return-Path: <linux-kernel+bounces-401477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384FA9C1AEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:43:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CF69C1AD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:41:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC36EB23CA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFCFB283149
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3551E3DF7;
-	Fri,  8 Nov 2024 10:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2941E25E3;
+	Fri,  8 Nov 2024 10:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xdgOfCvu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VHh+O/Et"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KLQIYI/i"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA981E2827
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1A641C6E
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731062548; cv=none; b=loPkWmdItSPPOSFQptLTDQqb05ZjZVgXf9kTvbH+6kFa5FNgndHwWwIiuldmJLvm8c75S9vYPI7WdJk39t7nNvroPDn9ooRoGJ9Uy8OMbNn/EhwJ6VXUckGYYQov+gfNsCtKoKo5AMVR0gfeAj+chTJwa1hgYUoDypTmOAVhCLI=
+	t=1731062462; cv=none; b=ZRlJZ7OM7+gpIwQWIgE5kRQ0kXZvVs/deBz04fmPFUuMvJID2V4o8mwq4yVB2uRbDGDvqghUcr3WhysmDdFEVhvG76AxGBmpsyaH5CqCoH4kG8kRWcdeqY+hOwCsgLjlaUPprP2G/AqYuKI/EVtcSIw24IcQwW4lo+NeampOM9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731062548; c=relaxed/simple;
-	bh=JFVR1zGFp7skboDzHve0FaCWnfWzqjqAx8p6gEqk04Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sd1tdPJ9VAlleVNuAyui6lAJFnzgzLTcAkG9EHPixLRCumP1OnXpvLLdyzaqSQGpk/CgR2wi4FsmBNe6VjJnzU3smtvcrrxkc98h1W7Ds2k6UE/ar1nm0gU7CbB3RW8aFxlkb/+YJWtCuLEMXEq+xY6cG8nyZCMkCIlbIzzLNZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xdgOfCvu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VHh+O/Et; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731062544;
+	s=arc-20240116; t=1731062462; c=relaxed/simple;
+	bh=LyQ/34sdEq88qqr8RgZ1ETW59iZn5NN5+qaGufK2zYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3QIoR5LA8gTibm7Eqad7pp/HVo2G796u1qFYQszX/V2tJ0e2R3A2Mh3BAWZw513YooW2I6Y0LxtFEquD7eQtrzzUXQvF6FzoLH3JNBk5LT4lRLRG85cuq+P55aMbTWaj9xmq/mPECe7qT7RU3qoZraNaSi8jJs6ZEyE/Y7/M/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KLQIYI/i; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731062458;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5s/mGxOR1k0iGJwjIgx4Nn5xFVAEP6Fy1K6QavY6cWI=;
-	b=xdgOfCvuilQldzQOMpNfqbhLBJWQ8hWgfi7YAXGqIUVsXt8dH2HKhMMZK1UbFE9QY6fyIt
-	Ndu0wL+sCgqAC/jf70Ab7g3JUc+RIBuysBK44EcaCDJDT6QpDFHGFZyaI9tYZrJRVNE0lH
-	1rvDfnBEtTP6crwTrkM2orUoU4mRhm015yD54+bkX+3gmce+fqFYPLFiSYlI4gn3V7gkBc
-	X843XtQxebo2ejvgd4+2eT99hArk1xL+U1CP8B3rFM4QTQx9MG1wmepd/myNImYUo38nYr
-	SB702ECMD7Wr1hbu4ix/ZGEtwoN9OAKQ5fZgPEdov9XmG257QZwRqDb8c9qcPQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731062544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5s/mGxOR1k0iGJwjIgx4Nn5xFVAEP6Fy1K6QavY6cWI=;
-	b=VHh+O/EtWZ3A16mOSU7KTf672Jd4VxY+gi5vSUz+Zg2VvhVa/0tjSabgMacEJVyXoKHUPJ
-	JWW3RE0D3a8cazBw==
-To: kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Marco Elver <elver@google.com>,
+	bh=D0oQh4hs+ahIQ4W1afqG0+5AfGIPhbq8psBrgytlA0c=;
+	b=KLQIYI/iNoKDVkll4YUwabrnPfFLAajFJ6tGOsNkYuk8YDjJbKN2x+po7SgIBsFSNXy+ri
+	mKLuQ6dquYP26tyyHNnMH+vdK5M0K3X7Lq/LPifz8YCYMO7sWKXP9jvYHADntKkBZNrLph
+	ztpPxyFTcRJAuVOAU/04yKLPDlrfsi0=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-73-98HbgVCuPgO2f3EK5BbrdQ-1; Fri, 08 Nov 2024 05:40:56 -0500
+X-MC-Unique: 98HbgVCuPgO2f3EK5BbrdQ-1
+X-Mimecast-MFC-AGG-ID: 98HbgVCuPgO2f3EK5BbrdQ
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43159603c92so13717825e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:40:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731062455; x=1731667255;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D0oQh4hs+ahIQ4W1afqG0+5AfGIPhbq8psBrgytlA0c=;
+        b=uf341gFPbxq2QMmb14PthKBvutq3E9FLERpLbbkDOiY84VHPnzq7lXX5yZa8RclobO
+         xBUq1ONiFxhT7UcAdzsrvgoHVrmX3zhDBB5Gl26jvpqkNL0kn4Ow1PYQM1+QGOUvSAnI
+         TD+UfsyrIzVjHjVP6I45dJFIigoKAyPxmzw9M/pO3l663RN5DYWDkkjBO+5d7VIEIAd8
+         LUvAc7d9+FRssBDHq8TbINgmMBByB/PpdR0kuk2/uBhW8iW9wWB3flv7be9Vn16Pe/GL
+         urjv9C+sUzXjo4yx+rv0mczU4HXGcUdBI01bIillUcngXdgc780Os5nCrgpFnPlnBY4q
+         NNuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFjDkcXVJKQDsPo126UgjI0fFq73dzC1fFzHC9x6oi/HQofqtkpPx8E5v+29N0b3P0spBZ+oWJvTIAxK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxklonPQiPkbqGg6E5kIntXefC1yp9KHObYj42F0XcLyzMx6kvT
+	LHulymLVJ4/E86nf5wQgj3OLJZR6YZwiMqjSfQKJxFgwGKLNs+EXGCFCPuis4dlTGdOFTt+QflN
+	dKj0i+OCkwDAnJe5eaeZsDedWHsXPp8dt3GGCXJJuKTeMtMI5cIPlj8YVzQU1NdqqinZY/Q==
+X-Received: by 2002:a05:600c:4709:b0:426:6f27:379a with SMTP id 5b1f17b1804b1-432b7503496mr17574885e9.13.1731062454828;
+        Fri, 08 Nov 2024 02:40:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHFoAq7ASw38j6nntrWcenSQJl/hhMmgehrQLdne2WnBG7JE60MCCEAxltP1L99pQwNf/PeWQ==
+X-Received: by 2002:a05:600c:4709:b0:426:6f27:379a with SMTP id 5b1f17b1804b1-432b7503496mr17574695e9.13.1731062454445;
+        Fri, 08 Nov 2024 02:40:54 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.142.6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6c1298sm94598435e9.24.2024.11.08.02.40.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 02:40:53 -0800 (PST)
+Date: Fri, 8 Nov 2024 11:40:51 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	akpm@linux-foundation.org,
-	cl@linux.com,
-	iamjoonsoo.kim@lge.com,
-	longman@redhat.com,
-	penberg@kernel.org,
-	rientjes@google.com,
-	sfr@canb.auug.org.au,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v3 4/4] scftorture: Use a lock-less list to free memory.
-Date: Fri,  8 Nov 2024 11:39:34 +0100
-Message-ID: <20241108104217.3759904-5-bigeasy@linutronix.de>
-In-Reply-To: <20241108104217.3759904-1-bigeasy@linutronix.de>
-References: <20241108104217.3759904-1-bigeasy@linutronix.de>
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
+Message-ID: <Zy3qszfGHO5PUa6W@jlelli-thinkpadt14gen4.remote.csb>
+References: <20241029225116.3998487-1-joel@joelfernandes.org>
+ <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
+ <20241030195017.GA4171541@google.com>
+ <Zyin7P2WNZMM40tp@jlelli-thinkpadt14gen4.remote.csb>
+ <20241104174109.GA1044726@google.com>
+ <ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb>
+ <74c126bc-911f-45fc-b024-815e134c97cf@redhat.com>
+ <3833509d-e0c1-4fc4-874f-5a10fe3f1633@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3833509d-e0c1-4fc4-874f-5a10fe3f1633@redhat.com>
 
-scf_handler() is used as a SMP function call. This function is always
-invoked in IRQ-context even with forced-threading enabled. This function
-frees memory which not allowed on PREEMPT_RT because the locking
-underneath is using sleeping locks.
+On 07/11/24 23:40, Waiman Long wrote:
+> On 11/6/24 1:05 PM, Waiman Long wrote:
+> > On 11/6/24 11:08 AM, Juri Lelli wrote:
+> > > On 04/11/24 17:41, Joel Fernandes wrote:
+> > > > On Mon, Nov 04, 2024 at 11:54:36AM +0100, Juri Lelli wrote:
+> > > ...
+> > > 
+> > > > > I added a printk in __dl_server_attach_root which is called after the
+> > > > > dynamic rd is built to transfer bandwidth to it.
+> > > > > 
+> > > > > __dl_server_attach_root came with d741f297bceaf ("sched/fair: Fair
+> > > > > server interface"), do you have this change in your backport?
+> > > > You nailed it! Our 5.15 backport appears to be slightly older
+> > > > and is missing
+> > > > this from topology.c as you mentioned. Thanks for clarifying!
+> > > > 
+> > > > 
+> > > >          /*
+> > > >           * Because the rq is not a task,
+> > > > dl_add_task_root_domain() did not
+> > > >           * move the fair server bw to the rd if it already started.
+> > > >           * Add it now.
+> > > >           */
+> > > >          if (rq->fair_server.dl_server)
+> > > > __dl_server_attach_root(&rq->fair_server, rq);
+> > > > 
+> > > > > > So if rd changes during boot initialization, the correct
+> > > > > > dl_bw has to be
+> > > > > > updated AFAICS. Also if cpusets are used, the rd for a
+> > > > > > CPU may change.
+> > > > > cpusets changes are something that I still need to double check. Will
+> > > > > do.
+> > > > > 
+> > > > Sounds good, that would be good to verify.
+> > > So, I played a little bit with it and came up with a simple set of ops
+> > > that point out an issue (default fedora server install):
+> > > 
+> > > echo Y >/sys/kernel/debug/sched/verbose
+> > > 
+> > > echo +cpuset >/sys/fs/cgroup/cgroup.subtree_control
+> > > 
+> > > echo 0-7 > /sys/fs/cgroup/user.slice/cpuset.cpus
+> > > echo 6-7 > /sys/fs/cgroup/user.slice/cpuset.cpus.exclusive
+> > > echo root >/sys/fs/cgroup/user.slice/cpuset.cpus.partition
+> > > 
+> > > The domains are rebuilt correctly, but we end up with a null total_bw.
+> > > 
+> > > The conditional call above takes care correctly of adding back dl_server
+> > > per-rq bandwidth when we pass from the single domain to the 2 exclusive
+> > > ones, but I noticed that we go through partition_sched_domains_locked()
+> > > twice for a single write of 'root' and the second one, since it's not
+> > > actually destroying/rebuilding anything, is resetting total_bw w/o
+> > > addition dl_server contribution back.
+> > > 
+> > > Now, not completely sure why we need to go through partition_sched_
+> > > domains_locked() twice, as we have (it also looked like a pattern from
+> > > other call paths)
+> > > 
+> > > update_prstate()
+> > > -> update_cpumasks_hier()
+> > >     -> rebuild_sched_domains_locked() <- right at the end
+> > > -> update_partition_sd_lb()
+> > >     -> rebuild_sched_domains_locked() <- right after the above call
+> > > 
+> > > Removing the first call does indeed fix the issue and domains look OK,
+> > > but I'm pretty sure I'm missing all sort of details and corner cases.
+> > > 
+> > > Waiman (now Cc-ed), maybe you can help here understanding why the two
+> > > back to back calls are needed?
+> > 
+> > Thanks for letting me know about this case.
+> > 
+> > I am aware that rebuild_sched_domains_locked() can be called more than
+> > once. I have addressed the hotplug case, but it can happen in some other
+> > corner cases as well. The problem with multiple
+> > rebuild_sched_domains_locked() calls is the fact that intermediate ones
+> > may be called where the internal states may not be consistent. I am
+> > going to work on a fix to this issue by making sure that
+> > rebuild_sched_domains_locked() will only be called once.
+> 
+> I am working on a set of cpuset patches to eliminate redundant
+> rebuild_sched_domains_locked() calls. However, my cpuset test script fails
+> after the change due to the presence of test cases where the only CPU in a
+> 1-cpu partition is being offlined. So I sent out a sched/deadline patch [1]
+> to work around this particular corner case.
+> 
+> [1]
+> https://lore.kernel.org/lkml/20241108042924.520458-1-longman@redhat.com/T/#u
+> 
+> Apparently, the null total_bw bug caused by multiple
+> rebuild_sched_domains_locked() calls masks this problem.
+> 
+> Anyway, I should be able to post the cpuset patch series next week after
+> further testing. Please review my sched/deadline patch to see if you are OK
+> with this minor change.
 
-Add a per-CPU scf_free_pool where each SMP functions adds its memory to
-be freed. This memory is then freed by scftorture_invoker() on each
-iteration. On the majority of invocations the number of items is less
-than five. If the thread sleeps/ gets delayed the number exceed 350 but
-did not reach 400 in testing. These were the spikes during testing.
-The bulk free of 64 pointers at once should improve the give-back if the
-list grows. The list size is ~1.3 items per invocations.
+Thank you! Will take a look.
 
-Having one global scf_free_pool with one cleaning thread let the list
-grow to over 10.000 items with 32 CPUs (again, spikes not the average)
-especially if the CPU went to sleep. The per-CPU part looks like a good
-compromise.
-
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Closes: https://lore.kernel.org/lkml/41619255-cdc2-4573-a360-7794fc3614f7@p=
-aulmck-laptop/
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/scftorture.c | 40 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 36 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/scftorture.c b/kernel/scftorture.c
-index e3c60f6dd5477..eeafd3fc16820 100644
---- a/kernel/scftorture.c
-+++ b/kernel/scftorture.c
-@@ -97,6 +97,7 @@ struct scf_statistics {
- static struct scf_statistics *scf_stats_p;
- static struct task_struct *scf_torture_stats_task;
- static DEFINE_PER_CPU(long long, scf_invoked_count);
-+static DEFINE_PER_CPU(struct llist_head, scf_free_pool);
-=20
- // Data for random primitive selection
- #define SCF_PRIM_RESCHED	0
-@@ -133,6 +134,7 @@ struct scf_check {
- 	bool scfc_wait;
- 	bool scfc_rpc;
- 	struct completion scfc_completion;
-+	struct llist_node scf_node;
- };
-=20
- // Use to wait for all threads to start.
-@@ -148,6 +150,31 @@ static DEFINE_TORTURE_RANDOM_PERCPU(scf_torture_rand);
-=20
- extern void resched_cpu(int cpu); // An alternative IPI vector.
-=20
-+static void scf_add_to_free_list(struct scf_check *scfcp)
-+{
-+	struct llist_head *pool;
-+	unsigned int cpu;
-+
-+	cpu =3D raw_smp_processor_id() % nthreads;
-+	pool =3D &per_cpu(scf_free_pool, cpu);
-+	llist_add(&scfcp->scf_node, pool);
-+}
-+
-+static void scf_cleanup_free_list(unsigned int cpu)
-+{
-+	struct llist_head *pool;
-+	struct llist_node *node;
-+	struct scf_check *scfcp;
-+
-+	pool =3D &per_cpu(scf_free_pool, cpu);
-+	node =3D llist_del_all(pool);
-+	while (node) {
-+		scfcp =3D llist_entry(node, struct scf_check, scf_node);
-+		node =3D node->next;
-+		kfree(scfcp);
-+	}
-+}
-+
- // Print torture statistics.  Caller must ensure serialization.
- static void scf_torture_stats_print(void)
- {
-@@ -296,7 +323,7 @@ static void scf_handler(void *scfc_in)
- 		if (scfcp->scfc_rpc)
- 			complete(&scfcp->scfc_completion);
- 	} else {
--		kfree(scfcp);
-+		scf_add_to_free_list(scfcp);
- 	}
- }
-=20
-@@ -363,7 +390,7 @@ static void scftorture_invoke_one(struct scf_statistics=
- *scfp, struct torture_ra
- 				scfp->n_single_wait_ofl++;
- 			else
- 				scfp->n_single_ofl++;
--			kfree(scfcp);
-+			scf_add_to_free_list(scfcp);
- 			scfcp =3D NULL;
- 		}
- 		break;
-@@ -391,7 +418,7 @@ static void scftorture_invoke_one(struct scf_statistics=
- *scfp, struct torture_ra
- 				preempt_disable();
- 		} else {
- 			scfp->n_single_rpc_ofl++;
--			kfree(scfcp);
-+			scf_add_to_free_list(scfcp);
- 			scfcp =3D NULL;
- 		}
- 		break;
-@@ -428,7 +455,7 @@ static void scftorture_invoke_one(struct scf_statistics=
- *scfp, struct torture_ra
- 			pr_warn("%s: Memory-ordering failure, scfs_prim: %d.\n", __func__, scfs=
-p->scfs_prim);
- 			atomic_inc(&n_mb_out_errs); // Leak rather than trash!
- 		} else {
--			kfree(scfcp);
-+			scf_add_to_free_list(scfcp);
- 		}
- 		barrier(); // Prevent race-reduction compiler optimizations.
- 	}
-@@ -479,6 +506,8 @@ static int scftorture_invoker(void *arg)
- 	VERBOSE_SCFTORTOUT("scftorture_invoker %d started", scfp->cpu);
-=20
- 	do {
-+		scf_cleanup_free_list(cpu);
-+
- 		scftorture_invoke_one(scfp, &rand);
- 		while (cpu_is_offline(cpu) && !torture_must_stop()) {
- 			schedule_timeout_interruptible(HZ / 5);
-@@ -529,6 +558,9 @@ static void scf_torture_cleanup(void)
- 	kfree(scf_stats_p);  // -After- the last stats print has completed!
- 	scf_stats_p =3D NULL;
-=20
-+	for (i =3D 0; i < nr_cpu_ids; i++)
-+		scf_cleanup_free_list(i);
-+
- 	if (atomic_read(&n_errs) || atomic_read(&n_mb_in_errs) || atomic_read(&n_=
-mb_out_errs))
- 		scftorture_print_module_parms("End of test: FAILURE");
- 	else if (torture_onoff_failures())
---=20
-2.45.2
+Best,
+Juri
 
 
