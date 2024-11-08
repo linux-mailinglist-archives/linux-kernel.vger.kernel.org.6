@@ -1,101 +1,192 @@
-Return-Path: <linux-kernel+bounces-401686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1C79C1DEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:27:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3DB9C1DFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E213E2872DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704E81F21987
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E1D1EF095;
-	Fri,  8 Nov 2024 13:26:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217EB1EE022;
-	Fri,  8 Nov 2024 13:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7291EB9F7;
+	Fri,  8 Nov 2024 13:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEZTbB/2"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FA71EBA18;
+	Fri,  8 Nov 2024 13:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731072390; cv=none; b=Ukt/JRedC9wFZHWfzfrIrdAJbm6r+unsV/Frawy26XQ3zcfKBv0bPr3xZicV3pLbZPmwNGKXcKCV4N/qeImD8VpQ7Cfpq4NKWRWg1YNEqFrnoXKdjqgJad9GT3rI5IYoWLgpuMhjL9KssC/Uut13Olsesb5S9qsR+3b9rDvjMZc=
+	t=1731072557; cv=none; b=j8qw6yM/8z7FIzTt3/mdtcYAhJnnVYIs7NEg8SrwAu9VWXgto9eLXHg99jKkoLcvsJPwovzZSnnKcs4WkLwp3JrdqKUu4TUTC+Q2qffZaBNFklE5gu7ajsAYfIXW4Std//K2A887zlcYNZYfhLKfoTx1PYU7ElpbKa2iYA8otiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731072390; c=relaxed/simple;
-	bh=S96fuz0VgAfN94TOyJ8HhG78xLZAJuZ52sWSC8Aa35c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G3OAM3TlhT0hEOcVFN8zUr0ftI2Zj3ki6jGqiKRQqhZr6AtKuIEXsOmFYLqROyI6CYh84u4vN2yQWgX1JfnENFeevP1PVuUnpQ44bFOYe//F+V5ToxQXClcv330+z81t5hccHloRCAorWTqUijwf/UZk7HeSLyf/Ly13YhxT9vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E6D1339;
-	Fri,  8 Nov 2024 05:26:57 -0800 (PST)
-Received: from [10.1.38.24] (e122027.cambridge.arm.com [10.1.38.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C8793F528;
-	Fri,  8 Nov 2024 05:26:24 -0800 (PST)
-Message-ID: <73eacca6-b6cd-4689-8ccd-f7e2e8b716f3@arm.com>
-Date: Fri, 8 Nov 2024 13:26:23 +0000
+	s=arc-20240116; t=1731072557; c=relaxed/simple;
+	bh=c30E1/lld3o/ZHf7kUJhQ3IIdEvfGMT4NT58P1RW7lg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GdNuURPM9+A8mMzSgyPIBeF7PII51+TYj9wB2juMaAcmc+sBa2ERTvdWcTO5JIHS5m++nukPT687hIWMWOa7qY7FENOtAv4rdFs4Sn+ZAe63ZSx2i/LdamgA5tN4WlnwpImQVm8vHN7is+C/bPPvSOZDMgdEGW0p6k9w/nDj5tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEZTbB/2; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-720b2d8bb8dso1532027b3a.1;
+        Fri, 08 Nov 2024 05:29:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731072555; x=1731677355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ytmxS4QcqOH2tK4MkIoNkfKYtFlgq0b1sTj7YW/3eik=;
+        b=DEZTbB/28KdYHpMZ28T/cmje/QFQ0WSBGmr/fU54qcvPfNEL6ihBg/4k5lyqexMFKz
+         I31fcpc+B/+1WTl+w53fvO464hpCCnAaXI8tftZM54U6lrnZzNWwpKdaHV/KAG18S3Ac
+         MB1Aox3o5HILI6AQrxvqzFSh1PcQhVC1m84i2n/jjEeRf2bFIbsI4IfJx3pBPWawl/P/
+         S1x6nNnl5OUh7DtUp177Cte4YIsCxz8JO2U38gTccZYrXA9AcMOPdfwCYMkeNvTdk5qL
+         bUmNKcGgOgI8NfdeuTPCrNDmRWg1MHnn95K1D/hHSw+z5659MBm2DbJ/cZPsizfssUn9
+         pisQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731072555; x=1731677355;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ytmxS4QcqOH2tK4MkIoNkfKYtFlgq0b1sTj7YW/3eik=;
+        b=ZICZZ3Iqh/LsMHJLh3xrmpzxwbz6P+UVthwBYohZJTy8WGjcdK80xvdeJwIVC/TOtm
+         vaUT0mETERqTsPeb6xpGutKpQuU3Wp0t+2FZLWHBtdP+lYXpcbr9+Qc3IAdCxzpZ9idO
+         dKspEUJ3HNgUiYlGLzGImY/B6+sA4SPlv4op/QJKjb1rUF0cLyx09sTC1XollPZoC1Gd
+         mCR1jIj1MSv6UYf0NzqNawsnlKeTixpGNFZMrZMPB++kP49tZx3BQwk1cGg87E3WxFvP
+         tSN9BEaiu6HblLM1xCQcNeyZW/6PB7tsgr91wkhbWLYK2xENdIGFlnJknqN/g3o4E1sq
+         22DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSTsmm6zCGGN5zlziwRd9zACTl8JDwy5s1Rxqyyrc+8zCAI6NoZQXCGYB8Zhv1WY6vnF4KaeUxSu2Hv6Lx@vger.kernel.org, AJvYcCXtJTI943bYo4mOETv38EMLteT6vin4RmvNJLNV123e8SD5FGtBMTntSz4Teg3U1mt70vtuMvpo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQR7IUmV1s346RhJAA5JeCekDOl7oLtJb7bITF2D0BpFeeUZ0v
+	U+F2LqTFmO0zmLmQuJoi1Nb/yOklTKM1TIrm6x/aRwE6F3SHDv4p
+X-Google-Smtp-Source: AGHT+IFCHrupnA9dGQ3nTX/CJT4uBx1j1t/FKeaGHa4H42gUeFgoHNvWLX+AAGqRwueMnpMHfwVMxw==
+X-Received: by 2002:a05:6a21:1690:b0:1d9:aa1:23e3 with SMTP id adf61e73a8af0-1dc22b664d3mr4031210637.32.1731072555057;
+        Fri, 08 Nov 2024 05:29:15 -0800 (PST)
+Received: from localhost.localdomain ([183.193.178.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078ce169sm3642561b3a.86.2024.11.08.05.29.09
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Nov 2024 05:29:14 -0800 (PST)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: mingo@redhat.com,
+	peterz@infradead.org
+Cc: juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	hannes@cmpxchg.org,
+	surenb@google.com,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v5 0/4] sched: Fix missing irq time when CONFIG_IRQ_TIME_ACCOUNTING is enabled 
+Date: Fri,  8 Nov 2024 21:29:00 +0800
+Message-Id: <20241108132904.6932-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] of: WARN on deprecated #address-cells/#size-cells
- handling
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- "Rob Herring (Arm)" <robh@kernel.org>, Saravana Kannan
- <saravanak@google.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org, Conor Dooley <conor@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-References: <20241106171028.3830266-1-robh@kernel.org>
- <CGME20241108110444eucas1p20cbed7533af31573dac30dbb435c3d9d@eucas1p2.samsung.com>
- <3706d174-fadd-485f-be7b-f7ef4b11cf84@samsung.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <3706d174-fadd-485f-be7b-f7ef4b11cf84@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/11/2024 11:04, Marek Szyprowski wrote:
-> Hi Rob,
-> 
-> On 06.11.2024 18:10, Rob Herring (Arm) wrote:
->> While OpenFirmware originally allowed walking parent nodes and default
->> root values for #address-cells and #size-cells, FDT has long required
->> explicit values. It's been a warning in dtc for the root node since the
->> beginning (2005) and for any parent node since 2007. Of course, not all
->> FDT uses dtc, but that should be the majority by far. The various
->> extracted OF devicetrees I have dating back to the 1990s (various
->> PowerMac, OLPC, PASemi Nemo) all have explicit root node properties. The
->> warning is disabled for Sparc as there are known systems relying on
->> default root node values.
->>
->> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->> ---
->> v2:
->>   - Add a define for excluded platforms to help clarify the intent
->>     is to have an exclude list and make adding platforms easier.
->>   - Also warn when walking parent nodes.
->> ---
->>   drivers/of/base.c | 28 ++++++++++++++++++++++------
->>   drivers/of/fdt.c  |  4 ++--
->>   2 files changed, 24 insertions(+), 8 deletions(-)
-> 
-> This patch landed in today's linux-next as commit 4b28a0dec185 ("of: 
-> WARN on deprecated #address-cells/#size-cells handling"). In my tests I 
-> found that it introduces warnings on almost all of my test systems. I 
-> took a look at the first one I got in my logs (Samsung Exynos Rinato 
-> board: arch/arm/boot/dts/samsung/exynos3250-rinato.dts):
+After enabling CONFIG_IRQ_TIME_ACCOUNTING to track IRQ pressure in our
+container environment, we encountered several user-visible behavioral
+changes:
 
-Just a "me too" for rk3288-firefly.dtb:
+- Interrupted IRQ/softirq time is excluded in the cpuacct cgroup
 
-[    0.138735] WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus_n_addr_cells+0x9c/0xd8
-[    0.138776] Missing '#address-cells' in /power-management@ff730000
+  This breaks userspace applications that rely on CPU usage data from
+  cgroups to monitor CPU pressure. This patchset resolves the issue by
+  ensuring that IRQ/softirq time is included in the cgroup of the
+  interrupted tasks.
 
-I'm sure it's easy to fix up the DTB, but we shouldn't be breaking long existing DTBs.
+- getrusage(2) does not include time interrupted by IRQ/softirq
 
-Steve
+  Some services use getrusage(2) to check if workloads are experiencing CPU
+  pressure. Since IRQ/softirq time is no longer included in task runtime,
+  getrusage(2) can no longer reflect the CPU pressure caused by heavy
+  interrupts.
+
+This patchset addresses the first issue, which is relatively
+straightforward. Once this solution is accepted, I will address the second
+issue in a follow-up patchset.
+
+Enabling CONFIG_IRQ_TIME_ACCOUNTING results in the CPU
+utilization metric excluding the time spent in IRQs. This means we
+lose visibility into how long the CPU was actually interrupted in
+comparison to its total utilization. Currently, the only ways to
+monitor interrupt time are through IRQ PSI or the IRQ time recorded in
+delay accounting. However, these metrics are independent of CPU
+utilization, which makes it difficult to combine them into a single,
+unified measure
+
+CPU utilization is a critical metric for almost all workloads, and
+it's problematic if it fails to reflect the full extent of system
+pressure. This situation is similar to iowait: when a task is in
+iowait, it could be due to other tasks performing I/O. It doesn’t
+matter if the I/O is being done by one of your tasks or by someone
+else's; what matters is that your task is stalled and waiting on I/O.
+Similarly, a comprehensive CPU utilization metric should reflect all
+sources of pressure, including IRQ time, to provide a more accurate
+representation of workload behavior.
+
+One of the applications impacted by this issue is our Redis load-balancing
+service. The setup operates as follows:
+
+                   ----------------
+                   | Load Balancer|
+                   ----------------
+                /    |      |        \
+               /     |      |         \ 
+          Server1 Server2 Server3 ... ServerN
+
+Although the load balancer's algorithm is complex, it follows some core
+principles:
+
+- When server CPU utilization increases, it adds more servers and deploys
+  additional instances to meet SLA requirements.
+- When server CPU utilization decreases, it scales down by decommissioning
+  servers and reducing the number of instances to save on costs.
+
+The load balancer is malfunctioning due to the exclusion of IRQ time from
+CPU utilization calculations.
+
+Changes:
+v4->v5:
+- Don't use static key in the IRQ_TIME_ACCOUNTING=n case (Peter)
+- Rename psi_irq_time to irq_time (Peter)
+- Use CPUTIME_IRQ instead of CPUTIME_SOFTIRQ (Peter)
+
+v3->v4: https://lore.kernel.org/all/20241101031750.1471-1-laoar.shao@gmail.com/
+- Rebase
+
+v2->v3:
+- Add a helper account_irqtime() to avoid redundant code (Johannes)
+
+v1->v2: https://lore.kernel.org/cgroups/20241008061951.3980-1-laoar.shao@gmail.com/
+- Fix lockdep issues reported by kernel test robot <oliver.sang@intel.com>
+
+v1: https://lore.kernel.org/all/20240923090028.16368-1-laoar.shao@gmail.com/
+
+
+
+Yafang Shao (4):
+  sched: Define sched_clock_irqtime as static key
+  sched: Don't account irq time if sched_clock_irqtime is disabled
+  sched, psi: Don't account irq time if sched_clock_irqtime is disabled
+  sched: Fix cgroup irq time for CONFIG_IRQ_TIME_ACCOUNTING
+
+ kernel/sched/core.c    | 77 +++++++++++++++++++++++++++++-------------
+ kernel/sched/cputime.c | 16 ++++-----
+ kernel/sched/psi.c     | 11 ++----
+ kernel/sched/sched.h   | 15 +++++++-
+ kernel/sched/stats.h   |  7 ++--
+ 5 files changed, 81 insertions(+), 45 deletions(-)
+
+-- 
+2.43.5
 
 
