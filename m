@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-402065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415659C22F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:29:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625D59C22F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C105C1F22D37
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B872829DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D53D1EBA1A;
-	Fri,  8 Nov 2024 17:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20743191F8E;
+	Fri,  8 Nov 2024 17:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIcmiu6p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8hLLCBf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FBA193081;
-	Fri,  8 Nov 2024 17:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7881DFD1;
+	Fri,  8 Nov 2024 17:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731086963; cv=none; b=go2fzfK590M8JNH9jXdVlkm1AXIq462s5QEASf8dj7uikMnEZKh8gWCT0YqGZsEtC/6lpJN6+9z8ki2s84sszyU7lF0cvkePtZm7Npsp45lLUjYtMFKdd+uciaT/S88JHOnJtGZkyz/kBGqAagnSf28K2F58r5ubKl1ts0m9GmI=
+	t=1731087007; cv=none; b=fT0p5zCDkJkCnnrQgRsjsLOS0UTD/anOmyv1ayqMYx+x70U8UE0gnUo/zo4afbMlVUS4G6gfnUo+hfoOxOH4y46Ra6ws7fi37veB6MT2EYqpin4BZg5GQuAkZRohQhD2Jh21LyQK3KXkM3yOlymYtVZO3b8awtM9Aeuvdo588s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731086963; c=relaxed/simple;
-	bh=H6G9e/WKDFIcjg+8qKalloGBWfdFi+J+6QVFHInmJxs=;
+	s=arc-20240116; t=1731087007; c=relaxed/simple;
+	bh=29DVLAh2HCtcArmnuxwpYrI5cfTUdqXRDhp9CcKrP+w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SLqoGyM/GBQYscsbwd2UcvayNnnLS87NBFa+UjxVabJe8CdJtosvy7utkUyc7O5V/8/YFU9ykjypfrXgFDsFWiaTGpgeTSd+SvrEoke8Qi+nM5A0TCBJiweZnp3w5F8w6EcLIgVC+ALU8Kj5U3xrg1efDot6ETTbKzqnhATuwA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIcmiu6p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D4FC4CECD;
-	Fri,  8 Nov 2024 17:29:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ts7tEV4zBZSJP+j8wHshdXH/+RhJHxM0iYLvOYcf42Go95hsorPre7QAUr0/XNj+Si3UJ/oxMBKfIKYi5wxKFOsOq6zv+G6dcoswwvSNU3X3t/+mpPbfIT1eiv8biiEFjl24A/mVhWxM73Y7TXaEtVCFGVmaXQtQ5kuqxYAk3KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8hLLCBf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1FDC4CECD;
+	Fri,  8 Nov 2024 17:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731086962;
-	bh=H6G9e/WKDFIcjg+8qKalloGBWfdFi+J+6QVFHInmJxs=;
+	s=k20201202; t=1731087006;
+	bh=29DVLAh2HCtcArmnuxwpYrI5cfTUdqXRDhp9CcKrP+w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qIcmiu6pPw6mnR2MH9U14mtULrfYBXCcVcrmKGCf4c1odKxNiAFyoGeAJDe24/jU3
-	 ky8Kp9XLZkkfhPdLKjOGyCFng+ebkx7SnLSdF4+EchVaqfqOpMACT2PBcPq/TeCNTR
-	 xalR4JqXI4dPkI/UCQDoajDa6dP+8L5IoU5R2CNY7HFvicF2wS2VJThZ6CXBKNOdsV
-	 B4TbnClc3vCVH3oo2iG2kVlRgyHFlDyeghygiE+A47PwP3+5sLLIKSoX47b+y4DiXh
-	 dBnxMRg7Gma22B6T3saJ44Pak2XB20XVyW0WehINsseTMqBCmrr/r3dWMRCOs+l4Zz
-	 azLfXLozusAzA==
-Date: Fri, 8 Nov 2024 10:29:20 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v5 1/1] x86/cpu: Make sure flag_is_changeable_p() is
- always being used
-Message-ID: <20241108172920.GB2564051@thelio-3990X>
-References: <20241108153105.1578186-1-andriy.shevchenko@linux.intel.com>
- <732CB428-EE83-455F-A5AF-C008B7541401@zytor.com>
- <Zy4xHC3MCtAqlSxy@smile.fi.intel.com>
- <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com>
+	b=j8hLLCBf8x6iuGLD5Z8eLntiO0L9tkSM8Ek1amA+tY/UUWKy7gYVe+u1bWnMCvUrz
+	 w3k6cKEWgGMvWJO9lFeEfbxYYn5p8aP1VupU/aBRy5zu8yU4k4UKzNELMa7HvkIVMs
+	 gvb/toW4F0aaAVeeP+vUX7v4urTAlTLLoglHttOz0tGy1mrsRN8kOLBBK0hvLqvgFS
+	 NpeMmsqptwsPbmCwswzuB61M0KDfVC1j8d+vHFx24nHInBcYgbd3UbHRnYT9d5ljEV
+	 Anl0oyQcQaNSSm0WhDAL+XjTuhFxdP0solLdkmAaivWOzWwEQMW/F3Fyt0ycL/8hBT
+	 1VTjwKIOWcGYg==
+Date: Fri, 8 Nov 2024 09:30:06 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, osandov@fb.com,
+	john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yangerkun@huawei.com
+Subject: Re: [PATCH 1/2] xfs: Fix missing block calculations in xfs datadev
+ fsmap
+Message-ID: <20241108173006.GA168069@frogsfrogsfrogs>
+References: <20240826031005.2493150-1-wozizhi@huawei.com>
+ <20240826031005.2493150-2-wozizhi@huawei.com>
+ <20241107234352.GU2386201@frogsfrogsfrogs>
+ <1549f04a-8431-405d-adfc-23e5988abe51@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,69 +62,196 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com>
+In-Reply-To: <1549f04a-8431-405d-adfc-23e5988abe51@huawei.com>
 
-On Fri, Nov 08, 2024 at 04:48:16PM +0100, H. Peter Anvin wrote:
-> On November 8, 2024 4:41:16 PM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> >On Fri, Nov 08, 2024 at 04:35:17PM +0100, H. Peter Anvin wrote:
-> >> On November 8, 2024 4:30:10 PM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> >> >See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> >> >inline functions for W=1 build").
-> >
-> >^^^ (1)
-> >
-> >> Looks good to me:
-> >> 
-> >> Reviewed-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-> >
-> >Thank you!
-> >
-> >> But another question: why the hell does clang complain about an unused static inline function?!
-> >
-> >Does (1) shed a bit of light to this?
-> >
+On Fri, Nov 08, 2024 at 10:29:08AM +0800, Zizhi Wo wrote:
 > 
-> How on earth is that supposed to work?! We have static inline functions in headers all over the place that are only used in certain circumstances. 
 > 
-> Is this a good thing, really? Or is it noise?
+> 在 2024/11/8 7:43, Darrick J. Wong 写道:
+> > On Mon, Aug 26, 2024 at 11:10:04AM +0800, Zizhi Wo wrote:
+> > > In xfs datadev fsmap query, I noticed a missing block calculation problem:
+> > > [root@fedora ~]# xfs_db -r -c "sb 0" -c "p" /dev/vdb
+> > > magicnum = 0x58465342
+> > > blocksize = 4096
+> > > dblocks = 5242880
+> > > ......
+> > > [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
+> > > ...
+> > > 30: 253:16 [31457384..41943031]: free space            3  (104..10485751)    10485648
+> > > 
+> > > (41943031 + 1) / 8 = 5242879 != 5242880
+> > > We missed one block in our fsmap calculation!
+> > 
+> > Eek.
+> > 
+> > > The root cause of the problem lies in __xfs_getfsmap_datadev(), where the
+> > > calculation of "end_fsb" requires a classification discussion. If "end_fsb"
+> > > is calculated based on "eofs", we need to add an extra sentinel node for
+> > > subsequent length calculations. Otherwise, one block will be missed. If
+> > > "end_fsb" is calculated based on "keys[1]", then there is no need to add an
+> > > extra node. Because "keys[1]" itself is unreachable, it cancels out one of
+> > > the additions. The diagram below illustrates this:
+> > > 
+> > > |0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|-----eofs
+> > > |---------------|---------------------|
+> > > a       n       b         n+1         c
+> > > 
+> > > Assume that eofs is 16, the start address of the previous query is block n,
+> > > sector 0, and the length is 1, so the "info->next" is at point b, sector 8.
+> > > In the last query, suppose the "rm_startblock" calculated based on
+> > > "eofs - 1" is the last block n+1 at point b. All we get is the starting
+> > > address of the block, not the end. Therefore, an additional sentinel node
+> > > needs to be added to move it to point c. After that, subtracting one from
+> > > the other will yield the remaining 1.
+> > > 
+> > > Although we can now calculate the exact last query using "info->end_daddr",
+> > > we will still get an incorrect value if the device at this point is not the
+> > > boundary device specified by "keys[1]", as "end_daddr" is still the initial
+> > > value. Therefore, the eofs situation here needs to be corrected. The issue
+> > > is resolved by adding a sentinel node.
+> > 
+> > Why don't we set end_daddr unconditionally, then?
+> > 
+> > Hmm, looking at the end_daddr usage in fsmap.c, I think it's wrong.  If
+> > end_daddr is set at all, it's set either to the last sector for which
+> > the user wants a mapping; or it's set to the last sector for the device.
+> > But then look at how we use it:
+> > 
+> > 	if (info->last...)
+> > 		frec->start_daddr = info->end_daddr;
+> > 
+> > 	...
+> > 
+> > 	/* "report the gap..."
+> > 	if (frec->start_daddr > info->next_daddr) {
+> > 		fmr.fmr_length = frec->start_daddr - info->next_daddr;
+> > 	}
+> > 
+> > This is wrong -- we're using start_daddr to compute the distance from
+> > the last mapping that we output up to the end of the range that we want.
+> > The "end of the range" is modeled with a phony rmap record that starts
+> > at the first fsblock after that range.
+> > 
+> 
+> In the current code, we set "rec_daddr = end_daddr" only when
+> (info->last && info->end_daddr != NULL), which should ensure that this
+> is the last query?
 
-Did you read the commit message of 6863f5643dd7 or just the title?
+Right.
 
-The difference between Clang and GCC is only around static inline
-function in .c files, not .h files.
+> Because end_daddr is set to the last device, and
+> info->last is set to the last query. Therefore, assigning it to
+> start_daddr should not cause issues in the next query?
 
-  $ cat test.h
-  static inline void unused_inline_in_h(void) {}
+Right, the code currently sets end_daddr only for the last device, so
+there won't be any issues with the next query.
 
-  $ cat test.c
-  #include "test.h"
+That said, we reset the xfs_getfsmap_info state between each device, so
+it's safe to set end_daddr for every device, not just the last time
+through that loop.
 
-  static inline void unused_inline_in_c(void) {}
+> Did I misunderstand something? Or is it because the latest code
+> constantly updates end_daddr, which is why this issue arises?
 
-  static void unused_in_c(void) {}
+The 6.13 metadir/rtgroups patches didn't change when end_daddr gets set,
+but my fixpatch *does* make it set end_daddr for all devices.  Will send
+a patch + fstests update shortly to demonstrate. :)
 
-  $ gcc -Wall -c -o /dev/null test.c
-  test.c:5:13: warning: ‘unused_in_c’ defined but not used [-Wunused-function]
-      5 | static void unused_in_c(void) {}
-        |             ^~~~~~~~~~~
+> > IOWs, that assignment should have been
+> > frec->start_daddr = info->end_daddr + 1.
+> > 
+> > Granted in August the codebase was less clear about the difference
+> > between rec_daddr and rmap->rm_startblock.  For 6.13, hch cleaned all
+> > that up -- rec_daddr is now called start_daddr and the fsmap code passes
+> > rmap records with space numbers in units of daddrs via a new struct
+> > xfs_fsmap_rec.  Unfortunately, that's all buried in the giant pile of
+> > pull requests I sent a couple of days ago which hasn't shown up on
+> > for-next yet.
+> > 
+> > https://lore.kernel.org/linux-xfs/173084396955.1871025.18156568347365549855.stgit@frogsfrogsfrogs/
+> > 
+> > So I think I know how to fix this against the 6.13 codebase, but I'm
+> > going to take a slightly different approach than yours...
+> > 
+> > > Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
+> > > Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+> > > ---
+> > >   fs/xfs/xfs_fsmap.c | 19 +++++++++++++++++--
+> > >   1 file changed, 17 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+> > > index 85dbb46452ca..8a2dfe96dae7 100644
+> > > --- a/fs/xfs/xfs_fsmap.c
+> > > +++ b/fs/xfs/xfs_fsmap.c
+> > > @@ -596,12 +596,27 @@ __xfs_getfsmap_datadev(
+> > >   	xfs_agnumber_t			end_ag;
+> > >   	uint64_t			eofs;
+> > >   	int				error = 0;
+> > > +	int				sentinel = 0;
+> > >   	eofs = XFS_FSB_TO_BB(mp, mp->m_sb.sb_dblocks);
+> > >   	if (keys[0].fmr_physical >= eofs)
+> > >   		return 0;
+> > >   	start_fsb = XFS_DADDR_TO_FSB(mp, keys[0].fmr_physical);
+> > > -	end_fsb = XFS_DADDR_TO_FSB(mp, min(eofs - 1, keys[1].fmr_physical));
+> > > +	/*
+> > > +	 * For the case of eofs, we need to add a sentinel node;
+> > > +	 * otherwise, one block will be missed when calculating the length
+> > > +	 * in the last query.
+> > > +	 * For the case of key[1], there is no need to add a sentinel node
+> > > +	 * because it already represents a value that cannot be reached.
+> > > +	 * For the case where key[1] after shifting is within the same
+> > > +	 * block as the starting address, it is resolved using end_daddr.
+> > > +	 */
+> > > +	if (keys[1].fmr_physical > eofs - 1) {
+> > > +		sentinel = 1;
+> > > +		end_fsb = XFS_DADDR_TO_FSB(mp, eofs - 1);
+> > > +	} else {
+> > > +		end_fsb = XFS_DADDR_TO_FSB(mp, keys[1].fmr_physical);
+> > > +	}
+> > 
+> > ...because running against djwong-wtf, I actually see the same symptoms
+> > for the realtime device.  So I think a better solution is to change
+> > xfs_getfsmap to set end_daddr always, and then fix the off by one error.
+> > 
+> 
+> Yes, my second patch looks at this rt problem...
+> Thank you for your reply
 
-  $ clang -fsyntax-only -Wall test.c
-  test.c:3:20: warning: unused function 'unused_inline_in_c' [-Wunused-function]
-      3 | static inline void unused_inline_in_c(void) {}
-        |                    ^~~~~~~~~~~~~~~~~~
-  test.c:5:13: warning: unused function 'unused_in_c' [-Wunused-function]
-      5 | static void unused_in_c(void) {}
-        |             ^~~~~~~~~~~
-  2 warnings generated.
+<nod>
 
-I do not think there are too many instances of unused static inline
-functions in .c files but Andy might be able to speak more around how
-many instances he has had to fix across the tree. I can see how this
-difference can be useful for catching dead code and maybe even making
-code cleaner but if it proves to be too much of an annoyance for the
-wider community, we could potentially discuss reverting 6863f5643dd7.
+--D
 
-Cheers,
-Nathan
+> Thanks,
+> Zizhi Wo
+> 
+> 
+> > I also don't really like "sentinel" values because they're not
+> > intuitive.
+> > 
+> > I will also go update xfs/273 to check that there are no gaps in the
+> > mappings returned, and that they go to where the filesystem thinks is
+> > the end of the device.  Thanks for reporting this, sorry I was too busy
+> > trying to get metadir/rtgroups done to look at this until now. :(
+> > 
+> > --D
+> > 
+> 
+> 
+> 
+> > >   	/*
+> > >   	 * Convert the fsmap low/high keys to AG based keys.  Initialize
+> > > @@ -649,7 +664,7 @@ __xfs_getfsmap_datadev(
+> > >   		info->pag = pag;
+> > >   		if (pag->pag_agno == end_ag) {
+> > >   			info->high.rm_startblock = XFS_FSB_TO_AGBNO(mp,
+> > > -					end_fsb);
+> > > +					end_fsb) + sentinel;
+> > >   			info->high.rm_offset = XFS_BB_TO_FSBT(mp,
+> > >   					keys[1].fmr_offset);
+> > >   			error = xfs_fsmap_owner_to_rmap(&info->high, &keys[1]);
+> > > -- 
+> > > 2.39.2
+> > > 
+> > > 
+> 
 
