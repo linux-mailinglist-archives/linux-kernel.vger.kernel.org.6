@@ -1,269 +1,163 @@
-Return-Path: <linux-kernel+bounces-402341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115A29C2698
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:29:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D551A9C269C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:31:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 570B6B238C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13F291C21ECA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A920B1CF5F6;
-	Fri,  8 Nov 2024 20:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CEE1AA1FA;
+	Fri,  8 Nov 2024 20:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="nBbeDXBB"
-Received: from CY4PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11020122.outbound.protection.outlook.com [40.93.198.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SP6vAW2D"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485B91A9B2D;
-	Fri,  8 Nov 2024 20:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.122
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731097782; cv=fail; b=TL6VTx0ehBTb15wo19CLIKt5/KUTKgCmywJ62I00e/GRWMBCWgmoyZZ9ip2HudY4CCy+uq83yRfJAKmpcKm3CzHn0VB9304hBs7KAML4riDoh02HWUu3EWuAwmmP1gNt/16DqKHBEpdSLNpLmlWsrAGl4HfGigNQ0363SrFGMgk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731097782; c=relaxed/simple;
-	bh=eDx2zlyfigM5GcSDZpQy4DUJtUnDowLmuljWmhCqLZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QM7pPpoFNskjByyK4qT+8JtuguN/3H0N0gnIrYhW/DI1y3utX5NJkmhBxXIwgvTn41NHBfwx0brhvvKZHcsnN1S2DjQHSZRKqEkmAi9WFUSzKxZYCR3ygz7xAzqLKA7iGJZhFcV8rwNFQ1XwZ2kmMmgQp/YG4APEVxTyBMlycSg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=nBbeDXBB; arc=fail smtp.client-ip=40.93.198.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c9QcgqaJzGcitk296IeJ49BLOfTna9BbHdJkWsjR/aiOEneKswLBu9DhAbPSSVwl6M9cOCAQH+smsLGDrx5yS3U9+nJRzK8tFEBvx1zzASPxRrP/Inxd94NHPuODdfSRgxy+J0QueNdPTmRfUppk71cDMI9wucr1MKzXDhVifEkgpyLGryF0tsrICSlk2OkhAcMdtlKo6pRD8WlbjbMyGa93ATNvuCnE5ld6GRe/lod8gCmd+RHHhGy5Y2+eqw6owYEklXO/EMFVaHwPjstYib84lEJ3u+mk5Rdhe+lgpsAx1y3BfxBmD8ZPfw0G2M7IngsduIY7ejlQTR8LqS1hBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IrmErlUgJSCq4FyTHpIzCmE72M0GQFr4VFXVm+indVQ=;
- b=oNoKwp989r8aYuhE19wBKssUEYyNxw/6lJUVrPpF6H3Yu1A+GmwB1weBETy6OsVdibLopCF68oOIRC1RroQqMs/cY6WWAb14mXMb35emy2VVMulVMc2oCmHwtfyWpVOOWnErgHLfb6G44dYJ+uIbOaKN0Rno4UWGdlvkA9FQl3AwTgV/Xl5kPJBEXCS84S6leyxifZM9yfpKm67ivK16zDZEbDpGZymYlwIO5RXoctzvGnhjrXdN8a+7XzITEBQq6QPFW/08kSi01Z9DqErDUxZEF6keaceZ+4bUoU7fPNOJNeg/G0oLxeudxL1cHLQHDlg8gNJpJ/dT3nif9bbe4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFF91C1F11;
+	Fri,  8 Nov 2024 20:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731097864; cv=none; b=WxAo/iNMRXp0Rt4F3cS4jYipdNzFKhF13jtnthpzpfvslWjM2peG9U19xZ75U8x1hIHpKhe9ZoYGluNFCuQp3FaJw6qPLCJjf8tFZUVl52SerkBQRNTX5y0hW6KCO8P6V4P6QbEXop9a038aFQDgFNi7iCU5BrM+1SycYaVgq8M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731097864; c=relaxed/simple;
+	bh=eRCb2WzMBlgHzf350SW31GIAQjE4jPD10X4h87w82IU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ouaQbiaFh7nynWjlpK+FAEOsZlxNPZrXWeFvRSkS7xcF5y9zY9vbb/PY7gHr+7WSRr9+YPMe2ix3r2xtiSyHKpQfQ8FFSTqPSxnmyytjj4ZPr3ywRY/W8eY9YxbZomfrhJtQJirYa06IkiuZW+pAcGyzIXxYLSimkZ10j/mRuJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SP6vAW2D; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26d8so6296689a12.1;
+        Fri, 08 Nov 2024 12:31:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IrmErlUgJSCq4FyTHpIzCmE72M0GQFr4VFXVm+indVQ=;
- b=nBbeDXBBVUQBawnnuMInObBxF3Enrm+BUzBy/qCIqlrKR4df4WG/Bqf4fCNcgwh29j6WIvT/DLLj4A4OzZXWYAfEZtNnbjp9FEZczq9rDZAMui0eXpqQh93eDgGiDUysa2LfOV+Iayc/LVSBBw0ytyWY0gjIW49ARtqPzN58W24=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- CH0PR01MB6841.prod.exchangelabs.com (2603:10b6:610:110::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.18; Fri, 8 Nov 2024 20:29:33 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.8137.018; Fri, 8 Nov 2024
- 20:29:33 +0000
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Graham Woodward <graham.woodward@arm.com>
-Cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] perf arm-spe: Add support for SPE Data Source packet on AmpereOne
-Date: Fri,  8 Nov 2024 20:29:46 +0000
-Message-ID: <20241108202946.16835-3-ilkka@os.amperecomputing.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241108202946.16835-1-ilkka@os.amperecomputing.com>
-References: <20241108202946.16835-1-ilkka@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH0PR03CA0255.namprd03.prod.outlook.com
- (2603:10b6:610:e5::20) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+        d=gmail.com; s=20230601; t=1731097859; x=1731702659; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=975RhISS9snOVR5cT+Z99sFnn60KIbe7YuBqYHMl/W4=;
+        b=SP6vAW2DMcVrxTVHPo/o8P9kMFBqx/z00bnXB3aKqJpxKiBEehi1t5dtveRGF1JRwy
+         wLWVHyCmBTPsh1RQ2eATg+cK1S7vfUqsA0Ot2LlD0bDHIafX3wABhBYy+UkVHvMiJvo5
+         ujESwYd4iW+/yaFfJD8y5vqj+B36aF61wFUsGM3k/1lWJinRKHetYtmhqT9CUvhucIwL
+         HC9yF64MWLLxbAhu+RQwsA9/+OP35WSYX8OXpmV8uj1tTPajRNefbfAV2Q6d1h53UGCC
+         ur6QLLXf8ppgTJfrHchKJJoJGptGfrkaY+fb5MpK19An6nCEJX6xoqWUkCba01QKYzLx
+         NawA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731097859; x=1731702659;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=975RhISS9snOVR5cT+Z99sFnn60KIbe7YuBqYHMl/W4=;
+        b=kXQolZWcOct0Pj/Fao2pBgCu4BAQFXPU/Fa9jftaibcysCo1gLH6tjwq2g2khzssIJ
+         axeQqGVcYnXRYzeGrICqu9Cx4HIioIgNp5Yyo5anvXgrg+ljZ3ayiuHCUDMk6+ZXK/c4
+         beQmZ02KZKt+kIsaTOVCcrD4/k9TcJCHYn60SGHUc+3kY75cj6dmNPAkWmQSjOuKMmSj
+         M3M4pDQyU0qUSdWjlqjDyAgCHRioMbaB7itNu7QMx7ueaT6NXiw+VuFCIvlKtTXoa7WP
+         DTt7Sd7UQgRzegfeOxkrK6ba47lySHXQuPUJfokeZrTe91D4Vwl5UamD/LmFYfEuE+cF
+         UbtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4SRlSDWbO5B7SjHx2LNGcc0I/5Q8tJ2E6Z1fSzA/8RZk+JOPR7PLegFKAt20vrDNhdF/q5w7vnR69@vger.kernel.org, AJvYcCXCjkSlY/u7IXFB0arI+aPsJmpkgdpdj/2UuAjNckTVC+pg0vbws0M7Srnr3U2hzWe6vFmDMmYi2q3R7Kt/@vger.kernel.org, AJvYcCXnJJ5z/dUC7dhEOKZD6u8moTPjMJowyvT7E8U71IlmkEEDjnhZESWyb852SFNlDP3ygBtTstlq19io@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzK1jS1rDt9U/VKcidMat06lLC3XAy7Di0vsc9ecMvnoKl+Lwr
+	zJN6K+n3vBTXHSh/t6lBDzDwl6x3PL8qGI/lPU9bwUNVeO2RtaTT
+X-Google-Smtp-Source: AGHT+IFnA8B3gdMncl9joVkiKED9mz5HN7VDKygr8RmfOVjjuIdQIDKMdQdT9VxpfjiqrYuVhJu+RQ==
+X-Received: by 2002:a05:6402:2552:b0:5ce:c7b1:e052 with SMTP id 4fb4d7f45d1cf-5cf0a49307cmr3860824a12.9.1731097858843;
+        Fri, 08 Nov 2024 12:30:58 -0800 (PST)
+Received: from [172.20.10.2] ([37.63.10.207])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03b5d7c3sm2329997a12.16.2024.11.08.12.30.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 12:30:58 -0800 (PST)
+Message-ID: <d5d3f934-4f1c-43d9-aaf9-8de194d1f3b7@gmail.com>
+Date: Fri, 8 Nov 2024 22:30:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|CH0PR01MB6841:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3df1dd23-d471-4601-bc45-08dd00340e08
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|7416014|366016|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IR1gY6pkPzHHO7ZF7U23W/cgAkpLjVIh7GBpNVqFzgbQbg8wGgmPXq3++lNk?=
- =?us-ascii?Q?1wHt3NP3fCPIzXGEgfUdSFYZawucwKy//3KhsAlA/OlWybnCa6+mRg1XbpUT?=
- =?us-ascii?Q?5SyeUe5Tx2IOlWWZucbGSyRnBA/p9JNCx7YKnuWmnlQjRhOohBlrDBozAebG?=
- =?us-ascii?Q?AeSKIqpEJ7sKk5PX2U6VpbDUQkE4PupCdq43jgprsV/1EgULcLCH0/uby1lK?=
- =?us-ascii?Q?sIUnZtcA82NURycxy/n9BLV204FF+gSTEdD9J8I157hStvk2cATC/q0kE+I9?=
- =?us-ascii?Q?0NY4lnF0u9bheyPU8AexOi0ArLQoxA0tEmHNLLZlb1wfMVHuPc0TozEXMKK9?=
- =?us-ascii?Q?c2o8a3Jqi5wpMfOkTkbhvFsEV75n9zwYayXrUDY3hG1cEQGgyLjNZ0CPjdfs?=
- =?us-ascii?Q?F5ws5R9SPYNT9zruvsa7msRQ7rU/vFr7XPAR/9isypmdOiyoFyD2GJskfrK/?=
- =?us-ascii?Q?jBvdeo57OEMLiCwRDLSy3bjBmcJZN5RQ1zK3VPf3a5ynVDC13zZM/Ykk1KY/?=
- =?us-ascii?Q?KOG49ad6GpN5NOpluAh3mlz6yCfXcy9z8kG1JXYDNdj7h+uLYR/9LH005ezo?=
- =?us-ascii?Q?Ndw8vL2edqDKJ8d43z5wudq7KShSD2bbT209RMa58MVQ3sx4B3zS7xffxrW9?=
- =?us-ascii?Q?dm6oSC6WAzPKo2Yw0pn7EYj94UNZzWcwcn59OZrL6vAItQl84nvyk1RWsR5s?=
- =?us-ascii?Q?6QEKfEvBHEqZ0YDBh/ONBTWrRehMex9BPcpcC0FB70P+6GaDw2gu+IRIFZ9a?=
- =?us-ascii?Q?LbXuV8uPJPCIW0d1EKKq5PeBcmdwOaLun7zBrq8CZqrzAYgQpgDrYb8Vkkbf?=
- =?us-ascii?Q?VlRQhrcCrO4ymxqEaMaHolAm7zPqXKHaldl0dUgLJGhElVUDh2ZzYL1msIGn?=
- =?us-ascii?Q?LLLmzVmWFjB0R3R8w1ZdnOWpQByA1iQBEl8g0kUTu8CGNNnACxtgCT+H9Uv5?=
- =?us-ascii?Q?/lAPzSaRNmeSZ49I/Wv2yo69M1YM3a3ttydbuANc94bLldljQO2VTd/jgbf5?=
- =?us-ascii?Q?y6eA+Au/VGmP8+xSyajrueS4ZqFGm+41zEL6oVyMmgFXc0X+JWUHWGFC8FkX?=
- =?us-ascii?Q?Io0yfnYultsx0BiC5AcqfTh/Uh94TlIogRpQFl6m+6yKVZIFgushyqwWJ1R6?=
- =?us-ascii?Q?w27dlaLZUEiiACfX2d+zuGLVLRHQlHRLn0AKTNoeJ7gLKd+9NppEmIcYUiKC?=
- =?us-ascii?Q?M1JZilr0HgeBHi82deS0aUlK70+olwN2qGuush7AmHpTg4IxoL9gEA3YHuL2?=
- =?us-ascii?Q?vrB3naPqakGgwBj0F/hf98UgzUDzGMk5KYfcwr0JKZKKye/2Bd3SgZHtlzgb?=
- =?us-ascii?Q?72TBCZPaKjPvWcfrBARpQX9bMS2lh7LALTX6PQe0mqBikOBmNEvMi0hecTwY?=
- =?us-ascii?Q?aDTTE0zJ5mdZ+3nrDnta0bQwWsi9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(366016)(376014)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yykkbOqlzvIGv8FOSFfDopY6XEDI2QQSgFd35OVrzOOHgYFMPYMzsd5CwvPY?=
- =?us-ascii?Q?+bnEiWiwJqvVC8aio/e1wCSme788FhsBU8zECNXzOwlSJYhk01L7iMUXphbu?=
- =?us-ascii?Q?sd1m4vTxVj971nesiNSZIJseotYgV7BWbparrJshMtVBNE3z8V2HajoNabcp?=
- =?us-ascii?Q?raGQfaPHkWReR2C4c1jbpO94lcnWTIZ/fi5p2upetzEZfrxNbpHq1wAM+1BU?=
- =?us-ascii?Q?NTqX1JwGaLMNCXkX8QhbRF8gFBUHIsq865phm+FiLaWiCJfAyXH2QUf8OUH/?=
- =?us-ascii?Q?dxp2GQ/Ct1lAU9ms1wC5V3/OzCw5XcxV7z7WcC65i4d6EjvBxUGEt7DSdlJ/?=
- =?us-ascii?Q?U3nXr2XykY1hdHgNxceqiX7f5bdKxXISzCIyyLCXn+Peq3wuf4MXLgqUi168?=
- =?us-ascii?Q?f+WLw0mITF1Ns/cTVpPJQEXNFPrrUDxIQHNrLQRTmqEfu0YUZx3xFbCv0H6j?=
- =?us-ascii?Q?kaBHhPy6MEt6WPBxqxFV61LCtxSIqLN+a9yqRGu2eI781JVH0/0QljqNGOJL?=
- =?us-ascii?Q?pyKHb96rKoXVir5SZtM3rj/F8bAAlWQflhIY/VIe12I00cMbURWjZU3bD47N?=
- =?us-ascii?Q?hKzus/mGKY32AJcP5Jj40bxvuWjd4ca65cngF0C3ER8eapW+zStWaiIwZWu6?=
- =?us-ascii?Q?idSE0Nip4DHdcyLPknh0Q/Rl9FB1CLA4Ox90DVlpPDBonzZGpIxnZog320m9?=
- =?us-ascii?Q?JhMdlvAlkhOQ4zc6FuEcLN7SQDqVvC3o/koXKveRnE2tSZqz63enj6nmOXIB?=
- =?us-ascii?Q?/ccqQS6gCqizlfvh+Fnv+Z5BSFLAnwIV2F0dysk9IU/vt6c4sJFzRAMZXSE7?=
- =?us-ascii?Q?nup4sKsjk7WbCHK1UJjvX0UBQAau2tYrXcj/RyF+wyBVIQKVRn3tqaPT+eNq?=
- =?us-ascii?Q?QyL32Ka3uyiwaLTv/rAwHXO3Cs6SuiGoHE4M+FlxYz2Q+4wsdGRqKicVX9Up?=
- =?us-ascii?Q?1x1yW5Fex816ElFi7Q4PGEIo2c7XruxtRpPNvwSeVtkBBnPM67zEkcXORA9R?=
- =?us-ascii?Q?ayTcH7/K4l13tR0gVQ1lDm0TmQQCv69LqQn5Z05hs4I8pkp2JiLQCiF3/EgH?=
- =?us-ascii?Q?ouwSQM5Jpnz8M+ffPg6BMNvX+TDf8dzFxc5GrwwEgeulhjh/br6bWuU4VZD/?=
- =?us-ascii?Q?BN0WzzFwqdY3/7A9D8+WwT33n87UB0rLla3w171NU5fAUaQGa4u6L19DUDot?=
- =?us-ascii?Q?1K1tXrztPdgHHSdarcgEnziOXOzwVImNJMLlWtA/hDQfBRcqZvKu5QaHK98o?=
- =?us-ascii?Q?djJWg8rPRVxCM+qsu130Rrg9Txco1Ru7GGp0D8pCamiTzys8SGWNMbf/ml4J?=
- =?us-ascii?Q?zhZakkwwoPMyln58XTcswtNMcEQIpKICrIy50gjAK8sDRlV6hIRQu0TuTc5x?=
- =?us-ascii?Q?zs9xjvfqn2OXSKgxa2xlIceB7Wm4jcHcEXcuM0YJCrZ2vN5GRHcDEQ/2PUNG?=
- =?us-ascii?Q?h0GZj2p8A5PXAFyTkySXZbNwxN5yYEb44o0GJDa73bG+UyygY7CLTpF56Nsh?=
- =?us-ascii?Q?hdrU9R4wX70D9jMUCVWSzpw2gdomsyWbKCmX/4ZIbOF1whX89hOX7PJeI/Gi?=
- =?us-ascii?Q?1oYP//zo25Rw4x7imuRNmHobtnYWgpC9Rs1z6azbWE5STkzgLsatGBOXPdfF?=
- =?us-ascii?Q?krFqQwjm1Arzo9gCqmy6bhU=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3df1dd23-d471-4601-bc45-08dd00340e08
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 20:29:33.1024
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 91xGPOCQqwNIuJdmadOB+4iK4AB+VpREjhLoq/CnjWGc2fw6RwZb4novpVVhbRdJ48mIA6kIXHmF9BQahF0+EJjsvn0fZHwCyBuFqLRmkSMuYdIZPWN86EYeEA5FBdqs
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR01MB6841
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: clock: actions,owl-cmu: convert to YAML
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241107143431.728669-1-ivo.ivanov.ivanov1@gmail.com>
+ <a4begcrmbtotl2imd3eaxpdveagvwridy6ev5zmwzvjqt3ovfq@wyj2dj73xe3e>
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <a4begcrmbtotl2imd3eaxpdveagvwridy6ev5zmwzvjqt3ovfq@wyj2dj73xe3e>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
 
-Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-Reviewed-by: Leo Yan <leo.yan@arm.com>
----
- .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 ++++
- tools/perf/util/arm-spe.c                     | 44 +++++++++++++++++++
- 2 files changed, 53 insertions(+)
 
-diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-index 358c611eeddb..4bcd627e859f 100644
---- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-+++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-@@ -67,6 +67,15 @@ enum arm_spe_common_data_source {
- 	ARM_SPE_COMMON_DS_DRAM		= 0xe,
- };
- 
-+enum arm_spe_ampereone_data_source {
-+	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE    = 0x0,
-+	ARM_SPE_AMPEREONE_SLC                           = 0x3,
-+	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE             = 0x5,
-+	ARM_SPE_AMPEREONE_DDR                           = 0x7,
-+	ARM_SPE_AMPEREONE_L1D                           = 0x8,
-+	ARM_SPE_AMPEREONE_L2D                           = 0x9,
-+};
-+
- struct arm_spe_record {
- 	enum arm_spe_sample_type type;
- 	int err;
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 3064c3f22806..12761c39788f 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -455,6 +455,11 @@ static const struct midr_range common_ds_encoding_cpus[] = {
- 	{},
- };
- 
-+static const struct midr_range ampereone_ds_encoding_cpus[] = {
-+	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
-+	{},
-+};
-+
- static void arm_spe__sample_flags(struct arm_spe_queue *speq)
- {
- 	const struct arm_spe_record *record = &speq->decoder->record;
-@@ -544,8 +549,47 @@ static void arm_spe__synth_data_source_common(const struct arm_spe_record *recor
- 	}
- }
- 
-+/*
-+ * Source is IMPDEF. Here we convert the source code used on AmpereOne cores
-+ * to the common (Neoverse, Cortex) to avoid duplicating the decoding code.
-+ */
-+static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
-+						 union perf_mem_data_src *data_src)
-+{
-+	struct arm_spe_record common_record;
-+
-+	switch (record->source) {
-+	case ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE:
-+		common_record.source = ARM_SPE_COMMON_DS_PEER_CORE;
-+		break;
-+	case ARM_SPE_AMPEREONE_SLC:
-+		common_record.source = ARM_SPE_COMMON_DS_SYS_CACHE;
-+		break;
-+	case ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE:
-+		common_record.source = ARM_SPE_COMMON_DS_REMOTE;
-+		break;
-+	case ARM_SPE_AMPEREONE_DDR:
-+		common_record.source = ARM_SPE_COMMON_DS_DRAM;
-+		break;
-+	case ARM_SPE_AMPEREONE_L1D:
-+		common_record.source = ARM_SPE_COMMON_DS_L1D;
-+		break;
-+	case ARM_SPE_AMPEREONE_L2D:
-+		common_record.source = ARM_SPE_COMMON_DS_L2;
-+		break;
-+	default:
-+		pr_warning_once("AmpereOne: Unknown data source (0x%x)\n",
-+				record->source);
-+		return;
-+	}
-+
-+	common_record.op = record->op;
-+	arm_spe__synth_data_source_common(&common_record, data_src);
-+}
-+
- static const struct data_source_handle data_source_handles[] = {
- 	DS(common_ds_encoding_cpus, data_source_common),
-+	DS(ampereone_ds_encoding_cpus, data_source_ampereone),
- };
- 
- static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
--- 
-2.47.0
+
+On 11/8/24 14:16, Krzysztof Kozlowski wrote:
+> On Thu, Nov 07, 2024 at 04:34:31PM +0200, Ivaylo Ivanov wrote:
+>> Convert the Actions Semi Owl CMU bindings to DT schema.
+>>
+>> Changes during conversion:
+>>  - Since all Actions Semi Owl SoCs utilize the internal low frequency
+>>    oscillator as a parent for some clocks, require it.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> <form letter>
+> This is a friendly reminder during the review process.
+>
+> It looks like you received a tag and forgot to add it.
+>
+> If you do not know the process, here is a short explanation: Please add
+> Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
+> or above your Signed-off-by tag. Tag is "received", when provided
+> in a message replied to you on the mailing list. Tools like b4 can help
+> here. However, there's no need to repost patches *only* to add the tags.
+> The upstream maintainer will do that for tags received on the version
+> they apply.
+>
+> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+>
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+>
+> I cannot add other people's tags - toolsets ignore it.
+>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> ...
+>
+>> +maintainers:
+>> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> +
+>> +description: |
+>> +  The Actions Semi Owl Clock Management Unit generates and supplies clock
+>> +  to various controllers within the SoC.
+>> +
+>> +  See also::
+> Single ':'.
+
+$ rg --files-with-matches "See also:" | wc -l
+110
+
+$ rg --files-with-matches "See also::" | wc -l
+94
+
+Having 94 matches of that out of all 110 definitely leads me to
+think that this has been done on purpose, and is still being done.
+
+Could you elaborate a bit more? If it's wrong, then shouldn't we
+clean all the other bindings from that mistake?
+
+Best regards, Ivo.
+
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Best regards,
+> Krzysztof
+>
 
 
