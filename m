@@ -1,325 +1,368 @@
-Return-Path: <linux-kernel+bounces-401427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E4229C1A51
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:18:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0039C1A58
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D0C1F23638
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:18:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFD05B2243E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C711E32A2;
-	Fri,  8 Nov 2024 10:18:24 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D061E283A;
+	Fri,  8 Nov 2024 10:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jNd4qUvU"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2991DED5A
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2AB19259F
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731061104; cv=none; b=Hft4G6hoojKmGQip+9vNnunkeq3phd6IM4x7pCnMmZvbM9f0g6VRaains631E2zT+o0TY3LFrXAWX5qbOFzYH0Fz00FbWDlqvoLnopFCbpRSg1KtUI4hWBf5LPvNgGm9uZmrTDqY0Xu8PyK4bGJ9exN38iN73wLlWxS/X76AQ9I=
+	t=1731061379; cv=none; b=QF6mG14clbL1Kts9BqOJ3tnNSAo5MNmaeLEcmzWiPg9T1hFNyWnlYK+oM8LU3+rGpwGzhmfRIxshYWyE6KIIid2oGk6tFcsPYCQ+er/TRGKrhH/AvRZR/sreQHJ1kwtX5hkAXgiwWv3yxIdiamB71EvQu67IeRG1+m5SLmNnq+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731061104; c=relaxed/simple;
-	bh=04KvrC6HdKcsCv1AkSLtJChq0NNBGE848WPtHbR2TJQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ixz7QyXkK/LNso3I3O63FIDniJOov+q8hOaYfvTZerN/jGb4/HJgwWHXyGT0L6+RfUd/g9L/XYSBledoXNEkTqX7ZLyjsdKPdihI+484nqO8j/y3lU881wd8qXUq+5aI5oFPwlllD5aCUWX/M8CDzPd/4UDcXUUroXPMaR4MS8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6f3a08573so4631855ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:18:22 -0800 (PST)
+	s=arc-20240116; t=1731061379; c=relaxed/simple;
+	bh=2XSVJ7MRTDYMhaOEh1VDyoXnJKjt44IvmM+Bblei2CE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XUkpoknmAC7+sgN4CiSOCvHrCuNDpu/4sCjUW8H3t/BMZHiOttPsKLj3F6VvQ+M7mu9gh1VIjjfXV5SerespcSptBY6mG+EkXeRo2HNW1Setx15UUXGFPnIZPXNs635ShAxGoWKmUGw/RsYrOoTMkvyBbGoV7Szc29xm6e0gn58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jNd4qUvU; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d462c91a9so1235231f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:22:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731061375; x=1731666175; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d5/7vgXiVWHft41t+5SnbWXBDVF//wXy8Ork/OVe6xM=;
+        b=jNd4qUvUWp9LPx7AgDqEn2YYEkCOq2LKnjPZJT3wihviHPkdxwMlaz3ov0KW7R0px/
+         r+93jCYp5XR8RcOtJl/5TWwte3bDZ1Fn01b5NBomqsZUtB8ZIuoTV15GYNOBolWKm5yJ
+         F8m55G9eNKkUi71cokU8UdpfhBLq5Yzua2zLrbAl2wLJMdVc6k7aLmdZBNntEfHz8Pjc
+         1f/v6vhF+afx+J1NvfDD4X26EaWa8kk7X50ZN/IreH+l8uSWOEKPPMOBPFCSX+9H5ZOn
+         uyywsXYu7VySfQL0vj+TI0bTMF1nJMFF7FNbS9OX8BbLKym6vjRdoyBzPKL+4SiDEDyh
+         fBaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731061101; x=1731665901;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YL5xe0P89IfOqHVhWaiV91dgxUHxAPg1BtgDYrQr5F0=;
-        b=OdmLD5FfkZ/KKEy0Gu4kVMXwDGXT6Oh649sTN7Y9QdWOX/gp9Tq+FHzFyyyOfrKFCY
-         ftgUKujW4TUH2V4BEvcsKz7C+9sSc2WUd9CMm8nanp6PQCcYaJwLoPMChhxrKBPJi0yG
-         YHx2Xm+7J1z3ESByJGivsNne7LpMS/yPI0uFxztreaAMpdLF1XDTBwh8m0hqdh7hVS/l
-         do/JSDk/eHXK2UWoPpm+/AecRJfjJ0PK3BFZlmkBR3Kx81/cmWo7YAVMebMJNgvI6LWx
-         pNzicBqxT0nYVDscelMOTev2SR4cOcGu8wFFxfFJ3JwaT2pedol93Dg7mQl0VWpaRmTu
-         9XaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvbwKUZVieV16IFobVvc1BVhD/YBFET6fjRQJfAnfL3K3rUBtwF7CDDJZ6t0yFbRcfCVgu3td0Q83vnJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJa3cbA0r9fkTbYIkp0wqY4fAckuqlvL1iLbyE/FE25YorYwTY
-	vgH90+5YVyDegWBKTSKozLz/vUlj7KV3oSQ8+57tT0W9epo9wF+d+MbWh2dkiBKSqVnhwTiEqkt
-	rCrj+ZGCgOM/EePreq3O465f0oRiY+MIol6OlpSJN5BY+rFFzxskBtQc=
-X-Google-Smtp-Source: AGHT+IFbHP7FrN4B2mMjVS3CUHuSi4dNVZvriUIZAXfl03xqRnKFVCBL+MTK5EPJ5+3ODAxc5J/CpIZEqawxjpQ9h7hrXZ9dfPIK
+        d=1e100.net; s=20230601; t=1731061375; x=1731666175;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d5/7vgXiVWHft41t+5SnbWXBDVF//wXy8Ork/OVe6xM=;
+        b=DkK9+OBc95wGfBxu6CH9gbYs+JjvGfuPppIeidGfaZTuwt9Zb/6Bvi6SwStn4gVm9m
+         m2Dcs+92xTty6NGm+FYJ+bTfg6/uWzL4FRqYd1vV7SO+v0IJttY4XVcoGCaGq5KX8zIZ
+         L/6Qo3M5v+0ky03gTcYW/9BBo8nBGavKgyADZq+u+TKkMrsJdT+0v2yET2wu8CqoUAUO
+         RXuUY2h+bp4qnEc0LYVYlcxEhnD6dAoGiLHe84YgiGMxrF05rcCJ4miPuggPQFJnnLBJ
+         Sh1zgrP1nd7KL6CMAWwxv+xJDuk4+cuAfF0CqDUhOp4SDtEei5AtBGaeMGj/jMs5ShRq
+         bk5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZhKPGsaEcRpwV1D9/nhBWZqF/84o9WOKA0acgK71MNo+XwbFOQv36Hu+oh9+0UW9KMnr8DWPIyH+KeMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymD9PLqE2VMdyJDeoO0yLKlt60vmCiAJHdSZVFAq0mOAgE1yPv
+	iHSPH5XAEJyOOIDIMfKg1Gmc/N8/Yxzol5yjUSNe0PTo2OvdiRDvTs2j/+x3/50=
+X-Google-Smtp-Source: AGHT+IFobP8XLxwPTAvv6JZbrKXqmGWSnKxS/agpTk5Grqdj3cevU1nFc4cgLboS4JThUKNPgo0nfQ==
+X-Received: by 2002:a5d:64e5:0:b0:37d:41cd:ba4e with SMTP id ffacd0b85a97d-381f1852777mr1996931f8f.48.1731061375336;
+        Fri, 08 Nov 2024 02:22:55 -0800 (PST)
+Received: from [172.16.23.252] ([154.14.63.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed99681csm4253706f8f.49.2024.11.08.02.22.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 02:22:54 -0800 (PST)
+Message-ID: <dffb4a49-9295-4ce3-af96-802f10c600e1@linaro.org>
+Date: Fri, 8 Nov 2024 11:22:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e4:b0:3a6:c472:765e with SMTP id
- e9e14a558f8ab-3a6f19c9f3bmr30555405ab.11.1731061101487; Fri, 08 Nov 2024
- 02:18:21 -0800 (PST)
-Date: Fri, 08 Nov 2024 02:18:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672de56d.050a0220.69fce.000d.GAE@google.com>
-Subject: [syzbot] [kernfs?] possible deadlock in __kernfs_remove (2)
-From: syzbot <syzbot+aa419d82b68e6a7e96c5@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 4/4] PCI: qcom: Add Qualcomm SA8255p based PCIe root
+ complex functionality
+To: Mayank Rana <quic_mrana@quicinc.com>, jingoohan1@gmail.com,
+ manivannan.sadhasivam@linaro.org, will@kernel.org, lpieralisi@kernel.org,
+ kw@linux.com, robh@kernel.org, bhelgaas@google.com, krzk@kernel.org
+Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_krichai@quicinc.com
+References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
+ <20241106221341.2218416-5-quic_mrana@quicinc.com>
+ <a1f03a33-22b2-4023-8185-d15abc72bc8a@linaro.org>
+ <7cfc0657-e8f4-45a8-95e2-668476ffce17@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <7cfc0657-e8f4-45a8-95e2-668476ffce17@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 07/11/2024 18:45, Mayank Rana wrote:
+> 
+> 
+> On 11/7/2024 12:45 AM, neil.armstrong@linaro.org wrote:
+>> Hi,
+>>
+>> On 06/11/2024 23:13, Mayank Rana wrote:
+>>> On SA8255p ride platform, PCIe root complex is firmware managed as well
+>>> configured into ECAM compliant mode. This change adds functionality to
+>>> enable resource management (system resource as well PCIe controller and
+>>> PHY configuration) through firmware, and enumerating ECAM compliant root
+>>> complex.
+>>>
+>>> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+>>> ---
+>>>   drivers/pci/controller/dwc/Kconfig     |   1 +
+>>>   drivers/pci/controller/dwc/pcie-qcom.c | 116 +++++++++++++++++++++++--
+>>>   2 files changed, 108 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+>>> index b6d6778b0698..0fe76bd39d69 100644
+>>> --- a/drivers/pci/controller/dwc/Kconfig
+>>> +++ b/drivers/pci/controller/dwc/Kconfig
+>>> @@ -275,6 +275,7 @@ config PCIE_QCOM
+>>>       select PCIE_DW_HOST
+>>>       select CRC8
+>>>       select PCIE_QCOM_COMMON
+>>> +    select PCI_HOST_COMMON
+>>>       help
+>>>         Say Y here to enable PCIe controller support on Qualcomm SoCs. The
+>>>         PCIe controller uses the DesignWare core plus Qualcomm-specific
+>>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>>> index ef44a82be058..2cb74f902baf 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>>> @@ -21,7 +21,9 @@
+>>>   #include <linux/limits.h>
+>>>   #include <linux/init.h>
+>>>   #include <linux/of.h>
+>>> +#include <linux/of_pci.h>
+>>>   #include <linux/pci.h>
+>>> +#include <linux/pci-ecam.h>
+>>>   #include <linux/pm_opp.h>
+>>>   #include <linux/pm_runtime.h>
+>>>   #include <linux/platform_device.h>
+>>> @@ -254,10 +256,12 @@ struct qcom_pcie_ops {
+>>>     * @ops: qcom PCIe ops structure
+>>>     * @override_no_snoop: Override NO_SNOOP attribute in TLP to enable cache
+>>>     * snooping
+>>> +  * @firmware_managed: Set if PCIe root complex is firmware managed
+>>>     */
+>>>   struct qcom_pcie_cfg {
+>>>       const struct qcom_pcie_ops *ops;
+>>>       bool override_no_snoop;
+>>> +    bool firmware_managed;
+>>>       bool no_l0s;
+>>>   };
+>>> @@ -1415,6 +1419,10 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
+>>>       .no_l0s = true,
+>>>   };
+>>> +static const struct qcom_pcie_cfg cfg_fw_managed = {
+>>> +    .firmware_managed = true,
+>>> +};
+>>> +
+>>>   static const struct dw_pcie_ops dw_pcie_ops = {
+>>>       .link_up = qcom_pcie_link_up,
+>>>       .start_link = qcom_pcie_start_link,
+>>> @@ -1566,6 +1574,51 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>>>       return IRQ_HANDLED;
+>>>   }
+>>> +static void qcom_pci_free_msi(void *ptr)
+>>> +{
+>>> +    struct dw_pcie_rp *pp = (struct dw_pcie_rp *)ptr;
+>>> +
+>>> +    if (pp && pp->has_msi_ctrl)
+>>> +        dw_pcie_free_msi(pp);
+>>> +}
+>>> +
+>>> +static int qcom_pcie_ecam_host_init(struct pci_config_window *cfg)
+>>> +{
+>>> +    struct device *dev = cfg->parent;
+>>> +    struct dw_pcie_rp *pp;
+>>> +    struct dw_pcie *pci;
+>>> +    int ret;
+>>> +
+>>> +    pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
+>>> +    if (!pci)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    pci->dev = dev;
+>>> +    pp = &pci->pp;
+>>> +    pci->dbi_base = cfg->win;
+>>> +    pp->num_vectors = MSI_DEF_NUM_VECTORS;
+>>> +
+>>> +    ret = dw_pcie_msi_host_init(pp);
+>>> +    if (ret)
+>>> +        return ret;
+>>> +
+>>> +    pp->has_msi_ctrl = true;
+>>> +    dw_pcie_msi_init(pp);
+>>> +
+>>> +    ret = devm_add_action_or_reset(dev, qcom_pci_free_msi, pp);
+>>> +    return ret;
+>>> +}
+>>> +
+>>> +/* ECAM ops */
+>>> +const struct pci_ecam_ops pci_qcom_ecam_ops = {
+>>> +    .init        = qcom_pcie_ecam_host_init,
+>>> +    .pci_ops    = {
+>>> +        .map_bus    = pci_ecam_map_bus,
+>>> +        .read        = pci_generic_config_read,
+>>> +        .write        = pci_generic_config_write,
+>>> +    }
+>>> +};
+>>> +
+>>>   static int qcom_pcie_probe(struct platform_device *pdev)
+>>>   {
+>>>       const struct qcom_pcie_cfg *pcie_cfg;
+>>> @@ -1580,11 +1633,52 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>>>       char *name;
+>>>       pcie_cfg = of_device_get_match_data(dev);
+>>> -    if (!pcie_cfg || !pcie_cfg->ops) {
+>>> -        dev_err(dev, "Invalid platform data\n");
+>>> +    if (!pcie_cfg) {
+>>> +        dev_err(dev, "No platform data\n");
+>>> +        return -EINVAL;
+>>> +    }
+>>> +
+>>> +    if (!pcie_cfg->firmware_managed && !pcie_cfg->ops) {
+>>> +        dev_err(dev, "No platform ops\n");
+>>>           return -EINVAL;
+>>>       }
+>>> +    pm_runtime_enable(dev);
+>>> +    ret = pm_runtime_get_sync(dev);
+>>> +    if (ret < 0)
+>>> +        goto err_pm_runtime_put;
+>>> +
+>>> +    if (pcie_cfg->firmware_managed) {
+>>> +        struct pci_host_bridge *bridge;
+>>> +        struct pci_config_window *cfg;
+>>> +
+>>> +        bridge = devm_pci_alloc_host_bridge(dev, 0);
+>>> +        if (!bridge) {
+>>> +            ret = -ENOMEM;
+>>> +            goto err_pm_runtime_put;
+>>> +        }
+>>> +
+>>> +        of_pci_check_probe_only();
+>>> +        /* Parse and map our Configuration Space windows */
+>>> +        cfg = gen_pci_init(dev, bridge, &pci_qcom_ecam_ops);
+>>> +        if (IS_ERR(cfg)) {
+>>> +            ret = PTR_ERR(cfg);
+>>> +            goto err_pm_runtime_put;
+>>> +        }
+>>> +
+>>> +        bridge->sysdata = cfg;
+>>> +        bridge->ops = (struct pci_ops *)&pci_qcom_ecam_ops.pci_ops;
+>>> +        bridge->msi_domain = true;
+>>> +
+>>> +        ret = pci_host_probe(bridge);
+>>> +        if (ret) {
+>>> +            dev_err(dev, "pci_host_probe() failed:%d\n", ret);
+>>> +            goto err_pm_runtime_put;
+>>> +        }
+>>> +
+>>> +        return ret;
+>>> +    }
+>>> +
+>>>       pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+>>>       if (!pcie)
+>>>           return -ENOMEM;
+>>> @@ -1593,11 +1687,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>>>       if (!pci)
+>>>           return -ENOMEM;
+>>> -    pm_runtime_enable(dev);
+>>> -    ret = pm_runtime_get_sync(dev);
+>>> -    if (ret < 0)
+>>> -        goto err_pm_runtime_put;
+>>> -
+>>>       pci->dev = dev;
+>>>       pci->ops = &dw_pcie_ops;
+>>>       pp = &pci->pp;
+>>> @@ -1739,9 +1828,13 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>>>   static int qcom_pcie_suspend_noirq(struct device *dev)
+>>>   {
+>>> -    struct qcom_pcie *pcie = dev_get_drvdata(dev);
+>>> +    struct qcom_pcie *pcie;
+>>>       int ret = 0;
+>>> +    if (of_device_is_compatible(dev->of_node, "qcom,pcie-sa8255p"))
+>>
+>> Can't you use if (pcie_cfg->firmware_managed) here instead ?
+> yes, although with firmware managed mode, struct qcom_pcie *pcie is not allocated, and just
+> to get access to pcie_cfg for this check, I took this approach. I am thiking to do allocating struct qcom_pcie *pcie and using it in future if we need more other related functionality which needs usage of this structure for functionality like global interrupt etc.
+> 
+> Although if you still prefer to allocate struct qcom_pcie based memory to access pcie_cfg, then I can consider to update in next patchset. Please suggest.
 
-syzbot found the following issue on:
+I understand, but running of_device_is_compatible() in runtime PM is not something we should do,
+so either allocate pcie_cfg, or add a firmware_managed bool to qcom_pcie copied from pcie_cfg,
+or move runtime pm callbacks in qcom_pcie_ops and don't declare any in cfg_fw_managed->ops.
 
-HEAD commit:    59b723cd2adb Linux 6.12-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1035f630580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
-dashboard link: https://syzkaller.appspot.com/bug?extid=aa419d82b68e6a7e96c5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101e46a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=149aad5f980000
+I think the latter would be more scalable so we could add runtime pm variant handling
+for each IP versions. But it may be quite quite useless for now.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-59b723cd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6b98f620edf1/vmlinux-59b723cd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b5d1377ba568/bzImage-59b723cd.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6387bac8a9c0/mount_0.gz
+I'll leave Mani comment on that.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aa419d82b68e6a7e96c5@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc6-syzkaller #0 Not tainted
-------------------------------------------------------
-udevd/5325 is trying to acquire lock:
-ffff88804002c1e8 (kn->active#5){++++}-{0:0}, at: __kernfs_remove+0x400/0x870 fs/kernfs/dir.c:1486
-
-but task is already holding lock:
-ffff88801f9de4c8 (&disk->open_mutex){+.+.}-{3:3}, at: bdev_release+0x17e/0x700 block/bdev.c:1087
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&disk->open_mutex){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       bdev_open+0xf0/0xc50 block/bdev.c:904
-       bdev_file_open_by_dev+0x1b0/0x220 block/bdev.c:1018
-       disk_scan_partitions+0x1be/0x2b0 block/genhd.c:367
-       device_add_disk+0xd02/0x1000 block/genhd.c:510
-       pmem_attach_disk+0xdf7/0x10e0 drivers/nvdimm/pmem.c:576
-       nvdimm_bus_probe+0x147/0x4e0 drivers/nvdimm/bus.c:94
-       really_probe+0x2b8/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __driver_attach+0x45f/0x710 drivers/base/dd.c:1216
-       bus_for_each_dev+0x239/0x2b0 drivers/base/bus.c:370
-       bus_add_driver+0x346/0x670 drivers/base/bus.c:675
-       driver_register+0x23a/0x320 drivers/base/driver.c:246
-       do_one_initcall+0x248/0x880 init/main.c:1269
-       do_initcall_level+0x157/0x210 init/main.c:1331
-       do_initcalls+0x3f/0x80 init/main.c:1347
-       kernel_init_freeable+0x435/0x5d0 init/main.c:1580
-       kernel_init+0x1d/0x2b0 init/main.c:1469
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #1 (&nvdimm_namespace_key){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       device_lock include/linux/device.h:1014 [inline]
-       uevent_show+0x17d/0x340 drivers/base/core.c:2736
-       dev_attr_show+0x55/0xc0 drivers/base/core.c:2430
-       sysfs_kf_seq_show+0x331/0x4c0 fs/sysfs/file.c:59
-       seq_read_iter+0x43f/0xd70 fs/seq_file.c:230
-       new_sync_read fs/read_write.c:488 [inline]
-       vfs_read+0x991/0xb70 fs/read_write.c:569
-       ksys_read+0x183/0x2b0 fs/read_write.c:712
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (kn->active#5){++++}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       kernfs_drain+0x31c/0x6d0 fs/kernfs/dir.c:500
-       __kernfs_remove+0x400/0x870 fs/kernfs/dir.c:1486
-       kernfs_remove_by_name_ns+0xdc/0x160 fs/kernfs/dir.c:1694
-       sysfs_remove_file include/linux/sysfs.h:773 [inline]
-       device_remove_file drivers/base/core.c:3054 [inline]
-       device_del+0x56a/0x9b0 drivers/base/core.c:3859
-       drop_partition+0x11b/0x180 block/partitions/core.c:273
-       bdev_disk_changed+0x2bf/0x13f0 block/partitions/core.c:666
-       __loop_clr_fd drivers/block/loop.c:1182 [inline]
-       lo_release+0x53e/0x850 drivers/block/loop.c:1739
-       bdev_release+0x5dd/0x700
-       blkdev_release+0x15/0x20 block/fops.c:639
-       __fput+0x23f/0x880 fs/file_table.c:431
-       __do_sys_close fs/open.c:1567 [inline]
-       __se_sys_close fs/open.c:1552 [inline]
-       __x64_sys_close+0x7f/0x110 fs/open.c:1552
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  kn->active#5 --> &nvdimm_namespace_key --> &disk->open_mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&disk->open_mutex);
-                               lock(&nvdimm_namespace_key);
-                               lock(&disk->open_mutex);
-  lock(kn->active#5);
-
- *** DEADLOCK ***
-
-1 lock held by udevd/5325:
- #0: ffff88801f9de4c8 (&disk->open_mutex){+.+.}-{3:3}, at: bdev_release+0x17e/0x700 block/bdev.c:1087
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5325 Comm: udevd Not tainted 6.12.0-rc6-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- kernfs_drain+0x31c/0x6d0 fs/kernfs/dir.c:500
- __kernfs_remove+0x400/0x870 fs/kernfs/dir.c:1486
- kernfs_remove_by_name_ns+0xdc/0x160 fs/kernfs/dir.c:1694
- sysfs_remove_file include/linux/sysfs.h:773 [inline]
- device_remove_file drivers/base/core.c:3054 [inline]
- device_del+0x56a/0x9b0 drivers/base/core.c:3859
- drop_partition+0x11b/0x180 block/partitions/core.c:273
- bdev_disk_changed+0x2bf/0x13f0 block/partitions/core.c:666
- __loop_clr_fd drivers/block/loop.c:1182 [inline]
- lo_release+0x53e/0x850 drivers/block/loop.c:1739
- bdev_release+0x5dd/0x700
- blkdev_release+0x15/0x20 block/fops.c:639
- __fput+0x23f/0x880 fs/file_table.c:431
- __do_sys_close fs/open.c:1567 [inline]
- __se_sys_close fs/open.c:1552 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1552
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f31211170a8
-Code: 48 8b 05 83 9d 0d 00 64 c7 00 16 00 00 00 83 c8 ff 48 83 c4 20 5b c3 64 8b 04 25 18 00 00 00 85 c0 75 20 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 5b 48 8b 15 51 9d 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007fffbff72f28 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 00007f31215610e0 RCX: 00007f31211170a8
-RDX: 000055bb50865e1f RSI: 00007fffbff72728 RDI: 0000000000000008
-RBP: 000055be0b666270 R08: 0000000000000006 R09: e96079c9d5837796
-R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000002
-R13: 000055be0b65a9a0 R14: 0000000000000008 R15: 000055be0b648910
- </TASK>
- loop0: p1 p2 p3
-block device autoloading is deprecated and will be removed.
-udevd[5325]: inotify_add_watch(7, /dev/loop0p1, 10) failed: No such file or directory
-udevd[5325]: inotify_add_watch(7, /dev/loop0p1, 10) failed: No such file or directory
-udevd[5325]: inotify_add_watch(7, /dev/loop0p1, 10) failed: No such file or directory
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
-udevd[5325]: inotify_add_watch(7, /dev/loop0p1, 10) failed: No such file or directory
-udevd[5325]: inotify_add_watch(7, /dev/loop0p1, 10) failed: No such file or directory
-udevd[5325]: inotify_add_watch(7, /dev/loop0p1, 10) failed: No such file or directory
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
- loop0: p1 p2 p3
+Neil
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>> +        return 0;
+>>> +
+>>> +    pcie = dev_get_drvdata(dev);
+>>>       /*
+>>>        * Set minimum bandwidth required to keep data path functional during
+>>>        * suspend.
+>>> @@ -1795,9 +1888,13 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+>>>   static int qcom_pcie_resume_noirq(struct device *dev)
+>>>   {
+>>> -    struct qcom_pcie *pcie = dev_get_drvdata(dev);
+>>> +    struct qcom_pcie *pcie;
+>>>       int ret;
+>>> +    if (of_device_is_compatible(dev->of_node, "qcom,pcie-sa8255p"))
+>>
+>> Ditto
+>>
+>>> +        return  0;
+>>> +
+>>> +    pcie = dev_get_drvdata(dev);
+>>>       if (pm_suspend_target_state != PM_SUSPEND_MEM) {
+>>>           ret = icc_enable(pcie->icc_cpu);
+>>>           if (ret) {
+>>> @@ -1830,6 +1927,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>>>       { .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
+>>>       { .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
+>>>       { .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
+>>> +    { .compatible = "qcom,pcie-sa8255p", .data = &cfg_fw_managed },
+>>>       { .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
+>>>       { .compatible = "qcom,pcie-sa8775p", .data = &cfg_1_34_0},
+>>>       { .compatible = "qcom,pcie-sc7280", .data = &cfg_1_9_0 },
+>>
+>> Thanks,
+>> Neil
+> 
+> Regards,
+> Mayank
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
