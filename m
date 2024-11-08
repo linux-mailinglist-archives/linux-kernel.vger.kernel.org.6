@@ -1,104 +1,229 @@
-Return-Path: <linux-kernel+bounces-401321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36CB9C18CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0179C18D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95E828452E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA9A828438A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8D31E0DE2;
-	Fri,  8 Nov 2024 09:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA281E0DD5;
+	Fri,  8 Nov 2024 09:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ke1fw9pI"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l7ltxyM3"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87911E0DAA
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFC61E0DAA
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731056964; cv=none; b=d3wUmhOPbMyOzhued06o3AnUjYhiiVZG2r8BfiRx8aD9pZUtOkTEyXvzDCTtiO+wbsNDg4VGc95W7EQn8MEqrGn7XALVtjXrC1xutFfW65rcpkzrYntaVCL8j3EO3pIrQhItAtyFbVi2WjNGDXSOljsnmg3ZlDUqYzdTjzKjTms=
+	t=1731056993; cv=none; b=RXBSPXrBnAjbm1NDkBnpgUFGOM/Hpr7epggEqbNQ7M13tQUQTnG19JANPJ9VmI4KKCkFHBGtkXrU2Az3VOb22Sqhu5CML1FkgOsGiCcTQd0viOsveBxVxQ5888N+H2YuUOv7HwmxcqPRn2A6fJcIHJlIBHm7HILfQ0oV++mp614=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731056964; c=relaxed/simple;
-	bh=FA4vkNb/mitqyAciN2f5UTCEggzC8PzDjAk9Yl3f00E=;
+	s=arc-20240116; t=1731056993; c=relaxed/simple;
+	bh=6KyTu3O9fQfXvsz503x3Dgpd5/g0spE0Tog+jn1Fri4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JhCb2zEW0nkZ8twWDDLg8WlUd4J0/0ctzN25n4TV1okqnhDn3rrTz+piCcKvI8lUzsAJRtfTa1OZkrWRa0fc587rBpTV40n8aAPRFXb/Hw4pgi05KsaPleuKzYv2Vs8MmglfL/TCRT9Zi1thp6mOE94cIMPERz4KHT9mFIa/66Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ke1fw9pI; arc=none smtp.client-ip=209.85.208.173
+	 To:Cc:Content-Type; b=GGj2Bupu6XrFE4fYIiL4jcXweiEoSvmv/p4MHFTUJJ0fBI3Rg1Iq+MTea9IBv1Z57yjUSGQyL4BygE1MZhQE4iclPH2py0Ld2SunvceWVYx73dJKEkznOB2hkC/5ul/R8zh2VvuOpilFkkQFE2bbD9sLlCogNEQ0zMoRxyCV3xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l7ltxyM3; arc=none smtp.client-ip=209.85.222.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso16026661fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:09:22 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-84fc0212a60so664871241.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:09:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731056961; x=1731661761; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731056991; x=1731661791; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FA4vkNb/mitqyAciN2f5UTCEggzC8PzDjAk9Yl3f00E=;
-        b=Ke1fw9pIz5UfqKUPmgbYSC5Qa8sfPp1I7nVcrq4XW2W12/DHpbfnDpygH7X0mjaSvp
-         xFlIGMw2bB/qTC/ky79qW7v4QA+2wqDtbSxShDyFmk1iCkXuxQb/EpNMW2SfGglhQWYn
-         La088s1PWHi62Trnac4JXAvu+ryJ6QGA1mjcrDexEicB/qlIPS+jXN/FNpOLXebxhvFN
-         UZJYaWNP1EfStZclagbmRV41+O3jDcNt/BHnL0JhPJ0MHjqu5sPGFL2TCsgRjtFAL99p
-         sBZVIiKcoulsMDisxHUG8Lo8s9HimEvJN2LdoOCEW7iy/4XO7TXPEOLrtStvfv9+sQhz
-         7mpQ==
+        bh=3rCuCRkF0AD6qgQEhq9OgaioP0iDJV1z0RS47lWOzG0=;
+        b=l7ltxyM3M8QCW50cpUsxb2IHedUM06c4saWr6EsRWefOuLNF/4SrW2H8+9U0Npn+Lr
+         AV3xyIFCc2629sREL4sLOAID3OM1NVseXHTwZguDvKOGfu4ucGKkxKWzr3D/BFfu3ptr
+         gTVrN7vZ7rlrts9IT09Dit7N/fKfeUS8WEZOu1XonnqVU7DtEad06JHP8dDohpQZeiXf
+         xclYS+8qoLaA3fuQkBeUJuFed/YfDwtlwc3k8NCBzQQYlEfyjd5jZYRqInozVayC67WN
+         21Lf+K6FQzAXjgTXAYKbV2I3dVcPxi8ykj33SG3YE4PrLb6uhUlgmCB0i8YnyI0rdEJk
+         oOyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731056961; x=1731661761;
+        d=1e100.net; s=20230601; t=1731056991; x=1731661791;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FA4vkNb/mitqyAciN2f5UTCEggzC8PzDjAk9Yl3f00E=;
-        b=ff0Ou8jDW8+Es++Gtxxjd8OR7EDz9igM14hUku5Kq1F91AQ9stIagjxKU0EeAM+bWx
-         rD/c/Lc39coAR5SAAqqBfSYsp+1cwuaEn1cZTNn5Sxnc/Ql+DBhclglzTLsB3f9P5Cnv
-         95+iReGo9DvIQxOuE/vKNzW4bWIMZnvd3uvtBE7GKBNgtw0IKm3i9FbXJv3kFuYf/x8j
-         J5dH8VCSCgb6H8IFD3MToTeNzMscwRTnkhv/a34bHYU0LMS2KVKQX9s/9/aDQJIwtd6M
-         +zB9M0jlFhvBEu7ckMrS2JkiNxnfAPerut3254uTZOplpCLg2qptyKd0fKD3PpoMrJP/
-         +eFg==
-X-Gm-Message-State: AOJu0YxQb29EcbwyvG69pQxJxxStWmojDca4uBXxS2JR9yXbVCrThZiF
-	tOriBAeh8Uybi7v3uOJ8dxCOgPd27dLjQfchToLAhuBdzEsTLjoRoi+YdVrvpEbl9vUT50JVf7m
-	65ZEnIQ+L2wxms0KmcP0oajWwWCOMSHsqaIRYOg==
-X-Google-Smtp-Source: AGHT+IHhr+fMSbLe+Spkx6S2HAMA1BNkht2ZD+kKrNtINXG0wH4E9HYyfyu1IwPxOm2Qn/Xqfjd2BS52cNcB5ulPJ58=
-X-Received: by 2002:a05:651c:211f:b0:2f6:62a1:25fe with SMTP id
- 38308e7fff4ca-2ff2028ea31mr8862541fa.23.1731056960773; Fri, 08 Nov 2024
- 01:09:20 -0800 (PST)
+        bh=3rCuCRkF0AD6qgQEhq9OgaioP0iDJV1z0RS47lWOzG0=;
+        b=aLgTmapDNBOl54XqCQbgxFWEv3eGG089d7HptojUw+ErGfbjvZX8FSjRAuGdZzTlWQ
+         uktAQBNs0+sjkQSHvuAmsCwQcGZ7gOsrRf+LeQze4Sc+KcvhLwgEUi0ToJQihTYkBgFf
+         itcejr+K2ptRGPdTKMCwA7bsF7OHll7pR7dQE1JJnl3mdNBQyu9uR7dgAudvZpCjT0qT
+         2q37APMBl+YaKJp9cD3EudPp9O1xgqx/JZUgzI/To6wK2qTi9rGdR72bciJL5L0PDPu1
+         ndQBNEFXKbFJdah5V9+AvWpgxdTbsfcBDXRa5V75DL9NTBOfZ4A+WVDm/BxhdBAiQFZk
+         eZZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeoqNqJdkKawPLN25sqr4+saAt+z8olrCNRBe5HQAO0FsCpXcMGOWHgyQMLBSYgNPu5sA99KZ1CqgafNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxoJXnOzbqh37DH5BzmS41kDZWuNjeN5pPMpUa3H0jjcJOu+Sc
+	JAnWWDISQzR3NBpYAhtvXoo18wan2RTbDl25Cz4/YwFbOaJVWh+W2I01uXmFqPa/kdZ0sEOQn/B
+	nVg8dwNXD2seuaTxdilBf1eYsLZj8hWhoIhuZHA==
+X-Google-Smtp-Source: AGHT+IFQ2rzdsFULikcsy1DcIOj/oaXCux6Um5MzvHa4kWe+1hKya+Pibd3ha8YnWK2f1twBBu+uljiRcC195WGdV0g=
+X-Received: by 2002:a05:6102:3f09:b0:4a4:8651:3c2c with SMTP id
+ ada2fe7eead31-4aae1686ad9mr2324623137.20.1731056990954; Fri, 08 Nov 2024
+ 01:09:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105064206.43626-1-hs@denx.de> <20241105064206.43626-3-hs@denx.de>
-In-Reply-To: <20241105064206.43626-3-hs@denx.de>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 8 Nov 2024 10:09:09 +0100
-Message-ID: <CACRpkdZWDZcekXBJcW7XkfrmPiQqAiECVF_S9DMcFMMgRg8qsQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: pinctrl: sx150xq: allow gpio line naming
-To: Heiko Schocher <hs@denx.de>
-Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
+References: <20241106120303.135636370@linuxfoundation.org>
+In-Reply-To: <20241106120303.135636370@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 8 Nov 2024 09:09:38 +0000
+Message-ID: <CA+G9fYvi8fy2muefm9GbpO806oTSBQjmoEQriWD0OyKU4s_K+Q@mail.gmail.com>
+Subject: Re: [PATCH 5.10 000/110] 5.10.229-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com, 
+	broonie@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 5, 2024 at 7:42=E2=80=AFAM Heiko Schocher <hs@denx.de> wrote:
-
-> Adding gpio-line-names property works fine for this
-> device node, but dtb check drops warning:
+On Wed, 6 Nov 2024 at 12:38, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> 'gpio-line-names' does not match any of the regexes: '-cfg$', 'pinctrl-[0=
--9]+'
-> from schema $id: http://devicetree.org/schemas/pinctrl/semtech,sx1501q.ya=
-ml#
+> This is the start of the stable review cycle for the 5.10.229 release.
+> There are 110 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Allow to add property gpio-line-names for this devices.
+> Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
+> Anything received after that time might be too late.
 >
-> Signed-off-by: Heiko Schocher <hs@denx.de>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.10.229-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This patch 2/3 applied for v6.13.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Yours,
-Linus Walleij
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 5.10.229-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 5d5f7338c1ba5235530d3a6b68406996feb2f021
+* git describe: v5.10.227-164-g5d5f7338c1ba
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
+.227-164-g5d5f7338c1ba
+
+## Test Regressions (compared to v5.10.227-53-g11656f6fe2df)
+
+## Metric Regressions (compared to v5.10.227-53-g11656f6fe2df)
+
+## Test Fixes (compared to v5.10.227-53-g11656f6fe2df)
+
+## Metric Fixes (compared to v5.10.227-53-g11656f6fe2df)
+
+## Test result summary
+total: 59570, pass: 43633, fail: 1918, skip: 13945, xfail: 74
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 102 total, 102 passed, 0 failed
+* arm64: 29 total, 29 passed, 0 failed
+* i386: 23 total, 23 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 23 total, 23 passed, 0 failed
+* riscv: 9 total, 9 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 25 total, 25 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
