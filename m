@@ -1,229 +1,185 @@
-Return-Path: <linux-kernel+bounces-401322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0179C18D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:10:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16619C18D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA9A828438A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:10:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 706F9282765
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA281E0DD5;
-	Fri,  8 Nov 2024 09:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95471E0E00;
+	Fri,  8 Nov 2024 09:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l7ltxyM3"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UK9qYCqF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFC61E0DAA
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9595D1E00AC;
+	Fri,  8 Nov 2024 09:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731056993; cv=none; b=RXBSPXrBnAjbm1NDkBnpgUFGOM/Hpr7epggEqbNQ7M13tQUQTnG19JANPJ9VmI4KKCkFHBGtkXrU2Az3VOb22Sqhu5CML1FkgOsGiCcTQd0viOsveBxVxQ5888N+H2YuUOv7HwmxcqPRn2A6fJcIHJlIBHm7HILfQ0oV++mp614=
+	t=1731057063; cv=none; b=ZoIsYgFcdA/HyPMdm7UrdVgCJbfZNSC5PuglMZeJefd9kN9SCUi/tmK0eLkP7odHDkNKia4Y0ZnbU2c9v7f9jlGiAVAyMrShD0mG0lRqOc1+F5qerLNbA29KS32ylBwWs4X6wB608VJNx7P1sqsE9ggjDVn/41PnZIFW1FFkxhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731056993; c=relaxed/simple;
-	bh=6KyTu3O9fQfXvsz503x3Dgpd5/g0spE0Tog+jn1Fri4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GGj2Bupu6XrFE4fYIiL4jcXweiEoSvmv/p4MHFTUJJ0fBI3Rg1Iq+MTea9IBv1Z57yjUSGQyL4BygE1MZhQE4iclPH2py0Ld2SunvceWVYx73dJKEkznOB2hkC/5ul/R8zh2VvuOpilFkkQFE2bbD9sLlCogNEQ0zMoRxyCV3xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l7ltxyM3; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-84fc0212a60so664871241.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:09:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731056991; x=1731661791; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3rCuCRkF0AD6qgQEhq9OgaioP0iDJV1z0RS47lWOzG0=;
-        b=l7ltxyM3M8QCW50cpUsxb2IHedUM06c4saWr6EsRWefOuLNF/4SrW2H8+9U0Npn+Lr
-         AV3xyIFCc2629sREL4sLOAID3OM1NVseXHTwZguDvKOGfu4ucGKkxKWzr3D/BFfu3ptr
-         gTVrN7vZ7rlrts9IT09Dit7N/fKfeUS8WEZOu1XonnqVU7DtEad06JHP8dDohpQZeiXf
-         xclYS+8qoLaA3fuQkBeUJuFed/YfDwtlwc3k8NCBzQQYlEfyjd5jZYRqInozVayC67WN
-         21Lf+K6FQzAXjgTXAYKbV2I3dVcPxi8ykj33SG3YE4PrLb6uhUlgmCB0i8YnyI0rdEJk
-         oOyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731056991; x=1731661791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3rCuCRkF0AD6qgQEhq9OgaioP0iDJV1z0RS47lWOzG0=;
-        b=aLgTmapDNBOl54XqCQbgxFWEv3eGG089d7HptojUw+ErGfbjvZX8FSjRAuGdZzTlWQ
-         uktAQBNs0+sjkQSHvuAmsCwQcGZ7gOsrRf+LeQze4Sc+KcvhLwgEUi0ToJQihTYkBgFf
-         itcejr+K2ptRGPdTKMCwA7bsF7OHll7pR7dQE1JJnl3mdNBQyu9uR7dgAudvZpCjT0qT
-         2q37APMBl+YaKJp9cD3EudPp9O1xgqx/JZUgzI/To6wK2qTi9rGdR72bciJL5L0PDPu1
-         ndQBNEFXKbFJdah5V9+AvWpgxdTbsfcBDXRa5V75DL9NTBOfZ4A+WVDm/BxhdBAiQFZk
-         eZZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeoqNqJdkKawPLN25sqr4+saAt+z8olrCNRBe5HQAO0FsCpXcMGOWHgyQMLBSYgNPu5sA99KZ1CqgafNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxoJXnOzbqh37DH5BzmS41kDZWuNjeN5pPMpUa3H0jjcJOu+Sc
-	JAnWWDISQzR3NBpYAhtvXoo18wan2RTbDl25Cz4/YwFbOaJVWh+W2I01uXmFqPa/kdZ0sEOQn/B
-	nVg8dwNXD2seuaTxdilBf1eYsLZj8hWhoIhuZHA==
-X-Google-Smtp-Source: AGHT+IFQ2rzdsFULikcsy1DcIOj/oaXCux6Um5MzvHa4kWe+1hKya+Pibd3ha8YnWK2f1twBBu+uljiRcC195WGdV0g=
-X-Received: by 2002:a05:6102:3f09:b0:4a4:8651:3c2c with SMTP id
- ada2fe7eead31-4aae1686ad9mr2324623137.20.1731056990954; Fri, 08 Nov 2024
- 01:09:50 -0800 (PST)
+	s=arc-20240116; t=1731057063; c=relaxed/simple;
+	bh=7y7+2Fk1QIr+WK3Rimae+4gKnLT1X/9v8Uy+PYWgLr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biUZ+27v7+kd+JAfQFMGlxd8QqZHvCxqiFdV65i1buFP4eNlS+MC9liUNodc/n00LQbkBk1zQL7x1pkeUdKJwbc73D4ucKXoDYe+Hbw7DePLGCIG21XaEyHbYuq9oAodRodr529uwUF9GP/EpmbJFu8r7Em4pJEaJ9hEHe6PfYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UK9qYCqF; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731057061; x=1762593061;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7y7+2Fk1QIr+WK3Rimae+4gKnLT1X/9v8Uy+PYWgLr8=;
+  b=UK9qYCqFTOzNNIlGyXJf4b8NfcCFt5JoleQyhee4vRHV4Nn8j3ASqSmE
+   Ek3PE7wPmEUQee4kcbjqBhFp5AibzVX0LJQHPGAjxK1jzjOnWo8Rj5wZm
+   VkfHa6T9ZUaNoU5MfiRAfulWPnGh51JmpqFghUzVyOYXXN6mM8JEuuVBs
+   bCw5y4SkACU78p2l6ZiKdr0Xw+LS2FXGQ7pSA9/4JmcKEiK6xvVK/MWPl
+   eshDFqs7jiVsLBBkS1v2uc7KJDX7PnS/apVa4ZBLVqlxo/5FhJP2vxWVL
+   xR8ggzcAQgWU3PPqEyFOoXVlP/gQWERgOvCQ9TZDAK+Ngrkz7kpu/+AHM
+   w==;
+X-CSE-ConnectionGUID: yDxoNjsRQK2EtN92jtHwfw==
+X-CSE-MsgGUID: aI5QNHB1RxCCakStMb6m4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="41548451"
+X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
+   d="scan'208";a="41548451"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 01:11:00 -0800
+X-CSE-ConnectionGUID: jeHofmArRXenqQOFeDXg/w==
+X-CSE-MsgGUID: BXQKvnMKR1KcbmQqyN1xUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
+   d="scan'208";a="85372043"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 08 Nov 2024 01:10:57 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9L14-000rFC-2N;
+	Fri, 08 Nov 2024 09:10:54 +0000
+Date: Fri, 8 Nov 2024 17:10:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Saru2003 <sarvesh20123@gmail.com>, johannes@sipsolutions.net
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Saru2003 <sarvesh20123@gmail.com>
+Subject: Re: [PATCH] Fix: Ensure auth_data and ap_addr are properly set
+ before marking STA as authenticated
+Message-ID: <202411081640.YeO04UUX-lkp@intel.com>
+References: <20241108022828.6571-1-sarvesh20123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106120303.135636370@linuxfoundation.org>
-In-Reply-To: <20241106120303.135636370@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 8 Nov 2024 09:09:38 +0000
-Message-ID: <CA+G9fYvi8fy2muefm9GbpO806oTSBQjmoEQriWD0OyKU4s_K+Q@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/110] 5.10.229-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108022828.6571-1-sarvesh20123@gmail.com>
 
-On Wed, 6 Nov 2024 at 12:38, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.10.229 release.
-> There are 110 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.10.229-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Saru2003,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+kernel test robot noticed the following build warnings:
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+[auto build test WARNING on wireless-next/main]
+[also build test WARNING on wireless/main linus/master v6.12-rc6 next-20241107]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-## Build
-* kernel: 5.10.229-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 5d5f7338c1ba5235530d3a6b68406996feb2f021
-* git describe: v5.10.227-164-g5d5f7338c1ba
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
-.227-164-g5d5f7338c1ba
+url:    https://github.com/intel-lab-lkp/linux/commits/Saru2003/Fix-Ensure-auth_data-and-ap_addr-are-properly-set-before-marking-STA-as-authenticated/20241108-103338
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
+patch link:    https://lore.kernel.org/r/20241108022828.6571-1-sarvesh20123%40gmail.com
+patch subject: [PATCH] Fix: Ensure auth_data and ap_addr are properly set before marking STA as authenticated
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241108/202411081640.YeO04UUX-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411081640.YeO04UUX-lkp@intel.com/reproduce)
 
-## Test Regressions (compared to v5.10.227-53-g11656f6fe2df)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411081640.YeO04UUX-lkp@intel.com/
 
-## Metric Regressions (compared to v5.10.227-53-g11656f6fe2df)
+All warnings (new ones prefixed by >>):
 
-## Test Fixes (compared to v5.10.227-53-g11656f6fe2df)
+   In file included from net/mac80211/mlme.c:16:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/x86/include/asm/cacheflush.h:5:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> net/mac80211/mlme.c:4341:46: warning: address of array 'ifmgd->auth_data->ap_addr' will always evaluate to 'true' [-Wpointer-bool-conversion]
+    4341 |         if (!ifmgd->auth_data || !ifmgd->auth_data->ap_addr) {
+         |                                  ~~~~~~~~~~~~~~~~~~~^~~~~~~
+   5 warnings generated.
 
-## Metric Fixes (compared to v5.10.227-53-g11656f6fe2df)
 
-## Test result summary
-total: 59570, pass: 43633, fail: 1918, skip: 13945, xfail: 74
+vim +4341 net/mac80211/mlme.c
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 102 total, 102 passed, 0 failed
-* arm64: 29 total, 29 passed, 0 failed
-* i386: 23 total, 23 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 23 total, 23 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 25 total, 25 passed, 0 failed
+  4334	
+  4335	static bool ieee80211_mark_sta_auth(struct ieee80211_sub_if_data *sdata)
+  4336	{
+  4337		struct ieee80211_if_managed *ifmgd = &sdata->u.mgd;
+  4338		const u8 *ap_addr;
+  4339		struct sta_info *sta;
+  4340		
+> 4341		if (!ifmgd->auth_data || !ifmgd->auth_data->ap_addr) {
+  4342			sdata_info(sdata, "auth_data not set or ap_addr missing\n");
+  4343			return false;
+  4344		}
+  4345	
+  4346		ap_addr = ifmgd->auth_data->ap_addr;
+  4347	
+  4348		lockdep_assert_wiphy(sdata->local->hw.wiphy);
+  4349	
+  4350		sdata_info(sdata, "authenticated\n");
+  4351		ifmgd->auth_data->done = true;
+  4352		ifmgd->auth_data->timeout = jiffies + IEEE80211_AUTH_WAIT_ASSOC;
+  4353		ifmgd->auth_data->timeout_started = true;
+  4354		run_again(sdata, ifmgd->auth_data->timeout);
+  4355	
+  4356		/* move station state to auth */
+  4357		sta = sta_info_get(sdata, ap_addr);
+  4358		if (!sta) {
+  4359		        sdata_info(sdata, "STA %pM not found, skipping authentication mark\n", ap_addr);
+  4360			return false;
+  4361		}
+  4362		if (sta_info_move_state(sta, IEEE80211_STA_AUTH)) {
+  4363			sdata_info(sdata, "failed moving %pM to auth\n", ap_addr);
+  4364			return false;
+  4365		}
+  4366	
+  4367		return true;
+  4368	}
+  4369	
 
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
