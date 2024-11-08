@@ -1,114 +1,174 @@
-Return-Path: <linux-kernel+bounces-400875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A159C1385
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:19:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A69A9C1389
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:20:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D0BB283BDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:19:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D60EB21538
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBA812E7E;
-	Fri,  8 Nov 2024 01:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wji7j22u"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ADDDDCD;
+	Fri,  8 Nov 2024 01:19:54 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE701BD9FF;
-	Fri,  8 Nov 2024 01:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53243D6D;
+	Fri,  8 Nov 2024 01:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731028704; cv=none; b=XVOTG+ePOJ9p/hJGm/qs5CvtoraEOHHRDkRLAkunQazsZow80rqbWICToqF1DOKbdIM17Gsmim6wPS4U2ysBaHz8APB5MLc1csvLGKapUpi1va7WXofDlu7aM7pSE92nAH8MEu6aeBdAKgDAtiV6sJlYfdftEPOD9blrdW2zUlU=
+	t=1731028793; cv=none; b=BGYpHZyih1Ifzz8/AtRxpq2W0c3iT4Cw8nhH+4cGvUiu5ZYPtVeHW1caOO2bxSn0U4sWIYs4+EUmOSJvkRare26mf7An+jvWKhtIEOo96i0cOkD3oSMuhXoM8fgp4+wlUqCaeotkPFnrYmhPaCXWUXQ/2JtMzGLAn+UCIh2oAx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731028704; c=relaxed/simple;
-	bh=Y+qOi9StNDWrNCeLn6mxKT2CuseUsVMBOWwSx1S6bs8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pWkGNy90QqzEdi++ANYRoPaXZJTy5Vg6CoPSYk7Ufe7E8S6x7z3LHA46lNoDzEDNYE5oZNTeLQRsI+iCivhC3Ft9b2zdKFHX47sxfzX5OJSXrnjlbaW0zMLwFPgIkCexbtvXc543qvrV2rHG2nKMo5yzMQokuBb368QGu7+Eo9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wji7j22u; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-720b2d8bb8dso1156105b3a.1;
-        Thu, 07 Nov 2024 17:18:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731028702; x=1731633502; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8cDuOa1WBcvgUICgbCuiS6lfsoFcTeZpS0w3TbLXnF0=;
-        b=Wji7j22uKUxV2LXV3L63lIAewOsNLKdPazzNFxRxPDzdIM7xFjJi+PXLDX/DKV+qFB
-         NGZxKfq/5VMHiojekAj14yFL61O5x/o+9b6thyXGmHiKq5ihplbn28PBX8+mifrWesPM
-         e3vwYfoAVWPHWxyvBWx3JoGaCT9OBQfSuGG7obhoPQg89vJ2INleNOGN3tCjO7I+d9Gs
-         Xz3GHWB542Pnzjbi/eG8DCd8CAIY0pzPjiKdnh090k3lr/0ca3b2Z1DdxphPzZ22tpZ9
-         c+qNI8bmC6/81YevQay681Z2kfiCK0llH2g2fQQl+wcVe20lVr/bTbPyDAdwuI7Syhkb
-         OmjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731028702; x=1731633502;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8cDuOa1WBcvgUICgbCuiS6lfsoFcTeZpS0w3TbLXnF0=;
-        b=og4vRuQOawvQFXKutK08L08frdPvS2ZbuWoHVQFyptpZb1GBFEgf9Hb7ngENSwI4r8
-         7Khn5sBVfcqRJNxNcJ/6GWy4bAjg6DCGYV+Afhd5LCV/wvaPCvusRL2GLTNEPX/LxgFZ
-         gxxXU8ITbycDxXdclgO7k6lQnlkNlKeJKN9Ia7K3B/d5fRzFgpV/EVtadTRXqOHYbkbq
-         TRpW9T+JKud2nqTyuHwioor80ilW9DjmN64aRgSnoXZcaTv44nCKS4hiqIuzNex50OkY
-         1ijLnUHJSHjSHorPD9YS8OYag3uvhFgwU5Bm+7DfqkHPAjue9v4RimPCqq2Fc90WPXsR
-         6SFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvAAZimtzgbJtd4PZ+S2yDUrwQhJ61eo2l5scjYy3sSrfq+9SdtkEj7rJ8Mc5BfVMYIqySsNMv@vger.kernel.org, AJvYcCV5MEkRJhNMxvxZsz/JB2sENLyrir0bVb9kvSEzHKcn/TiMCb8UCUDJsOOAR0XxKWbCngNdmQshWT+vV14=@vger.kernel.org, AJvYcCX8FoSO5Bk5CdlhD3oj2CHCyDl+p/V0yhDfJs1S0zG6IAimlnYFdmGUSXb9ttSckfRDC6l+eInAfkm9FI6ZeUWE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4eXIBnliUg325daG1L2oYpmWpvuvi6W5fjsaxkaUeaB3k9Ozo
-	YTW3pa0Aw1RwXnVU8k0ZyIS2GWzlSi+Zcl+p5qQe7scs4FPJTLU=
-X-Google-Smtp-Source: AGHT+IHic32rr0VTC89z6fvxpMe1QpENN9vrJsJO1uP+O3orkP9CZjTgg7oBIQf7xYD2errL+vUyKQ==
-X-Received: by 2002:a05:6a00:1909:b0:710:5848:8ae1 with SMTP id d2e1a72fcca58-7241327d7aamr1580271b3a.4.1731028701814;
-        Thu, 07 Nov 2024 17:18:21 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a17ed3sm2459264b3a.142.2024.11.07.17.18.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 17:18:21 -0800 (PST)
-Date: Thu, 7 Nov 2024 17:18:20 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Joe Damato <jdamato@fastly.com>, Stanislav Fomichev <sdf@fomichev.me>,
-	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-Subject: Re: [PATCH net-next v8 00/12] selftests: ncdevmem: Add ncdevmem to
- ksft
-Message-ID: <Zy1m3IkTR6GKObKE@mini-arch>
-References: <20241107181211.3934153-1-sdf@fomichev.me>
- <Zy0J1_3P76EACrBG@LQ3V64L9R2>
+	s=arc-20240116; t=1731028793; c=relaxed/simple;
+	bh=Rt8orAe9gRXZh7BDhVnfVOiGWoYztoEEpJjVMMGZ+Oc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=AwqMdwdGseZyqExuld+CUmxvdDl/mkf5qlBLtVvRHXUQmEX+YsyvhiSYv5M7lL84XaM9TO+yI0lkdcD4EaNLGrmWCHFDL2o3jOK3lJuoRuDZqtlxJArHsVwZaM4Ydm8kKWVbcVj+3jfDJ0uxWMD1ytBt8GdVVxn3evr+22ypzmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xl1Ln0lTjz4f3jY5;
+	Fri,  8 Nov 2024 09:19:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1B3F11A0194;
+	Fri,  8 Nov 2024 09:19:47 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgDHo4ctZy1n00WkBA--.29471S3;
+	Fri, 08 Nov 2024 09:19:44 +0800 (CST)
+Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
+To: Chuck Lever <chuck.lever@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+ linux-stable <stable@vger.kernel.org>,
+ "harry.wentland@amd.com" <harry.wentland@amd.com>,
+ "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Sasha Levin <sashal@kernel.org>,
+ "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
+ "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+ "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+ linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+ <2024110625-earwig-deport-d050@gregkh>
+ <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
+ <8bdd405e-0086-5441-e185-3641446ba49d@huaweicloud.com>
+ <ZyzRsR9rMQeIaIkM@tissot.1015granger.net>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <4db0a28b-8587-e999-b7a1-1d54fac4e19c@huaweicloud.com>
+Date: Fri, 8 Nov 2024 09:19:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zy0J1_3P76EACrBG@LQ3V64L9R2>
+In-Reply-To: <ZyzRsR9rMQeIaIkM@tissot.1015granger.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHo4ctZy1n00WkBA--.29471S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ArW7CF45Jw13Cw4DtFWDurg_yoW8Kw48pF
+	ZFqas8KwsrJw17KrnFyw1jqFWFyws8Jr15Xrs8Wr1UAF90kr1SgFWxGr1Ykas7Wrs3uw4U
+	KF4ava4xJF1UGaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26rWY6Fy7MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pR1lkxUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 11/07, Joe Damato wrote:
-> On Thu, Nov 07, 2024 at 10:11:59AM -0800, Stanislav Fomichev wrote:
-> > The goal of the series is to simplify and make it possible to use
-> > ncdevmem in an automated way from the ksft python wrapper.
-> > 
-> > ncdevmem is slowly mutated into a state where it uses stdout
-> > to print the payload and the python wrapper is added to
-> > make sure the arrived payload matches the expected one.
-> > 
-> > v8:
-> > - move error() calls into enable_reuseaddr() (Joe)
-> > - bail out when number of queues is 1 (Joe)
-> 
-> Thanks for all the work on the refactor; sorry for the nit-picking
-> on the queue counts. I just thought of it because in my test for
-> busy poll stuff, netdevsim uses 1 queue.
-> 
-> Having tests like this factored nicely really helps when people
-> (like me) go to try to write a test for the first time and have a
-> good example like this to follow :)
+Hi,
 
-No worries, thanks for taking the time to review! nit-picks are fine
-as wells since they are usually the easiest ones to address :-D
+在 2024/11/07 22:41, Chuck Lever 写道:
+> On Thu, Nov 07, 2024 at 08:57:23AM +0800, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2024/11/06 23:19, Chuck Lever III 写道:
+>>>
+>>>
+>>>> On Nov 6, 2024, at 1:16 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>>>
+>>>> On Thu, Oct 24, 2024 at 09:19:41PM +0800, Yu Kuai wrote:
+>>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>>>
+>>>>> Fix patch is patch 27, relied patches are from:
+>>>
+>>> I assume patch 27 is:
+>>>
+>>> libfs: fix infinite directory reads for offset dir
+>>>
+>>> https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huaweicloud.com/
+>>>
+>>> I don't think the Maple tree patches are a hard
+>>> requirement for this fix. And note that libfs did
+>>> not use Maple tree originally because I was told
+>>> at that time that Maple tree was not yet mature.
+>>>
+>>> So, a better approach might be to fit the fix
+>>> onto linux-6.6.y while sticking with xarray.
+>>
+>> The painful part is that using xarray is not acceptable, the offet
+>> is just 32 bit and if it overflows, readdir will read nothing. That's
+>> why maple_tree has to be used.
+> 
+> A 32-bit range should be entirely adequate for this usage.
+> 
+>   - The offset allocator wraps when it reaches the maximum, it
+>     doesn't overflow unless there are actually billions of extant
+>     entries in the directory, which IMO is not likely.
+
+Yes, it's not likely, but it's possible, and not hard to trigger for
+test. And please notice that the offset will increase for each new file,
+and file can be removed, while offset stays the same.
+> 
+>   - The offset values are dense, so the directory can use all 2- or
+>     4- billion in the 32-bit integer range before wrapping.
+
+A simple math, if user create and remove 1 file in each seconds, it will
+cost about 130 years to overflow. And if user create and remove 1000
+files in each second, it will cost about 1 month to overflow.
+
+maple tree use 64 bit value for the offset, which is impossible to
+overflow for the rest of our lifes.
+> 
+>   - No-one complained about this limitation when offset_readdir() was
+>     first merged. The xarray was replaced for performance reasons,
+>     not because of the 32-bit range limit.
+> 
+> It is always possible that I have misunderstood your concern!
+
+The problem is that if the next_offset overflows to 0, then after patch
+27, offset_dir_open() will record the 0, and later offset_readdir will
+return directly, while there can be many files.
+
+Thanks,
+Kuai
+
 
