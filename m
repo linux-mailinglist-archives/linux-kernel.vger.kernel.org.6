@@ -1,218 +1,136 @@
-Return-Path: <linux-kernel+bounces-400943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC749C1448
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:51:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06DB9C1451
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A3C1F242F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:51:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E35B230D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F72447A73;
-	Fri,  8 Nov 2024 02:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCFE12CDA5;
+	Fri,  8 Nov 2024 02:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xey+BlMf"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FceFVNPq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560C51BD9F3;
-	Fri,  8 Nov 2024 02:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0BD38DE0
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 02:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731034270; cv=none; b=HjeRy1gexINZGpfb9oMcvPXT5miFWMC2hx/sB5Exb/fPoIyoE+gtsaXceB1+6QmIlWk3QSQtktl+kif1+RmrIXrCtuP718BiZrEJSHZpxOEUwpbDJEX7mOBiBDi7QUKjklbsqb/AryrwAnaLO1ER7eycMHlEbirt5/OXiDM1o8c=
+	t=1731034446; cv=none; b=n8IPpst7AHMfs3cO4aB6b40xPE1RpuzTPhdWhSmEGfrx9qUIB1KjozmSFU7DJBxIWVoWmWvdcqE18K4/TlMbSfzqjiPniN3lxstweZUsV/ROKO8ZLyWiCtL3Yul9Cd4mmpN0rHmcIf8MO4NBKHFS4cor5yBGqDJ9/Lr2wi/r0aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731034270; c=relaxed/simple;
-	bh=lSQEIgpKDv3f26NYR8QFCbDnNgVJHCatRuxO+lIMyyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qB4GDIkvP+rlW15L8aC1IGqi74Tg3ecfTMyZHBXU0lUEvQ2v25ESb885ZFyVPWY7z15xexfGiLzKtb/WaFwWX1TiLJ9mD23f9hIH9/MaOnU0uH0gr0RRdE9NNVxqTNKXCSKQ+nOrK3ZJsCb31GSmu3izMP6VQiLJKBLL3MUiAPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xey+BlMf; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-71808b6246bso1016879a34.2;
-        Thu, 07 Nov 2024 18:51:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731034268; x=1731639068; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/EXjIMqHBmMIAGv5jp2hlycZHcXVd0mCL3d1IYu3e5U=;
-        b=Xey+BlMfBVZh7gOCXVTIqEBANqz2+fhiGoRTbmrF3a2SUZsHYo4YGHN98z8jNvX2R4
-         G2cGFPEMGgprE0rNQV0PbUk3c79R9mVij82OLWT0jSMx/dSbfa+YYjwFLkO4iPwLHBpQ
-         zZ+qg7YwJ90Wtfy+uXKhPVvJkGKvgyxL0G7FwO42a78hqWywU6kT8oZlQKM4OLEjG1MU
-         35Ztgy97v7EGM4AQBZ3UF/7YQvOjMjRRkqV8c62j4VTn4fNktYNZNjlAcQkEQr1lFBUf
-         IQZABEizidyRdw3cbijqe/Xpe2QzSzHhMf3j8ZvMd1weGTsxoiRrWhNLVmL4dOicyD0O
-         skvg==
+	s=arc-20240116; t=1731034446; c=relaxed/simple;
+	bh=cwEqbnHj/TJxnIy+3o2VhKgoUs8GcxvB6wBbbqhMWAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jx40KfGi1Jz9I/2Ahf8rvM+ZVOE4GxPNmZ5ec6neKIPawQGKOZ+tuPxKtMgzh+wn1j6qgfeYOOy0Jr0OlRBS82AQTq7zxTreV0gwFFgo3lNMtxbysgk00z64cuf9kWiIaQg07oAA7OGuogl1Xw/1kmDM1FdviXlDGi01RnOQAzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FceFVNPq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731034443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cwEqbnHj/TJxnIy+3o2VhKgoUs8GcxvB6wBbbqhMWAU=;
+	b=FceFVNPq5l8l8Sdw4km5N5zUPFVPGe1D8/Z2oOrdlpoDmQ0bZiUbbNIpdymQ4+3F4i2cIA
+	4HQ5dxTU0TGp1gswhsHz0yZ76phoX/VnR8EkdIlIbRWWegVWLMY7GdxudKt6dpdY33lYnd
+	UdVrE+YvHccYkWWNv2OV0yY3RtgdJv8=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-163-ro52Kk8yMKqImcneUqky3A-1; Thu, 07 Nov 2024 21:54:02 -0500
+X-MC-Unique: ro52Kk8yMKqImcneUqky3A-1
+X-Mimecast-MFC-AGG-ID: ro52Kk8yMKqImcneUqky3A
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e76eabc7ddso1886064a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 18:54:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731034268; x=1731639068;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/EXjIMqHBmMIAGv5jp2hlycZHcXVd0mCL3d1IYu3e5U=;
-        b=NEOXxBvgPFrQIYmaLwBHwxVbBsIvfFuUEeFXjx9lt/6j+Lixr8pEy8FQIduIKpq67D
-         YjeVOp8pYRzwC8/1Wvk+Z5AXiGNZQOqr7DOMIvqzJAqjJsn6mJlnFl3MFLDnJBX6hZN3
-         hfiRjgnPLI7RTRk8bfoS0gR9/2tvH4qOxXJohkNPYsdEMBWw075JnNM+IwrPKNN88Nsp
-         w6aSWHXZMGa3Y+i8Vqh/OjhRgXs7nHOduDJaeTz6Py5ItjLvFqh8D0bYospwz0JQgbmg
-         tNHuCWDsCZRtD5P9nRyA9BhmyBopz3bxFCFzQHSVj0os0kUjIidBW9hSVt+HCJMAV97Q
-         VWWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVfNE2a7vrBnZqJogsFCGdbvmJJLgBo7KJJg5XeSMYB3qX8qj7xgX9/cGbd18pMrdtae8JT6eo61A0YVg=@vger.kernel.org, AJvYcCXbeWyoL74OcNmnEA9Di393XetL24p9rzhJpLAf5HE1c7NXPHtX9M4BH5EKi4YBDhgEkkLTjnUMoGn070c9@vger.kernel.org, AJvYcCXfeWQDWRZxmRgyPiDaWK9CV/m1GmpAassSLmvwgLUOHBYs9xzkO5omVGBWQb1aFrnJ4IB3mqCVFYZf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywhas2+/Jx8iCpEiBtB2xMy/qo+BLYU5mRja+JVPr3b/vx+XA5
-	TzchLX8oqBU2kpopDvumkHVlRs2ENclZOgGPoLwg9bgCClLc52Dn
-X-Google-Smtp-Source: AGHT+IEElLZEABRWyjEIWGCuNoaAThPE7ptq0c3Gr/sJWPeAj85WKpXmwxpGDHpsPfsBPn6ESYu5rg==
-X-Received: by 2002:a05:6870:7d07:b0:291:467:ee42 with SMTP id 586e51a60fabf-2955ffecf54mr1450360fac.8.1731034268248;
-        Thu, 07 Nov 2024 18:51:08 -0800 (PST)
-Received: from ux-UP-WHL01 (mailgw01.gttektw.com. [45.117.96.243])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f423414bcesm2047171a12.4.2024.11.07.18.51.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 18:51:07 -0800 (PST)
-Date: Fri, 8 Nov 2024 10:51:02 +0800
-From: Charles Wang <charles.goodix@gmail.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: krzk@kernel.org, hbarnor@chromium.org, conor.dooley@microchip.com,
-	dmitry.torokhov@gmail.com, jikos@kernel.org, bentiss@kernel.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: input: Goodix SPI HID Touchscreen
-Message-ID: <Zy18ljw66z53C2Yv@ux-UP-WHL01>
-References: <20241107032313.64390-1-charles.goodix@gmail.com>
- <CAD=FV=UQr_6L_UhdCSr3cbxfGO2aEEYgTEpBh+gseYeapr-5iA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1731034441; x=1731639241;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cwEqbnHj/TJxnIy+3o2VhKgoUs8GcxvB6wBbbqhMWAU=;
+        b=qq4RdF3kmHKIqW3l/cog86hYcZt9KStBPKm9Fu6KAM51Q7KswGubhaDRTfhmcIGEnG
+         7GilI7o9z3aBtvAViCP9YaoGbuKV8lLkj1HrPbmEA7sPPyVpOfUKxekiIZxK3jLdnHlG
+         IWSp3NmWVB+VkMfuQHRC3iw4HjfxOAGdtZUWH8E7dZBIgLBUYZSfF0K6JQxaA8kjs5ZD
+         uFoYjBeZdx3ZXP/5rJc3BCo78eRiaHkDbg61Fc/cqRdO6gUoOOHzbwf6UOb3+WXV9dsl
+         ZrviMgfG1N74qFcwcJPFyOTjBP3m46otmW3YioxGwXPpbchAT0BUKNJRwvFk1zpOaMY0
+         IRrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw2pmJ40mNc9GpzPRQSuqy7/PkNu52A/TPf0Cp2DcbtfKP7QaioYpb1HRZ+nePNtAUKz9i3PLpqjM7cMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1/DzLogaTsfQvuIniTVwb9NWeYJ7q0tsmFm/4J9ubG6swa/Po
+	scwsRZ5dwuDwF7ZqZ6UmMf1vCZ8VFR3gTZkXy26n9qqtoHokbi9wBByHxaZYAUS8ZEOZELv5nH8
+	EHW7Gm7bu665jZ2Sih7DqkkhCW6V2QXwbM3nhSvinQzJSSOP5VaqIdkDicp2kE28yjCKLRdeV/z
+	I1JeefpQKqBqwpdk2197nNPpY/2iMnOIkP5/54
+X-Received: by 2002:a17:90b:3d91:b0:2e2:a029:3b4b with SMTP id 98e67ed59e1d1-2e9b177632bmr1984108a91.28.1731034440899;
+        Thu, 07 Nov 2024 18:54:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHeAKu6FXOO8aouj3/WFxZQgxhtW8ocCUmDNXhuRcpuePvBO35pclspRsjXFn6dE+pdWYMrEjjMCT0rnXoNyZM=
+X-Received: by 2002:a17:90b:3d91:b0:2e2:a029:3b4b with SMTP id
+ 98e67ed59e1d1-2e9b177632bmr1984080a91.28.1731034440508; Thu, 07 Nov 2024
+ 18:54:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=UQr_6L_UhdCSr3cbxfGO2aEEYgTEpBh+gseYeapr-5iA@mail.gmail.com>
+References: <20241031030847.3253873-1-qiang4.zhang@linux.intel.com>
+ <20241101015101.98111-1-qiang4.zhang@linux.intel.com> <CACGkMEtvrBRd8BaeUiR6bm1xVX4KUGa83s03tPWPHB2U0mYfLA@mail.gmail.com>
+ <20241106042828-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20241106042828-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 8 Nov 2024 10:53:49 +0800
+Message-ID: <CACGkMEv4eq9Ej2d2vKp0S8UdTgf4tjXJ_SAtfZmKxQ3iPxfEOg@mail.gmail.com>
+Subject: Re: [PATCH v2] virtio: only reset device and restore status if needed
+ in device resume
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: qiang4.zhang@linux.intel.com, Paolo Bonzini <pbonzini@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>, 
+	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gonglei <arei.gonglei@huawei.com>, 
+	"David S. Miller" <davem@davemloft.net>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	"Chen, Jian Jun" <jian.jun.chen@intel.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, David Hildenbrand <david@redhat.com>, 
+	Gerd Hoffmann <kraxel@redhat.com>, Anton Yakovlev <anton.yakovlev@opensynergy.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Qiang Zhang <qiang4.zhang@intel.com>, 
+	virtualization@lists.linux.dev, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, netdev@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 07, 2024 at 01:54:33PM -0800, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, Nov 6, 2024 at 7:23 PM Charles Wang <charles.goodix@gmail.com> wrote:
+On Wed, Nov 6, 2024 at 5:29=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com> =
+wrote:
+>
+> On Fri, Nov 01, 2024 at 10:11:11AM +0800, Jason Wang wrote:
+> > On Fri, Nov 1, 2024 at 9:54=E2=80=AFAM <qiang4.zhang@linux.intel.com> w=
+rote:
+> > >
+> > > From: Qiang Zhang <qiang4.zhang@intel.com>
+> > >
+> > > Virtio core unconditionally reset and restore status for all virtio
+> > > devices before calling restore method. This breaks some virtio driver=
+s
+> > > which don't need to do anything in suspend and resume because they
+> > > just want to keep device state retained.
 > >
-> > The Goodix GT7986U touch controller report touch data according to the
-> > HID protocol through the SPI bus. However, it is incompatible with
-> > Microsoft's HID-over-SPI protocol.
-> 
-> I think it was requested that both the yaml file and the commit
-> message mention why there are two different yaml file that both talk
-> about "gt7986u". In the commit message I think it would be valuable to
-> point to the previous discussion. AKA, maybe say:
-> 
-> NOTE: these bindings are distinct from the bindings used with the
-> GT7986U when the chip is running I2C firmware. For some background,
-> see discussion on the mailing lists in the thread:
-> 
-> https://lore.kernel.org/r/20241018020815.3098263-2-charles.goodix@gmail.com
-> 
-
-Ack,
-
-> 
-> > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Change compatible to 'goodix,gt7986u-spifw'.
-> > - Remove 'goodix,hid-report-addr' property.
-> 
-> Probably this should be a two-patch series now. The first is this
-> bindings file and the second changes the firmware (which never got
-> reverted) to default to a hid-report-addr of 1.
-> 
-
-Ack,
-
-> 
-> > - Change additionalProperties to unevaluatedProperties.
-> > - v1: https://lore.kernel.org/all/20241025114642.40793-2-charles.goodix@gmail.com/
-> > ---
-> >  .../bindings/input/goodix,gt7986u.yaml        | 66 +++++++++++++++++++
-> >  1 file changed, 66 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
-> 
-> The name of the file needs to match the primary compatible, so it
-> should include the "-spifw" part.
-> 
-
-Ack,
-
-> 
-> > diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
-> > new file mode 100644
-> > index 000000000..b7afa21fb
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
-> > @@ -0,0 +1,66 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Goodix GT7986U SPI HID Touchscreen
-> > +
-> > +maintainers:
-> > +  - Charles Wang <charles.goodix@gmail.com>
-> > +
-> > +description: Supports the Goodix GT7986U touchscreen.
-> > +  This touch controller reports data packaged according to the HID protocol
-> > +  over the SPI bus, but it is incompatible with Microsoft's HID-over-SPI protocol.
-> 
-> I probably would have put the note about the compatible here instead
-> of below. Something like:
-> 
-> NOTE: these bindings are distinct from the bindings used with the
-> GT7986U when the chip is running I2C firmware. This is because there's
-> not a single device that talks over both I2C and SPI but rather
-> distinct touchscreens that happen to be built with the same ASIC but
-> that are distinct products running distinct firmware.
+> > The challenge is how can driver know device doesn't need rest.
+>
+> I actually don't remember why do we do reset on restore. Do you?
 >
 
-Ack,
+Because the driver doesn't know if the device can keep its state, so
+it chooses to start from that.
 
-> 
-> > +allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    description:
-> > +      Add the 'spifw' suffix to distinguish it from the general GT7986U I2C-HID
-> > +      touchscreen, as it runs a substantially different firmware than GT7986U
-> > +      I2C-HID touchscreens.
-> 
-> As per above, I'd remove the "description" here. It's not common for a
-> compatible to have a "description".
->
-
-Ack,
-
-> 
-> > +    enum:
-> > +      - goodix,gt7986u-spifw
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  reset-gpios:
-> > +    maxItems: 1
-> > +
-> > +  spi-max-frequency: true
-> > +
-> > +unevaluatedProperties: false
-> 
-> I believe "unevaluatedProperties" is supposed to be moved down below
-> "required" according to previous comments on your patches.
-
-Ack,
-
-Thank you very much,
-Charles
+Thanks
 
 
