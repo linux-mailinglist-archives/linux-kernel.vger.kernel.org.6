@@ -1,121 +1,262 @@
-Return-Path: <linux-kernel+bounces-400863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA469C1361
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:59:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070E69C1367
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:02:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7413D1F235FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:59:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82852B21910
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79893B672;
-	Fri,  8 Nov 2024 00:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40231BA33;
+	Fri,  8 Nov 2024 01:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="shyvSabv"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L3RygPSR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8502D8F54
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861871BD9FB;
+	Fri,  8 Nov 2024 01:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731027580; cv=none; b=IvEhg6IrwrEobnaPItbHZDHM1eXd8UNwy+Ou+iFkNT4v5MbgPqSYf7fjyIo458rEtdvhiX23TYBV5eNsI+HTyg8RsNYPRCgbshtQyN5c564LXhJei5k3hyzb1zHKx08Jwuz1d4PpxGjahFH2XpnBUg+CYgNTJV8Jqruo4+hBnus=
+	t=1731027765; cv=none; b=a2hr/a2XAaQUoaeNC2ptkMAkwAYcDwQNkP0E3THQxYs+3GcDCbQnAJW26e1rRIt6QbmVLkAPa6En3QSeDSus2wOx+XqtwgBvnlm+fO188RK5/A+lNvZiBWw3mED3vPOnOJu+v2VbgZwG09fjTcAU6KRsVXuYTpw2FHRrIs9lZ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731027580; c=relaxed/simple;
-	bh=2Z3wd+ZMCDhE1fNOKNlz1k68JKwoJd0TG12r6GQ5CMw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mnOtr03ESD9LQI7Rq1SVoK8salBmDImciD/4ZXsT/VY4cInr7uAyX49xZF6jGG/AbLLJpnctcYbSWUsX4WKodGl60PiDR8LjgdjzCXYCgFbiKosafThXxpzCOAadXr12FzH3oZ7JksSrjYP/I0N0gJbvGLMtkqoroASd+yYU/88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=shyvSabv; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731027545; x=1731632345; i=efault@gmx.de;
-	bh=59sI9IkggmHHN5RmxLtDn719RMyw9UmIvqwVtChNITc=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=shyvSabvnXUtTJ9L9s0qtFngaUBPoGkxIp014ezt+c9Zt5vGt7oFxnJVmJGy0RIU
-	 eN5rJ0D6Lv5qKrxOMQKhlO0/JnvHxC2VzB7z/pkHDAIPyYDsWbg3WpgnFJ6ovmKC2
-	 gk9mIMLLZMo1DRRkAqEJJw8rZHrmT7ff2llOaLZj/TLcOuj/XUNnMpbHtwLV9P/v/
-	 eGofssyoZM9DwRv+JkStTJ0/PaSIW9KkpYphCSkw2ABOxN64k0lkARzkolmwh08Gh
-	 VMjni5pgh8G8J1XNAWvvVKZ4wZwqryCuZOm3m4RpHpn0D0Oh+IXrs0u+DsjqDxM+I
-	 ky2ys8qbXSKFbGs6xA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.195]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MhlKs-1tmy092EtM-00ccPo; Fri, 08
- Nov 2024 01:59:05 +0100
-Message-ID: <d9eb12bf0c7423368db2ac03ee3171925de15bfc.camel@gmx.de>
-Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
-From: Mike Galbraith <efault@gmx.de>
-To: Thomas Meyer <thomas@m3y3r.de>
-Cc: peterz@infradead.org, bigeasy@linutronix.de, tglx@linutronix.de, 
- mingo@kernel.org, linux-kernel@vger.kernel.org, juri.lelli@redhat.com, 
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- ankur.a.arora@oracle.com
-Date: Fri, 08 Nov 2024 01:59:03 +0100
-In-Reply-To: <87v7wzklib.fsf@DESKTOP-DQBDJ0U.localdomain>
-References: <87v7wzklib.fsf@DESKTOP-DQBDJ0U.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1731027765; c=relaxed/simple;
+	bh=GZkEOK11nLTG5sCW1VUVnGYZevL9I7vu4xi4O7heksc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXtScsS3YgcS2Vi2253uXqD9lg2e0Nlhg3W9psapxnEVwfkeBfa4KT1woJdyIiGRIwyjC1wxx5h3uGXgUko4Kd917N3wkDoIKck4SwBJxIcp4C97wTFQOX1EeG8Ny9Gh9fwJERVKw+29/0y++Q+ht/RuAXZ5DCaHT8lgJCAsuLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L3RygPSR; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731027764; x=1762563764;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GZkEOK11nLTG5sCW1VUVnGYZevL9I7vu4xi4O7heksc=;
+  b=L3RygPSRPe8tzMmi8v6duY3ybPR/dBhY4601bOFVMqv16u014oIctFst
+   PnGY0O5xsD0X0NcTAMslSJfWNzJYHiL/9Rpr/DBaaxVUajzQPUqGURdkh
+   dghcLtX6/oFCFM6J+7sAxjKe7PX34BJsVVMbWtxixmVGeweI0T2WQjuhs
+   0TZ40kFouByhLI4EYAu0kBkFSP2cJZOwp28I/gt0cOtpt1+OOUj0Nm4LC
+   HLpwTF3J4C8rowK8ACn/e1xuoaIX90bwKtGLFvfx782ssyGB6/a26cRGC
+   ODWJzqHR8EXpBGzlVz4K1uu0Uzg82knZYy9cjvv4CKJ/Ro+ogi+RCyG/H
+   w==;
+X-CSE-ConnectionGUID: pNDDSLbbSm6fsscAb44GtQ==
+X-CSE-MsgGUID: +IEgcUXFTwe4xrC2Ax/k3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="31125249"
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="31125249"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 17:02:43 -0800
+X-CSE-ConnectionGUID: OFxicbAhQcKvTfEBfAzY9Q==
+X-CSE-MsgGUID: jt30Y2yDSyaCXqUsfx4Q2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="84926883"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 07 Nov 2024 17:02:39 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9DOX-000qq6-0O;
+	Fri, 08 Nov 2024 01:02:37 +0000
+Date: Fri, 8 Nov 2024 09:02:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jonas Rebmann <jre@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Jonas Rebmann <jre@pengutronix.de>
+Subject: Re: [PATCH 2/2] spi: imx: support word delay
+Message-ID: <202411080814.OtrMOufy-lkp@intel.com>
+References: <20241107-imx-spi-word-delay-v1-2-2a969214d796@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4i83uMEKb8IApSKe/7UEBXiWMJ3zggWUPwQEgdBtEBnwA4r5Dfu
- cB9L6cmQxIJDAyaWG59EGgahp8hxenjzvmIPyPMqAll0r2fyr5cnr55USaiO3sOV3ZGj9tb
- PyAhtp1TFwO0kzm+uvLjxe0rHN6mhg2K6TNerrHjhwjKqaFFYjcNVQOjY5IJmRI98/UYE2r
- 0VkauNHG0dcUj/CN2MZjA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2qT3LAKmAc0=;0tiGVB/ouUDfWX+cyj8KZ1n51N3
- jblbKWky/yWjjhm9ewvcOqNzghyFA9lMlWBH6GnsZ7Vu+6J5o4IKi35L5tYs4kCUSxhzpfL6o
- m+v02CEDmxyYY9DboVIUlUCUk3EjDZCjepHmGsAryX65MO5dQNDovnPoq89VpFkY0eZuvQJdW
- 7+zW3l63HtbmzQQ3qIlX6L3kd7vFtBPmnSnaPV9yNH9ea3mTv/VAJbBrI3opw9QgQn/It971m
- I3ai7zGtIj5Xta6IJYfzERe3KSIqfLF0960kbCKmKKEBpjWZlWPegTJwNby7zVjZuwGfez0Rl
- hjrS8yqtagJ01kUMs3Ql6hEqZbDf+kWxoSBCWqpEb2vt1BeEqFzF54llYP7a/+rb0IHHUirIs
- bbOPiZY3ke3vct+oqbaFl6bSGslpC9r0QbJJfHDqELDh+90YfEC0NE2+/nKD57RB6ToGanToQ
- na5c7TBETMcf/ivluBOnJ51bbcDGv8Jy3/rxAqEwrGnOtnyPTe65TDIQSlroJhrBGVVmgmqj/
- u38aBbXS8/8PkY/9c697XPQyuuBecCbDzdvEPp5Oj+XbEyR7lWIvW015Rv4G8oPBBRzjTAoHp
- lqjV/Ue70Zhwt1hfwG6xJqEA551WeY42lcE7NWVf7PIKPWNY0fbJYLNuKncxaeGQDGIbakCXv
- JShEJGjJKo6RseQbdDtwtHm9zNutcan0ytKSN23zVU3XxQFhWVgX1QZvvTOBkaXoxdw5dLjcD
- V5tFi6zotc4CrUk7zOWfEv+VrlCyZH8ABD3YVWP4V0WXNDDyJeMAgEieCs8KhMUvcpp2wfOf3
- +3UZOWptHT3QH0+vo5+oWHAA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107-imx-spi-word-delay-v1-2-2a969214d796@pengutronix.de>
 
-On Thu, 2024-11-07 at 18:21 +0100, Thomas Meyer wrote:
->
-> Mike Galbraith <efault@gmx.de> writes:
-> > Full per run summaries attached, high speed scroll version below.
-> >
-> > desktop util 18.1% static voluntary - virgin source
-> > desktop util 18.3% static voluntary - +lazy patches
-> > desktop util 17.5% lazy=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ditto...
-> > desktop util 17.0% lazy
-> > desktop util 16.8% lazy
-> > desktop util 17.8% full
-> > desktop util 17.8% full
-> > desktop util 17.8% full
->
-> Can you please elaborate a bit more were those values, e.g. 18,1%, come =
-from?
-> How to get those? I couldn't find a connection to your raw data.
+Hi Jonas,
 
-I use a slightly twiddled perf to profile, ala perf sched record
-<whatever load>, perf sched lat to emit the profile, then do the total
-runtime accumulation vs competitor runtime arithmetic. Both competitor
-and desktop load are selected for maximal hands off consistency, poke
-start, watch yet another 5 minutes of BigBuckBunny to make sure the
-internet doesn't hiccup during recording.. and done.
+kernel test robot noticed the following build errors:
 
-> Sorry for asking this probably stupid question,
+[auto build test ERROR on 9852d85ec9d492ebef56dc5f229416c925758edc]
 
-Nah, the only silly question is one not pondered first.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jonas-Rebmann/spi-imx-pass-struct-spi_transfer-to-prepare_transfer/20241107-233756
+base:   9852d85ec9d492ebef56dc5f229416c925758edc
+patch link:    https://lore.kernel.org/r/20241107-imx-spi-word-delay-v1-2-2a969214d796%40pengutronix.de
+patch subject: [PATCH 2/2] spi: imx: support word delay
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241108/202411080814.OtrMOufy-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411080814.OtrMOufy-lkp@intel.com/reproduce)
 
-	-Mike
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411080814.OtrMOufy-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/spi/spi-imx.c:9:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/spi/spi-imx.c:9:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/spi/spi-imx.c:9:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/spi/spi-imx.c:9:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/spi/spi-imx.c:739:7: error: call to undeclared function 'FIELD_FIT'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     739 |         if (!FIELD_FIT(MX51_ECSPI_PERIOD_MASK, word_delay_sck))
+         |              ^
+>> drivers/spi/spi-imx.c:742:9: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     742 |         writel(FIELD_PREP(MX51_ECSPI_PERIOD_MASK, word_delay_sck),
+         |                ^
+   7 warnings and 2 errors generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +/FIELD_FIT +739 drivers/spi/spi-imx.c
+
+   665	
+   666	static int mx51_ecspi_prepare_transfer(struct spi_imx_data *spi_imx,
+   667					       struct spi_device *spi, struct spi_transfer *t)
+   668	{
+   669		u32 ctrl = readl(spi_imx->base + MX51_ECSPI_CTRL);
+   670		u64 word_delay_sck;
+   671		u32 clk;
+   672	
+   673		/* Clear BL field and set the right value */
+   674		ctrl &= ~MX51_ECSPI_CTRL_BL_MASK;
+   675		if (spi_imx->target_mode && is_imx53_ecspi(spi_imx))
+   676			ctrl |= (spi_imx->target_burst * 8 - 1)
+   677				<< MX51_ECSPI_CTRL_BL_OFFSET;
+   678		else {
+   679			ctrl |= (spi_imx->bits_per_word - 1)
+   680				<< MX51_ECSPI_CTRL_BL_OFFSET;
+   681		}
+   682	
+   683		/* set clock speed */
+   684		ctrl &= ~(0xf << MX51_ECSPI_CTRL_POSTDIV_OFFSET |
+   685			  0xf << MX51_ECSPI_CTRL_PREDIV_OFFSET);
+   686		ctrl |= mx51_ecspi_clkdiv(spi_imx, spi_imx->spi_bus_clk, &clk);
+   687		spi_imx->spi_bus_clk = clk;
+   688	
+   689		mx51_configure_cpha(spi_imx, spi);
+   690	
+   691		/*
+   692		 * ERR009165: work in XHC mode instead of SMC as PIO on the chips
+   693		 * before i.mx6ul.
+   694		 */
+   695		if (spi_imx->usedma && spi_imx->devtype_data->tx_glitch_fixed)
+   696			ctrl |= MX51_ECSPI_CTRL_SMC;
+   697		else
+   698			ctrl &= ~MX51_ECSPI_CTRL_SMC;
+   699	
+   700		writel(ctrl, spi_imx->base + MX51_ECSPI_CTRL);
+   701	
+   702		/* calculate word delay in SPI Clock (SCLK) cycles */
+   703		if (t->word_delay.value == 0) {
+   704			word_delay_sck = 0;
+   705		} else if (t->word_delay.unit == SPI_DELAY_UNIT_SCK) {
+   706			word_delay_sck = t->word_delay.value;
+   707	
+   708			if (word_delay_sck <= MX51_ECSPI_PERIOD_MIN_DELAY_SCK)
+   709				word_delay_sck = 0;
+   710			else if (word_delay_sck <= MX51_ECSPI_PERIOD_MIN_DELAY_SCK + 1)
+   711				word_delay_sck = 1;
+   712			else
+   713				word_delay_sck -= MX51_ECSPI_PERIOD_MIN_DELAY_SCK + 1;
+   714		} else {
+   715			int word_delay_ns;
+   716	
+   717			word_delay_ns = spi_delay_to_ns(&t->word_delay, t);
+   718			if (word_delay_ns < 0)
+   719				return word_delay_ns;
+   720	
+   721			if (word_delay_ns <= mul_u64_u32_div(NSEC_PER_SEC,
+   722							     MX51_ECSPI_PERIOD_MIN_DELAY_SCK,
+   723							     spi_imx->spi_bus_clk)) {
+   724				word_delay_sck = 0;
+   725			} else if (word_delay_ns <= mul_u64_u32_div(NSEC_PER_SEC,
+   726								    MX51_ECSPI_PERIOD_MIN_DELAY_SCK + 1,
+   727								    spi_imx->spi_bus_clk)) {
+   728				word_delay_sck = 1;
+   729			} else {
+   730				word_delay_ns -= mul_u64_u32_div(NSEC_PER_SEC,
+   731								 MX51_ECSPI_PERIOD_MIN_DELAY_SCK + 1,
+   732								 spi_imx->spi_bus_clk);
+   733	
+   734				word_delay_sck = DIV_U64_ROUND_UP((u64)word_delay_ns * spi_imx->spi_bus_clk,
+   735								  NSEC_PER_SEC);
+   736			}
+   737		}
+   738	
+ > 739		if (!FIELD_FIT(MX51_ECSPI_PERIOD_MASK, word_delay_sck))
+   740			return -EINVAL;
+   741	
+ > 742		writel(FIELD_PREP(MX51_ECSPI_PERIOD_MASK, word_delay_sck),
+   743		       spi_imx->base + MX51_ECSPI_PERIOD);
+   744	
+   745		return 0;
+   746	}
+   747	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
