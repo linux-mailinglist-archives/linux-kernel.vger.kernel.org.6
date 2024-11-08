@@ -1,105 +1,147 @@
-Return-Path: <linux-kernel+bounces-402294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EC59C2604
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:02:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C01A09C2606
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91BC01F232F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:02:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10959B21DAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A281C1F20;
-	Fri,  8 Nov 2024 20:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295E11C1F21;
+	Fri,  8 Nov 2024 20:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqHtF3Xd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdGoCmbw"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7284A199FAD;
-	Fri,  8 Nov 2024 20:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D7D17A5BE;
+	Fri,  8 Nov 2024 20:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731096134; cv=none; b=MKmFGzBDuD31xi5ify6SlqlVXKwVgF0BtnKLtFGJkoFU2ovSbH7KHST6TV/1q89imKt3YCcU+T/HDscOZG1+tZSwGmJ/Nrw9pq91ldWkVT4xgOfptHO2VjY28B0n0I8EB4M82NnUT6G/RrieE433+R0eLJwYRADHcWoTkykueQ0=
+	t=1731096170; cv=none; b=NsXwXespARh5VWzdkBZENJ+EG4Q2E7g6vVrX8+1i7oBj4ZvyM9TC3375+0u4mZUE7/Xt7Dd9GQ3DiXNyKbde8TqwR42oVLR3JW8uWt/ENI11yxwOLHTB6l+9vIRlqKXGh4QqqqG9xYzaDWw83Z/M7HKvAdECJdID9R82eb6laeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731096134; c=relaxed/simple;
-	bh=IiGK0LHHX6RUybvgqV5nuFEKCrZOZl5+t0SvjIYc6vw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dpHq9wTmifTEoLjd7X2pG4i/Ny8aa17dz4UtEtmgKEBiQE5CRQ/3GrYwWLXRsXwFbKX4qGT/eoiBaSDO7NKzz12wP/xzm55Ye6vHMnOrVlPlGjzNLBHjzU3eP6lW7fF/S3QU3rYEfjZgGxyDdDfrwVOAVwc6E17jkCQZUsculfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqHtF3Xd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A616C4CECD;
-	Fri,  8 Nov 2024 20:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731096134;
-	bh=IiGK0LHHX6RUybvgqV5nuFEKCrZOZl5+t0SvjIYc6vw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=DqHtF3XdUU0jyifBi/N10jB00cc/s9Ea9JgcleoBWNgq1xwlsJsFiO7OqCIxTYPOA
-	 SoO8/u3DFEftJV2V1CX/xoX4YdQhJ8lrhvM4cnF1GU3phTb2wvy0Q5qhiNwZDxipfL
-	 +71mZRwxrGdDK4sdMXNflGcgk/FzhajFW2C/J9F7NN116HFlmsKmx8sbkLYaojxc7Y
-	 vUtxKt7fNCi6tZkgLZu6iItF+VtGbc0NBOORCHnlymofHM9EPKw0p7s19fbpzcTQq7
-	 vXTWPA/hjHF+2eN040Lv+A5v3hmu+DkGxcLvkVuQItuEGi/k4t9xGLbOLHUnKfl8VF
-	 5Nve/05oXcSqw==
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e9b4a4182dso761517a91.0;
-        Fri, 08 Nov 2024 12:02:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWF+B/C8pIUeDwFbJDKvG9XJQM26XoLdI97dk/xuGNZFqxDv+rQIsJhy+itUdJq5wgO0dxAy96HK9MbkDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe58SIbXst9YY3hZXxQc9HYwlXkkFDd7Bbkr62Rqm6eL1Ay1YC
-	+/xS6TZ7NQO+roc0QWDjL7ngZD9TuJa4UbEfS2HsDMG90RypEZvdIgBWcXyzvfLfkcRJSJaUcqF
-	m1ZOac687fFUg4Ewve3bXAmXaJbI=
-X-Google-Smtp-Source: AGHT+IHjSGMCcWX9ZXitHft468If7SJgcPpj2MGee91MKiVkKuJXCqNP8LqSOW6owU74l0Tij7EHkushPrjGie781g4=
-X-Received: by 2002:a17:90b:544b:b0:2e2:c744:2eea with SMTP id
- 98e67ed59e1d1-2e9b1f61091mr6651907a91.13.1731096133642; Fri, 08 Nov 2024
- 12:02:13 -0800 (PST)
+	s=arc-20240116; t=1731096170; c=relaxed/simple;
+	bh=9IxIZTQigPBCCdGRlAbxA2LWPdmSedVO9RgEhrQd8Ec=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uLgpCCOG+lg1En0vO23hmUaF422S91h/gqp4wJ81tytuWBfsTzt2sLnjiFYslmFJMfgaSUlVgWFsu1YppoyqJceSAhhTtxnm+Y6yCplfmzPQi2nJzUphnL+07wcbvRSQJ9QpPHgNIF1pX60ImAUSlVIqqu3+J0h3HQmMYgfZuyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdGoCmbw; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso35815631fa.3;
+        Fri, 08 Nov 2024 12:02:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731096167; x=1731700967; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=efBc980s0NSZ9N+buepZjEFdcjQ+iehyxc2MW2RnkkI=;
+        b=QdGoCmbw9JQ0Y7pLNFuFfw9StK1FrAh+FPK3YyB5iJOoL9T5hjYGPd5a7KvWXrdooi
+         XpzCDnRKSnPZU+FW/SRuFTOP3g81KhI7qYvgueAl8LrjVCPerMyMoaz7ixw3rHxKK655
+         4D/npxlENfhR52GXC/DeEIg1KfFvLtOcKzhPX4l4Nkhlr4xbNpV/pMMJXdQo4m0b4nfD
+         QypivC0v0waxX+rhGWP++jySMBiAcnUA86PaJ6zM8sGkSYk0LbKDxplp/C5yuDVyMtuk
+         WWx08VnNj3qxm2390yps7ugDyxiiBB741CgkTtZt+e4WliM/HECd2AXyd0pq2vjttGyE
+         Q5yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731096167; x=1731700967;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=efBc980s0NSZ9N+buepZjEFdcjQ+iehyxc2MW2RnkkI=;
+        b=KSjKyXtEtZIXpYiYyXdEdNTYUFzSfauyLdSSgxsx+qA94yzs675O8Xic9dHrMqDbEX
+         ZPdTMmm/v2u64MqCo6RXq/d0eNL8K3RTtVgG6cxyF9BH7oEjm7h3C/q4kDYWqezuBVK7
+         PTsKVjO99Av/xqIpDE1M5Hv3Cmg3I/wfWfsDFCk1CufKdbPQj60RPoS5T2cmCeBZn+z3
+         pDyIh9iMJqNd9F3Pd5StrZ0vI3QY7XhDkkr92oDmUhfMHcIOadC6tuwMhyT5yBaPnUKw
+         niGiSazOuTTQ7ekTyOIdmKriiGQnnWFycQXvvkPRiTO5nDqqkCHg+zQyz80z1ymcTewf
+         iBCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDcB8pC1lMCnCgNCr8R0EgjUx3FqFMjyYTlJL20nH5xikUTcg+3rUmVMh5RKzskpU3IhvIyWcs@vger.kernel.org, AJvYcCXgau08FGKbPQnF9tTbsz70VnyFQtRlhF27VF4hGs7c2KdaE5fFjTfnxLXrqShUpJpQPwYQfIwzUNz2RLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh4eBcUXSzKx9sEgUJ17VI83A418AJSv0CJlYPLKAKP/38FL8c
+	jI+LWM+RRYemR/zNbuevsaVwLD53hjd3YogBwag5nKiL/f5hX9eMlMWDXw==
+X-Google-Smtp-Source: AGHT+IGtvyY2S8N9H8NXxhonZrHK8zzK12EnQLcYvZj7RQTllhlVsk74dShSegLQYXiYYn9WkJdHHQ==
+X-Received: by 2002:a2e:b8cc:0:b0:2fa:fcf0:7c2a with SMTP id 38308e7fff4ca-2ff202079b4mr30780451fa.24.1731096166587;
+        Fri, 08 Nov 2024 12:02:46 -0800 (PST)
+Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed970713sm5879025f8f.3.2024.11.08.12.02.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 12:02:46 -0800 (PST)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [net-next PATCH] net: dsa: add devm_dsa_register_switch()
+Date: Fri,  8 Nov 2024 21:02:16 +0100
+Message-ID: <20241108200217.2761-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 8 Nov 2024 21:02:02 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hNWYWG78+Y3EYSMkf4=mXB+2yS2QwNQ9Whaic48jLEAA@mail.gmail.com>
-Message-ID: <CAJZ5v0hNWYWG78+Y3EYSMkf4=mXB+2yS2QwNQ9Whaic48jLEAA@mail.gmail.com>
-Subject: [GIT PULL] Power management fix for v6.12-rc7
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Some DSA driver can be simplified if devres takes care of unregistering
+the DSA switch. This permits to effectively drop the remove OP from
+driver that just execute the dsa_unregister_switch() and nothing else.
 
-Please pull from the tag
+Suggested-by: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ include/net/dsa.h |  1 +
+ net/dsa/dsa.c     | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.12-rc7
+diff --git a/include/net/dsa.h b/include/net/dsa.h
+index 72ae65e7246a..c703d5dc3fb0 100644
+--- a/include/net/dsa.h
++++ b/include/net/dsa.h
+@@ -1355,6 +1355,7 @@ static inline void dsa_tag_generic_flow_dissect(const struct sk_buff *skb,
+ 
+ void dsa_unregister_switch(struct dsa_switch *ds);
+ int dsa_register_switch(struct dsa_switch *ds);
++int devm_dsa_register_switch(struct device *dev, struct dsa_switch *ds);
+ void dsa_switch_shutdown(struct dsa_switch *ds);
+ struct dsa_switch *dsa_switch_find(int tree_index, int sw_index);
+ void dsa_flush_workqueue(void);
+diff --git a/net/dsa/dsa.c b/net/dsa/dsa.c
+index 5a7c0e565a89..5cf1bac367ca 100644
+--- a/net/dsa/dsa.c
++++ b/net/dsa/dsa.c
+@@ -1544,6 +1544,25 @@ int dsa_register_switch(struct dsa_switch *ds)
+ }
+ EXPORT_SYMBOL_GPL(dsa_register_switch);
+ 
++static void devm_dsa_unregister_switch(void *data)
++{
++	struct dsa_switch *ds = data;
++
++	dsa_unregister_switch(ds);
++}
++
++int devm_dsa_register_switch(struct device *dev, struct dsa_switch *ds)
++{
++	int err;
++
++	err = dsa_register_switch(ds);
++	if (err)
++		return err;
++
++	return devm_add_action_or_reset(dev, devm_dsa_unregister_switch, ds);
++}
++EXPORT_SYMBOL_GPL(dsa_register_switch);
++
+ static void dsa_switch_remove(struct dsa_switch *ds)
+ {
+ 	struct dsa_switch_tree *dst = ds->dst;
+-- 
+2.45.2
 
-with top-most commit 92447aa5f6e7fbad9427a3fd1bb9e0679c403206
-
- cpufreq: intel_pstate: Update asym capacity for CPUs that were
-offline initially
-
-on top of commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-
- Linux 6.12-rc6
-
-to receive a power management fix for 6.12-rc7.
-
-This fixes the asymmetric CPU capacity support code in the intel_pstate
-driver, added during this development cycle, to address a corner case in
-which the capacity of a CPU going online is not updated (Rafael Wysocki).
-
-Thanks!
-
-
----------------
-
-Rafael J. Wysocki (2):
-      cpufreq: intel_pstate: Clear hybrid_max_perf_cpu before driver
-registration
-      cpufreq: intel_pstate: Update asym capacity for CPUs that were
-offline initially
-
----------------
-
- drivers/cpufreq/intel_pstate.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
 
