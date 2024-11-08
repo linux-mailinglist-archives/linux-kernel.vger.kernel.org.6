@@ -1,114 +1,157 @@
-Return-Path: <linux-kernel+bounces-402013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73469C223F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:38:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266669C2262
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78C07287FBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:38:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1EC91F2452C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A162192D97;
-	Fri,  8 Nov 2024 16:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B043B21C166;
+	Fri,  8 Nov 2024 16:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="wvuCdy/Y"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="CziqCWxg"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47706167DB7
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E543D1946C7;
+	Fri,  8 Nov 2024 16:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731083891; cv=none; b=urM9Up5LOw+HrhbxJj63xyoOIxKjTDifaJwll3Sby5BiziQ8rzPJb/3zZdRTNwv+5v1Kht/rwuBwWOJ13kwsWtc6JkyB0snnmoOv6OPrrKyNc95F/AmbTYeRURciUYvd3iNdWaMU4dba0qK0ebwA8p5D7wZuyj7D3oqcKO2K1zI=
+	t=1731084396; cv=none; b=VZ4QlpAsUlXsFok+WyFJa1dwvQr/MfSmJmVDVej6d+R6tSnBdhzPpJo7yMP8pYjunzMqZc3IFpmEloMSIcYYUoCEJE6K+c5txSsyinMfVppFO3+ZDN0YLd5WYH0qGzxapI7H3O+7AGRgTpRb8Mu99fQeKGiBXCT6M5/CCU8Snyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731083891; c=relaxed/simple;
-	bh=cX52sRS6FW3d71KiB+Z72yKhmMW3ZWSIUkmzYzcDwIc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=F6wTOkOY8WkgDimFo3/j5eZbo8AvNXGSvyhls+4fGvKK89hRJ4AkULfmaS0GimGuS6pTu+nt3CqEwZRHdjrTGW4RBHv0u8lzxbHtr1sJBzkcYvXSuDbfXYzX4+AltQWyGft0a1GBYDVEkcniKuuNonDeFu2AJVZFw0wZptTHb30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=wvuCdy/Y; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1731084396; c=relaxed/simple;
+	bh=I/l6yS2A34mcKFYeAnorgxbnF2qkABDnsse+by9CHTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zp3XDddMo8GxI3SFz6EhjjnfTnN/g4EEnwYo5vCaG3sqnhsMq6DLK55zgUoFPZJBu5n0Wgt2C0ch0as0Tiz04BLIrdLGQ1fmQfCOR85kE+2O1KwiFtdRQ1Q1t/mENBLDUFkNg5hbp2Kr9A6X2RJUP/4gzqY8TG0N3M9+WMuqC9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=CziqCWxg reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 5734cae46dce7224; Fri, 8 Nov 2024 17:46:25 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 39B41834811;
+	Fri,  8 Nov 2024 17:46:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1731084385;
+	bh=I/l6yS2A34mcKFYeAnorgxbnF2qkABDnsse+by9CHTU=;
+	h=From:Subject:Date;
+	b=CziqCWxg+n7ku4VAECHUivC9CqvzabHHFcHiozFgZyZYFvb+ZXCvFBbz4eVGPUrs/
+	 8Ro999u4XvOmPOgk0s2nGXHE1L6SVLbNSnhlP1uYXzgArwrZG7bhSZ9B/Xn6mzp0AC
+	 MIgpVU9q1pqoezHIQEBBtLb6y22XpDwLHm7hZ23Yfg3avGqo8DxuJu03TxSuUBQikv
+	 Ho8bKxQDSEfUiSRzgOKyzLUZt5VhSY1STh7z6O8Hr5jkUgApmORom6PuKSy/f9Vbft
+	 vrgzmY8Ln6udaPv142z4qkFun2MNUyY34H2JuLAXQM263Cxo9/cKRYzVC/ecJ9rQ0O
+	 hvMSyg+EeUqpw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Len Brown <len.brown@intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Subject:
+ [RFC][PATCH v0.1 3/6] PM: EM: Add special case to
+ em_dev_register_perf_domain()
+Date: Fri, 08 Nov 2024 17:38:11 +0100
+Message-ID: <2017201.usQuhbGJ8B@rjwysocki.net>
+In-Reply-To: <3607404.iIbC2pHGDl@rjwysocki.net>
+References: <3607404.iIbC2pHGDl@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1731083886;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y8isQ+eC1NBDJ85mhmgiRP01XgjT4qvdr3jwt+UY19g=;
-	b=wvuCdy/YsQr5y2ZLd7wKdSKLnnl9GdvdfoZrAkccd2PyafwFPUA5adoDCjZ0A2W0ehzRdu
-	QyWalDT08pxaTLAk3zchX7qLvtLa2fTTAGrUwABmQ88jbZl6/P7Yp/6RofZUJzni1JZpMx
-	/hJ84YXohGcqC4Ul/QvWzE4juichAa3wz0l72E0w7Sp3SXUEU4YpoBz9tbnuZZO9yj7T8D
-	+UUtjE85ItWVYdfZ4yGC2LGisf6PrGQ2OW8aXy0m1/ZDpa3CRhCVVntYe+qKbb+bUJLoO+
-	sxksUg6DJ9RR/+CiD26PqZ3X66Jg9ZmKloCi2N/Ytf2/fbSslOltMB2xQURPAw==
-Content-Type: multipart/signed;
- boundary=342aba1a373c0c1c659dff9cb9078d09b156ee41058742d4af8979a7c0b6;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Fri, 08 Nov 2024 17:37:51 +0100
-Message-Id: <D5GY0NXYFLS9.1YHBZ5502R764@cknow.org>
-Cc: <dsimic@manjaro.org>, <andy.yan@rock-chips.com>,
- <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>, <linux-kernel@vger.kernel.org>, "Heiko Stuebner"
- <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH] drm/rockchip: dsi: convert to dev_err_probe in probe
- function
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- <linux-rockchip@lists.infradead.org>, <dri-devel@lists.freedesktop.org>
-References: <20241108144425.1009916-1-heiko@sntech.de>
- <D5GWE4WJZMM8.1MPHPPQR2QW46@cknow.org> <3594835.iIbC2pHGDl@diego>
-In-Reply-To: <3594835.iIbC2pHGDl@diego>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigdeklecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthg
+X-DCC--Metrics: v370.home.net.pl 0; Body=10 Fuz1=10 Fuz2=10
 
---342aba1a373c0c1c659dff9cb9078d09b156ee41058742d4af8979a7c0b6
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Fri Nov 8, 2024 at 5:31 PM CET, Heiko St=C3=BCbner wrote:
-> Am Freitag, 8. November 2024, 16:21:24 CET schrieb Diederik de Haas:
-> > On Fri Nov 8, 2024 at 3:44 PM CET, Heiko Stuebner wrote:
-> > > From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > >
-> > > DRM_DEV_ERROR is deprecated and using dev_err_probe saves quite a num=
-ber
-> > > of lines too, so convert the error prints for the dsi-driver.
-> > >
-> > > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> >=20
-> > Should this have a Fixes tag?
-> > Because in the PineTab2 case it reported an error, which was actually
-> > just a deferred probe.
->
-> A deferred-probe is an error ;-)   -517 in fact  ... just that convention
-> nowadays is to not actively report on it but "fail" silently.
+Allow em_dev_register_perf_domain() to register a cost-only stub
+perf domain with one-element states table if the .active_power()
+callback is not provided.
 
-Good to know, thanks :)
+Subsequently, this will be used by the intel_pstate driver to register
+stub perf domains for CPUs on hybrid systems.
 
-> So personally I don't really consider it a fix, but more a style thing.
-> I guess I'll let others chime in for that.
+No intentional functional impact.
 
-Then I agree that it should not have a Fixes tag.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ kernel/power/energy_model.c |   26 +++++++++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
 
-Cheers,
-  Diederik
+Index: linux-pm/kernel/power/energy_model.c
+===================================================================
+--- linux-pm.orig/kernel/power/energy_model.c
++++ linux-pm/kernel/power/energy_model.c
+@@ -426,9 +426,11 @@ static int em_create_pd(struct device *d
+ 	if (!em_table)
+ 		goto free_pd;
+ 
+-	ret = em_create_perf_table(dev, pd, em_table->state, cb, flags);
+-	if (ret)
+-		goto free_pd_table;
++	if (cb->active_power) {
++		ret = em_create_perf_table(dev, pd, em_table->state, cb, flags);
++		if (ret)
++			goto free_pd_table;
++	}
+ 
+ 	ret = em_compute_costs(dev, em_table->state, cb, nr_states, flags);
+ 	if (ret)
+@@ -561,11 +563,20 @@ int em_dev_register_perf_domain(struct d
+ {
+ 	unsigned long cap, prev_cap = 0;
+ 	unsigned long flags = 0;
++	bool stub_pd = false;
+ 	int cpu, ret;
+ 
+ 	if (!dev || !nr_states || !cb)
+ 		return -EINVAL;
+ 
++	if (!cb->active_power) {
++		if (!cb->get_cost || nr_states > 1 || microwatts)
++			return -EINVAL;
++
++		/* Special case: a stub perf domain. */
++		stub_pd = true;
++	}
++
+ 	/*
+ 	 * Use a mutex to serialize the registration of performance domains and
+ 	 * let the driver-defined callback functions sleep.
+@@ -590,6 +601,15 @@ int em_dev_register_perf_domain(struct d
+ 				ret = -EEXIST;
+ 				goto unlock;
+ 			}
++
++			/*
++			 * The capacity need not be the same for all CPUs in a
++			 * stub perf domain, so long as the average cost of
++			 * running on each of them is approximately the same.
++			 */
++			if (stub_pd)
++				continue;
++
+ 			/*
+ 			 * All CPUs of a domain must have the same
+ 			 * micro-architecture since they all share the same
 
---342aba1a373c0c1c659dff9cb9078d09b156ee41058742d4af8979a7c0b6
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZy4+ZgAKCRDXblvOeH7b
-bm7IAQDlu5u1RUaHveltxvLYbs1Lkju/X4N1ZMHhqsGMKvP6MwEApHelYqAyAA1h
-JBDYWaKldiIhOrBuZQvjbtUN4ic/EQQ=
-=BFts
------END PGP SIGNATURE-----
-
---342aba1a373c0c1c659dff9cb9078d09b156ee41058742d4af8979a7c0b6--
 
