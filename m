@@ -1,246 +1,217 @@
-Return-Path: <linux-kernel+bounces-402462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF04C9C27F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:08:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3431C9C27F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:09:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606FC1F231E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:08:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A2B1C214C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D791F7549;
-	Fri,  8 Nov 2024 23:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79A91E32B0;
+	Fri,  8 Nov 2024 23:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rkpve48N"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TvY3JDzE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEF41C1F2B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731107301; cv=none; b=NfC4YDaPGht/C60P/vDk9ohEn8OMmd6L0PVE4LJ/OY99WJ7KmdTAxxOkNHWaoIk8RKT3lyeP2VSq5+NASOGYGFhRwPHV64p4fbUCmhxIypxESe4txSzydUK4ca5hh4O7f2WeAaR7XyI7h1X25QS9/09hhjnfZ4SYOEebGjKDfag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731107301; c=relaxed/simple;
-	bh=irsXnTZZxmygNupu1NXScKGAnNXMWo9lfsCc5kdbx9Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vm8Mpj47xmwv+JZrgCVxjCKGkzI+vQCHi6ZvUxzSnSonxXFyhm7moV2+a+9TZm6AUREdB4CIuVW12FnctGiPUdJPtAXqthSxdgWC9DBwuQzomfk5qnQL1V/a+JnYNYUmM02dPMnbKHVjIofSN4ncUR1dj5Cd6oFmlMuCwdegbO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rkpve48N; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso35745ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:08:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731107299; x=1731712099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IiCqEW55XHvVf8qTba07pGSpYKmfdNiKgbJzhLD73iM=;
-        b=Rkpve48NY0Rgd+nl2vXkSk9J3Te9p2r5JEaZRBEsr9/L1b35TTazoEKv6olDDk4/QM
-         W4BKfqa4TqqyTSNM+qz5zA8aUJXrzIXGyYut1vtMK/vWICR8XHun4ao8cnxxn4EZgc5i
-         4dzF0WFMjQEyryh20/87zIP7cDDR+sk8HFpBqWH1elOFnERynnM62SxHZ/NFYO7ga7vy
-         3tRbop0awyKCx875UGYdf4UhgfV2xt2rAYTEbGyqAj3116G9vNUYXExQMJivhIdHFRXm
-         KCw0aX77mjhJKdSxqJbGJw+dZhSrSeTINGml1Jj8A2pmrKHwejpFNY0Fk8nv7o5UQ9jx
-         3t7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731107299; x=1731712099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IiCqEW55XHvVf8qTba07pGSpYKmfdNiKgbJzhLD73iM=;
-        b=wjgKi4WTIzv2N7Ko+82Mgl6mb2/1HVIudF1uPLmnxQBYwc3/fgJsoAIK4FtdjtgYxn
-         0MRNkbStd7pkSRCkPMOeJlmCBy7jHjRd7QyK7+pvJGuGM/+d9YDeuove9clAUF7gKk5X
-         rnpFUZUZSZUMy43SDG2CtSDxD5XtgNT6zC1N2YemEaotWIRfzRmEk0z+Cos5WFWTqodi
-         XpLXlCMl/j/obMKQp+LHgd+NPdaw8HrWLkkRGdlMJ0QH8V+y11YVHmiqVVi1rUgbAhXk
-         aG5kAfb/FXOx8y46i+6qhNzgobdkfVGz+OjX2Yi46cGPwsBtYA3Bx+iSN2pXP7tjQMJo
-         gL4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJfXKdSUYIlHivMug2RiOMuM/D+z5lmd4zJJ7zZzChL+zNTcl3m+9HqgZW0eWmEZONu9BVWnf9ve5st2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMgbbU9d8eMoNV+E8zzXWYa1P2Nst1g3sXhJeho5Oa8ePg21lf
-	sVljXKJI9O49HD6c26bsJ23pv3J3nSCZJ29dCs3GT5ZIf8/hjRhxOpJaqsdNZ7KGDeyJfvaWLtS
-	O92tyRD9nXeUfsUptn1U2jn8DjcXgplglM5T5
-X-Gm-Gg: ASbGncvFR0DPWzmvhpEKKchPA7BEDJ8PIWAWIP+Bv4S3Yx1IUtMALuovf2npNx3YDx8
-	R7m9wmhGsmGZCOF3op1NFcIwZBL5i2EIr
-X-Google-Smtp-Source: AGHT+IEukeGFoyo6dh0VbQTAZvTWfrcspZTzt0yr9OYJp6P2e9ETJS0TnoGpuVFVzJTNq6FY+rr4thPlSIkzzSRgbw0=
-X-Received: by 2002:a05:6e02:1946:b0:3a0:a224:eb2c with SMTP id
- e9e14a558f8ab-3a6f9564132mr264765ab.25.1731107299142; Fri, 08 Nov 2024
- 15:08:19 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8DF1D433B
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731107357; cv=fail; b=UnAeXUk59jMI3Zq9rlEnkNgniRA4hoylBzIXe256qHpwBSGntT6EkomkLB8mECQdH8wwVtSlC2MvyVjohb9HcD09+kq3N86PBeBzniihqjFit1hCk0IlafWvKvIgUvw+na5Uf+FWdvFDw3ZdlLxfjkwa4t10eKweUOxUrEo20qc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731107357; c=relaxed/simple;
+	bh=BAwZw7Ky2/GhzyGdLzTh/wd/T62GiqTVUMMkN+bch9k=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=J+JfDaCHHC5dORpLWH/EdyUfzYBV7BwIfWC1t6fiAlu2N0OBNUHcZdzVN7dbdEn5vRZlH6f+T6bQGz5usj2Ii+FbXJ2w/6PEYlKzCy8ul8wDu3VBVNF3sZ63AUWeN68B0f1p/fapJYZQ3TrXfOYCv0gUUXVF+N2cz+/jSuqEXA8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TvY3JDzE; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731107355; x=1762643355;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=BAwZw7Ky2/GhzyGdLzTh/wd/T62GiqTVUMMkN+bch9k=;
+  b=TvY3JDzEbsY3CUK9TsjHPPmYrkbpci7/WElFZpgzcGnYJwUtq7GSQk21
+   txx5zGgmJrVjtqp7J1kgaigyLkgIfWcYM1ywRvMtJKKjP5rTdUDCS8a9J
+   WHkNzP8WVyCWCS9YuCHKwSVnQ5vc+1cHMoVOVxAwdxIlEdOgDfOUIPxNq
+   rqYfLRGZsL1uDGtMtS53xpq+eSS4rNmaQaGH2/MxqFvKz/UZJKk6LYoAz
+   yHA7WAVzcGiG3eRXTP//RUP0G5FWDvl42tR2/r0ySZcD4RgoYa4e01bnz
+   MjRgIvxxiYRUJ/O9MFY8CnbnTMR6z6GT7LYV7NX/1G/AOodeiAAjc8Qey
+   w==;
+X-CSE-ConnectionGUID: iuDd0FvvRvCvKfaAVWkoIg==
+X-CSE-MsgGUID: Dq8/UOoISVerjoonfPvstg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30420102"
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="30420102"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 15:09:15 -0800
+X-CSE-ConnectionGUID: v/NP3vMHSyG2WO/MN3dk2A==
+X-CSE-MsgGUID: flT1QUtgTYG+vAkym/5LNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="85777037"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Nov 2024 15:09:14 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 8 Nov 2024 15:09:14 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 8 Nov 2024 15:09:14 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 8 Nov 2024 15:09:14 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HSL4gsyvg/qksjU8GQwtnDoV+yNf+vByHs3mRio31epZvq49Fu4K2V1DJZzvw4mJY1XDqPfdQ4ESA1C1SYci/M98KGUezckSt/I/zoj2nBIbm3j2MNvMhYp3lsruMgFG+sGRX2fKNu7A7VIAOTiNDvFvnuK3Uc0whABR/D/Mi4Tl+nl4nCjUoOL34tvyr5Bc5t6VH2Fyd5/VJOF6telFReK6umDl7Gj7yG6U3CyTj4tT0rwdZkyIgSVDsDuyndKGIZCpMG+rqDejTYubZOoPZK0GaOOnnKZJ/OqxrkGc+FFV8LHfKBA+c4xe+hYdp7rHlyNhCxrOZpM4TkZXz9QLQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xt8fUhG+TKgRU/+ZbIcpPkUVt1XR00imwUXVu2bu5R8=;
+ b=dHS6HP7xqO3WC1bphBoG63hVIPnX/qHncO1WZSgxv3WrLt4Gy81Pt87WDeSDq6t+v66sXuzq8TJWevgKh6PK1+bSbwMiYe9jjAynVC7gDGGsQSWyMVHUxE0v0p9d4/L5Ra2d+SWuPucO42ODsU8y2xBpEyYjvDhKfBiLiZ1j6RnrcU21TH3hPPHX6azuRPleF64zWae667KWbMW93ae4aCKg8cvtYsh6LuqqZGhau11Ljo3t205uu2vtzuotcjXJxYfpwUGiA9xSy+NQEJJjfSKDapap9NcquETvmkOxE/orvsNQdsK7HZni4gM3hT8TnWp95NomF1b2nQG5Rp0IMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
+ by CH3PR11MB8591.namprd11.prod.outlook.com (2603:10b6:610:1af::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.21; Fri, 8 Nov
+ 2024 23:09:10 +0000
+Received: from BYAPR11MB3320.namprd11.prod.outlook.com
+ ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
+ ([fe80::e8c4:59e3:f1d5:af3b%5]) with mapi id 15.20.8114.023; Fri, 8 Nov 2024
+ 23:09:10 +0000
+Message-ID: <436a6b74-aa0b-42d7-a364-fce3b96ccc02@intel.com>
+Date: Fri, 8 Nov 2024 15:09:09 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpu: Fix FAM5_QUARK_X1000 to use X86_MATCH_VFM()
+To: Tony Luck <tony.luck@intel.com>, Dave Hansen <dave.hansen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20241031185733.17327-1-tony.luck@intel.com>
+Content-Language: en-US
+From: Sohil Mehta <sohil.mehta@intel.com>
+In-Reply-To: <20241031185733.17327-1-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0149.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::34) To BYAPR11MB3320.namprd11.prod.outlook.com
+ (2603:10b6:a03:18::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017002520.59124-1-irogers@google.com> <20241017002520.59124-11-irogers@google.com>
- <Zy5udmX6gZAg0wkS@google.com>
-In-Reply-To: <Zy5udmX6gZAg0wkS@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 8 Nov 2024 15:08:07 -0800
-Message-ID: <CAP-5=fWhiLJ97smNySGk+TmmQ=ELOdztqdb7h3hrxT+18wG_HA@mail.gmail.com>
-Subject: Re: [PATCH v3 10/20] perf dwarf-regs: Move csky dwarf-regs out of arch
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Kajol Jain <kjain@linux.ibm.com>, 
-	Atish Patra <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
-	Anup Patel <anup@brainfault.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Steinar H. Gunderson" <sesse@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|CH3PR11MB8591:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf9db0ae-d49f-4565-d8d6-08dd004a5a4b
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?OUFCVUhIVjNnK21vRWx3Tml4TDNGOFhNd290bVJZOVhvcUxWNU9iVitFMnF2?=
+ =?utf-8?B?a2plYjVsK3Y2YnJMNVVxRnAvT295SVd1KzNWRFI4aHVsTXIwUUdXTlVkYXM0?=
+ =?utf-8?B?UFRZYzNjakRqbTk1Q1NvZnJmaTFzbnFFc0doWkZUenF3THplUTVEYWhQampS?=
+ =?utf-8?B?UFNEN2dHVGhMYzltdmxwRUE5WVlJVnpoVFVLQVovdXR2UnVtMUpLN3BlcmF4?=
+ =?utf-8?B?MkF1OGdYaEpTWU9pSXBEN2lWRzhoeStua3BTMjZXUVczaDdWbWFobFZMdEVV?=
+ =?utf-8?B?eTBhWHNjcTQrL09GcU92VXVkRU05R0p2ajBsNit4aytxV2EzQUxRbEVSS0Zh?=
+ =?utf-8?B?MEhpaDFtdk56d3JiOFQ0T3BxZVF1TmRvdXpvcDhacEhMWnJsMGRvdmhjeG5L?=
+ =?utf-8?B?R1pqOFV5KzFSWENqa1NhL3RFQzR4ZmdqTWljblFkRnhVMzhFOFF6VmZKVk5U?=
+ =?utf-8?B?Z2lQd0VoY3oyRmo2Q3pOd1MwcWVKVWhtdXFJRERKMERMb3dEcS9zVEw0OC9G?=
+ =?utf-8?B?TlNWN3BMSUtvOStwSjlhZ2tvdHRGTEl2SC9RMDlhWVpmR0RuTGtjVmEwcVpr?=
+ =?utf-8?B?SGdkblFEekhWNVcxRWthNlVoYzQybDNRTkpZRU9Lbnc2R3F1ZE5EMWZROTNK?=
+ =?utf-8?B?a1hGM3diV0ZvNFpIaExRdzBkRFRNSERqeCt6Z2FqcEhuU0hZajdacjFMMW8r?=
+ =?utf-8?B?ZndMRjNxYStjcjFhaUp2Y0F2bXRmR1RiZ2c5MnJJV0UxeVo0WFpobU84WFZr?=
+ =?utf-8?B?b2I2ZjJ1a2FwdzFxYWI2dU1PNit1Mk9uSWE2N3hSeXhzcXVWNldTcC9YOXZu?=
+ =?utf-8?B?ZUwvN3d0aERlUzhLV1lIMHRYT2VNUTNZNElWZ0ZXL2FpR3FudTl4aXRBcVpa?=
+ =?utf-8?B?ZU9FZ0hzWURndmxwV0JiRG55UEJUVDlodW1vQ292NUNIVktKNGIreEdqK1BY?=
+ =?utf-8?B?dk5IUEpRL2ltR3luQjUyNjR6clRmb3NLanBJYkRtWGlEYUtHZlQrYzBBdWlv?=
+ =?utf-8?B?T01HUjZzWm81Rk44S3VtQnczSS9vamhoTGRkQm5qNW1wMDRQZGw3cU9yTGEx?=
+ =?utf-8?B?SytzWnNoajdCYVR4QVJiVHBvUEdHMkJCMDBMUFpoTGtoczVycThvVEcxNitk?=
+ =?utf-8?B?dit3dzdQcVlWM0l1UEN5NmpNUmY1c3o1Umd2MTVidTdiMEl5OENiY280ejg1?=
+ =?utf-8?B?MnAvVE9rZXBGNXJMclV6SGRkRlhaZ0tkL0xreWRPbXpsZ2hEbjdSY0ZDSW4z?=
+ =?utf-8?B?M1JKZUdwOTBLclNTcHpkWjFpTFdkTTljV1Q0YUdkaWxwditKVUxxSjZCMGF0?=
+ =?utf-8?B?NnlMK3IzU1VKVVpPRGtpNGd6Qm5PRjZFNEpLY1lmVnBXY2c5THhJcXZQVmx6?=
+ =?utf-8?B?bTZObmt3SzJWVXhkSU0vaXFMQksrVVRsbHl2a2ZkNVdFeWZvYVBGblMxTFF4?=
+ =?utf-8?B?bWdvVmpiSkNONmtTNU5Kb0lZSms3eHlsYVp0QnRSOUxjNGhUR3E4cDhvbTZH?=
+ =?utf-8?B?Q0d5RG5kOUJWYThsS3BUQnhXTmR0b2JQd0M0MUErMlMyOVJ4ajZHTFNpZWRa?=
+ =?utf-8?B?RDAyQ1d5Vk1icXJCY3o5emdnbVJKbUpIcERlc21LVjc1aU83SkdMd21UdFEw?=
+ =?utf-8?B?aXl5MmcxUWxpU1ArYW50VmRSalduQW5mMWg2dDB0QnBsUitFT3VQVGxqbFFG?=
+ =?utf-8?B?K05uaTBhMktadlQ4bU9tSkowSlJnSDZqcmhEUVA4eVoyS3ZHVXlEK0pkamFv?=
+ =?utf-8?Q?hrSXiGSouY4tU9dJuQ=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c1E5ZldBS1o1dXJ3S2VpeTZ1bXh1VExHeFFDd3ZjbytkK2dheE01L2NMb2k3?=
+ =?utf-8?B?dDc5NittQkpJNFpFRTAzMkxTaWJaeFFOMEF0a3hGTCtueG1Zek0yNkFMK1JR?=
+ =?utf-8?B?MzdQQmhoUzJNcndlc1FSRzV1SGc3VG9KNVI5WGZOb0FZOWR6TVc3emN6YzhC?=
+ =?utf-8?B?a3I5aVN5LzA0WGlxQXl0dkZ1UlNLOU9CRlhxTHhjT2RwYmRlSXZaK28zUlIv?=
+ =?utf-8?B?d0xNUWFCdHA0RTlqYktkYjVPdzhCZDgycHlrby8rV3ExaVBmcG9yemVWcDNk?=
+ =?utf-8?B?amZTbWxSYUVCa0t1c2x4RUFGQ1UvWmI3dzAxQVIwSHR0elY0UDg4NFppREY4?=
+ =?utf-8?B?RDJQRzRXaE1keHRuYVcxck4zb2pGSGl0RWJ5ZWtWRTEyZkRuRk9TYnBabTdm?=
+ =?utf-8?B?MWlsOWJpckIxdU8ybGRYQ0xyNktLVHB5ZERtaWJ2YnVKdUxKSFQ3dDhQTTRr?=
+ =?utf-8?B?SFQxNmNnVWJmSlFpSWtiUHY3ZFBxb09VNlJSdjNETVowMzRtdFZWYUNJemJV?=
+ =?utf-8?B?VnAvb0Z2QnJQRHg4K1NaMFpnakczcUlpWklVLy9OcGtxbVVWQnVwNkM3a1JP?=
+ =?utf-8?B?S3BvTldwT2swTTZGYS9ydExRWkh2amYzRkNNZ1M3d1FIYmFIVnVMWUE0b0tk?=
+ =?utf-8?B?RnJucUlyOTlRd056RkZRZndCeXl6ZDlwMGZEeUdzVlFhSnhXbFZocWZMRG5Y?=
+ =?utf-8?B?aUJLRjl2M1Jlc2VGR2JiL0Uxc1hnN1RPb0tZdVVNM1VLV3BQaHZhUCtuVW51?=
+ =?utf-8?B?RjBZV3FSUEk1V3c4UW9FdER5VjQ1Tk9reVVIUy80OXo1c2JyamIwczBVN01Y?=
+ =?utf-8?B?QW5jekszTkJlUDVwOWJvb0NlQlQ5MW1rcGlXVkNNQS9hSkxRdG1yLy9DMWxZ?=
+ =?utf-8?B?RmMwVUx2VnZoY2lSVzlDaWZBNE9zQ0dhS0t4bVhuYTRWOWNJTkFrMTdMTEV6?=
+ =?utf-8?B?NGFSSXFxdFFLeWNjb0hKL3JrbEYwZktyRTMybVVOR0FMUzh4RU83OWxGVkdu?=
+ =?utf-8?B?VFl6K1pvNER6WHNMYnY2dFBzYmY4K21hc054NDhJUEJ6UnIwVXRveTRCaU1l?=
+ =?utf-8?B?dHdPeHJaV2drUkh1cW45NWlGKzJGTUxpTUR0dU5QZ3NaYzREQW1WUi9yOW5a?=
+ =?utf-8?B?cStvQTU3UTNsaGVQb1ZVWkVHSjJORURSRVA2UldEeFFFT1lPQkFMVnlhTjQv?=
+ =?utf-8?B?eTZYOGNGcnZyampHMUpxSlc1dHpmVDU4V3IzVFVzYko2KzErK3hJUmo2eU9Y?=
+ =?utf-8?B?d1JLRlNiYVVkTktUOU9IK3VtdzNIN25LS2hxamJDMVZTbXRNSExXckZiazYv?=
+ =?utf-8?B?VXlmWjRlaUJXV1JoTjdIczVxNHF4b0pLQTl6azMwUGZRWGdXZWpIdXJsQjda?=
+ =?utf-8?B?aUQyaVpwKytWNlZOaXVuTUdwdmtydFRSZ2k4VUdNNGRKRGVsaDU0NXl1c0Js?=
+ =?utf-8?B?Vk1Lb3RqcTJDOFAzQU5GM0NTVGkySC9OUnl1dzRKV1dySkhjSE9xcGR5VHJz?=
+ =?utf-8?B?N3NKV3hYMnBwdXVrdE16YThURlJpRUxMbTQvWDFVaHRPbEtQYjdXY2c4a1lu?=
+ =?utf-8?B?VVZwOStIV1ZQdlErRk1xN2lUQmdjRzhMRFl2S3NhejlueG9ITTFuRW0wc3Bw?=
+ =?utf-8?B?b25pdDFpRFMvMTgrVXJyWXkveElidnI4TCt4QVd5cWpGMnNMb1lNVktuREF3?=
+ =?utf-8?B?Zk5VVUVkQWpXL3RTWFdWc0hzdmVFVlF6RUY5TlhhbkxRZ3EyaWpLeUJKRGh5?=
+ =?utf-8?B?OU5UR3Y3U1hZZTVOUlJ6TVF5cXFUT3h1allGSE44bUNDWFRWNDNxVFZEYW8x?=
+ =?utf-8?B?U25yZVpsTG1sWHZxSlVLSUF3dWdEbXlrWTR1a2JFMFhxWUcvdTg3Ui9reTBN?=
+ =?utf-8?B?Z3hvMGxPMGVoZnM5U2V3R2kzbTFKckFIeG9nSXMxV1J0YUNFaFp4RzdGV0hu?=
+ =?utf-8?B?MUg4VHNWRDRyNENXK1djTFFSd1NLUEVKUXFjd0Q2SFpOV0QwL25iM0lKRzBk?=
+ =?utf-8?B?Qys1bjlxR2dRREwzdFcwTnM5MGNnVER2RjJvUmhCazVUQythN0d1TVNnVDgx?=
+ =?utf-8?B?ZVRGWHBRdTVXUnc0N3BkWDJsaFZXNVF2emVmd2RNRFJlclRkL0poeDNMOGtH?=
+ =?utf-8?Q?xSpMWimAabj7CKa1jfDohuW3i?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf9db0ae-d49f-4565-d8d6-08dd004a5a4b
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 23:09:10.0664
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gZ9s24P57u8LXtT2jjCvmwZEzhZsPR9+g66gVJ/GhioZXUoTSvhU92unBzaXaTqdG1F7PcW2/lOX1Ap8IpqUeA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8591
+X-OriginatorOrg: intel.com
 
-On Fri, Nov 8, 2024 at 12:03=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Wed, Oct 16, 2024 at 05:25:10PM -0700, Ian Rogers wrote:
-> > Move arch/csky/util/dwarf-regs.c to util/dwarf-regs-csky.c and compile
-> > in unconditionally. To avoid get_arch_regstr being duplicated, rename
-> > to get_csky_regstr and add to get_dwarf_regstr switch.
-> >
-> > Update #ifdefs to allow ABI V1 and V2 tables at the same
-> > time. Determine the table from the ELF flags.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/arch/csky/util/Build               |  1 -
-> >  tools/perf/util/Build                         |  1 +
-> >  .../dwarf-regs.c =3D> util/dwarf-regs-csky.c}   | 19 ++++++++++-------=
---
-> >  tools/perf/util/dwarf-regs.c                  | 11 +++++++----
-> >  tools/perf/util/include/dwarf-regs.h          |  2 ++
-> >  5 files changed, 20 insertions(+), 14 deletions(-)
-> >  rename tools/perf/{arch/csky/util/dwarf-regs.c =3D> util/dwarf-regs-cs=
-ky.c} (74%)
-> >
-> > diff --git a/tools/perf/arch/csky/util/Build b/tools/perf/arch/csky/uti=
-l/Build
-> > index 1325310cab6a..5e6ea82c4202 100644
-> > --- a/tools/perf/arch/csky/util/Build
-> > +++ b/tools/perf/arch/csky/util/Build
-> > @@ -1,4 +1,3 @@
-> >  perf-util-y +=3D perf_regs.o
-> >
-> > -perf-util-$(CONFIG_LIBDW) +=3D dwarf-regs.o
-> >  perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) +=3D unwind-libdw.o
-> > diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> > index 4c615611b9d7..99ae4e2802b8 100644
-> > --- a/tools/perf/util/Build
-> > +++ b/tools/perf/util/Build
-> > @@ -203,6 +203,7 @@ endif
-> >  perf-util-$(CONFIG_LIBDW) +=3D probe-finder.o
-> >  perf-util-$(CONFIG_LIBDW) +=3D dwarf-aux.o
-> >  perf-util-$(CONFIG_LIBDW) +=3D dwarf-regs.o
-> > +perf-util-$(CONFIG_LIBDW) +=3D dwarf-regs-csky.o
-> >  perf-util-$(CONFIG_LIBDW) +=3D dwarf-regs-x86.o
-> >  perf-util-$(CONFIG_LIBDW) +=3D debuginfo.o
-> >  perf-util-$(CONFIG_LIBDW) +=3D annotate-data.o
-> > diff --git a/tools/perf/arch/csky/util/dwarf-regs.c b/tools/perf/util/d=
-warf-regs-csky.c
-> > similarity index 74%
-> > rename from tools/perf/arch/csky/util/dwarf-regs.c
-> > rename to tools/perf/util/dwarf-regs-csky.c
-> > index ca86ecaeacbb..d38ef1f07f3e 100644
-> > --- a/tools/perf/arch/csky/util/dwarf-regs.c
-> > +++ b/tools/perf/util/dwarf-regs-csky.c
-> > @@ -5,9 +5,8 @@
-> >  #include <stddef.h>
-> >  #include <dwarf-regs.h>
-> >
-> > -#if defined(__CSKYABIV2__)
-> > -#define CSKY_MAX_REGS 73
-> > -const char *csky_dwarf_regs_table[CSKY_MAX_REGS] =3D {
-> > +#define CSKY_ABIV2_MAX_REGS 73
-> > +const char *csky_dwarf_regs_table_abiv2[CSKY_ABIV2_MAX_REGS] =3D {
-> >       /* r0 ~ r8 */
-> >       "%a0", "%a1", "%a2", "%a3", "%regs0", "%regs1", "%regs2", "%regs3=
-",
-> >       /* r9 ~ r15 */
-> > @@ -26,9 +25,9 @@ const char *csky_dwarf_regs_table[CSKY_MAX_REGS] =3D =
-{
-> >       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-> >       "%epc",
-> >  };
-> > -#else
-> > -#define CSKY_MAX_REGS 57
-> > -const char *csky_dwarf_regs_table[CSKY_MAX_REGS] =3D {
-> > +
-> > +#define CSKY_ABIV1_MAX_REGS 57
+On 10/31/2024 11:57 AM, Tony Luck wrote:
+> This family 5 CPU escaped notice when cleaning up all the family 6
+> CPUs.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  arch/x86/include/asm/intel-family.h             | 1 -
+>  arch/x86/platform/efi/quirks.c                  | 3 +--
+>  arch/x86/platform/intel-quark/imr.c             | 2 +-
+>  arch/x86/platform/intel-quark/imr_selftest.c    | 2 +-
+>  drivers/thermal/intel/intel_quark_dts_thermal.c | 2 +-
+>  5 files changed, 4 insertions(+), 6 deletions(-)
+> 
 
-Definition of CSKY_ABIV1_MAX_REGS.
-
-> > +const char *csky_dwarf_regs_table_abiv1[CSKY_ABIV1_MAX_REGS] =3D {
-> >       /* r0 ~ r8 */
-> >       "%sp", "%regs9", "%a0", "%a1", "%a2", "%a3", "%regs0", "%regs1",
-> >       /* r9 ~ r15 */
-> > @@ -41,9 +40,11 @@ const char *csky_dwarf_regs_table[CSKY_MAX_REGS] =3D=
- {
-> >       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-> >       "%epc",
-> >  };
-> > -#endif
-> >
-> > -const char *get_arch_regstr(unsigned int n)
-> > +const char *get_csky_regstr(unsigned int n, unsigned int flags)
-> >  {
-> > -     return (n < CSKY_MAX_REGS) ? csky_dwarf_regs_table[n] : NULL;
-> > +     if (flags & EF_CSKY_ABIV2)
->
-> Hmm.. you need it here as well.
-
-These constants are part of the dwarf-regs-csky.c file and not elf.h.
-
-> > +             return (n < CSKY_ABIV2_MAX_REGS) ? csky_dwarf_regs_table_=
-abiv2[n] : NULL;
-> > +
-> > +     return (n < CSKY_ABIV1_MAX_REGS) ? csky_dwarf_regs_table_abiv1[n]=
- : NULL;
-> >  }
-> > diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.=
-c
-> > index fd21f9e90e40..9a76f83af62c 100644
-> > --- a/tools/perf/util/dwarf-regs.c
-> > +++ b/tools/perf/util/dwarf-regs.c
-> > @@ -29,17 +29,18 @@
-> >  #define __get_dwarf_regstr(tbl, n) (((n) < ARRAY_SIZE(tbl)) ? (tbl)[(n=
-)] : NULL)
-> >
-> >  /* Return architecture dependent register string (for kprobe-tracer) *=
-/
-> > -const char *get_dwarf_regstr(unsigned int n, unsigned int machine,
-> > -                          unsigned int flags __maybe_unused)
-> > +const char *get_dwarf_regstr(unsigned int n, unsigned int machine, uns=
-igned int flags)
-> >  {
-> > -#if EM_HOST =3D=3D EM_X86_64 || EM_HOST =3D=3D EM_386 || EM_HOST =3D=
-=3D EM_AARCH64 || EM_HOST =3D=3D EM_ARM
-> > +#if EM_HOST =3D=3D EM_X86_64 || EM_HOST =3D=3D EM_386 || EM_HOST =3D=
-=3D EM_AARCH64 || EM_HOST =3D=3D EM_ARM \
-> > +    || EM_HOST =3D=3D EM_CSKY
->
-> And here too.  It seems you also need a rebase.
->
-> At this point, I'm giving up.  Can you please refresh the series with
-> a fix?
-
-Sure I'll rebase and add ifndef+defines to dwarf-regs.h, I see we have
-these currently for EM_AARCH64 and EM_LOONGARCH there.
-
-Thanks,
-Ian
+Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
 
