@@ -1,136 +1,146 @@
-Return-Path: <linux-kernel+bounces-400949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 854319C1461
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:00:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C863B9C1465
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25AF1C214AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:00:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D971B23A8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8033FEAD7;
-	Fri,  8 Nov 2024 03:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1856A33F;
+	Fri,  8 Nov 2024 03:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f2xeLC9R"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xj+auV+8"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A1DBA49
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 03:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C491BD9C2;
+	Fri,  8 Nov 2024 03:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731034851; cv=none; b=vB/BnDWQftHjFnYBF/1b6HbPfE8xa2zfeRAvqMrdR7idjt8b/GFVMlQxgVN1P6lBDmvViJ7Bt42hJ7eRFV90xmrN0diUunheUQUclzt5Uq6XnCy/pyhtlgg0aucO6/7nOKWNI+pN+Vm68zWeduo4dCD7Z2aLzcJcfxj7uV/bkEc=
+	t=1731034916; cv=none; b=Et765aAwmpAvjykARfWwg3zPC+JRgX6oy26CHXVFsnNVv/g3vhuwudZvitN4bWlkGzrBIHdhLvSQdV7I2DWoz3By7RbJxhcqzUUIYS+T8Ux0XRIP/avgUJfG/QpSbAOH2syNxDg3WpEZX4873BbB55wCabRiC/Exbe2nnCRcgpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731034851; c=relaxed/simple;
-	bh=1lqzFGn1eXbAen/HouRQEXecZLXqEsPyxz4EZS5zSGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YOKaoyeKlgnwSatHj9v8bITkPFPuYLJPoeGkADVrFkqcWf9j+ASTJxVLSoWeE27/yOUF95xaQUp1HXFClHchVwx74jLCy/gAPt++hVQpeE/kxELKCyt4hd+M3kN4ptIf8kb4uzsuGEP5vtR7P2lIF2ywrB+IyY7iEi3Bf60Yz50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f2xeLC9R; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6ea051d04caso14120547b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 19:00:50 -0800 (PST)
+	s=arc-20240116; t=1731034916; c=relaxed/simple;
+	bh=jh5QLIklCuSffsX5HHrs2unmHbDfZrVTv4LkHr+NLfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gus5AydZMWshXSddPE7F82ui8ZMbRtlsq9jZgdVfWN5AZln+x3AYlXO7g2zQSKTNqa0g/5CraKj2kTE+VnOWt8OK2+A3FuIK27PvdmK2oyJ7WpOsVPpCgcxeTnvVIRIWDUEsJn3ulLrP/TRsSq3g1dRbdUGRfZhC8pDsPnibJOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xj+auV+8; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20ce65c8e13so18622615ad.1;
+        Thu, 07 Nov 2024 19:01:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731034849; x=1731639649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gpzEZp7ZlditrMUaR0RY215WGeQ8zIPi7Ck1Zq/zD0c=;
-        b=f2xeLC9RyPjTVxtYjwz6c9oV/mfXWe7ymKeFka+D6KP5W7r7Hw0ehmtYuw3LuPjs1q
-         y0/Wq7nauH8sdcHDe3Ln2bj97mwEcLSE8oAuHiytYRWUYEOMaofwXCoz3y88POrAzBon
-         klPz7Ayjrviz2ukj/+Y1UB93kXLkKh7a2+I9WcwNPvjfJ2iAzJJL8qfekCFsIZnjmoQ1
-         MJRblWBs257JmKyaxLughKWhAGc1XSpV42pnE9CWOfcNJiCH7pQT0+f85gQb/Z6gZaTq
-         WZaRmVjjYWwek/+ZahclALkCGWDBbtId8xLF0Hoe8k3QsEnr1aw/vIf2S+H0DMPU9LsP
-         VUiQ==
+        d=gmail.com; s=20230601; t=1731034914; x=1731639714; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2AFkIv1SzzbZMo5JYC3sgbdI5jWNWjyyxyaxG1ONBas=;
+        b=Xj+auV+8XIovxNqcvhKoldS7Y5n3MfAv48k34QToSREWR8sML3jUr3833UPI8phvb9
+         sNbCkgfU1tcrK2j5dmO6RcxKjkLP6USpeBurfCPOWXNk8C1Fh59xrmKkh8aeWaUNgki/
+         S2y2VqCixpgT6M2TEAanjxpelXD6UHVrNXsBrZSwitBPxYQK1loRcyH4zcdPlNZpd3Xa
+         v4ulEPWA6TwMqcmYdUlKaxI6yt8UR7MqF+zA6r5yzmL5h+dg6J9BUeyWfb7Nz79rZ5hT
+         /jpLmNu9ylcNnGDX4EZYjPX2cPmsj6Yx6I0iTpcDzjcXC8TErlc2g5WRygOGFvhpsvbP
+         6FIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731034849; x=1731639649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gpzEZp7ZlditrMUaR0RY215WGeQ8zIPi7Ck1Zq/zD0c=;
-        b=J8ZfK/9TzqyV8/tdjf4KLRnZl17TohxwqDh4Smf+34kSCH5LMRYMAYsx1S5Q/zgZzW
-         YpFPMpb9YGXlcx9ESsEQ06E36mU2FqzEA5nejQxSJtHkAwCbBNQC2yH/uCC7A2KxNJkk
-         md1SE6n7EcSuZtzKqz6QDb9TLPw+Hcns1pdDnxpO7bpZYSmg9LhY272kdxhBOUNNJk5B
-         YNAbmbRHbSv1RnOdmYhNyO9Bfpxv1isyqI6LvprPQ+fvjbRuiHrEQibgkhbvr4cAFAlm
-         vPqOd+vFtkFgeHOJib+PxBvd4Xy4n4pgY8HHWik5jasB7++4fxhtBFHVKeQ5cC+jZ9jk
-         41TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNh05DsK8W8wGoZWaw7VN6+WuvzASmzZPlJeu4wE/8CfYeXSSEK/9Grh/RFwpZKCZMc4oOzDTo8Nho+jA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg//Ri8g4wdr3JsNM3Nw6dOwdvR7MJpvFSkBq0zWMkz5BmTh75
-	Lrc5Fftxuq06AHUjfBGYdbj5b5aSBz4Gl+8wSzQXA2VGKCA+IbVKeKTyuqDsUMTBw9yoBNksT7U
-	xxyFI9HGUE/znt4+U9HvcJohz6baEJK/1A2uQ
-X-Google-Smtp-Source: AGHT+IHR4yckEoMuQ7L6FZx8C9n+6mGcTLb5/EhQ62bRePk5jVdh0KVFPZSYTuKhRFZX0cTeNXh9dAaW7vwAUxwoHQM=
-X-Received: by 2002:a05:690c:c93:b0:6e3:3336:7932 with SMTP id
- 00721157ae682-6eaddf8dc3emr16216267b3.27.1731034849279; Thu, 07 Nov 2024
- 19:00:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731034914; x=1731639714;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2AFkIv1SzzbZMo5JYC3sgbdI5jWNWjyyxyaxG1ONBas=;
+        b=JiywJtlTpXEAcZagz4Atr1YMZTLgO9M2vBHH1vryF3w3TmVRhQwfhylP+c0aE7g79+
+         trhGg2j91qfOZQDfj4oAJELZJz2zkFLnTH3Gwwn142B0lLLKRgzFYcEljfQKy+kF/wKT
+         WMi3gVbMViQJoXoRoopFNqCHUiOXqJ2Pcpaibow/o2XK43bx8kx/0SA58lkWveS/OHoH
+         3hXbt4WlmHhtt2aFw0wUTVfJ7UM7As6faBzrCoeLf43X/LNRhAfSMK52TCha1xjW7i2G
+         KIQqghR7zPktdqB8ubV3MNGk/kp6KQCVSckvfU16A/EgK/7jitAbBTbLiL5lDuRvyl6p
+         ItzA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0cJKHFJluuXVegUzlANKex0RK0PFHZ5mWOTdQuyUYOaJBioSBFnEJznNjCNKasJ/TfcyEbq0j6BQ=@vger.kernel.org, AJvYcCWmvzrQEYf2rONjGW1HMQedas06A/tnRb2VJgZo7xropvfCYowJbXSDzmoxi3y2rw2gHA8nbVRY+THR4w0X@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0gFizOHbC4a3wP+Lb5B6hmFFCjry3c8vxT9VS3YzAEGkuqo1v
+	wT7aQA4cFw433KJsI3GJSM8sRGVJdAXwJQupjg/taCFATxCHQOg=
+X-Google-Smtp-Source: AGHT+IHUqWILqJFNgB/xW1oz/3+eUiw2vIPL5tpyxz94DFjCJ6fiCYhx2hDJejDi2PBvvkZtB2NTaw==
+X-Received: by 2002:a17:902:e805:b0:20c:5c6b:2eac with SMTP id d9443c01a7336-211835ccb49mr14277365ad.49.1731034913729;
+        Thu, 07 Nov 2024 19:01:53 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc8264sm20525145ad.33.2024.11.07.19.01.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 19:01:53 -0800 (PST)
+Date: Thu, 7 Nov 2024 19:01:52 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Yi Lai <yi1.lai@linux.intel.com>,
+	Stanislav Fomichev <sdf@fomichev.me>
+Subject: Re: [PATCH net v2 2/2] net: clarify SO_DEVMEM_DONTNEED behavior in
+ documentation
+Message-ID: <Zy1_IG9v1KK8u2X4@mini-arch>
+References: <20241107210331.3044434-1-almasrymina@google.com>
+ <20241107210331.3044434-2-almasrymina@google.com>
+ <Zy1priZk_LjbJwVV@mini-arch>
+ <CAHS8izOJSd2-hkOBkL0Cy40xt-=1k8YdvkKS98rp2yeys_eGzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105184333.2305744-5-jthoughton@google.com> <202411061526.RAuCXKJh-lkp@intel.com>
-In-Reply-To: <202411061526.RAuCXKJh-lkp@intel.com>
-From: James Houghton <jthoughton@google.com>
-Date: Thu, 7 Nov 2024 22:00:13 -0500
-Message-ID: <CADrL8HU3KzDxrLsxD1+578zG6E__AjK3TMCfs-nQAnqFTZM2vQ@mail.gmail.com>
-Subject: Re: [PATCH v8 04/11] KVM: x86/mmu: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-To: kernel test robot <lkp@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	oe-kbuild-all@lists.linux.dev, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izOJSd2-hkOBkL0Cy40xt-=1k8YdvkKS98rp2yeys_eGzg@mail.gmail.com>
 
-On Wed, Nov 6, 2024 at 3:22=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
-ote:
->
-> Hi James,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on a27e0515592ec9ca28e0d027f42568c47b314784]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/James-Houghton/KVM=
--Remove-kvm_handle_hva_range-helper-functions/20241106-025133
-> base:   a27e0515592ec9ca28e0d027f42568c47b314784
-> patch link:    https://lore.kernel.org/r/20241105184333.2305744-5-jthough=
-ton%40google.com
-> patch subject: [PATCH v8 04/11] KVM: x86/mmu: Relax locking for kvm_test_=
-age_gfn and kvm_age_gfn
-> config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241106=
-/202411061526.RAuCXKJh-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20241106/202411061526.RAuCXKJh-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411061526.RAuCXKJh-lkp=
-@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->    arch/x86/kvm/mmu/tdp_mmu.c: In function 'kvm_tdp_mmu_age_spte':
-> >> arch/x86/kvm/mmu/tdp_mmu.c:1189:23: warning: ignoring return value of =
-'__tdp_mmu_set_spte_atomic' declared with attribute 'warn_unused_result' [-=
-Wunused-result]
->     1189 |                 (void)__tdp_mmu_set_spte_atomic(iter, new_spte=
-);
->          |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~
->
+On 11/07, Mina Almasry wrote:
+> On Thu, Nov 7, 2024 at 5:30 PM Stanislav Fomichev <stfomichev@gmail.com> wrote:
+> >
+> > On 11/07, Mina Almasry wrote:
+> > > Document new behavior when the number of frags passed is too big.
+> > >
+> > > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> > > ---
+> > >  Documentation/networking/devmem.rst | 9 +++++++++
+> > >  1 file changed, 9 insertions(+)
+> > >
+> > > diff --git a/Documentation/networking/devmem.rst b/Documentation/networking/devmem.rst
+> > > index a55bf21f671c..d95363645331 100644
+> > > --- a/Documentation/networking/devmem.rst
+> > > +++ b/Documentation/networking/devmem.rst
+> > > @@ -225,6 +225,15 @@ The user must ensure the tokens are returned to the kernel in a timely manner.
+> > >  Failure to do so will exhaust the limited dmabuf that is bound to the RX queue
+> > >  and will lead to packet drops.
+> > >
+> > > +The user must pass no more than 128 tokens, with no more than 1024 total frags
+> > > +among the token->token_count across all the tokens. If the user provides more
+> > > +than 1024 frags, the kernel will free up to 1024 frags and return early.
+> > > +
+> > > +The kernel returns the number of actual frags freed. The number of frags freed
+> > > +can be less than the tokens provided by the user in case of:
+> > > +
+> >
+> > [..]
+> >
+> > > +(a) an internal kernel leak bug.
+> >
+> > If you're gonna respin, might be worth mentioning that the dmesg
+> > will contain a warning in case of a leak?
+> 
+> We will not actually warn in the likely cases of leak.
+> 
+> We warn when we find an entry in the xarray that is not a net_iov, or
+> if napi_pp_put_page fails on that net_iov. Both are very unlikely to
+> happen honestly.
+> 
+> The likely 'leaks' are when we don't find the frag_id in the xarray.
+> We do not warn on that because the user can intentionally trigger the
+> warning with invalid input. If the user is actually giving valid input
+> and the warn still happens, likely a kernel bug like I mentioned in
+> another thread, but we still don't warn.
 
-Well, I saw this compiler warning in my latest rebase and thought the
-`(void)` would fix it. I guess the next best way to fix it would be to
-assign to an `int __maybe_unused`. I'll do for a v9, or Sean if you're
-going to take the series (maybe? :)), go ahead and apply whatever fix
-you like.
+In this case, maybe don't mention the leaks at all? If it's not
+actionable, not sure how it helps?
 
