@@ -1,73 +1,72 @@
-Return-Path: <linux-kernel+bounces-402475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CB79C2822
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:31:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0119C2823
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149321C21C4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B8E1C21AC9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6621F26C7;
-	Fri,  8 Nov 2024 23:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD85C1E25F2;
+	Fri,  8 Nov 2024 23:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcglRDNL"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="hXYUvvOI"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BA4610D;
-	Fri,  8 Nov 2024 23:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBF31A9B53
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731108686; cv=none; b=nd5596sQ8xCFXpSrvoylSrn9qUrrodqiOFhdTdNSeigJgi36TAuUCrOKg4tr1VtDAMB0N7gfc2Go3wVj0o+LIjuXQ5B6NTjbPGfm7oVc6B0WXlPScWZpYg/G1R9kd8pPXAhumcNC6/Nr6qWSYRBWAhRsMQTDdaOFDHGL58YE+VQ=
+	t=1731109011; cv=none; b=B7kLa8R0ztG0FC3IHZ/i1E/IqI0WuvIER/otLnHLZ8owX4MQdD7E0r+Avwbexc6wg1jFfLfZTFyDnrPDlIo8mfOSe0RMbhuFZt9dTP7+qVcs9orfsVxTnCD5JzaQujvK7K/iaK/eiyjo1Y3C7q0AtKOB6NNz8PE8ZUdCMXuafTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731108686; c=relaxed/simple;
-	bh=iz0xZ4OrldyN72hxlwwvIedXENVbkH2RVnLuwHEYJIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rGevyd4/cdsmRF33DHwUImuyJgZ0kCscweFV/YM1JgL9bOyTYk+beyaz4PAUf6HLHtTvAbPlVa8nyf1uGid1S3KBcV69FkqSSls16TjS56ZLZY7WIy/1X1Yag3eMwZub7nxo6kxtdAedSVkVf2ocwPhBmcrnCb+mh93uqe+DBWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WcglRDNL; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso21226775e9.1;
-        Fri, 08 Nov 2024 15:31:24 -0800 (PST)
+	s=arc-20240116; t=1731109011; c=relaxed/simple;
+	bh=3d/jIwsZ/ZicnzlNsDbS7eR5QoweLJIhaU1VXxILJs0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=lIeMnDr06+KM8VhuPyvplS2JCTjOXKMBqnpc0SkELb1gO7aSYUD+l9W2dTyloQfXdj9Bgcfz5vBQgXl1rB33/namXjHx3jo7zhLoI9NDgZx2XEBpsGOTVfKAuGwQrveE8CWoUf9ZUTkcSLlosJMNgNa1/9BoRwY41MXWRpj6Usc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=hXYUvvOI; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9e8522445dso452677466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:36:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731108682; x=1731713482; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CWrDohYO+E65fwPGOZN9UBAmDMASN0TGavNQ90zX+Bo=;
-        b=WcglRDNLkU61TEKCuZI+AHsOW3GjV36VKxK9GA9l745tXJS6nBji6i7F8bbuO8JhzC
-         9LX9qs+7S7eda7jlENtEanXFwkE4bMHkcuzfHczCbt+dzMQ/ynx9DzjEdTrFkP7mQRWP
-         8gDdYYuUgTr9+IhGJngckO2CsH1MmKkrRWpU0Ab9h+GKNQep1WxWHr05GO/hWStw3e4w
-         dDWUFnTi307kb1mcXDNPso+d9rnPVoL3l1gQURPRXkc1/VUIa1zc5h2x5e78XEPDUGkG
-         g7urOi39perIddwGlTr9hFJq53gPHsAzu42Gr7z5CxwZwvinnLrpZ69lnSiPzV/5P8iy
-         bH5Q==
+        d=citrix.com; s=google; t=1731109007; x=1731713807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=d6MsMrVv0bMMfI4mJu/kmqFfOPAOIvey0wCxyuyIfCo=;
+        b=hXYUvvOIfN+nsIkQSI2j3WvlDxTtopcJoKHa0ecPOKq+4Hn9It5+MuBx9d5aqncOKr
+         WBwfQD6E6bIhOTX+FXPqhYB4qEamc7Cc4Y41xp7jOWFFx1vS4SJT1KDPYYvRo6uRVo2S
+         T3dWD0QcJ7jt1q07pgT2ol/nm2f4BxV8YH5vg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731108682; x=1731713482;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWrDohYO+E65fwPGOZN9UBAmDMASN0TGavNQ90zX+Bo=;
-        b=hOn0K+n8jO/AfvisGSjue8BxZ07p0flQRUhYoqZdsqnlVgppbD0BTBQANBXj7luvD0
-         8x48jfvUw5MGQp1DADseo62IaQb9XsSXC3usnB7qPeIXkQl5JtwkWluT1qrj7DIQokSz
-         CQRZ/pDw+UWf1MW4L/szATFW++yxQO+xEM4uZz9mj7ag4Ff0MKOu/Ica8CMWe3FxqDEA
-         5+/QIA28DW0rfinxkIXEZYWTwfXKuVU8qJX59YKeHMv/XyL8gV+BjCaPR6pVwuCeNEln
-         Vgg1NP1ObVe1sNFPkIv6+b4ZqROHoxgQPY769Ch2D86gZ36eRGb99Ct0ft+QH/x4MINs
-         HJZg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0DDmSLmXYb3g1yAEaGylNtXQDov+LIYg60rS8qDq39KNkr7gPoHraavLtqB6Y4t2j2eFk1aNEBgftzlZSQOBG@vger.kernel.org, AJvYcCVBRNAh0uZDQ17JQo/UCqPePOMLPAM21ar7/L8OW2E2gxb4eytD6+Jkb2lB+2wOT9bJMrrlj2Ct@vger.kernel.org, AJvYcCVTQTLZySZ+nHOfs8UQhK/Hb8nbJo8xkTBuKWgZyUWGCygWu9JDqSXwBaBRQoYtW2ZlmsGoYItf+9fVi/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLIr5L28HXq0SbH4uHnBF7tEG1Ts5QAbIvVmwMihkzmgtXWCp9
-	3rSD/OaX/a2aDTMA2XNOxi2SGz1MgQLAhhXFYWe0BAEd1pE+bHY8
-X-Google-Smtp-Source: AGHT+IEq0HpFAdbYoKoNxwFjF5hrl6ar3mEYDoZ/2WaWDU7Y0dC50eiEpClDhBtuHHsfPTK8kXu8kQ==
-X-Received: by 2002:a05:600c:8608:b0:431:4c14:abf4 with SMTP id 5b1f17b1804b1-432b7887154mr37537395e9.14.1731108682324;
-        Fri, 08 Nov 2024 15:31:22 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432bc46751asm9938215e9.0.2024.11.08.15.31.20
+        d=1e100.net; s=20230601; t=1731109007; x=1731713807;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d6MsMrVv0bMMfI4mJu/kmqFfOPAOIvey0wCxyuyIfCo=;
+        b=qXmXp2zXxKqgscPJRCMtmenXRlkXBSi1+1U3SrnPWb3QYMwHUme9/zPFefKw/Krh59
+         NU1U1QofIOfSy8oMuFUMdzxp2mruzS8t+WoYWSMYX/DylFm9LxZCNKxVzMpcd0N8H4aU
+         TTD6xChuNzf/8UPqFz3NvvZou2spJnd5wGGdFyY9tCk6lBBE38CmKzMrQeglvkA2lf7f
+         QuDqcXlNbLdPv8rRRmB8z2Ws6WzeqLc1suldSiRFeNU23JKdAneLXaCtNsjtDz7ZsYKE
+         oux04UOrtmT8Dv8pDrdC70rCGw6iSeRklkibwsV++uNYh/iJHsTZmipzWifCYGGaOo3x
+         YLRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPSiCTLgEp+W085YS2PavfISGTiGSmKKtpuE6rS9O0L+8955R9wGW0BCEQdhIbQz5MerqA0LXS5UgKuOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxmLjFcLHLHGCQHyDgpTDj/KDY3Z31bpyfqy9cZBmm2/nd7ycv
+	UyvmLr8qerGts1avqw9eHHd9SLLmT9nDztphz/Q1lexspp8wJgv0VY4ZpVm40nAJDEtN9PWZvph
+	b
+X-Google-Smtp-Source: AGHT+IHNgZENGKuE8P52GzlblDf6gYHM4dUvqhU99lT3qRj/LRIIOlJ2PjZPS/VnX9LHl/EVLxCNJA==
+X-Received: by 2002:a17:907:3fa5:b0:a9e:b287:2808 with SMTP id a640c23a62f3a-a9eefeafae0mr446252166b.6.1731109007640;
+        Fri, 08 Nov 2024 15:36:47 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4a7d3sm291015366b.70.2024.11.08.15.36.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 15:31:21 -0800 (PST)
-Message-ID: <21c0887b-1c7d-424d-a723-2a8d212cbde1@gmail.com>
-Date: Sat, 9 Nov 2024 01:31:51 +0200
+        Fri, 08 Nov 2024 15:36:47 -0800 (PST)
+Message-ID: <59718ea7-efab-4975-a4e8-89c1d114a2e5@citrix.com>
+Date: Fri, 8 Nov 2024 23:36:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,78 +74,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 03/23] ovpn: add basic netlink support
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-3-de4698c73a25@openvpn.net>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <20241029-b4-ovpn-v11-3-de4698c73a25@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: dave.hansen@linux.intel.com
+Cc: bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+ x86@kernel.org
+References: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
+Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode to
+ be a vulnerability
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 29.10.2024 12:47, Antonio Quartulli wrote:
-> This commit introduces basic netlink support with family
-> registration/unregistration functionalities and stub pre/post-doit.
-> 
-> More importantly it introduces the YAML uAPI description along
-> with its auto-generated files:
-> - include/uapi/linux/ovpn.h
-> - drivers/net/ovpn/netlink-gen.c
-> - drivers/net/ovpn/netlink-gen.h
-> 
-> Cc: donald.hunter@gmail.com
-> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+> You can't practically run old microcode and consider a system secure
+> these days.  So, let's call old microcode what it is: a vulnerability.
 
-[skipped]
+The list becomes stale 4 times a year, so you need to identify when it's
+out of date, and whatever that something is has to be strong enough to
+cause distros to backport too.  Perhaps a date in the header, so you can
+at least report "status vulnerable, metadata out of date".
 
-> diff --git a/drivers/net/ovpn/ovpnstruct.h b/drivers/net/ovpn/ovpnstruct.h
-> --- /dev/null
-> +++ b/drivers/net/ovpn/ovpnstruct.h
-> @@ -0,0 +1,25 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*  OpenVPN data channel offload
-> + *
-> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
-> + *
-> + *  Author:	James Yonan <james@openvpn.net>
-> + *		Antonio Quartulli <antonio@openvpn.net>
-> + */
-> +
-> +#ifndef _NET_OVPN_OVPNSTRUCT_H_
-> +#define _NET_OVPN_OVPNSTRUCT_H_
-> +
-> +#include <net/net_trackers.h>
-> +
-> +/**
-> + * struct ovpn_struct - per ovpn interface state
-> + * @dev: the actual netdev representing the tunnel
-> + * @dev_tracker: reference tracker for associated dev
-> + */
-> +struct ovpn_struct {
+Also, you want to identify EOL CPUs.  Just because they're on the most
+recent published ucode doesn't mean they're not vulnerable.
 
-There is no standard convention how to entitle such structures, so the 
-question is basically of out-of-curiosity class. For me, having a 
-sturcuture with name 'struct' is like having no name. Did you consider 
-to use such names as ovpn_dev or ovpn_iface? Meaning, using a name that 
-gives a clue regarding the scope of the content.
+Under some hypervisors, you get fed the revision 0x7fffffff.  Others
+might tell you the truth, or it may be the truth from when you booted. 
+For this, probably best to say "consult your hypervisor".
 
-For interface functions, when the pointer assigned in such manner as 
-`ovpn = netdev_priv(dev)`, it is clear what is inside. But for functions 
-like ovpn_peer_get_by_id() it is a bit tricky to quickly realize, what 
-is this for.
+Failure to publish information, or not publishing fixes for in-support
+parts should be considered a vulnerability.  (*ahem*, AMD)
 
-> +	struct net_device *dev;
-> +	netdevice_tracker dev_tracker;
-> +};
-> +
-> +#endif /* _NET_OVPN_OVPNSTRUCT_H_ */
+Or you could just simplify the whole path to "yes".  It's true, even if
+people don't know.
 
---
-Sergey
+I really want to like this, but it's a giant can of worms, with as many
+political challenges as technical.
+
+~Andrew
+
+P.S. I do like that you've labelled debug microcode as vulnerable.  It's
+just software in a different form factor, and we know how buggy software
+generally is.
 
