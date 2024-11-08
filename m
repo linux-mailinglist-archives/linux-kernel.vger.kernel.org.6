@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-402026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11829C225E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B73469C223F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D47286605
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:47:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78C07287FBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F7B1EB9EB;
-	Fri,  8 Nov 2024 16:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A162192D97;
+	Fri,  8 Nov 2024 16:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="FEogs6sT"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="wvuCdy/Y"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF78197A8E;
-	Fri,  8 Nov 2024 16:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47706167DB7
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731084395; cv=none; b=XO1thm97EA/N9793ggiD0X+AVMuA0OP8tb+uLz19f4Y3LtCe+ifGtyd/fMQNtqkualHbFA1mnZKKHDipDiUgMbhXp3ih/RnBelnD9cjRstcYh8BXPROaBickz1XLoe1nWoioEQE4K2LHjpmdg01GN1ANytObznsumzdm3QAbWP4=
+	t=1731083891; cv=none; b=urM9Up5LOw+HrhbxJj63xyoOIxKjTDifaJwll3Sby5BiziQ8rzPJb/3zZdRTNwv+5v1Kht/rwuBwWOJ13kwsWtc6JkyB0snnmoOv6OPrrKyNc95F/AmbTYeRURciUYvd3iNdWaMU4dba0qK0ebwA8p5D7wZuyj7D3oqcKO2K1zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731084395; c=relaxed/simple;
-	bh=EWHBWVq8c2xPlLQOEUYeio/FxqoJ8rmfYy1j7aExdLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AS1O+BIEnPCBJGdbrWl7Bf8lF2BvEFsrzG4lkLPtY3HW2AgAKnNJ35GFPz9Rkvql7TsdH1ZrbahnbhrVJ9fhHIvfeHTQCIqK+s+oP9s1HxhS2sK+umcyr1aZqmbRhzY7bJhZesSRcFQVkrj+Ox9SuGI1DB5JhbyI6gjzOWtLNig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=FEogs6sT reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id db0b5c1feafc1978; Fri, 8 Nov 2024 17:46:25 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 9B10D834811;
-	Fri,  8 Nov 2024 17:46:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1731084385;
-	bh=EWHBWVq8c2xPlLQOEUYeio/FxqoJ8rmfYy1j7aExdLU=;
-	h=From:Subject:Date;
-	b=FEogs6sT+okuG0ijr0ZDOsqFcaQXyBgl1+9sPqHe8qm9nODAw4KRdWHMJmTI8H3/s
-	 ap9aV4B5IQ2D/yVvH9fB36lfoSWu87YFr3RP1FZy4Uuzo7OynUGqGwJ6P62f4ml+WR
-	 SemZ35t6qa8fE44TNPOSpcsXss4bUXuY1BS+aYvJBGnAD1XJ83jzfB85iPiROFZ/8a
-	 RAN2PgjJpMSPXiaWoIdngtJ3lbRlueX0NrLCVSwzfH3sx27obZjifl3IleIW1+2ret
-	 AwC4Krb/xJfQfv9wWQKZziaIKvinx5NhCS3x7Il6izm8RsYco/UnwUGuEiQPa/uMJv
-	 YCk0ck++w1zNw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Len Brown <len.brown@intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Subject:
- [RFC][PATCH v0.1 2/6] PM: EM: Call em_compute_costs() from
- em_create_perf_table()
-Date: Fri, 08 Nov 2024 17:37:21 +0100
-Message-ID: <1821040.VLH7GnMWUR@rjwysocki.net>
-In-Reply-To: <3607404.iIbC2pHGDl@rjwysocki.net>
-References: <3607404.iIbC2pHGDl@rjwysocki.net>
+	s=arc-20240116; t=1731083891; c=relaxed/simple;
+	bh=cX52sRS6FW3d71KiB+Z72yKhmMW3ZWSIUkmzYzcDwIc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=F6wTOkOY8WkgDimFo3/j5eZbo8AvNXGSvyhls+4fGvKK89hRJ4AkULfmaS0GimGuS6pTu+nt3CqEwZRHdjrTGW4RBHv0u8lzxbHtr1sJBzkcYvXSuDbfXYzX4+AltQWyGft0a1GBYDVEkcniKuuNonDeFu2AJVZFw0wZptTHb30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=wvuCdy/Y; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigdeklecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthg
-X-DCC--Metrics: v370.home.net.pl 0; Body=10 Fuz1=10 Fuz2=10
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1731083886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y8isQ+eC1NBDJ85mhmgiRP01XgjT4qvdr3jwt+UY19g=;
+	b=wvuCdy/YsQr5y2ZLd7wKdSKLnnl9GdvdfoZrAkccd2PyafwFPUA5adoDCjZ0A2W0ehzRdu
+	QyWalDT08pxaTLAk3zchX7qLvtLa2fTTAGrUwABmQ88jbZl6/P7Yp/6RofZUJzni1JZpMx
+	/hJ84YXohGcqC4Ul/QvWzE4juichAa3wz0l72E0w7Sp3SXUEU4YpoBz9tbnuZZO9yj7T8D
+	+UUtjE85ItWVYdfZ4yGC2LGisf6PrGQ2OW8aXy0m1/ZDpa3CRhCVVntYe+qKbb+bUJLoO+
+	sxksUg6DJ9RR/+CiD26PqZ3X66Jg9ZmKloCi2N/Ytf2/fbSslOltMB2xQURPAw==
+Content-Type: multipart/signed;
+ boundary=342aba1a373c0c1c659dff9cb9078d09b156ee41058742d4af8979a7c0b6;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Fri, 08 Nov 2024 17:37:51 +0100
+Message-Id: <D5GY0NXYFLS9.1YHBZ5502R764@cknow.org>
+Cc: <dsimic@manjaro.org>, <andy.yan@rock-chips.com>,
+ <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <linux-kernel@vger.kernel.org>, "Heiko Stuebner"
+ <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH] drm/rockchip: dsi: convert to dev_err_probe in probe
+ function
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ <linux-rockchip@lists.infradead.org>, <dri-devel@lists.freedesktop.org>
+References: <20241108144425.1009916-1-heiko@sntech.de>
+ <D5GWE4WJZMM8.1MPHPPQR2QW46@cknow.org> <3594835.iIbC2pHGDl@diego>
+In-Reply-To: <3594835.iIbC2pHGDl@diego>
+X-Migadu-Flow: FLOW_OUT
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+--342aba1a373c0c1c659dff9cb9078d09b156ee41058742d4af8979a7c0b6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-In preparation for subsequent changes, move the em_compute_costs()
-invocation from em_create_perf_table() to em_create_pd() which is its
-only caller.
+On Fri Nov 8, 2024 at 5:31 PM CET, Heiko St=C3=BCbner wrote:
+> Am Freitag, 8. November 2024, 16:21:24 CET schrieb Diederik de Haas:
+> > On Fri Nov 8, 2024 at 3:44 PM CET, Heiko Stuebner wrote:
+> > > From: Heiko Stuebner <heiko.stuebner@cherry.de>
+> > >
+> > > DRM_DEV_ERROR is deprecated and using dev_err_probe saves quite a num=
+ber
+> > > of lines too, so convert the error prints for the dsi-driver.
+> > >
+> > > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> >=20
+> > Should this have a Fixes tag?
+> > Because in the PineTab2 case it reported an error, which was actually
+> > just a deferred probe.
+>
+> A deferred-probe is an error ;-)   -517 in fact  ... just that convention
+> nowadays is to not actively report on it but "fail" silently.
 
-No intentional functional impact.
+Good to know, thanks :)
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- kernel/power/energy_model.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> So personally I don't really consider it a fix, but more a style thing.
+> I guess I'll let others chime in for that.
 
-Index: linux-pm/kernel/power/energy_model.c
-===================================================================
---- linux-pm.orig/kernel/power/energy_model.c
-+++ linux-pm/kernel/power/energy_model.c
-@@ -388,10 +388,6 @@ static int em_create_perf_table(struct d
- 
- 	em_init_performance(dev, pd, table, nr_states);
- 
--	ret = em_compute_costs(dev, table, cb, nr_states, flags);
--	if (ret)
--		return -EINVAL;
--
- 	return 0;
- }
- 
-@@ -434,6 +430,10 @@ static int em_create_pd(struct device *d
- 	if (ret)
- 		goto free_pd_table;
- 
-+	ret = em_compute_costs(dev, em_table->state, cb, nr_states, flags);
-+	if (ret)
-+		goto free_pd_table;
-+
- 	rcu_assign_pointer(pd->em_table, em_table);
- 
- 	if (_is_cpu_device(dev))
+Then I agree that it should not have a Fixes tag.
 
+Cheers,
+  Diederik
 
+--342aba1a373c0c1c659dff9cb9078d09b156ee41058742d4af8979a7c0b6
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZy4+ZgAKCRDXblvOeH7b
+bm7IAQDlu5u1RUaHveltxvLYbs1Lkju/X4N1ZMHhqsGMKvP6MwEApHelYqAyAA1h
+JBDYWaKldiIhOrBuZQvjbtUN4ic/EQQ=
+=BFts
+-----END PGP SIGNATURE-----
+
+--342aba1a373c0c1c659dff9cb9078d09b156ee41058742d4af8979a7c0b6--
 
