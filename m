@@ -1,227 +1,112 @@
-Return-Path: <linux-kernel+bounces-402218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7B59C2515
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:50:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596F49C2522
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:52:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A07C1F21E06
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904361C20355
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF18C1A9B46;
-	Fri,  8 Nov 2024 18:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DAA1A9B5E;
+	Fri,  8 Nov 2024 18:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJy0teTG"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="e9yPG+j+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA4A233D80
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721DE233D96;
+	Fri,  8 Nov 2024 18:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731091812; cv=none; b=qKI9jilLjT8iHJF2yTiLwHJr/a6LhVjAKqkPKFFdogHJ3+Y3TugvgDbKIdY9aTwMU4oYV7eQkgjMGIOwe9gNFs+vtU4ZvM7fpMu0vQxMPB2nDAOtlXGdpDM3hGbxteslb8U3/555Sbnodq77VKGFuUkhc7oWV/HeTfChUjtcZ9I=
+	t=1731091951; cv=none; b=EyWzOlAORXEJ20xWrcWpQl1VA9TtlOpjg9dmYe8+sU8x/MFNjPcDazenIskzwnAKJvgkS7mKyptq9iGvRC56+5XF7QOk6GMGUYBy/9/Aa+V1SJJj6CKAOX1jI0bueZxnyO4NnlTGA2kSsFws0budBbnKtyE+0MlG2Pf84FtuAEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731091812; c=relaxed/simple;
-	bh=pdMqJFn4xYar/ogW6iZpxVVKTHsKKJNMZLA6/IYtp+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U1SHjqQX6X0SuAVVZ+pUbmPrrfTTgbH0xQz2wQ6WZUaE3/ou46Ht02PXeuKauQlBx6EXliNjFeOGwH6Q41Z2fB6GhcEHqQ28yVPsukldW5pF4PWPdvt0GlZB/n8u9U2j5Yp+vRJXK4ws9jHG0GOsurOYoY5z7DiDWHFGZQDbODo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iJy0teTG; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460969c49f2so19541cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:50:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731091809; x=1731696609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UcZtVBPmVQL+MAycw/KU0YJN3A6fi37snUPr/mVBUXk=;
-        b=iJy0teTGAHSJdpaVsIi1LV7AMD+gF/dhg5lkZhBE8Som+ikTIx/Tr3KBPSCWAqd0eV
-         79DsIyfumMPJrIDgtMGZYTXJkdiSY6+QoMXXnJ8QSO43JGHY6y/Gnjj/JWq9vWR34457
-         6b6gsTl38ElOY/nMv6MeBWqHwdI5pYAgnOmA7MWoB7NQxmi/EWK/sAs+ddFIPZXNZ62Z
-         UFYtdywpMCDRTnEEjfH0uqk6TyZgf9f70jFNYXbtXdZjSRXggvAFDYERxjs0rJvbV4zw
-         LhImrlIcvsBc0hopwcO29IRO95OEIWrrtx8DpOMmiVzmtRT2SEZt+LsLC8vvNSWQeCUg
-         8uUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731091809; x=1731696609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UcZtVBPmVQL+MAycw/KU0YJN3A6fi37snUPr/mVBUXk=;
-        b=TNE3E29GGUEdWEpmAbHXDwH2QQpEg2i32tgnuja41KY7+kQ5sTj42t1deRvsrwalAm
-         xiiwo8rcgTXuI99sZ/qNb3cWrfgNg4eVYqsp0ImIYHUTJ6jLEjBMwCfgX8EimVHhDwQN
-         BRrR3zofl0yjT2oFa3OvfZlbBMWAbI0Iu7yDlWZ5LB4/9N5nASoUWJTH/RveOXEbujyd
-         EIv1aY9k84zVFZ/ikUDvx9jKlcN1cTcJAGU6PI1/RHEdrv0J1eNL6tg4Pe59YMTTEph3
-         Nz7dZX7cVo3O+uWo3/3AKTN+MzXSjcy4iZGuNd9loqzg6MnbAlervUztzpvLJ6bv2z7L
-         CqCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvTftMPdFwz+TSJc4/XK30/lN1neJfoVDnDqqAr3P4JjNgiEbJbP15n3n9BgcBDBvLPvIO+BGMklwLw6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz23eRpNq5gkB/A2Nt1uWmTFYVbVyhC64To/dY1QV2w6S4UJfbZ
-	XrZWPRmfdulBKe9VHjLARH1PH7IBEUBEuwVaLN883zDSeIdD+thcpxhCjpWeF7zLa8+Xtv2ShXw
-	rJzStlLIyVPVed5EUfHG4zQiKdOcfG3sO4lKJdwQZi0/oGBqireGB
-X-Gm-Gg: ASbGnctdtQFkx5fGSeaolLNIzSTvJ0o0YmT2glkTkpoFi29SdYuy60CkV3CTdp3mXdw
-	bPLJqqNxaFelfIZtJpZl5gSL5pOdGXPLXo05ZBi6/1EPDs5s0tTA5r4NiR3jV9A==
-X-Google-Smtp-Source: AGHT+IHayooXKesO/jmhc3MISQUMRHTU7foDBtuIeVmlZz6ij29U3/xla28tsA7vLuZJNNWCnO4txRPiTygml+GwUa4=
-X-Received: by 2002:ac8:588f:0:b0:461:32e9:c5ee with SMTP id
- d75a77b69052e-4631685e147mr96211cf.0.1731091808671; Fri, 08 Nov 2024 10:50:08
- -0800 (PST)
+	s=arc-20240116; t=1731091951; c=relaxed/simple;
+	bh=L9PZiEX333+Du0NXmYmoMzUp2gsXJVu8bc+StkfIx1E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m45TDsD0xP6i1McrX/ZyBYeW/nbhYHYEror1lIY/CXwnPdGVAVBoR6jmoB9beTrusEE9ZkAa3eiNIXEFuqH4DLjcfAnLGwedLau4uypa/i/Zoum4eLBHG48Y+xxSVi3RRpDv4NtFxNW6Bjnrvk9CbvKq5JY/vIAOz2UM5BnxCNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=e9yPG+j+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731091947;
+	bh=L9PZiEX333+Du0NXmYmoMzUp2gsXJVu8bc+StkfIx1E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=e9yPG+j+tbA5rv4eGyOBc65gC2rIW8aGsxtTc9tEA/EDmnlJSTPeqedHOMGE/qtvE
+	 VFV5mJ3KU5wl1hez1BGe7Z24yN3t9gAIp2IE5zR9Du9rC4eTHovO2caopGpD6s2nFS
+	 voNFKk8l0a0umITXRWRn23jlyl7M+GjNcWDXRmYujFQBAuwYqDg7qvHVXomWG0vksF
+	 C+WDDA6e6t2wbaib40Xv+vqgT67Xhezt684ituQIMFvxRnMKb/tJhwM2Lc761Ba3L2
+	 YNugjQnn/5mlBwa58HLzbkYbQz47qwflIebsA1Vt5VlNvfQ4V+tueJEuJ47GHV7V17
+	 U3wtA5O+Ms4uw==
+Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8903117E376A;
+	Fri,  8 Nov 2024 19:52:24 +0100 (CET)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Sandy Huang <hjc@rock-chips.com>,
+	Heiko Stubner <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Alexey Charkov <alchark@gmail.com>,
+	Jianfeng Liu <liujianfeng1994@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH v3 0/3] drm: rockchip: vop2: Add VP clock resets support
+Date: Fri,  8 Nov 2024 13:50:38 -0500
+Message-ID: <20241108185212.198603-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108051030.2918950-1-xur@google.com> <20241108174638.GC2564051@thelio-3990X>
-In-Reply-To: <20241108174638.GC2564051@thelio-3990X>
-From: Rong Xu <xur@google.com>
-Date: Fri, 8 Nov 2024 10:49:56 -0800
-Message-ID: <CAF1bQ=Rh51kUaNk3zQbPAe6H_buNv3jU9kcyMmJ8csXbZYQqWQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Fix Propeller build option
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Han Shen <shenhan@google.com>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Nathan, thank you a lot for helping with the patch!
+The clock reset must be used when the VOP is configured. Skipping it can
+put the VOP in an unknown state where the HDMI signal is either lost or
+not matching the selected mode.
 
-I will send an updated patch that integrates your suggestion shortly.
+This adds support for rk3588(s) based SoCs.
 
--Rong
+Changes since v2:
+- Rebase on latest master
+- Add details on how to reproduce the issue
 
-On Fri, Nov 8, 2024 at 9:46=E2=80=AFAM Nathan Chancellor <nathan@kernel.org=
-> wrote:
->
-> Hi Rong,
->
-> Thanks for the quick patch!
->
-> On Thu, Nov 07, 2024 at 09:10:30PM -0800, Rong Xu wrote:
-> > The '-fbasic-block-sections=3Dlabels' option has been deprecated with
-> > the following llvm patch:
-> > https://github.com/llvm/llvm-project/pull/110039
-> >
-> > The old option still works, but with a warning like
-> >   clang: warning: argument '-fbasic-block-sections=3Dlabels' \
-> >   is deprecated, use '-fbasic-block-address-map' instead [-Wdeprecated]
-> >
-> > Currently, the option change is only in the ToT clang (v20) and not yet
-> > released in v19.
->
-> I think this whole block could be a little easier to read and understand
-> with some more standard kernel commit message practices. I would combine
-> the first and third block into one sentence and I would unwrap the
-> warning text (it is okay to be long for a little clarity). Perhaps
-> something like this?
->
->   | The '-fbasic-block-sections=3Dlabels' option has been deprecated in t=
-ip of
->   | tree clang (20.0.0) [1]. While the option still works, a warning is
->   | emitted:
->   |
->   |   clang: warning: argument '-fbasic-block-sections=3Dlabels' is depre=
-cated, use '-fbasic-block-address-map' instead [-Wdeprecated]
->
-> then putting:
->
->   | Link: https://github.com/llvm/llvm-project/pull/110039 [1]
->
-> right above your Signoff.
->
-> > This patch adds a check to the Makefile to set the proper option.
->
-> Try to avoid saying "this patch" in kernel commit messages, it is
-> implicit. It would be cleaner to say something like:
->
->   | Add a version check to set the proper option.
->
-> You can see some more commit message tips in sections 4.2.3 to 4.2.6 in
-> the tip documentation:
->
-> https://docs.kernel.org/process/maintainer-tip.html#changelog
->
-> > If the option change is later integrated in v19.x, we need to update th=
-e
-> > check accordingly.
->
-> I think it is worth dropping this sentence entirely, as I would argue
-> that it is pretty unlikely that this option gets backported to
-> release/19.x, since it would basically accelerate the deprecation
-> timeline, which seems unreasonable to do in a stable release.
->
+Changes since v1:
+- Add AXI and AHB clock resets
+- Set maxItems for !rk3588 in vop2 bindings
 
-These are excellent suggestions that make the message more clear.
-I'll update the patch description.
+Detlev Casanova (3):
+  vop2: Add clock resets support
+  arm64: dts: rockchip: Add VOP clock resets for rk3588s
+  dt-bindings: display: vop2: Add VP clock resets
 
-> > Signed-off-by: Rong Xu <xur@google.com>
-> > Reported-by: Nathan Chancellor <nathan@kernel.org>
-> > ---
-> >  scripts/Makefile.propeller | 14 ++++++++++++--
-> >  1 file changed, 12 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/scripts/Makefile.propeller b/scripts/Makefile.propeller
-> > index 344190717e47..1a68ea0d1fe4 100644
-> > --- a/scripts/Makefile.propeller
-> > +++ b/scripts/Makefile.propeller
-> > @@ -5,7 +5,13 @@ ifdef CLANG_PROPELLER_PROFILE_PREFIX
-> >    CFLAGS_PROPELLER_CLANG :=3D -fbasic-block-sections=3Dlist=3D$(CLANG_=
-PROPELLER_PROFILE_PREFIX)_cc_profile.txt -ffunction-sections
-> >    KBUILD_LDFLAGS +=3D --symbol-ordering-file=3D$(CLANG_PROPELLER_PROFI=
-LE_PREFIX)_ld_profile.txt --no-warn-symbol-ordering
-> >  else
-> > -  CFLAGS_PROPELLER_CLANG :=3D -fbasic-block-sections=3Dlabels
-> > +  # Staring with clang v20, the '-fbasic-block-sections=3Dlabels' opti=
-on is
-> > +  # deprecated. Use the recommended '-fbasic-block-address-map' option=
-.
->
-> Might be worth linking the specific change here for archeology sake.
->
+ .../display/rockchip/rockchip-vop2.yaml       | 40 +++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 12 ++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c  | 30 ++++++++++++++
+ 3 files changed, 82 insertions(+)
 
-I will add the link in the comments.
+-- 
+2.47.0
 
-> > +  ifeq ($(call clang-min-version, 200000),y)
-> > +    CFLAGS_PROPELLER_CLANG :=3D -fbasic-block-address-map
-> > +  else
-> > +    CFLAGS_PROPELLER_CLANG :=3D -fbasic-block-sections=3Dlabels
-> > +  endif
-> >  endif
-> >
-> >  # Propeller requires debug information to embed module names in the pr=
-ofiles.
-> > @@ -21,7 +27,11 @@ ifdef CONFIG_LTO_CLANG_THIN
-> >    ifdef CLANG_PROPELLER_PROFILE_PREFIX
-> >      KBUILD_LDFLAGS +=3D --lto-basic-block-sections=3D$(CLANG_PROPELLER=
-_PROFILE_PREFIX)_cc_profile.txt
-> >    else
-> > -    KBUILD_LDFLAGS +=3D --lto-basic-block-sections=3Dlabels
-> > +    ifeq ($(call clang-min-version, 200000),y)
->
-> Would it be better/more accurate to check the LLD version here? I doubt
-> it would really happen but it is possible for someone to have LLVM=3D1
-> (using their system wide ld.lld and LLVM tools) and CC=3Dclang-20 to just
-> use an updated clang. Perhaps:
->
->   ifeq ($(call test-ge, $(CONFIG_LLD_VERSION), 200000),y)
->
-> here?
-
-I agree: checking the LLD version makes more sense here.
-
->
-> > +       KBUILD_LDFLAGS +=3D --lto-basic-block-address-map
-> > +    else
-> > +       KBUILD_LDFLAGS +=3D --lto-basic-block-sections=3Dlabels
-> > +    endif
-> >    endif
-> >  endif
-> >
-> >
-> > base-commit: 0dcc2d1066150787017a71f035145c566597dec7
-> > --
-> > 2.47.0.277.g8800431eea-goog
-> >
 
