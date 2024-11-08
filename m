@@ -1,268 +1,177 @@
-Return-Path: <linux-kernel+bounces-400868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED6B9C136F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:09:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32889C1372
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 755E4B2110A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593E7283357
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1886215E96;
-	Fri,  8 Nov 2024 01:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8DDBE49;
+	Fri,  8 Nov 2024 01:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="n/C+C0Og"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020138.outbound.protection.outlook.com [52.101.61.138])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U5WRaqsu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862067464;
-	Fri,  8 Nov 2024 01:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731028133; cv=fail; b=ObhEs5G087NeV/DUeDpiCIs2Qj4MO6pEA4c0GsbhBnDyNhYtoGNu7M80ExJ4W8Y/qBgS9IpyEJuFkZ5Z6OoGKovkzIS9fBpwAlQAcIOoLF706I1tJ/28txcdYRymkjwk0qYM4eMUy79gTNIqyiu/91l2D0//v527tbSyO5H9I+k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731028133; c=relaxed/simple;
-	bh=ekzwYo6IFAabQoqLOCbyJuz/S1yTjzZRX+VXHTu0eS0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O6SpXpLR915bmhAJnPIA3PEoim+YhA9t6PZNPPhAGJ4AhQ/haRteUMwhMUQjD2jw42JVDmk4pU9UxCgTOg7LheNPeHQZsbapiKsL1XGC4pEDfEB8L12BjaPwVg/edmq5L/cbOOTLd6TT42E7BFtdFZqqVECL8WNhGOW2L0Zob98=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=n/C+C0Og; arc=fail smtp.client-ip=52.101.61.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=biN7auLD5/Pia1ivi053PsvotFS3hk7M7gOt+pHGPf9qoEOLthWPHbyrfbLVOMsRE0i0DAYiSPdP3BsNFVupWqdiijQs23e2uE69rz/eUESnuqz27NwWc7RAE4H2VECii46uQQozZmVxgT0qEwcB37ZKA6n3y9Kebt3T+fswsv7gM7aAUmZDd0d4L7vGCqFS/x3uwBugGuguwwVo9M+HtaxusBatgNG/zaYZTmXTYxJQQpxEN2OX5rrrTyoxcBxKvvm2fSoRxy4qch5HtfcADzzdklrqW9qQyAfkaIeHkn5HuuTPtI7qmDfZxuMEMqCaVuXmCtR/Bn0yNOKCTiXhaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sx4yuVRUqEO4AyisEW0Rb/Ol4PtWENkMerlyl6CPBnw=;
- b=jLWcAAz7ahj3GRrhYNhMCZboPoDD2rr87r+qr1SrXl9nIEnXjWhVGoxs0sn1jqMPyStz+LlYfOIGf+j/py0KOU2PptKBms75N7t8nELgNJGS/cYLU09/o9q1yjTIM05v5dmUZ5ItUVCXegNKflUqDA7lLjA5ZlAnt3n8eAfVUoo1y6iHelhdaEryVxvc1wTs2YBEA/bQDGLUYim0COSAsUKafHA8jP9hb2nhgJQXjCwJ0oh9V7zSWJWEpwH+TsuK1MT+OCFVKZsXUp4HPnNLkHQvcJYaGlo2bqKWXSaO3VrqIrL0Dk2K6ZlwOIgCVUzJVT0farxZMnIHoOiKMyLNgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sx4yuVRUqEO4AyisEW0Rb/Ol4PtWENkMerlyl6CPBnw=;
- b=n/C+C0OgQgRS3FIRJTNXO85Djo+3WfJ4vcJ+UCXKl3V4uIhGRQI+dIKQHmHMEE2xPM7a8E3wFMrehCNERjDVdk3o2U9O8TNYRT/Hc7wooQwE/lzlJ74o7kmL15zraQi9xuyZRzG/uKEbJX7E9Q/UKEaARA2bDVFP3iopfg5pNlA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
- CO1PR01MB7385.prod.exchangelabs.com (2603:10b6:303:158::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.19; Fri, 8 Nov 2024 01:08:48 +0000
-Received: from MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
- ([fe80::13ba:df5b:8558:8bba%3]) with mapi id 15.20.8137.018; Fri, 8 Nov 2024
- 01:08:48 +0000
-From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-To: John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Graham Woodward <graham.woodward@arm.com>
-Cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] perf arm-spe: Add support for SPE Data Source packet on AmpereOne
-Date: Fri,  8 Nov 2024 01:09:11 +0000
-Message-ID: <20241108010911.58412-3-ilkka@os.amperecomputing.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241108010911.58412-1-ilkka@os.amperecomputing.com>
-References: <20241108010911.58412-1-ilkka@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH0PR03CA0366.namprd03.prod.outlook.com
- (2603:10b6:610:119::12) To MW4PR01MB6228.prod.exchangelabs.com
- (2603:10b6:303:76::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F818BA27
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 01:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731028374; cv=none; b=He24Eh3m2gwUZSkgBZaUdTYwixT0RCIZHWEpn64G/8+Anf+JDcefCzx28Yv1P5yMYfnvOLvXIX51p3tj5Hj/jeR7+H8WTh0UKOnU+eS4+1orCtVw8xr22Xoj4vahZnqlKDDOMbNSPnlfkPtSfy95PO/Pr7Qn2A8GCTKv6ObpF0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731028374; c=relaxed/simple;
+	bh=8C9mHlOz7lxiBqy6ivlhTg8m4o0ypwKwA+m0GRU8G6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TRDyDqAvQDPxZvUTjsirYi8mb/UzcftdcdnVxcgbq2o/Wgfb6ADWzTaDmgZCZO/W1rYtlj4RN5ThkOHy0HQm1SoPWgZoPzZDN5y0wSKBdmLcHAS2qxef9yxFEwKHSYaaw5onk0sJYiyvZfct0YrUPyeFuQ8O7QvxMqmpFW/JasE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U5WRaqsu; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731028373; x=1762564373;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8C9mHlOz7lxiBqy6ivlhTg8m4o0ypwKwA+m0GRU8G6E=;
+  b=U5WRaqsuFNMec3ZSjSMeBs6UXus4efUNlxModRpsGzZXTJgPnTVAMZJM
+   5IM/sRo4kiilWG+58Gc2SMHZVM6oglMUtpIYPUCJyrs4wW8wLAtpqpiU2
+   nCekYIh93vx3MX2Niye3BRQflJLFhR+cT/tJIgkCMGUsSwg7J7pO7XsR/
+   frapkmOX9Hf+qimb/VgCLrhUwHR1kKxkzhRXVS5Th4S/BZVDv1FpeNzHx
+   kk/O7Srian/S7yD0BdrJVX1ojr3InfDiUzfsdQfyipWCxCW+kcyQ4PhIK
+   JJp7DVKvI/AoNfYenIqorulqrpSzfYwtim4dCKJLYTYn7UepwhS+UKFMk
+   g==;
+X-CSE-ConnectionGUID: IEDXN5enQ9aEEzVzOupyHA==
+X-CSE-MsgGUID: 1OE3seBOTjiJ6oJVvZNXmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="42301434"
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="42301434"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 17:12:53 -0800
+X-CSE-ConnectionGUID: 8jnXaZrfTA+5wk8RR0LFZQ==
+X-CSE-MsgGUID: R2WLYbKjS9C4tv+tT6ci6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="85233233"
+Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.222.202]) ([10.124.222.202])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 17:12:52 -0800
+Message-ID: <4c01a30a-67d9-4918-8781-240b78944c42@intel.com>
+Date: Thu, 7 Nov 2024 17:12:51 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|CO1PR01MB7385:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ddda937-3b49-4a32-01a5-08dcff91e6bc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9/2aQVweG6X1Ct2+ZhCSQ/kFrP6RBSe6n6ktoUlbq1aSOftnhAn2y67x+KwP?=
- =?us-ascii?Q?AMimueefB+LbSjNnLOXuG9W+3/a787e4/X+AyVXBWEV9ImzhkRyV7qem4pyv?=
- =?us-ascii?Q?lKV+ECIqglu5mi2h4y+HggZKruks/SpgbDanEhlosOYeBtLArIQxQzs3W6MJ?=
- =?us-ascii?Q?3/j0QFFHplZxJiT6pMYWb6h/NIxaexHHvA2FZMMIu8UB2jmM1xVj4z7ymrzA?=
- =?us-ascii?Q?cgurNZqHfFdOJLdoQ+Z1rnIOYA46pNKKxO2Mnez8ZOU5NNUwEYa2+ppJ3A0R?=
- =?us-ascii?Q?aUIAWLIxaG3CDOXrDXQ9Apa6IPxvOuV1UYczMOtyrLGeJ2PNm5hKL92GTxgp?=
- =?us-ascii?Q?5AgwqmG6BQKqLDgeEDem+yvQare1CxdTKEAvMS7C0f3tRolX/DsfIWjHqQ5p?=
- =?us-ascii?Q?h7g4gfg9Y0vJQFB8Hy4W2w87zwT1V3BDOsZqd1ev4M5LwNgiI/mXNhr0aRtL?=
- =?us-ascii?Q?k2znRZLgdkUcyCOXzYlRGn21n+Vlzaf6T9rTcqCA+5kgK2B/NuzXuXKLTg8L?=
- =?us-ascii?Q?FdT6ert3eBiBlMxFb8T7/lyG91cA2f23n3w/lHNTVvZseCvdh6g50qJHyxaH?=
- =?us-ascii?Q?iQhwmFWrsjcfA3d/OoqRotFMcamMAYhM9Q/r6iHqkDSOeFGWC8VivqmIOYBp?=
- =?us-ascii?Q?RTHqybyNMXxFw6DFLm8svK24P2MsFXgMKfXgbcrAbtITAfS/D9kBl/Xk+MWL?=
- =?us-ascii?Q?Cu9VmKIn7v7AAH7tbt84U6A9a2j+iylW/MyqtTKR3elhSRFYai6Yn32L1lGi?=
- =?us-ascii?Q?cepLAhkolHxyps+BxWk++dpRAZYOs2Mo1y4AkhQpIUW4QmUIpC8FXkmfz2+t?=
- =?us-ascii?Q?bY07Jeixhfe2ZW26DWMxT1aJ1H+SjOlsSOadqQ5bnaw6nIJQfJHLNVmeQ7fI?=
- =?us-ascii?Q?L4ltL/52pVByTuk//bl5EPbC8zXY6tdkggO0aZPAQ/wPMUGNm6eGIAlYlScO?=
- =?us-ascii?Q?xokVBY2T7iFbSbwUl4qx1mpy8FCFut6lCsx3YF3VkX2xqJn7TfY8r93wdEGE?=
- =?us-ascii?Q?D0TPxAWbYU2luDhW7KcLd2DnTBCsLIDIZnhdfajmCQWbcFxjOgEMmFqgHwjL?=
- =?us-ascii?Q?RS04G+x7nAm1bAlqvxqaDyQQaUanrEMEPoFDy1eb7SPo3YAG/5+A6S32mLx8?=
- =?us-ascii?Q?ligBKn11UicTWHsEBHvlzNLGleMWItVcj0LQzVaIdJkYPxJreBv4tfnhlp+j?=
- =?us-ascii?Q?6WXqGuk2ZBq/uTKLj5iKcRc+7xrw5rMEAXd32JWgdqAbCd9sb7lujzD9E027?=
- =?us-ascii?Q?x63LSyZBZGm+scOekVyjrj/yjcFup32NEJ0KU1SneEX4Jw7tce4MD7jGoJES?=
- =?us-ascii?Q?ODtB4p0EX+bU/wkGMP13UgJIe7VAmwohAasIuHQk+Jx7g9cO6EnvoH9KYY11?=
- =?us-ascii?Q?9LqPFhTwdhjMS1rmwZ07tJC2mXIp?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IXAOS9Xq1sQgLFZetGX28Q4E6g/96UywD7zfVd9cnyNOuJ1sfyx2Q2yDm2JC?=
- =?us-ascii?Q?3F2vYWQU1nxPcgq1YLPRey9aKCVuGVG9jUmbOMklllQ9tOIAZ2on+DpUvagG?=
- =?us-ascii?Q?XHGWKaaElKrFxKay0tCx+4/ag2M6bXfWcwRyTk8M9mzUOgJRSY1oCjBf01Ss?=
- =?us-ascii?Q?HUx3vSqHgcZo+6zrhzTIrDHMEVWlCNx7uxaik+1MbSUVDmIXQxXXMOyyi/Fh?=
- =?us-ascii?Q?AIgnepuob0hkYuNuNxAHXzk3XIig69kHDSVsN6pTLleCVxrBpoPMAUsf4YZF?=
- =?us-ascii?Q?GtEx4uwhLW5PCkQj7Aa+dUdiHGcYI1HeEaDS/Os6recbT0pw6foRzuq7PTf6?=
- =?us-ascii?Q?HDRmSfe6897ZK4rBIhifnFI+U7hqr67azWh09zB/ZNNlEnvqzSYN4Q8a7UgS?=
- =?us-ascii?Q?dKiXm0ozSfLkEodjTXjF1fKAqTzMuQ8Q5UDGyEmEz3GgLYiONGwjI4BmbZCh?=
- =?us-ascii?Q?kxyPKMNYshrGdjrs3seBdRIC5sIoNJpbBCne3nVTGd9VM81SOrExd+aKuBu5?=
- =?us-ascii?Q?Q2Wr7nB+AXeqPvJKNO6Stg4abcAvz8JpWS8+0wDnazZeL86TNvTS/mGQ6TiM?=
- =?us-ascii?Q?QM1CrQ5ygIfICLJsdXcuhkP/n3oVLft8OrXc7Xm6V8pjvY/nkrxEa9576lvY?=
- =?us-ascii?Q?pbk8vIm8a+2n0niXrARgWkHVSNrLA4cOAGOQQhbMwV2ab8Yc6z7A1gIwx6xw?=
- =?us-ascii?Q?B2myhuavnLfz5VdDHxv12pqEE4QOPchAd2R+swh/2ylz/DnIq2Vapi05ghnt?=
- =?us-ascii?Q?wBXm0I6N+SJ5knsB42HMJeNSetY0BjNwkH6FqmDITHnK0Z0UiQuzgXqImiOa?=
- =?us-ascii?Q?jaEVbwcM3TdkPpkWzQqelg5VLxmUwqYhQV8OqoM+3HuksnkGo4ISYsWz8RKo?=
- =?us-ascii?Q?BBX7u+GGCxiWy6SVLC0Sv623sVzmxmcfTR+oti26/5Pio8nvrhYHp6v1VGAF?=
- =?us-ascii?Q?mjBhoDbvFuK5neFdyx0kLVA9zvygMLGVK+T52H1D6Cx7qmd8wDBZDNk+nhzV?=
- =?us-ascii?Q?qL+vrI6Hw3Us7jm4CYyIKkrrm5iharcu1GjwxSr9F4eMRYCu/8/OXF/260sr?=
- =?us-ascii?Q?bmhjSUIhUYm8P16Gv5TR0we0HdA9h7R3de9MUolS4RMDYsoEg0Mg8n9ND4PF?=
- =?us-ascii?Q?zVVAXss2hheqoplujiWXFAH5eFcYpmbdnFEeWyeFM7EgXJ37jhMm76cnITxL?=
- =?us-ascii?Q?ILKyVpAeBOguYFmPCKSUvnCyaGbZY73ETP10jzmek5UfnbsO8+DD0vNVZ02J?=
- =?us-ascii?Q?BEMY+V+syzAgsb78z6WuivDxDMbeYlPLO0czYrlVn6qF5ECwXbZ36v3F5ucU?=
- =?us-ascii?Q?fody0ugadvHsmplWlh0C5sC/SQdxFpaS1kPMO3NYnZuYCcieHsvLIxOZQwyB?=
- =?us-ascii?Q?FA1GO4TrPqgs2QLozUKK5UP35wUb3fAJzXkBT4Syekh7zzdYzYTlu57pcmxm?=
- =?us-ascii?Q?7cU9/SPRe7Y3G4suLfIg2LL+uOjX7tdNLFtX2RIic/38Nz0nBnzmrkCzYouI?=
- =?us-ascii?Q?ttAm4UZtPkn/ejzUIOMlqyCg8a9yjRjIDHU5bwtpMFmgyIHE+qEs+G8OqTOk?=
- =?us-ascii?Q?oWIfZwSEhwKZxx8rE5YOrI8sxJIVodd1TS3fyMuu3PsCcUsvajStH609qJlt?=
- =?us-ascii?Q?+JdJ4sRILDaz8rwp2L404T4=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ddda937-3b49-4a32-01a5-08dcff91e6bc
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 01:08:48.8423
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1Vua2hu1KGj/6jE30bqgQ0FKsgmJm+xPhmUD4CJh2j+pDbg3RsjJsg4xF8Q7sBhnbDoFbavZsO30/nCqu5NlC9HYdZpa6h022QcuyAyGwG96BNDt9Kpnik/zRheuuIjf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB7385
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpufeatures: Free up unused feature bits
+To: "H. Peter Anvin" <hpa@zytor.com>, Sohil Mehta <sohil.mehta@intel.com>,
+ x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Tony Luck <tony.luck@intel.com>,
+ linux-kernel@vger.kernel.org
+References: <20241107233000.2742619-1-sohil.mehta@intel.com>
+ <7ff32a10-1950-434b-8820-bb7c3b408544@intel.com>
+ <3492e85d-4aaa-4dd7-9e6a-c8fdc2aa2178@intel.com>
+ <74338393-4F39-4A04-83B1-BA64CE2D2FDA@zytor.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <74338393-4F39-4A04-83B1-BA64CE2D2FDA@zytor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
+On 11/7/24 15:49, H. Peter Anvin wrote:
+> Be careful - these bits are used in module strings and so modutils need to understand them.
 
-Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
----
- .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 ++++
- tools/perf/util/arm-spe.c                     | 44 +++++++++++++++++++
- 2 files changed, 53 insertions(+)
+Yeah, very true.  But I didn't ever see these features get used in a
+MODULE_DEVICE_TABLE().  Do you still have concerns if there was never an
+in-tree user that used X86_FEATURE_P3/P4 in a MODULE_DEVICE_TABLE()?$
 
-diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-index 358c611eeddb..4bcd627e859f 100644
---- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-+++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-@@ -67,6 +67,15 @@ enum arm_spe_common_data_source {
- 	ARM_SPE_COMMON_DS_DRAM		= 0xe,
- };
- 
-+enum arm_spe_ampereone_data_source {
-+	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE    = 0x0,
-+	ARM_SPE_AMPEREONE_SLC                           = 0x3,
-+	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE             = 0x5,
-+	ARM_SPE_AMPEREONE_DDR                           = 0x7,
-+	ARM_SPE_AMPEREONE_L1D                           = 0x8,
-+	ARM_SPE_AMPEREONE_L2D                           = 0x9,
-+};
-+
- struct arm_spe_record {
- 	enum arm_spe_sample_type type;
- 	int err;
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index dfb0c07cb7fe..df84933b673d 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -455,8 +455,14 @@ static const struct midr_range common_ds_encoding_cpus[] = {
- 	{},
- };
- 
-+static const struct midr_range ampereone_ds_encoding_cpus[] = {
-+	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
-+	{},
-+};
-+
- static const struct data_source_handle data_source_handles[] = {
- 	DS(common_ds_encoding_cpus, data_source_common),
-+	DS(ampereone_ds_encoding_cpus, data_source_ampereone),
- };
- 
- static void arm_spe__sample_flags(struct arm_spe_queue *speq)
-@@ -548,6 +554,44 @@ static void arm_spe__synth_data_source_common(const struct arm_spe_record *recor
- 	}
- }
- 
-+/*
-+ * Source is IMPDEF. Here we convert the source code used on AmpereOne cores
-+ * to the common (Neoverse, Cortex) to avoid duplicating the decoding code.
-+ */
-+static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
-+						 union perf_mem_data_src *data_src)
-+{
-+	struct arm_spe_record common_record;
-+
-+	switch (record->source) {
-+	case ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE:
-+		common_record.source = ARM_SPE_COMMON_DS_PEER_CORE;
-+		break;
-+	case ARM_SPE_AMPEREONE_SLC:
-+		common_record.source = ARM_SPE_COMMON_DS_SYS_CACHE;
-+		break;
-+	case ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE:
-+		common_record.source = ARM_SPE_COMMON_DS_REMOTE;
-+		break;
-+	case ARM_SPE_AMPEREONE_DDR:
-+		common_record.source = ARM_SPE_COMMON_DS_DRAM;
-+		break;
-+	case ARM_SPE_AMPEREONE_L1D:
-+		common_record.source = ARM_SPE_COMMON_DS_L1D;
-+		break;
-+	case ARM_SPE_AMPEREONE_L2D:
-+		common_record.source = ARM_SPE_COMMON_DS_L2;
-+		break;
-+	default:
-+		pr_warning_once("AmpereOne: Unknown data source (0x%x)\n",
-+				record->source);
-+		return;
-+	}
-+
-+	common_record.op = record->op;
-+	arm_spe__synth_data_source_common(&common_record, data_src);
-+}
-+
- static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
- 					union perf_mem_data_src *data_src)
- {
--- 
-2.47.0
+Sohil, go look at:
 
+# cat /sys/devices/system/cpu/modalias
+cpu:type:x86,ven0000fam0006mod008C:feature:,0000,0001,0002,0003,0004,0005,0006,...
+
+and, for instance:
+
+# modinfo /lib/modules/5.17.0-rc4/kernel/arch/x86/kvm/kvm-intel.ko
+filename:       /lib/modules/5.17.0-rc4/kernel/arch/x86/kvm/kvm-intel.ko
+license:        GPL
+author:         Qumranet
+srcversion:     ED99EA15FCA9B58172BAEB4
+alias:          cpu:type:x86,ven*fam*mod*:feature:*0085*
+
+Those magic strings get matched up by udev (I think) to auto-load
+modules when the CPU 'modalias' matches the module 'alias'.  Let's say
+we had an ooooooooold module that did this:
+
+#ifdef MODULE
+static const struct x86_cpu_id foo_cpu_id[] = {
+        X86_MATCH_FEATURE(X86_FEATURE_P3, NULL),
+        {}
+};
+MODULE_DEVICE_TABLE(x86cpu, foo_cpu_id);
+#endif
+
+which generated a modalias like this:
+
+	alias:          cpu:type:x86,ven*fam*mod*:feature:*0067*
+
+and then we recycled number 67:
+
+-#define X86_FEATURE_P3                  ( 3*32+ 6) /* P3 */
++#define X86_FEATURE_WHIZZY_NEW_FEATURE  ( 3*32+ 6) /* P3 */
+
+udev might try to load the old module on a new CPU with
+X86_FEATURE_WHIZZY_NEW_FEATURE that's not a P3.
+
+I sure hope we haven't been using too many of these synthetic features
+in MODULE_DEVICE_TABLE()s, because we tend to move them around, but I
+guess it's possible.
 
