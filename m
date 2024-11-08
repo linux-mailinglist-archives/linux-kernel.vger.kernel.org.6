@@ -1,125 +1,158 @@
-Return-Path: <linux-kernel+bounces-401955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9123D9C2188
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:04:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB679C2186
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52432286324
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397E91F2542C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5A1191F8E;
-	Fri,  8 Nov 2024 16:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4AD13BAD7;
+	Fri,  8 Nov 2024 16:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="CkY45I8I"
-Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5A5yZT1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF3147F4A;
-	Fri,  8 Nov 2024 16:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E44784A3E;
+	Fri,  8 Nov 2024 16:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731081826; cv=none; b=iin0NOXzKXtrBqtWZHzyISUYtNKlttWHl82WEI61ZvIiUTScGAidrf71WCxusOD8dxgzGQOWrTWbu/REwan1XR1aHpPxrWFeTqBqyjyJ0q2SmujnnVcBzzCj6GavImf26S2Zeq7pdvnreh6Ulu6mxvmxUJSu9iLli0xLG4++ENY=
+	t=1731081823; cv=none; b=luiGfxlOKSOnBGSjVSeo0bqednajaKgnosFqHpz0fUWVPgivatN1+DRjKelujfkdOHpdO+gcsbAAvWG5+HIJ8mQ4sIrKfwUMZAM7j3yaLLqZKXjdTsJ6OLJD/Jv4oqg7/z7msQtznRvfYGfZzXHmk3lrG1nAYwAdoCJdA7ToX30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731081826; c=relaxed/simple;
-	bh=LY7hr9zAy2fZ4pfDaD3EMfl66xmSVyTV8kkleWsJtsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZKeoGMmcLZHbNPzZQpn1mi6V4NRjUulwwsyEl0Tm1YNaPClisU7uS10LF2XmwqRiDpF3Q/WU6KAqx8Cxp3YiuTWkKJgHUlM/F9U3/+H7yNfpiA8xl7Pr1jh6tLFH5E3vYFINm4KwfTiq+ywB6J4Bielx7eo/3y3U1t0iTctO1Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=CkY45I8I; arc=none smtp.client-ip=178.154.239.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:3a8d:0:640:b3b5:0])
-	by forward502a.mail.yandex.net (Yandex) with ESMTPS id 2328E61939;
-	Fri,  8 Nov 2024 19:03:35 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id V3mYFHMl8mI0-0Q61gtdN;
-	Fri, 08 Nov 2024 19:03:33 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1731081813; bh=LY7hr9zAy2fZ4pfDaD3EMfl66xmSVyTV8kkleWsJtsU=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=CkY45I8IAtX1SyyVq5OHn3r/Ikf/FFI9hZoiDBQW9vTWbkhhFj2Iz6lQ6289/nEH2
-	 1/7pyT+8g5gjtqb4T8no5vy0MDafulFZ7bNtZWv6mk3Ty1MIgUfeXSlWA6JnYlSM2r
-	 O23RB5Kn75HRNDYzYbb4/hxlh3KeTF/08t7yFy5k=
-Authentication-Results: mail-nwsmtp-smtp-production-main-78.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <69d70bb9-4c9c-4a7d-a5bf-e5af8c98ba0b@yandex.ru>
-Date: Fri, 8 Nov 2024 19:03:30 +0300
+	s=arc-20240116; t=1731081823; c=relaxed/simple;
+	bh=maMZkEugr9XaHE38h7W9LihVbwTF3bu+pXRtcFwJZn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i9MQ9urlgkvwA/6hqIRY8wrnDwjW1q19zbScl6X8PKnSanPLUCjC22ZRuDBU9WHHk8yiXjWykxFuXH2FqTpLvqP14ekq411KqelEBuZRkNpxVEVU7VQWUjtBX8O4n5Z57OufQ5+1tlKn7j3Krmnjz0qMQeZSYpKABAsgtMYk/iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5A5yZT1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A23C4AF0B;
+	Fri,  8 Nov 2024 16:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731081823;
+	bh=maMZkEugr9XaHE38h7W9LihVbwTF3bu+pXRtcFwJZn4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=s5A5yZT16dxdKIQzyyfIHAEJywy0ymtVJT/p2XBKpcRvGNXwNPwKfmSHkmMBV+VLE
+	 7MDgtslW1h2LyFTDtKCeoBHxFHWq1DE3/OygRaNRe48Uptm+hT2iGRsmgGqkxMGTLO
+	 g1AnmeHI/D3QCGLTjp57CPHfRU/qzFJPdI3coalOXsZN2aysPoJAUkfAOuFpyY+go5
+	 bGZ6qLXihovzRTxfQwevNhod9uT3tw6QSle/ixHAmkdzPhjbTlFq5EiAVjYYKiXAKU
+	 Tj4/EYzXqYkzzpkIo8DZL+WsqCvtlNkoITyyNbzy2uyGm8iR6GN1/+Mj3oIS4fwEFy
+	 sqZ3otD3WMnBA==
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e30d821c3e0so2294958276.1;
+        Fri, 08 Nov 2024 08:03:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV001P4iQivTPhaKugy16inA/w7G71nAowZeKYjnhDkQPsB+R5a3Zd7x18c83NK0h2k/ua2/g/JaeNh@vger.kernel.org, AJvYcCW1LKsUHK/VlB4nPYqlQPEEq3N9OFKGp7WYYKIyZuW2Yd6rd5UhRMEebj0Af2xpEUmijJg8uvK5YUEw@vger.kernel.org, AJvYcCW9vpIN0MX9XXGm5DvIaeajOtYz26q9bDF1XvYMHpqwuyCdpqvzQOmEkUYjsJGxk4Ah7ocksjG6QFKHkBkQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1lxCKc4UhlVLCghOIfVc65KYjcngUqTT1Nsnp2m7BeL0FfWGN
+	EbulQLjLDPOLicz5x4uuWDd32kg0Vz1mMCGhj5sVwgxwSLKfHTqHXfAeoPiwsq1N5+rBm1XJ6rn
+	effJj9AW7k7YPPJ15kcsaGTVJXQ==
+X-Google-Smtp-Source: AGHT+IH2U9EUnCV98zgKoRRMSggJstFM3Mb3m+gw5EJ9rqdsBqYdZQCvPu7KqnlK3tLQNCNIxdGvFFXJXrU2mmN5zSg=
+X-Received: by 2002:a05:690c:4d05:b0:6ea:7c35:e2ab with SMTP id
+ 00721157ae682-6eaddd94216mr40875087b3.15.1731081822222; Fri, 08 Nov 2024
+ 08:03:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] procfs: avoid some usages of seq_file private data
-To: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Eric Biederman <ebiederm@xmission.com>, Andy Lutomirski
- <luto@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
- John Johansen <john.johansen@canonical.com>,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>,
- Felix Moessbauer <felix.moessbauer@siemens.com>, Jens Axboe
- <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
- "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-References: <20241108101339.1560116-1-stsp2@yandex.ru>
- <20241108101339.1560116-2-stsp2@yandex.ru>
- <618F0D80-F2E1-49C1-AA25-B2C0CC46F519@kernel.org>
-Content-Language: en-US
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <618F0D80-F2E1-49C1-AA25-B2C0CC46F519@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241108143600.756224-1-herve.codina@bootlin.com> <20241108143600.756224-6-herve.codina@bootlin.com>
+In-Reply-To: <20241108143600.756224-6-herve.codina@bootlin.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 8 Nov 2024 10:03:31 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ-05tB7QSjmGvFLbKFGmzezJhukDGS3fP9GFtp2=BWOA@mail.gmail.com>
+Message-ID: <CAL_JsqJ-05tB7QSjmGvFLbKFGmzezJhukDGS3fP9GFtp2=BWOA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] of: Add #address-cells/#size-cells in the
+ device-tree root empty node
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lizhi Hou <lizhi.hou@amd.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-08.11.2024 18:32, Kees Cook пишет:
+On Fri, Nov 8, 2024 at 8:36=E2=80=AFAM Herve Codina <herve.codina@bootlin.c=
+om> wrote:
 >
-> On November 8, 2024 2:13:38 AM PST, Stas Sergeev <stsp2@yandex.ru> wrote:
->> seq_file private data carries the inode pointer here.
->> Replace
->> `struct inode *inode = m->private;`
->> with:
->> `struct inode *inode = file_inode(m->file);`
->> to avoid the reliance on private data.
-> Conceptually this seems good, though I'd expect to see the removal of _setting_ m->private too in this patch.
+> On systems where ACPI is enabled or when a device-tree is not passed to
+> the kernel by the bootloader, a device-tree root empty node is created.
+> This device-tree root empty node doesn't have the #address-cells and the
 
-Sure I can try to do that, perhaps as
-an unrelated patch.
-Just got scared to post large patches
-and deal with potential problems where
-I didn't even mean to change anything.
+and the?
 
->> This is needed so that `proc_single_show()` can be used by
->> custom fops that utilize seq_file private data for other things.
->> This is used in the next patch.
-> Now that next patch is pretty wild. I think using proc is totally wrong for managing uid/gid. If that's going to happen at all, I think it should be tied to pidfd which will already do the correct process lifetime management, etc.
-I did the POC with pidfd:
+> This leads to the use of the default address cells and size cells values
+> which are defined in the code to 1 for address cells and 1 for size cells
 
-https://lore.kernel.org/lkml/20241101202657.468595-1-stsp2@yandex.ru/T/
+Missing period.
 
-For me it was just a random place to
-hack a POC on. I then searched for something
-more realistic and choose proc/status because
-it already carries all the needed info inside.
-So in this case it can be read from, validated,
-then applied with ioctl.
+>
+> According to the devicetree specification and the OpenFirmware standard
+> (IEEE 1275-1994) the default value for #address-cells should be 2.
+>
+> Also, according to the devicetree specification, the #address-cells and
+> the #size-cells are required properties in the root node.
+>
+> Modern implementation should have the #address-cells and the #size-cells
+> properties set and should not rely on default values.
+>
+> On x86, this root empty node is used and the code default values are
+> used.
+>
+> In preparation of the support for device-tree overlay on PCI devices
+> feature on x86 (i.e. the creation of the PCI root bus device-tree node),
+> the default value for #address-cells needs to be updated. Indeed, on
+> x86_64, addresses are on 64bits and the upper part of an address is
+> needed for correct address translations. On x86_32 having the default
+> value updated does not lead to issues while the uppert part of a 64bits
 
-How exactly do you foresee using pidfd?
-I mean, unless I am misunderstanding the
-pidfd intention, it is always opened by the
-pid of another process. There is no way of
-some process to "allow" others opening its
-pid, or to even know they did. Is it possible
-to use pidfd in such a way that the process
-can grant his groups explicitly?
-In my POC I had to do a totally silly thing
-of opening the _own_ pid and then sending
-the resulting fd with SCM_RIGHTS. I don't
-think people would do something like that.
-What technique do you have in the mind?
+upper
 
+> address is zero.
+>
+> Changing the default value for all architectures may break device-tree
+> compatibility. Indeed, existing dts file without the #address-cells
+> property set in the root node will not be compatible with this
+> modification.
+>
+> Instead of updating default values, add required #address-cells and
+
+and?
+
+>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  drivers/of/empty_root.dts | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/of/empty_root.dts b/drivers/of/empty_root.dts
+> index cf9e97a60f48..5017579f34dc 100644
+> --- a/drivers/of/empty_root.dts
+> +++ b/drivers/of/empty_root.dts
+> @@ -2,5 +2,11 @@
+>  /dts-v1/;
+>
+>  / {
+> -
+> +       /*
+> +        * #address-cells/#size-cells are required properties at root nod=
+e
+> +        * according to the devicetree specification. Use same values as =
+default
+> +        * values mentioned for #address-cells/#size-cells properties.
+
+Which default? We have multiple...
+
+There's also dtc's idea of default which IIRC is 2 and 1 like OpenFirmware.
+
+> +        */
+> +       #address-cells =3D <0x02>;
+> +       #size-cells =3D <0x01>;
+
+I think we should just do 2 cells for size.
+
+Rob
 
