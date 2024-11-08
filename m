@@ -1,268 +1,159 @@
-Return-Path: <linux-kernel+bounces-401120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6379C1627
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:49:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25469C1630
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17504B22BB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FE51F22168
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA7F1D1736;
-	Fri,  8 Nov 2024 05:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446A61CF7B1;
+	Fri,  8 Nov 2024 05:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pUJeHLua"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imDMGRyR"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E391D14E2;
-	Fri,  8 Nov 2024 05:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9048F1CF5C8;
+	Fri,  8 Nov 2024 05:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731044932; cv=none; b=RQyNed8gHeVqA31gXnobaXfooJfZ4xgAUSxHHizhH7uc/FZp0l3Ezp6YOnlHcLfv9F2UFNfmTt1iQLeRAUrG9wyXdKrA8U75Ss0kEBFw95e8e/+P/HgdPOSUGH1Vf0iVbn3BnGZaEMzv92XIvaDrmVF1b8ECUS+tfGTUEgpecYc=
+	t=1731045120; cv=none; b=QiMQnF15C0qKIfHJt5GihvdwYpzIjAWZFY/ctTDtFUbNRSGxc5LUKqNHs/YcRI8wl27Ph5db6ITqYbRaHAA0E1KWiPqOnEFMnVKGHGTAJPbITbPovFJcz9s/i4l5srDbBMmhLWW3CIqSJEyIknChzxC78vnPrqLJZpbIzIZRWMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731044932; c=relaxed/simple;
-	bh=+ptdexXDalV1BfSG+CzpxB/ohs/moGFR6wcAjE+GpNE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l0A3wnAP2coTcsnK0mUo9SoF9sFzYogvQijzAtX4Je/pGRkR4+7KJboWWBo58Ktf34eoZK22zlTALf6y6Zzap9GJJq+4LdTFDYqqJHHdf9DhXImWllTEG/EvQ/sd15zsO7jzJS+bi5G6djAHTQPj86Y+0/e5d+vW1SyFgCKvGaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pUJeHLua; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731044922; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=+ooUyQM6ykbH93D5TeE9qnZ42E23tAqkspDx0UAypCk=;
-	b=pUJeHLuaR6tKQ3l1xFf+b1FOclTJ044qFzhEd/nXOA2FFX5wDglf7htVrx3mKBmyLPgpCXzpjY294gPSW2C2qDnv29VGgaR9CDrnD7wiu0fDn/W9sUTYHQC8DS+pAoN3dt8zvJj6c2o0pF+7ZSmbBwhnNNrGxdOTZ9I9NcAMAgw=
-Received: from localhost(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WIxkgld_1731044920 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 08 Nov 2024 13:48:41 +0800
-From: Philo Lu <lulie@linux.alibaba.com>
-To: netdev@vger.kernel.org
-Cc: willemdebruijn.kernel@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	dsahern@kernel.org,
-	horms@kernel.org,
-	antony.antony@secunet.com,
-	steffen.klassert@secunet.com,
-	linux-kernel@vger.kernel.org,
-	dust.li@linux.alibaba.com,
-	jakub@cloudflare.com,
-	fred.cc@alibaba-inc.com,
-	yubing.qiuyubing@alibaba-inc.com
-Subject: [PATCH v8 net-next 4/4] ipv6/udp: Add 4-tuple hash for connected socket
-Date: Fri,  8 Nov 2024 13:48:36 +0800
-Message-Id: <20241108054836.123484-5-lulie@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20241108054836.123484-1-lulie@linux.alibaba.com>
-References: <20241108054836.123484-1-lulie@linux.alibaba.com>
+	s=arc-20240116; t=1731045120; c=relaxed/simple;
+	bh=FldH5ezVCKzA4ilhWwESkXoEsqQSxz+NQnJCrsnSmDo=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=AQ+O2oTe9fn+Y7cKCAwahkd/hS5+lsubLpdJdnziHdYIc03Xouw8Q35Lvk+CL+nnL3xnfj4agdAyAhnMJ0TT3KFySJC9p1glhP7VcYXMCfEegOAdlVh4OwDtY/z06W5j4QEKDgL0nrqjnKhbHPlDV8P+uwUBw6gqGryOifEv/kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imDMGRyR; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-288661760d3so935197fac.3;
+        Thu, 07 Nov 2024 21:51:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731045117; x=1731649917; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OqQKVoQIIB/alco7tDnCa7tsUMIzxx7+4InKayAOpSw=;
+        b=imDMGRyRqwhaM7xaIuhA8vIf7aO3Uv7G2chzV4oPGqJDRvUFoqCtCJ4ah0oixEBcH/
+         5cYdkjDuy0+JFcLzduPfqMdcI6lD2wCTOZyD1DeYBakFOssH6BelvRrC9iiCzLZ5cYAh
+         wD5dqHRscZKWGQSLai4isgYpSstR2ftfxJpP2T/xx2TGtfFukBMbtjSWk1HR+F+mt06u
+         hPTeJ2Tcu296eiik7O0QXLZ5yVvE3KV2mIsA+lET6rVZ3ru6Brhozn8+vDMdUIsKn8IO
+         eFi+hty103KE8F05g4DZK/tVHer7dj3zgOceo1Qlsju2ny210jrzs9zDpM+DNRvNEaPw
+         U4ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731045117; x=1731649917;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OqQKVoQIIB/alco7tDnCa7tsUMIzxx7+4InKayAOpSw=;
+        b=IfFDqdttZ6P3pxfVUn4mdwSQ2/+NvkEu7uc50Qbh4j5KkclorBUCnKUeH9fCgwV0Ya
+         R6MiiY7T2JTSDoglW5dAduPwN5Lo1lhpCCoOvmmKHvuhS+mNT6ERAS8rYdfc9DqTiq4A
+         xBX9PPQmErPxRcJph+mY5VwVDOviYYoRZHO6Fc0hzygWFwYR2TkAoargKugLxujRGYCb
+         iOnpmWxVpkX4HwJHhByGw4FPS0n2YFWNTmpuWgmAO0ZmFns6t+S/kI9vC8BAj/HcisHW
+         3lVQDpPz00l7gQVPzcHDLfbxzEi64bamSndG/yr02DdYRFcNfhK4GU/ibHODJxq7SX38
+         cPRA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6MhxjwRCVTCVaCk7oq6D7QZHyHczF0rrSlQClZjypGsl98F2qjqsoxM9B1xG2rahaUFAyGEQ6ZgHCo56H@vger.kernel.org, AJvYcCWHCoCTHeQMgF2gNimVKZSvTxgzQe9KG5SMitXo4TwbmyUmpEy3IMNzK81bDd8y4wRhcL37pjZMG4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyxr58X9BEBPKXqYi/sf+eblEeqyqV8wx70rKs2EUDfFgpkkiS
+	xQ4htwgBfVSaMG74CxYGM9MtTjwY7n3Z6X95Wqdil+LUwET0J1ki
+X-Google-Smtp-Source: AGHT+IFkZaTZJxaNXXPpZuSOVEsTRJR2nEjo5hkiRAfTbYsTwu37oqi4krQ0l4Ej1anGCJLRJlEz4A==
+X-Received: by 2002:a05:6870:5e53:b0:27b:55af:ca2b with SMTP id 586e51a60fabf-295600c5b27mr1930081fac.11.1731045117421;
+        Thu, 07 Nov 2024 21:51:57 -0800 (PST)
+Received: from 1337 (ms-studentunix-nat0.cs.ucalgary.ca. [136.159.16.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7ec7sm2752918b3a.55.2024.11.07.21.51.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 21:51:56 -0800 (PST)
+References: <20241107063042.106228-1-xandfury@gmail.com>
+ <464b1628-957a-485b-87d9-47636491de22@infradead.org>
+User-agent: mu4e 1.6.10; emacs 28.1
+From: Abhinav Saxena <xandfury@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, Zhihao Cheng
+ <chengzhihao1@huawei.com>, Richard Weinberger <richard@nod.at>
+Subject: Re: [PATCH 1/2] Documentation/mm: Fix spelling in hwpoison.rst
+Date: Thu, 07 Nov 2024 22:50:46 -0700
+In-reply-to: <464b1628-957a-485b-87d9-47636491de22@infradead.org>
+Message-ID: <87ed3me0j3.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Implement ipv6 udp hash4 like that in ipv4. The major difference is that
-the hash value should be calculated with udp6_ehashfn(). Besides,
-ipv4-mapped ipv6 address is handled before hash() and rehash(). Export
-udp_ehashfn because now we use it in udpv6 rehash.
 
-Core procedures of hash/unhash/rehash are same as ipv4, and udpv4 and
-udpv6 share the same udptable, so some functions in ipv4 hash4 can also
-be shared.
+Randy Dunlap <rdunlap@infradead.org> writes:
 
-Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
-Signed-off-by: Cambda Zhu <cambda@linux.alibaba.com>
-Signed-off-by: Fred Chen <fred.cc@alibaba-inc.com>
-Signed-off-by: Yubing Qiu <yubing.qiuyubing@alibaba-inc.com>
----
- include/net/udp.h |   2 +
- net/ipv4/udp.c    |   2 +-
- net/ipv6/udp.c    | 102 +++++++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 103 insertions(+), 3 deletions(-)
+> On 11/6/24 10:30 PM, Abhinav Saxena wrote:
+>> Fix spelling of "focusses" to "focuses" to follow standard English usage.
+>>=20
+>
+> We accept British spellings.
+>
+> internet says:
+> "Both spellings are acceptable in American and British English."
 
-diff --git a/include/net/udp.h b/include/net/udp.h
-index feb06c0e48fb..6e89520e100d 100644
---- a/include/net/udp.h
-+++ b/include/net/udp.h
-@@ -303,6 +303,8 @@ static inline int udp_lib_hash(struct sock *sk)
- 
- void udp_lib_unhash(struct sock *sk);
- void udp_lib_rehash(struct sock *sk, u16 new_hash, u16 new_hash4);
-+u32 udp_ehashfn(const struct net *net, const __be32 laddr, const __u16 lport,
-+		const __be32 faddr, const __be16 fport);
- 
- static inline void udp_lib_close(struct sock *sk, long timeout)
- {
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index b6c5edd7ff48..6a01905d379f 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -410,7 +410,6 @@ static int compute_score(struct sock *sk, const struct net *net,
- 	return score;
- }
- 
--INDIRECT_CALLABLE_SCOPE
- u32 udp_ehashfn(const struct net *net, const __be32 laddr, const __u16 lport,
- 		const __be32 faddr, const __be16 fport)
- {
-@@ -419,6 +418,7 @@ u32 udp_ehashfn(const struct net *net, const __be32 laddr, const __u16 lport,
- 	return __inet_ehashfn(laddr, lport, faddr, fport,
- 			      udp_ehash_secret + net_hash_mix(net));
- }
-+EXPORT_SYMBOL(udp_ehashfn);
- 
- /* called with rcu_read_lock() */
- static struct sock *udp4_lib_lookup2(const struct net *net,
-diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-index 1ea99d704e31..d766fd798ecf 100644
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -110,8 +110,19 @@ void udp_v6_rehash(struct sock *sk)
- 	u16 new_hash = ipv6_portaddr_hash(sock_net(sk),
- 					  &sk->sk_v6_rcv_saddr,
- 					  inet_sk(sk)->inet_num);
-+	u16 new_hash4;
- 
--	udp_lib_rehash(sk, new_hash, 0); /* 4-tuple hash not implemented */
-+	if (ipv6_addr_v4mapped(&sk->sk_v6_rcv_saddr)) {
-+		new_hash4 = udp_ehashfn(sock_net(sk),
-+					sk->sk_rcv_saddr, sk->sk_num,
-+					sk->sk_daddr, sk->sk_dport);
-+	} else {
-+		new_hash4 = udp6_ehashfn(sock_net(sk),
-+					 &sk->sk_v6_rcv_saddr, sk->sk_num,
-+					 &sk->sk_v6_daddr, sk->sk_dport);
-+	}
-+
-+	udp_lib_rehash(sk, new_hash, new_hash4);
- }
- 
- static int compute_score(struct sock *sk, const struct net *net,
-@@ -216,6 +227,74 @@ static struct sock *udp6_lib_lookup2(const struct net *net,
- 	return result;
- }
- 
-+#if IS_ENABLED(CONFIG_BASE_SMALL)
-+static struct sock *udp6_lib_lookup4(const struct net *net,
-+				     const struct in6_addr *saddr, __be16 sport,
-+				     const struct in6_addr *daddr,
-+				     unsigned int hnum, int dif, int sdif,
-+				     struct udp_table *udptable)
-+{
-+	return NULL;
-+}
-+
-+static void udp6_hash4(struct sock *sk)
-+{
-+}
-+#else /* !CONFIG_BASE_SMALL */
-+static struct sock *udp6_lib_lookup4(const struct net *net,
-+				     const struct in6_addr *saddr, __be16 sport,
-+				     const struct in6_addr *daddr,
-+				     unsigned int hnum, int dif, int sdif,
-+				     struct udp_table *udptable)
-+{
-+	const __portpair ports = INET_COMBINED_PORTS(sport, hnum);
-+	const struct hlist_nulls_node *node;
-+	struct udp_hslot *hslot4;
-+	unsigned int hash4, slot;
-+	struct udp_sock *up;
-+	struct sock *sk;
-+
-+	hash4 = udp6_ehashfn(net, daddr, hnum, saddr, sport);
-+	slot = hash4 & udptable->mask;
-+	hslot4 = &udptable->hash4[slot];
-+
-+begin:
-+	udp_lrpa_for_each_entry_rcu(up, node, &hslot4->nulls_head) {
-+		sk = (struct sock *)up;
-+		if (inet6_match(net, sk, saddr, daddr, ports, dif, sdif))
-+			return sk;
-+	}
-+
-+	/* if the nulls value we got at the end of this lookup is not the
-+	 * expected one, we must restart lookup. We probably met an item that
-+	 * was moved to another chain due to rehash.
-+	 */
-+	if (get_nulls_value(node) != slot)
-+		goto begin;
-+
-+	return NULL;
-+}
-+
-+static void udp6_hash4(struct sock *sk)
-+{
-+	struct net *net = sock_net(sk);
-+	unsigned int hash;
-+
-+	if (ipv6_addr_v4mapped(&sk->sk_v6_rcv_saddr)) {
-+		udp4_hash4(sk);
-+		return;
-+	}
-+
-+	if (sk_unhashed(sk) || ipv6_addr_any(&sk->sk_v6_rcv_saddr))
-+		return;
-+
-+	hash = udp6_ehashfn(net, &sk->sk_v6_rcv_saddr, sk->sk_num,
-+			    &sk->sk_v6_daddr, sk->sk_dport);
-+
-+	udp_lib_hash4(sk, hash);
-+}
-+#endif /* CONFIG_BASE_SMALL */
-+
- /* rcu_read_lock() must be held */
- struct sock *__udp6_lib_lookup(const struct net *net,
- 			       const struct in6_addr *saddr, __be16 sport,
-@@ -231,6 +310,13 @@ struct sock *__udp6_lib_lookup(const struct net *net,
- 	hash2 = ipv6_portaddr_hash(net, daddr, hnum);
- 	hslot2 = udp_hashslot2(udptable, hash2);
- 
-+	if (udp_has_hash4(hslot2)) {
-+		result = udp6_lib_lookup4(net, saddr, sport, daddr, hnum,
-+					  dif, sdif, udptable);
-+		if (result) /* udp6_lib_lookup4 return sk or NULL */
-+			return result;
-+	}
-+
- 	/* Lookup connected or non-wildcard sockets */
- 	result = udp6_lib_lookup2(net, saddr, sport,
- 				  daddr, hnum, dif, sdif,
-@@ -1166,6 +1252,18 @@ static int udpv6_pre_connect(struct sock *sk, struct sockaddr *uaddr,
- 	return BPF_CGROUP_RUN_PROG_INET6_CONNECT_LOCK(sk, uaddr, &addr_len);
- }
- 
-+static int udpv6_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
-+{
-+	int res;
-+
-+	lock_sock(sk);
-+	res = __ip6_datagram_connect(sk, uaddr, addr_len);
-+	if (!res)
-+		udp6_hash4(sk);
-+	release_sock(sk);
-+	return res;
-+}
-+
- /**
-  *	udp6_hwcsum_outgoing  -  handle outgoing HW checksumming
-  *	@sk:	socket we are sending on
-@@ -1761,7 +1859,7 @@ struct proto udpv6_prot = {
- 	.owner			= THIS_MODULE,
- 	.close			= udp_lib_close,
- 	.pre_connect		= udpv6_pre_connect,
--	.connect		= ip6_datagram_connect,
-+	.connect		= udpv6_connect,
- 	.disconnect		= udp_disconnect,
- 	.ioctl			= udp_ioctl,
- 	.init			= udpv6_init_sock,
--- 
-2.32.0.3.g01195cf9f
+Ah. I should've checked contributing.rst[1] first. checkpatch.pl flagged it
+for me. I did not look more into it.
 
+Thanks for the detailed reply!
+
+[1] - Documentation/doc-guide/contributing.rst
+
+>
+> "Focused" is the past tense of the verb "focus" and can also be used as a=
+n adjective to mean clear. For example, "She had a focused approach in trai=
+ning".=20
+> The plural of the noun "focus" can be either "foci" or "focuses".=20
+>
+>     FOCUS definition and meaning | Collins English Dictionary
+>     ), plural, 3rd person singular present tense focuses , focusing , pas=
+t tense, past participle focused language note: The spellings...
+>     Collins Dictionary
+>
+> Focussed vs Focused | Spelling, Explanation & Examples - QuillBot
+> Sep 10, 2024 =E2=80=94 Published on September 10, 2024 by Trevor Marshall=
+, MSc. Revised on October 29, 2024. Both focussed and focused are ac...
+> QuillBot
+> Spelling Tips: Focused or Focussed? | Australia's Best Writing Tips
+> May 7, 2020 =E2=80=94 Summary: Focused or Focussed? 'Focused' and 'focuss=
+ed' are two spellings of the same word: Focused (one 's') is the sta...
+> getproofed.com.au
+>
+>     Show all
+>
+> "
+>> Checkpatch.pl reported this issue.
+>>=20
+>> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+>> ---
+>>  Documentation/mm/hwpoison.rst | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/Documentation/mm/hwpoison.rst b/Documentation/mm/hwpoison.r=
+st
+>> index 483b72aa7c11..dd02fae484dc 100644
+>> --- a/Documentation/mm/hwpoison.rst
+>> +++ b/Documentation/mm/hwpoison.rst
+>> @@ -17,7 +17,7 @@ To quote the overview comment::
+>>  	hardware as being corrupted usually due to a 2bit ECC memory or cache
+>>  	failure.
+>>=20=20
+>> -	This focusses on pages detected as corrupted in the background.
+>> +	This focuses on pages detected as corrupted in the background.
+>>  	When the current CPU tries to consume corruption the currently
+>>  	running process can just be killed directly instead. This implies
+>>  	that if the error cannot be handled for some reason it's safe to
+
+
+--=20
+--=20
+Abhinav Saxena
 
