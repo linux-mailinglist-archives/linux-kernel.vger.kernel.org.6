@@ -1,118 +1,152 @@
-Return-Path: <linux-kernel+bounces-401863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22DC9C2043
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:22:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF029C204F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC5A1C23159
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:22:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2555EB22351
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D87F202F7C;
-	Fri,  8 Nov 2024 15:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CED5206E7F;
+	Fri,  8 Nov 2024 15:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XuHsgtU8"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="bJY1kfzU"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC454202659
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C0C206E7C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731079338; cv=none; b=B0InnHju/6cqI+WeUek7jy8msBPZXoBfmQbI8cd8gbwogT47Un+tD4xEDI08Z0iuE7VVWO/WG6+gyWn11qkB8Q+mpKBCI5D2MQBmSNN8LVpz2e+/lG0coze+0KT2OD20oDlouMtvyNnWbtgjzaMljed6z9siN5MKsogs65v4uzk=
+	t=1731079541; cv=none; b=QRmrpb2TiwoGrwEO242nRibS86cTmy2y1JNu97kpeJoG5kaEflQ00B36O5cAOJWha8vF7+tHt+bpDs5FESepP2CqWEPKLefxXKJj1NnYZSDNejCY0LxGebIciaLzcJNuRoakMCKBdMJwNzujqVjwUSgK7d+nV44kmd1VzUZCmwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731079338; c=relaxed/simple;
-	bh=0kURwNwHJBkQ3AtqqMqkka3+75b3qhZ4CX1aiiQ7DuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fql53GQCHwgviPNJUrwwn9s3VE1WpTJGKnHWwbu1+uK7dabP4C5byrg6W9wNq6c5MrhgDJGFdHN0ZuhwIyKfbejHNALS0dvFTQ7fFMkuqKE4qKgv5FvnUHM+66Y0rFnDXkpPIaZK5e2RsdrQEqhd3LVsdCcN2hl3+ud2LdzHlC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XuHsgtU8; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e8607c2aso2585486e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:22:16 -0800 (PST)
+	s=arc-20240116; t=1731079541; c=relaxed/simple;
+	bh=2feMVd+moXqEWqG7qu0YrJc0Jboh9RPoNC48SzdPbeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tAAXTnS73/fctH1a9sYVX1bOZskptu6qDlUsPbpHxj0+qO66Z22iBfb7BzWnDMmPGYAQIixAF4qQ0bwYqGAC/aao1Jd4RBbyl2HhOPLWxUJXIBhoWYuLOT6xgeYd7CQ631LMnU5xe3ewPXkNRRv9bEMcS0RvTgpOAlsC6sgC5qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=bJY1kfzU; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b155cca097so189713985a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:25:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731079333; x=1731684133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HgfLZptM6/3AAPLv+VlAD5qO5/FWxVF/aNEVYnKiuLs=;
-        b=XuHsgtU8ZW9jA3+esi5NL36aBgGmuid0N1GoUbYTpxatGBJn0h5G9xVzm3SOjeTDX6
-         ypk2Ev/xaHH7dlJG17v3FVaMudgrw8KPCCBKhjr9AdNXHt6sCBFO8vskRs4sOCFMjj55
-         Npu/ZYPcxgCTxFSSeQJ0fx9+wiL0JgI2EqOBI=
+        d=ziepe.ca; s=google; t=1731079538; x=1731684338; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nbYXv3yCM9yQzCKa6ScUYgOxj5i+yJ5Ve18Z6DNxO2Y=;
+        b=bJY1kfzUcarj5CrCE4Tih3DZkR2MPvb0tUrbaV67brM/zWFSSH4XDEINs+3lIpIn9G
+         XOUMKNr+TXsHV43VcaUCVNsg5hkY7HaAjzisjsOFkPzkqf2wjChDM10bgh71BOaOrrfv
+         Wf6a323Mkj68kqXlq68GFa2rqc+uNuFUgjNtHz9TLtkg/mwEQunzUDbDYQ4Y0v4vyRfK
+         eYeQFHi1h45hnN0WM3KDpaY3MeBuVFFiuikvP0SCR8XP2sOmgPpOSFobXNSzQZP+uGtV
+         N+NEaqh2K3YlIz3AKWeGCR7MPSMrKQ7XBJrkprKqy/9YgJoMrfrlr2YcXspzBqjS4ET4
+         QXag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731079333; x=1731684133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HgfLZptM6/3AAPLv+VlAD5qO5/FWxVF/aNEVYnKiuLs=;
-        b=OKNrZF07LLaZWohFJo4gfu2mzO8CI8l0Ww/5FFCyBZuyCwqSDxxFocxtbeiYBTfMk3
-         H+Sx6ApG1vFgh2HZAStf2xm5lHDONzcouVkNEa92rwmhJ5zZzNFjpnI3ahkokIbRDqHX
-         GW4ODgbdojplNzt0+2pIyLcN62DVr6XK4ctr2pdQLKCAmd9oCPuwD/k5gKsxT93V2w8S
-         Ww4E8VGfAa0sVxPobKCDG9sbV9SPe1NL38XEIUIvu/EnqfokP/4n97d/FIn7yKeFio55
-         5jUB8TAviKZJMUiAjbF8ZsxcTGLrwH+BNPrboGEoMe+8iZiTEblEm00f0QhYmGEv57+I
-         TmEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYbkNgcOeuagIsyTwv8yLHeHRhAWBcKi+HspbwfyW9hros4Yhs50J0afW5EYz6/PChmgOCN6aQx6dlaAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgGhc5YaNK4HsxcLTEQsmUbSAVh4rd7h56jT88A6ANdOMFaYbQ
-	UcRg7IbQWpjp+ciV1AL1v7ra0g34r//be8cY+Ap1IwovO5we+VwDCCZSTHmzOQYqLC68aTQeapA
-	NgA==
-X-Google-Smtp-Source: AGHT+IE80DqMqN6CTRTrdcxtCQJN0Mx9xEHZ/SvLjrNVUqyHmlHwQw31Ft7k0oZBhp8uvJv9p/RsVQ==
-X-Received: by 2002:a05:6512:3d21:b0:539:ea66:597e with SMTP id 2adb3069b0e04-53d862b44a7mr1968763e87.2.1731079333328;
-        Fri, 08 Nov 2024 07:22:13 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826784fesm644451e87.52.2024.11.08.07.22.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 07:22:12 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e8607c2aso2585283e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:22:12 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUeOlMzXtMsQSYFJHoRyVTnjhPbqyhe0Q7gAdd/wwpmx45nrMTc0oQ+ZIaHyKWEYH5cj/Oy/OSVbCIsdmw=@vger.kernel.org
-X-Received: by 2002:a2e:be20:0:b0:2f5:11f6:1b24 with SMTP id
- 38308e7fff4ca-2ff201b3185mr20586931fa.18.1731079331685; Fri, 08 Nov 2024
- 07:22:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731079538; x=1731684338;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nbYXv3yCM9yQzCKa6ScUYgOxj5i+yJ5Ve18Z6DNxO2Y=;
+        b=WH9HAC2HsDIFHA4m5l6HRZLYG72GHvS4/dVQqLzZ6RxLVO70GQHDacopuYUBc7CR5l
+         eiT0tGY5Vle2yK3uZcqIniTYE+4agE+4pQjMo+5LLo/w06CK+3mlu0VAVdU9Xq1TA6h5
+         TDNh/3vOpJFUeAlDtArNk+8ngmngi0TCpI0F4U3DT9Y7StFkt2bQsC81l09fBRsjSWu6
+         QmG+3FddfZDvSM/dj3JTI/8EzgluKGYvVdXgSPZVQwo15IpQQfsDWvOLWUTthcg8kcwj
+         Y3ZJ2qpKifzUnMeqObxDSSXZ3TGX9VQcSomAyhNI06dqHi+n3kKzZxRMA1mFYh9dVfWn
+         KOvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXw0uZ1cVKkSboqLSaokgNybemipuFdRJNXQV1oAawPOyCO1/zlPXcsJpzdWmIMVS+XLSVfOPLnn7bDusI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx3CctjOPCdYfxpMRfHLEmtRvQ7Is/M9BRutGpq2qpWYtxXSY6
+	fe59C9jR2JzIwiQnDblQcfj7Nuy5DKtCvN/s2mQTGK13Vj5zQrwIXhdicMODWKI=
+X-Google-Smtp-Source: AGHT+IH4eRArrUDZm2rUOb5KR+8EAvAFtyYH0Fr2uIHFPXrPpQnSMiiNxtBbq8LowDrIix/biyMB3w==
+X-Received: by 2002:a05:620a:4049:b0:7b1:4cc0:5e32 with SMTP id af79cd13be357-7b3328aeb7dmr490547585a.9.1731079538361;
+        Fri, 08 Nov 2024 07:25:38 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac51659sm170158385a.42.2024.11.08.07.25.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 07:25:37 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t9Qrh-00000002Zza-1RVx;
+	Fri, 08 Nov 2024 11:25:37 -0400
+Date: Fri, 8 Nov 2024 11:25:37 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Robin Murphy <robin.murphy@arm.com>, Leon Romanovsky <leon@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org, matthew.brost@intel.com,
+	Thomas.Hellstrom@linux.intel.com, brian.welty@intel.com,
+	himal.prasad.ghimiray@intel.com, krishnaiah.bommu@intel.com,
+	niranjana.vishwanathapura@intel.com
+Subject: Re: [PATCH v1 00/17] Provide a new two step DMA mapping API
+Message-ID: <20241108152537.GN35848@ziepe.ca>
+References: <cover.1730298502.git.leon@kernel.org>
+ <3567312e-5942-4037-93dc-587f25f0778c@arm.com>
+ <20241104095831.GA28751@lst.de>
+ <20241105195357.GI35848@ziepe.ca>
+ <20241107083256.GA9071@lst.de>
+ <20241107132808.GK35848@ziepe.ca>
+ <20241107135025.GA14996@lst.de>
+ <20241108150226.GM35848@ziepe.ca>
+ <20241108150500.GA10102@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108-new-maintainer-address-2-v1-0-47c9d71aac11@linaro.org>
-In-Reply-To: <20241108-new-maintainer-address-2-v1-0-47c9d71aac11@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 8 Nov 2024 07:21:56 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XSiNw5RKEPg5wwTn=tNVKDxYoqYZLU5C_88wveD29UCw@mail.gmail.com>
-Message-ID: <CAD=FV=XSiNw5RKEPg5wwTn=tNVKDxYoqYZLU5C_88wveD29UCw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] MAINTAINERS: Update with Daniel Thompson's korg address
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Jason Wessel <jason.wessel@windriver.com>, 
-	dri-devel@lists.freedesktop.org, kgdb-bugreport@lists.sourceforge.net, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108150500.GA10102@lst.de>
 
-Hi,
+On Fri, Nov 08, 2024 at 04:05:00PM +0100, Christoph Hellwig wrote:
+> On Fri, Nov 08, 2024 at 11:02:26AM -0400, Jason Gunthorpe wrote:
+> > It is fully OK? Can't dma_map_page() trigger swiotlb? It must not do
+> > that for P2P. How does it know the difference if it just gets a phys?
+> 
+> dma_direct_map_page checks for p2p pages in the swiotlb bounce
+> path already in the current kernel, and dma_map_sg relies on exactly
+> that check to prevent bouncing for p2p.
 
-On Fri, Nov 8, 2024 at 12:31=E2=80=AFAM Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
->
-> Going forward, I'll be using my kernel.org address for upstream work.
->
-> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
-> Daniel Thompson (2):
->       MAINTAINERS: Use Daniel Thompson's korg address for backlight work
->       MAINTAINERS: Use Daniel Thompson's korg address for kgdb work
->
->  MAINTAINERS | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+I'm asking how it will work if you change the struct page argument to
+physical, because today dma_direct_map_page() has:
 
-I don't know if it needs it, but if it does feel free to have:
+		if (is_pci_p2pdma_page(page))
+			return DMA_MAPPING_ERROR;
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Which is exactly the sorts of things I'm looking at when when I say to
+get rid of struct page.
 
-BTW: do you want to adjust the '.mailmap' file as well?
+What I'm thinking about is replacing code like the above with something like:
 
--Doug
+		if (p2p_provider)
+			return DMA_MAPPING_ERROR;
+
+And the caller is the one that would have done is_pci_p2pdma_page()
+and either passes p2p_provider=NULL or page->pgmap->p2p_provider.
+
+Anyhow, I hope Leon will attempt this once this is settled and it will
+make more sense in patches. I'm just brainstorming how I've been
+thinking of it.
+
+Another option would be some 'is_pci_p2pdma_page_phys(phys)', but I
+think that is going to be worse performance than managing a
+p2p_provider pointer in the mapping call chain explicitly.
+
+Jason
 
