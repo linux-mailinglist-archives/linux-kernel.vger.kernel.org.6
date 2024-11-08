@@ -1,113 +1,113 @@
-Return-Path: <linux-kernel+bounces-401567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333489C1C58
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:43:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497B39C1C69
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:44:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E493E286274
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:43:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0129E1F243B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128D31E47C1;
-	Fri,  8 Nov 2024 11:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373721E6DDE;
+	Fri,  8 Nov 2024 11:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwPKEtgK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="SYWN0siX"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2401E411C;
-	Fri,  8 Nov 2024 11:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05111E411C;
+	Fri,  8 Nov 2024 11:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066195; cv=none; b=jOCky1eBOq4ZI5rYq6EJL+vcmovIwqzEzi6kSGhbJNn+NoNTpCEht0NRo7XVBcvCugeDeeA3/v7DNAEoz8bEezpZMi6aXKbll8ZWM4zzCgezZMO4/0+pF2/2E2Di9Z5ZomeQQGWXhIoNOzkNpY2aF0TCVbcUaq9LQhZVfBbDFis=
+	t=1731066275; cv=none; b=DfiJts6dbznKmqBZpxvH3pba1S4S/HqWWRW6+2KU5eSr2Bf/gfJugFzRQBgT7DVLCWx9SF9gUkvfpPDolO2yhiotiECO1yXep0FrsfAja6VlH5u3x3j38agOcWmXkNbYMPmQidCRbuTiK4OLljsD/spOO+HOVVrJ/giAJyu/tHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066195; c=relaxed/simple;
-	bh=8zaJ33eL6o1+wVR92icQ0rxE6wt94nUld/Us/a4aZpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kfj37eN0wEZolo/No70PjN6jewwAutdzdIgNAEYt8+w/2BTRduiDUnqEsjoEHvEx+PmaoBekcNI4MRgMSNJklVT6jLeTeNx3xK9dLsVQEgjHK6iQX7m+ZpbbJFBAnVZZeTf7r2sflCgmKTD6oYMMh4rFU6o+FSrqmYBPFuQKszg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwPKEtgK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87EE7C4CECD;
-	Fri,  8 Nov 2024 11:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731066194;
-	bh=8zaJ33eL6o1+wVR92icQ0rxE6wt94nUld/Us/a4aZpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JwPKEtgKFJpBmRRPq/RyEhl4//oELyueeAhtNFqoFEFYMNvlSRSnGA38v1ey6qvC+
-	 skgKwROXWdzgElvH26Ahn0X6XoB4dmoSj62IsTsu2eMyXe2TLruFY4aPgUF0xukJM2
-	 1WMyKCqlgTbtxpgDRSnQWPHp+AZKOve1j5f83gDGAybpuSJh1KcE7p2yimsHcmLkOm
-	 HiyDXxlKQg3en33EXlzhzWRDfwmqt4OBGGTYnhNQogU3etOZlWK01tHcFdPQXYMGl/
-	 XidtFG1QdryARAk+YOW+05RP1ATpswcivG8eoaO6MaulWZtcPSW8iaqf3YWzBp0z2K
-	 c+iwcWAdxZgcQ==
-Date: Fri, 8 Nov 2024 12:43:07 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Ramon Cristopher M. Calam" <ramoncristopher.calam@analog.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: regulator: Add adi,lt8722-regulator.yaml
-Message-ID: <qr72zky2xfy4uzcm7vqnipgx3nkic4hp377jbtha46cktnxncy@52ms2zg3sf7w>
-References: <20241108093544.9492-1-ramoncristopher.calam@analog.com>
- <20241108093544.9492-3-ramoncristopher.calam@analog.com>
+	s=arc-20240116; t=1731066275; c=relaxed/simple;
+	bh=ET0Gze8UybLDnkwy0IpjRPcSFYxnsiDuor290UOR6Ko=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KskwNapCyDMnvUyZ7p1BwGQzCv3wyw9GZTVKtHSn9CGvjZF/PWxgfhdOiMBJGB7tbiU2n5e8/dKLI5J8/SyCMlDR4SONPNoiyqWUW2k0r/qUA6W60K6tyIndlx14dCIE/WF3shptuBpdrqohCMX3lh+DhrwDzKJD82vs2sl0Qz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=SYWN0siX; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1731066257; x=1731671057; i=wahrenst@gmx.net;
+	bh=6+biLB2vyBnJg099YjFn/sMIkw5aGC948JMXqyUDMIY=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SYWN0siXazfn5QHdURtBn8gTFWjKmjMlzGcJfWItWc2VHUJtYsFrDxupqwif1ITA
+	 0PzES3iRbNPyjSZdWZV/sAnu3NyDhQAgwLDflzWyxkbHJK5VSgsmezLesJR2XdqE+
+	 04SPnUDGez82HXZrl4JCgLg7dgQ39ugDOT7ki1kzb/oFaWVVpG/JrqZjJzq91IBMm
+	 t0XOyOI7UqU429HIdqstMu3FOmKfAfWlGDMqLAurN3KRIvc3AdBSPA6m83xmNhw1Q
+	 yBmfxwy5hihjopFsYF3I1cHbnJUs9II5KG/XePe7Sp8/8KqnJy+G2RxRDGa31qXxq
+	 olt7J/9ie6jqAxzDcw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M1Hdw-1t7iih32wE-006ImT; Fri, 08
+ Nov 2024 12:44:17 +0100
+From: Stefan Wahren <wahrenst@gmx.net>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH 0/2 net V3] net: vertexcom: mse102x: Fix mse102x_tx_work
+Date: Fri,  8 Nov 2024 12:43:41 +0100
+Message-Id: <20241108114343.6174-1-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241108093544.9492-3-ramoncristopher.calam@analog.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2IqqhzABu7eQtaqe+l6Jab/0sgkUNniKw+7jJYZbfhrEsZ8UEU9
+ 0FXgnxIZnQlTSVAwleBPRSHqFayAYVFo5ApyyEq8gqu/anoWabAOssR1jAQZXFhUPBfZMuy
+ v6FOYM/ZyWziJLMqECymuJNHDx2R56I73Q51hPeU3XUo1Hc8MP/DVSQ5tMNdsm4XdDHPwTw
+ mqLnMsCrZYLmSjTI6QhcQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BCnJ9HftvfE=;gwpFbdIPjIpMDzZCVlOQ0r+sfE5
+ GwaJAaW/2RTDS4wH9V0CCIe3S7zxQWgo02GykfgT8/BwnMcWoS4LuLPSZ+oNT+NORU69kvb/l
+ db2i0/+pgNyXSjqyrEsRt/aMfyk9gStqVcFqMdIZ0S++Nr64e7gaGkdLdu8hrNuMRpxvqzkS0
+ CVm4YeT4TwxaxO0gn6KPfgYTM2wOXk2F2cIm/R5M5SLavIbe3tOeGTF5T9TanNHp5Pf/LQhww
+ pTr0/iGo/lISmrjhDQKohOqFrlGzed93KCP+htv9B+WR7WiEwdAB93SjCxvLnuLwNAHrT/1cf
+ M7Bha2/AwJXoZSfRxr8FNLvxjzpisRUpldqakCdeBJxB9n2qD2303eZ5QeMkUsYgt9DhUZtey
+ tnk8iLJoA1lXgmMDuyNUJpHhGNlHh4iY430xxnTvU4LbSOv7uI+/luq0faANrg94n8JuigR+J
+ pekquenf2dxvjgeXjxVJUGBGZeoZ7siDktG8IaKuxFxAxEG9HZPn0rMxv/+3My5qoQyp4DS7c
+ 1r2v8efuFXkWtzxAmYv7Tj0E9HQPEyXpX5J/8QfarZau822mxe+tDZGYnpwRcMU1A4wst/cC/
+ XnPPoTAGx9/+d4vJFNxmlmW2XyFSFRMFEtnDG2BVSBuAg8AtJcdXAcfWOsPGzw0YbQqfkUkDe
+ BF0xn35NT/SN7Scw9zDNSABVMHP7P7B4iMjdF4KB1YozhIUiuo0GkjrAWTYnf3IXUe+3VhaDq
+ Nm8TmIG9YPEdxrupSIZ4PMJ/e+gFbp//xS8OG+5o/YWUHmDy+lRITx1SV5faPGXaUpBYTn5Kl
+ M8WIJA3XJDLDPag3NcgHWJbQ==
 
-On Fri, Nov 08, 2024 at 05:35:44PM +0800, Ramon Cristopher M. Calam wrote:
-> Add documentation for device tree bindings of LT8722.
-> 
-> Signed-off-by: Ramon Cristopher M. Calam <ramoncristopher.calam@analog.com>
-> ---
->  .../regulator/adi,lt8722-regulator.yaml       | 178 ++++++++++++++++++
->  1 file changed, 178 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/adi,lt8722-regulator.yaml
-> 
+This fixes two issue in the TX path of the Vertexcom MSE102x driver.
 
-This wasn't tested, so limited review follows.
+Initial version:
+https://lore.kernel.org/netdev/20241022155242.33729-1-wahrenst@gmx.net/
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Changes in V3:
+- use a temporary variable to store the "original" skb len in
+  patch 2 as suggested by Jakub Kicinski
 
-> diff --git a/Documentation/devicetree/bindings/regulator/adi,lt8722-regulator.yaml b/Documentation/devicetree/bindings/regulator/adi,lt8722-regulator.yaml
-> new file mode 100644
-> index 000000000000..3fbf788d4154
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/adi,lt8722-regulator.yaml
-> @@ -0,0 +1,178 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright (c) 2023 Analog Devices, Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/adi,lt8722-regulator.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices LT8722 Ultracompact Full Bridge Driver
+Changes in V2:
+- free the temporary skb in patch 1 in order to minimize changes
+  as suggested by Jakub Kicinski
+- add patch 2 to also fix the tx_bytes calculation
 
-Driver like motor driver or regulator? Or Linux driver? If the latter
-then, drop. Describe the hardware please.
+Stefan Wahren (2):
+  net: vertexcom: mse102x: Fix possible double free of TX skb
+  net: vertexcom: mse102x: Fix tx_bytes calculation
 
+ drivers/net/ethernet/vertexcom/mse102x.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-> +
-> +maintainers:
-> +  - Ramon Cristopher Calam <ramoncristopher.calam@analog.com>
-> +
-> +description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-That's all folks! More review when this is tested, please.
-
-Best regards,
-Krzysztof
+=2D-
+2.34.1
 
 
