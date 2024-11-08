@@ -1,235 +1,388 @@
-Return-Path: <linux-kernel+bounces-401522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546A99C1BB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:59:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8C69C1AB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2F1C1F23D59
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E06E285B31
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F1C1E47AB;
-	Fri,  8 Nov 2024 10:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05471E32A6;
+	Fri,  8 Nov 2024 10:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b="NF8W7dfM"
-Received: from mx07-0063e101.pphosted.com (mx07-0063e101.pphosted.com [205.220.184.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXj6ieDS"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251D71DE8A8;
-	Fri,  8 Nov 2024 10:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.184.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731063511; cv=fail; b=n7Ez08PE1fZl/3mrfOLpgO27BQF2ebNhMViMFdaGKpNk5t9vIa129erqNGSH48qvxXwyB36QdaCWhX1mSyB3Z5OEPImuwzLL2Xrib7zBzR7Y5q5g+yIn/3ZVNKfEBnGEHszXdeEhquYo5Feqwy8S2Fcfh86Zz30wjpddyu2K4Ww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731063511; c=relaxed/simple;
-	bh=fWx5zKZ3WCbVsnPDsEB5e4kSNRGU+N7BeNkjhnXeJ8E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Fi77w8+ZIXd3tH8NrncwruX9eUPXSygYXdrnDiflrOqZPA0fNdGr5JO3Ogt8E7WeAt+LxYRHBCmDGjF5aUPK73bRFk8NCc3T7mJwDEu22b2SW1d/bGKRrc1FuAmpocU/y9atC7L5zN++5cTFp2RJ1FRfcqXuEy0FaODTFigLEbA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com; spf=pass smtp.mailfrom=blaize.com; dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b=NF8W7dfM; arc=fail smtp.client-ip=205.220.184.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blaize.com
-Received: from pps.filterd (m0247495.ppops.net [127.0.0.1])
-	by mx08-0063e101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A8AGexG021628;
-	Fri, 8 Nov 2024 10:32:07 GMT
-Received: from ma0pr01cu009.outbound.protection.outlook.com (mail-southindiaazlp17010006.outbound.protection.outlook.com [40.93.131.6])
-	by mx08-0063e101.pphosted.com (PPS) with ESMTPS id 42s6f5r8jr-7
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 10:32:06 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IZ+5/Z/f3NXR1/VyEohB01i1s/9a4onYT8ctUsPL8miVU19F4t82zvP2aCtNkitJirnOR4YD/rUt09MYOX+SorJg4UiCY+Ty5JQ7/fxs5onf+GD/9yaRblAsT84vNvz9XBP/eX82k7b6SFx9N0//DJDX2fuJ2cBokZLqFBL9fxCJYA9dm1ujjaeTWJ//JmF/l753qBgrMZhCilDZa0H5wJ1Z1d9Pqr/T58ppmmZ/2l4Y2EgWbGEBAOPmdK16SpFctlFFl3m2aQ9SgT+pC/KkX9QpD1504Ajy6+ndH2HlQvRJjwrEi4xE2mT+uMkoRAIwOntqflsjRiv5uDFAacFtKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=keC3+QD706Hmw6ia2QKtGQJdMmZHSMOirycWwbtGBbw=;
- b=dwszkU2LSn+OVLT0LnKBgOQ983DMYnN8m6+18zY+udILIFQZoneRl5pnjLbFxJ1q9BQn4UbuYwhhNM8qc16TAYRJTMlbgD5XUgvkjDgoJLI8bIvcMpHTXG5KcGbSffqzI/vNZiEtipWSyU35nHo/zfHHbqDBzh+pKCGZbcosLrzqIShBN6KfZNnmFmn4MC2vvXv/GrXHkXZfUmtNXnhlglPwfKnBHTCwJbZxi66eS474CRauBXIZVqIQ7/SAddf7B9meYgS/sjISyJndv/E7xNWpcp0XXeFTU8q6HUcitYkU6YrdIzRndKT5iPGYbIK1lLDtVo2atMMqVwmQCDJ6fQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=blaize.com; dmarc=pass action=none header.from=blaize.com;
- dkim=pass header.d=blaize.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=BLAIZE.COM;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=keC3+QD706Hmw6ia2QKtGQJdMmZHSMOirycWwbtGBbw=;
- b=NF8W7dfMOGtnO0J2Bq4gF+TQuiSS09HtF1c1vOdI9hZeNGrGAfMHEY6UAAYOjIH9MgTWyPeHkaAyB6Ynf82J1f0S7M29c3luVNJ/3P0EFgsw+mkpVmlRslD/HeUwm9wzP/d7BzCnjlJdxIrBSgDmekr6V0rQwohTkb/iNCAfLSs=
-Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:12a::5)
- by PN0PR01MB7813.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:b5::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.21; Fri, 8 Nov
- 2024 10:31:59 +0000
-Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::309a:12cf:74a4:5655]) by MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::309a:12cf:74a4:5655%4]) with mapi id 15.20.8137.019; Fri, 8 Nov 2024
- 10:31:59 +0000
-From: Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>
-To: James Cowgill <james.cowgill@blaize.com>,
-        Matt Redfearn
-	<matthew.redfearn@blaize.com>,
-        Neil Jones <neil.jones@blaize.com>,
-        Niko
- Pasaloukos <nikolaos.pasaloukos@blaize.com>,
-        "robh@kernel.org"
-	<robh@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org"
-	<krzysztof.kozlowski+dt@linaro.org>,
-        "conor+dt@kernel.org"
-	<conor+dt@kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "hverkuil-cisco@xs4all.nl"
-	<hverkuil-cisco@xs4all.nl>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "hvilleneuve@dimonoff.com" <hvilleneuve@dimonoff.com>,
-        "andre.przywara@arm.com" <andre.przywara@arm.com>,
-        "rafal@milecki.pl"
-	<rafal@milecki.pl>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "konrad.dybcio@linaro.org" <konrad.dybcio@linaro.org>,
-        "angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>,
-        "nm@ti.com" <nm@ti.com>,
-        "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-        "nfraprado@collabora.com" <nfraprado@collabora.com>,
-        "johan+linaro@kernel.org" <johan+linaro@kernel.org>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v4 6/6] MAINTAINER: Add entry for Blaize SoC
-Thread-Topic: [PATCH v4 6/6] MAINTAINER: Add entry for Blaize SoC
-Thread-Index: AQHbMclxND9+YNk/m0CAi4+5zBw6OQ==
-Date: Fri, 8 Nov 2024 10:31:59 +0000
-Message-ID: <20241108103120.9955-7-nikolaos.pasaloukos@blaize.com>
-References: <20241108103120.9955-1-nikolaos.pasaloukos@blaize.com>
-In-Reply-To: <20241108103120.9955-1-nikolaos.pasaloukos@blaize.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0PR01MB10184:EE_|PN0PR01MB7813:EE_
-x-ms-office365-filtering-correlation-id: eb965b58-4262-42cb-64ce-08dcffe093be
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?DRgUEMG3fIqI3DtOHOVOlF0aKheOi1J06cy0kULwuPgjFSWM/bbwrUwp0c?=
- =?iso-8859-1?Q?0NYe8aL8h9pmurdxq8wZUttL2pUL8OSP2hgbQ/McB9TkxVLm66x4fHhAhO?=
- =?iso-8859-1?Q?9VvuU5WhKMrF/pt4vRsC254XrY5bJgcGYIygzdi5DAY5m2sTjLYHWv3GOH?=
- =?iso-8859-1?Q?P14g69/Cw6O5vQQZuHi08iuMRXFf2Rjk78nbAhVT0VOxislAqb4Dqzuqm8?=
- =?iso-8859-1?Q?gXQCaBjWWr27TEUGZScTKTYg8j7s6Pbe/M/6zaJzQxybDFk6RgrOfF4lAE?=
- =?iso-8859-1?Q?uDrXk6drye4s7aPMX4K/ObbmbwGFt/EHIR5ZdcN18Sa7bYP7TkQGBW6goh?=
- =?iso-8859-1?Q?0AW958ZqjON2gawh1DjlYBQ0EA+oR2NN519jaq+urhsZw38QfROAjDzBr+?=
- =?iso-8859-1?Q?TNFdR++YaRo6JpoDr3l1nYsrRzWc+PHcU7rfbhOxCtkMPtMRcJN9SB6Rt2?=
- =?iso-8859-1?Q?e379N7OUnKo1Qh+R0hK/zt5lrM+7hzQ0H1KR3FKlOKUO7OCWn2II1CGDFi?=
- =?iso-8859-1?Q?s/ZG+ft9RVRyhhNoVjHurFhFTMZLHeksHgg8bGxLHGpQVzR1eW53gOJ13c?=
- =?iso-8859-1?Q?hJDZIJX+5sTnw6QxPAlCRXx8mI/UfvQPgJSX7Zv+hb0jKVELiGZ1fQf6pG?=
- =?iso-8859-1?Q?LQFuBgYiJWmyuunm6B5KWsFsQTLQpNazXzxpobs017lsM2cvbSbR6IOCeY?=
- =?iso-8859-1?Q?lFMfbCoVK846KBJYCnO86eSEZJcY2xRdC/CyI3u8hNQwds5zFb0m8IIZ0B?=
- =?iso-8859-1?Q?5FW9aAyIw07k0XzuZV+yfWKGImDY3I7k/F2z+4WVT5q8oE6vVauFjXqwCA?=
- =?iso-8859-1?Q?9uAsIP7z9aOv+2xPPnBDQyOWZsHtvUbq0xIRPI41VbM+lyZOll78svBQId?=
- =?iso-8859-1?Q?5jDGWlIkpxKptZfTMQupqkmuj/Wb4fjG+q/9NL91cX0Mp/tb3XsrNjD+un?=
- =?iso-8859-1?Q?r4pm9VDtDUIPFlV7QuLSRnSbn0MEMnIIqT1YdL0xEiKfhL9PSFPHUmEzca?=
- =?iso-8859-1?Q?RUY+C28B0lCkMQWQoM+3/o/zg4fiVJxE3nPAmr21XhX+QF8iuIQXdzRs+L?=
- =?iso-8859-1?Q?T/jEfX1vN+oM1vs1jW1G1s/WGtJ1HagsYt16wIvFwoH2ybFDaX5Kd5aJup?=
- =?iso-8859-1?Q?8hXpJYXU3iMcYkEXQWsxM/O/4nz0ELI4bvxvEOnIMNjqXGdAziLFEJA2fb?=
- =?iso-8859-1?Q?/inTf7wKnbjmIL+Bsvh18y81q2ziwKjAjaQyBti7z4pPyfKPOSKfFZ1n5w?=
- =?iso-8859-1?Q?zw0h+0WihRaB1rJRBhd3KYUKyTp3SgUwjNBV1TBWMK3nzEcEqgblG7LbZk?=
- =?iso-8859-1?Q?jXHCx6h20ukrT/+C6ydJGP6TAbqDnguuM0MTnx4RnMx9DSuqQYKvse6Ouj?=
- =?iso-8859-1?Q?RuBc0x9wgjG7I+EKxsO5Zc3Eu/FP+RiGDIJgcQtYLqADHhuWbsIWvSqrX3?=
- =?iso-8859-1?Q?iDmsO+qlbHAdanTe?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?cTSl+u4n9lfFSpttJUemQArjr9Hh0k/F1zlqqW41oy+pkznNafiYW4Uxh4?=
- =?iso-8859-1?Q?Yz/rXYZsL+F7IG7PeQQr80lt2QDzwzcB+ICjcvfdtKYLXoo3IAo9ui8/WD?=
- =?iso-8859-1?Q?wJBCBYFMFMTv9P9OP5Pthzdp95FbUupYB/3npUoROycQZmVdOjnf3FG73D?=
- =?iso-8859-1?Q?RzfISMnkrUj1s9psmzDmGfKp9Bf3p8T5JP+dmsNEvWqhReXFL2amNMrKX/?=
- =?iso-8859-1?Q?BlEwbP1JW4iLJyzFWBfQsiq59mh0hp3bHHJmxODl2oohRGUYQdvrP2QYoI?=
- =?iso-8859-1?Q?NR479seno2eADGkOo6MoighvmcZiPqG0kj/Bh9QasEoeqUSxkNkdQ2upwx?=
- =?iso-8859-1?Q?OHVNLae79Ea7916AJ3h0OGm47cY+qQEcm8eqJD8s92dzx9POzK0n7mtNsk?=
- =?iso-8859-1?Q?ZwMMKiznLCepeN/mHmAEKekKFY82wz/xcX++w8IVdnmPAjrBSSd/D6X1te?=
- =?iso-8859-1?Q?R1p2SACdQr9HxLrDt5nU39c2dyF4Dl1mEoy7EFMtR8MVVPVrfwZNbM3djr?=
- =?iso-8859-1?Q?VppupFJDrSEtGK633+P2Fc12TrIHAmPqdOVcf6Fr82eCVUUOyMK/rgAYz4?=
- =?iso-8859-1?Q?oOl9noNlyFLYywfkJdopwy4Z24SWQa9ZZb5OrlMnjsJ5+H4FBN8U7kGQFv?=
- =?iso-8859-1?Q?8LV9X2Lih+irgECxX/w+fdrKMT8LGyFJnq7SWFxJnItsKoj/Uke5toyH02?=
- =?iso-8859-1?Q?BfS006+YZal4g8Qddliw+aN7vtsFc/FkHcjAa8dPmZ9pfyGF64fSfWjakF?=
- =?iso-8859-1?Q?sBYThTgF+PBV2ctBLoL5cDFGl8k8wMP/dQRsSWxg5tIrAOS7E/a7bTWf3I?=
- =?iso-8859-1?Q?uuxeui7nwpk/njxgKII4MKjnlva8leCgiKpjvJkwW/gx5ME2iTqdz5wM2i?=
- =?iso-8859-1?Q?K/ze4uP38Y5iYvrD7lz0VLRb/TS67hxYAqDPTF9AlO7oNt69ja3FrHPxA3?=
- =?iso-8859-1?Q?GK59R7X0718xJ6gw+zMfIAumMLBW3Ktt46CWTGHJz4StNW7RK/yELAvhnS?=
- =?iso-8859-1?Q?LaRpTbVX2fBRvB647MYVpQI/LJePXsFtOBRUSTva0vM7qTxPL0v0ydkRnj?=
- =?iso-8859-1?Q?zdJnOUcWvfal3z82qzCp7t58ZNjqV764GcqP/pNUT0xl3Ny87zjp3k30r7?=
- =?iso-8859-1?Q?HL8dseJK0UlXP3Pf16Nw49C6twA+j2ttki3TuVTQInjW/alBXvDs+oE8q3?=
- =?iso-8859-1?Q?IyEFQ8l7VUefLHpxwx//Jfp0iNhYJGF3h0lf1K36Jj0r8+4L6gg3qNzmmX?=
- =?iso-8859-1?Q?CVk8b17l5aB5I4bkOVjt41xCejtB+fasTP8469QOJGHWx4JH2oj0TxnmXy?=
- =?iso-8859-1?Q?oGATjDxuSnL9l8t5iIfvX4Y7pFgd3Jj9/i9w9RLjTetRbLf5sUdb8+Cn5s?=
- =?iso-8859-1?Q?d8Ia1CB3zo5ATrfBwijPJ+IV6yoTMFRq1ruPivHDvZBf2P7d+PxYAJN0qo?=
- =?iso-8859-1?Q?dteSvQLFXbQrzGGYrMKRjD7Db/D13F744A7uqKnaz4P0plCofDf0aMQZHG?=
- =?iso-8859-1?Q?n0jMp0DvXMCYnx1dcPHr1EsWFz4ueGFCeRLGYh3soLL0FfYXDfCSdoRjIF?=
- =?iso-8859-1?Q?a72Ne1b6BFzdXyLJVFkRZ228/ZYKwcAEhP4ALzrFYS7zWwUE+TQQiMO3I4?=
- =?iso-8859-1?Q?L2Rnbne1tmsuZszFRxhbKZhEHLn23ZHx6npxxgVcWkTohAq4DDWnQn2w?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21B01E25E0;
+	Fri,  8 Nov 2024 10:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731061957; cv=none; b=fdwjA9zJr7WyRHxof6dxEwMXBGFPj2Z3lDJY2tV5Mi7b37hSaxzMyFgjRP+aC8IQIRbf7j6+krckm+7r2WewmVyZGZ3GVvy5dowO5HBG4nTMwF+OvO2r0UIFlgEscHx502nBVzEavKDNSiEpEw+oWKqwXXGyQzx/sNbLj5Dds+M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731061957; c=relaxed/simple;
+	bh=mCunzD2GzZxLBHtBS8wxeir4DFtR0x0xiGP+WpdkBc8=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9so+DTSf0rP9/JO6x/XWuIyacUoWQ/tHpUVaRq505QmwTHIGEAWy0OB7MOevMoPFabsGdr+A7Ik5hXbjvfPTskbzsQfwR26q+LMzdakqmFy/U/B8MYcSdSTbR2fu2UWC223UL/pjIVLgHCZ2IsbXsisuvGQZQPAqT5iKqn6AMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXj6ieDS; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4319399a411so18115855e9.2;
+        Fri, 08 Nov 2024 02:32:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731061953; x=1731666753; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+D8vZegrH9yIdYiz0FSD9MNRGwL9EkUqYzbNsOs/U7A=;
+        b=HXj6ieDS6p9Uw/+96I4cLSREMyUjgenO+dDvexl0FSVLPrazXooizxVafbkjKNpXXL
+         aP9f3j2oYfhGPos29hqqh24RHt2WS42hWHnkTADZjuLZ0TjtbPXbzQO2pD8yxqiW63bx
+         YfXv38wzMTqZBbR97xOHPZ+jWqOBrUeGSl8e4IuGkuTDJk3Yh5P6wMU7VbkJDRsYiaXS
+         Fi8ZLspZNqKhORL7i/BcjDk6ABOJDIoY7pVHn7ACkGhOPQ98ItUkUIjZtWNM5CBJsYrd
+         UGjTxclfeRmzQ39uDI5cTc1V8d5LG0J+Zwm4g1NmelKs64o+pLchi0YgB2YE2+m4wO9t
+         5DAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731061953; x=1731666753;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+D8vZegrH9yIdYiz0FSD9MNRGwL9EkUqYzbNsOs/U7A=;
+        b=e7l377ExWbw3Xv9HvY38uEdw+ua62xRFzpL0GP8lh7TUmOqkquNZbPime+YsqFvGHv
+         9u77Gb2tHeXn3rBFch8XnOCSuNgCUGFGFxn9xTYvy1N+lWWMzix8kTfTjs1HxyEV5W4/
+         fQd99gIFaJKWTO6hq8a1VgLU60CogSmv/7YbTTHGMv48fCajcYOEtXC4g4QHtBmUshj+
+         Lgf8Aj0ssps5FeaI4I8D55beu354fG7OK6biv00Cx0w1Cz99cM7wu+8mt4v3UDpjUY9H
+         CRybbruM0SP41xufFMpHVgUaARQR17+qCn5OgVTwBjPobORRvZ3R/cdHBm0/vuUmzTaB
+         EnOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVByZ1Zmos9WMSEi2ko+B7hcs77Ix7EVfZt0pS4sWqBC0CkWzcRXjZmv+K0au0uFq2OGXI2ULAh83nV@vger.kernel.org, AJvYcCVbuJ5HUr3kife0yJPDv8fNqUhmMnBZc4X/ckbppdXRJDcr91QMg7ocUUKk8N5ixeyTeQQ3FU3g@vger.kernel.org, AJvYcCVmRDO3+qve65pR+bGj1PtQsdWqBWcuAyrfdXK/3yygL0ROqYZY4nTKV7eZk5nDSNybQ5H+0JM1a9irKOTe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj2ewn2IAcCQrlmYSucWzMu5qONcXx3UVqyNJNO9tg+KMnt38j
+	j8j+qEFALU84LnwfjEIjRM1yUDUEI0cR8rMlZmcDoRsAgl+V4k75
+X-Google-Smtp-Source: AGHT+IE3C6MenK86u+gyHcdGWTkHdT9bSmorvzGgc5cR9/kKCrxrVGkOIgWKFRagg6d/LTdxX87eoA==
+X-Received: by 2002:a05:600c:5488:b0:431:9397:9ac9 with SMTP id 5b1f17b1804b1-432b7507c16mr15281755e9.15.1731061952869;
+        Fri, 08 Nov 2024 02:32:32 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6b35c0sm97887395e9.16.2024.11.08.02.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 02:32:32 -0800 (PST)
+Message-ID: <672de8c0.050a0220.a7227.c2c7@mx.google.com>
+X-Google-Original-Message-ID: <Zy3ovEx0IELRttrI@Ansuel-XPS.>
+Date: Fri, 8 Nov 2024 11:32:28 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	"AngeloGioacchino Del Regno," <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v3 2/3] net: dsa: Add Airoha AN8855 5-Port
+ Gigabit DSA Switch driver
+References: <20241106122254.13228-1-ansuelsmth@gmail.com>
+ <20241106122254.13228-3-ansuelsmth@gmail.com>
+ <4318897e-0f1a-42c7-8f20-065dc690a112@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: blaize.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb965b58-4262-42cb-64ce-08dcffe093be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2024 10:31:59.5746
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fWDlaLBMmWKtQ5I/iu2HMsAnRNAFzUpaR03YELNour5lmZ1q5ot9LvXijjTTWamo4vqDhEjXbHOvh1MiGOCZHXwyKaUUq285HKWpoMo4TEo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB7813
-X-Proofpoint-GUID: ZQvS0hzx3jsDzP3i59gMrXUW5h678-sR
-X-Authority-Analysis: v=2.4 cv=BqvPwpX5 c=1 sm=1 tr=0 ts=672de8a6 cx=c_pps a=TXs1g+7sIME2BPo3OSn30g==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=VlfZXiiP6vEA:10 a=4MthsM0t3ikA:10
- a=-5LYVjoNHPMA:10 a=SrsycIMJAAAA:8 a=7CQSdrXTAAAA:8 a=JfrnYn6hAAAA:8 a=yOddBj_2bG4RPtLnvvEA:9 a=wPNLvfGTeEIA:10 a=zapPnUM7SFj2ezx6rUw-:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-ORIG-GUID: ZQvS0hzx3jsDzP3i59gMrXUW5h678-sR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-08_08,2024-11-07_01,2024-09-30_01
-X-Proofpoint-Spam-Reason: orgsafe
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4318897e-0f1a-42c7-8f20-065dc690a112@wanadoo.fr>
 
-Add MAINTAINERS entry for Blaize SoC platform with a list of
-maintainers.
+On Thu, Nov 07, 2024 at 06:53:53PM +0100, Christophe JAILLET wrote:
+> Le 06/11/2024 à 13:22, Christian Marangi a écrit :
+> > Add Airoha AN8855 5-Port Gigabit DSA switch.
+> > 
+> > The switch is also a nvmem-provider as it does have EFUSE to calibrate
+> > the internal PHYs.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > ---
+> 
+> Hi,
+> 
+> ...
+> 
+> > +#include <linux/bitfield.h>
+> > +#include <linux/ethtool.h>
+> > +#include <linux/etherdevice.h>
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/if_bridge.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/mdio.h>
+> > +#include <linux/netdevice.h>
+> > +#include <linux/of_mdio.h>
+> > +#include <linux/of_net.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/nvmem-provider.h>
+> 
+> Could be moved a few lines above to keep order.
+> 
+> > +#include <linux/phylink.h>
+> > +#include <linux/regmap.h>
+> > +#include <net/dsa.h>
+> ...
+> 
+> > +static int an8855_port_fdb_dump(struct dsa_switch *ds, int port,
+> > +				dsa_fdb_dump_cb_t *cb, void *data)
+> > +{
+> > +	struct an8855_priv *priv = ds->priv;
+> > +	struct an8855_fdb _fdb = {  };
+> 
+> Should it but reseted in the do loop below, instead of only once here?
+>
 
-Resolves: PESW-2604
-Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Common practice is to fill EVERY value in _fdb to not have to reset, but
+yes just as extra caution, I will move the define in the for loop.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9db17a2fe3b0..11ede0281316 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2037,6 +2037,15 @@ F:	arch/arm64/boot/dts/bitmain/
- F:	drivers/clk/clk-bm1880.c
- F:	drivers/pinctrl/pinctrl-bm1880.c
-=20
-+ARM/BLAIZE ARCHITECTURE
-+M:	James Cowgill <james.cowgill@blaize.com>
-+M:	Matt Redfearn <matt.redfearn@blaize.com>
-+M:	Neil Jones <neil.jones@blaize.com>
-+M:	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/arm/blaize.yaml
-+F:	arch/arm64/boot/dts/blaize/
-+
- ARM/CALXEDA HIGHBANK ARCHITECTURE
- M:	Andre Przywara <andre.przywara@arm.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
---=20
-2.43.0
+> > +	int banks, count = 0;
+> > +	u32 rsp;
+> > +	int ret;
+> > +	int i;
+> > +
+> > +	mutex_lock(&priv->reg_mutex);
+> > +
+> > +	/* Load search port */
+> > +	ret = regmap_write(priv->regmap, AN8855_ATWD2,
+> > +			   FIELD_PREP(AN8855_ATWD2_PORT, port));
+> > +	if (ret)
+> > +		goto exit;
+> > +	ret = an8855_fdb_cmd(priv, AN8855_ATC_MAT(AND8855_FDB_MAT_MAC_PORT) |
+> > +			     AN8855_FDB_START, &rsp);
+> > +	if (ret < 0)
+> > +		goto exit;
+> > +
+> > +	do {
+> > +		/* From response get the number of banks to read, exit if 0 */
+> > +		banks = FIELD_GET(AN8855_ATC_HIT, rsp);
+> > +		if (!banks)
+> > +			break;
+> > +
+> > +		/* Each banks have 4 entry */
+> > +		for (i = 0; i < 4; i++) {
+> > +			count++;
+> > +
+> > +			/* Check if bank is present */
+> > +			if (!(banks & BIT(i)))
+> > +				continue;
+> > +
+> > +			/* Select bank entry index */
+> > +			ret = regmap_write(priv->regmap, AN8855_ATRDS,
+> > +					   FIELD_PREP(AN8855_ATRD_SEL, i));
+> > +			if (ret)
+> > +				break;
+> > +			/* wait 1ms for the bank entry to be filled */
+> > +			usleep_range(1000, 1500);
+> > +			an8855_fdb_read(priv, &_fdb);
+> > +
+> > +			if (!_fdb.live)
+> > +				continue;
+> > +			ret = cb(_fdb.mac, _fdb.vid, _fdb.noarp, data);
+> > +			if (ret < 0)
+> > +				break;
+> > +		}
+> > +
+> > +		/* Stop if reached max FDB number */
+> > +		if (count >= AN8855_NUM_FDB_RECORDS)
+> > +			break;
+> > +
+> > +		/* Read next bank */
+> > +		ret = an8855_fdb_cmd(priv, AN8855_ATC_MAT(AND8855_FDB_MAT_MAC_PORT) |
+> > +				     AN8855_FDB_NEXT, &rsp);
+> > +		if (ret < 0)
+> > +			break;
+> > +	} while (true);
+> > +
+> > +exit:
+> > +	mutex_unlock(&priv->reg_mutex);
+> > +	return ret;
+> > +}
+> 
+> ...
+> 
+> > +	ret = regmap_set_bits(priv->regmap, AN8855_RG_RATE_ADAPT_CTRL_0,
+> > +			      AN8855_RG_RATE_ADAPT_RX_BYPASS |
+> > +			      AN8855_RG_RATE_ADAPT_TX_BYPASS |
+> > +			      AN8855_RG_RATE_ADAPT_RX_EN |
+> > +			      AN8855_RG_RATE_ADAPT_TX_EN);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Disable AN if not in autoneg */
+> > +	ret = regmap_update_bits(priv->regmap, AN8855_SGMII_REG_AN0, BMCR_ANENABLE,
+> > +				 neg_mode == PHYLINK_PCS_NEG_INBAND_ENABLED ? BMCR_ANENABLE :
+> > +									      0);
+> 
+> Should 'ret' be tested here?
+> 
 
+Sorry forgot to add.
+
+> > +
+> > +	if (interface == PHY_INTERFACE_MODE_SGMII &&
+> > +	    neg_mode == PHYLINK_PCS_NEG_INBAND_DISABLED) {
+> > +		ret = regmap_set_bits(priv->regmap, AN8855_PHY_RX_FORCE_CTRL_0,
+> > +				      AN8855_RG_FORCE_TXC_SEL);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> 
+> ...
+> 
+> > +	priv->ds = devm_kzalloc(&mdiodev->dev, sizeof(*priv->ds), GFP_KERNEL);
+> > +	if (!priv->ds)
+> > +		return -ENOMEM;
+> > +
+> > +	priv->ds->dev = &mdiodev->dev;
+> > +	priv->ds->num_ports = AN8855_NUM_PORTS;
+> > +	priv->ds->priv = priv;
+> > +	priv->ds->ops = &an8855_switch_ops;
+> > +	mutex_init(&priv->reg_mutex);
+> 
+> devm_mutex_init() to slightly simplify the remove function?
+> 
+
+Wonder if there is a variant also for dsa_unregister_switch. That
+would effectively remove the need for a remove function.
+
+> > +	priv->ds->phylink_mac_ops = &an8855_phylink_mac_ops;
+> > +
+> > +	priv->pcs.ops = &an8855_pcs_ops;
+> > +	priv->pcs.neg_mode = true;
+> > +	priv->pcs.poll = true;
+> > +
+> > +	ret = an8855_sw_register_nvmem(priv);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	dev_set_drvdata(&mdiodev->dev, priv);
+> > +
+> > +	return dsa_register_switch(priv->ds);
+> > +}
+> > +
+> > +static void
+> > +an8855_sw_remove(struct mdio_device *mdiodev)
+> > +{
+> > +	struct an8855_priv *priv = dev_get_drvdata(&mdiodev->dev);
+> > +
+> > +	dsa_unregister_switch(priv->ds);
+> > +	mutex_destroy(&priv->reg_mutex);
+> > +}
+> > +
+> > +static const struct of_device_id an8855_of_match[] = {
+> > +	{ .compatible = "airoha,an8855" },
+> > +	{ /* sentinel */ },
+> 
+> Ending comma is usually not needed after a terminator.
+> 
+> > +};
+> > +
+> > +static struct mdio_driver an8855_mdio_driver = {
+> > +	.probe = an8855_sw_probe,
+> > +	.remove = an8855_sw_remove,
+> > +	.mdiodrv.driver = {
+> > +		.name = "an8855",
+> > +		.of_match_table = an8855_of_match,
+> > +	},
+> > +};
+> 
+> ...
+> 
+> > +#define	  AN8855_VA0_VTAG_EN		BIT(10) /* Per VLAN Egress Tag Control */
+> > +#define	  AN8855_VA0_IVL_MAC		BIT(5) /* Independent VLAN Learning */
+> > +#define	  AN8855_VA0_VLAN_VALID		BIT(0) /* VLAN Entry Valid */
+> > +#define AN8855_VAWD1			0x10200608
+> > +#define	  AN8855_VA1_PORT_STAG		BIT(1)
+> > +
+> > +/* Same register map of VAWD0 */
+> 
+> Not sure to follow. AN8855_VAWD0 above is 0x10200604, not 0x10200618
+> 
+
+Confusing comment. The meaning here is not "same register" but same
+register fields aka bits and mask for the register are the same of
+..604.
+
+> > +#define AN8855_VARD0			0x10200618
+> > +
+> > +enum an8855_vlan_egress_attr {
+> > +	AN8855_VLAN_EGRESS_UNTAG = 0,
+> > +	AN8855_VLAN_EGRESS_TAG = 2,
+> > +	AN8855_VLAN_EGRESS_STACK = 3,
+> > +};
+> > +
+> > +/* Register for port STP state control */
+> > +#define AN8855_SSP_P(x)			(0x10208000 + ((x) * 0x200))
+> > +#define	 AN8855_FID_PST			GENMASK(1, 0)
+> > +
+> > +enum an8855_stp_state {
+> > +	AN8855_STP_DISABLED = 0,
+> > +	AN8855_STP_BLOCKING = 1,
+> > +	AN8855_STP_LISTENING = 1,
+> 
+> Just wondering if this 0, 1, *1*, 2, 3 was intentional?
+> 
+
+Yes blocking and listening is the same, I will follow suggestion by
+Andrew and make blocking = listening.
+
+> > +	AN8855_STP_LEARNING = 2,
+> > +	AN8855_STP_FORWARDING = 3
+> > +};
+> > +
+> > +/* Register for port control */
+> > +#define AN8855_PCR_P(x)			(0x10208004 + ((x) * 0x200))
+> > +#define	  AN8855_EG_TAG			GENMASK(29, 28)
+> > +#define	  AN8855_PORT_PRI		GENMASK(26, 24)
+> > +#define	  AN8855_PORT_TX_MIR		BIT(20)
+> > +#define	  AN8855_PORT_RX_MIR		BIT(16)
+> > +#define	  AN8855_PORT_VLAN		GENMASK(1, 0)
+> > +
+> > +enum an8855_port_mode {
+> > +	/* Port Matrix Mode: Frames are forwarded by the PCR_MATRIX members. */
+> > +	AN8855_PORT_MATRIX_MODE = 0,
+> > +
+> > +	/* Fallback Mode: Forward received frames with ingress ports that do
+> > +	 * not belong to the VLAN member. Frames whose VID is not listed on
+> > +	 * the VLAN table are forwarded by the PCR_MATRIX members.
+> > +	 */
+> > +	AN8855_PORT_FALLBACK_MODE = 1,
+> > +
+> > +	/* Check Mode: Forward received frames whose ingress do not
+> > +	 * belong to the VLAN member. Discard frames if VID ismiddes on the
+> > +	 * VLAN table.
+> > +	 */
+> > +	AN8855_PORT_CHECK_MODE = 1,
+> 
+> Just wondering if this 0, 1, *1*, 3 was intentional?
+> 
+
+Nope a typo. Thanks for noticing this.
+
+> > +
+> > +	/* Security Mode: Discard any frame due to ingress membership
+> > +	 * violation or VID missed on the VLAN table.
+> > +	 */
+> > +	AN8855_PORT_SECURITY_MODE = 3,
+> > +};
+> ...
+> 
+> CJ
+
+-- 
+	Ansuel
 
