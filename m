@@ -1,79 +1,93 @@
-Return-Path: <linux-kernel+bounces-401173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7BD9C16CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:09:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 310AC9C16E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487F61C2122D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:09:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB021F25380
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F5B1D174B;
-	Fri,  8 Nov 2024 07:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="r6yauIT5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C1E1D0DF6;
-	Fri,  8 Nov 2024 07:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C241D1519;
+	Fri,  8 Nov 2024 07:09:43 +0000 (UTC)
+Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF7CDDA8;
+	Fri,  8 Nov 2024 07:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731049714; cv=none; b=CHmvnXPyGm3l/ouSfS79/xj7n75McQ05VOpGwwSF2yyzIWtW7s8nptDTSCN6dgFXkqjrVOIPhC8NPmL2I1vc4jBuTmzT0rP3ADPFSd0LHDxJeAIdE5KCURMRBY+F9OEMDeal9wRGu2kjnkeLasVgSUhXgpIp/mUBnz6h/8Jb5oU=
+	t=1731049783; cv=none; b=sefOSl2pboTWnSBUxucOM95Wepn8HXkNhZLNiZ6oPxo/SJpVwt0xOP5iSmWpwCRuZ4kx4M7u6QDrb2tq25Y65nw83QIbj0o5aBU7j5137C0i+N2uSjZBegZSydvTLWiM2t/PT/M0HZ17iUJ+/Gl14UTKIxanOuZ2hxYKugmITuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731049714; c=relaxed/simple;
-	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ep0peQRvozkyfj5hx7ofBChjR5mtLsLCGOx9693OYo8gyKSTsA2egQdRzJks7xi6ey6GX660T26VLfYbtN5KffTmtGuthu0e2okhcCt/7zW7MuT9/GJqS3XetUU4pF8jnyryY9f4qDjN1RMxvZTyIHGja0utxuiFxT+Ymadj2E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=r6yauIT5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id 88BD1212D51F; Thu,  7 Nov 2024 23:08:32 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 88BD1212D51F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731049712;
-	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=r6yauIT5ny53DDMb7kV7cioffV0ER8go7d6Yk184ivO+H1YbKufnIBLl/QNUcmNoZ
-	 HRYvZgAeBF08FIwXwIosJFKrxDmMEY747yiwT1iHvnCheUZqYTkfZL7XRszLg1lpfg
-	 v80KP7hPnAVzgMHzwEHpEQMJ4pf1N0m3IOnSgLu0=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hagar@microsoft.com,
-	jonathanh@nvidia.com,
+	s=arc-20240116; t=1731049783; c=relaxed/simple;
+	bh=NZfaUT3PuVJd7QSqbh3Iw5TQJNKJ6xXrsnc0CQcgPL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IShLToe2IA+VIu7uz0HUvwGmJe1qrNmt0KS2kwcZA3NhVEdmzItmb6xtxYLcvCMvyXLD1884laVwHCx77/CPm680gZ0GKGpMXp8QPMh5i0y1SWrzElhhxqXh6uYDzKXyibL1IVN+P7o5TI+Bxvd0VJurKBP5+bv5umK+Ax6NKmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee9672db930ed8-f5eec;
+	Fri, 08 Nov 2024 15:09:37 +0800 (CST)
+X-RM-TRANSID:2ee9672db930ed8-f5eec
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee4672db93004d-866ba;
+	Fri, 08 Nov 2024 15:09:37 +0800 (CST)
+X-RM-TRANSID:2ee4672db93004d-866ba
+From: liujing <liujing@cmss.chinamobile.com>
+To: james.smart@broadcom.com
+Cc: dick.kennedy@broadcom.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 6.1] 6.1.116-rc1 review
-Date: Thu,  7 Nov 2024 23:08:32 -0800
-Message-Id: <1731049712-19002-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20241106120306.038154857@linuxfoundation.org>
-References: <20241106120306.038154857@linuxfoundation.org>
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] scsi: lpfc: Fix spelling errors asynchronously
+Date: Fri,  8 Nov 2024 15:09:35 +0800
+Message-Id: <20241108070935.10427-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+Signed-off-by: liujing<liujing@cmss.chinamobile.com>
+
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+index 49dd78ed8a9a..43dc1da4a156 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -242,7 +242,7 @@ lpfc_nvme_remoteport_delete(struct nvme_fc_remote_port *remoteport)
+  * @phba: pointer to lpfc hba data structure.
+  * @axchg: pointer to exchange context for the NVME LS request
+  *
+- * This routine is used for processing an asychronously received NVME LS
++ * This routine is used for processing an asynchronously received NVME LS
+  * request. Any remaining validation is done and the LS is then forwarded
+  * to the nvme-fc transport via nvme_fc_rcv_ls_req().
+  *
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index e6c9112a8862..fba2e62027b7 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -2142,7 +2142,7 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
+  * @phba: pointer to lpfc hba data structure.
+  * @axchg: pointer to exchange context for the NVME LS request
+  *
+- * This routine is used for processing an asychronously received NVME LS
++ * This routine is used for processing an asynchronously received NVME LS
+  * request. Any remaining validation is done and the LS is then forwarded
+  * to the nvmet-fc transport via nvmet_fc_rcv_ls_req().
+  *
+-- 
+2.27.0
 
 
 
-
-Thanks,
-Hardik
 
