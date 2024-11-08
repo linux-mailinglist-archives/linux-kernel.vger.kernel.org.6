@@ -1,142 +1,178 @@
-Return-Path: <linux-kernel+bounces-401880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA459C2080
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:34:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A6E9C2083
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07201F21728
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:34:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5B45B23B2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D668821A70C;
-	Fri,  8 Nov 2024 15:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B8421A70F;
+	Fri,  8 Nov 2024 15:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9iKwsrl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yrlsi7At"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FF51E5708;
-	Fri,  8 Nov 2024 15:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3F51E5708;
+	Fri,  8 Nov 2024 15:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731080041; cv=none; b=NRMtwnMEzTlsEtuWuBIu1Lrqqat+UWwrWzWRrijLUcEZO1jWuA3ZqtGqJLK/omzfQmTgoUSoP6KWoOpptIR2BKA4WDC92//gxC7/pX5wLn//NVCm5IsKuT4HWiKyIxQdmvCWhMgiGUbiGJzsHD/lbvrfflAQXItOe9yEZyqg/HA=
+	t=1731080079; cv=none; b=QNpvjT07YTxhbm35bDjH2GbY94o0nKFARh5Zhju0T9vKc1J7hXlxQNoj6l7ZiiWof6vrcH+QA/GqY/g7/YjV18xYv56Ylr4BEjp8M/J9cSlaU2KuTd9OPzUCBJ+99aUpOkz8mvzfkFoTJ0Cai/a15tw7wIDgZpx7JluQ3DfYAC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731080041; c=relaxed/simple;
-	bh=1/fCInMFBmHHR3za66V/ZX+QZXbhM4wb/26mnQ6YU9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rt+GTl+XsJFmaYrCleJgZa8DhNWsqlTDNv0mhDCNtwzqTKVFiLzhn5LhLIqOql1+u+PgBafDZxCUeEpMDh6RrkRa8FdoRb+SxeoI1Y3JbR1jXhxXRb/Bu9wXdZc802cRqRQz0ebNELnBcrf8YU3bPE0wUa9Yphx4DZ1HDM6rG3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9iKwsrl; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731080040; x=1762616040;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1/fCInMFBmHHR3za66V/ZX+QZXbhM4wb/26mnQ6YU9o=;
-  b=S9iKwsrlgc20vWl+6Y31mKSDTtIcntkVMSBImh7WDhSR/F08gLaaBdLC
-   F/SenWijZfuRDL+cIvrzL9p3FAizeTRt9in8oX7aRzqTBgR5ZqjyHlOhq
-   7TcM21SkU61YyVHY3zl2YF0ToibaIgF2Mr5HP9MiLt0SPEIuz0k1botkX
-   cem4EKnuwk4KfsWOWARIdrIyFFP/CaXNYkaqQ5byrtUgBRStvER5qKjNT
-   oDIg7jptmYAL7kzMnNsjZGNEeDo15Rz3ZrKPTrjSn2bt5PgF+kpdoW0Xn
-   fUq9RLiREs1k8+emskQksljN/hFBc9THWDRQ4PBENidwsAX7YBHFwdi2O
-   A==;
-X-CSE-ConnectionGUID: H+hWecOCSDSXjiXxK9vXkQ==
-X-CSE-MsgGUID: u+3QfJHiQXOcBumbyGBK9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="42353850"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="42353850"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 07:33:59 -0800
-X-CSE-ConnectionGUID: yIQdoykWRhiGZvhtJ6HFRg==
-X-CSE-MsgGUID: clZMkSQoSQmgc45Ix65DIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="85592470"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 08 Nov 2024 07:33:58 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 235D920F; Fri, 08 Nov 2024 17:33:56 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] Bluetooth: hci_bcm: Use the devm_clk_get_optional() helper
-Date: Fri,  8 Nov 2024 17:33:49 +0200
-Message-ID: <20241108153349.1589499-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1731080079; c=relaxed/simple;
+	bh=U/9AlEbPsyJXfUCtQk5OJgeixtftufu+eceurvg7r3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1l8r6SBDl930jaNLeieKCUJkIptpd5Zu8tZw+h21V2zX+QeqdrGJt1rcfxDPIVlChl695hOVKFM8pNkhrd/oz13Bcw/ySJlSSJM+jKd/OdBkake4rLCxeJeYSCtbSXm4WqU6GkmhPXBhi1afGFc4xWfI3HtV/YV4tmr9WWUwWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yrlsi7At; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vjqYkG8ff4c+T4YdMOMbIeQIrZmZCxBiG8+gykwYd68=; b=Yrlsi7At3LEJP0uIS6NkE1jR0Z
+	oEDQN829mzVxadI/xT+kHJyj5id3FRDTMankwY09OZVfoGLKoqsmLmgVU1Lu1pazKwCxc0rCgk1MQ
+	xtxACAOrflTnYJ1gsq35M/GrEku0PXrYo1NmUlRg3/xm/yNXfSqjxdFSGnOXTyYmYxf2oekxv9FLP
+	wEOzongRu606SdS0S8qnLTBPFqmALtmejbk/mXmEr2UTL7qA+UAscv+0HOvdCrD1PTIU4PbUBjS+W
+	/Lg0PXKc83CciAUL2IEcvj4nySJ8JJocIaAq2CpM/eee1apM5FIwT9nN1SxiZwdtiiRR7++R4EU95
+	TbKChe7A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t9Qzz-000000090KC-0Eqo;
+	Fri, 08 Nov 2024 15:34:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2EC8930049D; Fri,  8 Nov 2024 16:34:11 +0100 (CET)
+Date: Fri, 8 Nov 2024 16:34:11 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Oliver Upton <oliver.upton@linux.dev>,
+	Sean Christopherson <seanjc@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v7 4/5] x86: perf: Refactor misc flag assignments
+Message-ID: <20241108153411.GF38786@noisy.programming.kicks-ass.net>
+References: <20241107190336.2963882-1-coltonlewis@google.com>
+ <20241107190336.2963882-5-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107190336.2963882-5-coltonlewis@google.com>
 
-Use devm_clk_get_optional() instead of hand writing it.
-This saves some LoC and improves the semantic.
+On Thu, Nov 07, 2024 at 07:03:35PM +0000, Colton Lewis wrote:
+> Break the assignment logic for misc flags into their own respective
+> functions to reduce the complexity of the nested logic.
+> 
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+> ---
+>  arch/x86/events/core.c            | 32 +++++++++++++++++++++++--------
+>  arch/x86/include/asm/perf_event.h |  2 ++
+>  2 files changed, 26 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index d19e939f3998..9fdc5fa22c66 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -3011,16 +3011,35 @@ unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
+>  	return regs->ip + code_segment_base(regs);
+>  }
+>  
+> +static unsigned long common_misc_flags(struct pt_regs *regs)
+> +{
+> +	if (regs->flags & PERF_EFLAGS_EXACT)
+> +		return PERF_RECORD_MISC_EXACT_IP;
+> +
+> +	return 0;
+> +}
+> +
+> +unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+> +{
+> +	unsigned long guest_state = perf_guest_state();
+> +	unsigned long flags = common_misc_flags(regs);
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/bluetooth/hci_bcm.c | 25 ++++++++-----------------
- 1 file changed, 8 insertions(+), 17 deletions(-)
+This is double common_misc and makes no sense
 
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index 89d4c2224546..521b785f2908 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -1068,17 +1068,17 @@ static struct clk *bcm_get_txco(struct device *dev)
- 	struct clk *clk;
- 
- 	/* New explicit name */
--	clk = devm_clk_get(dev, "txco");
--	if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
-+	clk = devm_clk_get_optional(dev, "txco");
-+	if (clk)
- 		return clk;
- 
- 	/* Deprecated name */
--	clk = devm_clk_get(dev, "extclk");
--	if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
-+	clk = devm_clk_get_optional(dev, "extclk");
-+	if (clk)
- 		return clk;
- 
- 	/* Original code used no name at all */
--	return devm_clk_get(dev, NULL);
-+	return devm_clk_get_optional(dev, NULL);
- }
- 
- static int bcm_get_resources(struct bcm_device *dev)
-@@ -1093,21 +1093,12 @@ static int bcm_get_resources(struct bcm_device *dev)
- 		return 0;
- 
- 	dev->txco_clk = bcm_get_txco(dev->dev);
--
--	/* Handle deferred probing */
--	if (dev->txco_clk == ERR_PTR(-EPROBE_DEFER))
-+	if (IS_ERR(dev->txco_clk))
- 		return PTR_ERR(dev->txco_clk);
- 
--	/* Ignore all other errors as before */
--	if (IS_ERR(dev->txco_clk))
--		dev->txco_clk = NULL;
--
--	dev->lpo_clk = devm_clk_get(dev->dev, "lpo");
--	if (dev->lpo_clk == ERR_PTR(-EPROBE_DEFER))
--		return PTR_ERR(dev->lpo_clk);
--
-+	dev->lpo_clk = devm_clk_get_optional(dev->dev, "lpo");
- 	if (IS_ERR(dev->lpo_clk))
--		dev->lpo_clk = NULL;
-+		return PTR_ERR(dev->lpo_clk);
- 
- 	/* Check if we accidentally fetched the lpo clock twice */
- 	if (dev->lpo_clk && clk_is_match(dev->lpo_clk, dev->txco_clk)) {
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+> +
+> +	if (!(guest_state & PERF_GUEST_ACTIVE))
+> +		return flags;
+> +
+> +	if (guest_state & PERF_GUEST_USER)
+> +		return flags & PERF_RECORD_MISC_GUEST_USER;
+> +	else
+> +		return flags & PERF_RECORD_MISC_GUEST_KERNEL;
 
+And this is just broken garbage, right?
+
+> +}
+
+Did you mean to write:
+
+unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
+{
+	unsigned long guest_state = perf_guest_state();
+	unsigned long flags = 0;
+
+	if (guest_state & PERF_GUEST_ACTIVE) {
+		if (guest_state & PERF_GUEST_USER)
+			flags |= PERF_RECORD_MISC_GUEST_USER;
+		else
+			flags |= PERF_RECORD_MISC_GUEST_KERNEL;
+	}
+
+	return flags;
+}
+
+>  unsigned long perf_arch_misc_flags(struct pt_regs *regs)
+>  {
+>  	unsigned int guest_state = perf_guest_state();
+> -	int misc = 0;
+> +	unsigned long misc = common_misc_flags(regs);
+
+Because here you do the common thing..
+
+>  
+>  	if (guest_state) {
+> -		if (guest_state & PERF_GUEST_USER)
+> -			misc |= PERF_RECORD_MISC_GUEST_USER;
+> -		else
+> -			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
+> +		misc |= perf_arch_guest_misc_flags(regs);
+
+And here you mix in the guest things.
+
+>  	} else {
+>  		if (user_mode(regs))
+>  			misc |= PERF_RECORD_MISC_USER;
 
