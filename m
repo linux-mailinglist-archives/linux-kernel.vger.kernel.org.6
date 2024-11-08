@@ -1,167 +1,282 @@
-Return-Path: <linux-kernel+bounces-400830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E579C12EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:16:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1A49C12F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B7CD28419F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:16:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77CAA1C22735
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70D24414;
-	Fri,  8 Nov 2024 00:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1E34C92;
+	Fri,  8 Nov 2024 00:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sF2ENVVt"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFgtzVMD"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC7064A
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6903964A;
+	Fri,  8 Nov 2024 00:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731024958; cv=none; b=gI/a4pscX1wDW3jLYyE3K3CPu6MytM3hm2ZqceJ0eubmrK2ADHjDfI5A/wkbxy5bizc2958/Ai953GfehQBY49se3WgGqfH3tNt6fMnhCCUVamynuJG4SpT30dzjYWO7iCcJMQ7RgTnsTyHPIcRcZiOBwZqT+VneDKLMW7MJEHE=
+	t=1731025031; cv=none; b=A9PX9vytHG7Q4uAbKvCJwrx3kt9N5a0dOzt5/PKUXPZdHB65ZUfFEtkhViWQS/H3BIqVvhq96maKWMktm2DW/0tMBU8pvMNEWzEFXRJPQdoWLbhYkJbZpbUwcTwXj+nxXNa41UpPuXpqwT0OXmH1u03yNBYL5APCtDPBJxtaBX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731024958; c=relaxed/simple;
-	bh=bNQqUDWSpPVDp9f74/Vz4JfMnPFVGdfl7TBWEGPIpRs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LCD1QFkMDjVI4CzN0vQbkTAsnYDr4sidJdHFzMC2Ib7bFDaV3poZCOD56oqldzmAGOtRwurDmxSFRNaVRZbueaV6n2N0e4ITVVnKI46aTmSRSHBEdtnbh9zmjPDkmCF70nztgUPi9bAn4EavtwPo2w1eZlezvlylW7DQ1OBmA8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sF2ENVVt; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e32ff6f578eso3514028276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 16:15:56 -0800 (PST)
+	s=arc-20240116; t=1731025031; c=relaxed/simple;
+	bh=SqWgJ4hm51ed+f1/VfQjX/x/DJppAZXyr0Z0K9vD9fU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rnepCBG3F5niQn/p5A04cx/wTl8Vvetky9T4WdiY2h/0+IL1V0qPfFaRnnn0oTp+au1z+8gTr3VHW//xyB3OeLfgbp6MkUvo9M0WTWGN+8T26MP0OCDf+AUM6YCu7i9DRqhf/d7P+4+n622vosB+GQ03McXOKVV33jQLqyV6Cdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KFgtzVMD; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ea9739647bso1209580a12.0;
+        Thu, 07 Nov 2024 16:17:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731024956; x=1731629756; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=C+cvhfxMxcAGwNEI/sTbc9zPJ+TFYlYM6Rgfn0qgxwA=;
-        b=sF2ENVVtyxwszfyTYrQyMNvoYVJu7ny1sk8HeukAVJ4HVIrY2x+aQiFFRNRAHu0d7y
-         twwwvALNAfQLqdOsHiAguGMLMSFAPA0m/WHgNbSxx34e3h2YPt9k5NEAbP8FzD6xSUNK
-         CHs1n00i0BOw8ev8GbEsicI4UJvd5lIm4N8XTlLjf5j6vr7CuUwxzJuz24VOjy75JKI8
-         x20GMayxUNHNsupTYsObbd6nadegQRZ251lifz93lMua9RzvLEm7a9oFqSO+ti4mAyme
-         Wy7WjsntL6yrC4GS79l019Vyq/FD2Wp5BqxAXAbpqx3QTDKyPB5ln5b8KPeW4YEosW1O
-         Dmuw==
+        d=gmail.com; s=20230601; t=1731025028; x=1731629828; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F+Do7zzo+KFbLuMYOM1790nmyhHrHI1nMAaNQb+68y4=;
+        b=KFgtzVMDkWzQvjqxuU1JCv6Hd/2K3hskJPnbnKW+4whQrDZXz6SjrgwujPEAvIt7GG
+         cqtu0+GDYiINl05TQQLkKTauvcmOw/8X/HrzXq8y/yc7lzuB43T2MImm6TAkoJxz5Azn
+         tc0Htcg+Xpt+54S3AUto4RPJ3Iew561Yp5EX4QqXrLrIK1ROktjt1FUaDkm/xezhZGE7
+         zKdXW5McUslWcMaMH/9Ld5nHqEKjIHXATQ12ivT5UHcLH+i+z+10eAJomwcFzZANO4pM
+         9hXLkPEHytEl2xOv3Uh1emDMmCJ1OsAd/PGpdJ4y4i6aKSuLZN5zEFwM1dJblg68p7ef
+         hvfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731024956; x=1731629756;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C+cvhfxMxcAGwNEI/sTbc9zPJ+TFYlYM6Rgfn0qgxwA=;
-        b=YpdiFyqKWjL7yX5XxnqGBTTiUt/84Pi/B3yhFfjhq37MTpqZudNCWphdwADeNx9CuO
-         1us2E2Y5nptOuCrYsOuKfzhjHQ7HDxljBp2aC7xdOsHv3IVZ5IaOJZ7xCTU1G+PsV0f9
-         rOL+4+eIp+rOPs8r/7/XPcoUAvkPQUElYlIPQAqHteZDPXLPBRGQuZRYvG94K+QOQxRN
-         hum1CWL1q2kJbPQNy4nXAh8/j9xEDQBKpMPCpqyWBp00mWgBaY5xSSQ6YLaYHMW6j2jG
-         G9xscehjQVXFCbBGqxBS+CL7OtSvRDwMGtZ9ifFoPQCNv1FGOf+6lgPIi+QvBuDQVQdZ
-         QLeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXrVNb8tPd12uGn8nq3qrdyjahBaLf5JwkVkGY8pIUjJHOK226PNU63+RwJlW5puSmflvFa5Rta1JqBFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNhdcBhOEJK3uemecV4PJqhBR6NGALuzHI1iVI6pdXxSVuQB+h
-	DduVXraJKKPtktdlcjbifEChMhGx0ZyBkVKgWjeCng7i1T4q1ONZmE2vdvwAMrOfH/azeQ9IDC0
-	oNqOJE2GYdw==
-X-Google-Smtp-Source: AGHT+IF0uTz7dBmajkyMIyFuU38iEJPA3KUjwQ01O9i7tJDtXL5GXG6kS20R+PmADwYVMvNey9lNK63kXsGa2w==
-X-Received: from ip.c.googlers.com ([fda3:e722:ac3:cc00:ef:85c8:ac13:4138])
- (user=ipylypiv job=sendgmr) by 2002:a25:c2c7:0:b0:e29:9c5:5fcb with SMTP id
- 3f1490d57ef6-e337e1b0c47mr13777276.4.1731024955790; Thu, 07 Nov 2024 16:15:55
- -0800 (PST)
-Date: Fri,  8 Nov 2024 00:15:42 +0000
+        d=1e100.net; s=20230601; t=1731025028; x=1731629828;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F+Do7zzo+KFbLuMYOM1790nmyhHrHI1nMAaNQb+68y4=;
+        b=b8rNXrhqiGlF7WpYQpAboDGOQdmupPougV5+ec9ZlQuLkco0ABt9naWNwq60TBwcX+
+         TKMvn1bT9+YZjIRnU7E4fWHYDyz7wYIFlwoUcHB3O3oz/JbiG2Guo7xjHvG3LZgvhZjU
+         xffNK3PaOXbVwGb2vrFpLJ/LTu68zhyO7rT/tXDNB8ImyolnI39e2Gtp6R6LTaNGeZ6f
+         qY2o252Ok+371GjAyH9s+0QQ+fYAboWNcIe5vaFG1MXUvkz+Biqnj4az+qbE8bjUWP/f
+         fy9/HRtaHz8+eCOmdXC0BxZaBthFsy3zAhKw1TO/3LIR0ZLiQu/Dl+mDej7Fkse5VwTC
+         J4Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2SoIfjnI1caxnKEOHvMQw2c13USuDRDhP1c7rRIMG1KKsvDGKiRf/fLDTu7IWzcOz1sQpDH09LSgP+qWp@vger.kernel.org, AJvYcCWt5SpYowoeQMJUH3Cw3mUbmbpOrt5s/+paoDngY0Vqj1MoDcxpt28zNZQMjyg8puTK9w+N9e4JTznA@vger.kernel.org, AJvYcCXqdN6nNOMWfIh1Wen/NKl73ekDR7ZlZeUmZJ2rXEL2WD6yjI/47PqblgMIEpfs0vS8Hyki5amEH3KO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0jKSx5U0FE146ZvwbtFKoDXiC+ujI5OwIJ1vKXHrHn774WhNh
+	Mt1iKuA0EYRMgHASZiy8SrzsC6mEqvEcFk2vfkUX7QsDoT7RAnvq
+X-Google-Smtp-Source: AGHT+IHx1CO0T4w9TtTYGzXOtCQnF3M6HiVi4INvxoMblwadJozIaZRzoVFV6fbzFBdcXMIqlR4KGA==
+X-Received: by 2002:a17:90b:1f8e:b0:2e0:d957:1b9d with SMTP id 98e67ed59e1d1-2e9b17163cbmr1575389a91.13.1731025028446;
+        Thu, 07 Nov 2024 16:17:08 -0800 (PST)
+Received: from fan ([2601:646:8f03:9fee:6ed1:b454:5fd2:3850])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd180fsm2187666a91.33.2024.11.07.16.17.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 16:17:07 -0800 (PST)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Thu, 7 Nov 2024 16:17:03 -0800
+To: shiju.jose@huawei.com
+Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, gregkh@linuxfoundation.org,
+	sudeep.holla@arm.com, jassisinghbrar@gmail.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
+	Vilas.Sridharan@amd.com, leo.duran@amd.com, Yazen.Ghannam@amd.com,
+	rientjes@google.com, jiaqiyan@google.com, Jon.Grimm@amd.com,
+	dave.hansen@linux.intel.com, naoya.horiguchi@nec.com,
+	james.morse@arm.com, jthoughton@google.com, somasundaram.a@hpe.com,
+	erdemaktas@google.com, pgonda@google.com, duenwen@google.com,
+	gthelen@google.com, wschwartz@amperecomputing.com,
+	dferguson@amperecomputing.com, wbs@os.amperecomputing.com,
+	nifan.cxl@gmail.com, tanxiaofei@huawei.com,
+	prime.zeng@hisilicon.com, roberto.sassu@huawei.com,
+	kangkang.shen@futurewei.com, wanghuiqiang@huawei.com,
+	linuxarm@huawei.com
+Subject: Re: [PATCH v15 01/15] EDAC: Add support for EDAC device features
+ control
+Message-ID: <Zy1Yf5wfc9aYVGwA@fan>
+References: <20241101091735.1465-1-shiju.jose@huawei.com>
+ <20241101091735.1465-2-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241108001542.255155-1-ipylypiv@google.com>
-Subject: [PATCH v2] i2c: dev: Fix memory leak when underlying adapter does not
- support I2C
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jean Delvare <jdelvare@suse.de>, 
-	Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Pylypiv <ipylypiv@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101091735.1465-2-shiju.jose@huawei.com>
 
-Early return in i2cdev_ioctl_rdwr() failed to free the memory allocated
-by the caller. Move freeing the memory to the function where it has been
-allocated to prevent similar leaks in the future.
+On Fri, Nov 01, 2024 at 09:17:19AM +0000, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> Add generic EDAC device feature controls supporting the registration
+> of RAS features available in the system. The driver exposes control
+> attributes for these features to userspace in
+> /sys/bus/edac/devices/<dev-name>/<ras-feature>/
+> 
+> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  drivers/edac/edac_device.c | 101 +++++++++++++++++++++++++++++++++++++
+>  include/linux/edac.h       |  30 +++++++++++
+>  2 files changed, 131 insertions(+)
+> 
+> diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
+> index 621dc2a5d034..e9229b5f8afe 100644
+> --- a/drivers/edac/edac_device.c
+> +++ b/drivers/edac/edac_device.c
+> @@ -570,3 +570,104 @@ void edac_device_handle_ue_count(struct edac_device_ctl_info *edac_dev,
+>  		      block ? block->name : "N/A", count, msg);
+>  }
+>  EXPORT_SYMBOL_GPL(edac_device_handle_ue_count);
+> +
+> +/* EDAC device feature */
 
-Fixes: 97ca843f6ad3 ("i2c: dev: Check for I2C_FUNC_I2C before calling i2c_transfer")
-Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
----
- drivers/i2c/i2c-dev.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+The comment is not very helpful to me, seems not quite relevant to what
+the function below does.
 
-diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-index 61f7c4003d2f..7717db1f4c23 100644
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -251,10 +251,8 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
- 		return -EOPNOTSUPP;
- 
- 	data_ptrs = kmalloc_array(nmsgs, sizeof(u8 __user *), GFP_KERNEL);
--	if (data_ptrs == NULL) {
--		kfree(msgs);
-+	if (data_ptrs == NULL)
- 		return -ENOMEM;
--	}
- 
- 	res = 0;
- 	for (i = 0; i < nmsgs; i++) {
-@@ -302,7 +300,6 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
- 		for (j = 0; j < i; ++j)
- 			kfree(msgs[j].buf);
- 		kfree(data_ptrs);
--		kfree(msgs);
- 		return res;
- 	}
- 
-@@ -316,7 +313,6 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
- 		kfree(msgs[i].buf);
- 	}
- 	kfree(data_ptrs);
--	kfree(msgs);
- 	return res;
- }
- 
-@@ -446,6 +442,7 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case I2C_RDWR: {
- 		struct i2c_rdwr_ioctl_data rdwr_arg;
- 		struct i2c_msg *rdwr_pa;
-+		int res;
- 
- 		if (copy_from_user(&rdwr_arg,
- 				   (struct i2c_rdwr_ioctl_data __user *)arg,
-@@ -467,7 +464,9 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		if (IS_ERR(rdwr_pa))
- 			return PTR_ERR(rdwr_pa);
- 
--		return i2cdev_ioctl_rdwr(client, rdwr_arg.nmsgs, rdwr_pa);
-+		res = i2cdev_ioctl_rdwr(client, rdwr_arg.nmsgs, rdwr_pa);
-+		kfree(rdwr_pa);
-+		return res;
- 	}
- 
- 	case I2C_SMBUS: {
-@@ -540,7 +539,7 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
- 		struct i2c_rdwr_ioctl_data32 rdwr_arg;
- 		struct i2c_msg32 __user *p;
- 		struct i2c_msg *rdwr_pa;
--		int i;
-+		int i, res;
- 
- 		if (copy_from_user(&rdwr_arg,
- 				   (struct i2c_rdwr_ioctl_data32 __user *)arg,
-@@ -573,7 +572,9 @@ static long compat_i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned lo
- 			};
- 		}
- 
--		return i2cdev_ioctl_rdwr(client, rdwr_arg.nmsgs, rdwr_pa);
-+		res = i2cdev_ioctl_rdwr(client, rdwr_arg.nmsgs, rdwr_pa);
-+		kfree(rdwr_pa);
-+		return res;
- 	}
- 	case I2C_SMBUS: {
- 		struct i2c_smbus_ioctl_data32	data32;
+Fan
+> +static void edac_dev_release(struct device *dev)
+> +{
+> +	struct edac_dev_feat_ctx *ctx = container_of(dev, struct edac_dev_feat_ctx, dev);
+> +
+> +	kfree(ctx->dev.groups);
+> +	kfree(ctx);
+> +}
+> +
+> +const struct device_type edac_dev_type = {
+> +	.name = "edac_dev",
+> +	.release = edac_dev_release,
+> +};
+> +
+> +static void edac_dev_unreg(void *data)
+> +{
+> +	device_unregister(data);
+> +}
+> +
+> +/**
+> + * edac_dev_register - register device for RAS features with EDAC
+> + * @parent: parent device.
+> + * @name: parent device's name.
+> + * @private: parent driver's data to store in the context if any.
+> + * @num_features: number of RAS features to register.
+> + * @ras_features: list of RAS features to register.
+> + *
+> + * Return:
+> + *  * %0       - Success.
+> + *  * %-EINVAL - Invalid parameters passed.
+> + *  * %-ENOMEM - Dynamic memory allocation failed.
+> + *
+> + */
+> +int edac_dev_register(struct device *parent, char *name,
+> +		      void *private, int num_features,
+> +		      const struct edac_dev_feature *ras_features)
+> +{
+> +	const struct attribute_group **ras_attr_groups;
+> +	struct edac_dev_feat_ctx *ctx;
+> +	int attr_gcnt = 0;
+> +	int ret, feat;
+> +
+> +	if (!parent || !name || !num_features || !ras_features)
+> +		return -EINVAL;
+> +
+> +	/* Double parse to make space for attributes */
+> +	for (feat = 0; feat < num_features; feat++) {
+> +		switch (ras_features[feat].ft_type) {
+> +		/* Add feature specific code */
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ras_attr_groups = kcalloc(attr_gcnt + 1, sizeof(*ras_attr_groups), GFP_KERNEL);
+> +	if (!ras_attr_groups) {
+> +		ret = -ENOMEM;
+> +		goto ctx_free;
+> +	}
+> +
+> +	attr_gcnt = 0;
+> +	for (feat = 0; feat < num_features; feat++, ras_features++) {
+> +		switch (ras_features->ft_type) {
+> +		/* Add feature specific code */
+> +		default:
+> +			ret = -EINVAL;
+> +			goto groups_free;
+> +		}
+> +	}
+> +
+> +	ctx->dev.parent = parent;
+> +	ctx->dev.bus = edac_get_sysfs_subsys();
+> +	ctx->dev.type = &edac_dev_type;
+> +	ctx->dev.groups = ras_attr_groups;
+> +	ctx->private = private;
+> +	dev_set_drvdata(&ctx->dev, ctx);
+> +
+> +	ret = dev_set_name(&ctx->dev, name);
+> +	if (ret)
+> +		goto groups_free;
+> +
+> +	ret = device_register(&ctx->dev);
+> +	if (ret) {
+> +		put_device(&ctx->dev);
+> +		return ret;
+> +	}
+> +
+> +	return devm_add_action_or_reset(parent, edac_dev_unreg, &ctx->dev);
+> +
+> +groups_free:
+> +	kfree(ras_attr_groups);
+> +ctx_free:
+> +	kfree(ctx);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(edac_dev_register);
+> diff --git a/include/linux/edac.h b/include/linux/edac.h
+> index b4ee8961e623..e19706311ec0 100644
+> --- a/include/linux/edac.h
+> +++ b/include/linux/edac.h
+> @@ -661,4 +661,34 @@ static inline struct dimm_info *edac_get_dimm(struct mem_ctl_info *mci,
+>  
+>  	return mci->dimms[index];
+>  }
+> +
+> +/* EDAC device features */
+> +
+> +#define EDAC_FEAT_NAME_LEN	128
+> +
+> +/* RAS feature type */
+> +enum edac_dev_feat {
+> +	RAS_FEAT_MAX
+> +};
+> +
+> +/* EDAC device feature information structure */
+> +struct edac_dev_data {
+> +	u8 instance;
+> +	void *private;
+> +};
+> +
+> +struct edac_dev_feat_ctx {
+> +	struct device dev;
+> +	void *private;
+> +};
+> +
+> +struct edac_dev_feature {
+> +	enum edac_dev_feat ft_type;
+> +	u8 instance;
+> +	void *ctx;
+> +};
+> +
+> +int edac_dev_register(struct device *parent, char *dev_name,
+> +		      void *parent_pvt_data, int num_features,
+> +		      const struct edac_dev_feature *ras_features);
+>  #endif /* _LINUX_EDAC_H_ */
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.47.0.277.g8800431eea-goog
-
+Fan Ni
 
