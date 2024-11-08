@@ -1,131 +1,96 @@
-Return-Path: <linux-kernel+bounces-402399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DF39C271E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:42:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4938C9C2723
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B24B22C36
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:42:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B481C21290
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C622206E98;
-	Fri,  8 Nov 2024 21:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E13B1E049E;
+	Fri,  8 Nov 2024 21:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpBzAIux"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="f0clrftO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2E21F4FB6;
-	Fri,  8 Nov 2024 21:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C9D29CF4;
+	Fri,  8 Nov 2024 21:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731102090; cv=none; b=MFS9/fCFQfK056T9P62IFMt9KozFwacnTaU2E+zSTrwu7vLThmxT+4p652yGjckN5ih9hhMiLPan83Nr4APnbW/UruQF2A8LxkrCT844LBxjEaNZPcHcrtYKO42Xy//oOUKGam3vo5dkZV0oRGa/oDTY38GOjVSbbKSHguq9Twg=
+	t=1731102195; cv=none; b=tL59/H324cUK0Fg8OCy6rqEwGMykOqE0UFak3g/HtA9uYPJ52wSjVpkPzZUgjGKq1CxU8luVF8wCTwQGAOrkfDJdUkL8LogsSyuLcifAd2Dwrik/WymUsVTRhIsiUHvN7x6zkSJ82jLwlxzkShWlxAcOJLFJiROEUmvXZyC5Nj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731102090; c=relaxed/simple;
-	bh=XC1oBE+/8s+hMkWru/3TnQAGvSGZE4ay9tNeo7gN8Dw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r5NbyXwyUoMi4PIi+Ow5Ve4/0dkfv+GpnDhuWQFEI1L0KN6bvtJ1lgkM4iR6pmn9diYrQmwvO4dUWPXqJpx9ZcYA5AW3gfMjXqRufcoG3XrgtCxtMiVerT/RrMjX2eaH/y8qQuZFQpNmMY4ilnV+YnVq/DWkmpuu6NFCponkn3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpBzAIux; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E327EC4CED2;
-	Fri,  8 Nov 2024 21:41:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731102089;
-	bh=XC1oBE+/8s+hMkWru/3TnQAGvSGZE4ay9tNeo7gN8Dw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LpBzAIux41ykPNnKzDyHp2j1eamNnE5o7U94nakNR+NmERh0/7+PeoF3KUSXQYKm2
-	 zetuUwcytcbLZIpME8CU12P8y8JZC7XoFf7ZJC261tRDdFkQqL4Ow9OKR+A/2XRGrp
-	 jLNIDrC/ywabAyRxJRoGLeLZM8tKVK7yyTxim+K8qyQwju4riTJOCxElV5fYdwT9Bi
-	 cgw/Y0CuM+v9EADwU75enxSuxfZspHtbljNiq/ki2Cea9s6kxQH16CiQtDyz2SIAnE
-	 9WYAFKOlo5PK/Lx1ylnmO5jlsQA8Aak87cIKBQSu24F/xbrfAEH2nD4TM94z8UOYeq
-	 B/K1qa1tJIFog==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Fri, 08 Nov 2024 22:41:18 +0100
-Subject: [PATCH 2/2] arm64: dts: qcom: sa8775p: Use a SoC-specific
- compatible for GPI DMA
+	s=arc-20240116; t=1731102195; c=relaxed/simple;
+	bh=7ai3EhDD8kivSiHjwakaxR65JIFCmPtHFjyNVoxcZRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQ1hOcxyUE5nGS14QmYooeIafVDP41c8zmAdZpyUXwDj3VILa1EYH351YGAqbgNnSbF+1LGLrbMF3mlF0RLVN8tiI3y3HQB0vXHkyf+xcweHZ0ACfVSEWVWVTed8d/w3WqN7/+eKhpcQZtXePt6q9VPRWEigjTTqLIbfN5yAfuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=f0clrftO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=a3sPOVQXRa4B3JPzvGMyA57zRKiA5BOrPR46D7NL24U=; b=f0clrftORSp8KdyrJxGYM6ROVz
+	c1kNeDAlvnMt5V6JFgaOaHYe0zVOIfJv8Guw3MPRPH6lMcsE2vxhjhR5ued0GEhBrY5By1j2p0h0+
+	NkSSZGjlNmPMb2OaHK9CnjxVA3cQINikQ+C8Atk0PonLIJCPtfBD+6j7zGYJKHe0FcIc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t9Wky-00CeZe-23; Fri, 08 Nov 2024 22:43:04 +0100
+Date: Fri, 8 Nov 2024 22:43:04 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [net-next PATCH] net: dsa: add devm_dsa_register_switch()
+Message-ID: <9cf08624-cd84-41bf-beef-ca3b3573303e@lunn.ch>
+References: <20241108200217.2761-1-ansuelsmth@gmail.com>
+ <af968377-d4c4-4561-8dc6-6f92ff1ebbf4@lunn.ch>
+ <672e7a61.050a0220.1d1399.6d31@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241108-topic-sa8775_dma2-v1-2-1d3b0d08d153@oss.qualcomm.com>
-References: <20241108-topic-sa8775_dma2-v1-0-1d3b0d08d153@oss.qualcomm.com>
-In-Reply-To: <20241108-topic-sa8775_dma2-v1-0-1d3b0d08d153@oss.qualcomm.com>
-To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731102079; l=1998;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=SXMXA8JLFw+Ep7/JwUsd3TgXMmVTVSwYZFpkJtR6VWo=;
- b=lB4YU3B87LMEqngP1I5M8r5qygxJFztkOXiYFIKRLjFnkX8S0SGng46QpGGo76NfsMXdHT+Nf
- zKAkzysnkECCOwZkVJjz0wPBFiHyCIt9i0lfqDJ8/kxc3cN1Nnu7Z4k
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <672e7a61.050a0220.1d1399.6d31@mx.google.com>
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Fri, Nov 08, 2024 at 09:53:48PM +0100, Christian Marangi wrote:
+> On Fri, Nov 08, 2024 at 09:35:32PM +0100, Andrew Lunn wrote:
+> > > +int devm_dsa_register_switch(struct device *dev, struct dsa_switch *ds)
+> > > +{
+> > > +	int err;
+> > > +
+> > > +	err = dsa_register_switch(ds);
+> > > +	if (err)
+> > > +		return err;
+> > > +
+> > > +	return devm_add_action_or_reset(dev, devm_dsa_unregister_switch, ds);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(dsa_register_switch);
+> > 
+> > This looks to be the wrong function name.
+> >
+> 
+> Ah... Anyway aside from this, is the feature OK? Questioning why it
+> wasn't proposed early...
 
-The commit adding these nodes did not use a SoC-specific node, fix that
-to comply with bindings guidelines.
+Some people blindly make use of devm_ without thinking about
+ordering. These helpers can introduce bugs. So they are not always
+liked.
 
-Fixes: 34d17ccb5db8 ("arm64: dts: qcom: sa8775p: Add GPI configuration")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+It would be best if you added the helper at the same time as its user.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index ebfa049515c63a0f1a333315dd370e6f78501129..f99edbdd8314af20283e206e1228052a060f7d34 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -855,7 +855,7 @@ ipcc: mailbox@408000 {
- 		};
- 
- 		gpi_dma2: dma-controller@800000  {
--			compatible = "qcom,sm6350-gpi-dma";
-+			compatible = "qcom,sa8775p-gpi-dma", "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x00800000 0x0 0x60000>;
- 			#dma-cells = <3>;
- 			interrupts = <GIC_SPI 588 IRQ_TYPE_LEVEL_HIGH>,
-@@ -1346,7 +1346,7 @@ &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 		};
- 
- 		gpi_dma0: dma-controller@900000  {
--			compatible = "qcom,sm6350-gpi-dma";
-+			compatible = "qcom,sa8775p-gpi-dma", "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x00900000 0x0 0x60000>;
- 			#dma-cells = <3>;
- 			interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
-@@ -1771,7 +1771,7 @@ &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 		};
- 
- 		gpi_dma1: dma-controller@a00000  {
--			compatible = "qcom,sm6350-gpi-dma";
-+			compatible = "qcom,sa8775p-gpi-dma", "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x00a00000 0x0 0x60000>;
- 			#dma-cells = <3>;
- 			interrupts = <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
-@@ -2226,7 +2226,7 @@ &config_noc SLAVE_QUP_1 QCOM_ICC_TAG_ALWAYS>,
- 		};
- 
- 		gpi_dma3: dma-controller@b00000  {
--			compatible = "qcom,sm6350-gpi-dma";
-+			compatible = "qcom,sa8775p-gpi-dma", "qcom,sm6350-gpi-dma";
- 			reg = <0x0 0x00b00000 0x0 0x58000>;
- 			#dma-cells = <3>;
- 			interrupts = <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>,
-
--- 
-2.47.0
-
+	Andrew
 
