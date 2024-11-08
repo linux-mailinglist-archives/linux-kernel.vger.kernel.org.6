@@ -1,85 +1,95 @@
-Return-Path: <linux-kernel+bounces-401661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B0B9C1DA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:09:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2B09C1DA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80481C22F6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE5B1C22F54
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9351B1EABA9;
-	Fri,  8 Nov 2024 13:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0691EABC4;
+	Fri,  8 Nov 2024 13:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jWpSmnWn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fmTlRMxy"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A3E1E6DE1
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AD81E491C;
+	Fri,  8 Nov 2024 13:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731071350; cv=none; b=fiMI7XLROa2QL8bhDQ3pEFuTPZqboQNY3YVUAuGj2kFlQERPElfvCI3C8XtQOICtSaX29v5k8Xd7kMgg4PtvQ3NyQMl16y+48EUwShWmQmESYZshuYjEH7AlgZ2ff9GGg3CWMy0ktD0oaZSTXWlecXU9RU1VAuLVsMBQIH8qJv4=
+	t=1731071371; cv=none; b=md6B9PGnDZuv0Exo/aF6wJRGODEMiF66C2e6STxQh8yElGA2cE4LjCU0QtgRZypZcLzvKtZ7bG7sGoQO9Ioz6NjDkkt3PznVroUGTIhM8FBFhqEEL1plFp0KiM5PaNE7DpCCr0LIVbI94TQ7pBVl3JEbWlOHHki6z8WEfUaxPTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731071350; c=relaxed/simple;
-	bh=61vvWGL0UpYowW9YO69YIiDWIsi7Qdruyw3F3U/nxTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PuZAAwPawtbUDep+hWocrfxGN8aiVuLukbRHdN40nTL39aXSHY+R1c4FA2i0ww1mHIFAtziuOqlYSN026Ia7+y8Xd+92sL5TimJjNE9MtdY0B+vMQTwFoB92bLbApMZwGHJpczEbiEq/NQ6UsN6uIhI+EQIGG2e7K5lW/EksS/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jWpSmnWn; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731071350; x=1762607350;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=61vvWGL0UpYowW9YO69YIiDWIsi7Qdruyw3F3U/nxTo=;
-  b=jWpSmnWnVBvq5ROK2cuv3IyUMMCXR97VwLTkTOgWroJNBrQJfwFMwW5W
-   sqro+tZ9+YwerCsV/GQikJ+CsX0H/LP2hmqqsdF5rx/erzKx3YEEokXmp
-   mwIytDLCsXX01T6RYZ1d6obKCNPqcJzuw6WFMNxufNcu5X/Ncq+USjJRu
-   GqvSujnuWWsKxtvqMqi3sadw/juKkyXzlBB1KqA6i+6iK2o426OVEihew
-   VJjA6j6dXwPjsSUHBNBIV3+JeVWP8dRKHoEE7vV5nmV8Gs2Js8m6g9ahk
-   g2uuBtzxhTKi8Q+ceer1FrsFiC3F8wfTY/KD7Kpa0U/WvLi92VWiQogQ6
-   g==;
-X-CSE-ConnectionGUID: 5WT3fEvjQHGUj/P6eRJBzg==
-X-CSE-MsgGUID: P2fnW0HVTlevBJCwcPkvng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53514379"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="53514379"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 05:09:09 -0800
-X-CSE-ConnectionGUID: hcTWoXcFRGmvNlip2Riz+Q==
-X-CSE-MsgGUID: K4ZycnqFTMKtahPn8K5cyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="85652998"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 08 Nov 2024 05:09:05 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9OjW-000rRa-2c;
-	Fri, 08 Nov 2024 13:09:02 +0000
-Date: Fri, 8 Nov 2024 21:08:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	John Ogness <john.ogness@linutronix.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-	bluescreen_avenger@verizon.net,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Petr Mladek <pmladek@suse.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jocelyn Falempe <jfalempe@redhat.com>
-Subject: Re: [PATCH v7 3/7] drm/log: Introduce a new boot logger to draw the
- kmsg on the screen
-Message-ID: <202411082034.Lnxy55Wm-lkp@intel.com>
-References: <20241108082025.1004653-4-jfalempe@redhat.com>
+	s=arc-20240116; t=1731071371; c=relaxed/simple;
+	bh=7wPSME1yvHU9R3fhuU7nAzygr3P2SjWow4X8OI/HRUc=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjrm3ZZyJLuRrCNlYjb/vbJp7mPWVgfB971191peho+16HBAQnGNqUAmXGoiDgOI64Qhoodw2oVdtQjLajUyV4vbhBZkYA6SePpPl/8+xe95CJo4usTUaizAwrXrBhq851EhZUgCEvQzMRJhvleGzmhk062RcGCwNyqsd1kzuN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fmTlRMxy; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4c482844so1326785f8f.0;
+        Fri, 08 Nov 2024 05:09:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731071368; x=1731676168; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=F9iLMWxrxAZ1l6R46sN9fOYiE6mHClhuivBfFEnygig=;
+        b=fmTlRMxyTJYahSGz8XKbrFIcP+lXsd0yGiakVpbEF2tD1IjGG1WUthfxXp4Tr8zH39
+         2/cxt14Pc8+ZOPREA3qJS59jgJ6ES8aDTTHUrPblAesBvO2IuHSauC6g1FRKK2KnBmXc
+         b0AxwG/l5JhJNzWKr+OuhmKZM79gQBIjOxUPkUmNC/01TY0r2iLKg2sHofiMmFAbxxlR
+         R/BYjE8VEJA6NYYp1XhZN44BAM/VT+WQwURwOXmPJHca7OvL50m9Ay8BDrWA+98127kn
+         8DOS3SGSNGpYEpkWY1EdaE71x+FZDaB4zlm9E5ElpYwE6iwK5hZ8d12C14VMzduwV4WR
+         Bfcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731071368; x=1731676168;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F9iLMWxrxAZ1l6R46sN9fOYiE6mHClhuivBfFEnygig=;
+        b=ZWdlNLUBwbmXiH1HVmcozu/x0b08IjmoK8b7gGBjKikQuhDqMX4BLUEJ7QA8d8K8Qd
+         ks0svptidh4/kxlks+3VpycIfdQWTNtgJFA+op92R44bpsItenN1yvexs7h4NkOpptJR
+         5LWJZabwKYrce4skLWC4Qv7i0bYuAyiXesfT/6iVDFiQswD82dbxKFIY1qI5ETqoe//+
+         2lxt6Q2W6aG0UwFWLCSSYgVzcw12PwAZlh8zd7xGg6UI7NnyeB9EQnlSQP8Lmti6ugLB
+         7UiFBvLVvBQBLFA7CA8pg7FHGErDtY6/C9pdWzarZ9Lpy9RtHbZj7VK1JTmLsFOKzbYp
+         yJkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVH1V5vTysbeyS0sdoa5TPnV/OFJ3umsyhYZ76p+QlJWzhJx2UkTtQQZR4N1IKhaYeRc/sq1mE1@vger.kernel.org, AJvYcCWaZzRLjCqV9eQOEJNjDZXLxT7OQWp3E3WHtfNsRE4aDCzRUgS8HtUYMqEKTrAPe3adQ8vpOaJqLOJs@vger.kernel.org, AJvYcCWnLszoKhNVxskMo/+LkC/DxcIc8VNic+h45fk6N7FaVxtFEEYNDGJU6TBB5AVpgK/HEIS94gRx6zhao7ZF@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxJ9Xi083Y7+DNzqxv20UO3wD4o7Y/DjgbFi5f5MfBzn/eWS+v
+	kV7+VI9gH4PXD+gNWvE/yg24IbZF9EphseTBpgW3zi3Ff723xXrE
+X-Google-Smtp-Source: AGHT+IGn8e7+hz9DFcsUdMnK7TZj6vrjAuQ+ZZHeOp4IPyI4ISngIYwwvEId7eCxCw595dz7+N8oSA==
+X-Received: by 2002:a05:6000:18a7:b0:37d:52d0:a59d with SMTP id ffacd0b85a97d-381f18672fdmr2224309f8f.10.1731071367308;
+        Fri, 08 Nov 2024 05:09:27 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda0517csm4724320f8f.96.2024.11.08.05.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 05:09:26 -0800 (PST)
+Message-ID: <672e0d86.050a0220.9eb0d.c3e1@mx.google.com>
+X-Google-Original-Message-ID: <Zy4Ngmvg2sE1SOJK@Ansuel-XPS.>
+Date: Fri, 8 Nov 2024 14:09:22 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v3 3/3] net: phy: Add Airoha AN8855 Internal
+ Switch Gigabit PHY
+References: <20241106122254.13228-1-ansuelsmth@gmail.com>
+ <20241106122254.13228-4-ansuelsmth@gmail.com>
+ <Zy3xaviqqT6X8Ows@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,81 +98,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241108082025.1004653-4-jfalempe@redhat.com>
+In-Reply-To: <Zy3xaviqqT6X8Ows@shell.armlinux.org.uk>
 
-Hi Jocelyn,
+On Fri, Nov 08, 2024 at 11:09:30AM +0000, Russell King (Oracle) wrote:
+> On Wed, Nov 06, 2024 at 01:22:38PM +0100, Christian Marangi wrote:
+> > +/* MII Registers Page 1 */
+> > +#define AN8855_PHY_EXT_REG_14			0x14
+> > +#define   AN8855_PHY_EN_DOWN_SHFIT		BIT(4)
+> 
+> Shouldn't "AN8855_PHY_EN_DOWN_SHFIT" be "AN8855_PHY_EN_DOWN_SHIFT"
+> (notice the I and F are swapped) ?
+>
 
-kernel test robot noticed the following build errors:
+Typo from SDK that I didn't notice fun.
 
-[auto build test ERROR on baf4afc5831438b35de4b0e951b9cd58435a6d99]
+> > +static int an8855_get_downshift(struct phy_device *phydev, u8 *data)
+> > +{
+> > +	int saved_page;
+> > +	int val;
+> > +	int ret;
+> > +
+> > +	saved_page = phy_select_page(phydev, AN8855_PHY_PAGE_EXTENDED_1);
+> > +	if (saved_page >= 0)
+> > +		val = __phy_read(phydev, AN8855_PHY_EXT_REG_14);
+> > +	ret = phy_restore_page(phydev, saved_page, val);
+> > +	if (ret)
+> > +		return ret;
+> 
+> This function is entirely broken.
+> 
+> phy_restore_page() will return "val" if everything went successfully,
+> so here you end up returning "val" via this very return statement
+> without executing any further code in the function. The only time
+> further code will be executed is if "val" was successfully read as
+> zero.
+> 
+> Please use the helpers provided:
+> 
+> 	ret = phy_read_paged(phydev, AN8855_PHY_PAGE_EXTENDED_1,
+> 			     AN8855_PHY_EXT_REG_14);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> ret now contains what you're using as "val" below. No need to open code
+> phy_read_paged().
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-panic-Move-drawing-functions-to-drm_draw/20241108-162222
-base:   baf4afc5831438b35de4b0e951b9cd58435a6d99
-patch link:    https://lore.kernel.org/r/20241108082025.1004653-4-jfalempe%40redhat.com
-patch subject: [PATCH v7 3/7] drm/log: Introduce a new boot logger to draw the kmsg on the screen
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20241108/202411082034.Lnxy55Wm-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411082034.Lnxy55Wm-lkp@intel.com/reproduce)
+Thanks for the explaination, totally got confused by reading the
+restore_page code. Anyway yes I will use the helper.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411082034.Lnxy55Wm-lkp@intel.com/
+> 
+> > +
+> > +	*data = val & AN8855_PHY_EXT_REG_14 ? DOWNSHIFT_DEV_DEFAULT_COUNT :
+> > +					      DOWNSHIFT_DEV_DISABLE;
+> 
+> Here, the test is against the register number rather than the bit that
+> controls downshift. Shouldn't AN8855_PHY_EXT_REG_14 be
+> AN8855_PHY_EN_DOWN_SH(F)I(F)T ?
 
-All errors (new ones prefixed by >>):
+Copy paste error, was already staged to fix, thanks for extra eye on
+this.
 
->> drivers/gpu/drm/drm_client_setup.c:11:38: error: 'CONFIG_DRM_CLIENT_DEFAULT' undeclared here (not in a function); did you mean 'CONFIG_DRM_CLIENT_LIB'?
-      11 | static char drm_client_default[16] = CONFIG_DRM_CLIENT_DEFAULT;
-         |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                      CONFIG_DRM_CLIENT_LIB
-   In file included from include/linux/module.h:22,
-                    from include/linux/device/driver.h:21,
-                    from include/linux/device.h:32,
-                    from include/drm/drm_print.h:31,
-                    from drivers/gpu/drm/drm_client_setup.c:7:
->> drivers/gpu/drm/drm_client_setup.c:15:18: error: expected ',' or ';' before 'CONFIG_DRM_CLIENT_DEFAULT'
-      15 |                  CONFIG_DRM_CLIENT_DEFAULT "]");
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/moduleparam.h:26:61: note: in definition of macro '__MODULE_INFO'
-      26 |                 = __MODULE_INFO_PREFIX __stringify(tag) "=" info
-         |                                                             ^~~~
-   drivers/gpu/drm/drm_client_setup.c:13:1: note: in expansion of macro 'MODULE_PARM_DESC'
-      13 | MODULE_PARM_DESC(client,
-         | ^~~~~~~~~~~~~~~~
-   drivers/gpu/drm/drm_client_setup.c:33:6: error: redefinition of 'drm_client_setup'
-      33 | void drm_client_setup(struct drm_device *dev, const struct drm_format_info *format)
-         |      ^~~~~~~~~~~~~~~~
-   In file included from drivers/gpu/drm/drm_client_setup.c:3:
-   include/drm/drm_client_setup.h:16:20: note: previous definition of 'drm_client_setup' with type 'void(struct drm_device *, const struct drm_format_info *)'
-      16 | static inline void drm_client_setup(struct drm_device *dev,
-         |                    ^~~~~~~~~~~~~~~~
-   drivers/gpu/drm/drm_client_setup.c:55:6: error: redefinition of 'drm_client_setup_with_fourcc'
-      55 | void drm_client_setup_with_fourcc(struct drm_device *dev, u32 fourcc)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/gpu/drm/drm_client_setup.c:3:
-   include/drm/drm_client_setup.h:19:20: note: previous definition of 'drm_client_setup_with_fourcc' with type 'void(struct drm_device *, u32)' {aka 'void(struct drm_device *, unsigned int)'}
-      19 | static inline void drm_client_setup_with_fourcc(struct drm_device *dev, u32 fourcc)
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpu/drm/drm_client_setup.c:72:6: error: redefinition of 'drm_client_setup_with_color_mode'
-      72 | void drm_client_setup_with_color_mode(struct drm_device *dev, unsigned int color_mode)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/gpu/drm/drm_client_setup.c:3:
-   include/drm/drm_client_setup.h:21:20: note: previous definition of 'drm_client_setup_with_color_mode' with type 'void(struct drm_device *, unsigned int)'
-      21 | static inline void drm_client_setup_with_color_mode(struct drm_device *dev,
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> > +static int an8855_set_downshift(struct phy_device *phydev, u8 cnt)
+> > +{
+> > +	int saved_page;
+> > +	int ret;
+> > +
+> > +	saved_page = phy_select_page(phydev, AN8855_PHY_PAGE_EXTENDED_1);
+> > +	if (saved_page >= 0) {
+> > +		if (cnt != DOWNSHIFT_DEV_DISABLE)
+> > +			ret = __phy_set_bits(phydev, AN8855_PHY_EXT_REG_14,
+> > +					     AN8855_PHY_EN_DOWN_SHFIT);
+> > +		else
+> > +			ret = __phy_clear_bits(phydev, AN8855_PHY_EXT_REG_14,
+> > +					       AN8855_PHY_EN_DOWN_SHFIT);
+> > +	}
+> > +
+> > +	return phy_restore_page(phydev, saved_page, ret);
+> 
+> This entire thing can be simplified to:
+> 
+> 	u16 ds = cnt != DOWNSHIFT_DEV_DISABLE ? AN8855_PHY_EN_DOWN_SHFIT: 0;
+> 
+> 	return phy_modify_paged(phydev, AN8855_PHY_PAGE_EXTENDED_1,
+> 				AN8855_PHY_EXT_REG_14, AN8855_PHY_EN_DOWN_SHFIT,
+> 				ds);
 
+Funnly in rechecking I produced the same exact change.
 
-vim +11 drivers/gpu/drm/drm_client_setup.c
+> 
+> Thanks.
 
-    10	
-  > 11	static char drm_client_default[16] = CONFIG_DRM_CLIENT_DEFAULT;
-    12	module_param_string(client, drm_client_default, sizeof(drm_client_default), 0444);
-    13	MODULE_PARM_DESC(client,
-    14			 "Choose which drm client to start, default is"
-  > 15			 CONFIG_DRM_CLIENT_DEFAULT "]");
-    16	
+Thanks to you for the review.
+
+> 
+> -- 
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Ansuel
 
