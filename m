@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-401041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F8B9C1550
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:13:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFF919C1553
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA991F23D91
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:13:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 688B41F23F50
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1814C1C3F06;
-	Fri,  8 Nov 2024 04:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5AE1D043C;
+	Fri,  8 Nov 2024 04:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BLT+bTHW"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Rwm+hqD7"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B10E13CF82
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BE31CF5F4
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731039210; cv=none; b=UaaacHrmOtIsQA935FTIzzR2Iekh/D6RoMpa/fLPXHAIMo1vdivaIfjD75krZ+PIzVZ9Y0ZpO5t94wxvojG5QaZ3fYN+n+9AGGy1bYP15yYZ7hB2E+Gqu0eupb3+4GHKom6lxateTTuBcN/qMgvyad/DtB8nGrqSK3W61aZZAaw=
+	t=1731039215; cv=none; b=QiYv+grVog7CRW3decDh2aZtfDZ++1dJU9U3qsmwVDb5T0cXgDOclzqzqXicsRCn/Hrj3mGHYnI8/8KYTI73xLaeZ1lWA0VggQrSmJRNWdZrnkAbhEgYUwdWYvnRrpTN0AyEYhFUUqH7GehNIHvTx+eD94s+LvrQOPnCmoHV/eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731039210; c=relaxed/simple;
-	bh=aW+mk2ePZEaHmiZzVO05BzffwyUJkOfhEC+jcUFwaoc=;
+	s=arc-20240116; t=1731039215; c=relaxed/simple;
+	bh=pIINmnRuMhBwhKo7Aoq6MuHbbIlkpLT5NNRZGvEsE3I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fzmeLenLbgd5rt0glus3IZs+3Pm+7XfLRPyyD2GsH/M3HPEHyvS86KLkFMPcQlkGB5z0kpD4R080RNZN0luJPUk8oDPBLzQDZIt4k08MYn1M5JoiFL5lukAg7nBj/0k3NMzg7yYDWAHsoscZjdSni0agYmHbo+g3yT5BevvpHkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BLT+bTHW; arc=none smtp.client-ip=115.124.30.112
+	 MIME-Version; b=pSzWrROXRTGBqJolJqeQm0JtwXoiO4qkE8p4UehJv/6kRNtYr94E5FPRXxGt5PoWhOXne4VHvAjlOzwDfwk3pFlLrrDKf1hmGIFqNYhKfcaDNBRf5WHCfo/dWG7wzRdxnmRp9qawmuEoStYzr1JdIRAl01vlSaBNeMho50jjBck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Rwm+hqD7; arc=none smtp.client-ip=115.124.30.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1731039205; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=GjeDj7oC1iiZ/gkwEo4XJZE2Kubqr3JwCuLq6Y0HOAU=;
-	b=BLT+bTHW3cS/tkPHBwAItgUH4HiKzcYqMyXkO2UGmTrI4NkzHvCenBhi0FMSRFY3kuT8WS4tORB+M+EGw6NKS3mI7t15HlziENqLRZvzzMZc23hYMpTHtrakOLXrEYRFzdOhl2GGY1lWExPYb2U5QQHsfTFW1HJ97nGYvf8bGVw=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIxXGhc_1731039203 cluster:ay36)
+	t=1731039206; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=OAXkgfSC/TSIsttX/eS9fvBNEIFaQACVaW/jTgI39Ao=;
+	b=Rwm+hqD79ng0V3+gkZY7ifxG0EexZrRinnxWZM74LSYPR7l/LN4/38agX9VUIPHFeE792YQkYAKjzo3umiexnvFk2f7VLj1JPh9Gvyey+oe5C31JAvTsCwPY8PKfXo23/0DkpXqfzM13nBgESoPmas7FQsKgPv+Ba6a+stDplug=
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIxZtPU_1731039204 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Fri, 08 Nov 2024 12:13:23 +0800
+          Fri, 08 Nov 2024 12:13:24 +0800
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
 To: akpm@linux-foundation.org,
 	hughd@google.com
@@ -51,9 +51,9 @@ Cc: willy@infradead.org,
 	baolin.wang@linux.alibaba.com,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] mm: factor out the order calculation into a new helper
-Date: Fri,  8 Nov 2024 12:12:55 +0800
-Message-Id: <d3272b090b4f6fe92457d487c7b9f825ba72c1b5.1731038280.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH 2/4] mm: shmem: change shmem_huge_global_enabled() to return huge order bitmap
+Date: Fri,  8 Nov 2024 12:12:56 +0800
+Message-Id: <a0d41cdc3491878260277e8c18a3e71deb2bc1fb.1731038280.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
 References: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
@@ -65,51 +65,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out the order calculation into a new helper, which can be reused
-by shmem in the following patch.
+Change the shmem_huge_global_enabled() to return the suitable huge
+order bitmap, and return 0 if huge pages are not allowed. This is a
+preparation for supporting various huge orders allocation of tmpfs
+in the following patches.
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
+No functional changes.
+
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- include/linux/pagemap.h | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ mm/shmem.c | 45 ++++++++++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index bcf0865a38ae..d796c8a33647 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -727,6 +727,16 @@ typedef unsigned int __bitwise fgf_t;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 579e58cb3262..361da46c4bd5 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -549,37 +549,37 @@ static bool shmem_confirm_swap(struct address_space *mapping,
  
- #define FGP_WRITEBEGIN		(FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE)
+ static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
  
-+static inline unsigned int filemap_get_order(size_t size)
-+{
-+	unsigned int shift = ilog2(size);
-+
-+	if (shift <= PAGE_SHIFT)
-+		return 0;
-+
-+	return shift - PAGE_SHIFT;
-+}
-+
- /**
-  * fgf_set_order - Encode a length in the fgf_t flags.
-  * @size: The suggested size of the folio to create.
-@@ -740,11 +750,11 @@ typedef unsigned int __bitwise fgf_t;
-  */
- static inline fgf_t fgf_set_order(size_t size)
+-static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+-				      loff_t write_end, bool shmem_huge_force,
+-				      unsigned long vm_flags)
++static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
++					      loff_t write_end, bool shmem_huge_force,
++					      unsigned long vm_flags)
  {
--	unsigned int shift = ilog2(size);
-+	unsigned int order = filemap_get_order(size);
+ 	loff_t i_size;
  
--	if (shift <= PAGE_SHIFT)
-+	if (!order)
- 		return 0;
--	return (__force fgf_t)((shift - PAGE_SHIFT) << 26);
-+	return (__force fgf_t)(order << 26);
+ 	if (HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER)
+-		return false;
++		return 0;
+ 	if (!S_ISREG(inode->i_mode))
+-		return false;
++		return 0;
+ 	if (shmem_huge == SHMEM_HUGE_DENY)
+-		return false;
++		return 0;
+ 	if (shmem_huge_force || shmem_huge == SHMEM_HUGE_FORCE)
+-		return true;
++		return BIT(HPAGE_PMD_ORDER);
+ 
+ 	switch (SHMEM_SB(inode->i_sb)->huge) {
+ 	case SHMEM_HUGE_ALWAYS:
+-		return true;
++		return BIT(HPAGE_PMD_ORDER);
+ 	case SHMEM_HUGE_WITHIN_SIZE:
+ 		index = round_up(index + 1, HPAGE_PMD_NR);
+ 		i_size = max(write_end, i_size_read(inode));
+ 		i_size = round_up(i_size, PAGE_SIZE);
+ 		if (i_size >> PAGE_SHIFT >= index)
+-			return true;
++			return BIT(HPAGE_PMD_ORDER);
+ 		fallthrough;
+ 	case SHMEM_HUGE_ADVISE:
+ 		if (vm_flags & VM_HUGEPAGE)
+-			return true;
++			return BIT(HPAGE_PMD_ORDER);
+ 		fallthrough;
+ 	default:
+-		return false;
++		return 0;
+ 	}
  }
  
- void *filemap_get_entry(struct address_space *mapping, pgoff_t index);
+@@ -774,11 +774,11 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
+ 	return 0;
+ }
+ 
+-static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+-				      loff_t write_end, bool shmem_huge_force,
+-				      unsigned long vm_flags)
++static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
++					      loff_t write_end, bool shmem_huge_force,
++					      unsigned long vm_flags)
+ {
+-	return false;
++	return 0;
+ }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+@@ -1173,8 +1173,11 @@ static int shmem_getattr(struct mnt_idmap *idmap,
+ 	generic_fillattr(idmap, request_mask, inode, stat);
+ 	inode_unlock_shared(inode);
+ 
+-	if (shmem_huge_global_enabled(inode, 0, 0, false, 0))
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	if (shmem_huge_global_enabled(inode, 0, 0, false, 0) ==
++	    BIT(HPAGE_PMD_ORDER))
+ 		stat->blksize = HPAGE_PMD_SIZE;
++#endif
+ 
+ 	if (request_mask & STATX_BTIME) {
+ 		stat->result_mask |= STATX_BTIME;
+@@ -1682,21 +1685,21 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
+ 	unsigned long mask = READ_ONCE(huge_shmem_orders_always);
+ 	unsigned long within_size_orders = READ_ONCE(huge_shmem_orders_within_size);
+ 	unsigned long vm_flags = vma ? vma->vm_flags : 0;
+-	bool global_huge;
++	unsigned int global_orders;
+ 	loff_t i_size;
+ 	int order;
+ 
+ 	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags)))
+ 		return 0;
+ 
+-	global_huge = shmem_huge_global_enabled(inode, index, write_end,
+-						shmem_huge_force, vm_flags);
++	global_orders = shmem_huge_global_enabled(inode, index, write_end,
++						  shmem_huge_force, vm_flags);
+ 	if (!vma || !vma_is_anon_shmem(vma)) {
+ 		/*
+ 		 * For tmpfs, we now only support PMD sized THP if huge page
+ 		 * is enabled, otherwise fallback to order 0.
+ 		 */
+-		return global_huge ? BIT(HPAGE_PMD_ORDER) : 0;
++		return global_orders;
+ 	}
+ 
+ 	/*
+@@ -1729,7 +1732,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
+ 	if (vm_flags & VM_HUGEPAGE)
+ 		mask |= READ_ONCE(huge_shmem_orders_madvise);
+ 
+-	if (global_huge)
++	if (global_orders > 0)
+ 		mask |= READ_ONCE(huge_shmem_orders_inherit);
+ 
+ 	return THP_ORDERS_ALL_FILE_DEFAULT & mask;
 -- 
 2.39.3
 
