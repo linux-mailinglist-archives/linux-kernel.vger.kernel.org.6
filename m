@@ -1,125 +1,127 @@
-Return-Path: <linux-kernel+bounces-401820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CED59C1F9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:48:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294D09C1FA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:50:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9931F2178C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:48:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC841283E9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DE11F4299;
-	Fri,  8 Nov 2024 14:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200751F4299;
+	Fri,  8 Nov 2024 14:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JCKxbPX4"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L0wRjULW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FCE1803A;
-	Fri,  8 Nov 2024 14:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0549B1803A;
+	Fri,  8 Nov 2024 14:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731077299; cv=none; b=dDGM4K527iBd4QDi9MuQ7351MIYi9S7zlyEPqITtwIpFmm1gZrSii9B9LKgOo5qjZFjw41mfO4s5xpXXAGMEhp/ztvqjcNFlXEtiWM+ty8eGN8J+Ppn7Fh+N5r1VwtqUE7lZBPPE9RwzCVUMPUfF+uAzUP2HbOuQyl8sYm7wRb8=
+	t=1731077431; cv=none; b=S82sFfANuyKUCip1SHZBzyKKSAwCZyiPX//vX6MGI1Xwy1LuJMwfP05pPzppbjMTakZPXoKVKAAtyKYRfipQt8gJCrTMxOKHq1AzJnTAcq0VZFjiIvkeIY+RwN0Wv6MYYsHVQ9fL6eAAnuEOOQ0GDD3TEpH8XLk8F0uq4MazVJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731077299; c=relaxed/simple;
-	bh=7Vh423k2v5rDiz9e5aaLWERcHQiPBA3gPcPJh9+KSjE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MpIBHCzX/fEPHBpBWScG9EVTbf+MIDrXQ/P77wr1jJbBy0flrEQnxdX/XurTUaDF+/FhBe0wfY2CQ06VweVz70vMlKYhpN0X5/HrnG9PRg5oo/ZXhpwdQg45x+jvO7ZR4QatYo+AF2KXONpQMksfr1OByWNGoingUeK5EsXnjxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JCKxbPX4; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A8Em0fs090318;
-	Fri, 8 Nov 2024 08:48:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731077280;
-	bh=Qb5W5ggwcyRExagNeS8k1z2C/XU9B9OpyZND0Okpr+k=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=JCKxbPX4DVN8tneV7P3AMBuhJNPuYU0QfitzY4gmH83N9yBfhPKrr+qoKhslW5c38
-	 d6vNtQX1F2y/O58SBJbogUS9lKLOlSE3nAkvo07bBobpJJlMHgRukB/tjZXHMwnjUg
-	 OD9b/jR4ZBrwUmcbtx1bNFE2n8eEdhU7CnNXul/s=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A8Em0GJ083470;
-	Fri, 8 Nov 2024 08:48:00 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 8
- Nov 2024 08:48:00 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 8 Nov 2024 08:48:00 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A8Em0LU031896;
-	Fri, 8 Nov 2024 08:48:00 -0600
-Date: Fri, 8 Nov 2024 08:48:00 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Roger Quadros <rogerq@kernel.org>
-CC: Andreas Kemnade <andreas@kemnade.info>, Rob Herring <robh@kernel.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, Tony Lindgren
-	<tony@atomide.com>,
-        Conor Dooley <conor+dt@kernel.org>, Stephen Boyd
-	<sboyd@kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: ti: Convert mux.txt to json-schema
-Message-ID: <20241108144800.ks7owznyt4fpcdap@thrive>
-References: <20241104135549.38486-1-andreas@kemnade.info>
- <20241105135234.GA3100411-robh@kernel.org>
- <20241107075803.2cf33ab4@akair>
- <36b61684-fede-4422-bd54-0421e6a0fc23@kernel.org>
+	s=arc-20240116; t=1731077431; c=relaxed/simple;
+	bh=WB69xDzzfrDuMdKmcfw73F7bY7tywkvG6bjQxIqlu+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JIbh2XM6j5aujNn71qLMCta++lIxz9QOdTiPIhZqnetyi/3os3jL8OKbWC7wl5eZzgED4IMV+0e6mKFpaBjYx2T1ZC1G1AXbelELoFt27ge2ujJdh4+BU5eizPrAjd9obhSWj3X0/DRzrEJuo+JwJi1eU5QpoF5QwASeu6qFfeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L0wRjULW; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731077430; x=1762613430;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WB69xDzzfrDuMdKmcfw73F7bY7tywkvG6bjQxIqlu+c=;
+  b=L0wRjULWpZMEZEGKwlhgHqiZtNAoDa3m0KzOGYqc9vjbmbj468tq3Ucx
+   1wb2ydL9zDLU72Y6OtXHtkpf/tzJ/6WfYwLoNKxqZol8XWTNOk0lDRcVQ
+   +7l2OTUApDxwOcx+eCylQSgxJ6gb8dRJ7TYDykQWf0Z7UDwlJGWU7XVbc
+   Lq11LrJcKE0c3dLgeDKbUOGoCI3e1u+nu1lgA33/58EgOdFYK2UMdoFMr
+   Nxr8kRoAjMNekBZtPxtpUoGdHFsQk/twMcbystOmM/p6nSuZKA9hes0nC
+   SJSqKHtqI3wgyH8OqstCDA0JBUH4i1uz/dhDHYl9M/zNF6LlE6CZdSE+o
+   g==;
+X-CSE-ConnectionGUID: M8/q7W8vQB6BwurvFZtD6A==
+X-CSE-MsgGUID: rvxvbO1OR0y2HjS3xXmmdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30816070"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30816070"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 06:50:29 -0800
+X-CSE-ConnectionGUID: 9rgauUe1SnahjGV4Feu1ZQ==
+X-CSE-MsgGUID: S+pyx3y/SumsVVklPh5N1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="116422849"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 08 Nov 2024 06:50:27 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 054D043A; Fri, 08 Nov 2024 16:50:25 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH v1 1/1] media: ov7251: Remap "reset" to "enable" for OV7251
+Date: Fri,  8 Nov 2024 16:50:24 +0200
+Message-ID: <20241108145024.1490536-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <36b61684-fede-4422-bd54-0421e6a0fc23@kernel.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-On 15:03-20241108, Roger Quadros wrote:
-> >>> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..b271ab86dde1
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> >>> @@ -0,0 +1,123 @@
-> >>> +# SPDX-License-Identifier: GPL-2.0-only  
-> >>
-> >> Surely TI as the only author of the original binding would agree to
-> >> dual-license this?
-> >>
-> > So there is a question mark. So you are waiting for some confirmation
-> > form TI?
-> 
-> TI code uses below license clause. So better to stick to that.
-> 
-> # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+The driver of OmniVision OV7251 expects "enable" pin instead of "reset".
+Remap "reset" to "enable" and update polarity.
 
-Just my 2 cents:
+In particular, the Linux kernel can't load the camera sensor
+driver on Microsoft Surface Book without this change:
 
-Just to be clear, as a corporate, as TI contributor we have approval for the
-following two:
+ ov7251 i2c-INT347E:00: supply vdddo not found, using dummy regulator
+ ov7251 i2c-INT347E:00: supply vddd not found, using dummy regulator
+ ov7251 i2c-INT347E:00: supply vdda not found, using dummy regulator
+ ov7251 i2c-INT347E:00: cannot get enable gpio
+ ov7251 i2c-INT347E:00: probe with driver ov7251 failed with error -2
 
-For new stuff:  GPL-2.0-only OR MIT
-for legacy stuff, we had GPL-2.0-only.
+Suggested-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/media/i2c/ov7251.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-There are indeed instances of community contributions with
-GPL-2.0-only OR BSD-2-Clause, but that is definitely something community
-is free to do. Looking at history of
-Documentation/devicetree/bindings/clock/ti/mux.txt, I believe, at least
-from TI perspective, we are fine with GPL-2.0-only OR MIT and I think it
-will let other s/w ecosystems consume the same as well.
-
+diff --git a/drivers/media/i2c/ov7251.c b/drivers/media/i2c/ov7251.c
+index 30f61e04ecaf..7b35add1e0ed 100644
+--- a/drivers/media/i2c/ov7251.c
++++ b/drivers/media/i2c/ov7251.c
+@@ -1696,7 +1696,21 @@ static int ov7251_probe(struct i2c_client *client)
+ 		return PTR_ERR(ov7251->analog_regulator);
+ 	}
+ 
++	/*
++	 * The device-tree bindings call this pin "enable", but the
++	 * datasheet describes the pin as "reset (active low with internal
++	 * pull down resistor)". The ACPI tables describing this sensor
++	 * on, e.g., the Microsoft Surface Book use the ACPI equivalent of
++	 * "reset" as pin name, which ACPI glue code then maps to "reset".
++	 * Check for a "reset" pin if there is no "enable" pin.
++	 */
+ 	ov7251->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
++	if (IS_ERR(ov7251->enable_gpio) &&
++	    PTR_ERR(ov7251->enable_gpio) != -EPROBE_DEFER) {
++		ov7251->enable_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
++		if (!IS_ERR(ov7251->enable_gpio))
++			gpiod_toggle_active_low(ov7251->enable_gpio);
++	}
+ 	if (IS_ERR(ov7251->enable_gpio)) {
+ 		dev_err(dev, "cannot get enable gpio\n");
+ 		return PTR_ERR(ov7251->enable_gpio);
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+2.43.0.rc1.1336.g36b5255a03ac
+
 
