@@ -1,153 +1,193 @@
-Return-Path: <linux-kernel+bounces-401590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AACA9C1CA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:08:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED839C1CAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF06A1C22A09
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:08:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C40B20E3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502111E6DD4;
-	Fri,  8 Nov 2024 12:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED991E631B;
+	Fri,  8 Nov 2024 12:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSYsmY6e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="uKvu1lsd"
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928A31946CD;
-	Fri,  8 Nov 2024 12:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B5C1946CD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731067672; cv=none; b=XXdUt2ULRJyh/7RK9KDpilEzCxvYWhSOT1j4uvCoQ8MG+ZhspqoeGZVYwsQ/l09moWLHYYUlnkdvqJ4V3r/WA81MDn+M3Q5SAWCultXxfIJ03+sBSG1TRfRXk0xyox39S23MC+Akhk5/cTiDiqNpbSIgxunhBxyQ8PrS8TBlf1M=
+	t=1731067749; cv=none; b=PqjBcDbTpjUVEmrdTCcAoVNQdMaB2tnEmmXu8HIRaAlY47kBseOJB2i+TkN6yIQRTlfODINpXh8b0S+sP+SNsBRdcAzFdnYDpXxikHqqfS5awmWNogwN44rJP1MWbqGLnMx2v1QzZlckgD8cLwkjpXeBVaGIGwvuDOvLdxqaje4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731067672; c=relaxed/simple;
-	bh=AkeX75D7fsgoiqxx+TUSbZzUavTmnlL55rnC91lxH4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oKokvKkMsKGeCokB5OTBJ8YP6mlNOtcSAjIYZhwarwh5KzcjkuCovU7yrJJYdDgbIl2/SJXc2i0aKxnkcDV+JEXVHr9SUT/xELOzAiRSmVqlJh0HFMiXymROpf1pgFtl3eAl7WNi0cYUc9HWgCnihoNKQxJDIRC6+ihgKBabx8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSYsmY6e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5033AC4CECE;
-	Fri,  8 Nov 2024 12:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731067672;
-	bh=AkeX75D7fsgoiqxx+TUSbZzUavTmnlL55rnC91lxH4w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lSYsmY6ek7SRYC/1upg4dVxXLB39sUprkhxGj3rGCXJ7TpXIrAhdlke1NYMPXmxN7
-	 JrpKEBpLLmElfF2a/glJlX44IQYu7kNS8WkyPW7q8Am1qoQXzJ5t6UIlkRFg/A1kwZ
-	 R3pQOR2dXf/1JZMLF1vmjxGWgCdbDSl8CwlusMVSfqNmH0Pn3gQ1VlxhHryQezVR6x
-	 w2KXth04ko8WvbfQB0NY+ia0Kz6QkbPljo/05Ueat5bj0cQbrGzjoD2TnFykdb3V02
-	 +qtMJ95qhsxkf8YXlBbc/ewJ4XGGKSP8xQk0jyMN23IJXucUJ9tExkzx3oJ1yywsHy
-	 m/K8D3k1WKuZw==
-Message-ID: <ccdf16f9-0c75-49bc-98d7-9471bd1e0ae5@kernel.org>
-Date: Fri, 8 Nov 2024 13:07:46 +0100
+	s=arc-20240116; t=1731067749; c=relaxed/simple;
+	bh=EYV1tnRpjTsIOU6yPXGuIMkh+G91GY/ziHqLtllBcWw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oN25bSDQqdoQw+0Kkr5Xd1QC7tErmdyW5NufPaOFMT5D07ZqSfbZZQmH6xjZJZiWf/+rAbBJu9eGdvw8kafWKlpr3eESCkNoSovEdTEX/iDqVAv9UcW8OVvNPVysd4ILVqoZjBMPn1kZvHumpNs9s5MlfS2LwTv9pgmrNDEYSHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=uKvu1lsd; arc=none smtp.client-ip=159.100.248.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [149.56.97.132])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id BA7F126761
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:08:59 +0000 (UTC)
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay1.mymailcheap.com (Postfix) with ESMTPS id 600DF3E955;
+	Fri,  8 Nov 2024 12:08:51 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 32E2440078;
+	Fri,  8 Nov 2024 12:08:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1731067730; bh=EYV1tnRpjTsIOU6yPXGuIMkh+G91GY/ziHqLtllBcWw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uKvu1lsd/WuBSUXjl/93iSz57GA0lqMS4NHmZgIhIVbRRGBAEhdkKTwBWkMvrLNyT
+	 E95wfzlJfO8YVlr0muXSXfjP4O83JATmAITmGynJ3xpS2fjErW8C0OFh9/HjHRi3gP
+	 xBEt5wFExCQ4aKRWY4qV1AC8DsO+3DleLur17cTU=
+Received: from JellyNote.localdomain (unknown [38.179.66.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 6451A40493;
+	Fri,  8 Nov 2024 12:08:46 +0000 (UTC)
+From: Mingcong Bai <jeffbai@aosc.io>
+To: baolu.lu@linux.intel.com
+Cc: kexybiscuit@aosc.io,
+	weiguangtwk@outlook.com,
+	Mingcong Bai <jeffbai@aosc.io>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] iommu: intel: apply quirk_iommu_igfx for 8086:0044 (QM57/QS57)
+Date: Fri,  8 Nov 2024 20:08:21 +0800
+Message-ID: <20241108120838.495931-1-jeffbai@aosc.io>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/17] dt-bindings: net: wireless: cc33xx: Add
- ti,cc33xx.yaml
-To: Michael Nemanov <michael.nemanov@ti.com>, Kalle Valo <kvalo@kernel.org>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20241107125209.1736277-1-michael.nemanov@ti.com>
- <20241107125209.1736277-2-michael.nemanov@ti.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241107125209.1736277-2-michael.nemanov@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [1.40 / 10.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[weiguangtwk.outlook.com:server fail,jeffbai.aosc.io:server fail];
+	FREEMAIL_CC(0.00)[aosc.io,outlook.com,infradead.org,8bytes.org,kernel.org,arm.com,lists.linux.dev,vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[outlook.com];
+	RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 32E2440078
 
-On 07/11/2024 13:51, Michael Nemanov wrote:
-> Add device-tree bindings for the CC33xx family.
-> 
-> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
-> ---
->  .../bindings/net/wireless/ti,cc33xx.yaml      | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
-> new file mode 100644
-> index 000000000000..fd6e1ee8426e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
-> @@ -0,0 +1,59 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/wireless/ti,cc33xx.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments CC33xx Wireless LAN Controller
-> +
-> +maintainers:
-> +  - Michael Nemanov <michael.nemanov@ti.com>
-> +
-> +description:
-> +  The CC33xx is a family of IEEE 802.11ax chips from Texas Instruments.
-> +  These chips must be connected via SDIO and support in-band / out-of-band IRQ.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^wifi@2"
+(I'm not very confident about the approach of this patch but I failed to
+find a better way to address the issue I have on hand, so please consider
+this patch as an RFC...)
 
-As I asked, drop.
+On the Lenovo ThinkPad X201, when Intel VT-d is enabled in the BIOS, the
+kernel boots with errors related to DMAR, the graphical interface appeared
+quite choppy, and the system resets erratically within a minute after it
+booted:
 
-Best regards,
-Krzysztof
+DMAR: DRHD: handling fault status reg 3
+DMAR: [DMA Write NO_PASID] Request device [00:02.0] fault addr 0xb97ff000
+[fault reason 0x05] PTE Write access is not set
+
+Upon comparing boot logs with VT-d on/off, I found that the Intel Calpella
+quirk (`quirk_calpella_no_shadow_gtt()') correctly applied the igfx IOMMU
+disable/quirk correctly:
+
+pci 0000:00:00.0: DMAR: BIOS has allocated no shadow GTT; disabling IOMMU
+for graphics
+
+Whereas with VT-d on, it went into the "else" branch, which then
+triggered the DMAR handling fault above:
+
+... else if (!disable_igfx_iommu) {
+	/* we have to ensure the gfx device is idle before we flush */
+	pci_info(dev, "Disabling batched IOTLB flush on Ironlake\n");
+	iommu_set_dma_strict();
+}
+
+Now, this is not exactly scientific, but moving 0x0044 to quirk_iommu_igfx
+seems to have fixed the aforementioned issue. Running a few `git blame'
+runs on the function, I have found that the quirk was originally
+introduced as a fix specific to ThinkPad X201:
+
+commit 9eecabcb9a92 ("intel-iommu: Abort IOMMU setup for igfx if BIOS gave
+no shadow GTT space")
+
+Which was later revised twice to the "else" branch we saw above:
+
+- 2011: commit 6fbcfb3e467a ("intel-iommu: Workaround IOTLB hang on
+  Ironlake GPU")
+- 2024: commit ba00196ca41c ("iommu/vt-d: Decouple igfx_off from graphic
+  identity mapping")
+
+I'm uncertain whether further testings on this particular laptops were
+done in 2011 and (honestly I'm not sure) 2024, but I would be happy to do
+some distro-specific testing if that's what would be required to verify
+this patch.
+
+P.S., I also see IDs 0x0040, 0x0062, and 0x006a listed under the same
+`quirk_calpella_no_shadow_gtt()' quirk, but I'm not sure how similar these
+chipsets are (if they share the same issue with VT-d or even, indeed, if
+this issue is specific to a bug in the Lenovo BIOS). With regards to
+0x0062, it seems to be a Centrino wireless card, but not a chipset?
+
+I have also listed a couple (distro and kernel) bug reports below as
+references (some of them are from 7-8 years ago!), as they seem to be
+similar issue found on different Westmere/Ironlake, Haswell, and Broadwell
+hardware setups.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=197029
+Link: https://groups.google.com/g/qubes-users/c/4NP4goUds2c?pli=1
+Link: https://bugs.archlinux.org/task/65362
+Link: https://bbs.archlinux.org/viewtopic.php?id=230323
+Reported-by: Wenhao Sun <weiguangtwk@outlook.com>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+---
+ drivers/iommu/intel/iommu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index e860bc9439a2..1ccea83c2c95 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -4646,6 +4646,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e30, quirk_iommu_igfx);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e40, quirk_iommu_igfx);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e90, quirk_iommu_igfx);
+ 
++/* QM57/QS57 integrated gfx malfunctions with dmar */
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_iommu_igfx);
++
+ /* Broadwell igfx malfunctions with dmar */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x1606, quirk_iommu_igfx);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x160B, quirk_iommu_igfx);
+@@ -4723,7 +4726,6 @@ static void quirk_calpella_no_shadow_gtt(struct pci_dev *dev)
+ 	}
+ }
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0040, quirk_calpella_no_shadow_gtt);
+-DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_calpella_no_shadow_gtt);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0062, quirk_calpella_no_shadow_gtt);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x006a, quirk_calpella_no_shadow_gtt);
+ 
+-- 
+2.47.0
 
 
