@@ -1,76 +1,66 @@
-Return-Path: <linux-kernel+bounces-401709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533EC9C1E46
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:45:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A750D9C1E49
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D9B61C217AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:45:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF19A1C21647
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9111B1EBFFD;
-	Fri,  8 Nov 2024 13:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E341EF087;
+	Fri,  8 Nov 2024 13:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="aHjDW8XM";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="aHjDW8XM"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rf37ETsR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237811E1C29;
-	Fri,  8 Nov 2024 13:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1787C1E1C29;
+	Fri,  8 Nov 2024 13:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731073523; cv=none; b=RReAH92mCFY+/mc3DFwfnIQzPAICrEy6vw8Eiim4a0ZXQZm5qoWGiS+Joeidt4702MwHE3o8uZcR/z+5t9kNFPyPofp3SJ5rAjPPoFzghmayw/tD4ErVh8b+KXsuEFPlnfHICfZSKAu4BOnhcvF1kY3u6RKy/BGhdbJb7oRX2bg=
+	t=1731073554; cv=none; b=snPXurTeJiOOUNjZMtjQUUZzUajeWdvxYl66Ak/ik8Zb2EW3d1VG0/jSH3zAlbzonf0hZJXdTAbVqnMVgE9t9Uq+iDuG++SaCRNPxEdv84knkEr/u2HGe7La/TOfNeyxSwaL2eUKbiUwd5QrrDgQPGAxHhCRaZb5ewgcDyTvhXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731073523; c=relaxed/simple;
-	bh=b3aKFShRcOk97EWOL4hpPJ8FbYES5Y8SHGdatwQepto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m7MV0Al7s8ypo77rGU0u73jg1vwGV2yoAqOWJrJCPUoz37TjZAH+G/gIYVtiab17Z9BkXSgyDmwxSpX00AxbiAa0RDyMz3CQRpUZgXcaJ2y6tCMIJ5ZQOywI6oFLFWknJIMVjqZFTk4kzlgwUvOAtCbDiR4F+rSXX2ZM9wOgC70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=aHjDW8XM; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=aHjDW8XM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 193061FE43;
-	Fri,  8 Nov 2024 13:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1731073519; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=dwVIzSmKQhVsbeWBvbg6PtJi2OxH8xyFNmXxdDN/470=;
-	b=aHjDW8XMNLFFjQJHhte+NsP89vV4BxljBNakGiVgkAZD+LwSMs2Rp4EJCLO3kVcQkZIGAi
-	XrGz7AcdHVrRTw7hgC2ysPS/7BcsqdIpEEbL0mOotgYTIp00MfzlyXye25YW5dPOWwjMJ1
-	VORz8wMHrjGnQu7HHmPrJ4TBYR13uUw=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=aHjDW8XM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1731073519; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=dwVIzSmKQhVsbeWBvbg6PtJi2OxH8xyFNmXxdDN/470=;
-	b=aHjDW8XMNLFFjQJHhte+NsP89vV4BxljBNakGiVgkAZD+LwSMs2Rp4EJCLO3kVcQkZIGAi
-	XrGz7AcdHVrRTw7hgC2ysPS/7BcsqdIpEEbL0mOotgYTIp00MfzlyXye25YW5dPOWwjMJ1
-	VORz8wMHrjGnQu7HHmPrJ4TBYR13uUw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 06B1C13967;
-	Fri,  8 Nov 2024 13:45:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VlSdAe8VLmdddgAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Fri, 08 Nov 2024 13:45:19 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.12-rc7
-Date: Fri,  8 Nov 2024 14:45:10 +0100
-Message-ID: <cover.1731071660.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1731073554; c=relaxed/simple;
+	bh=DlaqznImQXYX1sv03yCEQEkG4Rcr3MjdRRGOPmOm12U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j0JShK1jyqKDeE82rS4FqDjAlmLDlYMpRpOcflFqnqt66t9ZOZuEKuOogy/jwL1t8jz0pq10s4sCPaxMMI3COvAXZPfe44pp5qVuBqldwMdFM+oUI1vVzaKV3TcHDf8uzqCKlw/ftWW+WoQxxN/esZXUYxNyX5thJTsjKHlny9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rf37ETsR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F709C4CECD;
+	Fri,  8 Nov 2024 13:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731073553;
+	bh=DlaqznImQXYX1sv03yCEQEkG4Rcr3MjdRRGOPmOm12U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Rf37ETsR2eZkx91LRDuGsTf7omjQET03oDI6ONerOec1cq6UBvGHKvSOmdBGvE63I
+	 IwfqJ2Z/m2NRWn6xfmCez1fDNUFSunP6Iz+zEXwn+ttNObqpYy6eSnYIlcTJ3R0fcS
+	 mcr9opoUND8W2afFjoQQu6jcUJ5QTXWoGtyMRT+x4S+THljzmt//gLf13mi/LePUi2
+	 wXHNHDPN9hEAy3waLJp29NeqoO9ZnJWPKy5F4O0khM6t/MpO1KhC9KIm7KqJiw887m
+	 S9t1sbBFKd+1TnZnT6G+qG6/TucbrcmKqGTaO3RtKxKfQB6amcYr8PkzbEmm3Xyi35
+	 tcsABoGWU8Cow==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCHv9 bpf-next 00/13] bpf: Add uprobe session support
+Date: Fri,  8 Nov 2024 14:45:31 +0100
+Message-ID: <20241108134544.480660-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,73 +68,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 193061FE43
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCPT_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
 
-Hi,
+hi,
+this patchset is adding support for session uprobe attachment and
+using it through bpf link for bpf programs.
 
-a few more one-liners that fix some user visible problems. Please pull,
-thanks.
+The session means that the uprobe consumer is executed on entry
+and return of probed function with additional control:
+  - entry callback can control execution of the return callback
+  - entry and return callbacks can share data/cookie
 
-- use correct range when clearing qgroup reservations after COW
+Uprobe changes (on top of perf/core [1] are posted in here [2].
+This patchset is based on bpf-next/master and will be merged once
+we pull [2] in bpf-next/master.
 
-- properly reset freed delayed ref list head
+v9 changes:
+  - rebased on bpf-next/master with perf/core tag merged (thanks Peter!)
 
-- fix ro/rw subvolume mounts to be backward compatible with old and new
-  mount API
+thanks,
+jirka
 
-----------------------------------------------------------------
-The following changes since commit 77b0d113eec49a7390ff1a08ca1923e89f5f86c6:
 
-  btrfs: fix defrag not merging contiguous extents due to merged extent maps (2024-10-31 16:46:41 +0100)
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/core
+[2] https://lore.kernel.org/bpf/20241018202252.693462-1-jolsa@kernel.org/T/#ma43c549c4bf684ca1b17fa638aa5e7cbb46893e9
+---
+Jiri Olsa (13):
+      bpf: Allow return values 0 and 1 for kprobe session
+      bpf: Force uprobe bpf program to always return 0
+      bpf: Add support for uprobe multi session attach
+      bpf: Add support for uprobe multi session context
+      libbpf: Add support for uprobe multi session attach
+      selftests/bpf: Add uprobe session test
+      selftests/bpf: Add uprobe session cookie test
+      selftests/bpf: Add uprobe session recursive test
+      selftests/bpf: Add uprobe session verifier test for return value
+      selftests/bpf: Add kprobe session verifier test for return value
+      selftests/bpf: Add uprobe session single consumer test
+      selftests/bpf: Add uprobe sessions to consumer test
+      selftests/bpf: Add threads to consumer test
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-rc6-tag
-
-for you to fetch changes up to 2b084d8205949dd804e279df8e68531da78be1e8:
-
-  btrfs: fix the length of reserved qgroup to free (2024-11-07 02:08:29 +0100)
-
-----------------------------------------------------------------
-Filipe Manana (1):
-      btrfs: reinitialize delayed ref list after deleting it from the list
-
-Haisu Wang (1):
-      btrfs: fix the length of reserved qgroup to free
-
-Qu Wenruo (1):
-      btrfs: fix per-subvolume RO/RW flags with new mount API
-
- fs/btrfs/delayed-ref.c |  2 +-
- fs/btrfs/inode.c       |  2 +-
- fs/btrfs/super.c       | 25 +++++--------------------
- 3 files changed, 7 insertions(+), 22 deletions(-)
+ include/uapi/linux/bpf.h                                           |   1 +
+ kernel/bpf/syscall.c                                               |   9 ++-
+ kernel/bpf/verifier.c                                              |  10 +++
+ kernel/trace/bpf_trace.c                                           |  57 +++++++++++----
+ tools/include/uapi/linux/bpf.h                                     |   1 +
+ tools/lib/bpf/bpf.c                                                |   1 +
+ tools/lib/bpf/libbpf.c                                             |  19 ++++-
+ tools/lib/bpf/libbpf.h                                             |   4 +-
+ tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c         |   2 +
+ tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c         | 337 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
+ tools/testing/selftests/bpf/progs/kprobe_multi_verifier.c          |  31 ++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_consumers.c         |   6 +-
+ tools/testing/selftests/bpf/progs/uprobe_multi_session.c           |  71 ++++++++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_cookie.c    |  48 ++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c |  44 +++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_single.c    |  44 +++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_verifier.c          |  31 ++++++++
+ 17 files changed, 653 insertions(+), 63 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/kprobe_multi_verifier.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_cookie.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_single.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_verifier.c
 
