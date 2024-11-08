@@ -1,155 +1,151 @@
-Return-Path: <linux-kernel+bounces-400989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A179C14BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:33:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6BE9C14C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CC05B21DAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D600A1F2287E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9F5198A17;
-	Fri,  8 Nov 2024 03:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FEB18E36D;
+	Fri,  8 Nov 2024 03:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hcz4G7Lg"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hPzxGdSc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C80218FC8F;
-	Fri,  8 Nov 2024 03:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74093126C0A;
+	Fri,  8 Nov 2024 03:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731036758; cv=none; b=mZ+pNh0Wh9fLp+EnrYo6gXVnN/Xah40q1wK+/m6rqxOcscyikLqbnYV/FDwYSfY+UMUqlEisKi0Z1D6B7kbq3m2rqQIIx5bcjLsnxM6nfbcnBYddX4w6f0yPPDQACoPEd8LcuugMQpKrp6HASnmsp3fDRbZoVHsVPiIPf/X/tng=
+	t=1731036817; cv=none; b=d4tzlmN0GtLe7bImZNBhwuCX/epW74KVZNGDkAEXusJpIILX1SjeDJP8x5gYgYeKAdSEN2Tnt/RChRXhqjeE02vGhvLIv6/THcH2y3hU2iEv+kDD9RInEHdPhEyvmWwuTn4UtHsjvpQs8D/1wnILHn2wF0N+MdDHfl46Ys9ZAys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731036758; c=relaxed/simple;
-	bh=yqi+8W/AjWyxg6UIkNlhX2akX3fg7fx85RwitAV7hno=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nn04dKLTh7XeGY3TQMWEvkR5RBQF/8HqVRZah5IQYJYhaWQgKlBJYDmpxY7TG1YUMg7WZU41c932MbP/LvIMkzMs8tddPMpBNQ/2Dn5vOU402fjAZo28ymczWP+2OyICcDCBbv8FRMot2CfwGnPtMs3bFWKLQnkDg6u0nosqF6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hcz4G7Lg; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 142a47829d8211efbd192953cf12861f-20241108
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=ANCM2Uqwm4VGrcrdHMI1jTNeMDeM6aY6JeQgDAIPhDY=;
-	b=hcz4G7LgCRjjObPkQ1KGCY4M3VYByK9KtYS/oEfD2dZwTITw6C6BY9JW0i4QnmTQMaQqQUxuBcSZ4fL7af+tLcf9aghX0Cpr9qc5HgQfLFo/Xv633g1DduBoKvonV8LKHf/n3+n/5SzW4QHZUh5SIOMAMrv1BV3dzGSVKsFnG3E=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:085e565c-d579-4483-a96b-79785025a367,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:de9cbe06-6ce0-4172-9755-bd2287e50583,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 142a47829d8211efbd192953cf12861f-20241108
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-	(envelope-from <yunfei.dong@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 644738266; Fri, 08 Nov 2024 11:32:28 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 8 Nov 2024 11:32:26 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 8 Nov 2024 11:32:25 +0800
-From: Yunfei Dong <yunfei.dong@mediatek.com>
-To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
-	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>
-CC: Hsin-Yi Wang <hsinyi@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>,
-	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, "Steve
- Cho" <stevecho@chromium.org>, Yunfei Dong <yunfei.dong@mediatek.com>,
-	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v6 5/5] media: mediatek: vcodec: remove media request checking
-Date: Fri, 8 Nov 2024 11:32:14 +0800
-Message-ID: <20241108033219.19804-6-yunfei.dong@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241108033219.19804-1-yunfei.dong@mediatek.com>
-References: <20241108033219.19804-1-yunfei.dong@mediatek.com>
+	s=arc-20240116; t=1731036817; c=relaxed/simple;
+	bh=nKb6Olhb7wDs2d9mq5cgNJcx5ZJO6XdVJTdrG7Vf3rA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Tw3t0dI3NKMLk4sFDlWCGfcblva7aPwCe2iggoDzlUvjfhyydp4TqV6oo06V4HD6LBgIIyUDbzG3mJVkm2lNjsZpBu1jTOVTwll+fMoD5FZ9M3U9trTRY+U//uoW6rXiytP6i76VZeiC+JVHTK20ZkPDuZWXn/gKdUGqZoL/Y5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hPzxGdSc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731036808;
+	bh=hS2bhoAqx2Bhg/xigxq+0fySwFLwDmPl2Qj0sfgqZMI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hPzxGdScX+h6FaM1qPQ/VpbfY86WTuEaNTQDKctSr73wJz4makYhdjHJ6+BxcsALl
+	 By6Pp8otxEJ3rMZSwHaS94W5o6+81N68g8DfhYjX/GsleykjjxRGqkcCV+jdE7mvU7
+	 /VOfDgKNsTcKEmjBT0/+EpKbsOt5FeFOBiJCl3F/9Lur5dhAk9goWGz+eCGVA1pf/m
+	 E0tI/vJTNWpNhRKQ+MnS2h98XYY+VNSLYAetpwuSa7OBraAAOMkBAHsyXe7qzjpVvk
+	 6FHhRyDftAPs0HUxkKt1XXMj9kBqFv0KlAjAskrAlMIn+H2isJJaGhiRbL99xCKuMa
+	 5lF8vM+CfBj/Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xl4KL6tBSz4wy9;
+	Fri,  8 Nov 2024 14:33:26 +1100 (AEDT)
+Date: Fri, 8 Nov 2024 14:33:28 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: hexue <xue01.he@samsung.com>, Nam Cao <namcao@linutronix.de>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip tree
+Message-ID: <20241108143328.6d819fcb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--9.264300-8.000000
-X-TMASE-MatchedRID: 6sPUm7w8jTpmcP5F4hatbcnlbo5l7mGFBLtx+64GFanjsTquy0JRi4ma
-	Qfsqx1XAWKuGHPyQzf64VxGFQBNJeJCoy9iDotiwDB+ErBr0bAPvJY9pBzgg1Fczpnf2wfW+/Ge
-	vfoH427ppx84QoERxMGxnReZpseJrr78SC5iivxwURSScn+QSXt0H8LFZNFG71sULACB0qRIxeQ
-	pO/P9szbBz1znW2KIohcXEhM/4aanHXAdvslucuOBnLZk2tw2HlExlQIQeRG0=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--9.264300-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	E17E845E3D081E50660A83A29D386E17279CC6C003956C5BB4AD941447119B032000:8
-X-MTK: N
+Content-Type: multipart/signed; boundary="Sig_/Pbq5oN=tdOBlv6PnSE0YoSV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Setting the buffer status to error if the media request of
-each source buffer is NULL, then schedule the work to process
-again in case of access NULL pointer.
+--Sig_/Pbq5oN=tdOBlv6PnSE0YoSV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+Hi all,
+
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+io_uring/rw.c: In function 'io_hybrid_iopoll_delay':
+io_uring/rw.c:1179:9: error: implicit declaration of function 'hrtimer_init=
+_sleeper_on_stack'; did you mean 'hrtimer_setup_sleeper_on_stack'? [-Wimpli=
+cit-function-declaration]
+ 1179 |         hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode=
+);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |         hrtimer_setup_sleeper_on_stack
+
+Caused by commit
+
+  f3bef7aaa6c8 ("hrtimers: Delete hrtimer_init_sleeper_on_stack()")
+
+interacting with commit
+
+  01ee194d1aba ("io_uring: add support for hybrid IOPOLL")
+
+from the block tree.
+
+I have applied the following merge fix patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 8 Nov 2024 14:06:37 +1100
+Subject: [PATCH] fix up for "hrtimers: Delete hrtimer_init_sleeper_on_stack=
+()"
+
+interacting with commit
+
+  01ee194d1aba ("io_uring: add support for hybrid IOPOLL")
+
+from the block tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- .../vcodec/decoder/mtk_vcodec_dec_stateless.c      | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ io_uring/rw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
-index 3f94654ebc73..251111678fd8 100644
---- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
-+++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
-@@ -363,10 +363,14 @@ static void mtk_vdec_worker(struct work_struct *work)
- 			  ctx->id, bs_src->va, &bs_src->dma_addr, bs_src->size, vb2_src);
- 	/* Apply request controls. */
- 	src_buf_req = vb2_src->req_obj.req;
--	if (src_buf_req)
-+	if (src_buf_req) {
- 		v4l2_ctrl_request_setup(src_buf_req, &ctx->ctrl_hdl);
--	else
-+	} else {
- 		mtk_v4l2_vdec_err(ctx, "vb2 buffer media request is NULL");
-+		v4l2_m2m_buf_done(vb2_v4l2_src, VB2_BUF_STATE_ERROR);
-+		v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
-+		return;
-+	}
- 
- 	ret = vdec_if_decode(ctx, bs_src, NULL, &res_chg);
- 	if (ret && ret != -EAGAIN) {
-@@ -384,8 +388,7 @@ static void mtk_vdec_worker(struct work_struct *work)
- 	state = ret ? VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE;
- 	if (!IS_VDEC_LAT_ARCH(dev->vdec_pdata->hw_arch) ||
- 	    ctx->current_codec == V4L2_PIX_FMT_VP8_FRAME) {
--		if (src_buf_req)
--			v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
-+		v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
- 		vb2_v4l2_dst = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
- 		v4l2_m2m_buf_done(vb2_v4l2_dst, state);
- 		v4l2_m2m_buf_done(vb2_v4l2_src, state);
-@@ -403,8 +406,7 @@ static void mtk_vdec_worker(struct work_struct *work)
- 	 */
- 	ctx->cur_src_buffer = (ret != -EAGAIN) ? NULL : vb2_v4l2_src;
- 	if (ret && ret != -EAGAIN) {
--		if (src_buf_req)
--			v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
-+		v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
- 		v4l2_m2m_buf_done(vb2_v4l2_src, state);
- 	}
- 
--- 
-2.46.0
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 93526a64ccd6..c792af8c4476 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -1176,7 +1176,7 @@ static u64 io_hybrid_iopoll_delay(struct io_ring_ctx =
+*ctx, struct io_kiocb *req)
+ 	req->flags |=3D REQ_F_IOPOLL_STATE;
+=20
+ 	mode =3D HRTIMER_MODE_REL;
+-	hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
++	hrtimer_setup_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
+ 	hrtimer_set_expires(&timer.timer, kt);
+ 	set_current_state(TASK_INTERRUPTIBLE);
+ 	hrtimer_sleeper_start_expires(&timer, mode);
+--=20
+2.45.2
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Pbq5oN=tdOBlv6PnSE0YoSV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcthogACgkQAVBC80lX
+0GwAcwgAjblZNa6BKmjS1KArenAoD4Easen0xHYzFP9jZsFlveAtrYFMPTDsFBb0
+HSC2lfjSuSAivH1vmzUr4sWpds/Gz+J9CX0tXbX3n1mfAEs/g3wuBHvR8r2MJ9di
+D+4YA1trA2eR6RyYq6vefacKXZbiG0yvkSfmfc58lXiw06jMUBZ3x7ox+s5N78pa
+MJJT4k8MmfWzRRehjSj9Na6OygcO0ovtk9/PHeDUe1qxzYJh3P11wLhG4njNDDth
+69tntXyF3xzT8tM0v/jWWsRIJ2xeVZx1WLn6AhyI2GKflQnYWxlXqFSz92X71qR0
+fIxclPmFcDtR5nijh9oyncNtU6Sm9A==
+=ZglG
+-----END PGP SIGNATURE-----
+
+--Sig_/Pbq5oN=tdOBlv6PnSE0YoSV--
 
