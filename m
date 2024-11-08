@@ -1,338 +1,116 @@
-Return-Path: <linux-kernel+bounces-402443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F5C9C2791
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:29:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E67A9C2793
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5331C22AC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:29:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14983284090
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3C61E2308;
-	Fri,  8 Nov 2024 22:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF72D1F5832;
+	Fri,  8 Nov 2024 22:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kA14MVKM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D0l9cm3A"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE381A9B51
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 22:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731104970; cv=fail; b=LpxuhFMMHJL0iBw9J+2+fVMaujDXhw6d5JEhnWkmhacAaGBZAih4OOw+cO9rMT66O7jX1KMvuFcu3g++eQEsGAR1TX5MVHb4mD2m1Zg9qivdUCnHyWG/WpjnthnbNU3PX6ovpT8qjbmMM+i36y5XGP3A58DLSmCJ7EKuHSJ9u2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731104970; c=relaxed/simple;
-	bh=MhpyXbpBjK+JtgsvqqHp0P0pT4kXGmkxdXOx/Vo26qg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=D8NHWHcNwrZYfPmLLuERu6Ew2GnGNyfVfQxi8sqNbRHqQuZ5Bj8oqrrQVaW/IWDWI3WkhbdI/vgLdQfOB+96Hcx93K0xKhIBI6j4YrywW/r7JfM/bJTdSBf6zOxyaGwAlTdumEd6lp4n9nALdShX6tF2I57Ox4gD7A0LNJCip0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kA14MVKM; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731104968; x=1762640968;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=MhpyXbpBjK+JtgsvqqHp0P0pT4kXGmkxdXOx/Vo26qg=;
-  b=kA14MVKMwqY0D/rkykftTCEkjqXO/XPy5rVkxTBCJ4geREevcus0Ol1y
-   RAjq96m+Wf8jnVfXAkZqBI57vwG8SZZDIQ3Ni6dMEJHNZOHBQHmTAz8QJ
-   uv+Ovu+GIbaMbprrAWfH/6lOoK9CV4cmAlsI8sFwiy/U1lJ7ulP9kvALx
-   F7iu0/pmWwPjhqzvEPzEfKooTpgs1jxJAk/WJEIfZNJz8+3yEYqVBJ88Q
-   0k5/2K0F9vG9cYHvjXTeYWo81S5JFGznuTDWa0NFUQxwhYQv8c5SuM9Ke
-   IgXFtexQXDM6Ja7Nd5dICP96ex3RDTot+gWrIelz0vaVDI443Qq0htomV
-   Q==;
-X-CSE-ConnectionGUID: Do2WlTviT5Chz7SJBGdl7g==
-X-CSE-MsgGUID: 5QIAFLDaQ7eiPrxoscQJCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48457509"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="48457509"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 14:27:05 -0800
-X-CSE-ConnectionGUID: QRJ2Rs1tRKmfyI+u9mFP/w==
-X-CSE-MsgGUID: MXwf6HJZQRalgHgVkx2M3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="90600667"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Nov 2024 14:27:04 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 8 Nov 2024 14:27:04 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 8 Nov 2024 14:27:04 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.171)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 8 Nov 2024 14:27:03 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fbb/5xxzwcfNiMJzS5q8BV0TPA4LAPfZmbvVDxyKdJHTQpZzs9KBHMR/3QkqCnk9ptBQCE389d05PylmUdoLOJiewSRoXmpr6VrzXQX2xm72LLnghsDEPA2WBvU4on2+2FgHlEK95c2Aem76wwuB1Uiltz+3uZF4CQMI7Pcur3U+Rhh0GgLAECPf5bVuVaTtqq5HQZReuPKOr+omiGLOqL9E36QZTIBN3UjLXQqUjL5MsJzUiCUOiNudoPgLM1kYXR2WiixZv0onG9ViPOq6uZlQyQgf2SxFSkw4MQ7BP8r8rKUnGH1x0CrZ5TNm+SIH0PPMUKMWrXH1W8bpdbWCwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xpdUkiwIrD5LBsz6jYFBZ68u9pZh09iMyPNG2O2u4NE=;
- b=lPOIz1ltbg8fIwlECohCxACy/8tEskfA/+Op3g9rAwYGR1VuaA4ElQCtVwV8jq3dAe3QGRK9eTjS6r0LSN2nBMiyec6b5/Qkkhl+/R7AuJGvOA8DDOlT42GXG37SoDJN+9rulLvYlvcci+zMBLe/pNGntM0it79DupFIBOCAKSSPYqpBUIRsQYJbwcVF/OC2SxBUlY83EtkO5JRbFQmnIl8AF8Gcf0839UrM2MqEEiBa4hNiQ+fZXIK9ilqAMrL/pGM195AtItk60y7e+L+PAUnSA7pvWs1Poei1x0ncV6vCuU5IhQcPGzx0Lu+WPyjZFSUDJVd7SpqIY+xxUxeaWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by IA1PR11MB7941.namprd11.prod.outlook.com (2603:10b6:208:3ff::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.22; Fri, 8 Nov
- 2024 22:27:00 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%6]) with mapi id 15.20.8114.028; Fri, 8 Nov 2024
- 22:27:00 +0000
-Date: Fri, 8 Nov 2024 14:27:32 -0800
-From: Matthew Brost <matthew.brost@intel.com>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-CC: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, "Boris
- Brezillon" <boris.brezillon@collabora.com>, Steven Price
-	<steven.price@arm.com>, Mihail Atanassov <mihail.atanassov@arm.com>,
-	<linux-kernel@vger.kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
-	<dri-devel@lists.freedesktop.org>, David Airlie <airlied@gmail.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Alex Deucher
-	<alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Shashank Sharma
-	<shashank.sharma@amd.com>, Ketil Johnsen <ketil.johnsen@arm.com>, Akash Goel
-	<akash.goel@arm.com>
-Subject: Re: [RFC PATCH 00/10] drm/panthor: Add user submission
-Message-ID: <Zy6QVH9FpAI32hMz@lstrano-desk.jf.intel.com>
-References: <20240828172605.19176-1-mihail.atanassov@arm.com>
- <c64be651-2f40-4535-a537-b8304e6556ce@amd.com>
- <a3e78bf7-931e-4e49-8933-c3df9a503ffd@arm.com>
- <96ef7ae3-4df1-4859-8672-453055bbfe96@amd.com>
- <Ztd7g4Q8V9lFZ53R@phenom.ffwll.local>
- <090ae980-a944-4c00-a26e-d95434414417@amd.com>
- <80ffea9b-63a6-4ae2-8a32-2db051bd7f28@arm.com>
- <20240904132308.7664902e@collabora.com>
- <a5a53492-9651-403e-b613-91ef0b9e80b6@amd.com>
- <ZvKGzSeA7OT-hZQS@phenom.ffwll.local>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZvKGzSeA7OT-hZQS@phenom.ffwll.local>
-X-ClientProxiedBy: MW4P222CA0006.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:303:114::11) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538E51F26C9;
+	Fri,  8 Nov 2024 22:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731104976; cv=none; b=YTUu9xqXniz6at/iwAgVJMcH65Imm1ECkkVcvA6FJW+mp8VTLb1QW7Np9E1O5/d3QyrBknl4FVYzo4PmZ30rBiElrm1MRpxRKkCrr3Yt23xdwGyYh+PE6i4BPWaaSgbmxM3TAC6945+32HQZx8OODKgcs3yiC32Lr5kdAHi/Ktc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731104976; c=relaxed/simple;
+	bh=qJjCe1x/+zqlWuKc7d+aXQgxzYOBvB4ApAoxF5HeEwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RraB3DZzqHja91gRxkzcM7WavzFXss7IZKHEkej4rdP5a79eV2F3IIe6OmuI4YvzUQwx4lAn6ISjQIftvcXMWxqV9F/xrIryEfLPoXjtGVoJSkyPBQ5+JyM3N/xRgo9q4sWryU0lfbFnfOuR5Li/DsvS+3Q+tSk5O0uMH6n/bok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D0l9cm3A; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=vyXWLdY22mbau7qfmkpZcxZ0TUXHpJ4OrztVMYMMO3w=; b=D0l9cm3Ar1Lv9+3q4mlHfKdV6X
+	runW4UHkA0IjIyBpEzIN1Yvw3dy4aGac2aq11Gtkg8PvUXnRsIRtA7kwNBumbPms/CO2QoRe/G6oF
+	TGNACtbN6UuuYPydxGmq6O+2xbVV3Of6qKfNGMe/JwSvDzauKd+Sd+F7cFYckZMdc+9+mzpw+FxSO
+	sv76iw9U+U7IFO2VPe3pCqFidKD+wEK6FhB20SC4UDzhm30/LqvQBSSggR6Bps+Xz7+xjNvyNX8bf
+	bz1kiX7OBbuBsqK+WoM8HKss/fGae7kkB3MtZ52NeuCUSUEhzmZDa139fzEw/z0pr//mKz+69Rsy0
+	ZwxcQ60w==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t9XTt-00000009Nig-05OW;
+	Fri, 08 Nov 2024 22:29:30 +0000
+Message-ID: <4ec3e311-fc25-4732-9b93-5b8f0332cb82@infradead.org>
+Date: Fri, 8 Nov 2024 14:29:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|IA1PR11MB7941:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4fc730eb-808f-4661-1e4a-08dd00447672
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?d3pndlNkVGFRN2RzZTl6VzZyZW1mbFI3UERxNXNPVTR5R0hLNHJEMVVaNlhi?=
- =?utf-8?B?RXJFZlJ1VnZvNE92L1ZMUUo2UHg3aGZzNEMzM09TWHd6bEFkRVZqSXpsVHFM?=
- =?utf-8?B?T0dkSEtZSFJ6eHhPNWp2K2tubHhBamM3YUl3NitHME4vWTNqTVBFNm9pMHB1?=
- =?utf-8?B?WDIrMXc0OVgwY0dYUTY3K3o5NWRPMHhRdW5mekprQy9sbDMzTFNWb2xpeW56?=
- =?utf-8?B?dU5mNjZ2QzNqK0VZOTdUT24xdURSTkdDT0VQdngvT054ZFpFSGc5d2VTL0Fi?=
- =?utf-8?B?Q1htTHBDc0dDRWV3UmtteDhySHc3d1RzdjU3aTBjUXNwRzQ1d1RQM3RuYW9J?=
- =?utf-8?B?N2N5Mi9hNCtVeGhNbGhuWHJIb1RMRHFHM3k1RUprS3JIN3FDdklST1lST2Uv?=
- =?utf-8?B?QlpwTkwwVENmL0JIYVVoWStNclJDdi82MDh5NkJUKzdEbEJOaW1sZFNMVE5l?=
- =?utf-8?B?a3ZCSW13ZVVRbmxSWWRZWjRydFMyQkNsOFJTcXdINWRZczJiQy84clRMUWky?=
- =?utf-8?B?OFFUbk40RVdMZFcrSGttOGJFdmhvSnlJWVJEWlVMV1pQVEpmTkxPdkFmMmZi?=
- =?utf-8?B?MDNTYnN1WDBLQmphRDE1OGlkZkpGd2FEajdpaWpUNm9hcW9tcjU4bHZJT3J4?=
- =?utf-8?B?ODV5UGNmSlVreW9UUlNQU3FIVDNDL0huenBncmFvVVN6a1Q0QllncWI0c294?=
- =?utf-8?B?dFU3ZVEvcjY5eExQaE00TlNLc0RNeUl2NzU4SnppaEgrM1FhbUNPSnNiOW10?=
- =?utf-8?B?NUdUTkFNSG5OZ0x6dy8zeUpFeVBkaUl0U2pRcHBaektJcjBkNHIzcU1QQ2Jj?=
- =?utf-8?B?aDdNOEZEWENyKzU5MUZudmRIeE1KbUFpTlpqaW5pekh0NUFtU3ZSWTdHWGhm?=
- =?utf-8?B?Z2ZIN2tXZlRjMk5nTUhRZkdPNXJkazc0c0FwN0NRT0tJeUYrbEhCRUhLdmtz?=
- =?utf-8?B?anMwT2Q0QVV0U21QeEFrV0xPb0Y3eWxuRmJSditnd2NJdzFUUGU0QkZvQnM3?=
- =?utf-8?B?cXFyNzM0TUxneVNGQmM1WjZQbGIxRVl2UlNwelg4c2NwTll2NERVVDdIL1ZM?=
- =?utf-8?B?Z3h2TkJuQ1JVRHdDK2ZHc3JFZFJ1QlRnUHU4d1FwLzhBbnlIcUNRcXZZMXl2?=
- =?utf-8?B?S0VYTU4xTG1ObExRaFJLYzNWQ3NyN2NtclprOUdaWTU1UlgxTDMreUdEY0Ja?=
- =?utf-8?B?VENsODNjWEZPR0kxMWNhWVZqTW1pYktKclNHbHZNNVhQdzM0NjNoYmVpWHRy?=
- =?utf-8?B?eHNaenYvUklEQjJDdHhxWlJ6Q1lkV1gzdWxrOElBMk4zN01uUkVGSXpZdVhC?=
- =?utf-8?B?SEtSSldTV2I4TXpmcFlhSFgwRWdBNmtNUU1tRS9KR0x3ODBHQjNFYjVJL0dT?=
- =?utf-8?B?eGJ4Mkpkalo5UVVacWwwaXRkVGJtMFZRVUFpem54TmpXOWxTUm5jT3U3eHN3?=
- =?utf-8?B?SkxDQ2tqTEJ6U1N6MXNidWRJZjBYWGZ4WndJY1Q2aC9Ddk8yMS9xY29GUStZ?=
- =?utf-8?B?VFE4NEhEWFFlU21FNVhGTTAxelAvRXFESVh2M0xJbmQ3dHpzS3R4eit6YXU2?=
- =?utf-8?B?QXdwNXlneXhLMTRTbCthSnBSajlXVVNHUldNRU9KUlM2T3BKdG9yRkFmM2x5?=
- =?utf-8?B?NVIwWnczblBpbDMrZGVtWGwrVnUyZzZZakVkZGFnRU5JWVV3N1NoMlFpakwx?=
- =?utf-8?Q?LORzKwbiXZ3HJkL+nogf?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YUxZOHJFcGYzYjd2ejBOVThpdkFGL0lkNGIxMWRham5HODVlaE54ZDU0WGh5?=
- =?utf-8?B?YmZLMm1zZzEvblprclBNRUFNd1N1dUFoeTI1U0gzNmthRHZCOXpCc0xKalhs?=
- =?utf-8?B?SmpnQmVaQkprTmh6R3F4aDJ1TkZwZmxHcWpNYWIvTDJzUVJxYTRSUE5vRGg5?=
- =?utf-8?B?a3pBT1hPVk5kVzhGbjBwQ2FXaVU3SnR0dXc3dy9EeFdETThsVklGcm9DVHdG?=
- =?utf-8?B?dVh4RXpLTG1PTEd3WmhSTkV3YWUrejlrZ3R0c3dkZG1CcHg1bTBFTlpFVk9w?=
- =?utf-8?B?UXkyTTN6dVZOVGs0NldJdGRwN0grWjNPV0gwYXo2YWRwdnVZckQxckZoVFhQ?=
- =?utf-8?B?Qis3UzJhbjRMbkRLa24zSWp3Y2RLUWFFQ0JvdU9PQWlrQ2NqODRFMzU4SUJn?=
- =?utf-8?B?aTcrSDBuZzhSWW5rcm1kS3hTc1VJT05vazc4M1BBQ3lJSG9ORTZWSFZMZEVD?=
- =?utf-8?B?bzQreHBTTDloUkhvSzZnandNMzhsR2dJYXp6cGxzVmJ5bVZLVEtCeXdiZWJ4?=
- =?utf-8?B?Mi9taUF0dmthWEtseFQ3RHEwd1BtT3NRRnI0VENWczFFdkFPTkRDZ05IV0dm?=
- =?utf-8?B?U0FqeDNrZjlMQTN2UzExTEpSYnZOT2trb3A1VlVNaUN6TVlxUFZ6UjF4NkJ6?=
- =?utf-8?B?Q0l1NWczbFFRM2huV25xdWt2eWtGd1VRRzVLeTNkdTJWaFdpcDRVUzlTVW4v?=
- =?utf-8?B?WlNDTjdrUm1lMGRLMFJjUWhOelZiMGU5dmRCZ2xzMGtoaVNGTjdZUFZkVml6?=
- =?utf-8?B?a3RPMzFtUmdKUkFvNE1ZMHZlaEVwRmM2M25vSjgrSzRVQVdGeDRkQm40cU9a?=
- =?utf-8?B?bllnTUZ3ekxRY3M1WDVadVNaUEhoeFI5a040S2tSay9qNE1MK25FUE4zR2Vz?=
- =?utf-8?B?SVVPeHpqWVNZeWROWUd0Q3RacTlwR3psdGFhaDdMMFRyRmJIVkNWYk50NmFl?=
- =?utf-8?B?aytnYUlpNnRaUFFlbUJiN0xiYU1XMHFPay95NStrejRDV2Y0M3l6RlViRk1N?=
- =?utf-8?B?YkN5WUZtTEtILzU3QnpVczFyZXBPUXVKREpsWExpaEVOa0tsRnZsbWZaNSsz?=
- =?utf-8?B?L0ZxMFFteTMrOHdUL0ttbXpOZDlxeHN5ZlpDVGxZSTJNRXRiZjJ6UGZUb2dN?=
- =?utf-8?B?T2pMR0VzaEs0YjBINEwzVUwwam9wV3MwcXdkVkJkRUl3ZERFWmpzRWppTWJs?=
- =?utf-8?B?SUYvc3FkN21QNVN6SStySjU0QkFIU1NGejZyRk5kcFRMZFhGNXk0MFJ1MnJh?=
- =?utf-8?B?NWsrODQ3S2l3aXJXcjBxNjdTMHBGTUxQb2pqVjBhNDZPYXQxeXhHRFU0T21a?=
- =?utf-8?B?SUIzVlFsS0NJM3V2TktsY1hFOHQzeTIxaldpcTlvdjFMc3FIVitHV3oyb0NE?=
- =?utf-8?B?eW1JU3RGeFkzNVVqNGpYNE1qYUhBWWtMamtSQjVUMnZ0WVl5bTlpYTNFUXBx?=
- =?utf-8?B?enJvQVRhUmlRNHNjNW5pT0RRQWN0dlUrVi9NWHlIc0xJb0RWcEZjTFZRWFo3?=
- =?utf-8?B?cjZRbHJOTGJObXh4L0lPZmxnd1JvT09XSGo3K0V0c2xlUGQwSFNzNTc1MzN1?=
- =?utf-8?B?NVljWlYvbE5zNThTbDlnNTJTb1p5aUpqVnBuS2MvcjJUaEJBbFdoMzFsS01a?=
- =?utf-8?B?NkpDMFA2N29xbVpKaTlveG41Q3lTZDN1VHc3Uzg1bVNVbCs5bno4RjJXaEZ2?=
- =?utf-8?B?VDUrYTBvQzZDa2YzcnBlZDI2V0J4VGFVblk5V2RjTXJBQ1pGOE5ZaHVZTjBY?=
- =?utf-8?B?bldOS0EyVTFIT0lsQVk1YzMxVW1DR1pxREhJRWpFSENwQ3Q0OGEzQ3dNWFVI?=
- =?utf-8?B?anVKTjBFd0gzV05HQW9Za21GYnp6WGw2cGhXRFJtNHRNVzg0czBuU2FoeHRl?=
- =?utf-8?B?eW90clJHUlNJeHhORE1rczNSQ0NiSjFYeHRRS2hrMk5uYmVZakpHYmVHbDBN?=
- =?utf-8?B?SVJVc04rUVFXSWY2MUdQNmd5WWh6VUN0YXRLanZIcXltRXpuYm0zaTludFor?=
- =?utf-8?B?VVBZanVGTENybER0L2NnY0Z3amROV25rSFY3TWJSd0xZM3F2NXlnV3BwajE1?=
- =?utf-8?B?Tmd0UWdFaWRqUHFBQlVoTytEU1BXUFAyTWZUUFZvMzNZeWVWY01RcVFYYjVV?=
- =?utf-8?B?WnRlTTF6UDZ4MzlVV25uaHVCNXhtc0s2OTVSL00xLzVBb1A1S3l5MG9KUGEr?=
- =?utf-8?B?cXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fc730eb-808f-4661-1e4a-08dd00447672
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 22:27:00.2848
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rFojaXDR2BqUjovf9ddhu+nXf/XmlYQoep5Vf+ZHonWu5Q5HwvSE/ssp6njzml7ZrFTJB+kXl0C5ZsO9tE9gQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7941
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: hwmon: Fix typos in sch5627 and max31827
+To: Abhinav Saxena <xandfury@gmail.com>,
+ linux-kernel-mentees@lists.linuxfoundation.org, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Jonathan Corbet <corbet@lwn.net>
+References: <20241108212201.144482-1-xandfury@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241108212201.144482-1-xandfury@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 24, 2024 at 11:30:53AM +0200, Simona Vetter wrote:
-> Apologies for the late reply ...
+
+
+On 11/8/24 1:22 PM, Abhinav Saxena wrote:
+> Fix some typos in hwmon/sch5627 and hwmon/max31827 reported by
+> checkpatch.pl. These changes are purely documentation cleanup with no
+> functional modifications.
 > 
+> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
 
-Also late reply, just read this.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-> On Wed, Sep 04, 2024 at 01:34:18PM +0200, Christian König wrote:
-> > Hi Boris,
-> > 
-> > Am 04.09.24 um 13:23 schrieb Boris Brezillon:
-> > > > > > > Please read up here on why that stuff isn't allowed:
-> > > > > > > https://www.kernel.org/doc/html/latest/driver-api/dma-buf.html#indefinite-dma-fences
-> > > > > > panthor doesn't yet have a shrinker, so all memory is pinned, which means
-> > > > > > memory management easy mode.
-> > > > > Ok, that at least makes things work for the moment.
-> > > > Ah, perhaps this should have been spelt out more clearly ;)
-> > > > 
-> > > > The VM_BIND mechanism that's already in place jumps through some hoops
-> > > > to ensure that memory is preallocated when the memory operations are
-> > > > enqueued. So any memory required should have been allocated before any
-> > > > sync object is returned. We're aware of the issue with memory
-> > > > allocations on the signalling path and trying to ensure that we don't
-> > > > have that.
-> > > > 
-> > > > I'm hoping that we don't need a shrinker which deals with (active) GPU
-> > > > memory with our design.
-> > > That's actually what we were planning to do: the panthor shrinker was
-> > > about to rely on fences attached to GEM objects to know if it can
-> > > reclaim the memory. This design relies on each job attaching its fence
-> > > to the GEM mapped to the VM at the time the job is submitted, such that
-> > > memory that's in-use or about-to-be-used doesn't vanish before the GPU
-> > > is done.
-> > 
-> > Yeah and exactly that doesn't work any more when you are using user queues,
-> > because the kernel has no opportunity to attach a fence for each submission.
-> > 
-> > > > Memory which user space thinks the GPU might
-> > > > need should be pinned before the GPU work is submitted. APIs which
-> > > > require any form of 'paging in' of data would need to be implemented by
-> > > > the GPU work completing and being resubmitted by user space after the
-> > > > memory changes (i.e. there could be a DMA fence pending on the GPU work).
-> > > Hard pinning memory could work (ioctl() around gem_pin/unpin()), but
-> > > that means we can't really transparently swap out GPU memory, or we
-> > > have to constantly pin/unpin around each job, which means even more
-> > > ioctl()s than we have now. Another option would be to add the XGS fence
-> > > to the BOs attached to the VM, assuming it's created before the job
-> > > submission itself, but you're no longer reducing the number of user <->
-> > > kernel round trips if you do that, because you now have to create an
-> > > XSG job for each submission, so you basically get back to one ioctl()
-> > > per submission.
-> > 
-> > For AMDGPU we are currently working on the following solution with memory
-> > management and user queues:
-> > 
-> > 1. User queues are created through an kernel IOCTL, submissions work by
-> > writing into a ring buffer and ringing a doorbell.
-> > 
-> > 2. Each queue can request the kernel to create fences for the currently
-> > pushed work for a queues which can then be attached to BOs, syncobjs,
-> > syncfiles etc...
-> > 
-> > 3. Additional to that we have and eviction/preemption fence attached to all
-> > BOs, page tables, whatever resources we need.
-> > 
-> > 4. When this eviction fences are requested to signal they first wait for all
-> > submission fences and then suspend the user queues and block creating new
-> > submission fences until the queues are restarted again.
+Thanks.
+
+> ---
+>  Documentation/hwmon/max31827.rst | 2 +-
+>  Documentation/hwmon/sch5627.rst  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> Yup this works, at least when I play it out in my head.
-> 
+> diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+> index 9c11a9518c67..6cc5088b26b7 100644
+> --- a/Documentation/hwmon/max31827.rst
+> +++ b/Documentation/hwmon/max31827.rst
+> @@ -136,7 +136,7 @@ PEC Support
+>  
+>  When reading a register value, the PEC byte is computed and sent by the chip.
+>  
+> -PEC on word data transaction respresents a signifcant increase in bandwitdh
+> +PEC on word data transaction represents a significant increase in bandwidth
+>  usage (+33% for both write and reads) in normal conditions.
+>  
+>  Since this operation implies there will be an extra delay to each
+> diff --git a/Documentation/hwmon/sch5627.rst b/Documentation/hwmon/sch5627.rst
+> index 8639dff234fc..5f521c6e90ab 100644
+> --- a/Documentation/hwmon/sch5627.rst
+> +++ b/Documentation/hwmon/sch5627.rst
+> @@ -39,7 +39,7 @@ Controlling fan speed
+>  ---------------------
+>  
+>  The SCH5627 allows for partially controlling the fan speed. If a temperature
+> -channel excedes tempX_max, all fans are forced to maximum speed. The same is not
+> +channel exceeds tempX_max, all fans are forced to maximum speed. The same is not
+>  true for tempX_crit, presumably some other measures to cool down the system are
+>  take in this case.
+>  In which way the value of fanX_min affects the fan speed is currently unknown.
 
-I just started experimenting with user submission in Xe last week and
-ended up landing on a different PoC, blissfully unaware future fences /
-Mesa submit thread. However, after Sima filled me in, I’ve essentially
-landed on exactly what Christian is describing in Xe. I haven’t coded it
-yet, but have the design in my head.
-
-I also generally agree with Sima’s comments about having a somewhat
-generic preempt fence (Christian refers to this as an eviction fence)
-as well.
-
-Additionally, I’m thinking it might be beneficial for us to add a new
-'preempt' dma-resv slot to track these, which would make it easier to
-enforce the ordering of submission fence signaling before preempt
-fences.
-
-Depending on bandwidth, I may post an RFC to the list soon. I’ll also
-gauge the interest and bandwidth from our Mesa team to begin UMD work.
-
-Matt
-
-> Note that the completion fence is only deadlock free if userspace is
-> really, really careful. Which in practice means you need the very
-> carefully constructed rules for e.g. vulkan winsys fences, otherwise you
-> do indeed deadlock.
-> 
-> But if you keep that promise in mind, then it works, and step 2 is
-> entirely option, which means we can start userspace in a pure long-running
-> compute mode where there's only eviction/preemption fences. And then if
-> userspace needs a vulkan winsys fence, we can create that with step 2 as
-> needed.
-> 
-> But the important part is that you need really strict rules on userspace
-> for when step 2 is ok and won't result in deadlocks. And those rules are
-> uapi, which is why I think doing this in panthor without the shrinker and
-> eviction fences (i.e. steps 3&4 above) is a very bad mistake.
-> 
-> > This way you can still do your memory management inside the kernel (e.g.
-> > move BOs from local to system memory) or even completely suspend and resume
-> > applications without their interaction, but as Sima said it is just horrible
-> > complicated to get right.
-> > 
-> > We have been working on this for like two years now and it still could be
-> > that we missed something since it is not in production testing yet.
-> 
-> Ack.
-> -Sima
-> -- 
-> Simona Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+-- 
+~Randy
 
