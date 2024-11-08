@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-401496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9199C1B41
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:52:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47F69C1B47
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56AA21F23A31
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:52:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27691C263E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038AC1EABD1;
-	Fri,  8 Nov 2024 10:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5878A1EB9EB;
+	Fri,  8 Nov 2024 10:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="A81QYsmV"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="iebG5QP+"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5A81E764A
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282531EABB6
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731063030; cv=none; b=OifhYCQ0SjZcYlExU9gQxUEyZkeikGFj33+0W5i/4oONSmF9VJBTHn6nfDmnp0UbjkxIp3Ygsarvxb2iF9+wTjXQ6zU+Vi/7t4keiY+SFDOaK3e2gY2xBXmsLl98qYU62vf6cGsWyXw51LzCsG2Z0D92x1l9V3Hglza9NVResBM=
+	t=1731063033; cv=none; b=hfR6d3PlwFnNXnkkebzFouSy7zadwjSzfqFdNj3LX0Z04Xo2afEIQkW5PPBzJzjQ3XJmm5hZqvQVOw9zlj8ouLc2J0gxMLUiAYEeqSofwd0Wu9xv8rZisyS7OzNmuOyvDCrvsy0e386AP6+MEhAXj8gOE473fKX0HgiNkLfwNLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731063030; c=relaxed/simple;
-	bh=h/y23T6WXsZosOzfQNnDY+T32ZVWlwo2fUWMCoZj4Lo=;
+	s=arc-20240116; t=1731063033; c=relaxed/simple;
+	bh=uQfKkEoR32N0d989ZespVXFD+EYoWvBvpUMB8tvOdrg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EykJv1cZ6lWyUwYGnZ+YpOxLo6xaeQTPCU8vkGEdH5NXHipmYgLFZXHsXWZPNcVpzNkFGCj7xP60Z0N//jky61J5KO+hAuIhuVp/XumT64wb8P+K0noxmC1laGPr3rnvkOKv+PNkQCqif3YZOtSO5YNGbPFjaBDn+PQ/iXk/+4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=A81QYsmV; arc=none smtp.client-ip=209.85.218.45
+	 MIME-Version; b=lhbnQjZZk9GXfFHa+E3dEIRtyIPSwh8W8Q3/AFvNd8q4mwtDJ+VNSzSsA3CiLx8duf77rP4tS2GtyE5ZY2dFsVNeCPeVq53kTHIShBy5wERuFktFrOblDv8YqWK1CnN13j8l0dH3Vfu+W0jHi6RZARBP5MxCEaXlrv0uFhapJK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=iebG5QP+; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso298594666b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:50:28 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9ed7d8d4e0so291296966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:50:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731063027; x=1731667827; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1731063031; x=1731667831; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EUINzcxd/jCXeTMEdPSmJ3jqpY02TDO75OGNa1aC3GU=;
-        b=A81QYsmV5wYG7J3JXFfonWCtIdvPYV5VFyOYawGMs6iObrxcBQudpD6KldaYHa19kn
-         E6d4I0655LOKvCqNOVrBXot3+5zE1tdXUaRZOOeYuDnj/USzrZjRs03+GChqdk5pKZuZ
-         TQp9oZ+GbgjHXbwaKWx+wb/FCp/2WEOZ6tW800E02lq7DOTmuIc+lc8/shO2B1dYMR97
-         MwS4hqX6VzTjnWa1fBsGRq1g4PVxL2V4TZ65L+bg5ilxaypaLPWQ1HDR5RUPuxRqdhK2
-         l7nA9iOGwauyritVI0sXOQILpVGX98fVB3QD9yYZR/2ytJ06zxuH4wWWH6mg+iC5gz4v
-         yHkQ==
+        bh=RVWcqtL2/z6hHqWPVR/NbA1tV+dgOCVHn7AuI7jqeJ4=;
+        b=iebG5QP+iP6Inr3RzPjO2Qc4Mlyw9fr0dqb3vxbEk6xx1YTG7nVwApjBp1mYrppw0s
+         rzQis8MO+CHhIWaZw0J25uvRxk2DcbHUNjdqrvX3lC3zTh4VUhk9E/FktQH8sxsALkgs
+         ABTKObYNuq4zEnOMi35/rP7Gje6Ad6dK5CduxQ7w9SAhQyWQcA6igVqOnG21riZXE+CO
+         bFr6Vm7EzB/sva6webN6ueneeGDS+ySJ3A/VQqNc7dGAaqA+mvSPW0IFpe88RpFs/g8H
+         ouyIWQZhN0y/WK+pOBFj0OhWMgx/9uliiY2/qlQ7zu1WC1rYWevGYybR/OkPpNH7SqKO
+         +ruw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731063027; x=1731667827;
+        d=1e100.net; s=20230601; t=1731063031; x=1731667831;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EUINzcxd/jCXeTMEdPSmJ3jqpY02TDO75OGNa1aC3GU=;
-        b=Kv17Q/WBhA4ZQdkfXMGuzk0ynAMGC/7YZ2n0b8c6XDWTwVV8XYc1PQLjLsgPGR/440
-         Dol9z5VSyzmF9TR+0gEwrh33E80IGcLpPUJxK2osXlr3INGLTziqyyoWKujpu5ZXI+TM
-         /Kn7BU4cF5oXOTFOjkGZO8EdoWRo7I22iDe2gacVxou8d5XRceh2QwuXycBikGIC7dHN
-         4PQeWiXfDqhGxn7SeYhIWfLXj+NXsrgSrBuHi5Sd0Ve+/NAxc8PeYPORr3qgKVcSYYBM
-         Eb541843Kz/xDdbX3u7G6NbobGdHd6BNxdhx72Ol0iEVAYsnpSBRiw96+NxTzhfU/ilv
-         Kzxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXyYnatZQDFBPjIm52kXSkyqVVdg//kJks8BqhmubmtQVaXQ+6+T5tL44mi42X4n4qGkeTX5Vma5zhwjo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoGBkKoWswXzF4zPxSu6FTJMnvJgOch6ZEL/G+NzXmGZCAy2gv
-	iWmJfo7BUB1v2otDEYCluTW1rqSdQNJ1sX5SLhcmeV2ryQsU5+uSdeJseUg7mzk=
-X-Google-Smtp-Source: AGHT+IHa+tQzc4xAxHWtIFyR5mkaoQUPDtmy4x/74qPWFJq2UkKS0Y337B/HDHtOvTb+ulbrG5B3Lg==
-X-Received: by 2002:a17:907:9603:b0:a9e:b5d0:de6 with SMTP id a640c23a62f3a-a9ef0016d4emr181814966b.50.1731063027209;
-        Fri, 08 Nov 2024 02:50:27 -0800 (PST)
+        bh=RVWcqtL2/z6hHqWPVR/NbA1tV+dgOCVHn7AuI7jqeJ4=;
+        b=O2Fd3smlceVCMukF3c/894GHdInMlmjv15k8WG/gk4KLxuTS1Hz4eh8hHYNY7ndlg1
+         o0z2FDIBcmUcvn5C8nkunu346gYaqSoC3CCBKbaLFsOZ3ZBCt87UckKuNDlwNNi254pc
+         d5NdWt/bjdgPrxsSViPw146XUWFt7WdmI3UqGOldtvQBUqJofYXlis3ptjMflnMQmKIM
+         4RBmhRmcZuvjCaRs4e28y9AWTCD0BcotCfM1EjMM2tEd5fbibq4GhHkKf3+twr3/SEGk
+         J7/L0kOeScHOKKhTV20HX6H5Rc988GMb8MAUtk7NRYlj7qAsmowINKSgpEtIVTB7yaPJ
+         HCpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNsZ6AhNB9XQD/e7tpWpLTR22zPLoTLexhCApOnbCVDbCUR91aQHeRgrRKEUZOLxF5xEV1qCkiMab7RQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJr2X+FGPA8/lSmHStiOjxxdfl6YP6Gx/DpxJ7U3llfkJTkHS+
+	8GTW6aJxdR01WUvKt0MuX7lv6vcSIhTjSzkOg0c5g0BHB0IRiaUnsn4cDFBmgvI=
+X-Google-Smtp-Source: AGHT+IFft6CwH3EePxmvnwbJFYSPRDnYeOJGj9yj1dd1M3Hdcr69b4JKtRaHUgCl0R3MhySJFo0PIQ==
+X-Received: by 2002:a17:906:848:b0:a9e:f28c:3749 with SMTP id a640c23a62f3a-a9ef28c3ac0mr107670166b.32.1731063030575;
+        Fri, 08 Nov 2024 02:50:30 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.50.24
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.50.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 02:50:26 -0800 (PST)
+        Fri, 08 Nov 2024 02:50:29 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -91,9 +91,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 07/25] ASoC: sh: rz-ssi: Use only the proper amount of dividers
-Date: Fri,  8 Nov 2024 12:49:40 +0200
-Message-Id: <20241108104958.2931943-8-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 08/25] ASoC: sh: rz-ssi: Fix typo on SSI_RATES macro comment
+Date: Fri,  8 Nov 2024 12:49:41 +0200
+Message-Id: <20241108104958.2931943-9-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
@@ -107,9 +107,8 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-There is no need to populate the ckdv[] with invalid dividers as that
-part will not be indexed anyway. The ssi->audio_mck/bclk_rate should
-always be >= 0.
+The SSI_RATES macro covers 8KHz-48KHz audio frequencies. Update macro
+comment to reflect it.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
@@ -117,23 +116,22 @@ Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Changes in v2:
 - none
 
- sound/soc/renesas/rz-ssi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/renesas/rz-ssi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index 2d8721156099..b4439505929f 100644
+index b4439505929f..a4d65be17eb1 100644
 --- a/sound/soc/renesas/rz-ssi.c
 +++ b/sound/soc/renesas/rz-ssi.c
-@@ -258,8 +258,7 @@ static void rz_ssi_stream_quit(struct rz_ssi_priv *ssi,
- static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
- 			    unsigned int channels)
- {
--	static s8 ckdv[16] = { 1,  2,  4,  8, 16, 32, 64, 128,
--			       6, 12, 24, 48, 96, -1, -1, -1 };
-+	static s8 ckdv[] = { 1,  2,  4,  8, 16, 32, 64, 128, 6, 12, 24, 48, 96 };
- 	unsigned int channel_bits = 32;	/* System Word Length */
- 	unsigned long bclk_rate = rate * channels * channel_bits;
- 	unsigned int div;
+@@ -71,7 +71,7 @@
+ #define PREALLOC_BUFFER		(SZ_32K)
+ #define PREALLOC_BUFFER_MAX	(SZ_32K)
+ 
+-#define SSI_RATES		SNDRV_PCM_RATE_8000_48000 /* 8k-44.1kHz */
++#define SSI_RATES		SNDRV_PCM_RATE_8000_48000 /* 8k-48kHz */
+ #define SSI_FMTS		SNDRV_PCM_FMTBIT_S16_LE
+ #define SSI_CHAN_MIN		2
+ #define SSI_CHAN_MAX		2
 -- 
 2.39.2
 
