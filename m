@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-401160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4839C1694
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:47:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6F69C1695
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DED7D1C22AD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:47:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1057D28399C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4451D07A7;
-	Fri,  8 Nov 2024 06:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89A21CFEA3;
+	Fri,  8 Nov 2024 06:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="umfLTCbR"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TaxxnE1W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D9B1C3F06
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 06:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301951BD9D8
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 06:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731048472; cv=none; b=GCJRpu1PejfSviKb4inobwOfH7pTNvn5PPg4glaAOYIBk6bh4Ct3TeXS6QMobfXzGc7cI5lOBmkwFpKqLEdm3PNs6sP5S4TGHwWimtJP7t1xdeqBAsM2/vhYNkVet6zIM5n+or7dWy9XbYYjm8/vhKV4qYoL0Csrmc2d0FKnHBk=
+	t=1731048550; cv=none; b=jMiqGxyZuAtdYs+GARPES0Q1g3XKdh6S2ApZ5uC9NuVk8UeUHwChYWEErjseTWS6J9GnokWqa/oaEeNRbV7nrLkOqkvVIlDd9muG1+V1djnu/zt/2yYN8V91h+7wj+sHb6wFKRCXpyj9wXCoSTdyDYavp8W6U6K/PPXv3LKbOTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731048472; c=relaxed/simple;
-	bh=aeB/gVKII4FFISWvHdRA+fZvh4oKNPS1S2q0rYFs/fg=;
+	s=arc-20240116; t=1731048550; c=relaxed/simple;
+	bh=yEnIXrr+o/BeE2tObiPbz4duD8YAfpPneFh6BOs8FmQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxH6opR3VPKWtGaoOAFy1qNh+Ic/eBMbU+WT6Nq/sNn4HNZFrbmLyum9HjednLPo5BvdSJSE99wbDjhnY5351to0lGANUKFIL4Uk1GFIIEUYvnPPuczPLwoOfYiLPwAFbMbXCaNX0FLChzIKZnRRq8gznDV2YugC5RQ6ndy5TBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=umfLTCbR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2559C4CECE;
-	Fri,  8 Nov 2024 06:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731048472;
-	bh=aeB/gVKII4FFISWvHdRA+fZvh4oKNPS1S2q0rYFs/fg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5TQf5RctleDQjWwQrZLtd379TK/r+olvhl0Y2kr+EmdESgRsCY6VQK8IA0x1n807ZXbKZEJk9xLuVtJlSUYWsU7Rr0XHjWPQY/C9io4IBp/A9CiRNigMx6BRVuPJdeFxTNNQSvOmERczyck9+OuDmowRI8nMNOuASQVBzCGXS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TaxxnE1W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62BDC4CECE;
+	Fri,  8 Nov 2024 06:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731048549;
+	bh=yEnIXrr+o/BeE2tObiPbz4duD8YAfpPneFh6BOs8FmQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=umfLTCbRFOYdoSKy8+gP7W6TZEx7yZMSU+lY4qjZCBpO1qWERybZJ6MraG0D6tCm2
-	 Mo+mWQEC72ags9X/E+MEoKZ6WaahnKPU8HcGyBGwoh2MrextLtYJpH/Rz3QU9qUMHX
-	 cxJJ/7untBNngWj9mZISEDDIs8EjE2/Vt77Xrlft/7giU03FKWglYYPyj4TL/+NkDk
-	 Ye9CaytPvuL/zgbJVIwz2AKp5QVIezDi060WGGn0f8SxvCGuPLSVGwckcF9lf/pZdg
-	 wpF2ZyUxs2Jtzjo4mORYUkPLlzqmYVLuQKqtDEBQ5UMnROA4ngDVwLRifa42vFv5Dc
-	 ZXwMynTQl7gPQ==
-Date: Thu, 7 Nov 2024 22:47:50 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Stephane Eranian <eranian@google.com>,
-	Sandipan Das <sandipan.das@amd.com>
-Subject: Re: [PATCH v5 0/2] perf: Relax privilege restriction on AMD IBS
-Message-ID: <Zy20Fm7sVbfReWBE@google.com>
-References: <20241028200153.1466731-1-namhyung@kernel.org>
- <d5187836-3c1e-4bdb-90a2-779d3c1f086d@amd.com>
+	b=TaxxnE1WWpYQPVrVRzO15nKb384mTSd0TjQ3WqkvFKnXHj3kTVSs8PbO09jZTVp2q
+	 L8w/tE8P9Ddkh1UkvK0TY1nokU3V0w6BL4jEI25JbrPCjGwboYfEGVZq389kjLQcQ0
+	 HO2/aiTHYhL1ITub224PUkH13hbEw84AvEFjpG9M=
+Date: Fri, 8 Nov 2024 07:49:05 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH vulns 1/2] add a .vulnerable id for CVE-2024-49888
+Message-ID: <2024110843-french-lingo-b055@gregkh>
+References: <20241108055118.28631-1-shung-hsi.yu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d5187836-3c1e-4bdb-90a2-779d3c1f086d@amd.com>
+In-Reply-To: <20241108055118.28631-1-shung-hsi.yu@suse.com>
 
-On Wed, Oct 30, 2024 at 03:22:02PM +0530, Ravi Bangoria wrote:
-> On 29-Oct-24 1:31 AM, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > This is v5 to allow AMD IBS to regular users on the default settings
-> > where kernel-level profiling is disabled (perf_event_paranoid=2).
-> > Currently AMD IBS doesn't allow any kind of exclusion in the event
-> > attribute.  But users needs to set attr.exclude_kernel to open an
-> > event on such an environment.
+On Fri, Nov 08, 2024 at 01:51:13PM +0800, Shung-Hsi Yu wrote:
+> Link: https://lore.kernel.org/all/klr4llu43s4osw4o7234no33k6eujo2wvpeyhft2z5zgib6zac@hvg72k5q7w3f/
+> Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+> ---
+> Add vulnerable commit IDs as Greg previously suggested[1].
 > 
-> For the series:
+> I posted analysis separately and referenced them with the Link tag
+> instead of including the whole analysis in the commit message. Let me
+> know if an alternative approach is preferred.
 > 
-> Reviewed-and-tested-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> 1: https://lore.kernel.org/all/2024102419-deserving-veneering-6641@gregkh/
+> ---
+>  cve/published/2024/CVE-2024-49888.vulnerable | 1 +
+>  1 file changed, 1 insertion(+)
+>  create mode 100644 cve/published/2024/CVE-2024-49888.vulnerable
+> 
+> diff --git a/cve/published/2024/CVE-2024-49888.vulnerable b/cve/published/2024/CVE-2024-49888.vulnerable
+> new file mode 100644
+> index 00000000..b7b1891d
+> --- /dev/null
+> +++ b/cve/published/2024/CVE-2024-49888.vulnerable
+> @@ -0,0 +1 @@
+> +ec0e2da95f72
+> -- 
+> 2.47.0
+> 
+> 
 
-Thanks for your review!
+Thanks for both of these patches.  I've now applied them and pushed out
+the update .json files to cve.org for these entries.
 
-Peter and Ingo, can you please take a look at this?
-
-Thanks,
-Namhyung
-
+greg k-h
 
