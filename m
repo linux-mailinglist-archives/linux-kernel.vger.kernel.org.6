@@ -1,109 +1,223 @@
-Return-Path: <linux-kernel+bounces-401563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D9B9C1C4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:41:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0499C1C4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C0451C21451
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:41:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B4A282DBA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B73F1E47D6;
-	Fri,  8 Nov 2024 11:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488261E47CD;
+	Fri,  8 Nov 2024 11:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a9J3z4l0"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K128yael"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C631E231E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7E71E3DFC;
+	Fri,  8 Nov 2024 11:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066093; cv=none; b=a6du4pdR4+zSpHB9A9MBAITOKhfDgGAAIfKiDPklm3MPbv9HrZWvjJpqBJDGhd8HeaI3HeWTJzRS1Sz4zf7gNWGDCVQz+eRc2+teW3JS1JsN3cYA5LjLQd6cxmSoQ3oBv+QafxSTFW979bt+CtCZXt7jSug5sxQLndpDvuV9cmA=
+	t=1731066112; cv=none; b=R+zVs+nv3eOVRMoy6DFbWYXsUOqKXrfuDUvd5eXK9fgnrBojAHpIDTo6iuoa9M3CpK+Ys0yOPNofBQzcyLsqrJpiAGw+KCOTMBFrMJchhtKAvpZjqqMdskGbNsxKnD/CfpYLv9XLnbF1rOLLxTxYoaWGlIBoPuD0JjLEli1pcv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066093; c=relaxed/simple;
-	bh=uY/iMbf3Vk3sXbHtDhy0LKeHEHnsP2OiGaIvmYFRXgM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J5VvNtci0kqO54FkDXoPIucaAZlrA0SrZeAlgy/am2bkTS4psmjZMVICBdpih6syRAXN9uBkxJH7sfoOHGGkRSy7X4/akWvLff/kOcxRCjOizZ++mpYb78CjtuHXbVz8cKbKZkG9zjFiBi3hMS9YBAcM3B9IO8uGwHkup3sQrVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a9J3z4l0; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb3110b964so17730311fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731066090; x=1731670890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CXSvbTMRrcj6fCxF0ufHCuWCloLz1hIjGxoKK8AG/+o=;
-        b=a9J3z4l0gQ22XqiiITIYecjr35fLofBoZvgBO7N+b6NvoZZDkfnHXnh2PJ90jWz4R/
-         xuyD19CygiOd0ckGrogpy+ilK0Ory6CtaNf8bZ7aZC5sTraayqFYtF6ZeLCP5k0fzArx
-         f/hNZwT19GxlGUHPXCGTRysPHAxs+JH815+7/5RO0ODPE3jAXRGLxZaWEowT/xlHupgH
-         0K9UVt9FpZZfzmsmtomhtTvGFOUfRyFB4KNnVZe4uufFfuufZPUhb+Waoy29wbWI3lbe
-         m8Pnsk3CUT38O1ff4bbMR8f5blcDcjLUSE6dFvivDVoIJdYyaPpZHsI6AbsqBJHSvWLc
-         rHww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731066090; x=1731670890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CXSvbTMRrcj6fCxF0ufHCuWCloLz1hIjGxoKK8AG/+o=;
-        b=KedHuMCk7MEkc/DAjuQyrLCUu6V0S02Fuvp851CMkadGFDcMm2INjIWmimWtQip9Wj
-         qIqQOppGfRTrVP4MHxFiX/e7ENgbtqlCLbVzjaLN3bLPnH6Pu57vgyk2/lTahkGpeJ2B
-         LG9LVJDFKVTQLFL0qh/DIfGYhNYQ2ZroHSUy8TTcad25TPYBJR83y3f6uous+R3gy/I7
-         YCArRvoiy3LxAA1aPzxen6LWBKKtqBm+bpwY0/gBofoVOGxFFOGJl6PdH9y3XSo7c9rv
-         51XBOgMK984bmO7E8mzxNZbYNiMg5bokSJlGAPrKV2zh2tX3bSgOd0pngF5aAKy/LFMC
-         a96A==
-X-Forwarded-Encrypted: i=1; AJvYcCWTDi3wt01mM/OpVj3WrDIEPFgULFEuubYUZxGL8UAF5rHsPKAIQCkVj2FbVySPJdg6YYI2mFtQo4QQKOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxapuOfKd5fXP4ahrzn10Fvh7rv+euJ30aDxDK0TRlV1AbPmzmf
-	AxtdPGxmk3AfZk8GnfE2UuYr0F51qoLZfpljRQXYWHC+1spIEjT35VtOhdt0QKs9GifL/HvCgdc
-	AvOUDF+P7adcUMiBMJz94N7LG37aqOKoGsKa2ojNONuUuhX0RXTc=
-X-Google-Smtp-Source: AGHT+IG6dsbVHDy06kTkj5zAs70A2/MyWRJqE/mKAm1qvOYLwYQg1hL1cr+88CsDKtRlIRo2uCMtTHRVmKF8kaDiYQk=
-X-Received: by 2002:a05:651c:1515:b0:2ef:243b:6dce with SMTP id
- 38308e7fff4ca-2ff20185abfmr11928261fa.10.1731066088370; Fri, 08 Nov 2024
- 03:41:28 -0800 (PST)
+	s=arc-20240116; t=1731066112; c=relaxed/simple;
+	bh=TXkIOp3uyndyYEvkJuBG+geJwUkD2tQM/QMtnBrWWOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lIp8ZOHEJacuiJ6uhH7uhEGCLNIbH/ZaLWI96oeZCphFQgqKqoFyu4X/gfRrkOWmqlaSa5TfDGnVpU+FHMYtuZN6rQ2CNSGZuHyHm0LSs3L1sxIvigLti8vdohUNVISikQZZ5+esT+5Dgb82A1oZWZWiEkcDDGPBje9COjx1q2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K128yael; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731066111; x=1762602111;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TXkIOp3uyndyYEvkJuBG+geJwUkD2tQM/QMtnBrWWOY=;
+  b=K128yaelRdAlLnK/Rm0R5oDu9sZLc28ZGRXtlj6Wf+WrYRebs/WICohn
+   QZvRocSsWZQq0h4zIlT+eugHBTZSCICfTG7o8PZsNXDnQwm0t7QIWNHEg
+   bDW073qP7ZrQF2HqpfvqY0gRaGeDEiT3KFKOq1S64/fXdUmb6iEH+/PaQ
+   ew0ATL5U3UbcsiBI2bUM2GPoXnkf0Zm+S7JlnldJ/kCa2bjYRVDBYXUbE
+   mtftgkAhpJoD5TV8Xc9NlPMdGoGa0NGa+aOvxNSJ0JQn3Aj8Ot9XRLqs3
+   ccNu1rbi6LLJxgSts0PONtLgQWwva75GvMb4OP39mwoiDouZDYxHBO6Ua
+   g==;
+X-CSE-ConnectionGUID: lZRkZnKdSwaZ9oz65Y8epA==
+X-CSE-MsgGUID: v8UCFla/TfCYXRW4OirmVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="30831449"
+X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
+   d="scan'208";a="30831449"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 03:41:50 -0800
+X-CSE-ConnectionGUID: JDD+C71jRSyE5UvjICiUiw==
+X-CSE-MsgGUID: wtSH8iCNQliNxB3KdiB8CQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
+   d="scan'208";a="123041995"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa001.jf.intel.com with SMTP; 08 Nov 2024 03:41:46 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 08 Nov 2024 13:41:44 +0200
+Date: Fri, 8 Nov 2024 13:41:44 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev, jthies@google.com,
+	akuchynski@google.com, pmalani@chromium.org,
+	dmitry.baryshkov@linaro.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] usb: typec: Only use SVID for matching altmodes
+Message-ID: <Zy34-G0uOUyA6EQc@kuha.fi.intel.com>
+References: <20241107193021.2690050-1-abhishekpandit@chromium.org>
+ <20241107112955.v3.1.Ie0d37646f18461234777d88b4c3e21faed92ed4f@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202410301531.7Vr9UkCn-lkp@intel.com> <CACRpkdbW5kheaWPzKip9ucEwK2uv+Cmf5SwT1necfa3Ynct6Ag@mail.gmail.com>
- <2010cc7a-7f49-4c5b-b684-8e08ff8d17ed@csgroup.eu>
-In-Reply-To: <2010cc7a-7f49-4c5b-b684-8e08ff8d17ed@csgroup.eu>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 8 Nov 2024 12:41:17 +0100
-Message-ID: <CACRpkdYQ6Pfn_Y7FJh7MV2Mb8etDXFCJEUrgq=c3JDxkSPOndA@mail.gmail.com>
-Subject: Re: drivers/net/ethernet/freescale/ucc_geth.c:2454:64: sparse:
- sparse: incorrect type in argument 1 (different address spaces)
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: kernel test robot <lkp@intel.com>, 
-	"linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, netdev <netdev@vger.kernel.org>, 
-	Stanislav Kinsburskii <stanislav.kinsburskii@gmail.com>, oe-kbuild-all@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107112955.v3.1.Ie0d37646f18461234777d88b4c3e21faed92ed4f@changeid>
 
-On Fri, Nov 8, 2024 at 11:30=E2=80=AFAM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
+On Thu, Nov 07, 2024 at 11:29:54AM -0800, Abhishek Pandit-Subedi wrote:
+> Mode in struct typec_altmode is used to indicate the index of the
+> altmode on a port, partner or plug. It is used in enter mode VDMs but
+> doesn't make much sense for matching against altmode drivers or for
+> matching partner to port altmodes.
+> 
+> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-> The problem is the __be16 in the function prototype.
->
->         set_mac_addr(&p_82xx_addr_filt->taddr.h, p_enet_addr);
->
-> p_82xx_addr_filt->taddr.h is a u16
-> and out_be16() expects a u16*
->
-> So the following fixes the above warnings:
+> ---
+> 
+> Changes in v3:
+> - Removed mode from altmode device ids
+> - Updated modalias for typecd bus to remove mode
+> - Re-ordered to start of series
+> 
+> Changes in v2:
+> - Update altmode_match to ignore mode entirely
+> - Also apply the same behavior to typec_match
+> 
+>  drivers/usb/typec/altmodes/displayport.c | 2 +-
+>  drivers/usb/typec/altmodes/nvidia.c      | 2 +-
+>  drivers/usb/typec/bus.c                  | 6 ++----
+>  drivers/usb/typec/class.c                | 4 ++--
+>  scripts/mod/devicetable-offsets.c        | 1 -
+>  scripts/mod/file2alias.c                 | 4 +---
+>  6 files changed, 7 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
+> index 2f03190a9873..3245e03d59e6 100644
+> --- a/drivers/usb/typec/altmodes/displayport.c
+> +++ b/drivers/usb/typec/altmodes/displayport.c
+> @@ -791,7 +791,7 @@ void dp_altmode_remove(struct typec_altmode *alt)
+>  EXPORT_SYMBOL_GPL(dp_altmode_remove);
+>  
+>  static const struct typec_device_id dp_typec_id[] = {
+> -	{ USB_TYPEC_DP_SID, USB_TYPEC_DP_MODE },
+> +	{ USB_TYPEC_DP_SID },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(typec, dp_typec_id);
+> diff --git a/drivers/usb/typec/altmodes/nvidia.c b/drivers/usb/typec/altmodes/nvidia.c
+> index fe70b36f078f..2b77d931e494 100644
+> --- a/drivers/usb/typec/altmodes/nvidia.c
+> +++ b/drivers/usb/typec/altmodes/nvidia.c
+> @@ -24,7 +24,7 @@ static void nvidia_altmode_remove(struct typec_altmode *alt)
+>  }
+>  
+>  static const struct typec_device_id nvidia_typec_id[] = {
+> -	{ USB_TYPEC_NVIDIA_VLINK_SID, TYPEC_ANY_MODE },
+> +	{ USB_TYPEC_NVIDIA_VLINK_SID },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(typec, nvidia_typec_id);
+> diff --git a/drivers/usb/typec/bus.c b/drivers/usb/typec/bus.c
+> index aa879253d3b8..ae90688d23e4 100644
+> --- a/drivers/usb/typec/bus.c
+> +++ b/drivers/usb/typec/bus.c
+> @@ -454,8 +454,7 @@ static int typec_match(struct device *dev, const struct device_driver *driver)
+>  	const struct typec_device_id *id;
+>  
+>  	for (id = drv->id_table; id->svid; id++)
+> -		if (id->svid == altmode->svid &&
+> -		    (id->mode == TYPEC_ANY_MODE || id->mode == altmode->mode))
+> +		if (id->svid == altmode->svid)
+>  			return 1;
+>  	return 0;
+>  }
+> @@ -470,8 +469,7 @@ static int typec_uevent(const struct device *dev, struct kobj_uevent_env *env)
+>  	if (add_uevent_var(env, "MODE=%u", altmode->mode))
+>  		return -ENOMEM;
+>  
+> -	return add_uevent_var(env, "MODALIAS=typec:id%04Xm%02X",
+> -			      altmode->svid, altmode->mode);
+> +	return add_uevent_var(env, "MODALIAS=typec:id%04X", altmode->svid);
+>  }
+>  
+>  static int typec_altmode_create_links(struct altmode *alt)
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 4b3047e055a3..febe453b96be 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -237,13 +237,13 @@ static int altmode_match(struct device *dev, void *data)
+>  	if (!is_typec_altmode(dev))
+>  		return 0;
+>  
+> -	return ((adev->svid == id->svid) && (adev->mode == id->mode));
+> +	return (adev->svid == id->svid);
+>  }
+>  
+>  static void typec_altmode_set_partner(struct altmode *altmode)
+>  {
+>  	struct typec_altmode *adev = &altmode->adev;
+> -	struct typec_device_id id = { adev->svid, adev->mode, };
+> +	struct typec_device_id id = { adev->svid };
+>  	struct typec_port *port = typec_altmode2port(adev);
+>  	struct altmode *partner;
+>  	struct device *dev;
+> diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
+> index 9c7b404defbd..d3d00e85edf7 100644
+> --- a/scripts/mod/devicetable-offsets.c
+> +++ b/scripts/mod/devicetable-offsets.c
+> @@ -237,7 +237,6 @@ int main(void)
+>  
+>  	DEVID(typec_device_id);
+>  	DEVID_FIELD(typec_device_id, svid);
+> -	DEVID_FIELD(typec_device_id, mode);
+>  
+>  	DEVID(tee_client_device_id);
+>  	DEVID_FIELD(tee_client_device_id, uuid);
+> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+> index c4cc11aa558f..218ccb7150bf 100644
+> --- a/scripts/mod/file2alias.c
+> +++ b/scripts/mod/file2alias.c
+> @@ -1343,14 +1343,12 @@ static int do_tbsvc_entry(const char *filename, void *symval, char *alias)
+>  	return 1;
+>  }
+>  
+> -/* Looks like: typec:idNmN */
+> +/* Looks like: typec:idN */
+>  static int do_typec_entry(const char *filename, void *symval, char *alias)
+>  {
+>  	DEF_FIELD(symval, typec_device_id, svid);
+> -	DEF_FIELD(symval, typec_device_id, mode);
+>  
+>  	sprintf(alias, "typec:id%04X", svid);
+> -	ADD(alias, "m", mode != TYPEC_ANY_MODE, mode);
+>  
+>  	return 1;
+>  }
+> -- 
+> 2.47.0.277.g8800431eea-goog
 
-Ah you are right of course, thanks! :)
-
-Let's wait to the big rework you mentioned to land and I will try
-to remember to revisit this in the v6.13 kernel cycle.
-
-Yours,
-Linus Walleij
+-- 
+heikki
 
