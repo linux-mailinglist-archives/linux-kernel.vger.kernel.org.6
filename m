@@ -1,167 +1,170 @@
-Return-Path: <linux-kernel+bounces-401762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4D49C1ED6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:08:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B169C1EDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A121F230A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:08:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 754C01C2276A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC521F472A;
-	Fri,  8 Nov 2024 14:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jThi73Yd"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3861EF0B9;
+	Fri,  8 Nov 2024 14:08:48 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A38E1F4292;
-	Fri,  8 Nov 2024 14:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F8E1EF095;
+	Fri,  8 Nov 2024 14:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731074885; cv=none; b=YRLp8iRupfVwroTQjc7FWL3trmFAOD9kJMJnqoB5S3ubEdExkP/Ntdwiy6XjtfTQwjCj10bQfoN3Z94KS8uAyQZQJNdIBHVeLOTWaB6NeL28CokakGcF5sApjhY8Wz7MuMi+pbqdiKNyPsl8lH243yvULPESRCoBudvymeAPWIw=
+	t=1731074928; cv=none; b=eJR/HQQVKQP24q0yZuvX9BPYJsltOY669JzUCQZ7Xw0/ddj5w4XG4D8nN5zidOB0EiP+EGh2Iv3PGlajLYKwNp+z674pDcxixk6uCNkPmT2WGLSzR9p8TF69R9k+CPxsAptyyIbPbvoALCEX8G7z4oqpA4vkxcu6knFr/Q8Rczc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731074885; c=relaxed/simple;
-	bh=1JDeXfRhKokM549SCom7cHvn1gonLus1O4lY8TDZ3+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZSoYS3IpvE58WxCdoYsUKUpN/BtqoFNoWuzCIhPY67sRKdzSGDYI+0KELl/8LKnh7daeSX9QYhmKbaYS7IFUc9d6iJjDnmL+kVC4pi8eNQF1SWx++66BIWmT1CAuE1Fefq23McDBo8MPus6JJb0VXcv4XWkHi6nBt6F4VUiZ8aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jThi73Yd; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1731074928; c=relaxed/simple;
+	bh=7Km3i1M5xWKDLBrUTRXumcxArKatpfaTbs4odA5WNBY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ohxfC5CrNNAQgmDqjQXD+xtTrMin5Pq/mq2D2cDHhJohEIApOGQMYdKRMDqzhfMU4ZAgbyOnfhktq+q6sxni4MuMx4nrJ3ePz+QuWxQKNj4WclWMW56AQGeB/ukpCRMR8iL8Q2pQKngWlAkoCw08mP3mwhQY3APuW23LUdg/iG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cf3e36a76so23434375ad.0;
-        Fri, 08 Nov 2024 06:08:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731074883; x=1731679683; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=MDA/YnPw1q979OydzNA3RQek3PwG3C1LVM/KL/xZqYg=;
-        b=jThi73Yd3DKDW8gMZZ//DOOVlbrOlySjroGHTXiGRcwB4tk0mNVfIp6kKBTTVGRAYB
-         i6xuQXaWjI7JZNHMu6UEwveK4ZfQV+9Sg/nzU8W77DWX9dUZRWQwfOscb8yCdhv6PK1u
-         Qr6WxxmwrVrVuwkqOkSzwxMei8+sguiDVpEIv3yQ4CA0HzZNciAufP2EAB9IM3s6Rvr+
-         nUSwqzLTgvacojZo8/+vsGXcLIJxsivtt0q69iss2pFuRB/AwfdyXuCKoC3sqWAs9R5v
-         3dVwm4mTRtwsZT4WHkFtX9oiePhnnbTV38YDLDNUQsf0+UBxzCssgDv4kY9q0lWmnftd
-         acbg==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99ebb390a5so605277866b.1;
+        Fri, 08 Nov 2024 06:08:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731074883; x=1731679683;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MDA/YnPw1q979OydzNA3RQek3PwG3C1LVM/KL/xZqYg=;
-        b=RooOvW9UUVGCLRenL2CY2bS119d9Ncp7gslAfxCU3K3EAWo5XM+i7G6blSYJ+ZFiIU
-         ed7wFVFj8fZY18a/12HrKoVIEoe/f+ai3mrf9JvmPGO/6rN8MJNsYdoUP5RVEgNDDSM7
-         SR/gJXupoNYk7ORBn3N0p5iTAh3CDJXpxoUxEwxQbStFgGj6ddNnTX/MCqcAEgcHR36Q
-         wZSTFD0Id+nhMVQI/qg7YCYrl3AN1KG8NZvgHDXZGKlXFqs1rPutnWbyF9Aj4FysMNoe
-         GIoJ+fnFftSkK9P6xPlOTYJaBCZoHwCIst0jb4jKDg3VXrnAjem/wRmoELUa6GgnXrev
-         sBGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyntsiaSKYjYDtGkYgCtAd7CRf5S6FPtdTm4n0FgosStj76nesAUeLA9zF+bz0OLnxhp6kZwNZzJcZs9FnIeE=@vger.kernel.org, AJvYcCXFeH1GkSR48dlmEDQp3LfP62ESJz+xa7JPHlCTKC4YYPULMdmKoHcUS3WRrOpyMXgEZpsbt78E5yD0Rj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMt03F76yDEETKh0Y/L2IGenDWC3mNJ9LDy+yJnSpaSUB9WcjG
-	xkkeuzod1gM4Ft5pEg95I5bu1HMYHjbjAwcH65FddR1fJCzIUvVs
-X-Google-Smtp-Source: AGHT+IFgkItELd0W01lweMUWk3BaIPKK/cfRmmwUw4c5FH32ummS1mrI9WYYmto2+9cJdiXsPPWbrw==
-X-Received: by 2002:a17:902:c942:b0:211:a6d:85dd with SMTP id d9443c01a7336-211835d9930mr35684205ad.47.1731074882693;
-        Fri, 08 Nov 2024 06:08:02 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5cab66sm3454618a12.33.2024.11.08.06.08.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 06:08:01 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9a1e64ef-81d9-48b0-b871-ce4ff792eae4@roeck-us.net>
-Date: Fri, 8 Nov 2024 06:07:59 -0800
+        d=1e100.net; s=20230601; t=1731074925; x=1731679725;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Vs+8MmoutBmVIGaxrBB+Gc26ziMMInjO3wPn6W3jwo=;
+        b=cH9AWSgpdnV1XhITXk6LlAr/JmJu9aG8F26cBsJ+V05FtxYcGIXueeJ946SkbZCW42
+         KZLgJWN9xFlwzlkut07KaB0/5TSXkZmzWbT+DUCKqU8XBSVEORx1lY87aDsHwMbEC0u9
+         tFm4rmmZE1gFhRsozN2U9AtOkWiDlhn6c5ujalpaDnWfvfzYYQN1BWBJJZnoznESqjOR
+         zsZqXxXGUE2U4N2vV5bqcPGr4OIXCkJZNiI3gzp5ua9ga2o876fJ0zEU9eO5qqNOZ1fx
+         3ISfMQqVF8GRrJlxP1bfFyVBehns1Rnw6n7QnshhED8eNCRxAir9Hek0+yOGVodTx8EK
+         Lt/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJVf00Q4DCQxu0weA6jKa7Rt6dw/5HmQIv7cifEw6Nm1yYxYdhGl73KYZzHT5J0ReYDGIKSmk8@vger.kernel.org, AJvYcCX+PhpIP2l2LnHElNRSHiUaWey0bYQLpm8Xq6YEbtLeG6IJMEZmwhsyEvD6XF3KozX5dSdugpBpZzZs9Qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCtxNj5tQnqMc1j8CeAGLIyjZ+YSVP5PbNCvMDHK7WU0+3W9SG
+	bBVTmSVD+L9Tz7KbP7MP1J/d8IeNTn41KSKhfGe4IsCzLPTcvbD2zybbdw==
+X-Google-Smtp-Source: AGHT+IG9MyyRiE8clL0are8WjgoIfAj4jhGW0zaUz3k+d78u3MMeQYOxWTAgO2qoNGOv58CynKY4FQ==
+X-Received: by 2002:a17:906:dc8c:b0:a9a:616c:459e with SMTP id a640c23a62f3a-a9eeffe65c0mr257588366b.27.1731074924529;
+        Fri, 08 Nov 2024 06:08:44 -0800 (PST)
+Received: from localhost (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ef31fe476sm84123066b.21.2024.11.08.06.08.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 06:08:43 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Fri, 08 Nov 2024 06:08:36 -0800
+Subject: [PATCH net v2] ipmr: Fix access to mfc_cache_list without lock
+ held
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus handling
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Patrick Williams <patrick@stwcx.xyz>,
- "wim@linux-watchdog.org" <wim@linux-watchdog.org>
-Cc: "joel@jms.id.au" <joel@jms.id.au>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
- "Peter.Yin@quantatw.com" <Peter.Yin@quantatw.com>,
- "Patrick_NC_Lin@wiwynn.com" <Patrick_NC_Lin@wiwynn.com>,
- "Bonnie_Lo@wiwynn.com" <Bonnie_Lo@wiwynn.com>,
- "DELPHINE_CHIU@wiwynn.com" <DELPHINE_CHIU@wiwynn.com>,
- BMC-SW <BMC-SW@aspeedtech.com>,
- "chnguyen@amperecomputing.com" <chnguyen@amperecomputing.com>
-References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
- <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
- <ZyUcIIb1dtoNhX00@heinlein.vulture-banana.ts.net>
- <a0faca9a6ec7f4acdfa2f29b4ffb94b5392aea6b.camel@codeconstruct.com.au>
- <TYZPR06MB5203053A004676F51322DECFB25C2@TYZPR06MB5203.apcprd06.prod.outlook.com>
- <ed77d57facaaef0be796b4c6a742dc7bf3bff479.camel@codeconstruct.com.au>
- <TYZPR06MB52039B02B6D3053355F30489B25D2@TYZPR06MB5203.apcprd06.prod.outlook.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <TYZPR06MB52039B02B6D3053355F30489B25D2@TYZPR06MB5203.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241108-ipmr_rcu-v2-1-c718998e209b@debian.org>
+X-B4-Tracking: v=1; b=H4sIAGMbLmcC/2XMQQ6CMBAF0Ks0f01Np0FFVt7DEFPoALOwkCkSD
+ eHuJmxdv+RtyKzCGbXZoLxKlimhNr4w6MaQBrYSURt450sid7Uyv/Sp3dv6G8XqXDrX0gWFwaz
+ cy+eoHki8oCkMRsnLpN+jX+mg/2klSzZE17Whin3P8R65lZBOkw5o9n3/AWBkXrWmAAAA
+X-Change-ID: 20241107-ipmr_rcu-291d85400b16
+To: "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2627; i=leitao@debian.org;
+ h=from:subject:message-id; bh=7Km3i1M5xWKDLBrUTRXumcxArKatpfaTbs4odA5WNBY=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnLhtqgmnm+ETxe80MIUaf83bV/rIllOdcVf6W8
+ FELLsJz9KqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZy4bagAKCRA1o5Of/Hh3
+ bVxpD/sG2B4c/+/VHr//44r6QyqEnMVYecaMa9xmfeSt4HkP5hZgvjJN9dG0GZbh0pj8ghBK10D
+ K8WcEJpghsUaY9uwD0ZQiekrIqwdtgsVz2iZddGju4TJ1IwVwlQCCKFIWxnvXmdvvnSezVBnq29
+ khJWj3rPHToJVC+XmRNOJuvB53x2b7qeV/ksm40yayF0ZO9nwji8OnE6s1e0WzLOZZAKa4y+skm
+ i9RPwg1/KAaiSmj8Usc0zrx6FHyHfTQLOlMhNkeLyqxT5lb8IbAkI2+T0KHTwTbNOBkiOZewPMe
+ FTrgbZZa2kie82+veWKH4xqYL7CocMNN3jDqQUYcOE2zMgyIQfLz3BxAENEZXnOQSPkWRHRnKmX
+ ec6Hwf7gcVVkBKV1/9WwpRl89cl/B7QNGtXIFJSgokjljMPyzS7NvYVmiEnGSqaIjwK+uiObJOO
+ XFXGbIiRAQwP+522nsIS/ezSmO371i7FvJyYkOmRk6Q7yTcXcqTg83ExcCfpZyQU/m3ibxLWAw6
+ KvhigMHJF0XEUYMkdshM3YAwgyVCmXE0VTi6KNKxrG463CAG8JGCITzMBqPmxyD6L8aqXnU5zZ1
+ McNlgFuBdUWmOOBY8mluPiJ6fFLhg6YI8pjP61w3EVcNAfo61oiIJVpATLH9ZUL5mzXAuc5YCTz
+ bDZEqJw0fUgAanw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On 11/7/24 21:42, Chin-Ting Kuo wrote:
+Accessing `mr_table->mfc_cache_list` is protected by an RCU lock. In the
+following code flow, the RCU read lock is not held, causing the
+following error when `RCU_PROVE` is not held. The same problem might
+show up in the IPv6 code path.
 
-> But now, I think it will be better to add a patch for creating a new
-> reset reason, e.g., WDIOF_REBOOT or WDIOF_RESTART, in watchdog.h
-> of uapi. Can I include this change, creating a new reset reason, in
-> this patch series? Or, should I create an extra new patch series for
-> this purpose?
-> 
+	6.12.0-rc5-kbuilder-01145-gbac17284bdcb #33 Tainted: G            E    N
+	-----------------------------
+	net/ipv4/ipmr_base.c:313 RCU-list traversed in non-reader section!!
 
-This is a UAPI change. That is a major change. It needs to be discussed
-separately, on its own, and can not be sneaked in like this.
+	rcu_scheduler_active = 2, debug_locks = 1
+		   2 locks held by RetransmitAggre/3519:
+		    #0: ffff88816188c6c0 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x8a/0x290
+		    #1: ffffffff83fcf7a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x6b/0x90
 
-Guenter
+	stack backtrace:
+		    lockdep_rcu_suspicious
+		    mr_table_dump
+		    ipmr_rtm_dumproute
+		    rtnl_dump_all
+		    rtnl_dumpit
+		    netlink_dump
+		    __netlink_dump_start
+		    rtnetlink_rcv_msg
+		    netlink_rcv_skb
+		    netlink_unicast
+		    netlink_sendmsg
+
+This is not a problem per see, since the RTNL lock is held here, so, it
+is safe to iterate in the list without the RCU read lock, as suggested
+by Eric.
+
+To alleviate the concern, modify the code to use
+list_for_each_entry_rcu() with the RTNL-held argument.
+
+The annotation will raise an error only if RTNL or RCU read lock are
+missing during iteration, signaling a legitimate problem, otherwise it
+will avoid this false positive.
+
+This will solve the IPv6 case as well, since ip6mr_rtm_dumproute() calls
+this function as well.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v2:
+- Instead of getting an RCU read lock, rely on rtnl mutex (Eric)
+- Link to v1: https://lore.kernel.org/r/20241107-ipmr_rcu-v1-1-ad0cba8dffed@debian.org
+- Still sending it against `net`, so, since this warning is annoying
+---
+ net/ipv4/ipmr_base.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/net/ipv4/ipmr_base.c b/net/ipv4/ipmr_base.c
+index 271dc03fc6dbd9b35db4d5782716679134f225e4..f0af12a2f70bcdf5ba54321bf7ebebe798318abb 100644
+--- a/net/ipv4/ipmr_base.c
++++ b/net/ipv4/ipmr_base.c
+@@ -310,7 +310,8 @@ int mr_table_dump(struct mr_table *mrt, struct sk_buff *skb,
+ 	if (filter->filter_set)
+ 		flags |= NLM_F_DUMP_FILTERED;
+ 
+-	list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list) {
++	list_for_each_entry_rcu(mfc, &mrt->mfc_cache_list, list,
++				lockdep_rtnl_is_held()) {
+ 		if (e < s_e)
+ 			goto next_entry;
+ 		if (filter->dev &&
+
+---
+base-commit: 25d70702142ac2115e75e01a0a985c6ea1d78033
+change-id: 20241107-ipmr_rcu-291d85400b16
+
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
 
 
