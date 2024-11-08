@@ -1,223 +1,102 @@
-Return-Path: <linux-kernel+bounces-401564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0499C1C4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:42:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E869C1C52
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:42:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B4A282DBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:42:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438C51C22E9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488261E47CD;
-	Fri,  8 Nov 2024 11:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A471E47C4;
+	Fri,  8 Nov 2024 11:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K128yael"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hUo86sKI"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7E71E3DFC;
-	Fri,  8 Nov 2024 11:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1757B3E1
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066112; cv=none; b=R+zVs+nv3eOVRMoy6DFbWYXsUOqKXrfuDUvd5eXK9fgnrBojAHpIDTo6iuoa9M3CpK+Ys0yOPNofBQzcyLsqrJpiAGw+KCOTMBFrMJchhtKAvpZjqqMdskGbNsxKnD/CfpYLv9XLnbF1rOLLxTxYoaWGlIBoPuD0JjLEli1pcv0=
+	t=1731066149; cv=none; b=hCTtmRxAvK+OTjzxmAuOgBS4t0vSYZCYWQIv0Zh3rC52mhS6fZWZ57ngDHKPG1kZbLH6dKOZob2dSJLm80Dl2KWOQ8TieQu1FjHDXKIwnQcDD91ikcr9WbAVzmREriZGg0qInOy/4GDDrHX+rsICb0v/g8g2Ow/99/cm4rCp+TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066112; c=relaxed/simple;
-	bh=TXkIOp3uyndyYEvkJuBG+geJwUkD2tQM/QMtnBrWWOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lIp8ZOHEJacuiJ6uhH7uhEGCLNIbH/ZaLWI96oeZCphFQgqKqoFyu4X/gfRrkOWmqlaSa5TfDGnVpU+FHMYtuZN6rQ2CNSGZuHyHm0LSs3L1sxIvigLti8vdohUNVISikQZZ5+esT+5Dgb82A1oZWZWiEkcDDGPBje9COjx1q2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K128yael; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731066111; x=1762602111;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TXkIOp3uyndyYEvkJuBG+geJwUkD2tQM/QMtnBrWWOY=;
-  b=K128yaelRdAlLnK/Rm0R5oDu9sZLc28ZGRXtlj6Wf+WrYRebs/WICohn
-   QZvRocSsWZQq0h4zIlT+eugHBTZSCICfTG7o8PZsNXDnQwm0t7QIWNHEg
-   bDW073qP7ZrQF2HqpfvqY0gRaGeDEiT3KFKOq1S64/fXdUmb6iEH+/PaQ
-   ew0ATL5U3UbcsiBI2bUM2GPoXnkf0Zm+S7JlnldJ/kCa2bjYRVDBYXUbE
-   mtftgkAhpJoD5TV8Xc9NlPMdGoGa0NGa+aOvxNSJ0JQn3Aj8Ot9XRLqs3
-   ccNu1rbi6LLJxgSts0PONtLgQWwva75GvMb4OP39mwoiDouZDYxHBO6Ua
-   g==;
-X-CSE-ConnectionGUID: lZRkZnKdSwaZ9oz65Y8epA==
-X-CSE-MsgGUID: v8UCFla/TfCYXRW4OirmVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="30831449"
-X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
-   d="scan'208";a="30831449"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 03:41:50 -0800
-X-CSE-ConnectionGUID: JDD+C71jRSyE5UvjICiUiw==
-X-CSE-MsgGUID: wtSH8iCNQliNxB3KdiB8CQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
-   d="scan'208";a="123041995"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa001.jf.intel.com with SMTP; 08 Nov 2024 03:41:46 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 08 Nov 2024 13:41:44 +0200
-Date: Fri, 8 Nov 2024 13:41:44 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev, jthies@google.com,
-	akuchynski@google.com, pmalani@chromium.org,
-	dmitry.baryshkov@linaro.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] usb: typec: Only use SVID for matching altmodes
-Message-ID: <Zy34-G0uOUyA6EQc@kuha.fi.intel.com>
-References: <20241107193021.2690050-1-abhishekpandit@chromium.org>
- <20241107112955.v3.1.Ie0d37646f18461234777d88b4c3e21faed92ed4f@changeid>
+	s=arc-20240116; t=1731066149; c=relaxed/simple;
+	bh=QSYeNCRrMACG703/tZ42was+9GV5MlAmzjGVyTIcV80=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oo+6m5UpGnigdhV5+lac+ngCfC8VFcIE9TxwEKlML+0kcv9TGgan4cEoAyskYmAK84FficecdCq2ltabZoxwHWKzvWORg/F4YiU754xbjwwLLXDU5bOHsPeTYzJ0bVdX9/v3QKCohIz6U+G3FAyiSdXHMknap5jiSzBQvB9mJ98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hUo86sKI; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so1282182f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:42:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731066145; x=1731670945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QSYeNCRrMACG703/tZ42was+9GV5MlAmzjGVyTIcV80=;
+        b=hUo86sKIaFf65neG4PL5agGkFsQsByTWyg4c0dPfhCnKKEBHcZwgovFfJByOxTp0xV
+         M8ZXd1n7fUQY4ifBYWbROYEZxU5F9Gb/RUFH1UstXtf7UTTTEJSY5uiFaaKRa+DDRlEO
+         53+UneoaY98r0ssxyXjGycwIuFX49EQl18FeWV+Uum3Z+esZrv6ciH+WVOLJLH4y4hrE
+         70Eb8W7jN6vmdWwN+floRN2bvZm8LwKIja22jvaN5QNjcLhLLb4gEaxnG15FxJrJlZtj
+         hFxEDCwwff0gca6gQviiTqLKFkjn2FAQQ9TM2GYXlJe42SDMTXZaRM+5tqFLN85wJOvN
+         LmBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731066145; x=1731670945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QSYeNCRrMACG703/tZ42was+9GV5MlAmzjGVyTIcV80=;
+        b=Thwq/z93/8BpLXpYHkd+AyWu706eTgAJA3XSrSJFb0z1LAKyoWn//sOGe5VXz9ES1a
+         aHCSkeLyngy5+p7xZyAa98oHv/C5vU5lu5Og0JVEyl5XRU/fVdDrKgUU0wbJfYXOdHqW
+         Herm8uS4g+cdKTR973UZNFA1fQMDl5gmQx8a/gsuF5e4o+wKbAWDqlwlgowPzCiBrNqK
+         Z8N8wQ/eaXGwidKqgGi1Y6AKdmKVWUZvZOkLZGPugvMSbUgHNSQKM0D36GUtA50OnJI7
+         cQLfWife2JIisvGBfD7f8URgDxbPGnG0ZvUy61xJa8XWnBJ6KvezXr3qV0WHF9sq201A
+         n4mA==
+X-Forwarded-Encrypted: i=1; AJvYcCURN+TpA2w5swlN/PlMCLTPTLpLqxnnaBz3a0zkW16RgQJqGFrK27EXZ6vDloFt/29D0+yVbnctlAscnD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW1aRDF2jBi2kCU2ckGf122LrgV8BDO4+weX32VxLYfCCDA6JC
+	bGJ7Xr1oXPG6ri7sE36kmunQPB+/JnzjVjCDZPBwJXS0Qos57l6y9MYvKbxvKMaJprM6zoVCLYt
+	o5/rvVKUltUxv0dEfeDPUBXdKL++3fFUf+7uJ
+X-Google-Smtp-Source: AGHT+IHwq++S1UFkctL0ms+SbLu6Jboh5uhqAxESNgvmcj+xrJ6NQ6q3WEQenfMQG5a8FwXU+DeMKJZxGjzaBtTZ3zE=
+X-Received: by 2002:a05:6000:1868:b0:374:c3e4:d6de with SMTP id
+ ffacd0b85a97d-381f1885dd9mr2122596f8f.41.1731066145385; Fri, 08 Nov 2024
+ 03:42:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107112955.v3.1.Ie0d37646f18461234777d88b4c3e21faed92ed4f@changeid>
+References: <20241104-borrow-mut-v2-0-de650678648d@gmail.com> <20241104-borrow-mut-v2-5-de650678648d@gmail.com>
+In-Reply-To: <20241104-borrow-mut-v2-5-de650678648d@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 8 Nov 2024 12:42:13 +0100
+Message-ID: <CAH5fLgji1CX=OGygvzoBPggYDss7PvgvHC+NhW4tR031H6Tbfw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] rust: reorder `ForeignOwnable` items
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 07, 2024 at 11:29:54AM -0800, Abhishek Pandit-Subedi wrote:
-> Mode in struct typec_altmode is used to indicate the index of the
-> altmode on a port, partner or plug. It is used in enter mode VDMs but
-> doesn't make much sense for matching against altmode drivers or for
-> matching partner to port altmodes.
-> 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+On Mon, Nov 4, 2024 at 10:20=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> `{into,from}_foreign` before `borrow` is slightly more logical.
+>
+> This removes an inconsistency with `kbox.rs` which already uses this
+> ordering.
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-> ---
-> 
-> Changes in v3:
-> - Removed mode from altmode device ids
-> - Updated modalias for typecd bus to remove mode
-> - Re-ordered to start of series
-> 
-> Changes in v2:
-> - Update altmode_match to ignore mode entirely
-> - Also apply the same behavior to typec_match
-> 
->  drivers/usb/typec/altmodes/displayport.c | 2 +-
->  drivers/usb/typec/altmodes/nvidia.c      | 2 +-
->  drivers/usb/typec/bus.c                  | 6 ++----
->  drivers/usb/typec/class.c                | 4 ++--
->  scripts/mod/devicetable-offsets.c        | 1 -
->  scripts/mod/file2alias.c                 | 4 +---
->  6 files changed, 7 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
-> index 2f03190a9873..3245e03d59e6 100644
-> --- a/drivers/usb/typec/altmodes/displayport.c
-> +++ b/drivers/usb/typec/altmodes/displayport.c
-> @@ -791,7 +791,7 @@ void dp_altmode_remove(struct typec_altmode *alt)
->  EXPORT_SYMBOL_GPL(dp_altmode_remove);
->  
->  static const struct typec_device_id dp_typec_id[] = {
-> -	{ USB_TYPEC_DP_SID, USB_TYPEC_DP_MODE },
-> +	{ USB_TYPEC_DP_SID },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(typec, dp_typec_id);
-> diff --git a/drivers/usb/typec/altmodes/nvidia.c b/drivers/usb/typec/altmodes/nvidia.c
-> index fe70b36f078f..2b77d931e494 100644
-> --- a/drivers/usb/typec/altmodes/nvidia.c
-> +++ b/drivers/usb/typec/altmodes/nvidia.c
-> @@ -24,7 +24,7 @@ static void nvidia_altmode_remove(struct typec_altmode *alt)
->  }
->  
->  static const struct typec_device_id nvidia_typec_id[] = {
-> -	{ USB_TYPEC_NVIDIA_VLINK_SID, TYPEC_ANY_MODE },
-> +	{ USB_TYPEC_NVIDIA_VLINK_SID },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(typec, nvidia_typec_id);
-> diff --git a/drivers/usb/typec/bus.c b/drivers/usb/typec/bus.c
-> index aa879253d3b8..ae90688d23e4 100644
-> --- a/drivers/usb/typec/bus.c
-> +++ b/drivers/usb/typec/bus.c
-> @@ -454,8 +454,7 @@ static int typec_match(struct device *dev, const struct device_driver *driver)
->  	const struct typec_device_id *id;
->  
->  	for (id = drv->id_table; id->svid; id++)
-> -		if (id->svid == altmode->svid &&
-> -		    (id->mode == TYPEC_ANY_MODE || id->mode == altmode->mode))
-> +		if (id->svid == altmode->svid)
->  			return 1;
->  	return 0;
->  }
-> @@ -470,8 +469,7 @@ static int typec_uevent(const struct device *dev, struct kobj_uevent_env *env)
->  	if (add_uevent_var(env, "MODE=%u", altmode->mode))
->  		return -ENOMEM;
->  
-> -	return add_uevent_var(env, "MODALIAS=typec:id%04Xm%02X",
-> -			      altmode->svid, altmode->mode);
-> +	return add_uevent_var(env, "MODALIAS=typec:id%04X", altmode->svid);
->  }
->  
->  static int typec_altmode_create_links(struct altmode *alt)
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 4b3047e055a3..febe453b96be 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -237,13 +237,13 @@ static int altmode_match(struct device *dev, void *data)
->  	if (!is_typec_altmode(dev))
->  		return 0;
->  
-> -	return ((adev->svid == id->svid) && (adev->mode == id->mode));
-> +	return (adev->svid == id->svid);
->  }
->  
->  static void typec_altmode_set_partner(struct altmode *altmode)
->  {
->  	struct typec_altmode *adev = &altmode->adev;
-> -	struct typec_device_id id = { adev->svid, adev->mode, };
-> +	struct typec_device_id id = { adev->svid };
->  	struct typec_port *port = typec_altmode2port(adev);
->  	struct altmode *partner;
->  	struct device *dev;
-> diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
-> index 9c7b404defbd..d3d00e85edf7 100644
-> --- a/scripts/mod/devicetable-offsets.c
-> +++ b/scripts/mod/devicetable-offsets.c
-> @@ -237,7 +237,6 @@ int main(void)
->  
->  	DEVID(typec_device_id);
->  	DEVID_FIELD(typec_device_id, svid);
-> -	DEVID_FIELD(typec_device_id, mode);
->  
->  	DEVID(tee_client_device_id);
->  	DEVID_FIELD(tee_client_device_id, uuid);
-> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index c4cc11aa558f..218ccb7150bf 100644
-> --- a/scripts/mod/file2alias.c
-> +++ b/scripts/mod/file2alias.c
-> @@ -1343,14 +1343,12 @@ static int do_tbsvc_entry(const char *filename, void *symval, char *alias)
->  	return 1;
->  }
->  
-> -/* Looks like: typec:idNmN */
-> +/* Looks like: typec:idN */
->  static int do_typec_entry(const char *filename, void *symval, char *alias)
->  {
->  	DEF_FIELD(symval, typec_device_id, svid);
-> -	DEF_FIELD(symval, typec_device_id, mode);
->  
->  	sprintf(alias, "typec:id%04X", svid);
-> -	ADD(alias, "m", mode != TYPEC_ANY_MODE, mode);
->  
->  	return 1;
->  }
-> -- 
-> 2.47.0.277.g8800431eea-goog
-
--- 
-heikki
+I don't think this is super important, but shrug.
 
