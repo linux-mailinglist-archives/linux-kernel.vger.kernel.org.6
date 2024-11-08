@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-401749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D728A9C1EAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:59:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA8D9C1EB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:59:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA2A1C21D97
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:59:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE96E1C20A8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829881EF95C;
-	Fri,  8 Nov 2024 13:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB3E1F4274;
+	Fri,  8 Nov 2024 13:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="aokS2xF1"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="qkQu+86e"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437CC137E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837921EF0B9
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731074341; cv=none; b=nV9w0mQ+zVKxovxGNj6R60ArZSdcbasvbJb/3Jr0GZH3j4Avup3qEfxsg35ZLgPULzk1FegGxRhZZ1l/FW2Na/SsWVSX8U9sNluBcbmyJJU+PyC6QBQoxH/xlb7qb5G/8u1vIR+vQ8hdWW2FSTh9icLjIToLlHp/ku3FTBsmeXs=
+	t=1731074343; cv=none; b=NwjXTzQ4ML+m+5ycM83K09ya6lhcmeulN9USWxW+tC4/y144Shlx8LO4O/V+J8GIQXWc1FSo8KqBoIjIHbdbbKaYhYUXzcpFDTdgKcfQrqSEen7RI+audYtPVG6fMi2Uy+8SnBWHF3TWa752mpt89G35Sp/0w0IDuLkYsxADuKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731074341; c=relaxed/simple;
-	bh=VJCrnUUdGei/ZnbWKo/IVdIKLNCrBMpKE8oFEy+MEtw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NoTn5qg0K2aQYbNxGCdFGCuyDEDm4b8YvbxkERK9k6cbFdhmvCLMB/LFAHLF1/udTE7CPkoIHoGTAH5DzV82I/ODh5kQl3gsKVG9xWjOwmaSTqTFtpK20OvRWBy6wGxCfjOFdbKvQPvM0zLkBDSK+JEXB07D8UnPyqneWFXWg1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=aokS2xF1; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1731074343; c=relaxed/simple;
+	bh=mAPRkq8mcGAitqZ2NJPZs4WYcWRS92IxYDvqOFLptL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P06ntmtbNu0A6sTXTCa9zNhdF1w+X1MnBTPx0zGec6b4K6+U3vm0ygApMu3wGETFzGKbhj/3AyW/wdrHgB8XZp3sD+Ka/iK7K59b4274kgOBnR+e+U4Uvpc+UvmPB+VP9u9Q/1gbMCcUmwpKaWaaWvGrKu76O376yWJ8ayeYl0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=qkQu+86e; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431481433bdso18749745e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 05:58:59 -0800 (PST)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so1304185f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 05:59:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1731074338; x=1731679138; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=19nNoiZMI2JgXeIpnibERXoHDynmYT61X0LDoD+6J9c=;
-        b=aokS2xF1F/Mi5SLlcydh7o8RUauswrA9c52O8DFGYKy7+g+Iow8tk4b5eVMWD+Ne6K
-         tVk9aXOsXEm3WV+P1hmFDgHv55o6vihvNfhJHIDGo704McJL9Uh2U35A2OYBf/ii9kAA
-         GTllmrCgc2sg1Y0Iq7Q0BNypXNe1XfCWMGEDGQWM3gLgr7/EzBExuMnluUYSw+/6YgYA
-         fI+VMnJU19ZWlSZ8ftsLX04ig8BPK/uUrQQ3NEEE9aihwah9X2JyE4qkCwxO5psYy5Er
-         /8fSSjGlIrggx+QF80+Xk1SnynWjnTYYlfZXYUx48P54PDbgsGiF3WAdDTTNqsf9TXf7
-         sjtQ==
+        d=sartura.hr; s=sartura; t=1731074340; x=1731679140; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1w6RpVPZFLgX8W7zDDIW9Bt9wUWPJmCNFHj/06iwgR0=;
+        b=qkQu+86eglnwUU9e8q9m+yhXyGghSfSZTooQfBRXhxgUsdjODQsxDdcLCDyrBk3AeM
+         3mnA0Jhj6/iFBSiVQ1E3C7XQYppjfAFuTL48w9U+H3wSqVgyu4ofF2QpzgWcFAPO3rIK
+         4uR5gchkf1dB7Eciy3rD/PUCaeCZzc7aoiwvjkVitFWMbMmKDmQsrvwXiZZVq/+x+ANV
+         pCqGWzUUZrJcLBV7Wi4trPZk14Kw1i93WJOgLI0ljveiKdSEaRUc6iUL3DGZj1Qhg0ml
+         MxWDAcwxLFq/leG7aYfHMfRKvr1NRasFROur0x2EIqBbYVeMCzNKfuTRP5NXzAlkQH8J
+         o/Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731074338; x=1731679138;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=19nNoiZMI2JgXeIpnibERXoHDynmYT61X0LDoD+6J9c=;
-        b=HuNUcUCQRQJU1KuydVRhmNIoyQ1by8DvLFepXMG09BWCTpqCoV3W9AjJ2OOsm2q0VW
-         RwGE85ptOUbtGRQY4FDp6xR/DIwucyF6R8lJv762VBrxt0QGn4pvYtvOEnphgVwKTIeq
-         tDgKjN8mQAiggP5gSbB12/lBzZAVSEoYa5TL3tRcP12mXK19yvl5CoBh0UbGNn1CzRCA
-         WnM1iI5MYogXhqvFAWf2giAjuJ2zXuRYURd95mQQnhvmL5uTAM51eIr7M9FYjUNY9/nK
-         b86Pc3lC7HXsb5hHIFJhGJmZKXKfYswdpEBTHxRr4iv18kJ+Jn+3vrJd7rZVPLWKtM6U
-         HxaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvqPkY34ybaWUI0rsd0Q61Hb4xpf0MGB8YFwCUUi0T/OLVetzAcXKFL2HWSofv1sxIx9sUNdmQb5e6n2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwONXaHTfYBO2/QSVqIMB9kSbB7Hw6462wf1Aw/mFLHthqRq4sa
-	LIFG6vlqz9BBnsD/glfz+c54s3+dmz5FnXN8Ppf/x9n81xS5ZPvCN6Js9O19uvw=
-X-Google-Smtp-Source: AGHT+IHddZyZHnBvXvpwpiOFOpBw0pB+ps3Rxlk3QlAmQ6sdQYs/NNEYqY/D3vFEUDZaWTay7pUGFA==
-X-Received: by 2002:a05:6000:401f:b0:381:b68f:d14b with SMTP id ffacd0b85a97d-381f182fc02mr2476225f8f.45.1731074338350;
-        Fri, 08 Nov 2024 05:58:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731074340; x=1731679140;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1w6RpVPZFLgX8W7zDDIW9Bt9wUWPJmCNFHj/06iwgR0=;
+        b=hPKcO5ucKp7Te22da1bac48/rNkw52ttND6lEgvF3gyKckoxkZwj9garWY8y1RC73c
+         u75QdSp8aE0pYOHp8hYdM+DDA/gCpSAnXAfsfsx9VjKCg8kkCDDUSdW1GBElRTIebbwp
+         xkGGAyKtkibNPUXhuXTYyv1FXgje+5T8AIbDQFsdemfsHV95X8K8vEwhpYGm1cfYWtlW
+         g9zU7uf9zMi1IpNWh/MosMcanX51Mr59mEh3EGOhRWbm4NzTfSJeGYD2VjtK+mNEso3n
+         EoJGxnSe/v9GsZYU6r7zWmD0yDlfJSeDS62IM5TN295xv8Od7ImdB4aIV5xfe/8w7kS9
+         8PmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVd4beGQACqSXtXn1ZJLVBR1h9PhDPtyNt1hEWHknINRI+jwz6hEzaBGLkJEpqZKSe684rPtEgm8yLt8Lk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYc6Mg2zCD+Acbk9JNYjEAJrSCOY+LTBbJMDbiJuyWESRneW2I
+	5hutd5N7rUl+YCY8Vw5WJns07naSJmUnS/xBtrLAb1h1Mud8Dxrhwp326FCbhl0=
+X-Google-Smtp-Source: AGHT+IE+nAqhwysBWUwaiDHL8021dYLt45cexYtLiP8CXTNVID4kP6yjzuHQfUBix0HKH4CQF1DrWg==
+X-Received: by 2002:a5d:6d06:0:b0:37d:45ad:8394 with SMTP id ffacd0b85a97d-381f1866bb5mr2611022f8f.15.1731074339782;
+        Fri, 08 Nov 2024 05:58:59 -0800 (PST)
 Received: from fedora.. (cpe-188-129-46-99.dynamic.amis.hr. [188.129.46.99])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed97cd97sm4924431f8f.27.2024.11.08.05.58.57
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed97cd97sm4924431f8f.27.2024.11.08.05.58.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 05:58:57 -0800 (PST)
+        Fri, 08 Nov 2024 05:58:59 -0800 (PST)
 From: Robert Marko <robert.marko@sartura.hr>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -78,10 +80,12 @@ To: catalin.marinas@arm.com,
 	linux-serial@vger.kernel.org
 Cc: luka.perkov@sartura.hr,
 	Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v2 1/4] arm64: lan969x: Add support for Microchip LAN969x SoC
-Date: Fri,  8 Nov 2024 14:57:31 +0100
-Message-ID: <20241108135855.129116-1-robert.marko@sartura.hr>
+Subject: [PATCH v2 2/4] clk: lan966x: make it selectable for ARCH_LAN969X
+Date: Fri,  8 Nov 2024 14:57:32 +0100
+Message-ID: <20241108135855.129116-2-robert.marko@sartura.hr>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241108135855.129116-1-robert.marko@sartura.hr>
+References: <20241108135855.129116-1-robert.marko@sartura.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,41 +94,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds support for the Microchip LAN969x ARMv8-based SoC switch family.
+LAN969x uses the same LAN966x clock driver so make it selectable for
+ARCH_LAN969X.
 
 Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 ---
-Changes in v2:
-* Add forgotten LAN969x architecture support itself
+ drivers/clk/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm64/Kconfig.platforms | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 6c6d11536b42..4650ad3674aa 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -128,6 +128,20 @@ config ARCH_SPARX5
- 	  security through TCAM-based frame processing using versatile
- 	  content aware processor (VCAP).
- 
-+config ARCH_LAN969X
-+	bool "Microchip LAN969X SoC family"
-+	select PINCTRL
-+	select DW_APB_TIMER_OF
-+	help
-+	  This enables support for the Microchip LAN969X ARMv8-based
-+	  SoC family of TSN-capable gigabit switches.
-+
-+	  The LAN969X Ethernet switch family provides a rich set of
-+	  switching features such as advanced TCAM-based VLAN and QoS
-+	  processing enabling delivery of differentiated services, and
-+	  security through TCAM-based frame processing using versatile
-+	  content aware processor (VCAP).
-+
- config ARCH_K3
- 	bool "Texas Instruments Inc. K3 multicore SoC architecture"
- 	select PM_GENERIC_DOMAINS if PM
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index ef709327cba1..713573b6c86c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -270,7 +270,7 @@ config COMMON_CLK_LAN966X
+ 	tristate "Generic Clock Controller driver for LAN966X SoC"
+ 	depends on HAS_IOMEM
+ 	depends on OF
+-	depends on SOC_LAN966 || COMPILE_TEST
++	depends on SOC_LAN966 || ARCH_LAN969X || COMPILE_TEST
+ 	help
+ 	  This driver provides support for Generic Clock Controller(GCK) on
+ 	  LAN966X SoC. GCK generates and supplies clock to various peripherals
 -- 
 2.47.0
 
